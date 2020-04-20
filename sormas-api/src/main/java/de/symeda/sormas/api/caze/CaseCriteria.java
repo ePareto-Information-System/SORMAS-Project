@@ -75,6 +75,8 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 	private String sourceCaseInfoLike;
 	private Date quarantineTo;
 	
+	private String viewMode;
+	
 	@Override
 	public CaseCriteria clone() {
 		try {
@@ -387,6 +389,14 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 	
 	public void setQuarantineTo(Date quarantineTo) {
 		this.quarantineTo = quarantineTo;
+	}
+	
+	public String getViewMode () {
+		return this.viewMode == null ? "grid" : this.viewMode;
+	}
+	
+	public void setViewMode (String viewMode) {
+		this.viewMode = viewMode;
 	}
 	
 }

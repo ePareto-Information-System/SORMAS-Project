@@ -17,8 +17,12 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.caze;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.vaadin.hene.popupbutton.PopupButton;
 
@@ -27,6 +31,7 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource;
+import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -57,8 +62,10 @@ import de.symeda.sormas.api.caze.CaseExportType;
 import de.symeda.sormas.api.caze.CaseOrigin;
 import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.caze.InvestigationStatus;
+import de.symeda.sormas.api.caze.MapCaseDto;
 import de.symeda.sormas.api.caze.NewCaseDateType;
 import de.symeda.sormas.api.epidata.EpiDataDto;
+import de.symeda.sormas.api.facility.FacilityDto;
 import de.symeda.sormas.api.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.i18n.Captions;
@@ -69,6 +76,7 @@ import de.symeda.sormas.api.infrastructure.PointOfEntryReferenceDto;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
+import de.symeda.sormas.api.region.GeoLatLon;
 import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.sample.AdditionalTestDto;
 import de.symeda.sormas.api.sample.SampleDto;
@@ -87,7 +95,10 @@ import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.caze.exporter.CaseExportConfigurationsLayout;
 import de.symeda.sormas.ui.caze.importer.CaseImportLayout;
 import de.symeda.sormas.ui.caze.importer.LineListingImportLayout;
+import de.symeda.sormas.ui.dashboard.DashboardCssStyles;
 import de.symeda.sormas.ui.dashboard.DateFilterOption;
+import de.symeda.sormas.ui.entitymap.DashboardMapComponent;
+import de.symeda.sormas.ui.map.LeafletMap;
 import de.symeda.sormas.ui.utils.AbstractView;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.DownloadUtil;
@@ -126,12 +137,16 @@ public class CasesView extends AbstractView {
 	private Button activeStatusButton;
 	private PopupButton moreButton;
 	private VerticalLayout moreLayout;
+	private Button showMapViewButton;
+	private Button showGridViewButton;
 
 	private VerticalLayout gridLayout;
 	private HorizontalLayout firstFilterRowLayout;
 	private HorizontalLayout secondFilterRowLayout;
 	private HorizontalLayout thirdFilterRowLayout;
 	private HorizontalLayout dateFilterRowLayout;
+	
+	private DashboardMapComponent map;
 
 	// Filters
 	private ComboBox caseOriginFilter;
@@ -178,13 +193,11 @@ public class CasesView extends AbstractView {
 		gridLayout = new VerticalLayout();
 		gridLayout.addComponent(createFilterBar());
 		gridLayout.addComponent(createStatusFilterBar());
-		gridLayout.addComponent(grid);
 		gridLayout.setMargin(true);
 		gridLayout.setSpacing(false);
 		gridLayout.setSizeFull();
-		gridLayout.setExpandRatio(grid, 1);
 		gridLayout.setStyleName("crud-main-layout");
-
+		
 		grid.getDataProvider().addDataProviderListener(e -> updateStatusButtons());
 		
 		if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS) || UserProvider.getCurrent().hasUserRight(UserRight.CASE_MERGE)) {
@@ -837,6 +850,7 @@ public class CasesView extends AbstractView {
 		HorizontalLayout actionButtonsLayout = new HorizontalLayout();
 		actionButtonsLayout.setSpacing(true);
 		{
+			
 			// Show active/archived/all dropdown
 			if (UserProvider.getCurrent().hasUserRight(UserRight.CASE_VIEW_ARCHIVED)) {
 				int daysAfterCaseGetsArchived = FacadeProvider.getConfigFacade().getDaysAfterCaseGetsArchived();
@@ -865,6 +879,9 @@ public class CasesView extends AbstractView {
 				});
 				actionButtonsLayout.addComponent(relevanceStatusFilter);
 			}
+			
+			//show toggle between mapView and gridView
+			addShowMapOrTableToggleButtons(actionButtonsLayout);
 
 			// Bulk operation dropdown
 			if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
@@ -936,7 +953,36 @@ public class CasesView extends AbstractView {
 		parentLayout.setComponentAlignment(collapseFiltersButton, Alignment.TOP_LEFT);
 		collapseFiltersButton.setVisible(false);
 	}
+	
+	private void addShowMapOrTableToggleButtons (HorizontalLayout layout) {
+		
+		//gridView
+		showGridViewButton = new Button("", VaadinIcons.TABLE);
+		CssStyles.style(showGridViewButton, CssStyles.BUTTON_SUBTLE);
+		showGridViewButton.addStyleName(CssStyles.VSPACE_NONE);
+		
+		showGridViewButton.addClickListener(e -> {
+			criteria.setViewMode("grid");
+			navigateTo(criteria);
+		});
+		
+		showGridViewButton.setVisible(false);
+		layout.addComponent(showGridViewButton);
 
+		//mapView
+		showMapViewButton = new Button("", VaadinIcons.SQUARE_SHADOW);
+		CssStyles.style(showMapViewButton, CssStyles.BUTTON_SUBTLE);
+		showMapViewButton.addStyleName(CssStyles.VSPACE_NONE);	
+		
+		showMapViewButton.addClickListener(e -> {
+			criteria.setViewMode("map");
+			navigateTo(criteria);
+		});
+		
+		showMapViewButton.setVisible(false);
+		layout.addComponent(showMapViewButton);
+	}
+	
 	public void setFiltersExpanded(boolean expanded) {
 		expandFiltersButton.setVisible(!expanded);
 		collapseFiltersButton.setVisible(expanded);
@@ -945,6 +991,7 @@ public class CasesView extends AbstractView {
 		dateFilterRowLayout.setVisible(expanded);
 	}
 
+	
 	@Override
 	public void enter(ViewChangeEvent event) {
 		String params = event.getParameters().trim();
@@ -953,7 +1000,28 @@ public class CasesView extends AbstractView {
 			criteria.fromUrlParams(params);
 		}
 		updateFilterComponents();
-		grid.reload();
+		
+		if (criteria.getViewMode().equals("map")) {
+			VerticalLayout mapLayout = new VerticalLayout();
+			mapLayout.setStyleName(DashboardCssStyles.CURVE_AND_MAP_LAYOUT);
+			mapLayout.setMargin(false);
+			
+			map = new DashboardMapComponent(criteria);			
+			mapLayout.addComponent(map);
+			mapLayout.setExpandRatio(map, 1);
+			gridLayout.addComponent(mapLayout);
+			
+			gridLayout.setExpandRatio(mapLayout, 1);
+			
+			showGridViewButton.setVisible(true);
+		}
+		else {
+			gridLayout.addComponent(grid);
+			gridLayout.setExpandRatio(grid, 1);
+			
+			showMapViewButton.setVisible(true);
+		}
+
 	}
 
 	public void updateFilterComponents() {

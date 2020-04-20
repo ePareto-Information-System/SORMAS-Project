@@ -408,6 +408,34 @@ public class CaseFacadeEjb implements CaseFacade {
 			return em.createQuery(cq).getResultList();
 		}
 	}
+	
+	//@Override
+	public List<MapCaseDto> getIndexListForMap(CaseCriteria caseCriteria, Integer first, Integer max, String userUuid,
+			List<SortProperty> sortProperties) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<MapCaseDto> cq = cb.createQuery(MapCaseDto.class);
+		Root<Case> caze = cq.from(Case.class);
+
+		selectIndexDtoFields2(cq, caze);
+
+		User user = userService.getByUuid(userUuid);
+		Predicate filter = caseService.createUserFilter(cb, cq, caze, user);
+
+		if (caseCriteria != null) {
+			Predicate criteriaFilter = caseService.createCriteriaFilter(caseCriteria, cb, cq, caze);
+			filter = AbstractAdoService.and(cb, filter, criteriaFilter);
+		}
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		if (first != null && max != null) {
+			return em.createQuery(cq).setFirstResult(first).setMaxResults(max).getResultList();
+		} else {
+			return em.createQuery(cq).getResultList();
+		}
+	}
 
 	@Override
 	@Transactional(value = TxType.REQUIRES_NEW)
@@ -1088,6 +1116,28 @@ public class CaseFacadeEjb implements CaseFacade {
 				root.get(Case.QUARANTINE_TO), root.get(Case.COMPLETENESS));
 	}
 
+	private void selectIndexDtoFields2(CriteriaQuery<MapCaseDto> cq, Root<Case> root) {
+		Join<Case, Person> person = root.join(Case.PERSON, JoinType.LEFT);
+		Join<Person, Location> personAddress = person.join(Person.ADDRESS, JoinType.LEFT);
+		Join<Case, Facility> facility = root.join(Case.HEALTH_FACILITY, JoinType.LEFT);
+		
+		cq.multiselect(
+				root.get(Case.UUID),
+				root.get(Case.REPORT_DATE),
+				root.get(Case.CASE_CLASSIFICATION),
+				root.get(Case.DISEASE),
+				person.get(Person.UUID),
+				person.get(Person.FIRST_NAME),
+				person.get(Person.LAST_NAME),
+				facility.get(Facility.UUID),
+				facility.get(Facility.LATITUDE),
+				facility.get(Facility.LONGITUDE),
+				root.get(Case.REPORT_LAT),
+				root.get(Case.REPORT_LON),
+				personAddress.get(Location.LATITUDE),
+				personAddress.get(Location.LONGITUDE));
+	}
+	
 	private void setIndexDtoSortingOrder(CriteriaBuilder cb, CriteriaQuery<CaseIndexDto> cq, Root<Case> root,
 			List<SortProperty> sortProperties) {
 		Join<Case, Person> person = root.join(Case.PERSON, JoinType.LEFT);

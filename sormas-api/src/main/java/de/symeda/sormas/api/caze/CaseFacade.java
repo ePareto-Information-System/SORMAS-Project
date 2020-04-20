@@ -44,6 +44,8 @@ public interface CaseFacade {
 	
 	List<CaseIndexDto> getIndexList(CaseCriteria caseCriteria, Integer first, Integer max, String userUuid, List<SortProperty> sortProperties);
 	
+	List<MapCaseDto> getIndexListForMap(CaseCriteria caseCriteria, Integer first, Integer max, String userUuid, List<SortProperty> sortProperties);
+	
 	List<CaseExportDto> getExportList(CaseCriteria caseCriteria, CaseExportType exportType, int first, int max, String userUuid, ExportConfigurationDto exportConfiguration);
 	
 	CaseDataDto getCaseDataByUuid(String uuid);
