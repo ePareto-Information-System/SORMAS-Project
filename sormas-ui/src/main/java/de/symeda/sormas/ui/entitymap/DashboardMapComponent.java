@@ -189,11 +189,10 @@ public class DashboardMapComponent extends VerticalLayout {
 			GeoLatLon center = Optional.ofNullable(mapCenter)
 				.orElseGet(FacadeProvider.getConfigFacade()::getCountryCenter);
 
-			center = new GeoLatLon(8, -0.5);
 			map.setCenter(center);
 		}
 		
-		map.setZoom(7);//(FacadeProvider.getConfigFacade().getMapZoom());
+		map.setZoom(FacadeProvider.getConfigFacade().getMapZoom());
 
 		showCases = true;
 		showContacts = false;
