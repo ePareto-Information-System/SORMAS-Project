@@ -12,7 +12,8 @@
   * [Apache Web Server](#apache-web-server)
   * [Firewall](#firewall)
   * [Postfix Mail Server](#postfix-mail-server)
-  * [Security](#security)
+  * [Testing the Server Setup](#testing-the-server-setup)
+* [R Software Environment](#r-software-environment)
 * [Troubleshooting](#troubleshooting)
 
 ## Related
@@ -35,7 +36,7 @@
 ### Postgres Database
 
 * Install PostgreSQL (currently 9.5, 9.6 or 10) on your system (manuals for all OS can be found here: https://www.postgresql.org/download)
-* set **max_prepared_transactions = 64** (at least) in postgresql.conf (e.g. ``/etc/postgresql/10.0/main/postgresql.conf``; ``C:/Program Files/PostgreSQL/10.0/data``)
+* set **max_prepared_transactions = 64** (at least) in postgresql.conf (e.g. ``/etc/postgresql/10.0/main/postgresql.conf``; ``C:/Program Files/PostgreSQL/10.0/data``) - make sure the property is uncommented
 * Install the "temporal tables" extension for Postgres (https://github.com/arkhipov/temporal_tables)
     * **Windows**: Download the latest version for your Postgres version: https://github.com/arkhipov/temporal_tables/releases/latest, then copy the DLL from the project into the PostgreSQL's lib directory and the .sql and .control files into the directory share\extension.	
     * **Linux** (see https://github.com/arkhipov/temporal_tables#installation):
@@ -112,10 +113,10 @@ Here are some things that you should do to configure the Apache server as a prox
 * Add a proxy pass to the local port:
 
 		ProxyRequests Off
-		ProxyPass /sormas-ui http://localhost:5080/sormas-ui
-		ProxyPassReverse /sormas-ui http://localhost:5080/sormas-ui
-		ProxyPass /sormas-rest http://localhost:5080/sormas-rest
-		ProxyPassReverse /sormas-rest http://localhost:5080/sormas-rest
+		ProxyPass /sormas-ui http://localhost:6080/sormas-ui
+		ProxyPassReverse /sormas-ui http://localhost:6080/sormas-ui
+		ProxyPass /sormas-rest http://localhost:6080/sormas-rest
+		ProxyPassReverse /sormas-rest http://localhost:6080/sormas-rest
 * Configure security settings:
 
 		Header always set X-Content-Type-Options "nosniff"
@@ -214,6 +215,20 @@ Here are some things that you should do to configure the Apache server as a prox
 ### Testing the Server Setup
 
 Use SSL Labs to test your server security config: https://www.ssllabs.com/ssltest
+
+## R Software Environment
+
+In order to enable disease network diagrams in the contact dashboard, R and several extension packages are required.
+Then the Rscript executable has to be configured in the ``sormas.properties`` file.
+This can be conveniently accomplished by executing the R setup script from the SORMAS ZIP archive (see [SORMAS Server](#sormas-server)):
+
+* If the SORMAS installation has been customized, ``r-setup.sh`` the install paths may have to be adjusted accordingly with a text editor.
+* Execute R setup script:
+
+	chmod +x r-setup.sh
+	./r-setup.sh
+	
+* Follow the instructions of the script.
 
 
 ## Troubleshooting
