@@ -100,7 +100,6 @@ import de.symeda.sormas.ui.caze.exporter.CaseExportConfigurationsLayout;
 import de.symeda.sormas.ui.caze.importer.CaseImportLayout;
 import de.symeda.sormas.ui.caze.importer.LineListingImportLayout;
 import de.symeda.sormas.ui.dashboard.DashboardCssStyles;
-import de.symeda.sormas.ui.dashboard.DateFilterOption;
 import de.symeda.sormas.ui.entitymap.DashboardMapComponent;
 import de.symeda.sormas.ui.map.LeafletMap;
 import de.symeda.sormas.ui.utils.AbstractView;

@@ -376,8 +376,7 @@ public class CaseFacadeEjb implements CaseFacade {
 
 		selectIndexDtoFields2(cq, caze);
 
-		User user = userService.getByUuid(userUuid);
-		Predicate filter = caseService.createUserFilter(cb, cq, caze, user);
+		Predicate filter = caseService.createUserFilter(cb, cq, caze);
 
 		if (caseCriteria != null) {
 			Predicate criteriaFilter = caseService.createCriteriaFilter(caseCriteria, cb, cq, caze);
