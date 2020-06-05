@@ -67,7 +67,20 @@ public class PathogenTestController {
 			BiConsumer<PathogenTestDto, Runnable> onSavedPathogenTest) {
 		SampleDto sampleDto = FacadeProvider.getSampleFacade().getSampleByUuid(sampleRef.getUuid());
 		PathogenTestForm createForm = new PathogenTestForm(sampleDto, true, caseSampleCount);
-		createForm.setValue(PathogenTestDto.build(sampleDto, UserProvider.getCurrent().getUser()));
+		
+		PathogenTestDto model = PathogenTestDto.build(sampleDto, UserProvider.getCurrent().getUser());
+		
+		//set defaults
+		model.setTestDateTime(new java.util.Date());
+			//use disease of associated case
+		if (sampleDto.getAssociatedCase() != null) {
+			CaseDataDto associatedCase = FacadeProvider.getCaseFacade().getCaseDataByUuid(sampleDto.getAssociatedCase().getUuid());
+			if (associatedCase != null)
+				model.setTestedDisease(associatedCase.getDisease());
+		}
+		model.setTestResultVerified(true);
+		
+		createForm.setValue(model);
 		final CommitDiscardWrapperComponent<PathogenTestForm> editView = new CommitDiscardWrapperComponent<PathogenTestForm>(
 				createForm, UserProvider.getCurrent().hasUserRight(UserRight.PATHOGEN_TEST_CREATE), createForm.getFieldGroup());
 
