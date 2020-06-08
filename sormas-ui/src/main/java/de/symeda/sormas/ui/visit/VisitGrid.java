@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.visit;
 
@@ -21,9 +21,7 @@ import java.util.Date;
 
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.ListDataProvider;
-import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.renderers.DateRenderer;
-import com.vaadin.ui.renderers.HtmlRenderer;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -51,35 +49,34 @@ public class VisitGrid extends FilteredGrid<VisitIndexDto, VisitCriteria> {
 		setEagerDataProvider();
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
-        	setSelectionMode(SelectionMode.MULTI);
-        } else {
-        	setSelectionMode(SelectionMode.NONE);
-        }
-
-		Column<VisitIndexDto, String> editColumn = addColumn(entry -> VaadinIcons.EDIT.getHtml(), new HtmlRenderer());
-		editColumn.setId(EDIT_BTN_ID);
-		editColumn.setWidth(20);
-
-		setColumns(EDIT_BTN_ID, VisitIndexDto.VISIT_DATE_TIME, VisitIndexDto.VISIT_STATUS, VisitIndexDto.VISIT_REMARKS,
-				VisitIndexDto.DISEASE, VisitIndexDto.SYMPTOMATIC, VisitIndexDto.TEMPERATURE);
-
-		((Column<VisitIndexDto, Date>) getColumn(VisitIndexDto.VISIT_DATE_TIME)).setRenderer(new DateRenderer(DateHelper.getLocalDateTimeFormat(I18nProperties.getUserLanguage())));
-		((Column<VisitIndexDto, String>) getColumn(VisitIndexDto.SYMPTOMATIC)).setRenderer(new BooleanRenderer());
-
-		for(Column<?, ?> column : getColumns()) {
-			column.setCaption(I18nProperties.getPrefixCaption(
-					VisitIndexDto.I18N_PREFIX, column.getId().toString(), column.getCaption()));
+			setSelectionMode(SelectionMode.MULTI);
+		} else {
+			setSelectionMode(SelectionMode.NONE);
 		}
 
-		addItemClickListener(e -> {
-			if (e.getColumn() != null && (EDIT_BTN_ID.equals(e.getColumn().getId()) || e.getMouseEventDetails().isDoubleClick())) {
-				ControllerProvider.getVisitController().editVisit(e.getItem().getUuid(), getCriteria().getContact(), r -> reload());
-			}
-		});
+		addEditColumn(e -> ControllerProvider.getVisitController().editVisit(e.getItem().getUuid(), getCriteria().getContact(), r -> reload()));
+
+		setColumns(
+			EDIT_BTN_ID,
+			VisitIndexDto.VISIT_DATE_TIME,
+			VisitIndexDto.VISIT_STATUS,
+			VisitIndexDto.VISIT_REMARKS,
+			VisitIndexDto.DISEASE,
+			VisitIndexDto.SYMPTOMATIC,
+			VisitIndexDto.TEMPERATURE);
+
+		((Column<VisitIndexDto, Date>) getColumn(VisitIndexDto.VISIT_DATE_TIME))
+			.setRenderer(new DateRenderer(DateHelper.getLocalDateTimeFormat(I18nProperties.getUserLanguage())));
+		((Column<VisitIndexDto, String>) getColumn(VisitIndexDto.SYMPTOMATIC)).setRenderer(new BooleanRenderer());
+
+		for (Column<?, ?> column : getColumns()) {
+			column.setCaption(I18nProperties.getPrefixCaption(VisitIndexDto.I18N_PREFIX, column.getId().toString(), column.getCaption()));
+		}
 	}
 
 	public void setEagerDataProvider() {
-		ListDataProvider<VisitIndexDto> dataProvider = DataProvider.fromStream(FacadeProvider.getVisitFacade().getIndexList(getCriteria(), null, null, null).stream());
+		ListDataProvider<VisitIndexDto> dataProvider =
+			DataProvider.fromStream(FacadeProvider.getVisitFacade().getIndexList(getCriteria(), null, null, null).stream());
 		setDataProvider(dataProvider);
 	}
 

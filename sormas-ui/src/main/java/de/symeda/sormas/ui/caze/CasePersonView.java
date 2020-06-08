@@ -9,15 +9,13 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.caze;
-
-import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
@@ -25,29 +23,30 @@ import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.person.PersonEditForm;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
-import de.symeda.sormas.ui.utils.ViewMode;
 
 @SuppressWarnings("serial")
 public class CasePersonView extends AbstractCaseView {
 
 	public static final String VIEW_NAME = ROOT_VIEW_NAME + "/person";
 
-    public CasePersonView() {
-    	super(VIEW_NAME);
-    }
+	public CasePersonView() {
+		super(VIEW_NAME, true);
+	}
 
-    @Override
-    public void enter(ViewChangeEvent event) {
-    	super.enter(event);
-    	
-    	if (getViewMode() == ViewMode.SIMPLE) {
-    		ControllerProvider.getCaseController().navigateToCase(getCaseRef().getUuid());
-    		return;
-    	}
-    	
-    	CaseDataDto caseData = FacadeProvider.getCaseFacade().getCaseDataByUuid(getCaseRef().getUuid());
-    	CommitDiscardWrapperComponent<PersonEditForm> personEditComponent = ControllerProvider.getPersonController().getPersonEditComponent(caseData.getPerson().getUuid(), caseData.getDisease(), caseData.getDiseaseDetails(), UserRight.CASE_EDIT, getViewMode());
-		
-    	setSubComponent(personEditComponent);
-    }
+	@Override
+	protected void initView(String params) {
+
+		CaseDataDto caseData = FacadeProvider.getCaseFacade().getCaseDataByUuid(getCaseRef().getUuid());
+		CommitDiscardWrapperComponent<PersonEditForm> personEditComponent = ControllerProvider.getPersonController()
+			.getPersonEditComponent(
+				caseData.getPerson().getUuid(),
+				caseData.getDisease(),
+				caseData.getDiseaseDetails(),
+				UserRight.CASE_EDIT,
+				getViewMode(),
+				FacadeProvider.getCaseFacade().isCaseEditAllowed(getCaseRef().getUuid()));
+
+		setSubComponent(personEditComponent);
+		setCaseEditPermission(personEditComponent);
+	}
 }

@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.utils;
 
@@ -53,8 +53,14 @@ public class EpiWeekAndDateFilterComponent<E extends Enum<E>> extends Horizontal
 		this(applyButton, fillAutomatically, showCaption, infoText, null, null, null);
 	}
 
-	public EpiWeekAndDateFilterComponent(Button applyButton, boolean fillAutomatically, boolean showCaption,
-			String infoText, Class<E> dateType, String dateTypePrompt, Enum<E> defaultDateType) {
+	public EpiWeekAndDateFilterComponent(
+		Button applyButton,
+		boolean fillAutomatically,
+		boolean showCaption,
+		String infoText,
+		Class<E> dateType,
+		String dateTypePrompt,
+		Enum<E> defaultDateType) {
 		setSpacing(true);
 
 		Calendar c = Calendar.getInstance();
@@ -68,8 +74,9 @@ public class EpiWeekAndDateFilterComponent<E extends Enum<E>> extends Horizontal
 		dateToFilter = new PopupDateField();
 
 		// Date filter options
+		dateFilterOptionFilter.setId("dateFilterOption");
 		dateFilterOptionFilter.setWidth(200, Unit.PIXELS);
-		dateFilterOptionFilter.addItems((Object[])DateFilterOption.values());
+		dateFilterOptionFilter.addItems((Object[]) DateFilterOption.values());
 		dateFilterOptionFilter.setNullSelectionAllowed(false);
 		dateFilterOptionFilter.select(DateFilterOption.EPI_WEEK);
 		if (showCaption) {
@@ -109,6 +116,7 @@ public class EpiWeekAndDateFilterComponent<E extends Enum<E>> extends Horizontal
 
 		// New case date type selector
 		if (dateType != null) {
+			dateTypeSelector.setId("dateType");
 			dateTypeSelector.setWidth(200, Unit.PIXELS);
 			dateTypeSelector.addItems((Object[]) dateType.getEnumConstants());
 			if (dateTypePrompt != null) {
@@ -134,6 +142,7 @@ public class EpiWeekAndDateFilterComponent<E extends Enum<E>> extends Horizontal
 		// Epi week filter
 		List<EpiWeek> epiWeekList = DateHelper.createEpiWeekList(c.get(Calendar.YEAR), c.get(Calendar.WEEK_OF_YEAR));
 
+		weekFromFilter.setId("weekFrom");
 		weekFromFilter.setWidth(200, Unit.PIXELS);
 		for (EpiWeek week : epiWeekList) {
 			weekFromFilter.addItem(week);
@@ -153,6 +162,7 @@ public class EpiWeekAndDateFilterComponent<E extends Enum<E>> extends Horizontal
 		}
 		addComponent(weekFromFilter);
 
+		weekToFilter.setId("weekTo");
 		weekToFilter.setWidth(200, Unit.PIXELS);
 		for (EpiWeek week : epiWeekList) {
 			weekToFilter.addItem(week);
@@ -173,6 +183,7 @@ public class EpiWeekAndDateFilterComponent<E extends Enum<E>> extends Horizontal
 		addComponent(weekToFilter);
 
 		// Date filter
+		dateFromFilter.setId("dateFrom");
 		dateFromFilter.setWidth(200, Unit.PIXELS);
 		if (showCaption) {
 			dateFromFilter.setCaption(I18nProperties.getCaption(Captions.from));
@@ -184,6 +195,7 @@ public class EpiWeekAndDateFilterComponent<E extends Enum<E>> extends Horizontal
 			});
 		}
 
+		dateToFilter.setId("dateTo");
 		dateToFilter.setWidth(200, Unit.PIXELS);
 		if (showCaption) {
 			dateToFilter.setCaption(I18nProperties.getCaption(Captions.to));
@@ -194,8 +206,8 @@ public class EpiWeekAndDateFilterComponent<E extends Enum<E>> extends Horizontal
 				applyButton.setEnabled(true);
 			});
 		}
-	}	
-	
+	}
+
 	public ComboBox getDateFilterOptionFilter() {
 		return dateFilterOptionFilter;
 	}
@@ -219,5 +231,4 @@ public class EpiWeekAndDateFilterComponent<E extends Enum<E>> extends Horizontal
 	public PopupDateField getDateToFilter() {
 		return dateToFilter;
 	}
-
 }

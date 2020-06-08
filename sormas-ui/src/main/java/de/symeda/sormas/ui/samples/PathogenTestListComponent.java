@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.samples;
 
@@ -38,6 +38,7 @@ import de.symeda.sormas.api.sample.SampleReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
+import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 
 @SuppressWarnings("serial")
@@ -46,8 +47,10 @@ public class PathogenTestListComponent extends VerticalLayout {
 	private PathogenTestList list;
 	private Button createButton;
 
-	public PathogenTestListComponent(SampleReferenceDto sampleRef, BiConsumer<PathogenTestDto, Runnable> onSavedPathogenTest,
-			Supplier<Boolean> createOrEditAllowedCallback) {
+	public PathogenTestListComponent(
+		SampleReferenceDto sampleRef,
+		BiConsumer<PathogenTestDto, Runnable> onSavedPathogenTest,
+		Supplier<Boolean> createOrEditAllowedCallback) {
 		setWidth(100, Unit.PERCENTAGE);
 
 		HorizontalLayout componentHeader = new HorizontalLayout();
@@ -63,16 +66,14 @@ public class PathogenTestListComponent extends VerticalLayout {
 		componentHeader.addComponent(testsHeader);
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.PATHOGEN_TEST_CREATE)) {
-			createButton = new Button(I18nProperties.getCaption(Captions.pathogenTestNewTest));
-			createButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
-			createButton.setIcon(VaadinIcons.PLUS_CIRCLE);
-			createButton.addClickListener(e -> {
+			createButton = ButtonHelper.createIconButton(Captions.pathogenTestNewTest, VaadinIcons.PLUS_CIRCLE, e -> {
 				if (createOrEditAllowedCallback.get()) {
 					ControllerProvider.getPathogenTestController().create(sampleRef, 0, list::reload, onSavedPathogenTest);
 				} else {
 					Notification.show(null, I18nProperties.getString(Strings.messageFormHasErrorsPathogenTest), Type.ERROR_MESSAGE);
 				}
-			});
+			}, ValoTheme.BUTTON_PRIMARY);
+
 			componentHeader.addComponent(createButton);
 			componentHeader.setComponentAlignment(createButton, Alignment.MIDDLE_RIGHT);
 		}
@@ -81,5 +82,4 @@ public class PathogenTestListComponent extends VerticalLayout {
 	public void reload() {
 		list.reload();
 	}
-
 }

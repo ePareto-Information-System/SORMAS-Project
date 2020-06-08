@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.utils;
 
@@ -36,6 +36,8 @@ import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.data.Item;
 import com.vaadin.v7.data.util.GeneratedPropertyContainer;
 import com.vaadin.v7.data.util.PropertyValueGenerator;
+import com.vaadin.v7.ui.Grid;
+import com.vaadin.v7.ui.renderers.HtmlRenderer;
 
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -72,11 +74,10 @@ public final class VaadinUiUtil {
 		Label contentLabel = new Label(contentText);
 		contentLabel.setWidth(100, Unit.PERCENTAGE);
 		popupLayout.addComponent(contentLabel);
-		Button okayButton = new Button(I18nProperties.getCaption(Captions.actionOkay));
-		okayButton.addClickListener(e -> {
+		Button okayButton = ButtonHelper.createButton(Captions.actionOkay, e -> {
 			window.close();
-		});
-		CssStyles.style(okayButton, ValoTheme.BUTTON_PRIMARY);
+		}, ValoTheme.BUTTON_PRIMARY);
+
 		popupLayout.addComponent(okayButton);
 		popupLayout.setComponentAlignment(okayButton, Alignment.BOTTOM_RIGHT);
 
@@ -109,6 +110,7 @@ public final class VaadinUiUtil {
 		content.setMargin(true);
 
 		content.addDoneListener(new DoneListener() {
+
 			public void onDone() {
 				popupWindow.close();
 			}
@@ -121,10 +123,12 @@ public final class VaadinUiUtil {
 	public static void addIconColumn(GeneratedPropertyContainer container, String iconPropertyId, VaadinIcons vaadinIconsIcon) {
 
 		container.addGeneratedProperty(iconPropertyId, new PropertyValueGenerator<String>() {
+
 			@Override
 			public String getValue(Item item, Object itemId, Object propertyId) {
 				return vaadinIconsIcon.getHtml();
 			}
+
 			@Override
 			public Class<String> getType() {
 				return String.class;
@@ -132,7 +136,21 @@ public final class VaadinUiUtil {
 		});
 	}
 
-	public static Window showConfirmationPopup(String caption, Component content, String confirmCaption, String cancelCaption, Integer width, Consumer<Boolean> resultConsumer) {
+	public static void setupEditColumn(Grid.Column column) {
+		column.setRenderer(new HtmlRenderer());
+		column.setWidth(20);
+		column.setSortable(false);
+		column.setHeaderCaption("");
+	}
+
+	public static Window showConfirmationPopup(
+		String caption,
+		Component content,
+		String confirmCaption,
+		String cancelCaption,
+		Integer width,
+		Consumer<Boolean> resultConsumer) {
+
 		Window popupWindow = VaadinUiUtil.createPopupWindow();
 		if (width != null) {
 			popupWindow.setWidth(width, Unit.PIXELS);
@@ -147,12 +165,15 @@ public final class VaadinUiUtil {
 		layout.addComponent(content);
 
 		ConfirmationComponent confirmationComponent = new ConfirmationComponent(false) {
+
 			private static final long serialVersionUID = 1L;
+
 			@Override
 			protected void onConfirm() {
 				resultConsumer.accept(true);
 				popupWindow.close();
 			}
+
 			@Override
 			protected void onCancel() {
 				resultConsumer.accept(false);
@@ -168,15 +189,23 @@ public final class VaadinUiUtil {
 		layout.setSpacing(true);
 		popupWindow.setContent(layout);
 		popupWindow.setClosable(false);
-		
+
 		UI.getCurrent().addWindow(popupWindow);
 		return popupWindow;
 	}
 
 	/**
-	 * @param resultConsumer TRUE: Option A, FALSE: Option B
+	 * @param resultConsumer
+	 *            TRUE: Option A, FALSE: Option B
 	 */
-	public static Window showChooseOptionPopup(String caption, Component content, String optionACaption, String optionBCaption, Integer width, Consumer<Boolean> resultConsumer) {
+	public static Window showChooseOptionPopup(
+		String caption,
+		Component content,
+		String optionACaption,
+		String optionBCaption,
+		Integer width,
+		Consumer<Boolean> resultConsumer) {
+
 		Window popupWindow = VaadinUiUtil.createPopupWindow();
 		if (width != null) {
 			popupWindow.setWidth(width, Unit.PIXELS);
@@ -191,12 +220,15 @@ public final class VaadinUiUtil {
 		layout.addComponent(content);
 
 		ConfirmationComponent confirmationComponent = new ConfirmationComponent(false) {
+
 			private static final long serialVersionUID = 1L;
+
 			@Override
 			protected void onConfirm() {
 				resultConsumer.accept(true);
 				popupWindow.close();
 			}
+
 			@Override
 			protected void onCancel() {
 				resultConsumer.accept(false);
@@ -215,25 +247,27 @@ public final class VaadinUiUtil {
 		layout.setSpacing(true);
 		popupWindow.setContent(layout);
 		popupWindow.setClosable(false);
-		
+
 		UI.getCurrent().addWindow(popupWindow);
 		return popupWindow;
 	}
-	
+
 	public static Window showDeleteConfirmationWindow(String content, Runnable callback) {
-		Window popupWindow = VaadinUiUtil.createPopupWindow();	
-		
+		Window popupWindow = VaadinUiUtil.createPopupWindow();
+
 		VerticalLayout deleteLayout = new VerticalLayout();
 		deleteLayout.setMargin(true);
 		deleteLayout.setSizeUndefined();
 		deleteLayout.setSpacing(true);
-	
+
 		Label description = new Label(content);
 		description.setWidth(100, Unit.PERCENTAGE);
 		deleteLayout.addComponent(description);
-		
+
 		ConfirmationComponent deleteConfirmationComponent = new ConfirmationComponent(false) {
+
 			private static final long serialVersionUID = 1L;
+
 			@Override
 			protected void onConfirm() {
 				popupWindow.close();
@@ -250,20 +284,23 @@ public final class VaadinUiUtil {
 		deleteConfirmationComponent.getCancelButton().setCaption(I18nProperties.getString(Strings.no));
 		deleteLayout.addComponent(deleteConfirmationComponent);
 		deleteLayout.setComponentAlignment(deleteConfirmationComponent, Alignment.BOTTOM_RIGHT);
-		
+
 		popupWindow.setCaption(I18nProperties.getString(Strings.headingConfirmDeletion));
 		popupWindow.setContent(deleteLayout);
 		UI.getCurrent().addWindow(popupWindow);
-		
+
 		return popupWindow;
 	}
-	
+
 	public static ConfirmationComponent buildYesNoConfirmationComponent() {
 		ConfirmationComponent requestTaskComponent = new ConfirmationComponent(false) {
+
 			private static final long serialVersionUID = 1L;
+
 			@Override
 			protected void onConfirm() {
 			}
+
 			@Override
 			protected void onCancel() {
 			}
@@ -272,7 +309,7 @@ public final class VaadinUiUtil {
 		requestTaskComponent.getCancelButton().setCaption(I18nProperties.getString(Strings.no));
 		return requestTaskComponent;
 	}
-	
+
 	public static HorizontalLayout createInfoComponent(String htmlContent) {
 		HorizontalLayout infoLayout = new HorizontalLayout();
 		infoLayout.setWidth(100, Unit.PERCENTAGE);
@@ -289,5 +326,4 @@ public final class VaadinUiUtil {
 		CssStyles.style(infoLayout, CssStyles.VSPACE_3);
 		return infoLayout;
 	}
-
 }

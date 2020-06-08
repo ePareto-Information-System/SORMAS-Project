@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.configuration.infrastructure;
 
@@ -23,8 +23,6 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.MenuBar.Command;
-import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
@@ -49,8 +47,10 @@ import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.configuration.AbstractConfigurationView;
+import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.FieldHelper;
+import de.symeda.sormas.ui.utils.MenuBarHelper;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 import de.symeda.sormas.ui.utils.ViewConfiguration;
 
@@ -67,7 +67,7 @@ public abstract class AbstractFacilitiesView extends AbstractConfigurationView {
 	private ComboBox districtFilter;
 	private ComboBox communityFilter;
 	private ComboBox relevanceStatusFilter;
-	private Button resetButton;	
+	private Button resetButton;
 
 	//	private HorizontalLayout headerLayout;
 	private HorizontalLayout filterLayout;
@@ -77,15 +77,13 @@ public abstract class AbstractFacilitiesView extends AbstractConfigurationView {
 	protected Button createButton;
 	protected Button exportButton;
 	private MenuBar bulkOperationsDropdown;
-	private MenuItem archiveItem;
-	private MenuItem dearchiveItem;
 
 	protected AbstractFacilitiesView(String viewName, FacilityType type) {
+
 		super(viewName);
-		Class<? extends AbstractFacilitiesView> viewClass = FacilityType.LABORATORY.equals(type)
-				? LaboratoriesView.class
-				: HealthFacilitiesView.class;
-		
+		Class<? extends AbstractFacilitiesView> viewClass =
+			FacilityType.LABORATORY.equals(type) ? LaboratoriesView.class : HealthFacilitiesView.class;
+
 		viewConfiguration = ViewModelProviders.of(viewClass).get(ViewConfiguration.class);
 		criteria = ViewModelProviders.of(viewClass).get(FacilityCriteria.class);
 		criteria.type(type);
@@ -105,12 +103,8 @@ public abstract class AbstractFacilitiesView extends AbstractConfigurationView {
 		gridLayout.setStyleName("crud-main-layout");
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_IMPORT)) {
-			importButton = new Button(I18nProperties.getCaption(Captions.actionImport));
-			importButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
-			importButton.setIcon(VaadinIcons.UPLOAD);
-			importButton.addClickListener(e -> {
-				Window window = VaadinUiUtil
-						.showPopupWindow(new InfrastructureImportLayout(InfrastructureType.FACILITY));
+			importButton = ButtonHelper.createIconButton(Captions.actionImport, VaadinIcons.UPLOAD, e -> {
+				Window window = VaadinUiUtil.showPopupWindow(new InfrastructureImportLayout(InfrastructureType.FACILITY));
 				if (FacilityType.LABORATORY.equals(type)) {
 					window.setCaption(I18nProperties.getString(Strings.headingImportLaboratories));
 				} else {
@@ -119,35 +113,29 @@ public abstract class AbstractFacilitiesView extends AbstractConfigurationView {
 				window.addCloseListener(c -> {
 					grid.reload();
 				});
-			});
+			}, ValoTheme.BUTTON_PRIMARY);
+
 			addHeaderComponent(importButton);
 		}
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_EXPORT)) {
-			exportButton = new Button(I18nProperties.getCaption(Captions.export));
+			exportButton = ButtonHelper.createIconButton(Captions.export, VaadinIcons.TABLE, null, ValoTheme.BUTTON_PRIMARY);
 			exportButton.setDescription(I18nProperties.getDescription(Descriptions.descExportButton));
-			exportButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
-			exportButton.setIcon(VaadinIcons.TABLE);
+
 			addHeaderComponent(exportButton);
 		}
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_CREATE)) {
-			createButton = new Button();
-			createButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
-			createButton.setIcon(VaadinIcons.PLUS_CIRCLE);
+			createButton = ButtonHelper.createIconButtonWithCaption("create", null, VaadinIcons.PLUS_CIRCLE, null, ValoTheme.BUTTON_PRIMARY);
 			addHeaderComponent(createButton);
 		}
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
-			Button btnEnterBulkEditMode = new Button(I18nProperties.getCaption(Captions.actionEnterBulkEditMode));
-			btnEnterBulkEditMode.setId("enterBulkEditMode");
-			btnEnterBulkEditMode.setIcon(VaadinIcons.CHECK_SQUARE_O);
+			Button btnEnterBulkEditMode = ButtonHelper.createIconButton(Captions.actionEnterBulkEditMode, VaadinIcons.CHECK_SQUARE_O, null);
 			btnEnterBulkEditMode.setVisible(!viewConfiguration.isInEagerMode());
 			addHeaderComponent(btnEnterBulkEditMode);
 
-			Button btnLeaveBulkEditMode = new Button(I18nProperties.getCaption(Captions.actionLeaveBulkEditMode));
-			btnLeaveBulkEditMode.setId("leaveBulkEditMode");
-			btnLeaveBulkEditMode.setIcon(VaadinIcons.CLOSE);
+			Button btnLeaveBulkEditMode = ButtonHelper.createIconButton(Captions.actionLeaveBulkEditMode, VaadinIcons.CLOSE, null);
 			btnLeaveBulkEditMode.setVisible(viewConfiguration.isInEagerMode());
 			btnLeaveBulkEditMode.setStyleName(ValoTheme.BUTTON_PRIMARY);
 			addHeaderComponent(btnLeaveBulkEditMode);
@@ -190,6 +178,7 @@ public abstract class AbstractFacilitiesView extends AbstractConfigurationView {
 		filterLayout.setWidth(100, Unit.PERCENTAGE);
 
 		searchField = new TextField();
+		searchField.setId("search");
 		searchField.setWidth(200, Unit.PIXELS);
 		searchField.setNullRepresentation("");
 		searchField.setInputPrompt(I18nProperties.getString(Strings.promptSearch));
@@ -201,6 +190,7 @@ public abstract class AbstractFacilitiesView extends AbstractConfigurationView {
 		filterLayout.addComponent(searchField);
 
 		regionFilter = new ComboBox();
+		regionFilter.setId(FacilityDto.REGION);
 		regionFilter.setWidth(140, Unit.PIXELS);
 		regionFilter.setCaption(I18nProperties.getPrefixCaption(FacilityDto.I18N_PREFIX, FacilityDto.REGION));
 		regionFilter.addItems(FacadeProvider.getRegionFacade().getAllActiveAsReference());
@@ -208,25 +198,28 @@ public abstract class AbstractFacilitiesView extends AbstractConfigurationView {
 			RegionReferenceDto region = (RegionReferenceDto) e.getProperty().getValue();
 			criteria.region(region);
 			navigateTo(criteria);
-			FieldHelper.updateItems(districtFilter,
-					region != null ? FacadeProvider.getDistrictFacade().getAllActiveByRegion(region.getUuid()) : null);
+			FieldHelper
+				.updateItems(districtFilter, region != null ? FacadeProvider.getDistrictFacade().getAllActiveByRegion(region.getUuid()) : null);
 
 		});
 		filterLayout.addComponent(regionFilter);
 
 		districtFilter = new ComboBox();
+		districtFilter.setId(FacilityDto.DISTRICT);
 		districtFilter.setWidth(140, Unit.PIXELS);
 		districtFilter.setCaption(I18nProperties.getPrefixCaption(FacilityDto.I18N_PREFIX, FacilityDto.DISTRICT));
 		districtFilter.addValueChangeListener(e -> {
 			DistrictReferenceDto district = (DistrictReferenceDto) e.getProperty().getValue();
 			criteria.district(district);
 			navigateTo(criteria);
-			FieldHelper.updateItems(communityFilter,
-					district != null ? FacadeProvider.getCommunityFacade().getAllActiveByDistrict(district.getUuid()) : null);
+			FieldHelper.updateItems(
+				communityFilter,
+				district != null ? FacadeProvider.getCommunityFacade().getAllActiveByDistrict(district.getUuid()) : null);
 		});
 		filterLayout.addComponent(districtFilter);
 
 		communityFilter = new ComboBox();
+		communityFilter.setId(FacilityDto.COMMUNITY);
 		communityFilter.setWidth(140, Unit.PIXELS);
 		communityFilter.setCaption(I18nProperties.getPrefixCaption(FacilityDto.I18N_PREFIX, FacilityDto.COMMUNITY));
 		communityFilter.addValueChangeListener(e -> {
@@ -235,13 +228,12 @@ public abstract class AbstractFacilitiesView extends AbstractConfigurationView {
 		});
 		filterLayout.addComponent(communityFilter);
 
-		resetButton = new Button(I18nProperties.getCaption(Captions.actionResetFilters));
-		resetButton.setVisible(false);
-		CssStyles.style(resetButton, CssStyles.FORCE_CAPTION);
-		resetButton.addClickListener(event -> {
+		resetButton = ButtonHelper.createButton(Captions.actionResetFilters, event -> {
 			ViewModelProviders.of(AbstractFacilitiesView.class).remove(FacilityCriteria.class);
 			navigateTo(null);
-		});
+		}, CssStyles.FORCE_CAPTION);
+		resetButton.setVisible(false);
+
 		filterLayout.addComponent(resetButton);
 
 		HorizontalLayout actionButtonsLayout = new HorizontalLayout();
@@ -250,14 +242,25 @@ public abstract class AbstractFacilitiesView extends AbstractConfigurationView {
 			// Show active/archived/all dropdown
 			if (UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_VIEW_ARCHIVED)) {
 				relevanceStatusFilter = new ComboBox();
+				relevanceStatusFilter.setId("relevanceStatus");
 				relevanceStatusFilter.setWidth(220, Unit.PERCENTAGE);
 				relevanceStatusFilter.setNullSelectionAllowed(false);
 				relevanceStatusFilter.addItems((Object[]) EntityRelevanceStatus.values());
-				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ACTIVE, I18nProperties.getCaption(
-						FacilityType.LABORATORY.equals(criteria.getType()) ? Captions.facilityActiveLaboratories : Captions.facilityActiveFacilities));
-				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ARCHIVED, I18nProperties.getCaption(
-						FacilityType.LABORATORY.equals(criteria.getType()) ? Captions.facilityArchivedLaboratories : Captions.facilityArchivedFacilities));
-				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ALL, I18nProperties.getCaption(
+				relevanceStatusFilter.setItemCaption(
+					EntityRelevanceStatus.ACTIVE,
+					I18nProperties.getCaption(
+						FacilityType.LABORATORY.equals(criteria.getType())
+							? Captions.facilityActiveLaboratories
+							: Captions.facilityActiveFacilities));
+				relevanceStatusFilter.setItemCaption(
+					EntityRelevanceStatus.ARCHIVED,
+					I18nProperties.getCaption(
+						FacilityType.LABORATORY.equals(criteria.getType())
+							? Captions.facilityArchivedLaboratories
+							: Captions.facilityArchivedFacilities));
+				relevanceStatusFilter.setItemCaption(
+					EntityRelevanceStatus.ALL,
+					I18nProperties.getCaption(
 						FacilityType.LABORATORY.equals(criteria.getType()) ? Captions.facilityAllLaboratories : Captions.facilityAllFacilities));
 				relevanceStatusFilter.addValueChangeListener(e -> {
 					criteria.relevanceStatus((EntityRelevanceStatus) e.getProperty().getValue());
@@ -267,30 +270,39 @@ public abstract class AbstractFacilitiesView extends AbstractConfigurationView {
 
 				// Bulk operation dropdown
 				if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
-					bulkOperationsDropdown = new MenuBar();	
-					MenuItem bulkOperationsItem = bulkOperationsDropdown.addItem(I18nProperties.getCaption(Captions.bulkActions), null);
+					bulkOperationsDropdown = MenuBarHelper.createDropDown(
+						Captions.bulkActions,
+						new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.actionArchive), VaadinIcons.ARCHIVE, selectedItem -> {
+							ControllerProvider.getInfrastructureController()
+								.archiveOrDearchiveAllSelectedItems(
+									true,
+									grid.asMultiSelect().getSelectedItems(),
+									InfrastructureType.FACILITY,
+									criteria.getType(),
+									new Runnable() {
 
-					Command archiveCommand = selectedItem -> {
-						ControllerProvider.getInfrastructureController().archiveOrDearchiveAllSelectedItems(true, grid.asMultiSelect().getSelectedItems(), InfrastructureType.FACILITY, criteria.getType(), new Runnable() {
-							public void run() {
-								navigateTo(criteria);
-							}
-						});
-					};
-					archiveItem = bulkOperationsItem.addItem(I18nProperties.getCaption(Captions.actionArchive), VaadinIcons.ARCHIVE, archiveCommand);
-					archiveItem.setVisible(EntityRelevanceStatus.ACTIVE.equals(criteria.getRelevanceStatus()));
+										public void run() {
+											navigateTo(criteria);
+										}
+									});
+						}, EntityRelevanceStatus.ACTIVE.equals(criteria.getRelevanceStatus())),
+						new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.actionDearchive), VaadinIcons.ARCHIVE, selectedItem -> {
+							ControllerProvider.getInfrastructureController()
+								.archiveOrDearchiveAllSelectedItems(
+									false,
+									grid.asMultiSelect().getSelectedItems(),
+									InfrastructureType.FACILITY,
+									criteria.getType(),
+									new Runnable() {
 
-					Command dearchiveCommand = selectedItem -> {
-						ControllerProvider.getInfrastructureController().archiveOrDearchiveAllSelectedItems(false, grid.asMultiSelect().getSelectedItems(), InfrastructureType.FACILITY, criteria.getType(), new Runnable() {
-							public void run() {
-								navigateTo(criteria);
-							}
-						});
-					};
-					dearchiveItem = bulkOperationsItem.addItem(I18nProperties.getCaption(Captions.actionDearchive), VaadinIcons.ARCHIVE, dearchiveCommand);
-					dearchiveItem.setVisible(EntityRelevanceStatus.ARCHIVED.equals(criteria.getRelevanceStatus()));
+										public void run() {
+											navigateTo(criteria);
+										}
+									});
+						}, EntityRelevanceStatus.ARCHIVED.equals(criteria.getRelevanceStatus())));
 
-					bulkOperationsDropdown.setVisible(viewConfiguration.isInEagerMode() && !EntityRelevanceStatus.ALL.equals(criteria.getRelevanceStatus()));
+					bulkOperationsDropdown
+						.setVisible(viewConfiguration.isInEagerMode() && !EntityRelevanceStatus.ALL.equals(criteria.getRelevanceStatus()));
 					actionButtonsLayout.addComponent(bulkOperationsDropdown);
 				}
 			}
@@ -330,5 +342,4 @@ public abstract class AbstractFacilitiesView extends AbstractConfigurationView {
 
 		applyingCriteria = false;
 	}
-
 }

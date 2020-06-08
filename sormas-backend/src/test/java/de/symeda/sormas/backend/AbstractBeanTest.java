@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.backend;
 
@@ -26,12 +26,11 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import de.symeda.sormas.api.Language;
-import de.symeda.sormas.api.i18n.I18nProperties;
 import org.junit.Before;
 
 import de.symeda.sormas.api.ConfigFacade;
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.caze.CaseFacade;
 import de.symeda.sormas.api.caze.CaseStatisticsFacade;
 import de.symeda.sormas.api.clinicalcourse.ClinicalCourseFacade;
@@ -45,6 +44,7 @@ import de.symeda.sormas.api.event.EventParticipantFacade;
 import de.symeda.sormas.api.facility.FacilityFacade;
 import de.symeda.sormas.api.feature.FeatureConfigurationFacade;
 import de.symeda.sormas.api.hospitalization.HospitalizationFacade;
+import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.importexport.ImportFacade;
 import de.symeda.sormas.api.infrastructure.PointOfEntryFacade;
 import de.symeda.sormas.api.infrastructure.PopulationDataFacade;
@@ -63,6 +63,7 @@ import de.symeda.sormas.api.task.TaskFacade;
 import de.symeda.sormas.api.therapy.PrescriptionFacade;
 import de.symeda.sormas.api.therapy.TherapyFacade;
 import de.symeda.sormas.api.therapy.TreatmentFacade;
+import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserFacade;
 import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.user.UserRoleConfigFacade;
@@ -93,6 +94,7 @@ import de.symeda.sormas.backend.infrastructure.PointOfEntryService;
 import de.symeda.sormas.backend.infrastructure.PopulationDataFacadeEjb.PopulationDataFacadeEjbLocal;
 import de.symeda.sormas.backend.outbreak.OutbreakFacadeEjb.OutbreakFacadeEjbLocal;
 import de.symeda.sormas.backend.person.PersonFacadeEjb.PersonFacadeEjbLocal;
+import de.symeda.sormas.backend.person.PersonService;
 import de.symeda.sormas.backend.region.CommunityFacadeEjb.CommunityFacadeEjbLocal;
 import de.symeda.sormas.backend.region.CommunityService;
 import de.symeda.sormas.backend.region.DistrictFacadeEjb.DistrictFacadeEjbLocal;
@@ -113,6 +115,7 @@ import de.symeda.sormas.backend.user.UserFacadeEjb.UserFacadeEjbLocal;
 import de.symeda.sormas.backend.user.UserRoleConfigFacadeEjb.UserRoleConfigFacadeEjbLocal;
 import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.visit.VisitFacadeEjb.VisitFacadeEjbLocal;
+import de.symeda.sormas.backend.visit.VisitService;
 import info.novatec.beantest.api.BaseBeanTest;
 
 public class AbstractBeanTest extends BaseBeanTest {
@@ -127,7 +130,7 @@ public class AbstractBeanTest extends BaseBeanTest {
 	public void init() {
 		MockProducer.resetMocks();
 		initH2Functions();
-		
+
 		creator.createUser(null, null, null, "ad", "min", UserRole.ADMIN, UserRole.NATIONAL_USER);
 		when(MockProducer.getPrincipal().getName()).thenReturn("admin");
 
@@ -147,7 +150,7 @@ public class AbstractBeanTest extends BaseBeanTest {
 		nativeQuery.executeUpdate();
 		em.getTransaction().commit();
 	}
-	
+
 	@Before
 	public void createDiseaseConfigurations() {
 		List<DiseaseConfiguration> diseaseConfigurations = getDiseaseConfigurationService().getAll();
@@ -157,7 +160,7 @@ public class AbstractBeanTest extends BaseBeanTest {
 			getDiseaseConfigurationService().ensurePersisted(configuration);
 		});
 	}
-	
+
 	public EntityManager getEntityManager() {
 		return getBean(EntityManagerWrapper.class).getEntityManager();
 	}
@@ -169,11 +172,11 @@ public class AbstractBeanTest extends BaseBeanTest {
 	public CaseFacade getCaseFacade() {
 		return getBean(CaseFacadeEjbLocal.class);
 	}
-	
+
 	public CaseService getCaseService() {
 		return getBean(CaseService.class);
 	}
-	
+
 	public CaseStatisticsFacade getCaseStatisticsFacade() {
 		return getBean(CaseStatisticsFacadeEjbLocal.class);
 	}
@@ -202,8 +205,16 @@ public class AbstractBeanTest extends BaseBeanTest {
 		return getBean(VisitFacadeEjbLocal.class);
 	}
 
+	public VisitService getVisitService() {
+		return getBean(VisitService.class);
+	}
+
 	public PersonFacade getPersonFacade() {
 		return getBean(PersonFacadeEjbLocal.class);
+	}
+
+	public PersonService getPersonService() {
+		return getBean(PersonService.class);
 	}
 
 	public TaskFacade getTaskFacade() {
@@ -217,7 +228,7 @@ public class AbstractBeanTest extends BaseBeanTest {
 	public PathogenTestFacade getSampleTestFacade() {
 		return getBean(PathogenTestFacadeEjbLocal.class);
 	}
-	
+
 	public AdditionalTestFacade getAdditionalTestFacade() {
 		return getBean(AdditionalTestFacadeEjbLocal.class);
 	}
@@ -301,35 +312,35 @@ public class AbstractBeanTest extends BaseBeanTest {
 	public CommunityService getCommunityService() {
 		return getBean(CommunityService.class);
 	}
-	
+
 	public ClinicalCourseFacade getClinicalCourseFacade() {
 		return getBean(ClinicalCourseFacadeEjbLocal.class);
 	}
-	
+
 	public ClinicalVisitFacade getClinicalVisitFacade() {
 		return getBean(ClinicalVisitFacadeEjbLocal.class);
 	}
-	
+
 	public TherapyFacade getTherapyFacade() {
 		return getBean(TherapyFacadeEjbLocal.class);
 	}
-	
+
 	public PrescriptionFacade getPrescriptionFacade() {
 		return getBean(PrescriptionFacadeEjbLocal.class);
 	}
-	
+
 	public TreatmentFacade getTreatmentFacade() {
 		return getBean(TreatmentFacadeEjbLocal.class);
 	}
-	
+
 	public DiseaseConfigurationFacade getDiseaseConfigurationFacade() {
 		return getBean(DiseaseConfigurationFacadeEjbLocal.class);
 	}
-	
+
 	public DiseaseConfigurationService getDiseaseConfigurationService() {
 		return getBean(DiseaseConfigurationService.class);
 	}
-	
+
 	public PopulationDataFacade getPopulationDataFacade() {
 		return getBean(PopulationDataFacadeEjbLocal.class);
 	}
@@ -337,13 +348,24 @@ public class AbstractBeanTest extends BaseBeanTest {
 	public DiseaseFacade getDiseaseFacade() {
 		return getBean(DiseaseFacadeEjbLocal.class);
 	}
-	
+
 	public FeatureConfigurationFacade getFeatureConfigurationFacade() {
 		return getBean(FeatureConfigurationFacadeEjbLocal.class);
 	}
-	
+
 	public PathogenTestFacade getPathogenTestFacade() {
 		return getBean(PathogenTestFacadeEjbLocal.class);
 	}
 
+	protected UserDto useSurveillanceOfficerLogin(TestDataCreator.RDCF rdcf) {
+		if (rdcf == null) {
+			rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
+		}
+
+		UserDto survOff =
+			creator.createUser(rdcf.region.getUuid(), rdcf.district.getUuid(), rdcf.facility.getUuid(), "Surv", "Off", UserRole.SURVEILLANCE_OFFICER);
+		when(MockProducer.getPrincipal().getName()).thenReturn("SurvOff");
+
+		return survOff;
+	}
 }

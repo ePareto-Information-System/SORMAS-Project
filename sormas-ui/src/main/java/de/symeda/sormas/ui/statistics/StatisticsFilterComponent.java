@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.statistics;
 
@@ -39,25 +39,27 @@ public class StatisticsFilterComponent extends VerticalLayout {
 	private StatisticsCaseSubAttribute selectedSubAttribute;
 	private StatisticsFilterElement filterElement;
 
-	public StatisticsFilterComponent() {
+	public StatisticsFilterComponent(int rowIndex) {
 		setSpacing(true);
 		setMargin(false);
 
 		addStyleName(CssStyles.LAYOUT_MINIMAL);
 		setWidth(100, Unit.PERCENTAGE);
 
-		addComponent(createFilterAttributeElement());
+		addComponent(createFilterAttributeElement(rowIndex));
 	}
 
-	private HorizontalLayout createFilterAttributeElement() {
+	private HorizontalLayout createFilterAttributeElement(int rowIndex) {
 		HorizontalLayout filterAttributeLayout = new HorizontalLayout();
 		filterAttributeLayout.setSpacing(true);
 		filterAttributeLayout.setWidth(100, Unit.PERCENTAGE);
 
 		MenuBar filterAttributeDropdown = new MenuBar();
+		filterAttributeDropdown.setId(Captions.statisticsAttribute + "-" + rowIndex);
 		filterAttributeDropdown.setCaption(I18nProperties.getCaption(Captions.statisticsAttribute));
 		MenuItem filterAttributeItem = filterAttributeDropdown.addItem(I18nProperties.getCaption(Captions.statisticsAttributeSelect), null);
 		MenuBar filterSubAttributeDropdown = new MenuBar();
+		filterSubAttributeDropdown.setId(Captions.statisticsAttributeSpecification + "-" + rowIndex);
 		filterSubAttributeDropdown.setCaption(I18nProperties.getCaption(Captions.statisticsAttributeSpecification));
 		MenuItem filterSubAttributeItem = filterSubAttributeDropdown.addItem(SPECIFY_YOUR_SELECTION, null);
 
@@ -72,13 +74,13 @@ public class StatisticsFilterComponent extends VerticalLayout {
 					selectedAttribute = attribute;
 					selectedSubAttribute = null;
 					filterAttributeItem.setText(attribute.toString());
-					
+
 					// Add style to keep chosen item selected and remove it from all other items
 					for (MenuItem menuItem : filterAttributeItem.getChildren()) {
 						menuItem.setStyleName(null);
 					}
 					selectedItem.setStyleName("selected-filter");
-					
+
 					// Reset the sub attribute dropdown
 					filterSubAttributeItem.removeChildren();
 					filterSubAttributeItem.setText(SPECIFY_YOUR_SELECTION);
@@ -89,14 +91,14 @@ public class StatisticsFilterComponent extends VerticalLayout {
 								Command subAttributeCommand = selectedSubItem -> {
 									selectedSubAttribute = subAttribute;
 									filterSubAttributeItem.setText(subAttribute.toString());
-									
+
 									// Add style to keep chosen item selected and remove it from all other items
 									for (MenuItem menuItem : filterSubAttributeItem.getChildren()) {
 										menuItem.setStyleName(null);
 									}
 									selectedSubItem.setStyleName("selected-filter");
-									
-									updateFilterElement();
+
+									updateFilterElement(rowIndex);
 								};
 
 								filterSubAttributeItem.addItem(subAttribute.toString(), subAttributeCommand);
@@ -113,7 +115,7 @@ public class StatisticsFilterComponent extends VerticalLayout {
 					} else {
 						filterAttributeLayout.removeComponent(filterSubAttributeDropdown);
 					}
-					updateFilterElement();
+					updateFilterElement(rowIndex);
 				};
 
 				filterAttributeItem.addItem(attribute.toString(), attributeCommand);
@@ -125,22 +127,22 @@ public class StatisticsFilterComponent extends VerticalLayout {
 		return filterAttributeLayout;
 	}
 
-	private void updateFilterElement() {
-		
+	private void updateFilterElement(int rowIndex) {
 		if (filterElement != null) {
 			removeComponent(filterElement);
 			filterElement = null;
 		}
-		
+
 		if (selectedSubAttribute == StatisticsCaseSubAttribute.DATE_RANGE) {
-			filterElement = new StatisticsFilterDateRangeElement();
-		} else if (selectedAttribute == StatisticsCaseAttribute.REGION_DISTRICT) {
-			filterElement = new StatisticsFilterRegionDistrictElement();
-		} else if (selectedAttribute.getSubAttributes().length == 0 
-				|| selectedSubAttribute != null) {
+			filterElement = new StatisticsFilterDateRangeElement(rowIndex);
+		} else if (selectedAttribute == StatisticsCaseAttribute.JURISDICTION) {
+			filterElement = new StatisticsFilterJurisdictionElement(rowIndex);
+		} else if (selectedAttribute.getSubAttributes().length == 0 || selectedSubAttribute != null) {
 			filterElement = new StatisticsFilterValuesElement(
-					selectedAttribute.toString() + (selectedSubAttribute != null ? " (" + selectedSubAttribute.toString() + ")" : ""), 
-					selectedAttribute, selectedSubAttribute);
+				selectedAttribute.toString() + (selectedSubAttribute != null ? " (" + selectedSubAttribute.toString() + ")" : ""),
+				selectedAttribute,
+				selectedSubAttribute,
+				rowIndex);
 		}
 
 		if (filterElement != null) {

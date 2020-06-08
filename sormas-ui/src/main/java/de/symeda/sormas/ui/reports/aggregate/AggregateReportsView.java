@@ -34,6 +34,7 @@ import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.utils.AbstractView;
+import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.GridExportStreamResource;
 
@@ -89,33 +90,33 @@ public class AggregateReportsView extends AbstractView {
 		addComponent(gridLayout);
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.AGGREGATE_REPORT_EDIT)) {
-			btnCreate = new Button(I18nProperties.getCaption(Captions.aggregateReportNewAggregateReport));
-			btnCreate.setId("create");
-			btnCreate.addStyleName(ValoTheme.BUTTON_PRIMARY);
-			btnCreate.setIcon(VaadinIcons.PLUS_CIRCLE);
-			btnCreate.addClickListener(
-					e -> ControllerProvider.getAggregateReportController()
-							.openEditOrCreateWindow((Runnable) () -> grid.reload(), false));
+			btnCreate = ButtonHelper.createIconButton(
+				Captions.aggregateReportNewAggregateReport,
+				VaadinIcons.PLUS_CIRCLE,
+				e -> ControllerProvider.getAggregateReportController().openEditOrCreateWindow(() -> grid.reload(), false),
+				ValoTheme.BUTTON_PRIMARY);
+
 			addHeaderComponent(btnCreate);
 
-			btnEdit = new Button(I18nProperties.getCaption(Captions.aggregateReportEditAggregateReport));
-			btnEdit.setId("edit");
-			btnEdit.addStyleName(ValoTheme.BUTTON_PRIMARY);
-			btnEdit.setIcon(VaadinIcons.EDIT);
+			btnEdit = ButtonHelper.createIconButton(
+				Captions.aggregateReportEditAggregateReport,
+				VaadinIcons.EDIT,
+				e -> ControllerProvider.getAggregateReportController().openEditOrCreateWindow(() -> grid.reload(), true),
+				ValoTheme.BUTTON_PRIMARY);
 			btnEdit.setVisible(false);
-			btnEdit.addClickListener(
-					e -> ControllerProvider.getAggregateReportController()
-							.openEditOrCreateWindow((Runnable) () -> grid.reload(), true));
+
 			addHeaderComponent(btnEdit);
 		}
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.AGGREGATE_REPORT_EXPORT)) {
-			btnExport = new Button(I18nProperties.getCaption(Captions.export));
-			btnExport.addStyleName(ValoTheme.BUTTON_PRIMARY);
-			btnExport.setIcon(VaadinIcons.DOWNLOAD);
+			btnExport = ButtonHelper.createIconButton(Captions.export, VaadinIcons.DOWNLOAD, null, ValoTheme.BUTTON_PRIMARY);
+
 			addHeaderComponent(btnExport);
 
-			StreamResource streamResource = new GridExportStreamResource(grid, "sormas_aggregate_reports", "sormas_aggregate_reports_" + DateHelper.formatDateForExport(new Date()) + ".csv");
+			StreamResource streamResource = new GridExportStreamResource(
+				grid,
+				"sormas_aggregate_reports",
+				"sormas_aggregate_reports_" + DateHelper.formatDateForExport(new Date()) + ".csv");
 			FileDownloader fileDownloader = new FileDownloader(streamResource);
 			fileDownloader.extend(btnExport);
 		}
@@ -156,13 +157,13 @@ public class AggregateReportsView extends AbstractView {
 		hlFirstFilterRow.setWidthUndefined();
 		{
 			cbRegionFilter = new ComboBox<>();
+			cbRegionFilter.setId(AggregateReportCriteria.REGION);
 			cbRegionFilter.addValueChangeListener(e -> updateButtonVisibility());
 			cbRegionFilter.addValueChangeListener(e -> {
 				RegionReferenceDto region = e.getValue();
 				cbDistrictFilter.clear();
 				if (region != null) {
-					cbDistrictFilter
-							.setItems(FacadeProvider.getDistrictFacade().getAllActiveByRegion(region.getUuid()));
+					cbDistrictFilter.setItems(FacadeProvider.getDistrictFacade().getAllActiveByRegion(region.getUuid()));
 					cbDistrictFilter.setEnabled(true);
 				} else {
 					cbDistrictFilter.setEnabled(false);
@@ -177,6 +178,7 @@ public class AggregateReportsView extends AbstractView {
 			}
 
 			cbDistrictFilter = new ComboBox<>();
+			cbDistrictFilter.setId(AggregateReportCriteria.DISTRICT);
 			cbDistrictFilter.addValueChangeListener(e -> updateButtonVisibility());
 			cbDistrictFilter.setWidth(200, Unit.PIXELS);
 			cbDistrictFilter.setPlaceholder(I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.DISTRICT));
@@ -207,6 +209,7 @@ public class AggregateReportsView extends AbstractView {
 			hlFirstFilterRow.addComponent(cbDistrictFilter);
 
 			cbFacilityFilter = new ComboBox<>();
+			cbFacilityFilter.setId(AggregateReportCriteria.HEALTH_FACILITY);
 			if (!UserRole.isPortHealthUser(UserProvider.getCurrent().getUserRoles())) {
 				cbFacilityFilter.addValueChangeListener(e -> updateButtonVisibility());
 				cbFacilityFilter.addValueChangeListener(e -> clearFilterIfNotEmpty(cbFacilityFilter, cbPoeFilter));
@@ -218,6 +221,7 @@ public class AggregateReportsView extends AbstractView {
 			}
 
 			cbPoeFilter = new ComboBox<>();
+			cbPoeFilter.setId(AggregateReportCriteria.POINT_OF_ENTRY);
 			if (UserProvider.getCurrent().hasUserRight(UserRight.PORT_HEALTH_INFO_VIEW)) {
 				cbPoeFilter.addValueChangeListener(e -> updateButtonVisibility());
 				cbPoeFilter.addValueChangeListener(e -> clearFilterIfNotEmpty(cbPoeFilter, cbFacilityFilter));
@@ -240,14 +244,18 @@ public class AggregateReportsView extends AbstractView {
 			hlSecondFilterRow.addComponent(lblFrom);
 
 			cbFromYearFilter = new ComboBox<>();
+			cbFromYearFilter.setId("yearFrom");
 			cbFromYearFilter.addValueChangeListener(e -> clearFilterIfEmpty(cbFromYearFilter, cbFromEpiWeekFilter));
 			cbFromYearFilter.addValueChangeListener(e -> updateButtonVisibility());
 			cbFromEpiWeekFilter = new ComboBox<>();
+			cbFromEpiWeekFilter.setId(AggregateReportCriteria.EPI_WEEK_FROM);
 			cbFromEpiWeekFilter.addValueChangeListener(e -> updateButtonVisibility());
 			cbToYearFilter = new ComboBox<>();
+			cbToYearFilter.setId("yearTo");
 			cbToYearFilter.addValueChangeListener(e -> clearFilterIfEmpty(cbFromYearFilter, cbToEpiWeekFilter));
 			cbToYearFilter.addValueChangeListener(e -> updateButtonVisibility());
 			cbToEpiWeekFilter = new ComboBox<>();
+			cbToEpiWeekFilter.setId(AggregateReportCriteria.EPI_WEEK_TO);
 			cbToEpiWeekFilter.addValueChangeListener(e -> updateButtonVisibility());
 
 			cbFromYearFilter.setWidth(140, Unit.PIXELS);
@@ -311,10 +319,11 @@ public class AggregateReportsView extends AbstractView {
 
 	private void updateButtonVisibility() {
 		if (btnEdit != null && btnCreate != null) {
-			if (cbRegionFilter.getValue() != null && cbDistrictFilter.getValue() != null
-					&& (cbFacilityFilter.getValue() != null || cbPoeFilter.getValue() != null)
-					&& cbFromEpiWeekFilter.getValue() != null
-					&& cbFromEpiWeekFilter.getValue().equals(cbToEpiWeekFilter.getValue())) {
+			if (cbRegionFilter.getValue() != null
+				&& cbDistrictFilter.getValue() != null
+				&& (cbFacilityFilter.getValue() != null || cbPoeFilter.getValue() != null)
+				&& cbFromEpiWeekFilter.getValue() != null
+				&& cbFromEpiWeekFilter.getValue().equals(cbToEpiWeekFilter.getValue())) {
 				criteria.healthFacility(cbFacilityFilter.getValue());
 				criteria.pointOfEntry(cbPoeFilter.getValue());
 				if (FacadeProvider.getAggregateReportFacade().countWithCriteria(criteria) > 0) {
@@ -335,20 +344,20 @@ public class AggregateReportsView extends AbstractView {
 	public void enter(ViewChangeEvent event) {
 		EpiWeek epiWeekFrom = criteria.getEpiWeekFrom();
 		EpiWeek epiWeekTo = criteria.getEpiWeekTo();
-		
+
 		String params = event.getParameters().trim();
 		if (params.startsWith("?")) {
 			params = params.substring(1);
 			criteria.fromUrlParams(params);
 		}
-		
+
 		if (criteria.getEpiWeekFrom() == null) {
 			criteria.setEpiWeekFrom(epiWeekFrom);
 		}
 		if (criteria.getEpiWeekTo() == null) {
 			criteria.setEpiWeekTo(epiWeekTo);
 		}
-		
+
 		grid.reload();
 	}
 

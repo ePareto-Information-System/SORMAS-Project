@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.sample;
 
@@ -29,32 +29,37 @@ public class SampleReferenceDto extends ReferenceDto {
 	private static final long serialVersionUID = -6975445672442728938L;
 
 	public SampleReferenceDto() {
-		
+
 	}
-	
+
 	public SampleReferenceDto(String uuid) {
 		setUuid(uuid);
 	}
-	
+
 	public SampleReferenceDto(String uuid, String caption) {
 		setUuid(uuid);
 		setCaption(caption);
 	}
 
-	public SampleReferenceDto(String uuid, SampleMaterial sampleMaterial, String caseUuid) {
+	public SampleReferenceDto(String uuid, SampleMaterial sampleMaterial, String caseUuid, String contactUuid) {
 		setUuid(uuid);
-		setCaption(buildCaption(sampleMaterial, caseUuid));
+		setCaption(buildCaption(sampleMaterial, caseUuid, contactUuid));
 	}
 
-	public static String buildCaption(SampleMaterial sampleMaterial, String caseUuid) {
+	public static String buildCaption(SampleMaterial sampleMaterial, String caseUuid, String contactUuid) {
+
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append(DataHelper.toStringNullable(sampleMaterial));
 		if (stringBuilder.length() > 0) {
 			stringBuilder.append(" ");
 		}
 		stringBuilder.append(I18nProperties.getString(Strings.entitySample));
-		stringBuilder.append(StringUtils.wrap(I18nProperties.getString(Strings.forCase), " "))
-			.append(DataHelper.getShortUuid(caseUuid));
+		if (caseUuid != null) {
+			stringBuilder.append(StringUtils.wrap(I18nProperties.getString(Strings.forCase), " ")).append(DataHelper.getShortUuid(caseUuid));
+		}
+		if (contactUuid != null) {
+			stringBuilder.append(StringUtils.wrap(I18nProperties.getString(Strings.forContact), " ")).append(DataHelper.getShortUuid(contactUuid));
+		}
 		return stringBuilder.toString();
 	}
 }

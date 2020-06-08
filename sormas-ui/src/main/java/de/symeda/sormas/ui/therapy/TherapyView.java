@@ -9,23 +9,20 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.therapy;
 
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.MenuBar.Command;
-import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.shared.ui.grid.HeightMode;
@@ -48,7 +45,9 @@ import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.caze.AbstractCaseView;
+import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.MenuBarHelper;
 
 @SuppressWarnings("serial")
 public class TherapyView extends AbstractCaseView {
@@ -68,13 +67,14 @@ public class TherapyView extends AbstractCaseView {
 	private TextField treatmentTextFilter;
 
 	public TherapyView() {
-		super(VIEW_NAME);
+		super(VIEW_NAME, false);
 
 		prescriptionCriteria = ViewModelProviders.of(TherapyView.class).get(PrescriptionCriteria.class);
 		treatmentCriteria = ViewModelProviders.of(TherapyView.class).get(TreatmentCriteria.class);
 	}
 
 	private VerticalLayout createPrescriptionsHeader() {
+
 		VerticalLayout prescriptionsHeader = new VerticalLayout();
 		prescriptionsHeader.setMargin(false);
 		prescriptionsHeader.setSpacing(false);
@@ -92,27 +92,25 @@ public class TherapyView extends AbstractCaseView {
 
 			// Bulk operations
 			if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
-				MenuBar bulkOperationsDropdown = new MenuBar();	
-				MenuItem bulkOperationsItem = bulkOperationsDropdown.addItem(I18nProperties.getCaption(Captions.bulkActions), null);
+				MenuBar bulkOperationsDropdown = MenuBarHelper.createDropDown(
+					Captions.bulkActions,
+					new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkDelete), VaadinIcons.TRASH, selectedItem -> {
+						ControllerProvider.getTherapyController().deleteAllSelectedPrescriptions(prescriptionGrid.getSelectedRows(), new Runnable() {
 
-				Command deleteCommand = selectedItem -> {
-					ControllerProvider.getTherapyController().deleteAllSelectedPrescriptions(prescriptionGrid.getSelectedRows(), new Runnable() {
-						public void run() {
-							reloadPrescriptionGrid();
-						}
-					});
-				};
-				bulkOperationsItem.addItem(I18nProperties.getCaption(Captions.bulkDelete), VaadinIcons.TRASH, deleteCommand);
+							public void run() {
+								reloadPrescriptionGrid();
+							}
+						});
+					}));
 
 				headlineRow.addComponent(bulkOperationsDropdown);
 				headlineRow.setComponentAlignment(bulkOperationsDropdown, Alignment.MIDDLE_RIGHT);
 			}
 
-			Button newPrescriptionButton = new Button(I18nProperties.getCaption(Captions.prescriptionNewPrescription));
-			CssStyles.style(newPrescriptionButton, ValoTheme.BUTTON_PRIMARY);
-			newPrescriptionButton.addClickListener(e -> {
+			Button newPrescriptionButton = ButtonHelper.createButton(Captions.prescriptionNewPrescription, e -> {
 				ControllerProvider.getTherapyController().openPrescriptionCreateForm(prescriptionCriteria.getTherapy(), this::reloadPrescriptionGrid);
-			});
+			}, ValoTheme.BUTTON_PRIMARY);
+
 			headlineRow.addComponent(newPrescriptionButton);
 
 			headlineRow.setComponentAlignment(newPrescriptionButton, Alignment.MIDDLE_RIGHT);
@@ -166,28 +164,26 @@ public class TherapyView extends AbstractCaseView {
 
 			// Bulk operations
 			if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
-				MenuBar bulkOperationsDropdown = new MenuBar();	
-				MenuItem bulkOperationsItem = bulkOperationsDropdown.addItem(I18nProperties.getCaption(Captions.bulkActions), null);
+				MenuBar bulkOperationsDropdown = MenuBarHelper.createDropDown(
+					Captions.bulkActions,
+					new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkDelete), VaadinIcons.TRASH, selectedItem -> {
+						ControllerProvider.getTherapyController().deleteAllSelectedTreatments(treatmentGrid.getSelectedRows(), new Runnable() {
 
-				Command deleteCommand = selectedItem -> {
-					ControllerProvider.getTherapyController().deleteAllSelectedTreatments(treatmentGrid.getSelectedRows(), new Runnable() {
-						public void run() {
-							reloadTreatmentGrid();
-						}
-					});
-				};
-				bulkOperationsItem.addItem(I18nProperties.getCaption(Captions.bulkDelete), VaadinIcons.TRASH, deleteCommand);
+							public void run() {
+								reloadTreatmentGrid();
+							}
+						});
+					}));
 
 				headlineRow.addComponent(bulkOperationsDropdown);
 				headlineRow.setComponentAlignment(bulkOperationsDropdown, Alignment.MIDDLE_RIGHT);
 			}
 
-			Button newTreatmentButton = new Button(I18nProperties.getCaption(Captions.treatmentNewTreatment));
-			newTreatmentButton.addClickListener(e -> {
+			Button newTreatmentButton = ButtonHelper.createButton(Captions.treatmentNewTreatment, e -> {
 				ControllerProvider.getTherapyController().openTreatmentCreateForm(treatmentCriteria.getTherapy(), this::reloadTreatmentGrid);
 			});
-			headlineRow.addComponent(newTreatmentButton);
 
+			headlineRow.addComponent(newTreatmentButton);
 			headlineRow.setComponentAlignment(newTreatmentButton, Alignment.MIDDLE_RIGHT);
 		}
 		treatmentsHeader.addComponent(headlineRow);
@@ -254,9 +250,8 @@ public class TherapyView extends AbstractCaseView {
 	}
 
 	@Override
-	public void enter(ViewChangeEvent event) {
-		super.enter(event);
-		
+	protected void initView(String params) {
+
 		VerticalLayout container = new VerticalLayout();
 		container.setSpacing(false);
 		container.setWidth(100, Unit.PERCENTAGE);
@@ -278,10 +273,9 @@ public class TherapyView extends AbstractCaseView {
 		container.setExpandRatio(treatmentGrid, 1);
 
 		setSubComponent(container);
-		
+
 		update();
 		reloadPrescriptionGrid();
 		reloadTreatmentGrid();
 	}
-
 }

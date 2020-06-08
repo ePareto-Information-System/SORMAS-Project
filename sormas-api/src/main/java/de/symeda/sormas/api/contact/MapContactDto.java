@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.contact;
 
@@ -28,7 +28,7 @@ import de.symeda.sormas.api.i18n.Strings;
 public class MapContactDto implements Serializable {
 
 	private static final long serialVersionUID = -5840120135940125045L;
-	
+
 	private String uuid;
 	private ContactClassification contactClassification;
 	private Double reportLat;
@@ -38,13 +38,27 @@ public class MapContactDto implements Serializable {
 	private Date lastVisitDateTime;
 	private Date caseOnsetDate;
 	private Date caseReportDate;
+	private Date contactReportDate;
 	private String personFirstName;
 	private String personLastName;
 	private String casePersonFirstName;
 	private String casePersonLastName;
-	
-	public MapContactDto(String uuid, ContactClassification contactClassification, Double reportLat, Double reportLon, Double addressLat, Double addressLon, Date caseOnsetDate, Date caseReportDate,
-			String personFirstName, String personLastName, String casePersonFirstName, String casePersonLastName) {
+
+	public MapContactDto(
+		String uuid,
+		ContactClassification contactClassification,
+		Double reportLat,
+		Double reportLon,
+		Double addressLat,
+		Double addressLon,
+		Date caseOnsetDate,
+		Date caseReportDate,
+		Date contactReportDate,
+		String personFirstName,
+		String personLastName,
+		String casePersonFirstName,
+		String casePersonLastName) {
+
 		this.uuid = uuid;
 		this.contactClassification = contactClassification;
 		this.reportLat = reportLat;
@@ -53,15 +67,17 @@ public class MapContactDto implements Serializable {
 		this.addressLon = addressLon;
 		this.caseOnsetDate = caseOnsetDate;
 		this.caseReportDate = caseReportDate;
+		this.contactReportDate = contactReportDate;
 		this.personFirstName = personFirstName;
 		this.personLastName = personLastName;
 		this.casePersonFirstName = casePersonFirstName;
 		this.casePersonLastName = casePersonLastName;
 	}
-	
+
 	public String getUuid() {
 		return uuid;
 	}
+
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
 	}
@@ -69,20 +85,23 @@ public class MapContactDto implements Serializable {
 	public ContactClassification getContactClassification() {
 		return contactClassification;
 	}
+
 	public void setContactClassification(ContactClassification contactClassification) {
 		this.contactClassification = contactClassification;
 	}
-	
+
 	public Double getReportLat() {
 		return reportLat;
 	}
+
 	public void setReportLat(Double reportLat) {
 		this.reportLat = reportLat;
 	}
-	
+
 	public Double getReportLon() {
 		return reportLon;
 	}
+
 	public void setReportLon(Double reportLon) {
 		this.reportLon = reportLon;
 	}
@@ -126,7 +145,7 @@ public class MapContactDto implements Serializable {
 	public void setCaseReportDate(Date caseReportDate) {
 		this.caseReportDate = caseReportDate;
 	}
-	
+
 	public String getPersonFirstName() {
 		return personFirstName;
 	}
@@ -159,13 +178,23 @@ public class MapContactDto implements Serializable {
 		this.casePersonLastName = casePersonLastName;
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(personFirstName).append(" ").append(personLastName.toUpperCase());
-		builder.append(StringUtils.wrap(I18nProperties.getString(Strings.toCase), ""));
-		builder.append(casePersonFirstName).append(" ").append(casePersonLastName.toUpperCase());
-		return builder.toString();
+	public Date getContactReportDate() {
+		return contactReportDate;
 	}
 
+	public void setContactReportDate(Date contactReportDate) {
+		this.contactReportDate = contactReportDate;
+	}
+
+	@Override
+	public String toString() {
+
+		StringBuilder builder = new StringBuilder();
+		builder.append(personFirstName).append(" ").append(personLastName.toUpperCase());
+		if (casePersonFirstName != null && casePersonLastName != null) {
+			builder.append(StringUtils.wrap(I18nProperties.getString(Strings.toCase), ""));
+			builder.append(casePersonFirstName).append(" ").append(casePersonLastName.toUpperCase());
+		}
+		return builder.toString();
+	}
 }

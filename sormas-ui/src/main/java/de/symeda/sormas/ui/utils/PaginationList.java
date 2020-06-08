@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.utils;
 
@@ -29,14 +29,24 @@ import com.vaadin.ui.themes.ValoTheme;
 public abstract class PaginationList<T> extends VerticalLayout {
 
 	private static final long serialVersionUID = -1949084832307944448L;
-	
+	public static final String[] BUTTON_STYLES = {
+		ValoTheme.BUTTON_BORDERLESS,
+		CssStyles.BUTTON_FILTER,
+		CssStyles.BUTTON_FILTER_LIGHT,
+		CssStyles.BUTTON_FILTER_SMALL };
+	public static final String[] CURRENT_BUTTON_STYLES = {
+		ValoTheme.BUTTON_BORDERLESS,
+		CssStyles.BUTTON_FILTER,
+		CssStyles.BUTTON_FILTER_DARK,
+		CssStyles.BUTTON_FILTER_SMALL };
+
 	protected final VerticalLayout listLayout;
 	protected final HorizontalLayout paginationLayout;
 	protected final int maxDisplayedEntries;
 	private List<T> entries;
 	private List<T> displayedEntries;
 	private int currentPage;
-	
+
 	// Pagination buttons
 	private Button firstPageButton;
 	private Button lastPageButton;
@@ -47,13 +57,13 @@ public abstract class PaginationList<T> extends VerticalLayout {
 	private Button currentPageButton;
 	private Label previousGapLabel;
 	private Label nextGapLabel;
-	
+
 	public PaginationList(int maxDisplayedEntries) {
 		setMargin(false);
 		setSpacing(false);
 		this.maxDisplayedEntries = maxDisplayedEntries;
 		this.currentPage = 1;
-		
+
 		this.listLayout = new VerticalLayout();
 		listLayout.setMargin(false);
 		listLayout.setSpacing(false);
@@ -62,85 +72,79 @@ public abstract class PaginationList<T> extends VerticalLayout {
 		paginationLayout.setSpacing(true);
 		CssStyles.style(paginationLayout, CssStyles.SPACING_SMALL, CssStyles.VSPACE_TOP_4);
 		initializePaginationLayout();
-		
+
 		addComponent(listLayout);
 		addComponent(paginationLayout);
 		setComponentAlignment(paginationLayout, Alignment.BOTTOM_RIGHT);
-		
+
 		setWidth(100, Unit.PERCENTAGE);
 		addStyleName(CssStyles.SORMAS_LIST);
 	}
-	
+
 	public abstract void reload();
+
 	protected abstract void drawDisplayedEntries();
-	
+
 	protected void showPage(int pageNumber) {
 		listLayout.removeAllComponents();
 		int firstDisplayedEntryIndex = (pageNumber - 1) * maxDisplayedEntries;
 		int lastDisplayedEntryIndex = pageNumber * maxDisplayedEntries;
-		displayedEntries = entries.subList(firstDisplayedEntryIndex,
-				entries.size() < lastDisplayedEntryIndex ? entries.size() : lastDisplayedEntryIndex);
+		displayedEntries =
+			entries.subList(firstDisplayedEntryIndex, entries.size() < lastDisplayedEntryIndex ? entries.size() : lastDisplayedEntryIndex);
 		currentPage = pageNumber;
 		drawDisplayedEntries();
 		updatePaginationLayout();
 	}
-	
+
 	private void initializePaginationLayout() {
-		firstPageButton = new Button("|<");
-		CssStyles.style(firstPageButton, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER, CssStyles.BUTTON_FILTER_LIGHT, CssStyles.BUTTON_FILTER_SMALL);
-		firstPageButton.addClickListener(e -> {
+		firstPageButton = ButtonHelper.createButtonWithCaption("fistPage", "|<", e -> {
 			showPage(1);
-		});
+		}, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER, CssStyles.BUTTON_FILTER_LIGHT, CssStyles.BUTTON_FILTER_SMALL);
+
 		paginationLayout.addComponent(firstPageButton);
-		
+
 		previousGapLabel = new Label("...");
 		CssStyles.style(previousGapLabel, CssStyles.LABEL_BOLD, CssStyles.LABEL_PRIMARY);
 		paginationLayout.addComponent(previousGapLabel);
 
-		previousPreviousPageButton = new Button();
-		CssStyles.style(previousPreviousPageButton, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER, CssStyles.BUTTON_FILTER_LIGHT, CssStyles.BUTTON_FILTER_SMALL);
-		previousPreviousPageButton.addClickListener(e -> {
+		previousPreviousPageButton = ButtonHelper.createButtonWithCaption("previousPreviousPage", null, e -> {
 			showPage(currentPage - 2);
-		});
+		}, BUTTON_STYLES);
+
 		paginationLayout.addComponent(previousPreviousPageButton);
-		
-		previousPageButton = new Button();
-		CssStyles.style(previousPageButton, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER, CssStyles.BUTTON_FILTER_LIGHT, CssStyles.BUTTON_FILTER_SMALL);
-		previousPageButton.addClickListener(e -> {
+
+		previousPageButton = ButtonHelper.createButtonWithCaption("previousPage", null, e -> {
 			showPage(currentPage - 1);
-		});
+		}, BUTTON_STYLES);
+
 		paginationLayout.addComponent(previousPageButton);
 
-		currentPageButton = new Button();
-		CssStyles.style(currentPageButton, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER, CssStyles.BUTTON_FILTER_DARK, CssStyles.BUTTON_FILTER_SMALL);
+		currentPageButton = ButtonHelper.createButtonWithCaption("currentPage", null, null, CURRENT_BUTTON_STYLES);
 		paginationLayout.addComponent(currentPageButton);
-		
-		nextPageButton = new Button();
-		CssStyles.style(nextPageButton, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER, CssStyles.BUTTON_FILTER_LIGHT, CssStyles.BUTTON_FILTER_SMALL);
-		nextPageButton.addClickListener(e -> {
+
+		nextPageButton = ButtonHelper.createButtonWithCaption("nextPage", null, e -> {
 			showPage(currentPage + 1);
-		});
+		}, BUTTON_STYLES);
+
 		paginationLayout.addComponent(nextPageButton);
 
-		nextNextPageButton = new Button();
-		CssStyles.style(nextNextPageButton, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER, CssStyles.BUTTON_FILTER_LIGHT, CssStyles.BUTTON_FILTER_SMALL);
-		nextNextPageButton.addClickListener(e -> {
+		nextNextPageButton = ButtonHelper.createButtonWithCaption("nextNextPage", null, e -> {
 			showPage(currentPage + 2);
-		});
+		}, BUTTON_STYLES);
+
 		paginationLayout.addComponent(nextNextPageButton);
-		
+
 		nextGapLabel = new Label("...");
 		CssStyles.style(nextGapLabel, CssStyles.LABEL_BOLD, CssStyles.LABEL_PRIMARY);
 		paginationLayout.addComponent(nextGapLabel);
-		
-		lastPageButton = new Button(">|");
-		CssStyles.style(lastPageButton, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER, CssStyles.BUTTON_FILTER_LIGHT, CssStyles.BUTTON_FILTER_SMALL);
-		lastPageButton.addClickListener(e -> {
+
+		lastPageButton = ButtonHelper.createButtonWithCaption("", ">|", e -> {
 			showPage(calculateLastPageNumber());
-		});
+		}, BUTTON_STYLES);
+
 		paginationLayout.addComponent(lastPageButton);
 	}
-	
+
 	protected void updatePaginationLayout() {
 		// Remove or re-add the pagination layout based on the number of list entries
 		if (entries.size() <= maxDisplayedEntries) {
@@ -150,7 +154,7 @@ public abstract class PaginationList<T> extends VerticalLayout {
 			addComponent(paginationLayout);
 			setComponentAlignment(paginationLayout, Alignment.BOTTOM_RIGHT);
 		}
-		
+
 		int firstDisplayedEntryIndex = entries.indexOf(displayedEntries.get(0));
 		int lastPageNumber = calculateLastPageNumber();
 
@@ -165,7 +169,7 @@ public abstract class PaginationList<T> extends VerticalLayout {
 		nextPageButton.setVisible(currentPage < lastPageNumber);
 		nextNextPageButton.setVisible(currentPage < lastPageNumber - 1);
 		nextGapLabel.setVisible(currentPage < lastPageNumber - 2);
-		
+
 		// Numbered button captions
 		currentPageButton.setCaption(String.valueOf((int) Math.ceil((firstDisplayedEntryIndex + 1) / (double) maxDisplayedEntries)));
 		if (previousPreviousPageButton.isVisible()) {
@@ -181,7 +185,7 @@ public abstract class PaginationList<T> extends VerticalLayout {
 			nextNextPageButton.setCaption(String.valueOf(currentPage + 2));
 		}
 	}
-	
+
 	private int calculateLastPageNumber() {
 		return (int) Math.ceil(entries.size() / (double) maxDisplayedEntries);
 	}
@@ -189,9 +193,8 @@ public abstract class PaginationList<T> extends VerticalLayout {
 	protected List<T> getDisplayedEntries() {
 		return displayedEntries;
 	}
-	
+
 	protected void setEntries(List<T> entries) {
 		this.entries = entries;
 	}
-	
 }

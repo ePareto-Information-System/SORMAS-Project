@@ -18,7 +18,7 @@ import de.symeda.sormas.api.caze.CaseIndexDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
-import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 
 @SuppressWarnings("serial")
@@ -30,6 +30,7 @@ public class CaseSelectionField extends CustomField<CaseIndexDto> {
 	protected VerticalLayout mainLayout;
 
 	public CaseSelectionField(CaseCriteria criteria) {
+
 		this.criteria = criteria;
 
 		mainLayout = new VerticalLayout();
@@ -43,6 +44,7 @@ public class CaseSelectionField extends CustomField<CaseIndexDto> {
 	}
 
 	private void addFilterComponent() {
+
 		HorizontalLayout filterLayout = new HorizontalLayout();
 		filterLayout.setSpacing(true);
 
@@ -51,9 +53,7 @@ public class CaseSelectionField extends CustomField<CaseIndexDto> {
 		searchField.setWidth(400, Unit.PIXELS);
 		filterLayout.addComponent(searchField);
 
-		Button searchButton = new Button(I18nProperties.getCaption(Captions.caseSearchCase));
-		CssStyles.style(searchButton, ValoTheme.BUTTON_PRIMARY);
-		searchButton.addClickListener(e -> {
+		Button searchButton = ButtonHelper.createButton(Captions.caseSearchCase, e -> {
 			if (StringUtils.isNotEmpty(searchField.getValue())) {
 				criteria.setSourceCaseInfoLike(searchField.getValue());
 				grid.setCases(FacadeProvider.getCaseFacade().getIndexList(criteria, null, null, null));
@@ -61,13 +61,15 @@ public class CaseSelectionField extends CustomField<CaseIndexDto> {
 				criteria.setSourceCaseInfoLike(null);
 				grid.clearCases();
 			}
-		});
+		}, ValoTheme.BUTTON_PRIMARY);
+
 		filterLayout.addComponent(searchButton);
 
 		mainLayout.addComponent(filterLayout);
 	}
 
 	private void addGrid() {
+
 		grid = new CaseSelectionGrid(null);
 		grid.addSelectionListener(e -> {
 			if (selectionChangeCallback != null) {
@@ -84,6 +86,7 @@ public class CaseSelectionField extends CustomField<CaseIndexDto> {
 
 	@Override
 	protected Component initContent() {
+
 		addInfoComponent();
 		addFilterComponent();
 		addGrid();
@@ -100,5 +103,4 @@ public class CaseSelectionField extends CustomField<CaseIndexDto> {
 	public void setSelectionChangeCallback(Consumer<Boolean> callback) {
 		this.selectionChangeCallback = callback;
 	}
-
 }

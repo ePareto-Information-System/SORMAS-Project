@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.backend.symptoms;
 
@@ -95,6 +95,8 @@ public class Symptoms extends AbstractDomainObject {
 	private SymptomState neckStiffness;
 	private SymptomState soreThroat;
 	private SymptomState cough;
+	private SymptomState coughWithSputum;
+	private SymptomState coughWithHeamoptysis;
 	private SymptomState runnyNose;
 	private SymptomState difficultyBreathing;
 	private SymptomState chestPain;
@@ -136,6 +138,7 @@ public class Symptoms extends AbstractDomainObject {
 	private SymptomState lesionsResembleImg3;
 	private SymptomState lesionsResembleImg4;
 	private Date lesionsOnsetDate;
+	private SymptomState lymphadenopathy;
 	private SymptomState lymphadenopathyInguinal;
 	private SymptomState lymphadenopathyAxillary;
 	private SymptomState lymphadenopathyCervical;
@@ -194,6 +197,14 @@ public class Symptoms extends AbstractDomainObject {
 	private SymptomState convulsion;
 	private SymptomState lossOfTaste;
 	private SymptomState lossOfSmell;
+	private SymptomState wheezing;
+	private SymptomState skinUlcers;
+	private SymptomState inabilityToWalk;
+	private SymptomState inDrawingOfChestWall;
+	private SymptomState respiratoryDiseaseVentilation;
+	private SymptomState generalSignsOfDisease;
+	private SymptomState fastHeartRate;
+	private SymptomState oxygenSaturationLower94;
 
 	// complications
 	private SymptomState alteredConsciousness;
@@ -211,6 +222,9 @@ public class Symptoms extends AbstractDomainObject {
 	private SymptomState conjunctivalInjection;
 	private SymptomState acuteRespiratoryDistressSyndrome;
 	private SymptomState pneumoniaClinicalOrRadiologic;
+
+	private SymptomState otherComplications;
+	private String otherComplicationsText;
 
 	// when adding new fields make sure to extend toHumanString
 
@@ -1582,6 +1596,123 @@ public class Symptoms extends AbstractDomainObject {
 		this.lossOfSmell = lossOfSmell;
 	}
 
+	@Enumerated(EnumType.STRING)
+	public SymptomState getLymphadenopathy() {
+		return lymphadenopathy;
+	}
+
+	public void setLymphadenopathy(SymptomState lymphadenopathy) {
+		this.lymphadenopathy = lymphadenopathy;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public SymptomState getWheezing() {
+		return wheezing;
+	}
+
+	public void setWheezing(SymptomState wheezing) {
+		this.wheezing = wheezing;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public SymptomState getSkinUlcers() {
+		return skinUlcers;
+	}
+
+	public void setSkinUlcers(SymptomState skinUlcers) {
+		this.skinUlcers = skinUlcers;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public SymptomState getInabilityToWalk() {
+		return inabilityToWalk;
+	}
+
+	public void setInabilityToWalk(SymptomState inabilityToWalk) {
+		this.inabilityToWalk = inabilityToWalk;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public SymptomState getInDrawingOfChestWall() {
+		return inDrawingOfChestWall;
+	}
+
+	public void setInDrawingOfChestWall(SymptomState inDrawingOfChestWall) {
+		this.inDrawingOfChestWall = inDrawingOfChestWall;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public SymptomState getCoughWithSputum() {
+		return coughWithSputum;
+	}
+
+	public void setCoughWithSputum(SymptomState coughWithSputum) {
+		this.coughWithSputum = coughWithSputum;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public SymptomState getCoughWithHeamoptysis() {
+		return coughWithHeamoptysis;
+	}
+
+	public void setCoughWithHeamoptysis(SymptomState coughWithHeamoptysis) {
+		this.coughWithHeamoptysis = coughWithHeamoptysis;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public SymptomState getRespiratoryDiseaseVentilation() {
+		return respiratoryDiseaseVentilation;
+	}
+
+	public void setRespiratoryDiseaseVentilation(SymptomState respiratoryDiseaseVentilation) {
+		this.respiratoryDiseaseVentilation = respiratoryDiseaseVentilation;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public SymptomState getGeneralSignsOfDisease() {
+		return generalSignsOfDisease;
+	}
+
+	public void setGeneralSignsOfDisease(SymptomState generalSignsOfDisease) {
+		this.generalSignsOfDisease = generalSignsOfDisease;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public SymptomState getFastHeartRate() {
+		return fastHeartRate;
+	}
+
+	public void setFastHeartRate(SymptomState fastHeartRate) {
+		this.fastHeartRate = fastHeartRate;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public SymptomState getOxygenSaturationLower94() {
+		return oxygenSaturationLower94;
+	}
+
+	public void setOxygenSaturationLower94(SymptomState oxygenSaturationLower94) {
+		this.oxygenSaturationLower94 = oxygenSaturationLower94;
+	}
+
+	@Enumerated
+	public SymptomState getOtherComplications() {
+		return otherComplications;
+	}
+
+	public void setOtherComplications(SymptomState otherComplications) {
+		this.otherComplications = otherComplications;
+	}
+
+	@Column(length = 255)
+	public String getOtherComplicationsText() {
+		return otherComplicationsText;
+	}
+
+	public void setOtherComplicationsText(String otherComplicationsText) {
+		this.otherComplicationsText = otherComplicationsText;
+	}
+
 	public String toHumanString(boolean includeOnset, Language language) {
 		StringBuilder string = new StringBuilder();
 
@@ -1639,6 +1770,8 @@ public class Symptoms extends AbstractDomainObject {
 		appendYesSymptom(string, neckStiffness, SymptomsDto.NECK_STIFFNESS);
 		appendYesSymptom(string, soreThroat, SymptomsDto.SORE_THROAT);
 		appendYesSymptom(string, cough, SymptomsDto.COUGH);
+		appendYesSymptom(string, coughWithSputum, SymptomsDto.COUGH_WITH_SPUTUM);
+		appendYesSymptom(string, coughWithHeamoptysis, SymptomsDto.COUGH_WITH_HEAMOPTYSIS);
 		appendYesSymptom(string, runnyNose, SymptomsDto.RUNNY_NOSE);
 		appendYesSymptom(string, difficultyBreathing, SymptomsDto.DIFFICULTY_BREATHING);
 		appendYesSymptom(string, chestPain, SymptomsDto.CHEST_PAIN);
@@ -1677,11 +1810,12 @@ public class Symptoms extends AbstractDomainObject {
 		appendTrue(string, lesionsGenitals, SymptomsDto.LESIONS_GENITALS);
 		appendTrue(string, lesionsAllOverBody, SymptomsDto.LESIONS_ALL_OVER_BODY);
 		// TODO images should have more specific caption to be included here
-		//		appendYesSymptom(string, lesionsResembleImg1, SymptomsDto.LESIONS_RESEMBLE_IMG1);
-		//		appendYesSymptom(string, lesionsResembleImg2, SymptomsDto.LESIONS_RESEMBLE_IMG2);
-		//		appendYesSymptom(string, lesionsResembleImg3, SymptomsDto.LESIONS_RESEMBLE_IMG3);
-		//		appendYesSymptom(string, lesionsResembleImg4, SymptomsDto.LESIONS_RESEMBLE_IMG4);
+//		appendYesSymptom(string, lesionsResembleImg1, SymptomsDto.LESIONS_RESEMBLE_IMG1);
+//		appendYesSymptom(string, lesionsResembleImg2, SymptomsDto.LESIONS_RESEMBLE_IMG2);
+//		appendYesSymptom(string, lesionsResembleImg3, SymptomsDto.LESIONS_RESEMBLE_IMG3);
+//		appendYesSymptom(string, lesionsResembleImg4, SymptomsDto.LESIONS_RESEMBLE_IMG4);
 		appendNotNullDateValue(string, lesionsOnsetDate, SymptomsDto.LESIONS_ONSET_DATE, language);
+		appendYesSymptom(string, lymphadenopathy, SymptomsDto.LYMPHADENOPATHY);
 		appendYesSymptom(string, lymphadenopathyInguinal, SymptomsDto.LYMPHADENOPATHY_INGUINAL);
 		appendYesSymptom(string, lymphadenopathyAxillary, SymptomsDto.LYMPHADENOPATHY_AXILLARY);
 		appendYesSymptom(string, lymphadenopathyCervical, SymptomsDto.LYMPHADENOPATHY_CERVICAL);
@@ -1726,6 +1860,15 @@ public class Symptoms extends AbstractDomainObject {
 		appendNotNullValue(string, congenitalHeartDiseaseDetails, SymptomsDto.CONGENITAL_HEART_DISEASE_DETAILS);
 		appendYesSymptom(string, lossOfTaste, SymptomsDto.LOSS_OF_TASTE);
 		appendYesSymptom(string, lossOfSmell, SymptomsDto.LOSS_OF_SMELL);
+		appendYesSymptom(string, wheezing, SymptomsDto.WHEEZING);
+		appendYesSymptom(string, skinUlcers, SymptomsDto.SKIN_ULCERS);
+		appendYesSymptom(string, inabilityToWalk, SymptomsDto.INABILITY_TO_WALK);
+		appendYesSymptom(string, inDrawingOfChestWall, SymptomsDto.IN_DRAWING_OF_CHEST_WALL);
+		appendYesSymptom(string, respiratoryDiseaseVentilation, SymptomsDto.RESPIRATORY_DISEASE_VENTILATION);
+		appendYesSymptom(string, generalSignsOfDisease, SymptomsDto.GENERAL_SIGNS_OF_DISEASE);
+		appendYesSymptom(string, fastHeartRate, SymptomsDto.FAST_HEART_RATE);
+		appendYesSymptom(string, oxygenSaturationLower94, SymptomsDto.OXYGEN_SATURATION_LOWER_94);
+		appendNotNullValue(string, otherComplicationsText, SymptomsDto.OTHER_COMPLICATIONS_TEXT);
 
 		// symptomsComments;
 
@@ -1740,8 +1883,7 @@ public class Symptoms extends AbstractDomainObject {
 			if (stringBuilder.length() > 0) {
 				stringBuilder.append(", ");
 			}
-			stringBuilder.append(I18nProperties.getPrefixCaption(SymptomsDto.I18N_PREFIX, dtoPropertyId, null))
-					.append(": ");
+			stringBuilder.append(I18nProperties.getPrefixCaption(SymptomsDto.I18N_PREFIX, dtoPropertyId, null)).append(": ");
 
 			stringBuilder.append(value);
 		}

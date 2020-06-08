@@ -15,6 +15,7 @@ import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.feature.FeatureConfigurationIndexDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.ui.SormasUI;
+import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 
 @SuppressWarnings("serial")
@@ -25,6 +26,7 @@ public class LineListingRegionsLayout extends CssLayout {
 	private Map<String, String> regionNames;
 
 	public LineListingRegionsLayout(List<FeatureConfigurationIndexDto> configurations, Disease disease) {
+
 		this.disease = disease;
 		this.regionNames = new HashMap<>();
 		this.regions = new TreeMap<>((r1, r2) -> regionNames.get(r1).compareTo(regionNames.get(r2)));
@@ -44,6 +46,7 @@ public class LineListingRegionsLayout extends CssLayout {
 	}
 
 	private void buildLayout() {
+
 		for (String regionUuid : regions.keySet()) {
 			StringBuilder captionBuilder = new StringBuilder();
 			captionBuilder.append("<b>").append(regionNames.get(regionUuid));
@@ -51,20 +54,20 @@ public class LineListingRegionsLayout extends CssLayout {
 				captionBuilder.append(" (").append(regions.get(regionUuid).size()).append(")");
 			}
 
-			Button configButton = new Button(captionBuilder.toString());
+			Button configButton = ButtonHelper.createButtonWithCaption("region-" + regionUuid, captionBuilder.toString(), e -> {
+				SormasUI.get()
+					.getNavigator()
+					.navigateTo(LineListingConfigurationView.VIEW_NAME + "/" + regionUuid + "/?disease=" + disease.getName());
+			}, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER, CssStyles.HSPACE_LEFT_4, CssStyles.VSPACE_4);
 			configButton.setCaptionAsHtml(true);
-			CssStyles.style(configButton, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER, 
-					CssStyles.HSPACE_LEFT_4, CssStyles.VSPACE_4);
+
 			if (regions.get(regionUuid).size() > 0) {
 				CssStyles.style(configButton, CssStyles.BUTTON_FILTER_ENABLED);
 			} else {
 				CssStyles.style(configButton, CssStyles.BUTTON_FILTER_DISABLED);
 			}
-			configButton.addClickListener(e -> {
-				SormasUI.get().getNavigator().navigateTo(LineListingConfigurationView.VIEW_NAME + "/" + regionUuid + "/?disease=" + disease.getName());
-			});
+
 			addComponent(configButton);
 		}
 	}
-
 }

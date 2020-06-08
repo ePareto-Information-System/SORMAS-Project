@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.samples;
 
@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
@@ -44,8 +43,10 @@ public class PathogenTestList extends PaginationList<PathogenTestDto> {
 	private BiConsumer<PathogenTestDto, Runnable> onSavedPathogenTest;
 	private Supplier<Boolean> createOrEditAllowedCallback;
 
-	public PathogenTestList(SampleReferenceDto sampleRef, BiConsumer<PathogenTestDto, Runnable> onSavedPathogenTest,
-			Supplier<Boolean> createOrEditAllowedCallback) {
+	public PathogenTestList(
+		SampleReferenceDto sampleRef,
+		BiConsumer<PathogenTestDto, Runnable> onSavedPathogenTest,
+		Supplier<Boolean> createOrEditAllowedCallback) {
 		super(5);
 
 		this.sampleRef = sampleRef;
@@ -55,9 +56,7 @@ public class PathogenTestList extends PaginationList<PathogenTestDto> {
 
 	@Override
 	public void reload() {
-		List<PathogenTestDto> pathogenTests = ControllerProvider.getPathogenTestController()
-				.getPathogenTestsBySample(sampleRef);
-
+		List<PathogenTestDto> pathogenTests = ControllerProvider.getPathogenTestController().getPathogenTestsBySample(sampleRef);
 
 		setEntries(pathogenTests);
 		if (!pathogenTests.isEmpty()) {
@@ -71,18 +70,17 @@ public class PathogenTestList extends PaginationList<PathogenTestDto> {
 
 	@Override
 	protected void drawDisplayedEntries() {
-		for (PathogenTestDto pathogenTest : getDisplayedEntries()) {
+		List<PathogenTestDto> displayedEntries = getDisplayedEntries();
+		for (int i = 0, displayedEntriesSize = displayedEntries.size(); i < displayedEntriesSize; i++) {
+			PathogenTestDto pathogenTest = displayedEntries.get(i);
 			PathogenTestListEntry listEntry = new PathogenTestListEntry(pathogenTest);
 			if (UserProvider.getCurrent().hasUserRight(UserRight.PATHOGEN_TEST_EDIT)) {
-				listEntry.addEditListener(new ClickListener() {
-					@Override
-					public void buttonClick(ClickEvent event) {
-						if (createOrEditAllowedCallback.get()) {
-							ControllerProvider.getPathogenTestController().edit(pathogenTest, caseSampleCount,
-									PathogenTestList.this::reload, onSavedPathogenTest);
-						} else {
-							Notification.show(null, I18nProperties.getString(Strings.messageFormHasErrorsPathogenTest), Type.ERROR_MESSAGE);
-						}
+				listEntry.addEditListener(i, (ClickListener) event -> {
+					if (createOrEditAllowedCallback.get()) {
+						ControllerProvider.getPathogenTestController()
+							.edit(pathogenTest, caseSampleCount, PathogenTestList.this::reload, onSavedPathogenTest);
+					} else {
+						Notification.show(null, I18nProperties.getString(Strings.messageFormHasErrorsPathogenTest), Type.ERROR_MESSAGE);
 					}
 				});
 			}

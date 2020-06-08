@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.utils;
 
@@ -50,25 +50,27 @@ import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 
-
-public class CommitDiscardWrapperComponent<C extends Component> extends
-VerticalLayout implements Buffered {
+public class CommitDiscardWrapperComponent<C extends Component> extends VerticalLayout implements Buffered {
 
 	private static final long serialVersionUID = 1L;
 
 	public static interface CommitListener {
+
 		void onCommit();
 	}
 
 	public static interface DiscardListener {
+
 		void onDiscard();
 	}
 
 	public static interface DoneListener {
+
 		void onDone();
 	}
 
 	public static interface DeleteListener {
+
 		void onDelete();
 	}
 
@@ -99,11 +101,18 @@ VerticalLayout implements Buffered {
 
 	}
 
-	public CommitDiscardWrapperComponent(C component, FieldGroup ...fieldGroups) {
-		setWrappedComponent(component, fieldGroups);
+	public CommitDiscardWrapperComponent(C component, FieldGroup... fieldGroups) {
+		this(component, null, fieldGroups);
 	}
 
-	protected void setWrappedComponent(C component, FieldGroup ...fieldGroups) {
+	public CommitDiscardWrapperComponent(C component, Boolean isEditingAllowed, FieldGroup... fieldGroups) {
+		setWrappedComponent(component, fieldGroups);
+		if (isEditingAllowed != null) {
+			setEnabled(isEditingAllowed);
+		}
+	}
+
+	protected void setWrappedComponent(C component, FieldGroup... fieldGroups) {
 
 		this.wrappedComponent = component;
 		this.fieldGroups = fieldGroups;
@@ -146,7 +155,7 @@ VerticalLayout implements Buffered {
 		if (fieldGroups != null && fieldGroups.length > 0) {
 			// convention: set wrapper to read-only when all wrapped field groups are read-only
 			boolean allReadOnly = true;
-			for (FieldGroup fieldGroup : fieldGroups)  {
+			for (FieldGroup fieldGroup : fieldGroups) {
 				if (!fieldGroup.isReadOnly()) {
 					allReadOnly = false;
 					break;
@@ -156,8 +165,7 @@ VerticalLayout implements Buffered {
 				setReadOnly(true);
 			}
 		} else if (wrappedComponent != null) {
-			if (wrappedComponent instanceof AbstractLegacyComponent 
-					&& ((AbstractLegacyComponent)wrappedComponent).isReadOnly()) {
+			if (wrappedComponent instanceof AbstractLegacyComponent && ((AbstractLegacyComponent) wrappedComponent).isReadOnly()) {
 				setReadOnly(true);
 			}
 		}
@@ -166,9 +174,7 @@ VerticalLayout implements Buffered {
 	protected Stream<Field<?>> getFieldsStream() {
 
 		if (fieldGroups != null) {
-			return Arrays.stream(fieldGroups)
-			.map(FieldGroup::getFields)
-			.flatMap(Collection::stream);
+			return Arrays.stream(fieldGroups).map(FieldGroup::getFields).flatMap(Collection::stream);
 		} else {
 			return Stream.empty();
 		}
@@ -208,10 +214,8 @@ VerticalLayout implements Buffered {
 	}
 
 	protected void registerActions(Notifier notifier) {
-		actions.add(new ClickShortcut(notifier, commitButton,
-				KeyCode.ENTER));
-		actions.add(new ClickShortcut(notifier, discardButton,
-				KeyCode.ESCAPE));
+		actions.add(new ClickShortcut(notifier, commitButton, KeyCode.ENTER));
+		actions.add(new ClickShortcut(notifier, discardButton, KeyCode.ESCAPE));
 	}
 
 	public C getWrappedComponent() {
@@ -222,67 +226,68 @@ VerticalLayout implements Buffered {
 		return buttonsPanel;
 	}
 
-
 	/**
 	 * Durch das Aufrufen dieser Methode wird ein Button zum Speichern erzeugt, aber nicht eingefügt.
 	 * Das passiert in setWrappedComponent().
+	 * 
 	 * @return
 	 */
 	public Button getCommitButton() {
 		if (commitButton == null) {
-			commitButton = new Button(I18nProperties.getCaption(Captions.actionSave));
-			commitButton.setId("commit");
-			commitButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
+			commitButton = ButtonHelper.createButtonWithCaption("commit", I18nProperties.getCaption(Captions.actionSave), new ClickListener() {
 
-			commitButton.addClickListener(new ClickListener() { 
 				private static final long serialVersionUID = 1L;
+
 				@Override
 				public void buttonClick(ClickEvent event) {
 					commitAndHandle();
 				}
-			});
+			}, ValoTheme.BUTTON_PRIMARY);
 		}
+
 		return commitButton;
 	}
-
 
 	/**
 	 * Durch das Aufrufen dieser Methode wird ein Button zum Verwerfen erzeugt aber nicht eingefügt.
 	 * Das passiert in setWrappedComponent().
+	 * 
 	 * @return
 	 */
 	public Button getDiscardButton() {
 		if (discardButton == null) {
-			discardButton = new Button(I18nProperties.getCaption(Captions.actionDiscard));
-			discardButton.setId("discard");
+			discardButton = ButtonHelper.createButtonWithCaption("discard", I18nProperties.getCaption(Captions.actionDiscard), new ClickListener() {
 
-			discardButton.addClickListener(new ClickListener() {
 				private static final long serialVersionUID = 1L;
+
 				@Override
 				public void buttonClick(ClickEvent event) {
 					discard();
 				}
 			});
 		}
+
 		return discardButton;
 	}
 
 	public Button getDeleteButton(String entityName) {
 		if (deleteButton == null) {
-			deleteButton = new Button(I18nProperties.getCaption(Captions.actionDelete));
-			deleteButton.setId("delete");
-			CssStyles.style(deleteButton, ValoTheme.BUTTON_DANGER, CssStyles.BUTTON_BORDER_NEUTRAL);
-			deleteButton.addClickListener(new ClickListener() {
+			deleteButton = ButtonHelper.createButtonWithCaption("delete", I18nProperties.getCaption(Captions.actionDelete), new ClickListener() {
+
 				private static final long serialVersionUID = 1L;
+
 				@Override
 				public void buttonClick(ClickEvent event) {
-					VaadinUiUtil.showDeleteConfirmationWindow(String.format(I18nProperties.getString(Strings.confirmationDeleteEntity), entityName), new Runnable() {
-						public void run() {
-							onDelete();
-						}
-					});
+					VaadinUiUtil.showDeleteConfirmationWindow(
+						String.format(I18nProperties.getString(Strings.confirmationDeleteEntity), entityName),
+						new Runnable() {
+
+							public void run() {
+								onDelete();
+							}
+						});
 				}
-			});
+			}, ValoTheme.BUTTON_DANGER, CssStyles.BUTTON_BORDER_NEUTRAL);
 		}
 
 		return deleteButton;
@@ -297,7 +302,7 @@ VerticalLayout implements Buffered {
 				}
 			}
 		} else if (wrappedComponent instanceof Buffered) {
-			return ((Buffered)wrappedComponent).isModified(); 
+			return ((Buffered) wrappedComponent).isModified();
 		}
 		return false;
 	}
@@ -309,8 +314,7 @@ VerticalLayout implements Buffered {
 	@Override
 	public void commit() throws InvalidValueException, SourceException, CommitRuntimeException {
 
-		if (fieldGroups != null)
-		{
+		if (fieldGroups != null) {
 			if (fieldGroups.length > 1) {
 				// validate all fields first, so commit will likely work for all fieldGroups
 				// this is basically only needed when we have multiple field groups
@@ -322,22 +326,21 @@ VerticalLayout implements Buffered {
 					}
 				});
 			}
-			
+
 			try {
 				for (FieldGroup fieldGroup : fieldGroups) {
 					fieldGroup.commit();
 				}
-			} 
-			catch (CommitException e) {
+			} catch (CommitException e) {
 				if (e.getCause() instanceof InvalidValueException)
-					throw (InvalidValueException)e.getCause();
+					throw (InvalidValueException) e.getCause();
 				else if (e.getCause() instanceof SourceException)
-					throw (SourceException)e.getCause();
+					throw (SourceException) e.getCause();
 				else
 					throw new CommitRuntimeException(e);
 			}
 		} else if (wrappedComponent instanceof Buffered) {
-			((Buffered)wrappedComponent).commit(); 
+			((Buffered) wrappedComponent).commit();
 		} else {
 			// NOOP
 		}
@@ -348,8 +351,7 @@ VerticalLayout implements Buffered {
 		onDone();
 	}
 
-	private String findHtmlMessage(InvalidValueException exception)
-	{
+	private String findHtmlMessage(InvalidValueException exception) {
 		if (!(exception.getMessage() == null || exception.getMessage().isEmpty()))
 			return exception.getHtmlMessage();
 
@@ -403,8 +405,9 @@ VerticalLayout implements Buffered {
 				}
 			}
 
-			new Notification(I18nProperties.getString(Strings.messageCheckInputData), htmlMsg.toString(), Type.ERROR_MESSAGE, true).show(Page.getCurrent());
-		} 
+			new Notification(I18nProperties.getString(Strings.messageCheckInputData), htmlMsg.toString(), Type.ERROR_MESSAGE, true)
+				.show(Page.getCurrent());
+		}
 	}
 
 	@Override
@@ -414,7 +417,7 @@ VerticalLayout implements Buffered {
 				fieldGroup.discard();
 			}
 		} else if (wrappedComponent instanceof Buffered) {
-			((Buffered)wrappedComponent).discard(); 
+			((Buffered) wrappedComponent).discard();
 		} else {
 			// NOOP
 		}
@@ -429,7 +432,7 @@ VerticalLayout implements Buffered {
 				fieldGroup.setBuffered(buffered);
 			}
 		} else if (wrappedComponent instanceof Buffered) {
-			((Buffered)wrappedComponent).setBuffered(buffered);
+			((Buffered) wrappedComponent).setBuffered(buffered);
 		} else {
 			// NOOP
 		}
@@ -477,10 +480,10 @@ VerticalLayout implements Buffered {
 			listener.onCommit();
 	}
 
-
 	/**
 	 * Fügt einen Listener zum Abbrechen hinzu.
 	 * Blendet den Abbrechen-Button aber nicht ein.
+	 * 
 	 * @param listener
 	 */
 	public void addDiscardListener(DiscardListener listener) {
@@ -534,23 +537,24 @@ VerticalLayout implements Buffered {
 		} catch (IllegalStateException e) {
 			super.setEnabled(readOnly);
 		}
-//
-//		getWrappedComponent().setReadOnly(readOnly);
-//		if (fieldGroups != null) {
-//			for (FieldGroup fieldGroup : fieldGroups) {
-//				fieldGroup.setReadOnly(readOnly);
-//			}
-//		}
-//
-//		buttonsPanel.setVisible(!readOnly);
+		//
+		//		getWrappedComponent().setReadOnly(readOnly);
+		//		if (fieldGroups != null) {
+		//			for (FieldGroup fieldGroup : fieldGroups) {
+		//				fieldGroup.setReadOnly(readOnly);
+		//			}
+		//		}
+		//
+		//		buttonsPanel.setVisible(!readOnly);
 	}
 
-//	@Override
-//	public boolean isReadOnly() {
-//		return getWrappedComponent().isReadOnly();
-//	}
+	//	@Override
+	//	public boolean isReadOnly() {
+	//		return getWrappedComponent().isReadOnly();
+	//	}
 
 	protected static class ClickShortcut extends Button.ClickShortcut {
+
 		private static final long serialVersionUID = 1L;
 
 		private final Notifier notifier;
@@ -582,7 +586,9 @@ VerticalLayout implements Buffered {
 	}
 
 	public static class CommitRuntimeException extends RuntimeException {
+
 		private static final long serialVersionUID = 1L;
+
 		public CommitRuntimeException(CommitException e) {
 			super(e.getMessage(), e);
 		}

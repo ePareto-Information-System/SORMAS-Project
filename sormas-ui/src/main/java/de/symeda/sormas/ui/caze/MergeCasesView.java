@@ -22,6 +22,7 @@ import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.utils.AbstractView;
+import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 
 @SuppressWarnings("serial")
@@ -33,7 +34,7 @@ public class MergeCasesView extends AbstractView {
 
 	private MergeCasesGrid grid;
 	private MergeCasesFilterComponent filterComponent;
-	
+
 	public MergeCasesView() {
 		super(VIEW_NAME);
 
@@ -42,8 +43,8 @@ public class MergeCasesView extends AbstractView {
 		criteria = ViewModelProviders.of(MergeCasesView.class).get(CaseCriteria.class);
 		if (criteriaUninitialized) {
 			criteria.creationDateFrom(DateHelper.subtractDays(new Date(), 30))
-			.creationDateTo(new Date())
-			.region(UserProvider.getCurrent().getUser().getRegion());
+				.creationDateTo(new Date())
+				.setRegion(UserProvider.getCurrent().getUser().getRegion());
 		}
 
 		grid = new MergeCasesGrid();
@@ -63,7 +64,7 @@ public class MergeCasesView extends AbstractView {
 			grid.reload(ignoreRegion);
 		});
 		gridLayout.addComponent(filterComponent);
-		
+
 		gridLayout.addComponent(grid);
 		gridLayout.setMargin(true);
 		gridLayout.setSpacing(false);
@@ -72,23 +73,20 @@ public class MergeCasesView extends AbstractView {
 		gridLayout.setStyleName("crud-main-layout");
 		addComponent(gridLayout);
 
-		Button btnOpenGuide = new Button(I18nProperties.getCaption(Captions.caseOpenMergeGuide));
-		btnOpenGuide.setId("openMergeGuide");
-		btnOpenGuide.setIcon(VaadinIcons.QUESTION);
-		btnOpenGuide.addClickListener(e -> buildAndOpenMergeInstructions());
+		Button btnOpenGuide = ButtonHelper.createIconButton(Captions.caseOpenMergeGuide, VaadinIcons.QUESTION, e -> buildAndOpenMergeInstructions());
 		addHeaderComponent(btnOpenGuide);
 
-		Button btnCalculateCompleteness = new Button(I18nProperties.getCaption(Captions.caseCalculateCompleteness));
-		btnCalculateCompleteness.setId("calculateCompleteness");
-		btnCalculateCompleteness.setIcon(VaadinIcons.CALC);
-		btnCalculateCompleteness.addClickListener(e -> showCalculateCompletenessWindow());
+		Button btnCalculateCompleteness =
+			ButtonHelper.createIconButton(Captions.caseCalculateCompleteness, VaadinIcons.CALC, e -> showCalculateCompletenessWindow());
+
 		addHeaderComponent(btnCalculateCompleteness);
 
-		Button btnBack = new Button(I18nProperties.getCaption(Captions.caseBackToDirectory));
-		btnBack.setId("backToDirectory");
-		btnBack.setIcon(VaadinIcons.ARROW_BACKWARD);
-		btnBack.addStyleName(ValoTheme.BUTTON_PRIMARY);
-		btnBack.addClickListener(e -> ControllerProvider.getCaseController().navigateToIndex());
+		Button btnBack = ButtonHelper.createIconButton(
+			Captions.caseBackToDirectory,
+			VaadinIcons.ARROW_BACKWARD,
+			e -> ControllerProvider.getCaseController().navigateToIndex(),
+			ValoTheme.BUTTON_PRIMARY);
+
 		addHeaderComponent(btnBack);
 	}
 
@@ -99,15 +97,22 @@ public class MergeCasesView extends AbstractView {
 	}
 
 	private void showCalculateCompletenessWindow() {
-		VaadinUiUtil.showConfirmationPopup(I18nProperties.getString(Strings.headingConfirmUpdateCompleteness), 
-				new Label(I18nProperties.getString(Strings.confirmationUpdateCompleteness)), 
-				I18nProperties.getString(Strings.yes), I18nProperties.getString(Strings.no), null, e -> {
-					if (e.booleanValue() == true) {
-						grid.calculateCompletenessValues();
-						new Notification(I18nProperties.getString(Strings.headingCasesArchived),
-								I18nProperties.getString(Strings.messageCompletenessValuesUpdated), Type.HUMANIZED_MESSAGE, false).show(Page.getCurrent());
-					}
-				});
+		VaadinUiUtil.showConfirmationPopup(
+			I18nProperties.getString(Strings.headingConfirmUpdateCompleteness),
+			new Label(I18nProperties.getString(Strings.confirmationUpdateCompleteness)),
+			I18nProperties.getString(Strings.yes),
+			I18nProperties.getString(Strings.no),
+			null,
+			e -> {
+				if (e.booleanValue() == true) {
+					grid.calculateCompletenessValues();
+					new Notification(
+						I18nProperties.getString(Strings.headingCasesArchived),
+						I18nProperties.getString(Strings.messageCompletenessValuesUpdated),
+						Type.HUMANIZED_MESSAGE,
+						false).show(Page.getCurrent());
+				}
+			});
 	}
 
 	@Override

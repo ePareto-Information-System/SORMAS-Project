@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.person;
 
@@ -35,29 +35,30 @@ public interface PersonFacade {
 	List<PersonDto> getPersonsAfter(Date date);
 
 	List<PersonDto> getDeathsBetween(Date fromDate, Date toDate, DistrictReferenceDto districtRef, Disease disease);
-	
-    PersonReferenceDto getReferenceByUuid(String uuid);
-    
-    PersonDto getPersonByUuid(String uuid);
 
-    PersonDto savePerson(PersonDto dto) throws ValidationRuntimeException;
-    
-    void validate(PersonDto dto) throws ValidationRuntimeException;
-    
+	PersonReferenceDto getReferenceByUuid(String uuid);
+
+	PersonDto getPersonByUuid(String uuid);
+
+	PersonDto savePerson(PersonDto dto) throws ValidationRuntimeException;
+
+	void validate(PersonDto dto) throws ValidationRuntimeException;
+
 	List<String> getAllUuids();
 
 	List<PersonDto> getByUuids(List<String> uuids);
-	
+
 	PersonIndexDto getIndexDto(String uuid);
 
-	Map<Disease, Long> getDeathCountByDisease(CaseCriteria caseCriteria);
+	Map<Disease, Long> getDeathCountByDisease(CaseCriteria caseCriteria, boolean excludeSharedCases, boolean excludeCasesFromContacts);
 
 	/**
 	 * Returns a list with the names of all persons that the user has access to and that match the criteria.
 	 * This only includes persons that are associated with an active case, contact or event participant.
 	 */
 	List<PersonNameDto> getMatchingNameDtos(UserReferenceDto user, PersonSimilarityCriteria criteria);
-	
+
 	List<PersonIndexDto> getIndexDtosByUuids(List<String> personUuids);
-	
+
+	Boolean isValidPersonUuid(String personUuid);
 }

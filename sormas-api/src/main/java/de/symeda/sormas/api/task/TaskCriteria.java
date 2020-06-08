@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.task;
 
@@ -49,19 +49,24 @@ public class TaskCriteria extends BaseCriteria implements Serializable {
 	private Date statusChangeDateTo;
 	private EntityRelevanceStatus relevanceStatus;
 
-	public TaskCriteria taskStatus(TaskStatus taskStatus) {
-		this.taskStatus = taskStatus;
-		return this;
-	}
-	
 	public TaskStatus getTaskStatus() {
 		return taskStatus;
+	}
+
+	public void setTaskStatus(TaskStatus taskStatus) {
+		this.taskStatus = taskStatus;
+	}
+
+	public TaskCriteria taskStatus(TaskStatus taskStatus) {
+		setTaskStatus(taskStatus);
+		return this;
 	}
 
 	public TaskCriteria taskType(TaskType taskType) {
 		this.taskType = taskType;
 		return this;
 	}
+
 	public TaskType getTaskType() {
 		return taskType;
 	}
@@ -70,14 +75,16 @@ public class TaskCriteria extends BaseCriteria implements Serializable {
 		this.assigneeUser = assigneeUser;
 		return this;
 	}
+
 	public UserReferenceDto getAssigneeUser() {
 		return assigneeUser;
 	}
-	
+
 	public TaskCriteria excludeAssigneeUser(UserReferenceDto excludeAssigneeUser) {
 		this.excludeAssigneeUser = excludeAssigneeUser;
 		return this;
 	}
+
 	public UserReferenceDto getExcludeAssigneeUser() {
 		return excludeAssigneeUser;
 	}
@@ -86,6 +93,7 @@ public class TaskCriteria extends BaseCriteria implements Serializable {
 		this.caze = caze;
 		return this;
 	}
+
 	public CaseReferenceDto getCaze() {
 		return caze;
 	}
@@ -94,6 +102,7 @@ public class TaskCriteria extends BaseCriteria implements Serializable {
 		this.contact = contact;
 		return this;
 	}
+
 	public ContactReferenceDto getContact() {
 		return contact;
 	}
@@ -102,12 +111,12 @@ public class TaskCriteria extends BaseCriteria implements Serializable {
 		this.contactPerson = contactPerson;
 		return this;
 	}
-	
+
 	public TaskCriteria event(EventReferenceDto event) {
 		this.event = event;
 		return this;
 	}
-	
+
 	public PersonReferenceDto getContactPerson() {
 		return contactPerson;
 	}
@@ -125,7 +134,7 @@ public class TaskCriteria extends BaseCriteria implements Serializable {
 		this.dueDateTo = dueDateTo;
 		return this;
 	}
-	
+
 	public TaskCriteria dueDateFrom(Date dueDateFrom) {
 		this.dueDateFrom = dueDateFrom;
 		return this;
@@ -134,16 +143,16 @@ public class TaskCriteria extends BaseCriteria implements Serializable {
 	public Date getDueDateFrom() {
 		return dueDateFrom;
 	}
-	
+
 	public TaskCriteria dueDateTo(Date dueDateTo) {
 		this.dueDateTo = dueDateTo;
 		return this;
 	}
-	
+
 	public Date getDueDateTo() {
 		return dueDateTo;
 	}
-	
+
 	public TaskCriteria startDateBetween(Date startDateFrom, Date startDateTo) {
 		this.startDateFrom = startDateFrom;
 		this.startDateTo = startDateTo;
@@ -154,7 +163,7 @@ public class TaskCriteria extends BaseCriteria implements Serializable {
 		this.startDateFrom = startDateFrom;
 		return this;
 	}
-	
+
 	public Date getStartDateFrom() {
 		return startDateFrom;
 	}
@@ -163,11 +172,10 @@ public class TaskCriteria extends BaseCriteria implements Serializable {
 		this.startDateTo = startDateTo;
 		return this;
 	}
-	
+
 	public Date getStartDateTo() {
 		return startDateTo;
 	}
-	
 
 	public TaskCriteria statusChangeDateBetween(Date statusChangeDateFrom, Date statusChangeDateTo) {
 		this.statusChangeDateFrom = statusChangeDateFrom;
@@ -179,28 +187,27 @@ public class TaskCriteria extends BaseCriteria implements Serializable {
 		this.statusChangeDateFrom = statusChangeDateFrom;
 		return this;
 	}
-	
+
 	public Date getStatusChangeDateFrom() {
 		return statusChangeDateFrom;
 	}
-	
+
 	public TaskCriteria statusChangeDateTo(Date statusChangeDateTo) {
 		this.statusChangeDateTo = statusChangeDateTo;
 		return this;
 	}
-	
+
 	public Date getStatusChangeDateTo() {
 		return statusChangeDateTo;
 	}
-	
+
 	public TaskCriteria relevanceStatus(EntityRelevanceStatus relevanceStatus) {
 		this.relevanceStatus = relevanceStatus;
 		return this;
 	}
-	
+
 	@IgnoreForUrl
 	public EntityRelevanceStatus getRelevanceStatus() {
 		return relevanceStatus;
 	}
-	
 }

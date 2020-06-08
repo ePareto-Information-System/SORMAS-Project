@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.events;
 
@@ -23,48 +23,44 @@ import com.vaadin.v7.ui.TextField;
 
 import de.symeda.sormas.api.event.EventParticipantDto;
 import de.symeda.sormas.api.person.PersonDto;
-import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
 
 public class EventParticipantCreateForm extends AbstractEditForm<EventParticipantDto> {
-	
+
 	private static final long serialVersionUID = 1L;
-	
+
 	private static final String FIRST_NAME = PersonDto.FIRST_NAME;
 	private static final String LAST_NAME = PersonDto.LAST_NAME;
-	
-	private static final String HTML_LAYOUT =
-			fluidRowLocs(EventParticipantDto.INVOLVEMENT_DESCRIPTION) +
-			fluidRowLocs(FIRST_NAME, LAST_NAME);
-	
-	public EventParticipantCreateForm(UserRight editOrCreateUserRight) {
-		super(EventParticipantDto.class, EventParticipantDto.I18N_PREFIX, editOrCreateUserRight);
-		
-        setWidth(540, Unit.PIXELS);
-        
-        hideValidationUntilNextCommit();
+
+	private static final String HTML_LAYOUT = fluidRowLocs(EventParticipantDto.INVOLVEMENT_DESCRIPTION) + fluidRowLocs(FIRST_NAME, LAST_NAME);
+
+	public EventParticipantCreateForm() {
+
+		super(EventParticipantDto.class, EventParticipantDto.I18N_PREFIX);
+		setWidth(540, Unit.PIXELS);
+		hideValidationUntilNextCommit();
 	}
-	
+
 	@Override
 	protected void addFields() {
+
 		addField(EventParticipantDto.INVOLVEMENT_DESCRIPTION, TextField.class);
 		addCustomField(FIRST_NAME, String.class, TextField.class);
-    	addCustomField(LAST_NAME, String.class, TextField.class);
-		
+		addCustomField(LAST_NAME, String.class, TextField.class);
+
 		setRequired(true, EventParticipantDto.INVOLVEMENT_DESCRIPTION, FIRST_NAME, LAST_NAME);
 	}
-	
-	public String getPersonFirstName() {
-    	return (String)getField(FIRST_NAME).getValue();
-    }
 
-    public String getPersonLastName() {
-    	return (String)getField(LAST_NAME).getValue();
-    }
-			
+	public String getPersonFirstName() {
+		return (String) getField(FIRST_NAME).getValue();
+	}
+
+	public String getPersonLastName() {
+		return (String) getField(LAST_NAME).getValue();
+	}
+
 	@Override
 	protected String createHtmlLayout() {
 		return HTML_LAYOUT;
 	}
-
 }

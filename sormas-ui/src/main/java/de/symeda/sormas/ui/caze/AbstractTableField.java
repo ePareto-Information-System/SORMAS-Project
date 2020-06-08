@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.caze;
 
@@ -35,8 +35,6 @@ import org.slf4j.LoggerFactory;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -55,19 +53,19 @@ import com.vaadin.v7.ui.Table;
 import com.vaadin.v7.ui.Table.ColumnGenerator;
 
 import de.symeda.sormas.api.i18n.Captions;
-import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 
 /**
  * TODO replace table with grid?
  * TODO whole component seems to need improvement (e.g. should use setInternalValue instead of setValue)
  * Does probably not make sense, because of future update to Vaadin 8
- * 
+ *
  * @author Martin Wahnschaffe
  */
 @SuppressWarnings({
-		"serial",
-		"rawtypes" })
+	"serial",
+	"rawtypes" })
 public abstract class AbstractTableField<E> extends CustomField<Collection> {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -99,10 +97,11 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 	}
 
 	/**
-	 * If there are different rows in the table 
-	 * and do not need to be scrolled vertically (<= 10 entries) 
-	 * (and expandRatio is used?), A horizontal scroll bar appears. 
+	 * If there are different rows in the table
+	 * and do not need to be scrolled vertically (<= 10 entries)
+	 * (and expandRatio is used?), A horizontal scroll bar appears.
 	 * This can be corrected in CSS as follows:
+	 * 
 	 * <pre>
 	 * .v-table-scrollbarFix .v-table-body-wrapper,
 	 * .v-table-scrollbarFix .v-table-body-wrapper:focus {
@@ -111,6 +110,7 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 	 * </pre>
 	 */
 	protected void applyScrollbarFix() {
+
 		if (table.getPageLength() == 0) {
 			table.addStyleName(SCROLLBAR_FIX_CSS);
 		} else {
@@ -119,6 +119,7 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 	}
 
 	protected void applyTablePageLength() {
+
 		if (getTable().size() <= getMaxTablePageLength()) {
 			table.setPageLength(0);
 		} else {
@@ -129,7 +130,7 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 
 	@Override
 	protected Component initContent() {
-		
+
 		this.addStyleName(CssStyles.CAPTION_HIDDEN);
 		this.addStyleName(CssStyles.VSPACE_2);
 
@@ -139,22 +140,23 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 		HorizontalLayout headerLayout = new HorizontalLayout();
 		{
 			headerLayout.setWidth(100, Unit.PERCENTAGE);
-			
+
 			captionLabel = new Label(getCaption());
 			captionLabel.setSizeUndefined();
 			headerLayout.addComponent(captionLabel);
 			headerLayout.setComponentAlignment(captionLabel, Alignment.BOTTOM_LEFT);
 			headerLayout.setExpandRatio(captionLabel, 0);
-			
+
 			addButton = createAddButton();
 			headerLayout.addComponent(addButton);
 			headerLayout.setComponentAlignment(addButton, Alignment.BOTTOM_RIGHT);
 			headerLayout.setExpandRatio(addButton, 1);
 		}
 		layout.addComponent(headerLayout);
-		
+
 		table = createTable();
 		table.addItemSetChangeListener(new ItemSetChangeListener() {
+
 			@Override
 			public void containerItemSetChange(ItemSetChangeEvent event) {
 				applyTablePageLength();
@@ -162,14 +164,13 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 		});
 		layout.addComponent(table);
 
-
 		return layout;
 	}
-	
+
 	@Override
 	public void setCaption(String caption) {
+
 		super.setCaption(caption);
-		
 		captionLabel.setValue(caption);
 	}
 
@@ -199,7 +200,7 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 
 			@Override
 			public Object generateCell(Table source, Object itemId, Object columnId) {
-				return generateEditCell(source, itemId, columnId);
+				return generateEditCell(itemId);
 			}
 		};
 		table.addGeneratedColumn(EDIT_COLUMN_ID, editColumnGenerator);
@@ -222,28 +223,15 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected Object generateEditCell(Table source, Object itemId, Object columnId) {
-		Button button = new Button(VaadinIcons.EDIT, e -> {
-			editEntry((E) itemId, false, result -> onEntryChanged(result));
-		});
-		button.setStyleName(ValoTheme.BUTTON_BORDERLESS);
-		return button;
+	protected Object generateEditCell(Object itemId) {
+
+		return ButtonHelper.createIconButtonWithCaption(itemId + "-edit", null, VaadinIcons.EDIT, e -> {
+			editEntry((E) itemId, false, this::onEntryChanged);
+		}, ValoTheme.BUTTON_BORDERLESS);
 	}
 
 	protected Button createAddButton() {
-
-		Button button = new Button(I18nProperties.getCaption(Captions.actionNewEntry));
-		button.addStyleName(ValoTheme.BUTTON_LINK);
-
-		button.addClickListener(new ClickListener() {
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				addEntry();
-			}
-		});
-
-		return button;
+		return ButtonHelper.createButton(Captions.actionNewEntry, event -> addEntry(), ValoTheme.BUTTON_LINK);
 	}
 
 	/**
@@ -251,6 +239,7 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 	 * @see #editEntry(Object)
 	 */
 	protected void addEntry() {
+
 		final E entry = createEntry();
 
 		editEntry(entry, true, new Consumer<E>() {
@@ -269,8 +258,8 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 	 * Override in order to do custom sort
 	 */
 	protected void onEntryChanged(E entry) {
+
 		getTable().refreshRowCache();
-		
 		fireValueChange(false);
 	}
 
@@ -280,6 +269,7 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 	protected abstract void updateColumns();
 
 	protected E createEntry() {
+
 		// TODO good way to do it like this?
 		try {
 			return getEntryType().newInstance();
@@ -291,14 +281,17 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 
 	/**
 	 * Copy of an entry. All editing is then done within this copy. At commit, this entry replaces the old one.
-	 * 
-	 * @param sourceEntry original
+	 *
+	 * @param sourceEntry
+	 *            original
 	 * @return
 	 */
 	protected E cloneEntry(E sourceEntry) {
+
 		if (sourceEntry == null) {
 			return null;
 		}
+
 		E clone = ObjectUtils.clone(sourceEntry);
 		if (clone == null) {
 			throw new CloneFailedException("Entry is not Cloneable");
@@ -310,9 +303,10 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 	 * Delete entry (e.g., called by the user).
 	 */
 	public void removeEntry(E entry) {
+
 		// gewünschten Eintrag löschen
 		getTable().removeItem(entry);
-		
+
 		fireValueChange(false);
 	}
 
@@ -328,7 +322,7 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 
 	/**
 	 * Specifies the possibility to change the entry before it is commited.
-	 * 
+	 *
 	 * @return May the entry be commited?
 	 */
 	protected boolean preEntryCommit(E entry) {
@@ -397,7 +391,7 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 		applyTablePageLength();
 
 		updateColumns();
-		
+
 		fireValueChange(false);
 
 		// not set, we manage our own dataSource
@@ -411,6 +405,7 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 
 	@Override
 	public boolean isModified() {
+
 		if (dataSource == null) {
 			return false;
 		}
@@ -453,6 +448,7 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 	 * Auxiliary method for comparing two objects. Uses equals for comparing.
 	 */
 	public static boolean isModifiedObject(Object oldObject, Object newObject) {
+
 		if (oldObject == newObject) {
 			return false;
 		}
@@ -520,9 +516,9 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 
 				// done
 				dataSource.setValue(entriesCopy);
-				
+
 				fireValueChange(false);
-				
+
 			} else {
 				/* An invalid value and we don't allow them, throw the exception */
 				validate();
@@ -545,7 +541,7 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 
 	@Override
 	public Collection<E> getValue() {
-		
+
 		BeanItemContainer<E> container = getContainer();
 		if (container == null) {
 			return null;
@@ -567,12 +563,11 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 		}
 		return true;
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void setValue(Collection newFieldValue, boolean repaintIsNotNeeded, boolean ignoreReadOnly)
-			throws com.vaadin.v7.data.Property.ReadOnlyException, ConversionException, InvalidValueException {
+		throws com.vaadin.v7.data.Property.ReadOnlyException, ConversionException, InvalidValueException {
 
 		BeanItemContainer<E> container = getContainer();
 		if (container == null) {
@@ -588,7 +583,7 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 
 	/**
 	 * @since Vaadin 7.4
-	 *       Workaround, because in AbstractField.clear () calls setValue (null).
+	 *        Workaround, because in AbstractField.clear () calls setValue (null).
 	 */
 	public void clear() {
 		BeanItemContainer<E> container = getContainer();
@@ -625,5 +620,4 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 			getTable().removeContainerProperty(EDIT_COLUMN_ID);
 		}
 	}
-	
 }

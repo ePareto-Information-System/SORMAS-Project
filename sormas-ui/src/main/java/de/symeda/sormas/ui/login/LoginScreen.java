@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.login;
 
@@ -49,6 +49,7 @@ import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.UserRightsException;
 
@@ -77,7 +78,7 @@ public class LoginScreen extends CssLayout {
 		addComponent(layout);
 
 		layout.addComponent(buildLoginLayout());
-		
+
 		// custom html layout
 		Layout loginSidebarLayout = buildLoginSidebarLayout();
 		layout.addComponent(loginSidebarLayout);
@@ -149,10 +150,10 @@ public class LoginScreen extends CssLayout {
 		return loginLayout;
 	}
 
-
 	private Component buildLoginForm() {
 
 		LoginForm loginForm = new LoginForm() {
+
 			@Override
 			protected TextField createUsernameField() {
 				TextField usernameField = new TextField(I18nProperties.getCaption(Captions.Login_username));
@@ -160,7 +161,7 @@ public class LoginScreen extends CssLayout {
 				usernameField.setWidth(100, Unit.PERCENTAGE);
 				return usernameField;
 			}
-			
+
 			@Override
 			protected PasswordField createPasswordField() {
 				PasswordField passwordField = new PasswordField(I18nProperties.getCaption(Captions.Login_password));
@@ -170,16 +171,15 @@ public class LoginScreen extends CssLayout {
 
 			@Override
 			protected Button createLoginButton() {
-				Button loginButton = new Button(I18nProperties.getCaption(Captions.Login_doLogIn));
+				Button loginButton = ButtonHelper.createButton(Captions.Login_doLogIn, null, CssStyles.FORCE_CAPTION, ValoTheme.BUTTON_PRIMARY);
 				loginButton.setWidth(100, Unit.PERCENTAGE);
-				CssStyles.style(loginButton, CssStyles.FORCE_CAPTION, ValoTheme.BUTTON_PRIMARY);
+
 				return loginButton;
 			}
-			
+
 			@Override
-			protected Component createContent(TextField userNameField, PasswordField passwordField,
-					Button loginButton) {
-				VerticalLayout contentLayout = (VerticalLayout)super.createContent(userNameField, passwordField, loginButton);
+			protected Component createContent(TextField userNameField, PasswordField passwordField, Button loginButton) {
+				VerticalLayout contentLayout = (VerticalLayout) super.createContent(userNameField, passwordField, loginButton);
 				contentLayout.setMargin(false);
 				contentLayout.setSpacing(false);
 				return contentLayout;
@@ -194,7 +194,7 @@ public class LoginScreen extends CssLayout {
 
 		return loginForm;
 	}
-	
+
 	private CssLayout buildLoginDetails() {
 
 		CssLayout loginDetailsLayout = new CssLayout();
@@ -223,7 +223,7 @@ public class LoginScreen extends CssLayout {
 
 		CssLayout loginSidebarLayout = new CssLayout();
 		loginSidebarLayout.setStyleName(CssStyles.LOGINSIDEBAR);
-		
+
 		VerticalLayout innerLayout = new VerticalLayout();
 		CssStyles.style(innerLayout, CssStyles.LAYOUT_SPACIOUS);
 		innerLayout.setSizeUndefined();
@@ -239,17 +239,19 @@ public class LoginScreen extends CssLayout {
 		CssStyles.style(fullNameText, CssStyles.H2, CssStyles.LABEL_PRIMARY, CssStyles.VSPACE_TOP_NONE, CssStyles.ALIGN_CENTER);
 		innerLayout.addComponent(fullNameText);
 		innerLayout.setComponentAlignment(fullNameText, Alignment.TOP_CENTER);
-		
-		Label missionText = new Label("• " + I18nProperties.getCaption(Captions.LoginSidebar_diseasePrevention)
-				+ "<br>• " + I18nProperties.getCaption(Captions.LoginSidebar_diseaseDetection) + "<br>• "
-				+ I18nProperties.getCaption(Captions.LoginSidebar_outbreakResponse), ContentMode.HTML);
+
+		Label missionText = new Label(
+			"• " + I18nProperties.getCaption(Captions.LoginSidebar_diseasePrevention) + "<br>• "
+				+ I18nProperties.getCaption(Captions.LoginSidebar_diseaseDetection) + "<br>• "
+				+ I18nProperties.getCaption(Captions.LoginSidebar_outbreakResponse),
+			ContentMode.HTML);
 		missionText.setWidth(320, Unit.PIXELS);
 		CssStyles.style(missionText, CssStyles.H2, CssStyles.VSPACE_TOP_NONE, CssStyles.ALIGN_CENTER);
 		innerLayout.addComponent(missionText);
 		innerLayout.setComponentAlignment(missionText, Alignment.TOP_CENTER);
-		
+
 		loginSidebarLayout.addComponent(innerLayout);
-		
+
 		Label poweredByLabel = new Label(I18nProperties.getCaption(Captions.LoginSidebar_poweredBy));
 		poweredByLabel.addStyleNames(CssStyles.LOGIN_HEADLINELABEL, CssStyles.H2);
 		loginSidebarLayout.addComponent(poweredByLabel);
@@ -276,17 +278,17 @@ public class LoginScreen extends CssLayout {
 
 		Label customHtmlLabel = new Label();
 		customHtmlLabel.setContentMode(ContentMode.HTML);
-		
+
 		Path customHtmlDirectory = Paths.get(FacadeProvider.getConfigFacade().getCustomFilesPath());
 		Path filePath = customHtmlDirectory.resolve("loginsidebar.html");
-		
+
 		try {
 			byte[] encoded = Files.readAllBytes(filePath);
 			customHtmlLabel.setValue(new String(encoded, UTF_8));
 		} catch (IOException e) {
 			customHtmlLabel.setValue("");
 		}
-		
+
 		loginSidebarLayout.addComponent(customHtmlLabel);
 		return loginSidebarLayout;
 	}
@@ -296,11 +298,15 @@ public class LoginScreen extends CssLayout {
 			if (LoginHelper.login(username, password)) {
 				loginListener.loginSuccessful();
 			} else {
-				showNotification(new Notification(I18nProperties.getString(Strings.headingLoginFailed),
-						I18nProperties.getString(Strings.messageLoginFailed), Notification.Type.WARNING_MESSAGE));
+				showNotification(
+					new Notification(
+						I18nProperties.getString(Strings.headingLoginFailed),
+						I18nProperties.getString(Strings.messageLoginFailed),
+						Notification.Type.WARNING_MESSAGE));
 			}
 		} catch (UserRightsException e) {
-			showNotification(new Notification(I18nProperties.getString(Strings.headingLoginFailed), e.getMessage(), Notification.Type.WARNING_MESSAGE));
+			showNotification(
+				new Notification(I18nProperties.getString(Strings.headingLoginFailed), e.getMessage(), Notification.Type.WARNING_MESSAGE));
 		}
 	}
 
@@ -312,6 +318,7 @@ public class LoginScreen extends CssLayout {
 	}
 
 	public interface LoginListener extends Serializable {
+
 		void loginSuccessful();
 	}
 }

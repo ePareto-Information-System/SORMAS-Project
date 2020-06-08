@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.events;
 
@@ -24,8 +24,6 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.MenuBar.Command;
-import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
@@ -37,7 +35,9 @@ import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
+import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.MenuBarHelper;
 
 public class EventParticipantsView extends AbstractEventView {
 
@@ -46,7 +46,7 @@ public class EventParticipantsView extends AbstractEventView {
 	public static final String VIEW_NAME = ROOT_VIEW_NAME + "/eventparticipants";
 
 	private EventParticipantCriteria criteria;
-	
+
 	private EventParticipantsGrid grid;
 	private Button addButton;
 	private VerticalLayout gridLayout;
@@ -74,17 +74,12 @@ public class EventParticipantsView extends AbstractEventView {
 		if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
 			topLayout.setWidth(100, Unit.PERCENTAGE);
 
-			MenuBar bulkOperationsDropdown = new MenuBar();	
-			MenuItem bulkOperationsItem = bulkOperationsDropdown.addItem(I18nProperties.getCaption(Captions.bulkActions), null);
-
-			Command deleteCommand = selectedItem -> {
-				ControllerProvider.getEventParticipantController().deleteAllSelectedItems(grid.asMultiSelect().getSelectedItems(), new Runnable() {
-					public void run() {
-						navigateTo(criteria);
-					}
-				});
-			};
-			bulkOperationsItem.addItem(I18nProperties.getCaption(Captions.bulkDelete), VaadinIcons.TRASH, deleteCommand);
+			MenuBar bulkOperationsDropdown = MenuBarHelper.createDropDown(
+				Captions.bulkActions,
+				new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkDelete), VaadinIcons.TRASH, selectedItem -> {
+					ControllerProvider.getEventParticipantController()
+						.deleteAllSelectedItems(grid.asMultiSelect().getSelectedItems(), () -> navigateTo(criteria));
+				}));
 
 			topLayout.addComponent(bulkOperationsDropdown);
 			topLayout.setComponentAlignment(bulkOperationsDropdown, Alignment.TOP_RIGHT);
@@ -92,13 +87,10 @@ public class EventParticipantsView extends AbstractEventView {
 		}
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.EVENTPARTICIPANT_CREATE)) {
-			addButton = new Button(I18nProperties.getCaption(Captions.eventParticipantAddPerson));
-			addButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
-			addButton.setIcon(VaadinIcons.PLUS_CIRCLE);
-			addButton.addClickListener(e -> {
-				ControllerProvider.getEventParticipantController().createEventParticipant(this.getEventRef(),
-						r -> navigateTo(criteria));
-			});
+			addButton = ButtonHelper.createIconButton(Captions.eventParticipantAddPerson, VaadinIcons.PLUS_CIRCLE, e -> {
+				ControllerProvider.getEventParticipantController().createEventParticipant(this.getEventRef(), r -> navigateTo(criteria));
+			}, ValoTheme.BUTTON_PRIMARY);
+
 			topLayout.addComponent(addButton);
 			topLayout.setComponentAlignment(addButton, Alignment.MIDDLE_RIGHT);
 		}
@@ -109,12 +101,13 @@ public class EventParticipantsView extends AbstractEventView {
 
 	@Override
 	public void enter(ViewChangeEvent event) {
+
 		if (event != null) {
 			super.enter(event);
 		}
-		
+
 		criteria.event(getEventRef());
-		
+
 		if (grid == null) {
 			grid = new EventParticipantsGrid(criteria);
 			gridLayout = new VerticalLayout();
@@ -127,8 +120,7 @@ public class EventParticipantsView extends AbstractEventView {
 			gridLayout.setStyleName("crud-main-layout");
 			setSubComponent(gridLayout);
 		}
-		
+
 		grid.reload();
 	}
-
 }

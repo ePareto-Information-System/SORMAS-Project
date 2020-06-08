@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.caze;
 
@@ -26,6 +26,7 @@ import de.symeda.sormas.api.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.infrastructure.PointOfEntryReferenceDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.person.PresentCondition;
+import de.symeda.sormas.api.region.CommunityReferenceDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
@@ -37,13 +38,17 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 
 	private static final long serialVersionUID = 5114202107622217837L;
 
+	public static final String PRESENT_CONDITION = "presentCondition";
+	public static final String REPORTING_USER_ROLE = "reportingUserRole";
+	public static final String MUST_HAVE_NO_GEO_COORDINATES = "mustHaveNoGeoCoordinates";
+	public static final String MUST_BE_PORT_HEALTH_CASE_WITHOUT_FACILITY = "mustBePortHealthCaseWithoutFacility";
+	public static final String MUST_HAVE_CASE_MANAGEMENT_DATA = "mustHaveCaseManagementData";
+	public static final String EXCLUDE_SHARED_CASES = "excludeSharedCases";
+	public static final String WITHOUT_RESPONSIBLE_OFFICER = "withoutResponsibleOfficer";
 	public static final String CREATION_DATE_FROM = "creationDateFrom";
 	public static final String CREATION_DATE_TO = "creationDateTo";
-	public static final String DISEASE = "disease";
 	public static final String NAME_UUID_EPID_NUMBER_LIKE = "nameUuidEpidNumberLike";
 	public static final String REPORTING_USER_LIKE = "reportingUserLike";
-	public static final String REGION = "region";
-	public static final String DISTRICT = "district";
 	public static final String NEW_CASE_DATE_TYPE = "newCaseDateType";
 	public static final String NEW_CASE_DATE_FROM = "newCaseDateFrom";
 	public static final String NEW_CASE_DATE_TO = "newCaseDateTo";
@@ -56,6 +61,7 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 	private PresentCondition presentCondition;
 	private RegionReferenceDto region;
 	private DistrictReferenceDto district;
+	private CommunityReferenceDto community;
 	private FacilityReferenceDto healthFacility;
 	private PointOfEntryReferenceDto pointOfEntry;
 	private UserReferenceDto surveillanceOfficer;
@@ -85,6 +91,7 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 
 	@Override
 	public CaseCriteria clone() {
+
 		try {
 			return (CaseCriteria) super.clone();
 		} catch (CloneNotSupportedException e) {
@@ -92,35 +99,36 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 		}
 	}
 
-	public CaseCriteria reportingUserRole(UserRole reportingUserRole) {
+	public void setReportingUserRole(UserRole reportingUserRole) {
 		this.reportingUserRole = reportingUserRole;
-		return this;
 	}
 
 	public UserRole getReportingUserRole() {
 		return reportingUserRole;
 	}
 
-	public CaseCriteria outcome(CaseOutcome outcome) {
+	public void setOutcome(CaseOutcome outcome) {
 		this.outcome = outcome;
-		return this;
 	}
 
 	public CaseOutcome getOutcome() {
 		return outcome;
 	}
 
-	public CaseCriteria caseOrigin(CaseOrigin caseOrigin) {
+	public void setCaseOrigin(CaseOrigin caseOrigin) {
 		this.caseOrigin = caseOrigin;
-		return this;
 	}
 
 	public CaseOrigin getCaseOrigin() {
 		return caseOrigin;
 	}
 
-	public CaseCriteria disease(Disease disease) {
+	public void setDisease(Disease disease) {
 		this.disease = disease;
+	}
+
+	public CaseCriteria disease(Disease disease) {
+		setDisease(disease);
 		return this;
 	}
 
@@ -128,8 +136,12 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 		return disease;
 	}
 
-	public CaseCriteria region(RegionReferenceDto region) {
+	public void setRegion(RegionReferenceDto region) {
 		this.region = region;
+	}
+
+	public CaseCriteria region(RegionReferenceDto region) {
+		setRegion(region);
 		return this;
 	}
 
@@ -137,8 +149,12 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 		return region;
 	}
 
-	public CaseCriteria district(DistrictReferenceDto district) {
+	public void setDistrict(DistrictReferenceDto district) {
 		this.district = district;
+	}
+
+	public CaseCriteria district(DistrictReferenceDto district) {
+		setDistrict(district);
 		return this;
 	}
 
@@ -146,10 +162,20 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 		return district;
 	}
 
+	public CommunityReferenceDto getCommunity() {
+		return community;
+	}
+
+	public void setCommunity(CommunityReferenceDto community) {
+		this.community = community;
+	}
+
 	/**
-	 * @param newCaseDateTo will automatically be set to the end of the day
+	 * @param newCaseDateTo
+	 *            will automatically be set to the end of the day
 	 */
 	public CaseCriteria newCaseDateBetween(Date newCaseDateFrom, Date newCaseDateTo, NewCaseDateType newCaseDateType) {
+
 		this.newCaseDateFrom = newCaseDateFrom;
 		this.newCaseDateTo = newCaseDateTo;
 		this.newCaseDateType = newCaseDateType;
@@ -157,7 +183,7 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 	}
 
 	public CaseCriteria newCaseDateFrom(Date newCaseDateFrom) {
-		this.newCaseDateFrom = newCaseDateFrom;
+		setNewCaseDateFrom(newCaseDateFrom);
 		return this;
 	}
 
@@ -165,18 +191,16 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 		return newCaseDateFrom;
 	}
 
-	public CaseCriteria newCaseDateTo(Date newCaseDateTo) {
-		this.newCaseDateTo = newCaseDateTo;
-		return this;
+	public void setNewCaseDateFrom(Date newCaseDateFrom) {
+		this.newCaseDateFrom = newCaseDateFrom;
 	}
 
 	public Date getNewCaseDateTo() {
 		return newCaseDateTo;
 	}
 
-	public CaseCriteria newCaseDateType(NewCaseDateType newCaseDateType) {
-		this.newCaseDateType = newCaseDateType;
-		return this;
+	public void setNewCaseDateTo(Date newCaseDateTo) {
+		this.newCaseDateTo = newCaseDateTo;
 	}
 
 	public NewCaseDateType getNewCaseDateType() {
@@ -187,63 +211,66 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 		this.dateFilterOption = dateFilterOption;
 		return this;
 	}
-	
+
 	public DateFilterOption getDateFilterOption() {
 		return dateFilterOption;
 	}
-	
-	public CaseCriteria person(PersonReferenceDto person) {
-		this.person = person;
-		return this;
+
+	public void setNewCaseDateType(NewCaseDateType newCaseDateType) {
+		this.newCaseDateType = newCaseDateType;
 	}
 
 	public PersonReferenceDto getPerson() {
 		return person;
 	}
 
-	public CaseCriteria mustHaveNoGeoCoordinates(Boolean mustHaveNoGeoCoordinates) {
-		this.mustHaveNoGeoCoordinates = mustHaveNoGeoCoordinates;
+	public void setPerson(PersonReferenceDto person) {
+		this.person = person;
+	}
+
+	public CaseCriteria person(PersonReferenceDto person) {
+		setPerson(person);
 		return this;
 	}
 
-	public Boolean isMustHaveNoGeoCoordinates() {
+	public void setMustHaveNoGeoCoordinates(Boolean mustHaveNoGeoCoordinates) {
+		this.mustHaveNoGeoCoordinates = mustHaveNoGeoCoordinates;
+	}
+
+	public Boolean getMustHaveNoGeoCoordinates() {
 		return mustHaveNoGeoCoordinates;
 	}
 
-	public CaseCriteria mustBePortHealthCaseWithoutFacility(Boolean mustBePortHealthCaseWithoutFacility) {
+	public void setMustBePortHealthCaseWithoutFacility(Boolean mustBePortHealthCaseWithoutFacility) {
 		this.mustBePortHealthCaseWithoutFacility = mustBePortHealthCaseWithoutFacility;
-		return this;
 	}
 
-	public Boolean isMustBePortHealthCaseWithoutFacility() {
+	public Boolean getMustBePortHealthCaseWithoutFacility() {
 		return mustBePortHealthCaseWithoutFacility;
 	}
 
-	public CaseCriteria mustHaveCaseManagementData(Boolean mustHaveCaseManagementData) {
+	public void setMustHaveCaseManagementData(Boolean mustHaveCaseManagementData) {
 		this.mustHaveCaseManagementData = mustHaveCaseManagementData;
-		return this;
 	}
 
-	public Boolean isMustHaveCaseManagementData() {
+	public Boolean getMustHaveCaseManagementData() {
 		return mustHaveCaseManagementData;
 	}
 
-	public CaseCriteria withoutResponsibleOfficer(Boolean withoutResponsibleOfficer) {
+	public void setWithoutResponsibleOfficer(Boolean withoutResponsibleOfficer) {
 		this.withoutResponsibleOfficer = withoutResponsibleOfficer;
-		return this;
 	}
 
-	public Boolean isWithoutResponsibleOfficer() {
+	public Boolean getWithoutResponsibleOfficer() {
 		return this.withoutResponsibleOfficer;
-	}
-
-	public CaseCriteria caseClassification(CaseClassification caseClassification) {
-		this.caseClassification = caseClassification;
-		return this;
 	}
 
 	public CaseClassification getCaseClassification() {
 		return caseClassification;
+	}
+
+	public void setCaseClassification(CaseClassification caseClassification) {
+		this.caseClassification = caseClassification;
 	}
 
 	public CaseCriteria investigationStatus(InvestigationStatus investigationStatus) {
@@ -255,36 +282,32 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 		return investigationStatus;
 	}
 
-	public CaseCriteria presentCondition(PresentCondition presentCondition) {
+	public void setPresentCondition(PresentCondition presentCondition) {
 		this.presentCondition = presentCondition;
-		return this;
 	}
 
 	public PresentCondition getPresentCondition() {
 		return presentCondition;
 	}
 
-	public CaseCriteria healthFacility(FacilityReferenceDto healthFacility) {
+	public void setHealthFacility(FacilityReferenceDto healthFacility) {
 		this.healthFacility = healthFacility;
-		return this;
 	}
 
 	public FacilityReferenceDto getHealthFacility() {
 		return healthFacility;
 	}
 
-	public CaseCriteria pointOfEntry(PointOfEntryReferenceDto pointOfEntry) {
+	public void setPointOfEntry(PointOfEntryReferenceDto pointOfEntry) {
 		this.pointOfEntry = pointOfEntry;
-		return this;
 	}
 
 	public PointOfEntryReferenceDto getPointOfEntry() {
 		return pointOfEntry;
 	}
 
-	public CaseCriteria surveillanceOfficer(UserReferenceDto surveillanceOfficer) {
+	public void setSurveillanceOfficer(UserReferenceDto surveillanceOfficer) {
 		this.surveillanceOfficer = surveillanceOfficer;
-		return this;
 	}
 
 	public UserReferenceDto getSurveillanceOfficer() {
@@ -314,9 +337,8 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 	/**
 	 * returns all entries that match ALL of the passed words
 	 */
-	public CaseCriteria nameUuidEpidNumberLike(String nameUuidEpidNumberLike) {
+	public void setNameUuidEpidNumberLike(String nameUuidEpidNumberLike) {
 		this.nameUuidEpidNumberLike = nameUuidEpidNumberLike;
-		return this;
 	}
 
 	@IgnoreForUrl
@@ -334,9 +356,8 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 		return this;
 	}
 
-	public CaseCriteria reportingUserLike(String reportingUserLike) {
+	public void setReportingUserLike(String reportingUserLike) {
 		this.reportingUserLike = reportingUserLike;
-		return this;
 	}
 
 	@IgnoreForUrl
@@ -348,8 +369,12 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 		return creationDateFrom;
 	}
 
-	public CaseCriteria creationDateFrom(Date creationDateFrom) {
+	public void setCreationDateFrom(Date creationDateFrom) {
 		this.creationDateFrom = creationDateFrom;
+	}
+
+	public CaseCriteria creationDateFrom(Date creationDateFrom) {
+		setCreationDateFrom(creationDateFrom);
 		return this;
 	}
 
@@ -357,58 +382,17 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 		return creationDateTo;
 	}
 
-	public CaseCriteria creationDateTo(Date creationDateTo) {
-		this.creationDateTo = creationDateTo;
-		return this;
-	}
-
-	public void setDisease(Disease disease) {
-		this.disease = disease;
-	}
-
-	public void setRegion(RegionReferenceDto region) {
-		this.region = region;
-	}
-
-	public void setDistrict(DistrictReferenceDto district) {
-		this.district = district;
-	}
-
-	public void setCreationDateFrom(Date creationDateFrom) {
-		this.creationDateFrom = creationDateFrom;
-	}
-
 	public void setCreationDateTo(Date creationDateTo) {
 		this.creationDateTo = creationDateTo;
 	}
 
-	public void setNameUuidEpidNumberLike(String nameUuidEpidNumberLike) {
-		this.nameUuidEpidNumberLike = nameUuidEpidNumberLike;
-	}
-
-	public void setReportingUserLike(String reportingUserLike) {
-		this.reportingUserLike = reportingUserLike;
-	}
-
-	public void setNewCaseDateFrom(Date newCaseDateFrom) {
-		this.newCaseDateFrom = newCaseDateFrom;
-	}
-
-	public void setNewCaseDateTo(Date newCaseDateTo) {
-		this.newCaseDateTo = newCaseDateTo;
-	}
-
-	public void setNewCaseDateType(NewCaseDateType newCaseDateType) {
-		this.newCaseDateType = newCaseDateType;
+	public CaseCriteria creationDateTo(Date creationDateTo) {
+		setCreationDateTo(creationDateTo);
+		return this;
 	}
 
 	public Date getQuarantineTo() {
 		return quarantineTo;
-	}
-
-	public CaseCriteria quarantineTo(Date quarantineTo) {
-		this.quarantineTo = quarantineTo;
-		return this;
 	}
 
 	public void setQuarantineTo(Date quarantineTo) {
@@ -428,13 +412,7 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 		return excludeSharedCases;
 	}
 
-	public CaseCriteria excludeSharedCases(Boolean excludeSharedCases) {
-		this.excludeSharedCases = excludeSharedCases;
-		return this;
-	}
-
 	public void setExcludeSharedCases(Boolean excludeSharedCases) {
 		this.excludeSharedCases = excludeSharedCases;
 	}
-
 }

@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.dashboard.diagram;
 
@@ -40,6 +40,7 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
 import de.symeda.sormas.ui.highcharts.HighChart;
+import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 
 @SuppressWarnings("serial")
@@ -56,12 +57,13 @@ public abstract class AbstractEpiCurveComponent extends VerticalLayout {
 	private Consumer<Boolean> externalExpandListener;
 
 	public AbstractEpiCurveComponent(DashboardDataProvider dashboardDataProvider) {
+
 		this.dashboardDataProvider = dashboardDataProvider;
 
 		setSpacing(false);
 		setSizeFull();
 		setMargin(true);
-		
+
 		epiCurveChart = new HighChart();
 		epiCurveChart.setSizeFull();
 		//epiCurveChart.setHeight(0, Unit.PIXELS);
@@ -81,6 +83,7 @@ public abstract class AbstractEpiCurveComponent extends VerticalLayout {
 	}
 
 	private HorizontalLayout createHeader() {
+
 		HorizontalLayout epiCurveHeaderLayout = new HorizontalLayout();
 		epiCurveHeaderLayout.setWidth(100, Unit.PERCENTAGE);
 		epiCurveHeaderLayout.setSpacing(true);
@@ -95,12 +98,10 @@ public abstract class AbstractEpiCurveComponent extends VerticalLayout {
 		epiCurveHeaderLayout.setExpandRatio(epiCurveLabel, 1);
 
 		// "Expand" and "Collapse" buttons
-		Button expandEpiCurveButton = new Button("", VaadinIcons.EXPAND);
-		CssStyles.style(expandEpiCurveButton, CssStyles.BUTTON_SUBTLE);
-		expandEpiCurveButton.addStyleName(CssStyles.VSPACE_NONE);
-		Button collapseEpiCurveButton = new Button("", VaadinIcons.COMPRESS);
-		CssStyles.style(collapseEpiCurveButton, CssStyles.BUTTON_SUBTLE);
-		collapseEpiCurveButton.addStyleName(CssStyles.VSPACE_NONE);
+		Button expandEpiCurveButton =
+			ButtonHelper.createIconButtonWithCaption("expandEpiCurve", "", VaadinIcons.EXPAND, null, CssStyles.BUTTON_SUBTLE, CssStyles.VSPACE_NONE);
+		Button collapseEpiCurveButton = ButtonHelper
+			.createIconButtonWithCaption("collapseEpiCurve", "", VaadinIcons.COMPRESS, null, CssStyles.BUTTON_SUBTLE, CssStyles.VSPACE_NONE);
 
 		expandEpiCurveButton.addClickListener(e -> {
 			externalExpandListener.accept(true);
@@ -108,12 +109,14 @@ public abstract class AbstractEpiCurveComponent extends VerticalLayout {
 			epiCurveHeaderLayout.addComponent(collapseEpiCurveButton);
 			epiCurveHeaderLayout.setComponentAlignment(collapseEpiCurveButton, Alignment.MIDDLE_RIGHT);
 		});
+
 		collapseEpiCurveButton.addClickListener(e -> {
 			externalExpandListener.accept(false);
 			epiCurveHeaderLayout.removeComponent(collapseEpiCurveButton);
 			epiCurveHeaderLayout.addComponent(expandEpiCurveButton);
 			epiCurveHeaderLayout.setComponentAlignment(expandEpiCurveButton, Alignment.MIDDLE_RIGHT);
 		});
+
 		epiCurveHeaderLayout.addComponent(expandEpiCurveButton);
 		epiCurveHeaderLayout.setComponentAlignment(expandEpiCurveButton, Alignment.MIDDLE_RIGHT);
 
@@ -121,19 +124,17 @@ public abstract class AbstractEpiCurveComponent extends VerticalLayout {
 	}
 
 	private HorizontalLayout createFooter() {
+
 		HorizontalLayout epiCurveFooterLayout = new HorizontalLayout();
 		epiCurveFooterLayout.setWidth(100, Unit.PERCENTAGE);
 		epiCurveFooterLayout.setSpacing(true);
 		CssStyles.style(epiCurveFooterLayout, CssStyles.VSPACE_4);
 
 		// Grouping
-		PopupButton groupingDropdown = new PopupButton(I18nProperties.getCaption(Captions.dashboardGrouping));
-		CssStyles.style(groupingDropdown, CssStyles.BUTTON_SUBTLE);
+		VerticalLayout groupingLayout = new VerticalLayout();
 		{
-			VerticalLayout groupingLayout = new VerticalLayout();
 			groupingLayout.setMargin(true);
 			groupingLayout.setSizeUndefined();
-			groupingDropdown.setContent(groupingLayout);
 
 			// Grouping option group
 			OptionGroup groupingSelect = new OptionGroup();
@@ -155,19 +156,20 @@ public abstract class AbstractEpiCurveComponent extends VerticalLayout {
 				clearAndFillEpiCurveChart();
 			});
 			groupingLayout.addComponent(minimumEntriesCheckbox);
-
-			groupingDropdown.setContent(groupingLayout);
 		}
+
+		PopupButton groupingDropdown = ButtonHelper.createPopupButton(Captions.dashboardGrouping, groupingLayout, CssStyles.BUTTON_SUBTLE);
+
 		epiCurveFooterLayout.addComponent(groupingDropdown);
 		epiCurveFooterLayout.setComponentAlignment(groupingDropdown, Alignment.MIDDLE_RIGHT);
 		epiCurveFooterLayout.setExpandRatio(groupingDropdown, 1);
-		
+
 		// Epi curve mode
 		AbstractComponent epiCurveModeSelector = createEpiCurveModeSelector();
 		epiCurveFooterLayout.addComponent(epiCurveModeSelector);
 		epiCurveFooterLayout.setComponentAlignment(epiCurveModeSelector, Alignment.MIDDLE_RIGHT);
 		epiCurveFooterLayout.setExpandRatio(epiCurveModeSelector, 0);
-		
+
 		return epiCurveFooterLayout;
 	}
 
@@ -181,6 +183,7 @@ public abstract class AbstractEpiCurveComponent extends VerticalLayout {
 	 * when showMinimumEntries is true.
 	 */
 	protected List<Date> buildListOfFilteredDates() {
+
 		List<Date> filteredDates = new ArrayList<>();
 		Date fromDate = DateHelper.getStartOfDay(dashboardDataProvider.getFromDate());
 		Date toDate = DateHelper.getEndOfDay(dashboardDataProvider.getToDate());
@@ -220,5 +223,4 @@ public abstract class AbstractEpiCurveComponent extends VerticalLayout {
 
 		return filteredDates;
 	}
-
 }
