@@ -52,28 +52,21 @@ import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseExportDto;
 import de.symeda.sormas.api.caze.CaseExportType;
 import de.symeda.sormas.api.caze.InvestigationStatus;
-<<<<<<< HEAD
 import de.symeda.sormas.api.caze.MapCaseDto;
 import de.symeda.sormas.api.caze.NewCaseDateType;
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.facility.FacilityDto;
 import de.symeda.sormas.api.facility.FacilityReferenceDto;
-=======
-import de.symeda.sormas.api.epidata.EpiDataDto;
->>>>>>> development
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.person.PersonDto;
-<<<<<<< HEAD
 import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.GeoLatLon;
 import de.symeda.sormas.api.region.RegionReferenceDto;
-=======
->>>>>>> development
 import de.symeda.sormas.api.sample.AdditionalTestDto;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SampleExportDto;
@@ -86,7 +79,6 @@ import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.caze.exporter.CaseExportConfigurationsLayout;
 import de.symeda.sormas.ui.caze.importer.CaseImportLayout;
 import de.symeda.sormas.ui.caze.importer.LineListingImportLayout;
-<<<<<<< HEAD
 import de.symeda.sormas.ui.dashboard.DashboardCssStyles;
 import de.symeda.sormas.ui.entitymap.DashboardMapComponent;
 import de.symeda.sormas.ui.map.LeafletMap;
@@ -99,17 +91,9 @@ import de.symeda.sormas.ui.utils.GridExportStreamResource;
 import de.symeda.sormas.ui.utils.LayoutUtil;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 import de.symeda.sormas.ui.utils.ViewConfiguration;
-=======
-import de.symeda.sormas.ui.utils.AbstractView;
 import de.symeda.sormas.ui.utils.ButtonHelper;
-import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.DateFormatHelper;
-import de.symeda.sormas.ui.utils.DownloadUtil;
-import de.symeda.sormas.ui.utils.GridExportStreamResource;
-import de.symeda.sormas.ui.utils.LayoutUtil;
 import de.symeda.sormas.ui.utils.MenuBarHelper;
-import de.symeda.sormas.ui.utils.VaadinUiUtil;
->>>>>>> development
 
 /**
  * A view for performing create-read-update-delete operations on products.
@@ -623,24 +607,6 @@ public class CasesView extends AbstractView {
 
 		return statusFilterLayout;
 	}
-
-<<<<<<< HEAD
-	private void addShowMoreOrLessFiltersButtons(HorizontalLayout parentLayout) {
-		expandFiltersButton = new Button(I18nProperties.getCaption(Captions.actionShowMoreFilters), VaadinIcons.CHEVRON_DOWN);
-		CssStyles.style(expandFiltersButton, ValoTheme.BUTTON_BORDERLESS, CssStyles.VSPACE_TOP_NONE, CssStyles.LABEL_PRIMARY);
-		collapseFiltersButton = new Button(I18nProperties.getCaption(Captions.actionShowLessFilters), VaadinIcons.CHEVRON_UP);
-		CssStyles.style(collapseFiltersButton, ValoTheme.BUTTON_BORDERLESS, CssStyles.VSPACE_TOP_NONE, CssStyles.LABEL_PRIMARY);
-
-		expandFiltersButton.addClickListener(e -> setFiltersExpanded(true));
-
-		collapseFiltersButton.addClickListener(e -> setFiltersExpanded(false));
-
-		parentLayout.addComponent(expandFiltersButton);
-		parentLayout.addComponent(collapseFiltersButton);
-		parentLayout.setComponentAlignment(expandFiltersButton, Alignment.TOP_LEFT);
-		parentLayout.setComponentAlignment(collapseFiltersButton, Alignment.TOP_LEFT);
-		collapseFiltersButton.setVisible(false);
-	}
 	
 	private void addShowMapOrTableToggleButtons (HorizontalLayout layout) {
 		
@@ -672,16 +638,12 @@ public class CasesView extends AbstractView {
 	}
 	
 	public void setFiltersExpanded(boolean expanded) {
-		expandFiltersButton.setVisible(!expanded);
-		collapseFiltersButton.setVisible(expanded);
 		secondFilterRowLayout.setVisible(expanded);
 		thirdFilterRowLayout.setVisible(expanded);
 		dateFilterRowLayout.setVisible(expanded);
 	}
 
 	
-=======
->>>>>>> development
 	@Override
 	public void enter(ViewChangeEvent event) {
 		String params = event.getParameters().trim();
@@ -691,7 +653,6 @@ public class CasesView extends AbstractView {
 		}
 
 		updateFilterComponents();
-<<<<<<< HEAD
 		
 		if (criteria.getViewMode().equals("map")) {
 			VerticalLayout mapLayout = new VerticalLayout();
@@ -714,8 +675,6 @@ public class CasesView extends AbstractView {
 			showMapViewButton.setVisible(true);
 		}
 
-=======
->>>>>>> development
 	}
 
 	public void updateFilterComponents() {
