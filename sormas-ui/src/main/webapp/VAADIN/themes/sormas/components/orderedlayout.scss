@@ -2,6 +2,8 @@
 @mixin sormas-orderedlayout {
 	
 	.v-layout, .v-popupview-popup .popupContent > .v-layout {
+	
+		white-space: normal !important;
 		
 		&.minimal {
 		
@@ -41,10 +43,6 @@
 				width: 36px;
 				height: 36px;
 			}
-		}
-		
-		&.wrap{
-		    white-space: normal !important
 		}
 	}
 }
