@@ -29,12 +29,14 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -184,6 +186,21 @@ public class SampleService extends AbstractCoreAdoService<Sample> {
 		} catch (NoResultException e) {
 			return null;
 		}
+	}
+
+	public Sample getByFieldSampleID(String fieldSampleId) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		ParameterExpression<String> fieldSampleParam = cb.parameter(String.class, Sample.FIELD_SAMPLE_ID);
+		CriteriaQuery<Sample> cq = cb.createQuery(getElementClass());
+		Root<Sample> from = cq.from(getElementClass());
+		cq.where(cb.equal(from.get(Sample.FIELD_SAMPLE_ID), fieldSampleParam));
+
+		TypedQuery<Sample> q = em.createQuery(cq).setParameter(fieldSampleParam, fieldSampleId);
+
+		Sample sample = q.getResultList().stream().findFirst().orElse(null);
+
+		return sample;
 	}
 
 	public List<String> getDeletedUuidsSince(User user, Date since) {
