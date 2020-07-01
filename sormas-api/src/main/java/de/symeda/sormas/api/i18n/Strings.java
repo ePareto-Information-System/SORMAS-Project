@@ -383,6 +383,7 @@ public interface Strings {
 	String headingNoPrescriptionsSelected = "headingNoPrescriptionsSelected";
 	String headingNoRowsSelected = "headingNoRowsSelected";
 	String headingNoSamplesSelected = "headingNoSamplesSelected";
+	String headingFieldSamplesId = "headingFieldSamplesId";
 	String headingNoTasksSelected = "headingNoTasksSelected";
 	String headingNoTreatmentsSelected = "headingNoTreatmentsSelected";
 	String headingNoVisitsSelected = "headingNoVisitsSelected";
@@ -699,6 +700,7 @@ public interface Strings {
 	String messageNoPrescriptionsSelected = "messageNoPrescriptionsSelected";
 	String messageNoRowsSelected = "messageNoRowsSelected";
 	String messageNoSamplesSelected = "messageNoSamplesSelected";
+	String messageFieldSampleIdExist = "messageFieldSampleIdExist";
 	String messageNoTasksSelected = "messageNoTasksSelected";
 	String messageNoTreatmentsSelected = "messageNoTreatmentsSelected";
 	String messageNoVisitsSelected = "messageNoVisitsSelected";
