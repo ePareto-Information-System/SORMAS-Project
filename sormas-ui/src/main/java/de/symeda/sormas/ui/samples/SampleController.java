@@ -97,7 +97,6 @@ public class SampleController {
 			createForm,
 			UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_CREATE),
 			createForm.getFieldGroup());
-
 		editView.addCommitListener(() -> {
 			if (!createForm.getFieldGroup().isModified()) {
 				saveSample(createForm);
@@ -167,7 +166,6 @@ public class SampleController {
 			form,
 			UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT),
 			form.getFieldGroup());
-
 		editView.addCommitListener(() -> {
 			if (!form.getFieldGroup().isModified()) {
 				SampleDto changedDto = form.getValue();
@@ -231,6 +229,7 @@ public class SampleController {
 					public void buttonClick(ClickEvent event) {
 						navigateToData(dto.getReferredTo().getUuid());
 					}
+
 				});
 
 		}
@@ -355,5 +354,14 @@ public class SampleController {
 						false).show(Page.getCurrent());
 				});
 		}
+	}
+
+	public boolean isFieldSampleIdExist(String fieldSampleId) {
+		boolean field = true;
+		SampleDto sample = FacadeProvider.getSampleFacade().getSampleByFieldSampleID(fieldSampleId);
+		if (sample != null) {
+			field = false;
+		}
+		return field;
 	}
 }
