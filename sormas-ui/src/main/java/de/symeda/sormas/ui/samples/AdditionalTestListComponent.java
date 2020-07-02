@@ -37,7 +37,6 @@ public class AdditionalTestListComponent extends VerticalLayout {
 		testsHeader.addStyleName(CssStyles.H3);
 		componentHeader.addComponent(testsHeader);
 
-		if (UserProvider.getCurrent().hasUserRight(UserRight.ADDITIONAL_TEST_CREATE)) {
 			createButton = ButtonHelper.createIconButton(Captions.additionalTestNewTest, VaadinIcons.PLUS_CIRCLE, e -> {
 				ControllerProvider.getAdditionalTestController().openCreateComponent(sampleUuid, list::reload);
 			}, ValoTheme.BUTTON_PRIMARY);
