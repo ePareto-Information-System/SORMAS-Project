@@ -50,6 +50,8 @@ public class PathogenTestListComponent extends VerticalLayout {
 	public PathogenTestListComponent(
 		SampleReferenceDto sampleRef,
 		BiConsumer<PathogenTestDto, Runnable> onSavedPathogenTest,
+		Supplier<Boolean> createOrEditAllowedCallback,
+		boolean received) {
 		setWidth(100, Unit.PERCENTAGE);
 
 		HorizontalLayout componentHeader = new HorizontalLayout();
@@ -64,6 +66,7 @@ public class PathogenTestListComponent extends VerticalLayout {
 		testsHeader.addStyleName(CssStyles.H3);
 		componentHeader.addComponent(testsHeader);
 
+		if (UserProvider.getCurrent().hasUserRight(UserRight.PATHOGEN_TEST_CREATE) && received == true) {
 			createButton = ButtonHelper.createIconButton(Captions.pathogenTestNewTest, VaadinIcons.PLUS_CIRCLE, e -> {
 				if (createOrEditAllowedCallback.get()) {
 					ControllerProvider.getPathogenTestController().create(sampleRef, 0, list::reload, onSavedPathogenTest);
