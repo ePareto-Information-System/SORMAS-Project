@@ -139,7 +139,6 @@ public class SampleDataView extends AbstractSampleView {
 		layout.addComponent(pathogenTestList, PATHOGEN_TESTS_LOC);
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)) {
-			AdditionalTestListComponent additionalTestList = new AdditionalTestListComponent(getSampleRef().getUuid());
 			additionalTestList.addStyleName(CssStyles.SIDE_COMPONENT);
 			layout.addComponent(additionalTestList, ADDITIONAL_TESTS_LOC);
 		}
