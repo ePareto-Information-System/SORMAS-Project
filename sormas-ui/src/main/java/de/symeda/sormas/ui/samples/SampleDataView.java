@@ -135,7 +135,6 @@ public class SampleDataView extends AbstractSampleView {
 		Supplier<Boolean> createOrEditAllowedCallback = () -> {
 			return editComponent.getWrappedComponent().getFieldGroup().isValid();
 		};
-		PathogenTestListComponent pathogenTestList = new PathogenTestListComponent(getSampleRef(), onSavedPathogenTest, createOrEditAllowedCallback);
 		pathogenTestList.addStyleName(CssStyles.SIDE_COMPONENT);
 		layout.addComponent(pathogenTestList, PATHOGEN_TESTS_LOC);
 
