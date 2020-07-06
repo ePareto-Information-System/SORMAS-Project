@@ -18,7 +18,9 @@ package de.symeda.sormas.app.sample.edit;
 import org.joda.time.DateTimeComparator;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.databinding.FragmentSampleEditLayoutBinding;
 import de.symeda.sormas.app.util.ResultCallback;
 
@@ -60,8 +62,24 @@ public class SampleValidator {
 
 			return false;
 		};
+		ResultCallback<Boolean> fieldSampleIdCallback = () -> {
+			if (!contentBinding.sampleFieldSampleID.getValue().isEmpty() && !contentBinding.sampleFieldSampleID.getValue().equals("") && contentBinding.sampleFieldSampleID.getValue() != null) {
+				if (queryByFieldSampleId(contentBinding.sampleFieldSampleID.getValue())) {
+						contentBinding.sampleFieldSampleID.enableErrorState(I18nProperties.getString(Strings.messageFieldSampleIdExist));
+						return true;
+					}
+				return false;
+			}
+			return false;
+		};
 
+		contentBinding.sampleFieldSampleID.setValidationCallback(fieldSampleIdCallback);
 		contentBinding.sampleSampleDateTime.setValidationCallback(sampleDateCallback);
 		contentBinding.sampleShipmentDate.setValidationCallback(shipmentDateCallback);
+	}
+
+	static boolean queryByFieldSampleId(String fieldSampleId){
+		boolean sample = DatabaseHelper.getSampleDao().checkFieldSampleIDExist(fieldSampleId); //throw new InvalidValueException
+		return sample;
 	}
 }
