@@ -17,7 +17,6 @@ public class AdditionalTestList extends PaginationList<AdditionalTestDto> {
 
 	private String sampleUuid;
 
-	public AdditionalTestList(String sampleUuid) {
 
 		super(3);
 		this.sampleUuid = sampleUuid;
