@@ -29,7 +29,6 @@ public class AdditionalTestListComponent extends VerticalLayout {
 		componentHeader.setWidth(100, Unit.PERCENTAGE);
 		addComponent(componentHeader);
 
-		list = new AdditionalTestList(sampleUuid);
 		addComponent(list);
 		list.reload();
 
