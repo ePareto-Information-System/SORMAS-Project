@@ -46,7 +46,6 @@ public class AdditionalTestList extends PaginationList<AdditionalTestDto> {
 			AdditionalTestListEntry listEntry = new AdditionalTestListEntry(additionalTest);
 			if (UserProvider.getCurrent().hasUserRight(UserRight.ADDITIONAL_TEST_EDIT)) {
 				listEntry.addEditListener(i, e -> {
-					ControllerProvider.getAdditionalTestController().openEditComponent(additionalTest, AdditionalTestList.this::reload);
 				});
 			}
 			listLayout.addComponent(listEntry);
