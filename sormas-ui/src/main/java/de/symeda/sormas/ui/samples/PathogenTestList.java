@@ -41,12 +41,10 @@ public class PathogenTestList extends PaginationList<PathogenTestDto> {
 	private SampleReferenceDto sampleRef;
 	private int caseSampleCount;
 	private BiConsumer<PathogenTestDto, Runnable> onSavedPathogenTest;
-	private Supplier<Boolean> createOrEditAllowedCallback;
 
 	public PathogenTestList(
 		SampleReferenceDto sampleRef,
 		BiConsumer<PathogenTestDto, Runnable> onSavedPathogenTest,
-		Supplier<Boolean> createOrEditAllowedCallback) {
 		super(5);
 
 		this.sampleRef = sampleRef;
