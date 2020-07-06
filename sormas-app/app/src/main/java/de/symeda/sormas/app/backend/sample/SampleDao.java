@@ -218,4 +218,15 @@ public class SampleDao extends AbstractAdoDao<Sample> {
 			throw new RuntimeException(e);
 		}
 	}
+
+	public boolean checkFieldSampleIDExist(String fieldSampleId) {
+		try {
+			List<Sample> samples =
+			queryBuilder().where().eq(Sample.FIELD_SAMPLE_ID, fieldSampleId).and().eq(AbstractDomainObject.SNAPSHOT, false).query();
+			return samples.size() != 0;
+		} catch (SQLException e) {
+			Log.e(getTableName(), "Could not perform queryByFieldSampleId");
+			throw new RuntimeException(e);
+		}
+	}
 }
