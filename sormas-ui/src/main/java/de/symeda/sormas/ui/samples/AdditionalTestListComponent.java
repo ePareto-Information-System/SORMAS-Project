@@ -23,7 +23,6 @@ public class AdditionalTestListComponent extends VerticalLayout {
 	private AdditionalTestList list;
 	private Button createButton;
 
-	public AdditionalTestListComponent(String sampleUuid, boolean receieved) {
 		setWidth(100, Unit.PERCENTAGE);
 
 		HorizontalLayout componentHeader = new HorizontalLayout();
