@@ -133,8 +133,6 @@ public class SampleDataView extends AbstractSampleView {
 
 		// why? if(sampleDto.getSamplePurpose() !=null && sampleDto.getSamplePurpose().equals(SamplePurpose.EXTERNAL)) {
 		};
-		PathogenTestListComponent pathogenTestList =
-			new PathogenTestListComponent(getSampleRef(), onSavedPathogenTest, createOrEditAllowedCallback, sampleDto.isReceived());
 		pathogenTestList.addStyleName(CssStyles.SIDE_COMPONENT);
 		layout.addComponent(pathogenTestList, PATHOGEN_TESTS_LOC);
 
