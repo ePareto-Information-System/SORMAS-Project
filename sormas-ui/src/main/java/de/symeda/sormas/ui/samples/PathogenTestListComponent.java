@@ -64,7 +64,6 @@ public class PathogenTestListComponent extends VerticalLayout {
 		testsHeader.addStyleName(CssStyles.H3);
 		componentHeader.addComponent(testsHeader);
 
-		if (UserProvider.getCurrent().hasUserRight(UserRight.PATHOGEN_TEST_CREATE) && received) {
 			createButton = ButtonHelper.createIconButton(Captions.pathogenTestNewTest, VaadinIcons.PLUS_CIRCLE, e -> {
 				if (createOrEditAllowedCallback.get()) {
 					ControllerProvider.getPathogenTestController().create(sampleRef, 0, list::reload, onSavedPathogenTest);
