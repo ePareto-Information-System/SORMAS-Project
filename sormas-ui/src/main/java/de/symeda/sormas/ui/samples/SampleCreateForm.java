@@ -114,19 +114,4 @@ public class SampleCreateForm extends AbstractSampleForm {
 		testDateField.setCaption(getPrefixCaption(PathogenTestDto.I18N_PREFIX, PathogenTestDto.TEST_DATE_TIME));
 		testTextField.setCaption(getPrefixCaption(PathogenTestDto.I18N_PREFIX, PathogenTestDto.TEST_RESULT_TEXT));
 	}
-
-	class FieldSampleIdValidator implements Validator {
-
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void validate(Object value) throws InvalidValueException {
-			SampleDto dto = getValue();
-			if (value == null || value.equals(""))
-				return;
-
-			else if (!(value instanceof String && value != null && ControllerProvider.getSampleController().isFieldSampleIdExist((String) value)))
-				throw new InvalidValueException(I18nProperties.getString(Strings.messageFieldSampleIdExist));
-		}
-	}
 }
