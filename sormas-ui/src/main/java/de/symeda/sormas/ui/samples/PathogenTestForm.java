@@ -158,6 +158,22 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		});
 
 		if (sample.getSamplePurpose() != SamplePurpose.INTERNAL) {
+			ComboBox lab = addField(PathogenTestDto.LAB, ComboBox.class);
+			lab.addItems(FacadeProvider.getFacilityFacade().getAllActiveLaboratories(true));
+			TextField labDetails = addField(PathogenTestDto.LAB_DETAILS, TextField.class);
+			labDetails.setVisible(false);
+
+			lab.addValueChangeListener(event -> {
+				if (event.getProperty().getValue() != null
+					&& ((FacilityReferenceDto) event.getProperty().getValue()).getUuid().equals(FacilityDto.OTHER_LABORATORY_UUID)) {
+					labDetails.setVisible(true);
+					labDetails.setRequired(true);
+				} else {
+					labDetails.setVisible(false);
+					labDetails.setRequired(false);
+					labDetails.clear();
+				}
+			});
 			setRequired(true, PathogenTestDto.LAB);
 		}
 		setRequired(true, PathogenTestDto.TEST_TYPE, PathogenTestDto.TESTED_DISEASE, PathogenTestDto.TEST_DATE_TIME, PathogenTestDto.TEST_RESULT);
