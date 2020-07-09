@@ -20,6 +20,7 @@ import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SamplePurpose;
 import de.symeda.sormas.ui.utils.DateTimeField;
 import de.symeda.sormas.ui.utils.FieldHelper;
+import de.symeda.sormas.ui.utils.FieldSampleIdValidatorUtil;
 
 public class SampleCreateForm extends AbstractSampleForm {
 
@@ -73,6 +74,7 @@ public class SampleCreateForm extends AbstractSampleForm {
 			false,
 			null);
 
+		addValidators(SampleDto.FIELD_SAMPLE_ID, new FieldSampleIdValidatorUtil(getValue()));
 
 		includeTestField.addValueChangeListener(e -> {
 			final Boolean includeTest = (Boolean) e.getProperty().getValue();
