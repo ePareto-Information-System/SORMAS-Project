@@ -579,6 +579,8 @@ public interface Strings {
 	String messageUserRoleCombination = "messageUserRoleCombination";
 	String messageVisitsDeleted = "messageVisitsDeleted";
 	String messageWrongFileType = "messageWrongFileType";
+	String messageCheckReceivedAndSelectedSampleDate = "messageCheckReceivedAndSelectedSampleDate";
+
 	String min = "min";
 	String mmhg = "mmhg";
 	String month = "month";
