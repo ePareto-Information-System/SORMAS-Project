@@ -41,12 +41,10 @@ public class PathogenTestList extends PaginationList<PathogenTestDto> {
 	private SampleReferenceDto sampleRef;
 	private int caseSampleCount;
 	private BiConsumer<PathogenTestDto, Runnable> onSavedPathogenTest;
-	private Supplier<Boolean> createOrEditAllowedCallback;
 
 	public PathogenTestList(
 		SampleReferenceDto sampleRef,
 		BiConsumer<PathogenTestDto, Runnable> onSavedPathogenTest,
-		Supplier<Boolean> createOrEditAllowedCallback) {
 		super(5);
 
 		this.sampleRef = sampleRef;
@@ -76,7 +74,6 @@ public class PathogenTestList extends PaginationList<PathogenTestDto> {
 			PathogenTestListEntry listEntry = new PathogenTestListEntry(pathogenTest);
 			if (UserProvider.getCurrent().hasUserRight(UserRight.PATHOGEN_TEST_EDIT)) {
 				listEntry.addEditListener(i, (ClickListener) event -> {
-					if (createOrEditAllowedCallback.get()) {
 						ControllerProvider.getPathogenTestController()
 							.edit(pathogenTest, caseSampleCount, PathogenTestList.this::reload, onSavedPathogenTest);
 					} else {
