@@ -32,9 +32,11 @@ import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventParticipantDto;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
 import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.SampleDto;
+import de.symeda.sormas.api.sample.SamplePurpose;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.ui.ControllerProvider;
@@ -163,12 +165,21 @@ public class SampleDataView extends AbstractSampleView {
 		};
 
 		// why? if(sampleDto.getSamplePurpose() !=null && sampleDto.getSamplePurpose().equals(SamplePurpose.EXTERNAL)) {
+		Supplier<String> createOrEditAllowedCallback = () -> {
+			if (editComponent.getWrappedComponent().getFieldGroup().isValid()) {
+				if (sampleDto.isReceived() || sampleDto.getSamplePurpose() == SamplePurpose.INTERNAL) {
+					return null;
+				}
+				return Strings.messageCheckReceivedAndSelectedSampleDate;
+			}
+			return Strings.messageFormHasErrorsPathogenTest;
 		};
 		PathogenTestListComponent pathogenTestList = new PathogenTestListComponent(getSampleRef(), onSavedPathogenTest, createOrEditAllowedCallback);
 		pathogenTestList.addStyleName(CssStyles.SIDE_COMPONENT);
 		layout.addComponent(pathogenTestList, PATHOGEN_TESTS_LOC);
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)) {
+			AdditionalTestListComponent additionalTestList = new AdditionalTestListComponent(getSampleRef().getUuid(), createOrEditAllowedCallback);
 			additionalTestList.addStyleName(CssStyles.SIDE_COMPONENT);
 			layout.addComponent(additionalTestList, ADDITIONAL_TESTS_LOC);
 		}
