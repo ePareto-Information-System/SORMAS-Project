@@ -20,6 +20,10 @@ package de.symeda.sormas.backend.caze;
 import static de.symeda.sormas.backend.util.DtoHelper.fillDto;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -58,6 +62,8 @@ import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.Session;
+import org.hibernate.jdbc.Work;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,6 +86,7 @@ import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.caze.CaseSimilarityCriteria;
 import de.symeda.sormas.api.caze.DashboardCaseDto;
+import de.symeda.sormas.api.caze.DetailCaseDtoExport;
 import de.symeda.sormas.api.caze.InvestigationStatus;
 import de.symeda.sormas.api.caze.MapCaseDto;
 import de.symeda.sormas.api.caze.PlagueType;
@@ -735,6 +742,158 @@ public class CaseFacadeEjb implements CaseFacade {
 
 		caseCriteria.setMustHaveCaseManagementData(previousCaseManagementDataCriteria);
 		return resultList;
+	}
+
+	@Override
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public List<DetailCaseDtoExport> getExportListSqlFunction(
+		CaseCriteria caseCriteria,
+		CaseExportType exportType,
+		int first,
+		int max,
+		ExportConfigurationDto exportConfiguration,
+		Language userLanguage) {
+
+		Boolean previousCaseManagementDataCriteria = caseCriteria.getMustHaveCaseManagementData();
+		if (CaseExportType.CASE_MANAGEMENT == exportType) {
+			caseCriteria.setMustHaveCaseManagementData(Boolean.TRUE);
+		}
+
+		Session session = em.unwrap(Session.class);
+		List<DetailCaseDtoExport> detailCaseDtoExports = new ArrayList<>();
+		String sql = "SELECT * FROM fn_detail_case_export(?, ?)";
+//		String symptomsSql = "SELECT fn_case_symptoms(?)";
+
+		session.doWork(new Work() {
+
+			@Override
+			public void execute(Connection connection) throws SQLException {
+				PreparedStatement stmt = connection.prepareStatement(sql);
+//				PreparedStatement symptomsPs = connection.prepareStatement(symptomsSql);
+				stmt.setInt(1, max);
+				stmt.setInt(2, first);
+//				stmt.setMaxRows(max);
+//				stmt.setFetchSize(first);
+				stmt.execute();
+
+				ResultSet resultSet = stmt.getResultSet();
+				while (resultSet.next()) {
+					DetailCaseDtoExport detailCaseDtoExport = new DetailCaseDtoExport();
+					detailCaseDtoExport.setCaseId(resultSet.getLong("case_id"));
+//					detailCaseDtoExport.setDistrictId(resultSet.getLong("district_id"));
+//					detailCaseDtoExport.setCaseId(resultSet.getLong("healthcond_id"));
+					detailCaseDtoExport.setCaseUuid(resultSet.getString("case_uuid"));
+					detailCaseDtoExport.setCaseEpidnumber(resultSet.getString("case_epidnumber"));
+					detailCaseDtoExport.setCaseDisease(resultSet.getString("case_disease"));
+					detailCaseDtoExport.setCaseDiseasedetails(resultSet.getString("case_diseasedetails"));
+					detailCaseDtoExport.setPersonFirstname(resultSet.getString("person_firstname"));
+					detailCaseDtoExport.setPersonLastname(resultSet.getString("person_lastname"));
+					detailCaseDtoExport.setPersonSex(resultSet.getString("person_sex"));
+					detailCaseDtoExport.setCasePregnant(resultSet.getString("case_pregnant"));
+					detailCaseDtoExport.setPersonApproximateage(resultSet.getInt("person_approximateage"));
+
+					detailCaseDtoExport.setPersonApproximateagetype(resultSet.getString("person_approximateagetype"));
+					detailCaseDtoExport.setPersonBirthdateDd(resultSet.getInt("person_birthdate_dd"));
+					detailCaseDtoExport.setPersonBirthdateMm(resultSet.getInt("person_birthdate_mm"));
+					detailCaseDtoExport.setCaseBirthdateYyyy(resultSet.getInt("case_birthdate_yyyy"));
+
+					detailCaseDtoExport.setCaseReportdate(resultSet.getDate("case_reportdate"));
+					detailCaseDtoExport.setUserUuid(resultSet.getString("user_uuid"));
+					detailCaseDtoExport.setRegionUuid(resultSet.getString("region_uuid"));
+					detailCaseDtoExport.setRegionName(resultSet.getString("region_name"));
+
+					detailCaseDtoExport.setDistrictUuid(resultSet.getString("district_uuid"));
+					detailCaseDtoExport.setDistrictName(resultSet.getString("district_name"));
+					detailCaseDtoExport.setCommunityUuid(resultSet.getString("community_uuid"));
+					detailCaseDtoExport.setCommunityName(resultSet.getString("community_name"));
+
+					detailCaseDtoExport.setFacilityName(resultSet.getString("facility_name"));
+					detailCaseDtoExport.setFacilityUuid(resultSet.getString("facility_uuid"));
+					detailCaseDtoExport.setCaseHealthFacilityDetails(resultSet.getString("case_healthfacilitydetails"));
+					detailCaseDtoExport.setPointofentName(resultSet.getString("pointofent_name"));
+					detailCaseDtoExport.setPointofentUuid(resultSet.getString("pointofent_uuid"));
+
+					detailCaseDtoExport.setCasePointofentrydetails(resultSet.getString("case_pointofentrydetails"));
+					detailCaseDtoExport.setCaseCaseclassification(resultSet.getString("case_caseclassification"));
+					detailCaseDtoExport.setCaseInvestigationstatus(resultSet.getString("case_investigationstatus"));
+					detailCaseDtoExport.setCaseOutcome(resultSet.getString("case_outcome"));
+					detailCaseDtoExport.setCaseQuarantine(resultSet.getString("case_quarantine"));
+
+					detailCaseDtoExport.setCaseQuarantinefrom(resultSet.getDate("case_quarantinefrom"));
+					detailCaseDtoExport.setCaseQuarantineto(resultSet.getDate("case_quarantineto"));
+					detailCaseDtoExport.setHospitalizAdmittedtohealthfacility(resultSet.getString("hospitaliz_admittedtohealthfacility"));
+					detailCaseDtoExport.setHospitalizAdmissiondate(resultSet.getDate("hospitaliz_admissiondate"));
+					detailCaseDtoExport.setHospitalizDischargedate(resultSet.getDate("hospitaliz_dischargedate"));
+
+					detailCaseDtoExport.setHospitalizLeftagainstadvice(resultSet.getString("hospitaliz_leftagainstadvice"));
+					detailCaseDtoExport.setPersonPresentcondition(resultSet.getInt("person_presentcondition"));
+					detailCaseDtoExport.setPersonDeathdate(resultSet.getDate("person_deathdate"));
+					detailCaseDtoExport.setPersonDeathdate(resultSet.getDate("person_burialdate"));
+					detailCaseDtoExport.setPersonBurialconductor(resultSet.getString("person_burialconductor"));
+
+					detailCaseDtoExport.setPersonBurialplacedescription(resultSet.getString("person_burialplacedescription"));
+//			    	  detailCaseDtoExport.setRegionNameT(resultSet.getString("region_name_two"));
+//			    	  detailCaseDtoExport.setHospitalizAdmittedtohealthfacility(resultSet.getString("region_uuid_two"));
+					detailCaseDtoExport.setLocationCity(resultSet.getString("location_city"));
+					detailCaseDtoExport.setLocationAddress(resultSet.getString("location_address"));
+
+					detailCaseDtoExport.setLocationPostalcode(resultSet.getString("location_postalcode"));
+					detailCaseDtoExport.setPersonPhone(resultSet.getString("person_phone"));
+					detailCaseDtoExport.setPersonPhoneowner(resultSet.getString("person_phoneowner"));
+					detailCaseDtoExport.setPersonEducationtype(resultSet.getString("person_educationtype"));
+					detailCaseDtoExport.setPersonEducationdetails(resultSet.getString("person_educationdetails"));
+
+					detailCaseDtoExport.setPersonOccupationtype(resultSet.getString("person_occupationtype"));
+					detailCaseDtoExport.setPersonOccupationdetails(resultSet.getString("person_occupationdetails"));
+//			    	  detailCaseDtoExport.setFacilityName(resultSet.getString("facility_name"));
+//			    	  detailCaseDtoExport.setFacilityUuid(resultSet.getString("facility_uuid"));
+					detailCaseDtoExport.setPersonOccupationdetails(resultSet.getString("person_occupationfacilitydetails"));
+
+					detailCaseDtoExport.setEpidataTraveled(resultSet.getString("epidata_traveled"));
+					detailCaseDtoExport.setEpidataBurialattended(resultSet.getString("epidata_burialattended"));
+					detailCaseDtoExport.setEpidataDirectcontactconfirmedcase(resultSet.getString("epidata_directcontactconfirmedcase"));
+					detailCaseDtoExport.setEpidataDirectcontactprobablecase(resultSet.getString("epidata_directcontactprobablecase"));
+					detailCaseDtoExport.setEpidataRodents(resultSet.getString("epidata_rodents"));
+
+					detailCaseDtoExport.setCaseVaccination(resultSet.getString("case_vaccination"));
+					detailCaseDtoExport.setCaseVaccinationdoses(resultSet.getString("case_vaccinationdoses"));
+
+					detailCaseDtoExport.setCaseVaccinationdate(resultSet.getDate("case_vaccinationdate"));
+					detailCaseDtoExport.setCaseVaccinationinfosource(resultSet.getString("case_vaccinationinfosource"));
+					detailCaseDtoExport.setCasePostpartum(resultSet.getString("case_postpartum"));
+
+					detailCaseDtoExport.setCaseTrimester(resultSet.getString("case_trimester"));
+//					detailCaseDtoExport.setPersonId(resultSet.getLong("person_id"));
+//					detailCaseDtoExport.setLocationId(resultSet.getLong("location_id"));
+//					detailCaseDtoExport.setEpidataId(resultSet.getLong("epidata_id"));
+//					detailCaseDtoExport.setSymptomsId(resultSet.getLong("symptoms_id"));
+//					detailCaseDtoExport.setHospitalizId(resultSet.getLong("hospitaliz_id"));
+//					detailCaseDtoExport.setSymptoms(resultSet.getString("symptoms"));
+
+//					symptomsPs.setLong(1, detailCaseDtoExport.getSymptomsId());
+////					symptomsPs.setLong(1, x);
+//					symptomsPs.execute();
+//					ResultSet symptomsRs = symptomsPs.getResultSet();
+//					while (symptomsRs.next()) {
+////						type type = (type) symptomsRs.nextElement();
+//						detailCaseDtoExport.setSymptoms((String) symptomsRs.getString("fn_case_symptoms"));
+//					}
+//					symptomsRs.close();
+//					symptomsPs.close();
+
+					detailCaseDtoExports.add(detailCaseDtoExport);
+
+				}
+				resultSet.close();
+				stmt.close();
+			}
+		});
+
+//		System.err.println("Total list size is " + detailCaseDtoExports.size() + " Firsts--: " + first + " Maxs--: " + max);
+
+		caseCriteria.setMustHaveCaseManagementData(previousCaseManagementDataCriteria);
+
+		return detailCaseDtoExports;
 	}
 
 	@Override
