@@ -60,6 +60,14 @@ public interface CaseFacade {
 		ExportConfigurationDto exportConfiguration,
 		Language userLanguage);
 
+	List<DetailCaseDtoExport> getExportListSqlFunction(
+		CaseCriteria caseCriteria,
+		CaseExportType exportType,
+		int first,
+		int max,
+		ExportConfigurationDto exportConfiguration,
+		Language userLanguage);
+
 	CaseDataDto getCaseDataByUuid(String uuid);
 
 	CaseDataDto saveCase(CaseDataDto dto) throws ValidationRuntimeException;
