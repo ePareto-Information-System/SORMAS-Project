@@ -46,6 +46,7 @@ import de.symeda.sormas.api.caze.CaseCriteria;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseExportDto;
 import de.symeda.sormas.api.caze.CaseExportType;
+import de.symeda.sormas.api.caze.DetailCaseDtoExport;
 import de.symeda.sormas.api.caze.InvestigationStatus;
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
@@ -224,6 +225,44 @@ public class CasesView extends AbstractView {
 					exportLayout,
 					VaadinIcons.FILE_TEXT,
 					Captions.exportDetailed,
+					Strings.infoDetailedExport);
+			}
+
+			{
+				StreamResource exportStreamResource = DownloadUtil.createCsvExportStreamResource(
+					DetailCaseDtoExport.class,
+					null,
+					(Integer start, Integer max) -> FacadeProvider.getCaseFacade()
+						.getExportListSqlFunction(
+							grid.getCriteria(),
+							CaseExportType.CASE_SURVEILLANCE,
+							start,
+							max,
+							null,
+							I18nProperties.getUserLanguage()),
+					(propertyId, type) -> {
+						String caption = I18nProperties.findPrefixCaption(
+							propertyId,
+							DetailCaseDtoExport.I18N_PREFIX,
+							CaseDataDto.I18N_PREFIX,
+							CaseExportDto.I18N_PREFIX,
+							PersonDto.I18N_PREFIX,
+							EpiDataDto.I18N_PREFIX,
+							LocationDto.I18N_PREFIX,
+							HospitalizationDto.I18N_PREFIX);
+						if (Date.class.isAssignableFrom(type)) {
+							caption += " (" + DateFormatHelper.getDateFormatPattern() + ")";
+						}
+						return caption;
+					},
+					createFileNameWithCurrentDate("sormas_cases_two_", ".csv"),
+					null);
+				addExportButton(
+					exportStreamResource,
+					exportPopupButton,
+					exportLayout,
+					VaadinIcons.FILE_TEXT,
+					Captions.exportDetailedTwo,
 					Strings.infoDetailedExport);
 			}
 
