@@ -705,6 +705,7 @@ public interface Captions {
 	String exportCaseManagement = "exportCaseManagement";
 	String ExportConfiguration_NAME = "ExportConfiguration.NAME";
 	String exportDetailed = "exportDetailed";
+	String exportDetailedTwo = "exportDetailedTwo";
 	String exportEditExportConfiguration = "exportEditExportConfiguration";
 	String exportFollowUp = "exportFollowUp";
 	String exportInfrastructureData = "exportInfrastructureData";
