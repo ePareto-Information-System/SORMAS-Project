@@ -27,7 +27,6 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.SampleDto;
-import de.symeda.sormas.ui.utils.FieldSampleIdValidatorUtil;
 
 public class SampleEditForm extends AbstractSampleForm {
 
@@ -51,7 +50,6 @@ public class SampleEditForm extends AbstractSampleForm {
 
 		setVisibilities();
 
-		addValidators(SampleDto.FIELD_SAMPLE_ID, new FieldSampleIdValidatorUtil(getValue()));
 
 		addValueChangeListener(e -> {
 			defaultValueChangeListener();
