@@ -21,6 +21,7 @@ import static de.symeda.sormas.ui.utils.CssStyles.H3;
 import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 
 import com.vaadin.ui.Label;
+import com.vaadin.v7.data.Validator;
 import com.vaadin.v7.ui.ComboBox;
 
 import de.symeda.sormas.api.FacadeProvider;
@@ -28,6 +29,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.SampleDto;
+import de.symeda.sormas.ui.ControllerProvider;
 
 public class SampleEditForm extends AbstractSampleForm {
 
@@ -61,15 +63,17 @@ public class SampleEditForm extends AbstractSampleForm {
 
 		setVisibilities();
 
-
 		addValueChangeListener(e -> {
 			defaultValueChangeListener();
+
 			if (FacadeProvider.getPathogenTestFacade().hasPathogenTest(getValue().toReference())) {
 				getField(SampleDto.PATHOGEN_TEST_RESULT).setRequired(true);
 			} else {
 				getField(SampleDto.PATHOGEN_TEST_RESULT).setEnabled(false);
 			}
 		});
+
+		addValidators(SampleDto.FIELD_SAMPLE_ID, new FieldSampleIdEditValidator());
 	}
 
 	public void makePathogenTestResultRequired() {
@@ -85,5 +89,20 @@ public class SampleEditForm extends AbstractSampleForm {
 	@Override
 	protected String createHtmlLayout() {
 		return HTML_LAYOUT;
+	}
+
+	class FieldSampleIdEditValidator implements Validator {
+
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void validate(Object value) throws InvalidValueException {
+			SampleDto dto = getValue();
+			if (value == null || value.equals(""))
+				return;
+
+			else if (!(value instanceof String && ControllerProvider.getSampleController().isFieldSampleIdExist(dto.getUuid(), (String) value)))
+				throw new InvalidValueException(I18nProperties.getString(Strings.messageFieldSampleIdExist));
+		}
 	}
 }
