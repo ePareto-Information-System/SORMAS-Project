@@ -190,11 +190,11 @@ public class SampleController {
 			form.getFieldGroup());
 		editView.addCommitListener(() -> {
 			if (!form.getFieldGroup().isModified()) {
+
 				SampleDto changedDto = form.getValue();
 				SampleDto originalDto = FacadeProvider.getSampleFacade().getSampleByUuid(changedDto.getUuid());
 				FacadeProvider.getSampleFacade().saveSample(changedDto);
 				SormasUI.refreshView();
-
 				if (changedDto.getSpecimenCondition() != originalDto.getSpecimenCondition()
 					&& changedDto.getSpecimenCondition() == SpecimenCondition.NOT_ADEQUATE
 					&& UserProvider.getCurrent().hasUserRight(UserRight.TASK_CREATE)) {
@@ -413,5 +413,9 @@ public class SampleController {
 			field = false;
 		}
 		return field;
+	}
+
+	public boolean isFieldSampleIdExist(String uuid, String fieldSampleId) {
+		return FacadeProvider.getSampleFacade().getSampleByFieldSampleID(uuid, fieldSampleId);
 	}
 }
