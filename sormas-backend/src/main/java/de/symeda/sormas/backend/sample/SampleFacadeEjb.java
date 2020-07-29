@@ -199,8 +199,14 @@ public class SampleFacadeEjb implements SampleFacade {
 		return convertToDto(sampleService.getByUuid(uuid));
 	}
 
+	@Override
 	public SampleDto getSampleByFieldSampleID(String fieldSampleId) {
 		return convertToDto(sampleService.getByFieldSampleID(fieldSampleId));
+	}
+
+	@Override
+	public boolean getSampleByFieldSampleID(String uuid, String fieldSampleId) {
+		return sampleService.getByFieldSampleID(uuid, fieldSampleId);
 	}
 
 	@Override
