@@ -772,8 +772,6 @@ public class CaseFacadeEjb implements CaseFacade {
 //				PreparedStatement symptomsPs = connection.prepareStatement(symptomsSql);
 				stmt.setInt(1, max);
 				stmt.setInt(2, first);
-//				stmt.setMaxRows(max);
-//				stmt.setFetchSize(first);
 				stmt.execute();
 
 				ResultSet resultSet = stmt.getResultSet();
