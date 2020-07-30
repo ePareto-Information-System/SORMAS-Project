@@ -172,7 +172,7 @@ public class SampleDataView extends AbstractSampleView {
 			} else if (sampleDto.getSamplePurpose() == SamplePurpose.EXTERNAL && sampleDto.isReceived() && sampleDto.getReceivedDate() == null) {
 				return Strings.messageCheckReceivedAndSelectedSampleDate;
 			}
-			return null;
+				return Strings.messageCheckReceivedAndSelectedSampleDate;
 		};
 		PathogenTestListComponent pathogenTestList = new PathogenTestListComponent(getSampleRef(), onSavedPathogenTest, createOrEditAllowedCallback);
 		pathogenTestList.addStyleName(CssStyles.SIDE_COMPONENT);
