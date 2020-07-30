@@ -166,13 +166,13 @@ public class SampleDataView extends AbstractSampleView {
 
 		// why? if(sampleDto.getSamplePurpose() !=null && sampleDto.getSamplePurpose().equals(SamplePurpose.EXTERNAL)) {
 		Supplier<String> createOrEditAllowedCallback = () -> {
-			if (editComponent.getWrappedComponent().getFieldGroup().isValid()) {
-				if (sampleDto.isReceived() || sampleDto.getSamplePurpose() == SamplePurpose.INTERNAL) {
-					return null;
-				}
+
+			if (!editComponent.getWrappedComponent().getFieldGroup().isValid()) {
+				return Strings.messageFormHasErrorsPathogenTest;
+			} else if (sampleDto.getSamplePurpose() == SamplePurpose.EXTERNAL && sampleDto.isReceived() && sampleDto.getReceivedDate() == null) {
 				return Strings.messageCheckReceivedAndSelectedSampleDate;
 			}
-			return Strings.messageFormHasErrorsPathogenTest;
+			return null;
 		};
 		PathogenTestListComponent pathogenTestList = new PathogenTestListComponent(getSampleRef(), onSavedPathogenTest, createOrEditAllowedCallback);
 		pathogenTestList.addStyleName(CssStyles.SIDE_COMPONENT);
