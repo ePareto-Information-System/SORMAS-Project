@@ -55,7 +55,6 @@ public class AdditionalTestList extends PaginationList<AdditionalTestDto> {
 					if (createOrEditAllowedCallback.get() != null) {
 						ControllerProvider.getAdditionalTestController().openEditComponent(additionalTest, AdditionalTestList.this::reload);
 					} else {
-						Notification.show(null, I18nProperties.getString(Strings.messageFormHasErrorsPathogenTest), Type.ERROR_MESSAGE);
 					}
 				});
 			}
