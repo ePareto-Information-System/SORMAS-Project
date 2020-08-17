@@ -229,34 +229,6 @@ public class CasesView extends AbstractView {
 			}
 
 			{
-				StreamResource exportStreamResource = DownloadUtil.createCsvExportStreamResource(
-					DetailCaseDtoExport.class,
-					null,
-					(Integer start, Integer max) -> FacadeProvider.getCaseFacade()
-						.getExportListSqlFunction(
-							grid.getCriteria(),
-							CaseExportType.CASE_SURVEILLANCE,
-							start,
-							max,
-							null,
-							I18nProperties.getUserLanguage()),
-					(propertyId, type) -> {
-						String caption = I18nProperties.findPrefixCaption(
-							propertyId,
-							DetailCaseDtoExport.I18N_PREFIX,
-							CaseDataDto.I18N_PREFIX,
-							CaseExportDto.I18N_PREFIX,
-							PersonDto.I18N_PREFIX,
-							EpiDataDto.I18N_PREFIX,
-							LocationDto.I18N_PREFIX,
-							HospitalizationDto.I18N_PREFIX);
-						if (Date.class.isAssignableFrom(type)) {
-							caption += " (" + DateFormatHelper.getDateFormatPattern() + ")";
-						}
-						return caption;
-					},
-					createFileNameWithCurrentDate("sormas_cases_two_", ".csv"),
-					null);
 				addExportButton(
 					exportStreamResource,
 					exportPopupButton,
