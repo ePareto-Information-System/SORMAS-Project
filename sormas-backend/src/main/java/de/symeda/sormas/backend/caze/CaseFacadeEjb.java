@@ -103,6 +103,7 @@ import de.symeda.sormas.api.epidata.EpiDataTravelHelper;
 import de.symeda.sormas.api.facility.FacilityDto;
 import de.symeda.sormas.api.facility.FacilityHelper;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.importexport.ExportConfigurationDto;
 import de.symeda.sormas.api.infrastructure.InfrastructureHelper;
@@ -221,6 +222,7 @@ import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.user.UserFacadeEjb;
 import de.symeda.sormas.backend.user.UserRoleConfigFacadeEjb.UserRoleConfigFacadeEjbLocal;
 import de.symeda.sormas.backend.user.UserService;
+import de.symeda.sormas.backend.util.CriteriaToJsonObject;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.ModelConstants;
 import de.symeda.sormas.backend.util.PseudonymizationService;
@@ -761,81 +763,97 @@ public class CaseFacadeEjb implements CaseFacade {
 
 		Session session = em.unwrap(Session.class);
 		List<DetailCaseDtoExport> detailCaseDtoExports = new ArrayList<>();
-		String sql = "SELECT * FROM fn_detail_case_export(?, ?)";
-//		String symptomsSql = "SELECT fn_case_symptoms(?)";
 
 		session.doWork(new Work() {
 
 			@Override
 			public void execute(Connection connection) throws SQLException {
-				PreparedStatement stmt = connection.prepareStatement(sql);
+				PreparedStatement stmt = connection.prepareStatement(I18nProperties.getString(Strings.detailCaseExportGeneral));
 //				PreparedStatement symptomsPs = connection.prepareStatement(symptomsSql);
-				stmt.setInt(1, max);
-				stmt.setInt(2, first);
-				stmt.execute();
 
+				String params = new CriteriaToJsonObject().hashMapToJson(caseCriteria, first, max);
+				System.err.println(params);
+				stmt.setObject(1, params);
+
+				stmt.execute();
 				ResultSet resultSet = stmt.getResultSet();
 				while (resultSet.next()) {
 					DetailCaseDtoExport detailCaseDtoExport = new DetailCaseDtoExport();
-					detailCaseDtoExport.setCaseId(resultSet.getLong("case_id"));
-//					detailCaseDtoExport.setDistrictId(resultSet.getLong("district_id"));
-//					detailCaseDtoExport.setCaseId(resultSet.getLong("healthcond_id"));
-					detailCaseDtoExport.setCaseUuid(resultSet.getString("case_uuid"));
-					detailCaseDtoExport.setCaseEpidnumber(resultSet.getString("case_epidnumber"));
-					detailCaseDtoExport.setCaseDisease(resultSet.getString("case_disease"));
+					detailCaseDtoExport.setCountry(resultSet.getString("country"));
+					detailCaseDtoExport.setCaseSn(resultSet.getLong("case_sn"));
+					detailCaseDtoExport.setCaseId(resultSet.getString("case_id"));
+					detailCaseDtoExport.setEpidNumber(resultSet.getString("epid_number"));
+					detailCaseDtoExport.setDisease(resultSet.getString("disease"));
+
 					detailCaseDtoExport.setCaseDiseasedetails(resultSet.getString("case_diseasedetails"));
-					detailCaseDtoExport.setPersonFirstname(resultSet.getString("person_firstname"));
-					detailCaseDtoExport.setPersonLastname(resultSet.getString("person_lastname"));
-					detailCaseDtoExport.setPersonSex(resultSet.getString("person_sex"));
-					detailCaseDtoExport.setCasePregnant(resultSet.getString("case_pregnant"));
-					detailCaseDtoExport.setPersonApproximateage(resultSet.getInt("person_approximateage"));
+					detailCaseDtoExport.setFirstname(resultSet.getString("firstname"));
+					detailCaseDtoExport.setLastname(resultSet.getString("lastname"));
+					detailCaseDtoExport.setSex(resultSet.getString("sex"));
+					detailCaseDtoExport.setPregnancy(resultSet.getString("pregnancy"));
+
+					detailCaseDtoExport.setTrimester(resultSet.getString("trimester"));
+					detailCaseDtoExport.setPostpartum(resultSet.getString("postpartum"));
+
+					detailCaseDtoExport.setAge(resultSet.getInt("age"));
+					detailCaseDtoExport.setAgeGroup(resultSet.getString("age_group"));
+					detailCaseDtoExport.setDateOfBirth(resultSet.getString("date_of_birth"));
 
 					detailCaseDtoExport.setPersonApproximateagetype(resultSet.getString("person_approximateagetype"));
+
 					detailCaseDtoExport.setPersonBirthdateDd(resultSet.getInt("person_birthdate_dd"));
 					detailCaseDtoExport.setPersonBirthdateMm(resultSet.getInt("person_birthdate_mm"));
 					detailCaseDtoExport.setCaseBirthdateYyyy(resultSet.getInt("case_birthdate_yyyy"));
 
-					detailCaseDtoExport.setCaseReportdate(resultSet.getDate("case_reportdate"));
-					detailCaseDtoExport.setUserUuid(resultSet.getString("user_uuid"));
-					detailCaseDtoExport.setRegionUuid(resultSet.getString("region_uuid"));
-					detailCaseDtoExport.setRegionName(resultSet.getString("region_name"));
+					detailCaseDtoExport.setDateOfReport(resultSet.getDate("date_of_report"));
+					detailCaseDtoExport.setRegionName(resultSet.getString("region"));
 
-					detailCaseDtoExport.setDistrictUuid(resultSet.getString("district_uuid"));
-					detailCaseDtoExport.setDistrictName(resultSet.getString("district_name"));
-					detailCaseDtoExport.setCommunityUuid(resultSet.getString("community_uuid"));
-					detailCaseDtoExport.setCommunityName(resultSet.getString("community_name"));
+					detailCaseDtoExport.setDistrictName(resultSet.getString("district"));
+					detailCaseDtoExport.setSubDistrict(resultSet.getString("sub_district"));
+					detailCaseDtoExport.setHealthFacility(resultSet.getString("health_facility"));
+					detailCaseDtoExport.setPointOfEntry(resultSet.getString("point_of_entry"));
+					detailCaseDtoExport.setPlaceOfInitialDetection(resultSet.getString("place_of_initial_detection"));
 
-					detailCaseDtoExport.setFacilityName(resultSet.getString("facility_name"));
-					detailCaseDtoExport.setFacilityUuid(resultSet.getString("facility_uuid"));
-					detailCaseDtoExport.setCaseHealthFacilityDetails(resultSet.getString("case_healthfacilitydetails"));
-					detailCaseDtoExport.setPointofentName(resultSet.getString("pointofent_name"));
-					detailCaseDtoExport.setPointofentUuid(resultSet.getString("pointofent_uuid"));
-
-					detailCaseDtoExport.setCasePointofentrydetails(resultSet.getString("case_pointofentrydetails"));
 					detailCaseDtoExport.setCaseCaseclassification(resultSet.getString("case_caseclassification"));
 					detailCaseDtoExport.setCaseInvestigationstatus(resultSet.getString("case_investigationstatus"));
 					detailCaseDtoExport.setCaseOutcome(resultSet.getString("case_outcome"));
 					detailCaseDtoExport.setCaseQuarantine(resultSet.getString("case_quarantine"));
 
-					detailCaseDtoExport.setCaseQuarantinefrom(resultSet.getDate("case_quarantinefrom"));
-					detailCaseDtoExport.setCaseQuarantineto(resultSet.getDate("case_quarantineto"));
+					detailCaseDtoExport.setCaseQuarantineStart(resultSet.getDate("case_quarantine_start"));
+					detailCaseDtoExport.setCaseQuarantineEnd(resultSet.getDate("case_quarantine_end"));
+
+					detailCaseDtoExport.setCaseClassificationSource(resultSet.getString("case_classification_source"));
+					detailCaseDtoExport.setDistrictId(resultSet.getLong("district_id"));
+					detailCaseDtoExport.setHealthcondId(resultSet.getLong("healthcond_id"));
+					detailCaseDtoExport.setCaseDiseasedetails(resultSet.getString("case_diseasedetails"));
+					detailCaseDtoExport.setPersonApproximateagetype(resultSet.getString("person_approximateagetype"));
+					detailCaseDtoExport.setUserUuid(resultSet.getString("user_uuid"));
+
+					detailCaseDtoExport.setUserUuid(resultSet.getString("user_uuid"));
+					detailCaseDtoExport.setRegionUuid(resultSet.getString("region_uuid"));
+					detailCaseDtoExport.setDistrictUuid(resultSet.getString("district_uuid"));
+					detailCaseDtoExport.setCommunityUuid(resultSet.getString("district_uuid"));
+					detailCaseDtoExport.setFacilityUuid(resultSet.getString("facility_uuid"));
+
+					detailCaseDtoExport.setCaseHealthFacilityDetails(resultSet.getString("case_healthfacilitydetails"));
+					detailCaseDtoExport.setPointofentUuid(resultSet.getString("case_pointofentry_uuid"));
+					detailCaseDtoExport.setPointofentrydetails(resultSet.getString("case_pointofentrydetails"));
 					detailCaseDtoExport.setHospitalizAdmittedtohealthfacility(resultSet.getString("hospitaliz_admittedtohealthfacility"));
 					detailCaseDtoExport.setHospitalizAdmissiondate(resultSet.getDate("hospitaliz_admissiondate"));
 					detailCaseDtoExport.setHospitalizDischargedate(resultSet.getDate("hospitaliz_dischargedate"));
-
 					detailCaseDtoExport.setHospitalizLeftagainstadvice(resultSet.getString("hospitaliz_leftagainstadvice"));
+
 					detailCaseDtoExport.setPersonPresentcondition(resultSet.getInt("person_presentcondition"));
 					detailCaseDtoExport.setPersonDeathdate(resultSet.getDate("person_deathdate"));
 					detailCaseDtoExport.setPersonDeathdate(resultSet.getDate("person_burialdate"));
 					detailCaseDtoExport.setPersonBurialconductor(resultSet.getString("person_burialconductor"));
-
 					detailCaseDtoExport.setPersonBurialplacedescription(resultSet.getString("person_burialplacedescription"));
-//			    	  detailCaseDtoExport.setRegionNameT(resultSet.getString("region_name_two"));
-//			    	  detailCaseDtoExport.setHospitalizAdmittedtohealthfacility(resultSet.getString("region_uuid_two"));
+
+					detailCaseDtoExport.setRegionName(resultSet.getString("region_name"));
+					detailCaseDtoExport.setDistrictName(resultSet.getString("district_name"));
 					detailCaseDtoExport.setLocationCity(resultSet.getString("location_city"));
 					detailCaseDtoExport.setLocationAddress(resultSet.getString("location_address"));
-
 					detailCaseDtoExport.setLocationPostalcode(resultSet.getString("location_postalcode"));
+
 					detailCaseDtoExport.setPersonPhone(resultSet.getString("person_phone"));
 					detailCaseDtoExport.setPersonPhoneowner(resultSet.getString("person_phoneowner"));
 					detailCaseDtoExport.setPersonEducationtype(resultSet.getString("person_educationtype"));
@@ -844,9 +862,8 @@ public class CaseFacadeEjb implements CaseFacade {
 					detailCaseDtoExport.setPersonOccupationtype(resultSet.getString("person_occupationtype"));
 					detailCaseDtoExport.setPersonOccupationdetails(resultSet.getString("person_occupationdetails"));
 //			    	  detailCaseDtoExport.setFacilityName(resultSet.getString("facility_name"));
-//			    	  detailCaseDtoExport.setFacilityUuid(resultSet.getString("facility_uuid"));
 					detailCaseDtoExport.setPersonOccupationdetails(resultSet.getString("person_occupationfacilitydetails"));
-
+//
 					detailCaseDtoExport.setEpidataTraveled(resultSet.getString("epidata_traveled"));
 					detailCaseDtoExport.setEpidataBurialattended(resultSet.getString("epidata_burialattended"));
 					detailCaseDtoExport.setEpidataDirectcontactconfirmedcase(resultSet.getString("epidata_directcontactconfirmedcase"));
@@ -858,15 +875,12 @@ public class CaseFacadeEjb implements CaseFacade {
 
 					detailCaseDtoExport.setCaseVaccinationdate(resultSet.getDate("case_vaccinationdate"));
 					detailCaseDtoExport.setCaseVaccinationinfosource(resultSet.getString("case_vaccinationinfosource"));
-					detailCaseDtoExport.setCasePostpartum(resultSet.getString("case_postpartum"));
 
-					detailCaseDtoExport.setCaseTrimester(resultSet.getString("case_trimester"));
-//					detailCaseDtoExport.setPersonId(resultSet.getLong("person_id"));
-//					detailCaseDtoExport.setLocationId(resultSet.getLong("location_id"));
-//					detailCaseDtoExport.setEpidataId(resultSet.getLong("epidata_id"));
-//					detailCaseDtoExport.setSymptomsId(resultSet.getLong("symptoms_id"));
-//					detailCaseDtoExport.setHospitalizId(resultSet.getLong("hospitaliz_id"));
-//					detailCaseDtoExport.setSymptoms(resultSet.getString("symptoms"));
+					detailCaseDtoExport.setPersonId(resultSet.getLong("person_id"));
+					detailCaseDtoExport.setLocationId(resultSet.getLong("location_id"));
+					detailCaseDtoExport.setEpidataId(resultSet.getLong("epidata_id"));
+					detailCaseDtoExport.setSymptomsId(resultSet.getLong("symptoms_id"));
+					detailCaseDtoExport.setHospitalizId(resultSet.getLong("hospitaliz_id"));
 
 //					symptomsPs.setLong(1, detailCaseDtoExport.getSymptomsId());
 ////					symptomsPs.setLong(1, x);
@@ -2610,5 +2624,11 @@ public class CaseFacadeEjb implements CaseFacade {
 	public Boolean isCaseEditAllowed(String caseUuid) {
 		Case caze = caseService.getByUuid(caseUuid);
 		return caseJurisdictionChecker.isInJurisdiction(caze);
+	}
+
+	public String convertToStringNull(String value) {
+		if (value == null || value.isEmpty() || value == "")
+			return "NULL";
+		return value;
 	}
 }
