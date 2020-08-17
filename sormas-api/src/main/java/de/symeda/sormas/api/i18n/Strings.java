@@ -675,4 +675,7 @@ public interface Strings {
 	String years = "years";
 	String yes = "yes";
 	String yesterday = "yesterday";
+
+//	PLPGSQL Functions
+	String detailCaseExportGeneral = "detailCaseExportGeneral";
 }
