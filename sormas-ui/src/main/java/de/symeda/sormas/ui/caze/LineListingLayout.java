@@ -24,6 +24,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.facility.FacilityDto;
 import de.symeda.sormas.api.facility.FacilityReferenceDto;
@@ -74,6 +75,7 @@ public class LineListingLayout extends VerticalLayout {
 		this.window = window;
 
 		setSpacing(false);
+		addStyleName("width-auto");
 
 		VerticalLayout sharedInformationComponent = new VerticalLayout();
 		sharedInformationComponent.setMargin(false);
@@ -144,6 +146,7 @@ public class LineListingLayout extends VerticalLayout {
 		caseLines = new ArrayList<CaseLineLayout>();
 		VerticalLayout lineComponent = new VerticalLayout();
 		lineComponent.setMargin(false);
+		lineComponent.addStyleName("v-slot-stripes");
 
 		Label lineComponentLabel = new Label();
 		lineComponentLabel.setValue(I18nProperties.getCaption(Captions.lineListingNewCasesList));
@@ -173,6 +176,7 @@ public class LineListingLayout extends VerticalLayout {
 			updateCommunityAndFacility(districtReferenceDto, newLine);
 			CaseLineDto lastLineDto = caseLines.get(caseLines.size() - 1).getBean();
 			CaseLineDto newLineDto = new CaseLineDto();
+
 			newLineDto.setDisease(lastLineDto.getDisease());
 			newLineDto.setDiseaseDetails(lastLineDto.getDiseaseDetails());
 			newLineDto.setRegion(lastLineDto.getRegion());
@@ -358,14 +362,17 @@ public class LineListingLayout extends VerticalLayout {
 		private ComboBox<Integer> dateOfBirthMonth;
 		private ComboBox<Integer> dateOfBirthDay;
 		private ComboBox<Sex> sex;
+		private ComboBox<CaseClassification> caseClassification;
 		private DateField dateOfOnset;
 
 		private Button delete;
 
 		public CaseLineLayout(VerticalLayout lineComponent, int lineIndex) {
-
 			addStyleName(CssStyles.SPACING_SMALL);
 			setMargin(false);
+			addStyleName("wrap");
+			addStyleName("height-auto");
+//			addStyleName("crud-main-layout");
 
 			binder.forField(disease).asRequired().bind(CaseLineDto.DISEASE);
 			binder.forField(diseaseDetails)
@@ -380,11 +387,13 @@ public class LineListingLayout extends VerticalLayout {
 			dateOfReport.setId("lineListingDateOfReport_" + lineIndex);
 			dateOfReport.setWidth(100, Unit.PIXELS);
 			binder.forField(dateOfReport).asRequired().bind(CaseLineDto.DATE_OF_REPORT);
+
 			dateOfReport.addValueChangeListener(e -> setEpidNumberPrefix(this, dateOfReport.getValue()));
 			epidNumber = new TextField();
 			epidNumber.setId("lineListingEpidNumber_" + lineIndex);
 			epidNumber.setWidth(160, Unit.PIXELS);
 			binder.forField(epidNumber).bind(CaseLineDto.EPID_NUMBER);
+
 			community = new ComboBox<>();
 			community.setId("lineListingCommunity_" + lineIndex);
 			community.addStyleName(CssStyles.SOFT_REQUIRED);
@@ -403,6 +412,7 @@ public class LineListingLayout extends VerticalLayout {
 				}
 			});
 			binder.forField(community).bind(CaseLineDto.COMMUNITY);
+
 			facility = new ComboBox<>();
 			facility.setId("lineListingFacility_" + lineIndex);
 			facility.setWidth(364, Unit.PIXELS);
@@ -410,6 +420,7 @@ public class LineListingLayout extends VerticalLayout {
 				updateFacilityFields(facility, facilityDetails);
 			});
 			binder.forField(facility).asRequired().bind(CaseLineDto.FACILITY);
+
 			facilityDetails = new TextField();
 			facilityDetails.setId("lineListingFacilityDetails_" + lineIndex);
 			facilityDetails.setVisible(false);
@@ -421,6 +432,7 @@ public class LineListingLayout extends VerticalLayout {
 			firstname = new TextField();
 			firstname.setId("lineListingFirstName_" + lineIndex);
 			binder.forField(firstname).asRequired().bind(CaseLineDto.FIRST_NAME);
+
 			lastname = new TextField();
 			firstname.setId("lineListingLastName_" + lineIndex);
 			binder.forField(lastname).asRequired().bind(CaseLineDto.LAST_NAME);
@@ -432,6 +444,7 @@ public class LineListingLayout extends VerticalLayout {
 			dateOfBirthYear.setWidth(80, Unit.PIXELS);
 			dateOfBirthYear.addStyleName(CssStyles.CAPTION_OVERFLOW);
 			binder.forField(dateOfBirthYear).bind(CaseLineDto.DATE_OF_BIRTH_YYYY);
+
 			dateOfBirthMonth = new ComboBox<>();
 			dateOfBirthMonth.setId("lineListingDateOfBirthMonth_" + lineIndex);
 			dateOfBirthMonth.setEmptySelectionAllowed(true);
@@ -440,6 +453,7 @@ public class LineListingLayout extends VerticalLayout {
 			setItemCaptionsForMonths(dateOfBirthMonth);
 			dateOfBirthMonth.setWidth(120, Unit.PIXELS);
 			binder.forField(dateOfBirthMonth).bind(CaseLineDto.DATE_OF_BIRTH_MM);
+
 			dateOfBirthDay = new ComboBox<>();
 			dateOfBirthDay.setId("lineListingDateOfBirthDay_" + lineIndex);
 			dateOfBirthDay.setEmptySelectionAllowed(true);
@@ -459,6 +473,13 @@ public class LineListingLayout extends VerticalLayout {
 			sex.setItems(Sex.values());
 			sex.setWidth(100, Unit.PIXELS);
 			binder.forField(sex).bind(CaseLineDto.SEX);
+
+			caseClassification = new ComboBox<>();
+			caseClassification.setId("lineListingcaseClassification" + lineIndex);
+			caseClassification.setItems(CaseClassification.values());
+			caseClassification.setWidth(120, Unit.PIXELS);
+			binder.forField(caseClassification).bind(CaseLineDto.CASE_CLASSIFICATION);
+
 			dateOfOnset = new DateField();
 			dateOfOnset.setId("lineListingDateOfOnSet_" + lineIndex);
 			dateOfOnset.setWidth(100, Unit.PIXELS);
@@ -487,6 +508,7 @@ public class LineListingLayout extends VerticalLayout {
 				dateOfBirthMonth,
 				dateOfBirthDay,
 				sex,
+				caseClassification,
 				dateOfOnset,
 				delete);
 
@@ -534,9 +556,11 @@ public class LineListingLayout extends VerticalLayout {
 			lastname.removeStyleName(CssStyles.CAPTION_HIDDEN);
 			dateOfBirthYear.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.BIRTH_DATE));
 			sex.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.SEX));
+			caseClassification.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, CaseDataDto.CASE_CLASSIFICATION));
 			dateOfOnset.setCaption(I18nProperties.getPrefixCaption(SymptomsDto.I18N_PREFIX, SymptomsDto.ONSET_DATE));
 			dateOfOnset.setDescription(I18nProperties.getPrefixDescription(SymptomsDto.I18N_PREFIX, SymptomsDto.ONSET_DATE));
 			delete.setEnabled(false);
+			delete.addStyleName("btn-center");
 			setComponentAlignment(delete, Alignment.MIDDLE_LEFT);
 		}
 
@@ -544,6 +568,24 @@ public class LineListingLayout extends VerticalLayout {
 
 			setRequiredInicatorsVisibility(false);
 
+			dateOfReport.setCaption(I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.REPORT_DATE));
+			dateOfReport.removeStyleName(CssStyles.CAPTION_HIDDEN);
+			epidNumber.setCaption(I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.EPID_NUMBER));
+			community.setCaption(I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.COMMUNITY));
+			facility.setCaption(I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.HEALTH_FACILITY));
+			facility.removeStyleName(CssStyles.CAPTION_HIDDEN);
+			CssStyles.style(facilityDetails, CssStyles.FORCE_CAPTION);
+			firstname.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.FIRST_NAME));
+			firstname.removeStyleName(CssStyles.CAPTION_HIDDEN);
+			lastname.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.LAST_NAME));
+			lastname.removeStyleName(CssStyles.CAPTION_HIDDEN);
+			dateOfBirthYear.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.BIRTH_DATE));
+			sex.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.SEX));
+			caseClassification.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, CaseDataDto.CASE_CLASSIFICATION));
+			dateOfOnset.setCaption(I18nProperties.getPrefixCaption(SymptomsDto.I18N_PREFIX, SymptomsDto.ONSET_DATE));
+			dateOfOnset.setDescription(I18nProperties.getPrefixDescription(SymptomsDto.I18N_PREFIX, SymptomsDto.ONSET_DATE));
+			delete.addStyleName("btn-center");
+			setComponentAlignment(delete, Alignment.MIDDLE_CENTER);
 		}
 
 		private void setRequiredInicatorsVisibility(boolean visible) {
@@ -633,6 +675,7 @@ public class LineListingLayout extends VerticalLayout {
 		public static final String DATE_OF_BIRTH_MM = "dateOfBirthMM";
 		public static final String DATE_OF_BIRTH_DD = "dateOfBirthDD";
 		public static final String SEX = "sex";
+		public static final String CASE_CLASSIFICATION = "caseClassification";
 		public static final String DATE_OF_ONSET = "dateOfOnset";
 		public static final String FACILITY_TYPE_GROUP = "facilityTypeGroup";
 		public static final String FACILITY_TYPE = "facilityType";
@@ -654,6 +697,7 @@ public class LineListingLayout extends VerticalLayout {
 		private Integer dateOfBirthMM;
 		private Integer dateOfBirthDD;
 		private Sex sex;
+		private CaseClassification caseClassification;
 		private LocalDate dateOfOnset;
 
 		public CaseLineDto(
@@ -674,6 +718,7 @@ public class LineListingLayout extends VerticalLayout {
 			Integer dateOfBirthMonth,
 			Integer dateOfBirthDay,
 			Sex sex,
+			CaseClassification caseClassification,
 			LocalDate dateOfOnset) {
 
 			this.disease = disease;
@@ -691,6 +736,7 @@ public class LineListingLayout extends VerticalLayout {
 			this.dateOfBirthMM = dateOfBirthMonth;
 			this.dateOfBirthDD = dateOfBirthDay;
 			this.sex = sex;
+			this.caseClassification = caseClassification;
 			this.dateOfOnset = dateOfOnset;
 			this.facilityTypeGroup = facilityTypeGroup;
 			this.facilityType = facilityType;
@@ -817,6 +863,14 @@ public class LineListingLayout extends VerticalLayout {
 
 		public void setSex(Sex sex) {
 			this.sex = sex;
+		}
+
+		public CaseClassification getCaseClassification() {
+			return caseClassification;
+		}
+
+		public void setCaseClassification(CaseClassification caseClassification) {
+			this.caseClassification = caseClassification;
 		}
 
 		public LocalDate getDateOfOnset() {
