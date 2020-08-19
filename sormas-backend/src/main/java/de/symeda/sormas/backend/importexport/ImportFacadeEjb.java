@@ -228,6 +228,7 @@ public class ImportFacadeEjb implements ImportFacade {
 		columnNames.add(CaseDataDto.POINT_OF_ENTRY);
 		columnNames.add(CaseDataDto.POINT_OF_ENTRY_DETAILS);
 		columnNames.add(CaseDataDto.SYMPTOMS + "." + SymptomsDto.ONSET_DATE);
+		columnNames.add(CaseDataDto.CASE_CLASSIFICATION);
 
 		Path filePath = Paths.get(getCaseLineListingImportTemplateFilePath());
 		try (CSVWriter writer = CSVUtils.createCSVWriter(new FileWriter(filePath.toString()), configFacade.getCsvSeparator())) {
