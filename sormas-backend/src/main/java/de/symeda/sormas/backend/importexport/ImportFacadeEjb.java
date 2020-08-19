@@ -273,36 +273,38 @@ public class ImportFacadeEjb implements ImportFacade {
 	@Override
 	public void generateCaseLineListingImportTemplateFile() throws IOException {
 
-		createExportDirectoryIfNecessary();
+		createExportDirectoryIfNessecary();
 
-		char separator = configFacade.getCsvSeparator();
+		List<String> columnNames = new ArrayList<>();
+		columnNames.add(CaseDataDto.DISEASE);
+		columnNames.add(CaseDataDto.DISEASE_DETAILS);
+		columnNames.add(CaseDataDto.PLAGUE_TYPE);
+		columnNames.add(CaseDataDto.DENGUE_FEVER_TYPE);
+		columnNames.add(CaseDataDto.RABIES_TYPE);
+		columnNames.add(CaseDataDto.PERSON + "." + PersonDto.FIRST_NAME);
+		columnNames.add(CaseDataDto.PERSON + "." + PersonDto.LAST_NAME);
+		columnNames.add(CaseDataDto.PERSON + "." + PersonDto.SEX);
+		columnNames.add(CaseDataDto.PERSON + "." + PersonDto.BIRTH_DATE_DD);
+		columnNames.add(CaseDataDto.PERSON + "." + PersonDto.BIRTH_DATE_MM);
+		columnNames.add(CaseDataDto.PERSON + "." + PersonDto.BIRTH_DATE_YYYY);
+		columnNames.add(CaseDataDto.EPID_NUMBER);
+		columnNames.add(CaseDataDto.REPORT_DATE);
+		columnNames.add(CaseDataDto.CASE_ORIGIN);
+		columnNames.add(CaseDataDto.REGION);
+		columnNames.add(CaseDataDto.DISTRICT);
+		columnNames.add(CaseDataDto.COMMUNITY);
+		columnNames.add(CaseDataDto.HEALTH_FACILITY);
+		columnNames.add(CaseDataDto.HEALTH_FACILITY_DETAILS);
+		columnNames.add(CaseDataDto.POINT_OF_ENTRY);
+		columnNames.add(CaseDataDto.POINT_OF_ENTRY_DETAILS);
+		columnNames.add(CaseDataDto.SYMPTOMS + "." + SymptomsDto.ONSET_DATE);
+		columnNames.add(CaseDataDto.CASE_CLASSIFICATION);
 
-		List<ImportColumn> importColumns = new ArrayList<>();
-		importColumns.add(ImportColumn.from(CaseDataDto.class, DISEASE, Disease.class, separator));
-		importColumns.add(ImportColumn.from(CaseDataDto.class, DISEASE_DETAILS, String.class, separator));
-		importColumns.add(ImportColumn.from(CaseDataDto.class, PLAGUE_TYPE, PlagueType.class, separator));
-		importColumns.add(ImportColumn.from(CaseDataDto.class, DENGUE_FEVER_TYPE, DengueFeverType.class, separator));
-		importColumns.add(ImportColumn.from(CaseDataDto.class, RABIES_TYPE, RabiesType.class, separator));
-		importColumns.add(ImportColumn.from(PersonDto.class, PERSON + "." + PersonDto.FIRST_NAME, String.class, separator));
-		importColumns.add(ImportColumn.from(PersonDto.class, PERSON + "." + PersonDto.LAST_NAME, String.class, separator));
-		importColumns.add(ImportColumn.from(PersonDto.class, PERSON + "." + PersonDto.SEX, Sex.class, separator));
-		importColumns.add(ImportColumn.from(PersonDto.class, PERSON + "." + PersonDto.BIRTH_DATE_DD, Integer.class, separator));
-		importColumns.add(ImportColumn.from(PersonDto.class, PERSON + "." + PersonDto.BIRTH_DATE_MM, Integer.class, separator));
-		importColumns.add(ImportColumn.from(PersonDto.class, PERSON + "." + PersonDto.BIRTH_DATE_YYYY, Integer.class, separator));
-		importColumns.add(ImportColumn.from(CaseDataDto.class, EPID_NUMBER, String.class, separator));
-		importColumns.add(ImportColumn.from(CaseDataDto.class, REPORT_DATE, Date.class, separator));
-		importColumns.add(ImportColumn.from(CaseDataDto.class, CASE_ORIGIN, CaseOrigin.class, separator));
-		importColumns.add(ImportColumn.from(CaseDataDto.class, REGION, RegionReferenceDto.class, separator));
-		importColumns.add(ImportColumn.from(CaseDataDto.class, DISTRICT, DistrictReferenceDto.class, separator));
-		importColumns.add(ImportColumn.from(CaseDataDto.class, COMMUNITY, CommunityReferenceDto.class, separator));
-		importColumns.add(ImportColumn.from(CaseDataDto.class, FACILITY_TYPE, FacilityType.class, separator));
-		importColumns.add(ImportColumn.from(CaseDataDto.class, HEALTH_FACILITY, FacilityReferenceDto.class, separator));
-		importColumns.add(ImportColumn.from(CaseDataDto.class, HEALTH_FACILITY_DETAILS, String.class, separator));
-		importColumns.add(ImportColumn.from(CaseDataDto.class, POINT_OF_ENTRY, PointOfEntryReferenceDto.class, separator));
-		importColumns.add(ImportColumn.from(CaseDataDto.class, POINT_OF_ENTRY_DETAILS, String.class, separator));
-		importColumns.add(ImportColumn.from(CaseDataDto.class, SYMPTOMS + "." + SymptomsDto.ONSET_DATE, Date.class, separator));
-
-		writeTemplate(Paths.get(getCaseLineListingImportTemplateFilePath()), importColumns, false);
+		Path filePath = Paths.get(getCaseLineListingImportTemplateFilePath());
+		try (CSVWriter writer = CSVUtils.createCSVWriter(new FileWriter(filePath.toString()), configFacade.getCsvSeparator())) {
+			writer.writeNext(columnNames.toArray(new String[columnNames.size()]));
+			writer.flush();
+		}
 	}
 
 	@Override
