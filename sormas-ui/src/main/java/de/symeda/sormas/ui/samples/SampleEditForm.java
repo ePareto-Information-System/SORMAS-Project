@@ -101,6 +101,7 @@ public class SampleEditForm extends AbstractSampleForm {
 			if (value == null || value.equals(""))
 				return;
 
+			else if (!ControllerProvider.getSampleController().isFieldSampleIdExist(dto.getUuid(), (String) value))
 				throw new InvalidValueException(I18nProperties.getString(Strings.messageFieldSampleIdExist));
 		}
 	}
