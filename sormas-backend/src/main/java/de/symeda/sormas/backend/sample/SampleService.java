@@ -205,16 +205,11 @@ public class SampleService extends AbstractCoreAdoService<Sample> {
 
 	public boolean getByFieldSampleID(String uuid, String fieldSampleId) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
-		ParameterExpression<String> uuidParams = cb.parameter(String.class, Sample.UUID);
 		CriteriaQuery<Sample> cq = cb.createQuery(getElementClass());
 		Root<Sample> from = cq.from(getElementClass());
-		cq.where(cb.equal(from.get(Sample.UUID), uuidParams));
 
-		TypedQuery<Sample> q = em.createQuery(cq).setParameter(uuidParams, uuid);
 
-		Sample entity = q.getResultList().stream().findFirst().orElse(null);
 
-		return entity == null || (entity != null && entity.getFieldSampleID().equals(fieldSampleId));
 	}
 
 	public List<String> getDeletedUuidsSince(User user, Date since) {
