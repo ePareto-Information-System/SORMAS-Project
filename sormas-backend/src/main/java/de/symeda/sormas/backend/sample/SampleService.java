@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
@@ -211,10 +212,18 @@ public class SampleService extends AbstractCoreAdoService<Sample> {
 
 	public boolean getByFieldSampleID(String uuid, String fieldSampleId) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
+		ParameterExpression<String> fieldSampleIdParams = cb.parameter(String.class, Sample.FIELD_SAMPLE_ID);
 		CriteriaQuery<Sample> cq = cb.createQuery(getElementClass());
 		Root<Sample> from = cq.from(getElementClass());
+		cq.where(cb.equal(from.get(Sample.FIELD_SAMPLE_ID), fieldSampleIdParams));
 
+		TypedQuery<Sample> q = em.createQuery(cq).setParameter(fieldSampleIdParams, fieldSampleId);
 
+		List<Sample> samples = q.getResultList();
+
+		Optional<Sample> sampleObject = samples.stream().filter(p -> p.getUuid().equals(uuid)).findFirst();
+
+		return (samples.size() >= 0 && sampleObject.isPresent()) || (samples.size() == 0 && !sampleObject.isPresent()) ? true : false;
 
 	}
 
