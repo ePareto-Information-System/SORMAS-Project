@@ -331,6 +331,7 @@ public interface Strings {
 	String headingPrescriptionsDeleted = "headingPrescriptionsDeleted";
 	String headingReferCaseFromPointOfEntry = "headingReferCaseFromPointOfEntry";
 	String headingReferSample = "headingReferSample";
+	String headingReferSamples = "headingReferSamples";
 	String headingRemoveCaseFromContact = "headingRemoveCaseFromContact";
 	String headingRequestedAdditionalTests = "headingRequestedAdditionalTests";
 	String headingRequestedPathogenTests = "headingRequestedPathogenTests";
