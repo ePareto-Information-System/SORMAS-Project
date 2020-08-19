@@ -169,6 +169,8 @@ public class SampleDataView extends AbstractSampleView {
 
 			if (!editComponent.getWrappedComponent().getFieldGroup().isValid()) {
 				return Strings.messageFormHasErrorsPathogenTest;
+			} else if (sampleDto.getSamplePurpose() == SamplePurpose.EXTERNAL && (sampleDto.isReceived() && sampleDto.getReceivedDate() == null)
+				|| (!sampleDto.isReceived())) {
 				return Strings.messageCheckReceivedAndSelectedSampleDate;
 			}
 				return Strings.messageCheckReceivedAndSelectedSampleDate;
