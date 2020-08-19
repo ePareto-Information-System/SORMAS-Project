@@ -608,6 +608,7 @@ public interface Strings {
 	String headingReferCaseFromPointOfEntry = "headingReferCaseFromPointOfEntry";
 	String headingReferSample = "headingReferSample";
 	String headingRejectSormasToSormasShareRequest = "headingRejectSormasToSormasShareRequest";
+	String headingReferSamples = "headingReferSamples";
 	String headingRemoveCaseFromContact = "headingRemoveCaseFromContact";
 	String headingRequestedAdditionalTests = "headingRequestedAdditionalTests";
 	String headingRequestedPathogenTests = "headingRequestedPathogenTests";
