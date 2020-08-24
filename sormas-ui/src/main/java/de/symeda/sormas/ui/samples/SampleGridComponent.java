@@ -17,6 +17,8 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.samples;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 import com.vaadin.icons.VaadinIcons;
@@ -36,6 +38,7 @@ import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.sample.SampleAssociationType;
 import de.symeda.sormas.api.sample.SampleCriteria;
+import de.symeda.sormas.api.sample.SampleIndexDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
@@ -281,6 +284,51 @@ public class SampleGridComponent extends VerticalLayout {
 
 		samplesView.navigateTo(criteria);
 	}
+	
+	private boolean addBulkOperationsDropdown (AbstractOrderedLayout actionButtonsLayout) {
+		List<MenuBarHelper.MenuBarItem> menuItems = new ArrayList<MenuBarHelper.MenuBarItem>();
+		
+		if (UserProvider.getCurrent().hasUserRight(UserRight.PATHOGEN_TEST_CREATE)) {
+			menuItems.add(
+				new MenuBarHelper.MenuBarItem(
+					I18nProperties.getCaption(Captions.bulkEnterTestResult),
+					VaadinIcons.ELLIPSIS_H,
+					selectedItem -> createBulkTestResult())
+			);				
+		}
+		
+		if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_TRANSFER)) {
+			menuItems.add(
+				new MenuBarHelper.MenuBarItem(
+					I18nProperties.getCaption(Captions.bulkReferSamples),
+					VaadinIcons.ARROW_FORWARD,
+					selectedItem -> createBulkTransfer())
+			);				
+		}
+		
+		if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
+			menuItems.add(
+				new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkDelete), VaadinIcons.TRASH, selectedItem -> {
+					ControllerProvider.getSampleController().deleteAllSelectedItems(grid.asMultiSelect().getSelectedItems(), new Runnable() {
+
+						public void run() {
+							samplesView.navigateTo(criteria);
+						}
+					});
+				})
+			);
+		}
+		
+		if (menuItems.size() > 0) {
+			bulkOperationsDropdown = MenuBarHelper.createDropDown(Captions.bulkActions, menuItems.toArray(new MenuBarHelper.MenuBarItem[0]));
+			
+			bulkOperationsDropdown.setVisible(samplesView.getViewConfiguration().isInEagerMode());
+
+			actionButtonsLayout.addComponent(bulkOperationsDropdown);
+		}
+		
+		return menuItems.size() > 0;
+	}
 
 	private void createAndAddStatusButton(String captionKey, String status, HorizontalLayout filterLayout) {
 		Button button = ButtonHelper.createButton(
@@ -326,5 +374,60 @@ public class SampleGridComponent extends VerticalLayout {
 
 	public SampleCriteria getCriteria() {
 		return criteria;
+	}
+	
+	private void createBulkTestResult() {
+		if (criteria.getDisease() == null) {
+			new Notification(
+				I18nProperties.getString(Strings.headingNoDiseasesSelected),
+				I18nProperties.getString(Strings.messageNoDiseasesSelected),
+				Type.WARNING_MESSAGE,
+				false).show(Page.getCurrent());
+			return;
+		}
+		
+		if (criteria.getLaboratory() == null) {
+			new Notification(
+				I18nProperties.getString(Strings.headingNoLaboratoriesSelected),
+				I18nProperties.getString(Strings.messageNoLaboratoriesSelected),
+				Type.WARNING_MESSAGE,
+				false).show(Page.getCurrent());
+			return;
+		}
+
+		ControllerProvider.getPathogenTestController().showBulkTestResultComponent(grid.asMultiSelect().getSelectedItems(), criteria.getDisease()); 
+	}
+
+	private void createBulkTransfer() {
+		if (criteria.getDisease() == null) {
+			new Notification(
+				I18nProperties.getString(Strings.headingNoDiseasesSelected),
+				I18nProperties.getString(Strings.messageNoDiseasesSelected),
+				Type.WARNING_MESSAGE,
+				false).show(Page.getCurrent());
+			return;
+		}
+		
+		if (criteria.getLaboratory() == null) {
+			new Notification(
+				I18nProperties.getString(Strings.headingNoLaboratoriesSelected),
+				I18nProperties.getString(Strings.messageNoLaboratoriesSelected),
+				Type.WARNING_MESSAGE,
+				false).show(Page.getCurrent());
+			return;
+		}
+		
+		Collection<SampleIndexDto> samples = grid.asMultiSelect().getSelectedItems();
+		
+		if (samples.size() == 0) {
+			new Notification(
+				I18nProperties.getString(Strings.headingNoSamplesSelected),
+				I18nProperties.getString(Strings.messageNoSamplesSelected),
+				Type.WARNING_MESSAGE,
+				false).show(Page.getCurrent());
+			return;
+		}
+
+		ControllerProvider.getSampleController().createReferrals(samples, () -> grid.deselectAll());
 	}
 }
