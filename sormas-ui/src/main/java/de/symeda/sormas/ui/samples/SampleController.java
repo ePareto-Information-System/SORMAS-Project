@@ -322,11 +322,59 @@ public class SampleController {
 		return createView;
 	}
 
+	private void saveSamples(SampleBulkTransferForm createForm, Collection<? extends SampleIndexDto> samples) {
+
+		List<SampleDto> samplesDtos = FacadeProvider.getSampleFacade().getByUuids(samples.stream().map(s -> s.getUuid()).collect(Collectors.toList()));
+		
+		final SampleDto sampleTemplate = createForm.getValue();
+		
+		for (SampleDto sample : samplesDtos)
+		{
+			SampleDto newSample = SampleDto.buildReferral(UserProvider.getCurrent().getUserReference(), sample);
+			
+			//copy basic sample data that hasn't been copied in buildReferral()
+			newSample.setSamplePurpose(sample.getSamplePurpose());
+			newSample.setFieldSampleID(sample.getFieldSampleID());
+			newSample.setForRetest(sample.getForRetest());
+			newSample.setReportLat(sample.getReportLat());
+			newSample.setReportLon(sample.getReportLon());
+			newSample.setReportLatLonAccuracy(sample.getReportLatLonAccuracy());
+			newSample.setRequestedOtherPathogenTests(sample.getRequestedOtherPathogenTests());
+			newSample.setRequestedOtherAdditionalTests(sample.getRequestedOtherAdditionalTests());			
+			
+			//copy shipment/reception info from sample form data
+			newSample.setLab(sampleTemplate.getLab());
+			newSample.setLabDetails(sampleTemplate.getLabDetails());
+			
+			newSample.setShipped(sampleTemplate.isShipped());
+			newSample.setShipmentDate(sampleTemplate.getShipmentDate());
+			newSample.setShipmentDetails(sampleTemplate.getShipmentDetails());
+			
+			newSample.setReceived(sampleTemplate.isReceived());
+			newSample.setReceivedDate(sampleTemplate.getReceivedDate());
+			newSample.setLabSampleID(sampleTemplate.getLabSampleID());
+			newSample.setSpecimenCondition(sampleTemplate.getSpecimenCondition());
+			newSample.setNoTestPossibleReason(sampleTemplate.getNoTestPossibleReason());
+			
+			//sample's comments
+			//add newComment to originalComment
+			String originalComment = sample.getComment() == null ? "" : sample.getComment();
+			String newComment = sampleTemplate.getComment() == null ? "" : sampleTemplate.getComment();
+			newSample.setComment(originalComment + (originalComment.length() > 0 && newComment.length() > 0 ? "\n" : "") + newComment);
+			
+			FacadeProvider.getSampleFacade().saveSample(newSample);
+		}
+		
+		Notification.show(I18nProperties.getString(Strings.messageSamplesTransferred), Type.HUMANIZED_MESSAGE);
+	}
+
 	public CommitDiscardWrapperComponent<SampleEditForm> getSampleEditComponent(
 		final String sampleUuid,
 		boolean isPseudonymized,
 		Disease disease,
 		boolean showDeleteButton) {
+
+	// public CommitDiscardWrapperComponent<SampleEditForm> getSampleEditComponent(final String sampleUuid) {
 
 		SampleEditForm form = new SampleEditForm(isPseudonymized, disease);
 		form.setWidth(form.getWidth() * 10 / 12, Unit.PIXELS);
