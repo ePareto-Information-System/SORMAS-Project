@@ -143,6 +143,31 @@ public class SampleController {
 
 		VaadinUiUtil.showModalPopupWindow(createView, I18nProperties.getString(Strings.headingReferSample));
 	}
+	
+	public void createReferrals(Collection<? extends SampleIndexDto> samples, Runnable callback) {
+		SampleIndexDto firstSample = samples.stream().findFirst().orElse(null);
+		SampleDto sample = FacadeProvider.getSampleFacade().getSampleByUuid(firstSample.getUuid());
+		Date maxSampleDate = samples.stream().map(s -> s.getSampleDateTime()).max(Date::compareTo).get();
+		sample.setSampleDateTime(maxSampleDate);
+		
+		final SampleDto referralSample = SampleDto.buildReferral(UserProvider.getCurrent().getUserReference(), sample);
+		final SampleBulkTransferForm createForm = new SampleBulkTransferForm();
+		createForm.setValue(referralSample);
+		final CommitDiscardWrapperComponent<SampleBulkTransferForm> createView = new CommitDiscardWrapperComponent<>(
+			createForm,
+			UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_TRANSFER),
+			createForm.getFieldGroup());
+
+		createView.addCommitListener(() -> {
+			if (!createForm.getFieldGroup().isModified()) {
+				saveSamples(createForm, samples);
+				if (callback != null)
+					callback.run();
+			}
+		});
+
+		VaadinUiUtil.showModalPopupWindow(createView, I18nProperties.getString(Strings.headingReferSamples));
+	}
 
 	private void saveSample(SampleCreateForm createForm) {
 
