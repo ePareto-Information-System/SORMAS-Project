@@ -77,7 +77,6 @@ public class PathogenTestList extends PaginationList<PathogenTestDto> {
 						ControllerProvider.getPathogenTestController()
 							.edit(pathogenTest, caseSampleCount, PathogenTestList.this::reload, onSavedPathogenTest);
 					} else {
-						Notification.show(null, I18nProperties.getString(createOrEditAllowedCallback.get()), Type.ERROR_MESSAGE);
 					}
 				});
 			}
