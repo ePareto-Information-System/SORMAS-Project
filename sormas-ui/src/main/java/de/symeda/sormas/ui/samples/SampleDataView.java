@@ -34,6 +34,7 @@ import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventParticipantDto;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SamplePurpose;
@@ -167,7 +168,9 @@ public class SampleDataView extends AbstractSampleView {
 		// why? if(sampleDto.getSamplePurpose() !=null && sampleDto.getSamplePurpose().equals(SamplePurpose.EXTERNAL)) {
 		Supplier<String> createOrEditAllowedCallback = () -> {
 
+			if (!editComponent.getWrappedComponent().getFieldGroup().isValid() || sampleDto.getForRetest() == null) {
 				return Strings.messageFormHasErrorsPathogenTest;
+			} else if (sampleDto.getSamplePurpose() == SamplePurpose.EXTERNAL && !sampleDto.isReceived()) {
 				return Strings.messageCheckReceivedAndSelectedSampleDate;
 			}
 				return Strings.messageCheckReceivedAndSelectedSampleDate;
