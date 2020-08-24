@@ -620,6 +620,7 @@ public interface Strings {
 	String messageSampleOpened = "messageSampleOpened";
 	String messageSampleSaved = "messageSampleSaved";
 	String messageSamplesDeleted = "messageSamplesDeleted";
+	String messageSamplesTransferred = "messageSamplesTransferred";
 	String messageSetContactRegionAndDistrict = "messageSetContactRegionAndDistrict";
 	String messageSpecifyColumnAttribute = "messageSpecifyColumnAttribute";
 	String messageSpecifyFilterAttributes = "messageSpecifyFilterAttributes";
