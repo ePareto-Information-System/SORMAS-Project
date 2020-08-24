@@ -168,7 +168,6 @@ public class SampleDataView extends AbstractSampleView {
 		Supplier<String> createOrEditAllowedCallback = () -> {
 
 				return Strings.messageFormHasErrorsPathogenTest;
-				|| (sampleDto.getSamplePurpose() == SamplePurpose.EXTERNAL && !sampleDto.isReceived())) {
 				return Strings.messageCheckReceivedAndSelectedSampleDate;
 			}
 				return Strings.messageCheckReceivedAndSelectedSampleDate;
