@@ -114,6 +114,7 @@ public interface Captions {
 	String bulkHealthFacility = "bulkHealthFacility";
 	String bulkInvestigationStatus = "bulkInvestigationStatus";
 	String bulkLostToFollowUp = "bulkLostToFollowUp";
+	String bulkReferSamples = "bulkReferSamples";
 	String bulkSurveillanceOfficer = "bulkSurveillanceOfficer";
 	String Campaign = "Campaign";
 	String Campaign_creatingUser = "Campaign.creatingUser";
