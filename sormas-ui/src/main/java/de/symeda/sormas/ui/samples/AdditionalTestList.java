@@ -52,8 +52,10 @@ public class AdditionalTestList extends PaginationList<AdditionalTestDto> {
 			AdditionalTestListEntry listEntry = new AdditionalTestListEntry(additionalTest);
 			if (UserProvider.getCurrent().hasUserRight(UserRight.ADDITIONAL_TEST_EDIT)) {
 				listEntry.addEditListener(i, e -> {
+					if (createOrEditAllowedCallback.get() == null) {
 						ControllerProvider.getAdditionalTestController().openEditComponent(additionalTest, AdditionalTestList.this::reload);
 					} else {
+						Notification.show(I18nProperties.getString(createOrEditAllowedCallback.get()), Type.ERROR_MESSAGE);
 					}
 				});
 			}
