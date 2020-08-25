@@ -309,7 +309,7 @@ public class SampleController {
 		List<String> samplesUuids,
 		PathogenTestResultType newResult,
 		Runnable callback) {
-		
+
 		if (samplesUuids == null || samplesUuids.size() == 0)
 			return;
 
@@ -317,9 +317,9 @@ public class SampleController {
 		layout.setMargin(true);
 
 		ConfirmationComponent confirmationComponent = VaadinUiUtil.buildYesNoConfirmationComponent();
-		
-		String descriptionText = samplesUuids.size() > 1 ?
-			String.format(I18nProperties.getString(Strings.messageChangePathogenTestsResults), samplesUuids.size(), newResult.toString())
+
+		String descriptionText = samplesUuids.size() > 1
+			? String.format(I18nProperties.getString(Strings.messageChangePathogenTestsResults), samplesUuids.size(), newResult.toString())
 			: String.format(I18nProperties.getString(Strings.messageChangePathogenTestResult), newResult.toString());
 
 		Label description = new Label(descriptionText);
@@ -341,13 +341,13 @@ public class SampleController {
 			public void buttonClick(ClickEvent event) {
 				if (editComponent != null)
 					editComponent.commit();
-				
+
 				List<SampleDto> samples = FacadeProvider.getSampleFacade().getByUuids(samplesUuids);
 				for (SampleDto sample : samples) {
 					sample.setPathogenTestResult(newResult);
 					FacadeProvider.getSampleFacade().saveSample(sample);
 				}
-				
+
 				popupWindow.close();
 				SormasUI.refreshView();
 				if (callback != null)
@@ -366,7 +366,7 @@ public class SampleController {
 			}
 		});
 	}
-	
+
 	public void showChangePathogenTestResultWindow(
 		CommitDiscardWrapperComponent<SampleEditForm> editComponent,
 		String sampleUuid,
@@ -400,16 +400,7 @@ public class SampleController {
 		}
 	}
 
-	public boolean isFieldSampleIdExist(String fieldSampleId) {
-		boolean field = true;
-		SampleDto sample = FacadeProvider.getSampleFacade().getSampleByFieldSampleID(fieldSampleId);
-		if (sample != null) {
-			field = false;
-		}
-		return field;
-	}
-
-	public boolean isFieldSampleIdExist(String uuid, String fieldSampleId) {
-		return FacadeProvider.getSampleFacade().getSampleByFieldSampleID(uuid, fieldSampleId);
+	public boolean isFieldSampleIdExist(SampleDto sample, String fieldSampleId) {
+		return FacadeProvider.getSampleFacade().isSampleByFieldSampleIDExist(sample, fieldSampleId);
 	}
 }
