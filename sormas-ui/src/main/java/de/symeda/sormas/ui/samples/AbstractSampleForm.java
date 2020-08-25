@@ -56,6 +56,7 @@ import de.symeda.sormas.ui.utils.DateFormatHelper;
 import de.symeda.sormas.ui.utils.DateTimeField;
 import de.symeda.sormas.ui.utils.FieldHelper;
 import de.symeda.sormas.ui.utils.NullableOptionGroup;
+import de.symeda.sormas.ui.utils.FieldSampleIdValidatorUtil;
 
 public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
@@ -250,6 +251,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		}
 
 		getContent().addComponent(reportInfoLayout, REPORT_INFORMATION_LOC);
+
+		addValidators(SampleDto.FIELD_SAMPLE_ID, new FieldSampleIdValidatorUtil(getValue()));
 	}
 
 	protected void updateLabDetailsVisibility(TextField labDetails, Property.ValueChangeEvent event) {
