@@ -195,20 +195,6 @@ public class SampleService extends AbstractCoreAdoService<Sample> {
 		}
 	}
 
-	public Sample getByFieldSampleID(String fieldSampleId) {
-
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		ParameterExpression<String> fieldSampleParam = cb.parameter(String.class, Sample.FIELD_SAMPLE_ID);
-		CriteriaQuery<Sample> cq = cb.createQuery(getElementClass());
-		Root<Sample> from = cq.from(getElementClass());
-		cq.where(cb.equal(from.get(Sample.FIELD_SAMPLE_ID), fieldSampleParam));
-
-		TypedQuery<Sample> q = em.createQuery(cq).setParameter(fieldSampleParam, fieldSampleId);
-
-		Sample sample = q.getResultList().stream().findFirst().orElse(null);
-
-		return sample;
-	}
 
 	public boolean getByFieldSampleID(String uuid, String fieldSampleId) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
