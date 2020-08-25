@@ -47,7 +47,7 @@ public class AdditionalTestListComponent extends VerticalLayout {
 				if (createOrEditAllowedCallback.get() == null) {
 					ControllerProvider.getAdditionalTestController().openCreateComponent(sampleUuid, list::reload);
 				} else {
-					Notification.show(I18nProperties.getString(createOrEditAllowedCallback.get()), Type.ERROR_MESSAGE);
+					Notification.show(null, I18nProperties.getString(createOrEditAllowedCallback.get()), Type.ERROR_MESSAGE);
 				}
 			}, ValoTheme.BUTTON_PRIMARY);
 
