@@ -1,5 +1,16 @@
 package de.symeda.sormas.ui.samples;
 
+import static de.symeda.sormas.ui.utils.CssStyles.HSPACE_RIGHT_4;
+import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_3;
+import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_4;
+import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_NONE;
+import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_TOP_3;
+import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
+import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
+import static de.symeda.sormas.ui.utils.LayoutUtil.locCss;
+
+import java.util.Arrays;
+
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
@@ -13,6 +24,7 @@ import com.vaadin.v7.ui.Field;
 import com.vaadin.v7.ui.OptionGroup;
 import com.vaadin.v7.ui.TextArea;
 import com.vaadin.v7.ui.TextField;
+
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
@@ -40,17 +52,7 @@ import de.symeda.sormas.ui.utils.DateComparisonValidator;
 import de.symeda.sormas.ui.utils.DateFormatHelper;
 import de.symeda.sormas.ui.utils.DateTimeField;
 import de.symeda.sormas.ui.utils.FieldHelper;
-
-import java.util.Arrays;
-
-import static de.symeda.sormas.ui.utils.CssStyles.HSPACE_RIGHT_4;
-import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_3;
-import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_4;
-import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_NONE;
-import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_TOP_3;
-import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
-import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
-import static de.symeda.sormas.ui.utils.LayoutUtil.locCss;
+import de.symeda.sormas.ui.utils.FieldSampleIdValidatorUtil;
 
 public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
@@ -237,6 +239,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		}
 
 		getContent().addComponent(reportInfoLayout, REPORT_INFORMATION_LOC);
+
+		addValidators(SampleDto.FIELD_SAMPLE_ID, new FieldSampleIdValidatorUtil(getValue()));
 	}
 
 	protected void updateLabDetailsVisibility(TextField labDetails, Property.ValueChangeEvent event) {
