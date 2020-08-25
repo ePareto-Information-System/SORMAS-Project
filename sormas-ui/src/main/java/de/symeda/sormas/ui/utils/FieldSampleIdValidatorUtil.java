@@ -9,14 +9,14 @@ import de.symeda.sormas.ui.ControllerProvider;
 
 public class FieldSampleIdValidatorUtil implements Validator {
 
-	private SampleDto dto;
+	private SampleDto sample;
 
 	public FieldSampleIdValidatorUtil(SampleDto sampleDto) {
 		getValue(sampleDto);
 	}
 
 	void getValue(SampleDto sampleDto) {
-		dto = sampleDto;
+		sample = sampleDto;
 	}
 
 	@Override
@@ -24,7 +24,7 @@ public class FieldSampleIdValidatorUtil implements Validator {
 		if (value == null || value.equals(""))
 			return;
 
-		else if (!(value instanceof String && value != null && ControllerProvider.getSampleController().isFieldSampleIdExist((String) value)))
+		else if (!ControllerProvider.getSampleController().isFieldSampleIdExist(sample, (String) value))
 			throw new InvalidValueException(I18nProperties.getString(Strings.messageFieldSampleIdExist));
 	}
 
