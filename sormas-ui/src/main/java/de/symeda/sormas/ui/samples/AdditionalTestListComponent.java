@@ -38,6 +38,11 @@ public class AdditionalTestListComponent extends VerticalLayout {
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.ADDITIONAL_TEST_CREATE)) {
 			createButton = ButtonHelper.createIconButton(Captions.additionalTestNewTest, VaadinIcons.PLUS_CIRCLE, e -> {
+				if (createOrEditAllowedCallback.get() == null) {
+					ControllerProvider.getAdditionalTestController().openCreateComponent(sampleUuid, list::reload);
+				} else {
+					Notification.show(null, I18nProperties.getString(createOrEditAllowedCallback.get()), Type.ERROR_MESSAGE);
+				}
 			}, ValoTheme.BUTTON_PRIMARY);
 
 			componentHeader.addComponent(createButton);

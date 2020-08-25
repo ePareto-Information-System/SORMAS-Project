@@ -70,7 +70,7 @@ public class PathogenTestListComponent extends VerticalLayout {
 				if (createOrEditAllowedCallback.get() == null) {
 					ControllerProvider.getPathogenTestController().create(sampleRef, 0, list::reload, onSavedPathogenTest);
 				} else {
-					Notification.show(I18nProperties.getString(createOrEditAllowedCallback.get()), Type.ERROR_MESSAGE);
+					Notification.show(null, I18nProperties.getString(createOrEditAllowedCallback.get()), Type.ERROR_MESSAGE);
 				}
 			}, ValoTheme.BUTTON_PRIMARY);
 
