@@ -383,7 +383,6 @@ public interface Strings {
 	String headingNoPrescriptionsSelected = "headingNoPrescriptionsSelected";
 	String headingNoRowsSelected = "headingNoRowsSelected";
 	String headingNoSamplesSelected = "headingNoSamplesSelected";
-	String headingFieldSamplesId = "headingFieldSamplesId";
 	String headingNoTasksSelected = "headingNoTasksSelected";
 	String headingNoTreatmentsSelected = "headingNoTreatmentsSelected";
 	String headingNoVisitsSelected = "headingNoVisitsSelected";
