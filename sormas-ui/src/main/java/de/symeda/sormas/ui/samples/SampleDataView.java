@@ -168,10 +168,10 @@ public class SampleDataView extends AbstractSampleView {
 		// why? if(sampleDto.getSamplePurpose() !=null && sampleDto.getSamplePurpose().equals(SamplePurpose.EXTERNAL)) {
 		Supplier<String> createOrEditAllowedCallback = () -> {
 
-			if (!editComponent.getWrappedComponent().getFieldGroup().isValid() || sampleDto.getForRetest() == null) {
+			if (!editComponent.getWrappedComponent().getFieldGroup().isValid()) {
 				return Strings.messageFormHasErrorsPathogenTest;
 			} else if (sampleDto.getSamplePurpose() == SamplePurpose.EXTERNAL && !sampleDto.isReceived()) {
-				return Strings.messageCheckReceivedAndSelectedSampleDate;
+				return Strings.messageReceiveSampleBeforeTestResult;
 			}
 				return Strings.messageCheckReceivedAndSelectedSampleDate;
 		};
