@@ -42,9 +42,7 @@ public interface SampleFacade {
 
 	SampleDto getSampleByUuid(String uuid);
 
-	SampleDto getSampleByFieldSampleID(String fieldSampleId);
-
-	boolean getSampleByFieldSampleID(String uuid, String fieldSampleId);
+	boolean isSampleByFieldSampleIDExist(SampleDto sample, String fieldSampleId);
 
 	SampleDto saveSample(SampleDto dto);
 
