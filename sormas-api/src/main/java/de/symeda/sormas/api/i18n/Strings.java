@@ -750,7 +750,7 @@ public interface Strings {
 	String messageUserRoleCombination = "messageUserRoleCombination";
 	String messageVisitsDeleted = "messageVisitsDeleted";
 	String messageWrongFileType = "messageWrongFileType";
-	String messageCheckReceivedAndSelectedSampleDate = "messageCheckReceivedAndSelectedSampleDate";
+	String messageReceiveSampleBeforeTestResult = "messageCheckReceivedAndSelectedSampleDate";
 
 	String min = "min";
 	String mmhg = "mmhg";
