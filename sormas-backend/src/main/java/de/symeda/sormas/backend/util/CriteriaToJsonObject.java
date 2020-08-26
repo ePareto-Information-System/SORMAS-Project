@@ -25,10 +25,15 @@ public class CriteriaToJsonObject {
 		mapObjectsParams.put("firstRow", first);
 		mapObjectsParams.put("caseDelete", caseCriteria.getDeleted());
 		mapObjectsParams.put("caseArchive", caseCriteria.getRelevanceStatus().getValue(caseCriteria.getRelevanceStatus()));
+		mapObjectsParams.put("reportingUser", caseCriteria.getSurveillanceOfficer() != null ? caseCriteria.getReportingUserLike() : "NULL");
+
+		mapObjectsParams.put("caseDisease", caseCriteria.getDisease() != null ? caseCriteria.getDisease().getName() : "NULL");
+		mapObjectsParams.put("caseOutcome", caseCriteria.getOutcome() != null ? caseCriteria.getOutcome().getName() : "NULL");
+		mapObjectsParams.put("excludeSharedCases", caseCriteria.getExcludeSharedCases() != null ? caseCriteria.getExcludeSharedCases() : "NULL");
 
 		mapObjectsParams.put("caseOrigin", caseCriteria.getCaseOrigin() != null ? caseCriteria.getCaseOrigin() : "NULL");
-		mapObjectsParams.put("caseOutcome", caseCriteria.getOutcome() != null ? caseCriteria.getOutcome().getName() : "NULL");
-		mapObjectsParams.put("caseDisease", caseCriteria.getDisease() != null ? caseCriteria.getDisease().getName() : "NULL");
+		mapObjectsParams.put("healthFacility", caseCriteria.getHealthFacility() != null ? caseCriteria.getHealthFacility().getUuid() : "NULL");
+
 		mapObjectsParams
 			.put("classification", caseCriteria.getCaseClassification() != null ? caseCriteria.getCaseClassification().getName() : "NULL");
 		mapObjectsParams.put("investigationStatus", caseCriteria.getInvestigationStatus() != null ? caseCriteria.getInvestigationStatus() : "NULL");
@@ -37,15 +42,13 @@ public class CriteriaToJsonObject {
 		mapObjectsParams.put("region", caseCriteria.getRegion() != null ? caseCriteria.getRegion().getUuid() : "NULL");
 		mapObjectsParams.put("district", caseCriteria.getDistrict() != null ? caseCriteria.getDistrict().getUuid() : "NULL");
 		mapObjectsParams.put("subDistrict", caseCriteria.getCommunity() != null ? caseCriteria.getCommunity().getUuid() : "NULL");
-		mapObjectsParams.put("healthFacility", caseCriteria.getHealthFacility() != null ? caseCriteria.getHealthFacility().getUuid() : "NULL");
 
 		mapObjectsParams.put("pointofEntry", caseCriteria.getPointOfEntry() != null ? caseCriteria.getPointOfEntry().getUuid() : "NULL");
 
 		mapObjectsParams
-			.put("responsibleDistrict", caseCriteria.getSurveillanceOfficer() != null ? caseCriteria.getSurveillanceOfficer().getUuid() : null);
+			.put("surveillanceOfficer", caseCriteria.getSurveillanceOfficer() != null ? caseCriteria.getSurveillanceOfficer().getUuid() : null);
 
 		mapObjectsParams.put("reportedBy", caseCriteria.getReportingUserRole() != null ? caseCriteria.getReportingUserRole() : null);
-		mapObjectsParams.put("reportingUser", caseCriteria.getSurveillanceOfficer() != null ? caseCriteria.getReportingUserLike() : "NULL");
 		mapObjectsParams.put("quarantineEnd", caseCriteria.getQuarantineTo() != null ? caseCriteria.getQuarantineTo() : null);
 
 		mapObjectsParams.put(
