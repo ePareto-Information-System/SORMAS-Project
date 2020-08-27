@@ -285,13 +285,16 @@
         margin: 5px;
         padding: 5px;
     }
-    .btn-center {
-        text-align: center !important;
-        width: 100%;
-        margin-left: 30%;
-        margin-right: 30%
-    }
+
     .float-right {
         float: right;
     }
+    .v-btn-centerd {
+	    text-align: center;
+	    display: block;
+	    width:50px;
+	}
+	.v-btn-centerd *{
+		text-align: center;
+	}
 }
