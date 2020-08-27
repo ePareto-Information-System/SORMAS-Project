@@ -400,7 +400,7 @@ public class SampleController {
 		}
 	}
 
-	public boolean isFieldSampleIdExist(SampleDto sample, String fieldSampleId) {
-		return FacadeProvider.getSampleFacade().isSampleByFieldSampleIDExist(sample, fieldSampleId);
+	public boolean isFieldSampleIdUnique(SampleDto sample, String fieldSampleId) {
+		return FacadeProvider.getSampleFacade().isFieldSampleIdUnique(sample, fieldSampleId);
 	}
 }
