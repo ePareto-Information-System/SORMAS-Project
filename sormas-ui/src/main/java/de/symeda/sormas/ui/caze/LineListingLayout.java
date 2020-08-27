@@ -474,17 +474,18 @@ public class LineListingLayout extends VerticalLayout {
 			sex.setWidth(100, Unit.PIXELS);
 			binder.forField(sex).bind(CaseLineDto.SEX);
 
+			dateOfOnset = new DateField();
+			dateOfOnset.setId("lineListingDateOfOnSet_" + lineIndex);
+			dateOfOnset.setWidth(150, Unit.PIXELS);
+//			dateOfOnset.addStyleName(CssStyles.CAPTION_FIXED_WIDTH_100);
+			binder.forField(dateOfOnset).bind(CaseLineDto.DATE_OF_ONSET);
+
 			caseClassification = new ComboBox<>();
 			caseClassification.setId("lineListingcaseClassification" + lineIndex);
 			caseClassification.setItems(CaseClassification.values());
-			caseClassification.setWidth(120, Unit.PIXELS);
+			caseClassification.setWidth(250, Unit.PIXELS);
 			binder.forField(caseClassification).bind(CaseLineDto.CASE_CLASSIFICATION);
 
-			dateOfOnset = new DateField();
-			dateOfOnset.setId("lineListingDateOfOnSet_" + lineIndex);
-			dateOfOnset.setWidth(100, Unit.PIXELS);
-			dateOfOnset.addStyleName(CssStyles.CAPTION_FIXED_WIDTH_100);
-			binder.forField(dateOfOnset).bind(CaseLineDto.DATE_OF_ONSET);
 			delete = ButtonHelper.createIconButtonWithCaption("delete_" + lineIndex, null, VaadinIcons.TRASH, event -> {
 				lineComponent.removeComponent(this);
 				caseLines.remove(this);
@@ -508,8 +509,8 @@ public class LineListingLayout extends VerticalLayout {
 				dateOfBirthMonth,
 				dateOfBirthDay,
 				sex,
-				caseClassification,
 				dateOfOnset,
+				caseClassification,
 				delete);
 
 			if (lineIndex == 0) {
@@ -556,11 +557,12 @@ public class LineListingLayout extends VerticalLayout {
 			lastname.removeStyleName(CssStyles.CAPTION_HIDDEN);
 			dateOfBirthYear.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.BIRTH_DATE));
 			sex.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.SEX));
-			caseClassification.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, CaseDataDto.CASE_CLASSIFICATION));
 			dateOfOnset.setCaption(I18nProperties.getPrefixCaption(SymptomsDto.I18N_PREFIX, SymptomsDto.ONSET_DATE));
 			dateOfOnset.setDescription(I18nProperties.getPrefixDescription(SymptomsDto.I18N_PREFIX, SymptomsDto.ONSET_DATE));
+			caseClassification.setCaption(I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.CASE_CLASSIFICATION));
+
 			delete.setEnabled(false);
-			delete.addStyleName("btn-center");
+			delete.addStyleName("v-btn-centerd");
 			setComponentAlignment(delete, Alignment.MIDDLE_LEFT);
 		}
 
@@ -581,10 +583,11 @@ public class LineListingLayout extends VerticalLayout {
 			lastname.removeStyleName(CssStyles.CAPTION_HIDDEN);
 			dateOfBirthYear.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.BIRTH_DATE));
 			sex.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.SEX));
-			caseClassification.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, CaseDataDto.CASE_CLASSIFICATION));
+
 			dateOfOnset.setCaption(I18nProperties.getPrefixCaption(SymptomsDto.I18N_PREFIX, SymptomsDto.ONSET_DATE));
 			dateOfOnset.setDescription(I18nProperties.getPrefixDescription(SymptomsDto.I18N_PREFIX, SymptomsDto.ONSET_DATE));
-			delete.addStyleName("btn-center");
+			caseClassification.setCaption(I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.CASE_CLASSIFICATION));
+			delete.addStyleName("v-btn-centerd");
 			setComponentAlignment(delete, Alignment.MIDDLE_CENTER);
 		}
 
