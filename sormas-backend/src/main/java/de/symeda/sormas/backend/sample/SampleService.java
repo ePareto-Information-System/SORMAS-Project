@@ -47,7 +47,6 @@ import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.SampleAssociationType;
 import de.symeda.sormas.api.sample.SampleCriteria;
-import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SpecimenCondition;
 import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.utils.DataHelper;
@@ -196,7 +195,7 @@ public class SampleService extends AbstractCoreAdoService<Sample> {
 		}
 	}
 
-	public boolean isFieldSampleIdUnique(SampleDto sample, String fieldSampleId) {
+	public boolean isFieldSampleIdUnique(String uuid, String fieldSampleId) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		ParameterExpression<String> fieldSampleIdParams = cb.parameter(String.class, Sample.FIELD_SAMPLE_ID);
 		CriteriaQuery<Sample> cq = cb.createQuery(getElementClass());
@@ -204,13 +203,9 @@ public class SampleService extends AbstractCoreAdoService<Sample> {
 		cq.where(cb.equal(from.get(Sample.FIELD_SAMPLE_ID), fieldSampleIdParams));
 
 		TypedQuery<Sample> q = em.createQuery(cq).setParameter(fieldSampleIdParams, fieldSampleId);
-		Optional<Sample> sampleObject = Optional.empty();
 
 		List<Sample> samples = q.getResultList();
-
-		if (sample != null) {
-			sampleObject = samples.stream().filter(p -> p.getUuid().equals(sample.getUuid())).findFirst();
-		}
+		Optional<Sample> sampleObject = samples.stream().filter(p -> p.getUuid().equals(uuid)).findFirst();
 
 		return (samples.size() >= 0 && sampleObject.isPresent()) || (samples.size() == 0 && !sampleObject.isPresent()) ? true : false;
 
