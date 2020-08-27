@@ -1,5 +1,13 @@
 package de.symeda.sormas.ui.caze;
 
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
 import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.icons.VaadinIcons;
@@ -13,6 +21,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
+
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseClassification;
@@ -37,14 +46,6 @@ import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.FieldHelper;
 import de.symeda.sormas.ui.utils.FieldVisibleAndNotEmptyValidator;
-
-import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public class LineListingLayout extends VerticalLayout {
 
@@ -410,17 +411,18 @@ public class LineListingLayout extends VerticalLayout {
 			sex.setWidth(100, Unit.PIXELS);
 			binder.forField(sex).bind(CaseLineDto.SEX);
 
+			dateOfOnset = new DateField();
+			dateOfOnset.setId("lineListingDateOfOnSet_" + lineIndex);
+			dateOfOnset.setWidth(150, Unit.PIXELS);
+//			dateOfOnset.addStyleName(CssStyles.CAPTION_FIXED_WIDTH_100);
+			binder.forField(dateOfOnset).bind(CaseLineDto.DATE_OF_ONSET);
+
 			caseClassification = new ComboBox<>();
 			caseClassification.setId("lineListingcaseClassification" + lineIndex);
 			caseClassification.setItems(CaseClassification.values());
-			caseClassification.setWidth(120, Unit.PIXELS);
+			caseClassification.setWidth(250, Unit.PIXELS);
 			binder.forField(caseClassification).bind(CaseLineDto.CASE_CLASSIFICATION);
 
-			dateOfOnset = new DateField();
-			dateOfOnset.setId("lineListingDateOfOnSet_" + lineIndex);
-			dateOfOnset.setWidth(100, Unit.PIXELS);
-			dateOfOnset.addStyleName(CssStyles.CAPTION_FIXED_WIDTH_100);
-			binder.forField(dateOfOnset).bind(CaseLineDto.DATE_OF_ONSET);
 			delete = ButtonHelper.createIconButtonWithCaption("delete_" + lineIndex, null, VaadinIcons.TRASH, event -> {
 				lineComponent.removeComponent(this);
 				caseLines.remove(this);
@@ -444,8 +446,8 @@ public class LineListingLayout extends VerticalLayout {
 				dateOfBirthMonth,
 				dateOfBirthDay,
 				sex,
-				caseClassification,
 				dateOfOnset,
+				caseClassification,
 				delete);
 
 			if (lineIndex == 0) {
@@ -492,11 +494,12 @@ public class LineListingLayout extends VerticalLayout {
 			lastname.removeStyleName(CssStyles.CAPTION_HIDDEN);
 			dateOfBirthYear.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.BIRTH_DATE));
 			sex.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.SEX));
-			caseClassification.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, CaseDataDto.CASE_CLASSIFICATION));
 			dateOfOnset.setCaption(I18nProperties.getPrefixCaption(SymptomsDto.I18N_PREFIX, SymptomsDto.ONSET_DATE));
 			dateOfOnset.setDescription(I18nProperties.getPrefixDescription(SymptomsDto.I18N_PREFIX, SymptomsDto.ONSET_DATE));
+			caseClassification.setCaption(I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.CASE_CLASSIFICATION));
+
 			delete.setEnabled(false);
-			delete.addStyleName("btn-center");
+			delete.addStyleName("v-btn-centerd");
 			setComponentAlignment(delete, Alignment.MIDDLE_LEFT);
 		}
 
@@ -517,10 +520,11 @@ public class LineListingLayout extends VerticalLayout {
 			lastname.removeStyleName(CssStyles.CAPTION_HIDDEN);
 			dateOfBirthYear.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.BIRTH_DATE));
 			sex.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.SEX));
-			caseClassification.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, CaseDataDto.CASE_CLASSIFICATION));
+
 			dateOfOnset.setCaption(I18nProperties.getPrefixCaption(SymptomsDto.I18N_PREFIX, SymptomsDto.ONSET_DATE));
 			dateOfOnset.setDescription(I18nProperties.getPrefixDescription(SymptomsDto.I18N_PREFIX, SymptomsDto.ONSET_DATE));
-			delete.addStyleName("btn-center");
+			caseClassification.setCaption(I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.CASE_CLASSIFICATION));
+			delete.addStyleName("v-btn-centerd");
 			setComponentAlignment(delete, Alignment.MIDDLE_CENTER);
 		}
 
