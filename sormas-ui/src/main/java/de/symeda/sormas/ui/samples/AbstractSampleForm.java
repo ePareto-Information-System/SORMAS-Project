@@ -17,6 +17,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.data.Property;
+import com.vaadin.v7.data.Validator;
 import com.vaadin.v7.ui.CheckBox;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.DateField;
@@ -52,7 +53,6 @@ import de.symeda.sormas.ui.utils.DateComparisonValidator;
 import de.symeda.sormas.ui.utils.DateFormatHelper;
 import de.symeda.sormas.ui.utils.DateTimeField;
 import de.symeda.sormas.ui.utils.FieldHelper;
-import de.symeda.sormas.ui.utils.FieldSampleIdValidatorUtil;
 
 public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
@@ -240,7 +240,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 		getContent().addComponent(reportInfoLayout, REPORT_INFORMATION_LOC);
 
-		addValidators(SampleDto.FIELD_SAMPLE_ID, new FieldSampleIdValidatorUtil(getValue()));
+		addValidators(SampleDto.FIELD_SAMPLE_ID, new FieldSampleIdEditValidator());
 	}
 
 	protected void updateLabDetailsVisibility(TextField labDetails, Property.ValueChangeEvent event) {
@@ -438,6 +438,20 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			getContent().addComponent(requestedAdditionalTestsLayout, REQUESTED_ADDITIONAL_TESTS_READ_LOC);
 		} else {
 			getContent().removeComponent(REQUESTED_ADDITIONAL_TESTS_READ_LOC);
+		}
+	}
+
+	class FieldSampleIdEditValidator implements Validator {
+
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void validate(Object value) throws InvalidValueException {
+			SampleDto dto = getValue();
+			if (value == null || value.equals(""))
+				return;
+			else if (!ControllerProvider.getSampleController().isFieldSampleIdUnique(dto, (String) value))
+				throw new InvalidValueException(I18nProperties.getString(Strings.messageFieldSampleIdExist));
 		}
 	}
 }
