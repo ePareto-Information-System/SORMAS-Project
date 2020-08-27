@@ -195,8 +195,7 @@ public class SampleService extends AbstractCoreAdoService<Sample> {
 		}
 	}
 
-
-	public boolean getByFieldSampleID(String uuid, String fieldSampleId) {
+	public boolean isFieldSampleIdUnique(SampleDto sample, String fieldSampleId) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		ParameterExpression<String> fieldSampleIdParams = cb.parameter(String.class, Sample.FIELD_SAMPLE_ID);
 		CriteriaQuery<Sample> cq = cb.createQuery(getElementClass());
