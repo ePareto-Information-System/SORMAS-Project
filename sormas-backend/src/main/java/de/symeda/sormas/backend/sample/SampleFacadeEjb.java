@@ -213,8 +213,8 @@ public class SampleFacadeEjb implements SampleFacade {
 	}
 
 	@Override
-	public boolean isFieldSampleIdUnique(SampleDto sample, String fieldSampleId) {
-		return sampleService.isFieldSampleIdUnique(sample, fieldSampleId);
+	public boolean isFieldSampleIdUnique(String uuid, String fieldSampleId) {
+		return sampleService.isFieldSampleIdUnique(uuid, fieldSampleId);
 	}
 
 	@Override
