@@ -967,7 +967,7 @@ public class CaseController {
 		EpiDataDto dto = caze.getEpiData();
 		setDefaultValues(dto);
 		epiDataForm.setValue(dto);
-		
+
 		final CommitDiscardWrapperComponent<EpiDataForm> editView = new CommitDiscardWrapperComponent<EpiDataForm>(
 			epiDataForm,
 			UserProvider.getCurrent().hasUserRight(UserRight.CASE_EDIT),
@@ -1310,6 +1310,7 @@ public class CaseController {
 			newCase.setFacilityType(caseLineDto.getFacilityType());
 			newCase.setHealthFacility(caseLineDto.getFacility());
 			newCase.setHealthFacilityDetails(caseLineDto.getFacilityDetails());
+			newCase.setCaseClassification(caseLineDto.getCaseClassification());
 
 			if (caseLineDto.getDateOfOnset() != null) {
 				newCase.getSymptoms().setOnsetDate(DateHelper8.toDate(caseLineDto.getDateOfOnset()));
