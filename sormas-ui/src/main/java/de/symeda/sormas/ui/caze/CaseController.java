@@ -52,6 +52,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseCriteria;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseFacade;
@@ -1310,7 +1311,8 @@ public class CaseController {
 			newCase.setFacilityType(caseLineDto.getFacilityType());
 			newCase.setHealthFacility(caseLineDto.getFacility());
 			newCase.setHealthFacilityDetails(caseLineDto.getFacilityDetails());
-			newCase.setCaseClassification(caseLineDto.getCaseClassification());
+			newCase.setCaseClassification(
+				caseLineDto.getCaseClassification() == null ? CaseClassification.NOT_CLASSIFIED : caseLineDto.getCaseClassification());
 
 			if (caseLineDto.getDateOfOnset() != null) {
 				newCase.getSymptoms().setOnsetDate(DateHelper8.toDate(caseLineDto.getDateOfOnset()));
