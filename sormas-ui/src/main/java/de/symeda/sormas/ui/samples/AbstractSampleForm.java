@@ -253,7 +253,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 		getContent().addComponent(reportInfoLayout, REPORT_INFORMATION_LOC);
 
-		addValidators(SampleDto.FIELD_SAMPLE_ID, new FieldSampleIdValidator());
 	}
 
 	protected void updateLabDetailsVisibility(TextField labDetails, Property.ValueChangeEvent event) {
@@ -316,6 +315,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				false,
 				false,
 				I18nProperties.getValidationError(Validations.afterDate, receivedDate.getCaption(), shipmentDate.getCaption())));
+
+		addValidators(SampleDto.FIELD_SAMPLE_ID, new FieldSampleIdValidator());
+
 	}
 
 	protected void setVisibilities() {
@@ -463,7 +465,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		public void validate(Object value) throws InvalidValueException {
 			if (value == null || value.equals(""))
 				return;
-			else if (!ControllerProvider.getSampleController().isFieldSampleIdUnique(getValue().getUuid(), (String) value))
+
+			if (!ControllerProvider.getSampleController().isFieldSampleIdUnique(getValue().getUuid(), (String) value))
 				throw new InvalidValueException(I18nProperties.getString(Strings.messageFieldSampleIdExist));
 		}
 	}
