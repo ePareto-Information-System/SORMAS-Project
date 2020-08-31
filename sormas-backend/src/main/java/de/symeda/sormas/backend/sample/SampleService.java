@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
@@ -205,11 +204,9 @@ public class SampleService extends AbstractCoreAdoService<Sample> {
 		TypedQuery<Sample> q = em.createQuery(cq).setParameter(fieldSampleIdParams, fieldSampleId);
 
 		List<Sample> samples = q.getResultList();
+		Sample sameSample = samples.stream().filter(p -> p.getUuid().equals(uuid)).findFirst().orElse(null);
 
-		Optional<Sample> sampleObject = samples.stream().filter(p -> p.getUuid().equals(uuid)).findFirst();
-
-		return (samples.size() >= 0 && sampleObject.isPresent()) || (samples.size() == 0 && !sampleObject.isPresent()) ? true : false;
-
+		return samples.size() == 0 || sameSample != null;
 	}
 
 	public List<String> getDeletedUuidsSince(User user, Date since) {
