@@ -562,7 +562,9 @@ public class LineListingLayout extends VerticalLayout {
 			caseClassification.setCaption(I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.CASE_CLASSIFICATION));
 
 			delete.setEnabled(false);
-			delete.addStyleName("v-btn-centerd");
+			delete.removeStyleName(ValoTheme.BUTTON_PRIMARY);
+			delete.addStyleName(CssStyles.FORCE_CAPTION);
+			delete.addStyleName(CssStyles.BUTTON_FILTER_LIGHT);
 			setComponentAlignment(delete, Alignment.MIDDLE_LEFT);
 		}
 
@@ -587,7 +589,9 @@ public class LineListingLayout extends VerticalLayout {
 			dateOfOnset.setCaption(I18nProperties.getPrefixCaption(SymptomsDto.I18N_PREFIX, SymptomsDto.ONSET_DATE));
 			dateOfOnset.setDescription(I18nProperties.getPrefixDescription(SymptomsDto.I18N_PREFIX, SymptomsDto.ONSET_DATE));
 			caseClassification.setCaption(I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.CASE_CLASSIFICATION));
-			delete.addStyleName("v-btn-centerd");
+			delete.removeStyleName(ValoTheme.BUTTON_PRIMARY);
+			delete.addStyleName(CssStyles.FORCE_CAPTION);
+			delete.addStyleName(CssStyles.BUTTON_FILTER_LIGHT);
 			setComponentAlignment(delete, Alignment.MIDDLE_CENTER);
 		}
 
