@@ -545,34 +545,4 @@
     .no-border {
         border: none;
     }
-    .v-slot-wrap {
-        white-space: normal;
-    }
-    .height-auto {
-        height: auto !important;
-    }
-    .width-auto {
-        width: auto !important;
-    }
-    div.v-slot-stripes>div:nth-of-type(odd) {
-        margin: 5px;
-        padding: 5px;
-    }
-    div.v-slot-stripes>div:nth-of-type(even) {
-        background: #EDF2FD;
-        margin: 5px;
-        padding: 5px;
-    }
-
-    .float-right {
-        float: right;
-    }
-    .v-btn-centerd {
-	    text-align: center;
-	    display: block;
-	    width:50px;
-	}
-	.v-btn-centerd *{
-		text-align: center;
-	}
 }
