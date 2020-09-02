@@ -481,7 +481,7 @@ public class LineListingLayout extends VerticalLayout {
 			binder.forField(dateOfOnset).bind(CaseLineDto.DATE_OF_ONSET);
 
 			caseClassification = new ComboBox<>();
-			caseClassification.setId("lineListingcaseClassification" + lineIndex);
+			caseClassification.setId("lineListingcaseClassification_" + lineIndex);
 			caseClassification.setItems(CaseClassification.values());
 			caseClassification.setWidth(250, Unit.PIXELS);
 			binder.forField(caseClassification).bind(CaseLineDto.CASE_CLASSIFICATION);
