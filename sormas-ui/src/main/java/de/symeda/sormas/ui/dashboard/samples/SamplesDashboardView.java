@@ -16,6 +16,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.dashboard.samples;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6d78f7873 (Work in progress...)
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.ui.dashboard.AbstractDashboardView;
