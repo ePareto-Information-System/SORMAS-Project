@@ -15,18 +15,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
-package de.symeda.sormas.ui.dashboard;
-
+package de.symeda.sormas.ui.dashboard.samples;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.ui.dashboard.AbstractDashboardView;
+import de.symeda.sormas.ui.dashboard.DashboardType;
 
-public enum DashboardType {
+@SuppressWarnings("serial")
+public class SamplesDashboardView extends AbstractDashboardView {
 
-	SURVEILLANCE,
-	CONTACTS,
-	CAMPAIGNS;
-	SAMPLES;
+	public static final String VIEW_NAME = ROOT_VIEW_NAME + "/samples";
 
-	public String toString() {
-		return I18nProperties.getEnumCaption(this);
+	protected CountsTileViewLayout countsTileViewLayout;
+
+	public SamplesDashboardView() {
+		super(VIEW_NAME, DashboardType.SAMPLES);
+
+		filterLayout.setInfoLabelText(I18nProperties.getString(Strings.infoSampleDashboard));
+
+		//add samples
+		countsTileViewLayout = new CountsTileViewLayout(dashboardDataProvider);
+		dashboardLayout.addComponent(countsTileViewLayout);
+		dashboardLayout.setExpandRatio(countsTileViewLayout, 1);
 	}
+
+	public void refreshDashboard() {
+		super.refreshDashboard();
+
+		// Update counts
+		if (countsTileViewLayout != null)
+			countsTileViewLayout.refresh();
+
+	}
+
 }

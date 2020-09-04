@@ -1236,6 +1236,7 @@ public interface Captions {
 	String Sample_comment = "Sample.comment";
 	String Sample_diseaseShort = "Sample.diseaseShort";
 	String Sample_fieldSampleID = "Sample.fieldSampleID";
+	String Sample_forRetest = "Sample.forRetest";
 	String Sample_lab = "Sample.lab";
 	String Sample_labDetails = "Sample.labDetails";
 	String Sample_labSampleID = "Sample.labSampleID";
@@ -1262,6 +1263,7 @@ public interface Captions {
 	String Sample_sampleMaterialText = "Sample.sampleMaterialText";
 	String Sample_samplePurpose = "Sample.samplePurpose";
 	String Sample_sampleSource = "Sample.sampleSource";
+	String Sample_shipment = "Sample.shipment";
 	String Sample_shipmentDate = "Sample.shipmentDate";
 	String Sample_shipmentDetails = "Sample.shipmentDetails";
 	String Sample_shipped = "Sample.shipped";
@@ -1721,6 +1723,7 @@ public interface Captions {
 	String View_dashboard_campaigns = "View.dashboard.campaigns";
 	String View_dashboard_contacts = "View.dashboard.contacts";
 	String View_dashboard_surveillance = "View.dashboard.surveillance";
+//	String View_dashboard_sample = "View.dashboard.sample";
 	String View_events = "View.events";
 	String View_events_archive = "View.events.archive";
 	String View_events_data = "View.events.data";

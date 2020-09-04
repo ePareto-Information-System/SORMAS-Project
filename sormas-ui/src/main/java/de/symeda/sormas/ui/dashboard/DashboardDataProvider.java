@@ -144,7 +144,12 @@ public class DashboardDataProvider {
 			this.refreshDataForQuarantinedContacts();
 		}
 
-		if (getDashboardType() == DashboardType.CONTACTS || this.disease != null) {
+		if (getDashboardType() == DashboardType.SAMPLES) {
+			//Samples counts
+			setSampleCount(FacadeProvider.getSampleFacade().getSampleCount(region, district, disease, fromDate, toDate));
+		}
+
+		if (getDashboardType() == DashboardType.CONTACTS || getDashboardType() == DashboardType.SAMPLES || this.disease != null) {
 			// Cases
 			CaseCriteria caseCriteria = new CaseCriteria();
 			caseCriteria.region(region).district(district).disease(disease).newCaseDateBetween(fromDate, toDate, NewCaseDateType.MOST_RELEVANT);
@@ -165,7 +170,7 @@ public class DashboardDataProvider {
 			}
 		}
 
-		if (this.disease == null || getDashboardType() == DashboardType.CONTACTS) {
+		if (this.disease == null || getDashboardType() == DashboardType.CONTACTS || getDashboardType() == DashboardType.SAMPLES) {
 			return;
 		}
 
