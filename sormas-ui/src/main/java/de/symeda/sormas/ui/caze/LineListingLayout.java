@@ -430,10 +430,8 @@ public class LineListingLayout extends VerticalLayout {
 				if (caseLines.size() > 1) {
 					caseLines.get(0).getDelete().setEnabled(true);
 				}
-			});
-			delete.removeStyleName(ValoTheme.BUTTON_PRIMARY);
-			delete.addStyleName(CssStyles.FORCE_CAPTION);
-			delete.addStyleName(CssStyles.BUTTON_FILTER_LIGHT);
+
+			}, CssStyles.FORCE_CAPTION);
 
 			addComponent(dateOfReport);
 			if (UserProvider.getCurrent().hasUserRight(UserRight.CASE_CHANGE_EPID_NUMBER)) {
