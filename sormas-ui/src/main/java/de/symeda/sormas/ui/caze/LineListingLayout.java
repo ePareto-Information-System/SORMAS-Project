@@ -418,7 +418,7 @@ public class LineListingLayout extends VerticalLayout {
 			binder.forField(dateOfOnset).bind(CaseLineDto.DATE_OF_ONSET);
 
 			caseClassification = new ComboBox<>();
-			caseClassification.setId("lineListingcaseClassification_" + lineIndex);
+			caseClassification.setId("lineListingCaseClassification_" + lineIndex);
 			caseClassification.setItems(CaseClassification.values());
 			caseClassification.setWidth(250, Unit.PIXELS);
 			binder.forField(caseClassification).bind(CaseLineDto.CASE_CLASSIFICATION);
@@ -431,6 +431,9 @@ public class LineListingLayout extends VerticalLayout {
 					caseLines.get(0).getDelete().setEnabled(true);
 				}
 			});
+			delete.removeStyleName(ValoTheme.BUTTON_PRIMARY);
+			delete.addStyleName(CssStyles.FORCE_CAPTION);
+			delete.addStyleName(CssStyles.BUTTON_FILTER_LIGHT);
 
 			addComponent(dateOfReport);
 			if (UserProvider.getCurrent().hasUserRight(UserRight.CASE_CHANGE_EPID_NUMBER)) {
@@ -478,31 +481,7 @@ public class LineListingLayout extends VerticalLayout {
 
 			formatAsOtherLine();
 
-			dateOfReport.setCaption(I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.REPORT_DATE));
-			dateOfReport.removeStyleName(CssStyles.CAPTION_HIDDEN);
-			epidNumber.setCaption(I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.EPID_NUMBER));
-			community.setCaption(I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.COMMUNITY));
-			facility.setCaption(I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.HEALTH_FACILITY));
-			facility.removeStyleName(CssStyles.CAPTION_HIDDEN);
-			// no caption due to limited space and dependence on type of facility (other or home)
-//			facilityDetails.setCaption(I18nProperties.getCaption(Captions.caseHealthFacilityDetailsShort));
-//			facilityDetails.removeStyleName(CssStyles.CAPTION_HIDDEN);
-			CssStyles.style(facilityDetails, CssStyles.FORCE_CAPTION);
-			firstname.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.FIRST_NAME));
-			firstname.removeStyleName(CssStyles.CAPTION_HIDDEN);
-			lastname.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.LAST_NAME));
-			lastname.removeStyleName(CssStyles.CAPTION_HIDDEN);
-			dateOfBirthYear.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.BIRTH_DATE));
-			sex.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.SEX));
-			dateOfOnset.setCaption(I18nProperties.getPrefixCaption(SymptomsDto.I18N_PREFIX, SymptomsDto.ONSET_DATE));
-			dateOfOnset.setDescription(I18nProperties.getPrefixDescription(SymptomsDto.I18N_PREFIX, SymptomsDto.ONSET_DATE));
-			caseClassification.setCaption(I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.CASE_CLASSIFICATION));
-
 			delete.setEnabled(false);
-			delete.removeStyleName(ValoTheme.BUTTON_PRIMARY);
-			delete.addStyleName(CssStyles.FORCE_CAPTION);
-			delete.addStyleName(CssStyles.BUTTON_FILTER_LIGHT);
-			setComponentAlignment(delete, Alignment.MIDDLE_LEFT);
 		}
 
 		private void formatAsOtherLine() {
@@ -526,10 +505,6 @@ public class LineListingLayout extends VerticalLayout {
 			dateOfOnset.setCaption(I18nProperties.getPrefixCaption(SymptomsDto.I18N_PREFIX, SymptomsDto.ONSET_DATE));
 			dateOfOnset.setDescription(I18nProperties.getPrefixDescription(SymptomsDto.I18N_PREFIX, SymptomsDto.ONSET_DATE));
 			caseClassification.setCaption(I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.CASE_CLASSIFICATION));
-			delete.removeStyleName(ValoTheme.BUTTON_PRIMARY);
-			delete.addStyleName(CssStyles.FORCE_CAPTION);
-			delete.addStyleName(CssStyles.BUTTON_FILTER_LIGHT);
-			setComponentAlignment(delete, Alignment.MIDDLE_CENTER);
 		}
 
 		private void setRequiredInicatorsVisibility(boolean visible) {
@@ -637,7 +612,7 @@ public class LineListingLayout extends VerticalLayout {
 		private Integer dateOfBirthMM;
 		private Integer dateOfBirthDD;
 		private Sex sex;
-		private CaseClassification caseClassification;
+		private CaseClassification caseClassification = CaseClassification.NOT_CLASSIFIED;
 		private LocalDate dateOfOnset;
 
 		public CaseLineDto(
