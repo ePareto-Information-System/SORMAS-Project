@@ -770,6 +770,87 @@ public class SampleFacadeEjb implements SampleFacade {
 		return sampleService.getNewTestResultCountByResultType(caseIds);
 	}
 
+	@Override
+	public Map<SampleCountType, Long> getSampleCount(
+		RegionReferenceDto regionRef,
+		DistrictReferenceDto districtRef,
+		Disease disease,
+		Date from,
+		Date to) {
+		long total =
+			count((new SampleCriteria()).region(regionRef).district(districtRef).disease(disease).reportDateBetween(from, to, DateFilterOption.DATE));
+
+		long indeterminateCount = pathogenTestFacade.count(
+			(new SampleCriteria()).region(regionRef)
+				.district(districtRef)
+				.disease(disease)
+				.reportDateBetween(from, to, DateFilterOption.DATE)
+				.pathogenTestResult(PathogenTestResultType.INDETERMINATE));
+		long pendingCount = pathogenTestFacade.count(
+			(new SampleCriteria()).region(regionRef)
+				.district(districtRef)
+				.disease(disease)
+				.reportDateBetween(from, to, DateFilterOption.DATE)
+				.pathogenTestResult(PathogenTestResultType.PENDING));
+		long negativeCount = pathogenTestFacade.count(
+			(new SampleCriteria()).region(regionRef)
+				.district(districtRef)
+				.disease(disease)
+				.reportDateBetween(from, to, DateFilterOption.DATE)
+				.pathogenTestResult(PathogenTestResultType.NEGATIVE));
+		long positiveCount = pathogenTestFacade.count(
+			(new SampleCriteria()).region(regionRef)
+				.district(districtRef)
+				.disease(disease)
+				.reportDateBetween(from, to, DateFilterOption.DATE)
+				.pathogenTestResult(PathogenTestResultType.POSITIVE));
+
+		long adequateCount = count(
+			(new SampleCriteria()).region(regionRef)
+				.district(districtRef)
+				.disease(disease)
+				.reportDateBetween(from, to, DateFilterOption.DATE)
+				.specimenCondition(SpecimenCondition.ADEQUATE));
+		long inadequateCount = count(
+			(new SampleCriteria()).region(regionRef)
+				.district(districtRef)
+				.disease(disease)
+				.reportDateBetween(from, to, DateFilterOption.DATE)
+				.specimenCondition(SpecimenCondition.NOT_ADEQUATE));
+		long shippedCount = count(
+			(new SampleCriteria()).region(regionRef)
+				.district(districtRef)
+				.disease(disease)
+				.reportDateBetween(from, to, DateFilterOption.DATE)
+				.shipped(true));
+		long notShippedCount = count(
+			(new SampleCriteria()).region(regionRef)
+				.district(districtRef)
+				.disease(disease)
+				.reportDateBetween(from, to, DateFilterOption.DATE)
+				.shipped(false));
+		long receivedCount = count(
+			(new SampleCriteria()).region(regionRef)
+				.district(districtRef)
+				.disease(disease)
+				.reportDateBetween(from, to, DateFilterOption.DATE)
+				.received(true));
+
+		Map<SampleCountType, Long> map = new HashMap<SampleCountType, Long>();
+		map.put(SampleCountType.TOTAL, total);
+		map.put(SampleCountType.INDETERMINATE, indeterminateCount);
+		map.put(SampleCountType.PENDING, pendingCount);
+		map.put(SampleCountType.POSITIVE, positiveCount);
+		map.put(SampleCountType.NEGATIVE, negativeCount);
+		map.put(SampleCountType.ADEQUATE, adequateCount);
+		map.put(SampleCountType.INADEQUATE, inadequateCount);
+		map.put(SampleCountType.SHIPPED, shippedCount);
+		map.put(SampleCountType.NOT_SHIPED, notShippedCount);
+		map.put(SampleCountType.RECEIVED, receivedCount);
+
+		return map;
+	}
+
 	public Sample fromDto(@NotNull SampleDto source) {
 
 		Sample target = sampleService.getByUuid(source.getUuid());
