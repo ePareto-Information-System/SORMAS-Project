@@ -79,6 +79,8 @@ public class DashboardDataProvider {
 	private Long casesInQuarantineCount = 0L;
 	private Long casesPlacedInQuarantineCount = 0L;
 	private Long contactsConvertedToCaseCount = 0L;
+	private Map<SampleCountType, Long> sampleCount = new HashMap<SampleCountType, Long>();
+	private Map<SampleCountType, Long> sampleCountDifference = new HashMap<SampleCountType, Long>();
 
 	public void refreshData() {
 
@@ -147,6 +149,7 @@ public class DashboardDataProvider {
 		if (getDashboardType() == DashboardType.SAMPLES) {
 			//Samples counts
 			setSampleCount(FacadeProvider.getSampleFacade().getSampleCount(region, district, disease, fromDate, toDate));
+			setSampleCountDifference(FacadeProvider.getSampleFacade().getSampleCount(region, district, disease, previousFromDate, previousToDate));
 		}
 
 		if (getDashboardType() == DashboardType.CONTACTS || getDashboardType() == DashboardType.SAMPLES || this.disease != null) {
@@ -408,5 +411,13 @@ public class DashboardDataProvider {
 
 	public void setContactsConvertedToCaseCount(Long contactsConvertedToCaseCount) {
 		this.contactsConvertedToCaseCount = contactsConvertedToCaseCount;
+	}
+
+	public Map<SampleCountType, Long> getSampleCountDifference() {
+		return sampleCountDifference;
+	}
+
+	public void setSampleCountDifference(Map<SampleCountType, Long> sampleCountDifference) {
+		this.sampleCountDifference = sampleCountDifference;
 	}
 }
