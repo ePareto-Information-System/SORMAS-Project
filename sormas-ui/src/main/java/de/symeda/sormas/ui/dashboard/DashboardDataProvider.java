@@ -420,4 +420,12 @@ public class DashboardDataProvider {
 	public void setSampleCountDifference(Map<SampleCountType, Long> sampleCountDifference) {
 		this.sampleCountDifference = sampleCountDifference;
 	}
+
+	public Map<SampleCountType, Long> getSampleCountDifference() {
+		return sampleCountDifference;
+	}
+
+	public void setSampleCountDifference(Map<SampleCountType, Long> sampleCountDifference) {
+		this.sampleCountDifference = sampleCountDifference;
+	}
 }
