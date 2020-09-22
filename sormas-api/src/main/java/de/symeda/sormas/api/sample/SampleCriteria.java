@@ -71,6 +71,7 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	private Date sampleDateTo;
 	private SampleDateType sampleDateType;
 	private DateFilterOption dateFilterOption = DateFilterOption.DATE;
+	private SamplePurpose samplePurpose;
 
 	public RegionReferenceDto getRegion() {
 		return region;
@@ -80,12 +81,30 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 		this.region = region;
 	}
 
+	public SampleCriteria region(RegionReferenceDto region) {
+		setRegion(region);
+
+		return this;
+	}
+
+	public SampleCriteria samplePurpose(SamplePurpose samplePurpose) {
+		setSamplePurpose(samplePurpose);
+
+		return this;
+	}
+
 	public DistrictReferenceDto getDistrict() {
 		return district;
 	}
 
 	public void setDistrict(DistrictReferenceDto district) {
 		this.district = district;
+	}
+
+	public SampleCriteria district(DistrictReferenceDto district) {
+		setDistrict(district);
+
+		return this;
 	}
 
 	public CommunityReferenceDto getCommunity() {
@@ -131,14 +150,32 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 		return this;
 	}
 
-	public SampleCriteria reportDateBetween(Date sampleDateFrom, Date sampleDateTo, SampleDateType sampleDateType, DateFilterOption dateFilterOption) {
+	public SampleCriteria reportDateBetween(
+		Date sampleDateFrom,
+		Date sampleDateTo,
+		SampleDateType sampleDateType,
+		DateFilterOption dateFilterOption) {
 		this.sampleDateFrom = sampleDateFrom;
 		this.sampleDateTo = sampleDateTo;
 		this.sampleDateType = sampleDateType;
 		this.dateFilterOption = dateFilterOption;
 		return this;
 	}
-	
+
+	public SampleCriteria reportDateBetween(
+		Date sampleDateFrom,
+		Date sampleDateTo,
+		SampleDateType sampleDateType,
+		DateFilterOption dateFilterOption,
+		SamplePurpose samplePurpose) {
+		this.sampleDateFrom = sampleDateFrom;
+		this.sampleDateTo = sampleDateTo;
+		this.sampleDateType = sampleDateType;
+		this.dateFilterOption = dateFilterOption;
+		this.samplePurpose = samplePurpose;
+		return this;
+	}
+
 	public SampleCriteria reportDateBetween(Date reportDateFrom, Date reportDateTo, DateFilterOption dateFilterOption) {
 		this.sampleDateFrom = reportDateFrom;
 		this.sampleDateTo = reportDateTo;
@@ -179,6 +216,12 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 		this.pathogenTestResult = pathogenTestResult;
 	}
 
+	public SampleCriteria pathogenTestResult(PathogenTestResultType pathogenTestResult) {
+		setPathogenTestResult(pathogenTestResult);
+
+		return this;
+	}
+
 	public CaseClassification getCaseClassification() {
 		return caseClassification;
 	}
@@ -193,6 +236,12 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 
 	public void setDisease(Disease disease) {
 		this.disease = disease;
+	}
+
+	public SampleCriteria disease(Disease disease) {
+		setDisease(disease);
+
+		return this;
 	}
 
 	public CaseReferenceDto getCaze() {
@@ -228,6 +277,11 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 
 	public void setSpecimenCondition(SpecimenCondition specimenCondition) {
 		this.specimenCondition = specimenCondition;
+	}
+
+	public SampleCriteria specimenCondition(SpecimenCondition specimenCondition) {
+		this.specimenCondition = specimenCondition;
+		return this;
 	}
 
 	public SampleAssociationType getSampleAssociationType() {
@@ -274,8 +328,16 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	public SampleDateType getSampleDateType() {
 		return sampleDateType;
 	}
-	
+
 	public void setSampleDateType(SampleDateType sampleActivity) {
 		this.sampleDateType = sampleActivity;
+	}
+
+	public SamplePurpose getSamplePurpose() {
+		return samplePurpose;
+	}
+
+	public void setSamplePurpose(SamplePurpose samplePurpose) {
+		this.samplePurpose = samplePurpose;
 	}
 }
