@@ -234,14 +234,21 @@ public class GeoShapeProviderEjb implements GeoShapeProvider {
 				RegionReferenceDto region = regionResult.get();
 
 				regionMultiPolygons.put(region, multiPolygon);
+				
+				GeoLatLon[][] regionShape = null;
 
-				GeoLatLon[][] regionShape = new GeoLatLon[multiPolygon.getNumGeometries()][];
-				for (int i = 0; i < multiPolygon.getNumGeometries(); i++) {
-					Polygon polygon = (Polygon) multiPolygon.getGeometryN(i);
-					regionShape[i] = Arrays.stream(polygon.getExteriorRing().getCoordinates())
-						.map(c -> new GeoLatLon(c.y, c.x))
-						.toArray(size -> new GeoLatLon[size]);
+				if (multiPolygon != null)
+				{
+					regionShape = new GeoLatLon[multiPolygon.getNumGeometries()][];
+					
+					for (int i = 0; i < multiPolygon.getNumGeometries(); i++) {
+						Polygon polygon = (Polygon) multiPolygon.getGeometryN(i);
+						regionShape[i] = Arrays.stream(polygon.getExteriorRing().getCoordinates())
+							.map(c -> new GeoLatLon(c.y, c.x))
+							.toArray(size -> new GeoLatLon[size]);
+					}
 				}
+				
 				regionShapes.put(region, regionShape);
 			}
 			iterator.close();
