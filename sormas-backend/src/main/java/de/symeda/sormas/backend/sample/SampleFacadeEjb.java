@@ -64,6 +64,7 @@ import de.symeda.sormas.api.sample.SampleExportDto;
 import de.symeda.sormas.api.sample.SampleFacade;
 import de.symeda.sormas.api.sample.SampleIndexDto;
 import de.symeda.sormas.api.sample.SampleJurisdictionDto;
+import de.symeda.sormas.api.sample.SamplePurpose;
 import de.symeda.sormas.api.sample.SampleReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.user.UserRole;
@@ -817,30 +818,35 @@ public class SampleFacadeEjb implements SampleFacade {
 				.disease(disease)
 				.reportDateBetween(from, to, DateFilterOption.DATE)
 				.specimenCondition(SpecimenCondition.NOT_ADEQUATE));
+
 		long shippedCount = count(
 			(new SampleCriteria()).region(regionRef)
 				.district(districtRef)
 				.disease(disease)
 				.reportDateBetween(from, to, DateFilterOption.DATE)
-				.shipped(true));
+				.shipped(true)
+				.samplePurpose(SamplePurpose.EXTERNAL));
 		long notShippedCount = count(
 			(new SampleCriteria()).region(regionRef)
 				.district(districtRef)
 				.disease(disease)
 				.reportDateBetween(from, to, DateFilterOption.DATE)
-				.shipped(false));
+				.shipped(false)
+				.samplePurpose(SamplePurpose.EXTERNAL));
 		long receivedCount = count(
 			(new SampleCriteria()).region(regionRef)
 				.district(districtRef)
 				.disease(disease)
 				.reportDateBetween(from, to, DateFilterOption.DATE)
-				.received(true));
+				.received(true)
+				.samplePurpose(SamplePurpose.EXTERNAL));
 		long notReceivedCount = count(
 			(new SampleCriteria()).region(regionRef)
 				.district(districtRef)
 				.disease(disease)
 				.reportDateBetween(from, to, DateFilterOption.DATE)
-				.received(false));
+				.received(false)
+				.samplePurpose(SamplePurpose.EXTERNAL));
 
 		Map<SampleCountType, Long> map = new HashMap<SampleCountType, Long>();
 		map.put(SampleCountType.TOTAL, total);
