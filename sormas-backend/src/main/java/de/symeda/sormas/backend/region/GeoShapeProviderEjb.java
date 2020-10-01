@@ -210,6 +210,9 @@ public class GeoShapeProviderEjb implements GeoShapeProvider {
 				if (shapeRegionName == null) {
 					shapeRegionName = (String) feature.getAttribute("REGION");
 				}
+				if (shapeRegionName == null) {
+					shapeRegionName = (String) feature.getAttribute("Name");
+				}
 				shapeRegionName = shapeRegionName.replaceAll("\\W", "").toLowerCase();
 				String finalShapeRegionName = shapeRegionName;
 				Optional<RegionReferenceDto> regionResult = regions.stream().filter(r -> {
@@ -234,13 +237,12 @@ public class GeoShapeProviderEjb implements GeoShapeProvider {
 				RegionReferenceDto region = regionResult.get();
 
 				regionMultiPolygons.put(region, multiPolygon);
-				
+
 				GeoLatLon[][] regionShape = null;
 
-				if (multiPolygon != null)
-				{
+				if (multiPolygon != null) {
 					regionShape = new GeoLatLon[multiPolygon.getNumGeometries()][];
-					
+
 					for (int i = 0; i < multiPolygon.getNumGeometries(); i++) {
 						Polygon polygon = (Polygon) multiPolygon.getGeometryN(i);
 						regionShape[i] = Arrays.stream(polygon.getExteriorRing().getCoordinates())
@@ -248,7 +250,7 @@ public class GeoShapeProviderEjb implements GeoShapeProvider {
 							.toArray(size -> new GeoLatLon[size]);
 					}
 				}
-				
+
 				regionShapes.put(region, regionShape);
 			}
 			iterator.close();
