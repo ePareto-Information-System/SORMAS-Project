@@ -49,7 +49,7 @@ public class CountsTileViewLayout extends CssLayout {
 
 	public void refresh() {
 		Map<SampleCountType, Long> sampleCount = dashboardDataProvider.getSampleCount();
-		Map<SampleCountType, Long> sampleCountDifference = dashboardDataProvider.getSampleCountDifference();
+		Map<SampleCountType, Long> previousSampleCount = dashboardDataProvider.getPreviousSampleCount();
 		this.removeAllComponents();
 
 		SampleCountType[] totalCol = {
@@ -77,28 +77,28 @@ public class CountsTileViewLayout extends CssLayout {
 
 		HorizontalLayout totalHorizontalLayout = new HorizontalLayout();
 		totalHorizontalLayout.setWidth(500, Unit.PIXELS);
-		totalHorizontalLayout.addComponent(createCountRow(totalCol, sampleCount, sampleCountDifference, Captions.Sample_name));
+		totalHorizontalLayout.addComponent(createCountRow(totalCol, sampleCount, previousSampleCount, Captions.Sample_name));
 		addComponent(totalHorizontalLayout);
 
 		HorizontalLayout conditionHorizontalLayout = new HorizontalLayout();
-		conditionHorizontalLayout.addComponent(createCountRow(conditionCol, sampleCount, sampleCountDifference, Captions.Sample_specimenCondition));
+		conditionHorizontalLayout.addComponent(createCountRow(conditionCol, sampleCount, previousSampleCount, Captions.Sample_specimenCondition));
 		addComponent(conditionHorizontalLayout);
 
 		HorizontalLayout sampleTestResultHorizontalLayout = new HorizontalLayout();
 		sampleTestResultHorizontalLayout.setWidth(100, Unit.PERCENTAGE);
-		sampleTestResultHorizontalLayout.addComponent(createCountRow(resultTypeCol, sampleCount, sampleCountDifference, Captions.Sample_testResult));
+		sampleTestResultHorizontalLayout.addComponent(createCountRow(resultTypeCol, sampleCount, previousSampleCount, Captions.Sample_testResult));
 		addComponent(sampleTestResultHorizontalLayout);
 
 		HorizontalLayout shipmentHorizontalLayout = new HorizontalLayout();
 		shipmentHorizontalLayout.setWidth(100, Unit.PERCENTAGE);
-		shipmentHorizontalLayout.addComponent(createCountRow(shipmentCol, sampleCount, sampleCountDifference, Captions.Sample_shipment));
+		shipmentHorizontalLayout.addComponent(createCountRow(shipmentCol, sampleCount, previousSampleCount, Captions.Sample_shipment));
 		addComponent(shipmentHorizontalLayout);
 	}
 
 	private VerticalLayout createCountRow(
 		SampleCountType[] cTypes,
 		Map<SampleCountType, Long> sampleCount,
-		Map<SampleCountType, Long> sampleCountDifference,
+		Map<SampleCountType, Long> previousSampleCount,
 		String label) {
 		VerticalLayout verticalLayout = new VerticalLayout();
 
@@ -109,7 +109,7 @@ public class CountsTileViewLayout extends CssLayout {
 
 		HorizontalLayout countColorHorizontalLayout = new HorizontalLayout();
 		for (SampleCountType type : cTypes) {
-			CountTileComponent tile = new CountTileComponent(type, sampleCount.get(type), sampleCountDifference.get(type));
+			CountTileComponent tile = new CountTileComponent(type, sampleCount.get(type), previousSampleCount.get(type));
 			tile.setWidth(230, Unit.PIXELS);
 			countColorHorizontalLayout.addComponent(tile);
 		}
