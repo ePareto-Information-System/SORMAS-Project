@@ -149,7 +149,7 @@ public class DashboardDataProvider {
 		if (getDashboardType() == DashboardType.SAMPLES) {
 			//Samples counts
 			setSampleCount(FacadeProvider.getSampleFacade().getSampleCount(region, district, disease, fromDate, toDate));
-			setSampleCountDifference(FacadeProvider.getSampleFacade().getSampleCount(region, district, disease, previousFromDate, previousToDate));
+			setPreviousSampleCount(FacadeProvider.getSampleFacade().getSampleCount(region, district, disease, previousFromDate, previousToDate));
 		}
 
 		if (getDashboardType() == DashboardType.CONTACTS || getDashboardType() == DashboardType.SAMPLES || this.disease != null) {
@@ -421,11 +421,11 @@ public class DashboardDataProvider {
 		this.sampleCountDifference = sampleCountDifference;
 	}
 
-	public Map<SampleCountType, Long> getSampleCountDifference() {
+	public Map<SampleCountType, Long> getPreviousSampleCount() {
 		return previousSampleCount;
 	}
 
-	public void setSampleCountDifference(Map<SampleCountType, Long> previousSampleCount) {
+	public void setPreviousSampleCount(Map<SampleCountType, Long> previousSampleCount) {
 		this.previousSampleCount = previousSampleCount;
 	}
 }
