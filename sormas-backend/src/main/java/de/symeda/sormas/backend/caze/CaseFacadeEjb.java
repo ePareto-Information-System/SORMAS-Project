@@ -58,6 +58,9 @@ import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.hql.internal.ast.ASTQueryTranslatorFactory;
+import org.hibernate.hql.spi.QueryTranslator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -409,10 +412,14 @@ public class CaseFacadeEjb implements CaseFacade {
 
 		return cases;
 	}
-	
+
 	//@Override
-	public List<MapCaseDto> getIndexListForMap(CaseCriteria caseCriteria, Integer first, Integer max, String userUuid,
-			List<SortProperty> sortProperties) {
+	public List<MapCaseDto> getIndexListForMap(
+		CaseCriteria caseCriteria,
+		Integer first,
+		Integer max,
+		String userUuid,
+		List<SortProperty> sortProperties) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<MapCaseDto> cq = cb.createQuery(MapCaseDto.class);
 		Root<Case> caze = cq.from(Case.class);
@@ -429,6 +436,16 @@ public class CaseFacadeEjb implements CaseFacade {
 		if (filter != null) {
 			cq.where(filter);
 		}
+
+		TypedQuery typedQuery = em.createQuery(cq);
+		String hqlQueryString = typedQuery.unwrap(org.hibernate.query.Query.class).getQueryString();
+		ASTQueryTranslatorFactory queryTranslatorFactory = new ASTQueryTranslatorFactory();
+		SessionImplementor hibernateSession = em.unwrap(SessionImplementor.class);
+		QueryTranslator queryTranslator =
+			queryTranslatorFactory.createQueryTranslator("", hqlQueryString, java.util.Collections.EMPTY_MAP, hibernateSession.getFactory(), null);
+		queryTranslator.compile(java.util.Collections.EMPTY_MAP, false);
+		String sqlQueryString = queryTranslator.getSQLString();
+		System.err.println("Query goes here... " + sqlQueryString);
 
 		if (first != null && max != null) {
 			return em.createQuery(cq).setFirstResult(first).setMaxResults(max).getResultList();
@@ -1183,22 +1200,22 @@ public class CaseFacadeEjb implements CaseFacade {
 		Join<Case, Person> person = root.join(Case.PERSON, JoinType.LEFT);
 		Join<Person, Location> personAddress = person.join(Person.ADDRESS, JoinType.LEFT);
 		Join<Case, Facility> facility = root.join(Case.HEALTH_FACILITY, JoinType.LEFT);
-		
+
 		cq.multiselect(
-				root.get(Case.UUID),
-				root.get(Case.REPORT_DATE),
-				root.get(Case.CASE_CLASSIFICATION),
-				root.get(Case.DISEASE),
-				person.get(Person.UUID),
-				person.get(Person.FIRST_NAME),
-				person.get(Person.LAST_NAME),
-				facility.get(Facility.UUID),
-				facility.get(Facility.LATITUDE),
-				facility.get(Facility.LONGITUDE),
-				root.get(Case.REPORT_LAT),
-				root.get(Case.REPORT_LON),
-				personAddress.get(Location.LATITUDE),
-				personAddress.get(Location.LONGITUDE));
+			root.get(Case.UUID),
+			root.get(Case.REPORT_DATE),
+			root.get(Case.CASE_CLASSIFICATION),
+			root.get(Case.DISEASE),
+			person.get(Person.UUID),
+			person.get(Person.FIRST_NAME),
+			person.get(Person.LAST_NAME),
+			facility.get(Facility.UUID),
+			facility.get(Facility.LATITUDE),
+			facility.get(Facility.LONGITUDE),
+			root.get(Case.REPORT_LAT),
+			root.get(Case.REPORT_LON),
+			personAddress.get(Location.LATITUDE),
+			personAddress.get(Location.LONGITUDE));
 	}
 
 	@Override
