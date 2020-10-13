@@ -84,6 +84,36 @@ public class MapCaseDto implements Serializable {
 		jurisdiction = new CaseJurisdictionDto(reportingUserUuid, regionUuid, districtUuid, communityUuid, healthFacilityUuid, pointOfEntryUuid);
 	}
 
+	public MapCaseDto(
+		String uuid,
+		Date reportDate,
+		CaseClassification caseClassification,
+		Disease disease,
+		String personUuid,
+		String personFirstName,
+		String personLastName,
+		String healthFacilityUuid,
+		Double healthFacilityLat,
+		Double healthFacilityLon,
+		Double reportLat,
+		Double reportLon,
+		Double addressLat,
+		Double addressLon) {
+
+		this.uuid = uuid;
+		this.reportDate = reportDate;
+		this.caseClassification = caseClassification;
+		this.disease = disease;
+		this.person = new PersonReferenceDto(personUuid, personFirstName, personLastName);
+		this.setHealthFacilityLat(healthFacilityLat);
+		this.setHealthFacilityLon(healthFacilityLon);
+		this.reportLat = reportLat;
+		this.reportLon = reportLon;
+		this.addressLat = addressLat;
+		this.addressLon = addressLon;
+//		jurisdiction = new CaseJurisdictionDto(reportingUserUuid, regionUuid, districtUuid, communityUuid, healthFacilityUuid, pointOfEntryUuid);
+	}
+
 	public String getUuid() {
 		return uuid;
 	}
