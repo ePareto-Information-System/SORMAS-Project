@@ -23,7 +23,9 @@ import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
+import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.caze.CaseCriteria;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -31,7 +33,9 @@ import de.symeda.sormas.api.task.TaskContext;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
+import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.caze.eventLink.EventListComponent;
+import de.symeda.sormas.ui.entitymap.DashboardMapComponent;
 import de.symeda.sormas.ui.samples.SampleListComponent;
 import de.symeda.sormas.ui.task.TaskListComponent;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
@@ -53,6 +57,9 @@ public class CaseDataView extends AbstractCaseView {
 	public static final String TASKS_LOC = "tasks";
 	public static final String SAMPLES_LOC = "samples";
 	public static final String EVENTS_LOC = "events";
+	public static final String CASE_MAP = "map";
+
+	private CaseCriteria criteria;
 
 	public CaseDataView() {
 		super(VIEW_NAME, false);
@@ -132,6 +139,20 @@ public class CaseDataView extends AbstractCaseView {
 		eventList.addStyleName(CssStyles.SIDE_COMPONENT);
 		eventLayout.addComponent(eventList);
 		layout.addComponent(eventLayout, EVENTS_LOC);
+
+		VerticalLayout mapLayout = new VerticalLayout();
+		mapLayout.setMargin(false);
+		mapLayout.setSpacing(false);
+
+		criteria = ViewModelProviders.of(CasesView.class).get(CaseCriteria.class);
+		if (criteria.getRelevanceStatus() == null) {
+			criteria.relevanceStatus(EntityRelevanceStatus.ACTIVE);
+		}
+
+		DashboardMapComponent map = new DashboardMapComponent(criteria);
+		map.addStyleName(CssStyles.SIDE_COMPONENT);
+		mapLayout.addComponent(map);
+		layout.addComponent(mapLayout, CASE_MAP);
 
 		setCaseEditPermission(container);
 	}
