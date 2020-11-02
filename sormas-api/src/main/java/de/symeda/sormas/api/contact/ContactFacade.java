@@ -119,4 +119,6 @@ public interface ContactFacade {
 	boolean isContactEditAllowed(String contactUuid);
 
 	boolean exists(String uuid);
+
+	List<MapContactDto> getIndexListForMap(ContactCriteria criteria, Integer first, Integer max, String userUuid, List<SortProperty> sortProperties);
 }

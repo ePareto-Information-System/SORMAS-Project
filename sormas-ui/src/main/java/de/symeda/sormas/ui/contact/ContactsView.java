@@ -61,7 +61,10 @@ import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.caze.CaseController;
+import de.symeda.sormas.ui.caze.CasesView;
 import de.symeda.sormas.ui.contact.importer.ContactsImportLayout;
+import de.symeda.sormas.ui.dashboard.DashboardCssStyles;
+import de.symeda.sormas.ui.entitymap.ContactMapComponent;
 import de.symeda.sormas.ui.utils.AbstractView;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
@@ -106,6 +109,10 @@ public class ContactsView extends AbstractView {
 	private int followUpRangeInterval = 14;
 	private boolean buttonPreviousOrNextClick = false;
 	private Date followUpToDate;
+
+	private Button showGridViewButton;
+	private Button showMapViewButton;
+	private ContactMapComponent contactMap;
 
 	public ContactsView() {
 		super(VIEW_NAME);
@@ -333,6 +340,11 @@ public class ContactsView extends AbstractView {
 		addComponent(gridLayout);
 	}
 
+	protected void changeViewType(ContactsViewType type) {
+		viewConfiguration.setViewType(type);
+		SormasUI.get().getNavigator().navigateTo(CasesView.VIEW_NAME);
+	}
+
 	public VerticalLayout createFilterBar() {
 		VerticalLayout filterLayout = new VerticalLayout();
 		filterLayout.setSpacing(false);
@@ -471,7 +483,7 @@ public class ContactsView extends AbstractView {
 
 				Button minusDaysButton = ButtonHelper.createButton(I18nProperties.getCaption(Captions.contactMinusDays), e -> {
 					followUpRangeInterval =
-							DateHelper.getDaysBetween(DateHelper8.toDate(fromReferenceDate.getValue()), DateHelper8.toDate(toReferenceDate.getValue()));
+						DateHelper.getDaysBetween(DateHelper8.toDate(fromReferenceDate.getValue()), DateHelper8.toDate(toReferenceDate.getValue()));
 					buttonPreviousOrNextClick = true;
 					toReferenceDate.setValue(toReferenceDate.getValue().minusDays(followUpRangeInterval));
 					fromReferenceDate.setValue(fromReferenceDate.getValue().minusDays(followUpRangeInterval));
@@ -502,7 +514,7 @@ public class ContactsView extends AbstractView {
 
 				Button plusDaysButton = ButtonHelper.createButton(I18nProperties.getCaption(Captions.contactPlusDays), e -> {
 					followUpRangeInterval =
-							DateHelper.getDaysBetween(DateHelper8.toDate(fromReferenceDate.getValue()), DateHelper8.toDate(toReferenceDate.getValue()));
+						DateHelper.getDaysBetween(DateHelper8.toDate(fromReferenceDate.getValue()), DateHelper8.toDate(toReferenceDate.getValue()));
 					buttonPreviousOrNextClick = true;
 					toReferenceDate.setValue(toReferenceDate.getValue().plusDays(followUpRangeInterval));
 					fromReferenceDate.setValue(fromReferenceDate.getValue().plusDays(followUpRangeInterval));
@@ -513,6 +525,7 @@ public class ContactsView extends AbstractView {
 
 			}
 		}
+		addShowMapOrTableToggleButtons(actionButtonsLayout);
 		statusFilterLayout.addComponent(actionButtonsLayout);
 		statusFilterLayout.setComponentAlignment(actionButtonsLayout, Alignment.TOP_RIGHT);
 		statusFilterLayout.setExpandRatio(actionButtonsLayout, 1);
@@ -570,6 +583,35 @@ public class ContactsView extends AbstractView {
 		return legendLayout;
 	}
 
+	private void addShowMapOrTableToggleButtons(HorizontalLayout layout) {
+
+		//gridView
+		showGridViewButton = new Button("", VaadinIcons.TABLE);
+		CssStyles.style(showGridViewButton, CssStyles.BUTTON_SUBTLE);
+		showGridViewButton.addStyleName(CssStyles.VSPACE_NONE);
+
+		showGridViewButton.addClickListener(e -> {
+			criteria.setViewMode("grid");
+			navigateTo(criteria);
+		});
+
+		showGridViewButton.setVisible(false);
+		layout.addComponent(showGridViewButton);
+
+		//mapView
+		showMapViewButton = new Button("", VaadinIcons.SQUARE_SHADOW);
+		CssStyles.style(showMapViewButton, CssStyles.BUTTON_SUBTLE);
+		showMapViewButton.addStyleName(CssStyles.VSPACE_NONE);
+
+		showMapViewButton.addClickListener(e -> {
+			criteria.setViewMode("map");
+			navigateTo(criteria);
+		});
+
+		showMapViewButton.setVisible(false);
+		layout.addComponent(showMapViewButton);
+	}
+
 	private void styleLegendEntry(Label label, String style, boolean first) {
 		label.setHeight(18, Unit.PIXELS);
 		label.setWidth(12, Unit.PIXELS);
@@ -590,11 +632,32 @@ public class ContactsView extends AbstractView {
 
 		if (ContactsViewType.FOLLOW_UP_VISITS_OVERVIEW.equals(viewConfiguration.getViewType())) {
 			((ContactFollowUpGrid) grid).reload();
+			showGridViewButton.setVisible(true);
 		} else {
 			if (viewConfiguration.isInEagerMode()) {
 				((AbstractContactGrid<?>) grid).setEagerDataProvider();
 			}
 			((AbstractContactGrid<?>) grid).reload();
+		}
+
+		if (criteria.getViewMode().equals("map")) {
+			VerticalLayout mapLayout = new VerticalLayout();
+			mapLayout.setStyleName(DashboardCssStyles.CURVE_AND_MAP_LAYOUT);
+			mapLayout.setMargin(false);
+
+			contactMap = new ContactMapComponent(criteria);
+//			mapLayout.addComponent(map);
+//			mapLayout.setExpandRatio(map, 1);
+			gridLayout.addComponent(mapLayout);
+
+			gridLayout.setExpandRatio(mapLayout, 1);
+
+			showGridViewButton.setVisible(true);
+		} else {
+			gridLayout.addComponent(grid);
+			gridLayout.setExpandRatio(grid, 1);
+
+			showMapViewButton.setVisible(true);
 		}
 	}
 

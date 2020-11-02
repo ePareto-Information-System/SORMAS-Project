@@ -1,20 +1,3 @@
-/*******************************************************************************
- * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *******************************************************************************/
 package de.symeda.sormas.ui.entitymap;
 
 import java.math.BigDecimal;
@@ -52,11 +35,11 @@ import de.symeda.sormas.api.CaseMeasure;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseClassification;
-import de.symeda.sormas.api.caze.CaseCriteria;
-import de.symeda.sormas.api.caze.CaseDataDto;
-import de.symeda.sormas.api.caze.CaseFacade;
 import de.symeda.sormas.api.caze.CaseIndexDto;
-import de.symeda.sormas.api.caze.MapCaseDto;
+import de.symeda.sormas.api.contact.ContactClassification;
+import de.symeda.sormas.api.contact.ContactCriteria;
+import de.symeda.sormas.api.contact.ContactDto;
+import de.symeda.sormas.api.contact.ContactFacade;
 import de.symeda.sormas.api.contact.MapContactDto;
 import de.symeda.sormas.api.event.DashboardEventDto;
 import de.symeda.sormas.api.facility.FacilityDto;
@@ -88,9 +71,9 @@ import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 
 @SuppressWarnings("serial")
-public class DashboardMapComponent extends VerticalLayout {
+public class ContactMapComponent extends VerticalLayout {
 
-	final static Logger logger = LoggerFactory.getLogger(DashboardMapComponent.class);
+	final static Logger logger = LoggerFactory.getLogger(ContactMapComponent.class);
 
 	private static final String CASES_GROUP_ID = "cases";
 	private static final String CONTACTS_GROUP_ID = "contacts";
@@ -100,7 +83,7 @@ public class DashboardMapComponent extends VerticalLayout {
 
 	// Layouts and components
 	private final DashboardDataProvider dashboardDataProvider;
-	private final CaseCriteria criteria;
+	private final ContactCriteria criteria;
 	private final LeafletMap map;
 	private PopupButton legendDropdown;
 
@@ -115,9 +98,9 @@ public class DashboardMapComponent extends VerticalLayout {
 
 	// Entities
 	private List<CaseIndexDto> cases;
-	private final HashMap<FacilityReferenceDto, List<MapCaseDto>> casesByFacility = new HashMap<>();
-	private List<MapCaseDto> mapCaseDtos = new ArrayList<>();
-	private List<MapCaseDto> mapAndFacilityCases = new ArrayList<>();
+	private final HashMap<FacilityReferenceDto, List<MapContactDto>> contactsByFacility = new HashMap<>();
+	private List<MapContactDto> mapCaseDtos = new ArrayList<>();
+	private List<MapContactDto> mapAndFacilityCases = new ArrayList<>();
 	private List<MapContactDto> mapContactDtos = new ArrayList<>();
 
 	// Markers
@@ -136,16 +119,15 @@ public class DashboardMapComponent extends VerticalLayout {
 	private Consumer<Boolean> externalExpandListener;
 	private boolean emptyPopulationDistrictPresent;
 
-	public DashboardMapComponent(CaseCriteria criteria) {
-		this.dashboardDataProvider = new DashboardDataProvider();//dashboardDataProvider;
-		this.criteria = criteria;
+	public ContactMapComponent(ContactCriteria contactCriteria) {
+		this.criteria = contactCriteria;
+		this.dashboardDataProvider = new DashboardDataProvider();
+		this.map = new LeafletMap();
 
 		setMargin(false);
 		setSpacing(false);
 		setSizeFull();
 
-		map = new LeafletMap();
-		//map.setSizeFull();
 		map.setWidth(100, Unit.PERCENTAGE);
 		map.setHeight(580, Unit.PIXELS);
 		map.addMarkerClickListener(new MarkerClickListener() {
@@ -155,7 +137,6 @@ public class DashboardMapComponent extends VerticalLayout {
 				onMarkerClicked(event.getGroupId(), event.getMarkerIndex());
 			}
 		});
-
 		{
 
 			GeoShapeProvider geoShapeProvider = FacadeProvider.getGeoShapeProvider();
@@ -177,7 +158,6 @@ public class DashboardMapComponent extends VerticalLayout {
 
 			map.setCenter(center);
 		}
-
 		map.setZoom(FacadeProvider.getConfigFacade().getMapZoom());
 
 		showCases = true;
@@ -210,20 +190,20 @@ public class DashboardMapComponent extends VerticalLayout {
 			//showRegionsShapes(caseMeasure, fromDate, toDate, dashboardDataProvider.getDisease());
 		}
 		if (showCases) {
-			showCaseMarkers(FacadeProvider.getCaseFacade().getIndexListForMap(criteria, null, null, UserProvider.getCurrent().getUuid(), null));
+			showContactMarkers(FacadeProvider.getContactFacade().getIndexListForMap(criteria, null, null, UserProvider.getCurrent().getUuid(), null));
 		}
 
 		// Re-create the map key layout to only show the keys for the selected layers
 		legendDropdown.setContent(createLegend());
 	}
 
-	public List<CaseDataDto> getCasesForFacility(FacilityReferenceDto facility) {
-		List<CaseDataDto> casesForFacility = new ArrayList<>();
-		CaseFacade caseFacade = FacadeProvider.getCaseFacade();
-		for (MapCaseDto mapCaseDto : casesByFacility.get(facility)) {
-			casesForFacility.add(caseFacade.getCaseDataByUuid(mapCaseDto.getUuid()));
+	public List<ContactDto> getContactForForFacility(FacilityReferenceDto facility) {
+		List<ContactDto> contactForFacility = new ArrayList<>();
+		ContactFacade contatcFacade = FacadeProvider.getContactFacade();
+		for (MapContactDto mapContactDto : contactsByFacility.get(facility)) {
+			contactForFacility.add(contatcFacade.getContactByUuid(mapContactDto.getUuid()));
 		}
-		return casesForFacility;
+		return contactForFacility;
 	}
 
 	public void setExpandListener(Consumer<Boolean> listener) {
@@ -257,41 +237,41 @@ public class DashboardMapComponent extends VerticalLayout {
 
 			// Add check boxes and apply button
 			{
-				OptionGroup mapCaseDisplayModeSelect = new OptionGroup();
-				mapCaseDisplayModeSelect.setWidth(100, Unit.PERCENTAGE);
-				mapCaseDisplayModeSelect.addItems((Object[]) MapCaseDisplayMode.values());
-				mapCaseDisplayModeSelect.setValue(mapCaseDisplayMode);
-				mapCaseDisplayModeSelect.addValueChangeListener(event -> {
+				OptionGroup mapContactDisplayModeSelect = new OptionGroup();
+				mapContactDisplayModeSelect.setWidth(100, Unit.PERCENTAGE);
+				mapContactDisplayModeSelect.addItems((Object[]) MapCaseDisplayMode.values());
+				mapContactDisplayModeSelect.setValue(mapCaseDisplayMode);
+				mapContactDisplayModeSelect.addValueChangeListener(event -> {
 					mapCaseDisplayMode = (MapCaseDisplayMode) event.getProperty().getValue();
 					refreshMap();
 				});
 
-				HorizontalLayout showCasesLayout = new HorizontalLayout();
+				HorizontalLayout showContactsLayout = new HorizontalLayout();
 				{
-					showCasesLayout.setMargin(false);
-					showCasesLayout.setSpacing(false);
+					showContactsLayout.setMargin(false);
+					showContactsLayout.setSpacing(false);
 					CheckBox showCasesCheckBox = new CheckBox();
 					showCasesCheckBox.setCaption(I18nProperties.getCaption(Captions.dashboardShowCases));
 					showCasesCheckBox.setValue(showCases);
 					showCasesCheckBox.addValueChangeListener(e -> {
 						showCases = (boolean) e.getProperty().getValue();
-						mapCaseDisplayModeSelect.setEnabled(showCases);
-						mapCaseDisplayModeSelect.setValue(mapCaseDisplayMode);
+						mapContactDisplayModeSelect.setEnabled(showCases);
+						mapContactDisplayModeSelect.setValue(mapCaseDisplayMode);
 						refreshMap();
 					});
-					showCasesLayout.addComponent(showCasesCheckBox);
+					showContactsLayout.addComponent(showCasesCheckBox);
 
 					Label infoLabel = new Label(VaadinIcons.INFO_CIRCLE.getHtml(), ContentMode.HTML);
 					infoLabel.setDescription(I18nProperties.getString(Strings.infoCaseMap));
 					CssStyles.style(infoLabel, CssStyles.LABEL_MEDIUM, CssStyles.LABEL_SECONDARY, CssStyles.HSPACE_LEFT_3);
 					infoLabel.setHeightUndefined();
-					showCasesLayout.addComponent(infoLabel);
-					showCasesLayout.setComponentAlignment(infoLabel, Alignment.TOP_CENTER);
+					showContactsLayout.addComponent(infoLabel);
+					showContactsLayout.setComponentAlignment(infoLabel, Alignment.TOP_CENTER);
 				}
-				layersLayout.addComponent(showCasesLayout);
+				layersLayout.addComponent(showContactsLayout);
 
-				layersLayout.addComponent(mapCaseDisplayModeSelect);
-				mapCaseDisplayModeSelect.setEnabled(showCases);
+				layersLayout.addComponent(mapContactDisplayModeSelect);
+				mapContactDisplayModeSelect.setEnabled(showCases);
 
 				if (UserProvider.getCurrent().hasUserRole(UserRole.NATIONAL_USER)
 					|| UserProvider.getCurrent().hasUserRole(UserRole.NATIONAL_CLINICIAN)
@@ -695,29 +675,29 @@ public class DashboardMapComponent extends VerticalLayout {
 
 		map.removeGroup(CASES_GROUP_ID);
 		markerCaseFacilities.clear();
-		casesByFacility.clear();
+		contactsByFacility.clear();
 		mapCaseDtos.clear();
 		mapAndFacilityCases.clear();
 	}
 
-	private void showCaseMarkers(List<MapCaseDto> cases) {
+	private void showContactMarkers(List<MapContactDto> contacts) {
 
 		clearCaseMarkers();
 
-		fillCaseLists(cases);
+//		fillCaseLists(contacts);
 
 		List<LeafletMarker> caseMarkers = new ArrayList<LeafletMarker>();
 
-		for (FacilityReferenceDto facilityReference : casesByFacility.keySet()) {
+		for (FacilityReferenceDto facilityReference : contactsByFacility.keySet()) {
 
-			List<MapCaseDto> casesList = casesByFacility.get(facilityReference);
+			List<MapContactDto> casesList = contactsByFacility.get(facilityReference);
 			// colorize the icon by the "strongest" classification type (order as in enum)
 			// and set its size depending
 			// on the number of cases
 			int numberOfCases = casesList.size();
-			Set<CaseClassification> classificationSet = new HashSet<>();
-			for (MapCaseDto caze : casesList) {
-				classificationSet.add(caze.getCaseClassification());
+			Set<ContactClassification> classificationSet = new HashSet<>();
+			for (MapContactDto contact : casesList) {
+				classificationSet.add(contact.getContactClassification());
 			}
 
 			MarkerIcon icon;
@@ -734,30 +714,28 @@ public class DashboardMapComponent extends VerticalLayout {
 			// create and place the marker
 			markerCaseFacilities.add(facilityReference);
 
-			MapCaseDto firstCase = casesList.get(0);
+			MapContactDto firstCase = casesList.get(0);
 			LeafletMarker leafletMarker = new LeafletMarker();
-			leafletMarker.setLatLon(firstCase.getHealthFacilityLat(), firstCase.getHealthFacilityLon());
+			leafletMarker.setLatLon(firstCase.getAddressLat(), firstCase.getAddressLon());
 			leafletMarker.setIcon(icon);
 			leafletMarker.setMarkerCount(numberOfCases);
 			caseMarkers.add(leafletMarker);
 		}
 
-		for (MapCaseDto caze : mapCaseDtos) {
+		for (MapContactDto contact : mapCaseDtos) {
 			LeafletMarker marker = new LeafletMarker();
-			if (caze.getCaseClassification() == CaseClassification.CONFIRMED) {
+			if (contact.getContactClassification() == ContactClassification.CONFIRMED) {
 				marker.setIcon(MarkerIcon.CASE_CONFIRMED);
-			} else if (caze.getCaseClassification() == CaseClassification.PROBABLE) {
-				marker.setIcon(MarkerIcon.CASE_PROBABLE);
-			} else if (caze.getCaseClassification() == CaseClassification.SUSPECT) {
-				marker.setIcon(MarkerIcon.CASE_SUSPECT);
+			} else if (contact.getContactClassification() == ContactClassification.NO_CONTACT) {
+				marker.setIcon(MarkerIcon.CONTACT_OK);
 			} else {
 				marker.setIcon(MarkerIcon.CASE_UNCLASSIFIED);
 			}
 
-			if (caze.getAddressLat() != null && caze.getAddressLon() != null) {
-				marker.setLatLon(caze.getAddressLat(), caze.getAddressLon());
+			if (contact.getAddressLat() != null && contact.getAddressLon() != null) {
+				marker.setLatLon(contact.getAddressLat(), contact.getAddressLon());
 			} else {
-				marker.setLatLon(caze.getReportLat(), caze.getReportLon());
+				marker.setLatLon(contact.getReportLat(), contact.getReportLon());
 			}
 
 			caseMarkers.add(marker);
@@ -766,49 +744,49 @@ public class DashboardMapComponent extends VerticalLayout {
 		map.addMarkerGroup("cases", caseMarkers);
 	}
 
-	private void fillCaseLists(List<MapCaseDto> cases) {
-		for (MapCaseDto caze : cases) {
-			CaseClassification classification = caze.getCaseClassification();
-			if (classification == null || classification == CaseClassification.NO_CASE)
+	private void fillContactLists(List<MapContactDto> contactsMaps) {
+		for (MapContactDto contact : contactsMaps) {
+			ContactClassification classification = contact.getContactClassification();
+			if (classification == null || classification == ContactClassification.NO_CONTACT)
 				continue;
-			boolean hasCaseGps =
-				(caze.getAddressLat() != null && caze.getAddressLon() != null) || (caze.getReportLat() != null || caze.getReportLon() != null);
-			boolean hasFacilityGps = caze.getHealthFacilityLat() != null && caze.getHealthFacilityLon() != null;
+			boolean hasCaseGps = (contact.getAddressLat() != null && contact.getAddressLon() != null)
+				|| (contact.getReportLat() != null || contact.getReportLon() != null);
+			boolean hasFacilityGps = contact.getReportLat() != null && contact.getReportLon() != null;
 			if (!hasCaseGps && !hasFacilityGps) {
 				continue; // no gps at all
 			}
 
-			if (mapCaseDisplayMode == MapCaseDisplayMode.CASE_ADDRESS) {
-				if (!hasCaseGps) {
-					continue;
-				}
-				mapCaseDtos.add(caze);
-			} else {
-				if (FacilityDto.NONE_FACILITY_UUID.equals(caze.getHealthFacilityUuid())
-					|| FacilityDto.OTHER_FACILITY_UUID.equals(caze.getHealthFacilityUuid())
-					|| !hasFacilityGps) {
-					if (mapCaseDisplayMode == MapCaseDisplayMode.HEALTH_FACILITY_OR_CASE_ADDRESS) {
-						if (!hasCaseGps) {
-							continue;
-						}
-						mapCaseDtos.add(caze);
-					} else {
-						continue;
-					}
-				} else {
-					if (!hasFacilityGps) {
-						continue;
-					}
-					FacilityReferenceDto facility = new FacilityReferenceDto();
-					facility.setUuid(caze.getHealthFacilityUuid());
-					if (casesByFacility.get(facility) == null) {
-						casesByFacility.put(facility, new ArrayList<MapCaseDto>());
-					}
-					casesByFacility.get(facility).add(caze);
-				}
-			}
+//			if (mapCaseDisplayMode == MapCaseDisplayMode.CASE_ADDRESS) {
+//				if (!hasCaseGps) {
+//					continue;
+//				}
+//				mapCaseDtos.add(contact);
+//			} else {
+//				if (FacilityDto.NONE_FACILITY_UUID.equals(contact.getHealthFacilityUuid())
+//					|| FacilityDto.OTHER_FACILITY_UUID.equals(contact.getHealthFacilityUuid())
+//					|| !hasFacilityGps) {
+//					if (mapCaseDisplayMode == MapCaseDisplayMode.HEALTH_FACILITY_OR_CASE_ADDRESS) {
+//						if (!hasCaseGps) {
+//							continue;
+//						}
+//						mapCaseDtos.add(contact);
+//					} else {
+//						continue;
+//					}
+//				} else {
+//					if (!hasFacilityGps) {
+//						continue;
+//					}
+//					FacilityReferenceDto facility = new FacilityReferenceDto();
+//					facility.setUuid(contact.getHealthFacilityUuid());
+//					if (contactsByFacility.get(facility) == null) {
+//						contactsByFacility.put(facility, new ArrayList<MapContactDto>());
+//					}
+//					contactsByFacility.get(facility).add(contact);
+//				}
+//			}
 
-			mapAndFacilityCases.add(caze);
+			mapAndFacilityCases.add(contact);
 		}
 	}
 
@@ -821,7 +799,7 @@ public class DashboardMapComponent extends VerticalLayout {
 				FacilityReferenceDto facility = markerCaseFacilities.get(markerIndex);
 				VerticalLayout layout = new VerticalLayout();
 				Window window = VaadinUiUtil.showPopupWindow(layout);
-				CasePopupGrid caseGrid = new CasePopupGrid(window, facility, DashboardMapComponent.this);
+				ContactPopupGridOnMap caseGrid = new ContactPopupGridOnMap(window, facility, ContactMapComponent.this);
 				caseGrid.setHeightMode(HeightMode.ROW);
 				layout.addComponent(caseGrid);
 				layout.setMargin(true);
@@ -829,7 +807,7 @@ public class DashboardMapComponent extends VerticalLayout {
 				window.setCaption(I18nProperties.getCaption(Captions.dashboardCasesIn) + " " + facilityDto.toString());
 			} else {
 				markerIndex -= markerCaseFacilities.size();
-				MapCaseDto caze = mapCaseDtos.get(markerIndex);
+				MapContactDto caze = mapCaseDtos.get(markerIndex);
 				ControllerProvider.getCaseController().navigateToCase(caze.getUuid(), true);
 			}
 			break;
@@ -845,4 +823,5 @@ public class DashboardMapComponent extends VerticalLayout {
 			break;
 		}
 	}
+
 }

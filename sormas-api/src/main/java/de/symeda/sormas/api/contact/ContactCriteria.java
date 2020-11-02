@@ -86,6 +86,8 @@ public class ContactCriteria extends BaseCriteria implements Serializable {
 	private Boolean quarantineNotOrdered;
 	private PersonReferenceDto person;
 
+	private String viewMode;
+
 	public UserRole getReportingUserRole() {
 		return reportingUserRole;
 	}
@@ -377,5 +379,13 @@ public class ContactCriteria extends BaseCriteria implements Serializable {
 	public ContactCriteria person(PersonReferenceDto person) {
 		this.person = person;
 		return this;
+	}
+
+	public String getViewMode() {
+		return this.viewMode == null ? "grid" : this.viewMode;
+	}
+
+	public void setViewMode(String viewMode) {
+		this.viewMode = viewMode;
 	}
 }

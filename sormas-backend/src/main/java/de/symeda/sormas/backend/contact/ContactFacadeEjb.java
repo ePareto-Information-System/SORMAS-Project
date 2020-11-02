@@ -1313,4 +1313,60 @@ public class ContactFacadeEjb implements ContactFacade {
 		Contact contact = contactService.getByUuid(contactUuid);
 		return contactJurisdictionChecker.isInJurisdiction(contact);
 	}
+
+	@Override
+	public List<MapContactDto> getIndexListForMap(
+		ContactCriteria criteria,
+		Integer first,
+		Integer max,
+		String userUuid,
+		List<SortProperty> sortProperties) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<MapContactDto> cq = cb.createQuery(MapContactDto.class);
+		Root<Contact> contact = cq.from(Contact.class);
+
+		contactSelectIndexDtoFields(cq, contact);
+
+		Predicate filter = contactService.createUserFilter(cb, cq, contact);
+
+		if (criteria != null) {
+			Predicate criteriaFilter = contactService.buildCriteriaFilter(criteria, cb, contact);
+			filter = AbstractAdoService.and(cb, filter, criteriaFilter);
+		}
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		if (first != null && max != null) {
+			return em.createQuery(cq).setFirstResult(first).setMaxResults(max).getResultList();
+		} else {
+			return em.createQuery(cq).getResultList();
+		}
+
+	}
+
+	private void contactSelectIndexDtoFields(CriteriaQuery<MapContactDto> cq, Root<Contact> root) {
+		Join<Contact, Person> person = root.join(Contact.PERSON, JoinType.LEFT);
+		Join<Person, Location> personAddress = person.join(Person.ADDRESS, JoinType.LEFT);
+		Join<Contact, Case> cases = root.join(Contact.CAZE, JoinType.LEFT);
+
+		cq.multiselect(
+			root.get(Contact.UUID),
+			root.get(Contact.CONTACT_CLASSIFICATION),
+			root.get(Contact.REPORT_LAT),
+			root.get(Contact.REPORT_LON),
+			personAddress.get(Location.LATITUDE),
+			personAddress.get(Location.LONGITUDE),
+
+			root.get(Contact.CHANGE_DATE),
+			root.get(Contact.LAST_CONTACT_DATE),
+			root.get(Contact.REPORT_DATE_TIME),
+
+			person.get(Person.FIRST_NAME),
+			person.get(Person.LAST_NAME),
+			cases.get(Person.FIRST_NAME),
+			cases.get(Person.LAST_NAME));
+	}
 }
