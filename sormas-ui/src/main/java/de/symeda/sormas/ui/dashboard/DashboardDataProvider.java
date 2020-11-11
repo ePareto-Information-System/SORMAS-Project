@@ -80,6 +80,14 @@ public class DashboardDataProvider {
 		this.refreshDataForSelectedDisease();
 	}
 
+	public void refreshDiseaseData() {
+
+//		setDiseasesBurden(
+//			FacadeProvider.getDiseaseFacade().getDiseaseBurdenForDashboard(region, district, fromDate, toDate, previousFromDate, previousToDate));
+
+//		this.refreshDataForSelectedDisease();
+	}
+
 	private void refreshDataForSelectedDisease() {
 
 		// Update the entities lists according to the filters

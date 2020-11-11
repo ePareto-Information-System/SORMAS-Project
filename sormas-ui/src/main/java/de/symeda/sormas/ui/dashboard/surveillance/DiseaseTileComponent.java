@@ -20,15 +20,19 @@ package de.symeda.sormas.ui.dashboard.surveillance;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.ValoTheme;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.disease.DiseaseBurdenDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.ui.ControllerProvider;
+import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 
 public class DiseaseTileComponent extends VerticalLayout {
@@ -44,7 +48,11 @@ public class DiseaseTileComponent extends VerticalLayout {
 			diseaseBurden.getCaseCount(),
 			diseaseBurden.getPreviousCaseCount(),
 			diseaseBurden.getOutbreakDistrictCount() > 0);
-		addStatsLayout(diseaseBurden.getCaseDeathCount(), diseaseBurden.getEventCount(), diseaseBurden.getLastReportedDistrictName());
+		addStatsLayout(
+			diseaseBurden.getCaseDeathCount(),
+			diseaseBurden.getEventCount(),
+			diseaseBurden.getLastReportedDistrictName(),
+			diseaseBurden.getDisease());
 	}
 
 	private void addTopLayout(Disease disease, Long casesCount, Long previousCasesCount, boolean isOutbreak) {
@@ -148,7 +156,7 @@ public class DiseaseTileComponent extends VerticalLayout {
 		addComponent(layout);
 	}
 
-	private void addStatsLayout(Long fatalities, Long events, String district) {
+	private void addStatsLayout(Long fatalities, Long events, String district, Disease disease) {
 		VerticalLayout layout = new VerticalLayout();
 		layout.setWidth(100, Unit.PERCENTAGE);
 		layout.setMargin(false);
@@ -166,6 +174,13 @@ public class DiseaseTileComponent extends VerticalLayout {
 		statsItem = createStatsItem(I18nProperties.getCaption(Captions.DiseaseBurden_eventCount), events.toString(), false, false);
 		CssStyles.style(statsItem, CssStyles.VSPACE_4);
 		layout.addComponent(statsItem);
+
+//		layout.addComponent(addDiseaseButton(disease.getName()));
+		Button diseaseDetailButton = ButtonHelper
+			.createIconButton(null, VaadinIcons.ELLIPSIS_DOTS_H, null, ValoTheme.BUTTON_BORDERLESS, CssStyles.VSPACE_TOP_NONE, CssStyles.VSPACE_4);
+		diseaseDetailButton.setVisible(true);
+		layout.addComponent(diseaseDetailButton);
+		diseaseDetailButton.addClickListener(click -> ControllerProvider.getDashboardController().navigateToDisease(disease.getName()));
 
 		addComponent(layout);
 	}
@@ -193,5 +208,14 @@ public class DiseaseTileComponent extends VerticalLayout {
 		layout.setExpandRatio(valueLabel, singleColumn ? 1f : 0.65f);
 
 		return layout;
+	}
+
+	private Button addDiseaseButton(String diseaseName) {
+		Button diseaseDetailButton = ButtonHelper
+			.createIconButton(null, VaadinIcons.ELLIPSIS_DOTS_H, null, ValoTheme.BUTTON_BORDERLESS, CssStyles.VSPACE_TOP_NONE, CssStyles.VSPACE_4);
+		diseaseDetailButton.setVisible(true);
+		diseaseDetailButton.addClickListener(click -> ControllerProvider.getDashboardController().navigateToDisease(diseaseName));
+
+		return diseaseDetailButton;
 	}
 }

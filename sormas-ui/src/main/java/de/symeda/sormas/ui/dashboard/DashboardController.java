@@ -20,8 +20,10 @@ package de.symeda.sormas.ui.dashboard;
 import com.vaadin.navigator.Navigator;
 
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.dashboard.contacts.ContactsDashboardView;
+import de.symeda.sormas.ui.dashboard.diseasedetails.DiseaseDetailsView;
 import de.symeda.sormas.ui.dashboard.surveillance.SurveillanceDashboardView;
 
 public class DashboardController {
@@ -37,5 +39,10 @@ public class DashboardController {
 		if (UserProvider.getCurrent().hasUserRight(UserRight.DASHBOARD_CONTACT_ACCESS)) {
 			navigator.addView(ContactsDashboardView.VIEW_NAME, ContactsDashboardView.class);
 		}
+	}
+
+	public void navigateToDisease(String diseaseName) {
+		String navigationState = DiseaseDetailsView.VIEW_NAME + "/" + diseaseName;
+		SormasUI.get().getNavigator().navigateTo(navigationState);
 	}
 }
