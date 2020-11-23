@@ -8,19 +8,16 @@ import com.vaadin.v7.data.util.BeanItemContainer;
 import com.vaadin.v7.data.util.GeneratedPropertyContainer;
 import com.vaadin.v7.data.util.PropertyValueGenerator;
 import com.vaadin.v7.ui.Grid;
-import com.vaadin.v7.ui.renderers.DateRenderer;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.Language;
-import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.contact.ContactDto;
+import de.symeda.sormas.api.contact.MapContactDto;
 import de.symeda.sormas.api.facility.FacilityHelper;
-import de.symeda.sormas.api.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.person.PersonDto;
-import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.utils.V7UuidRenderer;
 
@@ -30,12 +27,12 @@ public class ContactPopupGridOnMap extends Grid {
 	public static final String FIRST_NAME = PersonDto.FIRST_NAME;
 	public static final String LAST_NAME = PersonDto.LAST_NAME;
 
-	private final FacilityReferenceDto facility;
-	private final ContactMapComponent contactMapComponent;
+	private final MapContactDto mapContactDto;
+	private final DashboardMapComponent dashboardMapComponent;
 
-	public ContactPopupGridOnMap(Window window, FacilityReferenceDto facility, ContactMapComponent contactMapComponent) {
-		this.facility = facility;
-		this.contactMapComponent = contactMapComponent;
+	public ContactPopupGridOnMap(Window window, MapContactDto mapContactDto, DashboardMapComponent dashboardMapComponent) {
+		this.mapContactDto = mapContactDto;
+		this.dashboardMapComponent = dashboardMapComponent;
 		setWidth(960, Unit.PIXELS);
 		setHeightUndefined();
 
@@ -99,11 +96,11 @@ public class ContactPopupGridOnMap extends Grid {
 			ContactDto.CONTACT_CATEGORY,
 			ContactDto.FOLLOW_UP_STATUS);
 
-		getColumn(CaseDataDto.UUID).setRenderer(new V7UuidRenderer());
+		getColumn(ContactDto.UUID).setRenderer(new V7UuidRenderer());
 		Language userLanguage = I18nProperties.getUserLanguage();
-		getColumn(CaseDataDto.REPORT_DATE).setRenderer(new DateRenderer(DateHelper.getLocalDateTimeFormat(userLanguage)));
+//		getColumn(ContactDto.REPORT_DATE_TIME).setRenderer(new DateRenderer(DateHelper.getLocalDateTimeFormat(userLanguage)));
 
-		if (facility == null || !FacilityHelper.isOtherOrNoneHealthFacility(facility.getUuid())) {
+		if (mapContactDto == null || !FacilityHelper.isOtherOrNoneHealthFacility(mapContactDto.getUuid())) {
 			getColumn(ContactDto.FOLLOW_UP_STATUS).setHidden(true);
 		}
 
@@ -114,7 +111,7 @@ public class ContactPopupGridOnMap extends Grid {
 
 		addItemClickListener(e -> {
 			window.close();
-			ControllerProvider.getCaseController().navigateToCase(((ContactDto) e.getItemId()).getUuid(), true);
+			ControllerProvider.getContactController().navigateToData(((ContactDto) e.getItemId()).getUuid(), true);
 		});
 
 		reload();
@@ -129,8 +126,7 @@ public class ContactPopupGridOnMap extends Grid {
 	public void reload() {
 		getContainer().removeAllItems();
 
-//		List<CaseDataDto> cases = dashboardMapComponent.getCasesForFacility(facility);
-		List<ContactDto> contacts = contactMapComponent.getContactForForFacility(facility);
+		List<ContactDto> contacts = dashboardMapComponent.getContactsForMap(mapContactDto);
 
 		getContainer().addAll(contacts);
 		this.setHeightByRows(contacts.size());
