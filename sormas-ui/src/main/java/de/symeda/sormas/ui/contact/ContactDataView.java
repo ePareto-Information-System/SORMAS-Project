@@ -41,6 +41,7 @@ import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.caze.CaseInfoLayout;
+import de.symeda.sormas.ui.entitymap.DashboardMapComponent;
 import de.symeda.sormas.ui.samples.SampleListComponent;
 import de.symeda.sormas.ui.task.TaskListComponent;
 import de.symeda.sormas.ui.utils.ButtonHelper;
@@ -61,6 +62,7 @@ public class ContactDataView extends AbstractContactView {
 	public static final String CASE_BUTTONS_LOC = "caseButtons";
 	public static final String TASKS_LOC = "tasks";
 	public static final String SAMPLES_LOC = "samples";
+	public static final String CONTACT_MAP = "contactmap";
 
 	public ContactDataView() {
 		super(VIEW_NAME);
@@ -76,7 +78,8 @@ public class ContactDataView extends AbstractContactView {
 			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, CASE_LOC),
 			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, CASE_BUTTONS_LOC),
 			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, TASKS_LOC),
-			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, SAMPLES_LOC));
+			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, SAMPLES_LOC),
+			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, CONTACT_MAP));
 
 		VerticalLayout container = new VerticalLayout();
 		container.setWidth(100, Unit.PERCENTAGE);
@@ -203,6 +206,9 @@ public class ContactDataView extends AbstractContactView {
 			layout.addComponent(sampleLocLayout, SAMPLES_LOC);
 		}
 
+//		Map component for the contact
+		layout.addComponent(sideMapLayout(contactDto), CONTACT_MAP);
+
 		setContactEditPermission(container);
 	}
 
@@ -212,5 +218,18 @@ public class ContactDataView extends AbstractContactView {
 		CaseInfoLayout caseInfoLayout = new CaseInfoLayout(caseDto);
 		caseInfoLayout.addStyleName(CssStyles.SIDE_COMPONENT);
 		return caseInfoLayout;
+	}
+
+	private VerticalLayout sideMapLayout(ContactDto contactDto) {
+		VerticalLayout mapLayout = new VerticalLayout();
+		mapLayout.setMargin(false);
+		mapLayout.setSpacing(false);
+		DashboardMapComponent dashboardMapComponent = new DashboardMapComponent(contactDto, null);
+		dashboardMapComponent.addStyleName(CssStyles.SIDE_COMPONENT);
+
+		mapLayout.addComponent(dashboardMapComponent);
+
+		addComponent(mapLayout);
+		return mapLayout;
 	}
 }
