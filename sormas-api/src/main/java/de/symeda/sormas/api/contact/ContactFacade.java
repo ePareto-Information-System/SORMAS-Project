@@ -120,5 +120,5 @@ public interface ContactFacade {
 
 	boolean exists(String uuid);
 
-	List<MapContactDto> getIndexListForMap(ContactCriteria criteria, Integer first, Integer max, String userUuid, List<SortProperty> sortProperties);
+	List<MapContactDto> getIndexListForMap(ContactCriteria contactCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
 }
