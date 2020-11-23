@@ -458,6 +458,7 @@ public interface Captions {
 	String dashboardCaseFatalityRate = "dashboardCaseFatalityRate";
 	String dashboardCaseFatalityRateShort = "dashboardCaseFatalityRateShort";
 	String dashboardCasesIn = "dashboardCasesIn";
+	String dashboardContactsIn = "dashboardContactsIn";
 	String dashboardComparedTo = "dashboardComparedTo";
 	String dashboardComparedToPreviousPeriod = "dashboardComparedToPreviousPeriod";
 	String dashboardCompletedFollowUp = "dashboardCompletedFollowUp";
