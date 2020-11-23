@@ -64,7 +64,7 @@ import de.symeda.sormas.ui.caze.CaseController;
 import de.symeda.sormas.ui.caze.CasesView;
 import de.symeda.sormas.ui.contact.importer.ContactsImportLayout;
 import de.symeda.sormas.ui.dashboard.DashboardCssStyles;
-import de.symeda.sormas.ui.entitymap.ContactMapComponent;
+import de.symeda.sormas.ui.entitymap.DashboardMapComponent;
 import de.symeda.sormas.ui.utils.AbstractView;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
@@ -112,7 +112,7 @@ public class ContactsView extends AbstractView {
 
 	private Button showGridViewButton;
 	private Button showMapViewButton;
-	private ContactMapComponent contactMap;
+	private DashboardMapComponent contactMap;
 
 	public ContactsView() {
 		super(VIEW_NAME);
@@ -139,14 +139,14 @@ public class ContactsView extends AbstractView {
 		gridLayout = new VerticalLayout();
 		gridLayout.addComponent(createFilterBar());
 		gridLayout.addComponent(createStatusFilterBar());
-		gridLayout.addComponent(grid);
+
 		if (ContactsViewType.FOLLOW_UP_VISITS_OVERVIEW.equals(viewConfiguration.getViewType())) {
 			gridLayout.addComponent(createFollowUpLegend());
 		}
 		gridLayout.setMargin(true);
 		gridLayout.setSpacing(false);
 		gridLayout.setSizeFull();
-		gridLayout.setExpandRatio(grid, 1);
+
 		gridLayout.setStyleName("crud-main-layout");
 		grid.getDataProvider().addDataProviderListener(e -> updateStatusButtons());
 
@@ -622,6 +622,7 @@ public class ContactsView extends AbstractView {
 		}
 	}
 
+	@Override
 	public void enter(ViewChangeEvent event) {
 		String params = event.getParameters().trim();
 		if (params.startsWith("?")) {
@@ -641,13 +642,14 @@ public class ContactsView extends AbstractView {
 		}
 
 		if (criteria.getViewMode().equals("map")) {
+			gridLayout.removeComponent(grid);
 			VerticalLayout mapLayout = new VerticalLayout();
 			mapLayout.setStyleName(DashboardCssStyles.CURVE_AND_MAP_LAYOUT);
 			mapLayout.setMargin(false);
 
-			contactMap = new ContactMapComponent(criteria);
-//			mapLayout.addComponent(map);
-//			mapLayout.setExpandRatio(map, 1);
+			contactMap = new DashboardMapComponent(criteria);
+			mapLayout.addComponent(contactMap);
+			mapLayout.setExpandRatio(contactMap, 1);
 			gridLayout.addComponent(mapLayout);
 
 			gridLayout.setExpandRatio(mapLayout, 1);
