@@ -43,6 +43,15 @@ public class MapContactDto implements Serializable {
 	private String personLastName;
 	private String casePersonFirstName;
 	private String casePersonLastName;
+	private int visitCount;
+
+	public MapContactDto(String uuid, ContactClassification contactClassification, Double reportLat, Double reportLon) {
+
+		this.uuid = uuid;
+		this.contactClassification = contactClassification;
+		this.reportLat = reportLat;
+		this.reportLon = reportLon;
+	}
 
 	public MapContactDto(
 		String uuid,
@@ -57,7 +66,8 @@ public class MapContactDto implements Serializable {
 		String personFirstName,
 		String personLastName,
 		String casePersonFirstName,
-		String casePersonLastName) {
+		String casePersonLastName,
+		int visitCount) {
 
 		this.uuid = uuid;
 		this.contactClassification = contactClassification;
@@ -72,6 +82,15 @@ public class MapContactDto implements Serializable {
 		this.personLastName = personLastName;
 		this.casePersonFirstName = casePersonFirstName;
 		this.casePersonLastName = casePersonLastName;
+		this.visitCount = visitCount;
+	}
+
+	public int geVisitCount() {
+		return visitCount;
+	}
+
+	public void setVisitCount(int visitCount) {
+		this.visitCount = visitCount;
 	}
 
 	public String getUuid() {
