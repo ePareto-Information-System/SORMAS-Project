@@ -57,6 +57,10 @@ import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseFacade;
 import de.symeda.sormas.api.caze.CaseIndexDto;
 import de.symeda.sormas.api.caze.MapCaseDto;
+import de.symeda.sormas.api.contact.ContactClassification;
+import de.symeda.sormas.api.contact.ContactCriteria;
+import de.symeda.sormas.api.contact.ContactDto;
+import de.symeda.sormas.api.contact.ContactFacade;
 import de.symeda.sormas.api.contact.MapContactDto;
 import de.symeda.sormas.api.event.DashboardEventDto;
 import de.symeda.sormas.api.facility.FacilityDto;
@@ -101,12 +105,15 @@ public class DashboardMapComponent extends VerticalLayout {
 	// Layouts and components
 	private final DashboardDataProvider dashboardDataProvider;
 	private final CaseCriteria criteria;
+	private final ContactCriteria contactCriteria;
 	private final LeafletMap map;
 	private PopupButton legendDropdown;
 
 	// Layers
 	private boolean showCases;
+	private boolean showCase;
 	private boolean showContacts;
+	private boolean showContact;
 	private boolean showConfirmedContacts;
 	private boolean showUnconfirmedContacts;
 	private boolean showEvents;
@@ -116,13 +123,16 @@ public class DashboardMapComponent extends VerticalLayout {
 	// Entities
 	private List<CaseIndexDto> cases;
 	private final HashMap<FacilityReferenceDto, List<MapCaseDto>> casesByFacility = new HashMap<>();
+	private final HashMap<MapContactDto, List<MapContactDto>> hashContactMapDto = new HashMap<>();
+
 	private List<MapCaseDto> mapCaseDtos = new ArrayList<>();
 	private List<MapCaseDto> mapAndFacilityCases = new ArrayList<>();
+
 	private List<MapContactDto> mapContactDtos = new ArrayList<>();
 
 	// Markers
 	private final List<FacilityReferenceDto> markerCaseFacilities = new ArrayList<FacilityReferenceDto>();
-	private final List<MapContactDto> markerContacts = new ArrayList<MapContactDto>();
+	private final List<MapContactDto> markerContactList = new ArrayList<MapContactDto>();
 	private final List<DashboardEventDto> markerEvents = new ArrayList<DashboardEventDto>();
 	private final List<RegionReferenceDto> polygonRegions = new ArrayList<RegionReferenceDto>();
 	private final List<DistrictReferenceDto> polygonDistricts = new ArrayList<DistrictReferenceDto>();
@@ -136,7 +146,11 @@ public class DashboardMapComponent extends VerticalLayout {
 	private Consumer<Boolean> externalExpandListener;
 	private boolean emptyPopulationDistrictPresent;
 
+	private ContactDto singleContactDto;
+	private CaseDataDto singleCaseDataDto;
+
 	public DashboardMapComponent(CaseCriteria criteria) {
+		this.contactCriteria = new ContactCriteria();
 		this.dashboardDataProvider = new DashboardDataProvider();//dashboardDataProvider;
 		this.criteria = criteria;
 
@@ -197,9 +211,144 @@ public class DashboardMapComponent extends VerticalLayout {
 		refreshMap();
 	}
 
+	public DashboardMapComponent(ContactCriteria contactCriteria) {
+		this.criteria = new CaseCriteria();
+		this.contactCriteria = contactCriteria;
+		this.dashboardDataProvider = new DashboardDataProvider();
+		this.map = new LeafletMap();
+
+		setMargin(false);
+		setSpacing(false);
+		setSizeFull();
+
+		map.setWidth(100, Unit.PERCENTAGE);
+		map.setHeight(580, Unit.PIXELS);
+		map.addMarkerClickListener(new MarkerClickListener() {
+
+			@Override
+			public void markerClick(MarkerClickEvent event) {
+				onMarkerClicked(event.getGroupId(), event.getMarkerIndex());
+			}
+		});
+		{
+
+			GeoShapeProvider geoShapeProvider = FacadeProvider.getGeoShapeProvider();
+
+			final GeoLatLon mapCenter;
+			if (UserProvider.getCurrent().hasAnyUserRole(UserRole.NATIONAL_USER, UserRole.NATIONAL_CLINICIAN, UserRole.NATIONAL_OBSERVER)) {
+				mapCenter = geoShapeProvider.getCenterOfAllRegions();
+
+			} else {
+				UserDto user = UserProvider.getCurrent().getUser();
+				if (user.getRegion() != null) {
+					mapCenter = geoShapeProvider.getCenterOfRegion(user.getRegion());
+				} else {
+					mapCenter = geoShapeProvider.getCenterOfAllRegions();
+				}
+			}
+
+			GeoLatLon center = Optional.ofNullable(mapCenter).orElseGet(FacadeProvider.getConfigFacade()::getCountryCenter);
+
+			map.setCenter(center);
+		}
+		map.setZoom(FacadeProvider.getConfigFacade().getMapZoom());
+
+		showContacts = true;
+		showEvents = false;
+		showConfirmedContacts = true;
+		showUnconfirmedContacts = true;
+		hideOtherCountries = false;
+
+		this.setMargin(true);
+
+		// Add components
+		addComponent(map);
+		addComponent(createFooter());
+		setExpandRatio(map, 1);
+
+		refreshMap();
+	}
+
+	public DashboardMapComponent(ContactDto singleContactDto, CaseDataDto singleCaseDataDto) {
+		this.criteria = new CaseCriteria();
+		this.contactCriteria = new ContactCriteria();
+
+		this.singleContactDto = singleContactDto;
+		this.singleCaseDataDto = singleCaseDataDto;
+		this.dashboardDataProvider = new DashboardDataProvider();
+		this.map = new LeafletMap();
+
+		setMargin(false);
+		setSpacing(false);
+		setSizeFull();
+
+		map.setWidth(100, Unit.PERCENTAGE);
+		map.setHeight(350, Unit.PIXELS);
+		map.addMarkerClickListener(new MarkerClickListener() {
+
+			@Override
+			public void markerClick(MarkerClickEvent event) {
+				onMarkerClicked(event.getGroupId(), event.getMarkerIndex());
+			}
+		});
+		{
+
+			GeoShapeProvider geoShapeProvider = FacadeProvider.getGeoShapeProvider();
+
+			final GeoLatLon mapCenter;
+			if (UserProvider.getCurrent().hasAnyUserRole(UserRole.NATIONAL_USER, UserRole.NATIONAL_CLINICIAN, UserRole.NATIONAL_OBSERVER)) {
+				mapCenter = geoShapeProvider.getCenterOfAllRegions();
+
+			} else {
+				UserDto user = UserProvider.getCurrent().getUser();
+				if (user.getRegion() != null) {
+					mapCenter = geoShapeProvider.getCenterOfRegion(user.getRegion());
+				} else {
+					mapCenter = geoShapeProvider.getCenterOfAllRegions();
+				}
+			}
+
+			GeoLatLon center = Optional.ofNullable(mapCenter).orElseGet(FacadeProvider.getConfigFacade()::getCountryCenter);
+
+			map.setCenter(center);
+		}
+		map.setZoom(FacadeProvider.getConfigFacade().getMapZoom());
+
+		showEvents = false;
+		showConfirmedContacts = true;
+		showUnconfirmedContacts = true;
+		hideOtherCountries = false;
+		this.setMargin(true);
+
+		if (singleContactDto != null
+			&& ((singleContactDto.getReportLat() != null && singleContactDto.getReportLat() != 0)
+				&& (singleContactDto.getReportLon() != null && singleContactDto.getReportLon() != 0))) {
+			showContact = true;
+			// Add components
+			addComponent(map);
+			addComponent(createFooter());
+			setExpandRatio(map, 1);
+			refreshMap();
+		}
+
+		if (singleCaseDataDto != null
+			&& ((singleCaseDataDto.getReportLat() != null && singleCaseDataDto.getReportLat() != 0)
+				&& (singleCaseDataDto.getReportLon() != null && singleCaseDataDto.getReportLon() != 0))) {
+			showCase = true;
+			// Add components
+			addComponent(map);
+			addComponent(createFooter());
+			setExpandRatio(map, 1);
+			refreshMap();
+		}
+
+	}
+
 	public void refreshMap() {
 		clearRegionShapes();
 		clearCaseMarkers();
+		clearContactMarkers();
+
 		LeafletMapUtil.clearOtherCountriesOverlay(map);
 
 		if (hideOtherCountries) {
@@ -213,6 +362,50 @@ public class DashboardMapComponent extends VerticalLayout {
 			showCaseMarkers(FacadeProvider.getCaseFacade().getIndexListForMap(criteria, null, null, UserProvider.getCurrent().getUuid(), null));
 		}
 
+		if (showCase) {
+			MapCaseDto mapCase = new MapCaseDto(
+				singleCaseDataDto.getUuid(),
+				singleCaseDataDto.getReportDate(),
+				singleCaseDataDto.getCaseClassification(),
+				singleCaseDataDto.getDisease(),
+				singleCaseDataDto.getPerson().getUuid(),
+				singleCaseDataDto.getPerson().getFirstName(),
+				singleCaseDataDto.getPerson().getLastName(),
+				singleCaseDataDto.getHealthFacility().getUuid(),
+				null, //singleCaseDataDto.healthFacilityLat(),
+				null, //singleCaseDataDto.healthFacilityLon(),
+				singleCaseDataDto.getReportLat(),
+				singleCaseDataDto.getReportLon(),
+				null, //singleCaseDataDto.getAddressLat
+				null, //singleCaseDataDto.getAddressLon
+				null, //singleCaseDataDto.getReportingUser().getUuid(),
+				null, //singleCaseDataDto.getRegion().getUuid(),
+				null, //singleCaseDataDto.getDistrict().getUuid(),
+				null, //singleCaseDataDto.getCommunity().getUuid(),
+				null //singleCaseDataDto.getPointOfEntry().getUuid()
+			);
+
+			List<MapCaseDto> caseDtos = new ArrayList<>();
+			caseDtos.add(mapCase);
+
+			showCaseMarkers(caseDtos);
+		}
+		if (showContacts) {
+			showContactMarkers(FacadeProvider.getContactFacade().getIndexListForMap(contactCriteria, null, null, null));
+		}
+		if (showContact) {
+			MapContactDto mapContact = new MapContactDto(
+				singleContactDto.getUuid(),
+				singleContactDto.getContactClassification(),
+				singleContactDto.getReportLat(),
+				singleContactDto.getReportLon());
+
+			List<MapContactDto> contactDtos = new ArrayList<>();
+			contactDtos.add(mapContact);
+
+			showContactMarkers(contactDtos);
+		}
+
 		// Re-create the map key layout to only show the keys for the selected layers
 		legendDropdown.setContent(createLegend());
 	}
@@ -224,6 +417,15 @@ public class DashboardMapComponent extends VerticalLayout {
 			casesForFacility.add(caseFacade.getCaseDataByUuid(mapCaseDto.getUuid()));
 		}
 		return casesForFacility;
+	}
+
+	public List<ContactDto> getContactsForMap(MapContactDto mapContactDto) {
+		List<ContactDto> contactsForMap = new ArrayList<>();
+		ContactFacade contactFacade = FacadeProvider.getContactFacade();
+		for (MapContactDto mapContact : hashContactMapDto.get(mapContactDto)) {
+			contactsForMap.add(contactFacade.getContactByUuid(mapContact.getUuid()));
+		}
+		return contactsForMap;
 	}
 
 	public void setExpandListener(Consumer<Boolean> listener) {
@@ -589,7 +791,7 @@ public class DashboardMapComponent extends VerticalLayout {
 		map.setTileLayerOpacity(1);
 	}
 
-	private void showRegionsShapes(CaseMeasure caseMeasure, Date fromDate, Date toDate, Disease disease) {
+	private void showRegionsShappes(CaseMeasure caseMeasure, Date fromDate, Date toDate, Disease disease) {
 		clearRegionShapes();
 		map.setTileLayerOpacity(0.5f);
 
@@ -700,11 +902,20 @@ public class DashboardMapComponent extends VerticalLayout {
 		mapAndFacilityCases.clear();
 	}
 
+	private void clearContactMarkers() {
+
+		map.removeGroup(CONTACTS_GROUP_ID);
+		markerContactList.clear();
+		mapContactDtos.clear();
+		mapAndFacilityCases.clear();
+	}
+
 	private void showCaseMarkers(List<MapCaseDto> cases) {
 
 		clearCaseMarkers();
+		clearContactMarkers();
 
-		fillCaseLists(cases);
+		fillCaseLists(cases, null);
 
 		List<LeafletMarker> caseMarkers = new ArrayList<LeafletMarker>();
 
@@ -766,49 +977,166 @@ public class DashboardMapComponent extends VerticalLayout {
 		map.addMarkerGroup("cases", caseMarkers);
 	}
 
-	private void fillCaseLists(List<MapCaseDto> cases) {
-		for (MapCaseDto caze : cases) {
-			CaseClassification classification = caze.getCaseClassification();
-			if (classification == null || classification == CaseClassification.NO_CASE)
-				continue;
-			boolean hasCaseGps =
-				(caze.getAddressLat() != null && caze.getAddressLon() != null) || (caze.getReportLat() != null || caze.getReportLon() != null);
-			boolean hasFacilityGps = caze.getHealthFacilityLat() != null && caze.getHealthFacilityLon() != null;
-			if (!hasCaseGps && !hasFacilityGps) {
-				continue; // no gps at all
+	private void showContactMarkers(List<MapContactDto> contacts) {
+
+		clearCaseMarkers();
+		clearContactMarkers();
+
+		fillCaseLists(null, contacts);
+
+		List<LeafletMarker> contactMarkers = new ArrayList<LeafletMarker>();
+
+		for (MapContactDto contactMapReference : hashContactMapDto.keySet()) {
+
+			if (contactMapReference == null) {
+				return;
 			}
 
-			if (mapCaseDisplayMode == MapCaseDisplayMode.CASE_ADDRESS) {
-				if (!hasCaseGps) {
-					continue;
-				}
-				mapCaseDtos.add(caze);
+			List<MapContactDto> casesList = hashContactMapDto.get(contactMapReference);
+			// colorize the icon by the "strongest" classification type (order as in enum)
+			// and set its size depending
+			// on the number of cases
+			int numberOfContacts = casesList.size();
+			Set<ContactClassification> classificationSet = new HashSet<>();
+			for (MapContactDto contact : casesList) {
+				classificationSet.add(contact.getContactClassification());
+			}
+
+			MarkerIcon icon;
+			if (classificationSet.contains(ContactClassification.CONFIRMED)) {
+				icon = MarkerIcon.FACILITY_CONFIRMED;
+			} else if (classificationSet.contains(ContactClassification.UNCONFIRMED)) {
+				icon = MarkerIcon.FACILITY_PROBABLE;
+			} else if (classificationSet.contains(ContactClassification.NO_CONTACT)) {
+				icon = MarkerIcon.FACILITY_SUSPECT;
 			} else {
-				if (FacilityDto.NONE_FACILITY_UUID.equals(caze.getHealthFacilityUuid())
-					|| FacilityDto.OTHER_FACILITY_UUID.equals(caze.getHealthFacilityUuid())
-					|| !hasFacilityGps) {
-					if (mapCaseDisplayMode == MapCaseDisplayMode.HEALTH_FACILITY_OR_CASE_ADDRESS) {
-						if (!hasCaseGps) {
+				icon = MarkerIcon.FACILITY_UNCLASSIFIED;
+			}
+
+			// create and place the marker
+			markerContactList.add(contactMapReference);
+
+			MapContactDto firstContact = casesList.get(0);
+			LeafletMarker leafletMarker = new LeafletMarker();
+			leafletMarker.setLatLon(firstContact.getReportLat(), firstContact.getReportLon());
+			leafletMarker.setIcon(icon);
+			leafletMarker.setMarkerCount(numberOfContacts);
+			contactMarkers.add(leafletMarker);
+		}
+
+		for (MapContactDto contact : mapContactDtos) {
+			LeafletMarker marker = new LeafletMarker();
+			if (contact.getContactClassification() == ContactClassification.CONFIRMED) {
+				marker.setIcon(MarkerIcon.CASE_CONFIRMED);
+			} else if (contact.getContactClassification() == ContactClassification.NO_CONTACT) {
+				marker.setIcon(MarkerIcon.CONTACT_OK);
+			} else {
+				marker.setIcon(MarkerIcon.CASE_UNCLASSIFIED);
+			}
+
+			if ((contact.getAddressLat() != null || contact.getAddressLat() != 0)
+				&& (contact.getAddressLon() != null || contact.getAddressLon() != 0)) {
+				marker.setLatLon(contact.getAddressLat(), contact.getAddressLon());
+			} else if (contact.getReportLat() != 0 && contact.getReportLon() != 0) {
+				marker.setLatLon(contact.getReportLat(), contact.getReportLon());
+			}
+
+			contactMarkers.add(marker);
+		}
+
+		map.addMarkerGroup("contacts", contactMarkers);
+	}
+
+	private void fillCaseLists(List<MapCaseDto> cases, List<MapContactDto> contacts) {
+
+		if (cases != null) {
+			for (MapCaseDto caze : cases) {
+				CaseClassification classification = caze.getCaseClassification();
+				if (classification == null || classification == CaseClassification.NO_CASE)
+					continue;
+				boolean hasCaseGps =
+					(caze.getAddressLat() != null && caze.getAddressLon() != null) || (caze.getReportLat() != null || caze.getReportLon() != null);
+				boolean hasFacilityGps = caze.getHealthFacilityLat() != null && caze.getHealthFacilityLon() != null;
+				if (!hasCaseGps && !hasFacilityGps) {
+					continue; // no gps at all
+				}
+
+				if (mapCaseDisplayMode == MapCaseDisplayMode.CASE_ADDRESS) {
+					if (!hasCaseGps) {
+						continue;
+					}
+					mapCaseDtos.add(caze);
+				} else {
+					if (FacilityDto.NONE_FACILITY_UUID.equals(caze.getHealthFacilityUuid())
+						|| FacilityDto.OTHER_FACILITY_UUID.equals(caze.getHealthFacilityUuid())
+						|| !hasFacilityGps) {
+						if (mapCaseDisplayMode == MapCaseDisplayMode.HEALTH_FACILITY_OR_CASE_ADDRESS) {
+							if (!hasCaseGps) {
+								continue;
+							}
+							mapCaseDtos.add(caze);
+						} else {
 							continue;
 						}
-						mapCaseDtos.add(caze);
 					} else {
-						continue;
+						if (!hasFacilityGps) {
+							continue;
+						}
+						FacilityReferenceDto facility = new FacilityReferenceDto();
+						facility.setUuid(caze.getHealthFacilityUuid());
+						if (casesByFacility.get(facility) == null) {
+							casesByFacility.put(facility, new ArrayList<MapCaseDto>());
+						}
+						casesByFacility.get(facility).add(caze);
 					}
-				} else {
-					if (!hasFacilityGps) {
-						continue;
-					}
-					FacilityReferenceDto facility = new FacilityReferenceDto();
-					facility.setUuid(caze.getHealthFacilityUuid());
-					if (casesByFacility.get(facility) == null) {
-						casesByFacility.put(facility, new ArrayList<MapCaseDto>());
-					}
-					casesByFacility.get(facility).add(caze);
 				}
+
+				mapAndFacilityCases.add(caze);
 			}
 
-			mapAndFacilityCases.add(caze);
+		} else {
+			for (MapContactDto contact : contacts) {
+				ContactClassification classification = contact.getContactClassification();
+
+				if (classification == null || classification == ContactClassification.NO_CONTACT)
+					continue;
+
+				boolean hasContactGps = (contact.getAddressLat() != null && contact.getAddressLon() != null)
+					|| (contact.getReportLat() != null || contact.getReportLon() != null);
+
+				boolean hasReportGps = contact.getReportLat() != null && contact.getReportLon() != null;
+				if (!hasContactGps && !hasReportGps) {
+					continue; // no gps at all
+				}
+
+				if (mapCaseDisplayMode == MapCaseDisplayMode.CASE_ADDRESS) {
+					if (!hasContactGps) {
+						continue;
+					}
+					mapContactDtos.add(contact);
+				} else {
+					if (FacilityDto.NONE_FACILITY_UUID.equals(contact.getUuid())
+						|| FacilityDto.OTHER_FACILITY_UUID.equals(contact.getUuid())
+						|| !hasReportGps) {
+						if (mapCaseDisplayMode == MapCaseDisplayMode.HEALTH_FACILITY_OR_CASE_ADDRESS) {
+							if (!hasContactGps) {
+								continue;
+							}
+							mapContactDtos.add(contact);
+						} else {
+							continue;
+						}
+					} else {
+						if (!hasReportGps) {
+							continue;
+						}
+						if (hashContactMapDto.get(contact) == null) {
+							hashContactMapDto.put(contact, new ArrayList<MapContactDto>());
+						}
+						hashContactMapDto.get(contact).add(contact);
+					}
+				}
+			}
 		}
 	}
 
@@ -834,8 +1162,21 @@ public class DashboardMapComponent extends VerticalLayout {
 			}
 			break;
 		case CONTACTS_GROUP_ID: {
-			MapContactDto contact = markerContacts.get(markerIndex);
-			ControllerProvider.getContactController().navigateToData(contact.getUuid(), true);
+			if (markerIndex < markerContactList.size()) {
+				MapContactDto mapContactDtoClicked = markerContactList.get(markerIndex);
+				VerticalLayout layout = new VerticalLayout();
+				Window window = VaadinUiUtil.showPopupWindow(layout);
+				ContactPopupGridOnMap contactGrid = new ContactPopupGridOnMap(window, mapContactDtoClicked, DashboardMapComponent.this);
+				contactGrid.setHeightMode(HeightMode.ROW);
+				layout.addComponent(contactGrid);
+				layout.setMargin(true);
+				window.setCaption(I18nProperties.getCaption(Captions.dashboardContactsIn) + " " + mapContactDtoClicked.toString());
+			} else {
+				markerIndex -= markerContactList.size();
+				MapContactDto contact = mapContactDtos.get(markerIndex);
+				ControllerProvider.getContactController().navigateToData(contact.getUuid(), true);
+			}
+
 		}
 			break;
 		case EVENTS_GROUP_ID: {
