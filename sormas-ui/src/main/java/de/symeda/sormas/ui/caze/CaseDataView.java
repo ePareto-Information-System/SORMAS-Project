@@ -76,7 +76,8 @@ public class CaseDataView extends AbstractCaseView {
 			LayoutUtil.fluidColumnLoc(8, 0, 12, 0, CASE_LOC),
 			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, TASKS_LOC),
 			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, SAMPLES_LOC),
-			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, EVENTS_LOC));
+			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, EVENTS_LOC),
+			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, CASE_MAP));
 
 		VerticalLayout container = new VerticalLayout();
 		container.setWidth(100, Unit.PERCENTAGE);
@@ -149,11 +150,26 @@ public class CaseDataView extends AbstractCaseView {
 			criteria.relevanceStatus(EntityRelevanceStatus.ACTIVE);
 		}
 
-		DashboardMapComponent map = new DashboardMapComponent(criteria);
-		map.addStyleName(CssStyles.SIDE_COMPONENT);
-		mapLayout.addComponent(map);
-		layout.addComponent(mapLayout, CASE_MAP);
+//		DashboardMapComponent map = new DashboardMapComponent(criteria);
+//		map.addStyleName(CssStyles.SIDE_COMPONENT);
+//		mapLayout.addComponent(map);
+//		layout.addComponent(mapLayout, CASE_MAP);
+
+		layout.addComponent(sideMapLayout(caze), CASE_MAP);
 
 		setCaseEditPermission(container);
+	}
+
+	private VerticalLayout sideMapLayout(CaseDataDto caseDataDto) {
+		VerticalLayout mapLayout = new VerticalLayout();
+		mapLayout.setMargin(false);
+		mapLayout.setSpacing(false);
+		DashboardMapComponent dashboardMapComponent = new DashboardMapComponent(null, caseDataDto);
+		dashboardMapComponent.addStyleName(CssStyles.SIDE_COMPONENT);
+
+		mapLayout.addComponent(dashboardMapComponent);
+
+		addComponent(mapLayout);
+		return mapLayout;
 	}
 }
