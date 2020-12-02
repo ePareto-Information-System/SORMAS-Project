@@ -46,6 +46,38 @@ public class DiseaseBurdenDto implements Serializable {
 	private Long caseDeathCount;
 	private String lastReportedDistrictName;
 
+	private Integer cfr;
+	private String lastReportedDistrict;
+	private String outbreakDistrict;
+	private Integer death;
+
+	public DiseaseBurdenDto(
+		Disease disease,
+		Long caseCount,
+		Long previousCaseCount,
+		Long eventCount,
+		Long outbreakDistrictCount,
+		Long caseDeathCount,
+		String lastReportedDistrictName,
+		Integer cfr,
+		String lastReportedDistrict,
+		String outbreakDistrict,
+		Integer death) {
+
+		this.disease = disease;
+		this.caseCount = caseCount;
+		this.previousCaseCount = previousCaseCount;
+		this.eventCount = eventCount;
+		this.outbreakDistrictCount = outbreakDistrictCount;
+		this.caseDeathCount = caseDeathCount;
+		this.lastReportedDistrictName = lastReportedDistrictName;
+
+		this.cfr = cfr;
+		this.lastReportedDistrict = lastReportedDistrict;
+		this.outbreakDistrict = outbreakDistrict;
+		this.death = death;
+	}
+
 	public DiseaseBurdenDto(
 		Disease disease,
 		Long caseCount,
@@ -147,4 +179,37 @@ public class DiseaseBurdenDto implements Serializable {
 	public Boolean hasCount() {
 		return (caseCount + previousCaseCount + eventCount + outbreakDistrictCount) > 0;
 	}
+
+	public Integer getCfr() {
+		return cfr;
+	}
+
+	public void setCfr(Integer cfr) {
+		this.cfr = cfr;
+	}
+
+	public String getLastReportedDistrict() {
+		return lastReportedDistrict;
+	}
+
+	public void setLastReportedDistrict(String lastReportedDistrict) {
+		this.lastReportedDistrict = lastReportedDistrict;
+	}
+
+	public String getOutbreakDistrict() {
+		return outbreakDistrict;
+	}
+
+	public void setOutbreakDistrict(String outbreakDistrict) {
+		this.outbreakDistrict = outbreakDistrict;
+	}
+
+	public Integer getDeath() {
+		return death;
+	}
+
+	public void setDeath(Integer death) {
+		this.death = death;
+	}
+
 }

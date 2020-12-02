@@ -35,4 +35,5 @@ public interface DiseaseFacade {
 		Date to,
 		Date previousFromDate,
 		Date previousToDate);
+
 }

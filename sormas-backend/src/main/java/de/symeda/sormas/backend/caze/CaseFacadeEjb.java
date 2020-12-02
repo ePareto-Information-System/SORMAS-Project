@@ -2515,4 +2515,9 @@ public class CaseFacadeEjb implements CaseFacade {
 		Case caze = caseService.getByUuid(caseUuid);
 		return caseJurisdictionChecker.isInJurisdiction(caze);
 	}
+
+	@Override
+	public CaseDataDto getAllCaseDataByDisease(String disease) {
+		return convertToDto(caseService.(disease));
+	}
 }

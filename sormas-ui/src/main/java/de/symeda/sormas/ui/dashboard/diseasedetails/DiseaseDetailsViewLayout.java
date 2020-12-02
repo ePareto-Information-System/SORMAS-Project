@@ -1,69 +1,77 @@
 package de.symeda.sormas.ui.dashboard.diseasedetails;
 
-import com.vaadin.ui.Component;
-import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
 
-import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
+import de.symeda.sormas.ui.dashboard.map.DashboardMapComponent;
 import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.LayoutUtil;
 
-public class DiseaseDetailsViewLayout extends CssLayout {
+public class DiseaseDetailsViewLayout extends CustomLayout {
 
 	private static final long serialVersionUID = 6582975657305031105L;
+	private static final String EXTEND_BUTTONS_LOC = "extendButtons";
+
+	private static final String CARD = "card";
+	private static final String GRID_TABLE = "table";
+	private static final String MAP = "map";
 
 	private DashboardDataProvider dashboardDataProvider;
 
 	public DiseaseDetailsViewLayout(DashboardDataProvider dashboardDataProvider) {
 		this.dashboardDataProvider = dashboardDataProvider;
+
+		setTemplateContents(
+			LayoutUtil.fluidRow(LayoutUtil.fluidColumnLoc(3, 1, 6, 0, CARD), LayoutUtil.fluidColumnLoc(6, 0, 12, 0, GRID_TABLE))
+				+ LayoutUtil.loc(MAP));
+
+		reload();
 	}
 
-	public DiseaseDetailsViewLayout() {
+	public void reload() {
+		//Disease Card layout
+//		List<DiseaseBurdenDto> diseasesBurden = dashboardDataProvider.getDiseasesBurden();
+//		DiseaseDetailsComponent diseaseCardLayout = new DiseaseDetailsComponent(diseasesBurden.get(0));
+//		Label label = new Label("Outbreak..");
+//		diseaseCardLayout.addComponent(label);
+//		addComponent(diseaseCardLayout, CARD);
 
+//		Grid card layout
+		HorizontalLayout gridLayout = new HorizontalLayout();
+		gridLayout.addComponent(gridTableLayout());
+		addComponent(gridLayout, GRID_TABLE);
+
+//		Map layout 
+		HorizontalLayout mapLayout = new HorizontalLayout();
+		mapLayout.addComponent(mapVerticalLayout());
+		addComponent(mapLayout, MAP);
 	}
 
-	@Override
-	protected String getCss(Component c) {
-		c.setId("sample-card-wrapper");
-		return "display: flex !important; flex-wrap: wrap !important; flex-direction: column; white-space: normal !important";
+	private HorizontalLayout gridTableLayout() {
+		HorizontalLayout tableLayout = new HorizontalLayout();
+		tableLayout.setMargin(false);
+		tableLayout.setSpacing(false);
+
+		Label labelGrid = new Label("Grid Table here");
+
+		tableLayout.addComponent(labelGrid);
+		addComponent(tableLayout);
+		return tableLayout;
 	}
 
-//	private VerticalLayout addDiseaseCard(
-//		Disease disease,
-//		boolean outbreak,
-//		Long countDisease,
-//		Long deaths,
-//		double percentage,
-//		String reportedDistrict,
-//		String outBreakDistrict) {
-	private VerticalLayout addDiseaseCard(
-		Disease disease,
-		boolean outbreak,
-		double d,
-		double e,
-		double percentage,
-		String reportedDistrict,
-		String outBreakDistrict) {
-		VerticalLayout verticalLayout = new VerticalLayout();
+	private HorizontalLayout mapVerticalLayout() {
+		HorizontalLayout mapLayout = new HorizontalLayout();
+		mapLayout.setMargin(false);
+		mapLayout.setSpacing(false);
+		DashboardMapComponent dashboardMapComponent = new DashboardMapComponent(dashboardDataProvider);
+		dashboardMapComponent.addStyleName(CssStyles.SIDE_COMPONENT);
 
-//		Label title = new Label(I18nProperties.getCaption(disease.getName()));
-		Label title = new Label("Some disease name here");
-		CssStyles.style(title, CssStyles.H2, CssStyles.VSPACE_4, CssStyles.VSPACE_TOP_NONE);
+		mapLayout.addComponent(dashboardMapComponent);
 
-		verticalLayout.addComponent(title);
-		return verticalLayout;
-	}
-
-	public void refresh() {
-//		addDiseaseCard(disease, outbreak, countDisease, deaths, percentage, reportedDistrict, outBreakDistrict)
-
-		HorizontalLayout conditionHorizontalLayout = new HorizontalLayout();
-//		conditionHorizontalLayout.addComponent(addDiseaseCard(Disease.AFP, true, 0, 0, 10.2, "Mi5", "007"));
-		conditionHorizontalLayout.addComponent(addDiseaseCard(Disease.AFP, true, 9912240.0, 545124.0, 10.2, "Mi5", "007"));
-		addComponent(conditionHorizontalLayout);
-
+		addComponent(mapLayout);
+		return mapLayout;
 	}
 
 }

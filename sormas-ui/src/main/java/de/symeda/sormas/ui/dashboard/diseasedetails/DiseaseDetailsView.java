@@ -1,40 +1,44 @@
 package de.symeda.sormas.ui.dashboard.diseasedetails;
 
-import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.ui.Label;
-
-import de.symeda.sormas.ui.SormasUI;
-import de.symeda.sormas.ui.ViewModelProviders;
-import de.symeda.sormas.ui.utils.AbstractView;
+import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.ui.dashboard.AbstractDashboardView;
 import de.symeda.sormas.ui.utils.ViewConfiguration;
 
 @SuppressWarnings("serial")
-public class DiseaseDetailsView extends AbstractView {
+public class DiseaseDetailsView extends AbstractDashboardView {
 
 	private static final long serialVersionUID = -1L;
 	public static final String VIEW_NAME = "disease";
 	protected DiseaseDetailsViewLayout diseaseDetailsViewLayout;
 	private DiseaseDetailsComponent diseaseDetailsComponent;
 	private ViewConfiguration viewConfiguration;
+	private Disease disease;
 
 	public DiseaseDetailsView() {
-		super(VIEW_NAME);
-		SormasUI.get().getNavigator().addView("0", DiseaseDetailsView.class);// o(navigationState));
-		if (!ViewModelProviders.of(DiseaseDetailsView.class).has(DiseaseDetailsView.class)) {
-			ViewModelProviders.of(DiseaseDetailsView.class);
-			//.get(DiseaseDetailsView.class, taskCriteria);
-		}
-		viewConfiguration = ViewModelProviders.of(getClass()).get(ViewConfiguration.class);
+		super(VIEW_NAME, null);
+		filterLayout.setInfoLabelText(I18nProperties.getString(Strings.classificationForDisease));
+		dashboardLayout.setSpacing(false);
 
-		diseaseDetailsComponent = new DiseaseDetailsComponent(new Label(VIEW_NAME));
-		addComponent(diseaseDetailsComponent);
-		setExpandRatio(diseaseDetailsComponent, 1);
-		System.err.println("Here we go...");
+		System.err.println(VIEW_NAME);
+		//Added Component
+		diseaseDetailsViewLayout = new DiseaseDetailsViewLayout(dashboardDataProvider);
+		dashboardLayout.addComponent(diseaseDetailsViewLayout);
+		dashboardLayout.setExpandRatio(diseaseDetailsViewLayout, 1);
 	}
 
 	@Override
-	public void enter(ViewChangeEvent event) {
-		diseaseDetailsComponent.reload(event);
+	public void refreshDashboard() {
+		super.refreshDashboard();
+		// Update dashboard
+		if (diseaseDetailsViewLayout != null)
+			dashboardDataProvider.refreshDiseaseData();
+	}
+
+	public Disease setDisease(Disease disease) {
+		this.disease = disease;
+		return disease;
 	}
 
 }

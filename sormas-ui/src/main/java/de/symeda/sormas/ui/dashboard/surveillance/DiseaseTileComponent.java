@@ -175,12 +175,7 @@ public class DiseaseTileComponent extends VerticalLayout {
 		CssStyles.style(statsItem, CssStyles.VSPACE_4);
 		layout.addComponent(statsItem);
 
-//		layout.addComponent(addDiseaseButton(disease.getName()));
-		Button diseaseDetailButton = ButtonHelper
-			.createIconButton(null, VaadinIcons.ELLIPSIS_DOTS_H, null, ValoTheme.BUTTON_BORDERLESS, CssStyles.VSPACE_TOP_NONE, CssStyles.VSPACE_4);
-		diseaseDetailButton.setVisible(true);
-		layout.addComponent(diseaseDetailButton);
-		diseaseDetailButton.addClickListener(click -> ControllerProvider.getDashboardController().navigateToDisease(disease.getName()));
+		layout.addComponent(addDiseaseButton(disease));
 
 		addComponent(layout);
 	}
@@ -210,11 +205,17 @@ public class DiseaseTileComponent extends VerticalLayout {
 		return layout;
 	}
 
-	private Button addDiseaseButton(String diseaseName) {
+	private Button addDiseaseButton(Disease diseaseName) {
 		Button diseaseDetailButton = ButtonHelper
 			.createIconButton(null, VaadinIcons.ELLIPSIS_DOTS_H, null, ValoTheme.BUTTON_BORDERLESS, CssStyles.VSPACE_TOP_NONE, CssStyles.VSPACE_4);
 		diseaseDetailButton.setVisible(true);
 		diseaseDetailButton.addClickListener(click -> ControllerProvider.getDashboardController().navigateToDisease(diseaseName));
+
+//		Button diseaseDetailButton = ButtonHelper
+//			.createIconButton(null, VaadinIcons.ELLIPSIS_DOTS_H, null, ValoTheme.BUTTON_BORDERLESS, CssStyles.VSPACE_TOP_NONE, CssStyles.VSPACE_4);
+//		diseaseDetailButton.setVisible(true);
+//		layout.addComponent(diseaseDetailButton);
+//		diseaseDetailButton.addClickListener(click -> ControllerProvider.getDashboardController().navigateToDisease(disease.getName()));
 
 		return diseaseDetailButton;
 	}

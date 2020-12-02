@@ -19,6 +19,9 @@ package de.symeda.sormas.ui.dashboard;
 
 import com.vaadin.navigator.Navigator;
 
+import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.UserProvider;
@@ -41,8 +44,14 @@ public class DashboardController {
 		}
 	}
 
-	public void navigateToDisease(String diseaseName) {
-		String navigationState = DiseaseDetailsView.VIEW_NAME + "/" + diseaseName;
+	public void navigateToDisease(Disease disease) {
+		String navigationState = DiseaseDetailsView.VIEW_NAME + "/" + disease.getName();
 		SormasUI.get().getNavigator().navigateTo(navigationState);
+//		DiseaseDetailsView.this.setDisease(disease);
 	}
+
+	private CaseDataDto findCase(String uuid) {
+		return FacadeProvider.getCaseFacade().getCaseDataByUuid(uuid);
+	}
+
 }

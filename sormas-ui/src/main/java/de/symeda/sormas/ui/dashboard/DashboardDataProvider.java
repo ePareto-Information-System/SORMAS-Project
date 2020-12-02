@@ -53,6 +53,7 @@ public class DashboardDataProvider {
 
 	// overall
 	private List<DiseaseBurdenDto> diseasesBurden = new ArrayList<>();
+	private DiseaseBurdenDto diseaseBurdenDetail;
 
 	// TODO make disease specific when contact dashboard is updated
 	private List<DashboardContactDto> contacts = new ArrayList<>();
@@ -82,10 +83,14 @@ public class DashboardDataProvider {
 
 	public void refreshDiseaseData() {
 
-//		setDiseasesBurden(
-//			FacadeProvider.getDiseaseFacade().getDiseaseBurdenForDashboard(region, district, fromDate, toDate, previousFromDate, previousToDate));
+		setDiseasesBurden(
+			FacadeProvider.getDiseaseFacade().getDiseaseBurdenForDashboard(region, district, fromDate, toDate, previousFromDate, previousToDate));
 
-//		this.refreshDataForSelectedDisease();
+		this.refreshDataForSelectedDisease();
+		setOutbreakDistrictCount(
+			FacadeProvider.getOutbreakFacade()
+				.getOutbreakDistrictCount(
+					new OutbreakCriteria().region(region).district(district).disease(disease).reportedBetween(fromDate, toDate)));
 	}
 
 	private void refreshDataForSelectedDisease() {
@@ -233,6 +238,14 @@ public class DashboardDataProvider {
 
 	public void setDiseasesBurden(List<DiseaseBurdenDto> diseasesBurden) {
 		this.diseasesBurden = diseasesBurden;
+	}
+
+	public DiseaseBurdenDto getDiseaseBurdenDetail() {
+		return diseaseBurdenDetail;
+	}
+
+	public void setDiseaseBurdenDetail(DiseaseBurdenDto diseaseBurdenDetail) {
+		this.diseaseBurdenDetail = diseaseBurdenDetail;
 	}
 
 	public Long getOutbreakDistrictCount() {

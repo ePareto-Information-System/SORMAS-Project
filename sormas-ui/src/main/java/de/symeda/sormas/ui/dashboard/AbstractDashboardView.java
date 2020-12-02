@@ -103,4 +103,8 @@ public abstract class AbstractDashboardView extends AbstractView {
 	public void enter(ViewChangeEvent event) {
 		refreshDashboard();
 	}
+
+//	public Disease getDisease() {
+//		return 
+//	}
 }

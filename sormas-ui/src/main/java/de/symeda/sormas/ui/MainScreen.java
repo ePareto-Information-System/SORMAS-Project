@@ -17,6 +17,11 @@
  *******************************************************************************/
 package de.symeda.sormas.ui;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
@@ -24,6 +29,7 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.navigator.ViewProvider;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
+
 import de.symeda.sormas.api.BaseCriteria;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.feature.FeatureType;
@@ -47,6 +53,7 @@ import de.symeda.sormas.ui.configuration.outbreak.OutbreaksView;
 import de.symeda.sormas.ui.contact.ContactsView;
 import de.symeda.sormas.ui.dashboard.AbstractDashboardView;
 import de.symeda.sormas.ui.dashboard.contacts.ContactsDashboardView;
+import de.symeda.sormas.ui.dashboard.diseasedetails.DiseaseDetailsView;
 import de.symeda.sormas.ui.dashboard.surveillance.SurveillanceDashboardView;
 import de.symeda.sormas.ui.events.EventParticipantDataView;
 import de.symeda.sormas.ui.events.EventsView;
@@ -57,11 +64,6 @@ import de.symeda.sormas.ui.statistics.AbstractStatisticsView;
 import de.symeda.sormas.ui.statistics.StatisticsView;
 import de.symeda.sormas.ui.task.TasksView;
 import de.symeda.sormas.ui.user.UsersView;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Content of the UI when the user is logged in.
@@ -74,6 +76,7 @@ public class MainScreen extends HorizontalLayout {
 		Arrays.asList(
 			SurveillanceDashboardView.VIEW_NAME,
 			ContactsDashboardView.VIEW_NAME,
+			DiseaseDetailsView.VIEW_NAME,
 			TasksView.VIEW_NAME,
 			CasesView.VIEW_NAME,
 			ContactsView.VIEW_NAME,
@@ -198,6 +201,13 @@ public class MainScreen extends HorizontalLayout {
 				AbstractConfigurationView.ROOT_VIEW_NAME,
 				I18nProperties.getCaption(Captions.mainMenuConfiguration),
 				VaadinIcons.COGS);
+		}
+		if (permitted(UserRight.DASHBOARD_DISEASE_DETIALS_ACCESS)) {
+			menu.addView(
+				DiseaseDetailsView.class,
+				DiseaseDetailsView.VIEW_NAME,
+				I18nProperties.getCaption(Captions.mainMenuDashboard),
+				VaadinIcons.DISC);
 		}
 		menu.addView(AboutView.class, AboutView.VIEW_NAME, I18nProperties.getCaption(Captions.mainMenuAbout), VaadinIcons.INFO_CIRCLE);
 
