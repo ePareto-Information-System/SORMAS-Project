@@ -34,6 +34,9 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.vaadin.data.Binder;
 import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.icons.VaadinIcons;
@@ -45,12 +48,14 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.VisitOrigin;
 import de.symeda.sormas.api.caze.CaseCriteria;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseOrigin;
@@ -58,6 +63,7 @@ import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.ContactLogic;
 import de.symeda.sormas.api.contact.FollowUpStatus;
+import de.symeda.sormas.api.contact.QuarantineType;
 import de.symeda.sormas.api.facility.FacilityCriteria;
 import de.symeda.sormas.api.facility.FacilityDto;
 import de.symeda.sormas.api.i18n.Captions;
@@ -74,6 +80,9 @@ import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.SortProperty;
+import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
+import de.symeda.sormas.api.utils.fieldvisibility.checkers.CountryFieldVisibilityChecker;
+import de.symeda.sormas.api.utils.fieldvisibility.checkers.DiseaseFieldVisibilityChecker;
 import de.symeda.sormas.api.visit.VisitDto;
 import de.symeda.sormas.api.visit.VisitStatus;
 import de.symeda.sormas.ui.UserProvider;
@@ -88,10 +97,14 @@ public class DevModeView extends AbstractConfigurationView {
 
 	public static final String VIEW_NAME = ROOT_VIEW_NAME + "/devMode";
 
+	private final transient Logger logger = LoggerFactory.getLogger(getClass());
+
 	private VerticalLayout contentLayout;
 
 	private Binder<CaseGenerationConfig> caseGeneratorConfigBinder = new Binder<>();
 	private Binder<ContactGenerationConfig> contactGeneratorConfigBinder = new Binder<>();
+
+	private FieldVisibilityCheckers fieldVisibilityCheckers;
 
 	public DevModeView() {
 
@@ -337,8 +350,10 @@ public class DevModeView extends AbstractConfigurationView {
 			Class<? extends EntityDto> entityClass = entity.getClass();
 			List<Method> setters = setters(entityClass);
 			for (Method setter : setters) {
-				if (randomPercent(40)) {
-					continue; // leave some empty/default
+				String propertyId = setter.getName().substring(3, 4).toLowerCase() + setter.getName().substring(4);
+				// leave some empty/default
+				if (randomPercent(40) || !fieldVisibilityCheckers.isVisible(entityClass, propertyId)) {
+					continue;
 				}
 				Class<?> parameterType = setter.getParameterTypes()[0];
 				// doesn't make sense
@@ -428,17 +443,23 @@ public class DevModeView extends AbstractConfigurationView {
 		List<FacilityDto> healthFacilities = FacadeProvider.getFacilityFacade()
 			.getIndexList(facilityCriteria, 0, Math.min(config.getCaseCount() * 2, 300), Arrays.asList(new SortProperty(FacilityDto.NAME)));
 
+		long dt = System.nanoTime();
+
 		for (int i = 0; i < config.getCaseCount(); i++) {
 			Disease disease = config.getDisease();
 			if (disease == null) {
 				disease = random(diseases);
 			}
 
+			fieldVisibilityCheckers = new FieldVisibilityCheckers().add(new DiseaseFieldVisibilityChecker(disease))
+				.add(new CountryFieldVisibilityChecker(FacadeProvider.getConfigFacade().getCountryLocale()));
+
 			LocalDateTime referenceDateTime = getReferenceDateTime(i, config.getCaseCount(), baseOffset, disease, config.getStartDate(), daysBetween);
 
 			// person
 			PersonDto person = PersonDto.build();
 			fillEntity(person, referenceDateTime);
+			person.setSymptomJournalStatus(null);
 			setPersonName(person);
 
 			CaseDataDto caze = CaseDataDto.build(person.toReference(), disease);
@@ -446,6 +467,13 @@ public class DevModeView extends AbstractConfigurationView {
 			caze.setDisease(disease); // reset
 			if (caze.getDisease() == Disease.OTHER) {
 				caze.setDiseaseDetails("RD " + (random().nextInt(20) + 1));
+			}
+
+			if (!QuarantineType.isQuarantineInEffect(caze.getQuarantine())) {
+				caze.setQuarantineFrom(null);
+				caze.setQuarantineTo(null);
+				caze.setQuarantineExtended(false);
+				caze.setQuarantineReduced(false);
 			}
 
 			// report
@@ -460,12 +488,19 @@ public class DevModeView extends AbstractConfigurationView {
 			caze.setDistrict(healthFacility.getDistrict());
 			caze.setCommunity(healthFacility.getCommunity());
 			caze.setHealthFacility(healthFacility.toReference());
+			caze.setFacilityType(healthFacility.getType());
 			caze.setReportLat(healthFacility.getLatitude());
 			caze.setReportLon(healthFacility.getLongitude());
 
 			FacadeProvider.getPersonFacade().savePerson(person);
 			FacadeProvider.getCaseFacade().saveCase(caze);
 		}
+
+		dt = System.nanoTime() - dt;
+		long perCase = dt / config.getCaseCount();
+		String msg = String.format("Generating %,d cases took %,d  ms (%,d ms per case)", config.getCaseCount(), dt / 1_000_000, perCase / 1_000_000);
+		logger.info(msg);
+		Notification.show("", msg, Notification.Type.TRAY_NOTIFICATION);
 	}
 
 	private void generateContacts() {
@@ -499,6 +534,9 @@ public class DevModeView extends AbstractConfigurationView {
 				disease = random(diseases);
 			}
 
+			fieldVisibilityCheckers = new FieldVisibilityCheckers().add(new DiseaseFieldVisibilityChecker(disease))
+				.add(new CountryFieldVisibilityChecker(FacadeProvider.getConfigFacade().getCountryLocale()));
+
 			LocalDateTime referenceDateTime =
 				getReferenceDateTime(i, config.getContactCount(), baseOffset, disease, config.getStartDate(), daysBetween);
 
@@ -509,6 +547,7 @@ public class DevModeView extends AbstractConfigurationView {
 			} else {
 				person = PersonDto.build();
 				fillEntity(person, referenceDateTime);
+				person.setSymptomJournalStatus(null);
 				setPersonName(person);
 
 				if (config.isCreateMultipleContactsPerPerson()) {
@@ -578,7 +617,7 @@ public class DevModeView extends AbstractConfigurationView {
 					}
 
 					for (LocalDateTime date : followUpDates) {
-						VisitDto visit = VisitDto.build(contact.getPerson(), contact.getDisease());
+						VisitDto visit = VisitDto.build(contact.getPerson(), contact.getDisease(), VisitOrigin.USER);
 						fillEntity(visit, date);
 						visit.setVisitUser(userReference);
 						visit.setVisitDateTime(DateHelper8.toDate(date));

@@ -31,29 +31,34 @@ import com.vaadin.v7.data.fieldgroup.FieldGroup;
 import com.vaadin.v7.ui.CheckBox;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.DateField;
-import com.vaadin.v7.ui.OptionGroup;
 import com.vaadin.v7.ui.TextArea;
 import com.vaadin.v7.ui.TextField;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.event.EventDto;
+import de.symeda.sormas.api.event.EventInvestigationStatus;
 import de.symeda.sormas.api.event.EventSourceType;
 import de.symeda.sormas.api.event.EventStatus;
 import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.i18n.Captions;
+import de.symeda.sormas.api.i18n.Descriptions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRole;
-import de.symeda.sormas.api.utils.fieldaccess.FieldAccessCheckers;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.location.LocationEditForm;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
+import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.DateComparisonValidator;
 import de.symeda.sormas.ui.utils.DateTimeField;
 import de.symeda.sormas.ui.utils.FieldHelper;
+import de.symeda.sormas.ui.utils.NullableOptionGroup;
 import de.symeda.sormas.ui.utils.TextFieldWithMaxLengthWrapper;
 
 public class EventDataForm extends AbstractEditForm<EventDto> {
@@ -74,8 +79,11 @@ public class EventDataForm extends AbstractEditForm<EventDto> {
 			fluidRowLocs(EventDto.EVENT_STATUS) +
 			fluidRowLocs(EventDto.MULTI_DAY_EVENT) +
 			fluidRowLocs(4, EventDto.START_DATE, 4, EventDto.END_DATE) +
+			fluidRowLocs(EventDto.EVENT_INVESTIGATION_STATUS) +
+			fluidRowLocs(4,EventDto.EVENT_INVESTIGATION_START_DATE, 4, EventDto.EVENT_INVESTIGATION_END_DATE) +
 			fluidRowLocs(EventDto.DISEASE, EventDto.DISEASE_DETAILS) +
 			fluidRowLocs(EventDto.EXTERNAL_ID, "") +
+			fluidRowLocs(EventDto.EVENT_TITLE) +
 			fluidRowLocs(EventDto.EVENT_DESC) +
 			fluidRowLocs(EventDto.NOSOCOMIAL, "") +
 
@@ -93,22 +101,32 @@ public class EventDataForm extends AbstractEditForm<EventDto> {
 			fluidRowLocs("", EventDto.SURVEILLANCE_OFFICER);
 	//@formatter:on
 
-	private final VerticalLayout statusChangeLayout;
-	private Boolean isCreateForm = null;
+	private final Boolean isCreateForm;
+	private final boolean isPseudonymized;
 
-	public EventDataForm(boolean create) {
-		super(EventDto.class, EventDto.I18N_PREFIX, false, new FieldVisibilityCheckers(), new FieldAccessCheckers());
+	public EventDataForm(boolean create, boolean isPseudonymized) {
+		super(EventDto.class, EventDto.I18N_PREFIX, false, new FieldVisibilityCheckers(), createFieldAccessCheckers(isPseudonymized, true));
 
 		isCreateForm = create;
+		this.isPseudonymized = isPseudonymized;
+
 		if (create) {
 			hideValidationUntilNextCommit();
 		}
-		statusChangeLayout = new VerticalLayout();
+		VerticalLayout statusChangeLayout = new VerticalLayout();
 		statusChangeLayout.setSpacing(false);
 		statusChangeLayout.setMargin(false);
 		getContent().addComponent(statusChangeLayout, STATUS_CHANGE);
 
 		addFields();
+	}
+
+	private static UiFieldAccessCheckers createFieldAccessCheckers(boolean isPseudonymized, boolean withPersonalAndSensitive) {
+		if (withPersonalAndSensitive) {
+			return UiFieldAccessCheckers.getDefault(isPseudonymized);
+		}
+
+		return UiFieldAccessCheckers.getNoop();
 	}
 
 	@Override
@@ -136,10 +154,27 @@ public class EventDataForm extends AbstractEditForm<EventDto> {
 		DateField startDate = addField(EventDto.START_DATE, DateField.class);
 		CheckBox multiDayCheckbox = addField(EventDto.MULTI_DAY_EVENT, CheckBox.class);
 		DateField endDate = addField(EventDto.END_DATE, DateField.class);
-		addField(EventDto.EVENT_STATUS, OptionGroup.class);
-		addField(EventDto.EVENT_DESC, TextArea.class, new TextFieldWithMaxLengthWrapper<>());
 
-		addField(EventDto.NOSOCOMIAL, OptionGroup.class);
+		initEventDateValidation(startDate, endDate, multiDayCheckbox);
+
+		addField(EventDto.EVENT_STATUS, NullableOptionGroup.class);
+		addField(EventDto.EVENT_INVESTIGATION_STATUS, NullableOptionGroup.class);
+		addField(EventDto.EVENT_INVESTIGATION_START_DATE, DateField.class);
+		addField(EventDto.EVENT_INVESTIGATION_END_DATE, DateField.class);
+		FieldHelper.setVisibleWhen(
+			getFieldGroup(),
+			Arrays.asList(EventDto.EVENT_INVESTIGATION_START_DATE, EventDto.EVENT_INVESTIGATION_END_DATE),
+			EventDto.EVENT_INVESTIGATION_STATUS,
+			Arrays.asList(EventInvestigationStatus.ONGOING, EventInvestigationStatus.DONE, EventInvestigationStatus.DISCARDED),
+			false);
+		TextField title = addField(EventDto.EVENT_TITLE, TextField.class);
+		title.addStyleName(CssStyles.SOFT_REQUIRED);
+		TextArea descriptionField = addField(EventDto.EVENT_DESC, TextArea.class, new TextFieldWithMaxLengthWrapper<>());
+		descriptionField.setRows(2);
+		descriptionField.setDescription(
+			I18nProperties.getPrefixDescription(EventDto.I18N_PREFIX, EventDto.EVENT_DESC, "") + "\n"
+				+ I18nProperties.getDescription(Descriptions.descGdpr));
+		addField(EventDto.NOSOCOMIAL, NullableOptionGroup.class);
 
 		ComboBox typeOfPlace = addField(EventDto.TYPE_OF_PLACE, ComboBox.class);
 		typeOfPlace.setNullSelectionAllowed(true);
@@ -157,9 +192,10 @@ public class EventDataForm extends AbstractEditForm<EventDto> {
 		TextField srcMediaWebsite = addField(EventDto.SRC_MEDIA_WEBSITE, TextField.class);
 		TextField srcMediaName = addField(EventDto.SRC_MEDIA_NAME, TextField.class);
 		TextArea srcMediaDetails = addField(EventDto.SRC_MEDIA_DETAILS, TextArea.class);
-		srcMediaDetails.setRows(2);
+		srcMediaDetails.setRows(4);
 
-		addField(EventDto.EVENT_LOCATION, LocationEditForm.class).setCaption(null);
+		addField(EventDto.EVENT_LOCATION, new LocationEditForm(fieldVisibilityCheckers, createFieldAccessCheckers(isPseudonymized, false)))
+			.setCaption(null);
 
 		LocationEditForm locationForm = (LocationEditForm) getFieldGroup().getField(EventDto.EVENT_LOCATION);
 		if (isCreateForm) {
@@ -170,6 +206,8 @@ public class EventDataForm extends AbstractEditForm<EventDto> {
 		surveillanceOfficerField.setNullSelectionAllowed(true);
 
 		setReadOnly(true, EventDto.UUID, EventDto.REPORT_DATE_TIME, EventDto.REPORTING_USER);
+
+		initializeAccessAndAllowedAccesses();
 
 		FieldHelper.setVisibleWhen(
 			getFieldGroup(),
@@ -183,7 +221,7 @@ public class EventDataForm extends AbstractEditForm<EventDto> {
 			Collections.singletonList(EventDto.DISEASE_DETAILS),
 			Collections.singletonList(Disease.OTHER));
 
-		setRequired(true, EventDto.EVENT_STATUS, EventDto.UUID, EventDto.EVENT_DESC, EventDto.REPORT_DATE_TIME, EventDto.REPORTING_USER);
+		setRequired(true, EventDto.EVENT_STATUS, EventDto.UUID, EventDto.EVENT_TITLE, EventDto.REPORT_DATE_TIME, EventDto.REPORTING_USER);
 
 		FieldHelper.setVisibleWhen(getFieldGroup(), EventDto.END_DATE, EventDto.MULTI_DAY_EVENT, Collections.singletonList(true), true);
 		FieldHelper.setCaptionWhen(
@@ -233,6 +271,33 @@ public class EventDataForm extends AbstractEditForm<EventDto> {
 			srcTelNo,
 			srcMediaWebsite,
 			srcMediaName);
+	}
+
+	private void initEventDateValidation(DateField startDate, DateField endDate, CheckBox multiDayCheckbox) {
+		DateComparisonValidator startDateValidator = new DateComparisonValidator(
+			startDate,
+			endDate,
+			true,
+			true,
+			I18nProperties.getValidationError(Validations.beforeDate, startDate.getCaption(), endDate.getCaption()));
+
+		DateComparisonValidator endDateValidator = new DateComparisonValidator(
+			endDate,
+			startDate,
+			false,
+			true,
+			I18nProperties.getValidationError(Validations.afterDate, endDate.getCaption(), startDate.getCaption()));
+
+		multiDayCheckbox.addValueChangeListener(e -> {
+			if ((Boolean) e.getProperty().getValue()) {
+				startDate.addValidator(startDateValidator);
+				endDate.addValidator(endDateValidator);
+			} else {
+				startDate.removeValidator(startDateValidator);
+				endDate.removeValidator(endDateValidator);
+			}
+		});
+
 	}
 
 	@Override

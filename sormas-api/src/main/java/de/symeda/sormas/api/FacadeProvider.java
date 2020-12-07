@@ -1,30 +1,31 @@
-/*******************************************************************************
+/*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
- *
+ * Copyright © 2016-2020 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *******************************************************************************/
+ */
 package de.symeda.sormas.api;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import de.symeda.sormas.api.action.ActionFacade;
+import de.symeda.sormas.api.bagexport.BAGExportFacade;
 import de.symeda.sormas.api.campaign.CampaignFacade;
 import de.symeda.sormas.api.campaign.data.CampaignFormDataFacade;
-import de.symeda.sormas.api.campaign.form.CampaignFormFacade;
+import de.symeda.sormas.api.campaign.diagram.CampaignDiagramDefinitionFacade;
+import de.symeda.sormas.api.campaign.form.CampaignFormMetaFacade;
 import de.symeda.sormas.api.caze.CaseFacade;
 import de.symeda.sormas.api.caze.CaseStatisticsFacade;
+import de.symeda.sormas.api.caze.caseimport.CaseImportFacade;
 import de.symeda.sormas.api.caze.classification.CaseClassificationFacade;
 import de.symeda.sormas.api.caze.maternalhistory.MaternalHistoryFacade;
 import de.symeda.sormas.api.clinicalcourse.ClinicalCourseFacade;
@@ -32,9 +33,12 @@ import de.symeda.sormas.api.clinicalcourse.ClinicalVisitFacade;
 import de.symeda.sormas.api.contact.ContactFacade;
 import de.symeda.sormas.api.disease.DiseaseConfigurationFacade;
 import de.symeda.sormas.api.disease.DiseaseFacade;
+import de.symeda.sormas.api.docgeneneration.QuarantineOrderFacade;
+import de.symeda.sormas.api.document.DocumentFacade;
 import de.symeda.sormas.api.epidata.EpiDataFacade;
 import de.symeda.sormas.api.event.EventFacade;
 import de.symeda.sormas.api.event.EventParticipantFacade;
+import de.symeda.sormas.api.externaljournal.ExternalJournalFacade;
 import de.symeda.sormas.api.facility.FacilityFacade;
 import de.symeda.sormas.api.feature.FeatureConfigurationFacade;
 import de.symeda.sormas.api.geocoding.GeocodingFacade;
@@ -48,6 +52,7 @@ import de.symeda.sormas.api.outbreak.OutbreakFacade;
 import de.symeda.sormas.api.person.PersonFacade;
 import de.symeda.sormas.api.region.AreaFacade;
 import de.symeda.sormas.api.region.CommunityFacade;
+import de.symeda.sormas.api.region.CountryFacade;
 import de.symeda.sormas.api.region.DistrictFacade;
 import de.symeda.sormas.api.region.GeoShapeProvider;
 import de.symeda.sormas.api.region.RegionFacade;
@@ -56,6 +61,8 @@ import de.symeda.sormas.api.report.WeeklyReportFacade;
 import de.symeda.sormas.api.sample.AdditionalTestFacade;
 import de.symeda.sormas.api.sample.PathogenTestFacade;
 import de.symeda.sormas.api.sample.SampleFacade;
+import de.symeda.sormas.api.sormastosormas.SormasToSormasFacade;
+import de.symeda.sormas.api.survnet.SurvnetGatewayFacade;
 import de.symeda.sormas.api.symptoms.SymptomsFacade;
 import de.symeda.sormas.api.task.TaskFacade;
 import de.symeda.sormas.api.therapy.PrescriptionFacade;
@@ -98,6 +105,10 @@ public class FacadeProvider {
 		return get().lookupEjbRemote(CaseStatisticsFacade.class);
 	}
 
+	public static CaseImportFacade getCaseImportFacade() {
+		return get().lookupEjbRemote(CaseImportFacade.class);
+	}
+
 	public static ContactFacade getContactFacade() {
 		return get().lookupEjbRemote(ContactFacade.class);
 	}
@@ -122,6 +133,10 @@ public class FacadeProvider {
 		return get().lookupEjbRemote(TaskFacade.class);
 	}
 
+	public static ActionFacade getActionFacade() {
+		return get().lookupEjbRemote(ActionFacade.class);
+	}
+
 	public static SampleFacade getSampleFacade() {
 		return get().lookupEjbRemote(SampleFacade.class);
 	}
@@ -142,6 +157,9 @@ public class FacadeProvider {
 		return get().lookupEjbRemote(FacilityFacade.class);
 	}
 
+	public static CountryFacade getCountryFacade() {
+		return get().lookupEjbRemote(CountryFacade.class);
+	}
 	public static RegionFacade getRegionFacade() {
 		return get().lookupEjbRemote(RegionFacade.class);
 	}
@@ -262,16 +280,44 @@ public class FacadeProvider {
 		return get().lookupEjbRemote(CampaignFacade.class);
 	}
 
-	public static CampaignFormFacade getCampaignFormFacade() {
-		return get().lookupEjbRemote(CampaignFormFacade.class);
+	public static CampaignDiagramDefinitionFacade getCampaignDiagramDefinitionFacade() {
+		return get().lookupEjbRemote(CampaignDiagramDefinitionFacade.class);
+	}
+
+	public static CampaignFormMetaFacade getCampaignFormMetaFacade() {
+		return get().lookupEjbRemote(CampaignFormMetaFacade.class);
 	}
 
 	public static CampaignFormDataFacade getCampaignFormDataFacade() {
 		return get().lookupEjbRemote(CampaignFormDataFacade.class);
 	}
 
+	public static SormasToSormasFacade getSormasToSormasFacade() {
+		return get().lookupEjbRemote(SormasToSormasFacade.class);
+	}
+
+	public static BAGExportFacade getBAGExportFacade() {
+		return get().lookupEjbRemote(BAGExportFacade.class);
+	}
+
+	public static SurvnetGatewayFacade getSurvnetGatewayFacade() {
+		return get().lookupEjbRemote(SurvnetGatewayFacade.class);
+	}
+
 	public static AreaFacade getAreaFacade() {
 		return get().lookupEjbRemote(AreaFacade.class);
+	}
+
+	public static QuarantineOrderFacade getQuarantineOrderFacade() {
+		return get().lookupEjbRemote(QuarantineOrderFacade.class);
+	}
+
+	public static ExternalJournalFacade getExternalJournalFacade() {
+		return get().lookupEjbRemote(ExternalJournalFacade.class);
+	}
+
+	public static DocumentFacade getDocumentFacade() {
+		return get().lookupEjbRemote(DocumentFacade.class);
 	}
 
 	@SuppressWarnings("unchecked")

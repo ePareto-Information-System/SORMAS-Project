@@ -29,14 +29,18 @@ import java.util.Date;
 import java.util.List;
 
 import org.hamcrest.Matchers;
+import org.jboss.weld.bean.builtin.FacadeInjectionPoint;
+import org.junit.Assert;
 import org.junit.Test;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.action.ActionDto;
 import de.symeda.sormas.api.event.DashboardEventDto;
 import de.symeda.sormas.api.event.EventCriteria;
 import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventExportDto;
 import de.symeda.sormas.api.event.EventIndexDto;
+import de.symeda.sormas.api.event.EventInvestigationStatus;
 import de.symeda.sormas.api.event.EventParticipantDto;
 import de.symeda.sormas.api.event.EventStatus;
 import de.symeda.sormas.api.event.TypeOfPlace;
@@ -60,6 +64,8 @@ public class EventFacadeEjbTest extends AbstractBeanTest {
 			.createUser(rdcf.region.getUuid(), rdcf.district.getUuid(), rdcf.facility.getUuid(), "Surv", "Sup", UserRole.SURVEILLANCE_SUPERVISOR);
 		EventDto event = creator.createEvent(
 			EventStatus.SIGNAL,
+			EventInvestigationStatus.PENDING,
+			"Title",
 			"Description",
 			"First",
 			"Name",
@@ -93,6 +99,8 @@ public class EventFacadeEjbTest extends AbstractBeanTest {
 		UserDto admin = creator.createUser(rdcf.region.getUuid(), rdcf.district.getUuid(), rdcf.facility.getUuid(), "Ad", "Min", UserRole.ADMIN);
 		EventDto event = creator.createEvent(
 			EventStatus.SIGNAL,
+			EventInvestigationStatus.PENDING,
+			"Title",
 			"Description",
 			"First",
 			"Name",
@@ -105,17 +113,53 @@ public class EventFacadeEjbTest extends AbstractBeanTest {
 			Disease.EVD,
 			rdcf.district);
 		PersonDto eventPerson = creator.createPerson("Event", "Person");
-		EventParticipantDto eventParticipant = creator.createEventParticipant(event.toReference(), eventPerson, "Description");
+		EventParticipantDto eventParticipant = creator.createEventParticipant(event.toReference(), eventPerson, "Description", user.toReference());
+		ActionDto action = creator.createAction(event.toReference());
 
 		// Database should contain the created event and event participant
 		assertNotNull(getEventFacade().getEventByUuid(event.getUuid()));
 		assertNotNull(getEventParticipantFacade().getEventParticipantByUuid(eventParticipant.getUuid()));
+		assertNotNull(getActionFacade().getByUuid(action.getUuid()));
 
 		getEventFacade().deleteEvent(event.getUuid());
 
 		// Event should be marked as deleted; Event participant should be deleted
 		assertTrue(getEventFacade().getDeletedUuidsSince(since).contains(event.getUuid()));
-		assertNull(getEventParticipantFacade().getEventParticipantByUuid(eventParticipant.getUuid()));
+		assertTrue(getEventParticipantFacade().getDeletedUuidsSince(since).contains(eventParticipant.getUuid()));
+		assertNull(getActionFacade().getByUuid(action.getUuid()));
+	}
+
+	@Test
+	public void testEventUpdate() {
+
+		RDCF rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
+		UserDto user = creator
+			.createUser(rdcf.region.getUuid(), rdcf.district.getUuid(), rdcf.facility.getUuid(), "Surv", "Sup", UserRole.SURVEILLANCE_SUPERVISOR);
+		UserDto admin = creator.createUser(rdcf.region.getUuid(), rdcf.district.getUuid(), rdcf.facility.getUuid(), "Ad", "Min", UserRole.ADMIN);
+		EventDto event = creator.createEvent(
+			EventStatus.SIGNAL,
+			EventInvestigationStatus.PENDING,
+			"Title",
+			null,
+			"First",
+			"Name",
+			"12345",
+			TypeOfPlace.PUBLIC_PLACE,
+			null,
+			new Date(),
+			user.toReference(),
+			user.toReference(),
+			Disease.EVD,
+			rdcf.district);
+
+		final String testDescription = "testDescription";
+		final Date startDate = DateHelper.subtractDays(new Date(), 1);
+		event.setEventDesc(testDescription);
+		event.setStartDate(startDate);
+
+		final EventDto updatedEvent = getEventFacade().saveEvent(event);
+		Assert.assertEquals(testDescription, updatedEvent.getEventDesc());
+		Assert.assertEquals(startDate, updatedEvent.getStartDate());
 	}
 
 	@Test
@@ -126,7 +170,9 @@ public class EventFacadeEjbTest extends AbstractBeanTest {
 			.createUser(rdcf.region.getUuid(), rdcf.district.getUuid(), rdcf.facility.getUuid(), "Surv", "Sup", UserRole.SURVEILLANCE_SUPERVISOR);
 		creator.createEvent(
 			EventStatus.SIGNAL,
-			"Description",
+			EventInvestigationStatus.PENDING,
+			"TitleEv1",
+			"DescriptionEv1",
 			"First",
 			"Name",
 			"12345",
@@ -138,12 +184,36 @@ public class EventFacadeEjbTest extends AbstractBeanTest {
 			Disease.EVD,
 			rdcf.district);
 
-		EventCriteria eventCriteria = new EventCriteria();
-		eventCriteria.eventStatus(EventStatus.SIGNAL);
-		List<EventIndexDto> results = getEventFacade().getIndexList(eventCriteria, 0, 100, null);
+		creator.createEvent(
+			EventStatus.EVENT,
+			EventInvestigationStatus.PENDING,
+			"TitleEv2",
+			"DescriptionEv2",
+			"First",
+			"Name",
+			"12345",
+			TypeOfPlace.HOSPITAL,
+			DateHelper.subtractDays(new Date(), 1),
+			new Date(),
+			user.toReference(),
+			user.toReference(),
+			Disease.EVD,
+			rdcf.district);
 
-		// List should have one entry
+		EventCriteria eventCriteria = new EventCriteria();
+		List<EventIndexDto> results = getEventFacade().getIndexList(eventCriteria, 0, 100, null);
+		assertEquals(2, results.size());
+
+		eventCriteria.eventStatus(EventStatus.SIGNAL);
+		results = getEventFacade().getIndexList(eventCriteria, 0, 100, null);
 		assertEquals(1, results.size());
+		assertEquals("TitleEv1", results.get(0).getEventTitle());
+
+		eventCriteria.eventStatus(null);
+		eventCriteria.setTypeOfPlace(TypeOfPlace.HOSPITAL);
+		results = getEventFacade().getIndexList(eventCriteria, 0, 100, null);
+		assertEquals(1, results.size());
+		assertEquals("TitleEv2", results.get(0).getEventTitle());
 	}
 
 	@Test
@@ -154,6 +224,8 @@ public class EventFacadeEjbTest extends AbstractBeanTest {
 
 		creator.createEvent(
 			EventStatus.SIGNAL,
+			EventInvestigationStatus.PENDING,
+			"Title",
 			"Description",
 			"First",
 			"Name",
@@ -181,6 +253,8 @@ public class EventFacadeEjbTest extends AbstractBeanTest {
 			.createUser(rdcf.region.getUuid(), rdcf.district.getUuid(), rdcf.facility.getUuid(), "Surv", "Sup", UserRole.SURVEILLANCE_SUPERVISOR);
 		EventDto event = creator.createEvent(
 			EventStatus.SIGNAL,
+			EventInvestigationStatus.PENDING,
+			"Title",
 			"Description",
 			"First",
 			"Name",
@@ -193,7 +267,7 @@ public class EventFacadeEjbTest extends AbstractBeanTest {
 			Disease.EVD,
 			rdcf.district);
 		PersonDto eventPerson = creator.createPerson("Event", "Person");
-		creator.createEventParticipant(event.toReference(), eventPerson, "Description");
+		creator.createEventParticipant(event.toReference(), eventPerson, "Description", user.toReference());
 		Date testStartDate = new Date();
 
 		// getAllActiveEvents/getAllActiveEventParticipants and getAllUuids should return length 1
@@ -235,6 +309,8 @@ public class EventFacadeEjbTest extends AbstractBeanTest {
 		// One archived event
 		EventDto event1 = creator.createEvent(
 			EventStatus.EVENT,
+			EventInvestigationStatus.PENDING,
+			"",
 			"",
 			"",
 			"",
@@ -252,6 +328,8 @@ public class EventFacadeEjbTest extends AbstractBeanTest {
 		// One other event
 		EventDto event2 = creator.createEvent(
 			EventStatus.SIGNAL,
+			EventInvestigationStatus.PENDING,
+			"",
 			"",
 			"",
 			"",

@@ -17,6 +17,9 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.contact;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -25,11 +28,14 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.contact.ContactCriteria;
 import de.symeda.sormas.api.contact.ContactDto;
+import de.symeda.sormas.api.contact.ContactIndexDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.person.PersonDto;
+import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.ui.ControllerProvider;
@@ -39,6 +45,7 @@ import de.symeda.sormas.ui.caze.CaseContactsView;
 import de.symeda.sormas.ui.epidata.ContactEpiDataView;
 import de.symeda.sormas.ui.utils.AbstractDetailView;
 import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.DirtyStateComponent;
 
 @SuppressWarnings("serial")
 public abstract class AbstractContactView extends AbstractDetailView<ContactReferenceDto> {
@@ -48,8 +55,8 @@ public abstract class AbstractContactView extends AbstractDetailView<ContactRefe
 	protected AbstractContactView(String viewName) {
 		super(viewName);
 
-		if (FacadeProvider.getConfigFacade().getSymptomJournalUrl() != null
-			&& UserProvider.getCurrent().hasUserRight(UserRight.CONTACT_CREATE_PIA_ACCOUNT)) {
+		if (FacadeProvider.getConfigFacade().getSymptomJournalConfig().getUrl() != null
+			&& UserProvider.getCurrent().hasUserRight(UserRight.MANAGE_EXTERNAL_SYMPTOM_JOURNAL)) {
 			Button btnCreatePIAAccount = new Button(I18nProperties.getCaption(Captions.contactCreatePIAAccount));
 			CssStyles.style(btnCreatePIAAccount, ValoTheme.BUTTON_PRIMARY);
 			btnCreatePIAAccount.addClickListener(e -> {
@@ -58,6 +65,18 @@ public abstract class AbstractContactView extends AbstractDetailView<ContactRefe
 				ControllerProvider.getContactController().openSymptomJournalWindow(contactPerson);
 			});
 			getButtonsLayout().addComponent(btnCreatePIAAccount);
+		}
+
+		if (FacadeProvider.getConfigFacade().getPatientDiaryConfig().getUrl() != null
+			&& UserProvider.getCurrent().hasUserRight(UserRight.MANAGE_EXTERNAL_SYMPTOM_JOURNAL)) {
+			Button btnClimedoAccount = new Button(I18nProperties.getCaption(Captions.Contact_climedoAccount));
+			CssStyles.style(btnClimedoAccount, ValoTheme.BUTTON_PRIMARY);
+			btnClimedoAccount.addClickListener(e -> {
+				ContactDto contact = FacadeProvider.getContactFacade().getContactByUuid(getReference().getUuid());
+				PersonDto contactPerson = FacadeProvider.getPersonFacade().getPersonByUuid(contact.getPerson().getUuid());
+				ControllerProvider.getContactController().registerPatientDiaryPerson(contactPerson);
+			});
+			getButtonsLayout().addComponent(btnClimedoAccount);
 		}
 	}
 
@@ -98,6 +117,16 @@ public abstract class AbstractContactView extends AbstractDetailView<ContactRefe
 		final ContactReferenceDto reference;
 		if (FacadeProvider.getContactFacade().exists(uuid)) {
 			reference = FacadeProvider.getContactFacade().getReferenceByUuid(uuid);
+		} else if (FacadeProvider.getPersonFacade().isValidPersonUuid(uuid)) {
+			PersonReferenceDto person = FacadeProvider.getPersonFacade().getReferenceByUuid(uuid);
+			ContactCriteria criteria = new ContactCriteria();
+			criteria.setPerson(person);
+			List<ContactIndexDto> personContacts = FacadeProvider.getContactFacade().getIndexList(criteria, null, null, Collections.emptyList());
+			if (personContacts != null) {
+				reference = FacadeProvider.getContactFacade().getReferenceByUuid(personContacts.get(0).getUuid());
+			} else {
+				reference = null;
+			}
 		} else {
 			reference = null;
 		}
@@ -110,7 +139,7 @@ public abstract class AbstractContactView extends AbstractDetailView<ContactRefe
 	}
 
 	@Override
-	protected void setSubComponent(Component newComponent) {
+	protected void setSubComponent(DirtyStateComponent newComponent) {
 		super.setSubComponent(newComponent);
 
 		if (FacadeProvider.getContactFacade().isDeleted(getReference().getUuid())) {
@@ -123,9 +152,13 @@ public abstract class AbstractContactView extends AbstractDetailView<ContactRefe
 	}
 
 	public void setContactEditPermission(Component component) {
-		Boolean isContactEditAllowed = FacadeProvider.getContactFacade().isContactEditAllowed(getContactRef().getUuid());
+		Boolean isContactEditAllowed = isContactEditAllowed();
 		if (!isContactEditAllowed) {
 			getComponent(getComponentIndex(component)).setEnabled(false);
 		}
+	}
+
+	protected boolean isContactEditAllowed() {
+		return FacadeProvider.getContactFacade().isContactEditAllowed(getContactRef().getUuid());
 	}
 }

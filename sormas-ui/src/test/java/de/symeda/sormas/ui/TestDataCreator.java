@@ -24,6 +24,7 @@ import java.util.HashSet;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.ReferenceDto;
+import de.symeda.sormas.api.VisitOrigin;
 import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
@@ -37,6 +38,7 @@ import de.symeda.sormas.api.event.EventStatus;
 import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.facility.FacilityDto;
 import de.symeda.sormas.api.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.facility.FacilityType;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.region.CommunityDto;
@@ -93,6 +95,24 @@ public class TestDataCreator {
 		cazePerson = FacadeProvider.getPersonFacade().savePerson(cazePerson);
 
 		return cazePerson;
+	}
+
+	public EventParticipantDto createEventParticipant(EventReferenceDto event, PersonDto eventPerson, UserReferenceDto reportingUser) {
+		return createEventParticipant(event, eventPerson, "Description", reportingUser);
+	}
+
+	public EventParticipantDto createEventParticipant(
+		EventReferenceDto event,
+		PersonDto eventPerson,
+		String involvementDescription,
+		UserReferenceDto reportingUser) {
+
+		EventParticipantDto eventParticipant = EventParticipantDto.build(event, reportingUser);
+		eventParticipant.setPerson(eventPerson);
+		eventParticipant.setInvolvementDescription(involvementDescription);
+
+		eventParticipant = FacadeProvider.getEventParticipantFacade().saveEventParticipant(eventParticipant);
+		return eventParticipant;
 	}
 
 	public ContactDto createContact(
@@ -152,7 +172,9 @@ public class TestDataCreator {
 		caze.setRegion(FacadeProvider.getRegionFacade().getRegionReferenceByUuid(rdcf.region.getUuid()));
 		caze.setDistrict(FacadeProvider.getDistrictFacade().getDistrictReferenceByUuid(rdcf.district.getUuid()));
 		caze.setCommunity(FacadeProvider.getCommunityFacade().getCommunityReferenceByUuid(rdcf.community.getUuid()));
-		caze.setHealthFacility(FacadeProvider.getFacilityFacade().getFacilityReferenceByUuid(rdcf.facility.getUuid()));
+		FacilityDto facility = FacadeProvider.getFacilityFacade().getByUuid(rdcf.facility.getUuid());
+		caze.setFacilityType(facility.getType());
+		caze.setHealthFacility(facility.toReference());
 
 		caze = FacadeProvider.getCaseFacade().saveCase(caze);
 
@@ -212,7 +234,7 @@ public class TestDataCreator {
 
 	public VisitDto createVisit(Disease disease, PersonReferenceDto contactPerson, Date visitDateTime, VisitStatus visitStatus) {
 
-		VisitDto visit = VisitDto.build(contactPerson, disease);
+		VisitDto visit = VisitDto.build(contactPerson, disease, VisitOrigin.USER);
 		visit.setVisitDateTime(visitDateTime);
 		visit.setVisitStatus(visitStatus);
 		visit = FacadeProvider.getVisitFacade().saveVisit(visit);
@@ -244,6 +266,7 @@ public class TestDataCreator {
 
 	public EventDto createEvent(
 		EventStatus eventStatus,
+		String eventTitle,
 		String eventDesc,
 		String srcFirstName,
 		String srcLastName,
@@ -257,6 +280,7 @@ public class TestDataCreator {
 
 		EventDto event = EventDto.build();
 		event.setEventStatus(eventStatus);
+		event.setEventTitle(eventTitle);
 		event.setEventDesc(eventDesc);
 		event.setSrcFirstName(srcFirstName);
 		event.setSrcLastName(srcLastName);
@@ -271,18 +295,6 @@ public class TestDataCreator {
 		event = FacadeProvider.getEventFacade().saveEvent(event);
 
 		return event;
-	}
-
-	public EventParticipantDto createEventParticipant(EventReferenceDto event, PersonDto eventPerson, String involvementDescription) {
-
-		EventParticipantDto eventParticipant = EventParticipantDto.build(event);
-		eventParticipant.setEvent(event);
-		eventParticipant.setPerson(eventPerson);
-		eventParticipant.setInvolvementDescription(involvementDescription);
-
-		eventParticipant = FacadeProvider.getEventParticipantFacade().saveEventParticipant(eventParticipant);
-
-		return eventParticipant;
 	}
 
 	public SampleDto createSample(
@@ -306,14 +318,15 @@ public class TestDataCreator {
 	}
 
 	public PathogenTestDto createPathogenTest(
-			SampleReferenceDto sample,
-			PathogenTestType testType,
-			Date testDateTime,
-			FacilityReferenceDto lab,
-			UserReferenceDto labUser,
-			PathogenTestResultType testResult,
-			String testResultText,
-			boolean verified, Disease disease) {
+		SampleReferenceDto sample,
+		PathogenTestType testType,
+		Date testDateTime,
+		FacilityReferenceDto lab,
+		UserReferenceDto labUser,
+		PathogenTestResultType testResult,
+		String testResultText,
+		boolean verified,
+		Disease disease) {
 
 		PathogenTestDto sampleTest = PathogenTestDto.build(sample, labUser);
 		sampleTest.setTestType(testType);
@@ -379,6 +392,7 @@ public class TestDataCreator {
 		FacilityDto facility = FacilityDto.build();
 		facility.setUuid(DataHelper.createUuid());
 		facility.setName(facilityName);
+		facility.setType(FacilityType.HOSPITAL);
 		facility.setCommunity(community);
 		facility.setDistrict(district);
 		facility.setRegion(region);

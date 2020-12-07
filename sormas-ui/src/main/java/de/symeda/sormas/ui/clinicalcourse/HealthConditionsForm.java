@@ -32,14 +32,17 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.locs;
 
 import java.util.Arrays;
 
+import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.v7.ui.Field;
 import com.vaadin.v7.ui.TextArea;
 
-import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.clinicalcourse.HealthConditionsDto;
+import de.symeda.sormas.api.i18n.Descriptions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
 import de.symeda.sormas.ui.utils.FieldHelper;
@@ -66,8 +69,8 @@ public class HealthConditionsForm extends AbstractEditForm<HealthConditionsDto> 
 					loc(OTHER_CONDITIONS);
 	//@formatter:on
 
-	public HealthConditionsForm() {
-		super(HealthConditionsDto.class, I18N_PREFIX, FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()));
+	public HealthConditionsForm(FieldVisibilityCheckers fieldVisibilityCheckers, UiFieldAccessCheckers fieldAccessCheckers) {
+		super(HealthConditionsDto.class, I18N_PREFIX, true, fieldVisibilityCheckers, fieldAccessCheckers);
 	}
 
 	@Override
@@ -100,9 +103,14 @@ public class HealthConditionsForm extends AbstractEditForm<HealthConditionsDto> 
 			ASTHMA,
 			SICKLE_CELL_DISEASE,
 			IMMUNODEFICIENCY_INCLUDING_HIV);
-		addField(OTHER_CONDITIONS, TextArea.class).setRows(3);
+		TextArea otherConditions = addField(OTHER_CONDITIONS, TextArea.class);
+		otherConditions.setRows(6);
+		otherConditions.setDescription(
+			I18nProperties.getPrefixDescription(HealthConditionsDto.I18N_PREFIX, OTHER_CONDITIONS, "") + "\n"
+				+ I18nProperties.getDescription(Descriptions.descGdpr));
 
 		initializeVisibilitiesAndAllowedVisibilities();
+		initializeAccessAndAllowedAccesses();
 
 		FieldHelper.setVisibleWhen(getFieldGroup(), HIV_ART, HIV, Arrays.asList(YesNoUnknown.YES), true);
 	}
@@ -110,5 +118,12 @@ public class HealthConditionsForm extends AbstractEditForm<HealthConditionsDto> 
 	@Override
 	protected String createHtmlLayout() {
 		return HTML_LAYOUT;
+	}
+
+	@Override
+	protected <F extends Field> F addFieldToLayout(CustomLayout layout, String propertyId, F field) {
+		field.addValueChangeListener(e -> fireValueChange(false));
+
+		return super.addFieldToLayout(layout, propertyId, field);
 	}
 }

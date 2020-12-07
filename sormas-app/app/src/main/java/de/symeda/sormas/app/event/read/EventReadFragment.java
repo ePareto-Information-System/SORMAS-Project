@@ -21,8 +21,11 @@ import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
+import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.app.BaseReadFragment;
 import de.symeda.sormas.app.R;
+import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.config.ConfigProvider;
 import de.symeda.sormas.app.backend.event.Event;
 import de.symeda.sormas.app.databinding.FragmentEventReadLayoutBinding;
@@ -32,7 +35,12 @@ public class EventReadFragment extends BaseReadFragment<FragmentEventReadLayoutB
 	private Event record;
 
 	public static EventReadFragment newInstance(Event activityRootData) {
-		return newInstance(EventReadFragment.class, null, activityRootData);
+		return newInstanceWithFieldCheckers(
+			EventReadFragment.class,
+			null,
+			activityRootData,
+			new FieldVisibilityCheckers(),
+			UiFieldAccessCheckers.forSensitiveData(activityRootData.isPseudonymized()));
 	}
 
 	// Overrides
@@ -46,6 +54,7 @@ public class EventReadFragment extends BaseReadFragment<FragmentEventReadLayoutB
 	public void onLayoutBinding(FragmentEventReadLayoutBinding contentBinding) {
 		contentBinding.setData(record);
 		contentBinding.setMultiDayEvent(record.getEndDate() != null);
+		contentBinding.setParticipantCount(DatabaseHelper.getEventParticipantDao().countByEvent(record).intValue());
 	}
 
 	@Override
@@ -58,6 +67,7 @@ public class EventReadFragment extends BaseReadFragment<FragmentEventReadLayoutB
 
 		contentBinding.eventStartDate.setCaption(startDateCaption);
 
+		setFieldVisibilitiesAndAccesses(EventDto.class, contentBinding.mainContent);
 	}
 
 	@Override

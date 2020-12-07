@@ -37,9 +37,12 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.ui.ComboBox;
+import com.vaadin.v7.ui.OptionGroup;
 
 import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.action.ActionStatus;
+import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.event.EventCriteria;
 import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventExportDto;
@@ -53,6 +56,7 @@ import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.SearchSpecificLayout;
+import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.utils.AbstractView;
@@ -60,11 +64,11 @@ import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.DateFormatHelper;
 import de.symeda.sormas.ui.utils.DownloadUtil;
+import de.symeda.sormas.ui.utils.FilteredGrid;
 import de.symeda.sormas.ui.utils.GridExportStreamResource;
 import de.symeda.sormas.ui.utils.LayoutUtil;
 import de.symeda.sormas.ui.utils.MenuBarHelper;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
-import de.symeda.sormas.ui.utils.ViewConfiguration;
 
 public class EventsView extends AbstractView {
 
@@ -73,9 +77,9 @@ public class EventsView extends AbstractView {
 	public static final String VIEW_NAME = "events";
 
 	private EventCriteria criteria;
-	private ViewConfiguration viewConfiguration;
+	private EventsViewConfiguration viewConfiguration;
 
-	private EventGrid grid;
+	private FilteredGrid<?, ?> grid;
 	private Button createButton;
 	private HashMap<Button, String> statusButtons;
 	private Button activeStatusButton;
@@ -87,23 +91,30 @@ public class EventsView extends AbstractView {
 
 	private VerticalLayout gridLayout;
 
-	private String originalViewTitle;
-
 	// Bulk operations
 	private MenuBar bulkOperationsDropdown;
 
 	public EventsView() {
 		super(VIEW_NAME);
 
-		originalViewTitle = getViewTitleLabel().getValue();
+		viewConfiguration = ViewModelProviders.of(getClass()).get(EventsViewConfiguration.class);
+		if (viewConfiguration.getViewType() == null) {
+			viewConfiguration.setViewType(EventsViewType.DEFAULT);
+		}
 
-		viewConfiguration = ViewModelProviders.of(getClass()).get(ViewConfiguration.class);
 		criteria = ViewModelProviders.of(EventsView.class).get(EventCriteria.class);
 		if (criteria.getRelevanceStatus() == null) {
 			criteria.relevanceStatus(EntityRelevanceStatus.ACTIVE);
 		}
 
-		grid = new EventGrid(criteria, getClass());
+		if (isDefaultViewType()) {
+			grid = new EventGrid(criteria, getClass());
+			grid.getDataProvider().addDataProviderListener(e -> updateStatusButtons());
+		} else {
+			grid = new EventActionsGrid(criteria, getClass());
+			grid.getDataProvider().addDataProviderListener(e -> updateStatusButtons());
+			getViewTitleLabel().setValue(I18nProperties.getCaption(Captions.View_actions));
+		}
 		gridLayout = new VerticalLayout();
 		gridLayout.addComponent(createFilterBar());
 		gridLayout.addComponent(createStatusFilterBar());
@@ -113,9 +124,26 @@ public class EventsView extends AbstractView {
 		gridLayout.setSizeFull();
 		gridLayout.setExpandRatio(grid, 1);
 		gridLayout.setStyleName("crud-main-layout");
-		grid.getDataProvider().addDataProviderListener(e -> updateStatusButtons());
 
 		addComponent(gridLayout);
+
+		OptionGroup eventsViewSwitcher = new OptionGroup();
+		eventsViewSwitcher.setId("eventsViewSwitcher");
+		CssStyles.style(eventsViewSwitcher, CssStyles.FORCE_CAPTION, ValoTheme.OPTIONGROUP_HORIZONTAL, CssStyles.OPTIONGROUP_HORIZONTAL_PRIMARY);
+		eventsViewSwitcher.addItem(EventsViewType.DEFAULT);
+		eventsViewSwitcher.setItemCaption(EventsViewType.DEFAULT, I18nProperties.getCaption(Captions.eventDefaultView));
+
+		eventsViewSwitcher.addItem(EventsViewType.ACTIONS);
+		eventsViewSwitcher.setItemCaption(EventsViewType.ACTIONS, I18nProperties.getCaption(Captions.eventActionsView));
+
+		eventsViewSwitcher.setValue(viewConfiguration.getViewType());
+		eventsViewSwitcher.addValueChangeListener(e -> {
+			EventsViewType viewType = (EventsViewType) e.getProperty().getValue();
+
+			viewConfiguration.setViewType(viewType);
+			SormasUI.get().getNavigator().navigateTo(EventsView.VIEW_NAME);
+		});
+		addHeaderComponent(eventsViewSwitcher);
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.EVENT_EXPORT)) {
 			VerticalLayout exportLayout = new VerticalLayout();
@@ -136,35 +164,37 @@ public class EventsView extends AbstractView {
 			}
 
 			{
-				StreamResource exportStreamResource = DownloadUtil.createCsvExportStreamResource(
-					EventExportDto.class,
-					null,
-					(Integer start, Integer max) -> FacadeProvider.getEventFacade().getExportList(grid.getCriteria(), start, max),
-					(propertyId, type) -> {
-						String caption = I18nProperties.findPrefixCaption(
-							propertyId,
-							EventExportDto.I18N_PREFIX,
-							EventIndexDto.I18N_PREFIX,
-							EventDto.I18N_PREFIX,
-							LocationDto.I18N_PREFIX);
-						if (Date.class.isAssignableFrom(type)) {
-							caption += " (" + DateFormatHelper.getDateFormatPattern() + ")";
-						}
-						return caption;
-					},
-					createFileNameWithCurrentDate("sormas_events_", ".csv"),
-					null);
-				addExportButton(
-					exportStreamResource,
-					exportPopupButton,
-					exportLayout,
-					VaadinIcons.FILE_TEXT,
-					Captions.exportDetailed,
-					Strings.infoDetailedExport);
+				if (isDefaultViewType()) {
+					StreamResource exportStreamResource = DownloadUtil.createCsvExportStreamResource(
+						EventExportDto.class,
+						null,
+						(Integer start, Integer max) -> FacadeProvider.getEventFacade().getExportList((EventCriteria) grid.getCriteria(), start, max),
+						(propertyId, type) -> {
+							String caption = I18nProperties.findPrefixCaption(
+								propertyId,
+								EventExportDto.I18N_PREFIX,
+								EventIndexDto.I18N_PREFIX,
+								EventDto.I18N_PREFIX,
+								LocationDto.I18N_PREFIX);
+							if (Date.class.isAssignableFrom(type)) {
+								caption += " (" + DateFormatHelper.getDateFormatPattern() + ")";
+							}
+							return caption;
+						},
+						createFileNameWithCurrentDate("sormas_events_", ".csv"),
+						null);
+					addExportButton(
+						exportStreamResource,
+						exportPopupButton,
+						exportLayout,
+						VaadinIcons.FILE_TEXT,
+						Captions.exportDetailed,
+						Strings.infoDetailedExport);
+				}
 			}
 		}
 
-		if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
+		if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS) && isDefaultViewType()) {
 			Button btnEnterBulkEditMode = ButtonHelper.createIconButton(Captions.actionEnterBulkEditMode, VaadinIcons.CHECK_SQUARE_O, null);
 			btnEnterBulkEditMode.setVisible(!viewConfiguration.isInEagerMode());
 
@@ -181,8 +211,8 @@ public class EventsView extends AbstractView {
 				viewConfiguration.setInEagerMode(true);
 				btnEnterBulkEditMode.setVisible(false);
 				btnLeaveBulkEditMode.setVisible(true);
-				grid.setEagerDataProvider();
-				grid.reload();
+				((EventGrid) grid).setEagerDataProvider();
+				((EventGrid) grid).reload();
 			});
 			btnLeaveBulkEditMode.addClickListener(e -> {
 				bulkOperationsDropdown.setVisible(false);
@@ -197,18 +227,24 @@ public class EventsView extends AbstractView {
 			createButton = ButtonHelper.createIconButton(
 				Captions.eventNewEvent,
 				VaadinIcons.PLUS_CIRCLE,
-				e -> ControllerProvider.getEventController().create(null),
+				e -> ControllerProvider.getEventController().create((CaseReferenceDto) null),
 				ValoTheme.BUTTON_PRIMARY);
 
 			addHeaderComponent(createButton);
 		}
 
-		Button searchSpecificEventButton = ButtonHelper.createIconButton(
-			Captions.eventSearchSpecificEvent,
-			VaadinIcons.SEARCH,
-			e -> buildAndOpenSearchSpecificEventWindow(),
-			ValoTheme.BUTTON_PRIMARY);
-		addHeaderComponent(searchSpecificEventButton);
+		if (isDefaultViewType()) {
+			Button searchSpecificEventButton = ButtonHelper.createIconButton(
+				Captions.eventSearchSpecificEvent,
+				VaadinIcons.SEARCH,
+				e -> buildAndOpenSearchSpecificEventWindow(),
+				ValoTheme.BUTTON_PRIMARY);
+			addHeaderComponent(searchSpecificEventButton);
+		}
+	}
+
+	private boolean isDefaultViewType() {
+		return viewConfiguration.getViewType() == EventsViewType.DEFAULT;
 	}
 
 	public HorizontalLayout createFilterBar() {
@@ -217,15 +253,17 @@ public class EventsView extends AbstractView {
 		filterLayout.setMargin(false);
 		filterLayout.setSizeUndefined();
 
-		filterForm = new EventsFilterForm();
+		filterForm = new EventsFilterForm(isDefaultViewType(), isDefaultViewType());
 		filterForm.addValueChangeListener(e -> {
-			navigateTo(criteria);
+			if (!filterForm.hasFilter()) {
+				navigateTo(null);
+			}
 		});
 		filterForm.addResetHandler(e -> {
 			ViewModelProviders.of(EventsView.class).remove(EventCriteria.class);
 			navigateTo(null);
 		});
-
+		filterForm.addApplyHandler(e -> navigateTo(criteria));
 		filterLayout.addComponent(filterForm);
 
 		return filterLayout;
@@ -273,28 +311,54 @@ public class EventsView extends AbstractView {
 
 		statusButtons = new HashMap<>();
 
-		Button statusAll = ButtonHelper.createButton(Captions.all, e -> {
-			criteria.eventStatus(null);
-			navigateTo(criteria);
-		}, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER);
-		statusAll.setCaptionAsHtml(true);
-
-		statusFilterLayout.addComponent(statusAll);
-
-		statusButtons.put(statusAll, I18nProperties.getCaption(Captions.all));
-		activeStatusButton = statusAll;
-
-		for (EventStatus status : EventStatus.values()) {
-			Button statusButton = ButtonHelper.createButtonWithCaption("status-" + status, status.toString(), e -> {
-				criteria.eventStatus(status);
+		if (isDefaultViewType()) {
+			Button statusAll = ButtonHelper.createButton(Captions.all, e -> {
+				criteria.setEventStatus(null);
 				navigateTo(criteria);
-			}, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER, CssStyles.BUTTON_FILTER_LIGHT);
-			statusButton.setCaptionAsHtml(true);
-			statusButton.setData(status);
+			}, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER);
+			statusAll.setCaptionAsHtml(true);
 
-			statusFilterLayout.addComponent(statusButton);
+			statusFilterLayout.addComponent(statusAll);
 
-			statusButtons.put(statusButton, status.toString());
+			statusButtons.put(statusAll, I18nProperties.getCaption(Captions.all));
+			activeStatusButton = statusAll;
+
+			for (EventStatus status : EventStatus.values()) {
+				Button statusButton = ButtonHelper.createButtonWithCaption("status-" + status, status.toString(), e -> {
+					criteria.setEventStatus(status);
+					navigateTo(criteria);
+				}, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER, CssStyles.BUTTON_FILTER_LIGHT);
+				statusButton.setCaptionAsHtml(true);
+				statusButton.setData(status);
+
+				statusFilterLayout.addComponent(statusButton);
+
+				statusButtons.put(statusButton, status.toString());
+			}
+		} else {
+			Button statusAll = ButtonHelper.createButton(Captions.all, e -> {
+				criteria.setActionStatus(null);
+				navigateTo(criteria);
+			}, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER);
+			statusAll.setCaptionAsHtml(true);
+
+			statusFilterLayout.addComponent(statusAll);
+
+			statusButtons.put(statusAll, I18nProperties.getCaption(Captions.all));
+			activeStatusButton = statusAll;
+
+			for (ActionStatus status : ActionStatus.values()) {
+				Button statusButton = ButtonHelper.createButtonWithCaption("status-" + status, status.toString(), e -> {
+					criteria.actionStatus(status);
+					navigateTo(criteria);
+				}, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER, CssStyles.BUTTON_FILTER_LIGHT);
+				statusButton.setCaptionAsHtml(true);
+				statusButton.setData(status);
+
+				statusFilterLayout.addComponent(statusButton);
+
+				statusButtons.put(statusButton, status.toString());
+			}
 		}
 
 		HorizontalLayout actionButtonsLayout = new HorizontalLayout();
@@ -330,24 +394,25 @@ public class EventsView extends AbstractView {
 			}
 
 			// Bulk operation dropdown
-			if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
+			if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS) && isDefaultViewType()) {
+				EventGrid eventGrid = (EventGrid) grid;
 				bulkOperationsDropdown = MenuBarHelper.createDropDown(
 					Captions.bulkActions,
 					new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkEdit), VaadinIcons.ELLIPSIS_H, selectedItem -> {
-						ControllerProvider.getEventController().showBulkEventDataEditComponent(grid.asMultiSelect().getSelectedItems());
+						ControllerProvider.getEventController().showBulkEventDataEditComponent(eventGrid.asMultiSelect().getSelectedItems());
 					}),
 					new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkDelete), VaadinIcons.TRASH, selectedItem -> {
 						ControllerProvider.getEventController()
-							.deleteAllSelectedItems(grid.asMultiSelect().getSelectedItems(), () -> navigateTo(criteria));
+							.deleteAllSelectedItems(eventGrid.asMultiSelect().getSelectedItems(), () -> navigateTo(criteria));
 					}),
 					new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.actionArchive), VaadinIcons.ARCHIVE, selectedItem -> {
 						ControllerProvider.getEventController()
-							.archiveAllSelectedItems(grid.asMultiSelect().getSelectedItems(), () -> navigateTo(criteria));
-					}),
+							.archiveAllSelectedItems(eventGrid.asMultiSelect().getSelectedItems(), () -> navigateTo(criteria));
+					}, EntityRelevanceStatus.ACTIVE.equals(criteria.getRelevanceStatus())),
 					new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.actionDearchive), VaadinIcons.ARCHIVE, selectedItem -> {
 						ControllerProvider.getEventController()
-							.dearchiveAllSelectedItems(grid.asMultiSelect().getSelectedItems(), () -> navigateTo(criteria));
-					}, false));
+							.dearchiveAllSelectedItems(eventGrid.asMultiSelect().getSelectedItems(), () -> navigateTo(criteria));
+					}, EntityRelevanceStatus.ARCHIVED.equals(criteria.getRelevanceStatus())));
 
 				bulkOperationsDropdown.setVisible(viewConfiguration.isInEagerMode());
 				actionButtonsLayout.addComponent(bulkOperationsDropdown);
@@ -367,8 +432,17 @@ public class EventsView extends AbstractView {
 			params = params.substring(1);
 			criteria.fromUrlParams(params);
 		}
+
+		if (viewConfiguration.isInEagerMode() && isDefaultViewType()) {
+			((EventGrid) grid).setEagerDataProvider();
+		}
+
 		updateFilterComponents();
-		grid.reload();
+		if (isDefaultViewType()) {
+			((EventGrid) grid).reload();
+		} else {
+			((EventActionsGrid) grid).reload();
+		}
 	}
 
 	public void updateFilterComponents() {
@@ -391,7 +465,7 @@ public class EventsView extends AbstractView {
 		statusButtons.keySet().forEach(b -> {
 			CssStyles.style(b, CssStyles.BUTTON_FILTER_LIGHT);
 			b.setCaption(statusButtons.get(b));
-			if (b.getData() == criteria.getEventStatus()) {
+			if (b.getData() == (isDefaultViewType() ? criteria.getEventStatus() : criteria.getActionStatus())) {
 				activeStatusButton = b;
 			}
 		});

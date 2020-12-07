@@ -41,6 +41,7 @@ import com.vaadin.v7.ui.Field;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.utils.Diseases;
+import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 
 public final class FieldHelper {
 
@@ -52,7 +53,7 @@ public final class FieldHelper {
 		FieldGroup fieldGroup,
 		Object targetPropertyId,
 		Object sourcePropertyId,
-		List<Object> sourceValues,
+		List<?> sourceValues,
 		boolean clearOnReadOnly,
 		boolean readOnlyWhenNull) {
 
@@ -62,9 +63,9 @@ public final class FieldHelper {
 	@SuppressWarnings("rawtypes")
 	public static void setReadOnlyWhen(
 		final FieldGroup fieldGroup,
-		List<Object> targetPropertyIds,
+		List<?> targetPropertyIds,
 		Object sourcePropertyId,
-		final List<Object> sourceValues,
+		final List<?> sourceValues,
 		final boolean clearOnReadOnly,
 		boolean readOnlyWhenNull) {
 
@@ -76,10 +77,10 @@ public final class FieldHelper {
 		// initialize
 		{
 			boolean readOnly;
-			if (sourceField.getValue() == null) {
+			if (getNullableSourceFieldValue(sourceField) == null) {
 				readOnly = readOnlyWhenNull;
 			} else {
-				readOnly = sourceValues.contains(sourceField.getValue());
+				readOnly = sourceValues.contains(getNullableSourceFieldValue(sourceField));
 			}
 			for (Object targetPropertyId : targetPropertyIds) {
 				Field targetField = fieldGroup.getField(targetPropertyId);
@@ -98,10 +99,10 @@ public final class FieldHelper {
 
 		sourceField.addValueChangeListener(event -> {
 			boolean readOnly;
-			if (sourceField.getValue() == null) {
+			if (getNullableSourceFieldValue(sourceField) == null) {
 				readOnly = readOnlyWhenNull;
 			} else {
-				readOnly = sourceValues.contains(event.getProperty().getValue());
+				readOnly = sourceValues.contains(getNullableSourceFieldValue(((Field) event.getProperty())));
 			}
 			for (Object targetPropertyId : targetPropertyIds) {
 				Field targetField = fieldGroup.getField(targetPropertyId);
@@ -123,10 +124,30 @@ public final class FieldHelper {
 		FieldGroup fieldGroup,
 		String targetPropertyId,
 		Object sourcePropertyId,
-		List<Object> sourceValues,
+		Object sourceValue,
+		boolean clearOnHidden) {
+
+		setVisibleWhen(fieldGroup, targetPropertyId, sourcePropertyId, Arrays.asList(sourceValue), clearOnHidden);
+	}
+
+	public static void setVisibleWhen(
+		FieldGroup fieldGroup,
+		String targetPropertyId,
+		Object sourcePropertyId,
+		List<?> sourceValues,
 		boolean clearOnHidden) {
 
 		setVisibleWhen(fieldGroup, Arrays.asList(targetPropertyId), sourcePropertyId, sourceValues, clearOnHidden);
+	}
+
+	public static void setVisibleWhen(
+		FieldGroup fieldGroup,
+		List<String> targetPropertyIds,
+		Object sourcePropertyId,
+		Object sourceValue,
+		boolean clearOnHidden) {
+
+		setVisibleWhen(fieldGroup, targetPropertyIds, sourcePropertyId, Arrays.asList(sourceValue), clearOnHidden);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -134,7 +155,7 @@ public final class FieldHelper {
 		final FieldGroup fieldGroup,
 		List<String> targetPropertyIds,
 		Object sourcePropertyId,
-		final List<Object> sourceValues,
+		final List<?> sourceValues,
 		final boolean clearOnHidden) {
 
 		Field sourceField = fieldGroup.getField(sourcePropertyId);
@@ -147,7 +168,7 @@ public final class FieldHelper {
 		FieldGroup fieldGroup,
 		String targetPropertyId,
 		Field sourceField,
-		List<Object> sourceValues,
+		List<?> sourceValues,
 		boolean clearOnHidden) {
 
 		setVisibleWhen(fieldGroup, Arrays.asList(targetPropertyId), sourceField, sourceValues, clearOnHidden);
@@ -158,7 +179,7 @@ public final class FieldHelper {
 		final FieldGroup fieldGroup,
 		List<String> targetPropertyIds,
 		Field sourceField,
-		final List<Object> sourceValues,
+		final List<?> sourceValues,
 		final boolean clearOnHidden) {
 
 		final List<? extends Field<?>> targetFields = targetPropertyIds.stream().map(id -> fieldGroup.getField(id)).collect(Collectors.toList());
@@ -167,7 +188,7 @@ public final class FieldHelper {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static void setVisibleWhen(Field sourceField, List<? extends Field<?>> targetFields, List<Object> sourceValues, boolean clearOnHidden) {
+	public static void setVisibleWhen(Field sourceField, List<? extends Field<?>> targetFields, List<?> sourceValues, boolean clearOnHidden) {
 		if (sourceField != null) {
 			if (sourceField instanceof AbstractField<?>) {
 				((AbstractField) sourceField).setImmediate(true);
@@ -175,7 +196,7 @@ public final class FieldHelper {
 
 			// initialize
 			{
-				boolean visible = sourceValues.contains(sourceField.getValue());
+				boolean visible = sourceValues.contains(getNullableSourceFieldValue(sourceField));
 
 				targetFields.forEach(targetField -> {
 					targetField.setVisible(visible);
@@ -186,7 +207,7 @@ public final class FieldHelper {
 			}
 
 			sourceField.addValueChangeListener(event -> {
-				boolean visible = sourceValues.contains(event.getProperty().getValue());
+				boolean visible = sourceValues.contains(getNullableSourceFieldValue(((Field) event.getProperty())));
 				targetFields.forEach(targetField -> {
 					targetField.setVisible(visible);
 					if (!visible && clearOnHidden && targetField.getValue() != null) {
@@ -201,13 +222,13 @@ public final class FieldHelper {
 		if (sourceField != null) {
 			// initialize
 			{
-				boolean matches = sourceValue.equals(sourceField.getValue());
+				boolean matches = sourceValue.equals(getNullableSourceFieldValue(sourceField));
 
 				targetField.setCaption(matches ? matchCaption : noMatchCaption);
 			}
 
 			sourceField.addValueChangeListener(event -> {
-				boolean matches = sourceValue.equals(sourceField.getValue());
+				boolean matches = sourceValue.equals(getNullableSourceFieldValue(sourceField));
 				targetField.setCaption(matches ? matchCaption : noMatchCaption);
 			});
 		}
@@ -216,7 +237,7 @@ public final class FieldHelper {
 	public static void setVisibleWhen(
 		final FieldGroup fieldGroup,
 		List<String> targetPropertyIds,
-		Map<Object, List<Object>> sourcePropertyIdsAndValues,
+		Map<?, ? extends List<?>> sourcePropertyIdsAndValues,
 		final boolean clearOnHidden) {
 
 		onValueChangedSetVisible(fieldGroup, targetPropertyIds, sourcePropertyIdsAndValues, clearOnHidden);
@@ -230,7 +251,7 @@ public final class FieldHelper {
 	public static void setVisibleWhen(
 		final FieldGroup fieldGroup,
 		String targetPropertyId,
-		Map<Object, List<Object>> sourcePropertyIdsAndValues,
+		Map<?, ? extends List<?>> sourcePropertyIdsAndValues,
 		final boolean clearOnHidden) {
 
 		setVisibleWhen(fieldGroup, Arrays.asList(targetPropertyId), sourcePropertyIdsAndValues, clearOnHidden);
@@ -239,7 +260,7 @@ public final class FieldHelper {
 	private static void onValueChangedSetVisible(
 		final FieldGroup fieldGroup,
 		List<String> targetPropertyIds,
-		Map<Object, List<Object>> sourcePropertyIdsAndValues,
+		Map<?, ? extends List<?>> sourcePropertyIdsAndValues,
 		final boolean clearOnHidden) {
 
 		//a workaround variable to be modified in the forEach lambda
@@ -263,11 +284,7 @@ public final class FieldHelper {
 		}
 	}
 
-	public static void setRequiredWhen(
-		FieldGroup fieldGroup,
-		Object sourcePropertyId,
-		List<String> targetPropertyIds,
-		final List<Object> sourceValues) {
+	public static void setRequiredWhen(FieldGroup fieldGroup, Object sourcePropertyId, List<String> targetPropertyIds, final List<?> sourceValues) {
 
 		setRequiredWhen(fieldGroup, fieldGroup.getField(sourcePropertyId), targetPropertyIds, sourceValues);
 	}
@@ -277,7 +294,7 @@ public final class FieldHelper {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static void setRequiredWhen(FieldGroup fieldGroup, Field sourceField, List<String> targetPropertyIds, final List<Object> sourceValues) {
+	public static void setRequiredWhen(FieldGroup fieldGroup, Field sourceField, List<String> targetPropertyIds, final List<?> sourceValues) {
 		setRequiredWhen(fieldGroup, sourceField, targetPropertyIds, sourceValues, false, null);
 	}
 
@@ -286,7 +303,7 @@ public final class FieldHelper {
 		FieldGroup fieldGroup,
 		Field sourceField,
 		List<String> targetPropertyIds,
-		final List<Object> sourceValues,
+		final List<?> sourceValues,
 		Disease disease) {
 		setRequiredWhen(fieldGroup, sourceField, targetPropertyIds, sourceValues, false, disease);
 	}
@@ -302,7 +319,7 @@ public final class FieldHelper {
 		FieldGroup fieldGroup,
 		Field sourceField,
 		List<String> targetPropertyIds,
-		final List<Object> sourceValues,
+		final List<?> sourceValues,
 		boolean requiredWhenNot,
 		Disease disease) {
 
@@ -315,7 +332,7 @@ public final class FieldHelper {
 	public static void setRequiredWhen(
 		Field sourceField,
 		List<? extends Field<?>> targetFields,
-		List<Object> sourceValues,
+		List<?> sourceValues,
 		boolean requiredWhenNot,
 		Disease disease) {
 
@@ -326,7 +343,7 @@ public final class FieldHelper {
 
 			// initialize
 			{
-				boolean required = sourceValues.contains(sourceField.getValue());
+				boolean required = sourceValues.contains(getNullableSourceFieldValue(sourceField));
 
 				for (Field targetField : targetFields) {
 					if (!targetField.isVisible()) {
@@ -341,7 +358,7 @@ public final class FieldHelper {
 			}
 
 			sourceField.addValueChangeListener(event -> {
-				boolean required = sourceValues.contains(event.getProperty().getValue());
+				boolean required = sourceValues.contains(getNullableSourceFieldValue(((Field) event.getProperty())));
 				required = required != requiredWhenNot;
 				for (Field targetField : targetFields) {
 					if (!targetField.isVisible()) {
@@ -365,8 +382,8 @@ public final class FieldHelper {
 	public static void setEnabledWhen(
 		FieldGroup fieldGroup,
 		Field sourceField,
-		final List<Object> sourceValues,
-		List<Object> targetPropertyIds,
+		final List<?> sourceValues,
+		List<?> targetPropertyIds,
 		boolean clearOnDisabled) {
 
 		if (sourceField instanceof AbstractField<?>) {
@@ -375,7 +392,7 @@ public final class FieldHelper {
 
 		// initialize
 		{
-			boolean enabled = sourceValues.contains(sourceField.getValue());
+			boolean enabled = sourceValues.contains(getNullableSourceFieldValue(sourceField));
 			for (Object targetPropertyId : targetPropertyIds) {
 				Field targetField = fieldGroup.getField(targetPropertyId);
 				targetField.setEnabled(enabled);
@@ -386,7 +403,7 @@ public final class FieldHelper {
 		}
 
 		sourceField.addValueChangeListener(event -> {
-			boolean enabled = sourceValues.contains(event.getProperty().getValue());
+			boolean enabled = sourceValues.contains(getNullableSourceFieldValue(((Field) event.getProperty())));
 			for (Object targetPropertyId : targetPropertyIds) {
 				Field targetField = fieldGroup.getField(targetPropertyId);
 				targetField.setEnabled(enabled);
@@ -397,7 +414,7 @@ public final class FieldHelper {
 		});
 	}
 
-	public static void setEnabled(boolean enabled, Field ... fields){
+	public static void setEnabled(boolean enabled, Field... fields) {
 		Arrays.asList(fields).forEach(field -> field.setEnabled(enabled));
 	}
 
@@ -454,11 +471,20 @@ public final class FieldHelper {
 		"rawtypes" })
 	public static void updateEnumData(AbstractSelect select, Iterable<? extends Enum> enumData) {
 
+		boolean readOnly = select.isReadOnly();
+		select.setReadOnly(false);
+		Object value = select.getValue();
 		select.removeAllItems();
-		for (Object r : enumData) {
-			Item newItem = select.addItem(r);
-			newItem.getItemProperty(DefaultFieldGroupFieldFactory.CAPTION_PROPERTY_ID).setValue(r.toString());
+		select.addContainerProperty(SormasFieldGroupFieldFactory.CAPTION_PROPERTY_ID, String.class, "");
+		select.setItemCaptionPropertyId((SormasFieldGroupFieldFactory.CAPTION_PROPERTY_ID));
+		if (enumData != null) {
+			for (Object r : enumData) {
+				Item newItem = select.addItem(r);
+				newItem.getItemProperty(DefaultFieldGroupFieldFactory.CAPTION_PROPERTY_ID).setValue(r.toString());
+			}
 		}
+		select.setValue(value);
+		select.setReadOnly(readOnly);
 	}
 
 	public static void removeItems(AbstractSelect select) {
@@ -494,7 +520,7 @@ public final class FieldHelper {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static void addSoftRequiredStyleWhen(Field<?> sourceField, List<Field<?>> targetFields, final List<Object> sourceValues) {
+	public static void addSoftRequiredStyleWhen(Field<?> sourceField, List<Field<?>> targetFields, final List<?> sourceValues) {
 
 		if (sourceField instanceof AbstractField<?>) {
 			((AbstractField) sourceField).setImmediate(true);
@@ -502,7 +528,7 @@ public final class FieldHelper {
 
 		// initialize
 		{
-			boolean softRequired = sourceValues.contains(sourceField.getValue());
+			boolean softRequired = sourceValues.contains(getNullableSourceFieldValue(sourceField));
 			for (Field<?> targetField : targetFields) {
 				if (softRequired) {
 					addSoftRequiredStyle(targetField);
@@ -513,7 +539,7 @@ public final class FieldHelper {
 		}
 
 		sourceField.addValueChangeListener(event -> {
-			boolean softRequired = sourceValues.contains(event.getProperty().getValue());
+			boolean softRequired = sourceValues.contains(getNullableSourceFieldValue(((Field) event.getProperty())));
 			for (Field<?> targetField : targetFields) {
 				if (softRequired) {
 					addSoftRequiredStyle(targetField);
@@ -529,7 +555,7 @@ public final class FieldHelper {
 		FieldGroup fieldGroup,
 		Field sourceField,
 		List<String> targetPropertyIds,
-		final List<Object> sourceValues,
+		final List<?> sourceValues,
 		Disease disease) {
 
 		if (sourceField instanceof AbstractField<?>) {
@@ -538,7 +564,7 @@ public final class FieldHelper {
 
 		// initialize
 		{
-			boolean required = sourceValues.contains(sourceField.getValue());
+			boolean required = sourceValues.contains(getNullableSourceFieldValue(sourceField));
 			for (Object targetPropertyId : targetPropertyIds) {
 				Field targetField = fieldGroup.getField(targetPropertyId);
 				if (disease == null || Diseases.DiseasesConfiguration.isDefined(SymptomsDto.class, (String) targetPropertyId, disease)) {
@@ -552,7 +578,7 @@ public final class FieldHelper {
 		}
 
 		sourceField.addValueChangeListener(event -> {
-			boolean required = sourceValues.contains(event.getProperty().getValue());
+			boolean required = sourceValues.contains(getNullableSourceFieldValue(((Field) event.getProperty())));
 			for (Object targetPropertyId : targetPropertyIds) {
 				Field targetField = fieldGroup.getField(targetPropertyId);
 				if (disease == null || Diseases.DiseasesConfiguration.isDefined(SymptomsDto.class, (String) targetPropertyId, disease)) {
@@ -580,5 +606,19 @@ public final class FieldHelper {
 	@SuppressWarnings("rawtypes")
 	public static Stream<Field> streamFields(Component parent) {
 		return FieldHelper.stream(parent).filter(c -> c instanceof Field).map(c -> (Field) c);
+	}
+
+	public static Collection<Enum<?>> getVisibleEnumItems(Class<Enum<?>> enumClass, FieldVisibilityCheckers checkers) {
+		return Arrays.stream(enumClass.getEnumConstants())
+			.filter(constant -> checkers.isVisible(enumClass, constant.name()))
+			.collect(Collectors.toList());
+	}
+
+	public static Object getNullableSourceFieldValue(Field sourceField) {
+		if (sourceField instanceof NullableOptionGroup && ((NullableOptionGroup) sourceField).isMultiSelect()) {
+			return ((NullableOptionGroup) sourceField).getNullableValue();
+		} else {
+			return sourceField.getValue();
+		}
 	}
 }

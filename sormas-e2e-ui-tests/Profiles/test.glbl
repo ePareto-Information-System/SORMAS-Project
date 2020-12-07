@@ -3,7 +3,7 @@
    <description></description>
    <name>test</name>
    <tag></tag>
-   <defaultProfile>false</defaultProfile>
+   <defaultProfile>true</defaultProfile>
    <GlobalVariableEntity>
       <description>Sormas Testapplication</description>
       <initValue>'https://test.sormas.netzlink.com/'</initValue>
@@ -113,5 +113,15 @@
       <description>Downloadpath for file download in browser</description>
       <initValue>'C:\\Users\\raghavender.pola\\Downloads'</initValue>
       <name>gDownloadPath</name>
+   </GlobalVariableEntity>
+   <GlobalVariableEntity>
+      <description></description>
+      <initValue>'ImpUser'</initValue>
+      <name>gUsernameImportUser</name>
+   </GlobalVariableEntity>
+   <GlobalVariableEntity>
+      <description></description>
+      <initValue>'FAZQAE3xLJjx'</initValue>
+      <name>gPasswordImportUser</name>
    </GlobalVariableEntity>
 </GlobalVariableEntities>

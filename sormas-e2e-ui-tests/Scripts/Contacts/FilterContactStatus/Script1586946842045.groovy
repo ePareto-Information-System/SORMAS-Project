@@ -1,12 +1,10 @@
 import static com.kms.katalon.core.testcase.TestCaseFactory.findTestCase
 import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
 
+import com.hzi.Helper
 import com.kms.katalon.core.model.FailureHandling as FailureHandling
-import com.kms.katalon.core.testobject.ConditionType as ConditionType
 import com.kms.katalon.core.testobject.TestObject as TestObject
 import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
-
-import com.hzi.Helper
 
 WebUI.callTestCase(findTestCase('Contacts/partials/loginAsContactSupervisor'), [:], FailureHandling.STOP_ON_FAILURE)
 
@@ -25,7 +23,7 @@ WebUI.click(findTestObject('Contacts/ContactsOverview/div_Converted to case'))
 convertedToCases = CustomKeywords.'com.hzi.Table.getTableRowsByAttribute'(tableObject)
 println('convertedToCases:' + convertedToCases)
 
-WebUI.click(findTestObject('Contacts/ContactsOverview/dropped_contacts_filter'))
+WebUI.click(findTestObject('Contacts/ContactsOverview/div_Dropped'))
 droppedCases = CustomKeywords.'com.hzi.Table.getTableRowsByAttribute'(tableObject)
 println('droppedCases:' + droppedCases)
 

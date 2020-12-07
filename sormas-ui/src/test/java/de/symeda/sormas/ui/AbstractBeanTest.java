@@ -27,10 +27,13 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import de.symeda.sormas.api.region.CountryFacade;
+import de.symeda.sormas.backend.region.CountryFacadeEjb;
 import org.junit.Before;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseFacade;
+import de.symeda.sormas.api.caze.caseimport.CaseImportFacade;
 import de.symeda.sormas.api.facility.FacilityFacade;
 import de.symeda.sormas.api.infrastructure.PointOfEntryFacade;
 import de.symeda.sormas.api.person.PersonFacade;
@@ -42,6 +45,7 @@ import de.symeda.sormas.api.sample.SampleFacade;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.backend.caze.CaseFacadeEjb.CaseFacadeEjbLocal;
+import de.symeda.sormas.backend.caze.caseimport.CaseImportFacadeEjb.CaseImportFacadeEjbLocal;
 import de.symeda.sormas.backend.disease.DiseaseConfiguration;
 import de.symeda.sormas.backend.disease.DiseaseConfigurationService;
 import de.symeda.sormas.backend.facility.FacilityFacadeEjb.FacilityFacadeEjbLocal;
@@ -76,6 +80,10 @@ public class AbstractBeanTest extends BaseBeanTest {
 		em.getTransaction().begin();
 		Query nativeQuery = em.createNativeQuery("CREATE ALIAS similarity FOR \"de.symeda.sormas.ui.H2Function.similarity\"");
 		nativeQuery.executeUpdate();
+		nativeQuery = em.createNativeQuery("CREATE ALIAS similarity_operator FOR \"de.symeda.sormas.ui.H2Function.similarity_operator\"");
+		nativeQuery.executeUpdate();
+		nativeQuery = em.createNativeQuery("CREATE ALIAS set_limit FOR \"de.symeda.sormas.ui.H2Function.set_limit\"");
+		nativeQuery.executeUpdate();
 		em.getTransaction().commit();
 	}
 
@@ -95,6 +103,14 @@ public class AbstractBeanTest extends BaseBeanTest {
 
 	public CaseFacade getCaseFacade() {
 		return getBean(CaseFacadeEjbLocal.class);
+	}
+
+	public CaseImportFacade getCaseImportFacade() {
+		return getBean(CaseImportFacadeEjbLocal.class);
+	}
+
+	public CountryFacade getCountryFacade() {
+		return getBean(CountryFacadeEjb.CountryFacadeEjbLocal.class);
 	}
 
 	public RegionFacade getRegionFacade() {

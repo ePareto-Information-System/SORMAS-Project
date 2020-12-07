@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -15,10 +16,13 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
+import javax.persistence.criteria.Subquery;
 
 import de.symeda.sormas.api.caze.CaseCriteria;
 import de.symeda.sormas.api.caze.CaseIndexDetailedDto;
@@ -26,6 +30,8 @@ import de.symeda.sormas.api.caze.CaseIndexDto;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.backend.common.AbstractAdoService;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
+import de.symeda.sormas.backend.event.Event;
+import de.symeda.sormas.backend.event.EventParticipant;
 import de.symeda.sormas.backend.facility.Facility;
 import de.symeda.sormas.backend.infrastructure.PointOfEntry;
 import de.symeda.sormas.backend.location.Location;
@@ -35,6 +41,7 @@ import de.symeda.sormas.backend.region.District;
 import de.symeda.sormas.backend.region.Region;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.util.ModelConstants;
+import de.symeda.sormas.utils.CaseJoins;
 
 @Stateless
 @LocalBean
@@ -46,7 +53,7 @@ public class CaseListCriteriaBuilder {
 	private CaseService caseService;
 
 	public CriteriaQuery<CaseIndexDto> buildIndexCriteria(CaseCriteria caseCriteria, List<SortProperty> sortProperties) {
-		return buildIndexCriteria(CaseIndexDto.class, this::getCaseIndexSelections, caseCriteria, this::getIndexOrders, sortProperties);
+		return buildIndexCriteria(CaseIndexDto.class, this::getCaseIndexSelections, caseCriteria, this::getIndexOrders, sortProperties, false);
 	}
 
 	public CriteriaQuery<CaseIndexDetailedDto> buildIndexDetailedCriteria(CaseCriteria caseCriteria, List<SortProperty> sortProperties) {
@@ -56,7 +63,8 @@ public class CaseListCriteriaBuilder {
 			this::getCaseIndexDetailedSelections,
 			caseCriteria,
 			this::getIndexDetailOrders,
-			sortProperties);
+			sortProperties,
+			true);
 	}
 
 	private <T> CriteriaQuery<T> buildIndexCriteria(
@@ -64,14 +72,40 @@ public class CaseListCriteriaBuilder {
 		BiFunction<Root<Case>, CaseJoins<Case>, List<Selection<?>>> selectionProvider,
 		CaseCriteria caseCriteria,
 		OrderExpressionProvider orderExpressionProvider,
-		List<SortProperty> sortProperties) {
+		List<SortProperty> sortProperties,
+		boolean withEventInfo) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<T> cq = cb.createQuery(type);
 		Root<Case> caze = cq.from(Case.class);
 		CaseJoins<Case> joins = new CaseJoins<>(caze);
 
-		cq.multiselect(selectionProvider.apply(caze, joins));
+		List<Selection<?>> selectionList = new ArrayList<>(selectionProvider.apply(caze, joins));
+
+		Subquery<Integer> visitCountSq = cq.subquery(Integer.class);
+		Root<Case> visitCountRoot = visitCountSq.from(Case.class);
+		visitCountSq.where(cb.equal(visitCountRoot.get(AbstractDomainObject.ID), caze.get(AbstractDomainObject.ID)));
+		visitCountSq.select(cb.size(visitCountRoot.get(Case.VISITS)));
+		selectionList.add(visitCountSq);
+
+		if (withEventInfo) {
+			// Events count subquery
+			Subquery<Long> eventCountSq = cq.subquery(Long.class);
+			Root<EventParticipant> eventCountRoot = eventCountSq.from(EventParticipant.class);
+			Join<EventParticipant, Event> event = eventCountRoot.join(EventParticipant.EVENT, JoinType.INNER);
+			Join<EventParticipant, Case> resultingCase = eventCountRoot.join(EventParticipant.RESULTING_CASE, JoinType.INNER);
+			eventCountSq.where(
+				cb.and(
+					cb.equal(resultingCase.get(Case.ID), caze.get(Case.ID)),
+					cb.isFalse(event.get(Event.DELETED)),
+					cb.isFalse(event.get(Event.ARCHIVED)),
+					cb.isFalse(eventCountRoot.get(EventParticipant.DELETED))));
+			eventCountSq.select(cb.countDistinct(event.get(Event.ID)));
+			selectionList.add(eventCountSq);
+		}
+		cq.multiselect(selectionList);
+		cq.distinct(true);
+
 		if (sortProperties != null && sortProperties.size() > 0) {
 			List<Order> order = new ArrayList<Order>(sortProperties.size());
 			for (SortProperty sortProperty : sortProperties) {
@@ -86,10 +120,14 @@ public class CaseListCriteriaBuilder {
 			cq.orderBy(cb.desc(caze.get(Case.CHANGE_DATE)));
 		}
 
-		Predicate filter = caseService.createUserFilter(cb, cq, caze);
+		CaseUserFilterCriteria caseUserFilterCriteria = new CaseUserFilterCriteria();
+		if (caseCriteria != null) {
+			caseUserFilterCriteria.setIncludeCasesFromOtherJurisdictions(caseCriteria.getIncludeCasesFromOtherJurisdictions());
+		}
+		Predicate filter = caseService.createUserFilter(cb, cq, caze, caseUserFilterCriteria);
 
 		if (caseCriteria != null) {
-			Predicate criteriaFilter = caseService.createCriteriaFilter(caseCriteria, cb, cq, caze);
+			Predicate criteriaFilter = caseService.createCriteriaFilter(caseCriteria, cb, cq, caze, joins);
 			filter = AbstractAdoService.and(cb, filter, criteriaFilter);
 		}
 
@@ -136,7 +174,11 @@ public class CaseListCriteriaBuilder {
 			joins.getPerson().get(Person.BIRTHDATE_YYYY),
 			joins.getPerson().get(Person.SEX),
 			root.get(Case.QUARANTINE_TO),
-			root.get(Case.COMPLETENESS));
+			root.get(Case.COMPLETENESS),
+			root.get(Case.FOLLOW_UP_STATUS),
+			root.get(Case.FOLLOW_UP_UNTIL),
+			root.get(Case.CHANGE_DATE),
+			joins.getFacility().get(Facility.ID));
 	}
 
 	private List<Expression<?>> getIndexOrders(SortProperty sortProperty, Root<Case> caze, CaseJoins<Case> joins) {
@@ -155,6 +197,8 @@ public class CaseListCriteriaBuilder {
 		case CaseIndexDto.OUTCOME:
 		case CaseIndexDto.QUARANTINE_TO:
 		case CaseIndexDto.COMPLETENESS:
+		case CaseIndexDto.FOLLOW_UP_STATUS:
+		case CaseIndexDto.FOLLOW_UP_UNTIL:
 			return Collections.singletonList(caze.get(sortProperty.propertyName));
 		case CaseIndexDto.PERSON_FIRST_NAME:
 			return Collections.singletonList(joins.getPerson().get(Person.FIRST_NAME));
@@ -190,7 +234,9 @@ public class CaseListCriteriaBuilder {
 		selections.addAll(
 			Arrays.asList(
 				joins.getAddress().get(Location.CITY),
-				joins.getAddress().get(Location.ADDRESS),
+				joins.getAddress().get(Location.STREET),
+				joins.getAddress().get(Location.HOUSE_NUMBER),
+				joins.getAddress().get(Location.ADDITIONAL_INFORMATION),
 				joins.getAddress().get(Location.POSTAL_CODE),
 				joins.getPerson().get(Person.PHONE),
 				joins.getReportingUser().get(User.FIRST_NAME),
@@ -203,7 +249,9 @@ public class CaseListCriteriaBuilder {
 
 		switch (sortProperty.propertyName) {
 		case CaseIndexDetailedDto.CITY:
-		case CaseIndexDetailedDto.ADDRESS:
+		case CaseIndexDetailedDto.STREET:
+		case CaseIndexDetailedDto.HOUSE_NUMBER:
+		case CaseIndexDetailedDto.ADDITIONAL_INFORMATION:
 		case CaseIndexDetailedDto.POSTAL_CODE:
 			return Collections.singletonList(joins.getAddress().get(sortProperty.propertyName));
 		case CaseIndexDetailedDto.PHONE:
@@ -213,6 +261,17 @@ public class CaseListCriteriaBuilder {
 		default:
 			return getIndexOrders(sortProperty, caze, joins);
 		}
+	}
+
+	public Stream<Selection<?>> getJurisdictionSelections(CaseJoins joins) {
+
+		return Stream.of(
+			joins.getReportingUser().get(User.UUID),
+			joins.getRegion().get(Region.UUID),
+			joins.getDistrict().get(District.UUID),
+			joins.getCommunity().get(Community.UUID),
+			joins.getFacility().get(Facility.UUID),
+			joins.getPointOfEntry().get(PointOfEntry.UUID));
 	}
 
 	private interface OrderExpressionProvider {

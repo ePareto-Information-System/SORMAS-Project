@@ -269,17 +269,8 @@ public class SampleService extends AbstractCoreAdoService<Sample> {
 	@Override
 	@SuppressWarnings("rawtypes")
 	@Deprecated
-	public Predicate createUserFilter(CriteriaBuilder cb, CriteriaQuery cq, From<Sample, Sample> samplePath) {
-		Predicate filter = createUserFilterWithoutCase(cb, new SampleJoins(samplePath));
-
-		// whoever created the case the sample is associated with or is assigned to it
-		// is allowed to access it
-		Join<Case, Case> casePath = samplePath.join(Sample.ASSOCIATED_CASE, JoinType.LEFT);
-
-		Predicate caseFilter = caseService.createUserFilter(cb, cq, casePath);
-		filter = or(cb, filter, caseFilter);
-
-		return filter;
+	public Predicate createUserFilter(CriteriaBuilder cb, CriteriaQuery cq, From<?, Sample> samplePath) {
+		return createUserFilter(cq, cb, new SampleJoins<>(samplePath));
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -305,7 +296,7 @@ public class SampleService extends AbstractCoreAdoService<Sample> {
 		// lab users can see samples assigned to their laboratory
 		if (jurisdictionLevel == JurisdictionLevel.LABORATORY || jurisdictionLevel == JurisdictionLevel.EXTERNAL_LABORATORY) {
 			if (currentUser.getLaboratory() != null) {
-				filter = or(cb, filter, cb.equal(joins.getRoot().get(Sample.LAB), currentUser.getLaboratory()));
+				filter = or(cb, filter, cb.equal(joins.getLab(), currentUser.getLaboratory()));
 			}
 		}
 

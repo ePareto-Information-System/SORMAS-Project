@@ -38,6 +38,7 @@ import de.symeda.sormas.ui.caze.CaseDataView;
 import de.symeda.sormas.ui.contact.ContactDataView;
 import de.symeda.sormas.ui.events.EventParticipantDataView;
 import de.symeda.sormas.ui.utils.AbstractDetailView;
+import de.symeda.sormas.ui.utils.DirtyStateComponent;
 
 @SuppressWarnings("serial")
 public abstract class AbstractSampleView extends AbstractDetailView<SampleReferenceDto> {
@@ -108,7 +109,7 @@ public abstract class AbstractSampleView extends AbstractDetailView<SampleRefere
 	}
 
 	@Override
-	protected void setSubComponent(Component newComponent) {
+	protected void setSubComponent(DirtyStateComponent newComponent) {
 		super.setSubComponent(newComponent);
 
 		if (FacadeProvider.getSampleFacade().isDeleted(getReference().getUuid())) {
@@ -118,11 +119,15 @@ public abstract class AbstractSampleView extends AbstractDetailView<SampleRefere
 
 	public void setSampleEditPermission(Component component) {
 
-		Boolean isSampleEditAllowed = FacadeProvider.getSampleFacade().isSampleEditAllowed(getSampleRef().getUuid());
+		Boolean isSampleEditAllowed = isSampleEditAllowed();
 
 		if (!isSampleEditAllowed) {
 			component.setEnabled(false);
 		}
+	}
+
+	protected Boolean isSampleEditAllowed() {
+		return FacadeProvider.getSampleFacade().isSampleEditAllowed(getSampleRef().getUuid());
 	}
 
 	public SampleReferenceDto getSampleRef() {

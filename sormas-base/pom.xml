@@ -5,11 +5,7 @@
 	<groupId>de.symeda.sormas</groupId>
 	<artifactId>sormas-base</artifactId>
 	<packaging>pom</packaging>
-	<version>1.45.0</version>
-
-	<prerequisites>
-		<maven>3.0</maven>
-	</prerequisites>
+	<version>1.52.1</version>
 
 	<properties>
 		<slf4j.version>1.7.30</slf4j.version>
@@ -20,9 +16,16 @@
 		<jersey.version>2.29.1</jersey.version>
 		<jackson.version>2.9.8</jackson.version>
 		<swagger.version>2.1.2</swagger.version>
+		<bouncycastle.version>1.66</bouncycastle.version>
 		<jetty.plugin.version>9.2.3.v20140905</jetty.plugin.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<!-- Versions used for release. Overwrite them in settings.xml for local development with different versions -->
+		<payara.version>5.2020.2</payara.version>
+		<payara.oidc.version>1.1.0</payara.oidc.version>
+		<microprofile.api.version>1.4</microprofile.api.version>
+
+		<keycloak.version>11.0.0</keycloak.version>
 
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -32,7 +35,7 @@
 	<dependencyManagement>
 		<dependencies>
 
-			<!-- Baseline for tests, so that in all projects in any case the test 
+			<!-- Baseline for tests, so that in all projects in any case the test
 				libs are available -->
 			<dependency>
 				<groupId>junit</groupId>
@@ -57,8 +60,8 @@
 
 			<dependency>
 				<groupId>org.mockito</groupId>
-				<artifactId>mockito-core</artifactId>
-				<version>1.10.19</version>
+				<artifactId>mockito-inline</artifactId>
+				<version>3.5.13</version>
 				<scope>test</scope>
 			</dependency>
 
@@ -70,7 +73,7 @@
 			</dependency>
 
 			<dependency>
-				<groupId>org.hibernate</groupId>
+				<groupId>org.hibernate.validator</groupId>
 				<artifactId>hibernate-validator</artifactId>
 				<version>6.1.5.Final</version>
 				<scope>test</scope>
@@ -98,6 +101,31 @@
 				<artifactId>poi-ooxml</artifactId>
 				<version>3.17</version>
 				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.geronimo.config</groupId>
+				<artifactId>geronimo-config-impl</artifactId>
+				<version>1.0</version>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>fr.opensagres.xdocreport</groupId>
+				<artifactId>xdocreport</artifactId>
+				<version>2.0.2</version>
+			</dependency>
+
+			<dependency>
+				<groupId>fr.opensagres.xdocreport</groupId>
+				<artifactId>fr.opensagres.xdocreport.template.velocity</artifactId>
+				<version>2.0.2</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.freemarker</groupId>
+				<artifactId>freemarker</artifactId>
+				<version>2.3.20</version>
 			</dependency>
 
 			<!-- Java EE -->
@@ -152,6 +180,11 @@
 				<artifactId>joda-time</artifactId>
 				<version>2.9.4</version>
 			</dependency>
+			<dependency>
+				<groupId>com.googlecode.libphonenumber</groupId>
+				<artifactId>libphonenumber</artifactId>
+				<version>8.12.11</version>
+			</dependency>
 
 			<!-- glassfish-modules -->
 
@@ -188,25 +221,25 @@
 				<version>${jersey.version}</version>
 				<scope>provided</scope>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-core</artifactId>
 				<version>${jackson.version}</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
 				<version>${jackson.version}</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-annotations</artifactId>
 				<version>${jackson.version}</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-module-jaxm-annotations</artifactId>
@@ -218,7 +251,28 @@
 				<artifactId>jackson-module-jaxb-annotations</artifactId>
 				<version>${jackson.version}</version>
 			</dependency>
-			
+
+			<dependency>
+				<groupId>fish.payara.api</groupId>
+				<artifactId>payara-api</artifactId>
+				<version>${payara.version}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>fish.payara.security.connectors</groupId>
+				<artifactId>security-connector-oidc-client</artifactId>
+				<version>${payara.oidc.version}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.eclipse.microprofile.config</groupId>
+				<artifactId>microprofile-config-api</artifactId>
+				<version>${microprofile.api.version}</version>
+				<scope>provided</scope>
+			</dependency>
+
 			<!-- serverlibs -->
 
 			<dependency>
@@ -333,9 +387,9 @@
 			<dependency>
 				<groupId>com.opencsv</groupId>
 				<artifactId>opencsv</artifactId>
-				<version>4.1</version>
+				<version>5.3</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>org.jsoup</groupId>
 				<artifactId>jsoup</artifactId>
@@ -348,6 +402,13 @@
 				<groupId>io.swagger.core.v3</groupId>
 				<artifactId>swagger-jaxrs2</artifactId>
 				<version>${swagger.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.bouncycastle</groupId>
+				<artifactId>bcpkix-jdk15on</artifactId>
+				<version>${bouncycastle.version}</version>
+				<scope>provided</scope>
 			</dependency>
 
 		</dependencies>
@@ -373,7 +434,7 @@
 
 		<dependency>
 			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
+			<artifactId>mockito-inline</artifactId>
 		</dependency>
 
 	</dependencies>
@@ -389,6 +450,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.5</version>
 			</plugin>
 
 			<plugin>
@@ -407,9 +469,10 @@
 
 				<plugin>
 					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>3.2.0</version>
 					<configuration>
 						<!-- Deactivate javadoc validation (active by default since Java 1.8) -->
-						<additionalparam>-Xdoclint:none</additionalparam>
+						<additionalJOption>-Xdoclint:none</additionalJOption>
 					</configuration>
 				</plugin>
 
@@ -482,7 +545,7 @@
 
 				<plugin>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.19.1</version>
+					<version>2.22.0</version>
 				</plugin>
 
 				<plugin>
@@ -548,7 +611,9 @@
 							<hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
 							<versionTagPrefix>v</versionTagPrefix>
 						</flowInitContext>
+						<!--suppress MavenModelInspection -->
 						<username>${github.sormas.user}</username>
+						<!--suppress MavenModelInspection -->
 						<password>${github.sormas.password}</password>
 						<scmCommentPrefix>[GITFLOW]</scmCommentPrefix>
 						<pushReleases>true</pushReleases>
@@ -617,7 +682,7 @@
 			<name>Open Source Geospatial Foundation Repository</name>
 			<url>https://repo.osgeo.org/repository/release/</url>
 		</repository>
-	</repositories>	
+	</repositories>
 
 	<pluginRepositories>
 		<pluginRepository>
@@ -659,13 +724,6 @@
 			</modules>
 		</profile>
 
-		<profile>
-			<id>with-dep-poms</id>
-			<modules>
-				<module>./dependencies/serverlibs.pom</module>
-			</modules>
-		</profile>
-
 	</profiles>
 
 	<modules>
@@ -675,5 +733,7 @@
 		<module>../sormas-ear</module>
 		<module>../sormas-rest</module>
 		<module>../sormas-ui</module>
+		<module>./dependencies/serverlibs.pom</module>
+		<module>../sormas-cargoserver</module>
 	</modules>
 </project>

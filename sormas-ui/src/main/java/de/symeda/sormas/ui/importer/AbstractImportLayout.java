@@ -1,17 +1,22 @@
 package de.symeda.sormas.ui.importer;
 
+import java.io.IOException;
+
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.ClassResource;
 import com.vaadin.server.Extension;
 import com.vaadin.server.FileDownloader;
+import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
 import com.vaadin.server.StreamResource;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.ui.Upload;
 import com.vaadin.v7.ui.VerticalLayout;
 
+import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -66,16 +71,23 @@ public class AbstractImportLayout extends VerticalLayout {
 		Resource buttonIcon = VaadinIcons.DOWNLOAD;
 		String buttonCaption = I18nProperties.getCaption(Captions.importDownloadImportTemplate);
 		ImportLayoutComponent importTemplateComponent = new ImportLayoutComponent(step, headline, infoText, buttonIcon, buttonCaption);
-		StreamResource templateResource = DownloadUtil.createFileStreamResource(
-			templateFilePath,
-			templateFileName,
-			"text/csv",
-			I18nProperties.getString(Strings.headingTemplateNotAvailable),
-			I18nProperties.getString(Strings.messageTemplateNotAvailable));
-		FileDownloader templateFileDownloader = new FileDownloader(templateResource);
-		templateFileDownloader.extend(importTemplateComponent.getButton());
-		CssStyles.style(importTemplateComponent, CssStyles.VSPACE_2);
-		addComponent(importTemplateComponent);
+
+		try {
+			String content = FacadeProvider.getImportFacade().getImportTemplateContent(templateFilePath);
+			StreamResource templateResource = DownloadUtil.createStringStreamResource(content, templateFileName, "text/csv");
+
+			FileDownloader templateFileDownloader = new FileDownloader(templateResource);
+			templateFileDownloader.extend(importTemplateComponent.getButton());
+
+			CssStyles.style(importTemplateComponent, CssStyles.VSPACE_2);
+			addComponent(importTemplateComponent);
+		} catch (IOException e) {
+			new Notification(
+				I18nProperties.getString(Strings.headingTemplateNotAvailable),
+				I18nProperties.getString(Strings.messageTemplateNotAvailable),
+				Notification.Type.ERROR_MESSAGE,
+				false).show(Page.getCurrent());
+		}
 	}
 
 	protected void addImportCsvComponent(int step, ImportReceiver receiver) {

@@ -23,7 +23,10 @@ import java.util.Date;
 import de.symeda.sormas.api.BaseCriteria;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityRelevanceStatus;
+import de.symeda.sormas.api.action.ActionStatus;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.person.PersonReferenceDto;
+import de.symeda.sormas.api.region.CommunityReferenceDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
@@ -35,18 +38,22 @@ public class EventCriteria extends BaseCriteria implements Serializable {
 
 	private static final long serialVersionUID = 2194071020732246594L;
 
-	public static final String EVENT_DATE_FROM = "eventDateFrom";
-	public static final String EVENT_DATE_TO = "eventDateTo";
 	public static final String REPORTING_USER_ROLE = "reportingUserRole";
 	public static final String SURVEILLANCE_OFFICER = "surveillanceOfficer";
 	public static final String FREE_TEXT = "freeText";
+	public static final String EVENT_STATUS = "eventStatus";
+	public static final String EVENT_INVESTIGATION_STATUS = "eventInvestigationStatus";
+	public static final String DISTRICT = "district";
+	public static final String REGION = "region";
 
 	private EventStatus eventStatus;
+	private EventInvestigationStatus eventInvestigationStatus;
 	private Disease disease;
 	private UserRole reportingUserRole;
 	private Boolean deleted = Boolean.FALSE;
 	private RegionReferenceDto region;
 	private DistrictReferenceDto district;
+	private CommunityReferenceDto community;
 	private Date reportedDateFrom;
 	private Date reportedDateTo;
 	private EntityRelevanceStatus relevanceStatus;
@@ -58,6 +65,14 @@ public class EventCriteria extends BaseCriteria implements Serializable {
 	private EventSourceType srcType;
 	private CaseReferenceDto caze;
 	private Boolean userFilterIncluded = true;
+	private TypeOfPlace typeOfPlace;
+	private PersonReferenceDto person;
+
+	// Actions criterias
+	private ActionStatus actionStatus;
+	private Date actionChangeDateFrom;
+	private Date actionChangeDateTo;
+	private DateFilterOption actionChangeDateFilterOption = DateFilterOption.DATE;
 
 	public EventStatus getEventStatus() {
 		return eventStatus;
@@ -65,6 +80,23 @@ public class EventCriteria extends BaseCriteria implements Serializable {
 
 	public EventCriteria eventStatus(EventStatus eventStatus) {
 		this.eventStatus = eventStatus;
+		return this;
+	}
+
+	public void setEventStatus(EventStatus eventStatus) {
+		this.eventStatus = eventStatus;
+	}
+
+	public EventInvestigationStatus getEventInvestigationStatus() {
+		return eventInvestigationStatus;
+	}
+
+	public void setEventInvestigationStatus(EventInvestigationStatus eventInvestigationStatus) {
+		this.eventInvestigationStatus = eventInvestigationStatus;
+	}
+
+	public EventCriteria eventInvestigationStatus(EventInvestigationStatus eventInvestigationStatus) {
+		this.eventInvestigationStatus = eventInvestigationStatus;
 		return this;
 	}
 
@@ -131,6 +163,10 @@ public class EventCriteria extends BaseCriteria implements Serializable {
 		return this;
 	}
 
+	public void setRegion(RegionReferenceDto region) {
+		this.region = region;
+	}
+
 	public RegionReferenceDto getRegion() {
 		return this.region;
 	}
@@ -140,8 +176,25 @@ public class EventCriteria extends BaseCriteria implements Serializable {
 		return this;
 	}
 
+	public void setDistrict(DistrictReferenceDto district) {
+		this.district = district;
+	}
+
 	public DistrictReferenceDto getDistrict() {
 		return this.district;
+	}
+
+	public CommunityReferenceDto getCommunity() {
+		return community;
+	}
+
+	public void setCommunity(CommunityReferenceDto community) {
+		this.community = community;
+	}
+
+	public EventCriteria eventCommunity(CommunityReferenceDto eventCommunity) {
+		this.community = eventCommunity;
+		return this;
 	}
 
 	/**
@@ -241,4 +294,102 @@ public class EventCriteria extends BaseCriteria implements Serializable {
 	public void setSrcType(EventSourceType srcType) {
 		this.srcType = srcType;
 	}
+
+	public TypeOfPlace getTypeOfPlace() {
+		return typeOfPlace;
+	}
+
+	public void setTypeOfPlace(TypeOfPlace typeOfPlace) {
+		this.typeOfPlace = typeOfPlace;
+	}
+
+	public ActionStatus getActionStatus() {
+		return actionStatus;
+	}
+
+	public void setActionStatus(ActionStatus actionStatus) {
+		this.actionStatus = actionStatus;
+	}
+
+	public EventCriteria actionStatus(ActionStatus actionStatus) {
+		setActionStatus(actionStatus);
+		return this;
+	}
+
+	public EventCriteria actionChangeDateBetween(Date actionChangeDateFrom, Date actionChangeDateTo, DateFilterOption actionChangeDateFilterOption) {
+		this.actionChangeDateFrom = actionChangeDateFrom;
+		this.actionChangeDateTo = actionChangeDateTo;
+		this.actionChangeDateFilterOption = actionChangeDateFilterOption;
+		return this;
+	}
+
+	public EventCriteria dateBetween(DateType dateType, Date dateFrom, Date dateTo, DateFilterOption dateFilterOption) {
+		switch (dateType) {
+		case EVENT:
+			eventDateBetween(dateFrom, dateTo, dateFilterOption);
+			break;
+		case ACTION:
+			actionChangeDateBetween(dateFrom, dateTo, dateFilterOption);
+			break;
+		}
+		return this;
+	}
+
+	public Date getActionChangeDateFrom() {
+		return actionChangeDateFrom;
+	}
+
+	public void setActionChangeDateFrom(Date actionChangeDateFrom) {
+		this.actionChangeDateFrom = actionChangeDateFrom;
+	}
+
+	public EventCriteria actionChangeDateFrom(Date actionChangeDateFrom) {
+		this.actionChangeDateFrom = actionChangeDateFrom;
+		return this;
+	}
+
+	public Date getActionChangeDateTo() {
+		return actionChangeDateTo;
+	}
+
+	public void setActionChangeDateTo(Date actionChangeDateTo) {
+		this.actionChangeDateTo = actionChangeDateTo;
+	}
+
+	public EventCriteria actionChangeDateTo(Date actionChangeDateTo) {
+		this.actionChangeDateTo = actionChangeDateTo;
+		return this;
+	}
+
+	public void setActionChangeDateFilterOption(DateFilterOption actionChangeDateFilterOption) {
+		this.actionChangeDateFilterOption = actionChangeDateFilterOption;
+	}
+
+	public EventCriteria actionChangeDateFilterOption(DateFilterOption actionChangeDateFilterOption) {
+		this.actionChangeDateFilterOption = actionChangeDateFilterOption;
+		return this;
+	}
+
+	public DateFilterOption getActionChangeDateFilterOption() {
+		return actionChangeDateFilterOption;
+	}
+
+	public enum DateType {
+		EVENT,
+		ACTION,
+	}
+
+	public PersonReferenceDto getPerson() {
+		return person;
+	}
+
+	public void setPerson(PersonReferenceDto person) {
+		this.person = person;
+	}
+
+	public EventCriteria person(PersonReferenceDto person) {
+		this.person = person;
+		return this;
+	}
+
 }

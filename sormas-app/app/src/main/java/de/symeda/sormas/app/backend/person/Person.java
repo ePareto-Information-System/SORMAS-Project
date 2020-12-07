@@ -17,7 +17,9 @@ package de.symeda.sormas.app.backend.person;
 
 import static de.symeda.sormas.api.EntityDto.COLUMN_LENGTH_DEFAULT;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,6 +33,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import androidx.databinding.Bindable;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.facility.FacilityType;
 import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.person.BurialConductor;
 import de.symeda.sormas.api.person.CauseOfDeath;
@@ -97,6 +100,8 @@ public class Person extends PseudonymizableAdo {
 	private District placeOfBirthDistrict;
 	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
 	private Community placeOfBirthCommunity;
+	@Enumerated(EnumType.STRING)
+	private FacilityType placeOfBirthFacilityType;
 	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
 	private Facility placeOfBirthFacility;
 	@Column(length = COLUMN_LENGTH_DEFAULT)
@@ -151,16 +156,6 @@ public class Person extends PseudonymizableAdo {
 	private OccupationType occupationType;
 	@Column(length = COLUMN_LENGTH_DEFAULT)
 	private String occupationDetails;
-	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
-	private Region occupationRegion;
-	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
-	private District occupationDistrict;
-	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
-	private Community occupationCommunity;
-	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
-	private Facility occupationFacility;
-	@Column(length = COLUMN_LENGTH_DEFAULT)
-	private String occupationFacilityDetails;
 
 	@Column(length = COLUMN_LENGTH_DEFAULT)
 	private String generalPractitionerDetails;
@@ -168,6 +163,14 @@ public class Person extends PseudonymizableAdo {
 	private String passportNumber;
 	@Column
 	private String nationalHealthId;
+
+	private List<Location> addresses = new ArrayList<>();
+
+	@Column
+	private String externalId;
+
+	public Person() {
+	}
 
 	@Bindable
 	public String getFirstName() {
@@ -349,46 +352,6 @@ public class Person extends PseudonymizableAdo {
 		this.occupationDetails = occupationDetails;
 	}
 
-	public Region getOccupationRegion() {
-		return occupationRegion;
-	}
-
-	public void setOccupationRegion(Region occupationRegion) {
-		this.occupationRegion = occupationRegion;
-	}
-
-	public District getOccupationDistrict() {
-		return occupationDistrict;
-	}
-
-	public void setOccupationDistrict(District occupationDistrict) {
-		this.occupationDistrict = occupationDistrict;
-	}
-
-	public Community getOccupationCommunity() {
-		return occupationCommunity;
-	}
-
-	public void setOccupationCommunity(Community occupationCommunity) {
-		this.occupationCommunity = occupationCommunity;
-	}
-
-	public Facility getOccupationFacility() {
-		return occupationFacility;
-	}
-
-	public void setOccupationFacility(Facility occupationFacility) {
-		this.occupationFacility = occupationFacility;
-	}
-
-	public String getOccupationFacilityDetails() {
-		return occupationFacilityDetails;
-	}
-
-	public void setOccupationFacilityDetails(String occupationFacilityDetails) {
-		this.occupationFacilityDetails = occupationFacilityDetails;
-	}
-
 	public CauseOfDeath getCauseOfDeath() {
 		return causeOfDeath;
 	}
@@ -552,4 +515,24 @@ public class Person extends PseudonymizableAdo {
 	public void setNationalHealthId(String nationalHealthId) {
 		this.nationalHealthId = nationalHealthId;
 	}
+
+	public FacilityType getPlaceOfBirthFacilityType() {
+		return placeOfBirthFacilityType;
+	}
+
+	public void setPlaceOfBirthFacilityType(FacilityType placeOfBirthFacilityType) {
+		this.placeOfBirthFacilityType = placeOfBirthFacilityType;
+	}
+
+	public List<Location> getAddresses() {
+		return addresses;
+	}
+
+	public void setAddresses(List<Location> addresses) {
+		this.addresses = addresses;
+	}
+
+	public String getExternalId() { return externalId; }
+
+	public void setExternalId(String externalId) { this.externalId = externalId; }
 }

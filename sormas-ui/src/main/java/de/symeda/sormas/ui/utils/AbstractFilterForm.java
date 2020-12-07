@@ -8,8 +8,10 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import com.vaadin.event.ShortcutAction;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.data.Property;
@@ -21,8 +23,13 @@ import com.vaadin.v7.ui.Field;
 import com.vaadin.v7.ui.PopupDateField;
 import com.vaadin.v7.ui.TextField;
 
+import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.region.DistrictReferenceDto;
+import de.symeda.sormas.api.region.RegionReferenceDto;
+import de.symeda.sormas.api.user.UserDto;
+import de.symeda.sormas.ui.UserProvider;
 
 public abstract class AbstractFilterForm<T> extends AbstractForm<T> {
 
@@ -31,11 +38,13 @@ public abstract class AbstractFilterForm<T> extends AbstractForm<T> {
 	public static final String FILTER_ITEM_STYLE = "filter-item";
 
 	private static final String RESET_BUTTON_ID = "reset";
+	protected static final String APPLY_BUTTON_ID = "apply";
 	private static final String EXPAND_COLLAPSE_ID = "expandCollapse";
 	private static final String MORE_FILTERS_ID = "moreFilters";
 
 	private CustomLayout moreFiltersLayout;
 	private boolean skipChangeEvents;
+	private boolean hasFilter;
 
 	protected AbstractFilterForm(Class<T> type, String propertyI18nPrefix) {
 
@@ -43,6 +52,9 @@ public abstract class AbstractFilterForm<T> extends AbstractForm<T> {
 
 		String moreFiltersHtmlLayout = createMoreFiltersHtmlLayout();
 		boolean hasMoreFilters = moreFiltersHtmlLayout != null && moreFiltersHtmlLayout.length() > 0;
+
+		// needed before adding date filters
+		addApplyButton();
 
 		if (hasMoreFilters) {
 			moreFiltersLayout = new CustomLayout();
@@ -54,11 +66,34 @@ public abstract class AbstractFilterForm<T> extends AbstractForm<T> {
 		}
 
 		addDefaultButtons();
+
+		this.addValueChangeListener(e -> {
+			onChange();
+		});
+
+		addStyleName(CssStyles.FILTER_FORM);
+
+	}
+
+	private void addApplyButton() {
+		Button applyButton = ButtonHelper.createButton(Captions.actionApplyFilters, null, FILTER_ITEM_STYLE);
+		applyButton.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+		getContent().addComponent(applyButton, APPLY_BUTTON_ID);
+	}
+
+	public void onChange() {
+		hasFilter = streamFieldsForEmptyCheck(getContent()).anyMatch(f -> !f.isEmpty());
+		getContent().getComponent(RESET_BUTTON_ID).setVisible(hasFilter);
+		Component applyButton = getContent().getComponent(APPLY_BUTTON_ID);
+		if (applyButton != null) {
+			applyButton.setVisible(hasFilter);
+		}
 	}
 
 	@Override
 	protected String createHtmlLayout() {
-		return div(filterLocs(ArrayUtils.addAll(getMainFilterLocators(), EXPAND_COLLAPSE_ID, RESET_BUTTON_ID)) + loc(MORE_FILTERS_ID));
+		return div(
+			filterLocs(ArrayUtils.addAll(getMainFilterLocators(), EXPAND_COLLAPSE_ID, RESET_BUTTON_ID, APPLY_BUTTON_ID)) + loc(MORE_FILTERS_ID));
 	}
 
 	protected abstract String[] getMainFilterLocators();
@@ -74,7 +109,6 @@ public abstract class AbstractFilterForm<T> extends AbstractForm<T> {
 	protected void addDefaultButtons() {
 
 		Button resetButton = ButtonHelper.createButton(Captions.actionResetFilters, null, FILTER_ITEM_STYLE);
-
 		getContent().addComponent(resetButton, RESET_BUTTON_ID);
 
 		if (moreFiltersLayout != null) {
@@ -87,9 +121,9 @@ public abstract class AbstractFilterForm<T> extends AbstractForm<T> {
 					showHideButton.setIcon(isShowMore ? VaadinIcons.CHEVRON_UP : VaadinIcons.CHEVRON_DOWN);
 
 					if (isShowMore) {
-						getContent().getComponent(MORE_FILTERS_ID).setVisible(true);
+						moreFiltersLayout.setVisible(true);
 					} else {
-						getContent().getComponent(MORE_FILTERS_ID).setVisible(false);
+						moreFiltersLayout.setVisible(false);
 					}
 				}, ValoTheme.BUTTON_BORDERLESS, CssStyles.VSPACE_TOP_NONE, CssStyles.LABEL_PRIMARY, RESET_BUTTON_ID);
 
@@ -98,7 +132,7 @@ public abstract class AbstractFilterForm<T> extends AbstractForm<T> {
 	}
 
 	protected CustomLayout getMoreFiltersContainer() {
-		return (CustomLayout) getContent().getComponent(MORE_FILTERS_ID);
+		return moreFiltersLayout;
 	}
 
 	@Override
@@ -127,6 +161,10 @@ public abstract class AbstractFilterForm<T> extends AbstractForm<T> {
 		((Button) getContent().getComponent(RESET_BUTTON_ID)).addClickListener(resetHandler);
 	}
 
+	public void addApplyHandler(Button.ClickListener applyHandler) {
+		((Button) getContent().getComponent(APPLY_BUTTON_ID)).addClickListener(applyHandler);
+	}
+
 	@Override
 	@SuppressWarnings("rawtypes")
 	protected void applyFieldConfiguration(FieldConfiguration configuration, Field field) {
@@ -145,18 +183,11 @@ public abstract class AbstractFilterForm<T> extends AbstractForm<T> {
 
 			applyDependenciesOnNewValue(newFieldValue);
 
-			updateResetButtonState();
 			if (moreFiltersLayout != null) {
 				boolean hasExpandedFilter = streamFieldsForEmptyCheck(moreFiltersLayout).anyMatch(f -> !f.isEmpty());
 				moreFiltersLayout.setVisible(hasExpandedFilter);
 			}
 		});
-	}
-
-	public void updateResetButtonState() {
-		boolean hasFilter = streamFieldsForEmptyCheck(getContent()).anyMatch(f -> !f.isEmpty());
-
-		getContent().getComponent(RESET_BUTTON_ID).setVisible(hasFilter);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -166,6 +197,47 @@ public abstract class AbstractFilterForm<T> extends AbstractForm<T> {
 
 	protected void applyDependenciesOnNewValue(T newValue) {
 
+	}
+
+	protected void applyRegionFilterDependency(RegionReferenceDto region, String districtFieldId) {
+		final UserDto user = UserProvider.getCurrent().getUser();
+		final ComboBox districtField = getField(districtFieldId);
+		if (user.getRegion() != null && user.getDistrict() == null) {
+			FieldHelper.updateItems(districtField, FacadeProvider.getDistrictFacade().getAllActiveByRegion(user.getRegion().getUuid()));
+			districtField.setEnabled(true);
+		} else {
+			if (region != null) {
+				FieldHelper.updateItems(districtField, FacadeProvider.getDistrictFacade().getAllActiveByRegion(region.getUuid()));
+				districtField.setEnabled(true);
+			} else {
+				districtField.setEnabled(false);
+			}
+		}
+	}
+
+	protected void applyRegionAndDistrictFilterDependency(
+		RegionReferenceDto region,
+		String districtFieldId,
+		DistrictReferenceDto district,
+		String communityFieldId) {
+		applyRegionFilterDependency(region, districtFieldId);
+		applyDistrictDependency(district, communityFieldId);
+	}
+
+	protected void applyDistrictDependency(DistrictReferenceDto district, String communityFieldId) {
+		final UserDto user = UserProvider.getCurrent().getUser();
+		final ComboBox communityField = getField(communityFieldId);
+		if (user.getDistrict() != null && user.getCommunity() == null) {
+			FieldHelper.updateItems(communityField, FacadeProvider.getCommunityFacade().getAllActiveByDistrict(user.getDistrict().getUuid()));
+			communityField.setEnabled(true);
+		} else {
+			if (district != null) {
+				FieldHelper.updateItems(communityField, FacadeProvider.getCommunityFacade().getAllActiveByDistrict(district.getUuid()));
+				communityField.setEnabled(true);
+			} else {
+				communityField.setEnabled(false);
+			}
+		}
 	}
 
 	private void onFieldValueChange(String propertyId, Property.ValueChangeEvent event) {
@@ -204,6 +276,58 @@ public abstract class AbstractFilterForm<T> extends AbstractForm<T> {
 			((PopupDateField) field).setInputPrompt(caption);
 		} else {
 			field.setCaption(caption);
+		}
+	}
+
+	public boolean hasFilter() {
+		return hasFilter;
+	}
+
+	protected void clearAndDisableFields(Field... fields) {
+		for (Field field : fields) {
+			if (field != null) {
+				field.setValue(null);
+				field.setEnabled(false);
+			}
+		}
+	}
+
+	protected void clearAndDisableFields(String... propertyIds) {
+		for (String propertyId : propertyIds) {
+			Field<?> field = getField(propertyId);
+
+			field.setValue(null);
+			field.setEnabled(false);
+		}
+	}
+
+	protected void enableFields(String... propertyIds) {
+		updateFieldsEnabling(propertyIds, true);
+	}
+
+	protected void disableFields(String... propertyIds) {
+		updateFieldsEnabling(propertyIds, false);
+	}
+
+	private void updateFieldsEnabling(String[] propertyIds, boolean enabled) {
+		for (String propertyId : propertyIds) {
+			getField(propertyId).setEnabled(enabled);
+		}
+	}
+
+	protected void enableFields(Field... fields) {
+		updateFieldsEnabling(fields, true);
+	}
+
+	protected void disableFields(Field... fields) {
+		updateFieldsEnabling(fields, false);
+	}
+
+	private void updateFieldsEnabling(Field[] fields, boolean enabled) {
+		for (Field field : fields) {
+			if (field != null) {
+				field.setEnabled(enabled);
+			}
 		}
 	}
 

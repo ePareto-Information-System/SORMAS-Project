@@ -19,9 +19,11 @@ import de.symeda.sormas.api.therapy.PrescriptionDto;
 import de.symeda.sormas.api.therapy.PrescriptionIndexDto;
 import de.symeda.sormas.api.therapy.TherapyDto;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.DateFormatHelper;
+import de.symeda.sormas.ui.utils.FieldAccessCellStyleGenerator;
 import de.symeda.sormas.ui.utils.GridButtonRenderer;
 import de.symeda.sormas.ui.utils.PeriodDtoConverter;
 import de.symeda.sormas.ui.utils.V7AbstractGrid;
@@ -35,7 +37,8 @@ public class PrescriptionGrid extends Grid implements V7AbstractGrid<Prescriptio
 
 	private PrescriptionCriteria prescriptionCriteria = new PrescriptionCriteria();
 
-	public PrescriptionGrid(TherapyView parentView) {
+	public PrescriptionGrid(TherapyView parentView, boolean isPseudonymized) {
+
 		setSizeFull();
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
@@ -69,20 +72,29 @@ public class PrescriptionGrid extends Grid implements V7AbstractGrid<Prescriptio
 			PrescriptionIndexDto.PRESCRIPTION_PERIOD,
 			PrescriptionIndexDto.FREQUENCY,
 			PrescriptionIndexDto.DOSE,
-			PrescriptionIndexDto.ROUTE,
+			PrescriptionIndexDto.PRESCRIPTION_ROUTE,
 			PrescriptionIndexDto.PRESCRIBING_CLINICIAN,
 			DOCUMENT_TREATMENT_BTN_ID);
 
 		VaadinUiUtil.setupEditColumn(getColumn(EDIT_BTN_ID));
 
-		getColumn(DOCUMENT_TREATMENT_BTN_ID).setRenderer(new GridButtonRenderer());
-		getColumn(DOCUMENT_TREATMENT_BTN_ID).setHeaderCaption("");
+		if (isPseudonymized) {
+			getColumn(DOCUMENT_TREATMENT_BTN_ID).setRenderer(new GridButtonRenderer());
+			getColumn(DOCUMENT_TREATMENT_BTN_ID).setHeaderCaption("");
+		} else {
+			getColumn(DOCUMENT_TREATMENT_BTN_ID).setHidden(true);
+		}
+
 		getColumn(PrescriptionIndexDto.PRESCRIPTION_DATE).setRenderer(new DateRenderer(DateFormatHelper.getDateFormat()));
 		getColumn(PrescriptionIndexDto.PRESCRIPTION_PERIOD).setConverter(new PeriodDtoConverter());
 
 		for (Column column : getColumns()) {
 			column.setHeaderCaption(
 				I18nProperties.getPrefixCaption(PrescriptionIndexDto.I18N_PREFIX, column.getPropertyId().toString(), column.getHeaderCaption()));
+
+			setCellStyleGenerator(
+				FieldAccessCellStyleGenerator
+					.withFieldAccessCheckers(PrescriptionIndexDto.class, UiFieldAccessCheckers.forSensitiveData(isPseudonymized)));
 		}
 
 		addItemClickListener(e -> {

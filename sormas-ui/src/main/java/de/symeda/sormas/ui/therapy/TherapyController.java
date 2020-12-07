@@ -34,7 +34,7 @@ public class TherapyController {
 	}
 
 	public void openPrescriptionCreateForm(TherapyReferenceDto therapy, Runnable callback) {
-		PrescriptionForm form = new PrescriptionForm(true, false);
+		PrescriptionForm form = new PrescriptionForm(true, false, false);
 		form.setValue(PrescriptionDto.buildPrescription(therapy));
 		final CommitDiscardWrapperComponent<PrescriptionForm> view =
 			new CommitDiscardWrapperComponent<>(form, UserProvider.getCurrent().hasUserRight(UserRight.PRESCRIPTION_CREATE), form.getFieldGroup());
@@ -57,7 +57,7 @@ public class TherapyController {
 
 	public void openPrescriptionEditForm(PrescriptionReferenceDto prescriptionReference, Runnable callback, boolean readOnly) {
 		PrescriptionDto prescription = FacadeProvider.getPrescriptionFacade().getPrescriptionByUuid(prescriptionReference.getUuid());
-		PrescriptionForm form = new PrescriptionForm(false, readOnly);
+		PrescriptionForm form = new PrescriptionForm(false, readOnly, prescription.isPseudonymized());
 		form.setValue(prescription);
 
 		final CommitDiscardWrapperComponent<PrescriptionForm> view =
@@ -103,7 +103,7 @@ public class TherapyController {
 	}
 
 	public void openTreatmentCreateForm(TherapyReferenceDto therapy, Runnable callback) {
-		TreatmentForm form = new TreatmentForm(true);
+		TreatmentForm form = new TreatmentForm(true, false);
 		form.setValue(TreatmentDto.build(therapy));
 		final CommitDiscardWrapperComponent<TreatmentForm> view =
 			new CommitDiscardWrapperComponent<>(form, UserProvider.getCurrent().hasUserRight(UserRight.TREATMENT_CREATE), form.getFieldGroup());
@@ -125,7 +125,7 @@ public class TherapyController {
 	}
 
 	public void openTreatmentCreateForm(PrescriptionDto prescription, Runnable callback) {
-		TreatmentForm form = new TreatmentForm(true);
+		TreatmentForm form = new TreatmentForm(true, false);
 		form.setValue(TreatmentDto.build(prescription));
 		final CommitDiscardWrapperComponent<TreatmentForm> view =
 			new CommitDiscardWrapperComponent<>(form, UserProvider.getCurrent().hasUserRight(UserRight.TREATMENT_CREATE), form.getFieldGroup());
@@ -148,38 +148,30 @@ public class TherapyController {
 
 	public void openTreatmentEditForm(TreatmentIndexDto treatmentIndex, Runnable callback) {
 		TreatmentDto treatment = FacadeProvider.getTreatmentFacade().getTreatmentByUuid(treatmentIndex.getUuid());
-		TreatmentForm form = new TreatmentForm(false);
+		TreatmentForm form = new TreatmentForm(false, treatment.isPseudonymized());
 		form.setValue(treatment);
 
 		final CommitDiscardWrapperComponent<TreatmentForm> view =
 			new CommitDiscardWrapperComponent<>(form, UserProvider.getCurrent().hasUserRight(UserRight.TREATMENT_EDIT), form.getFieldGroup());
 		Window popupWindow = VaadinUiUtil.showModalPopupWindow(view, I18nProperties.getString(Strings.headingEditTreatment));
 
-		view.addCommitListener(new CommitListener() {
-
-			@Override
-			public void onCommit() {
-				if (!form.getFieldGroup().isModified()) {
-					TreatmentDto dto = form.getValue();
-					FacadeProvider.getTreatmentFacade().saveTreatment(dto);
-					popupWindow.close();
-					Notification.show(I18nProperties.getString(Strings.messageTreatmentSaved), Type.TRAY_NOTIFICATION);
-					callback.run();
-				}
+		view.addCommitListener(() -> {
+			if (!form.getFieldGroup().isModified()) {
+				TreatmentDto dto = form.getValue();
+				FacadeProvider.getTreatmentFacade().saveTreatment(dto);
+				popupWindow.close();
+				Notification.show(I18nProperties.getString(Strings.messageTreatmentSaved), Type.TRAY_NOTIFICATION);
+				callback.run();
 			}
 		});
 
-		view.addDiscardListener(() -> popupWindow.close());
+		view.addDiscardListener(popupWindow::close);
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.TREATMENT_DELETE)) {
-			view.addDeleteListener(new DeleteListener() {
-
-				@Override
-				public void onDelete() {
-					FacadeProvider.getTreatmentFacade().deleteTreatment(treatment.getUuid());
-					popupWindow.close();
-					callback.run();
-				}
+			view.addDeleteListener(() -> {
+				FacadeProvider.getTreatmentFacade().deleteTreatment(treatment.getUuid());
+				popupWindow.close();
+				callback.run();
 			}, I18nProperties.getString(Strings.entityTreatment));
 		}
 

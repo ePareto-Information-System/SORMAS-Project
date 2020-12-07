@@ -32,11 +32,13 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.locsCss;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
@@ -50,13 +52,14 @@ import com.vaadin.v7.ui.AbstractField;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.DateField;
 import com.vaadin.v7.ui.Field;
-import com.vaadin.v7.ui.OptionGroup;
+import com.vaadin.v7.ui.TextField;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.i18n.Captions;
+import de.symeda.sormas.api.i18n.Descriptions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
@@ -67,6 +70,7 @@ import de.symeda.sormas.api.symptoms.SymptomState;
 import de.symeda.sormas.api.symptoms.SymptomsContext;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.symptoms.SymptomsHelper;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.checkers.CountryFieldVisibilityChecker;
 import de.symeda.sormas.api.utils.fieldvisibility.checkers.DiseaseFieldVisibilityChecker;
@@ -76,6 +80,7 @@ import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.DateComparisonValidator;
 import de.symeda.sormas.ui.utils.FieldHelper;
+import de.symeda.sormas.ui.utils.NullableOptionGroup;
 import de.symeda.sormas.ui.utils.OutbreakFieldVisibilityChecker;
 import de.symeda.sormas.ui.utils.ViewMode;
 
@@ -103,30 +108,29 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					loc(SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					fluidRowCss(VSPACE_3,
 							//XXX #1620 fluidColumnLoc?
-							fluidColumn(8, 0, loc(SYMPTOMS_HINT_LOC)),
-							fluidColumn(4, 0, locCss(CssStyles.ALIGN_RIGHT, BUTTONS_LOC))) +
+							fluidColumn(8, 0, loc(SYMPTOMS_HINT_LOC))) +
+					fluidRow(fluidColumn(8,4, locCss(CssStyles.ALIGN_RIGHT,BUTTONS_LOC)))+
 					fluidRow(
-							fluidColumn(6, 0,
+							fluidColumn(6, -1,
 									locsCss(VSPACE_3,
-											GENERAL_SIGNS_OF_DISEASE, ABDOMINAL_PAIN, ABNORMAL_LUNG_XRAY_FINDINGS,
+											FEELING_ILL, SHIVERING, HEADACHE, MUSCLE_PAIN, ABDOMINAL_PAIN, ABNORMAL_LUNG_XRAY_FINDINGS,
 											ACUTE_RESPIRATORY_DISTRESS_SYNDROME, HEARINGLOSS, ANOREXIA_APPETITE_LOSS,
 											BACKACHE, BLACKENING_DEATH_OF_TISSUE, BLOOD_IN_STOOL,
 											BUBOES_GROIN_ARMPIT_NECK, BULGING_FONTANELLE,
 											BILATERAL_CATARACTS, UNILATERAL_CATARACTS, CHEST_PAIN, CHILLS_SWEATS,
 											CONGENITAL_GLAUCOMA, CONGENITAL_HEART_DISEASE,
 											CONGENITAL_HEART_DISEASE_TYPE, CONGENITAL_HEART_DISEASE_DETAILS,
-											CONJUNCTIVITIS, CONJUNCTIVAL_INJECTION, COUGH, COUGH_WITH_SPUTUM,
+											CONJUNCTIVITIS, CONJUNCTIVAL_INJECTION, COUGH, COUGH_WITHOUT_SPUTUM, COUGH_WITH_SPUTUM,
 											COUGH_WITH_HEAMOPTYSIS, RESPIRATORY_DISEASE_VENTILATION,
 											DARK_URINE, DEHYDRATION, DEVELOPMENTAL_DELAY, DIARRHEA,
-											DIFFICULTY_BREATHING, LYMPHADENOPATHY, LYMPHADENOPATHY_AXILLARY,
+											CHEST_PRESSURE, DIFFICULTY_BREATHING, LYMPHADENOPATHY, LYMPHADENOPATHY_AXILLARY,
 											LYMPHADENOPATHY_CERVICAL, LYMPHADENOPATHY_INGUINAL,
-											FATIGUE_WEAKNESS, FEVER, FLUID_IN_LUNG_CAVITY,
+											FATIGUE_WEAKNESS, WEAKNESS, FATIGUE,FEVER, FEVERISHFEELING, FLUID_IN_LUNG_CAVITY,
 											FLUID_IN_LUNG_CAVITY_AUSCULTATION, FLUID_IN_LUNG_CAVITY_XRAY,
-											HEADACHE, HICCUPS, BEDRIDDEN,
+											HICCUPS, BEDRIDDEN,
 											JAUNDICE, JAUNDICE_WITHIN_24_HOURS_OF_BIRTH, JOINT_PAIN, KOPLIKS_SPOTS,
 											LOSS_SKIN_TURGOR,
 											SKIN_RASH, MALAISE, MENINGOENCEPHALITIS, OTITIS_MEDIA, MICROCEPHALY,
-											MUSCLE_PAIN,
 											NAUSEA, NECK_STIFFNESS, OEDEMA_FACE_NECK, OEDEMA_LOWER_EXTREMITY,
 											EYE_PAIN_LIGHT_SENSITIVE,
 											PAINFUL_LYMPHADENITIS, ANXIETY_STATES, DELIRIUM, UPROARIOUSNESS,
@@ -161,6 +165,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 											ASCENDING_FLACCID_PARALYSIS, ERRATIC_BEHAVIOUR, COMA, LOSS_OF_TASTE,
 											LOSS_OF_SMELL, WHEEZING, SKIN_ULCERS, INABILITY_TO_WALK,
 											IN_DRAWING_OF_CHEST_WALL, OXYGEN_SATURATION_LOWER_94,
+											BREATHLESSNESS, BLUE_LIPS, BLOOD_CIRCULATION_PROBLEMS, PALPITATIONS,
+											DIZZINESS_STANDING_UP, HIGH_OR_LOW_BLOOD_PRESSURE, URINARY_RETENTION,
 											OTHER_NON_HEMORRHAGIC_SYMPTOMS, OTHER_NON_HEMORRHAGIC_SYMPTOMS_TEXT) +
 									locsCss(VSPACE_3, PATIENT_ILL_LOCATION, SYMPTOMS_COMMENTS)
 							)
@@ -190,15 +196,23 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 	private List<String> lesionsLocationFieldIds;
 	private List<String> monkeypoxImageFieldIds;
 
-	public SymptomsForm(CaseDataDto caze, Disease disease, PersonDto person, SymptomsContext symptomsContext, ViewMode viewMode) {
+	public SymptomsForm(
+		CaseDataDto caze,
+		Disease disease,
+		PersonDto person,
+		SymptomsContext symptomsContext,
+		ViewMode viewMode,
+		UiFieldAccessCheckers fieldAccessCheckers) {
 
 		// TODO add user right parameter
 		super(
 			SymptomsDto.class,
 			I18N_PREFIX,
+			false,
 			new FieldVisibilityCheckers().add(new DiseaseFieldVisibilityChecker(disease))
 				.add(new OutbreakFieldVisibilityChecker(viewMode))
-				.add(new CountryFieldVisibilityChecker(FacadeProvider.getConfigFacade().getCountryLocale())));
+				.add(new CountryFieldVisibilityChecker(FacadeProvider.getConfigFacade().getCountryLocale())),
+			fieldAccessCheckers);
 
 		this.caze = caze;
 		this.disease = disease;
@@ -317,7 +331,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			STOMACH_BLEEDING,
 			RAPID_BREATHING,
 			SWOLLEN_GLANDS,
-			SYMPTOMS_COMMENTS,
 			UNEXPLAINED_BLEEDING,
 			GUMS_BLEEDING,
 			INJECTION_SITE_BLEEDING,
@@ -415,10 +428,26 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			SKIN_ULCERS,
 			INABILITY_TO_WALK,
 			IN_DRAWING_OF_CHEST_WALL,
-			GENERAL_SIGNS_OF_DISEASE,
+			FEELING_ILL,
+			SHIVERING,
 			RESPIRATORY_DISEASE_VENTILATION,
 			FAST_HEART_RATE,
-			OXYGEN_SATURATION_LOWER_94);
+			OXYGEN_SATURATION_LOWER_94,
+			FEVERISHFEELING,
+			WEAKNESS,
+			FATIGUE,
+			COUGH_WITHOUT_SPUTUM,
+			BREATHLESSNESS,
+			CHEST_PRESSURE,
+			BLUE_LIPS,
+			BLOOD_CIRCULATION_PROBLEMS,
+			PALPITATIONS,
+			DIZZINESS_STANDING_UP,
+			HIGH_OR_LOW_BLOOD_PRESSURE,
+			URINARY_RETENTION);
+
+		addField(SYMPTOMS_COMMENTS, TextField.class).setDescription(
+			I18nProperties.getPrefixDescription(I18N_PREFIX, SYMPTOMS_COMMENTS, "") + "\n" + I18nProperties.getDescription(Descriptions.descGdpr));
 
 		addField(LESIONS_ONSET_DATE, DateField.class);
 
@@ -446,6 +475,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		// Set initial visibilities
 
 		initializeVisibilitiesAndAllowedVisibilities();
+		initializeAccessAndAllowedAccesses();
 
 		if (symptomsContext != SymptomsContext.CLINICAL_VISIT) {
 			setVisible(
@@ -588,6 +618,30 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			PARASTHESIA_AROUND_WOUND,
 			PARESIS,
 			UPROARIOUSNESS,
+			LOSS_OF_TASTE,
+			LOSS_OF_SMELL,
+			WHEEZING,
+			SKIN_ULCERS,
+			INABILITY_TO_WALK,
+			IN_DRAWING_OF_CHEST_WALL,
+			OTHER_COMPLICATIONS,
+			FEELING_ILL,
+			SHIVERING,
+			RESPIRATORY_DISEASE_VENTILATION,
+			FAST_HEART_RATE,
+			OXYGEN_SATURATION_LOWER_94,
+			FEVERISHFEELING,
+			WEAKNESS,
+			FATIGUE,
+			COUGH_WITHOUT_SPUTUM,
+			BREATHLESSNESS,
+			CHEST_PRESSURE,
+			BLUE_LIPS,
+			BLOOD_CIRCULATION_PROBLEMS,
+			PALPITATIONS,
+			DIZZINESS_STANDING_UP,
+			HIGH_OR_LOW_BLOOD_PRESSURE,
+			URINARY_RETENTION,
 			// complications
 			ALTERED_CONSCIOUSNESS,
 			CONFUSED_DISORIENTED,
@@ -597,18 +651,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			MENINGEAL_SIGNS,
 			SEIZURES,
 			SEPSIS,
-			SHOCK,
-			LOSS_OF_TASTE,
-			LOSS_OF_SMELL,
-			WHEEZING,
-			SKIN_ULCERS,
-			INABILITY_TO_WALK,
-			IN_DRAWING_OF_CHEST_WALL,
-			OTHER_COMPLICATIONS,
-			GENERAL_SIGNS_OF_DISEASE,
-			RESPIRATORY_DISEASE_VENTILATION,
-			FAST_HEART_RATE,
-			OXYGEN_SATURATION_LOWER_94);
+			SHOCK);
 
 		// Set visibilities
 
@@ -656,9 +699,11 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		Label lesionsLocationsCaption = new Label(I18nProperties.getCaption(Captions.symptomsLesionsLocations));
 		CssStyles.style(lesionsLocationsCaption, VSPACE_3);
 		getContent().addComponent(lesionsLocationsCaption, LESIONS_LOCATIONS_LOC);
-		getContent().getComponent(LESIONS_LOCATIONS_LOC).setVisible(getFieldGroup().getField(LESIONS).getValue() == SymptomState.YES);
+		getContent().getComponent(LESIONS_LOCATIONS_LOC)
+			.setVisible(FieldHelper.getNullableSourceFieldValue(getFieldGroup().getField(LESIONS)) == SymptomState.YES);
 		getFieldGroup().getField(LESIONS).addValueChangeListener(e -> {
-			getContent().getComponent(LESIONS_LOCATIONS_LOC).setVisible(e.getProperty().getValue() == SymptomState.YES);
+			getContent().getComponent(LESIONS_LOCATIONS_LOC)
+				.setVisible(FieldHelper.getNullableSourceFieldValue((Field) e.getProperty()) == SymptomState.YES);
 		});
 
 		// Symptoms hint text
@@ -676,24 +721,31 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			getFieldGroup().getField(PATIENT_ILL_LOCATION).setVisible(false);
 		}
 
-		FieldHelper.setRequiredWhen(
-			getFieldGroup(),
-			getFieldGroup().getField(OTHER_HEMORRHAGIC_SYMPTOMS),
-			Arrays.asList(OTHER_HEMORRHAGIC_SYMPTOMS_TEXT),
-			Arrays.asList(SymptomState.YES),
-			disease);
-		FieldHelper.setRequiredWhen(
-			getFieldGroup(),
-			getFieldGroup().getField(OTHER_NON_HEMORRHAGIC_SYMPTOMS),
-			Arrays.asList(OTHER_NON_HEMORRHAGIC_SYMPTOMS_TEXT),
-			Arrays.asList(SymptomState.YES),
-			disease);
-		FieldHelper.setRequiredWhen(
-			getFieldGroup(),
-			getFieldGroup().getField(OTHER_COMPLICATIONS),
-			Arrays.asList(OTHER_COMPLICATIONS_TEXT),
-			Arrays.asList(SymptomState.YES),
-			disease);
+		if (isEditableAllowed(OTHER_HEMORRHAGIC_SYMPTOMS_TEXT)) {
+			FieldHelper.setRequiredWhen(
+				getFieldGroup(),
+				getFieldGroup().getField(OTHER_HEMORRHAGIC_SYMPTOMS),
+				Arrays.asList(OTHER_HEMORRHAGIC_SYMPTOMS_TEXT),
+				Arrays.asList(SymptomState.YES),
+				disease);
+		}
+		if (isEditableAllowed(OTHER_NON_HEMORRHAGIC_SYMPTOMS_TEXT)) {
+			FieldHelper.setRequiredWhen(
+				getFieldGroup(),
+				getFieldGroup().getField(OTHER_NON_HEMORRHAGIC_SYMPTOMS),
+				Arrays.asList(OTHER_NON_HEMORRHAGIC_SYMPTOMS_TEXT),
+				Arrays.asList(SymptomState.YES),
+				disease);
+		}
+		if (isEditableAllowed(OTHER_COMPLICATIONS_TEXT)) {
+			FieldHelper.setRequiredWhen(
+				getFieldGroup(),
+				getFieldGroup().getField(OTHER_COMPLICATIONS),
+				Arrays.asList(OTHER_COMPLICATIONS_TEXT),
+				Arrays.asList(SymptomState.YES),
+				disease);
+		}
+
 		FieldHelper.setRequiredWhen(getFieldGroup(), getFieldGroup().getField(LESIONS), lesionsFieldIds, Arrays.asList(SymptomState.YES), disease);
 		FieldHelper
 			.setRequiredWhen(getFieldGroup(), getFieldGroup().getField(LESIONS), monkeypoxImageFieldIds, Arrays.asList(SymptomState.YES), disease);
@@ -718,44 +770,24 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			}
 		}, ValoTheme.BUTTON_LINK);
 
-		Button setEmptyToNoButton = ButtonHelper.createButton(Captions.symptomsSetClearedToNo, event -> {
-			for (Object symptomId : unconditionalSymptomFieldIds) {
-				Field<SymptomState> symptom = (Field<SymptomState>) getFieldGroup().getField(symptomId);
-				if (symptom.isVisible() && symptom.getValue() == null) {
-					symptom.setValue(SymptomState.NO);
-				}
-			}
-			for (Object symptomId : conditionalBleedingSymptomFieldIds) {
-				Field<SymptomState> symptom = (Field<SymptomState>) getFieldGroup().getField(symptomId);
-				if (symptom.isVisible() && symptom.getValue() == null) {
-					symptom.setValue(SymptomState.NO);
-				}
-			}
-			for (Object symptomId : lesionsFieldIds) {
-				Field<SymptomState> symptom = (Field<SymptomState>) getFieldGroup().getField(symptomId);
-				if (symptom.isVisible() && symptom.getValue() == null) {
-					symptom.setValue(SymptomState.NO);
-				}
-			}
-			for (Object symptomId : monkeypoxImageFieldIds) {
-				Field<SymptomState> symptom = (Field<SymptomState>) getFieldGroup().getField(symptomId);
-				if (symptom.isVisible() && symptom.getValue() == null) {
-					symptom.setValue(SymptomState.NO);
-				}
-			}
-		}, ValoTheme.BUTTON_LINK);
+		Button setEmptyToNoButton = createButtonSetClearedToSymptomState(Captions.symptomsSetClearedToNo, SymptomState.NO);
+
+		Button setEmptyToUnknownButton = createButtonSetClearedToSymptomState(Captions.symptomsSetClearedToUnknown, SymptomState.UNKNOWN);
 
 		// Complications heading - not displayed for Rubella (dirty, should be made generic)
 		Label complicationsHeading = new Label(I18nProperties.getString(Strings.headingComplications));
 		CssStyles.style(complicationsHeading, CssStyles.H3);
-		if (disease != Disease.CONGENITAL_RUBELLA && !isGermanServer()) {
+		if (disease != Disease.CONGENITAL_RUBELLA && !isConfiguredServer("de")) {
 			getContent().addComponent(complicationsHeading, COMPLICATIONS_HEADING);
 		}
 
 		HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.addComponent(clearAllButton);
 		buttonsLayout.addComponent(setEmptyToNoButton);
-		buttonsLayout.setDefaultComponentAlignment(Alignment.MIDDLE_RIGHT);
+		buttonsLayout.addComponent(setEmptyToUnknownButton);
+		buttonsLayout.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
+		buttonsLayout.setMargin(new MarginInfo(true, false, true, true));
+
 		getContent().addComponent(buttonsLayout, BUTTONS_LOC);
 	}
 
@@ -764,7 +796,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		return HTML_LAYOUT;
 	}
 
-	public void initializeSymptomRequirementsForVisit(OptionGroup visitStatus) {
+	public void initializeSymptomRequirementsForVisit(NullableOptionGroup visitStatus) {
 		FieldHelper.addSoftRequiredStyleWhen(
 			getFieldGroup(),
 			visitStatus,
@@ -857,7 +889,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		Object targetPropertyId,
 		List<String> sourcePropertyIds,
 		List<Object> sourceValues,
-		OptionGroup visitStatusField) {
+		NullableOptionGroup visitStatusField) {
 
 		for (Object sourcePropertyId : sourcePropertyIds) {
 			Field sourceField = fieldGroup.getField(sourcePropertyId);
@@ -873,7 +905,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		}
 
 		if (visitStatusField != null) {
-			if (isAnySymptomSetToYes(fieldGroup, sourcePropertyIds, sourceValues) && visitStatusField.getValue() == VisitStatus.COOPERATIVE) {
+			if (isAnySymptomSetToYes(fieldGroup, sourcePropertyIds, sourceValues) && visitStatusField.getNullableValue() == VisitStatus.COOPERATIVE) {
 				FieldHelper.addSoftRequiredStyle(targetField);
 			} else {
 				FieldHelper.removeSoftRequiredStyle(targetField);
@@ -935,7 +967,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 		for (Object sourcePropertyId : sourcePropertyIds) {
 			Field sourceField = fieldGroup.getField(sourcePropertyId);
-			if (sourceValues.contains(sourceField.getValue())) {
+			if (sourceValues.contains(FieldHelper.getNullableSourceFieldValue(sourceField))) {
 				return true;
 			}
 		}
@@ -952,7 +984,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		for (Object sourcePropertyId : allPropertyIds) {
 			Field sourceField = getFieldGroup().getField(sourcePropertyId);
 			sourceField.addValueChangeListener(event -> {
-				if (sourceField.getValue() == SymptomState.YES) {
+				if (FieldHelper.getNullableSourceFieldValue(sourceField) == SymptomState.YES) {
 					onsetSymptom.addItem(sourceField.getCaption());
 					onsetDateField.setEnabled(true);
 				} else {
@@ -987,7 +1019,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		List<String> monkeypoxImages = Arrays.asList(MONKEYPOX_LESIONS_IMG1, MONKEYPOX_LESIONS_IMG2, MONKEYPOX_LESIONS_IMG3, MONKEYPOX_LESIONS_IMG4);
 
 		// Set up initial visibility
-		boolean lesionsSetToYes = getFieldGroup().getField(LESIONS).getValue() == SymptomState.YES;
+		boolean lesionsSetToYes = FieldHelper.getNullableSourceFieldValue(getFieldGroup().getField(LESIONS)) == SymptomState.YES;
 		for (String monkeypoxImage : monkeypoxImages) {
 			getContent().getComponent(monkeypoxImage).setVisible(lesionsSetToYes);
 		}
@@ -995,7 +1027,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		// Set up image visibility listener
 		getFieldGroup().getField(LESIONS).addValueChangeListener(e -> {
 			for (String monkeypoxImage : monkeypoxImages) {
-				getContent().getComponent(monkeypoxImage).setVisible(e.getProperty().getValue() == SymptomState.YES);
+				getContent().getComponent(monkeypoxImage)
+					.setVisible(FieldHelper.getNullableSourceFieldValue((Field) e.getProperty()) == SymptomState.YES);
 			}
 		});
 	}
@@ -1003,4 +1036,45 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 	public List<String> getUnconditionalSymptomFieldIds() {
 		return unconditionalSymptomFieldIds;
 	}
+
+	public Button createButtonSetClearedToSymptomState(String caption, SymptomState symptomState) {
+
+		Button button = ButtonHelper.createButton(caption, event -> {
+			for (Object symptomId : unconditionalSymptomFieldIds) {
+				Field<Object> symptom = (Field<Object>) getFieldGroup().getField(symptomId);
+				if (symptom.isVisible() && (Set.class.isAssignableFrom(symptom.getValue().getClass()) && ((Set) symptom.getValue()).size() == 0)) {
+					Set<SymptomState> value = (Set<SymptomState>) symptom.getValue();
+					value.add(symptomState);
+					symptom.setValue(value);
+				}
+			}
+			for (Object symptomId : conditionalBleedingSymptomFieldIds) {
+				Field<Object> symptom = (Field<Object>) getFieldGroup().getField(symptomId);
+				if (symptom.isVisible() && (Set.class.isAssignableFrom(symptom.getValue().getClass()) && ((Set) symptom.getValue()).size() == 0)) {
+					Set<SymptomState> value = (Set<SymptomState>) symptom.getValue();
+					value.add(symptomState);
+					symptom.setValue(value);
+				}
+			}
+			for (Object symptomId : lesionsFieldIds) {
+				Field<Object> symptom = (Field<Object>) getFieldGroup().getField(symptomId);
+				if (symptom.isVisible() && (Set.class.isAssignableFrom(symptom.getValue().getClass()) && ((Set) symptom.getValue()).size() == 0)) {
+					Set<SymptomState> value = (Set<SymptomState>) symptom.getValue();
+					value.add(symptomState);
+					symptom.setValue(value);
+				}
+			}
+			for (Object symptomId : monkeypoxImageFieldIds) {
+				Field<Object> symptom = (Field<Object>) getFieldGroup().getField(symptomId);
+				if (symptom.isVisible() && (Set.class.isAssignableFrom(symptom.getValue().getClass()) && ((Set) symptom.getValue()).size() == 0)) {
+					Set<SymptomState> value = (Set<SymptomState>) symptom.getValue();
+					value.add(symptomState);
+					symptom.setValue(value);
+				}
+			}
+		}, ValoTheme.BUTTON_LINK);
+
+		return button;
+	}
+
 }

@@ -12,6 +12,9 @@ import de.symeda.sormas.api.caze.CaseIndexDetailedDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.person.PersonHelper;
 import de.symeda.sormas.api.utils.SortProperty;
+import de.symeda.sormas.ui.ControllerProvider;
+import de.symeda.sormas.ui.utils.ShowDetailsListener;
+import de.symeda.sormas.ui.utils.UuidRenderer;
 
 public class CaseGridDetailed extends AbstractCaseGrid<CaseIndexDetailedDto> {
 
@@ -32,15 +35,26 @@ public class CaseGridDetailed extends AbstractCaseGrid<CaseIndexDetailedDto> {
 	}
 
 	@Override
+	public Stream<String> getEventColumns() {
+		return Stream.of(
+			CaseIndexDetailedDto.EVENT_COUNT,
+			CaseIndexDetailedDto.LATEST_EVENT_ID,
+			CaseIndexDetailedDto.LATEST_EVENT_STATUS,
+			CaseIndexDetailedDto.LATEST_EVENT_TITLE);
+	}
+
+	@Override
 	protected Stream<String> getPersonColumns() {
 		return Stream.concat(
 			super.getPersonColumns(),
 			Stream.of(
-				CaseIndexDetailedDto.AGE_AND_BIRTH_DATE,
 				CaseIndexDetailedDto.SEX,
-				CaseIndexDetailedDto.CITY,
-				CaseIndexDetailedDto.ADDRESS,
+				CaseIndexDetailedDto.AGE_AND_BIRTH_DATE,
 				CaseIndexDetailedDto.POSTAL_CODE,
+				CaseIndexDetailedDto.CITY,
+				CaseIndexDetailedDto.STREET,
+				CaseIndexDetailedDto.HOUSE_NUMBER,
+				CaseIndexDetailedDto.ADDITIONAL_INFORMATION,
 				CaseIndexDetailedDto.PHONE));
 	}
 
@@ -49,12 +63,25 @@ public class CaseGridDetailed extends AbstractCaseGrid<CaseIndexDetailedDto> {
 	protected void initColumns() {
 
 		super.initColumns();
+
 		getColumn(CaseIndexDetailedDto.SEX).setWidth(80);
 		getColumn(CaseIndexDetailedDto.AGE_AND_BIRTH_DATE).setWidth(100);
-		getColumn(CaseIndexDetailedDto.CITY).setWidth(150);
-		getColumn(CaseIndexDetailedDto.ADDRESS).setWidth(200);
 		getColumn(CaseIndexDetailedDto.POSTAL_CODE).setWidth(100);
+		getColumn(CaseIndexDetailedDto.CITY).setWidth(150);
+		getColumn(CaseIndexDetailedDto.STREET).setWidth(150);
+		getColumn(CaseIndexDetailedDto.HOUSE_NUMBER).setWidth(50);
+		getColumn(CaseIndexDetailedDto.ADDITIONAL_INFORMATION).setWidth(200);
 		getColumn(CaseIndexDetailedDto.PHONE).setWidth(100);
+		getColumn(CaseIndexDetailedDto.EVENT_COUNT).setWidth(80).setSortable(false);
+		getColumn(CaseIndexDetailedDto.LATEST_EVENT_ID).setWidth(80).setSortable(false);
+		getColumn(CaseIndexDetailedDto.LATEST_EVENT_STATUS).setWidth(80).setSortable(false);
+		getColumn(CaseIndexDetailedDto.LATEST_EVENT_TITLE).setWidth(150).setSortable(false);
+
+		((Column<CaseIndexDetailedDto, String>) getColumn(CaseIndexDetailedDto.LATEST_EVENT_ID)).setRenderer(new UuidRenderer());
+		addItemClickListener(
+			new ShowDetailsListener<>(
+				CaseIndexDetailedDto.LATEST_EVENT_ID,
+				c -> ControllerProvider.getEventController().navigateToData(c.getLatestEventId())));
 
 		((Column<CaseIndexDetailedDto, AgeAndBirthDateDto>) getColumn(CaseIndexDetailedDto.AGE_AND_BIRTH_DATE)).setRenderer(
 			value -> value == null

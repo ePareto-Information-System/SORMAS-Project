@@ -18,11 +18,14 @@
 package de.symeda.sormas.api.importexport;
 
 import java.io.IOException;
+import java.net.URI;
 
 import javax.ejb.Remote;
 
 @Remote
 public interface ImportFacade {
+
+	String ACTIVE_DISEASES_PLACEHOLDER = "${activeDiseases}";
 
 	/**
 	 * Creates a .csv file with one row containing all relevant column names of the case entity
@@ -30,6 +33,10 @@ public interface ImportFacade {
 	 * it as a download.
 	 */
 	void generateCaseImportTemplateFile() throws IOException;
+
+	void generateEventParticipantImportTemplateFile() throws IOException;
+
+	void generateCampaignFormImportTemplateFile(String campaignFormUuid) throws IOException;
 
 	void generateCaseContactImportTemplateFile() throws IOException;
 
@@ -41,17 +48,23 @@ public interface ImportFacade {
 
 	void generateAreaImportTemplateFile() throws IOException;
 
+	void generateCountryImportTemplateFile() throws IOException;
+
 	void generateRegionImportTemplateFile() throws IOException;
 
 	void generateDistrictImportTemplateFile() throws IOException;
 
 	void generateCommunityImportTemplateFile() throws IOException;
 
-	void generateFacilityLaboratoryImportTemplateFile() throws IOException;
+	void generateFacilityImportTemplateFile() throws IOException;
 
 	void generateContactImportTemplateFile() throws IOException;
 
 	String getCaseImportTemplateFilePath();
+
+	String getEventParticipantImportTemplateFilePath();
+
+	String getCampaignFormImportTemplateFilePath();
 
 	String getPointOfEntryImportTemplateFilePath();
 
@@ -61,15 +74,21 @@ public interface ImportFacade {
 
 	String getAreaImportTemplateFilePath();
 
+	String getCountryImportTemplateFilePath();
+
+	URI getAllCountriesImportFilePath();
+
 	String getRegionImportTemplateFilePath();
 
 	String getDistrictImportTemplateFilePath();
 
 	String getCommunityImportTemplateFilePath();
 
-	String getFacilityLaboratoryImportTemplateFilePath();
+	String getFacilityImportTemplateFilePath();
 
 	String getCaseContactImportTemplateFilePath();
 
 	String getContactImportTemplateFilePath();
+
+	String getImportTemplateContent(String templateFilePath) throws IOException;
 }

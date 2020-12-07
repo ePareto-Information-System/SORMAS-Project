@@ -29,6 +29,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.v7.data.Validator;
 import com.vaadin.v7.ui.CheckBox;
 import com.vaadin.v7.ui.ComboBox;
+import com.vaadin.v7.ui.Field;
 import com.vaadin.v7.ui.OptionGroup;
 import com.vaadin.v7.ui.TextField;
 
@@ -42,7 +43,7 @@ import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserHelper;
 import de.symeda.sormas.api.user.UserRole;
-import de.symeda.sormas.api.utils.fieldaccess.FieldAccessCheckers;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
@@ -50,7 +51,7 @@ import de.symeda.sormas.ui.location.LocationEditForm;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.FieldHelper;
-import de.symeda.sormas.ui.utils.PhoneNumberValidator;
+import de.symeda.sormas.ui.utils.UserPhoneNumberValidator;
 
 public class UserEditForm extends AbstractEditForm<UserDto> {
 
@@ -83,7 +84,7 @@ public class UserEditForm extends AbstractEditForm<UserDto> {
 
     public UserEditForm(boolean create) {
 
-        super(UserDto.class, UserDto.I18N_PREFIX, true, new FieldVisibilityCheckers(), new FieldAccessCheckers());
+        super(UserDto.class, UserDto.I18N_PREFIX, true, new FieldVisibilityCheckers(), UiFieldAccessCheckers.getNoop());
 
 
         setWidth(640, Unit.PIXELS);
@@ -112,7 +113,7 @@ public class UserEditForm extends AbstractEditForm<UserDto> {
         addField(UserDto.LAST_NAME, TextField.class);
         addField(UserDto.USER_EMAIL, TextField.class);
         TextField phone = addField(UserDto.PHONE, TextField.class);
-        phone.addValidator(new PhoneNumberValidator(I18nProperties.getValidationError(Validations.phoneNumberValidation)));
+        phone.addValidator(new UserPhoneNumberValidator(I18nProperties.getValidationError(Validations.phoneNumberValidation)));
         addDiseaseField(UserDto.LIMITED_DISEASE, false);
 
         Label userEmailDesc = new Label(I18nProperties.getString(Strings.infoUserEmail));
@@ -159,7 +160,7 @@ public class UserEditForm extends AbstractEditForm<UserDto> {
                     districtDto != null ? FacadeProvider.getCommunityFacade().getAllActiveByDistrict(districtDto.getUuid()) : null);
             FieldHelper.updateItems(
                     healthFacility,
-                    districtDto != null ? FacadeProvider.getFacilityFacade().getActiveHealthFacilitiesByDistrict(districtDto, false) : null);
+                    districtDto != null ? FacadeProvider.getFacilityFacade().getActiveHospitalsByDistrict(districtDto, false) : null);
             FieldHelper.updateItems(
                     associatedOfficer,
                     districtDto != null ? FacadeProvider.getUserFacade().getUserRefsByDistrict(districtDto, false, UserRole.SURVEILLANCE_OFFICER) : null);
@@ -174,6 +175,7 @@ public class UserEditForm extends AbstractEditForm<UserDto> {
         region.addItems(FacadeProvider.getRegionFacade().getAllActiveAsReference());
 
         setRequired(true, UserDto.FIRST_NAME, UserDto.LAST_NAME, UserDto.USER_NAME, UserDto.USER_ROLES);
+        setRequired(ControllerProvider.getUserController().isEmailRequired(), UserDto.USER_EMAIL);
         addValidators(UserDto.USER_NAME, new UserNameValidator());
 
         addFieldListeners(UserDto.FIRST_NAME, e -> suggestUserName());
@@ -185,7 +187,7 @@ public class UserEditForm extends AbstractEditForm<UserDto> {
     @SuppressWarnings("unchecked")
     private void updateFieldsByUserRole() {
 
-		final OptionGroup userRolesField = (OptionGroup) getFieldGroup().getField(UserDto.USER_ROLES);
+		final Field userRolesField = getFieldGroup().getField(UserDto.USER_ROLES);
 		final Set<UserRole> userRoles = (Set<UserRole>) userRolesField.getValue();
 
 		final JurisdictionLevel jurisdictionLevel = UserRole.getJurisdictionLevel(userRoles);

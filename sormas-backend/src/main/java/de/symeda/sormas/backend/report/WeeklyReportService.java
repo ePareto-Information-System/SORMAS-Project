@@ -19,7 +19,6 @@ package de.symeda.sormas.backend.report;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.ejb.EJB;
@@ -36,19 +35,15 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import de.symeda.sormas.api.report.WeeklyReportCriteria;
-import de.symeda.sormas.api.report.WeeklyReportOfficerSummaryDto;
 import de.symeda.sormas.api.user.JurisdictionLevel;
-import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.EpiWeek;
 import de.symeda.sormas.backend.common.AbstractAdoService;
 import de.symeda.sormas.backend.facility.Facility;
-import de.symeda.sormas.backend.region.DistrictFacadeEjb;
 import de.symeda.sormas.backend.region.DistrictService;
 import de.symeda.sormas.backend.region.Region;
 import de.symeda.sormas.backend.region.RegionService;
 import de.symeda.sormas.backend.user.User;
-import de.symeda.sormas.backend.user.UserFacadeEjb;
 import de.symeda.sormas.backend.user.UserService;
 
 @Stateless
@@ -121,59 +116,19 @@ public class WeeklyReportService extends AbstractAdoService<WeeklyReport> {
 		}
 	}
 
-	public List<WeeklyReportOfficerSummaryDto> getWeeklyReportSummariesPerOfficer(Region region, EpiWeek epiWeek) {
-
-		WeeklyReportCriteria officerReportCriteria = new WeeklyReportCriteria().epiWeek(epiWeek);
-		WeeklyReportCriteria informantsReportCriteria = new WeeklyReportCriteria().epiWeek(epiWeek).officerReport(false);
-
-		Stream<User> officers = userService.getAllByRegionAndUserRoles(region, UserRole.SURVEILLANCE_OFFICER).stream();
-		officers = filterWeeklyReportUsers(getCurrentUser(), officers);
-
-		List<WeeklyReportOfficerSummaryDto> summaryDtos = officers.map(officer -> {
-			officerReportCriteria.reportingUser(new UserReferenceDto(officer.getUuid()));
-			List<WeeklyReport> officerReports = queryByCriteria(officerReportCriteria, null, null, true);
-
-			WeeklyReportOfficerSummaryDto summaryDto = new WeeklyReportOfficerSummaryDto();
-			summaryDto.setOfficer(UserFacadeEjb.toReferenceDto(officer));
-			summaryDto.setDistrict(DistrictFacadeEjb.toReferenceDto(officer.getDistrict()));
-
-			if (officerReports.size() > 0) {
-				WeeklyReport officerReport = officerReports.get(0);
-				summaryDto.setOfficerReportDate(officerReport.getReportDateTime());
-				summaryDto.setTotalCaseCount(officerReport.getTotalNumberOfCases());
-			}
-
-			Long informants = userService.countByAssignedOfficer(officer);
-			summaryDto.setInformants(informants.intValue());
-
-			informantsReportCriteria.assignedOfficer(summaryDto.getOfficer());
-			informantsReportCriteria.zeroReport(false);
-			Long informantCaseReports = countByCriteria(informantsReportCriteria, null);
-			summaryDto.setInformantCaseReports(informantCaseReports.intValue());
-
-			informantsReportCriteria.zeroReport(true);
-			Long informantZeroReports = countByCriteria(informantsReportCriteria, null);
-			summaryDto.setInformantZeroReports(informantZeroReports.intValue());
-
-			return summaryDto;
-		}).collect(Collectors.toList());
-
-		return summaryDtos;
-	}
-
 	/**
 	 * @see /sormas-backend/doc/UserDataAccess.md
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public Predicate createUserFilter(CriteriaBuilder cb, CriteriaQuery cq, From<WeeklyReport, WeeklyReport> from) {
+	public Predicate createUserFilter(CriteriaBuilder cb, CriteriaQuery cq, From<?, WeeklyReport> from) {
 
 		User currentUser = getCurrentUser();
 		// National users can access all reports in the system
 		final JurisdictionLevel jurisdictionLevel = currentUser.getJurisdictionLevel();
 		if (currentUser == null
-				|| (jurisdictionLevel == JurisdictionLevel.NATION && !UserRole.isPortHealthUser(currentUser.getUserRoles()))
-				|| currentUser.hasAnyUserRole(UserRole.REST_USER)) {
+			|| (jurisdictionLevel == JurisdictionLevel.NATION && !UserRole.isPortHealthUser(currentUser.getUserRoles()))
+			|| currentUser.hasAnyUserRole(UserRole.REST_USER)) {
 			return null;
 		}
 
@@ -184,8 +139,7 @@ public class WeeklyReportService extends AbstractAdoService<WeeklyReport> {
 		// Allow access based on user role
 
 		// Supervisors see all reports from users in their region
-		if (currentUser.getRegion() != null
-			&& jurisdictionLevel == JurisdictionLevel.REGION) {
+		if (currentUser.getRegion() != null && jurisdictionLevel == JurisdictionLevel.REGION) {
 			filter = cb.or(filter, cb.equal(from.join(WeeklyReport.REPORTING_USER, JoinType.LEFT).get(User.REGION), currentUser.getRegion()));
 		}
 

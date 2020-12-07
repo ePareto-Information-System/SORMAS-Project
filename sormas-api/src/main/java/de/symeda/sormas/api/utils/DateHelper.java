@@ -145,6 +145,13 @@ public final class DateHelper {
 
 		if (date != null) {
 			try {
+				SimpleDateFormat dateFormat = clone(SHORT_DATE_FORMAT);
+				dateFormat.setLenient(false);
+				return dateFormat.parse(date);
+			} catch (ParseException e) {
+				// Try next format
+			}
+			try {
 				SimpleDateFormat dateFormat = clone(DATE_FORMAT);
 				dateFormat.setLenient(false);
 				return dateFormat.parse(date);
@@ -1003,5 +1010,46 @@ public final class DateHelper {
 		Timestamp timestamp = new Timestamp(date.getTime());
 		timestamp.setNanos(timestamp.getNanos() + 999999);
 		return timestamp;
+	}
+
+	private static final int MILLISECONDS_PER_SECOND = 1000;
+
+	/**
+	 * @return Current time in milliseconds.
+	 */
+	public static long now() {
+
+		return System.currentTimeMillis();
+	}
+
+	/**
+	 * Redundant to {@link #now()} to propose {@code startTime} as variable name.
+	 * 
+	 * @return Current time in milliseconds.
+	 */
+	public static long startTime() {
+
+		return now();
+	}
+
+	/**
+	 * @return Duration from {@code startTimeMillies} to now in milliseconds.
+	 */
+	public static long durationMillies(long startTimeMilliseconds) {
+		return now() - startTimeMilliseconds;
+	}
+
+	/**
+	 * @return Duration from {@code startTimeMillies} to now in seconds.
+	 */
+	public static long durationSeconds(long startTimeMilliseconds) {
+		return toSeconds(durationMillies(startTimeMilliseconds));
+	}
+
+	/**
+	 * @return Converts milliseconds to completed seconds.
+	 */
+	public static long toSeconds(long milliseconds) {
+		return milliseconds / MILLISECONDS_PER_SECOND;
 	}
 }

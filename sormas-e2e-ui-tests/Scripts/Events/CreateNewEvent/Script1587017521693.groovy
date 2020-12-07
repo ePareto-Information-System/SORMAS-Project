@@ -20,7 +20,9 @@ WebUI.click(findTestObject('Events/NewEventView/div_Disease_v-filterselect-butto
 
 WebUI.click(findTestObject('Events/NewEventView/td_Disease_COVID-19'))
 
-WebUI.setText(findTestObject('Events/NewEventView/textarea_EventDescription_TArea'), 'Robo Marathon Event')
+WebUI.setText(findTestObject('Events/NewEventView/input_Title_eventTitle'), 'Robo Marathon Event')
+
+WebUI.setText(findTestObject('Events/NewEventView/textarea_EventDescription_TArea'), 'This is a Robo Marathon Event')
 
 //WebUI.click(findTestObject('Events/NewEventView/div_Source type_v-filterselect-button'))
 
@@ -39,9 +41,14 @@ WebUI.click(findTestObject('Events/NewEventView/div_TypeOfPlace_v-filterselect-b
 
 WebUI.click(findTestObject('Events/NewEventView/td_TypeOfPlace_Festivities_DDItem'))
 
-//WebUI.setText(findTestObject('Events/NewEventView/input_SourceTelephoneNo_inputBox'), '555-35271')
-WebUI.click(findTestObject('Events/NewEventView/textarea_AddressOrLandmark_TArea'))
-WebUI.setText(findTestObject('Events/NewEventView/textarea_AddressOrLandmark_TArea'), 'Am Klammerberg 3')
+/*WebUI.click(findTestObject('Events/NewEventView/textarea_AddressOrLandmark_TArea'))
+WebUI.setText(findTestObject('Events/NewEventView/textarea_AddressOrLandmark_TArea'), 'Am Klammerberg 3')*/
+
+WebUI.setText(findTestObject('Events/NewEventView/input_Street'), 'Alpha street')
+
+WebUI.click(findTestObject('Events/NewEventView/input_House number'))
+
+WebUI.setText(findTestObject('Events/NewEventView/input_House number'), '198')
 
 WebUI.setText(findTestObject('Events/NewEventView/input_PostalCode_inptBox'), '12345')
 
@@ -59,7 +66,7 @@ WebUI.click(findTestObject('Events/NewEventView/td_Voreingestellter Landkreis'))
 
 WebUI.click(findTestObject('Events/NewEventView/span_Community_CharlottenburgWilmersdorf-DDItem')) */
 
-WebUI.click(findTestObject('Events/NewEventView/div_Save_btn'))
+WebUI.click(findTestObject('ReusableORs/div_Save'))
 
 WebUI.delay(1)
 

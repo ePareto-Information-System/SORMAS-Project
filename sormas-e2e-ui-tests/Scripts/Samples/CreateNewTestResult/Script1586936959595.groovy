@@ -1,8 +1,9 @@
 import static com.kms.katalon.core.testcase.TestCaseFactory.findTestCase
 import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
+
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import com.hzi.Helper
+
 import com.kms.katalon.core.exception.StepFailedException
 import com.kms.katalon.core.model.FailureHandling as FailureHandling
 import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
@@ -38,7 +39,7 @@ WebUI.click(findTestObject('Object Repository/Samples/NewTestResult/div_Test res
 WebUI.click(findTestObject('Object Repository/Samples/NewTestResult/td_Pending'))
 
 WebUI.click(findTestObject('Object Repository/Samples/NewTestResult/label_No'))
-WebUI.click(findTestObject('Object Repository/Samples/NewTestResult/div_Save'))
+WebUI.click(findTestObject('ReusableORs/div_Save'))
 
 WebUI.delay(1)
 

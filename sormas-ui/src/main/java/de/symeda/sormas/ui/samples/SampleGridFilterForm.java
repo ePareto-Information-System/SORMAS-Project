@@ -10,7 +10,6 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.data.Property;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.Field;
@@ -132,37 +131,54 @@ public class SampleGridFilterForm extends AbstractFilterForm<SampleCriteria> {
 	}
 
 	private HorizontalLayout buildWeekAndDateFilter() {
-		Button applyButton = ButtonHelper.createButton(Captions.actionApplyDateFilter, null);
+//		Button applyButton = ButtonHelper.createButton(Captions.actionApplyDateFilter, null);
 
-		EpiWeekAndDateFilterComponent<SampleDateType> weekAndDateFilter = new EpiWeekAndDateFilterComponent<>(
-				applyButton,
-				false,
-				false,
-				null,
-				SampleDateType.class,
-				I18nProperties.getString(Strings.promptSampleDateType),
-				SampleDateType.COLLECTION);
+//		EpiWeekAndDateFilterComponent<SampleDateType> weekAndDateFilter = new EpiWeekAndDateFilterComponent<>(
+//				applyButton,
+//				false,
+//				false,
+//				null,
+//				SampleDateType.class,
+//				I18nProperties.getString(Strings.promptSampleDateType),
+//				SampleDateType.COLLECTION);
+		
+		EpiWeekAndDateFilterComponent<DateFilterOption> weekAndDateFilter =
+			new EpiWeekAndDateFilterComponent<>(false, false, null, this);
 
 		weekAndDateFilter.getWeekFromFilter().setInputPrompt(I18nProperties.getString(Strings.promptSampleEpiWeekFrom));
 		weekAndDateFilter.getWeekToFilter().setInputPrompt(I18nProperties.getString(Strings.promptSampleEpiWeekTo));
 		weekAndDateFilter.getDateFromFilter().setInputPrompt(I18nProperties.getString(Strings.promptSampleDateFrom));
 		weekAndDateFilter.getDateToFilter().setInputPrompt(I18nProperties.getString(Strings.promptSampleDateTo));
 
-		applyButton.addClickListener(e -> {
-			SampleCriteria criteria = getValue();
+		addApplyHandler(e -> onApplyClick(weekAndDateFilter));
 
-			DateFilterOption dateFilterOption = (DateFilterOption) weekAndDateFilter.getDateFilterOptionFilter().getValue();
-			Date fromDate, toDate;
-			if (dateFilterOption == DateFilterOption.DATE) {
-				fromDate = DateHelper.getStartOfDay(weekAndDateFilter.getDateFromFilter().getValue());
-				toDate = DateHelper.getEndOfDay(weekAndDateFilter.getDateToFilter().getValue());
-			} else {
-				fromDate = DateHelper.getEpiWeekStart((EpiWeek) weekAndDateFilter.getWeekFromFilter().getValue());
-				toDate = DateHelper.getEpiWeekEnd((EpiWeek) weekAndDateFilter.getWeekToFilter().getValue());
-			}
+		HorizontalLayout dateFilterRowLayout = new HorizontalLayout();
+		dateFilterRowLayout.setSpacing(true);
+		dateFilterRowLayout.setSizeUndefined();
+		dateFilterRowLayout.addStyleName("wrap");
 
-			if ((fromDate != null && toDate != null) || (fromDate == null && toDate == null)) {
-				applyButton.removeStyleName(ValoTheme.BUTTON_PRIMARY);
+		dateFilterRowLayout.addComponent(weekAndDateFilter);
+
+		return dateFilterRowLayout;
+	}
+
+	private void onApplyClick(EpiWeekAndDateFilterComponent<DateFilterOption> weekAndDateFilter) {
+		SampleCriteria criteria = getValue();
+
+		DateFilterOption dateFilterOption = (DateFilterOption) weekAndDateFilter.getDateFilterOptionFilter().getValue();
+		Date fromDate, toDate;
+		if (dateFilterOption == DateFilterOption.DATE) {
+			Date dateFrom = weekAndDateFilter.getDateFromFilter().getValue();
+			fromDate = dateFrom != null ? DateHelper.getStartOfDay(dateFrom) : null;
+			Date dateTo = weekAndDateFilter.getDateToFilter().getValue();
+			toDate = dateFrom != null ? DateHelper.getEndOfDay(dateTo) : null;
+		} else {
+			fromDate = DateHelper.getEpiWeekStart((EpiWeek) weekAndDateFilter.getWeekFromFilter().getValue());
+			toDate = DateHelper.getEpiWeekEnd((EpiWeek) weekAndDateFilter.getWeekToFilter().getValue());
+		}
+
+		if ((fromDate != null && toDate != null) || (fromDate == null && toDate == null)) {
+				//applyButton.removeStyleName(ValoTheme.BUTTON_PRIMARY);
 				
 				SampleDateType sampleDateType = (SampleDateType) weekAndDateFilter.getDateTypeSelector().getValue();
 				sampleDateType = sampleDateType != null ? sampleDateType : SampleDateType.COLLECTION;
@@ -170,44 +186,39 @@ public class SampleGridFilterForm extends AbstractFilterForm<SampleCriteria> {
 				criteria.reportDateBetween(fromDate, toDate, sampleDateType, dateFilterOption);
 
 				fireValueChange(true);
+		} else {
+			if (dateFilterOption == DateFilterOption.DATE) {
+				Notification notification = new Notification(
+					I18nProperties.getString(Strings.headingMissingDateFilter),
+					I18nProperties.getString(Strings.messageMissingDateFilter),
+					Notification.Type.WARNING_MESSAGE,
+					false);
+				notification.setDelayMsec(-1);
+				notification.show(Page.getCurrent());
 			} else {
-				if (dateFilterOption == DateFilterOption.DATE) {
-					Notification notification = new Notification(
-						I18nProperties.getString(Strings.headingMissingDateFilter),
-						I18nProperties.getString(Strings.messageMissingDateFilter),
-						Notification.Type.WARNING_MESSAGE,
-						false);
-					notification.setDelayMsec(-1);
-					notification.show(Page.getCurrent());
-				} else {
-					Notification notification = new Notification(
-						I18nProperties.getString(Strings.headingMissingEpiWeekFilter),
-						I18nProperties.getString(Strings.messageMissingEpiWeekFilter),
-						Notification.Type.WARNING_MESSAGE,
-						false);
-					notification.setDelayMsec(-1);
-					notification.show(Page.getCurrent());
-				}
+				Notification notification = new Notification(
+					I18nProperties.getString(Strings.headingMissingEpiWeekFilter),
+					I18nProperties.getString(Strings.messageMissingEpiWeekFilter),
+					Notification.Type.WARNING_MESSAGE,
+					false);
+				notification.setDelayMsec(-1);
+				notification.show(Page.getCurrent());
 			}
-		});
-
-		HorizontalLayout dateFilterRowLayout = new HorizontalLayout();
-		dateFilterRowLayout.setSpacing(true);
-		dateFilterRowLayout.setSizeUndefined();
-
-		dateFilterRowLayout.addComponent(weekAndDateFilter);
-		dateFilterRowLayout.addComponent(applyButton);
-
-		dateFilterRowLayout.addStyleName("wrap");
-
-		return dateFilterRowLayout;
+		}
 	}
 
 	@Override
 	protected void applyDependenciesOnFieldChange(String propertyId, Property.ValueChangeEvent event) {
 		switch (propertyId) {
 		case SampleCriteria.REGION: {
-			getField(SampleCriteria.DISTRICT).setValue(null);
+			RegionReferenceDto region = (RegionReferenceDto) event.getProperty().getValue();
+			if (region == null) {
+				clearAndDisableFields(SampleCriteria.DISTRICT);
+			} else {
+				enableFields(SampleCriteria.DISTRICT);
+				applyRegionFilterDependency(region, SampleCriteria.DISTRICT);
+			}
+
 			break;
 		}
 		case SampleCriteria.DISTRICT: {

@@ -28,7 +28,6 @@ import java.util.Map;
 
 import com.vaadin.v7.ui.CheckBox;
 import com.vaadin.v7.ui.ComboBox;
-import com.vaadin.v7.ui.OptionGroup;
 import com.vaadin.v7.ui.TextArea;
 import com.vaadin.v7.ui.TextField;
 
@@ -43,11 +42,14 @@ import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SamplePurpose;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
+import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.DateComparisonValidator;
 import de.symeda.sormas.ui.utils.DateTimeField;
 import de.symeda.sormas.ui.utils.FieldHelper;
+import de.symeda.sormas.ui.utils.NullableOptionGroup;
 
 public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
@@ -69,8 +71,13 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	private final SampleDto sample;
 	private int caseSampleCount;
 
-	public PathogenTestForm(SampleDto sample, boolean create, int caseSampleCount) {
-		super(PathogenTestDto.class, PathogenTestDto.I18N_PREFIX);
+	public PathogenTestForm(SampleDto sample, boolean create, int caseSampleCount, boolean isPseudonymized) {
+		super(
+			PathogenTestDto.class,
+			PathogenTestDto.I18N_PREFIX,
+			false,
+			new FieldVisibilityCheckers(),
+			UiFieldAccessCheckers.forSensitiveData(!create && isPseudonymized));
 
 		this.sample = sample;
 		this.caseSampleCount = caseSampleCount;
@@ -109,14 +116,16 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		ComboBox testResultField = addField(PathogenTestDto.TEST_RESULT, ComboBox.class);
 		addField(PathogenTestDto.SEROTYPE, TextField.class);
 		TextField cqValueField = addField(PathogenTestDto.CQ_VALUE, TextField.class);
-		removeMaxLengthValidators(cqValueField);
-		OptionGroup testResultVerifiedField = addField(PathogenTestDto.TEST_RESULT_VERIFIED, OptionGroup.class);
+		NullableOptionGroup testResultVerifiedField = addField(PathogenTestDto.TEST_RESULT_VERIFIED, NullableOptionGroup.class);
 		testResultVerifiedField.setRequired(true);
 		CheckBox fourFoldIncrease = addField(PathogenTestDto.FOUR_FOLD_INCREASE_ANTIBODY_TITER, CheckBox.class);
 		CssStyles.style(fourFoldIncrease, VSPACE_3, VSPACE_TOP_4);
 		fourFoldIncrease.setVisible(false);
 		fourFoldIncrease.setEnabled(false);
-		addField(PathogenTestDto.TEST_RESULT_TEXT, TextArea.class).setRows(3);
+		addField(PathogenTestDto.TEST_RESULT_TEXT, TextArea.class).setRows(6);
+
+		initializeAccessAndAllowedAccesses();
+
 		FieldHelper.setVisibleWhen(
 			getFieldGroup(),
 			PathogenTestDto.TEST_TYPE_TEXT,

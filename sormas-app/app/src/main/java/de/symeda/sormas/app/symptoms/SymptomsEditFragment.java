@@ -33,6 +33,7 @@ import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.symptoms.SymptomsHelper;
 import de.symeda.sormas.api.symptoms.TemperatureSource;
 import de.symeda.sormas.api.utils.DependantOn;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.checkers.CountryFieldVisibilityChecker;
 import de.symeda.sormas.api.visit.VisitStatus;
@@ -82,7 +83,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 			activityRootData,
 			FieldVisibilityCheckers.withDisease(activityRootData.getDisease())
 				.add(new CountryFieldVisibilityChecker(ConfigProvider.getServerLocale())),
-			null);
+			UiFieldAccessCheckers.forSensitiveData(activityRootData.isPseudonymized()));
 	}
 
 	public static SymptomsEditFragment newInstance(Visit activityRootData) {
@@ -92,7 +93,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 			activityRootData,
 			FieldVisibilityCheckers.withDisease(activityRootData.getDisease())
 				.add(new CountryFieldVisibilityChecker(ConfigProvider.getServerLocale())),
-			null);
+			UiFieldAccessCheckers.forSensitiveData(activityRootData.isPseudonymized()));
 	}
 
 	public static SymptomsEditFragment newInstance(ClinicalVisit activityRootData, String caseUuid) {
@@ -222,7 +223,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 				ControlPropertyField childField = findFieldByPropertyId(childSymptomPropertyId, contentBinding.mainContent);
 				if (symptomField != null && childField != null && childField.getVisibility() == VISIBLE) {
 					// only do this for fields that are visible (based on visibility by disease)
-					ControlPropertyField.setDependencyParentField(childField, symptomField, SymptomState.YES, null, null, null);
+					ControlPropertyField.setDependencyParentField(childField, symptomField, SymptomState.YES, null, null, null, null, null);
 				}
 			}
 		}

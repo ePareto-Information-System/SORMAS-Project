@@ -45,10 +45,17 @@ public class ContactGridDetailed extends AbstractContactGrid<ContactIndexDetaile
 				ContactIndexDetailedDto.SEX,
 				ContactIndexDetailedDto.APPROXIMATE_AGE,
 				ContactIndexDetailedDto.DISTRICT_NAME,
-				ContactIndexDetailedDto.CITY,
-				ContactIndexDetailedDto.ADDRESS,
 				ContactIndexDetailedDto.POSTAL_CODE,
+				ContactIndexDetailedDto.CITY,
+				ContactIndexDetailedDto.STREET,
+				ContactIndexDetailedDto.HOUSE_NUMBER,
+				ContactIndexDetailedDto.ADDITIONAL_INFORMATION,
 				ContactIndexDetailedDto.PHONE));
+	}
+
+	@Override
+	public Stream<String> getEventColumns() {
+		return Stream.of(ContactIndexDetailedDto.LATEST_EVENT_ID, ContactIndexDetailedDto.LATEST_EVENT_TITLE);
 	}
 
 	@Override
@@ -60,9 +67,11 @@ public class ContactGridDetailed extends AbstractContactGrid<ContactIndexDetaile
 		getColumn(ContactIndexDetailedDto.SEX).setWidth(80);
 		getColumn(ContactIndexDetailedDto.APPROXIMATE_AGE).setWidth(50);
 		getColumn(ContactIndexDetailedDto.DISTRICT_NAME).setWidth(150);
-		getColumn(ContactIndexDetailedDto.CITY).setWidth(150);
-		getColumn(ContactIndexDetailedDto.ADDRESS).setWidth(200);
 		getColumn(ContactIndexDetailedDto.POSTAL_CODE).setWidth(100);
+		getColumn(ContactIndexDetailedDto.CITY).setWidth(150);
+		getColumn(ContactIndexDetailedDto.STREET).setWidth(150);
+		getColumn(ContactIndexDetailedDto.HOUSE_NUMBER).setWidth(50);
+		getColumn(ContactIndexDetailedDto.ADDITIONAL_INFORMATION).setWidth(200);
 		getColumn(ContactIndexDetailedDto.PHONE).setWidth(100);
 		((Column<ContactIndexDetailedDto, CaseReferenceDto>) getColumn(ContactIndexDetailedDto.CAZE)).setWidth(150)
 			.setRenderer(entry -> entry != null ? entry.getUuid() : null, new UuidRenderer());
@@ -74,5 +83,14 @@ public class ContactGridDetailed extends AbstractContactGrid<ContactIndexDetaile
 				ControllerProvider.getCaseController().navigateToCase(caze.getUuid());
 			}
 		}));
+
+		getColumn(ContactIndexDetailedDto.LATEST_EVENT_ID).setWidth(80).setSortable(false);
+		getColumn(ContactIndexDetailedDto.LATEST_EVENT_TITLE).setWidth(150).setSortable(false);
+		((Column<ContactIndexDetailedDto, String>) getColumn(ContactIndexDetailedDto.LATEST_EVENT_ID)).setRenderer(new UuidRenderer());
+		addItemClickListener(
+			new ShowDetailsListener<>(
+				ContactIndexDetailedDto.LATEST_EVENT_ID,
+				c -> ControllerProvider.getEventController().navigateToData(c.getLatestEventId())));
+
 	}
 }

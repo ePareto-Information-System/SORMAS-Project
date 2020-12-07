@@ -42,12 +42,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -75,20 +75,12 @@ import de.symeda.sormas.api.AgeGroup;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.Language;
-import de.symeda.sormas.api.caze.AgeAndBirthDateDto;
-import de.symeda.sormas.api.caze.BirthDateDto;
-import de.symeda.sormas.api.caze.BurialInfoDto;
 import de.symeda.sormas.api.caze.CaseCriteria;
-import de.symeda.sormas.api.caze.CaseDataDto;
-import de.symeda.sormas.api.caze.CaseExportDto;
 import de.symeda.sormas.api.caze.CaseExportType;
 import de.symeda.sormas.api.clinicalcourse.ClinicalVisitDto;
 import de.symeda.sormas.api.clinicalcourse.ClinicalVisitExportDto;
-import de.symeda.sormas.api.clinicalcourse.HealthConditionsDto;
 import de.symeda.sormas.api.contact.ContactCriteria;
 import de.symeda.sormas.api.contact.ContactDto;
-import de.symeda.sormas.api.epidata.EpiDataDto;
-import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -98,7 +90,6 @@ import de.symeda.sormas.api.importexport.ExportProperty;
 import de.symeda.sormas.api.importexport.ExportTarget;
 import de.symeda.sormas.api.infrastructure.PopulationDataDto;
 import de.symeda.sormas.api.person.PersonDto;
-import de.symeda.sormas.api.person.PersonHelper;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.therapy.PrescriptionDto;
@@ -213,8 +204,9 @@ public final class DownloadUtil {
 							columnNames.add(DataHelper.getSexAndAgeGroupString(ageGroup, null));
 							columnNames.add(DataHelper.getSexAndAgeGroupString(ageGroup, Sex.MALE));
 							columnNames.add(DataHelper.getSexAndAgeGroupString(ageGroup, Sex.FEMALE));
+							columnNames.add(DataHelper.getSexAndAgeGroupString(ageGroup, Sex.OTHER));
 							ageGroupPositions.put(ageGroup, ageGroupIndex);
-							ageGroupIndex += 3;
+							ageGroupIndex += 4;
 						}
 
 						writer.writeNext(columnNames.toArray(new String[columnNames.size()]));
@@ -251,6 +243,8 @@ public final class DownloadUtil {
 									exportLine[3] = String.valueOf((int) populationExportData[4]);
 								} else if (Sex.FEMALE.getName().equals(sexString)) {
 									exportLine[4] = String.valueOf((int) populationExportData[4]);
+								} else if (Sex.OTHER.getName().equals(sexString)) {
+									exportLine[5] = String.valueOf((int) populationExportData[4]);
 								} else {
 									exportLine[2] = String.valueOf((int) populationExportData[4]);
 								}
@@ -262,6 +256,8 @@ public final class DownloadUtil {
 									ageGroupPosition += 1;
 								} else if (Sex.FEMALE.getName().equals(sexString)) {
 									ageGroupPosition += 2;
+								} else if (Sex.OTHER.getName().equals(sexString)) {
+									ageGroupPosition += 3;
 								}
 								exportLine[ageGroupPosition] = String.valueOf((int) populationExportData[4]);
 							}
@@ -290,39 +286,7 @@ public final class DownloadUtil {
 	}
 
 	public static StreamResource createCaseManagementExportResource(CaseCriteria criteria, String exportFileName) {
-
-		StreamResource casesResource = createCsvExportStreamResource(
-			CaseExportDto.class,
-			CaseExportType.CASE_MANAGEMENT,
-			(Integer start, Integer max) -> FacadeProvider.getCaseFacade()
-				.getExportList(criteria, CaseExportType.CASE_MANAGEMENT, start, max, null, I18nProperties.getUserLanguage()),
-			(propertyId, type) -> {
-				String caption = I18nProperties.getPrefixCaption(
-					CaseExportDto.I18N_PREFIX,
-					propertyId,
-					I18nProperties.getPrefixCaption(
-						CaseDataDto.I18N_PREFIX,
-						propertyId,
-						I18nProperties.getPrefixCaption(
-							PersonDto.I18N_PREFIX,
-							propertyId,
-							I18nProperties.getPrefixCaption(
-								SymptomsDto.I18N_PREFIX,
-								propertyId,
-								I18nProperties.getPrefixCaption(
-									EpiDataDto.I18N_PREFIX,
-									propertyId,
-									I18nProperties.getPrefixCaption(
-										HospitalizationDto.I18N_PREFIX,
-										propertyId,
-										I18nProperties.getPrefixCaption(HealthConditionsDto.I18N_PREFIX, propertyId)))))));
-				if (Date.class.isAssignableFrom(type)) {
-					caption += " (" + DateFormatHelper.getDateFormatPattern() + ")";
-				}
-				return caption;
-			},
-			"sormas_cases_" + DateHelper.formatDateForExport(new Date()) + ".csv",
-			null);
+		StreamResource casesResource = CaseDownloadUtil.createCaseExportResource(criteria, CaseExportType.CASE_MANAGEMENT, null);
 
 		StreamResource prescriptionsResource = createCsvExportStreamResource(
 			PrescriptionExportDto.class,
@@ -577,8 +541,6 @@ public final class DownloadUtil {
 		String exportFileName,
 		ExportConfigurationDto exportConfiguration) {
 
-
-		CountryFieldVisibilityChecker countryFieldVisibilityChecker = new CountryFieldVisibilityChecker(FacadeProvider.getConfigFacade().getCountryLocale());
 		StreamResource extendedStreamResource = new StreamResource(() -> {
 
 			return new DelayedInputStream((out) -> {
@@ -587,18 +549,7 @@ public final class DownloadUtil {
 					FacadeProvider.getConfigFacade().getCsvSeparator())) {
 
 					// 1. fields in order of declaration - not using Introspector here, because it gives properties in alphabetical order
-					List<Method> readMethods = new ArrayList<Method>();
-					readMethods.addAll(
-						Arrays.stream(exportRowClass.getDeclaredMethods())
-							.filter(
-								m -> (m.getName().startsWith("get") || m.getName().startsWith("is"))
-									&& m.isAnnotationPresent(Order.class)
-									&& (countryFieldVisibilityChecker.isVisible(m))
-									&& (exportType == null || hasExportTarget(exportType, m))
-									&& (exportConfiguration == null
-										|| exportConfiguration.getProperties().contains(m.getAnnotation(ExportProperty.class).value())))
-							.sorted(Comparator.comparingInt(a -> a.getAnnotationsByType(Order.class)[0].value()))
-							.collect(Collectors.toList()));
+					List<Method> readMethods = getExportRowClassReadMethods(exportRowClass, exportType, exportConfiguration);
 
 					// 2. replace entity fields with all the columns of the entity
 					Map<Method, Function<T, ?>> subEntityProviders = new HashMap<Method, Function<T, ?>>();
@@ -661,42 +612,8 @@ public final class DownloadUtil {
 									Object entity = subEntityProvider != null ? subEntityProvider.apply(exportRow) : exportRow;
 									// Sub entity might be null
 									Object value = entity != null ? method.invoke(entity) : null;
-									if (value == null) {
-										fieldValues[i] = "";
-									} else if (value instanceof Date) {
-										fieldValues[i] = DateFormatHelper.formatDate((Date) value);
-									} else if (value.getClass().equals(boolean.class) || value.getClass().equals(Boolean.class)) {
-										fieldValues[i] = DataHelper.parseBoolean((Boolean) value);
-									} else if (value instanceof Set) {
-										StringBuilder sb = new StringBuilder();
-										for (Object o : (Set<?>) value) {
-											if (sb.length() != 0) {
-												sb.append(", ");
-											}
-											sb.append(o);
-										}
-										fieldValues[i] = sb.toString();
-									} else if (value instanceof BurialInfoDto) {
-										fieldValues[i] = PersonHelper.buildBurialInfoString((BurialInfoDto) value, userLanguage);
-									} else if (value instanceof AgeAndBirthDateDto) {
-										AgeAndBirthDateDto ageAndBirthDate = (AgeAndBirthDateDto) value;
-										fieldValues[i] = PersonHelper.getAgeAndBirthdateString(
-											ageAndBirthDate.getAge(),
-											ageAndBirthDate.getAgeType(),
-											ageAndBirthDate.getBirthdateDD(),
-											ageAndBirthDate.getBirthdateMM(),
-											ageAndBirthDate.getBirthdateYYYY(),
-											userLanguage);
-									} else if (value instanceof BirthDateDto) {
-										BirthDateDto birthDate = (BirthDateDto) value;
-										fieldValues[i] = PersonHelper.formatBirthdate(
-											birthDate.getBirthdateDD(),
-											birthDate.getBirthdateMM(),
-											birthDate.getBirthdateYYYY(),
-											userLanguage);
-									} else {
-										fieldValues[i] = value.toString();
-									}
+
+									fieldValues[i] = DataHelper.valueToString(value);
 								}
 								writer.writeNext(fieldValues);
 							} ;
@@ -708,8 +625,7 @@ public final class DownloadUtil {
 						startIndex += DETAILED_EXPORT_STEP_SIZE;
 						exportRows = exportRowsSupplier.apply(startIndex, DETAILED_EXPORT_STEP_SIZE);
 					}
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					LoggerFactory.getLogger(DownloadUtil.class).error(e.getMessage(), e);
 					throw new RuntimeException(e);
 				}
@@ -730,6 +646,26 @@ public final class DownloadUtil {
 		extendedStreamResource.setMIMEType("text/csv");
 		extendedStreamResource.setCacheTime(0);
 		return extendedStreamResource;
+	}
+
+	private static <T> List<Method> getExportRowClassReadMethods(
+		Class<T> exportRowClass,
+		Enum<?> exportType,
+		ExportConfigurationDto exportConfiguration) {
+		CountryFieldVisibilityChecker countryFieldVisibilityChecker =
+			new CountryFieldVisibilityChecker(FacadeProvider.getConfigFacade().getCountryLocale());
+
+		List<Method> methods = Stream.of(exportRowClass.getDeclaredMethods())
+			.filter(
+				m -> (m.getName().startsWith("get") || m.getName().startsWith("is"))
+					&& m.isAnnotationPresent(Order.class)
+					&& (countryFieldVisibilityChecker.isVisible(m))
+					&& (exportType == null || hasExportTarget(exportType, m))
+					&& (exportConfiguration == null || exportConfiguration.getProperties().contains(m.getAnnotation(ExportProperty.class).value())))
+			.sorted(Comparator.comparingInt(a -> a.getAnnotationsByType(Order.class)[0].value()))
+			.collect(Collectors.toList());
+
+		return methods;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -786,5 +722,9 @@ public final class DownloadUtil {
 		dialog.setCaption(exportComponent.getCaption());
 
 		dialog.addCloseListener(closeListener);
+	}
+
+	public static String createFileNameWithCurrentDate(String fileNamePrefix, String fileExtension) {
+		return fileNamePrefix + DateHelper.formatDateForExport(new Date()) + fileExtension;
 	}
 }

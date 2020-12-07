@@ -30,14 +30,20 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import de.symeda.sormas.api.AgeGroup;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.HasUuid;
+import de.symeda.sormas.api.Language;
+import de.symeda.sormas.api.caze.AgeAndBirthDateDto;
+import de.symeda.sormas.api.caze.BirthDateDto;
+import de.symeda.sormas.api.caze.BurialInfoDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.api.person.PersonHelper;
 import de.symeda.sormas.api.person.Sex;
 
 public final class DataHelper {
@@ -206,6 +212,10 @@ public final class DataHelper {
 		return input.substring(0, 1).toUpperCase() + input.substring(1);
 	}
 
+	public static String lowercaseFirst(String input) {
+		return input.substring(0, 1).toLowerCase() + input.substring(1);
+	}
+
 	public static BigDecimal getTruncatedBigDecimal(BigDecimal number) {
 		return number.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) == 0 ? number.setScale(0, RoundingMode.HALF_UP) : number;
 	}
@@ -299,6 +309,15 @@ public final class DataHelper {
 		return className;
 	}
 
+	public static String getHumanClassCaption(Class<?> classType) {
+
+		String className = classType.getSimpleName();
+		className = className.replaceAll("Dto$", "");
+		className = className.replaceAll("Reference$", "");
+		I18nProperties.getCaption(DataHelper.lowercaseFirst(className), className);
+		return className;
+	}
+
 	/**
 	 * @return null when NumberFormatException is thrown
 	 */
@@ -330,6 +349,42 @@ public final class DataHelper {
 			return true;
 		} catch (Exception e) {
 			return false;
+		}
+	}
+
+	public static String valueToString(Object value) {
+		Language userLanguage = I18nProperties.getUserLanguage();
+		if (value == null) {
+			return "";
+		} else if (value instanceof Date) {
+			return DateFormatHelper.formatDate((Date) value);
+		} else if (value.getClass().equals(Boolean.class)) {
+			return DataHelper.parseBoolean((Boolean) value);
+		} else if (value instanceof Set) {
+			StringBuilder sb = new StringBuilder();
+			for (Object o : (Set<?>) value) {
+				if (sb.length() != 0) {
+					sb.append(", ");
+				}
+				sb.append(o);
+			}
+			return sb.toString();
+		} else if (value instanceof BurialInfoDto) {
+			return PersonHelper.buildBurialInfoString((BurialInfoDto) value, userLanguage);
+		} else if (value instanceof AgeAndBirthDateDto) {
+			AgeAndBirthDateDto ageAndBirthDate = (AgeAndBirthDateDto) value;
+			return PersonHelper.getAgeAndBirthdateString(
+				ageAndBirthDate.getAge(),
+				ageAndBirthDate.getAgeType(),
+				ageAndBirthDate.getBirthdateDD(),
+				ageAndBirthDate.getBirthdateMM(),
+				ageAndBirthDate.getBirthdateYYYY(),
+				userLanguage);
+		} else if (value instanceof BirthDateDto) {
+			BirthDateDto birthDate = (BirthDateDto) value;
+			return PersonHelper.formatBirthdate(birthDate.getBirthdateDD(), birthDate.getBirthdateMM(), birthDate.getBirthdateYYYY(), userLanguage);
+		} else {
+			return value.toString();
 		}
 	}
 }

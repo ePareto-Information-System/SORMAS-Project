@@ -33,10 +33,12 @@ import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.SubMenu;
 import de.symeda.sormas.ui.UserProvider;
-import de.symeda.sormas.ui.samples.SampleListComponent;
+import de.symeda.sormas.ui.contact.ContactListComponent;
+import de.symeda.sormas.ui.samples.sampleLink.SampleListComponent;
 import de.symeda.sormas.ui.utils.AbstractDetailView;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
 import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.DetailSubComponentWrapper;
 import de.symeda.sormas.ui.utils.LayoutUtil;
 
 public class EventParticipantDataView extends AbstractDetailView<EventParticipantReferenceDto> {
@@ -47,9 +49,14 @@ public class EventParticipantDataView extends AbstractDetailView<EventParticipan
 
 	public static final String EDIT_LOC = "edit";
 	public static final String SAMPLES_LOC = "samples";
+	public static final String CONTACTS_LOC = "contacts";
 
-	public static final String HTML_LAYOUT =
-		LayoutUtil.fluidRow(LayoutUtil.fluidColumnLoc(8, 0, 12, 0, EDIT_LOC), LayoutUtil.fluidColumnLoc(4, 0, 6, 0, SAMPLES_LOC));
+	public static final String HTML_LAYOUT = LayoutUtil.fluidRow(
+		LayoutUtil.fluidColumnLoc(8, 0, 12, 0, EDIT_LOC),
+		LayoutUtil.fluidColumnLoc(4, 0, 6, 0, SAMPLES_LOC),
+		LayoutUtil.fluidColumnLoc(4, 0, 6, 0, CONTACTS_LOC));
+
+	private CommitDiscardWrapperComponent<?> editComponent;
 
 	public EventParticipantDataView() {
 		super(VIEW_NAME);
@@ -81,7 +88,7 @@ public class EventParticipantDataView extends AbstractDetailView<EventParticipan
 	protected void initView(String params) {
 		setHeightUndefined();
 
-		VerticalLayout container = new VerticalLayout();
+		DetailSubComponentWrapper container = new DetailSubComponentWrapper(() -> editComponent);
 		container.setWidth(100, Unit.PERCENTAGE);
 		container.setMargin(true);
 		setSubComponent(container);
@@ -94,8 +101,7 @@ public class EventParticipantDataView extends AbstractDetailView<EventParticipan
 
 		final EventParticipantReferenceDto eventParticipantRef = getReference();
 
-		CommitDiscardWrapperComponent<?> editComponent =
-			ControllerProvider.getEventParticipantController().getEventParticipantDataEditComponent(eventParticipantRef.getUuid());
+		editComponent = ControllerProvider.getEventParticipantController().getEventParticipantDataEditComponent(eventParticipantRef.getUuid());
 		editComponent.setMargin(false);
 		editComponent.setWidth(100, Unit.PERCENTAGE);
 		editComponent.getWrappedComponent().setWidth(100, Unit.PERCENTAGE);
@@ -117,18 +123,36 @@ public class EventParticipantDataView extends AbstractDetailView<EventParticipan
 			sampleLocLayout.setSpacing(false);
 
 			SampleListComponent sampleList = new SampleListComponent(eventParticipantRef);
-			sampleList.addStyleName(CssStyles.SIDE_COMPONENT);
+			sampleList.addStyleNames(CssStyles.SIDE_COMPONENT, CssStyles.VSPACE_NONE);
 			sampleLocLayout.addComponent(sampleList);
 
 			if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_CREATE)) {
-				sampleLocLayout.addComponent(
-					new Label(
-						VaadinIcons.INFO_CIRCLE.getHtml() + " "
-							+ I18nProperties.getString(Strings.infoCreateNewSampleDiscardsChangesEventParticipant),
-						ContentMode.HTML));
+				Label infoSample = new Label(
+					VaadinIcons.INFO_CIRCLE.getHtml() + " " + I18nProperties.getString(Strings.infoCreateNewSampleDiscardsChangesEventParticipant),
+					ContentMode.HTML);
+				infoSample.addStyleNames(CssStyles.VSPACE_3, CssStyles.VSPACE_TOP_4);
+
+				sampleLocLayout.addComponent(infoSample);
 			}
 
 			layout.addComponent(sampleLocLayout, SAMPLES_LOC);
+		}
+
+		if (UserProvider.getCurrent().hasUserRight(UserRight.CONTACT_VIEW)) {
+			VerticalLayout contactsLayout = new VerticalLayout();
+			contactsLayout.setMargin(false);
+			contactsLayout.setSpacing(false);
+
+			ContactListComponent contactList = new ContactListComponent(eventParticipantRef);
+			contactList.addStyleName(CssStyles.SIDE_COMPONENT);
+			contactsLayout.addComponent(contactList);
+
+			layout.addComponent(contactsLayout, CONTACTS_LOC);
+		}
+
+		boolean isEditAllowed = FacadeProvider.getEventParticipantFacade().isEventParticipantEditAllowed(eventParticipantRef.getUuid());
+		if (!isEditAllowed) {
+			container.setEnabled(false);
 		}
 	}
 

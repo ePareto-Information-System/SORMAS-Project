@@ -5,14 +5,13 @@ import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.text.ParseException;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import de.symeda.sormas.api.person.SimilarPersonDto;
 import org.apache.commons.lang3.StringUtils;
 
+import com.opencsv.exceptions.CsvValidationException;
 import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.server.StreamResource;
 import com.vaadin.ui.UI;
@@ -27,8 +26,8 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.importexport.InvalidColumnException;
 import de.symeda.sormas.api.person.PersonDto;
-import de.symeda.sormas.api.person.PersonIndexDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
+import de.symeda.sormas.api.person.SimilarPersonDto;
 import de.symeda.sormas.api.region.CommunityReferenceDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
@@ -70,7 +69,8 @@ public class ContactImporter extends DataImporter {
 	}
 
 	@Override
-	public void startImport(Consumer<StreamResource> addErrorReportToLayoutCallback, UI currentUI, boolean duplicatesPossible) throws IOException {
+	public void startImport(Consumer<StreamResource> addErrorReportToLayoutCallback, UI currentUI, boolean duplicatesPossible)
+		throws IOException, CsvValidationException {
 
 		this.currentUI = currentUI;
 		super.startImport(addErrorReportToLayoutCallback, currentUI, duplicatesPossible);
@@ -96,24 +96,20 @@ public class ContactImporter extends DataImporter {
 		newContactTemp.setReportingUser(currentUser);
 
 		boolean contactHasImportError =
-			insertRowIntoData(values, entityClasses, entityPropertyPaths, true, new Function<ImportCellData, Exception>() {
-
-				@Override
-				public Exception apply(ImportCellData importColumnInformation) {
-					// If the cell entry is not empty, try to insert it into the current contact or person object
-					if (!StringUtils.isEmpty(importColumnInformation.getValue())) {
-						try {
-							insertColumnEntryIntoData(
-								newContactTemp,
-								newPersonTemp,
-								importColumnInformation.getValue(),
-								importColumnInformation.getEntityPropertyPath());
-						} catch (ImportErrorException | InvalidColumnException e) {
-							return e;
-						}
+			insertRowIntoData(values, entityClasses, entityPropertyPaths, true, importColumnInformation -> {
+				// If the cell entry is not empty, try to insert it into the current contact or person object
+				if (!StringUtils.isEmpty(importColumnInformation.getValue())) {
+					try {
+						insertColumnEntryIntoData(
+							newContactTemp,
+							newPersonTemp,
+							importColumnInformation.getValue(),
+							importColumnInformation.getEntityPropertyPath());
+					} catch (ImportErrorException | InvalidColumnException e) {
+						return e;
 					}
-					return null;
 				}
+				return null;
 			});
 
 		// try to assign the contact to an existing case
@@ -209,7 +205,7 @@ public class ContactImporter extends DataImporter {
 						}
 					}
 
-					FacadeProvider.getContactFacade().saveContact(newContact);
+					FacadeProvider.getContactFacade().saveContact(newContact, false);
 
 					consumer.result = null;
 					return ImportLineResult.SUCCESS;
@@ -357,7 +353,12 @@ public class ContactImporter extends DataImporter {
 						Pair<DistrictReferenceDto, CommunityReferenceDto> infrastructureData =
 							ImporterPersonHelper.getPersonDistrictAndCommunity(pd.getName(), person);
 						List<FacilityReferenceDto> facility = FacadeProvider.getFacilityFacade()
-							.getByName(entry, infrastructureData.getElement0(), infrastructureData.getElement1(), false);
+							.getByNameAndType(
+								entry,
+								infrastructureData.getElement0(),
+								infrastructureData.getElement1(),
+								getTypeOfFacility(pd.getName(), currentElement),
+								false);
 						if (facility.isEmpty()) {
 							if (infrastructureData.getElement1() != null) {
 								throw new ImportErrorException(
@@ -395,9 +396,6 @@ public class ContactImporter extends DataImporter {
 					I18nProperties.getValidationError(Validations.importErrorInColumn, buildEntityProperty(entryHeaderPath)));
 			} catch (IllegalArgumentException e) {
 				throw new ImportErrorException(entry, buildEntityProperty(entryHeaderPath));
-			} catch (ParseException e) {
-				throw new ImportErrorException(
-					I18nProperties.getValidationError(Validations.importInvalidDate, buildEntityProperty(entryHeaderPath)));
 			} catch (ImportErrorException e) {
 				throw e;
 			} catch (Exception e) {

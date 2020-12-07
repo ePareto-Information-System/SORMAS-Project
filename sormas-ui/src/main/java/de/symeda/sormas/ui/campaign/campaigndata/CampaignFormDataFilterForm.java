@@ -15,13 +15,16 @@
 
 package de.symeda.sormas.ui.campaign.campaigndata;
 
+import java.util.function.Consumer;
+
 import com.vaadin.v7.data.Property;
 import com.vaadin.v7.ui.ComboBox;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.campaign.data.CampaignFormDataCriteria;
 import de.symeda.sormas.api.campaign.data.CampaignFormDataDto;
-import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.campaign.form.CampaignFormMetaReferenceDto;
+import de.symeda.sormas.api.event.EventCriteria;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
@@ -30,10 +33,14 @@ import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.AbstractFilterForm;
 import de.symeda.sormas.ui.utils.FieldConfiguration;
+import de.symeda.sormas.ui.utils.FieldHelper;
 
 public class CampaignFormDataFilterForm extends AbstractFilterForm<CampaignFormDataCriteria> {
 
 	private static final long serialVersionUID = 718816470397296272L;
+
+	private Consumer<CampaignFormMetaReferenceDto> formMetaChangedCallback;
+	private ComboBox cbCampaignForm;
 
 	protected CampaignFormDataFilterForm() {
 		super(CampaignFormDataCriteria.class, CampaignFormDataDto.I18N_PREFIX);
@@ -43,7 +50,7 @@ public class CampaignFormDataFilterForm extends AbstractFilterForm<CampaignFormD
 	protected String[] getMainFilterLocators() {
 		return new String[] {
 			CampaignFormDataCriteria.CAMPAIGN,
-			CampaignFormDataCriteria.CAMPAIGN_FORM,
+			CampaignFormDataCriteria.CAMPAIGN_FORM_META,
 			CampaignFormDataCriteria.REGION,
 			CampaignFormDataCriteria.DISTRICT,
 			CampaignFormDataCriteria.COMMUNITY };
@@ -51,19 +58,21 @@ public class CampaignFormDataFilterForm extends AbstractFilterForm<CampaignFormD
 
 	@Override
 	protected void addFields() {
-		ComboBox cbCampaign = addField(
-			FieldConfiguration.withCaptionAndPixelSized(
-				CampaignFormDataCriteria.CAMPAIGN,
-				I18nProperties.getPrefixCaption(CampaignFormDataDto.I18N_PREFIX, CampaignFormDataDto.CAMPAIGN),
-				200));
-		cbCampaign.addItems(FacadeProvider.getCampaignFacade().getAllCampaignsAsReference());
 
-		ComboBox cbCampaignForm = addField(
+		cbCampaignForm = addField(
 			FieldConfiguration.withCaptionAndPixelSized(
-				CampaignFormDataCriteria.CAMPAIGN_FORM,
-				I18nProperties.getPrefixCaption(CampaignFormDataDto.I18N_PREFIX, CampaignFormDataDto.CAMPAIGN_FORM),
+				CampaignFormDataCriteria.CAMPAIGN_FORM_META,
+				I18nProperties.getPrefixCaption(CampaignFormDataDto.I18N_PREFIX, CampaignFormDataDto.CAMPAIGN_FORM_META),
 				200));
-		cbCampaignForm.addItems(FacadeProvider.getCampaignFormFacade().getAllCampaignFormsAsReferences());
+		cbCampaignForm.addItems(FacadeProvider.getCampaignFormMetaFacade().getAllCampaignFormMetasAsReferences());
+
+		FieldHelper.addSoftRequiredStyle(cbCampaignForm);
+
+		if (formMetaChangedCallback != null) {
+			cbCampaignForm.addValueChangeListener(e -> {
+				formMetaChangedCallback.accept((CampaignFormMetaReferenceDto) e.getProperty().getValue());
+			});
+		}
 
 		UserDto user = UserProvider.getCurrent().getUser();
 		if (user.getRegion() == null) {
@@ -110,8 +119,12 @@ public class CampaignFormDataFilterForm extends AbstractFilterForm<CampaignFormD
 		case CampaignFormDataDto.REGION:
 			RegionReferenceDto region = (RegionReferenceDto) event.getProperty().getValue();
 
-			if (!DataHelper.equal(region, criteria.getRegion())) {
-				getField(CaseDataDto.DISTRICT).setValue(null);
+			if (region == null) {
+				clearAndDisableFields(CampaignFormDataCriteria.DISTRICT, CampaignFormDataCriteria.COMMUNITY);
+			} else {
+				enableFields(EventCriteria.DISTRICT);
+				clearAndDisableFields(CampaignFormDataCriteria.COMMUNITY);
+				applyRegionFilterDependency(region, EventCriteria.DISTRICT);
 			}
 
 			break;
@@ -119,7 +132,12 @@ public class CampaignFormDataFilterForm extends AbstractFilterForm<CampaignFormD
 			DistrictReferenceDto district = (DistrictReferenceDto) event.getProperty().getValue();
 
 			if (!DataHelper.equal(district, criteria.getDistrict())) {
-				getField(CaseDataDto.COMMUNITY).setValue(null);
+				if (district == null) {
+					clearAndDisableFields(CampaignFormDataCriteria.COMMUNITY);
+				} else {
+					enableFields(CampaignFormDataCriteria.COMMUNITY);
+					applyDistrictDependency(district, CampaignFormDataCriteria.COMMUNITY);
+				}
 			}
 
 			break;
@@ -128,9 +146,9 @@ public class CampaignFormDataFilterForm extends AbstractFilterForm<CampaignFormD
 
 	@Override
 	protected void applyDependenciesOnNewValue(CampaignFormDataCriteria criteria) {
-		ComboBox cbRegion = (ComboBox) getField(CampaignFormDataDto.REGION);
-		ComboBox cbDistrict = (ComboBox) getField(CampaignFormDataDto.DISTRICT);
-		ComboBox cbCommunity = (ComboBox) getField(CampaignFormDataDto.COMMUNITY);
+		final ComboBox cbRegion = getField(CampaignFormDataDto.REGION);
+		final ComboBox cbDistrict = getField(CampaignFormDataDto.DISTRICT);
+		final ComboBox cbCommunity = getField(CampaignFormDataDto.COMMUNITY);
 
 		if (cbRegion != null && cbDistrict != null) {
 			RegionReferenceDto region = criteria.getRegion();
@@ -147,5 +165,22 @@ public class CampaignFormDataFilterForm extends AbstractFilterForm<CampaignFormD
 				cbCommunity.addItems(FacadeProvider.getCommunityFacade().getAllActiveByDistrict(district.getUuid()));
 			}
 		}
+
+		cbCampaignForm.removeAllItems();
+		if (criteria.getCampaign() != null) {
+			cbCampaignForm
+				.addItems(FacadeProvider.getCampaignFormMetaFacade().getCampaignFormMetasAsReferencesByCampaign(criteria.getCampaign().getUuid()));
+		} else {
+			cbCampaignForm.addItems(FacadeProvider.getCampaignFormMetaFacade().getAllCampaignFormMetasAsReferences());
+		}
 	}
+
+	public void setFormMetaChangedCallback(Consumer<CampaignFormMetaReferenceDto> formMetaChangedCallback) {
+		this.formMetaChangedCallback = formMetaChangedCallback;
+
+		if (cbCampaignForm != null) {
+			cbCampaignForm.addValueChangeListener(e -> formMetaChangedCallback.accept((CampaignFormMetaReferenceDto) e.getProperty().getValue()));
+		}
+	}
+
 }

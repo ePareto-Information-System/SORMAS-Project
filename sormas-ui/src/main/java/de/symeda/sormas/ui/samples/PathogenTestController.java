@@ -41,6 +41,7 @@ import de.symeda.sormas.api.contact.ContactClassification;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.contact.ContactStatus;
+import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventParticipantDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
 import de.symeda.sormas.api.i18n.Captions;
@@ -79,7 +80,7 @@ public class PathogenTestController {
 		Runnable callback,
 		BiConsumer<PathogenTestDto, Runnable> onSavedPathogenTest) {
 		SampleDto sampleDto = FacadeProvider.getSampleFacade().getSampleByUuid(sampleRef.getUuid());
-		PathogenTestForm createForm = new PathogenTestForm(sampleDto, true, caseSampleCount);
+		PathogenTestForm createForm = new PathogenTestForm(sampleDto, true, caseSampleCount, false);
 		createForm.setValue(PathogenTestDto.build(sampleDto, UserProvider.getCurrent().getUser()));
 		final CommitDiscardWrapperComponent<PathogenTestForm> editView = new CommitDiscardWrapperComponent<PathogenTestForm>(
 			createForm,
@@ -118,7 +119,7 @@ public class PathogenTestController {
 		bulkResultData.setTestedDisease(disease);
 		bulkResultData.setTestResultVerified(true);
 
-		PathogenTestForm form = new PathogenTestForm(sampleDto, true, 1);
+		PathogenTestForm form = new PathogenTestForm(sampleDto, true, 1, false);
 		form.setValue(bulkResultData);
 		final CommitDiscardWrapperComponent<PathogenTestForm> editView = new CommitDiscardWrapperComponent<PathogenTestForm>(
 			form,
@@ -189,15 +190,14 @@ public class PathogenTestController {
 	
 	public void edit(PathogenTestDto dto, int caseSampleCount, Runnable doneCallback, BiConsumer<PathogenTestDto, Runnable> onSavedPathogenTest) {
 		// get fresh data
-		PathogenTestDto newDto = facade.getByUuid(dto.getUuid());
+		PathogenTestDto pathogenTest = facade.getByUuid(dto.getUuid());
+		SampleDto sample = FacadeProvider.getSampleFacade().getSampleByUuid(dto.getSample().getUuid());
 
-		PathogenTestForm form =
-			new PathogenTestForm(FacadeProvider.getSampleFacade().getSampleByUuid(dto.getSample().getUuid()), false, caseSampleCount);
-		form.setValue(newDto);
-		final CommitDiscardWrapperComponent<PathogenTestForm> editView = new CommitDiscardWrapperComponent<PathogenTestForm>(
-			form,
-			UserProvider.getCurrent().hasUserRight(UserRight.PATHOGEN_TEST_EDIT),
-			form.getFieldGroup());
+		PathogenTestForm form = new PathogenTestForm(sample, false, caseSampleCount, pathogenTest.isPseudonymized());
+		form.setValue(pathogenTest);
+
+		final CommitDiscardWrapperComponent<PathogenTestForm> editView =
+			new CommitDiscardWrapperComponent<>(form, UserProvider.getCurrent().hasUserRight(UserRight.PATHOGEN_TEST_EDIT), form.getFieldGroup());
 
 		Window popupWindow = VaadinUiUtil.showModalPopupWindow(editView, I18nProperties.getString(Strings.headingEditPathogenTestResult));
 
@@ -289,10 +289,9 @@ public class PathogenTestController {
 			facade.savePathogenTest(dto);
 			final EventParticipantDto eventParticipant =
 				FacadeProvider.getEventParticipantFacade().getEventParticipantByUuid(associatedEventParticipant.getUuid());
-
 			Runnable eventParticipantConvertToCaseCallback = () -> {
 				if (PathogenTestResultType.POSITIVE.equals(dto.getTestResult()) && dto.getTestResultVerified().booleanValue() == true) {
-					showConvertEventParticipantToCaseDialog(eventParticipant);
+					showConvertEventParticipantToCaseDialog(eventParticipant, dto.getTestedDisease());
 				}
 			};
 
@@ -309,16 +308,25 @@ public class PathogenTestController {
 		CLONE_CASE_WITH_NEW_DISEASE,
 	}
 
-	public void showConvertEventParticipantToCaseDialog(EventParticipantDto eventParticipant) {
+	public void showConvertEventParticipantToCaseDialog(EventParticipantDto eventParticipant, Disease testedDisease) {
+		final EventDto event = FacadeProvider.getEventFacade().getEventByUuid(eventParticipant.getEvent().getUuid());
+		final boolean differentDiseases = !event.getDisease().equals(testedDisease);
+		Label dialogContent = differentDiseases
+			? new Label(I18nProperties.getString(Strings.messageConvertEventParticipantToCaseDifferentDiseases))
+			: new Label(I18nProperties.getString(Strings.messageConvertEventParticipantToCase));
 		VaadinUiUtil.showConfirmationPopup(
 			I18nProperties.getCaption(Captions.convertEventParticipantToCase),
-			new Label(I18nProperties.getString(Strings.messageConvertEventParticipantToCase)),
+				dialogContent,
 			I18nProperties.getString(Strings.yes),
 			I18nProperties.getString(Strings.no),
 			800,
 			e -> {
 				if (e.booleanValue() == true) {
-					ControllerProvider.getCaseController().createFromEventParticipant(eventParticipant);
+					if (differentDiseases) {
+						ControllerProvider.getCaseController().createFromEventParticipantDifferentDisease(eventParticipant, testedDisease);
+					} else {
+						ControllerProvider.getCaseController().createFromEventParticipant(eventParticipant);
+					}
 				}
 			});
 	}

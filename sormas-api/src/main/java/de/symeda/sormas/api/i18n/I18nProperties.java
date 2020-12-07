@@ -17,6 +17,10 @@
  *******************************************************************************/
 package de.symeda.sormas.api.i18n;
 
+import de.symeda.sormas.api.Language;
+import de.symeda.sormas.api.ResourceBundle;
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -29,12 +33,9 @@ import java.util.Map;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle.Control;
 
-import org.apache.commons.lang3.StringUtils;
-
-import de.symeda.sormas.api.Language;
-import de.symeda.sormas.api.ResourceBundle;
-
 public final class I18nProperties {
+
+	public static final String FULL_COUNTRY_LOCALE_PATTERN = "[a-zA-Z]*-[a-zA-Z]*";
 
 	private static Map<Language, I18nProperties> instances = new HashMap<>();
 	private static ThreadLocal<Language> userLanguage = new ThreadLocal<>();
@@ -46,6 +47,7 @@ public final class I18nProperties {
 	private final ResourceBundle enumProperties;
 	private final ResourceBundle validationProperties;
 	private final ResourceBundle stringProperties;
+	private final ResourceBundle countryProperties;
 
 	private static I18nProperties getInstance(Language language) {
 
@@ -276,6 +278,21 @@ public final class I18nProperties {
 		return getInstance(language).stringProperties.getString(property);
 	}
 
+	public static String getCountryName(String isoCode) {
+		return getCountryName(userLanguage.get(), isoCode);
+	}
+
+	public static String getCountryName(String isoCode, String defaultValue) {
+
+		String result = getCountryName(userLanguage.get(), isoCode);
+		return StringUtils.isEmpty(result) ? defaultValue : result;
+	}
+
+	public static String getCountryName(Language language, String isoCode) {
+		String nameLanguageKey = isoCode != null ? "country." + isoCode.toUpperCase() + ".name" : null;
+		return getInstance(language).countryProperties.getString(nameLanguageKey);
+	}
+
 	private I18nProperties() {
 		this(defaultLanguage);
 	}
@@ -287,6 +304,7 @@ public final class I18nProperties {
 		this.enumProperties = loadProperties("enum", language.getLocale());
 		this.validationProperties = loadProperties("validations", language.getLocale());
 		this.stringProperties = loadProperties("strings", language.getLocale());
+		this.countryProperties = loadProperties("countries", language.getLocale());
 	}
 
 	public static ResourceBundle loadProperties(String propertiesGroup, Locale locale) {

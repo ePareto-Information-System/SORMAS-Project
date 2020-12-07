@@ -20,22 +20,29 @@ package de.symeda.sormas.api.event;
 import java.util.Date;
 
 import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.Required;
+import de.symeda.sormas.api.utils.SensitiveData;
 import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 
-public class EventDto extends EntityDto {
+public class EventDto extends PseudonymizableDto {
 
 	private static final long serialVersionUID = 2430932452606853497L;
 
 	public static final String I18N_PREFIX = "Event";
 
 	public static final String EVENT_STATUS = "eventStatus";
+	public static final String EVENT_INVESTIGATION_STATUS = "eventInvestigationStatus";
+	public static final String EVENT_INVESTIGATION_START_DATE = "eventInvestigationStartDate";
+	public static final String EVENT_INVESTIGATION_END_DATE = "eventInvestigationEndDate";
 	public static final String EVENT_PERSONS = "eventPersons";
+	public static final String PARTICIPANTS_COUNT = "participantCount";
+	public static final String EVENT_ACTIONS = "eventActions";
 	public static final String EXTERNAL_ID = "externalId";
+	public static final String EVENT_TITLE = "eventTitle";
 	public static final String EVENT_DESC = "eventDesc";
 	public static final String NOSOCOMIAL = "nosocomial";
 	public static final String START_DATE = "startDate";
@@ -62,7 +69,11 @@ public class EventDto extends EntityDto {
 
 	@Required
 	private EventStatus eventStatus;
+	private EventInvestigationStatus eventInvestigationStatus;
+	private Date eventInvestigationStartDate;
+	private Date eventInvestigationEndDate;
 	private String externalId;
+	private String eventTitle;
 	@Required
 	private String eventDesc;
 	private YesNoUnknown nosocomial;
@@ -84,6 +95,7 @@ public class EventDto extends EntityDto {
 	private String srcMediaDetails;
 	private Disease disease;
 	private String diseaseDetails;
+	@SensitiveData
 	private UserReferenceDto surveillanceOfficer;
 	private String typeOfPlaceText;
 	private Double reportLat;
@@ -95,6 +107,7 @@ public class EventDto extends EntityDto {
 		event.setUuid(DataHelper.createUuid());
 
 		event.setEventStatus(EventStatus.SIGNAL);
+		event.setEventInvestigationStatus(EventInvestigationStatus.PENDING);
 		event.setEventLocation(LocationDto.build());
 		event.setReportDateTime(new Date());
 
@@ -109,12 +122,44 @@ public class EventDto extends EntityDto {
 		this.eventStatus = eventStatus;
 	}
 
+	public EventInvestigationStatus getEventInvestigationStatus() {
+		return eventInvestigationStatus;
+	}
+
+	public void setEventInvestigationStatus(EventInvestigationStatus eventInvestigationStatus) {
+		this.eventInvestigationStatus = eventInvestigationStatus;
+	}
+
+	public Date getEventInvestigationStartDate() {
+		return eventInvestigationStartDate;
+	}
+
+	public void setEventInvestigationStartDate(Date eventInvestigationStartDate) {
+		this.eventInvestigationStartDate = eventInvestigationStartDate;
+	}
+
+	public Date getEventInvestigationEndDate() {
+		return eventInvestigationEndDate;
+	}
+
+	public void setEventInvestigationEndDate(Date eventInvestigationEndDate) {
+		this.eventInvestigationEndDate = eventInvestigationEndDate;
+	}
+
 	public String getExternalId() {
 		return externalId;
 	}
 
 	public void setExternalId(String externalId) {
 		this.externalId = externalId;
+	}
+
+	public String getEventTitle() {
+		return eventTitle;
+	}
+
+	public void setEventTitle(String eventTitle) {
+		this.eventTitle = eventTitle;
 	}
 
 	public String getEventDesc() {

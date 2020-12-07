@@ -21,6 +21,7 @@ import de.symeda.sormas.api.PushResult;
 import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.app.backend.common.AdoDtoHelper;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
+import de.symeda.sormas.app.backend.facility.FacilityDtoHelper;
 import de.symeda.sormas.app.backend.region.CommunityDtoHelper;
 import de.symeda.sormas.app.backend.region.DistrictDtoHelper;
 import de.symeda.sormas.app.backend.region.RegionDtoHelper;
@@ -60,7 +61,6 @@ public class LocationDtoHelper extends AdoDtoHelper<Location, LocationDto> {
 	@Override
 	public void fillInnerFromDto(Location target, LocationDto source) {
 
-		target.setAddress(source.getAddress());
 		target.setCity(source.getCity());
 		target.setAreaType(source.getAreaType());
 		target.setDetails(source.getDetails());
@@ -73,12 +73,21 @@ public class LocationDtoHelper extends AdoDtoHelper<Location, LocationDto> {
 		target.setCommunity(DatabaseHelper.getCommunityDao().getByReferenceDto(source.getCommunity()));
 
 		target.setPostalCode(source.getPostalCode());
+
+		target.setPseudonymized(source.isPseudonymized());
+		target.setStreet(source.getStreet());
+		target.setHouseNumber(source.getHouseNumber());
+		target.setAdditionalInformation(source.getAdditionalInformation());
+		target.setAddressType(source.getAddressType());
+		target.setAddressTypeDetails(source.getAddressTypeDetails());
+		target.setFacility(DatabaseHelper.getFacilityDao().getByReferenceDto(source.getFacility()));
+		target.setFacilityDetails(source.getFacilityDetails());
+		target.setFacilityType(source.getFacilityType());
 	}
 
 	@Override
 	public void fillInnerFromAdo(LocationDto target, Location source) {
 
-		target.setAddress(source.getAddress());
 		target.setCity(source.getCity());
 		target.setAreaType(source.getAreaType());
 		target.setDetails(source.getDetails());
@@ -103,5 +112,15 @@ public class LocationDtoHelper extends AdoDtoHelper<Location, LocationDto> {
 		}
 
 		target.setPostalCode(source.getPostalCode());
+
+		target.setPseudonymized(source.isPseudonymized());
+		target.setStreet(source.getStreet());
+		target.setHouseNumber(source.getHouseNumber());
+		target.setAdditionalInformation(source.getAdditionalInformation());
+		target.setAddressType(source.getAddressType());
+		target.setAddressTypeDetails(source.getAddressTypeDetails());
+		target.setFacility(FacilityDtoHelper.toReferenceDto(source.getFacility()));
+		target.setFacilityDetails(source.getFacilityDetails());
+		target.setFacilityType(source.getFacilityType());
 	}
 }

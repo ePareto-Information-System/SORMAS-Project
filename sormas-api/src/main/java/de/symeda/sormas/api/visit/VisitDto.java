@@ -20,19 +20,20 @@ package de.symeda.sormas.api.visit;
 import java.util.Date;
 
 import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.EntityDto;
+import de.symeda.sormas.api.VisitOrigin;
 import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.Required;
+import de.symeda.sormas.api.utils.SensitiveData;
+import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 
-public class VisitDto extends EntityDto {
+public class VisitDto extends PseudonymizableDto {
 
 	private static final long serialVersionUID = -441664767075414789L;
 
 	public static final String I18N_PREFIX = "Visit";
-	public static final int ALLOWED_CONTACT_DATE_OFFSET = 30;
 
 	public static final String PERSON = "person";
 	public static final String DISEASE = "disease";
@@ -43,6 +44,7 @@ public class VisitDto extends EntityDto {
 	public static final String SYMPTOMS = "symptoms";
 	public static final String REPORT_LAT = "reportLat";
 	public static final String REPORT_LON = "reportLon";
+	public static final String ORIGIN = "origin";
 
 	@Required
 	private PersonReferenceDto person;
@@ -50,17 +52,23 @@ public class VisitDto extends EntityDto {
 	@Required
 	private Date visitDateTime;
 	@Required
+	@SensitiveData
 	private UserReferenceDto visitUser;
 	@Required
 	private VisitStatus visitStatus;
+	@SensitiveData
 	private String visitRemarks;
 	private SymptomsDto symptoms;
 
+	@SensitiveData
 	private Double reportLat;
+	@SensitiveData
 	private Double reportLon;
-	private Float reportLatLonAccuracy;
 
-	public static VisitDto build(PersonReferenceDto contactPerson, Disease disease) {
+	private Float reportLatLonAccuracy;
+	private VisitOrigin origin;
+
+	public static VisitDto build(PersonReferenceDto contactPerson, Disease disease, VisitOrigin origin) {
 
 		VisitDto visit = new VisitDto();
 		visit.setUuid(DataHelper.createUuid());
@@ -72,6 +80,7 @@ public class VisitDto extends EntityDto {
 		visit.setSymptoms(symptoms);
 
 		visit.setVisitDateTime(new Date());
+		visit.setOrigin(origin);
 
 		return visit;
 	}
@@ -86,9 +95,10 @@ public class VisitDto extends EntityDto {
 		SymptomsDto symptoms,
 		Double reportLat,
 		Double reportLon,
-		Float reportLatLonAccuracy) {
+		Float reportLatLonAccuracy,
+		VisitOrigin origin) {
 
-		final VisitDto visit = build(person, disease);
+		final VisitDto visit = build(person, disease, origin);
 
 		if (visitDateTime != null) {
 			visit.setVisitDateTime(visitDateTime);
@@ -185,6 +195,14 @@ public class VisitDto extends EntityDto {
 
 	public void setReportLatLonAccuracy(Float reportLatLonAccuracy) {
 		this.reportLatLonAccuracy = reportLatLonAccuracy;
+	}
+
+	public VisitOrigin getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(VisitOrigin origin) {
+		this.origin = origin;
 	}
 
 	public VisitReferenceDto toReference() {

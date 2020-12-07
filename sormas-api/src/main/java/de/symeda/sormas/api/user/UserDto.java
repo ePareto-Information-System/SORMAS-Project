@@ -25,6 +25,7 @@ import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.infrastructure.PointOfEntryReferenceDto;
 import de.symeda.sormas.api.location.LocationDto;
+import de.symeda.sormas.api.region.AreaReferenceDto;
 import de.symeda.sormas.api.region.CommunityReferenceDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
@@ -57,6 +58,7 @@ public class UserDto extends EntityDto {
 	public static final String POINT_OF_ENTRY = "pointOfEntry";
 	public static final String LIMITED_DISEASE = "limitedDisease";
 	public static final String LANGUAGE = "language";
+	public static final String HAS_CONSENTED_TO_GDPR = "hasConsentedToGdpr";
 
 	private boolean active = true;
 
@@ -86,6 +88,8 @@ public class UserDto extends EntityDto {
 	private Disease limitedDisease;
 
 	private Language language;
+
+	private boolean hasConsentedToGdpr;
 
 	public static UserDto build() {
 		UserDto user = new UserDto();
@@ -241,5 +245,13 @@ public class UserDto extends EntityDto {
 
 	public void setLanguage(Language language) {
 		this.language = language;
+	}
+
+	public boolean isHasConsentedToGdpr() {
+		return hasConsentedToGdpr;
+	}
+
+	public void setHasConsentedToGdpr(boolean hasConsentedToGdpr) {
+		this.hasConsentedToGdpr = hasConsentedToGdpr;
 	}
 }

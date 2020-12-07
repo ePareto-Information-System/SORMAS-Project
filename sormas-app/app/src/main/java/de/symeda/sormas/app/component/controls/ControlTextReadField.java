@@ -63,6 +63,7 @@ public class ControlTextReadField extends ControlPropertyField<String> {
 	private int maxLines;
 	private boolean distinct;
 	private Object internalValue;
+	private String inaccessibleValue;
 
 	// Listeners
 
@@ -85,7 +86,9 @@ public class ControlTextReadField extends ControlPropertyField<String> {
 	// Instance methods
 
 	protected String getDefaultValue(String defaultValue) {
-		if (defaultValue != null) {
+		if (inaccessibleValue != null) {
+			return inaccessibleValue;
+		} else if (defaultValue != null) {
 			return defaultValue;
 		} else {
 			return getContext().getResources().getString(R.string.notAnswered);
@@ -205,13 +208,19 @@ public class ControlTextReadField extends ControlPropertyField<String> {
 
 	@Override
 	public void setValue(Object value) {
+		String stringValue = DataHelper.toStringNullable(value);
+		stringValue = DataHelper.isNullOrEmpty(stringValue) && inaccessibleValue != null ? inaccessibleValue : stringValue;
+
 		internalValue = value;
-		setFieldValue(DataHelper.toStringNullable(value));
+		setFieldValue(stringValue);
 	}
 
 	public void setValue(Object value, Object internalValue) {
+		String stringValue = DataHelper.toStringNullable(value);
+		stringValue = DataHelper.isNullOrEmpty(stringValue) && inaccessibleValue != null ? inaccessibleValue : stringValue;
+
 		this.internalValue = internalValue;
-		setFieldValue(DataHelper.toStringNullable(value));
+		setFieldValue(stringValue);
 	}
 
 	public void applyDefaultValueStyle() {
@@ -221,6 +230,11 @@ public class ControlTextReadField extends ControlPropertyField<String> {
 	@Override
 	public Object getValue() {
 		return internalValue;
+	}
+
+	public void setInaccessibleValue(String value) {
+		this.inaccessibleValue = value;
+		setValue(null);
 	}
 
 	@Override
@@ -390,6 +404,23 @@ public class ControlTextReadField extends ControlPropertyField<String> {
 			valueFormat,
 			defaultValue,
 			booleanValue);
+	}
+
+	@BindingAdapter(value = {
+		"enumValue",
+		"detailsEnumValue",
+		"detailsValue" })
+	public static void setEnumValueWithDetails(ControlTextReadField textField, Enum<?> value, Enum<?> detailsEnumValue, String detailsValue) {
+		String fieldValue = null;
+		if (value != null) {
+			if (value == detailsEnumValue && StringUtils.isNotBlank(detailsValue)) {
+				fieldValue = detailsValue;
+			} else {
+				fieldValue = value.toString();
+			}
+		}
+
+		setValue(textField, fieldValue, null, null, null, null);
 	}
 
 	// Time

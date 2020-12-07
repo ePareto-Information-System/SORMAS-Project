@@ -15,18 +15,23 @@
 
 package de.symeda.sormas.app.event.edit;
 
+import static de.symeda.sormas.app.core.notification.NotificationType.ERROR;
+
 import java.util.List;
 
 import android.view.View;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.event.EventDto;
+import de.symeda.sormas.api.event.EventInvestigationStatus;
 import de.symeda.sormas.api.event.EventSourceType;
 import de.symeda.sormas.api.event.EventStatus;
 import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.utils.ValidationException;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
+import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.app.BaseActivity;
 import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
@@ -40,8 +45,6 @@ import de.symeda.sormas.app.databinding.FragmentEventEditLayoutBinding;
 import de.symeda.sormas.app.util.DataUtils;
 import de.symeda.sormas.app.util.DiseaseConfigurationCache;
 
-import static de.symeda.sormas.app.core.notification.NotificationType.ERROR;
-
 public class EventEditFragment extends BaseEditFragment<FragmentEventEditLayoutBinding, Event, Event> {
 
 	private Event record;
@@ -54,7 +57,12 @@ public class EventEditFragment extends BaseEditFragment<FragmentEventEditLayoutB
 	private boolean isMultiDayEvent;
 
 	public static EventEditFragment newInstance(Event activityRootData) {
-		EventEditFragment fragment = newInstance(EventEditFragment.class, null, activityRootData);
+		EventEditFragment fragment = newInstanceWithFieldCheckers(
+			EventEditFragment.class,
+			null,
+			activityRootData,
+			new FieldVisibilityCheckers(),
+			UiFieldAccessCheckers.getDefault(activityRootData.isPseudonymized()));
 
 		fragment.isMultiDayEvent = activityRootData.getEndDate() != null;
 
@@ -120,6 +128,7 @@ public class EventEditFragment extends BaseEditFragment<FragmentEventEditLayoutB
 
 		contentBinding.setData(record);
 		contentBinding.setEventStatusClass(EventStatus.class);
+		contentBinding.setEventInvestigationStatusClass(EventInvestigationStatus.class);
 		contentBinding.setIsMultiDayEvent(isMultiDayEvent);
 
 	}
@@ -139,6 +148,11 @@ public class EventEditFragment extends BaseEditFragment<FragmentEventEditLayoutB
 		contentBinding.eventStartDate.setCaption(startDateCaption);
 
 		contentBinding.eventEndDate.initializeDateField(getFragmentManager());
+
+		contentBinding.eventEventInvestigationStartDate.initializeDateField(getFragmentManager());
+		contentBinding.eventEventInvestigationEndDate.initializeDateField(getFragmentManager());
+
+		setFieldVisibilitiesAndAccesses(EventDto.class, contentBinding.mainContent);
 	}
 
 	@Override

@@ -8,6 +8,7 @@
   * [Java 11](#java-11)
   * [Postgres Database](#postgres-database)
 * [SORMAS Server](#sormas-server)
+* [Keycloak Server](#keycloak-server)
 * [Web Server Setup](#web-server-setup)
   * [Apache Web Server](#apache-web-server)
   * [Firewall](#firewall)
@@ -18,6 +19,7 @@
 
 ## Related
 * [Creating an App for a Demo Server](DEMO_APP.md)
+* [SORMAS Docker Repository](https://github.com/hzi-braunschweig/SORMAS-Docker)
 
 ## Prerequisites
 
@@ -27,9 +29,9 @@
   * **Linux**: https://docs.azul.com/zulu/zuludocs/#ZuluUserGuide/PrepareZuluPlatform/AttachAPTRepositoryUbuntuOrDebianSys.htm
         
 		sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0xB1998361219BD9C9
-		sudo apt-add-repository 'deb http://repos.azulsystems.com/ubuntu stable main'
+		sudo apt-add-repository 'deb https://repos.azul.com/zulu/deb/ stable main'
 		sudo apt-get update
-		sudo apt-get install zulu-11
+		sudo apt-get install zulu11
   * **Windows**: For testing and development environments we suggest to download and run the installer of the Java 11 **JDK** for 32 or 64 bit client systems (depending on your system).
 * You can check your Java version from the shell/command line using: ``java -version``
 
@@ -51,9 +53,15 @@
 
 * Get the latest SORMAS build by downloading the ZIP archive from the latest release on GitHub: https://github.com/hzi-braunschweig/SORMAS-Open/releases/latest 
 * **Linux**:
-  * Unzip the archive and copy/upload its contents to **/root/deploy/sormas/$(date +%F)**
-  * ``cd /root/deploy/sormas/$(date +%F)``
-  * Make the setup script executable with ``chmod +x server-setup.sh``
+  * Unzip the archive, copy/upload its contents to **/root/deploy/sormas/$(date +%F)** and make the setup script executable.
+        
+		cd /root/deploy/sormas
+		SORMAS_VERSION=1.y.z
+		wget https://github.com/hzi-braunschweig/SORMAS-Project/releases/download/v${SORMAS_VERSION}/sormas_${SORMAS_VERSION}.zip
+		unzip sormas_${SORMAS_VERSION}.zip
+		mv deploy/ $(date +%F)
+		rm sormas_${SORMAS_VERSION}.zip
+		chmod +x $(date +%F)/server-setup.sh
 * **Windows**:
   * Download & install Git for Windows. This will provide a bash emulation that you can use to run the setup script: https://gitforwindows.org/
   * Unzip the ZIP archive (e.g. into you download directory)
@@ -64,6 +72,62 @@
 * **IMPORTANT**: Adjust the SORMAS configuration for your country in /opt/domains/sormas/sormas.properties
 * Adjust the logging configuration in ``/opt/domains/sormas/config/logback.xml`` based on your needs (e.g. configure and activate email appender)
 * Linux: [Update the SORMAS domain](SERVER_UPDATE.md)
+
+## Keycloak Server
+
+By default Keycloak is run as a Docker container, which can be set up in two ways:
+* As a Docker container
+* As a Standalone installation
+
+### Keycloak as a Docker container
+*To be done only in the situation when SORMAS is already installed on the machine as a standalone installation.*
+
+*For complete Docker setup see the [SORMAS-Docker](https://github.com/hzi-braunschweig/SORMAS-Docker/tree/keycloak-integration) repository.*
+
+**Prerequisites**
+* SORMAS Server is installed
+* PostgreSQL is installed
+* Docker is installed
+* Open and edit [keycloak-setup.sh](sormas-base/setup/keycloak/keycloak-setup.sh) with your system's actual values
+
+**Setup**
+* Run [keycloak-setup.sh](sormas-base/setup/keycloak/keycloak-setup.sh)
+* Update `sormas.properties` file in the SORMAS domain with the property `authentication.provider=KEYCLOAK`
+
+
+### Keycloak as a standalone installation
+
+**Prerequisites**
+* SORMAS Server is installed
+* PostgreSQL is installed
+
+**Setup**
+
+Setting Keycloak up as a standalone installation [Server Installation and Configuration Guide](https://www.keycloak.org/docs/11.0/server_installation/#installation)
+* Make sure to configure Keycloak with PostgreSQL Database [Relational Database Setup](https://www.keycloak.org/docs/11.0/server_installation/#_database)
+* Setup an Admin User
+* Copy the `themes` folder content to `${KEYCLOAK_HOME}/themes` [Deploying Themes](https://www.keycloak.org/docs/11.0/server_development/#deploying-themes)
+* Create the SORMAS Realm by importing [SORMAS.json](sormas-base/setup/keycloak/SORMAS.json) see [Create a New Realm](https://www.keycloak.org/docs/11.0/server_admin/#_create-realm)
+* Update the `sormas-*` clients by generating new secrets for them
+* Update the realm's email settings to allow sending emails to users
+
+To update the SORMAS Server run the following commands
+```shell script
+${ASADMIN} set-config-property --propertyName=payara.security.openid.clientSecret --propertyValue=${KEYCLOAK_SORMAS_UI_SECRET} --source=domain
+${ASADMIN} set-config-property --propertyName=payara.security.openid.clientId --propertyValue=sormas-ui --source=domain
+${ASADMIN} set-config-property --propertyName=payara.security.openid.scope --propertyValue=openid --source=domain
+${ASADMIN} set-config-property --propertyName=payara.security.openid.providerURI --propertyValue=http://localhost:${KEYCLOAK_PORT}/keycloak/auth/realms/SORMAS --source=domain
+${ASADMIN} set-config-property --propertyName=sormas.rest.security.oidc.json --propertyValue="{\"realm\":\"SORMAS\",\"auth-server-url\":\"http://localhost:${KEYCLOAK_PORT}/auth\",\"ssl-required\":\"external\",\"resource\":\"sormas-rest\",\"credentials\":{\"secret\":\"${KEYCLOAK_SORMAS_REST_SECRET}\"},\"confidential-port\":0,\"principal-attribute\":\"preferred_username\",\"enable-basic-auth\":true}" --source=domain
+${ASADMIN} set-config-property --propertyName=sormas.backend.security.oidc.json --propertyValue="{\"realm\":\"SORMAS\",\"auth-server-url\":\"http://localhost:${KEYCLOAK_PORT}/auth/\",\"ssl-required\":\"external\",\"resource\":\"sormas-backend\",\"credentials\":{\"secret\":\"${KEYCLOAK_SORMAS_BACKEND_SECRET}\"},\"confidential-port\":0}" --source=domain
+```
+where:
+* `${ASADMIN}` - represents the location to `${PAYARA_HOME}\bin\asadmin`
+* `${KEYCLOAK_PORT}` - the port on which keycloak will run
+* `${KEYCLOAK_SORMAS_UI_SECRET}` - is the secret generated in Keycloak for the `sormas-ui` client
+* `${KEYCLOAK_SORMAS_REST_SECRET}` - is the secret generated in Keycloack for the `sormas-rest` client
+* `${KEYCLOAK_SORMAS_BACKEND_SECRET}` - is the secret generated in Keycloack for the `sormas-backend` client
+
+Then update `sormas.properties` file in the SORMAS domain with the property `authentication.provider=KEYCLOAK`
 
 ## Web Server Setup
 
@@ -230,6 +294,12 @@ This can be conveniently accomplished by executing the R setup script from the S
 	
 * Follow the instructions of the script.
 
+## SORMAS to SORMAS Certificate Setup
+
+To be able to communicate with other SORMAS instances, there are some additional steps which need to be taken, in order to set
+up the certificate and the truststore. Please see the [related guide](GUIDE_SORMAS2SORMAS_CERTIFICATE.md) for detailed instructions regarding
+SORMAS to SORMAS setup.
+<br/>
 
 ## Troubleshooting
 

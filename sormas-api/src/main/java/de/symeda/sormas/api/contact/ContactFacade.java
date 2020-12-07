@@ -42,6 +42,8 @@ public interface ContactFacade {
 
 	ContactDto saveContact(ContactDto dto);
 
+	ContactDto saveContact(ContactDto dto, boolean handleChanges);
+
 	ContactReferenceDto getReferenceByUuid(String uuid);
 
 	List<String> getAllActiveUuids();
@@ -50,12 +52,12 @@ public interface ContactFacade {
 
 	List<ContactDto> getByUuids(List<String> uuids);
 
+	Long countContactsForMap(RegionReferenceDto regionRef, DistrictReferenceDto districtRef, Disease disease, List<MapCaseDto> mapCaseDtos);
+
 	List<MapContactDto> getContactsForMap(
 		RegionReferenceDto regionRef,
 		DistrictReferenceDto districtRef,
 		Disease disease,
-		Date fromDate,
-		Date toDate,
 		List<MapCaseDto> mapCaseDtos);
 
 	void deleteContact(String contactUuid);
@@ -119,4 +121,12 @@ public interface ContactFacade {
 	boolean isContactEditAllowed(String contactUuid);
 
 	boolean exists(String uuid);
+
+	List<DashboardQuarantineDataDto> getQuarantineDataForDashBoard(
+		RegionReferenceDto regionRef,
+		DistrictReferenceDto districtRef,
+		Disease disease,
+		Date from,
+		Date to);
+
 }

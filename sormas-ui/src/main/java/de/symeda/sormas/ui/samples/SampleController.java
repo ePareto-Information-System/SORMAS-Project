@@ -44,6 +44,7 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventParticipantDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
 import de.symeda.sormas.api.facility.FacilityReferenceDto;
@@ -60,7 +61,6 @@ import de.symeda.sormas.api.sample.SampleReferenceDto;
 import de.symeda.sormas.api.sample.SpecimenCondition;
 import de.symeda.sormas.api.task.TaskContext;
 import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.UserProvider;
@@ -152,30 +152,36 @@ public class SampleController {
 			final PathogenTestDto pathogenTest = PathogenTestDto.build(newSample, UserProvider.getCurrent().getUser());
 			pathogenTest.setLab(newSample.getLab());
 			pathogenTest.setTestResult(testResult);
+			newSample.setPathogenTestResult(testResult);
 			final Boolean testResultVerified = (Boolean) createForm.getField(PathogenTestDto.TEST_RESULT_VERIFIED).getValue();
 			pathogenTest.setTestResultVerified(testResultVerified);
 			pathogenTest.setTestType((PathogenTestType) (createForm.getField(PathogenTestDto.TEST_TYPE)).getValue());
 			pathogenTest.setTestedDisease((Disease) (createForm.getField(PathogenTestDto.TESTED_DISEASE)).getValue());
 			pathogenTest.setTestDateTime((Date) (createForm.getField(PathogenTestDto.TEST_DATE_TIME)).getValue());
 			pathogenTest.setTestResultText((String) (createForm.getField(PathogenTestDto.TEST_RESULT_TEXT)).getValue());
-			newSample.setPathogenTestResult(testResult);
 			FacadeProvider.getSampleFacade().saveSample(newSample);
 			FacadeProvider.getPathogenTestFacade().savePathogenTest(pathogenTest);
-
 			final EventParticipantReferenceDto eventParticipantRef = newSample.getAssociatedEventParticipant();
-			if (eventParticipantRef != null && testResult.equals(PathogenTestResultType.POSITIVE) && testResultVerified) {
+			if (eventParticipantRef != null) {
 				EventParticipantDto eventParticipant =
 					FacadeProvider.getEventParticipantFacade().getEventParticipantByUuid(eventParticipantRef.getUuid());
-				ControllerProvider.getPathogenTestController().showConvertEventParticipantToCaseDialog(eventParticipant);
+				final EventDto event = FacadeProvider.getEventFacade().getEventByUuid(eventParticipant.getEvent().getUuid());
+				Disease testedDisease = pathogenTest.getTestedDisease();
+				if (event.getDisease().equals(testedDisease)) {
+					newSample.setPathogenTestResult(testResult);
+				}
+				if (testResult.equals(PathogenTestResultType.POSITIVE) && testResultVerified) {
+					ControllerProvider.getPathogenTestController().showConvertEventParticipantToCaseDialog(eventParticipant, testedDisease);
+				}
 			}
 		} else {
 			FacadeProvider.getSampleFacade().saveSample(newSample);
 		}
 	}
 
-	public CommitDiscardWrapperComponent<SampleEditForm> getSampleEditComponent(final String sampleUuid) {
+	public CommitDiscardWrapperComponent<SampleEditForm> getSampleEditComponent(final String sampleUuid, boolean isPseudonymized) {
 
-		SampleEditForm form = new SampleEditForm();
+		SampleEditForm form = new SampleEditForm(isPseudonymized);
 		form.setWidth(form.getWidth() * 10 / 12, Unit.PIXELS);
 		SampleDto dto = FacadeProvider.getSampleFacade().getSampleByUuid(sampleUuid);
 		form.setValue(dto);
@@ -201,7 +207,7 @@ public class SampleController {
 			}
 		});
 
-		if (UserProvider.getCurrent().hasUserRole(UserRole.ADMIN)) {
+		if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_DELETE)) {
 			editView.addDeleteListener(() -> {
 				FacadeProvider.getSampleFacade().deleteSample(dto.toReference());
 				UI.getCurrent().getNavigator().navigateTo(SamplesView.VIEW_NAME);

@@ -18,13 +18,12 @@
 package de.symeda.sormas.ui.location;
 
 import static de.symeda.sormas.ui.utils.LayoutUtil.divs;
-import static de.symeda.sormas.ui.utils.LayoutUtil.fluidColumn;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidColumnLoc;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRow;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
 import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
-import static de.symeda.sormas.ui.utils.LayoutUtil.locs;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Stream;
 
@@ -34,21 +33,30 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.PopupView;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.ui.AbstractField;
+import com.vaadin.v7.ui.AbstractSelect;
 import com.vaadin.v7.ui.ComboBox;
-import com.vaadin.v7.ui.TextArea;
+import com.vaadin.v7.ui.Field;
 import com.vaadin.v7.ui.TextField;
 
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.facility.FacilityDto;
+import de.symeda.sormas.api.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.facility.FacilityType;
+import de.symeda.sormas.api.facility.FacilityTypeGroup;
+import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.location.LocationDto;
+import de.symeda.sormas.api.person.PersonAddressType;
+import de.symeda.sormas.api.region.CommunityReferenceDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.GeoLatLon;
 import de.symeda.sormas.api.region.RegionReferenceDto;
-import de.symeda.sormas.api.utils.fieldaccess.FieldAccessCheckers;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.map.LeafletMap;
 import de.symeda.sormas.ui.map.LeafletMarker;
@@ -62,16 +70,18 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 	private static final long serialVersionUID = 1L;
 
+	private static final String FACILITY_TYPE_GROUP_LOC = "typeGroupLoc";
 	private static final String GEO_BUTTONS_LOC = "geoButtons";
 
 	private static final String HTML_LAYOUT =
 		//XXX #1620 are the divs needed?
 		divs(
-			fluidRow(
-				loc(LocationDto.ADDRESS),
-				//XXX #1620 are the divs needed?
-				divs(fluidRow(fluidColumn(6, 0, locs(LocationDto.POSTAL_CODE, LocationDto.AREA_TYPE)), fluidColumn(6, 0, loc(LocationDto.CITY))))),
+			fluidRowLocs(LocationDto.ADDRESS_TYPE, LocationDto.ADDRESS_TYPE_DETAILS, ""),
 			fluidRowLocs(LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY),
+			fluidRowLocs(FACILITY_TYPE_GROUP_LOC, LocationDto.FACILITY_TYPE),
+			fluidRowLocs(LocationDto.FACILITY, LocationDto.FACILITY_DETAILS),
+			fluidRowLocs(LocationDto.STREET, LocationDto.HOUSE_NUMBER, LocationDto.ADDITIONAL_INFORMATION),
+			fluidRowLocs(LocationDto.POSTAL_CODE, LocationDto.CITY, LocationDto.AREA_TYPE),
 			fluidRow(
 				loc(LocationDto.DETAILS),
 				fluidRow(
@@ -81,8 +91,13 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 					fluidColumnLoc(4, 0, LocationDto.LAT_LON_ACCURACY))));
 
 	private MapPopupView leafletMapPopup;
+	private ComboBox addressType;
+	private ComboBox facilityTypeGroup;
+	private ComboBox facilityType;
+	private ComboBox facility;
+	private TextField facilityDetails;
 
-	public LocationEditForm(FieldVisibilityCheckers fieldVisibilityCheckers, FieldAccessCheckers fieldAccessCheckers) {
+	public LocationEditForm(FieldVisibilityCheckers fieldVisibilityCheckers, UiFieldAccessCheckers fieldAccessCheckers) {
 		super(LocationDto.class, LocationDto.I18N_PREFIX, true, fieldVisibilityCheckers, fieldAccessCheckers);
 
 		if (FacadeProvider.getGeocodingFacade().isEnabled() && isEditableAllowed(LocationDto.LATITUDE) && isEditableAllowed(LocationDto.LONGITUDE)) {
@@ -103,11 +118,59 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		setRequired(required, fieldIds);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void addFields() {
-		TextArea addressField = addField(LocationDto.ADDRESS, TextArea.class);
-		addressField.setRows(5);
 
+		addressType = addField(LocationDto.ADDRESS_TYPE, ComboBox.class);
+		addressType.setVisible(false);
+		if (!isConfiguredServer("ch")) {
+			addressType.removeAllItems();
+			addressType.setItemCaptionMode(AbstractSelect.ItemCaptionMode.ID);
+			addressType.addItems(PersonAddressType.getValues(FacadeProvider.getConfigFacade().getCountryCode()));
+		}
+		TextField addressTypeDetails = addField(LocationDto.ADDRESS_TYPE_DETAILS, TextField.class);
+		addressTypeDetails.setVisible(false);
+		FieldHelper
+			.setVisibleWhen(getFieldGroup(), LocationDto.ADDRESS_TYPE_DETAILS, addressType, Arrays.asList(PersonAddressType.OTHER_ADDRESS), true);
+		FieldHelper.setRequiredWhen(
+			getFieldGroup(),
+			addressType,
+			Arrays.asList(LocationDto.ADDRESS_TYPE_DETAILS),
+			Arrays.asList(PersonAddressType.OTHER_ADDRESS));
+
+		facilityTypeGroup = new ComboBox();
+		facilityTypeGroup.setId("typeGroup");
+		facilityTypeGroup.setCaption(I18nProperties.getCaption(Captions.Facility_typeGroup));
+		facilityTypeGroup.setWidth(100, Unit.PERCENTAGE);
+		facilityTypeGroup.addItems(FacilityTypeGroup.values());
+		getContent().addComponent(facilityTypeGroup, FACILITY_TYPE_GROUP_LOC);
+		facilityType = addField(LocationDto.FACILITY_TYPE);
+		facility = addInfrastructureField(LocationDto.FACILITY);
+		facility.setImmediate(true);
+		facilityDetails = addField(LocationDto.FACILITY_DETAILS, TextField.class);
+		facilityDetails.setVisible(false);
+
+		addressType.addValueChangeListener(e -> {
+			FacilityTypeGroup oldGroup = (FacilityTypeGroup) facilityTypeGroup.getValue();
+			FacilityType oldType = (FacilityType) facilityType.getValue();
+			FacilityReferenceDto oldFacility = (FacilityReferenceDto) facility.getValue();
+			String oldDetails = facilityDetails.getValue();
+			facilityTypeGroup.removeAllItems();
+			if (PersonAddressType.HOME.equals(addressType.getValue())) {
+				facilityTypeGroup.addItems(FacilityTypeGroup.getAccomodationGroups());
+			} else {
+				facilityTypeGroup.addItems(FacilityTypeGroup.values());
+			}
+			facilityTypeGroup.setValue(oldGroup);
+			facilityType.setValue(oldType);
+			facility.setValue(oldFacility);
+			facilityDetails.setValue(oldDetails);
+		});
+
+		addField(LocationDto.STREET, TextField.class);
+		addField(LocationDto.HOUSE_NUMBER, TextField.class);
+		addField(LocationDto.ADDITIONAL_INFORMATION, TextField.class);
 		addField(LocationDto.DETAILS, TextField.class);
 		addField(LocationDto.CITY, TextField.class);
 		addField(LocationDto.POSTAL_CODE, TextField.class);
@@ -116,13 +179,10 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 		TextField tfLatitude = addField(LocationDto.LATITUDE, TextField.class);
 		tfLatitude.setConverter(new StringToAngularLocationConverter());
-		removeMaxLengthValidators(tfLatitude);
 		TextField tfLongitude = addField(LocationDto.LONGITUDE, TextField.class);
 		tfLongitude.setConverter(new StringToAngularLocationConverter());
-		removeMaxLengthValidators(tfLongitude);
 		TextField tfAccuracy = addField(LocationDto.LAT_LON_ACCURACY, TextField.class);
 		tfAccuracy.setConverter(new StringToAngularLocationConverter());
-		removeMaxLengthValidators(tfAccuracy);
 
 		ComboBox region = addInfrastructureField(LocationDto.REGION);
 		ComboBox district = addInfrastructureField(LocationDto.DISTRICT);
@@ -132,7 +192,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		initializeAccessAndAllowedAccesses();
 
 		if (!isEditableAllowed(LocationDto.COMMUNITY)) {
-			setReadOnly(true, LocationDto.REGION, LocationDto.DISTRICT);
+			setEnabled(false, LocationDto.REGION, LocationDto.DISTRICT);
 		}
 
 		region.addValueChangeListener(e -> {
@@ -141,18 +201,92 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 				.updateItems(district, regionDto != null ? FacadeProvider.getDistrictFacade().getAllActiveByRegion(regionDto.getUuid()) : null);
 		});
 		district.addValueChangeListener(e -> {
-			FieldHelper.removeItems(community);
 			DistrictReferenceDto districtDto = (DistrictReferenceDto) e.getProperty().getValue();
 			FieldHelper.updateItems(
 				community,
 				districtDto != null ? FacadeProvider.getCommunityFacade().getAllActiveByDistrict(districtDto.getUuid()) : null);
+			if (districtDto == null) {
+				FieldHelper.removeItems(facility);
+			} else if (facilityType.getValue() != null) {
+				FieldHelper.updateItems(
+					facility,
+					FacadeProvider.getFacilityFacade()
+						.getActiveFacilitiesByDistrictAndType(districtDto, (FacilityType) facilityType.getValue(), true, false));
+			}
+		});
+		community.addValueChangeListener(e -> {
+			CommunityReferenceDto communityDto = (CommunityReferenceDto) e.getProperty().getValue();
+			if (facilityType.getValue() != null) {
+				FieldHelper.updateItems(
+					facility,
+					communityDto != null
+						? FacadeProvider.getFacilityFacade()
+							.getActiveFacilitiesByCommunityAndType(communityDto, (FacilityType) facilityType.getValue(), true, true)
+						: district.getValue() != null
+							? FacadeProvider.getFacilityFacade()
+								.getActiveFacilitiesByDistrictAndType(
+									(DistrictReferenceDto) district.getValue(),
+									(FacilityType) facilityType.getValue(),
+									true,
+									false)
+							: null);
+			}
+		});
+		facilityTypeGroup.addValueChangeListener(e -> {
+			FieldHelper.removeItems(facility);
+			FieldHelper.updateEnumData(facilityType, FacilityType.getTypes((FacilityTypeGroup) facilityTypeGroup.getValue()));
+			facilityType.setRequired(facilityTypeGroup.getValue() != null);
+		});
+		facilityType.addValueChangeListener(e -> {
+			FieldHelper.removeItems(facility);
+			if (facilityType.getValue() != null && facilityTypeGroup.getValue() == null) {
+				facilityTypeGroup.setValue(((FacilityType) facilityType.getValue()).getFacilityTypeGroup());
+			}
+			if (facilityType.getValue() != null && district.getValue() != null) {
+				if (community.getValue() != null) {
+					FieldHelper.updateItems(
+						facility,
+						FacadeProvider.getFacilityFacade()
+							.getActiveFacilitiesByCommunityAndType(
+								(CommunityReferenceDto) community.getValue(),
+								(FacilityType) facilityType.getValue(),
+								true,
+								false));
+				} else {
+					FieldHelper.updateItems(
+						facility,
+						FacadeProvider.getFacilityFacade()
+							.getActiveFacilitiesByDistrictAndType(
+								(DistrictReferenceDto) district.getValue(),
+								(FacilityType) facilityType.getValue(),
+								true,
+								false));
+				}
+			}
+		});
+		facility.addValueChangeListener(e -> {
+			if (facility.getValue() != null) {
+				boolean visibleAndRequired = ((FacilityReferenceDto) facility.getValue()).getUuid().equals(FacilityDto.OTHER_FACILITY_UUID);
+
+				facilityDetails.setVisible(visibleAndRequired);
+				facilityDetails.setRequired(visibleAndRequired);
+
+				if (!visibleAndRequired) {
+					facilityDetails.clear();
+				} else {
+					facilityDetails.setValue(getValue().getFacilityDetails());
+				}
+			} else {
+				facilityDetails.setVisible(false);
+				facilityDetails.setRequired(false);
+				facilityDetails.clear();
+			}
 		});
 		region.addItems(FacadeProvider.getRegionFacade().getAllActiveAsReference());
 
 		Stream.of(LocationDto.LATITUDE, LocationDto.LONGITUDE)
-			.map(this::getField)
+			.<Field<?>> map(this::getField)
 			.forEach(f -> f.addValueChangeListener(e -> this.updateLeafletMapContent()));
-
 	}
 
 	private HorizontalLayout createGeoButton() {
@@ -209,16 +343,22 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 	private void triggerGeocoding() {
 
-		String address = getConvertedValue(LocationDto.ADDRESS);
+		String street = getConvertedValue(LocationDto.STREET);
+		String houseNumber = getConvertedValue(LocationDto.HOUSE_NUMBER);
 		String postalCode = getConvertedValue(LocationDto.POSTAL_CODE);
 		String city = getConvertedValue(LocationDto.CITY);
 
-		GeoLatLon latLon = FacadeProvider.getGeocodingFacade().getLatLon(address, postalCode, city);
+		GeoLatLon latLon = FacadeProvider.getGeocodingFacade().getLatLon(street, houseNumber, postalCode, city);
 
 		if (latLon != null) {
 			setConvertedValue(LocationDto.LATITUDE, latLon.getLat());
 			setConvertedValue(LocationDto.LONGITUDE, latLon.getLon());
 		}
+	}
+
+	public void showAddressType() {
+		addressType.setVisible(true);
+		addressType.setRequired(true);
 	}
 
 	@Override
@@ -276,5 +416,12 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		public void setCoordinates(GeoLatLon coordinates) {
 			this.coordinates = coordinates;
 		}
+	}
+
+	@Override
+	protected <F extends Field> F addFieldToLayout(CustomLayout layout, String propertyId, F field) {
+		field.addValueChangeListener(e -> fireValueChange(false));
+
+		return super.addFieldToLayout(layout, propertyId, field);
 	}
 }

@@ -24,6 +24,7 @@ import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.sample.SamplePurpose;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
@@ -52,7 +53,12 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 	// Instance methods
 
 	public static PathogenTestEditFragment newInstance(PathogenTest activityRootData) {
-		return newInstance(PathogenTestEditFragment.class, null, activityRootData);
+		return newInstanceWithFieldCheckers(
+			PathogenTestEditFragment.class,
+			null,
+			activityRootData,
+			null,
+			UiFieldAccessCheckers.forSensitiveData(activityRootData.isPseudonymized()));
 	}
 
 	// Overrides
@@ -84,6 +90,8 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 
 	@Override
 	public void onAfterLayoutBinding(FragmentPathogenTestEditLayoutBinding contentBinding) {
+		setFieldVisibilitiesAndAccesses(PathogenTestDto.class, contentBinding.mainContent);
+
 		// Initialize ControlSpinnerFields
 		contentBinding.pathogenTestTestType.initializeSpinner(testTypeList, new ValueChangeListener() {
 
@@ -121,7 +129,7 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 			@Override
 			public void onChange(ControlPropertyField field) {
 				Facility laboratory = (Facility) field.getValue();
-				if (laboratory != null && laboratory.getUuid().equals(FacilityDto.OTHER_LABORATORY_UUID)) {
+				if (laboratory != null && laboratory.getUuid().equals(FacilityDto.OTHER_FACILITY_UUID)) {
 					contentBinding.pathogenTestLabDetails.setVisibility(View.VISIBLE);
 				} else {
 					contentBinding.pathogenTestLabDetails.hideField(true);

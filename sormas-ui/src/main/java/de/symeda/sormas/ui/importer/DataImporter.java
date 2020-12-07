@@ -1,14 +1,16 @@
 package de.symeda.sormas.ui.importer;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
@@ -25,12 +27,15 @@ import org.slf4j.LoggerFactory;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
+import com.opencsv.exceptions.CsvValidationException;
 import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.server.StreamResource;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.facility.FacilityType;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -41,6 +46,7 @@ import de.symeda.sormas.api.region.AreaReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
+import de.symeda.sormas.api.utils.CSVCommentLineValidator;
 import de.symeda.sormas.api.utils.CSVUtils;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DateHelper;
@@ -65,7 +71,7 @@ public abstract class DataImporter {
 	/**
 	 * The input CSV file that contains the data to be imported.
 	 */
-	private File inputFile;
+	protected File inputFile;
 	/**
 	 * Whether or not the import file is supposed to have an additional row on top containing the entity name.
 	 * This is necessary for importers that also import data that is not referenced in the root entity,
@@ -88,6 +94,10 @@ public abstract class DataImporter {
 	 * Whether or not the current import has resulted in at least one error.
 	 */
 	private boolean hasImportError;
+	/**
+	 * CSV separator used in the file
+	 */
+	private char csvSeparator;
 
 	protected UserReferenceDto currentUser;
 	private CSVWriter errorReportCsvWriter;
@@ -102,17 +112,19 @@ public abstract class DataImporter {
 			ImportExportUtils.TEMP_FILE_PREFIX + "_error_report_" + DataHelper.getShortUuid(currentUser.getUuid()) + "_"
 				+ DateHelper.formatDateForExport(new Date()) + ".csv");
 		this.errorReportFilePath = errorReportFilePath.toString();
+
+		this.csvSeparator = FacadeProvider.getConfigFacade().getCsvSeparator();
 	}
 
 	/**
 	 * Opens a progress layout and runs the import logic in a separate thread.
 	 */
-	public void startImport(Consumer<StreamResource> errorReportConsumer, UI currentUI, boolean duplicatesPossible) throws IOException {
+	public void startImport(Consumer<StreamResource> errorReportConsumer, UI currentUI, boolean duplicatesPossible)
+		throws IOException, CsvValidationException {
 
-		ImportProgressLayout progressLayout =
-			new ImportProgressLayout(readImportFileLength(inputFile), currentUI, this::cancelImport, duplicatesPossible);
+		ImportProgressLayout progressLayout = this.getImportProgressLayout(currentUI, duplicatesPossible);
 
-		importedLineCallback = result -> progressLayout.updateProgress(result);
+		importedLineCallback = progressLayout::updateProgress;
 
 		Window window = VaadinUiUtil.createPopupWindow();
 		window.setCaption(I18nProperties.getString(Strings.headingDataImport));
@@ -121,110 +133,95 @@ public abstract class DataImporter {
 		window.setClosable(false);
 		currentUI.addWindow(window);
 
-		Thread importThread = new Thread() {
+		Thread importThread = new Thread(() -> {
+			try {
+				currentUI.setPollInterval(300);
 
-			@Override
-			public void run() {
-				try {
-					currentUI.setPollInterval(300);
+				ImportResultStatus importResult = runImport();
 
-					ImportResultStatus importResult = runImport();
+				// Display a window presenting the import result
+				currentUI.access(() -> {
+					window.setClosable(true);
+					progressLayout.makeClosable(window::close);
 
-					// Display a window presenting the import result
-					currentUI.access(new Runnable() {
+					if (importResult == ImportResultStatus.COMPLETED) {
+						progressLayout.displaySuccessIcon();
+						progressLayout.setInfoLabelText(I18nProperties.getString(Strings.messageImportSuccessful));
+					} else if (importResult == ImportResultStatus.COMPLETED_WITH_ERRORS) {
+						progressLayout.displayWarningIcon();
+						progressLayout.setInfoLabelText(I18nProperties.getString(Strings.messageImportPartiallySuccessful));
+					} else if (importResult == ImportResultStatus.CANCELED) {
+						progressLayout.displaySuccessIcon();
+						progressLayout.setInfoLabelText(I18nProperties.getString(Strings.messageImportCanceled));
+					} else {
+						progressLayout.displayWarningIcon();
+						progressLayout.setInfoLabelText(I18nProperties.getString(Strings.messageImportCanceledErrors));
+					}
 
-						@Override
-						public void run() {
-							window.setClosable(true);
-							progressLayout.makeClosable(() -> {
-								window.close();
-							});
-
-							if (importResult == ImportResultStatus.COMPLETED) {
-								progressLayout.displaySuccessIcon();
-								progressLayout.setInfoLabelText(I18nProperties.getString(Strings.messageImportSuccessful));
-							} else if (importResult == ImportResultStatus.COMPLETED_WITH_ERRORS) {
-								progressLayout.displayWarningIcon();
-								progressLayout.setInfoLabelText(I18nProperties.getString(Strings.messageImportPartiallySuccessful));
-							} else if (importResult == ImportResultStatus.CANCELED) {
-								progressLayout.displaySuccessIcon();
-								progressLayout.setInfoLabelText(I18nProperties.getString(Strings.messageImportCanceled));
-							} else {
-								progressLayout.displayWarningIcon();
-								progressLayout.setInfoLabelText(I18nProperties.getString(Strings.messageImportCanceledErrors));
-							}
-
-							window.addCloseListener(e -> {
-								if (importResult == ImportResultStatus.COMPLETED_WITH_ERRORS
-									|| importResult == ImportResultStatus.CANCELED_WITH_ERRORS) {
-									StreamResource streamResource = createErrorReportStreamResource();
-									errorReportConsumer.accept(streamResource);
-								}
-							});
-
-							currentUI.setPollInterval(-1);
+					window.addCloseListener(e -> {
+						if (importResult == ImportResultStatus.COMPLETED_WITH_ERRORS || importResult == ImportResultStatus.CANCELED_WITH_ERRORS) {
+							StreamResource streamResource = createErrorReportStreamResource();
+							errorReportConsumer.accept(streamResource);
 						}
 					});
-				} catch (InvalidColumnException e) {
-					currentUI.access(new Runnable() {
 
-						@Override
-						public void run() {
-							window.setClosable(true);
-							progressLayout.makeClosable(() -> {
-								window.close();
-							});
-							progressLayout.displayErrorIcon();
-							progressLayout
-								.setInfoLabelText(String.format(I18nProperties.getString(Strings.messageImportInvalidColumn), e.getColumnName()));
-							currentUI.setPollInterval(-1);
-						}
-					});
-				} catch (Exception e) {
-					logger.error(e.getMessage(), e);
+					currentUI.setPollInterval(-1);
+				});
+			} catch (InvalidColumnException e) {
+				currentUI.access(() -> {
+					window.setClosable(true);
+					progressLayout.makeClosable(window::close);
+					progressLayout.displayErrorIcon();
+					progressLayout.setInfoLabelText(String.format(I18nProperties.getString(Strings.messageImportInvalidColumn), e.getColumnName()));
+					currentUI.setPollInterval(-1);
+				});
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
 
-					currentUI.access(new Runnable() {
-
-						@Override
-						public void run() {
-							window.setClosable(true);
-							progressLayout.makeClosable(() -> {
-								window.close();
-							});
-							progressLayout.displayErrorIcon();
-							progressLayout.setInfoLabelText(I18nProperties.getString(Strings.messageImportFailedFull));
-							currentUI.setPollInterval(-1);
-						}
-					});
-				}
+				currentUI.access(() -> {
+					window.setClosable(true);
+					progressLayout.makeClosable(window::close);
+					progressLayout.displayErrorIcon();
+					progressLayout.setInfoLabelText(I18nProperties.getString(Strings.messageImportFailedFull));
+					currentUI.setPollInterval(-1);
+				});
 			}
-		};
+		});
 
 		importThread.start();
 	}
 
 	/**
+	 * Can be overriden by subclasses to provide alternative progress layouts
+	 */
+	protected ImportProgressLayout getImportProgressLayout(UI currentUI, boolean duplicatesPossible) throws IOException, CsvValidationException {
+		return new ImportProgressLayout(readImportFileLength(inputFile), currentUI, this::cancelImport, duplicatesPossible);
+	}
+
+	/**
 	 * To be called by async import thread or unit test
 	 */
-	public ImportResultStatus runImport() throws IOException, InvalidColumnException, InterruptedException {
-		logger.debug("runImport - " + inputFile.getAbsolutePath());
+	public ImportResultStatus runImport() throws IOException, InvalidColumnException, InterruptedException, CsvValidationException {
+		logger.debug("runImport - {}", inputFile.getAbsolutePath());
 
-		CSVReader csvReader = null;
-		try {
-			csvReader = CSVUtils
-				.createCSVReader(new InputStreamReader(new FileInputStream(inputFile), "UTF-8"), FacadeProvider.getConfigFacade().getCsvSeparator());
-			errorReportCsvWriter = CSVUtils.createCSVWriter(createErrorReportWriter(), FacadeProvider.getConfigFacade().getCsvSeparator());
+		long t0 = System.currentTimeMillis();
+
+		try (CSVReader csvReader = CSVUtils.createCSVReader(
+				Files.newBufferedReader(inputFile.toPath(), UTF_8),
+				this.csvSeparator,
+				new CSVCommentLineValidator())) {
+			errorReportCsvWriter = CSVUtils.createCSVWriter(createErrorReportWriter(), this.csvSeparator);
 
 			// Build dictionary of entity headers
 			String[] entityClasses;
 			if (hasEntityClassRow) {
-				entityClasses = csvReader.readNext();
+				entityClasses = readNextValidLine(csvReader);
 			} else {
 				entityClasses = null;
 			}
 
 			// Build dictionary of column paths
-			String[] entityProperties = csvReader.readNext();
+			String[] entityProperties = readNextValidLine(csvReader);
 			String[][] entityPropertyPaths = new String[entityProperties.length][];
 			for (int i = 0; i < entityProperties.length; i++) {
 				String[] entityPropertyPath = entityProperties[i].split("\\.");
@@ -240,21 +237,26 @@ public abstract class DataImporter {
 			errorReportCsvWriter.writeNext(columnNames);
 
 			// Read and import all lines from the import file
-			String[] nextLine = csvReader.readNext();
+			String[] nextLine = readNextValidLine(csvReader);
 			int lineCounter = 0;
 			while (nextLine != null) {
 				ImportLineResult lineResult = importDataFromCsvLine(nextLine, entityClasses, entityProperties, entityPropertyPaths, lineCounter == 0);
-				logger.debug("runImport - line " + lineCounter);
+				logger.debug("runImport - line {}", lineCounter);
 				if (importedLineCallback != null) {
 					importedLineCallback.accept(lineResult);
 				}
 				if (cancelAfterCurrent) {
 					break;
 				}
-				nextLine = csvReader.readNext();
+				nextLine = readNextValidLine(csvReader);
+				lineCounter++;
 			}
 
-			logger.debug("runImport - done");
+			if (logger.isDebugEnabled()) {
+				logger.debug("runImport - done");
+				long dt = System.currentTimeMillis() - t0;
+				logger.debug("import of {} lines took {} ms ({} ms/line)", lineCounter, dt, lineCounter > 0 ? dt / lineCounter : -1);
+			}
 
 			if (cancelAfterCurrent) {
 				if (!hasImportError) {
@@ -268,11 +270,7 @@ public abstract class DataImporter {
 				return ImportResultStatus.COMPLETED;
 			}
 		} finally {
-			if (csvReader != null) {
-				csvReader.close();
-			}
 			if (errorReportCsvWriter != null) {
-				errorReportCsvWriter.flush();
 				errorReportCsvWriter.close();
 			}
 		}
@@ -283,7 +281,7 @@ public abstract class DataImporter {
 	}
 
 	protected Writer createErrorReportWriter() throws IOException {
-		File errorReportFile = new File(errorReportFilePath.toString());
+		File errorReportFile = new File(errorReportFilePath);
 		if (errorReportFile.exists()) {
 			errorReportFile.delete();
 		}
@@ -304,10 +302,12 @@ public abstract class DataImporter {
 	 * Reads the number of actual CSV lines in the file minus the header line(s).
 	 * This is different from "normal" lines, because CSV may have escaped multi-line text blocks.
 	 */
-	protected int readImportFileLength(File inputFile) throws IOException {
+	protected int readImportFileLength(File inputFile) throws IOException, CsvValidationException {
 		int importFileLength = 0;
-		try (CSVReader caseCountReader = CSVUtils.createCSVReader(new FileReader(inputFile), FacadeProvider.getConfigFacade().getCsvSeparator())) {
-			while (caseCountReader.readNext() != null) {
+		try (CSVReader caseCountReader =
+			CSVUtils.createCSVReader(new FileReader(inputFile), this.csvSeparator, new CSVCommentLineValidator())) {
+
+			while (readNextValidLine(caseCountReader) != null) {
 				importFileLength++;
 			}
 			// subtract header line(s)
@@ -351,7 +351,7 @@ public abstract class DataImporter {
 		"unchecked",
 		"rawtypes" })
 	protected boolean executeDefaultInvokings(PropertyDescriptor pd, Object element, String entry, String[] entryHeaderPath)
-		throws InvocationTargetException, IllegalAccessException, ParseException, ImportErrorException {
+		throws InvocationTargetException, IllegalAccessException, ImportErrorException {
 		Class<?> propertyType = pd.getPropertyType();
 
 		if (propertyType.isEnum()) {
@@ -359,13 +359,11 @@ public abstract class DataImporter {
 			return true;
 		}
 		if (propertyType.isAssignableFrom(Date.class)) {
-			// If the string is smaller than the length of the expected date format, throw an exception
-			if (entry.length() < 10) {
-				throw new ImportErrorException(
-					I18nProperties.getValidationError(Validations.importInvalidDate, buildEntityProperty(entryHeaderPath)));
-			} else {
+			try {
 				pd.getWriteMethod().invoke(element, DateHelper.parseDateWithException(entry));
 				return true;
+			} catch (ParseException e) {
+				throw new ImportErrorException(I18nProperties.getValidationError(Validations.importInvalidDate, pd.getName()));
 			}
 		}
 		if (propertyType.isAssignableFrom(Integer.class)) {
@@ -479,6 +477,18 @@ public abstract class DataImporter {
 		return dataHasImportError;
 	}
 
+	protected FacilityType getTypeOfFacility(String propertyName, Object currentElement)
+		throws IntrospectionException, InvocationTargetException, IllegalAccessException {
+		String typeProperty;
+		if (CaseDataDto.class.equals(currentElement.getClass()) && CaseDataDto.HEALTH_FACILITY.equals(propertyName)) {
+			typeProperty = CaseDataDto.FACILITY_TYPE;
+		} else {
+			typeProperty = propertyName + "Type";
+		}
+		PropertyDescriptor pd = new PropertyDescriptor(typeProperty, currentElement.getClass());
+		return (FacilityType) pd.getReadMethod().invoke(currentElement);
+	}
+
 	protected void writeImportError(String[] errorLine, String message) throws IOException {
 		hasImportError = true;
 		List<String> errorLineAsList = new ArrayList<>();
@@ -489,5 +499,31 @@ public abstract class DataImporter {
 
 	protected String buildEntityProperty(String[] entityPropertyPath) {
 		return String.join(".", entityPropertyPath);
+	}
+
+	private String[] readNextValidLine(CSVReader csvReader) throws IOException, CsvValidationException {
+		String[] nextValidLine = null;
+		boolean isCommentLine;
+
+		do {
+			try {
+				nextValidLine = csvReader.readNext();
+				isCommentLine = false;
+			} catch (CsvValidationException e) {
+				if (StringUtils.contains(e.getMessage(), CSVCommentLineValidator.ERROR_MESSAGE)) {
+					logger.debug("Found comment line. Skipping it");
+					csvReader.skip(1);
+					isCommentLine = true;
+				} else {
+					throw e;
+				}
+			}
+		}
+		while (isCommentLine);
+		return nextValidLine;
+	}
+
+	public void setCsvSeparator(char csvSeparator) {
+		this.csvSeparator = csvSeparator;
 	}
 }

@@ -30,18 +30,19 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.event.EventInvestigationStatus;
 import de.symeda.sormas.api.event.EventReferenceDto;
 import de.symeda.sormas.api.event.EventSourceType;
 import de.symeda.sormas.api.event.EventStatus;
 import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.utils.YesNoUnknown;
-import de.symeda.sormas.app.backend.common.AbstractDomainObject;
+import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 import de.symeda.sormas.app.backend.location.Location;
 import de.symeda.sormas.app.backend.user.User;
 
 @Entity(name = Event.TABLE_NAME)
 @DatabaseTable(tableName = Event.TABLE_NAME)
-public class Event extends AbstractDomainObject {
+public class Event extends PseudonymizableAdo {
 
 	private static final long serialVersionUID = 4964495716032049582L;
 
@@ -49,7 +50,11 @@ public class Event extends AbstractDomainObject {
 	public static final String I18N_PREFIX = "Event";
 
 	public static final String EVENT_STATUS = "eventStatus";
+	public static final String EVENT_INVESTIGATION_STATUS = "eventInvestigationStatus";
+	public static final String EVENT_INVESTIGATION_START_DATE = "eventInvestigationStartDate";
+	public static final String EVENT_INVESTIGATION_END_DATE = "eventInvestigationEndDate";
 	public static final String EVENT_PERSONS = "eventPersons";
+	public static final String EVENT_TITLE = "eventTitle";
 	public static final String EVENT_DESC = "eventDesc";
 	public static final String START_DATE = "startDate";
 	public static final String REPORT_DATE_TIME = "reportDateTime";
@@ -72,8 +77,20 @@ public class Event extends AbstractDomainObject {
 	@Enumerated(EnumType.STRING)
 	private EventStatus eventStatus;
 
+	@Enumerated(EnumType.STRING)
+	private EventInvestigationStatus eventInvestigationStatus;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date eventInvestigationStartDate;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date eventInvestigationEndDate;
+
 	@Column(length = COLUMN_LENGTH_DEFAULT)
 	private String externalId;
+
+	@Column(length = COLUMN_LENGTH_DEFAULT)
+	private String eventTitle;
 
 	@Column(length = COLUMN_LENGTH_BIG)
 	private String eventDesc;
@@ -150,12 +167,44 @@ public class Event extends AbstractDomainObject {
 		this.eventStatus = eventStatus;
 	}
 
+	public EventInvestigationStatus getEventInvestigationStatus() {
+		return eventInvestigationStatus;
+	}
+
+	public void setEventInvestigationStatus(EventInvestigationStatus eventInvestigationStatus) {
+		this.eventInvestigationStatus = eventInvestigationStatus;
+	}
+
+	public Date getEventInvestigationStartDate() {
+		return eventInvestigationStartDate;
+	}
+
+	public void setEventInvestigationStartDate(Date eventInvestigationStartDate) {
+		this.eventInvestigationStartDate = eventInvestigationStartDate;
+	}
+
+	public Date getEventInvestigationEndDate() {
+		return eventInvestigationEndDate;
+	}
+
+	public void setEventInvestigationEndDate(Date eventInvestigationEndDate) {
+		this.eventInvestigationEndDate = eventInvestigationEndDate;
+	}
+
 	public String getExternalId() {
 		return externalId;
 	}
 
 	public void setExternalId(String externalId) {
 		this.externalId = externalId;
+	}
+
+	public String getEventTitle() {
+		return eventTitle;
+	}
+
+	public void setEventTitle(String eventTitle) {
+		this.eventTitle = eventTitle;
 	}
 
 	public String getEventDesc() {
@@ -336,7 +385,7 @@ public class Event extends AbstractDomainObject {
 
 	@Override
 	public String toString() {
-		return EventReferenceDto.buildCaption(getDisease(), getDiseaseDetails(), getEventStatus(), getStartDate());
+		return EventReferenceDto.buildCaption(getDisease(), getDiseaseDetails(), getEventStatus(), getEventInvestigationStatus(), getStartDate());
 	}
 
 	@Override

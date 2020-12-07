@@ -1,6 +1,5 @@
 import static com.kms.katalon.core.testcase.TestCaseFactory.findTestCase
 import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
-
 import com.hzi.TestDataConnector as TestDataConnector
 import com.kms.katalon.core.model.FailureHandling as FailureHandling
 import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
@@ -16,7 +15,7 @@ String lastName = TestDataConnector.getValueByKey('GenericUsers', 'last_name_cas
 WebUI.callTestCase(findTestCase('SurveillanceSupervisor/partials/FilterCaseByPersonName'), [('personName') : (firstName + 
         ' ') + lastName], FailureHandling.STOP_ON_FAILURE)
 
-WebUI.click(findTestObject('Surveillance/CaseView/Case/span_Contacts_tab'))
+WebUI.click(findTestObject('Surveillance/CaseView/div_Contacts_tab'))
 
 WebUI.click(findTestObject('Contacts/CasesView/NewContact/div_New contact'))
 
@@ -28,6 +27,10 @@ lastName = TestDataConnector.getValueByKey('GenericUsers', 'last_name_contact')
 
 WebUI.setText(findTestObject('Contacts/ContactsOverview/NewContact/input_Last name'), lastName)
 
+WebUI.click(findTestObject('Object Repository/Contacts/ContactInformationView/ChangeContactPersonData/div_Sex_v-filterselect-button'))
+
+WebUI.click(findTestObject('Contacts/ContactInformationView/ChangeContactPersonData/span_Male'))
+
 WebUI.click(findTestObject('Surveillance/CaseView/Contacts/NewContact/div_RelationshipWithCase_DDBox'))
 
 WebUI.click(findTestObject('Surveillance/CaseView/Contacts/NewContact/span_RelationshipWithCase_LiveInTheSameHousehold_DDItem'))
@@ -35,13 +38,13 @@ WebUI.click(findTestObject('Surveillance/CaseView/Contacts/NewContact/span_Relat
 WebUI.setText(findTestObject('Surveillance/CaseView/Contacts/NewContact/textarea_DescriptionOfHowContactTookPlace_TArea'), 
     'test')
 
-WebUI.click(findTestObject('Surveillance/CaseView/Contacts/NewContact/div_SaveContact_btn'))
+WebUI.click(findTestObject('ReusableORs/div_Save'))
 
 WebUI.delay(2)
 
 WebUI.click(findTestObject('Surveillance/CaseView/Contacts/NewContact/label_CreateANewPerson_option'))
 
-WebUI.click(findTestObject('Surveillance/CaseView/Contacts/NewContact/div_SaveContact_btn'))
+WebUI.click(findTestObject('ReusableORs/div_Save'))
 
 WebUI.delay(1)
 

@@ -18,6 +18,7 @@
 package de.symeda.sormas.ui.utils;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Sizeable.Unit;
@@ -38,7 +39,6 @@ import com.vaadin.v7.data.util.GeneratedPropertyContainer;
 import com.vaadin.v7.data.util.PropertyValueGenerator;
 import com.vaadin.v7.ui.Grid;
 import com.vaadin.v7.ui.renderers.HtmlRenderer;
-
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -60,6 +60,10 @@ public final class VaadinUiUtil {
 	}
 
 	public static Window showSimplePopupWindow(String caption, String contentText) {
+		return showSimplePopupWindow(caption, contentText, ContentMode.TEXT);
+	}
+
+	public static Window showSimplePopupWindow(String caption, String contentText, ContentMode contentMode) {
 		Window window = new Window(null);
 		window.setModal(true);
 		window.setSizeUndefined();
@@ -70,7 +74,7 @@ public final class VaadinUiUtil {
 		popupLayout.setMargin(true);
 		popupLayout.setSpacing(true);
 		popupLayout.setSizeUndefined();
-		Label contentLabel = new Label(contentText);
+		Label contentLabel = new Label(contentText, contentMode);
 		contentLabel.setWidth(100, Unit.PERCENTAGE);
 		popupLayout.addComponent(contentLabel);
 		Button okayButton = ButtonHelper.createButton(Captions.actionOkay, e -> {
@@ -149,6 +153,37 @@ public final class VaadinUiUtil {
 		Integer width,
 		Consumer<Boolean> resultConsumer) {
 
+		return showConfirmationPopup(caption, content, popupWindow -> {
+			ConfirmationComponent confirmationComponent = new ConfirmationComponent(false) {
+
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				protected void onConfirm() {
+					resultConsumer.accept(true);
+					popupWindow.close();
+				}
+
+				@Override
+				protected void onCancel() {
+					resultConsumer.accept(false);
+					popupWindow.close();
+				}
+			};
+
+			confirmationComponent.getConfirmButton().setCaption(confirmCaption);
+			confirmationComponent.getCancelButton().setCaption(cancelCaption);
+
+			return confirmationComponent;
+		}, width);
+	}
+
+	public static Window showConfirmationPopup(
+		String caption,
+		Component content,
+		Function<Window, ConfirmationComponent> confirmationComponentProvider,
+		Integer width) {
+
 		Window popupWindow = VaadinUiUtil.createPopupWindow();
 		if (width != null) {
 			popupWindow.setWidth(width, Unit.PIXELS);
@@ -162,33 +197,18 @@ public final class VaadinUiUtil {
 		content.setWidth(100, Unit.PERCENTAGE);
 		layout.addComponent(content);
 
-		ConfirmationComponent confirmationComponent = new ConfirmationComponent(false) {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			protected void onConfirm() {
-				resultConsumer.accept(true);
-				popupWindow.close();
-			}
-
-			@Override
-			protected void onCancel() {
-				resultConsumer.accept(false);
-				popupWindow.close();
-			}
-		};
-		confirmationComponent.getConfirmButton().setCaption(confirmCaption);
-		confirmationComponent.getCancelButton().setCaption(cancelCaption);
+		ConfirmationComponent confirmationComponent = confirmationComponentProvider.apply(popupWindow);
 
 		layout.addComponent(confirmationComponent);
 		layout.setComponentAlignment(confirmationComponent, Alignment.BOTTOM_RIGHT);
 		layout.setWidth(100, Unit.PERCENTAGE);
 		layout.setSpacing(true);
+
 		popupWindow.setContent(layout);
 		popupWindow.setClosable(false);
 
 		UI.getCurrent().addWindow(popupWindow);
+
 		return popupWindow;
 	}
 
@@ -308,20 +328,30 @@ public final class VaadinUiUtil {
 		return requestTaskComponent;
 	}
 
-	public static HorizontalLayout createInfoComponent(String htmlContent) {
-		HorizontalLayout infoLayout = new HorizontalLayout();
-		infoLayout.setWidth(100, Unit.PERCENTAGE);
-		infoLayout.setSpacing(true);
-		Image icon = new Image(null, new ThemeResource("img/info-icon.png"));
-		icon.setHeight(35, Unit.PIXELS);
-		icon.setWidth(35, Unit.PIXELS);
-		infoLayout.addComponent(icon);
-		infoLayout.setComponentAlignment(icon, Alignment.MIDDLE_LEFT);
-		Label infoLabel = new Label(htmlContent, ContentMode.HTML);
-		infoLabel.setWidth(100, Unit.PERCENTAGE);
-		infoLayout.addComponent(infoLabel);
-		infoLayout.setExpandRatio(infoLabel, 1);
-		CssStyles.style(infoLayout, CssStyles.VSPACE_3);
-		return infoLayout;
-	}
+    public static HorizontalLayout createInfoComponent(String htmlContent) {
+        return createIconComponent(htmlContent, "img/info-icon.png");
+
+    }
+
+    public static HorizontalLayout createWarningComponent(String htmlContent) {
+        return createIconComponent(htmlContent, "img/warning-icon.png");
+
+    }
+
+    public static HorizontalLayout createIconComponent(String htmlContent, String iconName) {
+        HorizontalLayout infoLayout = new HorizontalLayout();
+        infoLayout.setWidth(100, Unit.PERCENTAGE);
+        infoLayout.setSpacing(true);
+        Image icon = new Image(null, new ThemeResource(iconName));
+        icon.setHeight(35, Unit.PIXELS);
+        icon.setWidth(35, Unit.PIXELS);
+        infoLayout.addComponent(icon);
+        infoLayout.setComponentAlignment(icon, Alignment.MIDDLE_LEFT);
+        Label infoLabel = new Label(htmlContent, ContentMode.HTML);
+        infoLabel.setWidth(100, Unit.PERCENTAGE);
+        infoLayout.addComponent(infoLabel);
+        infoLayout.setExpandRatio(infoLabel, 1);
+        CssStyles.style(infoLayout, CssStyles.VSPACE_3);
+        return infoLayout;
+    }
 }

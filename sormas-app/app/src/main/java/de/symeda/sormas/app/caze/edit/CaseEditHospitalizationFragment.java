@@ -17,10 +17,16 @@ package de.symeda.sormas.app.caze.edit;
 
 import android.content.res.Resources;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.databinding.ObservableArrayList;
 
+import de.symeda.sormas.api.epidata.EpiDataDto;
+import de.symeda.sormas.api.hospitalization.HospitalizationDto;
+import de.symeda.sormas.api.hospitalization.PreviousHospitalizationDto;
 import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
+import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.caze.Case;
@@ -31,6 +37,7 @@ import de.symeda.sormas.app.component.controls.ControlPropertyField;
 import de.symeda.sormas.app.component.controls.ValueChangeListener;
 import de.symeda.sormas.app.core.IEntryItemOnClickListener;
 import de.symeda.sormas.app.databinding.FragmentCaseEditHospitalizationLayoutBinding;
+import de.symeda.sormas.app.util.FieldVisibilityAndAccessHelper;
 import de.symeda.sormas.app.util.InfrastructureHelper;
 
 public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCaseEditHospitalizationLayoutBinding, Hospitalization, Case> {
@@ -43,7 +50,12 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 	// Static methods
 
 	public static CaseEditHospitalizationFragment newInstance(Case activityRootData) {
-		return newInstance(CaseEditHospitalizationFragment.class, null, activityRootData);
+		return newInstanceWithFieldCheckers(
+			CaseEditHospitalizationFragment.class,
+			null,
+			activityRootData,
+			new FieldVisibilityCheckers(),
+			UiFieldAccessCheckers.forSensitiveData(activityRootData.isPseudonymized()));
 	}
 
 	// Instance methods
@@ -53,7 +65,7 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 			final PreviousHospitalization previousHospitalization = (PreviousHospitalization) item;
 			final PreviousHospitalization previousHospitalizationClone = (PreviousHospitalization) previousHospitalization.clone();
 			final PreviousHospitalizationDialog dialog =
-				new PreviousHospitalizationDialog(CaseEditActivity.getActiveActivity(), previousHospitalizationClone);
+				new PreviousHospitalizationDialog(CaseEditActivity.getActiveActivity(), previousHospitalizationClone, false);
 
 			dialog.setPositiveCallback(() -> {
 				record.getPreviousHospitalizations()
@@ -69,7 +81,7 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		getContentBinding().btnAddPrevHosp.setOnClickListener(v -> {
 			final PreviousHospitalization previousHospitalization = DatabaseHelper.getPreviousHospitalizationDao().build();
 			final PreviousHospitalizationDialog dialog =
-				new PreviousHospitalizationDialog(CaseEditActivity.getActiveActivity(), previousHospitalization);
+				new PreviousHospitalizationDialog(CaseEditActivity.getActiveActivity(), previousHospitalization, true);
 
 			dialog.setPositiveCallback(() -> addPreviousHospitalization(previousHospitalization));
 
@@ -97,6 +109,7 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 
 	private void updatePreviousHospitalizations() {
 		getContentBinding().setPreviousHospitalizationList(getPreviousHospitalizations());
+
 		verifyPrevHospitalizationStatus();
 	}
 
@@ -112,6 +125,8 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		} else {
 			getContentBinding().caseHospitalizationHospitalizedPreviously.disableWarningState();
 		}
+
+		getContentBinding().caseHospitalizationHospitalizedPreviously.setEnabled(getPreviousHospitalizations().size() == 0);
 	}
 
 	// Overrides
@@ -137,30 +152,29 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 	public void onLayoutBinding(final FragmentCaseEditHospitalizationLayoutBinding contentBinding) {
 		setUpControlListeners();
 
-		contentBinding.caseHospitalizationHospitalizedPreviously.addValueChangedListener(new ValueChangeListener() {
-
-			@Override
-			public void onChange(ControlPropertyField field) {
-				YesNoUnknown value = (YesNoUnknown) field.getValue();
-				contentBinding.prevHospitalizationsLayout.setVisibility(value == YesNoUnknown.YES ? View.VISIBLE : View.GONE);
-				if (value != YesNoUnknown.YES) {
-					clearPreviousHospitalizations();
-				}
-
-				verifyPrevHospitalizationStatus();
-			}
-		});
-
 		CaseValidator.initializeHospitalizationValidation(contentBinding, caze);
 
 		contentBinding.setData(record);
 		contentBinding.setCaze(caze);
 		contentBinding.setPreviousHospitalizationList(getPreviousHospitalizations());
 		contentBinding.setPrevHosItemClickCallback(onPrevHosItemClickListener);
+		getContentBinding().setPreviousHospitalizationBindCallback(this::setFieldVisibilitiesAndAccesses);
+
+		contentBinding.caseHospitalizationHospitalizedPreviously.addValueChangedListener(field -> {
+			YesNoUnknown value = (YesNoUnknown) field.getValue();
+			contentBinding.prevHospitalizationsLayout.setVisibility(value == YesNoUnknown.YES ? View.VISIBLE : View.GONE);
+			if (value != YesNoUnknown.YES) {
+				clearPreviousHospitalizations();
+			}
+
+			verifyPrevHospitalizationStatus();
+		});
 	}
 
 	@Override
 	protected void onAfterLayoutBinding(FragmentCaseEditHospitalizationLayoutBinding contentBinding) {
+		setFieldVisibilitiesAndAccesses(HospitalizationDto.class, contentBinding.mainContent);
+
 		InfrastructureHelper
 			.initializeHealthFacilityDetailsFieldVisibility(contentBinding.caseDataHealthFacility, contentBinding.caseDataHealthFacilityDetails);
 
@@ -177,5 +191,14 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 	@Override
 	public int getEditLayout() {
 		return R.layout.fragment_case_edit_hospitalization_layout;
+	}
+
+	private void setFieldVisibilitiesAndAccesses(View view) {
+		FieldVisibilityAndAccessHelper.setFieldVisibilitiesAndAccesses(
+			PreviousHospitalizationDto.class,
+			(ViewGroup) view,
+			new FieldVisibilityCheckers(),
+			getFieldAccessCheckers());
+
 	}
 }

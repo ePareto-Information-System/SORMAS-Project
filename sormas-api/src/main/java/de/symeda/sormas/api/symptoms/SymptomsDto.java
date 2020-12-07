@@ -17,6 +17,8 @@
  *******************************************************************************/
 package de.symeda.sormas.api.symptoms;
 
+import static de.symeda.sormas.api.CountryHelper.COUNTRY_CODE_GERMANY;
+import static de.symeda.sormas.api.CountryHelper.COUNTRY_CODE_SWITZERLAND;
 import static de.symeda.sormas.api.Disease.AFP;
 import static de.symeda.sormas.api.Disease.ANTHRAX;
 import static de.symeda.sormas.api.Disease.CHOLERA;
@@ -40,7 +42,6 @@ import static de.symeda.sormas.api.Disease.YELLOW_FEVER;
 
 import java.util.Date;
 
-import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.ImportIgnore;
 import de.symeda.sormas.api.utils.Complication;
 import de.symeda.sormas.api.utils.DataHelper;
@@ -50,9 +51,11 @@ import de.symeda.sormas.api.utils.HideForCountries;
 import de.symeda.sormas.api.utils.HideForCountriesExcept;
 import de.symeda.sormas.api.utils.Order;
 import de.symeda.sormas.api.utils.Outbreaks;
+import de.symeda.sormas.api.utils.SensitiveData;
 import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 
-public class SymptomsDto extends EntityDto {
+public class SymptomsDto extends PseudonymizableDto {
 
 	private static final long serialVersionUID = 4146526547904182448L;
 
@@ -211,11 +214,25 @@ public class SymptomsDto extends EntityDto {
 	public static final String VOMITING = "vomiting";
 	public static final String WHEEZING = "wheezing";
 	public static final String RESPIRATORY_DISEASE_VENTILATION = "respiratoryDiseaseVentilation";
-	public static final String GENERAL_SIGNS_OF_DISEASE = "generalSignsOfDisease";
+	public static final String FEELING_ILL = "feelingIll";
+	public static final String SHIVERING = "shivering";
 	public static final String FAST_HEART_RATE = "fastHeartRate";
 	public static final String OXYGEN_SATURATION_LOWER_94 = "oxygenSaturationLower94";
 
 	public static final String WEIGHT = "weight";
+
+	public static final String FEVERISHFEELING = "feverishFeeling";
+	public static final String WEAKNESS = "weakness";
+	public static final String FATIGUE = "fatigue";
+	public static final String COUGH_WITHOUT_SPUTUM = "coughWithoutSputum";
+	public static final String BREATHLESSNESS = "breathlessness";
+	public static final String CHEST_PRESSURE = "chestPressure";
+	public static final String BLUE_LIPS = "blueLips";
+	public static final String BLOOD_CIRCULATION_PROBLEMS = "bloodCirculationProblems";
+	public static final String PALPITATIONS = "palpitations";
+	public static final String DIZZINESS_STANDING_UP = "dizzinessStandingUp";
+	public static final String HIGH_OR_LOW_BLOOD_PRESSURE = "highOrLowBloodPressure";
+	public static final String URINARY_RETENTION = "urinaryRetention";
 
 	// Complications
 	public static final String ALTERED_CONSCIOUSNESS = "alteredConsciousness";
@@ -423,7 +440,9 @@ public class SymptomsDto extends EntityDto {
 		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
-	@HideForCountries
+	@HideForCountries(countries = {
+		"de",
+		"ch" })
 	private SymptomState conjunctivitis;
 
 	@Diseases({
@@ -442,6 +461,8 @@ public class SymptomsDto extends EntityDto {
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
+	@HideForCountries(countries = {
+		"ch" })
 	private SymptomState cough;
 
 	@Diseases({
@@ -593,7 +614,9 @@ public class SymptomsDto extends EntityDto {
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
-	@HideForCountries
+	@HideForCountries(countries = {
+		"de",
+		"ch" })
 	private SymptomState fatigueWeakness;
 
 	@Diseases({
@@ -627,7 +650,9 @@ public class SymptomsDto extends EntityDto {
 		UNSPECIFIED_VHF,
 		UNDEFINED,
 		OTHER })
-	@HideForCountries
+	@HideForCountries(countries = {
+		"de",
+		"ch" })
 	private SymptomState fluidInLungCavity;
 
 	private Integer glasgowComaScale;
@@ -666,7 +691,6 @@ public class SymptomsDto extends EntityDto {
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
-	@HideForCountries
 	private SymptomState headache;
 
 	@Diseases({
@@ -743,7 +767,9 @@ public class SymptomsDto extends EntityDto {
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
-	@HideForCountries
+	@HideForCountries(countries = {
+		"de",
+		"ch" })
 	private SymptomState jointPain;
 
 	@Diseases({
@@ -947,7 +973,9 @@ public class SymptomsDto extends EntityDto {
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
-	@HideForCountries
+	@HideForCountries(countries = {
+		"de",
+		"ch" })
 	private SymptomState lymphadenopathy;
 
 	@Diseases({
@@ -1012,7 +1040,6 @@ public class SymptomsDto extends EntityDto {
 		UNDEFINED,
 		OTHER })
 	@Outbreaks
-	@HideForCountries
 	private SymptomState musclePain;
 
 	@Diseases({
@@ -1110,7 +1137,9 @@ public class SymptomsDto extends EntityDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
-	@HideForCountries
+	@HideForCountries(countries = {
+		"de",
+		"ch" })
 	private SymptomState otherHemorrhagicSymptoms;
 
 	@Diseases({
@@ -1124,7 +1153,10 @@ public class SymptomsDto extends EntityDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(OTHER_HEMORRHAGIC_SYMPTOMS)
-	@HideForCountries
+	@HideForCountries(countries = {
+		"de",
+		"ch" })
+	@SensitiveData
 	private String otherHemorrhagicSymptomsText;
 
 	@Diseases({
@@ -1169,6 +1201,7 @@ public class SymptomsDto extends EntityDto {
 		OTHER })
 	@Outbreaks
 	@DependantOn(OTHER_NON_HEMORRHAGIC_SYMPTOMS)
+	@SensitiveData
 	private String otherNonHemorrhagicSymptomsText;
 
 	@Diseases({
@@ -1222,6 +1255,7 @@ public class SymptomsDto extends EntityDto {
 		POLIO,
 		UNDEFINED,
 		OTHER })
+	@SensitiveData
 	private String patientIllLocation;
 
 	@Diseases({
@@ -1320,7 +1354,9 @@ public class SymptomsDto extends EntityDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
-	@HideForCountries
+	@HideForCountries(countries = {
+		"de",
+		"ch" })
 	private SymptomState skinBruising;
 
 	@Diseases({
@@ -1412,6 +1448,7 @@ public class SymptomsDto extends EntityDto {
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
+	@SensitiveData
 	private String symptomsComments;
 
 	@Diseases({
@@ -1545,6 +1582,7 @@ public class SymptomsDto extends EntityDto {
 	@Diseases({
 		CONGENITAL_RUBELLA })
 	@HideForCountries
+	@SensitiveData
 	private String congenitalHeartDiseaseDetails;
 
 	@Diseases({
@@ -1560,7 +1598,9 @@ public class SymptomsDto extends EntityDto {
 		POLIO,
 		OTHER,
 		CORONAVIRUS })
-	@HideForCountries
+	@HideForCountries(countries = {
+		"de",
+		"ch" })
 	private SymptomState unexplainedBleeding;
 
 	@Diseases({
@@ -1674,7 +1714,9 @@ public class SymptomsDto extends EntityDto {
 	@Diseases({
 		RABIES,
 		CORONAVIRUS })
-	@HideForCountries
+	@HideForCountries(countries = {
+		"de",
+		"ch" })
 	private SymptomState coma;
 
 	@Diseases({
@@ -1686,40 +1728,50 @@ public class SymptomsDto extends EntityDto {
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
-	@HideForCountries
+	@HideForCountries(countries = {
+		"de",
+		"ch" })
 	private SymptomState fluidInLungCavityAuscultation;
 
 	@Diseases({
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
-	@HideForCountries
+	@HideForCountries(countries = {
+		"de",
+		"ch" })
 	private SymptomState fluidInLungCavityXray;
 
 	@Diseases({
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
-	@HideForCountries
+	@HideForCountries(countries = {
+		"de",
+		"ch" })
 	private SymptomState abnormalLungXrayFindings;
 
 	@Diseases({
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
-	@HideForCountries
+	@HideForCountries(countries = {
+		"de",
+		"ch" })
 	private SymptomState conjunctivalInjection;
 
 	@Diseases({
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
+	@HideForCountries(countries = "ch")
 	private SymptomState acuteRespiratoryDistressSyndrome;
 
 	@Diseases({
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
+	@HideForCountries(countries = "ch")
 	private SymptomState pneumoniaClinicalOrRadiologic;
 
 	@Diseases({
@@ -1738,29 +1790,38 @@ public class SymptomsDto extends EntityDto {
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
-	@HideForCountries
+	@HideForCountries(countries = {
+		"de",
+		"ch" })
 	private SymptomState wheezing;
 
 	@Diseases({
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
-	@HideForCountries
+	@HideForCountries(countries = {
+		"de",
+		"ch" })
 	private SymptomState skinUlcers;
 
 	@Diseases({
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
-	@HideForCountries
+	@HideForCountries(countries = {
+		"de",
+		"ch" })
 	private SymptomState inabilityToWalk;
 
 	@Diseases({
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
-	@HideForCountries
+	@HideForCountries(countries = {
+		"de",
+		"ch" })
 	private SymptomState inDrawingOfChestWall;
+
 	@Diseases({
 		CORONAVIRUS,
 		UNDEFINED,
@@ -1772,14 +1833,18 @@ public class SymptomsDto extends EntityDto {
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
-	@HideForCountriesExcept
-	private SymptomState generalSignsOfDisease;
+	@HideForCountriesExcept(countries = {
+		COUNTRY_CODE_GERMANY,
+		COUNTRY_CODE_SWITZERLAND })
+	private SymptomState feelingIll;
 
 	@Diseases({
 		CORONAVIRUS,
 		UNDEFINED,
 		OTHER })
-	@HideForCountriesExcept
+	@HideForCountriesExcept(countries = {
+		"de",
+		"ch" })
 	private SymptomState fastHeartRate;
 
 	@Diseases({
@@ -1940,6 +2005,7 @@ public class SymptomsDto extends EntityDto {
 	@DependantOn(OTHER_COMPLICATIONS)
 	@Complication
 	@HideForCountries
+	@SensitiveData
 	public String otherComplicationsText;
 
 	@Diseases({
@@ -1999,6 +2065,88 @@ public class SymptomsDto extends EntityDto {
 	@Complication
 	@HideForCountries
 	private SymptomState shock;
+
+	@Diseases({
+		CORONAVIRUS,
+		UNDEFINED,
+		OTHER })
+	@HideForCountriesExcept(countries = "ch")
+	private SymptomState feverishFeeling;
+	@Diseases({
+		CORONAVIRUS,
+		UNDEFINED,
+		OTHER })
+	@HideForCountriesExcept(countries = "ch")
+	private SymptomState weakness;
+	@Diseases({
+		CORONAVIRUS,
+		UNDEFINED,
+		OTHER })
+	@HideForCountriesExcept(countries = "ch")
+	private SymptomState fatigue;
+	@Diseases({
+		CORONAVIRUS,
+		UNDEFINED,
+		OTHER })
+	@HideForCountriesExcept(countries = "ch")
+	private SymptomState coughWithoutSputum;
+	@Diseases({
+		CORONAVIRUS,
+		UNDEFINED,
+		OTHER })
+	@HideForCountriesExcept(countries = "ch")
+	private SymptomState breathlessness;
+	@Diseases({
+		CORONAVIRUS,
+		UNDEFINED,
+		OTHER })
+	@HideForCountriesExcept(countries = "ch")
+	private SymptomState chestPressure;
+	@Diseases({
+		CORONAVIRUS,
+		UNDEFINED,
+		OTHER })
+	@HideForCountriesExcept(countries = "ch")
+	private SymptomState blueLips;
+	@Diseases({
+		CORONAVIRUS,
+		UNDEFINED,
+		OTHER })
+	@HideForCountriesExcept(countries = "ch")
+	private SymptomState bloodCirculationProblems;
+	@Diseases({
+		CORONAVIRUS,
+		UNDEFINED,
+		OTHER })
+	@HideForCountriesExcept(countries = "ch")
+	private SymptomState palpitations;
+	@Diseases({
+		CORONAVIRUS,
+		UNDEFINED,
+		OTHER })
+	@HideForCountriesExcept(countries = "ch")
+	private SymptomState dizzinessStandingUp;
+	@Diseases({
+		CORONAVIRUS,
+		UNDEFINED,
+		OTHER })
+	@HideForCountriesExcept(countries = "ch")
+	private SymptomState highOrLowBloodPressure;
+	@Diseases({
+		CORONAVIRUS,
+		UNDEFINED,
+		OTHER })
+	@HideForCountriesExcept(countries = "ch")
+	private SymptomState urinaryRetention;
+
+	@Diseases({
+		CORONAVIRUS,
+		UNDEFINED,
+		OTHER })
+	@HideForCountriesExcept(countries = {
+		COUNTRY_CODE_GERMANY,
+		COUNTRY_CODE_SWITZERLAND })
+	private SymptomState shivering;
 
 	@Order(0)
 	public Float getTemperature() {
@@ -2706,6 +2854,87 @@ public class SymptomsDto extends EntityDto {
 		return otherComplicationsText;
 	}
 
+	@Order(300)
+	public SymptomState getRespiratoryDiseaseVentilation() {
+		return respiratoryDiseaseVentilation;
+	}
+
+	@Order(301)
+	public SymptomState getFeelingIll() {
+		return feelingIll;
+	}
+
+	@Order(302)
+	public SymptomState getShivering() {
+		return shivering;
+	}
+
+	@Order(304)
+	public SymptomState getFastHeartRate() {
+		return fastHeartRate;
+	}
+
+	@Order(305)
+	public SymptomState getOxygenSaturationLower94() {
+		return oxygenSaturationLower94;
+	}
+
+	@Order(310)
+	public SymptomState getFeverishFeeling() {
+		return feverishFeeling;
+	}
+
+	@Order(311)
+	public SymptomState getWeakness() {
+		return weakness;
+	}
+
+	@Order(312)
+	public SymptomState getFatigue() {
+		return fatigue;
+	}
+
+	@Order(313)
+	public SymptomState getCoughWithoutSputum() {
+		return coughWithoutSputum;
+	}
+
+	@Order(314)
+	public SymptomState getBreathlessness() {
+		return breathlessness;
+	}
+
+	@Order(315)
+	public SymptomState getChestPressure() {
+		return chestPressure;
+	}
+
+	@Order(316)
+	public SymptomState getBlueLips() {
+		return blueLips;
+	}
+
+	@Order(317)
+	public SymptomState getBloodCirculationProblems() {
+		return bloodCirculationProblems;
+	}
+
+	@Order(318)
+	public SymptomState getDizzinessStandingUp() {
+		return dizzinessStandingUp;
+	}
+
+	@Order(319)
+	public SymptomState getHighOrLowBloodPressure() {
+		return highOrLowBloodPressure;
+	}
+
+	@Order(320)
+	public SymptomState getUrinaryRetention() {
+		return urinaryRetention;
+	}
+
+	@Order(330)
 	public Integer getWeight() {
 		return weight;
 	}
@@ -3438,35 +3667,76 @@ public class SymptomsDto extends EntityDto {
 		this.otherComplicationsText = otherComplicationsText;
 	}
 
-	public SymptomState getRespiratoryDiseaseVentilation() {
-		return respiratoryDiseaseVentilation;
-	}
-
 	public void setRespiratoryDiseaseVentilation(SymptomState respiratoryDiseaseVentilation) {
 		this.respiratoryDiseaseVentilation = respiratoryDiseaseVentilation;
 	}
 
-	public SymptomState getGeneralSignsOfDisease() {
-		return generalSignsOfDisease;
+	public void setFeelingIll(SymptomState feelingIll) {
+		this.feelingIll = feelingIll;
 	}
 
-	public void setGeneralSignsOfDisease(SymptomState generalSignsOfDisease) {
-		this.generalSignsOfDisease = generalSignsOfDisease;
-	}
-
-	public SymptomState getFastHeartRate() {
-		return fastHeartRate;
+	public void setShivering(SymptomState shivering) {
+		this.shivering = shivering;
 	}
 
 	public void setFastHeartRate(SymptomState fastHeartRate) {
 		this.fastHeartRate = fastHeartRate;
 	}
 
-	public SymptomState getOxygenSaturationLower94() {
-		return oxygenSaturationLower94;
-	}
-
 	public void setOxygenSaturationLower94(SymptomState oxygenSaturationLower94) {
 		this.oxygenSaturationLower94 = oxygenSaturationLower94;
 	}
+
+	public void setFeverishFeeling(SymptomState feverishFeeling) {
+		this.feverishFeeling = feverishFeeling;
+	}
+
+	public void setWeakness(SymptomState weakness) {
+		this.weakness = weakness;
+	}
+
+	public void setFatigue(SymptomState fatigue) {
+		this.fatigue = fatigue;
+	}
+
+	public void setCoughWithoutSputum(SymptomState coughWithoutSputum) {
+		this.coughWithoutSputum = coughWithoutSputum;
+	}
+
+	public void setBreathlessness(SymptomState breathlessness) {
+		this.breathlessness = breathlessness;
+	}
+
+	public void setChestPressure(SymptomState chestPressure) {
+		this.chestPressure = chestPressure;
+	}
+
+	public void setBlueLips(SymptomState blueLips) {
+		this.blueLips = blueLips;
+	}
+
+	public SymptomState getPalpitations() {
+		return palpitations;
+	}
+
+	public void setPalpitations(SymptomState palpitations) {
+		this.palpitations = palpitations;
+	}
+
+	public void setDizzinessStandingUp(SymptomState dizzinessStandingUp) {
+		this.dizzinessStandingUp = dizzinessStandingUp;
+	}
+
+	public void setHighOrLowBloodPressure(SymptomState highOrLowBloodPressure) {
+		this.highOrLowBloodPressure = highOrLowBloodPressure;
+	}
+
+	public void setUrinaryRetention(SymptomState urinaryRetention) {
+		this.urinaryRetention = urinaryRetention;
+	}
+
+	public void setBloodCirculationProblems(SymptomState bloodCirculationProblems) {
+		this.bloodCirculationProblems = bloodCirculationProblems;
+	}
+
 }

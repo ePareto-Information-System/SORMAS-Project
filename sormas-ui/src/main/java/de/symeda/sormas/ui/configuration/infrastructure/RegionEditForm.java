@@ -24,7 +24,7 @@ import com.vaadin.v7.ui.TextField;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.region.RegionDto;
-import de.symeda.sormas.api.utils.fieldaccess.FieldAccessCheckers;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
 
@@ -49,7 +49,7 @@ public class RegionEditForm extends AbstractEditForm<RegionDto> {
 			RegionDto.I18N_PREFIX,
 			false,
 			FieldVisibilityCheckers.withFeatureTypes(FacadeProvider.getFeatureConfigurationFacade().getActiveServerFeatureTypes()),
-			new FieldAccessCheckers());
+			UiFieldAccessCheckers.getNoop());
 		this.create = create;
 
 		setWidth(540, Unit.PIXELS);
@@ -81,9 +81,10 @@ public class RegionEditForm extends AbstractEditForm<RegionDto> {
 
 		area.addItems(FacadeProvider.getAreaFacade().getAllActiveAsReference());
 
-		if (!create) {
-			area.setEnabled(false);
-		}
+		// area can always be changed, as it's not directly use for data references of other entities (e.g. case)
+//		if (!create) {
+//			area.setEnabled(false);
+//		}
 	}
 
 	@Override

@@ -53,8 +53,11 @@ import com.vaadin.v7.ui.Table;
 import com.vaadin.v7.ui.Table.ColumnGenerator;
 
 import de.symeda.sormas.api.i18n.Captions;
+import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.FieldAccessCellStyleGenerator;
 
 /**
  * TODO replace table with grid?
@@ -92,7 +95,11 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 	private Property<Collection<E>> dataSource;
 	private BeanItemContainer<E> container;
 
-	public AbstractTableField() {
+	protected UiFieldAccessCheckers fieldAccessCheckers;
+
+	public AbstractTableField(UiFieldAccessCheckers fieldAccessCheckers) {
+		this.fieldAccessCheckers = fieldAccessCheckers;
+
 		getContent();
 	}
 
@@ -136,6 +143,7 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 
 		layout = new VerticalLayout();
 		layout.setSpacing(false);
+		layout.setMargin(false);
 
 		HorizontalLayout headerLayout = new HorizontalLayout();
 		{
@@ -391,11 +399,28 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 		applyTablePageLength();
 
 		updateColumns();
+		initInaccessiblePlaceHolders();
 
 		fireValueChange(false);
 
 		// not set, we manage our own dataSource
 		// super.setPropertyDataSource (newDataSource);
+	}
+
+	protected void initInaccessiblePlaceHolders() {
+		for (Object columnId : table.getVisibleColumns()) {
+			if (!isAccessible(columnId)) {
+				if (table.getColumnGenerator(columnId) != null) {
+					table.removeGeneratedColumn(columnId);
+				}
+				table.addGeneratedColumn(columnId, (source, itemId, columnId1) -> I18nProperties.getCaption(Captions.inaccessibleValue));
+			}
+		}
+		table.setCellStyleGenerator(new FieldAccessCellStyleGenerator(e -> isAccessible(e)));
+	}
+
+	protected boolean isAccessible(Object columnId) {
+		return fieldAccessCheckers.isAccessible(getEntryType(), columnId.toString());
 	}
 
 	@Override

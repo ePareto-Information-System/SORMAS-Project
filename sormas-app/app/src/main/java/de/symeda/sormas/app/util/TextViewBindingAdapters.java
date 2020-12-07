@@ -50,9 +50,6 @@ import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.caze.Case;
 import de.symeda.sormas.app.backend.common.AbstractDomainObject;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
-import de.symeda.sormas.app.backend.epidata.EpiDataBurial;
-import de.symeda.sormas.app.backend.epidata.EpiDataGathering;
-import de.symeda.sormas.app.backend.epidata.EpiDataTravel;
 import de.symeda.sormas.app.backend.event.Event;
 import de.symeda.sormas.app.backend.facility.Facility;
 import de.symeda.sormas.app.backend.infrastructure.PointOfEntry;
@@ -142,6 +139,12 @@ public class TextViewBindingAdapters {
 		} else {
 			view.setText(Html.fromHtml(valBuilder.append(value).toString()));
 		}
+	}
+
+	@BindingAdapter(value = {
+		"htmlValue" })
+	public static void setHtmlValue(TextView view, String value) {
+		view.setText(!StringUtils.isBlank(value) ? Html.fromHtml(value) : "");
 	}
 
 	@BindingAdapter(value = {
@@ -658,12 +661,18 @@ public class TextViewBindingAdapters {
 		if (person == null) {
 			textField.setText(defaultValue);
 		} else {
-			String valueFormat = textField.getContext().getResources().getString(R.string.person_name_format);
-
-			if (valueFormat != null && !valueFormat.trim().equals("")) {
-				textField.setText(String.format(valueFormat, person.getFirstName(), person.getLastName().toUpperCase()));
+			if (person.isPseudonymized()) {
+				ViewHelper.formatInaccessibleTextView(textField);
 			} else {
-				textField.setText(person.toString());
+				ViewHelper.removeInaccessibleTextViewFormat(textField);
+
+				String valueFormat = textField.getContext().getResources().getString(R.string.person_name_format);
+
+				if (valueFormat != null && !valueFormat.trim().equals("")) {
+					textField.setText(String.format(valueFormat, person.getFirstName(), person.getLastName()));
+				} else {
+					textField.setText(person.toString());
+				}
 			}
 		}
 	}
@@ -675,8 +684,6 @@ public class TextViewBindingAdapters {
 		if (sample == null) {
 			textField.setText(defaultValue);
 		} else {
-			String result = "";
-			String valueFormat = textField.getContext().getResources().getString(R.string.person_name_format);
 			Case assocCase = sample.getAssociatedCase();
 
 			if (assocCase == null) {
@@ -685,17 +692,7 @@ public class TextViewBindingAdapters {
 			}
 
 			Person person = assocCase.getPerson();
-
-			if (person == null) {
-				textField.setText(defaultValue);
-				return;
-			}
-
-			if (valueFormat != null && valueFormat.trim() != "") {
-				textField.setText(String.format(valueFormat, person.getFirstName(), person.getLastName().toUpperCase()));
-			} else {
-				textField.setText(person.toString());
-			}
+			setPersonValue(textField, person, defaultValue);
 		}
 	}
 
@@ -1051,54 +1048,6 @@ public class TextViewBindingAdapters {
 		}
 	}
 
-	//TODO: Orson - remove
-	@BindingAdapter(value = {
-		"removeBottomMarginForBurialIfEmpty",
-		"bottomMargin" })
-	public static void setRemoveBottomMarginForBurialIfEmpty(LinearLayout viewGroup, ObservableList<EpiDataBurial> list, float bottomMargin) {
-		LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) viewGroup.getLayoutParams();
-
-		if (list == null || list.size() <= 0) {
-			params.bottomMargin = 0;
-		} else {
-			params.bottomMargin = (int) bottomMargin;
-		}
-
-		viewGroup.setLayoutParams(params);
-	}
-
-	//TODO: Orson - remove
-	@BindingAdapter(value = {
-		"removeBottomMarginForGatheringIfEmpty",
-		"bottomMargin" })
-	public static void setRemoveBottomMarginForGatheringIfEmpty(LinearLayout viewGroup, ObservableList<EpiDataGathering> list, float bottomMargin) {
-		LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) viewGroup.getLayoutParams();
-
-		if (list == null || list.size() <= 0) {
-			params.bottomMargin = 0;
-		} else {
-			params.bottomMargin = (int) bottomMargin;
-		}
-
-		viewGroup.setLayoutParams(params);
-	}
-
-	//TODO: Orson - remove
-	@BindingAdapter(value = {
-		"removeBottomMarginForTravelIfEmpty",
-		"bottomMargin" })
-	public static void setRemoveBottomMarginForTravelIfEmpty(LinearLayout viewGroup, ObservableList<EpiDataTravel> list, float bottomMargin) {
-		LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) viewGroup.getLayoutParams();
-
-		if (list == null || list.size() <= 0) {
-			params.bottomMargin = 0;
-		} else {
-			params.bottomMargin = (int) bottomMargin;
-		}
-
-		viewGroup.setLayoutParams(params);
-	}
-
 	@BindingAdapter(value = {
 		"removeBottomMarginIfEmpty",
 		"bottomMargin" })
@@ -1139,19 +1088,15 @@ public class TextViewBindingAdapters {
 	}
 
 	private static String getDisease(Task record) {
-		String result = null;
-
-//        if (record.getCaze() != null && record.getCaze().getDisease() != null) {
-//            result = record.getCaze().getDisease().toShortString();
-//        } else if (record.getContact() != null && record.getContact().getCaze() != null && record.getContact().getCaze().getDisease() != null) {
-//            result = record.getContact().getCaze().getDisease().toShortString();
-//        } else if (record.getEvent() != null && record.getEvent().getDisease() != null){
-//            result = record.getEvent().getDisease().toShortString();
-//        } else {
-//            result = "";
-//        }
-
-		return result;
+		if (record.getCaze() != null && record.getCaze().getDisease() != null) {
+			return record.getCaze().getDisease().toShortString();
+		} else if (record.getContact() != null && record.getContact().getDisease() != null) {
+			return record.getContact().getDisease().toShortString();
+		} else if (record.getEvent() != null && record.getEvent().getDisease() != null) {
+			return record.getEvent().getDisease().toShortString();
+		} else {
+			return "";
+		}
 	}
 
 	private static String getDisease(Event record) {

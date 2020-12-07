@@ -31,19 +31,21 @@ import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.ui.SubMenu;
 import de.symeda.sormas.ui.UserProvider;
+import de.symeda.sormas.ui.configuration.docgeneration.DocumentTemplatesView;
 import de.symeda.sormas.ui.configuration.infrastructure.AreasView;
 import de.symeda.sormas.ui.configuration.infrastructure.CommunitiesView;
+import de.symeda.sormas.ui.configuration.infrastructure.CountriesView;
 import de.symeda.sormas.ui.configuration.infrastructure.DistrictsView;
-import de.symeda.sormas.ui.configuration.infrastructure.HealthFacilitiesView;
-import de.symeda.sormas.ui.configuration.infrastructure.LaboratoriesView;
+import de.symeda.sormas.ui.configuration.infrastructure.FacilitiesView;
 import de.symeda.sormas.ui.configuration.infrastructure.PointsOfEntryView;
 import de.symeda.sormas.ui.configuration.infrastructure.PopulationDataView;
 import de.symeda.sormas.ui.configuration.infrastructure.RegionsView;
 import de.symeda.sormas.ui.configuration.linelisting.LineListingConfigurationView;
 import de.symeda.sormas.ui.configuration.outbreak.OutbreaksView;
 import de.symeda.sormas.ui.utils.AbstractSubNavigationView;
+import de.symeda.sormas.ui.utils.DirtyStateComponent;
 
-public abstract class AbstractConfigurationView extends AbstractSubNavigationView {
+public abstract class AbstractConfigurationView extends AbstractSubNavigationView<DirtyStateComponent> {
 
 	private static final long serialVersionUID = 3193505016439327054L;
 
@@ -63,6 +65,11 @@ public abstract class AbstractConfigurationView extends AbstractSubNavigationVie
 			params);
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_VIEW)) {
+			menu.addView(
+					CountriesView.VIEW_NAME,
+					I18nProperties.getPrefixCaption("View", CountriesView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
+					null,
+					false);
 			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.INFRASTRUCTURE_TYPE_AREA)) {
 				menu.addView(
 					AreasView.VIEW_NAME,
@@ -86,13 +93,8 @@ public abstract class AbstractConfigurationView extends AbstractSubNavigationVie
 				null,
 				false);
 			menu.addView(
-				HealthFacilitiesView.VIEW_NAME,
-				I18nProperties.getPrefixCaption("View", HealthFacilitiesView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
-				null,
-				false);
-			menu.addView(
-				LaboratoriesView.VIEW_NAME,
-				I18nProperties.getPrefixCaption("View", LaboratoriesView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
+				FacilitiesView.VIEW_NAME,
+				I18nProperties.getPrefixCaption("View", FacilitiesView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
 				null,
 				false);
 			menu.addView(
@@ -115,19 +117,27 @@ public abstract class AbstractConfigurationView extends AbstractSubNavigationVie
 		//					UserRightsView.VIEW_NAME.replaceAll("/", ".") + ".short", ""), params);
 		//		}
 
-		if (FacadeProvider.getConfigFacade().isDevMode() && UserProvider.getCurrent().hasUserRole(UserRole.ADMIN)) {
-			menu.addView(
-				DevModeView.VIEW_NAME,
-				I18nProperties.getPrefixCaption("View", DevModeView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
-				null,
-				false);
-		}
-		if (UserProvider.getCurrent().hasUserRight(UserRight.LINE_LISTING_CONFIGURE)) {
+		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.LINE_LISTING)
+			&& UserProvider.getCurrent().hasUserRight(UserRight.LINE_LISTING_CONFIGURE)) {
 			RegionReferenceDto region = UserProvider.getCurrent().getUser().getRegion();
 			menu.addView(
 				LineListingConfigurationView.VIEW_NAME,
 				I18nProperties.getPrefixCaption("View", LineListingConfigurationView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
 				region != null ? region.getUuid() : null,
+				false);
+		}
+		if (UserProvider.getCurrent().hasUserRight(UserRight.DOCUMENT_TEMPLATE_MANAGEMENT)) {
+			menu.addView(
+				DocumentTemplatesView.VIEW_NAME,
+				I18nProperties.getPrefixCaption("View", DocumentTemplatesView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
+				null,
+				false);
+		}
+		if (FacadeProvider.getConfigFacade().isDevMode() && UserProvider.getCurrent().hasUserRole(UserRole.ADMIN)) {
+			menu.addView(
+				DevModeView.VIEW_NAME,
+				I18nProperties.getPrefixCaption("View", DevModeView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
+				null,
 				false);
 		}
 	}
@@ -139,11 +149,11 @@ public abstract class AbstractConfigurationView extends AbstractSubNavigationVie
 			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.INFRASTRUCTURE_TYPE_AREA)) {
 				navigator.addView(AreasView.VIEW_NAME, AreasView.class);
 			}
+			navigator.addView(CountriesView.VIEW_NAME, CountriesView.class);
 			navigator.addView(RegionsView.VIEW_NAME, RegionsView.class);
 			navigator.addView(DistrictsView.VIEW_NAME, DistrictsView.class);
 			navigator.addView(CommunitiesView.VIEW_NAME, CommunitiesView.class);
-			navigator.addView(HealthFacilitiesView.VIEW_NAME, HealthFacilitiesView.class);
-			navigator.addView(LaboratoriesView.VIEW_NAME, LaboratoriesView.class);
+			navigator.addView(FacilitiesView.VIEW_NAME, FacilitiesView.class);
 			navigator.addView(PointsOfEntryView.VIEW_NAME, PointsOfEntryView.class);
 
 			if (UserProvider.getCurrent().hasUserRight(UserRight.POPULATION_MANAGE)) {
@@ -155,12 +165,16 @@ public abstract class AbstractConfigurationView extends AbstractSubNavigationVie
 		//			navigator.addView(UserRightsView.VIEW_NAME, UserRightsView.class);
 		//		}
 
-		if (FacadeProvider.getConfigFacade().isDevMode() && UserProvider.getCurrent().hasUserRole(UserRole.ADMIN)) {
-			navigator.addView(DevModeView.VIEW_NAME, DevModeView.class);
-		}
-
 		if (UserProvider.getCurrent().hasUserRight(UserRight.LINE_LISTING_CONFIGURE)) {
 			navigator.addView(LineListingConfigurationView.VIEW_NAME, LineListingConfigurationView.class);
+		}
+
+		if (UserProvider.getCurrent().hasUserRight(UserRight.DOCUMENT_TEMPLATE_MANAGEMENT)) {
+			navigator.addView(DocumentTemplatesView.VIEW_NAME, DocumentTemplatesView.class);
+		}
+
+		if (FacadeProvider.getConfigFacade().isDevMode() && UserProvider.getCurrent().hasUserRole(UserRole.ADMIN)) {
+			navigator.addView(DevModeView.VIEW_NAME, DevModeView.class);
 		}
 	}
 

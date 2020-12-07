@@ -20,19 +20,27 @@ package de.symeda.sormas.backend.person;
 import static de.symeda.sormas.api.EntityDto.COLUMN_LENGTH_DEFAULT;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import de.symeda.auditlog.api.Audited;
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.facility.FacilityType;
 import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.person.BurialConductor;
 import de.symeda.sormas.api.person.CauseOfDeath;
@@ -42,7 +50,11 @@ import de.symeda.sormas.api.person.OccupationType;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.api.person.SymptomJournalStatus;
+import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
+import de.symeda.sormas.backend.contact.Contact;
+import de.symeda.sormas.backend.event.EventParticipant;
 import de.symeda.sormas.backend.facility.Facility;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.region.Community;
@@ -56,6 +68,7 @@ public class Person extends AbstractDomainObject {
 	private static final long serialVersionUID = -1735038738114840087L;
 
 	public static final String TABLE_NAME = "person";
+	public static final String PERSON_LOCATIONS_TABLE_NAME = "person_locations";
 
 	public static final String FIRST_NAME = "firstName";
 	public static final String LAST_NAME = "lastName";
@@ -81,11 +94,6 @@ public class Person extends AbstractDomainObject {
 	public static final String EDUCATION_DETAILS = "educationDetails";
 	public static final String OCCUPATION_TYPE = "occupationType";
 	public static final String OCCUPATION_DETAILS = "occupationDetails";
-	public static final String OCCUPATION_REGION = "occupationRegion";
-	public static final String OCCUPATION_DISTRICT = "occupationDistrict";
-	public static final String OCCUPATION_COMMUNITY = "occupationCommunity";
-	public static final String OCCUPATION_FACILITY = "occupationFacility";
-	public static final String OCCUPATION_FACILITY_DETAILS = "occupationFacilityDetails";
 	public static final String PHONE = "phone";
 	public static final String PHONE_OWNER = "phoneOwner";
 	public static final String FATHERS_NAME = "fathersName";
@@ -101,6 +109,16 @@ public class Person extends AbstractDomainObject {
 	public static final String PASSPORT_NUMBER = "passportNumber";
 	public static final String NATIONAL_HEALTH_ID = "nationalHealthId";
 	public static final String EMAIL_ADDRESS = "emailAddress";
+	public static final String PLACE_OF_BIRTH_FACILITY_TYPE = "placeOfBirthFacilityType";
+	public static final String ADDRESSES = "addresses";
+	public static final String EVENT_PARTICIPANTS = "eventParticipants";
+	public static final String CONTACTS = "contacts";
+
+	public static final String SYMPTOM_JOURNAL_STATUS = "symptomJournalStatus";
+	public static final String EXTERNAL_ID = "externalId";
+	public static final String PERSON_CASES = "personCases";
+	public static final String PERSON_CONTACTS = "personContacts";
+	public static final String PERSON_EVENT_PARTICIPANTS = "personEventParticipants";
 
 	private String firstName;
 	private String lastName;
@@ -147,14 +165,25 @@ public class Person extends AbstractDomainObject {
 
 	private OccupationType occupationType;
 	private String occupationDetails;
-	private Region occupationRegion;
-	private District occupationDistrict;
-	private Community occupationCommunity;
-	private Facility occupationFacility;
-	private String occupationFacilityDetails;
 	private String generalPractitionerDetails;
 	private String passportNumber;
 	private String nationalHealthId;
+	private FacilityType placeOfBirthFacilityType;
+	private Set<Location> addresses = new HashSet<>();
+	private Date changeDateOfEmbeddedLists;
+
+	private SymptomJournalStatus symptomJournalStatus;
+
+	private boolean hasCovidApp;
+	private boolean covidCodeDelivered;
+	private String externalId;
+
+	private Set<EventParticipant> eventParticipants = new HashSet<>();
+	private Set<Contact> contacts = new HashSet<>();
+
+	private List<Case> personCases;
+	private List<Contact> personContacts;
+	private List<EventParticipant> personEventParticipants;
 
 	@Column(nullable = false, length = COLUMN_LENGTH_DEFAULT)
 	public String getFirstName() {
@@ -401,50 +430,6 @@ public class Person extends AbstractDomainObject {
 		this.occupationDetails = occupationDetails;
 	}
 
-	@ManyToOne(cascade = {})
-	public Facility getOccupationFacility() {
-		return occupationFacility;
-	}
-
-	public void setOccupationFacility(Facility occupationFacility) {
-		this.occupationFacility = occupationFacility;
-	}
-
-	@ManyToOne(cascade = {})
-	public Region getOccupationRegion() {
-		return occupationRegion;
-	}
-
-	public void setOccupationRegion(Region occupationRegion) {
-		this.occupationRegion = occupationRegion;
-	}
-
-	@ManyToOne(cascade = {})
-	public District getOccupationDistrict() {
-		return occupationDistrict;
-	}
-
-	public void setOccupationDistrict(District occupationDistrict) {
-		this.occupationDistrict = occupationDistrict;
-	}
-
-	@ManyToOne(cascade = {})
-	public Community getOccupationCommunity() {
-		return occupationCommunity;
-	}
-
-	public void setOccupationCommunity(Community occupationCommunity) {
-		this.occupationCommunity = occupationCommunity;
-	}
-
-	public String getOccupationFacilityDetails() {
-		return occupationFacilityDetails;
-	}
-
-	public void setOccupationFacilityDetails(String occupationFacilityDetails) {
-		this.occupationFacilityDetails = occupationFacilityDetails;
-	}
-
 	@Column(length = COLUMN_LENGTH_DEFAULT)
 	public String getMothersName() {
 		return mothersName;
@@ -558,6 +543,121 @@ public class Person extends AbstractDomainObject {
 
 	public void setNationalHealthId(String nationalHealthId) {
 		this.nationalHealthId = nationalHealthId;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public FacilityType getPlaceOfBirthFacilityType() {
+		return placeOfBirthFacilityType;
+	}
+
+	public void setPlaceOfBirthFacilityType(FacilityType placeOfBirthFacilityType) {
+		this.placeOfBirthFacilityType = placeOfBirthFacilityType;
+	}
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@JoinTable(name = PERSON_LOCATIONS_TABLE_NAME,
+		joinColumns = @JoinColumn(name = "person_id"),
+		inverseJoinColumns = @JoinColumn(name = "location_id"))
+	public Set<Location> getAddresses() {
+		return addresses;
+	}
+
+	public void setAddresses(Set<Location> addresses) {
+		this.addresses = addresses;
+	}
+
+	/**
+	 * This change date has to be set whenever one of the embedded lists is modified: !oldList.equals(newList)
+	 *
+	 * @return
+	 */
+	public Date getChangeDateOfEmbeddedLists() {
+		return changeDateOfEmbeddedLists;
+	}
+
+	public void setChangeDateOfEmbeddedLists(Date changeDateOfEmbeddedLists) {
+		this.changeDateOfEmbeddedLists = changeDateOfEmbeddedLists;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public SymptomJournalStatus getSymptomJournalStatus() {
+		return symptomJournalStatus;
+	}
+
+	public void setSymptomJournalStatus(SymptomJournalStatus symptomJournalStatus) {
+		this.symptomJournalStatus = symptomJournalStatus;
+	}
+
+	@Column
+	public boolean isHasCovidApp() {
+		return hasCovidApp;
+	}
+
+	public void setHasCovidApp(boolean hasCovidApp) {
+		this.hasCovidApp = hasCovidApp;
+	}
+
+	@Column
+	public boolean isCovidCodeDelivered() {
+		return covidCodeDelivered;
+	}
+
+	public void setCovidCodeDelivered(boolean covidCodeDelivered) {
+		this.covidCodeDelivered = covidCodeDelivered;
+	}
+
+	@Column
+	public String getExternalId() {
+		return externalId;
+	}
+
+	public void setExternalId(String externalId) {
+		this.externalId = externalId;
+	}
+
+	public void setEventParticipants(Set<EventParticipant> eventParticipants) {
+		this.eventParticipants = eventParticipants;
+	}
+
+	@OneToMany(cascade = {}, mappedBy = EventParticipant.PERSON, fetch = FetchType.LAZY)
+	public Set<EventParticipant> getEventParticipants() {
+		return eventParticipants;
+	}
+
+	@OneToMany(mappedBy = Case.PERSON, fetch = FetchType.LAZY)
+	public List<Case> getPersonCases() {
+		return personCases;
+	}
+
+	public void setPersonCases(List<Case> personCases) {
+		this.personCases = personCases;
+	}
+
+	@OneToMany(mappedBy = Contact.PERSON, fetch = FetchType.LAZY)
+	public List<Contact> getPersonContacts() {
+		return personContacts;
+	}
+
+	public void setPersonContacts(List<Contact> personContacts) {
+		this.personContacts = personContacts;
+	}
+
+	@OneToMany(mappedBy = EventParticipant.PERSON, fetch = FetchType.LAZY)
+	public List<EventParticipant> getPersonEventParticipants() {
+		return personEventParticipants;
+	}
+
+	public void setPersonEventParticipants(List<EventParticipant> personEventParticipants) {
+		this.personEventParticipants = personEventParticipants;
+	}
+
+	public void setContacts(Set<Contact> contacts) {
+		this.contacts = contacts;
+	}
+
+	@OneToMany(cascade = {}, mappedBy = Contact.PERSON, fetch = FetchType.LAZY)
+	public Set<Contact> getContacts() {
+		return contacts;
 	}
 
 	@Override

@@ -20,8 +20,10 @@ import java.util.stream.Collectors;
 
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.ui.renderers.DateRenderer;
+import com.vaadin.ui.renderers.HtmlRenderer;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.Language;
@@ -41,6 +43,8 @@ public class CampaignGrid extends FilteredGrid<CampaignIndexDto, CampaignCriteri
 
 	private static final long serialVersionUID = -7922340233873282326L;
 
+	private static final String VIEW_FORMS_BTN_ID = "viewForms";
+
 	@SuppressWarnings("unchecked")
 	public CampaignGrid(CampaignCriteria criteria) {
 
@@ -59,11 +63,20 @@ public class CampaignGrid extends FilteredGrid<CampaignIndexDto, CampaignCriteri
 			setCriteria(criteria);
 		}
 
-		addEditColumn(e -> {
-			ControllerProvider.getCampaignController().createOrEditCampaign(e.getUuid());
-		});
+		addEditColumn(e -> ControllerProvider.getCampaignController().navigateToCampaign(e.getUuid()));
 
-		setColumns(EDIT_BTN_ID, CampaignIndexDto.UUID, CampaignIndexDto.NAME, CampaignIndexDto.START_DATE, CampaignIndexDto.END_DATE);
+		Column<CampaignIndexDto, String> viewFormsColumn = addColumn(entry -> VaadinIcons.EYE.getHtml(), new HtmlRenderer());
+		viewFormsColumn.setId(VIEW_FORMS_BTN_ID);
+		viewFormsColumn.setSortable(false);
+		viewFormsColumn.setWidth(25);
+
+		setColumns(
+			EDIT_BTN_ID,
+			VIEW_FORMS_BTN_ID,
+			CampaignIndexDto.UUID,
+			CampaignIndexDto.NAME,
+			CampaignIndexDto.START_DATE,
+			CampaignIndexDto.END_DATE);
 		Language userLanguage = I18nProperties.getUserLanguage();
 		((Column<CampaignIndexDto, String>) getColumn(CampaignIndexDto.UUID)).setRenderer(new UuidRenderer());
 		((Column<CampaignIndexDto, Date>) getColumn(CampaignIndexDto.START_DATE))
@@ -74,9 +87,11 @@ public class CampaignGrid extends FilteredGrid<CampaignIndexDto, CampaignCriteri
 		for (Column<?, ?> column : getColumns()) {
 			column.setCaption(I18nProperties.getPrefixCaption(CampaignIndexDto.I18N_PREFIX, column.getId(), column.getCaption()));
 		}
+		getColumn(EDIT_BTN_ID).setWidth(40);
+		getColumn(VIEW_FORMS_BTN_ID).setWidth(40);
 
 		addItemClickListener(
-			new ShowDetailsListener<>(CampaignIndexDto.UUID, e -> ControllerProvider.getCampaignController().navigateToCampaignData(e.getUuid())));
+			new ShowDetailsListener<>(VIEW_FORMS_BTN_ID, e -> ControllerProvider.getCampaignController().navigateToCampaignData(e.getUuid())));
 	}
 
 	public void setLazyDataProvider() {

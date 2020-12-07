@@ -17,8 +17,6 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.user;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 
 import com.vaadin.icons.VaadinIcons;
@@ -36,14 +34,13 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.ui.ComboBox;
 
+import de.symeda.sormas.api.AuthProvider;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.user.UserDto;
-import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.UserProvider;
@@ -55,9 +52,6 @@ import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 
 public class UserController {
-
-	public UserController() {
-	}
 
 	public void create() {
 		CommitDiscardWrapperComponent<UserEditForm> userCreateComponent = getUserCreateComponent();
@@ -168,7 +162,7 @@ public class UserController {
 					UserDto dto = createForm.getValue();
 					dto = FacadeProvider.getUserFacade().saveUser(dto);
 					refreshView();
-					makeNewPassword(dto.getUuid());
+					makeInitialPassword(dto.getUuid());
 				}
 			}
 		});
@@ -179,9 +173,26 @@ public class UserController {
 		return FacadeProvider.getUserFacade().isLoginUnique(uuid, userName);
 	}
 
+	public void makeInitialPassword(String userUuid) {
+		if (AuthProvider.getProvider().isDefaultProvider()) {
+			String newPassword = FacadeProvider.getUserFacade().resetPassword(userUuid);
+			showPasswordResetInternalSuccessPopup(newPassword);
+		} else {
+			showAccountCreatedSuccessful();
+		}
+	}
+
 	public void makeNewPassword(String userUuid) {
 		String newPassword = FacadeProvider.getUserFacade().resetPassword(userUuid);
 
+		if (AuthProvider.getProvider().isDefaultProvider()) {
+			showPasswordResetInternalSuccessPopup(newPassword);
+		} else {
+			showPasswordResetExternalSuccessPopup();
+		}
+	}
+
+	private void showPasswordResetInternalSuccessPopup(String newPassword) {
 		VerticalLayout layout = new VerticalLayout();
 		layout.addComponent(new Label(I18nProperties.getString(Strings.messageCopyPassword)));
 		Label passwordLabel = new Label(newPassword);
@@ -192,20 +203,22 @@ public class UserController {
 		layout.setMargin(true);
 	}
 
-	public List<UserReferenceDto> filterByDistrict(List<UserReferenceDto> users, DistrictReferenceDto district) {
-		List<UserDto> userDtos = new ArrayList<>();
-		for (UserReferenceDto userRef : users) {
-			userDtos.add(FacadeProvider.getUserFacade().getByUuid(userRef.getUuid()));
-		}
+	private void showAccountCreatedSuccessful() {
+		VerticalLayout layout = new VerticalLayout();
+		layout.addComponent(new Label(I18nProperties.getString(Strings.messageActivateAccount)));
+		Window popupWindow = VaadinUiUtil.showPopupWindow(layout);
+		popupWindow.setCaption(I18nProperties.getString(Strings.headingNewAccount));
+		popupWindow.setWidth(350, Unit.PIXELS);
+		layout.setMargin(true);
+	}
 
-		userDtos.removeIf(user -> user.getDistrict() == null || !user.getDistrict().equals(district));
-
-		List<UserReferenceDto> userRefs = new ArrayList<>();
-		for (UserDto user : userDtos) {
-			userRefs.add(FacadeProvider.getUserFacade().getByUserNameAsReference(user.getUserName()));
-		}
-
-		return userRefs;
+	private void showPasswordResetExternalSuccessPopup() {
+		VerticalLayout layout = new VerticalLayout();
+		layout.addComponent(new Label(I18nProperties.getString(Strings.messagePasswordReset)));
+		Window popupWindow = VaadinUiUtil.showPopupWindow(layout);
+		popupWindow.setCaption(I18nProperties.getString(Strings.headingNewPassword));
+		popupWindow.setWidth(350, Unit.PIXELS);
+		layout.setMargin(true);
 	}
 
 	private void refreshView() {
@@ -290,5 +303,9 @@ public class UserController {
 		for (Language language : Language.values()) {
 			cbLanguage.setItemIcon(language, new ThemeResource("img/flag-icons/" + language.name().toLowerCase() + ".png"));
 		}
+	}
+
+	public boolean isEmailRequired() {
+		return AuthProvider.getProvider().isEmailRequired();
 	}
 }

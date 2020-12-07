@@ -29,6 +29,8 @@ import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -40,6 +42,8 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.ValidationException;
+
+import org.apache.commons.beanutils.BeanUtils;
 
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
@@ -72,6 +76,9 @@ import de.symeda.sormas.backend.region.DistrictService;
 import de.symeda.sormas.backend.region.Region;
 import de.symeda.sormas.backend.region.RegionFacadeEjb;
 import de.symeda.sormas.backend.region.RegionService;
+import de.symeda.sormas.backend.user.event.PasswordResetEvent;
+import de.symeda.sormas.backend.user.event.UserCreateEvent;
+import de.symeda.sormas.backend.user.event.UserUpdateEvent;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.ModelConstants;
 import de.symeda.sormas.backend.util.PasswordHelper;
@@ -104,22 +111,36 @@ public class UserFacadeEjb implements UserFacade {
 	private EventService eventService;
 	@EJB
 	private PointOfEntryService pointOfEntryService;
+	@Inject
+	private Event<UserCreateEvent> userCreateEvent;
+	@Inject
+	private Event<UserUpdateEvent> userUpdateEvent;
+	@Inject
+	private Event<PasswordResetEvent> passwordResetEvent;
 
 	@Override
 	public List<UserReferenceDto> getUsersByRegionAndRoles(RegionReferenceDto regionRef, UserRole... assignableRoles) {
 
 		Region region = regionService.getByReferenceDto(regionRef);
-		return userService.getAllByRegionAndUserRoles(region, assignableRoles).stream().map(f -> toReferenceDto(f)).collect(Collectors.toList());
+		return userService.getAllByRegionAndUserRolesInJurisdiction(region, assignableRoles)
+			.stream()
+			.map(f -> toReferenceDto(f))
+			.collect(Collectors.toList());
 	}
 
 	@Override
 	public List<UserReferenceDto> getUserRefsByDistrict(DistrictReferenceDto districtRef, boolean includeSupervisors, UserRole... userRoles) {
 
 		District district = districtService.getByReferenceDto(districtRef);
-		return userService.getAllByDistrict(district, includeSupervisors, userRoles)
+		return userService.getAllByDistrictInJurisdiction(district, includeSupervisors, userRoles)
 			.stream()
 			.map(f -> toReferenceDto(f))
 			.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<UserReferenceDto> getAllUserRefs(boolean includeInactive) {
+		return userService.getAllInJurisdiction(includeInactive).stream().map(c -> toReferenceDto(c)).collect(Collectors.toList());
 	}
 
 	@Override
@@ -130,12 +151,6 @@ public class UserFacadeEjb implements UserFacade {
 	}
 
 	@Override
-	public List<UserDto> getAll(UserRole... roles) {
-
-		return userService.getAllByRegionAndUserRoles(null, roles).stream().map(f -> toDto(f)).collect(Collectors.toList());
-	}
-
-	@Override
 	public List<UserDto> getAllAfter(Date date) {
 		return userService.getAllAfter(date, null).stream().map(c -> toDto(c)).collect(Collectors.toList());
 	}
@@ -143,11 +158,6 @@ public class UserFacadeEjb implements UserFacade {
 	@Override
 	public List<UserDto> getByUuids(List<String> uuids) {
 		return userService.getByUuids(uuids).stream().map(c -> toDto(c)).collect(Collectors.toList());
-	}
-
-	@Override
-	public List<UserReferenceDto> getAllAfterAsReference(Date date) {
-		return userService.getAllAfter(date, null).stream().map(c -> toReferenceDto(c)).collect(Collectors.toList());
 	}
 
 	@Override
@@ -171,12 +181,16 @@ public class UserFacadeEjb implements UserFacade {
 	}
 
 	@Override
-	public UserReferenceDto getByUserNameAsReference(String userName) {
-		return toReferenceDto(userService.getByUserName(userName));
-	}
-
-	@Override
 	public UserDto saveUser(UserDto dto) {
+
+		User oldUser = null;
+		if (dto.getCreationDate() != null) {
+			try {
+				oldUser = (User) BeanUtils.cloneBean(userService.getByUuid(dto.getUuid()));
+			} catch (Exception e) {
+				throw new IllegalArgumentException("Invalid bean access", e);
+			}
+		}
 
 		User user = fromDto(dto);
 
@@ -187,6 +201,12 @@ public class UserFacadeEjb implements UserFacade {
 		}
 
 		userService.ensurePersisted(user);
+
+		if (oldUser == null) {
+			userCreateEvent.fire(new UserCreateEvent(user));
+		} else {
+			userUpdateEvent.fire(new UserUpdateEvent(oldUser, user));
+		}
 
 		return toDto(user);
 	}
@@ -233,7 +253,7 @@ public class UserFacadeEjb implements UserFacade {
 					expression = district.get(District.NAME);
 					break;
 				case UserDto.ADDRESS:
-					expression = address.get(Location.ADDRESS);
+					expression = address.get(Location.REGION);
 					break;
 				default:
 					throw new IllegalArgumentException(sortProperty.propertyName);
@@ -294,6 +314,7 @@ public class UserFacadeEjb implements UserFacade {
 		target.setPointOfEntry(PointOfEntryFacadeEjb.toReferenceDto(source.getPointOfEntry()));
 		target.setLimitedDisease(source.getLimitedDisease());
 		target.setLanguage(source.getLanguage());
+		target.setHasConsentedToGdpr(source.isHasConsentedToGdpr());
 
 		source.getUserRoles().size();
 		target.setUserRoles(new HashSet<UserRole>(source.getUserRoles()));
@@ -340,6 +361,7 @@ public class UserFacadeEjb implements UserFacade {
 		target.setPointOfEntry(pointOfEntryService.getByReferenceDto(source.getPointOfEntry()));
 		target.setLimitedDisease(source.getLimitedDisease());
 		target.setLanguage(source.getLanguage());
+		target.setHasConsentedToGdpr(source.isHasConsentedToGdpr());
 
 		target.setUserRoles(new HashSet<UserRole>(source.getUserRoles()));
 
@@ -353,7 +375,9 @@ public class UserFacadeEjb implements UserFacade {
 
 	@Override
 	public String resetPassword(String uuid) {
-		return userService.resetPassword(uuid);
+		String resetPassword = userService.resetPassword(uuid);
+		passwordResetEvent.fire(new PasswordResetEvent(userService.getByUuid(uuid)));
+		return resetPassword;
 	}
 
 	@Override

@@ -28,6 +28,7 @@ import de.symeda.sormas.api.CaseMeasure;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.contact.DashboardQuarantineDataDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
 import de.symeda.sormas.api.importexport.ExportConfigurationDto;
 import de.symeda.sormas.api.person.PresentCondition;
@@ -43,9 +44,10 @@ public interface CaseFacade {
 
 	List<CaseDataDto> getAllActiveCasesAfter(Date date);
 
-	//Created for the SurvNet interface in order to track additional change dates.
-	//additional change dates filters for: sample, pathogenTests, patient and location.
-	List<CaseDataDto> getAllActiveCasesAfter(Date date, Boolean includeExtendedChangeDateFilters);
+	/**
+	 * Additional change dates filters for: sample, pathogenTests, patient and location.
+	 */
+	List<CaseDataDto> getAllActiveCasesAfter(Date date, boolean includeExtendedChangeDateFilters);
 
 	long count(CaseCriteria caseCriteria);
 
@@ -69,6 +71,8 @@ public interface CaseFacade {
 
 	void setSampleAssociations(EventParticipantReferenceDto sourceEventParticipant, CaseReferenceDto cazeRef);
 
+	void setSampleAssociationsUnrelatedDisease(EventParticipantReferenceDto sourceEventParticipant, CaseReferenceDto cazeRef);
+
 	void validate(CaseDataDto dto) throws ValidationRuntimeException;
 
 	CaseReferenceDto getReferenceByUuid(String uuid);
@@ -82,6 +86,8 @@ public interface CaseFacade {
 	List<DashboardCaseDto> getCasesForDashboard(CaseCriteria caseCriteria);
 
 	List<MapCaseDto> getCasesForMap(RegionReferenceDto regionRef, DistrictReferenceDto districtRef, Disease disease, Date from, Date to);
+
+	Long countCasesForMap(RegionReferenceDto regionRef, DistrictReferenceDto districtRef, Disease disease, Date from, Date to);
 
 	Map<CaseClassification, Long> getCaseCountPerClassification(
 		CaseCriteria caseCriteria,
@@ -135,11 +141,36 @@ public interface CaseFacade {
 
 	void archiveAllArchivableCases(int daysAfterCaseGetsArchived);
 
+	/**
+	 * @param caseUuids
+	 *            Cases identified by {@code uuid} to be archived or not.
+	 * @param archived
+	 *            {@code true} archives the Case, {@code false} unarchives it.
+	 */
+	void updateArchived(List<String> caseUuids, boolean archived);
+
 	List<CaseReferenceDto> getRandomCaseReferences(CaseCriteria criteria, int count);
 
-	Boolean isCaseEditAllowed(String caseUuid);
+	boolean isCaseEditAllowed(String caseUuid);
 
 	boolean exists(String uuid);
 
 	boolean hasPositiveLabResult(String caseUuid);
+
+	List<CaseFollowUpDto> getCaseFollowUpList(
+		CaseCriteria caseCriteria,
+		Date referenceDate,
+		int interval,
+		Integer first,
+		Integer max,
+		List<SortProperty> sortProperties);
+
+	List<DashboardQuarantineDataDto> getQuarantineDataForDashBoard(
+		RegionReferenceDto regionRef,
+		DistrictReferenceDto districtRef,
+		Disease disease,
+		Date from,
+		Date to);
+
+	long countCasesConvertedFromContacts(CaseCriteria caseCriteria);
 }

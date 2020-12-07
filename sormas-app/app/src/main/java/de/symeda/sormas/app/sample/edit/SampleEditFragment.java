@@ -33,11 +33,13 @@ import androidx.annotation.Nullable;
 import de.symeda.sormas.api.facility.FacilityDto;
 import de.symeda.sormas.api.sample.AdditionalTestType;
 import de.symeda.sormas.api.sample.PathogenTestType;
+import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SampleMaterial;
 import de.symeda.sormas.api.sample.SamplePurpose;
 import de.symeda.sormas.api.sample.SampleSource;
 import de.symeda.sormas.api.sample.SpecimenCondition;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
@@ -69,7 +71,12 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 	private List<String> requestedAdditionalTests = new ArrayList<>();
 
 	public static SampleEditFragment newInstance(Sample activityRootData) {
-		return newInstance(SampleEditFragment.class, null, activityRootData);
+		return newInstanceWithFieldCheckers(
+			SampleEditFragment.class,
+			null,
+			activityRootData,
+			null,
+			UiFieldAccessCheckers.forSensitiveData(activityRootData.isPseudonymized()));
 	}
 
 	private void setUpControlListeners(FragmentSampleEditLayoutBinding contentBinding) {
@@ -181,6 +188,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 
 	@Override
 	public void onAfterLayoutBinding(final FragmentSampleEditLayoutBinding contentBinding) {
+		setFieldVisibilitiesAndAccesses(SampleDto.class, contentBinding.mainContent);
 		setUpFieldVisibilities(contentBinding);
 
 		// Initialize ControlSpinnerFields
@@ -189,7 +197,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 		contentBinding.samplePurpose.setEnabled(referredSample == null || record.getSamplePurpose() != SamplePurpose.EXTERNAL);
 		contentBinding.sampleLab.initializeSpinner(DataUtils.toItems(labList), field -> {
 			Facility laboratory = (Facility) field.getValue();
-			if (laboratory != null && laboratory.getUuid().equals(FacilityDto.OTHER_LABORATORY_UUID)) {
+			if (laboratory != null && laboratory.getUuid().equals(FacilityDto.OTHER_FACILITY_UUID)) {
 				contentBinding.sampleLabDetails.setVisibility(View.VISIBLE);
 			} else {
 				contentBinding.sampleLabDetails.hideField(true);

@@ -9,6 +9,7 @@ import de.symeda.sormas.api.caze.InvestigationStatus;
 import de.symeda.sormas.api.caze.PlagueType;
 import de.symeda.sormas.api.caze.RabiesType;
 import de.symeda.sormas.api.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.facility.FacilityType;
 import de.symeda.sormas.api.region.CommunityReferenceDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
@@ -34,6 +35,8 @@ public class CaseBulkEditData extends EntityDto {
 	public static final String DISTRICT = "district";
 	public static final String COMMUNITY = "community";
 	public static final String HEALTH_FACILITY = "healthFacility";
+	public static final String HEALTH_FACILITY_DETAILS = "healthFacilityDetails";
+	public static final String FACILITY_TYPE = "facilityType";
 
 	private Disease disease;
 	private String diseaseDetails;
@@ -47,7 +50,9 @@ public class CaseBulkEditData extends EntityDto {
 	private RegionReferenceDto region;
 	private DistrictReferenceDto district;
 	private CommunityReferenceDto community;
+	private FacilityType facilityType;
 	private FacilityReferenceDto healthFacility;
+	private String healthFacilityDetails;
 
 	public Disease getDisease() {
 		return disease;
@@ -145,11 +150,27 @@ public class CaseBulkEditData extends EntityDto {
 		this.community = community;
 	}
 
+	public FacilityType getFacilityType() {
+		return facilityType;
+	}
+
+	public void setFacilityType(FacilityType facilityType) {
+		this.facilityType = facilityType;
+	}
+
 	public FacilityReferenceDto getHealthFacility() {
 		return healthFacility;
 	}
 
 	public void setHealthFacility(FacilityReferenceDto healthFacility) {
 		this.healthFacility = healthFacility;
+	}
+
+	public String getHealthFacilityDetails() {
+		return healthFacilityDetails;
+	}
+
+	public void setHealthFacilityDetails(String healthFacilityDetails) {
+		this.healthFacilityDetails = healthFacilityDetails;
 	}
 }

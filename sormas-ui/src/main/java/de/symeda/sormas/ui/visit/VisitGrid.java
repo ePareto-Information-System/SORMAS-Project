@@ -32,6 +32,7 @@ import de.symeda.sormas.api.visit.VisitIndexDto;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.BooleanRenderer;
+import de.symeda.sormas.ui.utils.FieldAccessColumnStyleGenerator;
 import de.symeda.sormas.ui.utils.FilteredGrid;
 
 @SuppressWarnings("serial")
@@ -54,7 +55,8 @@ public class VisitGrid extends FilteredGrid<VisitIndexDto, VisitCriteria> {
 			setSelectionMode(SelectionMode.NONE);
 		}
 
-		addEditColumn(e -> ControllerProvider.getVisitController().editVisit(e.getUuid(), getCriteria().getContact(), r -> reload()));
+		addEditColumn(
+			e -> ControllerProvider.getVisitController().editVisit(e.getUuid(), getCriteria().getContact(), getCriteria().getCaze(), r -> reload()));
 
 		setColumns(
 			EDIT_BTN_ID,
@@ -63,14 +65,18 @@ public class VisitGrid extends FilteredGrid<VisitIndexDto, VisitCriteria> {
 			VisitIndexDto.VISIT_REMARKS,
 			VisitIndexDto.DISEASE,
 			VisitIndexDto.SYMPTOMATIC,
-			VisitIndexDto.TEMPERATURE);
+			VisitIndexDto.TEMPERATURE,
+			VisitIndexDto.ORIGIN);
 
 		((Column<VisitIndexDto, Date>) getColumn(VisitIndexDto.VISIT_DATE_TIME))
 			.setRenderer(new DateRenderer(DateHelper.getLocalDateTimeFormat(I18nProperties.getUserLanguage())));
 		((Column<VisitIndexDto, String>) getColumn(VisitIndexDto.SYMPTOMATIC)).setRenderer(new BooleanRenderer());
 
-		for (Column<?, ?> column : getColumns()) {
-			column.setCaption(I18nProperties.getPrefixCaption(VisitIndexDto.I18N_PREFIX, column.getId().toString(), column.getCaption()));
+		for (Column<VisitIndexDto, ?> column : getColumns()) {
+			column.setCaption(I18nProperties.getPrefixCaption(VisitIndexDto.I18N_PREFIX, column.getId(), column.getCaption()));
+
+			column.setStyleGenerator(FieldAccessColumnStyleGenerator.getDefault(getBeanType(), column.getId()));
+
 		}
 	}
 

@@ -19,6 +19,8 @@ import java.util.List;
 
 import android.content.res.Resources;
 
+import de.symeda.sormas.api.caze.maternalhistory.MaternalHistoryDto;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.caze.Case;
@@ -36,7 +38,12 @@ public class CaseEditMaternalHistoryFragment extends BaseEditFragment<FragmentCa
 	// Static methods
 
 	public static CaseEditMaternalHistoryFragment newInstance(Case activityRootData) {
-		return newInstance(CaseEditMaternalHistoryFragment.class, null, activityRootData);
+		return newInstanceWithFieldCheckers(
+			CaseEditMaternalHistoryFragment.class,
+			null,
+			activityRootData,
+			null,
+			UiFieldAccessCheckers.forSensitiveData(activityRootData.isPseudonymized()));
 	}
 
 	// Overrides
@@ -73,6 +80,8 @@ public class CaseEditMaternalHistoryFragment extends BaseEditFragment<FragmentCa
 		contentBinding.maternalHistoryRubellaOnset.initializeDateField(getFragmentManager());
 		contentBinding.maternalHistorySwollenLymphsOnset.initializeDateField(getFragmentManager());
 		contentBinding.maternalHistoryRashExposureDate.initializeDateField(getFragmentManager());
+
+		setFieldVisibilitiesAndAccesses(MaternalHistoryDto.class, contentBinding.mainContent);
 
 		List<Item> initialRegions = InfrastructureHelper.loadRegions();
 		List<Item> initialDistricts = InfrastructureHelper.loadDistricts(record.getRashExposureRegion());

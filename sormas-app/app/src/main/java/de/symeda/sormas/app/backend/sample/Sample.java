@@ -43,17 +43,18 @@ import de.symeda.sormas.api.sample.SampleSource;
 import de.symeda.sormas.api.sample.SpecimenCondition;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.backend.caze.Case;
-import de.symeda.sormas.app.backend.common.AbstractDomainObject;
+import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 import de.symeda.sormas.app.backend.contact.Contact;
 import de.symeda.sormas.app.backend.event.EventParticipant;
 import de.symeda.sormas.app.backend.facility.Facility;
+import de.symeda.sormas.app.backend.sormastosormas.SormasToSormasOriginInfo;
 import de.symeda.sormas.app.backend.user.User;
 import de.symeda.sormas.app.core.YesNo;
 import de.symeda.sormas.app.util.DateFormatHelper;
 
 @Entity(name = Sample.TABLE_NAME)
 @DatabaseTable(tableName = Sample.TABLE_NAME)
-public class Sample extends AbstractDomainObject {
+public class Sample extends PseudonymizableAdo {
 
 	private static final long serialVersionUID = -7196712070188634978L;
 
@@ -175,6 +176,11 @@ public class Sample extends AbstractDomainObject {
 
 	@Column(length = COLUMN_LENGTH_DEFAULT)
 	private String requestedOtherAdditionalTests;
+
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private SormasToSormasOriginInfo sormasToSormasOriginInfo;
+	@DatabaseField
+	private boolean ownershipHandedOver;
 
 	public Case getAssociatedCase() {
 		return associatedCase;
@@ -522,5 +528,21 @@ public class Sample extends AbstractDomainObject {
 
 	public void setReportLatLonAccuracy(Float reportLatLonAccuracy) {
 		this.reportLatLonAccuracy = reportLatLonAccuracy;
+	}
+
+	public SormasToSormasOriginInfo getSormasToSormasOriginInfo() {
+		return sormasToSormasOriginInfo;
+	}
+
+	public void setSormasToSormasOriginInfo(SormasToSormasOriginInfo sormasToSormasOriginInfo) {
+		this.sormasToSormasOriginInfo = sormasToSormasOriginInfo;
+	}
+
+	public boolean isOwnershipHandedOver() {
+		return ownershipHandedOver;
+	}
+
+	public void setOwnershipHandedOver(boolean ownershipHandedOver) {
+		this.ownershipHandedOver = ownershipHandedOver;
 	}
 }

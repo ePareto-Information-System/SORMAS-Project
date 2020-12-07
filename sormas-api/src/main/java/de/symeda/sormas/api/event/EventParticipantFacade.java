@@ -19,15 +19,19 @@ package de.symeda.sormas.api.event;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Remote;
 
+import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.utils.SortProperty;
 
 @Remote
 public interface EventParticipantFacade {
 
 	List<EventParticipantDto> getAllEventParticipantsByEventAfter(Date date, String eventUuid);
+
+	List<EventParticipantDto> getAllActiveEventParticipantsByEvent(String eventUuid);
 
 	List<EventParticipantDto> getAllActiveEventParticipantsAfter(Date date);
 
@@ -47,11 +51,26 @@ public interface EventParticipantFacade {
 		Integer max,
 		List<SortProperty> sortProperties);
 
+	EventParticipantDto getByUuid(String uuid);
+
 	void validate(EventParticipantDto eventParticipant);
 
 	long count(EventParticipantCriteria eventParticipantCriteria);
 
+	Map<String, Long> getContactCountPerEventParticipant(List<String> eventParticipantUuids, EventParticipantCriteria eventParticipantCriteria);
+
 	boolean exists(String uuid);
 
 	EventParticipantReferenceDto getReferenceByUuid(String uuid);
+
+	EventParticipantReferenceDto getReferenceByEventAndPerson(String eventUuid, String personUuid);
+
+	List<String> getDeletedUuidsSince(Date date);
+
+	boolean isEventParticipantEditAllowed(String uuid);
+
+	EventParticipantDto getFirst(EventParticipantCriteria eventParticipantCriteria);
+
+	List<EventParticipantExportDto> getExportList(EventParticipantCriteria eventParticipantCriteria, int first, int max, Language userLanguage);
+
 }

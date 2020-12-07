@@ -20,6 +20,7 @@ package de.symeda.sormas.backend.contact;
 import static de.symeda.sormas.api.EntityDto.COLUMN_LENGTH_BIG;
 import static de.symeda.sormas.api.EntityDto.COLUMN_LENGTH_DEFAULT;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -49,17 +50,22 @@ import de.symeda.sormas.api.contact.ContactProximity;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.contact.ContactRelation;
 import de.symeda.sormas.api.contact.ContactStatus;
+import de.symeda.sormas.api.contact.EndOfQuarantineReason;
 import de.symeda.sormas.api.contact.FollowUpStatus;
 import de.symeda.sormas.api.contact.QuarantineType;
 import de.symeda.sormas.api.contact.TracingApp;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.backend.caze.Case;
+import de.symeda.sormas.backend.clinicalcourse.HealthConditions;
 import de.symeda.sormas.backend.common.CoreAdo;
 import de.symeda.sormas.backend.epidata.EpiData;
 import de.symeda.sormas.backend.person.Person;
+import de.symeda.sormas.backend.region.Community;
 import de.symeda.sormas.backend.region.District;
 import de.symeda.sormas.backend.region.Region;
 import de.symeda.sormas.backend.sample.Sample;
+import de.symeda.sormas.backend.sormastosormas.SormasToSormasOriginInfo;
+import de.symeda.sormas.backend.sormastosormas.SormasToSormasShareInfo;
 import de.symeda.sormas.backend.task.Task;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.visit.Visit;
@@ -99,6 +105,7 @@ public class Contact extends CoreAdo {
 	public static final String EXTERNAL_ID = "externalID";
 	public static final String REGION = "region";
 	public static final String DISTRICT = "district";
+	public static final String COMMUNITY = "community";
 	public static final String HIGH_PRIORITY = "highPriority";
 	public static final String IMMUNOSUPPRESSIVE_THERAPY_BASIC_DISEASE = "immunosuppressiveTherapyBasicDisease";
 	public static final String IMMUNOSUPPRESSIVE_THERAPY_BASIC_DISEASE_DETAILS = "immunosuppressiveTherapyBasicDiseaseDetails";
@@ -124,9 +131,18 @@ public class Contact extends CoreAdo {
 	public static final String QUARANTINE_HOME_POSSIBLE_COMMENT = "quarantineHomePossibleComment";
 	public static final String QUARANTINE_HOME_SUPPLY_ENSURED = "quarantineHomeSupplyEnsured";
 	public static final String QUARANTINE_HOME_SUPPLY_ENSURED_COMMENT = "quarantineHomeSupplyEnsuredComment";
+	public static final String QUARANTINE_EXTENDED = "quarantineExtended";
+	public static final String QUARANTINE_REDUCED = "quarantineReduced";
+	public static final String QUARANTINE_OFFICIAL_ORDER_SENT = "quarantineOfficialOrderSent";
+	public static final String QUARANTINE_OFFICIAL_ORDER_SENT_DATE = "quarantineOfficialOrderSentDate";
 	public static final String VISITS = "visits";
 	public static final String ADDITIONAL_DETAILS = "additionalDetails";
 	public static final String EPI_DATA = "epiData";
+	public static final String HEALTH_CONDITIONS = "healthConditions";
+	public static final String SORMAS_TO_SORMAS_SHARES = "sormasToSormasShares";
+	public static final String RETURNING_TRAVELER = "returningTraveler";
+	public static final String END_OF_QUARANTINE_REASON = "endOfQuarantineReason";
+	public static final String END_OF_QUARANTINE_REASON_DETAILS = "endOfQuarantineReasonDetails";
 
 	private Date reportDateTime;
 	private User reportingUser;
@@ -136,6 +152,7 @@ public class Contact extends CoreAdo {
 
 	private Region region;
 	private District district;
+	private Community community;
 
 	private Person person;
 	private Case caze;
@@ -187,12 +204,24 @@ public class Contact extends CoreAdo {
 	private String quarantineHomePossibleComment;
 	private YesNoUnknown quarantineHomeSupplyEnsured;
 	private String quarantineHomeSupplyEnsuredComment;
+	private boolean quarantineExtended;
+	private boolean quarantineReduced;
+	private boolean quarantineOfficialOrderSent;
+	private Date quarantineOfficialOrderSentDate;
+
 	private String additionalDetails;
 	private EpiData epiData;
 
 	private List<Task> tasks;
 	private Set<Sample> samples;
 	private Set<Visit> visits = new HashSet<>();
+	private HealthConditions healthConditions;
+	private YesNoUnknown returningTraveler;
+	private EndOfQuarantineReason endOfQuarantineReason;
+	private String endOfQuarantineReasonDetails;
+
+	private SormasToSormasOriginInfo sormasToSormasOriginInfo;
+	private List<SormasToSormasShareInfo> sormasToSormasShares = new ArrayList<>(0);
 
 	@ManyToOne(cascade = {})
 	@JoinColumn(nullable = false)
@@ -508,6 +537,15 @@ public class Contact extends CoreAdo {
 		this.district = district;
 	}
 
+	@ManyToOne(cascade = {})
+	public Community getCommunity() {
+		return community;
+	}
+
+	public void setCommunity(Community community) {
+		this.community = community;
+	}
+
 	@Column
 	public boolean isHighPriority() {
 		return highPriority;
@@ -706,6 +744,42 @@ public class Contact extends CoreAdo {
 		this.quarantineHomeSupplyEnsuredComment = quarantineHomeSupplyEnsuredComment;
 	}
 
+	@Column
+	public boolean isQuarantineExtended() {
+		return quarantineExtended;
+	}
+
+	public void setQuarantineExtended(boolean quarantineExtended) {
+		this.quarantineExtended = quarantineExtended;
+	}
+
+	@Column
+	public boolean isQuarantineReduced() {
+		return quarantineReduced;
+	}
+
+	public void setQuarantineReduced(boolean quarantineReduced) {
+		this.quarantineReduced = quarantineReduced;
+	}
+
+	@Column
+	public boolean isQuarantineOfficialOrderSent() {
+		return quarantineOfficialOrderSent;
+	}
+
+	public void setQuarantineOfficialOrderSent(boolean quarantineOfficialOrderSent) {
+		this.quarantineOfficialOrderSent = quarantineOfficialOrderSent;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getQuarantineOfficialOrderSentDate() {
+		return quarantineOfficialOrderSentDate;
+	}
+
+	public void setQuarantineOfficialOrderSentDate(Date quarantineOfficialOrderSentDate) {
+		this.quarantineOfficialOrderSentDate = quarantineOfficialOrderSentDate;
+	}
+
 	@Column(length = COLUMN_LENGTH_BIG)
 	public String getAdditionalDetails() {
 		return additionalDetails;
@@ -729,5 +803,61 @@ public class Contact extends CoreAdo {
 
 	public void setEpiData(EpiData epiData) {
 		this.epiData = epiData;
+	}
+
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@AuditedIgnore
+	public HealthConditions getHealthConditions() {
+		return healthConditions;
+	}
+
+	public void setHealthConditions(HealthConditions healthConditions) {
+		this.healthConditions = healthConditions;
+	}
+
+	@ManyToOne(cascade = CascadeType.ALL)
+	@AuditedIgnore
+	public SormasToSormasOriginInfo getSormasToSormasOriginInfo() {
+		return sormasToSormasOriginInfo;
+	}
+
+	public void setSormasToSormasOriginInfo(SormasToSormasOriginInfo originInfo) {
+		this.sormasToSormasOriginInfo = originInfo;
+	}
+
+	@OneToMany(mappedBy = SormasToSormasShareInfo.CONTACT, fetch = FetchType.LAZY)
+	public List<SormasToSormasShareInfo> getSormasToSormasShares() {
+		return sormasToSormasShares;
+	}
+
+	public void setSormasToSormasShares(List<SormasToSormasShareInfo> sormasToSormasShares) {
+		this.sormasToSormasShares = sormasToSormasShares;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public EndOfQuarantineReason getEndOfQuarantineReason() {
+		return endOfQuarantineReason;
+	}
+
+	public void setEndOfQuarantineReason(EndOfQuarantineReason endOfQuarantineReason) {
+		this.endOfQuarantineReason = endOfQuarantineReason;
+	}
+
+	@Column(length = COLUMN_LENGTH_DEFAULT)
+	public String getEndOfQuarantineReasonDetails() {
+		return endOfQuarantineReasonDetails;
+	}
+
+	public void setEndOfQuarantineReasonDetails(String endOfQuarantineReasonDetails) {
+		this.endOfQuarantineReasonDetails = endOfQuarantineReasonDetails;
+	}
+
+  @Enumerated(EnumType.STRING)
+  public YesNoUnknown getReturningTraveler() {
+		return returningTraveler;
+	}
+
+	public void setReturningTraveler(YesNoUnknown returningTraveler) {
+		this.returningTraveler = returningTraveler;
 	}
 }
