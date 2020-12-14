@@ -100,6 +100,7 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setIntensiveCareUnit(source.getIntensiveCareUnit());
 		target.setIntensiveCareUnitStart(source.getIntensiveCareUnitStart());
 		target.setIntensiveCareUnitEnd(source.getIntensiveCareUnitEnd());
+		target.setPatientConditionOnAdmission(source.getPatientConditionOnAdmission());
 
 		return hospitalization;
 	}
@@ -166,6 +167,7 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setIntensiveCareUnit(source.getIntensiveCareUnit());
 		target.setIntensiveCareUnitStart(source.getIntensiveCareUnitStart());
 		target.setIntensiveCareUnitEnd(source.getIntensiveCareUnitEnd());
+		target.setPatientConditionOnAdmission(source.getPatientConditionOnAdmission());
 
 		return target;
 	}
