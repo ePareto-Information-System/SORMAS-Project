@@ -182,6 +182,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 				specifyOtherOutcome,
 				facilityField,
 				admittedToHealthFacilityField,
+				patienConditionOnAdmission,
 				admissionDateField,
 				dischargeDateField,
 				intensiveCareUnit,
