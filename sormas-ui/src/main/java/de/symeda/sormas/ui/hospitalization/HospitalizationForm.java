@@ -73,7 +73,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			loc(HOSPITALIZATION_HEADING_LOC) +
 			fluidRowLocs(HEALTH_FACILITY, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY) +
 			fluidRowLocs(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, "") +
-					fluidRowLocs(3, HospitalizationDto.INTENSIVE_CARE_UNIT, 3,
+			fluidRowLocs(4, HospitalizationDto.PATIENT_CONDITION_ON_ADMISSION) +
+			fluidRowLocs(3, HospitalizationDto.INTENSIVE_CARE_UNIT, 3,
 							HospitalizationDto.INTENSIVE_CARE_UNIT_START,
 							3,
 							HospitalizationDto.INTENSIVE_CARE_UNIT_END)
@@ -115,6 +116,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		facilityField.setReadOnly(true);
 
 		final OptionGroup admittedToHealthFacilityField = addField(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, OptionGroup.class);
+		final OptionGroup patienConditionOnAdmission = addField(HospitalizationDto.PATIENT_CONDITION_ON_ADMISSION, OptionGroup.class);
 		final DateField admissionDateField = addField(HospitalizationDto.ADMISSION_DATE, DateField.class);
 		final DateField dischargeDateField = addDateField(HospitalizationDto.DISCHARGE_DATE, DateField.class, 7);
 		intensiveCareUnit = addField(HospitalizationDto.INTENSIVE_CARE_UNIT, OptionGroup.class);
@@ -136,6 +138,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 				false,
 				facilityField,
 				admittedToHealthFacilityField,
+				patienConditionOnAdmission,
 				admissionDateField,
 				dischargeDateField,
 				intensiveCareUnit,
