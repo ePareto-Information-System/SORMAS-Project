@@ -24,17 +24,29 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRow;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
 import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 
+import com.vaadin.data.HasValue;
 import com.vaadin.server.UserError;
+import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.PopupView;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
+import com.vaadin.ui.Window.CloseListener;
+import com.vaadin.v7.data.Property;
+import com.vaadin.v7.data.Property.ValueChangeListener;
+import com.vaadin.v7.ui.AbstractSelect;
 import com.vaadin.v7.ui.DateField;
 import com.vaadin.v7.ui.Field;
 import com.vaadin.v7.ui.OptionGroup;
 import com.vaadin.v7.ui.TextField;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.facility.FacilityDto;
 import de.symeda.sormas.api.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.facility.FacilityType;
@@ -44,19 +56,27 @@ import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
+import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
+import de.symeda.sormas.ui.caze.BulkCaseDataForm;
+import de.symeda.sormas.ui.caze.CaseDataForm;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
+import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
+import de.symeda.sormas.ui.utils.ConfirmationComponent;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.DateComparisonValidator;
 import de.symeda.sormas.ui.utils.FieldHelper;
 import de.symeda.sormas.ui.utils.NullableOptionGroup;
 import de.symeda.sormas.ui.utils.OutbreakFieldVisibilityChecker;
+import de.symeda.sormas.ui.utils.VaadinUiUtil;
 import de.symeda.sormas.ui.utils.ViewMode;
+import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent.DoneListener;
 
 public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
@@ -80,7 +100,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 	//@formatter:off
 	private static final String HTML_LAYOUT =
-			loc(HOSPITALIZATION_HEADING_LOC) +
+			loc(HOSPITALIZATION_HEADING_LOC) + fluidRowLocs(4, CaseDataDto.OUTCOME) +
 			fluidRowLocs(HEALTH_FACILITY, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY) +
 			fluidRowLocs(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, "") +
 			fluidRowLocs(6, OUTCOME, 3, OTHERCASEOUTCOMEDETAIL) +
@@ -135,8 +155,11 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		// final OptionGroup admittedToHealthFacilityField = addField(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, OptionGroup.class);
 		final OptionGroup patienConditionOnAdmission = addField(HospitalizationDto.PATIENT_CONDITION_ON_ADMISSION, OptionGroup.class);
 		final DateField admissionDateField = addField(HospitalizationDto.ADMISSION_DATE, DateField.class);
-		final DateField dischargeDateField = addDateField(HospitalizationDto.DISCHARGE_DATE, DateField.class, 7);
-		intensiveCareUnit = addField(HospitalizationDto.INTENSIVE_CARE_UNIT, NullableOptionGroup.class);
+		dischargeDateField = addDateField(HospitalizationDto.DISCHARGE_DATE, DateField.class, 7);
+		
+//		dischargeDateField.addValueChangeListener(e -> showCaseOutcome(caze));
+		
+		intensiveCareUnit = addField(HospitalizationDto.INTENSIVE_CARE_UNIT, OptionGroup.class);
 		intensiveCareUnit.addValueChangeListener(e -> setDateFieldVisibilties());
 		intensiveCareUnitStart = addField(HospitalizationDto.INTENSIVE_CARE_UNIT_START, DateField.class);
 		intensiveCareUnitStart.setVisible(false);
@@ -144,8 +167,14 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		intensiveCareUnitEnd.setVisible(false);
 		final Field isolationDateField = addField(HospitalizationDto.ISOLATION_DATE);
 		final NullableOptionGroup isolatedField = addField(HospitalizationDto.ISOLATED, NullableOptionGroup.class);
+		
 		final NullableOptionGroup leftAgainstAdviceField = addField(HospitalizationDto.LEFT_AGAINST_ADVICE, NullableOptionGroup.class);
-		NullableOptionGroup hospitalizedPreviouslyField = addField(HospitalizationDto.HOSPITALIZED_PREVIOUSLY, NullableOptionGroup.class);
+		if(dischargeDateField.isModified() && caze.getOutcome() == null) {
+			leftAgainstAdviceField.setVisible(true);
+			leftAgainstAdviceField.setRequired(true);
+		}
+		
+		OptionGroup hospitalizedPreviouslyField = addField(HospitalizationDto.HOSPITALIZED_PREVIOUSLY, OptionGroup.class);
 		CssStyles.style(hospitalizedPreviouslyField, CssStyles.ERROR_COLOR_PRIMARY);
 		PreviousHospitalizationsField previousHospitalizationsField =
 			addField(HospitalizationDto.PREVIOUS_HOSPITALIZATIONS, PreviousHospitalizationsField.class);
@@ -186,7 +215,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 				Arrays.asList(YesNoUnknown.YES),
 				true);
 		}
-
+		
+		
 		// Validations
 		admissionDateField.addValidator(
 			new DateComparisonValidator(
@@ -213,6 +243,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 				false,
 				false,
 				I18nProperties.getValidationError(Validations.afterDate, dischargeDateField.getCaption(), admissionDateField.getCaption())));
+		
 		intensiveCareUnitStart.addValidator(
 			new DateComparisonValidator(
 				intensiveCareUnitStart,
@@ -251,6 +282,14 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		boolean visible = YesNoUnknown.YES.equals(intensiveCareUnit.getNullableValue());
 		intensiveCareUnitStart.setVisible(visible);
 		intensiveCareUnitEnd.setVisible(visible);
+	}
+	
+	private void showCaseOutcome(CaseDataDto caseDataDto) {
+		if(dischargeDateField.isModified() && caseDataDto.getOutcome() == null) {
+			System.err.println("No outcome found, go fill it...." );
+			caseOutcome.setVisible(true);
+			caseOutcome.setRequired(true);
+		}
 	}
 
 	private void showCaseOutcome() {
