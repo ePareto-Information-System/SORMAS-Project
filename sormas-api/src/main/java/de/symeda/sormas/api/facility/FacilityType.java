@@ -24,7 +24,8 @@ public enum FacilityType {
 	PRIMARY,
 	SECONDARY,
 	TERTIARY,
-	LABORATORY;
+	LABORATORY,
+	HOSPITAL;
 
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);
