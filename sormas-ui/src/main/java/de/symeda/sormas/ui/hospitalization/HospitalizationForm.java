@@ -81,6 +81,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 	private static final String HOSPITALIZATION_HEADING_LOC = "hospitalizationHeadingLoc";
 	private static final String HEALTH_FACILITY = Captions.CaseHospitalization_healthFacility;
+	private static final String OUTCOME = Captions.CaseData_outcome;
+
 	private final CaseDataDto caze;
 	private final ViewMode viewMode;
 
@@ -92,17 +94,14 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 	//@formatter:off
 	private static final String HTML_LAYOUT =
-			loc(HOSPITALIZATION_HEADING_LOC) + fluidRowLocs(4, CaseDataDto.OUTCOME) +
+			loc(HOSPITALIZATION_HEADING_LOC) +
 			fluidRowLocs(HEALTH_FACILITY, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY) +
 			fluidRowLocs(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, "") +
+			fluidRowLocs(9, OUTCOME) +
 			fluidRowLocs(3, HospitalizationDto.INTENSIVE_CARE_UNIT, 3,
-							HospitalizationDto.INTENSIVE_CARE_UNIT_START,
-							3,
-							HospitalizationDto.INTENSIVE_CARE_UNIT_END)
-					+ fluidRowLocs(HospitalizationDto.ISOLATED, HospitalizationDto.ISOLATION_DATE, "")
-					+
-			fluidRow(
-					fluidColumnLocCss(VSPACE_TOP_3, 6, 0, HospitalizationDto.HOSPITALIZED_PREVIOUSLY)) +
+							HospitalizationDto.INTENSIVE_CARE_UNIT_START, 3, HospitalizationDto.INTENSIVE_CARE_UNIT_END) +
+			fluidRowLocs(HospitalizationDto.ISOLATED, HospitalizationDto.ISOLATION_DATE, "") +
+			fluidRow(fluidColumnLocCss(VSPACE_TOP_3, 6, 0, HospitalizationDto.HOSPITALIZED_PREVIOUSLY)) +
 			fluidRowLocs(HospitalizationDto.PREVIOUS_HOSPITALIZATIONS);
 	//@formatter:on
 
@@ -128,7 +127,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		hospitalizationHeadingLabel.addStyleName(H3);
 		getContent().addComponent(hospitalizationHeadingLabel, HOSPITALIZATION_HEADING_LOC);
 
-		caseOutcome = addCustomField(CaseDataDto.OUTCOME, CaseDataDto.class, OptionGroup.class);
+		caseOutcome = addCustomField(OUTCOME, CaseOutcome.class, OptionGroup.class);
 		caseOutcome.setVisible(false);
 
 		TextField facilityField = addCustomField(HEALTH_FACILITY, FacilityReferenceDto.class, TextField.class);
@@ -143,8 +142,6 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		final DateField admissionDateField = addField(HospitalizationDto.ADMISSION_DATE, DateField.class);
 		dischargeDateField = addDateField(HospitalizationDto.DISCHARGE_DATE, DateField.class, 7);
 		
-//		dischargeDateField.addValueChangeListener(e -> showCaseOutcome(caze));
-		
 		intensiveCareUnit = addField(HospitalizationDto.INTENSIVE_CARE_UNIT, OptionGroup.class);
 		intensiveCareUnit.addValueChangeListener(e -> setDateFieldVisibilties());
 		intensiveCareUnitStart = addField(HospitalizationDto.INTENSIVE_CARE_UNIT_START, DateField.class);
@@ -155,11 +152,6 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		final OptionGroup isolatedField = addField(HospitalizationDto.ISOLATED, OptionGroup.class);
 		
 		final OptionGroup leftAgainstAdviceField = addField(HospitalizationDto.LEFT_AGAINST_ADVICE, OptionGroup.class);
-		if(dischargeDateField.isModified() && caze.getOutcome() == null) {
-			System.err.println("oopz... " + dischargeDateField.getValue());
-			leftAgainstAdviceField.setVisible(true);
-			leftAgainstAdviceField.setRequired(true);
-		}
 		
 		OptionGroup hospitalizedPreviouslyField = addField(HospitalizationDto.HOSPITALIZED_PREVIOUSLY, OptionGroup.class);
 		CssStyles.style(hospitalizedPreviouslyField, CssStyles.ERROR_COLOR_PRIMARY);
@@ -260,6 +252,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 		hospitalizedPreviouslyField.addValueChangeListener(e -> updatePrevHospHint(hospitalizedPreviouslyField, previousHospitalizationsField));
 		previousHospitalizationsField.addValueChangeListener(e -> updatePrevHospHint(hospitalizedPreviouslyField, previousHospitalizationsField));
+		dischargeDateField.addValueChangeListener(e -> showCaseOutcome(caze));
 	}
 
 	private void setDateFieldVisibilties() {
@@ -270,10 +263,11 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	}
 	
 	private void showCaseOutcome(CaseDataDto caseDataDto) {
-		if(dischargeDateField.isModified() && caseDataDto.getOutcome() == null) {
-			System.err.println("No outcome found, go fill it...." );
-			caseOutcome.setVisible(true);
+		if ((dischargeDateField.isModified() || !dischargeDateField.equals(null)) /* && caze.getOutcome() == null */) {
+			CaseOutcome outcome = caze.getOutcome();
 			caseOutcome.setRequired(true);
+			caseOutcome.setValue(outcome == null ? null : outcome);
+			caseOutcome.setVisible(true);
 		}
 	}
 
