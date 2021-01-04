@@ -158,7 +158,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 									CaseDataDto.PLAGUE_TYPE,
 									CaseDataDto.DENGUE_FEVER_TYPE,
 									CaseDataDto.RABIES_TYPE))) +
-					fluidRowLocs(9, CaseDataDto.OUTCOME, 3, CaseDataDto.OUTCOME_DATE) +
+					fluidRowLocs(7, CaseDataDto.OUTCOME, 3, CaseDataDto.OTHERCASEOUTCOMEDETAILS, 3, CaseDataDto.OUTCOME_DATE) +
 					fluidRowLocs(3, CaseDataDto.SEQUELAE, 9, CaseDataDto.SEQUELAE_DETAILS) +
 					fluidRowLocs(CaseDataDto.REPORTING_TYPE,
 							"")
@@ -228,6 +228,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 	private ComboBox facilityTypeGroup;
 	private ComboBox facilityType;
 	private boolean quarantineChangedByFollowUpUntilChange = false;
+	private OptionGroup caseOutcome;
+	private TextField otherCaseOutComeDetails;
 
 	public CaseDataForm(String caseUuid, PersonDto person, Disease disease, SymptomsDto symptoms, ViewMode viewMode, boolean isPseudonymized) {
 
@@ -1256,6 +1258,24 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				!isConfiguredServer(CountryHelper.COUNTRY_CODE_GERMANY)
 					&& !CaseLogic.isEpidNumberPrefix(fieldValue)
 					&& !CaseLogic.isCompleteEpidNumber(fieldValue));
+		}
+	}
+
+	private void addOtherOutcomeValue() {
+		if (caseOutcome.getValue() == CaseOutcome.OTHER) {
+			otherCaseOutComeDetails.setVisible(true);
+		}
+		else {
+			otherCaseOutComeDetails.setVisible(false);
+		}
+	}
+
+	private void setOtherOutomeValue() {
+		if (otherCaseOutComeDetails.getValue() != null) {
+			otherCaseOutComeDetails.setValue(otherCaseOutComeDetails.getValue());
+		}
+		else {
+			otherCaseOutComeDetails.setVisible(false);
 		}
 	}
 
