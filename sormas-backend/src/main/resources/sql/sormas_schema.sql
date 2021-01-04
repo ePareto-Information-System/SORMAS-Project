@@ -5274,6 +5274,10 @@ ALTER TABLE campaignformmeta_history ADD COLUMN campaignformtranslations json;
 INSERT INTO schema_version (version_number, comment) VALUES (251, 'Campaign diagram visualization refinement #2753');
 
 -- 2020-09-07 Campaign dashboard element
+ALTER TABLE cases ADD COLUMN othercaseoutcomedetails varchar(255);
+ALTER TABLE hospitalization ADD COLUMN patientconditiononadmission varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (256, 'Added a column name othercaseoutcomedetails, patientconditiononadmission to the cases, hospitalization table respectively');
 
 ALTER TABLE campaigns ADD COLUMN dashboardElements json;
 ALTER TABLE campaigns_history ADD COLUMN dashboardElements json;
