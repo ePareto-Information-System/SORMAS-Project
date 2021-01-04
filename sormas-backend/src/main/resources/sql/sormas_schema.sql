@@ -4802,7 +4802,7 @@ ALTER TABLE campaignformdata_history ADD COLUMN creatinguser_id bigint;
 
 ALTER TABLE campaignformdata ADD CONSTRAINT fk_campaignformdata_creatinguser_id FOREIGN KEY (creatinguser_id) REFERENCES users(id);
 
-INSERT INTO schema_version (version_number, comment) VALUES (228, 'Add form name to campaign forms and creating user to form data #1993');
+INSERT INTO schema_version (version_number, comment) VALUES (229, 'Add form name to campaign forms and creating user to form data #1993');
 
 -- 2020-07-27 Rename campaignforms to campaignformmeta #1997
 ALTER TABLE campaignforms RENAME TO campaignformmeta;
@@ -4816,13 +4816,21 @@ ALTER TABLE campaignformdata ADD CONSTRAINT fk_campaignformdata_region_id FOREIG
 ALTER TABLE campaignformdata ADD CONSTRAINT fk_campaignformdata_district_id FOREIGN KEY (district_id) REFERENCES district(id);
 ALTER TABLE campaignformdata ADD CONSTRAINT fk_campaignformdata_community_id FOREIGN KEY (community_id) REFERENCES community(id);
 
-INSERT INTO schema_version (version_number, comment) VALUES (229, 'Rename campaignforms to campaignformmeta #1997');
+INSERT INTO schema_version (version_number, comment) VALUES (230, 'Rename campaignforms to campaignformmeta #1997');
 
 -- 2020-07-27 Drop and re-create versioning trigger for campaignformmeta #1997
 DROP TRIGGER versioning_trigger ON campaignformmeta;
 CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON campaignformmeta
 FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'campaignformmeta_history', true);
 
-INSERT INTO schema_version (version_number, comment) VALUES (230, 'Drop and re-create versioning trigger for campaignformmeta #1997');
+INSERT INTO schema_version (version_number, comment) VALUES (231, 'Drop and re-create versioning trigger for campaignformmeta #1997');
+
+
+
+-- 2020-12-24 Drop and re-create versioning trigger for campaignformmeta #1997
+ALTER TABLE cases ADD COLUMN othercaseoutcomedetails varchar(255);
+ALTER TABLE hospitalization ADD COLUMN patientconditiononadmission varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (232, 'Added a column name othercaseoutcomedetails, patientconditiononadmission to the cases, hospitalization table respectively');
 
 -- *** Insert new sql commands BEFORE this line ***
