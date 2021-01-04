@@ -455,6 +455,7 @@ public interface Strings {
 	String messageAdditionalTestDeleted = "messageAdditionalTestDeleted";
 	String messageAdditionalTestSaved = "messageAdditionalTestSaved";
 	String messageAggregateReportFound = "messageAggregateReportFound";
+	String messageAllCampaignFormsValid = "messageAllCampaignFormsValid";
 	String messageAnimalContactsHint = "messageAnimalContactsHint";
 	String messageAreaArchived = "messageAreaArchived";
 	String messageAreaArchivingNotPossible = "messageAreaArchivingNotPossible";
