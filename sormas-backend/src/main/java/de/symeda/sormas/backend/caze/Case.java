@@ -154,6 +154,7 @@ public class Case extends CoreAdo {
 	public static final String POSTPARTUM = "postpartum";
 	public static final String TRIMESTER = "trimester";
 	public static final String SAMPLES = "samples";
+	public static final String OTHERCASEOUTCOMEDETAILS = "otherCaseOutcomeDetails";
 
 	private Person person;
 	private String description;
@@ -262,6 +263,8 @@ public class Case extends CoreAdo {
 
 	private List<Task> tasks;
 	private Set<Sample> samples;
+
+	private String otherCaseOutcomeDetails;
 
 	@ManyToOne(cascade = {})
 	@JoinColumn(nullable = false)
@@ -1082,4 +1085,13 @@ public class Case extends CoreAdo {
 	public void setTrimester(Trimester trimester) {
 		this.trimester = trimester;
 	}
+
+	public String getOtherCaseOutcomeDetails() {
+		return otherCaseOutcomeDetails;
+	}
+
+	public void setOtherCaseOutcomeDetails(String otherCaseOutcomeDetails) {
+		this.otherCaseOutcomeDetails = otherCaseOutcomeDetails;
+	}
+
 }
