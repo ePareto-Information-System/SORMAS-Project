@@ -82,6 +82,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	private static final String HOSPITALIZATION_HEADING_LOC = "hospitalizationHeadingLoc";
 	private static final String HEALTH_FACILITY = Captions.CaseHospitalization_healthFacility;
 	private static final String OUTCOME = Captions.CaseData_outcome;
+	private static final String OTHER_OUTCOME_SPECIFY = Captions.CaseData_outcome;
 
 	private final CaseDataDto caze;
 	private final ViewMode viewMode;
@@ -89,15 +90,17 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	private OptionGroup intensiveCareUnit;
 	private DateField intensiveCareUnitStart;
 	private DateField intensiveCareUnitEnd;
-	private OptionGroup caseOutcome;
 	private DateField dischargeDateField;
+
+	private OptionGroup caseOutcome;
+	private TextField otherCaseOutcomeDetails;
 
 	//@formatter:off
 	private static final String HTML_LAYOUT =
 			loc(HOSPITALIZATION_HEADING_LOC) +
 			fluidRowLocs(HEALTH_FACILITY, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY) +
 			fluidRowLocs(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, "") +
-			fluidRowLocs(9, OUTCOME) +
+			fluidRowLocs(6, OUTCOME) + fluidRowLocs(6, OTHER_OUTCOME_SPECIFY) +
 			fluidRowLocs(3, HospitalizationDto.INTENSIVE_CARE_UNIT, 3,
 							HospitalizationDto.INTENSIVE_CARE_UNIT_START, 3, HospitalizationDto.INTENSIVE_CARE_UNIT_END) +
 			fluidRowLocs(HospitalizationDto.ISOLATED, HospitalizationDto.ISOLATION_DATE, "") +
@@ -129,6 +132,9 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 		caseOutcome = addCustomField(OUTCOME, CaseOutcome.class, OptionGroup.class);
 		caseOutcome.setVisible(false);
+
+		otherCaseOutcomeDetails = addCustomField(OTHER_OUTCOME_SPECIFY, CaseDataDto.class, TextField.class);
+		otherCaseOutcomeDetails.setVisible(false);
 
 		TextField facilityField = addCustomField(HEALTH_FACILITY, FacilityReferenceDto.class, TextField.class);
 		FacilityReferenceDto healthFacility = caze.getHealthFacility();
@@ -252,7 +258,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 		hospitalizedPreviouslyField.addValueChangeListener(e -> updatePrevHospHint(hospitalizedPreviouslyField, previousHospitalizationsField));
 		previousHospitalizationsField.addValueChangeListener(e -> updatePrevHospHint(hospitalizedPreviouslyField, previousHospitalizationsField));
-		dischargeDateField.addValueChangeListener(e -> showCaseOutcome(caze));
+		dischargeDateField.addValueChangeListener(e -> showCaseOutcome());
+		caseOutcome.addValueChangeListener(e -> addOtherOutcomeValue());
 	}
 
 	private void setDateFieldVisibilties() {
@@ -262,12 +269,19 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		intensiveCareUnitEnd.setVisible(visible);
 	}
 	
-	private void showCaseOutcome(CaseDataDto caseDataDto) {
+	private void showCaseOutcome() {
 		if ((dischargeDateField.isModified() || !dischargeDateField.equals(null)) /* && caze.getOutcome() == null */) {
 			CaseOutcome outcome = caze.getOutcome();
 			caseOutcome.setRequired(true);
 			caseOutcome.setValue(outcome == null ? null : outcome);
 			caseOutcome.setVisible(true);
+		}
+	}
+	private void addOtherOutcomeValue() {
+		if (caseOutcome.getValue() == CaseOutcome.OTHER) {
+//			caseOutcome.setValue(outcome == null ? null : outcome);
+			otherCaseOutcomeDetails.setVisible(true);
+			System.err.println(caseOutcome.getValue());
 		}
 	}
 
