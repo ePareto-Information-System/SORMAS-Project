@@ -86,6 +86,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	private static final String HEALTH_FACILITY = Captions.CaseHospitalization_healthFacility;
 	private static final String OUTCOME = Captions.CaseData_outcome;
 	private static final String OTHERCASEOUTCOMEDETAIL = Captions.CaseData_specify_other_outcome;
+	private static final String OTHER_OUTCOME_SPECIFY = Captions.CaseData_outcome;
 
 	private final CaseDataDto caze;
 	private final ViewMode viewMode;
@@ -97,6 +98,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 	private OptionGroup caseOutcome;
 	private TextField specifyOtherOutcome;
+	private TextField otherCaseOutcomeDetails;
 
 	//@formatter:off
 	private static final String HTML_LAYOUT =
@@ -269,7 +271,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 		hospitalizedPreviouslyField.addValueChangeListener(e -> updatePrevHospHint(hospitalizedPreviouslyField, previousHospitalizationsField));
 		previousHospitalizationsField.addValueChangeListener(e -> updatePrevHospHint(hospitalizedPreviouslyField, previousHospitalizationsField));
-		dischargeDateField.addValueChangeListener(e -> showCaseOutcome(caze));
+		dischargeDateField.addValueChangeListener(e -> showCaseOutcome());
+		caseOutcome.addValueChangeListener(e -> addOtherOutcomeValue());
 	}
 
 	private void setDateFieldVisibilties() {
@@ -279,12 +282,19 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		intensiveCareUnitEnd.setVisible(visible);
 	}
 	
-	private void showCaseOutcome(CaseDataDto caseDataDto) {
+	private void showCaseOutcome() {
 		if ((dischargeDateField.isModified() || !dischargeDateField.equals(null)) /* && caze.getOutcome() == null */) {
 			CaseOutcome outcome = caze.getOutcome();
 			caseOutcome.setRequired(true);
 			caseOutcome.setValue(outcome == null ? null : outcome);
 			caseOutcome.setVisible(true);
+		}
+	}
+	private void addOtherOutcomeValue() {
+		if (caseOutcome.getValue() == CaseOutcome.OTHER) {
+//			caseOutcome.setValue(outcome == null ? null : outcome);
+			otherCaseOutcomeDetails.setVisible(true);
+			System.err.println(caseOutcome.getValue());
 		}
 	}
 
