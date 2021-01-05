@@ -1093,5 +1093,4 @@ public class Case extends CoreAdo {
 	public void setSpecifyOtherOutcome(String specifyOtherOutcome) {
 		this.specifyOtherOutcome = specifyOtherOutcome;
 	}
-
 }

@@ -1038,15 +1038,12 @@ public class CaseDataDto extends PseudonymizableDto {
 		this.trimester = trimester;
 	}
 
-	
 	public String getSpecifyOtherOutcome() {
 		return specifyOtherOutcome;
 	}
 
-	
 	public void setSpecifyOtherOutcome(String specifyOtherOutcome) {
 		this.specifyOtherOutcome = specifyOtherOutcome;
 	}
-	
 	
 }

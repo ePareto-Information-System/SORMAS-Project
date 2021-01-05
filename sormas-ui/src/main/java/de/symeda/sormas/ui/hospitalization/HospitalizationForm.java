@@ -276,7 +276,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		intensiveCareUnitStart.setVisible(visible);
 		intensiveCareUnitEnd.setVisible(visible);
 	}
-	
+
 	private void showCaseOutcome() {
 		if ((dischargeDateField.isModified() || !dischargeDateField.equals(null)) /* && caze.getOutcome() == null */) {
 			CaseOutcome outcome = caze.getOutcome();
@@ -284,8 +284,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			caseOutcome.setValue(outcome == null ? null : outcome);
 			caseOutcome.setVisible(true);
 		}
-		
 	}
+
 	private void addOtherOutcomeValue() {
 		if (caseOutcome.getValue() == CaseOutcome.OTHER) {
 			specifyOtherOutcome.setValue(caze.getSpecifyOtherOutcome());
