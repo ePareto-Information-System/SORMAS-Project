@@ -234,7 +234,7 @@ public interface Captions {
 	String CaseData_notifyingClinicDetails = "CaseData.notifyingClinicDetails";
 	String CaseData_numberOfVisits = "CaseData.numberOfVisits";
 	String CaseData_outcome = "CaseData.outcome";
-	String CaseData_specify_other_outcome = "CaseData.otheroutcomedetails";
+	String CaseData_specify_other_outcome = "CaseData.specifyOtherOutcome";
 	String CaseData_outcomeDate = "CaseData.outcomeDate";
 	String CaseData_overwriteFollowUpUntil = "CaseData.overwriteFollowUpUntil";
 	String CaseData_person = "CaseData.person";
