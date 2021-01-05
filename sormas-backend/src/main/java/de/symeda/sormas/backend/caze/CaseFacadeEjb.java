@@ -2119,6 +2119,7 @@ public class CaseFacadeEjb implements CaseFacade {
 		target.setEndOfIsolationReason(source.getEndOfIsolationReason());
 		target.setEndOfIsolationReasonDetails(source.getEndOfIsolationReasonDetails());
 		target.setCaseTransmissionClassification(source.getCaseTransmissionClassification());
+		target.setSpecifyOtherOutcome(source.getSpecifyOtherOutcome());
 
 		return target;
 	}
@@ -2366,6 +2367,7 @@ public class CaseFacadeEjb implements CaseFacade {
 		target.setOwnershipHandedOver(source.getSormasToSormasShares().stream().anyMatch(SormasToSormasShareInfo::isOwnershipHandedOver));
 
 		target.setCaseTransmissionClassification(source.getCaseTransmissionClassification());
+		target.setSpecifyOtherOutcome(source.getSpecifyOtherOutcome());
 
 		return target;
 	}
