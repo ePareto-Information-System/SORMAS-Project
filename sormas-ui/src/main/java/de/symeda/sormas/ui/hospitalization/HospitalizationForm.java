@@ -82,7 +82,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	private static final String HOSPITALIZATION_HEADING_LOC = "hospitalizationHeadingLoc";
 	private static final String HEALTH_FACILITY = Captions.CaseHospitalization_healthFacility;
 	private static final String OUTCOME = Captions.CaseData_outcome;
-	private static final String OTHER_OUTCOME_SPECIFY = Captions.CaseData_outcome;
+	private static final String OTHERCASEOUTCOMEDETAIL = Captions.CaseData_specify_other_outcome;
 
 	private final CaseDataDto caze;
 	private final ViewMode viewMode;
@@ -93,14 +93,14 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	private DateField dischargeDateField;
 
 	private OptionGroup caseOutcome;
-	private TextField otherCaseOutcomeDetails;
+	private TextField specifyOtherOutcome;
 
 	//@formatter:off
 	private static final String HTML_LAYOUT =
 			loc(HOSPITALIZATION_HEADING_LOC) +
 			fluidRowLocs(HEALTH_FACILITY, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY) +
 			fluidRowLocs(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, "") +
-			fluidRowLocs(6, OUTCOME) + fluidRowLocs(6, OTHER_OUTCOME_SPECIFY) +
+			fluidRowLocs(6, OUTCOME, 3, OTHERCASEOUTCOMEDETAIL) +
 			fluidRowLocs(4, HospitalizationDto.PATIENT_CONDITION_ON_ADMISSION) +
 			fluidRowLocs(3, HospitalizationDto.INTENSIVE_CARE_UNIT, 3,
 							HospitalizationDto.INTENSIVE_CARE_UNIT_START,
@@ -138,15 +138,15 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		caseOutcome = addCustomField(OUTCOME, CaseOutcome.class, OptionGroup.class);
 		caseOutcome.setVisible(false);
 
-		otherCaseOutcomeDetails = addCustomField(OTHER_OUTCOME_SPECIFY, CaseDataDto.class, TextField.class);
-		otherCaseOutcomeDetails.setVisible(false);
+		specifyOtherOutcome = addCustomField(OTHERCASEOUTCOMEDETAIL, CaseDataDto.class, TextField.class);
+		specifyOtherOutcome.setVisible(false);
 
 		TextField facilityField = addCustomField(HEALTH_FACILITY, FacilityReferenceDto.class, TextField.class);
 		FacilityReferenceDto healthFacility = caze.getHealthFacility();
 		final boolean noneFacility = healthFacility.getUuid().equalsIgnoreCase(FacilityDto.NONE_FACILITY_UUID);
 		facilityField.setValue(
 			healthFacility == null
-					|| noneFacility ? null : healthFacility.toString());
+					|| noneFacility ? null : healthFacility.toString()); 
 		facilityField.setReadOnly(true);
 
 		final OptionGroup admittedToHealthFacilityField = addField(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, OptionGroup.class);
@@ -174,6 +174,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			FieldHelper.setEnabled(
 				false,
 				caseOutcome,
+				specifyOtherOutcome,
 				facilityField,
 				admittedToHealthFacilityField,
 				patienConditionOnAdmission,
@@ -283,12 +284,16 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			caseOutcome.setValue(outcome == null ? null : outcome);
 			caseOutcome.setVisible(true);
 		}
+		
 	}
 	private void addOtherOutcomeValue() {
 		if (caseOutcome.getValue() == CaseOutcome.OTHER) {
-//			caseOutcome.setValue(outcome == null ? null : outcome);
-			otherCaseOutcomeDetails.setVisible(true);
-			System.err.println(caseOutcome.getValue());
+			specifyOtherOutcome.setValue(caze.getSpecifyOtherOutcome());
+			specifyOtherOutcome.setVisible(true);
+		}
+		else {
+			specifyOtherOutcome.setVisible(false);
+			specifyOtherOutcome.setValue(null);
 		}
 	}
 
@@ -308,5 +313,21 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	@Override
 	protected String createHtmlLayout() {
 		return HTML_LAYOUT;
+	}
+
+	public OptionGroup getCaseOutcome() {
+		return caseOutcome;
+	}
+
+	public void setCaseOutcome(OptionGroup caseOutcome) {
+		this.caseOutcome = caseOutcome;
+	}
+
+	public TextField getSpecifyOtherOutcome() {
+		return specifyOtherOutcome;
+	}
+
+	public void setSpecifyOtherOutcome(TextField specifyOtherOutcome) {
+		this.specifyOtherOutcome = specifyOtherOutcome;
 	}
 }
