@@ -218,6 +218,7 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	public static final String EXTERNAL_DATA = "externalData";
 	public static final String DELETION_REASON = "deletionReason";
 	public static final String OTHER_DELETION_REASON = "otherDeletionReason";
+	public static final String CASE_TRANSMISSION_CLASSIFICATION = "caseTransmissionClassification";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -587,6 +588,7 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	@SensitiveData
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
 	private String otherDeletionReason;
+	private TransmissionClassification caseTransmissionClassification;
 
 	@Outbreaks
 	private CardOrHistory vaccinationType;
@@ -1783,5 +1785,11 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	@Override
 	public String toString() {
 		return super.toString() + (StringUtils.isNotBlank(this.getExternalID()) ? " - " + this.getExternalID() : StringUtils.EMPTY);
+	public TransmissionClassification getCaseTransmissionClassification() {
+		return caseTransmissionClassification;
+	}
+
+	public void setCaseTransmissionClassification(TransmissionClassification caseTransmissionClassification) {
+		this.caseTransmissionClassification = caseTransmissionClassification;
 	}
 }

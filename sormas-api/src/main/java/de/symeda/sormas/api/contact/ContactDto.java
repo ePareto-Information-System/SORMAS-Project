@@ -35,6 +35,7 @@ import de.symeda.sormas.api.caze.*;
 import de.symeda.sormas.api.clinicalcourse.HealthConditionsDto;
 import de.symeda.sormas.api.common.DeletionReason;
 import de.symeda.sormas.api.disease.DiseaseVariant;
+import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.event.EventParticipantDto;
 import de.symeda.sormas.api.feature.FeatureType;
@@ -149,6 +150,9 @@ public class ContactDto extends SormasToSormasShareableDto {
 	public static final String QUARANTINE_CHANGE_COMMENT = "quarantineChangeComment";
 	public static final String DELETION_REASON = "deletionReason";
 	public static final String OTHER_DELETION_REASON = "otherDeletionReason";
+	public static final String ADDITIONAL_DETAILS = "additionalDetails";
+	public static final String EPI_DATA = "epiData";
+	public static final String CONTACT_TRANSMISSION_CLASSIFICATION = "contactTransmissionClassification";
 
 	private CaseReferenceDto caze;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
@@ -357,6 +361,7 @@ public class ContactDto extends SormasToSormasShareableDto {
 	private DeletionReason deletionReason;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
 	private String otherDeletionReason;
+	private TransmissionClassification contactTransmissionClassification;
 
 	public static ContactDto build() {
 		final ContactDto contact = new ContactDto();
@@ -1063,5 +1068,13 @@ public class ContactDto extends SormasToSormasShareableDto {
 
 	public void setOtherDeletionReason(String otherDeletionReason) {
 		this.otherDeletionReason = otherDeletionReason;
+	}
+}
+	public TransmissionClassification getContactTransmissionClassification() {
+		return contactTransmissionClassification;
+	}
+
+	public void setContactTransmissionClassification(TransmissionClassification contactTransmissionClassification) {
+		this.contactTransmissionClassification = contactTransmissionClassification;
 	}
 }

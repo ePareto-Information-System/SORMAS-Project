@@ -43,6 +43,7 @@ import javax.persistence.Transient;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.VaccinationStatus;
+import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.contact.ContactCategory;
 import de.symeda.sormas.api.contact.ContactClassification;
 import de.symeda.sormas.api.contact.ContactIdentificationSource;
@@ -163,7 +164,10 @@ public class Contact extends CoreAdo implements SormasToSormasShareable, HasExte
 	public static final String TRACING_APP_DETAILS = "tracingAppDetails";
 	public static final String VACCINATION_STATUS = "vaccinationStatus";
 	public static final String VISITS = "visits";
-	public static final String DUPLICATE_OF = "duplicateOf";
+	public static final String DUPLICATE_OF	= "duplicateOf";
+	public static final String ADDITIONAL_DETAILS = "additionalDetails";
+	public static final String EPI_DATA = "epiData";
+	public static final String CONTACT_TRANSMISSION_CLASSIFICATION = "contactTransmissionClassification";
 
 	private Date reportDateTime;
 	private User reportingUser;
@@ -295,6 +299,9 @@ public class Contact extends CoreAdo implements SormasToSormasShareable, HasExte
 	public void setPersonId(Long personId) {
 		this.personId = personId;
 	}
+	
+	private TransmissionClassification contactTransmissionClassification;
+
 
 	@ManyToOne(cascade = {})
 	@JoinColumn(nullable = false)
@@ -1081,4 +1088,14 @@ public class Contact extends CoreAdo implements SormasToSormasShareable, HasExte
 	public void setQuarantineChangeComment(String quarantineChangeComment) {
 		this.quarantineChangeComment = quarantineChangeComment;
 	}
+	@Enumerated(EnumType.STRING)
+	public TransmissionClassification getContactTransmissionClassification() {
+		return contactTransmissionClassification;
+	}
+
+	
+	public void setContactTransmissionClassification(TransmissionClassification contactTransmissionClassification) {
+		this.contactTransmissionClassification = contactTransmissionClassification;
+	}
+	
 }
