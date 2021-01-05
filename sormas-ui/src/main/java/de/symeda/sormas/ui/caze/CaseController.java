@@ -59,6 +59,7 @@ import de.symeda.sormas.api.caze.CaseFacade;
 import de.symeda.sormas.api.caze.CaseIndexDto;
 import de.symeda.sormas.api.caze.CaseLogic;
 import de.symeda.sormas.api.caze.CaseOrigin;
+import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.caze.CaseSimilarityCriteria;
 import de.symeda.sormas.api.caze.classification.ClassificationHtmlRenderer;
 import de.symeda.sormas.api.caze.classification.DiseaseClassificationCriteriaDto;
@@ -872,6 +873,9 @@ public class CaseController {
 			public void onCommit() {
 				CaseDataDto cazeDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(caseUuid);
 				cazeDto.setHospitalization(hospitalizationForm.getValue());
+				CaseOutcome caseOutcome = (CaseOutcome) hospitalizationForm.getCaseOutcome().getValue();
+				cazeDto.setSpecifyOtherOutcome(hospitalizationForm.getSpecifyOtherOutcome().getValue());
+				cazeDto.setOutcome(caseOutcome);
 				saveCase(cazeDto);
 			}
 		});
