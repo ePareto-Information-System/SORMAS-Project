@@ -137,7 +137,7 @@ public class CaseDataDto extends PseudonymizableDto {
 	public static final String REPORTING_TYPE = "reportingType";
 	public static final String POSTPARTUM = "postpartum";
 	public static final String TRIMESTER = "trimester";
-	public static final String OTHERCASEOUTCOMEDETAILS = "otherCaseOutcomeDetails";
+	public static final String OTHERCASEOUTCOMEDETAILS = "specifyOtherOutcome";
 
 
 	// Fields are declared in the order they should appear in the import template
@@ -333,7 +333,7 @@ public class CaseDataDto extends PseudonymizableDto {
 	private ReportingType reportingType;
 	private YesNoUnknown postpartum;
 	private Trimester trimester;
-	private String otherCaseOutcomeDetails;
+	private String specifyOtherOutcome;
 
 	public static CaseDataDto build(PersonReferenceDto person, Disease disease) {
 		CaseDataDto caze = new CaseDataDto();
@@ -1039,13 +1039,13 @@ public class CaseDataDto extends PseudonymizableDto {
 	}
 
 	
-	public String getOtherCaseOutcomeDetails() {
-		return otherCaseOutcomeDetails;
+	public String getSpecifyOtherOutcome() {
+		return specifyOtherOutcome;
 	}
 
 	
-	public void setOtherCaseOutcomeDetails(String otherCaseOutcomeDetails) {
-		this.otherCaseOutcomeDetails = otherCaseOutcomeDetails;
+	public void setSpecifyOtherOutcome(String specifyOtherOutcome) {
+		this.specifyOtherOutcome = specifyOtherOutcome;
 	}
 	
 	
