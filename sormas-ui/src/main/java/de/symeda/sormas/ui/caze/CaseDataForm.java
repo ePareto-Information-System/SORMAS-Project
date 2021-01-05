@@ -202,7 +202,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		addFields();
 	}
 
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({
+		"deprecation",
+		"unused" })
 	@Override
 	protected void addFields() {
 
@@ -250,6 +252,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 		addField(CaseDataDto.INVESTIGATION_STATUS, OptionGroup.class);
 		caseOutcome = addField(CaseDataDto.OUTCOME, OptionGroup.class);
+
 		caseOutcome.addValueChangeListener(e -> addOtherOutcomeValue());
 		otherCaseOutComeDetails = addField(CaseDataDto.OTHERCASEOUTCOMEDETAILS, TextField.class);
 		otherCaseOutComeDetails.setVisible(false);
@@ -694,6 +697,10 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				setVisible(false, CaseDataDto.EXTERNAL_ID);
 			}
 		});
+		if(CaseDataDto.HOSPITALIZATION == null) {
+			caseOutcome.setEnabled(false);
+			caseOutcome.setRequired(false);
+		}
 	}
 
 	private void updateQuarantineFields() {
