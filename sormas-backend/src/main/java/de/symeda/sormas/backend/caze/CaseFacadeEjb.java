@@ -1808,6 +1808,7 @@ public class CaseFacadeEjb implements CaseFacade {
 		target.setReportingType(source.getReportingType());
 		target.setPostpartum(source.getPostpartum());
 		target.setTrimester(source.getTrimester());
+		target.setCaseTransmissionClassification(source.getCaseTransmissionClassification());
 
 		return target;
 	}
@@ -1950,6 +1951,8 @@ public class CaseFacadeEjb implements CaseFacade {
 		target.setReportingType(source.getReportingType());
 		target.setPostpartum(source.getPostpartum());
 		target.setTrimester(source.getTrimester());
+
+		target.setCaseTransmissionClassification(source.getCaseTransmissionClassification());
 
 		return target;
 	}

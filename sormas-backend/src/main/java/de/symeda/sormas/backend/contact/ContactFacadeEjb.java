@@ -52,6 +52,7 @@ import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.annotations.SourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -926,7 +927,7 @@ public class ContactFacadeEjb implements ContactFacade {
 		target.setAdditionalDetails(source.getAdditionalDetails());
 
 		target.setEpiData(epiDataFacade.fromDto(source.getEpiData()));
-
+		target.setContactTransmissionClassification(source.getContactTransmissionClassification());
 		return target;
 	}
 
@@ -1103,6 +1104,7 @@ public class ContactFacadeEjb implements ContactFacade {
 		target.setAdditionalDetails(source.getAdditionalDetails());
 
 		target.setEpiData(EpiDataFacadeEjb.toDto(source.getEpiData()));
+		target.setContactTransmissionClassification(source.getContactTransmissionClassification());
 
 		return target;
 	}
