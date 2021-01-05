@@ -58,6 +58,7 @@ import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.annotations.SourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1075,6 +1076,7 @@ public class ContactFacadeEjb implements ContactFacade {
 			target.setSormasToSormasOriginInfo(originInfoFacade.toDto(source.getSormasToSormasOriginInfo()));
 		}
 
+		target.setContactTransmissionClassification(source.getContactTransmissionClassification());
 		return target;
 	}
 
@@ -1309,6 +1311,7 @@ public class ContactFacadeEjb implements ContactFacade {
 
 		target.setSormasToSormasOriginInfo(SormasToSormasOriginInfoFacadeEjb.toDto(source.getSormasToSormasOriginInfo()));
 		target.setOwnershipHandedOver(source.getSormasToSormasShares().stream().anyMatch(SormasToSormasShareInfo::isOwnershipHandedOver));
+		target.setContactTransmissionClassification(source.getContactTransmissionClassification());
 
 		return target;
 	}
