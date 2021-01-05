@@ -86,7 +86,6 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	private static final String HEALTH_FACILITY = Captions.CaseHospitalization_healthFacility;
 	private static final String OUTCOME = Captions.CaseData_outcome;
 	private static final String OTHERCASEOUTCOMEDETAIL = Captions.CaseData_specify_other_outcome;
-	private static final String OTHER_OUTCOME_SPECIFY = Captions.CaseData_outcome;
 
 	private final CaseDataDto caze;
 	private final ViewMode viewMode;
@@ -98,14 +97,13 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 	private OptionGroup caseOutcome;
 	private TextField specifyOtherOutcome;
-	private TextField otherCaseOutcomeDetails;
 
 	//@formatter:off
 	private static final String HTML_LAYOUT =
 			loc(HOSPITALIZATION_HEADING_LOC) +
 			fluidRowLocs(HEALTH_FACILITY, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY) +
 			fluidRowLocs(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, "") +
-			fluidRowLocs(6, OUTCOME, 3, OTHERCASEOUTCOMEDETAIL) +
+			// fluidRowLocs(6, OUTCOME, 3, OTHERCASEOUTCOMEDETAIL) +
 			fluidRowLocs(6, OUTCOME) + fluidRowLocs(6, OTHER_OUTCOME_SPECIFY) +
 			fluidRowLocs(4, HospitalizationDto.PATIENT_CONDITION_ON_ADMISSION) +
 			fluidRowLocs(3, HospitalizationDto.INTENSIVE_CARE_UNIT, 3,
@@ -308,6 +306,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			caseOutcome.setValue(outcome == null ? null : outcome);
 			caseOutcome.setVisible(true);
 		}
+		
 	}
 
 	private void addOtherOutcomeValue() {
