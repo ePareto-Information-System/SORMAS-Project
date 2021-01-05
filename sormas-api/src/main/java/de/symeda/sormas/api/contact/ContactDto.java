@@ -23,6 +23,7 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
@@ -92,6 +93,7 @@ public class ContactDto extends EntityDto {
 	public static final String QUARANTINE_HOME_SUPPLY_ENSURED_COMMENT = "quarantineHomeSupplyEnsuredComment";
 	public static final String ADDITIONAL_DETAILS = "additionalDetails";
 	public static final String EPI_DATA = "epiData";
+	public static final String CONTACT_TRANSMISSION_CLASSIFICATION = "contactTransmissionClassification";
 
 	private CaseReferenceDto caze;
 	private String caseIdExternalSystem;
@@ -166,6 +168,7 @@ public class ContactDto extends EntityDto {
 	private String quarantineHomeSupplyEnsuredComment;
 	private String additionalDetails;
 	private EpiDataDto epiData;
+	private TransmissionClassification contactTransmissionClassification;
 
 	public static ContactDto build() {
 		return build(null, null, null);
@@ -627,5 +630,13 @@ public class ContactDto extends EntityDto {
 
 	public void setEpiData(EpiDataDto epiData) {
 		this.epiData = epiData;
+	}
+
+	public TransmissionClassification getContactTransmissionClassification() {
+		return contactTransmissionClassification;
+	}
+
+	public void setContactTransmissionClassification(TransmissionClassification contactTransmissionClassification) {
+		this.contactTransmissionClassification = contactTransmissionClassification;
 	}
 }

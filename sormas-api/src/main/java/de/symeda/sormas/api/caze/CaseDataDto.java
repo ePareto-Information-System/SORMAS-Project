@@ -137,6 +137,7 @@ public class CaseDataDto extends PseudonymizableDto {
 	public static final String REPORTING_TYPE = "reportingType";
 	public static final String POSTPARTUM = "postpartum";
 	public static final String TRIMESTER = "trimester";
+	public static final String CASE_TRANSMISSION_CLASSIFICATION = "caseTransmissionClassification";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -331,6 +332,7 @@ public class CaseDataDto extends PseudonymizableDto {
 	private ReportingType reportingType;
 	private YesNoUnknown postpartum;
 	private Trimester trimester;
+	private TransmissionClassification caseTransmissionClassification;
 
 	public static CaseDataDto build(PersonReferenceDto person, Disease disease) {
 		CaseDataDto caze = new CaseDataDto();
@@ -1033,5 +1035,13 @@ public class CaseDataDto extends PseudonymizableDto {
 
 	public void setTrimester(Trimester trimester) {
 		this.trimester = trimester;
+	}
+
+	public TransmissionClassification getCaseTransmissionClassification() {
+		return caseTransmissionClassification;
+	}
+
+	public void setCaseTransmissionClassification(TransmissionClassification caseTransmissionClassification) {
+		this.caseTransmissionClassification = caseTransmissionClassification;
 	}
 }
