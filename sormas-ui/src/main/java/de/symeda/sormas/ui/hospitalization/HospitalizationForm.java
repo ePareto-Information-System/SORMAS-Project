@@ -306,7 +306,6 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			caseOutcome.setValue(outcome == null ? null : outcome);
 			caseOutcome.setVisible(true);
 		}
-		
 	}
 
 	private void addOtherOutcomeValue() {
