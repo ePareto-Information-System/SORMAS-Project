@@ -67,7 +67,7 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
 	private ComboBox birthDateDay;
 
 	//@formatter:off
-	private static final String HTML_LAYOUT = fluidRowLocs(CaseDataDto.CASE_ORIGIN, "")
+	private static final String HTML_LAYOUT = fluidRowLocs(4, CaseDataDto.CASE_ORIGIN, 8, CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION)
 			+ fluidRowLocs(CaseDataDto.REPORT_DATE, CaseDataDto.EPID_NUMBER)
 			+ fluidRow(fluidColumnLoc(6, 0, CaseDataDto.DISEASE),
 					fluidColumn(6, 0,
@@ -196,6 +196,9 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
 
 		OptionGroup ogCaseOrigin = addField(CaseDataDto.CASE_ORIGIN, OptionGroup.class);
 		ogCaseOrigin.setRequired(true);
+
+		OptionGroup caseTransmissionClassification = addField(CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION, OptionGroup.class);
+		caseTransmissionClassification.setRequired(true);
 
 		if (!UserRole.isPortHealthUser(UserProvider.getCurrent().getUserRoles())) {
 			ogCaseOrigin.addValueChangeListener(ev -> {

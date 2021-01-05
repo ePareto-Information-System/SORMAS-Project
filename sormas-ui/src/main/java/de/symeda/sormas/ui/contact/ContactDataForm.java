@@ -93,6 +93,7 @@ public class ContactDataForm extends AbstractEditForm<ContactDto> {
 	//@formatter:off
     private static final String HTML_LAYOUT =
             loc(CONTACT_DATA_HEADING_LOC) +
+            fluidRowLocs(ContactDto.CONTACT_TRANSMISSION_CLASSIFICATION) +
                     fluidRowLocs(ContactDto.CONTACT_CLASSIFICATION, ContactDto.CONTACT_STATUS) +
                     locCss(VSPACE_3, TO_CASE_BTN_LOC) +
                     fluidRowLocs(ContactDto.LAST_CONTACT_DATE, ContactDto.DISEASE) +
@@ -166,6 +167,7 @@ public class ContactDataForm extends AbstractEditForm<ContactDto> {
 		followUpStausHeadingLabel.addStyleName(H3);
 		getContent().addComponent(followUpStausHeadingLabel, FOLLOW_UP_STATUS_HEADING_LOC);
 
+		addField(ContactDto.CONTACT_TRANSMISSION_CLASSIFICATION, OptionGroup.class);
 		addField(ContactDto.CONTACT_CLASSIFICATION, OptionGroup.class);
 		addField(ContactDto.CONTACT_STATUS, OptionGroup.class);
 		addField(ContactDto.UUID, TextField.class);
