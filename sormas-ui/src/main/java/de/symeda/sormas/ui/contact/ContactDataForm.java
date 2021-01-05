@@ -101,6 +101,7 @@ public class ContactDataForm extends AbstractEditForm<ContactDto> {
 	//@formatter:off
     private static final String HTML_LAYOUT =
             loc(CONTACT_DATA_HEADING_LOC) +
+            fluidRowLocs(ContactDto.CONTACT_TRANSMISSION_CLASSIFICATION) +
                     fluidRowLocs(ContactDto.CONTACT_CLASSIFICATION, ContactDto.CONTACT_STATUS) +
                     locCss(VSPACE_3, TO_CASE_BTN_LOC) +
                     fluidRowLocs(ContactDto.LAST_CONTACT_DATE, ContactDto.DISEASE) +
