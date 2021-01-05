@@ -26,6 +26,7 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.clinicalcourse.HealthConditionsDto;
+import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.event.EventParticipantDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
@@ -113,6 +114,7 @@ public class ContactDto extends PseudonymizableDto {
 	public static final String END_OF_QUARANTINE_REASON = "endOfQuarantineReason";
 	public static final String END_OF_QUARANTINE_REASON_DETAILS = "endOfQuarantineReasonDetails";
 	public static final String RETURNING_TRAVELER = "returningTraveler";
+	public static final String CONTACT_TRANSMISSION_CLASSIFICATION = "contactTransmissionClassification";
 
 	private CaseReferenceDto caze;
 	private String caseIdExternalSystem;
@@ -246,6 +248,7 @@ public class ContactDto extends PseudonymizableDto {
 		COUNTRY_CODE_SWITZERLAND })
 	@SensitiveData
 	private String endOfQuarantineReasonDetails;
+	private TransmissionClassification contactTransmissionClassification;
 
 	public static ContactDto build() {
 		final ContactDto contact = new ContactDto();
@@ -802,5 +805,13 @@ public class ContactDto extends PseudonymizableDto {
 
 	public void setReturningTraveler(YesNoUnknown returningTraveler) {
 		this.returningTraveler = returningTraveler;
+	}
+}
+	public TransmissionClassification getContactTransmissionClassification() {
+		return contactTransmissionClassification;
+	}
+
+	public void setContactTransmissionClassification(TransmissionClassification contactTransmissionClassification) {
+		this.contactTransmissionClassification = contactTransmissionClassification;
 	}
 }

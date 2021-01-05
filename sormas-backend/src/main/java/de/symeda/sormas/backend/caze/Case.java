@@ -56,6 +56,7 @@ import de.symeda.sormas.api.caze.PlagueType;
 import de.symeda.sormas.api.caze.QuarantineReason;
 import de.symeda.sormas.api.caze.RabiesType;
 import de.symeda.sormas.api.caze.ReportingType;
+import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.caze.Trimester;
 import de.symeda.sormas.api.caze.Vaccination;
 import de.symeda.sormas.api.caze.VaccinationInfoSource;
@@ -190,6 +191,7 @@ public class Case extends CoreAdo {
 	public static final String QUARANTINE_REASON_BEFORE_ISOLATION_DETAILS = "quarantineReasonBeforeIsolationDetails";
 	public static final String END_OF_ISOLATION_REASON = "endOfIsolationReason";
 	public static final String END_OF_ISOLATION_REASON_DETAILS = "endOfIsolationReasonDetails";
+	public static final String CASE_TRANSMISSION_CLASSIFICATION = "caseTransmissionClassification";
 
 	private Person person;
 	private String description;
@@ -326,6 +328,8 @@ public class Case extends CoreAdo {
 
 	private SormasToSormasOriginInfo sormasToSormasOriginInfo;
 	private List<SormasToSormasShareInfo> sormasToSormasShares = new ArrayList<>(0);
+
+	private TransmissionClassification caseTransmissionClassification;
 
 	@ManyToOne(cascade = {})
 	@JoinColumn(nullable = false)
@@ -1363,5 +1367,12 @@ public class Case extends CoreAdo {
 
 	public void setSormasToSormasShares(List<SormasToSormasShareInfo> sormasToSormasShares) {
 		this.sormasToSormasShares = sormasToSormasShares;
+	@Enumerated(EnumType.STRING)
+	public TransmissionClassification getCaseTransmissionClassification() {
+		return caseTransmissionClassification;
+	}
+
+	public void setCaseTransmissionClassification(TransmissionClassification caseTransmissionClassification) {
+		this.caseTransmissionClassification = caseTransmissionClassification;
 	}
 }

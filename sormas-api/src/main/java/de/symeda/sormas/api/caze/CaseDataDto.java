@@ -164,6 +164,7 @@ public class CaseDataDto extends PseudonymizableDto {
 	public static final String QUARANTINE_REASON_BEFORE_ISOLATION_DETAILS = "quarantineReasonBeforeIsolationDetails";
 	public static final String END_OF_ISOLATION_REASON = "endOfIsolationReason";
 	public static final String END_OF_ISOLATION_REASON_DETAILS = "endOfIsolationReasonDetails";
+	public static final String CASE_TRANSMISSION_CLASSIFICATION = "caseTransmissionClassification";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -443,6 +444,7 @@ public class CaseDataDto extends PseudonymizableDto {
 	@HideForCountriesExcept(countries = COUNTRY_CODE_SWITZERLAND)
 	@SensitiveData
 	private String endOfIsolationReasonDetails;
+	private TransmissionClassification caseTransmissionClassification;
 
 	public static CaseDataDto build(PersonReferenceDto person, Disease disease) {
 		return build(person, disease, null);
@@ -1302,5 +1304,11 @@ public class CaseDataDto extends PseudonymizableDto {
 
 	public void setOwnershipHandedOver(boolean ownershipHandedOver) {
 		this.ownershipHandedOver = ownershipHandedOver;
+	public TransmissionClassification getCaseTransmissionClassification() {
+		return caseTransmissionClassification;
+	}
+
+	public void setCaseTransmissionClassification(TransmissionClassification caseTransmissionClassification) {
+		this.caseTransmissionClassification = caseTransmissionClassification;
 	}
 }

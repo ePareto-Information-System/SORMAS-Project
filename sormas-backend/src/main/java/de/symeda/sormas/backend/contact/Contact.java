@@ -43,6 +43,7 @@ import javax.persistence.TemporalType;
 import de.symeda.auditlog.api.Audited;
 import de.symeda.auditlog.api.AuditedIgnore;
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.contact.ContactCategory;
 import de.symeda.sormas.api.contact.ContactClassification;
 import de.symeda.sormas.api.contact.ContactIdentificationSource;
@@ -143,6 +144,7 @@ public class Contact extends CoreAdo {
 	public static final String RETURNING_TRAVELER = "returningTraveler";
 	public static final String END_OF_QUARANTINE_REASON = "endOfQuarantineReason";
 	public static final String END_OF_QUARANTINE_REASON_DETAILS = "endOfQuarantineReasonDetails";
+	public static final String CONTACT_TRANSMISSION_CLASSIFICATION = "contactTransmissionClassification";
 
 	private Date reportDateTime;
 	private User reportingUser;
@@ -222,6 +224,9 @@ public class Contact extends CoreAdo {
 
 	private SormasToSormasOriginInfo sormasToSormasOriginInfo;
 	private List<SormasToSormasShareInfo> sormasToSormasShares = new ArrayList<>(0);
+	
+	private TransmissionClassification contactTransmissionClassification;
+
 
 	@ManyToOne(cascade = {})
 	@JoinColumn(nullable = false)
@@ -860,4 +865,13 @@ public class Contact extends CoreAdo {
 	public void setReturningTraveler(YesNoUnknown returningTraveler) {
 		this.returningTraveler = returningTraveler;
 	}
+	@Enumerated(EnumType.STRING)
+	public TransmissionClassification getContactTransmissionClassification() {
+		return contactTransmissionClassification;
+	}
+
+	public void setContactTransmissionClassification(TransmissionClassification contactTransmissionClassification) {
+		this.contactTransmissionClassification = contactTransmissionClassification;
+	}
+	
 }
