@@ -192,6 +192,7 @@ public class Case extends CoreAdo {
 	public static final String END_OF_ISOLATION_REASON = "endOfIsolationReason";
 	public static final String END_OF_ISOLATION_REASON_DETAILS = "endOfIsolationReasonDetails";
 	public static final String CASE_TRANSMISSION_CLASSIFICATION = "caseTransmissionClassification";
+	public static final String OTHERCASEOUTCOMEDETAILS = "specifyOtherOutcome";
 
 	private Person person;
 	private String description;
@@ -330,6 +331,7 @@ public class Case extends CoreAdo {
 	private List<SormasToSormasShareInfo> sormasToSormasShares = new ArrayList<>(0);
 
 	private TransmissionClassification caseTransmissionClassification;
+	private String specifyOtherOutcome;
 
 	@ManyToOne(cascade = {})
 	@JoinColumn(nullable = false)
@@ -1263,6 +1265,14 @@ public class Case extends CoreAdo {
 	@Column
 	public Integer getCaseIdIsm() {
 		return caseIdIsm;
+	}
+		public String getSpecifyOtherOutcome() {
+		return specifyOtherOutcome;
+	}
+
+	public void setSpecifyOtherOutcome(String specifyOtherOutcome) {
+		this.specifyOtherOutcome = specifyOtherOutcome;
+
 	}
 
 	public void setCaseIdIsm(Integer caseIdIsm) {
