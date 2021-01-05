@@ -4794,4 +4794,10 @@ ALTER TABLE contact_history ADD COLUMN tracingappdetails varchar(512);
 
 INSERT INTO schema_version (version_number, comment) VALUES (228, 'Add source of identification as contact to contacts #2070');
 
+-- 2021-01-05 Add a column called transmission classification to the cases
+ALTER TABLE cases ADD COLUMN casetransmissionclassification varchar(255);
+ALTER TABLE contact ADD COLUMN contacttransmissionclassification varchar(225);
+
+INSERT INTO schema_version (version_number, comment) VALUES (229, 'Add source of identification as contact to contacts #2070');
+
 -- *** Insert new sql commands BEFORE this line ***
