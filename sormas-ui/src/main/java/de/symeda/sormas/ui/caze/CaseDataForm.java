@@ -249,7 +249,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		addFields();
 	}
 
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({
+		"deprecation",
+		"unused" })
 	@Override
 	protected void addFields() {
 
@@ -304,7 +306,13 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		addField(CaseDataDto.EXTERNAL_ID, TextField.class);
 
 		addField(CaseDataDto.INVESTIGATION_STATUS, NullableOptionGroup.class);
-		addField(CaseDataDto.OUTCOME, NullableOptionGroup.class);
+		caseOutcome = addField(CaseDataDto.OUTCOME, OptionGroup.class);
+
+		caseOutcome.addValueChangeListener(e -> addOtherOutcomeValue());
+		otherCaseOutComeDetails = addField(CaseDataDto.OTHERCASEOUTCOMEDETAILS, TextField.class);
+		otherCaseOutComeDetails.setVisible(false);
+		otherCaseOutComeDetails.addAttachListener(e -> setOtherOutomeValue());
+
 		addField(CaseDataDto.SEQUELAE, NullableOptionGroup.class);
 		if (isConfiguredServer(CountryHelper.COUNTRY_CODE_GERMANY)) {
 			addField(CaseDataDto.REPORTING_TYPE);
@@ -964,6 +972,10 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					CaseDataDto.QUARANTINE_OFFICIAL_ORDER_SENT_DATE);
 			}
 		});
+		if(CaseDataDto.HOSPITALIZATION == null) {
+			caseOutcome.setEnabled(false);
+			caseOutcome.setRequired(false);
+		}
 	}
 
 	private void onFollowUpUntilChanged(
