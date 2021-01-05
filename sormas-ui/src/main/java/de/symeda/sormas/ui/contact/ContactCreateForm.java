@@ -81,6 +81,7 @@ public class ContactCreateForm extends AbstractEditForm<ContactDto> {
 	//@formatter:off
 	private static final String HTML_LAYOUT =
 			LayoutUtil.loc(PERSON_NAME_LOC) +
+			LayoutUtil.fluidRowLocs(ContactDto.CONTACT_TRANSMISSION_CLASSIFICATION) +
 			LayoutUtil.fluidRowLocs(PersonDto.FIRST_NAME, PersonDto.LAST_NAME) +
 					LayoutUtil.fluidRow(fluidRowLocs(PersonDto.BIRTH_DATE_YYYY, PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD),
 							fluidRowLocs(PersonDto.SEX)) +
@@ -133,6 +134,8 @@ public class ContactCreateForm extends AbstractEditForm<ContactDto> {
 		if (hasCaseRelation == null) {
 			return;
 		}
+
+		addField(ContactDto.CONTACT_TRANSMISSION_CLASSIFICATION, OptionGroup.class);
 
 		addField(ContactDto.REPORT_DATE_TIME, DateField.class);
 		ComboBox cbDisease = addDiseaseField(ContactDto.DISEASE, false);
@@ -208,7 +211,7 @@ public class ContactCreateForm extends AbstractEditForm<ContactDto> {
 				districtDto != null ? FacadeProvider.getCommunityFacade().getAllActiveByDistrict(districtDto.getUuid()) : null);
 		});
 
-		setRequired(true, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, ContactDto.REPORT_DATE_TIME, PersonDto.SEX);
+		setRequired(true, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, ContactDto.REPORT_DATE_TIME, PersonDto.SEX, ContactDto.CONTACT_TRANSMISSION_CLASSIFICATION);
 		FieldHelper.setVisibleWhen(
 			getFieldGroup(),
 			ContactDto.RELATION_DESCRIPTION,
