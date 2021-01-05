@@ -3139,6 +3139,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setDeletionReason(source.getDeletionReason());
 		target.setOtherDeletionReason(source.getOtherDeletionReason());
 
+		target.setCaseTransmissionClassification(source.getCaseTransmissionClassification());
+
 		return target;
 	}
 

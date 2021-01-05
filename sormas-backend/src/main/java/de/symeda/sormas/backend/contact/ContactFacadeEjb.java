@@ -67,6 +67,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.annotations.SourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1615,6 +1616,7 @@ public class ContactFacadeEjb
 		target.setDeleted(source.isDeleted());
 		target.setDeletionReason(source.getDeletionReason());
 		target.setOtherDeletionReason(source.getOtherDeletionReason());
+		target.setContactTransmissionClassification(source.getContactTransmissionClassification());
 
 		return target;
 	}
@@ -1946,6 +1948,7 @@ public class ContactFacadeEjb
 		target.setDeleted(source.isDeleted());
 		target.setDeletionReason(source.getDeletionReason());
 		target.setOtherDeletionReason(source.getOtherDeletionReason());
+		target.setContactTransmissionClassification(source.getContactTransmissionClassification());
 
 		return target;
 	}
