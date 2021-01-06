@@ -30,7 +30,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import de.symeda.auditlog.api.Audited;
-import de.symeda.sormas.api.utils.MildModerateSevereCritical;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 
@@ -69,8 +68,6 @@ public class Hospitalization extends AbstractDomainObject {
 	private YesNoUnknown intensiveCareUnit;
 	private Date intensiveCareUnitStart;
 	private Date intensiveCareUnitEnd;
-
-	private MildModerateSevereCritical patientConditionOnAdmission;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getAdmissionDate() {
@@ -184,13 +181,4 @@ public class Hospitalization extends AbstractDomainObject {
 		this.intensiveCareUnitEnd = intensiveCareUnitEnd;
 	}
 
-	
-	public MildModerateSevereCritical getPatientConditionOnAdmission() {
-		return patientConditionOnAdmission;
-	}
-
-	
-	public void setPatientConditionOnAdmission(MildModerateSevereCritical patientConditionOnAdmission) {
-		this.patientConditionOnAdmission = patientConditionOnAdmission;
-	}
 }
