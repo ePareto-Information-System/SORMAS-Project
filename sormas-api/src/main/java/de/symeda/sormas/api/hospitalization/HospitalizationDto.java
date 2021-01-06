@@ -24,7 +24,6 @@ import java.util.List;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.ImportIgnore;
 import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.MildModerateSevereCritical;
 import de.symeda.sormas.api.utils.Outbreaks;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 
@@ -63,8 +62,6 @@ public class HospitalizationDto extends EntityDto {
 	private Date intensiveCareUnitStart;
 	private Date intensiveCareUnitEnd;
 
-	private MildModerateSevereCritical patientConditionOnAdmission;
-	
 	public static HospitalizationDto build() {
 		HospitalizationDto hospitalization = new HospitalizationDto();
 		hospitalization.setUuid(DataHelper.createUuid());
@@ -159,16 +156,5 @@ public class HospitalizationDto extends EntityDto {
 
 	public void setLeftAgainstAdvice(YesNoUnknown leftAgainstAdvice) {
 		this.leftAgainstAdvice = leftAgainstAdvice;
-	}
-
-	
-	public MildModerateSevereCritical getPatientConditionOnAdmission() {
-		return patientConditionOnAdmission;
-	}
-
-	
-	public void setPatientConditionOnAdmission(MildModerateSevereCritical patientConditionOnAdmission) {
-		this.patientConditionOnAdmission = patientConditionOnAdmission;
-	}
-	
+	}	
 }
