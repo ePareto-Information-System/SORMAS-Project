@@ -43,6 +43,7 @@
         <variable name="yesNoUnknownClass" type="Class" />
         <variable name="vaccinationClass" type="Class" />
         <variable name="trimesterClass" type="Class" />
+        <variable name="caseTransmissionClassificationClass" type="Class" />
     </data>
 
     <ScrollView
@@ -165,6 +166,12 @@
                     style="@style/ControlSingleColumnStyle" />
 
                 <ImageView style="@style/FullHorizontalDividerStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                    android:id="@+id/caseData_caseTransmissionClassification"
+                    style="@style/ControlSingleColumnStyle"
+                    app:required="true"
+                    app:value="@={data.caseTransmissionClassification}" />
 
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/caseData_disease"
