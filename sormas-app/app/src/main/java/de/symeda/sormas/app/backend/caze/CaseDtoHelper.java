@@ -176,6 +176,7 @@ public class CaseDtoHelper extends AdoDtoHelper<Case, CaseDataDto> {
 
 		target.setPostpartum(source.getPostpartum());
 		target.setTrimester(source.getTrimester());
+		target.setCaseTransmissionClassification(source.getCaseTransmissionClassification());
 	}
 
 	@Override
@@ -357,6 +358,7 @@ public class CaseDtoHelper extends AdoDtoHelper<Case, CaseDataDto> {
 
 		target.setPostpartum(source.getPostpartum());
 		target.setTrimester(source.getTrimester());
+		target.setCaseTransmissionClassification(source.getCaseTransmissionClassification());
 	}
 
 	public static CaseReferenceDto toReferenceDto(Case ado) {
