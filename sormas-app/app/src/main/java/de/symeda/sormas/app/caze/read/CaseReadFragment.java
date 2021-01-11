@@ -145,6 +145,7 @@ public class CaseReadFragment extends BaseReadFragment<FragmentCaseReadLayoutBin
 		setUpControlListeners(contentBinding);
 
 		contentBinding.setData(record);
+//		contentBinding.setCaseTransmissionClassificationClass(record.getCaseTransmissionClassification().toString());
 	}
 
 	@Override
