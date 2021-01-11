@@ -234,6 +234,7 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setNotACaseReasonDetails(source.getNotACaseReasonDetails());
 		target.setFollowUpStatusChangeDate(source.getFollowUpStatusChangeDate());
 		target.setFollowUpStatusChangeUser(DatabaseHelper.getUserDao().getByReferenceDto(source.getFollowUpStatusChangeUser()));
+		target.setCaseTransmissionClassification(source.getCaseTransmissionClassification());
 	}
 
 	@Override
@@ -495,6 +496,7 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 	@Override
 	protected long getApproximateJsonSizeInBytes() {
 		return CaseDataDto.APPROXIMATE_JSON_SIZE_IN_BYTES;
+		target.setCaseTransmissionClassification(source.getCaseTransmissionClassification());
 	}
 
 	public static CaseReferenceDto toReferenceDto(Case ado) {
