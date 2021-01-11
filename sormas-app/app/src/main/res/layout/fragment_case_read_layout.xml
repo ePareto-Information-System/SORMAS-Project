@@ -42,6 +42,7 @@
 
         <variable name="data" type="de.symeda.sormas.app.backend.caze.Case" />
         <variable name="singleClassification" type="de.symeda.sormas.api.caze.CaseConfirmationBasis" />
+        <variable name="caseTransmissionClassificationClass" type="Class" />
     </data>
 
     <ScrollView
@@ -209,6 +210,10 @@
                     style="@style/ControlSingleColumnStyle"
                     app:value="@{data.caseIdIsm}" />
 
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/caseData_caseTransmissionClassification"
+                    app:value="@{data.caseTransmissionClassification}"
+                    style="@style/ControlSingleColumnStyle" />
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
