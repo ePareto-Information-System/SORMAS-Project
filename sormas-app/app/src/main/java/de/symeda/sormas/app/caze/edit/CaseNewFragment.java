@@ -27,6 +27,7 @@ import de.symeda.sormas.api.caze.CaseOrigin;
 import de.symeda.sormas.api.caze.DengueFeverType;
 import de.symeda.sormas.api.caze.PlagueType;
 import de.symeda.sormas.api.caze.RabiesType;
+import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.user.UserRole;
@@ -63,6 +64,7 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 	private List<Item> initialCommunities;
 	private List<Item> initialFacilities;
 	private List<Item> initialPointsOfEntry;
+	private List<Item> caseTransmissionClassificationsList;
 
 	public static CaseNewFragment newInstance(Case activityRootData) {
 		return newInstance(CaseNewFragment.class, CaseNewActivity.buildBundle().get(), activityRootData);
@@ -104,6 +106,7 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 
 		sexList = DataUtils.getEnumItems(Sex.class, true);
 		presentConditionList = DataUtils.getEnumItems(PresentCondition.class, true);
+		caseTransmissionClassificationsList = DataUtils.getEnumItems(TransmissionClassification.class, true);
 
 		initialRegions = InfrastructureHelper.loadRegions();
 		initialDistricts = InfrastructureHelper.loadDistricts(record.getRegion());
@@ -119,7 +122,7 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 
 		contentBinding.caseDataPlagueType.initializeSpinner(plagueTypeList);
 		contentBinding.caseDataDengueFeverType.initializeSpinner(dengueFeverTypeList);
-
+		contentBinding.caseDataCaseTransmissionClassification.initializeSpinner(caseTransmissionClassificationsList);
 		InfrastructureHelper.initializeFacilityFields(
 			contentBinding.caseDataRegion,
 			initialRegions,

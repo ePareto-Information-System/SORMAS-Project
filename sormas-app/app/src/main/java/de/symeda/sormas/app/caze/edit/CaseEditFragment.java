@@ -35,6 +35,7 @@ import de.symeda.sormas.api.caze.HospitalWardType;
 import de.symeda.sormas.api.caze.PlagueType;
 import de.symeda.sormas.api.caze.RabiesType;
 import de.symeda.sormas.api.caze.ReportingType;
+import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.caze.Trimester;
 import de.symeda.sormas.api.caze.Vaccination;
 import de.symeda.sormas.api.caze.VaccinationInfoSource;
@@ -88,6 +89,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 	private List<Item> initialFacilities;
 	private List<Item> quarantineList;
 	private List<Item> reportingTypeList;
+	private List<Item> caseTransmissionClassificationsList;
 
 	// Static methods
 
@@ -243,6 +245,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		initialDistricts = InfrastructureHelper.loadDistricts(record.getRegion());
 		initialCommunities = InfrastructureHelper.loadCommunities(record.getDistrict());
 		initialFacilities = InfrastructureHelper.loadFacilities(record.getDistrict(), record.getCommunity());
+		caseTransmissionClassificationsList = DataUtils.getEnumItems(TransmissionClassification.class, true);
 	}
 
 	@Override
@@ -265,6 +268,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		}
 
 		FragmentActivity thisActivity = this.getActivity();
+		contentBinding.caseDataCaseTransmissionClassification.initializeSpinner(caseTransmissionClassificationsList);
 		contentBinding.caseDataDisease.addValueChangedListener(new ValueChangeListener() {
 
 			Disease currentDisease = record.getDisease();
