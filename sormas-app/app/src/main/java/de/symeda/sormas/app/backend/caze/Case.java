@@ -39,6 +39,7 @@ import de.symeda.sormas.api.caze.InvestigationStatus;
 import de.symeda.sormas.api.caze.PlagueType;
 import de.symeda.sormas.api.caze.RabiesType;
 import de.symeda.sormas.api.caze.ReportingType;
+import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.caze.Trimester;
 import de.symeda.sormas.api.caze.Vaccination;
 import de.symeda.sormas.api.caze.VaccinationInfoSource;
@@ -84,6 +85,7 @@ public class Case extends PseudonymizableAdo {
 	public static final String CASE_ORIGIN = "caseOrigin";
 	public static final String REGION = "region";
 	public static final String COMPLETENESS = "completeness";
+	public static final String CONTACT_TRANSMISSION_CLASSIFICATION = "caseTransmissionClassification";
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true, canBeNull = false, maxForeignAutoRefreshLevel = 3)
 	private Person person;
@@ -293,6 +295,9 @@ public class Case extends PseudonymizableAdo {
 	private YesNoUnknown postpartum;
 	@Enumerated(EnumType.STRING)
 	private Trimester trimester;
+	@Enumerated(EnumType.STRING)
+	private TransmissionClassification caseTransmissionClassification;
+
 
 	public boolean isUnreferredPortHealthCase() {
 		return caseOrigin == CaseOrigin.POINT_OF_ENTRY && healthFacility == null;
@@ -937,4 +942,12 @@ public class Case extends PseudonymizableAdo {
 	public void setTrimester(Trimester trimester) {
 		this.trimester = trimester;
 	}
+
+    public TransmissionClassification getCaseTransmissionClassification() {
+        return caseTransmissionClassification;
+    }
+
+    public void setCaseTransmissionClassification(TransmissionClassification caseTransmissionClassification) {
+        this.caseTransmissionClassification = caseTransmissionClassification;
+    }
 }
