@@ -2517,7 +2517,7 @@ public class CaseFacadeEjb implements CaseFacade {
 	}
 
 	@Override
-	public CaseDataDto getAllCaseDataByDisease(String disease) {
-		return convertToDto(caseService.(disease));
+	public List<CaseDataDto> getAllCaseDataByDisease(Disease disease) {
+		return caseService.getAllByDisease(disease);
 	}
 }

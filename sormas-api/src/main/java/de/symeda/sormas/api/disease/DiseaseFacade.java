@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.ejb.Remote;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
 
@@ -31,6 +32,15 @@ public interface DiseaseFacade {
 	List<DiseaseBurdenDto> getDiseaseBurdenForDashboard(
 		RegionReferenceDto regionRef,
 		DistrictReferenceDto districtRef,
+		Date from,
+		Date to,
+		Date previousFromDate,
+		Date previousToDate);
+
+	DiseaseBurdenDto getDiseaseForDashboard(
+		RegionReferenceDto regionRef,
+		DistrictReferenceDto districtRef,
+		Disease disease,
 		Date from,
 		Date to,
 		Date previousFromDate,

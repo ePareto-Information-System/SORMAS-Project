@@ -118,6 +118,64 @@ public class DiseaseFacadeEjb implements DiseaseFacade {
 		return diseasesBurden;
 	}
 
+	@Override
+	public DiseaseBurdenDto getDiseaseForDashboard(
+		RegionReferenceDto regionRef,
+		DistrictReferenceDto districtRef,
+		Disease disease,
+		Date from,
+		Date to,
+		Date previousFrom,
+		Date previousTo) {
+
+		//new cases
+		CaseCriteria caseCriteria = new CaseCriteria().newCaseDateBetween(from, to, null).region(regionRef).district(districtRef);
+
+		Map<Disease, Long> newCases = caseFacade.getCaseCountByDisease(caseCriteria, true, true);
+
+		//events
+		Map<Disease, Long> events =
+			eventFacade.getEventCountByDisease(new EventCriteria().region(regionRef).district(districtRef).reportedBetween(from, to));
+
+		//outbreaks
+		Map<Disease, Long> outbreakDistrictsCount = outbreakFacade
+			.getOutbreakDistrictCountByDisease(new OutbreakCriteria().region(regionRef).district(districtRef).reportedBetween(from, to));
+
+		//last report district
+		Map<Disease, District> lastReportedDistricts = caseFacade.getLastReportedDistrictByDisease(caseCriteria, true, true);
+
+		//case fatalities
+		Map<Disease, Long> caseFatalities = personFacade.getDeathCountByDisease(caseCriteria, true, true);
+
+		//previous cases
+		caseCriteria.newCaseDateBetween(previousFrom, previousTo, null);
+		Map<Disease, Long> previousCases = caseFacade.getCaseCountByDisease(caseCriteria, true, true);
+
+		//build diseasesBurden
+//		DiseaseBurdenDto diseasesBurden = diseases.stream().map(disease -> {
+//			Long caseCount = newCases.getOrDefault(disease, 0L);
+//			Long previousCaseCount = previousCases.getOrDefault(disease, 0L);
+//			Long eventCount = events.getOrDefault(disease, 0L);
+//			Long outbreakDistrictCount = outbreakDistrictsCount.getOrDefault(disease, 0L);
+//			Long caseFatalityCount = caseFatalities.getOrDefault(disease, 0L);
+//			District lastReportedDistrict = lastReportedDistricts.getOrDefault(disease, null);
+//
+//			String lastReportedDistrictName = lastReportedDistrict == null ? "" : lastReportedDistrict.getName();
+//
+//			return new DiseaseBurdenDto(
+//				disease,
+//				caseCount,
+//				previousCaseCount,
+//				eventCount,
+//				outbreakDistrictCount,
+//				caseFatalityCount,
+//				lastReportedDistrictName);
+//
+//		}).collect(Collectors.toList());
+
+		return null;
+	}
+
 	@LocalBean
 	@Stateless
 	public static class DiseaseFacadeEjbLocal extends DiseaseFacadeEjb {

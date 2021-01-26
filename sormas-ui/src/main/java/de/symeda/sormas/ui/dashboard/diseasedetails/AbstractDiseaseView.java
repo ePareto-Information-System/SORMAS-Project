@@ -5,6 +5,7 @@ import com.vaadin.ui.VerticalLayout;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
+import de.symeda.sormas.ui.dashboard.DashboardFilterLayout;
 import de.symeda.sormas.ui.utils.AbstractView;
 
 public abstract class AbstractDiseaseView extends AbstractView {
@@ -17,15 +18,16 @@ public abstract class AbstractDiseaseView extends AbstractView {
 
 	protected VerticalLayout diseaseDashboardLayout;
 	protected VerticalLayout topLayout;
-//	protected DashboardFilterLayout filterLayout;
+	protected DashboardFilterLayout filterLayout;
+	protected Disease disease;
 
-	public AbstractDiseaseView(String viewName) {
+	public AbstractDiseaseView(String viewName, Disease disease) {
 		super(viewName);
 		addStyleName("Disease");
+		this.disease = disease;
 		dashboardDataProvider = new DashboardDataProvider();
-//		dashboardDataProvider.setDisease(disease);
-//		dashboardDataProvider.setDisease(FacadeProvider.getDiseaseConfigurationFacade().getDefaultDisease());
-		dashboardDataProvider.setDisease(Disease.ANTHRAX);
+		dashboardDataProvider.setDisease(disease);
+
 		topLayout = new VerticalLayout();
 		topLayout.setMargin(false);
 		topLayout.setSpacing(false);
@@ -37,17 +39,30 @@ public abstract class AbstractDiseaseView extends AbstractView {
 		diseaseDashboardLayout.setSizeFull();
 		diseaseDashboardLayout.setStyleName("crud-main-layout");
 
-		diseaseDashboardLayout.addComponent(topLayout);
+		// Filter bar
+//		filterLayout = new DashboardFilterLayout(this, dashboardDataProvider);
+		diseaseDashboardLayout.addComponent(filterLayout);
+
 		addComponent(diseaseDashboardLayout);
 	}
 
-	public void refreshDashboard() {
+	public void refreshDiseaseData() {
 		dashboardDataProvider.refreshDiseaseData();
 	}
 
 	@Override
 	public void enter(ViewChangeEvent event) {
-		refreshDashboard();
+		refreshDiseaseData();
+	}
+
+	public Disease getDiseases(Disease disease) {
+//		this.disease = disease;
+//		getRefere.getUuid()
+		return disease;
+	}
+
+	public String getDisseaseName() {
+		return getData().toString();
 	}
 
 }

@@ -202,13 +202,6 @@ public class MainScreen extends HorizontalLayout {
 				I18nProperties.getCaption(Captions.mainMenuConfiguration),
 				VaadinIcons.COGS);
 		}
-		if (permitted(UserRight.DASHBOARD_DISEASE_DETIALS_ACCESS)) {
-			menu.addView(
-				DiseaseDetailsView.class,
-				DiseaseDetailsView.VIEW_NAME,
-				I18nProperties.getCaption(Captions.mainMenuDashboard),
-				VaadinIcons.DISC);
-		}
 		menu.addView(AboutView.class, AboutView.VIEW_NAME, I18nProperties.getCaption(Captions.mainMenuAbout), VaadinIcons.INFO_CIRCLE);
 
 		navigator.addViewChangeListener(viewChangeListener);

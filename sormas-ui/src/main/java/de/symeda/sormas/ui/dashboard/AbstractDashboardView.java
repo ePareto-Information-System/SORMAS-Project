@@ -22,12 +22,14 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.ui.OptionGroup;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.dashboard.contacts.ContactsDashboardView;
+import de.symeda.sormas.ui.dashboard.diseasedetails.DiseaseDetailsView;
 import de.symeda.sormas.ui.dashboard.surveillance.SurveillanceDashboardView;
 import de.symeda.sormas.ui.utils.AbstractView;
 import de.symeda.sormas.ui.utils.CssStyles;
@@ -42,6 +44,8 @@ public abstract class AbstractDashboardView extends AbstractView {
 	protected VerticalLayout dashboardLayout;
 	protected DashboardFilterLayout filterLayout;
 
+	protected Disease disease;
+
 	protected AbstractDashboardView(String viewName, DashboardType dashboardType) {
 		super(viewName);
 
@@ -52,6 +56,9 @@ public abstract class AbstractDashboardView extends AbstractView {
 			dashboardDataProvider.setDashboardType(dashboardType);
 		}
 		if (DashboardType.CONTACTS.equals(dashboardDataProvider.getDashboardType())) {
+			dashboardDataProvider.setDisease(FacadeProvider.getDiseaseConfigurationFacade().getDefaultDisease());
+		}
+		if (DashboardType.DISEASE.equals(dashboardDataProvider.getDashboardType())) {
 			dashboardDataProvider.setDisease(FacadeProvider.getDiseaseConfigurationFacade().getDefaultDisease());
 		}
 
@@ -70,6 +77,8 @@ public abstract class AbstractDashboardView extends AbstractView {
 			dashboardDataProvider.setDashboardType((DashboardType) e.getProperty().getValue());
 			if (DashboardType.SURVEILLANCE.equals(e.getProperty().getValue())) {
 				SormasUI.get().getNavigator().navigateTo(SurveillanceDashboardView.VIEW_NAME);
+			} else if (DashboardType.DISEASE.equals(e.getProperty().getValue())) {
+				SormasUI.get().getNavigator().navigateTo(DiseaseDetailsView.VIEW_NAME);
 			} else {
 				SormasUI.get().getNavigator().navigateTo(ContactsDashboardView.VIEW_NAME);
 			}
@@ -99,12 +108,26 @@ public abstract class AbstractDashboardView extends AbstractView {
 		dashboardDataProvider.refreshData();
 	}
 
-	@Override
-	public void enter(ViewChangeEvent event) {
-		refreshDashboard();
+	public void refreshDiseaseData() {
+		dashboardDataProvider.refreshDiseaseData();
 	}
 
-//	public Disease getDisease() {
-//		return 
-//	}
+	@Override
+	public void enter(ViewChangeEvent event) {
+
+		if (event.getViewName() == "dashboard/disease") {
+			setDiseases(Disease.valueOf(event.getParameters().toString()));
+			refreshDiseaseData();
+		} else {
+			refreshDashboard();
+		}
+	}
+
+	public void setDiseases(Disease disease) {
+		this.disease = disease;
+	}
+
+	public Disease getDiseases() {
+		return disease;
+	}
 }

@@ -17,6 +17,7 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.LayoutUtil;
 
 public class DiseaseDetailsComponent extends VerticalLayout {
 
@@ -36,10 +37,10 @@ public class DiseaseDetailsComponent extends VerticalLayout {
 		setMargin(false);
 
 //		this.viewTitleLabel = viewTitleLabel;
-//		String htmlLayout = LayoutUtil.fluidRow(
-//			LayoutUtil.fluidColumnLoc(8, 0, 12, 0, CARD_COUNT),
-//			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, DISEASE_GRID),
-//			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, DISEASE_MAP));
+		String htmlLayout = LayoutUtil.fluidRow(
+			LayoutUtil.fluidColumnLoc(8, 0, 12, 0, CARD_COUNT),
+			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, DISEASE_GRID),
+			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, DISEASE_MAP));
 
 //		verticalLayout = new VerticalLayout();
 //		verticalLayout.addComponent(addTopLayout());
@@ -188,7 +189,7 @@ public class DiseaseDetailsComponent extends VerticalLayout {
 			.createIconButton(null, VaadinIcons.ELLIPSIS_DOTS_H, null, ValoTheme.BUTTON_BORDERLESS, CssStyles.VSPACE_TOP_NONE, CssStyles.VSPACE_4);
 		diseaseDetailButton.setVisible(true);
 		layout.addComponent(diseaseDetailButton);
-		diseaseDetailButton.addClickListener(click -> ControllerProvider.getDashboardController().navigateToDisease(disease.getName()));
+		diseaseDetailButton.addClickListener(click -> ControllerProvider.getDashboardController().navigateToDisease(disease));
 
 		addComponent(layout);
 	}

@@ -143,6 +143,6 @@ public interface CaseFacade {
 
 	boolean hasPositiveLabResult(String caseUuid);
 
-	CaseDataDto getAllCaseDataByDisease(String uuid);
+	List<CaseDataDto> getAllCaseDataByDisease(Disease uuid);
 
 }

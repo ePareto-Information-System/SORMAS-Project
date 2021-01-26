@@ -4,6 +4,7 @@ import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 
+import de.symeda.sormas.api.disease.DiseaseBurdenDto;
 import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
 import de.symeda.sormas.ui.dashboard.map.DashboardMapComponent;
 import de.symeda.sormas.ui.utils.CssStyles;
@@ -24,29 +25,73 @@ public class DiseaseDetailsViewLayout extends CustomLayout {
 		this.dashboardDataProvider = dashboardDataProvider;
 
 		setTemplateContents(
-			LayoutUtil.fluidRow(LayoutUtil.fluidColumnLoc(3, 1, 6, 0, CARD), LayoutUtil.fluidColumnLoc(6, 0, 12, 0, GRID_TABLE))
-				+ LayoutUtil.loc(MAP));
+			LayoutUtil.fluidRow(
+				LayoutUtil.fluidColumnLoc(3, 1, 6, 0, CARD),
+				LayoutUtil.fluidColumnLoc(6, 2, 12, 0, GRID_TABLE),
+				LayoutUtil.fluidColumnLoc(12, 0, 12, 6, MAP)));
+
+//		setTemplateContents(
+//			LayoutUtil.fluidRow(LayoutUtil.fluidColumnLoc(3, 1, 6, 0, CARD), LayoutUtil.fluidColumnLoc(6, 0, 12, 0, GRID_TABLE))
+//				+ LayoutUtil.loc(MAP));
 
 		reload();
 	}
 
 	public void reload() {
-		//Disease Card layout
-//		List<DiseaseBurdenDto> diseasesBurden = dashboardDataProvider.getDiseasesBurden();
-//		DiseaseDetailsComponent diseaseCardLayout = new DiseaseDetailsComponent(diseasesBurden.get(0));
+//		Disease Card layout
+
+		DiseaseBurdenDto diseasesBurden = dashboardDataProvider.getDiseaseBurdenDetail();
+		DiseaseDetailsComponent diseaseCardLayout = new DiseaseDetailsComponent(diseasesBurden);
+//		DiseaseBurdenDto diseasesBurden = dashboardDataProvider.getDiseaseBurdenDetail();
+//		DiseaseDetailsComponent diseaseCardLayout = new DiseaseDetailsComponent(diseasesBurden);
+//		addComponent(diseaseCardLayout, CARD);
 //		Label label = new Label("Outbreak..");
 //		diseaseCardLayout.addComponent(label);
 //		addComponent(diseaseCardLayout, CARD);
+//		DiseaseDetailsComponent diseasesBurden = dashboardDataProvider.getDiseaseBurdenDetail();
+//		DiseaseDetailsComponent diseasesBurden = DiseaseBurdenDto(
+//			Disease.AFP,
+//			Long.valueOf(120),
+//			Long.valueOf(350),
+//			Long.valueOf(100),
+//			Long.valueOf(30),
+//			Long.valueOf(50),
+//			"Some District here",
+//			2145,
+//			null,
+//			null,
+//			1154);
+
+		HorizontalLayout cardLayout = new HorizontalLayout();
+		cardLayout.addComponent(diseaseCardLayout);
+		addComponent(cardLayout, CARD);
 
 //		Grid card layout
 		HorizontalLayout gridLayout = new HorizontalLayout();
 		gridLayout.addComponent(gridTableLayout());
-		addComponent(gridLayout, GRID_TABLE);
+//		addComponent(gridLayout, GRID_TABLE);
 
 //		Map layout 
 		HorizontalLayout mapLayout = new HorizontalLayout();
 		mapLayout.addComponent(mapVerticalLayout());
-		addComponent(mapLayout, MAP);
+//		addComponent(mapLayout, MAP);
+	}
+
+	private HorizontalLayout cardLayout(DiseaseBurdenDto diseaseBurdenDto) {
+		HorizontalLayout diseaseCaseCountLayout = new HorizontalLayout();
+		Label title = new Label(diseaseBurdenDto.getDisease().getName());
+		diseaseCaseCountLayout.addComponent(title);
+
+		HorizontalLayout caseCountLayout = new HorizontalLayout();
+		Label totalCaseCount = new Label(diseaseBurdenDto.getCaseCount().toString());
+		CssStyles.style(totalCaseCount, CssStyles.H2, CssStyles.VSPACE_4, CssStyles.VSPACE_TOP_NONE);
+		caseCountLayout.addComponent(totalCaseCount);
+
+		HorizontalLayout layout = new HorizontalLayout();
+		layout.addComponent(diseaseCaseCountLayout);
+		layout.addComponent(totalCaseCount);
+
+		return layout;
 	}
 
 	private HorizontalLayout gridTableLayout() {
@@ -54,6 +99,7 @@ public class DiseaseDetailsViewLayout extends CustomLayout {
 		tableLayout.setMargin(false);
 		tableLayout.setSpacing(false);
 
+//		Label title = new Label(I18nProperties.getCaption(Strings.DiseaseNetworkDiagram_heading));
 		Label labelGrid = new Label("Grid Table here");
 
 		tableLayout.addComponent(labelGrid);

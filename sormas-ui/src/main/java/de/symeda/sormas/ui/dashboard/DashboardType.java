@@ -22,6 +22,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 public enum DashboardType {
 
 	SURVEILLANCE,
+	DISEASE,
 	CONTACTS;
 
 	public String toString() {

@@ -83,10 +83,9 @@ public class DashboardDataProvider {
 
 	public void refreshDiseaseData() {
 
-		setDiseasesBurden(
-			FacadeProvider.getDiseaseFacade().getDiseaseBurdenForDashboard(region, district, fromDate, toDate, previousFromDate, previousToDate));
+		setDiseaseBurdenDetail(
+			FacadeProvider.getDiseaseFacade().getDiseaseForDashboard(region, district, disease, fromDate, toDate, previousFromDate, previousToDate));
 
-		this.refreshDataForSelectedDisease();
 		setOutbreakDistrictCount(
 			FacadeProvider.getOutbreakFacade()
 				.getOutbreakDistrictCount(

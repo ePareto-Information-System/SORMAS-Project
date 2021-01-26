@@ -42,12 +42,14 @@ public class DashboardController {
 		if (UserProvider.getCurrent().hasUserRight(UserRight.DASHBOARD_CONTACT_ACCESS)) {
 			navigator.addView(ContactsDashboardView.VIEW_NAME, ContactsDashboardView.class);
 		}
+		if (UserProvider.getCurrent().hasUserRight(UserRight.DASHBOARD_DISEASE_DETIALS_ACCESS)) {
+			navigator.addView(DiseaseDetailsView.VIEW_NAME, DiseaseDetailsView.class);
+		}
 	}
 
 	public void navigateToDisease(Disease disease) {
 		String navigationState = DiseaseDetailsView.VIEW_NAME + "/" + disease.getName();
 		SormasUI.get().getNavigator().navigateTo(navigationState);
-//		DiseaseDetailsView.this.setDisease(disease);
 	}
 
 	private CaseDataDto findCase(String uuid) {

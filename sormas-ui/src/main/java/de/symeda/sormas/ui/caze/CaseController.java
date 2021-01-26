@@ -42,6 +42,7 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.Window.CloseEvent;
 import com.vaadin.ui.Window.CloseListener;
 import com.vaadin.ui.themes.ValoTheme;
+
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.FacadeProvider;
@@ -103,11 +104,6 @@ import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent.DiscardListener;
 import de.symeda.sormas.ui.utils.DateHelper8;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 import de.symeda.sormas.ui.utils.ViewMode;
-
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.function.Consumer;
 
 public class CaseController {
 
@@ -890,7 +886,7 @@ public class CaseController {
 		EpiDataDto dto = caze.getEpiData();
 		setDefaultValues(dto);
 		epiDataForm.setValue(dto);
-		
+
 		final CommitDiscardWrapperComponent<EpiDataForm> editView = new CommitDiscardWrapperComponent<EpiDataForm>(
 			epiDataForm,
 			UserProvider.getCurrent().hasUserRight(UserRight.CASE_EDIT),

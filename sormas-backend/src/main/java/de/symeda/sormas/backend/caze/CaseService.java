@@ -44,6 +44,7 @@ import org.apache.commons.lang3.StringUtils;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.caze.CaseCriteria;
+import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseOrigin;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.caze.MapCaseDto;
@@ -876,12 +877,43 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 			newCaseFilter = cb.between(caze.get(Case.CREATION_DATE), fromDate, toDate);
 		} else if (newCaseDateType == NewCaseDateType.INVESTIGATION) {
 			newCaseFilter = cb.between(caze.get(Case.INVESTIGATED_DATE), fromDate, toDate);
-		//} else if (newCaseDateType == NewCaseDateType.LAST_TEST_RESULT) {
-		//	newCaseFilter = cb.between(caze.get(Case.REPORT_DATE), fromDate, toDate);
+			//} else if (newCaseDateType == NewCaseDateType.LAST_TEST_RESULT) {
+			//	newCaseFilter = cb.between(caze.get(Case.REPORT_DATE), fromDate, toDate);
 		} else {
 			newCaseFilter = reportDateFilter;
 		}
 
 		return newCaseFilter;
+	}
+
+	public List<CaseDataDto> getAllByDisease(Disease disease) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<CaseDataDto> cq = cb.createQuery(CaseDataDto.class);
+		Root<Case> from = cq.from(Case.class);
+
+		from.fetch(Case.SYMPTOMS);
+		from.fetch(Case.THERAPY);
+		Fetch<Case, ClinicalCourse> clinicalCourseFetch = from.fetch(Case.CLINICAL_COURSE);
+		clinicalCourseFetch.fetch(ClinicalCourse.HEALTH_CONDITIONS);
+		from.fetch(Case.HOSPITALIZATION);
+		from.fetch(Case.EPI_DATA);
+		from.fetch(Case.PORT_HEALTH_INFO);
+		from.fetch(Case.MATERNAL_HISTORY);
+
+		Predicate filter = createActiveCasesFilter(cb, from);
+
+		if (getCurrentUser() != null) {
+			Predicate userFilter = createUserFilter(cb, cq, from);
+			if (userFilter != null) {
+				filter = cb.and(filter, userFilter);
+			}
+		}
+
+		cq.where(filter);
+		cq.orderBy(cb.desc(from.get(Case.CHANGE_DATE)));
+		cq.distinct(true);
+
+		return em.createQuery(cq).getResultList();
 	}
 }
