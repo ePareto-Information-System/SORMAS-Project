@@ -54,7 +54,7 @@ public class ActionResource extends EntityDtoResource {
 	public List<ActionDto> getAll(@PathParam("since") long since) {
 		return FacadeProvider.getActionFacade().getAllActionsAfter(new Date(since));
 	}
-
+	
 	@POST
 	@Path("/query")
 	public List<ActionDto> getByUuids(List<String> uuids) {

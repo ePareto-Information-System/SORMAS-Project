@@ -273,8 +273,7 @@ public class ImportFacadeEjb implements ImportFacade {
 	@Override
 	public void generateCaseLineListingImportTemplateFile() throws IOException {
 
-		createExportDirectoryIfNessecary();
-
+		createExportDirectoryIfNecessary();
 		List<String> columnNames = new ArrayList<>();
 		columnNames.add(CaseDataDto.DISEASE);
 		columnNames.add(CaseDataDto.DISEASE_DETAILS);
