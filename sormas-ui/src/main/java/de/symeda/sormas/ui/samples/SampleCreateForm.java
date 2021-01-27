@@ -20,7 +20,6 @@ import de.symeda.sormas.api.sample.SamplePurpose;
 import de.symeda.sormas.ui.utils.DateTimeField;
 import de.symeda.sormas.ui.utils.FieldHelper;
 import de.symeda.sormas.ui.utils.NullableOptionGroup;
-import de.symeda.sormas.ui.utils.FieldSampleIdValidatorUtil;
 
 public class SampleCreateForm extends AbstractSampleForm {
 

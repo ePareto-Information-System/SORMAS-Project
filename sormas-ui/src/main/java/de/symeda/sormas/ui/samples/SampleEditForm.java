@@ -28,6 +28,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.SampleDto;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 
 public class SampleEditForm extends AbstractSampleForm {
 
