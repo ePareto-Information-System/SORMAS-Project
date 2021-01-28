@@ -5960,6 +5960,6 @@ INSERT INTO schema_version (version_number, comment) VALUES (282, 'Set contact w
 ALTER TABLE cases ADD COLUMN casetransmissionclassification varchar(255);
 ALTER TABLE contact ADD COLUMN contacttransmissionclassification varchar(225);
 
-INSERT INTO schema_version (version_number, comment) VALUES (283, 'Add source of identification as contact to contacts #2070');
+INSERT INTO schema_version (version_number, comment) VALUES (283, 'Altered case and contact table to add transmission classification to it');
 
 -- *** Insert new sql commands BEFORE this line ***
