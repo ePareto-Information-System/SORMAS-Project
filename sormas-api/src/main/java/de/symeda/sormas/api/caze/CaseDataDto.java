@@ -1304,6 +1304,8 @@ public class CaseDataDto extends PseudonymizableDto {
 
 	public void setOwnershipHandedOver(boolean ownershipHandedOver) {
 		this.ownershipHandedOver = ownershipHandedOver;
+	}
+	
 	public TransmissionClassification getCaseTransmissionClassification() {
 		return caseTransmissionClassification;
 	}

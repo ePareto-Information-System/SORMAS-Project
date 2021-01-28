@@ -1367,6 +1367,8 @@ public class Case extends CoreAdo {
 
 	public void setSormasToSormasShares(List<SormasToSormasShareInfo> sormasToSormasShares) {
 		this.sormasToSormasShares = sormasToSormasShares;
+	}
+	
 	@Enumerated(EnumType.STRING)
 	public TransmissionClassification getCaseTransmissionClassification() {
 		return caseTransmissionClassification;

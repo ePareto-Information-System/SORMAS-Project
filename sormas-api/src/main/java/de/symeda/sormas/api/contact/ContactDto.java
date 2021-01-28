@@ -806,7 +806,7 @@ public class ContactDto extends PseudonymizableDto {
 	public void setReturningTraveler(YesNoUnknown returningTraveler) {
 		this.returningTraveler = returningTraveler;
 	}
-}
+
 	public TransmissionClassification getContactTransmissionClassification() {
 		return contactTransmissionClassification;
 	}
