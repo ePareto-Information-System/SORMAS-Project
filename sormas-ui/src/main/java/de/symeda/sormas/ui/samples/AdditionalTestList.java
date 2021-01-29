@@ -1,8 +1,11 @@
 package de.symeda.sormas.ui.samples;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -16,10 +19,14 @@ import de.symeda.sormas.ui.utils.PaginationList;
 public class AdditionalTestList extends PaginationList<AdditionalTestDto> {
 
 	private String sampleUuid;
+	private Supplier<String> createOrEditAllowedCallback;
 
+	public AdditionalTestList(String sampleUuid, Supplier<String> createOrEditAllowedCallback) {
 
 		super(3);
 		this.sampleUuid = sampleUuid;
+		this.createOrEditAllowedCallback = createOrEditAllowedCallback;
+
 	}
 
 	@Override
