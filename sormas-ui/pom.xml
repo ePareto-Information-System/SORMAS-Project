@@ -189,6 +189,7 @@
 					<strict>true</strict>
 				</configuration>
 				<executions>
+
 					<execution>
                     	<configuration>
                     		<!-- if you don't specify any modules, the plugin will find them -->
