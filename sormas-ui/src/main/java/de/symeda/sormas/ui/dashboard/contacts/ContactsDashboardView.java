@@ -54,8 +54,6 @@ public class ContactsDashboardView extends AbstractDashboardView {
 
 	private static final int ROW_HEIGHT = 555;
 
-	protected DashboardDataProvider dashboardDataProvider;
-	protected DashboardFilterLayout filterLayout;
 
 	protected AbstractDashboardStatisticsComponent statisticsComponent;
 	protected AbstractEpiCurveComponent epiCurveComponent;
@@ -83,24 +81,7 @@ public class ContactsDashboardView extends AbstractDashboardView {
 	private Label contactsPlacedInQuarantineByDate = new Label();
 
 	public ContactsDashboardView() {
-		super(VIEW_NAME);
-
-		dashboardDataProvider = new DashboardDataProvider();
-		if (dashboardDataProvider.getDashboardType() == null) {
-			dashboardDataProvider.setDashboardType(DashboardType.CONTACTS);
-		}
-		if (DashboardType.CONTACTS.equals(dashboardDataProvider.getDashboardType())) {
-			dashboardDataProvider.setDisease(FacadeProvider.getDiseaseConfigurationFacade().getDefaultDisease());
-		}
-
-		filterLayout = new DashboardFilterLayout(this, dashboardDataProvider);
-		dashboardLayout.addComponent(filterLayout);
-
-		dashboardSwitcher.setValue(DashboardType.CONTACTS);
-		dashboardSwitcher.addValueChangeListener(e -> {
-			dashboardDataProvider.setDashboardType((DashboardType) e.getProperty().getValue());
-			navigateToDashboardView(e);
-		});
+		super(VIEW_NAME, DashboardType.CONTACTS);
 
 		filterLayout.setInfoLabelText(I18nProperties.getString(Strings.infoContactDashboard));
 
@@ -112,6 +93,7 @@ public class ContactsDashboardView extends AbstractDashboardView {
 
 		// Add statistics
 		statisticsComponent = new ContactsDashboardStatisticsComponent(dashboardDataProvider);
+		
 		rowsLayout.addComponent(statisticsComponent);
 		rowsLayout.setExpandRatio(statisticsComponent, 0);
 

@@ -44,15 +44,12 @@ public class CampaignDashboardView extends AbstractDashboardView {
 	private Component currentDiagramsWrapper;
 
 	public CampaignDashboardView() {
-		super(VIEW_NAME);
+		super(VIEW_NAME, DashboardType.CAMPAIGNS);
 
 		dataProvider = new CampaignDashboardDataProvider();
 		filterLayout = new CampaignDashboardFilterLayout(this, dataProvider);
 		dashboardLayout.addComponent(filterLayout);
 		dashboardLayout.setMargin(false);
-
-		dashboardSwitcher.setValue(DashboardType.CAMPAIGNS);
-		dashboardSwitcher.addValueChangeListener(e -> navigateToDashboardView(e));
 
 		filterLayout.setInfoLabelText(I18nProperties.getString(Strings.infoCampaignsDashboard));
 		dashboardLayout.setExpandRatio(filterLayout, 0);

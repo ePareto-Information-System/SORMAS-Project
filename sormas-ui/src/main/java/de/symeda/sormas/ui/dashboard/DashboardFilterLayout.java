@@ -108,7 +108,7 @@ public class DashboardFilterLayout extends HorizontalLayout {
 
 		createDateFilters();
 		createRegionAndDistrictFilter();
-		if (dashboardDataProvider.getDashboardType() == DashboardType.CONTACTS) {
+		if (dashboardDataProvider.getDashboardType() == DashboardType.CONTACTS || dashboardDataProvider.getDashboardType() == DashboardType.SAMPLES) {
 			createDiseaseFilter();
 		}
 		createResetAndApplyButtons();
@@ -509,7 +509,8 @@ public class DashboardFilterLayout extends HorizontalLayout {
 	}
 
 	private void setDateFilter(Date from, Date to) {
-		dashboardDataProvider.setFromDate(DateHelper.getStartOfDay(from));
+		Date f = DateHelper.getStartOfDay(from);
+		dashboardDataProvider.setFromDate(f);
 		dashboardDataProvider.setToDate(DateHelper.getEndOfDay(to));
 		updateComparisonDates();
 		if (dateFilterChangeCallback != null) {

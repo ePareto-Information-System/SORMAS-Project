@@ -106,6 +106,7 @@ $editor-caption-font-color: valo-font-color($editor-background-color, 0.5) !defa
 @import "views/statistics.scss";
 @import "views/classification.scss";
 @import "views/line-listing.scss";
+@import "views/samplecount.scss";
 
 @import "../valo/valo.scss";
 
@@ -168,6 +169,7 @@ $editor-caption-font-color: valo-font-color($editor-background-color, 0.5) !defa
   @include sormas-disease-styles;
   @include sormas-login-view;
   @include sormas-statistics-view;
+  @include sormas-sample-count-styles;
   @include sormas-view;
   
   @include sormas-line-listing-view;

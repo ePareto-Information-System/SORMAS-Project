@@ -42,6 +42,7 @@ import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.sample.DashboardTestResultDto;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
+import de.symeda.sormas.api.sample.SampleCountType;
 
 // FIXME: 06/08/2020 this should be refactored into two specific data providers for case and contact dashboards
 public class DashboardDataProvider {
@@ -73,13 +74,13 @@ public class DashboardDataProvider {
 	private Map<EventStatus, Long> eventCountByStatus;
 	private List<DashboardTestResultDto> testResults = new ArrayList<>();
 	private List<DashboardTestResultDto> previousTestResults = new ArrayList<>();
+	private Map<SampleCountType, Long> sampleCount = new HashMap<SampleCountType, Long>();
 
 	private Long contactsInQuarantineCount = 0L;
 	private Long contactsPlacedInQuarantineCount = 0L;
 	private Long casesInQuarantineCount = 0L;
 	private Long casesPlacedInQuarantineCount = 0L;
 	private Long contactsConvertedToCaseCount = 0L;
-	private Map<SampleCountType, Long> sampleCount = new HashMap<SampleCountType, Long>();
 	private Map<SampleCountType, Long> previousSampleCount = new HashMap<SampleCountType, Long>();
 
 	public void refreshData() {
@@ -413,19 +414,19 @@ public class DashboardDataProvider {
 		this.contactsConvertedToCaseCount = contactsConvertedToCaseCount;
 	}
 
-	public Map<SampleCountType, Long> getSampleCountDifference() {
-		return sampleCountDifference;
-	}
-
-	public void setSampleCountDifference(Map<SampleCountType, Long> sampleCountDifference) {
-		this.sampleCountDifference = sampleCountDifference;
-	}
-
 	public Map<SampleCountType, Long> getPreviousSampleCount() {
 		return previousSampleCount;
 	}
 
 	public void setPreviousSampleCount(Map<SampleCountType, Long> previousSampleCount) {
 		this.previousSampleCount = previousSampleCount;
+	}
+
+	public Map<SampleCountType, Long> getSampleCount() {
+		return sampleCount;
+	}
+
+	public void setSampleCount(Map<SampleCountType, Long> sampleCount) {
+		this.sampleCount = sampleCount;
 	}
 }

@@ -32,30 +32,11 @@ public class SurveillanceDashboardView extends AbstractDashboardView {
 
 	public static final String VIEW_NAME = ROOT_VIEW_NAME + "/surveillance";
 
-	protected DashboardDataProvider dashboardDataProvider;
-	protected DashboardFilterLayout filterLayout;
-
 	protected SurveillanceOverviewLayout surveillanceOverviewLayout;
 	protected SurveillanceDiseaseCarouselLayout diseaseCarouselLayout;
 
 	public SurveillanceDashboardView() {
-		super(VIEW_NAME);
-
-		dashboardDataProvider = new DashboardDataProvider();
-		if (dashboardDataProvider.getDashboardType() == null) {
-			dashboardDataProvider.setDashboardType(DashboardType.SURVEILLANCE);
-		}
-		if (DashboardType.CONTACTS.equals(dashboardDataProvider.getDashboardType())) {
-			dashboardDataProvider.setDisease(FacadeProvider.getDiseaseConfigurationFacade().getDefaultDisease());
-		}
-		filterLayout = new DashboardFilterLayout(this, dashboardDataProvider);
-		dashboardLayout.addComponent(filterLayout);
-
-		dashboardSwitcher.setValue(DashboardType.SURVEILLANCE);
-		dashboardSwitcher.addValueChangeListener(e -> {
-			dashboardDataProvider.setDashboardType((DashboardType) e.getProperty().getValue());
-			navigateToDashboardView(e);
-		});
+		super(VIEW_NAME, DashboardType.SURVEILLANCE);
 
 		filterLayout.setInfoLabelText(I18nProperties.getString(Strings.infoSurveillanceDashboard));
 		dashboardLayout.setSpacing(false);
