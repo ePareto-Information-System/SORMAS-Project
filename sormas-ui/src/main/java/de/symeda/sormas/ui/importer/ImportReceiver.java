@@ -56,7 +56,7 @@ public class ImportReceiver implements Receiver, SucceededListener {
 			return new ByteArrayOutputStream();
 		}
 		// Reject all files except .csv files - we also need to accept excel files here
-		if (!(mimeType.equals("text/csv") || mimeType.equals("application/vnd.ms-excel"))) {
+		if (!(mimeType.equals("text/csv") || mimeType.equals("application/vnd.ms-excel") || mimeType.equals("application/octet-stream"))) {
 			file = null;
 			new Notification(
 				I18nProperties.getString(Strings.headingWrongFileType),
