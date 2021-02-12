@@ -5972,8 +5972,8 @@ ALTER TABLE hospitalization ADD COLUMN patientconditiononadmission varchar(255);
 INSERT INTO schema_version (version_number, comment) VALUES (284, 'Altered hospitalization table by adding patientconditiononadmission to it');
 
 -- 2021-01-05 ALter the name of the column
-ALTER TABLE cases RENAME COLUMN  othercaseoutcomedetails TO specifyotheroutcome;
+ALTER TABLE cases ADD COLUMN specifyotheroutcome varchar(255);
 
-INSERT INTO schema_version (version_number, comment) VALUES (233, 'Modified the name of the column othercaseoutcomedetails to specifyOtherOutcome');
+INSERT INTO schema_version (version_number, comment) VALUES (400, 'Added a column to specifyOtherOutcome to the case table');
 
 -- *** Insert new sql commands BEFORE this line ***

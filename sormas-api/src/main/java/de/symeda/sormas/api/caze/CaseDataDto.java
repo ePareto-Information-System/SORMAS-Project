@@ -166,7 +166,6 @@ public class CaseDataDto extends PseudonymizableDto {
 	public static final String END_OF_ISOLATION_REASON_DETAILS = "endOfIsolationReasonDetails";
 	public static final String CASE_TRANSMISSION_CLASSIFICATION = "caseTransmissionClassification";
 	public static final String OTHERCASEOUTCOMEDETAILS = "specifyOtherOutcome";
-	public static final String OTHERCASEOUTCOMEDETAILS = "otherCaseOutcomeDetails";
 
 	// Fields are declared in the order they should appear in the import template
 

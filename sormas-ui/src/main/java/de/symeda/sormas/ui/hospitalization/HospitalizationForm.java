@@ -156,7 +156,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		final DateField admissionDateField = addField(HospitalizationDto.ADMISSION_DATE, DateField.class);
 		dischargeDateField = addDateField(HospitalizationDto.DISCHARGE_DATE, DateField.class, 7);
 		
-		intensiveCareUnit = addField(HospitalizationDto.INTENSIVE_CARE_UNIT, OptionGroup.class);
+		intensiveCareUnit = addField(HospitalizationDto.INTENSIVE_CARE_UNIT, NullableOptionGroup.class);
 		intensiveCareUnit.addValueChangeListener(e -> setDateFieldVisibilties());
 		intensiveCareUnitStart = addField(HospitalizationDto.INTENSIVE_CARE_UNIT_START, DateField.class);
 		intensiveCareUnitStart.setVisible(false);
@@ -171,7 +171,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			leftAgainstAdviceField.setRequired(true);
 		}
 		
-		OptionGroup hospitalizedPreviouslyField = addField(HospitalizationDto.HOSPITALIZED_PREVIOUSLY, OptionGroup.class);
+		NullableOptionGroup hospitalizedPreviouslyField = addField(HospitalizationDto.HOSPITALIZED_PREVIOUSLY, NullableOptionGroup.class);
 		CssStyles.style(hospitalizedPreviouslyField, CssStyles.ERROR_COLOR_PRIMARY);
 		PreviousHospitalizationsField previousHospitalizationsField =
 			addField(HospitalizationDto.PREVIOUS_HOSPITALIZATIONS, PreviousHospitalizationsField.class);
@@ -283,21 +283,21 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		intensiveCareUnitEnd.setVisible(visible);
 	}
 	
-	private void showCaseOutcome() {
-		if ((dischargeDateField.isModified() || !dischargeDateField.equals(null)) /* && caze.getOutcome() == null */) {
-			CaseOutcome outcome = caze.getOutcome();
-			caseOutcome.setRequired(true);
-			caseOutcome.setValue(outcome == null ? null : outcome);
-			caseOutcome.setVisible(true);
-		}
-	}
-	private void addOtherOutcomeValue() {
-		if (caseOutcome.getValue() == CaseOutcome.OTHER) {
+//	private void showCaseOutcome() {
+//		if ((dischargeDateField.isModified() || !dischargeDateField.equals(null)) /* && caze.getOutcome() == null */) {
+//			CaseOutcome outcome = caze.getOutcome();
+//			caseOutcome.setRequired(true);
 //			caseOutcome.setValue(outcome == null ? null : outcome);
-			otherCaseOutcomeDetails.setVisible(true);
-			System.err.println(caseOutcome.getValue());
-		}
-	}
+//			caseOutcome.setVisible(true);
+//		}
+//	}
+//	private void addOtherOutcomeValue() {
+//		if (caseOutcome.getValue() == CaseOutcome.OTHER) {
+////			caseOutcome.setValue(outcome == null ? null : outcome);
+//			otherCaseOutcomeDetails.setVisible(true);
+//			System.err.println(caseOutcome.getValue());
+//		}
+//	}
 
 	private void showCaseOutcome() {
 		if ((dischargeDateField.isModified() || !dischargeDateField.equals(null)) /* && caze.getOutcome() == null */) {
