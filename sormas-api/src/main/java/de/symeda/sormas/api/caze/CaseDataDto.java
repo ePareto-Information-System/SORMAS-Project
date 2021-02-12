@@ -1327,8 +1327,4 @@ public class CaseDataDto extends PseudonymizableDto {
 	public String getOtherCaseOutcomeDetails() {
 		return otherCaseOutcomeDetails;
 	}
-	
-	public void setSpecifyOtherOutcome(String specifyOtherOutcome) {
-		this.specifyOtherOutcome = specifyOtherOutcome;
-	}
 }
