@@ -14,7 +14,6 @@ import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.MapContactDto;
-import de.symeda.sormas.api.facility.FacilityHelper;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.person.PersonDto;
@@ -87,20 +86,15 @@ public class ContactPopupGridOnMap extends Grid {
 			}
 		});
 
-		setColumns(
-			ContactDto.UUID,
-			DISEASE_SHORT,
-			ContactDto.CONTACT_CLASSIFICATION,
-			FIRST_NAME,
-			LAST_NAME,
-			ContactDto.CONTACT_CATEGORY,
+		setColumns(ContactDto.UUID, DISEASE_SHORT, ContactDto.CONTACT_CLASSIFICATION, FIRST_NAME, LAST_NAME,
+//			ContactDto.CONTACT_CATEGORY,
 			ContactDto.FOLLOW_UP_STATUS);
 
 		getColumn(ContactDto.UUID).setRenderer(new V7UuidRenderer());
 		Language userLanguage = I18nProperties.getUserLanguage();
 //		getColumn(ContactDto.REPORT_DATE_TIME).setRenderer(new DateRenderer(DateHelper.getLocalDateTimeFormat(userLanguage)));
-
-		if (mapContactDto == null || !FacilityHelper.isOtherOrNoneHealthFacility(mapContactDto.getUuid())) {
+//		if (mapContactDto == null || !FacilityHelper.isOtherOrNoneHealthFacility(mapContactDto.getUuid())) {
+		if (mapContactDto == null) {
 			getColumn(ContactDto.FOLLOW_UP_STATUS).setHidden(true);
 		}
 
