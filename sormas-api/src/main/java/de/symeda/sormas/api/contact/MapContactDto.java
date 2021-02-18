@@ -209,7 +209,9 @@ public class MapContactDto implements Serializable {
 	public String toString() {
 
 		StringBuilder builder = new StringBuilder();
-		builder.append(personFirstName).append(" ").append(personLastName.toUpperCase());
+		if (personFirstName != null || personLastName != null) {
+			builder.append(personFirstName).append(" ").append(personLastName.toUpperCase());
+		}
 		if (casePersonFirstName != null && casePersonLastName != null) {
 			builder.append(StringUtils.wrap(I18nProperties.getString(Strings.toCase), ""));
 			builder.append(casePersonFirstName).append(" ").append(casePersonLastName.toUpperCase());
