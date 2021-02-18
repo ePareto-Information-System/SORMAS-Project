@@ -1170,7 +1170,7 @@ public class DashboardMapComponent extends VerticalLayout {
 				contactGrid.setHeightMode(HeightMode.ROW);
 				layout.addComponent(contactGrid);
 				layout.setMargin(true);
-				window.setCaption(I18nProperties.getCaption(Captions.dashboardContactsIn) + " " + mapContactDtoClicked.toString());
+				window.setCaption(I18nProperties.getCaption(Captions.dashboardContactsIn) + " " + mapContactDtoClicked);
 			} else {
 				markerIndex -= markerContactList.size();
 				MapContactDto contact = mapContactDtos.get(markerIndex);
