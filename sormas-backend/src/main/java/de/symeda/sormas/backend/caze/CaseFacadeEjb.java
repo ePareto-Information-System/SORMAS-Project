@@ -502,13 +502,14 @@ public class CaseFacadeEjb implements CaseFacade {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<MapCaseDto> cq = cb.createQuery(MapCaseDto.class);
 		Root<Case> caze = cq.from(Case.class);
+		CaseJoins<Case> caseJoins = new CaseJoins<>(caze);
 
 		selectIndexDtoFields2(cq, caze);
 
 		Predicate filter = caseService.createUserFilter(cb, cq, caze);
 
 		if (caseCriteria != null) {
-			Predicate criteriaFilter = caseService.createCriteriaFilter(caseCriteria, cb, cq, caze);
+			Predicate criteriaFilter = caseService.createCriteriaFilter(caseCriteria, cb, cq, caze, caseJoins);
 			filter = AbstractAdoService.and(cb, filter, criteriaFilter);
 		}
 
