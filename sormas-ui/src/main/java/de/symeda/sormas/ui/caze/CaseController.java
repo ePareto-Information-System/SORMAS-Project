@@ -972,7 +972,7 @@ public class CaseController {
 		EpiDataDto dto = caze.getEpiData();
 		setDefaultValues(dto);
 		epiDataForm.setValue(dto);
-
+		
 		final CommitDiscardWrapperComponent<EpiDataForm> editView = new CommitDiscardWrapperComponent<EpiDataForm>(
 			epiDataForm,
 			UserProvider.getCurrent().hasUserRight(UserRight.CASE_EDIT),

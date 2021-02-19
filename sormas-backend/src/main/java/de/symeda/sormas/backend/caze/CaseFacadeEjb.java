@@ -492,6 +492,37 @@ public class CaseFacadeEjb implements CaseFacade {
 		return cases;
 	}
 
+	//@Override
+	public List<MapCaseDto> getIndexListForMap(
+		CaseCriteria caseCriteria,
+		Integer first,
+		Integer max,
+		String userUuid,
+		List<SortProperty> sortProperties) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<MapCaseDto> cq = cb.createQuery(MapCaseDto.class);
+		Root<Case> caze = cq.from(Case.class);
+
+		selectIndexDtoFields2(cq, caze);
+
+		Predicate filter = caseService.createUserFilter(cb, cq, caze);
+
+		if (caseCriteria != null) {
+			Predicate criteriaFilter = caseService.createCriteriaFilter(caseCriteria, cb, cq, caze);
+			filter = AbstractAdoService.and(cb, filter, criteriaFilter);
+		}
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		if (first != null && max != null) {
+			return em.createQuery(cq).setFirstResult(first).setMaxResults(max).getResultList();
+		} else {
+			return em.createQuery(cq).getResultList();
+		}
+	}
+
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public List<CaseExportDto> getExportList(
@@ -1390,6 +1421,33 @@ public class CaseFacadeEjb implements CaseFacade {
 
 	private void selectIndexDtoFields(CriteriaQuery<CaseIndexDto> cq, Root<Case> root) {
 		cq.multiselect(listQueryBuilder.getCaseIndexSelections(root, new CaseJoins<>(root)));
+	}
+
+	private void selectIndexDtoFields2(CriteriaQuery<MapCaseDto> cq, Root<Case> root) {
+		Join<Case, Person> person = root.join(Case.PERSON, JoinType.LEFT);
+		Join<Person, Location> personAddress = person.join(Person.ADDRESS, JoinType.LEFT);
+		Join<Case, Facility> facility = root.join(Case.HEALTH_FACILITY, JoinType.LEFT);
+
+		cq.multiselect(
+			root.get(Case.UUID),
+			root.get(Case.REPORT_DATE),
+			root.get(Case.CASE_CLASSIFICATION),
+			root.get(Case.DISEASE),
+			person.get(Person.UUID),
+			person.get(Person.FIRST_NAME),
+			person.get(Person.LAST_NAME),
+			facility.get(Facility.UUID),
+			facility.get(Facility.LATITUDE),
+			facility.get(Facility.LONGITUDE),
+			root.get(Case.REPORT_LAT),
+			root.get(Case.REPORT_LON),
+			personAddress.get(Location.LATITUDE),
+			personAddress.get(Location.LONGITUDE),
+			root.get(User.UUID),
+			root.get(Region.UUID),
+			root.get(District.UUID),
+			root.get(Community.UUID),
+			root.get(PointOfEntry.UUID));
 	}
 
 	@Override

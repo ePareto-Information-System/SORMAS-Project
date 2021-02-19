@@ -60,12 +60,16 @@ import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DateHelper;
+import de.symeda.sormas.api.visit.VisitResult;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.caze.CaseController;
+import de.symeda.sormas.ui.caze.CasesView;
 import de.symeda.sormas.ui.contact.importer.ContactsImportLayout;
+import de.symeda.sormas.ui.dashboard.DashboardCssStyles;
+import de.symeda.sormas.ui.entitymap.DashboardMapComponent;
 import de.symeda.sormas.ui.utils.AbstractView;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
@@ -111,6 +115,10 @@ public class ContactsView extends AbstractView {
 	private boolean buttonPreviousOrNextClick = false;
 	private Date followUpToDate;
 
+	private Button showGridViewButton;
+	private Button showMapViewButton;
+	private DashboardMapComponent contactMap;
+
 	public ContactsView() {
 		super(VIEW_NAME);
 
@@ -136,14 +144,14 @@ public class ContactsView extends AbstractView {
 		gridLayout = new VerticalLayout();
 		gridLayout.addComponent(createFilterBar());
 		gridLayout.addComponent(createStatusFilterBar());
-		gridLayout.addComponent(grid);
+
 		if (ContactsViewType.FOLLOW_UP_VISITS_OVERVIEW.equals(viewConfiguration.getViewType())) {
 			gridLayout.addComponent(createFollowUpLegend());
 		}
 		gridLayout.setMargin(true);
 		gridLayout.setSpacing(false);
 		gridLayout.setSizeFull();
-		gridLayout.setExpandRatio(grid, 1);
+
 		gridLayout.setStyleName("crud-main-layout");
 		grid.getDataProvider().addDataProviderListener(e -> updateStatusButtons());
 
@@ -359,6 +367,11 @@ public class ContactsView extends AbstractView {
 		addComponent(gridLayout);
 	}
 
+	protected void changeViewType(ContactsViewType type) {
+		viewConfiguration.setViewType(type);
+		SormasUI.get().getNavigator().navigateTo(CasesView.VIEW_NAME);
+	}
+
 	public VerticalLayout createFilterBar() {
 		VerticalLayout filterLayout = new VerticalLayout();
 		filterLayout.setSpacing(false);
@@ -555,6 +568,7 @@ public class ContactsView extends AbstractView {
 
 			}
 		}
+		addShowMapOrTableToggleButtons(actionButtonsLayout);
 		statusFilterLayout.addComponent(actionButtonsLayout);
 		statusFilterLayout.setComponentAlignment(actionButtonsLayout, Alignment.TOP_RIGHT);
 		statusFilterLayout.setExpandRatio(actionButtonsLayout, 1);
@@ -569,6 +583,89 @@ public class ContactsView extends AbstractView {
 		buttonPreviousOrNextClick = false;
 	}
 
+	private HorizontalLayout createFollowUpLegend() {
+		HorizontalLayout legendLayout = new HorizontalLayout();
+		legendLayout.setSpacing(false);
+		CssStyles.style(legendLayout, CssStyles.VSPACE_TOP_4);
+
+		Label notSymptomaticColor = new Label("");
+		styleLegendEntry(notSymptomaticColor, CssStyles.LABEL_BACKGROUND_FOLLOW_UP_NOT_SYMPTOMATIC, true);
+		legendLayout.addComponent(notSymptomaticColor);
+
+		Label notSymptomaticLabel = new Label(VisitResult.NOT_SYMPTOMATIC.toString());
+		legendLayout.addComponent(notSymptomaticLabel);
+
+		Label symptomaticColor = new Label("");
+		styleLegendEntry(symptomaticColor, CssStyles.LABEL_BACKGROUND_FOLLOW_UP_SYMPTOMATIC, false);
+		legendLayout.addComponent(symptomaticColor);
+
+		Label symptomaticLabel = new Label(VisitResult.SYMPTOMATIC.toString());
+		legendLayout.addComponent(symptomaticLabel);
+
+		Label unavailableColor = new Label("");
+		styleLegendEntry(unavailableColor, CssStyles.LABEL_BACKGROUND_FOLLOW_UP_UNAVAILABLE, false);
+		legendLayout.addComponent(unavailableColor);
+
+		Label unavailableLabel = new Label(VisitResult.UNAVAILABLE.toString());
+		legendLayout.addComponent(unavailableLabel);
+
+		Label uncooperativeColor = new Label("");
+		styleLegendEntry(uncooperativeColor, CssStyles.LABEL_BACKGROUND_FOLLOW_UP_UNCOOPERATIVE, false);
+		legendLayout.addComponent(uncooperativeColor);
+
+		Label uncooperativeLabel = new Label(VisitResult.UNCOOPERATIVE.toString());
+		legendLayout.addComponent(uncooperativeLabel);
+
+		Label notPerformedColor = new Label("");
+		styleLegendEntry(notPerformedColor, CssStyles.LABEL_BACKGROUND_FOLLOW_UP_NOT_PERFORMED, false);
+		legendLayout.addComponent(notPerformedColor);
+
+		Label notPerformedLabel = new Label(VisitResult.NOT_PERFORMED.toString());
+		legendLayout.addComponent(notPerformedLabel);
+
+		return legendLayout;
+	}
+
+	private void addShowMapOrTableToggleButtons(HorizontalLayout layout) {
+
+		//gridView
+		showGridViewButton = new Button("", VaadinIcons.TABLE);
+		CssStyles.style(showGridViewButton, CssStyles.BUTTON_SUBTLE);
+		showGridViewButton.addStyleName(CssStyles.VSPACE_NONE);
+
+		showGridViewButton.addClickListener(e -> {
+			criteria.setViewMode("grid");
+			navigateTo(criteria);
+		});
+
+		showGridViewButton.setVisible(false);
+		layout.addComponent(showGridViewButton);
+
+		//mapView
+		showMapViewButton = new Button("", VaadinIcons.SQUARE_SHADOW);
+		CssStyles.style(showMapViewButton, CssStyles.BUTTON_SUBTLE);
+		showMapViewButton.addStyleName(CssStyles.VSPACE_NONE);
+
+		showMapViewButton.addClickListener(e -> {
+			criteria.setViewMode("map");
+			navigateTo(criteria);
+		});
+
+		showMapViewButton.setVisible(false);
+		layout.addComponent(showMapViewButton);
+	}
+
+	private void styleLegendEntry(Label label, String style, boolean first) {
+		label.setHeight(18, Unit.PIXELS);
+		label.setWidth(12, Unit.PIXELS);
+		CssStyles.style(label, style, CssStyles.HSPACE_RIGHT_4);
+
+		if (!first) {
+			CssStyles.style(label, CssStyles.HSPACE_LEFT_3);
+		}
+	}
+
+	@Override
 	public void enter(ViewChangeEvent event) {
 		String params = event.getParameters().trim();
 		if (params.startsWith("?")) {
@@ -584,11 +681,33 @@ public class ContactsView extends AbstractView {
 
 		if (ContactsViewType.FOLLOW_UP_VISITS_OVERVIEW.equals(viewConfiguration.getViewType())) {
 			((ContactFollowUpGrid) grid).reload();
+			showGridViewButton.setVisible(true);
 		} else {
 			if (viewConfiguration.isInEagerMode()) {
 				((AbstractContactGrid<?>) grid).setEagerDataProvider();
 			}
 			((AbstractContactGrid<?>) grid).reload();
+		}
+
+		if (criteria.getViewMode().equals("map")) {
+			gridLayout.removeComponent(grid);
+			VerticalLayout mapLayout = new VerticalLayout();
+			mapLayout.setStyleName(DashboardCssStyles.CURVE_AND_MAP_LAYOUT);
+			mapLayout.setMargin(false);
+
+			contactMap = new DashboardMapComponent(criteria);
+			mapLayout.addComponent(contactMap);
+			mapLayout.setExpandRatio(contactMap, 1);
+			gridLayout.addComponent(mapLayout);
+
+			gridLayout.setExpandRatio(mapLayout, 1);
+
+			showGridViewButton.setVisible(true);
+		} else {
+			gridLayout.addComponent(grid);
+			gridLayout.setExpandRatio(grid, 1);
+
+			showMapViewButton.setVisible(true);
 		}
 	}
 

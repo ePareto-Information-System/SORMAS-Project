@@ -574,6 +574,7 @@ public interface Captions {
 	String dashboardCaseFatalityRate = "dashboardCaseFatalityRate";
 	String dashboardCaseFatalityRateShort = "dashboardCaseFatalityRateShort";
 	String dashboardCasesIn = "dashboardCasesIn";
+	String dashboardContactsIn = "dashboardContactsIn";
 	String dashboardComparedTo = "dashboardComparedTo";
 	String dashboardComparedToPreviousPeriod = "dashboardComparedToPreviousPeriod";
 	String dashboardCompletedFollowUp = "dashboardCompletedFollowUp";
@@ -683,6 +684,7 @@ public interface Captions {
 	String dashboardUnderFollowUpShort = "dashboardUnderFollowUpShort";
 	String dashboardWeekBefore = "dashboardWeekBefore";
 	String dashboardYesterday = "dashboardYesterday";
+	String dashboardHealthFacilities = "dashboardHealthFacilities";
 	String date = "date";
 	String defaultCommunity = "defaultCommunity";
 	String defaultDistrict = "defaultDistrict";

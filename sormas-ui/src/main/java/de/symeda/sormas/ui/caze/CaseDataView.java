@@ -25,7 +25,9 @@ import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
+import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.caze.CaseCriteria;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -38,6 +40,8 @@ import de.symeda.sormas.ui.docgeneration.DocGenerationComponent;
 import de.symeda.sormas.ui.samples.sampleLink.SampleListComponent;
 import de.symeda.sormas.ui.sormastosormas.SormasToSormasListComponent;
 import de.symeda.sormas.ui.survnet.SurvnetGateway;
+import de.symeda.sormas.ui.ViewModelProviders;
+import de.symeda.sormas.ui.entitymap.DashboardMapComponent;
 import de.symeda.sormas.ui.task.TaskListComponent;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
 import de.symeda.sormas.ui.utils.CssStyles;
@@ -62,6 +66,10 @@ public class CaseDataView extends AbstractCaseView {
 	public static final String SORMAS_TO_SORMAS_LOC = "sormasToSormas";
 
 	private CommitDiscardWrapperComponent<CaseDataForm> editComponent;
+	public static final String CASE_MAP = "map";
+
+	private CaseCriteria criteria;
+
 
 	public CaseDataView() {
 		super(VIEW_NAME, false);
@@ -81,7 +89,8 @@ public class CaseDataView extends AbstractCaseView {
 			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, EVENTS_LOC),
 			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, SORMAS_TO_SORMAS_LOC),
 			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, SurvnetGateway.SURVNET_GATEWAY_LOC),
-			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, DocGenerationComponent.QUARANTINE_LOC));
+			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, DocGenerationComponent.QUARANTINE_LOC),
+			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, CASE_MAP));
 
 		DetailSubComponentWrapper container = new DetailSubComponentWrapper(() -> editComponent);
 		container.setWidth(100, Unit.PERCENTAGE);
@@ -160,6 +169,36 @@ public class CaseDataView extends AbstractCaseView {
 
 		DocGenerationComponent.addComponentToLayout(layout, getCaseRef(), caze.getQuarantine());
 
+		VerticalLayout mapLayout = new VerticalLayout();
+		mapLayout.setMargin(false);
+		mapLayout.setSpacing(false);
+
+		criteria = ViewModelProviders.of(CasesView.class).get(CaseCriteria.class);
+		if (criteria.getRelevanceStatus() == null) {
+			criteria.relevanceStatus(EntityRelevanceStatus.ACTIVE);
+		}
+
+//		DashboardMapComponent map = new DashboardMapComponent(criteria);
+//		map.addStyleName(CssStyles.SIDE_COMPONENT);
+//		mapLayout.addComponent(map);
+//		layout.addComponent(mapLayout, CASE_MAP);
+
+		layout.addComponent(sideMapLayout(caze), CASE_MAP);
+
+
 		setCaseEditPermission(container);
+	}
+
+	private VerticalLayout sideMapLayout(CaseDataDto caseDataDto) {
+		VerticalLayout mapLayout = new VerticalLayout();
+		mapLayout.setMargin(false);
+		mapLayout.setSpacing(false);
+		DashboardMapComponent dashboardMapComponent = new DashboardMapComponent(null, caseDataDto);
+		dashboardMapComponent.addStyleName(CssStyles.SIDE_COMPONENT);
+
+		mapLayout.addComponent(dashboardMapComponent);
+
+		addComponent(mapLayout);
+		return mapLayout;
 	}
 }

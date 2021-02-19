@@ -129,4 +129,5 @@ public interface ContactFacade {
 		Date from,
 		Date to);
 
+	List<MapContactDto> getIndexListForMap(ContactCriteria contactCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
 }

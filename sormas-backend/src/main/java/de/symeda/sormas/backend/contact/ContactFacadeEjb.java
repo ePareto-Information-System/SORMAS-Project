@@ -1493,4 +1493,19 @@ public class ContactFacadeEjb implements ContactFacade {
 
 		return contactService.isContactEditAllowed(contact);
 	}
+
+	@Override
+	public List<MapContactDto> getIndexListForMap(ContactCriteria contactCriteria, Integer first, Integer max, List<SortProperty> sortProperties) {
+
+		CriteriaQuery<MapContactDto> query = listCriteriaBuilder.buildIndexCriteriaForMap(contactCriteria, sortProperties);
+
+		final List<MapContactDto> mapContactDtos;
+		if (first != null && max != null) {
+			mapContactDtos = em.createQuery(query).setFirstResult(first).setMaxResults(max).getResultList();
+		} else {
+			mapContactDtos = em.createQuery(query).getResultList();
+		}
+
+		return mapContactDtos;
+	}
 }

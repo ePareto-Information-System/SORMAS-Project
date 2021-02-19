@@ -25,6 +25,7 @@ import de.symeda.sormas.api.contact.ContactCriteria;
 import de.symeda.sormas.api.contact.ContactIndexDetailedDto;
 import de.symeda.sormas.api.contact.ContactIndexDto;
 import de.symeda.sormas.api.contact.ContactJurisdictionDto;
+import de.symeda.sormas.api.contact.MapContactDto;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.common.AbstractAdoService;
@@ -50,6 +51,10 @@ public class ContactListCriteriaBuilder {
 
 	public CriteriaQuery<ContactIndexDto> buildIndexCriteria(ContactCriteria contactCriteria, List<SortProperty> sortProperties) {
 		return buildIndexCriteria(ContactIndexDto.class, this::getContactIndexSelections, contactCriteria, this::getIndexOrders, sortProperties);
+	}
+
+	public CriteriaQuery<MapContactDto> buildIndexCriteriaForMap(ContactCriteria contactCriteria, List<SortProperty> sortProperties) {
+		return buildIndexCriteria(MapContactDto.class, this::getContactIndexSelectionsForMap, contactCriteria, this::getIndexOrders, sortProperties);
 	}
 
 	public CriteriaQuery<ContactIndexDetailedDto> buildIndexDetailedCriteria(ContactCriteria contactCriteria, List<SortProperty> sortProperties) {
@@ -115,6 +120,27 @@ public class ContactListCriteriaBuilder {
 			joins.getCaseasePointOfEntry().get(PointOfEntry.UUID),
 			contact.get(Contact.CHANGE_DATE),
 			contact.get(Contact.EXTERNAL_ID));
+	}
+
+	private List<Selection<?>> getContactIndexSelectionsForMap(Root<Contact> contact, ContactJoins joins) {
+
+		return Arrays.asList(
+			contact.get(Contact.UUID),
+			contact.get(Contact.CONTACT_CLASSIFICATION),
+
+			contact.get(Contact.REPORT_LAT),
+			contact.get(Contact.REPORT_LON),
+			joins.getAddress().get(Location.LATITUDE),
+			joins.getAddress().get(Location.LONGITUDE),
+
+			contact.get(Contact.CHANGE_DATE),
+			contact.get(Contact.LAST_CONTACT_DATE),
+			contact.get(Contact.REPORT_DATE_TIME),
+
+			joins.getPerson().get(Person.FIRST_NAME),
+			joins.getPerson().get(Person.LAST_NAME),
+			joins.getCasePerson().get(User.FIRST_NAME),
+			joins.getCasePerson().get(Person.LAST_NAME));
 	}
 
 	private List<Expression<?>> getIndexOrders(SortProperty sortProperty, Root<Contact> contact, ContactJoins joins) {

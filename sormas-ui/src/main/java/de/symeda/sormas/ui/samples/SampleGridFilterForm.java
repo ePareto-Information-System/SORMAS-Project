@@ -159,6 +159,8 @@ public class SampleGridFilterForm extends AbstractFilterForm<SampleCriteria> {
 
 		dateFilterRowLayout.addComponent(weekAndDateFilter);
 
+		dateFilterRowLayout.addStyleName("wrap");
+
 		return dateFilterRowLayout;
 	}
 
@@ -210,21 +212,21 @@ public class SampleGridFilterForm extends AbstractFilterForm<SampleCriteria> {
 	@Override
 	protected void applyDependenciesOnFieldChange(String propertyId, Property.ValueChangeEvent event) {
 		switch (propertyId) {
-		case SampleCriteria.REGION: {
-			RegionReferenceDto region = (RegionReferenceDto) event.getProperty().getValue();
-			if (region == null) {
-				clearAndDisableFields(SampleCriteria.DISTRICT);
-			} else {
-				enableFields(SampleCriteria.DISTRICT);
-				applyRegionFilterDependency(region, SampleCriteria.DISTRICT);
+			case SampleCriteria.REGION: {
+				RegionReferenceDto region = (RegionReferenceDto) event.getProperty().getValue();
+				if (region == null) {
+					clearAndDisableFields(SampleCriteria.DISTRICT);
+				} else {
+					enableFields(SampleCriteria.DISTRICT);
+					applyRegionFilterDependency(region, SampleCriteria.DISTRICT);
+				}
+	
+				break;
 			}
-
-			break;
-		}
-		case SampleCriteria.DISTRICT: {
-			getField(SampleCriteria.COMMUNITY).setValue(null);
-			break;
-		}
+			case SampleCriteria.DISTRICT: {
+				getField(SampleCriteria.COMMUNITY).setValue(null);
+				break;
+			}
 		}
 	}
 

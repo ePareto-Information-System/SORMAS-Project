@@ -111,6 +111,9 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 	private FacilityTypeGroup facilityTypeGroup;
 	private FacilityType facilityType;
 	private Boolean includeCasesFromOtherJurisdictions = Boolean.FALSE;
+	private String viewMode;
+	
+	public Boolean excludeSharedCases;
 
 	@Override
 	public CaseCriteria clone() {
@@ -469,6 +472,15 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 	public void setQuarantineTo(Date quarantineTo) {
 		this.quarantineTo = quarantineTo;
 	}
+	
+	public String getViewMode () {
+		return this.viewMode == null ? "grid" : this.viewMode;
+	}
+	
+	public void setViewMode (String viewMode) {
+		this.viewMode = viewMode;
+	}
+	
 
 	public Integer getBirthdateYYYY() {
 		return birthdateYYYY;

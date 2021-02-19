@@ -118,6 +118,8 @@ public class ContactCriteria extends BaseCriteria implements Serializable {
 	private EventParticipantReferenceDto eventParticipant;
 	private EventReferenceDto onlyContactsWithSourceCaseInGivenEvent;
 
+	private String viewMode;
+
 	public UserRole getReportingUserRole() {
 		return reportingUserRole;
 	}
@@ -572,5 +574,12 @@ public class ContactCriteria extends BaseCriteria implements Serializable {
 	public ContactCriteria onlyContactsWithSourceCaseInGivenEvent(EventReferenceDto onlyContactsWithSourceCaseInGivenEvent) {
 		this.onlyContactsWithSourceCaseInGivenEvent = onlyContactsWithSourceCaseInGivenEvent;
 		return this;
+	}
+	public String getViewMode() {
+		return this.viewMode == null ? "grid" : this.viewMode;
+	}
+
+	public void setViewMode(String viewMode) {
+		this.viewMode = viewMode;
 	}
 }

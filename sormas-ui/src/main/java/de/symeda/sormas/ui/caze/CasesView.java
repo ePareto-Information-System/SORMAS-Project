@@ -77,6 +77,8 @@ import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.caze.exporter.CaseExportConfigurationsLayout;
 import de.symeda.sormas.ui.caze.importer.CaseImportLayout;
 import de.symeda.sormas.ui.caze.importer.LineListingImportLayout;
+import de.symeda.sormas.ui.dashboard.DashboardCssStyles;
+import de.symeda.sormas.ui.entitymap.DashboardMapComponent;
 import de.symeda.sormas.ui.utils.AbstractView;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CaseDownloadUtil;
@@ -121,8 +123,16 @@ public class CasesView extends AbstractView {
 	private Button activeStatusButton;
 	private PopupButton moreButton;
 	private VerticalLayout moreLayout;
+	private Button showMapViewButton;
+	private Button showGridViewButton;
 
 	private VerticalLayout gridLayout;
+	private HorizontalLayout firstFilterRowLayout;
+	private HorizontalLayout secondFilterRowLayout;
+	private HorizontalLayout thirdFilterRowLayout;
+	private HorizontalLayout dateFilterRowLayout;
+
+	private DashboardMapComponent map;
 
 	private CaseFilterForm filterForm;
 
@@ -174,7 +184,6 @@ public class CasesView extends AbstractView {
 		gridLayout.setMargin(true);
 		gridLayout.setSpacing(false);
 		gridLayout.setSizeFull();
-		gridLayout.setExpandRatio(grid, 1);
 		gridLayout.setStyleName("crud-main-layout");
 
 		grid.getDataProvider().addDataProviderListener(e -> updateStatusButtons());
@@ -647,6 +656,7 @@ public class CasesView extends AbstractView {
 		HorizontalLayout actionButtonsLayout = new HorizontalLayout();
 		actionButtonsLayout.setSpacing(true);
 		{
+
 			// Show active/archived/all dropdown
 			if (UserProvider.getCurrent().hasUserRight(UserRight.CASE_VIEW_ARCHIVED)) {
 				int daysAfterCaseGetsArchived = FacadeProvider.getConfigFacade().getDaysAfterCaseGetsArchived();
@@ -678,6 +688,9 @@ public class CasesView extends AbstractView {
 
 			if (viewConfiguration.getViewType().isCaseOverview()) {
 				AbstractCaseGrid<?> caseGrid = (AbstractCaseGrid<?>) this.grid;
+				//show toggle between mapView and gridView
+				addShowMapOrTableToggleButtons(actionButtonsLayout);
+
 				// Bulk operation dropdown
 				if (isBulkEditAllowed()) {
 					boolean hasBulkOperationsRight = UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS);
@@ -726,6 +739,41 @@ public class CasesView extends AbstractView {
 		return statusFilterLayout;
 	}
 
+	private void addShowMapOrTableToggleButtons(HorizontalLayout layout) {
+
+		//gridView
+		showGridViewButton = new Button("", VaadinIcons.TABLE);
+		CssStyles.style(showGridViewButton, CssStyles.BUTTON_SUBTLE);
+		showGridViewButton.addStyleName(CssStyles.VSPACE_NONE);
+
+		showGridViewButton.addClickListener(e -> {
+			criteria.setViewMode("grid");
+			navigateTo(criteria);
+		});
+
+		showGridViewButton.setVisible(false);
+		layout.addComponent(showGridViewButton);
+
+		//mapView
+		showMapViewButton = new Button("", VaadinIcons.SQUARE_SHADOW);
+		CssStyles.style(showMapViewButton, CssStyles.BUTTON_SUBTLE);
+		showMapViewButton.addStyleName(CssStyles.VSPACE_NONE);
+
+		showMapViewButton.addClickListener(e -> {
+			criteria.setViewMode("map");
+			navigateTo(criteria);
+		});
+
+		showMapViewButton.setVisible(false);
+		layout.addComponent(showMapViewButton);
+	}
+
+	public void setFiltersExpanded(boolean expanded) {
+		secondFilterRowLayout.setVisible(expanded);
+		thirdFilterRowLayout.setVisible(expanded);
+		dateFilterRowLayout.setVisible(expanded);
+	}
+
 	@Override
 	public void enter(ViewChangeEvent event) {
 		String params = event.getParameters().trim();
@@ -740,6 +788,27 @@ public class CasesView extends AbstractView {
 		}
 
 		updateFilterComponents();
+
+		if (criteria.getViewMode().equals("map")) {
+			VerticalLayout mapLayout = new VerticalLayout();
+			mapLayout.setStyleName(DashboardCssStyles.CURVE_AND_MAP_LAYOUT);
+			mapLayout.setMargin(false);
+
+			map = new DashboardMapComponent(criteria);
+			mapLayout.addComponent(map);
+			mapLayout.setExpandRatio(map, 1);
+			gridLayout.addComponent(mapLayout);
+
+			gridLayout.setExpandRatio(mapLayout, 1);
+
+			showGridViewButton.setVisible(true);
+		} else {
+			gridLayout.addComponent(grid);
+			gridLayout.setExpandRatio(grid, 1);
+
+			showMapViewButton.setVisible(true);
+		}
+
 	}
 
 	public void updateFilterComponents() {
