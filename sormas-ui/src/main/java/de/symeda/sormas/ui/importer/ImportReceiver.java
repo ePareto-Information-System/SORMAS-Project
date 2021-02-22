@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.Files;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
@@ -36,6 +37,7 @@ public class ImportReceiver implements Receiver, SucceededListener {
 	private File file;
 	private String fileNameAddition;
 	Consumer<File> fileConsumer;
+	private boolean isCsv;
 
 	public ImportReceiver(String fileNameAddition, Consumer<File> fileConsumer) {
 		this.fileNameAddition = fileNameAddition;
@@ -44,6 +46,8 @@ public class ImportReceiver implements Receiver, SucceededListener {
 
 	@Override
 	public OutputStream receiveUpload(String fileName, String mimeType) {
+		isFileExtensionCsv(fileName);
+
 		// Reject empty files
 		if (fileName == null || fileName.isEmpty()) {
 			file = null;
@@ -56,7 +60,7 @@ public class ImportReceiver implements Receiver, SucceededListener {
 			return new ByteArrayOutputStream();
 		}
 		// Reject all files except .csv files - we also need to accept excel files here
-		if (!(mimeType.equals("text/csv") || mimeType.equals("application/vnd.ms-excel") || mimeType.equals("application/octet-stream"))) {
+		if (!(mimeType.equals("text/csv") || mimeType.equals("application/vnd.ms-excel") || isCsv)) {
 			file = null;
 			new Notification(
 				I18nProperties.getString(Strings.headingWrongFileType),
@@ -110,5 +114,12 @@ public class ImportReceiver implements Receiver, SucceededListener {
 				Type.ERROR_MESSAGE,
 				false).show(Page.getCurrent());
 		}
+	}
+
+	public boolean isFileExtensionCsv(String fileName) {
+	    String x = Files.getFileExtension(fileName);
+	    if(x.equals("csv"))
+	    	isCsv = true;
+		return isCsv;
 	}
 }
