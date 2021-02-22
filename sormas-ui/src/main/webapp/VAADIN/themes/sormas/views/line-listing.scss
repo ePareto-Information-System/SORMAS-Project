@@ -6,7 +6,7 @@
     .width-auto {
         width: auto !important;
     }
-    div.v-slot-stripes>div:* {
+    div.v-slot-stripes>div > * {
         margin: 5px;
         padding: 5px;
     }
