@@ -5277,7 +5277,7 @@ INSERT INTO schema_version (version_number, comment) VALUES (251, 'Campaign diag
 ALTER TABLE cases ADD COLUMN othercaseoutcomedetails varchar(255);
 ALTER TABLE hospitalization ADD COLUMN patientconditiononadmission varchar(255);
 
-INSERT INTO schema_version (version_number, comment) VALUES (256, 'Added a column name othercaseoutcomedetails, patientconditiononadmission to the cases, hospitalization table respectively');
+INSERT INTO schema_version (version_number, comment) VALUES (252, 'Added a column name othercaseoutcomedetails, patientconditiononadmission to the cases, hospitalization table respectively');
 
 ALTER TABLE campaigns ADD COLUMN dashboardElements json;
 ALTER TABLE campaigns_history ADD COLUMN dashboardElements json;
@@ -5291,7 +5291,7 @@ exception
 end;
 $$ language plpgsql immutable;
 
-INSERT INTO schema_version (version_number, comment) VALUES (252, 'Campaign dashboard element #2527');
+INSERT INTO schema_version (version_number, comment) VALUES (253, 'Campaign dashboard element #2527');
 
 -- 2020-09-14 Add person_locations table and remove person reference from locations #2746
 
@@ -5315,7 +5315,7 @@ INSERT INTO person_locations (person_id, location_id) SELECT l.person_id, l.id F
 
 ALTER TABLE location DROP COLUMN person_id;
 
-INSERT INTO schema_version (version_number, comment) VALUES (253, 'Add person_locations table and remove person reference from locations #2746');
+INSERT INTO schema_version (version_number, comment) VALUES (254, 'Add person_locations table and remove person reference from locations #2746');
 
 -- 2020-09-21 - Store if quarantine period has been reduced #2235
 ALTER TABLE cases ADD COLUMN quarantinereduced boolean DEFAULT false;
@@ -5324,25 +5324,25 @@ ALTER TABLE contact ADD COLUMN quarantinereduced boolean DEFAULT false;
 ALTER TABLE cases_history ADD COLUMN quarantinereduced boolean DEFAULT false;
 ALTER TABLE contact_history ADD COLUMN quarantinereduced boolean DEFAULT false;
 
-INSERT INTO schema_version (version_number, comment) VALUES (254, 'Store if quarantine period has been reduced #2235');
+INSERT INTO schema_version (version_number, comment) VALUES (255, 'Store if quarantine period has been reduced #2235');
 
 -- 2020-09-21 Add new field externalId as per feature #2670
 ALTER TABLE person ADD COLUMN externalid varchar(255);
 ALTER TABLE person_history ADD COLUMN externalid varchar(255);
 
-INSERT INTO schema_version (version_number, comment) VALUES (255, 'Add new field externalId as per feature #2670');
+INSERT INTO schema_version (version_number, comment) VALUES (256, 'Add new field externalId as per feature #2670');
 
 -- 2020-09-18 Add action title
 ALTER TABLE action ADD COLUMN title character varying(512);
 ALTER TABLE action_history ADD COLUMN title character varying(512);
 
-INSERT INTO schema_version (version_number, comment) VALUES (256, 'Add action.title');
+INSERT INTO schema_version (version_number, comment) VALUES (257, 'Add action.title');
 
 -- 2020-09-18 Add event title
 ALTER TABLE events ADD COLUMN eventTitle character varying(512);
 ALTER TABLE events_history ADD COLUMN eventTitle character varying(512);
 
-INSERT INTO schema_version (version_number, comment) VALUES (257, 'Add event.eventTitle');
+INSERT INTO schema_version (version_number, comment) VALUES (258, 'Add event.eventTitle');
 
 -- 2020-09-25 Cases > Minimal Essential Data (MED) for Switzerland #2959
 ALTER TABLE cases
@@ -5367,7 +5367,7 @@ ALTER TABLE cases_history
     ADD COLUMN endofisolationreason varchar(255),
     ADD COLUMN endofisolationreasondetails varchar(512);
 
-INSERT INTO schema_version (version_number, comment) VALUES (258, 'Cases > Minimal Essential Data (MED) for Switzerland #2959');
+INSERT INTO schema_version (version_number, comment) VALUES (259, 'Cases > Minimal Essential Data (MED) for Switzerland #2959');
 
 -- 2020-09-22 Add facility fields to location and refactor occupation facilities for persons #2456
 ALTER TABLE location ADD COLUMN facilitytype varchar(255);
@@ -5388,7 +5388,7 @@ FROM t_id_map;
 INSERT INTO person_locations (person_id, location_id) SELECT person_id, location_id FROM t_id_map;
 ALTER TABLE person DROP COLUMN occupationregion_id, DROP COLUMN occupationdistrict_id, DROP COLUMN occupationcommunity_id, DROP COLUMN occupationfacilitytype, DROP COLUMN occupationfacility_id, DROP COLUMN occupationfacilitydetails;
 
-INSERT INTO schema_version (version_number, comment) VALUES (259, 'Add facility fields to location and refactor occupation facilities for persons #2456');
+INSERT INTO schema_version (version_number, comment) VALUES (260, 'Add facility fields to location and refactor occupation facilities for persons #2456');
 
 -- 202-10-01 Split general signs of disease #2916
 ALTER TABLE symptoms ADD COLUMN shivering character varying(255);
@@ -5398,7 +5398,7 @@ ALTER TABLE symptoms_history ADD COLUMN shivering character varying(255);
 ALTER TABLE symptoms_history RENAME generalsignsofdisease to feelingill;
 
 
-INSERT INTO schema_version (version_number, comment) VALUES (260, 'Split general signs of disease #2916');
+INSERT INTO schema_version (version_number, comment) VALUES (261, 'Split general signs of disease #2916');
 
 -- 2020-10-01 Contacts > Minimal Essential Data (MED) for Switzerland #2960
 ALTER TABLE contact
@@ -5409,25 +5409,25 @@ ALTER TABLE contact_history
     ADD COLUMN endofquarantinereason varchar(255),
     ADD COLUMN endofquarantinereasondetails varchar(512);
 
-INSERT INTO schema_version (version_number, comment) VALUES (261, 'Contacts > Minimal Essential Data (MED) for Switzerland #2960');
+INSERT INTO schema_version (version_number, comment) VALUES (262, 'Contacts > Minimal Essential Data (MED) for Switzerland #2960');
 
 -- 2020-09-16 Add total series to campaigndiagramdefinition to calculate percentage values #2528
 ALTER TABLE campaigndiagramdefinition ADD COLUMN campaignseriestotal json;
 ALTER TABLE campaigndiagramdefinition_history ADD COLUMN campaignseriestotal json;
 
-INSERT INTO schema_version (version_number, comment) VALUES (262, 'Add series total to campaigndiagramdefinition to calculate percentage values #2528');
+INSERT INTO schema_version (version_number, comment) VALUES (263, 'Add series total to campaigndiagramdefinition to calculate percentage values #2528');
 
 -- 2020-10-01 Add possibility to set percentage visualization as default for campaign diagram definitions #2528
 ALTER TABLE campaigndiagramdefinition ADD COLUMN percentagedefault boolean DEFAULT false;
 ALTER TABLE campaigndiagramdefinition_history ADD COLUMN percentagedefault boolean DEFAULT false;
 
-INSERT INTO schema_version (version_number, comment) VALUES (263, 'Add possibility to set percentage visualization as default for campaign diagram definitions #2528');
+INSERT INTO schema_version (version_number, comment) VALUES (264, 'Add possibility to set percentage visualization as default for campaign diagram definitions #2528');
 
 -- 2020-10-02 Add new field returningTraveler to contact
 ALTER TABLE contact ADD COLUMN returningtraveler varchar(255);
 ALTER TABLE contact_history ADD COLUMN returningtraveler varchar(255);
 
-INSERT INTO schema_version (version_number, comment) VALUES (264, 'Add new field returningTraveler to contact #2603');
+INSERT INTO schema_version (version_number, comment) VALUES (265, 'Add new field returningTraveler to contact #2603');
 -- 2020-08-13 Sormas 2 Sormas sharing information #2624
 CREATE TABLE sormastosormasorigininfo (
     id bigint NOT NULL,
@@ -5469,7 +5469,7 @@ ALTER TABLE sormastosormasshareinfo ADD CONSTRAINT fk_sormastosormasshareinfo_ca
 ALTER TABLE sormastosormasshareinfo ADD CONSTRAINT fk_sormastosormasshareinfo_contact_id FOREIGN KEY (contact_id) REFERENCES contact (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
 ALTER TABLE sormastosormasshareinfo ADD CONSTRAINT fk_sormastosormasshareinfo_sender_id FOREIGN KEY (sender_id) REFERENCES users (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
 
-INSERT INTO schema_version (version_number, comment) VALUES (265, 'Store Sormas 2 Sormas sharing information #2624');
+INSERT INTO schema_version (version_number, comment) VALUES (266, 'Store Sormas 2 Sormas sharing information #2624');
 
 -- 2020-10-05 Add new field: Quarantine before isolation #2977
 ALTER TABLE cases
@@ -5478,7 +5478,7 @@ ALTER TABLE cases
 ALTER TABLE cases_history
     ADD COLUMN wasInQuarantineBeforeIsolation varchar(255);
 
-INSERT INTO schema_version (version_number, comment) VALUES (266, 'Add new field: Quarantine before isolation #2977');
+INSERT INTO schema_version (version_number, comment) VALUES (267, 'Add new field: Quarantine before isolation #2977');
 -- 2020-09-23 CampaignFormMeta to Campaigns relation #2855
 
 CREATE TABLE campaign_campaignformmeta(
@@ -5497,24 +5497,24 @@ CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON campaign_
     FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'campaign_campaignformmeta_history', true);
 ALTER TABLE campaign_campaignformmeta_history OWNER TO sormas_user;
 
-INSERT INTO schema_version (version_number, comment) VALUES (267, 'CampaignFormMeta to Campaigns relation #2855');
+INSERT INTO schema_version (version_number, comment) VALUES (268, 'CampaignFormMeta to Campaigns relation #2855');
 
 --2020-10-09 Add boolean to users to active window GDPR
 ALTER TABLE users ADD COLUMN hasConsentedToGdpr boolean default false;
 ALTER TABLE users_history ADD COLUMN hasConsentedToGdpr boolean default false;
-INSERT INTO schema_version (version_number, comment) VALUES (268, 'Add gdpr popup to user');
+INSERT INTO schema_version (version_number, comment) VALUES (269, 'Add gdpr popup to user');
 
 --2020-10-22 Optimize person similarity/duplication check
 CREATE INDEX similarity_index
     ON person using gist ((firstName || ' ' || lastName) gist_trgm_ops);
-INSERT INTO schema_version (version_number, comment) VALUES (269, 'Optimize person similarity/duplication check');
+INSERT INTO schema_version (version_number, comment) VALUES (270, 'Optimize person similarity/duplication check');
 
 -- 2020-10-27 - Store visit source #2083
 ALTER TABLE visit ADD COLUMN origin varchar(255);
 ALTER TABLE visit_history ADD COLUMN origin varchar(255);
 UPDATE visit SET origin='USER';
 
-INSERT INTO schema_version (version_number, comment) VALUES (270, 'Add new field origin to visits as per feature #2083');
+INSERT INTO schema_version (version_number, comment) VALUES (271, 'Add new field origin to visits as per feature #2083');
 -- 2020-10-22 Sormas 2 Sormas samples #3210
 ALTER TABLE samples ADD COLUMN sormasToSormasOriginInfo_id bigint;
 ALTER TABLE samples ADD CONSTRAINT fk_samples_sormasToSormasOriginInfo_id FOREIGN KEY (sormasToSormasOriginInfo_id) REFERENCES sormastosormasorigininfo (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
@@ -5523,7 +5523,7 @@ ALTER TABLE samples ADD CONSTRAINT fk_samples_sormasToSormasOriginInfo_id FOREIG
 ALTER TABLE sormastosormasshareinfo ADD COLUMN sample_id bigint;
 ALTER TABLE sormastosormasshareinfo ADD CONSTRAINT fk_sormastosormasshareinfo_sample_id FOREIGN KEY (sample_id) REFERENCES samples (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
 
-INSERT INTO schema_version (version_number, comment) VALUES (271, 'Sormas 2 Sormas samples #3210');
+INSERT INTO schema_version (version_number, comment) VALUES (272, 'Sormas 2 Sormas samples #3210');
 
 -- 2020-10-12 Add event investigation status
 ALTER TABLE events ADD COLUMN eventInvestigationStatus varchar(255);
@@ -5533,7 +5533,7 @@ ALTER TABLE events_history ADD COLUMN eventInvestigationStartDate timestamp;
 ALTER TABLE events ADD COLUMN eventInvestigationEndDate timestamp;
 ALTER TABLE events_history ADD COLUMN eventInvestigationEndDate timestamp;
 
-INSERT INTO schema_version (version_number, comment) VALUES (272, 'Add event.eventInvestigationStatus #2992');
+INSERT INTO schema_version (version_number, comment) VALUES (273, 'Add event.eventInvestigationStatus #2992');
 
 -- 2020-10-30 Increase case directory performance #3137
 ALTER TABLE visit DROP CONSTRAINT IF EXISTS fk_visit_caze_id;
@@ -5541,17 +5541,17 @@ ALTER TABLE visit ADD CONSTRAINT fk_visit_caze_id FOREIGN KEY (caze_id) REFERENC
 CREATE INDEX IF NOT EXISTS idx_visit_caze_id ON visit USING HASH (caze_id);
 CREATE INDEX IF NOT EXISTS idx_eventparticipant_resultingcase_id ON eventparticipant USING hash (resultingcase_id);
 
-INSERT INTO schema_version (version_number, comment) VALUES (273, 'Increase case directory performance #3137');
+INSERT INTO schema_version (version_number, comment) VALUES (274, 'Increase case directory performance #3137');
 
 -- 2020-11-02 Drop not null constraint from event description #3223
 ALTER TABLE events ALTER COLUMN eventdesc DROP NOT NULL;
 
-INSERT INTO schema_version (version_number, comment) VALUES (274, 'Drop not null constraint from event description #3223');
+INSERT INTO schema_version (version_number, comment) VALUES (275, 'Drop not null constraint from event description #3223');
 
 -- 2020-11-05 Drop not null constraint from event history description #3391
 ALTER TABLE events_history ALTER COLUMN eventdesc DROP NOT NULL;
 
-INSERT INTO schema_version (version_number, comment) VALUES (275, 'Drop not null constraint from event history description #3391');
+INSERT INTO schema_version (version_number, comment) VALUES (276, 'Drop not null constraint from event history description #3391');
 
 -- 2020-11-06 Split follow-up duration #3100
 ALTER TABLE diseaseconfiguration ADD COLUMN casefollowupduration integer;
@@ -5561,7 +5561,7 @@ ALTER TABLE diseaseconfiguration_history ADD COLUMN eventparticipantfollowupdura
 UPDATE diseaseconfiguration SET casefollowupduration = followupduration;
 UPDATE diseaseconfiguration SET eventparticipantfollowupduration = followupduration;
 
-INSERT INTO schema_version (version_number, comment) VALUES (276, 'Split follow-up duration #3100');
+INSERT INTO schema_version (version_number, comment) VALUES (277, 'Split follow-up duration #3100');
 
 -- 2020-??-?? Create country table #2993
 CREATE TABLE country (
@@ -5578,7 +5578,7 @@ CREATE TABLE country (
 );
 ALTER TABLE country OWNER TO sormas_user;
 
-INSERT INTO schema_version (version_number, comment) VALUES (277, 'Create country table #2993');
+INSERT INTO schema_version (version_number, comment) VALUES (278, 'Create country table #2993');
 
 -- 2020-11-10 Add documents
 
@@ -5599,14 +5599,14 @@ CREATE TABLE documents (
     CONSTRAINT fk_documents_uploadinguser_id FOREIGN KEY (uploadinguser_id) REFERENCES users(id)
 );
 
-INSERT INTO schema_version (version_number, comment) VALUES (278, 'Add documents #2328');
+INSERT INTO schema_version (version_number, comment) VALUES (279, 'Add documents #2328');
 
 -- 2020-11-06 Extend event participant jurisdiction calculation #2902
 ALTER TABLE eventparticipant ADD COLUMN region_id bigint;
 ALTER TABLE eventparticipant ADD COLUMN district_id bigint;
 ALTER TABLE eventparticipant ADD CONSTRAINT fk_eventparticipant_region_id FOREIGN KEY (region_id) REFERENCES region (id);
 ALTER TABLE eventparticipant ADD CONSTRAINT fk_eventparticipant_district_id FOREIGN KEY (district_id) REFERENCES district (id);
-INSERT INTO schema_version (version_number, comment) VALUES (279, 'Extend event participant jurisdiction calculation #2902');
+INSERT INTO schema_version (version_number, comment) VALUES (280, 'Extend event participant jurisdiction calculation #2902');
 
 -- 2020-10-15 New exposure entity and migration #2948
 ALTER TABLE epidata ADD COLUMN exposuredetailsknown varchar(255);
@@ -5736,7 +5736,7 @@ FROM tl_map tl;
 
 DROP TABLE IF EXISTS tl_map;
 
-INSERT INTO schema_version (version_number, comment) VALUES (280, 'New exposure entity and migration #2948');
+INSERT INTO schema_version (version_number, comment) VALUES (281, 'New exposure entity and migration #2948');
 
 -- 2020-10-21 Epi data migration #2949
 ALTER TABLE epidata ADD COLUMN contactwithsourcecaseknown varchar(255);
@@ -5954,22 +5954,22 @@ UPDATE epidata SET exposuredetailsknown = 'YES' FROM exposures WHERE (exposurede
 
 UPDATE epidata SET changedate = now();
 
-INSERT INTO schema_version (version_number, comment) VALUES (281, 'Epi data migration #2949');
+INSERT INTO schema_version (version_number, comment) VALUES (282, 'Epi data migration #2949');
 
 -- 2020-10-21 Set contact with source case known for all existing cases #2946
 UPDATE epidata SET contactwithsourcecaseknown = 'YES' FROM cases WHERE cases.epidata_id = epidata.id AND (SELECT COUNT(id) FROM contact WHERE contact.resultingcase_id = cases.id) > 0;
 
-INSERT INTO schema_version (version_number, comment) VALUES (282, 'Set contact with source case known for all existing cases #2946');-- *** Insert new sql commands BEFORE this line ***
+INSERT INTO schema_version (version_number, comment) VALUES (283, 'Set contact with source case known for all existing cases #2946');-- *** Insert new sql commands BEFORE this line ***
 -- 2021-01-05 Add a column called transmission classification to the cases
 ALTER TABLE cases ADD COLUMN casetransmissionclassification varchar(255);
 ALTER TABLE contact ADD COLUMN contacttransmissionclassification varchar(225);
 
-INSERT INTO schema_version (version_number, comment) VALUES (283, 'Altered case and contact table to add transmission classification to it');
+INSERT INTO schema_version (version_number, comment) VALUES (284, 'Altered case and contact table to add transmission classification to it');
 
 -- 2021-01-15 Added Patient condition during admission to hospitalization table
-ALTER TABLE hospitalization ADD COLUMN patientconditiononadmission varchar(255);
+--ALTER TABLE hospitalization ADD COLUMN patientconditiononadmission varchar(255);
 
-INSERT INTO schema_version (version_number, comment) VALUES (284, 'Altered hospitalization table by adding patientconditiononadmission to it');
+--INSERT INTO schema_version (version_number, comment) VALUES (285, 'Altered hospitalization table by adding patientconditiononadmission to it');
 
 -- 2021-01-05 ALter the name of the column
 ALTER TABLE cases ADD COLUMN specifyotheroutcome varchar(255);
@@ -5977,6 +5977,6 @@ ALTER TABLE cases ADD COLUMN specifyotheroutcome varchar(255);
 -- ALTER TABLE hospitalization ADD COLUMN patientconditiononadmission varchar(255);
 
 -- INSERT INTO schema_version (version_number, comment) VALUES (232, 'Added a column name othercaseoutcomedetails, patientconditiononadmission to the cases, hospitalization table respectively');
-INSERT INTO schema_version (version_number, comment) VALUES (400, 'Added a column to specifyOtherOutcome to the case table');
+INSERT INTO schema_version (version_number, comment) VALUES (285, 'Added a column to specifyOtherOutcome to the case table');
 
 -- *** Insert new sql commands BEFORE this line ***
