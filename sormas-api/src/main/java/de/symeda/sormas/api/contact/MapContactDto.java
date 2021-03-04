@@ -82,6 +82,36 @@ public class MapContactDto implements Serializable {
 		String personFirstName,
 		String personLastName,
 		String casePersonFirstName,
+		String casePersonLastName) {
+
+		this.uuid = uuid;
+		this.contactClassification = contactClassification;
+		this.reportLat = reportLat;
+		this.reportLon = reportLon;
+		this.addressLat = addressLat;
+		this.addressLon = addressLon;
+		this.caseOnsetDate = caseOnsetDate;
+		this.caseReportDate = caseReportDate;
+		this.contactReportDate = contactReportDate;
+		this.personFirstName = personFirstName;
+		this.personLastName = personLastName;
+		this.casePersonFirstName = casePersonFirstName;
+		this.casePersonLastName = casePersonLastName;
+	}
+
+	public MapContactDto(
+		String uuid,
+		ContactClassification contactClassification,
+		Double reportLat,
+		Double reportLon,
+		Double addressLat,
+		Double addressLon,
+		Date caseOnsetDate,
+		Date caseReportDate,
+		Date contactReportDate,
+		String personFirstName,
+		String personLastName,
+		String casePersonFirstName,
 		String casePersonLastName,
 		int visitCount) {
 
