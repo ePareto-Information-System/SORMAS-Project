@@ -37,7 +37,7 @@ public class AuditLogEntryDto extends EntityDto {
 	public static final String UUID = "uuid";
 	public static final String EDITING_USER_ID = "editingUserId";
 	public static final String TRANSACTION_ID = "transactionId";
-	public static final String DETECTION_TMESTAMP = "detectionTimestamp";
+	public static final String DETECTION_TIMESTAMP = "detectionTimestamp";
 	public static final String CHANGE_TYPE = "changeType";
 
 	private Long id;

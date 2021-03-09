@@ -51,6 +51,11 @@ public class AuditLogEntry implements Serializable {
 	private static final String SEQ_JPA_NAME = "Auditlog_seq";
 	private static final String SEQ_SQL_NAME = "auditlog_seq";
 
+	public static final String UUID = "uuid";
+	public static final String CLASS = "clazz";
+	public static final String CHANGE_TYPE = "changeType";
+	public static final String DETECTION_TIMESTAMP = "detectionTimestamp";
+	
 	@Id
 	@SequenceGenerator(name = SEQ_JPA_NAME, allocationSize = 1, sequenceName = SEQ_SQL_NAME)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQ_JPA_NAME)

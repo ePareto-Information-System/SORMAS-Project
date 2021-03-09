@@ -430,6 +430,14 @@ public class UserFacadeEjb implements UserFacade {
 		});
 	}
 
+	public List<User> getByIds (List<Long> ids) {
+		return userService.getByIds(ids);
+	}
+	
+	public User getSystemUser () {
+		return userService.getSystemUser();
+	}
+
 	@LocalBean
 	@Stateless
 	public static class UserFacadeEjbLocal extends UserFacadeEjb {
