@@ -38,6 +38,7 @@ import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.ui.ControllerProvider;
+import de.symeda.sormas.ui.UiUtil;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.caze.CaseInfoLayout;
 import de.symeda.sormas.ui.contact.ContactInfoLayout;
@@ -192,5 +193,7 @@ public class SampleDataView extends AbstractSampleView {
 		//}
 
 		setSampleEditPermission(container);
+		
+		UiUtil.logActivity(sampleDto);
 	}
 }
