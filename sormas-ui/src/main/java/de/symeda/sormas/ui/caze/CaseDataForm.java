@@ -252,6 +252,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 		addField(CaseDataDto.INVESTIGATION_STATUS, OptionGroup.class);
 		caseOutcome = addField(CaseDataDto.OUTCOME, OptionGroup.class);
+		if (caseOutcome.getValue() == null) {
+			caseOutcome.setVisible(false);
+		}
 
 		caseOutcome.addValueChangeListener(e -> addOtherOutcomeValue());
 		otherCaseOutComeDetails = addField(CaseDataDto.OTHERCASEOUTCOMEDETAILS, TextField.class);
@@ -676,7 +679,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			if (getValue().getCaseOrigin() == CaseOrigin.POINT_OF_ENTRY) {
 				setVisible(true, CaseDataDto.POINT_OF_ENTRY);
 				setVisible(getValue().getPointOfEntry().isOtherPointOfEntry(), CaseDataDto.POINT_OF_ENTRY_DETAILS);
-
+				caseOutcome.setVisible(false);
 				if (getValue().getHealthFacility() == null) {
 					setVisible(false, CaseDataDto.COMMUNITY, CaseDataDto.HEALTH_FACILITY, CaseDataDto.HEALTH_FACILITY_DETAILS);
 					setReadOnly(true, CaseDataDto.REGION, CaseDataDto.DISTRICT, CaseDataDto.COMMUNITY);
@@ -684,6 +687,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			} else {
 				setRequired(true, CaseDataDto.HEALTH_FACILITY);
 				setVisible(false, CaseDataDto.POINT_OF_ENTRY, CaseDataDto.POINT_OF_ENTRY_DETAILS);
+				caseOutcome.setVisible(true);
 			}
 
 			// Hide case origin from port health users
