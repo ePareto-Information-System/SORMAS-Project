@@ -52,7 +52,9 @@ public class AuditLogServiceBean {
 
 		Date changeDate = AuditLogDateHelper.from(event.getChangeDate());
 		
-		final User user = userService.getCurrentUser();
+		User user = userService.getCurrentUser();
+		if (user == null)
+			user = userService.getSystemUser();
 
 		AuditLogEntry log = new AuditLogEntry();
 		log.setAttributes(event.getNewValues());
