@@ -49,6 +49,7 @@ import de.symeda.auditlog.api.sample.SubClassEntity;
 import de.symeda.auditlog.api.sample.SuperClassEntity;
 import de.symeda.auditlog.api.sample.UnauditedMiddleClassEntity;
 import de.symeda.auditlog.api.value.ValueContainer;
+import de.symeda.sormas.api.auditlog.ChangeType;
 import de.symeda.sormas.backend.auditlog.AuditLogDateHelper;
 
 public class AuditorTest {

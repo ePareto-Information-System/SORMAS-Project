@@ -41,6 +41,7 @@ import de.symeda.auditlog.api.value.format.override.DateFormatOverrideDetector;
 import de.symeda.auditlog.api.value.format.override.OverrideDetector;
 import de.symeda.auditlog.api.value.reflection.EntityInspector;
 import de.symeda.sormas.api.HasUuid;
+import de.symeda.sormas.api.auditlog.ChangeType;
 
 /**
  * Class for the inspection of entity states.

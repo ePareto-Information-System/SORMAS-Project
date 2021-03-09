@@ -36,7 +36,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import de.symeda.auditlog.api.ChangeType;
+import de.symeda.sormas.api.auditlog.ChangeType;
 
 /**
  * For saving changes on entities.

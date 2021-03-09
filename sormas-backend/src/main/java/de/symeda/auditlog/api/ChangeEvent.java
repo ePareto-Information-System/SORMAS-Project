@@ -20,6 +20,8 @@ package de.symeda.auditlog.api;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+import de.symeda.sormas.api.auditlog.ChangeType; 
+
 /**
  * Event object that describes the changes of an entity.
  * 
