@@ -15,73 +15,60 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
-package de.symeda.sormas.backend.auditlog;
+package de.symeda.sormas.api.auditlog;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import de.symeda.sormas.api.auditlog.ChangeType;
+import de.symeda.sormas.api.EntityDto;
+import de.symeda.sormas.api.user.UserDto;
 
 /**
  * For saving changes on entities.
  * 
  * @author Oliver Milke
  */
-@Entity
-public class AuditLogEntry implements Serializable {
+public class AuditLogEntryDto extends EntityDto {
 
-	private static final long serialVersionUID = 1L;
-
-	private static final String SEQ_JPA_NAME = "Auditlog_seq";
-	private static final String SEQ_SQL_NAME = "auditlog_seq";
-
-	public static final String UUID = "uuid";
-	public static final String CLASS = "clazz";
-	public static final String CHANGE_TYPE = "changeType";
-	public static final String DETECTION_TIMESTAMP = "detectionTimestamp";
+	private static final long serialVersionUID = 2439546041916003652L;
 	
-	@Id
-	@SequenceGenerator(name = SEQ_JPA_NAME, allocationSize = 1, sequenceName = SEQ_SQL_NAME)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQ_JPA_NAME)
+	public static final String ID = "id";
+	public static final String CLASS = "clazz";
+	public static final String UUID = "uuid";
+	public static final String EDITING_USER_ID = "editingUserId";
+	public static final String TRANSACTION_ID = "transactionId";
+	public static final String DETECTION_TIMESTAMP = "detectionTimestamp";
+	public static final String CHANGE_TYPE = "changeType";
+
 	private Long id;
 
 	private String clazz;
 	private String uuid;
-	private String editingUser;
 	private Long editingUserId;
-
-	@Column(name = "transaction_id", nullable = false)
+	private UserDto editingUser;
 	private String transactionId;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "detection_ts", nullable = false)
 	private Date detectionTimestamp;
-
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
 	private ChangeType changeType;
 
-	@ElementCollection
-	@CollectionTable(name = "auditlogentry_attributes", joinColumns = @JoinColumn(name = "auditlogentry_id", nullable = false))
-	@MapKeyColumn(name = "attribute_key", nullable = false)
-	@Column(name = "attribute_value", columnDefinition = "text")
 	private Map<String, String> attributes;
+	
+	public AuditLogEntryDto(
+		Long id,
+		String clazz,
+		String uuid,
+		Long editingUserId,
+		String transactionId,
+		Date detectionTimestamp,
+		ChangeType changeType) {
+
+		this.id = id;
+		this.clazz = clazz;
+		this.uuid = uuid;
+		this.editingUserId = editingUserId;
+		this.transactionId = transactionId;
+		this.detectionTimestamp = detectionTimestamp;
+		this.changeType = changeType;
+	}
 
 	public Long getId() {
 		return id;
@@ -110,11 +97,11 @@ public class AuditLogEntry implements Serializable {
 		this.uuid = uuid;
 	}
 
-	public String getEditingUser() {
+	public UserDto getEditingUser() {
 		return editingUser;
 	}
 
-	public void setEditingUser(String editingUser) {
+	public void setEditingUser(UserDto editingUser) {
 		this.editingUser = editingUser;
 	}
 	
@@ -125,7 +112,7 @@ public class AuditLogEntry implements Serializable {
 	public void setEditingUserId(Long editingUserId) {
 		this.editingUserId = editingUserId;
 	}
-
+	
 	public ChangeType getChangeType() {
 		return changeType;
 	}
@@ -159,5 +146,12 @@ public class AuditLogEntry implements Serializable {
 
 	public void setAttributes(Map<String, String> attributes) {
 		this.attributes = attributes;
+	}
+	
+	public static String getEntityClazz (java.lang.reflect.Type type) {
+		return type.getTypeName()
+				.replaceAll(".sormas.api.", ".sormas.backend.")
+				.replaceAll("ReferenceDto$", "")
+				.replaceAll("Dto$", "");
 	}
 }

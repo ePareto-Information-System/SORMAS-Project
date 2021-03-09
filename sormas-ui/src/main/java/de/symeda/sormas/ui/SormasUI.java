@@ -25,12 +25,17 @@ import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.server.VaadinSession;
+import com.vaadin.ui.JavaScript;
+import com.vaadin.ui.JavaScriptFunction;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.auditlog.ChangeType;
 import de.symeda.sormas.ui.UserProvider.HasUserProvider;
 import de.symeda.sormas.ui.ViewModelProviders.HasViewModelProviders;
 import de.symeda.sormas.ui.utils.SormasDefaultConverterFactory;
+import elemental.json.JsonArray;
+import elemental.json.JsonObject;
 
 import javax.servlet.annotation.HttpConstraint;
 import javax.servlet.annotation.ServletSecurity;
@@ -71,6 +76,8 @@ public class SormasUI extends UI implements HasUserProvider, HasViewModelProvide
 	protected void initMainScreen() {
 		addStyleName(ValoTheme.UI_WITH_MENU);
 		setContent(new MainScreen(SormasUI.this));
+		
+		initUserActivityLogging();
 	}
 
 	public static SormasUI get() {
@@ -97,5 +104,24 @@ public class SormasUI extends UI implements HasUserProvider, HasViewModelProvide
 
 	public static void refreshView() {
 		get().getNavigator().navigateTo(get().getNavigator().getState());
+	}
+	
+	private void initUserActivityLogging () {
+		JavaScript.getCurrent().addFunction("de.symeda.sormas.ui.auditlog.logActivity",
+		   new JavaScriptFunction() {
+				@Override
+				public void call(JsonArray arguments) {
+					
+					JsonObject params = arguments.getObject(0);
+					String activityType = params.getString("activityType");
+					String clazz = params.getString("clazz");
+					String uuid = params.getString("uuid");
+					
+					ChangeType changeType = ChangeType.valueOf(activityType);
+					
+					FacadeProvider.getAuditLogEntryFacade().logActivity(changeType, clazz, uuid);
+				}
+			}
+		);
 	}
 }

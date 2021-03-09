@@ -15,11 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
-package de.symeda.auditlog.api;
+package de.symeda.sormas.api.auditlog;
 
-public enum ChangeType {
+import java.util.List;
 
-	CREATE,
-	UPDATE,
-	DELETE;
+import javax.ejb.Remote;
+
+import de.symeda.sormas.api.utils.SortProperty;
+
+@Remote
+public interface AuditLogEntryFacade {
+	List<AuditLogEntryDto> getList(AuditLogEntryCriteria entryCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
+	void logActivity(ChangeType changeType, String clazz, String uuid);
 }

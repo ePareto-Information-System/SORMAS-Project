@@ -19,6 +19,7 @@ package de.symeda.sormas.backend.auditlog;
 
 import java.util.Date;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -28,6 +29,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import de.symeda.auditlog.api.ChangeEvent;
+import de.symeda.sormas.backend.user.User;
+import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.ModelConstants;
 
 /**
@@ -40,17 +43,23 @@ public class AuditLogServiceBean {
 
 	@PersistenceContext(unitName = ModelConstants.PERSISTENCE_UNIT_NAME_AUDITLOG)
 	private EntityManager entityManager;
+	
+	@EJB
+	UserService userService;
 
 	@TransactionAttribute(TransactionAttributeType.MANDATORY)
 	public void receiveChanges(@Observes(during = TransactionPhase.IN_PROGRESS) ChangeEvent event) {
 
 		Date changeDate = AuditLogDateHelper.from(event.getChangeDate());
+		
+		final User user = userService.getCurrentUser();
 
 		AuditLogEntry log = new AuditLogEntry();
 		log.setAttributes(event.getNewValues());
 		log.setDetectionTimestamp(changeDate);
 		log.setChangeType(event.getChangeType());
 		log.setEditingUser(event.getUserId());
+		log.setEditingUserId(user.getId());
 		log.setTransactionId(event.getTransactionId());
 		log.setUuid(event.getOid().getEntityUuid());
 		log.setClazz(event.getOid().getEntityClass().getName());

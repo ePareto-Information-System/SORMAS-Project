@@ -52,3 +52,22 @@ CREATE TABLE auditlogentry_attributes (
 ALTER TABLE auditlogentry_attributes OWNER TO sormas_user;
 
 INSERT INTO schema_version (version_number, comment) VALUES (2, 'Initial entity model');
+
+--	March 04, 2021 use User.id instead of user.username
+--	first, copy users table from sormas_db to sormas_audit_db
+--		cd "/c/Program Files/PostgreSQL/10/bin/"
+--		.\pg_dump -U sormas_user -t users sormas_db | .\psql -U sormas_user sormas_audit_db;
+--	then, set editinguser.id from the users table using the username field
+
+ALTER TABLE auditlogentry ADD editinguserid BIGINT NULL;
+
+UPDATE auditlogentry
+SET editinguserid = u.id
+FROM auditlogentry e
+LEFT JOIN users u ON e.editinguser = u.username
+WHERE e.id = auditlogentry.id;
+
+--	we no longer need users table
+DROP TABLE users;
+
+INSERT INTO schema_version (version_number, comment) VALUES (3, 'Use user.id instead of user.username');

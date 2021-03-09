@@ -20,6 +20,7 @@ package de.symeda.sormas.backend.user;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -458,5 +459,15 @@ public class UserService extends AbstractAdoService<User> {
 
 	public Predicate createDefaultFilter(CriteriaBuilder cb, From<?, User> root) {
 		return cb.isTrue(root.get(User.ACTIVE));
+	}
+
+	public User getSystemUser() {
+		User systemUser = new User();
+		systemUser.setUserName("SYSTEM");
+		systemUser.setFirstName("SYSTEM");
+		systemUser.setLastName("");
+		systemUser.setUserRoles(new HashSet<UserRole>(0));
+		
+		return systemUser;
 	}
 }

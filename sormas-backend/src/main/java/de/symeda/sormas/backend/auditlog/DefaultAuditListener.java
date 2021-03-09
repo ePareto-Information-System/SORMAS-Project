@@ -31,7 +31,7 @@ import javax.persistence.PreUpdate;
 import de.symeda.auditlog.api.AuditListener;
 import de.symeda.auditlog.api.Auditor;
 import de.symeda.auditlog.api.ChangeEvent;
-import de.symeda.auditlog.api.ChangeType;
+import de.symeda.sormas.api.auditlog.ChangeType;
 import de.symeda.auditlog.api.Current;
 import de.symeda.auditlog.api.EntityId;
 import de.symeda.auditlog.api.TransactionId;

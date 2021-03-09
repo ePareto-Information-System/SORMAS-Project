@@ -1785,4 +1785,9 @@ public interface Captions {
 	String WeeklyReportRegionSummary_officers = "WeeklyReportRegionSummary.officers";
 	String WeeklyReportRegionSummary_officerZeroReports = "WeeklyReportRegionSummary.officerZeroReports";
 	String weeklyReportsInDistrict = "weeklyReportsInDistrict";
+	String EntityAuditLogComponent_heading = "EntityAuditLogComponent.heading";
+	String EntityAuditLogComponent_noActivities = "EntityAuditLogComponent.noActivities";
+	String EntityAuditLogComponent_filters = "EntityAuditLogComponent.filters";
+	String EntityAuditLogComponent_showUniqueActivities = "EntityAuditLogComponent.showUniqueActivities";
+	String EntityAuditLogComponent_selectActivities = "EntityAuditLogComponent.selectActivities";
 }
