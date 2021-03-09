@@ -59,6 +59,35 @@ INSERT INTO schema_version (version_number, comment) VALUES (2, 'Initial entity 
 --		.\pg_dump -U sormas_user -t users sormas_db | .\psql -U sormas_user sormas_audit_db;
 --	then, set editinguser.id from the users table using the username field
 
+--	a safety net for when the above 'copy users table' is not followed
+CREATE TABLE IF NOT EXISTS users
+(
+	"id" int8 NOT NULL,
+	"active" bool NOT NULL,
+	"changedate" timestamp(6) NOT NULL,
+	"creationdate" timestamp(6) NOT NULL,
+	"firstname" varchar(512) COLLATE "pg_catalog"."default" NOT NULL,
+	"lastname" varchar(512) COLLATE "pg_catalog"."default" NOT NULL,
+	"password" varchar(64) COLLATE "pg_catalog"."default" NOT NULL,
+	"phone" varchar(255) COLLATE "pg_catalog"."default",
+	"seed" varchar(16) COLLATE "pg_catalog"."default" NOT NULL,
+	"useremail" varchar(255) COLLATE "pg_catalog"."default",
+	"username" varchar(512) COLLATE "pg_catalog"."default" NOT NULL,
+	"uuid" varchar(36) COLLATE "pg_catalog"."default" NOT NULL,
+	"address_id" int8,
+	"associatedofficer_id" int8,
+	"region_id" int8,
+	"district_id" int8,
+	"healthfacility_id" int8,
+	"laboratory_id" int8,
+	"sys_period" tstzrange NOT NULL,
+	"community_id" int8,
+	"limiteddisease" varchar(255) COLLATE "pg_catalog"."default",
+	"pointofentry_id" int8,
+	"language" varchar(255) COLLATE "pg_catalog"."default",
+	"hasconsentedtogdpr" bool DEFAULT false
+);
+
 ALTER TABLE auditlogentry ADD editinguserid BIGINT NULL;
 
 UPDATE auditlogentry
