@@ -36,10 +36,12 @@ import de.symeda.sormas.api.event.EventParticipantReferenceDto;
 import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UiUtil;
 import de.symeda.sormas.ui.UserProvider;
+import de.symeda.sormas.ui.auditlog.EntityAuditLogComponent;
 import de.symeda.sormas.ui.caze.CaseInfoLayout;
 import de.symeda.sormas.ui.contact.ContactInfoLayout;
 import de.symeda.sormas.ui.events.EventParticipantInfoLayout;
@@ -61,6 +63,7 @@ public class SampleDataView extends AbstractSampleView {
 	public static final String EVENT_PARTICIPANT_LOC = "eventParticipant";
 	public static final String PATHOGEN_TESTS_LOC = "pathogenTests";
 	public static final String ADDITIONAL_TESTS_LOC = "additionalTests";
+	public static final String USER_ACTIVITY_LOG_LOC = "userActivityLog";
 	public static final String SORMAS_TO_SORMAS_LOC = "sormsToSormas";
 
 	private CommitDiscardWrapperComponent<SampleEditForm> editComponent;
@@ -81,6 +84,7 @@ public class SampleDataView extends AbstractSampleView {
 			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, EVENT_PARTICIPANT_LOC),
 			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, PATHOGEN_TESTS_LOC),
 			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, ADDITIONAL_TESTS_LOC),
+			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, USER_ACTIVITY_LOG_LOC),
 			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, SORMAS_TO_SORMAS_LOC));
 
 		DetailSubComponentWrapper container = new DetailSubComponentWrapper(() -> editComponent);
@@ -175,6 +179,12 @@ public class SampleDataView extends AbstractSampleView {
 			AdditionalTestListComponent additionalTestList = new AdditionalTestListComponent(getSampleRef().getUuid());
 			additionalTestList.addStyleName(CssStyles.SIDE_COMPONENT);
 			layout.addComponent(additionalTestList, ADDITIONAL_TESTS_LOC);
+		}
+		
+		if (UserProvider.getCurrent().hasUserRole(UserRole.ADMIN)) {
+			EntityAuditLogComponent userActivityList = new EntityAuditLogComponent(SampleDto.class, getSampleRef().getUuid());
+			userActivityList.addStyleName(CssStyles.SIDE_COMPONENT);
+			layout.addComponent(userActivityList, USER_ACTIVITY_LOG_LOC);
 		}
 
 		boolean sormasToSormasEnabled = FacadeProvider.getSormasToSormasFacade().isFeatureEnabled();
