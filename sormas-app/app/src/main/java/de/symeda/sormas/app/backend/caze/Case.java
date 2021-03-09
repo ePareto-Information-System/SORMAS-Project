@@ -294,6 +294,9 @@ public class Case extends PseudonymizableAdo {
 	@Enumerated(EnumType.STRING)
 	private Trimester trimester;
 
+	private String specifyOtherOutcome;
+
+
 	public boolean isUnreferredPortHealthCase() {
 		return caseOrigin == CaseOrigin.POINT_OF_ENTRY && healthFacility == null;
 	}
@@ -936,5 +939,13 @@ public class Case extends PseudonymizableAdo {
 
 	public void setTrimester(Trimester trimester) {
 		this.trimester = trimester;
+	}
+
+	public String getSpecifyOtherOutcome() {
+		return specifyOtherOutcome;
+	}
+
+	public void setSpecifyOtherOutcome(String specifyOtherOutcome) {
+		this.specifyOtherOutcome = specifyOtherOutcome;
 	}
 }

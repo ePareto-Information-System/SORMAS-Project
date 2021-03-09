@@ -76,6 +76,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 
 	private List<Item> caseClassificationList;
 	private List<Item> caseOutcomeList;
+	private List<Item> specifyOthercaseOutcome;
 	private List<Item> vaccinationInfoSourceList;
 	private List<Item> diseaseList;
 	private List<Item> plagueTypeList;
@@ -333,6 +334,16 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			contentBinding.caseDataQuarantineOrderedOfficialDocument.setVisibility(GONE);
 			contentBinding.caseDataQuarantineOrderedOfficialDocumentDate.setVisibility(GONE);
 		}
+
+		contentBinding.caseDataOutcome.addValueChangedListener(new ValueChangeListener() {
+			CaseOutcome outcome = record.getOutcome();
+			@Override
+			public void onChange(ControlPropertyField field) {
+				if (this.outcome != null && contentBinding.caseDataOutcome.getValue() == CaseOutcome.OTHER) {
+					contentBinding.caseDataSpecifyOtherOutcome.setVisibility(GONE);
+				}
+			}
+		});
 	}
 
 	@Override
@@ -346,6 +357,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		contentBinding.caseDataDisease.initializeSpinner(diseaseList);
 		contentBinding.caseDataCaseClassification.initializeSpinner(caseClassificationList);
 		contentBinding.caseDataOutcome.initializeSpinner(caseOutcomeList);
+//		contentBinding.caseDataSpecifyOtherOutcome.initializeSpinner(specifyOthercaseOutcome);
 		contentBinding.caseDataPlagueType.initializeSpinner(plagueTypeList);
 		contentBinding.caseDataDengueFeverType.initializeSpinner(dengueFeverTypeList);
 		contentBinding.caseDataRabiesType.initializeSpinner(humanRabiesTypeList);
@@ -356,6 +368,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		// Initialize ControlDateFields
 		contentBinding.caseDataReportDate.initializeDateField(getFragmentManager());
 		contentBinding.caseDataOutcomeDate.initializeDateField(getFragmentManager());
+//		contentBinding.caseDataSpecifyOtherOutcome.initialize(specifyOthercaseOutcome);
 		contentBinding.caseDataVaccinationDate.initializeDateField(getFragmentManager());
 		contentBinding.caseDataDistrictLevelDate.initializeDateField(getFragmentManager());
 		contentBinding.caseDataQuarantineFrom.initializeDateField(getFragmentManager());
