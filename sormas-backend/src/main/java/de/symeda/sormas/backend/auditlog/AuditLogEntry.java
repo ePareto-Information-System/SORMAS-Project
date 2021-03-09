@@ -59,6 +59,7 @@ public class AuditLogEntry implements Serializable {
 	private String clazz;
 	private String uuid;
 	private String editingUser;
+	private Long editingUserId;
 
 	@Column(name = "transaction_id", nullable = false)
 	private String transactionId;
@@ -110,6 +111,14 @@ public class AuditLogEntry implements Serializable {
 
 	public void setEditingUser(String editingUser) {
 		this.editingUser = editingUser;
+	}
+	
+	public Long getEditingUserId() {
+		return editingUserId;
+	}
+	
+	public void setEditingUserId(Long editingUserId) {
+		this.editingUserId = editingUserId;
 	}
 
 	public ChangeType getChangeType() {
