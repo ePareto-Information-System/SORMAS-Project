@@ -335,15 +335,6 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			contentBinding.caseDataQuarantineOrderedOfficialDocumentDate.setVisibility(GONE);
 		}
 
-		contentBinding.caseDataOutcome.addValueChangedListener(new ValueChangeListener() {
-			CaseOutcome outcome = record.getOutcome();
-			@Override
-			public void onChange(ControlPropertyField field) {
-				if (this.outcome != null && contentBinding.caseDataOutcome.getValue() == CaseOutcome.OTHER) {
-					contentBinding.caseDataSpecifyOtherOutcome.setVisibility(GONE);
-				}
-			}
-		});
 	}
 
 	@Override
