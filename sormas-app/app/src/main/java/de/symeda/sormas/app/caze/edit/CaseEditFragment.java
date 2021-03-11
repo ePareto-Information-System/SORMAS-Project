@@ -334,7 +334,6 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 			contentBinding.caseDataQuarantineOrderedOfficialDocument.setVisibility(GONE);
 			contentBinding.caseDataQuarantineOrderedOfficialDocumentDate.setVisibility(GONE);
 		}
-
 	}
 
 	@Override
@@ -348,7 +347,6 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		contentBinding.caseDataDisease.initializeSpinner(diseaseList);
 		contentBinding.caseDataCaseClassification.initializeSpinner(caseClassificationList);
 		contentBinding.caseDataOutcome.initializeSpinner(caseOutcomeList);
-//		contentBinding.caseDataSpecifyOtherOutcome.initializeSpinner(specifyOthercaseOutcome);
 		contentBinding.caseDataPlagueType.initializeSpinner(plagueTypeList);
 		contentBinding.caseDataDengueFeverType.initializeSpinner(dengueFeverTypeList);
 		contentBinding.caseDataRabiesType.initializeSpinner(humanRabiesTypeList);
@@ -359,7 +357,6 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		// Initialize ControlDateFields
 		contentBinding.caseDataReportDate.initializeDateField(getFragmentManager());
 		contentBinding.caseDataOutcomeDate.initializeDateField(getFragmentManager());
-//		contentBinding.caseDataSpecifyOtherOutcome.initialize(specifyOthercaseOutcome);
 		contentBinding.caseDataVaccinationDate.initializeDateField(getFragmentManager());
 		contentBinding.caseDataDistrictLevelDate.initializeDateField(getFragmentManager());
 		contentBinding.caseDataQuarantineFrom.initializeDateField(getFragmentManager());
