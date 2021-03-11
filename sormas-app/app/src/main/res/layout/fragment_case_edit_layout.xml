@@ -119,9 +119,12 @@
                         android:id="@+id/caseData_specifyOtherOutcome"
                         app:required="false"
                         app:value="@={data.specifyOtherOutcome}"
+                        app:softRequired="true"
+                        app:dependencyParentField="@{caseDataOutcome}"
+                        app:dependencyParentValue="@{CaseOutcome.OTHER}"
+                        app:dependencyParentVisibility="@{true}"
                         app:userEditRight="@{UserRight.CASE_CLASSIFY}"
-                        style="@style/ControlFirstOfTwoColumnsStyle" />
-
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlDateField
                         android:id="@+id/caseData_outcomeDate"
