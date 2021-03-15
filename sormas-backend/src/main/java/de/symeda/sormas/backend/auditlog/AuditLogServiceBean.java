@@ -29,7 +29,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import de.symeda.auditlog.api.ChangeEvent;
-import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.ModelConstants;
 
@@ -52,16 +51,16 @@ public class AuditLogServiceBean {
 
 		Date changeDate = AuditLogDateHelper.from(event.getChangeDate());
 		
-		User user = userService.getCurrentUser();
-		if (user == null)
-			user = userService.getSystemUser();
+		Long userId = userService.getIdByUsername(event.getUserId());
+//		User user = userService.getByUserName(event.getUserId());
+//		Long userId = user == null ? null : user.getId();
 
 		AuditLogEntry log = new AuditLogEntry();
 		log.setAttributes(event.getNewValues());
 		log.setDetectionTimestamp(changeDate);
 		log.setChangeType(event.getChangeType());
 		log.setEditingUser(event.getUserId());
-		log.setEditingUserId(user.getId());
+		log.setEditingUserId(userId);
 		log.setTransactionId(event.getTransactionId());
 		log.setUuid(event.getOid().getEntityUuid());
 		log.setClazz(event.getOid().getEntityClass().getName());
