@@ -28,6 +28,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import de.symeda.sormas.api.hospitalization.AccommodationType;
+import de.symeda.sormas.api.utils.MildModerateSevereCritical;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.backend.common.AbstractDomainObject;
 import de.symeda.sormas.app.backend.common.EmbeddedAdo;
@@ -66,6 +67,11 @@ public class Hospitalization extends AbstractDomainObject {
 	private Date intensiveCareUnitStart;
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date intensiveCareUnitEnd;
+
+//	@DatabaseField(dataType = DataType.ENUM_STRING)
+	@Enumerated(EnumType.STRING)
+	private MildModerateSevereCritical patientConditionOnAdmission;
+
 	// just for reference, not persisted in DB
 	private List<PreviousHospitalization> previousHospitalizations = new ArrayList<PreviousHospitalization>();
 
@@ -175,5 +181,13 @@ public class Hospitalization extends AbstractDomainObject {
 
 	public void setLeftAgainstAdvice(YesNoUnknown leftAgainstAdvice) {
 		this.leftAgainstAdvice = leftAgainstAdvice;
+	}
+
+	public MildModerateSevereCritical getPatientConditionOnAdmission() {
+		return patientConditionOnAdmission;
+	}
+
+	public void setPatientConditionOnAdmission(MildModerateSevereCritical patientConditionOnAdmission) {
+		this.patientConditionOnAdmission = patientConditionOnAdmission;
 	}
 }
