@@ -4819,4 +4819,9 @@ FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'campaignformmeta_histor
 
 INSERT INTO schema_version (version_number, comment) VALUES (230, 'Drop and re-create versioning trigger for campaignformmeta #1997');
 
+-- 2021-03-16 Altered the the hospitalization table by adding patient_condition_on_admission
+ALTER TABLE hospitalization ADD COLUMN patientconditiononadmission varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (231, 'Created a column patientconditiononadmission in the hospitalization table');
+
 -- *** Insert new sql commands BEFORE this line ***

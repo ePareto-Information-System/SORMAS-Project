@@ -69,7 +69,7 @@ public class Hospitalization extends AbstractDomainObject {
 	private Date intensiveCareUnitEnd;
 
 //	@DatabaseField(dataType = DataType.ENUM_STRING)
-	@Enumerated(EnumType.STRING)
+//	@Enumerated(EnumType.STRING)
 	private MildModerateSevereCritical patientConditionOnAdmission;
 
 	// just for reference, not persisted in DB
