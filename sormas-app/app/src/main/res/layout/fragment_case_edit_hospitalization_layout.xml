@@ -30,7 +30,7 @@
         <import type="de.symeda.sormas.api.hospitalization.AccommodationType" />
         <import type="de.symeda.sormas.api.utils.MildModerateSevereCritical" />
 
-        <variable name="condition" type="MildModerateSevereCritical" />
+        <variable name="patientCondition" type="MildModerateSevereCritical" />
         <variable name="data" type="de.symeda.sormas.app.backend.hospitalization.Hospitalization" />
         <variable name="caze" type="de.symeda.sormas.app.backend.caze.Case" />
         <variable name="previousHospitalizationList" type="androidx.databinding.ObservableList&lt;de.symeda.sormas.app.backend.hospitalization.PreviousHospitalization&gt;" />
