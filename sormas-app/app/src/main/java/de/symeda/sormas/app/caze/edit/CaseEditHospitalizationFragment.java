@@ -24,6 +24,9 @@ import androidx.databinding.ObservableArrayList;
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.hospitalization.PreviousHospitalizationDto;
+import java.util.List;
+
+import de.symeda.sormas.api.utils.MildModerateSevereCritical;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
@@ -33,17 +36,20 @@ import de.symeda.sormas.app.backend.caze.Case;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.hospitalization.Hospitalization;
 import de.symeda.sormas.app.backend.hospitalization.PreviousHospitalization;
+import de.symeda.sormas.app.component.Item;
 import de.symeda.sormas.app.component.controls.ControlPropertyField;
 import de.symeda.sormas.app.component.controls.ValueChangeListener;
 import de.symeda.sormas.app.core.IEntryItemOnClickListener;
 import de.symeda.sormas.app.databinding.FragmentCaseEditHospitalizationLayoutBinding;
 import de.symeda.sormas.app.util.FieldVisibilityAndAccessHelper;
+import de.symeda.sormas.app.util.DataUtils;
 import de.symeda.sormas.app.util.InfrastructureHelper;
 
 public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCaseEditHospitalizationLayoutBinding, Hospitalization, Case> {
 
 	private Hospitalization record;
 	private Case caze;
+	private List<Item> patientCondition;
 
 	private IEntryItemOnClickListener onPrevHosItemClickListener;
 
@@ -146,6 +152,7 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 	protected void prepareFragmentData() {
 		caze = getActivityRootData();
 		record = caze.getHospitalization();
+		patientCondition = DataUtils.getEnumItems(MildModerateSevereCritical.class, true);
 	}
 
 	@Override
@@ -156,6 +163,7 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 
 		contentBinding.setData(record);
 		contentBinding.setCaze(caze);
+//		contentBinding.setPatientCondition(patientCondition);
 		contentBinding.setPreviousHospitalizationList(getPreviousHospitalizations());
 		contentBinding.setPrevHosItemClickCallback(onPrevHosItemClickListener);
 		getContentBinding().setPreviousHospitalizationBindCallback(this::setFieldVisibilitiesAndAccesses);
@@ -184,6 +192,7 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		contentBinding.caseHospitalizationIntensiveCareUnitStart.initializeDateField(getFragmentManager());
 		contentBinding.caseHospitalizationIntensiveCareUnitEnd.initializeDateField(getFragmentManager());
 		contentBinding.caseHospitalizationIsolationDate.initializeDateField(getFragmentManager());
+		contentBinding.caseHospitalizationPatientConditionOnAdmission.initializeSpinner(patientCondition);
 
 		verifyPrevHospitalizationStatus();
 	}

@@ -25,6 +25,7 @@ import androidx.databinding.ObservableArrayList;
 import de.symeda.sormas.api.hospitalization.PreviousHospitalizationDto;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
+import de.symeda.sormas.api.utils.MildModerateSevereCritical;
 import de.symeda.sormas.app.BaseReadFragment;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.caze.Case;
@@ -39,6 +40,7 @@ public class CaseReadHospitalizationFragment extends BaseReadFragment<FragmentCa
 
 	private Case caze;
 	private Hospitalization record;
+//	private MildModerateSevereCritical patientCondition;
 
 	// Static methods
 
@@ -57,6 +59,7 @@ public class CaseReadHospitalizationFragment extends BaseReadFragment<FragmentCa
 	protected void prepareFragmentData(Bundle savedInstanceState) {
 		caze = getActivityRootData();
 		record = caze.getHospitalization();
+//		patientCondition = record.getPatientConditionOnAdmission();
 	}
 
 	@Override
@@ -66,6 +69,7 @@ public class CaseReadHospitalizationFragment extends BaseReadFragment<FragmentCa
 
 		contentBinding.setData(record);
 		contentBinding.setCaze(caze);
+		contentBinding.setPatientCondition(record.getPatientConditionOnAdmission());
 		contentBinding.setPreviousHospitalizationList(previousHospitalizations);
 		contentBinding.setPreviousHospitalizationBindCallback(v -> {
 			setFieldVisibilitiesAndAccesses(PreviousHospitalizationDto.class, (ViewGroup) v);

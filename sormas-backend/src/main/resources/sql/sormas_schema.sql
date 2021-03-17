@@ -5966,17 +5966,9 @@ ALTER TABLE contact ADD COLUMN contacttransmissionclassification varchar(225);
 
 INSERT INTO schema_version (version_number, comment) VALUES (284, 'Altered case and contact table to add transmission classification to it');
 
--- 2021-01-15 Added Patient condition during admission to hospitalization table
---ALTER TABLE hospitalization ADD COLUMN patientconditiononadmission varchar(255);
-
---INSERT INTO schema_version (version_number, comment) VALUES (285, 'Altered hospitalization table by adding patientconditiononadmission to it');
-
 -- 2021-01-05 ALter the name of the column
 ALTER TABLE cases ADD COLUMN specifyotheroutcome varchar(255);
--- ALTER TABLE cases ADD COLUMN othercaseoutcomedetails varchar(255);
--- ALTER TABLE hospitalization ADD COLUMN patientconditiononadmission varchar(255);
 
--- INSERT INTO schema_version (version_number, comment) VALUES (232, 'Added a column name othercaseoutcomedetails, patientconditiononadmission to the cases, hospitalization table respectively');
 INSERT INTO schema_version (version_number, comment) VALUES (285, 'Added a column to specifyOtherOutcome to the case table');
 
 -- *** Insert new sql commands BEFORE this line ***
