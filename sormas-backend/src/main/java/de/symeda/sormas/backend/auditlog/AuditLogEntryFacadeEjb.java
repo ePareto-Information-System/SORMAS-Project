@@ -115,7 +115,7 @@ public class AuditLogEntryFacadeEjb implements AuditLogEntryFacade {
 		if (criteria.showingDistinctActivitiesOnly().equals(YesNoUnknown.YES)) {
 			entries = entries
 					 .stream()
-					 .filter(distinctByKeys(AuditLogEntryDto::getChangeType, AuditLogEntryDto::getEditingUser))
+					 .filter(distinctByKeys(AuditLogEntryDto::getChangeType, AuditLogEntryDto::getEditingUserId))
 					 .collect(Collectors.toList());		
 		}
 		
