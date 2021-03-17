@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -32,6 +33,8 @@ import de.symeda.sormas.api.utils.MildModerateSevereCritical;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.backend.common.AbstractDomainObject;
 import de.symeda.sormas.app.backend.common.EmbeddedAdo;
+
+import static de.symeda.sormas.api.EntityDto.COLUMN_LENGTH_DEFAULT;
 
 @Entity(name = Hospitalization.TABLE_NAME)
 @DatabaseTable(tableName = Hospitalization.TABLE_NAME)
@@ -68,8 +71,7 @@ public class Hospitalization extends AbstractDomainObject {
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date intensiveCareUnitEnd;
 
-//	@DatabaseField(dataType = DataType.ENUM_STRING)
-//	@Enumerated(EnumType.STRING)
+	@Column(length = COLUMN_LENGTH_DEFAULT)
 	private MildModerateSevereCritical patientConditionOnAdmission;
 
 	// just for reference, not persisted in DB
