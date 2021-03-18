@@ -178,6 +178,26 @@
                         app:value="@{data.outcome}"
                         style="@style/ControlFirstOfTwoColumnsStyle" />
 
+
+<!--                    <de.symeda.sormas.app.component.controls.ControlTextReadField-->
+<!--                        android:id="@+id/caseData_specifyOtherOutcome"-->
+<!--                        app:required="false"-->
+<!--                        app:value="@={data.specifyOtherOutcome}"-->
+<!--                        app:softRequired="true"-->
+<!--                        app:dependencyParentField="@{caseDataOutcome}"-->
+<!--                        app:dependencyParentValue="@{CaseOutcome.OTHER}"-->
+<!--                        app:dependencyParentVisibility="@{true}"-->
+<!--                        app:userEditRight="@{UserRight.CASE_CLASSIFY}"-->
+<!--                        style="@style/ControlSecondOfTwoColumnsStyle" />-->
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/caseData_specifyOtherOutcome"
+                        app:value="@{data.specifyOtherOutcome}"
+                        app:dependencyParentField="@{caseDataOutcome}"
+                        app:dependencyParentValue2="@{CaseOutcome.OTHER}"
+                        app:dependencyParentVisibility="@{true}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
                     <de.symeda.sormas.app.component.controls.ControlTextReadField
                         android:id="@+id/caseData_outcomeDate"
                         app:value="@{data.outcomeDate}"

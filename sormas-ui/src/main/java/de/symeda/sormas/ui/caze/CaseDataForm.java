@@ -307,8 +307,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		epidNumberWarningLabel.addStyleName(VSPACE_3);
 		addField(CaseDataDto.EXTERNAL_ID, TextField.class);
 
-		addField(CaseDataDto.INVESTIGATION_STATUS, NullableOptionGroup.class);
+		addField(CaseDataDto.INVESTIGATION_STATUS, OptionGroup.class);
 		caseOutcome = addField(CaseDataDto.OUTCOME, OptionGroup.class);
+		caseOutcome.setVisible(false);
 
 		caseOutcome.addValueChangeListener(e -> addOtherOutcomeValue());
 		otherCaseOutComeDetails = addField(CaseDataDto.OTHERCASEOUTCOMEDETAILS, TextField.class);
@@ -886,7 +887,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			}
 
 			updateFollowUpStatusComponents();
-
+			if (getValue() != null && getValue().getHospitalization().getDischargeDate() != null) {
+				caseOutcome.setVisible(true);
+				caseOutcome.setEnabled(true);
+				caseOutcome.setRequired(true);
+			}
 			setEpidNumberError(epidField, assignNewEpidNumberButton, epidNumberWarningLabel, getValue().getEpidNumber());
 
 			epidField.addValueChangeListener(f -> {
@@ -1262,7 +1267,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 	}
 
 	private void addOtherOutcomeValue() {
-		if (caseOutcome.getValue() == CaseOutcome.OTHER) {
+		if (caseOutcome.getValue() == CaseOutcome.OTHER && getValue().getHospitalization().getDischargeDate() != null) {
 			otherCaseOutComeDetails.setVisible(true);
 		}
 		else {

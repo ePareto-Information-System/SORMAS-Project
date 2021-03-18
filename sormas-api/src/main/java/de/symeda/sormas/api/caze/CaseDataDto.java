@@ -1308,15 +1308,6 @@ public class CaseDataDto extends PseudonymizableDto {
 	public void setOwnershipHandedOver(boolean ownershipHandedOver) {
 		this.ownershipHandedOver = ownershipHandedOver;
 	}
-	
-	public String getSpecifyOtherOutcome() {
-		return specifyOtherOutcome;
-	}
-
-	public void setSpecifyOtherOutcome(String specifyOtherOutcome) {
-		this.specifyOtherOutcome = specifyOtherOutcome;
-	}
-	
 	public TransmissionClassification getCaseTransmissionClassification() {
 		return caseTransmissionClassification;
 	}
@@ -1326,5 +1317,12 @@ public class CaseDataDto extends PseudonymizableDto {
 	}
 	public String getOtherCaseOutcomeDetails() {
 		return otherCaseOutcomeDetails;
+	}
+	public String getSpecifyOtherOutcome() {
+		return specifyOtherOutcome;
+	}
+
+	public void setSpecifyOtherOutcome(String specifyOtherOutcome) {
+		this.specifyOtherOutcome = specifyOtherOutcome;
 	}
 }

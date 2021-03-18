@@ -83,6 +83,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 
 	private List<Item> caseClassificationList;
 	private List<Item> caseOutcomeList;
+	private List<Item> specifyOthercaseOutcome;
 	private List<Item> vaccinationInfoSourceList;
 	private List<Item> diseaseList;
 	private List<Item> plagueTypeList;

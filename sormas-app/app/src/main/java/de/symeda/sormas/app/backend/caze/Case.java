@@ -93,6 +93,7 @@ public class Case extends PseudonymizableAdo {
 	public static final String CASE_ORIGIN = "caseOrigin";
 	public static final String REGION = "region";
 	public static final String COMPLETENESS = "completeness";
+	public static final String SPECIFYOTHEROUTCOME = "specifyOtherOutcome";
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true, canBeNull = false, maxForeignAutoRefreshLevel = 3)
 	private Person person;
@@ -338,6 +339,9 @@ public class Case extends PseudonymizableAdo {
 	private SormasToSormasOriginInfo sormasToSormasOriginInfo;
 	@DatabaseField
 	private boolean ownershipHandedOver;
+
+	@DatabaseField(canBeNull = true)
+	private String specifyotheroutcome;
 
 	public boolean isUnreferredPortHealthCase() {
 		return caseOrigin == CaseOrigin.POINT_OF_ENTRY && healthFacility == null;
@@ -1117,5 +1121,12 @@ public class Case extends PseudonymizableAdo {
 
 	public void setOwnershipHandedOver(boolean ownershipHandedOver) {
 		this.ownershipHandedOver = ownershipHandedOver;
+	}
+		public String getSpecifyOtherOutcome() {
+		return specifyotheroutcome;
+	}
+
+	public void setSpecifyOtherOutcome(String specifyotheroutcome) {
+		this.specifyotheroutcome = specifyotheroutcome;
 	}
 }

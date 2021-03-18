@@ -1272,7 +1272,6 @@ public class Case extends CoreAdo {
 
 	public void setSpecifyOtherOutcome(String specifyOtherOutcome) {
 		this.specifyOtherOutcome = specifyOtherOutcome;
-
 	}
 
 	public void setCaseIdIsm(Integer caseIdIsm) {

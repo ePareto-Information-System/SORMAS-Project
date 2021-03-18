@@ -17,11 +17,14 @@
  *******************************************************************************/
 package de.symeda.sormas.backend.hospitalization;
 
+import static de.symeda.sormas.api.EntityDto.COLUMN_LENGTH_DEFAULT;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -184,6 +187,7 @@ public class Hospitalization extends AbstractDomainObject {
 		this.intensiveCareUnitEnd = intensiveCareUnitEnd;
 	}
 	
+	@Column(length = COLUMN_LENGTH_DEFAULT)
 	public MildModerateSevereCritical getPatientConditionOnAdmission() {
 		return patientConditionOnAdmission;
 	}

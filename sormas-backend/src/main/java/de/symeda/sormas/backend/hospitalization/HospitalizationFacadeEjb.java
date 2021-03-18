@@ -101,7 +101,6 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setIntensiveCareUnitStart(source.getIntensiveCareUnitStart());
 		target.setIntensiveCareUnitEnd(source.getIntensiveCareUnitEnd());
 		target.setPatientConditionOnAdmission(source.getPatientConditionOnAdmission());
-
 		return hospitalization;
 	}
 
