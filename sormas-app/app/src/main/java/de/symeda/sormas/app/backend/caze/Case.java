@@ -295,8 +295,9 @@ public class Case extends PseudonymizableAdo {
 	@Enumerated(EnumType.STRING)
 	private Trimester trimester;
 
-	@DatabaseField(canBeNull = true)
-	private String specifyotheroutcome;
+//	@DatabaseField(canBeNull = true)
+	@Column(length = COLUMN_LENGTH_DEFAULT)
+	private String specifyOtherOutcome;
 
 	public boolean isUnreferredPortHealthCase() {
 		return caseOrigin == CaseOrigin.POINT_OF_ENTRY && healthFacility == null;
@@ -943,10 +944,10 @@ public class Case extends PseudonymizableAdo {
 	}
 
 	public String getSpecifyOtherOutcome() {
-		return specifyotheroutcome;
+		return specifyOtherOutcome;
 	}
 
-	public void setSpecifyOtherOutcome(String specifyotheroutcome) {
-		this.specifyotheroutcome = specifyotheroutcome;
+	public void setSpecifyOtherOutcome(String specifyOtherOutcome) {
+		this.specifyOtherOutcome = specifyOtherOutcome;
 	}
 }
