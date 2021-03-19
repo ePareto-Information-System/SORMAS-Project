@@ -85,7 +85,7 @@ public class Case extends PseudonymizableAdo {
 	public static final String CASE_ORIGIN = "caseOrigin";
 	public static final String REGION = "region";
 	public static final String COMPLETENESS = "completeness";
-	public static final String CONTACT_TRANSMISSION_CLASSIFICATION = "caseTransmissionClassification";
+	public static final String CASE_TRANSMISSION_CLASSIFICATION = "caseTransmissionClassification";
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true, canBeNull = false, maxForeignAutoRefreshLevel = 3)
 	private Person person;
