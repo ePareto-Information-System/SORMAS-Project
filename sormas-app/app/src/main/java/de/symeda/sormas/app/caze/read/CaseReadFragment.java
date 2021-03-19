@@ -195,6 +195,7 @@ public class CaseReadFragment extends BaseReadFragment<FragmentCaseReadLayoutBin
 			contentBinding.setSingleClassification(CaseConfirmationBasis.LABORATORY_DIAGNOSTIC_CONFIRMATION);
 		}
 //		contentBinding.setCaseTransmissionClassificationClass(record.getCaseTransmissionClassification().toString());
+		contentBinding.setCaseTransmissionClassificationClass(record.getCaseTransmissionClassification());
 	}
 
 	@Override
