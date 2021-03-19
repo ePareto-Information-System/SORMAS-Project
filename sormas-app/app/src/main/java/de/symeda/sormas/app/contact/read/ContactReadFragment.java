@@ -94,6 +94,8 @@ public class ContactReadFragment extends BaseReadFragment<FragmentContactReadLay
 
 		contentBinding.setData(record);
 		contentBinding.setCaze(sourceCase);
+		contentBinding.setContactTransmissionClassificationClass(record.getContactTransmissionClassification());
+
 	}
 
 	@Override

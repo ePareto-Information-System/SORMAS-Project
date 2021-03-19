@@ -26,6 +26,7 @@ import android.view.View;
 import org.apache.commons.lang3.ObjectUtils;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.contact.ContactCategory;
 import de.symeda.sormas.api.contact.ContactClassification;
 import de.symeda.sormas.api.contact.ContactDto;
@@ -67,6 +68,7 @@ public class ContactEditFragment extends BaseEditFragment<FragmentContactEditLay
 	private List<Item> categoryList;
 	private List<Item> contactIdentificationSources;
 	private List<Item> tracingApps;
+	private List<Item> contactTransmissionClassificationsList;
 
 	// Instance methods
 
@@ -176,6 +178,8 @@ public class ContactEditFragment extends BaseEditFragment<FragmentContactEditLay
 		categoryList = DataUtils.getEnumItems(ContactCategory.class, true);
 		contactIdentificationSources = DataUtils.getEnumItems(ContactIdentificationSource.class, true);
 		tracingApps = DataUtils.getEnumItems(TracingApp.class, true);
+		contactTransmissionClassificationsList = DataUtils.getEnumItems(TransmissionClassification.class, true);
+
 	}
 
 	@Override
@@ -251,6 +255,7 @@ public class ContactEditFragment extends BaseEditFragment<FragmentContactEditLay
 			contentBinding.contactRegion.setRequired(true);
 			contentBinding.contactDistrict.setRequired(true);
 		}
+		contentBinding.contactContactTransmissionClassification.initializeSpinner(contactTransmissionClassificationsList);
 
 		ContactValidator.initializeValidation(record, contentBinding);
 
