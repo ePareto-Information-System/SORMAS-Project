@@ -155,6 +155,7 @@ public class ContactDtoHelper extends AdoDtoHelper<Contact, ContactDto> {
 
 		target.setPseudonymized(source.isPseudonymized());
 		target.setReturningTraveler(source.getReturningTraveler());
+		target.setContactTransmissionClassification(source.getContactTransmissionClassification());
 	}
 
 	@Override
@@ -284,6 +285,7 @@ public class ContactDtoHelper extends AdoDtoHelper<Contact, ContactDto> {
 
 		target.setPseudonymized(source.isPseudonymized());
 		target.setReturningTraveler(source.getReturningTraveler());
+		target.setContactTransmissionClassification(source.getContactTransmissionClassification());
 	}
 
 	public static ContactReferenceDto toReferenceDto(Contact ado) {

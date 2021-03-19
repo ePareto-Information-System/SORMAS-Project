@@ -201,6 +201,7 @@ public class CaseDtoHelper extends AdoDtoHelper<Case, CaseDataDto> {
 			sormasToSormasOriginInfoDtoHelper.fillOrCreateFromDto(target.getSormasToSormasOriginInfo(), source.getSormasToSormasOriginInfo()));
 		target.setOwnershipHandedOver(source.isOwnershipHandedOver());
 		target.setSpecifyOtherOutcome(source.getSpecifyOtherOutcome());
+		target.setCaseTransmissionClassification(source.getCaseTransmissionClassification());
 	}
 
 	@Override
@@ -405,7 +406,7 @@ public class CaseDtoHelper extends AdoDtoHelper<Case, CaseDataDto> {
 			target.setSormasToSormasOriginInfo(sormasToSormasOriginInfoDtoHelper.adoToDto(source.getSormasToSormasOriginInfo()));
 		}
 		target.setSpecifyOtherOutcome(source.getSpecifyOtherOutcome());
-
+		target.setCaseTransmissionClassification(source.getCaseTransmissionClassification());
 	}
 
 	public static CaseReferenceDto toReferenceDto(Case ado) {

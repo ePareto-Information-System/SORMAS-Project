@@ -25,6 +25,7 @@ import java.util.List;
 
 import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.contact.ContactCategory;
 import de.symeda.sormas.api.contact.ContactProximity;
 import de.symeda.sormas.api.contact.ContactRelation;
@@ -58,6 +59,7 @@ public class ContactNewFragment extends BaseEditFragment<FragmentContactNewLayou
 	private List<Item> diseaseList;
 	private List<Item> sexList;
 	private List<Item> categoryList;
+	private List<Item> contactTransmissionClassificationsList;
 
 	public static ContactNewFragment newInstance(Contact activityRootData) {
 		return newInstance(ContactNewFragment.class, null, activityRootData);
@@ -86,6 +88,7 @@ public class ContactNewFragment extends BaseEditFragment<FragmentContactNewLayou
 		diseaseList = DataUtils.toItems(DiseaseConfigurationCache.getInstance().getAllDiseases(true, true, true));
 		sexList = DataUtils.getEnumItems(Sex.class, true);
 		categoryList = DataUtils.getEnumItems(ContactCategory.class, true);
+		contactTransmissionClassificationsList = DataUtils.getEnumItems(TransmissionClassification.class, true);
 	}
 
 	@Override
@@ -141,6 +144,7 @@ public class ContactNewFragment extends BaseEditFragment<FragmentContactNewLayou
 			contentBinding.contactContactProximityDetails.setVisibility(GONE);
 			contentBinding.contactContactCategory.setVisibility(GONE);
 		}
+		contentBinding.contactContactTransmissionClassification.initializeSpinner(contactTransmissionClassificationsList);
 
 		ContactValidator.initializeValidation(record, contentBinding);
 	}

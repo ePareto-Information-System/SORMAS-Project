@@ -30,6 +30,7 @@
 
         <variable name="data" type="de.symeda.sormas.app.backend.contact.Contact" />
         <variable name="yesNoUnknownClass" type="Class" />
+        <variable name="contactTransmissionClassificationClass" type="de.symeda.sormas.api.caze.TransmissionClassification" />
     </data>
 
     <ScrollView
@@ -50,6 +51,12 @@
                 app:value="@={data.reportDateTime}"
                 app:required="true"
                 style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                android:id="@+id/contact_contactTransmissionClassification"
+                style="@style/ControlSingleColumnStyle"
+                app:required="true"
+                app:value="@={data.contactTransmissionClassification}" />
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/person_firstName"

@@ -40,6 +40,7 @@ import de.symeda.sormas.api.caze.PlagueType;
 import de.symeda.sormas.api.caze.QuarantineReason;
 import de.symeda.sormas.api.caze.RabiesType;
 import de.symeda.sormas.api.caze.ReportingType;
+import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.caze.Trimester;
 import de.symeda.sormas.api.caze.Vaccination;
 import de.symeda.sormas.api.caze.VaccinationInfoSource;
@@ -102,6 +103,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 	private List<Item> endOfIsolationReasonList;
 	private List<Item> covidTestReasonList;
 	private List<Item> contactTracingContactTypeList;
+	private List<Item> caseTransmissionClassificationsList;
 
 	// Static methods
 
@@ -268,6 +270,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		endOfIsolationReasonList = DataUtils.getEnumItems(EndOfIsolationReason.class, true);
 		covidTestReasonList = DataUtils.getEnumItems(CovidTestReason.class, true);
 		contactTracingContactTypeList = DataUtils.getEnumItems(ContactTracingContactType.class, true);
+		caseTransmissionClassificationsList = DataUtils.getEnumItems(TransmissionClassification.class, true);
 	}
 
 	@Override
@@ -290,6 +293,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		}
 
 		FragmentActivity thisActivity = this.getActivity();
+		contentBinding.caseDataCaseTransmissionClassification.initializeSpinner(caseTransmissionClassificationsList);
 		contentBinding.caseDataDisease.addValueChangedListener(new ValueChangeListener() {
 
 			Disease currentDisease = record.getDisease();

@@ -34,6 +34,7 @@
         <import type="de.symeda.sormas.api.contact.QuarantineType" />
 
         <variable name="data" type="de.symeda.sormas.app.backend.caze.Case" />
+        <variable name="caseTransmissionClassificationClass" type="de.symeda.sormas.api.caze.TransmissionClassification" />
     </data>
 
     <ScrollView
@@ -247,6 +248,11 @@
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/caseData_caseOrigin"
                     app:value="@{data.caseOrigin}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/caseData_caseTransmissionClassification"
+                    app:value="@{data.caseTransmissionClassification}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <LinearLayout

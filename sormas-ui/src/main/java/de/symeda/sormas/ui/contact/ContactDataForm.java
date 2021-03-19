@@ -43,6 +43,7 @@ import com.vaadin.v7.ui.CheckBox;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.DateField;
 import com.vaadin.v7.ui.Field;
+import com.vaadin.v7.ui.OptionGroup;
 import com.vaadin.v7.ui.TextArea;
 import com.vaadin.v7.ui.TextField;
 
@@ -184,6 +185,7 @@ public class ContactDataForm extends AbstractEditForm<ContactDto> {
 		followUpStausHeadingLabel.addStyleName(H3);
 		getContent().addComponent(followUpStausHeadingLabel, FOLLOW_UP_STATUS_HEADING_LOC);
 
+		addField(ContactDto.CONTACT_TRANSMISSION_CLASSIFICATION, OptionGroup.class);
 		addField(ContactDto.CONTACT_CLASSIFICATION, NullableOptionGroup.class);
 		addField(ContactDto.CONTACT_STATUS, NullableOptionGroup.class);
 		addField(ContactDto.UUID, TextField.class);

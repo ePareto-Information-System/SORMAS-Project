@@ -2179,6 +2179,7 @@ public class CaseFacadeEjb implements CaseFacade {
 		target.setEndOfIsolationReasonDetails(source.getEndOfIsolationReasonDetails());
 		target.setCaseTransmissionClassification(source.getCaseTransmissionClassification());
 		target.setSpecifyOtherOutcome(source.getSpecifyOtherOutcome());
+		target.setCaseTransmissionClassification(source.getCaseTransmissionClassification());
 
 		return target;
 	}
@@ -2427,6 +2428,8 @@ public class CaseFacadeEjb implements CaseFacade {
 
 		target.setCaseTransmissionClassification(source.getCaseTransmissionClassification());
 		target.setSpecifyOtherOutcome(source.getSpecifyOtherOutcome());
+
+		target.setCaseTransmissionClassification(source.getCaseTransmissionClassification());
 
 		return target;
 	}

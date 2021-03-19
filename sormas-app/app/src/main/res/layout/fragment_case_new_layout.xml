@@ -28,6 +28,7 @@
 
         <variable name="data" type="de.symeda.sormas.app.backend.caze.Case" />
         <variable name="caseOriginClass" type="Class" />
+        <variable name="caseTransmissionClassificationClass" type="de.symeda.sormas.api.caze.TransmissionClassification" />
     </data>
 
 
@@ -53,6 +54,12 @@
                 app:nullable="false"
                 app:required="true"
                 app:value="@={data.caseOrigin}" />
+
+            <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                android:id="@+id/caseData_caseTransmissionClassification"
+                style="@style/ControlSingleColumnStyle"
+                app:required="true"
+                app:value="@={data.caseTransmissionClassification}" />
 
             <de.symeda.sormas.app.component.controls.ControlSpinnerField
                 android:id="@+id/caseData_disease"
