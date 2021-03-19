@@ -43,7 +43,7 @@
         <variable name="yesNoUnknownClass" type="Class" />
         <variable name="vaccinationClass" type="Class" />
         <variable name="trimesterClass" type="Class" />
-        <variable name="caseTransmissionClassificationClass" type="Class" />
+        <variable name="caseTransmissionClassificationClass" type="de.symeda.sormas.api.caze.TransmissionClassification" />
     </data>
 
     <ScrollView
