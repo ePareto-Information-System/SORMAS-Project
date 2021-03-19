@@ -30,6 +30,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.contact.ContactCategory;
 import de.symeda.sormas.api.contact.ContactClassification;
 import de.symeda.sormas.api.contact.ContactIdentificationSource;
@@ -80,6 +81,7 @@ public class Contact extends AbstractDomainObject {
 	public static final String REPORT_LAT = "reportLat";
 	public static final String REPORT_LON = "reportLon";
 	public static final String REPORT_LAT_LON_ACCURACY = "reportLatLonAccuracy";
+	public static final String CONTACT_TRANSMISSION_CLASSIFICATION = "contactTransmissionClassification";
 
 	@DatabaseField(dataType = DataType.DATE_LONG, canBeNull = true)
 	private Date reportDateTime;
@@ -193,6 +195,10 @@ public class Contact extends AbstractDomainObject {
 	private String quarantineHomeSupplyEnsuredComment;
 	@Column(length = COLUMN_LENGTH_BIG)
 	private String additionalDetails;
+	@Column(length = COLUMN_LENGTH_DEFAULT)
+	@Enumerated(EnumType.STRING)
+	private TransmissionClassification contactTransmissionClassification;
+
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private EpiData epiData;
@@ -643,5 +649,13 @@ public class Contact extends AbstractDomainObject {
 
 	public void setEpiData(EpiData epiData) {
 		this.epiData = epiData;
+	}
+
+	public TransmissionClassification getContactTransmissionClassification() {
+		return contactTransmissionClassification;
+	}
+
+	public void setContactTransmissionClassification(TransmissionClassification contactTransmissionClassification) {
+		this.contactTransmissionClassification = contactTransmissionClassification;
 	}
 }
