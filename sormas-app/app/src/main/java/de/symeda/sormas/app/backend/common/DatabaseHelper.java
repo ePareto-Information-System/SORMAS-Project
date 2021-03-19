@@ -3086,6 +3086,15 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(FeatureConfiguration.class).executeRaw("DELETE FROM featureConfiguration WHERE featureType = 'DASHBOARD';");
 
 				// ATTENTION: break should only be done after last version
+			case 216:
+				currentVersion = 216;
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN caseTransmissionClassification varchar(512);");
+
+			case 217:
+				currentVersion = 217;
+				getDao(Contact.class).executeRaw("ALTER TABLE contacts ADD COLUMN contactTransmissionClassification varchar(512);");
+
+					// ATTENTION: break should only be done after last version
 				break;
 
 			default:
