@@ -39,6 +39,8 @@
         <variable name="caze" type="de.symeda.sormas.app.backend.caze.Case"/>
         <variable name="yesNoUnknownClass" type="Class" />
         <variable name="vaccinationStatusClass" type="Class" />
+        <variable name="contactTransmissionClassificationClass" type="de.symeda.sormas.api.caze.TransmissionClassification" />
+
     </data>
 
     <ScrollView
@@ -91,6 +93,11 @@
                         app:value="@={data.externalToken}"
                         style="@style/ControlSecondOfTwoColumnsStyle"/>
                 </LinearLayout>
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                    android:id="@+id/contact_contactTransmissionClassification"
+                    style="@style/ControlSingleColumnStyle"
+                    app:required="true"
+                    app:value="@={data.contactTransmissionClassification}" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/contact_internalToken"
