@@ -131,6 +131,7 @@ public class ContactDtoHelper extends AdoDtoHelper<Contact, ContactDto> {
 		target.setAdditionalDetails(source.getAdditionalDetails());
 
 		target.setEpiData(epiDataDtoHelper.fillOrCreateFromDto(target.getEpiData(), source.getEpiData()));
+		target.setContactTransmissionClassification(source.getContactTransmissionClassification());
 	}
 
 	@Override
@@ -233,6 +234,7 @@ public class ContactDtoHelper extends AdoDtoHelper<Contact, ContactDto> {
 		} else {
 			target.setEpiData(null);
 		}
+		target.setContactTransmissionClassification(source.getContactTransmissionClassification());
 	}
 
 	public static ContactReferenceDto toReferenceDto(Contact ado) {
