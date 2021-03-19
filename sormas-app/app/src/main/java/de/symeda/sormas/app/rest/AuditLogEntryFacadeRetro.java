@@ -35,6 +35,6 @@ public interface AuditLogEntryFacadeRetro {
 	Call<void> logActivity(
 		@Path("activityType") String activityType,
 		@Path("clazz") String clazz,
-		@Path("uuid") String uuid,
+		@Path("uuid") String uuid
 	);
 }
