@@ -32,7 +32,7 @@ import retrofit2.http.Path;
 public interface AuditLogEntryFacadeRetro {
 
 	@POST("auditlogentry/logactivity/{activityType}/{clazz}/{uuid}")
-	Call<void> logActivity(
+	Call<String> logActivity(
 		@Path("activityType") String activityType,
 		@Path("clazz") String clazz,
 		@Path("uuid") String uuid

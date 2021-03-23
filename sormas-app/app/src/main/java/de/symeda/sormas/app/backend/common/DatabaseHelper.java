@@ -47,6 +47,8 @@ import de.symeda.sormas.api.exposure.HabitationType;
 import de.symeda.sormas.api.exposure.TypeOfAnimal;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.app.backend.auditlog.AuditLogEntry;
+import de.symeda.sormas.app.backend.auditlog.AuditLogEntryDao;
 import de.symeda.sormas.app.backend.campaign.Campaign;
 import de.symeda.sormas.app.backend.campaign.CampaignDao;
 import de.symeda.sormas.app.backend.campaign.data.CampaignFormData;
@@ -152,7 +154,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	public static final String DATABASE_NAME = "sormas.db";
 	// any time you make changes to your database objects, you may have to increase the database version
 
-	public static final int DATABASE_VERSION = 247;
+	public static final int DATABASE_VERSION = 248;
 
 	private static DatabaseHelper instance = null;
 
@@ -1773,6 +1775,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 						+ "SELECT exposureDetailsKnown, contactWithSourceCaseKnown, wildbirds, changeDate, creationDate, id, lastOpenedDate, localChangeDate, modified, snapshot, uuid, pseudonymized "
 						+ "FROM tmp_epidata;");
 				getDao(EpiData.class).executeRaw("DROP TABLE tmp_epidata;");
+			case 247:
+				currentVersion = 247;
+
+				TableUtils.createTable(connectionSource, AuditLogEntry.class);
 
 				// ATTENTION: break should only be done after last version
 				break;
@@ -2216,6 +2222,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					dao = (AbstractAdoDao<ADO>) new CampaignFormMetaDao((Dao<CampaignFormMeta, Long>) innerDao);
 				} else if (type.equals(CampaignFormData.class)) {
 					dao = (AbstractAdoDao<ADO>) new CampaignFormDataDao((Dao<CampaignFormData, Long>) innerDao);
+				} else if (type.equals(AuditLogEntry.class)) {
+					dao = (AbstractAdoDao<ADO>) new AuditLogEntryDao((Dao<AuditLogEntry, Long>) innerDao);
 				} else {
 					throw new UnsupportedOperationException(type.toString());
 				}
@@ -2439,6 +2447,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	public static CampaignFormDataDao getCampaignFormDataDao() {
 		return (CampaignFormDataDao) getAdoDao(CampaignFormData.class);
+	}
+
+	public static AuditLogEntryDao getAuditLogEntryDao() {
+		return (AuditLogEntryDao) getAdoDao(AuditLogEntry.class);
 	}
 
 	/**
