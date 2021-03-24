@@ -149,7 +149,7 @@ public class AuditLogEntryDto extends EntityDto {
 	}
 	
 	public static String getEntityClazz (java.lang.reflect.Type type) {
-		return type.getTypeName()
+		return type.toString()
 				.replaceAll(".sormas.api.", ".sormas.backend.")
 				.replaceAll("ReferenceDto$", "")
 				.replaceAll("Dto$", "");

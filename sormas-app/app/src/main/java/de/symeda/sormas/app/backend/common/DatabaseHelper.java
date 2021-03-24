@@ -47,6 +47,8 @@ import de.symeda.sormas.api.exposure.HabitationType;
 import de.symeda.sormas.api.exposure.TypeOfAnimal;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.app.backend.auditlog.AuditLogEntry;
+import de.symeda.sormas.app.backend.auditlog.AuditLogEntryDao;
 import de.symeda.sormas.app.backend.campaign.Campaign;
 import de.symeda.sormas.app.backend.campaign.CampaignDao;
 import de.symeda.sormas.app.backend.campaign.data.CampaignFormData;
@@ -1714,7 +1716,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 			case 240:
 				currentVersion = 240;
-				getDao(Visit.class).executeRaw("ALTER TABLE visits ADD COLUMN origin varchar(255);");
+//				getDao(Visit.class).executeRaw("ALTER TABLE visits ADD COLUMN origin varchar(255);");
 				getDao(Visit.class).executeRaw("UPDATE visits SET origin='USER'");
 
 			case 241:
@@ -1764,10 +1766,15 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN highTransmissionRiskArea varchar(255);");
 				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN largeOutbreaksArea varchar(255);");
 
-			case 247:
-				currentVersion = 247;
+			// case 247:
+				// currentVersion = 247;
 				// Mistakenly added
 				//getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN exposureDetailsKnown varchar(255);");
+
+			case 247:
+				currentVersion = 247;
+
+				TableUtils.createTable(connectionSource, AuditLogEntry.class);
 
 			case 248:
 				currentVersion = 248;
@@ -1782,7 +1789,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 						+ "SELECT exposureDetailsKnown, contactWithSourceCaseKnown, wildbirds, changeDate, creationDate, id, lastOpenedDate, localChangeDate, modified, snapshot, uuid, pseudonymized "
 						+ "FROM tmp_epidata;");
 				getDao(EpiData.class).executeRaw("DROP TABLE tmp_epidata;");
-
+			
 			case 249:
 				currentVersion = 249;
 				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN patientConditionOnAdmission varchar(512);");
@@ -2235,6 +2242,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 					dao = (AbstractAdoDao<ADO>) new CampaignFormMetaDao((Dao<CampaignFormMeta, Long>) innerDao);
 				} else if (type.equals(CampaignFormData.class)) {
 					dao = (AbstractAdoDao<ADO>) new CampaignFormDataDao((Dao<CampaignFormData, Long>) innerDao);
+				} else if (type.equals(AuditLogEntry.class)) {
+					dao = (AbstractAdoDao<ADO>) new AuditLogEntryDao((Dao<AuditLogEntry, Long>) innerDao);
 				} else {
 					throw new UnsupportedOperationException(type.toString());
 				}
@@ -2458,6 +2467,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	public static CampaignFormDataDao getCampaignFormDataDao() {
 		return (CampaignFormDataDao) getAdoDao(CampaignFormData.class);
+	}
+
+	public static AuditLogEntryDao getAuditLogEntryDao() {
+		return (AuditLogEntryDao) getAdoDao(AuditLogEntry.class);
 	}
 
 	/**

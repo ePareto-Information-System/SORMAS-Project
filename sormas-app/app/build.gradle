@@ -14,7 +14,7 @@ android {
     defaultConfig {
         applicationId "de.symeda.sormas.app"
         minSdkVersion 24
-        targetSdkVersion 29
+        targetSdkVersion 24
         versionCode buildVersionCode()
         versionName "$sormasVersion"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

@@ -28,10 +28,12 @@ import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.app.BaseReadActivity;
 import de.symeda.sormas.app.BaseReadFragment;
 import de.symeda.sormas.app.R;
+import de.symeda.sormas.app.backend.auditlog.AuditLogEntryDtoHelper;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.sample.Sample;
 import de.symeda.sormas.app.backend.sample.SampleEditAuthorization;
 import de.symeda.sormas.app.component.menu.PageMenuItem;
+import de.symeda.sormas.app.rest.RetroProvider;
 import de.symeda.sormas.app.sample.SampleSection;
 import de.symeda.sormas.app.sample.ShipmentStatus;
 import de.symeda.sormas.app.sample.edit.SampleEditActivity;
@@ -124,6 +126,7 @@ public class SampleReadActivity extends BaseReadActivity<Sample> {
 
 	@Override
 	public void goToEditView() {
+		AuditLogEntryDtoHelper.logActivity(this, getStoredRootEntity());
 		SampleSection section = SampleSection.fromOrdinal(getActivePage().getPosition());
 		SampleEditActivity.startActivity(getContext(), getRootUuid(), section);
 	}
