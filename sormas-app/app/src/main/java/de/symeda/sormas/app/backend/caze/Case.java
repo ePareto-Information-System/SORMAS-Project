@@ -342,8 +342,9 @@ public class Case extends PseudonymizableAdo {
 	@DatabaseField
 	private boolean ownershipHandedOver;
 
-	@DatabaseField(canBeNull = true)
-	private String specifyotheroutcome;
+//	@DatabaseField(canBeNull = true)
+	@Column(length = COLUMN_LENGTH_DEFAULT)
+	private String specifyOtherOutcome;
 
 	@Enumerated(EnumType.STRING)
 	private TransmissionClassification caseTransmissionClassification;
@@ -1127,12 +1128,12 @@ public class Case extends PseudonymizableAdo {
 	public void setOwnershipHandedOver(boolean ownershipHandedOver) {
 		this.ownershipHandedOver = ownershipHandedOver;
 	}
-		public String getSpecifyOtherOutcome() {
-		return specifyotheroutcome;
+	public String getSpecifyOtherOutcome() {
+		return specifyOtherOutcome;
 	}
 
-	public void setSpecifyOtherOutcome(String specifyotheroutcome) {
-		this.specifyotheroutcome = specifyotheroutcome;
+	public void setSpecifyOtherOutcome(String specifyOtherOutcome) {
+		this.specifyOtherOutcome = specifyOtherOutcome;
 	}
 
     public TransmissionClassification getCaseTransmissionClassification() {
