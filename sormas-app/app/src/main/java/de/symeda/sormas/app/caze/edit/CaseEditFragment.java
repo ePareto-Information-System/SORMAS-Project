@@ -20,6 +20,7 @@ import static android.view.View.VISIBLE;
 
 import java.util.List;
 
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.webkit.WebView;
 
@@ -55,6 +56,7 @@ import de.symeda.sormas.app.backend.classification.DiseaseClassificationAppHelpe
 import de.symeda.sormas.app.backend.classification.DiseaseClassificationCriteria;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.config.ConfigProvider;
+import de.symeda.sormas.app.backend.hospitalization.Hospitalization;
 import de.symeda.sormas.app.component.Item;
 import de.symeda.sormas.app.component.controls.ControlPropertyField;
 import de.symeda.sormas.app.component.controls.ValueChangeListener;
@@ -71,12 +73,12 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 	public static final String TAG = CaseEditFragment.class.getSimpleName();
 
 	private Case record;
+	private Hospitalization hospitalization;
 
 	// Enum lists
 
 	private List<Item> caseClassificationList;
 	private List<Item> caseOutcomeList;
-	private List<Item> specifyOthercaseOutcome;
 	private List<Item> vaccinationInfoSourceList;
 	private List<Item> diseaseList;
 	private List<Item> plagueTypeList;
@@ -218,6 +220,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 	@Override
 	protected void prepareFragmentData() {
 		record = getActivityRootData();
+		hospitalization = record.getHospitalization();
 
 		List<Disease> diseases = DiseaseConfigurationCache.getInstance().getAllDiseases(true, true, true);
 		diseaseList = DataUtils.toItems(diseases);
@@ -290,6 +293,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		});
 
 		contentBinding.setData(record);
+		contentBinding.setHosp(hospitalization);
 		contentBinding.setYesNoUnknownClass(YesNoUnknown.class);
 		contentBinding.setVaccinationClass(Vaccination.class);
 		contentBinding.setTrimesterClass(Trimester.class);
@@ -346,7 +350,13 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		// Initialize ControlSpinnerFields
 		contentBinding.caseDataDisease.initializeSpinner(diseaseList);
 		contentBinding.caseDataCaseClassification.initializeSpinner(caseClassificationList);
+
 		contentBinding.caseDataOutcome.initializeSpinner(caseOutcomeList);
+		contentBinding.caseDataOutcome.setVisibility(GONE);
+		if (hospitalization.getDischargeDate() != null){
+			contentBinding.outcomeCaseLayout.setVisibility(VISIBLE);
+			contentBinding.caseDataOutcome.setVisibility(VISIBLE);
+		}
 		contentBinding.caseDataPlagueType.initializeSpinner(plagueTypeList);
 		contentBinding.caseDataDengueFeverType.initializeSpinner(dengueFeverTypeList);
 		contentBinding.caseDataRabiesType.initializeSpinner(humanRabiesTypeList);
