@@ -27,6 +27,8 @@ import de.symeda.sormas.api.hospitalization.PreviousHospitalizationDto;
 import java.util.List;
 
 import de.symeda.sormas.api.utils.MildModerateSevereCritical;
+import java.util.List;
+import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
@@ -52,6 +54,8 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 	private List<Item> patientCondition;
 
 	private IEntryItemOnClickListener onPrevHosItemClickListener;
+	private List<Item> outcomeList;
+
 
 	// Static methods
 
@@ -153,6 +157,7 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		caze = getActivityRootData();
 		record = caze.getHospitalization();
 		patientCondition = DataUtils.getEnumItems(MildModerateSevereCritical.class, true);
+		outcomeList = DataUtils.getEnumItems(CaseOutcome.class, true);
 	}
 
 	@Override
@@ -193,6 +198,8 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		contentBinding.caseHospitalizationIntensiveCareUnitEnd.initializeDateField(getFragmentManager());
 		contentBinding.caseHospitalizationIsolationDate.initializeDateField(getFragmentManager());
 		contentBinding.caseHospitalizationPatientConditionOnAdmission.initializeSpinner(patientCondition);
+
+		contentBinding.caseDataOutcome.initializeSpinner(outcomeList);
 
 		verifyPrevHospitalizationStatus();
 	}

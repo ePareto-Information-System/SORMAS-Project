@@ -43,6 +43,7 @@
         <import type="de.symeda.sormas.api.caze.CovidTestReason" />
         <import type="de.symeda.sormas.api.caze.EndOfIsolationReason" />
 
+        <variable name="hosp" type="de.symeda.sormas.app.backend.hospitalization.Hospitalization" />
         <variable name="data" type="de.symeda.sormas.app.backend.caze.Case"/>
         <variable name="yesNoUnknownClass" type="Class" />
         <variable name="vaccinationClass" type="Class" />
@@ -115,14 +116,16 @@
                         style="@style/ControlSingleColumnStyle"/>
 
                 <LinearLayout
-                        android:layout_width="match_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:visibility="gone"
+                    android:orientation="horizontal" android:id="@+id/outcomeCaseLayout">
 
                     <de.symeda.sormas.app.component.controls.ControlSpinnerField
                         android:id="@+id/caseData_outcome"
                         app:required="true"
                         app:value="@={data.outcome}"
+                        app:dependencyParentVisibility="@{true}"
                         app:userEditRight="@{UserRight.CASE_CLASSIFY}"
                         style="@style/ControlFirstOfTwoColumnsStyle" />
 
@@ -136,6 +139,12 @@
                         app:dependencyParentVisibility="@{true}"
                         app:userEditRight="@{UserRight.CASE_CLASSIFY}"
                         style="@style/ControlSecondOfTwoColumnsStyle" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <de.symeda.sormas.app.component.controls.ControlDateField
                         android:id="@+id/caseData_outcomeDate"
