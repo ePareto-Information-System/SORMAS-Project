@@ -28,6 +28,7 @@
         <import type="de.symeda.sormas.api.utils.YesNoUnknown" />
         <import type="de.symeda.sormas.app.component.controls.ControlButtonType" />
         <import type="de.symeda.sormas.api.hospitalization.AccommodationType" />
+        <import type="de.symeda.sormas.api.caze.CaseOutcome" />
 
         <variable name="data" type="de.symeda.sormas.app.backend.hospitalization.Hospitalization" />
         <variable name="caze" type="de.symeda.sormas.app.backend.caze.Case" />
@@ -96,6 +97,31 @@
                         app:allowedDaysInFuture="7"
                         style="@style/ControlSecondOfTwoColumnsStyle" />
 
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:id="@+id/outcome_layout">
+
+                    <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                        android:id="@+id/caseData_Outcome"
+                        dependencyParentField="@{caseHospitalizationDischargeDate}"
+                        app:dependencyParentVisibility="@{false}"
+                        app:required="true"
+                        app:value="@={caze.outcome}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/caseData_specifyOtherOutcome"
+                        style="@style/ControlSecondOfTwoColumnsStyle"
+                        app:dependencyParentField="@{caseDataOutcome}"
+                        app:dependencyParentValue="@{CaseOutcome.OTHER}"
+                        app:dependencyParentVisibility="@{true}"
+                        app:required="false"
+                        app:softRequired="true"
+                        app:value="@={caze.specifyOtherOutcome}" />
                 </LinearLayout>
 
                 <de.symeda.sormas.app.component.controls.ControlSwitchField
