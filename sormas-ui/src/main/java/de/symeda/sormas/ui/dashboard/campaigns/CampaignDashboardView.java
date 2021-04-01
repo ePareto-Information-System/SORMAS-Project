@@ -1,6 +1,7 @@
 package de.symeda.sormas.ui.dashboard.campaigns;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -19,6 +20,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.ui.OptionGroup;
 
+import de.symeda.sormas.api.campaign.CampaignReferenceDto;
 import de.symeda.sormas.api.campaign.diagram.CampaignDashboardElement;
 import de.symeda.sormas.api.campaign.diagram.CampaignDiagramDataDto;
 import de.symeda.sormas.api.campaign.diagram.CampaignDiagramDefinitionDto;
@@ -42,6 +44,9 @@ public class CampaignDashboardView extends AbstractDashboardView {
 	private List<String> campaignDashboardDiagramStyles = new ArrayList<>();
 	private Component currentSubTabsWrapper;
 	private Component currentDiagramsWrapper;
+
+	private Map<CampaignReferenceDto, String> lastTabIdForCampaign = new HashMap<>();
+	private Map<CampaignReferenceDto, Map<String, String>> lastSubTabIdForTabIdAndCampaign = new HashMap<>();
 
 	public CampaignDashboardView() {
 		super(VIEW_NAME, DashboardType.CAMPAIGNS);
@@ -92,7 +97,8 @@ public class CampaignDashboardView extends AbstractDashboardView {
 		if (!(tabs.size() > 1)) {
 			tabSwitcherLayout.setVisible(false);
 		}
-		tabSwitcher.setValue(tabs.isEmpty() ? StringUtils.EMPTY : tabs.get(0));
+		final String lastTabId = lastTabIdForCampaign.get(dataProvider.getCampaign());
+		tabSwitcher.setValue(tabs.isEmpty() ? StringUtils.EMPTY : lastTabId != null ? lastTabId : tabs.get(0));
 
 		CssStyles.style(tabSwitcher, CssStyles.FORCE_CAPTION, ValoTheme.OPTIONGROUP_HORIZONTAL, CssStyles.OPTIONGROUP_HORIZONTAL_PRIMARY);
 
@@ -108,6 +114,7 @@ public class CampaignDashboardView extends AbstractDashboardView {
 			final String tabId = (String) e.getProperty().getValue();
 			subTabLayout.removeComponent(currentDiagramsWrapper);
 			subTabLayout.removeComponent(currentSubTabsWrapper);
+			lastTabIdForCampaign.put(dataProvider.getCampaign(), tabId);
 			refreshSubTabs(page, tabId, subTabLayout);
 		});
 		refreshSubTabs(page, (String) tabSwitcher.getValue(), subTabLayout);
@@ -130,15 +137,24 @@ public class CampaignDashboardView extends AbstractDashboardView {
 
 		subTabs.forEach(subTabId -> subTabSwitcher.addView(subTabId, subTabId, (e) -> {
 			subTabLayout.removeComponent(currentDiagramsWrapper);
+			if (lastSubTabIdForTabIdAndCampaign.containsKey(dataProvider.getCampaign())) {
+				lastSubTabIdForTabIdAndCampaign.get(dataProvider.getCampaign()).put(tabId, subTabId);
+			} else {
+				final HashMap<String, String> subTabMap = new HashMap<>();
+				subTabMap.put(tabId, subTabId);
+				lastSubTabIdForTabIdAndCampaign.put(dataProvider.getCampaign(), subTabMap);
+			}
 			refreshDiagrams(page, subTabLayout, tabId, subTabId);
 		}));
 		if (!(subTabs.size() > 1)) {
 			subTabSwitcherLayout.setVisible(false);
 		}
-		String firstSubTab = subTabs.isEmpty() ? StringUtils.EMPTY : subTabs.get(0);
-		subTabSwitcher.setActiveView(firstSubTab);
+		final Map<String, String> subTabMap = lastSubTabIdForTabIdAndCampaign.get(dataProvider.getCampaign());
+		final String lastSubTabId = subTabMap != null ? subTabMap.get(tabId) : null;
+		final String activeSubTab = subTabs.isEmpty() ? StringUtils.EMPTY : lastSubTabId != null ? lastSubTabId : subTabs.get(0);
+		subTabSwitcher.setActiveView(activeSubTab);
 
-		refreshDiagrams(page, subTabLayout, tabId, firstSubTab);
+		refreshDiagrams(page, subTabLayout, tabId, activeSubTab);
 	}
 
 	private void refreshDiagrams(Page page, VerticalLayout layout, String tabId, String subTabId) {
@@ -180,22 +196,15 @@ public class CampaignDashboardView extends AbstractDashboardView {
 				final CampaignDiagramDefinitionDto campaignDiagramDefinitionDto = campaignDashboardDiagramDto.getCampaignDiagramDefinitionDto();
 				final String diagramId = campaignDiagramDefinitionDto.getDiagramId();
 				final String diagramCssClass = diagramId + generateRandomString();
+
 				final CampaignDashboardDiagramComponent diagramComponent = new CampaignDashboardDiagramComponent(
 					campaignDiagramDefinitionDto,
 					diagramData,
 					dataProvider.getCampaignFormTotalsMap().get(campaignDashboardDiagramDto),
-					campaignDiagramDefinitionDto.isPercentageDefault());
+					campaignDiagramDefinitionDto.isPercentageDefault(),
+					dataProvider.getCampaignJurisdictionLevelGroupBy());
 				styles.add(createDiagramStyle(diagramCssClass, diagramId));
 				diagramComponent.setStyleName(diagramCssClass);
-
-				JavaScript.getCurrent()
-					.addFunction("changeDiagramState_" + campaignDiagramDefinitionDto.getDiagramId(), (JavaScriptFunction) jsonArray -> {
-						int index = diagramsLayout.getComponentIndex(diagramComponent);
-						diagramsLayout.removeComponent(diagramComponent);
-						diagramComponent.setShowPercentages(!diagramComponent.isShowPercentages());
-						diagramComponent.buildDiagramChart(campaignDiagramDefinitionDto.getDiagramCaption());
-						diagramsLayout.addComponent(diagramComponent, index);
-					});
 
 				diagramsLayout.addComponent(diagramComponent);
 			});

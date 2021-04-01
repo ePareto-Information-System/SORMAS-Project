@@ -45,6 +45,7 @@ import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 import de.symeda.sormas.api.utils.pseudonymization.Pseudonymizer;
 import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.LatitudePseudonymizer;
 import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.LongitudePseudonymizer;
+import de.symeda.sormas.api.vaccinationinfo.VaccinationInfoDto;
 
 public class ContactDto extends PseudonymizableDto {
 
@@ -56,6 +57,8 @@ public class ContactDto extends PseudonymizableDto {
 	public static final String CAZE = "caze";
 	public static final String REPORT_DATE_TIME = "reportDateTime";
 	public static final String REPORTING_USER = "reportingUser";
+	public static final String MULTI_DAY_CONTACT = "multiDayContact";
+	public static final String FIRST_CONTACT_DATE = "firstContactDate";
 	public static final String LAST_CONTACT_DATE = "lastContactDate";
 	public static final String CONTACT_IDENTIFICATION_SOURCE = "contactIdentificationSource";
 	public static final String CONTACT_IDENTIFICATION_SOURCE_DETAILS = "contactIdentificationSourceDetails";
@@ -77,6 +80,7 @@ public class ContactDto extends PseudonymizableDto {
 	public static final String RESULTING_CASE_USER = "resultingCaseUser";
 	public static final String VISITS = "visits";
 	public static final String EXTERNAL_ID = "externalID";
+	public static final String EXTERNAL_TOKEN = "externalToken";
 	public static final String REGION = "region";
 	public static final String DISTRICT = "district";
 	public static final String COMMUNITY = "community";
@@ -116,6 +120,14 @@ public class ContactDto extends PseudonymizableDto {
 	public static final String RETURNING_TRAVELER = "returningTraveler";
 	public static final String CONTACT_TRANSMISSION_CLASSIFICATION = "contactTransmissionClassification";
 
+	public static final String PROHIBITION_TO_WORK = "prohibitionToWork";
+	public static final String PROHIBITION_TO_WORK_FROM = "prohibitionToWorkFrom";
+	public static final String PROHIBITION_TO_WORK_UNTIL = "prohibitionToWorkUntil";
+
+	public static final String REPORTING_DISTRICT = "reportingDistrict";
+
+	public static final String VACCINATION_INFO = "vaccinationInfo";
+
 	private CaseReferenceDto caze;
 	private String caseIdExternalSystem;
 	@SensitiveData
@@ -139,6 +151,9 @@ public class ContactDto extends PseudonymizableDto {
 	private RegionReferenceDto region;
 	private DistrictReferenceDto district;
 	private CommunityReferenceDto community;
+	@Required
+	private boolean multiDayContact;
+	private Date firstContactDate;
 	@Required
 	private Date lastContactDate;
 	@HideForCountriesExcept
@@ -171,6 +186,10 @@ public class ContactDto extends PseudonymizableDto {
 		COUNTRY_CODE_GERMANY,
 		COUNTRY_CODE_SWITZERLAND })
 	private String externalID;
+	@HideForCountriesExcept(countries = {
+			COUNTRY_CODE_GERMANY,
+			COUNTRY_CODE_SWITZERLAND })
+	private String externalToken;
 
 	private boolean highPriority;
 	private YesNoUnknown immunosuppressiveTherapyBasicDisease;
@@ -250,6 +269,18 @@ public class ContactDto extends PseudonymizableDto {
 	private String endOfQuarantineReasonDetails;
 	private TransmissionClassification contactTransmissionClassification;
 
+	@HideForCountriesExcept
+	private YesNoUnknown prohibitionToWork;
+	@HideForCountriesExcept
+	private Date prohibitionToWorkFrom;
+	@HideForCountriesExcept
+	private Date prohibitionToWorkUntil;
+
+	@HideForCountriesExcept
+	private DistrictReferenceDto reportingDistrict;
+
+	private VaccinationInfoDto vaccinationInfo;
+
 	public static ContactDto build() {
 		final ContactDto contact = new ContactDto();
 		contact.setUuid(DataHelper.createUuid());
@@ -259,6 +290,7 @@ public class ContactDto extends PseudonymizableDto {
 		contact.setContactStatus(ContactStatus.ACTIVE);
 		contact.setEpiData(EpiDataDto.build());
 		contact.setHealthConditions(HealthConditionsDto.build());
+		contact.setVaccinationInfo(VaccinationInfoDto.build());
 
 		return contact;
 	}
@@ -321,6 +353,22 @@ public class ContactDto extends PseudonymizableDto {
 
 	public void setReportingUser(UserReferenceDto reportingUser) {
 		this.reportingUser = reportingUser;
+	}
+
+	public boolean isMultiDayContact() {
+		return multiDayContact;
+	}
+
+	public void setMultiDayContact(boolean multiDayContact) {
+		this.multiDayContact = multiDayContact;
+	}
+
+	public Date getFirstContactDate() {
+		return firstContactDate;
+	}
+
+	public void setFirstContactDate(Date firstContactDate) {
+		this.firstContactDate = firstContactDate;
 	}
 
 	public Date getLastContactDate() {
@@ -476,7 +524,12 @@ public class ContactDto extends PseudonymizableDto {
 	}
 
 	public ContactReferenceDto toReference() {
-		return new ContactReferenceDto(getUuid());
+		return new ContactReferenceDto(
+			getUuid(),
+			getPerson().getFirstName(),
+			getPerson().getLastName(),
+			getCaze() != null ? getCaze().getFirstName() : null,
+			getCaze() != null ? getCaze().getLastName() : null);
 	}
 
 	public UserReferenceDto getResultingCaseUser() {
@@ -509,6 +562,12 @@ public class ContactDto extends PseudonymizableDto {
 
 	public void setExternalID(String externalID) {
 		this.externalID = externalID;
+	}
+
+	public String getExternalToken() { return externalToken; }
+
+	public void setExternalToken(String externalToken) {
+		this.externalToken = externalToken;
 	}
 
 	public RegionReferenceDto getRegion() {
@@ -799,6 +858,38 @@ public class ContactDto extends PseudonymizableDto {
 		this.endOfQuarantineReasonDetails = endOfQuarantineReasonDetails;
 	}
 
+	public YesNoUnknown getProhibitionToWork() {
+		return prohibitionToWork;
+	}
+
+	public void setProhibitionToWork(YesNoUnknown prohibitionToWork) {
+		this.prohibitionToWork = prohibitionToWork;
+	}
+
+	public Date getProhibitionToWorkFrom() {
+		return prohibitionToWorkFrom;
+	}
+
+	public void setProhibitionToWorkFrom(Date prohibitionToWorkFrom) {
+		this.prohibitionToWorkFrom = prohibitionToWorkFrom;
+	}
+
+	public Date getProhibitionToWorkUntil() {
+		return prohibitionToWorkUntil;
+	}
+
+	public void setProhibitionToWorkUntil(Date prohibitionToWorkUntil) {
+		this.prohibitionToWorkUntil = prohibitionToWorkUntil;
+	}
+
+	public DistrictReferenceDto getReportingDistrict() {
+		return reportingDistrict;
+	}
+
+	public void setReportingDistrict(DistrictReferenceDto reportingDistrict) {
+		this.reportingDistrict = reportingDistrict;
+	}
+
 	public YesNoUnknown getReturningTraveler() {
 		return returningTraveler;
 	}
@@ -813,5 +904,12 @@ public class ContactDto extends PseudonymizableDto {
 
 	public void setContactTransmissionClassification(TransmissionClassification contactTransmissionClassification) {
 		this.contactTransmissionClassification = contactTransmissionClassification;
+	}
+	public VaccinationInfoDto getVaccinationInfo() {
+		return vaccinationInfo;
+	}
+
+	public void setVaccinationInfo(VaccinationInfoDto vaccinationInfo) {
+		this.vaccinationInfo = vaccinationInfo;
 	}
 }

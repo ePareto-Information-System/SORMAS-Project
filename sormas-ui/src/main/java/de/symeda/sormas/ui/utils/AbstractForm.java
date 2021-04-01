@@ -18,6 +18,7 @@ import com.vaadin.v7.ui.DateField;
 import com.vaadin.v7.ui.Field;
 
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.i18n.Captions;
 
 public abstract class AbstractForm<T> extends CustomField<T> {
 
@@ -248,7 +249,7 @@ public abstract class AbstractForm<T> extends CustomField<T> {
 		field.setId(propertyId);
 		// Add validators before wrapping field, so the wrapper can access validators
 		addDefaultAdditionalValidators(field, null);
-		layout.addComponent(fieldWrapper.wrap(field), propertyId);
+		layout.addComponent(fieldWrapper.wrap(field, Captions.numberOfCharacters), propertyId);
 		return field;
 	}
 
@@ -257,6 +258,17 @@ public abstract class AbstractForm<T> extends CustomField<T> {
 		F field = getFieldGroup().getFieldFactory().createField(dataType, fieldType);
 		field.setId(fieldId);
 		formatField(field, fieldId);
+		addDefaultAdditionalValidators(field, dataType);
+		getContent().addComponent(field, fieldId);
+		customFields.add(field);
+		return field;
+	}
+
+	@SuppressWarnings("rawtypes")
+	protected <F extends Field> F addCustomField(String fieldId, String customCaption, Class<?> dataType, Class<F> fieldType) {
+		F field = getFieldGroup().getFieldFactory().createField(dataType, fieldType);
+		field.setId(fieldId);
+		formatField(field, fieldId, customCaption);
 		addDefaultAdditionalValidators(field, dataType);
 		getContent().addComponent(field, fieldId);
 		customFields.add(field);

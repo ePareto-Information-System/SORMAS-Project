@@ -68,6 +68,8 @@ public class Contact extends PseudonymizableAdo {
 	public static final String DISEASE = "disease";
 	public static final String REPORT_DATE_TIME = "reportDateTime";
 	public static final String REPORTING_USER = "reportingUser";
+	public static final String MULTI_DAY_CONTACT = "multiDayContact";
+	public static final String FIRST_CONTACT_DATE = "firstContactDate";
 	public static final String LAST_CONTACT_DATE = "lastContactDate";
 	public static final String CONTACT_IDENTIFICATION_SOURCE = "contactIdentificationSource";
 	public static final String CONTACT_IDENTIFICATION_SOURCE_DETAILS = "contactIdentificationSourceDetails";
@@ -114,7 +116,11 @@ public class Contact extends PseudonymizableAdo {
 	private Disease disease;
 	@Column(length = COLUMN_LENGTH_DEFAULT)
 	private String diseaseDetails;
-	@DatabaseField(dataType = DataType.DATE_LONG, canBeNull = true)
+	@DatabaseField
+	private boolean multiDayContact;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date firstContactDate;
+	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date lastContactDate;
 	@Enumerated(EnumType.STRING)
 	private ContactIdentificationSource contactIdentificationSource;
@@ -146,6 +152,9 @@ public class Contact extends PseudonymizableAdo {
 	private String relationDescription;
 	@Column(length = COLUMN_LENGTH_DEFAULT)
 	private String externalID;
+
+	@Column(length = COLUMN_LENGTH_DEFAULT)
+	private String externalToken;
 
 	@DatabaseField
 	private String resultingCaseUuid;
@@ -234,6 +243,19 @@ public class Contact extends PseudonymizableAdo {
 	@Column(length = COLUMN_LENGTH_DEFAULT)
 	private String endOfQuarantineReasonDetails;
 
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown prohibitionToWork;
+	@DatabaseField
+	private Date prohibitionToWorkFrom;
+	@DatabaseField
+	private Date prohibitionToWorkUntil;
+
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private District reportingDistrict;
+
+	// TODO [vaccination info] integrate vaccination info
+//	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+//	private VaccinationInfo vaccinationInfo;
 
 	public Person getPerson() {
 		return person;
@@ -257,6 +279,22 @@ public class Contact extends PseudonymizableAdo {
 
 	public void setReportingUser(User reportingUser) {
 		this.reportingUser = reportingUser;
+	}
+
+	public boolean isMultiDayContact() {
+		return multiDayContact;
+	}
+
+	public void setMultiDayContact(boolean multiDayContact) {
+		this.multiDayContact = multiDayContact;
+	}
+
+	public Date getFirstContactDate() {
+		return firstContactDate;
+	}
+
+	public void setFirstContactDate(Date firstContactDate) {
+		this.firstContactDate = firstContactDate;
 	}
 
 	public Date getLastContactDate() {
@@ -471,6 +509,14 @@ public class Contact extends PseudonymizableAdo {
 
 	public void setExternalID(String externalID) {
 		this.externalID = externalID;
+	}
+
+	public String getExternalToken() {
+		return externalToken;
+	}
+
+	public void setExternalToken(String externalToken) {
+		this.externalToken = externalToken;
 	}
 
 	public Region getRegion() {
@@ -737,8 +783,8 @@ public class Contact extends PseudonymizableAdo {
 
 	public void setReturningTraveler(YesNoUnknown returningTraveler) {
 		this.returningTraveler = returningTraveler;
-  }
-  
+	}
+
 	public SormasToSormasOriginInfo getSormasToSormasOriginInfo() {
 		return sormasToSormasOriginInfo;
 	}
@@ -777,4 +823,45 @@ public class Contact extends PseudonymizableAdo {
 	public void setContactTransmissionClassification(TransmissionClassification contactTransmissionClassification) {
 		this.contactTransmissionClassification = contactTransmissionClassification;
 	}
+
+	public YesNoUnknown getProhibitionToWork() {
+		return prohibitionToWork;
+	}
+
+	public void setProhibitionToWork(YesNoUnknown prohibitionToWork) {
+		this.prohibitionToWork = prohibitionToWork;
+	}
+
+	public Date getProhibitionToWorkFrom() {
+		return prohibitionToWorkFrom;
+	}
+
+	public void setProhibitionToWorkFrom(Date prohibitionToWorkFrom) {
+		this.prohibitionToWorkFrom = prohibitionToWorkFrom;
+	}
+
+	public Date getProhibitionToWorkUntil() {
+		return prohibitionToWorkUntil;
+	}
+
+	public void setProhibitionToWorkUntil(Date prohibitionToWorkUntil) {
+		this.prohibitionToWorkUntil = prohibitionToWorkUntil;
+	}
+
+	public District getReportingDistrict() {
+		return reportingDistrict;
+	}
+
+	public void setReportingDistrict(District reportingDistrict) {
+		this.reportingDistrict = reportingDistrict;
+	}
+
+	// TODO [vaccination info] integrate vaccination info
+//	public VaccinationInfo getVaccinationInfo() {
+//		return vaccinationInfo;
+//	}
+//
+//	public void setVaccinationInfo(VaccinationInfo vaccinationInfo) {
+//		this.vaccinationInfo = vaccinationInfo;
+//	}
 }

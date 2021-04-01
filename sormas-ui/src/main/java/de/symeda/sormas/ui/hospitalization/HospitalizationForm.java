@@ -27,6 +27,8 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
 
 import com.vaadin.data.HasValue;
 import com.vaadin.server.UserError;
@@ -39,6 +41,7 @@ import com.vaadin.ui.Window.CloseListener;
 import com.vaadin.v7.data.Property;
 import com.vaadin.v7.data.Property.ValueChangeListener;
 import com.vaadin.v7.ui.AbstractSelect;
+import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.DateField;
 import com.vaadin.v7.ui.Field;
 import com.vaadin.v7.ui.OptionGroup;
@@ -51,6 +54,7 @@ import de.symeda.sormas.api.facility.FacilityDto;
 import de.symeda.sormas.api.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.facility.FacilityType;
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
+import de.symeda.sormas.api.hospitalization.HospitalizationReasonType;
 import de.symeda.sormas.api.hospitalization.PreviousHospitalizationDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -104,8 +108,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			fluidRowLocs(HEALTH_FACILITY, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY) +
 			fluidRowLocs(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, "") +
 			fluidRowLocs(6, OUTCOME, 3, OTHERCASEOUTCOMEDETAIL) +
-			// fluidRowLocs(6, OUTCOME) + fluidRowLocs(6, OTHER_OUTCOME_SPECIFY) +
 			fluidRowLocs(4, HospitalizationDto.PATIENT_CONDITION_ON_ADMISSION) +
+			fluidRowLocs(HospitalizationDto.HOSPITALIZATION_REASON, HospitalizationDto.OTHER_HOSPITALIZATION_REASON) +
 			fluidRowLocs(3, HospitalizationDto.INTENSIVE_CARE_UNIT, 3,
 							HospitalizationDto.INTENSIVE_CARE_UNIT_START, 3, HospitalizationDto.INTENSIVE_CARE_UNIT_END) +
 			fluidRowLocs(HospitalizationDto.ISOLATED, HospitalizationDto.ISOLATION_DATE, "") +
@@ -170,6 +174,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			leftAgainstAdviceField.setRequired(true);
 		}
 		
+		final ComboBox hospitalizationReason = addField(HospitalizationDto.HOSPITALIZATION_REASON);
+		final TextField otherHospitalizationReason = addField(HospitalizationDto.OTHER_HOSPITALIZATION_REASON, TextField.class);
 		NullableOptionGroup hospitalizedPreviouslyField = addField(HospitalizationDto.HOSPITALIZED_PREVIOUSLY, NullableOptionGroup.class);
 		CssStyles.style(hospitalizedPreviouslyField, CssStyles.ERROR_COLOR_PRIMARY);
 		PreviousHospitalizationsField previousHospitalizationsField =
@@ -189,7 +195,9 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 				intensiveCareUnitEnd,
 				isolationDateField,
 				isolatedField,
-				leftAgainstAdviceField);
+				leftAgainstAdviceField,
+				hospitalizationReason,
+				otherHospitalizationReason);
 		}
 
 		initializeVisibilitiesAndAllowedVisibilities();
@@ -211,8 +219,14 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 				Arrays.asList(YesNoUnknown.YES),
 				true);
 		}
-		
-		
+
+		FieldHelper.setVisibleWhen(
+				getFieldGroup(),
+				HospitalizationDto.OTHER_HOSPITALIZATION_REASON,
+				HospitalizationDto.HOSPITALIZATION_REASON,
+				Collections.singletonList(HospitalizationReasonType.OTHER),
+				true);
+
 		// Validations
 		admissionDateField.addValidator(
 			new DateComparisonValidator(
@@ -268,7 +282,6 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 				true,
 				true,
 				I18nProperties.getValidationError(Validations.beforeDate, intensiveCareUnitEnd.getCaption(), dischargeDateField.getCaption())));
-
 		hospitalizedPreviouslyField.addValueChangeListener(e -> updatePrevHospHint(hospitalizedPreviouslyField, previousHospitalizationsField));
 		previousHospitalizationsField.addValueChangeListener(e -> updatePrevHospHint(hospitalizedPreviouslyField, previousHospitalizationsField));
 		dischargeDateField.addValueChangeListener(e -> showCaseOutcome());
@@ -329,6 +342,12 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		} else {
 			hospitalizedPreviouslyField.setComponentError(null);
 		}
+		if (Objects.nonNull(previousHospitalizationsField.getValue())) {
+			hospitalizedPreviouslyField.setEnabled(previousHospitalizationsField.isEmpty());
+		} else {
+			hospitalizedPreviouslyField.setEnabled(true);
+		}
+
 	}
 
 	@Override

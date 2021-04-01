@@ -30,6 +30,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import de.symeda.sormas.api.hospitalization.AccommodationType;
 import de.symeda.sormas.api.utils.MildModerateSevereCritical;
+import de.symeda.sormas.api.hospitalization.HospitalizationReasonType;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.backend.common.AbstractDomainObject;
 import de.symeda.sormas.app.backend.common.EmbeddedAdo;
@@ -73,6 +74,11 @@ public class Hospitalization extends AbstractDomainObject {
 
 	@Column(length = COLUMN_LENGTH_DEFAULT)
 	private MildModerateSevereCritical patientConditionOnAdmission;
+	@Enumerated(EnumType.STRING)
+	private HospitalizationReasonType hospitalizationReason;
+
+	@Column(columnDefinition = "text")
+	private String otherHospitalizationReason;
 
 	// just for reference, not persisted in DB
 	private List<PreviousHospitalization> previousHospitalizations = new ArrayList<>();
@@ -191,5 +197,20 @@ public class Hospitalization extends AbstractDomainObject {
 
 	public void setPatientConditionOnAdmission(MildModerateSevereCritical patientConditionOnAdmission) {
 		this.patientConditionOnAdmission = patientConditionOnAdmission;
+	}
+	public HospitalizationReasonType getHospitalizationReason() {
+		return hospitalizationReason;
+	}
+
+	public void setHospitalizationReason(HospitalizationReasonType hospitalizationReason) {
+		this.hospitalizationReason = hospitalizationReason;
+	}
+
+	public String getOtherHospitalizationReason() {
+		return otherHospitalizationReason;
+	}
+
+	public void setOtherHospitalizationReason(String otherHospitalizationReason) {
+		this.otherHospitalizationReason = otherHospitalizationReason;
 	}
 }

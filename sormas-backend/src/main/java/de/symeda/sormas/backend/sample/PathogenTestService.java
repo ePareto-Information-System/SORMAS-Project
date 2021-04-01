@@ -36,10 +36,10 @@ import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.SampleCriteria;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.backend.caze.Case;
-import de.symeda.sormas.backend.common.AbstractAdoService;
 import de.symeda.sormas.backend.common.AbstractCoreAdoService;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.CoreAdo;
+import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
 import de.symeda.sormas.backend.region.Region;
 import de.symeda.sormas.backend.user.User;
 
@@ -64,12 +64,12 @@ public class PathogenTestService extends AbstractCoreAdoService<PathogenTest> {
 
 		if (user != null) {
 			Predicate userFilter = createUserFilter(cb, cq, from);
-			filter = AbstractAdoService.and(cb, filter, userFilter);
+			filter = CriteriaBuilderHelper.and(cb, filter, userFilter);
 		}
 
 		if (date != null) {
 			Predicate dateFilter = createChangeDateFilter(cb, from, DateHelper.toTimestampUpper(date));
-			filter = AbstractAdoService.and(cb, filter, dateFilter);
+			filter = CriteriaBuilderHelper.and(cb, filter, dateFilter);
 		}
 
 		cq.where(filter);
@@ -89,7 +89,7 @@ public class PathogenTestService extends AbstractCoreAdoService<PathogenTest> {
 
 		if (user != null) {
 			Predicate userFilter = createUserFilter(cb, cq, from);
-			filter = AbstractAdoService.and(cb, filter, userFilter);
+			filter = CriteriaBuilderHelper.and(cb, filter, userFilter);
 		}
 
 		cq.where(filter);
@@ -253,24 +253,24 @@ public class PathogenTestService extends AbstractCoreAdoService<PathogenTest> {
 							cb.selectCase()
 								.when(cb.isNotNull(joins.getContactCaseRegion()), joins.getContactCaseRegion().get(Region.UUID))
 								.otherwise(joins.getEventRegion().get(Region.UUID))));
-			filter = and(cb, filter, cb.equal(regionExpression, criteria.getRegion().getUuid()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(regionExpression, criteria.getRegion().getUuid()));
 		}
 
 		if (criteria.getPathogenTestResult() != null) {
-			filter = and(cb, filter, cb.equal(pathogenJoins.get(PathogenTest.TEST_RESULT), criteria.getPathogenTestResult()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(pathogenJoins.get(PathogenTest.TEST_RESULT), criteria.getPathogenTestResult()));
 		}
 
 		if (criteria.getDisease() != null) {
-			filter = and(cb, filter, cb.equal(pathogenJoins.get(PathogenTest.TESTED_DISEASE), criteria.getDisease()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(pathogenJoins.get(PathogenTest.TESTED_DISEASE), criteria.getDisease()));
 		}
 
 		if (criteria.getSampleDateFrom() != null && criteria.getSampleDateTo() != null) {
 			filter =
-				and(cb, filter, cb.between(pathogenJoins.get(PathogenTest.TEST_DATE_TIME), criteria.getSampleDateFrom(), criteria.getSampleDateTo()));
+				CriteriaBuilderHelper.and(cb, filter, cb.between(pathogenJoins.get(PathogenTest.TEST_DATE_TIME), criteria.getSampleDateFrom(), criteria.getSampleDateTo()));
 		}
 
 		if (criteria.getDeleted() != null) {
-			filter = and(cb, filter, cb.equal(pathogenJoins.get(PathogenTest.DELETED), criteria.getDeleted()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(pathogenJoins.get(PathogenTest.DELETED), criteria.getDeleted()));
 		}
 
 		return filter;

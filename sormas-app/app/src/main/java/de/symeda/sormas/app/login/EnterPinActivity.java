@@ -40,7 +40,8 @@ import de.symeda.sormas.app.core.notification.NotificationType;
 import de.symeda.sormas.app.databinding.ActivityEnterPinLayoutBinding;
 import de.symeda.sormas.app.util.NavigationHelper;
 
-public class EnterPinActivity extends AppCompatActivity implements NotificationContext {
+public class
+EnterPinActivity extends AppCompatActivity implements NotificationContext {
 
 	public static final String CALLED_FROM_SETTINGS = "calledFromSettings";
 

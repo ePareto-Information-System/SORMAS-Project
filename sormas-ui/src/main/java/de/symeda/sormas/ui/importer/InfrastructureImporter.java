@@ -23,7 +23,7 @@ import de.symeda.sormas.api.region.CommunityReferenceDto;
 import de.symeda.sormas.api.region.DistrictDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionDto;
-import de.symeda.sormas.api.user.UserReferenceDto;
+import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
 
 /**
@@ -31,9 +31,9 @@ import de.symeda.sormas.api.utils.ValidationRuntimeException;
  */
 public class InfrastructureImporter extends DataImporter {
 
-	private InfrastructureType type;
+	private final InfrastructureType type;
 
-	public InfrastructureImporter(File inputFile, UserReferenceDto currentUser, InfrastructureType type) {
+	public InfrastructureImporter(File inputFile, UserDto currentUser, InfrastructureType type) {
 		super(inputFile, false, currentUser);
 		this.type = type;
 	}
@@ -147,63 +147,61 @@ public class InfrastructureImporter extends DataImporter {
 					// Execute the default invokes specified in the data importer; if none of those were triggered, execute additional invokes
 					// according to the types of the infrastructure object's fields; additionally, throw an error if infrastructure data that
 					// is referenced in the imported object does not exist in the database
-					if (executeDefaultInvokings(pd, currentElement, value, entityPropertyPath)) {
-						continue;
-					} else if (propertyType.isAssignableFrom(DistrictReferenceDto.class)) {
-						List<DistrictReferenceDto> district;
-						switch (type) {
-						case COMMUNITY:
-							district = FacadeProvider.getDistrictFacade().getByName(value, ((CommunityDto) newEntityDto).getRegion(), false);
-							break;
-						case FACILITY:
-							district = FacadeProvider.getDistrictFacade().getByName(value, ((FacilityDto) newEntityDto).getRegion(), false);
-							break;
-						case POINT_OF_ENTRY:
-							district = FacadeProvider.getDistrictFacade().getByName(value, ((PointOfEntryDto) newEntityDto).getRegion(), false);
-							break;
-						default:
+					if (!executeDefaultInvokings(pd, currentElement, value, entityPropertyPath)) {
+						if (propertyType.isAssignableFrom(DistrictReferenceDto.class)) {
+							List<DistrictReferenceDto> district;
+							switch (type) {
+							case COMMUNITY:
+								district = FacadeProvider.getDistrictFacade().getByName(value, ((CommunityDto) newEntityDto).getRegion(), false);
+								break;
+							case FACILITY:
+								district = FacadeProvider.getDistrictFacade().getByName(value, ((FacilityDto) newEntityDto).getRegion(), false);
+								break;
+							case POINT_OF_ENTRY:
+								district = FacadeProvider.getDistrictFacade().getByName(value, ((PointOfEntryDto) newEntityDto).getRegion(), false);
+								break;
+							default:
+								throw new UnsupportedOperationException(
+									I18nProperties.getValidationError(Validations.importPropertyTypeNotAllowed, propertyType.getName()));
+							}
+							if (district.isEmpty()) {
+								throw new ImportErrorException(
+									I18nProperties.getValidationError(
+										Validations.importEntryDoesNotExistDbOrRegion,
+										value,
+										buildEntityProperty(entityPropertyPath)));
+							} else if (district.size() > 1) {
+								throw new ImportErrorException(
+									I18nProperties
+										.getValidationError(Validations.importDistrictNotUnique, value, buildEntityProperty(entityPropertyPath)));
+							} else {
+								pd.getWriteMethod().invoke(currentElement, district.get(0));
+							}
+						} else if (propertyType.isAssignableFrom(CommunityReferenceDto.class)) {
+							List<CommunityReferenceDto> community;
+							if (type == InfrastructureType.FACILITY) {
+								community = FacadeProvider.getCommunityFacade().getByName(value, ((FacilityDto) newEntityDto).getDistrict(), false);
+							} else {
+								throw new UnsupportedOperationException(
+									I18nProperties.getValidationError(Validations.importPropertyTypeNotAllowed, propertyType.getName()));
+							}
+							if (community.isEmpty()) {
+								throw new ImportErrorException(
+									I18nProperties.getValidationError(
+										Validations.importEntryDoesNotExistDbOrRegion,
+										value,
+										buildEntityProperty(entityPropertyPath)));
+							} else if (community.size() > 1) {
+								throw new ImportErrorException(
+									I18nProperties
+										.getValidationError(Validations.importDistrictNotUnique, value, buildEntityProperty(entityPropertyPath)));
+							} else {
+								pd.getWriteMethod().invoke(currentElement, community.get(0));
+							}
+						} else {
 							throw new UnsupportedOperationException(
 								I18nProperties.getValidationError(Validations.importPropertyTypeNotAllowed, propertyType.getName()));
 						}
-						if (district.isEmpty()) {
-							throw new ImportErrorException(
-								I18nProperties.getValidationError(
-									Validations.importEntryDoesNotExistDbOrRegion,
-									value,
-									buildEntityProperty(entityPropertyPath)));
-						} else if (district.size() > 1) {
-							throw new ImportErrorException(
-								I18nProperties
-									.getValidationError(Validations.importDistrictNotUnique, value, buildEntityProperty(entityPropertyPath)));
-						} else {
-							pd.getWriteMethod().invoke(currentElement, district.get(0));
-						}
-					} else if (propertyType.isAssignableFrom(CommunityReferenceDto.class)) {
-						List<CommunityReferenceDto> community;
-						switch (type) {
-						case FACILITY:
-							community = FacadeProvider.getCommunityFacade().getByName(value, ((FacilityDto) newEntityDto).getDistrict(), false);
-							break;
-						default:
-							throw new UnsupportedOperationException(
-								I18nProperties.getValidationError(Validations.importPropertyTypeNotAllowed, propertyType.getName()));
-						}
-						if (community.isEmpty()) {
-							throw new ImportErrorException(
-								I18nProperties.getValidationError(
-									Validations.importEntryDoesNotExistDbOrRegion,
-									value,
-									buildEntityProperty(entityPropertyPath)));
-						} else if (community.size() > 1) {
-							throw new ImportErrorException(
-								I18nProperties
-									.getValidationError(Validations.importDistrictNotUnique, value, buildEntityProperty(entityPropertyPath)));
-						} else {
-							pd.getWriteMethod().invoke(currentElement, community.get(0));
-						}
-					} else {
-						throw new UnsupportedOperationException(
-							I18nProperties.getValidationError(Validations.importPropertyTypeNotAllowed, propertyType.getName()));
 					}
 				}
 			} catch (IntrospectionException e) {

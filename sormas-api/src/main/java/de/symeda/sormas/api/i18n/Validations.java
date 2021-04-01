@@ -12,6 +12,7 @@ public interface Validations {
 
 	String afterDate = "afterDate";
 	String afterDateSoft = "afterDateSoft";
+	String afterDateWithDate = "afterDateWithDate";
 	String beforeDate = "beforeDate";
 	String beforeDateSoft = "beforeDateSoft";
 	String campaignDashboardChartIdDoesNotExist = "campaignDashboardChartIdDoesNotExist";
@@ -23,8 +24,10 @@ public interface Validations {
 	String campaignFormDependingOnValuesMissing = "campaignFormDependingOnValuesMissing";
 	String campaignFormElementDuplicateId = "campaignFormElementDuplicateId";
 	String campaignFormElementIdRequired = "campaignFormElementIdRequired";
+	String campaignFormElementNotExisting = "campaignFormElementNotExisting";
 	String campaignFormElementTypeRequired = "campaignFormElementTypeRequired";
 	String campaignFormInvalidIdInListElements = "campaignFormInvalidIdInListElements";
+	String campaignFormMetaValidationUnexpectedError = "campaignFormMetaValidationUnexpectedError";
 	String campaignFormTranslationCaptionRequired = "campaignFormTranslationCaptionRequired";
 	String campaignFormTranslationIdInvalid = "campaignFormTranslationIdInvalid";
 	String campaignFormTranslationIdRequired = "campaignFormTranslationIdRequired";
@@ -46,6 +49,11 @@ public interface Validations {
 	String externalJournalPersonValidationNoEmailOrPhone = "externalJournalPersonValidationNoEmailOrPhone";
 	String externalJournalPersonValidationPhone = "externalJournalPersonValidationPhone";
 	String externalJournalPersonValidationPhoneTaken = "externalJournalPersonValidationPhoneTaken";
+	String externalMessageConversionError = "externalMessageConversionError";
+	String externalMessageDecryptError = "externalMessageDecryptError";
+	String externalMessageDisplayError = "externalMessageDisplayError";
+	String externalMessageFetchError = "externalMessageFetchError";
+	String externalMessageInitError = "externalMessageInitError";
 	String futureDate = "futureDate";
 	String futureDateStrict = "futureDateStrict";
 	String importAreaAlreadyExists = "importAreaAlreadyExists";
@@ -109,8 +117,10 @@ public interface Validations {
 	String statisticsIncidenceOnlyNumbersAllowed = "statisticsIncidenceOnlyNumbersAllowed";
 	String textTooLong = "textTooLong";
 	String userNameNotUnique = "userNameNotUnique";
+	String vaccineDosesFormat = "vaccineDosesFormat";
 	String validCaseContactOrEventParticipant = "validCaseContactOrEventParticipant";
 	String validCommunity = "validCommunity";
+	String validDateRange = "validDateRange";
 	String validDisease = "validDisease";
 	String validDistrict = "validDistrict";
 	String validEmailAddress = "validEmailAddress";

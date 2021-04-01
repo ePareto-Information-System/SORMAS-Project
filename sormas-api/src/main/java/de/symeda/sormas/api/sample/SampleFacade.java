@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Remote;
+import javax.validation.Valid;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseCriteria;
@@ -47,7 +48,7 @@ public interface SampleFacade {
 
 	boolean isFieldSampleIdUnique(String uuid, String fieldSampleId);
 
-	SampleDto saveSample(SampleDto dto);
+	SampleDto saveSample(@Valid SampleDto dto);
 
 	SampleReferenceDto getReferenceByUuid(String uuid);
 
@@ -71,8 +72,11 @@ public interface SampleFacade {
 
 	Boolean isSampleEditAllowed(String sampleUuid);
 
+	List<SampleDto> getByContactUuids(List<String> contactUuids);
+
 	boolean exists(String uuid);
 	
 	Map<SampleCountType, Long> getSampleCount(RegionReferenceDto regionRef, DistrictReferenceDto districtRef, Disease disease, Date from, Date to);
+	List<SampleDto> getByEventParticipantUuids(List<String> asList);
 	
 }

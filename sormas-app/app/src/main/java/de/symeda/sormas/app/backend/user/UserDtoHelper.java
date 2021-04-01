@@ -32,7 +32,7 @@ import retrofit2.Call;
 /**
  * Created by Martin Wahnschaffe on 27.07.2016.
  */
-public class UserDtoHelper extends AdoDtoHelper<User, UserDto> {
+public class 	UserDtoHelper extends AdoDtoHelper<User, UserDto> {
 
 	private LocationDtoHelper locationHelper = new LocationDtoHelper();
 

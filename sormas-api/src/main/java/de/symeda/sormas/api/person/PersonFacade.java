@@ -22,11 +22,14 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Remote;
+import javax.validation.Valid;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseCriteria;
+import de.symeda.sormas.api.contact.FollowUpStatus;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
+import de.symeda.sormas.api.utils.SortProperty;
 
 @Remote
 public interface PersonFacade {
@@ -41,7 +44,7 @@ public interface PersonFacade {
 
 	JournalPersonDto getPersonForJournal(String uuid);
 
-	PersonDto savePerson(PersonDto dto);
+	PersonDto savePerson(@Valid PersonDto dto);
 
 	void validate(PersonDto dto);
 
@@ -67,6 +70,13 @@ public interface PersonFacade {
 
 	Date getLatestFollowUpEndDateByUuid(String uuid);
 
+	FollowUpStatus getMostRelevantFollowUpStatusByUuid(String uuid);
+
 	boolean setSymptomJournalStatus(String personUuid, SymptomJournalStatus status);
 
+    List<PersonIndexDto> getIndexList(PersonCriteria criteria, Integer offset, Integer limit, List<SortProperty> sortProperties);
+
+	long count(PersonCriteria criteria);
+
+    boolean exists(String uuid);
 }

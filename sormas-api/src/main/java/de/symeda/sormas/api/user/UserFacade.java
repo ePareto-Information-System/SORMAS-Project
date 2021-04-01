@@ -74,4 +74,6 @@ public interface UserFacade {
 	Set<UserRole> getValidLoginRoles(String userName, String password);
 
 	void removeUserAsSurveillanceAndContactOfficer(String userUuid);
+
+	UserSyncResult syncUser(String userUuid);
 }

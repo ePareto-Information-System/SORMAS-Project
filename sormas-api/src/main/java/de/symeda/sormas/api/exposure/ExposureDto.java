@@ -27,6 +27,7 @@ import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.Diseases;
+import de.symeda.sormas.api.utils.HideForCountriesExcept;
 import de.symeda.sormas.api.utils.PersonalData;
 import de.symeda.sormas.api.utils.Required;
 import de.symeda.sormas.api.utils.SensitiveData;
@@ -52,6 +53,7 @@ public class ExposureDto extends PseudonymizableDto {
 	public static final String MEANS_OF_TRANSPORT_DETAILS = "meansOfTransportDetails";
 	public static final String CONNECTION_NUMBER = "connectionNumber";
 	public static final String SEAT_NUMBER = "seatNumber";
+	public static final String WORK_ENVIRONMENT = "workEnvironment";
 	public static final String INDOORS = "indoors";
 	public static final String OUTDOORS = "outdoors";
 	public static final String WEARING_MASK = "wearingMask";
@@ -88,6 +90,7 @@ public class ExposureDto extends PseudonymizableDto {
 	public static final String DECEASED_PERSON_ILL = "deceasedPersonIll";
 	public static final String DECEASED_PERSON_NAME = "deceasedPersonName";
 	public static final String DECEASED_PERSON_RELATION = "deceasedPersonRelation";
+	public static final String EXPOSURE_ROLE = "exposureRole";
 
 	@SensitiveData
 	private UserReferenceDto reportingUser;
@@ -100,6 +103,8 @@ public class ExposureDto extends PseudonymizableDto {
 	@SensitiveData
 	private String exposureTypeDetails;
 	private LocationDto location;
+	@HideForCountriesExcept
+	private ExposureRole exposureRole;
 
 	// Type of Place
 	private TypeOfPlace typeOfPlace;
@@ -112,6 +117,8 @@ public class ExposureDto extends PseudonymizableDto {
 	private String connectionNumber;
 	@SensitiveData
 	private String seatNumber;
+
+	private WorkEnvironment workEnvironment;
 
 	// Details
 	private YesNoUnknown indoors;
@@ -300,6 +307,14 @@ public class ExposureDto extends PseudonymizableDto {
 
 	public void setLocation(LocationDto location) {
 		this.location = location;
+	}
+
+	public ExposureRole getExposureRole() {
+		return exposureRole;
+	}
+
+	public void setExposureRole(ExposureRole exposureRole) {
+		this.exposureRole = exposureRole;
 	}
 
 	public YesNoUnknown getIndoors() {
@@ -614,6 +629,14 @@ public class ExposureDto extends PseudonymizableDto {
 		this.seatNumber = seatNumber;
 	}
 
+	public WorkEnvironment getWorkEnvironment() {
+		return workEnvironment;
+	}
+
+	public void setWorkEnvironment(WorkEnvironment workEnvironment) {
+		this.workEnvironment = workEnvironment;
+	}
+
 	public YesNoUnknown getProphylaxis() {
 		return prophylaxis;
 	}
@@ -636,5 +659,12 @@ public class ExposureDto extends PseudonymizableDto {
 
 	public void setRiskArea(YesNoUnknown riskArea) {
 		this.riskArea = riskArea;
+	}
+
+	@Override
+	public ExposureDto clone() throws CloneNotSupportedException {
+		ExposureDto clone = (ExposureDto) super.clone();
+		clone.setLocation((LocationDto) clone.getLocation().clone());
+		return clone;
 	}
 }

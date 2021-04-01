@@ -4,7 +4,7 @@
 	xmlns="http://xmlns.jcp.org/xml/ns/javaee"
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
 	version="3.1">
-	
+
 	<display-name>SORMAS Rest Interface</display-name>
 
 	<security-role>
@@ -30,6 +30,9 @@
     </security-role>
 	<security-role>
         <role-name>SORMAS_TO_SORMAS_CLIENT</role-name>
+    </security-role>
+	<security-role>
+        <role-name>BAG_USER</role-name>
     </security-role>
 
 </web-app>

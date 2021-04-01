@@ -21,8 +21,11 @@ import android.view.ViewGroup;
 
 import androidx.databinding.ObservableArrayList;
 
+import java.util.List;
+
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
+import de.symeda.sormas.api.hospitalization.HospitalizationReasonType;
 import de.symeda.sormas.api.hospitalization.PreviousHospitalizationDto;
 import java.util.List;
 
@@ -43,6 +46,7 @@ import de.symeda.sormas.app.component.controls.ControlPropertyField;
 import de.symeda.sormas.app.component.controls.ValueChangeListener;
 import de.symeda.sormas.app.core.IEntryItemOnClickListener;
 import de.symeda.sormas.app.databinding.FragmentCaseEditHospitalizationLayoutBinding;
+import de.symeda.sormas.app.util.DataUtils;
 import de.symeda.sormas.app.util.FieldVisibilityAndAccessHelper;
 import de.symeda.sormas.app.util.DataUtils;
 import de.symeda.sormas.app.util.InfrastructureHelper;
@@ -166,12 +170,15 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 
 		CaseValidator.initializeHospitalizationValidation(contentBinding, caze);
 
+		List<Item> hospitalizationReasons = DataUtils.getEnumItems(HospitalizationReasonType.class, true);
+
 		contentBinding.setData(record);
 		contentBinding.setCaze(caze);
 //		contentBinding.setPatientCondition(patientCondition);
 		contentBinding.setPreviousHospitalizationList(getPreviousHospitalizations());
 		contentBinding.setPrevHosItemClickCallback(onPrevHosItemClickListener);
 		getContentBinding().setPreviousHospitalizationBindCallback(this::setFieldVisibilitiesAndAccesses);
+		contentBinding.caseHospitalizationHospitalizationReason.initializeSpinner(hospitalizationReasons);
 
 		contentBinding.caseHospitalizationHospitalizedPreviously.addValueChangedListener(field -> {
 			YesNoUnknown value = (YesNoUnknown) field.getValue();

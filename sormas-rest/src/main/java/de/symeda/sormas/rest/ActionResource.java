@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -54,7 +55,7 @@ public class ActionResource extends EntityDtoResource {
 	public List<ActionDto> getAll(@PathParam("since") long since) {
 		return FacadeProvider.getActionFacade().getAllActionsAfter(new Date(since));
 	}
-	
+
 	@POST
 	@Path("/query")
 	public List<ActionDto> getByUuids(List<String> uuids) {
@@ -65,7 +66,7 @@ public class ActionResource extends EntityDtoResource {
 
 	@POST
 	@Path("/push")
-	public List<PushResult> postActions(List<ActionDto> dtos) {
+	public List<PushResult> postActions(@Valid List<ActionDto> dtos) {
 
 		List<PushResult> result = savePushedDto(dtos, FacadeProvider.getActionFacade()::saveAction);
 		return result;

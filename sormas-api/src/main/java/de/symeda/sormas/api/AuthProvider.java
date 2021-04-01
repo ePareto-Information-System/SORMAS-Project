@@ -39,15 +39,21 @@ public class AuthProvider {
 
     private final boolean isUsernameCaseSensitive;
 
-    private final boolean isEmailRequired;
-
     private final boolean isDefaultProvider;
+
+    private final boolean isUserSyncSupported;
+
+    private final boolean isUserSyncAtStartupEnabled;
+
+    private final String name;
 
     private AuthProvider() {
         String configuredProvider = FacadeProvider.getConfigFacade().getAuthenticationProvider();
         isUsernameCaseSensitive = SORMAS.equalsIgnoreCase(configuredProvider);
-        isEmailRequired = KEYCLOAK.equalsIgnoreCase(configuredProvider);
         isDefaultProvider = SORMAS.equalsIgnoreCase(configuredProvider);
+        isUserSyncSupported = KEYCLOAK.equalsIgnoreCase(configuredProvider);
+        isUserSyncAtStartupEnabled = isUserSyncSupported && FacadeProvider.getConfigFacade().isAuthenticationProviderUserSyncAtStartupEnabled();
+        name = configuredProvider;
     }
 
     public static AuthProvider getProvider() {
@@ -69,16 +75,31 @@ public class AuthProvider {
     }
 
     /**
-     * Authentication Provider requires emails to be required or optional.
-     */
-    public boolean isEmailRequired() {
-        return isEmailRequired;
-    }
-
-    /**
      * Current Authentication Provider is the SORMAS default one.
      */
     public boolean isDefaultProvider() {
         return isDefaultProvider;
+    }
+
+    /**
+     * Authentication Provider enables users to be synced from the default provider.
+     */
+    public boolean isUserSyncSupported() {
+        return isUserSyncSupported;
+    }
+
+    /**
+     * Even if the Authentication Provider supports user sync, the user sync at startup might be disabled for startup performance reasons.
+     * If user sync is not supported, this will always return false.
+     */
+    public boolean isUserSyncAtStartupEnabled() {
+        return isUserSyncAtStartupEnabled;
+    }
+
+    /**
+     * Name of the active Authentication Provider.
+     */
+    public String getName() {
+        return name;
     }
 }
