@@ -35,9 +35,11 @@ import com.vaadin.v7.ui.PopupDateField;
 
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.sample.SampleDateType;
 import de.symeda.sormas.api.utils.DateFilterOption;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.EpiWeek;
+import de.symeda.sormas.ui.samples.SampleGridFilterForm;
 
 public class EpiWeekAndDateFilterComponent<E extends Enum<E>> extends HorizontalLayout {
 
@@ -53,6 +55,12 @@ public class EpiWeekAndDateFilterComponent<E extends Enum<E>> extends Horizontal
 	public EpiWeekAndDateFilterComponent(boolean fillAutomatically, boolean showCaption, String infoText, AbstractFilterForm parentFilterForm) {
 		this(fillAutomatically, showCaption, infoText, null, null, null, parentFilterForm);
 	}
+	
+	public EpiWeekAndDateFilterComponent(boolean fillAutomatically, boolean showCaption, String infoText, Class<SampleDateType> dateType, AbstractFilterForm parentFilterForm) {
+//		dateType = (Class<E>) SampleDateType.class;
+		this(fillAutomatically, showCaption, infoText, (Class<E>) dateType, null, null, parentFilterForm);
+	}
+
 
 	public EpiWeekAndDateFilterComponent(
 		boolean fillAutomatically,

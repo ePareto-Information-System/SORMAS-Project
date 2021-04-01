@@ -63,6 +63,7 @@ public class ContactCriteria extends BaseCriteria implements Serializable {
 	public static final String EVENT_LIKE = "eventLike";
 	public static final String INCLUDE_CONTACTS_FROM_OTHER_JURISDICTIONS = "includeContactsFromOtherJurisdictions";
 	public static final String ONLY_CONTACTS_SHARING_EVENT_WITH_SOURCE_CASE = "onlyContactsSharingEventWithSourceCase";
+	public static final String ONLY_CONTACTS_FROM_OTHER_INSTANCES = "onlyContactsFromOtherInstances";
 
 	private static final long serialVersionUID = 5114202107622217837L;
 
@@ -83,12 +84,12 @@ public class ContactCriteria extends BaseCriteria implements Serializable {
 	private DateFilterOption dateFilterOption = DateFilterOption.DATE;
 	private Date followUpUntilFrom;
 	private Date followUpUntilTo;
+	private Boolean followUpUntilToPrecise;
 	/**
 	 * If yes, the followUpUntilTo filter will search for strict matches instead of a period,
 	 * even if a followUpUntilFrom is specified
 	 */
 	private SymptomJournalStatus symptomJournalStatus;
-	private Boolean followUpUntilToPrecise;
 	private Date lastContactDateFrom;
 	private Date lastContactDateTo;
 	private Boolean deleted = Boolean.FALSE;
@@ -117,6 +118,7 @@ public class ContactCriteria extends BaseCriteria implements Serializable {
 	private Boolean onlyContactsSharingEventWithSourceCase;
 	private EventParticipantReferenceDto eventParticipant;
 	private EventReferenceDto onlyContactsWithSourceCaseInGivenEvent;
+	private Boolean onlyContactsFromOtherInstances;
 
 	private String viewMode;
 
@@ -581,5 +583,13 @@ public class ContactCriteria extends BaseCriteria implements Serializable {
 
 	public void setViewMode(String viewMode) {
 		this.viewMode = viewMode;
+	}
+
+	public Boolean getOnlyContactsFromOtherInstances() {
+		return onlyContactsFromOtherInstances;
+	}
+
+	public void setOnlyContactsFromOtherInstances(Boolean onlyContactsFromOtherInstances) {
+		this.onlyContactsFromOtherInstances = onlyContactsFromOtherInstances;
 	}
 }

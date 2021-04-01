@@ -25,14 +25,15 @@ import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.contact.ContactDto;
+import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -41,7 +42,7 @@ import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.caze.CaseInfoLayout;
-import de.symeda.sormas.ui.docgeneration.DocGenerationComponent;
+import de.symeda.sormas.ui.docgeneration.CaseDocumentsComponent;
 import de.symeda.sormas.ui.events.eventLink.EventListComponent;
 import de.symeda.sormas.ui.samples.sampleLink.SampleListComponent;
 import de.symeda.sormas.ui.sormastosormas.SormasToSormasListComponent;
@@ -89,8 +90,9 @@ public class ContactDataView extends AbstractContactView {
 			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, TASKS_LOC),
 			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, SAMPLES_LOC),
 			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, SORMAS_TO_SORMAS_LOC),
-			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, DocGenerationComponent.QUARANTINE_LOC),
-			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, CONTACT_MAP));
+//			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, DocGenerationComponent.QUARANTINE_LOC),
+			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, CONTACT_MAP),
+			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, CaseDocumentsComponent.QUARANTINE_LOC));
 
 		DetailSubComponentWrapper container = new DetailSubComponentWrapper(() -> editComponent);
 		container.setWidth(100, Unit.PERCENTAGE);
@@ -195,9 +197,11 @@ public class ContactDataView extends AbstractContactView {
 			layout.addComponent(buttonsLayout, CASE_BUTTONS_LOC);
 		}
 
-		TaskListComponent taskList = new TaskListComponent(TaskContext.CONTACT, getContactRef());
-		taskList.addStyleName(CssStyles.SIDE_COMPONENT);
-		layout.addComponent(taskList, TASKS_LOC);
+		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.TASK_MANAGEMENT)) {
+			TaskListComponent taskList = new TaskListComponent(TaskContext.CONTACT, getContactRef());
+			taskList.addStyleName(CssStyles.SIDE_COMPONENT);
+			layout.addComponent(taskList, TASKS_LOC);
+		}
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW)) {
 			VerticalLayout sampleLocLayout = new VerticalLayout();
@@ -218,7 +222,8 @@ public class ContactDataView extends AbstractContactView {
 			layout.addComponent(sampleLocLayout, SAMPLES_LOC);
 		}
 
-		if (UserProvider.getCurrent().hasUserRight(UserRight.EVENT_VIEW)) {
+		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.EVENT_SURVEILLANCE)
+			&& UserProvider.getCurrent().hasUserRight(UserRight.EVENT_VIEW)) {
 			VerticalLayout eventsLayout = new VerticalLayout();
 			eventsLayout.setMargin(false);
 			eventsLayout.setSpacing(false);
@@ -243,8 +248,9 @@ public class ContactDataView extends AbstractContactView {
 			layout.addComponent(sormasToSormasLocLayout, SORMAS_TO_SORMAS_LOC);
 		}
 
-		DocGenerationComponent.addComponentToLayout(layout, getContactRef(), contactDto.getQuarantine());
+//		DocGenerationComponent.addComponentToLayout(layout, getContactRef(), contactDto.getQuarantine());
 		layout.addComponent(sideMapLayout(contactDto), CONTACT_MAP);
+		CaseDocumentsComponent.addComponentToLayout(layout, contactDto);
 
 		setContactEditPermission(container);
 	}

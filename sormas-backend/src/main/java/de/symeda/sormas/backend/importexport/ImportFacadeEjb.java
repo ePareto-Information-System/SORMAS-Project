@@ -37,8 +37,10 @@ import static de.symeda.sormas.api.caze.CaseDataDto.REGION;
 import static de.symeda.sormas.api.caze.CaseDataDto.REPORT_DATE;
 import static de.symeda.sormas.api.caze.CaseDataDto.SYMPTOMS;
 
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -63,15 +65,11 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Provider;
 
-import de.symeda.sormas.api.CountryHelper;
-import de.symeda.sormas.api.utils.HideForCountries;
-import de.symeda.sormas.api.utils.HideForCountriesExcept;
-import de.symeda.sormas.api.utils.fieldvisibility.checkers.CountryFieldVisibilityChecker;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.auth0.jwt.internal.org.apache.commons.lang3.text.WordUtils;
 import com.opencsv.CSVWriter;
 
 import de.symeda.sormas.api.AgeGroup;
@@ -116,6 +114,7 @@ import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.CSVCommentLineValidator;
 import de.symeda.sormas.api.utils.CSVUtils;
 import de.symeda.sormas.api.utils.DependingOnFeatureType;
+import de.symeda.sormas.api.utils.fieldvisibility.checkers.CountryFieldVisibilityChecker;
 import de.symeda.sormas.backend.campaign.form.CampaignFormMetaFacadeEjb.CampaignFormMetaFacadeEjbLocal;
 import de.symeda.sormas.backend.common.ConfigFacadeEjb.ConfigFacadeEjbLocal;
 import de.symeda.sormas.backend.disease.DiseaseConfigurationFacadeEjb.DiseaseConfigurationFacadeEjbLocal;
@@ -623,7 +622,9 @@ public class ImportFacadeEjb implements ImportFacade {
 	 * @throws IOException
 	 */
 	private void writeTemplate(Path templatePath, List<ImportColumn> importColumns, boolean includeEntityNames) throws IOException {
-		try (CSVWriter writer = CSVUtils.createCSVWriter(new FileWriter(templatePath.toString()), configFacade.getCsvSeparator())) {
+		try (CSVWriter writer = CSVUtils.createCSVWriter(
+			new OutputStreamWriter(new FileOutputStream(templatePath.toString()), StandardCharsets.UTF_8.newEncoder()),
+			configFacade.getCsvSeparator())) {
 			if (includeEntityNames) {
 				writer.writeNext(importColumns.stream().map(ImportColumn::getEntityName).toArray(String[]::new));
 			}

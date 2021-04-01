@@ -28,7 +28,7 @@ import de.symeda.sormas.api.contact.ContactJurisdictionDto;
 import de.symeda.sormas.api.contact.MapContactDto;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.backend.caze.Case;
-import de.symeda.sormas.backend.common.AbstractAdoService;
+import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
 import de.symeda.sormas.backend.facility.Facility;
 import de.symeda.sormas.backend.infrastructure.PointOfEntry;
 import de.symeda.sormas.backend.location.Location;
@@ -119,7 +119,8 @@ public class ContactListCriteriaBuilder {
 			joins.getCaseHealthFacility().get(Facility.UUID),
 			joins.getCaseasePointOfEntry().get(PointOfEntry.UUID),
 			contact.get(Contact.CHANGE_DATE),
-			contact.get(Contact.EXTERNAL_ID));
+			contact.get(Contact.EXTERNAL_ID),
+			contact.get(Contact.EXTERNAL_TOKEN));
 	}
 
 	private List<Selection<?>> getContactIndexSelectionsForMap(Root<Contact> contact, ContactJoins joins) {
@@ -159,6 +160,7 @@ public class ContactListCriteriaBuilder {
 		case ContactIndexDto.DISEASE:
 		case ContactIndexDto.CASE_CLASSIFICATION:
 		case ContactIndexDto.EXTERNAL_ID:
+		case ContactIndexDto.EXTERNAL_TOKEN:
 			expressions.add(contact.get(sortProperty.propertyName));
 			break;
 		case ContactIndexDto.PERSON_FIRST_NAME:
@@ -282,7 +284,7 @@ public class ContactListCriteriaBuilder {
 
 		if (contactCriteria != null) {
 			Predicate criteriaFilter = contactService.buildCriteriaFilter(contactCriteria, cb, contact, joins);
-			filter = AbstractAdoService.and(cb, filter, criteriaFilter);
+			filter = CriteriaBuilderHelper.and(cb, filter, criteriaFilter);
 		}
 		return filter;
 	}

@@ -14,6 +14,7 @@
  */
 package de.symeda.sormas.api;
 
+import javax.naming.ConfigurationException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
@@ -29,11 +30,15 @@ import de.symeda.sormas.api.caze.CaseStatisticsFacade;
 import de.symeda.sormas.api.caze.caseimport.CaseImportFacade;
 import de.symeda.sormas.api.caze.classification.CaseClassificationFacade;
 import de.symeda.sormas.api.caze.maternalhistory.MaternalHistoryFacade;
+import de.symeda.sormas.api.caze.surveillancereport.SurveillanceReportFacade;
 import de.symeda.sormas.api.clinicalcourse.ClinicalCourseFacade;
 import de.symeda.sormas.api.clinicalcourse.ClinicalVisitFacade;
 import de.symeda.sormas.api.contact.ContactFacade;
 import de.symeda.sormas.api.disease.DiseaseConfigurationFacade;
 import de.symeda.sormas.api.disease.DiseaseFacade;
+import de.symeda.sormas.api.disease.DiseaseVariantFacade;
+import de.symeda.sormas.api.docgeneneration.DocumentTemplateFacade;
+import de.symeda.sormas.api.docgeneneration.EventDocumentFacade;
 import de.symeda.sormas.api.docgeneneration.QuarantineOrderFacade;
 import de.symeda.sormas.api.document.DocumentFacade;
 import de.symeda.sormas.api.epidata.EpiDataFacade;
@@ -44,11 +49,14 @@ import de.symeda.sormas.api.facility.FacilityFacade;
 import de.symeda.sormas.api.feature.FeatureConfigurationFacade;
 import de.symeda.sormas.api.geocoding.GeocodingFacade;
 import de.symeda.sormas.api.hospitalization.HospitalizationFacade;
+import de.symeda.sormas.api.i18n.I18nFacade;
 import de.symeda.sormas.api.importexport.ExportFacade;
 import de.symeda.sormas.api.importexport.ImportFacade;
 import de.symeda.sormas.api.infrastructure.InfrastructureFacade;
 import de.symeda.sormas.api.infrastructure.PointOfEntryFacade;
 import de.symeda.sormas.api.infrastructure.PopulationDataFacade;
+import de.symeda.sormas.api.labmessage.ExternalLabResultsFacade;
+import de.symeda.sormas.api.labmessage.LabMessageFacade;
 import de.symeda.sormas.api.outbreak.OutbreakFacade;
 import de.symeda.sormas.api.person.PersonFacade;
 import de.symeda.sormas.api.region.AreaFacade;
@@ -65,6 +73,7 @@ import de.symeda.sormas.api.sample.SampleFacade;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasFacade;
 import de.symeda.sormas.api.survnet.SurvnetGatewayFacade;
 import de.symeda.sormas.api.symptoms.SymptomsFacade;
+import de.symeda.sormas.api.systemevents.SystemEventFacade;
 import de.symeda.sormas.api.task.TaskFacade;
 import de.symeda.sormas.api.therapy.PrescriptionFacade;
 import de.symeda.sormas.api.therapy.TherapyFacade;
@@ -161,6 +170,7 @@ public class FacadeProvider {
 	public static CountryFacade getCountryFacade() {
 		return get().lookupEjbRemote(CountryFacade.class);
 	}
+
 	public static RegionFacade getRegionFacade() {
 		return get().lookupEjbRemote(RegionFacade.class);
 	}
@@ -245,6 +255,10 @@ public class FacadeProvider {
 		return get().lookupEjbRemote(DiseaseConfigurationFacade.class);
 	}
 
+	public static DiseaseVariantFacade getDiseaseVariantFacade() {
+		return get().lookupEjbRemote(DiseaseVariantFacade.class);
+	}
+
 	public static MaternalHistoryFacade getMaternalHistoryFacade() {
 		return get().lookupEjbRemote(MaternalHistoryFacade.class);
 	}
@@ -313,6 +327,14 @@ public class FacadeProvider {
 		return get().lookupEjbRemote(QuarantineOrderFacade.class);
 	}
 
+	public static EventDocumentFacade getEventDocumentFacade() {
+		return get().lookupEjbRemote(EventDocumentFacade.class);
+	}
+
+	public static DocumentTemplateFacade getDocumentTemplateFacade() {
+		return get().lookupEjbRemote(DocumentTemplateFacade.class);
+	}
+
 	public static ExternalJournalFacade getExternalJournalFacade() {
 		return get().lookupEjbRemote(ExternalJournalFacade.class);
 	}
@@ -323,6 +345,36 @@ public class FacadeProvider {
 	
 	public static AuditLogEntryFacade getAuditLogEntryFacade() {
 		return get().lookupEjbRemote(AuditLogEntryFacade.class);
+	}
+
+	public static SystemEventFacade getSystemEventFacade() {
+
+		return get().lookupEjbRemote(SystemEventFacade.class);
+	}
+
+	public static LabMessageFacade getLabMessageFacade() {
+		return get().lookupEjbRemote(LabMessageFacade.class);
+	}
+
+	public static ExternalLabResultsFacade getExternalLabResultsFacade() {
+		try {
+			String jndiName = FacadeProvider.getConfigFacade().getDemisJndiName();
+			if (jndiName == null) {
+				throw new ConfigurationException("No LabResultAdapter JNDI name is configured in the sormas.properties");
+			} else {
+				return (ExternalLabResultsFacade) get().ic.lookup(jndiName);
+			}
+		} catch (NamingException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+	}
+
+	public static SurveillanceReportFacade getSurveillanceReportFacade() {
+		return get().lookupEjbRemote(SurveillanceReportFacade.class);
+	}
+
+	public static I18nFacade getI18nFacade() {
+		return get().lookupEjbRemote(I18nFacade.class);
 	}
 
 	@SuppressWarnings("unchecked")

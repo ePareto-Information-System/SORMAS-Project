@@ -27,6 +27,7 @@ import java.util.Set;
 
 import com.vaadin.ui.Label;
 import com.vaadin.v7.data.Validator;
+import com.vaadin.v7.data.util.converter.Converter;
 import com.vaadin.v7.ui.CheckBox;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.Field;
@@ -46,7 +47,6 @@ import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.ControllerProvider;
-import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.location.LocationEditForm;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
 import de.symeda.sormas.ui.utils.CssStyles;
@@ -132,7 +132,6 @@ public class UserEditForm extends AbstractEditForm<UserDto> {
         addField(UserDto.USER_ROLES, OptionGroup.class).addValidator(new UserRolesValidator());
         OptionGroup userRoles = (OptionGroup) getFieldGroup().getField(UserDto.USER_ROLES);
         userRoles.setMultiSelect(true);
-        userRoles.addItems(UserRole.getAssignableRoles(UserProvider.getCurrent().getUserRoles()));
 
         ComboBox region = addInfrastructureField(UserDto.REGION);
         ComboBox community = addInfrastructureField(UserDto.COMMUNITY);
@@ -175,7 +174,6 @@ public class UserEditForm extends AbstractEditForm<UserDto> {
         region.addItems(FacadeProvider.getRegionFacade().getAllActiveAsReference());
 
         setRequired(true, UserDto.FIRST_NAME, UserDto.LAST_NAME, UserDto.USER_NAME, UserDto.USER_ROLES);
-        setRequired(ControllerProvider.getUserController().isEmailRequired(), UserDto.USER_EMAIL);
         addValidators(UserDto.USER_NAME, new UserNameValidator());
 
         addFieldListeners(UserDto.FIRST_NAME, e -> suggestUserName());
@@ -277,5 +275,15 @@ public class UserEditForm extends AbstractEditForm<UserDto> {
             if (!(value instanceof String && ControllerProvider.getUserController().isLoginUnique(dto.getUuid(), (String) value)))
                 throw new InvalidValueException(I18nProperties.getValidationError(Validations.userNameNotUnique));
         }
+    }
+
+    @Override
+    public void setValue(UserDto userDto) throws com.vaadin.v7.data.Property.ReadOnlyException, Converter.ConversionException {
+
+        OptionGroup userRoles = (OptionGroup) getFieldGroup().getField(UserDto.USER_ROLES);
+        userRoles.removeAllItems();
+        userRoles.addItems(UserUiHelper.getAssignableRoles(userDto.getUserRoles()));
+        
+        super.setValue(userDto);
     }
 }

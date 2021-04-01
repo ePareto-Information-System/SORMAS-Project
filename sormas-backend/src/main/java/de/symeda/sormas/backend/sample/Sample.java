@@ -153,7 +153,7 @@ public class Sample extends CoreAdo {
 	private SormasToSormasOriginInfo sormasToSormasOriginInfo;
 	private List<SormasToSormasShareInfo> sormasToSormasShares = new ArrayList<>(0);
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
 	public Case getAssociatedCase() {
 		return associatedCase;
@@ -163,7 +163,7 @@ public class Sample extends CoreAdo {
 		this.associatedCase = associatedCase;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
 	public Contact getAssociatedContact() {
 		return associatedContact;
@@ -173,7 +173,7 @@ public class Sample extends CoreAdo {
 		this.associatedContact = associatedContact;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
 	public EventParticipant getAssociatedEventParticipant() {
 		return associatedEventParticipant;
@@ -342,7 +342,7 @@ public class Sample extends CoreAdo {
 		this.pathogenTests = pathogenTests;
 	}
 
-	@OneToMany(cascade = {}, mappedBy = AdditionalTest.SAMPLE)
+	@OneToMany(mappedBy = AdditionalTest.SAMPLE, fetch = FetchType.LAZY)
 	public List<AdditionalTest> getAdditionalTests() {
 		return additionalTests;
 	}

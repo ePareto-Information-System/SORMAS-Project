@@ -41,11 +41,12 @@ import de.symeda.sormas.api.caze.HospitalWardType;
 import de.symeda.sormas.api.caze.PlagueType;
 import de.symeda.sormas.api.caze.QuarantineReason;
 import de.symeda.sormas.api.caze.RabiesType;
-import de.symeda.sormas.api.caze.ReportingType;
+//import de.symeda.sormas.api.caze.ReportingType;
 import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.caze.Trimester;
 import de.symeda.sormas.api.caze.Vaccination;
 import de.symeda.sormas.api.caze.VaccinationInfoSource;
+import de.symeda.sormas.api.caze.surveillancereport.ReportingType;
 import de.symeda.sormas.api.contact.QuarantineType;
 import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.facility.FacilityDto;
@@ -135,12 +136,12 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		}
 
 		// Vaccination date
-		if (isVisibleAllowed(CaseDataDto.class, contentBinding.caseDataVaccination)) {
-			setVisibleWhen(contentBinding.caseDataVaccinationDate, contentBinding.caseDataVaccination, Vaccination.VACCINATED);
-		}
-		if (isVisibleAllowed(CaseDataDto.class, contentBinding.caseDataSmallpoxVaccinationReceived)) {
-			setVisibleWhen(contentBinding.caseDataVaccinationDate, contentBinding.caseDataSmallpoxVaccinationReceived, YesNoUnknown.YES);
-		}
+//		if (isVisibleAllowed(CaseDataDto.class, contentBinding.caseDataVaccination)) {
+//			setVisibleWhen(contentBinding.caseDataVaccinationDate, contentBinding.caseDataVaccination, Vaccination.VACCINATED);
+//		}
+//		if (isVisibleAllowed(CaseDataDto.class, contentBinding.caseDataSmallpoxVaccinationReceived)) {
+//			setVisibleWhen(contentBinding.caseDataVaccinationDate, contentBinding.caseDataSmallpoxVaccinationReceived, YesNoUnknown.YES);
+//		}
 
 		// Pregnancy
 		if (record.getPerson().getSex() != Sex.FEMALE) {
@@ -189,7 +190,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 
 		if (!ConfigProvider.isConfiguredServer(CountryHelper.COUNTRY_CODE_GERMANY)) {
 			contentBinding.caseDataExternalID.setVisibility(GONE);
-			contentBinding.caseDataReportingType.setVisibility(GONE);
+//			contentBinding.caseDataReporting.setVisibility(GONE);
 			contentBinding.caseDataClinicalConfirmation.setVisibility(GONE);
 			contentBinding.caseDataEpidemiologicalConfirmation.setVisibility(GONE);
 			contentBinding.caseDataLaboratoryDiagnosticConfirmation.setVisibility(GONE);
@@ -478,14 +479,14 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		// Initialize ControlDateFields
 		contentBinding.caseDataReportDate.initializeDateField(getFragmentManager());
 		contentBinding.caseDataOutcomeDate.initializeDateField(getFragmentManager());
-		contentBinding.caseDataVaccinationDate.initializeDateField(getFragmentManager());
+//		contentBinding.caseDataVaccinationDate.initializeDateField(getFragmentManager());
 		contentBinding.caseDataDistrictLevelDate.initializeDateField(getFragmentManager());
 		contentBinding.caseDataQuarantineFrom.initializeDateField(getFragmentManager());
 		contentBinding.caseDataQuarantineTo.initializeDateField(getFragmentManager());
 		contentBinding.caseDataQuarantineOrderedVerballyDate.initializeDateField(getChildFragmentManager());
 		contentBinding.caseDataQuarantineOrderedOfficialDocumentDate.initializeDateField(getChildFragmentManager());
 		contentBinding.caseDataQuarantineOfficialOrderSentDate.initializeDateField(getChildFragmentManager());
-		contentBinding.caseDataReportingType.initializeSpinner(reportingTypeList);
+//		contentBinding.caseDataReportingType.initializeSpinner(reportingTypeList);
 
 		// Replace classification user field with classified by field when case has been classified automatically
 		if (contentBinding.getData().getClassificationDate() != null && contentBinding.getData().getClassificationUser() == null) {

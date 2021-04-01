@@ -25,6 +25,7 @@ import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.clinicalcourse.ClinicalCourse;
 import de.symeda.sormas.backend.clinicalcourse.HealthConditions;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
+import de.symeda.sormas.backend.disease.DiseaseVariant;
 import de.symeda.sormas.backend.epidata.EpiData;
 import de.symeda.sormas.backend.event.EventParticipant;
 import de.symeda.sormas.backend.facility.Facility;
@@ -33,8 +34,11 @@ import de.symeda.sormas.backend.infrastructure.PointOfEntry;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.person.Person;
 import de.symeda.sormas.backend.region.Community;
+import de.symeda.sormas.backend.region.Country;
 import de.symeda.sormas.backend.region.District;
 import de.symeda.sormas.backend.region.Region;
+import de.symeda.sormas.backend.sample.Sample;
+import de.symeda.sormas.backend.sormastosormas.SormasToSormasShareInfo;
 import de.symeda.sormas.backend.symptoms.Symptoms;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.util.AbstractDomainObjectJoins;
@@ -63,6 +67,12 @@ public class CaseJoins<T extends AbstractDomainObject> extends AbstractDomainObj
 	private Join<ClinicalCourse, HealthConditions> healthConditions;
 	private Join<Case, EventParticipant> eventParticipants;
 	private Join<Person, List<Location>> personAddresses;
+	private Join<Case, Sample> samples;
+	private Join<Person, Country> personBirthCountry;
+	private Join<Person, Country> personCitizenship;
+	private Join<Case, District> reportingDistrict;
+	private Join<Case, DiseaseVariant> diseaseVariant;
+	private Join<Case, SormasToSormasShareInfo> sormasToSormasShareInfo;
 
 	public CaseJoins(From<T, Case> caze) {
 		super(caze);
@@ -234,5 +244,53 @@ public class CaseJoins<T extends AbstractDomainObject> extends AbstractDomainObj
 
 	private void setPersonAddresses(Join<Person, List<Location>> personAddresses) {
 		this.personAddresses = personAddresses;
+	}
+
+	public Join<Case, Sample> getSamples() {
+		return getOrCreate(samples, Case.SAMPLES, JoinType.LEFT, this::setSamples);
+	}
+
+	private void setSamples(Join<Case, Sample> samples) {
+		this.samples = samples;
+	}
+
+	public Join<Person, Country> getPersonBirthCountry() {
+		return getOrCreate(personBirthCountry, Person.BIRTH_COUNTRY, JoinType.LEFT, getPerson(), this::setPersonBirthCountry);
+	}
+
+	private void setPersonBirthCountry(Join<Person, Country> personBirthCountry) {
+		this.personBirthCountry = personBirthCountry;
+	}
+
+	public Join<Person, Country> getPersonCitizenship() {
+		return getOrCreate(personCitizenship, Person.CITIZENSHIP, JoinType.LEFT, getPerson(), this::setPersonCitizenship);
+	}
+
+	public void setPersonCitizenship(Join<Person, Country> personCitizenship) {
+		this.personCitizenship = personCitizenship;
+	}
+
+	public Join<Case, District> getReportingDistrict() {
+		return getOrCreate(reportingDistrict, Case.REPORTING_DISTRICT, JoinType.LEFT, this::setReportingDistrict);
+	}
+
+	private void setReportingDistrict(Join<Case, District> reportingDistrict) {
+		this.reportingDistrict = reportingDistrict;
+	}
+
+	public Join<Case, DiseaseVariant> getDiseaseVariant() {
+		return getOrCreate(diseaseVariant, Case.DISEASE_VARIANT, JoinType.LEFT, this::setDiseaseVariant);
+	}
+
+	public void setDiseaseVariant(Join<Case, DiseaseVariant> diseaseVariant) {
+		this.diseaseVariant = diseaseVariant;
+	}
+
+	public Join<Case, SormasToSormasShareInfo> getSormasToSormasShareInfo() {
+		return getOrCreate(sormasToSormasShareInfo, Case.SORMAS_TO_SORMAS_SHARES, JoinType.LEFT, this::setSormasToSormasShareInfo);
+	}
+
+	public void setSormasToSormasShareInfo(Join<Case, SormasToSormasShareInfo> sormasToSormasShareInfo) {
+		this.sormasToSormasShareInfo = sormasToSormasShareInfo;
 	}
 }

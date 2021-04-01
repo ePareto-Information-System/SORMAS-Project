@@ -20,17 +20,18 @@
 
 package de.symeda.sormas.backend.campaign.data;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -41,6 +42,7 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import de.symeda.sormas.api.campaign.CampaignReferenceDto;
@@ -55,6 +57,10 @@ import de.symeda.sormas.api.campaign.diagram.CampaignDiagramDataDto;
 import de.symeda.sormas.api.campaign.diagram.CampaignDiagramSeries;
 import de.symeda.sormas.api.campaign.form.CampaignFormElement;
 import de.symeda.sormas.api.campaign.form.CampaignFormElementType;
+import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.api.infrastructure.PopulationDataCriteria;
+import de.symeda.sormas.api.infrastructure.PopulationDataDto;
 import de.symeda.sormas.api.region.AreaReferenceDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
@@ -67,9 +73,11 @@ import de.symeda.sormas.backend.campaign.CampaignService;
 import de.symeda.sormas.backend.campaign.form.CampaignFormMeta;
 import de.symeda.sormas.backend.campaign.form.CampaignFormMetaFacadeEjb;
 import de.symeda.sormas.backend.campaign.form.CampaignFormMetaService;
-import de.symeda.sormas.backend.common.AbstractAdoService;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
+import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
+import de.symeda.sormas.backend.infrastructure.PopulationDataFacadeEjb;
 import de.symeda.sormas.backend.region.Area;
+import de.symeda.sormas.backend.region.AreaService;
 import de.symeda.sormas.backend.region.Community;
 import de.symeda.sormas.backend.region.CommunityFacadeEjb;
 import de.symeda.sormas.backend.region.CommunityService;
@@ -111,17 +119,18 @@ public class CampaignFormDataFacadeEjb implements CampaignFormDataFacade {
 	@EJB
 	private UserService userService;
 
-	public CampaignFormData fromDto(@NotNull CampaignFormDataDto source) {
-		CampaignFormData target = campaignFormDataService.getByUuid(source.getUuid());
-		if (target == null) {
-			target = new CampaignFormData();
-			target.setUuid(source.getUuid());
-			if (source.getCreationDate() != null) {
-				target.setCreationDate(new Timestamp(source.getCreationDate().getTime()));
-			}
-		}
+	@EJB
+	private PopulationDataFacadeEjb.PopulationDataFacadeEjbLocal populationDataFacadeEjb;
 
-		DtoHelper.validateDto(source, target);
+	@EJB
+	private AreaService areaService;
+
+	@EJB
+	private RegionFacadeEjb.RegionFacadeEjbLocal regionFacadeEjb;
+
+	public CampaignFormData fromDto(@NotNull CampaignFormDataDto source, boolean checkChangeDate) {
+		CampaignFormData target =
+			DtoHelper.fillOrBuildEntity(source, campaignFormDataService.getByUuid(source.getUuid()), CampaignFormData::new, checkChangeDate);
 
 		target.setFormValues(source.getFormValues());
 		target.setCampaign(campaignService.getByReferenceDto(source.getCampaign()));
@@ -156,12 +165,27 @@ public class CampaignFormDataFacadeEjb implements CampaignFormDataFacade {
 	}
 
 	@Override
-	public CampaignFormDataDto saveCampaignFormData(CampaignFormDataDto campaignFormDataDto) throws ValidationRuntimeException {
+	public CampaignFormDataDto saveCampaignFormData(@Valid CampaignFormDataDto campaignFormDataDto) throws ValidationRuntimeException {
 
-		CampaignFormData campaignFormData = fromDto(campaignFormDataDto);
+		CampaignFormData campaignFormData = fromDto(campaignFormDataDto, true);
 		CampaignFormDataEntry.removeNullValueEntries(campaignFormData.getFormValues());
+
+		validate(campaignFormDataDto);
+
 		campaignFormDataService.ensurePersisted(campaignFormData);
 		return toDto(campaignFormData);
+	}
+
+	private void validate(CampaignFormDataDto campaignFormDataDto) {
+		if (campaignFormDataDto.getRegion() == null) {
+			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.validRegion));
+		}
+		if (campaignFormDataDto.getDistrict() == null) {
+			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.validDistrict));
+		}
+		if (campaignFormDataDto.getCommunity() == null) {
+			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.validCommunity));
+		}
 	}
 
 	@Override
@@ -213,11 +237,36 @@ public class CampaignFormDataFacadeEjb implements CampaignFormDataFacade {
 	}
 
 	@Override
+	public CampaignFormDataDto getExistingData(CampaignFormDataCriteria criteria) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<CampaignFormData> cq = cb.createQuery(CampaignFormData.class);
+		Root<CampaignFormData> root = cq.from(CampaignFormData.class);
+
+		Predicate filter = CriteriaBuilderHelper
+			.and(cb, campaignFormDataService.createCriteriaFilter(criteria, cb, root), campaignFormDataService.createUserFilter(cb, cq, root));
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		cq.orderBy(cb.desc(root.get(CampaignFormData.CHANGE_DATE)));
+
+		CampaignFormData resultEntity;
+		try {
+			resultEntity = em.createQuery(cq).setMaxResults(1).getSingleResult();
+		} catch (NoResultException e) {
+			resultEntity = null;
+		}
+
+		return resultEntity != null ? toDto(resultEntity) : null;
+	}
+
+	@Override
 	public List<CampaignFormDataIndexDto> getIndexList(
 		CampaignFormDataCriteria criteria,
 		Integer first,
 		Integer max,
 		List<SortProperty> sortProperties) {
+
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<CampaignFormDataIndexDto> cq = cb.createQuery(CampaignFormDataIndexDto.class);
 		Root<CampaignFormData> root = cq.from(CampaignFormData.class);
@@ -237,7 +286,7 @@ public class CampaignFormDataFacadeEjb implements CampaignFormDataFacade {
 			communityJoin.get(Community.NAME),
 			root.get(CampaignFormData.FORM_DATE));
 
-		Predicate filter = AbstractAdoService
+		Predicate filter = CriteriaBuilderHelper
 			.and(cb, campaignFormDataService.createCriteriaFilter(criteria, cb, root), campaignFormDataService.createUserFilter(cb, cq, root));
 		if (filter != null) {
 			cq.where(filter);
@@ -304,29 +353,164 @@ public class CampaignFormDataFacadeEjb implements CampaignFormDataFacade {
 		return campaignFormDataService.getAllActiveAfter(date).stream().map(c -> convertToDto(c)).collect(Collectors.toList());
 	}
 
+	public List<CampaignDiagramDataDto> getDiagramDataByAgeGroup(
+		CampaignDiagramSeries diagramSeriesTotal,
+		CampaignDiagramSeries diagramSeries,
+		CampaignDiagramCriteria campaignDiagramCriteria) {
+		List<CampaignDiagramDataDto> resultData = new ArrayList<>();
+		final AreaReferenceDto area = campaignDiagramCriteria.getArea();
+		final RegionReferenceDto region = campaignDiagramCriteria.getRegion();
+		final DistrictReferenceDto district = campaignDiagramCriteria.getDistrict();
+		if (Objects.isNull(area)) {
+			List<Area> areas = areaService.getAll();
+			areas.forEach(areaItem -> {
+				Integer population = populationDataFacadeEjb.getAreaPopulation(areaItem.getUuid(), diagramSeriesTotal.getPopulationGroup());
+				if (population == 0) {
+					resultData.add(
+						new CampaignDiagramDataDto(
+							areaItem.getName(),
+							0,
+							areaItem.getUuid(),
+							areaItem.getName(),
+							diagramSeries.getFieldId(),
+							diagramSeries.getFormId(),
+							false));
+				} else {
+					resultData.add(
+						new CampaignDiagramDataDto(
+							areaItem.getName(),
+							population,
+							areaItem.getUuid(),
+							areaItem.getName(),
+							diagramSeries.getFieldId(),
+							diagramSeries.getFormId(),
+							true));
+				}
+			});
+		} else if (Objects.isNull(region)) {
+			List<RegionReferenceDto> regions = regionFacadeEjb.getAllActiveByArea(area.getUuid());
+			if (regions.isEmpty()) {
+				resultData.add(
+					new CampaignDiagramDataDto(
+						area.getCaption(),
+						0,
+						area.getUuid(),
+						area.getCaption(),
+						diagramSeries.getFieldId(),
+						diagramSeries.getFormId(),
+						false));
+			} else {
+				regions.stream().forEach(regionReferenceDto -> {
+					PopulationDataCriteria criteria = new PopulationDataCriteria();
+					criteria.sexIsNull(true);
+					criteria.region(regionReferenceDto);
+					criteria.ageGroup(diagramSeriesTotal.getPopulationGroup());
+					List<PopulationDataDto> populationDataDto = populationDataFacadeEjb.getPopulationData(criteria);
+					Integer populationSum = 0;
+					if (!populationDataDto.isEmpty()) {
+						populationSum = populationDataDto.stream().mapToInt(e -> e.getPopulation()).sum();
+						resultData.add(
+							new CampaignDiagramDataDto(
+								regionReferenceDto.getCaption(),
+								populationSum,
+								regionReferenceDto.getUuid(),
+								regionReferenceDto.getCaption(),
+								diagramSeries.getFieldId(),
+								diagramSeries.getFormId(),
+								true));
+					} else {
+						resultData.add(
+							new CampaignDiagramDataDto(
+								regionReferenceDto.getCaption(),
+								0,
+								regionReferenceDto.getUuid(),
+								regionReferenceDto.getCaption(),
+								diagramSeries.getFieldId(),
+								diagramSeries.getFormId(),
+								false));
+					}
+				});
+			}
+		} else if (Objects.isNull(district)) {
+
+			List<DistrictReferenceDto> districts = districtService.getAllActiveByRegion(regionService.getByUuid(region.getUuid()))
+				.stream()
+				.map(district1 -> new DistrictReferenceDto(district1.getUuid(), district1.getName(), district1.getExternalID()))
+				.collect(Collectors.toList());
+			if (districts.isEmpty()) {
+				resultData.add(
+					new CampaignDiagramDataDto(
+						region.getCaption(),
+						0,
+						region.getUuid(),
+						region.getCaption(),
+						diagramSeries.getFieldId(),
+						diagramSeries.getFormId(),
+						false));
+			} else {
+				districts.stream().forEach(districtReferenceDto -> {
+					PopulationDataCriteria criteria = new PopulationDataCriteria();
+					criteria.sexIsNull(true);
+					criteria.district(districtReferenceDto);
+					criteria.region(region);
+					criteria.ageGroup(diagramSeriesTotal.getPopulationGroup());
+					List<PopulationDataDto> populationDataDtoList = populationDataFacadeEjb.getPopulationData(criteria);
+					Integer populationSum = 0;
+					if (!populationDataDtoList.isEmpty()) {
+						populationSum = populationDataDtoList.stream().mapToInt(e -> e.getPopulation()).sum();
+						resultData.add(
+							new CampaignDiagramDataDto(
+								districtReferenceDto.getCaption(),
+								populationSum,
+								districtReferenceDto.getUuid(),
+								districtReferenceDto.getCaption(),
+								diagramSeries.getFieldId(),
+								diagramSeries.getFormId(),
+								true));
+					} else {
+						resultData.add(
+							new CampaignDiagramDataDto(
+								districtReferenceDto.getCaption(),
+								populationSum,
+								districtReferenceDto.getUuid(),
+								districtReferenceDto.getCaption(),
+								diagramSeries.getFieldId(),
+								diagramSeries.getFormId(),
+								false));
+					}
+				});
+			}
+		} else {
+			resultData.add(
+				new CampaignDiagramDataDto(
+					district.getCaption(),
+					0,
+					district.getUuid(),
+					district.getCaption(),
+					diagramSeries.getFieldId(),
+					diagramSeries.getFormId(),
+					true));
+		}
+		return resultData;
+	}
+
 	@Override
 	public List<CampaignDiagramDataDto> getDiagramData(List<CampaignDiagramSeries> diagramSeries, CampaignDiagramCriteria campaignDiagramCriteria) {
 
 		List<CampaignDiagramDataDto> resultData = new ArrayList<>();
+		final AreaReferenceDto area = campaignDiagramCriteria.getArea();
+		final RegionReferenceDto region = campaignDiagramCriteria.getRegion();
+		final DistrictReferenceDto district = campaignDiagramCriteria.getDistrict();
+		final CampaignReferenceDto campaign = campaignDiagramCriteria.getCampaign();
 
 		for (CampaignDiagramSeries series : diagramSeries) {
-
 			//@formatter:off
-			final AreaReferenceDto area = campaignDiagramCriteria.getArea();
-			final RegionReferenceDto region = campaignDiagramCriteria.getRegion();
-			final DistrictReferenceDto district = campaignDiagramCriteria.getDistrict();
-			final CampaignReferenceDto campaign = campaignDiagramCriteria.getCampaign();
-			
-			final String areaFilter = area != null ? " AND " + Area.TABLE_NAME + "." + Area.UUID + " = '" + area.getUuid() + "'": "";
-			final String regionFilter = region != null ? " AND " + CampaignFormData.REGION + "." + Region.UUID + " = '" + region.getUuid() + "'": "";
-			final String districtFilter = district != null ? " AND " + CampaignFormData.DISTRICT + "." + District.UUID + " = '" + district.getUuid() + "'" : "";
-			final String campaignFilter = campaign != null ? " AND " + Campaign.TABLE_NAME + "." + Campaign.UUID + " = '" + campaign.getUuid() +  "'" : "";
-			final String jurisdictionGrouping =
-					district != null ? ", " + Community.TABLE_NAME + "." + Community.UUID + ", " + Community.TABLE_NAME + "." + Community.NAME :
-							region != null ? ", " + District.TABLE_NAME + "." + District.UUID + ", " + District.TABLE_NAME + "." + District.NAME : 
-									area != null ? ", " + Region.TABLE_NAME + "." + Region.UUID + ", " + Region.TABLE_NAME + "." + Region.NAME :
-											", " + Area.TABLE_NAME + "." + Area.UUID + ", " + Area.TABLE_NAME + "." + Area.NAME;
-			//@formatter:on
+
+				final String areaFilter = area != null ? " AND " + Area.TABLE_NAME + "." + Area.UUID + " = :areaUuid" : "";
+				final String regionFilter = region != null ? " AND " + CampaignFormData.REGION + "." + Region.UUID + " = :regionUuid" : "";
+				final String districtFilter = district != null ? " AND " + CampaignFormData.DISTRICT + "." + District.UUID + " = :districtUuid" : "";
+				final String campaignFilter = campaign != null ? " AND " + Campaign.TABLE_NAME + "." + Campaign.UUID + " = :campaignUuid" : "";
+				//@formatter:on
 
 			// SELECT
 			StringBuilder selectBuilder = new StringBuilder("SELECT ").append(CampaignFormMeta.TABLE_NAME)
@@ -359,13 +543,19 @@ public class CampaignFormDataFacadeEjb implements CampaignFormDataFacade {
 				selectBuilder.append(", null as fieldId, null as fieldCaption, count(formId) as sumValue,");
 			}
 
-			if (district != null) {
-				appendInfrastructureSelection(selectBuilder, Community.TABLE_NAME, Community.NAME);
-			} else if (region != null) {
-				appendInfrastructureSelection(selectBuilder, District.TABLE_NAME, District.NAME);
-			} else if (area != null) {
+			final String jurisdictionGrouping;
+			switch (campaignDiagramCriteria.getCampaignJurisdictionLevelGroupBy()) {
+			case REGION:
 				appendInfrastructureSelection(selectBuilder, Region.TABLE_NAME, Region.NAME);
-			} else {
+				break;
+			case DISTRICT:
+				appendInfrastructureSelection(selectBuilder, District.TABLE_NAME, District.NAME);
+				break;
+			case COMMUNITY:
+				appendInfrastructureSelection(selectBuilder, Community.TABLE_NAME, Community.NAME);
+				break;
+			case AREA:
+			default:
 				appendInfrastructureSelection(selectBuilder, Area.TABLE_NAME, Area.NAME);
 			}
 
@@ -428,12 +618,12 @@ public class CampaignFormDataFacadeEjb implements CampaignFormDataFacade {
 
 			// WHERE
 			StringBuilder whereBuilder =
-				new StringBuilder(" WHERE ").append(CampaignFormMeta.TABLE_NAME).append(".").append(CampaignFormMeta.FORM_ID).append(" = ?0");
+				new StringBuilder(" WHERE ").append(CampaignFormMeta.TABLE_NAME).append(".").append(CampaignFormMeta.FORM_ID).append(" = :campaignFormMetaId");
 
 			if (series.getFieldId() != null) {
 				whereBuilder.append(" AND jsonData->>'")
 					.append(CampaignFormDataEntry.ID)
-					.append("' = ?1")
+					.append("' = :campaignFormDataId")
 					.append(" AND jsonData->>'")
 					.append(CampaignFormDataEntry.VALUE)
 					.append("' IS NOT NULL AND jsonData->>'")
@@ -464,6 +654,21 @@ public class CampaignFormDataFacadeEjb implements CampaignFormDataFacade {
 					.append("'");
 			}
 
+			switch (campaignDiagramCriteria.getCampaignJurisdictionLevelGroupBy()) {
+			case REGION:
+				jurisdictionGrouping = ", " + Region.TABLE_NAME + "." + Region.UUID + ", " + Region.TABLE_NAME + "." + Region.NAME;
+				break;
+			case DISTRICT:
+				jurisdictionGrouping = ", " + District.TABLE_NAME + "." + District.UUID + ", " + District.TABLE_NAME + "." + District.NAME;
+				break;
+			case COMMUNITY:
+				jurisdictionGrouping = ", " + Community.TABLE_NAME + "." + Community.UUID + ", " + Community.TABLE_NAME + "." + Community.NAME;
+				break;
+			case AREA:
+			default:
+				jurisdictionGrouping = ", " + Area.TABLE_NAME + "." + Area.UUID + ", " + Area.TABLE_NAME + "." + Area.NAME;
+			}
+
 			groupByBuilder.append(jurisdictionGrouping);
 
 			//@formatter:off
@@ -471,10 +676,22 @@ public class CampaignFormDataFacadeEjb implements CampaignFormDataFacade {
 					selectBuilder.toString() + " FROM " + CampaignFormData.TABLE_NAME + joinBuilder + whereBuilder + groupByBuilder);
 			//@formatter:on
 
-			seriesDataQuery.setParameter(0, series.getFormId());
+			seriesDataQuery.setParameter("campaignFormMetaId", series.getFormId());
+			if (area != null) {
+				seriesDataQuery.setParameter("areaUuid", area.getUuid());
+			}
+			if (region != null) {
+				seriesDataQuery.setParameter("regionUuid", region.getUuid());
+			}
+			if (district != null) {
+				seriesDataQuery.setParameter("districtUuid", district.getUuid());
+			}
+			if (campaign != null) {
+				seriesDataQuery.setParameter("campaignUuid", campaign.getUuid());
+			}
 
 			if (series.getFieldId() != null) {
-				seriesDataQuery.setParameter(1, series.getFieldId());
+				seriesDataQuery.setParameter("campaignFormDataId", series.getFieldId());
 			}
 
 			@SuppressWarnings("unchecked")
@@ -494,6 +711,7 @@ public class CampaignFormDataFacadeEjb implements CampaignFormDataFacade {
 							series.getStack()))
 					.collect(Collectors.toList()));
 		}
+
 		return resultData;
 	}
 
@@ -507,14 +725,20 @@ public class CampaignFormDataFacadeEjb implements CampaignFormDataFacade {
 		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
 		Root<CampaignFormData> root = cq.from(CampaignFormData.class);
 
-		Predicate filter = AbstractAdoService
-				.and(cb, campaignFormDataService.createCriteriaFilter(criteria, cb, root), campaignFormDataService.createUserFilter(cb, cq, root));
+		Predicate filter = CriteriaBuilderHelper
+			.and(cb, campaignFormDataService.createCriteriaFilter(criteria, cb, root), campaignFormDataService.createUserFilter(cb, cq, root));
 		if (filter != null) {
 			cq.where(filter);
 		}
 
 		cq.select(cb.count(root));
 		return em.createQuery(cq).getSingleResult();
+	}
+
+	@Override
+	public void overwriteCampaignFormData(CampaignFormDataDto existingData, CampaignFormDataDto newData) {
+		DtoHelper.copyDtoValues(existingData, newData, true);
+		saveCampaignFormData(existingData);
 	}
 
 	private CampaignFormDataReferenceDto toReferenceDto(CampaignFormData source) {

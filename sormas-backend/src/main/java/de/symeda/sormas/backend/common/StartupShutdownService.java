@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -48,36 +49,29 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import de.symeda.sormas.api.externaljournal.PatientDiaryConfig;
-import de.symeda.sormas.api.externaljournal.SymptomJournalConfig;
-import de.symeda.sormas.api.externaljournal.UserConfig;
-import de.symeda.sormas.backend.user.event.MockPasswordUpdateEvent;
-import de.symeda.sormas.backend.user.event.MockUserCreateEvent;
-import de.symeda.sormas.backend.user.event.PasswordResetEvent;
-import de.symeda.sormas.backend.user.event.UserCreateEvent;
+import de.symeda.sormas.api.AuthProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.Language;
+import de.symeda.sormas.api.externaljournal.PatientDiaryConfig;
+import de.symeda.sormas.api.externaljournal.SymptomJournalConfig;
+import de.symeda.sormas.api.externaljournal.UserConfig;
 import de.symeda.sormas.api.facility.FacilityCriteria;
 import de.symeda.sormas.api.facility.FacilityType;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.infrastructure.PointOfEntryDto;
 import de.symeda.sormas.api.infrastructure.PointOfEntryType;
 import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.backend.caze.CaseService;
+import de.symeda.sormas.api.utils.PasswordHelper;
 import de.symeda.sormas.backend.common.ConfigFacadeEjb.ConfigFacadeEjbLocal;
 import de.symeda.sormas.backend.contact.Contact;
 import de.symeda.sormas.backend.contact.ContactService;
 import de.symeda.sormas.backend.disease.DiseaseConfiguration;
-import de.symeda.sormas.backend.disease.DiseaseConfigurationFacadeEjb.DiseaseConfigurationFacadeEjbLocal;
 import de.symeda.sormas.backend.disease.DiseaseConfigurationService;
-import de.symeda.sormas.backend.epidata.EpiDataService;
-import de.symeda.sormas.backend.event.EventParticipantService;
 import de.symeda.sormas.backend.facility.Facility;
 import de.symeda.sormas.backend.facility.FacilityFacadeEjb.FacilityFacadeEjbLocal;
 import de.symeda.sormas.backend.facility.FacilityService;
@@ -85,7 +79,6 @@ import de.symeda.sormas.backend.feature.FeatureConfigurationService;
 import de.symeda.sormas.backend.importexport.ImportFacadeEjb.ImportFacadeEjbLocal;
 import de.symeda.sormas.backend.infrastructure.PointOfEntry;
 import de.symeda.sormas.backend.infrastructure.PointOfEntryService;
-import de.symeda.sormas.backend.person.PersonService;
 import de.symeda.sormas.backend.region.Community;
 import de.symeda.sormas.backend.region.CommunityService;
 import de.symeda.sormas.backend.region.District;
@@ -93,12 +86,13 @@ import de.symeda.sormas.backend.region.DistrictService;
 import de.symeda.sormas.backend.region.Region;
 import de.symeda.sormas.backend.region.RegionService;
 import de.symeda.sormas.backend.sormastosormas.ServerAccessDataService;
-import de.symeda.sormas.backend.symptoms.SymptomsService;
 import de.symeda.sormas.backend.user.User;
+import de.symeda.sormas.backend.user.UserFacadeEjb.UserFacadeEjbLocal;
 import de.symeda.sormas.backend.user.UserService;
+import de.symeda.sormas.backend.user.event.PasswordResetEvent;
+import de.symeda.sormas.backend.user.event.UserUpdateEvent;
 import de.symeda.sormas.backend.util.MockDataGenerator;
 import de.symeda.sormas.backend.util.ModelConstants;
-import de.symeda.sormas.backend.util.PasswordHelper;
 
 @Singleton(name = "StartupShutdownService")
 @Startup
@@ -156,7 +150,7 @@ public class StartupShutdownService {
 	private ServerAccessDataService serverAccessDataService;
 
 	@Inject
-	private Event<UserCreateEvent> userCreateEvent;
+	private Event<UserUpdateEvent> userUpdateEvent;
 
 	@Inject
 	private Event<PasswordResetEvent> passwordResetEvent;
@@ -178,7 +172,7 @@ public class StartupShutdownService {
 
 		facilityService.createConstantFacilities();
 
-		createConstantPointsOfEntry();
+		pointOfEntryService.createConstantPointsOfEntry();
 
 		createDefaultUsers();
 
@@ -188,6 +182,8 @@ public class StartupShutdownService {
 
 		createOrUpdatePatientDiaryUser();
 
+		syncUsers();
+
 		upgrade();
 
 		createImportTemplateFiles();
@@ -195,6 +191,7 @@ public class StartupShutdownService {
 		createMissingDiseaseConfigurations();
 
 		featureConfigurationService.createMissingFeatureConfigurations();
+		featureConfigurationService.updateFeatureConfigurations();
 
 		configFacade.validateAppUrls();
 		configFacade.validateExternalUrls();
@@ -308,44 +305,21 @@ public class StartupShutdownService {
 		}
 	}
 
-	private void createConstantPointsOfEntry() {
-		if (pointOfEntryService.getByUuid(PointOfEntryDto.OTHER_AIRPORT_UUID) == null) {
-			PointOfEntry otherAirport = new PointOfEntry();
-			otherAirport.setName("OTHER_AIRPORT");
-			otherAirport.setUuid(PointOfEntryDto.OTHER_AIRPORT_UUID);
-			otherAirport.setActive(true);
-			otherAirport.setPointOfEntryType(PointOfEntryType.AIRPORT);
-			pointOfEntryService.persist(otherAirport);
-		}
-		if (pointOfEntryService.getByUuid(PointOfEntryDto.OTHER_SEAPORT_UUID) == null) {
-			PointOfEntry otherSeaport = new PointOfEntry();
-			otherSeaport.setName("OTHER_SEAPORT");
-			otherSeaport.setUuid(PointOfEntryDto.OTHER_SEAPORT_UUID);
-			otherSeaport.setActive(true);
-			otherSeaport.setPointOfEntryType(PointOfEntryType.SEAPORT);
-			pointOfEntryService.persist(otherSeaport);
-		}
-		if (pointOfEntryService.getByUuid(PointOfEntryDto.OTHER_GROUND_CROSSING_UUID) == null) {
-			PointOfEntry otherGC = new PointOfEntry();
-			otherGC.setName("OTHER_GROUND_CROSSING");
-			otherGC.setUuid(PointOfEntryDto.OTHER_GROUND_CROSSING_UUID);
-			otherGC.setActive(true);
-			otherGC.setPointOfEntryType(PointOfEntryType.GROUND_CROSSING);
-			pointOfEntryService.persist(otherGC);
-		}
-		if (pointOfEntryService.getByUuid(PointOfEntryDto.OTHER_POE_UUID) == null) {
-			PointOfEntry otherPoe = new PointOfEntry();
-			otherPoe.setName("OTHER_POE");
-			otherPoe.setUuid(PointOfEntryDto.OTHER_POE_UUID);
-			otherPoe.setActive(true);
-			otherPoe.setPointOfEntryType(PointOfEntryType.OTHER);
-			pointOfEntryService.persist(otherPoe);
-		}
-	}
-
 	private void createDefaultUsers() {
 
 		if (userService.count() == 0) {
+
+			// Create Admin
+			User admin = MockDataGenerator.createUser(UserRole.ADMIN, "ad", "min", "sadmin");
+			admin.setUserName("admin");
+			userService.persist(admin);
+			userUpdateEvent.fire(new UserUpdateEvent(admin));
+
+			if (!configFacade.isCreateDefaultUsers()) {
+				// return if getCreateDefaultUsers() is false
+				logger.info("Skipping the creation of default users");
+				return;
+			}
 
 			Region region = regionService.getAll().get(0);
 			District district = region.getDistricts().get(0);
@@ -356,65 +330,61 @@ public class StartupShutdownService {
 			Facility laboratory = laboratories.size() > 0 ? laboratories.get(0) : null;
 			PointOfEntry pointOfEntry = pointOfEntryService.getAllActive().get(0);
 
-			// Create Admin
-			User admin = MockDataGenerator.createUser(UserRole.ADMIN, "ad", "min", "sadmin");
-			admin.setUserName("admin");
-			userService.persist(admin);
-			userCreateEvent.fire(new MockUserCreateEvent(admin, "sadmin"));
+			logger.info("Create default users");
 
 			// Create Surveillance Supervisor
 			User surveillanceSupervisor = MockDataGenerator.createUser(UserRole.SURVEILLANCE_SUPERVISOR, "Surveillance", "Supervisor", "SurvSup");
 			surveillanceSupervisor.setUserName("SurvSup");
 			surveillanceSupervisor.setRegion(region);
 			userService.persist(surveillanceSupervisor);
-			userCreateEvent.fire(new MockUserCreateEvent(surveillanceSupervisor, "SurvSup"));
+			userUpdateEvent.fire(new UserUpdateEvent(surveillanceSupervisor));
 
 			// Create Case Supervisor
 			User caseSupervisor = MockDataGenerator.createUser(UserRole.CASE_SUPERVISOR, "Case", "Supervisor", "CaseSup");
 			caseSupervisor.setUserName("CaseSup");
 			caseSupervisor.setRegion(region);
 			userService.persist(caseSupervisor);
-			userCreateEvent.fire(new MockUserCreateEvent(caseSupervisor, "CaseSup"));
+			userUpdateEvent.fire(new UserUpdateEvent(caseSupervisor));
 
 			// Create Contact Supervisor
 			User contactSupervisor = MockDataGenerator.createUser(UserRole.CONTACT_SUPERVISOR, "Contact", "Supervisor", "ContSup");
 			contactSupervisor.setUserName("ContSup");
 			contactSupervisor.setRegion(region);
 			userService.persist(contactSupervisor);
-			userCreateEvent.fire(new MockUserCreateEvent(contactSupervisor, "ContSup"));
+			userUpdateEvent.fire(new UserUpdateEvent(contactSupervisor));
 
 			// Create Point of Entry Supervisor
 			User poeSupervisor = MockDataGenerator.createUser(UserRole.POE_SUPERVISOR, "Point of Entry", "Supervisor", "PoeSup");
 			poeSupervisor.setUserName("PoeSup");
 			poeSupervisor.setRegion(region);
 			userService.persist(poeSupervisor);
-			userCreateEvent.fire(new MockUserCreateEvent(poeSupervisor, "PoeSup"));
+			userUpdateEvent.fire(new UserUpdateEvent(poeSupervisor));
 
 			// Create Laboratory Officer
 			User laboratoryOfficer = MockDataGenerator.createUser(UserRole.LAB_USER, "Laboratory", "Officer", "LabOff");
 			laboratoryOfficer.setUserName("LabOff");
 			laboratoryOfficer.setLaboratory(laboratory);
 			userService.persist(laboratoryOfficer);
-			userCreateEvent.fire(new MockUserCreateEvent(laboratoryOfficer, "LabOff"));
+			userUpdateEvent.fire(new UserUpdateEvent(laboratoryOfficer));
 
 			// Create Event Officer
 			User eventOfficer = MockDataGenerator.createUser(UserRole.EVENT_OFFICER, "Event", "Officer", "EveOff");
 			eventOfficer.setUserName("EveOff");
 			eventOfficer.setRegion(region);
 			userService.persist(eventOfficer);
-			userCreateEvent.fire(new MockUserCreateEvent(eventOfficer, "EveOff"));
+			userUpdateEvent.fire(new UserUpdateEvent(eventOfficer));
 
 			// Create National User
 			User nationalUser = MockDataGenerator.createUser(UserRole.NATIONAL_USER, "National", "User", "NatUser");
 			nationalUser.setUserName("NatUser");
 			userService.persist(nationalUser);
-			userCreateEvent.fire(new MockUserCreateEvent(nationalUser, "NatUser"));
+			userUpdateEvent.fire(new UserUpdateEvent(nationalUser));
 
 			// Create National Clinician
 			User nationalClinician = MockDataGenerator.createUser(UserRole.NATIONAL_CLINICIAN, "National", "Clinician", "NatClin");
 			nationalClinician.setUserName("NatClin");
 			userService.persist(nationalClinician);
-			userCreateEvent.fire(new MockUserCreateEvent(nationalClinician, "NatClin"));
+			userUpdateEvent.fire(new UserUpdateEvent(nationalClinician));
 
 			// Create Surveillance Officer
 			User surveillanceOfficer = MockDataGenerator.createUser(UserRole.SURVEILLANCE_OFFICER, "Surveillance", "Officer", "SurvOff");
@@ -422,7 +392,7 @@ public class StartupShutdownService {
 			surveillanceOfficer.setRegion(region);
 			surveillanceOfficer.setDistrict(district);
 			userService.persist(surveillanceOfficer);
-			userCreateEvent.fire(new MockUserCreateEvent(surveillanceOfficer, "SurvOff"));
+			userUpdateEvent.fire(new UserUpdateEvent(surveillanceOfficer));
 
 			// Create Hospital Informant
 			User hospitalInformant = MockDataGenerator.createUser(UserRole.HOSPITAL_INFORMANT, "Hospital", "Informant", "HospInf");
@@ -432,7 +402,7 @@ public class StartupShutdownService {
 			hospitalInformant.setHealthFacility(facility);
 			hospitalInformant.setAssociatedOfficer(surveillanceOfficer);
 			userService.persist(hospitalInformant);
-			userCreateEvent.fire(new MockUserCreateEvent(hospitalInformant, "HospInf"));
+			userUpdateEvent.fire(new UserUpdateEvent(hospitalInformant));
 
 			User poeInformant = MockDataGenerator.createUser(UserRole.POE_INFORMANT, "Poe", "Informant", "PoeInf");
 			poeInformant.setUserName("PoeInf");
@@ -441,7 +411,7 @@ public class StartupShutdownService {
 			poeInformant.setPointOfEntry(pointOfEntry);
 			poeInformant.setAssociatedOfficer(surveillanceOfficer);
 			userService.persist(poeInformant);
-			userCreateEvent.fire(new MockUserCreateEvent(poeInformant, "PoeInf"));
+			userUpdateEvent.fire(new UserUpdateEvent(poeInformant));
 		}
 	}
 
@@ -491,7 +461,7 @@ public class StartupShutdownService {
 
 	private void createOrUpdateDefaultUser(Set<UserRole> userRoles, String username, String password, String firstName, String lastName) {
 
-		if(StringUtils.isAnyBlank(username, password)) {
+		if (StringUtils.isAnyBlank(username, password)) {
 			logger.debug("Invalid user details. Will not create/update default user");
 			return;
 		}
@@ -504,17 +474,59 @@ public class StartupShutdownService {
 				newUser.setUserName(username);
 
 				userService.persist(newUser);
-				userCreateEvent.fire(new MockUserCreateEvent(newUser, password));
+				userUpdateEvent.fire(new UserUpdateEvent(newUser));
 			}
-		} else if (!DataHelper
-			.equal(existingUser.getPassword(), PasswordHelper.encodePassword(password, existingUser.getSeed()))) {
+		} else if (!DataHelper.equal(existingUser.getPassword(), PasswordHelper.encodePassword(password, existingUser.getSeed()))) {
 			existingUser.setSeed(PasswordHelper.createPass(16));
 			existingUser.setPassword(PasswordHelper.encodePassword(password, existingUser.getSeed()));
 
 			userService.persist(existingUser);
-			passwordResetEvent.fire(new MockPasswordUpdateEvent(existingUser, password));
+			passwordResetEvent.fire(new PasswordResetEvent(existingUser));
 		}
 
+	}
+
+	/**
+	 * Synchronizes all active users with the external Authentication Provider if User Sync at startup is enabled and supported.
+	 * @see AuthProvider#isUserSyncSupported()
+	 * @see AuthProvider#isUserSyncAtStartupEnabled()
+	 */
+	private void syncUsers() {
+
+		AuthProvider authProvider = AuthProvider.getProvider();
+
+		if (!authProvider.isUserSyncSupported()) {
+			logger.info("Active Authentication Provider {} doesn't support user sync", authProvider.getName());
+			return;
+		}
+
+		if(!authProvider.isUserSyncAtStartupEnabled()) {
+			logger.info("User sync at startup is disabled. Enable this in SORMAS properties if the active Authentication Provider supports it");
+			return;
+		}
+
+		List<User> users = userService.getAllActive();
+		for (User user : users) {
+			syncUser(user);
+		}
+		logger.info("User synchronization finalized");
+	}
+
+	/**
+	 * Triggers the user sync asynchronously to not block the deployment step
+	 */
+	private void syncUser(User user) {
+		String shortUuid = DataHelper.getShortUuid(user.getUuid());
+		logger.debug("Synchronizing user {}", shortUuid);
+		try {
+
+			UserUpdateEvent event = new UserUpdateEvent(user);
+			event.setExceptionCallback(exceptionMessage -> logger.error("Could not synchronize user {} due to {}", shortUuid, exceptionMessage));
+
+			this.userUpdateEvent.fireAsync(event);
+		} catch (Throwable e) {
+			logger.error(MessageFormat.format("Unexpected exception when synchronizing user {0}", shortUuid), e);
+		}
 	}
 
 	/**

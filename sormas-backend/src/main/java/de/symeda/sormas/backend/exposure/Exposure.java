@@ -36,10 +36,12 @@ import de.symeda.sormas.api.epidata.WaterSource;
 import de.symeda.sormas.api.event.MeansOfTransport;
 import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.exposure.AnimalContactType;
+import de.symeda.sormas.api.exposure.ExposureRole;
 import de.symeda.sormas.api.exposure.ExposureType;
 import de.symeda.sormas.api.exposure.GatheringType;
 import de.symeda.sormas.api.exposure.HabitationType;
 import de.symeda.sormas.api.exposure.TypeOfAnimal;
+import de.symeda.sormas.api.exposure.WorkEnvironment;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.contact.Contact;
@@ -53,7 +55,7 @@ public class Exposure extends AbstractDomainObject {
 
 	private static final long serialVersionUID = -5570515874416024604L;
 
-	public static final String TABLE_NAME = "exposure";
+	public static final String TABLE_NAME = "exposures";
 
 	public static final String EPI_DATA = "epiData";
 	public static final String LOCATION = "location";
@@ -68,6 +70,7 @@ public class Exposure extends AbstractDomainObject {
 	private ExposureType exposureType;
 	private String exposureTypeDetails;
 	private Location location;
+	private ExposureRole exposureRole;
 
 	// Type of Place
 	private TypeOfPlace typeOfPlace;
@@ -76,6 +79,8 @@ public class Exposure extends AbstractDomainObject {
 	private String meansOfTransportDetails;
 	private String connectionNumber;
 	private String seatNumber;
+
+	private WorkEnvironment workEnvironment;
 
 	// Details
 	private YesNoUnknown indoors;
@@ -186,7 +191,7 @@ public class Exposure extends AbstractDomainObject {
 	}
 
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(nullable = false)
+	@JoinColumn
 	public Location getLocation() {
 		if (location == null) {
 			location = new Location();
@@ -196,6 +201,15 @@ public class Exposure extends AbstractDomainObject {
 
 	public void setLocation(Location location) {
 		this.location = location;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public ExposureRole getExposureRole() {
+		return exposureRole;
+	}
+
+	public void setExposureRole(ExposureRole exposureRole) {
+		this.exposureRole = exposureRole;
 	}
 
 	@Enumerated(EnumType.STRING)
@@ -544,6 +558,15 @@ public class Exposure extends AbstractDomainObject {
 	@Column(length = COLUMN_LENGTH_DEFAULT)
 	public String getSeatNumber() {
 		return seatNumber;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public WorkEnvironment getWorkEnvironment() {
+		return workEnvironment;
+	}
+
+	public void setWorkEnvironment(WorkEnvironment workEnvironment) {
+		this.workEnvironment = workEnvironment;
 	}
 
 	public void setSeatNumber(String seatNumber) {

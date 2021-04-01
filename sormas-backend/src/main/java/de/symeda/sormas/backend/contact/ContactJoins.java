@@ -29,11 +29,14 @@ import de.symeda.sormas.backend.infrastructure.PointOfEntry;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.person.Person;
 import de.symeda.sormas.backend.region.Community;
+import de.symeda.sormas.backend.region.Country;
 import de.symeda.sormas.backend.region.District;
 import de.symeda.sormas.backend.region.Region;
+import de.symeda.sormas.backend.sormastosormas.SormasToSormasShareInfo;
 import de.symeda.sormas.backend.symptoms.Symptoms;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.util.AbstractDomainObjectJoins;
+import de.symeda.sormas.backend.vaccinationinfo.VaccinationInfo;
 import de.symeda.sormas.backend.visit.Visit;
 
 public class ContactJoins extends AbstractDomainObjectJoins<Contact, Contact> {
@@ -70,6 +73,15 @@ public class ContactJoins extends AbstractDomainObjectJoins<Contact, Contact> {
 	private Join<Visit, Symptoms> visitSymptoms;
 	private Join<Contact, HealthConditions> healthConditions;
 	private Join<Person, Location> personAddress;
+
+	private Join<Person, Country> personBirthCountry;
+	private Join<Person, Country> personCitizenship;
+
+	private Join<Contact, District> reportingDistrict;
+
+	private Join<Contact, VaccinationInfo> vaccinationInfo;
+
+	private Join<Contact, SormasToSormasShareInfo> sormasToSormasShareInfo;
 
 	public ContactJoins(Root<Contact> contact) {
 		super(contact);
@@ -307,5 +319,45 @@ public class ContactJoins extends AbstractDomainObjectJoins<Contact, Contact> {
 
 	public Join<EventParticipant, Event> getCaseEvent() {
 		return getOrCreate(caseEvent, EventParticipant.EVENT, JoinType.LEFT, getCaseEventParticipants(), this::setCaseEvent);
+	}
+
+	public Join<Person, Country> getPersonBirthCountry() {
+		return getOrCreate(personBirthCountry, Person.BIRTH_COUNTRY, JoinType.LEFT, getPerson(), this::setPersonBirthCountry);
+	}
+
+	private void setPersonBirthCountry(Join<Person, Country> personBirthCountry) {
+		this.personBirthCountry = personBirthCountry;
+	}
+
+	public Join<Person, Country> getPersonCitizenship() {
+		return getOrCreate(personCitizenship, Person.CITIZENSHIP, JoinType.LEFT, getPerson(), this::setPersonCitizenship);
+	}
+
+	public void setPersonCitizenship(Join<Person, Country> personCitizenship) {
+		this.personCitizenship = personCitizenship;
+	}
+
+	public Join<Contact, District> getReportingDistrict() {
+		return getOrCreate(reportingDistrict, Contact.REPORTING_DISTRICT, JoinType.LEFT, this::setReportingDistrict);
+	}
+
+	private void setReportingDistrict(Join<Contact, District> reportingDistrict) {
+		this.reportingDistrict = reportingDistrict;
+	}
+
+	public Join<Contact, VaccinationInfo> getVaccinationInfo() {
+		return getOrCreate(vaccinationInfo, Contact.VACCINATION_INFO, JoinType.LEFT, this::setVaccinationInfo);
+	}
+
+	private void setVaccinationInfo(Join<Contact, VaccinationInfo> vaccinationInfo) {
+		this.vaccinationInfo = vaccinationInfo;
+	}
+
+	public Join<Contact, SormasToSormasShareInfo> getSormasToSormasShareInfo() {
+		return getOrCreate(sormasToSormasShareInfo, Contact.SORMAS_TO_SORMAS_SHARES, JoinType.LEFT, this::setSormasToSormasShareInfo);
+	}
+
+	public void setSormasToSormasShareInfo(Join<Contact, SormasToSormasShareInfo> sormasToSormasShareInfo) {
+		this.sormasToSormasShareInfo = sormasToSormasShareInfo;
 	}
 }
