@@ -27,12 +27,8 @@ public final class EpiDataHelper {
 
 	}
 
-	public static String buildDetailedTravelString(
-		String travelLocation,
-		String travelDetails,
-		Date travelDateFrom,
-		Date travelDateTo,
-		Language language) {
+	public static String buildDetailedTravelString(String travelLocation, String travelDetails, Date travelDateFrom,
+			Date travelDateTo, Language language) {
 		StringBuilder resultString = new StringBuilder();
 
 		if (!DataHelper.isNullOrEmpty(travelDetails)) {

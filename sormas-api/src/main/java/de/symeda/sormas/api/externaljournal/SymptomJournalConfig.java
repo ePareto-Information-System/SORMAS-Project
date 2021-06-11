@@ -45,6 +45,10 @@ public class SymptomJournalConfig implements Serializable, Cloneable {
 		this.secret = secret;
 	}
 
+	public boolean isActive() {
+		return url != null;
+	}
+
 	public UserConfig getDefaultUser() {
 		return defaultUser;
 	}
@@ -60,11 +64,9 @@ public class SymptomJournalConfig implements Serializable, Cloneable {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		SymptomJournalConfig that = (SymptomJournalConfig) o;
-		return Objects.equals(url, that.url)
-			&& Objects.equals(authUrl, that.authUrl)
-			&& Objects.equals(clientId, that.clientId)
-			&& Objects.equals(secret, that.secret)
-			&& Objects.equals(defaultUser, that.defaultUser);
+		return Objects.equals(url, that.url) && Objects.equals(authUrl, that.authUrl)
+				&& Objects.equals(clientId, that.clientId) && Objects.equals(secret, that.secret)
+				&& Objects.equals(defaultUser, that.defaultUser);
 	}
 
 	@Override

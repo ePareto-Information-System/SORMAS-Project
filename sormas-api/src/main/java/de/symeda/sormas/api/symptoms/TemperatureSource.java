@@ -21,10 +21,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum TemperatureSource {
 
-	AXILLARY,
-	ORAL,
-	RECTAL,
-	NON_CONTACT;
+	AXILLARY, ORAL, RECTAL, NON_CONTACT;
 
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);

@@ -33,14 +33,13 @@ import de.symeda.sormas.api.utils.ValidationException;
 /**
  * These are also used as user groups in the server realm
  */
-public enum UserRole
-	implements
-	StatisticsGroupingKey {
+public enum UserRole implements StatisticsGroupingKey {
 
 	ADMIN(false, false, false, false, JurisdictionLevel.NONE),
 	NATIONAL_USER(false, false, false, false, JurisdictionLevel.NATION),
 	SURVEILLANCE_SUPERVISOR(true, false, false, false, JurisdictionLevel.REGION),
-	ADMIN_SUPERVISOR(true, false, false, false, JurisdictionLevel.REGION), // FIXME : remove this when user rights management is doable by users
+	ADMIN_SUPERVISOR(true, false, false, false, JurisdictionLevel.REGION), // FIXME : remove this when user rights
+																			// management is doable by users
 	SURVEILLANCE_OFFICER(false, true, false, false, JurisdictionLevel.DISTRICT),
 	HOSPITAL_INFORMANT(false, false, true, false, JurisdictionLevel.HEALTH_FACILITY),
 	COMMUNITY_OFFICER(false, true, false, false, JurisdictionLevel.COMMUNITY),
@@ -60,14 +59,14 @@ public enum UserRole
 	POE_SUPERVISOR(true, false, false, true, JurisdictionLevel.REGION),
 	POE_NATIONAL_USER(false, false, false, true, JurisdictionLevel.NATION),
 	IMPORT_USER(false, false, false, false, JurisdictionLevel.NONE),
-	REST_EXTERNAL_VISITS_USER(false, false, false, false, JurisdictionLevel.NONE),
+	REST_EXTERNAL_VISITS_USER(false, false, false, false, JurisdictionLevel.NATION),
 	REST_USER(false, false, false, false, JurisdictionLevel.NONE),
 	SORMAS_TO_SORMAS_CLIENT(false, false, false, false, JurisdictionLevel.NATION),
 	BAG_USER(false, false, false, false, JurisdictionLevel.NONE);
 
 	/*
-	 * Hint for SonarQube issues:
-	 * 1. java:S115: Violation of name convention for String constants of this class is accepted: Close as false positive.
+	 * Hint for SonarQube issues: 1. java:S115: Violation of name convention for
+	 * String constants of this class is accepted: Close as false positive.
 	 */
 
 	public static final String _SYSTEM = "SYSTEM";
@@ -106,12 +105,8 @@ public enum UserRole
 
 	private final JurisdictionLevel jurisdictionLevel;
 
-	UserRole(
-		boolean supervisor,
-		boolean hasOptionalHealthFacility,
-		boolean hasAssociatedOfficer,
-		boolean portHealthUser,
-		JurisdictionLevel jurisdictionLevel) {
+	UserRole(boolean supervisor, boolean hasOptionalHealthFacility, boolean hasAssociatedOfficer,
+			boolean portHealthUser, JurisdictionLevel jurisdictionLevel) {
 
 		this.supervisor = supervisor;
 		this.hasOptionalHealthFacility = hasOptionalHealthFacility;
@@ -255,7 +250,8 @@ public enum UserRole
 		boolean laboratoryJurisdictionPresent = false;
 		for (UserRole role : roles) {
 			final JurisdictionLevel jurisdictionLevel = role.getJurisdictionLevel();
-			if (roles.size() == 1 || (jurisdictionLevel != JurisdictionLevel.NONE && jurisdictionLevel != JurisdictionLevel.LABORATORY)) {
+			if (roles.size() == 1 || (jurisdictionLevel != JurisdictionLevel.NONE
+					&& jurisdictionLevel != JurisdictionLevel.LABORATORY)) {
 				return jurisdictionLevel;
 			} else if (jurisdictionLevel == JurisdictionLevel.LABORATORY) {
 				laboratoryJurisdictionPresent = true;
@@ -330,7 +326,8 @@ public enum UserRole
 		private final UserRole forbiddenUserRole;
 
 		public UserRoleValidationException(UserRole checkedUserRole, UserRole forbiddenUserRole) {
-			super(checkedUserRole + " " + I18nProperties.getString(Strings.messageUserRoleCombination) + " " + forbiddenUserRole);
+			super(checkedUserRole + " " + I18nProperties.getString(Strings.messageUserRoleCombination) + " "
+					+ forbiddenUserRole);
 			this.checkedUserRole = checkedUserRole;
 			this.forbiddenUserRole = forbiddenUserRole;
 		}
@@ -351,8 +348,8 @@ public enum UserRole
 			throw new NullPointerException("Can't compare to null.");
 		}
 		if (o.getClass() != this.getClass()) {
-			throw new UnsupportedOperationException(
-				"Can't compare to class " + o.getClass().getName() + " that differs from " + this.getClass().getName());
+			throw new UnsupportedOperationException("Can't compare to class " + o.getClass().getName()
+					+ " that differs from " + this.getClass().getName());
 		}
 
 		return this.toString().compareTo(o.toString());

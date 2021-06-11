@@ -23,13 +23,11 @@ import de.symeda.sormas.api.utils.DataHelper;
 
 public class ContactJurisdictionHelper {
 
-	public static boolean isInJurisdictionOrOwned(
-		JurisdictionLevel jurisdictionLevel,
-		UserJurisdiction userJurisdiction,
-		ContactJurisdictionDto contactJurisdiction) {
+	public static boolean isInJurisdictionOrOwned(JurisdictionLevel jurisdictionLevel,
+			UserJurisdiction userJurisdiction, ContactJurisdictionDto contactJurisdiction) {
 
 		if (contactJurisdiction.getReportingUserUuid() != null
-			&& DataHelper.equal(userJurisdiction.getUuid(), contactJurisdiction.getReportingUserUuid())) {
+				&& DataHelper.equal(userJurisdiction.getUuid(), contactJurisdiction.getReportingUserUuid())) {
 			return true;
 		}
 
@@ -64,7 +62,8 @@ public class ContactJurisdictionHelper {
 		}
 
 		if (contactJurisdiction.getCaseJurisdiction() != null) {
-			return CaseJurisdictionHelper.isInJurisdictionOrOwned(jurisdictionLevel, userJurisdiction, contactJurisdiction.getCaseJurisdiction());
+			return CaseJurisdictionHelper.isInJurisdictionOrOwned(jurisdictionLevel, userJurisdiction,
+					contactJurisdiction.getCaseJurisdiction());
 		}
 
 		return false;

@@ -17,12 +17,8 @@ public class CampaignDiagramCriteria extends BaseCriteria implements Serializabl
 	private DistrictReferenceDto district;
 	private CampaignJurisdictionLevel campaignJurisdictionLevelGroupBy;
 
-	public CampaignDiagramCriteria(
-		CampaignReferenceDto campaign,
-		AreaReferenceDto area,
-		RegionReferenceDto region,
-		DistrictReferenceDto district,
-		CampaignJurisdictionLevel campaignJurisdictionLevelGroupBy) {
+	public CampaignDiagramCriteria(CampaignReferenceDto campaign, AreaReferenceDto area, RegionReferenceDto region,
+			DistrictReferenceDto district, CampaignJurisdictionLevel campaignJurisdictionLevelGroupBy) {
 		this.campaign = campaign;
 		this.area = area;
 		this.region = region;

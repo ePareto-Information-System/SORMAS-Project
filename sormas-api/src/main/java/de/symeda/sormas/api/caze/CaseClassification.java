@@ -23,21 +23,14 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 
-public enum CaseClassification
-	implements
-	StatisticsGroupingKey {
+public enum CaseClassification implements StatisticsGroupingKey {
 
-	NOT_CLASSIFIED(1),
-	SUSPECT(2),
-	PROBABLE(3),
-	CONFIRMED(6),
-	CONFIRMED_NO_SYMPTOMS(4),
-	CONFIRMED_UNKNOWN_SYMPTOMS(5),
+	NOT_CLASSIFIED(1), SUSPECT(2), PROBABLE(3), CONFIRMED(6), CONFIRMED_NO_SYMPTOMS(4), CONFIRMED_UNKNOWN_SYMPTOMS(5),
 	NO_CASE(0);
 
 	/**
-	 * Severity of the case classification; confirmed has the highest severity in terms of the classification process
-	 * while no_case has the lowest.
+	 * Severity of the case classification; confirmed has the highest severity in
+	 * terms of the classification process while no_case has the lowest.
 	 */
 	private final int severity;
 
@@ -64,8 +57,8 @@ public enum CaseClassification
 			throw new NullPointerException("Can't compare to null.");
 		}
 		if (o.getClass() != this.getClass()) {
-			throw new UnsupportedOperationException(
-				"Can't compare to class " + o.getClass().getName() + " that differs from " + this.getClass().getName());
+			throw new UnsupportedOperationException("Can't compare to class " + o.getClass().getName()
+					+ " that differs from " + this.getClass().getName());
 		}
 
 		return this.toString().compareTo(o.toString());
@@ -76,11 +69,7 @@ public enum CaseClassification
 	}
 
 	public static Set<CaseClassification> getConfirmedClassifications() {
-		return Collections
-				.unmodifiableSet(EnumSet.of(
-						CaseClassification.CONFIRMED,
-						CaseClassification.CONFIRMED_NO_SYMPTOMS,
-						CaseClassification.CONFIRMED_UNKNOWN_SYMPTOMS
-				));
+		return Collections.unmodifiableSet(EnumSet.of(CaseClassification.CONFIRMED,
+				CaseClassification.CONFIRMED_NO_SYMPTOMS, CaseClassification.CONFIRMED_UNKNOWN_SYMPTOMS));
 	}
 }

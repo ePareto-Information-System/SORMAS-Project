@@ -49,7 +49,8 @@ public class ContactReferenceDto extends ReferenceDto {
 		setUuid(uuid);
 	}
 
-	public ContactReferenceDto(String uuid, String contactFirstName, String contactLastName, String caseFirstName, String caseLastName) {
+	public ContactReferenceDto(String uuid, String contactFirstName, String contactLastName, String caseFirstName,
+			String caseLastName) {
 
 		setUuid(uuid);
 		this.contactName = new PersonName(contactFirstName, contactLastName);
@@ -61,22 +62,13 @@ public class ContactReferenceDto extends ReferenceDto {
 
 	@Override
 	public String getCaption() {
-		return buildCaption(
-			contactName.firstName,
-			contactName.lastName,
-			caseName != null ? caseName.firstName : null,
-			caseName != null ? caseName.lastName : null,
-			getUuid());
+		return buildCaption(contactName.firstName, contactName.lastName, caseName != null ? caseName.firstName : null,
+				caseName != null ? caseName.lastName : null, getUuid());
 	}
 
 	public String getCaptionAlwaysWithUuid() {
-		return buildCaption(
-			contactName.firstName,
-			contactName.lastName,
-			caseName != null ? caseName.firstName : null,
-			caseName != null ? caseName.lastName : null,
-			getUuid(),
-			true);
+		return buildCaption(contactName.firstName, contactName.lastName, caseName != null ? caseName.firstName : null,
+				caseName != null ? caseName.lastName : null, getUuid(), true);
 	}
 
 	public PersonName getContactName() {
@@ -87,39 +79,29 @@ public class ContactReferenceDto extends ReferenceDto {
 		return caseName;
 	}
 
-	public static String buildCaption(
-		String contactFirstName,
-		String contactLastName,
-		String caseFirstName,
-		String caseLastName,
-		String contactUuid) {
+	public static String buildCaption(String contactFirstName, String contactLastName, String caseFirstName,
+			String caseLastName, String contactUuid) {
 		return buildCaption(contactFirstName, contactLastName, caseFirstName, caseLastName, contactUuid, false);
 	}
 
-	public static String buildCaption(
-		String contactFirstName,
-		String contactLastName,
-		String caseFirstName,
-		String caseLastName,
-		String contactUuid,
-		boolean alwaysShowUuid) {
+	public static String buildCaption(String contactFirstName, String contactLastName, String caseFirstName,
+			String caseLastName, String contactUuid, boolean alwaysShowUuid) {
 
 		StringBuilder builder = new StringBuilder();
 		if (!DataHelper.isNullOrEmpty(contactFirstName) || !DataHelper.isNullOrEmpty(contactLastName)) {
-			builder.append(DataHelper.toStringNullable(contactFirstName))
-				.append(" ")
-				.append(DataHelper.toStringNullable(contactLastName).toUpperCase());
+			builder.append(DataHelper.toStringNullable(contactFirstName)).append(" ")
+					.append(DataHelper.toStringNullable(contactLastName).toUpperCase());
 		}
 
 		if (!DataHelper.isNullOrEmpty(caseFirstName) || !DataHelper.isNullOrEmpty(caseLastName)) {
 			builder.append(StringUtils.wrap(I18nProperties.getString(Strings.toCase), " "))
-				.append(DataHelper.toStringNullable(caseFirstName))
-				.append(" ")
-				.append(DataHelper.toStringNullable(caseLastName));
+					.append(DataHelper.toStringNullable(caseFirstName)).append(" ")
+					.append(DataHelper.toStringNullable(caseLastName));
 		}
 
 		if (alwaysShowUuid || builder.length() == 0) {
-			builder.append(builder.length() > 0 ? " (" + DataHelper.getShortUuid(contactUuid) + ")" : DataHelper.getShortUuid(contactUuid));
+			builder.append(builder.length() > 0 ? " (" + DataHelper.getShortUuid(contactUuid) + ")"
+					: DataHelper.getShortUuid(contactUuid));
 		}
 
 		return builder.toString();

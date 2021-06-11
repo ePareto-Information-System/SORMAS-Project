@@ -21,9 +21,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum DengueFeverType {
 
-	DENGUE_FEVER,
-	DENGUE_HEMORRHAGIC_FEVER,
-	DENUGE_SHOCK_SYNDROME;
+	DENGUE_FEVER, DENGUE_HEMORRHAGIC_FEVER, DENUGE_SHOCK_SYNDROME;
 
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);

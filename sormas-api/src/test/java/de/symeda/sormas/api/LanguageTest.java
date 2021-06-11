@@ -46,7 +46,7 @@ public class LanguageTest {
 		assertThat(Language.fromLocaleString("fr"), is(Language.FR));
 		assertThat(Language.fromLocaleString("it"), is(Language.IT));
 
-		//default fallback is en
+		// default fallback is en
 		assertThat(Language.fromLocaleString(""), is(Language.EN));
 		assertThat(Language.fromLocaleString("tlh"), is(Language.EN));
 		assertThat(Language.fromLocaleString("en-GB"), is(Language.EN));

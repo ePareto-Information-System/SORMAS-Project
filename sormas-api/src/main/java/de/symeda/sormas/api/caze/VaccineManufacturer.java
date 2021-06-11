@@ -19,14 +19,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum VaccineManufacturer {
 
-	BIONTECH_PFIZER,
-	MODERNA,
-	ASTRA_ZENECA,
-	JOHNSON_JOHNSON,
-	NOVAVAX,
-	SANOFI_GSK,
-	UNKNOWN,
-	OTHER;
+	BIONTECH_PFIZER, MODERNA, ASTRA_ZENECA, JOHNSON_JOHNSON, NOVAVAX, SANOFI_GSK, UNKNOWN, OTHER;
 
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);

@@ -28,9 +28,10 @@ import de.symeda.sormas.api.utils.ExportErrorException;
 public interface ExportFacade {
 
 	/**
-	 * Exports the passed database tables as .csv files to the export folder specified in the
-	 * properties file, creates a zip archive containing these .csv files and returns the path
-	 * to the zip archive that can then be used to offer it as a download.
+	 * Exports the passed database tables as .csv files to the export folder
+	 * specified in the properties file, creates a zip archive containing these .csv
+	 * files and returns the path to the zip archive that can then be used to offer
+	 * it as a download.
 	 */
 	String generateDatabaseExportArchive(List<DatabaseTable> databaseTables) throws ExportErrorException, IOException;
 

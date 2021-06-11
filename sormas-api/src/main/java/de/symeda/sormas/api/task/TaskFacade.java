@@ -17,16 +17,18 @@
  *******************************************************************************/
 package de.symeda.sormas.api.task;
 
-import de.symeda.sormas.api.caze.CaseReferenceDto;
-import de.symeda.sormas.api.contact.ContactReferenceDto;
-import de.symeda.sormas.api.event.EventReferenceDto;
-import de.symeda.sormas.api.utils.SortProperty;
-
-import javax.ejb.Remote;
-import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import javax.ejb.Remote;
+import javax.validation.Valid;
+
+import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.event.EventReferenceDto;
+import de.symeda.sormas.api.utils.SortProperty;
 
 @Remote
 public interface TaskFacade {
@@ -36,6 +38,9 @@ public interface TaskFacade {
 	List<TaskDto> getAllActiveTasksAfter(Date date);
 
 	List<TaskDto> getAllByCase(CaseReferenceDto caseRef);
+
+	Page<TaskIndexDto> getIndexPage(TaskCriteria taskCriteria, Integer offset, Integer size,
+			List<SortProperty> sortProperties);
 
 	List<TaskDto> getAllByContact(ContactReferenceDto contactRef);
 
@@ -59,7 +64,8 @@ public interface TaskFacade {
 
 	long count(TaskCriteria criteria);
 
-	List<TaskIndexDto> getIndexList(TaskCriteria criteria, Integer first, Integer max, List<SortProperty> sortProperties);
+	List<TaskIndexDto> getIndexList(TaskCriteria criteria, Integer first, Integer max,
+			List<SortProperty> sortProperties);
 
 	void sendNewAndDueTaskMessages();
 }

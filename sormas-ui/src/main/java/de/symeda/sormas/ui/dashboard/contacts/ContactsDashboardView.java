@@ -39,8 +39,8 @@ import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.dashboard.AbstractDashboardView;
 import de.symeda.sormas.ui.dashboard.DashboardCssStyles;
 import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
-import de.symeda.sormas.ui.dashboard.DashboardFilterLayout;
 import de.symeda.sormas.ui.dashboard.DashboardType;
+import de.symeda.sormas.ui.dashboard.contacts.components.ContactsFilterLayout;
 import de.symeda.sormas.ui.dashboard.diagram.AbstractEpiCurveComponent;
 import de.symeda.sormas.ui.dashboard.map.DashboardMapComponent;
 import de.symeda.sormas.ui.dashboard.statistics.AbstractDashboardStatisticsComponent;
@@ -54,6 +54,8 @@ public class ContactsDashboardView extends AbstractDashboardView {
 
 	private static final int ROW_HEIGHT = 555;
 
+	protected DashboardDataProvider dashboardDataProvider;
+	protected ContactsFilterLayout filterLayout;
 
 	protected AbstractDashboardStatisticsComponent statisticsComponent;
 	protected AbstractEpiCurveComponent epiCurveComponent;
@@ -81,9 +83,25 @@ public class ContactsDashboardView extends AbstractDashboardView {
 	private Label contactsPlacedInQuarantineByDate = new Label();
 
 	public ContactsDashboardView() {
-		super(VIEW_NAME, DashboardType.CONTACTS);
+		super(VIEW_NAME);
+		// super(VIEW_NAME, DashboardType.CONTACTS);
 
-		filterLayout.setInfoLabelText(I18nProperties.getString(Strings.infoContactDashboard));
+		dashboardDataProvider = new DashboardDataProvider();
+		if (dashboardDataProvider.getDashboardType() == null) {
+			dashboardDataProvider.setDashboardType(DashboardType.CONTACTS);
+		}
+		if (DashboardType.CONTACTS.equals(dashboardDataProvider.getDashboardType())) {
+			dashboardDataProvider.setDisease(FacadeProvider.getDiseaseConfigurationFacade().getDefaultDisease());
+		}
+
+		filterLayout = new ContactsFilterLayout(this, dashboardDataProvider);
+		dashboardLayout.addComponent(filterLayout);
+
+		dashboardSwitcher.setValue(DashboardType.CONTACTS);
+		dashboardSwitcher.addValueChangeListener(e -> {
+			dashboardDataProvider.setDashboardType((DashboardType) e.getProperty().getValue());
+			navigateToDashboardView(e);
+		});
 
 		rowsLayout = new VerticalLayout();
 		rowsLayout.setMargin(false);

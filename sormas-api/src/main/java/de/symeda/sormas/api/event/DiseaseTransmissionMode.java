@@ -19,12 +19,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum DiseaseTransmissionMode {
 
-	HUMAN_TO_HUMAN,
-	ANIMAL,
-	ENVIRONMENT,
-	FOOD,
-	VECTOR_BORNE,
-	UNKNOWN;
+	HUMAN_TO_HUMAN, ANIMAL, ENVIRONMENT, FOOD, VECTOR_BORNE, UNKNOWN;
 
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);

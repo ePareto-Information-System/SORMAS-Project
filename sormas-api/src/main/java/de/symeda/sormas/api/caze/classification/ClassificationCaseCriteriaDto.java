@@ -32,11 +32,11 @@ import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 
 @JsonSubTypes({
-	@JsonSubTypes.Type(value = ClassificationEpiDataCriteriaDto.class, name = "ClassificationEpiDataCriteriaDto"),
-	@JsonSubTypes.Type(value = ClassificationNotInStartDateRangeCriteriaDto.class, name = "ClassificationNotInStartDateRangeCriteriaDto"),
-	@JsonSubTypes.Type(value = ClassificationPathogenTestCriteriaDto.class, name = "ClassificationPathogenTestCriteriaDto"),
-	@JsonSubTypes.Type(value = ClassificationExposureCriteriaDto.class, name = "ClassificationExposureCriteriaDto"),
-	@JsonSubTypes.Type(value = ClassificationSymptomsCriteriaDto.class, name = "ClassificationSymptomsCriteriaDto"), })
+		@JsonSubTypes.Type(value = ClassificationEpiDataCriteriaDto.class, name = "ClassificationEpiDataCriteriaDto"),
+		@JsonSubTypes.Type(value = ClassificationNotInStartDateRangeCriteriaDto.class, name = "ClassificationNotInStartDateRangeCriteriaDto"),
+		@JsonSubTypes.Type(value = ClassificationPathogenTestCriteriaDto.class, name = "ClassificationPathogenTestCriteriaDto"),
+		@JsonSubTypes.Type(value = ClassificationExposureCriteriaDto.class, name = "ClassificationExposureCriteriaDto"),
+		@JsonSubTypes.Type(value = ClassificationSymptomsCriteriaDto.class, name = "ClassificationSymptomsCriteriaDto"), })
 public class ClassificationCaseCriteriaDto extends ClassificationCriteriaDto {
 
 	private static final long serialVersionUID = 2640725590302569043L;
@@ -65,10 +65,12 @@ public class ClassificationCaseCriteriaDto extends ClassificationCriteriaDto {
 	public boolean eval(CaseDataDto caze, PersonDto person, List<PathogenTestDto> pathogenTests) {
 
 		try {
-			Method method = getInvokeClass().getMethod("get" + propertyId.substring(0, 1).toUpperCase() + propertyId.substring(1));
+			Method method = getInvokeClass()
+					.getMethod("get" + propertyId.substring(0, 1).toUpperCase() + propertyId.substring(1));
 			Object value = method.invoke(getInvokeObject(caze));
 			return propertyValues.contains(value);
-		} catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException e) {
+		} catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| SecurityException e) {
 			throw new RuntimeException(e);
 		}
 	}

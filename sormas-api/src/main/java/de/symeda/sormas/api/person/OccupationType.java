@@ -126,41 +126,28 @@ public enum OccupationType {
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
 	MINING,
 	/**
-	 * T.ACTIVITIES OF HOUSEHOLDS AS EMPLOYERS; UNDIFFERENTIATED GOODS- AND SERVICES-PRODUCING ACTIVITIES OF HOUSEHOLDS FOR OWN USE
+	 * T.ACTIVITIES OF HOUSEHOLDS AS EMPLOYERS; UNDIFFERENTIATED GOODS- AND
+	 * SERVICES-PRODUCING ACTIVITIES OF HOUSEHOLDS FOR OWN USE
 	 */
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
 	PRIVATE_HOUSEHOLD,
 
 	// Generic Occupation Types
 	@HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
-	FARMER,
-	@HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
-	BUTCHER,
-	@HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
-	HUNTER_MEAT_TRADER,
-	@HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
-	MINER,
-	@HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
-	RELIGIOUS_LEADER,
-	@HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
-	HOUSEWIFE,
-	@HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
-	PUPIL_STUDENT,
-	@HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
-	CHILD,
-	@HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
-	BUSINESSMAN_WOMAN,
-	@HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
-	TRANSPORTER,
-	@HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
-	HEALTHCARE_WORKER,
-	@HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
-	TRADITIONAL_SPIRITUAL_HEALER,
-	@HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
-	WORKING_WITH_ANIMALS,
-	@HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
-	LABORATORY_STAFF,
-	@HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
+	FARMER, @HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
+	BUTCHER, @HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
+	HUNTER_MEAT_TRADER, @HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
+	MINER, @HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
+	RELIGIOUS_LEADER, @HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
+	HOUSEWIFE, @HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
+	PUPIL_STUDENT, @HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
+	CHILD, @HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
+	BUSINESSMAN_WOMAN, @HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
+	TRANSPORTER, @HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
+	HEALTHCARE_WORKER, @HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
+	TRADITIONAL_SPIRITUAL_HEALER, @HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
+	WORKING_WITH_ANIMALS, @HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
+	LABORATORY_STAFF, @HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
 	OTHER;
 
 	public String toString() {

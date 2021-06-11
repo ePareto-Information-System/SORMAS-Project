@@ -171,15 +171,16 @@ public class SampleDataView extends AbstractSampleView {
 		};
 
 		// why? if(sampleDto.getSamplePurpose() !=null && sampleDto.getSamplePurpose().equals(SamplePurpose.EXTERNAL)) {
-		Supplier<String> createOrEditAllowedCallback = () -> {
+		// Supplier<String> createOrEditAllowedCallback = () -> {
 
-			if (!editComponent.getWrappedComponent().getFieldGroup().isValid()) {
-				return Strings.messageFormHasErrorsPathogenTest;
-			} else if (sampleDto.getSamplePurpose() == SamplePurpose.EXTERNAL && !sampleDto.isReceived()) {
-				return Strings.messageReceiveSampleBeforeTestResult;
-			}
-				return null;
-		};
+		// 	if (!editComponent.getWrappedComponent().getFieldGroup().isValid()) {
+		// 		return Strings.messageFormHasErrorsPathogenTest;
+		// 	} else if (sampleDto.getSamplePurpose() == SamplePurpose.EXTERNAL && !sampleDto.isReceived()) {
+		// 		return Strings.messageReceiveSampleBeforeTestResult;
+		// 	}
+		// 		return null;
+		// };
+		Supplier<Boolean> createOrEditAllowedCallback = () -> editComponent.getWrappedComponent().getFieldGroup().isValid();
 		PathogenTestListComponent pathogenTestList = new PathogenTestListComponent(getSampleRef(), onSavedPathogenTest, createOrEditAllowedCallback);
 		pathogenTestList.addStyleName(CssStyles.SIDE_COMPONENT);
 		layout.addComponent(pathogenTestList, PATHOGEN_TESTS_LOC);

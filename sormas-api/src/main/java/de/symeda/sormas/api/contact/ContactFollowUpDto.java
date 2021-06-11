@@ -26,30 +26,26 @@ public class ContactFollowUpDto extends FollowUpDto {
 	private ContactJurisdictionDto jurisdiction;
 	private SymptomJournalStatus symptomJournalStatus;
 
-	//@formatter:off
-	public ContactFollowUpDto(String uuid, String personFirstName, String personLastName,
-							  String contactOfficerUuid, String contactOfficerFirstName, String contactOfficerLastName,
-							  Date lastContactDate, Date reportDate, Date followUpUntil, SymptomJournalStatus symptomJournalStatus, Disease disease,
-							  String reportingUserUuid, String regionUuid, String districtUuid, String communityUuid,
-							  String caseReportingUserUuid, String caseRegionUuid, String caseDistrictUuid, String caseCommunityUud, String caseHealthFacilityUuid, String casePointOfEntryUuid
-	) {
-	//formatter:on
+	// @formatter:off
+	public ContactFollowUpDto(String uuid, String personFirstName, String personLastName, String contactOfficerUuid,
+			String contactOfficerFirstName, String contactOfficerLastName, Date lastContactDate, Date reportDate,
+			Date followUpUntil, SymptomJournalStatus symptomJournalStatus, Disease disease, String reportingUserUuid,
+			String regionUuid, String districtUuid, String communityUuid, String caseReportingUserUuid,
+			String caseRegionUuid, String caseDistrictUuid, String caseCommunityUud, String caseHealthFacilityUuid,
+			String casePointOfEntryUuid) {
+		// formatter:on
 
 		super(uuid, personFirstName, personLastName, reportDate, followUpUntil, disease);
-		this.contactOfficer = new UserReferenceDto(contactOfficerUuid, contactOfficerFirstName, contactOfficerLastName, null);
+		this.contactOfficer = new UserReferenceDto(contactOfficerUuid, contactOfficerFirstName, contactOfficerLastName,
+				null);
 		this.lastContactDate = lastContactDate;
 		this.symptomJournalStatus = symptomJournalStatus;
 
-		CaseJurisdictionDto caseJurisdiction = caseReportingUserUuid == null
-			? null
-			: new CaseJurisdictionDto(
-				caseReportingUserUuid,
-				caseRegionUuid,
-				caseDistrictUuid,
-				caseCommunityUud,
-				caseHealthFacilityUuid,
-				casePointOfEntryUuid);
-		jurisdiction = new ContactJurisdictionDto(reportingUserUuid, regionUuid, districtUuid, communityUuid, caseJurisdiction);
+		CaseJurisdictionDto caseJurisdiction = caseReportingUserUuid == null ? null
+				: new CaseJurisdictionDto(caseReportingUserUuid, caseRegionUuid, caseDistrictUuid, caseCommunityUud,
+						caseHealthFacilityUuid, casePointOfEntryUuid);
+		jurisdiction = new ContactJurisdictionDto(reportingUserUuid, regionUuid, districtUuid, communityUuid,
+				caseJurisdiction);
 	}
 
 	public UserReferenceDto getContactOfficer() {

@@ -28,9 +28,8 @@ public class ClassificationPathogenTestOtherPositiveResultCriteriaDto extends Cl
 	public boolean eval(CaseDataDto caze, PersonDto person, List<PathogenTestDto> pathogenTests) {
 
 		for (PathogenTestDto pathogenTest : pathogenTests) {
-			if (pathogenTest.getTestResult() == PathogenTestResultType.POSITIVE
-				&& testedDisease != null
-				&& pathogenTest.getTestedDisease() != testedDisease) {
+			if (pathogenTest.getTestResult() == PathogenTestResultType.POSITIVE && testedDisease != null
+					&& pathogenTest.getTestedDisease() != testedDisease) {
 				return true;
 			}
 		}

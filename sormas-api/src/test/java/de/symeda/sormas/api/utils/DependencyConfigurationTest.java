@@ -45,15 +45,10 @@ public class DependencyConfigurationTest {
 	@Test
 	public void testGetChildren() {
 
-		assertArrayEquals(
-			new String[] {
-				"testB",
-				"testC" },
-			DependencyConfiguration.getChildren(TestClass.class, "testA").toArray());
-		assertArrayEquals(
-			new String[] {
-				"testD" },
-			DependencyConfiguration.getChildren(TestClass.class, "testC").toArray());
+		assertArrayEquals(new String[] { "testB", "testC" },
+				DependencyConfiguration.getChildren(TestClass.class, "testA").toArray());
+		assertArrayEquals(new String[] { "testD" },
+				DependencyConfiguration.getChildren(TestClass.class, "testC").toArray());
 		assertArrayEquals(new String[] {}, DependencyConfiguration.getChildren(TestClass.class, "testB").toArray());
 	}
 

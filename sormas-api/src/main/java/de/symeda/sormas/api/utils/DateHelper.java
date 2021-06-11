@@ -177,12 +177,14 @@ public final class DateHelper {
 
 		Matcher matcher = DATE_FORMAT_PATTERN.matcher(defaultFormat);
 		if (matcher.find()) {
-			final List<String> dateFieldsDefault = new ArrayList<>(Arrays.asList(matcher.group(1), matcher.group(3), matcher.group(5)));
+			final List<String> dateFieldsDefault = new ArrayList<>(
+					Arrays.asList(matcher.group(1), matcher.group(3), matcher.group(5)));
 
 			final List<String> dateFieldsYearFormat = new ArrayList<>(dateFieldsDefault.size());
 			for (String dateField : dateFieldsDefault) {
 				if (dateField.toLowerCase().startsWith("y")) {
-					dateFieldsYearFormat.add(dateField.length() == 4 ? dateField.substring(0, 2) : dateField + dateField);
+					dateFieldsYearFormat
+							.add(dateField.length() == 4 ? dateField.substring(0, 2) : dateField + dateField);
 				} else {
 					dateFieldsYearFormat.add(dateField);
 				}
@@ -256,8 +258,8 @@ public final class DateHelper {
 		secondCalendar.setTime(secondDate);
 
 		return firstCalendar.get(Calendar.YEAR) == secondCalendar.get(Calendar.YEAR)
-			&& firstCalendar.get(Calendar.MONTH) == secondCalendar.get(Calendar.MONTH)
-			&& firstCalendar.get(Calendar.DAY_OF_MONTH) == secondCalendar.get(Calendar.DAY_OF_MONTH);
+				&& firstCalendar.get(Calendar.MONTH) == secondCalendar.get(Calendar.MONTH)
+				&& firstCalendar.get(Calendar.DAY_OF_MONTH) == secondCalendar.get(Calendar.DAY_OF_MONTH);
 	}
 
 	/**
@@ -370,8 +372,8 @@ public final class DateHelper {
 	}
 
 	/**
-	 * List days between the two given dates. This includes both the start and
-	 * end dates.
+	 * List days between the two given dates. This includes both the start and end
+	 * dates.
 	 */
 	public static List<Date> listDaysBetween(Date start, Date end) {
 
@@ -393,8 +395,8 @@ public final class DateHelper {
 	}
 
 	/**
-	 * List weeks between the two given dates. This includes both the start and
-	 * end dates.
+	 * List weeks between the two given dates. This includes both the start and end
+	 * dates.
 	 */
 	public static List<Date> listWeeksBetween(Date start, Date end) {
 
@@ -416,8 +418,8 @@ public final class DateHelper {
 	}
 
 	/**
-	 * List months between the two given dates. This includes both the start and
-	 * end dates.
+	 * List months between the two given dates. This includes both the start and end
+	 * dates.
 	 */
 	public static List<Date> listMonthsBetween(Date start, Date end) {
 
@@ -438,8 +440,8 @@ public final class DateHelper {
 	}
 
 	/**
-	 * List years between the two given dates. This includes both the start and
-	 * end dates.
+	 * List years between the two given dates. This includes both the start and end
+	 * dates.
 	 */
 	public static List<Date> listYearsBetween(Date start, Date end) {
 
@@ -516,7 +518,8 @@ public final class DateHelper {
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
-		return new LocalDateTime(getEndOfDay(date)).withDayOfMonth(calendar.getActualMaximum(Calendar.DAY_OF_MONTH)).toDate();
+		return new LocalDateTime(getEndOfDay(date)).withDayOfMonth(calendar.getActualMaximum(Calendar.DAY_OF_MONTH))
+				.toDate();
 	}
 
 	public static Date getStartOfYear(Date date) {
@@ -527,12 +530,15 @@ public final class DateHelper {
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(getEndOfDay(date));
-		return new LocalDateTime(calendar.getTime()).withDayOfYear(calendar.getActualMaximum(Calendar.DAY_OF_YEAR)).toDate();
+		return new LocalDateTime(calendar.getTime()).withDayOfYear(calendar.getActualMaximum(Calendar.DAY_OF_YEAR))
+				.toDate();
 	}
 
 	public static boolean isBetween(Date date, Date start, Date end) {
-		//sometimes date.equals(start) returns false but start.equals(date) returns true
-		return (date.equals(start) || start.equals(date) || date.after(start)) && (date.equals(end) || end.equals(date) || date.before(end));
+		// sometimes date.equals(start) returns false but start.equals(date) returns
+		// true
+		return (date.equals(start) || start.equals(date) || date.after(start))
+				&& (date.equals(end) || end.equals(date) || date.before(end));
 	}
 
 	/**
@@ -559,8 +565,7 @@ public final class DateHelper {
 	 * system, i.e. the week that contains the 1st of January always is the first
 	 * epi week of the year, even if it begins in December.
 	 *
-	 * @param date
-	 *            The date to calculate the epi week for
+	 * @param date The date to calculate the epi week for
 	 * @return The epi week according to the Nigerian epi week system
 	 */
 	public static EpiWeek getEpiWeek(Date date) {
@@ -583,8 +588,7 @@ public final class DateHelper {
 	 * Nigerian epi week system, i.e. the week that contains the 1st of January
 	 * always is the first epi week of the year, even if it begins in December.
 	 *
-	 * @param date
-	 *            The date to calculate the previous epi week for
+	 * @param date The date to calculate the previous epi week for
 	 * @return The previous epi week according to the Nigerian epi week system
 	 */
 	public static EpiWeek getPreviousEpiWeek(Date date) {
@@ -607,8 +611,7 @@ public final class DateHelper {
 	 * Nigerian epi week system, i.e. the week that contains the 1st of January
 	 * always is the first epi week of the year, even if it begins in December.
 	 *
-	 * @param date
-	 *            The date to calculate the next epi week for
+	 * @param date The date to calculate the next epi week for
 	 * @return The next epi week according to the Nigerian epi week system
 	 */
 	public static EpiWeek getNextEpiWeek(Date date) {
@@ -629,10 +632,8 @@ public final class DateHelper {
 	/**
 	 * Returns a Date object that is set to Monday of the given epi week.
 	 *
-	 * @param sYear
-	 *            The year to get the first day of the epi week for
-	 * @param week
-	 *            The epi week to get the first day for
+	 * @param sYear The year to get the first day of the epi week for
+	 * @param week  The epi week to get the first day for
 	 * @return The first day of the epi week
 	 */
 	public static Date getEpiWeekStart(EpiWeek epiWeek) {
@@ -654,10 +655,8 @@ public final class DateHelper {
 	/**
 	 * Returns a Date object that is set to Sunday of the given epi week.
 	 *
-	 * @param sYear
-	 *            The year to get the last day of the epi week for
-	 * @param week
-	 *            The epi week to get the last day for
+	 * @param sYear The year to get the last day of the epi week for
+	 * @param week  The epi week to get the last day for
 	 * @return The last day of the epi week
 	 */
 	public static Date getEpiWeekEnd(EpiWeek epiWeek) {
@@ -680,10 +679,8 @@ public final class DateHelper {
 	 * Calculates whether the second epi week starts on a later date than the first
 	 * one.
 	 *
-	 * @param epiWeek
-	 *            The first epi week
-	 * @param anotherEpiWeek
-	 *            The second epi week to check for a later beginning
+	 * @param epiWeek        The first epi week
+	 * @param anotherEpiWeek The second epi week to check for a later beginning
 	 * @return True if the second epi week is on a later date, false if not
 	 */
 	public static boolean isEpiWeekAfter(EpiWeek epiWeek, EpiWeek anotherEpiWeek) {
@@ -735,9 +732,8 @@ public final class DateHelper {
 		lastYearCalendar.set(Calendar.WEEK_OF_YEAR, week);
 
 		List<EpiWeek> epiWeekList = new ArrayList<>();
-		for (int epiWeek = lastYearCalendar.get(Calendar.WEEK_OF_YEAR);
-			epiWeek <= lastYearCalendar.getActualMaximum(Calendar.WEEK_OF_YEAR);
-			epiWeek++) {
+		for (int epiWeek = lastYearCalendar.get(Calendar.WEEK_OF_YEAR); epiWeek <= lastYearCalendar
+				.getActualMaximum(Calendar.WEEK_OF_YEAR); epiWeek++) {
 			epiWeekList.add(new EpiWeek(year - 1, epiWeek));
 		}
 		for (int epiWeek = 1; epiWeek <= calendar.get(Calendar.WEEK_OF_YEAR); epiWeek++) {
@@ -749,8 +745,10 @@ public final class DateHelper {
 
 	private static EpiWeek getEpiWeekWithCorrectYear(Calendar calendar) {
 
-		// Year has to be manually increased for week 1 of the next year because Calendar chooses the year
-		// of the actual date; e.g., the 31st of December 2018 is technically in 2018, but already in epi week
+		// Year has to be manually increased for week 1 of the next year because
+		// Calendar chooses the year
+		// of the actual date; e.g., the 31st of December 2018 is technically in 2018,
+		// but already in epi week
 		// 1 of 2019, which is why the year has to be manually increased.
 		if (calendar.get(Calendar.WEEK_OF_YEAR) == 1 && calendar.get(Calendar.MONTH) == 11) {
 			return new EpiWeek(calendar.get(Calendar.YEAR) + 1, calendar.get(Calendar.WEEK_OF_YEAR));
@@ -763,26 +761,18 @@ public final class DateHelper {
 	 * Calculates the start and end dates of the report for the given epi week.
 	 *
 	 * @param now
-	 * @param epiWeek
-	 *            The epi week to calculate the dates for
-	 * @param weeklyReportDate
-	 *            The date of report for the given epi week, or
-	 *            null if none is available
-	 * @param prevWeeklyReportDate
-	 *            The date of report for the week before the given
-	 *            epi week, or null if none is available
-	 * @param nextWeeklyReportDate
-	 *            The date of report for the week after the given
-	 *            epi week, or null if none is available
+	 * @param epiWeek              The epi week to calculate the dates for
+	 * @param weeklyReportDate     The date of report for the given epi week, or
+	 *                             null if none is available
+	 * @param prevWeeklyReportDate The date of report for the week before the given
+	 *                             epi week, or null if none is available
+	 * @param nextWeeklyReportDate The date of report for the week after the given
+	 *                             epi week, or null if none is available
 	 * @return An array of size 2, containing the start date at index 0 and the end
 	 *         date at index 1
 	 */
-	public static Date[] calculateEpiWeekReportStartAndEnd(
-		Date now,
-		EpiWeek epiWeek,
-		Date weeklyReportDate,
-		Date prevWeeklyReportDate,
-		Date nextWeeklyReportDate) {
+	public static Date[] calculateEpiWeekReportStartAndEnd(Date now, EpiWeek epiWeek, Date weeklyReportDate,
+			Date prevWeeklyReportDate, Date nextWeeklyReportDate) {
 
 		Date[] reportStartAndEnd = new Date[2];
 
@@ -823,14 +813,18 @@ public final class DateHelper {
 		return reportStartAndEnd;
 	}
 
-	private static final Pattern COMPLETE_DATE_PATTERN = Pattern.compile("(([012]?\\d)|30|31)\\/((0?\\d)|10|11|12)\\/((18|19|20|21)?\\d\\d)");
-	private static final Pattern DAY_MONTH_DATE_PATTERN = Pattern.compile("(([012]?\\d)|30|31)\\/((0?\\d)|10|11|12)\\/");
-	private static final Pattern MONTH_YEAR_DATE_PATTERN = Pattern.compile("((0?\\d)|10|11|12)\\/((18|19|20|21)?\\d\\d)");
+	private static final Pattern COMPLETE_DATE_PATTERN = Pattern
+			.compile("(([012]?\\d)|30|31)\\/((0?\\d)|10|11|12)\\/((18|19|20|21)?\\d\\d)");
+	private static final Pattern DAY_MONTH_DATE_PATTERN = Pattern
+			.compile("(([012]?\\d)|30|31)\\/((0?\\d)|10|11|12)\\/");
+	private static final Pattern MONTH_YEAR_DATE_PATTERN = Pattern
+			.compile("((0?\\d)|10|11|12)\\/((18|19|20|21)?\\d\\d)");
 	private static final Pattern MONTH_DATE_PATTERN = Pattern.compile("((0?\\d)|10|11|12)\\/");
 	private static final Pattern DAY_DATE_PATTERN = Pattern.compile("(([012]?\\d)|30|31)\\/");
 	private static final Pattern YEAR_DATE_PATTERN = Pattern.compile("((18|19|20|21)?\\d\\d)");
 
-	private static final Pattern DAY_MONTH_PREFIX_DATE_PATTERN = Pattern.compile("(([012]?\\d)|30|31)\\/((0?\\d)|10|11|12)\\/?");
+	private static final Pattern DAY_MONTH_PREFIX_DATE_PATTERN = Pattern
+			.compile("(([012]?\\d)|30|31)\\/((0?\\d)|10|11|12)\\/?");
 	private static final Pattern MONTH_PREFIX_DATE_PATTERN = Pattern.compile("((0?\\d)|10|11|12)\\/?");
 	private static final Pattern DAY_PREFIX_DATE_PATTERN = Pattern.compile("(([012]?\\d)|30|31)\\/?");
 
@@ -951,9 +945,7 @@ public final class DateHelper {
 			end = end.plusDays(day);
 		}
 
-		return new Date[] {
-			start.toDate(),
-			end.toDate() };
+		return new Date[] { start.toDate(), end.toDate() };
 	}
 
 	/**
@@ -985,18 +977,16 @@ public final class DateHelper {
 			}
 		}
 
-		return new Integer[] {
-			day,
-			month };
+		return new Integer[] { day, month };
 	}
 
 	/**
-	 * If the century is positive and has only two digits, it is set to a fitting century relative to the current point in time.
+	 * If the century is positive and has only two digits, it is set to a fitting
+	 * century relative to the current point in time.
 	 * <p>
 	 * Use case: Correcting a two-digit date entered by the user.
 	 *
-	 * @param value
-	 *            The date to (possibly) correct
+	 * @param value The date to (possibly) correct
 	 * @return The entered date, possibly with corrected century
 	 */
 	public static Date toCorrectCentury(Date value) {
@@ -1004,14 +994,13 @@ public final class DateHelper {
 	}
 
 	/**
-	 * If the century is positive and has only two digits, it is set to a fitting century relative to the current point in time.
+	 * If the century is positive and has only two digits, it is set to a fitting
+	 * century relative to the current point in time.
 	 * <p>
 	 * Use case: Correcting a two-digit date entered by the user.
 	 *
-	 * @param value
-	 *            The date to (possibly) correct
-	 * @param reference
-	 *            The current date as reference
+	 * @param value     The date to (possibly) correct
+	 * @param reference The current date as reference
 	 * @return The entered date, possibly with corrected century
 	 */
 	public static Date toCorrectCentury(Date value, Date reference) {
@@ -1098,9 +1087,11 @@ public final class DateHelper {
 
 	/**
 	 * Find the latest date between 2 dates
+	 * 
 	 * @param date1 the first date
 	 * @param date2 the second date
-	 * @return the latest date between 2 dates. If any is null, the other is returned. If both are null, null is returned.
+	 * @return the latest date between 2 dates. If any is null, the other is
+	 *         returned. If both are null, null is returned.
 	 */
 	public static Date getLatestDate(Date date1, Date date2) {
 		if (ObjectUtils.allNotNull(date1, date2)) {

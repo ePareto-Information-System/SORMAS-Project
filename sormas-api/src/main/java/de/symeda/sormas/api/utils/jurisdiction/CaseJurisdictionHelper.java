@@ -23,10 +23,8 @@ import de.symeda.sormas.api.utils.DataHelper;
 
 public class CaseJurisdictionHelper {
 
-	public static Boolean isInJurisdictionOrOwned(
-		JurisdictionLevel jurisdictionLevel,
-		UserJurisdiction userJurisdiction,
-		CaseJurisdictionDto caseJurisdictionDto) {
+	public static Boolean isInJurisdictionOrOwned(JurisdictionLevel jurisdictionLevel,
+			UserJurisdiction userJurisdiction, CaseJurisdictionDto caseJurisdictionDto) {
 
 		if (caseJurisdictionDto.getReportingUserUuid() != null
 				&& DataHelper.equal(userJurisdiction.getUuid(), caseJurisdictionDto.getReportingUserUuid())) {
@@ -46,7 +44,8 @@ public class CaseJurisdictionHelper {
 		case COMMUNITY:
 			return DataHelper.equal(caseJurisdictionDto.getCommunityUuid(), userJurisdiction.getCommunityUuid());
 		case HEALTH_FACILITY:
-			return DataHelper.equal(caseJurisdictionDto.getHealthFacilityUuid(), userJurisdiction.getHealthFacilityUuid());
+			return DataHelper.equal(caseJurisdictionDto.getHealthFacilityUuid(),
+					userJurisdiction.getHealthFacilityUuid());
 		case LABORATORY:
 			return false;
 		case EXTERNAL_LABORATORY:

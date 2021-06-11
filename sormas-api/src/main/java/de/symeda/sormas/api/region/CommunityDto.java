@@ -29,33 +29,26 @@ public class CommunityDto extends EntityDto {
 	public static final String I18N_PREFIX = "Community";
 
 	public static final String NAME = "name";
+	public static final String GROWTH_RATE = "growthRate";
 	public static final String REGION = "region";
 	public static final String DISTRICT = "district";
 	public static final String EXTERNAL_ID = "externalID";
 
 	private String name;
+	private Float growthRate;
 	private RegionReferenceDto region;
 	private DistrictReferenceDto district;
 	private boolean archived;
 	private String externalID;
 
-	public CommunityDto(
-		Date creationDate,
-		Date changeDate,
-		String uuid,
-		boolean archived,
-		String name,
-		String regionUuid,
-		String regionName,
-		String regionExternalId,
-		String districtUuid,
-		String districtName,
-		String districtExternalId,
-		String externalID) {
+	public CommunityDto(Date creationDate, Date changeDate, String uuid, boolean archived, String name,
+			Float growthRate, String regionUuid, String regionName, String regionExternalId, String districtUuid,
+			String districtName, String districtExternalId, String externalID) {
 
 		super(creationDate, changeDate, uuid);
 		this.archived = archived;
 		this.name = name;
+		this.growthRate = growthRate;
 		this.region = new RegionReferenceDto(regionUuid, regionName, regionExternalId);
 		this.district = new DistrictReferenceDto(districtUuid, districtName, districtExternalId);
 		this.externalID = externalID;
@@ -71,6 +64,14 @@ public class CommunityDto extends EntityDto {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Float getGrowthRate() {
+		return growthRate;
+	}
+
+	public void setGrowthRate(Float growthRate) {
+		this.growthRate = growthRate;
 	}
 
 	public RegionReferenceDto getRegion() {

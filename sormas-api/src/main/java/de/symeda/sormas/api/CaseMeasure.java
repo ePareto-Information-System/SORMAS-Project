@@ -26,7 +26,8 @@ public enum CaseMeasure {
 	 */
 	CASE_COUNT,
 	/**
-	 * Number of cases per DistrictDto.CASE_INCIDENCE_DIVISOR; rounded to two decimal places with rounding mode half up
+	 * Number of cases per DistrictDto.CASE_INCIDENCE_DIVISOR; rounded to two
+	 * decimal places with rounding mode half up
 	 */
 	CASE_INCIDENCE;
 

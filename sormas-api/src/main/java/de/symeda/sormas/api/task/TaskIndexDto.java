@@ -62,6 +62,7 @@ public class TaskIndexDto extends PseudonymizableIndexDto implements Serializabl
 	public static final String CONTEXT_REFERENCE = "contextReference";
 	public static final String REGION = "region";
 	public static final String DISTRICT = "district";
+	public static final String COMMUNITY = "community";
 
 	private String uuid;
 	private TaskContext taskContext;
@@ -79,6 +80,7 @@ public class TaskIndexDto extends PseudonymizableIndexDto implements Serializabl
 	private ContactReferenceDto contact;
 	private String region;
 	private String district;
+	private String community;
 
 	private TaskType taskType;
 	private TaskPriority priority;
@@ -93,19 +95,23 @@ public class TaskIndexDto extends PseudonymizableIndexDto implements Serializabl
 
 	private TaskJurisdictionDto jurisdiction;
 
-	//@formatter:off
-	public TaskIndexDto(String uuid, TaskContext taskContext, String caseUuid, String caseFirstName, String caseLastName,
-			String eventUuid, String eventTitle, Disease eventDisease, String eventDiseaseDetails, EventStatus eventStatus, EventInvestigationStatus eventInvestigationStatus, Date eventDate,
-			String contactUuid, String contactFirstName, String contactLastName, String contactCaseFirstName, String contactCaseLastName,
-			TaskType taskType, TaskPriority priority, Date dueDate, Date suggestedStart, TaskStatus taskStatus,
-			String creatorUserUuid, String creatorUserFirstName, String creatorUserLastName, String creatorComment,
-			String assigneeUserUuid, String assigneeUserFirstName, String assigneeUserLastName, String assigneeReply,
-			String caseReportingUserUuid, String caseRegionUuid, String caseDistrictUuid, String caseCommunityUuid, String caseHealthFacilityUuid, 
-			String casePointOfEntryUuid, String contactReportingUserUuid, String contactRegionUuid, String contactDistrictUuid, String contactCommunityUuid,
-			String contactCaseReportingUserUuid, String contactCaseRegionUuid, String contactCaseDistrictUuid, String contactCaseCommunityUuid, 
-			String contactCaseHealthFacilityUuid, String contactCasePointOfEntryUuid, String eventReportingUserUuid, String eventOfficerUuid, String eventRegionUuid, 
-			String eventDistrictUuid, String eventCommunityUuid, String region, String district) {
-	//@formatter:on
+	// @formatter:off
+	public TaskIndexDto(String uuid, TaskContext taskContext, String caseUuid, String caseFirstName,
+			String caseLastName, String eventUuid, String eventTitle, Disease eventDisease, String eventDiseaseDetails,
+			EventStatus eventStatus, EventInvestigationStatus eventInvestigationStatus, Date eventDate,
+			String contactUuid, String contactFirstName, String contactLastName, String contactCaseFirstName,
+			String contactCaseLastName, TaskType taskType, TaskPriority priority, Date dueDate, Date suggestedStart,
+			TaskStatus taskStatus, String creatorUserUuid, String creatorUserFirstName, String creatorUserLastName,
+			String creatorComment, String assigneeUserUuid, String assigneeUserFirstName, String assigneeUserLastName,
+			String assigneeReply, String caseReportingUserUuid, String caseRegionUuid, String caseDistrictUuid,
+			String caseCommunityUuid, String caseHealthFacilityUuid, String casePointOfEntryUuid,
+			String contactReportingUserUuid, String contactRegionUuid, String contactDistrictUuid,
+			String contactCommunityUuid, String contactCaseReportingUserUuid, String contactCaseRegionUuid,
+			String contactCaseDistrictUuid, String contactCaseCommunityUuid, String contactCaseHealthFacilityUuid,
+			String contactCasePointOfEntryUuid, String eventReportingUserUuid, String eventOfficerUuid,
+			String eventRegionUuid, String eventDistrictUuid, String eventCommunityUuid, String region, String district,
+			String community) {
+		// @formatter:on
 
 		this.setUuid(uuid);
 		this.taskContext = taskContext;
@@ -113,46 +119,34 @@ public class TaskIndexDto extends PseudonymizableIndexDto implements Serializabl
 		CaseJurisdictionDto caseJurisdiction = null;
 		if (caseUuid != null) {
 			this.caze = new CaseReferenceDto(caseUuid, caseFirstName, caseLastName);
-			caseJurisdiction = new CaseJurisdictionDto(
-				caseReportingUserUuid,
-				caseRegionUuid,
-				caseDistrictUuid,
-				caseCommunityUuid,
-				caseHealthFacilityUuid,
-				casePointOfEntryUuid);
+			caseJurisdiction = new CaseJurisdictionDto(caseReportingUserUuid, caseRegionUuid, caseDistrictUuid,
+					caseCommunityUuid, caseHealthFacilityUuid, casePointOfEntryUuid);
 		}
 
 		EventJurisdictionDto eventJurisdiction = null;
 		if (eventUuid != null) {
-			eventJurisdiction =
-				new EventJurisdictionDto(eventReportingUserUuid, eventOfficerUuid, eventRegionUuid, eventDistrictUuid, eventCommunityUuid);
+			eventJurisdiction = new EventJurisdictionDto(eventReportingUserUuid, eventOfficerUuid, eventRegionUuid,
+					eventDistrictUuid, eventCommunityUuid);
 
 			if (StringUtils.isNotBlank(eventTitle)) {
 				this.event = new EventReferenceDto(eventUuid, StringUtils.capitalize(eventTitle));
 			} else {
-				this.event = new EventReferenceDto(eventUuid, eventDisease, eventDiseaseDetails, eventStatus, eventInvestigationStatus, eventDate);
+				this.event = new EventReferenceDto(eventUuid, eventDisease, eventDiseaseDetails, eventStatus,
+						eventInvestigationStatus, eventDate);
 			}
 		}
 
 		ContactJurisdictionDto contactJurisdiction = null;
 		if (contactUuid != null) {
-			this.contact = new ContactReferenceDto(contactUuid, contactFirstName, contactLastName, contactCaseFirstName, contactCaseLastName);
+			this.contact = new ContactReferenceDto(contactUuid, contactFirstName, contactLastName, contactCaseFirstName,
+					contactCaseLastName);
 
-			CaseJurisdictionDto contactCaseJurisdiction = contactCaseReportingUserUuid == null
-				? null
-				: new CaseJurisdictionDto(
-					contactCaseReportingUserUuid,
-					contactCaseRegionUuid,
-					contactCaseDistrictUuid,
-					contactCaseCommunityUuid,
-					contactCaseHealthFacilityUuid,
-					contactCasePointOfEntryUuid);
-			contactJurisdiction = new ContactJurisdictionDto(
-				contactReportingUserUuid,
-				contactRegionUuid,
-				contactDistrictUuid,
-				contactCommunityUuid,
-				contactCaseJurisdiction);
+			CaseJurisdictionDto contactCaseJurisdiction = contactCaseReportingUserUuid == null ? null
+					: new CaseJurisdictionDto(contactCaseReportingUserUuid, contactCaseRegionUuid,
+							contactCaseDistrictUuid, contactCaseCommunityUuid, contactCaseHealthFacilityUuid,
+							contactCasePointOfEntryUuid);
+			contactJurisdiction = new ContactJurisdictionDto(contactReportingUserUuid, contactRegionUuid,
+					contactDistrictUuid, contactCommunityUuid, contactCaseJurisdiction);
 		}
 
 		this.taskType = taskType;
@@ -164,10 +158,12 @@ public class TaskIndexDto extends PseudonymizableIndexDto implements Serializabl
 		this.creatorComment = creatorComment;
 		this.assigneeUser = new UserReferenceDto(assigneeUserUuid, assigneeUserFirstName, assigneeUserLastName, null);
 		this.assigneeReply = assigneeReply;
+		this.community = community;
 		this.district = district;
 		this.region = region;
 
-		this.jurisdiction = new TaskJurisdictionDto(creatorUserUuid, assigneeUserUuid, caseJurisdiction, contactJurisdiction, eventJurisdiction);
+		this.jurisdiction = new TaskJurisdictionDto(creatorUserUuid, assigneeUserUuid, caseJurisdiction,
+				contactJurisdiction, eventJurisdiction);
 	}
 
 	public TaskContext getTaskContext() {
@@ -315,5 +311,13 @@ public class TaskIndexDto extends PseudonymizableIndexDto implements Serializabl
 
 	public void setDistrict(String district) {
 		this.district = district;
+	}
+
+	public String getCommunity() {
+		return community;
+	}
+
+	public void setCommunity(String community) {
+		this.community = community;
 	}
 }

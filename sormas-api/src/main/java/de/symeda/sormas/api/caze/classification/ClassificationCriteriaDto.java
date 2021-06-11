@@ -30,25 +30,23 @@ import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.sample.PathogenTestDto;
 
 /**
- * Classification criteria are used to automatically classify cases and to be able to display
- * the underlying rules in the UI. A specific criteria can be evaluated using the eval method
- * which returns whether this criteria is applicable or not for the given case. A set of
- * criteria can be evaluated in order to determine whether the case should be classified as
- * suspect, probable, confirmed or not classified at all.
+ * Classification criteria are used to automatically classify cases and to be
+ * able to display the underlying rules in the UI. A specific criteria can be
+ * evaluated using the eval method which returns whether this criteria is
+ * applicable or not for the given case. A set of criteria can be evaluated in
+ * order to determine whether the case should be classified as suspect,
+ * probable, confirmed or not classified at all.
  */
 @JsonTypeInfo(use = Id.NAME, include = As.PROPERTY)
 @JsonSubTypes({
-	@JsonSubTypes.Type(value = ClassificationAllOfCriteriaDto.class, name = "ClassificationAllOfCriteriaDto"),
-	@JsonSubTypes.Type(value = ClassificationCaseCriteriaDto.class, name = "ClassificationCaseCriteriaDto"),
-	@JsonSubTypes.Type(value = ClassificationNoneOfCriteriaDto.class, name = "ClassificationNoneOfCrieriaDto"),
-	@JsonSubTypes.Type(value = ClassificationPersonAgeBetweenYearsCriteriaDto.class, name = "ClassificationPersonAgeBetweenYearsCriteriaDto"),
-	@JsonSubTypes.Type(value = ClassificationPathogenTestPositiveResultCriteriaDto.class,
-		name = "ClassificationPathogenTestPositiveResultCriteriaDto"),
-	@JsonSubTypes.Type(value = ClassificationPathogenTestNegativeResultCriteriaDto.class,
-		name = "ClassificationPathogenTestNegativeResultCriteriaDto"),
-	@JsonSubTypes.Type(value = ClassificationPathogenTestOtherPositiveResultCriteriaDto.class,
-		name = "ClassificationPathogenTestOtherPositiveResultCriteriaDto"),
-	@JsonSubTypes.Type(value = ClassificationXOfCriteriaDto.class, name = "ClassificationXOfCriteriaDto"), })
+		@JsonSubTypes.Type(value = ClassificationAllOfCriteriaDto.class, name = "ClassificationAllOfCriteriaDto"),
+		@JsonSubTypes.Type(value = ClassificationCaseCriteriaDto.class, name = "ClassificationCaseCriteriaDto"),
+		@JsonSubTypes.Type(value = ClassificationNoneOfCriteriaDto.class, name = "ClassificationNoneOfCrieriaDto"),
+		@JsonSubTypes.Type(value = ClassificationPersonAgeBetweenYearsCriteriaDto.class, name = "ClassificationPersonAgeBetweenYearsCriteriaDto"),
+		@JsonSubTypes.Type(value = ClassificationPathogenTestPositiveResultCriteriaDto.class, name = "ClassificationPathogenTestPositiveResultCriteriaDto"),
+		@JsonSubTypes.Type(value = ClassificationPathogenTestNegativeResultCriteriaDto.class, name = "ClassificationPathogenTestNegativeResultCriteriaDto"),
+		@JsonSubTypes.Type(value = ClassificationPathogenTestOtherPositiveResultCriteriaDto.class, name = "ClassificationPathogenTestOtherPositiveResultCriteriaDto"),
+		@JsonSubTypes.Type(value = ClassificationXOfCriteriaDto.class, name = "ClassificationXOfCriteriaDto"), })
 public abstract class ClassificationCriteriaDto implements Serializable {
 
 	protected String type = getClass().getSimpleName();

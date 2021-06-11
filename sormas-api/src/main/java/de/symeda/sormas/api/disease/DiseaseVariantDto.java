@@ -23,29 +23,29 @@ import de.symeda.sormas.api.EntityDto;
 
 public class DiseaseVariantDto extends EntityDto {
 
-    private static final long serialVersionUID = 7980726625509183207L;
+	private static final long serialVersionUID = 7980726625509183207L;
 
-    private Disease disease;
-    private String name;
+	private Disease disease;
+	private String name;
 
-    public Disease getDisease() {
-        return disease;
-    }
+	public Disease getDisease() {
+		return disease;
+	}
 
-    public void setDisease(Disease disease) {
-        this.disease = disease;
-    }
+	public void setDisease(Disease disease) {
+		this.disease = disease;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    @Override
-    public String toString() {
-        return getName();
-    }
+	@Override
+	public String toString() {
+		return getName();
+	}
 }

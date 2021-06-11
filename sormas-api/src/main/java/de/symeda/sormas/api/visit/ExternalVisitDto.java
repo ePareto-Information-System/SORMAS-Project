@@ -35,16 +35,9 @@ public class ExternalVisitDto implements Serializable, Cloneable {
 	private Double reportLon;
 	private Float reportLatLonAccuracy;
 
-	public static ExternalVisitDto build(
-		String personUuid,
-		Disease disease,
-		Date visitDateTime,
-		VisitStatus visitStatus,
-		String visitRemarks,
-		SymptomsDto symptoms,
-		Double reportLat,
-		Double reportLon,
-		Float reportLatLonAccuracy) {
+	public static ExternalVisitDto build(String personUuid, Disease disease, Date visitDateTime,
+			VisitStatus visitStatus, String visitRemarks, SymptomsDto symptoms, Double reportLat, Double reportLon,
+			Float reportLatLonAccuracy) {
 		final ExternalVisitDto externalVisitDto = new ExternalVisitDto();
 		externalVisitDto.setPersonUuid(personUuid);
 		externalVisitDto.setDisease(disease);

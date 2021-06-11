@@ -34,7 +34,8 @@ public abstract class FollowUpDto extends PseudonymizableIndexDto implements Ser
 	private Disease disease;
 	private VisitResultDto[] visitResults;
 
-	protected FollowUpDto(String uuid, String personFirstName, String personLastName, Date reportDate, Date followUpUntil, Disease disease) {
+	protected FollowUpDto(String uuid, String personFirstName, String personLastName, Date reportDate,
+			Date followUpUntil, Disease disease) {
 		this.uuid = uuid;
 		this.firstName = personFirstName;
 		this.lastName = personLastName;

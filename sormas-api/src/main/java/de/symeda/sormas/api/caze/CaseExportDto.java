@@ -64,13 +64,16 @@ import de.symeda.sormas.api.utils.pseudonymization.Pseudonymizer;
 import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.PostalCodePseudonymizer;
 
 /**
- * A DTO class that contains the properties that are exported during a detailed case export. These
- * properties are also those that users can select when creating a custom export configuration.
+ * A DTO class that contains the properties that are exported during a detailed
+ * case export. These properties are also those that users can select when
+ * creating a custom export configuration.
  * <p>
- * PLEASE NOTE: When the @ExportProperty value of one of these properties changes, it's necessary
- * to replace all occurrences of the former value in all export configurations in the database.
- * Otherwise, existing export configurations will no longer export the property. Also, it is
- * recommended to remove properties that are removed from this file from existing export configurations.
+ * PLEASE NOTE: When the @ExportProperty value of one of these properties
+ * changes, it's necessary to replace all occurrences of the former value in all
+ * export configurations in the database. Otherwise, existing export
+ * configurations will no longer export the property. Also, it is recommended to
+ * remove properties that are removed from this file from existing export
+ * configurations.
  */
 @ExportEntity(CaseDataDto.class)
 public class CaseExportDto implements Serializable {
@@ -81,7 +84,7 @@ public class CaseExportDto implements Serializable {
 
 	public static final String ID = "id";
 	public static final String COUNTRY = "country";
-	public static final String BIRTH_DATE = "birthDate";
+	public static final String BIRTH_DATE = "birthdate";
 	public static final String AGE_GROUP = "ageGroup";
 	public static final String INITIAL_DETECTION_PLACE = "initialDetectionPlace";
 	public static final String MAX_SOURCE_CASE_CLASSIFICATION = "maxSourceCaseClassification";
@@ -154,6 +157,9 @@ public class CaseExportDto implements Serializable {
 	@SensitiveData
 	private String pointOfEntryDetails;
 	private CaseClassification caseClassification;
+	private YesNoUnknown clinicalConfirmation;
+	private YesNoUnknown epidemiologicalConfirmation;
+	private YesNoUnknown laboratoryDiagnosticConfirmation;
 	private Boolean notACaseReasonNegativeTest;
 	private Boolean notACaseReasonPhysicianInformation;
 	private Boolean notACaseReasonDifferentPathogen;
@@ -212,6 +218,8 @@ public class CaseExportDto implements Serializable {
 	private String phoneOwner;
 	@SensitiveData
 	private String emailAddress;
+	@SensitiveData
+	private String otherContactDetails;
 	private OccupationType occupationType;
 	@SensitiveData
 	private String occupationDetails;
@@ -224,7 +232,7 @@ public class CaseExportDto implements Serializable {
 	private boolean burialAttended;
 	private YesNoUnknown contactWithSourceCaseKnown;
 	private SymptomsDto symptoms;
-	//	private Date onsetDate;
+	// private Date onsetDate;
 //	private String symptoms;
 	private Vaccination vaccination;
 	private String vaccinationDoses;
@@ -296,42 +304,50 @@ public class CaseExportDto implements Serializable {
 
 	private String reportingDistrict;
 
-	//@formatter:off
+	// @formatter:off
 	public CaseExportDto(long id, long personId, long personAddressId, long epiDataId, long symptomsId,
-						 long hospitalizationId, long districtId, long healthConditionsId, String uuid, String epidNumber,
-						 Disease disease, String diseaseVariantUuid, String diseaseVariantName, String diseaseDetails, String firstName, String lastName, Salutation salutation, String otherSalutation, Sex sex, YesNoUnknown pregnant,
-						 Integer approximateAge, ApproximateAgeType approximateAgeType, Integer birthdateDD, Integer birthdateMM,
-						 Integer birthdateYYYY, Date reportDate, String reportingUserUuid, String regionUuid, String region,
-						 String districtUuid, String district, String communityUuid, String community,
-						 FacilityType facilityType, String healthFacility, String healthFacilityUuid, String healthFacilityDetails, String pointOfEntry,
-						 String pointOfEntryUuid, String pointOfEntryDetails, CaseClassification caseClassification,
-						 Boolean notACaseReasonNegativeTest, Boolean notACaseReasonPhysicianInformation, Boolean notACaseReasonDifferentPathogen, Boolean notACaseReasonOther,
-						 String notACaseReasonDetails, InvestigationStatus investigationStatus, CaseOutcome outcome, Date outcomeDate, YesNoUnknown bloodOrganOrTissueDonated,
-						 FollowUpStatus followUpStatus, Date followUpUntil,
-						 Boolean nosocomialOutbreak, InfectionSetting infectionSetting,
-						 YesNoUnknown reInfection, Date previousInfectionDate,
-						 // Quarantine
-						 QuarantineType quarantine, String quarantineTypeDetails, Date quarantineFrom, Date quarantineTo,
-						 boolean quarantineOrderedVerbally, boolean quarantineOrderedOfficialDocument, Date quarantineOrderedVerballyDate,
-						 Date quarantineOrderedOfficialDocumentDate, boolean quarantineExtended, boolean quarantineReduced,
-						 boolean quarantineOfficialOrderSent, Date quarantineOfficialOrderSentDate,
-						 YesNoUnknown admittedToHealthFacility, Date admissionDate, Date dischargeDate, YesNoUnknown leftAgainstAdvice, PresentCondition presentCondition,
-						 Date deathDate, Date burialDate, BurialConductor burialConductor, String burialPlaceDescription,
-						 String addressRegion, String addressDistrict, String addressCommunity, String city, String street, String houseNumber, String additionalInformation, String postalCode,
-						 String facility, String facilityUuid, String facilityDetails,
-						 String phone, String phoneOwner, String emailAddress, EducationType educationType, String educationDetails,
-						 OccupationType occupationType, String occupationDetails, ArmedForcesRelationType ArmedForcesRelationType, YesNoUnknown contactWithSourceCaseKnown,
-						 //Date onsetDate,
-						 // vaccination info
-						 Vaccination vaccination, String vaccinationDoses, VaccinationInfoSource vaccinationInfoSource, Date firstVaccinationDate, Date lastVaccinationDate,
-						 Vaccine vaccineName, String otherVaccineName, VaccineManufacturer vaccineManufacturer, String otherVaccineManufacturer,
-						 String vaccineInn, String vaccineBatchNumber, String vaccineUniiCode, String vaccineAtcCode,
+			long hospitalizationId, long districtId, long healthConditionsId, String uuid, String epidNumber,
+			Disease disease, String diseaseVariantUuid, String diseaseVariantName, String diseaseDetails,
+			String firstName, String lastName, Salutation salutation, String otherSalutation, Sex sex,
+			YesNoUnknown pregnant, Integer approximateAge, ApproximateAgeType approximateAgeType, Integer birthdateDD,
+			Integer birthdateMM, Integer birthdateYYYY, Date reportDate, String reportingUserUuid, String regionUuid,
+			String region, String districtUuid, String district, String communityUuid, String community,
+			FacilityType facilityType, String healthFacility, String healthFacilityUuid, String healthFacilityDetails,
+			String pointOfEntry, String pointOfEntryUuid, String pointOfEntryDetails,
+			CaseClassification caseClassification, YesNoUnknown clinicalConfirmation,
+			YesNoUnknown epidemiologicalConfirmation, YesNoUnknown laboratoryDiagnosticConfirmation,
+			Boolean notACaseReasonNegativeTest, Boolean notACaseReasonPhysicianInformation,
+			Boolean notACaseReasonDifferentPathogen, Boolean notACaseReasonOther, String notACaseReasonDetails,
+			InvestigationStatus investigationStatus, CaseOutcome outcome, Date outcomeDate,
+			YesNoUnknown bloodOrganOrTissueDonated, FollowUpStatus followUpStatus, Date followUpUntil,
+			Boolean nosocomialOutbreak, InfectionSetting infectionSetting, YesNoUnknown reInfection,
+			Date previousInfectionDate,
+			// Quarantine
+			QuarantineType quarantine, String quarantineTypeDetails, Date quarantineFrom, Date quarantineTo,
+			boolean quarantineOrderedVerbally, boolean quarantineOrderedOfficialDocument,
+			Date quarantineOrderedVerballyDate, Date quarantineOrderedOfficialDocumentDate, boolean quarantineExtended,
+			boolean quarantineReduced, boolean quarantineOfficialOrderSent, Date quarantineOfficialOrderSentDate,
+			YesNoUnknown admittedToHealthFacility, Date admissionDate, Date dischargeDate,
+			YesNoUnknown leftAgainstAdvice, PresentCondition presentCondition, Date deathDate, Date burialDate,
+			BurialConductor burialConductor, String burialPlaceDescription, String addressRegion,
+			String addressDistrict, String addressCommunity, String city, String street, String houseNumber,
+			String additionalInformation, String postalCode, String facility, String facilityUuid,
+			String facilityDetails, String phone, String phoneOwner, String emailAddress, String otherContactDetails,
+			EducationType educationType, String educationDetails, OccupationType occupationType,
+			String occupationDetails, ArmedForcesRelationType ArmedForcesRelationType,
+			YesNoUnknown contactWithSourceCaseKnown,
+			// Date onsetDate,
+			// vaccination info
+			Vaccination vaccination, String vaccinationDoses, VaccinationInfoSource vaccinationInfoSource,
+			Date firstVaccinationDate, Date lastVaccinationDate, Vaccine vaccineName, String otherVaccineName,
+			VaccineManufacturer vaccineManufacturer, String otherVaccineManufacturer, String vaccineInn,
+			String vaccineBatchNumber, String vaccineUniiCode, String vaccineAtcCode,
 
-						 YesNoUnknown postpartum, Trimester trimester,
-						 long eventCount, String externalID, String externalToken,
-						 String birthName, String birthCountryIsoCode, String birthCountryName, String citizenshipIsoCode, String citizenshipCountryName,
-						 String reportingDistrict, CaseIdentificationSource caseIdentificationSource, ScreeningType screeningType) {
-		//@formatter:on
+			YesNoUnknown postpartum, Trimester trimester, long eventCount, String externalID, String externalToken,
+			String birthName, String birthCountryIsoCode, String birthCountryName, String citizenshipIsoCode,
+			String citizenshipCountryName, String reportingDistrict, CaseIdentificationSource caseIdentificationSource,
+			ScreeningType screeningType) {
+		// @formatter:on
 
 		this.id = id;
 		this.personId = personId;
@@ -361,6 +377,9 @@ public class CaseExportDto implements Serializable {
 		this.district = district;
 		this.community = community;
 		this.caseClassification = caseClassification;
+		this.clinicalConfirmation = clinicalConfirmation;
+		this.epidemiologicalConfirmation = epidemiologicalConfirmation;
+		this.laboratoryDiagnosticConfirmation = laboratoryDiagnosticConfirmation;
 		this.notACaseReasonNegativeTest = notACaseReasonNegativeTest;
 		this.notACaseReasonPhysicianInformation = notACaseReasonPhysicianInformation;
 		this.notACaseReasonDifferentPathogen = notACaseReasonDifferentPathogen;
@@ -411,6 +430,7 @@ public class CaseExportDto implements Serializable {
 		this.phone = phone;
 		this.phoneOwner = phoneOwner;
 		this.emailAddress = emailAddress;
+		this.otherContactDetails = otherContactDetails;
 		this.educationType = educationType;
 		this.educationDetails = educationDetails;
 		this.occupationType = occupationType;
@@ -445,7 +465,8 @@ public class CaseExportDto implements Serializable {
 		this.caseIdentificationSource = caseIdentificationSource;
 		this.screeningType = screeningType;
 
-		jurisdiction = new CaseJurisdictionDto(reportingUserUuid, regionUuid, districtUuid, communityUuid, healthFacilityUuid, pointOfEntryUuid);
+		jurisdiction = new CaseJurisdictionDto(reportingUserUuid, regionUuid, districtUuid, communityUuid,
+				healthFacilityUuid, pointOfEntryUuid);
 	}
 
 	public CaseReferenceDto toReference() {
@@ -453,9 +474,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(0)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(COUNTRY)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getCountry() {
@@ -463,9 +482,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(1)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(ID)
 	@ExportGroup(ExportGroupType.CORE)
 	public long getId() {
@@ -501,9 +518,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(2)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.UUID)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getUuid() {
@@ -511,9 +526,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(3)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.EPID_NUMBER)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getEpidNumber() {
@@ -521,9 +534,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(4)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.EXTERNAL_ID)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getExternalID() {
@@ -531,9 +542,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(5)
-	@ExportTarget(caseExportTypes = {
-			CaseExportType.CASE_SURVEILLANCE,
-			CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.EXTERNAL_TOKEN)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getExternalToken() {
@@ -541,9 +550,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(6)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.DISEASE)
 	@ExportGroup(ExportGroupType.CORE)
 	public Disease getDisease() {
@@ -551,9 +558,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(7)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.DISEASE_DETAILS)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getDiseaseDetails() {
@@ -561,9 +566,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(8)
-	@ExportTarget(caseExportTypes = {
-			CaseExportType.CASE_SURVEILLANCE,
-			CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.DISEASE_VARIANT)
 	@ExportGroup(ExportGroupType.CORE)
 	public DiseaseVariantReferenceDto getDiseaseVariant() {
@@ -571,52 +574,37 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(10)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.FIRST_NAME })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.FIRST_NAME })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getFirstName() {
 		return firstName;
 	}
 
 	@Order(11)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.LAST_NAME })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.LAST_NAME })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getLastName() {
 		return lastName;
 	}
 
 	@Order(12)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.SALUTATION })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.SALUTATION })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	@HideForCountriesExcept
 	public Salutation getSalutation() {
 		return salutation;
 	}
+
 	@Order(13)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.OTHER_SALUTATION })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.OTHER_SALUTATION })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	@HideForCountriesExcept
 	public String getOtherSalutation() {
@@ -624,22 +612,16 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(14)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.SEX })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.SEX })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public Sex getSex() {
 		return sex;
 	}
 
 	@Order(15)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.PREGNANT)
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public YesNoUnknown getPregnant() {
@@ -647,9 +629,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(16)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.TRIMESTER)
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public Trimester getTrimester() {
@@ -657,9 +637,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(17)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.POSTPARTUM)
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public YesNoUnknown getPostpartum() {
@@ -667,35 +645,25 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(18)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.APPROXIMATE_AGE })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.APPROXIMATE_AGE })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getApproximateAge() {
 		return approximateAge;
 	}
 
 	@Order(19)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		AGE_GROUP })
+	@ExportProperty({ CaseDataDto.PERSON, AGE_GROUP })
 	@ExportGroup(ExportGroupType.PERSON)
 	public String getAgeGroup() {
 		return ageGroup;
 	}
 
 	@Order(20)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
 	@ExportProperty(CaseExportDto.BIRTH_DATE)
 	@ExportGroup(ExportGroupType.SENSITIVE)
@@ -704,9 +672,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(21)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.REPORT_DATE)
 	@ExportGroup(ExportGroupType.CORE)
 	public Date getReportDate() {
@@ -714,9 +680,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(22)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.REGION)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getRegion() {
@@ -724,9 +688,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(23)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.DISTRICT)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getDistrict() {
@@ -734,9 +696,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(24)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.COMMUNITY)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getCommunity() {
@@ -744,9 +704,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(25)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.FACILITY_TYPE)
 	@ExportGroup(ExportGroupType.CORE)
 	public FacilityType getFacilityType() {
@@ -754,9 +712,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(26)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.HEALTH_FACILITY)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getHealthFacility() {
@@ -764,9 +720,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(27)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.HEALTH_FACILITY_DETAILS)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getHealthFacilityDetails() {
@@ -774,9 +728,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(28)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.POINT_OF_ENTRY)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getPointOfEntry() {
@@ -784,9 +736,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(29)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.POINT_OF_ENTRY_DETAILS)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getPointOfEntryDetails() {
@@ -794,9 +744,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(35)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(INITIAL_DETECTION_PLACE)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getInitialDetectionPlace() {
@@ -804,8 +752,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(36)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseDataDto.CASE_CLASSIFICATION)
 	@ExportGroup(ExportGroupType.CORE)
 	public CaseClassification getCaseClassification() {
@@ -813,38 +760,55 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(37)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
+	@ExportProperty(CaseDataDto.CLINICAL_CONFIRMATION)
+	@ExportGroup(ExportGroupType.ADDITIONAL)
+	public YesNoUnknown getClinicalConfirmation() {
+		return clinicalConfirmation;
+	}
+
+	@Order(38)
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
+	@ExportProperty(CaseDataDto.EPIDEMIOLOGICAL_CONFIRMATION)
+	@ExportGroup(ExportGroupType.ADDITIONAL)
+	public YesNoUnknown getEpidemiologicalConfirmation() {
+		return epidemiologicalConfirmation;
+	}
+
+	@Order(39)
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
+	@ExportProperty(CaseDataDto.LABORATORY_DIAGNOSTIC_CONFIRMATION)
+	@ExportGroup(ExportGroupType.ADDITIONAL)
+	public YesNoUnknown getLaboratoryDiagnosticConfirmation() {
+		return laboratoryDiagnosticConfirmation;
+	}
+
+	@Order(40)
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseDataDto.INVESTIGATION_STATUS)
 	@ExportGroup(ExportGroupType.CORE)
 	public InvestigationStatus getInvestigationStatus() {
 		return investigationStatus;
 	}
 
-	@Order(38)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@Order(41)
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.OUTCOME)
 	@ExportGroup(ExportGroupType.CORE)
 	public CaseOutcome getOutcome() {
 		return outcome;
 	}
 
-	@Order(39)
-	@ExportTarget(caseExportTypes = {
-			CaseExportType.CASE_SURVEILLANCE,
-			CaseExportType.CASE_MANAGEMENT })
+	@Order(42)
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.OUTCOME_DATE)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public Date getOutcomeDate() {
 		return outcomeDate;
 	}
 
-	@Order(40)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@Order(43)
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.BLOOD_ORGAN_OR_TISSUE_DONATED)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept()
@@ -852,10 +816,8 @@ public class CaseExportDto implements Serializable {
 		return bloodOrganOrTissueDonated;
 	}
 
-	@Order(41)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@Order(44)
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = CaseDataDto.NOSOCOMIAL_OUTBREAK, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept
@@ -863,10 +825,8 @@ public class CaseExportDto implements Serializable {
 		return nosocomialOutbreak;
 	}
 
-	@Order(42)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@Order(45)
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = CaseDataDto.NOSOCOMIAL_OUTBREAK, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept
@@ -874,10 +834,8 @@ public class CaseExportDto implements Serializable {
 		return infectionSetting;
 	}
 
-	@Order(43)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@Order(46)
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = CaseDataDto.RE_INFECTION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept
@@ -885,10 +843,8 @@ public class CaseExportDto implements Serializable {
 		return reInfection;
 	}
 
-	@Order(44)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@Order(47)
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = CaseDataDto.RE_INFECTION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept
@@ -896,128 +852,94 @@ public class CaseExportDto implements Serializable {
 		return previousInfectionDate;
 	}
 
-	@Order(50)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@Order(48)
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public QuarantineType getQuarantine() {
 		return quarantine;
 	}
 
-	@Order(51)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@Order(49)
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getQuarantineTypeDetails() {
 		return quarantineTypeDetails;
 	}
 
-	@Order(52)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@Order(50)
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public Date getQuarantineFrom() {
 		return quarantineFrom;
 	}
 
-	@Order(53)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@Order(51)
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public Date getQuarantineTo() {
 		return quarantineTo;
 	}
 
-	@Order(54)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@Order(52)
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
-	@HideForCountriesExcept(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND})
+	@HideForCountriesExcept(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	public boolean isQuarantineOrderedVerbally() {
 		return quarantineOrderedVerbally;
 	}
 
-	@Order(55)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@Order(53)
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
-	@HideForCountriesExcept(countries = {
-			CountryHelper.COUNTRY_CODE_GERMANY,
-			CountryHelper.COUNTRY_CODE_SWITZERLAND})
+	@HideForCountriesExcept(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	public boolean isQuarantineOrderedOfficialDocument() {
 		return quarantineOrderedOfficialDocument;
 	}
 
-	@Order(56)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@Order(54)
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
-	@HideForCountriesExcept(countries = {
-			CountryHelper.COUNTRY_CODE_GERMANY,
-			CountryHelper.COUNTRY_CODE_SWITZERLAND})
+	@HideForCountriesExcept(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	public Date getQuarantineOrderedVerballyDate() {
 		return quarantineOrderedVerballyDate;
 	}
 
-	@Order(57)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@Order(55)
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
-	@HideForCountriesExcept(countries = {
-			CountryHelper.COUNTRY_CODE_GERMANY,
-			CountryHelper.COUNTRY_CODE_SWITZERLAND})
+	@HideForCountriesExcept(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	public Date getQuarantineOrderedOfficialDocumentDate() {
 		return quarantineOrderedOfficialDocumentDate;
 	}
 
 	@Order(58)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
-	@HideForCountriesExcept(countries = {
-			CountryHelper.COUNTRY_CODE_GERMANY,
-			CountryHelper.COUNTRY_CODE_SWITZERLAND})
+	@HideForCountriesExcept(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	public boolean isQuarantineOfficialOrderSent() {
 		return quarantineOfficialOrderSent;
 	}
 
 	@Order(59)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
-	@HideForCountriesExcept(countries = {
-			CountryHelper.COUNTRY_CODE_GERMANY,
-			CountryHelper.COUNTRY_CODE_SWITZERLAND})
+	@HideForCountriesExcept(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	public Date getQuarantineOfficialOrderSentDate() {
 		return quarantineOfficialOrderSentDate;
 	}
 
 	@Order(60)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public boolean isQuarantineExtended() {
@@ -1025,9 +947,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(61)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public boolean isQuarantineReduced() {
@@ -1035,8 +955,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(65)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(MAX_SOURCE_CASE_CLASSIFICATION)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public CaseClassification getMaxSourceCaseClassification() {
@@ -1044,8 +963,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(66)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(ASSOCIATED_WITH_OUTBREAK)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getAssociatedWithOutbreak() {
@@ -1057,39 +975,27 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(67)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(HospitalizationDto.class)
-	@ExportProperty({
-		CaseDataDto.HOSPITALIZATION,
-		HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY })
+	@ExportProperty({ CaseDataDto.HOSPITALIZATION, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY })
 	@ExportGroup(ExportGroupType.HOSPITALIZATION)
 	public YesNoUnknown getAdmittedToHealthFacility() {
 		return admittedToHealthFacility;
 	}
 
 	@Order(68)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(HospitalizationDto.class)
-	@ExportProperty({
-		CaseDataDto.HOSPITALIZATION,
-		HospitalizationDto.ADMISSION_DATE })
+	@ExportProperty({ CaseDataDto.HOSPITALIZATION, HospitalizationDto.ADMISSION_DATE })
 	@ExportGroup(ExportGroupType.HOSPITALIZATION)
 	public Date getAdmissionDate() {
 		return admissionDate;
 	}
 
 	@Order(69)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(HospitalizationDto.class)
-	@ExportProperty({
-		CaseDataDto.HOSPITALIZATION,
-		HospitalizationDto.DISCHARGE_DATE })
+	@ExportProperty({ CaseDataDto.HOSPITALIZATION, HospitalizationDto.DISCHARGE_DATE })
 	@ExportGroup(ExportGroupType.HOSPITALIZATION)
 	public Date getDischargeDate() {
 		return dischargeDate;
@@ -1100,13 +1006,9 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(70)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(HospitalizationDto.class)
-	@ExportProperty({
-		CaseDataDto.HOSPITALIZATION,
-		HospitalizationDto.LEFT_AGAINST_ADVICE })
+	@ExportProperty({ CaseDataDto.HOSPITALIZATION, HospitalizationDto.LEFT_AGAINST_ADVICE })
 	@ExportGroup(ExportGroupType.HOSPITALIZATION)
 	public YesNoUnknown getLeftAgainstAdvice() {
 		return leftAgainstAdvice;
@@ -1117,32 +1019,24 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(71)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.PRESENT_CONDITION })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.PRESENT_CONDITION })
 	@ExportGroup(ExportGroupType.PERSON)
 	public PresentCondition getPresentCondition() {
 		return presentCondition;
 	}
 
 	@Order(72)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.DEATH_DATE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.DEATH_DATE })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public Date getDeathDate() {
 		return deathDate;
 	}
 
 	@Order(73)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(BURIAL_INFO)
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public BurialInfoDto getBurialInfo() {
@@ -1150,121 +1044,79 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(76)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(LocationDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.ADDRESS,
-		LocationDto.REGION })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.ADDRESS, LocationDto.REGION })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getAddressRegion() {
 		return addressRegion;
 	}
 
 	@Order(77)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(LocationDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.ADDRESS,
-		LocationDto.DISTRICT })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.ADDRESS, LocationDto.DISTRICT })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getAddressDistrict() {
 		return addressDistrict;
 	}
 
 	@Order(78)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(LocationDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.ADDRESS,
-		LocationDto.COMMUNITY })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.ADDRESS, LocationDto.COMMUNITY })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getAddressCommunity() {
 		return addressCommunity;
 	}
 
 	@Order(79)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(LocationDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.ADDRESS,
-		LocationDto.CITY })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.ADDRESS, LocationDto.CITY })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getCity() {
 		return city;
 	}
 
 	@Order(80)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(LocationDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.ADDRESS,
-		LocationDto.STREET })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.ADDRESS, LocationDto.STREET })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getStreet() {
 		return street;
 	}
 
 	@Order(81)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(LocationDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.ADDRESS,
-		LocationDto.HOUSE_NUMBER })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.ADDRESS, LocationDto.HOUSE_NUMBER })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getHouseNumber() {
 		return houseNumber;
 	}
 
 	@Order(82)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(LocationDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.ADDRESS,
-		LocationDto.ADDITIONAL_INFORMATION })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.ADDRESS, LocationDto.ADDITIONAL_INFORMATION })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getAdditionalInformation() {
 		return additionalInformation;
 	}
 
 	@Order(83)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(LocationDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.ADDRESS,
-		LocationDto.POSTAL_CODE })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.ADDRESS, LocationDto.POSTAL_CODE })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getPostalCode() {
 		return postalCode;
 	}
 
 	@Order(84)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(ADDRESS_GPS_COORDINATES)
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getAddressGpsCoordinates() {
@@ -1272,140 +1124,106 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(85)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(LocationDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.ADDRESS,
-		LocationDto.FACILITY })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.ADDRESS, LocationDto.FACILITY })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getFacility() {
 		return facility;
 	}
 
 	@Order(86)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(LocationDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.ADDRESS,
-		LocationDto.FACILITY_DETAILS })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.ADDRESS, LocationDto.FACILITY_DETAILS })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getFacilityDetails() {
 		return facilityDetails;
 	}
 
 	@Order(87)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.PHONE })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.PHONE })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getPhone() {
 		return phone;
 	}
 
 	@Order(88)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.PHONE_OWNER })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.PHONE_OWNER })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getPhoneOwner() {
 		return phoneOwner;
 	}
 
 	@Order(89)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.EMAIL_ADDRESS })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.EMAIL_ADDRESS })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getEmailAddress() {
 		return emailAddress;
 	}
 
 	@Order(90)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.EDUCATION_TYPE })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.OTHER_CONTACT_DETAILS })
+	@ExportGroup(ExportGroupType.SENSITIVE)
+	public String getOtherContactDetails() {
+		return otherContactDetails;
+	}
+
+	@Order(91)
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
+	@ExportEntity(PersonDto.class)
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.EDUCATION_TYPE })
 	@ExportGroup(ExportGroupType.PERSON)
 	public EducationType getEducationType() {
 		return educationType;
 	}
 
-	@Order(91)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@Order(92)
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.EDUCATION_DETAILS })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.EDUCATION_DETAILS })
 	@ExportGroup(ExportGroupType.PERSON)
 	public String getEducationDetails() {
 		return educationDetails;
 	}
 
-	@Order(92)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@Order(93)
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.OCCUPATION_TYPE })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.OCCUPATION_TYPE })
 	@ExportGroup(ExportGroupType.PERSON)
 	public OccupationType getOccupationType() {
 		return occupationType;
 	}
 
-	@Order(93)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@Order(94)
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.OCCUPATION_DETAILS })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.OCCUPATION_DETAILS })
 	@ExportGroup(ExportGroupType.PERSON)
 	public String getOccupationDetails() {
 		return occupationDetails;
 	}
 
-	@Order(94)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@Order(95)
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.ARMED_FORCES_RELATION_TYPE })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.ARMED_FORCES_RELATION_TYPE })
 	@ExportGroup(ExportGroupType.PERSON)
 	public ArmedForcesRelationType getArmedForcesRelationType() {
 		return armedForcesRelationType;
 	}
 
 	@Order(100)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(TRAVELED)
 	@ExportGroup(ExportGroupType.EPIDEMIOLOGICAL)
 	public boolean isTraveled() {
@@ -1417,8 +1235,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(101)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(TRAVEL_HISTORY)
 	@ExportGroup(ExportGroupType.EPIDEMIOLOGICAL)
 	public String getTravelHistory() {
@@ -1426,8 +1243,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(102)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(BURIAL_ATTENDED)
 	@ExportGroup(ExportGroupType.EPIDEMIOLOGICAL)
 	public boolean isBurialAttended() {
@@ -1439,12 +1255,9 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(103)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportEntity(EpiDataDto.class)
-	@ExportProperty({
-		CaseDataDto.EPI_DATA,
-		EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN })
+	@ExportProperty({ CaseDataDto.EPI_DATA, EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN })
 	@ExportGroup(ExportGroupType.EPIDEMIOLOGICAL)
 	public YesNoUnknown getContactWithSourceCaseKnown() {
 		return contactWithSourceCaseKnown;
@@ -1455,9 +1268,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(104)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.VACCINATION)
 	@ExportGroup(ExportGroupType.VACCINATION)
 	public Vaccination getVaccination() {
@@ -1465,9 +1276,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(105)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.VACCINATION_DOSES)
 	@ExportGroup(ExportGroupType.VACCINATION)
 	public String getVaccinationDoses() {
@@ -1475,9 +1284,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(106)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.VACCINATION_INFO_SOURCE)
 	@ExportGroup(ExportGroupType.VACCINATION)
 	public VaccinationInfoSource getVaccinationInfoSource() {
@@ -1485,9 +1292,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(107)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.FIRST_VACCINATION_DATE)
 	@ExportGroup(ExportGroupType.VACCINATION)
 	public Date getFirstVaccinationDate() {
@@ -1495,9 +1300,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(108)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.LAST_VACCINATION_DATE)
 	@ExportGroup(ExportGroupType.VACCINATION)
 	public Date getLastVaccinationDate() {
@@ -1505,9 +1308,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(109)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.VACCINE_NAME)
 	@ExportGroup(ExportGroupType.VACCINATION)
 	public Vaccine getVaccineName() {
@@ -1515,9 +1316,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(110)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.OTHER_VACCINE_NAME)
 	@ExportGroup(ExportGroupType.VACCINATION)
 	public String getOtherVaccineName() {
@@ -1525,9 +1324,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(111)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.VACCINE_MANUFACTURER)
 	@ExportGroup(ExportGroupType.VACCINATION)
 	public VaccineManufacturer getVaccineManufacturer() {
@@ -1535,9 +1332,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(112)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.OTHER_VACCINE_MANUFACTURER)
 	@ExportGroup(ExportGroupType.VACCINATION)
 	public String getOtherVaccineManufacturer() {
@@ -1545,9 +1340,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(113)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.VACCINE_INN)
 	@ExportGroup(ExportGroupType.VACCINATION)
 	public String getVaccineInn() {
@@ -1555,9 +1348,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(114)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.VACCINE_BATCH_NUMBER)
 	@ExportGroup(ExportGroupType.VACCINATION)
 	public String getVaccineBatchNumber() {
@@ -1565,9 +1356,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(115)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.VACCINE_UNII_CODE)
 	@ExportGroup(ExportGroupType.VACCINATION)
 	public String getVaccineUniiCode() {
@@ -1575,9 +1364,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(116)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.VACCINE_ATC_CODE)
 	@ExportGroup(ExportGroupType.VACCINATION)
 	public String getVaccineAtcCode() {
@@ -1595,9 +1382,7 @@ public class CaseExportDto implements Serializable {
 //	}
 
 	@Order(120)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.SYMPTOMS)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public SymptomsDto getSymptoms() {
@@ -1605,8 +1390,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(121)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(ClinicalCourseDto.HEALTH_CONDITIONS)
 	@ExportGroup(ExportGroupType.CASE_MANAGEMENT)
 	public HealthConditionsDto getHealthConditions() {
@@ -1614,8 +1398,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(122)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(NUMBER_OF_PRESCRIPTIONS)
 	@ExportGroup(ExportGroupType.CASE_MANAGEMENT)
 	public int getNumberOfPrescriptions() {
@@ -1623,8 +1406,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(123)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(NUMBER_OF_TREATMENTS)
 	@ExportGroup(ExportGroupType.CASE_MANAGEMENT)
 	public int getNumberOfTreatments() {
@@ -1632,8 +1414,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(124)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(NUMBER_OF_CLINICAL_VISITS)
 	@ExportGroup(ExportGroupType.CASE_MANAGEMENT)
 	public int getNumberOfClinicalVisits() {
@@ -1641,8 +1422,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(130)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(value = SAMPLE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getSampleUuid1() {
@@ -1650,8 +1430,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(131)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(value = SAMPLE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public Date getSampleDateTime1() {
@@ -1659,8 +1438,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(132)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(value = SAMPLE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getSampleLab1() {
@@ -1668,8 +1446,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(133)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(value = SAMPLE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public PathogenTestResultType getSampleResult1() {
@@ -1677,8 +1454,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(134)
-	@ExportTarget(caseExportTypes = {
-			CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(value = SAMPLE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getSampleUuid2() {
@@ -1686,8 +1462,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(135)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(value = SAMPLE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public Date getSampleDateTime2() {
@@ -1695,8 +1470,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(136)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(value = SAMPLE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getSampleLab2() {
@@ -1704,8 +1478,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(137)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(value = SAMPLE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public PathogenTestResultType getSampleResult2() {
@@ -1713,8 +1486,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(138)
-	@ExportTarget(caseExportTypes = {
-			CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(value = SAMPLE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getSampleUuid3() {
@@ -1722,8 +1494,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(139)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(value = SAMPLE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public Date getSampleDateTime3() {
@@ -1731,8 +1502,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(140)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(value = SAMPLE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getSampleLab3() {
@@ -1740,8 +1510,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(141)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(value = SAMPLE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public PathogenTestResultType getSampleResult3() {
@@ -1749,8 +1518,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(142)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(value = SAMPLE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getOtherSamplesString() {
@@ -1765,8 +1533,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(143)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseDataDto.FOLLOW_UP_STATUS)
 	@ExportGroup(ExportGroupType.FOLLOW_UP)
 	public FollowUpStatus getFollowUpStatus() {
@@ -1774,8 +1541,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(144)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseDataDto.FOLLOW_UP_UNTIL)
 	@ExportGroup(ExportGroupType.FOLLOW_UP)
 	public Date getFollowUpUntil() {
@@ -1783,8 +1549,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(145)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseExportDto.NUMBER_OF_VISITS)
 	@ExportGroup(ExportGroupType.FOLLOW_UP)
 	public int getNumberOfVisits() {
@@ -1792,8 +1557,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(146)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseExportDto.LAST_COOPERATIVE_VISIT_SYMPTOMATIC)
 	@ExportGroup(ExportGroupType.FOLLOW_UP)
 	public YesNoUnknown getLastCooperativeVisitSymptomatic() {
@@ -1801,8 +1565,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(147)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseExportDto.LAST_COOPERATIVE_VISIT_DATE)
 	@ExportGroup(ExportGroupType.FOLLOW_UP)
 	public Date getLastCooperativeVisitDate() {
@@ -1810,8 +1573,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(148)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseExportDto.LAST_COOPERATIVE_VISIT_SYMPTOMS)
 	@ExportGroup(ExportGroupType.FOLLOW_UP)
 	public String getLastCooperativeVisitSymptoms() {
@@ -1819,8 +1581,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(149)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseExportDto.EVENT_COUNT)
 	@ExportGroup(ExportGroupType.EVENT)
 	public Long getEventCount() {
@@ -1828,8 +1589,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(150)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseExportDto.LATEST_EVENT_ID)
 	@ExportGroup(ExportGroupType.EVENT)
 	public String getLatestEventId() {
@@ -1837,8 +1597,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(151)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseExportDto.LATEST_EVENT_STATUS)
 	@ExportGroup(ExportGroupType.EVENT)
 	public EventStatus getLatestEventStatus() {
@@ -1846,8 +1605,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(152)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseExportDto.LATEST_EVENT_TITLE)
 	@ExportGroup(ExportGroupType.EVENT)
 	public String getLatestEventTitle() {
@@ -1855,13 +1613,9 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(160)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.BIRTH_NAME })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.BIRTH_NAME })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	@HideForCountriesExcept
 	public String getBirthName() {
@@ -1869,13 +1623,9 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(161)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.BIRTH_COUNTRY })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.BIRTH_COUNTRY })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	@HideForCountriesExcept
 	public String getBirthCountry() {
@@ -1883,13 +1633,9 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(162)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
-	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.CITIZENSHIP })
+	@ExportProperty({ CaseDataDto.PERSON, PersonDto.CITIZENSHIP })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	@HideForCountriesExcept
 	public String getCitizenship() {
@@ -1897,9 +1643,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(163)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.REPORTING_DISTRICT)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept
@@ -1908,8 +1652,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(164)
-	@ExportTarget(caseExportTypes = {
-			CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseDataDto.NOT_A_CASE_REASON_NEGATIVE_TEST)
 	@ExportGroup(ExportGroupType.CORE)
 	public Boolean getNotACaseReasonNegativeTest() {
@@ -1917,8 +1660,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(165)
-	@ExportTarget(caseExportTypes = {
-			CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseDataDto.NOT_A_CASE_REASON_PHYSICIAN_INFORMATION)
 	@ExportGroup(ExportGroupType.CORE)
 	public Boolean getNotACaseReasonPhysicianInformation() {
@@ -1926,8 +1668,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(166)
-	@ExportTarget(caseExportTypes = {
-			CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseDataDto.NOT_A_CASE_REASON_DIFFERENT_PATHOGEN)
 	@ExportGroup(ExportGroupType.CORE)
 	public Boolean getNotACaseReasonDifferentPathogen() {
@@ -1935,8 +1676,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(167)
-	@ExportTarget(caseExportTypes = {
-			CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseDataDto.NOT_A_CASE_REASON_OTHER)
 	@ExportGroup(ExportGroupType.CORE)
 	public Boolean getNotACaseReasonOther() {
@@ -1944,8 +1684,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(168)
-	@ExportTarget(caseExportTypes = {
-			CaseExportType.CASE_SURVEILLANCE })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseDataDto.NOT_A_CASE_REASON_DETAILS)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getNotACaseReasonDetails() {
@@ -1953,9 +1692,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(169)
-	@ExportTarget(caseExportTypes = {
-			CaseExportType.CASE_SURVEILLANCE,
-			CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.CASE_IDENTIFICATION_SOURCE)
 	@ExportGroup(ExportGroupType.CORE)
 	@HideForCountriesExcept
@@ -1964,9 +1701,7 @@ public class CaseExportDto implements Serializable {
 	}
 
 	@Order(170)
-	@ExportTarget(caseExportTypes = {
-			CaseExportType.CASE_SURVEILLANCE,
-			CaseExportType.CASE_MANAGEMENT })
+	@ExportTarget(caseExportTypes = { CaseExportType.CASE_SURVEILLANCE, CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.SCREENING_TYPE)
 	@ExportGroup(ExportGroupType.CORE)
 	@HideForCountriesExcept
@@ -2090,6 +1825,18 @@ public class CaseExportDto implements Serializable {
 		this.caseClassification = caseClassification;
 	}
 
+	public void setClinicalConfirmation(YesNoUnknown clinicalConfirmation) {
+		this.clinicalConfirmation = clinicalConfirmation;
+	}
+
+	public void setEpidemiologicalConfirmation(YesNoUnknown epidemiologicalConfirmation) {
+		this.epidemiologicalConfirmation = epidemiologicalConfirmation;
+	}
+
+	public void setLaboratoryDiagnosticConfirmation(YesNoUnknown laboratoryDiagnosticConfirmation) {
+		this.laboratoryDiagnosticConfirmation = laboratoryDiagnosticConfirmation;
+	}
+
 	public void setNotACaseReasonNegativeTest(Boolean notACaseReasonNegativeTest) {
 		this.notACaseReasonNegativeTest = notACaseReasonNegativeTest;
 	}
@@ -2127,7 +1874,8 @@ public class CaseExportDto implements Serializable {
 	}
 
 	public void setAssociatedWithOutbreak(boolean associatedWithOutbreak) {
-		this.associatedWithOutbreak = associatedWithOutbreak ? I18nProperties.getString(Strings.yes) : I18nProperties.getString(Strings.no);
+		this.associatedWithOutbreak = associatedWithOutbreak ? I18nProperties.getString(Strings.yes)
+				: I18nProperties.getString(Strings.no);
 	}
 
 	public void setDeathDate(Date deathDate) {
@@ -2275,7 +2023,8 @@ public class CaseExportDto implements Serializable {
 	}
 
 	public void setExternalToken(String externalToken) {
-		this.externalToken = externalToken; }
+		this.externalToken = externalToken;
+	}
 
 	public void setCaseIdentificationSource(CaseIdentificationSource caseIdentificationSource) {
 		this.caseIdentificationSource = caseIdentificationSource;
@@ -2283,5 +2032,9 @@ public class CaseExportDto implements Serializable {
 
 	public void setScreeningType(ScreeningType screeningType) {
 		this.screeningType = screeningType;
+	}
+
+	public void setOtherContactDetails(String otherContactDetails) {
+		this.otherContactDetails = otherContactDetails;
 	}
 }

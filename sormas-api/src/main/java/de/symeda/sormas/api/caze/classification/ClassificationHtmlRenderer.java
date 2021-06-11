@@ -35,7 +35,8 @@ import de.symeda.sormas.api.utils.HtmlHelper;
 import de.symeda.sormas.api.utils.InfoProvider;
 
 /**
- * Provides methods that create HTML Strings to visualize the automatic classification rules.
+ * Provides methods that create HTML Strings to visualize the automatic
+ * classification rules.
  */
 public final class ClassificationHtmlRenderer {
 
@@ -86,7 +87,8 @@ public final class ClassificationHtmlRenderer {
 			StringBuilder confirmedSb = new StringBuilder();
 			confirmedSb.append(createHeadlineDiv(I18nProperties.getString(Strings.classificationConfirmed)));
 			if (confirmedCriteria instanceof ClassificationXOfCriteriaDto) {
-				confirmedSb.append(createInfoDiv(((ClassificationXOfCriteriaDto) confirmedCriteria).getRequiredAmount()));
+				confirmedSb
+						.append(createInfoDiv(((ClassificationXOfCriteriaDto) confirmedCriteria).getRequiredAmount()));
 			} else {
 				confirmedSb.append(createInfoDiv());
 			}
@@ -120,68 +122,42 @@ public final class ClassificationHtmlRenderer {
 		html.append("<html><header><style>");
 
 		// Add style definitions
-		//@formatter:off
-		html.append("body {\r\n" +
-				" font-family: verdana;\r\n" +
-				"}\r\n" +
-				".classification-rules .main-criteria {\r\n" + 
-				"  font-size: 0.8em;\r\n" +
-				"  width: 75%;\r\n" + 
-				"  border-radius: 8px;\r\n" + 
-				"  margin: auto;\r\n" +
-				"  padding: 8px;\r\n" + 
-				"}\r\n" + 
-				".classification-rules .main-criteria.main-criteria-suspect {\r\n" + 
-				"  background: rgba(255, 215, 0, 0.6);\r\n" +
-				"}\r\n" + 
-				".classification-rules .main-criteria.main-criteria-probable {\r\n" + 
-				"  background: rgba(255, 140, 0, 0.6);\r\n" +
-				"}\r\n" + 
-				".classification-rules .main-criteria.main-criteria-confirmed {\r\n" + 
-				"  background: rgba(255, 0, 0, 0.6);\r\n" + 
-				"}\r\n" +
-				".classification-rules .main-criteria.main-criteria-not_a_case {\r\n" + 
-				"  background: rgba(160, 160, 160, 0.6);\r\n" + 
-				"}\r\n" + 
-				".classification-rules .headline {\r\n" + 
-				"  font-weight: bold;\r\n" + 
-				"}\r\n" + 
-				".classification-rules .criteria {\r\n" + 
-				"  width: calc(100% - 16px);\r\n" + 
-				"  border-radius: 8px;\r\n" + 
-				"  padding: 8px;\r\n" + 
-				"  margin-top: 6px;\r\n" + 
-				"  background: rgba(244, 244, 244, 0.8);\r\n" + 
-				"  display: inline-block;\r\n" + 
-				"}\r\n" + 
-				".classification-rules .sub-criteria {\r\n" + 
-				"  width: 95%;\r\n" + 
-				"  margin-right: 10px;\r\n" + 
-				"  margin-left: auto;\r\n" + 
-				"  margin-top: 6px;\r\n" + 
-				"  margin-bottom: 6px;\r\n" + 
-				"}\r\n" + 
-				".classification-rules .sub-criteria .sub-criteria-content {\r\n" + 
-				"  width: calc(100% - 8px);\r\n" + 
-				"  border-radius: 8px;\r\n" + 
-				"  padding: 8px;\r\n" + 
-				"  background: rgba(244, 244, 244, 0.7);\r\n" + 
-				"  display: inline-block;\r\n" + 
-				"}</style></header><body>");
-		//@formatter:on
+		// @formatter:off
+		html.append("body {\r\n" + " font-family: verdana;\r\n" + "}\r\n" + ".classification-rules .main-criteria {\r\n"
+				+ "  font-size: 0.8em;\r\n" + "  width: 75%;\r\n" + "  border-radius: 8px;\r\n" + "  margin: auto;\r\n"
+				+ "  padding: 8px;\r\n" + "}\r\n" + ".classification-rules .main-criteria.main-criteria-suspect {\r\n"
+				+ "  background: rgba(255, 215, 0, 0.6);\r\n" + "}\r\n"
+				+ ".classification-rules .main-criteria.main-criteria-probable {\r\n"
+				+ "  background: rgba(255, 140, 0, 0.6);\r\n" + "}\r\n"
+				+ ".classification-rules .main-criteria.main-criteria-confirmed {\r\n"
+				+ "  background: rgba(255, 0, 0, 0.6);\r\n" + "}\r\n"
+				+ ".classification-rules .main-criteria.main-criteria-not_a_case {\r\n"
+				+ "  background: rgba(160, 160, 160, 0.6);\r\n" + "}\r\n" + ".classification-rules .headline {\r\n"
+				+ "  font-weight: bold;\r\n" + "}\r\n" + ".classification-rules .criteria {\r\n"
+				+ "  width: calc(100% - 16px);\r\n" + "  border-radius: 8px;\r\n" + "  padding: 8px;\r\n"
+				+ "  margin-top: 6px;\r\n" + "  background: rgba(244, 244, 244, 0.8);\r\n"
+				+ "  display: inline-block;\r\n" + "}\r\n" + ".classification-rules .sub-criteria {\r\n"
+				+ "  width: 95%;\r\n" + "  margin-right: 10px;\r\n" + "  margin-left: auto;\r\n"
+				+ "  margin-top: 6px;\r\n" + "  margin-bottom: 6px;\r\n" + "}\r\n"
+				+ ".classification-rules .sub-criteria .sub-criteria-content {\r\n" + "  width: calc(100% - 8px);\r\n"
+				+ "  border-radius: 8px;\r\n" + "  padding: 8px;\r\n" + "  background: rgba(244, 244, 244, 0.7);\r\n"
+				+ "  display: inline-block;\r\n" + "}</style></header><body>");
+		// @formatter:on
 
-		//@formatter:off
-		html.append("<h1 style=\"text-align: center; color: #005A9C;\">").append(I18nProperties.getString(Strings.classificationClassificationRules)).append("</h1>");
+		// @formatter:off
+		html.append("<h1 style=\"text-align: center; color: #005A9C;\">")
+				.append(I18nProperties.getString(Strings.classificationClassificationRules)).append("</h1>");
 		html.append("<h4 style=\"text-align: center;\">")
-				.append(I18nProperties.getString(Strings.classificationGeneratedFor))
-				.append(" ").append(HtmlHelper.cleanHtml(InfoProvider.get().getVersion()))
-				.append(StringUtils.wrap(I18nProperties.getString(Strings.on), " "))
-				.append(sormasServerUrl).append(StringUtils.wrap(I18nProperties.getString(Strings.at), " "))
+				.append(I18nProperties.getString(Strings.classificationGeneratedFor)).append(" ")
+				.append(HtmlHelper.cleanHtml(InfoProvider.get().getVersion()))
+				.append(StringUtils.wrap(I18nProperties.getString(Strings.on), " ")).append(sormasServerUrl)
+				.append(StringUtils.wrap(I18nProperties.getString(Strings.at), " "))
 				.append(DateHelper.formatLocalDateTime(new Date(), language)).append("</h4>");
-		//@formatter:on
+		// @formatter:on
 
 		for (Disease disease : diseases) {
-			DiseaseClassificationCriteriaDto diseaseCriteria = FacadeProvider.getCaseClassificationFacade().getByDisease(disease);
+			DiseaseClassificationCriteriaDto diseaseCriteria = FacadeProvider.getCaseClassificationFacade()
+					.getByDisease(disease);
 			if (diseaseCriteria != null && diseaseCriteria.hasAnyCriteria()) {
 				html.append("<h2 style=\"text-align: center; color: #005A9C;\">" + disease.toString() + "</h2>");
 				html.append(createSuspectHtmlString(diseaseCriteria));
@@ -199,20 +175,26 @@ public final class ClassificationHtmlRenderer {
 		StringBuilder sb = new StringBuilder();
 
 		if (!(criteria instanceof ClassificationCollectiveCriteria)) {
-			// Create a single div if the criteria is not collective (i.e. has no sub criteria)
+			// Create a single div if the criteria is not collective (i.e. has no sub
+			// criteria)
 			String itemDiv = createCriteriaItemDiv(criteria.buildDescription());
 			sb.append(createCriteriaSurroundingDiv(itemDiv));
 		} else {
 			// Otherwise, create a div and fill it by iterating over the sub criteria
-			for (ClassificationCriteriaDto subCriteria : ((ClassificationCollectiveCriteria) criteria).getSubCriteria()) {
+			for (ClassificationCriteriaDto subCriteria : ((ClassificationCollectiveCriteria) criteria)
+					.getSubCriteria()) {
 				if (subCriteria instanceof ClassificationAllOfCriteriaDto
-					&& !((ClassificationAllOfCriteriaDto) subCriteria).isDrawSubCriteriaTogether()) {
-					// If the sub criteria is an AllOfCriteria, every one of its sub criteria needs its own div
-					for (ClassificationCriteriaDto subSubCriteria : ((ClassificationCollectiveCriteria) subCriteria).getSubCriteria()) {
-						sb.append(createCriteriaSurroundingDiv(buildSubCriteriaDiv(new StringBuilder(), subSubCriteria, subCriteria)));
+						&& !((ClassificationAllOfCriteriaDto) subCriteria).isDrawSubCriteriaTogether()) {
+					// If the sub criteria is an AllOfCriteria, every one of its sub criteria needs
+					// its own div
+					for (ClassificationCriteriaDto subSubCriteria : ((ClassificationCollectiveCriteria) subCriteria)
+							.getSubCriteria()) {
+						sb.append(createCriteriaSurroundingDiv(
+								buildSubCriteriaDiv(new StringBuilder(), subSubCriteria, subCriteria)));
 					}
 				} else {
-					sb.append(createCriteriaSurroundingDiv(buildSubCriteriaDiv(new StringBuilder(), subCriteria, criteria)));
+					sb.append(createCriteriaSurroundingDiv(
+							buildSubCriteriaDiv(new StringBuilder(), subCriteria, criteria)));
 				}
 			}
 		}
@@ -220,10 +202,8 @@ public final class ClassificationHtmlRenderer {
 		return sb.toString();
 	}
 
-	private static String buildSubCriteriaDiv(
-		StringBuilder subCriteriaSb,
-		ClassificationCriteriaDto criteria,
-		ClassificationCriteriaDto parentCriteria) {
+	private static String buildSubCriteriaDiv(StringBuilder subCriteriaSb, ClassificationCriteriaDto criteria,
+			ClassificationCriteriaDto parentCriteria) {
 
 		// For non-collective criteria, only a simple div needs to be added
 		if (!(criteria instanceof ClassificationCollectiveCriteria)) {
@@ -232,30 +212,39 @@ public final class ClassificationHtmlRenderer {
 		}
 
 		// Add the criteria name to the div (e.g. "ONE OF")
-		if (!(criteria instanceof ClassificationAllOfCriteriaDto) || ((ClassificationAllOfCriteriaDto) criteria).isDrawSubCriteriaTogether()) {
-			subCriteriaSb.append(createCriteriaItemDiv(((ClassificationCollectiveCriteria) criteria).getCriteriaName()));
+		if (!(criteria instanceof ClassificationAllOfCriteriaDto)
+				|| ((ClassificationAllOfCriteriaDto) criteria).isDrawSubCriteriaTogether()) {
+			subCriteriaSb
+					.append(createCriteriaItemDiv(((ClassificationCollectiveCriteria) criteria).getCriteriaName()));
 		}
 
 		for (ClassificationCriteriaDto subCriteria : ((ClassificationCollectiveCriteria) criteria).getSubCriteria()) {
-			if (!(subCriteria instanceof ClassificationCollectiveCriteria) || subCriteria instanceof ClassificationCompactCriteria) {
-				// For non-collective or compact collective criteria, add the description as a list item
-				subCriteriaSb.append("- " + HtmlHelper.cleanHtml(subCriteria.buildDescription(), Whitelist.basic()) + "</br>");
+			if (!(subCriteria instanceof ClassificationCollectiveCriteria)
+					|| subCriteria instanceof ClassificationCompactCriteria) {
+				// For non-collective or compact collective criteria, add the description as a
+				// list item
+				subCriteriaSb.append(
+						"- " + HtmlHelper.cleanHtml(subCriteria.buildDescription(), Whitelist.basic()) + "</br>");
 			} else if (subCriteria instanceof ClassificationCollectiveCriteria
-				&& !(subCriteria instanceof ClassificationAllOfCriteriaDto)
-				&& !(subCriteria.getClass() == ClassificationXOfCriteriaDto.class)) {
-				// For collective criteria, but not ClassificationAllOfCriteria, add a sub div with a slightly different color to make clear
+					&& !(subCriteria instanceof ClassificationAllOfCriteriaDto)
+					&& !(subCriteria.getClass() == ClassificationXOfCriteriaDto.class)) {
+				// For collective criteria, but not ClassificationAllOfCriteria, add a sub div
+				// with a slightly different color to make clear
 				// that it belongs to the criteria listed before
 				String itemDiv = null;
-				if (subCriteria instanceof ClassificationXOfSubCriteriaDto && !((ClassificationXOfSubCriteriaDto) subCriteria).isAddition()) {
+				if (subCriteria instanceof ClassificationXOfSubCriteriaDto
+						&& !((ClassificationXOfSubCriteriaDto) subCriteria).isAddition()) {
 					itemDiv = createCriteriaItemDiv(subCriteria.buildDescription());
 				} else {
-					itemDiv =
-						createCriteriaItemDiv("<b>" + I18nProperties.getString(Strings.and).toUpperCase() + "</b>" + subCriteria.buildDescription());
+					itemDiv = createCriteriaItemDiv("<b>" + I18nProperties.getString(Strings.and).toUpperCase() + "</b>"
+							+ subCriteria.buildDescription());
 				}
 				subCriteriaSb.append(createSubCriteriaSurroundingDiv(itemDiv));
 			} else {
-				// For everything else, recursively call this method to determine how to display the sub criteria
-				buildSubCriteriaDiv(subCriteriaSb, subCriteria, criteria instanceof ClassificationAllOfCriteriaDto ? parentCriteria : criteria);
+				// For everything else, recursively call this method to determine how to display
+				// the sub criteria
+				buildSubCriteriaDiv(subCriteriaSb, subCriteria,
+						criteria instanceof ClassificationAllOfCriteriaDto ? parentCriteria : criteria);
 			}
 		}
 
@@ -264,18 +253,16 @@ public final class ClassificationHtmlRenderer {
 	}
 
 	/**
-	 * Creates the surrounding div of a whole (suspect, probable or confirmed) criteria definition.
+	 * Creates the surrounding div of a whole (suspect, probable or confirmed)
+	 * criteria definition.
 	 */
-	private static String createSurroundingDiv(ClassificationCriteriaType criteriaType, String content, boolean marginBottom) {
+	private static String createSurroundingDiv(ClassificationCriteriaType criteriaType, String content,
+			boolean marginBottom) {
 
-		//@formatter:off
-		return "<div class='classification-rules'>"
-				+ "<div class='main-criteria main-criteria-"
-				+ HtmlHelper.cleanHtml(criteriaType.toString())
-				+ "'>"
-				+ content
-				+ "</div></div>";
-		//@formatter:on
+		// @formatter:off
+		return "<div class='classification-rules'>" + "<div class='main-criteria main-criteria-"
+				+ HtmlHelper.cleanHtml(criteriaType.toString()) + "'>" + content + "</div></div>";
+		// @formatter:on
 	}
 
 	/**
@@ -283,11 +270,9 @@ public final class ClassificationHtmlRenderer {
 	 */
 	private static String createHeadlineDiv(String headline) {
 
-		//@formatter:off
-		return "<div class='headline'>"
-				+ HtmlHelper.cleanHtml(headline, Whitelist.basic())
-				+ "</div>";
-		//@formatter:on
+		// @formatter:off
+		return "<div class='headline'>" + HtmlHelper.cleanHtml(headline, Whitelist.basic()) + "</div>";
+		// @formatter:on
 	}
 
 	/**
@@ -298,8 +283,8 @@ public final class ClassificationHtmlRenderer {
 	}
 
 	private static String createInfoDiv(int requirementsNumber) {
-		return HtmlHelper.cleanI18nString(
-			String.format(I18nProperties.getString(Strings.classificationInfoNumberText), DataHelper.parseNumberToString(requirementsNumber)));
+		return HtmlHelper.cleanI18nString(String.format(I18nProperties.getString(Strings.classificationInfoNumberText),
+				DataHelper.parseNumberToString(requirementsNumber)));
 	}
 
 	/**
@@ -307,28 +292,25 @@ public final class ClassificationHtmlRenderer {
 	 */
 	private static String createCriteriaSurroundingDiv(String content) {
 
-		//@formatter:off
-		return "<div class='criteria'>"
-				+ content
-				+ "</div>";
-		//@formatter:on
+		// @formatter:off
+		return "<div class='criteria'>" + content + "</div>";
+		// @formatter:on
 	}
 
 	/**
-	 * Creates the surrounding div of a single sub criteria (with a slightly darker background).
+	 * Creates the surrounding div of a single sub criteria (with a slightly darker
+	 * background).
 	 */
 	private static String createSubCriteriaSurroundingDiv(String content) {
 
-		//@formatter:off
-		return "<div class='sub-criteria'><div class='sub-criteria-content'>"
-				+ content
-				+ "</div></div>";
-		//@formatter:on
+		// @formatter:off
+		return "<div class='sub-criteria'><div class='sub-criteria-content'>" + content + "</div></div>";
+		// @formatter:on
 	}
 
 	/**
-	 * Creates the div for an actual criteria containing its description.
-	 * Specific tags are allowed to be contained in i18n strings and are thus unescaped
+	 * Creates the div for an actual criteria containing its description. Specific
+	 * tags are allowed to be contained in i18n strings and are thus unescaped
 	 */
 	private static String createCriteriaItemDiv(String text) {
 		return (HtmlHelper.cleanHtml(text, Whitelist.basic()) + "<br>");
@@ -336,10 +318,7 @@ public final class ClassificationHtmlRenderer {
 
 	private enum ClassificationCriteriaType {
 
-		SUSPECT,
-		PROBABLE,
-		CONFIRMED,
-		NOT_A_CASE;
+		SUSPECT, PROBABLE, CONFIRMED, NOT_A_CASE;
 
 		@Override
 		public String toString() {

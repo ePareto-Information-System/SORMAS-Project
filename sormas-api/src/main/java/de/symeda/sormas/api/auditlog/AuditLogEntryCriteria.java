@@ -30,96 +30,96 @@ public class AuditLogEntryCriteria extends BaseCriteria implements Cloneable {
 
 	private Type clazz;
 	private String uuid;
-	
+
 	private boolean showViews;
 	private boolean showCreates;
 	private boolean showUpdates;
 	private boolean showDeletes;
-	
+
 	private YesNoUnknown showDistinctActivitiesOnly;
-	
+
 	public Type getClazz() {
 		return clazz;
 	}
-	
+
 	public AuditLogEntryCriteria setClazz(Type clazz) {
 		this.clazz = clazz;
 		return this;
 	}
-	
+
 	public String getUuid() {
 		return uuid;
 	}
-	
+
 	public AuditLogEntryCriteria setUuid(String uuid) {
 		this.uuid = uuid;
 		return this;
 	}
-	
+
 	public YesNoUnknown showingDistinctActivitiesOnly() {
 		return showDistinctActivitiesOnly;
 	}
-	
+
 	public AuditLogEntryCriteria showDistinctActivitiesOnly(YesNoUnknown show) {
 		this.showDistinctActivitiesOnly = show;
 		return this;
 	}
-	
+
 	public boolean showingViews() {
 		return showViews;
 	}
-	
+
 	public AuditLogEntryCriteria showViews(boolean showViews) {
 		this.showViews = showViews;
 		return this;
 	}
-	
+
 	public boolean showingCreates() {
 		return showCreates;
 	}
-	
+
 	public AuditLogEntryCriteria showCreates(boolean showCreates) {
 		this.showCreates = showCreates;
 		return this;
 	}
-	
+
 	public boolean showingUpdates() {
 		return showUpdates;
 	}
-	
+
 	public AuditLogEntryCriteria showUpdates(boolean showUpdates) {
 		this.showUpdates = showUpdates;
 		return this;
 	}
-	
+
 	public boolean showingDeletes() {
 		return showDeletes;
 	}
-	
+
 	public AuditLogEntryCriteria showDeletes(boolean showDeletes) {
 		this.showDeletes = showDeletes;
 		return this;
 	}
-	
+
 	public List<ChangeType> getChangeTypes() {
 		List<ChangeType> changeTypes = new ArrayList<ChangeType>();
-		
+
 		if (showingViews()) {
 			changeTypes.add(ChangeType.VIEW);
 		}
-		
+
 		if (showingCreates()) {
 			changeTypes.add(ChangeType.CREATE);
 		}
-		
+
 		if (showingUpdates()) {
 			changeTypes.add(ChangeType.UPDATE);
 		}
-		
+
 		if (showingDeletes()) {
 			changeTypes.add(ChangeType.DELETE);
 		}
-		
+
 		return changeTypes;
 	}
 }

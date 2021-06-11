@@ -32,25 +32,11 @@ public class PrescriptionIndexDto implements Serializable {
 
 	private CaseJurisdictionDto caseJurisdiction;
 
-	public PrescriptionIndexDto(
-		String uuid,
-		TreatmentType prescriptionType,
-		String prescriptionDetails,
-		TypeOfDrug typeOfDrug,
-		Date prescriptionDate,
-		Date prescriptionStart,
-		Date prescriptionEnd,
-		String frequency,
-		String dose,
-		TreatmentRoute route,
-		String routeDetails,
-		String prescribingClinician,
-		String caseReportingUserUuid,
-		String caseRegionUuid,
-		String caseDistrictUuid,
-		String caseCommunityUuid,
-		String caseHealthFacilityUuid,
-		String casePointOfEntryUuid) {
+	public PrescriptionIndexDto(String uuid, TreatmentType prescriptionType, String prescriptionDetails,
+			TypeOfDrug typeOfDrug, Date prescriptionDate, Date prescriptionStart, Date prescriptionEnd,
+			String frequency, String dose, TreatmentRoute route, String routeDetails, String prescribingClinician,
+			String caseReportingUserUuid, String caseRegionUuid, String caseDistrictUuid, String caseCommunityUuid,
+			String caseHealthFacilityUuid, String casePointOfEntryUuid) {
 
 		this.uuid = uuid;
 		this.prescriptionIndexType = new PrescriptionIndexType(prescriptionType, prescriptionDetails, typeOfDrug);
@@ -61,13 +47,8 @@ public class PrescriptionIndexDto implements Serializable {
 		this.prescriptionIndexRoute = new PrescriptionIndexRoute(route, routeDetails);
 		this.prescribingClinician = prescribingClinician;
 
-		this.caseJurisdiction = new CaseJurisdictionDto(
-			caseReportingUserUuid,
-			caseRegionUuid,
-			caseDistrictUuid,
-			caseCommunityUuid,
-			caseHealthFacilityUuid,
-			casePointOfEntryUuid);
+		this.caseJurisdiction = new CaseJurisdictionDto(caseReportingUserUuid, caseRegionUuid, caseDistrictUuid,
+				caseCommunityUuid, caseHealthFacilityUuid, casePointOfEntryUuid);
 	}
 
 	public String getUuid() {
@@ -145,7 +126,8 @@ public class PrescriptionIndexDto implements Serializable {
 		private String prescriptionDetails;
 		private TypeOfDrug typeOfDrug;
 
-		public PrescriptionIndexType(TreatmentType prescriptionType, String prescriptionDetails, TypeOfDrug typeOfDrug) {
+		public PrescriptionIndexType(TreatmentType prescriptionType, String prescriptionDetails,
+				TypeOfDrug typeOfDrug) {
 			this.prescriptionType = prescriptionType;
 			this.prescriptionDetails = prescriptionDetails;
 			this.typeOfDrug = typeOfDrug;

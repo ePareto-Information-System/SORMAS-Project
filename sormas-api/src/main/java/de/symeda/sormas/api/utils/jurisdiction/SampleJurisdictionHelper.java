@@ -6,13 +6,11 @@ import de.symeda.sormas.api.utils.DataHelper;
 
 public class SampleJurisdictionHelper {
 
-	public static boolean isInJurisdictionOrOwned(
-		JurisdictionLevel jurisdictionLevel,
-		UserJurisdiction userJurisdiction,
-		SampleJurisdictionDto sampleJurisdiction) {
+	public static boolean isInJurisdictionOrOwned(JurisdictionLevel jurisdictionLevel,
+			UserJurisdiction userJurisdiction, SampleJurisdictionDto sampleJurisdiction) {
 
 		if (sampleJurisdiction.getReportingUserUuid() != null
-			&& DataHelper.equal(userJurisdiction.getUuid(), sampleJurisdiction.getReportingUserUuid())) {
+				&& DataHelper.equal(userJurisdiction.getUuid(), sampleJurisdiction.getReportingUserUuid())) {
 			return true;
 		}
 
@@ -23,21 +21,23 @@ public class SampleJurisdictionHelper {
 			return true;
 		case LABORATORY:
 		case EXTERNAL_LABORATORY:
-			return sampleJurisdiction.getLabUuid() != null && DataHelper.equal(sampleJurisdiction.getLabUuid(), userJurisdiction.getLabUuid());
+			return sampleJurisdiction.getLabUuid() != null
+					&& DataHelper.equal(sampleJurisdiction.getLabUuid(), userJurisdiction.getLabUuid());
 		}
 
 		if (sampleJurisdiction.getCaseJurisdiction() != null) {
-			return CaseJurisdictionHelper.isInJurisdictionOrOwned(jurisdictionLevel, userJurisdiction, sampleJurisdiction.getCaseJurisdiction());
+			return CaseJurisdictionHelper.isInJurisdictionOrOwned(jurisdictionLevel, userJurisdiction,
+					sampleJurisdiction.getCaseJurisdiction());
 		}
 
 		if (sampleJurisdiction.getContactJurisdiction() != null) {
-			return ContactJurisdictionHelper
-				.isInJurisdictionOrOwned(jurisdictionLevel, userJurisdiction, sampleJurisdiction.getContactJurisdiction());
+			return ContactJurisdictionHelper.isInJurisdictionOrOwned(jurisdictionLevel, userJurisdiction,
+					sampleJurisdiction.getContactJurisdiction());
 		}
 
 		if (sampleJurisdiction.getEventParticipantJurisdiction() != null) {
-			return EventParticipantJurisdictionHelper
-				.isInJurisdictionOrOwned(jurisdictionLevel, userJurisdiction, sampleJurisdiction.getEventParticipantJurisdiction());
+			return EventParticipantJurisdictionHelper.isInJurisdictionOrOwned(jurisdictionLevel, userJurisdiction,
+					sampleJurisdiction.getEventParticipantJurisdiction());
 		}
 
 		return false;

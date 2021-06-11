@@ -36,7 +36,8 @@ public interface DistrictFacade {
 
 	List<DistrictDto> getAllAfter(Date date);
 
-	List<DistrictIndexDto> getIndexList(DistrictCriteria criteria, Integer first, Integer max, List<SortProperty> sortProperties);
+	List<DistrictIndexDto> getIndexList(DistrictCriteria criteria, Integer first, Integer max,
+			List<SortProperty> sortProperties);
 
 	long count(DistrictCriteria criteria);
 
@@ -53,6 +54,8 @@ public interface DistrictFacade {
 	List<DistrictDto> getByUuids(List<String> uuids);
 
 	void saveDistrict(DistrictDto dto) throws ValidationRuntimeException;
+
+	void saveDistrict(DistrictDto dto, boolean allowMerge) throws ValidationRuntimeException;
 
 	List<DistrictReferenceDto> getByName(String name, RegionReferenceDto regionRef, boolean includeArchivedEntities);
 

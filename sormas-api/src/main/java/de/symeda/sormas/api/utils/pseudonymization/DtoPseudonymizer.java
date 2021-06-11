@@ -34,11 +34,9 @@ public class DtoPseudonymizer {
 
 	private final boolean pseudonymizeMandatoryFields;
 
-	protected DtoPseudonymizer(
-		FieldAccessCheckers inJurisdictionCheckers,
-		FieldAccessCheckers outsideJurisdictionCheckers,
-		String stringValuePlaceholder,
-		boolean pseudonymizeMandatoryFields) {
+	protected DtoPseudonymizer(FieldAccessCheckers inJurisdictionCheckers,
+			FieldAccessCheckers outsideJurisdictionCheckers, String stringValuePlaceholder,
+			boolean pseudonymizeMandatoryFields) {
 		this.inJurisdictionCheckers = inJurisdictionCheckers;
 		this.outsideJurisdictionCheckers = outsideJurisdictionCheckers;
 
@@ -46,26 +44,22 @@ public class DtoPseudonymizer {
 		this.pseudonymizeMandatoryFields = pseudonymizeMandatoryFields;
 	}
 
-	public void addFieldAccessChecker(FieldAccessChecker inJurisdictionChecker, FieldAccessChecker outsideJurisdictionChecker) {
+	public void addFieldAccessChecker(FieldAccessChecker inJurisdictionChecker,
+			FieldAccessChecker outsideJurisdictionChecker) {
 		this.inJurisdictionCheckers.add(inJurisdictionChecker);
 		this.outsideJurisdictionCheckers.add(outsideJurisdictionChecker);
 	}
 
-	public <DTO> void pseudonymizeDtoCollection(
-		Class<DTO> type,
-		Collection<DTO> dtos,
-		JurisdictionValidator<DTO> jurisdictionValidator,
-		final CustomCollectionItemPseudonymization<DTO> customPseudonymization) {
+	public <DTO> void pseudonymizeDtoCollection(Class<DTO> type, Collection<DTO> dtos,
+			JurisdictionValidator<DTO> jurisdictionValidator,
+			final CustomCollectionItemPseudonymization<DTO> customPseudonymization) {
 
 		pseudonymizeDtoCollection(type, dtos, jurisdictionValidator, customPseudonymization, false);
 	}
 
-	public <DTO> void pseudonymizeDtoCollection(
-		Class<DTO> type,
-		Collection<DTO> dtos,
-		JurisdictionValidator<DTO> jurisdictionValidator,
-		final CustomCollectionItemPseudonymization<DTO> customPseudonymization,
-		boolean skipEmbeddedFields) {
+	public <DTO> void pseudonymizeDtoCollection(Class<DTO> type, Collection<DTO> dtos,
+			JurisdictionValidator<DTO> jurisdictionValidator,
+			final CustomCollectionItemPseudonymization<DTO> customPseudonymization, boolean skipEmbeddedFields) {
 
 		List<Field> pseudonymizableFieldsInJurisdiction = getPseudonymizableFields(type, true);
 		List<Field> pseudonymizableFieldsOutsideJurisdiction = getPseudonymizableFields(type, false);
@@ -74,31 +68,29 @@ public class DtoPseudonymizer {
 
 		for (final DTO dto : dtos) {
 			final boolean isInJurisdiction = jurisdictionValidator.validate(dto);
-			pseudonymizeDto(
-				dto,
-				isInJurisdiction ? pseudonymizableFieldsInJurisdiction : pseudonymizableFieldsOutsideJurisdiction,
-				isInJurisdiction ? embeddedFieldsInJurisdiction : embeddedFieldsOutsideJurisdiction,
-				isInJurisdiction,
-				null,
-				customPseudonymization == null ? null : new CustomPseudonymization<DTO>() {
+			pseudonymizeDto(dto,
+					isInJurisdiction ? pseudonymizableFieldsInJurisdiction : pseudonymizableFieldsOutsideJurisdiction,
+					isInJurisdiction ? embeddedFieldsInJurisdiction : embeddedFieldsOutsideJurisdiction,
+					isInJurisdiction, null, customPseudonymization == null ? null : new CustomPseudonymization<DTO>() {
 
-					@Override
-					public void pseudonymize(DTO d) {
-						customPseudonymization.pseudonymize(dto, isInJurisdiction);
-					}
-				},
-				skipEmbeddedFields);
+						@Override
+						public void pseudonymize(DTO d) {
+							customPseudonymization.pseudonymize(dto, isInJurisdiction);
+						}
+					}, skipEmbeddedFields);
 		}
 	}
 
-	public <DTO> void pseudonymizeDto(Class<DTO> type, DTO dto, boolean isInJurisdiction, CustomPseudonymization<DTO> customPseudonymization) {
+	public <DTO> void pseudonymizeDto(Class<DTO> type, DTO dto, boolean isInJurisdiction,
+			CustomPseudonymization<DTO> customPseudonymization) {
 		List<Field> declaredFields = getPseudonymizableFields(type, isInJurisdiction);
 		List<Field> embeddedFields = getEmbeddedFields(type, isInJurisdiction);
 
 		pseudonymizeDto(dto, declaredFields, embeddedFields, isInJurisdiction, null, customPseudonymization, false);
 	}
 
-	public <DTO extends Pseudonymizable> void restorePseudonymizedValues(Class<DTO> type, DTO dto, DTO originalDto, boolean isInJurisdiction) {
+	public <DTO extends Pseudonymizable> void restorePseudonymizedValues(Class<DTO> type, DTO dto, DTO originalDto,
+			boolean isInJurisdiction) {
 		if (originalDto == null) {
 			return;
 		}
@@ -107,7 +99,8 @@ public class DtoPseudonymizer {
 		List<Field> embeddedFields = getEmbeddedFields(type, isInJurisdiction);
 
 		for (Field pseudonymizedField : pseudonymizableFields) {
-			if (!getFieldAccessCheckers(isInJurisdiction).isAccessible(pseudonymizedField, pseudonymizeMandatoryFields) || dto.isPseudonymized()) {
+			if (!getFieldAccessCheckers(isInJurisdiction).isAccessible(pseudonymizedField, pseudonymizeMandatoryFields)
+					|| dto.isPseudonymized()) {
 				restoreOriginalValue(dto, pseudonymizedField, originalDto);
 			}
 		}
@@ -119,13 +112,12 @@ public class DtoPseudonymizer {
 				try {
 					embeddedField.setAccessible(true);
 
-					restorePseudonymizedValues(
-						(Class<Pseudonymizable>) fieldType,
-						(Pseudonymizable) embeddedField.get(dto),
-						(Pseudonymizable) embeddedField.get(originalDto),
-						isInJurisdiction);
+					restorePseudonymizedValues((Class<Pseudonymizable>) fieldType,
+							(Pseudonymizable) embeddedField.get(dto), (Pseudonymizable) embeddedField.get(originalDto),
+							isInJurisdiction);
 				} catch (IllegalAccessException e) {
-					throw new RuntimeException("Couldn't restore embedded field " + dto.getClass().getName() + "." + embeddedField.getName(), e);
+					throw new RuntimeException("Couldn't restore embedded field " + dto.getClass().getName() + "."
+							+ embeddedField.getName(), e);
 				} finally {
 					embeddedField.setAccessible(isAccessible);
 				}
@@ -133,34 +125,19 @@ public class DtoPseudonymizer {
 		}
 	}
 
-	private <DTO> boolean pseudonymizeDto(
-		Class<DTO> type,
-		DTO dto,
-		boolean isInJurisdiction,
-		Class<? extends ValuePseudonymizer> defaultPseudonymizerClass,
-		CustomPseudonymization<DTO> customPseudonymization,
-		boolean skipEmbeddedFields) {
+	private <DTO> boolean pseudonymizeDto(Class<DTO> type, DTO dto, boolean isInJurisdiction,
+			Class<? extends ValuePseudonymizer> defaultPseudonymizerClass,
+			CustomPseudonymization<DTO> customPseudonymization, boolean skipEmbeddedFields) {
 		List<Field> declaredFields = getPseudonymizableFields(type, isInJurisdiction);
 		List<Field> embeddedFields = getEmbeddedFields(type, isInJurisdiction);
 
-		return pseudonymizeDto(
-			dto,
-			declaredFields,
-			embeddedFields,
-			isInJurisdiction,
-			defaultPseudonymizerClass,
-			customPseudonymization,
-			skipEmbeddedFields);
+		return pseudonymizeDto(dto, declaredFields, embeddedFields, isInJurisdiction, defaultPseudonymizerClass,
+				customPseudonymization, skipEmbeddedFields);
 	}
 
-	private <DTO> boolean pseudonymizeDto(
-		DTO dto,
-		List<Field> pseudonymizableFields,
-		List<Field> embeddedFields,
-		boolean inJurisdiction,
-		Class<? extends ValuePseudonymizer> defaultPseudonymizerClass,
-		CustomPseudonymization<DTO> customPseudonymization,
-		boolean skipEmbeddedFields) {
+	private <DTO> boolean pseudonymizeDto(DTO dto, List<Field> pseudonymizableFields, List<Field> embeddedFields,
+			boolean inJurisdiction, Class<? extends ValuePseudonymizer> defaultPseudonymizerClass,
+			CustomPseudonymization<DTO> customPseudonymization, boolean skipEmbeddedFields) {
 		if (dto == null) {
 			return false;
 		}
@@ -181,20 +158,15 @@ public class DtoPseudonymizer {
 
 					embeddedField.setAccessible(true);
 					Pseudonymizer pseudonymizerAnnotation = embeddedField.getAnnotation(Pseudonymizer.class);
-					Class<? extends ValuePseudonymizer> psudonomyzerClass =
-						pseudonymizerAnnotation != null ? pseudonymizerAnnotation.value() : defaultPseudonymizerClass;
+					Class<? extends ValuePseudonymizer> psudonomyzerClass = pseudonymizerAnnotation != null
+							? pseudonymizerAnnotation.value()
+							: defaultPseudonymizerClass;
 
-					didPseudonymization = pseudonymizeDto(
-						(Class<Object>) embeddedField.getType(),
-						embeddedField.get(dto),
-						inJurisdiction,
-						psudonomyzerClass,
-						null,
-						skipEmbeddedFields);
+					didPseudonymization = pseudonymizeDto((Class<Object>) embeddedField.getType(),
+							embeddedField.get(dto), inJurisdiction, psudonomyzerClass, null, skipEmbeddedFields);
 				} catch (IllegalAccessException e) {
-					throw new RuntimeException(
-						"Failed to pseudonymize embedded field " + dto.getClass().getName() + "." + embeddedField.getName(),
-						e);
+					throw new RuntimeException("Failed to pseudonymize embedded field " + dto.getClass().getName() + "."
+							+ embeddedField.getName(), e);
 				} finally {
 					embeddedField.setAccessible(accessible);
 				}
@@ -227,8 +199,9 @@ public class DtoPseudonymizer {
 		}
 	}
 
-	private ValuePseudonymizer<?> getPseudonymizer(Field field, Class<? extends ValuePseudonymizer> defaultPseudonymizerClass)
-		throws IllegalAccessException, InstantiationException {
+	private ValuePseudonymizer<?> getPseudonymizer(Field field,
+			Class<? extends ValuePseudonymizer> defaultPseudonymizerClass)
+			throws IllegalAccessException, InstantiationException {
 		Pseudonymizer pseudonymizerAnnotation = field.getAnnotation(Pseudonymizer.class);
 
 		if (pseudonymizerAnnotation == null) {

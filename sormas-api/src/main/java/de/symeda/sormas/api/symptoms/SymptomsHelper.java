@@ -101,11 +101,8 @@ public final class SymptomsHelper {
 		}
 
 		StringBuilder bpStringBuilder = new StringBuilder();
-		bpStringBuilder.append(systolic != null ? systolic : "?")
-			.append("/")
-			.append(diastolic != null ? diastolic : "?")
-			.append(" ")
-			.append(I18nProperties.getString(Strings.mmhg));
+		bpStringBuilder.append(systolic != null ? systolic : "?").append("/")
+				.append(diastolic != null ? diastolic : "?").append(" ").append(I18nProperties.getString(Strings.mmhg));
 
 		return bpStringBuilder.toString();
 	}
@@ -199,11 +196,13 @@ public final class SymptomsHelper {
 	}
 
 	/**
-	 * Updates the targetSymptoms according to the sourceSymptoms values. All sourceSymptoms that
-	 * are set to YES will also be set to YES in the targetSymptoms, while sourceSymptoms set to NO
-	 * will not result in an update of the corresponding targetSymptom. Additionally, the
-	 * targetSymptoms temperature will be updated if it is lower than the sourceSymptoms temperature,
-	 * and Strings will be added to existing Strings when those do not contain them already.
+	 * Updates the targetSymptoms according to the sourceSymptoms values. All
+	 * sourceSymptoms that are set to YES will also be set to YES in the
+	 * targetSymptoms, while sourceSymptoms set to NO will not result in an update
+	 * of the corresponding targetSymptom. Additionally, the targetSymptoms
+	 * temperature will be updated if it is lower than the sourceSymptoms
+	 * temperature, and Strings will be added to existing Strings when those do not
+	 * contain them already.
 	 */
 	public static void updateSymptoms(SymptomsDto sourceSymptoms, SymptomsDto targetSymptoms) {
 
@@ -213,7 +212,8 @@ public final class SymptomsHelper {
 
 		boolean newTemperatureSet = false;
 		try {
-			PropertyDescriptor[] pds = Introspector.getBeanInfo(SymptomsDto.class, EntityDto.class).getPropertyDescriptors();
+			PropertyDescriptor[] pds = Introspector.getBeanInfo(SymptomsDto.class, EntityDto.class)
+					.getPropertyDescriptors();
 			for (PropertyDescriptor pd : pds) {
 				// Skip properties without a read or write method
 				if (pd.getReadMethod() == null || pd.getWriteMethod() == null) {
@@ -237,7 +237,8 @@ public final class SymptomsHelper {
 						}
 					}
 				} else if (pd.getName().equals(SymptomsDto.TEMPERATURE)) {
-					// Temperature is carried over when it's higher than the targetSymptoms temperature
+					// Temperature is carried over when it's higher than the targetSymptoms
+					// temperature
 					Float sourceResult = (Float) pd.getReadMethod().invoke(sourceSymptoms);
 					Float targetResult = (Float) pd.getReadMethod().invoke(targetSymptoms);
 					if (sourceResult != null && (targetResult == null || sourceResult > targetResult)) {
@@ -245,7 +246,8 @@ public final class SymptomsHelper {
 						newTemperatureSet = true;
 					}
 				} else if (pd.getReadMethod().getReturnType() == String.class) {
-					// Strings are added to the targetSymptoms when they are not contained within the
+					// Strings are added to the targetSymptoms when they are not contained within
+					// the
 					// respective targetSymptoms String
 					if (pd.getName().equals(SymptomsDto.ONSET_DATE)) {
 						continue;
@@ -314,7 +316,8 @@ public final class SymptomsHelper {
 			for (Method method : SymptomsDto.class.getDeclaredMethods()) {
 				if (method.getReturnType() == SymptomState.class) {
 					Object symptomState = method.invoke(dto);
-					if (symptomState == SymptomState.YES || symptomState == SymptomState.UNKNOWN || symptomState == null) {
+					if (symptomState == SymptomState.YES || symptomState == SymptomState.UNKNOWN
+							|| symptomState == null) {
 						return false;
 					}
 				}
@@ -377,8 +380,9 @@ public final class SymptomsHelper {
 		appendYesSymptom(string, symptomsDto.getBleedingVagina(), SymptomsDto.BLEEDING_VAGINA);
 		appendYesSymptom(string, symptomsDto.getSkinBruising(), SymptomsDto.SKIN_BRUISING);
 		appendYesSymptom(string, symptomsDto.getBloodUrine(), SymptomsDto.BLOOD_URINE);
-		//otherHemorrhagicSymptoms
-		appendNotNullValue(string, symptomsDto.getOtherHemorrhagicSymptomsText(), SymptomsDto.OTHER_HEMORRHAGIC_SYMPTOMS_TEXT);
+		// otherHemorrhagicSymptoms
+		appendNotNullValue(string, symptomsDto.getOtherHemorrhagicSymptomsText(),
+				SymptomsDto.OTHER_HEMORRHAGIC_SYMPTOMS_TEXT);
 		appendYesSymptom(string, symptomsDto.getSkinRash(), SymptomsDto.SKIN_RASH);
 		appendYesSymptom(string, symptomsDto.getNeckStiffness(), SymptomsDto.NECK_STIFFNESS);
 		appendYesSymptom(string, symptomsDto.getSoreThroat(), SymptomsDto.SORE_THROAT);
@@ -400,11 +404,13 @@ public final class SymptomsHelper {
 		appendYesSymptom(string, symptomsDto.getJointPain(), SymptomsDto.JOINT_PAIN);
 		appendYesSymptom(string, symptomsDto.getHiccups(), SymptomsDto.HICCUPS);
 		// otherNonHemorrhagicSymptoms
-		appendNotNullValue(string, symptomsDto.getOtherNonHemorrhagicSymptomsText(), SymptomsDto.OTHER_NON_HEMORRHAGIC_SYMPTOMS_TEXT);
+		appendNotNullValue(string, symptomsDto.getOtherNonHemorrhagicSymptomsText(),
+				SymptomsDto.OTHER_NON_HEMORRHAGIC_SYMPTOMS_TEXT);
 		appendYesSymptom(string, symptomsDto.getBackache(), SymptomsDto.BACKACHE);
 		appendYesSymptom(string, symptomsDto.getEyesBleeding(), SymptomsDto.EYES_BLEEDING);
 		appendYesSymptom(string, symptomsDto.getJaundice(), SymptomsDto.JAUNDICE);
-		appendNotNullValue(string, symptomsDto.getJaundiceWithin24HoursOfBirth(), SymptomsDto.JAUNDICE_WITHIN_24_HOURS_OF_BIRTH);
+		appendNotNullValue(string, symptomsDto.getJaundiceWithin24HoursOfBirth(),
+				SymptomsDto.JAUNDICE_WITHIN_24_HOURS_OF_BIRTH);
 		appendYesSymptom(string, symptomsDto.getDarkUrine(), SymptomsDto.DARK_URINE);
 		appendYesSymptom(string, symptomsDto.getStomachBleeding(), SymptomsDto.STOMACH_BLEEDING);
 		appendYesSymptom(string, symptomsDto.getRapidBreathing(), SymptomsDto.RAPID_BREATHING);
@@ -463,21 +469,27 @@ public final class SymptomsHelper {
 		appendYesSymptom(string, symptomsDto.getMeningoencephalitis(), SymptomsDto.MENINGOENCEPHALITIS);
 		appendYesSymptom(string, symptomsDto.getRadiolucentBoneDisease(), SymptomsDto.RADIOLUCENT_BONE_DISEASE);
 		appendYesSymptom(string, symptomsDto.getCongenitalHeartDisease(), SymptomsDto.CONGENITAL_HEART_DISEASE);
-		appendYesSymptom(string, symptomsDto.getFluidInLungCavityAuscultation(), SymptomsDto.FLUID_IN_LUNG_CAVITY_AUSCULTATION);
+		appendYesSymptom(string, symptomsDto.getFluidInLungCavityAuscultation(),
+				SymptomsDto.FLUID_IN_LUNG_CAVITY_AUSCULTATION);
 		appendYesSymptom(string, symptomsDto.getFluidInLungCavityXray(), SymptomsDto.FLUID_IN_LUNG_CAVITY_XRAY);
 		appendYesSymptom(string, symptomsDto.getAbnormalLungXrayFindings(), SymptomsDto.ABNORMAL_LUNG_XRAY_FINDINGS);
 		appendYesSymptom(string, symptomsDto.getConjunctivalInjection(), SymptomsDto.CONJUNCTIVAL_INJECTION);
-		appendYesSymptom(string, symptomsDto.getAcuteRespiratoryDistressSyndrome(), SymptomsDto.ACUTE_RESPIRATORY_DISTRESS_SYNDROME);
-		appendYesSymptom(string, symptomsDto.getPneumoniaClinicalOrRadiologic(), SymptomsDto.PNEUMONIA_CLINICAL_OR_RADIOLOGIC);
-		appendNotNullValue(string, symptomsDto.getCongenitalHeartDiseaseType(), SymptomsDto.CONGENITAL_HEART_DISEASE_TYPE);
-		appendNotNullValue(string, symptomsDto.getCongenitalHeartDiseaseDetails(), SymptomsDto.CONGENITAL_HEART_DISEASE_DETAILS);
+		appendYesSymptom(string, symptomsDto.getAcuteRespiratoryDistressSyndrome(),
+				SymptomsDto.ACUTE_RESPIRATORY_DISTRESS_SYNDROME);
+		appendYesSymptom(string, symptomsDto.getPneumoniaClinicalOrRadiologic(),
+				SymptomsDto.PNEUMONIA_CLINICAL_OR_RADIOLOGIC);
+		appendNotNullValue(string, symptomsDto.getCongenitalHeartDiseaseType(),
+				SymptomsDto.CONGENITAL_HEART_DISEASE_TYPE);
+		appendNotNullValue(string, symptomsDto.getCongenitalHeartDiseaseDetails(),
+				SymptomsDto.CONGENITAL_HEART_DISEASE_DETAILS);
 		appendYesSymptom(string, symptomsDto.getLossOfTaste(), SymptomsDto.LOSS_OF_TASTE);
 		appendYesSymptom(string, symptomsDto.getLossOfSmell(), SymptomsDto.LOSS_OF_SMELL);
 		appendYesSymptom(string, symptomsDto.getWheezing(), SymptomsDto.WHEEZING);
 		appendYesSymptom(string, symptomsDto.getSkinUlcers(), SymptomsDto.SKIN_ULCERS);
 		appendYesSymptom(string, symptomsDto.getInabilityToWalk(), SymptomsDto.INABILITY_TO_WALK);
 		appendYesSymptom(string, symptomsDto.getInDrawingOfChestWall(), SymptomsDto.IN_DRAWING_OF_CHEST_WALL);
-		appendYesSymptom(string, symptomsDto.getRespiratoryDiseaseVentilation(), SymptomsDto.RESPIRATORY_DISEASE_VENTILATION);
+		appendYesSymptom(string, symptomsDto.getRespiratoryDiseaseVentilation(),
+				SymptomsDto.RESPIRATORY_DISEASE_VENTILATION);
 		appendYesSymptom(string, symptomsDto.getFeelingIll(), SymptomsDto.FEELING_ILL);
 		appendYesSymptom(string, symptomsDto.getShivering(), SymptomsDto.SHIVERING);
 		appendYesSymptom(string, symptomsDto.getFastHeartRate(), SymptomsDto.FAST_HEART_RATE);
@@ -511,13 +523,15 @@ public final class SymptomsHelper {
 			if (stringBuilder.length() > 0) {
 				stringBuilder.append(", ");
 			}
-			stringBuilder.append(I18nProperties.getPrefixCaption(SymptomsDto.I18N_PREFIX, dtoPropertyId, null)).append(": ");
+			stringBuilder.append(I18nProperties.getPrefixCaption(SymptomsDto.I18N_PREFIX, dtoPropertyId, null))
+					.append(": ");
 
 			stringBuilder.append(value);
 		}
 	}
 
-	private static void appendNotNullDateValue(StringBuilder stringBuilder, Date value, String dtoPropertyId, Language language) {
+	private static void appendNotNullDateValue(StringBuilder stringBuilder, Date value, String dtoPropertyId,
+			Language language) {
 		appendNotNullValue(stringBuilder, DateHelper.formatLocalDate(value, language), dtoPropertyId);
 	}
 

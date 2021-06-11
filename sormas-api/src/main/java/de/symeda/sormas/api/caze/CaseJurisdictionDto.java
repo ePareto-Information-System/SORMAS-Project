@@ -33,13 +33,8 @@ public class CaseJurisdictionDto implements Serializable {
 	public CaseJurisdictionDto() {
 	}
 
-	public CaseJurisdictionDto(
-		String reportingUserUuid,
-		String regionUuid,
-		String districtUuid,
-		String communityUuid,
-		String healthFacilityUuid,
-		String pointOfEntryUuid) {
+	public CaseJurisdictionDto(String reportingUserUuid, String regionUuid, String districtUuid, String communityUuid,
+			String healthFacilityUuid, String pointOfEntryUuid) {
 		this.reportingUserUuid = reportingUserUuid;
 		this.regionUuid = regionUuid;
 		this.districtUuid = districtUuid;

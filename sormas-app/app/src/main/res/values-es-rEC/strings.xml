@@ -265,6 +265,7 @@
     <string name="heading_app_update_required">Actualización de la aplicación requerida</string>
     <string name="heading_burial">Sepelio</string>
     <string name="heading_burials_visited">Entierros visitados</string>
+    <string name="heading_campaigns_list">Campaign Data</string>
     <string name="heading_case_disease_changed">Enfermedad del caso cambió</string>
     <string name="heading_case_edit">Editar caso</string>
     <string name="heading_case_new">Nuevo caso</string>
@@ -318,6 +319,7 @@
     <string name="heading_outbreak_response">Respuesta al brote</string>
     <string name="heading_person_involved">Persona involucrada</string>
     <string name="heading_person_involved_new">Nueva persona involucrada</string>
+    <string name="heading_person_contact_detail">Person contact details</string>
     <string name="heading_pick_or_create_person">Elegir o crear una persona</string>
     <string name="heading_pick_or_create_case">Elegir o crear un caso</string>
     <string name="heading_pick_or_create_event">Pick or Create a Event</string>
@@ -367,6 +369,7 @@
     <string name="heading_extend_followup">Extend follow-up period</string>
     <string name="heading_contact_tracing_first_contact">First contact with Contact Tracing</string>
     <string name="heading_exposure">Exposure</string>
+    <string name="heading_activityAsCase">Activity as Case</string>
     <string name="hint_add_to_empty_list">Añade una nueva entrada pulsando el símbolo \"+\" en la parte superior derecha.</string>
     <string name="hint_clear">Limpiar</string>
     <string name="hint_create_pin">Por favor, elija un PIN de cuatro dígitos que utilizará para autenticarse cuando abra la aplicación SORMAS.</string>

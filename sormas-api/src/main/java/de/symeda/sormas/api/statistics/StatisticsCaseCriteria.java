@@ -337,7 +337,8 @@ public class StatisticsCaseCriteria implements Serializable {
 		return this;
 	}
 
-	public StatisticsCaseCriteria quartersOfYear(List<QuarterOfYear> quartersOfYear, StatisticsCaseAttribute mainAttribute) {
+	public StatisticsCaseCriteria quartersOfYear(List<QuarterOfYear> quartersOfYear,
+			StatisticsCaseAttribute mainAttribute) {
 		switch (mainAttribute) {
 		case ONSET_TIME:
 			this.onsetQuartersOfYear = quartersOfYear;
@@ -505,9 +506,8 @@ public class StatisticsCaseCriteria implements Serializable {
 		return this;
 	}
 
-	public List<? extends StatisticsGroupingKey> getFilterValuesForGrouping(
-		StatisticsCaseAttribute attribute,
-		StatisticsCaseSubAttribute subAttribute) {
+	public List<? extends StatisticsGroupingKey> getFilterValuesForGrouping(StatisticsCaseAttribute attribute,
+			StatisticsCaseSubAttribute subAttribute) {
 
 		if (subAttribute != null) {
 			switch (subAttribute) {
@@ -626,14 +626,8 @@ public class StatisticsCaseCriteria implements Serializable {
 
 	public boolean hasOnsetDate() {
 
-		return onsetDateFrom != null
-			|| onsetDateTo != null
-			|| onsetEpiWeeks != null
-			|| onsetEpiWeeksOfYear != null
-			|| onsetMonths != null
-			|| onsetMonthsOfYear != null
-			|| onsetQuarters != null
-			|| onsetQuartersOfYear != null
-			|| onsetYears != null;
+		return onsetDateFrom != null || onsetDateTo != null || onsetEpiWeeks != null || onsetEpiWeeksOfYear != null
+				|| onsetMonths != null || onsetMonthsOfYear != null || onsetQuarters != null
+				|| onsetQuartersOfYear != null || onsetYears != null;
 	}
 }

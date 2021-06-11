@@ -43,23 +43,19 @@ import de.symeda.sormas.api.utils.fieldvisibility.checkers.CountryFieldVisibilit
 
 public class CsvStreamUtils {
 
-	public static final int STEP_SIZE = 50;
+	public static <T> void writeCsvContentToStream(Class<T> csvRowClass,
+			SupplierBiFunction<Integer, Integer, List<T>> exportRowsSupplier,
+			SupplierBiFunction<String, Class<?>, String> propertyIdCaptionSupplier,
+			ExportConfigurationDto exportConfiguration, final Predicate redMethodFilter, ConfigFacade configFacade,
+			OutputStream out) {
 
-	public static <T> void writeCsvContentToStream(
-		Class<T> csvRowClass,
-		SupplierBiFunction<Integer, Integer, List<T>> exportRowsSupplier,
-		SupplierBiFunction<String, Class<?>, String> propertyIdCaptionSupplier,
-		ExportConfigurationDto exportConfiguration,
-		final Predicate redMethodFilter,
-		ConfigFacade configFacade,
-		OutputStream out) {
+		try (CSVWriter writer = CSVUtils.createCSVWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8.name()),
+				configFacade.getCsvSeparator())) {
 
-		try (
-			CSVWriter writer = CSVUtils.createCSVWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8.name()), configFacade.getCsvSeparator())) {
-
-			// 1. fields in order of declaration - not using Introspector here, because it gives properties in alphabetical order
-			List<Method> readMethods =
-				getExportRowClassReadMethods(csvRowClass, exportConfiguration, redMethodFilter, configFacade.getCountryLocale());
+			// 1. fields in order of declaration - not using Introspector here, because it
+			// gives properties in alphabetical order
+			List<Method> readMethods = getExportRowClassReadMethods(csvRowClass, exportConfiguration, redMethodFilter,
+					configFacade.getCountryLocale());
 
 			// 2. replace entity fields with all the columns of the entity
 			Map<Method, SubEntityProvider<T>> subEntityProviders = new HashMap<Method, SubEntityProvider<T>>();
@@ -129,7 +125,9 @@ public class CsvStreamUtils {
 			writer.writeNext(labels, false);
 
 			int startIndex = 0;
-			List<T> exportRows = exportRowsSupplier.apply(startIndex, STEP_SIZE);
+			int stepSize = configFacade.getStepSizeForCsvExport();
+
+			List<T> exportRows = exportRowsSupplier.apply(startIndex, stepSize);
 			while (!exportRows.isEmpty()) {
 				try {
 					for (T exportRow : exportRows) {
@@ -143,7 +141,7 @@ public class CsvStreamUtils {
 							labels[i] = DataHelper.valueToString(value);
 						}
 						writer.writeNext(labels);
-					} ;
+					}
 				} catch (InvocationTargetException | IllegalAccessException | IllegalArgumentException e) {
 					throw new RuntimeException(e);
 				} catch (Exception e) {
@@ -151,8 +149,8 @@ public class CsvStreamUtils {
 				}
 
 				writer.flush();
-				startIndex += STEP_SIZE;
-				exportRows = exportRowsSupplier.apply(startIndex, STEP_SIZE);
+				startIndex += stepSize;
+				exportRows = exportRowsSupplier.apply(startIndex, stepSize);
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -160,17 +158,16 @@ public class CsvStreamUtils {
 	}
 
 	private static String getFieldNameFromMethod(Method method) {
-		String propertyId = method.getName().startsWith("get") ? method.getName().substring(3) : method.getName().substring(2);
+		String propertyId = method.getName().startsWith("get") ? method.getName().substring(3)
+				: method.getName().substring(2);
 		propertyId = Character.toLowerCase(propertyId.charAt(0)) + propertyId.substring(1);
 		return propertyId;
 	}
 
-	private static <T> List<Method> getExportRowClassReadMethods(
-		Class<T> exportRowClass,
-		final ExportConfigurationDto exportConfiguration,
-		final Predicate redMethodFilter,
-		String countryLocale) {
-		final CountryFieldVisibilityChecker countryFieldVisibilityChecker = new CountryFieldVisibilityChecker(countryLocale);
+	private static <T> List<Method> getExportRowClassReadMethods(Class<T> exportRowClass,
+			final ExportConfigurationDto exportConfiguration, final Predicate redMethodFilter, String countryLocale) {
+		final CountryFieldVisibilityChecker countryFieldVisibilityChecker = new CountryFieldVisibilityChecker(
+				countryLocale);
 
 		return getReadMethods(exportRowClass, new Predicate() {
 
@@ -179,8 +176,8 @@ public class CsvStreamUtils {
 				Method m = (Method) o;
 
 				return (countryFieldVisibilityChecker.isVisible(m))
-					&& (redMethodFilter == null || redMethodFilter.evaluate(o))
-					&& (exportConfiguration == null || isConfiguredForExport(m, exportConfiguration));
+						&& (redMethodFilter == null || redMethodFilter.evaluate(o))
+						&& (exportConfiguration == null || isConfiguredForExport(m, exportConfiguration));
 			}
 		});
 	}
@@ -204,8 +201,7 @@ public class CsvStreamUtils {
 			public boolean evaluate(Object o) {
 				Method m = (Method) o;
 				return (m.getName().startsWith("get") || m.getName().startsWith("is"))
-					&& m.isAnnotationPresent(Order.class)
-					&& (filters == null || filters.evaluate(o));
+						&& m.isAnnotationPresent(Order.class) && (filters == null || filters.evaluate(o));
 			}
 		});
 		Collections.sort(readMethods, new Comparator<Method>() {

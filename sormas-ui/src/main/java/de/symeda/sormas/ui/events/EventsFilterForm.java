@@ -44,6 +44,7 @@ import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.DateFilterOption;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.EpiWeek;
+import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.AbstractFilterForm;
 import de.symeda.sormas.ui.utils.CssStyles;
@@ -69,7 +70,8 @@ public class EventsFilterForm extends AbstractFilterForm<EventCriteria> {
 		FACILITY_TYPE_GROUP_FILTER,
 		LocationDto.FACILITY_TYPE,
 		LocationDto.FACILITY,
-		EventDto.EVENT_INVESTIGATION_STATUS)
+		EventDto.EVENT_INVESTIGATION_STATUS,
+		EventDto.EVENT_MANAGEMENT_STATUS)
 		+ loc(EVENT_WEEK_AND_DATE_FILTER)
 		+ loc(EVENT_SIGNAL_EVOLUTION_WEEK_AND_DATE_FILTER)
 		+ loc(ACTION_WEEK_AND_DATE_FILTER);
@@ -78,7 +80,10 @@ public class EventsFilterForm extends AbstractFilterForm<EventCriteria> {
 	private final boolean hideActionFilters;
 
 	protected EventsFilterForm(boolean hideEventStatusFilter, boolean hideActionFilters) {
-		super(EventCriteria.class, EventIndexDto.I18N_PREFIX);
+		super(
+			EventCriteria.class,
+			EventIndexDto.I18N_PREFIX,
+			FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()));
 		this.hideEventStatusFilter = hideEventStatusFilter;
 		this.hideActionFilters = hideActionFilters;
 
@@ -104,7 +109,8 @@ public class EventsFilterForm extends AbstractFilterForm<EventCriteria> {
 			EventCriteria.REPORTING_USER_ROLE,
 			EventCriteria.RESPONSIBLE_USER,
 			EventCriteria.FREE_TEXT,
-			EventCriteria.FREE_TEXT_EVENT_PARTICIPANTS };
+			EventCriteria.FREE_TEXT_EVENT_PARTICIPANTS,
+			EventCriteria.FREE_TEXT_EVENT_GROUPS };
 	}
 
 	@Override
@@ -126,6 +132,13 @@ public class EventsFilterForm extends AbstractFilterForm<EventCriteria> {
 				I18nProperties.getString(Strings.promptEventsSearchFieldEventParticipants),
 				200));
 		searchFieldEventParticipants.setNullRepresentation("");
+
+		TextField searchFieldEventGroups = addField(
+			FieldConfiguration.withCaptionAndPixelSized(
+				EventCriteria.FREE_TEXT_EVENT_GROUPS,
+				I18nProperties.getString(Strings.promptEventsSearchFieldEventGroups),
+				200));
+		searchFieldEventGroups.setNullRepresentation("");
 	}
 
 	@Override
@@ -134,7 +147,8 @@ public class EventsFilterForm extends AbstractFilterForm<EventCriteria> {
 			moreFiltersContainer,
 			FieldConfiguration.pixelSized(EventDto.SRC_TYPE, 140),
 			FieldConfiguration.pixelSized(EventDto.TYPE_OF_PLACE, 140),
-			FieldConfiguration.pixelSized(EventDto.EVENT_INVESTIGATION_STATUS, 140));
+			FieldConfiguration.pixelSized(EventDto.EVENT_INVESTIGATION_STATUS, 140),
+			FieldConfiguration.pixelSized(EventDto.EVENT_MANAGEMENT_STATUS, 140));
 
 		ComboBox regionField = addField(
 			moreFiltersContainer,
@@ -271,7 +285,6 @@ public class EventsFilterForm extends AbstractFilterForm<EventCriteria> {
 			fromDate = DateHelper.getEpiWeekStart((EpiWeek) weekAndDateFilter.getWeekFromFilter().getValue());
 			toDate = DateHelper.getEpiWeekEnd((EpiWeek) weekAndDateFilter.getWeekToFilter().getValue());
 		}
-		weekAndDateFilter.setVisible(false);
 
 		if ((fromDate != null && toDate != null) || (fromDate == null && toDate == null)) {
 			criteria.dateBetween(dateType, fromDate, toDate, dateFilterOption);

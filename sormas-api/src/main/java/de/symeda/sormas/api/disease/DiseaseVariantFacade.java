@@ -27,13 +27,15 @@ import java.util.List;
 @Remote
 public interface DiseaseVariantFacade {
 
-    List<DiseaseVariantDto> getAllAfter(Date date);
+	List<DiseaseVariantDto> getAllAfter(Date date);
 
-    List<DiseaseVariantDto> getByUuids(List<String> uuids);
+	List<DiseaseVariantDto> getByUuids(List<String> uuids);
 
-    List<String> getAllUuids();
+	List<String> getAllUuids();
 
-    List<DiseaseVariantReferenceDto> getAll();
+	List<DiseaseVariantReferenceDto> getAll();
 
-    List<DiseaseVariantReferenceDto> getAllByDisease(Disease disease);
+	List<DiseaseVariantReferenceDto> getAllByDisease(Disease disease);
+
+	List<DiseaseVariantReferenceDto> getByName(String name, Disease disease);
 }

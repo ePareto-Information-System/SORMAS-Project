@@ -19,17 +19,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum ExposureType {
 
-	WORK,
-	TRAVEL,
-	SPORT,
-	VISIT,
-	GATHERING,
-	HABITATION,
-	PERSONAL_SERVICES,
-	BURIAL,
-	ANIMAL_CONTACT,
-	OTHER,
-	UNKNOWN;
+	WORK, TRAVEL, SPORT, VISIT, GATHERING, HABITATION, PERSONAL_SERVICES, BURIAL, ANIMAL_CONTACT, OTHER, UNKNOWN;
 
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);

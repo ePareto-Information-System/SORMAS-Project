@@ -39,7 +39,8 @@ public class ClassificationPathogenTestCriteriaDto extends ClassificationCaseCri
 		super();
 	}
 
-	public ClassificationPathogenTestCriteriaDto(String propertyId, List<PathogenTestType> testTypes, Object... propertyValues) {
+	public ClassificationPathogenTestCriteriaDto(String propertyId, List<PathogenTestType> testTypes,
+			Object... propertyValues) {
 
 		super(propertyId, propertyValues);
 		this.testTypes = testTypes;
@@ -60,10 +61,12 @@ public class ClassificationPathogenTestCriteriaDto extends ClassificationCaseCri
 
 			Method method = null;
 			try {
-				method = getInvokeClass().getMethod("get" + propertyId.substring(0, 1).toUpperCase() + propertyId.substring(1));
+				method = getInvokeClass()
+						.getMethod("get" + propertyId.substring(0, 1).toUpperCase() + propertyId.substring(1));
 			} catch (NoSuchMethodException e) {
 				try {
-					method = getInvokeClass().getMethod("is" + propertyId.substring(0, 1).toUpperCase() + propertyId.substring(1));
+					method = getInvokeClass()
+							.getMethod("is" + propertyId.substring(0, 1).toUpperCase() + propertyId.substring(1));
 				} catch (NoSuchMethodException newE) {
 					throw new RuntimeException(newE);
 				}
@@ -76,7 +79,8 @@ public class ClassificationPathogenTestCriteriaDto extends ClassificationCaseCri
 				if (propertyValues.contains(value)) {
 					return true;
 				}
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException e) {
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
+					| SecurityException e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -90,11 +94,13 @@ public class ClassificationPathogenTestCriteriaDto extends ClassificationCaseCri
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append(I18nProperties.getPrefixCaption(PathogenTestDto.I18N_PREFIX, propertyId));
 		if (testTypes != null && !testTypes.isEmpty()) {
-			stringBuilder.append(" ").append(I18nProperties.getString(Strings.classificationCriteriaForTestType)).append(" ");
+			stringBuilder.append(" ").append(I18nProperties.getString(Strings.classificationCriteriaForTestType))
+					.append(" ");
 			for (int i = 0; i < testTypes.size(); i++) {
 				if (i > 0) {
 					if (i == testTypes.size() - 1) {
-						stringBuilder.append(" <b>").append(I18nProperties.getString(Strings.or).toUpperCase()).append("</b> ");
+						stringBuilder.append(" <b>").append(I18nProperties.getString(Strings.or).toUpperCase())
+								.append("</b> ");
 					} else {
 						stringBuilder.append(", ");
 					}

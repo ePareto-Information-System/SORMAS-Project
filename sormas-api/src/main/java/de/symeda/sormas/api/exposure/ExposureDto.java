@@ -41,6 +41,7 @@ public class ExposureDto extends PseudonymizableDto {
 	public static final String I18N_PREFIX = "Exposure";
 
 	public static final String REPORTING_USER = "reportingUser";
+	public static final String PROBABLE_INFECTION_ENVIRONMENT = "probableInfectionEnvironment";
 	public static final String START_DATE = "startDate";
 	public static final String END_DATE = "endDate";
 	public static final String DESCRIPTION = "description";
@@ -91,9 +92,12 @@ public class ExposureDto extends PseudonymizableDto {
 	public static final String DECEASED_PERSON_NAME = "deceasedPersonName";
 	public static final String DECEASED_PERSON_RELATION = "deceasedPersonRelation";
 	public static final String EXPOSURE_ROLE = "exposureRole";
+	public static final String LARGE_ATTENDANCE_NUMBER = "largeAttendanceNumber";
 
 	@SensitiveData
 	private UserReferenceDto reportingUser;
+	@HideForCountriesExcept
+	private boolean probableInfectionEnvironment;
 	private Date startDate;
 	private Date endDate;
 	@SensitiveData
@@ -103,7 +107,6 @@ public class ExposureDto extends PseudonymizableDto {
 	@SensitiveData
 	private String exposureTypeDetails;
 	private LocationDto location;
-	@HideForCountriesExcept
 	private ExposureRole exposureRole;
 
 	// Type of Place
@@ -130,92 +133,34 @@ public class ExposureDto extends PseudonymizableDto {
 	private String protectiveMeasuresDetails;
 	private YesNoUnknown shortDistance;
 	private YesNoUnknown longFaceToFaceContact;
-	@Diseases({
-		Disease.CORONAVIRUS,
-		Disease.UNDEFINED,
-		Disease.OTHER })
+	@Diseases({ Disease.CORONAVIRUS, Disease.UNDEFINED, Disease.OTHER })
 	private YesNoUnknown animalMarket;
-	@Diseases({
-		Disease.AFP,
-		Disease.EVD,
-		Disease.GUINEA_WORM,
-		Disease.POLIO,
-		Disease.CORONAVIRUS,
-		Disease.UNSPECIFIED_VHF,
-		Disease.UNDEFINED,
-		Disease.OTHER })
+	@Diseases({ Disease.AFP, Disease.EVD, Disease.GUINEA_WORM, Disease.POLIO, Disease.CORONAVIRUS,
+			Disease.UNSPECIFIED_VHF, Disease.UNDEFINED, Disease.OTHER })
 	private YesNoUnknown percutaneous;
-	@Diseases({
-		Disease.AFP,
-		Disease.EVD,
-		Disease.GUINEA_WORM,
-		Disease.POLIO,
-		Disease.CORONAVIRUS,
-		Disease.UNSPECIFIED_VHF,
-		Disease.UNDEFINED,
-		Disease.OTHER })
+	@Diseases({ Disease.AFP, Disease.EVD, Disease.GUINEA_WORM, Disease.POLIO, Disease.CORONAVIRUS,
+			Disease.UNSPECIFIED_VHF, Disease.UNDEFINED, Disease.OTHER })
 	private YesNoUnknown contactToBodyFluids;
-	@Diseases({
-		Disease.AFP,
-		Disease.GUINEA_WORM,
-		Disease.NEW_INFLUENZA,
-		Disease.ANTHRAX,
-		Disease.POLIO,
-		Disease.CORONAVIRUS,
-		Disease.UNDEFINED,
-		Disease.OTHER })
+	@Diseases({ Disease.AFP, Disease.GUINEA_WORM, Disease.NEW_INFLUENZA, Disease.ANTHRAX, Disease.POLIO,
+			Disease.CORONAVIRUS, Disease.UNDEFINED, Disease.OTHER })
 	private YesNoUnknown handlingSamples;
-	@Diseases({
-		Disease.AFP,
-		Disease.GUINEA_WORM,
-		Disease.NEW_INFLUENZA,
-		Disease.ANTHRAX,
-		Disease.POLIO,
-		Disease.UNDEFINED,
-		Disease.OTHER })
+	@Diseases({ Disease.AFP, Disease.GUINEA_WORM, Disease.NEW_INFLUENZA, Disease.ANTHRAX, Disease.POLIO,
+			Disease.UNDEFINED, Disease.OTHER })
 	private YesNoUnknown eatingRawAnimalProducts;
-	@Diseases({
-		Disease.AFP,
-		Disease.EVD,
-		Disease.GUINEA_WORM,
-		Disease.LASSA,
-		Disease.MONKEYPOX,
-		Disease.PLAGUE,
-		Disease.ANTHRAX,
-		Disease.POLIO,
-		Disease.UNSPECIFIED_VHF,
-		Disease.UNDEFINED,
-		Disease.OTHER })
+	@Diseases({ Disease.AFP, Disease.EVD, Disease.GUINEA_WORM, Disease.LASSA, Disease.MONKEYPOX, Disease.PLAGUE,
+			Disease.ANTHRAX, Disease.POLIO, Disease.UNSPECIFIED_VHF, Disease.UNDEFINED, Disease.OTHER })
 	private YesNoUnknown handlingAnimals;
 	private AnimalCondition animalCondition;
 	private YesNoUnknown animalVaccinated;
 	private AnimalContactType animalContactType;
 	@SensitiveData
 	private String animalContactTypeDetails;
-	@Diseases({
-		Disease.AFP,
-		Disease.CHOLERA,
-		Disease.GUINEA_WORM,
-		Disease.POLIO,
-		Disease.UNDEFINED,
-		Disease.OTHER })
+	@Diseases({ Disease.AFP, Disease.CHOLERA, Disease.GUINEA_WORM, Disease.POLIO, Disease.UNDEFINED, Disease.OTHER })
 	private YesNoUnknown bodyOfWater;
-	@Diseases({
-		Disease.AFP,
-		Disease.CHOLERA,
-		Disease.GUINEA_WORM,
-		Disease.POLIO,
-		Disease.UNDEFINED,
-		Disease.OTHER })
+	@Diseases({ Disease.AFP, Disease.CHOLERA, Disease.GUINEA_WORM, Disease.POLIO, Disease.UNDEFINED, Disease.OTHER })
 	private WaterSource waterSource;
 	@SensitiveData
-	@Diseases({
-		Disease.AFP,
-		Disease.CHOLERA,
-		Disease.GUINEA_WORM,
-		Disease.POLIO,
-		Disease.UNDEFINED,
-		Disease.OTHER })
+	@Diseases({ Disease.AFP, Disease.CHOLERA, Disease.GUINEA_WORM, Disease.POLIO, Disease.UNDEFINED, Disease.OTHER })
 	private String waterSourceDetails;
 	@PersonalData
 	private ContactReferenceDto contactToCase;
@@ -242,6 +187,7 @@ public class ExposureDto extends PseudonymizableDto {
 	private String deceasedPersonName;
 	@SensitiveData
 	private String deceasedPersonRelation;
+	private YesNoUnknown largeAttendanceNumber;
 
 	public static ExposureDto build(ExposureType exposureType) {
 
@@ -259,6 +205,14 @@ public class ExposureDto extends PseudonymizableDto {
 
 	public void setReportingUser(UserReferenceDto reportingUser) {
 		this.reportingUser = reportingUser;
+	}
+
+	public boolean isProbableInfectionEnvironment() {
+		return probableInfectionEnvironment;
+	}
+
+	public void setProbableInfectionEnvironment(boolean probableInfectionEnvironment) {
+		this.probableInfectionEnvironment = probableInfectionEnvironment;
 	}
 
 	public Date getStartDate() {
@@ -659,6 +613,14 @@ public class ExposureDto extends PseudonymizableDto {
 
 	public void setRiskArea(YesNoUnknown riskArea) {
 		this.riskArea = riskArea;
+	}
+
+	public YesNoUnknown getLargeAttendanceNumber() {
+		return largeAttendanceNumber;
+	}
+
+	public void setLargeAttendanceNumber(YesNoUnknown largeAttendanceNumber) {
+		this.largeAttendanceNumber = largeAttendanceNumber;
 	}
 
 	@Override

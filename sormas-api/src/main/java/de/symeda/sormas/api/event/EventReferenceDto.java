@@ -44,13 +44,8 @@ public class EventReferenceDto extends ReferenceDto {
 		setCaption(caption);
 	}
 
-	public EventReferenceDto(
-		String uuid,
-		Disease disease,
-		String diseaseDetails,
-		EventStatus eventStatus,
-		EventInvestigationStatus eventInvestigationStatus,
-		Date eventDate) {
+	public EventReferenceDto(String uuid, Disease disease, String diseaseDetails, EventStatus eventStatus,
+			EventInvestigationStatus eventInvestigationStatus, Date eventDate) {
 		setUuid(uuid);
 		setCaption(buildCaption(disease, diseaseDetails, eventStatus, eventInvestigationStatus, eventDate));
 	}
@@ -60,14 +55,11 @@ public class EventReferenceDto extends ReferenceDto {
 		return super.getCaption();
 	}
 
-	public static String buildCaption(
-		Disease disease,
-		String diseaseDetails,
-		EventStatus eventStatus,
-		EventInvestigationStatus eventInvestigationStatus,
-		Date eventDate) {
+	public static String buildCaption(Disease disease, String diseaseDetails, EventStatus eventStatus,
+			EventInvestigationStatus eventInvestigationStatus, Date eventDate) {
 
-		String diseaseString = disease != Disease.OTHER ? DataHelper.toStringNullable(disease) : DataHelper.toStringNullable(diseaseDetails);
+		String diseaseString = disease != Disease.OTHER ? DataHelper.toStringNullable(disease)
+				: DataHelper.toStringNullable(diseaseDetails);
 		String eventStatusString = DataHelper.toStringNullable(eventStatus);
 		String eventInvestigationStatusString = DataHelper.toStringNullable(eventInvestigationStatus);
 		if (!diseaseString.isEmpty()) {
@@ -75,7 +67,7 @@ public class EventReferenceDto extends ReferenceDto {
 		}
 
 		Language language = I18nProperties.getUserLanguage();
-		return diseaseString + " " + eventStatusString + " " + eventInvestigationStatusString + " " + I18nProperties.getString(Strings.on) + " "
-			+ DateHelper.formatLocalDate(eventDate, language);
+		return diseaseString + " " + eventStatusString + " " + eventInvestigationStatusString + " "
+				+ I18nProperties.getString(Strings.on) + " " + DateHelper.formatLocalDate(eventDate, language);
 	}
 }

@@ -45,152 +45,58 @@ public class VaccinationInfoDto extends EntityDto {
 	public static final String VACCINE_UNII_CODE = "vaccineUniiCode";
 	public static final String VACCINE_ATC_CODE = "vaccineAtcCode";
 
-	@Diseases({
-		Disease.AFP,
-		Disease.GUINEA_WORM,
-		Disease.MEASLES,
-		Disease.POLIO,
-		Disease.YELLOW_FEVER,
-		Disease.CSM,
-		Disease.RABIES,
-		Disease.UNSPECIFIED_VHF,
-		Disease.ANTHRAX,
-		Disease.CORONAVIRUS,
-		Disease.OTHER })
+	@Diseases({ Disease.AFP, Disease.GUINEA_WORM, Disease.MEASLES, Disease.POLIO, Disease.YELLOW_FEVER, Disease.CSM,
+			Disease.RABIES, Disease.UNSPECIFIED_VHF, Disease.ANTHRAX, Disease.CORONAVIRUS, Disease.OTHER })
 	@Outbreaks
 	private Vaccination vaccination;
 
-	@Diseases({
-		Disease.AFP,
-		Disease.GUINEA_WORM,
-		Disease.MEASLES,
-		Disease.POLIO,
-		Disease.CSM,
-		Disease.YELLOW_FEVER,
-		Disease.RABIES,
-		Disease.UNSPECIFIED_VHF,
-		Disease.ANTHRAX,
-		Disease.CORONAVIRUS,
-		Disease.OTHER })
+	@Diseases({ Disease.AFP, Disease.GUINEA_WORM, Disease.MEASLES, Disease.POLIO, Disease.CSM, Disease.YELLOW_FEVER,
+			Disease.RABIES, Disease.UNSPECIFIED_VHF, Disease.ANTHRAX, Disease.CORONAVIRUS, Disease.OTHER })
 	@Outbreaks
 	private String vaccinationDoses;
 
-	@Diseases({
-		Disease.AFP,
-		Disease.GUINEA_WORM,
-		Disease.MEASLES,
-		Disease.POLIO,
-		Disease.YELLOW_FEVER,
-		Disease.CSM,
-		Disease.MONKEYPOX,
-		Disease.UNSPECIFIED_VHF,
-		Disease.RABIES,
-		Disease.ANTHRAX,
-		Disease.CORONAVIRUS,
-		Disease.OTHER })
+	@Diseases({ Disease.AFP, Disease.GUINEA_WORM, Disease.MEASLES, Disease.POLIO, Disease.YELLOW_FEVER, Disease.CSM,
+			Disease.MONKEYPOX, Disease.UNSPECIFIED_VHF, Disease.RABIES, Disease.ANTHRAX, Disease.CORONAVIRUS,
+			Disease.OTHER })
 	@Outbreaks
 	private Date firstVaccinationDate;
 
-	@Diseases({
-		Disease.AFP,
-		Disease.GUINEA_WORM,
-		Disease.MEASLES,
-		Disease.POLIO,
-		Disease.YELLOW_FEVER,
-		Disease.CSM,
-		Disease.MONKEYPOX,
-		Disease.UNSPECIFIED_VHF,
-		Disease.RABIES,
-		Disease.ANTHRAX,
-		Disease.CORONAVIRUS,
-		Disease.OTHER })
+	@Diseases({ Disease.AFP, Disease.GUINEA_WORM, Disease.MEASLES, Disease.POLIO, Disease.YELLOW_FEVER, Disease.CSM,
+			Disease.MONKEYPOX, Disease.UNSPECIFIED_VHF, Disease.RABIES, Disease.ANTHRAX, Disease.CORONAVIRUS,
+			Disease.OTHER })
 	@Outbreaks
 	private Date lastVaccinationDate;
 
-	@Diseases({
-		Disease.AFP,
-		Disease.GUINEA_WORM,
-		Disease.MEASLES,
-		Disease.POLIO,
-		Disease.YELLOW_FEVER,
-		Disease.CSM,
-		Disease.RABIES,
-		Disease.UNSPECIFIED_VHF,
-		Disease.ANTHRAX,
-		Disease.CORONAVIRUS,
-		Disease.OTHER })
+	@Diseases({ Disease.AFP, Disease.GUINEA_WORM, Disease.MEASLES, Disease.POLIO, Disease.YELLOW_FEVER, Disease.CSM,
+			Disease.RABIES, Disease.UNSPECIFIED_VHF, Disease.ANTHRAX, Disease.CORONAVIRUS, Disease.OTHER })
 	private VaccinationInfoSource vaccinationInfoSource;
 
-	@Diseases({
-		Disease.CORONAVIRUS })
+	@Diseases({ Disease.CORONAVIRUS })
 	private Vaccine vaccineName;
 
-	@Diseases({
-		Disease.CORONAVIRUS })
+	@Diseases({ Disease.CORONAVIRUS })
 	private String otherVaccineName;
 
-	@Diseases({
-		Disease.CORONAVIRUS, })
+	@Diseases({ Disease.CORONAVIRUS, })
 	private VaccineManufacturer vaccineManufacturer;
 
-	@Diseases({
-		Disease.CORONAVIRUS, })
+	@Diseases({ Disease.CORONAVIRUS, })
 	private String otherVaccineManufacturer;
 
-	@Diseases({
-		Disease.AFP,
-		Disease.GUINEA_WORM,
-		Disease.MEASLES,
-		Disease.POLIO,
-		Disease.YELLOW_FEVER,
-		Disease.CSM,
-		Disease.RABIES,
-		Disease.UNSPECIFIED_VHF,
-		Disease.ANTHRAX,
-		Disease.CORONAVIRUS,
-		Disease.OTHER })
+	@Diseases({ Disease.AFP, Disease.GUINEA_WORM, Disease.MEASLES, Disease.POLIO, Disease.YELLOW_FEVER, Disease.CSM,
+			Disease.RABIES, Disease.UNSPECIFIED_VHF, Disease.ANTHRAX, Disease.CORONAVIRUS, Disease.OTHER })
 	private String vaccineInn;
 
-	@Diseases({
-		Disease.AFP,
-		Disease.GUINEA_WORM,
-		Disease.MEASLES,
-		Disease.POLIO,
-		Disease.YELLOW_FEVER,
-		Disease.CSM,
-		Disease.RABIES,
-		Disease.UNSPECIFIED_VHF,
-		Disease.ANTHRAX,
-		Disease.CORONAVIRUS,
-		Disease.OTHER })
+	@Diseases({ Disease.AFP, Disease.GUINEA_WORM, Disease.MEASLES, Disease.POLIO, Disease.YELLOW_FEVER, Disease.CSM,
+			Disease.RABIES, Disease.UNSPECIFIED_VHF, Disease.ANTHRAX, Disease.CORONAVIRUS, Disease.OTHER })
 	private String vaccineBatchNumber;
 
-	@Diseases({
-		Disease.AFP,
-		Disease.GUINEA_WORM,
-		Disease.MEASLES,
-		Disease.POLIO,
-		Disease.YELLOW_FEVER,
-		Disease.CSM,
-		Disease.RABIES,
-		Disease.UNSPECIFIED_VHF,
-		Disease.ANTHRAX,
-		Disease.CORONAVIRUS,
-		Disease.OTHER })
+	@Diseases({ Disease.AFP, Disease.GUINEA_WORM, Disease.MEASLES, Disease.POLIO, Disease.YELLOW_FEVER, Disease.CSM,
+			Disease.RABIES, Disease.UNSPECIFIED_VHF, Disease.ANTHRAX, Disease.CORONAVIRUS, Disease.OTHER })
 	private String vaccineUniiCode;
 
-	@Diseases({
-		Disease.AFP,
-		Disease.GUINEA_WORM,
-		Disease.MEASLES,
-		Disease.POLIO,
-		Disease.YELLOW_FEVER,
-		Disease.CSM,
-		Disease.RABIES,
-		Disease.UNSPECIFIED_VHF,
-		Disease.ANTHRAX,
-		Disease.CORONAVIRUS,
-		Disease.OTHER })
+	@Diseases({ Disease.AFP, Disease.GUINEA_WORM, Disease.MEASLES, Disease.POLIO, Disease.YELLOW_FEVER, Disease.CSM,
+			Disease.RABIES, Disease.UNSPECIFIED_VHF, Disease.ANTHRAX, Disease.CORONAVIRUS, Disease.OTHER })
 	private String vaccineAtcCode;
 
 	public static VaccinationInfoDto build() {

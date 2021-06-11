@@ -19,14 +19,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum GatheringType {
 
-	PARTY,
-	RELIGIOUS,
-	MUSICAL,
-	DEMONSTRATION,
-	CARNIVAL,
-	FAIR,
-	SPORTING_EVENT,
-	OTHER;
+	PARTY, RELIGIOUS, MUSICAL, CONCERT, DEMONSTRATION, CARNIVAL, FAIR, SPORTING_EVENT, OTHER;
 
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);

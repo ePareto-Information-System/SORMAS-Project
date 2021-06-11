@@ -52,7 +52,8 @@ public class UserReferenceDto extends ReferenceDto {
 	public static String buildCaption(String firstName, String lastName, Set<UserRole> userRoles) {
 
 		StringBuilder result = new StringBuilder();
-		result.append(DataHelper.toStringNullable(firstName)).append(" ").append(DataHelper.toStringNullable(lastName).toUpperCase());
+		result.append(DataHelper.toStringNullable(firstName)).append(" ")
+				.append(DataHelper.toStringNullable(lastName).toUpperCase());
 		boolean first = true;
 		if (userRoles != null) {
 			for (UserRole userRole : userRoles) {
@@ -74,5 +75,9 @@ public class UserReferenceDto extends ReferenceDto {
 
 	public String getLastName() {
 		return lastName;
+	}
+
+	public String getShortCaption() {
+		return buildCaption(firstName, lastName, null);
 	}
 }

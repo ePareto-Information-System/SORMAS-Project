@@ -21,14 +21,9 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum Vaccine {
 
-	COMIRNATY(VaccineManufacturer.BIONTECH_PFIZER),
-	MRNA_1273(VaccineManufacturer.MODERNA),
-	OXFORD_ASTRA_ZENECA(VaccineManufacturer.ASTRA_ZENECA),
-	AD26_COV2_S(VaccineManufacturer.JOHNSON_JOHNSON),
-	NVX_COV_2373(VaccineManufacturer.NOVAVAX),
-	SANOFI_GSK(VaccineManufacturer.SANOFI_GSK),
-	UNKNOWN,
-	OTHER;
+	COMIRNATY(VaccineManufacturer.BIONTECH_PFIZER), MRNA_1273(VaccineManufacturer.MODERNA),
+	OXFORD_ASTRA_ZENECA(VaccineManufacturer.ASTRA_ZENECA), AD26_COV2_S(VaccineManufacturer.JOHNSON_JOHNSON),
+	NVX_COV_2373(VaccineManufacturer.NOVAVAX), SANOFI_GSK(VaccineManufacturer.SANOFI_GSK), UNKNOWN, OTHER;
 
 	@Nullable
 	private VaccineManufacturer manufacturer;

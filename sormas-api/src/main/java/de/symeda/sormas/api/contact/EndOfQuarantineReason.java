@@ -19,10 +19,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum EndOfQuarantineReason {
 
-	ASYMPTOMATIC,
-	ISOLATED_AS_CASE,
-	LOST_TO_FOLLOWUP,
-	OTHER;
+	ASYMPTOMATIC, ISOLATED_AS_CASE, LOST_TO_FOLLOWUP, OTHER;
 
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);

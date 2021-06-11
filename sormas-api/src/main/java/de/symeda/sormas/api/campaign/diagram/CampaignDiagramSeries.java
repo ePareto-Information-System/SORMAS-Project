@@ -78,8 +78,8 @@ public class CampaignDiagramSeries implements Serializable {
 	}
 
 	/**
-	 * Needed. Otherwise hibernate will persist whenever loading,
-	 * because hibernate types creates new instances that aren't equal.
+	 * Needed. Otherwise hibernate will persist whenever loading, because hibernate
+	 * types creates new instances that aren't equal.
 	 */
 	@Override
 	public boolean equals(Object o) {
@@ -88,13 +88,10 @@ public class CampaignDiagramSeries implements Serializable {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		CampaignDiagramSeries that = (CampaignDiagramSeries) o;
-		return Objects.equals(fieldId, that.fieldId)
-			&& Objects.equals(formId, that.formId)
-			&& Objects.equals(referenceValue, that.referenceValue)
-			&& Objects.equals(stack, that.stack)
-			&& Objects.equals(caption, that.caption)
-			&& Objects.equals(color, that.color)
-			&& Objects.equals(populationGroup, that.populationGroup);
+		return Objects.equals(fieldId, that.fieldId) && Objects.equals(formId, that.formId)
+				&& Objects.equals(referenceValue, that.referenceValue) && Objects.equals(stack, that.stack)
+				&& Objects.equals(caption, that.caption) && Objects.equals(color, that.color)
+				&& Objects.equals(populationGroup, that.populationGroup);
 	}
 
 	public AgeGroup getPopulationGroup() {

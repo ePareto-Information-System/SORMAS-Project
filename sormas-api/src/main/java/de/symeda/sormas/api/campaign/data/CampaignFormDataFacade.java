@@ -48,18 +48,18 @@ public interface CampaignFormDataFacade {
 
 	CampaignFormDataReferenceDto getReferenceByUuid(String uuid);
 
-	List<CampaignFormDataIndexDto> getIndexList(CampaignFormDataCriteria criteria, Integer first, Integer max, List<SortProperty> sortProperties);
+	List<CampaignFormDataIndexDto> getIndexList(CampaignFormDataCriteria criteria, Integer first, Integer max,
+			List<SortProperty> sortProperties);
 
 	CampaignFormDataDto getExistingData(CampaignFormDataCriteria criteria);
 
 	long count(CampaignFormDataCriteria criteria);
 
-	List<CampaignDiagramDataDto> getDiagramData(List<CampaignDiagramSeries> diagramSeries, CampaignDiagramCriteria campaignDiagramCriteria);
+	List<CampaignDiagramDataDto> getDiagramData(List<CampaignDiagramSeries> diagramSeries,
+			CampaignDiagramCriteria campaignDiagramCriteria);
 
-	List<CampaignDiagramDataDto> getDiagramDataByAgeGroup(
-		CampaignDiagramSeries diagramSeriesTotal,
-		CampaignDiagramSeries diagramSeries,
-		CampaignDiagramCriteria campaignDiagramCriteria);
+	List<CampaignDiagramDataDto> getDiagramDataByAgeGroup(CampaignDiagramSeries diagramSeriesTotal,
+			CampaignDiagramSeries diagramSeries, CampaignDiagramCriteria campaignDiagramCriteria);
 
 	List<String> getAllActiveUuids();
 

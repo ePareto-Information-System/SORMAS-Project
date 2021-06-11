@@ -24,43 +24,19 @@ public class VisitContactJurisdictionDto extends ContactJurisdictionDto {
 
 	private long visitId;
 
-	public VisitContactJurisdictionDto(
-		long visitId,
-		String reportingUserUuid,
-		String regionUuid,
-		String districtUuid,
-		String communityUuid,
-		String caseReportingUserUuid,
-		String caseRegionUui,
-		String caseDistrictUud,
-		String caseCommunityUuid,
-		String caseHealthFacilityUuid,
-		String casePointOfEntryUuid) {
+	public VisitContactJurisdictionDto(long visitId, String reportingUserUuid, String regionUuid, String districtUuid,
+			String communityUuid, String caseReportingUserUuid, String caseRegionUui, String caseDistrictUud,
+			String caseCommunityUuid, String caseHealthFacilityUuid, String casePointOfEntryUuid) {
 
-		this(
-			visitId,
-			reportingUserUuid,
-			regionUuid,
-			districtUuid,
-			communityUuid,
-			caseReportingUserUuid != null
-				? new CaseJurisdictionDto(
-					caseReportingUserUuid,
-					caseRegionUui,
-					caseDistrictUud,
-					caseCommunityUuid,
-					caseHealthFacilityUuid,
-					casePointOfEntryUuid)
-				: null);
+		this(visitId, reportingUserUuid, regionUuid, districtUuid, communityUuid,
+				caseReportingUserUuid != null
+						? new CaseJurisdictionDto(caseReportingUserUuid, caseRegionUui, caseDistrictUud,
+								caseCommunityUuid, caseHealthFacilityUuid, casePointOfEntryUuid)
+						: null);
 	}
 
-	public VisitContactJurisdictionDto(
-		long visitId,
-		String reportingUserUuid,
-		String regionUuid,
-		String districtUuid,
-		String communityUuid,
-		CaseJurisdictionDto caseJursidiction) {
+	public VisitContactJurisdictionDto(long visitId, String reportingUserUuid, String regionUuid, String districtUuid,
+			String communityUuid, CaseJurisdictionDto caseJursidiction) {
 
 		super(reportingUserUuid, regionUuid, districtUuid, communityUuid, caseJursidiction);
 		this.visitId = visitId;

@@ -16,7 +16,8 @@ public class CampaignDiagramDataDto implements Serializable {
 	private String stack;
 	private boolean hasAgeGroupData;
 
-	public CampaignDiagramDataDto(String fieldCaption, Number valueSum, Object groupingKey, String groupingCaption, String fieldId, String formId) {
+	public CampaignDiagramDataDto(String fieldCaption, Number valueSum, Object groupingKey, String groupingCaption,
+			String fieldId, String formId) {
 		this.fieldCaption = fieldCaption;
 		this.valueSum = valueSum;
 		this.groupingKey = groupingKey;
@@ -25,15 +26,8 @@ public class CampaignDiagramDataDto implements Serializable {
 		this.formId = formId;
 	}
 
-	public CampaignDiagramDataDto(
-		String fieldCaption,
-		Number valueSum,
-		Object groupingKey,
-		String groupingCaption,
-		String fieldId,
-		String formId,
-		boolean hasAgeGroupData,
-		String stack) {
+	public CampaignDiagramDataDto(String fieldCaption, Number valueSum, Object groupingKey, String groupingCaption,
+			String fieldId, String formId, boolean hasAgeGroupData, String stack) {
 		this.fieldCaption = fieldCaption;
 		this.valueSum = valueSum;
 		this.groupingKey = groupingKey;
@@ -44,14 +38,8 @@ public class CampaignDiagramDataDto implements Serializable {
 		this.stack = stack;
 	}
 
-	public CampaignDiagramDataDto(
-		String fieldCaption,
-		Number valueSum,
-		Object groupingKey,
-		String groupingCaption,
-		String fieldId,
-		String formId,
-		boolean hasAgeGroupData) {
+	public CampaignDiagramDataDto(String fieldCaption, Number valueSum, Object groupingKey, String groupingCaption,
+			String fieldId, String formId, boolean hasAgeGroupData) {
 		this.fieldCaption = fieldCaption;
 		this.valueSum = valueSum;
 		this.groupingKey = groupingKey;
@@ -62,15 +50,8 @@ public class CampaignDiagramDataDto implements Serializable {
 
 	}
 
-	public CampaignDiagramDataDto(
-		String formMetaUuid,
-		String formId,
-		String fieldId,
-		String fieldCaption,
-		Number valueSum,
-		Object groupingKey,
-		String groupingCaption,
-		String stack) {
+	public CampaignDiagramDataDto(String formMetaUuid, String formId, String fieldId, String fieldCaption,
+			Number valueSum, Object groupingKey, String groupingCaption, String stack) {
 		this.formMetaUuid = formMetaUuid;
 		this.formId = formId;
 		this.fieldId = fieldId;

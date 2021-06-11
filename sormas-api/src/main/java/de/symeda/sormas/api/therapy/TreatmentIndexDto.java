@@ -28,22 +28,10 @@ public class TreatmentIndexDto implements Serializable {
 
 	private CaseJurisdictionDto caseJurisdiction;
 
-	public TreatmentIndexDto(
-		String uuid,
-		TreatmentType treatmentType,
-		String treatmentDetails,
-		TypeOfDrug typeOfDrug,
-		Date treatmentDateTime,
-		String dose,
-		TreatmentRoute route,
-		String routeDetails,
-		String executingClinician,
-		String caseReportingUserUuid,
-		String caseRegionUuid,
-		String caseDistrictUuid,
-		String caseCommunityUuid,
-		String caseHealthFacilityUuid,
-		String casePointOfEntryUuid) {
+	public TreatmentIndexDto(String uuid, TreatmentType treatmentType, String treatmentDetails, TypeOfDrug typeOfDrug,
+			Date treatmentDateTime, String dose, TreatmentRoute route, String routeDetails, String executingClinician,
+			String caseReportingUserUuid, String caseRegionUuid, String caseDistrictUuid, String caseCommunityUuid,
+			String caseHealthFacilityUuid, String casePointOfEntryUuid) {
 
 		this.uuid = uuid;
 		this.treatmentIndexType = new TreatmentIndexType(treatmentType, treatmentDetails, typeOfDrug);
@@ -52,13 +40,8 @@ public class TreatmentIndexDto implements Serializable {
 		this.treatmentIndexRoute = new TreatmentIndexRoute(route, routeDetails);
 		this.executingClinician = executingClinician;
 
-		this.caseJurisdiction = new CaseJurisdictionDto(
-			caseReportingUserUuid,
-			caseRegionUuid,
-			caseDistrictUuid,
-			caseCommunityUuid,
-			caseHealthFacilityUuid,
-			casePointOfEntryUuid);
+		this.caseJurisdiction = new CaseJurisdictionDto(caseReportingUserUuid, caseRegionUuid, caseDistrictUuid,
+				caseCommunityUuid, caseHealthFacilityUuid, casePointOfEntryUuid);
 	}
 
 	public String getUuid() {

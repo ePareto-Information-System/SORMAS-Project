@@ -17,9 +17,6 @@ package de.symeda.sormas.api.person;
 
 public enum PersonContext {
 
-	CASE,
-	CONTACT,
-	EVENT_PARTICIPANT,
-	OTHER;
+	CASE, CONTACT, EVENT_PARTICIPANT, OTHER;
 
 }

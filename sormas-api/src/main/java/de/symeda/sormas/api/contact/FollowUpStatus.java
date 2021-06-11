@@ -21,11 +21,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum FollowUpStatus {
 
-	FOLLOW_UP,
-	COMPLETED,
-	CANCELED,
-	LOST,
-	NO_FOLLOW_UP;
+	FOLLOW_UP, COMPLETED, CANCELED, LOST, NO_FOLLOW_UP;
 
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);

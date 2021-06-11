@@ -17,6 +17,7 @@
  *******************************************************************************/
 package de.symeda.sormas.api.event;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -46,16 +47,11 @@ public interface EventParticipantFacade {
 
 	void deleteEventParticipant(EventParticipantReferenceDto eventParticipantRef);
 
-	List<EventParticipantIndexDto> getIndexList(
-		EventParticipantCriteria eventParticipantCriteria,
-		Integer first,
-		Integer max,
-		List<SortProperty> sortProperties);
+	List<EventParticipantIndexDto> getIndexList(EventParticipantCriteria eventParticipantCriteria, Integer first,
+			Integer max, List<SortProperty> sortProperties);
 
-	List<EventParticipantListEntryDto> getListEntries(
-		EventParticipantCriteria eventParticipantCriteria,
-		Integer first,
-		Integer max);
+	List<EventParticipantListEntryDto> getListEntries(EventParticipantCriteria eventParticipantCriteria, Integer first,
+			Integer max);
 
 	EventParticipantDto getByUuid(String uuid);
 
@@ -63,7 +59,8 @@ public interface EventParticipantFacade {
 
 	long count(EventParticipantCriteria eventParticipantCriteria);
 
-	Map<String, Long> getContactCountPerEventParticipant(List<String> eventParticipantUuids, EventParticipantCriteria eventParticipantCriteria);
+	Map<String, Long> getContactCountPerEventParticipant(List<String> eventParticipantUuids,
+			EventParticipantCriteria eventParticipantCriteria);
 
 	boolean exists(String uuid);
 
@@ -77,9 +74,12 @@ public interface EventParticipantFacade {
 
 	EventParticipantDto getFirst(EventParticipantCriteria eventParticipantCriteria);
 
-	List<EventParticipantExportDto> getExportList(EventParticipantCriteria eventParticipantCriteria, int first, int max, Language userLanguage);
+	List<EventParticipantExportDto> getExportList(EventParticipantCriteria eventParticipantCriteria,
+			Collection<String> selectedRows, int first, int max, Language userLanguage);
 
 	List<EventParticipantDto> getByEventUuids(List<String> eventUuids);
 
 	List<SimilarEventParticipantDto> getMatchingEventParticipants(EventParticipantCriteria criteria);
+
+	List<EventParticipantDto> getByPersonUuids(List<String> personUuids);
 }

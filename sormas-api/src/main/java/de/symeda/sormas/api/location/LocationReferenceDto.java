@@ -37,27 +37,15 @@ public class LocationReferenceDto extends ReferenceDto {
 		this.setCaption(caption);
 	}
 
-	public LocationReferenceDto(
-		String uuid,
-		String regionName,
-		String districtName,
-		String communityName,
-		String city,
-		String street,
-		String houseNumber,
-		String additionalInformation) {
+	public LocationReferenceDto(String uuid, String regionName, String districtName, String communityName, String city,
+			String street, String houseNumber, String additionalInformation) {
 		this.setUuid(uuid);
-		this.setCaption(buildCaption(regionName, districtName, communityName, city, street, houseNumber, additionalInformation));
+		this.setCaption(buildCaption(regionName, districtName, communityName, city, street, houseNumber,
+				additionalInformation));
 	}
 
-	public static String buildCaption(
-		String regionName,
-		String districtName,
-		String communityName,
-		String city,
-		String street,
-		String houseNumber,
-		String additionalInformation) {
+	public static String buildCaption(String regionName, String districtName, String communityName, String city,
+			String street, String houseNumber, String additionalInformation) {
 
 		StringBuilder stringBuilder = new StringBuilder();
 

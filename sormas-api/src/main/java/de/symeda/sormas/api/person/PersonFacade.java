@@ -40,8 +40,6 @@ public interface PersonFacade {
 
 	PersonReferenceDto getReferenceByUuid(String uuid);
 
-	PersonDto getPersonByUuid(String uuid);
-
 	JournalPersonDto getPersonForJournal(String uuid);
 
 	PersonDto savePerson(@Valid PersonDto dto);
@@ -50,13 +48,17 @@ public interface PersonFacade {
 
 	List<String> getAllUuids();
 
+	PersonDto getPersonByUuid(String uuid);
+
 	List<PersonDto> getByUuids(List<String> uuids);
 
-	Map<Disease, Long> getDeathCountByDisease(CaseCriteria caseCriteria, boolean excludeSharedCases, boolean excludeCasesFromContacts);
+	Map<Disease, Long> getDeathCountByDisease(CaseCriteria caseCriteria, boolean excludeSharedCases,
+			boolean excludeCasesFromContacts);
 
 	/**
-	 * Returns a list with the names of all persons that the user has access to and that match the criteria.
-	 * This only includes persons that are associated with an active case, contact or event participant.
+	 * Returns a list with the names of all persons that the user has access to and
+	 * that match the criteria. This only includes persons that are associated with
+	 * an active case, contact or event participant.
 	 */
 	List<PersonNameDto> getMatchingNameDtos(UserReferenceDto user, PersonSimilarityCriteria criteria);
 
@@ -74,9 +76,16 @@ public interface PersonFacade {
 
 	boolean setSymptomJournalStatus(String personUuid, SymptomJournalStatus status);
 
-    List<PersonIndexDto> getIndexList(PersonCriteria criteria, Integer offset, Integer limit, List<SortProperty> sortProperties);
+	List<PersonIndexDto> getIndexList(PersonCriteria criteria, Integer offset, Integer limit,
+			List<SortProperty> sortProperties);
 
 	long count(PersonCriteria criteria);
 
-    boolean exists(String uuid);
+	boolean exists(String uuid);
+
+	boolean doesExternalTokenExist(String externalToken, String personUuid);
+
+	long setMissingGeoCoordinates(boolean overwriteExistingCoordinates);
+
+	boolean isSharedWithoutOwnership(String uuid);
 }

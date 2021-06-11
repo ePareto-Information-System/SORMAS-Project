@@ -15,16 +15,16 @@
 
 package de.symeda.sormas.api.docgeneneration;
 
-import static de.symeda.sormas.api.docgeneneration.RootEntityName.ROOT_CASE;
-import static de.symeda.sormas.api.docgeneneration.RootEntityName.ROOT_CONTACT;
-import static de.symeda.sormas.api.docgeneneration.RootEntityName.ROOT_EVENT;
-import static de.symeda.sormas.api.docgeneneration.RootEntityName.ROOT_EVENT_ACTIONS;
-import static de.symeda.sormas.api.docgeneneration.RootEntityName.ROOT_EVENT_PARTICIPANT;
-import static de.symeda.sormas.api.docgeneneration.RootEntityName.ROOT_EVENT_PARTICIPANTS;
-import static de.symeda.sormas.api.docgeneneration.RootEntityName.ROOT_PATHOGEN_TEST;
-import static de.symeda.sormas.api.docgeneneration.RootEntityName.ROOT_PERSON;
-import static de.symeda.sormas.api.docgeneneration.RootEntityName.ROOT_SAMPLE;
-import static de.symeda.sormas.api.docgeneneration.RootEntityName.ROOT_USER;
+import static de.symeda.sormas.api.docgeneneration.RootEntityType.ROOT_CASE;
+import static de.symeda.sormas.api.docgeneneration.RootEntityType.ROOT_CONTACT;
+import static de.symeda.sormas.api.docgeneneration.RootEntityType.ROOT_EVENT;
+import static de.symeda.sormas.api.docgeneneration.RootEntityType.ROOT_EVENT_ACTIONS;
+import static de.symeda.sormas.api.docgeneneration.RootEntityType.ROOT_EVENT_PARTICIPANT;
+import static de.symeda.sormas.api.docgeneneration.RootEntityType.ROOT_EVENT_PARTICIPANTS;
+import static de.symeda.sormas.api.docgeneneration.RootEntityType.ROOT_PATHOGEN_TEST;
+import static de.symeda.sormas.api.docgeneneration.RootEntityType.ROOT_PERSON;
+import static de.symeda.sormas.api.docgeneneration.RootEntityType.ROOT_SAMPLE;
+import static de.symeda.sormas.api.docgeneneration.RootEntityType.ROOT_USER;
 import static de.symeda.sormas.api.docgeneneration.TemplateFileType.DOCX;
 import static de.symeda.sormas.api.docgeneneration.TemplateFileType.HTML;
 
@@ -43,26 +43,22 @@ public enum DocumentWorkflow {
 	// it is called. So "${case.person.firstName}" in the template refers
 	// to the case's or contact's person's first name in either case.
 	QUARANTINE_ORDER_CASE("quarantine", DOCX, ROOT_CASE, ROOT_PERSON, ROOT_USER, ROOT_SAMPLE, ROOT_PATHOGEN_TEST),
-	QUARANTINE_ORDER_CONTACT("quarantineContact", DOCX, ROOT_CONTACT, ROOT_PERSON, ROOT_USER, ROOT_SAMPLE, ROOT_PATHOGEN_TEST),
-	QUARANTINE_ORDER_EVENT_PARTICIPANT("quarantineEventParticipant",
-		DOCX,
-		ROOT_EVENT_PARTICIPANT,
-		ROOT_PERSON,
-		ROOT_USER,
-		ROOT_SAMPLE,
-		ROOT_PATHOGEN_TEST),
+	QUARANTINE_ORDER_CONTACT("quarantineContact", DOCX, ROOT_CONTACT, ROOT_PERSON, ROOT_USER, ROOT_SAMPLE,
+			ROOT_PATHOGEN_TEST),
+	QUARANTINE_ORDER_EVENT_PARTICIPANT("quarantineEventParticipant", DOCX, ROOT_EVENT_PARTICIPANT, ROOT_PERSON,
+			ROOT_USER, ROOT_SAMPLE, ROOT_PATHOGEN_TEST),
 	EVENT_HANDOUT("eventHandout", HTML, ROOT_EVENT, ROOT_USER, ROOT_EVENT_ACTIONS, ROOT_EVENT_PARTICIPANTS);
 
 	private String templateDirectory;
 	private TemplateFileType fileType;
 	private List<String> rootEntityNames;
 
-	DocumentWorkflow(String templateDirectory, TemplateFileType fileType, String... rootEntityNames) {
+	DocumentWorkflow(String templateDirectory, TemplateFileType fileType, RootEntityType... rootEntityTypes) {
 		this.templateDirectory = templateDirectory;
 		this.fileType = fileType;
 		this.rootEntityNames = new ArrayList<>();
-		for (String rootEntityName : rootEntityNames) {
-			this.rootEntityNames.add(rootEntityName.toLowerCase());
+		for (RootEntityType rootEntityName : rootEntityTypes) {
+			this.rootEntityNames.add(rootEntityName.getEntityName().toLowerCase());
 		}
 	}
 

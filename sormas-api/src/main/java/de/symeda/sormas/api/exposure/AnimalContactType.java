@@ -19,11 +19,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum AnimalContactType {
 
-	BITE,
-	TOUCH,
-	SCRATCH,
-	LICK,
-	OTHER;
+	BITE, TOUCH, SCRATCH, LICK, OTHER;
 
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);

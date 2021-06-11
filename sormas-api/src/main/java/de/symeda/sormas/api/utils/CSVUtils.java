@@ -35,10 +35,11 @@ public final class CSVUtils {
 		// Hide Utility Class Constructor
 	}
 
-	public static CSVReader createCSVReader(Reader reader, char separator, LineValidator ...lineValidators) {
-		final CSVReaderBuilder builder = new CSVReaderBuilder(reader).withCSVParser(new CSVParserBuilder().withSeparator(separator).build());
+	public static CSVReader createCSVReader(Reader reader, char separator, LineValidator... lineValidators) {
+		final CSVReaderBuilder builder = new CSVReaderBuilder(reader)
+				.withCSVParser(new CSVParserBuilder().withSeparator(separator).build());
 		if (ArrayUtils.isNotEmpty(lineValidators)) {
-			for(LineValidator lineValidator: lineValidators) {
+			for (LineValidator lineValidator : lineValidators) {
 				builder.withLineValidator(lineValidator);
 			}
 		}
@@ -46,14 +47,16 @@ public final class CSVUtils {
 	}
 
 	public static CSVWriter createCSVWriter(Writer writer, char separator) {
-		return new SafeCSVWriter(writer, separator, CSVWriter.DEFAULT_QUOTE_CHARACTER, CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
+		return new SafeCSVWriter(writer, separator, CSVWriter.DEFAULT_QUOTE_CHARACTER,
+				CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
 	}
 
 	/**
-	 * Extension of the {@link CSVWriter} which sanitizes each element of the CSV to prevent CSV Injection.
-	 * Implementation based on version 5.3 of opencsv.
+	 * Extension of the {@link CSVWriter} which sanitizes each element of the CSV to
+	 * prevent CSV Injection. Implementation based on version 5.3 of opencsv.
 	 * 
-	 * @see <a href="https://owasp.org/www-community/attacks/CSV_Injection">CSV Injection</a>
+	 * @see <a href="https://owasp.org/www-community/attacks/CSV_Injection">CSV
+	 *      Injection</a>
 	 */
 	public static class SafeCSVWriter extends CSVWriter {
 
@@ -88,7 +91,7 @@ public final class CSVUtils {
 				appendQuoteCharacterIfNeeded(applyQuotesToAll, appendable, stringContainsSpecialCharacters);
 
 				// begin code change from parent code
-				if(formulaPattern.matcher(nextElement).matches()) {
+				if (formulaPattern.matcher(nextElement).matches()) {
 					appendable.append(FORMULA_PREFIX);
 				}
 				// end
@@ -107,7 +110,8 @@ public final class CSVUtils {
 		}
 
 		// Copied from the parent class since it's access modifier was private
-		private void appendQuoteCharacterIfNeeded(boolean applyQuotesToAll, Appendable appendable, Boolean stringContainsSpecialCharacters) throws IOException {
+		private void appendQuoteCharacterIfNeeded(boolean applyQuotesToAll, Appendable appendable,
+				Boolean stringContainsSpecialCharacters) throws IOException {
 			if ((applyQuotesToAll || stringContainsSpecialCharacters) && quotechar != NO_QUOTE_CHARACTER) {
 				appendable.append(quotechar);
 			}

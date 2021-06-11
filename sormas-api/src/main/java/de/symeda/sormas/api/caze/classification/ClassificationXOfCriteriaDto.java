@@ -28,10 +28,12 @@ import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.utils.DataHelper;
 
 /**
- * A criteria determining that a specific number of sub criteria need to be true in order for the whole criteria
- * to be applicable. The exact number is specified in the constructor.
+ * A criteria determining that a specific number of sub criteria need to be true
+ * in order for the whole criteria to be applicable. The exact number is
+ * specified in the constructor.
  */
-public class ClassificationXOfCriteriaDto extends ClassificationCriteriaDto implements ClassificationCollectiveCriteria {
+public class ClassificationXOfCriteriaDto extends ClassificationCriteriaDto
+		implements ClassificationCollectiveCriteria {
 
 	private static final long serialVersionUID = 1139711267145230378L;
 
@@ -71,7 +73,8 @@ public class ClassificationXOfCriteriaDto extends ClassificationCriteriaDto impl
 
 	@Override
 	public String getCriteriaName() {
-		return "<b>" + DataHelper.parseNumberToString(requiredAmount) + " " + I18nProperties.getString(Strings.of).toUpperCase() + "</b>";
+		return "<b>" + DataHelper.parseNumberToString(requiredAmount) + " "
+				+ I18nProperties.getString(Strings.of).toUpperCase() + "</b>";
 	}
 
 	@Override
@@ -96,8 +99,8 @@ public class ClassificationXOfCriteriaDto extends ClassificationCriteriaDto impl
 	}
 
 	/**
-	 * Has a different buildDescription method to display all sub criteria with bullet points.
-	 * Functionality is identical to ClassificationXOfCriteria.
+	 * Has a different buildDescription method to display all sub criteria with
+	 * bullet points. Functionality is identical to ClassificationXOfCriteria.
 	 */
 	public static class ClassificationXOfSubCriteriaDto extends ClassificationXOfCriteriaDto {
 
@@ -109,7 +112,8 @@ public class ClassificationXOfCriteriaDto extends ClassificationCriteriaDto impl
 			super();
 		}
 
-		public ClassificationXOfSubCriteriaDto(int requiredAmount, boolean isAddition, ClassificationCriteriaDto... criteria) {
+		public ClassificationXOfSubCriteriaDto(int requiredAmount, boolean isAddition,
+				ClassificationCriteriaDto... criteria) {
 			super(requiredAmount, criteria);
 			this.isAddition = isAddition;
 		}
@@ -118,7 +122,8 @@ public class ClassificationXOfCriteriaDto extends ClassificationCriteriaDto impl
 		public String buildDescription() {
 
 			StringBuilder stringBuilder = new StringBuilder();
-			stringBuilder.append("<b> ").append(I18nProperties.getString(Strings.classificationOneOf).toUpperCase()).append("</b>");
+			stringBuilder.append("<b> ").append(I18nProperties.getString(Strings.classificationOneOf).toUpperCase())
+					.append("</b>");
 			for (int i = 0; i < classificationCriteria.size(); i++) {
 				stringBuilder.append("<br/>- ");
 				stringBuilder.append(classificationCriteria.get(i).buildDescription());
@@ -137,10 +142,12 @@ public class ClassificationXOfCriteriaDto extends ClassificationCriteriaDto impl
 	}
 
 	/**
-	 * Has a different buildDescription method to display all sub criteria in one line, separated by commas and
-	 * an "OR" for the last criteria. Functionality is identical to ClassificationXOfCriteria.
+	 * Has a different buildDescription method to display all sub criteria in one
+	 * line, separated by commas and an "OR" for the last criteria. Functionality is
+	 * identical to ClassificationXOfCriteria.
 	 */
-	public static class ClassificationOneOfCompactCriteriaDto extends ClassificationXOfCriteriaDto implements ClassificationCompactCriteria {
+	public static class ClassificationOneOfCompactCriteriaDto extends ClassificationXOfCriteriaDto
+			implements ClassificationCompactCriteria {
 
 		private static final long serialVersionUID = 8374870595895910414L;
 
@@ -160,7 +167,8 @@ public class ClassificationXOfCriteriaDto extends ClassificationCriteriaDto impl
 					if (i + 1 < classificationCriteria.size()) {
 						stringBuilder.append(", ");
 					} else {
-						stringBuilder.append(" <b>").append(I18nProperties.getString(Strings.or).toUpperCase()).append("</b> ");
+						stringBuilder.append(" <b>").append(I18nProperties.getString(Strings.or).toUpperCase())
+								.append("</b> ");
 					}
 				}
 

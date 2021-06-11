@@ -27,8 +27,8 @@ public final class VersionHelper {
 	}
 
 	/**
-	 * Extract the version (X.Y.Z) from any string.
-	 * If multiple matching patterns are found the last one is returned.
+	 * Extract the version (X.Y.Z) from any string. If multiple matching patterns
+	 * are found the last one is returned.
 	 * 
 	 * @return null when no version is found.
 	 */

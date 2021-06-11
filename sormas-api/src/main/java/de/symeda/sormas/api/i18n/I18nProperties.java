@@ -50,6 +50,8 @@ public final class I18nProperties {
 	private final ResourceBundle validationProperties;
 	private final ResourceBundle stringProperties;
 	private final ResourceBundle countryProperties;
+	private final ResourceBundle continentProperties;
+	private final ResourceBundle subcontinentProperties;
 
 	private static I18nProperties getInstance(Language language) {
 
@@ -138,7 +140,8 @@ public final class I18nProperties {
 			return getEnumCaption(language, (InfectionSetting) value);
 		}
 
-		String caption = getInstance(language).enumProperties.getString(value.getClass().getSimpleName() + "." + value.name());
+		String caption = getInstance(language).enumProperties
+				.getString(value.getClass().getSimpleName() + "." + value.name());
 		if (caption != null) {
 			return caption;
 		} else {
@@ -147,15 +150,16 @@ public final class I18nProperties {
 	}
 
 	/**
-	 * Retrieves the property by adding an additional string in between the class name and the property name,
-	 * e.g. Disease.Short.EVD or FollowUpStatus.Desc.NO_FOLLOW_UP
+	 * Retrieves the property by adding an additional string in between the class
+	 * name and the property name, e.g. Disease.Short.EVD or
+	 * FollowUpStatus.Desc.NO_FOLLOW_UP
 	 * <p>
 	 * Does fallback to enum caption without addition.
 	 */
 	public static String getEnumCaption(Enum<?> value, String addition) {
 
-		String caption =
-			getInstance(userLanguage.get()).enumProperties.getString(value.getClass().getSimpleName() + "." + addition + "." + value.name());
+		String caption = getInstance(userLanguage.get()).enumProperties
+				.getString(value.getClass().getSimpleName() + "." + addition + "." + value.name());
 		if (caption != null) {
 			return caption;
 		} else {
@@ -202,7 +206,8 @@ public final class I18nProperties {
 	}
 
 	/**
-	 * Iterates through the prefixes to determines the caption for the specified propertyId.
+	 * Iterates through the prefixes to determines the caption for the specified
+	 * propertyId.
 	 */
 	public static String findPrefixCaption(String propertyId, String... prefixes) {
 
@@ -217,7 +222,8 @@ public final class I18nProperties {
 	}
 
 	/**
-	 * Iterates through the prefixes to determines the caption for the specified propertyId.
+	 * Iterates through the prefixes to determines the caption for the specified
+	 * propertyId.
 	 */
 	public static String findPrefixCaptionWithDefault(String propertyId, String defaultValue, String... prefixes) {
 
@@ -319,10 +325,6 @@ public final class I18nProperties {
 		return getInstance(language).countryProperties.getString(nameLanguageKey);
 	}
 
-	private I18nProperties() {
-		this(defaultLanguage);
-	}
-
 	private I18nProperties(Language language) {
 
 		this.captionProperties = loadProperties("captions", language.getLocale());
@@ -331,6 +333,24 @@ public final class I18nProperties {
 		this.validationProperties = loadProperties("validations", language.getLocale());
 		this.stringProperties = loadProperties("strings", language.getLocale());
 		this.countryProperties = loadProperties("countries", language.getLocale());
+		this.continentProperties = loadProperties("continents", language.getLocale());
+		this.subcontinentProperties = loadProperties("subcontinents", language.getLocale());
+	}
+
+	private I18nProperties() {
+		this(defaultLanguage);
+	}
+
+	public static String getContinentName(String defaultName) {
+		String name = getInstance(userLanguage.get()).continentProperties
+				.getString("continent." + defaultName.replace(" ", "_").toUpperCase() + ".name");
+		return name != null ? name : defaultName;
+	}
+
+	public static String getSubcontinentName(String defaultName) {
+		String name = getInstance(userLanguage.get()).subcontinentProperties
+				.getString("subcontinent." + defaultName.replace(" ", "_").toUpperCase() + ".name");
+		return name != null ? name : defaultName;
 	}
 
 	public static ResourceBundle loadProperties(String propertiesGroup, Locale locale) {
@@ -341,8 +361,8 @@ public final class I18nProperties {
 
 		private static final char LOCALE_SEP = '-';
 
-		public java.util.ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload)
-			throws IllegalAccessException, InstantiationException, IOException {
+		public java.util.ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader,
+				boolean reload) throws IllegalAccessException, InstantiationException, IOException {
 
 			// The below is a copy of the default implementation.
 			String bundleName = toBundleName(baseName, locale);
@@ -357,16 +377,16 @@ public final class I18nProperties {
 		}
 
 		/**
-		 * Converts the given <code>baseName</code> and <code>locale</code>
-		 * to the bundle name. This method is called from the default
-		 * implementation of the {@link #newBundle(String, Locale, String,
-		 * ClassLoader, boolean) newBundle} and {@link #needsReload(String,
-		 * Locale, String, ClassLoader, ResourceBundle, long) needsReload}
-		 * methods.
+		 * Converts the given <code>baseName</code> and <code>locale</code> to the
+		 * bundle name. This method is called from the default implementation of the
+		 * {@link #newBundle(String, Locale, String, ClassLoader, boolean) newBundle}
+		 * and
+		 * {@link #needsReload(String, Locale, String, ClassLoader, ResourceBundle, long)
+		 * needsReload} methods.
 		 *
 		 * <p>
-		 * In contrast to <code>ResourceBundle.Control::toBundleName</code>
-		 * '-' instead of '_' is used to separate the Locale components:
+		 * In contrast to <code>ResourceBundle.Control::toBundleName</code> '-' instead
+		 * of '_' is used to separate the Locale components:
 		 * </p>
 		 *
 		 * <p>
@@ -376,37 +396,29 @@ public final class I18nProperties {
 		 * baseName + "_" + language + "-" + script + "-" + country + "-" + variant
 		 * </pre>
 		 *
-		 * where <code>language</code>, <code>script</code>, <code>country</code>,
-		 * and <code>variant</code> are the language, script, country, and variant
-		 * values of <code>locale</code>, respectively. Final component values that
-		 * are empty Strings are omitted along with the preceding '-'. When the
-		 * script is empty, the script value is omitted along with the preceding '_'.
-		 * If all of the values are empty strings, then <code>baseName</code>
-		 * is returned.
+		 * where <code>language</code>, <code>script</code>, <code>country</code>, and
+		 * <code>variant</code> are the language, script, country, and variant values of
+		 * <code>locale</code>, respectively. Final component values that are empty
+		 * Strings are omitted along with the preceding '-'. When the script is empty,
+		 * the script value is omitted along with the preceding '_'. If all of the
+		 * values are empty strings, then <code>baseName</code> is returned.
 		 *
 		 * <p>
-		 * For example, if <code>baseName</code> is
-		 * <code>"baseName"</code> and <code>locale</code> is
-		 * <code>Locale("ja",&nbsp;"",&nbsp;"XX")</code>, then
-		 * <code>"baseName_ja-&thinsp;-XX"</code> is returned. If the given
-		 * locale is <code>Locale("en")</code>, then
-		 * <code>"baseName_en"</code> is returned.
+		 * For example, if <code>baseName</code> is <code>"baseName"</code> and
+		 * <code>locale</code> is <code>Locale("ja",&nbsp;"",&nbsp;"XX")</code>, then
+		 * <code>"baseName_ja-&thinsp;-XX"</code> is returned. If the given locale is
+		 * <code>Locale("en")</code>, then <code>"baseName_en"</code> is returned.
 		 *
 		 * <p>
-		 * Overriding this method allows applications to use different
-		 * conventions in the organization and packaging of localized
-		 * resources.
+		 * Overriding this method allows applications to use different conventions in
+		 * the organization and packaging of localized resources.
 		 *
-		 * @param baseName
-		 *            the base name of the resource bundle, a fully
-		 *            qualified class name
-		 * @param locale
-		 *            the locale for which a resource bundle should be
-		 *            loaded
+		 * @param baseName the base name of the resource bundle, a fully qualified class
+		 *                 name
+		 * @param locale   the locale for which a resource bundle should be loaded
 		 * @return the bundle name for the resource bundle
-		 * @exception NullPointerException
-		 *                if <code>baseName</code> or <code>locale</code>
-		 *                is <code>null</code>
+		 * @exception NullPointerException if <code>baseName</code> or
+		 *                                 <code>locale</code> is <code>null</code>
 		 */
 		@Override
 		public String toBundleName(String baseName, Locale locale) {
@@ -427,7 +439,8 @@ public final class I18nProperties {
 			sb.append('_');
 			if (script != "") {
 				if (variant != "") {
-					sb.append(language).append(LOCALE_SEP).append(script).append(LOCALE_SEP).append(country).append(LOCALE_SEP).append(variant);
+					sb.append(language).append(LOCALE_SEP).append(script).append(LOCALE_SEP).append(country)
+							.append(LOCALE_SEP).append(variant);
 				} else if (country != "") {
 					sb.append(language).append(LOCALE_SEP).append(script).append(LOCALE_SEP).append(country);
 				} else {
