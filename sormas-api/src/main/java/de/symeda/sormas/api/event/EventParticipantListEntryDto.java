@@ -13,7 +13,8 @@ public class EventParticipantListEntryDto extends PseudonymizableIndexDto implem
 	private Disease disease;
 	private String eventTitle;
 
-	public EventParticipantListEntryDto(String uuid, String eventUuid, EventStatus eventStatus, Disease disease, String eventTitle) {
+	public EventParticipantListEntryDto(String uuid, String eventUuid, EventStatus eventStatus, Disease disease,
+			String eventTitle) {
 		this.uuid = uuid;
 		this.eventUuid = eventUuid;
 		this.eventStatus = eventStatus;

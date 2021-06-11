@@ -26,8 +26,8 @@ public class PointOfEntryReferenceDto extends InfrastructureDataReferenceDto {
 
 	public boolean isOtherPointOfEntry() {
 		return PointOfEntryDto.OTHER_AIRPORT_UUID.equals(getUuid())
-			|| PointOfEntryDto.OTHER_SEAPORT_UUID.equals(getUuid())
-			|| PointOfEntryDto.OTHER_GROUND_CROSSING_UUID.equals(getUuid())
-			|| PointOfEntryDto.OTHER_POE_UUID.equals(getUuid());
+				|| PointOfEntryDto.OTHER_SEAPORT_UUID.equals(getUuid())
+				|| PointOfEntryDto.OTHER_GROUND_CROSSING_UUID.equals(getUuid())
+				|| PointOfEntryDto.OTHER_POE_UUID.equals(getUuid());
 	}
 }

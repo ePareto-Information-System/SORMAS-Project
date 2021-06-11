@@ -69,20 +69,9 @@ public class MapContactDto implements Serializable {
 		this.reportLon = reportLon;
 	}
 
-	public MapContactDto(
-		String uuid,
-		ContactClassification contactClassification,
-		Double reportLat,
-		Double reportLon,
-		Double addressLat,
-		Double addressLon,
-		Date caseOnsetDate,
-		Date caseReportDate,
-		Date contactReportDate,
-		String personFirstName,
-		String personLastName,
-		String casePersonFirstName,
-		String casePersonLastName) {
+	public MapContactDto(String uuid, ContactClassification contactClassification, Double reportLat, Double reportLon,
+			Double addressLat, Double addressLon, Date caseOnsetDate, Date caseReportDate, Date contactReportDate,
+			String personFirstName, String personLastName, String casePersonFirstName, String casePersonLastName) {
 
 		this.uuid = uuid;
 		this.contactClassification = contactClassification;
@@ -99,21 +88,10 @@ public class MapContactDto implements Serializable {
 		this.casePersonLastName = casePersonLastName;
 	}
 
-	public MapContactDto(
-		String uuid,
-		ContactClassification contactClassification,
-		Double reportLat,
-		Double reportLon,
-		Double addressLat,
-		Double addressLon,
-		Date caseOnsetDate,
-		Date caseReportDate,
-		Date contactReportDate,
-		String personFirstName,
-		String personLastName,
-		String casePersonFirstName,
-		String casePersonLastName,
-		int visitCount) {
+	public MapContactDto(String uuid, ContactClassification contactClassification, Double reportLat, Double reportLon,
+			Double addressLat, Double addressLon, Date caseOnsetDate, Date caseReportDate, Date contactReportDate,
+			String personFirstName, String personLastName, String casePersonFirstName, String casePersonLastName,
+			int visitCount) {
 
 		this.uuid = uuid;
 		this.contactClassification = contactClassification;

@@ -13,14 +13,16 @@ public interface PopulationDataFacade {
 	Integer getDistrictPopulation(String districtUuid);
 
 	/**
-	 * Returns the population of the district, projected to the current point in time based on its growth rate
+	 * Returns the population of the district, projected to the current point in
+	 * time based on its growth rate
 	 */
 	Integer getProjectedDistrictPopulation(String districtUuid);
 
 	Integer getRegionPopulation(String regionUuid);
 
 	/**
-	 * Returns the population of the region, projected to the current point in time based on its growth rate
+	 * Returns the population of the region, projected to the current point in time
+	 * based on its growth rate
 	 */
 	Integer getProjectedRegionPopulation(String regionUuid);
 
@@ -31,12 +33,9 @@ public interface PopulationDataFacade {
 	List<Object[]> getPopulationDataForExport();
 
 	/**
-	 * Checks whether there is general population data available for all regions and districts
+	 * Checks whether there is general population data available for all regions and
+	 * districts
 	 */
-	List<Long> getMissingPopulationDataForStatistics(
-		StatisticsCaseCriteria criteria,
-		boolean groupByRegion,
-		boolean groupByDistrict,
-		boolean groupBySex,
-		boolean groupByAgeGroup);
+	List<Long> getMissingPopulationDataForStatistics(StatisticsCaseCriteria criteria, boolean groupByRegion,
+			boolean groupByDistrict, boolean groupBySex, boolean groupByAgeGroup);
 }

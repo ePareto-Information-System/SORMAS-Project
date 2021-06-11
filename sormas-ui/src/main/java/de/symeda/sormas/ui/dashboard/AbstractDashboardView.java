@@ -32,6 +32,7 @@ import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.dashboard.campaigns.CampaignDashboardView;
+import de.symeda.sormas.ui.dashboard.components.DashboardFilterLayout;
 import de.symeda.sormas.ui.dashboard.contacts.ContactsDashboardView;
 import de.symeda.sormas.ui.dashboard.samples.SamplesDashboardView;
 import de.symeda.sormas.ui.dashboard.surveillance.SurveillanceDashboardView;
@@ -45,8 +46,9 @@ public abstract class AbstractDashboardView extends AbstractView {
 
 	protected VerticalLayout dashboardLayout;
 	protected DashboardFilterLayout filterLayout;
-	
+
 	protected DashboardDataProvider dashboardDataProvider;
+	protected OptionGroup dashboardSwitcher = new OptionGroup();
 
 	@SuppressWarnings("deprecation")
 	protected AbstractDashboardView(String viewName, DashboardType dashboardType) {
@@ -62,8 +64,6 @@ public abstract class AbstractDashboardView extends AbstractView {
 		if (DashboardType.CONTACTS.equals(dashboardDataProvider.getDashboardType())) {
 			dashboardDataProvider.setDisease(FacadeProvider.getDiseaseConfigurationFacade().getDefaultDisease());
 		}
-
-		OptionGroup dashboardSwitcher = new OptionGroup();
 
 		CssStyles.style(dashboardSwitcher, CssStyles.FORCE_CAPTION, ValoTheme.OPTIONGROUP_HORIZONTAL, CssStyles.OPTIONGROUP_HORIZONTAL_PRIMARY);
 		if (permitted(FeatureType.CASE_SURVEILANCE, UserRight.DASHBOARD_SURVEILLANCE_ACCESS)) {
@@ -84,8 +84,7 @@ public abstract class AbstractDashboardView extends AbstractView {
 		}
 		if (UserProvider.getCurrent().hasUserRight(UserRight.DASHBOARD_SAMPLE_ACCESS)) {
 			dashboardSwitcher.addItem(DashboardType.SAMPLES);
-			dashboardSwitcher.setItemCaption(DashboardType.SAMPLES,
-					I18nProperties.getEnumCaption(DashboardType.SAMPLES));
+			dashboardSwitcher.setItemCaption(DashboardType.SAMPLES, I18nProperties.getEnumCaption(DashboardType.SAMPLES));
 		}
 		dashboardSwitcher.setValue(dashboardType);
 		dashboardSwitcher.addValueChangeListener(e -> {
@@ -98,7 +97,7 @@ public abstract class AbstractDashboardView extends AbstractView {
 				SormasUI.get().getNavigator().navigateTo(SamplesDashboardView.VIEW_NAME);
 			}
 		});
-		
+
 		addHeaderComponent(dashboardSwitcher);
 
 		// Hide the dashboard switcher if only one dashboard is accessible to the user
@@ -114,22 +113,24 @@ public abstract class AbstractDashboardView extends AbstractView {
 		dashboardLayout.setStyleName("crud-main-layout");
 
 		// Filter bar
-		filterLayout = new DashboardFilterLayout(this, dashboardDataProvider);
-		dashboardLayout.addComponent(filterLayout);
-		
+//		filterLayout = new DashboardFilterLayout(this, dashboardDataProvider);
+//		dashboardLayout.addComponent(filterLayout);
+
 		addComponent(dashboardLayout);
 		setExpandRatio(dashboardLayout, 1);
 	}
 
-//	protected void navigateToDashboardView(Property.ValueChangeEvent e) {
-//		if (DashboardType.SURVEILLANCE.equals(e.getProperty().getValue())) {
-//			SormasUI.get().getNavigator().navigateTo(SurveillanceDashboardView.VIEW_NAME);
-//		} else if (DashboardType.CONTACTS.equals(e.getProperty().getValue())) {
-//			SormasUI.get().getNavigator().navigateTo(ContactsDashboardView.VIEW_NAME);
-//		} else {
-//			SormasUI.get().getNavigator().navigateTo(CampaignDashboardView.VIEW_NAME);
-//		}
-//	}
+	protected void navigateToDashboardView(Property.ValueChangeEvent e) {
+		if (DashboardType.SURVEILLANCE.equals(e.getProperty().getValue())) {
+			SormasUI.get().getNavigator().navigateTo(SurveillanceDashboardView.VIEW_NAME);
+		} else if (DashboardType.CONTACTS.equals(e.getProperty().getValue())) {
+			SormasUI.get().getNavigator().navigateTo(ContactsDashboardView.VIEW_NAME);
+		} else if (DashboardType.SAMPLES.equals(e.getProperty().getValue())) {
+			SormasUI.get().getNavigator().navigateTo(SamplesDashboardView.VIEW_NAME);
+		} else {
+			SormasUI.get().getNavigator().navigateTo(CampaignDashboardView.VIEW_NAME);
+		}
+	}
 
 	public void refreshDashboard() {
 		dashboardDataProvider.refreshData();

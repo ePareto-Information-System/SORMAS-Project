@@ -11,7 +11,8 @@ import de.symeda.sormas.api.utils.SortProperty;
 @Remote
 public interface CampaignFacade {
 
-	List<CampaignIndexDto> getIndexList(CampaignCriteria campaignCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
+	List<CampaignIndexDto> getIndexList(CampaignCriteria campaignCriteria, Integer first, Integer max,
+			List<SortProperty> sortProperties);
 
 	List<CampaignReferenceDto> getAllActiveCampaignsAsReference();
 

@@ -29,14 +29,7 @@ public class PasswordHelperTest {
 
 	private static final int LENGTH = 20;
 
-	private static final String[] FORBIDDEN = {
-		"0",
-		"1",
-		"O",
-		"I",
-		"V",
-		"l",
-		"v" };
+	private static final String[] FORBIDDEN = { "0", "1", "O", "I", "V", "l", "v" };
 
 	@Test
 	public void testCreatePass() {
@@ -46,7 +39,8 @@ public class PasswordHelperTest {
 			String password = PasswordHelper.createPass(LENGTH);
 			assertEquals("Unerwartete Passwortlänge", LENGTH, password.length());
 			for (int j = 0; j < FORBIDDEN.length; j++) {
-				assertFalse("Unerlaubtes Zeichen " + FORBIDDEN[j] + " enthalten: " + password, password.contains(FORBIDDEN[j]));
+				assertFalse("Unerlaubtes Zeichen " + FORBIDDEN[j] + " enthalten: " + password,
+						password.contains(FORBIDDEN[j]));
 			}
 		}
 	}

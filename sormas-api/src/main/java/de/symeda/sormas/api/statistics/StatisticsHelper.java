@@ -56,14 +56,11 @@ public final class StatisticsHelper {
 	public static final String TOTAL = "total";
 	public static final String NOT_SPECIFIED = "notSpecified";
 
-	public static StatisticsGroupingKey buildGroupingKey(
-		Object attributeValue,
-		StatisticsCaseAttribute attribute,
-		StatisticsCaseSubAttribute subAttribute,
-		Function<Integer, RegionReferenceDto> regionProvider,
-		Function<Integer, DistrictReferenceDto> districtProvider,
-		Function<Integer, CommunityReferenceDto> communityProvider,
-		Function<Integer, FacilityReferenceDto> facilityProvider) {
+	public static StatisticsGroupingKey buildGroupingKey(Object attributeValue, StatisticsCaseAttribute attribute,
+			StatisticsCaseSubAttribute subAttribute, Function<Integer, RegionReferenceDto> regionProvider,
+			Function<Integer, DistrictReferenceDto> districtProvider,
+			Function<Integer, CommunityReferenceDto> communityProvider,
+			Function<Integer, FacilityReferenceDto> facilityProvider) {
 
 		if (isNullOrUnknown(attributeValue)) {
 			return null;
@@ -82,18 +79,17 @@ public final class StatisticsHelper {
 			case QUARTER_OF_YEAR:
 				String entryAsString = String.valueOf(attributeValue);
 				return new QuarterOfYear(
-					new Quarter(Integer.valueOf(entryAsString.substring(entryAsString.length() - 1))),
-					new Year(Integer.valueOf(entryAsString.substring(0, entryAsString.length() - 1))));
+						new Quarter(Integer.valueOf(entryAsString.substring(entryAsString.length() - 1))),
+						new Year(Integer.valueOf(entryAsString.substring(0, entryAsString.length() - 1))));
 			case MONTH_OF_YEAR:
 				entryAsString = String.valueOf(attributeValue);
 				return new MonthOfYear(
-					Month.values()[Integer.valueOf(entryAsString.substring(entryAsString.length() - 2)) - 1],
-					new Year(Integer.valueOf(entryAsString.substring(0, entryAsString.length() - 2))));
+						Month.values()[Integer.valueOf(entryAsString.substring(entryAsString.length() - 2)) - 1],
+						new Year(Integer.valueOf(entryAsString.substring(0, entryAsString.length() - 2))));
 			case EPI_WEEK_OF_YEAR:
 				entryAsString = String.valueOf(attributeValue);
-				return new EpiWeek(
-					Integer.valueOf(entryAsString.substring(0, entryAsString.length() - 2)),
-					Integer.valueOf(entryAsString.substring(entryAsString.length() - 2)));
+				return new EpiWeek(Integer.valueOf(entryAsString.substring(0, entryAsString.length() - 2)),
+						Integer.valueOf(entryAsString.substring(entryAsString.length() - 2)));
 			case REGION:
 				return regionProvider.apply(((Number) attributeValue).intValue());
 			case DISTRICT:
@@ -132,11 +128,11 @@ public final class StatisticsHelper {
 				}
 
 				if (entryAsString.contains("-")) {
-					return new IntegerRange(
-						Integer.valueOf(entryAsString.substring(0, entryAsString.indexOf("-"))),
-						Integer.valueOf(entryAsString.substring(entryAsString.indexOf("-") + 1)));
+					return new IntegerRange(Integer.valueOf(entryAsString.substring(0, entryAsString.indexOf("-"))),
+							Integer.valueOf(entryAsString.substring(entryAsString.indexOf("-") + 1)));
 				} else if (entryAsString.contains("+")) {
-					return new IntegerRange(Integer.valueOf(entryAsString.substring(0, entryAsString.indexOf("+"))), null);
+					return new IntegerRange(Integer.valueOf(entryAsString.substring(0, entryAsString.indexOf("+"))),
+							null);
 				} else {
 					return new IntegerRange(Integer.valueOf(entryAsString), Integer.valueOf(entryAsString));
 				}
@@ -207,7 +203,8 @@ public final class StatisticsHelper {
 		return ageIntervalList;
 	}
 
-	public static List<StatisticsGroupingKey> getTimeGroupingKeys(StatisticsCaseAttribute attribute, StatisticsCaseSubAttribute subAttribute) {
+	public static List<StatisticsGroupingKey> getTimeGroupingKeys(StatisticsCaseAttribute attribute,
+			StatisticsCaseSubAttribute subAttribute) {
 
 		Date oldestCaseDate = null;
 		switch (attribute) {
@@ -277,7 +274,8 @@ public final class StatisticsHelper {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<StatisticsGroupingKey> getAttributeGroupingKeys(StatisticsCaseAttribute attribute, StatisticsCaseSubAttribute subAttribute) {
+	public static List<StatisticsGroupingKey> getAttributeGroupingKeys(StatisticsCaseAttribute attribute,
+			StatisticsCaseSubAttribute subAttribute) {
 
 		if (subAttribute != null) {
 			switch (subAttribute) {
@@ -290,11 +288,11 @@ public final class StatisticsHelper {
 			case EPI_WEEK_OF_YEAR:
 				return StatisticsHelper.getTimeGroupingKeys(attribute, subAttribute);
 			case REGION:
-				return (List<StatisticsGroupingKey>) (List<? extends StatisticsGroupingKey>) FacadeProvider.getRegionFacade()
-					.getAllActiveAsReference();
+				return (List<StatisticsGroupingKey>) (List<? extends StatisticsGroupingKey>) FacadeProvider
+						.getRegionFacade().getAllActiveByServerCountry();
 			case DISTRICT:
-				return (List<StatisticsGroupingKey>) (List<? extends StatisticsGroupingKey>) FacadeProvider.getDistrictFacade()
-					.getAllActiveAsReference();
+				return (List<StatisticsGroupingKey>) (List<? extends StatisticsGroupingKey>) FacadeProvider
+						.getDistrictFacade().getAllActiveAsReference();
 			case COMMUNITY:
 			case FACILITY:
 				return new ArrayList<>();
@@ -327,7 +325,8 @@ public final class StatisticsHelper {
 	}
 
 	/**
-	 * Converts the given values to a {@link List} of {@link StatisticsGroupingKey}s.
+	 * Converts the given values to a {@link List} of
+	 * {@link StatisticsGroupingKey}s.
 	 */
 	private static <K extends StatisticsGroupingKey> List<StatisticsGroupingKey> toGroupingKeys(K[] keys) {
 
@@ -339,7 +338,8 @@ public final class StatisticsHelper {
 	}
 
 	/**
-	 * Converts the given values to a {@link List} of {@link StatisticsGroupingKey}s.
+	 * Converts the given values to a {@link List} of
+	 * {@link StatisticsGroupingKey}s.
 	 */
 	private static <K extends StatisticsGroupingKey> List<StatisticsGroupingKey> toGroupingKeys(Collection<K> keys) {
 
@@ -353,7 +353,8 @@ public final class StatisticsHelper {
 		if (value == null) {
 			return true;
 		}
-		if (value instanceof IntegerRange && ((IntegerRange) value).getFrom() == null && ((IntegerRange) value).getTo() == null) {
+		if (value instanceof IntegerRange && ((IntegerRange) value).getFrom() == null
+				&& ((IntegerRange) value).getTo() == null) {
 			return true;
 		}
 

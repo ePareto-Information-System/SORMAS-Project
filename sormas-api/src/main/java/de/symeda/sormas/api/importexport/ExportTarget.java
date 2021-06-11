@@ -9,8 +9,9 @@ import de.symeda.sormas.api.caze.CaseExportType;
 import de.symeda.sormas.api.visit.VisitExportType;
 
 /**
- * Defines which {@link CaseExportType}s the annotated field will be used for. If an export type is
- * chosen that is not in this list, the field will not appear in the result.
+ * Defines which {@link CaseExportType}s the annotated field will be used for.
+ * If an export type is chosen that is not in this list, the field will not
+ * appear in the result.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

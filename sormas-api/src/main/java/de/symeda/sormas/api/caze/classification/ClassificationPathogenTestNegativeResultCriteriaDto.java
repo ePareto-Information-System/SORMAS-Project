@@ -44,7 +44,8 @@ public class ClassificationPathogenTestNegativeResultCriteriaDto extends Classif
 		stringBuilder.append(I18nProperties.getString(Strings.classificationOneNegativeTestResult)).append(" ");
 
 		if (testedDisease != null) {
-			stringBuilder.append(" ").append(I18nProperties.getString(Strings.classificationForDisease)).append(" ").append(testedDisease.toString());
+			stringBuilder.append(" ").append(I18nProperties.getString(Strings.classificationForDisease)).append(" ")
+					.append(testedDisease.toString());
 		}
 
 		return stringBuilder.toString();

@@ -32,9 +32,12 @@ public class EventIndexDto extends PseudonymizableIndexDto implements Serializab
 	public static final String I18N_PREFIX = "Event";
 
 	public static final String UUID = "uuid";
+	public static final String EXTERNAL_ID = "externalId";
+	public static final String EXTERNAL_TOKEN = "externalToken";
 	public static final String EVENT_STATUS = "eventStatus";
 	public static final String RISK_LEVEL = "riskLevel";
 	public static final String EVENT_INVESTIGATION_STATUS = "eventInvestigationStatus";
+	public static final String EVENT_MANAGEMENT_STATUS = "eventManagementStatus";
 	public static final String PARTICIPANT_COUNT = "participantCount";
 	public static final String CASE_COUNT = "caseCount";
 	public static final String DEATH_COUNT = "deathCount";
@@ -58,11 +61,15 @@ public class EventIndexDto extends PseudonymizableIndexDto implements Serializab
 	public static final String DISTRICT = "district";
 	public static final String COMMUNITY = "community";
 	public static final String ADDRESS = "address";
+	public static final String EVENT_GROUPS = "eventGroups";
 
 	private String uuid;
+	private String externalId;
+	private String externalToken;
 	private EventStatus eventStatus;
 	private RiskLevel riskLevel;
 	private EventInvestigationStatus eventInvestigationStatus;
+	private EventManagementStatus eventManagementStatus;
 	private long participantCount;
 	private long caseCount;
 	private long deathCount;
@@ -71,7 +78,8 @@ public class EventIndexDto extends PseudonymizableIndexDto implements Serializab
 	 */
 	private long contactCount;
 	/**
-	 * number of contacts whose person is involved in this event, and where the source case is also part of the event
+	 * number of contacts whose person is involved in this event, and where the
+	 * source case is also part of the event
 	 */
 	private long contactCountSourceInEvent;
 	private Disease disease;
@@ -91,54 +99,34 @@ public class EventIndexDto extends PseudonymizableIndexDto implements Serializab
 	private UserReferenceDto reportingUser;
 	private UserReferenceDto responsibleUser;
 	private EventJurisdictionDto jurisdiction;
+	private EventGroupsIndexDto eventGroups;
 
-	public EventIndexDto(
-		String uuid,
-		EventStatus eventStatus,
-		RiskLevel riskLevel,
-		EventInvestigationStatus eventInvestigationStatus,
-		Disease disease,
-		String diseaseDetails,
-		Date startDate,
-		Date endDate,
-		Date evolutionDate,
-		String eventTitle,
-		String regionUuid,
-		String regionName,
-		String districtUuid,
-		String districtName,
-		String communityUuid,
-		String communityName,
-		String city,
-		String street,
-		String houseNumber,
-		String additionalInformation,
-		EventSourceType srcType,
-		String srcFirstName,
-		String srcLastName,
-		String srcTelNo,
-		String srcMediaWebsite,
-		String srcMediaName,
-		Date reportDateTime,
-		String reportingUserUuid,
-		String reportingUserFirstName,
-		String reportingUserLastName,
-		String responsibleUserUuid,
-		String responsibleUserFirstName,
-		String responsibleUserLastName,
-		Date changeDate) {
+	public EventIndexDto(String uuid, String externalId, String externalToken, EventStatus eventStatus,
+			RiskLevel riskLevel, EventInvestigationStatus eventInvestigationStatus,
+			EventManagementStatus eventManagementStatus, Disease disease, String diseaseDetails, Date startDate,
+			Date endDate, Date evolutionDate, String eventTitle, String regionUuid, String regionName,
+			String districtUuid, String districtName, String communityUuid, String communityName, String city,
+			String street, String houseNumber, String additionalInformation, EventSourceType srcType,
+			String srcFirstName, String srcLastName, String srcTelNo, String srcMediaWebsite, String srcMediaName,
+			Date reportDateTime, String reportingUserUuid, String reportingUserFirstName, String reportingUserLastName,
+			String responsibleUserUuid, String responsibleUserFirstName, String responsibleUserLastName,
+			Date changeDate) {
 
 		this.uuid = uuid;
+		this.externalId = externalId;
+		this.externalToken = externalToken;
 		this.eventStatus = eventStatus;
 		this.riskLevel = riskLevel;
 		this.eventInvestigationStatus = eventInvestigationStatus;
+		this.eventManagementStatus = eventManagementStatus;
 		this.disease = disease;
 		this.diseaseDetails = diseaseDetails;
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.evolutionDate = evolutionDate;
 		this.eventTitle = eventTitle;
-		this.eventLocation = new EventIndexLocation(regionName, districtName, communityName, city, street, houseNumber, additionalInformation);
+		this.eventLocation = new EventIndexLocation(regionName, districtName, communityName, city, street, houseNumber,
+				additionalInformation);
 		this.srcType = srcType;
 		this.srcFirstName = srcFirstName;
 		this.srcLastName = srcLastName;
@@ -146,9 +134,12 @@ public class EventIndexDto extends PseudonymizableIndexDto implements Serializab
 		this.srcMediaWebsite = srcMediaWebsite;
 		this.srcMediaName = srcMediaName;
 		this.reportDateTime = reportDateTime;
-		this.reportingUser = new UserReferenceDto(reportingUserUuid, reportingUserFirstName, reportingUserLastName, null);
-		this.responsibleUser = new UserReferenceDto(responsibleUserUuid, responsibleUserFirstName, responsibleUserLastName, null);
-		this.jurisdiction = new EventJurisdictionDto(reportingUserUuid, responsibleUserUuid, regionUuid, districtUuid, communityUuid);
+		this.reportingUser = new UserReferenceDto(reportingUserUuid, reportingUserFirstName, reportingUserLastName,
+				null);
+		this.responsibleUser = new UserReferenceDto(responsibleUserUuid, responsibleUserFirstName,
+				responsibleUserLastName, null);
+		this.jurisdiction = new EventJurisdictionDto(reportingUserUuid, responsibleUserUuid, regionUuid, districtUuid,
+				communityUuid);
 	}
 
 	public String getUuid() {
@@ -157,6 +148,22 @@ public class EventIndexDto extends PseudonymizableIndexDto implements Serializab
 
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
+	}
+
+	public String getExternalId() {
+		return externalId;
+	}
+
+	public void setExternalId(String externalId) {
+		this.externalId = externalId;
+	}
+
+	public String getExternalToken() {
+		return externalToken;
+	}
+
+	public void setExternalToken(String externalToken) {
+		this.externalToken = externalToken;
 	}
 
 	public EventStatus getEventStatus() {
@@ -363,8 +370,25 @@ public class EventIndexDto extends PseudonymizableIndexDto implements Serializab
 		return getEventLocation().getAddress();
 	}
 
+	public EventManagementStatus getEventManagementStatus() {
+		return eventManagementStatus;
+	}
+
+	public void setEventManagementStatus(EventManagementStatus eventManagementStatus) {
+		this.eventManagementStatus = eventManagementStatus;
+	}
+
+	public EventGroupsIndexDto getEventGroups() {
+		return eventGroups;
+	}
+
+	public void setEventGroups(EventGroupsIndexDto eventGroups) {
+		this.eventGroups = eventGroups;
+	}
+
 	public EventReferenceDto toReference() {
-		return new EventReferenceDto(getUuid(), getDisease(), getDiseaseDetails(), getEventStatus(), getEventInvestigationStatus(), getStartDate());
+		return new EventReferenceDto(getUuid(), getDisease(), getDiseaseDetails(), getEventStatus(),
+				getEventInvestigationStatus(), getStartDate());
 	}
 
 	@Override
@@ -401,14 +425,8 @@ public class EventIndexDto extends PseudonymizableIndexDto implements Serializab
 		private String houseNumber;
 		private String additionalInformation;
 
-		public EventIndexLocation(
-			String regionName,
-			String districtName,
-			String communityName,
-			String city,
-			String street,
-			String houseNumber,
-			String additionalInformation) {
+		public EventIndexLocation(String regionName, String districtName, String communityName, String city,
+				String street, String houseNumber, String additionalInformation) {
 			this.regionName = regionName;
 			this.districtName = districtName;
 			this.communityName = communityName;
@@ -436,7 +454,8 @@ public class EventIndexDto extends PseudonymizableIndexDto implements Serializab
 
 		@Override
 		public String toString() {
-			return LocationReferenceDto.buildCaption(regionName, districtName, communityName, city, street, houseNumber, additionalInformation);
+			return LocationReferenceDto.buildCaption(regionName, districtName, communityName, city, street, houseNumber,
+					additionalInformation);
 		}
 	}
 }

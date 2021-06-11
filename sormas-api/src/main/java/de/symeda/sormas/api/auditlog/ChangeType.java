@@ -22,15 +22,12 @@ import de.symeda.sormas.api.utils.DataHelper;
 
 public enum ChangeType {
 
-	CREATE,
-	UPDATE,
-	DELETE,
-	VIEW;
-	
+	CREATE, UPDATE, DELETE, VIEW;
+
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);
 	}
-	
+
 	public static String toString(ChangeType value) {
 		if (value == null) {
 			return "";
@@ -38,7 +35,7 @@ public enum ChangeType {
 
 		return value.toString();
 	}
-	
+
 	public static String toPastTense(ChangeType value) {
 		if (value == null) {
 			return "";

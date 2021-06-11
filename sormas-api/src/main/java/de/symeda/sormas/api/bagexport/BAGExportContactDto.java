@@ -71,7 +71,7 @@ public class BAGExportContactDto implements Serializable {
 	private String exposureLocationStreetNumber;
 	private String exposureLocationCity;
 	private String exposureLocationPostalCode;
-	//	missing
+	// missing
 	private String exposureLocationFlightDetail;
 
 	private Date symptomOnsetDate;
@@ -86,19 +86,17 @@ public class BAGExportContactDto implements Serializable {
 	private String endOfQuarantineReasonDetails;
 
 // int, long, java.lang.String, java.util.Date, java.util.Date, de.symeda.sormas.api.contact.EndOfQuarantineReason, java.lang.String
-	//@formatter:off
+	// @formatter:off
 	public BAGExportContactDto(Long contactId, Long personId, String lastName, String firstName,
-							   String homeAddressStreet, String homeAddressHouseNumber, String homeAddressCity, String homeAddressPostalCode,
-							   String phoneNumber, String mobileNumber, Sex sex,
-							   Integer birthdateDD, Integer birthdateMM, Integer birthdateYYYY,
-							   OccupationType occupationType,
-							   QuarantineType quarantineType, String quarantineDetails,
-							   Integer caseLinkCaseIdIsm, Long caseLinkCaseId, Date caseLinkContactDate,
-							   Date startOfQuarantineDate, Date endOfQuarantineDate, EndOfQuarantineReason endOfQuarantineReason, String endOfQuarantineReasonDetails
-
+			String homeAddressStreet, String homeAddressHouseNumber, String homeAddressCity,
+			String homeAddressPostalCode, String phoneNumber, String mobileNumber, Sex sex, Integer birthdateDD,
+			Integer birthdateMM, Integer birthdateYYYY, OccupationType occupationType, QuarantineType quarantineType,
+			String quarantineDetails, Integer caseLinkCaseIdIsm, Long caseLinkCaseId, Date caseLinkContactDate,
+			Date startOfQuarantineDate, Date endOfQuarantineDate, EndOfQuarantineReason endOfQuarantineReason,
+			String endOfQuarantineReasonDetails
 
 	) {
-		//@formatter:on
+		// @formatter:on
 
 		this.contactId = contactId;
 		this.personId = personId;

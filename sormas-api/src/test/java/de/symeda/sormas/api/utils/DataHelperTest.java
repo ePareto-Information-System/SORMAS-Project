@@ -72,6 +72,7 @@ public class DataHelperTest {
 			exceptionThrown = true;
 		}
 
-		assertTrue("getShortUuid should throw StringIndexOutOfBoundsException on Uuids that are too short.", exceptionThrown);
+		assertTrue("getShortUuid should throw StringIndexOutOfBoundsException on Uuids that are too short.",
+				exceptionThrown);
 	}
 }

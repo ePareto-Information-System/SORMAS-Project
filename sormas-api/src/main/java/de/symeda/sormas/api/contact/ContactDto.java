@@ -40,6 +40,7 @@ import de.symeda.sormas.api.utils.EmbeddedPersonalData;
 import de.symeda.sormas.api.utils.HideForCountriesExcept;
 import de.symeda.sormas.api.utils.Required;
 import de.symeda.sormas.api.utils.SensitiveData;
+import de.symeda.sormas.api.utils.SormasToSormasEntityDto;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 import de.symeda.sormas.api.utils.pseudonymization.Pseudonymizer;
@@ -47,7 +48,7 @@ import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.LatitudeP
 import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.LongitudePseudonymizer;
 import de.symeda.sormas.api.vaccinationinfo.VaccinationInfoDto;
 
-public class ContactDto extends PseudonymizableDto {
+public class ContactDto extends PseudonymizableDto implements SormasToSormasEntityDto {
 
 	private static final long serialVersionUID = -7764607075875188799L;
 
@@ -127,6 +128,8 @@ public class ContactDto extends PseudonymizableDto {
 	public static final String REPORTING_DISTRICT = "reportingDistrict";
 
 	public static final String VACCINATION_INFO = "vaccinationInfo";
+	public static final String FOLLOW_UP_STATUS_CHANGE_DATE = "followUpStatusChangeDate";
+	public static final String FOLLOW_UP_STATUS_CHANGE_USER = "followUpStatusChangeUser";
 
 	private CaseReferenceDto caze;
 	private String caseIdExternalSystem;
@@ -182,13 +185,8 @@ public class ContactDto extends PseudonymizableDto {
 	private ContactRelation relationToCase;
 	@SensitiveData
 	private String relationDescription;
-	@HideForCountriesExcept(countries = {
-		COUNTRY_CODE_GERMANY,
-		COUNTRY_CODE_SWITZERLAND })
+	@HideForCountriesExcept(countries = { COUNTRY_CODE_GERMANY, COUNTRY_CODE_SWITZERLAND })
 	private String externalID;
-	@HideForCountriesExcept(countries = {
-			COUNTRY_CODE_GERMANY,
-			COUNTRY_CODE_SWITZERLAND })
 	private String externalToken;
 
 	private boolean highPriority;
@@ -216,21 +214,13 @@ public class ContactDto extends PseudonymizableDto {
 
 	@SensitiveData
 	private String quarantineHelpNeeded;
-	@HideForCountriesExcept(countries = {
-		COUNTRY_CODE_GERMANY,
-		COUNTRY_CODE_SWITZERLAND })
+	@HideForCountriesExcept(countries = { COUNTRY_CODE_GERMANY, COUNTRY_CODE_SWITZERLAND })
 	private boolean quarantineOrderedVerbally;
-	@HideForCountriesExcept(countries = {
-		COUNTRY_CODE_GERMANY,
-		COUNTRY_CODE_SWITZERLAND })
+	@HideForCountriesExcept(countries = { COUNTRY_CODE_GERMANY, COUNTRY_CODE_SWITZERLAND })
 	private boolean quarantineOrderedOfficialDocument;
-	@HideForCountriesExcept(countries = {
-		COUNTRY_CODE_GERMANY,
-		COUNTRY_CODE_SWITZERLAND })
+	@HideForCountriesExcept(countries = { COUNTRY_CODE_GERMANY, COUNTRY_CODE_SWITZERLAND })
 	private Date quarantineOrderedVerballyDate;
-	@HideForCountriesExcept(countries = {
-		COUNTRY_CODE_GERMANY,
-		COUNTRY_CODE_SWITZERLAND })
+	@HideForCountriesExcept(countries = { COUNTRY_CODE_GERMANY, COUNTRY_CODE_SWITZERLAND })
 	private Date quarantineOrderedOfficialDocumentDate;
 	@HideForCountriesExcept
 	private YesNoUnknown quarantineHomePossible;
@@ -244,13 +234,9 @@ public class ContactDto extends PseudonymizableDto {
 	private String quarantineHomeSupplyEnsuredComment;
 	private boolean quarantineExtended;
 	private boolean quarantineReduced;
-	@HideForCountriesExcept(countries = {
-		COUNTRY_CODE_GERMANY,
-		COUNTRY_CODE_SWITZERLAND })
+	@HideForCountriesExcept(countries = { COUNTRY_CODE_GERMANY, COUNTRY_CODE_SWITZERLAND })
 	private boolean quarantineOfficialOrderSent;
-	@HideForCountriesExcept(countries = {
-		COUNTRY_CODE_GERMANY,
-		COUNTRY_CODE_SWITZERLAND })
+	@HideForCountriesExcept(countries = { COUNTRY_CODE_GERMANY, COUNTRY_CODE_SWITZERLAND })
 	private Date quarantineOfficialOrderSentDate;
 	@SensitiveData
 	private String additionalDetails;
@@ -260,11 +246,9 @@ public class ContactDto extends PseudonymizableDto {
 	private boolean ownershipHandedOver;
 	private YesNoUnknown returningTraveler;
 
-	@HideForCountriesExcept(countries = {
-		COUNTRY_CODE_SWITZERLAND })
+	@HideForCountriesExcept(countries = { COUNTRY_CODE_SWITZERLAND })
 	private EndOfQuarantineReason endOfQuarantineReason;
-	@HideForCountriesExcept(countries = {
-		COUNTRY_CODE_SWITZERLAND })
+	@HideForCountriesExcept(countries = { COUNTRY_CODE_SWITZERLAND })
 	@SensitiveData
 	private String endOfQuarantineReasonDetails;
 	private TransmissionClassification contactTransmissionClassification;
@@ -280,6 +264,8 @@ public class ContactDto extends PseudonymizableDto {
 	private DistrictReferenceDto reportingDistrict;
 
 	private VaccinationInfoDto vaccinationInfo;
+	private Date followUpStatusChangeDate;
+	private UserReferenceDto followUpStatusChangeUser;
 
 	public static ContactDto build() {
 		final ContactDto contact = new ContactDto();
@@ -524,12 +510,9 @@ public class ContactDto extends PseudonymizableDto {
 	}
 
 	public ContactReferenceDto toReference() {
-		return new ContactReferenceDto(
-			getUuid(),
-			getPerson().getFirstName(),
-			getPerson().getLastName(),
-			getCaze() != null ? getCaze().getFirstName() : null,
-			getCaze() != null ? getCaze().getLastName() : null);
+		return new ContactReferenceDto(getUuid(), getPerson().getFirstName(), getPerson().getLastName(),
+				getCaze() != null ? getCaze().getFirstName() : null,
+				getCaze() != null ? getCaze().getLastName() : null);
 	}
 
 	public UserReferenceDto getResultingCaseUser() {
@@ -564,7 +547,9 @@ public class ContactDto extends PseudonymizableDto {
 		this.externalID = externalID;
 	}
 
-	public String getExternalToken() { return externalToken; }
+	public String getExternalToken() {
+		return externalToken;
+	}
 
 	public void setExternalToken(String externalToken) {
 		this.externalToken = externalToken;
@@ -826,14 +811,17 @@ public class ContactDto extends PseudonymizableDto {
 		this.healthConditions = healthConditions;
 	}
 
+	@Override
 	public SormasToSormasOriginInfoDto getSormasToSormasOriginInfo() {
 		return sormasToSormasOriginInfo;
 	}
 
+	@Override
 	public void setSormasToSormasOriginInfo(SormasToSormasOriginInfoDto sormasToSormasOriginInfo) {
 		this.sormasToSormasOriginInfo = sormasToSormasOriginInfo;
 	}
 
+	@Override
 	public boolean isOwnershipHandedOver() {
 		return ownershipHandedOver;
 	}
@@ -905,11 +893,28 @@ public class ContactDto extends PseudonymizableDto {
 	public void setContactTransmissionClassification(TransmissionClassification contactTransmissionClassification) {
 		this.contactTransmissionClassification = contactTransmissionClassification;
 	}
+
 	public VaccinationInfoDto getVaccinationInfo() {
 		return vaccinationInfo;
 	}
 
 	public void setVaccinationInfo(VaccinationInfoDto vaccinationInfo) {
 		this.vaccinationInfo = vaccinationInfo;
+	}
+
+	public Date getFollowUpStatusChangeDate() {
+		return followUpStatusChangeDate;
+	}
+
+	public void setFollowUpStatusChangeDate(Date followUpStatusChangeDate) {
+		this.followUpStatusChangeDate = followUpStatusChangeDate;
+	}
+
+	public UserReferenceDto getFollowUpStatusChangeUser() {
+		return followUpStatusChangeUser;
+	}
+
+	public void setFollowUpStatusChangeUser(UserReferenceDto followUpStatusChangeUser) {
+		this.followUpStatusChangeUser = followUpStatusChangeUser;
 	}
 }

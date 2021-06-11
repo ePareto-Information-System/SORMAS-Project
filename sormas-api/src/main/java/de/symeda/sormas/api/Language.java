@@ -24,7 +24,8 @@ public enum Language {
 	IT_CH(new Locale("it", "CH"), "dd/MM/yyyy", "dd/MM/yyyy H:mm", "dd/MM"),
 	FI(new Locale("fi", "FI"), "dd.MM.yyyy", "dd.MM.yyyy H.mm", "dd.MM"),
 	PS(new Locale("ps", "AF"), "dd/MM/yyyy", "dd/MM/yyyy HH:mm", "dd/MM"),
-	FA(new Locale("fa", "AF"), "dd/MM/yyyy", "dd/MM/yyyy HH:mm", "dd/MM");
+	FA(new Locale("fa", "AF"), "dd/MM/yyyy", "dd/MM/yyyy HH:mm", "dd/MM"),
+	CZ(new Locale("cs", "CZ"), "dd.MM.yyyy", "dd.MM.yyyy HH:mm", "dd.MM.");
 
 	/**
 	 * Links locale strings to Languages
@@ -36,7 +37,7 @@ public enum Language {
 			Locale locale = lang.getLocale();
 			languageLookup.put(createKey(locale.getLanguage(), locale.getCountry()), lang);
 
-			//add first Language enum as default for the plain language Locale
+			// add first Language enum as default for the plain language Locale
 			String langKey = createKey(locale.getLanguage(), "");
 			if (!languageLookup.containsKey(langKey)) {
 				languageLookup.put(langKey, lang);
@@ -99,7 +100,7 @@ public enum Language {
 
 	private static String createKey(String... localeComponents) {
 
-		//only language and country are factored in
+		// only language and country are factored in
 		StringBuilder sb = new StringBuilder(5);
 		sb.append(localeComponents[0].toLowerCase());
 

@@ -19,11 +19,12 @@
 package de.symeda.sormas.api;
 
 /**
- * Authentication provider which can be configured trough the {@link ConfigFacade#getAuthenticationProvider()} property.
- * Once initialized it provides Auth Provider specific authentication configs like:
+ * Authentication provider which can be configured trough the
+ * {@link ConfigFacade#getAuthenticationProvider()} property. Once initialized
+ * it provides Auth Provider specific authentication configs like:
  * <ul>
- *     <li>is user name case sensitive</li>
- *     <li>is email required</li>
+ * <li>is user name case sensitive</li>
+ * <li>is email required</li>
  * </ul>
  *
  * @author Alex Vidrean
@@ -31,75 +32,78 @@ package de.symeda.sormas.api;
  */
 public class AuthProvider {
 
-    public static final String KEYCLOAK = "KEYCLOAK";
+	public static final String KEYCLOAK = "KEYCLOAK";
 
-    public static final String SORMAS = "SORMAS";
+	public static final String SORMAS = "SORMAS";
 
-    private static AuthProvider provider;
+	private static AuthProvider provider;
 
-    private final boolean isUsernameCaseSensitive;
+	private final boolean isUsernameCaseSensitive;
 
-    private final boolean isDefaultProvider;
+	private final boolean isDefaultProvider;
 
-    private final boolean isUserSyncSupported;
+	private final boolean isUserSyncSupported;
 
-    private final boolean isUserSyncAtStartupEnabled;
+	private final boolean isUserSyncAtStartupEnabled;
 
-    private final String name;
+	private final String name;
 
-    private AuthProvider() {
-        String configuredProvider = FacadeProvider.getConfigFacade().getAuthenticationProvider();
-        isUsernameCaseSensitive = SORMAS.equalsIgnoreCase(configuredProvider);
-        isDefaultProvider = SORMAS.equalsIgnoreCase(configuredProvider);
-        isUserSyncSupported = KEYCLOAK.equalsIgnoreCase(configuredProvider);
-        isUserSyncAtStartupEnabled = isUserSyncSupported && FacadeProvider.getConfigFacade().isAuthenticationProviderUserSyncAtStartupEnabled();
-        name = configuredProvider;
-    }
+	private AuthProvider() {
+		String configuredProvider = FacadeProvider.getConfigFacade().getAuthenticationProvider();
+		isUsernameCaseSensitive = SORMAS.equalsIgnoreCase(configuredProvider);
+		isDefaultProvider = SORMAS.equalsIgnoreCase(configuredProvider);
+		isUserSyncSupported = KEYCLOAK.equalsIgnoreCase(configuredProvider);
+		isUserSyncAtStartupEnabled = isUserSyncSupported
+				&& FacadeProvider.getConfigFacade().isAuthenticationProviderUserSyncAtStartupEnabled();
+		name = configuredProvider;
+	}
 
-    public static AuthProvider getProvider() {
-        if (provider == null) {
-            synchronized (AuthProvider.class) {
-                if (provider == null) {
-                    provider = new AuthProvider();
-                }
-            }
-        }
-        return provider;
-    }
+	public static AuthProvider getProvider() {
+		if (provider == null) {
+			synchronized (AuthProvider.class) {
+				if (provider == null) {
+					provider = new AuthProvider();
+				}
+			}
+		}
+		return provider;
+	}
 
-    /**
-     * Authentication Provider requires usernames to be case sensitive or insensitive
-     */
-    public boolean isUsernameCaseSensitive() {
-        return isUsernameCaseSensitive;
-    }
+	/**
+	 * Authentication Provider requires usernames to be case sensitive or
+	 * insensitive
+	 */
+	public boolean isUsernameCaseSensitive() {
+		return isUsernameCaseSensitive;
+	}
 
-    /**
-     * Current Authentication Provider is the SORMAS default one.
-     */
-    public boolean isDefaultProvider() {
-        return isDefaultProvider;
-    }
+	/**
+	 * Current Authentication Provider is the SORMAS default one.
+	 */
+	public boolean isDefaultProvider() {
+		return isDefaultProvider;
+	}
 
-    /**
-     * Authentication Provider enables users to be synced from the default provider.
-     */
-    public boolean isUserSyncSupported() {
-        return isUserSyncSupported;
-    }
+	/**
+	 * Authentication Provider enables users to be synced from the default provider.
+	 */
+	public boolean isUserSyncSupported() {
+		return isUserSyncSupported;
+	}
 
-    /**
-     * Even if the Authentication Provider supports user sync, the user sync at startup might be disabled for startup performance reasons.
-     * If user sync is not supported, this will always return false.
-     */
-    public boolean isUserSyncAtStartupEnabled() {
-        return isUserSyncAtStartupEnabled;
-    }
+	/**
+	 * Even if the Authentication Provider supports user sync, the user sync at
+	 * startup might be disabled for startup performance reasons. If user sync is
+	 * not supported, this will always return false.
+	 */
+	public boolean isUserSyncAtStartupEnabled() {
+		return isUserSyncAtStartupEnabled;
+	}
 
-    /**
-     * Name of the active Authentication Provider.
-     */
-    public String getName() {
-        return name;
-    }
+	/**
+	 * Name of the active Authentication Provider.
+	 */
+	public String getName() {
+		return name;
+	}
 }

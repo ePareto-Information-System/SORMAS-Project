@@ -20,14 +20,9 @@ package de.symeda.sormas.api.person;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 
-public enum Sex
-	implements
-	StatisticsGroupingKey {
+public enum Sex implements StatisticsGroupingKey {
 
-	MALE,
-	FEMALE,
-	OTHER,
-	UNKNOWN;
+	MALE, FEMALE, OTHER, UNKNOWN;
 
 	public String getName() {
 		return this.name();
@@ -44,8 +39,8 @@ public enum Sex
 			throw new NullPointerException("Can't compare to null.");
 		}
 		if (o.getClass() != this.getClass()) {
-			throw new UnsupportedOperationException(
-				"Can't compare to class " + o.getClass().getName() + " that differs from " + this.getClass().getName());
+			throw new UnsupportedOperationException("Can't compare to class " + o.getClass().getName()
+					+ " that differs from " + this.getClass().getName());
 		}
 
 		return this.toString().compareTo(o.toString());

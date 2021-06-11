@@ -34,7 +34,8 @@ public interface CommunityFacade {
 
 	List<CommunityDto> getAllAfter(Date date);
 
-	List<CommunityDto> getIndexList(CommunityCriteria criteria, Integer first, Integer max, List<SortProperty> sortProperties);
+	List<CommunityDto> getIndexList(CommunityCriteria criteria, Integer first, Integer max,
+			List<SortProperty> sortProperties);
 
 	long count(CommunityCriteria criteria);
 
@@ -50,7 +51,10 @@ public interface CommunityFacade {
 
 	void saveCommunity(CommunityDto dto) throws ValidationRuntimeException;
 
-	List<CommunityReferenceDto> getByName(String name, DistrictReferenceDto districtRef, boolean includeArchivedEntities);
+	void saveCommunity(CommunityDto dto, boolean allowMerge) throws ValidationRuntimeException;
+
+	List<CommunityReferenceDto> getByName(String name, DistrictReferenceDto districtRef,
+			boolean includeArchivedEntities);
 
 	List<CommunityReferenceDto> getByExternalId(String externalId, boolean includeArchivedEntities);
 

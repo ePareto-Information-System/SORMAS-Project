@@ -54,6 +54,10 @@ public class PatientDiaryConfig implements Serializable, Cloneable {
 		this.password = password;
 	}
 
+	public boolean isActive() {
+		return url != null;
+	}
+
 	public UserConfig getDefaultUser() {
 		return defaultUser;
 	}
@@ -69,12 +73,9 @@ public class PatientDiaryConfig implements Serializable, Cloneable {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		PatientDiaryConfig that = (PatientDiaryConfig) o;
-		return Objects.equals(url, that.url)
-			&& Objects.equals(probandsUrl, that.probandsUrl)
-			&& Objects.equals(authUrl, that.authUrl)
-			&& Objects.equals(email, that.email)
-			&& Objects.equals(password, that.password)
-			&& Objects.equals(defaultUser, that.defaultUser);
+		return Objects.equals(url, that.url) && Objects.equals(probandsUrl, that.probandsUrl)
+				&& Objects.equals(authUrl, that.authUrl) && Objects.equals(email, that.email)
+				&& Objects.equals(password, that.password) && Objects.equals(defaultUser, that.defaultUser);
 	}
 
 	@Override

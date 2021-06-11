@@ -30,7 +30,8 @@ public class CampaignDashboardElement implements Serializable {
 		this.height = height;
 	}
 
-	public CampaignDashboardElement(String diagramId, String tabId, String subTabId, Integer order, Integer width, Integer height) {
+	public CampaignDashboardElement(String diagramId, String tabId, String subTabId, Integer order, Integer width,
+			Integer height) {
 		this(diagramId, tabId, order, width, height);
 		this.subTabId = subTabId;
 	}
@@ -84,20 +85,19 @@ public class CampaignDashboardElement implements Serializable {
 	}
 
 	/**
-	 * Needed. Otherwise hibernate will persist whenever loading,
-	 * because hibernate types creates new instances that aren't equal.
+	 * Needed. Otherwise hibernate will persist whenever loading, because hibernate
+	 * types creates new instances that aren't equal.
 	 */
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 		CampaignDashboardElement that = (CampaignDashboardElement) o;
-		return Objects.equals(diagramId, that.diagramId) &&
-				Objects.equals(tabId, that.tabId) &&
-				Objects.equals(subTabId, that.subTabId) &&
-				Objects.equals(order, that.order) &&
-				Objects.equals(width, that.width) &&
-				Objects.equals(height, that.height);
+		return Objects.equals(diagramId, that.diagramId) && Objects.equals(tabId, that.tabId)
+				&& Objects.equals(subTabId, that.subTabId) && Objects.equals(order, that.order)
+				&& Objects.equals(width, that.width) && Objects.equals(height, that.height);
 	}
 
 	@Override

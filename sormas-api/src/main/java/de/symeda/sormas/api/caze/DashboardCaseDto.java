@@ -39,16 +39,9 @@ public class DashboardCaseDto implements Serializable {
 	private PresentCondition casePersonCondition;
 	private Disease causeOfDeathDisease;
 
-	public DashboardCaseDto(
-		long id,
-		String uuid,
-		Date reportDate,
-		Date onsetDate,
-		CaseClassification caseClassification,
-		Disease disease,
-		InvestigationStatus investigationStatus,
-		PresentCondition casePersonCondition,
-		Disease causeOfDeathDisease) {
+	public DashboardCaseDto(long id, String uuid, Date reportDate, Date onsetDate,
+			CaseClassification caseClassification, Disease disease, InvestigationStatus investigationStatus,
+			PresentCondition casePersonCondition, Disease causeOfDeathDisease) {
 
 		this.id = id;
 		this.uuid = uuid;
@@ -134,6 +127,7 @@ public class DashboardCaseDto implements Serializable {
 	}
 
 	public Boolean wasFatal() {
-		return getCasePersonCondition() != null && getCasePersonCondition() != PresentCondition.ALIVE && getCauseOfDeathDisease() == getDisease();
+		return getCasePersonCondition() != null && getCasePersonCondition() != PresentCondition.ALIVE
+				&& getCauseOfDeathDisease() == getDisease();
 	}
 }

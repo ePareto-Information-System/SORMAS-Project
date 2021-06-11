@@ -36,13 +36,9 @@ public class DiseaseClassificationCriteriaDto extends EntityDto {
 
 	}
 
-	public DiseaseClassificationCriteriaDto(
-		Disease disease,
-		Date changeDate,
-		ClassificationCriteriaDto suspectCriteria,
-		ClassificationCriteriaDto probableCriteria,
-		ClassificationCriteriaDto confirmedCriteria,
-		ClassificationCriteriaDto notACaseCriteria) {
+	public DiseaseClassificationCriteriaDto(Disease disease, Date changeDate, ClassificationCriteriaDto suspectCriteria,
+			ClassificationCriteriaDto probableCriteria, ClassificationCriteriaDto confirmedCriteria,
+			ClassificationCriteriaDto notACaseCriteria) {
 
 		super(changeDate, changeDate, null);
 		this.disease = disease;
@@ -93,6 +89,7 @@ public class DiseaseClassificationCriteriaDto extends EntityDto {
 	}
 
 	public boolean hasAnyCriteria() {
-		return suspectCriteria != null || probableCriteria != null || confirmedCriteria != null || notACaseCriteria != null;
+		return suspectCriteria != null || probableCriteria != null || confirmedCriteria != null
+				|| notACaseCriteria != null;
 	}
 }

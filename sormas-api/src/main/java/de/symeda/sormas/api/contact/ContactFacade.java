@@ -17,6 +17,7 @@
  *******************************************************************************/
 package de.symeda.sormas.api.contact;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -54,41 +55,30 @@ public interface ContactFacade {
 
 	List<ContactDto> getByUuids(List<String> uuids);
 
-	Long countContactsForMap(RegionReferenceDto regionRef, DistrictReferenceDto districtRef, Disease disease, List<MapCaseDto> mapCaseDtos);
+	Long countContactsForMap(RegionReferenceDto regionRef, DistrictReferenceDto districtRef, Disease disease,
+			List<MapCaseDto> mapCaseDtos);
 
-	List<MapContactDto> getContactsForMap(
-		RegionReferenceDto regionRef,
-		DistrictReferenceDto districtRef,
-		Disease disease,
-		List<MapCaseDto> mapCaseDtos);
+	List<MapContactDto> getContactsForMap(RegionReferenceDto regionRef, DistrictReferenceDto districtRef,
+			Disease disease, List<MapCaseDto> mapCaseDtos);
 
 	void deleteContact(String contactUuid);
 
-	List<ContactIndexDto> getIndexList(ContactCriteria contactCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
+	List<ContactIndexDto> getIndexList(ContactCriteria contactCriteria, Integer first, Integer max,
+			List<SortProperty> sortProperties);
 
-	List<ContactIndexDetailedDto> getIndexDetailedList(
-		ContactCriteria contactCriteria,
-		Integer first,
-		Integer max,
-		List<SortProperty> sortProperties);
+	List<ContactIndexDetailedDto> getIndexDetailedList(ContactCriteria contactCriteria, Integer first, Integer max,
+			List<SortProperty> sortProperties);
 
-	List<ContactExportDto> getExportList(
-		ContactCriteria contactCriteria,
-		int first,
-		int max,
-		ExportConfigurationDto exportConfiguration,
-		Language userLanguage);
+	List<ContactExportDto> getExportList(ContactCriteria contactCriteria, Collection<String> selectedRows, int first,
+			int max, ExportConfigurationDto exportConfiguration, Language userLanguage);
 
-	List<VisitSummaryExportDto> getVisitSummaryExportList(ContactCriteria contactCriteria, int first, int max, Language userLanguage);
+	List<VisitSummaryExportDto> getVisitSummaryExportList(ContactCriteria contactCriteria,
+			Collection<String> selectedRows, int first, int max, Language userLanguage);
 
 	long countMaximumFollowUpDays(ContactCriteria contactCriteria);
 
-	List<DashboardContactDto> getContactsForDashboard(
-		RegionReferenceDto regionRef,
-		DistrictReferenceDto districtRef,
-		Disease disease,
-		Date from,
-		Date to);
+	List<DashboardContactDto> getContactsForDashboard(RegionReferenceDto regionRef, DistrictReferenceDto districtRef,
+			Disease disease, Date from, Date to);
 
 	Map<ContactStatus, Long> getNewContactCountPerStatus(ContactCriteria contactCriteria);
 
@@ -104,19 +94,14 @@ public interface ContactFacade {
 
 	boolean isDeleted(String contactUuid);
 
-	List<ContactFollowUpDto> getContactFollowUpList(
-		ContactCriteria contactCriteria,
-		Date referenceDate,
-		int interval,
-		Integer first,
-		Integer max,
-		List<SortProperty> sortProperties);
+	List<ContactFollowUpDto> getContactFollowUpList(ContactCriteria contactCriteria, Date referenceDate, int interval,
+			Integer first, Integer max, List<SortProperty> sortProperties);
 
 	int[] getContactCountsByCasesForDashboard(List<Long> contactIds);
 
 	/**
-	 * @param caseUuids
-	 *            The cases to check, how much of them where created from a contact.
+	 * @param caseUuids The cases to check, how much of them where created from a
+	 *                  contact.
 	 * @return Number of cases, that resulted from a contact.
 	 */
 	int getNonSourceCaseCountForDashboard(List<String> caseUuids);
@@ -129,12 +114,13 @@ public interface ContactFacade {
 
 	boolean exists(String uuid);
 
-	List<DashboardQuarantineDataDto> getQuarantineDataForDashBoard(
-		RegionReferenceDto regionRef,
-		DistrictReferenceDto districtRef,
-		Disease disease,
-		Date from,
-		Date to);
+	boolean doesExternalTokenExist(String externalToken, String contactUuid);
 
-	List<MapContactDto> getIndexListForMap(ContactCriteria contactCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
+	List<DashboardQuarantineDataDto> getQuarantineDataForDashBoard(RegionReferenceDto regionRef,
+			DistrictReferenceDto districtRef, Disease disease, Date from, Date to);
+
+	List<MapContactDto> getIndexListForMap(ContactCriteria contactCriteria, Integer first, Integer max,
+			List<SortProperty> sortProperties);
+
+	List<ContactDto> getByPersonUuids(List<String> personUuids);
 }

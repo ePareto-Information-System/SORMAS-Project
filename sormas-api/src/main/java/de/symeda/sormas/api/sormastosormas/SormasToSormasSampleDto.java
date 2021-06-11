@@ -35,7 +35,8 @@ public class SormasToSormasSampleDto implements Serializable {
 	public SormasToSormasSampleDto() {
 	}
 
-	public SormasToSormasSampleDto(SampleDto sample, List<PathogenTestDto> pathogenTests, List<AdditionalTestDto> additionalTests) {
+	public SormasToSormasSampleDto(SampleDto sample, List<PathogenTestDto> pathogenTests,
+			List<AdditionalTestDto> additionalTests) {
 		this.sample = sample;
 		this.pathogenTests = pathogenTests;
 		this.additionalTests = additionalTests;

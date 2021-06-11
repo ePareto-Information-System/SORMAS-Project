@@ -31,9 +31,7 @@ import de.symeda.sormas.api.utils.DataHelper.Pair;
 
 public enum ApproximateAgeType {
 
-	YEARS,
-	MONTHS,
-	DAYS;
+	YEARS, MONTHS, DAYS;
 
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);
@@ -87,14 +85,12 @@ public enum ApproximateAgeType {
 			return getApproximateAge(birthDate, null);
 		}
 
-		public static Pair<Integer, ApproximateAgeType> getApproximateAge(
-			Integer birthdateYYYY,
-			Integer birthdateMM,
-			Integer birthdateDD,
-			Date deathDate) {
+		public static Pair<Integer, ApproximateAgeType> getApproximateAge(Integer birthdateYYYY, Integer birthdateMM,
+				Integer birthdateDD, Date deathDate) {
 
 			Calendar birthdate = new GregorianCalendar();
-			birthdate.set(birthdateYYYY, birthdateMM != null ? birthdateMM - 1 : 0, birthdateDD != null ? birthdateDD : 1);
+			birthdate.set(birthdateYYYY, birthdateMM != null ? birthdateMM - 1 : 0,
+					birthdateDD != null ? birthdateDD : 1);
 
 			return getApproximateAge(birthdate.getTime(), deathDate);
 		}

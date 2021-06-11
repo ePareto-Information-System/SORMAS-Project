@@ -265,6 +265,7 @@
     <string name="heading_app_update_required">Päivitys vaaditaan</string>
     <string name="heading_burial">Hautajaiset</string>
     <string name="heading_burials_visited">Käydyt hautajaiset</string>
+    <string name="heading_campaigns_list">Campaign Data</string>
     <string name="heading_case_disease_changed">Potilaan tauti on vaihtunut</string>
     <string name="heading_case_edit">Muokkaa potilasta</string>
     <string name="heading_case_new">Uusi Potilas</string>
@@ -318,6 +319,7 @@
     <string name="heading_outbreak_response">Epidemioiden torjunta</string>
     <string name="heading_person_involved">Osallinen henkilö</string>
     <string name="heading_person_involved_new">Uusi osallinen henkilö</string>
+    <string name="heading_person_contact_detail">Person contact details</string>
     <string name="heading_pick_or_create_person">Valitse tai lisää henkilö</string>
     <string name="heading_pick_or_create_case">Valitse tai lisää potilas</string>
     <string name="heading_pick_or_create_event">Pick or Create a Event</string>
@@ -367,6 +369,7 @@
     <string name="heading_extend_followup">Extend follow-up period</string>
     <string name="heading_contact_tracing_first_contact">First contact with Contact Tracing</string>
     <string name="heading_exposure">Exposure</string>
+    <string name="heading_activityAsCase">Activity as Case</string>
     <string name="hint_add_to_empty_list">Lisää uusi merkintä painamalla \"+\" symbolia oikeassa yläkulmassa.</string>
     <string name="hint_clear">Tyhjennä</string>
     <string name="hint_create_pin">Valitse neljänumeroinen PIN jota käytät vahvistamaan itsesi, kun avaat SORMAS-sovelluksen.</string>

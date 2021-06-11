@@ -25,6 +25,8 @@ import de.symeda.sormas.api.utils.SortProperty;
 
 @Remote
 public interface AuditLogEntryFacade {
-	List<AuditLogEntryDto> getList(AuditLogEntryCriteria entryCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
+	List<AuditLogEntryDto> getList(AuditLogEntryCriteria entryCriteria, Integer first, Integer max,
+			List<SortProperty> sortProperties);
+
 	void logActivity(ChangeType changeType, String clazz, String uuid);
 }

@@ -19,12 +19,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum MeansOfTransport {
 
-	LOCAL_PUBLIC_TRANSPORT,
-	BUS,
-	FERRY,
-	PLANE,
-	TRAIN,
-	OTHER;
+	LOCAL_PUBLIC_TRANSPORT, BUS, FERRY, PLANE, TRAIN, OTHER;
 
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);

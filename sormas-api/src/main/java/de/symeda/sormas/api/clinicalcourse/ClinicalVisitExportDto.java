@@ -31,21 +31,10 @@ public class ClinicalVisitExportDto implements Serializable {
 
 	private CaseJurisdictionDto caseJurisdiction;
 
-	public ClinicalVisitExportDto(
-		String caseUuid,
-		String caseFirstName,
-		String caseLastName,
-		Disease disease,
-		Date visitDateTime,
-		String visitRemarks,
-		String visitingPerson,
-		long symptomsId,
-		String caseReportingUserUuid,
-		String caseRegionUuid,
-		String caseDistrictUuid,
-		String caseCommunityUuid,
-		String caseHealthFacilityUuid,
-		String casePointOfEntryUuid) {
+	public ClinicalVisitExportDto(String caseUuid, String caseFirstName, String caseLastName, Disease disease,
+			Date visitDateTime, String visitRemarks, String visitingPerson, long symptomsId,
+			String caseReportingUserUuid, String caseRegionUuid, String caseDistrictUuid, String caseCommunityUuid,
+			String caseHealthFacilityUuid, String casePointOfEntryUuid) {
 
 		this.caseUuid = caseUuid;
 		this.caseName = PersonDto.buildCaption(caseFirstName, caseLastName);
@@ -55,7 +44,8 @@ public class ClinicalVisitExportDto implements Serializable {
 		this.visitingPerson = visitingPerson;
 		this.symptomsId = symptomsId;
 
-		this.caseJurisdiction = new CaseJurisdictionDto(caseReportingUserUuid, caseRegionUuid, caseDistrictUuid, caseCommunityUuid, caseHealthFacilityUuid, casePointOfEntryUuid);
+		this.caseJurisdiction = new CaseJurisdictionDto(caseReportingUserUuid, caseRegionUuid, caseDistrictUuid,
+				caseCommunityUuid, caseHealthFacilityUuid, casePointOfEntryUuid);
 	}
 
 	@Order(0)

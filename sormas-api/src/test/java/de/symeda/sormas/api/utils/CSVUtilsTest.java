@@ -33,13 +33,7 @@ public class CSVUtilsTest {
 	@Test
 	public void testCSVFormulaInjectionPreventionSingleLine() throws IOException {
 
-		String[] line = new String[] {
-			"text",
-			"=today()",
-			"=1+1",
-			"+2-1",
-			"-1-1",
-			"@sum(1+9)" };
+		String[] line = new String[] { "text", "=today()", "=1+1", "+2-1", "-1-1", "@sum(1+9)" };
 
 		StringWriter sw = new StringWriter();
 		BufferedWriter bw = new BufferedWriter(sw);
@@ -49,7 +43,8 @@ public class CSVUtilsTest {
 		csvWriter.flush();
 
 		String string = sw.toString();
-		String expectedString = "\"text\",\"'=today()\",\"'=1+1\",\"'+2-1\",\"'-1-1\",\"'@sum(1+9)\"" + CSVWriter.DEFAULT_LINE_END;
+		String expectedString = "\"text\",\"'=today()\",\"'=1+1\",\"'+2-1\",\"'-1-1\",\"'@sum(1+9)\""
+				+ CSVWriter.DEFAULT_LINE_END;
 
 		assertEquals(expectedString, string);
 
@@ -58,16 +53,8 @@ public class CSVUtilsTest {
 	@Test
 	public void testCSVFormulaInjectionMultipleLines() throws IOException {
 
-		String[] firstLine = new String[] {
-			"1+2",
-			"now=today",
-			"to-from",
-			"test@email.com" };
-		String[] secondLine = new String[] {
-			"=DATE(1,1,1)",
-			"@VALUE(\"2\")",
-			"+CONCAT(\"test\",\n\"test2\")",
-			"-5*5" };
+		String[] firstLine = new String[] { "1+2", "now=today", "to-from", "test@email.com" };
+		String[] secondLine = new String[] { "=DATE(1,1,1)", "@VALUE(\"2\")", "+CONCAT(\"test\",\n\"test2\")", "-5*5" };
 
 		StringWriter sw = new StringWriter();
 		BufferedWriter bw = new BufferedWriter(sw);
@@ -79,7 +66,8 @@ public class CSVUtilsTest {
 
 		String string = sw.toString();
 		String expectedString = "\"1+2\",\"now=today\",\"to-from\",\"test@email.com\"" + CSVWriter.DEFAULT_LINE_END
-			+ "\"'=DATE(1,1,1)\",\"'@VALUE(\"\"2\"\")\",\"'+CONCAT(\"\"test\"\",\n\"\"test2\"\")\",\"'-5*5\"" + CSVWriter.DEFAULT_LINE_END;
+				+ "\"'=DATE(1,1,1)\",\"'@VALUE(\"\"2\"\")\",\"'+CONCAT(\"\"test\"\",\n\"\"test2\"\")\",\"'-5*5\""
+				+ CSVWriter.DEFAULT_LINE_END;
 
 		assertEquals(expectedString, string);
 	}

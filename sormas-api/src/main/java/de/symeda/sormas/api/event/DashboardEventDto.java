@@ -47,23 +47,10 @@ public class DashboardEventDto implements Serializable {
 
 	private EventJurisdictionDto jurisdiction;
 
-	public DashboardEventDto(
-		String uuid,
-		EventStatus eventStatus,
-		EventInvestigationStatus eventInvestigationStatus,
-		Disease disease,
-		String diseaseDetails,
-		Date eventDate,
-		Double reportLat,
-		Double reportLon,
-		Double locationLat,
-		Double locationLon,
-		String reportingUserUuid,
-		String responsibleUserUuid,
-		String regionUuid,
-		String districtName,
-		String districtUuid,
-		String communityUuid) {
+	public DashboardEventDto(String uuid, EventStatus eventStatus, EventInvestigationStatus eventInvestigationStatus,
+			Disease disease, String diseaseDetails, Date eventDate, Double reportLat, Double reportLon,
+			Double locationLat, Double locationLon, String reportingUserUuid, String responsibleUserUuid,
+			String regionUuid, String districtName, String districtUuid, String communityUuid) {
 
 		this.uuid = uuid;
 		this.eventStatus = eventStatus;
@@ -77,7 +64,8 @@ public class DashboardEventDto implements Serializable {
 		this.locationLon = locationLon;
 		this.district = new DistrictReferenceDto(districtUuid, districtName, null);
 
-		this.jurisdiction = new EventJurisdictionDto(reportingUserUuid, responsibleUserUuid, regionUuid, districtUuid, communityUuid);
+		this.jurisdiction = new EventJurisdictionDto(reportingUserUuid, responsibleUserUuid, regionUuid, districtUuid,
+				communityUuid);
 	}
 
 	public String getUuid() {
@@ -166,7 +154,8 @@ public class DashboardEventDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return EventReferenceDto.buildCaption(getDisease(), getDiseaseDetails(), getEventStatus(), getEventInvestigationStatus(), getEventDate());
+		return EventReferenceDto.buildCaption(getDisease(), getDiseaseDetails(), getEventStatus(),
+				getEventInvestigationStatus(), getEventDate());
 	}
 
 	public EventJurisdictionDto getJurisdiction() {

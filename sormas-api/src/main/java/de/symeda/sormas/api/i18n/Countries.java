@@ -6,8 +6,8 @@ import javax.annotation.Generated;
 public interface Countries {
 
 	/*
-	 * Hint for SonarQube issues:
-	 * 1. java:S115: Violation of name convention for constants of this class is accepted: Close as false positive.
+	 * Hint for SonarQube issues: 1. java:S115: Violation of name convention for
+	 * constants of this class is accepted: Close as false positive.
 	 */
 
 }

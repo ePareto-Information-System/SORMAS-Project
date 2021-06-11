@@ -29,13 +29,18 @@ import de.symeda.sormas.api.utils.ValidationRuntimeException;
 @Remote
 public interface RegionFacade {
 
+	List<RegionReferenceDto> getAllActiveByServerCountry();
+
+	List<RegionReferenceDto> getAllActiveByCountry(String countryUuid);
+
 	List<RegionReferenceDto> getAllActiveByArea(String areaUuid);
 
 	List<RegionReferenceDto> getAllActiveAsReference();
 
 	List<RegionDto> getAllAfter(Date date);
 
-	List<RegionIndexDto> getIndexList(RegionCriteria criteria, Integer first, Integer max, List<SortProperty> sortProperties);
+	List<RegionIndexDto> getIndexList(RegionCriteria criteria, Integer first, Integer max,
+			List<SortProperty> sortProperties);
 
 	long count(RegionCriteria criteria);
 
@@ -51,7 +56,11 @@ public interface RegionFacade {
 
 	void saveRegion(RegionDto dto) throws ValidationRuntimeException;
 
-	List<RegionReferenceDto> getByName(String name, boolean includeArchivedEntities);
+	void saveRegion(RegionDto dto, boolean allowMerge) throws ValidationRuntimeException;
+
+	List<RegionReferenceDto> getReferencesByName(String name, boolean includeArchivedEntities);
+
+	List<RegionDto> getByName(String name, boolean includeArchivedEntities);
 
 	List<RegionReferenceDto> getByExternalId(String id, boolean includeArchivedEntities);
 

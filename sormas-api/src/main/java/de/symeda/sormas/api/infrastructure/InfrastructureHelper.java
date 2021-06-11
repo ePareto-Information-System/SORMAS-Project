@@ -16,7 +16,8 @@ public final class InfrastructureHelper {
 
 	public static final int CASE_INCIDENCE_DIVISOR = 100000;
 
-	public static String buildPointOfEntryString(String pointOfEntryUuid, String pointOfEntryName, String pointOfEntryDetails) {
+	public static String buildPointOfEntryString(String pointOfEntryUuid, String pointOfEntryName,
+			String pointOfEntryDetails) {
 
 		StringBuilder result = new StringBuilder();
 		result.append(buildPointOfEntryString(pointOfEntryUuid, pointOfEntryName));
@@ -40,7 +41,8 @@ public final class InfrastructureHelper {
 				return I18nProperties.getPrefixCaption(PointOfEntryDto.I18N_PREFIX, PointOfEntryDto.OTHER_SEAPORT);
 			}
 			if (pointOfEntryUuid.equals(PointOfEntryDto.OTHER_GROUND_CROSSING_UUID)) {
-				return I18nProperties.getPrefixCaption(PointOfEntryDto.I18N_PREFIX, PointOfEntryDto.OTHER_GROUND_CROSSING);
+				return I18nProperties.getPrefixCaption(PointOfEntryDto.I18N_PREFIX,
+						PointOfEntryDto.OTHER_GROUND_CROSSING);
 			}
 			if (pointOfEntryUuid.equals(PointOfEntryDto.OTHER_POE_UUID)) {
 				return I18nProperties.getPrefixCaption(PointOfEntryDto.I18N_PREFIX, PointOfEntryDto.OTHER_POE);

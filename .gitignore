@@ -30,4 +30,8 @@ bin
 /sormas-cargoserver/.env
 /sormas-cargoserver/custom.env
 /sormas-cargoserver/custom.properties
-sormas_*.zip
+
+sormas-e2e-ui-tests/gradle/
+sormas-e2e-ui-tests/gradlew
+sormas-e2e-ui-tests/gradlew.bat
+

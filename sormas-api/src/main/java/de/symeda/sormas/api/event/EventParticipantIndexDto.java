@@ -1,10 +1,11 @@
 package de.symeda.sormas.api.event;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.person.Sex;
-import de.symeda.sormas.api.person.ApproximateAgeType.ApproximateAgeHelper;
+import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.utils.PersonalData;
 import de.symeda.sormas.api.utils.SensitiveData;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableIndexDto;
@@ -36,25 +37,20 @@ public class EventParticipantIndexDto extends PseudonymizableIndexDto implements
 	@SensitiveData
 	private String lastName;
 	private Sex sex;
-	private String approximateAge;
+	private Integer approximateAge;
 	@SensitiveData
 	private String involvementDescription;
 	private long contactCount;
 
+	private PathogenTestResultType pathogenTestResult;
+	private Date sampleDateTime;
+
 	private EventParticipantJurisdictionDto eventJurisdiction;
 
-	public EventParticipantIndexDto(
-		String uuid,
-		String personUuid,
-		String caseUuid,
-		String eventUuid,
-		String firstName,
-		String lastName,
-		Sex sex,
-		Integer approximateAge,
-		ApproximateAgeType approximateAgeType,
-		String involvementDescription,
-		String reportingUserUuid) {
+	public EventParticipantIndexDto(String uuid, String personUuid, String caseUuid, String eventUuid, String firstName,
+			String lastName, Sex sex, Integer approximateAge, ApproximateAgeType approximateAgeType,
+			String involvementDescription, PathogenTestResultType pathogenTestResult, Date sampleDateTime,
+			String reportingUserUuid) {
 
 		this.uuid = uuid;
 		this.personUuid = personUuid;
@@ -63,9 +59,10 @@ public class EventParticipantIndexDto extends PseudonymizableIndexDto implements
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.sex = sex;
-		this.approximateAge = ApproximateAgeHelper.formatApproximateAge(approximateAge, approximateAgeType);
+		this.approximateAge = approximateAge;
 		this.involvementDescription = involvementDescription;
-
+		this.pathogenTestResult = pathogenTestResult;
+		this.sampleDateTime = sampleDateTime;
 		this.eventJurisdiction = new EventParticipantJurisdictionDto(reportingUserUuid);
 	}
 
@@ -125,11 +122,11 @@ public class EventParticipantIndexDto extends PseudonymizableIndexDto implements
 		this.sex = sex;
 	}
 
-	public String getApproximateAge() {
+	public Integer getApproximateAge() {
 		return approximateAge;
 	}
 
-	public void setApproximateAge(String approximateAge) {
+	public void setApproximateAge(Integer approximateAge) {
 		this.approximateAge = approximateAge;
 	}
 
@@ -151,5 +148,25 @@ public class EventParticipantIndexDto extends PseudonymizableIndexDto implements
 
 	public EventParticipantJurisdictionDto getJurisdiction() {
 		return eventJurisdiction;
+	}
+
+	public PathogenTestResultType getPathogenTestResult() {
+		return pathogenTestResult;
+	}
+
+	public void setPathogenTestResult(PathogenTestResultType pathogenTestResult) {
+		this.pathogenTestResult = pathogenTestResult;
+	}
+
+	public Date getSampleDateTime() {
+		return sampleDateTime;
+	}
+
+	public void setSampleDateTime(Date sampleDateTime) {
+		this.sampleDateTime = sampleDateTime;
+	}
+
+	public EventParticipantReferenceDto toReference() {
+		return new EventParticipantReferenceDto(uuid, firstName, lastName);
 	}
 }

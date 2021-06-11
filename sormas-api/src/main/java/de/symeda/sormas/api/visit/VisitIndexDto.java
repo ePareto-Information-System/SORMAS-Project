@@ -41,17 +41,9 @@ public class VisitIndexDto extends PseudonymizableIndexDto implements Serializab
 
 	private ContactJurisdictionDto contactJurisdiction;
 
-	public VisitIndexDto(
-		Long id,
-		String uuid,
-		Date visitDateTime,
-		VisitStatus visitStatus,
-		String visitRemarks,
-		Disease disease,
-		Boolean symptomatic,
-		Float temperature,
-		TemperatureSource temperatureSource,
-		VisitOrigin origin) {
+	public VisitIndexDto(Long id, String uuid, Date visitDateTime, VisitStatus visitStatus, String visitRemarks,
+			Disease disease, Boolean symptomatic, Float temperature, TemperatureSource temperatureSource,
+			VisitOrigin origin) {
 
 		this.id = id;
 		this.uuid = uuid;

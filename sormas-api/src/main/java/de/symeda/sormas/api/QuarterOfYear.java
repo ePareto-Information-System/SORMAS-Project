@@ -93,15 +93,16 @@ public class QuarterOfYear implements Serializable, Comparable<QuarterOfYear>, S
 			throw new NullPointerException("Can't compare to null.");
 		}
 		if (o.getClass() != this.getClass()) {
-			throw new UnsupportedOperationException(
-				"Can't compare to class " + o.getClass().getName() + " that differs from " + this.getClass().getName());
+			throw new UnsupportedOperationException("Can't compare to class " + o.getClass().getName()
+					+ " that differs from " + this.getClass().getName());
 		}
 
 		if (this.equals(o)) {
 			return 0;
 		}
 		if (this.getYear().keyCompareTo(((QuarterOfYear) o).getYear()) < 0
-			|| (this.getYear().equals(((QuarterOfYear) o).getYear()) && this.getQuarter().keyCompareTo(((QuarterOfYear) o).getQuarter()) < 0)) {
+				|| (this.getYear().equals(((QuarterOfYear) o).getYear())
+						&& this.getQuarter().keyCompareTo(((QuarterOfYear) o).getQuarter()) < 0)) {
 			return -1;
 		}
 		return 1;

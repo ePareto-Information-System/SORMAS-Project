@@ -18,6 +18,7 @@
 package de.symeda.sormas.api.person;
 
 import java.text.Normalizer;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -28,8 +29,11 @@ import org.simmetrics.metrics.StringMetrics;
 import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.caze.BirthDateDto;
 import de.symeda.sormas.api.caze.BurialInfoDto;
+import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.person.ApproximateAgeType.ApproximateAgeHelper;
 import de.symeda.sormas.api.utils.DateHelper;
+import de.symeda.sormas.api.utils.ValidationRuntimeException;
 
 public final class PersonHelper {
 
@@ -40,31 +44,30 @@ public final class PersonHelper {
 	public static final double DEFAULT_NAME_SIMILARITY_THRESHOLD = 0.65D;
 
 	/**
-	 * Calculates the trigram distance between both names and returns true
-	 * if the similarity is high enough to consider them a possible match.
-	 * Uses a default of {@link PersonHelper#DEFAULT_NAME_SIMILARITY_THRESHOLD} for the threshold.
+	 * Calculates the trigram distance between both names and returns true if the
+	 * similarity is high enough to consider them a possible match. Uses a default
+	 * of {@link PersonHelper#DEFAULT_NAME_SIMILARITY_THRESHOLD} for the threshold.
 	 */
-	protected static boolean areFullNamesSimilar(final String firstName, final String secondName, Double similarityThreshold) {
+	protected static boolean areFullNamesSimilar(final String firstName, final String secondName,
+			Double similarityThreshold) {
 		final String name = normalizeString(firstName);
 		final String otherName = normalizeString(secondName);
-		return StringMetrics.qGramsDistance().compare(name, otherName)
-			>= (similarityThreshold != null ? similarityThreshold : DEFAULT_NAME_SIMILARITY_THRESHOLD);
+		return StringMetrics.qGramsDistance().compare(name,
+				otherName) >= (similarityThreshold != null ? similarityThreshold : DEFAULT_NAME_SIMILARITY_THRESHOLD);
 	}
 
 	/**
-	 * Calculates the trigram distance between firstName/lastname (also viceversa lastname/firstname) and otherFirstName/otherLastName,
-	 * returns true if the similarity is high enough to consider them a possible match.
+	 * Calculates the trigram distance between firstName/lastname (also viceversa
+	 * lastname/firstname) and otherFirstName/otherLastName, returns true if the
+	 * similarity is high enough to consider them a possible match.
 	 */
-	public static boolean areNamesSimilar(
-		final String firstName,
-		final String lastName,
-		final String otherFirstName,
-		final String otherLastName,
-		Double similarityThreshold) {
+	public static boolean areNamesSimilar(final String firstName, final String lastName, final String otherFirstName,
+			final String otherLastName, Double similarityThreshold) {
 		final String name = createFullName(firstName, lastName);
 		final String nameInverted = createFullName(lastName, firstName);
 		final String otherName = createFullName(otherFirstName, otherLastName);
-		return areFullNamesSimilar(name, otherName, similarityThreshold) || areFullNamesSimilar(nameInverted, otherName, similarityThreshold);
+		return areFullNamesSimilar(name, otherName, similarityThreshold)
+				|| areFullNamesSimilar(nameInverted, otherName, similarityThreshold);
 	}
 
 	private static String createFullName(String firstName, String lastName) {
@@ -77,7 +80,8 @@ public final class PersonHelper {
 		return pattern.matcher(nfdNormalizedString).replaceAll("");
 	}
 
-	public static String formatBirthdate(Integer birthdateDD, Integer birthdateMM, Integer birthdateYYYY, Language language) {
+	public static String formatBirthdate(Integer birthdateDD, Integer birthdateMM, Integer birthdateYYYY,
+			Language language) {
 
 		if (birthdateDD == null && birthdateMM == null && birthdateYYYY == null) {
 			return "";
@@ -129,19 +133,38 @@ public final class PersonHelper {
 		return new BirthDateDto(birthdateDD, birthdateMM, birthdateYYYY);
 	}
 
-	public static String getAgeAndBirthdateString(
-		Integer age,
-		ApproximateAgeType ageType,
-		Integer birthdateDD,
-		Integer birthdateMM,
-		Integer birthdateYYYY,
-		Language language) {
+	public static String getAgeAndBirthdateString(Integer age, ApproximateAgeType ageType, Integer birthdateDD,
+			Integer birthdateMM, Integer birthdateYYYY, Language language) {
 
 		String ageStr = ApproximateAgeHelper.formatApproximateAge(age, ageType);
 		String birthdateStr = formatBirthdate(birthdateDD, birthdateMM, birthdateYYYY, language);
 		return !StringUtils.isEmpty(ageStr)
-			? (ageStr + (!StringUtils.isEmpty(birthdateStr) ? " (" + birthdateStr + ")" : ""))
-			: !StringUtils.isEmpty(birthdateStr) ? birthdateStr : "";
+				? (ageStr + (!StringUtils.isEmpty(birthdateStr) ? " (" + birthdateStr + ")" : ""))
+				: !StringUtils.isEmpty(birthdateStr) ? birthdateStr : "";
+	}
+
+	public static void validateBirthDate(Integer year, Integer month, Integer day) throws ValidationRuntimeException {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setLenient(false);
+
+		if (year != null) {
+			calendar.set(Calendar.YEAR, year);
+		}
+		if (month != null) {
+			month -= 1;
+			calendar.set(Calendar.MONTH, month);
+		}
+		if (day != null) {
+			calendar.set(Calendar.DAY_OF_MONTH, day);
+		}
+
+		try {
+			if (DateHelper.getEndOfDay(calendar.getTime()).after(DateHelper.getEndOfDay(new Date()))) {
+				throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.birthDateInFuture));
+			}
+		} catch (IllegalArgumentException e) {
+			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.birthDateInvalid));
+		}
 	}
 
 	public static String buildBurialInfoString(BurialInfoDto dto, Language language) {

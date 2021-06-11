@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+ * Copyright © 2016-2021 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *******************************************************************************/
+ */
 package de.symeda.sormas.backend.util;
 
 import javax.ejb.EJB;
@@ -25,12 +25,12 @@ import de.symeda.sormas.api.event.EventJurisdictionDto;
 import de.symeda.sormas.api.event.EventParticipantJurisdictionDto;
 import de.symeda.sormas.api.sample.SampleJurisdictionDto;
 import de.symeda.sormas.api.task.TaskJurisdictionDto;
+import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.utils.jurisdiction.UserJurisdiction;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.contact.Contact;
 import de.symeda.sormas.backend.event.Event;
 import de.symeda.sormas.backend.event.EventParticipant;
-import de.symeda.sormas.backend.event.EventParticipantJurisdictionChecker;
 import de.symeda.sormas.backend.facility.Facility;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.sample.Sample;
@@ -38,9 +38,6 @@ import de.symeda.sormas.backend.task.Task;
 import de.symeda.sormas.backend.user.User;
 
 public class JurisdictionHelper {
-
-	@EJB
-	private EventParticipantJurisdictionChecker eventParticipantJurisdictionChecker;
 
 	public static UserJurisdiction createUserJurisdiction(User user) {
 
@@ -261,5 +258,24 @@ public class JurisdictionHelper {
 		}
 
 		return eventParticipantJurisdiction;
+	}
+
+	public static JurisdictionLevel getSuperordinateJurisdiction(JurisdictionLevel jurisdition) {
+		switch (jurisdition) {
+		case NATION:
+			return JurisdictionLevel.NONE;
+		case REGION:
+			return JurisdictionLevel.NATION;
+		case DISTRICT:
+			return JurisdictionLevel.REGION;
+		case COMMUNITY:
+		case POINT_OF_ENTRY:
+		case HEALTH_FACILITY:
+			return JurisdictionLevel.DISTRICT;
+		case LABORATORY:
+		case EXTERNAL_LABORATORY:
+		default:
+			return JurisdictionLevel.NONE;
+		}
 	}
 }

@@ -14,9 +14,9 @@ import de.symeda.sormas.api.utils.ValidationRuntimeException;
 public interface PointOfEntryFacade {
 
 	/**
-	 * @param includeOthers
-	 *            Whether to include generic points of entry that can be used when a specific
-	 *            point of entry is not in the database.
+	 * @param includeOthers Whether to include generic points of entry that can be
+	 *                      used when a specific point of entry is not in the
+	 *                      database.
 	 */
 	List<PointOfEntryReferenceDto> getAllActiveByDistrict(String districtUuid, boolean includeOthers);
 
@@ -24,7 +24,10 @@ public interface PointOfEntryFacade {
 
 	void save(PointOfEntryDto pointOfEntry) throws ValidationRuntimeException;
 
-	List<PointOfEntryDto> getIndexList(PointOfEntryCriteria criteria, Integer first, Integer max, List<SortProperty> sortProperties);
+	void save(PointOfEntryDto dto, boolean allowMerge) throws ValidationRuntimeException;
+
+	List<PointOfEntryDto> getIndexList(PointOfEntryCriteria criteria, Integer first, Integer max,
+			List<SortProperty> sortProperties);
 
 	long count(PointOfEntryCriteria criteria);
 
@@ -36,7 +39,8 @@ public interface PointOfEntryFacade {
 
 	List<PointOfEntryDto> getByUuids(List<String> uuids);
 
-	List<PointOfEntryReferenceDto> getByName(String name, DistrictReferenceDto district, boolean includeArchivedEntities);
+	List<PointOfEntryReferenceDto> getByName(String name, DistrictReferenceDto district,
+			boolean includeArchivedEntities);
 
 	List<PointOfEntryReferenceDto> getByExternalId(String name, boolean includeArchivedEntities);
 

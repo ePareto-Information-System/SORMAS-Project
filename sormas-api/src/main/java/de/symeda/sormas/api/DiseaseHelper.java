@@ -29,15 +29,15 @@ public final class DiseaseHelper {
 	}
 
 	/**
-	 * Checks whether the given symptoms match the clinical criteria of one of the three Plague types.
+	 * Checks whether the given symptoms match the clinical criteria of one of the
+	 * three Plague types.
 	 */
 	public static PlagueType getPlagueTypeForSymptoms(SymptomsDto symptoms) {
 		if (symptoms.getFever() == SymptomState.YES) {
 			if (symptoms.getPainfulLymphadenitis() == SymptomState.YES) {
 				return PlagueType.BUBONIC;
-			} else if (symptoms.getCough() == SymptomState.YES
-				|| symptoms.getChestPain() == SymptomState.YES
-				|| symptoms.getCoughingBlood() == SymptomState.YES) {
+			} else if (symptoms.getCough() == SymptomState.YES || symptoms.getChestPain() == SymptomState.YES
+					|| symptoms.getCoughingBlood() == SymptomState.YES) {
 				return PlagueType.PNEUMONIC;
 			} else if (symptoms.getChillsSweats() == SymptomState.YES) {
 				return PlagueType.SEPTICAEMIC;

@@ -64,7 +64,8 @@ public class DateHelperTest {
 	}
 
 	/**
-	 * Asserts that all expected days are present in order from 1 to {@code maxDayInMonth}.
+	 * Asserts that all expected days are present in order from 1 to
+	 * {@code maxDayInMonth}.
 	 */
 	private static void assertDays(List<Integer> days, int maxDayInMonth) {
 

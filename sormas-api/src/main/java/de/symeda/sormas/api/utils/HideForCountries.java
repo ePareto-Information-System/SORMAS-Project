@@ -11,6 +11,5 @@ import de.symeda.sormas.api.CountryHelper;
 @Target(ElementType.FIELD)
 public @interface HideForCountries {
 
-	String[] countries() default {
-		CountryHelper.COUNTRY_CODE_GERMANY };
+	String[] countries() default { CountryHelper.COUNTRY_CODE_GERMANY };
 }

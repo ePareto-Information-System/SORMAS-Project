@@ -47,22 +47,9 @@ public class VisitExportDto implements Serializable {
 
 	private VisitOrigin origin;
 
-	public VisitExportDto(
-		Long id,
-		String uuid,
-		Long personId,
-		String firstName,
-		String lastName,
-		Long symptomsId,
-		Long visitUserId,
-		Disease disease,
-		Date visitDateTime,
-		VisitStatus visitStatus,
-		String visitRemarks,
-		Double reportLat,
-		Double reportLon,
-		VisitOrigin origin,
-		String personUuid) {
+	public VisitExportDto(Long id, String uuid, Long personId, String firstName, String lastName, Long symptomsId,
+			Long visitUserId, Disease disease, Date visitDateTime, VisitStatus visitStatus, String visitRemarks,
+			Double reportLat, Double reportLon, VisitOrigin origin, String personUuid) {
 
 		this.id = id;
 		this.uuid = uuid;

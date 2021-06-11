@@ -36,23 +36,11 @@ public class ClinicalVisitIndexDto implements Serializable {
 
 	private CaseJurisdictionDto caseJurisdiction;
 
-	public ClinicalVisitIndexDto(
-		String uuid,
-		Date visitDateTime,
-		String visitingPerson,
-		String visitRemarks,
-		Float temperature,
-		TemperatureSource temperatureSource,
-		Integer bloodPressureSystolic,
-		Integer bloodPressureDiastolic,
-		Integer heartRate,
-		Long symptomsId,
-		String caseReportingUserUuid,
-		String caseRegionUuid,
-		String caseDistrictUuid,
-		String caseCommunityUuid,
-		String caseHealthFacilityUuid,
-		String casePointOfEntryUuid) {
+	public ClinicalVisitIndexDto(String uuid, Date visitDateTime, String visitingPerson, String visitRemarks,
+			Float temperature, TemperatureSource temperatureSource, Integer bloodPressureSystolic,
+			Integer bloodPressureDiastolic, Integer heartRate, Long symptomsId, String caseReportingUserUuid,
+			String caseRegionUuid, String caseDistrictUuid, String caseCommunityUuid, String caseHealthFacilityUuid,
+			String casePointOfEntryUuid) {
 
 		this.uuid = uuid;
 		this.visitDateTime = visitDateTime;
@@ -63,7 +51,8 @@ public class ClinicalVisitIndexDto implements Serializable {
 		this.heartRate = heartRate != null ? SymptomsHelper.getHeartRateString(heartRate) : "";
 		this.symptomsId = symptomsId;
 
-		this.caseJurisdiction = new CaseJurisdictionDto(caseReportingUserUuid, caseRegionUuid, caseDistrictUuid, caseCommunityUuid, caseHealthFacilityUuid, casePointOfEntryUuid);
+		this.caseJurisdiction = new CaseJurisdictionDto(caseReportingUserUuid, caseRegionUuid, caseDistrictUuid,
+				caseCommunityUuid, caseHealthFacilityUuid, casePointOfEntryUuid);
 	}
 
 	public String getUuid() {

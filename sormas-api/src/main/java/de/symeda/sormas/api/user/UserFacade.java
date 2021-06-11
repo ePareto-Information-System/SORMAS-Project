@@ -44,6 +44,8 @@ public interface UserFacade {
 
 	List<UserReferenceDto> getUsersByRegionAndRoles(RegionReferenceDto regionRef, UserRole... assignableRoles);
 
+	List<UserReferenceDto> getUsersWithSuperiorJurisdiction(UserDto user);
+
 	List<UserDto> getIndexList(UserCriteria userCriteria, int first, int max, List<SortProperty> sortProperties);
 
 	long count(UserCriteria userCriteria);
@@ -51,13 +53,12 @@ public interface UserFacade {
 	/**
 	 * 
 	 * @param district
-	 * @param includeSupervisors
-	 *            independent from the district
-	 * @param userRoles
-	 *            roles of the users by district
+	 * @param includeSupervisors independent from the district
+	 * @param userRoles          roles of the users by district
 	 * @return
 	 */
-	List<UserReferenceDto> getUserRefsByDistrict(DistrictReferenceDto district, boolean includeSupervisors, UserRole... userRoles);
+	List<UserReferenceDto> getUserRefsByDistrict(DistrictReferenceDto district, boolean includeSupervisors,
+			UserRole... userRoles);
 
 	List<UserReferenceDto> getAllUserRefs(boolean includeInactive);
 
@@ -76,4 +77,6 @@ public interface UserFacade {
 	void removeUserAsSurveillanceAndContactOfficer(String userUuid);
 
 	UserSyncResult syncUser(String userUuid);
+
+	List<UserDto> getUsersWithDefaultPassword();
 }

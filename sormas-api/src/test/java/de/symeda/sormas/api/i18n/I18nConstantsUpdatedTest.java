@@ -19,7 +19,8 @@ import org.junit.Test;
 public class I18nConstantsUpdatedTest {
 
 	/**
-	 * Checks whether the by {@link I18nConstantGenerator} generated Constants classes are in sync with the properties files.
+	 * Checks whether the by {@link I18nConstantGenerator} generated Constants
+	 * classes are in sync with the properties files.
 	 */
 	@Test
 	public void testConstantsAreUpdated() throws IOException {
@@ -42,8 +43,8 @@ public class I18nConstantsUpdatedTest {
 
 	private String getDifference(I18nConstantGenerator generator, String expectedContent) throws IOException {
 
-		try (BufferedReader reader =
-			new BufferedReader(new InputStreamReader(new FileInputStream(new File(generator.getOutputClassFilePath())), StandardCharsets.UTF_8))) {
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+				new FileInputStream(new File(generator.getOutputClassFilePath())), StandardCharsets.UTF_8))) {
 
 			StringBuilder sb = new StringBuilder();
 			String line;

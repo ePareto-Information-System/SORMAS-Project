@@ -32,15 +32,8 @@ public class SimilarEventParticipantDto implements Serializable {
 	private String eventTitle;
 	private Date startDate;
 
-	public SimilarEventParticipantDto(
-		String uuid,
-		String firstName,
-		String lastName,
-		String involvementDescription,
-		String eventUuid,
-		EventStatus eventStatus,
-		String eventTitle,
-		Date startDate) {
+	public SimilarEventParticipantDto(String uuid, String firstName, String lastName, String involvementDescription,
+			String eventUuid, EventStatus eventStatus, String eventTitle, Date startDate) {
 
 		this.uuid = uuid;
 		this.firstName = firstName;

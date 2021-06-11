@@ -117,6 +117,7 @@ public class ConfigFacadeEjb implements ConfigFacade {
 	private static final String GEOCODING_SERVICE_URL_TEMPLATE = "geocodingServiceUrlTemplate";
 	private static final String GEOCODING_LONGITUDE_JSON_PATH = "geocodingLongitudeJsonPath";
 	private static final String GEOCODING_LATITUDE_JSON_PATH = "geocodingLatitudeJsonPath";
+	private static final String GEOCODING_EPSG4326_WKT = "geocodingEPSG4326_WKT";
 
 	private static final String SORMAS2SORMAS_FILES_PATH = "sormas2sormas.path";
 	private static final String SORMAS2SORMAS_SERVER_ACCESS_DATA_FILE_NAME = "sormas2sormas.serverAccessDataFileName";
@@ -128,12 +129,15 @@ public class ConfigFacadeEjb implements ConfigFacade {
 
 	private static final String SORMAS_TO_SORMAS_USER_PASSWORD = "sormasToSormasUserPassword";
 
-	private static final String SURVNET_GATEWAY_URL = "survnet.url";
+	private static final String EXTERNAL_SURVEILLANCE_TOOL_GATEWAY_URL = "survnet.url";
 
 	private static final String DASHBOARD_MAP_MARKER_LIMIT = "dashboardMapMarkerLimit";
 	private static final String AUDITOR_ATTRIBUTE_LOGGING = "auditor.attribute.logging";
 
-	private static final String CREATE_DEFAULT_USERS = "createDefaultUsers";
+	private static final String CREATE_DEFAULT_ENTITIES = "createDefaultEntities";
+	private static final String SKIP_DEFAULT_PASSWORD_CHECK = "skipDefaultPasswordCheck";
+
+	private static final String STEP_SIZE_FOR_CSV_EXPORT = "stepSizeForCsvExport";
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -404,6 +408,13 @@ public class ConfigFacadeEjb implements ConfigFacade {
 	}
 
 	@Override
+	public String getGeocodingEPSG4326_WKT() {
+		return getProperty(
+			GEOCODING_EPSG4326_WKT,
+			"GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Long\",EAST],AXIS[\"Lat\",NORTH],AUTHORITY[\"EPSG\",\"4326\"]]");
+	}
+
+	@Override
 	public SymptomJournalConfig getSymptomJournalConfig() {
 		SymptomJournalConfig config = new SymptomJournalConfig();
 		config.setUrl(getProperty(INTERFACE_SYMPTOM_JOURNAL_URL, null));
@@ -461,8 +472,8 @@ public class ConfigFacadeEjb implements ConfigFacade {
 	}
 
 	@Override
-	public String getSurvnetGatewayUrl() {
-		return getProperty(SURVNET_GATEWAY_URL, null);
+	public String getExternalSurveillanceToolGatewayUrl() {
+		return getProperty(EXTERNAL_SURVEILLANCE_TOOL_GATEWAY_URL, null);
 	}
 
 	@Override
@@ -549,8 +560,12 @@ public class ConfigFacadeEjb implements ConfigFacade {
 		return getInt(DASHBOARD_MAP_MARKER_LIMIT, -1);
 	}
 
-	public boolean isCreateDefaultUsers() {
-		return getBoolean(CREATE_DEFAULT_USERS, true);
+	public boolean isCreateDefaultEntities() {
+		return getBoolean(CREATE_DEFAULT_ENTITIES, false);
+	}
+
+	public boolean isSkipDefaultPasswordCheck() {
+		return getBoolean(SKIP_DEFAULT_PASSWORD_CHECK, false);
 	}
 
 	public String getDocgenerationNullReplacement() {
@@ -560,6 +575,11 @@ public class ConfigFacadeEjb implements ConfigFacade {
 	@Override
 	public boolean isAuditorAttributeLoggingEnabled() {
 		return getBoolean(AUDITOR_ATTRIBUTE_LOGGING, true);
+	}
+
+	@Override
+	public int getStepSizeForCsvExport() {
+		return getInt(STEP_SIZE_FOR_CSV_EXPORT, 5000);
 	}
 
 	@LocalBean

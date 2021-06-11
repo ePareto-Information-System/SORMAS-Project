@@ -17,8 +17,8 @@ public class PointOfEntryDto extends EntityDto {
 	public static final String OTHER_SEAPORT_UUID = "SORMAS-CONSTID-OTHERS-SEAPORTX";
 	public static final String OTHER_GROUND_CROSSING_UUID = "SORMAS-CONSTIG-OTHERS-GROUNDCR";
 	public static final String OTHER_POE_UUID = "SORMAS-CONSTID-OTHERS-OTHERPOE";
-	public static final List<String> CONSTANT_POE_UUIDS =
-		Arrays.asList(OTHER_AIRPORT_UUID, OTHER_SEAPORT_UUID, OTHER_GROUND_CROSSING_UUID, OTHER_POE_UUID);
+	public static final List<String> CONSTANT_POE_UUIDS = Arrays.asList(OTHER_AIRPORT_UUID, OTHER_SEAPORT_UUID,
+			OTHER_GROUND_CROSSING_UUID, OTHER_POE_UUID);
 	public static final String OTHER_AIRPORT = "OTHER_AIRPORT";
 	public static final String OTHER_SEAPORT = "OTHER_SEAPORT";
 	public static final String OTHER_GROUND_CROSSING = "OTHER_GROUND_CROSSING";
@@ -43,23 +43,10 @@ public class PointOfEntryDto extends EntityDto {
 	private boolean archived;
 	private String externalID;
 
-	public PointOfEntryDto(
-		Date creationDate,
-		Date changeDate,
-		String uuid,
-		boolean archived,
-		PointOfEntryType pointOfEntryType,
-		String name,
-		String regionUuid,
-		String regionName,
-		String regionExternalId,
-		String districtUuid,
-		String districtName,
-		String districtExternalId,
-		Double latitude,
-		Double longitude,
-		boolean active,
-		String externalID) {
+	public PointOfEntryDto(Date creationDate, Date changeDate, String uuid, boolean archived,
+			PointOfEntryType pointOfEntryType, String name, String regionUuid, String regionName,
+			String regionExternalId, String districtUuid, String districtName, String districtExternalId,
+			Double latitude, Double longitude, boolean active, String externalID) {
 
 		super(creationDate, changeDate, uuid);
 
@@ -89,10 +76,8 @@ public class PointOfEntryDto extends EntityDto {
 
 	public boolean isOtherPointOfEntry() {
 
-		return OTHER_AIRPORT_UUID.equals(getUuid())
-			|| OTHER_SEAPORT_UUID.equals(getUuid())
-			|| OTHER_GROUND_CROSSING_UUID.equals(getUuid())
-			|| OTHER_POE_UUID.equals(getUuid());
+		return OTHER_AIRPORT_UUID.equals(getUuid()) || OTHER_SEAPORT_UUID.equals(getUuid())
+				|| OTHER_GROUND_CROSSING_UUID.equals(getUuid()) || OTHER_POE_UUID.equals(getUuid());
 	}
 
 	public boolean isNameOtherPointOfEntry() {
@@ -100,7 +85,8 @@ public class PointOfEntryDto extends EntityDto {
 	}
 
 	public static boolean isNameOtherPointOfEntry(String name) {
-		return OTHER_AIRPORT.equals(name) || OTHER_SEAPORT.equals(name) || OTHER_GROUND_CROSSING.equals(name) || OTHER_POE.equals(name);
+		return OTHER_AIRPORT.equals(name) || OTHER_SEAPORT.equals(name) || OTHER_GROUND_CROSSING.equals(name)
+				|| OTHER_POE.equals(name);
 	}
 
 	public static String getOtherPointOfEntryUuid(PointOfEntryType pointOfEntryType) {

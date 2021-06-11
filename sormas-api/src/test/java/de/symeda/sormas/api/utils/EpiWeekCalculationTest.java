@@ -47,8 +47,9 @@ public class EpiWeekCalculationTest {
 	}
 
 	/**
-	 * TODO this test is not stable, because calculateEpiWeekReportStartAndEnd uses the current date for comparisons.
-	 * Add a "now" param to calculateEpiWeekReportStartAndEnd
+	 * TODO this test is not stable, because calculateEpiWeekReportStartAndEnd uses
+	 * the current date for comparisons. Add a "now" param to
+	 * calculateEpiWeekReportStartAndEnd
 	 */
 	@Test
 	public void testCalculateEpiWeekReportStartAndEnd() {
@@ -64,7 +65,8 @@ public class EpiWeekCalculationTest {
 		calendar.set(2017, 10, 10);
 		Date previousWeeklyReportDate = calendar.getTime();
 
-		Date[] startAndEnd = DateHelper.calculateEpiWeekReportStartAndEnd(now, epiWeek, weeklyReportDate, previousWeeklyReportDate, null);
+		Date[] startAndEnd = DateHelper.calculateEpiWeekReportStartAndEnd(now, epiWeek, weeklyReportDate,
+				previousWeeklyReportDate, null);
 		assertTrue(startAndEnd[0].equals(previousWeeklyReportDate));
 		assertFalse(startAndEnd[1].after(weeklyReportDate));
 

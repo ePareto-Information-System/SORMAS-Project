@@ -21,9 +21,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum ActionPriority {
 
-	HIGH,
-	NORMAL,
-	LOW;
+	HIGH, NORMAL, LOW;
 
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);

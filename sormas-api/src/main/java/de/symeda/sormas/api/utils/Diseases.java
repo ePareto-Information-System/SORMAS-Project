@@ -30,8 +30,8 @@ import java.util.List;
 import de.symeda.sormas.api.Disease;
 
 /**
- * Used to annotate which fields are visible for a specific disease.
- * Use the code generated in sormas-api/tools/Fields.xlsx to get annotated members
+ * Used to annotate which fields are visible for a specific disease. Use the
+ * code generated in sormas-api/tools/Fields.xlsx to get annotated members
  * 
  * @author Martin Wahnschaffe
  */
@@ -48,8 +48,7 @@ public @interface Diseases {
 		}
 
 		// TODO thread safety, etc.?!
-		private static final HashMap<Class<?>, HashMap<String, List<Disease>>> diseaseConfigCache =
-			new HashMap<Class<?>, HashMap<String, List<Disease>>>();
+		private static final HashMap<Class<?>, HashMap<String, List<Disease>>> diseaseConfigCache = new HashMap<Class<?>, HashMap<String, List<Disease>>>();
 
 		public static boolean isDefinedOrMissing(Class<?> clazz, String propertyName, Disease disease) {
 

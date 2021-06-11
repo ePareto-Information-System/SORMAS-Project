@@ -55,37 +55,43 @@ public class ContactIndexDetailedDto extends ContactIndexDto {
 	private String latestEventTitle;
 	private Long eventCount;
 
-	//@formatter:off
-	public ContactIndexDetailedDto(String uuid, String personFirstName, String personLastName, String cazeUuid, Disease disease, String diseaseDetails,
-								   String caseFirstName, String caseLastName, String regionUuid, String regionName, String districtUuid, String districtName, String communityUuid,
-								   Date lastContactDate, ContactCategory contactCategory, ContactProximity contactProximity,
-								   ContactClassification contactClassification, ContactStatus contactStatus, FollowUpStatus followUpStatus,
-								   Date followUpUntil, SymptomJournalStatus symptomJournalStatus, String contactOfficerUuid, String reportingUserUuid, Date reportDateTime,
-								   CaseClassification caseClassification,
-								   String caseReportingUserUid, String caseRegionUuid, String caseRegionName, String caseDistrictUuid, String caseDistrictName, String caseCommunityUuid,
-								   String caseHealthFacilityUuid, String casePointOfEntryUuid, Date changeDate, String externalID, String externalToken,
-								   Sex sex, Integer approximateAge, ApproximateAgeType approximateAgeType,
-								   String city, String street, String houseNumber, String additionalInformation, String postalCode, String phone,
-								   String reportingUserFirstName, String reportingUserLastName, int visitCount
-	) {
-	//@formatter:on
+	// @formatter:off
+	public ContactIndexDetailedDto(String uuid, String personFirstName, String personLastName, String cazeUuid,
+			Disease disease, String diseaseDetails, String caseFirstName, String caseLastName, String regionUuid,
+			String regionName, String districtUuid, String districtName, String communityUuid, Date lastContactDate,
+			ContactCategory contactCategory, ContactProximity contactProximity,
+			ContactClassification contactClassification, ContactStatus contactStatus, FollowUpStatus followUpStatus,
+			Date followUpUntil, SymptomJournalStatus symptomJournalStatus, String contactOfficerUuid,
+			String reportingUserUuid, Date reportDateTime, CaseClassification caseClassification,
+			String caseReportingUserUid, String caseRegionUuid, String caseRegionName, String caseDistrictUuid,
+			String caseDistrictName, String caseCommunityUuid, String caseHealthFacilityUuid,
+			String casePointOfEntryUuid, Date changeDate, String externalID, String externalToken, Sex sex,
+			Integer approximateAge, ApproximateAgeType approximateAgeType, String city, String street,
+			String houseNumber, String additionalInformation, String postalCode, String phone,
+			String reportingUserFirstName, String reportingUserLastName, int visitCount) {
+		// @formatter:on
 
-		//@formatter:off
-		super(uuid, personFirstName, personLastName, cazeUuid, disease, diseaseDetails, caseFirstName, caseLastName, regionUuid, regionName, districtUuid, districtName, communityUuid,
-				lastContactDate, contactCategory, contactProximity, contactClassification, contactStatus, followUpStatus, followUpUntil, symptomJournalStatus,
-				contactOfficerUuid, reportingUserUuid, reportDateTime, caseClassification,
-				caseReportingUserUid, caseRegionUuid, caseRegionName, caseDistrictUuid, caseDistrictName, caseCommunityUuid, caseHealthFacilityUuid, casePointOfEntryUuid, changeDate, externalID, externalToken, visitCount);
-		//@formatter:on
+		// @formatter:off
+		super(uuid, personFirstName, personLastName, cazeUuid, disease, diseaseDetails, caseFirstName, caseLastName,
+				regionUuid, regionName, districtUuid, districtName, communityUuid, lastContactDate, contactCategory,
+				contactProximity, contactClassification, contactStatus, followUpStatus, followUpUntil,
+				symptomJournalStatus, contactOfficerUuid, reportingUserUuid, reportDateTime, caseClassification,
+				caseReportingUserUid, caseRegionUuid, caseRegionName, caseDistrictUuid, caseDistrictName,
+				caseCommunityUuid, caseHealthFacilityUuid, casePointOfEntryUuid, changeDate, externalID, externalToken,
+				visitCount);
+		// @formatter:on
 
 		this.sex = sex;
-		this.approximateAge = ApproximateAgeType.ApproximateAgeHelper.formatApproximateAge(approximateAge, approximateAgeType);
+		this.approximateAge = ApproximateAgeType.ApproximateAgeHelper.formatApproximateAge(approximateAge,
+				approximateAgeType);
 		this.city = city;
 		this.street = street;
 		this.houseNumber = houseNumber;
 		this.additionalInformation = additionalInformation;
 		this.postalCode = postalCode;
 		this.phone = phone;
-		this.reportingUser = new UserReferenceDto(reportingUserUuid, reportingUserFirstName, reportingUserLastName, null);
+		this.reportingUser = new UserReferenceDto(reportingUserUuid, reportingUserFirstName, reportingUserLastName,
+				null);
 	}
 
 	public Sex getSex() {

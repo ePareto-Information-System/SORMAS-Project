@@ -19,11 +19,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum EventSourceType {
 
-	NOT_APPLICABLE,
-	MEDIA_NEWS,
-	HOTLINE_PERSON,
-	MATHEMATICAL_MODEL,
-	INSTITUTIONAL_PARTNER;
+	NOT_APPLICABLE, MEDIA_NEWS, HOTLINE_PERSON, MATHEMATICAL_MODEL, INSTITUTIONAL_PARTNER;
 
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);

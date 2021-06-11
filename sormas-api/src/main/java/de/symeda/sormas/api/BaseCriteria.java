@@ -16,6 +16,8 @@ import java.util.Map;
 
 import org.apache.commons.lang3.NotImplementedException;
 
+import de.symeda.sormas.api.caze.CaseCriteriaDateType;
+import de.symeda.sormas.api.caze.CaseCriteriaDateTypeHelper;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.EpiWeek;
 import de.symeda.sormas.api.utils.IgnoreForUrl;
@@ -29,10 +31,9 @@ public abstract class BaseCriteria implements Serializable {
 		String encoding = "UTF-8";
 		try {
 			for (Method getter : getClass().getDeclaredMethods()) {
-				if (Modifier.isStatic(getter.getModifiers())
-					|| Modifier.isPrivate(getter.getModifiers())
-					|| !(getter.getName().startsWith("get") || getter.getName().startsWith("is"))
-					|| getter.isAnnotationPresent(IgnoreForUrl.class))
+				if (Modifier.isStatic(getter.getModifiers()) || Modifier.isPrivate(getter.getModifiers())
+						|| !(getter.getName().startsWith("get") || getter.getName().startsWith("is"))
+						|| getter.isAnnotationPresent(IgnoreForUrl.class))
 					continue;
 
 				String propertyName = getter.getName();
@@ -65,13 +66,16 @@ public abstract class BaseCriteria implements Serializable {
 						stringValue = String.valueOf(value);
 					} else if (EpiWeek.class.isAssignableFrom(type)) {
 						stringValue = ((EpiWeek) value).toUrlString();
+					} else if (CaseCriteriaDateType.class.isAssignableFrom(type)) {
+						stringValue = CaseCriteriaDateTypeHelper.toUrlString((CaseCriteriaDateType) value);
 					} else {
 						throw new NotImplementedException(type.toString());
 					}
 					urlFilter.append(URLEncoder.encode(stringValue, encoding));
 				}
 			}
-		} catch (IllegalArgumentException | UnsupportedEncodingException | IllegalAccessException | InvocationTargetException e) {
+		} catch (IllegalArgumentException | UnsupportedEncodingException | IllegalAccessException
+				| InvocationTargetException e) {
 			throw new RuntimeException(e);
 		}
 		return urlFilter.toString();
@@ -81,9 +85,8 @@ public abstract class BaseCriteria implements Serializable {
 
 		try {
 			for (Method getter : getClass().getDeclaredMethods()) {
-				if (Modifier.isStatic(getter.getModifiers())
-					|| Modifier.isPrivate(getter.getModifiers())
-					|| !(getter.getName().startsWith("get") || getter.getName().startsWith("is")))
+				if (Modifier.isStatic(getter.getModifiers()) || Modifier.isPrivate(getter.getModifiers())
+						|| !(getter.getName().startsWith("get") || getter.getName().startsWith("is")))
 					continue;
 
 				String propertyName = getter.getName();
@@ -117,17 +120,14 @@ public abstract class BaseCriteria implements Serializable {
 		}
 	}
 
-	@SuppressWarnings({
-		"unchecked",
-		"rawtypes" })
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void fromUrlParams(String urlParams) {
 
 		Map<String, List<String>> params = splitQuery(urlParams);
 		try {
 			for (Method getter : getClass().getDeclaredMethods()) {
-				if (Modifier.isStatic(getter.getModifiers())
-					|| Modifier.isPrivate(getter.getModifiers())
-					|| !(getter.getName().startsWith("get") || getter.getName().startsWith("is")))
+				if (Modifier.isStatic(getter.getModifiers()) || Modifier.isPrivate(getter.getModifiers())
+						|| !(getter.getName().startsWith("get") || getter.getName().startsWith("is")))
 					continue;
 
 				String propertyName = getter.getName();
@@ -143,7 +143,8 @@ public abstract class BaseCriteria implements Serializable {
 				try {
 					setter = getClass().getMethod(propertyName, type);
 				} catch (NoSuchMethodException e) {
-					setter = getClass().getMethod("set" + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1), type);
+					setter = getClass().getMethod(
+							"set" + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1), type);
 				}
 
 				if (params.containsKey(propertyName)) {
@@ -171,6 +172,8 @@ public abstract class BaseCriteria implements Serializable {
 						value = Integer.valueOf(fieldParams.get(0));
 					} else if (EpiWeek.class.isAssignableFrom(type)) {
 						value = EpiWeek.fromUrlString(fieldParams.get(0));
+					} else if (CaseCriteriaDateType.class.isAssignableFrom(type)) {
+						value = CaseCriteriaDateTypeHelper.valueOf(fieldParams.get(0));
 					} else {
 						throw new NotImplementedException(type.toString());
 					}
@@ -179,7 +182,8 @@ public abstract class BaseCriteria implements Serializable {
 				}
 			}
 
-		} catch (NoSuchMethodException | SecurityException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
+		} catch (NoSuchMethodException | SecurityException | InvocationTargetException | IllegalAccessException
+				| InstantiationException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -201,7 +205,9 @@ public abstract class BaseCriteria implements Serializable {
 				if (!queryPairs.containsKey(key)) {
 					queryPairs.put(key, new LinkedList<String>());
 				}
-				final String value = idx > 0 && pair.length() > idx + 1 ? URLDecoder.decode(pair.substring(idx + 1), encoding) : null;
+				final String value = idx > 0 && pair.length() > idx + 1
+						? URLDecoder.decode(pair.substring(idx + 1), encoding)
+						: null;
 				queryPairs.get(key).add(value);
 			}
 		} catch (UnsupportedEncodingException e) {

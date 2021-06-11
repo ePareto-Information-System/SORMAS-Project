@@ -32,25 +32,24 @@ import de.symeda.sormas.api.utils.ValidationRuntimeException;
 @Remote
 public interface FacilityFacade {
 
-	List<FacilityDto> getIndexList(FacilityCriteria facilityCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
+	List<FacilityIndexDto> getIndexList(FacilityCriteria facilityCriteria, Integer first, Integer max,
+			List<SortProperty> sortProperties);
+
+	List<FacilityExportDto> getExportList(FacilityCriteria facilityCriteria, Integer first, Integer max);
 
 	long count(FacilityCriteria criteria);
 
-	List<FacilityReferenceDto> getActiveFacilitiesByCommunityAndType(
-		CommunityReferenceDto community,
-		FacilityType type,
-		boolean includeOtherFacility,
-		boolean includeNoneFacility);
+	List<FacilityReferenceDto> getActiveFacilitiesByCommunityAndType(CommunityReferenceDto community, FacilityType type,
+			boolean includeOtherFacility, boolean includeNoneFacility);
 
-	List<FacilityReferenceDto> getActiveFacilitiesByDistrictAndType(
-		DistrictReferenceDto district,
-		FacilityType type,
-		boolean includeOtherFacility,
-		boolean includeNoneFacility);
+	List<FacilityReferenceDto> getActiveFacilitiesByDistrictAndType(DistrictReferenceDto district, FacilityType type,
+			boolean includeOtherFacility, boolean includeNoneFacility);
 
-	List<FacilityReferenceDto> getActiveHospitalsByCommunity(CommunityReferenceDto community, boolean includeOtherFacility);
+	List<FacilityReferenceDto> getActiveHospitalsByCommunity(CommunityReferenceDto community,
+			boolean includeOtherFacility);
 
-	List<FacilityReferenceDto> getActiveHospitalsByDistrict(DistrictReferenceDto district, boolean includeOtherFacility);
+	List<FacilityReferenceDto> getActiveHospitalsByDistrict(DistrictReferenceDto district,
+			boolean includeOtherFacility);
 
 	List<FacilityReferenceDto> getAllActiveLaboratories(boolean includeOtherFacility);
 
@@ -70,12 +69,10 @@ public interface FacilityFacade {
 
 	void saveFacility(FacilityDto value) throws ValidationRuntimeException;
 
-	List<FacilityReferenceDto> getByNameAndType(
-		String name,
-		DistrictReferenceDto districtRef,
-		CommunityReferenceDto communityRef,
-		FacilityType type,
-		boolean includeArchivedEntities);
+	void saveFacility(FacilityDto value, boolean allowMerge) throws ValidationRuntimeException;
+
+	List<FacilityReferenceDto> getByNameAndType(String name, DistrictReferenceDto districtRef,
+			CommunityReferenceDto communityRef, FacilityType type, boolean includeArchivedEntities);
 
 	List<FacilityReferenceDto> getLaboratoriesByName(String name, boolean includeArchivedEntities);
 

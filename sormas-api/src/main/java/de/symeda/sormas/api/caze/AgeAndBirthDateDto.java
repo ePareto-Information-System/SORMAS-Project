@@ -11,7 +11,8 @@ public class AgeAndBirthDateDto extends BirthDateDto implements Serializable {
 	private Integer age;
 	private ApproximateAgeType ageType;
 
-	public AgeAndBirthDateDto(Integer age, ApproximateAgeType ageType, Integer birthdateDD, Integer birthdateMM, Integer birthdateYYYY) {
+	public AgeAndBirthDateDto(Integer age, ApproximateAgeType ageType, Integer birthdateDD, Integer birthdateMM,
+			Integer birthdateYYYY) {
 
 		super(birthdateDD, birthdateMM, birthdateYYYY);
 

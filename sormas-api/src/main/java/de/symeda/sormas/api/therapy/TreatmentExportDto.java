@@ -50,25 +50,11 @@ public class TreatmentExportDto implements Serializable {
 
 	private CaseJurisdictionDto caseJurisdiction;
 
-	public TreatmentExportDto(
-		String caseUuid,
-		String caseFirstName,
-		String caseLastName,
-		Date treatmentDateTime,
-		String executingClinician,
-		TreatmentType treatmentType,
-		String treatmentDetails,
-		TypeOfDrug typeOfDrug,
-		String dose,
-		TreatmentRoute route,
-		String routeDetails,
-		String additionalNotes,
-		String caseReportingUserUuid,
-		String caseRegionUuid,
-		String caseDistrictUuid,
-		String caseCommunityUuid,
-		String caseHealthFacilityUuid,
-		String casePointOfEntryUuid) {
+	public TreatmentExportDto(String caseUuid, String caseFirstName, String caseLastName, Date treatmentDateTime,
+			String executingClinician, TreatmentType treatmentType, String treatmentDetails, TypeOfDrug typeOfDrug,
+			String dose, TreatmentRoute route, String routeDetails, String additionalNotes,
+			String caseReportingUserUuid, String caseRegionUuid, String caseDistrictUuid, String caseCommunityUuid,
+			String caseHealthFacilityUuid, String casePointOfEntryUuid) {
 
 		this.caseUuid = caseUuid;
 		this.caseName = PersonDto.buildCaption(caseFirstName, caseLastName);
@@ -82,13 +68,8 @@ public class TreatmentExportDto implements Serializable {
 		this.routeDetails = routeDetails;
 		this.additionalNotes = additionalNotes;
 
-		this.caseJurisdiction = new CaseJurisdictionDto(
-			caseReportingUserUuid,
-			caseRegionUuid,
-			caseDistrictUuid,
-			caseCommunityUuid,
-			caseHealthFacilityUuid,
-			casePointOfEntryUuid);
+		this.caseJurisdiction = new CaseJurisdictionDto(caseReportingUserUuid, caseRegionUuid, caseDistrictUuid,
+				caseCommunityUuid, caseHealthFacilityUuid, casePointOfEntryUuid);
 	}
 
 	@Order(0)

@@ -21,9 +21,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum SampleSource {
 
-	HUMAN,
-	ANIMAL,
-	ENVIRONMENT;
+	HUMAN, ANIMAL, ENVIRONMENT;
 
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);

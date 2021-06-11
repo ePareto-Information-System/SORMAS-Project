@@ -24,11 +24,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Fields whose getters are annotated with this annotation are ignored
- * when building .csv templates and importing entities.
+ * Fields whose getters are annotated with this annotation are ignored when
+ * building .csv templates and importing entities.
  */
-@Target({
-	ElementType.METHOD })
+@Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface ImportIgnore {

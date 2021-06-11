@@ -15,7 +15,8 @@ public class StatisticsCaseCountDto implements Serializable {
 	private StatisticsGroupingKey rowKey;
 	private StatisticsGroupingKey columnKey;
 
-	public StatisticsCaseCountDto(Integer caseCount, Integer population, StatisticsGroupingKey rowKey, StatisticsGroupingKey columnKey) {
+	public StatisticsCaseCountDto(Integer caseCount, Integer population, StatisticsGroupingKey rowKey,
+			StatisticsGroupingKey columnKey) {
 
 		super();
 		this.caseCount = caseCount;

@@ -2,9 +2,6 @@ package de.symeda.sormas.api.importexport;
 
 public enum ExportType {
 
-	CASE,
-	CONTACT,
-	VISIT,
-	SAMPLE;
+	CASE, CONTACT, EVENT_PARTICIPANTS, VISIT, SAMPLE;
 
 }

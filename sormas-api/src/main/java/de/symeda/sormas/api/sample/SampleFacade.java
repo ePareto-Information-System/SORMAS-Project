@@ -17,6 +17,7 @@
  *******************************************************************************/
 package de.symeda.sormas.api.sample;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -36,11 +37,13 @@ public interface SampleFacade {
 
 	List<SampleDto> getAllActiveSamplesAfter(Date date);
 
-	List<SampleIndexDto> getIndexList(SampleCriteria sampleCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
+	List<SampleIndexDto> getIndexList(SampleCriteria sampleCriteria, Integer first, Integer max,
+			List<SortProperty> sortProperties);
 
-	List<SampleExportDto> getExportList(SampleCriteria sampleCriteria, int first, int max);
+	List<SampleExportDto> getExportList(SampleCriteria sampleCriteria, Collection<String> selectedRows, int first,
+			int max);
 
-	List<SampleExportDto> getExportList(CaseCriteria caseCriteria, int first, int max);
+	List<SampleExportDto> getExportList(CaseCriteria caseCriteria, Collection<String> selectedRows, int first, int max);
 
 	long count(SampleCriteria sampleCriteria);
 
@@ -60,6 +63,8 @@ public interface SampleFacade {
 
 	void deleteSample(SampleReferenceDto sampleRef);
 
+	void deleteAllSamples(List<String> sampleUuids);
+
 	void validate(SampleDto sample) throws ValidationRuntimeException;
 
 	List<String> getDeletedUuidsSince(Date since);
@@ -74,9 +79,13 @@ public interface SampleFacade {
 
 	List<SampleDto> getByContactUuids(List<String> contactUuids);
 
+	List<SampleDto> getSimilarSamples(SampleSimilarityCriteria criteria);
+
 	boolean exists(String uuid);
-	
-	Map<SampleCountType, Long> getSampleCount(RegionReferenceDto regionRef, DistrictReferenceDto districtRef, Disease disease, Date from, Date to);
+
+	Map<SampleCountType, Long> getSampleCount(RegionReferenceDto regionRef, DistrictReferenceDto districtRef,
+			Disease disease, Date from, Date to);
+
 	List<SampleDto> getByEventParticipantUuids(List<String> asList);
-	
+
 }
