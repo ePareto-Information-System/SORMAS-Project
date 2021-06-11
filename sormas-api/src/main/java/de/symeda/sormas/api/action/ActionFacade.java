@@ -47,7 +47,8 @@ public interface ActionFacade {
 
 	List<ActionDto> getActionList(ActionCriteria criteria, Integer first, Integer max);
 
-	List<EventActionIndexDto> getEventActionList(EventCriteria criteria, Integer first, Integer max, List<SortProperty> sortProperties);
+	List<EventActionIndexDto> getEventActionList(EventCriteria criteria, Integer first, Integer max,
+			List<SortProperty> sortProperties);
 
 	List<EventActionExportDto> getEventActionExportList(EventCriteria criteria, Integer first, Integer max);
 

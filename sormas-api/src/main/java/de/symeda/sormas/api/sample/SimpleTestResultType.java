@@ -4,9 +4,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum SimpleTestResultType {
 
-	POSITIVE,
-	NEGATIVE,
-	INDETERMINATE;
+	POSITIVE, NEGATIVE, INDETERMINATE;
 
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);

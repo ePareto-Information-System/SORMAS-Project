@@ -29,7 +29,7 @@ public class VersionHelperTest {
 	@Test
 	public void testExtractVersion() {
 
-		//@formatter:off
+		// @formatter:off
 		assertArrayEquals(new int[] { 0, 23, 0 }, VersionHelper.extractVersion("0.23.0"));
 		assertArrayEquals(new int[] { 0, 23, 1 }, VersionHelper.extractVersion("0.23.1"));
 		assertArrayEquals(new int[] { 0, 23, 1 }, VersionHelper.extractVersion("0.23.1-SNAPSHOT"));
@@ -52,13 +52,13 @@ public class VersionHelperTest {
 				VersionHelper.extractVersion("https://www.sormas.org/download/sormas-1.0.0-SNAPSHOT-release.apk"));
 		assertArrayEquals(new int[] { 11, 13, 15 },
 				VersionHelper.extractVersion("https://www.sormas.org/download/sormas-11.13.15-release.apk"));
-		//@formatter:on
+		// @formatter:on
 	}
 
 	@Test
 	public void testIsBefore() {
 
-		//@formatter:off
+		// @formatter:off
 		assertTrue(VersionHelper.isBefore(new int[] { 0, 23, 0 }, new int[] { 1, 0, 0 }));
 		assertTrue(VersionHelper.isBefore(new int[] { 1, 23, 0 }, new int[] { 2, 0, 0 }));
 		assertTrue(VersionHelper.isBefore(new int[] { 0, 23, 0 }, new int[] { 0, 23, 1 }));
@@ -67,13 +67,13 @@ public class VersionHelperTest {
 		assertFalse(VersionHelper.isBefore(new int[] { 2, 0, 0 }, new int[] { 1, 23, 0 }));
 		assertFalse(VersionHelper.isBefore(new int[] { 0, 23, 1 }, new int[] { 0, 23, 0 }));
 		assertFalse(VersionHelper.isBefore(new int[] { 0, 23, 0 }, new int[] { 0, 23, 0 }));
-		//@formatter:on
+		// @formatter:on
 	}
 
 	@Test
 	public void testIsAfter() {
 
-		//@formatter:off
+		// @formatter:off
 		assertFalse(VersionHelper.isAfter(new int[] { 0, 23, 0 }, new int[] { 1, 0, 0 }));
 		assertFalse(VersionHelper.isAfter(new int[] { 1, 23, 0 }, new int[] { 2, 0, 0 }));
 		assertFalse(VersionHelper.isAfter(new int[] { 0, 23, 0 }, new int[] { 0, 23, 1 }));
@@ -82,18 +82,18 @@ public class VersionHelperTest {
 		assertTrue(VersionHelper.isAfter(new int[] { 1, 0, 0 }, new int[] { 0, 23, 0 }));
 		assertTrue(VersionHelper.isAfter(new int[] { 2, 0, 0 }, new int[] { 1, 23, 0 }));
 		assertTrue(VersionHelper.isAfter(new int[] { 0, 23, 1 }, new int[] { 0, 23, 0 }));
-		//@formatter:on
+		// @formatter:on
 	}
 
 	@Test
 	public void testIsEqual() {
 
-		//@formatter:off
+		// @formatter:off
 		assertTrue(VersionHelper.isEqual(new int[] { 1, 0, 0 }, new int[] { 1, 0, 0 }));
 		assertTrue(VersionHelper.isEqual(new int[] { 0, 23, 0 }, new int[] { 0, 23, 0 }));
-		
+
 		assertFalse(VersionHelper.isEqual(new int[] { 0, 23, 0 }, new int[] { 1, 0, 0 }));
 		assertFalse(VersionHelper.isEqual(new int[] { 1, 0, 0 }, new int[] { 0, 0, 5 }));
-		//@formatter:on
+		// @formatter:on
 	}
 }

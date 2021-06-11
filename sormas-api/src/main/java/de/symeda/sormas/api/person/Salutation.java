@@ -19,12 +19,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum Salutation {
 
-	MR,
-	MRS,
-	MR_AND_MRS,
-	FAMILY,
-	GUARDIAN_OF_MINOR,
-	OTHER;
+	MR, MRS, MR_AND_MRS, FAMILY, GUARDIAN_OF_MINOR, OTHER;
 
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);

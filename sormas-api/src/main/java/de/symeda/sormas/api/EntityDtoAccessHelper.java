@@ -30,7 +30,8 @@ import de.symeda.sormas.api.utils.DataHelper;
 
 public class EntityDtoAccessHelper {
 
-	public static Object getPropertyValue(HasUuid entity, String propertyKey) throws InvocationTargetException, IllegalAccessException {
+	public static Object getPropertyValue(HasUuid entity, String propertyKey)
+			throws InvocationTargetException, IllegalAccessException {
 		if (entity == null) {
 			return null;
 		}
@@ -39,7 +40,8 @@ public class EntityDtoAccessHelper {
 			Method[] declaredMethods = entityClass.getDeclaredMethods();
 			for (Method method : declaredMethods) {
 				String methodName = method.getName();
-				if (methodName.startsWith("get") || methodName.startsWith("is")) {
+				if (method.getParameterTypes().length == 0
+						&& (methodName.startsWith("get") || methodName.startsWith("is"))) {
 					String propertyName = methodName.replaceAll("(^(is|get))|((Reference)?Dto$)", "").toUpperCase();
 					if (propertyName.equals(propertyKey.toUpperCase())) {
 						return method.invoke(entity);
@@ -48,21 +50,24 @@ public class EntityDtoAccessHelper {
 			}
 			entityClass = entityClass.getSuperclass();
 		}
-		throw new IllegalArgumentException("No property " + propertyKey + " in class " + entity.getClass().getSimpleName());
+		throw new IllegalArgumentException(
+				"No property " + propertyKey + " in class " + entity.getClass().getSimpleName());
 	}
 
 	public static Object getPropertyPathValue(HasUuid entity, String propertyPath) {
 		return getPropertyPathValue(entity, propertyPath, null);
 	}
 
-	public static Object getPropertyPathValue(HasUuid entity, String propertyPath, IReferenceDtoResolver referenceDtoResolver) {
+	public static Object getPropertyPathValue(HasUuid entity, String propertyPath,
+			IReferenceDtoResolver referenceDtoResolver) {
 		String[] propertyKeys = propertyPath.split("[.]");
 		Object currentEntity = entity;
 		for (int i = 0; i < propertyKeys.length; i++) {
 			if (currentEntity == null) {
 				return null;
 			}
-			boolean isResolvable = referenceDtoResolver != null && ReferenceDto.class.isAssignableFrom(currentEntity.getClass());
+			boolean isResolvable = referenceDtoResolver != null
+					&& ReferenceDto.class.isAssignableFrom(currentEntity.getClass());
 
 			Object propertyValue = null;
 			try {
@@ -83,7 +88,8 @@ public class EntityDtoAccessHelper {
 			} else {
 				if (isResolvable) {
 					try {
-						currentEntity = getPropertyValue(referenceDtoResolver.resolve((ReferenceDto) currentEntity), propertyKeys[i]);
+						currentEntity = getPropertyValue(referenceDtoResolver.resolve((ReferenceDto) currentEntity),
+								propertyKeys[i]);
 					} catch (InvocationTargetException | IllegalAccessException | IllegalArgumentException e) {
 						throwIllegalArgumentException(e, entity, propertyKeys, i);
 					}
@@ -96,13 +102,14 @@ public class EntityDtoAccessHelper {
 	}
 
 	private static void throwIllegalArgumentException(Exception e, HasUuid entity, String[] propertyKeys, int i) {
-		String errorPropertyPath = cleanDictionaryClassNames(entity.getClass().getSimpleName())
-			+ (i > 0 ? "." : "")
-			+ StringUtils.join(Arrays.copyOfRange(propertyKeys, 0, i), ".");
-		throw new IllegalArgumentException("In " + errorPropertyPath + ": " + cleanDictionaryClassNames(e.getMessage()), e);
+		String errorPropertyPath = cleanDictionaryClassNames(entity.getClass().getSimpleName()) + (i > 0 ? "." : "")
+				+ StringUtils.join(Arrays.copyOfRange(propertyKeys, 0, i), ".");
+		throw new IllegalArgumentException("In " + errorPropertyPath + ": " + cleanDictionaryClassNames(e.getMessage()),
+				e);
 	}
 
-	public static Object getPropertyPathValueString(HasUuid entity, String propertyPath, IReferenceDtoResolver referenceDtoResolver) {
+	public static Object getPropertyPathValueString(HasUuid entity, String propertyPath,
+			IReferenceDtoResolver referenceDtoResolver) {
 		Object value = getPropertyPathValue(entity, propertyPath, referenceDtoResolver);
 		return formatObject(value);
 	}
@@ -110,10 +117,8 @@ public class EntityDtoAccessHelper {
 	public static Object formatObject(Object value) {
 		if (value == null) {
 			return null;
-		} else if (value instanceof Date
-			|| value instanceof BurialInfoDto
-			|| value instanceof BirthDateDto
-			|| value.getClass().equals(Boolean.class)) {
+		} else if (value instanceof Date || value instanceof BurialInfoDto || value instanceof BirthDateDto
+				|| value.getClass().equals(Boolean.class)) {
 			return DataHelper.valueToString(value);
 		} else {
 			return value;

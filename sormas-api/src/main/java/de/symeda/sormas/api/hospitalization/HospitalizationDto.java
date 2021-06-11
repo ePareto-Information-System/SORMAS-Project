@@ -28,7 +28,6 @@ import de.symeda.sormas.api.utils.MildModerateSevereCritical;
 import de.symeda.sormas.api.utils.Outbreaks;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 
-
 public class HospitalizationDto extends EntityDto {
 
 	private static final long serialVersionUID = 4846215199480684369L;
@@ -168,11 +167,12 @@ public class HospitalizationDto extends EntityDto {
 	public MildModerateSevereCritical getPatientConditionOnAdmission() {
 		return patientConditionOnAdmission;
 	}
-	
+
 	public void setPatientConditionOnAdmission(MildModerateSevereCritical patientConditionOnAdmission) {
 		this.patientConditionOnAdmission = patientConditionOnAdmission;
 	}
-		public HospitalizationReasonType getHospitalizationReason() {
+
+	public HospitalizationReasonType getHospitalizationReason() {
 		return hospitalizationReason;
 	}
 

@@ -85,18 +85,9 @@ public class VisitDto extends PseudonymizableDto {
 		return visit;
 	}
 
-	public static VisitDto build(
-		PersonReferenceDto person,
-		Disease disease,
-		Date visitDateTime,
-		UserReferenceDto visitUser,
-		VisitStatus visitStatus,
-		String visitRemarks,
-		SymptomsDto symptoms,
-		Double reportLat,
-		Double reportLon,
-		Float reportLatLonAccuracy,
-		VisitOrigin origin) {
+	public static VisitDto build(PersonReferenceDto person, Disease disease, Date visitDateTime,
+			UserReferenceDto visitUser, VisitStatus visitStatus, String visitRemarks, SymptomsDto symptoms,
+			Double reportLat, Double reportLon, Float reportLatLonAccuracy, VisitOrigin origin) {
 
 		final VisitDto visit = build(person, disease, origin);
 

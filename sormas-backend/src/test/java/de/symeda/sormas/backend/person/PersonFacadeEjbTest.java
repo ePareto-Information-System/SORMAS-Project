@@ -7,6 +7,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
@@ -25,6 +27,7 @@ import de.symeda.sormas.api.caze.InvestigationStatus;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.FollowUpStatus;
 import de.symeda.sormas.api.event.EventDto;
+import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolException;
 import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.person.JournalPersonDto;
 import de.symeda.sormas.api.person.PersonCriteria;
@@ -58,7 +61,7 @@ public class PersonFacadeEjbTest extends AbstractBeanTest {
 	}
 
 	@Test
-	public void testGetIndexListPersonNotConsideredIfAssociatedEntityDeleted() {
+	public void testGetIndexListPersonNotConsideredIfAssociatedEntityDeleted() throws ExternalSurveillanceToolException {
 		final RDCFEntities rdcf = creator.createRDCFEntities();
 		final UserDto user = creator.createUser(rdcf, UserRole.SURVEILLANCE_SUPERVISOR);
 
@@ -235,9 +238,9 @@ public class PersonFacadeEjbTest extends AbstractBeanTest {
 		creator.createPerson(); // Person without contact
 		final PersonDto person1 = creator.createPerson();
 		final PersonDto person2 = creator.createPerson();
-		final ContactDto contact11 = creator.createContact(user.toReference(), person1.toReference());
-		final ContactDto contact12 = creator.createContact(user.toReference(), person1.toReference());
-		final ContactDto contact2 = creator.createContact(user.toReference(), person2.toReference());
+		final ContactDto contact11 = creator.createContact(user.toReference(), person1.toReference(), DateHelper.subtractDays(new Date(), 41));
+		final ContactDto contact12 = creator.createContact(user.toReference(), person1.toReference(), DateHelper.subtractDays(new Date(), 29));
+		final ContactDto contact2 = creator.createContact(user.toReference(), person2.toReference(), DateHelper.subtractDays(new Date(), 21));
 
 		contact11.setOverwriteFollowUpUntil(true);
 		contact12.setOverwriteFollowUpUntil(true);
@@ -274,20 +277,23 @@ public class PersonFacadeEjbTest extends AbstractBeanTest {
 	 */
 	public void testGetPersonForJournal() {
 		RDCFEntities rdcfEntities = creator.createRDCFEntities();
-		UserDto user = creator.createUser(rdcfEntities, UserRole.REST_EXTERNAL_VISITS_USER, UserRole.CONTACT_SUPERVISOR);
+		UserDto user = creator.createUser(rdcfEntities, UserRole.CONTACT_SUPERVISOR);
+
+		String phoneNumber = "+496211218490";
+		String internationalPhoneNumber = "+49 621 1218490";
 
 		final PersonDto person = creator.createPerson();
 		person.setFirstName("Klaus");
 		person.setLastName("Draufle");
 		person.setSex(Sex.MALE);
 		person.setEmailAddress("test@test.de");
-		person.setPhone("+496211218490");
+		person.setPhone(phoneNumber);
 		person.setBirthdateYYYY(2000);
 		person.setBirthdateMM(6);
 		person.setBirthdateDD(1);
 		person.setSymptomJournalStatus(SymptomJournalStatus.REGISTERED);
-		final ContactDto contact1 = creator.createContact(user.toReference(), person.toReference());
-		final ContactDto contact2 = creator.createContact(user.toReference(), person.toReference());
+		final ContactDto contact1 = creator.createContact(user.toReference(), person.toReference(), DateHelper.subtractDays(new Date(), 41));
+		final ContactDto contact2 = creator.createContact(user.toReference(), person.toReference(), DateHelper.subtractDays(new Date(), 29));
 		contact1.setOverwriteFollowUpUntil(true);
 		contact2.setOverwriteFollowUpUntil(true);
 
@@ -304,7 +310,7 @@ public class PersonFacadeEjbTest extends AbstractBeanTest {
 		assertEquals(person.getLastName(), exportPerson.getLastName());
 		assertEquals(person.getSex(), exportPerson.getSex());
 		assertEquals(person.getEmailAddress(), exportPerson.getEmailAddress());
-		assertEquals(person.getPhone(), exportPerson.getPhone());
+		assertEquals(internationalPhoneNumber, exportPerson.getPhone());
 		assertEquals(person.getBirthdateYYYY(), exportPerson.getBirthdateYYYY());
 		assertEquals(person.getBirthdateMM(), exportPerson.getBirthdateMM());
 		assertEquals(person.getBirthdateDD(), exportPerson.getBirthdateDD());
@@ -323,11 +329,14 @@ public class PersonFacadeEjbTest extends AbstractBeanTest {
 		final CaseDataDto case12 = creator.createCase(user.toReference(), person1.toReference(), rdcfEntities);
 		final CaseDataDto case2 = creator.createCase(user.toReference(), person2.toReference(), rdcfEntities);
 
+		Date now = new Date();
+		case11.getSymptoms().setOnsetDate(DateHelper.subtractDays(now, 41));
 		case11.setOverwriteFollowUpUntil(true);
+		case12.getSymptoms().setOnsetDate(DateHelper.subtractDays(now, 29));
 		case12.setOverwriteFollowUpUntil(true);
+		case2.getSymptoms().setOnsetDate(DateHelper.subtractDays(now, 21));
 		case2.setOverwriteFollowUpUntil(true);
 
-		Date now = new Date();
 		case11.setFollowUpUntil(DateHelper.subtractDays(now, 20));
 		case12.setFollowUpUntil(DateHelper.subtractDays(now, 8));
 		case2.setFollowUpUntil(now);
@@ -353,39 +362,76 @@ public class PersonFacadeEjbTest extends AbstractBeanTest {
 	public void testGetFollowUpEndDatesContactsAndCases() {
 		RDCFEntities rdcfEntities = creator.createRDCFEntities();
 		UserDto user = creator.createUser(rdcfEntities, UserRole.REST_EXTERNAL_VISITS_USER);
+		Date now = new Date();
 
 		final PersonDto person1 = creator.createPerson();
 		final PersonDto person2 = creator.createPerson();
-		final ContactDto contact1 = creator.createContact(user.toReference(), person1.toReference());
-		final ContactDto contact2 = creator.createContact(user.toReference(), person2.toReference());
+		final PersonDto person3 = creator.createPerson();
+		final PersonDto person4 = creator.createPerson();
+		final ContactDto contact1 = creator.createContact(user.toReference(), person1.toReference(), DateHelper.subtractDays(now, 22));
+		final ContactDto contact2 = creator.createContact(user.toReference(), person2.toReference(), DateHelper.subtractDays(now, 22));
+		final ContactDto contact3 = creator.createContact(user.toReference(), person4.toReference());
+		final ContactDto contact4 = creator.createContact(user.toReference(), person4.toReference(), DateHelper.subtractDays(now, 21));
 		final CaseDataDto case1 = creator.createCase(user.toReference(), person1.toReference(), rdcfEntities);
 		final CaseDataDto case2 = creator.createCase(user.toReference(), person2.toReference(), rdcfEntities);
+		final CaseDataDto case3 = creator.createCase(user.toReference(), person2.toReference(), rdcfEntities);
+		final CaseDataDto case4 = creator.createCase(user.toReference(), person3.toReference(), rdcfEntities);
+		final CaseDataDto case5 = creator.createCase(user.toReference(), person3.toReference(), rdcfEntities);
 
 		contact1.setOverwriteFollowUpUntil(true);
 		contact2.setOverwriteFollowUpUntil(true);
 		case1.setOverwriteFollowUpUntil(true);
+		case1.getSymptoms().setOnsetDate(DateHelper.subtractDays(now, 23));
 		case2.setOverwriteFollowUpUntil(true);
+		case2.getSymptoms().setOnsetDate(DateHelper.subtractDays(now, 21));
+		case3.setOverwriteFollowUpUntil(true);
+		case3.getSymptoms().setOnsetDate(DateHelper.subtractDays(now, 23));
+		case4.setOverwriteFollowUpUntil(true);
+		case4.getSymptoms().setOnsetDate(DateHelper.subtractDays(now, 21));
+		case5.setOverwriteFollowUpUntil(true);
+		case5.getSymptoms().setOnsetDate(DateHelper.subtractDays(now, 21));
+		contact3.setFollowUpStatus(FollowUpStatus.NO_FOLLOW_UP);
+		contact3.setFollowUpUntil(null);
+		contact4.setFollowUpStatus(FollowUpStatus.FOLLOW_UP);
 
-		Date now = new Date();
 		contact1.setFollowUpUntil(DateHelper.subtractDays(now, 1));
 		case1.setFollowUpUntil(DateHelper.subtractDays(now, 2));
 		contact2.setFollowUpUntil(DateHelper.subtractDays(now, 1));
+
 		case2.setFollowUpUntil(now);
+		case2.setFollowUpStatus(FollowUpStatus.CANCELED);
+		case3.setFollowUpUntil(DateHelper.subtractDays(now, 2));
+
+		case4.setFollowUpStatus(FollowUpStatus.CANCELED);
+		case5.setFollowUpStatus(FollowUpStatus.CANCELED);
+		contact4.setFollowUpUntil(now);
 
 		getContactFacade().saveContact(contact1);
 		getContactFacade().saveContact(contact2);
+		getContactFacade().saveContact(contact3);
+		getContactFacade().saveContact(contact4);
 		getCaseFacade().saveCase(case1);
 		getCaseFacade().saveCase(case2);
+		getCaseFacade().saveCase(case3);
+		getCaseFacade().saveCase(case4);
+		getCaseFacade().saveCase(case5);
 
 		List<PersonFollowUpEndDto> followUpEndDtos = getPersonFacade().getLatestFollowUpEndDates(null, false);
 
-		assertThat(followUpEndDtos, hasSize(2));
+		assertThat(followUpEndDtos, hasSize(4));
+
 		Optional<PersonFollowUpEndDto> result1 = followUpEndDtos.stream().filter(p -> p.getPersonUuid().equals(person1.getUuid())).findFirst();
 		assertTrue(result1.isPresent());
 		assertTrue(DateHelper.isSameDay(result1.get().getLatestFollowUpEndDate(), DateHelper.subtractDays(now, 1)));
+
 		Optional<PersonFollowUpEndDto> result2 = followUpEndDtos.stream().filter(p -> p.getPersonUuid().equals(person2.getUuid())).findFirst();
 		assertTrue(result2.isPresent());
-		assertTrue(DateHelper.isSameDay(result2.get().getLatestFollowUpEndDate(), now));
+		assertNotNull(result2.get().getLatestFollowUpEndDate());
+		assertTrue(DateHelper.isSameDay(result2.get().getLatestFollowUpEndDate(), DateHelper.subtractDays(now, 1)));
+
+		Optional<PersonFollowUpEndDto> result3 = followUpEndDtos.stream().filter(p -> p.getPersonUuid().equals(person3.getUuid())).findFirst();
+		assertTrue(result3.isPresent());
+		assertNull(result3.get().getLatestFollowUpEndDate());
 	}
 
 	@Test

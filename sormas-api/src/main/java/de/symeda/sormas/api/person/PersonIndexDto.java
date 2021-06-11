@@ -57,25 +57,10 @@ public class PersonIndexDto extends PseudonymizableIndexDto implements Serializa
 	private Date changeDate;
 	private Boolean isInJurisdiction;
 
-	public PersonIndexDto(
-		String uuid,
-		String firstName,
-		String lastName,
-		Integer age,
-		ApproximateAgeType ageType,
-		Integer birthdateDD,
-		Integer birthdateMM,
-		Integer birthdateYYYY,
-		Sex sex,
-		String district,
-		String street,
-		String houseNumber,
-		String postalCode,
-		String city,
-		String phone,
-		String email,
-		Date changeDate,
-		boolean isInJurisdiction) {
+	public PersonIndexDto(String uuid, String firstName, String lastName, Integer age, ApproximateAgeType ageType,
+			Integer birthdateDD, Integer birthdateMM, Integer birthdateYYYY, Sex sex, String district, String street,
+			String houseNumber, String postalCode, String city, String phone, String email, Date changeDate,
+			boolean isInJurisdiction) {
 
 		this.uuid = uuid;
 		this.firstName = firstName;

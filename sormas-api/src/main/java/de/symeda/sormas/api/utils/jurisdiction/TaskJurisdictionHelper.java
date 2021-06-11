@@ -6,29 +6,32 @@ import de.symeda.sormas.api.utils.DataHelper;
 
 public class TaskJurisdictionHelper {
 
-	public static boolean isInJurisdictionOrOwned(
-		JurisdictionLevel jurisdictionLevel,
-		UserJurisdiction userJurisdiction,
-		TaskJurisdictionDto taskJurisdiction) {
+	public static boolean isInJurisdictionOrOwned(JurisdictionLevel jurisdictionLevel,
+			UserJurisdiction userJurisdiction, TaskJurisdictionDto taskJurisdiction) {
 
-		if (taskJurisdiction.getCreatorUserUuid() != null && DataHelper.equal(userJurisdiction.getUuid(), taskJurisdiction.getCreatorUserUuid())) {
+		if (taskJurisdiction.getCreatorUserUuid() != null
+				&& DataHelper.equal(userJurisdiction.getUuid(), taskJurisdiction.getCreatorUserUuid())) {
 			return true;
 		}
 
-		if (taskJurisdiction.getAssigneeUserUuid() != null && DataHelper.equal(userJurisdiction.getUuid(), taskJurisdiction.getAssigneeUserUuid())) {
+		if (taskJurisdiction.getAssigneeUserUuid() != null
+				&& DataHelper.equal(userJurisdiction.getUuid(), taskJurisdiction.getAssigneeUserUuid())) {
 			return true;
 		}
 
 		if (taskJurisdiction.getCaseJurisdiction() != null) {
-			return CaseJurisdictionHelper.isInJurisdictionOrOwned(jurisdictionLevel, userJurisdiction, taskJurisdiction.getCaseJurisdiction());
+			return CaseJurisdictionHelper.isInJurisdictionOrOwned(jurisdictionLevel, userJurisdiction,
+					taskJurisdiction.getCaseJurisdiction());
 		}
 
 		if (taskJurisdiction.getContactJurisdiction() != null) {
-			return ContactJurisdictionHelper.isInJurisdictionOrOwned(jurisdictionLevel, userJurisdiction, taskJurisdiction.getContactJurisdiction());
+			return ContactJurisdictionHelper.isInJurisdictionOrOwned(jurisdictionLevel, userJurisdiction,
+					taskJurisdiction.getContactJurisdiction());
 		}
 
 		if (taskJurisdiction.getEventJurisdiction() != null) {
-			return EventJurisdictionHelper.isInJurisdictionOrOwned(jurisdictionLevel, userJurisdiction, taskJurisdiction.getEventJurisdiction());
+			return EventJurisdictionHelper.isInJurisdictionOrOwned(jurisdictionLevel, userJurisdiction,
+					taskJurisdiction.getEventJurisdiction());
 		}
 
 		switch (jurisdictionLevel) {

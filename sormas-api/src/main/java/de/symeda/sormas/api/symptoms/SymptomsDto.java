@@ -64,7 +64,7 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	public static final String I18N_PREFIX = "Symptoms";
 
-	//Symptoms
+	// Symptoms
 	public static final String ABDOMINAL_PAIN = "abdominalPain";
 	public static final String ABNORMAL_LUNG_XRAY_FINDINGS = "abnormalLungXrayFindings";
 	public static final String ACUTE_RESPIRATORY_DISTRESS_SYNDROME = "acuteRespiratoryDistressSyndrome";
@@ -258,101 +258,40 @@ public class SymptomsDto extends PseudonymizableDto {
 		return symptoms;
 	}
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		CHOLERA,
-		YELLOW_FEVER,
-		DENGUE,
-		PLAGUE,
-		POLIO,
-		ANTHRAX,
-		CORONAVIRUS,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, CHOLERA, YELLOW_FEVER, DENGUE, PLAGUE, POLIO, ANTHRAX,
+			CORONAVIRUS, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState abdominalPain;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		CSM,
-		CHOLERA,
-		POLIO,
-		YELLOW_FEVER,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, CSM, CHOLERA, POLIO, YELLOW_FEVER, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@Outbreaks
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState anorexiaAppetiteLoss;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		POLIO,
-		YELLOW_FEVER,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, POLIO, YELLOW_FEVER, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState backache;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		MONKEYPOX,
-		POLIO,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, MONKEYPOX, POLIO, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState bedridden;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		PLAGUE,
-		POLIO,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, PLAGUE, POLIO, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.SKIN)
 	private SymptomState blackeningDeathOfTissue;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState bleedingVagina;
 
-	@Diseases({
-		AFP,
-		CHOLERA,
-		GUINEA_WORM,
-		POLIO,
-		YELLOW_FEVER,
-		ANTHRAX,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, CHOLERA, GUINEA_WORM, POLIO, YELLOW_FEVER, ANTHRAX, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState bloodInStool;
@@ -361,381 +300,144 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	private Integer bloodPressureSystolic;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.URINARY)
 	private SymptomState bloodUrine;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState bloodyBlackStool;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		PLAGUE,
-		POLIO,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, PLAGUE, POLIO, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState buboesGroinArmpitNeck;
 
-	@Diseases({
-		AFP,
-		CSM,
-		GUINEA_WORM,
-		POLIO,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, CSM, GUINEA_WORM, POLIO, UNDEFINED, OTHER })
 	@Outbreaks
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState bulgingFontanelle;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		PLAGUE,
-		POLIO,
-		ANTHRAX,
-		CORONAVIRUS,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, PLAGUE, POLIO, ANTHRAX, CORONAVIRUS, UNSPECIFIED_VHF,
+			UNDEFINED, OTHER })
 	@Outbreaks
 	@HideForCountries
 	private SymptomState chestPain;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		MONKEYPOX,
-		PLAGUE,
-		ANTHRAX,
-		POLIO,
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, MONKEYPOX, PLAGUE, ANTHRAX, POLIO, CORONAVIRUS, UNDEFINED, OTHER })
 	@Outbreaks
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState chillsSweats;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		MEASLES,
-		MONKEYPOX,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, MEASLES, MONKEYPOX, POLIO, UNSPECIFIED_VHF, UNDEFINED,
+			OTHER })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState conjunctivitis;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		MEASLES,
-		MONKEYPOX,
-		PLAGUE,
-		POLIO,
-		ANTHRAX,
-		UNSPECIFIED_VHF,
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, MEASLES, MONKEYPOX, PLAGUE, POLIO, ANTHRAX,
+			UNSPECIFIED_VHF, CORONAVIRUS, UNDEFINED, OTHER })
 	@Outbreaks
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState cough;
 
-	@Diseases({
-		CORONAVIRUS })
+	@Diseases({ CORONAVIRUS })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState coughWithSputum;
 
-	@Diseases({
-		CORONAVIRUS })
+	@Diseases({ CORONAVIRUS })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState coughWithHeamoptysis;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		PLAGUE,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, PLAGUE, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@Outbreaks
 	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState coughingBlood;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		POLIO,
-		YELLOW_FEVER,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, POLIO, YELLOW_FEVER, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.URINARY)
 	private SymptomState darkUrine;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		CHOLERA,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, CHOLERA, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState dehydration;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		CSM,
-		CHOLERA,
-		MEASLES,
-		PLAGUE,
-		POLIO,
-		ANTHRAX,
-		CORONAVIRUS,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, CSM, CHOLERA, MEASLES, PLAGUE, POLIO, ANTHRAX, CORONAVIRUS,
+			UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@Outbreaks
 	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState diarrhea;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		MEASLES,
-		PLAGUE,
-		POLIO,
-		UNSPECIFIED_VHF,
-		RABIES,
-		ANTHRAX,
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, MEASLES, PLAGUE, POLIO, UNSPECIFIED_VHF, RABIES, ANTHRAX,
+			CORONAVIRUS, UNDEFINED, OTHER })
 	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState difficultyBreathing;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState digestedBloodVomit;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		CSM,
-		MEASLES,
-		DENGUE,
-		MONKEYPOX,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, CSM, MEASLES, DENGUE, MONKEYPOX, POLIO, UNSPECIFIED_VHF,
+			UNDEFINED, OTHER })
 	@Outbreaks
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState eyePainLightSensitive;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		POLIO,
-		YELLOW_FEVER,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, POLIO, YELLOW_FEVER, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState eyesBleeding;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		CSM,
-		CHOLERA,
-		MEASLES,
-		YELLOW_FEVER,
-		DENGUE,
-		MONKEYPOX,
-		PLAGUE,
-		POLIO,
-		UNSPECIFIED_VHF,
-		RABIES,
-		ANTHRAX,
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, CSM, CHOLERA, MEASLES, YELLOW_FEVER, DENGUE, MONKEYPOX,
+			PLAGUE, POLIO, UNSPECIFIED_VHF, RABIES, ANTHRAX, CORONAVIRUS, UNDEFINED, OTHER })
 	@Outbreaks
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState fatigueWeakness;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		CSM,
-		CHOLERA,
-		MEASLES,
-		YELLOW_FEVER,
-		DENGUE,
-		MONKEYPOX,
-		PLAGUE,
-		POLIO,
-		UNSPECIFIED_VHF,
-		RABIES,
-		ANTHRAX,
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, CSM, CHOLERA, MEASLES, YELLOW_FEVER, DENGUE, MONKEYPOX,
+			PLAGUE, POLIO, UNSPECIFIED_VHF, RABIES, ANTHRAX, CORONAVIRUS, UNDEFINED, OTHER })
 	@Outbreaks
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState fever;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@Diseases({ AFP, GUINEA_WORM, LASSA, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState fluidInLungCavity;
 
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private Integer glasgowComaScale;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		YELLOW_FEVER,
-		DENGUE,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, POLIO, YELLOW_FEVER, DENGUE, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState gumsBleeding;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		CSM,
-		YELLOW_FEVER,
-		DENGUE,
-		MONKEYPOX,
-		PLAGUE,
-		POLIO,
-		UNSPECIFIED_VHF,
-		RABIES,
-		ANTHRAX,
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, CSM, YELLOW_FEVER, DENGUE, MONKEYPOX, PLAGUE, POLIO,
+			UNSPECIFIED_VHF, RABIES, ANTHRAX, CORONAVIRUS, UNDEFINED, OTHER })
 	@Outbreaks
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState headache;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		UNSPECIFIED_VHF,
-		CONGENITAL_RUBELLA,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, POLIO, UNSPECIFIED_VHF, CONGENITAL_RUBELLA, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState hearingloss;
@@ -744,429 +446,198 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	private Integer height;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState hiccups;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState injectionSiteBleeding;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		YELLOW_FEVER,
-		LASSA,
-		POLIO,
-		UNSPECIFIED_VHF,
-		CONGENITAL_RUBELLA,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, YELLOW_FEVER, LASSA, POLIO, UNSPECIFIED_VHF, CONGENITAL_RUBELLA, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState jaundice;
 
-	@Diseases({
-		CONGENITAL_RUBELLA })
+	@Diseases({ CONGENITAL_RUBELLA })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private YesNoUnknown jaundiceWithin24HoursOfBirth;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		NEW_INFLUENZA,
-		CSM,
-		MEASLES,
-		DENGUE,
-		CORONAVIRUS,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, POLIO, NEW_INFLUENZA, CSM, MEASLES, DENGUE, CORONAVIRUS, UNSPECIFIED_VHF,
+			UNDEFINED, OTHER })
 	@Outbreaks
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState jointPain;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		MEASLES,
-		POLIO,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, MEASLES, POLIO, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState kopliksSpots;
 
-	@Diseases({
-			AFP,
-			GUINEA_WORM,
-			MONKEYPOX,
-			ANTHRAX,
-			POLIO,
-			UNDEFINED,
-			OTHER })
+	@Diseases({ AFP, GUINEA_WORM, MONKEYPOX, ANTHRAX, POLIO, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.SKIN)
 	/** Vesiculopustular rash */
 	private SymptomState lesions;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		MONKEYPOX,
-		POLIO,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, MONKEYPOX, POLIO, UNDEFINED, OTHER })
 	@DependantOn(LESIONS)
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.SKIN)
 	private Boolean lesionsAllOverBody;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		MONKEYPOX,
-		ANTHRAX,
-		POLIO,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, MONKEYPOX, ANTHRAX, POLIO, UNDEFINED, OTHER })
 	@DependantOn(LESIONS)
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.SKIN)
 	private Boolean lesionsArms;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		MONKEYPOX,
-		ANTHRAX,
-		POLIO,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, MONKEYPOX, ANTHRAX, POLIO, UNDEFINED, OTHER })
 	@DependantOn(LESIONS)
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.SKIN)
 	private SymptomState lesionsDeepProfound;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		MONKEYPOX,
-		POLIO,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, MONKEYPOX, POLIO, UNDEFINED, OTHER })
 	@DependantOn(LESIONS)
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.SKIN)
 	private Boolean lesionsFace;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		MONKEYPOX,
-		POLIO,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, MONKEYPOX, POLIO, UNDEFINED, OTHER })
 	@DependantOn(LESIONS)
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.SKIN)
 	private Boolean lesionsGenitals;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		MONKEYPOX,
-		POLIO,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, MONKEYPOX, POLIO, UNDEFINED, OTHER })
 	@DependantOn(LESIONS)
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.SKIN)
 	private Boolean lesionsLegs;
 
-	@Diseases({
-		MONKEYPOX,
-		ANTHRAX })
+	@Diseases({ MONKEYPOX, ANTHRAX })
 	@DependantOn(LESIONS)
 	@HideForCountries
 	private Date lesionsOnsetDate;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		MONKEYPOX,
-		POLIO,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, MONKEYPOX, POLIO, UNDEFINED, OTHER })
 	@DependantOn(LESIONS)
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.SKIN)
 	private Boolean lesionsPalmsHands;
 
-	@Diseases({
-		MONKEYPOX })
+	@Diseases({ MONKEYPOX })
 	@DependantOn(LESIONS)
 	@HideForCountries
 	private SymptomState lesionsResembleImg1;
-	@Diseases({
-		MONKEYPOX })
+	@Diseases({ MONKEYPOX })
 	@DependantOn(LESIONS)
 	@HideForCountries
 	private SymptomState lesionsResembleImg2;
 
-	@Diseases({
-		MONKEYPOX })
+	@Diseases({ MONKEYPOX })
 	@DependantOn(LESIONS)
 	@HideForCountries
 	private SymptomState lesionsResembleImg3;
 
-	@Diseases({
-		MONKEYPOX })
+	@Diseases({ MONKEYPOX })
 	@DependantOn(LESIONS)
 	@HideForCountries
 	private SymptomState lesionsResembleImg4;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		MONKEYPOX,
-		POLIO,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, MONKEYPOX, POLIO, UNDEFINED, OTHER })
 	@DependantOn(LESIONS)
 	@HideForCountries
 	private SymptomState lesionsSameSize;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		MONKEYPOX,
-		POLIO,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, MONKEYPOX, POLIO, UNDEFINED, OTHER })
 	@DependantOn(LESIONS)
 	@HideForCountries
 	private SymptomState lesionsSameState;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		MONKEYPOX,
-		POLIO,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, MONKEYPOX, POLIO, UNDEFINED, OTHER })
 	@DependantOn(LESIONS)
 	@HideForCountries
 	private Boolean lesionsSolesFeet;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		MONKEYPOX,
-		POLIO,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, MONKEYPOX, POLIO, UNDEFINED, OTHER })
 	@DependantOn(LESIONS)
 	@HideForCountries
 	private SymptomState lesionsThatItch;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		MONKEYPOX,
-		POLIO,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, MONKEYPOX, POLIO, UNDEFINED, OTHER })
 	@DependantOn(LESIONS)
 	@HideForCountries
 	private Boolean lesionsThorax;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, LASSA, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState lossSkinTurgor;
 
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState lymphadenopathy;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		MONKEYPOX,
-		POLIO,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, MONKEYPOX, POLIO, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState lymphadenopathyAxillary;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		MONKEYPOX,
-		POLIO,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, MONKEYPOX, POLIO, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState lymphadenopathyCervical;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		MONKEYPOX,
-		POLIO,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, MONKEYPOX, POLIO, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState lymphadenopathyInguinal;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, LASSA, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState malaise;
 
 	private Integer midUpperArmCircumference;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		CSM,
-		CHOLERA,
-		MEASLES,
-		YELLOW_FEVER,
-		DENGUE,
-		MONKEYPOX,
-		PLAGUE,
-		POLIO,
-		CORONAVIRUS,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, CSM, CHOLERA, MEASLES, YELLOW_FEVER, DENGUE, MONKEYPOX,
+			PLAGUE, POLIO, CORONAVIRUS, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@Outbreaks
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState musclePain;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		CSM,
-		CHOLERA,
-		YELLOW_FEVER,
-		DENGUE,
-		MONKEYPOX,
-		PLAGUE,
-		UNSPECIFIED_VHF,
-		POLIO,
-		RABIES,
-		ANTHRAX,
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, CSM, CHOLERA, YELLOW_FEVER, DENGUE, MONKEYPOX, PLAGUE,
+			UNSPECIFIED_VHF, POLIO, RABIES, ANTHRAX, CORONAVIRUS, UNDEFINED, OTHER })
 	@Outbreaks
 	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState nausea;
 
-	@Diseases({
-		AFP,
-		CSM,
-		GUINEA_WORM,
-		POLIO,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, CSM, GUINEA_WORM, POLIO, UNDEFINED, OTHER })
 	@Outbreaks
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState neckStiffness;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		YELLOW_FEVER,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, POLIO, YELLOW_FEVER, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState noseBleeding;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, LASSA, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.CARDIOVASCULAR)
 	private SymptomState oedemaFaceNeck;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, LASSA, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.CARDIOVASCULAR)
 	private SymptomState oedemaLowerExtremity;
@@ -1176,807 +647,402 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	private String onsetSymptom;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		MONKEYPOX,
-		POLIO,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, MONKEYPOX, POLIO, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState oralUlcers;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		PLAGUE,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, PLAGUE, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState otherHemorrhagicSymptoms;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		PLAGUE,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, PLAGUE, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@DependantOn(OTHER_HEMORRHAGIC_SYMPTOMS)
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	@SensitiveData
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private String otherHemorrhagicSymptomsText;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		CSM,
-		CHOLERA,
-		MEASLES,
-		DENGUE,
-		MONKEYPOX,
-		PLAGUE,
-		UNSPECIFIED_VHF,
-		CONGENITAL_RUBELLA,
-		POLIO,
-		RABIES,
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, CSM, CHOLERA, MEASLES, DENGUE, MONKEYPOX, PLAGUE,
+			UNSPECIFIED_VHF, CONGENITAL_RUBELLA, POLIO, RABIES, CORONAVIRUS, UNDEFINED, OTHER })
 	@Outbreaks
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState otherNonHemorrhagicSymptoms;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		CSM,
-		CHOLERA,
-		MEASLES,
-		DENGUE,
-		MONKEYPOX,
-		PLAGUE,
-		POLIO,
-		UNSPECIFIED_VHF,
-		CONGENITAL_RUBELLA,
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, CSM, CHOLERA, MEASLES, DENGUE, MONKEYPOX, PLAGUE, POLIO,
+			UNSPECIFIED_VHF, CONGENITAL_RUBELLA, CORONAVIRUS, UNDEFINED, OTHER })
 	@Outbreaks
 	@DependantOn(OTHER_NON_HEMORRHAGIC_SYMPTOMS)
 	@SensitiveData
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private String otherNonHemorrhagicSymptomsText;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		NEW_INFLUENZA,
-		MEASLES,
-		POLIO,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, NEW_INFLUENZA, MEASLES, POLIO, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState otitisMedia;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		PLAGUE,
-		POLIO,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, PLAGUE, POLIO, UNDEFINED, OTHER })
 	@Outbreaks
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState painfulLymphadenitis;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, LASSA, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState palpableLiver;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, LASSA, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState palpableSpleen;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		MONKEYPOX,
-		POLIO,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, MONKEYPOX, POLIO, UNDEFINED, OTHER })
 	@SensitiveData
 	private String patientIllLocation;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, LASSA, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState pharyngealErythema;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, LASSA, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState pharyngealExudate;
 
-	@Diseases({
-		AFP,
-		CORONAVIRUS,
-		DENGUE,
-		GUINEA_WORM,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, CORONAVIRUS, DENGUE, GUINEA_WORM, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState rapidBreathing;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		DENGUE,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, DENGUE, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState redBloodVomit;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		CSM,
-		CHOLERA,
-		POLIO,
-		UNSPECIFIED_VHF,
-		RABIES,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, CSM, CHOLERA, POLIO, UNSPECIFIED_VHF, RABIES, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState refusalFeedorDrink;
 
 	private Integer respiratoryRate;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		NEW_INFLUENZA,
-		MEASLES,
-		POLIO,
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, NEW_INFLUENZA, MEASLES, POLIO, CORONAVIRUS, UNDEFINED, OTHER })
 	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState runnyNose;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, LASSA, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState sidePain;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	private SymptomState skinBruising;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		CSM,
-		MEASLES,
-		DENGUE,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER,
-		CORONAVIRUS })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, CSM, MEASLES, DENGUE, POLIO, UNSPECIFIED_VHF, UNDEFINED,
+			OTHER, CORONAVIRUS })
 	@Outbreaks
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	/** Maculopapular rash */
 	private SymptomState skinRash;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		MEASLES,
-		MONKEYPOX,
-		ANTHRAX,
-		POLIO,
-		CORONAVIRUS,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, MEASLES, MONKEYPOX, ANTHRAX, POLIO, CORONAVIRUS,
+			UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState soreThroat;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		POLIO,
-		YELLOW_FEVER,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, POLIO, YELLOW_FEVER, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState stomachBleeding;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, LASSA, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState sunkenEyesFontanelle;
 
-	@Diseases({
-		AFP,
-		DENGUE,
-		GUINEA_WORM,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, DENGUE, GUINEA_WORM, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState swollenGlands;
 
 	private Boolean symptomatic;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		CSM,
-		CHOLERA,
-		MEASLES,
-		DENGUE,
-		MONKEYPOX,
-		PLAGUE,
-		POLIO,
-		UNSPECIFIED_VHF,
-		CONGENITAL_RUBELLA,
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, CSM, CHOLERA, MEASLES, DENGUE, MONKEYPOX, PLAGUE, POLIO,
+			UNSPECIFIED_VHF, CONGENITAL_RUBELLA, CORONAVIRUS, UNDEFINED, OTHER })
 	@SensitiveData
 	private String symptomsComments;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		CSM,
-		CHOLERA,
-		MEASLES,
-		YELLOW_FEVER,
-		DENGUE,
-		MONKEYPOX,
-		PLAGUE,
-		UNSPECIFIED_VHF,
-		CONGENITAL_RUBELLA,
-		POLIO,
-		RABIES,
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, CSM, CHOLERA, MEASLES, YELLOW_FEVER, DENGUE, MONKEYPOX,
+			PLAGUE, UNSPECIFIED_VHF, CONGENITAL_RUBELLA, POLIO, RABIES, CORONAVIRUS, UNDEFINED, OTHER })
 	@Outbreaks
 	private Float temperature;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		CSM,
-		CHOLERA,
-		MEASLES,
-		YELLOW_FEVER,
-		DENGUE,
-		MONKEYPOX,
-		PLAGUE,
-		UNSPECIFIED_VHF,
-		CONGENITAL_RUBELLA,
-		POLIO,
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, CSM, CHOLERA, MEASLES, YELLOW_FEVER, DENGUE, MONKEYPOX,
+			PLAGUE, UNSPECIFIED_VHF, CONGENITAL_RUBELLA, POLIO, CORONAVIRUS, UNDEFINED, OTHER })
 	@Outbreaks
 	private TemperatureSource temperatureSource;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState throbocytopenia;
 
-	@Diseases({
-		AFP,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, GUINEA_WORM, LASSA, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@HideForCountries
 	private SymptomState tremor;
 
-	@Diseases({
-		CONGENITAL_RUBELLA })
+	@Diseases({ CONGENITAL_RUBELLA })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState bilateralCataracts;
 
-	@Diseases({
-		CONGENITAL_RUBELLA })
+	@Diseases({ CONGENITAL_RUBELLA })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState unilateralCataracts;
 
-	@Diseases({
-		CONGENITAL_RUBELLA })
+	@Diseases({ CONGENITAL_RUBELLA })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState congenitalGlaucoma;
 
-	@Diseases({
-		CONGENITAL_RUBELLA })
+	@Diseases({ CONGENITAL_RUBELLA })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState pigmentaryRetinopathy;
 
-	@Diseases({
-		CONGENITAL_RUBELLA })
+	@Diseases({ CONGENITAL_RUBELLA })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.SKIN)
 	private SymptomState purpuricRash;
 
-	@Diseases({
-		CONGENITAL_RUBELLA })
+	@Diseases({ CONGENITAL_RUBELLA })
 	@HideForCountries
 	private SymptomState microcephaly;
 
-	@Diseases({
-		CONGENITAL_RUBELLA })
+	@Diseases({ CONGENITAL_RUBELLA })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState developmentalDelay;
 
-	@Diseases({
-		CONGENITAL_RUBELLA })
+	@Diseases({ CONGENITAL_RUBELLA })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState splenomegaly;
 
-	@Diseases({
-		CONGENITAL_RUBELLA })
+	@Diseases({ CONGENITAL_RUBELLA })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.NERVOUS_SYSTEM)
 	private SymptomState meningoencephalitis;
 
-	@Diseases({
-		CONGENITAL_RUBELLA })
+	@Diseases({ CONGENITAL_RUBELLA })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState radiolucentBoneDisease;
 
-	@Diseases({
-		CONGENITAL_RUBELLA })
+	@Diseases({ CONGENITAL_RUBELLA })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.CARDIOVASCULAR)
 	private SymptomState congenitalHeartDisease;
 
-	@Diseases({
-		CONGENITAL_RUBELLA })
+	@Diseases({ CONGENITAL_RUBELLA })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.CARDIOVASCULAR)
 	private CongenitalHeartDiseaseType congenitalHeartDiseaseType;
 
-	@Diseases({
-		CONGENITAL_RUBELLA })
+	@Diseases({ CONGENITAL_RUBELLA })
 	@HideForCountries
 	@SensitiveData
 	@SymptomGrouping(SymptomGroup.CARDIOVASCULAR)
 	private String congenitalHeartDiseaseDetails;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		YELLOW_FEVER,
-		DENGUE,
-		PLAGUE,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		POLIO,
-		OTHER,
-		CORONAVIRUS })
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, YELLOW_FEVER, DENGUE, PLAGUE, UNSPECIFIED_VHF, UNDEFINED, POLIO, OTHER,
+			CORONAVIRUS })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState unexplainedBleeding;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		CSM,
-		CHOLERA,
-		MEASLES,
-		YELLOW_FEVER,
-		DENGUE,
-		MONKEYPOX,
-		PLAGUE,
-		ANTHRAX,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		POLIO,
-		CORONAVIRUS,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, CSM, CHOLERA, MEASLES, YELLOW_FEVER, DENGUE, MONKEYPOX,
+			PLAGUE, ANTHRAX, UNSPECIFIED_VHF, UNDEFINED, POLIO, CORONAVIRUS, OTHER })
 	@Outbreaks
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.GASTROINTESTINAL)
 	private SymptomState vomiting;
 
-	@Diseases({
-		RABIES })
+	@Diseases({ RABIES })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.NERVOUS_SYSTEM)
 	private SymptomState hydrophobia;
 
-	@Diseases({
-		RABIES })
+	@Diseases({ RABIES })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.NERVOUS_SYSTEM)
 	private SymptomState opisthotonus;
 
-	@Diseases({
-		RABIES })
+	@Diseases({ RABIES })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.NERVOUS_SYSTEM)
 	private SymptomState anxietyStates;
 
-	@Diseases({
-		RABIES })
+	@Diseases({ RABIES })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.NERVOUS_SYSTEM)
 	private SymptomState delirium;
 
-	@Diseases({
-		RABIES })
+	@Diseases({ RABIES })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.NERVOUS_SYSTEM)
 	private SymptomState uproariousness;
 
-	@Diseases({
-		RABIES })
+	@Diseases({ RABIES })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState paresthesiaAroundWound;
 
-	@Diseases({
-		RABIES })
+	@Diseases({ RABIES })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState excessSalivation;
 
-	@Diseases({
-		RABIES })
+	@Diseases({ RABIES })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState insomnia;
 
-	@Diseases({
-		RABIES })
+	@Diseases({ RABIES })
 	@HideForCountries
 	private SymptomState paralysis;
 
-	@Diseases({
-		RABIES })
+	@Diseases({ RABIES })
 	@HideForCountries
 	private SymptomState excitation;
 
-	@Diseases({
-		RABIES })
+	@Diseases({ RABIES })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.NERVOUS_SYSTEM)
 	private SymptomState dysphagia;
 
-	@Diseases({
-		RABIES })
+	@Diseases({ RABIES })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.NERVOUS_SYSTEM)
 	private SymptomState aerophobia;
 
-	@Diseases({
-		RABIES })
+	@Diseases({ RABIES })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.NERVOUS_SYSTEM)
 	private SymptomState hyperactivity;
 
-	@Diseases({
-		RABIES })
+	@Diseases({ RABIES })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.NERVOUS_SYSTEM)
 	private SymptomState paresis;
 
-	@Diseases({
-		RABIES })
+	@Diseases({ RABIES })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.NERVOUS_SYSTEM)
 	private SymptomState agitation;
 
-	@Diseases({
-		RABIES })
+	@Diseases({ RABIES })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.NERVOUS_SYSTEM)
 	private SymptomState ascendingFlaccidParalysis;
 
-	@Diseases({
-		RABIES })
+	@Diseases({ RABIES })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.NERVOUS_SYSTEM)
 	private SymptomState erraticBehaviour;
 
-	@Diseases({
-		RABIES,
-		CORONAVIRUS })
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@Diseases({ RABIES, CORONAVIRUS })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState coma;
 
-	@Diseases({
-		ANTHRAX })
+	@Diseases({ ANTHRAX })
 	@HideForCountries
 	@SymptomGrouping(SymptomGroup.NERVOUS_SYSTEM)
 	private SymptomState convulsion;
 
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState fluidInLungCavityAuscultation;
 
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState fluidInLungCavityXray;
 
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState abnormalLungXrayFindings;
 
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	private SymptomState conjunctivalInjection;
 
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
 	@HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
 	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState acuteRespiratoryDistressSyndrome;
 
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
 	@HideForCountries(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
 	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState pneumoniaClinicalOrRadiologic;
 
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState lossOfTaste;
 
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState lossOfSmell;
 
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	private SymptomState wheezing;
 
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	@SymptomGrouping(SymptomGroup.SKIN)
 	private SymptomState skinUlcers;
 
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState inabilityToWalk;
 
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState inDrawingOfChestWall;
 
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
 	@HideForCountriesExcept
 	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState respiratoryDiseaseVentilation;
 
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
-	@HideForCountriesExcept(countries = {
-		COUNTRY_CODE_GERMANY,
-		COUNTRY_CODE_SWITZERLAND })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
+	@HideForCountriesExcept(countries = { COUNTRY_CODE_GERMANY, COUNTRY_CODE_SWITZERLAND })
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState feelingIll;
 
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
-	@HideForCountriesExcept(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
+	@HideForCountriesExcept(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	@SymptomGrouping(SymptomGroup.CARDIOVASCULAR)
 	private SymptomState fastHeartRate;
 
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
 	@HideForCountriesExcept
 	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState oxygenSaturationLower94;
@@ -1985,308 +1051,132 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	// complications
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		CSM,
-		CHOLERA,
-		MEASLES,
-		POLIO,
-		UNSPECIFIED_VHF,
-		RABIES,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, CSM, CHOLERA, MEASLES, POLIO, UNSPECIFIED_VHF, RABIES,
+			UNDEFINED, OTHER })
 	@Outbreaks
 	@Complication
 	@HideForCountries
 	private SymptomState alteredConsciousness;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		CSM,
-		CHOLERA,
-		MEASLES,
-		PLAGUE,
-		POLIO,
-		UNSPECIFIED_VHF,
-		RABIES,
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, CSM, CHOLERA, MEASLES, PLAGUE, POLIO, UNSPECIFIED_VHF,
+			RABIES, CORONAVIRUS, UNDEFINED, OTHER })
 	@Outbreaks
 	@Complication
 	@HideForCountries
 	private SymptomState confusedDisoriented;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		YELLOW_FEVER,
-		DENGUE,
-		PLAGUE,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, POLIO, YELLOW_FEVER, DENGUE, PLAGUE, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@Outbreaks
 	@Complication
 	@HideForCountries
 	private SymptomState hemorrhagicSyndrome;
 
-	@Diseases({
-		AFP,
-		CSM,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, CSM, GUINEA_WORM, LASSA, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@Outbreaks
 	@Complication
 	@HideForCountries
 	private SymptomState hyperglycemia;
 
-	@Diseases({
-		AFP,
-		CSM,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, CSM, GUINEA_WORM, LASSA, POLIO, UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@Outbreaks
 	@Complication
 	@HideForCountries
 	private SymptomState hypoglycemia;
 
-	@Diseases({
-		AFP,
-		CSM,
-		GUINEA_WORM,
-		LASSA,
-		POLIO,
-		UNSPECIFIED_VHF,
-		RABIES,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, CSM, GUINEA_WORM, LASSA, POLIO, UNSPECIFIED_VHF, RABIES, UNDEFINED, OTHER })
 	@Outbreaks
 	@Complication
 	@HideForCountries
 	private SymptomState meningealSigns;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		CSM,
-		CHOLERA,
-		MEASLES,
-		POLIO,
-		UNSPECIFIED_VHF,
-		GUINEA_WORM,
-		RABIES,
-		YELLOW_FEVER,
-		DENGUE,
-		PLAGUE,
-		ANTHRAX,
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, CSM, CHOLERA, MEASLES, POLIO, UNSPECIFIED_VHF, GUINEA_WORM,
+			RABIES, YELLOW_FEVER, DENGUE, PLAGUE, ANTHRAX, CORONAVIRUS, UNDEFINED, OTHER })
 	@Complication
 	@HideForCountries
 	private SymptomState otherComplications;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		CSM,
-		CHOLERA,
-		MEASLES,
-		POLIO,
-		UNSPECIFIED_VHF,
-		GUINEA_WORM,
-		RABIES,
-		YELLOW_FEVER,
-		DENGUE,
-		PLAGUE,
-		ANTHRAX,
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, CSM, CHOLERA, MEASLES, POLIO, UNSPECIFIED_VHF, GUINEA_WORM,
+			RABIES, YELLOW_FEVER, DENGUE, PLAGUE, ANTHRAX, CORONAVIRUS, UNDEFINED, OTHER })
 	@DependantOn(OTHER_COMPLICATIONS)
 	@Complication
 	@HideForCountries
 	@SensitiveData
 	private String otherComplicationsText;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		CSM,
-		CHOLERA,
-		MEASLES,
-		POLIO,
-		UNSPECIFIED_VHF,
-		RABIES,
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, CSM, CHOLERA, MEASLES, POLIO, UNSPECIFIED_VHF, RABIES,
+			CORONAVIRUS, UNDEFINED, OTHER })
 	@Outbreaks
 	@Complication
 	@HideForCountries
 	private SymptomState seizures;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		CSM,
-		CHOLERA,
-		MEASLES,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, CSM, CHOLERA, MEASLES, POLIO, UNSPECIFIED_VHF, UNDEFINED,
+			OTHER })
 	@Outbreaks
 	@Complication
 	@HideForCountries
 	private SymptomState sepsis;
 
-	@Diseases({
-		AFP,
-		EVD,
-		GUINEA_WORM,
-		LASSA,
-		NEW_INFLUENZA,
-		CSM,
-		CHOLERA,
-		MEASLES,
-		PLAGUE,
-		ANTHRAX,
-		POLIO,
-		UNSPECIFIED_VHF,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ AFP, EVD, GUINEA_WORM, LASSA, NEW_INFLUENZA, CSM, CHOLERA, MEASLES, PLAGUE, ANTHRAX, POLIO,
+			UNSPECIFIED_VHF, UNDEFINED, OTHER })
 	@Outbreaks
 	@Complication
 	@HideForCountries
 	private SymptomState shock;
 
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState feverishFeeling;
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState weakness;
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState fatigue;
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
 	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState coughWithoutSputum;
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
 	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState breathlessness;
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
 	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState chestPressure;
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
 	@SymptomGrouping(SymptomGroup.RESPIRATORY)
 	private SymptomState blueLips;
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
 	@SymptomGrouping(SymptomGroup.CARDIOVASCULAR)
 	private SymptomState bloodCirculationProblems;
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
 	@SymptomGrouping(SymptomGroup.CARDIOVASCULAR)
 	private SymptomState palpitations;
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
 	@SymptomGrouping(SymptomGroup.CARDIOVASCULAR)
 	private SymptomState dizzinessStandingUp;
 
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
 	@SymptomGrouping(SymptomGroup.CARDIOVASCULAR)
 	private SymptomState highOrLowBloodPressure;
 
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_SWITZERLAND)
 	@SymptomGrouping(SymptomGroup.URINARY)
 	private SymptomState urinaryRetention;
 
-	@Diseases({
-		CORONAVIRUS,
-		UNDEFINED,
-		OTHER })
-	@HideForCountriesExcept(countries = {
-		COUNTRY_CODE_GERMANY,
-		COUNTRY_CODE_SWITZERLAND })
+	@Diseases({ CORONAVIRUS, UNDEFINED, OTHER })
+	@HideForCountriesExcept(countries = { COUNTRY_CODE_GERMANY, COUNTRY_CODE_SWITZERLAND })
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState shivering;
 
@@ -3529,6 +2419,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		this.vomiting = vomiting;
 	}
 
+	@Order(331)
 	public SymptomState getConvulsion() {
 		return convulsion;
 	}
@@ -3593,6 +2484,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		this.congenitalHeartDiseaseDetails = congenitalHeartDiseaseDetails;
 	}
 
+	@Order(332)
 	public SymptomState getHydrophobia() {
 		return hydrophobia;
 	}
@@ -3601,6 +2493,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		this.hydrophobia = hydrophobia;
 	}
 
+	@Order(333)
 	public SymptomState getOpisthotonus() {
 		return opisthotonus;
 	}
@@ -3609,6 +2502,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		this.opisthotonus = opisthotonus;
 	}
 
+	@Order(334)
 	public SymptomState getAnxietyStates() {
 		return anxietyStates;
 	}
@@ -3617,6 +2511,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		this.anxietyStates = anxietyStates;
 	}
 
+	@Order(335)
 	public SymptomState getDelirium() {
 		return delirium;
 	}
@@ -3625,6 +2520,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		this.delirium = delirium;
 	}
 
+	@Order(336)
 	public SymptomState getUproariousness() {
 		return uproariousness;
 	}
@@ -3633,6 +2529,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		this.uproariousness = uproariousness;
 	}
 
+	@Order(337)
 	public SymptomState getParesthesiaAroundWound() {
 		return paresthesiaAroundWound;
 	}
@@ -3641,6 +2538,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		this.paresthesiaAroundWound = paresthesiaAroundWound;
 	}
 
+	@Order(338)
 	public SymptomState getExcessSalivation() {
 		return excessSalivation;
 	}
@@ -3649,6 +2547,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		this.excessSalivation = excessSalivation;
 	}
 
+	@Order(339)
 	public SymptomState getInsomnia() {
 		return insomnia;
 	}
@@ -3657,6 +2556,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		this.insomnia = insomnia;
 	}
 
+	@Order(340)
 	public SymptomState getParalysis() {
 		return paralysis;
 	}
@@ -3665,6 +2565,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		this.paralysis = paralysis;
 	}
 
+	@Order(341)
 	public SymptomState getExcitation() {
 		return excitation;
 	}
@@ -3673,6 +2574,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		this.excitation = excitation;
 	}
 
+	@Order(342)
 	public SymptomState getDysphagia() {
 		return dysphagia;
 	}
@@ -3681,6 +2583,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		this.dysphagia = dysphagia;
 	}
 
+	@Order(343)
 	public SymptomState getAerophobia() {
 		return aerophobia;
 	}
@@ -3689,6 +2592,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		this.aerophobia = aerophobia;
 	}
 
+	@Order(344)
 	public SymptomState getHyperactivity() {
 		return hyperactivity;
 	}
@@ -3697,6 +2601,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		this.hyperactivity = hyperactivity;
 	}
 
+	@Order(345)
 	public SymptomState getParesis() {
 		return paresis;
 	}
@@ -3705,6 +2610,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		this.paresis = paresis;
 	}
 
+	@Order(346)
 	public SymptomState getAgitation() {
 		return agitation;
 	}
@@ -3713,6 +2619,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		this.agitation = agitation;
 	}
 
+	@Order(347)
 	public SymptomState getAscendingFlaccidParalysis() {
 		return ascendingFlaccidParalysis;
 	}
@@ -3721,6 +2628,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		this.ascendingFlaccidParalysis = ascendingFlaccidParalysis;
 	}
 
+	@Order(348)
 	public SymptomState getErraticBehaviour() {
 		return erraticBehaviour;
 	}
@@ -3729,6 +2637,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		this.erraticBehaviour = erraticBehaviour;
 	}
 
+	@Order(349)
 	public SymptomState getComa() {
 		return coma;
 	}
@@ -3857,6 +2766,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		this.blueLips = blueLips;
 	}
 
+	@Order(350)
 	public SymptomState getPalpitations() {
 		return palpitations;
 	}

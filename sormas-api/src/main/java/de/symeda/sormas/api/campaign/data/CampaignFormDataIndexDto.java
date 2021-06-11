@@ -42,15 +42,8 @@ public class CampaignFormDataIndexDto implements Serializable, Cloneable {
 	private String community;
 	private Date formDate;
 
-	public CampaignFormDataIndexDto(
-		String uuid,
-		String campaign,
-		String form,
-		Object formValues,
-		String region,
-		String district,
-		String community,
-		Date formDate) {
+	public CampaignFormDataIndexDto(String uuid, String campaign, String form, Object formValues, String region,
+			String district, String community, Date formDate) {
 		this.uuid = uuid;
 		this.campaign = campaign;
 		this.form = form;

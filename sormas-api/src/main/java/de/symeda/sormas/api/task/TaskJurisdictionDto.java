@@ -18,12 +18,8 @@ public class TaskJurisdictionDto implements Serializable {
 
 	}
 
-	public TaskJurisdictionDto(
-		String creatorUserUuid,
-		String assigneeUserUuid,
-		CaseJurisdictionDto caseJurisdiction,
-		ContactJurisdictionDto contactJurisdiction,
-		EventJurisdictionDto eventJurisdiction) {
+	public TaskJurisdictionDto(String creatorUserUuid, String assigneeUserUuid, CaseJurisdictionDto caseJurisdiction,
+			ContactJurisdictionDto contactJurisdiction, EventJurisdictionDto eventJurisdiction) {
 		this.creatorUserUuid = creatorUserUuid;
 		this.assigneeUserUuid = assigneeUserUuid;
 		this.caseJurisdiction = caseJurisdiction;

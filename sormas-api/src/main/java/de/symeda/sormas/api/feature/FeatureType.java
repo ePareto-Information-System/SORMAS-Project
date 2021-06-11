@@ -6,64 +6,33 @@ import java.util.List;
 import de.symeda.sormas.api.i18n.I18nProperties;
 
 /**
- * New server features are automatically added to the database in FeatureConfigurationService.createMissingFeatureConfigurations().
+ * New server features are automatically added to the database in
+ * FeatureConfigurationService.createMissingFeatureConfigurations().
  */
 public enum FeatureType {
 
-	LINE_LISTING(false, false, null),
-	AGGREGATE_REPORTING(true, true, null),
-	EVENT_SURVEILLANCE(true, true, null),
-	WEEKLY_REPORTING(true, true, null),
-	CLINICAL_MANAGEMENT(true, true, null),
-	NATIONAL_CASE_SHARING(true, false, null),
+	LINE_LISTING(false, false, null), AGGREGATE_REPORTING(true, true, null), EVENT_SURVEILLANCE(true, true, null),
+	WEEKLY_REPORTING(true, true, null), CLINICAL_MANAGEMENT(true, true, null), NATIONAL_CASE_SHARING(true, false, null),
 	TASK_MANAGEMENT(true, true, null),
-	TASK_GENERATION_CASE_SURVEILLANCE(true,
-		true,
-		new FeatureType[] {
-			TASK_MANAGEMENT }),
-	TASK_GENERATION_CONTACT_TRACING(true,
-		true,
-		new FeatureType[] {
-			TASK_MANAGEMENT }),
-	TASK_GENERATION_EVENT_SURVEILLANCE(true,
-		true,
-		new FeatureType[] {
-			TASK_MANAGEMENT }),
-	TASK_GENERATION_GENERAL(true,
-		true,
-		new FeatureType[] {
-			TASK_MANAGEMENT }),
-	CAMPAIGNS(true, false, null),
-	CASE_SURVEILANCE(true, true, null),
-	CONTACT_TRACING(true,
-		true,
-		new FeatureType[] {
-			CASE_SURVEILANCE }),
-	SAMPLES_LAB(true,
-		true,
-		new FeatureType[] {
-			CASE_SURVEILANCE,
-			CONTACT_TRACING }),
-	INFRASTRUCTURE_TYPE_AREA(true, false, null),
-	CASE_FOLLOWUP(true, false, null),
-	TASK_NOTIFICATIONS(true,
-		true,
-		new FeatureType[] {
-			TASK_MANAGEMENT }),
-	MANUAL_EXTERNAL_MESSAGES(true, true, null),
-	OTHER_NOTIFICATIONS(true, true, null),
-	DOCUMENTS(true, false, null),
-	OUTBREAKS(true, true, null),
-	LAB_MESSAGES(true, false, null),
+	TASK_GENERATION_CASE_SURVEILLANCE(true, true, new FeatureType[] { TASK_MANAGEMENT }),
+	TASK_GENERATION_CONTACT_TRACING(true, true, new FeatureType[] { TASK_MANAGEMENT }),
+	TASK_GENERATION_EVENT_SURVEILLANCE(true, true, new FeatureType[] { TASK_MANAGEMENT }),
+	TASK_GENERATION_GENERAL(true, true, new FeatureType[] { TASK_MANAGEMENT }), CAMPAIGNS(true, false, null),
+	CASE_SURVEILANCE(true, true, null), CONTACT_TRACING(true, true, new FeatureType[] { CASE_SURVEILANCE }),
+	SAMPLES_LAB(true, true, new FeatureType[] { CASE_SURVEILANCE, CONTACT_TRACING, EVENT_SURVEILLANCE }),
+	INFRASTRUCTURE_TYPE_AREA(true, false, null), CASE_FOLLOWUP(true, false, null),
+	TASK_NOTIFICATIONS(true, true, new FeatureType[] { TASK_MANAGEMENT }), MANUAL_EXTERNAL_MESSAGES(true, true, null),
+	EVENT_PARTICIPANT_CASE_CONFIRMED_NOTIFICATIONS(true, true, null), OTHER_NOTIFICATIONS(true, true, null),
+	DOCUMENTS(true, false, null), OUTBREAKS(true, true, null), LAB_MESSAGES(true, false, null),
 	ASSIGN_TASKS_TO_HIGHER_LEVEL(true, true, null),
-	SURVEILLANCE_REPORTS(true,
-		false,
-		new FeatureType[] {
-			CASE_SURVEILANCE });
+	SURVEILLANCE_REPORTS(true, false, new FeatureType[] { CASE_SURVEILANCE }),
+	PERSON_MANAGEMENT(true, true, new FeatureType[] { CASE_SURVEILANCE, EVENT_SURVEILLANCE }),
+	GDPR_CONSENT_POPUP(true, false, null), EVENT_GROUPS(true, true, null),
+	EVENT_GROUPS_MODIFICATION_NOTIFICATIONS(true, false, new FeatureType[] { EVENT_GROUPS });
 
 	/**
-	 * Server feature means that the feature only needs to be configured once per server since they define the way the system
-	 * is supposed to operate.
+	 * Server feature means that the feature only needs to be configured once per
+	 * server since they define the way the system is supposed to operate.
 	 */
 	private final boolean serverFeature;
 

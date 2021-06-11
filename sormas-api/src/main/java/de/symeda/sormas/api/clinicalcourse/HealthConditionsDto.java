@@ -39,72 +39,42 @@ public class HealthConditionsDto extends PseudonymizableDto {
 	public static final String SICKLE_CELL_DISEASE = "sickleCellDisease";
 	public static final String IMMUNODEFICIENCY_INCLUDING_HIV = "immunodeficiencyIncludingHiv";
 
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	private YesNoUnknown tuberculosis;
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	private YesNoUnknown asplenia;
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	private YesNoUnknown hepatitis;
 	private YesNoUnknown diabetes;
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	private YesNoUnknown hiv;
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	private YesNoUnknown hivArt;
 	private YesNoUnknown chronicLiverDisease;
 	private YesNoUnknown malignancyChemotherapy;
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	private YesNoUnknown chronicHeartFailure;
 	private YesNoUnknown chronicPulmonaryDisease;
 	private YesNoUnknown chronicKidneyDisease;
 	private YesNoUnknown chronicNeurologicCondition;
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	private YesNoUnknown downSyndrome;
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	private YesNoUnknown congenitalSyphilis;
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	private YesNoUnknown immunodeficiencyOtherThanHiv;
 	private YesNoUnknown cardiovascularDiseaseIncludingHypertension;
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	private YesNoUnknown obesity;
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	private YesNoUnknown currentSmoker;
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	private YesNoUnknown formerSmoker;
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	private YesNoUnknown asthma;
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@HideForCountries(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	private YesNoUnknown sickleCellDisease;
-	@HideForCountriesExcept(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+	@HideForCountriesExcept(countries = { CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	private YesNoUnknown immunodeficiencyIncludingHiv;
 	@SensitiveData
 	private String otherConditions;

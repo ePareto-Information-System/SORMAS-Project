@@ -21,10 +21,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum PresentCondition {
 
-	ALIVE,
-	DEAD,
-	BURIED,
-	UNKNOWN;
+	ALIVE, DEAD, BURIED, UNKNOWN;
 
 	public boolean isDeceased() {
 		return this == DEAD || this == BURIED;

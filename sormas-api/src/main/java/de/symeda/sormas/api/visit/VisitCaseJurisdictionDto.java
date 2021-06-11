@@ -23,14 +23,8 @@ public class VisitCaseJurisdictionDto extends CaseJurisdictionDto {
 
 	private long visitId;
 
-	public VisitCaseJurisdictionDto(
-		long visitId,
-		String reportingUserUuid,
-		String regionUuid,
-		String districtUuid,
-		String communityUuid,
-		String healthFacilityUuid,
-		String pointOfEntryUuid) {
+	public VisitCaseJurisdictionDto(long visitId, String reportingUserUuid, String regionUuid, String districtUuid,
+			String communityUuid, String healthFacilityUuid, String pointOfEntryUuid) {
 
 		super(reportingUserUuid, regionUuid, districtUuid, communityUuid, healthFacilityUuid, pointOfEntryUuid);
 		this.visitId = visitId;

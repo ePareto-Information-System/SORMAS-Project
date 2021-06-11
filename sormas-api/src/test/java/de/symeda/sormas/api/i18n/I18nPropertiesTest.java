@@ -33,13 +33,15 @@ public class I18nPropertiesTest {
 
 		{
 			Locale locale = Locale.ROOT;
-			ResourceBundle bundle = control.newBundle("captions", locale, "java.properties", getClass().getClassLoader(), true);
+			ResourceBundle bundle = control.newBundle("captions", locale, "java.properties",
+					getClass().getClassLoader(), true);
 			Set<String> keys = bundle.keySet();
 			assertThat("Root Language", keys, not(empty()));
 		}
 
 		for (Language l : Language.values()) {
-			ResourceBundle bundle = control.newBundle("captions", l.getLocale(), "java.properties", getClass().getClassLoader(), true);
+			ResourceBundle bundle = control.newBundle("captions", l.getLocale(), "java.properties",
+					getClass().getClassLoader(), true);
 
 			Set<String> keys = bundle.keySet();
 			if (l.equals(Language.EN)) {

@@ -45,12 +45,8 @@ public class ContactJurisdictionDto implements Serializable {
 
 	}
 
-	public ContactJurisdictionDto(
-		String reportingUserUuid,
-		String regionUuid,
-		String districtUuid,
-		String communityUuid,
-		CaseJurisdictionDto caseJurisdiction) {
+	public ContactJurisdictionDto(String reportingUserUuid, String regionUuid, String districtUuid,
+			String communityUuid, CaseJurisdictionDto caseJurisdiction) {
 
 		this.reportingUserUuid = reportingUserUuid;
 		this.regionUuid = regionUuid;

@@ -82,10 +82,10 @@ public class SormasToSormasConfig implements Serializable, Cloneable {
 			return false;
 		SormasToSormasConfig that = (SormasToSormasConfig) o;
 		return Objects.equals(path, that.path)
-			&& Objects.equals(serverAccessDataFileName, that.serverAccessDataFileName)
-			&& Objects.equals(keystorePass, that.keystorePass)
-			&& Objects.equals(truststoreName, that.truststoreName)
-			&& Objects.equals(truststorePass, that.truststorePass);
+				&& Objects.equals(serverAccessDataFileName, that.serverAccessDataFileName)
+				&& Objects.equals(keystorePass, that.keystorePass)
+				&& Objects.equals(truststoreName, that.truststoreName)
+				&& Objects.equals(truststorePass, that.truststorePass);
 	}
 
 	@Override

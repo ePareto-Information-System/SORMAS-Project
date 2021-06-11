@@ -26,10 +26,8 @@ public abstract class AnnotationBasedFieldAccessChecker implements FieldAccessCh
 	private Class<? extends Annotation> embeddedAnnotation;
 	private final boolean hasRight;
 
-	protected AnnotationBasedFieldAccessChecker(
-		Class<? extends Annotation> fieldAnnotation,
-		Class<? extends Annotation> embeddedAnnotation,
-		boolean hasRight) {
+	protected AnnotationBasedFieldAccessChecker(Class<? extends Annotation> fieldAnnotation,
+			Class<? extends Annotation> embeddedAnnotation, boolean hasRight) {
 		this.fieldAnnotation = fieldAnnotation;
 		this.embeddedAnnotation = embeddedAnnotation;
 		this.hasRight = hasRight;

@@ -24,10 +24,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum StatisticsCaseAttributeGroup {
 
-	TIME,
-	PLACE,
-	PERSON,
-	CASE;
+	TIME, PLACE, PERSON, CASE;
 
 	private List<StatisticsCaseAttribute> attributes;
 

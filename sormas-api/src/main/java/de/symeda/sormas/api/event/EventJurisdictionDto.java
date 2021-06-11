@@ -13,12 +13,8 @@ public class EventJurisdictionDto implements Serializable {
 	public EventJurisdictionDto() {
 	}
 
-	public EventJurisdictionDto(
-		String reportingUserUuid,
-		String responsibleUserUuid,
-		String regionUuid,
-		String districtUuid,
-		String communityUuid) {
+	public EventJurisdictionDto(String reportingUserUuid, String responsibleUserUuid, String regionUuid,
+			String districtUuid, String communityUuid) {
 		this.reportingUserUuid = reportingUserUuid;
 		this.responsibleUserUuid = responsibleUserUuid;
 		this.regionUuid = regionUuid;

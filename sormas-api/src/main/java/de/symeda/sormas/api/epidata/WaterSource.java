@@ -21,11 +21,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum WaterSource {
 
-	PIPE_NETWORK,
-	COMMUNITY_BOREHOLE_WELL,
-	PRIVATE_BOREHOLE_WELL,
-	STREAM,
-	OTHER;
+	PIPE_NETWORK, COMMUNITY_BOREHOLE_WELL, PRIVATE_BOREHOLE_WELL, STREAM, OTHER;
 
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);

@@ -68,14 +68,16 @@ public class AdditionalTestDto extends EntityDto {
 	}
 
 	public boolean hasArterialVenousGasValue() {
-		return arterialVenousGasPH != null || arterialVenousGasPco2 != null || arterialVenousGasPao2 != null || arterialVenousGasHco3 != null;
+		return arterialVenousGasPH != null || arterialVenousGasPco2 != null || arterialVenousGasPao2 != null
+				|| arterialVenousGasHco3 != null;
 	}
 
 	public String buildArterialVenousGasValuesString() {
 
 		StringBuilder sb = new StringBuilder();
 		if (arterialVenousGasPH != null) {
-			sb.append(I18nProperties.getPrefixCaption(I18N_PREFIX, ARTERIAL_VENOUS_GAS_PH)).append(": ").append(arterialVenousGasPH);
+			sb.append(I18nProperties.getPrefixCaption(I18N_PREFIX, ARTERIAL_VENOUS_GAS_PH)).append(": ")
+					.append(arterialVenousGasPH);
 		}
 		if (arterialVenousGasPco2 != null) {
 			String pCo2String = I18nProperties.getPrefixCaption(I18N_PREFIX, ARTERIAL_VENOUS_GAS_PCO2);

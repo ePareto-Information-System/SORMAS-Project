@@ -25,7 +25,8 @@ import de.symeda.sormas.api.event.EventReferenceDto;
 @Remote
 public interface EventDocumentFacade {
 
-	String getGeneratedDocument(String templateName, EventReferenceDto eventReference, Properties extraProperties) throws DocumentTemplateException;
+	String getGeneratedDocument(String templateName, EventReferenceDto eventReference, Properties extraProperties)
+			throws DocumentTemplateException;
 
 	List<String> getAvailableTemplates();
 

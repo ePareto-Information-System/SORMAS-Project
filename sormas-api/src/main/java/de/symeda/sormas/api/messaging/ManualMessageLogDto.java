@@ -16,7 +16,8 @@ public class ManualMessageLogDto implements Serializable {
 	public ManualMessageLogDto() {
 	}
 
-	public ManualMessageLogDto(MessageType messageType, Date sentDate, UserReferenceDto sendingUser, PersonReferenceDto recipientPerson) {
+	public ManualMessageLogDto(MessageType messageType, Date sentDate, UserReferenceDto sendingUser,
+			PersonReferenceDto recipientPerson) {
 		this.messageType = messageType;
 		this.sentDate = sentDate;
 		this.sendingUser = sendingUser;

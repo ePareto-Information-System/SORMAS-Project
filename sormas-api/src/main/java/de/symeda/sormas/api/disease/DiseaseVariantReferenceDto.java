@@ -22,16 +22,16 @@ import de.symeda.sormas.api.ReferenceDto;
 
 public class DiseaseVariantReferenceDto extends ReferenceDto {
 
-    private static final long serialVersionUID = 7980726625509183207L;
+	private static final long serialVersionUID = 7980726625509183207L;
 
-    public DiseaseVariantReferenceDto() {
-    }
+	public DiseaseVariantReferenceDto() {
+	}
 
-    public DiseaseVariantReferenceDto(String uuid) {
-        super(uuid);
-    }
+	public DiseaseVariantReferenceDto(String uuid) {
+		super(uuid);
+	}
 
-    public DiseaseVariantReferenceDto(String uuid, String caption) {
-        super(uuid, caption);
-    }
+	public DiseaseVariantReferenceDto(String uuid, String caption) {
+		super(uuid, caption);
+	}
 }

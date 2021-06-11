@@ -43,14 +43,9 @@ public class DashboardContactDto implements Serializable {
 	private Disease disease;
 	private Map<VisitStatus, Long> visitStatusMap = new HashMap<>();
 
-	public DashboardContactDto(
-		long id,
-		Date reportDate,
-		ContactStatus contactStatus,
-		ContactClassification contactClassification,
-		FollowUpStatus followUpStatus,
-		Date followUpUntil,
-		Disease disease) {
+	public DashboardContactDto(long id, Date reportDate, ContactStatus contactStatus,
+			ContactClassification contactClassification, FollowUpStatus followUpStatus, Date followUpUntil,
+			Disease disease) {
 
 		this.id = id;
 		this.reportDate = reportDate;

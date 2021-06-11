@@ -29,9 +29,8 @@ public final class EventHelper {
 		// Hide Utility Class Constructor
 	}
 
-	public static String buildInstitutionalPartnerTypeString(
-		InstitutionalPartnerType institutionalPartnerType,
-		String institutionalPartnerTypeDetails) {
+	public static String buildInstitutionalPartnerTypeString(InstitutionalPartnerType institutionalPartnerType,
+			String institutionalPartnerTypeDetails) {
 
 		if (institutionalPartnerType == InstitutionalPartnerType.OTHER) {
 			return DataHelper.toStringNullable(institutionalPartnerTypeDetails);
@@ -47,11 +46,13 @@ public final class EventHelper {
 		} else if (eventEndDate == null) {
 			return DateFormatHelper.formatDate(eventStartDate);
 		} else {
-			return String.format("%s - %s", DateFormatHelper.formatDate(eventStartDate), DateFormatHelper.formatDate(eventEndDate));
+			return String.format("%s - %s", DateFormatHelper.formatDate(eventStartDate),
+					DateFormatHelper.formatDate(eventEndDate));
 		}
 	}
 
-	public static String buildMeansOfTransportString(MeansOfTransport meansOfTransport, String meansOfTransportDetails) {
+	public static String buildMeansOfTransportString(MeansOfTransport meansOfTransport,
+			String meansOfTransportDetails) {
 
 		if (meansOfTransport == MeansOfTransport.OTHER) {
 			return DataHelper.toStringNullable(meansOfTransportDetails);

@@ -19,10 +19,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum EndOfIsolationReason {
 
-	RECOVERED,
-	DIED,
-	LOST_TO_FOLLOW_UP,
-	OTHER;
+	RECOVERED, DIED, LOST_TO_FOLLOW_UP, OTHER;
 
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);

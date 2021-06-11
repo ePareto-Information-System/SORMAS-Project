@@ -86,8 +86,8 @@ public class ContactCriteria extends BaseCriteria implements Serializable {
 	private Date followUpUntilTo;
 	private Boolean followUpUntilToPrecise;
 	/**
-	 * If yes, the followUpUntilTo filter will search for strict matches instead of a period,
-	 * even if a followUpUntilFrom is specified
+	 * If yes, the followUpUntilTo filter will search for strict matches instead of
+	 * a period, even if a followUpUntilFrom is specified
 	 */
 	private SymptomJournalStatus symptomJournalStatus;
 	private Date lastContactDateFrom;
@@ -573,10 +573,12 @@ public class ContactCriteria extends BaseCriteria implements Serializable {
 		return onlyContactsWithSourceCaseInGivenEvent;
 	}
 
-	public ContactCriteria onlyContactsWithSourceCaseInGivenEvent(EventReferenceDto onlyContactsWithSourceCaseInGivenEvent) {
+	public ContactCriteria onlyContactsWithSourceCaseInGivenEvent(
+			EventReferenceDto onlyContactsWithSourceCaseInGivenEvent) {
 		this.onlyContactsWithSourceCaseInGivenEvent = onlyContactsWithSourceCaseInGivenEvent;
 		return this;
 	}
+
 	public String getViewMode() {
 		return this.viewMode == null ? "grid" : this.viewMode;
 	}

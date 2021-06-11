@@ -19,6 +19,7 @@ package de.symeda.sormas.api.sample;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import de.symeda.sormas.api.BaseCriteria;
 import de.symeda.sormas.api.Disease;
@@ -74,6 +75,10 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	private DateFilterOption dateFilterOption = DateFilterOption.DATE;
 	private SamplePurpose samplePurpose;
 
+	private List<String> caseUuids;
+	private List<String> contactUuids;
+	private List<String> eventParticipantUuids;
+
 	public RegionReferenceDto getRegion() {
 		return region;
 	}
@@ -81,8 +86,8 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	public void setRegion(RegionReferenceDto region) {
 		this.region = region;
 	}
-	
-	public SampleCriteria region(RegionReferenceDto region){
+
+	public SampleCriteria region(RegionReferenceDto region) {
 		setRegion(region);
 
 		return this;
@@ -101,8 +106,8 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	public void setDistrict(DistrictReferenceDto district) {
 		this.district = district;
 	}
-	
-	public SampleCriteria district(DistrictReferenceDto district){
+
+	public SampleCriteria district(DistrictReferenceDto district) {
 		setDistrict(district);
 
 		return this;
@@ -151,11 +156,8 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 		return this;
 	}
 
-	public SampleCriteria reportDateBetween(
-		Date sampleDateFrom,
-		Date sampleDateTo,
-		SampleDateType sampleDateType,
-		DateFilterOption dateFilterOption) {
+	public SampleCriteria reportDateBetween(Date sampleDateFrom, Date sampleDateTo, SampleDateType sampleDateType,
+			DateFilterOption dateFilterOption) {
 		this.sampleDateFrom = sampleDateFrom;
 		this.sampleDateTo = sampleDateTo;
 		this.sampleDateType = sampleDateType;
@@ -163,12 +165,8 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 		return this;
 	}
 
-	public SampleCriteria reportDateBetween(
-		Date sampleDateFrom,
-		Date sampleDateTo,
-		SampleDateType sampleDateType,
-		DateFilterOption dateFilterOption,
-		SamplePurpose samplePurpose) {
+	public SampleCriteria reportDateBetween(Date sampleDateFrom, Date sampleDateTo, SampleDateType sampleDateType,
+			DateFilterOption dateFilterOption, SamplePurpose samplePurpose) {
 		this.sampleDateFrom = sampleDateFrom;
 		this.sampleDateTo = sampleDateTo;
 		this.sampleDateType = sampleDateType;
@@ -216,8 +214,8 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	public void setPathogenTestResult(PathogenTestResultType pathogenTestResult) {
 		this.pathogenTestResult = pathogenTestResult;
 	}
-	
-	public SampleCriteria pathogenTestResult(PathogenTestResultType pathogenTestResult){
+
+	public SampleCriteria pathogenTestResult(PathogenTestResultType pathogenTestResult) {
 		setPathogenTestResult(pathogenTestResult);
 
 		return this;
@@ -238,8 +236,8 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	public void setDisease(Disease disease) {
 		this.disease = disease;
 	}
-	
-	public SampleCriteria disease(Disease disease){
+
+	public SampleCriteria disease(Disease disease) {
 		setDisease(disease);
 
 		return this;
@@ -279,7 +277,7 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	public void setSpecimenCondition(SpecimenCondition specimenCondition) {
 		this.specimenCondition = specimenCondition;
 	}
-	
+
 	public SampleCriteria specimenCondition(SpecimenCondition specimenCondition) {
 		this.specimenCondition = specimenCondition;
 		return this;
@@ -340,5 +338,36 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 
 	public void setSamplePurpose(SamplePurpose samplePurpose) {
 		this.samplePurpose = samplePurpose;
+	}
+
+	public List<String> getCaseUuids() {
+		return caseUuids;
+	}
+
+	public SampleCriteria caseUuids(List<String> caseUuids) {
+		this.caseUuids = caseUuids;
+
+		return this;
+	}
+
+	public List<String> getContactUuids() {
+		return contactUuids;
+	}
+
+	public SampleCriteria contactUuids(List<String> contactUuids) {
+		this.contactUuids = contactUuids;
+
+		return this;
+	}
+
+	public List<String> getEventParticipantUuids() {
+		return eventParticipantUuids;
+	}
+
+	public SampleCriteria eventParticipantUuids(List<String> eventParticipantUuids) {
+		this.eventParticipantUuids = eventParticipantUuids;
+
+		return this;
+
 	}
 }

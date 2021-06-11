@@ -22,17 +22,13 @@ import java.util.List;
 
 import javax.ejb.Remote;
 
+import de.symeda.sormas.api.caze.NewCaseDateType;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
 
 @Remote
 public interface DiseaseFacade {
 
-	List<DiseaseBurdenDto> getDiseaseBurdenForDashboard(
-		RegionReferenceDto regionRef,
-		DistrictReferenceDto districtRef,
-		Date from,
-		Date to,
-		Date previousFromDate,
-		Date previousToDate);
+	List<DiseaseBurdenDto> getDiseaseBurdenForDashboard(RegionReferenceDto regionRef, DistrictReferenceDto districtRef,
+			Date from, Date to, Date previousFromDate, Date previousToDate, NewCaseDateType newCaseDateType);
 }

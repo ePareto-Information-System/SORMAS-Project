@@ -38,9 +38,7 @@ public class DiseasesConfigurationTest {
 		@Diseases(Disease.EVD)
 		private String testOne;
 
-		@Diseases({
-			Disease.CHOLERA,
-			Disease.CSM })
+		@Diseases({ Disease.CHOLERA, Disease.CSM })
 		private String testMultiple;
 	}
 

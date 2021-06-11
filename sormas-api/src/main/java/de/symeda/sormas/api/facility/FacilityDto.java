@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 
 import de.symeda.sormas.api.EntityDto;
+import de.symeda.sormas.api.location.AreaType;
 import de.symeda.sormas.api.region.CommunityReferenceDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
@@ -44,6 +45,15 @@ public class FacilityDto extends EntityDto {
 	public static final String DISTRICT = "district";
 	public static final String COMMUNITY = "community";
 	public static final String CITY = "city";
+	public static final String POSTAL_CODE = "postalCode";
+	public static final String STREET = "street";
+	public static final String HOUSE_NUMBER = "houseNumber";
+	public static final String ADDITIONAL_INFORMATION = "additionalInformation";
+	public static final String AREA_TYPE = "areaType";
+	public static final String CONTACT_PERSON_FIRST_NAME = "contactPersonFirstName";
+	public static final String CONTACT_PERSON_LAST_NAME = "contactPersonLastName";
+	public static final String CONTACT_PERSON_PHONE = "contactPersonPhone";
+	public static final String CONTACT_PERSON_EMAIL = "contactPersonEmail";
 	public static final String LATITUDE = "latitude";
 	public static final String LONGITUDE = "longitude";
 	public static final String TYPE_GROUP = "typeGroup";
@@ -55,6 +65,15 @@ public class FacilityDto extends EntityDto {
 	private DistrictReferenceDto district;
 	private CommunityReferenceDto community;
 	private String city;
+	private String postalCode;
+	private String street;
+	private String houseNumber;
+	private String additionalInformation;
+	private AreaType areaType;
+	private String contactPersonFirstName;
+	private String contactPersonLastName;
+	private String contactPersonPhone;
+	private String contactPersonEmail;
 	private Double latitude;
 	private Double longitude;
 	private FacilityType type;
@@ -62,27 +81,13 @@ public class FacilityDto extends EntityDto {
 	private boolean archived;
 	private String externalID;
 
-	public FacilityDto(
-		Date creationDate,
-		Date changeDate,
-		String uuid,
-		boolean archived,
-		String name,
-		String regionUuid,
-		String regionName,
-		String regionExternalId,
-		String districtUuid,
-		String districtName,
-		String districtExternalId,
-		String communityUuid,
-		String communityName,
-		String communityExternalId,
-		String city,
-		Double latitude,
-		Double longitude,
-		FacilityType type,
-		boolean publicOwnership,
-		String externalID) {
+	public FacilityDto(Date creationDate, Date changeDate, String uuid, boolean archived, String name,
+			String regionUuid, String regionName, String regionExternalId, String districtUuid, String districtName,
+			String districtExternalId, String communityUuid, String communityName, String communityExternalId,
+			String city, String postalCode, String street, String houseNumber, String additionalInformation,
+			AreaType areaType, String contactPersonFirstName, String contactPersonLastName, String contactPersonPhone,
+			String contactPersonEmail, Double latitude, Double longitude, FacilityType type, boolean publicOwnership,
+			String externalID) {
 
 		super(creationDate, changeDate, uuid);
 		this.archived = archived;
@@ -97,6 +102,15 @@ public class FacilityDto extends EntityDto {
 			this.community = new CommunityReferenceDto(communityUuid, communityName, communityExternalId);
 		}
 		this.city = city;
+		this.postalCode = postalCode;
+		this.street = street;
+		this.houseNumber = houseNumber;
+		this.additionalInformation = additionalInformation;
+		this.areaType = areaType;
+		this.contactPersonFirstName = contactPersonFirstName;
+		this.contactPersonLastName = contactPersonLastName;
+		this.contactPersonPhone = contactPersonPhone;
+		this.contactPersonEmail = contactPersonEmail;
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.type = type;
@@ -162,6 +176,78 @@ public class FacilityDto extends EntityDto {
 
 	public void setCity(String city) {
 		this.city = city;
+	}
+
+	public String getPostalCode() {
+		return postalCode;
+	}
+
+	public void setPostalCode(String postalCode) {
+		this.postalCode = postalCode;
+	}
+
+	public String getStreet() {
+		return street;
+	}
+
+	public void setStreet(String street) {
+		this.street = street;
+	}
+
+	public String getHouseNumber() {
+		return houseNumber;
+	}
+
+	public void setHouseNumber(String houseNumber) {
+		this.houseNumber = houseNumber;
+	}
+
+	public String getAdditionalInformation() {
+		return additionalInformation;
+	}
+
+	public void setAdditionalInformation(String additionalInformation) {
+		this.additionalInformation = additionalInformation;
+	}
+
+	public AreaType getAreaType() {
+		return areaType;
+	}
+
+	public void setAreaType(AreaType areaType) {
+		this.areaType = areaType;
+	}
+
+	public String getContactPersonFirstName() {
+		return contactPersonFirstName;
+	}
+
+	public void setContactPersonFirstName(String contactPersonFirstName) {
+		this.contactPersonFirstName = contactPersonFirstName;
+	}
+
+	public String getContactPersonLastName() {
+		return contactPersonLastName;
+	}
+
+	public void setContactPersonLastName(String contactPersonLastName) {
+		this.contactPersonLastName = contactPersonLastName;
+	}
+
+	public String getContactPersonPhone() {
+		return contactPersonPhone;
+	}
+
+	public void setContactPersonPhone(String contactPersonPhone) {
+		this.contactPersonPhone = contactPersonPhone;
+	}
+
+	public String getContactPersonEmail() {
+		return contactPersonEmail;
+	}
+
+	public void setContactPersonEmail(String contactPersonEmail) {
+		this.contactPersonEmail = contactPersonEmail;
 	}
 
 	public FacilityType getType() {

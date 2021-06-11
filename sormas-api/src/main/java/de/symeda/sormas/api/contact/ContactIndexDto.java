@@ -83,18 +83,19 @@ public class ContactIndexDto extends PseudonymizableIndexDto implements Serializ
 	private ContactJurisdictionDto jurisdiction;
 	private CaseJurisdictionDto caseJurisdiction;
 
-	//@formatter:off
-	public ContactIndexDto(String uuid, String personFirstName, String personLastName, String cazeUuid,
-						   Disease disease, String diseaseDetails, String caseFirstName, String caseLastName, String regionUuid, String regionName,
-						   String districtUuid, String districtName, String communityUuid, Date lastContactDate, ContactCategory contactCategory, 
-						   ContactProximity contactProximity, ContactClassification contactClassification, ContactStatus contactStatus, FollowUpStatus followUpStatus,
-						   Date followUpUntil, SymptomJournalStatus symptomJournalStatus, String contactOfficerUuid, String reportingUserUuid, Date reportDateTime,
-						   CaseClassification caseClassification, String caseReportingUserUid, String caseRegionUuid, String caseRegionName, String caseDistrictUuid, 
-						   String caseDistrictName, String caseCommunityUuid, String caseHealthFacilityUuid, String casePointOfEntryUuid,
-						   Date changeDate, // XXX: unused, only here for TypedQuery mapping
-						   String externalID, String externalToken,
-						   int visitCount) {
-	//@formatter:on
+	// @formatter:off
+	public ContactIndexDto(String uuid, String personFirstName, String personLastName, String cazeUuid, Disease disease,
+			String diseaseDetails, String caseFirstName, String caseLastName, String regionUuid, String regionName,
+			String districtUuid, String districtName, String communityUuid, Date lastContactDate,
+			ContactCategory contactCategory, ContactProximity contactProximity,
+			ContactClassification contactClassification, ContactStatus contactStatus, FollowUpStatus followUpStatus,
+			Date followUpUntil, SymptomJournalStatus symptomJournalStatus, String contactOfficerUuid,
+			String reportingUserUuid, Date reportDateTime, CaseClassification caseClassification,
+			String caseReportingUserUid, String caseRegionUuid, String caseRegionName, String caseDistrictUuid,
+			String caseDistrictName, String caseCommunityUuid, String caseHealthFacilityUuid,
+			String casePointOfEntryUuid, Date changeDate, // XXX: unused, only here for TypedQuery mapping
+			String externalID, String externalToken, int visitCount) {
+		// @formatter:on
 
 		this.uuid = uuid;
 		this.firstName = personFirstName;
@@ -102,13 +103,8 @@ public class ContactIndexDto extends PseudonymizableIndexDto implements Serializ
 
 		if (cazeUuid != null) {
 			this.caze = new CaseReferenceDto(cazeUuid, caseFirstName, caseLastName);
-			this.caseJurisdiction = new CaseJurisdictionDto(
-				caseReportingUserUid,
-				caseRegionUuid,
-				caseDistrictUuid,
-				caseCommunityUuid,
-				caseHealthFacilityUuid,
-				casePointOfEntryUuid);
+			this.caseJurisdiction = new CaseJurisdictionDto(caseReportingUserUid, caseRegionUuid, caseDistrictUuid,
+					caseCommunityUuid, caseHealthFacilityUuid, casePointOfEntryUuid);
 		}
 
 		this.disease = disease;
@@ -132,7 +128,8 @@ public class ContactIndexDto extends PseudonymizableIndexDto implements Serializ
 		this.caseRegionName = caseRegionName;
 		this.caseDistrictName = caseDistrictName;
 
-		this.jurisdiction = new ContactJurisdictionDto(reportingUserUuid, regionUuid, districtUuid, communityUuid, caseJurisdiction);
+		this.jurisdiction = new ContactJurisdictionDto(reportingUserUuid, regionUuid, districtUuid, communityUuid,
+				caseJurisdiction);
 	}
 
 	public String getUuid() {
@@ -291,9 +288,13 @@ public class ContactIndexDto extends PseudonymizableIndexDto implements Serializ
 		this.externalID = externalID;
 	}
 
-	public String getExternalToken() { return externalToken; }
+	public String getExternalToken() {
+		return externalToken;
+	}
 
-	public void setExternalToken(String externalToken) { this.externalToken = externalToken; }
+	public void setExternalToken(String externalToken) {
+		this.externalToken = externalToken;
+	}
 
 	public String getRegionName() {
 		return regionName;

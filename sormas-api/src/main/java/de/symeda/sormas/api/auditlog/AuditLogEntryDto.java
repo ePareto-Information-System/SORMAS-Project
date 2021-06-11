@@ -31,7 +31,7 @@ import de.symeda.sormas.api.user.UserDto;
 public class AuditLogEntryDto extends EntityDto {
 
 	private static final long serialVersionUID = 2439546041916003652L;
-	
+
 	public static final String ID = "id";
 	public static final String CLASS = "clazz";
 	public static final String UUID = "uuid";
@@ -51,15 +51,9 @@ public class AuditLogEntryDto extends EntityDto {
 	private ChangeType changeType;
 
 	private Map<String, String> attributes;
-	
-	public AuditLogEntryDto(
-		Long id,
-		String clazz,
-		String uuid,
-		Long editingUserId,
-		String transactionId,
-		Date detectionTimestamp,
-		ChangeType changeType) {
+
+	public AuditLogEntryDto(Long id, String clazz, String uuid, Long editingUserId, String transactionId,
+			Date detectionTimestamp, ChangeType changeType) {
 
 		this.id = id;
 		this.clazz = clazz;
@@ -104,15 +98,15 @@ public class AuditLogEntryDto extends EntityDto {
 	public void setEditingUser(UserDto editingUser) {
 		this.editingUser = editingUser;
 	}
-	
+
 	public Long getEditingUserId() {
 		return editingUserId;
 	}
-	
+
 	public void setEditingUserId(Long editingUserId) {
 		this.editingUserId = editingUserId;
 	}
-	
+
 	public ChangeType getChangeType() {
 		return changeType;
 	}
@@ -147,11 +141,9 @@ public class AuditLogEntryDto extends EntityDto {
 	public void setAttributes(Map<String, String> attributes) {
 		this.attributes = attributes;
 	}
-	
-	public static String getEntityClazz (java.lang.reflect.Type type) {
-		return type.toString()
-				.replaceAll(".sormas.api.", ".sormas.backend.")
-				.replaceAll("ReferenceDto$", "")
+
+	public static String getEntityClazz(java.lang.reflect.Type type) {
+		return type.toString().replaceAll(".sormas.api.", ".sormas.backend.").replaceAll("ReferenceDto$", "")
 				.replaceAll("Dto$", "");
 	}
 }

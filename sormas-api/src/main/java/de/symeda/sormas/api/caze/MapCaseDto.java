@@ -65,26 +65,11 @@ public class MapCaseDto implements Serializable {
 
 	private CaseJurisdictionDto jurisdiction;
 
-	public MapCaseDto(
-		String uuid,
-		Date reportDate,
-		CaseClassification caseClassification,
-		Disease disease,
-		String personUuid,
-		String personFirstName,
-		String personLastName,
-		String healthFacilityUuid,
-		Double healthFacilityLat,
-		Double healthFacilityLon,
-		Double reportLat,
-		Double reportLon,
-		Double addressLat,
-		Double addressLon,
-		String reportingUserUuid,
-		String regionUuid,
-		String districtUuid,
-		String communityUuid,
-		String pointOfEntryUuid) {
+	public MapCaseDto(String uuid, Date reportDate, CaseClassification caseClassification, Disease disease,
+			String personUuid, String personFirstName, String personLastName, String healthFacilityUuid,
+			Double healthFacilityLat, Double healthFacilityLon, Double reportLat, Double reportLon, Double addressLat,
+			Double addressLon, String reportingUserUuid, String regionUuid, String districtUuid, String communityUuid,
+			String pointOfEntryUuid) {
 
 		this.uuid = uuid;
 		this.reportDate = reportDate;
@@ -98,7 +83,8 @@ public class MapCaseDto implements Serializable {
 		this.addressLat = addressLat;
 		this.addressLon = addressLon;
 
-		jurisdiction = new CaseJurisdictionDto(reportingUserUuid, regionUuid, districtUuid, communityUuid, healthFacilityUuid, pointOfEntryUuid);
+		jurisdiction = new CaseJurisdictionDto(reportingUserUuid, regionUuid, districtUuid, communityUuid,
+				healthFacilityUuid, pointOfEntryUuid);
 	}
 
 	public String getUuid() {

@@ -23,11 +23,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum TreatmentRoute {
 
-	ORAL,
-	IV,
-	RECTAL,
-	TOPICAL,
-	OTHER;
+	ORAL, IV, RECTAL, TOPICAL, OTHER;
 
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);

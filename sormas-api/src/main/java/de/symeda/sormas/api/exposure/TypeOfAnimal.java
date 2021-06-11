@@ -19,21 +19,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum TypeOfAnimal {
 
-	BAT,
-	POULTRY,
-	CAMEL,
-	CANIDAE,
-	CAT,
-	CATTLE,
-	DOG,
-	PRIMATE,
-	SNAKE,
-	SWINE,
-	RABBIT,
-	RODENT,
-	TICK,
-	FLEA,
-	OTHER;
+	BAT, POULTRY, CAMEL, CANIDAE, CAT, CATTLE, DOG, PRIMATE, SNAKE, SWINE, RABBIT, RODENT, TICK, FLEA, OTHER;
 
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);

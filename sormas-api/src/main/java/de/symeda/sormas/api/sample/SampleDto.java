@@ -31,9 +31,10 @@ import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.Required;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.SensitiveData;
+import de.symeda.sormas.api.utils.SormasToSormasEntityDto;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 
-public class SampleDto extends PseudonymizableDto {
+public class SampleDto extends PseudonymizableDto implements SormasToSormasEntityDto {
 
 	private static final long serialVersionUID = -6975445672442728938L;
 
@@ -68,6 +69,8 @@ public class SampleDto extends PseudonymizableDto {
 	public static final String PATHOGEN_TEST_RESULT = "pathogenTestResult";
 	public static final String REQUESTED_OTHER_PATHOGEN_TESTS = "requestedOtherPathogenTests";
 	public static final String REQUESTED_OTHER_ADDITIONAL_TESTS = "requestedOtherAdditionalTests";
+	public static final String SAMPLING_REASON = "samplingReason";
+	public static final String SAMPLING_REASON_DETAILS = "samplingReasonDetails";
 
 	private CaseReferenceDto associatedCase;
 	private ContactReferenceDto associatedContact;
@@ -95,7 +98,7 @@ public class SampleDto extends PseudonymizableDto {
 	private String sampleMaterialText;
 	@Required
 	private SamplePurpose samplePurpose;
-	@Required
+
 	private FacilityReferenceDto lab;
 	@SensitiveData
 	private String labDetails;
@@ -120,6 +123,10 @@ public class SampleDto extends PseudonymizableDto {
 	private Set<AdditionalTestType> requestedAdditionalTests;
 	private String requestedOtherPathogenTests;
 	private String requestedOtherAdditionalTests;
+
+	private SamplingReason samplingReason;
+	@SensitiveData
+	private String samplingReasonDetails;
 
 	private SormasToSormasOriginInfoDto sormasToSormasOriginInfo;
 	private boolean ownershipHandedOver;
@@ -166,11 +173,11 @@ public class SampleDto extends PseudonymizableDto {
 	public void setFieldSampleID(String fieldSampleID) {
 		this.fieldSampleID = fieldSampleID;
 	}
-	
+
 	public YesNoUnknown getForRetest() {
 		return forRetest;
 	}
-	
+
 	public void setForRetest(YesNoUnknown forRetest) {
 		this.forRetest = forRetest;
 	}
@@ -382,14 +389,33 @@ public class SampleDto extends PseudonymizableDto {
 		this.requestedOtherAdditionalTests = requestedOtherAdditionalTests;
 	}
 
+	public SamplingReason getSamplingReason() {
+		return samplingReason;
+	}
+
+	public void setSamplingReason(SamplingReason samplingReason) {
+		this.samplingReason = samplingReason;
+	}
+
+	public String getSamplingReasonDetails() {
+		return samplingReasonDetails;
+	}
+
+	public void setSamplingReasonDetails(String samplingReasonDetails) {
+		this.samplingReasonDetails = samplingReasonDetails;
+	}
+
+	@Override
 	public SormasToSormasOriginInfoDto getSormasToSormasOriginInfo() {
 		return sormasToSormasOriginInfo;
 	}
 
+	@Override
 	public void setSormasToSormasOriginInfo(SormasToSormasOriginInfoDto sormasToSormasOriginInfo) {
 		this.sormasToSormasOriginInfo = sormasToSormasOriginInfo;
 	}
 
+	@Override
 	public boolean isOwnershipHandedOver() {
 		return ownershipHandedOver;
 	}

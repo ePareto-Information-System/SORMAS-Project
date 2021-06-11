@@ -44,7 +44,8 @@ public class Quarter implements Serializable, StatisticsGroupingKey {
 	/**
 	 * Increases the quarter by 1 or sets it back to 1 if its current value is 4.
 	 * 
-	 * @return true if the quarter has been set back to 1, indicating a concomitant increase of the year.
+	 * @return true if the quarter has been set back to 1, indicating a concomitant
+	 *         increase of the year.
 	 */
 	public boolean increaseQuarter() {
 		if (value == 4) {
@@ -92,8 +93,8 @@ public class Quarter implements Serializable, StatisticsGroupingKey {
 			throw new NullPointerException("Can't compare to null.");
 		}
 		if (o.getClass() != this.getClass()) {
-			throw new UnsupportedOperationException(
-				"Can't compare to class " + o.getClass().getName() + " that differs from " + this.getClass().getName());
+			throw new UnsupportedOperationException("Can't compare to class " + o.getClass().getName()
+					+ " that differs from " + this.getClass().getName());
 		}
 
 		return Integer.compare(value, ((Quarter) o).getValue());

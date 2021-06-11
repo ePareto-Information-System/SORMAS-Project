@@ -106,6 +106,9 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 		target.setReportLon(source.getReportLon());
 		target.setReportLatLonAccuracy(source.getReportLatLonAccuracy());
 
+		target.setSamplingReason(source.getSamplingReason());
+		target.setSamplingReasonDetails(source.getSamplingReasonDetails());
+
 		target.setSormasToSormasOriginInfo(
 			sormasToSormasOriginInfoDtoHelper.fillOrCreateFromDto(target.getSormasToSormasOriginInfo(), source.getSormasToSormasOriginInfo()));
 		target.setOwnershipHandedOver(source.isOwnershipHandedOver());
@@ -171,6 +174,9 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 		target.setReportLat(source.getReportLat());
 		target.setReportLon(source.getReportLon());
 		target.setReportLatLonAccuracy(source.getReportLatLonAccuracy());
+
+		target.setSamplingReason(source.getSamplingReason());
+		target.setSamplingReasonDetails(source.getSamplingReasonDetails());
 
 		if (source.getSormasToSormasOriginInfo() != null) {
 			target.setSormasToSormasOriginInfo(sormasToSormasOriginInfoDtoHelper.adoToDto(source.getSormasToSormasOriginInfo()));

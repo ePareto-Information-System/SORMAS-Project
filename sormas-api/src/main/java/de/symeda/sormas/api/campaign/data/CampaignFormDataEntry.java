@@ -66,7 +66,8 @@ public class CampaignFormDataEntry implements Serializable, JsonDataEntry {
 		}
 
 		if (value instanceof Boolean) {
-			return value.equals(Boolean.TRUE) ? I18nProperties.getString(Strings.yes) : I18nProperties.getString(Strings.no);
+			return value.equals(Boolean.TRUE) ? I18nProperties.getString(Strings.yes)
+					: I18nProperties.getString(Strings.no);
 		}
 
 		return value.toString();
@@ -84,8 +85,8 @@ public class CampaignFormDataEntry implements Serializable, JsonDataEntry {
 	}
 
 	/**
-	 * Needed. Otherwise hibernate will persist whenever loading,
-	 * because hibernate types creates new instances that aren't equal.
+	 * Needed. Otherwise hibernate will persist whenever loading, because hibernate
+	 * types creates new instances that aren't equal.
 	 */
 	@Override
 	public boolean equals(Object o) {

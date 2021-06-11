@@ -21,10 +21,8 @@ import de.symeda.sormas.api.utils.DataHelper;
 
 public class EventParticipantJurisdictionHelper {
 
-	public static boolean isInJurisdictionOrOwned(
-		JurisdictionLevel jurisdictionLevel,
-		UserJurisdiction userJurisdiction,
-		EventParticipantJurisdictionDto eventParticipantJurisdiction) {
+	public static boolean isInJurisdictionOrOwned(JurisdictionLevel jurisdictionLevel,
+			UserJurisdiction userJurisdiction, EventParticipantJurisdictionDto eventParticipantJurisdiction) {
 
 		if (isOwned(userJurisdiction, eventParticipantJurisdiction))
 			return true;
@@ -32,19 +30,18 @@ public class EventParticipantJurisdictionHelper {
 		return isInJurisdiction(jurisdictionLevel, userJurisdiction, eventParticipantJurisdiction);
 	}
 
-	public static boolean isOwned(UserJurisdiction userJurisdiction, EventParticipantJurisdictionDto eventParticipantJurisdiction) {
+	public static boolean isOwned(UserJurisdiction userJurisdiction,
+			EventParticipantJurisdictionDto eventParticipantJurisdiction) {
 
-		if (eventParticipantJurisdiction.getReportingUserUuid() != null
-			&& DataHelper.equal(userJurisdiction.getUuid(), eventParticipantJurisdiction.getReportingUserUuid())) {
+		if (eventParticipantJurisdiction != null && eventParticipantJurisdiction.getReportingUserUuid() != null
+				&& DataHelper.equal(userJurisdiction.getUuid(), eventParticipantJurisdiction.getReportingUserUuid())) {
 			return true;
 		}
 		return false;
 	}
 
-	public static boolean isInJurisdiction(
-		JurisdictionLevel jurisdictionLevel,
-		UserJurisdiction userJurisdiction,
-		EventParticipantJurisdictionDto eventParticipantJurisdiction) {
+	public static boolean isInJurisdiction(JurisdictionLevel jurisdictionLevel, UserJurisdiction userJurisdiction,
+			EventParticipantJurisdictionDto eventParticipantJurisdiction) {
 
 		switch (jurisdictionLevel) {
 		case NONE:
@@ -53,10 +50,10 @@ public class EventParticipantJurisdictionHelper {
 			return true;
 		case REGION:
 			return eventParticipantJurisdiction.getRegionUuid() != null
-				&& DataHelper.equal(eventParticipantJurisdiction.getRegionUuid(), userJurisdiction.getRegionUuid());
+					&& DataHelper.equal(eventParticipantJurisdiction.getRegionUuid(), userJurisdiction.getRegionUuid());
 		case DISTRICT:
-			return eventParticipantJurisdiction.getDistrictUuid() != null
-				&& DataHelper.equal(eventParticipantJurisdiction.getDistrictUuid(), userJurisdiction.getDistrictUuid());
+			return eventParticipantJurisdiction.getDistrictUuid() != null && DataHelper
+					.equal(eventParticipantJurisdiction.getDistrictUuid(), userJurisdiction.getDistrictUuid());
 		case COMMUNITY:
 			return false;
 		case HEALTH_FACILITY:

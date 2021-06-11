@@ -21,59 +21,28 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum StatisticsCaseAttribute {
 
-	ONSET_TIME(StatisticsCaseAttributeGroup.TIME,
-		false,
-		true,
-		StatisticsCaseSubAttribute.YEAR,
-		StatisticsCaseSubAttribute.QUARTER,
-		StatisticsCaseSubAttribute.MONTH,
-		StatisticsCaseSubAttribute.EPI_WEEK,
-		StatisticsCaseSubAttribute.QUARTER_OF_YEAR,
-		StatisticsCaseSubAttribute.MONTH_OF_YEAR,
-		StatisticsCaseSubAttribute.EPI_WEEK_OF_YEAR,
-		StatisticsCaseSubAttribute.DATE_RANGE),
+	ONSET_TIME(StatisticsCaseAttributeGroup.TIME, false, true, StatisticsCaseSubAttribute.YEAR,
+			StatisticsCaseSubAttribute.QUARTER, StatisticsCaseSubAttribute.MONTH, StatisticsCaseSubAttribute.EPI_WEEK,
+			StatisticsCaseSubAttribute.QUARTER_OF_YEAR, StatisticsCaseSubAttribute.MONTH_OF_YEAR,
+			StatisticsCaseSubAttribute.EPI_WEEK_OF_YEAR, StatisticsCaseSubAttribute.DATE_RANGE),
 
-	REPORT_TIME(StatisticsCaseAttributeGroup.TIME,
-		false,
-		false,
-		StatisticsCaseSubAttribute.YEAR,
-		StatisticsCaseSubAttribute.QUARTER,
-		StatisticsCaseSubAttribute.MONTH,
-		StatisticsCaseSubAttribute.EPI_WEEK,
-		StatisticsCaseSubAttribute.QUARTER_OF_YEAR,
-		StatisticsCaseSubAttribute.MONTH_OF_YEAR,
-		StatisticsCaseSubAttribute.EPI_WEEK_OF_YEAR,
-		StatisticsCaseSubAttribute.DATE_RANGE),
+	REPORT_TIME(StatisticsCaseAttributeGroup.TIME, false, false, StatisticsCaseSubAttribute.YEAR,
+			StatisticsCaseSubAttribute.QUARTER, StatisticsCaseSubAttribute.MONTH, StatisticsCaseSubAttribute.EPI_WEEK,
+			StatisticsCaseSubAttribute.QUARTER_OF_YEAR, StatisticsCaseSubAttribute.MONTH_OF_YEAR,
+			StatisticsCaseSubAttribute.EPI_WEEK_OF_YEAR, StatisticsCaseSubAttribute.DATE_RANGE),
 
-	OUTCOME_TIME(StatisticsCaseAttributeGroup.TIME,
-		false,
-		true,
-		StatisticsCaseSubAttribute.YEAR,
-		StatisticsCaseSubAttribute.QUARTER,
-		StatisticsCaseSubAttribute.MONTH,
-		StatisticsCaseSubAttribute.EPI_WEEK,
-		StatisticsCaseSubAttribute.QUARTER_OF_YEAR,
-		StatisticsCaseSubAttribute.MONTH_OF_YEAR,
-		StatisticsCaseSubAttribute.EPI_WEEK_OF_YEAR,
-		StatisticsCaseSubAttribute.DATE_RANGE),
+	OUTCOME_TIME(StatisticsCaseAttributeGroup.TIME, false, true, StatisticsCaseSubAttribute.YEAR,
+			StatisticsCaseSubAttribute.QUARTER, StatisticsCaseSubAttribute.MONTH, StatisticsCaseSubAttribute.EPI_WEEK,
+			StatisticsCaseSubAttribute.QUARTER_OF_YEAR, StatisticsCaseSubAttribute.MONTH_OF_YEAR,
+			StatisticsCaseSubAttribute.EPI_WEEK_OF_YEAR, StatisticsCaseSubAttribute.DATE_RANGE),
 
-	JURISDICTION(StatisticsCaseAttributeGroup.PLACE,
-		true,
-		true,
-		StatisticsCaseSubAttribute.REGION,
-		StatisticsCaseSubAttribute.DISTRICT,
-		StatisticsCaseSubAttribute.COMMUNITY,
-		StatisticsCaseSubAttribute.FACILITY),
+	JURISDICTION(StatisticsCaseAttributeGroup.PLACE, true, true, StatisticsCaseSubAttribute.REGION,
+			StatisticsCaseSubAttribute.DISTRICT, StatisticsCaseSubAttribute.COMMUNITY,
+			StatisticsCaseSubAttribute.FACILITY),
 
-	PLACE_OF_RESIDENCE(StatisticsCaseAttributeGroup.PERSON,
-		true,
-		true,
-		false,
-		StatisticsCaseSubAttribute.PERSON_REGION,
-		StatisticsCaseSubAttribute.PERSON_DISTRICT,
-		StatisticsCaseSubAttribute.PERSON_COMMUNITY,
-		StatisticsCaseSubAttribute.PERSON_CITY,
-		StatisticsCaseSubAttribute.PERSON_POSTCODE),
+	PLACE_OF_RESIDENCE(StatisticsCaseAttributeGroup.PERSON, true, true, false, StatisticsCaseSubAttribute.PERSON_REGION,
+			StatisticsCaseSubAttribute.PERSON_DISTRICT, StatisticsCaseSubAttribute.PERSON_COMMUNITY,
+			StatisticsCaseSubAttribute.PERSON_CITY, StatisticsCaseSubAttribute.PERSON_POSTCODE),
 
 	SEX(StatisticsCaseAttributeGroup.PERSON, true, true),
 	AGE_INTERVAL_1_YEAR(StatisticsCaseAttributeGroup.PERSON, false, true),
@@ -93,11 +62,8 @@ public enum StatisticsCaseAttribute {
 	private boolean usedForVisualisation = true;
 	private final StatisticsCaseSubAttribute[] subAttributes;
 
-	StatisticsCaseAttribute(
-		StatisticsCaseAttributeGroup attributeGroup,
-		boolean sortByCaption,
-		boolean unknownValueAllowed,
-		StatisticsCaseSubAttribute... subAttributes) {
+	StatisticsCaseAttribute(StatisticsCaseAttributeGroup attributeGroup, boolean sortByCaption,
+			boolean unknownValueAllowed, StatisticsCaseSubAttribute... subAttributes) {
 
 		this.attributeGroup = attributeGroup;
 		this.sortByCaption = sortByCaption;
@@ -105,12 +71,8 @@ public enum StatisticsCaseAttribute {
 		this.subAttributes = subAttributes;
 	}
 
-	StatisticsCaseAttribute(
-		StatisticsCaseAttributeGroup attributeGroup,
-		boolean sortByCaption,
-		boolean unknownValueAllowed,
-		boolean usedForVisualisation,
-		StatisticsCaseSubAttribute... subAttributes) {
+	StatisticsCaseAttribute(StatisticsCaseAttributeGroup attributeGroup, boolean sortByCaption,
+			boolean unknownValueAllowed, boolean usedForVisualisation, StatisticsCaseSubAttribute... subAttributes) {
 
 		this.usedForVisualisation = usedForVisualisation;
 		this.attributeGroup = attributeGroup;
@@ -145,12 +107,9 @@ public enum StatisticsCaseAttribute {
 
 	public boolean isAgeGroup() {
 
-		return this == AGE_INTERVAL_1_YEAR
-			|| this == AGE_INTERVAL_5_YEARS
-			|| this == AGE_INTERVAL_BASIC
-			|| this == AGE_INTERVAL_CHILDREN_COARSE
-			|| this == AGE_INTERVAL_CHILDREN_FINE
-			|| this == AGE_INTERVAL_CHILDREN_MEDIUM;
+		return this == AGE_INTERVAL_1_YEAR || this == AGE_INTERVAL_5_YEARS || this == AGE_INTERVAL_BASIC
+				|| this == AGE_INTERVAL_CHILDREN_COARSE || this == AGE_INTERVAL_CHILDREN_FINE
+				|| this == AGE_INTERVAL_CHILDREN_MEDIUM;
 	}
 
 	public boolean isPopulationData() {

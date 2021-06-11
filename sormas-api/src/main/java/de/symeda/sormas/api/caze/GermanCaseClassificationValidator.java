@@ -21,10 +21,8 @@ import de.symeda.sormas.api.symptoms.SymptomsHelper;
 
 public class GermanCaseClassificationValidator {
 
-	public static boolean isValidGermanCaseClassification(
-		CaseClassification caseClassification,
-		CaseDataDto caseDataDto,
-		Boolean hasPositiveLabResult) {
+	public static boolean isValidGermanCaseClassification(CaseClassification caseClassification,
+			CaseDataDto caseDataDto, Boolean hasPositiveLabResult) {
 		return true;
 //		switch (caseClassification) {
 //
@@ -65,16 +63,11 @@ public class GermanCaseClassificationValidator {
 
 	private static boolean hasCoronavirusSymptom(CaseDataDto caseDataDto) {
 		final SymptomsDto symptoms = caseDataDto.getSymptoms();
-		return caseDataDto.getDisease() == Disease.CORONAVIRUS
-			&& symptoms.getSymptomatic()
-			&& SymptomsHelper.atLeastOnSymptomTrue(
-				symptoms.getPneumoniaClinicalOrRadiologic(),
-				symptoms.getDifficultyBreathing(),
-				symptoms.getSoreThroat(),
-				symptoms.getCough(),
-				symptoms.getRunnyNose(),
-				symptoms.getRespiratoryDiseaseVentilation(),
-				symptoms.getAcuteRespiratoryDistressSyndrome());
+		return caseDataDto.getDisease() == Disease.CORONAVIRUS && symptoms.getSymptomatic()
+				&& SymptomsHelper.atLeastOnSymptomTrue(symptoms.getPneumoniaClinicalOrRadiologic(),
+						symptoms.getDifficultyBreathing(), symptoms.getSoreThroat(), symptoms.getCough(),
+						symptoms.getRunnyNose(), symptoms.getRespiratoryDiseaseVentilation(),
+						symptoms.getAcuteRespiratoryDistressSyndrome());
 	}
 
 }

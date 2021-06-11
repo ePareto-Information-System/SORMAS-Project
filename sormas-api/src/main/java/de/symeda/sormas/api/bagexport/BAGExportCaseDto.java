@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 import de.symeda.sormas.api.caze.BirthDateDto;
-import de.symeda.sormas.api.caze.CovidTestReason;
 import de.symeda.sormas.api.caze.EndOfIsolationReason;
 import de.symeda.sormas.api.caze.QuarantineReason;
 import de.symeda.sormas.api.contact.QuarantineType;
@@ -28,6 +27,7 @@ import de.symeda.sormas.api.person.OccupationType;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
+import de.symeda.sormas.api.sample.SamplingReason;
 import de.symeda.sormas.api.utils.Order;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 
@@ -62,7 +62,7 @@ public class BAGExportCaseDto implements Serializable {
 
 	private YesNoUnknown symptomatic;
 
-	private CovidTestReason pcrReason;
+	private SamplingReason pcrReason;
 	private String otherPcrReason;
 
 	private Date symptomOnsetDate;
@@ -118,20 +118,17 @@ public class BAGExportCaseDto implements Serializable {
 	private EndOfIsolationReason endOfIsolationReason;
 	private String endOfIsolationReasonDetails;
 
-	//@formatter:off
-	public BAGExportCaseDto(Integer caseIdIsm, Long caseId, Long personId,
-							String lastName, String firstName,
-							String homeAddressStreet, String homeAddressHouseNumber, String homeAddressCity, String homeAddressPostalCode, String homeAddressCountry,
-							String phoneNumber, String mobileNumber, String emailAddress,
-							Sex sex, Integer birthdateDD, Integer birthdateMM, Integer birthdateYYYY,
-							OccupationType occupationType,
-							boolean symptomatic, CovidTestReason pcrReason, String otherPcrReason, Date symptomOnsetDate,
-							String activityMappingYn,
-							Date contactTracingContactDate,
-							YesNoUnknown wasInQuarantineBeforeIsolation, QuarantineReason quarantineReasonBeforeIsolation, String quarantineReasonBeforeIsolationDetails,
-							QuarantineType isolationType, String isolationTypeDetails,
-							Date followUpStartDate, Date endOfIsolationDate, EndOfIsolationReason endOfIsolationReason, String endOfIsolationReasonDetails) {
-		//@formatter:on
+	// @formatter:off
+	public BAGExportCaseDto(Integer caseIdIsm, Long caseId, Long personId, String lastName, String firstName,
+			String homeAddressStreet, String homeAddressHouseNumber, String homeAddressCity,
+			String homeAddressPostalCode, String homeAddressCountry, String phoneNumber, String mobileNumber,
+			String emailAddress, Sex sex, Integer birthdateDD, Integer birthdateMM, Integer birthdateYYYY,
+			OccupationType occupationType, boolean symptomatic, Date symptomOnsetDate, String activityMappingYn,
+			Date contactTracingContactDate, YesNoUnknown wasInQuarantineBeforeIsolation,
+			QuarantineReason quarantineReasonBeforeIsolation, String quarantineReasonBeforeIsolationDetails,
+			QuarantineType isolationType, String isolationTypeDetails, Date followUpStartDate, Date endOfIsolationDate,
+			EndOfIsolationReason endOfIsolationReason, String endOfIsolationReasonDetails) {
+		// @formatter:on
 
 		this.caseIdIsm = caseIdIsm;
 		this.caseId = caseId;
@@ -150,8 +147,6 @@ public class BAGExportCaseDto implements Serializable {
 		this.birthDate = new BirthDateDto(birthdateDD, birthdateMM, birthdateYYYY);
 		this.occupationType = occupationType;
 		this.symptomatic = symptomatic ? YesNoUnknown.YES : YesNoUnknown.NO;
-		this.pcrReason = pcrReason;
-		this.otherPcrReason = otherPcrReason;
 		this.symptomOnsetDate = symptomOnsetDate;
 		this.activityMappingYn = activityMappingYn;
 		this.contactTracingContactDate = contactTracingContactDate;
@@ -374,11 +369,11 @@ public class BAGExportCaseDto implements Serializable {
 	}
 
 	@Order(51)
-	public CovidTestReason getPcrReason() {
+	public SamplingReason getPcrReason() {
 		return pcrReason;
 	}
 
-	public void setPcrReason(CovidTestReason pcrReason) {
+	public void setPcrReason(SamplingReason pcrReason) {
 		this.pcrReason = pcrReason;
 	}
 

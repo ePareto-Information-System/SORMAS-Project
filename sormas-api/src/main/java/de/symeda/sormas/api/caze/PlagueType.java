@@ -21,9 +21,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum PlagueType {
 
-	BUBONIC,
-	PNEUMONIC,
-	SEPTICAEMIC;
+	BUBONIC, PNEUMONIC, SEPTICAEMIC;
 
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);

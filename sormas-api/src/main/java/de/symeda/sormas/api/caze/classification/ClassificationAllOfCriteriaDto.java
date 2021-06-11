@@ -26,13 +26,14 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.sample.PathogenTestDto;
 
-public class ClassificationAllOfCriteriaDto extends ClassificationCriteriaDto implements ClassificationCollectiveCriteria {
+public class ClassificationAllOfCriteriaDto extends ClassificationCriteriaDto
+		implements ClassificationCollectiveCriteria {
 
 	private static final long serialVersionUID = -6427002056924376593L;
 
 	/**
-	 * Always draws all sub criteria in one component instead of providing a dedicated
-	 * component for all of them.
+	 * Always draws all sub criteria in one component instead of providing a
+	 * dedicated component for all of them.
 	 */
 	protected boolean drawSubCriteriaTogether = false;
 
@@ -79,10 +80,12 @@ public class ClassificationAllOfCriteriaDto extends ClassificationCriteriaDto im
 	}
 
 	/**
-	 * Has a different buildDescription method to display all sub criteria in one line, with the sub criteria separated
-	 * by an "AND". Functionality is identical to ClassificationAllOfCriteria.
+	 * Has a different buildDescription method to display all sub criteria in one
+	 * line, with the sub criteria separated by an "AND". Functionality is identical
+	 * to ClassificationAllOfCriteria.
 	 */
-	public static class ClassificationAllOfCompactCriteriaDto extends ClassificationAllOfCriteriaDto implements ClassificationCompactCriteria {
+	public static class ClassificationAllOfCompactCriteriaDto extends ClassificationAllOfCriteriaDto
+			implements ClassificationCompactCriteria {
 
 		private static final long serialVersionUID = 3761118522728690578L;
 
@@ -98,7 +101,8 @@ public class ClassificationAllOfCriteriaDto extends ClassificationCriteriaDto im
 					if (i + 1 < subCriteria.size()) {
 						stringBuilder.append(", ");
 					} else {
-						stringBuilder.append(" <b>").append(I18nProperties.getString(Strings.and).toUpperCase()).append("</b> ");
+						stringBuilder.append(" <b>").append(I18nProperties.getString(Strings.and).toUpperCase())
+								.append("</b> ");
 					}
 				}
 

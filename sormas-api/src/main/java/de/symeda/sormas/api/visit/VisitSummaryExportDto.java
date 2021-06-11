@@ -20,7 +20,8 @@ public class VisitSummaryExportDto implements Serializable {
 	private Date followUpUntil;
 	private List<VisitSummaryExportDetailsDto> visitDetails = new ArrayList<>();
 
-	public VisitSummaryExportDto(String uuid, Long contactId, String firstName, String lastName, Date lastContactDate, Date followUpUntil) {
+	public VisitSummaryExportDto(String uuid, Long contactId, String firstName, String lastName, Date lastContactDate,
+			Date followUpUntil) {
 		this.uuid = uuid;
 		this.contactId = contactId;
 		this.firstName = firstName;

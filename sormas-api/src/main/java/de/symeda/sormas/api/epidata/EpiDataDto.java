@@ -49,14 +49,8 @@ public class EpiDataDto extends PseudonymizableDto {
 	private YesNoUnknown contactWithSourceCaseKnown;
 	private YesNoUnknown highTransmissionRiskArea;
 	private YesNoUnknown largeOutbreaksArea;
-	@Diseases({
-		Disease.AFP,
-		Disease.GUINEA_WORM,
-		Disease.NEW_INFLUENZA,
-		Disease.ANTHRAX,
-		Disease.POLIO,
-		Disease.UNDEFINED,
-		Disease.OTHER })
+	@Diseases({ Disease.AFP, Disease.GUINEA_WORM, Disease.NEW_INFLUENZA, Disease.ANTHRAX, Disease.POLIO,
+			Disease.UNDEFINED, Disease.OTHER })
 	private YesNoUnknown areaInfectedAnimals;
 
 	private List<ExposureDto> exposures = new ArrayList<>();

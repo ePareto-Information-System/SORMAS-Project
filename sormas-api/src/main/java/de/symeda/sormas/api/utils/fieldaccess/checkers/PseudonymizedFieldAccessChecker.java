@@ -25,10 +25,8 @@ import de.symeda.sormas.api.utils.SensitiveData;
 
 public class PseudonymizedFieldAccessChecker extends AnnotationBasedFieldAccessChecker {
 
-	private PseudonymizedFieldAccessChecker(
-		Class<? extends Annotation> annotation,
-		Class<? extends Annotation> embeddedAnnotation,
-		boolean isPseudonymized) {
+	private PseudonymizedFieldAccessChecker(Class<? extends Annotation> annotation,
+			Class<? extends Annotation> embeddedAnnotation, boolean isPseudonymized) {
 		super(annotation, embeddedAnnotation, !isPseudonymized);
 	}
 

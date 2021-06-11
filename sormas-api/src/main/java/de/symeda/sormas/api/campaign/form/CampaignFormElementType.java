@@ -2,11 +2,7 @@ package de.symeda.sormas.api.campaign.form;
 
 public enum CampaignFormElementType {
 
-	LABEL,
-	SECTION,
-	NUMBER,
-	TEXT,
-	YES_NO("yes", "no", "true", "false");
+	LABEL, SECTION, NUMBER, TEXT, YES_NO("yes", "no", "true", "false");
 
 	private final String[] allowedValues;
 

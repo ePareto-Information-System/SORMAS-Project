@@ -75,8 +75,8 @@ public class Year implements Serializable, Comparable<Year>, StatisticsGroupingK
 			throw new NullPointerException("Can't compare to null.");
 		}
 		if (o.getClass() != this.getClass()) {
-			throw new UnsupportedOperationException(
-				"Can't compare to class " + o.getClass().getName() + " that differs from " + this.getClass().getName());
+			throw new UnsupportedOperationException("Can't compare to class " + o.getClass().getName()
+					+ " that differs from " + this.getClass().getName());
 		}
 
 		return Integer.compare(value, ((Year) o).getValue());

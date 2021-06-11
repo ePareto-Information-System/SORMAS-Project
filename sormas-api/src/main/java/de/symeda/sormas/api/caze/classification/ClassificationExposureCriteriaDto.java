@@ -60,10 +60,12 @@ public class ClassificationExposureCriteriaDto extends ClassificationCaseCriteri
 
 			Method method;
 			try {
-				method = getInvokeClass().getMethod("get" + propertyId.substring(0, 1).toUpperCase() + propertyId.substring(1));
+				method = getInvokeClass()
+						.getMethod("get" + propertyId.substring(0, 1).toUpperCase() + propertyId.substring(1));
 			} catch (NoSuchMethodException e) {
 				try {
-					method = getInvokeClass().getMethod("is" + propertyId.substring(0, 1).toUpperCase() + propertyId.substring(1));
+					method = getInvokeClass()
+							.getMethod("is" + propertyId.substring(0, 1).toUpperCase() + propertyId.substring(1));
 				} catch (NoSuchMethodException newE) {
 					throw new RuntimeException(newE);
 				}
@@ -73,10 +75,12 @@ public class ClassificationExposureCriteriaDto extends ClassificationCaseCriteri
 
 			try {
 				Object value = method.invoke(exposure);
-				if (propertyValues.contains(value) || CollectionUtils.isEmpty(propertyValues) && YesNoUnknown.YES.equals(value)) {
+				if (propertyValues.contains(value)
+						|| CollectionUtils.isEmpty(propertyValues) && YesNoUnknown.YES.equals(value)) {
 					return true;
 				}
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException e) {
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
+					| SecurityException e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -90,7 +94,8 @@ public class ClassificationExposureCriteriaDto extends ClassificationCaseCriteri
 		StringBuilder sb = new StringBuilder();
 		sb.append(I18nProperties.getPrefixCaption(ExposureDto.I18N_PREFIX, propertyId));
 		if (exposureType != null) {
-			sb.append(" ").append(I18nProperties.getString(Strings.classificationCriteriaForExposureType)).append(exposureType.toString());
+			sb.append(" ").append(I18nProperties.getString(Strings.classificationCriteriaForExposureType))
+					.append(exposureType.toString());
 		}
 
 		return sb.toString();

@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+ * Copyright © 2016-2021 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,37 +14,33 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *******************************************************************************/
+ */
+
 package de.symeda.sormas.api.importexport;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum DatabaseTable {
 
-	CASES(DatabaseTableType.SORMAS, null, "cases"),
-	CASE_SYMPTOMS(DatabaseTableType.SORMAS, CASES, "case_symptoms"),
+	CASES(DatabaseTableType.SORMAS, null, "cases"), CASE_SYMPTOMS(DatabaseTableType.SORMAS, CASES, "case_symptoms"),
 	HOSPITALIZATIONS(DatabaseTableType.SORMAS, CASES, "hospitalizations"),
 	PREVIOUSHOSPITALIZATIONS(DatabaseTableType.SORMAS, HOSPITALIZATIONS, "previous_hospitalizations"),
 	EPIDATA(DatabaseTableType.SORMAS, CASES, "epidemiological_data"),
-	EXPOSURES(DatabaseTableType.SORMAS, EPIDATA, "exposures"),
-	THERAPIES(DatabaseTableType.SORMAS, CASES, "therapies"),
+	EXPOSURES(DatabaseTableType.SORMAS, EPIDATA, "exposures"), THERAPIES(DatabaseTableType.SORMAS, CASES, "therapies"),
 	PRESCRIPTIONS(DatabaseTableType.SORMAS, THERAPIES, "prescriptions"),
 	TREATMENTS(DatabaseTableType.SORMAS, THERAPIES, "treatments"),
 	CLINICAL_COURSES(DatabaseTableType.SORMAS, CASES, "clinical_courses"),
 	HEALTH_CONDITIONS(DatabaseTableType.SORMAS, CLINICAL_COURSES, "health_conditions"),
 	CLINICAL_VISITS(DatabaseTableType.SORMAS, CLINICAL_COURSES, "clinical_visits"),
 	CLINICAL_VISIT_SYMPTOMS(DatabaseTableType.SORMAS, CLINICAL_VISITS, "clinical_visit_symptoms"),
-	CONTACTS(DatabaseTableType.SORMAS, null, "contacts"),
-	VISITS(DatabaseTableType.SORMAS, CONTACTS, "visits"),
+	CONTACTS(DatabaseTableType.SORMAS, null, "contacts"), VISITS(DatabaseTableType.SORMAS, CONTACTS, "visits"),
 	VISIT_SYMPTOMS(DatabaseTableType.SORMAS, VISITS, "visit_symptoms"),
 	EVENTS(DatabaseTableType.SORMAS, null, "events"),
 	EVENTPARTICIPANTS(DatabaseTableType.SORMAS, EVENTS, "event_persons_involved"),
-	SAMPLES(DatabaseTableType.SORMAS, null, "samples"),
-	SAMPLETESTS(DatabaseTableType.SORMAS, SAMPLES, "sample_tests"),
-	TASKS(DatabaseTableType.SORMAS, null, "tasks"),
-	PERSONS(DatabaseTableType.SORMAS, null, "persons"),
-	LOCATIONS(DatabaseTableType.SORMAS, null, "locations"),
-	OUTBREAKS(DatabaseTableType.SORMAS, null, "outbreaks"),
+	SAMPLES(DatabaseTableType.SORMAS, null, "samples"), SAMPLETESTS(DatabaseTableType.SORMAS, SAMPLES, "sample_tests"),
+	TASKS(DatabaseTableType.SORMAS, null, "tasks"), PERSONS(DatabaseTableType.SORMAS, null, "persons"),
+	PERSON_CONTACT_DETAILS(DatabaseTableType.SORMAS, PERSONS, "person_contact_details"),
+	LOCATIONS(DatabaseTableType.SORMAS, null, "locations"), OUTBREAKS(DatabaseTableType.SORMAS, null, "outbreaks"),
 	COUNTRIES(DatabaseTableType.INFRASTRUCTURE, null, "countries"),
 	REGIONS(DatabaseTableType.INFRASTRUCTURE, null, "regions"),
 	DISTRICTS(DatabaseTableType.INFRASTRUCTURE, null, "districts"),

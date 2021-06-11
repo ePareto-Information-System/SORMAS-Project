@@ -265,6 +265,7 @@
     <string name="heading_app_update_required">Mise à jour de l\'application requise</string>
     <string name="heading_burial">Enterrement</string>
     <string name="heading_burials_visited">Des enterrements visités</string>
+    <string name="heading_campaigns_list">Campaign Data</string>
     <string name="heading_case_disease_changed">La maladie du cas a changé</string>
     <string name="heading_case_edit">Modifier le cas</string>
     <string name="heading_case_new">Nouveau Cas</string>
@@ -318,6 +319,7 @@
     <string name="heading_outbreak_response">Réponse à l\'épidémie</string>
     <string name="heading_person_involved">Personne impliquée</string>
     <string name="heading_person_involved_new">Nouvelle personne impliquée</string>
+    <string name="heading_person_contact_detail">Person contact details</string>
     <string name="heading_pick_or_create_person">Pick or Create Person</string>
     <string name="heading_pick_or_create_case">Choisir ou créer un Cas</string>
     <string name="heading_pick_or_create_event">Choisir ou créer un événement</string>
@@ -367,6 +369,7 @@
     <string name="heading_extend_followup">Prolonger la période de suivi</string>
     <string name="heading_contact_tracing_first_contact">Premier contact par le suivi des contacts</string>
     <string name="heading_exposure">Exposure</string>
+    <string name="heading_activityAsCase">Activity as Case</string>
     <string name="hint_add_to_empty_list">Ajouter une nouvelle entrée en appuyant sur \"+\" en haut à droite.</string>
     <string name="hint_clear">Supprimer</string>
     <string name="hint_create_pin">Veuillez choisir un code PIN à quatre chiffres que vous utiliserez pour vous authentifier à chaque fois que vous ouvrirez l\'application SORMAS.</string>

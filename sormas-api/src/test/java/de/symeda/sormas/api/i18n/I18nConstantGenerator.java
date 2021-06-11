@@ -37,10 +37,8 @@ public class I18nConstantGenerator {
 	private final boolean ignoreChildren;
 
 	/**
-	 * @param propertiesFileName
-	 *            The properties file to read the contant keys from.
-	 * @param outputClassName
-	 *            Name of the constants class.
+	 * @param propertiesFileName The properties file to read the contant keys from.
+	 * @param outputClassName    Name of the constants class.
 	 * @param ignoreChildren
 	 */
 	public I18nConstantGenerator(String propertiesFileName, String outputClassName, boolean ignoreChildren) {
@@ -52,7 +50,8 @@ public class I18nConstantGenerator {
 	}
 
 	/**
-	 * @return The properties file to look up the what constants need to be generated.
+	 * @return The properties file to look up the what constants need to be
+	 *         generated.
 	 */
 	public String getPropertiesFileName() {
 		return propertiesFileName;
@@ -104,13 +103,10 @@ public class I18nConstantGenerator {
 	}
 
 	/**
-	 * @param propertiesFileName
-	 *            The properties file to read the contant keys from.
-	 * @param outputClassName
-	 *            Name of the constants class.
+	 * @param propertiesFileName The properties file to read the contant keys from.
+	 * @param outputClassName    Name of the constants class.
 	 * @param ignoreChildren
-	 * @param writer
-	 *            Writes the java file into this {@code writer}.
+	 * @param writer             Writes the java file into this {@code writer}.
 	 * @throws IOException
 	 */
 	void writeI18nConstantClass(Writer writer, String sep) throws IOException {
@@ -127,14 +123,9 @@ public class I18nConstantGenerator {
 		writer.append("import javax.annotation.Generated;").append(sep + sep);
 		writer.append("@Generated(value = \"" + getClass().getCanonicalName() + "\")").append(sep);
 		writer.append("public interface " + outputClassName + " {").append(sep + sep);
-		writer.append("\t/*")
-			.append(sep)
-			.append("\t * Hint for SonarQube issues:")
-			.append(sep)
-			.append("\t * 1. java:S115: Violation of name convention for constants of this class is accepted: Close as false positive.")
-			.append(sep)
-			.append("\t */")
-			.append(sep + sep);
+		writer.append("\t/*").append(sep).append("\t * Hint for SonarQube issues:").append(sep).append(
+				"\t * 1. java:S115: Violation of name convention for constants of this class is accepted: Close as false positive.")
+				.append(sep).append("\t */").append(sep + sep);
 
 		Collection<String> orderedKeys = new TreeSet<String>(new Comparator<String>() {
 
@@ -179,11 +170,11 @@ public class I18nConstantGenerator {
 
 		long startTime = System.currentTimeMillis();
 
-		// Check if this program is started with the module directory as working directory.
+		// Check if this program is started with the module directory as working
+		// directory.
 		Path path = Paths.get(FILE_PATH_PATTERN.split("/")[0]);
 		if (!Files.exists(path)) {
-			throw new IOException(
-				String.format(
+			throw new IOException(String.format(
 					"Path '%s' not found. Please make sure the working directory is set to the module path.",
 					path.toAbsolutePath().toString()));
 		}
@@ -193,13 +184,14 @@ public class I18nConstantGenerator {
 			try {
 				generator.generateI18nConstantClass();
 			} catch (IOException e) {
-				// This generator is manually run by developers, so print to console is permitted.
+				// This generator is manually run by developers, so print to console is
+				// permitted.
 				System.out.println("Failure writing " + generator.outputClassName);
 				throw e;
 			}
 		}
 
-		System.out
-			.println(String.format("Generation finished. %s ms, generated classes: %s", System.currentTimeMillis() - startTime, generators.size()));
+		System.out.println(String.format("Generation finished. %s ms, generated classes: %s",
+				System.currentTimeMillis() - startTime, generators.size()));
 	}
 }

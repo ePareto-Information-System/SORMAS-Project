@@ -56,12 +56,9 @@ public class CampaignFormDataDto extends EntityDto {
 	private CommunityReferenceDto community;
 	private UserReferenceDto creatingUser;
 
-	public static CampaignFormDataDto build(
-		CampaignReferenceDto campaign,
-		CampaignFormMetaReferenceDto campaignFormMeta,
-		RegionReferenceDto region,
-		DistrictReferenceDto district,
-		CommunityReferenceDto community) {
+	public static CampaignFormDataDto build(CampaignReferenceDto campaign,
+			CampaignFormMetaReferenceDto campaignFormMeta, RegionReferenceDto region, DistrictReferenceDto district,
+			CommunityReferenceDto community) {
 		CampaignFormDataDto campaignFormData = new CampaignFormDataDto();
 		campaignFormData.setUuid(DataHelper.createUuid());
 		campaignFormData.setCampaign(campaign);

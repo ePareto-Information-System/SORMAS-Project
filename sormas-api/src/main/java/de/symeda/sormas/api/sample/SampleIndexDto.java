@@ -65,7 +65,6 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 	public static final String RECEIVED = "received";
 	public static final String REFERRED = "referred";
 	public static final String PATHOGEN_TEST_RESULT = "pathogenTestResult";
-	public static final String PATHOGEN_TEST_LAB_USER_NAME = "pathogenTestLabUserName";
 	public static final String ADDITIONAL_TESTING_STATUS = "additionalTestingStatus";
 
 	private String uuid;
@@ -100,60 +99,55 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 	private SpecimenCondition specimenCondition;
 	private PathogenTestResultType pathogenTestResult;
 	private AdditionalTestingStatus additionalTestingStatus;
+	private SamplingReason samplingReason;
+	private String samplingReasonDetails;
 
 	private SampleJurisdictionDto jurisdiction;
 
-	//@formatter:off
+	// @formatter:off
 	public SampleIndexDto(String uuid, String epidNumber, String labSampleId, String fieldSampleId, Date sampleDateTime,
-						  boolean shipped, Date shipmentDate, boolean received, Date receivedDate,
-						  SampleMaterial sampleMaterial, SamplePurpose samplePurpose, SpecimenCondition specimenCondition,
-						  String labName, String referredSampleUuid,
-						  String associatedCaseUuid, String associatedCaseFirstName, String associatedCaseLastName,
-						  String associatedContactUuid, String associatedContactFirstName, String associatedContactLastName,
-						  String associatedEventParticipantUuid, String associatedEventParticipantFirstName, String associatedEventParticipantLastName,
-						  Disease disease, String diseaseDetails, PathogenTestResultType pathogenTestResult, Boolean additionalTestingRequested, Boolean additionalTestPerformed,
-						  String caseDistrictName, String contactDistrictName, String contactCaseDistrictName, String eventDistrictName,
-						  String caseCommunityName, String contactCommunityName, String contactCaseCommunityName, String eventCommunityName,
-						  String districtName, String reportingUserUuid, String labUuid,
-						  String caseReportingUserUuid, String caseRegionUuid, String caseDistrictUuid, String caseCommunityUuid, String caseHealthFacilityUuid, String casePointOfEntryUuid,
-						  String contactReportingUserUuid, String contactRegionUuid, String contactDistrictUuid, String contactCommunityUuid,
-						  String contactCaseReportingUserUuid, String contactCaseRegionUuid, String contactCaseDistrictUuid, 
-						  String contactCaseCommunityUuid, String contactCaseHealthFacilityUuid, String contactCasePointOfEntryUuid,
-						  String eventReportingUserUuid, String eventOfficerUuid, String eventParticipantRegionUuid, String eventParticipantDistrictUuid, String eventUuid) {
-	//@formatter:on
+			boolean shipped, Date shipmentDate, boolean received, Date receivedDate, SampleMaterial sampleMaterial,
+			SamplePurpose samplePurpose, SpecimenCondition specimenCondition, String labName, String referredSampleUuid,
+			SamplingReason samplingReason, String samplingReasonDetails, String associatedCaseUuid,
+			String associatedCaseFirstName, String associatedCaseLastName, String associatedContactUuid,
+			String associatedContactFirstName, String associatedContactLastName, String associatedEventParticipantUuid,
+			String associatedEventParticipantFirstName, String associatedEventParticipantLastName, Disease disease,
+			String diseaseDetails, PathogenTestResultType pathogenTestResult, Boolean additionalTestingRequested,
+			Boolean additionalTestPerformed, String caseDistrictName, String contactDistrictName,
+			String contactCaseDistrictName, String eventDistrictName, String caseCommunityName,
+			String contactCommunityName, String contactCaseCommunityName, String eventCommunityName,
+			String districtName, String reportingUserUuid, String labUuid, String caseReportingUserUuid,
+			String caseRegionUuid, String caseDistrictUuid, String caseCommunityUuid, String caseHealthFacilityUuid,
+			String casePointOfEntryUuid, String contactReportingUserUuid, String contactRegionUuid,
+			String contactDistrictUuid, String contactCommunityUuid, String contactCaseReportingUserUuid,
+			String contactCaseRegionUuid, String contactCaseDistrictUuid, String contactCaseCommunityUuid,
+			String contactCaseHealthFacilityUuid, String contactCasePointOfEntryUuid, String eventReportingUserUuid,
+			String eventOfficerUuid, String eventParticipantRegionUuid, String eventParticipantDistrictUuid,
+			String eventUuid) {
+		// @formatter:on
 
 		this.uuid = uuid;
 		if (associatedCaseUuid != null) {
-			this.associatedCase = new CaseReferenceDto(associatedCaseUuid, associatedCaseFirstName, associatedCaseLastName);
+			this.associatedCase = new CaseReferenceDto(associatedCaseUuid, associatedCaseFirstName,
+					associatedCaseLastName);
 		}
 		if (associatedContactUuid != null) {
-			this.associatedContact =
-				new ContactReferenceDto(associatedContactUuid, associatedContactFirstName, associatedContactLastName, null, null);
+			this.associatedContact = new ContactReferenceDto(associatedContactUuid, associatedContactFirstName,
+					associatedContactLastName, null, null);
 		}
 		if (associatedEventParticipantUuid != null) {
-			this.associatedEventParticipant = new EventParticipantReferenceDto(
-				associatedEventParticipantUuid,
-				associatedEventParticipantFirstName,
-				associatedEventParticipantLastName);
+			this.associatedEventParticipant = new EventParticipantReferenceDto(associatedEventParticipantUuid,
+					associatedEventParticipantFirstName, associatedEventParticipantLastName);
 		}
 		this.epidNumber = epidNumber;
 		this.labSampleID = labSampleId;
 		this.fieldSampleID = fieldSampleId;
 		this.disease = disease;
 		this.diseaseDetails = diseaseDetails;
-		this.district =
-			createDistrictReference(
-			districtName, 
-			caseDistrictUuid, 
-			contactDistrictUuid, 
-			contactCaseDistrictUuid, 
-			eventParticipantDistrictUuid);
-		this.community = createCommunityReference(
-			caseCommunityName, 
-			contactCommunityName, 
-			contactCaseCommunityName, 
-			caseCommunityUuid,
-			contactCaseCommunityUuid);
+		this.district = createDistrictReference(districtName, caseDistrictUuid, contactDistrictUuid,
+				contactCaseDistrictUuid, eventParticipantDistrictUuid);
+		this.community = createCommunityReference(caseCommunityName, contactCommunityName, contactCaseCommunityName,
+				caseCommunityUuid, contactCaseCommunityUuid);
 		this.shipped = shipped;
 		this.received = received;
 		this.referred = referredSampleUuid != null;
@@ -165,64 +159,40 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 		this.samplePurpose = samplePurpose;
 		this.specimenCondition = specimenCondition;
 		this.pathogenTestResult = pathogenTestResult;
-		this.additionalTestingStatus = Boolean.TRUE.equals(additionalTestPerformed)
-			? AdditionalTestingStatus.PERFORMED
-			: (Boolean.TRUE.equals(additionalTestingRequested) ? AdditionalTestingStatus.REQUESTED : AdditionalTestingStatus.NOT_REQUESTED);
+		this.additionalTestingStatus = Boolean.TRUE.equals(additionalTestPerformed) ? AdditionalTestingStatus.PERFORMED
+				: (Boolean.TRUE.equals(additionalTestingRequested) ? AdditionalTestingStatus.REQUESTED
+						: AdditionalTestingStatus.NOT_REQUESTED);
+		this.samplingReason = samplingReason;
+		this.samplingReasonDetails = samplingReasonDetails;
 
 		CaseJurisdictionDto associatedCaseJurisdiction = null;
 		if (associatedCaseUuid != null) {
-			associatedCaseJurisdiction = new CaseJurisdictionDto(
-				caseReportingUserUuid,
-				caseRegionUuid,
-				caseDistrictUuid,
-				caseCommunityUuid,
-				caseHealthFacilityUuid,
-				casePointOfEntryUuid);
+			associatedCaseJurisdiction = new CaseJurisdictionDto(caseReportingUserUuid, caseRegionUuid,
+					caseDistrictUuid, caseCommunityUuid, caseHealthFacilityUuid, casePointOfEntryUuid);
 		}
 
 		ContactJurisdictionDto associatedContactJurisdiction = null;
 		if (associatedContactUuid != null) {
-			CaseJurisdictionDto contactCaseJurisdiction = contactCaseReportingUserUuid == null
-				? null
-				: new CaseJurisdictionDto(
-					contactCaseReportingUserUuid,
-					contactCaseRegionUuid,
-					contactCaseDistrictUuid,
-					contactCaseCommunityUuid,
-					contactCaseHealthFacilityUuid,
-					contactCasePointOfEntryUuid);
-			associatedContactJurisdiction = new ContactJurisdictionDto(
-				contactReportingUserUuid,
-				contactRegionUuid,
-				contactDistrictUuid,
-				contactCommunityUuid,
-				contactCaseJurisdiction);
+			CaseJurisdictionDto contactCaseJurisdiction = contactCaseReportingUserUuid == null ? null
+					: new CaseJurisdictionDto(contactCaseReportingUserUuid, contactCaseRegionUuid,
+							contactCaseDistrictUuid, contactCaseCommunityUuid, contactCaseHealthFacilityUuid,
+							contactCasePointOfEntryUuid);
+			associatedContactJurisdiction = new ContactJurisdictionDto(contactReportingUserUuid, contactRegionUuid,
+					contactDistrictUuid, contactCommunityUuid, contactCaseJurisdiction);
 		}
 
 		EventParticipantJurisdictionDto eventParticipantJurisdiction = null;
 		if (associatedEventParticipantUuid != null) {
-			eventParticipantJurisdiction = new EventParticipantJurisdictionDto(
-				associatedEventParticipantUuid,
-				eventReportingUserUuid,
-				eventParticipantRegionUuid,
-				eventParticipantDistrictUuid,
-				eventUuid);
+			eventParticipantJurisdiction = new EventParticipantJurisdictionDto(associatedEventParticipantUuid,
+					eventReportingUserUuid, eventParticipantRegionUuid, eventParticipantDistrictUuid, eventUuid);
 		}
 
-		jurisdiction = new SampleJurisdictionDto(
-			reportingUserUuid,
-			associatedCaseJurisdiction,
-			associatedContactJurisdiction,
-			eventParticipantJurisdiction,
-			labUuid);
+		jurisdiction = new SampleJurisdictionDto(reportingUserUuid, associatedCaseJurisdiction,
+				associatedContactJurisdiction, eventParticipantJurisdiction, labUuid);
 	}
 
-	private CommunityReferenceDto createCommunityReference(
-		String caseCommunityName,
-		String contactCommunityName,
-		String contactCaseCommunityName,
-		String caseCommunityUuid,
-		String contactCaseCommunityUuid) {
+	private CommunityReferenceDto createCommunityReference(String caseCommunityName, String contactCommunityName,
+			String contactCaseCommunityName, String caseCommunityUuid, String contactCaseCommunityUuid) {
 
 		CommunityReferenceDto ref = null;
 		if (caseCommunityUuid != null) {
@@ -234,12 +204,8 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 		return ref;
 	}
 
-	private DistrictReferenceDto createDistrictReference(
-		String districtName,
-		String caseDistrictUuid,
-		String contactDistrictUuid,
-		String contactCaseDistrictUuid,
-		String eventDistrictUuid) {
+	private DistrictReferenceDto createDistrictReference(String districtName, String caseDistrictUuid,
+			String contactDistrictUuid, String contactCaseDistrictUuid, String eventDistrictUuid) {
 
 		DistrictReferenceDto ref = null;
 		if (caseDistrictUuid != null) {
@@ -318,11 +284,11 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 	public void setLabSampleID(String labSampleID) {
 		this.labSampleID = labSampleID;
 	}
-	
+
 	public String getFieldSampleID() {
 		return fieldSampleID;
 	}
-	
+
 	public void setFieldSampleID(String fieldSampleID) {
 		this.fieldSampleID = fieldSampleID;
 	}
@@ -417,12 +383,10 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 
 	public SampleReferenceDto toReference() {
 
-		return new SampleReferenceDto(
-			uuid,
-			getSampleMaterial(),
-			getAssociatedCase() != null ? getAssociatedCase().getUuid() : null,
-			getAssociatedContact() != null ? getAssociatedContact().getUuid() : null,
-			getAssociatedEventParticipant() != null ? getAssociatedEventParticipant().getUuid() : null);
+		return new SampleReferenceDto(uuid, getSampleMaterial(),
+				getAssociatedCase() != null ? getAssociatedCase().getUuid() : null,
+				getAssociatedContact() != null ? getAssociatedContact().getUuid() : null,
+				getAssociatedEventParticipant() != null ? getAssociatedEventParticipant().getUuid() : null);
 	}
 
 	public PathogenTestResultType getPathogenTestResult() {
@@ -447,6 +411,22 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 
 	public void setAdditionalTestingStatus(AdditionalTestingStatus additionalTestingStatus) {
 		this.additionalTestingStatus = additionalTestingStatus;
+	}
+
+	public SamplingReason getSamplingReason() {
+		return samplingReason;
+	}
+
+	public void setSamplingReason(SamplingReason samplingReason) {
+		this.samplingReason = samplingReason;
+	}
+
+	public String getSamplingReasonDetails() {
+		return samplingReasonDetails;
+	}
+
+	public void setSamplingReasonDetails(String samplingReasonDetails) {
+		this.samplingReasonDetails = samplingReasonDetails;
 	}
 
 	public SampleJurisdictionDto getJurisdiction() {

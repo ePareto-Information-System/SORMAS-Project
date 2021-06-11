@@ -40,7 +40,8 @@ public class ClassificationPathogenTestPositiveResultCriteriaDto extends Classif
 
 	}
 
-	public ClassificationPathogenTestPositiveResultCriteriaDto(Disease testedDisease, PathogenTestType... pathogenTestTypes) {
+	public ClassificationPathogenTestPositiveResultCriteriaDto(Disease testedDisease,
+			PathogenTestType... pathogenTestTypes) {
 
 		this.testedDisease = testedDisease;
 		this.pathogenTestTypes = Arrays.asList(pathogenTestTypes);
@@ -50,7 +51,8 @@ public class ClassificationPathogenTestPositiveResultCriteriaDto extends Classif
 	public boolean eval(CaseDataDto caze, PersonDto person, List<PathogenTestDto> pathogenTests) {
 
 		for (PathogenTestDto pathogenTest : pathogenTests) {
-			if (pathogenTest.getTestResult() == PathogenTestResultType.POSITIVE && pathogenTestTypes.contains(pathogenTest.getTestType())) {
+			if (pathogenTest.getTestResult() == PathogenTestResultType.POSITIVE
+					&& pathogenTestTypes.contains(pathogenTest.getTestType())) {
 				if (testedDisease == null || pathogenTest.getTestedDisease() == testedDisease) {
 					return true;
 				}
@@ -69,7 +71,8 @@ public class ClassificationPathogenTestPositiveResultCriteriaDto extends Classif
 				if (i < pathogenTestTypes.size() - 1) {
 					stringBuilder.append(", ");
 				} else {
-					stringBuilder.append(" <b>").append(I18nProperties.getString(Strings.or).toUpperCase()).append("</b> ");
+					stringBuilder.append(" <b>").append(I18nProperties.getString(Strings.or).toUpperCase())
+							.append("</b> ");
 				}
 			}
 
@@ -77,7 +80,8 @@ public class ClassificationPathogenTestPositiveResultCriteriaDto extends Classif
 		}
 
 		if (testedDisease != null) {
-			stringBuilder.append(" ").append(I18nProperties.getString(Strings.classificationForDisease)).append(" ").append(testedDisease.toString());
+			stringBuilder.append(" ").append(I18nProperties.getString(Strings.classificationForDisease)).append(" ")
+					.append(testedDisease.toString());
 		}
 
 		return stringBuilder.toString();

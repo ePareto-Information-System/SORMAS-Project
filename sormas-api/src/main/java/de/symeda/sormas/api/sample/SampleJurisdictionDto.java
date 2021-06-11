@@ -18,12 +18,9 @@ public class SampleJurisdictionDto implements Serializable {
 
 	}
 
-	public SampleJurisdictionDto(
-		String reportingUserUuid,
-		CaseJurisdictionDto caseJurisdiction,
-		ContactJurisdictionDto contactJurisdiction,
-		EventParticipantJurisdictionDto eventParticipantJurisdiction,
-		String labUuid) {
+	public SampleJurisdictionDto(String reportingUserUuid, CaseJurisdictionDto caseJurisdiction,
+			ContactJurisdictionDto contactJurisdiction, EventParticipantJurisdictionDto eventParticipantJurisdiction,
+			String labUuid) {
 		this.reportingUserUuid = reportingUserUuid;
 		this.caseJurisdiction = caseJurisdiction;
 		this.contactJurisdiction = contactJurisdiction;

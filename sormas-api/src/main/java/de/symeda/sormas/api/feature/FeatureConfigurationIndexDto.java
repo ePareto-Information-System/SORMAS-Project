@@ -25,15 +25,8 @@ public class FeatureConfigurationIndexDto implements Serializable {
 	private boolean enabled;
 	private Date endDate;
 
-	public FeatureConfigurationIndexDto(
-		String uuid,
-		String regionUuid,
-		String regionName,
-		String districtUuid,
-		String districtName,
-		Disease disease,
-		boolean enabled,
-		Date endDate) {
+	public FeatureConfigurationIndexDto(String uuid, String regionUuid, String regionName, String districtUuid,
+			String districtName, Disease disease, boolean enabled, Date endDate) {
 
 		this.uuid = uuid;
 		this.regionUuid = regionUuid;

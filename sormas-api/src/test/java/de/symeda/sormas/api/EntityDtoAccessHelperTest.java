@@ -95,7 +95,8 @@ public class EntityDtoAccessHelperTest {
 	public void readEntityDtoPropertyPath() {
 		assertNull(EntityDtoAccessHelper.getPropertyPathValue(caseDataDto, "hospitalization.dischargeDate"));
 		caseDataDto.setHospitalization(hospitalizationDto);
-		assertEquals(new Date(1600387200000L), EntityDtoAccessHelper.getPropertyPathValue(caseDataDto, "hospitalization.dischargeDate"));
+		assertEquals(new Date(1600387200000L),
+				EntityDtoAccessHelper.getPropertyPathValue(caseDataDto, "hospitalization.dischargeDate"));
 	}
 
 	@Test
@@ -127,7 +128,8 @@ public class EntityDtoAccessHelperTest {
 		}
 
 		try {
-			EntityDtoAccessHelper.getPropertyPathValue(caseDataDto, "person.firstName.blubber", cachedReferenceDtoResolver);
+			EntityDtoAccessHelper.getPropertyPathValue(caseDataDto, "person.firstName.blubber",
+					cachedReferenceDtoResolver);
 			fail("expected: IllegalArgumentException");
 		} catch (IllegalArgumentException e) {
 			assertEquals("In CaseData.person.firstName: String.blubber cannot be resolved.", e.getMessage());
@@ -150,11 +152,16 @@ public class EntityDtoAccessHelperTest {
 		assertNull(EntityDtoAccessHelper.getPropertyPathValue(caseDataDto, "person.firstName", null));
 		caseDataDto.setPerson(personReferenceDto);
 		assertNull(EntityDtoAccessHelper.getPropertyPathValue(caseDataDto, "person.firstName", null));
-		assertEquals("Tenzing", EntityDtoAccessHelper.getPropertyPathValue(caseDataDto, "person.firstName", referenceDtoResolver));
-		assertEquals(26, EntityDtoAccessHelper.getPropertyPathValue(caseDataDto, "person.BirthdateDD", referenceDtoResolver));
-		assertEquals(11, EntityDtoAccessHelper.getPropertyPathValue(caseDataDto, "person.BirthdateMM", referenceDtoResolver));
-		assertEquals(1973, EntityDtoAccessHelper.getPropertyPathValue(caseDataDto, "person.BirthdateYYYY", referenceDtoResolver));
-		assertEquals("+49 681 1234", EntityDtoAccessHelper.getPropertyPathValue(caseDataDto, "person.phone", referenceDtoResolver));
+		assertEquals("Tenzing",
+				EntityDtoAccessHelper.getPropertyPathValue(caseDataDto, "person.firstName", referenceDtoResolver));
+		assertEquals(26,
+				EntityDtoAccessHelper.getPropertyPathValue(caseDataDto, "person.BirthdateDD", referenceDtoResolver));
+		assertEquals(11,
+				EntityDtoAccessHelper.getPropertyPathValue(caseDataDto, "person.BirthdateMM", referenceDtoResolver));
+		assertEquals(1973,
+				EntityDtoAccessHelper.getPropertyPathValue(caseDataDto, "person.BirthdateYYYY", referenceDtoResolver));
+		assertEquals("+49 681 1234",
+				EntityDtoAccessHelper.getPropertyPathValue(caseDataDto, "person.phone", referenceDtoResolver));
 	}
 
 	@Test
@@ -163,8 +170,10 @@ public class EntityDtoAccessHelperTest {
 		CachedReferenceDtoResolver cachedReferenceDtoResolver = new CachedReferenceDtoResolver(mockResolver);
 		when(mockResolver.resolve(personReferenceDto)).thenReturn(personDto);
 		caseDataDto.setPerson(personReferenceDto);
-		assertEquals("Tenzing", EntityDtoAccessHelper.getPropertyPathValue(caseDataDto, "person.firstName", cachedReferenceDtoResolver));
-		assertEquals("Tenzing", EntityDtoAccessHelper.getPropertyPathValue(caseDataDto, "person.firstName", cachedReferenceDtoResolver));
+		assertEquals("Tenzing", EntityDtoAccessHelper.getPropertyPathValue(caseDataDto, "person.firstName",
+				cachedReferenceDtoResolver));
+		assertEquals("Tenzing", EntityDtoAccessHelper.getPropertyPathValue(caseDataDto, "person.firstName",
+				cachedReferenceDtoResolver));
 		verify(mockResolver, times(1)).resolve(personReferenceDto);
 	}
 
@@ -172,12 +181,11 @@ public class EntityDtoAccessHelperTest {
 	public void readPropertyValuesString() {
 		caseDataDto.setPerson(personReferenceDto);
 		caseDataDto.setHospitalization(hospitalizationDto);
-		assertEquals("Tenzing", EntityDtoAccessHelper.getPropertyPathValueString(caseDataDto, "person.firstName", referenceDtoResolver));
-		assertEquals(
-			YesNoUnknown.NO,
-			EntityDtoAccessHelper.getPropertyPathValueString(caseDataDto, "hospitalization.isolated", referenceDtoResolver));
-		assertEquals(
-			"9/18/2020",
-			EntityDtoAccessHelper.getPropertyPathValueString(caseDataDto, "hospitalization.dischargeDate", referenceDtoResolver));
+		assertEquals("Tenzing", EntityDtoAccessHelper.getPropertyPathValueString(caseDataDto, "person.firstName",
+				referenceDtoResolver));
+		assertEquals(YesNoUnknown.NO, EntityDtoAccessHelper.getPropertyPathValueString(caseDataDto,
+				"hospitalization.isolated", referenceDtoResolver));
+		assertEquals("9/18/2020", EntityDtoAccessHelper.getPropertyPathValueString(caseDataDto,
+				"hospitalization.dischargeDate", referenceDtoResolver));
 	}
 }

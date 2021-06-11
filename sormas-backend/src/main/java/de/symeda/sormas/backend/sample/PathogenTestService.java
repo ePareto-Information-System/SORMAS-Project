@@ -17,15 +17,19 @@
  *******************************************************************************/
 package de.symeda.sormas.backend.sample;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
@@ -40,7 +44,8 @@ import de.symeda.sormas.backend.common.AbstractCoreAdoService;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.CoreAdo;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
-import de.symeda.sormas.backend.region.Region;
+import de.symeda.sormas.backend.contact.Contact;
+import de.symeda.sormas.backend.event.EventParticipant;
 import de.symeda.sormas.backend.user.User;
 
 @Stateless
@@ -145,7 +150,7 @@ public class PathogenTestService extends AbstractCoreAdoService<PathogenTest> {
 		return em.createQuery(cq).getResultList();
 	}
 
-	public List<PathogenTest> getBySampleUuids(List<String> sampleUuids) {
+	public List<PathogenTest> getBySampleUuids(List<String> sampleUuids, boolean ordered) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<PathogenTest> cq = cb.createQuery(PathogenTest.class);
@@ -155,10 +160,15 @@ public class PathogenTestService extends AbstractCoreAdoService<PathogenTest> {
 		Predicate filter = cb.and(createDefaultFilter(cb, pathogenTestRoot), sampleJoin.get(AbstractDomainObject.UUID).in(sampleUuids));
 
 		cq.where(filter);
+
+		if (ordered) {
+			cq.orderBy(cb.desc(pathogenTestRoot.get(PathogenTest.CREATION_DATE)));
+		}
+
 		return em.createQuery(cq).getResultList();
 	}
 
-	public List<String> getDeletedUuidsSince(User user, Date since) {
+	public List<String> getDeletedUuidsSince(Date since) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<String> cq = cb.createQuery(String.class);
@@ -219,14 +229,19 @@ public class PathogenTestService extends AbstractCoreAdoService<PathogenTest> {
 	}
 
 	/**
-	 * Creates a filter that excludes all pathogen tests that are either {@link CoreAdo#deleted} or associated with
-	 * samples whose case is {@link Case#archived}.
+	 * Creates a filter that excludes all pathogen tests that are {@link CoreAdo#deleted} or associated with
+	 * cases that are {@link Case#archived}, contacts that are {@link Contact#deleted}. or event participants that are
+	 * {@link EventParticipant#deleted}
 	 */
 	public Predicate createActiveTestsFilter(CriteriaBuilder cb, Root<PathogenTest> root) {
 
 		Join<PathogenTest, Sample> sample = root.join(PathogenTest.SAMPLE, JoinType.LEFT);
 		Join<Sample, Case> caze = sample.join(Sample.ASSOCIATED_CASE, JoinType.LEFT);
-		return cb.and(cb.isFalse(caze.get(Case.ARCHIVED)), cb.isFalse(root.get(PathogenTest.DELETED)));
+		Join<Sample, Contact> contact = sample.join(Sample.ASSOCIATED_CONTACT, JoinType.LEFT);
+		Join<Sample, EventParticipant> event = sample.join(Sample.ASSOCIATED_EVENT_PARTICIPANT, JoinType.LEFT);
+		Predicate pred =
+			cb.or(cb.isFalse(caze.get(Case.ARCHIVED)), cb.isFalse(contact.get(Contact.DELETED)), cb.isFalse(event.get(EventParticipant.DELETED)));
+		return cb.and(pred, cb.isFalse(sample.get(Sample.DELETED)));
 	}
 
 	/**
@@ -237,43 +252,22 @@ public class PathogenTestService extends AbstractCoreAdoService<PathogenTest> {
 		return cb.isFalse(root.get(PathogenTest.DELETED));
 	}
 
-	public Predicate buildPathogenCriteriaFilter(SampleCriteria criteria, CriteriaBuilder cb, Root<PathogenTest> pathogenJoins) {
+	/**
+	 * @param pathogenTestUuids
+	 *            {@link PathogenTest}s identified by {@code uuid} to be deleted.
+	 */
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	public void delete(List<String> pathogenTestUuids) {
 
-		Predicate filter = null;
-		From<Sample, Sample> sampleJoin = pathogenJoins.join(PathogenTest.SAMPLE, JoinType.LEFT);
-		SampleJoins joins = new SampleJoins(sampleJoin);
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaUpdate<PathogenTest> cu = cb.createCriteriaUpdate(PathogenTest.class);
+		Root<PathogenTest> root = cu.from(PathogenTest.class);
 
-		if (criteria.getRegion() != null) {
-			Expression<Object> regionExpression = cb.selectCase()
-				.when(cb.isNotNull(joins.getCaseRegion()), joins.getCaseRegion().get(Region.UUID))
-				.otherwise(
-					cb.selectCase()
-						.when(cb.isNotNull(joins.getContactRegion()), joins.getContactRegion().get(Region.UUID))
-						.otherwise(
-							cb.selectCase()
-								.when(cb.isNotNull(joins.getContactCaseRegion()), joins.getContactCaseRegion().get(Region.UUID))
-								.otherwise(joins.getEventRegion().get(Region.UUID))));
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(regionExpression, criteria.getRegion().getUuid()));
-		}
+		cu.set(PathogenTest.CHANGE_DATE, Timestamp.from(Instant.now()));
+		cu.set(root.get(PathogenTest.DELETED), true);
 
-		if (criteria.getPathogenTestResult() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(pathogenJoins.get(PathogenTest.TEST_RESULT), criteria.getPathogenTestResult()));
-		}
+		cu.where(root.get(PathogenTest.UUID).in(pathogenTestUuids));
 
-		if (criteria.getDisease() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(pathogenJoins.get(PathogenTest.TESTED_DISEASE), criteria.getDisease()));
-		}
-
-		if (criteria.getSampleDateFrom() != null && criteria.getSampleDateTo() != null) {
-			filter =
-				CriteriaBuilderHelper.and(cb, filter, cb.between(pathogenJoins.get(PathogenTest.TEST_DATE_TIME), criteria.getSampleDateFrom(), criteria.getSampleDateTo()));
-		}
-
-		if (criteria.getDeleted() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(pathogenJoins.get(PathogenTest.DELETED), criteria.getDeleted()));
-		}
-
-		return filter;
+		em.createQuery(cu).executeUpdate();
 	}
-
 }
