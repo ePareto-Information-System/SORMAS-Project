@@ -15,27 +15,37 @@
 
 package de.symeda.sormas.backend.contact;
 
+import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 
 import de.symeda.sormas.backend.caze.Case;
+import de.symeda.sormas.backend.clinicalcourse.HealthConditions;
 import de.symeda.sormas.backend.epidata.EpiData;
+import de.symeda.sormas.backend.event.Event;
+import de.symeda.sormas.backend.event.EventParticipant;
 import de.symeda.sormas.backend.facility.Facility;
 import de.symeda.sormas.backend.infrastructure.PointOfEntry;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.person.Person;
 import de.symeda.sormas.backend.region.Community;
+import de.symeda.sormas.backend.region.Country;
 import de.symeda.sormas.backend.region.District;
 import de.symeda.sormas.backend.region.Region;
+import de.symeda.sormas.backend.sormastosormas.SormasToSormasShareInfo;
+import de.symeda.sormas.backend.symptoms.Symptoms;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.util.AbstractDomainObjectJoins;
+import de.symeda.sormas.backend.vaccinationinfo.VaccinationInfo;
+import de.symeda.sormas.backend.visit.Visit;
 
-public class ContactJoins extends AbstractDomainObjectJoins<Contact, Contact> {
+public class ContactJoins<T> extends AbstractDomainObjectJoins<T, Contact> {
 
 	private Join<Contact, Person> person;
 //	private CaseJoins<Contact> caseJoins;
 	private Join<Contact, Case> caze;
+	private Join<Contact, Case> resultingCase;
 	private Join<Case, Person> casePerson;
 	private Join<Case, User> caseReportingUser;
 	private Join<Case, Region> caseRegion;
@@ -47,13 +57,34 @@ public class ContactJoins extends AbstractDomainObjectJoins<Contact, Contact> {
 	private Join<Person, Location> address;
 	private Join<Contact, Region> region;
 	private Join<Contact, District> district;
+	private Join<Contact, Community> community;
 	private Join<Contact, User> reportingUser;
 	private Join<Location, Region> addressRegion;
-	private Join<Location, Region> addressDistrict;
+	private Join<Location, District> addressDistrict;
+	private Join<Location, Community> addressCommunity;
+	private Join<Location, Facility> addressFacility;
 	private Join<Person, Facility> occupationFacility;
 	private Join<Contact, EpiData> epiData;
+	private Join<Person, EventParticipant> eventParticipants;
+	private Join<Case, EventParticipant> caseEventParticipants;
+	private Join<EventParticipant, Event> event;
+	private Join<EventParticipant, Event> caseEvent;
 
-	public ContactJoins(Root<Contact> contact) {
+	private Join<Contact, Visit> visits;
+	private Join<Visit, Symptoms> visitSymptoms;
+	private Join<Contact, HealthConditions> healthConditions;
+	private Join<Person, Location> personAddress;
+
+	private Join<Person, Country> personBirthCountry;
+	private Join<Person, Country> personCitizenship;
+
+	private Join<Contact, District> reportingDistrict;
+
+	private Join<Contact, VaccinationInfo> vaccinationInfo;
+
+	private Join<Contact, SormasToSormasShareInfo> sormasToSormasShareInfo;
+
+	public ContactJoins(From<T, Contact> contact) {
 		super(contact);
 
 //		this.caseJoins = new CaseJoins<>(contact.join(Contact.CAZE));
@@ -73,6 +104,14 @@ public class ContactJoins extends AbstractDomainObjectJoins<Contact, Contact> {
 
 	private void setCaze(Join<Contact, Case> caze) {
 		this.caze = caze;
+	}
+
+	public Join<Contact, Case> getResultingCase() {
+		return getOrCreate(resultingCase, Contact.RESULTING_CASE, JoinType.LEFT, this::setResultingCase);
+	}
+
+	private void setResultingCase(Join<Contact, Case> resultingCase) {
+		this.resultingCase = resultingCase;
 	}
 
 	public Join<Case, Person> getCasePerson() {
@@ -163,6 +202,14 @@ public class ContactJoins extends AbstractDomainObjectJoins<Contact, Contact> {
 		this.district = district;
 	}
 
+	public Join<Contact, Community> getCommunity() {
+		return getOrCreate(community, Contact.COMMUNITY, JoinType.LEFT, this::setCommunity);
+	}
+
+	private void setCommunity(Join<Contact, Community> community) {
+		this.community = community;
+	}
+
 	public Join<Contact, User> getReportingUser() {
 		return getOrCreate(reportingUser, Contact.REPORTING_USER, JoinType.LEFT, this::setReportingUser);
 	}
@@ -179,20 +226,28 @@ public class ContactJoins extends AbstractDomainObjectJoins<Contact, Contact> {
 		this.addressRegion = addressRegion;
 	}
 
-	public Join<Location, Region> getAddressDistrict() {
+	public Join<Location, District> getAddressDistrict() {
 		return getOrCreate(addressDistrict, Location.DISTRICT, JoinType.LEFT, getAddress(), this::setAddressDistrict);
 	}
 
-	private void setAddressDistrict(Join<Location, Region> addressDistrict) {
+	private void setAddressDistrict(Join<Location, District> addressDistrict) {
 		this.addressDistrict = addressDistrict;
 	}
 
-	public Join<Person, Facility> getOccupationFacility() {
-		return getOrCreate(occupationFacility, Person.OCCUPATION_FACILITY, JoinType.LEFT, getPerson(), this::setOccupationFacility);
+	public Join<Location, Community> getAddressCommunity() {
+		return getOrCreate(addressCommunity, Location.COMMUNITY, JoinType.LEFT, getAddress(), this::setAddressCommunity);
 	}
 
-	private void setOccupationFacility(Join<Person, Facility> occupationFacility) {
-		this.occupationFacility = occupationFacility;
+	private void setAddressCommunity(Join<Location, Community> addressCommunity) {
+		this.addressCommunity = addressCommunity;
+	}
+
+	public Join<Location, Facility> getAddressFacility() {
+		return getOrCreate(addressFacility, Location.FACILITY, JoinType.LEFT, getAddress(), this::setAddressFacility);
+	}
+
+	private void setAddressFacility(Join<Location, Facility> addressFacility) {
+		this.addressFacility = addressFacility;
 	}
 
 	public Join<Contact, EpiData> getEpiData() {
@@ -201,5 +256,109 @@ public class ContactJoins extends AbstractDomainObjectJoins<Contact, Contact> {
 
 	private void setEpiData(Join<Contact, EpiData> epiData) {
 		this.epiData = epiData;
+	}
+
+	public Join<Contact, Visit> getVisits() {
+		return getOrCreate(visits, Contact.VISITS, JoinType.LEFT, this::setVisits);
+	}
+
+	private void setVisits(Join<Contact, Visit> visits) {
+		this.visits = visits;
+	}
+
+	public Join<Visit, Symptoms> getVisitSymptoms() {
+		return getOrCreate(visitSymptoms, Visit.SYMPTOMS, JoinType.LEFT, getVisits(), this::setVisitSymptoms);
+	}
+
+	private void setVisitSymptoms(Join<Visit, Symptoms> visitSymptoms) {
+		this.visitSymptoms = visitSymptoms;
+	}
+
+	public Join<Contact, HealthConditions> getHealthConditions() {
+		return healthConditions;
+	}
+
+	public void setHealthConditions(Join<Contact, HealthConditions> healthConditions) {
+		this.healthConditions = healthConditions;
+	}
+
+	public Join<Person, Location> getPersonAddress() {
+		return getOrCreate(personAddress, Person.ADDRESS, JoinType.LEFT, getPerson(), this::setPersonAddress);
+	}
+
+	private void setPersonAddress(Join<Person, Location> personAddress) {
+		this.personAddress = personAddress;
+	}
+
+	private void setEventParticipants(Join<Person, EventParticipant> eventParticipants) {
+		this.eventParticipants = eventParticipants;
+	}
+
+	public Join<Person, EventParticipant> getEventParticipants() {
+		return getOrCreate(eventParticipants, Person.EVENT_PARTICIPANTS, JoinType.LEFT, getPerson(), this::setEventParticipants);
+	}
+
+	private void setCaseEventParticipants(Join<Case, EventParticipant> caseEventParticipants) {
+		this.caseEventParticipants = caseEventParticipants;
+	}
+
+	public Join<Case, EventParticipant> getCaseEventParticipants() {
+		return getOrCreate(caseEventParticipants, Case.EVENT_PARTICIPANTS, JoinType.LEFT, getCaze(), this::setCaseEventParticipants);
+	}
+
+	private void setEvent(Join<EventParticipant, Event> event) {
+		this.event = event;
+	}
+
+	public Join<EventParticipant, Event> getEvent() {
+		return getOrCreate(event, EventParticipant.EVENT, JoinType.LEFT, getEventParticipants(), this::setEvent);
+	}
+
+	private void setCaseEvent(Join<EventParticipant, Event> caseEvent) {
+		this.caseEvent = caseEvent;
+	}
+
+	public Join<EventParticipant, Event> getCaseEvent() {
+		return getOrCreate(caseEvent, EventParticipant.EVENT, JoinType.LEFT, getCaseEventParticipants(), this::setCaseEvent);
+	}
+
+	public Join<Person, Country> getPersonBirthCountry() {
+		return getOrCreate(personBirthCountry, Person.BIRTH_COUNTRY, JoinType.LEFT, getPerson(), this::setPersonBirthCountry);
+	}
+
+	private void setPersonBirthCountry(Join<Person, Country> personBirthCountry) {
+		this.personBirthCountry = personBirthCountry;
+	}
+
+	public Join<Person, Country> getPersonCitizenship() {
+		return getOrCreate(personCitizenship, Person.CITIZENSHIP, JoinType.LEFT, getPerson(), this::setPersonCitizenship);
+	}
+
+	public void setPersonCitizenship(Join<Person, Country> personCitizenship) {
+		this.personCitizenship = personCitizenship;
+	}
+
+	public Join<Contact, District> getReportingDistrict() {
+		return getOrCreate(reportingDistrict, Contact.REPORTING_DISTRICT, JoinType.LEFT, this::setReportingDistrict);
+	}
+
+	private void setReportingDistrict(Join<Contact, District> reportingDistrict) {
+		this.reportingDistrict = reportingDistrict;
+	}
+
+	public Join<Contact, VaccinationInfo> getVaccinationInfo() {
+		return getOrCreate(vaccinationInfo, Contact.VACCINATION_INFO, JoinType.LEFT, this::setVaccinationInfo);
+	}
+
+	private void setVaccinationInfo(Join<Contact, VaccinationInfo> vaccinationInfo) {
+		this.vaccinationInfo = vaccinationInfo;
+	}
+
+	public Join<Contact, SormasToSormasShareInfo> getSormasToSormasShareInfo() {
+		return getOrCreate(sormasToSormasShareInfo, Contact.SORMAS_TO_SORMAS_SHARES, JoinType.LEFT, this::setSormasToSormasShareInfo);
+	}
+
+	public void setSormasToSormasShareInfo(Join<Contact, SormasToSormasShareInfo> sormasToSormasShareInfo) {
+		this.sormasToSormasShareInfo = sormasToSormasShareInfo;
 	}
 }

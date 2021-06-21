@@ -25,13 +25,20 @@ import de.symeda.sormas.api.ReferenceDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.EmbeddedPersonalData;
+import de.symeda.sormas.api.utils.EmbeddedSensitiveData;
 import de.symeda.sormas.api.utils.PersonalData;
+import de.symeda.sormas.api.utils.SensitiveData;
 
 public class ContactReferenceDto extends ReferenceDto {
 
 	private static final long serialVersionUID = -7764607075875188799L;
 
+	@EmbeddedPersonalData
+	@EmbeddedSensitiveData
 	private PersonName contactName;
+	@EmbeddedPersonalData
+	@EmbeddedSensitiveData
 	private PersonName caseName;
 
 	public ContactReferenceDto() {
@@ -46,12 +53,30 @@ public class ContactReferenceDto extends ReferenceDto {
 
 		setUuid(uuid);
 		this.contactName = new PersonName(contactFirstName, contactLastName);
-		this.caseName = new PersonName(caseFirstName, caseLastName);
+
+		if (caseFirstName != null && caseLastName != null) {
+			this.caseName = new PersonName(caseFirstName, caseLastName);
+		}
 	}
 
 	@Override
 	public String getCaption() {
-		return buildCaption(contactName.firstName, contactName.lastName, caseName.firstName, caseName.lastName, getUuid());
+		return buildCaption(
+			contactName.firstName,
+			contactName.lastName,
+			caseName != null ? caseName.firstName : null,
+			caseName != null ? caseName.lastName : null,
+			getUuid());
+	}
+
+	public String getCaptionAlwaysWithUuid() {
+		return buildCaption(
+			contactName.firstName,
+			contactName.lastName,
+			caseName != null ? caseName.firstName : null,
+			caseName != null ? caseName.lastName : null,
+			getUuid(),
+			true);
 	}
 
 	public PersonName getContactName() {
@@ -68,6 +93,16 @@ public class ContactReferenceDto extends ReferenceDto {
 		String caseFirstName,
 		String caseLastName,
 		String contactUuid) {
+		return buildCaption(contactFirstName, contactLastName, caseFirstName, caseLastName, contactUuid, false);
+	}
+
+	public static String buildCaption(
+		String contactFirstName,
+		String contactLastName,
+		String caseFirstName,
+		String caseLastName,
+		String contactUuid,
+		boolean alwaysShowUuid) {
 
 		StringBuilder builder = new StringBuilder();
 		if (!DataHelper.isNullOrEmpty(contactFirstName) || !DataHelper.isNullOrEmpty(contactLastName)) {
@@ -83,8 +118,8 @@ public class ContactReferenceDto extends ReferenceDto {
 				.append(DataHelper.toStringNullable(caseLastName));
 		}
 
-		if (builder.length() == 0) {
-			builder.append(DataHelper.getShortUuid(contactUuid));
+		if (alwaysShowUuid || builder.length() == 0) {
+			builder.append(builder.length() > 0 ? " (" + DataHelper.getShortUuid(contactUuid) + ")" : DataHelper.getShortUuid(contactUuid));
 		}
 
 		return builder.toString();
@@ -95,9 +130,14 @@ public class ContactReferenceDto extends ReferenceDto {
 		private static final long serialVersionUID = 3655299579771996044L;
 
 		@PersonalData
+		@SensitiveData
 		private String firstName;
 		@PersonalData
+		@SensitiveData
 		private String lastName;
+
+		public PersonName() {
+		}
 
 		public PersonName(String firstName, String lastName) {
 			this.firstName = firstName;
@@ -110,6 +150,10 @@ public class ContactReferenceDto extends ReferenceDto {
 
 		public String getLastName() {
 			return lastName;
+		}
+
+		public String toString() {
+			return firstName + " " + lastName;
 		}
 	}
 }

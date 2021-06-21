@@ -21,17 +21,26 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.PushResult;
+import de.symeda.sormas.api.caze.CaseCriteria;
 import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.caze.CaseIndexDetailedDto;
+import de.symeda.sormas.api.caze.CaseIndexDto;
+import de.symeda.sormas.api.caze.CasePersonDto;
+import de.symeda.sormas.api.caze.CriteriaWithSorting;
+import de.symeda.sormas.api.common.Page;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @Path("/cases")
 @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -47,12 +56,6 @@ public class CaseResource extends EntityDtoResource {
 		return FacadeProvider.getCaseFacade().getAllActiveCasesAfter(new Date(since));
 	}
 
-	@GET
-	@Path("/allWithExtendedChangeDateFilters/{since}")
-	public List<CaseDataDto> getAllCasesWithExtendedChangeDateFilters(@PathParam("since") long since) {
-		return FacadeProvider.getCaseFacade().getAllActiveCasesAfter(new Date(since), true);
-	}
-
 	@POST
 	@Path("/query")
 	public List<CaseDataDto> getByUuids(List<String> uuids) {
@@ -60,8 +63,14 @@ public class CaseResource extends EntityDtoResource {
 	}
 
 	@POST
+	@Path("/query/persons")
+	public List<CaseDataDto> getByPersonUuids(List<String> uuids) {
+		return FacadeProvider.getCaseFacade().getByPersonUuids(uuids);
+	}
+
+	@POST
 	@Path("/push")
-	public List<PushResult> postCases(List<CaseDataDto> dtos) {
+	public List<PushResult> postCases(@Valid List<CaseDataDto> dtos) {
 		return savePushedDto(dtos, FacadeProvider.getCaseFacade()::saveCase);
 	}
 
@@ -82,4 +91,42 @@ public class CaseResource extends EntityDtoResource {
 	public List<String> getDeletedUuidsSince(@PathParam("since") long since) {
 		return FacadeProvider.getCaseFacade().getDeletedUuidsSince(new Date(since));
 	}
+
+	@POST
+	@Path("/getduplicates")
+	public List<CasePersonDto> getDuplicates(@Valid CasePersonDto casePerson) {
+		return FacadeProvider.getCaseFacade().getDuplicates(casePerson);
+	}
+
+	@POST
+	@Path("/getduplicates/{reportDateThreshold}")
+	public List<CasePersonDto> getDuplicates(@Valid CasePersonDto casePerson, @PathParam("reportDateThreshold") int reportDateThreshold) {
+		return FacadeProvider.getCaseFacade().getDuplicates(casePerson, reportDateThreshold);
+	}
+
+	@POST
+	@Path("/indexList")
+	public Page<CaseIndexDto> getIndexList(
+		@RequestBody CriteriaWithSorting<CaseCriteria> criteriaWithSorting,
+		@QueryParam("offset") int offset,
+		@QueryParam("size") int size) {
+		return FacadeProvider.getCaseFacade().getIndexPage(criteriaWithSorting.getCriteria(), offset, size, criteriaWithSorting.getSortProperties());
+	}
+
+	@POST
+	@Path("/detailedIndexList")
+	public Page<CaseIndexDetailedDto> getIndexDetailedList(
+		@RequestBody CriteriaWithSorting<CaseCriteria> criteriaWithSorting,
+		@QueryParam("offset") int offset,
+		@QueryParam("size") int size) {
+		return FacadeProvider.getCaseFacade()
+			.getIndexDetailedPage(criteriaWithSorting.getCriteria(), offset, size, criteriaWithSorting.getSortProperties());
+	}
+
+	@GET
+	@Path("/{uuid}")
+	public CaseDataDto getByUuid(@PathParam("uuid") String uuid) {
+		return FacadeProvider.getCaseFacade().getByUuid(uuid);
+	}
+
 }

@@ -1,46 +1,57 @@
-/*******************************************************************************
+/*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
- *
+ * Copyright © 2016-2020 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *******************************************************************************/
+ */
 package de.symeda.sormas.backend.common;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.regex.Pattern;
+
+import javax.annotation.Resource;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.routines.UrlValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 import de.symeda.sormas.api.ConfigFacade;
 import de.symeda.sormas.api.Language;
+import de.symeda.sormas.api.SormasToSormasConfig;
+import de.symeda.sormas.api.externaljournal.PatientDiaryConfig;
+import de.symeda.sormas.api.externaljournal.SymptomJournalConfig;
+import de.symeda.sormas.api.externaljournal.UserConfig;
+import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.person.PersonHelper;
 import de.symeda.sormas.api.region.GeoLatLon;
 import de.symeda.sormas.api.utils.CompatibilityCheckResponse;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.InfoProvider;
 import de.symeda.sormas.api.utils.VersionHelper;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.validator.routines.UrlValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.Resource;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import java.util.Locale;
-import java.util.Properties;
 
 /**
  * Provides the application configuration settings
  */
 @Stateless(name = "ConfigFacade")
 public class ConfigFacadeEjb implements ConfigFacade {
+
+	private static final String AUTHENTICATION_PROVIDER = "authentication.provider";
+	private static final String AUTHENTICATION_PROVIDER_USER_SYNC_AT_STARTUP = "authentication.provider.userSyncAtStartup";
 
 	public static final String COUNTRY_NAME = "country.name";
 	public static final String COUNTRY_LOCALE = "country.locale";
@@ -56,12 +67,15 @@ public class ConfigFacadeEjb implements ConfigFacade {
 	public static final String CUSTOM_BRANDING = "custombranding";
 	public static final String CUSTOM_BRANDING_NAME = "custombranding.name";
 	public static final String CUSTOM_BRANDING_LOGO_PATH = "custombranding.logo.path";
+	public static final String CUSTOM_BRANDING_USE_LOGIN_SIDEBAR = "custombranding.useloginsidebar";
+	public static final String CUSTOM_BRANDING_LOGIN_BACKGROUND_PATH = "custombranding.loginbackground.path";
 
 	public static final String APP_URL = "app.url";
 	public static final String APP_LEGACY_URL = "app.legacy.url";
 
 	public static final String FEATURE_AUTOMATIC_CASE_CLASSIFICATION = "feature.automaticcaseclassification";
 
+	public static final String DOCUMENT_FILES_PATH = "documents.path";
 	public static final String TEMP_FILES_PATH = "temp.path";
 	public static final String GENERATED_FILES_PATH = "generated.path";
 	public static final String CUSTOM_FILES_PATH = "custom.path";
@@ -81,11 +95,49 @@ public class ConfigFacadeEjb implements ConfigFacade {
 	public static final String INTERFACE_SYMPTOM_JOURNAL_AUTH_URL = "interface.symptomjournal.authurl";
 	public static final String INTERFACE_SYMPTOM_JOURNAL_CLIENT_ID = "interface.symptomjournal.clientid";
 	public static final String INTERFACE_SYMPTOM_JOURNAL_SECRET = "interface.symptomjournal.secret";
+	public static final String INTERFACE_SYMPTOM_JOURNAL_DEFAULT_USER_USERNAME = "interface.symptomjournal.defaultuser.username";
+	public static final String INTERFACE_SYMPTOM_JOURNAL_DEFAULT_USER_PASSWORD = "interface.symptomjournal.defaultuser.password";
+
+	public static final String INTERFACE_PATIENT_DIARY_URL = "interface.patientdiary.url";
+	public static final String INTERFACE_PATIENT_DIARY_PROBANDS_URL = "interface.patientdiary.probandsurl";
+	public static final String INTERFACE_PATIENT_DIARY_AUTH_URL = "interface.patientdiary.authurl";
+	public static final String INTERFACE_PATIENT_DIARY_EMAIL = "interface.patientdiary.email";
+	public static final String INTERFACE_PATIENT_DIARY_PASSWORD = "interface.patientdiary.password";
+	public static final String INTERFACE_PATIENT_DIARY_DEFAULT_USER_USERNAME = "interface.patientdiary.defaultuser.username";
+	public static final String INTERFACE_PATIENT_DIARY_DEFAULT_USER_PASSWORD = "interface.patientdiary.defaultuser.password";
+
+	public static final String DOCGENERATION_NULL_REPLACEMENT = "docgeneration.nullReplacement";
+	public static final String INTERFACE_DEMIS_JNDINAME = "interface.demis.jndiName";
 
 	public static final String DAYS_AFTER_CASE_GETS_ARCHIVED = "daysAfterCaseGetsArchived";
 	private static final String DAYS_AFTER_EVENT_GETS_ARCHIVED = "daysAfterEventGetsArchived";
 
-	private static final String GEOCODING_OSGTS_ENDPOINT = "geocodingOsgtsEndpoint";
+	private static final String DAYS_AFTER_SYSTEM_EVENT_GETS_DELETED = "daysAfterSystemEventGetsDeleted";
+
+	private static final String GEOCODING_SERVICE_URL_TEMPLATE = "geocodingServiceUrlTemplate";
+	private static final String GEOCODING_LONGITUDE_JSON_PATH = "geocodingLongitudeJsonPath";
+	private static final String GEOCODING_LATITUDE_JSON_PATH = "geocodingLatitudeJsonPath";
+	private static final String GEOCODING_EPSG4326_WKT = "geocodingEPSG4326_WKT";
+
+	private static final String SORMAS2SORMAS_FILES_PATH = "sormas2sormas.path";
+	private static final String SORMAS2SORMAS_SERVER_ACCESS_DATA_FILE_NAME = "sormas2sormas.serverAccessDataFileName";
+	private static final String SORMAS2SORMAS_KEYSTORE_NAME = "sormas2sormas.keystoreName";
+	private static final String SORMAS2SORMAS_KEYSTORE_PASSWORD = "sormas2sormas.keystorePass";
+	private static final String SORMAS2SORMAS_TRUSTSTORE_NAME = "sormas2sormas.truststoreName";
+	private static final String SORMAS2SORMAS_TRUSTSTORE_PASS = "sormas2sormas.truststorePass";
+	private static final String SORMAS2SORMAS_RETAIN_CASE_EXTERNAL_TOKEN = "sormas2sormas.retainCaseExternalToken";
+
+	private static final String SORMAS_TO_SORMAS_USER_PASSWORD = "sormasToSormasUserPassword";
+
+	private static final String EXTERNAL_SURVEILLANCE_TOOL_GATEWAY_URL = "survnet.url";
+
+	private static final String DASHBOARD_MAP_MARKER_LIMIT = "dashboardMapMarkerLimit";
+	private static final String AUDITOR_ATTRIBUTE_LOGGING = "auditor.attribute.logging";
+
+	private static final String CREATE_DEFAULT_ENTITIES = "createDefaultEntities";
+	private static final String SKIP_DEFAULT_PASSWORD_CHECK = "skipDefaultPasswordCheck";
+
+	private static final String STEP_SIZE_FOR_CSV_EXPORT = "stepSizeForCsvExport";
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -152,6 +204,18 @@ public class ConfigFacadeEjb implements ConfigFacade {
 		return normalizeLocaleString(locale);
 	}
 
+	@Override
+	public String getCountryCode() {
+		String locale = getProperty(COUNTRY_LOCALE, Language.EN.getLocale().toString());
+		String normalizedLocale = normalizeLocaleString(locale);
+
+		if (normalizedLocale.contains("-")) {
+			return normalizedLocale.substring(normalizedLocale.lastIndexOf("-") + 1);
+		} else {
+			return normalizedLocale;
+		}
+	}
+
 	static String normalizeLocaleString(String locale) {
 
 		locale = locale.trim();
@@ -165,8 +229,12 @@ public class ConfigFacadeEjb implements ConfigFacade {
 	}
 
 	@Override
-	public boolean isGermanServer() {
-		return getCountryLocale().startsWith("de");
+	public boolean isConfiguredCountry(String countryCode) {
+		if (Pattern.matches(I18nProperties.FULL_COUNTRY_LOCALE_PATTERN, getCountryLocale())) {
+			return getCountryLocale().toLowerCase().endsWith(countryCode.toLowerCase());
+		} else {
+			return getCountryLocale().toLowerCase().startsWith(countryCode.toLowerCase());
+		}
 	}
 
 	@Override
@@ -205,6 +273,16 @@ public class ConfigFacadeEjb implements ConfigFacade {
 	}
 
 	@Override
+	public boolean isUseLoginSidebar() {
+		return getBoolean(CUSTOM_BRANDING_USE_LOGIN_SIDEBAR, true);
+	}
+
+	@Override
+	public String getLoginBackgroundPath() {
+		return getProperty(CUSTOM_BRANDING_LOGIN_BACKGROUND_PATH, null);
+	}
+
+	@Override
 	public String getSormasInstanceName() {
 		return isCustomBranding() ? getCustomBrandingName() : "SORMAS";
 	}
@@ -222,6 +300,11 @@ public class ConfigFacadeEjb implements ConfigFacade {
 	@Override
 	public String getAppLegacyUrl() {
 		return getProperty(APP_LEGACY_URL, null);
+	}
+
+	@Override
+	public String getDocumentFilesPath() {
+		return getProperty(DOCUMENT_FILES_PATH, "/opt/sormas/documents/");
 	}
 
 	@Override
@@ -305,46 +388,131 @@ public class ConfigFacadeEjb implements ConfigFacade {
 	}
 
 	@Override
-	public String getGeocodingOsgtsEndpoint() {
-		return getProperty(GEOCODING_OSGTS_ENDPOINT, null);
+	public int getDaysAfterSystemEventGetsDeleted() {
+		return getInt(DAYS_AFTER_SYSTEM_EVENT_GETS_DELETED, 90);
 	}
 
 	@Override
-	public String getSymptomJournalUrl() {
-		return getProperty(INTERFACE_SYMPTOM_JOURNAL_URL, null);
+	public String getGeocodingServiceUrlTemplate() {
+		return getProperty(GEOCODING_SERVICE_URL_TEMPLATE, null);
 	}
 
 	@Override
-	public String getSymptomJournalAuthUrl() {
-		return getProperty(INTERFACE_SYMPTOM_JOURNAL_AUTH_URL, null);
+	public String getGeocodingLongitudeJsonPath() {
+		return getProperty(GEOCODING_LONGITUDE_JSON_PATH, null);
 	}
 
 	@Override
-	public String getSymptomJournalClientId() {
-		return getProperty(INTERFACE_SYMPTOM_JOURNAL_CLIENT_ID, null);
+	public String getGeocodingLatitudeJsonPath() {
+		return getProperty(GEOCODING_LATITUDE_JSON_PATH, null);
 	}
 
 	@Override
-	public String getSymptomJournalSecret() {
-		return getProperty(INTERFACE_SYMPTOM_JOURNAL_SECRET, null);
+	public String getGeocodingEPSG4326_WKT() {
+		return getProperty(
+			GEOCODING_EPSG4326_WKT,
+			"GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Long\",EAST],AXIS[\"Lat\",NORTH],AUTHORITY[\"EPSG\",\"4326\"]]");
+	}
+
+	@Override
+	public SymptomJournalConfig getSymptomJournalConfig() {
+		SymptomJournalConfig config = new SymptomJournalConfig();
+		config.setUrl(getProperty(INTERFACE_SYMPTOM_JOURNAL_URL, null));
+		config.setAuthUrl(getProperty(INTERFACE_SYMPTOM_JOURNAL_AUTH_URL, null));
+		config.setClientId(getProperty(INTERFACE_SYMPTOM_JOURNAL_CLIENT_ID, null));
+		config.setSecret(getProperty(INTERFACE_SYMPTOM_JOURNAL_SECRET, null));
+
+		UserConfig userConfig = new UserConfig();
+		userConfig.setUsername(getProperty(INTERFACE_SYMPTOM_JOURNAL_DEFAULT_USER_USERNAME, null));
+		userConfig.setPassword(getProperty(INTERFACE_SYMPTOM_JOURNAL_DEFAULT_USER_PASSWORD, null));
+
+		if (StringUtils.isNoneBlank(userConfig.getUsername(), userConfig.getPassword())) {
+			config.setDefaultUser(userConfig);
+		}
+
+		return config;
+	}
+
+	@Override
+	public PatientDiaryConfig getPatientDiaryConfig() {
+		PatientDiaryConfig config = new PatientDiaryConfig();
+		config.setUrl(getProperty(INTERFACE_PATIENT_DIARY_URL, null));
+		config.setProbandsUrl(getProperty(INTERFACE_PATIENT_DIARY_PROBANDS_URL, null));
+		config.setAuthUrl(getProperty(INTERFACE_PATIENT_DIARY_AUTH_URL, null));
+		config.setEmail(getProperty(INTERFACE_PATIENT_DIARY_EMAIL, null));
+		config.setPassword(getProperty(INTERFACE_PATIENT_DIARY_PASSWORD, null));
+
+		UserConfig userConfig = new UserConfig();
+		userConfig.setUsername(getProperty(INTERFACE_PATIENT_DIARY_DEFAULT_USER_USERNAME, null));
+		userConfig.setPassword(getProperty(INTERFACE_PATIENT_DIARY_DEFAULT_USER_PASSWORD, null));
+
+		if (StringUtils.isNoneBlank(userConfig.getUsername(), userConfig.getPassword())) {
+			config.setDefaultUser(userConfig);
+		}
+
+		return config;
+	}
+
+	@Override
+	public SormasToSormasConfig getSormasToSormasConfig() {
+		SormasToSormasConfig config = new SormasToSormasConfig();
+		config.setPath(getProperty(SORMAS2SORMAS_FILES_PATH, null));
+		config.setServerAccessDataFileName(getProperty(SORMAS2SORMAS_SERVER_ACCESS_DATA_FILE_NAME, null));
+		config.setKeystoreName(getProperty(SORMAS2SORMAS_KEYSTORE_NAME, null));
+		config.setKeystorePass(getProperty(SORMAS2SORMAS_KEYSTORE_PASSWORD, null));
+		config.setTruststoreName(getProperty(SORMAS2SORMAS_TRUSTSTORE_NAME, null));
+		config.setTruststorePass(getProperty(SORMAS2SORMAS_TRUSTSTORE_PASS, null));
+		config.setRetainCaseExternalToken(getBoolean(SORMAS2SORMAS_RETAIN_CASE_EXTERNAL_TOKEN, true));
+		return config;
+	}
+
+	@Override
+	public String getSormasToSormasUserPassword() {
+		return getProperty(SORMAS_TO_SORMAS_USER_PASSWORD, null);
+	}
+
+	@Override
+	public String getExternalSurveillanceToolGatewayUrl() {
+		return getProperty(EXTERNAL_SURVEILLANCE_TOOL_GATEWAY_URL, null);
 	}
 
 	@Override
 	public void validateExternalUrls() {
 
-		String piaUrl = getSymptomJournalUrl();
+		List<String> urls = Lists.newArrayList(
+			getSymptomJournalConfig().getUrl(),
+			getSymptomJournalConfig().getAuthUrl(),
+			getPatientDiaryConfig().getUrl(),
+			getPatientDiaryConfig().getProbandsUrl(),
+			getPatientDiaryConfig().getAuthUrl());
 
-		if (StringUtils.isBlank(piaUrl)) {
-			return;
-		}
+		urls.forEach(url -> {
+			if (StringUtils.isBlank(url)) {
+				return;
+			}
+			// Must be a valid URL
+			if (!new UrlValidator(
+				new String[] {
+					"http",
+					"https" }).isValid(url)) {
+				throw new IllegalArgumentException("'" + url + "' is not a valid URL");
+			}
+		});
+	}
 
-		// Must be a valid URL
-		if (!new UrlValidator(
-			new String[] {
-				"http",
-				"https" }).isValid(piaUrl)) {
-			throw new IllegalArgumentException("Property '" + ConfigFacadeEjb.INTERFACE_SYMPTOM_JOURNAL_URL + "' is not a valid URL");
-		}
+	@Override
+	public String getAuthenticationProvider() {
+		return getProperty(AUTHENTICATION_PROVIDER, "SORMAS");
+	}
+
+	@Override
+	public boolean isAuthenticationProviderUserSyncAtStartupEnabled() {
+		return getBoolean(AUTHENTICATION_PROVIDER_USER_SYNC_AT_STARTUP, false);
+	}
+
+	@Override
+	public boolean isExternalJournalActive() {
+		return !StringUtils.isAllBlank(getProperty(INTERFACE_SYMPTOM_JOURNAL_URL, null), getProperty(INTERFACE_PATIENT_DIARY_URL, null));
 	}
 
 	@Override
@@ -388,9 +556,46 @@ public class ConfigFacadeEjb implements ConfigFacade {
 
 	}
 
+	public int getDashboardMapMarkerLimit() {
+		return getInt(DASHBOARD_MAP_MARKER_LIMIT, -1);
+	}
+
+	public boolean isCreateDefaultEntities() {
+		return getBoolean(CREATE_DEFAULT_ENTITIES, false);
+	}
+
+	public boolean isSkipDefaultPasswordCheck() {
+		return getBoolean(SKIP_DEFAULT_PASSWORD_CHECK, false);
+	}
+
+	public String getDocgenerationNullReplacement() {
+		return getProperty(DOCGENERATION_NULL_REPLACEMENT, "./.");
+	}
+
+	@Override
+	public boolean isAuditorAttributeLoggingEnabled() {
+		return getBoolean(AUDITOR_ATTRIBUTE_LOGGING, true);
+	}
+
+	@Override
+	public int getStepSizeForCsvExport() {
+		return getInt(STEP_SIZE_FOR_CSV_EXPORT, 5000);
+	}
+
 	@LocalBean
 	@Stateless
 	public static class ConfigFacadeEjbLocal extends ConfigFacadeEjb {
 
 	}
+
+	@Override
+	public boolean isSmsServiceSetUp() {
+		return !StringUtils.isAnyBlank(getProperty(SMS_AUTH_KEY, null), getProperty(SMS_AUTH_SECRET, null));
+	}
+
+	@Override
+	public String getDemisJndiName() {
+		return getProperty(INTERFACE_DEMIS_JNDINAME, null);
+	}
+
 }

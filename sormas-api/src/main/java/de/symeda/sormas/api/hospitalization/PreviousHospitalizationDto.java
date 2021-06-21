@@ -19,16 +19,17 @@ package de.symeda.sormas.api.hospitalization;
 
 import java.util.Date;
 
-import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.region.CommunityReferenceDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.SensitiveData;
 import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 
-public class PreviousHospitalizationDto extends EntityDto {
+public class PreviousHospitalizationDto extends PseudonymizableDto {
 
 	private static final long serialVersionUID = -7544440109802739018L;
 
@@ -43,16 +44,32 @@ public class PreviousHospitalizationDto extends EntityDto {
 	public static final String HEALTH_FACILITY_DETAILS = "healthFacilityDetails";
 	public static final String ISOLATED = "isolated";
 	public static final String DESCRIPTION = "description";
+	public static final String HOSPITALIZATION_REASON = "hospitalizationReason";
+	public static final String OTHER_HOSPITALIZATION_REASON = "otherHospitalizationReason";
+	public static final String INTENSIVE_CARE_UNIT = "intensiveCareUnit";
+	public static final String INTENSIVE_CARE_UNIT_START = "intensiveCareUnitStart";
+	public static final String INTENSIVE_CARE_UNIT_END = "intensiveCareUnitEnd";
 
 	private Date admissionDate;
 	private Date dischargeDate;
 	private RegionReferenceDto region;
 	private DistrictReferenceDto district;
+	@SensitiveData
 	private CommunityReferenceDto community;
+	@SensitiveData
 	private FacilityReferenceDto healthFacility;
+	@SensitiveData
 	private String healthFacilityDetails;
 	private YesNoUnknown isolated;
+	@SensitiveData
 	private String description;
+
+	private HospitalizationReasonType hospitalizationReason;
+	private String otherHospitalizationReason;
+
+	private YesNoUnknown intensiveCareUnit;
+	private Date intensiveCareUnitStart;
+	private Date intensiveCareUnitEnd;
 
 	public static PreviousHospitalizationDto build(CaseDataDto caze) {
 
@@ -76,7 +93,13 @@ public class PreviousHospitalizationDto extends EntityDto {
 		previousHospitalization.setDistrict(caze.getDistrict());
 		previousHospitalization.setCommunity(caze.getCommunity());
 		previousHospitalization.setHealthFacility(caze.getHealthFacility());
+		previousHospitalization.setHealthFacilityDetails(caze.getHealthFacilityDetails());
 		previousHospitalization.setIsolated(hospitalization.getIsolated());
+		previousHospitalization.setHospitalizationReason(hospitalization.getHospitalizationReason());
+		previousHospitalization.setOtherHospitalizationReason(hospitalization.getOtherHospitalizationReason());
+		previousHospitalization.setIntensiveCareUnit(hospitalization.getIntensiveCareUnit());
+		previousHospitalization.setIntensiveCareUnitStart(hospitalization.getIntensiveCareUnitStart());
+		previousHospitalization.setIntensiveCareUnitEnd(hospitalization.getIntensiveCareUnitEnd());
 
 		return previousHospitalization;
 	}
@@ -151,5 +174,45 @@ public class PreviousHospitalizationDto extends EntityDto {
 
 	public void setHealthFacilityDetails(String healthFacilityDetails) {
 		this.healthFacilityDetails = healthFacilityDetails;
+	}
+
+	public HospitalizationReasonType getHospitalizationReason() {
+		return hospitalizationReason;
+	}
+
+	public void setHospitalizationReason(HospitalizationReasonType hospitalizationReason) {
+		this.hospitalizationReason = hospitalizationReason;
+	}
+
+	public String getOtherHospitalizationReason() {
+		return otherHospitalizationReason;
+	}
+
+	public void setOtherHospitalizationReason(String otherHospitalizationReason) {
+		this.otherHospitalizationReason = otherHospitalizationReason;
+	}
+
+	public YesNoUnknown getIntensiveCareUnit() {
+		return intensiveCareUnit;
+	}
+
+	public void setIntensiveCareUnit(YesNoUnknown intensiveCareUnit) {
+		this.intensiveCareUnit = intensiveCareUnit;
+	}
+
+	public Date getIntensiveCareUnitStart() {
+		return intensiveCareUnitStart;
+	}
+
+	public void setIntensiveCareUnitStart(Date intensiveCareUnitStart) {
+		this.intensiveCareUnitStart = intensiveCareUnitStart;
+	}
+
+	public Date getIntensiveCareUnitEnd() {
+		return intensiveCareUnitEnd;
+	}
+
+	public void setIntensiveCareUnitEnd(Date intensiveCareUnitEnd) {
+		this.intensiveCareUnitEnd = intensiveCareUnitEnd;
 	}
 }

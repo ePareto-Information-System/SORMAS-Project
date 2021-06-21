@@ -15,14 +15,11 @@
 
 package de.symeda.sormas.app.symptoms;
 
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
+import android.content.res.Resources;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import android.content.res.Resources;
-import android.view.View;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.person.ApproximateAgeType;
@@ -33,6 +30,7 @@ import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.symptoms.SymptomsHelper;
 import de.symeda.sormas.api.symptoms.TemperatureSource;
 import de.symeda.sormas.api.utils.DependantOn;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.checkers.CountryFieldVisibilityChecker;
 import de.symeda.sormas.api.visit.VisitStatus;
@@ -58,6 +56,9 @@ import de.symeda.sormas.app.databinding.FragmentSymptomsEditLayoutBinding;
 import de.symeda.sormas.app.util.Bundler;
 import de.symeda.sormas.app.util.DataUtils;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditLayoutBinding, Symptoms, AbstractDomainObject> {
 
 	private Symptoms record;
@@ -72,6 +73,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 
 	private IEntryItemOnClickListener clearAllCallback;
 	private IEntryItemOnClickListener setClearedToNoCallback;
+	private IEntryItemOnClickListener setClearedToUnknownCallback;
 
 	private List<ControlSwitchField> symptomFields;
 
@@ -82,7 +84,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 			activityRootData,
 			FieldVisibilityCheckers.withDisease(activityRootData.getDisease())
 				.add(new CountryFieldVisibilityChecker(ConfigProvider.getServerLocale())),
-			null);
+			UiFieldAccessCheckers.forSensitiveData(activityRootData.isPseudonymized()));
 	}
 
 	public static SymptomsEditFragment newInstance(Visit activityRootData) {
@@ -92,7 +94,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 			activityRootData,
 			FieldVisibilityCheckers.withDisease(activityRootData.getDisease())
 				.add(new CountryFieldVisibilityChecker(ConfigProvider.getServerLocale())),
-			null);
+			UiFieldAccessCheckers.forSensitiveData(activityRootData.isPseudonymized()));
 	}
 
 	public static SymptomsEditFragment newInstance(ClinicalVisit activityRootData, String caseUuid) {
@@ -155,6 +157,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		contentBinding.setSymptomStateClass(SymptomState.class);
 		contentBinding.setClearAllCallback(clearAllCallback);
 		contentBinding.setSetClearedToNoCallback(setClearedToNoCallback);
+		contentBinding.setSetClearedToUnknownCallback(setClearedToUnknownCallback);
 
 		SymptomsValidator.initializeSymptomsValidation(contentBinding, ado);
 	}
@@ -222,7 +225,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 				ControlPropertyField childField = findFieldByPropertyId(childSymptomPropertyId, contentBinding.mainContent);
 				if (symptomField != null && childField != null && childField.getVisibility() == VISIBLE) {
 					// only do this for fields that are visible (based on visibility by disease)
-					ControlPropertyField.setDependencyParentField(childField, symptomField, SymptomState.YES, null, null, null);
+					ControlPropertyField.setDependencyParentField(childField, symptomField, SymptomState.YES, null, null, null, null, null);
 				}
 			}
 		}
@@ -314,6 +317,18 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 				for (ControlSwitchField symptomField : symptomFields) {
 					if (symptomField.getVisibility() == VISIBLE && symptomField.getValue() == null) {
 						symptomField.setValue(SymptomState.NO);
+					}
+				}
+			}
+		};
+
+		setClearedToUnknownCallback = new IEntryItemOnClickListener() {
+
+			@Override
+			public void onClick(View v, Object item) {
+				for (ControlSwitchField symptomField : symptomFields) {
+					if (symptomField.getVisibility() == VISIBLE && symptomField.getValue() == null) {
+						symptomField.setValue(SymptomState.UNKNOWN);
 					}
 				}
 			}

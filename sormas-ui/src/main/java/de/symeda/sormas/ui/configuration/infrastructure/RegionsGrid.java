@@ -19,6 +19,8 @@ package de.symeda.sormas.ui.configuration.infrastructure;
 
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.shared.data.sort.SortDirection;
@@ -56,13 +58,21 @@ public class RegionsGrid extends FilteredGrid<RegionIndexDto, RegionCriteria> {
 			setCriteria(criteria);
 		}
 
-		setColumns(
-			RegionIndexDto.NAME,
+		String[] columns = new String[] {
+			RegionIndexDto.NAME };
+		if (FacadeProvider.getFeatureConfigurationFacade().isCountryEnabled()) {
+			columns = ArrayUtils.add(columns, RegionIndexDto.COUNTRY);
+		}
+		columns = ArrayUtils.addAll(
+			columns,
 			RegionIndexDto.AREA,
 			RegionIndexDto.EPID_CODE,
 			RegionIndexDto.EXTERNAL_ID,
 			RegionIndexDto.POPULATION,
 			RegionIndexDto.GROWTH_RATE);
+		setColumns(columns);
+
+		getColumn(RegionIndexDto.POPULATION).setSortable(false);
 
 		if (!FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.INFRASTRUCTURE_TYPE_AREA)) {
 			removeColumn(RegionIndexDto.AREA);
@@ -73,7 +83,7 @@ public class RegionsGrid extends FilteredGrid<RegionIndexDto, RegionCriteria> {
 		}
 
 		for (Column<?, ?> column : getColumns()) {
-			column.setCaption(I18nProperties.getPrefixCaption(RegionIndexDto.I18N_PREFIX, column.getId().toString(), column.getCaption()));
+			column.setCaption(I18nProperties.getPrefixCaption(RegionIndexDto.I18N_PREFIX, column.getId(), column.getCaption()));
 		}
 	}
 

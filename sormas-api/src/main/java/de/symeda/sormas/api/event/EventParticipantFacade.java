@@ -17,11 +17,15 @@
  *******************************************************************************/
 package de.symeda.sormas.api.event;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Remote;
+import javax.validation.Valid;
 
+import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.utils.SortProperty;
 
 @Remote
@@ -29,11 +33,13 @@ public interface EventParticipantFacade {
 
 	List<EventParticipantDto> getAllEventParticipantsByEventAfter(Date date, String eventUuid);
 
+	List<EventParticipantDto> getAllActiveEventParticipantsByEvent(String eventUuid);
+
 	List<EventParticipantDto> getAllActiveEventParticipantsAfter(Date date);
 
 	EventParticipantDto getEventParticipantByUuid(String uuid);
 
-	EventParticipantDto saveEventParticipant(EventParticipantDto dto);
+	EventParticipantDto saveEventParticipant(@Valid EventParticipantDto dto);
 
 	List<String> getAllActiveUuids();
 
@@ -47,11 +53,41 @@ public interface EventParticipantFacade {
 		Integer max,
 		List<SortProperty> sortProperties);
 
+	List<EventParticipantListEntryDto> getListEntries(
+		EventParticipantCriteria eventParticipantCriteria,
+		Integer first,
+		Integer max);
+
+	EventParticipantDto getByUuid(String uuid);
+
 	void validate(EventParticipantDto eventParticipant);
 
 	long count(EventParticipantCriteria eventParticipantCriteria);
 
+	Map<String, Long> getContactCountPerEventParticipant(List<String> eventParticipantUuids, EventParticipantCriteria eventParticipantCriteria);
+
 	boolean exists(String uuid);
 
 	EventParticipantReferenceDto getReferenceByUuid(String uuid);
+
+	EventParticipantReferenceDto getReferenceByEventAndPerson(String eventUuid, String personUuid);
+
+	List<String> getDeletedUuidsSince(Date date);
+
+	boolean isEventParticipantEditAllowed(String uuid);
+
+	EventParticipantDto getFirst(EventParticipantCriteria eventParticipantCriteria);
+
+	List<EventParticipantExportDto> getExportList(
+		EventParticipantCriteria eventParticipantCriteria,
+		Collection<String> selectedRows,
+		int first,
+		int max,
+		Language userLanguage);
+
+	List<EventParticipantDto> getByEventUuids(List<String> eventUuids);
+
+	List<SimilarEventParticipantDto> getMatchingEventParticipants(EventParticipantCriteria criteria);
+
+    List<EventParticipantDto> getByPersonUuids(List<String> personUuids);
 }

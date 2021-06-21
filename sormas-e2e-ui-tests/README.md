@@ -1,15 +1,14 @@
 # Sormas Testing Suite
 
-
-# Integration into Jenkins CI/CD
+## Integration into Jenkins CI/CD
 
 The integration of Katalon Studio in Jenkins is quite simple:
 
-## Prequisites
+### Prequisites
 
 System / OS packages needed to be installed:
 
-- xvfb 
+- xvfb
 - firefox(-esr)
 
 
@@ -27,7 +26,7 @@ In Katalon-Studio open the dialog Window->Command Palette
 
 Select the option "Generate Command for Console Mode"
 
-Copy the String from the field "Katalon API Key" and insert it into the build step from jenkins. 
+Copy the String from the field "Katalon API Key" and insert it into the build step from jenkins.
 
 ### Jenkins Project "GitHub" config
 
@@ -37,9 +36,9 @@ Repository URL: URL to Katalon Sormas tests
 
 ### Jenkins Project "Build" config
 
-Download Katalon Studio Version: `e.g.: 7.2.6`
+Download Katalon Studio Version: `e.g.: 6.3.3`
 
-Command arguments: `-browserType="Firefox" -retry=0 -statusDelay=15 -testSuitePath="Test Suites/Login/LoginRoles" -apiKey=<your api key>`
+Command arguments: `--config -webui.autoUpdateDrivers=true -projectPath="$WORKSPACE/<subfolder>/Sormas-Testing.prj" -retry=0 -testSuitePath="Test Suites/LoginShortSuite" -executionProfile="test" -browserType="Chrome (headless)" -apiKey=<your api key>`
 
 Xvfb-run configuration (for Linux): `-s "-screen 0 1024x768x24"`
 
@@ -56,14 +55,14 @@ JUnit-Tests: `Reports/**/*.xml`
 
 ### Configure Katalon plugin to find testing project in a given subfolder
 
-Command arguments: `-browserType="Firefox" -retry=0 -statusDelay=15 -projectPath="$WORKSPACE/<subfolder>/Sormas-Testing.prj" -testSuitePath="Test Suites/Login/LoginRoles" -apiKey=<your api key>`
+Command arguments: `--config -webui.autoUpdateDrivers=true -browserType="Firefox (headless)" -retry=0 -projectPath="$WORKSPACE/<subfolder>/Sormas-Testing.prj" -testSuitePath="Test Suites/Login/LoginRoles" -apiKey=<your api key>`
 
 Don't forget to adjust the Post build configuration.
 
 ![alt text](images/J_config_testing_subfolder.png "Subfolder config")
 
 ## Katalon command line options (useful ones)
-Source: https://docs.katalon.com/katalon-studio/docs/console-mode-execution.html#general-options
+Source: <https://docs.katalon.com/katalon-studio/docs/console-mode-execution.html#general-options>
 
 <table>
    <thead>

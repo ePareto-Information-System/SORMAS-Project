@@ -21,6 +21,8 @@ import java.util.Collection;
 
 import com.vaadin.data.ValueProvider;
 
+import de.symeda.sormas.api.utils.HtmlHelper;
+
 /**
  * A ValueProvider that allows displaying a collection as a comma separated list of
  * strings.
@@ -43,7 +45,7 @@ public class CollectionValueProvider<T extends Collection> implements ValueProvi
 			b.append(", ");
 		}
 		if (b.length() >= 2) {
-			return b.substring(0, b.length() - 2);
+			return HtmlHelper.cleanHtml(b.substring(0, b.length() - 2));
 		}
 		return "";
 	}

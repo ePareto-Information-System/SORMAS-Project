@@ -8,7 +8,6 @@ import java.util.Arrays;
 
 import com.vaadin.ui.Label;
 import com.vaadin.v7.ui.ComboBox;
-import com.vaadin.v7.ui.OptionGroup;
 import com.vaadin.v7.ui.TextField;
 
 import de.symeda.sormas.api.FacadeProvider;
@@ -19,8 +18,11 @@ import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
+import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
 import de.symeda.sormas.ui.utils.FieldHelper;
+import de.symeda.sormas.ui.utils.NullableOptionGroup;
 import de.symeda.sormas.ui.utils.ViewMode;
 
 public class MaternalHistoryForm extends AbstractEditForm<MaternalHistoryDto> {
@@ -46,8 +48,13 @@ public class MaternalHistoryForm extends AbstractEditForm<MaternalHistoryDto> {
 			fluidRowLocs(MaternalHistoryDto.RASH_EXPOSURE_REGION, MaternalHistoryDto.RASH_EXPOSURE_DISTRICT, MaternalHistoryDto.RASH_EXPOSURE_COMMUNITY);
 	//@formatter:on
 
-	public MaternalHistoryForm(ViewMode viewMode) {
-		super(MaternalHistoryDto.class, MaternalHistoryDto.I18N_PREFIX);
+	public MaternalHistoryForm(ViewMode viewMode, boolean isPseudonymized) {
+		super(
+			MaternalHistoryDto.class,
+			MaternalHistoryDto.I18N_PREFIX,
+			true,
+			new FieldVisibilityCheckers(),
+			UiFieldAccessCheckers.forSensitiveData(isPseudonymized));
 		this.viewMode = viewMode;
 	}
 
@@ -60,32 +67,24 @@ public class MaternalHistoryForm extends AbstractEditForm<MaternalHistoryDto> {
 
 		TextField tfChildrenNumber = addField(MaternalHistoryDto.CHILDREN_NUMBER, TextField.class);
 		tfChildrenNumber.setConversionError(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, tfChildrenNumber.getCaption()));
-		removeMaxLengthValidators(tfChildrenNumber);
 		TextField tfAgeAtBirth = addField(MaternalHistoryDto.AGE_AT_BIRTH, TextField.class);
 		tfAgeAtBirth.setConversionError(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, tfAgeAtBirth.getCaption()));
-		removeMaxLengthValidators(tfAgeAtBirth);
 		TextField tfConjunctivitisMonth = addField(MaternalHistoryDto.CONJUNCTIVITIS_MONTH, TextField.class);
 		tfConjunctivitisMonth
 			.setConversionError(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, tfConjunctivitisMonth.getCaption()));
-		removeMaxLengthValidators(tfConjunctivitisMonth);
 		TextField tfMaculopapularRashMonth = addField(MaternalHistoryDto.MACULOPAPULAR_RASH_MONTH, TextField.class);
 		tfMaculopapularRashMonth
 			.setConversionError(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, tfMaculopapularRashMonth.getCaption()));
-		removeMaxLengthValidators(tfMaculopapularRashMonth);
 		TextField tfSwollenLymphsMonth = addField(MaternalHistoryDto.SWOLLEN_LYMPHS_MONTH, TextField.class);
 		tfSwollenLymphsMonth.setConversionError(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, tfSwollenLymphsMonth.getCaption()));
-		removeMaxLengthValidators(tfSwollenLymphsMonth);
 		TextField tfArthralgiaArthritisMonth = addField(MaternalHistoryDto.ARTHRALGIA_ARTHRITIS_MONTH, TextField.class);
 		tfArthralgiaArthritisMonth
 			.setConversionError(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, tfArthralgiaArthritisMonth.getCaption()));
-		removeMaxLengthValidators(tfArthralgiaArthritisMonth);
 		TextField otherComplicationsMonth = addField(MaternalHistoryDto.OTHER_COMPLICATIONS_MONTH, TextField.class);
 		otherComplicationsMonth
 			.setConversionError(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, otherComplicationsMonth.getCaption()));
-		removeMaxLengthValidators(otherComplicationsMonth);
 		TextField rashExposureMonth = addField(MaternalHistoryDto.RASH_EXPOSURE_MONTH, TextField.class);
 		rashExposureMonth.setConversionError(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, rashExposureMonth.getCaption()));
-		removeMaxLengthValidators(rashExposureMonth);
 
 		addFields(
 			MaternalHistoryDto.CONJUNCTIVITIS_ONSET,
@@ -97,17 +96,19 @@ public class MaternalHistoryForm extends AbstractEditForm<MaternalHistoryDto> {
 			MaternalHistoryDto.RUBELLA_ONSET,
 			MaternalHistoryDto.RASH_EXPOSURE_DATE);
 
-		addField(MaternalHistoryDto.CONJUNCTIVITIS, OptionGroup.class);
-		addField(MaternalHistoryDto.MACULOPAPULAR_RASH, OptionGroup.class);
-		addField(MaternalHistoryDto.SWOLLEN_LYMPHS, OptionGroup.class);
-		addField(MaternalHistoryDto.ARTHRALGIA_ARTHRITIS, OptionGroup.class);
-		addField(MaternalHistoryDto.OTHER_COMPLICATIONS, OptionGroup.class);
-		addField(MaternalHistoryDto.RUBELLA, OptionGroup.class);
-		addField(MaternalHistoryDto.RASH_EXPOSURE, OptionGroup.class);
+		addField(MaternalHistoryDto.CONJUNCTIVITIS, NullableOptionGroup.class);
+		addField(MaternalHistoryDto.MACULOPAPULAR_RASH, NullableOptionGroup.class);
+		addField(MaternalHistoryDto.SWOLLEN_LYMPHS, NullableOptionGroup.class);
+		addField(MaternalHistoryDto.ARTHRALGIA_ARTHRITIS, NullableOptionGroup.class);
+		addField(MaternalHistoryDto.OTHER_COMPLICATIONS, NullableOptionGroup.class);
+		addField(MaternalHistoryDto.RUBELLA, NullableOptionGroup.class);
+		addField(MaternalHistoryDto.RASH_EXPOSURE, NullableOptionGroup.class);
 
 		ComboBox cbRashExposureRegion = addInfrastructureField(MaternalHistoryDto.RASH_EXPOSURE_REGION);
 		ComboBox cbRashExposureDistrict = addInfrastructureField(MaternalHistoryDto.RASH_EXPOSURE_DISTRICT);
 		ComboBox cbRashExposureCommunity = addInfrastructureField(MaternalHistoryDto.RASH_EXPOSURE_COMMUNITY);
+
+		initializeAccessAndAllowedAccesses();
 
 		cbRashExposureRegion.addValueChangeListener(e -> {
 			RegionReferenceDto region = (RegionReferenceDto) e.getProperty().getValue();
@@ -122,7 +123,7 @@ public class MaternalHistoryForm extends AbstractEditForm<MaternalHistoryDto> {
 				cbRashExposureCommunity,
 				district != null ? FacadeProvider.getCommunityFacade().getAllActiveByDistrict(district.getUuid()) : null);
 		});
-		cbRashExposureRegion.addItems(FacadeProvider.getRegionFacade().getAllActiveAsReference());
+		cbRashExposureRegion.addItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
 
 		FieldHelper.setVisibleWhen(
 			getFieldGroup(),

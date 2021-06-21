@@ -15,29 +15,48 @@
 
 package de.symeda.sormas.ui.campaign.campaigndata;
 
+import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
+import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
+
+import java.util.Objects;
+
 import com.vaadin.ui.GridLayout;
 import com.vaadin.v7.data.Validator;
 import com.vaadin.v7.data.util.converter.Converter;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.DateField;
+
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.campaign.data.CampaignFormDataDto;
-import de.symeda.sormas.api.campaign.form.CampaignFormDto;
+import de.symeda.sormas.api.campaign.form.CampaignFormMetaDto;
+import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.i18n.Captions;
+import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.region.AreaReferenceDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
-import de.symeda.sormas.ui.campaign.CampaignFormBuilder;
+import de.symeda.sormas.api.user.UserDto;
+import de.symeda.sormas.ui.UserProvider;
+import de.symeda.sormas.ui.campaign.expressions.ExpressionProcessor;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.FieldHelper;
 
-import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
-import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
-
 public class CampaignFormDataEditForm extends AbstractEditForm<CampaignFormDataDto> {
 
 	public static final String CAMPAIGN_FORM_LOC = "campaignFormLoc";
+	private AreaReferenceDto area;
+	public static final String AREA = "area";
 
-	private static final String HTML_LAYOUT = fluidRowLocs(CampaignFormDataDto.CAMPAIGN, CampaignFormDataDto.FORM_DATE, "")
+	public AreaReferenceDto getArea() {
+		return area;
+	}
+
+	public void setArea(AreaReferenceDto area) {
+		this.area = area;
+	}
+
+	private static final String HTML_LAYOUT = fluidRowLocs(CampaignFormDataDto.CAMPAIGN, CampaignFormDataDto.FORM_DATE, CampaignFormDataEditForm.AREA)
 		+ fluidRowLocs(CampaignFormDataDto.REGION, CampaignFormDataDto.DISTRICT, CampaignFormDataDto.COMMUNITY)
 		+ loc(CAMPAIGN_FORM_LOC);
 
@@ -53,10 +72,11 @@ public class CampaignFormDataEditForm extends AbstractEditForm<CampaignFormDataD
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void addFields() {
 		ComboBox cbCampaign = addField(CampaignFormDataDto.CAMPAIGN, ComboBox.class);
-		cbCampaign.addItems(FacadeProvider.getCampaignFacade().getAllCampaignsAsReference());
+		cbCampaign.addItems(FacadeProvider.getCampaignFacade().getAllActiveCampaignsAsReference());
 
 		ComboBox cbRegion = addInfrastructureField(CampaignFormDataDto.REGION);
 		ComboBox cbDistrict = addInfrastructureField(CampaignFormDataDto.DISTRICT);
@@ -73,7 +93,56 @@ public class CampaignFormDataEditForm extends AbstractEditForm<CampaignFormDataD
 			CampaignFormDataDto.COMMUNITY);
 
 		addInfrastructureListeners(cbRegion, cbDistrict, cbCommunity);
-		cbRegion.addItems(FacadeProvider.getRegionFacade().getAllActiveAsReference());
+		cbRegion.addItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
+
+		final UserDto currentUser = UserProvider.getCurrent().getUser();
+		final RegionReferenceDto currentUserRegion = currentUser.getRegion();
+
+		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.INFRASTRUCTURE_TYPE_AREA)) {
+			ComboBox cbArea = addCustomField(CampaignFormDataEditForm.AREA, AreaReferenceDto.class, ComboBox.class);
+			cbArea.setCaption(I18nProperties.getCaption(Captions.CampaignFormData_area));
+			setRequired(true, CampaignFormDataEditForm.AREA);
+			cbArea.addItems(FacadeProvider.getAreaFacade().getAllActiveAsReference());
+			cbArea.addValueChangeListener(e -> {
+				AreaReferenceDto area = (AreaReferenceDto) e.getProperty().getValue();
+
+				if (area == null) {
+					cbRegion.setValue(null);
+				}
+
+				FieldHelper.updateItems(
+					cbRegion,
+					area != null
+						? FacadeProvider.getRegionFacade().getAllActiveByArea(area.getUuid())
+						: FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
+			});
+			cbRegion.addValueChangeListener(e -> {
+				RegionReferenceDto region = (RegionReferenceDto) e.getProperty().getValue();
+				if (Objects.nonNull(region)) {
+					cbArea.setValue(FacadeProvider.getRegionFacade().getRegionByUuid(region.getUuid()).getArea());
+				}
+			});
+			if (currentUserRegion != null) {
+				final AreaReferenceDto area = FacadeProvider.getRegionFacade().getRegionByUuid(currentUserRegion.getUuid()).getArea();
+				cbArea.setValue(area);
+				if (currentUserRegion != null) {
+					cbArea.setEnabled(false);
+				}
+			}
+		}
+
+		if (currentUserRegion != null) {
+			cbRegion.setValue(currentUserRegion);
+			cbRegion.setEnabled(false);
+		}
+		if (currentUser.getDistrict() != null) {
+			cbDistrict.setValue(currentUser.getDistrict());
+			cbDistrict.setEnabled(false);
+		}
+		if (currentUser.getCommunity() != null) {
+			cbCommunity.setValue(currentUser.getCommunity());
+			cbCommunity.setEnabled(false);
+		}
 	}
 
 	private void addInfrastructureListeners(ComboBox cbRegion, ComboBox cbDistrict, ComboBox cbCommunity) {
@@ -129,7 +198,8 @@ public class CampaignFormDataEditForm extends AbstractEditForm<CampaignFormDataD
 		campaignFormLayout.setWidth(100, Unit.PERCENTAGE);
 		CssStyles.style(campaignFormLayout, CssStyles.VSPACE_3);
 
-		CampaignFormDto campaignForm = FacadeProvider.getCampaignFormFacade().getCampaignFormByUuid(campaignFormData.getCampaignForm().getUuid());
+		CampaignFormMetaDto campaignForm =
+			FacadeProvider.getCampaignFormMetaFacade().getCampaignFormMetaByUuid(campaignFormData.getCampaignFormMeta().getUuid());
 		campaignFormBuilder = new CampaignFormBuilder(
 			campaignForm.getCampaignFormElements(),
 			campaignFormData.getFormValues(),
@@ -137,6 +207,11 @@ public class CampaignFormDataEditForm extends AbstractEditForm<CampaignFormDataD
 			campaignForm.getCampaignFormTranslations());
 
 		campaignFormBuilder.buildForm();
+
+		final ExpressionProcessor expressionProcessor = new ExpressionProcessor(campaignFormBuilder);
+		expressionProcessor.disableExpressionFieldsForEditing();
+		expressionProcessor.configureExpressionFieldsWithTooltip();
+		expressionProcessor.addExpressionListener();
 
 		getContent().addComponent(campaignFormLayout, CAMPAIGN_FORM_LOC);
 	}

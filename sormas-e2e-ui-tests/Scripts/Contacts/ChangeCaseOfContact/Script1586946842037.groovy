@@ -1,13 +1,12 @@
 import static com.kms.katalon.core.testcase.TestCaseFactory.findTestCase
-import static com.kms.katalon.core.testdata.TestDataFactory.findTestData
 import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
+
+import com.hzi.TestDataConnector as TestDataConnector
 import com.kms.katalon.core.exception.StepFailedException as StepFailedException
 import com.kms.katalon.core.model.FailureHandling as FailureHandling
 import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
 
 import internal.GlobalVariable
-
-import com.hzi.TestDataConnector as TestDataConnector
 
 // PREPARE
 WebUI.callTestCase(findTestCase('Contacts/partials/loginAsContactSupervisor'), [:], FailureHandling.STOP_ON_FAILURE)
@@ -63,7 +62,7 @@ WebUI.setText(findTestObject('Contacts/ContactInformationView/changeCaseDlg_inpu
 
 WebUI.click(findTestObject('Contacts/ContactInformationView/changeCaseDlg_search_button'))
 
-WebUI.delay(0.5)
+WebUI.delay(1)
 
 //String oldCaseEpidNumber = WebUI.getText(findTestObject('Contacts/ContactInformationView/changeCaseDlg_epidNumber_field'))
 String oldCaseEpidNumber = WebUI.getText(findTestObject('Contacts/ContactInformationView/caseID_field'))
@@ -74,9 +73,10 @@ WebUI.click(findTestObject('Contacts/ContactInformationView/changeCaseDlg_select
 
 WebUI.click(findTestObject('Contacts/ContactInformationView/changeCaseDlg_confirm_button'))
 
-WebUI.delay(1)
+WebUI.delay(3)
 
 // CHECK
+WebUI.waitForElementVisible(findTestObject('Contacts/ContactInformationView/div_CaseID info'), 20)
 String epidNumberAfterChange = WebUI.getText(findTestObject('Contacts/ContactInformationView/div_CaseID info'))
 
 println('displayed epidnumber after change in contact: ' + epidNumberAfterChange)

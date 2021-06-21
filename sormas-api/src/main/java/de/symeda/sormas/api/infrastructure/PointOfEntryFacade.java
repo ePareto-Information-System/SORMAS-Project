@@ -24,6 +24,8 @@ public interface PointOfEntryFacade {
 
 	void save(PointOfEntryDto pointOfEntry) throws ValidationRuntimeException;
 
+	void save(PointOfEntryDto dto, boolean allowMerge) throws ValidationRuntimeException;
+
 	List<PointOfEntryDto> getIndexList(PointOfEntryCriteria criteria, Integer first, Integer max, List<SortProperty> sortProperties);
 
 	long count(PointOfEntryCriteria criteria);
@@ -37,6 +39,8 @@ public interface PointOfEntryFacade {
 	List<PointOfEntryDto> getByUuids(List<String> uuids);
 
 	List<PointOfEntryReferenceDto> getByName(String name, DistrictReferenceDto district, boolean includeArchivedEntities);
+
+	List<PointOfEntryReferenceDto> getByExternalId(String name, boolean includeArchivedEntities);
 
 	void archive(String pointOfEntryUuid);
 

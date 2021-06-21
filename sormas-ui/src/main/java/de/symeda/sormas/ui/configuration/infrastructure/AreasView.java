@@ -1,5 +1,9 @@
 package de.symeda.sormas.ui.configuration.infrastructure;
 
+import static com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+
+import java.util.Date;
+
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.StreamResource;
@@ -11,7 +15,7 @@ import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
-import com.vaadin.v7.ui.TextField;
+
 import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.Descriptions;
@@ -25,17 +29,15 @@ import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.configuration.AbstractConfigurationView;
+import de.symeda.sormas.ui.configuration.infrastructure.components.SearchField;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.ExportEntityName;
 import de.symeda.sormas.ui.utils.GridExportStreamResource;
 import de.symeda.sormas.ui.utils.MenuBarHelper;
 import de.symeda.sormas.ui.utils.RowCount;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 import de.symeda.sormas.ui.utils.ViewConfiguration;
-
-import java.util.Date;
-
-import static com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 
 @SuppressWarnings("serial")
 public class AreasView extends AbstractConfigurationView {
@@ -45,7 +47,7 @@ public class AreasView extends AbstractConfigurationView {
 	private final AreaCriteria criteria;
 	private final ViewConfiguration viewConfiguration;
 
-	private TextField filterTextFilter;
+	private SearchField searchField;
 	private ComboBox<EntityRelevanceStatus> filterRelevanceStatus;
 	private Button btnResetFilters;
 
@@ -91,11 +93,7 @@ public class AreasView extends AbstractConfigurationView {
 			btnExport.setDescription(I18nProperties.getDescription(Descriptions.descExportButton));
 			addHeaderComponent(btnExport);
 
-			StreamResource streamResource = new GridExportStreamResource(
-				grid,
-				"sormas_areas",
-				"sormas_areas_" + DateHelper.formatDateForExport(new Date()) + ".csv",
-				AreasGrid.EDIT_BTN_ID);
+			StreamResource streamResource = GridExportStreamResource.createStreamResource(grid, ExportEntityName.AREAS, AreasGrid.EDIT_BTN_ID);
 			FileDownloader fileDownloader = new FileDownloader(streamResource);
 			fileDownloader.extend(btnExport);
 		}
@@ -125,7 +123,7 @@ public class AreasView extends AbstractConfigurationView {
 				viewConfiguration.setInEagerMode(true);
 				btnEnterBulkEditMode.setVisible(false);
 				btnLeaveBulkEditMode.setVisible(true);
-				filterTextFilter.setEnabled(false);
+				searchField.setEnabled(false);
 				grid.setEagerDataProvider();
 				grid.reload();
 			});
@@ -134,7 +132,7 @@ public class AreasView extends AbstractConfigurationView {
 				viewConfiguration.setInEagerMode(false);
 				btnLeaveBulkEditMode.setVisible(false);
 				btnEnterBulkEditMode.setVisible(true);
-				filterTextFilter.setEnabled(true);
+				searchField.setEnabled(true);
 				navigateTo(criteria);
 			});
 		}
@@ -148,17 +146,12 @@ public class AreasView extends AbstractConfigurationView {
 		filterLayout.setSpacing(true);
 		filterLayout.setWidth(100, Unit.PERCENTAGE);
 
-		filterTextFilter = new TextField();
-		filterTextFilter.setId("search");
-		filterTextFilter.setWidth(300, Unit.PIXELS);
-		filterTextFilter.setInputPrompt(I18nProperties.getString(Strings.promptSearch));
-		filterTextFilter.setNullRepresentation("");
-		filterTextFilter.addTextChangeListener(e -> {
+		searchField = new SearchField();
+		searchField.addTextChangeListener(e -> {
 			criteria.textFilter(e.getText());
-			navigateTo(criteria);
+			grid.reload();
 		});
-		CssStyles.style(filterTextFilter, CssStyles.FORCE_CAPTION);
-		filterLayout.addComponent(filterTextFilter);
+		filterLayout.addComponent(searchField);
 
 		btnResetFilters = ButtonHelper.createButton(Captions.actionResetFilters, event -> {
 			ViewModelProviders.of(AreasView.class).remove(AreaCriteria.class);
@@ -203,7 +196,6 @@ public class AreasView extends AbstractConfigurationView {
 									true,
 									grid.asMultiSelect().getSelectedItems(),
 									InfrastructureType.AREA,
-									null,
 									() -> navigateTo(criteria));
 						}, EntityRelevanceStatus.ACTIVE.equals(criteria.getRelevanceStatus())),
 						new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.actionDearchive), VaadinIcons.ARCHIVE, selectedItem -> {
@@ -212,7 +204,6 @@ public class AreasView extends AbstractConfigurationView {
 									false,
 									grid.asMultiSelect().getSelectedItems(),
 									InfrastructureType.AREA,
-									null,
 									() -> navigateTo(criteria));
 						}, EntityRelevanceStatus.ARCHIVED.equals(criteria.getRelevanceStatus())));
 
@@ -249,7 +240,7 @@ public class AreasView extends AbstractConfigurationView {
 		if (filterRelevanceStatus != null) {
 			filterRelevanceStatus.setValue(criteria.getRelevanceStatus());
 		}
-		filterTextFilter.setValue(criteria.getTextFilter());
+		searchField.setValue(criteria.getTextFilter());
 
 		applyingCriteria = false;
 	}

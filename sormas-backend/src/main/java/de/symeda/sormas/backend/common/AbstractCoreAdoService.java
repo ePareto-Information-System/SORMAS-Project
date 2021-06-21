@@ -1,6 +1,13 @@
 package de.symeda.sormas.backend.common;
 
-public abstract class AbstractCoreAdoService<ADO extends CoreAdo> extends AbstractAdoService<ADO> {
+import java.sql.Timestamp;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
+
+public abstract class AbstractCoreAdoService<ADO extends CoreAdo> extends AdoServiceWithUserFilter<ADO> {
 
 	public AbstractCoreAdoService(Class<ADO> elementClass) {
 		super(elementClass);
@@ -12,5 +19,13 @@ public abstract class AbstractCoreAdoService<ADO extends CoreAdo> extends Abstra
 		deleteme.setDeleted(true);
 		em.persist(deleteme);
 		em.flush();
+	}
+
+	protected <C> Predicate changeDateFilter(CriteriaBuilder cb, Timestamp date, From<?, C> path, String... joinFields) {
+		From<?, ?> parent = path;
+		for (int i = 0; i < joinFields.length; i++) {
+			parent = parent.join(joinFields[i], JoinType.LEFT);
+		}
+		return CriteriaBuilderHelper.greaterThanAndNotNull(cb, parent.get(AbstractDomainObject.CHANGE_DATE), date);
 	}
 }

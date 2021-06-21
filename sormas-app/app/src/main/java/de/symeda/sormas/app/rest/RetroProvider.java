@@ -38,6 +38,7 @@ import de.symeda.sormas.api.caze.classification.ClassificationAllOfCriteriaDto;
 import de.symeda.sormas.api.caze.classification.ClassificationCaseCriteriaDto;
 import de.symeda.sormas.api.caze.classification.ClassificationCriteriaDto;
 import de.symeda.sormas.api.caze.classification.ClassificationEpiDataCriteriaDto;
+import de.symeda.sormas.api.caze.classification.ClassificationExposureCriteriaDto;
 import de.symeda.sormas.api.caze.classification.ClassificationNoneOfCriteriaDto;
 import de.symeda.sormas.api.caze.classification.ClassificationNotInStartDateRangeCriteriaDto;
 import de.symeda.sormas.api.caze.classification.ClassificationPathogenTestCriteriaDto;
@@ -86,6 +87,9 @@ public final class RetroProvider {
 	private PersonFacadeRetro personFacadeRetro;
 	private CommunityFacadeRetro communityFacadeRetro;
 	private DistrictFacadeRetro districtFacadeRetro;
+	private ContinentFacadeRetro continentFacadeRetro;
+	private SubcontinentFacadeRetro subcontinentFacadeRetro;
+	private CountryFacadeRetro countryFacadeRetro;
 	private RegionFacadeRetro regionFacadeRetro;
 	private FacilityFacadeRetro facilityFacadeRetro;
 	private PointOfEntryFacadeRetro pointOfEntryFacadeRetro;
@@ -106,7 +110,11 @@ public final class RetroProvider {
 	private AdditionalTestFacadeRetro additionalTestFacadeRetro;
 	private ClinicalVisitFacadeRetro clinicalVisitFacadeRetro;
 	private DiseaseConfigurationFacadeRetro diseaseConfigurationFacadeRetro;
+	private DiseaseVariantFacadeRetro diseaseVariantFacadeRetro;
 	private InfrastructureFacadeRetro infrastructureFacadeRetro;
+	private CampaignFacadeRetro campaignFacadeRetro;
+	private CampaignFormMetaFacadeRetro campaignFormMetaFacadeRetro;
+	private CampaignFormDataFacadeRetro campaignFormDataFacadeRetro;
 	private FeatureConfigurationFacadeRetro featureConfigurationFacadeRetro;
 	private AggregateReportFacadeRetro aggregateReportFacadeRetro;
 
@@ -137,6 +145,7 @@ public final class RetroProvider {
 				.registerSubtype(ClassificationNotInStartDateRangeCriteriaDto.class, "ClassificationNotInStartDateRangeCriteriaDto")
 				.registerSubtype(ClassificationSymptomsCriteriaDto.class, "ClassificationSymptomsCriteriaDto")
 				.registerSubtype(ClassificationPathogenTestCriteriaDto.class, "ClassificationPathogenTestCriteriaDto")
+				.registerSubtype(ClassificationExposureCriteriaDto.class, "ClassificationExposureCriteriaDto")
 				.registerSubtype(ClassificationXOfCriteriaDto.ClassificationXOfSubCriteriaDto.class, "ClassificationXOfSubCriteriaDto")
 				.registerSubtype(ClassificationXOfCriteriaDto.ClassificationOneOfCompactCriteriaDto.class, "ClassificationOneOfCompactCriteriaDto")
 				.registerSubtype(ClassificationAllOfCriteriaDto.ClassificationAllOfCompactCriteriaDto.class, "ClassificationAllOfCompactCriteriaDto");
@@ -189,6 +198,7 @@ public final class RetroProvider {
 		checkCompatibility();
 
 		updateLocale();
+		updateCountryName();
 	}
 
 	public static int getLastConnectionId() {
@@ -213,6 +223,27 @@ public final class RetroProvider {
 			ConfigProvider.setServerLocale(localeStr);
 		} else {
 			throwException(localeResponse);
+		}
+	}
+
+	private void updateCountryName() throws ServerCommunicationException, ServerConnectionException {
+		Response<String> countryNameResponse;
+		infoFacadeRetro = retrofit.create(InfoFacadeRetro.class);
+		Call<String> countryNameCall = infoFacadeRetro.getCountryName();
+		try {
+			countryNameResponse = countryNameCall.execute();
+		} catch (IOException e) {
+			Log.w(RetroProvider.class.getSimpleName(), e.getMessage());
+			// wrap the exception message inside a response object
+			countryNameResponse = Response.error(500, ResponseBody.create(MediaType.parse("text/plain"), e.getMessage()));
+		}
+
+		if (countryNameResponse.isSuccessful()) {
+			// success - now check compatibility
+			String countryNameStr = countryNameResponse.body();
+			ConfigProvider.setServerCountryName(countryNameStr);
+		} else {
+			throwException(countryNameResponse);
 		}
 	}
 
@@ -480,6 +511,45 @@ public final class RetroProvider {
 		return instance.districtFacadeRetro;
 	}
 
+	public static ContinentFacadeRetro getContinentFacade() throws NoConnectionException {
+		if (instance == null)
+			throw new NoConnectionException();
+		if (instance.continentFacadeRetro == null) {
+			synchronized ((RetroProvider.class)) {
+				if (instance.continentFacadeRetro == null) {
+					instance.continentFacadeRetro = instance.retrofit.create(ContinentFacadeRetro.class);
+				}
+			}
+		}
+		return instance.continentFacadeRetro;
+	}
+
+	public static SubcontinentFacadeRetro getSubcontinentFacade() throws NoConnectionException {
+		if (instance == null)
+			throw new NoConnectionException();
+		if (instance.subcontinentFacadeRetro == null) {
+			synchronized ((RetroProvider.class)) {
+				if (instance.subcontinentFacadeRetro == null) {
+					instance.subcontinentFacadeRetro = instance.retrofit.create(SubcontinentFacadeRetro.class);
+				}
+			}
+		}
+		return instance.subcontinentFacadeRetro;
+	}
+
+	public static CountryFacadeRetro getCountryFacade() throws NoConnectionException {
+		if (instance == null)
+			throw new NoConnectionException();
+		if (instance.countryFacadeRetro == null) {
+			synchronized ((RetroProvider.class)) {
+				if (instance.countryFacadeRetro == null) {
+					instance.countryFacadeRetro = instance.retrofit.create(CountryFacadeRetro.class);
+				}
+			}
+		}
+		return instance.countryFacadeRetro;
+	}
+
 	public static RegionFacadeRetro getRegionFacade() throws NoConnectionException {
 		if (instance == null)
 			throw new NoConnectionException();
@@ -740,6 +810,19 @@ public final class RetroProvider {
 		return instance.diseaseConfigurationFacadeRetro;
 	}
 
+	public static DiseaseVariantFacadeRetro getDiseaseVariantFacade() throws NoConnectionException {
+		if (instance == null)
+			throw new NoConnectionException();
+		if (instance.diseaseVariantFacadeRetro == null) {
+			synchronized ((RetroProvider.class)) {
+				if (instance.diseaseVariantFacadeRetro == null) {
+					instance.diseaseVariantFacadeRetro = instance.retrofit.create(DiseaseVariantFacadeRetro.class);
+				}
+			}
+		}
+		return instance.diseaseVariantFacadeRetro;
+	}
+
 	public static FeatureConfigurationFacadeRetro getFeatureConfigurationFacade() throws NoConnectionException {
 		if (instance == null)
 			throw new NoConnectionException();
@@ -764,6 +847,45 @@ public final class RetroProvider {
 			}
 		}
 		return instance.infrastructureFacadeRetro;
+	}
+
+	public static CampaignFacadeRetro getCampaignFacade() throws NoConnectionException {
+		if (instance == null)
+			throw new NoConnectionException();
+		if (instance.campaignFacadeRetro == null) {
+			synchronized ((RetroProvider.class)) {
+				if (instance.campaignFacadeRetro == null) {
+					instance.campaignFacadeRetro = instance.retrofit.create(CampaignFacadeRetro.class);
+				}
+			}
+		}
+		return instance.campaignFacadeRetro;
+	}
+
+	public static CampaignFormMetaFacadeRetro getCampaignFormMetaFacade() throws NoConnectionException {
+		if (instance == null)
+			throw new NoConnectionException();
+		if (instance.campaignFormMetaFacadeRetro == null) {
+			synchronized ((RetroProvider.class)) {
+				if (instance.campaignFormMetaFacadeRetro == null) {
+					instance.campaignFormMetaFacadeRetro = instance.retrofit.create(CampaignFormMetaFacadeRetro.class);
+				}
+			}
+		}
+		return instance.campaignFormMetaFacadeRetro;
+	}
+
+	public static CampaignFormDataFacadeRetro getCampaignFormDataFacade() throws NoConnectionException {
+		if (instance == null)
+			throw new NoConnectionException();
+		if (instance.campaignFormDataFacadeRetro == null) {
+			synchronized ((RetroProvider.class)) {
+				if (instance.campaignFormDataFacadeRetro == null) {
+					instance.campaignFormDataFacadeRetro = instance.retrofit.create(CampaignFormDataFacadeRetro.class);
+				}
+			}
+		}
+		return instance.campaignFormDataFacadeRetro;
 	}
 
 	public static AggregateReportFacadeRetro getAggregateReportFacade() throws NoConnectionException {

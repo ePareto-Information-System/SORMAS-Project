@@ -38,7 +38,7 @@ import de.symeda.sormas.app.component.dialog.AbstractDialog;
 import de.symeda.sormas.app.component.validation.FragmentValidator;
 import de.symeda.sormas.app.core.notification.NotificationHelper;
 import de.symeda.sormas.app.databinding.DialogMoveCaseLayoutBinding;
-import de.symeda.sormas.app.util.InfrastructureHelper;
+import de.symeda.sormas.app.util.InfrastructureDaoHelper;
 
 public class ReferCaseFromPoeDialog extends AbstractDialog {
 
@@ -78,14 +78,15 @@ public class ReferCaseFromPoeDialog extends AbstractDialog {
 
 	@Override
 	protected void initializeContentView(ViewDataBinding rootBinding, ViewDataBinding buttonPanelBinding) {
-		InfrastructureHelper
+		InfrastructureDaoHelper
 			.initializeHealthFacilityDetailsFieldVisibility(contentBinding.caseDataHealthFacility, contentBinding.caseDataHealthFacilityDetails);
 
-		List<Item> initialRegions = InfrastructureHelper.loadRegions();
-		List<Item> initialDistricts = InfrastructureHelper.loadDistricts(data.getRegion());
-		List<Item> initialCommunities = InfrastructureHelper.loadCommunities(data.getDistrict());
-		List<Item> initialFacilities = InfrastructureHelper.loadFacilities(data.getDistrict(), data.getCommunity());
-		InfrastructureHelper.initializeFacilityFields(
+		List<Item> initialRegions = InfrastructureDaoHelper.loadRegionsByServerCountry();
+		List<Item> initialDistricts = InfrastructureDaoHelper.loadDistricts(data.getRegion());
+		List<Item> initialCommunities = InfrastructureDaoHelper.loadCommunities(data.getDistrict());
+		List<Item> initialFacilities = InfrastructureDaoHelper.loadFacilities(data.getDistrict(), data.getCommunity(), data.getFacilityType());
+		InfrastructureDaoHelper.initializeFacilityFields(
+			data,
 			contentBinding.caseDataRegion,
 			initialRegions,
 			data.getRegion(),
@@ -95,9 +96,17 @@ public class ReferCaseFromPoeDialog extends AbstractDialog {
 			contentBinding.caseDataCommunity,
 			initialCommunities,
 			data.getCommunity(),
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
 			contentBinding.caseDataHealthFacility,
 			initialFacilities,
-			data.getHealthFacility());
+			data.getHealthFacility(),
+			contentBinding.caseDataHealthFacilityDetails,
+			false);
 	}
 
 	@Override

@@ -15,16 +15,16 @@
 
 package de.symeda.sormas.app.backend.person;
 
-import java.sql.SQLException;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
+import android.util.Log;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
-import android.util.Log;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import de.symeda.sormas.api.person.PersonNameDto;
 import de.symeda.sormas.api.person.PersonSimilarityCriteria;
@@ -32,6 +32,7 @@ import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.app.backend.common.AbstractAdoDao;
 import de.symeda.sormas.app.backend.common.AbstractDomainObject;
 import de.symeda.sormas.app.backend.common.DaoException;
+import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.location.Location;
 
 public class PersonDao extends AbstractAdoDao<Person> {
@@ -89,6 +90,36 @@ public class PersonDao extends AbstractAdoDao<Person> {
 	}
 
 	@Override
+	public Person queryUuid(String uuid) {
+		Person person = super.queryUuid(uuid);
+		if (person != null) {
+			initLocations(person);
+			initPersonContactDetails(person);
+		}
+		return person;
+	}
+
+	@Override
+	public Person queryForId(Long id) {
+		Person person = super.queryForId(id);
+		if (person != null) {
+			initLocations(person);
+			initPersonContactDetails(person);
+		}
+		return person;
+	}
+
+	@Override
+	public Person querySnapshotByUuid(String uuid) {
+		Person person = super.querySnapshotByUuid(uuid);
+		if (person != null) {
+			initLocations(person);
+			initPersonContactDetails(person);
+		}
+		return person;
+	}
+
+	@Override
 	public Date getLatestChangeDate() {
 		Date date = super.getLatestChangeDate();
 		if (date == null) {
@@ -108,7 +139,14 @@ public class PersonDao extends AbstractAdoDao<Person> {
 
 		final Person existingPerson = queryUuid(person.getUuid());
 		onPersonChanged(existingPerson, person);
-		return super.saveAndSnapshot(person);
+
+		Person snapshot = super.saveAndSnapshot(person);
+		DatabaseHelper.getLocationDao()
+			.saveCollectionWithSnapshot(DatabaseHelper.getLocationDao().getByPerson(person), person.getAddresses(), person);
+		DatabaseHelper.getPersonContactDetailDao()
+			.saveCollectionWithSnapshot(DatabaseHelper.getPersonContactDetailDao().getByPerson(person), person.getPersonContactDetails(), person);
+
+		return snapshot;
 	}
 
 	private void onPersonChanged(Person existingPerson, Person changedPerson) {
@@ -123,5 +161,15 @@ public class PersonDao extends AbstractAdoDao<Person> {
 				changedPerson.setApproximateAgeReferenceDate(changedPerson.getDeathDate() != null ? changedPerson.getDeathDate() : new Date());
 			}
 		}
+	}
+
+	public Person initLocations(Person person) {
+		person.setAddresses(DatabaseHelper.getLocationDao().getByPerson(person));
+		return person;
+	}
+
+	public Person initPersonContactDetails(Person person) {
+		person.setPersonContactDetails(DatabaseHelper.getPersonContactDetailDao().getByPerson(person));
+		return person;
 	}
 }

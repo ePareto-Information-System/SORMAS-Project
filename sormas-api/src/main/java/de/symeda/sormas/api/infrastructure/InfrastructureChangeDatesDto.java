@@ -5,8 +5,11 @@ import java.util.Date;
 
 public class InfrastructureChangeDatesDto implements Serializable {
 
-	private static final long serialVersionUID = 3661789242295903774L;
+	private static final long serialVersionUID = 6269655187128160377L;
 
+	private Date continentChangeDate;
+	private Date subcontinentChangeDate;
+	private Date countryChangeDate;
 	private Date regionChangeDate;
 	private Date districtChangeDate;
 	private Date communityChangeDate;
@@ -17,6 +20,32 @@ public class InfrastructureChangeDatesDto implements Serializable {
 	private Date diseaseConfigurationChangeDate;
 	private Date userRoleConfigurationChangeDate;
 	private Date featureConfigurationChangeDate;
+	private Date campaignChangeDate;
+	private Date campaignFormMetaChangeDate;
+
+	public Date getContinentChangeDate() {
+		return continentChangeDate;
+	}
+
+	public void setContinentChangeDate(Date continentChangeDate) {
+		this.continentChangeDate = continentChangeDate;
+	}
+
+	public Date getSubcontinentChangeDate() {
+		return subcontinentChangeDate;
+	}
+
+	public void setSubcontinentChangeDate(Date subcontinentChangeDate) {
+		this.subcontinentChangeDate = subcontinentChangeDate;
+	}
+
+	public Date getCountryChangeDate() {
+		return countryChangeDate;
+	}
+
+	public void setCountryChangeDate(Date countryChangeDate) {
+		this.countryChangeDate = countryChangeDate;
+	}
 
 	public Date getRegionChangeDate() {
 		return regionChangeDate;
@@ -96,5 +125,21 @@ public class InfrastructureChangeDatesDto implements Serializable {
 
 	public void setFeatureConfigurationChangeDate(Date featureConfigurationChangeDate) {
 		this.featureConfigurationChangeDate = featureConfigurationChangeDate;
+	}
+
+	public Date getCampaignChangeDate() {
+		return campaignChangeDate;
+	}
+
+	public void setCampaignChangeDate(Date campaignChangeDate) {
+		this.campaignChangeDate = campaignChangeDate;
+	}
+
+	public Date getCampaignFormMetaChangeDate() {
+		return campaignFormMetaChangeDate;
+	}
+
+	public void setCampaignFormMetaChangeDate(Date campaignFormMetaChangeDate) {
+		this.campaignFormMetaChangeDate = campaignFormMetaChangeDate;
 	}
 }

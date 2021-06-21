@@ -25,36 +25,55 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.event.EventParticipantReferenceDto;
+import de.symeda.sormas.api.event.EventReferenceDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
+import de.symeda.sormas.api.person.SymptomJournalStatus;
+import de.symeda.sormas.api.region.CommunityReferenceDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.DateFilterOption;
 import de.symeda.sormas.api.utils.IgnoreForUrl;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 
 public class ContactCriteria extends BaseCriteria implements Serializable {
 
 	public static final String NAME_UUID_CASE_LIKE = "nameUuidCaseLike";
 	public static final String REGION = "region";
 	public static final String DISTRICT = "district";
+	public static final String COMMUNITY = "community";
 	public static final String CONTACT_OFFICER = "contactOfficer";
 	public static final String REPORTING_USER_ROLE = "reportingUserRole";
 	public static final String FOLLOW_UP_UNTIL_TO = "followUpUntilTo";
+	public static final String SYMPTOM_JOURNAL_STATUS = "symptomJournalStatus";
 	public static final String QUARANTINE_TYPE = "quarantineType";
 	public static final String QUARANTINE_ORDERED_VERBALLY = "quarantineOrderedVerbally";
 	public static final String QUARANTINE_ORDERED_OFFICIAL_DOCUMENT = "quarantineOrderedOfficialDocument";
 	public static final String QUARANTINE_NOT_ORDERED = "quarantineNotOrdered";
 	public static final String ONLY_QUARANTINE_HELP_NEEDED = "onlyQuarantineHelpNeeded";
 	public static final String ONLY_HIGH_PRIORITY_CONTACTS = "onlyHighPriorityContacts";
+	public static final String WITH_EXTENDED_QUARANTINE = "withExtendedQuarantine";
+	public static final String WITH_REDUCED_QUARANTINE = "withReducedQuarantine";
+	public static final String BIRTHDATE_YYYY = "birthdateYYYY";
+	public static final String BIRTHDATE_MM = "birthdateMM";
+	public static final String BIRTHDATE_DD = "birthdateDD";
+	public static final String RETURNING_TRAVELER = "returningTraveler";
+	public static final String EVENT_LIKE = "eventLike";
+	public static final String INCLUDE_CONTACTS_FROM_OTHER_JURISDICTIONS = "includeContactsFromOtherJurisdictions";
+	public static final String ONLY_CONTACTS_SHARING_EVENT_WITH_SOURCE_CASE = "onlyContactsSharingEventWithSourceCase";
+	public static final String ONLY_CONTACTS_FROM_OTHER_INSTANCES = "onlyContactsFromOtherInstances";
 
 	private static final long serialVersionUID = 5114202107622217837L;
 
 	private UserRole reportingUserRole;
 	private Disease disease;
 	private CaseReferenceDto caze;
+	private CaseReferenceDto resultingCase;
 	private RegionReferenceDto region;
 	private DistrictReferenceDto district;
+	private CommunityReferenceDto community;
 	private UserReferenceDto contactOfficer;
 	private ContactClassification contactClassification;
 	private ContactStatus contactStatus;
@@ -65,11 +84,12 @@ public class ContactCriteria extends BaseCriteria implements Serializable {
 	private DateFilterOption dateFilterOption = DateFilterOption.DATE;
 	private Date followUpUntilFrom;
 	private Date followUpUntilTo;
+	private Boolean followUpUntilToPrecise;
 	/**
 	 * If yes, the followUpUntilTo filter will search for strict matches instead of a period,
 	 * even if a followUpUntilFrom is specified
 	 */
-	private Boolean followUpUntilToPrecise;
+	private SymptomJournalStatus symptomJournalStatus;
 	private Date lastContactDateFrom;
 	private Date lastContactDateTo;
 	private Boolean deleted = Boolean.FALSE;
@@ -79,12 +99,26 @@ public class ContactCriteria extends BaseCriteria implements Serializable {
 	private ContactCategory contactCategory;
 	private CaseClassification caseClassification;
 	private QuarantineType quarantineType;
+	private Date quarantineFrom;
 	private Date quarantineTo;
 	private Boolean onlyQuarantineHelpNeeded;
 	private Boolean quarantineOrderedVerbally;
 	private Boolean quarantineOrderedOfficialDocument;
 	private Boolean quarantineNotOrdered;
+	private Boolean withExtendedQuarantine;
+	private Boolean withReducedQuarantine;
 	private PersonReferenceDto person;
+	private Integer birthdateYYYY;
+	private Integer birthdateMM;
+	private Integer birthdateDD;
+	private YesNoUnknown returningTraveler;
+	private String eventLike;
+	private String eventUuid;
+	private Boolean includeContactsFromOtherJurisdictions = Boolean.FALSE;
+	private Boolean onlyContactsSharingEventWithSourceCase;
+	private EventParticipantReferenceDto eventParticipant;
+	private EventReferenceDto onlyContactsWithSourceCaseInGivenEvent;
+	private Boolean onlyContactsFromOtherInstances;
 
 	public UserRole getReportingUserRole() {
 		return reportingUserRole;
@@ -117,6 +151,15 @@ public class ContactCriteria extends BaseCriteria implements Serializable {
 		return this;
 	}
 
+	public CaseReferenceDto getResultingCase() {
+		return resultingCase;
+	}
+
+	public ContactCriteria resultingCase(CaseReferenceDto resultingCase) {
+		this.resultingCase = resultingCase;
+		return this;
+	}
+
 	public RegionReferenceDto getRegion() {
 		return region;
 	}
@@ -141,6 +184,19 @@ public class ContactCriteria extends BaseCriteria implements Serializable {
 
 	public ContactCriteria district(DistrictReferenceDto district) {
 		setDistrict(district);
+		return this;
+	}
+
+	public CommunityReferenceDto getCommunity() {
+		return community;
+	}
+
+	public void setCommunity(CommunityReferenceDto community) {
+		this.community = community;
+	}
+
+	public ContactCriteria community(CommunityReferenceDto community) {
+		setCommunity(community);
 		return this;
 	}
 
@@ -257,6 +313,14 @@ public class ContactCriteria extends BaseCriteria implements Serializable {
 		return followUpUntilTo;
 	}
 
+	public SymptomJournalStatus getSymptomJournalStatus() {
+		return symptomJournalStatus;
+	}
+
+	public void setSymptomJournalStatus(SymptomJournalStatus symptomJournalStatus) {
+		this.symptomJournalStatus = symptomJournalStatus;
+	}
+
 	public Boolean getFollowUpUntilToPrecise() {
 		return followUpUntilToPrecise;
 	}
@@ -338,6 +402,14 @@ public class ContactCriteria extends BaseCriteria implements Serializable {
 		this.onlyQuarantineHelpNeeded = onlyQuarantineHelpNeeded;
 	}
 
+	public Date getQuarantineFrom() {
+		return quarantineFrom;
+	}
+
+	public void setQuarantineFrom(Date quarantineFrom) {
+		this.quarantineFrom = quarantineFrom;
+	}
+
 	public Date getQuarantineTo() {
 		return quarantineTo;
 	}
@@ -370,12 +442,145 @@ public class ContactCriteria extends BaseCriteria implements Serializable {
 		this.quarantineNotOrdered = quarantineNotOrdered;
 	}
 
+	public Boolean getWithExtendedQuarantine() {
+		return withExtendedQuarantine;
+	}
+
+	public void setWithExtendedQuarantine(Boolean withExtendedQuarantine) {
+		this.withExtendedQuarantine = withExtendedQuarantine;
+	}
+
+	public Boolean getWithReducedQuarantine() {
+		return withReducedQuarantine;
+	}
+
+	public void setWithReducedQuarantine(Boolean withReducedQuarantine) {
+		this.withReducedQuarantine = withReducedQuarantine;
+	}
+
 	public PersonReferenceDto getPerson() {
 		return person;
 	}
 
-	public ContactCriteria person(PersonReferenceDto person) {
+	public ContactCriteria setPerson(PersonReferenceDto person) {
 		this.person = person;
 		return this;
+	}
+
+	public Integer getBirthdateYYYY() {
+		return birthdateYYYY;
+	}
+
+	public void setBirthdateYYYY(Integer birthdateYYYY) {
+		this.birthdateYYYY = birthdateYYYY;
+	}
+
+	public Integer getBirthdateMM() {
+		return birthdateMM;
+	}
+
+	public void setBirthdateMM(Integer birthdateMM) {
+		this.birthdateMM = birthdateMM;
+	}
+
+	public Integer getBirthdateDD() {
+		return birthdateDD;
+	}
+
+	public void setBirthdateDD(Integer birthdateDD) {
+		this.birthdateDD = birthdateDD;
+	}
+
+	public YesNoUnknown getReturningTraveler() {
+		return returningTraveler;
+	}
+
+	public void setReturningTraveler(YesNoUnknown returningTraveler) {
+		this.returningTraveler = returningTraveler;
+	}
+
+	public void setEventLike(String eventLike) {
+		this.eventLike = eventLike;
+	}
+
+	@IgnoreForUrl
+	public String getEventLike() {
+		return eventLike;
+	}
+
+	public ContactCriteria eventLike(String eventLike) {
+		setEventLike(eventLike);
+		return this;
+	}
+
+	public void setEventUuid(String eventUuid) {
+		this.eventUuid = eventUuid;
+	}
+
+	public String getEventUuid() {
+		return eventUuid;
+	}
+
+	public ContactCriteria eventUuid(String eventUuid) {
+		setEventUuid(eventUuid);
+		return this;
+	}
+
+	public void setOnlyContactsSharingEventWithSourceCase(Boolean onlyContactsSharingEventWithSourceCase) {
+		this.onlyContactsSharingEventWithSourceCase = onlyContactsSharingEventWithSourceCase;
+	}
+
+	@IgnoreForUrl
+	public Boolean getOnlyContactsSharingEventWithSourceCase() {
+		return onlyContactsSharingEventWithSourceCase;
+	}
+
+	public ContactCriteria onlyContactsSharingEventWithSourceCase(Boolean onlyContactsSharingEventWithSourceCase) {
+		this.onlyContactsSharingEventWithSourceCase = onlyContactsSharingEventWithSourceCase;
+		return this;
+	}
+
+	public Boolean getIncludeContactsFromOtherJurisdictions() {
+		return includeContactsFromOtherJurisdictions;
+	}
+
+	public void setIncludeContactsFromOtherJurisdictions(Boolean includeContactsFromOtherJurisdictions) {
+		this.includeContactsFromOtherJurisdictions = includeContactsFromOtherJurisdictions;
+	}
+
+	public void setEventParticipant(EventParticipantReferenceDto eventParticipant) {
+		this.eventParticipant = eventParticipant;
+	}
+
+	@IgnoreForUrl
+	public EventParticipantReferenceDto getEventParticipant() {
+		return eventParticipant;
+	}
+
+	public ContactCriteria eventParticipant(EventParticipantReferenceDto eventParticipant) {
+		this.eventParticipant = eventParticipant;
+		return this;
+	}
+
+	public void setOnlyContactsWithSourceCaseInGivenEvent(EventReferenceDto onlyContactsWithSourceCaseInGivenEvent) {
+		this.onlyContactsWithSourceCaseInGivenEvent = onlyContactsWithSourceCaseInGivenEvent;
+	}
+
+	@IgnoreForUrl
+	public EventReferenceDto getOnlyContactsWithSourceCaseInGivenEvent() {
+		return onlyContactsWithSourceCaseInGivenEvent;
+	}
+
+	public ContactCriteria onlyContactsWithSourceCaseInGivenEvent(EventReferenceDto onlyContactsWithSourceCaseInGivenEvent) {
+		this.onlyContactsWithSourceCaseInGivenEvent = onlyContactsWithSourceCaseInGivenEvent;
+		return this;
+	}
+
+	public Boolean getOnlyContactsFromOtherInstances() {
+		return onlyContactsFromOtherInstances;
+	}
+
+	public void setOnlyContactsFromOtherInstances(Boolean onlyContactsFromOtherInstances) {
+		this.onlyContactsFromOtherInstances = onlyContactsFromOtherInstances;
 	}
 }

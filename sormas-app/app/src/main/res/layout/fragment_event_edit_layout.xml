@@ -25,14 +25,20 @@
     tools:ignore="contentDescription">
 
     <data>
+        <import type="android.view.View" />
         <import type="de.symeda.sormas.api.event.EventStatus" />
+        <import type="de.symeda.sormas.api.event.MeansOfTransport" />
         <import type="de.symeda.sormas.api.event.TypeOfPlace" />
         <import type="de.symeda.sormas.api.event.EventSourceType" />
+        <import type="de.symeda.sormas.api.event.InstitutionalPartnerType" />
         <import type="de.symeda.sormas.api.Disease" />
         <import type="de.symeda.sormas.api.utils.YesNoUnknown" />
 
         <variable name="data" type="de.symeda.sormas.app.backend.event.Event"/>
+        <variable name="eventManagementStatusClass" type="Class" />
         <variable name="eventStatusClass" type="Class" />
+        <variable name="eventInvestigationStatusClass" type="Class" />
+        <variable name="riskLevelClass" type="Class" />
         <variable name="isMultiDayEvent" type="Boolean" />
     </data>
 
@@ -58,9 +64,9 @@
                     app:shortUuidValue="@{data.uuid}" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
-                    android:id="@+id/event_surveillanceOfficer"
+                    android:id="@+id/event_responsibleUser"
                     style="@style/ControlSecondOfTwoColumnsStyle"
-                    app:value="@{data.surveillanceOfficer}" />
+                    app:value="@{data.responsibleUser}" />
 
             </LinearLayout>
 
@@ -90,6 +96,19 @@
                 app:required="true"
                 app:value="@={data.eventStatus}"/>
 
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/event_eventManagementStatus"
+                style="@style/ControlSingleColumnStyle"
+                app:enumClass="@{eventManagementStatusClass}"
+                app:value="@={data.eventManagementStatus}"/>
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/event_riskLevel"
+                style="@style/ControlSingleColumnStyle"
+                app:enumClass="@{riskLevelClass}"
+                app:value="@={data.riskLevel}"/>
+
             <de.symeda.sormas.app.component.controls.ControlCheckBoxField
                 android:id="@+id/event_multiDayEvent"
                 style="@style/ControlSingleColumnStyle"
@@ -111,22 +130,96 @@
                 app:dependencyParentField="@{eventMultiDayEvent}"
                 app:dependencyParentValue="@{true}"
                 app:softRequired="true"
+                app:allowedDaysInFuture="365"
                 app:value="@={data.endDate}" />
         </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlDateField
+                android:id="@+id/event_evolutionDate"
+                style="@style/ControlSingleColumnStyle"
+                app:value="@={data.evolutionDate}" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/event_evolutionComment"
+                style="@style/ControlSingleColumnStyle"
+                app:value="@={data.evolutionComment}"
+                app:dependencyParentField="@{eventEvolutionDate}"
+                app:dependencyParentValue="@{null}"
+                app:dependencyParentVisibility="@{false}" />
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/event_eventInvestigationStatus"
+                style="@style/ControlSingleColumnStyle"
+                app:enumClass="@{eventInvestigationStatusClass}"
+                app:value="@={data.eventInvestigationStatus}"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/event_eventInvestigationStartDate"
+                    style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:value="@={data.eventInvestigationStartDate}" />
+
+                <de.symeda.sormas.app.component.controls.ControlDateField
+                    android:id="@+id/event_eventInvestigationEndDate"
+                    style="@style/ControlSecondOfTwoColumnsStyle"
+                    app:value="@={data.eventInvestigationEndDate}" />
+            </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/event_eventTitle"
+                style="@style/ControlSingleColumnStyle"
+                app:required="true"
+                app:value="@={data.eventTitle}" />
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField
                 android:id="@+id/event_eventDesc"
                 style="@style/ControlSingleColumnStyle"
-                app:required="true"
                 app:value="@={data.eventDesc}" />
+
+            <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                android:id="@+id/event_diseaseTransmissionMode"
+                style="@style/ControlSingleColumnStyle"
+                app:dependencyParentField="@{eventEventStatus}"
+                app:dependencyParentValue="@{EventStatus.CLUSTER}"
+                app:value="@={data.diseaseTransmissionMode}" />
+
+            <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                android:id="@+id/event_humanTransmissionMode"
+                style="@style/ControlSingleColumnStyle"
+                app:value="@={data.humanTransmissionMode}" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                    android:id="@+id/event_parenteralTransmissionMode"
+                    style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:value="@={data.parenteralTransmissionMode}" />
+
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                    android:id="@+id/event_medicallyAssociatedTransmissionMode"
+                    style="@style/ControlSecondOfTwoColumnsStyle"
+                    app:value="@={data.medicallyAssociatedTransmissionMode}" />
+
+            </LinearLayout>
 
             <de.symeda.sormas.app.component.controls.ControlSwitchField
                 android:id="@+id/event_nosocomial"
                 style="@style/ControlSingleColumnStyle"
                 app:dependencyParentField="@{eventEventStatus}"
                 app:dependencyParentValue="@{EventStatus.CLUSTER}"
-                app:slim="true"
                 app:value="@={data.nosocomial}" />
+
+            <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                android:id="@+id/event_infectionPathCertainty"
+                style="@style/ControlSingleColumnStyle"
+                app:value="@={data.infectionPathCertainty}" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -148,19 +241,36 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/event_externalId"
+                    style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:value="@={data.externalId}" />
+
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/contact_externalToken"
+                    app:value="@={data.externalToken}"
+                    style="@style/ControlSecondOfTwoColumnsStyle"/>
+            </LinearLayout>
+
             <de.symeda.sormas.app.component.controls.ControlTextEditField
-                android:id="@+id/event_externalId"
-                style="@style/ControlSingleColumnStyle"
-                app:value="@={data.externalId}" />
+                android:id="@+id/contact_internalId"
+                app:value="@={data.internalId}"
+                style="@style/ControlSingleColumnStyle"/>
 
             <ImageView style="@style/FullHorizontalDividerStyle"/>
 
-            <de.symeda.sormas.app.component.controls.ControlTextPopupField
-                android:id="@+id/event_eventLocation"
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/event_transregionalOutbreak"
                 style="@style/ControlSingleColumnStyle"
-                app:hint="@string/hint_enter_location"
-                app:iconStart="@drawable/ic_edit_location_black_24dp"
-                app:locationValue="@={data.eventLocation}" />
+                app:dependencyParentField="@{eventEventStatus}"
+                app:dependencyParentValue="@{EventStatus.CLUSTER}"
+                app:value="@={data.transregionalOutbreak}" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -178,10 +288,62 @@
                     style="@style/ControlSecondOfTwoColumnsStyle"
                     app:dependencyParentField="@{eventTypeOfPlace}"
                     app:dependencyParentValue="@{TypeOfPlace.OTHER}"
-                    app:softRequired="true"
+                    app:required="true"
                     app:value="@={data.typeOfPlaceText}" />
 
             </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                android:id="@+id/event_workEnvironment"
+                app:value="@={data.workEnvironment}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextPopupField
+                android:id="@+id/event_eventLocation"
+                style="@style/ControlSingleColumnStyle"
+                app:hint="@string/hint_enter_location"
+                app:iconStart="@drawable/ic_edit_location_black_24dp"
+                app:locationValue="@={data.eventLocation}" />
+
+            <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                android:id="@+id/event_meansOfTransport"
+                style="@style/ControlSingleColumnStyle"
+                app:dependencyParentField="@{eventTypeOfPlace}"
+                app:dependencyParentValue="@{TypeOfPlace.MEANS_OF_TRANSPORT}"
+                app:softRequired="true"
+                app:value="@={data.meansOfTransport}" />
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/event_meansOfTransportDetails"
+                style="@style/ControlSingleColumnStyle"
+                app:dependencyParentField="@{eventMeansOfTransport}"
+                app:dependencyParentValue="@{MeansOfTransport.OTHER}"
+                app:softRequired="true"
+                app:value="@={data.meansOfTransportDetails}" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <de.symeda.sormas.app.component.controls.ControlTextEditField
+                android:id="@+id/event_connectionNumber"
+                style="@style/ControlFirstOfTwoColumnsStyle"
+                app:dependencyParentField="@{eventTypeOfPlace}"
+                app:dependencyParentValue="@{TypeOfPlace.MEANS_OF_TRANSPORT}"
+                app:softRequired="true"
+                app:value="@={data.connectionNumber}" />
+
+            <de.symeda.sormas.app.component.controls.ControlDateField
+                android:id="@+id/event_travelDate"
+                style="@style/ControlSecondOfTwoColumnsStyle"
+                app:dependencyParentField="@{eventTypeOfPlace}"
+                app:dependencyParentValue="@{TypeOfPlace.MEANS_OF_TRANSPORT}"
+                app:softRequired="true"
+                app:value="@={data.travelDate}" />
+
+        </LinearLayout>
+
 
             <ImageView style="@style/FullHorizontalDividerStyle"/>
 
@@ -198,6 +360,29 @@
                 app:value="@={data.srcType}" />
 
             <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                        android:id="@+id/event_srcInstitutionalPartnerType"
+                        style="@style/ControlFirstOfTwoColumnsStyle"
+                        app:dependencyParentField="@{eventSrcType}"
+                        app:dependencyParentValue="@{EventSourceType.INSTITUTIONAL_PARTNER}"
+                        app:softRequired="true"
+                        app:value="@={data.srcInstitutionalPartnerType}" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/event_srcInstitutionalPartnerTypeDetails"
+                        style="@style/ControlSecondOfTwoColumnsStyle"
+                        app:dependencyParentField="@{eventSrcInstitutionalPartnerType}"
+                        app:dependencyParentValue="@{InstitutionalPartnerType.OTHER}"
+                        app:softRequired="true"
+                        app:value="@={data.srcInstitutionalPartnerTypeDetails}" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -207,6 +392,7 @@
                     style="@style/ControlFirstOfTwoColumnsStyle"
                     app:dependencyParentField="@{eventSrcType}"
                     app:dependencyParentValue="@{EventSourceType.HOTLINE_PERSON}"
+                    app:dependencyParentValue2="@{EventSourceType.INSTITUTIONAL_PARTNER}"
                     app:softRequired="true"
                     app:value="@={data.srcFirstName}" />
 
@@ -215,6 +401,7 @@
                     style="@style/ControlSecondOfTwoColumnsStyle"
                     app:dependencyParentField="@{eventSrcType}"
                     app:dependencyParentValue="@{EventSourceType.HOTLINE_PERSON}"
+                    app:dependencyParentValue2="@{EventSourceType.INSTITUTIONAL_PARTNER}"
                     app:softRequired="true"
                     app:value="@={data.srcLastName}" />
 
@@ -230,6 +417,7 @@
                     style="@style/ControlFirstOfTwoColumnsStyle"
                     app:dependencyParentField="@{eventSrcType}"
                     app:dependencyParentValue="@{EventSourceType.HOTLINE_PERSON}"
+                    app:dependencyParentValue2="@{EventSourceType.INSTITUTIONAL_PARTNER}"
                     app:softRequired="true"
                     app:value="@={data.srcTelNo}" />
 
@@ -238,6 +426,7 @@
                     style="@style/ControlSecondOfTwoColumnsStyle"
                     app:dependencyParentField="@{eventSrcType}"
                     app:dependencyParentValue="@{EventSourceType.HOTLINE_PERSON}"
+                    app:dependencyParentValue2="@{EventSourceType.INSTITUTIONAL_PARTNER}"
                     app:value="@={data.srcEmail}" />
 
             </LinearLayout>

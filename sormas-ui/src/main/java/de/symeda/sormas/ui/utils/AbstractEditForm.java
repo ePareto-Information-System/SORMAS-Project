@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.data.Item;
 import com.vaadin.v7.data.Validator;
@@ -32,27 +31,29 @@ import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitEvent;
 import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.v7.data.util.converter.Converter.ConversionException;
 import com.vaadin.v7.ui.AbstractField;
+import com.vaadin.v7.ui.AbstractTextField;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.Field;
-import com.vaadin.v7.ui.OptionGroup;
 
 import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.utils.fieldaccess.FieldAccessCheckers;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 
-public abstract class AbstractEditForm<DTO extends EntityDto> extends AbstractForm<DTO> implements FieldGroup.CommitHandler {// implements DtoEditForm<DTO> {
+public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements FieldGroup.CommitHandler {// implements DtoEditForm<DTO> {
 
 	private static final long serialVersionUID = 1L;
 
 	protected final FieldVisibilityCheckers fieldVisibilityCheckers;
-	protected final FieldAccessCheckers fieldAccessCheckers;
+	protected final UiFieldAccessCheckers fieldAccessCheckers;
 
 	private boolean hideValidationUntilNextCommit = false;
 	private List<Field<?>> visibleAllowedFields = new ArrayList<>();
+	private boolean visibilitiesInitialized;
 	private List<Field<?>> editableAllowedFields = new ArrayList<>();
+	private boolean fieldAccessesInitialized;
 
 	protected AbstractEditForm(Class<DTO> type, String propertyI18nPrefix) {
 		this(type, propertyI18nPrefix, true, null, null);
@@ -71,7 +72,7 @@ public abstract class AbstractEditForm<DTO extends EntityDto> extends AbstractFo
 		String propertyI18nPrefix,
 		boolean addFields,
 		FieldVisibilityCheckers fieldVisibilityCheckers,
-		FieldAccessCheckers fieldAccessCheckers) {
+		UiFieldAccessCheckers fieldAccessCheckers) {
 
 		super(type, propertyI18nPrefix, new SormasFieldGroupFieldFactory(fieldVisibilityCheckers, fieldAccessCheckers), false);
 		this.fieldVisibilityCheckers = fieldVisibilityCheckers;
@@ -83,27 +84,6 @@ public abstract class AbstractEditForm<DTO extends EntityDto> extends AbstractFo
 		if (addFields) {
 			addFields();
 		}
-	}
-
-	@SuppressWarnings("rawtypes")
-	public static CommitDiscardWrapperComponent<? extends AbstractEditForm> buildCommitDiscardWrapper(AbstractEditForm wrappedForm) {
-		return new CommitDiscardWrapperComponent<>(wrappedForm, wrappedForm.getFieldGroup());
-	}
-
-	@SuppressWarnings("rawtypes")
-	public static CommitDiscardWrapperComponent<VerticalLayout> buildCommitDiscardWrapper(AbstractEditForm... wrappedForms) {
-
-		VerticalLayout formsLayout = new VerticalLayout();
-		if (wrappedForms.length > 0) { // not perfect, but necessary to make this work in grid views like CaseDataView
-			formsLayout.setWidth(wrappedForms[0].getWidth(), wrappedForms[0].getWidthUnits());
-		}
-		FieldGroup[] fieldGroups = new FieldGroup[wrappedForms.length];
-		for (int i = 0; i < wrappedForms.length; i++) {
-			formsLayout.addComponent(wrappedForms[i]);
-			wrappedForms[i].setWidth(100, Unit.PERCENTAGE);
-			fieldGroups[i] = wrappedForms[i].getFieldGroup();
-		}
-		return new CommitDiscardWrapperComponent<>(formsLayout, fieldGroups);
 	}
 
 	@Override
@@ -230,7 +210,7 @@ public abstract class AbstractEditForm<DTO extends EntityDto> extends AbstractFo
 	@SuppressWarnings("rawtypes")
 	@Override
 	protected <T extends Field> T addDateField(String propertyId, Class<T> fieldType, int allowedDaysInFuture) {
-		T field = getFieldGroup().buildAndBind(propertyId, (Object) propertyId, fieldType);
+		T field = createField(propertyId, fieldType);
 		formatField(field, propertyId);
 		field.setId(propertyId);
 		getContent().addComponent(field, propertyId);
@@ -241,11 +221,16 @@ public abstract class AbstractEditForm<DTO extends EntityDto> extends AbstractFo
 	@SuppressWarnings("rawtypes")
 	@Override
 	protected <T extends Field> void formatField(T field, String propertyId) {
+		formatField(field, propertyId, I18nProperties.getPrefixCaption(propertyI18nPrefix, propertyId, field.getCaption()));
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	protected <T extends Field> void formatField(T field, String propertyId, String customCaption) {
 
 		super.formatField(field, propertyId);
 
-		String caption = I18nProperties.getPrefixCaption(propertyI18nPrefix, propertyId, field.getCaption());
-		field.setCaption(caption);
+		field.setCaption(customCaption);
 
 		if (field instanceof AbstractField) {
 			AbstractField<?> abstractField = (AbstractField) field;
@@ -256,7 +241,7 @@ public abstract class AbstractEditForm<DTO extends EntityDto> extends AbstractFo
 			}
 		}
 
-		String validationError = I18nProperties.getPrefixValidationError(propertyI18nPrefix, propertyId, caption);
+		String validationError = I18nProperties.getPrefixValidationError(propertyI18nPrefix, propertyId, customCaption);
 		field.setRequiredError(validationError);
 
 		field.setWidth(100, Unit.PERCENTAGE);
@@ -264,7 +249,7 @@ public abstract class AbstractEditForm<DTO extends EntityDto> extends AbstractFo
 
 	protected void styleAsOptionGroupHorizontal(List<String> fields) {
 		for (String field : fields) {
-			CssStyles.style((OptionGroup) getFieldGroup().getField(field), ValoTheme.OPTIONGROUP_HORIZONTAL);
+			CssStyles.style((NullableOptionGroup) getFieldGroup().getField(field), ValoTheme.OPTIONGROUP_HORIZONTAL);
 		}
 	}
 
@@ -273,6 +258,15 @@ public abstract class AbstractEditForm<DTO extends EntityDto> extends AbstractFo
 		for (String propertyId : fieldOrPropertyIds) {
 			if (readOnly || isEditableAllowed(propertyId)) {
 				getField(propertyId).setReadOnly(readOnly);
+			}
+		}
+	}
+
+	protected void setEnabled(boolean enabled, String... fieldOrPropertyIds) {
+
+		for (String propertyId : fieldOrPropertyIds) {
+			if (enabled || isEditableAllowed(propertyId)) {
+				getField(propertyId).setEnabled(enabled);
 			}
 		}
 	}
@@ -319,7 +313,9 @@ public abstract class AbstractEditForm<DTO extends EntityDto> extends AbstractFo
 		for (String propertyId : fieldOrPropertyIds) {
 			if (!required || isEditableAllowed(propertyId)) {
 				Field<?> field = getField(propertyId);
-				field.setRequired(required);
+				if (!field.isReadOnly()) {
+					field.setRequired(required);
+				}
 			}
 		}
 	}
@@ -416,6 +412,8 @@ public abstract class AbstractEditForm<DTO extends EntityDto> extends AbstractFo
 				field.setVisible(false);
 			}
 		}
+
+		visibilitiesInitialized = true;
 	}
 
 	/**
@@ -423,7 +421,7 @@ public abstract class AbstractEditForm<DTO extends EntityDto> extends AbstractFo
 	 * the given field. This needs to be called before EVERY setVisible or setVisibleWhen call.
 	 */
 	protected boolean isVisibleAllowed(Field<?> field) {
-		return visibleAllowedFields.isEmpty() || visibleAllowedFields.contains(field);
+		return !visibilitiesInitialized || visibleAllowedFields.contains(field);
 	}
 
 	protected boolean isVisibleAllowed(String propertyId) {
@@ -445,10 +443,22 @@ public abstract class AbstractEditForm<DTO extends EntityDto> extends AbstractFo
 			if (fieldAccessCheckers.isAccessible(getType(), propertyId.toString())) {
 				editableAllowedFields.add(field);
 			} else {
-				field.setReadOnly(true);
+				field.setEnabled(false);
 				field.setRequired(false);
+				field.addStyleName(CssStyles.INACCESSIBLE_FIELD);
+
+				if (field instanceof AbstractTextField) {
+					((AbstractTextField) field).setInputPrompt(I18nProperties.getCaption(Captions.inaccessibleValue));
+				}
+
+				if (field instanceof ComboBoxWithPlaceholder) {
+					ComboBoxWithPlaceholder combo = (ComboBoxWithPlaceholder) field;
+					combo.setPlaceholder(I18nProperties.getCaption(Captions.inaccessibleValue));
+				}
 			}
 		}
+
+		fieldAccessesInitialized = true;
 	}
 
 	/**
@@ -456,7 +466,7 @@ public abstract class AbstractEditForm<DTO extends EntityDto> extends AbstractFo
 	 * the given field. This needs to be called before EVERY setEnabled or setEnabledWhen call.
 	 */
 	protected boolean isEditableAllowed(Field<?> field) {
-		return editableAllowedFields.isEmpty() || editableAllowedFields.contains(field);
+		return !fieldAccessesInitialized || editableAllowedFields.contains(field);
 	}
 
 	protected boolean isEditableAllowed(String propertyId) {

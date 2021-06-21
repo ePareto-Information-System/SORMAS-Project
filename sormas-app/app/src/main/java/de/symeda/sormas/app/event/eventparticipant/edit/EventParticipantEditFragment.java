@@ -19,6 +19,9 @@ import static android.view.View.GONE;
 
 import android.view.View;
 
+import de.symeda.sormas.api.event.EventDto;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
+import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
@@ -35,12 +38,19 @@ public class EventParticipantEditFragment extends BaseEditFragment<FragmentEvent
 	private EventParticipant record;
 
 	public static EventParticipantEditFragment newInstance(EventParticipant activityRootData) {
-		return newInstance(EventParticipantEditFragment.class, null, activityRootData);
+		return newInstanceWithFieldCheckers(
+			EventParticipantEditFragment.class,
+			null,
+			activityRootData,
+			new FieldVisibilityCheckers(),
+			UiFieldAccessCheckers.getDefault(activityRootData.isPseudonymized()));
 	}
 
 	// Instance methods
 
 	private void setUpFieldVisibilities(FragmentEventParticipantEditLayoutBinding contentBinding) {
+		setFieldVisibilitiesAndAccesses(EventDto.class, contentBinding.mainContent);
+
 		if (record.getResultingCaseUuid() != null) {
 			contentBinding.createCaseFromEventPerson.setVisibility(GONE);
 			if (DatabaseHelper.getCaseDao().queryUuidBasic(record.getResultingCaseUuid()) == null) {

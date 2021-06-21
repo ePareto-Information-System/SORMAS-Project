@@ -17,9 +17,9 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.user;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
@@ -36,14 +36,13 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.ui.ComboBox;
 
+import de.symeda.sormas.api.AuthProvider;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.user.UserDto;
-import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.UserProvider;
@@ -55,9 +54,6 @@ import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 
 public class UserController {
-
-	public UserController() {
-	}
 
 	public void create() {
 		CommitDiscardWrapperComponent<UserEditForm> userCreateComponent = getUserCreateComponent();
@@ -108,7 +104,7 @@ public class UserController {
 			userEditForm.getFieldGroup());
 
 		// Add reset password button
-		Button resetPasswordButton = createResetPasswordButton(userUuid, editView);
+		Button resetPasswordButton = createResetPasswordButton(userUuid, userDto.getUserEmail(), editView);
 		editView.getButtonsPanel().addComponent(resetPasswordButton, 0);
 
 		editView.addDiscardListener(closeWindowCallback::run);
@@ -168,7 +164,7 @@ public class UserController {
 					UserDto dto = createForm.getValue();
 					dto = FacadeProvider.getUserFacade().saveUser(dto);
 					refreshView();
-					makeNewPassword(dto.getUuid());
+					makeInitialPassword(dto.getUuid(), dto.getUserEmail());
 				}
 			}
 		});
@@ -179,9 +175,26 @@ public class UserController {
 		return FacadeProvider.getUserFacade().isLoginUnique(uuid, userName);
 	}
 
-	public void makeNewPassword(String userUuid) {
+	public void makeInitialPassword(String userUuid, String userEmail) {
+		if (StringUtils.isBlank(userEmail) || AuthProvider.getProvider().isDefaultProvider()) {
+			String newPassword = FacadeProvider.getUserFacade().resetPassword(userUuid);
+			showPasswordResetInternalSuccessPopup(newPassword);
+		} else {
+			showAccountCreatedSuccessful();
+		}
+	}
+
+	public void makeNewPassword(String userUuid, String userEmail) {
 		String newPassword = FacadeProvider.getUserFacade().resetPassword(userUuid);
 
+		if (StringUtils.isBlank(userEmail) || AuthProvider.getProvider().isDefaultProvider()) {
+			showPasswordResetInternalSuccessPopup(newPassword);
+		} else {
+			showPasswordResetExternalSuccessPopup();
+		}
+	}
+
+	private void showPasswordResetInternalSuccessPopup(String newPassword) {
 		VerticalLayout layout = new VerticalLayout();
 		layout.addComponent(new Label(I18nProperties.getString(Strings.messageCopyPassword)));
 		Label passwordLabel = new Label(newPassword);
@@ -192,20 +205,22 @@ public class UserController {
 		layout.setMargin(true);
 	}
 
-	public List<UserReferenceDto> filterByDistrict(List<UserReferenceDto> users, DistrictReferenceDto district) {
-		List<UserDto> userDtos = new ArrayList<>();
-		for (UserReferenceDto userRef : users) {
-			userDtos.add(FacadeProvider.getUserFacade().getByUuid(userRef.getUuid()));
-		}
+	private void showAccountCreatedSuccessful() {
+		VerticalLayout layout = new VerticalLayout();
+		layout.addComponent(new Label(I18nProperties.getString(Strings.messageActivateAccount)));
+		Window popupWindow = VaadinUiUtil.showPopupWindow(layout);
+		popupWindow.setCaption(I18nProperties.getString(Strings.headingNewAccount));
+		popupWindow.setWidth(350, Unit.PIXELS);
+		layout.setMargin(true);
+	}
 
-		userDtos.removeIf(user -> user.getDistrict() == null || !user.getDistrict().equals(district));
-
-		List<UserReferenceDto> userRefs = new ArrayList<>();
-		for (UserDto user : userDtos) {
-			userRefs.add(FacadeProvider.getUserFacade().getByUserNameAsReference(user.getUserName()));
-		}
-
-		return userRefs;
+	private void showPasswordResetExternalSuccessPopup() {
+		VerticalLayout layout = new VerticalLayout();
+		layout.addComponent(new Label(I18nProperties.getString(Strings.messagePasswordResetEmailLink)));
+		Window popupWindow = VaadinUiUtil.showPopupWindow(layout);
+		popupWindow.setCaption(I18nProperties.getString(Strings.headingNewPassword));
+		popupWindow.setWidth(450, Unit.PIXELS);
+		layout.setMargin(true);
 	}
 
 	private void refreshView() {
@@ -216,7 +231,7 @@ public class UserController {
 		}
 	}
 
-	public Button createResetPasswordButton(String userUuid, CommitDiscardWrapperComponent<UserEditForm> editView) {
+	public Button createResetPasswordButton(String userUuid, String userEmail, CommitDiscardWrapperComponent<UserEditForm> editView) {
 
 		return ButtonHelper.createIconButton(Captions.userResetPassword, VaadinIcons.UNLOCK, new ClickListener() {
 
@@ -224,7 +239,7 @@ public class UserController {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				ConfirmationComponent resetPasswordComponent = getResetPasswordConfirmationComponent(userUuid, editView);
+				ConfirmationComponent resetPasswordComponent = getResetPasswordConfirmationComponent(userUuid, userEmail, editView);
 				Window popupWindow = VaadinUiUtil.showPopupWindow(resetPasswordComponent);
 				resetPasswordComponent.addDoneListener(() -> popupWindow.close());
 				resetPasswordComponent.getCancelButton().addClickListener(new ClickListener() {
@@ -241,7 +256,10 @@ public class UserController {
 		}, ValoTheme.BUTTON_LINK);
 	}
 
-	public ConfirmationComponent getResetPasswordConfirmationComponent(String userUuid, CommitDiscardWrapperComponent<UserEditForm> editView) {
+	public ConfirmationComponent getResetPasswordConfirmationComponent(
+		String userUuid,
+		String userEmail,
+		CommitDiscardWrapperComponent<UserEditForm> editView) {
 		ConfirmationComponent resetPasswordConfirmationComponent = new ConfirmationComponent(false) {
 
 			private static final long serialVersionUID = 1L;
@@ -250,7 +268,7 @@ public class UserController {
 			protected void onConfirm() {
 				onDone();
 				editView.discard();
-				makeNewPassword(userUuid);
+				makeNewPassword(userUuid, userEmail);
 			}
 
 			@Override
@@ -268,20 +286,18 @@ public class UserController {
 		UserDto user = FacadeProvider.getUserFacade().getByUuid(UserProvider.getCurrent().getUuid());
 		form.setValue(user);
 
-		final CommitDiscardWrapperComponent<UserSettingsForm> component =
-			new CommitDiscardWrapperComponent<UserSettingsForm>(form, form.getFieldGroup());
+		final CommitDiscardWrapperComponent<UserSettingsForm> component = new CommitDiscardWrapperComponent<>(form, form.getFieldGroup());
 		component.addCommitListener(() -> {
 			if (!form.getFieldGroup().isModified()) {
 				UserDto changedUser = form.getValue();
 				FacadeProvider.getUserFacade().saveUser(changedUser);
 				I18nProperties.setUserLanguage(changedUser.getLanguage());
+				FacadeProvider.getI18nFacade().setUserLanguage(changedUser.getLanguage());
 				Page.getCurrent().reload();
 				commitOrDiscardCallback.run();
 			}
 		});
-		component.addDiscardListener(() -> {
-			commitOrDiscardCallback.run();
-		});
+		component.addDiscardListener(commitOrDiscardCallback::run);
 
 		return component;
 	}
@@ -290,5 +306,10 @@ public class UserController {
 		for (Language language : Language.values()) {
 			cbLanguage.setItemIcon(language, new ThemeResource("img/flag-icons/" + language.name().toLowerCase() + ".png"));
 		}
+	}
+
+	public void sync() {
+		Window window = VaadinUiUtil.showPopupWindow(new UsersSyncLayout());
+		window.setCaption(I18nProperties.getCaption(Captions.syncUsers));
 	}
 }

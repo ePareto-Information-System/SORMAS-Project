@@ -18,7 +18,6 @@
 package de.symeda.sormas.ui.utils;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Objects;
 
 import org.vaadin.hene.popupbutton.PopupButton;
@@ -41,7 +40,6 @@ import com.vaadin.ui.themes.ValoTheme;
 import de.symeda.sormas.api.BaseCriteria;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.ui.SormasUI;
 
 public abstract class AbstractView extends VerticalLayout implements View {
@@ -50,6 +48,7 @@ public abstract class AbstractView extends VerticalLayout implements View {
 
 	protected final String viewName;
 	private final HorizontalLayout viewHeader;
+	private final VerticalLayout viewTitleLayout;
 	private final Label viewTitleLabel;
 	private final Label viewSubTitleLabel;
 
@@ -69,7 +68,7 @@ public abstract class AbstractView extends VerticalLayout implements View {
 		viewHeader.setSpacing(true);
 		CssStyles.style(viewHeader, "view-header");
 
-		VerticalLayout viewTitleLayout = new VerticalLayout();
+		viewTitleLayout = new VerticalLayout();
 		{
 			viewTitleLayout.setSizeUndefined();
 			viewTitleLayout.setSpacing(false);
@@ -97,6 +96,12 @@ public abstract class AbstractView extends VerticalLayout implements View {
 	protected void addHeaderComponent(Component c) {
 		viewHeader.addComponent(c);
 		viewHeader.setComponentAlignment(c, Alignment.MIDDLE_RIGHT);
+	}
+
+	protected void setMainHeaderComponent(Component c) {
+		viewHeader.removeComponent(viewTitleLayout);
+		viewHeader.addComponent(c, 0);
+		viewHeader.setExpandRatio(c, 1);
 	}
 
 	@Override
@@ -143,7 +148,7 @@ public abstract class AbstractView extends VerticalLayout implements View {
 		return didNavigate;
 	}
 
-	private String buildNavigationState(String currentState, BaseCriteria criteria) {
+	public static String buildNavigationState(String currentState, BaseCriteria criteria) {
 
 		String newState = currentState;
 		int paramsIndex = newState.lastIndexOf('?');
@@ -213,7 +218,7 @@ public abstract class AbstractView extends VerticalLayout implements View {
 			.orElse(propertyId);
 	}
 
-	protected String createFileNameWithCurrentDate(String fileNamePrefix, String fileExtension) {
-		return fileNamePrefix + DateHelper.formatDateForExport(new Date()) + fileExtension;
+	protected String createFileNameWithCurrentDate(ExportEntityName entityName, String fileExtension) {
+		return DownloadUtil.createFileNameWithCurrentDate(entityName, fileExtension);
 	}
 }

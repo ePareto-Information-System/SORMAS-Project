@@ -22,6 +22,7 @@ import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.api.utils.HtmlHelper;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 
@@ -66,7 +67,7 @@ public class LineListingConfigurationEditLayout extends VerticalLayout {
 					I18nProperties.getString(
 						regionName != null ? Strings.infoLineListingConfigurationRegionEdit : Strings.infoLineListingConfigurationNationEdit),
 					disease.toString(),
-					regionName),
+					HtmlHelper.cleanHtml(regionName)),
 			ContentMode.HTML);
 		CssStyles.style(lblInfo, CssStyles.VSPACE_4);
 		addComponent(lblInfo);

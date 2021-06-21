@@ -21,15 +21,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.function.Consumer;
 
+import com.opencsv.exceptions.CsvValidationException;
 import com.vaadin.server.ClassResource;
 import com.vaadin.server.Page;
-import com.vaadin.server.StreamResource;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.api.importexport.ImportFacade;
 import de.symeda.sormas.ui.importer.AbstractImportLayout;
 import de.symeda.sormas.ui.importer.ImportReceiver;
 
@@ -40,11 +41,10 @@ public class CaseImportLayout extends AbstractImportLayout {
 
 		super();
 
+		ImportFacade importFacade = FacadeProvider.getImportFacade();
+
 		addDownloadResourcesComponent(1, new ClassResource("/SORMAS_Import_Guide.pdf"), new ClassResource("/doc/SORMAS_Data_Dictionary.xlsx"));
-		addDownloadImportTemplateComponent(
-			2,
-			FacadeProvider.getImportFacade().getCaseImportTemplateFilePath().toString(),
-			"sormas_import_case_template.csv");
+		addDownloadImportTemplateComponent(2, importFacade.getCaseImportTemplateFilePath(), importFacade.getCaseImportTemplateFileName());
 		addImportCsvComponent(3, new ImportReceiver("_case_import_", new Consumer<File>() {
 
 			@Override
@@ -53,14 +53,8 @@ public class CaseImportLayout extends AbstractImportLayout {
 
 				try {
 					CaseImporter importer = new CaseImporter(file, true, currentUser);
-					importer.startImport(new Consumer<StreamResource>() {
-
-						@Override
-						public void accept(StreamResource resource) {
-							extendDownloadErrorReportButton(resource);
-						}
-					}, currentUI, true);
-				} catch (IOException e) {
+					importer.startImport(resource -> extendDownloadErrorReportButton(resource), currentUI, true);
+				} catch (IOException | CsvValidationException e) {
 					new Notification(
 						I18nProperties.getString(Strings.headingImportFailed),
 						I18nProperties.getString(Strings.messageImportFailed),

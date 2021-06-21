@@ -17,7 +17,9 @@ package de.symeda.sormas.app.backend.person;
 
 import static de.symeda.sormas.api.EntityDto.COLUMN_LENGTH_DEFAULT;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,20 +31,23 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import androidx.databinding.Bindable;
-
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.facility.FacilityType;
 import de.symeda.sormas.api.person.ApproximateAgeType;
+import de.symeda.sormas.api.person.ArmedForcesRelationType;
 import de.symeda.sormas.api.person.BurialConductor;
 import de.symeda.sormas.api.person.CauseOfDeath;
 import de.symeda.sormas.api.person.DeathPlaceType;
 import de.symeda.sormas.api.person.EducationType;
 import de.symeda.sormas.api.person.OccupationType;
 import de.symeda.sormas.api.person.PresentCondition;
+import de.symeda.sormas.api.person.Salutation;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 import de.symeda.sormas.app.backend.facility.Facility;
 import de.symeda.sormas.app.backend.location.Location;
 import de.symeda.sormas.app.backend.region.Community;
+import de.symeda.sormas.app.backend.region.Country;
 import de.symeda.sormas.app.backend.region.District;
 import de.symeda.sormas.app.backend.region.Region;
 
@@ -70,6 +75,12 @@ public class Person extends PseudonymizableAdo {
 	private String firstName;
 	@Column(nullable = false)
 	private String lastName;
+	@Enumerated(EnumType.STRING)
+	private Salutation salutation;
+	@Column(length = COLUMN_LENGTH_DEFAULT)
+	private String otherSalutation;
+	@Column(length = COLUMN_LENGTH_DEFAULT)
+	private String birthName;
 	@Column(length = COLUMN_LENGTH_DEFAULT)
 	private String nickname;
 	@Column(length = COLUMN_LENGTH_DEFAULT)
@@ -78,6 +89,8 @@ public class Person extends PseudonymizableAdo {
 	private String mothersName;
 	@Column(length = COLUMN_LENGTH_DEFAULT)
 	private String fathersName;
+	@Column(length = COLUMN_LENGTH_DEFAULT)
+	private String namesOfGuardians;
 	@Column
 	private Integer birthdateDD;
 	@Column
@@ -97,6 +110,8 @@ public class Person extends PseudonymizableAdo {
 	private District placeOfBirthDistrict;
 	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
 	private Community placeOfBirthCommunity;
+	@Enumerated(EnumType.STRING)
+	private FacilityType placeOfBirthFacilityType;
 	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
 	private Facility placeOfBirthFacility;
 	@Column(length = COLUMN_LENGTH_DEFAULT)
@@ -109,12 +124,6 @@ public class Person extends PseudonymizableAdo {
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 2)
 	private Location address;
-	@Column(length = COLUMN_LENGTH_DEFAULT)
-	private String phone;
-	@Column(length = COLUMN_LENGTH_DEFAULT)
-	private String phoneOwner;
-	@Column(length = COLUMN_LENGTH_DEFAULT)
-	private String emailAddress;
 
 	@Enumerated(EnumType.STRING)
 	private Sex sex;
@@ -151,23 +160,32 @@ public class Person extends PseudonymizableAdo {
 	private OccupationType occupationType;
 	@Column(length = COLUMN_LENGTH_DEFAULT)
 	private String occupationDetails;
-	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
-	private Region occupationRegion;
-	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
-	private District occupationDistrict;
-	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
-	private Community occupationCommunity;
-	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
-	private Facility occupationFacility;
-	@Column(length = COLUMN_LENGTH_DEFAULT)
-	private String occupationFacilityDetails;
+	@Enumerated
+	private ArmedForcesRelationType armedForcesRelationType;
 
-	@Column(length = COLUMN_LENGTH_DEFAULT)
-	private String generalPractitionerDetails;
 	@Column
 	private String passportNumber;
 	@Column
 	private String nationalHealthId;
+
+	private List<Location> addresses = new ArrayList<>();
+	private List<PersonContactDetail> personContactDetails = new ArrayList<>();
+
+	@Column(length = COLUMN_LENGTH_DEFAULT)
+	private String externalId;
+
+	@Column(length = COLUMN_LENGTH_DEFAULT)
+	private String externalToken;
+
+	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
+	private Country birthCountry;
+	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
+	private Country citizenship;
+	@Column(columnDefinition = "text")
+	private String additionalDetails;
+
+	public Person() {
+	}
 
 	@Bindable
 	public String getFirstName() {
@@ -185,6 +203,30 @@ public class Person extends PseudonymizableAdo {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+
+	public Salutation getSalutation() {
+		return salutation;
+	}
+
+	public void setSalutation(Salutation salutation) {
+		this.salutation = salutation;
+	}
+
+	public String getOtherSalutation() {
+		return otherSalutation;
+	}
+
+	public void setOtherSalutation(String otherSalutation) {
+		this.otherSalutation = otherSalutation;
+	}
+
+	public String getBirthName() {
+		return birthName;
+	}
+
+	public void setBirthName(String birthName) {
+		this.birthName = birthName;
 	}
 
 	public String getNickname() {
@@ -250,22 +292,6 @@ public class Person extends PseudonymizableAdo {
 
 	public void setAddress(Location address) {
 		this.address = address;
-	}
-
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-
-	public String getPhoneOwner() {
-		return phoneOwner;
-	}
-
-	public void setPhoneOwner(String phoneOwner) {
-		this.phoneOwner = phoneOwner;
 	}
 
 	public Sex getSex() {
@@ -349,44 +375,12 @@ public class Person extends PseudonymizableAdo {
 		this.occupationDetails = occupationDetails;
 	}
 
-	public Region getOccupationRegion() {
-		return occupationRegion;
+	public ArmedForcesRelationType getArmedForcesRelationType() {
+		return armedForcesRelationType;
 	}
 
-	public void setOccupationRegion(Region occupationRegion) {
-		this.occupationRegion = occupationRegion;
-	}
-
-	public District getOccupationDistrict() {
-		return occupationDistrict;
-	}
-
-	public void setOccupationDistrict(District occupationDistrict) {
-		this.occupationDistrict = occupationDistrict;
-	}
-
-	public Community getOccupationCommunity() {
-		return occupationCommunity;
-	}
-
-	public void setOccupationCommunity(Community occupationCommunity) {
-		this.occupationCommunity = occupationCommunity;
-	}
-
-	public Facility getOccupationFacility() {
-		return occupationFacility;
-	}
-
-	public void setOccupationFacility(Facility occupationFacility) {
-		this.occupationFacility = occupationFacility;
-	}
-
-	public String getOccupationFacilityDetails() {
-		return occupationFacilityDetails;
-	}
-
-	public void setOccupationFacilityDetails(String occupationFacilityDetails) {
-		this.occupationFacilityDetails = occupationFacilityDetails;
+	public void setArmedForcesRelationType(ArmedForcesRelationType armedForcesRelationType) {
+		this.armedForcesRelationType = armedForcesRelationType;
 	}
 
 	public CauseOfDeath getCauseOfDeath() {
@@ -465,6 +459,14 @@ public class Person extends PseudonymizableAdo {
 		this.fathersName = fathersName;
 	}
 
+	public String getNamesOfGuardians() {
+		return namesOfGuardians;
+	}
+
+	public void setNamesOfGuardians(String namesOfGuardians) {
+		this.namesOfGuardians = namesOfGuardians;
+	}
+
 	public Region getPlaceOfBirthRegion() {
 		return placeOfBirthRegion;
 	}
@@ -521,22 +523,6 @@ public class Person extends PseudonymizableAdo {
 		this.birthWeight = birthWeight;
 	}
 
-	public String getGeneralPractitionerDetails() {
-		return generalPractitionerDetails;
-	}
-
-	public void setGeneralPractitionerDetails(String generalPractitionerDetails) {
-		this.generalPractitionerDetails = generalPractitionerDetails;
-	}
-
-	public String getEmailAddress() {
-		return emailAddress;
-	}
-
-	public void setEmailAddress(String emailAddress) {
-		this.emailAddress = emailAddress;
-	}
-
 	public String getPassportNumber() {
 		return passportNumber;
 	}
@@ -551,5 +537,69 @@ public class Person extends PseudonymizableAdo {
 
 	public void setNationalHealthId(String nationalHealthId) {
 		this.nationalHealthId = nationalHealthId;
+	}
+
+	public FacilityType getPlaceOfBirthFacilityType() {
+		return placeOfBirthFacilityType;
+	}
+
+	public void setPlaceOfBirthFacilityType(FacilityType placeOfBirthFacilityType) {
+		this.placeOfBirthFacilityType = placeOfBirthFacilityType;
+	}
+
+	public List<Location> getAddresses() {
+		return addresses;
+	}
+
+	public void setAddresses(List<Location> addresses) {
+		this.addresses = addresses;
+	}
+
+	public List<PersonContactDetail> getPersonContactDetails() {
+		return personContactDetails;
+	}
+
+	public void setPersonContactDetails(List<PersonContactDetail> personContactDetails) {
+		this.personContactDetails = personContactDetails;
+	}
+
+	public String getExternalId() {
+		return externalId;
+	}
+
+	public void setExternalId(String externalId) {
+		this.externalId = externalId;
+	}
+
+	public String getExternalToken() {
+		return externalToken;
+	}
+
+	public void setExternalToken(String externalToken) {
+		this.externalToken = externalToken;
+	}
+
+	public Country getBirthCountry() {
+		return birthCountry;
+	}
+
+	public void setBirthCountry(Country birthCountry) {
+		this.birthCountry = birthCountry;
+	}
+
+	public Country getCitizenship() {
+		return citizenship;
+	}
+
+	public void setCitizenship(Country citizenship) {
+		this.citizenship = citizenship;
+	}
+
+	public String getAdditionalDetails() {
+		return additionalDetails;
+	}
+
+	public void setAdditionalDetails(String additionalDetails) {
+		this.additionalDetails = additionalDetails;
 	}
 }

@@ -19,18 +19,31 @@ package de.symeda.sormas.api.caze;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
 
 public enum CaseClassification
 	implements
 	StatisticsGroupingKey {
 
-	NOT_CLASSIFIED,
-	SUSPECT,
-	PROBABLE,
-	CONFIRMED,
-	CONFIRMED_NO_SYMPTOMS,
-	CONFIRMED_UNKNOWN_SYMPTOMS,
-	NO_CASE;
+	NOT_CLASSIFIED(1),
+	SUSPECT(2),
+	PROBABLE(3),
+	CONFIRMED(6),
+	CONFIRMED_NO_SYMPTOMS(4),
+	CONFIRMED_UNKNOWN_SYMPTOMS(5),
+	NO_CASE(0);
+
+	/**
+	 * Severity of the case classification; confirmed has the highest severity in terms of the classification process
+	 * while no_case has the lowest.
+	 */
+	private final int severity;
+
+	CaseClassification(int severity) {
+		this.severity = severity;
+	}
 
 	public String getName() {
 		return this.name();
@@ -56,5 +69,18 @@ public enum CaseClassification
 		}
 
 		return this.toString().compareTo(o.toString());
+	}
+
+	public int getSeverity() {
+		return severity;
+	}
+
+	public static Set<CaseClassification> getConfirmedClassifications() {
+		return Collections
+				.unmodifiableSet(EnumSet.of(
+						CaseClassification.CONFIRMED,
+						CaseClassification.CONFIRMED_NO_SYMPTOMS,
+						CaseClassification.CONFIRMED_UNKNOWN_SYMPTOMS
+				));
 	}
 }

@@ -17,39 +17,70 @@
  *******************************************************************************/
 package de.symeda.sormas.backend.event;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import de.symeda.auditlog.api.Audited;
+import de.symeda.auditlog.api.AuditedIgnore;
 import de.symeda.sormas.backend.caze.Case;
-import de.symeda.sormas.backend.common.AbstractDomainObject;
+import de.symeda.sormas.backend.common.CoreAdo;
 import de.symeda.sormas.backend.person.Person;
+import de.symeda.sormas.backend.region.District;
+import de.symeda.sormas.backend.region.Region;
 import de.symeda.sormas.backend.sample.Sample;
+import de.symeda.sormas.backend.sormastosormas.SormasToSormasEntity;
+import de.symeda.sormas.backend.sormastosormas.SormasToSormasOriginInfo;
+import de.symeda.sormas.backend.sormastosormas.SormasToSormasShareInfo;
+import de.symeda.sormas.backend.user.User;
+import de.symeda.sormas.backend.vaccinationinfo.VaccinationInfo;
 
 @Entity
 @Audited
-public class EventParticipant extends AbstractDomainObject {
+public class EventParticipant extends CoreAdo implements SormasToSormasEntity {
 
 	private static final long serialVersionUID = -9006001699517297107L;
 
 	public static final String TABLE_NAME = "eventparticipant";
 
+	public static final String REPORTING_USER = "reportingUser";
 	public static final String EVENT = "event";
 	public static final String PERSON = "person";
 	public static final String INVOLVEMENT_DESCRIPTION = "involvementDescription";
 	public static final String RESULTING_CASE = "resultingCase";
-
+	public static final String VACCINATION_INFO = "vaccinationInfo";
+	public static final String SAMPLES = "samples";
+	public static final String REGION = "region";
+	public static final String DISTRICT = "district";
+	private User reportingUser;
 	private Event event;
 	private Person person;
 	private String involvementDescription;
 	private Case resultingCase;
 	private Set<Sample> samples;
+	private Region region;
+	private District district;
+	private VaccinationInfo vaccinationInfo;
+	private SormasToSormasOriginInfo sormasToSormasOriginInfo;
+	private List<SormasToSormasShareInfo> sormasToSormasShares = new ArrayList<>(0);
+
+	@ManyToOne(cascade = {})
+	public User getReportingUser() {
+		return reportingUser;
+	}
+
+	public void setReportingUser(User reportingUser) {
+		this.reportingUser = reportingUser;
+	}
 
 	@ManyToOne(cascade = {})
 	public Event getEvent() {
@@ -70,7 +101,7 @@ public class EventParticipant extends AbstractDomainObject {
 		this.person = person;
 	}
 
-	@Column(length = 512, nullable = false)
+	@Column(length = 512)
 	public String getInvolvementDescription() {
 		return involvementDescription;
 	}
@@ -103,4 +134,52 @@ public class EventParticipant extends AbstractDomainObject {
 		this.samples = samples;
 	}
 
+	@ManyToOne(cascade = {})
+	public Region getRegion() {
+		return region;
+	}
+
+	public void setRegion(Region region) {
+		this.region = region;
+	}
+
+	@ManyToOne(cascade = {})
+	public District getDistrict() {
+		return district;
+	}
+
+	public void setDistrict(District district) {
+		this.district = district;
+	}
+
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@AuditedIgnore
+	public VaccinationInfo getVaccinationInfo() {
+		return vaccinationInfo;
+	}
+
+	public void setVaccinationInfo(VaccinationInfo vaccinationInfo) {
+		this.vaccinationInfo = vaccinationInfo;
+	}
+
+	@Override
+	@ManyToOne(cascade = CascadeType.ALL)
+	@AuditedIgnore
+	public SormasToSormasOriginInfo getSormasToSormasOriginInfo() {
+		return sormasToSormasOriginInfo;
+	}
+
+	@Override
+	public void setSormasToSormasOriginInfo(SormasToSormasOriginInfo sormasToSormasOriginInfo) {
+		this.sormasToSormasOriginInfo = sormasToSormasOriginInfo;
+	}
+
+	@OneToMany(mappedBy = SormasToSormasShareInfo.EVENT_PARTICIPANT, fetch = FetchType.LAZY)
+	public List<SormasToSormasShareInfo> getSormasToSormasShares() {
+		return sormasToSormasShares;
+	}
+
+	public void setSormasToSormasShares(List<SormasToSormasShareInfo> sormasToSormasShares) {
+		this.sormasToSormasShares = sormasToSormasShares;
+	}
 }

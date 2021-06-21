@@ -19,13 +19,15 @@ import java.util.List;
 
 import android.content.res.Resources;
 
+import de.symeda.sormas.api.caze.maternalhistory.MaternalHistoryDto;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.caze.Case;
 import de.symeda.sormas.app.backend.caze.maternalhistory.MaternalHistory;
 import de.symeda.sormas.app.component.Item;
 import de.symeda.sormas.app.databinding.FragmentCaseEditMaternalHistoryLayoutBinding;
-import de.symeda.sormas.app.util.InfrastructureHelper;
+import de.symeda.sormas.app.util.InfrastructureDaoHelper;
 
 public class CaseEditMaternalHistoryFragment extends BaseEditFragment<FragmentCaseEditMaternalHistoryLayoutBinding, MaternalHistory, Case> {
 
@@ -36,7 +38,12 @@ public class CaseEditMaternalHistoryFragment extends BaseEditFragment<FragmentCa
 	// Static methods
 
 	public static CaseEditMaternalHistoryFragment newInstance(Case activityRootData) {
-		return newInstance(CaseEditMaternalHistoryFragment.class, null, activityRootData);
+		return newInstanceWithFieldCheckers(
+			CaseEditMaternalHistoryFragment.class,
+			null,
+			activityRootData,
+			null,
+			UiFieldAccessCheckers.forSensitiveData(activityRootData.isPseudonymized()));
 	}
 
 	// Overrides
@@ -74,10 +81,12 @@ public class CaseEditMaternalHistoryFragment extends BaseEditFragment<FragmentCa
 		contentBinding.maternalHistorySwollenLymphsOnset.initializeDateField(getFragmentManager());
 		contentBinding.maternalHistoryRashExposureDate.initializeDateField(getFragmentManager());
 
-		List<Item> initialRegions = InfrastructureHelper.loadRegions();
-		List<Item> initialDistricts = InfrastructureHelper.loadDistricts(record.getRashExposureRegion());
-		List<Item> initialCommunities = InfrastructureHelper.loadCommunities(record.getRashExposureDistrict());
-		InfrastructureHelper.initializeRegionFields(
+		setFieldVisibilitiesAndAccesses(MaternalHistoryDto.class, contentBinding.mainContent);
+
+		List<Item> initialRegions = InfrastructureDaoHelper.loadRegionsByServerCountry();
+		List<Item> initialDistricts = InfrastructureDaoHelper.loadDistricts(record.getRashExposureRegion());
+		List<Item> initialCommunities = InfrastructureDaoHelper.loadCommunities(record.getRashExposureDistrict());
+		InfrastructureDaoHelper.initializeRegionFields(
 			contentBinding.maternalHistoryRashExposureRegion,
 			initialRegions,
 			record.getRashExposureRegion(),

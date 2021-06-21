@@ -77,6 +77,7 @@ public class User extends AbstractDomainObject {
 	public static final String POINT_OF_ENTRY = "pointOfEntry";
 	public static final String ASSOCIATED_OFFICER = "associatedOfficer";
 	public static final String LANGUAGE = "language";
+	public static final String HAS_CONSENTED_TO_GDPR = "hasConsentedToGdpr";
 
 	private String userName;
 	private String password;
@@ -108,6 +109,8 @@ public class User extends AbstractDomainObject {
 	private Disease limitedDisease;
 
 	private Language language;
+
+	private boolean hasConsentedToGdpr;
 
 	@Column(nullable = false, length = COLUMN_LENGTH_DEFAULT)
 	public String getUserName() {
@@ -182,7 +185,7 @@ public class User extends AbstractDomainObject {
 		this.phone = phone;
 	}
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public Location getAddress() {
 		if (address == null) {
 			address = new Location();
@@ -308,6 +311,14 @@ public class User extends AbstractDomainObject {
 
 	public void setLanguage(Language language) {
 		this.language = language;
+	}
+
+	public boolean isHasConsentedToGdpr() {
+		return hasConsentedToGdpr;
+	}
+
+	public void setHasConsentedToGdpr(boolean hasConsentedToGdpr) {
+		this.hasConsentedToGdpr = hasConsentedToGdpr;
 	}
 
 	/**

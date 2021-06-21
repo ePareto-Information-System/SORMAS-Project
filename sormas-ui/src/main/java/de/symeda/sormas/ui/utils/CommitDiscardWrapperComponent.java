@@ -23,6 +23,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
+import javax.naming.CannotProceedException;
+
 import com.vaadin.event.Action.Notifier;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.server.Page;
@@ -46,17 +48,25 @@ import com.vaadin.v7.ui.Field;
 import com.vaadin.v7.ui.RichTextArea;
 import com.vaadin.v7.ui.TextArea;
 
+import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.i18n.Captions;
+import de.symeda.sormas.api.i18n.Descriptions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.api.location.LocationDto;
+import de.symeda.sormas.api.person.PersonDto;
+import de.symeda.sormas.ui.events.EventDataForm;
+import de.symeda.sormas.ui.location.AccessibleTextField;
+import de.symeda.sormas.ui.location.LocationEditForm;
+import de.symeda.sormas.ui.person.PersonEditForm;
 
-public class CommitDiscardWrapperComponent<C extends Component> extends VerticalLayout implements Buffered {
+public class CommitDiscardWrapperComponent<C extends Component> extends VerticalLayout implements DirtyStateComponent, Buffered {
 
 	private static final long serialVersionUID = 1L;
 
 	public static interface CommitListener {
 
-		void onCommit();
+		void onCommit() throws CannotProceedException;
 	}
 
 	public static interface DiscardListener {
@@ -93,6 +103,7 @@ public class CommitDiscardWrapperComponent<C extends Component> extends Vertical
 	private Button deleteButton;
 
 	private boolean commited = false;
+	private boolean dirty = false;
 
 	private boolean shortcutsEnabled = false;
 	protected transient List<ClickShortcut> actions;
@@ -169,6 +180,93 @@ public class CommitDiscardWrapperComponent<C extends Component> extends Vertical
 				setReadOnly(true);
 			}
 		}
+
+		dirty = false;
+		addDirtyHandler(fieldGroups);
+	}
+
+	@SuppressWarnings("deprecation")
+	protected void addDirtyHandler(FieldGroup[] fieldGroups) {
+		if (fieldGroups != null) {
+			Stream.of(fieldGroups).forEach(fg -> fg.getFields().forEach(f -> f.addValueChangeListener(ev -> {
+				final Object source = ((Field.ValueChangeEvent) ev).getSource();
+				// Note by @MateStrysewske: It seems like the duplicate code here is necessary; for some reason,
+				// moving it to a separate method breaks the logic at least on my dev system
+				if (source instanceof PersonEditForm) {
+					final PersonEditForm personEditForm = (PersonEditForm) source;
+					final LocationEditForm locationEditForm = personEditForm.getField(PersonDto.ADDRESS);
+					if (atLeastOneFieldModified(
+						locationEditForm.getField(LocationDto.LATITUDE),
+						locationEditForm.getField(LocationDto.LONGITUDE),
+						locationEditForm.getField(LocationDto.LAT_LON_ACCURACY))) {
+						dirty = true;
+					} else if (locationEditForm.getFieldGroup()
+						.getFields()
+						.stream()
+						.filter(lf -> !(lf instanceof AccessibleTextField))
+						.anyMatch(Buffered::isModified)) {
+						dirty = true;
+					} else if (personEditForm.getFieldGroup()
+						.getFields()
+						.stream()
+						.filter(lf -> !(lf instanceof AccessibleTextField))
+						.anyMatch(Buffered::isModified)) {
+						dirty = true;
+					}
+				} else if (source instanceof EventDataForm) {
+					final EventDataForm eventDataForm = (EventDataForm) source;
+					final LocationEditForm locationEditForm = eventDataForm.getField(EventDto.EVENT_LOCATION);
+					if (atLeastOneFieldModified(
+						locationEditForm.getField(LocationDto.LATITUDE),
+						locationEditForm.getField(LocationDto.LONGITUDE),
+						locationEditForm.getField(LocationDto.LAT_LON_ACCURACY))) {
+						dirty = true;
+					} else if (locationEditForm.getFieldGroup()
+						.getFields()
+						.stream()
+						.filter(lf -> !(lf instanceof AccessibleTextField))
+						.anyMatch(Buffered::isModified)) {
+						dirty = true;
+					} else if (eventDataForm.getFieldGroup()
+						.getFields()
+						.stream()
+						.filter(lf -> !(lf instanceof AccessibleTextField))
+						.anyMatch(Buffered::isModified)) {
+						dirty = true;
+					}
+				} else if (source instanceof LocationEditForm) {
+					final LocationEditForm locationEditForm = (LocationEditForm) source;
+					if (atLeastOneFieldModified(
+						locationEditForm.getField(LocationDto.LATITUDE),
+						locationEditForm.getField(LocationDto.LONGITUDE),
+						locationEditForm.getField(LocationDto.LAT_LON_ACCURACY))) {
+						dirty = true;
+					} else if (locationEditForm.getFieldGroup()
+						.getFields()
+						.stream()
+						.filter(lf -> !(lf instanceof AccessibleTextField))
+						.anyMatch(Buffered::isModified)) {
+						dirty = true;
+					}
+				} else if (source instanceof AccessibleTextField) {
+					final AccessibleTextField accessibleTextField = (AccessibleTextField) source;
+					if (accessibleTextField.isModified()) {
+						dirty = true;
+					}
+				} else {
+					dirty = true;
+				}
+			})));
+		}
+	}
+
+	private boolean atLeastOneFieldModified(AccessibleTextField... fields) {
+		for (AccessibleTextField field : fields) {
+			if (field.getState().modified) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	protected Stream<Field<?>> getFieldsStream() {
@@ -265,6 +363,7 @@ public class CommitDiscardWrapperComponent<C extends Component> extends Vertical
 					discard();
 				}
 			});
+			discardButton.setDescription(I18nProperties.getDescription(Descriptions.discardDescription));
 		}
 
 		return discardButton;
@@ -344,10 +443,10 @@ public class CommitDiscardWrapperComponent<C extends Component> extends Vertical
 		} else {
 			// NOOP
 		}
+		dirty = false;
 
 		onCommit();
 		commited = true;
-
 		onDone();
 	}
 
@@ -421,6 +520,8 @@ public class CommitDiscardWrapperComponent<C extends Component> extends Vertical
 		} else {
 			// NOOP
 		}
+		dirty = false;
+
 		onDiscard();
 		onDone();
 	}
@@ -477,7 +578,11 @@ public class CommitDiscardWrapperComponent<C extends Component> extends Vertical
 	private void onCommit() {
 
 		for (CommitListener listener : commitListeners)
-			listener.onCommit();
+			try {
+				listener.onCommit();
+			} catch (CannotProceedException e) {
+				break;
+			}
 	}
 
 	/**
@@ -626,5 +731,14 @@ public class CommitDiscardWrapperComponent<C extends Component> extends Vertical
 		} else {
 			contentPanel.setHeight(100, Unit.PERCENTAGE);
 		}
+	}
+
+	@Override
+	public boolean isDirty() {
+		return dirty;
+	}
+
+	public void setDirty(boolean dirty) {
+		this.dirty = dirty;
 	}
 }

@@ -6,21 +6,35 @@ import de.symeda.sormas.api.utils.DataHelper;
 
 public class EventJurisdictionHelper {
 
-	public static boolean isInJurisdiction(
+	public static boolean isInJurisdictionOrOwned(
 		JurisdictionLevel jurisdictionLevel,
 		UserJurisdiction userJurisdiction,
 		EventJurisdictionDto eventJurisdiction) {
 
+		if (isOwned(userJurisdiction, eventJurisdiction))
+			return true;
+
+		return isInJurisdiction(jurisdictionLevel, userJurisdiction, eventJurisdiction);
+	}
+
+	public static boolean isOwned(UserJurisdiction userJurisdiction, EventJurisdictionDto eventJurisdiction) {
 		if (eventJurisdiction.getReportingUserUuid() != null
 			&& DataHelper.equal(userJurisdiction.getUuid(), eventJurisdiction.getReportingUserUuid())) {
 			return true;
 		}
 
-		if (eventJurisdiction.getSurveillanceOfficerUuid() != null
-			&& DataHelper.equal(userJurisdiction.getUuid(), eventJurisdiction.getSurveillanceOfficerUuid())) {
+		if (eventJurisdiction.getResponsibleUserUuid() != null
+			&& DataHelper.equal(userJurisdiction.getUuid(), eventJurisdiction.getResponsibleUserUuid())) {
 			return true;
 		}
 
+		return false;
+	}
+
+	public static boolean isInJurisdiction(
+		JurisdictionLevel jurisdictionLevel,
+		UserJurisdiction userJurisdiction,
+		EventJurisdictionDto eventJurisdiction) {
 		switch (jurisdictionLevel) {
 		case NONE:
 			return false;

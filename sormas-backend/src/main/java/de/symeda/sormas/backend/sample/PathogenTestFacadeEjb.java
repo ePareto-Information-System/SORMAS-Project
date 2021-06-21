@@ -17,7 +17,6 @@
  *******************************************************************************/
 package de.symeda.sormas.backend.sample;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -35,14 +34,18 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import de.symeda.sormas.backend.disease.DiseaseVariantFacadeEjb;
+import de.symeda.sormas.backend.disease.DiseaseVariantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.api.messaging.MessageType;
 import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.PathogenTestFacade;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
@@ -53,9 +56,9 @@ import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.caze.CaseFacadeEjb.CaseFacadeEjbLocal;
-import de.symeda.sormas.backend.common.MessageType;
-import de.symeda.sormas.backend.common.MessagingService;
-import de.symeda.sormas.backend.common.NotificationDeliveryFailedException;
+import de.symeda.sormas.backend.common.messaging.MessageSubject;
+import de.symeda.sormas.backend.common.messaging.MessagingService;
+import de.symeda.sormas.backend.common.messaging.NotificationDeliveryFailedException;
 import de.symeda.sormas.backend.contact.Contact;
 import de.symeda.sormas.backend.event.EventParticipant;
 import de.symeda.sormas.backend.facility.FacilityFacadeEjb;
@@ -67,6 +70,7 @@ import de.symeda.sormas.backend.user.UserRoleConfigFacadeEjb.UserRoleConfigFacad
 import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.ModelConstants;
+import de.symeda.sormas.backend.util.Pseudonymizer;
 
 @Stateless(name = "PathogenTestFacade")
 public class PathogenTestFacadeEjb implements PathogenTestFacade {
@@ -83,6 +87,8 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 	@EJB
 	private SampleService sampleService;
 	@EJB
+	private DiseaseVariantService diseaseVariantService;
+	@EJB
 	private FacilityService facilityService;
 	@EJB
 	private UserService userService;
@@ -90,11 +96,13 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 	private MessagingService messagingService;
 	@EJB
 	private UserRoleConfigFacadeEjbLocal userRoleConfigFacade;
+	@EJB
+	private SampleJurisdictionChecker sampleJurisdictionChecker;
 
 	@Override
 	public List<String> getAllActiveUuids() {
-
 		User user = userService.getCurrentUser();
+
 		if (user == null) {
 			return Collections.emptyList();
 		}
@@ -104,60 +112,79 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 
 	@Override
 	public List<PathogenTestDto> getAllActivePathogenTestsAfter(Date date) {
-
 		User user = userService.getCurrentUser();
+
 		if (user == null) {
 			return Collections.emptyList();
 		}
 
-		return pathogenTestService.getAllActivePathogenTestsAfter(date, user).stream().map(e -> toDto(e)).collect(Collectors.toList());
+		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
+		return pathogenTestService.getAllActivePathogenTestsAfter(date, user)
+			.stream()
+			.map(p -> convertToDto(p, pseudonymizer))
+			.collect(Collectors.toList());
 	}
 
 	@Override
 	public List<PathogenTestDto> getByUuids(List<String> uuids) {
-		return pathogenTestService.getByUuids(uuids).stream().map(c -> toDto(c)).collect(Collectors.toList());
+		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
+		return pathogenTestService.getByUuids(uuids).stream().map(c -> convertToDto(c, pseudonymizer)).collect(Collectors.toList());
 	}
 
 	@Override
 	public List<PathogenTestDto> getBySampleUuids(List<String> sampleUuids) {
-		return pathogenTestService.getBySampleUuids(sampleUuids).stream().map(p -> toDto(p)).collect(Collectors.toList());
+		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
+		return pathogenTestService.getBySampleUuids(sampleUuids, false)
+			.stream()
+			.map(p -> convertToDto(p, pseudonymizer))
+			.collect(Collectors.toList());
 	}
 
 	@Override
 	public List<PathogenTestDto> getAllBySample(SampleReferenceDto sampleRef) {
-
 		if (sampleRef == null) {
 			return Collections.emptyList();
 		}
 
-		Sample sample = sampleService.getByUuid(sampleRef.getUuid());
-		return pathogenTestService.getAllBySample(sample).stream().map(s -> toDto(s)).collect(Collectors.toList());
+		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
+		return sampleService.getByUuid(sampleRef.getUuid())
+			.getPathogenTests()
+			.stream()
+			.map(p -> convertToDto(p, pseudonymizer))
+			.collect(Collectors.toList());
 	}
 
 	@Override
 	public List<String> getDeletedUuidsSince(Date since) {
-
 		User user = userService.getCurrentUser();
+
 		if (user == null) {
 			return Collections.emptyList();
 		}
 
-		return pathogenTestService.getDeletedUuidsSince(user, since);
+		return pathogenTestService.getDeletedUuidsSince(since);
 	}
 
 	@Override
 	public PathogenTestDto getByUuid(String uuid) {
-		return toDto(pathogenTestService.getByUuid(uuid));
+		return convertToDto(pathogenTestService.getByUuid(uuid), Pseudonymizer.getDefault(userService::hasRight));
 	}
 
 	@Override
-	public PathogenTestDto savePathogenTest(PathogenTestDto dto) {
+	public PathogenTestDto savePathogenTest(@Valid PathogenTestDto dto) {
+		return savePathogenTest(dto, true);
+	}
 
-		PathogenTestDto existingSampleTest = toDto(pathogenTestService.getByUuid(dto.getUuid()));
-		PathogenTest pathogenTest = fromDto(dto);
+	public PathogenTestDto savePathogenTest(PathogenTestDto dto, boolean checkChangeDate) {
+		PathogenTest existingSampleTest = pathogenTestService.getByUuid(dto.getUuid());
+		PathogenTestDto existingSampleTestDto = toDto(existingSampleTest);
+
+		restorePseudonymizedDto(dto, existingSampleTest, existingSampleTestDto);
+
+		PathogenTest pathogenTest = fromDto(dto, checkChangeDate);
 		pathogenTestService.ensurePersisted(pathogenTest);
 
-		onPathogenTestChanged(existingSampleTest, pathogenTest);
+		onPathogenTestChanged(existingSampleTestDto, pathogenTest);
 
 		// Update case classification if necessary
 		final Case associatedCase = pathogenTest.getSample().getAssociatedCase();
@@ -165,12 +192,11 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 			caseFacade.onCaseChanged(CaseFacadeEjbLocal.toDto(associatedCase), associatedCase);
 		}
 
-		return toDto(pathogenTest);
+		return convertToDto(pathogenTest, Pseudonymizer.getDefault(userService::hasRight));
 	}
 
 	@Override
 	public void deletePathogenTest(String pathogenTestUuid) {
-
 		User user = userService.getCurrentUser();
 		if (!userRoleConfigFacade.getEffectiveUserRights(user.getUserRoles().toArray(new UserRole[user.getUserRoles().size()]))
 			.contains(UserRight.PATHOGEN_TEST_DELETE)) {
@@ -188,14 +214,12 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 
 	@Override
 	public boolean hasPathogenTest(SampleReferenceDto sample) {
-
 		Sample sampleEntity = sampleService.getByReferenceDto(sample);
 		return pathogenTestService.hasPathogenTest(sampleEntity);
 	}
 
 	@Override
 	public void validate(PathogenTestDto pathogenTest) throws ValidationRuntimeException {
-
 		if (pathogenTest.getSample() == null) {
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.validSample));
 		}
@@ -238,7 +262,6 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 
 	@Override
 	public Date getLatestPathogenTestDate(String sampleUuid) {
-
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Date> cq = cb.createQuery(Date.class);
 		Root<PathogenTest> pathogenTestRoot = cq.from(PathogenTest.class);
@@ -256,39 +279,33 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		}
 	}
 
-	public PathogenTest fromDto(@NotNull PathogenTestDto source) {
+	public List<PathogenTestDto> getPositiveOrLatest(List<String> sampleUuids) {
+		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
+		return pathogenTestService.getBySampleUuids(sampleUuids, true)
+			.stream()
+			.collect(
+				Collectors.toMap(
+					s -> s.getSample().getUuid(),
+					(s) -> s,
+					(s1, s2) -> {
 
-		PathogenTest target = pathogenTestService.getByUuid(source.getUuid());
-		if (target == null) {
-			target = new PathogenTest();
-			target.setUuid(source.getUuid());
-			if (source.getCreationDate() != null) {
-				target.setCreationDate(new Timestamp(source.getCreationDate().getTime()));
-			}
-		}
-		DtoHelper.validateDto(source, target);
+						// keep the positive one
+						if (s1.getTestResult() == PathogenTestResultType.POSITIVE) {
+							return s1;
+						} else if (s2.getTestResult() == PathogenTestResultType.POSITIVE) {
+							return s2;
+						}
 
-		target.setSample(sampleService.getByReferenceDto(source.getSample()));
-		target.setTestedDisease(source.getTestedDisease());
-		target.setTestedDiseaseDetails(source.getTestedDiseaseDetails());
-		target.setTestType(source.getTestType());
-		target.setTestTypeText(source.getTestTypeText());
-		target.setTestDateTime(source.getTestDateTime());
-		target.setLab(facilityService.getByReferenceDto(source.getLab()));
-		target.setLabDetails(source.getLabDetails());
-		target.setLabUser(userService.getByReferenceDto(source.getLabUser()));
-		target.setTestResult(source.getTestResult());
-		target.setTestResultText(source.getTestResultText());
-		target.setTestResultVerified(source.getTestResultVerified());
-		target.setFourFoldIncreaseAntibodyTiter(source.isFourFoldIncreaseAntibodyTiter());
-		target.setSerotype(source.getSerotype());
-		target.setCqValue(source.getCqValue());
-
-		return target;
+						// ordered by creation date by default, so always keep the first one
+						return s1;
+					}))
+			.values()
+			.stream()
+			.map(s -> convertToDto(s, pseudonymizer))
+			.collect(Collectors.toList());
 	}
 
 	public static PathogenTestDto toDto(PathogenTest source) {
-
 		if (source == null) {
 			return null;
 		}
@@ -298,8 +315,11 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 
 		target.setSample(SampleFacadeEjb.toReferenceDto(source.getSample()));
 		target.setTestedDisease(source.getTestedDisease());
+		target.setTestedDiseaseVariant(DiseaseVariantFacadeEjb.toReferenceDto(source.getTestedDiseaseVariant()));
 		target.setTestedDiseaseDetails(source.getTestedDiseaseDetails());
+		target.setTypingId(source.getTypingId());
 		target.setTestType(source.getTestType());
+		target.setPcrTestSpecification(source.getPcrTestSpecification());
 		target.setTestTypeText(source.getTestTypeText());
 		target.setTestDateTime(source.getTestDateTime());
 		target.setLab(FacilityFacadeEjb.toReferenceDto(source.getLab()));
@@ -311,12 +331,64 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		target.setFourFoldIncreaseAntibodyTiter(source.isFourFoldIncreaseAntibodyTiter());
 		target.setSerotype(source.getSerotype());
 		target.setCqValue(source.getCqValue());
+		target.setReportDate(source.getReportDate());
+		target.setViaLims(source.isViaLims());
+
+		return target;
+	}
+
+	public PathogenTestDto convertToDto(PathogenTest source, Pseudonymizer pseudonymizer) {
+		PathogenTestDto target = toDto(source);
+
+		pseudonymizeDto(source, target, pseudonymizer);
+
+		return target;
+	}
+
+	private void pseudonymizeDto(PathogenTest source, PathogenTestDto target, Pseudonymizer pseudonymizer) {
+		if (source != null && target != null) {
+			pseudonymizer.pseudonymizeDto(PathogenTestDto.class, target, sampleJurisdictionChecker.isInJurisdictionOrOwned(source.getSample()), null);
+		}
+	}
+
+	private void restorePseudonymizedDto(PathogenTestDto dto, PathogenTest existingSampleTest, PathogenTestDto existingSampleTestDto) {
+		if (existingSampleTestDto != null) {
+			boolean isInJurisdiction = sampleJurisdictionChecker.isInJurisdictionOrOwned(existingSampleTest.getSample());
+			Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
+
+			pseudonymizer.restorePseudonymizedValues(PathogenTestDto.class, dto, existingSampleTestDto, isInJurisdiction);
+		}
+	}
+
+	public PathogenTest fromDto(@NotNull PathogenTestDto source, boolean checkChangeDate) {
+		PathogenTest target =
+			DtoHelper.fillOrBuildEntity(source, pathogenTestService.getByUuid(source.getUuid()), PathogenTest::new, checkChangeDate);
+
+		target.setSample(sampleService.getByReferenceDto(source.getSample()));
+		target.setTestedDisease(source.getTestedDisease());
+		target.setTestedDiseaseVariant(diseaseVariantService.getByReferenceDto(source.getTestedDiseaseVariant()));
+		target.setTestedDiseaseDetails(source.getTestedDiseaseDetails());
+		target.setTypingId(source.getTypingId());
+		target.setTestType(source.getTestType());
+		target.setPcrTestSpecification(source.getPcrTestSpecification());
+		target.setTestTypeText(source.getTestTypeText());
+		target.setTestDateTime(source.getTestDateTime());
+		target.setLab(facilityService.getByReferenceDto(source.getLab()));
+		target.setLabDetails(source.getLabDetails());
+		target.setLabUser(userService.getByReferenceDto(source.getLabUser()));
+		target.setTestResult(source.getTestResult());
+		target.setTestResultText(source.getTestResultText());
+		target.setTestResultVerified(source.getTestResultVerified());
+		target.setFourFoldIncreaseAntibodyTiter(source.isFourFoldIncreaseAntibodyTiter());
+		target.setSerotype(source.getSerotype());
+		target.setCqValue(source.getCqValue());
+		target.setReportDate(source.getReportDate());
+		target.setViaLims(source.isViaLims());
 
 		return target;
 	}
 
 	private void onPathogenTestChanged(PathogenTestDto existingPathogenTest, PathogenTest newPathogenTest) {
-
 		// Send an email to all responsible supervisors when a new non-pending sample test is created or the status of
 		// a formerly pending test result has changed
 		final String sampleUuid = newPathogenTest.getSample().getUuid();
@@ -397,13 +469,12 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		String contentLabResultArrived,
 		String contentLabResultSpecified,
 		String shortUuid) {
-
 		if (existingPathogenTest == null && newPathogenTest.getTestResult() != PathogenTestResultType.PENDING) {
 			for (User recipient : messageRecipients) {
 				try {
 					messagingService.sendMessage(
 						recipient,
-						I18nProperties.getString(MessagingService.SUBJECT_LAB_RESULT_ARRIVED),
+						MessageSubject.LAB_RESULT_ARRIVED,
 						String.format(
 							I18nProperties.getString(contentLabResultArrived),
 							newPathogenTest.getTestResult().toString(),
@@ -428,7 +499,7 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 				try {
 					messagingService.sendMessage(
 						recipient,
-						I18nProperties.getString(MessagingService.SUBJECT_LAB_RESULT_SPECIFIED),
+						MessageSubject.LAB_RESULT_SPECIFIED,
 						String.format(
 							I18nProperties.getString(contentLabResultSpecified),
 							disease,
@@ -452,6 +523,5 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 	@LocalBean
 	@Stateless
 	public static class PathogenTestFacadeEjbLocal extends PathogenTestFacadeEjb {
-
 	}
 }

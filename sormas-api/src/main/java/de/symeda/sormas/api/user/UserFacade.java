@@ -30,8 +30,6 @@ import de.symeda.sormas.api.utils.SortProperty;
 @Remote
 public interface UserFacade {
 
-	List<UserDto> getAll(UserRole... roles);
-
 	UserDto getByUuid(String uuid);
 
 	UserDto saveUser(UserDto dto);
@@ -44,11 +42,9 @@ public interface UserFacade {
 
 	UserDto getByUserName(String userName);
 
-	UserReferenceDto getByUserNameAsReference(String userName);
-
-	List<UserReferenceDto> getAllAfterAsReference(Date date);
-
 	List<UserReferenceDto> getUsersByRegionAndRoles(RegionReferenceDto regionRef, UserRole... assignableRoles);
+
+	List<UserReferenceDto> getUsersWithSuperiorJurisdiction(UserDto user);
 
 	List<UserDto> getIndexList(UserCriteria userCriteria, int first, int max, List<SortProperty> sortProperties);
 
@@ -65,6 +61,8 @@ public interface UserFacade {
 	 */
 	List<UserReferenceDto> getUserRefsByDistrict(DistrictReferenceDto district, boolean includeSupervisors, UserRole... userRoles);
 
+	List<UserReferenceDto> getAllUserRefs(boolean includeInactive);
+
 	List<UserDto> getUsersByAssociatedOfficer(UserReferenceDto associatedOfficer, UserRole... userRoles);
 
 	List<String> getAllUuids();
@@ -78,4 +76,8 @@ public interface UserFacade {
 	Set<UserRole> getValidLoginRoles(String userName, String password);
 
 	void removeUserAsSurveillanceAndContactOfficer(String userUuid);
+
+	UserSyncResult syncUser(String userUuid);
+
+	List<UserDto> getUsersWithDefaultPassword();
 }

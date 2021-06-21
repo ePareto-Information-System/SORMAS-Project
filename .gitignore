@@ -23,3 +23,15 @@ deploy
 /sormas-app/java_pid21052.hprof
 bin
 /sormas-base/setup/setup.log
+
+# Exclude maven wrapper
+!/.mvn/wrapper/maven-wrapper.jar
+
+/sormas-cargoserver/.env
+/sormas-cargoserver/custom.env
+/sormas-cargoserver/custom.properties
+
+sormas-e2e-ui-tests/gradle/
+sormas-e2e-ui-tests/gradlew
+sormas-e2e-ui-tests/gradlew.bat
+

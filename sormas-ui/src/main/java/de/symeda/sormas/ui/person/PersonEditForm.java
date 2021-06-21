@@ -18,6 +18,7 @@
 package de.symeda.sormas.ui.person;
 
 import static de.symeda.sormas.ui.utils.CssStyles.H3;
+import static de.symeda.sormas.ui.utils.CssStyles.LABEL_WHITE_SPACE_NORMAL;
 import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_3;
 import static de.symeda.sormas.ui.utils.LayoutUtil.divsCss;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidColumnLocCss;
@@ -30,17 +31,21 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.oneOfTwoCol;
 import java.time.Month;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.v7.ui.AbstractSelect;
 import com.vaadin.v7.ui.AbstractSelect.ItemCaptionMode;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.DateField;
 import com.vaadin.v7.ui.Field;
+import com.vaadin.v7.ui.TextArea;
 import com.vaadin.v7.ui.TextField;
 
 import de.symeda.sormas.api.Disease;
@@ -48,6 +53,9 @@ import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.facility.FacilityDto;
 import de.symeda.sormas.api.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.facility.FacilityType;
+import de.symeda.sormas.api.i18n.Captions;
+import de.symeda.sormas.api.i18n.Descriptions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
@@ -57,18 +65,20 @@ import de.symeda.sormas.api.person.CauseOfDeath;
 import de.symeda.sormas.api.person.DeathPlaceType;
 import de.symeda.sormas.api.person.EducationType;
 import de.symeda.sormas.api.person.OccupationType;
+import de.symeda.sormas.api.person.PersonContext;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.PresentCondition;
+import de.symeda.sormas.api.person.Salutation;
 import de.symeda.sormas.api.region.CommunityReferenceDto;
+import de.symeda.sormas.api.region.CountryReferenceDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper.Pair;
 import de.symeda.sormas.api.utils.DateHelper;
-import de.symeda.sormas.api.utils.fieldaccess.FieldAccessCheckers;
-import de.symeda.sormas.api.utils.fieldaccess.checkers.PersonalDataFieldAccessChecker;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
-import de.symeda.sormas.api.utils.fieldvisibility.checkers.DiseaseFieldVisibilityChecker;
-import de.symeda.sormas.ui.UserProvider;
+import de.symeda.sormas.api.utils.fieldvisibility.checkers.CountryFieldVisibilityChecker;
+import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.location.LocationEditForm;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
 import de.symeda.sormas.ui.utils.ApproximateAgeValidator;
@@ -76,6 +86,8 @@ import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.DateComparisonValidator;
 import de.symeda.sormas.ui.utils.FieldHelper;
 import de.symeda.sormas.ui.utils.OutbreakFieldVisibilityChecker;
+import de.symeda.sormas.ui.utils.ResizableTextAreaWrapper;
+import de.symeda.sormas.ui.utils.ValidationUtils;
 import de.symeda.sormas.ui.utils.ViewMode;
 
 public class PersonEditForm extends AbstractEditForm<PersonDto> {
@@ -85,90 +97,125 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	private static final String PERSON_INFORMATION_HEADING_LOC = "personInformationHeadingLoc";
 	private static final String OCCUPATION_HEADER = "occupationHeader";
 	private static final String ADDRESS_HEADER = "addressHeader";
+	private static final String ADDRESSES_HEADER = "addressesHeader";
 	private static final String CONTACT_INFORMATION_HEADER = "contactInformationHeader";
+	private static final String EXTERNAL_TOKEN_WARNING_LOC = "externalTokenWarningLoc";
+	private static final String GENERAL_COMMENT_LOC = "generalCommentLoc";
 
-	private Label occupationHeader = new Label(I18nProperties.getString(Strings.headingPersonOccupation));
-	private Label addressHeader = new Label(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.ADDRESS));
-	private Label contactInformationHeader = new Label(I18nProperties.getString(Strings.headingContactInformation));
+	private final Label occupationHeader = new Label(I18nProperties.getString(Strings.headingPersonOccupation));
+	private final Label addressHeader = new Label(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.ADDRESS));
+	private final Label addressesHeader = new Label(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.ADDRESSES));
+	private final Label contactInformationHeader = new Label(I18nProperties.getString(Strings.headingContactInformation));
 
+	private TextField firstNameField;
+	private TextField lastNameField;
 	private Disease disease;
 	private String diseaseDetails;
 	private ComboBox causeOfDeathField;
 	private ComboBox causeOfDeathDiseaseField;
 	private TextField causeOfDeathDetailsField;
-	private ComboBox occupationFacility;
-	private TextField occupationFacilityDetails;
-	private final ViewMode viewMode;
 	private ComboBox birthDateDay;
+	private ComboBox cbPlaceOfBirthFacility;
+	private PersonContext personContext;
+	private boolean isPseudonymized;
 
 	//@formatter:off
-	private static final String HTML_LAYOUT =
-			loc(PERSON_INFORMATION_HEADING_LOC) +
-					fluidRowLocs(PersonDto.FIRST_NAME, PersonDto.LAST_NAME) +
-					fluidRow(
-							fluidRowLocs(PersonDto.BIRTH_DATE_YYYY, PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD),
-							fluidRowLocs(PersonDto.APPROXIMATE_AGE, PersonDto.APPROXIMATE_AGE_TYPE, PersonDto.APPROXIMATE_AGE_REFERENCE_DATE)
-					) +
-					fluidRowLocs(PersonDto.PLACE_OF_BIRTH_REGION, PersonDto.PLACE_OF_BIRTH_DISTRICT, PersonDto.PLACE_OF_BIRTH_COMMUNITY) +
-					fluidRowLocs(PersonDto.PLACE_OF_BIRTH_FACILITY, PersonDto.PLACE_OF_BIRTH_FACILITY_DETAILS) +
-					fluidRowLocs(PersonDto.GESTATION_AGE_AT_BIRTH, PersonDto.BIRTH_WEIGHT) +
-					fluidRowLocs(PersonDto.SEX, PersonDto.PRESENT_CONDITION) +
-					fluidRow(
-							oneOfFourCol(PersonDto.DEATH_DATE),
-							oneOfFourCol(PersonDto.CAUSE_OF_DEATH),
-							fluidColumnLocCss(CssStyles.LAYOUT_COL_HIDE_INVSIBLE, 3, 0, PersonDto.CAUSE_OF_DEATH_DISEASE),
-							oneOfFourCol(PersonDto.CAUSE_OF_DEATH_DETAILS)
-					) +
-					fluidRow(
-							oneOfFourCol(PersonDto.DEATH_PLACE_TYPE),
-							oneOfFourCol(PersonDto.DEATH_PLACE_DESCRIPTION)
-					) +
-					fluidRow(
-							oneOfFourCol(PersonDto.BURIAL_DATE),
-							oneOfFourCol(PersonDto.BURIAL_CONDUCTOR),
-							oneOfTwoCol(PersonDto.BURIAL_PLACE_DESCRIPTION)
-					) +
-					fluidRowLocs(PersonDto.PASSPORT_NUMBER, PersonDto.NATIONAL_HEALTH_ID) +
+    private static final String HTML_LAYOUT =
+            loc(PERSON_INFORMATION_HEADING_LOC) +
+					fluidRowLocs(PersonDto.UUID, "")+
+                    fluidRowLocs(PersonDto.FIRST_NAME, PersonDto.LAST_NAME) +
+					fluidRowLocs(PersonDto.SALUTATION, PersonDto.OTHER_SALUTATION) +
+                    fluidRow(
+                            fluidRowLocs(PersonDto.BIRTH_DATE_YYYY, PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD),
+                            fluidRowLocs(PersonDto.APPROXIMATE_AGE, PersonDto.APPROXIMATE_AGE_TYPE, PersonDto.APPROXIMATE_AGE_REFERENCE_DATE)
+                    ) +
+                    fluidRowLocs(PersonDto.PLACE_OF_BIRTH_REGION, PersonDto.PLACE_OF_BIRTH_DISTRICT, PersonDto.PLACE_OF_BIRTH_COMMUNITY) +
+                    fluidRowLocs(PersonDto.PLACE_OF_BIRTH_FACILITY_TYPE, PersonDto.PLACE_OF_BIRTH_FACILITY, PersonDto.PLACE_OF_BIRTH_FACILITY_DETAILS) +
+                    fluidRowLocs(PersonDto.GESTATION_AGE_AT_BIRTH, PersonDto.BIRTH_WEIGHT) +
+                    fluidRowLocs(PersonDto.SEX, PersonDto.PRESENT_CONDITION) +
+                    fluidRow(
+                            oneOfFourCol(PersonDto.DEATH_DATE),
+                            oneOfFourCol(PersonDto.CAUSE_OF_DEATH),
+                            fluidColumnLocCss(CssStyles.LAYOUT_COL_HIDE_INVSIBLE, 3, 0, PersonDto.CAUSE_OF_DEATH_DISEASE),
+                            oneOfFourCol(PersonDto.CAUSE_OF_DEATH_DETAILS)
+                    ) +
+                    fluidRow(
+                            oneOfFourCol(PersonDto.DEATH_PLACE_TYPE),
+                            oneOfFourCol(PersonDto.DEATH_PLACE_DESCRIPTION)
+                    ) +
+                    fluidRow(
+                            oneOfFourCol(PersonDto.BURIAL_DATE),
+                            oneOfFourCol(PersonDto.BURIAL_CONDUCTOR),
+                            oneOfTwoCol(PersonDto.BURIAL_PLACE_DESCRIPTION)
+                    ) +
+                    fluidRowLocs(PersonDto.PASSPORT_NUMBER, PersonDto.NATIONAL_HEALTH_ID) +
+					fluidRowLocs(PersonDto.EXTERNAL_ID, PersonDto.EXTERNAL_TOKEN) +
+					fluidRowLocs("", EXTERNAL_TOKEN_WARNING_LOC) +
 
-					loc(OCCUPATION_HEADER) +
-					divsCss(VSPACE_3,
-							fluidRowLocs(PersonDto.OCCUPATION_TYPE, PersonDto.OCCUPATION_DETAILS),
-							fluidRowLocs(PersonDto.OCCUPATION_REGION, PersonDto.OCCUPATION_DISTRICT, PersonDto.OCCUPATION_COMMUNITY, PersonDto.OCCUPATION_FACILITY),
-							fluidRowLocs("", "", PersonDto.OCCUPATION_FACILITY_DETAILS),
-							fluidRowLocs(PersonDto.EDUCATION_TYPE, PersonDto.EDUCATION_DETAILS)
-					) +
+					fluidRowLocs(PersonDto.HAS_COVID_APP, PersonDto.COVID_CODE_DELIVERED) +
 
-					loc(ADDRESS_HEADER) +
-					divsCss(VSPACE_3, fluidRowLocs(PersonDto.ADDRESS)) +
+                    loc(OCCUPATION_HEADER) +
+                    divsCss(VSPACE_3,
+                            fluidRowLocs(PersonDto.OCCUPATION_TYPE, PersonDto.OCCUPATION_DETAILS) +
+                            fluidRow(oneOfTwoCol(PersonDto.ARMED_FORCES_RELATION_TYPE)),
+                            fluidRowLocs(PersonDto.EDUCATION_TYPE, PersonDto.EDUCATION_DETAILS)
+                    ) +
 
-					loc(CONTACT_INFORMATION_HEADER) +
+                    loc(ADDRESS_HEADER) +
+                    divsCss(VSPACE_3, fluidRowLocs(PersonDto.ADDRESS)) +
+
+					loc(ADDRESSES_HEADER) +
+					fluidRowLocs(PersonDto.ADDRESSES) +
+
+                    loc(CONTACT_INFORMATION_HEADER) +
 					divsCss(
-							VSPACE_3,
-							fluidRowLocs(PersonDto.NICKNAME, PersonDto.MOTHERS_MAIDEN_NAME) +
+                            VSPACE_3,
+							fluidRowLocs(PersonDto.BIRTH_NAME, "") +
+									fluidRowLocs(PersonDto.NICKNAME, PersonDto.MOTHERS_MAIDEN_NAME) +
 									fluidRowLocs(PersonDto.MOTHERS_NAME, PersonDto.FATHERS_NAME) +
-									fluidRowLocs(PersonDto.PHONE, PersonDto.PHONE_OWNER) +
-									fluidRowLocs(PersonDto.EMAIL_ADDRESS, "") +
-									loc(PersonDto.GENERAL_PRACTITIONER_DETAILS));
+									fluidRowLocs(PersonDto.NAMES_OF_GUARDIANS) +
+                                    fluidRowLocs(PersonDto.BIRTH_COUNTRY, PersonDto.CITIZENSHIP) +
+					fluidRowLocs(PersonDto.PERSON_CONTACT_DETAILS)) +
+					loc(GENERAL_COMMENT_LOC) + fluidRowLocs(CaseDataDto.ADDITIONAL_DETAILS);
 	//@formatter:on
 
-	public PersonEditForm(Disease disease, String diseaseDetails, ViewMode viewMode, boolean isInJurisdiction) {
-
+	public PersonEditForm(PersonContext personContext, Disease disease, String diseaseDetails, ViewMode viewMode, boolean isPseudonymized) {
 		super(
 			PersonDto.class,
 			PersonDto.I18N_PREFIX,
 			false,
-			new FieldVisibilityCheckers().add(new DiseaseFieldVisibilityChecker(disease)).add(new OutbreakFieldVisibilityChecker(viewMode)),
-			new FieldAccessCheckers().add(new PersonalDataFieldAccessChecker(r -> UserProvider.getCurrent().hasUserRight(r), isInJurisdiction)));
+			FieldVisibilityCheckers.withDisease(disease)
+				.add(new OutbreakFieldVisibilityChecker(viewMode))
+				.add(new CountryFieldVisibilityChecker(FacadeProvider.getConfigFacade().getCountryLocale())),
+			UiFieldAccessCheckers.getDefault(isPseudonymized));
 
+		this.personContext = personContext;
 		this.disease = disease;
 		this.diseaseDetails = diseaseDetails;
-		this.viewMode = viewMode;
+		this.isPseudonymized = isPseudonymized;
 
-		occupationHeader.addStyleName(CssStyles.H3);
-		addressHeader.addStyleName(CssStyles.H3);
-		contactInformationHeader.addStyleName(CssStyles.H3);
+		CssStyles.style(CssStyles.H3, occupationHeader, addressHeader, addressesHeader, contactInformationHeader);
 		getContent().addComponent(occupationHeader, OCCUPATION_HEADER);
 		getContent().addComponent(addressHeader, ADDRESS_HEADER);
+		getContent().addComponent(addressesHeader, ADDRESSES_HEADER);
+		getContent().addComponent(contactInformationHeader, CONTACT_INFORMATION_HEADER);
+
+		addFields();
+	}
+
+	public PersonEditForm(boolean isPseudonymized) {
+		super(
+			PersonDto.class,
+			PersonDto.I18N_PREFIX,
+			false,
+			new FieldVisibilityCheckers().add(new OutbreakFieldVisibilityChecker(ViewMode.NORMAL))
+				.add(new CountryFieldVisibilityChecker(FacadeProvider.getConfigFacade().getCountryLocale())),
+			UiFieldAccessCheckers.getDefault(isPseudonymized));
+
+		CssStyles.style(CssStyles.H3, occupationHeader, addressHeader, addressesHeader, contactInformationHeader);
+		getContent().addComponent(occupationHeader, OCCUPATION_HEADER);
+		getContent().addComponent(addressHeader, ADDRESS_HEADER);
+		getContent().addComponent(addressesHeader, ADDRESSES_HEADER);
 		getContent().addComponent(contactInformationHeader, CONTACT_INFORMATION_HEADER);
 
 		addFields();
@@ -181,23 +228,32 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		personInformationHeadingLabel.addStyleName(H3);
 		getContent().addComponent(personInformationHeadingLabel, PERSON_INFORMATION_HEADING_LOC);
 
-		addField(PersonDto.FIRST_NAME, TextField.class);
-		addField(PersonDto.LAST_NAME, TextField.class);
+		addField(PersonDto.UUID).setReadOnly(true);
+		firstNameField = addField(PersonDto.FIRST_NAME, TextField.class);
+		lastNameField = addField(PersonDto.LAST_NAME, TextField.class);
+
+		addFields(PersonDto.SALUTATION, PersonDto.OTHER_SALUTATION);
+		FieldHelper.setVisibleWhen(getFieldGroup(), PersonDto.OTHER_SALUTATION, PersonDto.SALUTATION, Salutation.OTHER, true);
+
 		ComboBox sex = addField(PersonDto.SEX, ComboBox.class);
+		addField(PersonDto.BIRTH_NAME, TextField.class);
 		addField(PersonDto.NICKNAME, TextField.class);
 		addField(PersonDto.MOTHERS_MAIDEN_NAME, TextField.class);
 		addFields(PersonDto.MOTHERS_NAME, PersonDto.FATHERS_NAME);
+		addFields(PersonDto.NAMES_OF_GUARDIANS);
 		ComboBox presentCondition = addField(PersonDto.PRESENT_CONDITION, ComboBox.class);
 		birthDateDay = addField(PersonDto.BIRTH_DATE_DD, ComboBox.class);
 		// @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3
 		birthDateDay.setNullSelectionAllowed(true);
 		birthDateDay.setInputPrompt(I18nProperties.getString(Strings.day));
+		birthDateDay.setCaption("");
 		ComboBox birthDateMonth = addField(PersonDto.BIRTH_DATE_MM, ComboBox.class);
 		// @TODO: Done for nullselection Bug, fixed in Vaadin 7.7.3
 		birthDateMonth.setNullSelectionAllowed(true);
 		birthDateMonth.addItems(DateHelper.getMonthsInYear());
 		birthDateMonth.setPageLength(12);
 		birthDateMonth.setInputPrompt(I18nProperties.getString(Strings.month));
+		birthDateMonth.setCaption("");
 		setItemCaptionsForMonths(birthDateMonth);
 		ComboBox birthDateYear = addField(PersonDto.BIRTH_DATE_YYYY, ComboBox.class);
 		birthDateYear.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.BIRTH_DATE));
@@ -206,10 +262,19 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		birthDateYear.addItems(DateHelper.getYearsToNow());
 		birthDateYear.setItemCaptionMode(ItemCaptionMode.ID_TOSTRING);
 		birthDateYear.setInputPrompt(I18nProperties.getString(Strings.year));
+		birthDateDay.addValidator(
+			e -> ControllerProvider.getPersonController()
+				.validateBirthDate((Integer) birthDateYear.getValue(), (Integer) birthDateMonth.getValue(), (Integer) e));
+		birthDateMonth.addValidator(
+			e -> ControllerProvider.getPersonController()
+				.validateBirthDate((Integer) birthDateYear.getValue(), (Integer) e, (Integer) birthDateDay.getValue()));
+		birthDateYear.addValidator(
+			e -> ControllerProvider.getPersonController()
+				.validateBirthDate((Integer) e, (Integer) birthDateMonth.getValue(), (Integer) birthDateDay.getValue()));
+
 		DateField deathDate = addField(PersonDto.DEATH_DATE, DateField.class);
 		TextField approximateAgeField = addField(PersonDto.APPROXIMATE_AGE, TextField.class);
 		approximateAgeField.setConversionError(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, approximateAgeField.getCaption()));
-		removeMaxLengthValidators(approximateAgeField);
 		ComboBox approximateAgeTypeField = addField(PersonDto.APPROXIMATE_AGE_TYPE, ComboBox.class);
 		addField(PersonDto.APPROXIMATE_AGE_REFERENCE_DATE, DateField.class);
 
@@ -222,10 +287,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		TextField tfGestationAgeAtBirth = addField(PersonDto.GESTATION_AGE_AT_BIRTH, TextField.class);
 		tfGestationAgeAtBirth
 			.setConversionError(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, tfGestationAgeAtBirth.getCaption()));
-		removeMaxLengthValidators(tfGestationAgeAtBirth);
 		TextField tfBirthWeight = addField(PersonDto.BIRTH_WEIGHT, TextField.class);
 		tfBirthWeight.setConversionError(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, tfBirthWeight.getCaption()));
-		removeMaxLengthValidators(tfBirthWeight);
 
 		AbstractSelect deathPlaceType = addField(PersonDto.DEATH_PLACE_TYPE, ComboBox.class);
 		deathPlaceType.setNullSelectionAllowed(true);
@@ -234,42 +297,56 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		TextField burialPlaceDesc = addField(PersonDto.BURIAL_PLACE_DESCRIPTION, TextField.class);
 		ComboBox burialConductor = addField(PersonDto.BURIAL_CONDUCTOR, ComboBox.class);
 		addField(PersonDto.ADDRESS, LocationEditForm.class).setCaption(null);
+		addField(PersonDto.ADDRESSES, LocationsField.class).setCaption(null);
+
+		PersonContactDetailsField personContactDetailsField = new PersonContactDetailsField(getValue(), fieldVisibilityCheckers, fieldAccessCheckers);
+		personContactDetailsField.setId(PersonDto.PERSON_CONTACT_DETAILS);
+		personContactDetailsField.setPseudonymized(isPseudonymized);
+		getFieldGroup().bind(personContactDetailsField, PersonDto.PERSON_CONTACT_DETAILS);
+		getContent().addComponent(personContactDetailsField, PersonDto.PERSON_CONTACT_DETAILS);
 
 		addFields(
 			PersonDto.OCCUPATION_TYPE,
 			PersonDto.OCCUPATION_DETAILS,
+			PersonDto.ARMED_FORCES_RELATION_TYPE,
 			PersonDto.EDUCATION_TYPE,
-			PersonDto.EDUCATION_DETAILS,
-			PersonDto.PHONE,
-			PersonDto.PHONE_OWNER,
-			PersonDto.EMAIL_ADDRESS,
-			PersonDto.PASSPORT_NUMBER,
-			PersonDto.NATIONAL_HEALTH_ID);
+			PersonDto.EDUCATION_DETAILS);
+
+		List<CountryReferenceDto> countries = FacadeProvider.getCountryFacade().getAllActiveAsReference();
+		((ComboBox) addField(PersonDto.BIRTH_COUNTRY)).addItems(countries);
+		((ComboBox) addField(PersonDto.CITIZENSHIP)).addItems(countries);
+
+		addFields(PersonDto.PASSPORT_NUMBER, PersonDto.NATIONAL_HEALTH_ID);
+		Field externalId = addField(PersonDto.EXTERNAL_ID);
+		if (FacadeProvider.getExternalSurveillanceToolFacade().isFeatureEnabled()) {
+			externalId.setEnabled(false);
+		}
+		TextField externalTokenField = addField(PersonDto.EXTERNAL_TOKEN);
+		Label externalTokenWarningLabel = new Label(I18nProperties.getString(Strings.messagePersonExternalTokenWarning));
+		externalTokenWarningLabel.addStyleNames(VSPACE_3, LABEL_WHITE_SPACE_NORMAL);
+		getContent().addComponent(externalTokenWarningLabel, EXTERNAL_TOKEN_WARNING_LOC);
+
+		addField(PersonDto.HAS_COVID_APP).addStyleName(CssStyles.FORCE_CAPTION_CHECKBOX);
+		addField(PersonDto.COVID_CODE_DELIVERED).addStyleName(CssStyles.FORCE_CAPTION_CHECKBOX);
+
+		if (personContext != PersonContext.CASE) {
+			setVisible(false, PersonDto.HAS_COVID_APP, PersonDto.COVID_CODE_DELIVERED);
+		}
 
 		ComboBox cbPlaceOfBirthRegion = addInfrastructureField(PersonDto.PLACE_OF_BIRTH_REGION);
 		ComboBox cbPlaceOfBirthDistrict = addInfrastructureField(PersonDto.PLACE_OF_BIRTH_DISTRICT);
 		ComboBox cbPlaceOfBirthCommunity = addInfrastructureField(PersonDto.PLACE_OF_BIRTH_COMMUNITY);
-		ComboBox cbPlaceOfBirthFacility = addInfrastructureField(PersonDto.PLACE_OF_BIRTH_FACILITY);
+		ComboBox placeOfBirthFacilityType = addField(PersonDto.PLACE_OF_BIRTH_FACILITY_TYPE);
+		FieldHelper.removeItems(placeOfBirthFacilityType);
+		placeOfBirthFacilityType.setItemCaptionMode(AbstractSelect.ItemCaptionMode.ID);
+		placeOfBirthFacilityType.addItems(FacilityType.getPlaceOfBirthTypes());
+
+		cbPlaceOfBirthFacility = addInfrastructureField(PersonDto.PLACE_OF_BIRTH_FACILITY);
 		TextField tfPlaceOfBirthFacilityDetails = addField(PersonDto.PLACE_OF_BIRTH_FACILITY_DETAILS, TextField.class);
 
 		causeOfDeathField = addField(PersonDto.CAUSE_OF_DEATH, ComboBox.class);
 		causeOfDeathDiseaseField = addDiseaseField(PersonDto.CAUSE_OF_DEATH_DISEASE, true);
 		causeOfDeathDetailsField = addField(PersonDto.CAUSE_OF_DEATH_DETAILS, TextField.class);
-		ComboBox facilityRegion = addInfrastructureField(PersonDto.OCCUPATION_REGION);
-		facilityRegion.setImmediate(true);
-		facilityRegion.setNullSelectionAllowed(true);
-		ComboBox facilityDistrict = addInfrastructureField(PersonDto.OCCUPATION_DISTRICT);
-		facilityDistrict.setImmediate(true);
-		facilityDistrict.setNullSelectionAllowed(true);
-		ComboBox facilityCommunity = addInfrastructureField(PersonDto.OCCUPATION_COMMUNITY);
-		facilityCommunity.setImmediate(true);
-		facilityCommunity.setNullSelectionAllowed(true);
-		occupationFacility = addInfrastructureField(PersonDto.OCCUPATION_FACILITY);
-		occupationFacility.setImmediate(true);
-		occupationFacility.setNullSelectionAllowed(true);
-		occupationFacilityDetails = addField(PersonDto.OCCUPATION_FACILITY_DETAILS, TextField.class);
-
-		addField(PersonDto.GENERAL_PRACTITIONER_DETAILS, TextField.class);
 
 		// Set requirements that don't need visibility changes and read only status
 
@@ -278,11 +355,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		setVisible(
 			false,
 			PersonDto.OCCUPATION_DETAILS,
-			PersonDto.OCCUPATION_FACILITY,
-			PersonDto.OCCUPATION_FACILITY_DETAILS,
-			PersonDto.OCCUPATION_REGION,
-			PersonDto.OCCUPATION_DISTRICT,
-			PersonDto.OCCUPATION_COMMUNITY,
 			PersonDto.DEATH_DATE,
 			PersonDto.DEATH_PLACE_TYPE,
 			PersonDto.DEATH_PLACE_DESCRIPTION,
@@ -313,10 +385,14 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		initializeVisibilitiesAndAllowedVisibilities();
 		initializeAccessAndAllowedAccesses();
 
-		if (!getField(PersonDto.OCCUPATION_TYPE).isVisible() && !getField(PersonDto.EDUCATION_TYPE).isVisible())
+		if (!getField(PersonDto.OCCUPATION_TYPE).isVisible()
+			&& !getField(PersonDto.ARMED_FORCES_RELATION_TYPE).isVisible()
+			&& !getField(PersonDto.EDUCATION_TYPE).isVisible())
 			occupationHeader.setVisible(false);
 		if (!getField(PersonDto.ADDRESS).isVisible())
 			addressHeader.setVisible(false);
+		if (!getField(PersonDto.ADDRESSES).isVisible())
+			addressesHeader.setVisible(false);
 
 		// Add listeners
 
@@ -324,11 +400,13 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		addFieldListeners(PersonDto.APPROXIMATE_AGE, e -> {
 			@SuppressWarnings("unchecked")
 			Field<ApproximateAgeType> ageTypeField = (Field<ApproximateAgeType>) getField(PersonDto.APPROXIMATE_AGE_TYPE);
-			if (e.getProperty().getValue() == null) {
-				ageTypeField.clear();
-			} else {
-				if (ageTypeField.isEmpty()) {
-					ageTypeField.setValue(ApproximateAgeType.YEARS);
+			if (!ageTypeField.isReadOnly()) {
+				if (e.getProperty().getValue() == null) {
+					ageTypeField.clear();
+				} else {
+					if (ageTypeField.isEmpty()) {
+						ageTypeField.setValue(ApproximateAgeType.YEARS);
+					}
 				}
 			}
 		});
@@ -358,11 +436,11 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			cbPlaceOfBirthRegion,
 			cbPlaceOfBirthDistrict,
 			cbPlaceOfBirthCommunity,
+			placeOfBirthFacilityType,
 			cbPlaceOfBirthFacility,
-			tfPlaceOfBirthFacilityDetails);
-		addListenersToInfrastructureFields(facilityRegion, facilityDistrict, facilityCommunity, occupationFacility, occupationFacilityDetails);
-		cbPlaceOfBirthRegion.addItems(FacadeProvider.getRegionFacade().getAllActiveAsReference());
-		facilityRegion.addItems(FacadeProvider.getRegionFacade().getAllActiveAsReference());
+			tfPlaceOfBirthFacilityDetails,
+			true);
+		cbPlaceOfBirthRegion.addItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
 
 		addFieldListeners(PersonDto.PRESENT_CONDITION, e -> toogleDeathAndBurialFields());
 
@@ -396,18 +474,51 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		// Update the list of days according to the selected month and year
 		birthDateYear.addValueChangeListener(e -> {
 			updateListOfDays((Integer) e.getProperty().getValue(), (Integer) birthDateMonth.getValue());
+			birthDateMonth.markAsDirty();
+			birthDateDay.markAsDirty();
 		});
 		birthDateMonth.addValueChangeListener(e -> {
 			updateListOfDays((Integer) birthDateYear.getValue(), (Integer) e.getProperty().getValue());
+			birthDateYear.markAsDirty();
+			birthDateDay.markAsDirty();
 		});
+		birthDateDay.addValueChangeListener(e -> {
+			birthDateYear.markAsDirty();
+			birthDateMonth.markAsDirty();
+		});
+
+		addValueChangeListener((e) -> {
+			ValidationUtils.initComponentErrorValidator(
+				externalTokenField,
+				getValue().getExternalToken(),
+				Validations.duplicateExternalToken,
+				externalTokenWarningLabel,
+				(externalToken) -> FacadeProvider.getPersonFacade().doesExternalTokenExist(externalToken, getValue().getUuid()));
+
+			personContactDetailsField.setThisPerson((PersonDto) e.getProperty().getValue());
+		});
+
+		Label generalCommentLabel = new Label(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.ADDITIONAL_DETAILS));
+		generalCommentLabel.addStyleName(H3);
+		getContent().addComponent(generalCommentLabel, GENERAL_COMMENT_LOC);
+
+		TextArea additionalDetails = addField(PersonDto.ADDITIONAL_DETAILS, TextArea.class, new ResizableTextAreaWrapper<>(false));
+		additionalDetails.setRows(6);
+		additionalDetails.setDescription(
+			I18nProperties.getPrefixDescription(PersonDto.I18N_PREFIX, PersonDto.ADDITIONAL_DETAILS, "") + "\n"
+				+ I18nProperties.getDescription(Descriptions.descGdpr));
+		CssStyles.style(additionalDetails, CssStyles.CAPTION_HIDDEN);
 	}
 
 	private void addListenersToInfrastructureFields(
 		ComboBox regionField,
 		ComboBox districtField,
 		ComboBox communityField,
+		ComboBox typeField,
 		ComboBox facilityField,
-		TextField detailsField) {
+		TextField detailsField,
+		boolean allowNoneFacility) {
+
 		regionField.addValueChangeListener(e -> {
 			RegionReferenceDto regionDto = (RegionReferenceDto) e.getProperty().getValue();
 			FieldHelper
@@ -415,38 +526,65 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		});
 
 		districtField.addValueChangeListener(e -> {
-			if (communityField.getValue() == null) {
-				FieldHelper.removeItems(facilityField);
-			}
-			FieldHelper.removeItems(communityField);
 			DistrictReferenceDto districtDto = (DistrictReferenceDto) e.getProperty().getValue();
 			FieldHelper.updateItems(
 				communityField,
 				districtDto != null ? FacadeProvider.getCommunityFacade().getAllActiveByDistrict(districtDto.getUuid()) : null);
-			FieldHelper.updateItems(
-				facilityField,
-				districtDto != null ? FacadeProvider.getFacilityFacade().getActiveHealthFacilitiesByDistrict(districtDto, true) : null);
+			updateFacilities(facilityField, typeField, communityField, districtField, allowNoneFacility);
+
 		});
 
-		communityField.addValueChangeListener(e -> {
-			if (occupationFacility.getValue() == null) {
-				FieldHelper.removeItems(facilityField);
-				CommunityReferenceDto communityDto = (CommunityReferenceDto) e.getProperty().getValue();
-				FieldHelper.updateItems(
-					facilityField,
-					communityDto != null
-						? FacadeProvider.getFacilityFacade().getActiveHealthFacilitiesByCommunity(communityDto, true)
-						: districtField.getValue() != null
-							? FacadeProvider.getFacilityFacade()
-								.getActiveHealthFacilitiesByDistrict((DistrictReferenceDto) districtField.getValue(), true)
-							: null);
-			}
-		});
+		communityField.addValueChangeListener(e -> updateFacilities(facilityField, typeField, communityField, districtField, allowNoneFacility));
+		typeField.addValueChangeListener(e -> updateFacilities(facilityField, typeField, communityField, districtField, allowNoneFacility));
+		FieldHelper.updateItems(
+			facilityField,
+			Collections.singletonList(FacadeProvider.getFacilityFacade().getFacilityReferenceByUuid(FacilityDto.NONE_FACILITY_UUID)));
+
 		facilityField.addValueChangeListener(e -> {
 			updateFacilityDetailsVisibility(detailsField, (FacilityReferenceDto) e.getProperty().getValue());
+			if (facilityField.equals(cbPlaceOfBirthFacility)) {
+				this.getValue().setPlaceOfBirthFacilityType((FacilityType) typeField.getValue());
+			}
 		});
 		// Set initial visibility
 		updateFacilityDetailsVisibility(detailsField, (FacilityReferenceDto) facilityField.getValue());
+	}
+
+	private void updateFacilities(
+		ComboBox facilityField,
+		ComboBox typeField,
+		ComboBox communityField,
+		ComboBox districtField,
+		boolean allowNoneFacility) {
+		if (typeField.getValue() != null) {
+			FieldHelper.updateItems(
+				facilityField,
+				communityField.getValue() != null
+					? FacadeProvider.getFacilityFacade()
+						.getActiveFacilitiesByCommunityAndType(
+							(CommunityReferenceDto) communityField.getValue(),
+							(FacilityType) typeField.getValue(),
+							true,
+							false)
+					: districtField.getValue() != null
+						? FacadeProvider.getFacilityFacade()
+							.getActiveFacilitiesByDistrictAndType(
+								(DistrictReferenceDto) districtField.getValue(),
+								(FacilityType) typeField.getValue(),
+								true,
+								false)
+						: null);
+		} else {
+			if (allowNoneFacility) {
+				// "home or other place" as fallback
+				FieldHelper.updateItems(
+					facilityField,
+					Collections.singletonList(FacadeProvider.getFacilityFacade().getFacilityReferenceByUuid(FacilityDto.NONE_FACILITY_UUID)));
+			} else {
+				FieldHelper.removeItems(facilityField);
+			}
+		}
+
 	}
 
 	private void updateListOfDays(Integer selectedYear, Integer selectedMonth) {
@@ -518,45 +656,17 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			case BUSINESSMAN_WOMAN:
 			case TRANSPORTER:
 			case OTHER:
-				setVisible(
-					false,
-					PersonDto.OCCUPATION_FACILITY,
-					PersonDto.OCCUPATION_FACILITY_DETAILS,
-					PersonDto.OCCUPATION_REGION,
-					PersonDto.OCCUPATION_DISTRICT,
-					PersonDto.OCCUPATION_COMMUNITY);
 				setVisible(true, PersonDto.OCCUPATION_DETAILS);
 				break;
 			case HEALTHCARE_WORKER:
-				setVisible(
-					true,
-					PersonDto.OCCUPATION_DETAILS,
-					PersonDto.OCCUPATION_REGION,
-					PersonDto.OCCUPATION_DISTRICT,
-					PersonDto.OCCUPATION_COMMUNITY,
-					PersonDto.OCCUPATION_FACILITY);
-				updateFacilityDetailsVisibility(occupationFacilityDetails, (FacilityReferenceDto) occupationFacility.getValue());
+				setVisible(true, PersonDto.OCCUPATION_DETAILS);
 				break;
 			default:
-				setVisible(
-					false,
-					PersonDto.OCCUPATION_DETAILS,
-					PersonDto.OCCUPATION_FACILITY,
-					PersonDto.OCCUPATION_FACILITY_DETAILS,
-					PersonDto.OCCUPATION_REGION,
-					PersonDto.OCCUPATION_DISTRICT,
-					PersonDto.OCCUPATION_COMMUNITY);
+				setVisible(false, PersonDto.OCCUPATION_DETAILS);
 				break;
 			}
 		} else {
-			setVisible(
-				false,
-				PersonDto.OCCUPATION_DETAILS,
-				PersonDto.OCCUPATION_FACILITY,
-				PersonDto.OCCUPATION_FACILITY_DETAILS,
-				PersonDto.OCCUPATION_REGION,
-				PersonDto.OCCUPATION_DISTRICT,
-				PersonDto.OCCUPATION_COMMUNITY);
+			setVisible(false, PersonDto.OCCUPATION_DETAILS);
 		}
 	}
 
@@ -567,17 +677,17 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			return;
 		}
 
-		boolean otherHealthFacility = facility.getUuid().equals(FacilityDto.OTHER_FACILITY_UUID);
-		boolean noneHealthFacility = facility.getUuid().equals(FacilityDto.NONE_FACILITY_UUID);
-		boolean visibleAndRequired = otherHealthFacility || noneHealthFacility;
+		boolean otherFacility = facility.getUuid().equals(FacilityDto.OTHER_FACILITY_UUID);
+		boolean noneFacility = facility.getUuid().equals(FacilityDto.NONE_FACILITY_UUID);
+		boolean visibleAndRequired = otherFacility || noneFacility;
 
 		detailsField.setVisible(visibleAndRequired);
 
-		if (otherHealthFacility) {
+		if (otherFacility) {
 			detailsField.setCaption(I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.HEALTH_FACILITY_DETAILS));
 		}
-		if (noneHealthFacility) {
-			detailsField.setCaption(I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.NONE_HEALTH_FACILITY_DETAILS));
+		if (noneFacility) {
+			detailsField.setCaption(I18nProperties.getCaption(Captions.CaseData_noneHealthFacilityDetails));
 		}
 		if (!visibleAndRequired) {
 			detailsField.clear();
@@ -739,5 +849,20 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		if (burialPlaceDesc.isVisible() && StringUtils.isBlank(burialPlaceDesc.getValue())) {
 			burialPlaceDesc.setValue(getValue().getAddress().toString());
 		}
+	}
+
+	public Field getFirstNameField() {
+		return firstNameField;
+	}
+
+	public Field getLastNameField() {
+		return lastNameField;
+	}
+
+	@Override
+	protected <F extends Field> F addFieldToLayout(CustomLayout layout, String propertyId, F field) {
+		field.addValueChangeListener(e -> fireValueChange(false));
+
+		return super.addFieldToLayout(layout, propertyId, field);
 	}
 }

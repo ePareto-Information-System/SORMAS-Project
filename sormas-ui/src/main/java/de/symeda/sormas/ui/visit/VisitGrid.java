@@ -25,6 +25,7 @@ import com.vaadin.ui.renderers.DateRenderer;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.visit.VisitCriteria;
@@ -32,6 +33,7 @@ import de.symeda.sormas.api.visit.VisitIndexDto;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.BooleanRenderer;
+import de.symeda.sormas.ui.utils.FieldAccessColumnStyleGenerator;
 import de.symeda.sormas.ui.utils.FilteredGrid;
 
 @SuppressWarnings("serial")
@@ -54,7 +56,8 @@ public class VisitGrid extends FilteredGrid<VisitIndexDto, VisitCriteria> {
 			setSelectionMode(SelectionMode.NONE);
 		}
 
-		addEditColumn(e -> ControllerProvider.getVisitController().editVisit(e.getUuid(), getCriteria().getContact(), r -> reload()));
+		addEditColumn(
+			e -> ControllerProvider.getVisitController().editVisit(e.getUuid(), getCriteria().getContact(), getCriteria().getCaze(), r -> reload()));
 
 		setColumns(
 			EDIT_BTN_ID,
@@ -63,14 +66,20 @@ public class VisitGrid extends FilteredGrid<VisitIndexDto, VisitCriteria> {
 			VisitIndexDto.VISIT_REMARKS,
 			VisitIndexDto.DISEASE,
 			VisitIndexDto.SYMPTOMATIC,
-			VisitIndexDto.TEMPERATURE);
+			VisitIndexDto.TEMPERATURE,
+			VisitIndexDto.ORIGIN);
 
 		((Column<VisitIndexDto, Date>) getColumn(VisitIndexDto.VISIT_DATE_TIME))
 			.setRenderer(new DateRenderer(DateHelper.getLocalDateTimeFormat(I18nProperties.getUserLanguage())));
 		((Column<VisitIndexDto, String>) getColumn(VisitIndexDto.SYMPTOMATIC)).setRenderer(new BooleanRenderer());
 
-		for (Column<?, ?> column : getColumns()) {
-			column.setCaption(I18nProperties.getPrefixCaption(VisitIndexDto.I18N_PREFIX, column.getId().toString(), column.getCaption()));
+		for (Column<VisitIndexDto, ?> column : getColumns()) {
+			final String columnId = column.getId();
+			final String i18nPrefix = columnId.equals(VisitIndexDto.SYMPTOMATIC) || columnId.equals(VisitIndexDto.TEMPERATURE)
+				? SymptomsDto.I18N_PREFIX
+				: VisitIndexDto.I18N_PREFIX;
+			column.setCaption(I18nProperties.getPrefixCaption(i18nPrefix, columnId, column.getCaption()));
+			column.setStyleGenerator(FieldAccessColumnStyleGenerator.getDefault(getBeanType(), columnId));
 		}
 	}
 

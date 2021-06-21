@@ -16,19 +16,19 @@
 package de.symeda.sormas.ui.campaign;
 
 import com.vaadin.navigator.Navigator;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Component;
+
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.ui.SubMenu;
 import de.symeda.sormas.ui.campaign.campaigndata.CampaignDataView;
 import de.symeda.sormas.ui.campaign.campaigndata.CampaignFormDataView;
+import de.symeda.sormas.ui.campaign.campaigns.CampaignView;
 import de.symeda.sormas.ui.campaign.campaigns.CampaignsView;
+import de.symeda.sormas.ui.campaign.campaignstatistics.CampaignStatisticsView;
 import de.symeda.sormas.ui.utils.AbstractSubNavigationView;
 
-import java.util.Optional;
-
 @SuppressWarnings("serial")
-public abstract class AbstractCampaignView extends AbstractSubNavigationView {
+public abstract class AbstractCampaignView extends AbstractSubNavigationView<Component> {
 
 	public static final String ROOT_VIEW_NAME = "campaign";
 
@@ -37,28 +37,29 @@ public abstract class AbstractCampaignView extends AbstractSubNavigationView {
 	}
 
 	@Override
-	public void refreshMenu(SubMenu menu, Label infoLabel, Label infoLabelSub, String params) {
+	public void refreshMenu(SubMenu menu, String params) {
 		menu.removeAllViews();
 
-		menu.addView(
-			CampaignsView.VIEW_NAME,
-			I18nProperties.getPrefixCaption("View", CampaignsView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
-			params);
 		menu.addView(
 			CampaignDataView.VIEW_NAME,
 			I18nProperties.getPrefixCaption("View", CampaignDataView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
 			params);
+		menu.addView(
+			CampaignStatisticsView.VIEW_NAME,
+			I18nProperties.getPrefixCaption("View", CampaignStatisticsView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
+			params);
+		menu.addView(
+			CampaignsView.VIEW_NAME,
+			I18nProperties.getPrefixCaption("View", CampaignsView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
+			params);
 	}
 
 	public static void registerViews(Navigator navigator) {
-		navigator.addView(CampaignsView.VIEW_NAME, CampaignsView.class);
 		navigator.addView(CampaignDataView.VIEW_NAME, CampaignDataView.class);
 		navigator.addView(CampaignFormDataView.VIEW_NAME, CampaignFormDataView.class);
-	}
-
-	@Override
-	protected Optional<VerticalLayout> createInfoLayout() {
-		return Optional.empty();
+		navigator.addView(CampaignStatisticsView.VIEW_NAME, CampaignStatisticsView.class);
+		navigator.addView(CampaignsView.VIEW_NAME, CampaignsView.class);
+		navigator.addView(CampaignView.VIEW_NAME, CampaignView.class);
 	}
 
 }

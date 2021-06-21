@@ -17,40 +17,51 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.configuration.infrastructure;
 
-import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
-
+import com.vaadin.v7.data.util.converter.Converter;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.TextField;
-
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.facility.FacilityDto;
+import de.symeda.sormas.api.facility.FacilityType;
+import de.symeda.sormas.api.facility.FacilityTypeGroup;
+import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.region.CommunityReferenceDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
+import de.symeda.sormas.ui.location.AccessibleTextField;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
 import de.symeda.sormas.ui.utils.FieldHelper;
 import de.symeda.sormas.ui.utils.StringToAngularLocationConverter;
+
+import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
 
 public class FacilityEditForm extends AbstractEditForm<FacilityDto> {
 
 	private static final long serialVersionUID = 1952619382018965255L;
 
-	private static final String HTML_LAYOUT = fluidRowLocs(FacilityDto.NAME, FacilityDto.REGION)
-		+ fluidRowLocs(FacilityDto.DISTRICT, FacilityDto.COMMUNITY)
-		+ fluidRowLocs(FacilityDto.CITY)
+	private static final String TYPE_GROUP_LOC = "typeGroupLoc";
+
+	private static final String HTML_LAYOUT = fluidRowLocs(FacilityDto.NAME)
+		+ fluidRowLocs(TYPE_GROUP_LOC, FacilityDto.TYPE)
+		+ fluidRowLocs(FacilityDto.REGION, FacilityDto.DISTRICT)
+		+ fluidRowLocs(FacilityDto.COMMUNITY)
+		+ fluidRowLocs(FacilityDto.STREET, FacilityDto.HOUSE_NUMBER)
+		+ fluidRowLocs(FacilityDto.ADDITIONAL_INFORMATION, FacilityDto.POSTAL_CODE)
+		+ fluidRowLocs(FacilityDto.AREA_TYPE, FacilityDto.CITY)
+		+fluidRowLocs(FacilityDto.CONTACT_PERSON_FIRST_NAME, FacilityDto.CONTACT_PERSON_LAST_NAME)
+		+fluidRowLocs(FacilityDto.CONTACT_PERSON_PHONE, FacilityDto.CONTACT_PERSON_EMAIL)
 		+ fluidRowLocs(FacilityDto.LATITUDE, FacilityDto.LONGITUDE)
 		+ fluidRowLocs(RegionDto.EXTERNAL_ID);
 
-	private boolean laboratory;
 	private boolean create;
+	private ComboBox typeGroup;
 
-	public FacilityEditForm(boolean create, boolean laboratory) {
+	public FacilityEditForm(boolean create) {
 		super(FacilityDto.class, FacilityDto.I18N_PREFIX, false);
 		this.create = create;
-		this.laboratory = laboratory;
 
 		setWidth(540, Unit.PIXELS);
 
@@ -62,26 +73,55 @@ public class FacilityEditForm extends AbstractEditForm<FacilityDto> {
 
 	@Override
 	protected void addFields() {
-		TextField name = addField(FacilityDto.NAME, TextField.class);
+		addField(FacilityDto.NAME, TextField.class);
+		typeGroup = new ComboBox();
+		typeGroup.setId("typeGroup");
+		typeGroup.setCaption(I18nProperties.getCaption(Captions.Facility_typeGroup));
+		typeGroup.addItems(FacilityTypeGroup.values());
+		typeGroup.setWidth(100, Unit.PERCENTAGE);
+		typeGroup.setEnabled(create);
+		getContent().addComponent(typeGroup, TYPE_GROUP_LOC);
+		ComboBox type = addField(FacilityDto.TYPE);
+		type.removeAllItems();
+		type.setEnabled(create);
 		ComboBox region = addInfrastructureField(FacilityDto.REGION);
 		ComboBox district = addInfrastructureField(FacilityDto.DISTRICT);
 		ComboBox community = addInfrastructureField(FacilityDto.COMMUNITY);
 		addField(FacilityDto.CITY, TextField.class);
-		TextField latitude = addField(FacilityDto.LATITUDE, TextField.class);
+		addField(FacilityDto.POSTAL_CODE, TextField.class);
+		addField(FacilityDto.STREET, TextField.class);
+		addField(FacilityDto.HOUSE_NUMBER, TextField.class);
+		addField(FacilityDto.ADDITIONAL_INFORMATION, TextField.class);
+		addField(FacilityDto.AREA_TYPE, ComboBox.class);
+		addField(FacilityDto.CONTACT_PERSON_FIRST_NAME, TextField.class);
+		addField(FacilityDto.CONTACT_PERSON_LAST_NAME, TextField.class);
+		addField(FacilityDto.CONTACT_PERSON_PHONE, TextField.class);
+		addField(FacilityDto.CONTACT_PERSON_EMAIL, TextField.class);
+		AccessibleTextField latitude = addField(FacilityDto.LATITUDE, AccessibleTextField.class);
 		latitude.setConverter(new StringToAngularLocationConverter());
 		latitude.setConversionError(I18nProperties.getValidationError(Validations.onlyGeoCoordinatesAllowed, latitude.getCaption()));
-		removeMaxLengthValidators(latitude);
-		TextField longitude = addField(FacilityDto.LONGITUDE, TextField.class);
+		AccessibleTextField longitude = addField(FacilityDto.LONGITUDE, AccessibleTextField.class);
 		longitude.setConverter(new StringToAngularLocationConverter());
 		longitude.setConversionError(I18nProperties.getValidationError(Validations.onlyGeoCoordinatesAllowed, longitude.getCaption()));
-		removeMaxLengthValidators(longitude);
 		addField(RegionDto.EXTERNAL_ID, TextField.class);
 
-		name.setRequired(true);
-		if (!laboratory) {
-			region.setRequired(true);
-			district.setRequired(true);
-		}
+		setRequired(true, FacilityDto.NAME, TYPE_GROUP_LOC, FacilityDto.TYPE, FacilityDto.REGION, FacilityDto.DISTRICT);
+
+		typeGroup.addValueChangeListener(e -> {
+			FieldHelper.updateEnumData(type, FacilityType.getTypes((FacilityTypeGroup) typeGroup.getValue()));
+		});
+
+		type.addValueChangeListener(e -> {
+			boolean notLab = !FacilityType.LABORATORY.equals(type.getValue());
+			region.setRequired(notLab);
+			district.setRequired(notLab);
+			if (!create) {
+				// Disable editing of region, etc. so case references stay correct
+				region.setEnabled(false);
+				district.setEnabled(false);
+				community.setEnabled(false);
+			}
+		});
 
 		region.addValueChangeListener(e -> {
 			RegionReferenceDto regionDto = (RegionReferenceDto) e.getProperty().getValue();
@@ -102,16 +142,14 @@ public class FacilityEditForm extends AbstractEditForm<FacilityDto> {
 			CommunityReferenceDto communityDto = (CommunityReferenceDto) e.getProperty().getValue();
 		});
 		region.addItems(FacadeProvider.getRegionFacade().getAllActiveAsReference());
+	}
 
-		if (!create) {
-			if (!laboratory) {
-				// Disable editing of region, etc. so case references stay correct
-				region.setEnabled(false);
-				district.setEnabled(false);
-				community.setEnabled(false);
-			}
+	@Override
+	public void setValue(FacilityDto facilityDto) throws com.vaadin.v7.data.Property.ReadOnlyException, Converter.ConversionException {
+		if (facilityDto.getType() != null) {
+			typeGroup.setValue(facilityDto.getType().getFacilityTypeGroup());
 		}
-
+		super.setValue(facilityDto);
 	}
 
 	@Override

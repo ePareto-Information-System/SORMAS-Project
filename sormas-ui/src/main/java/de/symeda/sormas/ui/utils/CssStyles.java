@@ -1,28 +1,27 @@
-/*******************************************************************************
+/*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
- *
+ * Copyright © 2016-2021 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *******************************************************************************/
-package de.symeda.sormas.ui.utils;
+ */
 
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import de.symeda.sormas.api.Disease;
+package de.symeda.sormas.ui.utils;
 
 import java.util.Arrays;
 import java.util.Collections;
+
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
+
+import de.symeda.sormas.api.Disease;
 
 public final class CssStyles {
 
@@ -38,6 +37,9 @@ public final class CssStyles {
 	public static final String H5 = "h5";
 
 	public static final String VR = "vertical-rule";
+
+	public static final String RICH_TEXT_CONTENT_CONTAINER = "rich-text-content-container";
+	public static final String REPLY = "reply";
 
 	// Vertical space
 	public static final String VSPACE_0 = "vspace-0";
@@ -117,11 +119,14 @@ public final class CssStyles {
 	public static final String LABEL_ROUNDED_CORNERS_SLIM = "rounded-corners-slim";
 	public static final String LABEL_BACKGROUND_FOCUS_LIGHT = "background-focus-light";
 	public static final String LABEL_VERTICAL_ALIGN_SUPER = "vertical-align-super";
+	public static final String LABEL_VERTICAL_ALIGN_TOP = "vertical-align-top";
 	public static final String LABEL_BACKGROUND_FOLLOW_UP_SYMPTOMATIC = "bg-follow-up-symptomatic";
 	public static final String LABEL_BACKGROUND_FOLLOW_UP_NOT_SYMPTOMATIC = "bg-follow-up-not-symptomatic";
 	public static final String LABEL_BACKGROUND_FOLLOW_UP_UNAVAILABLE = "bg-follow-up-unavailable";
 	public static final String LABEL_BACKGROUND_FOLLOW_UP_UNCOOPERATIVE = "bg-follow-up-uncooperative";
 	public static final String LABEL_BACKGROUND_FOLLOW_UP_NOT_PERFORMED = "bg-follow-up-not-performed";
+	public static final String LABEL_WHITE_SPACE_NORMAL = "white-space-normal";
+	public static final String LABEL_TEXT_ALIGN_RIGHT = "text-align-right";
 
 	// Layout styles
 	public static final String LAYOUT_MINIMAL = "minimal";
@@ -153,6 +158,7 @@ public final class CssStyles {
 	public static final String BUTTON_FILTER_ENABLED = "filter-enabled";
 	public static final String BUTTON_FILTER_DISABLED = "filter-disabled";
 	public static final String BUTTON_FONT_SIZE_LARGE = "font-size-large";
+	public static final String GEOCODE_BUTTON_HIGHLIGHT = "geocode-button-highlight";
 
 	// List styles
 	public static final String SORMAS_LIST = "s-list";
@@ -175,6 +181,7 @@ public final class CssStyles {
 
 	public static final String FORCE_CAPTION = "force-caption";
 	public static final String FORCE_CAPTION_CHECKBOX = "force-caption-checkbox";
+	public static final String CAPTION_ON_TOP = "on-top";
 	public static final String CAPTION_HIDDEN = "caption-hidden";
 	public static final String CAPTION_OVERFLOW = "caption-overflow";
 	public static final String CAPTION_FIXED_WIDTH_100 = "caption-fixed-width-100";
@@ -202,6 +209,12 @@ public final class CssStyles {
 	public static final String GRID_CELL_UNAVAILABLE = "follow-up-unavailable";
 	public static final String GRID_CELL_UNCOOPERATIVE = "follow-up-uncooperative";
 	public static final String GRID_CELL_NOT_PERFORMED = "follow-up-not-performed";
+	public static final String GRID_CELL_SYMPTOMATIC_EXTERNAL = "follow-up-symptomatic-external";
+	public static final String GRID_CELL_NOT_SYMPTOMATIC_EXTERNAL = "follow-up-not-symptomatic-external";
+	public static final String GRID_CELL_UNAVAILABLE_EXTERNAL = "follow-up-unavailable-external";
+	public static final String GRID_CELL_UNCOOPERATIVE_EXTERNAL = "follow-up-uncooperative-external";
+	public static final String GRID_CELL_NOT_PERFORMED_EXTERNAL = "follow-up-not-performed-external";
+	public static final String GRID_CELL_LINK = "link";
 
 	public static final String GRID_CELL_ODD = "odd";
 
@@ -263,6 +276,16 @@ public final class CssStyles {
 	 * Example: <code>LayoutUtil.fluidColumnLocCss(CssStyles.LAYOUT_COL_HIDE_INVSIBLE, 3, 0, PersonDto.CAUSE_OF_DEATH_DISEASE)</code>
 	 */
 	public static final String LAYOUT_COL_HIDE_INVSIBLE = "hide-invisble";
+
+	public static final String INACCESSIBLE_FIELD = "inaccessible-field";
+	public static final String INACCESSIBLE_COLUMN = "inaccessible-column";
+	public static final String INACCESSIBLE_LABEL = "inaccessible-label";
+
+	// Print
+	public static final String PRINT_CONTAINER = "print-container";
+	public static final String PRINT_MENU = "print-menu";
+	public static final String PRINT_VIEW_CONTAINER = "print-view-container";
+	public static final String FILTER_FORM = "filter-form";
 
 	@Deprecated
 	public static final String CALLOUT = "callout";
@@ -372,14 +395,13 @@ public final class CssStyles {
 			return "background-disease-congenital-rubella";
 		case ANTHRAX:
 			return "background-disease-anthrax";
-		case UNDEFINED:
-			return "background-disease-undefined";
 		case RABIES:
 			return "background-disease-rabies";
 		case CORONAVIRUS:
 			return "background-disease-coronavirus";
+		case UNDEFINED:
 		default:
-			throw new IllegalArgumentException(disease.toString());
+			return "background-disease-undefined";
 		}
 	}
 }

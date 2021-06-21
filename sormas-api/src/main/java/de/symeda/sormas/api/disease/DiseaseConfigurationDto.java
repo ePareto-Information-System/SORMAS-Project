@@ -13,6 +13,10 @@ public class DiseaseConfigurationDto extends EntityDto {
 	private Boolean caseBased;
 	private Boolean followUpEnabled;
 	private Integer followUpDuration;
+	private Integer caseFollowUpDuration;
+	private Integer eventParticipantFollowUpDuration;
+	private Boolean extendedClassification;
+	private Boolean extendedClassificationMulti;
 
 	public Disease getDisease() {
 		return disease;
@@ -60,5 +64,37 @@ public class DiseaseConfigurationDto extends EntityDto {
 
 	public void setFollowUpDuration(Integer followUpDuration) {
 		this.followUpDuration = followUpDuration;
+	}
+
+	public Integer getCaseFollowUpDuration() {
+		return caseFollowUpDuration;
+	}
+
+	public void setCaseFollowUpDuration(Integer caseFollowUpDuration) {
+		this.caseFollowUpDuration = caseFollowUpDuration;
+	}
+
+	public Integer getEventParticipantFollowUpDuration() {
+		return eventParticipantFollowUpDuration;
+	}
+
+	public void setEventParticipantFollowUpDuration(Integer eventParticipantFollowUpDuration) {
+		this.eventParticipantFollowUpDuration = eventParticipantFollowUpDuration;
+	}
+
+	public Boolean getExtendedClassification() {
+		return extendedClassification;
+	}
+
+	public void setExtendedClassification(Boolean extendedClassification) {
+		this.extendedClassification = extendedClassification;
+	}
+
+	public Boolean getExtendedClassificationMulti() {
+		return extendedClassificationMulti;
+	}
+
+	public void setExtendedClassificationMulti(Boolean extendedClassificationMulti) {
+		this.extendedClassificationMulti = extendedClassificationMulti;
 	}
 }

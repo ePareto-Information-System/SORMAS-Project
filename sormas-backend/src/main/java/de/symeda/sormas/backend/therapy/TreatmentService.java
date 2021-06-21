@@ -15,17 +15,19 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import com.auth0.jwt.internal.org.apache.commons.lang3.StringUtils;
+import de.symeda.sormas.api.utils.DataHelper;
+import org.apache.commons.lang3.StringUtils;
 
 import de.symeda.sormas.api.therapy.TreatmentCriteria;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.caze.CaseService;
-import de.symeda.sormas.backend.common.AbstractAdoService;
+import de.symeda.sormas.backend.common.AdoServiceWithUserFilter;
+import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
 import de.symeda.sormas.backend.user.User;
 
 @Stateless
 @LocalBean
-public class TreatmentService extends AbstractAdoService<Treatment> {
+public class TreatmentService extends AdoServiceWithUserFilter<Treatment> {
 
 	@EJB
 	private CaseService caseService;
@@ -81,12 +83,12 @@ public class TreatmentService extends AbstractAdoService<Treatment> {
 
 		if (user != null) {
 			Predicate userFilter = createUserFilter(cb, cq, from);
-			filter = AbstractAdoService.and(cb, filter, userFilter);
+			filter = CriteriaBuilderHelper.and(cb, filter, userFilter);
 		}
 
 		if (date != null) {
 			Predicate dateFilter = createChangeDateFilter(cb, from, date);
-			filter = AbstractAdoService.and(cb, filter, dateFilter);
+			filter = CriteriaBuilderHelper.and(cb, filter, dateFilter);
 		}
 
 		cq.where(filter);
@@ -108,7 +110,7 @@ public class TreatmentService extends AbstractAdoService<Treatment> {
 
 		if (user != null) {
 			Predicate userFilter = createUserFilter(cb, cq, from);
-			filter = AbstractAdoService.and(cb, filter, userFilter);
+			filter = CriteriaBuilderHelper.and(cb, filter, userFilter);
 		}
 
 		cq.where(filter);
@@ -123,25 +125,23 @@ public class TreatmentService extends AbstractAdoService<Treatment> {
 		Join<Treatment, Therapy> therapy = treatment.join(Treatment.THERAPY, JoinType.LEFT);
 
 		if (criteria.getTherapy() != null) {
-			filter = and(cb, filter, cb.equal(therapy.get(Therapy.UUID), criteria.getTherapy().getUuid()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(therapy.get(Therapy.UUID), criteria.getTherapy().getUuid()));
 		}
 		if (criteria.getTreatmentType() != null) {
-			filter = and(cb, filter, cb.equal(treatment.get(Treatment.TREATMENT_TYPE), criteria.getTreatmentType()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(treatment.get(Treatment.TREATMENT_TYPE), criteria.getTreatmentType()));
 		}
 		if (!StringUtils.isEmpty(criteria.getTextFilter())) {
 			String[] textFilters = criteria.getTextFilter().split("\\s+");
-			for (int i = 0; i < textFilters.length; i++) {
-				String textFilter = "%" + textFilters[i].toLowerCase() + "%";
-				if (!StringUtils.isEmpty(textFilter)) {
-					Predicate likeFilters = cb.or(
-// #1389: Disabled the possibility to search in TREATMENT_TYPE and TYPE_OF_DRUG
-//			Should be undone as soon as a possibility was found to search an enum value by string
-//						cb.like(cb.lower(treatment.get(Treatment.TREATMENT_TYPE)), textFilter),
-						cb.like(cb.lower(treatment.get(Treatment.TREATMENT_DETAILS)), textFilter),
-//						cb.like(cb.lower(treatment.get(Treatment.TYPE_OF_DRUG)), textFilter),
-						cb.like(cb.lower(treatment.get(Treatment.EXECUTING_CLINICIAN)), textFilter));
-					filter = and(cb, filter, likeFilters);
+			for (String textFilter : textFilters) {
+				if (DataHelper.isNullOrEmpty(textFilter)) {
+					continue;
 				}
+
+				// #1389: Disabled the possibility to search in TREATMENT_TYPE and TYPE_OF_DRUG
+				Predicate likeFilters = cb.or(
+					CriteriaBuilderHelper.unaccentedIlike(cb, treatment.get(Treatment.TREATMENT_DETAILS), textFilter),
+					CriteriaBuilderHelper.unaccentedIlike(cb, treatment.get(Treatment.EXECUTING_CLINICIAN), textFilter));
+				filter = CriteriaBuilderHelper.and(cb, filter, likeFilters);
 			}
 		}
 
@@ -150,7 +150,7 @@ public class TreatmentService extends AbstractAdoService<Treatment> {
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public Predicate createUserFilter(CriteriaBuilder cb, CriteriaQuery cq, From<Treatment, Treatment> from) {
+	public Predicate createUserFilter(CriteriaBuilder cb, CriteriaQuery cq, From<?, Treatment> from) {
 		Join<Treatment, Therapy> therapy = from.join(Treatment.THERAPY, JoinType.LEFT);
 		return caseService.createUserFilter(cb, cq, therapy.join(Therapy.CASE, JoinType.LEFT));
 	}

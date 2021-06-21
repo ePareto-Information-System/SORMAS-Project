@@ -30,10 +30,12 @@ public class DashboardEventDto implements Serializable {
 	public static final String I18N_PREFIX = "Event";
 
 	public static final String EVENT_STATUS = "eventStatus";
+	public static final String EVENT_INVESTIGATION_STATUS = "eventInvestigationStatus";
 	public static final String DISEASE = "disease";
 
 	private String uuid;
 	private EventStatus eventStatus;
+	private EventInvestigationStatus eventInvestigationStatus;
 	private Disease disease;
 	private String diseaseDetails;
 	private Date eventDate;
@@ -41,12 +43,14 @@ public class DashboardEventDto implements Serializable {
 	private Double reportLon;
 	private Double locationLat;
 	private Double locationLon;
-	private String districtUuid;
 	private DistrictReferenceDto district;
+
+	private EventJurisdictionDto jurisdiction;
 
 	public DashboardEventDto(
 		String uuid,
 		EventStatus eventStatus,
+		EventInvestigationStatus eventInvestigationStatus,
 		Disease disease,
 		String diseaseDetails,
 		Date eventDate,
@@ -54,10 +58,16 @@ public class DashboardEventDto implements Serializable {
 		Double reportLon,
 		Double locationLat,
 		Double locationLon,
-		String districtUuid) {
+		String reportingUserUuid,
+		String responsibleUserUuid,
+		String regionUuid,
+		String districtName,
+		String districtUuid,
+		String communityUuid) {
 
 		this.uuid = uuid;
 		this.eventStatus = eventStatus;
+		this.eventInvestigationStatus = eventInvestigationStatus;
 		this.disease = disease;
 		this.diseaseDetails = diseaseDetails;
 		this.eventDate = eventDate;
@@ -65,7 +75,9 @@ public class DashboardEventDto implements Serializable {
 		this.reportLon = reportLon;
 		this.locationLat = locationLat;
 		this.locationLon = locationLon;
-		this.districtUuid = districtUuid;
+		this.district = new DistrictReferenceDto(districtUuid, districtName, null);
+
+		this.jurisdiction = new EventJurisdictionDto(reportingUserUuid, responsibleUserUuid, regionUuid, districtUuid, communityUuid);
 	}
 
 	public String getUuid() {
@@ -82,6 +94,14 @@ public class DashboardEventDto implements Serializable {
 
 	public void setEventStatus(EventStatus eventStatus) {
 		this.eventStatus = eventStatus;
+	}
+
+	public EventInvestigationStatus getEventInvestigationStatus() {
+		return eventInvestigationStatus;
+	}
+
+	public void setEventInvestigationStatus(EventInvestigationStatus eventInvestigationStatus) {
+		this.eventInvestigationStatus = eventInvestigationStatus;
 	}
 
 	public Disease getDisease() {
@@ -140,24 +160,16 @@ public class DashboardEventDto implements Serializable {
 		this.locationLon = locationLon;
 	}
 
-	public String getDistrictUuid() {
-		return districtUuid;
-	}
-
-	public void setDistrictUuid(String districtUuid) {
-		this.districtUuid = districtUuid;
-	}
-
 	public DistrictReferenceDto getDistrict() {
 		return district;
 	}
 
-	public void setDistrict(DistrictReferenceDto district) {
-		this.district = district;
-	}
-
 	@Override
 	public String toString() {
-		return EventReferenceDto.buildCaption(getDisease(), getDiseaseDetails(), getEventStatus(), getEventDate());
+		return EventReferenceDto.buildCaption(getDisease(), getDiseaseDetails(), getEventStatus(), getEventInvestigationStatus(), getEventDate());
+	}
+
+	public EventJurisdictionDto getJurisdiction() {
+		return jurisdiction;
 	}
 }

@@ -17,6 +17,9 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.task;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Alignment;
@@ -27,6 +30,7 @@ import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.ui.ComboBox;
+
 import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.Captions;
@@ -41,9 +45,6 @@ import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.LayoutUtil;
 import de.symeda.sormas.ui.utils.MenuBarHelper;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @SuppressWarnings("serial")
 public class TaskGridComponent extends VerticalLayout {
@@ -64,8 +65,6 @@ public class TaskGridComponent extends VerticalLayout {
 
 	MenuBar bulkOperationsDropdown;
 
-	private VerticalLayout gridLayout;
-
 	private Label viewTitleLabel;
 	private String originalViewTitle;
 
@@ -83,11 +82,12 @@ public class TaskGridComponent extends VerticalLayout {
 		}
 
 		grid = new TaskGrid(criteria);
-		gridLayout = new VerticalLayout();
+		VerticalLayout gridLayout = new VerticalLayout();
 		gridLayout.addComponent(createFilterBar());
 		gridLayout.addComponent(createAssigneeFilterBar());
 		gridLayout.addComponent(grid);
 		grid.getDataProvider().addDataProviderListener(e -> updateAssigneeFilterButtons());
+		grid.setDataProviderListener(e -> updateAssigneeFilterButtons());
 
 		gridLayout.setMargin(true);
 		styleGridLayout(gridLayout);
@@ -102,13 +102,11 @@ public class TaskGridComponent extends VerticalLayout {
 		filterLayout.setSizeUndefined();
 
 		filterForm = new TaskGridFilterForm();
-		filterForm.addValueChangeListener(e -> {
-			tasksView.navigateTo(criteria);
-		});
 		filterForm.addResetHandler(e -> {
 			ViewModelProviders.of(TasksView.class).remove(TaskCriteria.class);
-			tasksView.navigateTo(null);
+			tasksView.navigateTo(null, true);
 		});
+		filterForm.addApplyHandler(e -> grid.reload());
 
 		filterLayout.addComponent(filterForm);
 

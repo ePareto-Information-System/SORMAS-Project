@@ -33,9 +33,9 @@ WebUI.click(findTestObject('Contacts/ContactInformationView/div_New visit'))
 
 WebUI.click(findTestObject('Contacts/ContactInformationView/newCall_dlg_label_nichtKooperativ'))
 
-WebUI.click(findTestObject('Contacts/ContactInformationView/button_div_Save'))
+WebUI.click(findTestObject('ReusableORs/div_Save'))
 int numberOfCallsAfterSave = Table.getNumberOfTableRows()
-
+WebUI.delay(2)
 // TESTCASE CANCEL
 WebUI.click(findTestObject('Contacts/ContactInformationView/div_New visit'))
 

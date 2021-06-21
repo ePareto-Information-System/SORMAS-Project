@@ -6,7 +6,6 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 import java.util.Arrays;
 
 import com.vaadin.v7.ui.ComboBox;
-import com.vaadin.v7.ui.OptionGroup;
 import com.vaadin.v7.ui.TextArea;
 import com.vaadin.v7.ui.TextField;
 
@@ -14,9 +13,12 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.therapy.TreatmentDto;
 import de.symeda.sormas.api.therapy.TreatmentRoute;
 import de.symeda.sormas.api.therapy.TreatmentType;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
+import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
 import de.symeda.sormas.ui.utils.DateTimeField;
 import de.symeda.sormas.ui.utils.FieldHelper;
+import de.symeda.sormas.ui.utils.NullableOptionGroup;
 
 public class TreatmentForm extends AbstractEditForm<TreatmentDto> {
 
@@ -29,8 +31,13 @@ public class TreatmentForm extends AbstractEditForm<TreatmentDto> {
 		+ loc(TreatmentDto.ROUTE_DETAILS)
 		+ loc(TreatmentDto.ADDITIONAL_NOTES);
 
-	public TreatmentForm(boolean create) {
-		super(TreatmentDto.class, TreatmentDto.I18N_PREFIX);
+	public TreatmentForm(boolean create, boolean isPseudonymized) {
+		super(
+			TreatmentDto.class,
+			TreatmentDto.I18N_PREFIX,
+			true,
+			new FieldVisibilityCheckers(),
+			UiFieldAccessCheckers.forSensitiveData(isPseudonymized));
 
 		setWidth(680, Unit.PIXELS);
 
@@ -45,21 +52,28 @@ public class TreatmentForm extends AbstractEditForm<TreatmentDto> {
 		ComboBox treatmentTypeField = addField(TreatmentDto.TREATMENT_TYPE, ComboBox.class);
 		treatmentTypeField.setImmediate(true);
 		TextField treatmentDetailsField = addField(TreatmentDto.TREATMENT_DETAILS, TextField.class);
-		addField(TreatmentDto.TYPE_OF_DRUG, OptionGroup.class);
+		addField(TreatmentDto.TYPE_OF_DRUG, NullableOptionGroup.class);
 		addField(TreatmentDto.TREATMENT_DATE_TIME, DateTimeField.class);
 		addField(TreatmentDto.EXECUTING_CLINICIAN, TextField.class);
 		addField(TreatmentDto.DOSE, TextField.class);
 		ComboBox routeField = addField(TreatmentDto.ROUTE, ComboBox.class);
 		addField(TreatmentDto.ROUTE_DETAILS, TextField.class);
-		addField(TreatmentDto.ADDITIONAL_NOTES, TextArea.class).setRows(3);
+		addField(TreatmentDto.ADDITIONAL_NOTES, TextArea.class).setRows(6);
+
+		initializeAccessAndAllowedAccesses();
 
 		setRequired(true, TreatmentDto.TREATMENT_TYPE, TreatmentDto.TREATMENT_DATE_TIME);
-		FieldHelper.setRequiredWhen(
-			getFieldGroup(),
-			treatmentTypeField,
-			Arrays.asList(TreatmentDto.TREATMENT_DETAILS),
-			Arrays.asList(TreatmentType.OTHER, TreatmentType.DRUG_INTAKE));
-		FieldHelper.setRequiredWhen(getFieldGroup(), routeField, Arrays.asList(TreatmentDto.ROUTE_DETAILS), Arrays.asList(TreatmentRoute.OTHER));
+		if (isEditableAllowed(TreatmentDto.TREATMENT_DETAILS)) {
+			FieldHelper.setRequiredWhen(
+				getFieldGroup(),
+				treatmentTypeField,
+				Arrays.asList(TreatmentDto.TREATMENT_DETAILS),
+				Arrays.asList(TreatmentType.OTHER, TreatmentType.DRUG_INTAKE));
+		}
+		if (isEditableAllowed(TreatmentDto.ROUTE_DETAILS)) {
+			FieldHelper.setRequiredWhen(getFieldGroup(), routeField, Arrays.asList(TreatmentDto.ROUTE_DETAILS), Arrays.asList(TreatmentRoute.OTHER));
+		}
+
 		FieldHelper.setVisibleWhen(getFieldGroup(), TreatmentDto.ROUTE_DETAILS, TreatmentDto.ROUTE, Arrays.asList(TreatmentRoute.OTHER), true);
 		FieldHelper
 			.setVisibleWhen(getFieldGroup(), TreatmentDto.TYPE_OF_DRUG, TreatmentDto.TREATMENT_TYPE, Arrays.asList(TreatmentType.DRUG_INTAKE), true);

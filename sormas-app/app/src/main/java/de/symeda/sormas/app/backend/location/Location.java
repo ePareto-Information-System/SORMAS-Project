@@ -30,13 +30,21 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import androidx.databinding.Bindable;
 
+import de.symeda.sormas.api.facility.FacilityType;
 import de.symeda.sormas.api.location.AreaType;
+import de.symeda.sormas.api.person.PersonAddressType;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.app.backend.common.EmbeddedAdo;
+import de.symeda.sormas.app.backend.common.JoinTableReference;
 import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
+import de.symeda.sormas.app.backend.facility.Facility;
+import de.symeda.sormas.app.backend.person.Person;
 import de.symeda.sormas.app.backend.region.Community;
+import de.symeda.sormas.app.backend.region.Continent;
+import de.symeda.sormas.app.backend.region.Country;
 import de.symeda.sormas.app.backend.region.District;
 import de.symeda.sormas.app.backend.region.Region;
+import de.symeda.sormas.app.backend.region.Subcontinent;
 
 @Entity(name = Location.TABLE_NAME)
 @DatabaseTable(tableName = Location.TABLE_NAME)
@@ -48,9 +56,8 @@ public class Location extends PseudonymizableAdo {
 	public static final String TABLE_NAME = "location";
 	public static final String I18N_PREFIX = "Location";
 	public static final String COMMUNITY = "community";
+	public static final String PERSON = "person";
 
-	@Column(length = COLUMN_LENGTH_BIG)
-	private String address;
 	@Column(length = COLUMN_LENGTH_DEFAULT)
 	private String details;
 	@Column(length = COLUMN_LENGTH_DEFAULT)
@@ -58,6 +65,12 @@ public class Location extends PseudonymizableAdo {
 	@Column
 	private AreaType areaType;
 
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private Continent continent;
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private Subcontinent subcontinent;
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private Country country;
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private Region region;
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
@@ -74,15 +87,39 @@ public class Location extends PseudonymizableAdo {
 
 	@Column(length = COLUMN_LENGTH_DEFAULT)
 	private String postalCode;
+	@Column(length = COLUMN_LENGTH_BIG)
+	private String street;
+	@Column(length = COLUMN_LENGTH_DEFAULT)
+	private String houseNumber;
+	@Column(length = COLUMN_LENGTH_DEFAULT)
+	private String additionalInformation;
+	@Column
+	private PersonAddressType addressType;
+	@Column(length = COLUMN_LENGTH_DEFAULT)
+	private String addressTypeDetails;
+	@Column
+	private FacilityType facilityType;
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private Facility facility;
+	@Column(length = COLUMN_LENGTH_DEFAULT)
+	private String facilityDetails;
 
-	@Bindable
-	public String getAddress() {
-		return address;
-	}
+	@Column(columnDefinition = "text")
+	private String contactPersonFirstName;
+	@Column(columnDefinition = "text")
+	private String contactPersonLastName;
+	@Column(columnDefinition = "text")
+	private String contactPersonPhone;
+	@Column(columnDefinition = "text")
+	private String contactPersonEmail;
 
-	public void setAddress(String address) {
-		this.address = address;
-	}
+	/**
+	 * Dirty fix for person-location association; doing this with a JoinTable is not
+	 * easy in SQLite; only locations that are part of the addresses field of a person
+	 * have this association.
+	 */
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private Person person;
 
 	@Bindable
 	public String getDetails() {
@@ -108,6 +145,30 @@ public class Location extends PseudonymizableAdo {
 
 	public void setAreaType(AreaType areaType) {
 		this.areaType = areaType;
+	}
+
+	public Continent getContinent() {
+		return continent;
+	}
+
+	public void setContinent(Continent continent) {
+		this.continent = continent;
+	}
+
+	public Subcontinent getSubcontinent() {
+		return subcontinent;
+	}
+
+	public void setSubcontinent(Subcontinent subcontinent) {
+		this.subcontinent = subcontinent;
+	}
+
+	public Country getCountry() {
+		return country;
+	}
+
+	public void setCountry(Country country) {
+		this.country = country;
 	}
 
 	public Region getRegion() {
@@ -158,14 +219,135 @@ public class Location extends PseudonymizableAdo {
 		this.postalCode = postalCode;
 	}
 
+	@Bindable
+	public String getStreet() {
+		return street;
+	}
+
+	public void setStreet(String street) {
+		this.street = street;
+	}
+
+	@Bindable
+	public String getHouseNumber() {
+		return houseNumber;
+	}
+
+	public void setHouseNumber(String houseNumber) {
+		this.houseNumber = houseNumber;
+	}
+
+	@Bindable
+	public String getAdditionalInformation() {
+		return additionalInformation;
+	}
+
+	public void setAdditionalInformation(String additionalInformation) {
+		this.additionalInformation = additionalInformation;
+	}
+
+	public PersonAddressType getAddressType() {
+		return addressType;
+	}
+
+	public void setAddressType(PersonAddressType addressType) {
+		this.addressType = addressType;
+	}
+
+	public String getAddressTypeDetails() {
+		return addressTypeDetails;
+	}
+
+	public void setAddressTypeDetails(String addressTypeDetails) {
+		this.addressTypeDetails = addressTypeDetails;
+	}
+
+	public FacilityType getFacilityType() {
+		return facilityType;
+	}
+
+	public void setFacilityType(FacilityType facilityType) {
+		this.facilityType = facilityType;
+	}
+
+	public Facility getFacility() {
+		return facility;
+	}
+
+	public void setFacility(Facility facility) {
+		this.facility = facility;
+	}
+
+	public String getFacilityDetails() {
+		return facilityDetails;
+	}
+
+	public void setFacilityDetails(String facilityDetails) {
+		this.facilityDetails = facilityDetails;
+	}
+
+	public String getContactPersonFirstName() {
+		return contactPersonFirstName;
+	}
+
+	public void setContactPersonFirstName(String contactPersonFirstName) {
+		this.contactPersonFirstName = contactPersonFirstName;
+	}
+
+	public String getContactPersonLastName() {
+		return contactPersonLastName;
+	}
+
+	public void setContactPersonLastName(String contactPersonLastName) {
+		this.contactPersonLastName = contactPersonLastName;
+	}
+
+	public String getContactPersonPhone() {
+		return contactPersonPhone;
+	}
+
+	public void setContactPersonPhone(String contactPersonPhone) {
+		this.contactPersonPhone = contactPersonPhone;
+	}
+
+	public String getContactPersonEmail() {
+		return contactPersonEmail;
+	}
+
+	public void setContactPersonEmail(String contactPersonEmail) {
+		this.contactPersonEmail = contactPersonEmail;
+	}
+
+	@JoinTableReference
+	public Person getPerson() {
+		return person;
+	}
+
+	public void setPerson(Person person) {
+		this.person = person;
+	}
+
 	public String getCompleteString() {
 
 		StringBuilder sb = new StringBuilder();
-		if (getAddress() != null && !getAddress().isEmpty()) {
-			sb.append(getAddress());
+		if (getStreet() != null && !getStreet().isEmpty()) {
+			sb.append(getStreet());
 		}
+		if (getHouseNumber() != null && !getHouseNumber().isEmpty()) {
+			if (sb.length() > 0) {
+				sb.append(" ");
+			}
+			sb.append(getHouseNumber());
+		}
+		if (getAdditionalInformation() != null && !getAdditionalInformation().isEmpty()) {
+			if (sb.length() > 0) {
+				sb.append(", ");
+			}
+			sb.append(getAdditionalInformation());
+		}
+
 		if ((getCity() != null && !getCity().isEmpty()) || getCommunity() != null || getDistrict() != null || getAreaType() != null) {
-			if (getAddress() != null && !getAddress().isEmpty()) {
+			if (sb.length() > 0) {
 				sb.append("\n");
 			}
 			if (getCity() != null && !getCity().isEmpty()) {
@@ -174,13 +356,13 @@ public class Location extends PseudonymizableAdo {
 				sb.append(getCommunity());
 			}
 			if (getDistrict() != null) {
-				if ((getCity() != null && !getCity().isEmpty()) || getCommunity() != null) {
+				if (sb.length() > 0) {
 					sb.append(", ");
 				}
 				sb.append(getDistrict());
 			}
 			if (getAreaType() != null) {
-				if ((!StringUtils.isEmpty(getCity()) || getCommunity() != null || getDistrict() != null)) {
+				if (sb.length() > 0) {
 					sb.append(", ");
 				}
 				sb.append(getAreaType().toString());
@@ -188,13 +370,40 @@ public class Location extends PseudonymizableAdo {
 		}
 
 		if (getDetails() != null && !getDetails().isEmpty()) {
-			if ((getAddress() != null && !getAddress().isEmpty())
-				|| (getCity() != null && !getCity().isEmpty())
-				|| getCommunity() != null
-				|| getDistrict() != null) {
+			if (sb.length() > 0) {
 				sb.append("\n");
 			}
 			sb.append(getDetails());
+		}
+
+		if (StringUtils.isNotEmpty(getContactPersonFirstName()) || StringUtils.isNotEmpty(getContactPersonLastName())) {
+			sb.append("\n");
+			StringBuilder contactNameRow = new StringBuilder();
+			if (StringUtils.isNotEmpty(getContactPersonFirstName())) {
+				contactNameRow.append(getContactPersonFirstName());
+			}
+			if (StringUtils.isNotEmpty(getContactPersonLastName())) {
+				if (contactNameRow.length()>0){
+					contactNameRow.append(" ");
+				}
+				contactNameRow.append(getContactPersonLastName());
+			}
+			sb.append(contactNameRow);
+		}
+
+		if (StringUtils.isNotEmpty(getContactPersonPhone()) || StringUtils.isNotEmpty(getContactPersonEmail())) {
+			sb.append("\n");
+			StringBuilder phoneAndEmailRow = new StringBuilder();
+			if (StringUtils.isNotEmpty(getContactPersonPhone())) {
+				phoneAndEmailRow.append(getContactPersonPhone());
+			}
+			if (StringUtils.isNotEmpty(getContactPersonEmail())) {
+				if (phoneAndEmailRow.length()>0){
+					phoneAndEmailRow.append(", ");
+				}
+				phoneAndEmailRow.append(getContactPersonEmail());
+			}
+			sb.append(phoneAndEmailRow);
 		}
 
 		String latLonString = getLatLonString();
@@ -239,7 +448,14 @@ public class Location extends PseudonymizableAdo {
 	}
 
 	public boolean isEmptyLocation() {
-		return address == null && details == null && city == null && region == null && district == null && community == null;
+		return street == null
+			&& houseNumber == null
+			&& additionalInformation == null
+			&& details == null
+			&& city == null
+			&& region == null
+			&& district == null
+			&& community == null;
 	}
 
 	public String getGpsLocation() {
@@ -268,4 +484,5 @@ public class Location extends PseudonymizableAdo {
 	public void setLatLonAccuracy(Float latLonAccuracy) {
 		this.latLonAccuracy = latLonAccuracy;
 	}
+
 }

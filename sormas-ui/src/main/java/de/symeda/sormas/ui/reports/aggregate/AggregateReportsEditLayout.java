@@ -98,7 +98,7 @@ public class AggregateReportsEditLayout extends VerticalLayout {
 		comboBoxRegion = new ComboBox<>();
 		comboBoxRegion.setWidth(250, Unit.PIXELS);
 		comboBoxRegion.setCaption(I18nProperties.getPrefixCaption(AggregateReportDto.I18N_PREFIX, AggregateReportDto.REGION));
-		comboBoxRegion.setItems(FacadeProvider.getRegionFacade().getAllActiveAsReference());
+		comboBoxRegion.setItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
 		comboBoxRegion.addValueChangeListener(e -> {
 			RegionReferenceDto region = e.getValue();
 			comboBoxDistrict.clear();
@@ -123,7 +123,7 @@ public class AggregateReportsEditLayout extends VerticalLayout {
 			}
 			if (district != null) {
 				if (comboBoxFacility != null) {
-					comboBoxFacility.setItems(FacadeProvider.getFacilityFacade().getActiveHealthFacilitiesByDistrict(district, false));
+					comboBoxFacility.setItems(FacadeProvider.getFacilityFacade().getActiveHospitalsByDistrict(district, false));
 					comboBoxFacility.setEnabled(true);
 				}
 				if (comboBoxPoe != null) {

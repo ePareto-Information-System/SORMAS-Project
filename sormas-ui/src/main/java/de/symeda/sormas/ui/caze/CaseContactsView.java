@@ -17,11 +17,14 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.caze;
 
-import java.util.Date;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.vaadin.hene.popupbutton.PopupButton;
 
+import com.vaadin.event.ShortcutAction;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.StreamResource;
 import com.vaadin.shared.ui.ContentMode;
@@ -37,36 +40,32 @@ import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.TextField;
 
 import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.contact.ContactClassification;
 import de.symeda.sormas.api.contact.ContactCriteria;
 import de.symeda.sormas.api.contact.ContactDto;
-import de.symeda.sormas.api.contact.ContactExportDto;
 import de.symeda.sormas.api.contact.ContactIndexDto;
+import de.symeda.sormas.api.contact.ContactJurisdictionDto;
 import de.symeda.sormas.api.contact.ContactStatus;
-import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.Descriptions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
-import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
-import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.user.UserRole;
-import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.contact.ContactGrid;
 import de.symeda.sormas.ui.contact.importer.CaseContactsImportLayout;
 import de.symeda.sormas.ui.utils.ButtonHelper;
+import de.symeda.sormas.ui.utils.ContactDownloadUtil;
 import de.symeda.sormas.ui.utils.CssStyles;
-import de.symeda.sormas.ui.utils.DateFormatHelper;
-import de.symeda.sormas.ui.utils.DownloadUtil;
+import de.symeda.sormas.ui.utils.DetailSubComponentWrapper;
+import de.symeda.sormas.ui.utils.ExportEntityName;
 import de.symeda.sormas.ui.utils.GridExportStreamResource;
 import de.symeda.sormas.ui.utils.LayoutUtil;
 import de.symeda.sormas.ui.utils.MenuBarHelper;
@@ -91,9 +90,10 @@ public class CaseContactsView extends AbstractCaseView {
 	private ComboBox officerFilter;
 	private TextField searchField;
 	private Button resetButton;
+	private Button applyButton;
 
 	private Button newButton;
-	private VerticalLayout gridLayout;
+	private DetailSubComponentWrapper gridLayout;
 	private HashMap<Button, String> statusButtons;
 	private Button activeStatusButton;
 
@@ -116,18 +116,15 @@ public class CaseContactsView extends AbstractCaseView {
 		classificationFilter = new ComboBox();
 		classificationFilter.setWidth(240, Unit.PIXELS);
 		classificationFilter.setInputPrompt(I18nProperties.getPrefixCaption(ContactIndexDto.I18N_PREFIX, ContactIndexDto.CONTACT_CLASSIFICATION));
-		classificationFilter.addValueChangeListener(e -> {
-			criteria.setContactClassification((ContactClassification) e.getProperty().getValue());
-			navigateTo(criteria);
-		});
+		classificationFilter.addValueChangeListener(e -> criteria.setContactClassification((ContactClassification) e.getProperty().getValue()));
 		topLayout.addComponent(classificationFilter);
 
 		UserDto user = UserProvider.getCurrent().getUser();
 		regionFilter = new ComboBox();
 		if (user.getRegion() == null) {
 			regionFilter.setWidth(240, Unit.PIXELS);
-			regionFilter.setInputPrompt(I18nProperties.getPrefixCaption(ContactIndexDto.I18N_PREFIX, ContactIndexDto.REGION_UUID));
-			regionFilter.addItems(FacadeProvider.getRegionFacade().getAllActiveAsReference());
+			regionFilter.setInputPrompt(I18nProperties.getPrefixCaption(ContactIndexDto.I18N_PREFIX, ContactJurisdictionDto.REGION_UUID));
+			regionFilter.addItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
 			regionFilter.addValueChangeListener(e -> {
 				RegionReferenceDto region = (RegionReferenceDto) e.getProperty().getValue();
 				if (region != null) {
@@ -136,18 +133,14 @@ public class CaseContactsView extends AbstractCaseView {
 					officerFilter.removeAllItems();
 				}
 				criteria.region(region);
-				navigateTo(criteria);
 			});
 			topLayout.addComponent(regionFilter);
 		}
 
 		districtFilter = new ComboBox();
 		districtFilter.setWidth(240, Unit.PIXELS);
-		districtFilter.setInputPrompt(I18nProperties.getPrefixCaption(ContactIndexDto.I18N_PREFIX, ContactIndexDto.DISTRICT_UUID));
-		districtFilter.addValueChangeListener(e -> {
-			criteria.district((DistrictReferenceDto) e.getProperty().getValue());
-			navigateTo(criteria);
-		});
+		districtFilter.setInputPrompt(I18nProperties.getPrefixCaption(ContactJurisdictionDto.I18N_PREFIX, ContactJurisdictionDto.DISTRICT_UUID));
+		districtFilter.addValueChangeListener(e -> criteria.district((DistrictReferenceDto) e.getProperty().getValue()));
 
 		if (user.getRegion() != null && user.getDistrict() == null) {
 			districtFilter.addItems(FacadeProvider.getDistrictFacade().getAllActiveByRegion(user.getRegion().getUuid()));
@@ -176,10 +169,7 @@ public class CaseContactsView extends AbstractCaseView {
 		officerFilter = new ComboBox();
 		officerFilter.setWidth(240, Unit.PIXELS);
 		officerFilter.setInputPrompt(I18nProperties.getPrefixCaption(ContactIndexDto.I18N_PREFIX, ContactIndexDto.CONTACT_OFFICER_UUID));
-		officerFilter.addValueChangeListener(e -> {
-			criteria.setContactOfficer((UserReferenceDto) e.getProperty().getValue());
-			navigateTo(criteria);
-		});
+		officerFilter.addValueChangeListener(e -> criteria.setContactOfficer((UserReferenceDto) e.getProperty().getValue()));
 		if (user.getRegion() != null) {
 			officerFilter.addItems(FacadeProvider.getUserFacade().getUsersByRegionAndRoles(user.getRegion(), UserRole.CONTACT_OFFICER));
 		}
@@ -189,10 +179,7 @@ public class CaseContactsView extends AbstractCaseView {
 		searchField.setWidth(200, Unit.PIXELS);
 		searchField.setNullRepresentation("");
 		searchField.setInputPrompt(I18nProperties.getString(Strings.promptContactsSearchField));
-		searchField.addTextChangeListener(e -> {
-			criteria.setNameUuidCaseLike(e.getText());
-			((ContactGrid) grid).reload();
-		});
+		searchField.addTextChangeListener(e -> criteria.setNameUuidCaseLike(e.getText()));
 		topLayout.addComponent(searchField);
 
 		resetButton = ButtonHelper.createButton(Captions.actionResetFilters, event -> {
@@ -200,8 +187,18 @@ public class CaseContactsView extends AbstractCaseView {
 			navigateTo(null);
 		});
 		resetButton.setVisible(false);
-
 		topLayout.addComponent(resetButton);
+
+		applyButton = ButtonHelper.createButton(Captions.actionApplyFilters, event -> navigateTo(criteria));
+		applyButton.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+		applyButton.setVisible(false);
+		topLayout.addComponent(applyButton);
+
+		classificationFilter.addValueChangeListener(e -> updateApplyResetButtons());
+		regionFilter.addValueChangeListener(e -> updateApplyResetButtons());
+		officerFilter.addValueChangeListener(e -> updateApplyResetButtons());
+		districtFilter.addValueChangeListener(e -> updateApplyResetButtons());
+		searchField.addValueChangeListener(e -> updateApplyResetButtons());
 
 		return topLayout;
 	}
@@ -250,29 +247,15 @@ public class CaseContactsView extends AbstractCaseView {
 				}),
 				new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkCancelFollowUp), VaadinIcons.CLOSE, selectedItem -> {
 					ControllerProvider.getContactController()
-						.cancelFollowUpOfAllSelectedItems(grid.asMultiSelect().getSelectedItems(), new Runnable() {
-
-							public void run() {
-								navigateTo(criteria);
-							}
-						});
+						.cancelFollowUpOfAllSelectedItems(grid.asMultiSelect().getSelectedItems(), () -> navigateTo(criteria));
 				}),
 				new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkLostToFollowUp), VaadinIcons.UNLINK, selectedItem -> {
 					ControllerProvider.getContactController()
-						.setAllSelectedItemsToLostToFollowUp(grid.asMultiSelect().getSelectedItems(), new Runnable() {
-
-							public void run() {
-								navigateTo(criteria);
-							}
-						});
+						.setAllSelectedItemsToLostToFollowUp(grid.asMultiSelect().getSelectedItems(), () -> navigateTo(criteria));
 				}),
 				new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkDelete), VaadinIcons.TRASH, selectedItem -> {
-					ControllerProvider.getContactController().deleteAllSelectedItems(grid.asMultiSelect().getSelectedItems(), new Runnable() {
-
-						public void run() {
-							navigateTo(criteria);
-						}
-					});
+					ControllerProvider.getContactController()
+						.deleteAllSelectedItems(grid.asMultiSelect().getSelectedItems(), () -> navigateTo(criteria));
 				}));
 
 			statusFilterLayout.addComponent(bulkOperationsDropdown);
@@ -311,40 +294,14 @@ public class CaseContactsView extends AbstractCaseView {
 			if (!UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
 				statusFilterLayout.setExpandRatio(exportButton, 1);
 			}
-
-			StreamResource streamResource =
-				new GridExportStreamResource(grid, "sormas_contacts", "sormas_contacts_" + DateHelper.formatDateForExport(new Date()) + ".csv");
+			StreamResource streamResource = GridExportStreamResource.createStreamResourceWithSelectedItems(
+				grid,
+				() -> viewConfiguration.isInEagerMode() ? this.grid.asMultiSelect().getSelectedItems() : null,
+				ExportEntityName.CONTACTS);
 			addExportButton(streamResource, exportButton, exportLayout, VaadinIcons.TABLE, Captions.exportBasic, Descriptions.descExportButton);
 
-			StreamResource extendedExportStreamResource = DownloadUtil.createCsvExportStreamResource(
-				ContactExportDto.class,
-				null,
-				(Integer start, Integer max) -> FacadeProvider.getContactFacade()
-					.getExportList(grid.getCriteria(), start, max, I18nProperties.getUserLanguage()),
-				(propertyId, type) -> {
-					String caption = I18nProperties.getPrefixCaption(
-						ContactExportDto.I18N_PREFIX,
-						propertyId,
-						I18nProperties.getPrefixCaption(
-							ContactDto.I18N_PREFIX,
-							propertyId,
-							I18nProperties.getPrefixCaption(
-								CaseDataDto.I18N_PREFIX,
-								propertyId,
-								I18nProperties.getPrefixCaption(
-									PersonDto.I18N_PREFIX,
-									propertyId,
-									I18nProperties.getPrefixCaption(
-										SymptomsDto.I18N_PREFIX,
-										propertyId,
-										I18nProperties.getPrefixCaption(HospitalizationDto.I18N_PREFIX, propertyId))))));
-					if (Date.class.isAssignableFrom(type)) {
-						caption += " (" + DateFormatHelper.getDateFormatPattern() + ")";
-					}
-					return caption;
-				},
-				"sormas_contacts_" + DateHelper.formatDateForExport(new Date()) + ".csv",
-				null);
+			StreamResource extendedExportStreamResource =
+				ContactDownloadUtil.createContactExportResource(grid.getCriteria(), this::getSelectedRows, null);
 			addExportButton(
 				extendedExportStreamResource,
 				exportButton,
@@ -353,15 +310,20 @@ public class CaseContactsView extends AbstractCaseView {
 				Captions.exportDetailed,
 				Descriptions.descDetailedExportButton);
 
+			Button btnCustomExport = ButtonHelper.createIconButton(Captions.exportCustom, VaadinIcons.FILE_TEXT, e -> {
+				ControllerProvider.getCustomExportController().openContactExportWindow(grid.getCriteria(), this::getSelectedRows);
+			}, ValoTheme.BUTTON_PRIMARY);
+			btnCustomExport.setDescription(I18nProperties.getString(Strings.infoCustomExport));
+			btnCustomExport.setWidth(100, Unit.PERCENTAGE);
+			exportLayout.addComponent(btnCustomExport);
+
 			// Warning if no filters have been selected
 			Label warningLabel = new Label(I18nProperties.getString(Strings.infoExportNoFilters));
 			warningLabel.setWidth(100, Unit.PERCENTAGE);
 			exportLayout.addComponent(warningLabel);
 			warningLabel.setVisible(false);
 
-			exportButton.addClickListener(e -> {
-				warningLabel.setVisible(!criteria.hasAnyFilterActive());
-			});
+			exportButton.addClickListener(e -> warningLabel.setVisible(!criteria.hasAnyFilterActive()));
 		}
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.CONTACT_CREATE)) {
@@ -381,14 +343,20 @@ public class CaseContactsView extends AbstractCaseView {
 		return statusFilterLayout;
 	}
 
+	private Set<String> getSelectedRows() {
+		return viewConfiguration.isInEagerMode()
+			? this.grid.asMultiSelect().getSelectedItems().stream().map(ContactIndexDto::getUuid).collect(Collectors.toSet())
+			: Collections.emptySet();
+	}
+
 	@Override
 	protected void initView(String params) {
 
 		criteria.caze(getCaseRef());
 
 		if (grid == null) {
-			grid = new ContactGrid(criteria, getClass());
-			gridLayout = new VerticalLayout();
+			grid = new ContactGrid(criteria, getClass(), ViewConfiguration.class);
+			gridLayout = new DetailSubComponentWrapper(() -> null);
 			gridLayout.addComponent(createFilterBar());
 			gridLayout.addComponent(createStatusFilterBar());
 			gridLayout.addComponent(grid);
@@ -396,6 +364,11 @@ public class CaseContactsView extends AbstractCaseView {
 			gridLayout.setSpacing(false);
 			gridLayout.setSizeFull();
 			gridLayout.setExpandRatio(grid, 1);
+
+			if (viewConfiguration.isInEagerMode()) {
+				grid.setEagerDataProvider();
+			}
+
 			grid.getDataProvider().addDataProviderListener(e -> updateStatusButtons());
 
 			setSubComponent(gridLayout);
@@ -414,8 +387,6 @@ public class CaseContactsView extends AbstractCaseView {
 
 		// TODO replace with Vaadin 8 databinding
 		applyingCriteria = true;
-
-		resetButton.setVisible(criteria.hasAnyFilterActive());
 
 		updateStatusButtons();
 
@@ -445,5 +416,22 @@ public class CaseContactsView extends AbstractCaseView {
 			activeStatusButton
 				.setCaption(statusButtons.get(activeStatusButton) + LayoutUtil.spanCss(CssStyles.BADGE, String.valueOf(grid.getItemCount())));
 		}
+	}
+
+	private void updateApplyResetButtons() {
+		boolean hasFilters = hasFilters();
+		resetButton.setVisible(hasFilters);
+		applyButton.setVisible(hasFilters);
+		if (!hasFilters) {
+			navigateTo(null);
+		}
+	}
+
+	private boolean hasFilters() {
+		return !classificationFilter.isEmpty()
+			|| !regionFilter.isEmpty()
+			|| !districtFilter.isEmpty()
+			|| !officerFilter.isEmpty()
+			|| !searchField.isEmpty();
 	}
 }

@@ -27,7 +27,7 @@ import android.view.ViewGroup;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import de.symeda.sormas.api.utils.fieldaccess.FieldAccessCheckers;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.app.component.controls.ControlPropertyField;
 import de.symeda.sormas.app.component.controls.ValueChangeListener;
@@ -38,7 +38,7 @@ public class BaseFragment extends Fragment {
 	private FirebaseAnalytics firebaseAnalytics;
 
 	private FieldVisibilityCheckers fieldVisibilityCheckers;
-	private FieldAccessCheckers fieldAccessCheckers;
+	private UiFieldAccessCheckers fieldAccessCheckers;
 
 	public BaseActivity getBaseActivity() {
 		return (BaseActivity) getActivity();
@@ -75,15 +75,19 @@ public class BaseFragment extends Fragment {
 		super.onPause();
 	}
 
+	public FieldVisibilityCheckers getFieldVisibilityCheckers() {
+		return fieldVisibilityCheckers;
+	}
+
 	public void setFieldVisibilityCheckers(FieldVisibilityCheckers fieldVisibilityCheckers) {
 		this.fieldVisibilityCheckers = fieldVisibilityCheckers;
 	}
 
-	public FieldAccessCheckers getFieldAccessCheckers() {
+	public UiFieldAccessCheckers getFieldAccessCheckers() {
 		return fieldAccessCheckers;
 	}
 
-	public void setFieldAccessCheckers(FieldAccessCheckers fieldAccessCheckers) {
+	public void setFieldAccessCheckers(UiFieldAccessCheckers fieldAccessCheckers) {
 		this.fieldAccessCheckers = fieldAccessCheckers;
 	}
 
@@ -91,7 +95,7 @@ public class BaseFragment extends Fragment {
 		FieldVisibilityAndAccessHelper.setFieldVisibilitiesAndAccesses(dtoClass, viewGroup, fieldVisibilityCheckers, fieldAccessCheckers);
 	}
 
-	protected boolean isVisibleAllowed(Class<?> dtoClass, ControlPropertyField field) {
+	public boolean isVisibleAllowed(Class<?> dtoClass, ControlPropertyField field) {
 		String propertyId = field.getSubPropertyId();
 		return FieldVisibilityAndAccessHelper.isVisibleAllowed(dtoClass, propertyId, fieldVisibilityCheckers);
 	}
@@ -102,7 +106,7 @@ public class BaseFragment extends Fragment {
 		return FieldVisibilityAndAccessHelper.isFieldAccessible(dtoClass, propertyId, fieldAccessCheckers);
 	}
 
-	protected void setVisibleWhen(final ControlPropertyField targetField, ControlPropertyField sourceField, final Object sourceValue) {
+	public void setVisibleWhen(final ControlPropertyField targetField, ControlPropertyField sourceField, final Object sourceValue) {
 		if (sourceField.getValue() != null && sourceField.getValue().equals(sourceValue)) {
 			targetField.setVisibility(VISIBLE);
 		} else {

@@ -17,8 +17,6 @@
  *******************************************************************************/
 package de.symeda.sormas.backend.symptoms;
 
-import java.sql.Timestamp;
-
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -33,25 +31,14 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 	@EJB
 	private SymptomsService service;
 
-	public Symptoms fromDto(SymptomsDto dto) {
+	public Symptoms fromDto(SymptomsDto source, boolean checkChangeDate) {
 
-		if (dto == null) {
+		if (source == null) {
 			return null;
 		}
 
-		final String uuid = dto.getUuid();
-		Symptoms symptoms = uuid != null ? service.getByUuid(uuid) : null;
-		if (symptoms == null) {
-			symptoms = new Symptoms();
-			symptoms.setUuid(uuid);
-			if (dto.getCreationDate() != null) {
-				symptoms.setCreationDate(new Timestamp(dto.getCreationDate().getTime()));
-			}
-		}
-
-		Symptoms target = symptoms;
-		SymptomsDto source = dto;
-		DtoHelper.validateDto(source, target);
+		String uuid = source.getUuid();
+		Symptoms target = DtoHelper.fillOrBuildEntity(source, uuid != null ? service.getByUuid(uuid) : null, Symptoms::new, checkChangeDate);
 
 		target.setAbdominalPain(source.getAbdominalPain());
 		target.setAlteredConsciousness(source.getAlteredConsciousness());
@@ -217,11 +204,24 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setOtherComplications(source.getOtherComplications());
 		target.setOtherComplicationsText(source.getOtherComplicationsText());
 		target.setRespiratoryDiseaseVentilation(source.getRespiratoryDiseaseVentilation());
-		target.setGeneralSignsOfDisease(source.getGeneralSignsOfDisease());
+		target.setFeelingIll(source.getFeelingIll());
+		target.setShivering(source.getShivering());
 		target.setFastHeartRate(source.getFastHeartRate());
 		target.setOxygenSaturationLower94(source.getOxygenSaturationLower94());
+		target.setFeverishFeeling(source.getFeverishFeeling());
+		target.setWeakness(source.getWeakness());
+		target.setFatigue(source.getFatigue());
+		target.setCoughWithoutSputum(source.getCoughWithoutSputum());
+		target.setBreathlessness(source.getBreathlessness());
+		target.setChestPressure(source.getChestPressure());
+		target.setBlueLips(source.getBlueLips());
+		target.setBloodCirculationProblems(source.getBloodCirculationProblems());
+		target.setPalpitations(source.getPalpitations());
+		target.setDizzinessStandingUp(source.getDizzinessStandingUp());
+		target.setHighOrLowBloodPressure(source.getHighOrLowBloodPressure());
+		target.setUrinaryRetention(source.getUrinaryRetention());
 
-		return symptoms;
+		return target;
 	}
 
 	public static SymptomsDto toDto(Symptoms symptoms) {
@@ -233,9 +233,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		SymptomsDto target = new SymptomsDto();
 		Symptoms source = symptoms;
 
-		target.setCreationDate(source.getCreationDate());
-		target.setChangeDate(source.getChangeDate());
-		target.setUuid(source.getUuid());
+		DtoHelper.fillDto(target, source);
 
 		target.setAbdominalPain(source.getAbdominalPain());
 		target.setAlteredConsciousness(source.getAlteredConsciousness());
@@ -401,9 +399,22 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setOtherComplications(source.getOtherComplications());
 		target.setOtherComplicationsText(source.getOtherComplicationsText());
 		target.setRespiratoryDiseaseVentilation(source.getRespiratoryDiseaseVentilation());
-		target.setGeneralSignsOfDisease(source.getGeneralSignsOfDisease());
+		target.setFeelingIll(source.getFeelingIll());
+		target.setShivering(source.getShivering());
 		target.setFastHeartRate(source.getFastHeartRate());
 		target.setOxygenSaturationLower94(source.getOxygenSaturationLower94());
+		target.setFeverishFeeling(source.getFeverishFeeling());
+		target.setWeakness(source.getWeakness());
+		target.setFatigue(source.getFatigue());
+		target.setCoughWithoutSputum(source.getCoughWithoutSputum());
+		target.setBreathlessness(source.getBreathlessness());
+		target.setChestPressure(source.getChestPressure());
+		target.setBlueLips(source.getBlueLips());
+		target.setBloodCirculationProblems(source.getBloodCirculationProblems());
+		target.setPalpitations(source.getPalpitations());
+		target.setDizzinessStandingUp(source.getDizzinessStandingUp());
+		target.setHighOrLowBloodPressure(source.getHighOrLowBloodPressure());
+		target.setUrinaryRetention(source.getUrinaryRetention());
 
 		return target;
 	}

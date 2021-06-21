@@ -17,13 +17,21 @@
  *******************************************************************************/
 package de.symeda.sormas.api.event;
 
-import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.person.PersonDto;
+import de.symeda.sormas.api.region.DistrictReferenceDto;
+import de.symeda.sormas.api.region.RegionReferenceDto;
+import de.symeda.sormas.api.sormastosormas.SormasToSormasOriginInfoDto;
+import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.EmbeddedPersonalData;
 import de.symeda.sormas.api.utils.Required;
+import de.symeda.sormas.api.utils.SensitiveData;
+import de.symeda.sormas.api.utils.SormasToSormasEntityDto;
+import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
+import de.symeda.sormas.api.vaccinationinfo.VaccinationInfoDto;
 
-public class EventParticipantDto extends EntityDto {
+public class EventParticipantDto extends PseudonymizableDto implements SormasToSormasEntityDto {
 
 	private static final long serialVersionUID = -8725734604520880084L;
 
@@ -33,28 +41,65 @@ public class EventParticipantDto extends EntityDto {
 	public static final String PERSON = "person";
 	public static final String INVOLVEMENT_DESCRIPTION = "involvementDescription";
 	public static final String RESULTING_CASE = "resultingCase";
+	public static final String REPORTING_USER = "reportingUser";
+	public static final String REGION = "region";
+	public static final String DISTRICT = "district";
+	public static final String VACCINATION_INFO = "vaccinationInfo";
 
+	private UserReferenceDto reportingUser;
 	@Required
 	private EventReferenceDto event;
 	@Required
+	@EmbeddedPersonalData
 	private PersonDto person;
+	@SensitiveData
 	private String involvementDescription;
 	private CaseReferenceDto resultingCase; // read-only
+	private RegionReferenceDto region;
+	private DistrictReferenceDto district;
 
-	public static EventParticipantDto build(EventReferenceDto event) {
+	private VaccinationInfoDto vaccinationInfo;
+
+	private SormasToSormasOriginInfoDto sormasToSormasOriginInfo;
+	private boolean ownershipHandedOver;
+
+	public static EventParticipantDto build(EventReferenceDto event, UserReferenceDto reportingUser) {
 		EventParticipantDto eventParticipant = new EventParticipantDto();
 		eventParticipant.setUuid(DataHelper.createUuid());
 		eventParticipant.setEvent(event);
+		eventParticipant.setReportingUser(reportingUser);
+		eventParticipant.setVaccinationInfo(VaccinationInfoDto.build());
+
 		return eventParticipant;
 	}
 
-	public static EventParticipantDto buildFromCase(CaseReferenceDto caseReferenceDto, PersonDto person, EventReferenceDto event) {
-		EventParticipantDto eventParticipantDto = new EventParticipantDto();
-		eventParticipantDto.setUuid(DataHelper.createUuid());
-		eventParticipantDto.setEvent(event);
+	public static EventParticipantDto buildFromCase(
+		CaseReferenceDto caseReferenceDto,
+		PersonDto person,
+		EventReferenceDto event,
+		UserReferenceDto reportingUser) {
+		EventParticipantDto eventParticipantDto = build(event, reportingUser);
+
 		eventParticipantDto.setPerson(person);
 		eventParticipantDto.setResultingCase(caseReferenceDto);
+
 		return eventParticipantDto;
+	}
+
+	public static EventParticipantDto buildFromPerson(PersonDto person, EventReferenceDto event, UserReferenceDto reportingUser) {
+		EventParticipantDto eventParticipantDto = build(event, reportingUser);
+
+		eventParticipantDto.setPerson(person);
+
+		return eventParticipantDto;
+	}
+
+	public UserReferenceDto getReportingUser() {
+		return reportingUser;
+	}
+
+	public void setReportingUser(UserReferenceDto reportingUser) {
+		this.reportingUser = reportingUser;
 	}
 
 	public EventReferenceDto getEvent() {
@@ -94,5 +139,48 @@ public class EventParticipantDto extends EntityDto {
 	 */
 	public void setResultingCase(CaseReferenceDto resultingCase) {
 		this.resultingCase = resultingCase;
+	}
+
+	public RegionReferenceDto getRegion() {
+		return region;
+	}
+
+	public void setRegion(RegionReferenceDto region) {
+		this.region = region;
+	}
+
+	public DistrictReferenceDto getDistrict() {
+		return district;
+	}
+
+	public void setDistrict(DistrictReferenceDto district) {
+		this.district = district;
+	}
+
+	public VaccinationInfoDto getVaccinationInfo() {
+		return vaccinationInfo;
+	}
+
+	public void setVaccinationInfo(VaccinationInfoDto vaccinationInfo) {
+		this.vaccinationInfo = vaccinationInfo;
+	}
+
+	@Override
+	public SormasToSormasOriginInfoDto getSormasToSormasOriginInfo() {
+		return sormasToSormasOriginInfo;
+	}
+
+	@Override
+	public void setSormasToSormasOriginInfo(SormasToSormasOriginInfoDto sormasToSormasOriginInfo) {
+		this.sormasToSormasOriginInfo = sormasToSormasOriginInfo;
+	}
+
+	@Override
+	public boolean isOwnershipHandedOver() {
+		return ownershipHandedOver;
+	}
+
+	public void setOwnershipHandedOver(boolean ownershipHandedOver) {
+		this.ownershipHandedOver = ownershipHandedOver;
 	}
 }

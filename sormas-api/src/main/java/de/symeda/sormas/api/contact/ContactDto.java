@@ -17,23 +17,37 @@
  *******************************************************************************/
 package de.symeda.sormas.api.contact;
 
+import static de.symeda.sormas.api.CountryHelper.COUNTRY_CODE_GERMANY;
+import static de.symeda.sormas.api.CountryHelper.COUNTRY_CODE_SWITZERLAND;
+
 import java.util.Date;
 
 import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.clinicalcourse.HealthConditionsDto;
 import de.symeda.sormas.api.epidata.EpiDataDto;
+import de.symeda.sormas.api.event.EventParticipantDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
+import de.symeda.sormas.api.region.CommunityReferenceDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
+import de.symeda.sormas.api.sormastosormas.SormasToSormasOriginInfoDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.EmbeddedPersonalData;
 import de.symeda.sormas.api.utils.HideForCountriesExcept;
 import de.symeda.sormas.api.utils.Required;
+import de.symeda.sormas.api.utils.SensitiveData;
+import de.symeda.sormas.api.utils.SormasToSormasEntityDto;
 import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
+import de.symeda.sormas.api.utils.pseudonymization.Pseudonymizer;
+import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.LatitudePseudonymizer;
+import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.LongitudePseudonymizer;
+import de.symeda.sormas.api.vaccinationinfo.VaccinationInfoDto;
 
-public class ContactDto extends EntityDto {
+public class ContactDto extends PseudonymizableDto implements SormasToSormasEntityDto {
 
 	private static final long serialVersionUID = -7764607075875188799L;
 
@@ -43,6 +57,8 @@ public class ContactDto extends EntityDto {
 	public static final String CAZE = "caze";
 	public static final String REPORT_DATE_TIME = "reportDateTime";
 	public static final String REPORTING_USER = "reportingUser";
+	public static final String MULTI_DAY_CONTACT = "multiDayContact";
+	public static final String FIRST_CONTACT_DATE = "firstContactDate";
 	public static final String LAST_CONTACT_DATE = "lastContactDate";
 	public static final String CONTACT_IDENTIFICATION_SOURCE = "contactIdentificationSource";
 	public static final String CONTACT_IDENTIFICATION_SOURCE_DETAILS = "contactIdentificationSourceDetails";
@@ -64,8 +80,10 @@ public class ContactDto extends EntityDto {
 	public static final String RESULTING_CASE_USER = "resultingCaseUser";
 	public static final String VISITS = "visits";
 	public static final String EXTERNAL_ID = "externalID";
+	public static final String EXTERNAL_TOKEN = "externalToken";
 	public static final String REGION = "region";
 	public static final String DISTRICT = "district";
+	public static final String COMMUNITY = "community";
 	public static final String HIGH_PRIORITY = "highPriority";
 	public static final String IMMUNOSUPPRESSIVE_THERAPY_BASIC_DISEASE = "immunosuppressiveTherapyBasicDisease";
 	public static final String IMMUNOSUPPRESSIVE_THERAPY_BASIC_DISEASE_DETAILS = "immunosuppressiveTherapyBasicDiseaseDetails";
@@ -90,11 +108,30 @@ public class ContactDto extends EntityDto {
 	public static final String QUARANTINE_HOME_POSSIBLE_COMMENT = "quarantineHomePossibleComment";
 	public static final String QUARANTINE_HOME_SUPPLY_ENSURED = "quarantineHomeSupplyEnsured";
 	public static final String QUARANTINE_HOME_SUPPLY_ENSURED_COMMENT = "quarantineHomeSupplyEnsuredComment";
+	public static final String QUARANTINE_EXTENDED = "quarantineExtended";
+	public static final String QUARANTINE_REDUCED = "quarantineReduced";
+	public static final String QUARANTINE_OFFICIAL_ORDER_SENT = "quarantineOfficialOrderSent";
+	public static final String QUARANTINE_OFFICIAL_ORDER_SENT_DATE = "quarantineOfficialOrderSentDate";
 	public static final String ADDITIONAL_DETAILS = "additionalDetails";
 	public static final String EPI_DATA = "epiData";
+	public static final String HEALTH_CONDITIONS = "healthConditions";
+	public static final String END_OF_QUARANTINE_REASON = "endOfQuarantineReason";
+	public static final String END_OF_QUARANTINE_REASON_DETAILS = "endOfQuarantineReasonDetails";
+	public static final String RETURNING_TRAVELER = "returningTraveler";
+
+	public static final String PROHIBITION_TO_WORK = "prohibitionToWork";
+	public static final String PROHIBITION_TO_WORK_FROM = "prohibitionToWorkFrom";
+	public static final String PROHIBITION_TO_WORK_UNTIL = "prohibitionToWorkUntil";
+
+	public static final String REPORTING_DISTRICT = "reportingDistrict";
+
+	public static final String VACCINATION_INFO = "vaccinationInfo";
+	public static final String FOLLOW_UP_STATUS_CHANGE_DATE = "followUpStatusChangeDate";
+	public static final String FOLLOW_UP_STATUS_CHANGE_USER = "followUpStatusChangeUser";
 
 	private CaseReferenceDto caze;
 	private String caseIdExternalSystem;
+	@SensitiveData
 	private String caseOrEventInformation;
 	private Disease disease;
 	private String diseaseDetails;
@@ -103,72 +140,165 @@ public class ContactDto extends EntityDto {
 	private Date reportDateTime;
 	@Required
 	private UserReferenceDto reportingUser;
+	@SensitiveData
+	@Pseudonymizer(LatitudePseudonymizer.class)
 	private Double reportLat;
+	@SensitiveData
+	@Pseudonymizer(LongitudePseudonymizer.class)
 	private Double reportLon;
+
 	private Float reportLatLonAccuracy;
 
 	private RegionReferenceDto region;
 	private DistrictReferenceDto district;
+	private CommunityReferenceDto community;
+	@Required
+	private boolean multiDayContact;
+	private Date firstContactDate;
 	@Required
 	private Date lastContactDate;
 	@HideForCountriesExcept
 	private ContactIdentificationSource contactIdentificationSource;
 	@HideForCountriesExcept
+	@SensitiveData
 	private String contactIdentificationSourceDetails;
 	@HideForCountriesExcept
 	private TracingApp tracingApp;
 	@HideForCountriesExcept
+	@SensitiveData
 	private String tracingAppDetails;
 	private ContactProximity contactProximity;
+	@SensitiveData
 	private String contactProximityDetails;
 	private ContactCategory contactCategory;
 	private ContactClassification contactClassification;
 	private ContactStatus contactStatus;
 	private FollowUpStatus followUpStatus;
+	@SensitiveData
 	private String followUpComment;
 	private Date followUpUntil;
 	private boolean overwriteFollowUpUntil;
+	@SensitiveData
 	private String description;
 	private ContactRelation relationToCase;
+	@SensitiveData
 	private String relationDescription;
+	@HideForCountriesExcept(countries = {
+		COUNTRY_CODE_GERMANY,
+		COUNTRY_CODE_SWITZERLAND })
 	private String externalID;
+	private String externalToken;
 
 	private boolean highPriority;
 	private YesNoUnknown immunosuppressiveTherapyBasicDisease;
+	@SensitiveData
 	private String immunosuppressiveTherapyBasicDiseaseDetails;
 	private YesNoUnknown careForPeopleOver60;
 
 	private QuarantineType quarantine;
+	@SensitiveData
 	private String quarantineTypeDetails;
 	private Date quarantineFrom;
 	private Date quarantineTo;
 
 	@Required
+	@EmbeddedPersonalData
 	private PersonReferenceDto person;
 
+	@SensitiveData
 	private UserReferenceDto contactOfficer;
 
 	private CaseReferenceDto resultingCase; // read-only now, but editable long-term
+	@SensitiveData
 	private UserReferenceDto resultingCaseUser;
 
+	@SensitiveData
 	private String quarantineHelpNeeded;
+	@HideForCountriesExcept(countries = {
+		COUNTRY_CODE_GERMANY,
+		COUNTRY_CODE_SWITZERLAND })
 	private boolean quarantineOrderedVerbally;
+	@HideForCountriesExcept(countries = {
+		COUNTRY_CODE_GERMANY,
+		COUNTRY_CODE_SWITZERLAND })
 	private boolean quarantineOrderedOfficialDocument;
+	@HideForCountriesExcept(countries = {
+		COUNTRY_CODE_GERMANY,
+		COUNTRY_CODE_SWITZERLAND })
 	private Date quarantineOrderedVerballyDate;
+	@HideForCountriesExcept(countries = {
+		COUNTRY_CODE_GERMANY,
+		COUNTRY_CODE_SWITZERLAND })
 	private Date quarantineOrderedOfficialDocumentDate;
 	@HideForCountriesExcept
 	private YesNoUnknown quarantineHomePossible;
 	@HideForCountriesExcept
+	@SensitiveData
 	private String quarantineHomePossibleComment;
 	@HideForCountriesExcept
 	private YesNoUnknown quarantineHomeSupplyEnsured;
 	@HideForCountriesExcept
+	@SensitiveData
 	private String quarantineHomeSupplyEnsuredComment;
+	private boolean quarantineExtended;
+	private boolean quarantineReduced;
+	@HideForCountriesExcept(countries = {
+		COUNTRY_CODE_GERMANY,
+		COUNTRY_CODE_SWITZERLAND })
+	private boolean quarantineOfficialOrderSent;
+	@HideForCountriesExcept(countries = {
+		COUNTRY_CODE_GERMANY,
+		COUNTRY_CODE_SWITZERLAND })
+	private Date quarantineOfficialOrderSentDate;
+	@SensitiveData
 	private String additionalDetails;
 	private EpiDataDto epiData;
+	private HealthConditionsDto healthConditions;
+	private SormasToSormasOriginInfoDto sormasToSormasOriginInfo;
+	private boolean ownershipHandedOver;
+	private YesNoUnknown returningTraveler;
+
+	@HideForCountriesExcept(countries = {
+		COUNTRY_CODE_SWITZERLAND })
+	private EndOfQuarantineReason endOfQuarantineReason;
+	@HideForCountriesExcept(countries = {
+		COUNTRY_CODE_SWITZERLAND })
+	@SensitiveData
+	private String endOfQuarantineReasonDetails;
+
+	@HideForCountriesExcept
+	private YesNoUnknown prohibitionToWork;
+	@HideForCountriesExcept
+	private Date prohibitionToWorkFrom;
+	@HideForCountriesExcept
+	private Date prohibitionToWorkUntil;
+
+	@HideForCountriesExcept
+	private DistrictReferenceDto reportingDistrict;
+
+	private VaccinationInfoDto vaccinationInfo;
+	private Date followUpStatusChangeDate;
+	private UserReferenceDto followUpStatusChangeUser;
 
 	public static ContactDto build() {
-		return build(null, null, null);
+		final ContactDto contact = new ContactDto();
+		contact.setUuid(DataHelper.createUuid());
+		contact.setPerson(new PersonReferenceDto(DataHelper.createUuid()));
+		contact.setReportDateTime(new Date());
+		contact.setContactClassification(ContactClassification.UNCONFIRMED);
+		contact.setContactStatus(ContactStatus.ACTIVE);
+		contact.setEpiData(EpiDataDto.build());
+		contact.setHealthConditions(HealthConditionsDto.build());
+		contact.setVaccinationInfo(VaccinationInfoDto.build());
+
+		return contact;
+	}
+
+	public static ContactDto build(EventParticipantDto eventParticipant) {
+		final ContactDto contact = build();
+		contact.setPerson(eventParticipant.getPerson().toReference());
+
+		return contact;
 	}
 
 	public static ContactDto build(CaseDataDto caze) {
@@ -176,17 +306,8 @@ public class ContactDto extends EntityDto {
 	}
 
 	public static ContactDto build(CaseReferenceDto caze, Disease disease, String diseaseDetails) {
-		ContactDto contact = new ContactDto();
-		contact.setUuid(DataHelper.createUuid());
-
+		final ContactDto contact = build();
 		contact.assignCase(caze, disease, diseaseDetails);
-		contact.setPerson(new PersonReferenceDto(DataHelper.createUuid()));
-
-		contact.setReportDateTime(new Date());
-		contact.setContactClassification(ContactClassification.UNCONFIRMED);
-		contact.setContactStatus(ContactStatus.ACTIVE);
-
-		contact.setEpiData(EpiDataDto.build());
 
 		return contact;
 	}
@@ -231,6 +352,22 @@ public class ContactDto extends EntityDto {
 
 	public void setReportingUser(UserReferenceDto reportingUser) {
 		this.reportingUser = reportingUser;
+	}
+
+	public boolean isMultiDayContact() {
+		return multiDayContact;
+	}
+
+	public void setMultiDayContact(boolean multiDayContact) {
+		this.multiDayContact = multiDayContact;
+	}
+
+	public Date getFirstContactDate() {
+		return firstContactDate;
+	}
+
+	public void setFirstContactDate(Date firstContactDate) {
+		this.firstContactDate = firstContactDate;
 	}
 
 	public Date getLastContactDate() {
@@ -386,7 +523,12 @@ public class ContactDto extends EntityDto {
 	}
 
 	public ContactReferenceDto toReference() {
-		return new ContactReferenceDto(getUuid());
+		return new ContactReferenceDto(
+			getUuid(),
+			getPerson().getFirstName(),
+			getPerson().getLastName(),
+			getCaze() != null ? getCaze().getFirstName() : null,
+			getCaze() != null ? getCaze().getLastName() : null);
 	}
 
 	public UserReferenceDto getResultingCaseUser() {
@@ -421,6 +563,14 @@ public class ContactDto extends EntityDto {
 		this.externalID = externalID;
 	}
 
+	public String getExternalToken() {
+		return externalToken;
+	}
+
+	public void setExternalToken(String externalToken) {
+		this.externalToken = externalToken;
+	}
+
 	public RegionReferenceDto getRegion() {
 		return region;
 	}
@@ -435,6 +585,14 @@ public class ContactDto extends EntityDto {
 
 	public void setDistrict(DistrictReferenceDto district) {
 		this.district = district;
+	}
+
+	public CommunityReferenceDto getCommunity() {
+		return community;
+	}
+
+	public void setCommunity(CommunityReferenceDto community) {
+		this.community = community;
 	}
 
 	public boolean isHighPriority() {
@@ -613,6 +771,38 @@ public class ContactDto extends EntityDto {
 		this.quarantineHomeSupplyEnsuredComment = quarantineHomeSupplyEnsuredComment;
 	}
 
+	public boolean isQuarantineExtended() {
+		return quarantineExtended;
+	}
+
+	public void setQuarantineExtended(boolean quarantineExtended) {
+		this.quarantineExtended = quarantineExtended;
+	}
+
+	public boolean isQuarantineReduced() {
+		return quarantineReduced;
+	}
+
+	public void setQuarantineReduced(boolean quarantineReduced) {
+		this.quarantineReduced = quarantineReduced;
+	}
+
+	public boolean isQuarantineOfficialOrderSent() {
+		return quarantineOfficialOrderSent;
+	}
+
+	public void setQuarantineOfficialOrderSent(boolean quarantineOfficialOrderSent) {
+		this.quarantineOfficialOrderSent = quarantineOfficialOrderSent;
+	}
+
+	public Date getQuarantineOfficialOrderSentDate() {
+		return quarantineOfficialOrderSentDate;
+	}
+
+	public void setQuarantineOfficialOrderSentDate(Date quarantineOfficialOrderSentDate) {
+		this.quarantineOfficialOrderSentDate = quarantineOfficialOrderSentDate;
+	}
+
 	public String getAdditionalDetails() {
 		return additionalDetails;
 	}
@@ -627,5 +817,112 @@ public class ContactDto extends EntityDto {
 
 	public void setEpiData(EpiDataDto epiData) {
 		this.epiData = epiData;
+	}
+
+	public HealthConditionsDto getHealthConditions() {
+		return healthConditions;
+	}
+
+	public void setHealthConditions(HealthConditionsDto healthConditions) {
+		this.healthConditions = healthConditions;
+	}
+
+	@Override
+	public SormasToSormasOriginInfoDto getSormasToSormasOriginInfo() {
+		return sormasToSormasOriginInfo;
+	}
+
+	@Override
+	public void setSormasToSormasOriginInfo(SormasToSormasOriginInfoDto sormasToSormasOriginInfo) {
+		this.sormasToSormasOriginInfo = sormasToSormasOriginInfo;
+	}
+
+	@Override
+	public boolean isOwnershipHandedOver() {
+		return ownershipHandedOver;
+	}
+
+	public void setOwnershipHandedOver(boolean ownershipHandedOver) {
+		this.ownershipHandedOver = ownershipHandedOver;
+	}
+
+	public EndOfQuarantineReason getEndOfQuarantineReason() {
+		return endOfQuarantineReason;
+	}
+
+	public void setEndOfQuarantineReason(EndOfQuarantineReason endOfQuarantineReason) {
+		this.endOfQuarantineReason = endOfQuarantineReason;
+	}
+
+	public String getEndOfQuarantineReasonDetails() {
+		return endOfQuarantineReasonDetails;
+	}
+
+	public void setEndOfQuarantineReasonDetails(String endOfQuarantineReasonDetails) {
+		this.endOfQuarantineReasonDetails = endOfQuarantineReasonDetails;
+	}
+
+	public YesNoUnknown getProhibitionToWork() {
+		return prohibitionToWork;
+	}
+
+	public void setProhibitionToWork(YesNoUnknown prohibitionToWork) {
+		this.prohibitionToWork = prohibitionToWork;
+	}
+
+	public Date getProhibitionToWorkFrom() {
+		return prohibitionToWorkFrom;
+	}
+
+	public void setProhibitionToWorkFrom(Date prohibitionToWorkFrom) {
+		this.prohibitionToWorkFrom = prohibitionToWorkFrom;
+	}
+
+	public Date getProhibitionToWorkUntil() {
+		return prohibitionToWorkUntil;
+	}
+
+	public void setProhibitionToWorkUntil(Date prohibitionToWorkUntil) {
+		this.prohibitionToWorkUntil = prohibitionToWorkUntil;
+	}
+
+	public DistrictReferenceDto getReportingDistrict() {
+		return reportingDistrict;
+	}
+
+	public void setReportingDistrict(DistrictReferenceDto reportingDistrict) {
+		this.reportingDistrict = reportingDistrict;
+	}
+
+	public YesNoUnknown getReturningTraveler() {
+		return returningTraveler;
+	}
+
+	public void setReturningTraveler(YesNoUnknown returningTraveler) {
+		this.returningTraveler = returningTraveler;
+	}
+
+	public VaccinationInfoDto getVaccinationInfo() {
+		return vaccinationInfo;
+	}
+
+	public void setVaccinationInfo(VaccinationInfoDto vaccinationInfo) {
+		this.vaccinationInfo = vaccinationInfo;
+	}
+
+	public Date getFollowUpStatusChangeDate() {
+		return followUpStatusChangeDate;
+	}
+
+	public void setFollowUpStatusChangeDate(Date followUpStatusChangeDate) {
+		this.followUpStatusChangeDate = followUpStatusChangeDate;
+	}
+
+	public UserReferenceDto getFollowUpStatusChangeUser() {
+		return followUpStatusChangeUser;
+	}
+
+	public void setFollowUpStatusChangeUser(UserReferenceDto followUpStatusChangeUser) {
+		this.followUpStatusChangeUser = followUpStatusChangeUser;
 	}
 }

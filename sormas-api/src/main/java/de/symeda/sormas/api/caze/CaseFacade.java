@@ -18,18 +18,26 @@
 package de.symeda.sormas.api.caze;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.ejb.Remote;
+import javax.validation.Valid;
 
 import de.symeda.sormas.api.CaseMeasure;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.Language;
+import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.contact.DashboardQuarantineDataDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
+import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolException;
 import de.symeda.sormas.api.importexport.ExportConfigurationDto;
+import de.symeda.sormas.api.messaging.ManualMessageLogDto;
+import de.symeda.sormas.api.messaging.MessageType;
 import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.region.DistrictDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
@@ -43,18 +51,24 @@ public interface CaseFacade {
 
 	List<CaseDataDto> getAllActiveCasesAfter(Date date);
 
-	//Created for the SurvNet interface in order to track additional change dates.
-	//additional change dates filters for: sample, pathogenTests, patient and location.
-	List<CaseDataDto> getAllActiveCasesAfter(Date date, Boolean includeExtendedChangeDateFilters);
+	/**
+	 * Additional change dates filters for: sample, pathogenTests, patient and location.
+	 */
+	List<CaseDataDto> getAllActiveCasesAfter(Date date, boolean includeExtendedChangeDateFilters);
 
 	long count(CaseCriteria caseCriteria);
 
 	List<CaseIndexDto> getIndexList(CaseCriteria caseCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
 
-	List<CaseIndexDetailedDto> getIndexDetailedList(CaseCriteria caseCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
+	Page<CaseIndexDto> getIndexPage(CaseCriteria caseCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
+
+	Page<CaseIndexDetailedDto> getIndexDetailedPage(CaseCriteria caseCriteria, Integer offset, Integer max, List<SortProperty> sortProperties);
+
+	List<CaseIndexDetailedDto> getIndexDetailedList(CaseCriteria caseCriteria, Integer offset, Integer max, List<SortProperty> sortProperties);
 
 	List<CaseExportDto> getExportList(
 		CaseCriteria caseCriteria,
+		Collection<String> selectedRows,
 		CaseExportType exportType,
 		int first,
 		int max,
@@ -63,11 +77,13 @@ public interface CaseFacade {
 
 	CaseDataDto getCaseDataByUuid(String uuid);
 
-	CaseDataDto saveCase(CaseDataDto dto) throws ValidationRuntimeException;
+	CaseDataDto saveCase(@Valid CaseDataDto dto) throws ValidationRuntimeException;
 
 	void setSampleAssociations(ContactReferenceDto sourceContact, CaseReferenceDto cazeRef);
 
 	void setSampleAssociations(EventParticipantReferenceDto sourceEventParticipant, CaseReferenceDto cazeRef);
+
+	void setSampleAssociationsUnrelatedDisease(EventParticipantReferenceDto sourceEventParticipant, CaseReferenceDto cazeRef);
 
 	void validate(CaseDataDto dto) throws ValidationRuntimeException;
 
@@ -77,11 +93,15 @@ public interface CaseFacade {
 
 	List<CaseDataDto> getByUuids(List<String> uuids);
 
+	CaseDataDto getByUuid(String uuid);
+
 	String getUuidByUuidEpidNumberOrExternalId(String searchTerm);
 
 	List<DashboardCaseDto> getCasesForDashboard(CaseCriteria caseCriteria);
 
 	List<MapCaseDto> getCasesForMap(RegionReferenceDto regionRef, DistrictReferenceDto districtRef, Disease disease, Date from, Date to);
+
+	Long countCasesForMap(RegionReferenceDto regionRef, DistrictReferenceDto districtRef, Disease disease, Date from, Date to);
 
 	Map<CaseClassification, Long> getCaseCountPerClassification(
 		CaseCriteria caseCriteria,
@@ -101,13 +121,15 @@ public interface CaseFacade {
 
 	List<CaseDataDto> getAllCasesOfPerson(String personUuid);
 
-	void deleteCase(String caseUuid);
+	void deleteCase(String caseUuid) throws ExternalSurveillanceToolException;
 
-	void deleteCaseAsDuplicate(String caseUuid, String duplicateOfCaseUuid);
+	void deleteCaseAsDuplicate(String caseUuid, String duplicateOfCaseUuid) throws ExternalSurveillanceToolException;
 
 	Date getOldestCaseOnsetDate();
 
 	Date getOldestCaseReportDate();
+
+	Date getOldestCaseOutcomeDate();
 
 	boolean isArchived(String caseUuid);
 
@@ -121,7 +143,9 @@ public interface CaseFacade {
 
 	boolean doesEpidNumberExist(String epidNumber, String caseUuid, Disease disease);
 
-	String generateEpidNumber(CaseReferenceDto caze);
+	boolean doesExternalTokenExist(String externalToken, String caseUuid);
+
+	String generateEpidNumber(CaseDataDto caze);
 
 	void mergeCase(String leadUuid, String otherUuid);
 
@@ -135,11 +159,69 @@ public interface CaseFacade {
 
 	void archiveAllArchivableCases(int daysAfterCaseGetsArchived);
 
-	List<CaseReferenceDto> getRandomCaseReferences(CaseCriteria criteria, int count);
+	/**
+	 * @param caseUuids
+	 *            Cases identified by {@code uuid} to be archived or not.
+	 * @param archived
+	 *            {@code true} archives the Case, {@code false} unarchives it.
+	 */
+	void updateArchived(List<String> caseUuids, boolean archived);
 
-	Boolean isCaseEditAllowed(String caseUuid);
+	List<CaseReferenceDto> getRandomCaseReferences(CaseCriteria criteria, int count, Random randomGenerator);
+
+	boolean isCaseEditAllowed(String caseUuid);
 
 	boolean exists(String uuid);
 
 	boolean hasPositiveLabResult(String caseUuid);
+
+	List<CaseFollowUpDto> getCaseFollowUpList(
+		CaseCriteria caseCriteria,
+		Date referenceDate,
+		int interval,
+		Integer first,
+		Integer max,
+		List<SortProperty> sortProperties);
+
+	List<DashboardQuarantineDataDto> getQuarantineDataForDashBoard(
+		RegionReferenceDto regionRef,
+		DistrictReferenceDto districtRef,
+		Disease disease,
+		Date from,
+		Date to);
+
+	long countCasesConvertedFromContacts(CaseCriteria caseCriteria);
+
+	void sendMessage(List<String> caseUuids, String subject, String messageContent, MessageType... messageTypes);
+
+	long countCasesWithMissingContactInformation(List<String> caseUuids, MessageType messageType);
+
+	List<ManualMessageLogDto> getMessageLog(String caseUuid, MessageType messageType);
+
+	String getFirstCaseUuidWithOwnershipHandedOver(List<String> caseUuids);
+
+	void saveBulkCase(
+		List<String> caseUuidList,
+		CaseBulkEditData updatedCaseBulkEditData,
+		boolean diseaseChange,
+		boolean classificationChange,
+		boolean investigationStatusChange,
+		boolean outcomeChange,
+		boolean surveillanceOfficerChange);
+
+	void saveBulkEditWithFacilities(
+		List<String> caseUuidList,
+		CaseBulkEditData updatedCaseBulkEditData,
+		boolean diseaseChange,
+		boolean classificationChange,
+		boolean investigationStatusChange,
+		boolean outcomeChange,
+		boolean surveillanceOfficerChange,
+		Boolean doTransfer);
+
+	List<CasePersonDto> getDuplicates(CasePersonDto casePerson, int reportDateThreshold);
+
+	List<CasePersonDto> getDuplicates(CasePersonDto casePerson);
+
+	List<CaseDataDto> getByPersonUuids(List<String> personUuids);
 }

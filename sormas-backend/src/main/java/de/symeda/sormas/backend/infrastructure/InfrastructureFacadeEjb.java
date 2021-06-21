@@ -3,9 +3,12 @@ package de.symeda.sormas.backend.infrastructure;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
+import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.infrastructure.InfrastructureChangeDatesDto;
 import de.symeda.sormas.api.infrastructure.InfrastructureFacade;
 import de.symeda.sormas.api.infrastructure.InfrastructureSyncDto;
+import de.symeda.sormas.backend.campaign.CampaignFacadeEjb;
+import de.symeda.sormas.backend.campaign.form.CampaignFormMetaFacadeEjb;
 import de.symeda.sormas.backend.caze.classification.CaseClassificationFacadeEjb.CaseClassificationFacadeEjbLocal;
 import de.symeda.sormas.backend.common.ConfigFacadeEjb.ConfigFacadeEjbLocal;
 import de.symeda.sormas.backend.disease.DiseaseConfigurationFacadeEjb.DiseaseConfigurationFacadeEjbLocal;
@@ -15,14 +18,23 @@ import de.symeda.sormas.backend.feature.FeatureConfigurationFacadeEjb.FeatureCon
 import de.symeda.sormas.backend.infrastructure.PointOfEntryFacadeEjb.PointOfEntryFacadeEjbLocal;
 import de.symeda.sormas.backend.region.CommunityFacadeEjb.CommunityFacadeEjbLocal;
 import de.symeda.sormas.backend.region.CommunityService;
+import de.symeda.sormas.backend.region.ContinentFacadeEjb;
+import de.symeda.sormas.backend.region.CountryFacadeEjb.CountryFacadeEjbLocal;
 import de.symeda.sormas.backend.region.DistrictFacadeEjb.DistrictFacadeEjbLocal;
 import de.symeda.sormas.backend.region.RegionFacadeEjb.RegionFacadeEjbLocal;
+import de.symeda.sormas.backend.region.SubcontinentFacadeEjb;
 import de.symeda.sormas.backend.user.UserFacadeEjb.UserFacadeEjbLocal;
 import de.symeda.sormas.backend.user.UserRoleConfigFacadeEjb.UserRoleConfigFacadeEjbLocal;
 
 @Stateless(name = "InfrastructureFacade")
 public class InfrastructureFacadeEjb implements InfrastructureFacade {
 
+	@EJB
+	private ContinentFacadeEjb.ContinentFacadeEjbLocal continentFacade;
+	@EJB
+	private SubcontinentFacadeEjb.SubcontinentFacadeEjbLocal subcontinentFacade;
+	@EJB
+	private CountryFacadeEjbLocal countryFacade;
 	@EJB
 	private RegionFacadeEjbLocal regionFacade;
 	@EJB
@@ -49,6 +61,10 @@ public class InfrastructureFacadeEjb implements InfrastructureFacade {
 	private ConfigFacadeEjbLocal configFacade;
 	@EJB
 	private FeatureConfigurationFacadeEjbLocal featureConfigurationFacade;
+	@EJB
+	private CampaignFacadeEjb.CampaignFacadeEjbLocal campaignFacade;
+	@EJB
+	private CampaignFormMetaFacadeEjb.CampaignFormMetaFacadeEjbLocal campaignFormMetaFacade;
 
 	@Override
 	public InfrastructureSyncDto getInfrastructureSyncData(InfrastructureChangeDatesDto changeDates) {
@@ -61,6 +77,9 @@ public class InfrastructureFacadeEjb implements InfrastructureFacade {
 			return sync;
 		}
 
+		sync.setContinents(continentFacade.getAllAfter(changeDates.getContinentChangeDate()));
+		sync.setSubcontinents(subcontinentFacade.getAllAfter(changeDates.getSubcontinentChangeDate()));
+		sync.setCountries(countryFacade.getAllAfter(changeDates.getCountryChangeDate()));
 		sync.setRegions(regionFacade.getAllAfter(changeDates.getRegionChangeDate()));
 		sync.setDistricts(districtFacade.getAllAfter(changeDates.getDistrictChangeDate()));
 		sync.setCommunities(communityFacade.getAllAfter(changeDates.getCommunityChangeDate()));
@@ -73,6 +92,11 @@ public class InfrastructureFacadeEjb implements InfrastructureFacade {
 		sync.setDeletedUserRoleConfigurationUuids(userRoleConfigurationFacade.getDeletedUuids(changeDates.getUserRoleConfigurationChangeDate()));
 		sync.setFeatureConfigurations(featureConfigurationFacade.getAllAfter(changeDates.getFeatureConfigurationChangeDate()));
 		sync.setDeletedFeatureConfigurationUuids(featureConfigurationFacade.getDeletedUuids(changeDates.getFeatureConfigurationChangeDate()));
+
+		if (featureConfigurationFacade.isFeatureEnabled(FeatureType.CAMPAIGNS)) {
+			sync.setCampaigns(campaignFacade.getAllAfter(changeDates.getCampaignChangeDate()));
+			sync.setCampaignFormMetas(campaignFormMetaFacade.getAllAfter(changeDates.getCampaignFormMetaChangeDate()));
+		}
 
 		return sync;
 	}

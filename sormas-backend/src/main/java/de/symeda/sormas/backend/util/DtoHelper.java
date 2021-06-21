@@ -21,11 +21,14 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
+import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.function.Supplier;
 
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.ReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.JsonDataEntry;
 import de.symeda.sormas.api.utils.OutdatedEntityException;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 
@@ -40,9 +43,10 @@ public final class DtoHelper {
 	 */
 	public static final int CHANGE_DATE_TOLERANCE_MS = 1000;
 
-	public static void validateDto(EntityDto dto, AbstractDomainObject entity) {
+	public static void validateDto(EntityDto dto, AbstractDomainObject entity, boolean checkChangeDate) {
 
-		if (entity.getChangeDate() != null
+		if (checkChangeDate
+			&& entity.getChangeDate() != null
 			&& (dto.getChangeDate() == null || dto.getChangeDate().getTime() + CHANGE_DATE_TOLERANCE_MS < entity.getChangeDate().getTime())) {
 			throw new OutdatedEntityException(dto.getUuid(), dto.getClass());
 		}
@@ -61,7 +65,7 @@ public final class DtoHelper {
 	@SuppressWarnings({
 		"unchecked",
 		"rawtypes" })
-	public static <T extends EntityDto> void fillDto(T target, T source, boolean overrideValues) {
+	public static <T extends EntityDto> T copyDtoValues(T target, T source, boolean overrideValues) {
 
 		try {
 			PropertyDescriptor[] pds = Introspector.getBeanInfo(target.getClass(), EntityDto.class).getPropertyDescriptors();
@@ -75,6 +79,10 @@ public final class DtoHelper {
 				Object targetValue = pd.getReadMethod().invoke(target);
 				Object sourceValue = pd.getReadMethod().invoke(source);
 
+				if (sourceValue == null) {
+					continue;
+				}
+
 				if (EntityDto.class.isAssignableFrom(pd.getPropertyType())) {
 
 					if (targetValue == null) {
@@ -82,47 +90,45 @@ public final class DtoHelper {
 						pd.getWriteMethod().invoke(target, targetValue);
 					}
 
+					// If both entities have the same UUID, assign a new one to targetValue to create a new entity
+					if (((EntityDto) targetValue).getUuid().equals(((EntityDto) sourceValue).getUuid())) {
+						((EntityDto) targetValue).setUuid(DataHelper.createUuid());
+					}
+
 					// entity: just fill the existing one with the source
-					fillDto((EntityDto) targetValue, (EntityDto) sourceValue, overrideValues);
+					copyDtoValues((EntityDto) targetValue, (EntityDto) sourceValue, overrideValues);
 				} else {
-					boolean targetIsEmpty =
-						targetValue == null || (Collection.class.isAssignableFrom(pd.getPropertyType()) && ((Collection<?>) targetValue).isEmpty());
 					boolean override = overrideValues && !ReferenceDto.class.isAssignableFrom(pd.getPropertyType());
 					// should we write into the target property?
-					if (targetIsEmpty || override) {
+					if (Collection.class.isAssignableFrom(pd.getPropertyType())) {
 
-						if (Collection.class.isAssignableFrom(pd.getPropertyType()) && sourceValue != null) {
+						if (targetValue == null) {
+							targetValue = sourceValue.getClass().newInstance();
+							pd.getWriteMethod().invoke(target, targetValue);
+						}
 
-							if (targetValue == null) {
-								targetValue = sourceValue.getClass().newInstance();
-								pd.getWriteMethod().invoke(target, targetValue);
+						Collection targetCollection = (Collection) targetValue;
+
+						for (Object sourceEntry : (Collection) sourceValue) {
+							if (sourceEntry instanceof EntityDto) {
+								EntityDto newEntry = ((EntityDto) sourceEntry).clone();
+								newEntry.setUuid(DataHelper.createUuid());
+								newEntry.setCreationDate(null);
+								copyDtoValues(newEntry, (EntityDto) sourceEntry, true);
+								targetCollection.add(newEntry);
+							} else if (DataHelper.isValueType(sourceEntry.getClass())
+								|| sourceEntry instanceof ReferenceDto
+								|| sourceEntry instanceof JsonDataEntry) {
+								targetCollection.add(sourceEntry);
+							} else {
+								throw new UnsupportedOperationException(pd.getPropertyType().getName() + " is not supported as a list entry type.");
 							}
+						}
 
-							Collection targetCollection = (Collection) targetValue;
-							targetCollection.clear();
-
-							for (Object sourceEntry : (Collection) sourceValue) {
-
-								if (sourceEntry instanceof EntityDto) {
-									EntityDto newEntry = ((EntityDto) sourceEntry).clone();
-									newEntry.setUuid(DataHelper.createUuid());
-									newEntry.setCreationDate(null);
-									fillDto(newEntry, (EntityDto) sourceEntry, true);
-									targetCollection.add(newEntry);
-								} else if (DataHelper.isValueType(sourceEntry.getClass()) || sourceEntry instanceof ReferenceDto) {
-									targetCollection.add(sourceEntry);
-								} else {
-									throw new UnsupportedOperationException(
-										pd.getPropertyType().getName() + " is not supported as a list entry type.");
-								}
-							}
-
-						} else if (DataHelper.isValueType(pd.getPropertyType()) || ReferenceDto.class.isAssignableFrom(pd.getPropertyType())) {
-
+					} else if (targetValue == null || override) {
+						if (DataHelper.isValueType(pd.getPropertyType()) || ReferenceDto.class.isAssignableFrom(pd.getPropertyType())) {
 							pd.getWriteMethod().invoke(target, sourceValue);
-
 						} else {
-
 							// Other objects are not supported
 							throw new UnsupportedOperationException(pd.getPropertyType().getName() + " is not supported as a property type.");
 						}
@@ -136,5 +142,23 @@ public final class DtoHelper {
 			| InstantiationException e) {
 			throw new RuntimeException("Exception when trying to fill dto: " + e.getMessage(), e.getCause());
 		}
+		return target;
+	}
+
+	public static <T extends AbstractDomainObject> T fillOrBuildEntity(EntityDto source, T target, Supplier<T> newEntity, boolean checkChangeDate) {
+		if (target == null) {
+			target = newEntity.get();
+
+			String uuid = source.getUuid() != null ? source.getUuid() : DataHelper.createUuid();
+			target.setUuid(uuid);
+
+			if (source.getCreationDate() != null) {
+				target.setCreationDate(new Timestamp(source.getCreationDate().getTime()));
+			}
+		}
+
+		DtoHelper.validateDto(source, target, checkChangeDate);
+
+		return target;
 	}
 }

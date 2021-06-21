@@ -17,20 +17,30 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.events;
 
+import java.util.Date;
+
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.ui.renderers.DateRenderer;
 
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.event.EventParticipantCriteria;
 import de.symeda.sormas.api.event.EventParticipantDto;
 import de.symeda.sormas.api.event.EventParticipantIndexDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.sample.PathogenTestResultType;
+import de.symeda.sormas.api.sample.SampleIndexDto;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.DateHelper;
+import de.symeda.sormas.api.utils.jurisdiction.EventParticipantJurisdictionHelper;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.CaseUuidRenderer;
+import de.symeda.sormas.ui.utils.FieldAccessColumnStyleGenerator;
 import de.symeda.sormas.ui.utils.FilteredGrid;
+import de.symeda.sormas.ui.utils.PathogenTestResultTypeRenderer;
 import de.symeda.sormas.ui.utils.ShowDetailsListener;
 import de.symeda.sormas.ui.utils.UuidRenderer;
 
@@ -38,8 +48,8 @@ import de.symeda.sormas.ui.utils.UuidRenderer;
 public class EventParticipantsGrid extends FilteredGrid<EventParticipantIndexDto, EventParticipantCriteria> {
 
 	private static final String CASE_ID = Captions.EventParticipant_caseUuid;
+	private static final String NO_CASE_CREATE = null;
 
-	@SuppressWarnings("unchecked")
 	public EventParticipantsGrid(EventParticipantCriteria criteria) {
 
 		super(EventParticipantIndexDto.class);
@@ -47,9 +57,7 @@ public class EventParticipantsGrid extends FilteredGrid<EventParticipantIndexDto
 
 		setInEagerMode(true);
 		setCriteria(criteria);
-		ListDataProvider<EventParticipantIndexDto> dataProvider =
-			DataProvider.fromStream(FacadeProvider.getEventParticipantFacade().getIndexList(getCriteria(), null, null, null).stream());
-		setDataProvider(dataProvider);
+		setEagerDataProvider();
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
 			setSelectionMode(SelectionMode.MULTI);
@@ -60,34 +68,64 @@ public class EventParticipantsGrid extends FilteredGrid<EventParticipantIndexDto
 		Column<EventParticipantIndexDto, String> caseIdColumn = addColumn(entry -> {
 			if (entry.getCaseUuid() != null) {
 				return entry.getCaseUuid();
-			} else {
-				return "";
 			}
+
+			boolean isInJurisdiction = FieldAccessColumnStyleGenerator.callJurisdictionChecker(
+				EventParticipantJurisdictionHelper::isInJurisdictionOrOwned,
+				UserProvider.getCurrent().getUser(),
+				entry.getJurisdiction());
+			if (!isInJurisdiction) {
+				return NO_CASE_CREATE;
+			}
+
+			return "";
 		});
 		caseIdColumn.setId(CASE_ID);
 		caseIdColumn.setSortProperty(EventParticipantIndexDto.CASE_UUID);
-		caseIdColumn.setRenderer(new CaseUuidRenderer(true));
+		caseIdColumn.setRenderer(
+			new CaseUuidRenderer(
+				uuid -> {
+					// '!=' check is ok because the converter returns the constant when no case creation is allowed
+					return NO_CASE_CREATE != uuid;
+				}));
 
+		Language userLanguage = I18nProperties.getUserLanguage();
 		setColumns(
 			EventParticipantIndexDto.UUID,
 			EventParticipantIndexDto.PERSON_UUID,
-			EventParticipantIndexDto.NAME,
+			EventParticipantIndexDto.FIRST_NAME,
+			EventParticipantIndexDto.LAST_NAME,
 			EventParticipantIndexDto.SEX,
 			EventParticipantIndexDto.APPROXIMATE_AGE,
 			EventParticipantIndexDto.INVOLVEMENT_DESCRIPTION,
-			CASE_ID);
-
+			CASE_ID,
+			EventParticipantIndexDto.CONTACT_COUNT,
+			SampleIndexDto.PATHOGEN_TEST_RESULT,
+			SampleIndexDto.SAMPLE_DATE_TIME);
+		((Column<EventParticipantIndexDto, Date>) getColumn(SampleIndexDto.SAMPLE_DATE_TIME))
+			.setRenderer(new DateRenderer(DateHelper.getLocalDateTimeFormat(userLanguage)));
 		((Column<EventParticipantIndexDto, String>) getColumn(EventParticipantIndexDto.UUID)).setRenderer(new UuidRenderer());
 		((Column<EventParticipantIndexDto, String>) getColumn(EventParticipantIndexDto.PERSON_UUID)).setRenderer(new UuidRenderer());
 
-		for (Column<?, ?> column : getColumns()) {
-			column.setCaption(I18nProperties.getPrefixCaption(EventParticipantIndexDto.I18N_PREFIX, column.getId().toString(), column.getCaption()));
+		final Column<EventParticipantIndexDto, PathogenTestResultType> pathogenTestResultColumn =
+			(Column<EventParticipantIndexDto, PathogenTestResultType>) getColumn(SampleIndexDto.PATHOGEN_TEST_RESULT);
+		pathogenTestResultColumn.setRenderer(new PathogenTestResultTypeRenderer());
+		for (Column<EventParticipantIndexDto, ?> column : getColumns()) {
+			column.setCaption(I18nProperties.getPrefixCaption(EventParticipantIndexDto.I18N_PREFIX, column.getId(), column.getCaption()));
+			column.setStyleGenerator(FieldAccessColumnStyleGenerator.getDefault(getBeanType(), column.getId()));
 		}
+		getColumn(SampleIndexDto.PATHOGEN_TEST_RESULT)
+			.setCaption(I18nProperties.getPrefixCaption(SampleIndexDto.I18N_PREFIX, SampleIndexDto.PATHOGEN_TEST_RESULT));
+		getColumn(SampleIndexDto.SAMPLE_DATE_TIME)
+			.setCaption(I18nProperties.getPrefixCaption(SampleIndexDto.I18N_PREFIX, SampleIndexDto.SAMPLE_DATE_TIME));
 
 		addItemClickListener(new ShowDetailsListener<>(CASE_ID, false, e -> {
 			if (e.getCaseUuid() != null) {
 				ControllerProvider.getCaseController().navigateToCase(e.getCaseUuid());
-			} else {
+			} else if (FieldAccessColumnStyleGenerator.callJurisdictionChecker(
+				EventParticipantJurisdictionHelper::isInJurisdictionOrOwned,
+				UserProvider.getCurrent().getUser(),
+				e.getJurisdiction())) {
 				EventParticipantDto eventParticipant = FacadeProvider.getEventParticipantFacade().getEventParticipantByUuid(e.getUuid());
 				ControllerProvider.getCaseController().createFromEventParticipant(eventParticipant);
 			}
@@ -98,6 +136,12 @@ public class EventParticipantsGrid extends FilteredGrid<EventParticipantIndexDto
 				e -> ControllerProvider.getEventParticipantController().navigateToData(e.getUuid())));
 	}
 
+	public void setEagerDataProvider() {
+		ListDataProvider<EventParticipantIndexDto> dataProvider =
+			DataProvider.fromStream(FacadeProvider.getEventParticipantFacade().getIndexList(getCriteria(), null, null, null).stream());
+		setDataProvider(dataProvider);
+	}
+
 	public void reload() {
 
 		if (getSelectionModel().isUserSelectionAllowed()) {
@@ -105,5 +149,6 @@ public class EventParticipantsGrid extends FilteredGrid<EventParticipantIndexDto
 		}
 
 		getDataProvider().refreshAll();
+		setEagerDataProvider();
 	}
 }

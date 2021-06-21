@@ -24,6 +24,7 @@ import de.symeda.sormas.api.therapy.TreatmentDto;
 import de.symeda.sormas.api.therapy.TreatmentRoute;
 import de.symeda.sormas.api.therapy.TreatmentType;
 import de.symeda.sormas.api.therapy.TypeOfDrug;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.therapy.Treatment;
@@ -45,7 +46,12 @@ public class TreatmentEditFragment extends BaseEditFragment<FragmentTreatmentEdi
 	// Static methods
 
 	public static TreatmentEditFragment newInstance(Treatment activityRootData) {
-		return newInstance(TreatmentEditFragment.class, null, activityRootData);
+		return newInstanceWithFieldCheckers(
+			TreatmentEditFragment.class,
+			null,
+			activityRootData,
+			null,
+			UiFieldAccessCheckers.forSensitiveData(activityRootData.isPseudonymized()));
 	}
 	// Instance methods
 
@@ -101,6 +107,8 @@ public class TreatmentEditFragment extends BaseEditFragment<FragmentTreatmentEdi
 
 	@Override
 	public void onAfterLayoutBinding(FragmentTreatmentEditLayoutBinding contentBinding) {
+		setFieldVisibilitiesAndAccesses(TreatmentDto.class, contentBinding.mainContent);
+
 		setUpFieldVisibilities(contentBinding);
 
 		// Initialize fields

@@ -29,9 +29,10 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import de.symeda.sormas.api.hospitalization.HospitalizationReasonType;
 import de.symeda.sormas.api.utils.YesNoUnknown;
-import de.symeda.sormas.app.backend.common.AbstractDomainObject;
 import de.symeda.sormas.app.backend.common.EmbeddedAdo;
+import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 import de.symeda.sormas.app.backend.facility.Facility;
 import de.symeda.sormas.app.backend.region.Community;
 import de.symeda.sormas.app.backend.region.District;
@@ -45,7 +46,7 @@ import de.symeda.sormas.app.util.DateFormatHelper;
 @Entity(name = PreviousHospitalization.TABLE_NAME)
 @DatabaseTable(tableName = PreviousHospitalization.TABLE_NAME)
 @EmbeddedAdo(parentAccessor = PreviousHospitalization.HOSPITALIZATION)
-public class PreviousHospitalization extends AbstractDomainObject {
+public class PreviousHospitalization extends PseudonymizableAdo {
 
 	private static final long serialVersionUID = 768263094433806267L;
 
@@ -82,6 +83,21 @@ public class PreviousHospitalization extends AbstractDomainObject {
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private Hospitalization hospitalization;
+
+	@Enumerated(EnumType.STRING)
+	private HospitalizationReasonType hospitalizationReason;
+
+	@Column(columnDefinition = "text")
+	private String otherHospitalizationReason;
+
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown intensiveCareUnit;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date intensiveCareUnitStart;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date intensiveCareUnitEnd;
 
 	public Date getAdmissionDate() {
 		return admissionDate;
@@ -161,6 +177,46 @@ public class PreviousHospitalization extends AbstractDomainObject {
 
 	public void setHospitalization(Hospitalization hospitalization) {
 		this.hospitalization = hospitalization;
+	}
+
+	public HospitalizationReasonType getHospitalizationReason() {
+		return hospitalizationReason;
+	}
+
+	public void setHospitalizationReason(HospitalizationReasonType hospitalizationReason) {
+		this.hospitalizationReason = hospitalizationReason;
+	}
+
+	public String getOtherHospitalizationReason() {
+		return otherHospitalizationReason;
+	}
+
+	public void setOtherHospitalizationReason(String otherHospitalizationReason) {
+		this.otherHospitalizationReason = otherHospitalizationReason;
+	}
+
+	public YesNoUnknown getIntensiveCareUnit() {
+		return intensiveCareUnit;
+	}
+
+	public void setIntensiveCareUnit(YesNoUnknown intensiveCareUnit) {
+		this.intensiveCareUnit = intensiveCareUnit;
+	}
+
+	public Date getIntensiveCareUnitStart() {
+		return intensiveCareUnitStart;
+	}
+
+	public void setIntensiveCareUnitStart(Date intensiveCareUnitStart) {
+		this.intensiveCareUnitStart = intensiveCareUnitStart;
+	}
+
+	public Date getIntensiveCareUnitEnd() {
+		return intensiveCareUnitEnd;
+	}
+
+	public void setIntensiveCareUnitEnd(Date intensiveCareUnitEnd) {
+		this.intensiveCareUnitEnd = intensiveCareUnitEnd;
 	}
 
 	@Override

@@ -36,6 +36,7 @@ import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.utils.AbstractView;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.ExportEntityName;
 import de.symeda.sormas.ui.utils.GridExportStreamResource;
 
 @SuppressWarnings("serial")
@@ -113,10 +114,7 @@ public class AggregateReportsView extends AbstractView {
 
 			addHeaderComponent(btnExport);
 
-			StreamResource streamResource = new GridExportStreamResource(
-				grid,
-				"sormas_aggregate_reports",
-				"sormas_aggregate_reports_" + DateHelper.formatDateForExport(new Date()) + ".csv");
+			StreamResource streamResource = GridExportStreamResource.createStreamResource(grid, ExportEntityName.AGGREGATE_REPORTS);
 			FileDownloader fileDownloader = new FileDownloader(streamResource);
 			fileDownloader.extend(btnExport);
 		}
@@ -172,18 +170,18 @@ public class AggregateReportsView extends AbstractView {
 			if (user.getRegion() == null) {
 				cbRegionFilter.setWidth(200, Unit.PIXELS);
 				cbRegionFilter.setPlaceholder(I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.REGION));
-				cbRegionFilter.setItems(FacadeProvider.getRegionFacade().getAllActiveAsReference());
+				cbRegionFilter.setItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
 				binder.bind(cbRegionFilter, AggregateReportCriteria.REGION);
 				hlFirstFilterRow.addComponent(cbRegionFilter);
 			}
 
 			cbDistrictFilter = new ComboBox<>();
 			cbDistrictFilter.setId(AggregateReportCriteria.DISTRICT);
-			cbDistrictFilter.addValueChangeListener(e -> updateButtonVisibility());
 			cbDistrictFilter.setWidth(200, Unit.PIXELS);
 			cbDistrictFilter.setPlaceholder(I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.DISTRICT));
 			binder.bind(cbDistrictFilter, AggregateReportCriteria.DISTRICT);
 			cbDistrictFilter.addValueChangeListener(e -> {
+				updateButtonVisibility();
 				DistrictReferenceDto district = e.getValue();
 				if (cbFacilityFilter != null) {
 					cbFacilityFilter.clear();
@@ -193,7 +191,7 @@ public class AggregateReportsView extends AbstractView {
 				}
 				if (district != null) {
 					if (cbFacilityFilter != null) {
-						cbFacilityFilter.setItems(FacadeProvider.getFacilityFacade().getActiveHealthFacilitiesByDistrict(district, false));
+						cbFacilityFilter.setItems(FacadeProvider.getFacilityFacade().getActiveHospitalsByDistrict(district, false));
 						cbFacilityFilter.setEnabled(true);
 					}
 					if (cbPoeFilter != null) {

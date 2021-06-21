@@ -21,10 +21,12 @@ import java.util.Date;
 import java.util.stream.Collectors;
 
 import com.vaadin.data.provider.DataProvider;
+import com.vaadin.data.provider.DataProviderListener;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.ui.renderers.DateRenderer;
 import com.vaadin.ui.renderers.HtmlRenderer;
+import com.vaadin.ui.renderers.TextRenderer;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.Language;
@@ -33,14 +35,20 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.task.TaskCriteria;
 import de.symeda.sormas.api.task.TaskIndexDto;
 import de.symeda.sormas.api.task.TaskPriority;
+import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.SortProperty;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
+import de.symeda.sormas.api.utils.jurisdiction.CaseJurisdictionHelper;
+import de.symeda.sormas.api.utils.jurisdiction.ContactJurisdictionHelper;
+import de.symeda.sormas.api.utils.jurisdiction.EventJurisdictionHelper;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.FieldAccessColumnStyleGenerator;
 import de.symeda.sormas.ui.utils.FilteredGrid;
 import de.symeda.sormas.ui.utils.ReferenceDtoHtmlProvider;
 import de.symeda.sormas.ui.utils.ShortStringRenderer;
@@ -49,6 +57,8 @@ import de.symeda.sormas.ui.utils.ViewConfiguration;
 
 @SuppressWarnings("serial")
 public class TaskGrid extends FilteredGrid<TaskIndexDto, TaskCriteria> {
+
+	private DataProviderListener<TaskIndexDto> dataProviderListener;
 
 	@SuppressWarnings("unchecked")
 	public TaskGrid(TaskCriteria criteria) {
@@ -66,7 +76,7 @@ public class TaskGrid extends FilteredGrid<TaskIndexDto, TaskCriteria> {
 			setCriteria(criteria);
 		}
 
-		addEditColumn(e -> ControllerProvider.getTaskController().edit(e, this::reload));
+		addEditColumn(e -> ControllerProvider.getTaskController().edit(e, this::reload, true));
 
 		setStyleGenerator(item -> {
 			if (item != null && item.getTaskStatus() != null) {
@@ -89,7 +99,10 @@ public class TaskGrid extends FilteredGrid<TaskIndexDto, TaskCriteria> {
 		setColumns(
 			EDIT_BTN_ID,
 			TaskIndexDto.CONTEXT_REFERENCE,
+			TaskIndexDto.TASK_CONTEXT,
 			TaskIndexDto.TASK_TYPE,
+			TaskIndexDto.REGION,
+			TaskIndexDto.DISTRICT,
 			TaskIndexDto.PRIORITY,
 			TaskIndexDto.SUGGESTED_START,
 			TaskIndexDto.DUE_DATE,
@@ -112,14 +125,14 @@ public class TaskGrid extends FilteredGrid<TaskIndexDto, TaskCriteria> {
 
 		Column<TaskIndexDto, UserReferenceDto> assigneeUserColumn = (Column<TaskIndexDto, UserReferenceDto>) getColumn(TaskIndexDto.ASSIGNEE_USER);
 		assigneeUserColumn.setRenderer(user -> {
-			String html;
+			String text;
 			if (user != null) {
-				html = ControllerProvider.getTaskController().getUserCaptionWithPendingTaskCount(user);
+				text = user.getCaption();
 			} else {
-				html = "";
+				text = "";
 			}
-			return html;
-		}, new HtmlRenderer());
+			return text;
+		}, new TextRenderer());
 
 		Column<TaskIndexDto, TaskPriority> priorityColumn = (Column<TaskIndexDto, TaskPriority>) getColumn(TaskIndexDto.PRIORITY);
 		priorityColumn.setStyleGenerator(item -> {
@@ -148,8 +161,36 @@ public class TaskGrid extends FilteredGrid<TaskIndexDto, TaskCriteria> {
 		});
 
 		for (Column<?, ?> column : getColumns()) {
-			column.setCaption(I18nProperties.getPrefixCaption(TaskIndexDto.I18N_PREFIX, column.getId().toString(), column.getCaption()));
+			column.setCaption(I18nProperties.getPrefixCaption(TaskIndexDto.I18N_PREFIX, column.getId(), column.getCaption()));
 		}
+
+		getColumn(TaskIndexDto.CONTEXT_REFERENCE).setStyleGenerator(new FieldAccessColumnStyleGenerator<>(task -> {
+
+			UserDto currentUser = UserProvider.getCurrent().getUser();
+			boolean isInJurisdiction = true;
+			switch (task.getTaskContext()) {
+			case CASE:
+				isInJurisdiction = FieldAccessColumnStyleGenerator.callJurisdictionChecker(
+					CaseJurisdictionHelper::isInJurisdictionOrOwned,
+					currentUser,
+					task.getJurisdiction().getCaseJurisdiction());
+				break;
+			case CONTACT:
+				isInJurisdiction = FieldAccessColumnStyleGenerator.callJurisdictionChecker(
+					ContactJurisdictionHelper::isInJurisdictionOrOwned,
+					currentUser,
+					task.getJurisdiction().getContactJurisdiction());
+				break;
+			case EVENT:
+				isInJurisdiction = FieldAccessColumnStyleGenerator.callJurisdictionChecker(
+					EventJurisdictionHelper::isInJurisdictionOrOwned,
+					currentUser,
+					task.getJurisdiction().getEventJurisdiction());
+				break;
+			}
+
+			return UiFieldAccessCheckers.getDefault(!isInJurisdiction).hasRight();
+		}));
 
 		addItemClickListener(new ShowDetailsListener<>(TaskIndexDto.CONTEXT_REFERENCE, false, e -> navigateToData(e)));
 	}
@@ -157,6 +198,10 @@ public class TaskGrid extends FilteredGrid<TaskIndexDto, TaskCriteria> {
 	public void reload() {
 		if (getSelectionModel().isUserSelectionAllowed()) {
 			deselectAll();
+		}
+
+		if (ViewModelProviders.of(TasksView.class).get(ViewConfiguration.class).isInEagerMode()) {
+			setEagerDataProvider();
 		}
 
 		getDataProvider().refreshAll();
@@ -203,5 +248,13 @@ public class TaskGrid extends FilteredGrid<TaskIndexDto, TaskCriteria> {
 			DataProvider.fromStream(FacadeProvider.getTaskFacade().getIndexList(getCriteria(), null, null, null).stream());
 		setDataProvider(dataProvider);
 		setSelectionMode(SelectionMode.MULTI);
+
+		if (dataProviderListener != null) {
+			dataProvider.addDataProviderListener(dataProviderListener);
+		}
+	}
+
+	public void setDataProviderListener(DataProviderListener<TaskIndexDto> dataProviderListener) {
+		this.dataProviderListener = dataProviderListener;
 	}
 }

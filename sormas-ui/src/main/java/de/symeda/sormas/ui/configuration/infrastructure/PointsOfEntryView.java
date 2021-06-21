@@ -1,6 +1,19 @@
-package de.symeda.sormas.ui.configuration.infrastructure;
+/*
+ * SORMAS® - Surveillance Outbreak Response Management & Analysis System
+ * Copyright © 2016-2021 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
-import java.util.Date;
+package de.symeda.sormas.ui.configuration.infrastructure;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -13,7 +26,6 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.HorizontalLayout;
-import com.vaadin.v7.ui.TextField;
 import com.vaadin.v7.ui.VerticalLayout;
 
 import de.symeda.sormas.api.EntityRelevanceStatus;
@@ -30,13 +42,14 @@ import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.configuration.AbstractConfigurationView;
+import de.symeda.sormas.ui.configuration.infrastructure.components.SearchField;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.ExportEntityName;
 import de.symeda.sormas.ui.utils.FieldHelper;
 import de.symeda.sormas.ui.utils.GridExportStreamResource;
 import de.symeda.sormas.ui.utils.MenuBarHelper;
@@ -54,7 +67,8 @@ public class PointsOfEntryView extends AbstractConfigurationView {
 	private ViewConfiguration viewConfiguration;
 
 	// Filters
-	private TextField searchField;
+	private SearchField searchField;
+	private ComboBox countryFilter;
 	private ComboBox regionFilter;
 	private ComboBox districtFilter;
 	private ComboBox typeFilter;
@@ -74,7 +88,8 @@ public class PointsOfEntryView extends AbstractConfigurationView {
 		super(VIEW_NAME);
 
 		viewConfiguration = ViewModelProviders.of(PointsOfEntryView.class).get(ViewConfiguration.class);
-		criteria = ViewModelProviders.of(PointsOfEntryView.class).get(PointOfEntryCriteria.class);
+		criteria = ViewModelProviders.of(PointsOfEntryView.class)
+			.get(PointOfEntryCriteria.class, new PointOfEntryCriteria().country(FacadeProvider.getCountryFacade().getServerCountry()));
 		if (criteria.getRelevanceStatus() == null) {
 			criteria.relevanceStatus(EntityRelevanceStatus.ACTIVE);
 		}
@@ -107,11 +122,8 @@ public class PointsOfEntryView extends AbstractConfigurationView {
 			exportButton.setDescription(I18nProperties.getDescription(Descriptions.descExportButton));
 			addHeaderComponent(exportButton);
 
-			StreamResource streamResource = new GridExportStreamResource(
-				grid,
-				"sormas_pointsofentry",
-				"sormas_pointsofentry_" + DateHelper.formatDateForExport(new Date()) + ".csv",
-				PointsOfEntryGrid.EDIT_BTN_ID);
+			StreamResource streamResource =
+				GridExportStreamResource.createStreamResource(grid, ExportEntityName.POINTS_OF_ENTRY, PointsOfEntryGrid.EDIT_BTN_ID);
 			FileDownloader fileDownloader = new FileDownloader(streamResource);
 			fileDownloader.extend(exportButton);
 		}
@@ -165,17 +177,18 @@ public class PointsOfEntryView extends AbstractConfigurationView {
 		filterLayout.setSpacing(true);
 		filterLayout.setWidth(100, Unit.PERCENTAGE);
 
-		searchField = new TextField();
-		searchField.setId("search");
-		searchField.setWidth(200, Unit.PIXELS);
-		searchField.setNullRepresentation("");
-		searchField.setInputPrompt(I18nProperties.getString(Strings.promptSearch));
+		searchField = new SearchField();
 		searchField.addTextChangeListener(e -> {
 			criteria.nameLike(e.getText());
 			grid.reload();
 		});
 		CssStyles.style(searchField, CssStyles.FORCE_CAPTION);
 		filterLayout.addComponent(searchField);
+
+		countryFilter = addCountryFilter(filterLayout, country -> {
+			criteria.country(country);
+			grid.reload();
+		}, regionFilter);
 
 		regionFilter = new ComboBox();
 		regionFilter.setId(PointOfEntryDto.REGION);
@@ -218,8 +231,8 @@ public class PointsOfEntryView extends AbstractConfigurationView {
 		activeFilter.setCaption(I18nProperties.getPrefixCaption(PointOfEntryDto.I18N_PREFIX, PointOfEntryDto.ACTIVE));
 		activeFilter.addItem(Boolean.TRUE);
 		activeFilter.addItem(Boolean.FALSE);
-		activeFilter.setItemCaption(Boolean.TRUE, DataHelper.parseBoolean(Boolean.TRUE));
-		activeFilter.setItemCaption(Boolean.FALSE, DataHelper.parseBoolean(Boolean.FALSE));
+		activeFilter.setItemCaption(Boolean.TRUE, DataHelper.stringifyBoolean(Boolean.TRUE));
+		activeFilter.setItemCaption(Boolean.FALSE, DataHelper.stringifyBoolean(Boolean.FALSE));
 		activeFilter.addValueChangeListener(e -> {
 			criteria.active((Boolean) e.getProperty().getValue());
 			navigateTo(criteria);
@@ -265,13 +278,7 @@ public class PointsOfEntryView extends AbstractConfigurationView {
 									true,
 									grid.asMultiSelect().getSelectedItems(),
 									InfrastructureType.POINT_OF_ENTRY,
-									null,
-									new Runnable() {
-
-										public void run() {
-											navigateTo(criteria);
-										}
-									});
+									() -> navigateTo(criteria));
 						}, EntityRelevanceStatus.ACTIVE.equals(criteria.getRelevanceStatus())),
 						new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.actionDearchive), VaadinIcons.ARCHIVE, selectedItem -> {
 							ControllerProvider.getInfrastructureController()
@@ -279,13 +286,7 @@ public class PointsOfEntryView extends AbstractConfigurationView {
 									false,
 									grid.asMultiSelect().getSelectedItems(),
 									InfrastructureType.POINT_OF_ENTRY,
-									null,
-									new Runnable() {
-
-										public void run() {
-											navigateTo(criteria);
-										}
-									});
+									() -> navigateTo(criteria));
 						}, EntityRelevanceStatus.ARCHIVED.equals(criteria.getRelevanceStatus())));
 
 					bulkOperationsDropdown
@@ -325,6 +326,7 @@ public class PointsOfEntryView extends AbstractConfigurationView {
 			relevanceStatusFilter.setValue(criteria.getRelevanceStatus());
 		}
 		searchField.setValue(criteria.getNameLike());
+		countryFilter.setValue(criteria.getCountry());
 		regionFilter.setValue(criteria.getRegion());
 		districtFilter.setValue(criteria.getDistrict());
 		typeFilter.setValue(criteria.getType());

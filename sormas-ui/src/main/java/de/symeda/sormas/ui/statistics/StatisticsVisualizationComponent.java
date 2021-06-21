@@ -267,11 +267,23 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 		}
 	}
 
+	public boolean hasCommunityGrouping() {
+		switch (visualizationType) {
+			case TABLE:
+			case CHART:
+				return rowsElement.getSubAttribute() == StatisticsCaseSubAttribute.COMMUNITY
+						|| columnsElement.getSubAttribute() == StatisticsCaseSubAttribute.COMMUNITY;
+			//TODO: Community Grouping on this Visualisationtype may be implemented later
+			case MAP:
+				return false;
+			default:
+				throw new IllegalArgumentException(visualizationType.toString());
+		}
+	}
+
 	public boolean hasIncidenceIncompatibleGrouping() {
-		return rowsElement.getSubAttribute() == StatisticsCaseSubAttribute.COMMUNITY
-			|| columnsElement.getSubAttribute() == StatisticsCaseSubAttribute.COMMUNITY
-			|| rowsElement.getSubAttribute() == StatisticsCaseSubAttribute.HEALTH_FACILITY
-			|| columnsElement.getSubAttribute() == StatisticsCaseSubAttribute.HEALTH_FACILITY;
+		return rowsElement.getSubAttribute() == StatisticsCaseSubAttribute.FACILITY
+			|| columnsElement.getSubAttribute() == StatisticsCaseSubAttribute.FACILITY;
 	}
 
 	public boolean hasSexGrouping() {

@@ -119,6 +119,7 @@ public class DistrictFacadeEjb implements DistrictFacade {
 			root.get(District.GROWTH_RATE),
 			region.get(Region.UUID),
 			region.get(Region.NAME),
+			region.get(Region.EXTERNAL_ID),
 			root.get(District.EXTERNAL_ID));
 	}
 
@@ -250,17 +251,33 @@ public class DistrictFacadeEjb implements DistrictFacade {
 
 	@Override
 	public void saveDistrict(DistrictDto dto) throws ValidationRuntimeException {
+		saveDistrict(dto, false);
+	}
 
-		District district = districtService.getByUuid(dto.getUuid());
-		if (district == null && !getByName(dto.getName(), dto.getRegion(), true).isEmpty()) {
-			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.importDistrictAlreadyExists));
-		}
+	@Override
+	public void saveDistrict(DistrictDto dto, boolean allowMerge) throws ValidationRuntimeException {
 
 		if (dto.getRegion() == null) {
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.validRegion));
 		}
 
-		district = fillOrBuildEntity(dto, district);
+		District district = districtService.getByUuid(dto.getUuid());
+
+		if (district == null) {
+			List<DistrictReferenceDto> duplicates = getByName(dto.getName(), dto.getRegion(), true);
+			if (!duplicates.isEmpty()) {
+				if (allowMerge) {
+					String uuid = duplicates.get(0).getUuid();
+					district = districtService.getByUuid(uuid);
+					DistrictDto dtoToMerge = getDistrictByUuid(uuid);
+					dto = DtoHelper.copyDtoValues(dtoToMerge, dto, true);
+				} else {
+					throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.importDistrictAlreadyExists));
+				}
+			}
+		}
+
+		district = fillOrBuildEntity(dto, district, true);
 		districtService.ensurePersisted(district);
 	}
 
@@ -269,7 +286,16 @@ public class DistrictFacadeEjb implements DistrictFacade {
 
 		return districtService.getByName(name, regionService.getByReferenceDto(regionRef), includeArchivedEntities)
 			.stream()
-			.map(d -> toReferenceDto(d))
+			.map(DistrictFacadeEjb::toReferenceDto)
+			.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<DistrictReferenceDto> getByExternalId(String externalId, boolean includeArchivedEntities) {
+
+		return districtService.getByExternalId(externalId, includeArchivedEntities)
+			.stream()
+			.map(DistrictFacadeEjb::toReferenceDto)
 			.collect(Collectors.toList());
 	}
 
@@ -331,7 +357,7 @@ public class DistrictFacadeEjb implements DistrictFacade {
 			return null;
 		}
 
-		DistrictReferenceDto dto = new DistrictReferenceDto(entity.getUuid(), entity.toString());
+		DistrictReferenceDto dto = new DistrictReferenceDto(entity.getUuid(), entity.toString(), entity.getExternalID());
 		return dto;
 	}
 
@@ -373,14 +399,9 @@ public class DistrictFacadeEjb implements DistrictFacade {
 		return dto;
 	}
 
-	private District fillOrBuildEntity(@NotNull DistrictDto source, District target) {
+	private District fillOrBuildEntity(@NotNull DistrictDto source, District target, boolean checkChangeDate) {
 
-		if (target == null) {
-			target = new District();
-			target.setUuid(source.getUuid());
-		}
-
-		DtoHelper.validateDto(source, target);
+		target = DtoHelper.fillOrBuildEntity(source, target, District::new, checkChangeDate);
 
 		target.setName(source.getName());
 		target.setEpidCode(source.getEpidCode());
@@ -396,9 +417,12 @@ public class DistrictFacadeEjb implements DistrictFacade {
 	public String getFullEpidCodeForDistrict(String districtUuid) {
 
 		District district = districtService.getByUuid(districtUuid);
-		String fullEpidCode = (district.getRegion().getEpidCode() != null ? district.getRegion().getEpidCode() : "") + "-"
+		return getFullEpidCodeForDistrict(district);
+	}
+
+	private String getFullEpidCodeForDistrict(District district) {
+		return (district.getRegion().getEpidCode() != null ? district.getRegion().getEpidCode() : "") + "-"
 			+ (district.getEpidCode() != null ? district.getEpidCode() : "");
-		return fullEpidCode;
 	}
 
 	@LocalBean

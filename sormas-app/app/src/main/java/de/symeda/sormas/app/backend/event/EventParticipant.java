@@ -23,12 +23,14 @@ import javax.persistence.Entity;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import de.symeda.sormas.app.backend.common.AbstractDomainObject;
+import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 import de.symeda.sormas.app.backend.person.Person;
+import de.symeda.sormas.app.backend.sormastosormas.SormasToSormasOriginInfo;
+import de.symeda.sormas.app.backend.user.User;
 
 @Entity(name = EventParticipant.TABLE_NAME)
 @DatabaseTable(tableName = EventParticipant.TABLE_NAME)
-public class EventParticipant extends AbstractDomainObject {
+public class EventParticipant extends PseudonymizableAdo {
 
 	private static final long serialVersionUID = -9006001699517297107L;
 
@@ -39,6 +41,9 @@ public class EventParticipant extends AbstractDomainObject {
 	public static final String PERSON = "person";
 	public static final String INVOLVEMENT_DESCRIPTION = "involvementDescription";
 	public static final String RESULTING_CASE_UUID = "resultingCaseUuid";
+
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private User reportingUser;
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true, canBeNull = false)
 	private Event event;
@@ -51,6 +56,24 @@ public class EventParticipant extends AbstractDomainObject {
 
 	@DatabaseField
 	private String resultingCaseUuid;
+
+	// TODO [vaccination info] integrate vaccination info
+//	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+//	private VaccinationInfo vaccinationInfo;
+
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private SormasToSormasOriginInfo sormasToSormasOriginInfo;
+	@DatabaseField
+	private boolean ownershipHandedOver;
+
+
+	public User getReportingUser() {
+		return reportingUser;
+	}
+
+	public void setReportingUser(User reportingUser) {
+		this.reportingUser = reportingUser;
+	}
 
 	public Event getEvent() {
 		return event;
@@ -104,5 +127,30 @@ public class EventParticipant extends AbstractDomainObject {
 
 	public void setResultingCaseUuid(String resultingCaseUuid) {
 		this.resultingCaseUuid = resultingCaseUuid;
+	}
+
+	// TODO [vaccination info] integrate vaccination info
+//	public VaccinationInfo getVaccinationInfo() {
+//		return vaccinationInfo;
+//	}
+//
+//	public void setVaccinationInfo(VaccinationInfo vaccinationInfo) {
+//		this.vaccinationInfo = vaccinationInfo;
+//	}
+
+	public SormasToSormasOriginInfo getSormasToSormasOriginInfo() {
+		return sormasToSormasOriginInfo;
+	}
+
+	public void setSormasToSormasOriginInfo(SormasToSormasOriginInfo sormasToSormasOriginInfo) {
+		this.sormasToSormasOriginInfo = sormasToSormasOriginInfo;
+	}
+
+	public boolean isOwnershipHandedOver() {
+		return ownershipHandedOver;
+	}
+
+	public void setOwnershipHandedOver(boolean ownershipHandedOver) {
+		this.ownershipHandedOver = ownershipHandedOver;
 	}
 }

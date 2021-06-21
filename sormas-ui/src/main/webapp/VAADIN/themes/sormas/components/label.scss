@@ -157,5 +157,13 @@
 	&.v-label-bottom-line, .bottom-line {
 		border-bottom: 1px solid #CDD8EC;
 	}
+
+	&.v-label-white-space-normal, .white-space-normal {
+		white-space: normal !important;
+	}
+
+	&.v-label-text-align-right {
+		text-align: right;
+	}
   }
 }

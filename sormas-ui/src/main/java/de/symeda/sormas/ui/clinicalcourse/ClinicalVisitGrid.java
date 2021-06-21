@@ -17,8 +17,10 @@ import de.symeda.sormas.api.clinicalcourse.ClinicalVisitIndexDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DateHelper;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
+import de.symeda.sormas.ui.utils.FieldAccessCellStyleGenerator;
 import de.symeda.sormas.ui.utils.V7AbstractGrid;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 
@@ -29,7 +31,7 @@ public class ClinicalVisitGrid extends Grid implements V7AbstractGrid<ClinicalVi
 
 	private ClinicalVisitCriteria clinicalVisitCriteria = new ClinicalVisitCriteria();
 
-	public ClinicalVisitGrid(CaseReferenceDto caseRef) {
+	public ClinicalVisitGrid(CaseReferenceDto caseRef, boolean isPseudonymized) {
 
 		setSizeFull();
 
@@ -62,6 +64,10 @@ public class ClinicalVisitGrid extends Grid implements V7AbstractGrid<ClinicalVi
 			column.setHeaderCaption(
 				I18nProperties.getPrefixCaption(ClinicalVisitIndexDto.I18N_PREFIX, column.getPropertyId().toString(), column.getHeaderCaption()));
 		}
+
+		setCellStyleGenerator(
+			FieldAccessCellStyleGenerator
+				.withFieldAccessCheckers(ClinicalVisitIndexDto.class, UiFieldAccessCheckers.forSensitiveData(isPseudonymized)));
 
 		addItemClickListener(e -> {
 			if (EDIT_BTN_ID.equals(e.getPropertyId()) || e.isDoubleClick()) {

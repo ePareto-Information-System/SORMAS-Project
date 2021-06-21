@@ -34,12 +34,12 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import de.symeda.sormas.api.user.UserRole;
-import de.symeda.sormas.backend.common.AbstractAdoService;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
+import de.symeda.sormas.backend.common.AdoServiceWithUserFilter;
 
 @Stateless
 @LocalBean
-public class UserRoleConfigService extends AbstractAdoService<UserRoleConfig> {
+public class UserRoleConfigService extends AdoServiceWithUserFilter<UserRoleConfig> {
 
 	@Resource
 	private SessionContext sessionContext;
@@ -50,7 +50,7 @@ public class UserRoleConfigService extends AbstractAdoService<UserRoleConfig> {
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public Predicate createUserFilter(CriteriaBuilder cb, CriteriaQuery cq, From<UserRoleConfig, UserRoleConfig> from) {
+	public Predicate createUserFilter(CriteriaBuilder cb, CriteriaQuery cq, From<?, UserRoleConfig> from) {
 		// a user can read all user role configurations
 		return null;
 	}

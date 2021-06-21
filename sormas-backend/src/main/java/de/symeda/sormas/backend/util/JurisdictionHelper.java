@@ -1,6 +1,6 @@
-/*******************************************************************************
+/*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+ * Copyright © 2016-2021 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,18 +14,23 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *******************************************************************************/
+ */
 package de.symeda.sormas.backend.util;
+
+import javax.ejb.EJB;
 
 import de.symeda.sormas.api.caze.CaseJurisdictionDto;
 import de.symeda.sormas.api.contact.ContactJurisdictionDto;
 import de.symeda.sormas.api.event.EventJurisdictionDto;
+import de.symeda.sormas.api.event.EventParticipantJurisdictionDto;
 import de.symeda.sormas.api.sample.SampleJurisdictionDto;
 import de.symeda.sormas.api.task.TaskJurisdictionDto;
+import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.utils.jurisdiction.UserJurisdiction;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.contact.Contact;
 import de.symeda.sormas.backend.event.Event;
+import de.symeda.sormas.backend.event.EventParticipant;
 import de.symeda.sormas.backend.facility.Facility;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.sample.Sample;
@@ -136,8 +141,8 @@ public class JurisdictionHelper {
 			eventJurisdiction.setReportingUserUuid(event.getReportingUser().getUuid());
 		}
 
-		if (event.getSurveillanceOfficer() != null) {
-			eventJurisdiction.setSurveillanceOfficerUuid(event.getSurveillanceOfficer().getUuid());
+		if (event.getResponsibleUser() != null) {
+			eventJurisdiction.setResponsibleUserUuid(event.getResponsibleUser().getUuid());
 		}
 
 		if (eventLocation.getRegion() != null) {
@@ -212,11 +217,65 @@ public class JurisdictionHelper {
 			jurisdiction.setContactJurisdiction(createContactJurisdictionDto(contact));
 		}
 
+		EventParticipant eventParticipant = sample.getAssociatedEventParticipant();
+		if (eventParticipant != null) {
+//			jurisdiction.setEventJurisdiction(createEventJurisdictionDto(eventParticipant.getEvent()));
+			jurisdiction.setEventParticipantJurisdiction(createEventParticipantJurisdictionDto(eventParticipant));
+		}
+
 		Facility labFacility = sample.getLab();
 		if (labFacility != null) {
 			jurisdiction.setLabUuid(sample.getLab().getUuid());
 		}
 
 		return jurisdiction;
+	}
+
+	public static EventParticipantJurisdictionDto createEventParticipantJurisdictionDto(EventParticipant eventParticipant) {
+
+		if (eventParticipant == null) {
+			return null;
+		}
+
+		EventParticipantJurisdictionDto eventParticipantJurisdiction = new EventParticipantJurisdictionDto();
+
+		eventParticipantJurisdiction.setEventParticipantUuid(eventParticipant.getUuid());
+
+		if (eventParticipant.getReportingUser() != null) {
+			eventParticipantJurisdiction.setReportingUserUuid(eventParticipant.getReportingUser().getUuid());
+		}
+
+		if (eventParticipant.getRegion() != null) {
+			eventParticipantJurisdiction.setRegionUuid(eventParticipant.getRegion().getUuid());
+		}
+
+		if (eventParticipant.getDistrict() != null) {
+			eventParticipantJurisdiction.setDistrictUuid(eventParticipant.getDistrict().getUuid());
+		}
+
+		if (eventParticipant.getEvent() != null) {
+			eventParticipantJurisdiction.setEventUuid(eventParticipant.getEvent().getUuid());
+		}
+
+		return eventParticipantJurisdiction;
+	}
+
+	public static JurisdictionLevel getSuperordinateJurisdiction(JurisdictionLevel jurisdition) {
+		switch (jurisdition) {
+		case NATION:
+			return JurisdictionLevel.NONE;
+		case REGION:
+			return JurisdictionLevel.NATION;
+		case DISTRICT:
+			return JurisdictionLevel.REGION;
+		case COMMUNITY:
+		case POINT_OF_ENTRY:
+		case HEALTH_FACILITY:
+			return JurisdictionLevel.DISTRICT;
+		case LABORATORY:
+		case EXTERNAL_LABORATORY:
+		default:
+			return JurisdictionLevel.NONE;
+		}
 	}
 }

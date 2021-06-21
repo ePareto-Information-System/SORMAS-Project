@@ -4,9 +4,13 @@ import java.io.Serializable;
 import java.util.Date;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.VisitOrigin;
+import de.symeda.sormas.api.contact.ContactJurisdictionDto;
 import de.symeda.sormas.api.symptoms.TemperatureSource;
+import de.symeda.sormas.api.utils.SensitiveData;
+import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableIndexDto;
 
-public class VisitIndexDto implements Serializable {
+public class VisitIndexDto extends PseudonymizableIndexDto implements Serializable {
 
 	private static final long serialVersionUID = -2707325548819626469L;
 
@@ -21,17 +25,24 @@ public class VisitIndexDto implements Serializable {
 	public static final String SYMPTOMATIC = "symptomatic";
 	public static final String TEMPERATURE = "temperature";
 	public static final String TEMPERATURE_SOURCE = "temperatureSource";
+	public static final String ORIGIN = "origin";
 
+	private Long id;
 	private String uuid;
 	private Date visitDateTime;
 	private VisitStatus visitStatus;
+	@SensitiveData
 	private String visitRemarks;
 	private Disease disease;
 	private Boolean symptomatic;
 	private Float temperature;
 	private TemperatureSource temperatureSource;
+	private VisitOrigin origin;
+
+	private ContactJurisdictionDto contactJurisdiction;
 
 	public VisitIndexDto(
+		Long id,
 		String uuid,
 		Date visitDateTime,
 		VisitStatus visitStatus,
@@ -39,8 +50,10 @@ public class VisitIndexDto implements Serializable {
 		Disease disease,
 		Boolean symptomatic,
 		Float temperature,
-		TemperatureSource temperatureSource) {
+		TemperatureSource temperatureSource,
+		VisitOrigin origin) {
 
+		this.id = id;
 		this.uuid = uuid;
 		this.visitDateTime = visitDateTime;
 		this.visitStatus = visitStatus;
@@ -49,6 +62,11 @@ public class VisitIndexDto implements Serializable {
 		this.symptomatic = symptomatic;
 		this.temperature = temperature;
 		this.temperatureSource = temperatureSource;
+		this.origin = origin;
+	}
+
+	public Long getId() {
+		return id;
 	}
 
 	public String getUuid() {
@@ -113,5 +131,21 @@ public class VisitIndexDto implements Serializable {
 
 	public void setTemperatureSource(TemperatureSource temperatureSource) {
 		this.temperatureSource = temperatureSource;
+	}
+
+	public void setJurisdiction(ContactJurisdictionDto contactJurisdiction) {
+		this.contactJurisdiction = contactJurisdiction;
+	}
+
+	public VisitOrigin getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(VisitOrigin origin) {
+		this.origin = origin;
+	}
+
+	public ContactJurisdictionDto getJurisdiction() {
+		return contactJurisdiction;
 	}
 }

@@ -17,9 +17,13 @@
  *******************************************************************************/
 package de.symeda.sormas.api.user;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
+
+import org.apache.commons.lang3.ArrayUtils;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -36,8 +40,10 @@ public enum UserRole
 	ADMIN(false, false, false, false, JurisdictionLevel.NONE),
 	NATIONAL_USER(false, false, false, false, JurisdictionLevel.NATION),
 	SURVEILLANCE_SUPERVISOR(true, false, false, false, JurisdictionLevel.REGION),
+	ADMIN_SUPERVISOR(true, false, false, false, JurisdictionLevel.REGION), // FIXME : remove this when user rights management is doable by users
 	SURVEILLANCE_OFFICER(false, true, false, false, JurisdictionLevel.DISTRICT),
 	HOSPITAL_INFORMANT(false, false, true, false, JurisdictionLevel.HEALTH_FACILITY),
+	COMMUNITY_OFFICER(false, true, false, false, JurisdictionLevel.COMMUNITY),
 	COMMUNITY_INFORMANT(false, false, true, false, JurisdictionLevel.COMMUNITY),
 	CASE_SUPERVISOR(true, false, false, false, JurisdictionLevel.REGION),
 	CASE_OFFICER(false, true, false, false, JurisdictionLevel.DISTRICT),
@@ -54,8 +60,10 @@ public enum UserRole
 	POE_SUPERVISOR(true, false, false, true, JurisdictionLevel.REGION),
 	POE_NATIONAL_USER(false, false, false, true, JurisdictionLevel.NATION),
 	IMPORT_USER(false, false, false, false, JurisdictionLevel.NONE),
-	REST_EXTERNAL_VISITS_USER(false, false, false, false, JurisdictionLevel.NONE),
-	REST_USER(false, false, false, false, JurisdictionLevel.NONE);
+	REST_EXTERNAL_VISITS_USER(false, false, false, false, JurisdictionLevel.NATION),
+	REST_USER(false, false, false, false, JurisdictionLevel.NONE),
+	SORMAS_TO_SORMAS_CLIENT(false, false, false, false, JurisdictionLevel.NATION),
+	BAG_USER(false, false, false, false, JurisdictionLevel.NONE);
 
 	/*
 	 * Hint for SonarQube issues:
@@ -69,6 +77,7 @@ public enum UserRole
 	public static final String _SURVEILLANCE_SUPERVISOR = SURVEILLANCE_SUPERVISOR.name();
 	public static final String _SURVEILLANCE_OFFICER = SURVEILLANCE_OFFICER.name();
 	public static final String _HOSPITAL_INFORMANT = HOSPITAL_INFORMANT.name();
+	public static final String _COMMUNITY_OFFICER = COMMUNITY_OFFICER.name();
 	public static final String _COMMUNITY_INFORMANT = COMMUNITY_INFORMANT.name();
 	public static final String _CASE_SUPERVISOR = CASE_SUPERVISOR.name();
 	public static final String _CASE_OFFICER = CASE_OFFICER.name();
@@ -85,6 +94,8 @@ public enum UserRole
 	public static final String _IMPORT_USER = IMPORT_USER.name();
 	public static final String _REST_EXTERNAL_VISITS_USER = REST_EXTERNAL_VISITS_USER.name();
 	public static final String _REST_USER = REST_USER.name();
+	public static final String _SORMAS_TO_SORMAS_CLIENT = "SORMAS_TO_SORMAS_CLIENT";
+	public static final String _BAG_USER = "BAG_USER";
 
 	private Set<UserRight> defaultUserRights = null;
 
@@ -209,6 +220,12 @@ public enum UserRole
 			break;
 		case REST_USER:
 			collection.add(REST_USER);
+			break;
+		case SORMAS_TO_SORMAS_CLIENT:
+			collection.add(SORMAS_TO_SORMAS_CLIENT);
+			break;
+		case BAG_USER:
+			collection.add(BAG_USER);
 			break;
 		default:
 			break;
@@ -339,5 +356,17 @@ public enum UserRole
 		}
 
 		return this.toString().compareTo(o.toString());
+	}
+
+	public static List<UserRole> getWithJurisdictionLevels(JurisdictionLevel... jurisdictionLevels) {
+		List<UserRole> ret = new ArrayList<>();
+
+		for (UserRole role : UserRole.values()) {
+			if (ArrayUtils.contains(jurisdictionLevels, role.jurisdictionLevel)) {
+				ret.add(role);
+			}
+		}
+
+		return ret;
 	}
 }

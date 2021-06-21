@@ -3,7 +3,9 @@ package de.symeda.sormas.ui.utils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -20,10 +22,12 @@ import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.InvestigationStatus;
 import de.symeda.sormas.api.contact.ContactCriteria;
 import de.symeda.sormas.api.contact.ContactDto;
+import de.symeda.sormas.api.followup.FollowUpLogic;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.symptoms.SymptomState;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserRole;
+import de.symeda.sormas.api.utils.DateFormatHelper;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.visit.VisitDto;
 import de.symeda.sormas.api.visit.VisitStatus;
@@ -39,7 +43,6 @@ public class DownloadUtilTest extends AbstractBeanTest {
 		TestDataCreator.RDCF rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
 		UserDto user = creator
 			.createUser(rdcf.region.getUuid(), rdcf.district.getUuid(), rdcf.facility.getUuid(), "Surv", "Sup", UserRole.SURVEILLANCE_SUPERVISOR);
-		String userUuid = user.getUuid();
 		PersonDto cazePerson = creator.createPerson("Case", "Person");
 		CaseDataDto caze = creator.createCase(
 			user.toReference(),
@@ -69,7 +72,7 @@ public class DownloadUtilTest extends AbstractBeanTest {
 		VisitDto visit23 = creator.createVisit(
 			caze.getDisease(),
 			contactPerson2.toReference(),
-			DateHelper.subtractDays(new Date(), VisitDto.ALLOWED_CONTACT_DATE_OFFSET + 1),
+			DateHelper.subtractDays(new Date(), FollowUpLogic.ALLOWED_DATE_OFFSET + 1),
 			VisitStatus.COOPERATIVE);
 		visit23.getSymptoms().setAgitation(SymptomState.YES);
 		FacadeProvider.getVisitFacade().saveVisit(visit23);
@@ -82,10 +85,11 @@ public class DownloadUtilTest extends AbstractBeanTest {
 		}
 
 		StreamResource contactVisitsExport =
-			DownloadUtil.createVisitsExportStreamResource(new ContactCriteria(), "test_contact_follow_up_export.csv");
+			DownloadUtil.createVisitsExportStreamResource(new ContactCriteria(), Collections::emptySet, ExportEntityName.CONTACT_FOLLOW_UPS);
 
+		String expectedFileName = DownloadUtil.createFileNameWithCurrentDate(ExportEntityName.CONTACT_FOLLOW_UPS, ".csv");
 		Assert.assertNotNull(contactVisitsExport);
-		Assert.assertEquals("test_contact_follow_up_export.csv", contactVisitsExport.getStream().getFileName());
+		Assert.assertEquals(expectedFileName, contactVisitsExport.getStream().getFileName());
 		InputStream stream = contactVisitsExport.getStream().getStream();
 
 		final String shortDate = DateFormatHelper.formatDate(new Date());

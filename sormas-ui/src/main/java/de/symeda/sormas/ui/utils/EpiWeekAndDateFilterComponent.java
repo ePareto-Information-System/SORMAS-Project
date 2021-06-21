@@ -25,10 +25,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.PopupDateField;
 
@@ -38,7 +36,7 @@ import de.symeda.sormas.api.utils.DateFilterOption;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.EpiWeek;
 
-public class EpiWeekAndDateFilterComponent<E extends Enum<E>> extends HorizontalLayout {
+public class EpiWeekAndDateFilterComponent<DATE_TYPE> extends HorizontalLayout {
 
 	private static final long serialVersionUID = 8752630393182185034L;
 
@@ -49,18 +47,18 @@ public class EpiWeekAndDateFilterComponent<E extends Enum<E>> extends Horizontal
 	private PopupDateField dateFromFilter;
 	private PopupDateField dateToFilter;
 
-	public EpiWeekAndDateFilterComponent(Button applyButton, boolean fillAutomatically, boolean showCaption, String infoText) {
-		this(applyButton, fillAutomatically, showCaption, infoText, null, null, null);
+	public EpiWeekAndDateFilterComponent(boolean fillAutomatically, boolean showCaption, String infoText, AbstractFilterForm parentFilterForm) {
+		this(fillAutomatically, showCaption, infoText, null, null, null, parentFilterForm);
 	}
 
 	public EpiWeekAndDateFilterComponent(
-		Button applyButton,
 		boolean fillAutomatically,
 		boolean showCaption,
 		String infoText,
-		Class<E> dateType,
+		DATE_TYPE[] dateTypes,
 		String dateTypePrompt,
-		Enum<E> defaultDateType) {
+		DATE_TYPE defaultDateType,
+		AbstractFilterForm parentFilterForm) {
 		setSpacing(true);
 
 		Calendar c = Calendar.getInstance();
@@ -115,10 +113,10 @@ public class EpiWeekAndDateFilterComponent<E extends Enum<E>> extends Horizontal
 		addComponent(dateFilterOptionFilter);
 
 		// New case date type selector
-		if (dateType != null) {
+		if (dateTypes != null) {
 			dateTypeSelector.setId("dateType");
 			dateTypeSelector.setWidth(200, Unit.PIXELS);
-			dateTypeSelector.addItems((Object[]) dateType.getEnumConstants());
+			dateTypeSelector.addItems(dateTypes);
 			if (dateTypePrompt != null) {
 				dateTypeSelector.setInputPrompt(dateTypePrompt);
 			}
@@ -154,12 +152,6 @@ public class EpiWeekAndDateFilterComponent<E extends Enum<E>> extends Horizontal
 		if (showCaption) {
 			weekFromFilter.setCaption(I18nProperties.getCaption(Captions.epiWeekFrom));
 		}
-		if (applyButton != null) {
-			weekFromFilter.addValueChangeListener(e -> {
-				applyButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
-				applyButton.setEnabled(true);
-			});
-		}
 		addComponent(weekFromFilter);
 
 		weekToFilter.setId("weekTo");
@@ -174,12 +166,6 @@ public class EpiWeekAndDateFilterComponent<E extends Enum<E>> extends Horizontal
 		if (showCaption) {
 			weekToFilter.setCaption(I18nProperties.getCaption(Captions.epiWeekTo));
 		}
-		if (applyButton != null) {
-			weekToFilter.addValueChangeListener(e -> {
-				applyButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
-				applyButton.setEnabled(true);
-			});
-		}
 		addComponent(weekToFilter);
 
 		// Date filter
@@ -188,23 +174,20 @@ public class EpiWeekAndDateFilterComponent<E extends Enum<E>> extends Horizontal
 		if (showCaption) {
 			dateFromFilter.setCaption(I18nProperties.getCaption(Captions.from));
 		}
-		if (applyButton != null) {
-			dateFromFilter.addValueChangeListener(e -> {
-				applyButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
-				applyButton.setEnabled(true);
-			});
-		}
 
 		dateToFilter.setId("dateTo");
 		dateToFilter.setWidth(200, Unit.PIXELS);
 		if (showCaption) {
 			dateToFilter.setCaption(I18nProperties.getCaption(Captions.to));
 		}
-		if (applyButton != null) {
-			dateToFilter.addValueChangeListener(e -> {
-				applyButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
-				applyButton.setEnabled(true);
-			});
+
+		if (parentFilterForm != null) {
+			dateFilterOptionFilter.addValueChangeListener(e -> parentFilterForm.onChange());
+			dateTypeSelector.addValueChangeListener(e -> parentFilterForm.onChange());
+			weekFromFilter.addValueChangeListener(e -> parentFilterForm.onChange());
+			weekToFilter.addValueChangeListener(e -> parentFilterForm.onChange());
+			dateFromFilter.addValueChangeListener(e -> parentFilterForm.onChange());
+			dateToFilter.addValueChangeListener(e -> parentFilterForm.onChange());
 		}
 	}
 

@@ -8,6 +8,7 @@ import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
 
 WebUI.callTestCase(findTestCase('Login/partials/LoginAsSurveillanceSupervisor'), [:], FailureHandling.STOP_ON_FAILURE)
 
+WebUI.delay(2)
 WebUI.click(findTestObject('Login/MainView/menu_Tasks'))
 WebUI.delay(1)
 
@@ -23,7 +24,7 @@ WebUI.click(findTestObject('Object Repository/Tasks/div_Assigned to_v-filtersele
 //WebUI.setText(findTestObject('Object Repository/Tasks/div_Assigned to_v-filterselect-button'), 'Surveillance SUPERVISOR')
 WebUI.click(findTestObject('Object Repository/Tasks/span_Surveillance SUPERVISOR - berwachungsleitung (4)'))
 
-WebUI.click(findTestObject('Object Repository/Tasks/div_Save'))
+WebUI.click(findTestObject('ReusableORs/div_Save'))
 WebUI.delay(1)
 
 int newNumberOfRows = Table.getNumberOfTableRows()

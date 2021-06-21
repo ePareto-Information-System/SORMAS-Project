@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -49,6 +50,9 @@ import de.symeda.sormas.api.visit.VisitDto;
 	"REST_USER" })
 public class VisitResource extends EntityDtoResource {
 
+	/**
+	 * Attention: For now this only returns the visits of contacts, since case visits are not yet implemented in the mobile app
+	 */
 	@GET
 	@Path("/all/{since}")
 	public List<VisitDto> getAllVisits(@PathParam("since") long since) {
@@ -66,7 +70,7 @@ public class VisitResource extends EntityDtoResource {
 
 	@POST
 	@Path("/push")
-	public List<PushResult> postVisits(List<VisitDto> dtos) {
+	public List<PushResult> postVisits(@Valid List<VisitDto> dtos) {
 
 		List<PushResult> result = savePushedDto(dtos, FacadeProvider.getVisitFacade()::saveVisit);
 		return result;

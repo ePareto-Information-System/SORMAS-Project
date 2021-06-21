@@ -36,13 +36,16 @@ import de.symeda.sormas.api.event.EventParticipantReferenceDto;
 import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.caze.CaseInfoLayout;
 import de.symeda.sormas.ui.contact.ContactInfoLayout;
 import de.symeda.sormas.ui.events.EventParticipantInfoLayout;
+import de.symeda.sormas.ui.sormastosormas.SormasToSormasListComponent;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
 import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.DetailSubComponentWrapper;
 import de.symeda.sormas.ui.utils.LayoutUtil;
 
 public class SampleDataView extends AbstractSampleView {
@@ -57,6 +60,9 @@ public class SampleDataView extends AbstractSampleView {
 	public static final String EVENT_PARTICIPANT_LOC = "eventParticipant";
 	public static final String PATHOGEN_TESTS_LOC = "pathogenTests";
 	public static final String ADDITIONAL_TESTS_LOC = "additionalTests";
+	public static final String SORMAS_TO_SORMAS_LOC = "sormsToSormas";
+
+	private CommitDiscardWrapperComponent<SampleEditForm> editComponent;
 
 	public SampleDataView() {
 		super(VIEW_NAME);
@@ -73,9 +79,10 @@ public class SampleDataView extends AbstractSampleView {
 			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, CONTACT_LOC),
 			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, EVENT_PARTICIPANT_LOC),
 			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, PATHOGEN_TESTS_LOC),
-			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, ADDITIONAL_TESTS_LOC));
+			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, ADDITIONAL_TESTS_LOC),
+			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, SORMAS_TO_SORMAS_LOC));
 
-		VerticalLayout container = new VerticalLayout();
+		DetailSubComponentWrapper container = new DetailSubComponentWrapper(() -> editComponent);
 		container.setWidth(100, Unit.PERCENTAGE);
 		container.setMargin(true);
 		setSubComponent(container);
@@ -92,7 +99,6 @@ public class SampleDataView extends AbstractSampleView {
 		final CaseReferenceDto associatedCase = sampleDto.getAssociatedCase();
 		if (associatedCase != null) {
 			final CaseDataDto caseDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(associatedCase.getUuid());
-
 			disease = caseDto.getDisease();
 
 			final CaseInfoLayout caseInfoLayout = new CaseInfoLayout(caseDto);
@@ -105,25 +111,31 @@ public class SampleDataView extends AbstractSampleView {
 
 			disease = contactDto.getDisease();
 
-			final ContactInfoLayout contactInfoLayout = new ContactInfoLayout(contactDto);
+			final ContactInfoLayout contactInfoLayout =
+				new ContactInfoLayout(contactDto, UiFieldAccessCheckers.getDefault(contactDto.isPseudonymized()));
 			contactInfoLayout.addStyleName(CssStyles.SIDE_COMPONENT);
 			layout.addComponent(contactInfoLayout, CONTACT_LOC);
+
 		}
 		final EventParticipantReferenceDto associatedEventParticipant = sampleDto.getAssociatedEventParticipant();
 		if (associatedEventParticipant != null) {
 			final EventParticipantDto eventParticipantDto =
 				FacadeProvider.getEventParticipantFacade().getEventParticipantByUuid(associatedEventParticipant.getUuid());
 			final EventDto eventDto = FacadeProvider.getEventFacade().getEventByUuid(eventParticipantDto.getEvent().getUuid());
+			boolean isInJurisdiction = FacadeProvider.getEventFacade().isEventEditAllowed(eventDto.getUuid());
 
 			disease = eventDto.getDisease();
 
-			final EventParticipantInfoLayout eventParticipantInfoLayout = new EventParticipantInfoLayout(eventParticipantDto, eventDto);
+			final EventParticipantInfoLayout eventParticipantInfoLayout = new EventParticipantInfoLayout(
+				eventParticipantDto,
+				eventDto,
+				UiFieldAccessCheckers.getDefault(eventParticipantDto.isPseudonymized()));
+
 			eventParticipantInfoLayout.addStyleName(CssStyles.SIDE_COMPONENT);
 			layout.addComponent(eventParticipantInfoLayout, EVENT_PARTICIPANT_LOC);
 		}
 
-		CommitDiscardWrapperComponent<SampleEditForm> editComponent =
-			ControllerProvider.getSampleController().getSampleEditComponent(getSampleRef().getUuid());
+		editComponent = ControllerProvider.getSampleController().getSampleEditComponent(getSampleRef().getUuid(), sampleDto.isPseudonymized());
 		editComponent.setMargin(new MarginInfo(false, false, true, false));
 		editComponent.setWidth(100, Unit.PERCENTAGE);
 		editComponent.getWrappedComponent().setWidth(100, Unit.PERCENTAGE);
@@ -147,13 +159,11 @@ public class SampleDataView extends AbstractSampleView {
 				callback.run();
 			}
 
-			editComponent.getWrappedComponent().makePathogenTestResultRequired();
+			editComponent.getWrappedComponent().fillPathogenTestResult();
 		};
 
 		// why? if(sampleDto.getSamplePurpose() !=null && sampleDto.getSamplePurpose().equals(SamplePurpose.EXTERNAL)) {
-		Supplier<Boolean> createOrEditAllowedCallback = () -> {
-			return editComponent.getWrappedComponent().getFieldGroup().isValid();
-		};
+		Supplier<Boolean> createOrEditAllowedCallback = () -> editComponent.getWrappedComponent().getFieldGroup().isValid();
 		PathogenTestListComponent pathogenTestList = new PathogenTestListComponent(getSampleRef(), onSavedPathogenTest, createOrEditAllowedCallback);
 		pathogenTestList.addStyleName(CssStyles.SIDE_COMPONENT);
 		layout.addComponent(pathogenTestList, PATHOGEN_TESTS_LOC);
@@ -163,6 +173,20 @@ public class SampleDataView extends AbstractSampleView {
 			additionalTestList.addStyleName(CssStyles.SIDE_COMPONENT);
 			layout.addComponent(additionalTestList, ADDITIONAL_TESTS_LOC);
 		}
+
+		boolean sormasToSormasEnabled = FacadeProvider.getSormasToSormasFacade().isFeatureEnabled();
+		if (sormasToSormasEnabled || sampleDto.getSormasToSormasOriginInfo() != null) {
+			VerticalLayout sormasToSormasLocLayout = new VerticalLayout();
+			sormasToSormasLocLayout.setMargin(false);
+			sormasToSormasLocLayout.setSpacing(false);
+
+			SormasToSormasListComponent sormasToSormasListComponent = new SormasToSormasListComponent(sampleDto);
+			sormasToSormasListComponent.addStyleNames(CssStyles.SIDE_COMPONENT);
+			sormasToSormasLocLayout.addComponent(sormasToSormasListComponent);
+
+			layout.addComponent(sormasToSormasLocLayout, SORMAS_TO_SORMAS_LOC);
+		}
+
 		//}
 
 		setSampleEditPermission(container);

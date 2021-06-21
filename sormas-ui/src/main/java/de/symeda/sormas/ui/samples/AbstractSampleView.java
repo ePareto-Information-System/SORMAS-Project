@@ -19,7 +19,6 @@ package de.symeda.sormas.ui.samples;
 
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
@@ -31,13 +30,14 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SampleReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.SubMenu;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.caze.CaseDataView;
 import de.symeda.sormas.ui.contact.ContactDataView;
 import de.symeda.sormas.ui.events.EventParticipantDataView;
 import de.symeda.sormas.ui.utils.AbstractDetailView;
+import de.symeda.sormas.ui.utils.DirtyStateComponent;
 
 @SuppressWarnings("serial")
 public abstract class AbstractSampleView extends AbstractDetailView<SampleReferenceDto> {
@@ -56,7 +56,7 @@ public abstract class AbstractSampleView extends AbstractDetailView<SampleRefere
 	}
 
 	@Override
-	public void refreshMenu(SubMenu menu, Label infoLabel, Label infoLabelSub, String params) {
+	public void refreshMenu(SubMenu menu, String params) {
 
 		if (!findReferenceByParams(params)) {
 			return;
@@ -86,8 +86,8 @@ public abstract class AbstractSampleView extends AbstractDetailView<SampleRefere
 		}
 
 		menu.addView(SampleDataView.VIEW_NAME, I18nProperties.getCaption(SampleDto.I18N_PREFIX), params);
-		infoLabel.setValue(getReference().getCaption());
-		infoLabelSub.setValue(DataHelper.getShortUuid(getReference().getUuid()));
+
+		setMainHeaderComponent(ControllerProvider.getSampleController().getSampleViewTitleLayout(sampleByUuid));
 	}
 
 	@Override
@@ -108,7 +108,7 @@ public abstract class AbstractSampleView extends AbstractDetailView<SampleRefere
 	}
 
 	@Override
-	protected void setSubComponent(Component newComponent) {
+	protected void setSubComponent(DirtyStateComponent newComponent) {
 		super.setSubComponent(newComponent);
 
 		if (FacadeProvider.getSampleFacade().isDeleted(getReference().getUuid())) {
@@ -118,11 +118,15 @@ public abstract class AbstractSampleView extends AbstractDetailView<SampleRefere
 
 	public void setSampleEditPermission(Component component) {
 
-		Boolean isSampleEditAllowed = FacadeProvider.getSampleFacade().isSampleEditAllowed(getSampleRef().getUuid());
+		Boolean isSampleEditAllowed = isSampleEditAllowed();
 
 		if (!isSampleEditAllowed) {
 			component.setEnabled(false);
 		}
+	}
+
+	protected Boolean isSampleEditAllowed() {
+		return FacadeProvider.getSampleFacade().isSampleEditAllowed(getSampleRef().getUuid());
 	}
 
 	public SampleReferenceDto getSampleRef() {

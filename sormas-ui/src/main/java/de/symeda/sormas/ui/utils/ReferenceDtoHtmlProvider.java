@@ -21,6 +21,7 @@ import com.vaadin.data.ValueProvider;
 
 import de.symeda.sormas.api.ReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.HtmlHelper;
 
 @SuppressWarnings("serial")
 public class ReferenceDtoHtmlProvider implements ValueProvider<ReferenceDto, String> {
@@ -28,10 +29,12 @@ public class ReferenceDtoHtmlProvider implements ValueProvider<ReferenceDto, Str
 	@Override
 	public String apply(ReferenceDto source) {
 
-		String html;
+		final String html;
 		if (source != null) {
-			String uuid = source.getUuid();
-			html = "<a title='" + uuid + "'>" + DataHelper.getShortUuid(uuid) + "</a> (" + source.getCaption() + ")";
+			html = String.format(
+				"%s (%s)",
+				HtmlHelper.buildHyperlinkTitle(source.getUuid(), DataHelper.getShortUuid(source.getUuid())),
+				HtmlHelper.cleanHtml(source.getCaption()));
 		} else {
 			html = "";
 		}

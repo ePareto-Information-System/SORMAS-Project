@@ -17,28 +17,30 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.contact;
 
-import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.themes.ValoTheme;
+import java.util.Collections;
+import java.util.List;
 
-import de.symeda.sormas.api.Disease;
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.ui.Component;
+
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.contact.ContactCriteria;
 import de.symeda.sormas.api.contact.ContactDto;
+import de.symeda.sormas.api.contact.ContactIndexDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.person.PersonDto;
+import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.SubMenu;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.caze.CaseContactsView;
 import de.symeda.sormas.ui.epidata.ContactEpiDataView;
 import de.symeda.sormas.ui.utils.AbstractDetailView;
-import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.DirtyStateComponent;
+import de.symeda.sormas.ui.utils.ExternalJournalUtil;
 
 @SuppressWarnings("serial")
 public abstract class AbstractContactView extends AbstractDetailView<ContactReferenceDto> {
@@ -47,18 +49,6 @@ public abstract class AbstractContactView extends AbstractDetailView<ContactRefe
 
 	protected AbstractContactView(String viewName) {
 		super(viewName);
-
-		if (FacadeProvider.getConfigFacade().getSymptomJournalUrl() != null
-			&& UserProvider.getCurrent().hasUserRight(UserRight.CONTACT_CREATE_PIA_ACCOUNT)) {
-			Button btnCreatePIAAccount = new Button(I18nProperties.getCaption(Captions.contactCreatePIAAccount));
-			CssStyles.style(btnCreatePIAAccount, ValoTheme.BUTTON_PRIMARY);
-			btnCreatePIAAccount.addClickListener(e -> {
-				ContactDto contact = FacadeProvider.getContactFacade().getContactByUuid(getReference().getUuid());
-				PersonDto contactPerson = FacadeProvider.getPersonFacade().getPersonByUuid(contact.getPerson().getUuid());
-				ControllerProvider.getContactController().openSymptomJournalWindow(contactPerson);
-			});
-			getButtonsLayout().addComponent(btnCreatePIAAccount);
-		}
 	}
 
 	@Override
@@ -69,7 +59,7 @@ public abstract class AbstractContactView extends AbstractDetailView<ContactRefe
 	}
 
 	@Override
-	public void refreshMenu(SubMenu menu, Label infoLabel, Label infoLabelSub, String params) {
+	public void refreshMenu(SubMenu menu, String params) {
 
 		if (!findReferenceByParams(params)) {
 			return;
@@ -87,9 +77,12 @@ public abstract class AbstractContactView extends AbstractDetailView<ContactRefe
 		menu.addView(ContactEpiDataView.VIEW_NAME, I18nProperties.getPrefixCaption(ContactDto.I18N_PREFIX, ContactDto.EPI_DATA), params);
 		menu.addView(ContactVisitsView.VIEW_NAME, I18nProperties.getPrefixCaption(ContactDto.I18N_PREFIX, ContactDto.VISITS), params);
 
-		infoLabel.setValue(getReference().getCaption());
-		infoLabelSub.setValue(
-			contact.getDisease() != Disease.OTHER ? contact.getDisease().toShortString() : DataHelper.toStringNullable(contact.getDiseaseDetails()));
+		setMainHeaderComponent(ControllerProvider.getContactController().getContactViewTitleLayout(contact));
+
+		if (UserProvider.getCurrent().hasUserRight(UserRight.MANAGE_EXTERNAL_SYMPTOM_JOURNAL)) {
+			PersonDto contactPerson = FacadeProvider.getPersonFacade().getPersonByUuid(contact.getPerson().getUuid());
+			ExternalJournalUtil.getExternalJournalUiButton(contactPerson).ifPresent(getButtonsLayout()::addComponent);
+		}
 	}
 
 	@Override
@@ -98,6 +91,16 @@ public abstract class AbstractContactView extends AbstractDetailView<ContactRefe
 		final ContactReferenceDto reference;
 		if (FacadeProvider.getContactFacade().exists(uuid)) {
 			reference = FacadeProvider.getContactFacade().getReferenceByUuid(uuid);
+		} else if (FacadeProvider.getPersonFacade().isValidPersonUuid(uuid)) {
+			PersonReferenceDto person = FacadeProvider.getPersonFacade().getReferenceByUuid(uuid);
+			ContactCriteria criteria = new ContactCriteria();
+			criteria.setPerson(person);
+			List<ContactIndexDto> personContacts = FacadeProvider.getContactFacade().getIndexList(criteria, null, null, Collections.emptyList());
+			if (personContacts != null) {
+				reference = FacadeProvider.getContactFacade().getReferenceByUuid(personContacts.get(0).getUuid());
+			} else {
+				reference = null;
+			}
 		} else {
 			reference = null;
 		}
@@ -110,7 +113,7 @@ public abstract class AbstractContactView extends AbstractDetailView<ContactRefe
 	}
 
 	@Override
-	protected void setSubComponent(Component newComponent) {
+	protected void setSubComponent(DirtyStateComponent newComponent) {
 		super.setSubComponent(newComponent);
 
 		if (FacadeProvider.getContactFacade().isDeleted(getReference().getUuid())) {
@@ -123,9 +126,13 @@ public abstract class AbstractContactView extends AbstractDetailView<ContactRefe
 	}
 
 	public void setContactEditPermission(Component component) {
-		Boolean isContactEditAllowed = FacadeProvider.getContactFacade().isContactEditAllowed(getContactRef().getUuid());
+		boolean isContactEditAllowed = isContactEditAllowed();
 		if (!isContactEditAllowed) {
 			getComponent(getComponentIndex(component)).setEnabled(false);
 		}
+	}
+
+	protected boolean isContactEditAllowed() {
+		return FacadeProvider.getContactFacade().isContactEditAllowed(getContactRef().getUuid());
 	}
 }

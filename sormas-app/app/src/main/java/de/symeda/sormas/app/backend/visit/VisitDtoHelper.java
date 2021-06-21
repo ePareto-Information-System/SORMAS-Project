@@ -72,11 +72,14 @@ public class VisitDtoHelper extends AdoDtoHelper<Visit, VisitDto> {
 		target.setVisitDateTime(source.getVisitDateTime());
 		target.setVisitRemarks(source.getVisitRemarks());
 		target.setVisitStatus(source.getVisitStatus());
+		target.setOrigin(source.getOrigin());
 		target.setVisitUser(DatabaseHelper.getUserDao().getByReferenceDto(source.getVisitUser()));
 
 		target.setReportLat(source.getReportLat());
 		target.setReportLon(source.getReportLon());
 		target.setReportLatLonAccuracy(source.getReportLatLonAccuracy());
+
+		target.setPseudonymized(source.isPseudonymized());
 	}
 
 	@Override
@@ -102,6 +105,7 @@ public class VisitDtoHelper extends AdoDtoHelper<Visit, VisitDto> {
 		target.setVisitDateTime(source.getVisitDateTime());
 		target.setVisitRemarks(source.getVisitRemarks());
 		target.setVisitStatus(source.getVisitStatus());
+		target.setOrigin(source.getOrigin());
 
 		if (source.getVisitUser() != null) {
 			User user = DatabaseHelper.getUserDao().queryForId(source.getVisitUser().getId());
@@ -113,5 +117,7 @@ public class VisitDtoHelper extends AdoDtoHelper<Visit, VisitDto> {
 		target.setReportLat(source.getReportLat());
 		target.setReportLon(source.getReportLon());
 		target.setReportLatLonAccuracy(source.getReportLatLonAccuracy());
+
+		target.setPseudonymized(source.isPseudonymized());
 	}
 }

@@ -74,8 +74,6 @@ public class SampleGridComponent extends VerticalLayout {
 	private ComboBox relevanceStatusFilter;
 	private ComboBox sampleTypeFilter;
 
-	private VerticalLayout gridLayout;
-
 	private Label viewTitleLabel;
 	private String originalViewTitle;
 
@@ -95,10 +93,11 @@ public class SampleGridComponent extends VerticalLayout {
 			criteria.sampleAssociationType(SampleAssociationType.ALL);
 		}
 		grid = new SampleGrid(criteria);
-		gridLayout = new VerticalLayout();
+		VerticalLayout gridLayout = new VerticalLayout();
 		gridLayout.addComponent(createFilterBar());
 		gridLayout.addComponent(createShipmentFilterBar());
 		gridLayout.addComponent(grid);
+		grid.setDataProviderListener(e -> updateStatusButtons());
 		grid.getDataProvider().addDataProviderListener(e -> updateStatusButtons());
 
 		styleGridLayout(gridLayout);
@@ -117,14 +116,19 @@ public class SampleGridComponent extends VerticalLayout {
 		filterForm = new SampleGridFilterForm();
 		filterForm.addValueChangeListener(e -> {
 						
-			if (!DataHelper.isNullOrEmpty(criteria.getCaseCodeIdLike()) || !samplesView.navigateTo(criteria, false)) {
-				filterForm.updateResetButtonState();
-				grid.reload();
+			// if (!DataHelper.isNullOrEmpty(criteria.getCaseCodeIdLike()) || !samplesView.navigateTo(criteria, false)) {
+			// 	filterForm.updateResetButtonState();
+			// 	grid.reload();
 				
-				if (!DataHelper.isNullOrEmpty(criteria.getCaseCodeIdLike()) && grid.getItemCount() == 1) {
-					String sampleUuid = grid.getFirstItem().getUuid();
-					ControllerProvider.getSampleController().navigateToData(sampleUuid);
-				}
+			// 	if (!DataHelper.isNullOrEmpty(criteria.getCaseCodeIdLike()) && grid.getItemCount() == 1) {
+			// 		String sampleUuid = grid.getFirstItem().getUuid();
+			// 		ControllerProvider.getSampleController().navigateToData(sampleUuid);
+			// 	}
+			// if (!filterForm.hasFilter()) {
+			// 	samplesView.navigateTo(null);
+			if (!filterForm.hasFilter()) {
+				samplesView.navigateTo(null);
+	
 			}
 		});
 		
@@ -132,7 +136,9 @@ public class SampleGridComponent extends VerticalLayout {
 			ViewModelProviders.of(SamplesView.class).remove(SampleCriteria.class);
 			samplesView.navigateTo(null, true);
 		});
-
+		filterForm.addApplyHandler(e -> {
+			grid.reload();
+		});
 		filterLayout.addComponent(filterForm);
 
 		return filterLayout;
@@ -188,6 +194,7 @@ public class SampleGridComponent extends VerticalLayout {
 			}
 
 			if (addBulkOperationsDropdown(actionButtonsLayout)) {
+			// if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS_CASE_SAMPLES)) {
 				shipmentFilterLayout.setWidth(100, Unit.PERCENTAGE);
 			}
 

@@ -17,13 +17,18 @@
  *******************************************************************************/
 package de.symeda.sormas.ui;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.ReferenceDto;
+import de.symeda.sormas.api.VisitOrigin;
+import de.symeda.sormas.api.campaign.CampaignDto;
+import de.symeda.sormas.api.campaign.form.CampaignFormMetaDto;
 import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
@@ -37,6 +42,7 @@ import de.symeda.sormas.api.event.EventStatus;
 import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.facility.FacilityDto;
 import de.symeda.sormas.api.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.facility.FacilityType;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.region.CommunityDto;
@@ -71,6 +77,17 @@ public class TestDataCreator {
 	}
 
 	public UserDto createUser(String regionUuid, String districtUuid, String facilityUuid, String firstName, String lastName, UserRole... roles) {
+		return createUser(regionUuid, districtUuid, facilityUuid, firstName, lastName, Language.EN, roles);
+	}
+
+	public UserDto createUser(
+		String regionUuid,
+		String districtUuid,
+		String facilityUuid,
+		String firstName,
+		String lastName,
+		Language language,
+		UserRole... roles) {
 
 		UserDto user = UserDto.build();
 		user.setFirstName(firstName);
@@ -80,6 +97,7 @@ public class TestDataCreator {
 		user.setRegion(FacadeProvider.getRegionFacade().getRegionReferenceByUuid(regionUuid));
 		user.setDistrict(FacadeProvider.getDistrictFacade().getDistrictReferenceByUuid(districtUuid));
 		user.setHealthFacility(FacadeProvider.getFacilityFacade().getFacilityReferenceByUuid(facilityUuid));
+		user.setLanguage(language);
 		user = FacadeProvider.getUserFacade().saveUser(user);
 
 		return user;
@@ -93,6 +111,24 @@ public class TestDataCreator {
 		cazePerson = FacadeProvider.getPersonFacade().savePerson(cazePerson);
 
 		return cazePerson;
+	}
+
+	public EventParticipantDto createEventParticipant(EventReferenceDto event, PersonDto eventPerson, UserReferenceDto reportingUser) {
+		return createEventParticipant(event, eventPerson, "Description", reportingUser);
+	}
+
+	public EventParticipantDto createEventParticipant(
+		EventReferenceDto event,
+		PersonDto eventPerson,
+		String involvementDescription,
+		UserReferenceDto reportingUser) {
+
+		EventParticipantDto eventParticipant = EventParticipantDto.build(event, reportingUser);
+		eventParticipant.setPerson(eventPerson);
+		eventParticipant.setInvolvementDescription(involvementDescription);
+
+		eventParticipant = FacadeProvider.getEventParticipantFacade().saveEventParticipant(eventParticipant);
+		return eventParticipant;
 	}
 
 	public ContactDto createContact(
@@ -152,7 +188,9 @@ public class TestDataCreator {
 		caze.setRegion(FacadeProvider.getRegionFacade().getRegionReferenceByUuid(rdcf.region.getUuid()));
 		caze.setDistrict(FacadeProvider.getDistrictFacade().getDistrictReferenceByUuid(rdcf.district.getUuid()));
 		caze.setCommunity(FacadeProvider.getCommunityFacade().getCommunityReferenceByUuid(rdcf.community.getUuid()));
-		caze.setHealthFacility(FacadeProvider.getFacilityFacade().getFacilityReferenceByUuid(rdcf.facility.getUuid()));
+		FacilityDto facility = FacadeProvider.getFacilityFacade().getByUuid(rdcf.facility.getUuid());
+		caze.setFacilityType(facility.getType());
+		caze.setHealthFacility(facility.toReference());
 
 		caze = FacadeProvider.getCaseFacade().saveCase(caze);
 
@@ -212,7 +250,7 @@ public class TestDataCreator {
 
 	public VisitDto createVisit(Disease disease, PersonReferenceDto contactPerson, Date visitDateTime, VisitStatus visitStatus) {
 
-		VisitDto visit = VisitDto.build(contactPerson, disease);
+		VisitDto visit = VisitDto.build(contactPerson, disease, VisitOrigin.USER);
 		visit.setVisitDateTime(visitDateTime);
 		visit.setVisitStatus(visitStatus);
 		visit = FacadeProvider.getVisitFacade().saveVisit(visit);
@@ -244,6 +282,7 @@ public class TestDataCreator {
 
 	public EventDto createEvent(
 		EventStatus eventStatus,
+		String eventTitle,
 		String eventDesc,
 		String srcFirstName,
 		String srcLastName,
@@ -252,11 +291,12 @@ public class TestDataCreator {
 		Date eventDate,
 		Date reportDateTime,
 		UserReferenceDto reportingUser,
-		UserReferenceDto surveillanceOfficer,
+		UserReferenceDto responsibleUser,
 		Disease disease) {
 
 		EventDto event = EventDto.build();
 		event.setEventStatus(eventStatus);
+		event.setEventTitle(eventTitle);
 		event.setEventDesc(eventDesc);
 		event.setSrcFirstName(srcFirstName);
 		event.setSrcLastName(srcLastName);
@@ -265,24 +305,12 @@ public class TestDataCreator {
 		event.setStartDate(eventDate);
 		event.setReportDateTime(reportDateTime);
 		event.setReportingUser(reportingUser);
-		event.setSurveillanceOfficer(surveillanceOfficer);
+		event.setResponsibleUser(responsibleUser);
 		event.setDisease(disease);
 
 		event = FacadeProvider.getEventFacade().saveEvent(event);
 
 		return event;
-	}
-
-	public EventParticipantDto createEventParticipant(EventReferenceDto event, PersonDto eventPerson, String involvementDescription) {
-
-		EventParticipantDto eventParticipant = EventParticipantDto.build(event);
-		eventParticipant.setEvent(event);
-		eventParticipant.setPerson(eventPerson);
-		eventParticipant.setInvolvementDescription(involvementDescription);
-
-		eventParticipant = FacadeProvider.getEventParticipantFacade().saveEventParticipant(eventParticipant);
-
-		return eventParticipant;
 	}
 
 	public SampleDto createSample(
@@ -303,30 +331,6 @@ public class TestDataCreator {
 		sample = FacadeProvider.getSampleFacade().saveSample(sample);
 
 		return sample;
-	}
-
-	public PathogenTestDto createPathogenTest(
-			SampleReferenceDto sample,
-			PathogenTestType testType,
-			Date testDateTime,
-			FacilityReferenceDto lab,
-			UserReferenceDto labUser,
-			PathogenTestResultType testResult,
-			String testResultText,
-			boolean verified, Disease disease) {
-
-		PathogenTestDto sampleTest = PathogenTestDto.build(sample, labUser);
-		sampleTest.setTestType(testType);
-		sampleTest.setTestDateTime(testDateTime);
-		sampleTest.setLab(lab);
-		sampleTest.setTestResult(testResult);
-		sampleTest.setTestResultText(testResultText);
-		sampleTest.setTestResultVerified(verified);
-		sampleTest.setTestedDisease(disease);
-
-		sampleTest = FacadeProvider.getPathogenTestFacade().savePathogenTest(sampleTest);
-
-		return sampleTest;
 	}
 
 	public RDCF createRDCF(String regionName, String districtName, String communityName, String facilityName) {
@@ -379,11 +383,42 @@ public class TestDataCreator {
 		FacilityDto facility = FacilityDto.build();
 		facility.setUuid(DataHelper.createUuid());
 		facility.setName(facilityName);
+		facility.setType(FacilityType.HOSPITAL);
 		facility.setCommunity(community);
 		facility.setDistrict(district);
 		facility.setRegion(region);
 		FacadeProvider.getFacilityFacade().saveFacility(facility);
 		return facility;
+	}
+
+	public CampaignDto createCampaign(UserDto user) {
+
+		CampaignDto campaign = CampaignDto.build();
+		campaign.setCreatingUser(user.toReference());
+		campaign.setName("CampaignName");
+		campaign.setDescription("Campaign description");
+
+		campaign = FacadeProvider.getCampaignFacade().saveCampaign(campaign);
+
+		return campaign;
+	}
+
+	public CampaignFormMetaDto createCampaignForm(CampaignDto campaign) throws IOException {
+
+		CampaignFormMetaDto campaignForm;
+
+		String schema = "[{\n" + "  \"type\": \"section\",\n" + "  \"id\": \"totalNumbersSection\"\n" + "}, {\n" + "  \"type\": \"label\",\n"
+			+ "  \"id\": \"totalNumbersLabel\",\n" + "  \"caption\": \"<h3>Total Numbers</h3>\"\n" + "}, {\n" + "  \"type\": \"number\",\n"
+			+ "  \"id\": \"infected\",\n" + "  \"caption\": \"Number of infected\",\n" + "  \"styles\": [\"row\", \"col-3\"],\n"
+			+ "  \"important\": true\n" + "}, {\n" + "  \"type\": \"number\",\n" + "  \"id\": \"withAntibodies\",\n"
+			+ "  \"caption\": \"Number persons with antibodies\",\n" + "  \"styles\": [\"row\", \"col-3\"]\n" + "}, {\n" + "  \"type\": \"yes-no\",\n"
+			+ "  \"id\": \"mostlyNonBelievers\",\n" + "  \"caption\": \"Mostly non believers?\",\n" + "  \"important\": true\n" + "}]";
+
+		campaignForm = FacadeProvider.getCampaignFormMetaFacade().buildCampaignFormMetaFromJson("testForm", null, schema, null);
+
+		campaignForm = FacadeProvider.getCampaignFormMetaFacade().saveCampaignFormMeta(campaignForm);
+
+		return campaignForm;
 	}
 
 	public class RDCF {

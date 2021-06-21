@@ -22,23 +22,15 @@ import java.util.Optional;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.ValoTheme;
 
 import de.symeda.sormas.ui.SubMenu;
 
 @SuppressWarnings("serial")
-public abstract class AbstractSubNavigationView extends AbstractView {
+public abstract class AbstractSubNavigationView<SC extends Component> extends AbstractView {
 
-	private String params;
-
-	private SubMenu subNavigationMenu;
+	private final SubMenu subNavigationMenu;
 	private HorizontalLayout buttonsLayout;
-	private VerticalLayout infoLayout;
-	private Label infoLabel;
-	private Label infoLabelSub;
-	private Component subComponent;
+	protected SC subComponent;
 
 	protected AbstractSubNavigationView(String viewName) {
 		super(viewName);
@@ -51,11 +43,6 @@ public abstract class AbstractSubNavigationView extends AbstractView {
 			buttonsLayout = l;
 			addHeaderComponent(l);
 		});
-
-		createInfoLayout().ifPresent(l -> {
-			infoLayout = l;
-			addHeaderComponent(l);
-		});
 	}
 
 	protected Optional<HorizontalLayout> createButtonsLayout() {
@@ -65,33 +52,17 @@ public abstract class AbstractSubNavigationView extends AbstractView {
 		return Optional.of(buttonsLayout);
 	}
 
-	protected Optional<VerticalLayout> createInfoLayout() {
-
-		VerticalLayout infoLayout = new VerticalLayout();
-		infoLayout.setMargin(false);
-		infoLayout.setSpacing(false);
-		infoLayout.setSizeUndefined();
-		CssStyles.stylePrimary(infoLayout, CssStyles.CALLOUT);
-		infoLabel = new Label("");
-		infoLabelSub = new Label("");
-		CssStyles.style(infoLabelSub, ValoTheme.LABEL_SMALL);
-		infoLayout.addComponent(infoLabel);
-		infoLayout.addComponent(infoLabelSub);
-
-		return Optional.of(infoLayout);
-	}
-
 	@Override
 	public void enter(ViewChangeEvent event) {
 
-		params = event.getParameters();
-		refreshMenu(subNavigationMenu, infoLabel, infoLabelSub, params);
+		String params = event.getParameters();
+		refreshMenu(subNavigationMenu, params);
 		selectInMenu();
 	}
 
-	public abstract void refreshMenu(SubMenu menu, Label infoLabel, Label infoLabelSub, String params);
+	public abstract void refreshMenu(SubMenu menu, String params);
 
-	protected void setSubComponent(Component newComponent) {
+	protected void setSubComponent(SC newComponent) {
 
 		if (subComponent != null) {
 			removeComponent(subComponent);
@@ -102,10 +73,6 @@ public abstract class AbstractSubNavigationView extends AbstractView {
 			addComponent(subComponent, 2);
 			setExpandRatio(subComponent, 1);
 		}
-	}
-
-	protected void hideInfoLabel() {
-		infoLayout.setVisible(false);
 	}
 
 	public void selectInMenu() {

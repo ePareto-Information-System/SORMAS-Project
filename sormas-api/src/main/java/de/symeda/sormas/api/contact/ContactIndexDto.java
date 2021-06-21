@@ -24,9 +24,11 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseJurisdictionDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.person.SymptomJournalStatus;
 import de.symeda.sormas.api.utils.PersonalData;
+import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableIndexDto;
 
-public class ContactIndexDto implements Serializable {
+public class ContactIndexDto extends PseudonymizableIndexDto implements Serializable {
 
 	private static final long serialVersionUID = 7511900591141885152L;
 
@@ -38,17 +40,18 @@ public class ContactIndexDto implements Serializable {
 	public static final String PERSON_LAST_NAME = "lastName";
 	public static final String CAZE = "caze";
 	public static final String DISEASE = "disease";
-	public static final String REGION_UUID = "regionUuid";
-	public static final String DISTRICT_UUID = "districtUuid";
 	public static final String LAST_CONTACT_DATE = "lastContactDate";
 	public static final String CONTACT_PROXIMITY = "contactProximity";
 	public static final String CONTACT_CLASSIFICATION = "contactClassification";
 	public static final String CONTACT_STATUS = "contactStatus";
 	public static final String FOLLOW_UP_STATUS = "followUpStatus";
 	public static final String FOLLOW_UP_UNTIL = "followUpUntil";
+	public static final String SYMPTOM_JOURNAL_STATUS = "symptomJournalStatus";
 	public static final String CONTACT_OFFICER_UUID = "contactOfficerUuid";
 	public static final String CONTACT_CATEGORY = "contactCategory";
 	public static final String CASE_CLASSIFICATION = "caseClassification";
+	public static final String EXTERNAL_ID = "externalID";
+	public static final String EXTERNAL_TOKEN = "externalToken";
 
 	private String uuid;
 	@PersonalData
@@ -64,23 +67,32 @@ public class ContactIndexDto implements Serializable {
 	private ContactStatus contactStatus;
 	private FollowUpStatus followUpStatus;
 	private Date followUpUntil;
+	private SymptomJournalStatus symptomJournalStatus;
 	private String contactOfficerUuid;
 	private Date reportDateTime;
 	private ContactCategory contactCategory;
 	private CaseClassification caseClassification;
 	private int visitCount;
+	private String externalID;
+	private String externalToken;
+	private String regionName;
+	private String districtName;
+	private String caseRegionName;
+	private String caseDistrictName;
 
 	private ContactJurisdictionDto jurisdiction;
 	private CaseJurisdictionDto caseJurisdiction;
 
 	//@formatter:off
 	public ContactIndexDto(String uuid, String personFirstName, String personLastName, String cazeUuid,
-						   Disease disease, String diseaseDetails, String caseFirstName, String caseLastName, String regionUuid,
-						   String districtUuid, Date lastContactDate, ContactCategory contactCategory, ContactProximity contactProximity,
-						   ContactClassification contactClassification, ContactStatus contactStatus, FollowUpStatus followUpStatus,
-						   Date followUpUntil, String contactOfficerUuid, String reportingUserUuid, Date reportDateTime,
-						   CaseClassification caseClassification,
-						   String caseReportingUserUid, String caseRegionUuid, String caseDistrictUud, String caseCommunityUuid, String caseHealthFacilityUuid, String casePointOfEntryUuid,
+						   Disease disease, String diseaseDetails, String caseFirstName, String caseLastName, String regionUuid, String regionName,
+						   String districtUuid, String districtName, String communityUuid, Date lastContactDate, ContactCategory contactCategory, 
+						   ContactProximity contactProximity, ContactClassification contactClassification, ContactStatus contactStatus, FollowUpStatus followUpStatus,
+						   Date followUpUntil, SymptomJournalStatus symptomJournalStatus, String contactOfficerUuid, String reportingUserUuid, Date reportDateTime,
+						   CaseClassification caseClassification, String caseReportingUserUid, String caseRegionUuid, String caseRegionName, String caseDistrictUuid, 
+						   String caseDistrictName, String caseCommunityUuid, String caseHealthFacilityUuid, String casePointOfEntryUuid,
+						   Date changeDate, // XXX: unused, only here for TypedQuery mapping
+						   String externalID, String externalToken,
 						   int visitCount) {
 	//@formatter:on
 
@@ -93,7 +105,7 @@ public class ContactIndexDto implements Serializable {
 			this.caseJurisdiction = new CaseJurisdictionDto(
 				caseReportingUserUid,
 				caseRegionUuid,
-				caseDistrictUud,
+				caseDistrictUuid,
 				caseCommunityUuid,
 				caseHealthFacilityUuid,
 				casePointOfEntryUuid);
@@ -108,12 +120,19 @@ public class ContactIndexDto implements Serializable {
 		this.contactStatus = contactStatus;
 		this.followUpStatus = followUpStatus;
 		this.followUpUntil = followUpUntil;
+		this.symptomJournalStatus = symptomJournalStatus;
 		this.contactOfficerUuid = contactOfficerUuid;
 		this.reportDateTime = reportDateTime;
 		this.caseClassification = caseClassification;
 		this.visitCount = visitCount;
+		this.externalID = externalID;
+		this.externalToken = externalToken;
+		this.regionName = regionName;
+		this.districtName = districtName;
+		this.caseRegionName = caseRegionName;
+		this.caseDistrictName = caseDistrictName;
 
-		this.jurisdiction = new ContactJurisdictionDto(reportingUserUuid, regionUuid, districtUuid, caseJurisdiction);
+		this.jurisdiction = new ContactJurisdictionDto(reportingUserUuid, regionUuid, districtUuid, communityUuid, caseJurisdiction);
 	}
 
 	public String getUuid() {
@@ -212,6 +231,14 @@ public class ContactIndexDto implements Serializable {
 		this.followUpUntil = followUpUntil;
 	}
 
+	public SymptomJournalStatus getSymptomJournalStatus() {
+		return symptomJournalStatus;
+	}
+
+	public void setSymptomJournalStatus(SymptomJournalStatus symptomJournalStatus) {
+		this.symptomJournalStatus = symptomJournalStatus;
+	}
+
 	public String getDistrictUuid() {
 		return jurisdiction.getDistrictUuid();
 	}
@@ -254,6 +281,50 @@ public class ContactIndexDto implements Serializable {
 
 	public void setVisitCount(int visitCount) {
 		this.visitCount = visitCount;
+	}
+
+	public String getExternalID() {
+		return externalID;
+	}
+
+	public void setExternalID(String externalID) {
+		this.externalID = externalID;
+	}
+
+	public String getExternalToken() { return externalToken; }
+
+	public void setExternalToken(String externalToken) { this.externalToken = externalToken; }
+
+	public String getRegionName() {
+		return regionName;
+	}
+
+	public void setRegionName(String regionName) {
+		this.regionName = regionName;
+	}
+
+	public String getDistrictName() {
+		return districtName;
+	}
+
+	public void setDistrictName(String districtName) {
+		this.districtName = districtName;
+	}
+
+	public String getCaseRegionName() {
+		return caseRegionName;
+	}
+
+	public void setCaseRegionName(String caseRegionName) {
+		this.caseRegionName = caseRegionName;
+	}
+
+	public String getCaseDistrictName() {
+		return caseDistrictName;
+	}
+
+	public void setCaseDistrictName(String caseDistrictName) {
+		this.caseDistrictName = caseDistrictName;
 	}
 
 	public ContactReferenceDto toReference() {

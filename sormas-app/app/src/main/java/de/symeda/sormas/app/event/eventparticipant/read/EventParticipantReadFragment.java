@@ -20,6 +20,8 @@ import static android.view.View.GONE;
 import android.os.Bundle;
 import android.view.View;
 
+import de.symeda.sormas.api.event.EventDto;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.app.BaseReadFragment;
 import de.symeda.sormas.app.R;
@@ -30,7 +32,6 @@ import de.symeda.sormas.app.databinding.FragmentEventParticipantReadLayoutBindin
 import de.symeda.sormas.app.databinding.FragmentPersonReadLayoutBinding;
 import de.symeda.sormas.app.person.edit.PersonEditFragment;
 import de.symeda.sormas.app.person.read.PersonReadFragment;
-import de.symeda.sormas.app.util.InfrastructureHelper;
 
 public class EventParticipantReadFragment extends BaseReadFragment<FragmentEventParticipantReadLayoutBinding, EventParticipant, EventParticipant> {
 
@@ -44,12 +45,14 @@ public class EventParticipantReadFragment extends BaseReadFragment<FragmentEvent
 			null,
 			activityRootData,
 			FieldVisibilityCheckers.withDisease(activityRootData.getEvent().getDisease()),
-			null);
+			UiFieldAccessCheckers.getDefault(activityRootData.isPseudonymized()));
 	}
 
 	// Instance methods
 
 	private void setUpFieldVisibilities(FragmentEventParticipantReadLayoutBinding contentBinding) {
+		setFieldVisibilitiesAndAccesses(EventDto.class, contentBinding.mainContent);
+
 		if (record.getResultingCaseUuid() == null || DatabaseHelper.getCaseDao().queryUuidBasic(record.getResultingCaseUuid()) == null) {
 			contentBinding.eventParticipantButtonsPanel.setVisibility(GONE);
 		}
@@ -67,8 +70,6 @@ public class EventParticipantReadFragment extends BaseReadFragment<FragmentEvent
 
 	private void setUpPersonFragmentFieldVisibilities(FragmentPersonReadLayoutBinding contentBinding) {
 		PersonReadFragment.setUpFieldVisibilities(this, contentBinding, record.getEvent());
-		InfrastructureHelper
-			.initializeHealthFacilityDetailsFieldVisibility(contentBinding.personOccupationFacility, contentBinding.personOccupationFacilityDetails);
 		PersonEditFragment.initializeCauseOfDeathDetailsFieldVisibility(
 			contentBinding.personCauseOfDeath,
 			contentBinding.personCauseOfDeathDisease,
@@ -87,6 +88,7 @@ public class EventParticipantReadFragment extends BaseReadFragment<FragmentEvent
 		setUpControlListeners(contentBinding);
 
 		contentBinding.setData(record);
+		PersonReadFragment.initCountryTranslations(contentBinding.eventParticipantPersonLayout, record.getPerson());
 	}
 
 	@Override

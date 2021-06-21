@@ -15,8 +15,9 @@
 
 package de.symeda.sormas.app.backend.sample;
 
-import static de.symeda.sormas.api.EntityDto.COLUMN_LENGTH_BIG;
-import static de.symeda.sormas.api.EntityDto.COLUMN_LENGTH_DEFAULT;
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.Date;
 
@@ -25,21 +26,22 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
-import com.j256.ormlite.field.DataType;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
-
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.sample.PCRTestSpecification;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
-import de.symeda.sormas.app.backend.common.AbstractDomainObject;
+import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
+import de.symeda.sormas.app.backend.disease.DiseaseVariant;
 import de.symeda.sormas.app.backend.facility.Facility;
 import de.symeda.sormas.app.backend.user.User;
 import de.symeda.sormas.app.util.DateFormatHelper;
 
+import static de.symeda.sormas.api.EntityDto.COLUMN_LENGTH_BIG;
+import static de.symeda.sormas.api.EntityDto.COLUMN_LENGTH_DEFAULT;
+
 @Entity(name = PathogenTest.TABLE_NAME)
 @DatabaseTable(tableName = PathogenTest.TABLE_NAME)
-public class PathogenTest extends AbstractDomainObject {
+public class PathogenTest extends PseudonymizableAdo {
 
 	private static final long serialVersionUID = 2290351143518627813L;
 
@@ -55,14 +57,23 @@ public class PathogenTest extends AbstractDomainObject {
 	@Enumerated(EnumType.STRING)
 	private PathogenTestType testType;
 
+	@Enumerated(EnumType.STRING)
+	private PCRTestSpecification pcrTestSpecification;
+
 	@Column
 	private String testTypeText;
 
 	@Enumerated(EnumType.STRING)
 	private Disease testedDisease;
 
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private DiseaseVariant testedDiseaseVariant;
+
 	@Column(length = COLUMN_LENGTH_DEFAULT)
 	private String testedDiseaseDetails;
+
+	@Column
+	private String typingId;
 
 	@Enumerated(EnumType.STRING)
 	@Column
@@ -86,6 +97,9 @@ public class PathogenTest extends AbstractDomainObject {
 	@DatabaseField
 	private Float cqValue;
 
+	@DatabaseField(dataType = DataType.DATE_LONG, canBeNull = true)
+	private Date reportDate;
+
 	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
 	private Facility lab;
 
@@ -94,6 +108,9 @@ public class PathogenTest extends AbstractDomainObject {
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private User labUser;
+
+	@Column
+	private boolean viaLims;
 
 	public Sample getSample() {
 		return sample;
@@ -111,6 +128,14 @@ public class PathogenTest extends AbstractDomainObject {
 		this.testType = testType;
 	}
 
+	public PCRTestSpecification getPcrTestSpecification() {
+		return pcrTestSpecification;
+	}
+
+	public void setPcrTestSpecification(PCRTestSpecification pcrTestSpecification) {
+		this.pcrTestSpecification = pcrTestSpecification;
+	}
+
 	public Disease getTestedDisease() {
 		return testedDisease;
 	}
@@ -119,12 +144,28 @@ public class PathogenTest extends AbstractDomainObject {
 		this.testedDisease = testedDisease;
 	}
 
+	public DiseaseVariant getTestedDiseaseVariant() {
+		return testedDiseaseVariant;
+	}
+
+	public void setTestedDiseaseVariant(DiseaseVariant testedDiseaseVariant) {
+		this.testedDiseaseVariant = testedDiseaseVariant;
+	}
+
 	public String getTestedDiseaseDetails() {
 		return testedDiseaseDetails;
 	}
 
 	public void setTestedDiseaseDetails(String testedDiseaseDetails) {
 		this.testedDiseaseDetails = testedDiseaseDetails;
+	}
+
+	public String getTypingId() {
+		return typingId;
+	}
+
+	public void setTypingId(String typingId) {
+		this.typingId = typingId;
 	}
 
 	public PathogenTestResultType getTestResult() {
@@ -213,6 +254,22 @@ public class PathogenTest extends AbstractDomainObject {
 
 	public void setCqValue(Float cqValue) {
 		this.cqValue = cqValue;
+	}
+
+	public Date getReportDate() {
+		return reportDate;
+	}
+
+	public void setReportDate(Date reportDate) {
+		this.reportDate = reportDate;
+	}
+
+	public boolean isViaLims() {
+		return viaLims;
+	}
+
+	public void setViaLims(boolean viaLims) {
+		this.viaLims = viaLims;
 	}
 
 	@Override

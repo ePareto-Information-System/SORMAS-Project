@@ -62,6 +62,18 @@
                     android:orientation="horizontal">
 
                     <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/sample_uuid"
+                        app:value="@{data.uuid}"
+                        style="@style/ControlSingleColumnStyle" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
                         android:id="@+id/sample_casePersonName"
                         app:value="@{data.associatedCase.person}"
                         style="@style/ControlFirstOfTwoColumnsStyle" />
@@ -122,6 +134,17 @@
                         style="@style/ControlSecondOfTwoColumnsStyle" />
 
                 </LinearLayout>
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/sample_samplingReason"
+                    style="@style/ControlSingleColumnStyle"
+                    app:appendValue="@{data.samplingReasonDetails}"
+                    app:value="@{data.samplingReason}"
+                    app:valueFormat="@string/two_strings_with_hyphen_format" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/sample_fieldSampleID"
+                    app:value="@{data.fieldSampleID}"
+                    style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/sample_lab"

@@ -16,6 +16,8 @@ String lastName = TestDataConnector.getValueByKey('GenericUsers', 'last_name_cas
 WebUI.callTestCase(findTestCase('SurveillanceSupervisor/partials/FilterCaseByPersonName'), [('personName') : (firstName + 
         ' ') + lastName], FailureHandling.STOP_ON_FAILURE)
 
+WebUI.maximizeWindow()
+
 WebUI.click(findTestObject('Tasks/button_div_New task'))
 
 WebUI.click(findTestObject('Surveillance/CaseView/Task/div_TaskType_DDBox'))
@@ -28,7 +30,7 @@ WebUI.click(findTestObject('Surveillance/CaseView/Task/span_Surveillance SUPERVI
 
 WebUI.setText(findTestObject('Surveillance/CaseView/Task/textarea_Comment_TArea'), Helper.generateString('comment', 5))
 
-WebUI.click(findTestObject('Surveillance/CaseView/Task/div_SaveTask_btn'))
+WebUI.click(findTestObject('ReusableORs/div_Save_modalWindow'))
 
 WebUI.delay(1)
 

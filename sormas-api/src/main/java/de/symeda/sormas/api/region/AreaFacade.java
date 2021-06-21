@@ -20,6 +20,8 @@ public interface AreaFacade {
 
 	void saveArea(AreaDto area);
 
+	void saveArea(AreaDto area, boolean allowMerge);
+
 	boolean isUsedInOtherInfrastructureData(Collection<String> areaUuids);
 
 	void archive(String areaUuid);
@@ -27,5 +29,4 @@ public interface AreaFacade {
 	void deArchive(String areaUuid);
 
 	List<AreaReferenceDto> getByName(String name, boolean includeArchivedAreas);
-
 }

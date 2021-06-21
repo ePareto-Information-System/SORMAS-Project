@@ -17,17 +17,23 @@
  *******************************************************************************/
 package de.symeda.sormas.api.person;
 
-import de.symeda.sormas.api.Language;
-import de.symeda.sormas.api.caze.BurialInfoDto;
-import de.symeda.sormas.api.person.ApproximateAgeType.ApproximateAgeHelper;
-import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.DateHelper;
+import java.text.Normalizer;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 import org.simmetrics.metrics.StringMetrics;
 
-import java.text.Normalizer;
-import java.util.Date;
-import java.util.regex.Pattern;
+import de.symeda.sormas.api.Language;
+import de.symeda.sormas.api.caze.BirthDateDto;
+import de.symeda.sormas.api.caze.BurialInfoDto;
+import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.api.person.ApproximateAgeType.ApproximateAgeHelper;
+import de.symeda.sormas.api.utils.DateHelper;
+import de.symeda.sormas.api.utils.ValidationRuntimeException;
 
 public final class PersonHelper {
 
@@ -35,7 +41,7 @@ public final class PersonHelper {
 		// Hide Utility Class Constructor
 	}
 
-	public static final double DEFAULT_NAME_SIMILARITY_THRESHOLD = 0.6D;
+	public static final double DEFAULT_NAME_SIMILARITY_THRESHOLD = 0.65D;
 
 	/**
 	 * Calculates the trigram distance between both names and returns true
@@ -90,6 +96,43 @@ public final class PersonHelper {
 		}
 	}
 
+	public static BirthDateDto parseBirthdate(String birthDate, Language language) {
+
+		if (StringUtils.isEmpty(birthDate)) {
+			return null;
+		}
+
+		String dateFormat = language.getDateFormat();
+		List<String> dateFormatFields = DateHelper.getDateFields(dateFormat);
+		List<String> dateFields = DateHelper.getDateFields(birthDate);
+
+		if (dateFormatFields == null || dateFields == null) {
+			return null;
+		}
+
+		Integer birthdateDD = null;
+		Integer birthdateMM = null;
+		Integer birthdateYYYY = null;
+
+		for (int i = 0; i < dateFormatFields.size(); i++) {
+			String dateField = dateFields.get(i);
+			String formatField = dateFormatFields.get(i);
+
+			if (!StringUtils.isEmpty(dateField)) {
+				if (formatField.toLowerCase().startsWith("d")) {
+					birthdateDD = Integer.parseInt(dateField);
+				} else if (formatField.toLowerCase().startsWith("m")) {
+					birthdateMM = Integer.parseInt(dateField);
+				} else if (formatField.toLowerCase().startsWith("y")) {
+					birthdateYYYY = Integer.parseInt(dateField);
+				}
+
+			}
+		}
+
+		return new BirthDateDto(birthdateDD, birthdateMM, birthdateYYYY);
+	}
+
 	public static String getAgeAndBirthdateString(
 		Integer age,
 		ApproximateAgeType ageType,
@@ -103,6 +146,30 @@ public final class PersonHelper {
 		return !StringUtils.isEmpty(ageStr)
 			? (ageStr + (!StringUtils.isEmpty(birthdateStr) ? " (" + birthdateStr + ")" : ""))
 			: !StringUtils.isEmpty(birthdateStr) ? birthdateStr : "";
+	}
+
+	public static void validateBirthDate(Integer year, Integer month, Integer day) throws ValidationRuntimeException {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setLenient(false);
+
+		if (year != null) {
+			calendar.set(Calendar.YEAR, year);
+		}
+		if (month != null) {
+			month -= 1;
+			calendar.set(Calendar.MONTH, month);
+		}
+		if (day != null) {
+			calendar.set(Calendar.DAY_OF_MONTH, day);
+		}
+
+		try {
+			if (DateHelper.getEndOfDay(calendar.getTime()).after(DateHelper.getEndOfDay(new Date()))) {
+				throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.birthDateInFuture));
+			}
+		} catch (IllegalArgumentException e) {
+			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.birthDateInvalid));
+		}
 	}
 
 	public static String buildBurialInfoString(BurialInfoDto dto, Language language) {
@@ -131,34 +198,13 @@ public final class PersonHelper {
 		return result.toString();
 	}
 
-	public static String buildPhoneString(String phone, String phoneOwner) {
-
-		StringBuilder result = new StringBuilder();
-		if (!DataHelper.isNullOrEmpty(phone)) {
-			result.append(phone);
-		}
-		if (!DataHelper.isNullOrEmpty(phoneOwner)) {
-			if (result.length() > 0) {
-				result.append(" - ");
-			}
-			result.append(phoneOwner);
-		}
-		return result.toString();
-	}
-
-	public static String buildOccupationString(OccupationType occupationType, String occupationDetails, String occupationFacilityName) {
+	public static String buildOccupationString(OccupationType occupationType, String occupationDetails) {
 
 		StringBuilder result = new StringBuilder();
 		if (occupationType == OccupationType.OTHER) {
 			result.append(occupationDetails);
 		} else if (occupationType != null) {
 			result.append(occupationType);
-		}
-		if (!DataHelper.isNullOrEmpty(occupationFacilityName)) {
-			if (result.length() > 0) {
-				result.append(", ");
-			}
-			result.append(occupationFacilityName);
 		}
 		return result.toString();
 	}

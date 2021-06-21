@@ -37,6 +37,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.crypto.Cipher;
@@ -77,7 +78,10 @@ public final class ConfigProvider {
 	private static String LAST_DELETED_SYNC_DATE = "lastDeletedSyncDate";
 	private static String CURRENT_APP_DOWNLOAD_ID = "currentAppDownloadId";
 	private static String SERVER_LOCALE = "locale";
+	private static String SERVER_COUNTRY_NAME = "countryname";
 	private static String INITIAL_SYNC_REQUIRED = "initialSyncRequired";
+
+	private static final String FULL_COUNTRY_LOCALE_PATTERN = "[a-zA-Z]*-[a-zA-Z]*";
 
 	public static ConfigProvider instance = null;
 
@@ -102,6 +106,7 @@ public final class ConfigProvider {
 	private Long currentAppDownloadId;
 	private Boolean accessGranted;
 	private String serverLocale;
+	private String serverCountryName;
 	private Boolean repullNeeded;
 	private Boolean initialSyncRequired;
 
@@ -644,8 +649,52 @@ public final class ConfigProvider {
 		return instance.serverLocale;
 	}
 
-	public static boolean isGermanServer() {
-		return getServerLocale().toLowerCase().startsWith("de");
+	public static String getServerCountryCode() {
+		String locale = getServerLocale();
+		String normalizedLocale = normalizeLocaleString(locale);
+
+		if (normalizedLocale.contains("-")) {
+			return normalizedLocale.substring(normalizedLocale.lastIndexOf("-") + 1);
+		} else {
+			return normalizedLocale;
+		}
+	}
+
+	public static String getServerCountryName() {
+		if (instance.serverCountryName == null) {
+			synchronized (ConfigProvider.class) {
+				if (instance.serverCountryName == null) {
+					Config config = DatabaseHelper.getConfigDao().queryForId(SERVER_COUNTRY_NAME);
+					if (config != null) {
+						instance.serverCountryName = config.getValue();
+					}
+
+					if (instance.serverCountryName == null) {
+						setServerCountryName("");
+					}
+				}
+			}
+		}
+		return instance.serverCountryName;
+	}
+
+	public static String normalizeLocaleString(String locale) {
+		locale = locale.trim();
+		int pos = Math.max(locale.indexOf('-'), locale.indexOf('_'));
+		if (pos < 0) {
+			locale = locale.toLowerCase();
+		} else {
+			locale = locale.substring(0, pos).toLowerCase(Locale.ENGLISH) + '-' + locale.substring(pos + 1).toUpperCase(Locale.ENGLISH);
+		}
+		return locale;
+	}
+
+	public static boolean isConfiguredServer(String countryCode) {
+		if (Pattern.matches(FULL_COUNTRY_LOCALE_PATTERN, getServerLocale())) {
+			return getServerLocale().toLowerCase().endsWith(countryCode.toLowerCase());
+		} else {
+			return getServerLocale().toLowerCase().startsWith(countryCode.toLowerCase());
+		}
 	}
 
 	/**
@@ -661,6 +710,18 @@ public final class ConfigProvider {
 
 		instance.serverLocale = serverLocale;
 		saveConfigEntry(SERVER_LOCALE, serverLocale);
+	}
+
+	public static void setServerCountryName(String serverCountryName) {
+		if (serverCountryName != null && serverCountryName.isEmpty()) {
+			serverCountryName = null;
+		}
+
+		if (serverCountryName == instance.serverCountryName || (serverCountryName != null && serverCountryName.equals(instance.serverCountryName)))
+			return;
+
+		instance.serverCountryName = serverCountryName;
+		saveConfigEntry(SERVER_COUNTRY_NAME, serverCountryName);
 	}
 
 	public static boolean isRepullNeeded() {

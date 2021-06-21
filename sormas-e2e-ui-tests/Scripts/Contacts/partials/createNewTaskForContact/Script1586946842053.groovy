@@ -1,18 +1,6 @@
-import static com.kms.katalon.core.testcase.TestCaseFactory.findTestCase
-import static com.kms.katalon.core.testdata.TestDataFactory.findTestData
 import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
-
-import org.openqa.selenium.Dimension
-import org.openqa.selenium.WebDriver
-
-import com.hzi.Helper
-import com.hzi.Table
-import com.hzi.TableContent
-import com.kms.katalon.core.exception.StepFailedException
-import com.kms.katalon.core.model.FailureHandling as FailureHandling
-import com.kms.katalon.core.webui.driver.DriverFactory
+import com.hzi.Helper as Helper
 import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
-
 
 WebUI.click(Helper.createTestObjectWithXPath('//table[@aria-rowcount]//a'))
 
@@ -34,14 +22,13 @@ WebUI.setText(findTestObject('Contacts/ContactInformationView/newTask_dlg_zugewi
 WebUI.click(findTestObject('Contacts/ContactInformationView/span_Surveillance SUPERVISOR - berwachungsleitung (2)'))
 
 //WebUI.setText(findTestObject('Contacts/ContactInformationView/newTask_dlg_zugewiesen_button'), 'Berlin CONTACT - Surveillance Officer, Contact Officer (41)')
-
-if (create){
-	WebUI.click(findTestObject('Contacts/ContactInformationView/newTask_dlg_save_button'))
+if (create) {
+    WebUI.click(findTestObject('ReusableORs/div_Save_modalWindow'))
 } else {
-	WebUI.click(findTestObject('Contacts/ContactInformationView/newTask_dlg_cancel_button'))
+    WebUI.click(findTestObject('Contacts/ContactInformationView/newTask_dlg_cancel_button'))
 }
 
 WebUI.click(findTestObject('Contacts/ContactInformationView/div_Contacts list'))
-WebUI.delay(1)
 
+WebUI.delay(1)
 

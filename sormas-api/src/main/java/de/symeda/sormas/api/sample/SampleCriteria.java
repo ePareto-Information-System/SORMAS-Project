@@ -19,6 +19,7 @@ package de.symeda.sormas.api.sample;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import de.symeda.sormas.api.BaseCriteria;
 import de.symeda.sormas.api.Disease;
@@ -71,6 +72,10 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	private Date sampleDateTo;
 	private SampleDateType sampleDateType;
 	private DateFilterOption dateFilterOption = DateFilterOption.DATE;
+
+	private List<String> caseUuids;
+	private List<String> contactUuids;
+	private List<String> eventParticipantUuids;
 
 	public RegionReferenceDto getRegion() {
 		return region;
@@ -131,7 +136,19 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 		return this;
 	}
 
-	public SampleCriteria reportDateBetween(Date sampleDateFrom, Date sampleDateTo, SampleDateType sampleDateType, DateFilterOption dateFilterOption) {
+	public SampleCriteria reportDateBetween(Date sampleDateFrom, Date sampleDateTo, DateFilterOption dateFilterOption) {
+		this.sampleDateFrom = sampleDateFrom;
+		this.sampleDateTo = sampleDateTo;
+		this.sampleDateType = sampleDateType;
+		this.dateFilterOption = dateFilterOption;
+		return this;
+	}
+
+	public SampleCriteria reportDateBetween(
+		Date sampleDateFrom,
+		Date sampleDateTo,
+		SampleDateType sampleDateType,
+		DateFilterOption dateFilterOption) {
 		this.sampleDateFrom = sampleDateFrom;
 		this.sampleDateTo = sampleDateTo;
 		this.sampleDateType = sampleDateType;
@@ -267,8 +284,38 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	public SampleDateType getSampleDateType() {
 		return sampleDateType;
 	}
-	
+
 	public void setSampleDateType(SampleDateType sampleActivity) {
 		this.sampleDateType = sampleActivity;
+	}
+
+	public List<String> getCaseUuids() {
+		return caseUuids;
+	}
+
+	public SampleCriteria caseUuids(List<String> caseUuids) {
+		this.caseUuids = caseUuids;
+
+		return this;
+	}
+
+	public List<String> getContactUuids() {
+		return contactUuids;
+	}
+
+	public SampleCriteria contactUuids(List<String> contactUuids) {
+		this.contactUuids = contactUuids;
+
+		return this;
+	}
+
+	public List<String> getEventParticipantUuids() {
+		return eventParticipantUuids;
+	}
+
+	public SampleCriteria eventParticipantUuids(List<String> eventParticipantUuids) {
+		this.eventParticipantUuids = eventParticipantUuids;
+
+		return this;
 	}
 }

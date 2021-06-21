@@ -35,6 +35,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -52,11 +53,11 @@ import de.symeda.sormas.api.statistics.StatisticsCaseSubAttribute;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 import de.symeda.sormas.api.statistics.StatisticsHelper;
 import de.symeda.sormas.api.user.UserDto;
-import de.symeda.sormas.backend.common.AbstractAdoService;
 import de.symeda.sormas.backend.facility.Facility;
 import de.symeda.sormas.backend.facility.FacilityFacadeEjb.FacilityFacadeEjbLocal;
 import de.symeda.sormas.backend.facility.FacilityService;
 import de.symeda.sormas.backend.infrastructure.PopulationData;
+import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.person.Person;
 import de.symeda.sormas.backend.region.Community;
 import de.symeda.sormas.backend.region.CommunityFacadeEjb.CommunityFacadeEjbLocal;
@@ -70,6 +71,7 @@ import de.symeda.sormas.backend.region.RegionService;
 import de.symeda.sormas.backend.symptoms.Symptoms;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.util.ModelConstants;
+import de.symeda.sormas.backend.util.QueryHelper;
 
 @Stateless(name = "CaseStatisticsFacade")
 public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
@@ -262,7 +264,7 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 
 		StringBuilder caseJoinBuilder = new StringBuilder();
 
-		if (subGroupingA == StatisticsCaseSubAttribute.HEALTH_FACILITY || subGroupingB == StatisticsCaseSubAttribute.HEALTH_FACILITY) {
+		if (subGroupingA == StatisticsCaseSubAttribute.FACILITY || subGroupingB == StatisticsCaseSubAttribute.FACILITY) {
 			caseJoinBuilder.append(" LEFT JOIN ")
 				.append(Facility.TABLE_NAME)
 				.append(" ON ")
@@ -340,7 +342,12 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 			|| groupingA == StatisticsCaseAttribute.AGE_INTERVAL_BASIC
 			|| groupingB == StatisticsCaseAttribute.AGE_INTERVAL_BASIC
 			|| caseCriteria.getSexes() != null
-			|| caseCriteria.getAgeIntervals() != null) {
+			|| caseCriteria.getAgeIntervals() != null
+			|| caseCriteria.getPersonRegions() != null
+			|| caseCriteria.getPersonDistricts() != null
+			|| caseCriteria.getPersonCommunities() != null
+			|| caseCriteria.getPersonCity() != null
+			|| caseCriteria.getPersonPostcode() != null) {
 			caseJoinBuilder.append(" LEFT JOIN ")
 				.append(Person.TABLE_NAME)
 				.append(" ON ")
@@ -352,6 +359,24 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 				.append(Person.TABLE_NAME)
 				.append(".")
 				.append(Person.ID);
+		}
+
+		if (caseCriteria.getPersonRegions() != null
+			|| caseCriteria.getPersonDistricts() != null
+			|| caseCriteria.getPersonCommunities() != null
+			|| caseCriteria.getPersonCity() != null
+			|| caseCriteria.getPersonPostcode() != null) {
+			caseJoinBuilder.append(" LEFT JOIN ")
+				.append(Location.TABLE_NAME)
+				.append(" ON ")
+				.append(Person.TABLE_NAME)
+				.append(".")
+				.append(Person.ADDRESS)
+				.append("_id")
+				.append(" = ")
+				.append(Location.TABLE_NAME)
+				.append(".")
+				.append(Location.ID);
 		}
 
 		if (CollectionUtils.isNotEmpty(caseCriteria.getReportingUserRoles())
@@ -546,6 +571,126 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 				caseCriteria.getReportDateTo(),
 				Case.TABLE_NAME,
 				Case.REPORT_DATE);
+		}
+
+		if (CollectionUtils.isNotEmpty(caseCriteria.getOutcomeYears())) {
+			extendFilterBuilderWithDateElement(
+				caseFilterBuilder,
+				filterBuilderParameters,
+				"YEAR",
+				Case.TABLE_NAME,
+				Case.OUTCOME_DATE,
+				caseCriteria.getOutcomeYears(),
+				dateValue -> (dateValue.getValue()));
+		}
+
+		if (CollectionUtils.isNotEmpty(caseCriteria.getOutcomeQuarters())) {
+			extendFilterBuilderWithDateElement(
+				caseFilterBuilder,
+				filterBuilderParameters,
+				"QUARTER",
+				Case.TABLE_NAME,
+				Case.OUTCOME_DATE,
+				caseCriteria.getOutcomeQuarters(),
+				dateValue -> (dateValue.getValue()));
+		}
+
+		if (CollectionUtils.isNotEmpty(caseCriteria.getOutcomeMonths())) {
+			extendFilterBuilderWithDateElement(
+				caseFilterBuilder,
+				filterBuilderParameters,
+				"MONTH",
+				Case.TABLE_NAME,
+				Case.OUTCOME_DATE,
+				caseCriteria.getOutcomeMonths(),
+				dateValue -> (dateValue.ordinal() + 1));
+		}
+
+		if (CollectionUtils.isNotEmpty(caseCriteria.getOutcomeEpiWeeks())) {
+			extendFilterBuilderWithEpiWeek(
+				caseFilterBuilder,
+				filterBuilderParameters,
+				Case.TABLE_NAME,
+				Case.OUTCOME_DATE,
+				caseCriteria.getOutcomeEpiWeeks(),
+				value -> value.getWeek());
+		}
+
+		if (CollectionUtils.isNotEmpty(caseCriteria.getOutcomeQuartersOfYear())) {
+			extendFilterBuilderWithQuarterOfYear(
+				caseFilterBuilder,
+				filterBuilderParameters,
+				Case.TABLE_NAME,
+				Case.OUTCOME_DATE,
+				caseCriteria.getOutcomeQuartersOfYear(),
+				value -> value.getYear().getValue() * 10 + value.getQuarter().getValue());
+		}
+
+		if (CollectionUtils.isNotEmpty(caseCriteria.getOutcomeMonthsOfYear())) {
+			extendFilterBuilderWithMonthOfYear(
+				caseFilterBuilder,
+				filterBuilderParameters,
+				Case.TABLE_NAME,
+				Case.OUTCOME_DATE,
+				caseCriteria.getOutcomeMonthsOfYear(),
+				value -> value.getYear().getValue() * 100 + (value.getMonth().ordinal() + 1));
+		}
+
+		if (CollectionUtils.isNotEmpty(caseCriteria.getOutcomeEpiWeeksOfYear())) {
+			extendFilterBuilderWithEpiWeekOfYear(
+				caseFilterBuilder,
+				filterBuilderParameters,
+				Case.TABLE_NAME,
+				Case.OUTCOME_DATE,
+				caseCriteria.getOutcomeEpiWeeksOfYear(),
+				value -> value.getYear() * 100 + value.getWeek());
+		}
+
+		if (caseCriteria.getOutcomeDateFrom() != null || caseCriteria.getOutcomeDateTo() != null) {
+			extendFilterBuilderWithDate(
+				caseFilterBuilder,
+				filterBuilderParameters,
+				caseCriteria.getOutcomeDateFrom(),
+				caseCriteria.getOutcomeDateTo(),
+				Case.TABLE_NAME,
+				Case.OUTCOME_DATE);
+		}
+
+		if (CollectionUtils.isNotEmpty(caseCriteria.getPersonRegions())) {
+			List<Long> regionIds = regionService.getIdsByReferenceDtos(caseCriteria.getPersonRegions());
+			extendFilterBuilderWithSimpleValue(
+				caseFilterBuilder,
+				filterBuilderParameters,
+				Location.TABLE_NAME,
+				Location.REGION + "_id",
+				regionIds,
+				entry -> entry);
+		}
+		if (CollectionUtils.isNotEmpty(caseCriteria.getPersonDistricts())) {
+			List<Long> districtIds = districtService.getIdsByReferenceDtos(caseCriteria.getPersonDistricts());
+			extendFilterBuilderWithSimpleValue(
+				caseFilterBuilder,
+				filterBuilderParameters,
+				Location.TABLE_NAME,
+				Location.DISTRICT + "_id",
+				districtIds,
+				entry -> entry);
+		}
+		if (CollectionUtils.isNotEmpty(caseCriteria.getPersonCommunities())) {
+			List<Long> communityIds = communityService.getIdsByReferenceDtos(caseCriteria.getPersonCommunities());
+			extendFilterBuilderWithSimpleValue(
+				caseFilterBuilder,
+				filterBuilderParameters,
+				Location.TABLE_NAME,
+				Location.COMMUNITY + "_id",
+				communityIds,
+				entry -> entry);
+		}
+		if (StringUtils.isNotEmpty(caseCriteria.getPersonCity())) {
+			extendFilterBuilderWithLike(caseFilterBuilder, Location.TABLE_NAME, Location.CITY, caseCriteria.getPersonCity());
+		}
+		if (StringUtils.isNotEmpty(caseCriteria.getPersonPostcode())) {
+			extendFilterBuilderWithLike(caseFilterBuilder, Location.TABLE_NAME, Location.POSTAL_CODE, caseCriteria.getPersonPostcode());
 		}
 
 		if (CollectionUtils.isNotEmpty(caseCriteria.getSexes()) || caseCriteria.isSexUnknown() != null) {
@@ -846,6 +991,38 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 				entry -> entry);
 		}
 
+		boolean usesCommunitys;
+		List<Long> communityIds;
+		if (CollectionUtils.isNotEmpty(caseCriteria.getCommunities())) {
+			// limit to specific communitys
+
+			communityIds = communityService.getIdsByReferenceDtos(caseCriteria.getCommunities());
+			extendFilterBuilderWithSimpleValue(
+					whereBuilder,
+					filterBuilderParameters,
+					PopulationData.TABLE_NAME,
+					PopulationData.COMMUNITY + "_id",
+					communityIds,
+					entry -> entry);
+			usesCommunitys = true;
+		} else {
+			// limit either to entries with community or to entries without community
+
+			communityIds = null;
+			usesCommunitys = subGroupingA == StatisticsCaseSubAttribute.COMMUNITY || subGroupingB == StatisticsCaseSubAttribute.COMMUNITY;
+
+			if (whereBuilder.length() > 0) {
+				whereBuilder.append(" AND ");
+			}
+			whereBuilder.append("(").append(PopulationData.TABLE_NAME).append(".").append(PopulationData.COMMUNITY).append("_id");
+			if (usesCommunitys) {
+				whereBuilder.append(" IS NOT NULL)");
+			} else {
+				// use entry with sum for all community
+				whereBuilder.append(" IS NULL)");
+			}
+		}
+
 		boolean usesDistricts;
 		List<Long> districtIds;
 		if (CollectionUtils.isNotEmpty(caseCriteria.getDistricts())) {
@@ -870,7 +1047,7 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 				whereBuilder.append(" AND ");
 			}
 			whereBuilder.append("(").append(PopulationData.TABLE_NAME).append(".").append(PopulationData.DISTRICT).append("_id");
-			if (usesDistricts) {
+			if (usesDistricts || usesCommunitys) {
 				whereBuilder.append(" IS NOT NULL)");
 			} else {
 				// use entry with sum for all districts
@@ -965,7 +1142,16 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 
 		// growth rates to calculate the population
 		selectBuilder.append(" LEFT JOIN ");
-		if (districtIds != null || subGroupingA == StatisticsCaseSubAttribute.DISTRICT || subGroupingB == StatisticsCaseSubAttribute.DISTRICT) {
+		if (communityIds != null || subGroupingA == StatisticsCaseSubAttribute.COMMUNITY || subGroupingB == StatisticsCaseSubAttribute.COMMUNITY) {
+			selectBuilder.append(Community.TABLE_NAME)
+				.append(" AS growthsource ON growthsource.")
+				.append(Community.ID)
+				.append(" = ")
+				.append(PopulationData.COMMUNITY)
+				.append("_id");
+		} else if (districtIds != null
+			|| subGroupingA == StatisticsCaseSubAttribute.DISTRICT
+			|| subGroupingB == StatisticsCaseSubAttribute.DISTRICT) {
 			selectBuilder.append(District.TABLE_NAME)
 				.append(" AS growthsource ON growthsource.")
 				.append(District.ID)
@@ -1008,6 +1194,8 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 					return PopulationData.TABLE_NAME + "." + PopulationData.REGION + "_id";
 				case DISTRICT:
 					return PopulationData.TABLE_NAME + "." + PopulationData.DISTRICT + "_id";
+				case COMMUNITY:
+					return PopulationData.TABLE_NAME + "." + PopulationData.COMMUNITY + "_id";
 				default:
 					return null;
 				}
@@ -1023,6 +1211,15 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 		return null;
 	}
 
+	private void extendFilterBuilderWithLike(StringBuilder filterBuilder, String tableName, String fieldName, String filterValue) {
+
+		if (filterBuilder.length() > 0) {
+			filterBuilder.append(" AND ");
+		}
+
+		filterBuilder.append(tableName).append(".").append(fieldName).append(" LIKE ").append("'%").append(filterValue).append("%'");
+	}
+
 	private <T> StringBuilder extendFilterBuilderWithSimpleValue(
 		StringBuilder filterBuilder,
 		List<Object> filterBuilderParameters,
@@ -1036,7 +1233,7 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 		}
 
 		filterBuilder.append(tableName).append(".").append(fieldName).append(" IN ");
-		return AbstractAdoService.appendInFilterValues(filterBuilder, filterBuilderParameters, values, valueMapper);
+		return QueryHelper.appendInFilterValues(filterBuilder, filterBuilderParameters, values, valueMapper);
 	}
 
 	private StringBuilder extendFilterBuilderWithDate(
@@ -1088,7 +1285,7 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 			.append(fieldName)
 			.append(")  AS integer))")
 			.append(" IN ");
-		return AbstractAdoService.appendInFilterValues(filterBuilder, filterBuilderParameters, values, valueMapper);
+		return QueryHelper.appendInFilterValues(filterBuilder, filterBuilderParameters, values, valueMapper);
 	}
 
 	private <T> StringBuilder extendFilterBuilderWithEpiWeek(
@@ -1104,7 +1301,7 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 		}
 
 		filterBuilder.append("epi_week(").append(tableName).append(".").append(fieldName).append(")").append(" IN ");
-		return AbstractAdoService.appendInFilterValues(filterBuilder, filterBuilderParameters, values, valueMapper);
+		return QueryHelper.appendInFilterValues(filterBuilder, filterBuilderParameters, values, valueMapper);
 	}
 
 	private <T> StringBuilder extendFilterBuilderWithEpiWeekOfYear(
@@ -1131,7 +1328,7 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 			.append(fieldName)
 			.append("))")
 			.append(" IN ");
-		return AbstractAdoService.appendInFilterValues(filterBuilder, filterBuilderParameters, values, valueMapper);
+		return QueryHelper.appendInFilterValues(filterBuilder, filterBuilderParameters, values, valueMapper);
 	}
 
 	private <T> StringBuilder extendFilterBuilderWithQuarterOfYear(
@@ -1157,7 +1354,7 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 			.append(fieldName)
 			.append(") AS integer))")
 			.append(" IN ");
-		return AbstractAdoService.appendInFilterValues(filterBuilder, filterBuilderParameters, values, valueMapper);
+		return QueryHelper.appendInFilterValues(filterBuilder, filterBuilderParameters, values, valueMapper);
 	}
 
 	private <T> StringBuilder extendFilterBuilderWithMonthOfYear(
@@ -1183,7 +1380,7 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 			.append(fieldName)
 			.append(") AS integer))")
 			.append(" IN ");
-		return AbstractAdoService.appendInFilterValues(filterBuilder, filterBuilderParameters, values, valueMapper);
+		return QueryHelper.appendInFilterValues(filterBuilder, filterBuilderParameters, values, valueMapper);
 	}
 
 	private String buildCaseGroupingSelectQuery(StatisticsCaseAttribute grouping, StatisticsCaseSubAttribute subGrouping, String groupAlias) {
@@ -1213,7 +1410,7 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 			case COMMUNITY:
 				groupingSelectPartBuilder.append(Community.TABLE_NAME).append(".").append(Community.ID).append(" AS ").append(groupAlias);
 				break;
-			case HEALTH_FACILITY:
+			case FACILITY:
 				groupingSelectPartBuilder.append(Facility.TABLE_NAME).append(".").append(Facility.ID).append(" AS ").append(groupAlias);
 				break;
 			default:
@@ -1278,6 +1475,33 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 				break;
 			case EPI_WEEK_OF_YEAR:
 				extendGroupingBuilderWithEpiWeekOfYear(groupingSelectPartBuilder, Case.TABLE_NAME, Case.REPORT_DATE, groupAlias);
+				break;
+			default:
+				throw new IllegalArgumentException(subGrouping.toString());
+			}
+			break;
+		case OUTCOME_TIME:
+			switch (subGrouping) {
+			case YEAR:
+				extendGroupingBuilderWithDate(groupingSelectPartBuilder, "YEAR", Case.TABLE_NAME, Case.OUTCOME_DATE, groupAlias);
+				break;
+			case QUARTER:
+				extendGroupingBuilderWithDate(groupingSelectPartBuilder, "QUARTER", Case.TABLE_NAME, Case.OUTCOME_DATE, groupAlias);
+				break;
+			case MONTH:
+				extendGroupingBuilderWithDate(groupingSelectPartBuilder, "MONTH", Case.TABLE_NAME, Case.OUTCOME_DATE, groupAlias);
+				break;
+			case EPI_WEEK:
+				extendGroupingBuilderWithEpiWeek(groupingSelectPartBuilder, Case.TABLE_NAME, Case.OUTCOME_DATE, groupAlias);
+				break;
+			case QUARTER_OF_YEAR:
+				extendGroupingBuilderWithQuarterOfYear(groupingSelectPartBuilder, Case.TABLE_NAME, Case.OUTCOME_DATE, groupAlias);
+				break;
+			case MONTH_OF_YEAR:
+				extendGroupingBuilderWithMonthOfYear(groupingSelectPartBuilder, Case.TABLE_NAME, Case.OUTCOME_DATE, groupAlias);
+				break;
+			case EPI_WEEK_OF_YEAR:
+				extendGroupingBuilderWithEpiWeekOfYear(groupingSelectPartBuilder, Case.TABLE_NAME, Case.OUTCOME_DATE, groupAlias);
 				break;
 			default:
 				throw new IllegalArgumentException(subGrouping.toString());

@@ -54,7 +54,7 @@ public final class StatisticsHelper {
 
 	public static final String VALUE_UNKNOWN = "VALUE_UNKNOWN";
 	public static final String TOTAL = "total";
-	public static final String UNKNOWN = "unknown";
+	public static final String NOT_SPECIFIED = "notSpecified";
 
 	public static StatisticsGroupingKey buildGroupingKey(
 		Object attributeValue,
@@ -63,7 +63,7 @@ public final class StatisticsHelper {
 		Function<Integer, RegionReferenceDto> regionProvider,
 		Function<Integer, DistrictReferenceDto> districtProvider,
 		Function<Integer, CommunityReferenceDto> communityProvider,
-		Function<Integer, FacilityReferenceDto> healthFacilityProvider) {
+		Function<Integer, FacilityReferenceDto> facilityProvider) {
 
 		if (isNullOrUnknown(attributeValue)) {
 			return null;
@@ -100,8 +100,8 @@ public final class StatisticsHelper {
 				return districtProvider.apply(((Number) attributeValue).intValue());
 			case COMMUNITY:
 				return communityProvider.apply(((Number) attributeValue).intValue());
-			case HEALTH_FACILITY:
-				return healthFacilityProvider.apply(((Number) attributeValue).intValue());
+			case FACILITY:
+				return facilityProvider.apply(((Number) attributeValue).intValue());
 			default:
 				throw new IllegalArgumentException(subAttribute.toString());
 			}
@@ -217,6 +217,9 @@ public final class StatisticsHelper {
 		case REPORT_TIME:
 			oldestCaseDate = FacadeProvider.getCaseFacade().getOldestCaseReportDate();
 			break;
+		case OUTCOME_TIME:
+			oldestCaseDate = FacadeProvider.getCaseFacade().getOldestCaseOutcomeDate();
+			break;
 		default:
 			return new ArrayList<>();
 		}
@@ -288,12 +291,12 @@ public final class StatisticsHelper {
 				return StatisticsHelper.getTimeGroupingKeys(attribute, subAttribute);
 			case REGION:
 				return (List<StatisticsGroupingKey>) (List<? extends StatisticsGroupingKey>) FacadeProvider.getRegionFacade()
-					.getAllActiveAsReference();
+					.getAllActiveByServerCountry();
 			case DISTRICT:
 				return (List<StatisticsGroupingKey>) (List<? extends StatisticsGroupingKey>) FacadeProvider.getDistrictFacade()
 					.getAllActiveAsReference();
 			case COMMUNITY:
-			case HEALTH_FACILITY:
+			case FACILITY:
 				return new ArrayList<>();
 			default:
 				throw new IllegalArgumentException(subAttribute.toString());

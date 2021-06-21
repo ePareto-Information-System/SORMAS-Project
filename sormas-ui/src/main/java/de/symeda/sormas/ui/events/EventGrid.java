@@ -17,22 +17,30 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.events;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.vaadin.data.provider.DataProvider;
+import com.vaadin.data.provider.DataProviderListener;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.navigator.View;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.ui.renderers.DateRenderer;
+import com.vaadin.ui.renderers.HtmlRenderer;
 
 import de.symeda.sormas.api.DiseaseHelper;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.event.EventCriteria;
 import de.symeda.sormas.api.event.EventDto;
+import de.symeda.sormas.api.event.EventGroupsIndexDto;
+import de.symeda.sormas.api.event.EventHelper;
 import de.symeda.sormas.api.event.EventIndexDto;
 import de.symeda.sormas.api.event.EventSourceType;
+import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.user.UserRight;
@@ -41,18 +49,24 @@ import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
+import de.symeda.sormas.ui.events.groups.EventGroupsValueProvider;
+import de.symeda.sormas.ui.utils.DateFormatHelper;
+import de.symeda.sormas.ui.utils.FieldAccessColumnStyleGenerator;
+import de.symeda.sormas.ui.utils.FieldAccessHelper;
 import de.symeda.sormas.ui.utils.FilteredGrid;
 import de.symeda.sormas.ui.utils.ShowDetailsListener;
 import de.symeda.sormas.ui.utils.UuidRenderer;
-import de.symeda.sormas.ui.utils.ViewConfiguration;
 
 @SuppressWarnings("serial")
 public class EventGrid extends FilteredGrid<EventIndexDto, EventCriteria> {
 
 	public static final String EVENT_DATE = Captions.singleDayEventDate;
+	public static final String EVENT_EVOLUTION_DATE = Captions.Event_evolutionDate;
 	public static final String INFORMATION_SOURCE = Captions.Event_informationSource;
 	public static final String NUMBER_OF_PENDING_TASKS = Captions.columnNumberOfPendingTasks;
 	public static final String DISEASE_SHORT = Captions.columnDiseaseShort;
+
+	private DataProviderListener<EventIndexDto> dataProviderListener;
 
 	@SuppressWarnings("unchecked")
 	public <V extends View> EventGrid(EventCriteria criteria, Class<V> viewClass) {
@@ -60,7 +74,7 @@ public class EventGrid extends FilteredGrid<EventIndexDto, EventCriteria> {
 		super(EventIndexDto.class);
 		setSizeFull();
 
-		ViewConfiguration viewConfiguration = ViewModelProviders.of(viewClass).get(ViewConfiguration.class);
+		EventsViewConfiguration viewConfiguration = ViewModelProviders.of(viewClass).get(EventsViewConfiguration.class);
 		setInEagerMode(viewConfiguration.isInEagerMode());
 
 		if (isInEagerMode() && UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
@@ -84,50 +98,102 @@ public class EventGrid extends FilteredGrid<EventIndexDto, EventCriteria> {
 
 		Language userLanguage = I18nProperties.getUserLanguage();
 
-		Column<EventIndexDto, String> pendingTasksColumn = addColumn(
-			entry -> String.format(
-				I18nProperties.getCaption(Captions.formatSimpleNumberFormat),
-				FacadeProvider.getTaskFacade().getPendingTaskCountByEvent(entry.toReference())));
-		pendingTasksColumn.setId(NUMBER_OF_PENDING_TASKS);
-		pendingTasksColumn.setSortable(false);
+		boolean tasksFeatureEnabled = FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.TASK_MANAGEMENT);
+		if (tasksFeatureEnabled) {
+			Column<EventIndexDto, String> pendingTasksColumn = addColumn(
+				entry -> String.format(
+					I18nProperties.getCaption(Captions.formatSimpleNumberFormat),
+					FacadeProvider.getTaskFacade().getPendingTaskCountByEvent(entry.toReference())));
+			pendingTasksColumn.setId(NUMBER_OF_PENDING_TASKS);
+			pendingTasksColumn.setSortable(false);
+		}
 
-		setColumns(
-			EventIndexDto.UUID,
-			EventIndexDto.EVENT_STATUS,
-			createEventDateColumn(this, userLanguage),
-			DISEASE_SHORT,
-			EventIndexDto.EVENT_DESC,
-			EventIndexDto.EVENT_LOCATION,
-			EventIndexDto.SRC_TYPE,
-			INFORMATION_SOURCE,
-			EventIndexDto.REPORT_DATE_TIME,
-			NUMBER_OF_PENDING_TASKS);
+
+		List<String> columnIds = new ArrayList(
+			Arrays.asList(
+				EventIndexDto.UUID,
+				EventIndexDto.EXTERNAL_ID,
+				EventIndexDto.EXTERNAL_TOKEN,
+				EventIndexDto.EVENT_STATUS,
+				EventIndexDto.RISK_LEVEL,
+				EventIndexDto.EVENT_INVESTIGATION_STATUS,
+				EventIndexDto.EVENT_MANAGEMENT_STATUS,
+				createEventDateColumn(this),
+				createEventEvolutionDateColumn(this),
+				DISEASE_SHORT,
+				EventIndexDto.EVENT_TITLE,
+				EventIndexDto.EVENT_GROUPS,
+				EventIndexDto.REGION,
+				EventIndexDto.DISTRICT,
+				EventIndexDto.COMMUNITY,
+				EventIndexDto.ADDRESS,
+				EventIndexDto.SRC_TYPE,
+				INFORMATION_SOURCE,
+				EventIndexDto.REPORT_DATE_TIME,
+				EventIndexDto.REPORTING_USER,
+				EventIndexDto.RESPONSIBLE_USER,
+				NUMBER_OF_PENDING_TASKS,
+				EventIndexDto.PARTICIPANT_COUNT,
+				EventIndexDto.CASE_COUNT,
+				EventIndexDto.DEATH_COUNT,
+				EventIndexDto.CONTACT_COUNT,
+				EventIndexDto.CONTACT_COUNT_SOURCE_IN_EVENT));
+
+		if (!tasksFeatureEnabled) {
+			columnIds.remove(NUMBER_OF_PENDING_TASKS);
+		}
+
+		boolean eventGroupsFeatureEnabled = FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.EVENT_GROUPS);
+		if (!eventGroupsFeatureEnabled) {
+			columnIds.remove(EventIndexDto.EVENT_GROUPS);
+		}
+
+		setColumns(columnIds.toArray(new String[columnIds.size()]));
+
+		getColumn(EventIndexDto.PARTICIPANT_COUNT).setSortable(false);
+		getColumn(EventIndexDto.CASE_COUNT).setSortable(false);
+		getColumn(EventIndexDto.DEATH_COUNT).setSortable(false);
+		getColumn(EventIndexDto.CONTACT_COUNT).setSortable(false);
+		getColumn(EventIndexDto.CONTACT_COUNT_SOURCE_IN_EVENT).setSortable(false);
+
+		if (eventGroupsFeatureEnabled) {
+			Column<EventIndexDto, EventGroupsIndexDto> eventGroupsColumn = (Column<EventIndexDto, EventGroupsIndexDto>) getColumn(EventIndexDto.EVENT_GROUPS);
+			eventGroupsColumn.setSortable(false);
+			eventGroupsColumn.setRenderer(new EventGroupsValueProvider(), new HtmlRenderer());
+
+			addItemClickListener(e -> {
+				if (e.getColumn() != null && EventIndexDto.EVENT_GROUPS.equals(e.getColumn().getId())) {
+					EventGroupsIndexDto eventGroups = e.getItem().getEventGroups();
+					if (eventGroups != null && eventGroups.getEventGroup() != null) {
+						ControllerProvider.getEventGroupController().navigateToData(eventGroups.getEventGroup().getUuid());
+					}
+				}
+			});
+		}
+
+		setContactCountMethod(EventContactCountMethod.ALL); // Count all contacts by default
 
 		((Column<EventIndexDto, String>) getColumn(EventIndexDto.UUID)).setRenderer(new UuidRenderer());
 		((Column<EventIndexDto, Date>) getColumn(EventIndexDto.REPORT_DATE_TIME))
 			.setRenderer(new DateRenderer(DateHelper.getLocalDateTimeFormat(userLanguage)));
 
-		for (Column<?, ?> column : getColumns()) {
-			column.setCaption(I18nProperties.getPrefixCaption(EventIndexDto.I18N_PREFIX, column.getId().toString(), column.getCaption()));
+		for (Column<EventIndexDto, ?> column : getColumns()) {
+			String columnId = column.getId();
+			column.setCaption(I18nProperties.getPrefixCaption(EventIndexDto.I18N_PREFIX, columnId, column.getCaption()));
+			column.setStyleGenerator(
+				FieldAccessColumnStyleGenerator
+					.getDefault(getBeanType(), INFORMATION_SOURCE.equals(columnId) ? EventIndexDto.SRC_FIRST_NAME : columnId));
 		}
+
+		getColumn(EventIndexDto.CONTACT_COUNT_SOURCE_IN_EVENT)
+			.setCaption(I18nProperties.getPrefixCaption(EventIndexDto.I18N_PREFIX, EventIndexDto.CONTACT_COUNT));
 
 		addItemClickListener(new ShowDetailsListener<>(EventIndexDto.UUID, e -> ControllerProvider.getEventController().navigateToData(e.getUuid())));
 	}
 
-	public static String createEventDateColumn(FilteredGrid<EventIndexDto, EventCriteria> grid, Language userLanguage) {
-		Column<EventIndexDto, String> eventDateColumn = grid.addColumn(event -> {
-			Date startDate = event.getStartDate();
-			Date endDate = event.getEndDate();
-
-			if (startDate == null) {
-				return "";
-			} else if (endDate == null) {
-				return DateHelper.formatLocalDate(startDate, userLanguage);
-			} else {
-				return String
-					.format("%s - %s", DateHelper.formatLocalDate(startDate, userLanguage), DateHelper.formatLocalDate(endDate, userLanguage));
-			}
-		});
+	public static String createEventDateColumn(FilteredGrid<EventIndexDto, EventCriteria> grid) {
+		Column<EventIndexDto, String> eventDateColumn =
+			grid.addColumn(event -> EventHelper.buildEventDateString(event.getStartDate(), event.getEndDate()));
 		eventDateColumn.setId(EVENT_DATE);
 		eventDateColumn.setSortProperty(EventDto.START_DATE);
 		eventDateColumn.setSortable(true);
@@ -135,20 +201,60 @@ public class EventGrid extends FilteredGrid<EventIndexDto, EventCriteria> {
 		return EVENT_DATE;
 	}
 
+	public static String createEventEvolutionDateColumn(FilteredGrid<EventIndexDto, EventCriteria> grid) {
+		Column<EventIndexDto, String> eventDateColumn = grid.addColumn(event -> DateFormatHelper.formatDate(event.getEvolutionDate()));
+		eventDateColumn.setId(EVENT_EVOLUTION_DATE);
+		eventDateColumn.setSortProperty(EventDto.EVOLUTION_DATE);
+		eventDateColumn.setSortable(true);
+
+		return EVENT_EVOLUTION_DATE;
+	}
+
 	private String buildSourcePersonText(EventIndexDto event) {
-		return (event.getSrcFirstName() != null ? event.getSrcFirstName() : "") + " " + (event.getSrcLastName() != null ? event.getSrcLastName() : "")
-			+ (event.getSrcTelNo() != null && !event.getSrcTelNo().isEmpty() ? " (" + event.getSrcTelNo() + ")" : "");
+		String srcFirstName = event.getSrcFirstName();
+		String srcLastName = event.getSrcLastName();
+		String srcTelNo = event.getSrcTelNo();
+
+		if (FieldAccessHelper.isAllInaccessible(srcFirstName, srcLastName, srcTelNo)) {
+			return I18nProperties.getCaption(Captions.inaccessibleValue);
+		}
+
+		return (srcFirstName != null ? srcFirstName : "") + " " + (srcLastName != null ? srcLastName : "")
+			+ (srcTelNo != null && !srcTelNo.isEmpty() ? " (" + srcTelNo + ")" : "");
 	}
 
 	private String buildSourceMediaText(EventIndexDto event) {
-		return (event.getSrcMediaWebsite() != null ? event.getSrcMediaWebsite() : "") + " "
-			+ (event.getSrcMediaName() != null ? "(" + event.getSrcMediaName() + ")" : "");
+		String srcMediaWebsite = event.getSrcMediaWebsite();
+		String srcMediaName = event.getSrcMediaName();
+
+		if (FieldAccessHelper.isAllInaccessible(srcMediaWebsite, srcMediaName)) {
+			return I18nProperties.getCaption(Captions.inaccessibleValue);
+		}
+
+		return (srcMediaWebsite != null ? srcMediaWebsite : "") + " " + (srcMediaName != null ? "(" + srcMediaName + ")" : "");
+	}
+
+	public void setContactCountMethod(EventContactCountMethod method) {
+		getColumn(EventIndexDto.CONTACT_COUNT_SOURCE_IN_EVENT).setHidden(method == EventContactCountMethod.ALL);
+		getColumn(EventIndexDto.CONTACT_COUNT).setHidden(method == EventContactCountMethod.SOURCE_CASE_IN_EVENT);
+		if (method == EventContactCountMethod.BOTH_METHODS) {
+			getColumn(EventIndexDto.CONTACT_COUNT_SOURCE_IN_EVENT)
+				.setCaption(I18nProperties.getPrefixCaption(EventIndexDto.I18N_PREFIX, EventIndexDto.CONTACT_COUNT_SOURCE_IN_EVENT));
+		} else {
+			getColumn(EventIndexDto.CONTACT_COUNT_SOURCE_IN_EVENT)
+				.setCaption(I18nProperties.getPrefixCaption(EventIndexDto.I18N_PREFIX, EventIndexDto.CONTACT_COUNT));
+		}
 	}
 
 	public void reload() {
 
 		if (getSelectionModel().isUserSelectionAllowed()) {
 			deselectAll();
+		}
+
+		EventsViewConfiguration viewConfiguration = ViewModelProviders.of(EventsView.class).get(EventsViewConfiguration.class);
+		if (viewConfiguration.isInEagerMode()) {
+			setEagerDataProvider();
 		}
 
 		getDataProvider().refreshAll();
@@ -177,5 +283,13 @@ public class EventGrid extends FilteredGrid<EventIndexDto, EventCriteria> {
 			DataProvider.fromStream(FacadeProvider.getEventFacade().getIndexList(getCriteria(), null, null, null).stream());
 		setDataProvider(dataProvider);
 		setSelectionMode(SelectionMode.MULTI);
+
+		if (dataProviderListener != null) {
+			dataProvider.addDataProviderListener(dataProviderListener);
+		}
+	}
+
+	public void setDataProviderListener(DataProviderListener<EventIndexDto> dataProviderListener) {
+		this.dataProviderListener = dataProviderListener;
 	}
 }

@@ -37,9 +37,18 @@ public interface DiseaseConfigurationFacade {
 
 	int getFollowUpDuration(Disease disease);
 
+	int getCaseFollowUpDuration(Disease disease);
+
+	int getEventParticipantFollowUpDuration(Disease disease);
+
 	void saveDiseaseConfiguration(DiseaseConfigurationDto configuration);
 
 	Disease getDefaultDisease();
 
 	List<Disease> getAllDiseasesWithFollowUp(Boolean active, Boolean primary, Boolean caseBased);
+
+	boolean usesExtendedClassification(Disease disease);
+
+	boolean usesExtendedClassificationMulti(Disease disease);
+
 }

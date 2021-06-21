@@ -219,9 +219,24 @@ public class SymptomsDtoHelper extends AdoDtoHelper<Symptoms, SymptomsDto> {
 		target.setOtherComplications(source.getOtherComplications());
 		target.setOtherComplicationsText(source.getOtherComplicationsText());
 		target.setRespiratoryDiseaseVentilation(source.getRespiratoryDiseaseVentilation());
-		target.setGeneralSignsOfDisease(source.getGeneralSignsOfDisease());
+		target.setFeelingIll(source.getFeelingIll());
 		target.setFastHeartRate(source.getFastHeartRate());
 		target.setOxygenSaturationLower94(source.getOxygenSaturationLower94());
+		target.setFeverishFeeling(source.getFeverishFeeling());
+		target.setWeakness(source.getWeakness());
+		target.setFatigue(source.getFatigue());
+		target.setCoughWithoutSputum(source.getCoughWithoutSputum());
+		target.setBreathlessness(source.getBreathlessness());
+		target.setChestPressure(source.getChestPressure());
+		target.setBlueLips(source.getBlueLips());
+		target.setBloodCirculationProblems(source.getBloodCirculationProblems());
+		target.setPalpitations(source.getPalpitations());
+		target.setDizzinessStandingUp(source.getDizzinessStandingUp());
+		target.setHighOrLowBloodPressure(source.getHighOrLowBloodPressure());
+		target.setUrinaryRetention(source.getUrinaryRetention());
+		target.setShivering(source.getShivering());
+
+		target.setPseudonymized(source.isPseudonymized());
 	}
 
 	@Override
@@ -390,8 +405,23 @@ public class SymptomsDtoHelper extends AdoDtoHelper<Symptoms, SymptomsDto> {
 		target.setOtherComplications(source.getOtherComplications());
 		target.setOtherComplicationsText(source.getOtherComplicationsText());
 		target.setRespiratoryDiseaseVentilation(source.getRespiratoryDiseaseVentilation());
-		target.setGeneralSignsOfDisease(source.getGeneralSignsOfDisease());
+		target.setFeelingIll(source.getFeelingIll());
 		target.setFastHeartRate(source.getFastHeartRate());
 		target.setOxygenSaturationLower94(source.getOxygenSaturationLower94());
+		target.setFeverishFeeling(source.getFeverishFeeling());
+		target.setWeakness(source.getWeakness());
+		target.setFatigue(source.getFatigue());
+		target.setCoughWithoutSputum(source.getCoughWithoutSputum());
+		target.setBreathlessness(source.getBreathlessness());
+		target.setChestPressure(source.getChestPressure());
+		target.setBlueLips(source.getBlueLips());
+		target.setBloodCirculationProblems(source.getBloodCirculationProblems());
+		target.setPalpitations(source.getPalpitations());
+		target.setDizzinessStandingUp(source.getDizzinessStandingUp());
+		target.setHighOrLowBloodPressure(source.getHighOrLowBloodPressure());
+		target.setUrinaryRetention(source.getUrinaryRetention());
+		target.setShivering(source.getShivering());
+
+		target.setPseudonymized(source.isPseudonymized());
 	}
 }

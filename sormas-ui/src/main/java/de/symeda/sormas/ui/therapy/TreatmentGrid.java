@@ -16,8 +16,10 @@ import de.symeda.sormas.api.therapy.TreatmentCriteria;
 import de.symeda.sormas.api.therapy.TreatmentIndexDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DateHelper;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
+import de.symeda.sormas.ui.utils.FieldAccessCellStyleGenerator;
 import de.symeda.sormas.ui.utils.V7AbstractGrid;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 
@@ -28,7 +30,7 @@ public class TreatmentGrid extends Grid implements V7AbstractGrid<TreatmentCrite
 
 	private TreatmentCriteria treatmentCriteria = new TreatmentCriteria();
 
-	public TreatmentGrid() {
+	public TreatmentGrid(boolean isPseudonymized) {
 		setSizeFull();
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
@@ -47,7 +49,7 @@ public class TreatmentGrid extends Grid implements V7AbstractGrid<TreatmentCrite
 			TreatmentIndexDto.TREATMENT_TYPE,
 			TreatmentIndexDto.TREATMENT_DATE_TIME,
 			TreatmentIndexDto.DOSE,
-			TreatmentIndexDto.ROUTE,
+			TreatmentIndexDto.TREATMENT_ROUTE,
 			TreatmentIndexDto.EXECUTING_CLINICIAN);
 
 		VaadinUiUtil.setupEditColumn(getColumn(EDIT_BTN_ID));
@@ -58,6 +60,10 @@ public class TreatmentGrid extends Grid implements V7AbstractGrid<TreatmentCrite
 		for (Column column : getColumns()) {
 			column.setHeaderCaption(
 				I18nProperties.getPrefixCaption(TreatmentIndexDto.I18N_PREFIX, column.getPropertyId().toString(), column.getHeaderCaption()));
+
+			setCellStyleGenerator(
+				FieldAccessCellStyleGenerator
+					.withFieldAccessCheckers(TreatmentIndexDto.class, UiFieldAccessCheckers.forSensitiveData(isPseudonymized)));
 		}
 
 		addItemClickListener(e -> {

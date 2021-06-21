@@ -15,22 +15,22 @@
 
 package de.symeda.sormas.app.backend.person;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.symeda.sormas.api.PushResult;
+import de.symeda.sormas.api.location.LocationDto;
+import de.symeda.sormas.api.person.PersonContactDetailDto;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.app.backend.common.AdoDtoHelper;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
-import de.symeda.sormas.app.backend.facility.Facility;
 import de.symeda.sormas.app.backend.facility.FacilityDtoHelper;
 import de.symeda.sormas.app.backend.location.Location;
 import de.symeda.sormas.app.backend.location.LocationDtoHelper;
-import de.symeda.sormas.app.backend.region.Community;
 import de.symeda.sormas.app.backend.region.CommunityDtoHelper;
-import de.symeda.sormas.app.backend.region.District;
+import de.symeda.sormas.app.backend.region.CountryDtoHelper;
 import de.symeda.sormas.app.backend.region.DistrictDtoHelper;
-import de.symeda.sormas.app.backend.region.Region;
 import de.symeda.sormas.app.backend.region.RegionDtoHelper;
 import de.symeda.sormas.app.rest.NoConnectionException;
 import de.symeda.sormas.app.rest.RetroProvider;
@@ -39,6 +39,7 @@ import retrofit2.Call;
 public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 
 	private LocationDtoHelper locationHelper = new LocationDtoHelper();
+	private PersonContactDetailDtoHelper personContactDetailDtoHelper = new PersonContactDetailDtoHelper();
 
 	@Override
 	protected Class<Person> getAdoClass() {
@@ -70,6 +71,9 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 
 		target.setFirstName(source.getFirstName());
 		target.setLastName(source.getLastName());
+		target.setSalutation(source.getSalutation());
+		target.setOtherSalutation(source.getOtherSalutation());
+		target.setBirthName(source.getBirthName());
 		target.setNickname(source.getNickname());
 		target.setMothersMaidenName(source.getMothersMaidenName());
 		target.setSex(source.getSex());
@@ -80,9 +84,6 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 		target.setApproximateAge(source.getApproximateAge());
 		target.setApproximateAgeType(source.getApproximateAgeType());
 		target.setApproximateAgeReferenceDate(source.getApproximateAgeReferenceDate());
-
-		target.setPhone(source.getPhone());
-		target.setPhoneOwner(source.getPhoneOwner());
 
 		target.setPresentCondition(source.getPresentCondition());
 		target.setDeathDate(source.getDeathDate());
@@ -94,11 +95,7 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 
 		target.setOccupationType(source.getOccupationType());
 		target.setOccupationDetails(source.getOccupationDetails());
-		target.setOccupationRegion(DatabaseHelper.getRegionDao().getByReferenceDto(source.getOccupationRegion()));
-		target.setOccupationDistrict(DatabaseHelper.getDistrictDao().getByReferenceDto(source.getOccupationDistrict()));
-		target.setOccupationCommunity(DatabaseHelper.getCommunityDao().getByReferenceDto(source.getOccupationCommunity()));
-		target.setOccupationFacility(DatabaseHelper.getFacilityDao().getByReferenceDto(source.getOccupationFacility()));
-		target.setOccupationFacilityDetails(source.getOccupationFacilityDetails());
+		target.setArmedForcesRelationType(source.getArmedForcesRelationType());
 		target.setDeathPlaceType(source.getDeathPlaceType());
 		target.setDeathPlaceDescription(source.getDeathPlaceDescription());
 		target.setBurialDate(source.getBurialDate());
@@ -109,6 +106,7 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 		target.setCauseOfDeathDetails(source.getCauseOfDeathDetails());
 		target.setMothersName(source.getMothersName());
 		target.setFathersName(source.getFathersName());
+		target.setNamesOfGuardians(source.getNamesOfGuardians());
 		target.setPlaceOfBirthRegion(DatabaseHelper.getRegionDao().getByReferenceDto(source.getPlaceOfBirthRegion()));
 		target.setPlaceOfBirthDistrict(DatabaseHelper.getDistrictDao().getByReferenceDto(source.getPlaceOfBirthDistrict()));
 		target.setPlaceOfBirthCommunity(DatabaseHelper.getCommunityDao().getByReferenceDto(source.getPlaceOfBirthCommunity()));
@@ -117,12 +115,38 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 		target.setGestationAgeAtBirth(source.getGestationAgeAtBirth());
 		target.setBirthWeight(source.getBirthWeight());
 
-		target.setGeneralPractitionerDetails(source.getGeneralPractitionerDetails());
-		target.setEmailAddress(source.getEmailAddress());
 		target.setPassportNumber(source.getPassportNumber());
 		target.setNationalHealthId(source.getNationalHealthId());
 
 		target.setPseudonymized(source.isPseudonymized());
+		target.setPlaceOfBirthFacilityType(source.getPlaceOfBirthFacilityType());
+
+		List<Location> addresses = new ArrayList<>();
+		if (!source.getAddresses().isEmpty()) {
+			for (LocationDto locationDto : source.getAddresses()) {
+				Location location = locationHelper.fillOrCreateFromDto(null, locationDto);
+				location.setPerson(target);
+				addresses.add(location);
+			}
+		}
+		target.setAddresses(addresses);
+
+		List<PersonContactDetail> personContactDetails = new ArrayList<>();
+		List<PersonContactDetailDto> personContactDetailDtos = source.getPersonContactDetails();
+		if (!personContactDetailDtos.isEmpty()) {
+			for (PersonContactDetailDto personContactDetailDto : personContactDetailDtos) {
+				PersonContactDetail personContactDetail = personContactDetailDtoHelper.fillOrCreateFromDto(null, personContactDetailDto);
+				personContactDetail.setPerson(target);
+				personContactDetails.add(personContactDetail);
+			}
+		}
+		target.setPersonContactDetails(personContactDetails);
+
+		target.setExternalId(source.getExternalId());
+		target.setExternalToken(source.getExternalToken());
+		target.setBirthCountry(DatabaseHelper.getCountryDao().getByReferenceDto(source.getBirthCountry()));
+		target.setCitizenship(DatabaseHelper.getCountryDao().getByReferenceDto(source.getCitizenship()));
+		target.setAdditionalDetails(source.getAdditionalDetails());
 	}
 
 	@Override
@@ -130,6 +154,9 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 
 		target.setFirstName(source.getFirstName());
 		target.setLastName(source.getLastName());
+		target.setSalutation(source.getSalutation());
+		target.setOtherSalutation(source.getOtherSalutation());
+		target.setBirthName(source.getBirthName());
 		target.setNickname(source.getNickname());
 		target.setMothersMaidenName(source.getMothersMaidenName());
 		target.setSex(source.getSex());
@@ -147,8 +174,6 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 		target.setApproximateAge(source.getApproximateAge());
 		target.setApproximateAgeType(source.getApproximateAgeType());
 		target.setApproximateAgeReferenceDate(source.getApproximateAgeReferenceDate());
-		target.setPhone(source.getPhone());
-		target.setPhoneOwner(source.getPhoneOwner());
 
 		target.setCauseOfDeath(source.getCauseOfDeath());
 		target.setCauseOfDeathDisease(source.getCauseOfDeathDisease());
@@ -162,35 +187,11 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 
 		target.setOccupationType(source.getOccupationType());
 		target.setOccupationDetails(source.getOccupationDetails());
-		if (source.getOccupationRegion() != null) {
-			Region region = DatabaseHelper.getRegionDao().queryForId(source.getOccupationRegion().getId());
-			target.setOccupationRegion(RegionDtoHelper.toReferenceDto(region));
-		} else {
-			target.setOccupationRegion(null);
-		}
-		if (source.getOccupationDistrict() != null) {
-			District district = DatabaseHelper.getDistrictDao().queryForId(source.getOccupationDistrict().getId());
-			target.setOccupationDistrict(DistrictDtoHelper.toReferenceDto(district));
-		} else {
-			target.setOccupationDistrict(null);
-		}
-		if (source.getOccupationCommunity() != null) {
-			Community community = DatabaseHelper.getCommunityDao().queryForId(source.getOccupationCommunity().getId());
-			target.setOccupationCommunity(CommunityDtoHelper.toReferenceDto(community));
-		} else {
-			target.setOccupationCommunity(null);
-		}
-		if (source.getOccupationFacility() != null) {
-			Facility facility = DatabaseHelper.getFacilityDao().queryForId(source.getOccupationFacility().getId());
-			target.setOccupationFacility(FacilityDtoHelper.toReferenceDto(facility));
-		} else {
-			target.setOccupationFacility(null);
-		}
-
-		target.setOccupationFacilityDetails(source.getOccupationFacilityDetails());
+		target.setArmedForcesRelationType(source.getArmedForcesRelationType());
 
 		target.setMothersName(source.getMothersName());
 		target.setFathersName(source.getFathersName());
+		target.setNamesOfGuardians(source.getNamesOfGuardians());
 
 		if (source.getPlaceOfBirthRegion() != null) {
 			target.setPlaceOfBirthRegion(
@@ -221,12 +222,35 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 		target.setGestationAgeAtBirth(source.getGestationAgeAtBirth());
 		target.setBirthWeight(source.getBirthWeight());
 
-		target.setGeneralPractitionerDetails(source.getGeneralPractitionerDetails());
-		target.setEmailAddress(source.getEmailAddress());
 		target.setPassportNumber(source.getPassportNumber());
 		target.setNationalHealthId(source.getNationalHealthId());
 
 		target.setPseudonymized(source.isPseudonymized());
+		target.setPlaceOfBirthFacilityType(source.getPlaceOfBirthFacilityType());
+
+		List<LocationDto> locationDtos = new ArrayList<>();
+		// Necessary because the person is synchronized independently
+		DatabaseHelper.getPersonDao().initLocations(source);
+		for (Location location : source.getAddresses()) {
+			LocationDto locationDto = locationHelper.adoToDto(location);
+			locationDtos.add(locationDto);
+		}
+		target.setAddresses(locationDtos);
+
+		List<PersonContactDetailDto> personContactDetailDtos = new ArrayList<>();
+		// Necessary because the person is synchronized independently
+		DatabaseHelper.getPersonDao().initPersonContactDetails(source);
+		for (PersonContactDetail personContactDetail : source.getPersonContactDetails()) {
+			PersonContactDetailDto personContactDetailDto = personContactDetailDtoHelper.adoToDto(personContactDetail);
+			personContactDetailDtos.add(personContactDetailDto);
+		}
+		target.setPersonContactDetails(personContactDetailDtos);
+
+		target.setExternalId(source.getExternalId());
+		target.setExternalToken(source.getExternalToken());
+		target.setBirthCountry(CountryDtoHelper.toReferenceDto(source.getBirthCountry()));
+		target.setCitizenship(CountryDtoHelper.toReferenceDto(source.getCitizenship()));
+		target.setAdditionalDetails(source.getAdditionalDetails());
 	}
 
 	public static PersonReferenceDto toReferenceDto(Person ado) {

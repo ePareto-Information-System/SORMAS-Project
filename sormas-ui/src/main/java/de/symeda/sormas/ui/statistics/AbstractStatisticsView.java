@@ -17,7 +17,7 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.statistics;
 
-import com.vaadin.ui.Label;
+import com.vaadin.ui.Component;
 
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -27,7 +27,7 @@ import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.AbstractSubNavigationView;
 
 @SuppressWarnings("serial")
-public class AbstractStatisticsView extends AbstractSubNavigationView {
+public class AbstractStatisticsView extends AbstractSubNavigationView<Component> {
 
 	public static final String ROOT_VIEW_NAME = "statistics";
 
@@ -36,13 +36,11 @@ public class AbstractStatisticsView extends AbstractSubNavigationView {
 	}
 
 	@Override
-	public void refreshMenu(SubMenu menu, Label infoLabel, Label infoLabelSub, String params) {
+	public void refreshMenu(SubMenu menu, String params) {
 		menu.removeAllViews();
 		menu.addView(StatisticsView.VIEW_NAME, I18nProperties.getCaption(Captions.statisticsStatistics), params);
 		if (UserProvider.getCurrent().hasUserRight(UserRight.DATABASE_EXPORT_ACCESS)) {
 			menu.addView(DatabaseExportView.VIEW_NAME, I18nProperties.getCaption(Captions.statisticsDatabaseExport), params);
 		}
-
-		hideInfoLabel();
 	}
 }

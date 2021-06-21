@@ -13,7 +13,7 @@ import de.symeda.sormas.api.contact.ContactIndexDto;
 import de.symeda.sormas.api.contact.ContactSimilarityCriteria;
 import de.symeda.sormas.api.contact.SimilarContactDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.person.PersonIndexDto;
+import de.symeda.sormas.api.person.SimilarPersonDto;
 
 public class ContactSelectionGrid extends Grid {
 
@@ -22,6 +22,11 @@ public class ContactSelectionGrid extends Grid {
 	public ContactSelectionGrid(ContactSimilarityCriteria criteria) {
 		buildGrid();
 		loadData(criteria);
+	}
+
+	public ContactSelectionGrid(List<SimilarContactDto> contacts) {
+		buildGrid();
+		setContainerData(contacts);
 	}
 
 	private void buildGrid() {
@@ -49,7 +54,7 @@ public class ContactSelectionGrid extends Grid {
 			column.setHeaderCaption(
 				I18nProperties.findPrefixCaption(
 					column.getPropertyId().toString(),
-					PersonIndexDto.I18N_PREFIX,
+					SimilarPersonDto.I18N_PREFIX,
 					ContactIndexDto.I18N_PREFIX,
 					ContactDto.I18N_PREFIX));
 		}
@@ -60,6 +65,10 @@ public class ContactSelectionGrid extends Grid {
 
 	private void loadData(ContactSimilarityCriteria criteria) {
 		final List<SimilarContactDto> similarContacts = FacadeProvider.getContactFacade().getMatchingContacts(criteria);
+		setContainerData(similarContacts);
+	}
+
+	private void setContainerData(List<SimilarContactDto> similarContacts) {
 		getContainer().removeAllItems();
 		getContainer().addAll(similarContacts);
 		setHeightByRows(similarContacts.size() > 0 ? (similarContacts.size() <= 10 ? similarContacts.size() : 10) : 1);

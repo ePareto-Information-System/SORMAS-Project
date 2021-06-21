@@ -8,15 +8,15 @@ import javax.persistence.criteria.JoinType;
 
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 
-public class AbstractDomainObjectJoins<X extends AbstractDomainObject, Y extends AbstractDomainObject> {
+public class AbstractDomainObjectJoins<Z, Y extends AbstractDomainObject> {
 
-	private From<X, Y> root;
+	private From<Z, Y> root;
 
-	public AbstractDomainObjectJoins(From<X, Y> root) {
+	public AbstractDomainObjectJoins(From<Z, Y> root) {
 		this.root = root;
 	}
 
-	public From<X, Y> getRoot() {
+	public From<Z, Y> getRoot() {
 		return root;
 	}
 
@@ -29,6 +29,8 @@ public class AbstractDomainObjectJoins<X extends AbstractDomainObject, Y extends
 		if (join == null) {
 			join = parent.join(attribute, joinType);
 			setValue.accept(join);
+		} else if (join.getJoinType() != joinType) {
+			throw new IllegalArgumentException("Join already defined with another join type");
 		}
 
 		return join;

@@ -1,6 +1,5 @@
 package de.symeda.sormas.backend.sample;
 
-import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -11,6 +10,7 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import de.symeda.sormas.api.sample.AdditionalTestDto;
@@ -20,6 +20,7 @@ import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.ModelConstants;
+import de.symeda.sormas.backend.util.Pseudonymizer;
 
 @Stateless(name = "AdditionalTestFacade")
 public class AdditionalTestFacadeEjb implements AdditionalTestFacade {
@@ -33,6 +34,8 @@ public class AdditionalTestFacadeEjb implements AdditionalTestFacade {
 	private SampleService sampleService;
 	@EJB
 	private UserService userService;
+	@EJB
+	private SampleJurisdictionChecker sampleJurisdictionChecker;
 
 	@Override
 	public AdditionalTestDto getByUuid(String uuid) {
@@ -51,9 +54,13 @@ public class AdditionalTestFacadeEjb implements AdditionalTestFacade {
 	}
 
 	@Override
-	public AdditionalTestDto saveAdditionalTest(AdditionalTestDto additionalTest) {
+	public AdditionalTestDto saveAdditionalTest(@Valid AdditionalTestDto additionalTest) {
+		return saveAdditionalTest(additionalTest, true);
+	}
 
-		AdditionalTest entity = fromDto(additionalTest);
+	public AdditionalTestDto saveAdditionalTest(AdditionalTestDto additionalTest, boolean checkChangeDate) {
+
+		AdditionalTest entity = fromDto(additionalTest, checkChangeDate);
 		service.ensurePersisted(entity);
 		return toDto(entity);
 	}
@@ -96,18 +103,17 @@ public class AdditionalTestFacadeEjb implements AdditionalTestFacade {
 		return service.getAllActiveUuids(user);
 	}
 
-	public AdditionalTest fromDto(@NotNull AdditionalTestDto source) {
+	public AdditionalTestDto convertToDto(AdditionalTest source, Pseudonymizer pseudonymizer) {
+		AdditionalTestDto dto = toDto(source);
 
-		AdditionalTest target = service.getByUuid(source.getUuid());
-		if (target == null) {
-			target = new AdditionalTest();
-			target.setUuid(source.getUuid());
-			if (source.getCreationDate() != null) {
-				target.setCreationDate(new Timestamp(source.getCreationDate().getTime()));
-			}
-		}
+		pseudonymizer.pseudonymizeDto(AdditionalTestDto.class, dto, sampleJurisdictionChecker.isInJurisdictionOrOwned(source.getSample()), null);
 
-		DtoHelper.validateDto(source, target);
+		return dto;
+	}
+
+	public AdditionalTest fromDto(@NotNull AdditionalTestDto source, boolean checkChangeDate) {
+
+		AdditionalTest target = DtoHelper.fillOrBuildEntity(source, service.getByUuid(source.getUuid()), AdditionalTest::new, checkChangeDate);
 
 		target.setSample(sampleService.getByReferenceDto(source.getSample()));
 		target.setTestDateTime(source.getTestDateTime());
@@ -135,7 +141,7 @@ public class AdditionalTestFacadeEjb implements AdditionalTestFacade {
 		return target;
 	}
 
-	public AdditionalTestDto toDto(AdditionalTest source) {
+	public static AdditionalTestDto toDto(AdditionalTest source) {
 
 		if (source == null) {
 			return null;

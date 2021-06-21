@@ -19,10 +19,13 @@ package de.symeda.sormas.api.task;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Remote;
+import javax.validation.Valid;
 
 import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.event.EventReferenceDto;
 import de.symeda.sormas.api.utils.SortProperty;
@@ -30,11 +33,13 @@ import de.symeda.sormas.api.utils.SortProperty;
 @Remote
 public interface TaskFacade {
 
-	TaskDto saveTask(TaskDto dto);
+	TaskDto saveTask(@Valid TaskDto dto);
 
 	List<TaskDto> getAllActiveTasksAfter(Date date);
 
 	List<TaskDto> getAllByCase(CaseReferenceDto caseRef);
+
+	Page<TaskIndexDto> getIndexPage(TaskCriteria taskCriteria, Integer offset, Integer size, List<SortProperty> sortProperties);
 
 	List<TaskDto> getAllByContact(ContactReferenceDto contactRef);
 
@@ -48,7 +53,7 @@ public interface TaskFacade {
 
 	long getPendingTaskCountByEvent(EventReferenceDto eventDto);
 
-	long getPendingTaskCount(String userUuid);
+	Map<String, Long> getPendingTaskCountPerUser(List<String> userUuids);
 
 	TaskDto getByUuid(String uuid);
 

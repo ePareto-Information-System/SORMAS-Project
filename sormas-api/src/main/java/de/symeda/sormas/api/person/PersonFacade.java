@@ -17,15 +17,19 @@
  *******************************************************************************/
 package de.symeda.sormas.api.person;
 
-import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.caze.CaseCriteria;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.user.UserReferenceDto;
-
-import javax.ejb.Remote;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import javax.ejb.Remote;
+import javax.validation.Valid;
+
+import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.caze.CaseCriteria;
+import de.symeda.sormas.api.contact.FollowUpStatus;
+import de.symeda.sormas.api.region.DistrictReferenceDto;
+import de.symeda.sormas.api.user.UserReferenceDto;
+import de.symeda.sormas.api.utils.SortProperty;
 
 @Remote
 public interface PersonFacade {
@@ -36,17 +40,17 @@ public interface PersonFacade {
 
 	PersonReferenceDto getReferenceByUuid(String uuid);
 
-	PersonDto getPersonByUuid(String uuid);
+	JournalPersonDto getPersonForJournal(String uuid);
 
-	PersonDto savePerson(PersonDto dto);
+	PersonDto savePerson(@Valid PersonDto dto);
 
 	void validate(PersonDto dto);
 
 	List<String> getAllUuids();
 
-	List<PersonDto> getByUuids(List<String> uuids);
+	PersonDto getPersonByUuid(String uuid);
 
-	PersonIndexDto getIndexDto(String uuid);
+	List<PersonDto> getByUuids(List<String> uuids);
 
 	Map<Disease, Long> getDeathCountByDisease(CaseCriteria caseCriteria, boolean excludeSharedCases, boolean excludeCasesFromContacts);
 
@@ -56,9 +60,29 @@ public interface PersonFacade {
 	 */
 	List<PersonNameDto> getMatchingNameDtos(UserReferenceDto user, PersonSimilarityCriteria criteria);
 
+	boolean checkMatchingNameInDatabase(UserReferenceDto userRef, PersonSimilarityCriteria criteria);
+
 	List<SimilarPersonDto> getSimilarPersonsByUuids(List<String> personUuids);
 
 	Boolean isValidPersonUuid(String personUuid);
 
-	List<PersonQuarantineEndDto> getLatestQuarantineEndDates(Date since);
+	List<PersonFollowUpEndDto> getLatestFollowUpEndDates(Date since, boolean forSymptomsJournal);
+
+	Date getLatestFollowUpEndDateByUuid(String uuid);
+
+	FollowUpStatus getMostRelevantFollowUpStatusByUuid(String uuid);
+
+	boolean setSymptomJournalStatus(String personUuid, SymptomJournalStatus status);
+
+	List<PersonIndexDto> getIndexList(PersonCriteria criteria, Integer offset, Integer limit, List<SortProperty> sortProperties);
+
+	long count(PersonCriteria criteria);
+
+	boolean exists(String uuid);
+
+	boolean doesExternalTokenExist(String externalToken, String personUuid);
+
+	long setMissingGeoCoordinates(boolean overwriteExistingCoordinates);
+
+	boolean isSharedWithoutOwnership(String uuid);
 }

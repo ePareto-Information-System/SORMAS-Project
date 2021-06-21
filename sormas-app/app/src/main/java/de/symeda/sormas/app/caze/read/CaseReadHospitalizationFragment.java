@@ -18,16 +18,20 @@ package de.symeda.sormas.app.caze.read;
 import static android.view.View.GONE;
 
 import android.os.Bundle;
+import android.view.ViewGroup;
 
 import androidx.databinding.ObservableArrayList;
 
+import de.symeda.sormas.api.hospitalization.PreviousHospitalizationDto;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
+import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.app.BaseReadFragment;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.caze.Case;
 import de.symeda.sormas.app.backend.hospitalization.Hospitalization;
 import de.symeda.sormas.app.backend.hospitalization.PreviousHospitalization;
 import de.symeda.sormas.app.databinding.FragmentCaseReadHospitalizationLayoutBinding;
-import de.symeda.sormas.app.util.InfrastructureHelper;
+import de.symeda.sormas.app.util.InfrastructureDaoHelper;
 
 public class CaseReadHospitalizationFragment extends BaseReadFragment<FragmentCaseReadHospitalizationLayoutBinding, Hospitalization, Case> {
 
@@ -39,7 +43,12 @@ public class CaseReadHospitalizationFragment extends BaseReadFragment<FragmentCa
 	// Static methods
 
 	public static CaseReadHospitalizationFragment newInstance(Case activityRootData) {
-		return newInstance(CaseReadHospitalizationFragment.class, null, activityRootData);
+		return newInstanceWithFieldCheckers(
+			CaseReadHospitalizationFragment.class,
+			null,
+			activityRootData,
+			new FieldVisibilityCheckers(),
+			UiFieldAccessCheckers.forSensitiveData(activityRootData.isPseudonymized()));
 	}
 
 	// Overrides
@@ -58,11 +67,14 @@ public class CaseReadHospitalizationFragment extends BaseReadFragment<FragmentCa
 		contentBinding.setData(record);
 		contentBinding.setCaze(caze);
 		contentBinding.setPreviousHospitalizationList(previousHospitalizations);
+		contentBinding.setPreviousHospitalizationBindCallback(v -> {
+			setFieldVisibilitiesAndAccesses(PreviousHospitalizationDto.class, (ViewGroup) v);
+		});
 	}
 
 	@Override
 	public void onAfterLayoutBinding(FragmentCaseReadHospitalizationLayoutBinding contentBinding) {
-		InfrastructureHelper
+		InfrastructureDaoHelper
 			.initializeHealthFacilityDetailsFieldVisibility(contentBinding.caseDataHealthFacility, contentBinding.caseDataHealthFacilityDetails);
 
 		// Previous hospitalizations list

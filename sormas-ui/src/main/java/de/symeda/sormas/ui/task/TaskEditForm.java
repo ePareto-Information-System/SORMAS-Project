@@ -24,38 +24,53 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.locs;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.vaadin.icons.VaadinIcons;
+import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.shared.ui.MarginInfo;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.v7.ui.AbstractSelect.ItemCaptionMode;
 import com.vaadin.v7.ui.ComboBox;
-import com.vaadin.v7.ui.OptionGroup;
 import com.vaadin.v7.ui.TextArea;
 
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.ReferenceDto;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.event.EventDto;
+import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.task.TaskContext;
 import de.symeda.sormas.api.task.TaskDto;
 import de.symeda.sormas.api.task.TaskType;
+import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.user.UserRole;
-import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
 import de.symeda.sormas.ui.utils.DateComparisonValidator;
 import de.symeda.sormas.ui.utils.DateTimeField;
 import de.symeda.sormas.ui.utils.FieldHelper;
+import de.symeda.sormas.ui.utils.NullableOptionGroup;
 import de.symeda.sormas.ui.utils.TaskStatusValidator;
 
 public class TaskEditForm extends AbstractEditForm<TaskDto> {
 
 	private static final long serialVersionUID = 1L;
+
+	private static final String SAVE_INFO = "saveInfo";
+	private static final String ASSIGNEE_MISSING_INFO = "assigneeMissingInfo";
 
 	//@formatter:off
 	private static final String HTML_LAYOUT = 
@@ -65,17 +80,23 @@ public class TaskEditForm extends AbstractEditForm<TaskDto> {
 			fluidRowLocs(TaskDto.TASK_TYPE) +
 			fluidRowLocs(TaskDto.SUGGESTED_START, TaskDto.DUE_DATE) +
 			fluidRowLocs(TaskDto.ASSIGNEE_USER, TaskDto.PRIORITY) +
+			fluidRowLocs(ASSIGNEE_MISSING_INFO) +
 			fluidRowLocs(TaskDto.CREATOR_COMMENT) +
 			fluidRowLocs(TaskDto.ASSIGNEE_REPLY) +
-			fluidRowLocs(TaskDto.TASK_STATUS);
-	//@formatter:off
+			fluidRowLocs(TaskDto.TASK_STATUS) +
+			fluidRowLocs(SAVE_INFO);
+	//@formatter:on
 
 	private UserRight editOrCreateUserRight;
+	private boolean editedFromTaskGrid;
 
-	public TaskEditForm(boolean create) {
+	public TaskEditForm(boolean create, boolean editedFromTaskGrid) {
 
 		super(TaskDto.class, TaskDto.I18N_PREFIX);
+
+		this.editedFromTaskGrid = editedFromTaskGrid;
 		this.editOrCreateUserRight = editOrCreateUserRight;
+
 		addValueChangeListener(e -> {
 			updateByTaskContext();
 			updateByCreatingAndAssignee();
@@ -98,8 +119,8 @@ public class TaskEditForm extends AbstractEditForm<TaskDto> {
 		DateTimeField dueDate = addDateField(TaskDto.DUE_DATE, DateTimeField.class, -1);
 		dueDate.setImmediate(true);
 		addField(TaskDto.PRIORITY, ComboBox.class);
-		OptionGroup taskStatus = addField(TaskDto.TASK_STATUS, OptionGroup.class);
-		OptionGroup taskContext = addField(TaskDto.TASK_CONTEXT, OptionGroup.class);
+		NullableOptionGroup taskStatus = addField(TaskDto.TASK_STATUS, NullableOptionGroup.class);
+		NullableOptionGroup taskContext = addField(TaskDto.TASK_CONTEXT, NullableOptionGroup.class);
 		taskContext.setImmediate(true);
 		taskContext.addValueChangeListener(event -> updateByTaskContext());
 
@@ -114,15 +135,18 @@ public class TaskEditForm extends AbstractEditForm<TaskDto> {
 		});
 
 		ComboBox assigneeUser = addField(TaskDto.ASSIGNEE_USER, ComboBox.class);
-		assigneeUser.addValueChangeListener(e -> updateByCreatingAndAssignee());
+		assigneeUser.addValueChangeListener(e -> {
+			updateByCreatingAndAssignee();
+			checkIfAssigneeEmailOrPhoneIsProvided((UserReferenceDto) e.getProperty().getValue());
+		});
 		assigneeUser.setImmediate(true);
 
 		TextArea creatorComment = addField(TaskDto.CREATOR_COMMENT, TextArea.class);
 		creatorComment.setRows(2);
 		creatorComment.setImmediate(true);
-		addField(TaskDto.ASSIGNEE_REPLY, TextArea.class).setRows(2);
+		addField(TaskDto.ASSIGNEE_REPLY, TextArea.class).setRows(4);
 
-		setRequired(true, TaskDto.TASK_CONTEXT, TaskDto.TASK_TYPE, TaskDto.ASSIGNEE_USER, TaskDto.DUE_DATE);
+		setRequired(true, TaskDto.TASK_CONTEXT, TaskDto.TASK_TYPE, TaskDto.ASSIGNEE_USER, TaskDto.DUE_DATE, TaskDto.TASK_STATUS);
 		setReadOnly(true, TaskDto.TASK_CONTEXT, TaskDto.CAZE, TaskDto.CONTACT, TaskDto.EVENT);
 
 		addValueChangeListener(e -> {
@@ -133,8 +157,17 @@ public class TaskEditForm extends AbstractEditForm<TaskDto> {
 					new TaskStatusValidator(
 						taskDto.getCaze().getUuid(),
 						I18nProperties.getValidationError(Validations.investigationStatusUnclassifiedCase)));
+
+				if (!editedFromTaskGrid) {
+					final HorizontalLayout saveInfoLayout = new HorizontalLayout(
+						new Label(VaadinIcons.INFO_CIRCLE.getHtml() + " " + I18nProperties.getString(Strings.infoSaveOfTask), ContentMode.HTML));
+					saveInfoLayout.setSpacing(true);
+					saveInfoLayout.setMargin(new MarginInfo(true, false, true, false));
+					getContent().addComponent(saveInfoLayout, SAVE_INFO);
+				}
 			}
 
+			UserDto userDto = UserProvider.getCurrent().getUser();
 			DistrictReferenceDto district = null;
 			RegionReferenceDto region = null;
 			if (taskDto.getCaze() != null) {
@@ -156,19 +189,30 @@ public class TaskEditForm extends AbstractEditForm<TaskDto> {
 				district = eventDto.getEventLocation().getDistrict();
 				region = eventDto.getEventLocation().getRegion();
 			} else {
-				UserDto userDto = UserProvider.getCurrent().getUser();
 				district = userDto.getDistrict();
 				region = userDto.getRegion();
 			}
 
-			List<UserReferenceDto> users = new ArrayList<>();
+			final List<UserReferenceDto> users = new ArrayList<>();
 			if (district != null) {
-				users = FacadeProvider.getUserFacade().getUserRefsByDistrict(district, true);
+				users.addAll(FacadeProvider.getUserFacade().getUserRefsByDistrict(district, true));
 			} else if (region != null) {
-				users = FacadeProvider.getUserFacade().getUsersByRegionAndRoles(region);
+				users.addAll(FacadeProvider.getUserFacade().getUsersByRegionAndRoles(region));
 			} else {
 				// fallback - just show all users
-				users = FacadeProvider.getUserFacade().getAllAfterAsReference(null);
+				users.addAll(FacadeProvider.getUserFacade().getAllUserRefs(false));
+			}
+
+			// Allow users to assign tasks to users of the next higher jurisdiction level, when the higher jurisdiction contains the users jurisdiction
+			// For facility users, this checks where the facility is located and considers the district & community of the faciliy the "higher level"
+			// For national users, there is no higher level
+			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.ASSIGN_TASKS_TO_HIGHER_LEVEL)
+				&& UserRole.getJurisdictionLevel(userDto.getUserRoles()) != JurisdictionLevel.NATION) {
+
+				List<UserReferenceDto> superordinateUsers = FacadeProvider.getUserFacade().getUsersWithSuperiorJurisdiction(userDto);
+				if (superordinateUsers != null) {
+					users.addAll(superordinateUsers);
+				}
 			}
 
 			// Validation
@@ -187,12 +231,49 @@ public class TaskEditForm extends AbstractEditForm<TaskDto> {
 					false,
 					I18nProperties.getValidationError(Validations.afterDate, dueDate.getCaption(), startDate.getCaption())));
 
-			TaskController taskController = ControllerProvider.getTaskController();
+			Map<String, Long> userTaskCounts =
+				FacadeProvider.getTaskFacade().getPendingTaskCountPerUser(users.stream().map(ReferenceDto::getUuid).collect(Collectors.toList()));
 			for (UserReferenceDto user : users) {
 				assigneeUser.addItem(user);
-				assigneeUser.setItemCaption(user, taskController.getUserCaptionWithPendingTaskCount(user));
+				Long userTaskCount = userTaskCounts.get(user.getUuid());
+				assigneeUser.setItemCaption(user, user.getCaption() + " (" + (userTaskCount != null ? userTaskCount.toString() : "0") + ")");
 			}
 		});
+	}
+
+	private void checkIfAssigneeEmailOrPhoneIsProvided(UserReferenceDto assigneeRef) {
+
+		if (assigneeRef == null || FacadeProvider.getFeatureConfigurationFacade().isFeatureDisabled(FeatureType.TASK_NOTIFICATIONS)) {
+			return;
+		}
+
+		UserDto user = FacadeProvider.getUserFacade().getByUuid(assigneeRef.getUuid());
+		boolean hasEmail = !StringUtils.isEmpty(user.getUserEmail());
+		boolean hasPhoneNumber = !StringUtils.isEmpty(user.getPhone());
+
+		boolean isSmsServiceSetUp = FacadeProvider.getConfigFacade().isSmsServiceSetUp();
+
+		if (isSmsServiceSetUp && !hasEmail && !hasPhoneNumber) {
+			getContent().addComponent(
+				getMissingInfoComponent(I18nProperties.getString(Strings.infoAssigneeMissingEmailOrPhoneNumber)),
+				ASSIGNEE_MISSING_INFO);
+		} else if (!isSmsServiceSetUp && !hasEmail) {
+			getContent().addComponent(getMissingInfoComponent(I18nProperties.getString(Strings.infoAssigneeMissingEmail)), ASSIGNEE_MISSING_INFO);
+		} else {
+			getContent().removeComponent(ASSIGNEE_MISSING_INFO);
+		}
+	}
+
+	private HorizontalLayout getMissingInfoComponent(String caption) {
+		Label assigneeMissingInfoLabel = new Label(VaadinIcons.INFO_CIRCLE.getHtml() + " " + caption, ContentMode.HTML);
+		assigneeMissingInfoLabel.setWidthFull();
+
+		final HorizontalLayout assigneeMissingInfo = new HorizontalLayout(assigneeMissingInfoLabel);
+		assigneeMissingInfo.setSpacing(true);
+		assigneeMissingInfo.setMargin(new MarginInfo(false, false, true, false));
+		assigneeMissingInfo.setWidthFull();
+
+		return assigneeMissingInfo;
 	}
 
 	private void updateByCreatingAndAssignee() {

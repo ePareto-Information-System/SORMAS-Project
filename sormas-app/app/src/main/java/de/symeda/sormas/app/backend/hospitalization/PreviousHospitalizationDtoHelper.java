@@ -95,6 +95,13 @@ public class PreviousHospitalizationDtoHelper extends AdoDtoHelper<PreviousHospi
 		a.setAdmissionDate(b.getAdmissionDate());
 		a.setDischargeDate(b.getDischargeDate());
 		a.setDescription(b.getDescription());
+		a.setHospitalizationReason(b.getHospitalizationReason());
+		a.setOtherHospitalizationReason(b.getOtherHospitalizationReason());
+		a.setIntensiveCareUnit(b.getIntensiveCareUnit());
+		a.setIntensiveCareUnitStart(b.getIntensiveCareUnitStart());
+		a.setIntensiveCareUnitEnd(b.getIntensiveCareUnitEnd());
+
+		a.setPseudonymized(b.isPseudonymized());
 	}
 
 	@Override
@@ -133,5 +140,12 @@ public class PreviousHospitalizationDtoHelper extends AdoDtoHelper<PreviousHospi
 		a.setAdmissionDate(b.getAdmissionDate());
 		a.setDischargeDate(b.getDischargeDate());
 		a.setDescription(b.getDescription());
+		a.setHospitalizationReason(b.getHospitalizationReason());
+		a.setOtherHospitalizationReason(b.getOtherHospitalizationReason());
+		a.setIntensiveCareUnit(b.getIntensiveCareUnit());
+		a.setIntensiveCareUnitStart(b.getIntensiveCareUnitStart());
+		a.setIntensiveCareUnitEnd(b.getIntensiveCareUnitEnd());
+
+		a.setPseudonymized(b.isPseudonymized());
 	}
 }

@@ -15,6 +15,17 @@
 
 package de.symeda.sormas.app;
 
+import static de.symeda.sormas.app.core.notification.NotificationType.ERROR;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import com.google.android.material.navigation.NavigationView;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -39,14 +50,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import com.google.android.material.navigation.NavigationView;
-
-import org.apache.commons.lang3.StringUtils;
-
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
 
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.user.UserRight;
@@ -73,8 +76,6 @@ import de.symeda.sormas.app.rest.SynchronizeDataAsync;
 import de.symeda.sormas.app.util.Bundler;
 import de.symeda.sormas.app.util.Callback;
 import de.symeda.sormas.app.util.NavigationHelper;
-
-import static de.symeda.sormas.app.core.notification.NotificationType.ERROR;
 
 public abstract class BaseActivity extends BaseLocalizedActivity implements NotificationContext {
 
@@ -239,16 +240,19 @@ public abstract class BaseActivity extends BaseLocalizedActivity implements Noti
 
 	protected void updatePageMenu() {
 		List<PageMenuItem> menuItems = getPageMenuData();
-		if (pageMenu != null && menuItems != null) {
+		if (pageMenu != null) {
 			ensureFabHiddenOnSoftKeyboardShown(pageMenu);
 			pageMenu.hide();
 
 			List<PageMenuItem> displayedMenuItems = new ArrayList<>();
-			for (PageMenuItem item : menuItems) {
-				if (item != null) {
-					displayedMenuItems.add(item);
+			if (menuItems != null) {
+				for (PageMenuItem item : menuItems) {
+					if (item != null) {
+						displayedMenuItems.add(item);
+					}
 				}
 			}
+
 			pageMenu.setMenuData(displayedMenuItems);
 			pageMenu.markActiveMenuItem(initializePageMenu(menuItems));
 		}
@@ -296,6 +300,8 @@ public abstract class BaseActivity extends BaseLocalizedActivity implements Noti
 					NavigationHelper.goToEvents(getContext());
 				} else if (id == R.id.menu_item_samples) {
 					NavigationHelper.goToSamples(getContext());
+				} else if (id == R.id.menu_item_campaigns) {
+					NavigationHelper.goToCampaigns(getContext());
 				} else if (id == R.id.menu_item_reports) {
 					NavigationHelper.goToReports(getContext());
 				}
@@ -403,10 +409,13 @@ public abstract class BaseActivity extends BaseLocalizedActivity implements Noti
 				dashboardMenu.setVisible(false);
 
 			if (taskMenu != null)
-				taskMenu.setVisible(ConfigProvider.hasUserRight(UserRight.TASK_VIEW));
+				taskMenu.setVisible(
+					ConfigProvider.hasUserRight(UserRight.TASK_VIEW)
+						&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.TASK_MANAGEMENT));
 
 			if (caseMenu != null)
-				caseMenu.setVisible(ConfigProvider.hasUserRight(UserRight.CASE_VIEW)
+				caseMenu.setVisible(
+					ConfigProvider.hasUserRight(UserRight.CASE_VIEW)
 						&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.CASE_SURVEILANCE));
 
 			if (aggregateReportsMenu != null)
@@ -415,7 +424,8 @@ public abstract class BaseActivity extends BaseLocalizedActivity implements Noti
 						&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.AGGREGATE_REPORTING));
 
 			if (sampleMenu != null)
-				sampleMenu.setVisible(ConfigProvider.hasUserRight(UserRight.SAMPLE_VIEW)
+				sampleMenu.setVisible(
+					ConfigProvider.hasUserRight(UserRight.SAMPLE_VIEW)
 						&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.SAMPLES_LAB));
 
 			if (eventMenu != null)
@@ -424,7 +434,8 @@ public abstract class BaseActivity extends BaseLocalizedActivity implements Noti
 						&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.EVENT_SURVEILLANCE));
 
 			if (contactMenu != null)
-				contactMenu.setVisible(ConfigProvider.hasUserRight(UserRight.CONTACT_VIEW)
+				contactMenu.setVisible(
+					ConfigProvider.hasUserRight(UserRight.CONTACT_VIEW)
 						&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.CONTACT_TRACING));
 
 			if (reportMenu != null)
@@ -725,10 +736,12 @@ public abstract class BaseActivity extends BaseLocalizedActivity implements Noti
 
 	private PageMenuItem initializePageMenu(List<PageMenuItem> menuList) {
 		this.pageItems = menuList;
-		activePageItem = menuList.get(0);
-		for (int i = 0; i < menuList.size(); i++) {
-			if (i == activePagePosition) {
-				activePageItem = menuList.get(i);
+		if (CollectionUtils.isNotEmpty(menuList)) {
+			activePageItem = menuList.get(0);
+			for (int i = 0; i < menuList.size(); i++) {
+				if (i == activePagePosition) {
+					activePageItem = menuList.get(i);
+				}
 			}
 		}
 

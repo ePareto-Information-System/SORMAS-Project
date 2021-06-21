@@ -22,6 +22,7 @@ import java.io.Serializable;
 import de.symeda.sormas.api.BaseCriteria;
 import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.region.CommunityReferenceDto;
+import de.symeda.sormas.api.region.CountryReferenceDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.utils.IgnoreForUrl;
@@ -30,12 +31,24 @@ public class FacilityCriteria extends BaseCriteria implements Serializable, Clon
 
 	private static final long serialVersionUID = 3958619224286048978L;
 
+	private CountryReferenceDto country;
 	private RegionReferenceDto region;
 	private DistrictReferenceDto district;
 	private CommunityReferenceDto community;
 	private String nameCityLike;
+	private FacilityTypeGroup typeGroup;
 	private FacilityType type;
 	private EntityRelevanceStatus relevanceStatus;
+
+	public CountryReferenceDto getCountry() {
+		return country;
+	}
+
+	public FacilityCriteria country(CountryReferenceDto country) {
+		this.country = country;
+
+		return this;
+	}
 
 	public FacilityCriteria region(RegionReferenceDto region) {
 		this.region = region;
@@ -62,6 +75,16 @@ public class FacilityCriteria extends BaseCriteria implements Serializable, Clon
 
 	public CommunityReferenceDto getCommunity() {
 		return community;
+	}
+
+	public FacilityCriteria typeGroup(FacilityTypeGroup typeGroup) {
+		this.typeGroup = typeGroup;
+		return this;
+	}
+
+	@IgnoreForUrl
+	public FacilityTypeGroup getTypeGroup() {
+		return typeGroup;
 	}
 
 	public FacilityCriteria type(FacilityType type) {
