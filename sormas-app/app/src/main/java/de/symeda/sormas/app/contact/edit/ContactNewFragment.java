@@ -40,12 +40,11 @@ import de.symeda.sormas.app.backend.config.ConfigProvider;
 import de.symeda.sormas.app.backend.contact.Contact;
 import de.symeda.sormas.app.caze.edit.CaseNewFragment;
 import de.symeda.sormas.app.component.Item;
-import de.symeda.sormas.app.component.controls.ControlCheckBoxField;
-import de.symeda.sormas.app.component.controls.ControlDateField;
 import de.symeda.sormas.app.databinding.FragmentContactNewLayoutBinding;
+import de.symeda.sormas.app.person.edit.PersonValidator;
 import de.symeda.sormas.app.util.DataUtils;
 import de.symeda.sormas.app.util.DiseaseConfigurationCache;
-import de.symeda.sormas.app.util.InfrastructureHelper;
+import de.symeda.sormas.app.util.InfrastructureDaoHelper;
 
 public class ContactNewFragment extends BaseEditFragment<FragmentContactNewLayoutBinding, Contact, Contact> {
 
@@ -84,9 +83,9 @@ public class ContactNewFragment extends BaseEditFragment<FragmentContactNewLayou
 			sourceCase = DatabaseHelper.getCaseDao().queryUuidBasic(record.getCaseUuid());
 		}
 		relationshipList = DataUtils.getEnumItems(ContactRelation.class, true);
-		initialRegions = InfrastructureHelper.loadRegions();
-		initialDistricts = InfrastructureHelper.loadDistricts(record.getRegion());
-		initialCommunities = InfrastructureHelper.loadCommunities(record.getDistrict());
+		initialRegions = InfrastructureDaoHelper.loadRegionsByServerCountry();
+		initialDistricts = InfrastructureDaoHelper.loadDistricts(record.getRegion());
+		initialCommunities = InfrastructureDaoHelper.loadCommunities(record.getDistrict());
 		diseaseList = DataUtils.toItems(DiseaseConfigurationCache.getInstance().getAllDiseases(true, true, true));
 		sexList = DataUtils.getEnumItems(Sex.class, true);
 		categoryList = DataUtils.getEnumItems(ContactCategory.class, true);
@@ -98,7 +97,10 @@ public class ContactNewFragment extends BaseEditFragment<FragmentContactNewLayou
 		contentBinding.setData(record);
 		contentBinding.setYesNoUnknownClass(YesNoUnknown.class);
 
-		InfrastructureHelper.initializeRegionFields(
+		PersonValidator
+			.initializeBirthDateValidation(contentBinding.personBirthdateYYYY, contentBinding.personBirthdateMM, contentBinding.personBirthdateDD);
+
+		InfrastructureDaoHelper.initializeRegionFields(
 			contentBinding.contactRegion,
 			initialRegions,
 			record.getRegion(),

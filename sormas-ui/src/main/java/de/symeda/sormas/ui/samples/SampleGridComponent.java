@@ -74,8 +74,6 @@ public class SampleGridComponent extends VerticalLayout {
 	private ComboBox relevanceStatusFilter;
 	private ComboBox sampleTypeFilter;
 
-	private VerticalLayout gridLayout;
-
 	private Label viewTitleLabel;
 	private String originalViewTitle;
 
@@ -95,10 +93,11 @@ public class SampleGridComponent extends VerticalLayout {
 			criteria.sampleAssociationType(SampleAssociationType.ALL);
 		}
 		grid = new SampleGrid(criteria);
-		gridLayout = new VerticalLayout();
+		VerticalLayout gridLayout = new VerticalLayout();
 		gridLayout.addComponent(createFilterBar());
 		gridLayout.addComponent(createShipmentFilterBar());
 		gridLayout.addComponent(grid);
+		grid.setDataProviderListener(e -> updateStatusButtons());
 		grid.getDataProvider().addDataProviderListener(e -> updateStatusButtons());
 
 		styleGridLayout(gridLayout);
@@ -133,9 +132,7 @@ public class SampleGridComponent extends VerticalLayout {
 			samplesView.navigateTo(null, true);
 		});
 		filterForm.addApplyHandler(e -> {
-			if (!samplesView.navigateTo(criteria, false)) {
-				grid.reload();
-			}
+			grid.reload();
 		});
 		filterLayout.addComponent(filterForm);
 

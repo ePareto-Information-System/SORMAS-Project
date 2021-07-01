@@ -65,6 +65,7 @@ import de.symeda.sormas.backend.region.Community;
 import de.symeda.sormas.backend.region.District;
 import de.symeda.sormas.backend.region.Region;
 import de.symeda.sormas.backend.sample.Sample;
+import de.symeda.sormas.backend.sormastosormas.SormasToSormasEntity;
 import de.symeda.sormas.backend.sormastosormas.SormasToSormasOriginInfo;
 import de.symeda.sormas.backend.sormastosormas.SormasToSormasShareInfo;
 import de.symeda.sormas.backend.task.Task;
@@ -74,7 +75,7 @@ import de.symeda.sormas.backend.visit.Visit;
 
 @Entity
 @Audited
-public class Contact extends CoreAdo {
+public class Contact extends CoreAdo implements SormasToSormasEntity {
 
 	private static final long serialVersionUID = -7764607075875188799L;
 
@@ -152,6 +153,8 @@ public class Contact extends CoreAdo {
 	public static final String CONTACT_TRANSMISSION_CLASSIFICATION = "contactTransmissionClassification";
 	public static final String REPORTING_DISTRICT = "reportingDistrict";
 	public static final String VACCINATION_INFO = "vaccinationInfo";
+	public static final String FOLLOW_UP_STATUS_CHANGE_DATE = "followUpStatusChangeDate";
+	public static final String FOLLOW_UP_STATUS_CHANGE_USER = "followUpStatusChangeUser";
 
 	private Date reportDateTime;
 	private User reportingUser;
@@ -239,6 +242,8 @@ public class Contact extends CoreAdo {
 	private District reportingDistrict;
 
 	private VaccinationInfo vaccinationInfo;
+	private Date followUpStatusChangeDate;
+	private User followUpStatusChangeUser;
 
 	private SormasToSormasOriginInfo sormasToSormasOriginInfo;
 	private List<SormasToSormasShareInfo> sormasToSormasShares = new ArrayList<>(0);
@@ -865,12 +870,14 @@ public class Contact extends CoreAdo {
 		this.healthConditions = healthConditions;
 	}
 
+	@Override
 	@ManyToOne(cascade = CascadeType.ALL)
 	@AuditedIgnore
 	public SormasToSormasOriginInfo getSormasToSormasOriginInfo() {
 		return sormasToSormasOriginInfo;
 	}
 
+	@Override
 	public void setSormasToSormasOriginInfo(SormasToSormasOriginInfo originInfo) {
 		this.sormasToSormasOriginInfo = originInfo;
 	}
@@ -964,5 +971,22 @@ public class Contact extends CoreAdo {
 	public void setVaccinationInfo(VaccinationInfo vaccinationInfo) {
 		this.vaccinationInfo = vaccinationInfo;
 	}
-	
+
+	@Temporal(TemporalType.DATE)
+	public Date getFollowUpStatusChangeDate() {
+		return followUpStatusChangeDate;
+	}
+
+	public void setFollowUpStatusChangeDate(Date followUpStatusChangeDate) {
+		this.followUpStatusChangeDate = followUpStatusChangeDate;
+	}
+
+	@ManyToOne(cascade = {})
+	public User getFollowUpStatusChangeUser() {
+		return followUpStatusChangeUser;
+	}
+
+	public void setFollowUpStatusChangeUser(User followUpStatusChangeUser) {
+		this.followUpStatusChangeUser = followUpStatusChangeUser;
+	}
 }

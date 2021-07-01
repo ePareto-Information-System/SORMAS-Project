@@ -9,13 +9,17 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.Type;
+import de.symeda.sormas.backend.sample.PathogenTest;
 
 import de.symeda.auditlog.api.Audited;
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.labmessage.LabMessageStatus;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
@@ -43,6 +47,7 @@ public class LabMessage extends AbstractDomainObject {
 	public static final String TESTED_DISEASE = "testedDisease";
 	public static final String TEST_DATE_TIME = "testDateTime";
 	public static final String TEST_RESULT = "testResult";
+	public static final String TEST_RESULT_VERIFIED = "testResultVerified";
 	public static final String PERSON_FIRST_NAME = "personFirstName";
 	public static final String PERSON_LAST_NAME = "personLastName";
 	public static final String PERSON_SEX = "personSex";
@@ -53,9 +58,12 @@ public class LabMessage extends AbstractDomainObject {
 	public static final String PERSON_CITY = "personCity";
 	public static final String PERSON_STREET = "personStreet";
 	public static final String PERSON_HOUSE_NUMBER = "personHouseNumber";
+	public static final String PERSON_PHONE = "personPhone";
+	public static final String PERSON_EMAIL = "personEmail";
 	public static final String LAB_MESSAGE_DETAILS = "labMessageDetails";
-	public static final String PROCESSED = "processed";
+	public static final String STATUS = "status";
 	public static final String TEST_RESULT_TEXT = "testResultText";
+	public static final String PATHOGEN_TEST = "pathogenTest";
 
 	private Date messageDateTime;
 	private Date sampleDateTime;
@@ -71,6 +79,7 @@ public class LabMessage extends AbstractDomainObject {
 	private Disease testedDisease;
 	private Date testDateTime;
 	private PathogenTestResultType testResult;
+	private Boolean testResultVerified;
 	private String personFirstName;
 	private String personLastName;
 	private Sex personSex;
@@ -81,11 +90,15 @@ public class LabMessage extends AbstractDomainObject {
 	private String personCity;
 	private String personStreet;
 	private String personHouseNumber;
+	private String personPhone;
+	private String personEmail;
 
 	private String labMessageDetails;
 
-	private boolean processed;
+	private LabMessageStatus status = LabMessageStatus.UNPROCESSED;
+
 	private String testResultText;
+	private PathogenTest pathogenTest;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getMessageDateTime() {
@@ -213,6 +226,15 @@ public class LabMessage extends AbstractDomainObject {
 		this.testResult = testResult;
 	}
 
+	@Column
+	public Boolean isTestResultVerified() {
+		return testResultVerified;
+	}
+
+	public void setTestResultVerified(Boolean testResultVerified) {
+		this.testResultVerified = testResultVerified;
+	}
+
 	@Column(length = COLUMN_LENGTH_DEFAULT)
 	public String getPersonFirstName() {
 		return personFirstName;
@@ -303,6 +325,25 @@ public class LabMessage extends AbstractDomainObject {
 		this.personHouseNumber = personHouseNumber;
 	}
 
+	@Column(length = COLUMN_LENGTH_DEFAULT)
+	public String getPersonPhone() {
+		return personPhone;
+	}
+
+	public void setPersonPhone(String personPhone) {
+		this.personPhone = personPhone;
+	}
+
+	@Column(length = COLUMN_LENGTH_DEFAULT)
+	public String getPersonEmail() {
+		return personEmail;
+	}
+
+	public void setPersonEmail(String personEmail) {
+		this.personEmail = personEmail;
+	}
+
+
 	@Column
 	public String getLabMessageDetails() {
 		return labMessageDetails;
@@ -312,13 +353,14 @@ public class LabMessage extends AbstractDomainObject {
 		this.labMessageDetails = labMessageDetails;
 	}
 
-	@Column
-	public boolean isProcessed() {
-		return processed;
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	public LabMessageStatus getStatus() {
+		return status;
 	}
 
-	public void setProcessed(boolean processed) {
-		this.processed = processed;
+	public void setStatus(LabMessageStatus status) {
+		this.status = status;
 	}
 
 	@Column(length = COLUMN_LENGTH_BIG)
@@ -328,5 +370,15 @@ public class LabMessage extends AbstractDomainObject {
 
 	public void setTestResultText(String testResultText) {
 		this.testResultText = testResultText;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn
+	public PathogenTest getPathogenTest() {
+		return pathogenTest;
+	}
+
+	public void setPathogenTest(PathogenTest pathogenTest) {
+		this.pathogenTest = pathogenTest;
 	}
 }

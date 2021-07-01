@@ -18,9 +18,11 @@
 package de.symeda.sormas.api.caze;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.ejb.Remote;
 import javax.validation.Valid;
@@ -28,9 +30,11 @@ import javax.validation.Valid;
 import de.symeda.sormas.api.CaseMeasure;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.Language;
+import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.contact.DashboardQuarantineDataDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
+import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolException;
 import de.symeda.sormas.api.importexport.ExportConfigurationDto;
 import de.symeda.sormas.api.messaging.ManualMessageLogDto;
 import de.symeda.sormas.api.messaging.MessageType;
@@ -58,10 +62,15 @@ public interface CaseFacade {
 	
 	List<MapCaseDto> getIndexListForMap(CaseCriteria caseCriteria, Integer first, Integer max, String userUuid, List<SortProperty> sortProperties);
 
-	List<CaseIndexDetailedDto> getIndexDetailedList(CaseCriteria caseCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
+	Page<CaseIndexDto> getIndexPage(CaseCriteria caseCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
+
+	Page<CaseIndexDetailedDto> getIndexDetailedPage(CaseCriteria caseCriteria, Integer offset, Integer max, List<SortProperty> sortProperties);
+
+	List<CaseIndexDetailedDto> getIndexDetailedList(CaseCriteria caseCriteria, Integer offset, Integer max, List<SortProperty> sortProperties);
 
 	List<CaseExportDto> getExportList(
 		CaseCriteria caseCriteria,
+		Collection<String> selectedRows,
 		CaseExportType exportType,
 		int first,
 		int max,
@@ -85,6 +94,8 @@ public interface CaseFacade {
 	List<String> getAllActiveUuids();
 
 	List<CaseDataDto> getByUuids(List<String> uuids);
+
+	CaseDataDto getByUuid(String uuid);
 
 	String getUuidByUuidEpidNumberOrExternalId(String searchTerm);
 
@@ -112,9 +123,9 @@ public interface CaseFacade {
 
 	List<CaseDataDto> getAllCasesOfPerson(String personUuid);
 
-	void deleteCase(String caseUuid);
+	void deleteCase(String caseUuid) throws ExternalSurveillanceToolException;
 
-	void deleteCaseAsDuplicate(String caseUuid, String duplicateOfCaseUuid);
+	void deleteCaseAsDuplicate(String caseUuid, String duplicateOfCaseUuid) throws ExternalSurveillanceToolException;
 
 	Date getOldestCaseOnsetDate();
 
@@ -133,6 +144,8 @@ public interface CaseFacade {
 	List<String> getDeletedUuidsSince(Date since);
 
 	boolean doesEpidNumberExist(String epidNumber, String caseUuid, Disease disease);
+
+	boolean doesExternalTokenExist(String externalToken, String caseUuid);
 
 	String generateEpidNumber(CaseDataDto caze);
 
@@ -156,7 +169,7 @@ public interface CaseFacade {
 	 */
 	void updateArchived(List<String> caseUuids, boolean archived);
 
-	List<CaseReferenceDto> getRandomCaseReferences(CaseCriteria criteria, int count);
+	List<CaseReferenceDto> getRandomCaseReferences(CaseCriteria criteria, int count, Random randomGenerator);
 
 	boolean isCaseEditAllowed(String caseUuid);
 
@@ -211,4 +224,6 @@ public interface CaseFacade {
 	List<CasePersonDto> getDuplicates(CasePersonDto casePerson, int reportDateThreshold);
 
 	List<CasePersonDto> getDuplicates(CasePersonDto casePerson);
+
+	List<CaseDataDto> getByPersonUuids(List<String> personUuids);
 }

@@ -33,6 +33,12 @@ import java.util.Objects;
 import com.vaadin.data.HasValue;
 import com.vaadin.server.UserError;
 import com.vaadin.server.Sizeable.Unit;
+
+import org.joda.time.DateTimeComparator;
+
+import com.vaadin.server.ErrorMessage;
+import com.vaadin.server.UserError;
+import com.vaadin.shared.ui.ErrorLevel;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.PopupView;
 import com.vaadin.ui.VerticalLayout;
@@ -160,11 +166,12 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		dischargeDateField = addDateField(HospitalizationDto.DISCHARGE_DATE, DateField.class, 7);
 		
 		intensiveCareUnit = addField(HospitalizationDto.INTENSIVE_CARE_UNIT, NullableOptionGroup.class);
-		intensiveCareUnit.addValueChangeListener(e -> setDateFieldVisibilties());
 		intensiveCareUnitStart = addField(HospitalizationDto.INTENSIVE_CARE_UNIT_START, DateField.class);
 		intensiveCareUnitStart.setVisible(false);
 		intensiveCareUnitEnd = addField(HospitalizationDto.INTENSIVE_CARE_UNIT_END, DateField.class);
 		intensiveCareUnitEnd.setVisible(false);
+		FieldHelper
+			.setVisibleWhen(intensiveCareUnit, Arrays.asList(intensiveCareUnitStart, intensiveCareUnitEnd), Arrays.asList(YesNoUnknown.YES), true);
 		final Field isolationDateField = addField(HospitalizationDto.ISOLATION_DATE);
 		final NullableOptionGroup isolatedField = addField(HospitalizationDto.ISOLATED, NullableOptionGroup.class);
 		
@@ -221,23 +228,40 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		}
 
 		FieldHelper.setVisibleWhen(
-				getFieldGroup(),
-				HospitalizationDto.OTHER_HOSPITALIZATION_REASON,
-				HospitalizationDto.HOSPITALIZATION_REASON,
-				Collections.singletonList(HospitalizationReasonType.OTHER),
-				true);
+			getFieldGroup(),
+			HospitalizationDto.OTHER_HOSPITALIZATION_REASON,
+			HospitalizationDto.HOSPITALIZATION_REASON,
+			Collections.singletonList(HospitalizationReasonType.OTHER),
+			true);
 
 		// Validations
-		admissionDateField.addValidator(
-			new DateComparisonValidator(
-				admissionDateField,
-				caze.getSymptoms().getOnsetDate(),
-				false,
-				false,
-				I18nProperties.getValidationError(
-					Validations.afterDateSoft,
-					admissionDateField.getCaption(),
-					I18nProperties.getPrefixCaption(SymptomsDto.I18N_PREFIX, SymptomsDto.ONSET_DATE))));
+		// Add a visual-only validator to check if symptomonsetdate<admissiondate, as saving should be possible either way
+		admissionDateField.addValueChangeListener(event -> {
+			if (caze.getSymptoms().getOnsetDate() != null
+				&& DateTimeComparator.getDateOnlyInstance().compare(admissionDateField.getValue(), caze.getSymptoms().getOnsetDate()) < 0) {
+				admissionDateField.setComponentError(new ErrorMessage() {
+
+					@Override
+					public ErrorLevel getErrorLevel() {
+						return ErrorLevel.INFO;
+					}
+
+					@Override
+					public String getFormattedHtmlMessage() {
+						return I18nProperties.getValidationError(
+							Validations.afterDateSoft,
+							admissionDateField.getCaption(),
+							I18nProperties.getPrefixCaption(SymptomsDto.I18N_PREFIX, SymptomsDto.ONSET_DATE));
+					}
+				});
+			} else {
+				// remove all invalidity-indicators and re-evaluate field
+				admissionDateField.setComponentError(null);
+				admissionDateField.markAsDirty();
+			}
+			// re-evaluate validity of dischargeDate (necessary because discharge has to be after admission)
+			dischargeDateField.markAsDirty();
+		});
 		admissionDateField.addValidator(
 			new DateComparisonValidator(
 				admissionDateField,
@@ -245,7 +269,6 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 				true,
 				false,
 				I18nProperties.getValidationError(Validations.beforeDate, admissionDateField.getCaption(), dischargeDateField.getCaption())));
-		admissionDateField.setInvalidCommitted(true);
 		dischargeDateField.addValidator(
 			new DateComparisonValidator(
 				dischargeDateField,
@@ -253,35 +276,37 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 				false,
 				false,
 				I18nProperties.getValidationError(Validations.afterDate, dischargeDateField.getCaption(), admissionDateField.getCaption())));
-		
+		dischargeDateField.addValueChangeListener(event -> admissionDateField.markAsDirty()); // re-evaluate admission date for consistent validation of all fields
 		intensiveCareUnitStart.addValidator(
 			new DateComparisonValidator(
 				intensiveCareUnitStart,
 				admissionDateField,
 				false,
-				true,
+				false,
 				I18nProperties.getValidationError(Validations.afterDate, intensiveCareUnitStart.getCaption(), admissionDateField.getCaption())));
 		intensiveCareUnitStart.addValidator(
 			new DateComparisonValidator(
 				intensiveCareUnitStart,
 				intensiveCareUnitEnd,
 				true,
-				true,
+				false,
 				I18nProperties.getValidationError(Validations.beforeDate, intensiveCareUnitStart.getCaption(), intensiveCareUnitEnd.getCaption())));
 		intensiveCareUnitEnd.addValidator(
 			new DateComparisonValidator(
 				intensiveCareUnitEnd,
 				intensiveCareUnitStart,
 				false,
-				true,
+				false,
 				I18nProperties.getValidationError(Validations.afterDate, intensiveCareUnitEnd.getCaption(), intensiveCareUnitStart.getCaption())));
 		intensiveCareUnitEnd.addValidator(
 			new DateComparisonValidator(
 				intensiveCareUnitEnd,
 				dischargeDateField,
 				true,
-				true,
+				false,
 				I18nProperties.getValidationError(Validations.beforeDate, intensiveCareUnitEnd.getCaption(), dischargeDateField.getCaption())));
+		intensiveCareUnitStart.addValueChangeListener(event -> intensiveCareUnitEnd.markAsDirty());
+		intensiveCareUnitEnd.addValueChangeListener(event -> intensiveCareUnitStart.markAsDirty());
 		hospitalizedPreviouslyField.addValueChangeListener(e -> updatePrevHospHint(hospitalizedPreviouslyField, previousHospitalizationsField));
 		previousHospitalizationsField.addValueChangeListener(e -> updatePrevHospHint(hospitalizedPreviouslyField, previousHospitalizationsField));
 		dischargeDateField.addValueChangeListener(e -> showCaseOutcome());

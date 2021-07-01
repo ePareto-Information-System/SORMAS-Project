@@ -22,6 +22,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -30,8 +31,11 @@ import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.facility.FacilityType;
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.hospitalization.PreviousHospitalizationDto;
+import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.ValidationException;
 import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.visit.VisitDto;
+import de.symeda.sormas.api.visit.VisitStatus;
 
 public final class CaseLogic {
 
@@ -59,7 +63,7 @@ public final class CaseLogic {
 	}
 
 	public static Date getEndDate(Date onsetDate, Date reportDate, Date followUpUntil) {
-		return followUpUntil != null ? followUpUntil : onsetDate != null ? onsetDate: reportDate;
+		return followUpUntil != null ? followUpUntil : onsetDate != null ? onsetDate : reportDate;
 	}
 
 	public static boolean isEpidNumberPrefix(String s) {
@@ -81,20 +85,26 @@ public final class CaseLogic {
 	}
 
 	/**
-	 * Should be called if the facility of a case is changed
+	 * Handles the hospitalization change of a case.
 	 * 
 	 * @param caze
+	 *            The new CaseDataDto for which the facility change should be handled.
 	 * @param oldCase
+	 *            The Dto of the existing case being changed.
 	 * @param isTransfer
+	 *            Indicates if the old case is transferred (both from or to a hospital).
 	 */
 	public static void handleHospitalization(CaseDataDto caze, CaseDataDto oldCase, boolean isTransfer) {
-
+		// todo (@JonasCir) I feel this whole class or at least this method should be absorbed by the case EJB
+		// case is already in a hospital and is transferred from it (discharge or other hospital)...
 		if (isTransfer && FacilityType.HOSPITAL.equals(oldCase.getFacilityType())) {
+			// therefore add the old hospitalization to the list of previous ones
 			PreviousHospitalizationDto prevHosp = PreviousHospitalizationDto.build(oldCase);
 			caze.getHospitalization().getPreviousHospitalizations().add(prevHosp);
 			caze.getHospitalization().setHospitalizedPreviously(YesNoUnknown.YES);
 		}
 
+		// clear everything if a case is transferred or discharged from a hospital
 		if (isTransfer || !FacilityType.HOSPITAL.equals(caze.getFacilityType())) {
 			// set everything but previous hospitalization to null
 			try {
@@ -115,10 +125,50 @@ public final class CaseLogic {
 			}
 		}
 
-		if (isTransfer && FacilityType.HOSPITAL.equals(caze.getFacilityType()))
-
-		{
+		// case gets transferred to a hospital
+		if (isTransfer && FacilityType.HOSPITAL.equals(caze.getFacilityType())) {
 			caze.getHospitalization().setAdmissionDate(new Date());
 		}
+	}
+
+	/**
+	 * Calculates the follow-up until date of the case based on its start date (onset contact or report date), the follow-up duration of
+	 * the disease, the current follow-up until date and the date of the last cooperative visit.
+	 *
+	 * @param ignoreOverwrite
+	 *            Returns the expected follow-up until date based on case start date, follow-up duration of the disease and date of the
+	 *            last cooperative visit. Ignores current follow-up until date and whether or not follow-up until has been overwritten.
+	 */
+	public static Date calculateFollowUpUntilDate(CaseDataDto caze, List<VisitDto> visits, int followUpDuration, boolean ignoreOverwrite) {
+
+		Date beginDate = CaseLogic.getStartDate(caze.getSymptoms().getOnsetDate(), caze.getReportDate());
+		Date standardUntilDate = DateHelper.addDays(beginDate, followUpDuration);
+		Date untilDate = !ignoreOverwrite && caze.isOverwriteFollowUpUntil() ? caze.getFollowUpUntil() : standardUntilDate;
+
+		Date lastVisitDate = null;
+		boolean additionalVisitNeeded = true;
+		for (VisitDto visit : visits) {
+			if (lastVisitDate == null || DateHelper.getStartOfDay(visit.getVisitDateTime()).after(DateHelper.getStartOfDay(lastVisitDate))) {
+				lastVisitDate = visit.getVisitDateTime();
+			}
+			if (additionalVisitNeeded
+				&& !DateHelper.getStartOfDay(visit.getVisitDateTime()).before(DateHelper.getStartOfDay(untilDate))
+				&& visit.getVisitStatus() == VisitStatus.COOPERATIVE) {
+				additionalVisitNeeded = false;
+			}
+		}
+
+		// Follow-up until needs to be extended to the date after the last visit if there is no cooperative visit after the follow-up until date
+		if (additionalVisitNeeded && lastVisitDate != null && untilDate.before(DateHelper.addDays(lastVisitDate, 1))) {
+			untilDate = DateHelper.addDays(lastVisitDate, 1);
+		}
+
+		// If the follow-up until date is before the standard follow-up until date for some reason (e.g. because the report date and/or last contact
+		// date were changed), set it to the standard follow-up until date
+		if (DateHelper.getStartOfDay(untilDate).before(standardUntilDate)) {
+			untilDate = standardUntilDate;
+		}
+
+		return untilDate;
 	}
 }

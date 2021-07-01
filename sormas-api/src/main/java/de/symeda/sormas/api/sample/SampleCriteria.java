@@ -19,6 +19,7 @@ package de.symeda.sormas.api.sample;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import de.symeda.sormas.api.BaseCriteria;
 import de.symeda.sormas.api.Disease;
@@ -73,6 +74,10 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	private SampleDateType sampleDateType;
 	private DateFilterOption dateFilterOption = DateFilterOption.DATE;
 	private SamplePurpose samplePurpose;
+
+	private List<String> caseUuids;
+	private List<String> contactUuids;
+	private List<String> eventParticipantUuids;
 
 	public RegionReferenceDto getRegion() {
 		return region;
@@ -340,5 +345,35 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 
 	public void setSamplePurpose(SamplePurpose samplePurpose) {
 		this.samplePurpose = samplePurpose;
+	}
+
+	public List<String> getCaseUuids() {
+		return caseUuids;
+	}
+
+	public SampleCriteria caseUuids(List<String> caseUuids) {
+		this.caseUuids = caseUuids;
+
+		return this;
+	}
+
+	public List<String> getContactUuids() {
+		return contactUuids;
+	}
+
+	public SampleCriteria contactUuids(List<String> contactUuids) {
+		this.contactUuids = contactUuids;
+
+		return this;
+	}
+
+	public List<String> getEventParticipantUuids() {
+		return eventParticipantUuids;
+	}
+
+	public SampleCriteria eventParticipantUuids(List<String> eventParticipantUuids) {
+		this.eventParticipantUuids = eventParticipantUuids;
+
+		return this;
 	}
 }

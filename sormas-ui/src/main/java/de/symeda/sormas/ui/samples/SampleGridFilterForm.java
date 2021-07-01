@@ -98,7 +98,7 @@ public class SampleGridFilterForm extends AbstractFilterForm<SampleCriteria> {
 					SampleCriteria.REGION,
 					I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.REGION),
 					140));
-			regionField.addItems(FacadeProvider.getRegionFacade().getAllActiveAsReference());
+			regionField.addItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
 		}
 
 		addField(
@@ -141,8 +141,9 @@ public class SampleGridFilterForm extends AbstractFilterForm<SampleCriteria> {
 //				I18nProperties.getString(Strings.promptSampleDateType),
 //				SampleDateType.COLLECTION);
 				
-		EpiWeekAndDateFilterComponent<DateFilterOption> weekAndDateFilter =
-			new EpiWeekAndDateFilterComponent<>(false, false, I18nProperties.getString(Strings.promptSampleDateType), SampleDateType.class, this);
+		SampleDateType[] sampleTypes = {SampleDateType.REPORT, SampleDateType.RESULT, SampleDateType.COLLECTION, SampleDateType.RECEIVED, SampleDateType.SHIPPED};
+		EpiWeekAndDateFilterComponent<SampleDateType> weekAndDateFilter =
+			new EpiWeekAndDateFilterComponent<>(false, false, I18nProperties.getString(Strings.promptSampleDateType), sampleTypes, this);
 
 		weekAndDateFilter.getWeekFromFilter().setInputPrompt(I18nProperties.getString(Strings.promptSampleEpiWeekFrom));
 		weekAndDateFilter.getWeekToFilter().setInputPrompt(I18nProperties.getString(Strings.promptSampleEpiWeekTo));
@@ -163,7 +164,7 @@ public class SampleGridFilterForm extends AbstractFilterForm<SampleCriteria> {
 		return dateFilterRowLayout;
 	}
 
-	private void onApplyClick(EpiWeekAndDateFilterComponent<DateFilterOption> weekAndDateFilter) {
+	private void onApplyClick(EpiWeekAndDateFilterComponent<SampleDateType> weekAndDateFilter) {
 		SampleCriteria criteria = getValue();
 
 		DateFilterOption dateFilterOption = (DateFilterOption) weekAndDateFilter.getDateFilterOptionFilter().getValue();

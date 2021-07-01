@@ -27,6 +27,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import de.symeda.sormas.api.i18n.Captions;
+import de.symeda.sormas.api.i18n.Descriptions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.sample.AdditionalTestingStatus;
@@ -34,6 +35,7 @@ import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SampleIndexDto;
 import de.symeda.sormas.api.sample.SamplePurpose;
+import de.symeda.sormas.api.sample.SamplingReason;
 import de.symeda.sormas.api.sample.SpecimenCondition;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DataHelper;
@@ -47,6 +49,7 @@ public class SampleListEntry extends HorizontalLayout {
 
 	private final SampleIndexDto sample;
 	private Button editButton;
+	private Button associatedLabMessagesButton;
 
 	public SampleListEntry(SampleIndexDto sample) {
 
@@ -125,6 +128,17 @@ public class SampleListEntry extends HorizontalLayout {
 				Label labLabel = new Label(DataHelper.toStringNullable(sample.getLab()));
 				topLeftLayout.addComponent(labLabel);
 			}
+
+			SamplingReason samplingReason = sample.getSamplingReason();
+			if (samplingReason != null) {
+				String samplingReasonCaption = samplingReason.toString();
+				if (samplingReason == SamplingReason.OTHER_REASON && sample.getSamplingReasonDetails() != null) {
+					samplingReasonCaption = sample.getSamplingReasonDetails();
+				}
+				Label samplingReasonLabel =
+					new Label(I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, SampleDto.SAMPLING_REASON) + ": " + samplingReasonCaption);
+				topLeftLayout.addComponent(samplingReasonLabel);
+			}
 		}
 
 		VerticalLayout topRightLayout = new VerticalLayout();
@@ -146,13 +160,13 @@ public class SampleListEntry extends HorizontalLayout {
 		}
 	}
 
-	public void addEditListener(int rowIndex, ClickListener editClickListener) {
+	public void addEditListener(ClickListener editClickListener) {
 		if (editButton == null) {
 			editButton = ButtonHelper.createIconButtonWithCaption(
-				"edit-sample-" + rowIndex,
+				"edit-sample-" + sample.getUuid(),
 				null,
 				VaadinIcons.PENCIL,
-				null,
+				editClickListener,
 				ValoTheme.BUTTON_LINK,
 				CssStyles.BUTTON_COMPACT);
 
@@ -160,8 +174,23 @@ public class SampleListEntry extends HorizontalLayout {
 			setComponentAlignment(editButton, Alignment.TOP_RIGHT);
 			setExpandRatio(editButton, 0);
 		}
+	}
 
-		editButton.addClickListener(editClickListener);
+	public void addAssociatedLabMessagesListener(ClickListener associatedLabMessagesClickListener) {
+		if (associatedLabMessagesButton == null) {
+			associatedLabMessagesButton = ButtonHelper.createIconButtonWithCaption(
+				"see-associated-lab-messages-" + sample.getUuid(),
+				null,
+				VaadinIcons.NOTEBOOK,
+				associatedLabMessagesClickListener,
+				ValoTheme.BUTTON_LINK,
+				CssStyles.BUTTON_COMPACT);
+
+			addComponent(associatedLabMessagesButton);
+			setComponentAlignment(associatedLabMessagesButton, Alignment.TOP_RIGHT);
+			setExpandRatio(associatedLabMessagesButton, 0);
+			associatedLabMessagesButton.setDescription(I18nProperties.getDescription(Descriptions.Sample_associatedLabMessages));
+		}
 	}
 
 	public SampleIndexDto getSample() {

@@ -5,6 +5,7 @@ import java.util.Date;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.api.sample.PathogenTestReferenceDto;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.sample.SampleMaterial;
@@ -29,6 +30,7 @@ public class LabMessageDto extends EntityDto {
 	public static final String TESTED_DISEASE = "testedDisease";
 	public static final String TEST_DATE_TIME = "testDateTime";
 	public static final String TEST_RESULT = "testResult";
+	public static final String TEST_RESULT_VERIFIED = "testResultVerified";
 	public static final String PERSON_FIRST_NAME = "personFirstName";
 	public static final String PERSON_LAST_NAME = "personLastName";
 	public static final String PERSON_SEX = "personSex";
@@ -37,11 +39,14 @@ public class LabMessageDto extends EntityDto {
 	public static final String PERSON_BIRTH_DATE_YYYY = "personBirthDateYYYY";
 	public static final String PERSON_POSTAL_CODE = "personPostalCode";
 	public static final String PERSON_CITY = "personCity";
+	public static final String PERSON_PHONE = "personPhone";
+	public static final String PERSON_EMAIL = "personEmail";
 	public static final String PERSON_STREET = "personStreet";
 	public static final String PERSON_HOUSE_NUMBER = "personHouseNumber";
 	public static final String LAB_MESSAGE_DETAILS = "labMessageDetails";
 	public static final String PROCESSED = "processed";
 	public static final String TEST_RESULT_TEXT = "testResultText";
+	public static final String PATHOGEN_TEST = "pathogenTest";
 
 	private Date messageDateTime;
 	private Date sampleDateTime;
@@ -57,6 +62,7 @@ public class LabMessageDto extends EntityDto {
 	private Disease testedDisease;
 	private Date testDateTime;
 	private PathogenTestResultType testResult;
+	private Boolean testResultVerified;
 	private String personFirstName;
 	private String personLastName;
 	private Sex personSex;
@@ -67,11 +73,14 @@ public class LabMessageDto extends EntityDto {
 	private String personCity;
 	private String personStreet;
 	private String personHouseNumber;
+	private String personPhone;
+	private String personEmail;
 
 	private String labMessageDetails;
 
-	private boolean processed;
+	private LabMessageStatus status = LabMessageStatus.UNPROCESSED;
 	private String testResultText;
+	private PathogenTestReferenceDto pathogenTest;
 
 	public Date getMessageDateTime() {
 		return messageDateTime;
@@ -185,6 +194,14 @@ public class LabMessageDto extends EntityDto {
 		this.testResult = testResult;
 	}
 
+	public Boolean isTestResultVerified() {
+		return testResultVerified;
+	}
+
+	public void setTestResultVerified(Boolean testResultVerified) {
+		this.testResultVerified = testResultVerified;
+	}
+
 	public String getPersonFirstName() {
 		return personFirstName;
 	}
@@ -265,6 +282,22 @@ public class LabMessageDto extends EntityDto {
 		this.personHouseNumber = personHouseNumber;
 	}
 
+	public String getPersonPhone() {
+		return personPhone;
+	}
+
+	public void setPersonPhone(String personPhone) {
+		this.personPhone = personPhone;
+	}
+
+	public String getPersonEmail() {
+		return personEmail;
+	}
+
+	public void setPersonEmail(String personEmail) {
+		this.personEmail = personEmail;
+	}
+
 	public String getLabMessageDetails() {
 		return labMessageDetails;
 	}
@@ -273,12 +306,12 @@ public class LabMessageDto extends EntityDto {
 		this.labMessageDetails = labMessageDetails;
 	}
 
-	public boolean isProcessed() {
-		return processed;
+	public LabMessageStatus getStatus() {
+		return status;
 	}
 
-	public void setProcessed(boolean processed) {
-		this.processed = processed;
+	public void setStatus(LabMessageStatus status) {
+		this.status = status;
 	}
 
 	public String getTestResultText() {
@@ -289,10 +322,19 @@ public class LabMessageDto extends EntityDto {
 		this.testResultText = testResultText;
 	}
 
+	public PathogenTestReferenceDto getPathogenTest() {
+		return pathogenTest;
+	}
+
+	public void setPathogenTest(PathogenTestReferenceDto pathogenTest) {
+		this.pathogenTest = pathogenTest;
+	}
+
 	public static LabMessageDto build() {
 
 		LabMessageDto labMessage = new LabMessageDto();
 		labMessage.setUuid(DataHelper.createUuid());
 		return labMessage;
 	}
+
 }

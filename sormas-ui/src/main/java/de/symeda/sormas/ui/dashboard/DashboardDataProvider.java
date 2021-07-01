@@ -56,6 +56,8 @@ public class DashboardDataProvider {
 	private Date previousFromDate;
 	private Date previousToDate;
 
+	private NewCaseDateType newCaseDateType = NewCaseDateType.MOST_RELEVANT;
+
 	// overall
 	private List<DiseaseBurdenDto> diseasesBurden = new ArrayList<>();
 
@@ -88,7 +90,8 @@ public class DashboardDataProvider {
 		// Update the entities lists according to the filters
 		// Disease burden
 		setDiseasesBurden(
-			FacadeProvider.getDiseaseFacade().getDiseaseBurdenForDashboard(region, district, fromDate, toDate, previousFromDate, previousToDate));
+			FacadeProvider.getDiseaseFacade()
+				.getDiseaseBurdenForDashboard(region, district, fromDate, toDate, previousFromDate, previousToDate, newCaseDateType));
 
 		this.refreshDataForSelectedDisease();
 	}
@@ -156,11 +159,11 @@ public class DashboardDataProvider {
 		if (getDashboardType() == DashboardType.CONTACTS || getDashboardType() == DashboardType.SAMPLES || this.disease != null) {
 			// Cases
 			CaseCriteria caseCriteria = new CaseCriteria();
-			caseCriteria.region(region).district(district).disease(disease).newCaseDateBetween(fromDate, toDate, NewCaseDateType.MOST_RELEVANT);
+			caseCriteria.region(region).district(district).disease(disease).newCaseDateBetween(fromDate, toDate, newCaseDateType);
 			setCases(FacadeProvider.getCaseFacade().getCasesForDashboard(caseCriteria));
 			setLastReportedDistrict(FacadeProvider.getCaseFacade().getLastReportedDistrictName(caseCriteria, true, true));
 
-			caseCriteria.newCaseDateBetween(previousFromDate, previousToDate, NewCaseDateType.MOST_RELEVANT);
+			caseCriteria.newCaseDateBetween(previousFromDate, previousToDate, newCaseDateType);
 			setPreviousCases(FacadeProvider.getCaseFacade().getCasesForDashboard(caseCriteria));
 
 			if (getDashboardType() != DashboardType.CONTACTS) {
@@ -364,6 +367,17 @@ public class DashboardDataProvider {
 
 	public void setPreviousToDate(Date previousToDate) {
 		this.previousToDate = previousToDate;
+	}
+
+	public NewCaseDateType getNewCaseDateType() {
+		if (newCaseDateType == null) {
+			return NewCaseDateType.MOST_RELEVANT;
+		}
+		return newCaseDateType;
+	}
+
+	public void setNewCaseDateType(NewCaseDateType newCaseDateType) {
+		this.newCaseDateType = newCaseDateType;
 	}
 
 	public DashboardType getDashboardType() {

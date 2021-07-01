@@ -59,8 +59,7 @@ public class SamplesDashboardView extends AbstractDashboardView {
 
 	public SamplesDashboardView() {
 		super(VIEW_NAME, DashboardType.SAMPLES);
-
-		filterLayout.setInfoLabelText(I18nProperties.getString(Strings.infoSampleDashboard));
+//		filterLayout.setInfoLabelText(I18nProperties.getString(Strings.infoSampleDashboard));
 		//add samples
 		countsTileViewLayout = new CountsTileViewLayout(dashboardDataProvider);
 		dashboardLayout.addComponent(countsTileViewLayout);
