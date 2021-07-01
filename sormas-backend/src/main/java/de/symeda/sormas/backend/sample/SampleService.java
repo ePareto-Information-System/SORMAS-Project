@@ -525,20 +525,30 @@ public class SampleService extends AbstractCoreAdoService<Sample> {
 
 		return filter;
 	}
-	
+
 	private Predicate createSampleDateFilter(CriteriaBuilder cb, Predicate filter, From<?, ?> sample, SampleCriteria criteria) {
-		
+
 		String dateProperty = Sample.SAMPLE_DATE_TIME;
 		if (criteria.getSampleDateType() != null) {
 			switch (criteria.getSampleDateType()) {
-				case REPORT: dateProperty = Sample.REPORT_DATE_TIME; break;
-				case SHIPPED: dateProperty = Sample.SHIPMENT_DATE; break;
-				case RECEIVED: dateProperty = Sample.RECEIVED_DATE; break;
-				case RESULT: dateProperty = Sample.PATHOGEN_TEST_RESULT_CHANGE_DATE; break;
-				default: dateProperty = Sample.SAMPLE_DATE_TIME; break;
+			case REPORT:
+				dateProperty = Sample.REPORT_DATE_TIME;
+				break;
+			case SHIPPED:
+				dateProperty = Sample.SHIPMENT_DATE;
+				break;
+			case RECEIVED:
+				dateProperty = Sample.RECEIVED_DATE;
+				break;
+			case RESULT:
+				dateProperty = Sample.PATHOGEN_TEST_RESULT_CHANGE_DATE;
+				break;
+			default:
+				dateProperty = Sample.SAMPLE_DATE_TIME;
+				break;
 			}
 		}
-		
+
 		if (criteria.getSampleDateFrom() != null && criteria.getSampleDateTo() != null) {
 			filter = CriteriaBuilderHelper.and(
 				cb,
@@ -549,7 +559,7 @@ public class SampleService extends AbstractCoreAdoService<Sample> {
 		} else if (criteria.getSampleDateTo() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.lessThanOrEqualTo(sample.get(dateProperty), criteria.getSampleDateTo()));
 		}
-		
+
 		return filter;
 	}
 

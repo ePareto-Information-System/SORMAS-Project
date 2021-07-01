@@ -106,8 +106,8 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	public void setDistrict(DistrictReferenceDto district) {
 		this.district = district;
 	}
-	
-	public SampleCriteria district(DistrictReferenceDto district){
+
+	public SampleCriteria district(DistrictReferenceDto district) {
 		setDistrict(district);
 
 		return this;

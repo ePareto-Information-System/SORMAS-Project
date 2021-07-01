@@ -72,6 +72,8 @@ public interface SampleFacade {
 	Map<PathogenTestResultType, Long> getNewTestResultCountByResultType(List<Long> caseIds);
 
 	List<SampleDto> getByCaseUuids(List<String> caseUuids);
+	
+	Map<SampleCountType, Long> getSampleCount(RegionReferenceDto regionRef, DistrictReferenceDto districtRef, Disease disease, Date from, Date to);
 
 	Boolean isSampleEditAllowed(String sampleUuid);
 
@@ -81,7 +83,6 @@ public interface SampleFacade {
 
 	boolean exists(String uuid);
 	
-	Map<SampleCountType, Long> getSampleCount(RegionReferenceDto regionRef, DistrictReferenceDto districtRef, Disease disease, Date from, Date to);
 	List<SampleDto> getByEventParticipantUuids(List<String> asList);
 	
 }

@@ -94,7 +94,7 @@ public abstract class AbstractDashboardView extends AbstractView {
 				SormasUI.get().getNavigator().navigateTo(SurveillanceDashboardView.VIEW_NAME);
 			} else if (DashboardType.CONTACTS.equals(e.getProperty().getValue())) {
 				SormasUI.get().getNavigator().navigateTo(ContactsDashboardView.VIEW_NAME);
-			}
+			} 
 			else if (DashboardType.SAMPLES.equals(e.getProperty().getValue())) {
 				SormasUI.get().getNavigator().navigateTo(SamplesDashboardView.VIEW_NAME);
 			}

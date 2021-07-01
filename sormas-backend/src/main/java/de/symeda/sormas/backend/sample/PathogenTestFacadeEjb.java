@@ -543,4 +543,5 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		Long count = em.createQuery(cq).getSingleResult();
 		return count;
 	}
+
 }
