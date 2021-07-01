@@ -20,6 +20,7 @@ package de.symeda.sormas.ui.dashboard.samples;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.ui.dashboard.AbstractDashboardView;
+import de.symeda.sormas.ui.dashboard.DashboardFilterLayout;
 import de.symeda.sormas.ui.dashboard.DashboardType;
 
 @SuppressWarnings("serial")
@@ -32,7 +33,10 @@ public class SamplesDashboardView extends AbstractDashboardView {
 	public SamplesDashboardView() {
 		super(VIEW_NAME, DashboardType.SAMPLES);
 
-		filterLayout.setInfoLabelText(I18nProperties.getString(Strings.infoSampleDashboard));
+//		filterLayout.setInfoLabelText(I18nProperties.getString(Strings.infoSampleDashboard));
+		filterLayout = new DashboardFilterLayout(this, dashboardDataProvider);
+		dashboardLayout.addComponent(filterLayout);
+//		addComponent(dashboardLayout);
 
 		//add samples
 		countsTileViewLayout = new CountsTileViewLayout(dashboardDataProvider);
