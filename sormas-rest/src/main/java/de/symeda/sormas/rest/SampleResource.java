@@ -32,6 +32,7 @@ import javax.ws.rs.core.MediaType;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.PushResult;
+import de.symeda.sormas.api.sample.SampleCriteria;
 import de.symeda.sormas.api.sample.SampleDto;
 
 @Path("/samples")
@@ -52,6 +53,13 @@ public class SampleResource extends EntityDtoResource {
 	@Path("/query")
 	public List<SampleDto> getByUuids(List<String> uuids) {
 		List<SampleDto> result = FacadeProvider.getSampleFacade().getByUuids(uuids);
+		return result;
+	}
+	
+	@POST
+	@Path("/find")
+	public List<SampleDto> find(SampleCriteria criteria) {
+		List<SampleDto> result = FacadeProvider.getSampleFacade().findBy(criteria);
 		return result;
 	}
 
