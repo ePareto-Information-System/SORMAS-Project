@@ -223,6 +223,17 @@ public class SampleFacadeEjb implements SampleFacade {
 	}
 
 	@Override
+	public List<SampleDto> findBy(SampleCriteria criteria) {
+		User user = userService.getCurrentUser();
+		if (user == null) {
+			return Collections.emptyList();
+		}
+		
+		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
+		return sampleService.findBy(criteria, user).stream().map(c -> convertToDto(c, pseudonymizer)).collect(Collectors.toList());
+	}
+	
+	@Override
 	public List<SampleDto> getByCaseUuids(List<String> caseUuids) {
 		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
 		return sampleService.getByCaseUuids(caseUuids).stream().map(c -> convertToDto(c, pseudonymizer)).collect(Collectors.toList());

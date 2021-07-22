@@ -58,6 +58,8 @@ public interface SampleFacade {
 	List<String> getAllActiveUuids();
 
 	List<SampleDto> getByUuids(List<String> uuids);
+	
+	List<SampleDto> findBy(SampleCriteria criteria);
 
 	void deleteSample(SampleReferenceDto sampleRef);
 
