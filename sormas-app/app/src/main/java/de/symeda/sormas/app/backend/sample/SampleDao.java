@@ -240,11 +240,12 @@ public class SampleDao extends AbstractAdoDao<Sample> {
 		}
 	}
 
-	public boolean checkFieldSampleIDExist(String fieldSampleId) {
+	public boolean checkFieldSampleIDExist(String uuid, String fieldSampleId) {
 		try {
 			List<Sample> samples =
 			queryBuilder().where().eq(Sample.FIELD_SAMPLE_ID, fieldSampleId).and().eq(AbstractDomainObject.SNAPSHOT, false).query();
-			return samples.size() != 0;
+			Sample sameSample = samples.stream().filter(p -> p.getUuid().equals(uuid)).findFirst().orElse(null);
+			return samples.size() == 0 || sameSample != null;
 		} catch (SQLException e) {
 			Log.e(getTableName(), "Could not perform queryByFieldSampleId");
 			throw new RuntimeException(e);
