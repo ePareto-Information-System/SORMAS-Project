@@ -64,7 +64,7 @@ public class SampleValidator {
 		};
 		ResultCallback<Boolean> fieldSampleIdCallback = () -> {
 			if (!contentBinding.sampleFieldSampleID.getValue().isEmpty() && !contentBinding.sampleFieldSampleID.getValue().equals("") && contentBinding.sampleFieldSampleID.getValue() != null) {
-				if (queryByFieldSampleId(contentBinding.sampleFieldSampleID.getValue())) {
+				if (!queryByFieldSampleId(contentBinding.getData().getUuid(), contentBinding.sampleFieldSampleID.getValue())) {
 						contentBinding.sampleFieldSampleID.enableErrorState(I18nProperties.getString(Strings.messageFieldSampleIdExist));
 						return true;
 					}
@@ -78,8 +78,8 @@ public class SampleValidator {
 		contentBinding.sampleShipmentDate.setValidationCallback(shipmentDateCallback);
 	}
 
-	static boolean queryByFieldSampleId(String fieldSampleId){
-		boolean sample = DatabaseHelper.getSampleDao().checkFieldSampleIDExist(fieldSampleId); //throw new InvalidValueException
+	static boolean queryByFieldSampleId(String uuid, String fieldSampleId){
+		boolean sample = DatabaseHelper.getSampleDao().checkFieldSampleIDExist(uuid, fieldSampleId); //throw new InvalidValueException
 		return sample;
 	}
 }
