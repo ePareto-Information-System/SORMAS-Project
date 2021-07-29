@@ -412,7 +412,7 @@ public class SampleController {
 		List<String> samplesUuids,
 		PathogenTestResultType newResult,
 		Runnable callback) {
-		
+
 		if (samplesUuids == null || samplesUuids.size() == 0)
 			return;
 
@@ -470,7 +470,7 @@ public class SampleController {
 			}
 		});
 	}
-	
+
 	public void showChangePathogenTestResultWindow(
 		CommitDiscardWrapperComponent<SampleEditForm> editComponent,
 		String sampleUuid,
@@ -507,7 +507,7 @@ public class SampleController {
 		return FacadeProvider.getSampleFacade().isFieldSampleIdUnique(uuid, fieldSampleId);
 	}
 
-		public VerticalLayout getSampleViewTitleLayout(SampleDto sample) {
+	public VerticalLayout getSampleViewTitleLayout(SampleDto sample) {
 
 		VerticalLayout titleLayout = new VerticalLayout();
 		titleLayout.addStyleNames(CssStyles.LAYOUT_MINIMAL, CssStyles.VSPACE_4, CssStyles.VSPACE_TOP_4);
