@@ -218,6 +218,11 @@ public class SampleFacadeEjb implements SampleFacade {
 	}
 
 	@Override
+	public List<String> getAllFieldSampleIds() {
+		return sampleService.getAllFieldSampleIds();
+	}
+	
+	@Override
 	public SampleDto saveSample(SampleDto dto) {
 		return saveSample(dto, true);
 	}

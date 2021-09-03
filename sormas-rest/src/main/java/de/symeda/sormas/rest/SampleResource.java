@@ -79,4 +79,10 @@ public class SampleResource extends EntityDtoResource {
 	public List<String> getDeletedUuidsSince(@PathParam("since") long since) {
 		return FacadeProvider.getSampleFacade().getDeletedUuidsSince(new Date(since));
 	}
+	
+	@GET
+	@Path("/fieldsampleids")
+	public List<String> getAllFieldSampleIds() {
+		return FacadeProvider.getSampleFacade().getAllFieldSampleIds();
+	}
 }

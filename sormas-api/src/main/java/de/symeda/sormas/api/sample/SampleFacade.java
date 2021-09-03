@@ -43,6 +43,8 @@ public interface SampleFacade {
 	SampleDto getSampleByUuid(String uuid);
 
 	boolean isFieldSampleIdUnique(String uuid, String fieldSampleId);
+	
+	List<String> getAllFieldSampleIds();
 
 	SampleDto saveSample(SampleDto dto);
 

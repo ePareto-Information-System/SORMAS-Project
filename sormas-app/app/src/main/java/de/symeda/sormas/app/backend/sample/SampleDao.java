@@ -251,4 +251,20 @@ public class SampleDao extends AbstractAdoDao<Sample> {
 			throw new RuntimeException(e);
 		}
 	}
+	public boolean checkFieldSampleIDExistByFieldSampleId(String fieldSampleId) {
+		try {
+			List<Sample> fieldSampleIds =
+					queryBuilder().where().eq(FieldSampleId.FIELD_SAMPLE_ID, fieldSampleId).and().eq(AbstractDomainObject.SNAPSHOT, false).query();
+
+//			FieldSampleId sameSample = fieldSampleIds.stream().filter(p -> p.getUuid().equals(uuid)).findFirst().orElse(null);
+			return fieldSampleIds.size() == 0 || fieldSampleIds != null;
+		} catch (SQLException e) {
+			Log.e(getTableName(), "Could not perform queryByFieldSampleId");
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void deleteSampleAndAllDependingEntitiesByFieldSampleId(String fieldSampleId) throws SQLException {
+		deleteSampleAndAllDependingEntities(queryByFieldSampleId(fieldSampleId));
+	}
 }

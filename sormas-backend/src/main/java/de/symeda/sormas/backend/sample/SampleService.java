@@ -208,6 +208,20 @@ public class SampleService extends AbstractCoreAdoService<Sample> {
 
 		return samples.size() == 0 || sameSample != null;
 	}
+	
+	public List<String> getAllFieldSampleIds() {
+		System.err.println("Loading: getAllFieldSampleIds ");
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<String> cq = cb.createQuery(String.class);
+		Root<Sample> from = cq.from(getElementClass());
+
+		Predicate filter = createActiveSamplesFilter(cb, from);
+
+		cq.where(filter);
+		cq.select(from.get(Sample.FIELD_SAMPLE_ID));
+
+		return em.createQuery(cq).getResultList();
+	}
 
 	public List<String> getDeletedUuidsSince(User user, Date since) {
 

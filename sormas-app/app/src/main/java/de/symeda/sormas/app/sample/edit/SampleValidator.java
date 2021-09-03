@@ -15,6 +15,8 @@
 
 package de.symeda.sormas.app.sample.edit;
 
+import android.util.Log;
+
 import org.joda.time.DateTimeComparator;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -64,7 +66,10 @@ public class SampleValidator {
 		};
 		ResultCallback<Boolean> fieldSampleIdCallback = () -> {
 			if (!contentBinding.sampleFieldSampleID.getValue().isEmpty() && !contentBinding.sampleFieldSampleID.getValue().equals("") && contentBinding.sampleFieldSampleID.getValue() != null) {
-				if (!queryByFieldSampleId(contentBinding.getData().getUuid(), contentBinding.sampleFieldSampleID.getValue())) {
+//				if (!queryByFieldSampleId(contentBinding.getData().getUuid(), contentBinding.sampleFieldSampleID.getValue())) {
+				boolean isFieldSampleId = queryByFieldSampleId(contentBinding.getData().getUuid(), contentBinding.sampleFieldSampleID.getValue());
+				Log.d("isFieldSampleId is: ", String.valueOf(isFieldSampleId));
+				if (!isFieldSampleId) {
 						contentBinding.sampleFieldSampleID.enableErrorState(I18nProperties.getString(Strings.messageFieldSampleIdExist));
 						return true;
 					}
@@ -79,7 +84,15 @@ public class SampleValidator {
 	}
 
 	static boolean queryByFieldSampleId(String uuid, String fieldSampleId){
-		boolean sample = DatabaseHelper.getSampleDao().checkFieldSampleIDExist(uuid, fieldSampleId); //throw new InvalidValueException
-		return sample;
+		boolean x = DatabaseHelper.getSampleDao().checkFieldSampleIDExist(uuid, fieldSampleId); //throw new InvalidValueException
+		boolean y = DatabaseHelper.getFieldSampleIdtDao().isFieldSampleId(fieldSampleId); //throw new InvalidValueException
+
+		Log.d("X value is: ", Boolean.toString(x));
+		Log.d("Y value is: ", Boolean.toString(y));
+//		if (!x || !y)
+//			return false;
+//		return true;
+
+		return !x && !y;
 	}
 }

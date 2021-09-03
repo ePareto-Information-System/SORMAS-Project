@@ -41,7 +41,7 @@ public class AbstractDomainObject extends BaseObservable implements Serializable
 
 	public static final String ID = "id";
 	public static final String UUID = "uuid";
-	public static final String SNAPSHOT = "snapshot";
+		public static final String SNAPSHOT = "snapshot";
 	public static final String CREATION_DATE = "creationDate";
 	public static final String CHANGE_DATE = "changeDate";
 	public static final String LOCAL_CHANGE_DATE = "localChangeDate";

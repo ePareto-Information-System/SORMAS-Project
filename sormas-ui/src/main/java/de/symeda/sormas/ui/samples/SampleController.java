@@ -401,6 +401,8 @@ public class SampleController {
 	}
 
 	public boolean isFieldSampleIdUnique(String uuid, String fieldSampleId) {
+		List<String> fieldSampleIds = FacadeProvider.getSampleFacade().getAllFieldSampleIds();
+		System.err.println("Getting fieldSampleId size: " + fieldSampleIds);
 		return FacadeProvider.getSampleFacade().isFieldSampleIdUnique(uuid, fieldSampleId);
 	}
 }

@@ -46,4 +46,8 @@ public interface SampleFacadeRetro {
 	@GET("samples/deleted/{since}")
 	Call<List<String>> pullDeletedUuidsSince(@Path("since") long since);
 
+	@GET("samples/fieldsampleids")
+	Call<List<String>> getAllFieldSampleIds();
+
+
 }

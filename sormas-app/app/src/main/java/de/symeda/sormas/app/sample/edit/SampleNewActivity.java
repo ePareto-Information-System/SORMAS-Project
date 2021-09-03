@@ -132,7 +132,7 @@ public class SampleNewActivity extends BaseEditActivity<Sample> {
 			sampleToSave.setReportDateTime(new Date());
 		}
 
-		fragment.setLiveValidationDisabled(false);
+		fragment.setLiveValidationDisabled(true);
 
 		try {
 			FragmentValidator.validate(getContext(), fragment.getContentBinding());
