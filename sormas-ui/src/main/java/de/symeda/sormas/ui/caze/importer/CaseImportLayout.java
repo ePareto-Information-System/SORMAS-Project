@@ -17,7 +17,9 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.caze.importer;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.function.Consumer;
 
 import com.opencsv.exceptions.CsvValidationException;
 import com.vaadin.server.ClassResource;
