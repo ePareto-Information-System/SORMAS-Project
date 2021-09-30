@@ -21,11 +21,12 @@ import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.TextArea;
 
 import de.symeda.sormas.api.caze.surveillancereport.SurveillanceReportDto;
-import de.symeda.sormas.api.facility.FacilityTypeGroup;
+import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
+import de.symeda.sormas.ui.utils.ComboBoxHelper;
 import de.symeda.sormas.ui.utils.InfrastructureFieldsHelper;
 
 public class SurveillanceReportForm extends AbstractEditForm<SurveillanceReportDto> {
@@ -83,7 +84,7 @@ public class SurveillanceReportForm extends AbstractEditForm<SurveillanceReportD
 	}
 
 	private ComboBox addFacilityTypeGroupField() {
-		ComboBox facilityTypeGroup = new ComboBox();
+		ComboBox facilityTypeGroup = ComboBoxHelper.createComboBoxV7();
 		facilityTypeGroup.setId(FACILITY_TYPE_GROUP_LOC);
 		facilityTypeGroup.setCaption(I18nProperties.getCaption(Captions.Facility_typeGroup));
 		facilityTypeGroup.setWidth(100, Unit.PERCENTAGE);

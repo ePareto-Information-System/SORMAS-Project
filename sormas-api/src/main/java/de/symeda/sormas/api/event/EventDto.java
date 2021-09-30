@@ -16,9 +16,14 @@
 package de.symeda.sormas.api.event;
 
 import java.util.Date;
+import java.util.Map;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.ImportIgnore;
+import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.exposure.WorkEnvironment;
+import de.symeda.sormas.api.importexport.format.ImportExportFormat;
+import de.symeda.sormas.api.importexport.format.ImportFormat;
 import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasOriginInfoDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
@@ -39,6 +44,7 @@ public class EventDto extends PseudonymizableDto implements SormasToSormasEntity
 	public static final String EVENT_STATUS = "eventStatus";
 	public static final String EVENT_INVESTIGATION_STATUS = "eventInvestigationStatus";
 	public static final String RISK_LEVEL = "riskLevel";
+	public static final String SPECIFIC_RISK = "specificRisk";
 	public static final String EVENT_INVESTIGATION_START_DATE = "eventInvestigationStartDate";
 	public static final String EVENT_INVESTIGATION_END_DATE = "eventInvestigationEndDate";
 	public static final String EVENT_PERSONS = "eventPersons";
@@ -76,6 +82,7 @@ public class EventDto extends PseudonymizableDto implements SormasToSormasEntity
 	public static final String SRC_MEDIA_DETAILS = "srcMediaDetails";
 	public static final String DISEASE = "disease";
 	public static final String DISEASE_DETAILS = "diseaseDetails";
+	public static final String DISEASE_VARIANT = "diseaseVariant";
 	public static final String RESPONSIBLE_USER = "responsibleUser";
 	public static final String TYPE_OF_PLACE_TEXT = "typeOfPlaceText";
 	public static final String REPORT_LAT = "reportLat";
@@ -89,14 +96,20 @@ public class EventDto extends PseudonymizableDto implements SormasToSormasEntity
 	public static final String HUMAN_TRANSMISSION_MODE = "humanTransmissionMode";
 	public static final String PARENTERAL_TRANSMISSION_MODE = "parenteralTransmissionMode";
 	public static final String MEDICALLY_ASSOCIATED_TRANSMISSION_MODE = "medicallyAssociatedTransmissionMode";
-	public static final String INTERNALID = "internalId";
+	public static final String EPIDEMIOLOGICAL_EVIDENCE = "epidemiologicalEvidence";
+	public static final String EPIDEMIOLOGICAL_EVIDENCE_DETAILS = "epidemiologicalEvidenceDetails";
+	public static final String LABORATORY_DIAGNOSTIC_EVIDENCE = "laboratoryDiagnosticEvidence";
+	public static final String LABORATORY_DIAGNOSTIC_EVIDENCE_DETAILS = "laboratoryDiagnosticEvidenceDetails";
+	public static final String INTERNAL_TOKEN = "internalToken";
 	public static final String EVENT_GROUP = "eventGroup";
+	public static final String EVENT_IDENTIFICATION_SOURCE = "eventIdentificationSource";
 
 	private EventReferenceDto superordinateEvent;
 
 	@Required
 	private EventStatus eventStatus;
 	private RiskLevel riskLevel;
+	private SpecificRisk specificRisk;
 	private EventInvestigationStatus eventInvestigationStatus;
 	private Date eventInvestigationStartDate;
 	private Date eventInvestigationEndDate;
@@ -137,6 +150,7 @@ public class EventDto extends PseudonymizableDto implements SormasToSormasEntity
 	private String srcMediaDetails;
 	private Disease disease;
 	private String diseaseDetails;
+	private DiseaseVariant diseaseVariant;
 	@SensitiveData
 	private UserReferenceDto responsibleUser;
 	private String typeOfPlaceText;
@@ -155,11 +169,22 @@ public class EventDto extends PseudonymizableDto implements SormasToSormasEntity
 	@HideForCountriesExcept
 	private MedicallyAssociatedTransmissionMode medicallyAssociatedTransmissionMode;
 
+	@HideForCountriesExcept
+	private YesNoUnknown epidemiologicalEvidence;
+	@HideForCountriesExcept
+	private Map<EpidemiologicalEvidenceDetail, Boolean> epidemiologicalEvidenceDetails;
+	@HideForCountriesExcept
+	private YesNoUnknown laboratoryDiagnosticEvidence;
+	@HideForCountriesExcept
+	private Map<LaboratoryDiagnosticEvidenceDetail, Boolean> laboratoryDiagnosticEvidenceDetails;
+
 	private SormasToSormasOriginInfoDto sormasToSormasOriginInfo;
 	private boolean ownershipHandedOver;
 
 	@HideForCountriesExcept
-	private String internalId;
+	private String internalToken;
+
+	private EventIdentificationSource eventIdentificationSource;
 
 	public static EventDto build() {
 		EventDto event = new EventDto();
@@ -187,6 +212,14 @@ public class EventDto extends PseudonymizableDto implements SormasToSormasEntity
 
 	public void setRiskLevel(RiskLevel riskLevel) {
 		this.riskLevel = riskLevel;
+	}
+
+	public SpecificRisk getSpecificRisk() {
+		return specificRisk;
+	}
+
+	public void setSpecificRisk(SpecificRisk specificRisk) {
+		this.specificRisk = specificRisk;
 	}
 
 	public EventInvestigationStatus getEventInvestigationStatus() {
@@ -257,6 +290,7 @@ public class EventDto extends PseudonymizableDto implements SormasToSormasEntity
 		return startDate;
 	}
 
+	@ImportFormat(ImportExportFormat.DATE_TIME)
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
@@ -265,6 +299,7 @@ public class EventDto extends PseudonymizableDto implements SormasToSormasEntity
 		return endDate;
 	}
 
+	@ImportFormat(ImportExportFormat.DATE_TIME)
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
@@ -461,6 +496,14 @@ public class EventDto extends PseudonymizableDto implements SormasToSormasEntity
 		this.diseaseDetails = diseaseDetails;
 	}
 
+	public DiseaseVariant getDiseaseVariant() {
+		return diseaseVariant;
+	}
+
+	public void setDiseaseVariant(DiseaseVariant diseaseVariant) {
+		this.diseaseVariant = diseaseVariant;
+	}
+
 	public UserReferenceDto getResponsibleUser() {
 		return responsibleUser;
 	}
@@ -558,6 +601,7 @@ public class EventDto extends PseudonymizableDto implements SormasToSormasEntity
 	}
 
 	@Override
+	@ImportIgnore
 	public SormasToSormasOriginInfoDto getSormasToSormasOriginInfo() {
 		return sormasToSormasOriginInfo;
 	}
@@ -584,12 +628,52 @@ public class EventDto extends PseudonymizableDto implements SormasToSormasEntity
 		this.eventManagementStatus = eventManagementStatus;
 	}
 
-	public String getInternalId() {
-		return internalId;
+	public YesNoUnknown getEpidemiologicalEvidence() {
+		return epidemiologicalEvidence;
 	}
 
-	public void setInternalId(String internalId) {
-		this.internalId = internalId;
+	public void setEpidemiologicalEvidence(YesNoUnknown epidemiologicalEvidence) {
+		this.epidemiologicalEvidence = epidemiologicalEvidence;
+	}
+
+	public YesNoUnknown getLaboratoryDiagnosticEvidence() {
+		return laboratoryDiagnosticEvidence;
+	}
+
+	public void setLaboratoryDiagnosticEvidence(YesNoUnknown laboratoryDiagnosticEvidence) {
+		this.laboratoryDiagnosticEvidence = laboratoryDiagnosticEvidence;
+	}
+
+	public Map<EpidemiologicalEvidenceDetail, Boolean> getEpidemiologicalEvidenceDetails() {
+		return epidemiologicalEvidenceDetails;
+	}
+
+	public void setEpidemiologicalEvidenceDetails(Map<EpidemiologicalEvidenceDetail, Boolean> epidemiologicalEvidenceDetails) {
+		this.epidemiologicalEvidenceDetails = epidemiologicalEvidenceDetails;
+	}
+
+	public Map<LaboratoryDiagnosticEvidenceDetail, Boolean> getLaboratoryDiagnosticEvidenceDetails() {
+		return laboratoryDiagnosticEvidenceDetails;
+	}
+
+	public void setLaboratoryDiagnosticEvidenceDetails(Map<LaboratoryDiagnosticEvidenceDetail, Boolean> laboratoryDiagnosticEvidenceDetails) {
+		this.laboratoryDiagnosticEvidenceDetails = laboratoryDiagnosticEvidenceDetails;
+	}
+
+	public String getInternalToken() {
+		return internalToken;
+	}
+
+	public void setInternalToken(String internalToken) {
+		this.internalToken = internalToken;
+	}
+
+	public EventIdentificationSource getEventIdentificationSource() {
+		return eventIdentificationSource;
+	}
+
+	public void setEventIdentificationSource(EventIdentificationSource eventIdentificationSource) {
+		this.eventIdentificationSource = eventIdentificationSource;
 	}
 
 	public EventReferenceDto toReference() {

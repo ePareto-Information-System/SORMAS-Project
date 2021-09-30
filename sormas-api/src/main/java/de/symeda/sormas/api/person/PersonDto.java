@@ -27,13 +27,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.ImportIgnore;
-import de.symeda.sormas.api.facility.FacilityReferenceDto;
-import de.symeda.sormas.api.facility.FacilityType;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.location.LocationDto;
-import de.symeda.sormas.api.region.CommunityReferenceDto;
-import de.symeda.sormas.api.region.CountryReferenceDto;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.region.RegionReferenceDto;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
+import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.Diseases;
 import de.symeda.sormas.api.utils.EmbeddedPersonalData;
@@ -106,6 +106,7 @@ public class PersonDto extends PseudonymizableDto {
 	public static final String COVID_CODE_DELIVERED = "covidCodeDelivered";
 	public static final String EXTERNAL_ID = "externalId";
 	public static final String EXTERNAL_TOKEN = "externalToken";
+	public static final String INTERNAL_TOKEN = "internalToken";
 	public static final String BIRTH_COUNTRY = "birthCountry";
 	public static final String CITIZENSHIP = "citizenship";
 	public static final String ADDITIONAL_DETAILS = "additionalDetails";
@@ -150,6 +151,7 @@ public class PersonDto extends PseudonymizableDto {
 	@HideForCountriesExcept
 	private String namesOfGuardians;
 	@Outbreaks
+	@Required
 	private Sex sex;
 	@Outbreaks
 	@PersonalData
@@ -297,6 +299,7 @@ public class PersonDto extends PseudonymizableDto {
 	private String externalId;
 	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_GERMANY)
 	private String externalToken;
+	private String internalToken;
 
 	@HideForCountriesExcept
 	@SensitiveData
@@ -324,6 +327,13 @@ public class PersonDto extends PseudonymizableDto {
 		PersonDto person = new PersonDto();
 		person.setUuid(DataHelper.createUuid());
 		person.setAddress(LocationDto.build());
+		return person;
+	}
+
+	public static PersonDto buildImportEntity() {
+
+		PersonDto person = build();
+		person.setSex(Sex.UNKNOWN);
 		return person;
 	}
 
@@ -463,14 +473,19 @@ public class PersonDto extends PseudonymizableDto {
 		this.deathDate = deathDate;
 	}
 
-	private void setPersonContactInformation(String contactInfo, PersonContactDetailType personContactDetailType) {
+	private void setPersonContactInformation(String contactInfo, PersonContactDetailType personContactDetailType, boolean primary) {
 		for (PersonContactDetailDto contactDetailDto : getPersonContactDetails()) {
 			if (contactDetailDto.getPersonContactDetailType() == personContactDetailType && contactDetailDto.isPrimaryContact()) {
-				contactDetailDto.setPrimaryContact(false);
+				if (contactInfo.equals(contactDetailDto.getContactInformation())) {
+					return;
+				}
+				if (primary) {
+					contactDetailDto.setPrimaryContact(false);
+				}
 			}
 		}
 		final PersonContactDetailDto pcd =
-			PersonContactDetailDto.build(this.toReference(), true, personContactDetailType, null, null, contactInfo, null, false, null, null);
+			PersonContactDetailDto.build(this.toReference(), primary, personContactDetailType, null, null, contactInfo, null, false, null, null);
 		getPersonContactDetails().add(pcd);
 	}
 
@@ -524,12 +539,19 @@ public class PersonDto extends PseudonymizableDto {
 	}
 
 	/**
-	 * 
 	 * @param phone
 	 *            is automatically set as primary phone number, removing the primary status from another phone number if necessary.
 	 */
 	public void setPhone(String phone) {
-		setPersonContactInformation(phone, PersonContactDetailType.PHONE);
+		setPersonContactInformation(phone, PersonContactDetailType.PHONE, true);
+	}
+
+	/**
+	 * @param phone
+	 *            is set as an additional non-primary phone number
+	 */
+	public void setAdditionalPhone(String phone) {
+		setPersonContactInformation(phone, PersonContactDetailType.PHONE, false);
 	}
 
 	/**
@@ -587,7 +609,7 @@ public class PersonDto extends PseudonymizableDto {
 	 *            is automatically set as primary email address, removing the primary status from another email address if necessary.
 	 */
 	public void setEmailAddress(String email) {
-		setPersonContactInformation(email, PersonContactDetailType.EMAIL);
+		setPersonContactInformation(email, PersonContactDetailType.EMAIL, true);
 	}
 
 	private String getPersonContactInformation(PersonContactDetailType personContactDetailType) {
@@ -868,6 +890,14 @@ public class PersonDto extends PseudonymizableDto {
 
 	public void setExternalToken(String externalToken) {
 		this.externalToken = externalToken;
+	}
+
+	public String getInternalToken() {
+		return internalToken;
+	}
+
+	public void setInternalToken(String internalToken) {
+		this.internalToken = internalToken;
 	}
 
 	public CountryReferenceDto getBirthCountry() {

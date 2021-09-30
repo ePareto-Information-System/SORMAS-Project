@@ -39,7 +39,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
-import de.symeda.sormas.api.BaseCriteria;
+import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Captions;
@@ -49,6 +49,7 @@ import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.criteria.BaseCriteria;
 import de.symeda.sormas.ui.campaign.AbstractCampaignView;
 import de.symeda.sormas.ui.campaign.campaigndata.CampaignDataView;
 import de.symeda.sormas.ui.campaign.campaigns.CampaignsView;
@@ -72,14 +73,17 @@ import de.symeda.sormas.ui.dashboard.surveillance.SurveillanceDashboardView;
 import de.symeda.sormas.ui.events.EventGroupDataView;
 import de.symeda.sormas.ui.events.EventParticipantDataView;
 import de.symeda.sormas.ui.events.EventsView;
+import de.symeda.sormas.ui.immunization.ImmunizationsView;
 import de.symeda.sormas.ui.labmessage.LabMessagesView;
 import de.symeda.sormas.ui.person.PersonsView;
 import de.symeda.sormas.ui.reports.ReportsView;
 import de.symeda.sormas.ui.reports.aggregate.AggregateReportsView;
 import de.symeda.sormas.ui.samples.SamplesView;
+import de.symeda.sormas.ui.sormastosormas.ShareRequestsView;
 import de.symeda.sormas.ui.statistics.AbstractStatisticsView;
 import de.symeda.sormas.ui.statistics.StatisticsView;
 import de.symeda.sormas.ui.task.TasksView;
+import de.symeda.sormas.ui.travelentry.TravelEntriesView;
 import de.symeda.sormas.ui.user.UsersView;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
@@ -93,7 +97,7 @@ public class MainScreen extends HorizontalLayout {
 	// Add new views to this set to make sure that the right error page is shown
 	private static final Set<String> KNOWN_VIEWS = initKnownViews();
 
-	private Menu menu;
+	private final Menu menu;
 
 	public MainScreen(SormasUI ui) {
 
@@ -175,10 +179,41 @@ public class MainScreen extends HorizontalLayout {
 			navigator.addView(EventGroupDataView.VIEW_NAME, EventGroupDataView.class);
 			menu.addView(EventsView.class, EventsView.VIEW_NAME, I18nProperties.getCaption(Captions.mainMenuEvents), VaadinIcons.PHONE);
 		}
+
 		if (permitted(FeatureType.SAMPLES_LAB, UserRight.SAMPLE_VIEW)) {
 			ControllerProvider.getSampleController().registerViews(navigator);
 			menu.addView(SamplesView.class, SamplesView.VIEW_NAME, I18nProperties.getCaption(Captions.mainMenuSamples), VaadinIcons.DATABASE);
 		}
+
+		if (permitted(FeatureType.IMMUNIZATION_MANAGEMENT, UserRight.IMMUNIZATION_MANAGEMENT_ACCESS)) {
+			ControllerProvider.getImmunizationController().registerViews(navigator);
+			menu.addView(
+				ImmunizationsView.class,
+				ImmunizationsView.VIEW_NAME,
+				I18nProperties.getCaption(Captions.mainMenuImmunizations),
+				VaadinIcons.HEALTH_CARD);
+		}
+
+		if (permitted(FeatureType.TRAVEL_ENTRIES, UserRight.TRAVEL_ENTRY_MANAGEMENT_ACCESS)
+			&& FacadeProvider.getConfigFacade().isConfiguredCountry(CountryHelper.COUNTRY_CODE_GERMANY)) {
+			ControllerProvider.getTravelEntryController().registerViews(navigator);
+			menu.addView(
+				TravelEntriesView.class,
+				TravelEntriesView.VIEW_NAME,
+				I18nProperties.getCaption(Captions.mainMenuEntries),
+				VaadinIcons.AIRPLANE);
+		}
+
+		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.SORMAS_TO_SORMAS_ACCEPT_REJECT)
+			&& FacadeProvider.getSormasToSormasFacade().isFeatureEnabledForUser()) {
+			ControllerProvider.getSormasToSormasController().registerViews(navigator);
+			menu.addView(
+				ShareRequestsView.class,
+				ShareRequestsView.VIEW_NAME,
+				I18nProperties.getCaption(Captions.mainMenuShareRequests),
+				VaadinIcons.SHARE);
+		}
+
 		if (permitted(FeatureType.CAMPAIGNS, UserRight.CAMPAIGN_VIEW)) {
 			AbstractCampaignView.registerViews(navigator);
 			menu.addView(
@@ -294,7 +329,9 @@ public class MainScreen extends HorizontalLayout {
 				ContinentsView.VIEW_NAME,
 				SubcontinentsView.VIEW_NAME,
 				CountriesView.VIEW_NAME,
-				LabMessagesView.VIEW_NAME));
+				LabMessagesView.VIEW_NAME,
+				TravelEntriesView.VIEW_NAME,
+				ImmunizationsView.VIEW_NAME));
 
 		if (permitted(FeatureType.CASE_SURVEILANCE, UserRight.DASHBOARD_SURVEILLANCE_ACCESS)) {
 			views.add(SurveillanceDashboardView.VIEW_NAME);
@@ -337,7 +374,7 @@ public class MainScreen extends HorizontalLayout {
 					if (!DataHelper.isNullOrEmpty(event.getParameters())) {
 						url += event.getParameters();
 					}
-					url += "?" + urlParams.toString();
+					url += "?" + urlParams;
 					SormasUI.get().getNavigator().navigateTo(url);
 					return false;
 				}

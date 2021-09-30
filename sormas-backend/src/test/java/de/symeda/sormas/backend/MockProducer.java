@@ -39,8 +39,10 @@ import javax.transaction.UserTransaction;
 
 import de.symeda.sormas.api.utils.InfoProvider;
 import de.symeda.sormas.backend.common.ConfigFacadeEjb;
-import de.symeda.sormas.backend.sormastosormas.SormasToSormasRestClient;
-import de.symeda.sormas.backend.sormastosormas.SormasToSormasRestClientProducer;
+import de.symeda.sormas.backend.sormastosormas.crypto.SormasToSormasEncryptionFacadeEjb.SormasToSormasEncryptionFacadeEjbLocal;
+import de.symeda.sormas.backend.sormastosormas.access.SormasToSormasDiscoveryService;
+import de.symeda.sormas.backend.sormastosormas.rest.SormasToSormasRestClient;
+import de.symeda.sormas.backend.sormastosormas.rest.SormasToSormasRestClientProducer;
 
 /**
  * Creates mocks for resources needed in bean test / external services.
@@ -158,7 +160,10 @@ public class MockProducer {
 
 		@Override
 		@Produces
-		public SormasToSormasRestClient sormasToSormasClient() {
+		public SormasToSormasRestClient sormasToSormasClient(
+			SormasToSormasDiscoveryService sormasToSormasDiscoveryService,
+			SormasToSormasEncryptionFacadeEjbLocal sormasToSormasEncryptionEjb,
+			ConfigFacadeEjb.ConfigFacadeEjbLocal configFacadeEjb) {
 			return SORMAS_TO_SORMAS_REST_CLIENT;
 		}
 	}
@@ -166,5 +171,9 @@ public class MockProducer {
 	@Produces
 	public static ManagedScheduledExecutorService getManagedScheduledExecutorService() {
 		return managedScheduledExecutorService;
+	}
+
+	public static void mockProperty(String property, String value) {
+		properties.setProperty(property, value);
 	}
 }

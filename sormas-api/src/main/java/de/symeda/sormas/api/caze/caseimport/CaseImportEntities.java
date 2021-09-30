@@ -37,7 +37,7 @@ public class CaseImportEntities implements Serializable {
 	private List<PersonNameDto> similarPersons;
 
 	public CaseImportEntities(UserReferenceDto reportingUser) {
-		person = PersonDto.build();
+		person = PersonDto.buildImportEntity();
 		caze = createCase(person, reportingUser);
 
 		samples = new ArrayList<>();

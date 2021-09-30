@@ -19,6 +19,7 @@ package de.symeda.sormas.backend.sample;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -46,6 +47,7 @@ import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
 import de.symeda.sormas.backend.contact.Contact;
 import de.symeda.sormas.backend.event.EventParticipant;
 import de.symeda.sormas.backend.user.User;
+import de.symeda.sormas.backend.util.QueryHelper;
 
 @Stateless
 @LocalBean
@@ -127,13 +129,30 @@ public class PathogenTestService extends AbstractCoreAdoService<PathogenTest> {
 		Root<PathogenTest> from = cq.from(getElementClass());
 
 		cq.where(cb.and(createDefaultFilter(cb, from), cb.equal(from.get(PathogenTest.SAMPLE), sample)));
-		return !em.createQuery(cq).setMaxResults(1).getResultList().isEmpty();
+		return QueryHelper.getFirstResult(em, cq) != null;
 	}
 
-	public List<PathogenTest> getAllByCase(Case caze) {
+	public List<PathogenTest> getAllByCase(String caseUuid) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<PathogenTest> cq = cb.createQuery(getElementClass());
+		Root<PathogenTest> from = cq.from(getElementClass());
+
+		Predicate filter = createDefaultFilter(cb, from);
+
+		Join<Object, Object> sampleJoin = from.join(PathogenTest.SAMPLE);
+		filter = cb.and(filter, cb.equal(sampleJoin.join(Sample.ASSOCIATED_CASE, JoinType.LEFT).get(Case.UUID), caseUuid));
+
+		cq.where(filter);
+		cq.orderBy(cb.desc(from.get(PathogenTest.TEST_DATE_TIME)));
+
+		return em.createQuery(cq).getResultList();
+	}
+
+	public Long countByCase(Case caze) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
 		Root<PathogenTest> from = cq.from(getElementClass());
 
 		Predicate filter = createDefaultFilter(cb, from);
@@ -142,11 +161,11 @@ public class PathogenTestService extends AbstractCoreAdoService<PathogenTest> {
 			Join<Object, Object> sampleJoin = from.join(PathogenTest.SAMPLE);
 			filter = cb.and(filter, cb.equal(sampleJoin.get(Sample.ASSOCIATED_CASE), caze));
 		}
-
 		cq.where(filter);
-		cq.orderBy(cb.desc(from.get(PathogenTest.TEST_DATE_TIME)));
 
-		return em.createQuery(cq).getResultList();
+		cq.select(cb.count(from.get(PathogenTest.ID)));
+
+		return em.createQuery(cq).getSingleResult();
 	}
 
 	public List<PathogenTest> getBySampleUuids(List<String> sampleUuids, boolean ordered) {
@@ -165,6 +184,10 @@ public class PathogenTestService extends AbstractCoreAdoService<PathogenTest> {
 		}
 
 		return em.createQuery(cq).getResultList();
+	}
+
+	public List<PathogenTest> getBySampleUuid(String sampleUuid, boolean ordered) {
+		return getBySampleUuids(Collections.singletonList(sampleUuid), ordered);
 	}
 
 	public List<String> getDeletedUuidsSince(Date since) {
@@ -235,12 +258,7 @@ public class PathogenTestService extends AbstractCoreAdoService<PathogenTest> {
 	public Predicate createActiveTestsFilter(CriteriaBuilder cb, Root<PathogenTest> root) {
 
 		Join<PathogenTest, Sample> sample = root.join(PathogenTest.SAMPLE, JoinType.LEFT);
-		Join<Sample, Case> caze = sample.join(Sample.ASSOCIATED_CASE, JoinType.LEFT);
-		Join<Sample, Contact> contact = sample.join(Sample.ASSOCIATED_CONTACT, JoinType.LEFT);
-		Join<Sample, EventParticipant> event = sample.join(Sample.ASSOCIATED_EVENT_PARTICIPANT, JoinType.LEFT);
-		Predicate pred =
-			cb.or(cb.isFalse(caze.get(Case.ARCHIVED)), cb.isFalse(contact.get(Contact.DELETED)), cb.isFalse(event.get(EventParticipant.DELETED)));
-		return cb.and(pred, cb.isFalse(sample.get(Sample.DELETED)));
+		return sampleService.createActiveSamplesFilter(cb, sample);
 	}
 
 	/**

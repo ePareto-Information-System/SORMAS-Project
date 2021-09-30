@@ -18,16 +18,14 @@ package de.symeda.sormas.ui.importexport;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertNull;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,11 +34,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
-import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import com.vaadin.server.StreamResource;
 
@@ -50,19 +46,19 @@ import de.symeda.sormas.api.caze.CaseCriteria;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseExportType;
 import de.symeda.sormas.api.caze.InvestigationStatus;
-import de.symeda.sormas.api.caze.Trimester;
 import de.symeda.sormas.api.contact.ContactCriteria;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.FollowUpStatus;
 import de.symeda.sormas.api.contact.QuarantineType;
 import de.symeda.sormas.api.importexport.InvalidColumnException;
+import de.symeda.sormas.api.person.PersonCriteria;
 import de.symeda.sormas.api.person.PersonDto;
+import de.symeda.sormas.api.person.PersonIndexDto;
 import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.symptoms.SymptomState;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserRole;
-import de.symeda.sormas.api.utils.CSVUtils;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.YesNoUnknown;
@@ -93,9 +89,6 @@ public class ImportExportTest extends AbstractBeanTest {
 		caze.setExternalID("text-ext-id");
 		caze.setExternalToken("text-ext-token");
 		caze.setDiseaseDetails("Corona");
-		caze.setPregnant(YesNoUnknown.NO);
-		caze.setTrimester(Trimester.UNKNOWN);
-		caze.setPostpartum(YesNoUnknown.NO);
 		caze.setHealthFacilityDetails("test HF details");
 		caze.setQuarantine(QuarantineType.INSTITUTIONELL);
 		caze.setQuarantineFrom(dateNow);
@@ -145,7 +138,6 @@ public class ImportExportTest extends AbstractBeanTest {
 
 		for (int i = 0, getLength = columns.length; i < getLength; i++) {
 			String column = columns[i];
-			String value = values[i];
 
 			if (CaseDataDto.UUID.equals(column)) {
 				values[i] = importUuid;
@@ -174,18 +166,27 @@ public class ImportExportTest extends AbstractBeanTest {
 			assertThat("Error during import: " + StringUtils.join(errorRows.get(1), ", "), errorRows, hasSize(0));
 		}
 
-		CaseDataDto importedCase = getCaseFacade().getCaseDataByUuid(importUuid);
+		PersonCriteria importPersonCriteria = new PersonCriteria();
+		importPersonCriteria.setNameAddressPhoneEmailLike("Import John");
+
+		List<PersonIndexDto> importedPersons = getPersonFacade().getIndexList(importPersonCriteria, null, null, null);
+		assertThat(importedPersons.size(), is(1));
+
+		List<CaseDataDto> importedCases = getCaseFacade().getByPersonUuids(Collections.singletonList(importedPersons.get(0).getUuid()));
+		assertThat(importedCases.size(), is(1));
+
+		CaseDataDto importedCase = importedCases.get(0);
 
 		assertThat(importedCase.getExternalID(), is("text-ext-id"));
 		assertThat(importedCase.getExternalToken(), is("text-ext-token"));
 		assertThat(importedCase.getDisease(), is(Disease.CORONAVIRUS));
 		assertThat(importedCase.getDiseaseDetails(), is("Corona"));
-		assertThat(importedCase.getPregnant(), is(YesNoUnknown.NO));
-		assertThat(importedCase.getTrimester(), is(Trimester.UNKNOWN));
-		assertThat(importedCase.getPostpartum(), is(YesNoUnknown.NO));
-		assertThat(importedCase.getRegion(), is(rdcf.region));
-		assertThat(importedCase.getDistrict(), is(rdcf.district));
-		assertThat(importedCase.getCommunity(), is(rdcf.community));
+		assertNull(importedCase.getPregnant());
+		assertNull(importedCase.getTrimester());
+		assertNull(importedCase.getPostpartum());
+		assertThat(importedCase.getResponsibleRegion(), is(rdcf.region));
+		assertThat(importedCase.getResponsibleDistrict(), is(rdcf.district));
+		assertThat(importedCase.getResponsibleCommunity(), is(rdcf.community));
 		assertThat(importedCase.getHealthFacility(), is(rdcf.facility));
 		assertThat(importedCase.getHealthFacilityDetails(), is("test HF details"));
 		assertThat(importedCase.getQuarantine(), is(QuarantineType.INSTITUTIONELL));
@@ -314,8 +315,19 @@ public class ImportExportTest extends AbstractBeanTest {
 			assertThat("Error during import: " + StringUtils.join(errorRows.get(1), ", "), errorRows, hasSize(0));
 		}
 
-		ContactDto importedContact = getContactFacade().getContactByUuid(importUuid);
 
+		PersonCriteria importPersonCriteria = new PersonCriteria();
+		importPersonCriteria.setNameAddressPhoneEmailLike("Import John");
+
+		List<PersonIndexDto> importedPersons = getPersonFacade().getIndexList(importPersonCriteria, null, null, null);
+		assertThat(importedPersons.size(), is(1));
+
+		List<ContactDto> importedContacts = getContactFacade().getByPersonUuids(Collections.singletonList(importedPersons.get(0).getUuid()));
+		assertThat(importedContacts.size(), is(1));
+
+		ContactDto importedContact = importedContacts.get(0);
+
+		assertThat(importedContact.getUuid(), not(importUuid));
 		assertThat(importedContact.getExternalID(), is("text-ext-id"));
 		assertThat(importedContact.getExternalToken(), is("text-ext-token"));
 		assertThat(importedContact.getDisease(), is(Disease.CORONAVIRUS));
@@ -345,13 +357,5 @@ public class ImportExportTest extends AbstractBeanTest {
 		assertThat(importedPerson.getAddress().getStreet(), is("test street"));
 		assertThat(importedPerson.getAddress().getHouseNumber(), is("test house number"));
 		assertThat(importedPerson.getAddress().getAdditionalInformation(), is("test additional information"));
-	}
-
-	private CSVReader getCsvReader(InputStream inputStream) {
-		CharsetDecoder decoder = StandardCharsets.UTF_8.newDecoder();
-		BOMInputStream bomInputStream = new BOMInputStream(inputStream);
-		Reader reader = new InputStreamReader(bomInputStream, decoder);
-		BufferedReader bufferedReader = new BufferedReader(reader);
-		return CSVUtils.createCSVReader(bufferedReader, ',');
 	}
 }

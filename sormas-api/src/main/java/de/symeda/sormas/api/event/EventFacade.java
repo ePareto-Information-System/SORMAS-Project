@@ -28,8 +28,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.externaldata.ExternalDataDto;
+import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
 import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolException;
-import de.symeda.sormas.api.region.RegionReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
 
@@ -38,13 +41,9 @@ public interface EventFacade {
 
 	List<EventDto> getAllActiveEventsAfter(Date date);
 
-	List<DashboardEventDto> getNewEventsForDashboard(EventCriteria eventCriteria);
-
 	Map<Disease, Long> getEventCountByDisease(EventCriteria eventCriteria);
 
-	Map<EventStatus, Long> getEventCountByStatus(EventCriteria eventCriteria);
-
-	EventDto getEventByUuid(String uuid);
+	EventDto getEventByUuid(String uuid, boolean detailedReferences);
 
 	EventDto saveEvent(@Valid @NotNull EventDto dto);
 
@@ -61,6 +60,8 @@ public interface EventFacade {
 	long count(EventCriteria eventCriteria);
 
 	List<EventIndexDto> getIndexList(EventCriteria eventCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
+
+	Page<EventIndexDto> getIndexPage(@NotNull EventCriteria eventCriteria, Integer offset, Integer size, List<SortProperty> sortProperties);
 
 	List<EventExportDto> getExportList(EventCriteria eventCriteria, Collection<String> selectedRows, Integer first, Integer max);
 
@@ -90,9 +91,11 @@ public interface EventFacade {
 
 	Set<String> getAllEventUuidsByEventGroupUuid(String eventGroupUuid);
 
-    String getFirstEventUuidWithOwnershipHandedOver(List<String> eventUuids);
+	String getFirstEventUuidWithOwnershipHandedOver(List<String> eventUuids);
 
 	void validate(EventDto dto) throws ValidationRuntimeException;
 
 	Set<RegionReferenceDto> getAllRegionsRelatedToEventUuids(List<String> uuids);
+
+	void updateExternalData(List<ExternalDataDto> externalData) throws ExternalDataUpdateException;
 }

@@ -1,29 +1,38 @@
 package de.symeda.sormas.ui.labmessage;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.Page;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.Validator;
 import com.vaadin.v7.ui.OptionGroup;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.labmessage.LabMessageCriteria;
 import de.symeda.sormas.api.labmessage.LabMessageFetchResult;
 import de.symeda.sormas.api.labmessage.LabMessageStatus;
 import de.symeda.sormas.api.labmessage.NewMessagesState;
+import de.symeda.sormas.api.systemevents.SystemEventType;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.SormasUI;
@@ -34,6 +43,8 @@ import de.symeda.sormas.ui.samples.SamplesViewType;
 import de.symeda.sormas.ui.utils.AbstractView;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.DateTimeField;
+import de.symeda.sormas.ui.utils.FutureDateValidator;
 import de.symeda.sormas.ui.utils.LayoutUtil;
 import de.symeda.sormas.ui.utils.MenuBarHelper;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
@@ -81,7 +92,7 @@ public class LabMessagesView extends AbstractView {
 		addHeaderComponent(samplesViewSwitcher);
 
 		addHeaderComponent(ButtonHelper.createIconButton(Captions.labMessageFetch, VaadinIcons.REFRESH, e -> {
-			fetchLabmessages();
+			checkForConcurrentEventsAndFetch();
 		}, ValoTheme.BUTTON_PRIMARY));
 
 		if (isBulkEditAllowed()) {
@@ -206,8 +217,36 @@ public class LabMessagesView extends AbstractView {
 		return button;
 	}
 
-	private void fetchLabmessages() {
-		LabMessageFetchResult fetchResult = FacadeProvider.getLabMessageFacade().fetchAndSaveExternalLabMessages();
+	private void checkForConcurrentEventsAndFetch() {
+		boolean fetchAlreadyStarted = FacadeProvider.getSystemEventFacade().existsStartedEvent(SystemEventType.FETCH_LAB_MESSAGES);
+		if (fetchAlreadyStarted) {
+			VaadinUiUtil.showConfirmationPopup(
+				I18nProperties.getString(Strings.headingFetchLabMessages),
+				new Label(I18nProperties.getString(Strings.confirmationFetchLabMessages)),
+				I18nProperties.getString(Strings.yes),
+				I18nProperties.getString(Strings.no),
+				480,
+				confirmed -> {
+					if (confirmed) {
+						askForSinceDateAndFetch();
+					}
+				});
+		} else {
+			askForSinceDateAndFetch();
+		}
+	}
+	
+	private void askForSinceDateAndFetch() {
+		boolean atLeastOneFetchExecuted = FacadeProvider.getLabMessageFacade().atLeastOneFetchExecuted();
+		if (atLeastOneFetchExecuted) {
+			fetchLabMessages(null);
+		} else {
+			showSinceDateSelectionWindow(this::fetchLabMessages);
+		}
+	}
+
+	private void fetchLabMessages(Date since) {
+		LabMessageFetchResult fetchResult = FacadeProvider.getLabMessageFacade().fetchAndSaveExternalLabMessages(since);
 		if (!fetchResult.isSuccess()) {
 			VaadinUiUtil.showWarningPopup(fetchResult.getError());
 		} else if (NewMessagesState.NO_NEW_MESSAGES.equals(fetchResult.getNewMessagesState())) {
@@ -215,6 +254,58 @@ public class LabMessagesView extends AbstractView {
 		} else {
 			grid.reload();
 		}
+	}
+
+	private void showSinceDateSelectionWindow(Consumer<Date> dateConsumer) {
+		VerticalLayout verticalLayout = new VerticalLayout();
+		Label label = new Label(I18nProperties.getString(Strings.confirmationSinceLabMessages));
+		verticalLayout.addComponent(label);
+
+		HorizontalLayout horizontalLayout = new HorizontalLayout();
+		Button yesButton = ButtonHelper.createButton(Captions.actionYes);
+		Button noButton = ButtonHelper.createButton(Captions.actionNo);
+		Button cancelButton = ButtonHelper.createButton(Captions.actionCancel);
+		cancelButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
+
+		horizontalLayout.addComponent(yesButton);
+		horizontalLayout.addComponent(noButton);
+		horizontalLayout.addComponent(cancelButton);
+		horizontalLayout.setStyleName(CssStyles.FLOAT_RIGHT);
+		verticalLayout.addComponent(horizontalLayout);
+
+		Window window = VaadinUiUtil.showPopupWindow(verticalLayout);
+
+		cancelButton.addClickListener(event -> window.close());
+		noButton.addClickListener(event -> dateConsumer.accept(null));
+		yesButton.addClickListener(yesEvent -> {
+			horizontalLayout.removeComponent(yesButton);
+			horizontalLayout.removeComponent(noButton);
+			horizontalLayout.removeComponent(cancelButton);
+
+			Button confirmButton = ButtonHelper.createButton(Captions.actionConfirm);
+			confirmButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
+
+			DateTimeField dateTimeField = new DateTimeField();
+			dateTimeField.addValidator(date -> {
+				if (date == null) {
+					throw new Validator.InvalidValueException("Since date has to be set");
+				}
+			});
+			dateTimeField.addValidator(new FutureDateValidator(dateTimeField, 0, null));
+
+			horizontalLayout.addComponent(dateTimeField);
+			horizontalLayout.addComponent(confirmButton);
+
+			confirmButton.addClickListener(confirmEvent -> {
+				if (dateTimeField.isValid()) {
+					dateConsumer.accept(dateTimeField.getValue());
+					window.close();
+				} else {
+					new Notification(I18nProperties.getString(Strings.messageCheckInputData), null, Notification.Type.ERROR_MESSAGE, true)
+							.show(Page.getCurrent());
+				}
+			});
+		});
 	}
 
 	private boolean isBulkEditAllowed() {

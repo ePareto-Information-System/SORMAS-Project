@@ -22,7 +22,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.importexport.InvalidColumnException;
 import de.symeda.sormas.api.infrastructure.InfrastructureType;
-import de.symeda.sormas.api.region.CountryDto;
+import de.symeda.sormas.api.infrastructure.country.CountryDto;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.utils.EmptyValueException;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
@@ -101,7 +101,7 @@ public class CountryImporter extends InfrastructureImporter {
 					PropertyDescriptor pd = new PropertyDescriptor(headerPathElementName, currentElement.getClass());
 					Class<?> propertyType = pd.getPropertyType();
 					validateFieldLength(headerPathElementName, value);
-					if (!executeDefaultInvokings(pd, currentElement, value, entityPropertyPath)) {
+					if (!executeDefaultInvoke(pd, currentElement, value, entityPropertyPath)) {
 						throw new UnsupportedOperationException(
 							I18nProperties.getValidationError(Validations.importPropertyTypeNotAllowed, propertyType.getName()));
 					}

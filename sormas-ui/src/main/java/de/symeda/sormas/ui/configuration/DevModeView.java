@@ -72,21 +72,21 @@ import de.symeda.sormas.api.contact.QuarantineType;
 import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventParticipantDto;
 import de.symeda.sormas.api.event.EventStatus;
-import de.symeda.sormas.api.facility.FacilityCriteria;
-import de.symeda.sormas.api.facility.FacilityDto;
-import de.symeda.sormas.api.facility.FacilityIndexDto;
-import de.symeda.sormas.api.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityCriteria;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityIndexDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.person.Sex;
-import de.symeda.sormas.api.region.DistrictCriteria;
-import de.symeda.sormas.api.region.DistrictDto;
-import de.symeda.sormas.api.region.DistrictIndexDto;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.region.RegionReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictCriteria;
+import de.symeda.sormas.api.infrastructure.district.DistrictDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictIndexDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.sample.AdditionalTestDto;
 import de.symeda.sormas.api.sample.AdditionalTestType;
 import de.symeda.sormas.api.sample.PathogenTestType;
@@ -161,8 +161,23 @@ public class DevModeView extends AbstractConfigurationView {
 		contentLayout.addComponent(createContactGeneratorLayout());
 		contentLayout.addComponent(createEventsGeneratorLayout());
 		contentLayout.addComponent(createSamplesGeneratorLayout());
+		contentLayout.addComponent(createDevButtonsLayout());
 
 		addComponent(contentLayout);
+	}
+
+	private HorizontalLayout createDevButtonsLayout() {
+
+		HorizontalLayout horizontalLayout = new HorizontalLayout();
+		horizontalLayout.setSpacing(true);
+
+		Button btnResetEnumCache = ButtonHelper.createButton((Captions.actionResetEnumCache), e -> {
+			FacadeProvider.getCustomizableEnumFacade().loadData();
+		});
+
+		horizontalLayout.addComponent(btnResetEnumCache);
+
+		return horizontalLayout;
 	}
 
 	private HorizontalLayout createSeedSettingsLayout() {
@@ -929,14 +944,14 @@ public class DevModeView extends AbstractConfigurationView {
 				caze.setCaseOrigin(CaseOrigin.IN_COUNTRY);
 				caze.setHealthFacility(noFacilityRef);
 				caze.setFacilityType(null);
-				caze.setRegion(config.getRegion());
-				caze.setDistrict(config.getDistrict());
+				caze.setResponsibleRegion(config.getRegion());
+				caze.setResponsibleDistrict(config.getDistrict());
 			} else {
 				FacilityIndexDto healthFacility = random(healthFacilities);
 				caze.setCaseOrigin(CaseOrigin.IN_COUNTRY);
-				caze.setRegion(healthFacility.getRegion());
-				caze.setDistrict(healthFacility.getDistrict());
-				caze.setCommunity(healthFacility.getCommunity());
+				caze.setResponsibleRegion(healthFacility.getRegion());
+				caze.setResponsibleDistrict(healthFacility.getDistrict());
+				caze.setResponsibleCommunity(healthFacility.getCommunity());
 				caze.setHealthFacility(healthFacility.toReference());
 				caze.setFacilityType(healthFacility.getType());
 				caze.setReportLat(healthFacility.getLatitude());
@@ -1212,7 +1227,7 @@ public class DevModeView extends AbstractConfigurationView {
 				&& FacadeProvider.getDiseaseConfigurationFacade().hasFollowUp(contact.getDisease())
 				&& FollowUpStatus.NO_FOLLOW_UP != contact.getFollowUpStatus()) {
 				Date latestFollowUpDate = contact.getFollowUpUntil().before(new Date()) ? contact.getFollowUpUntil() : new Date();
-				Date contactStartDate = ContactLogic.getStartDate(contact.getLastContactDate(), contact.getReportDateTime());
+				Date contactStartDate = ContactLogic.getStartDate(contact);
 				int followUpCount = random().nextInt(DateHelper.getDaysBetween(contactStartDate, latestFollowUpDate) + 1);
 				if (followUpCount > 0) {
 					int[] followUpDays = random().ints(1, followUpCount + 1).distinct().limit(followUpCount).toArray();

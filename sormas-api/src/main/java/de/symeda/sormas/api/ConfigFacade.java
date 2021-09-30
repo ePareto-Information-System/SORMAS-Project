@@ -18,7 +18,8 @@ import javax.ejb.Remote;
 
 import de.symeda.sormas.api.externaljournal.PatientDiaryConfig;
 import de.symeda.sormas.api.externaljournal.SymptomJournalConfig;
-import de.symeda.sormas.api.region.GeoLatLon;
+import de.symeda.sormas.api.geo.GeoLatLon;
+import de.symeda.sormas.api.sormastosormas.SormasToSormasConfig;
 
 @Remote
 public interface ConfigFacade {
@@ -34,6 +35,8 @@ public interface ConfigFacade {
 	String getEpidPrefix();
 
 	String getAppUrl();
+
+	String getUiUrl();
 
 	boolean isFeatureAutomaticCaseClassification();
 
@@ -77,6 +80,8 @@ public interface ConfigFacade {
 
 	String getSormasInstanceName();
 
+	boolean isDuplicateChecksExcludePersonsOfArchivedEntries();
+
 	double getNameSimilarityThreshold();
 
 	int getInfrastructureSyncThreshold();
@@ -87,7 +92,11 @@ public interface ConfigFacade {
 
 	int getDaysAfterSystemEventGetsDeleted();
 
+	int getDaysAfterTravelEntryGetsArchived();
+
 	GeoLatLon getCountryCenter();
+
+	boolean isMapUseCountryCenter();
 
 	int getMapZoom();
 
@@ -103,11 +112,9 @@ public interface ConfigFacade {
 
 	PatientDiaryConfig getPatientDiaryConfig();
 
-	String getSormasToSormasUserPassword();
-
 	void validateExternalUrls();
 
-	SormasToSormasConfig getSormasToSormasConfig();
+	SormasToSormasConfig getS2SConfig();
 
 	String getExternalSurveillanceToolGatewayUrl();
 

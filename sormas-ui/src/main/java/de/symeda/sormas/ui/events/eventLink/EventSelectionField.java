@@ -24,12 +24,10 @@ import java.util.Date;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import com.vaadin.server.Page;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomField;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.RadioButtonGroup;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -38,8 +36,8 @@ import com.vaadin.ui.themes.ValoTheme;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.event.EventCriteria;
+import de.symeda.sormas.api.event.EventCriteriaDateType;
 import de.symeda.sormas.api.event.EventDto;
-import de.symeda.sormas.api.event.EventGroupDto;
 import de.symeda.sormas.api.event.EventGroupReferenceDto;
 import de.symeda.sormas.api.event.EventHelper;
 import de.symeda.sormas.api.event.EventIndexDto;
@@ -291,26 +289,10 @@ public class EventSelectionField extends CustomField<EventIndexDto> {
 
 			if ((fromDate != null && toDate != null) || (fromDate == null && toDate == null)) {
 				applyButton.removeStyleName(ValoTheme.BUTTON_PRIMARY);
-				criteria.eventDateBetween(fromDate, toDate, dateFilterOption);
+				criteria.eventDateBetween(fromDate, toDate, EventCriteriaDateType.EVENT_DATE, dateFilterOption);
 
 			} else {
-				if (dateFilterOption == DateFilterOption.DATE) {
-					Notification notification = new Notification(
-						I18nProperties.getString(Strings.headingMissingDateFilter),
-						I18nProperties.getString(Strings.messageMissingDateFilter),
-						Notification.Type.WARNING_MESSAGE,
-						false);
-					notification.setDelayMsec(-1);
-					notification.show(Page.getCurrent());
-				} else {
-					Notification notification = new Notification(
-						I18nProperties.getString(Strings.headingMissingEpiWeekFilter),
-						I18nProperties.getString(Strings.messageMissingEpiWeekFilter),
-						Notification.Type.WARNING_MESSAGE,
-						false);
-					notification.setDelayMsec(-1);
-					notification.show(Page.getCurrent());
-				}
+				weekAndDateFilter.setNotificationsForMissingFilters();
 			}
 			eventGrid.setCriteria(criteria);
 			eventGrid.getSelectedItems();
@@ -322,7 +304,7 @@ public class EventSelectionField extends CustomField<EventIndexDto> {
 
 			weekAndDateFilter.getDateFromFilter().setValue(null);
 			weekAndDateFilter.getDateToFilter().setValue(null);
-			criteria.eventDateBetween(null, null, DateFilterOption.DATE);
+			criteria.eventDateBetween(null, null, null, DateFilterOption.DATE);
 
 			eventGrid.setCriteria(criteria);
 			eventGrid.getSelectedItems();

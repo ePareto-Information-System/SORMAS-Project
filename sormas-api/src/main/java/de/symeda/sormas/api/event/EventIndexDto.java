@@ -1,6 +1,6 @@
 /*******************************************************************************
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+ * Copyright © 2016-2021 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.location.LocationReferenceDto;
+import de.symeda.sormas.api.share.ExternalShareStatus;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableIndexDto;
 
@@ -34,8 +36,10 @@ public class EventIndexDto extends PseudonymizableIndexDto implements Serializab
 	public static final String UUID = "uuid";
 	public static final String EXTERNAL_ID = "externalId";
 	public static final String EXTERNAL_TOKEN = "externalToken";
+	public static final String INTERNAL_TOKEN = "internalToken";
 	public static final String EVENT_STATUS = "eventStatus";
 	public static final String RISK_LEVEL = "riskLevel";
+	public static final String SPECIFIC_RISK = "specificRisk";
 	public static final String EVENT_INVESTIGATION_STATUS = "eventInvestigationStatus";
 	public static final String EVENT_MANAGEMENT_STATUS = "eventManagementStatus";
 	public static final String PARTICIPANT_COUNT = "participantCount";
@@ -44,6 +48,7 @@ public class EventIndexDto extends PseudonymizableIndexDto implements Serializab
 	public static final String CONTACT_COUNT = "contactCount";
 	public static final String CONTACT_COUNT_SOURCE_IN_EVENT = "contactCountSourceInEvent";
 	public static final String DISEASE = "disease";
+	public static final String DISEASE_VARIANT = "diseaseVariant";
 	public static final String DISEASE_DETAILS = "diseaseDetails";
 	public static final String START_DATE = "startDate";
 	public static final String END_DATE = "endDate";
@@ -62,12 +67,19 @@ public class EventIndexDto extends PseudonymizableIndexDto implements Serializab
 	public static final String COMMUNITY = "community";
 	public static final String ADDRESS = "address";
 	public static final String EVENT_GROUPS = "eventGroups";
+	public static final String SURVEILLANCE_TOOL_LAST_SHARE_DATE = "surveillanceToolLastShareDate";
+	public static final String SURVEILLANCE_TOOL_SHARE_COUNT = "surveillanceToolShareCount";
+	public static final String SURVEILLANCE_TOOL_STATUS = "surveillanceToolStatus";
+	public static final String EVENT_IDENTIFICATION_SOURCE = "eventIdentificationSource";
 
+	private Long id;
 	private String uuid;
 	private String externalId;
 	private String externalToken;
+	private String internalToken;
 	private EventStatus eventStatus;
 	private RiskLevel riskLevel;
+	private SpecificRisk specificRisk;
 	private EventInvestigationStatus eventInvestigationStatus;
 	private EventManagementStatus eventManagementStatus;
 	private long participantCount;
@@ -82,6 +94,7 @@ public class EventIndexDto extends PseudonymizableIndexDto implements Serializab
 	 */
 	private long contactCountSourceInEvent;
 	private Disease disease;
+	private DiseaseVariant diseaseVariant;
 	private String diseaseDetails;
 	private Date startDate;
 	private Date endDate;
@@ -97,18 +110,28 @@ public class EventIndexDto extends PseudonymizableIndexDto implements Serializab
 	private Date reportDateTime;
 	private UserReferenceDto reportingUser;
 	private UserReferenceDto responsibleUser;
-	private EventJurisdictionDto jurisdiction;
+	private String regionUuid;
+	private boolean isInJurisdictionOrOwned;
 	private EventGroupsIndexDto eventGroups;
+	private EventIdentificationSource eventIdentificationSource;
+
+	private Date surveillanceToolLastShareDate;
+	private Long surveillanceToolShareCount;
+	private ExternalShareStatus surveillanceToolStatus;
 
 	public EventIndexDto(
+		Long id,
 		String uuid,
 		String externalId,
 		String externalToken,
+		String internalToken,
 		EventStatus eventStatus,
 		RiskLevel riskLevel,
+		SpecificRisk specificRisk,
 		EventInvestigationStatus eventInvestigationStatus,
 		EventManagementStatus eventManagementStatus,
 		Disease disease,
+		DiseaseVariant diseaseVariant,
 		String diseaseDetails,
 		Date startDate,
 		Date endDate,
@@ -137,16 +160,22 @@ public class EventIndexDto extends PseudonymizableIndexDto implements Serializab
 		String responsibleUserUuid,
 		String responsibleUserFirstName,
 		String responsibleUserLastName,
-		Date changeDate) {
+		boolean isInJurisdictionOrOwned,
+		Date changeDate,
+		EventIdentificationSource eventIdentificationSource) {
 
+		this.id = id;
 		this.uuid = uuid;
 		this.externalId = externalId;
 		this.externalToken = externalToken;
+		this.internalToken = internalToken;
 		this.eventStatus = eventStatus;
 		this.riskLevel = riskLevel;
+		this.specificRisk = specificRisk;
 		this.eventInvestigationStatus = eventInvestigationStatus;
 		this.eventManagementStatus = eventManagementStatus;
 		this.disease = disease;
+		this.diseaseVariant = diseaseVariant;
 		this.diseaseDetails = diseaseDetails;
 		this.startDate = startDate;
 		this.endDate = endDate;
@@ -162,7 +191,17 @@ public class EventIndexDto extends PseudonymizableIndexDto implements Serializab
 		this.reportDateTime = reportDateTime;
 		this.reportingUser = new UserReferenceDto(reportingUserUuid, reportingUserFirstName, reportingUserLastName, null);
 		this.responsibleUser = new UserReferenceDto(responsibleUserUuid, responsibleUserFirstName, responsibleUserLastName, null);
-		this.jurisdiction = new EventJurisdictionDto(reportingUserUuid, responsibleUserUuid, regionUuid, districtUuid, communityUuid);
+		this.isInJurisdictionOrOwned = isInJurisdictionOrOwned;
+		this.regionUuid = regionUuid;
+		this.eventIdentificationSource = eventIdentificationSource;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getUuid() {
@@ -189,6 +228,14 @@ public class EventIndexDto extends PseudonymizableIndexDto implements Serializab
 		this.externalToken = externalToken;
 	}
 
+	public String getInternalToken() {
+		return internalToken;
+	}
+
+	public void setInternalToken(String internalToken) {
+		this.internalToken = internalToken;
+	}
+
 	public EventStatus getEventStatus() {
 		return eventStatus;
 	}
@@ -205,6 +252,14 @@ public class EventIndexDto extends PseudonymizableIndexDto implements Serializab
 		this.riskLevel = riskLevel;
 	}
 
+	public SpecificRisk getSpecificRisk() {
+		return specificRisk;
+	}
+
+	public void setSpecificRisk(SpecificRisk specificRisk) {
+		this.specificRisk = specificRisk;
+	}
+
 	public EventInvestigationStatus getEventInvestigationStatus() {
 		return eventInvestigationStatus;
 	}
@@ -219,6 +274,14 @@ public class EventIndexDto extends PseudonymizableIndexDto implements Serializab
 
 	public void setDisease(Disease disease) {
 		this.disease = disease;
+	}
+
+	public DiseaseVariant getDiseaseVariant() {
+		return diseaseVariant;
+	}
+
+	public void setDiseaseVariant(DiseaseVariant diseaseVariant) {
+		this.diseaseVariant = diseaseVariant;
 	}
 
 	public String getDiseaseDetails() {
@@ -409,8 +472,44 @@ public class EventIndexDto extends PseudonymizableIndexDto implements Serializab
 		this.eventGroups = eventGroups;
 	}
 
+	public Date getSurveillanceToolLastShareDate() {
+		return surveillanceToolLastShareDate;
+	}
+
+	public void setSurveillanceToolLastShareDate(Date surveillanceToolLastShareDate) {
+		this.surveillanceToolLastShareDate = surveillanceToolLastShareDate;
+	}
+
+	public Long getSurveillanceToolShareCount() {
+		return surveillanceToolShareCount;
+	}
+
+	public void setSurveillanceToolShareCount(Long surveillanceToolShareCount) {
+		this.surveillanceToolShareCount = surveillanceToolShareCount;
+	}
+
+	public ExternalShareStatus getSurveillanceToolStatus() {
+		return surveillanceToolStatus;
+	}
+
+	public void setSurveillanceToolStatus(ExternalShareStatus surveillanceToolStatus) {
+		this.surveillanceToolStatus = surveillanceToolStatus;
+	}
+
+	public EventIdentificationSource getEventIdentificationSource() {
+		return eventIdentificationSource;
+	}
+
+	public void setEventIdentificationSource(EventIdentificationSource eventIdentificationSource) {
+		this.eventIdentificationSource = eventIdentificationSource;
+	}
+
 	public EventReferenceDto toReference() {
 		return new EventReferenceDto(getUuid(), getDisease(), getDiseaseDetails(), getEventStatus(), getEventInvestigationStatus(), getStartDate());
+	}
+
+	public String getRegionUuid() {
+		return regionUuid;
 	}
 
 	@Override
@@ -433,8 +532,8 @@ public class EventIndexDto extends PseudonymizableIndexDto implements Serializab
 		return result;
 	}
 
-	public EventJurisdictionDto getJurisdiction() {
-		return jurisdiction;
+	public boolean getInJurisdictionOrOwned() {
+		return isInJurisdictionOrOwned;
 	}
 
 	public static class EventIndexLocation implements Serializable {

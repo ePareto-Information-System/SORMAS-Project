@@ -42,10 +42,10 @@ import org.apache.commons.lang3.tuple.Pair;
 import de.symeda.sormas.api.AgeGroup;
 import de.symeda.sormas.api.IntegerRange;
 import de.symeda.sormas.api.caze.CaseStatisticsFacade;
-import de.symeda.sormas.api.facility.FacilityReferenceDto;
-import de.symeda.sormas.api.region.CommunityReferenceDto;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.region.RegionReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.statistics.StatisticsCaseAttribute;
 import de.symeda.sormas.api.statistics.StatisticsCaseCountDto;
 import de.symeda.sormas.api.statistics.StatisticsCaseCriteria;
@@ -53,21 +53,21 @@ import de.symeda.sormas.api.statistics.StatisticsCaseSubAttribute;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 import de.symeda.sormas.api.statistics.StatisticsHelper;
 import de.symeda.sormas.api.user.UserDto;
-import de.symeda.sormas.backend.facility.Facility;
-import de.symeda.sormas.backend.facility.FacilityFacadeEjb.FacilityFacadeEjbLocal;
-import de.symeda.sormas.backend.facility.FacilityService;
+import de.symeda.sormas.backend.infrastructure.facility.Facility;
+import de.symeda.sormas.backend.infrastructure.facility.FacilityFacadeEjb.FacilityFacadeEjbLocal;
+import de.symeda.sormas.backend.infrastructure.facility.FacilityService;
 import de.symeda.sormas.backend.infrastructure.PopulationData;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.person.Person;
-import de.symeda.sormas.backend.region.Community;
-import de.symeda.sormas.backend.region.CommunityFacadeEjb.CommunityFacadeEjbLocal;
-import de.symeda.sormas.backend.region.CommunityService;
-import de.symeda.sormas.backend.region.District;
-import de.symeda.sormas.backend.region.DistrictFacadeEjb.DistrictFacadeEjbLocal;
-import de.symeda.sormas.backend.region.DistrictService;
-import de.symeda.sormas.backend.region.Region;
-import de.symeda.sormas.backend.region.RegionFacadeEjb.RegionFacadeEjbLocal;
-import de.symeda.sormas.backend.region.RegionService;
+import de.symeda.sormas.backend.infrastructure.community.Community;
+import de.symeda.sormas.backend.infrastructure.community.CommunityFacadeEjb.CommunityFacadeEjbLocal;
+import de.symeda.sormas.backend.infrastructure.community.CommunityService;
+import de.symeda.sormas.backend.infrastructure.district.District;
+import de.symeda.sormas.backend.infrastructure.district.DistrictFacadeEjb.DistrictFacadeEjbLocal;
+import de.symeda.sormas.backend.infrastructure.district.DistrictService;
+import de.symeda.sormas.backend.infrastructure.region.Region;
+import de.symeda.sormas.backend.infrastructure.region.RegionFacadeEjb.RegionFacadeEjbLocal;
+import de.symeda.sormas.backend.infrastructure.region.RegionService;
 import de.symeda.sormas.backend.symptoms.Symptoms;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.util.ModelConstants;
@@ -282,7 +282,7 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 				.append(" ON ")
 				.append(Case.TABLE_NAME)
 				.append(".")
-				.append(Case.COMMUNITY)
+				.append(Case.RESPONSIBLE_COMMUNITY)
 				.append("_id = ")
 				.append(Community.TABLE_NAME)
 				.append(".")
@@ -294,7 +294,7 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 				.append(" ON ")
 				.append(Case.TABLE_NAME)
 				.append(".")
-				.append(Case.DISTRICT)
+				.append(Case.RESPONSIBLE_DISTRICT)
 				.append("_id = ")
 				.append(District.TABLE_NAME)
 				.append(".")
@@ -306,7 +306,7 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 				.append(" ON ")
 				.append(Case.TABLE_NAME)
 				.append(".")
-				.append(Case.REGION)
+				.append(Case.RESPONSIBLE_REGION)
 				.append("_id = ")
 				.append(Region.TABLE_NAME)
 				.append(".")
@@ -814,7 +814,7 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 				caseFilterBuilder,
 				filterBuilderParameters,
 				Case.TABLE_NAME,
-				Case.REGION + "_id",
+				Case.RESPONSIBLE_REGION + "_id",
 				regionIds,
 				entry -> entry);
 		}
@@ -825,7 +825,7 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 				caseFilterBuilder,
 				filterBuilderParameters,
 				Case.TABLE_NAME,
-				Case.DISTRICT + "_id",
+				Case.RESPONSIBLE_DISTRICT + "_id",
 				districtIds,
 				entry -> entry);
 		}
@@ -836,7 +836,7 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 				caseFilterBuilder,
 				filterBuilderParameters,
 				Case.TABLE_NAME,
-				Case.COMMUNITY + "_id",
+				Case.RESPONSIBLE_COMMUNITY + "_id",
 				communityIds,
 				entry -> entry);
 		}

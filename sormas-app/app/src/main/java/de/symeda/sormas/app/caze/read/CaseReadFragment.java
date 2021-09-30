@@ -29,7 +29,7 @@ import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseOrigin;
 import de.symeda.sormas.api.caze.Vaccination;
 import de.symeda.sormas.api.event.TypeOfPlace;
-import de.symeda.sormas.api.facility.FacilityDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.YesNoUnknown;
@@ -55,13 +55,15 @@ public class CaseReadFragment extends BaseReadFragment<FragmentCaseReadLayoutBin
 	private CaseConfirmationBasis caseConfirmationBasis;
 
 	public static CaseReadFragment newInstance(Case activityRootData) {
-		return newInstanceWithFieldCheckers(
+		CaseReadFragment caseReadFragment = newInstanceWithFieldCheckers(
 			CaseReadFragment.class,
 			null,
 			activityRootData,
 			FieldVisibilityCheckers.withDisease(activityRootData.getDisease())
 				.add(new CountryFieldVisibilityChecker(ConfigProvider.getServerLocale())),
 			UiFieldAccessCheckers.getDefault(activityRootData.isPseudonymized()));
+
+		return caseReadFragment;
 	}
 
 	private void setUpFieldVisibilities(FragmentCaseReadLayoutBinding contentBinding) {
@@ -83,19 +85,22 @@ public class CaseReadFragment extends BaseReadFragment<FragmentCaseReadLayoutBin
 		if (record.getPerson().getSex() != Sex.FEMALE) {
 			contentBinding.caseDataPregnant.setVisibility(GONE);
 			contentBinding.caseDataPostpartum.setVisibility(GONE);
+			contentBinding.caseDataTrimester.setVisibility(GONE);
 		}
 
 		// Port Health fields
 		if (UserRole.isPortHealthUser(ConfigProvider.getUser().getUserRoles())) {
 			contentBinding.caseDataCaseOrigin.setVisibility(GONE);
-			contentBinding.facilityOrHomeLayout.setVisibility(GONE);
+			contentBinding.facilityOrHome.setVisibility(GONE);
+			contentBinding.caseDataCommunity.setVisibility(GONE);
 			contentBinding.facilityTypeFieldsLayout.setVisibility(GONE);
 			contentBinding.caseDataHealthFacility.setVisibility(GONE);
 			contentBinding.caseDataHealthFacilityDetails.setVisibility(GONE);
 		} else {
 			if (record.getCaseOrigin() == CaseOrigin.POINT_OF_ENTRY) {
 				if (record.getHealthFacility() == null) {
-					contentBinding.facilityOrHomeLayout.setVisibility(GONE);
+					contentBinding.facilityOrHome.setVisibility(GONE);
+					contentBinding.caseDataCommunity.setVisibility(GONE);
 					contentBinding.facilityTypeFieldsLayout.setVisibility(GONE);
 					contentBinding.caseDataHealthFacility.setVisibility(GONE);
 					contentBinding.caseDataHealthFacilityDetails.setVisibility(GONE);

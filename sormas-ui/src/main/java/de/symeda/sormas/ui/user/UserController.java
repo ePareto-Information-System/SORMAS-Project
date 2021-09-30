@@ -17,7 +17,10 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.user;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -30,6 +33,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -176,7 +180,7 @@ public class UserController {
 	}
 
 	public void makeInitialPassword(String userUuid, String userEmail) {
-		if (StringUtils.isBlank(userEmail) || AuthProvider.getProvider().isDefaultProvider()) {
+		if (StringUtils.isBlank(userEmail) || AuthProvider.getProvider(FacadeProvider.getConfigFacade()).isDefaultProvider()) {
 			String newPassword = FacadeProvider.getUserFacade().resetPassword(userUuid);
 			showPasswordResetInternalSuccessPopup(newPassword);
 		} else {
@@ -187,7 +191,7 @@ public class UserController {
 	public void makeNewPassword(String userUuid, String userEmail) {
 		String newPassword = FacadeProvider.getUserFacade().resetPassword(userUuid);
 
-		if (StringUtils.isBlank(userEmail) || AuthProvider.getProvider().isDefaultProvider()) {
+		if (StringUtils.isBlank(userEmail) || AuthProvider.getProvider(FacadeProvider.getConfigFacade()).isDefaultProvider()) {
 			showPasswordResetInternalSuccessPopup(newPassword);
 		} else {
 			showPasswordResetExternalSuccessPopup();
@@ -311,5 +315,69 @@ public class UserController {
 	public void sync() {
 		Window window = VaadinUiUtil.showPopupWindow(new UsersSyncLayout());
 		window.setCaption(I18nProperties.getCaption(Captions.syncUsers));
+	}
+
+	public void enableAllSelectedItems(Collection<UserDto> selectedRows, Runnable callback) {
+
+		if (selectedRows.size() == 0) {
+			new Notification(
+				I18nProperties.getString(Strings.headingNoUsersSelected),
+				I18nProperties.getString(Strings.messageNoUsersSelected),
+				Notification.Type.WARNING_MESSAGE,
+				false).show(Page.getCurrent());
+		} else {
+			VaadinUiUtil.showConfirmationPopup(
+				I18nProperties.getString(Strings.headingConfirmEnabling),
+				new Label(String.format(I18nProperties.getString(Strings.confirmationEnableUsers), selectedRows.size())),
+				I18nProperties.getString(Strings.yes),
+				I18nProperties.getString(Strings.no),
+				null,
+				confirmed -> {
+					if (!confirmed) {
+						return;
+					}
+
+					List<String> uuids = selectedRows.stream().map(UserDto::getUuid).collect(Collectors.toList());
+					FacadeProvider.getUserFacade().enableUsers(uuids);
+					callback.run();
+					new Notification(
+						I18nProperties.getString(Strings.headingUsersEnabled),
+						I18nProperties.getString(Strings.messageUsersEnabled),
+						Notification.Type.HUMANIZED_MESSAGE,
+						false).show(Page.getCurrent());
+				});
+		}
+	}
+
+	public void disableAllSelectedItems(Collection<UserDto> selectedRows, Runnable callback) {
+
+		if (selectedRows.size() == 0) {
+			new Notification(
+				I18nProperties.getString(Strings.headingNoUsersSelected),
+				I18nProperties.getString(Strings.messageNoUsersSelected),
+				Notification.Type.WARNING_MESSAGE,
+				false).show(Page.getCurrent());
+		} else {
+			VaadinUiUtil.showConfirmationPopup(
+				I18nProperties.getString(Strings.headingConfirmDisabling),
+				new Label(String.format(I18nProperties.getString(Strings.confirmationDisableUsers), selectedRows.size())),
+				I18nProperties.getString(Strings.yes),
+				I18nProperties.getString(Strings.no),
+				null,
+				confirmed -> {
+					if (!confirmed) {
+						return;
+					}
+
+					List<String> uuids = selectedRows.stream().map(UserDto::getUuid).collect(Collectors.toList());
+					FacadeProvider.getUserFacade().disableUsers(uuids);
+					callback.run();
+					new Notification(
+						I18nProperties.getString(Strings.headingUsersDisabled),
+						I18nProperties.getString(Strings.messageUsersDisabled),
+						Notification.Type.HUMANIZED_MESSAGE,
+						false).show(Page.getCurrent());
+				});
+		}
 	}
 }

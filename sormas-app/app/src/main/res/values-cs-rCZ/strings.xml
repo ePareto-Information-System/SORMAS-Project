@@ -68,6 +68,7 @@
     <string name="action_markAllAsRead">Označit vše jako přečtené</string>
     <string name="action_new">Nové</string>
     <string name="action_new_case">Nový případ</string>
+    <string name="action_new_campaign_form_data">Nová data formuláře kampaně</string>
     <string name="action_new_contact">Nový kontakt</string>
     <string name="action_new_event">Nová udalost</string>
     <string name="action_new_sample">Nový vzorek</string>
@@ -112,6 +113,9 @@
     <string name="action_save_pathogen_test">Uložit test patogenu</string>
     <string name="action_edit_pathogen_test">Upravit test patogenu</string>
     <string name="action_submit_case_numbers">Odeslat čísla případů</string>
+    <string name="action_kex_lbds">LBDS Key Exchange</string>
+    <string name="action_sync_person_lbds">LBDS Sync Persons</string>
+    <string name="action_sync_case_lbds">LBDS Sync Cases</string>
     <string name="caption_address">Adresa</string>
     <string name="caption_age">Věk</string>
     <string name="caption_attended_by">Zúčastnil se</string>
@@ -226,6 +230,7 @@
     <string name="caption_visit_time">Čas návštěvy</string>
     <string name="caption_year">Rok</string>
     <string name="caption_latest_submission">Poslední příspěvek: %1$s</string>
+    <string name="caption_settings_debug_url_lbds">LBDS Server Debug URL</string>
     <string name="confirmation_action">Opravdu to chcete udělat?</string>
     <string name="confirmation_delete">Opravdu chcete vymazat tento záznam?</string>
     <string name="confirmation_pick_gps">Jste právě na tomto místě?</string>
@@ -265,7 +270,7 @@
     <string name="heading_app_update_required">Vyžadována aktualizace aplikace</string>
     <string name="heading_burial">Pohřbení</string>
     <string name="heading_burials_visited">Navštívené pohřby</string>
-    <string name="heading_campaigns_list">Data kampaně</string>
+    <string name="heading_campaigns_list">Seznam dat kampaně</string>
     <string name="heading_case_disease_changed">Nemoc případu se změnila</string>
     <string name="heading_case_edit">Upravit případ</string>
     <string name="heading_case_new">Nový případ</string>
@@ -345,7 +350,7 @@
     <string name="heading_social_events">Sociální události</string>
     <string name="heading_source_case">Zdrojový případ</string>
     <string name="heading_source_of_information">Zdroj informací</string>
-    <string name="heading_surveillance_outbreak">Surveillance Outbreak</string>
+    <string name="heading_surveillance_outbreak">Dohled nad ohniskem nákazy</string>
     <string name="heading_symptoms">Znaky a příznaky</string>
     <string name="heading_sync_conflicts">Konflikty synchronizace</string>
     <string name="heading_synchronization">Synchronizace</string>
@@ -370,6 +375,12 @@
     <string name="heading_contact_tracing_first_contact">První kontakt s trasováním kontaktu</string>
     <string name="heading_exposure">Vystavení nákaze</string>
     <string name="heading_activityAsCase">Aktivita jako případ</string>
+    <string name="heading_campaign_form_data_edit">Upravit data kampaně</string>
+    <string name="heading_campaign_form_data_new">Nová data kampaně</string>
+    <string name="heading_campaign_form_data_read">Číst data kampaně</string>
+    <string name="heading_campaign_form_data_summary">Shrnutí dat kampaně</string>
+    <string name="heading_campaign_form_meta_select">Vybrat formulář kampaně</string>
+    <string name="heading_case_place_of_stay">Místo pobytu</string>
     <string name="hint_add_to_empty_list">Přidejte nový záznam stisknutím symbolu \"+\" v pravém horním rohu.</string>
     <string name="hint_clear">Vymazat</string>
     <string name="hint_create_pin">Vyberte si prosím čtyřmístný PIN kód, který budete používat k ověření při každém otevření aplikace SORMAS.</string>
@@ -403,6 +414,7 @@
     <string name="hint_weekly_report_no_data">Pro tento týden epi nejsou k dispozici žádná data.</string>
     <string name="hint_case_numbers_not_submitted">Čísla případů ještě nebyla odeslána</string>
     <string name="hint_contact_text_filter">Číslo ID nebo jméno kontaktní osoby</string>
+    <string name="hint_settings_debug_url_lbds">např. https://localhost:6070/sormas-rest/</string>
     <string name="indicator_error">CHYBA</string>
     <string name="indicator_required">*</string>
     <string name="indicator_soft_required">*</string>
@@ -413,6 +425,10 @@
     <string name="info_create_event">Pokud <b>nemůžete</b> najít událost v seznamu výše, klikněte na tlačítko \"Vytvořit\".</string>
     <string name="info_epidemiological_info">Uveďte, zda je během inkubační doby nebo nemoci pro pacienta relevantní.</string>
     <string name="info_initial_synchronization">Počáteční synchronizace se serverem SORMAS.\nStahování dat infrastruktury bude trvat několik minut.</string>
+    <string name="info_lbds_key_exchange_started">LBDS Sync: Key Exchange started</string>
+    <string name="info_lbds_key_exchange_successful">LBDS Sync: Key Exchange successful</string>
+    <string name="info_lbds_no_case_to_transfer">LBDS Sync. No case to transfer</string>
+    <string name="info_lbds_no_person_to_transfer">LBDS Sync. No person to transfer</string>
     <string name="info_no_additional_test">Na tomto vzorku dosud nebyly provedeny žádné další zkoušky</string>
     <string name="info_no_sample_test">Vzorek ještě nebyl testován</string>
     <string name="info_pick_person">Prohlédněte si prosím tento seznam osob. <b>Pokud se domníváte, že jste zadali osobní údaje, patří jedné z těchto osob,</b> vyberte tuto osobu klepnutím na ni a poté klikněte na tlačítko „Select“ níže.</string>
@@ -428,6 +444,7 @@
     <string name="info_pick_or_create_event">Níže uvedený seznam obsahuje všechny existující události, které mají stejnou chorobu jako aktuální případ z vašeho regionu. Zkontrolujte, zda tato událost patří do tohoto seznamu, nebo vytvořte novou, pokud tomu tak není.</string>
     <string name="info_case_creation_mark_check_box">Tento případ je <b>nový případ</b> a <b>není duplicitní</b> jednoho z výše uvedených případů</string>
     <string name="info_event_creation_mark_check_box">Tato událost je <b>nová událost</b> a <b>není duplicitní</b> jedné z výše uvedených událostí</string>
+    <string name="info_pick_campaign_form_meta">Vyberte prosím formulář kampaně, pro který chcete vložit data!</string>
     <string name="main_menu_cases">Případy</string>
     <string name="main_menu_contacts">Kontakty</string>
     <string name="main_menu_dashboard">Ovládací panel</string>
@@ -538,6 +555,7 @@
     <string name="validation_visit_date_time_after_followup">Návštěva nemůže být delší než 30 dní po skončení následného období.</string>
     <string name="validation_visit_date_time_before_contact_date">Návštěva nemůže být delší než 30 dní před posledním kontaktním datem.</string>
     <string name="validation_visit_date_time_before_report_date">Návštěva nemůže být delší než 30 dní před datem hlášení kontaktu.</string>
+    <string name="value_unknown">Neznámý</string>
     <string name="value_age_unknown">Věk N/A</string>
     <string name="value_blood_pressure_unknown">Krevní tlak N/A</string>
     <string name="value_case_uuid_unknown">ID případu N/A</string>

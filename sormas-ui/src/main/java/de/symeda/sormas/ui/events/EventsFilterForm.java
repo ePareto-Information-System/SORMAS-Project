@@ -1,52 +1,80 @@
+/*
+ * SORMAS® - Surveillance Outbreak Response Management & Analysis System
+ * Copyright © 2016-2021 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 package de.symeda.sormas.ui.events;
 
+import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_3;
 import static de.symeda.sormas.ui.utils.LayoutUtil.filterLocs;
+import static de.symeda.sormas.ui.utils.LayoutUtil.filterLocsCss;
 import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import com.google.common.collect.Sets;
-import com.vaadin.server.Page;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.data.Property;
+import com.vaadin.v7.ui.CheckBox;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.Field;
 import com.vaadin.v7.ui.TextField;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
+import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.event.EventCriteria;
+import de.symeda.sormas.api.event.EventCriteriaDateType;
 import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventIndexDto;
+import de.symeda.sormas.api.event.SpecificRisk;
 import de.symeda.sormas.api.event.TypeOfPlace;
-import de.symeda.sormas.api.facility.FacilityDto;
-import de.symeda.sormas.api.facility.FacilityType;
-import de.symeda.sormas.api.facility.FacilityTypeGroup;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityType;
+import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
+import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.Descriptions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.location.LocationDto;
-import de.symeda.sormas.api.region.CommunityReferenceDto;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.region.RegionReferenceDto;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.DateFilterOption;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.EpiWeek;
+import de.symeda.sormas.api.utils.criteria.CriteriaDateType;
+import de.symeda.sormas.api.utils.criteria.CriteriaDateTypeHelper;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.AbstractFilterForm;
+import de.symeda.sormas.ui.utils.ComboBoxHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.EpiWeekAndDateFilterComponent;
 import de.symeda.sormas.ui.utils.FieldConfiguration;
@@ -71,7 +99,13 @@ public class EventsFilterForm extends AbstractFilterForm<EventCriteria> {
 		LocationDto.FACILITY_TYPE,
 		LocationDto.FACILITY,
 		EventDto.EVENT_INVESTIGATION_STATUS,
-		EventDto.EVENT_MANAGEMENT_STATUS)
+		EventDto.EVENT_MANAGEMENT_STATUS,
+		EventDto.EVENT_IDENTIFICATION_SOURCE)
+		+ filterLocsCss(
+			VSPACE_3,
+			EventCriteria.ONLY_ENTITIES_NOT_SHARED_WITH_EXTERNAL_SURV_TOOL,
+			EventCriteria.ONLY_ENTITIES_SHARED_WITH_EXTERNAL_SURV_TOOL,
+			EventCriteria.ONLY_ENTITIES_CHANGED_SINCE_LAST_SHARED_WITH_EXTERNAL_SURV_TOOL)
 		+ loc(EVENT_WEEK_AND_DATE_FILTER)
 		+ loc(EVENT_SIGNAL_EVOLUTION_WEEK_AND_DATE_FILTER)
 		+ loc(ACTION_WEEK_AND_DATE_FILTER);
@@ -105,7 +139,9 @@ public class EventsFilterForm extends AbstractFilterForm<EventCriteria> {
 		return new String[] {
 			EventCriteria.EVENT_STATUS,
 			EventCriteria.RISK_LEVEL,
+			EventCriteria.SPECIFIC_RISK,
 			EventIndexDto.DISEASE,
+			EventIndexDto.DISEASE_VARIANT,
 			EventCriteria.REPORTING_USER_ROLE,
 			EventCriteria.RESPONSIBLE_USER,
 			EventCriteria.FREE_TEXT,
@@ -118,7 +154,16 @@ public class EventsFilterForm extends AbstractFilterForm<EventCriteria> {
 
 		addField(FieldConfiguration.pixelSized(EventCriteria.EVENT_STATUS, 140));
 		addField(FieldConfiguration.pixelSized(EventCriteria.RISK_LEVEL, 140));
+
+		List<SpecificRisk> specificRisks = FacadeProvider.getCustomizableEnumFacade().getEnumValues(CustomizableEnumType.SPECIFIC_EVENT_RISK, null);
+		if (!specificRisks.isEmpty()) {
+			ComboBox specificRiskField = addField(FieldConfiguration.pixelSized(EventCriteria.SPECIFIC_RISK, 140), ComboBox.class);
+			FieldHelper.updateItems(specificRiskField, specificRisks);
+		}
+
 		addField(FieldConfiguration.pixelSized(EventIndexDto.DISEASE, 140));
+		addField(FieldConfiguration.pixelSized(EventIndexDto.DISEASE_VARIANT, 140), ComboBox.class);
+
 		addField(FieldConfiguration.withCaptionAndPixelSized(EventCriteria.REPORTING_USER_ROLE, I18nProperties.getString(Strings.reportedBy), 140));
 		addField(FieldConfiguration.pixelSized(EventCriteria.RESPONSIBLE_USER, 140));
 
@@ -143,12 +188,15 @@ public class EventsFilterForm extends AbstractFilterForm<EventCriteria> {
 
 	@Override
 	public void addMoreFilters(CustomLayout moreFiltersContainer) {
+		boolean isExternalShareEnabled = FacadeProvider.getExternalSurveillanceToolFacade().isFeatureEnabled();
+
 		addFields(
 			moreFiltersContainer,
 			FieldConfiguration.pixelSized(EventDto.SRC_TYPE, 140),
 			FieldConfiguration.pixelSized(EventDto.TYPE_OF_PLACE, 140),
 			FieldConfiguration.pixelSized(EventDto.EVENT_INVESTIGATION_STATUS, 140),
-			FieldConfiguration.pixelSized(EventDto.EVENT_MANAGEMENT_STATUS, 140));
+			FieldConfiguration.pixelSized(EventDto.EVENT_MANAGEMENT_STATUS, 140),
+			FieldConfiguration.pixelSized(EventDto.EVENT_IDENTIFICATION_SOURCE, 140));
 
 		ComboBox regionField = addField(
 			moreFiltersContainer,
@@ -170,12 +218,13 @@ public class EventsFilterForm extends AbstractFilterForm<EventCriteria> {
 				140));
 		communityField.setDescription(I18nProperties.getDescription(Descriptions.descCommunityFilter));
 
-		moreFiltersContainer.addComponent(buildWeekAndDateFilter(EventCriteria.DateType.EVENT), EVENT_WEEK_AND_DATE_FILTER);
-		moreFiltersContainer
-			.addComponent(buildWeekAndDateFilter(EventCriteria.DateType.EVENT_SIGNAL_EVOLUTION), EVENT_SIGNAL_EVOLUTION_WEEK_AND_DATE_FILTER);
-		moreFiltersContainer.addComponent(buildWeekAndDateFilter(EventCriteria.DateType.ACTION), ACTION_WEEK_AND_DATE_FILTER);
+		moreFiltersContainer.addComponent(buildWeekAndDateFilter(EventCriteria.DateType.EVENT, isExternalShareEnabled), EVENT_WEEK_AND_DATE_FILTER);
+		moreFiltersContainer.addComponent(
+			buildWeekAndDateFilter(EventCriteria.DateType.EVENT_SIGNAL_EVOLUTION, isExternalShareEnabled),
+			EVENT_SIGNAL_EVOLUTION_WEEK_AND_DATE_FILTER);
+		moreFiltersContainer.addComponent(buildWeekAndDateFilter(EventCriteria.DateType.ACTION, isExternalShareEnabled), ACTION_WEEK_AND_DATE_FILTER);
 
-		ComboBox facilityTypeGroupField = new ComboBox();
+		ComboBox facilityTypeGroupField = ComboBoxHelper.createComboBoxV7();
 		facilityTypeGroupField.setId(FACILITY_TYPE_GROUP_FILTER);
 		facilityTypeGroupField.setInputPrompt(I18nProperties.getPrefixCaption(FacilityDto.I18N_PREFIX, FacilityDto.TYPE_GROUP));
 		facilityTypeGroupField
@@ -234,31 +283,76 @@ public class EventsFilterForm extends AbstractFilterForm<EventCriteria> {
 				facilityField.setEnabled(false);
 			}
 		});
+
+		if (isExternalShareEnabled) {
+			addField(
+				moreFiltersContainer,
+				CheckBox.class,
+				FieldConfiguration.withCaptionAndStyle(
+					EventCriteria.ONLY_ENTITIES_NOT_SHARED_WITH_EXTERNAL_SURV_TOOL,
+					I18nProperties.getCaption(Captions.eventFilterOnlyEventsNotSharedWithExternalSurvTool),
+					null,
+					CssStyles.CHECKBOX_FILTER_INLINE));
+
+			addField(
+				moreFiltersContainer,
+				CheckBox.class,
+				FieldConfiguration.withCaptionAndStyle(
+					EventCriteria.ONLY_ENTITIES_SHARED_WITH_EXTERNAL_SURV_TOOL,
+					I18nProperties.getCaption(Captions.eventFilterOnlyEventsSharedWithExternalSurvTool),
+					null,
+					CssStyles.CHECKBOX_FILTER_INLINE));
+
+			addField(
+				moreFiltersContainer,
+				CheckBox.class,
+				FieldConfiguration.withCaptionAndStyle(
+					EventCriteria.ONLY_ENTITIES_CHANGED_SINCE_LAST_SHARED_WITH_EXTERNAL_SURV_TOOL,
+					I18nProperties.getCaption(Captions.eventFilterOnlyEventsChangedSinceLastSharedWithExternalSurvTool),
+					null,
+					CssStyles.CHECKBOX_FILTER_INLINE));
+		}
 	}
 
-	private HorizontalLayout buildWeekAndDateFilter(EventCriteria.DateType dateType) {
+	private HorizontalLayout buildWeekAndDateFilter(EventCriteria.DateType dateType, boolean isExternalShareEnabled) {
 
-		EpiWeekAndDateFilterComponent<DateFilterOption> weekAndDateFilter = new EpiWeekAndDateFilterComponent<>(false, false, null, this);
+		final EpiWeekAndDateFilterComponent<?> weekAndDateFilter;
 
 		switch (dateType) {
 		case EVENT:
+			weekAndDateFilter = new EpiWeekAndDateFilterComponent<>(
+				false,
+				false,
+				null,
+				CriteriaDateTypeHelper.getTypes(EventCriteriaDateType.class, isExternalShareEnabled),
+				I18nProperties.getString(Strings.promptEventDateType),
+				null,
+				this);
+
 			weekAndDateFilter.getWeekFromFilter().setInputPrompt(I18nProperties.getString(Strings.promptEventEpiWeekFrom));
 			weekAndDateFilter.getWeekToFilter().setInputPrompt(I18nProperties.getString(Strings.promptEventEpiWeekTo));
 			weekAndDateFilter.getDateFromFilter().setInputPrompt(I18nProperties.getString(Strings.promptEventDateFrom));
 			weekAndDateFilter.getDateToFilter().setInputPrompt(I18nProperties.getString(Strings.promptEventDateTo));
 			break;
 		case EVENT_SIGNAL_EVOLUTION:
+			weekAndDateFilter = new EpiWeekAndDateFilterComponent<>(false, false, null, this);
+
 			weekAndDateFilter.getWeekFromFilter().setInputPrompt(I18nProperties.getString(Strings.promptEventSignalEvolutionEpiWeekFrom));
 			weekAndDateFilter.getWeekToFilter().setInputPrompt(I18nProperties.getString(Strings.promptEventSignalEvolutionEpiWeekTo));
 			weekAndDateFilter.getDateFromFilter().setInputPrompt(I18nProperties.getString(Strings.promptEventEvolutionDateFrom));
 			weekAndDateFilter.getDateToFilter().setInputPrompt(I18nProperties.getString(Strings.promptEventEvolutionDateTo));
 			break;
 		case ACTION:
+			weekAndDateFilter = new EpiWeekAndDateFilterComponent<>(false, false, null, this);
+
 			weekAndDateFilter.getWeekFromFilter().setInputPrompt(I18nProperties.getString(Strings.promptActionEpiWeekFrom));
 			weekAndDateFilter.getWeekToFilter().setInputPrompt(I18nProperties.getString(Strings.promptActionEpiWeekTo));
 			weekAndDateFilter.getDateFromFilter().setInputPrompt(I18nProperties.getString(Strings.promptActionDateFrom));
 			weekAndDateFilter.getDateToFilter().setInputPrompt(I18nProperties.getString(Strings.promptActionDateTo));
 			break;
+
+		default:
+			throw new RuntimeException("Unknown event date filter type");
 		}
 		addApplyHandler(e -> onApplyClick(weekAndDateFilter, dateType));
 
@@ -271,10 +365,12 @@ public class EventsFilterForm extends AbstractFilterForm<EventCriteria> {
 		return dateFilterRowLayout;
 	}
 
-	private void onApplyClick(EpiWeekAndDateFilterComponent<DateFilterOption> weekAndDateFilter, EventCriteria.DateType dateType) {
+	private void onApplyClick(EpiWeekAndDateFilterComponent<?> weekAndDateFilter, EventCriteria.DateType dateType) {
 		EventCriteria criteria = getValue();
 
 		DateFilterOption dateFilterOption = (DateFilterOption) weekAndDateFilter.getDateFilterOptionFilter().getValue();
+		CriteriaDateType eventDateType = (CriteriaDateType) weekAndDateFilter.getDateTypeSelector().getValue();
+
 		Date fromDate, toDate;
 		if (dateFilterOption == DateFilterOption.DATE) {
 			Date dateFrom = weekAndDateFilter.getDateFromFilter().getValue();
@@ -287,25 +383,9 @@ public class EventsFilterForm extends AbstractFilterForm<EventCriteria> {
 		}
 
 		if ((fromDate != null && toDate != null) || (fromDate == null && toDate == null)) {
-			criteria.dateBetween(dateType, fromDate, toDate, dateFilterOption);
+			criteria.dateBetween(dateType, fromDate, toDate, eventDateType, dateFilterOption);
 		} else {
-			if (dateFilterOption == DateFilterOption.DATE) {
-				Notification notification = new Notification(
-					I18nProperties.getString(Strings.headingMissingDateFilter),
-					I18nProperties.getString(Strings.messageMissingDateFilter),
-					Notification.Type.WARNING_MESSAGE,
-					false);
-				notification.setDelayMsec(-1);
-				notification.show(Page.getCurrent());
-			} else {
-				Notification notification = new Notification(
-					I18nProperties.getString(Strings.headingMissingEpiWeekFilter),
-					I18nProperties.getString(Strings.messageMissingEpiWeekFilter),
-					Notification.Type.WARNING_MESSAGE,
-					false);
-				notification.setDelayMsec(-1);
-				notification.show(Page.getCurrent());
-			}
+			weekAndDateFilter.setNotificationsForMissingFilters();
 		}
 	}
 
@@ -352,6 +432,9 @@ public class EventsFilterForm extends AbstractFilterForm<EventCriteria> {
 		case EventDto.TYPE_OF_PLACE:
 			applyFacilityFieldsDependencies();
 			break;
+		case CaseDataDto.DISEASE:
+			Disease disease = (Disease) event.getProperty().getValue();
+			applyDiseaseFilterDependency(disease);
 		}
 	}
 
@@ -405,6 +488,23 @@ public class EventsFilterForm extends AbstractFilterForm<EventCriteria> {
 		applyFacilityFieldsDependencies(criteria.getTypeOfPlace(), criteria.getDistrict(), criteria.getCommunity());
 
 		updateResponsibleUserFieldItems(criteria.getDistrict(), criteria.getRegion());
+
+		ComboBox diseaseField = getField(CaseDataDto.DISEASE);
+		Disease disease = (Disease) diseaseField.getValue();
+		applyDiseaseFilterDependency(disease);
+	}
+
+	private void applyDiseaseFilterDependency(Disease disease) {
+		ComboBox diseaseVariantField = getField(CaseDataDto.DISEASE_VARIANT);
+		if (disease == null) {
+			FieldHelper.updateItems(diseaseVariantField, Collections.emptyList());
+			FieldHelper.setEnabled(false, diseaseVariantField);
+		} else {
+			List<DiseaseVariant> diseaseVariants =
+				FacadeProvider.getCustomizableEnumFacade().getEnumValues(CustomizableEnumType.DISEASE_VARIANT, disease);
+			FieldHelper.updateItems(diseaseVariantField, diseaseVariants);
+			FieldHelper.setEnabled(CollectionUtils.isNotEmpty(diseaseVariants), diseaseVariantField);
+		}
 	}
 
 	private void applyDateDependencyOnNewValue(String componentId, DateFilterOption dateFilterOption, Date dateFrom, Date dateTo) {

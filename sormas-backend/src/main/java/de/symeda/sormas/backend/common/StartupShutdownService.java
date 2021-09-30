@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -62,12 +63,12 @@ import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.externaljournal.PatientDiaryConfig;
 import de.symeda.sormas.api.externaljournal.SymptomJournalConfig;
 import de.symeda.sormas.api.externaljournal.UserConfig;
-import de.symeda.sormas.api.facility.FacilityCriteria;
-import de.symeda.sormas.api.facility.FacilityType;
+import de.symeda.sormas.api.infrastructure.facility.FacilityCriteria;
+import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.infrastructure.PointOfEntryType;
-import de.symeda.sormas.api.region.CountryReferenceDto;
+import de.symeda.sormas.api.infrastructure.pointofentry.PointOfEntryType;
+import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
 import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DefaultUserHelper;
@@ -77,23 +78,23 @@ import de.symeda.sormas.backend.contact.Contact;
 import de.symeda.sormas.backend.contact.ContactService;
 import de.symeda.sormas.backend.disease.DiseaseConfiguration;
 import de.symeda.sormas.backend.disease.DiseaseConfigurationService;
-import de.symeda.sormas.backend.facility.Facility;
-import de.symeda.sormas.backend.facility.FacilityFacadeEjb.FacilityFacadeEjbLocal;
-import de.symeda.sormas.backend.facility.FacilityService;
+import de.symeda.sormas.backend.infrastructure.facility.Facility;
+import de.symeda.sormas.backend.infrastructure.facility.FacilityFacadeEjb.FacilityFacadeEjbLocal;
+import de.symeda.sormas.backend.infrastructure.facility.FacilityService;
 import de.symeda.sormas.backend.feature.FeatureConfigurationService;
 import de.symeda.sormas.backend.importexport.ImportFacadeEjb.ImportFacadeEjbLocal;
-import de.symeda.sormas.backend.infrastructure.PointOfEntry;
-import de.symeda.sormas.backend.infrastructure.PointOfEntryService;
-import de.symeda.sormas.backend.region.Community;
-import de.symeda.sormas.backend.region.CommunityService;
-import de.symeda.sormas.backend.region.Country;
-import de.symeda.sormas.backend.region.CountryFacadeEjb.CountryFacadeEjbLocal;
-import de.symeda.sormas.backend.region.CountryService;
-import de.symeda.sormas.backend.region.District;
-import de.symeda.sormas.backend.region.DistrictService;
-import de.symeda.sormas.backend.region.Region;
-import de.symeda.sormas.backend.region.RegionService;
-import de.symeda.sormas.backend.sormastosormas.ServerAccessDataService;
+import de.symeda.sormas.backend.infrastructure.pointofentry.PointOfEntry;
+import de.symeda.sormas.backend.infrastructure.pointofentry.PointOfEntryService;
+import de.symeda.sormas.backend.infrastructure.community.Community;
+import de.symeda.sormas.backend.infrastructure.community.CommunityService;
+import de.symeda.sormas.backend.infrastructure.country.Country;
+import de.symeda.sormas.backend.infrastructure.country.CountryFacadeEjb.CountryFacadeEjbLocal;
+import de.symeda.sormas.backend.infrastructure.country.CountryService;
+import de.symeda.sormas.backend.infrastructure.district.District;
+import de.symeda.sormas.backend.infrastructure.district.DistrictService;
+import de.symeda.sormas.backend.infrastructure.region.Region;
+import de.symeda.sormas.backend.infrastructure.region.RegionService;
+import de.symeda.sormas.backend.sormastosormas.SormasToSormasFacadeEjb;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.user.event.PasswordResetEvent;
@@ -107,7 +108,6 @@ import de.symeda.sormas.backend.util.ModelConstants;
 @TransactionManagement(TransactionManagementType.CONTAINER)
 public class StartupShutdownService {
 
-	public static final String SORMAS_TO_SORMAS_USER_NAME = "Sormas2Sormas";
 	static final String SORMAS_SCHEMA = "sql/sormas_schema.sql";
 	static final String AUDIT_SCHEMA = "sql/sormas_audit_schema.sql";
 	private static final Pattern SQL_COMMENT_PATTERN = Pattern.compile("^\\s*(--.*)?");
@@ -150,11 +150,11 @@ public class StartupShutdownService {
 	@EJB
 	private FeatureConfigurationService featureConfigurationService;
 	@EJB
-	private ServerAccessDataService serverAccessDataService;
-	@EJB
 	private CountryFacadeEjbLocal countryFacade;
 	@EJB
 	private CountryService countryService;
+	@EJB
+	private SormasToSormasFacadeEjb.SormasToSormasFacadeEjbLocal sormasToSormasFacadeEjb;
 
 	@Inject
 	private Event<UserUpdateEvent> userUpdateEvent;
@@ -507,15 +507,19 @@ public class StartupShutdownService {
 	}
 
 	private void createOrUpdateSormasToSormasUser() {
-		serverAccessDataService.getServerAccessData().ifPresent((serverAccessData -> {
-			String sormasToSormasUserPassword = serverAccessData.getRestUserPassword();
+		if (sormasToSormasFacadeEjb.isFeatureConfigured()) {
+			// password is never used, just to prevent login as this user
+			byte[] pwd = new byte[64];
+			SecureRandom rnd = new SecureRandom();
+			rnd.nextBytes(pwd);
+
 			createOrUpdateDefaultUser(
 				Collections.singleton(UserRole.SORMAS_TO_SORMAS_CLIENT),
-				SORMAS_TO_SORMAS_USER_NAME,
-				sormasToSormasUserPassword,
+				DefaultUserHelper.SORMAS_TO_SORMAS_USER_NAME,
+				new String(pwd),
 				"Sormas to Sormas",
 				"Client");
-		}));
+		}
 	}
 
 	private void createOrUpdateSymptomJournalUser() {
@@ -585,7 +589,7 @@ public class StartupShutdownService {
 	 */
 	private void syncUsers() {
 
-		AuthProvider authProvider = AuthProvider.getProvider();
+		AuthProvider authProvider = AuthProvider.getProvider(configFacade);
 
 		if (!authProvider.isUserSyncSupported()) {
 			logger.info("Active Authentication Provider {} doesn't support user sync", authProvider.getName());
@@ -629,9 +633,10 @@ public class StartupShutdownService {
 		List<String> errors = new ArrayList<>();
 
 		// Check postgres version
-		String versionRegexp = Stream.of("9\\.5", "9\\.6", "10\\.\\d+").collect(Collectors.joining(")|(", "(", ")"));
 		String versionString = entityManager.createNativeQuery("SHOW server_version").getSingleResult().toString();
-		if (!versionString.matches(versionRegexp)) {
+		if (isSupportedDatabaseVersion(versionString)) {
+			logger.debug("Your PostgreSQL Version ({}) is currently supported.", versionString);
+		} else {
 			logger.warn("Your PostgreSQL Version ({}) is currently not supported.", versionString);
 		}
 
@@ -655,6 +660,18 @@ public class StartupShutdownService {
 			// List all config problems and stop deployment
 			throw new RuntimeException(errors.stream().collect(Collectors.joining("\n * ", "Postgres setup is not compatible:\n * ", "")));
 		}
+	}
+
+	/**
+	 * @param versionString
+	 *            Database system version.
+	 * @return {@code true}, if the database version is supported.
+	 */
+	static boolean isSupportedDatabaseVersion(String versionString) {
+
+		String versionBegin = versionString.split(" ")[0];
+		String versionRegexp = Stream.of("9\\.5", "9\\.5\\.\\d+", "9\\.6", "9\\.6\\.\\d+", "10\\.\\d+").collect(Collectors.joining(")|(", "(", ")"));
+		return versionBegin.matches(versionRegexp);
 	}
 
 	private void updateDatabase(EntityManager entityManager, String schemaFileName) {
@@ -845,7 +862,7 @@ public class StartupShutdownService {
 		try {
 			importFacade.generateEventParticipantImportTemplateFile();
 		} catch (IOException e) {
-			logger.error("Could not create eventparticipant import template .csv file.");
+			logger.error("Could not create event participant import template .csv file.");
 		}
 	}
 
