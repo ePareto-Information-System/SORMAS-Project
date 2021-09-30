@@ -167,7 +167,7 @@ public class CampaignDataView extends AbstractCampaignView {
 			newFormLayout.removeAllComponents();
 			if (!Objects.isNull(campaignSelector.getValue())) {
 				createImportLayout(importFormLayout);
-				createNewFormLayout(newFormLayout);
+				createNewFormLayout(newFormLayout)	;
 				importCampaignButton.setEnabled(true);
 				newFormButton.setEnabled(true);
 			} else {

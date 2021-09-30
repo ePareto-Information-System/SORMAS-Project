@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.Date;
 import java.util.function.Consumer;
 
+import com.google.common.io.Files;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +37,7 @@ public class ImportReceiver implements Receiver, SucceededListener {
 	private File file;
 	private String fileNameAddition;
 	Consumer<File> fileConsumer;
-
+	boolean isCsv;
 	public ImportReceiver(String fileNameAddition, Consumer<File> fileConsumer) {
 		this.fileNameAddition = fileNameAddition;
 		this.fileConsumer = fileConsumer;
@@ -45,7 +46,9 @@ public class ImportReceiver implements Receiver, SucceededListener {
 	@Override
 	public OutputStream receiveUpload(String fileName, String mimeType) {
 		// Reject empty files
-		if (fileName == null || fileName.isEmpty()) {
+		isCsv = isFileExtensionCsv(fileName);
+
+		if (fileName == null || fileName.isEmpty() && isCsv) {
 			file = null;
 			new Notification(
 				I18nProperties.getString(Strings.headingNoFile),
@@ -111,4 +114,11 @@ public class ImportReceiver implements Receiver, SucceededListener {
 				false).show(Page.getCurrent());
 		}
 	}
+	public boolean isFileExtensionCsv(String fileName) {
+		String x = Files.getFileExtension(fileName);
+		if(x.equals("csv"))
+			isCsv = true;
+		return isCsv;
+	}
+
 }
