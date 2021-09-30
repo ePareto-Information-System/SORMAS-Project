@@ -50,7 +50,7 @@ public class LineListingImportLayout extends AbstractImportLayout {
 						public void accept(StreamResource resource) {
 							extendDownloadErrorReportButton(resource);
 						}
-					}, currentUI, true);
+					}, currentUI, true, true );
 				} catch (IOException | CsvValidationException e) {
 					new Notification(
 						I18nProperties.getString(Strings.headingImportFailed),

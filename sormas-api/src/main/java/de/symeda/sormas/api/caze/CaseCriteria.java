@@ -18,6 +18,7 @@
 package de.symeda.sormas.api.caze;
 
 import java.util.Date;
+import java.util.List;
 
 import de.symeda.sormas.api.BaseCriteria;
 import de.symeda.sormas.api.Disease;
@@ -73,6 +74,8 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 	public static final String ONLY_CASES_NOT_SHARED_WITH_EXTERNAL_SURV_TOOL = "onlyCasesNotSharedWithExternalSurvTool";
 	public static final String ONLY_CASES_SHARED_WITH_EXTERNAL_SURV_TOOL = "onlyCasesSharedWithExternalSurvTool";
 	public static final String ONLY_CASES_CHANGED_SINCE_LAST_SHARED_WITH_EXTERNAL_SURV_TOOL = "onlyCasesChangedSinceLastSharedWithExternalSurvTool";
+	public static final String CASE_UUIDS = "caseUuids";
+	public static final String PERSONS_UUIDS = "personsUuids";
 
 	private UserRole reportingUserRole;
 	private Disease disease;
@@ -126,6 +129,8 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 	private Boolean onlyCasesNotSharedWithExternalSurvTool;
 	private Boolean onlyCasesSharedWithExternalSurvTool;
 	private Boolean onlyCasesChangedSinceLastSharedWithExternalSurvTool;
+	private List<String> caseUuids;
+	private List<String> personsUuids;
 
 	@Override
 	public CaseCriteria clone() {
@@ -635,5 +640,21 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 
 	public void setOnlyCasesChangedSinceLastSharedWithExternalSurvTool(Boolean onlyCasesChangedSinceLastSharedWithExternalSurvTool) {
 		this.onlyCasesChangedSinceLastSharedWithExternalSurvTool = onlyCasesChangedSinceLastSharedWithExternalSurvTool;
+	}
+
+	public List<String> getCaseUuids() {
+		return caseUuids;
+	}
+
+	public void setCaseUuids(List<String> caseUuids) {
+		this.caseUuids = caseUuids;
+	}
+
+	public List<String> getPersonsUuids() {
+		return personsUuids;
+	}
+
+	public void setPersonsUuids(List<String> personsUuids) {
+		this.personsUuids = personsUuids;
 	}
 }

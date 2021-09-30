@@ -798,6 +798,14 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 			filter = CriteriaBuilderHelper.and(cb, filter, changedSinceLastShareFilter);
 		}
 
+		if(caseCriteria.getCaseUuids()!=null && caseCriteria.getCaseUuids().stream().count()>0){
+			filter = CriteriaBuilderHelper.andInValues(caseCriteria.getCaseUuids(), filter, cb,from.get(Case.UUID) );
+		}
+
+		if(caseCriteria.getPersonsUuids()!=null && caseCriteria.getPersonsUuids().stream().count()>0){
+			filter = CriteriaBuilderHelper.andInValues(caseCriteria.getPersonsUuids(), filter, cb,person.get(Person.UUID) );
+		}
+
 		return filter;
 	}
 

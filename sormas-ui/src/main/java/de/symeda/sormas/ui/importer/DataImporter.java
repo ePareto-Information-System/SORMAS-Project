@@ -101,6 +101,10 @@ public abstract class DataImporter {
 	 */
 	private Consumer<ImportLineResult> importedLineCallback;
 	/**
+	 * Called when ever runImport execution is completed in startImport method call
+	 */
+	public Consumer<ImportResultStatus> onRunImportComplete;
+	/**
 	 * Whether the import should be canceled after the current line.
 	 */
 	private boolean cancelAfterCurrent;
@@ -182,6 +186,9 @@ public abstract class DataImporter {
 							StreamResource streamResource = createErrorReportStreamResource();
 							errorReportConsumer.accept(streamResource);
 						}
+
+						if(onRunImportComplete!=null)
+							onRunImportComplete.accept(importResult);
 					});
 
 					currentUI.setPollInterval(-1);

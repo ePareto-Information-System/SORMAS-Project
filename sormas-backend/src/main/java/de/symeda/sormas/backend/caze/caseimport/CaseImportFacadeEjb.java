@@ -29,6 +29,7 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.transaction.Transactional;
 
+import de.symeda.sormas.api.person.PersonNameDto;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.Mutable;
 import org.apache.commons.lang3.mutable.MutableBoolean;
@@ -164,7 +165,13 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
 
 		PersonDto person = entities.getPerson();
 
-		if (personFacade.isPersonSimilarToExisting(person)) {
+//		if (personFacade.isPersonSimilarToExisting(person)) {
+//			return ImportLineResultDto.duplicateResult(entities);
+//		}
+
+		List<PersonNameDto> similarPersons = personFacade.similarExistingPersons(person);
+		if(similarPersons.size()>0) {
+			entities.setSimilarPersons(similarPersons);
 			return ImportLineResultDto.duplicateResult(entities);
 		}
 

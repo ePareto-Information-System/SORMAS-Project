@@ -19,9 +19,13 @@ package de.symeda.sormas.ui.caze.importer;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.vaadin.ui.VerticalLayout;
+import de.symeda.sormas.ui.caze.MergeImportedCasesGrid;
+import de.symeda.sormas.ui.importer.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,11 +51,6 @@ import de.symeda.sormas.api.importexport.InvalidColumnException;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.PersonFacade;
 import de.symeda.sormas.api.user.UserDto;
-import de.symeda.sormas.ui.importer.CaseImportSimilarityInput;
-import de.symeda.sormas.ui.importer.CaseImportSimilarityResult;
-import de.symeda.sormas.ui.importer.DataImporter;
-import de.symeda.sormas.ui.importer.ImportLineResult;
-import de.symeda.sormas.ui.importer.ImportSimilarityResultOption;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent.CommitListener;
@@ -61,7 +60,7 @@ import de.symeda.sormas.ui.utils.VaadinUiUtil;
 /**
  * Data importer that is used to import cases and associated samples.
  * This importer adds the following logic:
- * 
+ *
  * - Check the database for similar cases and, if at least one is found, execute the
  * similarityCallback received by the calling class.
  * - The import will wait for the similarityCallback to be resolved before it is continued
@@ -79,6 +78,9 @@ public class CaseImporter extends DataImporter {
 
 	private final PersonFacade personFacade;
 	private final CaseFacade caseFacade;
+	private boolean showAllDuplicatesAfter;
+	private List<String> duplicateSimilarCaseIds;
+	private List<String> duplicateSimilarPersonIds;
 
 	public CaseImporter(File inputFile, boolean hasEntityClassRow, UserDto currentUser) {
 		super(inputFile, hasEntityClassRow, currentUser);
@@ -97,6 +99,47 @@ public class CaseImporter extends DataImporter {
 		super.startImport(addErrorReportToLayoutCallback, currentUI, duplicatesPossible);
 	}
 
+	public void startImport(Consumer<StreamResource> addErrorReportToLayoutCallback, UI currentUI, boolean duplicatesPossible, boolean showAllDuplicatesAfter)
+			throws IOException, CsvValidationException {
+
+		this.showAllDuplicatesAfter = showAllDuplicatesAfter;
+		if(showAllDuplicatesAfter){
+			this.duplicateSimilarCaseIds = new ArrayList<>();
+			this.duplicateSimilarPersonIds = new ArrayList<>();
+			this.onRunImportComplete = (ImportResultStatus result)->{
+				handleDuplicatesMerge();
+			};
+		}
+		this.startImport(addErrorReportToLayoutCallback, currentUI, duplicatesPossible);
+	}
+
+	private void handleDuplicatesMerge(){
+		MergeImportedCasesGrid mergeImportedCasesGrid = new MergeImportedCasesGrid();
+		CaseCriteria criteria = new CaseCriteria().region(currentUser.getRegion());
+		criteria.setCaseUuids(duplicateSimilarCaseIds);
+		criteria.setPersonsUuids(duplicateSimilarPersonIds);
+		mergeImportedCasesGrid.setCriteria(criteria);
+		mergeImportedCasesGrid.reload();
+		VerticalLayout mergeLayout = new VerticalLayout();
+//		Button btnDownloadAsCsv = new Button("Download Merge CSV");
+//		mergeLayout.addComponent(btnDownloadAsCsv);
+		mergeLayout.addComponent(mergeImportedCasesGrid);
+		if(mergeImportedCasesGrid.dataCount>0){
+			currentUI.accessSynchronously(()->{
+				final CommitDiscardWrapperComponent<VerticalLayout> component =
+						new CommitDiscardWrapperComponent<VerticalLayout>(mergeLayout);
+				component.getDiscardButton().setVisible(false);
+				component.getCommitButton().setCaption(I18nProperties.getCaption(Captions.actionClose));
+				component.addCommitListener(() -> {
+					//closed
+				});
+
+				VaadinUiUtil.showModalPopupWindow(component, I18nProperties.getCaption(Captions.caseMergeDuplicates));
+			});
+		}
+
+	}
+
 	@Override
 	protected ImportLineResult importDataFromCsvLine(
 		String[] values,
@@ -112,7 +155,8 @@ public class CaseImporter extends DataImporter {
 		if (importResult.isError()) {
 			writeImportError(values, importResult.getMessage());
 			return ImportLineResult.ERROR;
-		} else if (importResult.isDuplicate()) {
+		}
+		else if (importResult.isDuplicate()) {
 			CaseImportEntities entities = importResult.getImportEntities();
 			CaseDataDto importCase = entities.getCaze();
 			PersonDto importPerson = entities.getPerson();
@@ -123,42 +167,47 @@ public class CaseImporter extends DataImporter {
 			CaseImportConsumer consumer = new CaseImportConsumer();
 			ImportSimilarityResultOption resultOption = null;
 
-			CaseImportLock personSelectLock = new CaseImportLock();
-			// We need to pause the current thread to prevent the import from continuing until the user has acted
-			synchronized (personSelectLock) {
-				// Call the logic that allows the user to handle the similarity; once this has been done, the LOCK should be notified
-				// to allow the importer to resume
-				handlePersonSimilarity(
-					importPerson,
-					result -> consumer.onImportResult(result, personSelectLock),
-					(person, similarityResultOption) -> new CaseImportSimilarityResult(person, null, similarityResultOption),
-					Strings.infoSelectOrCreatePersonForCaseImport,
-					currentUI);
+			if(showAllDuplicatesAfter){
+				duplicateSimilarPersonIds.add(entities.getSimilarPersons().get(0).getUuid() );
+			}else {
+				CaseImportLock personSelectLock = new CaseImportLock();
+				// We need to pause the current thread to prevent the import from continuing until the user has acted
+				synchronized (personSelectLock) {
+					// Call the logic that allows the user to handle the similarity; once this has been done, the LOCK should be notified
+					// to allow the importer to resume
+					handlePersonSimilarity(
+							importPerson,
+							result -> consumer.onImportResult(result, personSelectLock),
+							(person, similarityResultOption) -> new CaseImportSimilarityResult(person, null, similarityResultOption),
+							Strings.infoSelectOrCreatePersonForCaseImport,
+							currentUI);
 
-				try {
-					if (!personSelectLock.wasNotified) {
-						personSelectLock.wait();
+					try {
+						if (!personSelectLock.wasNotified) {
+							personSelectLock.wait();
+						}
+					} catch (InterruptedException e) {
+						logger.error("InterruptedException when trying to perform LOCK.wait() in case import: " + e.getMessage());
+						throw e;
 					}
-				} catch (InterruptedException e) {
-					logger.error("InterruptedException when trying to perform LOCK.wait() in case import: " + e.getMessage());
-					throw e;
-				}
 
-				if (consumer.result != null) {
-					resultOption = consumer.result.getResultOption();
-				}
+					if (consumer.result != null) {
+						resultOption = consumer.result.getResultOption();
+					}
 
-				// If the user picked an existing person, override the case person with it
-				if (ImportSimilarityResultOption.PICK.equals(resultOption)) {
-					selectedPersonUuid = consumer.result.getMatchingPerson().getUuid();
-					// Reset the importResult option for case selection
-					resultOption = null;
+					// If the user picked an existing person, override the case person with it
+					if (ImportSimilarityResultOption.PICK.equals(resultOption)) {
+						selectedPersonUuid = consumer.result.getMatchingPerson().getUuid();
+						// Reset the importResult option for case selection
+						resultOption = null;
+					}
 				}
 			}
 
 			if (ImportSimilarityResultOption.SKIP.equals(resultOption)) {
 				return ImportLineResult.SKIPPED;
-			} else {
+			}
+			else {
 				final CaseImportLock caseSelectLock = new CaseImportLock();
 				synchronized (caseSelectLock) {
 					// Retrieve all similar cases from the database
@@ -177,9 +226,13 @@ public class CaseImporter extends DataImporter {
 							importPerson = personFacade.getPersonByUuid(selectedPersonUuid);
 						}
 
-						handleCaseSimilarity(
-							new CaseImportSimilarityInput(importCase, importPerson, similarCases),
-							result -> consumer.onImportResult(result, caseSelectLock));
+						if(showAllDuplicatesAfter){
+							duplicateSimilarCaseIds.add(similarCases.get(0).getUuid());
+						}else {
+							handleCaseSimilarity(
+									new CaseImportSimilarityInput(importCase, importPerson, similarCases),
+									result -> consumer.onImportResult(result, caseSelectLock));
+						}
 
 						try {
 							if (!caseSelectLock.wasNotified) {

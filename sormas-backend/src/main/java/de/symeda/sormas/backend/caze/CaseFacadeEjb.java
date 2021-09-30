@@ -1505,6 +1505,22 @@ public class CaseFacadeEjb implements CaseFacade {
 		filter = cb.and(filter, creationDateFilter);
 		filter = cb.and(filter, cb.notEqual(root.get(Case.ID), root2.get(Case.ID)));
 
+		if(criteria.getCaseUuids()!=null && criteria.getCaseUuids().size()>0){
+			Predicate casesFilter = cb.or(
+					root.get(Case.UUID).in(criteria.getCaseUuids()),
+					root2.get(Case.UUID).in(criteria.getCaseUuids())
+			);
+			filter = cb.and( filter, casesFilter);
+		}
+
+		if(criteria.getPersonsUuids()!=null && criteria.getPersonsUuids().size()>0){
+			Predicate personsFilter = cb.or(
+				person.get(Person.UUID).in(criteria.getPersonsUuids()),
+				person2.get(Person.UUID).in(criteria.getPersonsUuids())
+			);
+			filter = cb.and( filter, personsFilter);
+		}
+
 		cq.where(filter);
 		cq.multiselect(root.get(Case.ID), root2.get(Case.ID), root.get(Case.CREATION_DATE));
 		cq.orderBy(cb.desc(root.get(Case.CREATION_DATE)));

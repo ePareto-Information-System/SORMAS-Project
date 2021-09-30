@@ -21,6 +21,7 @@ import java.util.List;
 
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.person.PersonDto;
+import de.symeda.sormas.api.person.PersonNameDto;
 import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
@@ -33,6 +34,7 @@ public class CaseImportEntities implements Serializable {
 	private final CaseDataDto caze;
 	private final List<SampleDto> samples;
 	private final List<PathogenTestDto> pathogenTests;
+	private List<PersonNameDto> similarPersons;
 
 	public CaseImportEntities(UserReferenceDto reportingUser) {
 		person = PersonDto.build();
@@ -71,5 +73,13 @@ public class CaseImportEntities implements Serializable {
 
 	public List<PathogenTestDto> getPathogenTests() {
 		return pathogenTests;
+	}
+
+	public List<PersonNameDto> getSimilarPersons() {
+		return similarPersons;
+	}
+
+	public void setSimilarPersons(List<PersonNameDto> similarPersons) {
+		this.similarPersons = similarPersons;
 	}
 }

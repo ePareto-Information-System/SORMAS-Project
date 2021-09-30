@@ -1253,6 +1253,24 @@ public class PersonFacadeEjb implements PersonFacade {
 		return checkMatchingNameInDatabase(userFacade.getCurrentUser().toReference(), criteria);
 	}
 
+	public List<PersonNameDto> similarExistingPersons(PersonDto referencePerson) {
+
+		PersonSimilarityCriteria criteria = new PersonSimilarityCriteria().firstName(referencePerson.getFirstName())
+				.lastName(referencePerson.getLastName())
+				.sex(referencePerson.getSex())
+				.birthdateDD(referencePerson.getBirthdateDD())
+				.birthdateMM(referencePerson.getBirthdateMM())
+				.birthdateYYYY(referencePerson.getBirthdateYYYY())
+				.passportNumber(referencePerson.getPassportNumber())
+				.nationalHealthId(referencePerson.getNationalHealthId());
+
+		User user = userService.getByReferenceDto(userFacade.getCurrentUser().toReference());
+		if (user == null) {
+			return null;
+		}
+		return personService.getMatchingNameDtos(criteria,3);
+	}
+
 	@LocalBean
 	@Stateless
 	public static class PersonFacadeEjbLocal extends PersonFacadeEjb {
