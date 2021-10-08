@@ -33,7 +33,6 @@ public class CaseImportEntities implements Serializable {
 	private final CaseDataDto caze;
 	private final List<SampleDto> samples;
 	private final List<PathogenTestDto> pathogenTests;
-	private final boolean existingCase;
 
 	public CaseImportEntities(UserReferenceDto reportingUser) {
 		person = PersonDto.build();
@@ -41,7 +40,6 @@ public class CaseImportEntities implements Serializable {
 
 		samples = new ArrayList<>();
 		pathogenTests = new ArrayList<>();
-		existingCase = false;
 	}
 
 	public static CaseDataDto createCase(PersonDto person, UserReferenceDto reportingUser) {
@@ -57,7 +55,6 @@ public class CaseImportEntities implements Serializable {
 
 		samples = new ArrayList<>();
 		pathogenTests = new ArrayList<>();
-		existingCase = false;
 	}
 
 	public PersonDto getPerson() {
@@ -75,6 +72,4 @@ public class CaseImportEntities implements Serializable {
 	public List<PathogenTestDto> getPathogenTests() {
 		return pathogenTests;
 	}
-	
-	public boolean isExistingCase(){return existingCase;}
 }
