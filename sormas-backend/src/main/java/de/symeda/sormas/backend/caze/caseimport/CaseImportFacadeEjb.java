@@ -17,9 +17,11 @@ package de.symeda.sormas.backend.caze.caseimport;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
@@ -27,8 +29,13 @@ import java.util.function.Function;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.enterprise.inject.New;
 import javax.transaction.Transactional;
 
+import de.symeda.sormas.api.caze.*;
+import de.symeda.sormas.api.person.PersonNameDto;
+import de.symeda.sormas.api.sample.SampleSimilarityCriteria;
+import de.symeda.sormas.api.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.Mutable;
 import org.apache.commons.lang3.mutable.MutableBoolean;
@@ -37,10 +44,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.symeda.sormas.api.Language;
-import de.symeda.sormas.api.caze.BirthDateDto;
-import de.symeda.sormas.api.caze.CaseDataDto;
-import de.symeda.sormas.api.caze.CaseExportDto;
-import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.caze.caseimport.CaseImportEntities;
 import de.symeda.sormas.api.caze.caseimport.CaseImportFacade;
 import de.symeda.sormas.api.contact.FollowUpStatus;
@@ -69,9 +72,6 @@ import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SampleReferenceDto;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
-import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.DateHelper;
-import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.backend.caze.CaseFacadeEjb.CaseFacadeEjbLocal;
 import de.symeda.sormas.backend.common.EnumService;
 import de.symeda.sormas.backend.disease.DiseaseVariantFacadeEjb.DiseaseVariantFacadeEjbLocal;
@@ -164,11 +164,13 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
 
 		PersonDto person = entities.getPerson();
 
-		if (personFacade.isPersonSimilarToExisting(person)) {
+		ImportLineResultDto<CaseImportEntities> result;
+		//Nii here, to remove
+		if (personFacade.isPersonSimilarToExisting(person) && entities.getCaze().getExistingCase().equals(NewExisting.EXISTING_CASE)) {
 			return ImportLineResultDto.duplicateResult(entities);
+		}else {
+			result = saveImportedEntities(entities);
 		}
-
-		ImportLineResultDto<CaseImportEntities> result = saveImportedEntities(entities);
 
 		return result;
 	}
@@ -230,8 +232,12 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
 			// Should be changed when doing #2265
 			caze.setChangeDate(new Date());
 			caseFacade.saveCase(caze);
+
 			for (SampleDto sample : samples) {
-				sampleFacade.saveSample(sample);
+				if (sample.getFieldSampleID() != null)
+					sampleFacade.saveSample(sample, true, true);
+				else
+					sampleFacade.saveSample(sample);
 			}
 			for (PathogenTestDto pathogenTest : pathogenTests) {
 				pathogenTestFacade.savePathogenTest(pathogenTest);
@@ -283,7 +289,8 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
 					// If the first column of a new sample or pathogen test has been reached, remove the last sample and
 					// pathogen test if they don't have any entries
 					if (String.join(".", cellData.getEntityPropertyPath()).equals(firstSampleColumnName.getValue())
-						|| String.join(".", cellData.getEntityPropertyPath()).equals(firstPathogenTestColumnName.getValue())) {
+						|| String.join(".", cellData.getEntityPropertyPath()).equals(firstPathogenTestColumnName.getValue()))
+                    {
 						if (samples.size() > 0 && currentSampleHasEntries.isFalse()) {
 							samples.remove(samples.size() - 1);
 							currentSampleHasEntries.setTrue();
@@ -293,6 +300,7 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
 							pathogenTests.remove(pathogenTests.size() - 1);
 							currentPathogenTestHasEntries.setTrue();
 						}
+
 					}
 
 					CaseDataDto caze = entities.getCaze();
@@ -729,6 +737,25 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
 
 	protected String buildEntityProperty(String[] entityPropertyPath) {
 		return String.join(".", entityPropertyPath);
+	}
+
+	public CaseCriteria createCaseCriteria(CaseDataDto caseDataDto, PersonDto personDto){
+		CaseCriteria caseCriteria = new CaseCriteria();
+		caseCriteria.disease(caseDataDto.getDisease());
+		caseCriteria.region(caseDataDto.getRegion());
+		caseCriteria.person(caseDataDto.getPerson());
+		caseCriteria.creationDateTo(caseDataDto.getCreationDate());
+		caseCriteria.district(caseDataDto.getDistrict());
+		caseCriteria.investigationStatus(caseDataDto.getInvestigationStatus());
+		caseCriteria.reportDateTo(caseDataDto.getReportDate());
+		caseCriteria.setFacilityType(caseDataDto.getFacilityType());
+		caseCriteria.setHealthFacility(caseDataDto.getHealthFacility());
+
+		caseCriteria.setCaseClassification(caseDataDto.getCaseClassification());
+		caseCriteria.setHealthFacility(caseDataDto.getHealthFacility());
+		caseCriteria.setSurveillanceOfficer(caseDataDto.getSurveillanceOfficer());
+
+		return caseCriteria;
 	}
 
 	@LocalBean
