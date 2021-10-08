@@ -261,6 +261,7 @@ public interface Captions {
 	String CaseData_expectedFollowUpUntil = "CaseData.expectedFollowUpUntil";
 	String CaseData_externalID = "CaseData.externalID";
 	String CaseData_externalToken = "CaseData.externalToken";
+	String CaseData_existingCase= "CaseData.existingCase";
 	String CaseData_facilityType = "CaseData.facilityType";
 	String CaseData_firstVaccinationDate = "CaseData.firstVaccinationDate";
 	String CaseData_followUpComment = "CaseData.followUpComment";
