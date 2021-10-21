@@ -256,6 +256,7 @@ public interface Captions {
 	String CaseData_caseOfficer = "CaseData.caseOfficer";
 	String CaseData_caseOrigin = "CaseData.caseOrigin";
 	String CaseData_caseReferenceDefinition = "CaseData.caseReferenceDefinition";
+	String CaseData_importUpdateStatus = "CaseData.importUpdateStatus";
 	String CaseData_classificationComment = "CaseData.classificationComment";
 	String CaseData_classificationDate = "CaseData.classificationDate";
 	String CaseData_classificationUser = "CaseData.classificationUser";
@@ -287,6 +288,7 @@ public interface Captions {
 	String CaseData_expectedFollowUpUntil = "CaseData.expectedFollowUpUntil";
 	String CaseData_externalID = "CaseData.externalID";
 	String CaseData_externalToken = "CaseData.externalToken";
+	String CaseData_existingCase= "CaseData.existingCase";
 	String CaseData_facilityType = "CaseData.facilityType";
 	String CaseData_firstVaccinationDate = "CaseData.firstVaccinationDate";
 	String CaseData_followUpComment = "CaseData.followUpComment";
@@ -1145,6 +1147,7 @@ public interface Captions {
 	String exportConfigurationData = "exportConfigurationData";
 	String exportCustom = "exportCustom";
 	String exportDetailed = "exportDetailed";
+	String exportDownloadMergeFile = "exportDownloadMergeFile";
 	String exportEditExportConfiguration = "exportEditExportConfiguration";
 	String exportFollowUp = "exportFollowUp";
 	String exportInfrastructureData = "exportInfrastructureData";

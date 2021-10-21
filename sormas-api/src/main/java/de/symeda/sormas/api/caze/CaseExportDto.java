@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import de.symeda.sormas.api.utils.*;
 import org.apache.commons.lang3.StringUtils;
 
 import de.symeda.sormas.api.CountryHelper;
@@ -59,11 +60,6 @@ import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.user.UserRole;
-import de.symeda.sormas.api.utils.HideForCountriesExcept;
-import de.symeda.sormas.api.utils.Order;
-import de.symeda.sormas.api.utils.PersonalData;
-import de.symeda.sormas.api.utils.SensitiveData;
-import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.pseudonymization.Pseudonymizer;
 import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.PostalCodePseudonymizer;
 
@@ -330,6 +326,8 @@ public class CaseExportDto implements Serializable {
 	private String followUpStatusChangeUserRoles;
 
 	private Boolean isInJurisdiction;
+
+	private PickMerge importUpdateCaseStatus;
 
 	//@formatter:off
 	public CaseExportDto(long id, long personId, long personAddressId, long epiDataId, long symptomsId,
@@ -2282,6 +2280,16 @@ public class CaseExportDto implements Serializable {
 		this.followUpStatusChangeUserRoles = StringUtils.join(roles, ", ");
 	}
 
+	@Order(178)
+	@ExportTarget(caseExportTypes = {
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
+	@ExportGroup(ExportGroupType.ADDITIONAL)
+	@ExportProperty(CaseDataDto.IMPORT_UPDATE_CASE_STATUS)
+	public PickMerge getImportUpdateCaseStatus() {
+		return importUpdateCaseStatus;
+	}
+
 	public void setCountry(String country) {
 		this.country = country;
 	}
@@ -2604,5 +2612,9 @@ public class CaseExportDto implements Serializable {
 
 	public void setOtherContactDetails(String otherContactDetails) {
 		this.otherContactDetails = otherContactDetails;
+	}
+
+	public void setImportUpdateCaseStatus(PickMerge importUpdateCaseStatus) {
+		this.importUpdateCaseStatus = importUpdateCaseStatus;
 	}
 }

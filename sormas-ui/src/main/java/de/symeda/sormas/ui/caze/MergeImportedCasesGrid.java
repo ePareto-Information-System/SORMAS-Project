@@ -3,8 +3,7 @@ package de.symeda.sormas.ui.caze;
 import com.vaadin.data.TreeData;
 import com.vaadin.data.provider.TreeDataProvider;
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.server.ExternalResource;
-import com.vaadin.server.Page;
+import com.vaadin.server.*;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.renderers.DateRenderer;
@@ -26,7 +25,9 @@ import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.DownloadUtil;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
+import org.vaadin.hene.popupbutton.PopupButton;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -289,5 +290,38 @@ public class MergeImportedCasesGrid extends TreeGrid<CaseIndexDto> {
 
 	public void setCriteria(CaseCriteria criteria) {
 		this.criteria = criteria;
+	}
+
+	public CaseCriteria getCriteria() {
+		return criteria;
+	}
+
+	public void addExportButton(
+			StreamResource streamResource,
+			VerticalLayout exportLayout,
+			Resource icon,
+			String captionKey,
+			String descriptionKey) {
+
+		Button exportButton = ButtonHelper.createIconButton(captionKey, icon, e -> {
+
+			Button button = e.getButton();
+			int buttonPos = exportLayout.getComponentIndex(button);
+
+			DownloadUtil.showExportWaitDialog(button, ce -> {
+				//restore the button
+				exportLayout.addComponent(button, buttonPos);
+				button.setEnabled(true);
+			});
+//			exportPopupButton.setPopupVisible(false);
+		}, ValoTheme.BUTTON_PRIMARY);
+
+		exportButton.setDisableOnClick(true);
+		exportButton.setDescription(I18nProperties.getDescription(descriptionKey));
+		exportButton.setWidth(100, Unit.PERCENTAGE);
+
+		exportLayout.addComponent(exportButton);
+
+		new FileDownloader(streamResource).extend(exportButton);
 	}
 }

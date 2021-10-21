@@ -48,17 +48,7 @@ import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.therapy.TherapyDto;
 import de.symeda.sormas.api.travelentry.TravelEntryDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
-import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.Diseases;
-import de.symeda.sormas.api.utils.EmbeddedPersonalData;
-import de.symeda.sormas.api.utils.HideForCountries;
-import de.symeda.sormas.api.utils.HideForCountriesExcept;
-import de.symeda.sormas.api.utils.Outbreaks;
-import de.symeda.sormas.api.utils.PersonalData;
-import de.symeda.sormas.api.utils.Required;
-import de.symeda.sormas.api.utils.SensitiveData;
-import de.symeda.sormas.api.utils.SormasToSormasEntityDto;
-import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 import de.symeda.sormas.api.utils.pseudonymization.Pseudonymizer;
 import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.LatitudePseudonymizer;
@@ -207,6 +197,7 @@ public class CaseDataDto extends PseudonymizableDto implements SormasToSormasEnt
 	public static final String FOLLOW_UP_STATUS_CHANGE_USER = "followUpStatusChangeUser";
 	public static final String DONT_SHARE_WITH_REPORTING_TOOL = "dontShareWithReportingTool";
 	public static final String CASE_REFERENCE_DEFINITION = "caseReferenceDefinition";
+	public static final String IMPORT_UPDATE_CASE_STATUS = "importUpdateStatus";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -623,6 +614,11 @@ public class CaseDataDto extends PseudonymizableDto implements SormasToSormasEnt
 
 	@HideForCountriesExcept
 	private CaseReferenceDefinition caseReferenceDefinition;
+
+	private NewExisting existingCase;
+
+	private PickMerge importUpdateCaseStatus;
+
 
 	public static CaseDataDto build(PersonReferenceDto person, Disease disease) {
 		return build(person, disease, null);
@@ -1789,5 +1785,21 @@ public class CaseDataDto extends PseudonymizableDto implements SormasToSormasEnt
 
 	public void setCaseReferenceDefinition(CaseReferenceDefinition caseReferenceDefinition) {
 		this.caseReferenceDefinition = caseReferenceDefinition;
+	}
+
+	public NewExisting getExistingCase() {
+		return existingCase;
+	}
+
+	public void setExistingCase(NewExisting existingCase) {
+		this.existingCase = existingCase;
+	}
+
+	public PickMerge getImportUpdateCaseStatus() {
+		return importUpdateCaseStatus;
+	}
+
+	public void setImportUpdateCaseStatus(PickMerge importUpdateCaseStatus) {
+		this.importUpdateCaseStatus = importUpdateCaseStatus;
 	}
 }

@@ -51,6 +51,10 @@ public class ImportLineResultDto<E> implements Serializable {
 		return result == ImportLineResult.DUPLICATE;
 	}
 
+	public boolean isMerge() {
+		return result == ImportLineResult.MERGE;
+	}
+
 	public boolean isSuccess() {
 		return result == ImportLineResult.SUCCESS;
 	}
@@ -65,5 +69,9 @@ public class ImportLineResultDto<E> implements Serializable {
 
 	public static <E> ImportLineResultDto<E> duplicateResult(E entities) {
 		return new ImportLineResultDto<>(ImportLineResult.DUPLICATE, null, entities);
+	}
+
+	public static <E> ImportLineResultDto<E> mergeResult(E entities) {
+		return new ImportLineResultDto<>(ImportLineResult.MERGE, null, entities);
 	}
 }
