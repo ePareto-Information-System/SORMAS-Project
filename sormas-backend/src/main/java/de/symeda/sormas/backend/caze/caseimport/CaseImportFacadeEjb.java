@@ -30,7 +30,9 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.transaction.Transactional;
 
+import de.symeda.sormas.api.caze.*;
 import de.symeda.sormas.api.person.PersonNameDto;
+import de.symeda.sormas.api.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.Mutable;
 import org.apache.commons.lang3.mutable.MutableBoolean;
@@ -69,9 +71,6 @@ import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SampleReferenceDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
-import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.DateHelper;
-import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.backend.caze.CaseFacadeEjb.CaseFacadeEjbLocal;
 import de.symeda.sormas.backend.common.EnumService;
 import de.symeda.sormas.backend.infrastructure.facility.FacilityFacadeEjb.FacilityFacadeEjbLocal;
@@ -146,18 +145,50 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
 		}
 
 		PersonDto person = entities.getPerson();
+		List<PersonNameDto> similarPersons = personFacade.similarExistingPersons(person);
+		CaseDataDto caseDataDto = null;
+		PickMerge pickMerge = entities.getCaze().getImportUpdateCaseStatus();
+		if (pickMerge == null)
+			pickMerge = PickMerge.CANCEL;
+
+		if (pickMerge.equals(PickMerge.PICK) && entities.getCaze().getUuid() != null)
+			caseDataDto = caseFacade.getCaseDataByUuid(entities.getCaze().getUuid());
+
+		if (pickMerge.equals(PickMerge.MERGE) && entities.getCaze().getUuid() != null ) {
+			caseDataDto = caseFacade.getCaseDataByUuid(entities.getCaze().getUuid());
+			String uuid = caseDataDto.getUuid();
+			caseDataDto = entities.getCaze();
+			caseDataDto.setUuid(uuid);
+		}
+//		CaseDataDto caseDataDto = entities.getCaze().getUuid() == null ? caseFacade.getCaseDataByUuid(entities.getCaze().getUuid())
+//				: caseFacade.getByExternalId(entities.getCaze().getExternalID());
+		ImportLineResultDto<CaseImportEntities> result;
 
 //		if (personFacade.isPersonSimilarToExisting(person)) {
 //			return ImportLineResultDto.duplicateResult(entities);
 //		}
 
-		List<PersonNameDto> similarPersons = personFacade.similarExistingPersons(person);
-		if(similarPersons.size()>0) {
-			entities.setSimilarPersons(similarPersons);
-			return ImportLineResultDto.duplicateResult(entities);
-		}
+		NewExisting newExisting = entities.getCaze().getExistingCase();
+		if (newExisting == null)
+			newExisting = NewExisting.NEW_CASE;
 
-		ImportLineResultDto<CaseImportEntities> result = saveImportedEntities(entities);
+		if(similarPersons.size() > 0 && newExisting.equals(NewExisting.EXISTING_CASE) && caseDataDto == null) {
+			entities.setSimilarPersons(similarPersons);
+			return ImportLineResultDto.mergeResult(entities);
+		}
+		//Nii here, to remove
+//		if (personFacade.isPersonSimilarToExisting(person) && newExisting.equals(NewExisting.EXISTING_CASE)) {
+////			entities.setSimilarPersons(similarPersons);
+//			return ImportLineResultDto.duplicateResult(entities);
+//		}
+		if (caseDataDto != null){
+			result = updateCaseWithImportData(caseDataDto.getPerson().getUuid(),
+					caseDataDto.getUuid(), values, entityClasses, entityPropertyPaths);
+		}
+		else {
+			result = saveImportedEntities(entities);
+		}
+//		ImportLineResultDto<CaseImportEntities> result = saveImportedEntities(entities);
 
 		return result;
 	}
@@ -219,8 +250,12 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
 			// Should be changed when doing #2265
 			caze.setChangeDate(new Date());
 			caseFacade.saveCase(caze);
+
 			for (SampleDto sample : samples) {
-				sampleFacade.saveSample(sample);
+				if (sample.getFieldSampleID() != null)
+					sampleFacade.saveSample(sample, true, true, true);
+				else
+					sampleFacade.saveSample(sample);
 			}
 			for (PathogenTestDto pathogenTest : pathogenTests) {
 				pathogenTestFacade.savePathogenTest(pathogenTest);
@@ -272,7 +307,8 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
 					// If the first column of a new sample or pathogen test has been reached, remove the last sample and
 					// pathogen test if they don't have any entries
 					if (String.join(".", cellData.getEntityPropertyPath()).equals(firstSampleColumnName.getValue())
-						|| String.join(".", cellData.getEntityPropertyPath()).equals(firstPathogenTestColumnName.getValue())) {
+						|| String.join(".", cellData.getEntityPropertyPath()).equals(firstPathogenTestColumnName.getValue()))
+                    {
 						if (samples.size() > 0 && currentSampleHasEntries.isFalse()) {
 							samples.remove(samples.size() - 1);
 							currentSampleHasEntries.setTrue();
@@ -282,6 +318,7 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
 							pathogenTests.remove(pathogenTests.size() - 1);
 							currentPathogenTestHasEntries.setTrue();
 						}
+
 					}
 
 					CaseDataDto caze = entities.getCaze();
@@ -632,6 +669,25 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
 
 	protected String buildEntityProperty(String[] entityPropertyPath) {
 		return String.join(".", entityPropertyPath);
+	}
+
+	public CaseCriteria createCaseCriteria(CaseDataDto caseDataDto, PersonDto personDto){
+		CaseCriteria caseCriteria = new CaseCriteria();
+		caseCriteria.disease(caseDataDto.getDisease());
+		caseCriteria.region(caseDataDto.getRegion());
+		caseCriteria.person(caseDataDto.getPerson());
+		caseCriteria.creationDateTo(caseDataDto.getCreationDate());
+		caseCriteria.district(caseDataDto.getDistrict());
+		caseCriteria.investigationStatus(caseDataDto.getInvestigationStatus());
+		caseCriteria.reportDateTo(caseDataDto.getReportDate());
+		caseCriteria.setFacilityType(caseDataDto.getFacilityType());
+		caseCriteria.setHealthFacility(caseDataDto.getHealthFacility());
+
+		caseCriteria.setCaseClassification(caseDataDto.getCaseClassification());
+		caseCriteria.setHealthFacility(caseDataDto.getHealthFacility());
+		caseCriteria.setSurveillanceOfficer(caseDataDto.getSurveillanceOfficer());
+
+		return caseCriteria;
 	}
 
 	@LocalBean
