@@ -22,10 +22,10 @@ import de.symeda.sormas.api.i18n.Descriptions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.InfrastructureType;
-import de.symeda.sormas.api.region.CountryCriteria;
-import de.symeda.sormas.api.region.CountryDto;
-import de.symeda.sormas.api.region.CountryIndexDto;
-import de.symeda.sormas.api.region.SubcontinentReferenceDto;
+import de.symeda.sormas.api.infrastructure.country.CountryCriteria;
+import de.symeda.sormas.api.infrastructure.country.CountryDto;
+import de.symeda.sormas.api.infrastructure.country.CountryIndexDto;
+import de.symeda.sormas.api.infrastructure.subcontinent.SubcontinentReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
@@ -33,6 +33,7 @@ import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.configuration.AbstractConfigurationView;
 import de.symeda.sormas.ui.configuration.infrastructure.components.SearchField;
 import de.symeda.sormas.ui.utils.ButtonHelper;
+import de.symeda.sormas.ui.utils.ComboBoxHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.ExportEntityName;
 import de.symeda.sormas.ui.utils.GridExportStreamResource;
@@ -59,6 +60,7 @@ public class CountriesView extends AbstractConfigurationView {
 	private HorizontalLayout filterLayout;
 	private VerticalLayout gridLayout;
 	private CountriesGrid grid;
+	private RowCount rowCount;
 	protected Button createButton;
 	protected Button importButton;
 	protected Button importDefaultCountriesButton;
@@ -75,7 +77,8 @@ public class CountriesView extends AbstractConfigurationView {
 		grid = new CountriesGrid(criteria);
 		gridLayout = new VerticalLayout();
 		gridLayout.addComponent(createFilterBar());
-		gridLayout.addComponent(new RowCount(Strings.labelNumberOfCountries, grid.getItemCount()));
+		rowCount = new RowCount(Strings.labelNumberOfCountries, 0);
+		gridLayout.addComponent(rowCount);
 		gridLayout.addComponent(grid);
 		gridLayout.setMargin(true);
 		gridLayout.setSpacing(false);
@@ -87,14 +90,14 @@ public class CountriesView extends AbstractConfigurationView {
 			importButton = ButtonHelper.createIconButton(Captions.actionImport, VaadinIcons.UPLOAD, e -> {
 				Window window = VaadinUiUtil.showPopupWindow(new InfrastructureImportLayout(InfrastructureType.COUNTRY));
 				window.setCaption(I18nProperties.getString(Strings.headingImportCountries));
-				window.addCloseListener(c -> grid.reload());
+				window.addCloseListener(c -> grid.reload(true));
 			}, ValoTheme.BUTTON_PRIMARY);
 			addHeaderComponent(importButton);
 
 			importDefaultCountriesButton = ButtonHelper.createIconButton(Captions.actionImportAllCountries, VaadinIcons.UPLOAD, e -> {
 				Window window = VaadinUiUtil.showPopupWindow(new ImportDefaultCountriesLayout());
 				window.setCaption(I18nProperties.getString(Strings.headingImportAllCountries));
-				window.addCloseListener(c -> grid.reload());
+				window.addCloseListener(c -> grid.reload(true));
 			}, ValoTheme.BUTTON_PRIMARY);
 			addHeaderComponent(importDefaultCountriesButton);
 		}
@@ -139,7 +142,7 @@ public class CountriesView extends AbstractConfigurationView {
 				btnEnterBulkEditMode.setVisible(false);
 				btnLeaveBulkEditMode.setVisible(true);
 				searchField.setEnabled(false);
-				grid.setEagerDataProvider();
+				grid.setInEagerMode(true);
 				grid.reload();
 			});
 			btnLeaveBulkEditMode.addClickListener(e -> {
@@ -168,7 +171,7 @@ public class CountriesView extends AbstractConfigurationView {
 		});
 		filterLayout.addComponent(searchField);
 
-		subcontinentFilter = new ComboBox();
+		subcontinentFilter = ComboBoxHelper.createComboBoxV7();
 		subcontinentFilter.setId(CountryDto.SUBCONTINENT);
 		subcontinentFilter.setWidth(140, Unit.PIXELS);
 		subcontinentFilter.setCaption(I18nProperties.getPrefixCaption(CountryDto.I18N_PREFIX, CountryDto.SUBCONTINENT));
@@ -191,8 +194,8 @@ public class CountriesView extends AbstractConfigurationView {
 		actionButtonsLayout.setSpacing(true);
 		{
 			// Show active/archived/all dropdown
-			if (UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_VIEW_ARCHIVED)) {
-				relevanceStatusFilter = new ComboBox();
+			if (UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_VIEW)) {
+				relevanceStatusFilter = ComboBoxHelper.createComboBoxV7();
 				relevanceStatusFilter.setId("relevanceStatus");
 				relevanceStatusFilter.setWidth(220, Unit.PERCENTAGE);
 				relevanceStatusFilter.setNullSelectionAllowed(false);
@@ -251,6 +254,7 @@ public class CountriesView extends AbstractConfigurationView {
 		}
 		updateFilterComponents();
 		grid.reload();
+		rowCount.update(grid.getItemCount());
 	}
 
 	public void updateFilterComponents() {

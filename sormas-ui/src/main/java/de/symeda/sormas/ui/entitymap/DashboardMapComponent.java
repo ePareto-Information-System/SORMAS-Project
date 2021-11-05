@@ -28,6 +28,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import de.symeda.sormas.api.dashboard.DashboardEventDto;
+import de.symeda.sormas.api.geo.GeoLatLon;
+import de.symeda.sormas.api.geo.GeoShapeProvider;
+import de.symeda.sormas.api.infrastructure.district.DistrictDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.hene.popupbutton.PopupButton;
@@ -62,22 +70,13 @@ import de.symeda.sormas.api.contact.ContactCriteria;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.ContactFacade;
 import de.symeda.sormas.api.contact.MapContactDto;
-import de.symeda.sormas.api.event.DashboardEventDto;
-import de.symeda.sormas.api.facility.FacilityDto;
-import de.symeda.sormas.api.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.InfrastructureHelper;
-import de.symeda.sormas.api.region.DistrictDto;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.region.GeoLatLon;
-import de.symeda.sormas.api.region.GeoShapeProvider;
-import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.DataHelper.Pair;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
@@ -90,6 +89,7 @@ import de.symeda.sormas.ui.map.LeafletPolygon;
 import de.symeda.sormas.ui.map.MarkerIcon;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
+import de.symeda.sormas.api.utils.DataHelper.Pair;
 
 @SuppressWarnings("serial")
 public class DashboardMapComponent extends VerticalLayout {
@@ -224,7 +224,6 @@ public class DashboardMapComponent extends VerticalLayout {
 		map.setWidth(100, Unit.PERCENTAGE);
 		map.setHeight(580, Unit.PIXELS);
 		map.addMarkerClickListener(new MarkerClickListener() {
-
 			@Override
 			public void markerClick(MarkerClickEvent event) {
 				onMarkerClicked(event.getGroupId(), event.getMarkerIndex());
@@ -372,17 +371,13 @@ public class DashboardMapComponent extends VerticalLayout {
 				singleCaseDataDto.getPerson().getFirstName(),
 				singleCaseDataDto.getPerson().getLastName(),
 				singleCaseDataDto.getHealthFacility().getUuid(),
-				null, //singleCaseDataDto.healthFacilityLat(),
-				null, //singleCaseDataDto.healthFacilityLon(),
+				null,
+				null,
 				singleCaseDataDto.getReportLat(),
 				singleCaseDataDto.getReportLon(),
-				null, //singleCaseDataDto.getAddressLat
-				null, //singleCaseDataDto.getAddressLon
-				null, //singleCaseDataDto.getReportingUser().getUuid(),
-				null, //singleCaseDataDto.getRegion().getUuid(),
-				null, //singleCaseDataDto.getDistrict().getUuid(),
-				null, //singleCaseDataDto.getCommunity().getUuid(),
-				null //singleCaseDataDto.getPointOfEntry().getUuid()
+				null,
+				null,
+					singleCaseDataDto.hasResponsibleJurisdiction()
 			);
 
 			List<MapCaseDto> caseDtos = new ArrayList<>();
@@ -390,9 +385,11 @@ public class DashboardMapComponent extends VerticalLayout {
 
 			showCaseMarkers(caseDtos);
 		}
-		if (showContacts) {
+
+        if (showContacts) {
 			showContactMarkers(FacadeProvider.getContactFacade().getIndexListForMap(contactCriteria, null, null, null));
 		}
+
 		if (showContact) {
 			MapContactDto mapContact = new MapContactDto(
 				singleContactDto.getUuid(),

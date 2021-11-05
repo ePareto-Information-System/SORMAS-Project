@@ -33,18 +33,18 @@ import com.vaadin.v7.ui.ComboBox;
 
 import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.facility.FacilityCriteria;
-import de.symeda.sormas.api.facility.FacilityDto;
-import de.symeda.sormas.api.facility.FacilityExportDto;
-import de.symeda.sormas.api.facility.FacilityType;
-import de.symeda.sormas.api.facility.FacilityTypeGroup;
+import de.symeda.sormas.api.infrastructure.facility.FacilityCriteria;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityExportDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityType;
+import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.InfrastructureType;
-import de.symeda.sormas.api.region.CommunityReferenceDto;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.region.RegionReferenceDto;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
@@ -52,6 +52,7 @@ import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.configuration.AbstractConfigurationView;
 import de.symeda.sormas.ui.configuration.infrastructure.components.SearchField;
 import de.symeda.sormas.ui.utils.ButtonHelper;
+import de.symeda.sormas.ui.utils.ComboBoxHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.DateFormatHelper;
 import de.symeda.sormas.ui.utils.DownloadUtil;
@@ -91,6 +92,7 @@ public class FacilitiesView extends AbstractConfigurationView {
 	protected Button createButton;
 	protected PopupButton exportPopupButton;
 	private MenuBar bulkOperationsDropdown;
+	private RowCount rowCount;
 
 	public FacilitiesView() {
 
@@ -107,7 +109,8 @@ public class FacilitiesView extends AbstractConfigurationView {
 		gridLayout = new VerticalLayout();
 		//		gridLayout.addComponent(createHeaderBar());
 		gridLayout.addComponent(createFilterBar());
-		gridLayout.addComponent(new RowCount(Strings.labelNumberOfFacilities, grid.getItemCount()));
+		rowCount = new RowCount(Strings.labelNumberOfFacilities, grid.getItemCount());
+		gridLayout.addComponent(rowCount);
 		gridLayout.addComponent(grid);
 		gridLayout.setMargin(true);
 		gridLayout.setSpacing(false);
@@ -121,6 +124,7 @@ public class FacilitiesView extends AbstractConfigurationView {
 				window.setCaption(I18nProperties.getString(Strings.headingImportFacilities));
 				window.addCloseListener(c -> {
 					grid.reload();
+					rowCount.update(grid.getItemCount());
 				});
 			}, ValoTheme.BUTTON_PRIMARY);
 
@@ -201,6 +205,7 @@ public class FacilitiesView extends AbstractConfigurationView {
 				searchField.setEnabled(false);
 				grid.setEagerDataProvider();
 				grid.reload();
+				rowCount.update(grid.getItemCount());
 			});
 			btnLeaveBulkEditMode.addClickListener(e -> {
 				bulkOperationsDropdown.setVisible(false);
@@ -235,10 +240,11 @@ public class FacilitiesView extends AbstractConfigurationView {
 		searchField.addTextChangeListener(e -> {
 			criteria.nameCityLike(e.getText());
 			grid.reload();
+			rowCount.update(grid.getItemCount());
 		});
 		filterLayout.addComponent(searchField);
 
-		typeGroupFilter = new ComboBox();
+		typeGroupFilter = ComboBoxHelper.createComboBoxV7();
 		typeGroupFilter.setId("typeGroup");
 		typeGroupFilter.setWidth(220, Unit.PIXELS);
 		typeGroupFilter.setCaption(I18nProperties.getCaption(Captions.Facility_typeGroup));
@@ -249,7 +255,7 @@ public class FacilitiesView extends AbstractConfigurationView {
 		});
 		filterLayout.addComponent(typeGroupFilter);
 
-		typeFilter = new ComboBox();
+		typeFilter = ComboBoxHelper.createComboBoxV7();
 		typeFilter.setId(FacilityDto.TYPE);
 		typeFilter.setWidth(220, Unit.PIXELS);
 		typeFilter.setCaption(I18nProperties.getPrefixCaption(FacilityDto.I18N_PREFIX, FacilityDto.TYPE));
@@ -262,9 +268,10 @@ public class FacilitiesView extends AbstractConfigurationView {
 		countryFilter = addCountryFilter(filterLayout, country -> {
 			criteria.country(country);
 			grid.reload();
+			rowCount.update(grid.getItemCount());
 		}, regionFilter);
 
-		regionFilter = new ComboBox();
+		regionFilter = ComboBoxHelper.createComboBoxV7();
 		regionFilter.setId(FacilityDto.REGION);
 		regionFilter.setWidth(140, Unit.PIXELS);
 		regionFilter.setCaption(I18nProperties.getPrefixCaption(FacilityDto.I18N_PREFIX, FacilityDto.REGION));
@@ -279,7 +286,7 @@ public class FacilitiesView extends AbstractConfigurationView {
 		});
 		filterLayout.addComponent(regionFilter);
 
-		districtFilter = new ComboBox();
+		districtFilter = ComboBoxHelper.createComboBoxV7();
 		districtFilter.setId(FacilityDto.DISTRICT);
 		districtFilter.setWidth(140, Unit.PIXELS);
 		districtFilter.setCaption(I18nProperties.getPrefixCaption(FacilityDto.I18N_PREFIX, FacilityDto.DISTRICT));
@@ -293,7 +300,7 @@ public class FacilitiesView extends AbstractConfigurationView {
 		});
 		filterLayout.addComponent(districtFilter);
 
-		communityFilter = new ComboBox();
+		communityFilter = ComboBoxHelper.createComboBoxV7();
 		communityFilter.setId(FacilityDto.COMMUNITY);
 		communityFilter.setWidth(140, Unit.PIXELS);
 		communityFilter.setCaption(I18nProperties.getPrefixCaption(FacilityDto.I18N_PREFIX, FacilityDto.COMMUNITY));
@@ -315,8 +322,8 @@ public class FacilitiesView extends AbstractConfigurationView {
 		actionButtonsLayout.setSpacing(true);
 		{
 			// Show active/archived/all dropdown
-			if (UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_VIEW_ARCHIVED)) {
-				relevanceStatusFilter = new ComboBox();
+			if (UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_VIEW)) {
+				relevanceStatusFilter = ComboBoxHelper.createComboBoxV7();
 				relevanceStatusFilter.setId("relevanceStatus");
 				relevanceStatusFilter.setWidth(220, Unit.PERCENTAGE);
 				relevanceStatusFilter.setNullSelectionAllowed(false);
@@ -386,6 +393,7 @@ public class FacilitiesView extends AbstractConfigurationView {
 		}
 		updateFilterComponents();
 		grid.reload();
+		rowCount.update(grid.getItemCount());
 	}
 
 	public void updateFilterComponents() {

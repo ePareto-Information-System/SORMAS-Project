@@ -27,17 +27,15 @@ import org.apache.commons.lang3.StringUtils;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
-
 import androidx.databinding.ViewDataBinding;
 import androidx.databinding.library.baseAdapters.BR;
 import androidx.fragment.app.FragmentActivity;
-
 import de.symeda.sormas.api.CountryHelper;
-import de.symeda.sormas.api.facility.FacilityType;
-import de.symeda.sormas.api.facility.FacilityTypeGroup;
+import de.symeda.sormas.api.infrastructure.facility.FacilityType;
+import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
-import de.symeda.sormas.api.location.AreaType;
+import de.symeda.sormas.api.infrastructure.area.AreaType;
 import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.person.PersonAddressType;
 import de.symeda.sormas.api.utils.ValidationException;
@@ -56,6 +54,7 @@ import de.symeda.sormas.app.core.notification.NotificationType;
 import de.symeda.sormas.app.databinding.DialogLocationLayoutBinding;
 import de.symeda.sormas.app.util.DataUtils;
 import de.symeda.sormas.app.util.InfrastructureDaoHelper;
+import de.symeda.sormas.app.util.InfrastructureFieldsDependencyHandler;
 import de.symeda.sormas.app.util.LocationService;
 
 public class LocationDialog extends FormDialog {
@@ -117,7 +116,8 @@ public class LocationDialog extends FormDialog {
 		List<Item> facilityTypeList =
 			data.getFacilityType() != null ? DataUtils.toItems(FacilityType.getTypes(data.getFacilityType().getFacilityTypeGroup())) : null;
 
-		InfrastructureDaoHelper.initializeHealthFacilityDetailsFieldVisibility(contentBinding.locationFacility, contentBinding.locationFacilityDetails);
+		InfrastructureDaoHelper
+			.initializeHealthFacilityDetailsFieldVisibility(contentBinding.locationFacility, contentBinding.locationFacilityDetails);
 
 		if (data.getCountry() == null) {
 			String serverCountryName = ConfigProvider.getServerCountryName();
@@ -130,7 +130,7 @@ public class LocationDialog extends FormDialog {
 			}
 		}
 
-		InfrastructureDaoHelper.initializeFacilityFields(
+		InfrastructureFieldsDependencyHandler.instance.initializeFacilityFields(
 			data,
 			this.contentBinding.locationContinent,
 			initialContinents,
@@ -205,7 +205,17 @@ public class LocationDialog extends FormDialog {
 		if (data.getFacilityType() != null) {
 			contentBinding.locationFacilityType.setValue(data.getFacilityType());
 			contentBinding.facilityTypeGroup.setValue(data.getFacilityType().getFacilityTypeGroup());
+		} else {
+			setFacilityContactPersonFieldsVisible(false, true);
 		}
+
+		contentBinding.locationFacilityType.addValueChangedListener(field -> {
+			if (field.getValue() == null) {
+				setFacilityContactPersonFieldsVisible(false, true);
+			} else {
+				setFacilityContactPersonFieldsVisible(true, true);
+			}
+		});
 
 		contentBinding.locationFacility.addValueChangedListener(field -> {
 			final Facility facility = (Facility) field.getValue();
@@ -296,16 +306,25 @@ public class LocationDialog extends FormDialog {
 		contentBinding.locationFacility.setVisibility(visibility);
 		contentBinding.locationFacilityDetails.setVisibility(visibility);
 		contentBinding.locationFacilityType.setVisibility(visibility);
-		contentBinding.locationContactPersonFirstName.setVisibility(visibility);
-		contentBinding.locationContactPersonLastName.setVisibility(visibility);
-		contentBinding.locationContactPersonPhone.setVisibility(visibility);
-		contentBinding.locationContactPersonEmail.setVisibility(visibility);
+
+		setFacilityContactPersonFieldsVisible(visible && (contentBinding.locationFacilityType.getValue() != null), clearOnHidden);
 
 		if (!visible && clearOnHidden) {
 			contentBinding.facilityTypeGroup.setValue(null);
 			contentBinding.locationFacility.setValue(null);
 			contentBinding.locationFacilityDetails.setValue(null);
 			contentBinding.locationFacilityType.setValue(null);
+		}
+	}
+
+	private void setFacilityContactPersonFieldsVisible(boolean visible, boolean clearOnHidden) {
+		final int visibility = visible ? VISIBLE : GONE;
+		contentBinding.locationContactPersonFirstName.setVisibility(visibility);
+		contentBinding.locationContactPersonLastName.setVisibility(visibility);
+		contentBinding.locationContactPersonPhone.setVisibility(visibility);
+		contentBinding.locationContactPersonEmail.setVisibility(visibility);
+
+		if (!visible && clearOnHidden) {
 			contentBinding.locationContactPersonFirstName.setValue(null);
 			contentBinding.locationContactPersonLastName.setValue(null);
 			contentBinding.locationContactPersonPhone.setValue(null);

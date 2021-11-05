@@ -60,10 +60,10 @@ import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.common.CoreAdo;
 import de.symeda.sormas.backend.contact.Contact;
 import de.symeda.sormas.backend.event.EventParticipant;
-import de.symeda.sormas.backend.facility.Facility;
-import de.symeda.sormas.backend.sormastosormas.SormasToSormasEntity;
-import de.symeda.sormas.backend.sormastosormas.SormasToSormasOriginInfo;
-import de.symeda.sormas.backend.sormastosormas.SormasToSormasShareInfo;
+import de.symeda.sormas.backend.infrastructure.facility.Facility;
+import de.symeda.sormas.backend.sormastosormas.entities.SormasToSormasEntity;
+import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfo;
+import de.symeda.sormas.backend.sormastosormas.share.shareinfo.ShareInfoSample;
 import de.symeda.sormas.backend.user.User;
 
 @Entity(name = "samples")
@@ -157,7 +157,7 @@ public class Sample extends CoreAdo implements SormasToSormasEntity {
 	private List<AdditionalTest> additionalTests;
 
 	private SormasToSormasOriginInfo sormasToSormasOriginInfo;
-	private List<SormasToSormasShareInfo> sormasToSormasShares = new ArrayList<>(0);
+	private List<ShareInfoSample> shareInfoSamples = new ArrayList<>(0);
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
@@ -609,12 +609,12 @@ public class Sample extends CoreAdo implements SormasToSormasEntity {
 		this.sormasToSormasOriginInfo = sormasToSormasOriginInfo;
 	}
 
-	@OneToMany(mappedBy = SormasToSormasShareInfo.SAMPLE, fetch = FetchType.LAZY)
-	public List<SormasToSormasShareInfo> getSormasToSormasShares() {
-		return sormasToSormasShares;
+	@OneToMany(mappedBy = ShareInfoSample.SAMPLE, fetch = FetchType.LAZY)
+	public List<ShareInfoSample> getShareInfoSamples() {
+		return shareInfoSamples;
 	}
 
-	public void setSormasToSormasShares(List<SormasToSormasShareInfo> sormasToSormasShares) {
-		this.sormasToSormasShares = sormasToSormasShares;
+	public void setShareInfoSamples(List<ShareInfoSample> shareInfoSamples) {
+		this.shareInfoSamples = shareInfoSamples;
 	}
 }

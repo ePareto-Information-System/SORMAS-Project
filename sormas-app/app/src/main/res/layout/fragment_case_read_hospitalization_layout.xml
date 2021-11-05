@@ -26,7 +26,7 @@
         <import type="de.symeda.sormas.api.utils.YesNoUnknown" />
         <import type="de.symeda.sormas.api.caze.CaseOutcome" />
         <import type="de.symeda.sormas.api.hospitalization.HospitalizationReasonType" />
-        <import type="de.symeda.sormas.api.facility.FacilityType" />
+        <import type="de.symeda.sormas.api.infrastructure.facility.FacilityType" />
 
         <variable name="patientCondition" type="de.symeda.sormas.api.utils.MildModerateSevereCritical" />
         <variable name="data" type="de.symeda.sormas.app.backend.hospitalization.Hospitalization" />

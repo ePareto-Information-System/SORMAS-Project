@@ -40,6 +40,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 @MappedSuperclass
 public class AbstractDomainObject extends BaseObservable implements HasUuid, Serializable, Cloneable {
+// public class AbstractDomainObject extends BaseObservable implements Serializable, Cloneable, HasUuid {
 
 	public static final String ID = "id";
 	public static final String UUID = "uuid";

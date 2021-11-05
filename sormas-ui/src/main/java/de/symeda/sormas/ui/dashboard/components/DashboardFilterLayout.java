@@ -42,8 +42,8 @@ import de.symeda.sormas.api.caze.NewCaseDateType;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.region.RegionReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.utils.DateFilterOption;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.EpiWeek;
@@ -51,6 +51,7 @@ import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.dashboard.AbstractDashboardView;
 import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
 import de.symeda.sormas.ui.utils.ButtonHelper;
+import de.symeda.sormas.ui.utils.ComboBoxHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.DateFormatHelper;
 import de.symeda.sormas.ui.utils.EpiWeekAndDateFilterComponent;
@@ -92,8 +93,8 @@ public abstract class DashboardFilterLayout extends HorizontalLayout {
 	public DashboardFilterLayout(AbstractDashboardView dashboardView, DashboardDataProvider dashboardDataProvider) {
 		this.dashboardView = dashboardView;
 		this.dashboardDataProvider = dashboardDataProvider;
-		this.regionFilter = new ComboBox();
-		this.districtFilter = new ComboBox();
+		this.regionFilter = ComboBoxHelper.createComboBoxV7();
+		this.districtFilter = ComboBoxHelper.createComboBoxV7();
 		dateFilterButtons = new HashSet<>();
 		dateComparisonButtons = new HashSet<>();
 
@@ -395,7 +396,7 @@ public abstract class DashboardFilterLayout extends HorizontalLayout {
 	}
 
 	private Button createAndAddDateFilterButton(String id, String caption, Set<Button> buttonSet) {
-		Button button = ButtonHelper.createButtonWithCaption(id, caption, e -> {
+		Button button = ButtonHelper.createButton(id, caption, e -> {
 			changeCustomDateFilterPanelStyle(e.getButton(), buttonSet);
 		}, ValoTheme.BUTTON_BORDERLESS, CssStyles.BUTTON_FILTER, CssStyles.BUTTON_FILTER_LIGHT);
 

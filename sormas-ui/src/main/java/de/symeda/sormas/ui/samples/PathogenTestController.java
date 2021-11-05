@@ -41,7 +41,7 @@ import de.symeda.sormas.api.contact.ContactClassification;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.contact.ContactStatus;
-import de.symeda.sormas.api.disease.DiseaseVariantReferenceDto;
+import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventParticipantDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
@@ -212,6 +212,7 @@ public class PathogenTestController {
 			}, I18nProperties.getCaption(PathogenTestDto.I18N_PREFIX));
 		}
 		editView.addCommitListener(popupWindow::close);
+		editView.addDiscardListener(popupWindow::close);
 
 		popupWindow.setContent(editView);
 		popupWindow.setCaption(I18nProperties.getString(Strings.headingEditPathogenTestResult));
@@ -243,7 +244,7 @@ public class PathogenTestController {
 		return editView;
 	}
 
-	public static void showCaseUpdateWithNewDiseaseVariantDialog(CaseDataDto existingCaseDto, DiseaseVariantReferenceDto diseaseVariantReferenceDto) {
+	public static void showCaseUpdateWithNewDiseaseVariantDialog(CaseDataDto existingCaseDto, DiseaseVariant diseaseVariant) {
 
 		VaadinUiUtil.showConfirmationPopup(
 			I18nProperties.getString(Strings.headingUpdateCaseWithNewDiseaseVariant),
@@ -254,7 +255,7 @@ public class PathogenTestController {
 			e -> {
 				if (e) {
 					CaseDataDto caseDataByUuid = FacadeProvider.getCaseFacade().getCaseDataByUuid(existingCaseDto.getUuid());
-					caseDataByUuid.setDiseaseVariant(diseaseVariantReferenceDto);
+					caseDataByUuid.setDiseaseVariant(diseaseVariant);
 					FacadeProvider.getCaseFacade().saveCase(caseDataByUuid);
 					ControllerProvider.getCaseController().navigateToCase(caseDataByUuid.getUuid());
 				}
@@ -378,7 +379,7 @@ public class PathogenTestController {
 	}
 
 	public void showConvertEventParticipantToCaseDialog(EventParticipantDto eventParticipant, Disease testedDisease) {
-		final EventDto event = FacadeProvider.getEventFacade().getEventByUuid(eventParticipant.getEvent().getUuid());
+		final EventDto event = FacadeProvider.getEventFacade().getEventByUuid(eventParticipant.getEvent().getUuid(), false);
 		final boolean differentDiseases = event.getDisease() == null || !event.getDisease().equals(testedDisease);
 		Label dialogContent = differentDiseases
 			? new Label(I18nProperties.getString(Strings.messageConvertEventParticipantToCaseDifferentDiseases))
@@ -429,6 +430,7 @@ public class PathogenTestController {
 	}
 
 	private void showCaseCloningWithNewDiseaseDialog(Collection<CaseDataDto> existingCasesDtos, Disease disease) {
+	// public static void showCaseCloningWithNewDiseaseDialog(CaseDataDto existingCaseDto, Disease disease) {
 		
 		if (existingCasesDtos == null || existingCasesDtos.size() == 0)
 			return;
@@ -438,6 +440,7 @@ public class PathogenTestController {
 		String labelText = existingCasesDtos.size() > 1 ?
 				String.format(I18nProperties.getString(Strings.messageCloneCasesWithNewDisease), existingCasesDtos.size())
 				: I18nProperties.getString(Strings.messageCloneCaseWithNewDisease);
+
 
 		VaadinUiUtil.showConfirmationPopup(
 			I18nProperties.getCaption(caption) + " " + I18nProperties.getEnumCaption(disease) + "?",
@@ -469,10 +472,11 @@ public class PathogenTestController {
 		);
 	}
 	
-	private void showCaseCloningWithNewDiseaseDialog(CaseDataDto existingCaseDto, Disease disease) {
+	void showCaseCloningWithNewDiseaseDialog(CaseDataDto existingCaseDto, Disease disease) {
 		showCaseCloningWithNewDiseaseDialog(Arrays.asList(existingCaseDto), disease);
 	}
 
+	// public void showConfirmCaseDialog(CaseDataDto caze) {
 	private void showConfirmCaseDialog(Collection<CaseDataDto> cases) {
 		
 		if (cases == null || cases.size() == 0)
@@ -499,7 +503,7 @@ public class PathogenTestController {
 
 	}
 	
-	private void showConfirmCaseDialog(CaseDataDto caze) {
+	public void showConfirmCaseDialog(CaseDataDto caze) {
 		showConfirmCaseDialog(Arrays.asList(caze));
 	}
 

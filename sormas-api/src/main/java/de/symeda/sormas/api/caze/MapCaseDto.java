@@ -31,174 +31,210 @@ import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.Longitude
 
 public class MapCaseDto implements Serializable {
 
-	private static final long serialVersionUID = -3021332968056368431L;
+    private static final long serialVersionUID = -3021332968056368431L;
 
-	public static final String I18N_PREFIX = "CaseData";
+    public static final String I18N_PREFIX = "CaseData";
 
-	private String uuid;
-	private Date reportDate;
-	private CaseClassification caseClassification;
-	private Disease disease;
-	private PersonReferenceDto person;
-	@PersonalData
-	@SensitiveData
-	@Pseudonymizer(LatitudePseudonymizer.class)
-	private Double healthFacilityLat;
-	@PersonalData
-	@SensitiveData
-	@Pseudonymizer(LongitudePseudonymizer.class)
-	private Double healthFacilityLon;
-	@SensitiveData
-	@Pseudonymizer(LatitudePseudonymizer.class)
-	private Double reportLat;
-	@SensitiveData
-	@Pseudonymizer(LongitudePseudonymizer.class)
-	private Double reportLon;
-	@PersonalData
-	@SensitiveData
-	@Pseudonymizer(LatitudePseudonymizer.class)
-	private Double addressLat;
-	@PersonalData
-	@SensitiveData
-	@Pseudonymizer(LongitudePseudonymizer.class)
-	private Double addressLon;
+    private String uuid;
+    private Date reportDate;
+    private CaseClassification caseClassification;
+    private Disease disease;
+    private PersonReferenceDto person;
+    @PersonalData
+    @SensitiveData
+    @Pseudonymizer(LatitudePseudonymizer.class)
+    private Double healthFacilityLat;
+    @PersonalData
+    @SensitiveData
+    @Pseudonymizer(LongitudePseudonymizer.class)
+    private Double healthFacilityLon;
+    @SensitiveData
+    @Pseudonymizer(LatitudePseudonymizer.class)
+    private Double reportLat;
+    @SensitiveData
+    @Pseudonymizer(LongitudePseudonymizer.class)
+    private Double reportLon;
+    @PersonalData
+    @SensitiveData
+    @Pseudonymizer(LatitudePseudonymizer.class)
+    private Double addressLat;
+    @PersonalData
+    @SensitiveData
+    @Pseudonymizer(LongitudePseudonymizer.class)
+    private Double addressLon;
 
-	private CaseJurisdictionDto jurisdiction;
+    private String healthFacilityUuid;
 
-	public MapCaseDto(
-		String uuid,
-		Date reportDate,
-		CaseClassification caseClassification,
-		Disease disease,
-		String personUuid,
-		String personFirstName,
-		String personLastName,
-		String healthFacilityUuid,
-		Double healthFacilityLat,
-		Double healthFacilityLon,
-		Double reportLat,
-		Double reportLon,
-		Double addressLat,
-		Double addressLon,
-		String reportingUserUuid,
-		String regionUuid,
-		String districtUuid,
-		String communityUuid,
-		String pointOfEntryUuid) {
+    private Boolean isInJurisdiction;
 
-		this.uuid = uuid;
-		this.reportDate = reportDate;
-		this.caseClassification = caseClassification;
-		this.disease = disease;
-		this.person = new PersonReferenceDto(personUuid, personFirstName, personLastName);
-		this.setHealthFacilityLat(healthFacilityLat);
-		this.setHealthFacilityLon(healthFacilityLon);
-		this.reportLat = reportLat;
-		this.reportLon = reportLon;
-		this.addressLat = addressLat;
-		this.addressLon = addressLon;
+//    private CaseJurisdictionDto jurisdiction;
 
-		jurisdiction = new CaseJurisdictionDto(reportingUserUuid, regionUuid, districtUuid, communityUuid, healthFacilityUuid, pointOfEntryUuid);
-	}
+    public MapCaseDto(
+            String uuid,
+            Date reportDate,
+            CaseClassification caseClassification,
+            Disease disease,
+            String personUuid,
+            String personFirstName,
+            String personLastName,
+            String healthFacilityUuid,
+            Double healthFacilityLat,
+            Double healthFacilityLon,
+            Double reportLat,
+            Double reportLon,
+            Double addressLat,
+            Double addressLon,
+            boolean isInJurisdiction) {
 
-	public String getUuid() {
-		return uuid;
-	}
+        this.uuid = uuid;
+        this.reportDate = reportDate;
+        this.caseClassification = caseClassification;
+        this.disease = disease;
+        this.person = new PersonReferenceDto(personUuid, personFirstName, personLastName);
+        this.setHealthFacilityLat(healthFacilityLat);
+        this.setHealthFacilityLon(healthFacilityLon);
+        this.reportLat = reportLat;
+        this.reportLon = reportLon;
+        this.addressLat = addressLat;
+        this.addressLon = addressLon;
+        this.healthFacilityUuid = healthFacilityUuid;
+        this.isInJurisdiction = isInJurisdiction;
+    }
 
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
+    public MapCaseDto(
+            String uuid,
+            Date reportDate,
+            CaseClassification caseClassification,
+            Disease disease,
+            String personUuid,
+            String personFirstName,
+            String personLastName,
+            String healthFacilityUuid,
+            Double healthFacilityLat,
+            Double healthFacilityLon,
+            Double reportLat,
+            Double reportLon,
+            Double addressLat,
+            Double addressLon,
+            String reportingUserUuid,
+            String regionUuid,
+            String districtUuid,
+            String communityUuid,
+            String pointOfEntryUuid) {
 
-	public Date getReportDate() {
-		return reportDate;
-	}
+        this.uuid = uuid;
+        this.reportDate = reportDate;
+        this.caseClassification = caseClassification;
+        this.disease = disease;
+        this.person = new PersonReferenceDto(personUuid, personFirstName, personLastName);
+        this.setHealthFacilityLat(healthFacilityLat);
+        this.setHealthFacilityLon(healthFacilityLon);
+        this.reportLat = reportLat;
+        this.reportLon = reportLon;
+        this.addressLat = addressLat;
+        this.addressLon = addressLon;
 
-	public void setReportDate(Date reportDate) {
-		this.reportDate = reportDate;
-	}
+//        jurisdiction = new CaseJurisdictionDto(reportingUserUuid, regionUuid, districtUuid, communityUuid, healthFacilityUuid, pointOfEntryUuid);
+    }
 
-	public CaseClassification getCaseClassification() {
-		return caseClassification;
-	}
+    public String getUuid() {
+        return uuid;
+    }
 
-	public void setCaseClassification(CaseClassification caseClassification) {
-		this.caseClassification = caseClassification;
-	}
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 
-	public Disease getDisease() {
-		return disease;
-	}
+    public Date getReportDate() {
+        return reportDate;
+    }
 
-	public void setDisease(Disease disease) {
-		this.disease = disease;
-	}
+    public void setReportDate(Date reportDate) {
+        this.reportDate = reportDate;
+    }
 
-	public String getHealthFacilityUuid() {
-		return jurisdiction.getHealthFacilityUuid();
-	}
+    public CaseClassification getCaseClassification() {
+        return caseClassification;
+    }
 
-	public PersonReferenceDto getPerson() {
-		return person;
-	}
+    public void setCaseClassification(CaseClassification caseClassification) {
+        this.caseClassification = caseClassification;
+    }
 
-	public void setPerson(PersonReferenceDto person) {
-		this.person = person;
-	}
+    public Disease getDisease() {
+        return disease;
+    }
 
-	public Double getReportLat() {
-		return reportLat;
-	}
+    public void setDisease(Disease disease) {
+        this.disease = disease;
+    }
 
-	public void setReportLat(Double reportLat) {
-		this.reportLat = reportLat;
-	}
+    public String getHealthFacilityUuid() {
+        return healthFacilityUuid;
+    }
 
-	public Double getReportLon() {
-		return reportLon;
-	}
+    public PersonReferenceDto getPerson() {
+        return person;
+    }
 
-	public void setReportLon(Double reportLon) {
-		this.reportLon = reportLon;
-	}
+    public void setPerson(PersonReferenceDto person) {
+        this.person = person;
+    }
 
-	public Double getAddressLat() {
-		return addressLat;
-	}
+    public Double getReportLat() {
+        return reportLat;
+    }
 
-	public void setAddressLat(Double addressLat) {
-		this.addressLat = addressLat;
-	}
+    public void setReportLat(Double reportLat) {
+        this.reportLat = reportLat;
+    }
 
-	public Double getAddressLon() {
-		return addressLon;
-	}
+    public Double getReportLon() {
+        return reportLon;
+    }
 
-	public void setAddressLon(Double addressLon) {
-		this.addressLon = addressLon;
-	}
+    public void setReportLon(Double reportLon) {
+        this.reportLon = reportLon;
+    }
 
-	@Override
-	public String toString() {
-		return person.toString() + " (" + DataHelper.getShortUuid(uuid) + ")";
-	}
+    public Double getAddressLat() {
+        return addressLat;
+    }
 
-	public Double getHealthFacilityLat() {
-		return healthFacilityLat;
-	}
+    public void setAddressLat(Double addressLat) {
+        this.addressLat = addressLat;
+    }
 
-	public void setHealthFacilityLat(Double healthFacilityLat) {
-		this.healthFacilityLat = healthFacilityLat;
-	}
+    public Double getAddressLon() {
+        return addressLon;
+    }
 
-	public Double getHealthFacilityLon() {
-		return healthFacilityLon;
-	}
+    public void setAddressLon(Double addressLon) {
+        this.addressLon = addressLon;
+    }
 
-	public void setHealthFacilityLon(Double healthFacilityLon) {
-		this.healthFacilityLon = healthFacilityLon;
-	}
+    @Override
+    public String toString() {
+        return person.toString() + " (" + DataHelper.getShortUuid(uuid) + ")";
+    }
 
-	public CaseJurisdictionDto getJurisdiction() {
-		return jurisdiction;
-	}
+    public Double getHealthFacilityLat() {
+        return healthFacilityLat;
+    }
+
+    public void setHealthFacilityLat(Double healthFacilityLat) {
+        this.healthFacilityLat = healthFacilityLat;
+    }
+
+    public Double getHealthFacilityLon() {
+        return healthFacilityLon;
+    }
+
+    public void setHealthFacilityLon(Double healthFacilityLon) {
+        this.healthFacilityLon = healthFacilityLon;
+    }
+
+    public Boolean getInJurisdiction() {
+        return isInJurisdiction;
+    }
 }

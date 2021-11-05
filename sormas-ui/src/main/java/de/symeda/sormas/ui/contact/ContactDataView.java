@@ -240,7 +240,7 @@ public class ContactDataView extends AbstractContactView {
 			layout.addComponent(eventsLayout, EVENTS_LOC);
 		}
 
-		boolean sormasToSormasfeatureEnabled = FacadeProvider.getSormasToSormasFacade().isFeatureEnabled();
+		boolean sormasToSormasfeatureEnabled = FacadeProvider.getSormasToSormasFacade().isSharingCasesContactsAndSamplesEnabledForUser();
 		if (sormasToSormasfeatureEnabled || contactDto.getSormasToSormasOriginInfo() != null) {
 			VerticalLayout sormasToSormasLocLayout = new VerticalLayout();
 			sormasToSormasLocLayout.setMargin(false);
@@ -258,7 +258,8 @@ public class ContactDataView extends AbstractContactView {
 //		CaseDocumentsComponent.addComponentToLayout(layout, contactDto);
 
 		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.DOCUMENTS)) {
-			DocumentListComponent documentList = new DocumentListComponent(DocumentRelatedEntityType.CONTACT, getContactRef(), UserRight.CONTACT_EDIT, contactDto.isPseudonymized());
+			DocumentListComponent documentList =
+				new DocumentListComponent(DocumentRelatedEntityType.CONTACT, getContactRef(), UserRight.CONTACT_EDIT, contactDto.isPseudonymized());
 			documentList.addStyleName(CssStyles.SIDE_COMPONENT);
 			layout.addComponent(documentList, DOCUMENTS_LOC);
 		}

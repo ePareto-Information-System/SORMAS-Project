@@ -30,10 +30,6 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.sample.SampleCountType;
 import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
 import de.symeda.sormas.ui.utils.CssStyles;
-import de.symeda.sormas.api.disease.DiseaseBurdenDto;
-import de.symeda.sormas.api.sample.SampleCountType;
-import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
-import de.symeda.sormas.ui.dashboard.surveillance.DiseaseTileComponent;
 
 public class CountsTileViewLayout extends CssLayout {
 	private static final long serialVersionUID = 6582975657305031105L;

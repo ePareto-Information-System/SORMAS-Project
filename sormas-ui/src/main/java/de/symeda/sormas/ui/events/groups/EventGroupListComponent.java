@@ -45,6 +45,7 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
+import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 
 public class EventGroupListComponent extends VerticalLayout {
@@ -56,7 +57,7 @@ public class EventGroupListComponent extends VerticalLayout {
 
 		EventGroupList eventList = new EventGroupList(eventReference);
 		createEventGroupListComponent(eventList, I18nProperties.getCaption(Captions.eventGroups), e -> {
-			EventDto event = FacadeProvider.getEventFacade().getEventByUuid(eventReference.getUuid());
+			EventDto event = FacadeProvider.getEventFacade().getEventByUuid(eventReference.getUuid(), false);
 			UserProvider user = UserProvider.getCurrent();
 			if (!user.hasNationalJurisdictionLevel() && !user.hasRegion(event.getEventLocation().getRegion())) {
 				new Notification(
@@ -119,7 +120,7 @@ public class EventGroupListComponent extends VerticalLayout {
 
 		UserProvider user = UserProvider.getCurrent();
 		if (user.hasUserRight(UserRight.EVENTGROUP_CREATE) || user.hasUserRight(UserRight.EVENTGROUP_LINK)) {
-			createButton = new Button(I18nProperties.getCaption(Captions.linkEventGroup));
+			createButton = ButtonHelper.createButton(I18nProperties.getCaption(Captions.linkEventGroup));
 			createButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
 			createButton.setIcon(VaadinIcons.PLUS_CIRCLE);
 			createButton.addClickListener(clickListener);

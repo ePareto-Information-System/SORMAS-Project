@@ -1,20 +1,17 @@
-/*******************************************************************************
+/*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
- *
+ * Copyright © 2016-2021 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *******************************************************************************/
+ */
 package de.symeda.sormas.backend.event;
 
 import static de.symeda.sormas.api.EntityDto.COLUMN_LENGTH_BIG;
@@ -23,9 +20,11 @@ import static de.symeda.sormas.api.EntityDto.COLUMN_LENGTH_DEFAULT;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -39,10 +38,15 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Type;
+
 import de.symeda.auditlog.api.Audited;
 import de.symeda.auditlog.api.AuditedIgnore;
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.event.DiseaseTransmissionMode;
+import de.symeda.sormas.api.event.EpidemiologicalEvidenceDetail;
+import de.symeda.sormas.api.event.EventIdentificationSource;
 import de.symeda.sormas.api.event.EventInvestigationStatus;
 import de.symeda.sormas.api.event.EventManagementStatus;
 import de.symeda.sormas.api.event.EventReferenceDto;
@@ -51,24 +55,29 @@ import de.symeda.sormas.api.event.EventStatus;
 import de.symeda.sormas.api.event.HumanTransmissionMode;
 import de.symeda.sormas.api.event.InfectionPathCertainty;
 import de.symeda.sormas.api.event.InstitutionalPartnerType;
+import de.symeda.sormas.api.event.LaboratoryDiagnosticEvidenceDetail;
 import de.symeda.sormas.api.event.MeansOfTransport;
 import de.symeda.sormas.api.event.MedicallyAssociatedTransmissionMode;
 import de.symeda.sormas.api.event.ParenteralTransmissionMode;
 import de.symeda.sormas.api.event.RiskLevel;
+import de.symeda.sormas.api.event.SpecificRisk;
 import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.exposure.WorkEnvironment;
+import de.symeda.sormas.api.externaldata.HasExternalData;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.backend.common.CoreAdo;
+import de.symeda.sormas.backend.disease.DiseaseVariantConverter;
 import de.symeda.sormas.backend.location.Location;
-import de.symeda.sormas.backend.sormastosormas.SormasToSormasEntity;
-import de.symeda.sormas.backend.sormastosormas.SormasToSormasOriginInfo;
-import de.symeda.sormas.backend.sormastosormas.SormasToSormasShareInfo;
+import de.symeda.sormas.backend.sormastosormas.entities.SormasToSormasEntity;
+import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfo;
+import de.symeda.sormas.backend.sormastosormas.share.shareinfo.ShareInfoEvent;
 import de.symeda.sormas.backend.task.Task;
 import de.symeda.sormas.backend.user.User;
+import de.symeda.sormas.backend.util.ModelConstants;
 
 @Entity(name = "events")
 @Audited
-public class Event extends CoreAdo implements SormasToSormasEntity {
+public class Event extends CoreAdo implements SormasToSormasEntity, HasExternalData {
 
 	private static final long serialVersionUID = 4964495716032049582L;
 
@@ -78,8 +87,10 @@ public class Event extends CoreAdo implements SormasToSormasEntity {
 
 	public static final String EXTERNAL_ID = "externalId";
 	public static final String EXTERNAL_TOKEN = "externalToken";
+	public static final String INTERNAL_TOKEN = "internalToken";
 	public static final String EVENT_STATUS = "eventStatus";
 	public static final String RISK_LEVEL = "riskLevel";
+	public static final String SPECIFIC_RISK = "specificRisk";
 	public static final String EVENT_INVESTIGATION_STATUS = "eventInvestigationStatus";
 	public static final String EVENT_INVESTIGATION_START_DATE = "eventInvestigationStartDate";
 	public static final String EVENT_INVESTIGATION_END_DATE = "eventInvestigationEndDate";
@@ -114,6 +125,7 @@ public class Event extends CoreAdo implements SormasToSormasEntity {
 	public static final String SRC_MEDIA_NAME = "srcMediaName";
 	public static final String SRC_MEDIA_DETAILS = "srcMediaDetails";
 	public static final String DISEASE = "disease";
+	public static final String DISEASE_VARIANT = "diseaseVariant";
 	public static final String DISEASE_DETAILS = "diseaseDetails";
 	public static final String RESPONSIBLE_USER = "responsibleUser";
 	public static final String TYPE_OF_PLACE_TEXT = "typeOfPlaceText";
@@ -125,19 +137,21 @@ public class Event extends CoreAdo implements SormasToSormasEntity {
 	public static final String TRANSREGIONAL_OUTBREAK = "transregionalOutbreak";
 	public static final String SUPERORDINATE_EVENT = "superordinateEvent";
 	public static final String SUBORDINATE_EVENTS = "subordinateEvents";
+	public static final String EVENT_IDENTIFICATION_SOURCE = "eventIdentificationSource";
 
 	public static final String INFECTION_PATH_CERTAINTY = "infectionPathCertainty";
 	public static final String HUMAN_TRANSMISSION_MODE = "humanTransmissionMode";
 	public static final String PARENTERAL_TRANSMISSION_MODE = "parenteralTransmissionMode";
 	public static final String MEDICALLY_ASSOCIATED_TRANSMISSION_MODE = "medicallyAssociatedTransmissionMode";
 
-	public static final String SORMAS_TO_SORMAS_SHARES = "sormasToSormasShares";
+	public static final String SHARE_INFO_EVENTS = "shareInfoEvents";
 
 	private Event superordinateEvent;
 	private List<Event> subordinateEvents;
 
 	private EventStatus eventStatus;
 	private RiskLevel riskLevel;
+	private SpecificRisk specificRisk;
 	private EventInvestigationStatus eventInvestigationStatus;
 	private Date eventInvestigationStartDate;
 	private Date eventInvestigationEndDate;
@@ -171,6 +185,7 @@ public class Event extends CoreAdo implements SormasToSormasEntity {
 	private String srcMediaName;
 	private String srcMediaDetails;
 	private Disease disease;
+	private DiseaseVariant diseaseVariant;
 	private String diseaseDetails;
 	private User responsibleUser;
 	private String typeOfPlaceText;
@@ -180,7 +195,7 @@ public class Event extends CoreAdo implements SormasToSormasEntity {
 	private YesNoUnknown transregionalOutbreak;
 	private DiseaseTransmissionMode diseaseTransmissionMode;
 	private SormasToSormasOriginInfo sormasToSormasOriginInfo;
-	private List<SormasToSormasShareInfo> sormasToSormasShares = new ArrayList<>(0);
+	private List<ShareInfoEvent> shareInfoEvents = new ArrayList<>(0);
 	private EventManagementStatus eventManagementStatus;
 
 	private boolean archived;
@@ -190,10 +205,17 @@ public class Event extends CoreAdo implements SormasToSormasEntity {
 	private ParenteralTransmissionMode parenteralTransmissionMode;
 	private MedicallyAssociatedTransmissionMode medicallyAssociatedTransmissionMode;
 
+	private YesNoUnknown epidemiologicalEvidence;
+	private Map<EpidemiologicalEvidenceDetail, Boolean> epidemiologicalEvidenceDetails;
+	private YesNoUnknown laboratoryDiagnosticEvidence;
+	private Map<LaboratoryDiagnosticEvidenceDetail, Boolean>  laboratoryDiagnosticEvidenceDetails;
+
 	private List<Task> tasks;
 	private List<EventGroup> eventGroups;
 
-	private String internalId;
+	private String internalToken;
+
+	private EventIdentificationSource eventIdentificationSource;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -212,6 +234,16 @@ public class Event extends CoreAdo implements SormasToSormasEntity {
 
 	public void setRiskLevel(RiskLevel riskLevel) {
 		this.riskLevel = riskLevel;
+	}
+
+	@Column
+	@Convert(converter = SpecificRiskConverter.class)
+	public SpecificRisk getSpecificRisk() {
+		return specificRisk;
+	}
+
+	public void setSpecificRisk(SpecificRisk specificRisk) {
+		this.specificRisk = specificRisk;
 	}
 
 	@Enumerated(EnumType.STRING)
@@ -514,6 +546,16 @@ public class Event extends CoreAdo implements SormasToSormasEntity {
 		this.disease = disease;
 	}
 
+	@Column
+	@Convert(converter = DiseaseVariantConverter.class)
+	public DiseaseVariant getDiseaseVariant() {
+		return diseaseVariant;
+	}
+
+	public void setDiseaseVariant(DiseaseVariant diseaseVariant) {
+		this.diseaseVariant = diseaseVariant;
+	}
+
 	@Column(length = COLUMN_LENGTH_DEFAULT)
 	public String getDiseaseDetails() {
 		return diseaseDetails;
@@ -539,6 +581,44 @@ public class Event extends CoreAdo implements SormasToSormasEntity {
 
 	public void setTypeOfPlaceText(String typeOfPlaceText) {
 		this.typeOfPlaceText = typeOfPlaceText;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public YesNoUnknown getEpidemiologicalEvidence() {
+		return epidemiologicalEvidence;
+	}
+
+	public void setEpidemiologicalEvidence(YesNoUnknown epidemiologicalEvidence) {
+		this.epidemiologicalEvidence = epidemiologicalEvidence;
+	}
+
+	@Type(type = ModelConstants.HIBERNATE_TYPE_JSON)
+	@Column(columnDefinition = ModelConstants.COLUMN_DEFINITION_JSON)
+	public Map<EpidemiologicalEvidenceDetail, Boolean> getEpidemiologicalEvidenceDetails() {
+		return epidemiologicalEvidenceDetails;
+	}
+
+	public void setEpidemiologicalEvidenceDetails(Map<EpidemiologicalEvidenceDetail, Boolean> epidemiologicalEvidenceDetails) {
+		this.epidemiologicalEvidenceDetails = epidemiologicalEvidenceDetails;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public YesNoUnknown getLaboratoryDiagnosticEvidence() {
+		return laboratoryDiagnosticEvidence;
+	}
+
+	public void setLaboratoryDiagnosticEvidence(YesNoUnknown laboratoryDiagnosticEvidence) {
+		this.laboratoryDiagnosticEvidence = laboratoryDiagnosticEvidence;
+	}
+
+	@Type(type = ModelConstants.HIBERNATE_TYPE_JSON)
+	@Column(columnDefinition = ModelConstants.COLUMN_DEFINITION_JSON)
+	public Map<LaboratoryDiagnosticEvidenceDetail, Boolean> getLaboratoryDiagnosticEvidenceDetails() {
+		return laboratoryDiagnosticEvidenceDetails;
+	}
+
+	public void setLaboratoryDiagnosticEvidenceDetails(Map<LaboratoryDiagnosticEvidenceDetail, Boolean> laboratoryDiagnosticEvidenceDetails) {
+		this.laboratoryDiagnosticEvidenceDetails = laboratoryDiagnosticEvidenceDetails;
 	}
 
 	@OneToMany(mappedBy = Task.EVENT, fetch = FetchType.LAZY)
@@ -679,22 +759,22 @@ public class Event extends CoreAdo implements SormasToSormasEntity {
 		this.sormasToSormasOriginInfo = originInfo;
 	}
 
-	@OneToMany(mappedBy = SormasToSormasShareInfo.EVENT, fetch = FetchType.LAZY)
-	public List<SormasToSormasShareInfo> getSormasToSormasShares() {
-		return sormasToSormasShares;
+	@OneToMany(mappedBy = ShareInfoEvent.EVENT, fetch = FetchType.LAZY)
+	public List<ShareInfoEvent> getShareInfoEvents() {
+		return shareInfoEvents;
 	}
 
-	public void setSormasToSormasShares(List<SormasToSormasShareInfo> sormasToSormasShares) {
-		this.sormasToSormasShares = sormasToSormasShares;
+	public void setShareInfoEvents(List<ShareInfoEvent> shareInfoEvents) {
+		this.shareInfoEvents = shareInfoEvents;
 	}
 
 	@Column(columnDefinition = "text")
-	public String getInternalId() {
-		return internalId;
+	public String getInternalToken() {
+		return internalToken;
 	}
 
-	public void setInternalId(String internalId) {
-		this.internalId = internalId;
+	public void setInternalToken(String internalToken) {
+		this.internalToken = internalToken;
 	}
 
 	@AuditedIgnore
@@ -706,5 +786,14 @@ public class Event extends CoreAdo implements SormasToSormasEntity {
 
 	public void setEventGroups(List<EventGroup> eventGroups) {
 		this.eventGroups = eventGroups;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public EventIdentificationSource getEventIdentificationSource() {
+		return eventIdentificationSource;
+	}
+
+	public void setEventIdentificationSource(EventIdentificationSource eventIdentificationSource) {
+		this.eventIdentificationSource = eventIdentificationSource;
 	}
 }

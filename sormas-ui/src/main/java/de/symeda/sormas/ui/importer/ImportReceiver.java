@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.Date;
 import java.util.function.Consumer;
 
+import com.google.common.io.Files;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +50,8 @@ public class ImportReceiver implements Receiver, SucceededListener {
 		isFileExtensionCsv(fileName);
 
 		// Reject empty files
+		isCsv = isFileExtensionCsv(fileName);
+
 		if (fileName == null || fileName.isEmpty()) {
 			file = null;
 			new Notification(

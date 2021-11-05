@@ -61,8 +61,8 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.Sex;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.region.RegionReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.ui.ControllerProvider;
@@ -541,14 +541,14 @@ public class ContactCreateForm extends AbstractEditForm<ContactDto> {
 			startDate,
 			endDate,
 			true,
-			true,
+			false,
 			I18nProperties.getValidationError(Validations.beforeDate, startDate.getCaption(), endDate.getCaption()));
 
 		DateComparisonValidator endDateValidator = new DateComparisonValidator(
 			endDate,
 			startDate,
 			false,
-			true,
+			false,
 			I18nProperties.getValidationError(Validations.afterDate, endDate.getCaption(), startDate.getCaption()));
 
 		startDate.addValueChangeListener(event -> endDate.setRequired(event.getProperty().getValue() != null));

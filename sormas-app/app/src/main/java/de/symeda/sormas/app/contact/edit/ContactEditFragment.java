@@ -54,6 +54,7 @@ import de.symeda.sormas.app.databinding.FragmentContactEditLayoutBinding;
 import de.symeda.sormas.app.util.DataUtils;
 import de.symeda.sormas.app.util.DiseaseConfigurationCache;
 import de.symeda.sormas.app.util.InfrastructureDaoHelper;
+import de.symeda.sormas.app.util.InfrastructureFieldsDependencyHandler;
 
 public class ContactEditFragment extends BaseEditFragment<FragmentContactEditLayoutBinding, Contact, Contact> {
 
@@ -198,7 +199,7 @@ public class ContactEditFragment extends BaseEditFragment<FragmentContactEditLay
 		contentBinding.setCaze(sourceCase);
 		contentBinding.setYesNoUnknownClass(YesNoUnknown.class);
 
-		InfrastructureDaoHelper.initializeRegionFields(
+		InfrastructureFieldsDependencyHandler.instance.initializeRegionFields(
 			contentBinding.contactRegion,
 			initialRegions,
 			record.getRegion(),

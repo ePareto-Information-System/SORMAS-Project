@@ -3,10 +3,10 @@ package de.symeda.sormas.backend.contact;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -24,21 +24,21 @@ import javax.persistence.criteria.Selection;
 import de.symeda.sormas.api.contact.ContactCriteria;
 import de.symeda.sormas.api.contact.ContactIndexDetailedDto;
 import de.symeda.sormas.api.contact.ContactIndexDto;
-import de.symeda.sormas.api.contact.ContactJurisdictionDto;
 import de.symeda.sormas.api.contact.MapContactDto;
 import de.symeda.sormas.api.utils.SortProperty;
+import de.symeda.sormas.backend.ExtendedPostgreSQL94Dialect;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.caze.CaseQueryContext;
+import de.symeda.sormas.backend.caze.CaseService;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
-import de.symeda.sormas.backend.facility.Facility;
-import de.symeda.sormas.backend.infrastructure.PointOfEntry;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.person.Person;
-import de.symeda.sormas.backend.region.Community;
-import de.symeda.sormas.backend.region.District;
-import de.symeda.sormas.backend.region.Region;
+import de.symeda.sormas.backend.infrastructure.district.District;
+import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.user.User;
+import de.symeda.sormas.backend.util.JurisdictionHelper;
 import de.symeda.sormas.backend.util.ModelConstants;
+import de.symeda.sormas.backend.vaccinationinfo.VaccinationInfo;
 
 @Stateless
 @LocalBean
@@ -47,6 +47,9 @@ public class ContactListCriteriaBuilder {
 	@PersistenceContext(unitName = ModelConstants.PERSISTENCE_UNIT_NAME)
 	private EntityManager em;
 
+	@EJB
+	private CaseService caseService;
+	
 	@EJB
 	private ContactService contactService;
 
@@ -68,24 +71,10 @@ public class ContactListCriteriaBuilder {
 			sortProperties);
 	}
 
-	public Stream<Selection<?>> getJurisdictionSelections(ContactJoins<Contact> joins) {
-
-		return Stream.of(
-			joins.getReportingUser().get(User.UUID),
-			joins.getRegion().get(Region.UUID),
-			joins.getDistrict().get(District.UUID),
-			joins.getCommunity().get(Community.UUID),
-			joins.getCaseReportingUser().get(User.UUID),
-			joins.getCaseRegion().get(Region.UUID),
-			joins.getCaseDistrict().get(District.UUID),
-			joins.getCaseCommunity().get(Community.UUID),
-			joins.getCaseHealthFacility().get(Facility.UUID),
-			joins.getCaseasePointOfEntry().get(PointOfEntry.UUID));
-	}
-
-	private List<Selection<?>> getContactIndexSelections(Root<Contact> contact, ContactQueryContext contactQueryContext) {
+	public List<Selection<?>> getContactIndexSelections(Root<Contact> contact, ContactQueryContext contactQueryContext) {
 
 		ContactJoins joins = (ContactJoins) contactQueryContext.getJoins();
+		CriteriaBuilder cb = contactQueryContext.getCriteriaBuilder();
 
 		return Arrays.asList(
 			contact.get(Contact.UUID),
@@ -96,34 +85,65 @@ public class ContactListCriteriaBuilder {
 			contact.get(Contact.DISEASE_DETAILS),
 			joins.getCasePerson().get(Person.FIRST_NAME),
 			joins.getCasePerson().get(Person.LAST_NAME),
-			joins.getRegion().get(Region.UUID),
 			joins.getRegion().get(Region.NAME),
-			joins.getDistrict().get(District.UUID),
 			joins.getDistrict().get(District.NAME),
-			joins.getCommunity().get(Community.UUID),
 			contact.get(Contact.LAST_CONTACT_DATE),
 			contact.get(Contact.CONTACT_CATEGORY),
 			contact.get(Contact.CONTACT_PROXIMITY),
 			contact.get(Contact.CONTACT_CLASSIFICATION),
 			contact.get(Contact.CONTACT_STATUS),
+			contact.get(Contact.COMPLETENESS),
 			contact.get(Contact.FOLLOW_UP_STATUS),
 			contact.get(Contact.FOLLOW_UP_UNTIL),
 			joins.getPerson().get(Person.SYMPTOM_JOURNAL_STATUS),
+			joins.getVaccinationInfo().get(VaccinationInfo.VACCINATION),
 			joins.getContactOfficer().get(User.UUID),
 			joins.getReportingUser().get(User.UUID),
 			contact.get(Contact.REPORT_DATE_TIME),
 			joins.getCaze().get(Case.CASE_CLASSIFICATION),
-			joins.getCaseReportingUser().get(User.UUID),
-			joins.getCaseRegion().get(Region.UUID),
 			joins.getCaseRegion().get(Region.NAME),
-			joins.getCaseDistrict().get(District.UUID),
 			joins.getCaseDistrict().get(District.NAME),
-			joins.getCaseCommunity().get(Community.UUID),
-			joins.getCaseHealthFacility().get(Facility.UUID),
-			joins.getCaseasePointOfEntry().get(PointOfEntry.UUID),
 			contact.get(Contact.CHANGE_DATE),
 			contact.get(Contact.EXTERNAL_ID),
-			contact.get(Contact.EXTERNAL_TOKEN));
+			contact.get(Contact.EXTERNAL_TOKEN),
+			contact.get(Contact.INTERNAL_TOKEN),
+			JurisdictionHelper.booleanSelector(cb, contactService.inJurisdictionOrOwned(contactQueryContext)),
+			JurisdictionHelper.booleanSelector(
+				cb,
+				caseService.inJurisdictionOrOwned(
+					new CaseQueryContext<>(
+						contactQueryContext.getCriteriaBuilder(),
+						contactQueryContext.getQuery(),
+						((ContactJoins) contactQueryContext.getJoins()).getCaze()))));
+	}
+
+	public List<Selection<?>> getMergeContactIndexSelections(Root<Contact> contact, ContactQueryContext contactQueryContext) {
+
+		ContactJoins joins = (ContactJoins) contactQueryContext.getJoins();
+
+		return Arrays.asList(
+			contact.get(Contact.ID),
+			contact.get(Contact.UUID),
+			joins.getPerson().get(Person.FIRST_NAME),
+			joins.getPerson().get(Person.LAST_NAME),
+			joins.getPerson().get(Person.APPROXIMATE_AGE),
+			joins.getPerson().get(Person.APPROXIMATE_AGE_TYPE),
+			joins.getPerson().get(Person.BIRTHDATE_DD),
+			joins.getPerson().get(Person.BIRTHDATE_MM),
+			joins.getPerson().get(Person.BIRTHDATE_YYYY),
+			joins.getPerson().get(Person.SEX),
+			joins.getCaze().get(Case.UUID),
+			joins.getCasePerson().get(Person.FIRST_NAME),
+			joins.getCasePerson().get(Person.LAST_NAME),
+			contact.get(Contact.DISEASE),
+			contact.get(Contact.DISEASE_DETAILS),
+			joins.getRegion().get(Region.NAME),
+			joins.getDistrict().get(District.NAME),
+			contact.get(Contact.LAST_CONTACT_DATE),
+			contact.get(Contact.CREATION_DATE),
+			contact.get(Contact.CONTACT_CLASSIFICATION),
+			contact.get(Contact.COMPLETENESS),
+			contact.get(Contact.REPORT_DATE_TIME));
 	}
 
 	private List<Selection<?>> getContactIndexSelectionsForMap(Root<Contact> contact, ContactQueryContext contactQueryContext) 
@@ -167,6 +187,7 @@ public class ContactListCriteriaBuilder {
 		case ContactIndexDto.CASE_CLASSIFICATION:
 		case ContactIndexDto.EXTERNAL_ID:
 		case ContactIndexDto.EXTERNAL_TOKEN:
+		case ContactIndexDto.INTERNAL_TOKEN:
 			expressions.add(contact.get(sortProperty.propertyName));
 			break;
 		case ContactIndexDto.PERSON_FIRST_NAME:
@@ -178,11 +199,14 @@ public class ContactListCriteriaBuilder {
 			expressions.add(joins.getCasePerson().get(Person.FIRST_NAME));
 			expressions.add(joins.getCasePerson().get(Person.LAST_NAME));
 			break;
-		case ContactJurisdictionDto.REGION_UUID:
+		case ContactIndexDto.REGION_UUID:
 			expressions.add(joins.getRegion().get(Region.NAME));
 			break;
-		case ContactJurisdictionDto.DISTRICT_UUID:
+		case ContactIndexDto.DISTRICT_UUID:
 			expressions.add(joins.getDistrict().get(District.NAME));
+			break;
+		case ContactIndexDto.VACCINATION:
+			expressions.add(joins.getVaccinationInfo().get(VaccinationInfo.VACCINATION));
 			break;
 		default:
 			throw new IllegalArgumentException(sortProperty.propertyName);
@@ -206,7 +230,8 @@ public class ContactListCriteriaBuilder {
 			joins.getAddress().get(Location.POSTAL_CODE),
 			((Selection<String>) contactQueryContext.getSubqueryExpression(CaseQueryContext.PERSON_PHONE_SUBQUERY)),
 			joins.getReportingUser().get(User.FIRST_NAME),
-			joins.getReportingUser().get(User.LAST_NAME));
+			joins.getReportingUser().get(User.LAST_NAME),
+			contact.get(Contact.RELATION_TO_CASE));
 		indexSelection.addAll(selections);
 
 		return indexSelection;
@@ -233,6 +258,8 @@ public class ContactListCriteriaBuilder {
 			return Collections.singletonList(joins.getAddress().get(sortProperty.propertyName));
 		case ContactIndexDetailedDto.REPORTING_USER:
 			return Arrays.asList(joins.getReportingUser().get(User.FIRST_NAME), joins.getReportingUser().get(User.LAST_NAME));
+		case ContactIndexDetailedDto.RELATION_TO_CASE:
+			return Collections.singletonList(contact.get(Contact.RELATION_TO_CASE));
 		default:
 			return this.getIndexOrders(sortProperty, contact, joins, cb);
 		}
@@ -253,6 +280,10 @@ public class ContactListCriteriaBuilder {
 
 		List<Selection<?>> selections = new ArrayList<>(selectionProvider.apply(contact, contactQueryContext));
 		selections.add(cb.size(contact.get(Contact.VISITS)));
+		// This is needed in selection because of the combination of distinct and orderBy clauses - every operator in the orderBy has to be part of the select IF distinct is used
+		Expression<Date> latestChangedDateFunction =
+			cb.function(ExtendedPostgreSQL94Dialect.GREATEST, Date.class, contact.get(Contact.CHANGE_DATE), joins.getPerson().get(Person.CHANGE_DATE));
+		selections.add(latestChangedDateFunction);
 
 		Predicate filter = buildContactFilter(contactCriteria, contactQueryContext);
 
@@ -264,7 +295,7 @@ public class ContactListCriteriaBuilder {
 		cq.distinct(true);
 
 		if (sortProperties == null || sortProperties.size() == 0) {
-			cq.orderBy(cb.desc(contact.get(Contact.CHANGE_DATE)));
+			cq.orderBy(cb.desc(latestChangedDateFunction));
 		} else {
 			List<Order> order = new ArrayList<>(sortProperties.size());
 			for (SortProperty sortProperty : sortProperties) {

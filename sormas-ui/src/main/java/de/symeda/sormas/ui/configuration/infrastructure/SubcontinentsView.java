@@ -22,10 +22,10 @@ import de.symeda.sormas.api.i18n.Descriptions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.InfrastructureType;
-import de.symeda.sormas.api.region.ContinentReferenceDto;
-import de.symeda.sormas.api.region.SubcontinentCriteria;
-import de.symeda.sormas.api.region.SubcontinentDto;
-import de.symeda.sormas.api.region.SubcontinentIndexDto;
+import de.symeda.sormas.api.infrastructure.continent.ContinentReferenceDto;
+import de.symeda.sormas.api.infrastructure.subcontinent.SubcontinentCriteria;
+import de.symeda.sormas.api.infrastructure.subcontinent.SubcontinentDto;
+import de.symeda.sormas.api.infrastructure.subcontinent.SubcontinentIndexDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
@@ -33,6 +33,7 @@ import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.configuration.AbstractConfigurationView;
 import de.symeda.sormas.ui.configuration.infrastructure.components.SearchField;
 import de.symeda.sormas.ui.utils.ButtonHelper;
+import de.symeda.sormas.ui.utils.ComboBoxHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.ExportEntityName;
 import de.symeda.sormas.ui.utils.GridExportStreamResource;
@@ -58,6 +59,7 @@ public class SubcontinentsView extends AbstractConfigurationView {
 	private VerticalLayout gridLayout;
 	private SubcontinentsGrid grid;
 	private MenuBar bulkOperationsDropdown;
+	private RowCount rowCount;
 
 	public SubcontinentsView() {
 		super(VIEW_NAME);
@@ -70,7 +72,8 @@ public class SubcontinentsView extends AbstractConfigurationView {
 		grid = new SubcontinentsGrid(criteria);
 		gridLayout = new VerticalLayout();
 		gridLayout.addComponent(createFilterBar());
-		gridLayout.addComponent(new RowCount(Strings.labelNumberOfSubcontinents, grid.getItemCount()));
+		rowCount = new RowCount(Strings.labelNumberOfSubcontinents, grid.getItemCount());
+		gridLayout.addComponent(rowCount);
 		gridLayout.addComponent(grid);
 		gridLayout.setMargin(true);
 		gridLayout.setSpacing(false);
@@ -82,14 +85,14 @@ public class SubcontinentsView extends AbstractConfigurationView {
 			importButton = ButtonHelper.createIconButton(Captions.actionImport, VaadinIcons.UPLOAD, e -> {
 				Window window = VaadinUiUtil.showPopupWindow(new InfrastructureImportLayout(InfrastructureType.SUBCONTINENT));
 				window.setCaption(I18nProperties.getString(Strings.headingImportSubcontinents));
-				window.addCloseListener(c -> grid.reload());
+				window.addCloseListener(c -> grid.reload(true));
 			}, ValoTheme.BUTTON_PRIMARY);
 			addHeaderComponent(importButton);
 
 			importDefaultSubcontinentsButton = ButtonHelper.createIconButton(Captions.actionImportAllSubcontinents, VaadinIcons.UPLOAD, e -> {
 				Window window = VaadinUiUtil.showPopupWindow(new ImportDefaultSubcontinentsLayout());
 				window.setCaption(I18nProperties.getString(Strings.headingImportAllSubcontinents));
-				window.addCloseListener(c -> grid.reload());
+				window.addCloseListener(c -> grid.reload(true));
 			}, ValoTheme.BUTTON_PRIMARY);
 			addHeaderComponent(importDefaultSubcontinentsButton);
 		}
@@ -134,7 +137,7 @@ public class SubcontinentsView extends AbstractConfigurationView {
 				btnEnterBulkEditMode.setVisible(false);
 				btnLeaveBulkEditMode.setVisible(true);
 				searchField.setEnabled(false);
-				grid.setEagerDataProvider();
+				grid.setInEagerMode(true);
 				grid.reload();
 			});
 			btnLeaveBulkEditMode.addClickListener(e -> {
@@ -163,7 +166,7 @@ public class SubcontinentsView extends AbstractConfigurationView {
 		});
 		filterLayout.addComponent(searchField);
 
-		continentFilter = new ComboBox();
+		continentFilter = ComboBoxHelper.createComboBoxV7();
 		continentFilter.setId(SubcontinentDto.CONTINENT);
 		continentFilter.setWidth(140, Unit.PIXELS);
 		continentFilter.setCaption(I18nProperties.getPrefixCaption(SubcontinentDto.I18N_PREFIX, SubcontinentDto.CONTINENT));
@@ -186,8 +189,8 @@ public class SubcontinentsView extends AbstractConfigurationView {
 		actionButtonsLayout.setSpacing(true);
 		{
 			// Show active/archived/all dropdown
-			if (UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_VIEW_ARCHIVED)) {
-				relevanceStatusFilter = new ComboBox();
+			if (UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_VIEW)) {
+				relevanceStatusFilter = ComboBoxHelper.createComboBoxV7();
 				relevanceStatusFilter.setId("relevanceStatus");
 				relevanceStatusFilter.setWidth(220, Unit.PERCENTAGE);
 				relevanceStatusFilter.setNullSelectionAllowed(false);
@@ -248,6 +251,7 @@ public class SubcontinentsView extends AbstractConfigurationView {
 		}
 		updateFilterComponents();
 		grid.reload();
+		rowCount.update(grid.getItemCount());
 	}
 
 	public void updateFilterComponents() {

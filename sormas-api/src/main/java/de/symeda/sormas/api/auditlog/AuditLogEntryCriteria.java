@@ -21,8 +21,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.symeda.sormas.api.BaseCriteria;
 import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.criteria.BaseCriteria;
 
 public class AuditLogEntryCriteria extends BaseCriteria implements Cloneable {
 
