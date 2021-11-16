@@ -20,6 +20,7 @@ package de.symeda.sormas.api.disease;
 import java.io.Serializable;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.region.RegionDto;
 
 public class DiseaseBurdenDto implements Serializable {
 
@@ -38,6 +39,12 @@ public class DiseaseBurdenDto implements Serializable {
 	public static final String CASE_FATALITY_RATE = "caseFatalityRate";
 	public static final String LAST_REPORTED_DISTRICT_NAME = "lastReportedDistrictName";
 
+	//Regional specific Disease Details
+	public static final String CASES_REGION = "region";
+	public static final String CASES_ACTIVE_CASE = "caseActiveCases";
+	public static final String CASES_RECOVERED_CASES = "caseRecoveredCase";
+	public static final String CASES_DEATH_CASES = "caseDeathCase";
+
 	private Disease disease;
 	private Long caseCount;
 	private Long previousCaseCount;
@@ -50,6 +57,10 @@ public class DiseaseBurdenDto implements Serializable {
 	private String lastReportedDistrict;
 	private String outbreakDistrict;
 	private Integer death;
+
+	private RegionDto region;
+	private Long caseRecoveredCase;
+	private Long caseActiveCases;
 
 	public DiseaseBurdenDto(
 		Disease disease,
@@ -64,6 +75,35 @@ public class DiseaseBurdenDto implements Serializable {
 		String outbreakDistrict,
 		Integer death) {
 
+		this.disease = disease;
+		this.caseCount = caseCount;
+		this.previousCaseCount = previousCaseCount;
+		this.eventCount = eventCount;
+		this.outbreakDistrictCount = outbreakDistrictCount;
+		this.caseDeathCount = caseDeathCount;
+		this.lastReportedDistrictName = lastReportedDistrictName;
+
+		this.cfr = cfr;
+		this.lastReportedDistrict = lastReportedDistrict;
+		this.outbreakDistrict = outbreakDistrict;
+		this.death = death;
+	}
+
+	public DiseaseBurdenDto(
+			RegionDto regionDto,
+			Disease disease,
+			Long caseCount,
+			Long previousCaseCount,
+			Long eventCount,
+			Long outbreakDistrictCount,
+			Long caseDeathCount,
+			String lastReportedDistrictName,
+			Integer cfr,
+			String lastReportedDistrict,
+			String outbreakDistrict,
+			Integer death) {
+
+		this.region = regionDto;
 		this.disease = disease;
 		this.caseCount = caseCount;
 		this.previousCaseCount = previousCaseCount;
@@ -212,4 +252,27 @@ public class DiseaseBurdenDto implements Serializable {
 		this.death = death;
 	}
 
+	public RegionDto getRegion() {
+		return region;
+	}
+
+	public void setRegion(RegionDto region) {
+		this.region = region;
+	}
+
+	public Long getCaseRecoveredCase() {
+		return caseRecoveredCase;
+	}
+
+	public void setCaseRecoveredCase(Long caseRecoveredCase) {
+		this.caseRecoveredCase = caseRecoveredCase;
+	}
+
+	public Long getCaseActiveCases() {
+		return caseActiveCases;
+	}
+
+	public void setCaseActiveCases(Long caseActiveCases) {
+		this.caseActiveCases = caseActiveCases;
+	}
 }

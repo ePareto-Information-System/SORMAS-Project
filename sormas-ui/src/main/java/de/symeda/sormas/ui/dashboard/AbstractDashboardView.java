@@ -18,6 +18,7 @@
 package de.symeda.sormas.ui.dashboard;
 
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.navigator.ViewProvider;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.ui.OptionGroup;
@@ -59,7 +60,10 @@ public abstract class AbstractDashboardView extends AbstractView {
 			dashboardDataProvider.setDisease(FacadeProvider.getDiseaseConfigurationFacade().getDefaultDisease());
 		}
 		if (DashboardType.DISEASE.equals(dashboardDataProvider.getDashboardType())) {
-			dashboardDataProvider.setDisease(FacadeProvider.getDiseaseConfigurationFacade().getDefaultDisease());
+//			dashboardDataProvider.setDisease(FacadeProvider.getDiseaseConfigurationFacade().getDefaultDisease());
+			System.out.println("Getting getDiseases: " + getDiseases());
+
+			dashboardDataProvider.setDisease(getDiseases());
 		}
 
 		OptionGroup dashboardSwitcher = new OptionGroup();
@@ -104,6 +108,32 @@ public abstract class AbstractDashboardView extends AbstractView {
 		addComponent(dashboardLayout);
 	}
 
+	protected AbstractDashboardView(String viewName, DashboardType dashboardType, Disease disease) {
+		super(viewName);
+
+		if (disease == null)
+
+		this.disease = disease;
+		addStyleName(DashboardCssStyles.DASHBOARD_SCREEN);
+		System.out.println("Getting getDiseases: " + getDiseases());
+		dashboardDataProvider.setDisease(disease);
+
+		SormasUI.get().getNavigator().navigateTo(DiseaseDetailsView.VIEW_NAME);
+
+		// Dashboard layout
+		dashboardLayout = new VerticalLayout();
+		dashboardLayout.setMargin(false);
+		dashboardLayout.setSpacing(false);
+		dashboardLayout.setSizeFull();
+		dashboardLayout.setStyleName("crud-main-layout");
+
+		// Filter bar
+		filterLayout = new DashboardFilterLayout(this, dashboardDataProvider);
+		dashboardLayout.addComponent(filterLayout);
+
+		addComponent(dashboardLayout);
+	}
+
 	public void refreshDashboard() {
 		dashboardDataProvider.refreshData();
 	}
@@ -114,13 +144,7 @@ public abstract class AbstractDashboardView extends AbstractView {
 
 	@Override
 	public void enter(ViewChangeEvent event) {
-
-		if (event.getViewName() == "dashboard/disease") {
-			setDiseases(Disease.valueOf(event.getParameters().toString()));
-			refreshDiseaseData();
-		} else {
-			refreshDashboard();
-		}
+		refreshDashboard();
 	}
 
 	public void setDiseases(Disease disease) {

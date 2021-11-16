@@ -82,6 +82,7 @@ public class DashboardDataProvider {
 	}
 
 	public void refreshDiseaseData() {
+		System.out.println("Dashboard data provider on refreshDiseaseData=:" + disease);
 
 		setDiseaseBurdenDetail(
 			FacadeProvider.getDiseaseFacade().getDiseaseForDashboard(region, district, disease, fromDate, toDate, previousFromDate, previousToDate));
@@ -90,6 +91,8 @@ public class DashboardDataProvider {
 			FacadeProvider.getOutbreakFacade()
 				.getOutbreakDistrictCount(
 					new OutbreakCriteria().region(region).district(district).disease(disease).reportedBetween(fromDate, toDate)));
+
+		this.refreshDataForSelectedDisease();
 	}
 
 	private void refreshDataForSelectedDisease() {
@@ -104,6 +107,27 @@ public class DashboardDataProvider {
 		}
 
 		if (getDashboardType() == DashboardType.CONTACTS || this.disease != null) {
+			// Cases
+			CaseCriteria caseCriteria = new CaseCriteria();
+			caseCriteria.region(region).district(district).disease(disease).newCaseDateBetween(fromDate, toDate, NewCaseDateType.MOST_RELEVANT);
+			setCases(FacadeProvider.getCaseFacade().getCasesForDashboard(caseCriteria));
+			setLastReportedDistrict(FacadeProvider.getCaseFacade().getLastReportedDistrictName(caseCriteria, true, true));
+
+			caseCriteria.newCaseDateBetween(previousFromDate, previousToDate, NewCaseDateType.MOST_RELEVANT);
+			setPreviousCases(FacadeProvider.getCaseFacade().getCasesForDashboard(caseCriteria));
+
+			if (getDashboardType() != DashboardType.CONTACTS) {
+				if (getCases().size() > 0) {
+					setTestResultCountByResultType(
+						FacadeProvider.getSampleFacade()
+							.getNewTestResultCountByResultType(getCases().stream().map(c -> c.getId()).collect(Collectors.toList())));
+				} else {
+					setTestResultCountByResultType(new HashMap<>());
+				}
+			}
+		}
+
+		if (getDashboardType() == DashboardType.DISEASE || this.disease != null) {
 			// Cases
 			CaseCriteria caseCriteria = new CaseCriteria();
 			caseCriteria.region(region).district(district).disease(disease).newCaseDateBetween(fromDate, toDate, NewCaseDateType.MOST_RELEVANT);
@@ -232,6 +256,8 @@ public class DashboardDataProvider {
 	}
 
 	public List<DiseaseBurdenDto> getDiseasesBurden() {
+		System.out.println("DashboardDataProvider am i getting from getDiseasesBurden(): " + diseasesBurden);
+
 		return diseasesBurden;
 	}
 
@@ -240,6 +266,7 @@ public class DashboardDataProvider {
 	}
 
 	public DiseaseBurdenDto getDiseaseBurdenDetail() {
+		System.out.println("What am i getting from getDiseaseBurdenDetail(): " + diseaseBurdenDetail);
 		return diseaseBurdenDetail;
 	}
 

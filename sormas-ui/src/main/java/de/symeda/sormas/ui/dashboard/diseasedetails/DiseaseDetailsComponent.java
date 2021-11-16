@@ -2,11 +2,7 @@ package de.symeda.sormas.ui.dashboard.diseasedetails;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 
 import de.symeda.sormas.api.Disease;
@@ -15,11 +11,15 @@ import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.ui.ControllerProvider;
+import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.LayoutUtil;
 
-public class DiseaseDetailsComponent extends VerticalLayout {
+import java.util.List;
+
+//public class DiseaseDetailsComponent extends VerticalLayout {
+public class DiseaseDetailsComponent extends CssLayout {
 
 	/**
 	 * 
@@ -31,37 +31,33 @@ public class DiseaseDetailsComponent extends VerticalLayout {
 	public static final String CARD_COUNT = "count";
 	public static final String DISEASE_GRID = "grid";
 	public static final String DISEASE_MAP = "diseasemap";
+	private DashboardDataProvider dashboardDataProvider;
+	private List<DiseaseBurdenDto> diseaseBurden;
 
-	public DiseaseDetailsComponent(DiseaseBurdenDto diseaseBurden) {
+//	public DiseaseDetailsComponent(DiseaseBurdenDto diseaseBurden) {
+	public DiseaseDetailsComponent(DashboardDataProvider dashboardDataProvider) {
 		setSizeFull();
-		setMargin(false);
+//		setMargin(false);
+		this.dashboardDataProvider = dashboardDataProvider;
+	}
 
-//		this.viewTitleLabel = viewTitleLabel;
+	public void refresh(){
 		String htmlLayout = LayoutUtil.fluidRow(
 			LayoutUtil.fluidColumnLoc(8, 0, 12, 0, CARD_COUNT),
 			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, DISEASE_GRID),
 			LayoutUtil.fluidColumnLoc(4, 0, 6, 0, DISEASE_MAP));
 
-//		verticalLayout = new VerticalLayout();
-//		verticalLayout.addComponent(addTopLayout());
-//		verticalLayout.setMargin(true);
-//		CustomLayout layout = new CustomLayout();
-//		layout.addStyleName(CssStyles.ROOT_COMPONENT);
-//		layout.setTemplateContents(htmlLayout);
-//		layout.setWidth(100, Unit.PERCENTAGE);
-//		layout.setHeightUndefined();
-//		verticalLayout.addComponent(layout);
-//		addComponent(verticalLayout);
 		addTopLayout(
-			diseaseBurden.getDisease(),
-			diseaseBurden.getCaseCount(),
-			diseaseBurden.getPreviousCaseCount(),
-			diseaseBurden.getOutbreakDistrictCount() > 0);
+				dashboardDataProvider.getDiseaseBurdenDetail().getDisease(),
+				dashboardDataProvider.getDiseaseBurdenDetail().getCaseCount(),
+				dashboardDataProvider.getDiseaseBurdenDetail().getPreviousCaseCount(),
+				dashboardDataProvider.getDiseaseBurdenDetail().getOutbreakDistrictCount() > 0);
+
 		addStatsLayout(
-			diseaseBurden.getCaseDeathCount(),
-			diseaseBurden.getEventCount(),
-			diseaseBurden.getLastReportedDistrictName(),
-			diseaseBurden.getDisease());
+				dashboardDataProvider.getDiseaseBurdenDetail().getCaseDeathCount(),
+				dashboardDataProvider.getDiseaseBurdenDetail().getEventCount(),
+				dashboardDataProvider.getDiseaseBurdenDetail().getLastReportedDistrictName(),
+				dashboardDataProvider.getDiseaseBurdenDetail().getDisease());
 	}
 
 	private void addTopLayout(Disease disease, Long casesCount, Long previousCasesCount, boolean isOutbreak) {

@@ -128,8 +128,11 @@ public class DiseaseFacadeEjb implements DiseaseFacade {
 		Date previousFrom,
 		Date previousTo) {
 
+		System.out.println("Disease Facade EJB getDiseaseForDashboard parameters:---- Disease: " + disease + " From and To Date: " +from + " To---: " + to);
+
 		//new cases
-		CaseCriteria caseCriteria = new CaseCriteria().newCaseDateBetween(from, to, null).region(regionRef).district(districtRef);
+		CaseCriteria caseCriteria = new CaseCriteria()
+				.newCaseDateBetween(from, to, null).region(regionRef).district(districtRef).disease(disease);
 
 		Map<Disease, Long> newCases = caseFacade.getCaseCountByDisease(caseCriteria, true, true);
 
@@ -152,28 +155,36 @@ public class DiseaseFacadeEjb implements DiseaseFacade {
 		Map<Disease, Long> previousCases = caseFacade.getCaseCountByDisease(caseCriteria, true, true);
 
 		//build diseasesBurden
-//		DiseaseBurdenDto diseasesBurden = diseases.stream().map(disease -> {
-//			Long caseCount = newCases.getOrDefault(disease, 0L);
-//			Long previousCaseCount = previousCases.getOrDefault(disease, 0L);
-//			Long eventCount = events.getOrDefault(disease, 0L);
-//			Long outbreakDistrictCount = outbreakDistrictsCount.getOrDefault(disease, 0L);
-//			Long caseFatalityCount = caseFatalities.getOrDefault(disease, 0L);
-//			District lastReportedDistrict = lastReportedDistricts.getOrDefault(disease, null);
-//
-//			String lastReportedDistrictName = lastReportedDistrict == null ? "" : lastReportedDistrict.getName();
-//
-//			return new DiseaseBurdenDto(
-//				disease,
-//				caseCount,
-//				previousCaseCount,
-//				eventCount,
-//				outbreakDistrictCount,
-//				caseFatalityCount,
-//				lastReportedDistrictName);
-//
-//		}).collect(Collectors.toList());
+		Long caseCount = newCases.getOrDefault(disease, 0L);
+		Long previousCaseCount = previousCases.getOrDefault(disease, 0L);
+		Long eventCount = events.getOrDefault(disease, 0L);
+		Long outbreakDistrictCount = outbreakDistrictsCount.getOrDefault(disease, 0L);
+		Long caseFatalityCount = caseFatalities.getOrDefault(disease, 0L);
+		District lastReportedDistrict = lastReportedDistricts.getOrDefault(disease, null);
 
-		return null;
+		String lastReportedDistrictName = lastReportedDistrict == null ? "" : lastReportedDistrict.getName();
+
+			return new DiseaseBurdenDto(
+				disease,
+				caseCount,
+				previousCaseCount,
+				eventCount,
+				outbreakDistrictCount,
+				caseFatalityCount,
+				lastReportedDistrictName);
+
+//			return new DiseaseBurdenDto(
+//					disease,
+//					caseCount,
+//					previousCaseCount,
+//					eventCount,
+//					outbreakDistrictCount,
+//					caseFatalityCount,
+//					lastReportedDistrictName);
+//
+//		}).collect(Collectors.toList())
+
+//		return null;
 	}
 
 	@LocalBean
