@@ -224,6 +224,13 @@ public class SampleGridFilterForm extends AbstractFilterForm<SampleCriteria> {
 				break;
 			}
 			case SampleCriteria.DISTRICT: {
+				DistrictReferenceDto district = (DistrictReferenceDto) event.getProperty().getValue();
+				if(district == null) {
+					clearAndDisableFields(SampleCriteria.COMMUNITY);
+				} else {
+					enableFields(SampleCriteria.COMMUNITY);
+					applyDistrictDependency( district, SampleCriteria.COMMUNITY);
+				}
 				getField(SampleCriteria.COMMUNITY).setValue(null);
 				break;
 			}
