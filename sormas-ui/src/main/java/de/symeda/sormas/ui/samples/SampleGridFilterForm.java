@@ -216,6 +216,7 @@ public class SampleGridFilterForm extends AbstractFilterForm<SampleCriteria> {
 				RegionReferenceDto region = (RegionReferenceDto) event.getProperty().getValue();
 				if (region == null) {
 					clearAndDisableFields(SampleCriteria.DISTRICT);
+					clearAndDisableFields(SampleCriteria.COMMUNITY);
 				} else {
 					enableFields(SampleCriteria.DISTRICT);
 					applyRegionFilterDependency(region, SampleCriteria.DISTRICT);
