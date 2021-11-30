@@ -394,7 +394,11 @@ public class SampleService extends AbstractCoreAdoService<Sample> {
 		} else if (sampleAssociationType == SampleAssociationType.EVENT_PARTICIPANT) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.isNotNull(joins.getEventParticipant()));
 		}
-
+		
+		if (criteria.getRequestedPathogenTestsString() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getPathogenTestType().get(PathogenTest.TEST_TYPE), criteria.getRequestedPathogenTestsString()));
+		}
+		
 		if (criteria.getRegion() != null) {
 			Expression<Object> regionExpression = cb.selectCase()
 				.when(cb.isNotNull(joins.getCaseRegion()), joins.getCaseRegion().get(Region.UUID))
