@@ -49,6 +49,8 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	public static final String COMMUNITY = "community";
 	public static final String LAB = "laboratory";
 	public static final String CASE_CODE_ID_LIKE = "caseCodeIdLike";
+	public static final String PATHOGEN_TEST_TYPE = "requestedPathogenTestsString";
+	
 
 	private RegionReferenceDto region;
 	private DistrictReferenceDto district;
@@ -68,7 +70,7 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	private String caseCodeIdLike;
 	private EntityRelevanceStatus relevanceStatus;
 	private SampleAssociationType sampleAssociationType;
-
+	private PathogenTestType requestedPathogenTestsString;
 	private Date sampleDateFrom;
 	private Date sampleDateTo;
 	private SampleDateType sampleDateType;
@@ -376,4 +378,19 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 
 		return this;
 	}
+	
+	//get pathogen test
+		public PathogenTestType getRequestedPathogenTestsString() {
+			return requestedPathogenTestsString;
+		}
+		//set pathogen test
+		public void setRequestedPathogenTestsString(PathogenTestType requestedPathogenTestsString) {
+			this.requestedPathogenTestsString = requestedPathogenTestsString;
+		}
+		
+		//Sample criteria
+		public SampleCriteria pathogenTestType(PathogenTestType setRequestedPathogenTestsString) {
+			setRequestedPathogenTestsString(setRequestedPathogenTestsString);
+			return this;
+		}
 }
