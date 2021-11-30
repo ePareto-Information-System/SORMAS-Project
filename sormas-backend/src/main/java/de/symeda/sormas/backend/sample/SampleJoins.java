@@ -21,6 +21,7 @@ import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 
+import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.contact.Contact;
 import de.symeda.sormas.backend.event.Event;
@@ -78,11 +79,20 @@ public class SampleJoins<P> extends AbstractDomainObjectJoins<P, Sample> {
 	private Join<Event, Location> eventLocation;
 	private Join<Event, User> eventReportingUser;
 	private Join<Event, User> eventResponsibleUser;
+	private Join<Sample, PathogenTest> pathogenTests;
 
 	public SampleJoins(From<P, Sample> root) {
 		super(root);
 	}
-
+	
+	public Join<Sample, PathogenTest> getPathogenTestType(){
+		return getOrCreate(pathogenTests, Sample.PATHOGENTESTS, JoinType.LEFT, this::setPathogenTestType);
+	}
+	
+	private void setPathogenTestType(Join<Sample, PathogenTest> pathogenTests){
+		this.pathogenTests = pathogenTests;
+	}
+	
 	public Join<Sample, User> getReportingUser() {
 		return getOrCreate(reportingUser, Sample.REPORTING_USER, JoinType.LEFT, this::setReportingUser);
 	}
