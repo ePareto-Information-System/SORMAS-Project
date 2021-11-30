@@ -114,10 +114,13 @@ public class SampleGridComponent extends VerticalLayout {
 		filterLayout.addStyleName("wrap");
 
 		filterForm = new SampleGridFilterForm();
-		filterForm.addValueChangeListener(e -> {
-						
+		
+		filterForm.addResetHandler(e -> {
+			ViewModelProviders.of(SamplesView.class).remove(SampleCriteria.class);
+			samplesView.navigateTo(null, true);
+		});
+		filterForm.addApplyHandler(e -> {
 			if (!DataHelper.isNullOrEmpty(criteria.getCaseCodeIdLike()) || !samplesView.navigateTo(criteria, false)) {
-//				filterForm.updateResetButtonState();
 				grid.reload();
 				
 				if (!DataHelper.isNullOrEmpty(criteria.getCaseCodeIdLike()) && grid.getItemCount() == 1) {
@@ -125,14 +128,6 @@ public class SampleGridComponent extends VerticalLayout {
 					ControllerProvider.getSampleController().navigateToData(sampleUuid);
 				}
 			}
-		});
-		
-		filterForm.addResetHandler(e -> {
-			ViewModelProviders.of(SamplesView.class).remove(SampleCriteria.class);
-			samplesView.navigateTo(null, true);
-		});
-		filterForm.addApplyHandler(e -> {
-			grid.reload();
 		});
 		filterLayout.addComponent(filterForm);
 
