@@ -36,6 +36,7 @@ import de.symeda.sormas.api.event.EventCriteria;
 import de.symeda.sormas.api.event.EventStatus;
 import de.symeda.sormas.api.outbreak.OutbreakCriteria;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
+import de.symeda.sormas.api.region.RegionDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.sample.DashboardTestResultDto;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
@@ -70,6 +71,7 @@ public class DashboardDataProvider {
 	private Map<EventStatus, Long> eventCountByStatus;
 	private List<DashboardTestResultDto> testResults = new ArrayList<>();
 	private List<DashboardTestResultDto> previousTestResults = new ArrayList<>();
+	private List<RegionDto> regionDtoList;
 
 	public void refreshData() {
 
@@ -82,8 +84,6 @@ public class DashboardDataProvider {
 	}
 
 	public void refreshDiseaseData() {
-		System.out.println("Dashboard data provider on refreshDiseaseData=:" + disease);
-
 		setDiseaseBurdenDetail(
 			FacadeProvider.getDiseaseFacade().getDiseaseForDashboard(region, district, disease, fromDate, toDate, previousFromDate, previousToDate));
 
@@ -137,14 +137,12 @@ public class DashboardDataProvider {
 			caseCriteria.newCaseDateBetween(previousFromDate, previousToDate, NewCaseDateType.MOST_RELEVANT);
 			setPreviousCases(FacadeProvider.getCaseFacade().getCasesForDashboard(caseCriteria));
 
-			if (getDashboardType() != DashboardType.CONTACTS) {
-				if (getCases().size() > 0) {
-					setTestResultCountByResultType(
-						FacadeProvider.getSampleFacade()
-							.getNewTestResultCountByResultType(getCases().stream().map(c -> c.getId()).collect(Collectors.toList())));
-				} else {
-					setTestResultCountByResultType(new HashMap<>());
-				}
+			if (getCases().size() > 0) {
+				setTestResultCountByResultType(
+					FacadeProvider.getSampleFacade()
+						.getNewTestResultCountByResultType(getCases().stream().map(c -> c.getId()).collect(Collectors.toList())));
+			} else {
+				setTestResultCountByResultType(new HashMap<>());
 			}
 		}
 
@@ -256,8 +254,6 @@ public class DashboardDataProvider {
 	}
 
 	public List<DiseaseBurdenDto> getDiseasesBurden() {
-		System.out.println("DashboardDataProvider am i getting from getDiseasesBurden(): " + diseasesBurden);
-
 		return diseasesBurden;
 	}
 
@@ -266,7 +262,6 @@ public class DashboardDataProvider {
 	}
 
 	public DiseaseBurdenDto getDiseaseBurdenDetail() {
-		System.out.println("What am i getting from getDiseaseBurdenDetail(): " + diseaseBurdenDetail);
 		return diseaseBurdenDetail;
 	}
 
@@ -354,5 +349,13 @@ public class DashboardDataProvider {
 
 	public void setDashboardType(DashboardType dashboardType) {
 		this.dashboardType = dashboardType;
+	}
+
+	public List<RegionDto> getRegionDtoList() {
+		return regionDtoList;
+	}
+
+	public void setRegionDtoList(List<RegionDto> regionDtoList) {
+		this.regionDtoList = regionDtoList;
 	}
 }
