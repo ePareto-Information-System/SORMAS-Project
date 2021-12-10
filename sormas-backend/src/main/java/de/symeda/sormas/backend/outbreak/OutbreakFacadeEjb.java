@@ -34,6 +34,7 @@ import de.symeda.sormas.api.outbreak.OutbreakFacade;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
+import de.symeda.sormas.backend.region.District;
 import de.symeda.sormas.backend.region.DistrictFacadeEjb;
 import de.symeda.sormas.backend.region.DistrictService;
 import de.symeda.sormas.backend.user.User;
@@ -186,6 +187,12 @@ public class OutbreakFacadeEjb implements OutbreakFacade {
 		target.setReportDate(source.getReportDate());
 
 		return target;
+	}
+
+	public Map<Disease, District> getOutbreakDistrictNameByDisease(OutbreakCriteria criteria) {
+		User user = userService.getCurrentUser();
+
+		return outbreakService.getOutbreakDistrictNameByDisease(criteria, user);
 	}
 
 	public Map<Disease, Long> getOutbreakDistrictCountByDisease(OutbreakCriteria criteria) {
