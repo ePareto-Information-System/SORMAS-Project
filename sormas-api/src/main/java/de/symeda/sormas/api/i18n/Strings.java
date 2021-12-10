@@ -177,6 +177,7 @@ public interface Strings {
 	String headingCasesDeleted = "headingCasesDeleted";
 	String headingCasesGuide = "headingCasesGuide";
 	String headingCaseStatusMap = "headingCaseStatusMap";
+	String headingDiseaseStatusMap = "headingDiseaseStatusMap";
 	String headingChangeCaseDisease = "headingChangeCaseDisease";
 	String headingChangePathogenTestResult = "headingChangePathogenTestResult";
 	String headingClinicalMeasurements = "headingClinicalMeasurements";
