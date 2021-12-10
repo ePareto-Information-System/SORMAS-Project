@@ -17,9 +17,6 @@ public class DiseaseDetailsView extends AbstractDashboardView {
 	public static final String VIEW_NAME = ROOT_VIEW_NAME + "/disease";
 
 	protected DiseaseDetailsViewLayout diseaseDetailsViewLayout;
-	private DiseaseDetailsComponent diseaseDetailsComponent;
-	private RegionalDiseaseBurdenGrid regionalDiseaseBurdenGrid;
-	private ViewConfiguration viewConfiguration;
 
 	public DiseaseDetailsView() {
 		super(VIEW_NAME, DashboardType.DISEASE);
@@ -31,31 +28,18 @@ public class DiseaseDetailsView extends AbstractDashboardView {
 		diseaseDetailsViewLayout = new DiseaseDetailsViewLayout(dashboardDataProvider);
 		dashboardLayout.addComponent(diseaseDetailsViewLayout);
 		dashboardLayout.setExpandRatio(diseaseDetailsViewLayout, 1);
-
-		/*diseaseDetailsComponent = new DiseaseDetailsComponent(dashboardDataProvider);
-		dashboardLayout.addComponent(diseaseDetailsComponent);
-		dashboardLayout.setExpandRatio(diseaseDetailsComponent, 1);
-
-		regionalDiseaseBurdenGrid = new RegionalDiseaseBurdenGrid(dashboardDataProvider);
-		dashboardLayout.addComponent(regionalDiseaseBurdenGrid);
-		dashboardLayout.setExpandRatio(regionalDiseaseBurdenGrid, 2);*/
 	}
 
 	@Override
 	public void refreshDiseaseData() {
 		super.refreshDiseaseData();
-		/*if (diseaseDetailsComponent != null)
-			diseaseDetailsComponent.refresh();*/
-
 		if (diseaseDetailsViewLayout != null)
 			diseaseDetailsViewLayout.refresh();
-
 	}
 
 	@Override
 	public void enter(ViewChangeEvent event) {
 		super.enter(event);
-		disease = Disease.valueOf(event.getParameters().toString());
 		dashboardDataProvider.setDisease(Disease.valueOf(event.getParameters().toString()));
 		refreshDiseaseData();
 	}
