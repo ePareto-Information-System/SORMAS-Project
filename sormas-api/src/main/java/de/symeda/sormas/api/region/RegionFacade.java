@@ -58,4 +58,7 @@ public interface RegionFacade {
 	void dearchive(String regionUuid);
 
 	boolean isUsedInOtherInfrastructureData(Collection<String> regionUuids);
+
+	List<RegionDto> getAllRegion();
+
 }
