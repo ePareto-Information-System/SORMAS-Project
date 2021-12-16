@@ -20,7 +20,6 @@ package de.symeda.sormas.api;
 import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum ContactMeasure {
-	
 	/**
 	 * Number of contacts
 	 */
@@ -29,7 +28,6 @@ public enum ContactMeasure {
 	 * Number of contacts per DistrictDto.Contact_INCIDENCE_DIVISOR; rounded to two decimal places with rounding mode half up
 	 */
 	CONTACT_INCIDENCE;
-	
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);
 	};
