@@ -1124,7 +1124,7 @@ public class StatisticsCasesView extends AbstractStatisticsView {
 
 		StatisticsKeyComparator keyComparator = new StatisticsKeyComparator();
 
-		System.out.println(resultData.toString());
+
 
 		resultData.sort((c1, c2) -> {
 			int result = keyComparator.compare(c1.getRowKey(), c2.getRowKey());
