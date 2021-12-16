@@ -5,6 +5,7 @@ import java.util.List;
 import javax.ejb.Remote;
 
 import de.symeda.sormas.api.statistics.StatisticsCaseCriteria;
+import de.symeda.sormas.api.statistics.StatisticsContactCriteria;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
 
 @Remote
@@ -35,6 +36,15 @@ public interface PopulationDataFacade {
 	 */
 	List<Long> getMissingPopulationDataForStatistics(
 		StatisticsCaseCriteria criteria,
+		boolean groupByRegion,
+		boolean groupByDistrict,
+		boolean groupBySex,
+		boolean groupByAgeGroup);
+	/**
+	 * Checks whether there is general population data available for all regions and districts
+	 */
+	List<Long> getContactMissingPopulationDataForStatistics(
+		StatisticsContactCriteria criteria,
 		boolean groupByRegion,
 		boolean groupByDistrict,
 		boolean groupBySex,
