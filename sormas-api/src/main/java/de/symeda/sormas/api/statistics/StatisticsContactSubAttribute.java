@@ -32,7 +32,6 @@ public enum StatisticsContactSubAttribute {
 	REGION(false, true),
 	DISTRICT(false, true),
 	COMMUNITY(false, true),
-//	FACILITY(false, true),
 	PERSON_REGION(false, false),
 	PERSON_DISTRICT(false, false),
 	PERSON_COMMUNITY(false, false),
