@@ -146,4 +146,10 @@ public interface ContactFacade {
 		Date to);
 
     List<ContactDto> getByPersonUuids(List<String> personUuids);
+
+	Date getOldestContactCreationDate();
+
+	Date getOldestContactReportDate();
+
+	Date getOldestContactLastContactDate();
 }
