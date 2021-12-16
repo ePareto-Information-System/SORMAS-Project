@@ -29,7 +29,9 @@ public class StatisticsController {
 	}
 
 	public void registerViews(Navigator navigator) {
-		navigator.addView(StatisticsView.VIEW_NAME, StatisticsView.class);
+		navigator.addView(StatisticsCasesView.VIEW_NAME, StatisticsCasesView.class);
+		navigator.addView(StatisticsContactsView.VIEW_NAME, StatisticsContactsView.class);
+
 		if (UserProvider.getCurrent().hasUserRight(UserRight.DATABASE_EXPORT_ACCESS)) {
 			navigator.addView(DatabaseExportView.VIEW_NAME, DatabaseExportView.class);
 		}
