@@ -1284,14 +1284,6 @@ public class StatisticsContactsView extends AbstractStatisticsView {
 					}
 					contactCriteria.communities(communities);
 				}
-//				if (jurisdictionElement.getSelectedHealthFacilities() != null) {
-//					List<FacilityReferenceDto> facilities = new ArrayList<>();
-//					for (TokenizableValue tokenizableValue : jurisdictionElement.getSelectedHealthFacilities()) {
-//						facilities.add((FacilityReferenceDto) tokenizableValue.getValue());
-//					}
-//					caseCriteria.healthFacilities(facilities);
-//				}
-//				break;
 			case PLACE_OF_RESIDENCE:
 				StatisticsFilterResidenceElement residenceElement = (StatisticsFilterResidenceElement) filterElement;
 				if (residenceElement.getSelectedRegions() != null) {
