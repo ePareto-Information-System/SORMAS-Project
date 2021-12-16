@@ -34,7 +34,6 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -191,34 +190,6 @@ public class StatisticsContactFilterValuesElement extends StatisticsFilterElemen
 					return new ArrayList<>();
 				}
 				return createCommunityTokens(jurisdictionElement.getSelectedDistricts());
-//			case FACILITY:
-//				if (jurisdictionElement == null) {
-//					return new ArrayList<>();
-//				}
-//
-//				List<TokenizableValue> selectedDistrictTokenizables = jurisdictionElement.getSelectedDistricts();
-//				List<TokenizableValue> selectedCommunityTokenizables = jurisdictionElement.getSelectedCommunities();
-//				if (CollectionUtils.isNotEmpty(selectedCommunityTokenizables)) {
-//					List<FacilityReferenceDto> facilities = new ArrayList<>();
-//					for (TokenizableValue selectedCommunityTokenizable : selectedCommunityTokenizables) {
-//						CommunityReferenceDto selectedCommunity = (CommunityReferenceDto) selectedCommunityTokenizable.getValue();
-//						facilities.addAll(
-//							FacadeProvider.getFacilityFacade()
-//								.getActiveFacilitiesByCommunityAndType(selectedCommunity, jurisdictionElement.getFacilityType(), false, false));
-//					}
-//					return createTokens(facilities);
-//				} else if (CollectionUtils.isNotEmpty(selectedDistrictTokenizables)) {
-//					List<FacilityReferenceDto> facilities = new ArrayList<>();
-//					for (TokenizableValue selectedDistrictTokenizable : selectedDistrictTokenizables) {
-//						DistrictReferenceDto selectedDistrict = (DistrictReferenceDto) selectedDistrictTokenizable.getValue();
-//						facilities.addAll(
-//							FacadeProvider.getFacilityFacade()
-//								.getActiveFacilitiesByDistrictAndType(selectedDistrict, jurisdictionElement.getFacilityType(), false, false));
-//					}
-//					return createTokens(facilities);
-//				} else {
-//					return new ArrayList<>();
-//				}
 			case PERSON_REGION:
 				return createTokens(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
 			case PERSON_DISTRICT:
