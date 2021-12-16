@@ -567,6 +567,9 @@ public interface Strings {
 	String infoCaseDate = "infoCaseDate";
 	String infoCaseIncidence = "infoCaseIncidence";
 	String infoCaseIncidenceIncompatible = "infoCaseIncidenceIncompatible";
+	String infoContactIncidenceIncompatible = "infoContactIncidenceIncompatible";
+	String infoContactIncidenceNotPossible = "infoContactIncidenceNotPossible";
+	String infoContactIncidenceMissingPopulationData = "infoContactIncidenceMissingPopulationData";
 	String infoCaseIncidenceMissingPopulationData = "infoCaseIncidenceMissingPopulationData";
 	String infoCaseIncidenceNotPossible = "infoCaseIncidenceNotPossible";
 	String infoCaseManagementExport = "infoCaseManagementExport";
@@ -627,6 +630,7 @@ public interface Strings {
 	String infoMergingPickDescription = "infoMergingPickDescription";
 	String infoNoAdditionalTests = "infoNoAdditionalTests";
 	String infoNoCasesFoundStatistics = "infoNoCasesFoundStatistics";
+	String infoNoContactsFoundStatistics = "infoNoContactFoundStatistics";
 	String infoNoEventGroups = "infoNoEventGroups";
 	String infoNoNetworkDiagram = "infoNoNetworkDiagram";
 	String infoNoPathogenTests = "infoNoPathogenTests";
@@ -665,7 +669,9 @@ public interface Strings {
 	String infoSpecificCaseSearch = "infoSpecificCaseSearch";
 	String infoSpecificEventSearch = "infoSpecificEventSearch";
 	String infoStatisticsDisclaimer = "infoStatisticsDisclaimer";
+	String infoStatisticsContactDisclaimer = "infoStatisticsContactDisclaimer";
 	String infoStatisticsFilter = "infoStatisticsFilter";
+	String infoContactsStatisticsFilter = "infoContactsStatisticsFilter";
 	String infoStatisticsResults = "infoStatisticsResults";
 	String infoSurveillanceDashboard = "infoSurveillanceDashboard";
 	String infoSyncUsers = "infoSyncUsers";
@@ -718,6 +724,7 @@ public interface Strings {
 	String messageCaseDuplicateDeleted = "messageCaseDuplicateDeleted";
 	String messageCaseExternalTokenWarning = "messageCaseExternalTokenWarning";
 	String messageCaseIncidenceUnsupportedAgeGroup = "messageCaseIncidenceUnsupportedAgeGroup";
+	String messageContactIncidenceUnsupportedAgeGroup = "messageCaseIncidenceUnsupportedAgeGroup";
 	String messageCaseReferredFromPoe = "messageCaseReferredFromPoe";
 	String messageCaseRelationToEventWithoutDisease = "messageCaseRelationToEventWithoutDisease";
 	String messageCasesArchived = "messageCasesArchived";
