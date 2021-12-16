@@ -25,7 +25,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import de.symeda.sormas.api.AgeGroup;
 import de.symeda.sormas.api.IntegerRange;
 import de.symeda.sormas.api.contact.ContactStatisticsFacade;
-import de.symeda.sormas.api.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.region.CommunityReferenceDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
@@ -36,9 +35,6 @@ import de.symeda.sormas.api.statistics.StatisticsContactSubAttribute;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 import de.symeda.sormas.api.statistics.StatisticsHelper;
 import de.symeda.sormas.api.user.UserDto;
-import de.symeda.sormas.backend.facility.Facility;
-import de.symeda.sormas.backend.facility.FacilityService;
-import de.symeda.sormas.backend.facility.FacilityFacadeEjb.FacilityFacadeEjbLocal;
 import de.symeda.sormas.backend.infrastructure.PopulationData;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.person.Person;
@@ -69,8 +65,6 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 	private DistrictService districtService;
 	@EJB
 	private CommunityService communityService;
-	@EJB
-	private FacilityService facilityService;
 
 	@EJB
 	private RegionFacadeEjbLocal regionFacade;
@@ -78,8 +72,6 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 	private DistrictFacadeEjbLocal districtFacade;
 	@EJB
 	private CommunityFacadeEjbLocal communityFacade;
-	@EJB
-	private FacilityFacadeEjbLocal facilityFacade;
 
 	@SuppressWarnings("unchecked")
 	@Override
