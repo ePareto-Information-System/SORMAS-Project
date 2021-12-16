@@ -34,6 +34,7 @@ import de.symeda.sormas.api.caze.surveillancereport.SurveillanceReportFacade;
 import de.symeda.sormas.api.clinicalcourse.ClinicalCourseFacade;
 import de.symeda.sormas.api.clinicalcourse.ClinicalVisitFacade;
 import de.symeda.sormas.api.contact.ContactFacade;
+import de.symeda.sormas.api.contact.ContactStatisticsFacade;
 import de.symeda.sormas.api.disease.DiseaseConfigurationFacade;
 import de.symeda.sormas.api.disease.DiseaseFacade;
 import de.symeda.sormas.api.disease.DiseaseVariantFacade;
@@ -131,6 +132,10 @@ public class FacadeProvider {
 
 	public static ContactFacade getContactFacade() {
 		return get().lookupEjbRemote(ContactFacade.class);
+	}
+	
+	public static ContactStatisticsFacade getContactStatisticsFacade() {
+		return get().lookupEjbRemote(ContactStatisticsFacade.class);
 	}
 
 	public static EventFacade getEventFacade() {
