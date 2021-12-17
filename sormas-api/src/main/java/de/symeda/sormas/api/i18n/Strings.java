@@ -650,6 +650,7 @@ public interface Strings {
 	String infoPopulationCollectionDate = "infoPopulationCollectionDate";
 	String infoPopulationDataView = "infoPopulationDataView";
 	String infoPopulationReferenceYear = "infoPopulationReferenceYear";
+	String infoContactPopulationReferenceYear = "infoContactPopulationReferenceYear";
 	String infoSampleAdditionalTesting = "infoSampleAdditionalTesting";
 	String infoSampleExport = "infoSampleExport";
 	String infoSamplePathogenTesting = "infoSamplePathogenTesting";
@@ -724,7 +725,7 @@ public interface Strings {
 	String messageCaseDuplicateDeleted = "messageCaseDuplicateDeleted";
 	String messageCaseExternalTokenWarning = "messageCaseExternalTokenWarning";
 	String messageCaseIncidenceUnsupportedAgeGroup = "messageCaseIncidenceUnsupportedAgeGroup";
-	String messageContactIncidenceUnsupportedAgeGroup = "messageCaseIncidenceUnsupportedAgeGroup";
+	String messageContactIncidenceUnsupportedAgeGroup = "messageContactIncidenceUnsupportedAgeGroup";
 	String messageCaseReferredFromPoe = "messageCaseReferredFromPoe";
 	String messageCaseRelationToEventWithoutDisease = "messageCaseRelationToEventWithoutDisease";
 	String messageCasesArchived = "messageCasesArchived";
@@ -942,6 +943,7 @@ public interface Strings {
 	String messageTreatmentSaved = "messageTreatmentSaved";
 	String messageTreatmentsDeleted = "messageTreatmentsDeleted";
 	String messageUnknownFilterAttributeForPopulationData = "messageUnknownFilterAttributeForPopulationData";
+	String messageUnknownContactFilterAttributeForPopulationData = "messageUnknownContactFilterAttributeForPopulationData";
 	String messageUpdateCaseWithNewDiseaseVariant = "messageUpdateCaseWithNewDiseaseVariant";
 	String messageUploadSuccessful = "messageUploadSuccessful";
 	String messageUserRightsExportFailed = "messageUserRightsExportFailed";
