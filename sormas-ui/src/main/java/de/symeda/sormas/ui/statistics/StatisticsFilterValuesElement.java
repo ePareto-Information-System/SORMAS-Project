@@ -45,7 +45,7 @@ import de.symeda.sormas.api.region.CommunityReferenceDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.statistics.StatisticsCaseAttribute;
-import de.symeda.sormas.api.statistics.StatisticsCaseSubAttribute;
+import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 import de.symeda.sormas.api.statistics.StatisticsHelper;
 import de.symeda.sormas.api.user.UserRole;
@@ -56,7 +56,7 @@ import de.symeda.sormas.ui.utils.CssStyles;
 public class StatisticsFilterValuesElement extends StatisticsFilterElement {
 
 	private final StatisticsCaseAttribute attribute;
-	private final StatisticsCaseSubAttribute subAttribute;
+	private final StatisticsSubAttribute subAttribute;
 
 	private Registration valueChangeListenerRegistration;
 	private ExtTokenField tokenField;
@@ -69,7 +69,7 @@ public class StatisticsFilterValuesElement extends StatisticsFilterElement {
 
 	private StatisticsFilterResidenceElement residenceElement;
 
-	public StatisticsFilterValuesElement(String caption, StatisticsCaseAttribute attribute, StatisticsCaseSubAttribute subAttribute, int rowIndex) {
+	public StatisticsFilterValuesElement(String caption, StatisticsCaseAttribute attribute, StatisticsSubAttribute subAttribute, int rowIndex) {
 
 		setSpacing(true);
 		addStyleName(CssStyles.LAYOUT_MINIMAL);
@@ -90,7 +90,7 @@ public class StatisticsFilterValuesElement extends StatisticsFilterElement {
 	public StatisticsFilterValuesElement(
 		String caption,
 		StatisticsCaseAttribute attribute,
-		StatisticsCaseSubAttribute subAttribute,
+		StatisticsSubAttribute subAttribute,
 		StatisticsFilterJurisdictionElement jurisdictionElement,
 		int rowIndex) {
 		this(caption, attribute, subAttribute, rowIndex);
@@ -100,7 +100,7 @@ public class StatisticsFilterValuesElement extends StatisticsFilterElement {
 	public StatisticsFilterValuesElement(
 		String caption,
 		StatisticsCaseAttribute attribute,
-		StatisticsCaseSubAttribute subAttribute,
+		StatisticsSubAttribute subAttribute,
 		StatisticsFilterResidenceElement residenceElement,
 		int rowIndex) {
 		this(caption, attribute, subAttribute, rowIndex);

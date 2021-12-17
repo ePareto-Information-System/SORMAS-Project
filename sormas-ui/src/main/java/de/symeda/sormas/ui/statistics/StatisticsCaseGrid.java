@@ -30,7 +30,7 @@ import de.symeda.sormas.api.infrastructure.InfrastructureHelper;
 import de.symeda.sormas.api.statistics.StatisticsCaseAttribute;
 import de.symeda.sormas.api.statistics.StatisticsCaseCountDto;
 import de.symeda.sormas.api.statistics.StatisticsCaseCriteria;
-import de.symeda.sormas.api.statistics.StatisticsCaseSubAttribute;
+import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 import de.symeda.sormas.api.statistics.StatisticsHelper;
 import de.symeda.sormas.api.statistics.StatisticsHelper.StatisticsKeyComparator;
@@ -65,9 +65,9 @@ public class StatisticsCaseGrid extends Grid {
 	 */
 	public StatisticsCaseGrid(
 		StatisticsCaseAttribute rowsAttribute,
-		StatisticsCaseSubAttribute rowsSubAttribute,
+		StatisticsSubAttribute rowsSubAttribute,
 		StatisticsCaseAttribute columnsAttribute,
-		StatisticsCaseSubAttribute columnsSubAttribute,
+		StatisticsSubAttribute columnsSubAttribute,
 		boolean showCaseIncidence,
 		int incidenceDivisor,
 		List<StatisticsCaseCountDto> cellValues,

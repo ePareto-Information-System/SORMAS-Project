@@ -34,7 +34,7 @@ import com.vaadin.v7.ui.OptionGroup;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.statistics.StatisticsCaseAttribute;
-import de.symeda.sormas.api.statistics.StatisticsCaseSubAttribute;
+import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.ui.statistics.StatisticsVisualizationType.StatisticsVisualizationChartType;
 import de.symeda.sormas.ui.statistics.StatisticsVisualizationType.StatisticsVisualizationMapType;
 import de.symeda.sormas.ui.utils.ButtonHelper;
@@ -178,14 +178,14 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 		return rowsElement.getAttribute();
 	}
 
-	public StatisticsCaseSubAttribute getRowsSubAttribute() {
+	public StatisticsSubAttribute getRowsSubAttribute() {
 		switch (visualizationType) {
 		case MAP:
 			switch (visualizationMapType) {
 			case REGIONS:
-				return StatisticsCaseSubAttribute.REGION;
+				return StatisticsSubAttribute.REGION;
 			case DISTRICTS:
-				return StatisticsCaseSubAttribute.DISTRICT;
+				return StatisticsSubAttribute.DISTRICT;
 			default:
 				throw new IllegalArgumentException(visualizationMapType.toString());
 			}
@@ -212,7 +212,7 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 		return columnsElement.getAttribute();
 	}
 
-	public StatisticsCaseSubAttribute getColumnsSubAttribute() {
+	public StatisticsSubAttribute getColumnsSubAttribute() {
 		switch (visualizationType) {
 		case MAP:
 			return null;
@@ -245,8 +245,8 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 		switch (visualizationType) {
 		case TABLE:
 		case CHART:
-			return rowsElement.getSubAttribute() == StatisticsCaseSubAttribute.REGION
-				|| columnsElement.getSubAttribute() == StatisticsCaseSubAttribute.REGION;
+			return rowsElement.getSubAttribute() == StatisticsSubAttribute.REGION
+				|| columnsElement.getSubAttribute() == StatisticsSubAttribute.REGION;
 		case MAP:
 			return visualizationMapType == StatisticsVisualizationMapType.REGIONS;
 		default:
@@ -258,8 +258,8 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 		switch (visualizationType) {
 		case TABLE:
 		case CHART:
-			return rowsElement.getSubAttribute() == StatisticsCaseSubAttribute.DISTRICT
-				|| columnsElement.getSubAttribute() == StatisticsCaseSubAttribute.DISTRICT;
+			return rowsElement.getSubAttribute() == StatisticsSubAttribute.DISTRICT
+				|| columnsElement.getSubAttribute() == StatisticsSubAttribute.DISTRICT;
 		case MAP:
 			return visualizationMapType == StatisticsVisualizationMapType.DISTRICTS;
 		default:
@@ -271,8 +271,8 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 		switch (visualizationType) {
 			case TABLE:
 			case CHART:
-				return rowsElement.getSubAttribute() == StatisticsCaseSubAttribute.COMMUNITY
-						|| columnsElement.getSubAttribute() == StatisticsCaseSubAttribute.COMMUNITY;
+				return rowsElement.getSubAttribute() == StatisticsSubAttribute.COMMUNITY
+						|| columnsElement.getSubAttribute() == StatisticsSubAttribute.COMMUNITY;
 			//TODO: Community Grouping on this Visualisationtype may be implemented later
 			case MAP:
 				return false;
@@ -282,8 +282,8 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 	}
 
 	public boolean hasIncidenceIncompatibleGrouping() {
-		return rowsElement.getSubAttribute() == StatisticsCaseSubAttribute.FACILITY
-			|| columnsElement.getSubAttribute() == StatisticsCaseSubAttribute.FACILITY;
+		return rowsElement.getSubAttribute() == StatisticsSubAttribute.FACILITY
+			|| columnsElement.getSubAttribute() == StatisticsSubAttribute.FACILITY;
 	}
 
 	public boolean hasSexGrouping() {

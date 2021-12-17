@@ -507,7 +507,7 @@ public class StatisticsCaseCriteria implements Serializable {
 
 	public List<? extends StatisticsGroupingKey> getFilterValuesForGrouping(
 		StatisticsCaseAttribute attribute,
-		StatisticsCaseSubAttribute subAttribute) {
+		StatisticsSubAttribute subAttribute) {
 
 		if (subAttribute != null) {
 			switch (subAttribute) {

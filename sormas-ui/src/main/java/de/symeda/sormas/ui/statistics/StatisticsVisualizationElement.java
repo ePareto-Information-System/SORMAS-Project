@@ -26,7 +26,7 @@ import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.statistics.StatisticsCaseAttribute;
 import de.symeda.sormas.api.statistics.StatisticsCaseAttributeGroup;
-import de.symeda.sormas.api.statistics.StatisticsCaseSubAttribute;
+import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.ui.utils.CssStyles;
 
 @SuppressWarnings("serial")
@@ -41,7 +41,7 @@ public class StatisticsVisualizationElement extends HorizontalLayout {
 	private StatisticsVisualizationElementType type;
 	private StatisticsVisualizationType visualizationType;
 	private StatisticsCaseAttribute attribute;
-	private StatisticsCaseSubAttribute subAttribute;
+	private StatisticsSubAttribute subAttribute;
 
 	public StatisticsVisualizationElement(StatisticsVisualizationElementType type, StatisticsVisualizationType visualizationType) {
 		this.type = type;
@@ -93,7 +93,7 @@ public class StatisticsVisualizationElement extends HorizontalLayout {
 
 						// Build sub attribute dropdown
 						if (attribute.getSubAttributes().length > 0) {
-							for (StatisticsCaseSubAttribute subAttribute : attribute.getSubAttributes()) {
+							for (StatisticsSubAttribute subAttribute : attribute.getSubAttributes()) {
 								if (subAttribute.isUsedForGrouping()) {
 									Command subAttributeCommand = selectedSubItem -> {
 										this.subAttribute = subAttribute;
@@ -134,7 +134,7 @@ public class StatisticsVisualizationElement extends HorizontalLayout {
 		return attribute;
 	}
 
-	public StatisticsCaseSubAttribute getSubAttribute() {
+	public StatisticsSubAttribute getSubAttribute() {
 		return subAttribute;
 	}
 

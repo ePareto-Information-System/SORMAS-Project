@@ -77,7 +77,7 @@ import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.statistics.StatisticsCaseAttribute;
 import de.symeda.sormas.api.statistics.StatisticsCaseCountDto;
 import de.symeda.sormas.api.statistics.StatisticsCaseCriteria;
-import de.symeda.sormas.api.statistics.StatisticsCaseSubAttribute;
+import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 import de.symeda.sormas.api.statistics.StatisticsHelper;
 import de.symeda.sormas.api.statistics.StatisticsHelper.StatisticsKeyComparator;
@@ -486,9 +486,9 @@ public class StatisticsCasesView extends AbstractStatisticsView {
 
 		StatisticsVisualizationChartType chartType = visualizationComponent.getVisualizationChartType();
 		StatisticsCaseAttribute xAxisAttribute = visualizationComponent.getColumnsAttribute();
-		StatisticsCaseSubAttribute xAxisSubAttribute = visualizationComponent.getColumnsSubAttribute();
+		StatisticsSubAttribute xAxisSubAttribute = visualizationComponent.getColumnsSubAttribute();
 		StatisticsCaseAttribute seriesAttribute = visualizationComponent.getRowsAttribute();
-		StatisticsCaseSubAttribute seriesSubAttribute = visualizationComponent.getRowsSubAttribute();
+		StatisticsSubAttribute seriesSubAttribute = visualizationComponent.getRowsSubAttribute();
 
 		HighChart chart = new HighChart();
 		chart.setWidth(100, Unit.PERCENTAGE);

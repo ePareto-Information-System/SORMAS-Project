@@ -15,7 +15,7 @@ import de.symeda.sormas.api.region.CommunityReferenceDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.statistics.StatisticsCaseAttribute;
-import de.symeda.sormas.api.statistics.StatisticsCaseSubAttribute;
+import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.ui.utils.CssStyles;
 
 public class StatisticsFilterResidenceElement extends StatisticsFilterElement {
@@ -37,19 +37,19 @@ public class StatisticsFilterResidenceElement extends StatisticsFilterElement {
 		regionElement = new StatisticsFilterValuesElement(
 			I18nProperties.getPrefixCaption(LocationDto.I18N_PREFIX, LocationDto.REGION),
 			StatisticsCaseAttribute.PLACE_OF_RESIDENCE,
-			StatisticsCaseSubAttribute.PERSON_REGION,
+			StatisticsSubAttribute.PERSON_REGION,
 			this,
 			rowIndex);
 		districtElement = new StatisticsFilterValuesElement(
 			I18nProperties.getPrefixCaption(LocationDto.I18N_PREFIX, LocationDto.DISTRICT),
 			StatisticsCaseAttribute.PLACE_OF_RESIDENCE,
-			StatisticsCaseSubAttribute.PERSON_DISTRICT,
+			StatisticsSubAttribute.PERSON_DISTRICT,
 			this,
 			rowIndex);
 		communityElement = new StatisticsFilterValuesElement(
 			I18nProperties.getPrefixCaption(LocationDto.I18N_PREFIX, LocationDto.COMMUNITY),
 			StatisticsCaseAttribute.PLACE_OF_RESIDENCE,
-			StatisticsCaseSubAttribute.PERSON_COMMUNITY,
+			StatisticsSubAttribute.PERSON_COMMUNITY,
 			this,
 			rowIndex);
 		cityElement = new StatisticsFilterSimpleTextElement(I18nProperties.getCaption(Captions.city), rowIndex);

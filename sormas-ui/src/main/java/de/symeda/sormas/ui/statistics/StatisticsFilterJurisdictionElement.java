@@ -38,7 +38,7 @@ import de.symeda.sormas.api.region.CommunityReferenceDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.statistics.StatisticsCaseAttribute;
-import de.symeda.sormas.api.statistics.StatisticsCaseSubAttribute;
+import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.FieldHelper;
 
@@ -62,19 +62,19 @@ public class StatisticsFilterJurisdictionElement extends StatisticsFilterElement
 		regionElement = new StatisticsFilterValuesElement(
 			I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.REGION),
 			StatisticsCaseAttribute.JURISDICTION,
-			StatisticsCaseSubAttribute.REGION,
+			StatisticsSubAttribute.REGION,
 			this,
 			rowIndex);
 		districtElement = new StatisticsFilterValuesElement(
 			I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.DISTRICT),
 			StatisticsCaseAttribute.JURISDICTION,
-			StatisticsCaseSubAttribute.DISTRICT,
+			StatisticsSubAttribute.DISTRICT,
 			this,
 			rowIndex);
 		communityElement = new StatisticsFilterValuesElement(
 			I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.COMMUNITY),
 			StatisticsCaseAttribute.JURISDICTION,
-			StatisticsCaseSubAttribute.COMMUNITY,
+			StatisticsSubAttribute.COMMUNITY,
 			this,
 			rowIndex);
 		HorizontalLayout facilityTypeFilterLayout = new HorizontalLayout();
@@ -92,7 +92,7 @@ public class StatisticsFilterJurisdictionElement extends StatisticsFilterElement
 		facilityElement = new StatisticsFilterValuesElement(
 			I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.HEALTH_FACILITY),
 			StatisticsCaseAttribute.JURISDICTION,
-			StatisticsCaseSubAttribute.FACILITY,
+			StatisticsSubAttribute.FACILITY,
 			this,
 			rowIndex);
 
