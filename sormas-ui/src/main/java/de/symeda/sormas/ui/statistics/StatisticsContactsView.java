@@ -76,7 +76,7 @@ import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.statistics.StatisticsContactAttribute;
 import de.symeda.sormas.api.statistics.StatisticsContactCountDto;
 import de.symeda.sormas.api.statistics.StatisticsContactCriteria;
-import de.symeda.sormas.api.statistics.StatisticsContactSubAttribute;
+import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 import de.symeda.sormas.api.statistics.StatisticsHelper;
 import de.symeda.sormas.api.statistics.StatisticsHelper.StatisticsKeyComparator;
@@ -163,7 +163,7 @@ public class StatisticsContactsView extends AbstractStatisticsView {
 
 		// Disclaimer
 		Label disclaimer =
-			new Label(VaadinIcons.INFO_CIRCLE.getHtml() + " " + I18nProperties.getString(Strings.infoStatisticsDisclaimer), ContentMode.HTML);
+			new Label(VaadinIcons.INFO_CIRCLE.getHtml() + " " + I18nProperties.getString(Strings.infoStatisticsContactDisclaimer), ContentMode.HTML);
 		statisticsLayout.addComponent(disclaimer);
 
 		addComponent(statisticsLayout);
@@ -179,7 +179,7 @@ public class StatisticsContactsView extends AbstractStatisticsView {
 		CssStyles.style(filtersSectionLayout, CssStyles.STATISTICS_TITLE_BOX);
 		filtersSectionLayout.setSpacing(true);
 		filtersSectionLayout.setWidth(100, Unit.PERCENTAGE);
-		Label filtersInfoText = new Label(I18nProperties.getString(Strings.infoStatisticsFilter), ContentMode.HTML);
+		Label filtersInfoText = new Label(I18nProperties.getString(Strings.infoContactsStatisticsFilter), ContentMode.HTML);
 		filtersSectionLayout.addComponent(filtersInfoText);
 
 		filtersLayout = new VerticalLayout();
@@ -327,7 +327,7 @@ public class StatisticsContactsView extends AbstractStatisticsView {
 
 			if (showContactIncidence && hasPopulationFilterUnknownValue()) {
 				errorNotification =
-					new Notification(I18nProperties.getString(Strings.messageUnknownFilterAttributeForPopulationData), Type.ERROR_MESSAGE);
+					new Notification(I18nProperties.getString(Strings.messageUnknownContactFilterAttributeForPopulationData), Type.ERROR_MESSAGE);
 			}
 
 			if (showContactIncidence && visualizationComponent.hasAgeGroupGroupingWithoutPopulationData() || hasUnsupportedPopulationAgeGroupFilter()) {
@@ -382,7 +382,7 @@ public class StatisticsContactsView extends AbstractStatisticsView {
 			&& populationReferenceYear != Calendar.getInstance().get(Calendar.YEAR)) {
 			referenceYearLabel = new Label(
 				VaadinIcons.INFO_CIRCLE.getHtml() + " "
-					+ String.format(I18nProperties.getString(Strings.infoPopulationReferenceYear), populationReferenceYear),
+					+ String.format(I18nProperties.getString(Strings.infoContactPopulationReferenceYear), populationReferenceYear),
 				ContentMode.HTML);
 			resultsLayout.addComponent(referenceYearLabel);
 			CssStyles.style(referenceYearLabel, CssStyles.VSPACE_TOP_4);
@@ -455,7 +455,7 @@ public class StatisticsContactsView extends AbstractStatisticsView {
 			&& populationReferenceYear != Calendar.getInstance().get(Calendar.YEAR)) {
 			referenceYearLabel = new Label(
 				VaadinIcons.INFO_CIRCLE.getHtml() + " "
-					+ String.format(I18nProperties.getString(Strings.infoPopulationReferenceYear), populationReferenceYear),
+					+ String.format(I18nProperties.getString(Strings.infoContactPopulationReferenceYear), populationReferenceYear),
 				ContentMode.HTML);
 			resultsLayout.addComponent(referenceYearLabel);
 			CssStyles.style(referenceYearLabel, CssStyles.VSPACE_TOP_4);
@@ -486,9 +486,9 @@ public class StatisticsContactsView extends AbstractStatisticsView {
 
 		StatisticsVisualizationChartType chartType = visualizationComponent.getVisualizationChartType();
 		StatisticsContactAttribute xAxisAttribute = visualizationComponent.getColumnsAttribute();
-		StatisticsContactSubAttribute xAxisSubAttribute = visualizationComponent.getColumnsSubAttribute();
+		StatisticsSubAttribute xAxisSubAttribute = visualizationComponent.getColumnsSubAttribute();
 		StatisticsContactAttribute seriesAttribute = visualizationComponent.getRowsAttribute();
-		StatisticsContactSubAttribute seriesSubAttribute = visualizationComponent.getRowsSubAttribute();
+		StatisticsSubAttribute seriesSubAttribute = visualizationComponent.getRowsSubAttribute();
 
 		HighChart chart = new HighChart();
 		chart.setWidth(100, Unit.PERCENTAGE);
@@ -813,7 +813,7 @@ public class StatisticsContactsView extends AbstractStatisticsView {
 			&& populationReferenceYear != Calendar.getInstance().get(Calendar.YEAR)) {
 			referenceYearLabel = new Label(
 				VaadinIcons.INFO_CIRCLE.getHtml() + " "
-					+ String.format(I18nProperties.getString(Strings.infoPopulationReferenceYear), populationReferenceYear),
+					+ String.format(I18nProperties.getString(Strings.infoContactPopulationReferenceYear), populationReferenceYear),
 				ContentMode.HTML);
 			resultsLayout.addComponent(referenceYearLabel);
 			CssStyles.style(referenceYearLabel, CssStyles.VSPACE_TOP_4);

@@ -24,55 +24,55 @@ public enum StatisticsContactAttribute {
 	ONSET_TIME(StatisticsContactAttributeGroup.TIME,
 		false,
 		true,
-		StatisticsContactSubAttribute.YEAR,
-		StatisticsContactSubAttribute.QUARTER,
-		StatisticsContactSubAttribute.MONTH,
-		StatisticsContactSubAttribute.EPI_WEEK,
-		StatisticsContactSubAttribute.QUARTER_OF_YEAR,
-		StatisticsContactSubAttribute.MONTH_OF_YEAR,
-		StatisticsContactSubAttribute.EPI_WEEK_OF_YEAR,
-		StatisticsContactSubAttribute.DATE_RANGE),
+		StatisticsSubAttribute.YEAR,
+		StatisticsSubAttribute.QUARTER,
+		StatisticsSubAttribute.MONTH,
+		StatisticsSubAttribute.EPI_WEEK,
+		StatisticsSubAttribute.QUARTER_OF_YEAR,
+		StatisticsSubAttribute.MONTH_OF_YEAR,
+		StatisticsSubAttribute.EPI_WEEK_OF_YEAR,
+		StatisticsSubAttribute.DATE_RANGE),
 
 	REPORT_TIME(StatisticsContactAttributeGroup.TIME,
 		false,
 		false,
-		StatisticsContactSubAttribute.YEAR,
-		StatisticsContactSubAttribute.QUARTER,
-		StatisticsContactSubAttribute.MONTH,
-		StatisticsContactSubAttribute.EPI_WEEK,
-		StatisticsContactSubAttribute.QUARTER_OF_YEAR,
-		StatisticsContactSubAttribute.MONTH_OF_YEAR,
-		StatisticsContactSubAttribute.EPI_WEEK_OF_YEAR,
-		StatisticsContactSubAttribute.DATE_RANGE),
+		StatisticsSubAttribute.YEAR,
+		StatisticsSubAttribute.QUARTER,
+		StatisticsSubAttribute.MONTH,
+		StatisticsSubAttribute.EPI_WEEK,
+		StatisticsSubAttribute.QUARTER_OF_YEAR,
+		StatisticsSubAttribute.MONTH_OF_YEAR,
+		StatisticsSubAttribute.EPI_WEEK_OF_YEAR,
+		StatisticsSubAttribute.DATE_RANGE),
 
 	OUTCOME_TIME(StatisticsContactAttributeGroup.TIME,
 		false,
 		true,
-		StatisticsContactSubAttribute.YEAR,
-		StatisticsContactSubAttribute.QUARTER,
-		StatisticsContactSubAttribute.MONTH,
-		StatisticsContactSubAttribute.EPI_WEEK,
-		StatisticsContactSubAttribute.QUARTER_OF_YEAR,
-		StatisticsContactSubAttribute.MONTH_OF_YEAR,
-		StatisticsContactSubAttribute.EPI_WEEK_OF_YEAR,
-		StatisticsContactSubAttribute.DATE_RANGE),
+		StatisticsSubAttribute.YEAR,
+		StatisticsSubAttribute.QUARTER,
+		StatisticsSubAttribute.MONTH,
+		StatisticsSubAttribute.EPI_WEEK,
+		StatisticsSubAttribute.QUARTER_OF_YEAR,
+		StatisticsSubAttribute.MONTH_OF_YEAR,
+		StatisticsSubAttribute.EPI_WEEK_OF_YEAR,
+		StatisticsSubAttribute.DATE_RANGE),
 
 	JURISDICTION(StatisticsContactAttributeGroup.PLACE,
 		true,
 		true,
-		StatisticsContactSubAttribute.REGION,
-		StatisticsContactSubAttribute.DISTRICT,
-		StatisticsContactSubAttribute.COMMUNITY),
+		StatisticsSubAttribute.REGION,
+		StatisticsSubAttribute.DISTRICT,
+		StatisticsSubAttribute.COMMUNITY),
 
 	PLACE_OF_RESIDENCE(StatisticsContactAttributeGroup.PERSON,
 		true,
 		true,
 		false,
-		StatisticsContactSubAttribute.PERSON_REGION,
-		StatisticsContactSubAttribute.PERSON_DISTRICT,
-		StatisticsContactSubAttribute.PERSON_COMMUNITY,
-		StatisticsContactSubAttribute.PERSON_CITY,
-		StatisticsContactSubAttribute.PERSON_POSTCODE),
+		StatisticsSubAttribute.PERSON_REGION,
+		StatisticsSubAttribute.PERSON_DISTRICT,
+		StatisticsSubAttribute.PERSON_COMMUNITY,
+		StatisticsSubAttribute.PERSON_CITY,
+		StatisticsSubAttribute.PERSON_POSTCODE),
 
 	SEX(StatisticsContactAttributeGroup.PERSON, true, true),
 	AGE_INTERVAL_1_YEAR(StatisticsContactAttributeGroup.PERSON, false, true),
@@ -90,13 +90,13 @@ public enum StatisticsContactAttribute {
 	private final boolean sortByCaption;
 	private final boolean unknownValueAllowed;
 	private boolean usedForVisualisation = true;
-	private final StatisticsContactSubAttribute[] subAttributes;
+	private final StatisticsSubAttribute[] subAttributes;
 
 	StatisticsContactAttribute(
 		StatisticsContactAttributeGroup attributeGroup,
 		boolean sortByCaption,
 		boolean unknownValueAllowed,
-		StatisticsContactSubAttribute... subAttributes) {
+		StatisticsSubAttribute... subAttributes) {
 
 		this.attributeGroup = attributeGroup;
 		this.sortByCaption = sortByCaption;
@@ -109,7 +109,7 @@ public enum StatisticsContactAttribute {
 		boolean sortByCaption,
 		boolean unknownValueAllowed,
 		boolean usedForVisualisation,
-		StatisticsContactSubAttribute... subAttributes) {
+		StatisticsSubAttribute... subAttributes) {
 
 		this.usedForVisualisation = usedForVisualisation;
 		this.attributeGroup = attributeGroup;
@@ -134,7 +134,7 @@ public enum StatisticsContactAttribute {
 		return unknownValueAllowed;
 	}
 
-	public StatisticsContactSubAttribute[] getSubAttributes() {
+	public StatisticsSubAttribute[] getSubAttributes() {
 		return subAttributes;
 	}
 

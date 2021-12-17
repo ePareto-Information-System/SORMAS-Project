@@ -31,7 +31,7 @@ import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.statistics.StatisticsContactAttribute;
 import de.symeda.sormas.api.statistics.StatisticsContactCountDto;
 import de.symeda.sormas.api.statistics.StatisticsContactCriteria;
-import de.symeda.sormas.api.statistics.StatisticsContactSubAttribute;
+import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 import de.symeda.sormas.api.statistics.StatisticsHelper;
 import de.symeda.sormas.api.user.UserDto;
@@ -78,9 +78,9 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 	public List<StatisticsContactCountDto> queryContactCount(
 		StatisticsContactCriteria contactCriteria,
 		StatisticsContactAttribute rowGrouping,
-		StatisticsContactSubAttribute rowSubGrouping,
+		StatisticsSubAttribute rowSubGrouping,
 		StatisticsContactAttribute columnGrouping,
-		StatisticsContactSubAttribute columnSubGrouping,
+		StatisticsSubAttribute columnSubGrouping,
 		boolean includePopulation,
 		boolean includeZeroValues,
 		Integer populationReferenceYear) {
@@ -219,9 +219,9 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 	public Pair<String, List<Object>> buildContactCountQuery(
 		StatisticsContactCriteria contactCriteria,
 		StatisticsContactAttribute groupingA,
-		StatisticsContactSubAttribute subGroupingA,
+		StatisticsSubAttribute subGroupingA,
 		StatisticsContactAttribute groupingB,
-		StatisticsContactSubAttribute subGroupingB) {
+		StatisticsSubAttribute subGroupingB) {
 
 		// Steps to build the query:
 		// 1. Join the required tables
@@ -234,7 +234,7 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 		/////////////
 
 		StringBuilder contactJoinBuilder = new StringBuilder();
-		if (subGroupingA == StatisticsContactSubAttribute.COMMUNITY || subGroupingB == StatisticsContactSubAttribute.COMMUNITY) {
+		if (subGroupingA == StatisticsSubAttribute.COMMUNITY || subGroupingB == StatisticsSubAttribute.COMMUNITY) {
 			contactJoinBuilder.append(" LEFT JOIN ")
 				.append(Community.TABLE_NAME)
 				.append(" ON ")
@@ -246,7 +246,7 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 				.append(".")
 				.append(Community.ID);
 		}
-		if (subGroupingA == StatisticsContactSubAttribute.DISTRICT || subGroupingB == StatisticsContactSubAttribute.DISTRICT) {
+		if (subGroupingA == StatisticsSubAttribute.DISTRICT || subGroupingB == StatisticsSubAttribute.DISTRICT) {
 			contactJoinBuilder.append(" LEFT JOIN ")
 				.append(District.TABLE_NAME)
 				.append(" ON ")
@@ -258,7 +258,7 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 				.append(".")
 				.append(District.ID);
 		}
-		if (subGroupingA == StatisticsContactSubAttribute.REGION || subGroupingB == StatisticsContactSubAttribute.REGION) {
+		if (subGroupingA == StatisticsSubAttribute.REGION || subGroupingB == StatisticsSubAttribute.REGION) {
 			contactJoinBuilder.append(" LEFT JOIN ")
 				.append(Region.TABLE_NAME)
 				.append(" ON ")
@@ -880,9 +880,9 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 	public Pair<String, List<Object>> buildPopulationQuery(
 		StatisticsContactCriteria contactCriteria,
 		StatisticsContactAttribute groupingA,
-		StatisticsContactSubAttribute subGroupingA,
+		StatisticsSubAttribute subGroupingA,
 		StatisticsContactAttribute groupingB,
-		StatisticsContactSubAttribute subGroupingB,
+		StatisticsSubAttribute subGroupingB,
 		Integer populationReferenceYear) {
 
 		////////
@@ -956,7 +956,7 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 			// limit either to entries with community or to entries without community
 
 			communityIds = null;
-			usesCommunitys = subGroupingA == StatisticsContactSubAttribute.COMMUNITY || subGroupingB == StatisticsContactSubAttribute.COMMUNITY;
+			usesCommunitys = subGroupingA == StatisticsSubAttribute.COMMUNITY || subGroupingB == StatisticsSubAttribute.COMMUNITY;
 
 			if (whereBuilder.length() > 0) {
 				whereBuilder.append(" AND ");
@@ -988,7 +988,7 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 			// limit either to entries with district or to entries without district
 
 			districtIds = null;
-			usesDistricts = subGroupingA == StatisticsContactSubAttribute.DISTRICT || subGroupingB == StatisticsContactSubAttribute.DISTRICT;
+			usesDistricts = subGroupingA == StatisticsSubAttribute.DISTRICT || subGroupingB == StatisticsSubAttribute.DISTRICT;
 
 			if (whereBuilder.length() > 0) {
 				whereBuilder.append(" AND ");
@@ -1089,7 +1089,7 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 
 		// growth rates to calculate the population
 		selectBuilder.append(" LEFT JOIN ");
-		if (communityIds != null || subGroupingA == StatisticsContactSubAttribute.COMMUNITY || subGroupingB == StatisticsContactSubAttribute.COMMUNITY) {
+		if (communityIds != null || subGroupingA == StatisticsSubAttribute.COMMUNITY || subGroupingB == StatisticsSubAttribute.COMMUNITY) {
 			selectBuilder.append(Community.TABLE_NAME)
 				.append(" AS growthsource ON growthsource.")
 				.append(Community.ID)
@@ -1097,8 +1097,8 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 				.append(PopulationData.COMMUNITY)
 				.append("_id");
 		} else if (districtIds != null
-			|| subGroupingA == StatisticsContactSubAttribute.DISTRICT
-			|| subGroupingB == StatisticsContactSubAttribute.DISTRICT) {
+			|| subGroupingA == StatisticsSubAttribute.DISTRICT
+			|| subGroupingB == StatisticsSubAttribute.DISTRICT) {
 			selectBuilder.append(District.TABLE_NAME)
 				.append(" AS growthsource ON growthsource.")
 				.append(District.ID)
@@ -1131,7 +1131,7 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 		return new ImmutablePair<String, List<Object>>(queryBuilder.toString(), filterBuilderParameters);
 	}
 
-	private String buildPopulationGroupingSelect(StatisticsContactAttribute grouping, StatisticsContactSubAttribute subGrouping) {
+	private String buildPopulationGroupingSelect(StatisticsContactAttribute grouping, StatisticsSubAttribute subGrouping) {
 
 		if (grouping != null) {
 			switch (grouping) {
@@ -1330,7 +1330,7 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 		return QueryHelper.appendInFilterValues(filterBuilder, filterBuilderParameters, values, valueMapper);
 	}
 
-	private String buildContactGroupingSelectQuery(StatisticsContactAttribute grouping, StatisticsContactSubAttribute subGrouping, String groupAlias) {
+	private String buildContactGroupingSelectQuery(StatisticsContactAttribute grouping, StatisticsSubAttribute subGrouping, String groupAlias) {
 
 		StringBuilder groupingSelectPartBuilder = new StringBuilder();
 		switch (grouping) {

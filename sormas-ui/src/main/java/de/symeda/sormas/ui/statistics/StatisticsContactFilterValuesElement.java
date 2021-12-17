@@ -44,7 +44,7 @@ import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.contact.ContactClassification;
 import de.symeda.sormas.api.contact.ContactStatus;
 import de.symeda.sormas.api.statistics.StatisticsContactAttribute;
-import de.symeda.sormas.api.statistics.StatisticsContactSubAttribute;
+import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 import de.symeda.sormas.api.statistics.StatisticsHelper;
 import de.symeda.sormas.api.user.UserRole;
@@ -55,7 +55,7 @@ import de.symeda.sormas.ui.utils.CssStyles;
 public class StatisticsContactFilterValuesElement extends StatisticsFilterElement {
 
 	private final StatisticsContactAttribute attribute;
-	private final StatisticsContactSubAttribute subAttribute;
+	private final StatisticsSubAttribute subAttribute;
 
 	private Registration valueChangeListenerRegistration;
 	private ExtTokenField tokenField;
@@ -68,7 +68,7 @@ public class StatisticsContactFilterValuesElement extends StatisticsFilterElemen
 
 	private StatisticsFilterResidenceElement residenceElement;
 
-	public StatisticsContactFilterValuesElement(String caption, StatisticsContactAttribute attribute, StatisticsContactSubAttribute subAttribute, int rowIndex) {
+	public StatisticsContactFilterValuesElement(String caption, StatisticsContactAttribute attribute, StatisticsSubAttribute subAttribute, int rowIndex) {
 
 		setSpacing(true);
 		addStyleName(CssStyles.LAYOUT_MINIMAL);
@@ -89,7 +89,7 @@ public class StatisticsContactFilterValuesElement extends StatisticsFilterElemen
 	public StatisticsContactFilterValuesElement(
 		String caption,
 		StatisticsContactAttribute attribute,
-		StatisticsContactSubAttribute subAttribute,
+		StatisticsSubAttribute subAttribute,
 		StatisticsFilterJurisdictionElement jurisdictionElement,
 		int rowIndex) {
 		this(caption, attribute, subAttribute, rowIndex);
@@ -99,7 +99,7 @@ public class StatisticsContactFilterValuesElement extends StatisticsFilterElemen
 	public StatisticsContactFilterValuesElement(
 		String caption,
 		StatisticsContactAttribute attribute,
-		StatisticsContactSubAttribute subAttribute,
+		StatisticsSubAttribute subAttribute,
 		StatisticsFilterResidenceElement residenceElement,
 		int rowIndex) {
 		this(caption, attribute, subAttribute, rowIndex);

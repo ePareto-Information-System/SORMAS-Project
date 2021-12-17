@@ -18,7 +18,7 @@ import com.vaadin.v7.ui.OptionGroup;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.statistics.StatisticsContactAttribute;
-import de.symeda.sormas.api.statistics.StatisticsContactSubAttribute;
+import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.ui.statistics.StatisticsVisualizationType.StatisticsVisualizationChartType;
 import de.symeda.sormas.ui.statistics.StatisticsVisualizationType.StatisticsVisualizationMapType;
 import de.symeda.sormas.ui.utils.ButtonHelper;
@@ -162,14 +162,14 @@ public class StatisticsContactsVisualizationComponent extends HorizontalLayout {
 		return rowsElement.getContactAttribute();
 	}
 	
-	public StatisticsContactSubAttribute getRowsSubAttribute() {
+	public StatisticsSubAttribute getRowsSubAttribute() {
 		switch (visualizationType) {
 		case MAP:
 			switch (visualizationMapType) {
 			case REGIONS:
-				return StatisticsContactSubAttribute.REGION;
+				return StatisticsSubAttribute.REGION;
 			case DISTRICTS:
-				return StatisticsContactSubAttribute.DISTRICT;
+				return StatisticsSubAttribute.DISTRICT;
 			default:
 				throw new IllegalArgumentException(visualizationMapType.toString());
 			}
@@ -196,7 +196,7 @@ public class StatisticsContactsVisualizationComponent extends HorizontalLayout {
 		return columnsElement.getContactAttribute();
 	}
 
-	public StatisticsContactSubAttribute getColumnsSubAttribute() {
+	public StatisticsSubAttribute getColumnsSubAttribute() {
 		switch (visualizationType) {
 		case MAP:
 			return null;
@@ -229,8 +229,8 @@ public class StatisticsContactsVisualizationComponent extends HorizontalLayout {
 		switch (visualizationType) {
 		case TABLE:
 		case CHART:
-			return rowsElement.getContactSubAttribute() == StatisticsContactSubAttribute.REGION
-				|| columnsElement.getContactSubAttribute() == StatisticsContactSubAttribute.REGION;
+			return rowsElement.getContactSubAttribute() == StatisticsSubAttribute.REGION
+				|| columnsElement.getContactSubAttribute() == StatisticsSubAttribute.REGION;
 		case MAP:
 			return visualizationMapType == StatisticsVisualizationMapType.REGIONS;
 		default:
@@ -242,8 +242,8 @@ public class StatisticsContactsVisualizationComponent extends HorizontalLayout {
 		switch (visualizationType) {
 		case TABLE:
 		case CHART:
-			return rowsElement.getContactSubAttribute() == StatisticsContactSubAttribute.DISTRICT
-				|| columnsElement.getContactSubAttribute() == StatisticsContactSubAttribute.DISTRICT;
+			return rowsElement.getContactSubAttribute() == StatisticsSubAttribute.DISTRICT
+				|| columnsElement.getContactSubAttribute() == StatisticsSubAttribute.DISTRICT;
 		case MAP:
 			return visualizationMapType == StatisticsVisualizationMapType.DISTRICTS;
 		default:
@@ -255,8 +255,8 @@ public class StatisticsContactsVisualizationComponent extends HorizontalLayout {
 		switch (visualizationType) {
 			case TABLE:
 			case CHART:
-				return rowsElement.getContactSubAttribute() == StatisticsContactSubAttribute.COMMUNITY
-						|| columnsElement.getContactSubAttribute() == StatisticsContactSubAttribute.COMMUNITY;
+				return rowsElement.getContactSubAttribute() == StatisticsSubAttribute.COMMUNITY
+						|| columnsElement.getContactSubAttribute() == StatisticsSubAttribute.COMMUNITY;
 			//TODO: Community Grouping on this Visualisationtype may be implemented later
 			case MAP:
 				return false;
@@ -266,8 +266,8 @@ public class StatisticsContactsVisualizationComponent extends HorizontalLayout {
 	}
 	
 	public boolean hasIncidenceIncompatibleGrouping() {
-		return rowsElement.getContactSubAttribute() == StatisticsContactSubAttribute.DISTRICT
-			|| columnsElement.getContactSubAttribute() == StatisticsContactSubAttribute.DISTRICT;
+		return rowsElement.getContactSubAttribute() == StatisticsSubAttribute.DISTRICT
+			|| columnsElement.getContactSubAttribute() == StatisticsSubAttribute.DISTRICT;
 	}
 
 	public boolean hasSexGrouping() {

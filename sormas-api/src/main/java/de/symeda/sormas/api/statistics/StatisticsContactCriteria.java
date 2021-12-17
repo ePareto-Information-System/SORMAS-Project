@@ -498,7 +498,7 @@ public class StatisticsContactCriteria implements Serializable {
 
 	public List<? extends StatisticsGroupingKey> getFilterValuesForGrouping(
 		StatisticsContactAttribute attribute,
-		StatisticsContactSubAttribute subAttribute) {
+		StatisticsSubAttribute subAttribute) {
 
 		if (subAttribute != null) {
 			switch (subAttribute) {

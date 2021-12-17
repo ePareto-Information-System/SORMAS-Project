@@ -11,7 +11,7 @@ import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.statistics.StatisticsContactAttribute;
 import de.symeda.sormas.api.statistics.StatisticsContactAttributeGroup;
-import de.symeda.sormas.api.statistics.StatisticsContactSubAttribute;
+import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.ui.utils.CssStyles;
 
 @SuppressWarnings("serial")
@@ -20,7 +20,7 @@ public class StatisticsContactFilterComponent extends VerticalLayout {
 	private static final String SPECIFY_YOUR_SELECTION = I18nProperties.getCaption(Captions.statisticsSpecifySelection);
 
 	private StatisticsContactAttribute selectedAttribute;
-	private StatisticsContactSubAttribute selectedSubAttribute;
+	private StatisticsSubAttribute selectedSubAttribute;
 	private StatisticsFilterElement filterElement;
 
 	public StatisticsContactFilterComponent(int rowIndex) {
@@ -70,7 +70,7 @@ public class StatisticsContactFilterComponent extends VerticalLayout {
 					filterSubAttributeItem.setText(SPECIFY_YOUR_SELECTION);
 
 					if (attribute.getSubAttributes().length > 0) {
-						for (StatisticsContactSubAttribute subAttribute : attribute.getSubAttributes()) {
+						for (StatisticsSubAttribute subAttribute : attribute.getSubAttributes()) {
 							if (subAttribute.isUsedForFilters()) {
 								Command subAttributeCommand = selectedSubItem -> {
 									selectedSubAttribute = subAttribute;
@@ -117,7 +117,7 @@ public class StatisticsContactFilterComponent extends VerticalLayout {
 			filterElement = null;
 		}
 
-		if (selectedSubAttribute == StatisticsContactSubAttribute.DATE_RANGE) {
+		if (selectedSubAttribute == StatisticsSubAttribute.DATE_RANGE) {
 			filterElement = new StatisticsFilterDateRangeElement(rowIndex);
 		} else if (selectedAttribute == StatisticsContactAttribute.JURISDICTION) {
 			filterElement = new StatisticsFilterJurisdictionElement(rowIndex);
@@ -140,7 +140,7 @@ public class StatisticsContactFilterComponent extends VerticalLayout {
 		return selectedAttribute;
 	}
 
-	public StatisticsContactSubAttribute getSelectedSubAttribute() {
+	public StatisticsSubAttribute getSelectedSubAttribute() {
 		return selectedSubAttribute;
 	}
 

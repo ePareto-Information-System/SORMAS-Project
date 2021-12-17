@@ -61,7 +61,7 @@ public final class StatisticsHelper {
 	public static StatisticsGroupingKey buildGroupingKey(
 		Object attributeValue,
 		StatisticsCaseAttribute attribute,
-		StatisticsCaseSubAttribute subAttribute,
+		StatisticsSubAttribute subAttribute,
 		Function<Integer, RegionReferenceDto> regionProvider,
 		Function<Integer, DistrictReferenceDto> districtProvider,
 		Function<Integer, CommunityReferenceDto> communityProvider,
@@ -209,7 +209,7 @@ public final class StatisticsHelper {
 		return ageIntervalList;
 	}
 
-	public static List<StatisticsGroupingKey> getTimeGroupingKeys(StatisticsCaseAttribute attribute, StatisticsCaseSubAttribute subAttribute) {
+	public static List<StatisticsGroupingKey> getTimeGroupingKeys(StatisticsCaseAttribute attribute, StatisticsSubAttribute subAttribute) {
 
 		Date oldestCaseDate = null;
 		switch (attribute) {
@@ -278,7 +278,7 @@ public final class StatisticsHelper {
 		}
 	}
 	//get contact time Groupings
-	public static List<StatisticsGroupingKey> getContactTimeGroupingKeys(StatisticsContactAttribute attribute, StatisticsContactSubAttribute subAttribute) {
+	public static List<StatisticsGroupingKey> getContactTimeGroupingKeys(StatisticsContactAttribute attribute, StatisticsSubAttribute subAttribute) {
 
 		Date oldestContactDate = null;
 		switch (attribute) {
@@ -409,7 +409,7 @@ public final class StatisticsHelper {
 	public static StatisticsGroupingKey buildContactGroupingKey(
 			Object attributeValue,
 			StatisticsContactAttribute attribute,
-			StatisticsContactSubAttribute subAttribute,
+			StatisticsSubAttribute subAttribute,
 			Function<Integer, RegionReferenceDto> regionProvider,
 			Function<Integer, DistrictReferenceDto> districtProvider,
 			Function<Integer, CommunityReferenceDto> communityProvider) {
@@ -496,7 +496,7 @@ public final class StatisticsHelper {
 		}
 	
 	@SuppressWarnings("unchecked")
-	public static List<StatisticsGroupingKey> getContactAttributeGroupingKeys(StatisticsContactAttribute attribute,StatisticsContactSubAttribute subAttribute) {
+	public static List<StatisticsGroupingKey> getContactAttributeGroupingKeys(StatisticsContactAttribute attribute,StatisticsSubAttribute subAttribute) {
 
 		if (subAttribute != null) {
 			switch (subAttribute) {
@@ -544,7 +544,7 @@ public final class StatisticsHelper {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<StatisticsGroupingKey> getAttributeGroupingKeys(StatisticsCaseAttribute attribute, StatisticsCaseSubAttribute subAttribute) {
+	public static List<StatisticsGroupingKey> getAttributeGroupingKeys(StatisticsCaseAttribute attribute, StatisticsSubAttribute subAttribute) {
 
 		if (subAttribute != null) {
 			switch (subAttribute) {

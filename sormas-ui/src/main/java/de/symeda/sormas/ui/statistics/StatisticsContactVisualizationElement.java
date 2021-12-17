@@ -9,7 +9,7 @@ import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.statistics.StatisticsContactAttribute;
 import de.symeda.sormas.api.statistics.StatisticsContactAttributeGroup;
-import de.symeda.sormas.api.statistics.StatisticsContactSubAttribute;
+import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.ui.utils.CssStyles;
 
 @SuppressWarnings("serial")
@@ -24,11 +24,11 @@ public class StatisticsContactVisualizationElement extends HorizontalLayout {
 	private StatisticsVisualizationElementType type;
 	private StatisticsVisualizationType visualizationType;
 	private StatisticsContactAttribute attribute;
-	private StatisticsContactSubAttribute subAttribute;
+	private StatisticsSubAttribute subAttribute;
 	
 	//contact
 	private StatisticsContactAttribute contactAttribute;
-	private StatisticsContactSubAttribute contactSubAttribute;
+	private StatisticsSubAttribute contactSubAttribute;
 	
 	public StatisticsContactVisualizationElement(StatisticsVisualizationElementType type, StatisticsVisualizationType visualizationType) {
 		this.type = type;
@@ -80,7 +80,7 @@ public class StatisticsContactVisualizationElement extends HorizontalLayout {
 
 						// Build sub attribute dropdown
 						if (attribute.getSubAttributes().length > 0) {
-							for (StatisticsContactSubAttribute subAttribute : attribute.getSubAttributes()) {
+							for (StatisticsSubAttribute subAttribute : attribute.getSubAttributes()) {
 								if (subAttribute.isUsedForGrouping()) {
 									Command subAttributeCommand = selectedSubItem -> {
 										this.subAttribute = subAttribute;
@@ -121,7 +121,7 @@ public class StatisticsContactVisualizationElement extends HorizontalLayout {
 		return attribute;
 	}
 
-	public StatisticsContactSubAttribute getSubAttribute() {
+	public StatisticsSubAttribute getSubAttribute() {
 		return subAttribute;
 	}
 
@@ -143,7 +143,7 @@ public class StatisticsContactVisualizationElement extends HorizontalLayout {
 		return attribute;
 	}
 	
-	public StatisticsContactSubAttribute getContactSubAttribute() {
+	public StatisticsSubAttribute getContactSubAttribute() {
 		return subAttribute;
 	}
 }

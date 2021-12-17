@@ -17,7 +17,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.infrastructure.InfrastructureHelper;
 import de.symeda.sormas.api.statistics.StatisticsContactAttribute;
 import de.symeda.sormas.api.statistics.StatisticsContactCriteria;
-import de.symeda.sormas.api.statistics.StatisticsContactSubAttribute;
+import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 import de.symeda.sormas.api.statistics.StatisticsHelper;
 import de.symeda.sormas.api.statistics.StatisticsHelper.StatisticsKeyComparator;
@@ -52,9 +52,9 @@ public class StatisticsContactGrid extends Grid{
 	 */
 	public StatisticsContactGrid(
 		StatisticsContactAttribute rowsAttribute,
-		StatisticsContactSubAttribute rowsSubAttribute,
+		StatisticsSubAttribute rowsSubAttribute,
 		StatisticsContactAttribute columnsAttribute,
-		StatisticsContactSubAttribute columnsSubAttribute,
+		StatisticsSubAttribute columnsSubAttribute,
 		boolean showContactIncidence,
 		int incidenceDivisor,
 		List<StatisticsContactCountDto> cellValues,

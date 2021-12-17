@@ -24,7 +24,7 @@ import javax.ejb.Remote;
 import de.symeda.sormas.api.statistics.StatisticsContactAttribute;
 import de.symeda.sormas.api.statistics.StatisticsContactCountDto;
 import de.symeda.sormas.api.statistics.StatisticsContactCriteria;
-import de.symeda.sormas.api.statistics.StatisticsContactSubAttribute;
+import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 
 @Remote
 public interface ContactStatisticsFacade {
@@ -32,9 +32,9 @@ public interface ContactStatisticsFacade {
 	List<StatisticsContactCountDto> queryContactCount(
 			StatisticsContactCriteria contactCriteria,
 			StatisticsContactAttribute groupingA,
-			StatisticsContactSubAttribute subGroupingA,
+			StatisticsSubAttribute subGroupingA,
 			StatisticsContactAttribute groupingB,
-			StatisticsContactSubAttribute subGroupingB,
+			StatisticsSubAttribute subGroupingB,
 			boolean includePopulation,
 			boolean includeZeroValues,
 			Integer populationReferenceYear);
