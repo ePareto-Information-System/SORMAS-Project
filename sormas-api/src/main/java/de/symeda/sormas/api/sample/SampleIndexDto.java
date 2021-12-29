@@ -23,6 +23,7 @@ import java.util.Date;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseJurisdictionDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.caze.ResponsibleJurisdictionDto;
 import de.symeda.sormas.api.contact.ContactJurisdictionDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.event.EventParticipantJurisdictionDto;
@@ -117,10 +118,13 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 						  String caseDistrictName, String contactDistrictName, String contactCaseDistrictName, String eventDistrictName,
 						  String caseCommunityName, String contactCommunityName, String contactCaseCommunityName, String eventCommunityName,
 						  String districtName, String reportingUserUuid, String labUuid,
-						  String caseReportingUserUuid, String caseRegionUuid, String caseDistrictUuid, String caseCommunityUuid, String caseHealthFacilityUuid, String casePointOfEntryUuid,
+						  String caseReportingUserUuid,
+						  String caseResponsibleRegionUuid, String caseResponsibleDistrictUid, String caseResponsibleCommunityUid,
+						  String caseRegionUuid, String caseDistrictUuid, String caseCommunityUuid, String caseHealthFacilityUuid, String casePointOfEntryUuid,
 						  String contactReportingUserUuid, String contactRegionUuid, String contactDistrictUuid, String contactCommunityUuid,
-						  String contactCaseReportingUserUuid, String contactCaseRegionUuid, String contactCaseDistrictUuid, 
-						  String contactCaseCommunityUuid, String contactCaseHealthFacilityUuid, String contactCasePointOfEntryUuid,
+						  String contactCaseReportingUserUuid,
+						  String contactCaseResponsibleRegionUuid, String contactCaseResponsibleDistrictUid, String contactCaseResponsibleCommunityUid,
+						  String contactCaseRegionUuid, String contactCaseDistrictUuid, String contactCaseCommunityUuid, String contactCaseHealthFacilityUuid, String contactCasePointOfEntryUuid,
 						  String eventReportingUserUuid, String eventOfficerUuid, String eventParticipantRegionUuid, String eventParticipantDistrictUuid, String eventUuid) {
 	//@formatter:on
 
@@ -177,6 +181,7 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 		if (associatedCaseUuid != null) {
 			associatedCaseJurisdiction = new CaseJurisdictionDto(
 				caseReportingUserUuid,
+				ResponsibleJurisdictionDto.of(caseResponsibleRegionUuid, caseResponsibleDistrictUid, caseResponsibleCommunityUid),
 				caseRegionUuid,
 				caseDistrictUuid,
 				caseCommunityUuid,
@@ -190,6 +195,8 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 				? null
 				: new CaseJurisdictionDto(
 					contactCaseReportingUserUuid,
+					ResponsibleJurisdictionDto
+						.of(contactCaseResponsibleRegionUuid, contactCaseResponsibleDistrictUid, contactCaseResponsibleCommunityUid),
 					contactCaseRegionUuid,
 					contactCaseDistrictUuid,
 					contactCaseCommunityUuid,

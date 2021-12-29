@@ -49,6 +49,7 @@ import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.utils.ButtonHelper;
+import de.symeda.sormas.ui.utils.ComboBoxHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.LayoutUtil;
 import de.symeda.sormas.ui.utils.MenuBarHelper;
@@ -173,7 +174,7 @@ public class SampleGridComponent extends VerticalLayout {
 		{
 			// Show active/archived/all dropdown
 			if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW_ARCHIVED)) {
-				relevanceStatusFilter = new ComboBox();
+				relevanceStatusFilter = ComboBoxHelper.createComboBoxV7();
 				relevanceStatusFilter.setId("relevanceStatusFilter");
 				relevanceStatusFilter.setWidth(140, Unit.PERCENTAGE);
 				relevanceStatusFilter.setNullSelectionAllowed(false);
@@ -192,7 +193,7 @@ public class SampleGridComponent extends VerticalLayout {
 				shipmentFilterLayout.setWidth(100, Unit.PERCENTAGE);
 			}
 
-			sampleTypeFilter = new ComboBox();
+			sampleTypeFilter = ComboBoxHelper.createComboBoxV7();
 			sampleTypeFilter.setWidth(140, Unit.PERCENTAGE);
 			sampleTypeFilter.setId("sampleTypeFilter");
 			sampleTypeFilter.setNullSelectionAllowed(false);

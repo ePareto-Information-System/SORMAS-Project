@@ -62,7 +62,7 @@ import de.symeda.sormas.api.contact.ContactCriteria;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.ContactFacade;
 import de.symeda.sormas.api.contact.MapContactDto;
-import de.symeda.sormas.api.event.DashboardEventDto;
+import de.symeda.sormas.api.dashboard.DashboardEventDto;
 import de.symeda.sormas.api.facility.FacilityDto;
 import de.symeda.sormas.api.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.i18n.Captions;
@@ -379,6 +379,9 @@ public class DashboardMapComponent extends VerticalLayout {
 				null, //singleCaseDataDto.getAddressLat
 				null, //singleCaseDataDto.getAddressLon
 				null, //singleCaseDataDto.getReportingUser().getUuid(),
+				null, //singleCaseDataDto.getResponsibleRegion().getUuid(),
+				null, //singleCaseDataDto.getResponsibleDistrict().getUuid(),
+				null, //singleCaseDataDto.getResponsibleCommunity().getUuid(),
 				null, //singleCaseDataDto.getRegion().getUuid(),
 				null, //singleCaseDataDto.getDistrict().getUuid(),
 				null, //singleCaseDataDto.getCommunity().getUuid(),

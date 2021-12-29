@@ -40,7 +40,7 @@ import de.symeda.sormas.api.contact.ContactClassification;
 import de.symeda.sormas.api.contact.ContactCriteria;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.MapContactDto;
-import de.symeda.sormas.api.event.DashboardEventDto;
+import de.symeda.sormas.api.dashboard.DashboardEventDto;
 import de.symeda.sormas.api.facility.FacilityDto;
 import de.symeda.sormas.api.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.i18n.Captions;

@@ -91,6 +91,7 @@ public class Contact extends CoreAdo implements SormasToSormasEntity {
 	public static final String CONTACT_PROXIMITY = "contactProximity";
 	public static final String CONTACT_CLASSIFICATION = "contactClassification";
 	public static final String CONTACT_STATUS = "contactStatus";
+	public static final String COMPLETENESS = "completeness";
 	public static final String FOLLOW_UP_STATUS = "followUpStatus";
 	public static final String FOLLOW_UP_COMMENT = "followUpComment";
 	public static final String FOLLOW_UP_UNTIL = "followUpUntil";
@@ -224,11 +225,12 @@ public class Contact extends CoreAdo implements SormasToSormasEntity {
 	private boolean quarantineOfficialOrderSent;
 	private Date quarantineOfficialOrderSentDate;
 
+	private Float completeness;
 	private String additionalDetails;
 	private EpiData epiData;
 
 	private List<Task> tasks;
-	private Set<Sample> samples;
+	private Set<Sample> samples = new HashSet<>();
 	private Set<Visit> visits = new HashSet<>();
 	private HealthConditions healthConditions;
 	private YesNoUnknown returningTraveler;
@@ -250,6 +252,8 @@ public class Contact extends CoreAdo implements SormasToSormasEntity {
 	
 	private TransmissionClassification contactTransmissionClassification;
 
+
+	private Contact duplicateOf;
 
 	@ManyToOne(cascade = {})
 	@JoinColumn(nullable = false)
@@ -835,6 +839,14 @@ public class Contact extends CoreAdo implements SormasToSormasEntity {
 		this.quarantineOfficialOrderSentDate = quarantineOfficialOrderSentDate;
 	}
 
+	public Float getCompleteness() {
+		return completeness;
+	}
+
+	public void setCompleteness(Float completeness) {
+		this.completeness = completeness;
+	}
+
 	@Column(length = COLUMN_LENGTH_BIG)
 	public String getAdditionalDetails() {
 		return additionalDetails;
@@ -988,5 +1000,15 @@ public class Contact extends CoreAdo implements SormasToSormasEntity {
 
 	public void setFollowUpStatusChangeUser(User followUpStatusChangeUser) {
 		this.followUpStatusChangeUser = followUpStatusChangeUser;
+	}
+
+	@OneToOne(cascade = {}, fetch = FetchType.LAZY)
+	@AuditedIgnore
+	public Contact getDuplicateOf() {
+		return duplicateOf;
+	}
+
+	public void setDuplicateOf(Contact duplicateOf) {
+		this.duplicateOf = duplicateOf;
 	}
 }

@@ -1,6 +1,8 @@
 package de.symeda.sormas.ui.utils;
 
 import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 import com.vaadin.data.provider.ConfigurableFilterDataProvider;
@@ -11,7 +13,8 @@ import com.vaadin.server.SerializableSupplier;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.renderers.HtmlRenderer;
 
-import de.symeda.sormas.api.BaseCriteria;
+import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.utils.criteria.BaseCriteria;
 
 public class FilteredGrid<T, C extends BaseCriteria> extends Grid<T> {
 
@@ -19,11 +22,17 @@ public class FilteredGrid<T, C extends BaseCriteria> extends Grid<T> {
 
 	private static final long serialVersionUID = 8116377533153377424L;
 
+	/**
+	 * For lazy loading: Defines how many entries are loaded into the grid when new data needs to be loaded for the visible range.
+	 */
+	private static final int LAZY_BATCH_SIZE = 100;
+
 	private C criteria;
 	private boolean inEagerMode;
 
 	public FilteredGrid(Class<T> beanType) {
 		super(beanType);
+		getDataCommunicator().setMinPushSize(LAZY_BATCH_SIZE);
 	}
 
 	public C getCriteria() {
@@ -72,12 +81,25 @@ public class FilteredGrid<T, C extends BaseCriteria> extends Grid<T> {
 		return getDataProvider().fetch(new Query<>(0, 1, Collections.emptyList(), null, null)).findFirst().orElse(null);
 	}	
 	
-	//protected void addEditColumn(Consumer<ItemClick<T>> handler) {
+	/**
+	 * Add's a column to the left hand side of the grid complete with an edit-logo
+	 *
+	 * @param handler
+	 *            ItemClickListener
+	 */
 	protected void addEditColumn(Consumer<T> handler) {
+
+		List<Column<T, ?>> columnsList = new ArrayList<>(getColumns());
+
 		Column<T, String> editColumn = addColumn(entry -> VaadinIcons.EDIT.getHtml(), new HtmlRenderer());
 		editColumn.setId(EDIT_BTN_ID);
+		editColumn.setCaption(I18nProperties.getCaption(EDIT_BTN_ID));
 		editColumn.setSortable(false);
 		editColumn.setWidth(20);
+
+		// the edit column should always be on the left for consistency and to prevent sidescrolling
+		columnsList.add(0, editColumn);
+		setColumnOrder(columnsList.toArray(new Column[columnsList.size()]));
 
 		addItemClickListener(new ShowDetailsListener<>(EDIT_BTN_ID, e -> handler.accept(e)));
 	}

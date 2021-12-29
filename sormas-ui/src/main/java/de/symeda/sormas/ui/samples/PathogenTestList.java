@@ -68,6 +68,7 @@ public class PathogenTestList extends PaginationList<PathogenTestDto> {
 		if (!pathogenTests.isEmpty()) {
 			showPage(1);
 		} else {
+			listLayout.removeAllComponents();
 			updatePaginationLayout();
 			Label noPathogenTestsLabel = new Label(I18nProperties.getString(Strings.infoNoPathogenTests));
 			listLayout.addComponent(noPathogenTestsLabel);
@@ -111,8 +112,7 @@ public class PathogenTestList extends PaginationList<PathogenTestDto> {
 	private void addViewLabMessageButton(PathogenTestListEntry listEntry) {
 		List<LabMessageDto> labMessages = FacadeProvider.getLabMessageFacade().getByPathogenTestUuid(listEntry.getPathogenTest().getUuid());
 		if (!labMessages.isEmpty()) {
-			listEntry
-				.addAssociatedLabMessagesListener(clickEvent -> ControllerProvider.getLabMessageController().showLabMessagesSlider(labMessages));
+			listEntry.addAssociatedLabMessagesListener(clickEvent -> ControllerProvider.getLabMessageController().showLabMessagesSlider(labMessages));
 		}
 	}
 }

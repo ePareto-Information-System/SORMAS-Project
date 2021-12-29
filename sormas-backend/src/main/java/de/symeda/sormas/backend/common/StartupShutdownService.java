@@ -729,7 +729,7 @@ public class StartupShutdownService {
 					contactService.udpateContactStatus(contact);
 				}
 				break;
-			case 354:
+			case 357:
 				CountryReferenceDto serverCountry = countryFacade.getServerCountry();
 
 				if (serverCountry != null) {
