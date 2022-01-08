@@ -593,19 +593,16 @@ public class CaseFacadeEjb implements CaseFacade {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<MapCaseDto> cq = cb.createQuery(MapCaseDto.class);
 		Root<Case> caze = cq.from(Case.class);
-//		CaseJoins<Case> caseJoins = new CaseJoins<>(caze);
 
 		final CaseQueryContext caseQueryContext = new CaseQueryContext(cb, cq, caze);
 		
-		selectIndexDtoFields2(cq, caze);
+		selectMapDtoFields(cq, caze);
 
 		Predicate filter = caseService.createUserFilter(cb, cq, caze);
 
 		if (caseCriteria != null) {
-//			Predicate criteriaFilter = caseService.createCriteriaFilter(caseCriteria, cb, cq, caze, caseJoins);
 			Predicate criteriaFilter = caseService.createCriteriaFilter(caseCriteria, caseQueryContext);
 
-//			filter = AbstractAdoService.and(cb, filter, criteriaFilter);
 			filter = CriteriaBuilderHelper.and(cb, filter, criteriaFilter);
 		}
 		
@@ -1375,7 +1372,7 @@ public class CaseFacadeEjb implements CaseFacade {
 		cq.multiselect(listQueryBuilder.getCaseIndexSelections(root, new CaseJoins<>(root)));
 	}
 
-	private void selectIndexDtoFields2(CriteriaQuery<MapCaseDto> cq, Root<Case> root) {
+	private void selectMapDtoFields(CriteriaQuery<MapCaseDto> cq, Root<Case> root) {
 		Join<Case, Person> person = root.join(Case.PERSON, JoinType.LEFT);
 		Join<Person, Location> personAddress = person.join(Person.ADDRESS, JoinType.LEFT);
 		Join<Case, Facility> facility = root.join(Case.HEALTH_FACILITY, JoinType.LEFT);
@@ -1396,6 +1393,9 @@ public class CaseFacadeEjb implements CaseFacade {
 			personAddress.get(Location.LATITUDE),
 			personAddress.get(Location.LONGITUDE),
 			root.get(User.UUID),
+			root.get(Region.UUID),
+			root.get(District.UUID),
+			root.get(Community.UUID),
 			root.get(Region.UUID),
 			root.get(District.UUID),
 			root.get(Community.UUID),

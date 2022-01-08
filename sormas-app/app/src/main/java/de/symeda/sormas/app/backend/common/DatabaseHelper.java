@@ -1952,7 +1952,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 			case 240:
 				currentVersion = 240;
-//				getDao(Visit.class).executeRaw("ALTER TABLE visits ADD COLUMN origin varchar(255);");
+				getDao(Visit.class).executeRaw("ALTER TABLE visits ADD COLUMN origin varchar(255);");
 				getDao(Visit.class).executeRaw("UPDATE visits SET origin='USER'");
 
 			case 241:
@@ -2250,7 +2250,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 			case 269:
 				currentVersion = 269;
-				getDao(DiseaseVariant.class).executeRaw(
+				getDao(Case.class).executeRaw(
 					"CREATE TABLE diseaseVariant(" + "  id integer not null primary key autoincrement," + "  uuid varchar(36) not null unique,"
 						+ "  changeDate TIMESTAMP not null," + "  creationDate TIMESTAMP not null," + "  disease varchar(255) not null,"
 						+ "  name VARCHAR(512) not null," + "  lastOpenedDate BIGINT," + "  localChangeDate BIGINT NOT NULL," + "  modified SMALLINT,"
