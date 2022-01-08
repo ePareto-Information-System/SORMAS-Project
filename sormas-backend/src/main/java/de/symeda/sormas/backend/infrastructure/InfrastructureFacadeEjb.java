@@ -1,5 +1,7 @@
 package de.symeda.sormas.backend.infrastructure;
 
+import java.util.Collections;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
@@ -99,9 +101,16 @@ public class InfrastructureFacadeEjb implements InfrastructureFacade {
 		if (featureConfigurationFacade.isFeatureEnabled(FeatureType.INFRASTRUCTURE_TYPE_AREA)) {
 			sync.setAreas(areaFacade.getAllAfter(changeDates.getAreaChangeDate()));
 		}
+		else {
+			sync.setAreas(Collections.emptyList());
+		}
 		if (featureConfigurationFacade.isFeatureEnabled(FeatureType.CAMPAIGNS)) {
 			sync.setCampaigns(campaignFacade.getAllAfter(changeDates.getCampaignChangeDate()));
 			sync.setCampaignFormMetas(campaignFormMetaFacade.getAllAfter(changeDates.getCampaignFormMetaChangeDate()));
+		}
+		else {
+			sync.setCampaigns(Collections.emptyList());
+			sync.setCampaignFormMetas(Collections.emptyList());		
 		}
 
 		return sync;
