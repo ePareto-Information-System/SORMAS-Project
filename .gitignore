@@ -23,6 +23,8 @@ deploy
 /sormas-app/java_pid21052.hprof
 /sormas-app/app/release/output.json
 /sormas-app/app/release/sormas-1.60.3-release.apk
+/sormas-app/app/debug/output.json
+/sormas-app/app/debug/sormas-1.60.3-debug.apk
 bin
 /sormas-base/setup/setup.log
 
