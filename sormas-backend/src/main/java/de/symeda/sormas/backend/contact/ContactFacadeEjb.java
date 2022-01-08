@@ -67,6 +67,7 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.VisitOrigin;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.clinicalcourse.HealthConditionsDto;
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.contact.ContactClassification;
 import de.symeda.sormas.api.contact.ContactCriteria;
@@ -1226,8 +1227,26 @@ public class ContactFacadeEjb implements ContactFacade {
 		target.setQuarantineOfficialOrderSentDate(source.getQuarantineOfficialOrderSentDate());
 		target.setAdditionalDetails(source.getAdditionalDetails());
 
-		target.setEpiData(epiDataFacade.fromDto(source.getEpiData(), checkChangeDate));
-		target.setHealthConditions(clinicalCourseFacade.fromHealthConditionsDto(source.getHealthConditions(), checkChangeDate));
+		// create new epidata info in case it is not created in the mobile app
+		{
+			EpiDataDto epiData = source.getEpiData();
+			if (epiData == null && target.getEpiData() == null) {
+				epiData = EpiDataDto.build();
+			}
+			if (epiData != null) {
+				target.setEpiData(epiDataFacade.fromDto(epiData, checkChangeDate));
+			}
+		}
+		// create new health conditions in case it is not created in the mobile app
+		{
+			HealthConditionsDto healthConditions = source.getHealthConditions();
+			if (healthConditions == null && target.getHealthConditions() == null) {
+				healthConditions = HealthConditionsDto.build();
+			}
+			if (healthConditions != null) {
+				target.setHealthConditions(clinicalCourseFacade.fromHealthConditionsDto(healthConditions, checkChangeDate));
+			}
+		}
 		target.setReturningTraveler(source.getReturningTraveler());
 		target.setEndOfQuarantineReason(source.getEndOfQuarantineReason());
 		target.setEndOfQuarantineReasonDetails(source.getEndOfQuarantineReasonDetails());
