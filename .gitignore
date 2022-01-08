@@ -21,6 +21,8 @@ deploy
 *.jks
 /sormas-app/keystore.properties
 /sormas-app/java_pid21052.hprof
+/sormas-app/app/release/output.json
+/sormas-app/app/release/sormas-1.60.3-release.apk
 bin
 /sormas-base/setup/setup.log
 
