@@ -112,12 +112,12 @@ public class CaseExportDto implements Serializable {
 	public static final String LATEST_EVENT_ID = "latestEventId";
 	public static final String LATEST_EVENT_STATUS = "latestEventStatus";
 	public static final String LATEST_EVENT_TITLE = "latestEventTitle";
-	public static final String CASE_LATITUDE = "caseLatitude";
-	public static final String CASE_LONGITUDE = "caseLongitude";
-	public static final String CASE_LAT_LON_ACCURACY = "caseLatLonAccuracy";
-	public static final String PERSON_LATITUDE = "personLatitude";
-	public static final String PERSON_LONGITUDE = "personLongitude";
-	public static final String PERSON_LAT_LON_ACCURACY = "personLatLonAccuracy";
+	public static final String CASE_LATITUDE = "reportLat";
+	public static final String CASE_LONGITUDE = "reportLon";
+	public static final String CASE_LAT_LON_ACCURACY = "reportLatLonAccuracy";
+	public static final String PERSON_LATITUDE = "person.Latitude";
+	public static final String PERSON_LONGITUDE = "person.Longitude";
+	public static final String PERSON_LAT_LON_ACCURACY = "person.LatLonAccuracy";
 
 	private String country;
 	private long id;
