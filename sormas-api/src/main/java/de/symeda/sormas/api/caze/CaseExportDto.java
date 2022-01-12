@@ -93,7 +93,7 @@ public class CaseExportDto implements Serializable {
 	public static final String MAX_SOURCE_CASE_CLASSIFICATION = "maxSourceCaseClassification";
 	public static final String ASSOCIATED_WITH_OUTBREAK = "associatedWithOutbreak";
 	public static final String BURIAL_INFO = "burialInfo";
-	public static final String ADDRESS_GPS_COORDINATES = "addressGpsCoordinates";
+	public static final String ADDRESS_GPS_COORDINATES = "person.address.gpsCoordinates";
 	public static final String CASE_GPS_COORDINATES = "caseGpsCoordinates";
 	public static final String BURIAL_ATTENDED = "burialAttended";
 	public static final String TRAVELED = "traveled";
@@ -115,9 +115,9 @@ public class CaseExportDto implements Serializable {
 	public static final String CASE_LATITUDE = "reportLat";
 	public static final String CASE_LONGITUDE = "reportLon";
 	public static final String CASE_LAT_LON_ACCURACY = "reportLatLonAccuracy";
-	public static final String PERSON_LATITUDE = "person.Latitude";
-	public static final String PERSON_LONGITUDE = "person.Longitude";
-	public static final String PERSON_LAT_LON_ACCURACY = "person.LatLonAccuracy";
+	public static final String PERSON_LATITUDE = "person.address.latitude";
+	public static final String PERSON_LONGITUDE = "person.address.longitude";
+	public static final String PERSON_LAT_LON_ACCURACY = "person.address.latLonAccuracy";
 
 	private String country;
 	private long id;
@@ -1567,6 +1567,7 @@ public class CaseExportDto implements Serializable {
 	@ExportTarget(caseExportTypes = {
 		CaseExportType.CASE_SURVEILLANCE,
 		CaseExportType.CASE_MANAGEMENT })
+	@ExportEntity(LocationDto.class)
 	@ExportProperty(ADDRESS_GPS_COORDINATES)
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getAddressGpsCoordinates() {
