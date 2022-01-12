@@ -441,8 +441,8 @@ public interface Captions {
 	String CaseExport_quarantineInformation = "CaseExport.quarantineInformation";
 	String CaseExport_reportingUserName = "CaseExport.reportingUserName";
 	String CaseExport_reportingUserRoles = "CaseExport.reportingUserRoles";
-	String CaseExport_latitude = "CaseExport.latitude";
-	String CaseExport_longitude = "CaseExport.longitude";
+	String CaseExport_caseLatitude = "CaseExport.caselatitude";
+	String CaseExport_caseLongitude = "CaseExport.caselongitude";
 	String CaseExport_caseLatLonAccuracy = "CaseExport.caseLatLonAccuracy";
 	String CaseExport_personLatitude = "CaseExport.personLatitude";
 	String CaseExport_personLatLongitude = "CaseExport.personLongitude";
