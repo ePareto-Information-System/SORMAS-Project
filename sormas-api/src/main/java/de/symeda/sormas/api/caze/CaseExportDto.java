@@ -1533,6 +1533,7 @@ public class CaseExportDto implements Serializable {
 	@ExportTarget(caseExportTypes = {
 		CaseExportType.CASE_SURVEILLANCE,
 		CaseExportType.CASE_MANAGEMENT })
+	@ExportEntity(LocationDto.class)
 	@ExportProperty(PERSON_LATITUDE)
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getPersonLatitude() {
@@ -1543,6 +1544,7 @@ public class CaseExportDto implements Serializable {
 	@ExportTarget(caseExportTypes = {
 		CaseExportType.CASE_SURVEILLANCE,
 		CaseExportType.CASE_MANAGEMENT })
+	@ExportEntity(LocationDto.class)
 	@ExportProperty(PERSON_LONGITUDE)
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getPersonLongitude() {
@@ -1551,8 +1553,10 @@ public class CaseExportDto implements Serializable {
 
 	@Order(88)
 	@ExportTarget(caseExportTypes = {
+
 		CaseExportType.CASE_SURVEILLANCE,
 		CaseExportType.CASE_MANAGEMENT })
+	@ExportEntity(LocationDto.class)
 	@ExportProperty(PERSON_LAT_LON_ACCURACY)
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getPersonLatLonAccuracy() {
