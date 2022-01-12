@@ -816,8 +816,29 @@ public class CaseFacadeEjb implements CaseFacade {
 				symptoms = symptomsList.stream().collect(Collectors.toMap(Symptoms::getId, Function.identity()));
 			}
 
+			Map<Long, Case> caseAddresses = null;
+			if (ExportHelper.shouldExportFields(
+				exportConfiguration,
+				CaseDataDto.REPORT_LAT,
+				CaseExportDto.CASE_LATITUDE,
+				CaseExportDto.CASE_LONGITUDE,
+				CaseExportDto.CASE_LAT_LON_ACCURACY,
+				CaseExportDto.CASE_GPS_COORDINATES)) {
+				CriteriaQuery<Case> caseAddressesCq = cb.createQuery(Case.class);
+				Root<Case> caseAddressRoot = caseAddressesCq.from(Case.class);
+				Expression<String> caseAddressesIdsExpr = caseAddressRoot.get(Case.ID);
+				caseAddressesCq.where(caseAddressesIdsExpr.in(resultList.stream().map(CaseExportDto::getId).collect(Collectors.toList())));
+				List<Case> caseAddressesList = em.createQuery(caseAddressesCq).setHint(ModelConstants.HINT_HIBERNATE_READ_ONLY, true).getResultList();
+				caseAddresses = caseAddressesList.stream().collect(Collectors.toMap(Case::getId, Function.identity()));
+			}
+
 			Map<Long, Location> personAddresses = null;
-			if (ExportHelper.shouldExportFields(exportConfiguration, PersonDto.ADDRESS, CaseExportDto.ADDRESS_GPS_COORDINATES)) {
+			if (ExportHelper.shouldExportFields(
+				exportConfiguration,
+				PersonDto.ADDRESS,
+				CaseExportDto.ADDRESS_GPS_COORDINATES,
+				CaseExportDto.PERSON_LATITUDE,
+				CaseExportDto.PERSON_LONGITUDE)) {
 				CriteriaQuery<Location> personAddressesCq = cb.createQuery(Location.class);
 				Root<Location> personAddressesRoot = personAddressesCq.from(Location.class);
 				Expression<String> personAddressesIdsExpr = personAddressesRoot.get(Location.ID);
@@ -996,6 +1017,34 @@ public class CaseFacadeEjb implements CaseFacade {
 				if (symptoms != null) {
 					Optional.ofNullable(symptoms.get(exportDto.getSymptomsId()))
 						.ifPresent(symptom -> exportDto.setSymptoms(SymptomsFacadeEjb.toDto(symptom)));
+				}
+				if (exportConfiguration == null || exportConfiguration.getProperties().contains(CaseExportDto.CASE_LATITUDE)) {
+					Optional.ofNullable(caseAddresses.get(exportDto.getId()))
+						.ifPresent(caseAddress -> exportDto.setCaseLatitude(caseAddress.buildCaseLatitudeCoordination()));
+				}
+				if (exportConfiguration == null || exportConfiguration.getProperties().contains(CaseExportDto.CASE_LONGITUDE)) {
+					Optional.ofNullable(caseAddresses.get(exportDto.getId()))
+						.ifPresent(caseAddress -> exportDto.setCaseLongitude(caseAddress.buildCaseLongitudeCoordination()));
+				}
+				if (exportConfiguration == null || exportConfiguration.getProperties().contains(CaseExportDto.CASE_LAT_LON_ACCURACY)) {
+					Optional.ofNullable(caseAddresses.get(exportDto.getId()))
+						.ifPresent(caseAddress -> exportDto.setCaseLatLonAccuracy(caseAddress.buildCaseLatLonCoordination()));
+				}
+				if (exportConfiguration == null || exportConfiguration.getProperties().contains(CaseExportDto.CASE_GPS_COORDINATES)) {
+					Optional.ofNullable(caseAddresses.get(exportDto.getId()))
+						.ifPresent(caseAddress -> exportDto.setCaseGpsCoordinates(caseAddress.buildCaseGpsCoordinationCaption()));
+				}
+				if (exportConfiguration == null || exportConfiguration.getProperties().contains(CaseExportDto.PERSON_LATITUDE)) {
+					Optional.ofNullable(personAddresses.get(exportDto.getPersonAddressId()))
+						.ifPresent(personAddress -> exportDto.setPersonLatitude(personAddress.buildLatitudeCoordination()));
+				}
+				if (exportConfiguration == null || exportConfiguration.getProperties().contains(CaseExportDto.PERSON_LONGITUDE)) {
+					Optional.ofNullable(personAddresses.get(exportDto.getPersonAddressId()))
+						.ifPresent(personAddress -> exportDto.setPersonLongitude(personAddress.buildLongitudeCoordination()));
+				}
+				if (exportConfiguration == null || exportConfiguration.getProperties().contains(CaseExportDto.PERSON_LAT_LON_ACCURACY)) {
+					Optional.ofNullable(personAddresses.get(exportDto.getPersonAddressId()))
+						.ifPresent(personAddress -> exportDto.setPersonLatLonAccuracy(personAddress.buildLatLonCoordination()));
 				}
 				if (personAddresses != null || exportConfiguration.getProperties().contains(CaseExportDto.ADDRESS_GPS_COORDINATES)) {
 					Optional.ofNullable(personAddresses.get(exportDto.getPersonAddressId()))
