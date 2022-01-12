@@ -353,9 +353,33 @@ public class Location extends AbstractDomainObject {
 		} else if (latitude == null || longitude == null) {
 			return I18nProperties.getString(Strings.messageIncompleteGpsCoordinates);
 		} else if (latLonAccuracy == null) {
-			return latitude + ", " + longitude;
+			return latitude + "," + longitude;
 		} else {
 			return latitude + ", " + longitude + " +-" + Math.round(latLonAccuracy) + "m";
+		}
+	}
+
+	public String buildLatitudeCoordination() {
+		if (latitude == null) {
+			return "";
+		} else {
+			return latitude + "";
+		}
+	}
+
+	public String buildLongitudeCoordination() {
+		if (longitude == null) {
+			return "";
+		} else {
+			return longitude + "";
+		}
+	}
+
+	public String buildLatLonCoordination() {
+		if (latLonAccuracy == null) {
+			return "";
+		} else {
+			return latLonAccuracy + "";
 		}
 	}
 
