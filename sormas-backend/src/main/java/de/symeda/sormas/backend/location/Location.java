@@ -371,7 +371,7 @@ public class Location extends AbstractDomainObject {
 		if (longitude == null) {
 			return "";
 		} else {
-			return longitude + "";
+			return " " + longitude;
 		}
 	}
 
