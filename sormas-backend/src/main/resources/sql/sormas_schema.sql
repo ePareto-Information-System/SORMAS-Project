@@ -6274,8 +6274,15 @@ INSERT INTO schema_version (version_number, comment) VALUES (311, 'Add superordi
 
 -- 2020-12-03 Remove hospital from exposure type of places #3680
 -- 2021-01-28 [Hotfix] Fixed migration code setting facility type for all locations in the system #4120
-UPDATE location SET facilitytype = 'HOSPITAL' WHERE facilitytype IS NULL AND (SELECT typeofplace FROM exposures WHERE location_id = location.id) = 'HOSPITAL';
-UPDATE exposures SET typeofplace = 'FACILITY' WHERE (SELECT facilitytype FROM location WHERE id = exposures.location_id) IS NOT NULL;
+UPDATE location l
+	SET facilitytype = 'HOSPITAL'
+FROM exposures e
+WHERE e.location_id = l.id AND l.facilitytype IS NULL AND e.typeofplace = 'HOSPITAL';
+
+UPDATE exposures e
+	SET typeofplace = 'FACILITY'
+FROM location l
+WHERE e.location_id = l.id AND l.facilitytype IS NOT NULL;
 
 INSERT INTO schema_version (version_number, comment) VALUES (312, 'Remove hospital from exposure type of places #3680, #4120');
 
