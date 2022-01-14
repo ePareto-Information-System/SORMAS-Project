@@ -410,12 +410,15 @@ public class ContactService extends AbstractCoreAdoService<Contact> {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<MapContactDto> cq = cb.createQuery(MapContactDto.class);
+
 		Root<Contact> contact = cq.from(getElementClass());
 		Join<Contact, Person> person = contact.join(Contact.PERSON, JoinType.LEFT);
 		Join<Person, Location> contactPersonAddress = person.join(Person.ADDRESS, JoinType.LEFT);
 		Join<Contact, Case> caze = contact.join(Contact.CAZE, JoinType.LEFT);
 		Join<Case, Person> casePerson = caze.join(Case.PERSON, JoinType.LEFT);
 		Join<Case, Symptoms> symptoms = caze.join(Case.SYMPTOMS, JoinType.LEFT);
+
+		Join<Contact, District> contactDistrict = contact.join(Contact.DISTRICT, JoinType.LEFT);
 
 		Predicate filter = createMapContactsFilter(cb, cq, contact, caze, contactPersonAddress, region, district, disease, from, to);
 
@@ -435,7 +438,10 @@ public class ContactService extends AbstractCoreAdoService<Contact> {
 				person.get(Person.FIRST_NAME),
 				person.get(Person.LAST_NAME),
 				casePerson.get(Person.FIRST_NAME),
-				casePerson.get(Person.LAST_NAME));
+				casePerson.get(Person.LAST_NAME),
+					contactDistrict.get(District.DISTRICT_LATITUDE),
+					contactDistrict.get(District.DISTRICT_LONGITUDE)
+					);
 
 			result = em.createQuery(cq).getResultList();
 			// #1274 Temporarily disabled because it severely impacts the performance of the

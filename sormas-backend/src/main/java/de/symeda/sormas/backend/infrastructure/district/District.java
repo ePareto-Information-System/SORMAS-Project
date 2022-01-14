@@ -30,6 +30,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
+import de.symeda.sormas.api.geo.GeoLatLon;
 import de.symeda.sormas.backend.common.InfrastructureAdo;
 import de.symeda.sormas.backend.feature.FeatureConfiguration;
 import de.symeda.sormas.backend.infrastructure.community.Community;
@@ -49,6 +50,8 @@ public class District extends InfrastructureAdo {
 	public static final String GROWTH_RATE = "growthRate";
 	public static final String EXTERNAL_ID = "externalID";
 	public static final String FEATURE_CONFIGURATIONS = "featureConfigurations";
+	public static final String DISTRICT_LATITUDE = "districtLatitude";
+	public static final String DISTRICT_LONGITUDE = "districtLongitude";
 
 	private String name;
 	private Region region;
@@ -56,6 +59,9 @@ public class District extends InfrastructureAdo {
 	private List<Community> communities;
 	private Float growthRate;
 	private String externalID;
+
+	private Double districtLatitude;
+	private Double districtLongitude;
 
 	private List<FeatureConfiguration> featureConfigurations;
 
@@ -124,5 +130,21 @@ public class District extends InfrastructureAdo {
 	@Override
 	public String toString() {
 		return getName();
+	}
+
+	public Double getDistrictLatitude() {
+		return districtLatitude;
+	}
+
+	public void setDistrictLatitude(Double districtLatitude) {
+		this.districtLatitude = districtLatitude;
+	}
+
+	public Double getDistrictLongitude() {
+		return districtLongitude;
+	}
+
+	public void setDistrictLongitude(Double districtLongitude) {
+		this.districtLongitude = districtLongitude;
 	}
 }

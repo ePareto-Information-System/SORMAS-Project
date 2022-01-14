@@ -1059,8 +1059,12 @@ public class DashboardMapComponent extends VerticalLayout {
 
 			if (caze.getAddressLat() != null && caze.getAddressLon() != null) {
 				marker.setLatLon(caze.getAddressLat(), caze.getAddressLon());
-			} else {
+			}
+			else if(caze.getReportLat() != null && caze.getReportLon() != null) {
 				marker.setLatLon(caze.getReportLat(), caze.getReportLon());
+			}
+			else {
+				marker.setLatLon(caze.getDistrictLatitude(), caze.getDistrictLongitude());
 			}
 
 			caseMarkers.add(marker);
@@ -1174,8 +1178,12 @@ public class DashboardMapComponent extends VerticalLayout {
 			marker.setIcon(icon);
 			if (contact.getAddressLat() != null && contact.getAddressLon() != null) {
 				marker.setLatLon(contact.getAddressLat(), contact.getAddressLon());
-			} else {
+			}
+			else if(contact.getReportLat() != null && contact.getReportLon() != null) {
 				marker.setLatLon(contact.getReportLat(), contact.getReportLon());
+			}
+			else {
+				marker.setLatLon(contact.getDistrictLatitude(), contact.getDistrictLongitude());
 			}
 			markerContacts.add(contact);
 			contactMarkers.add(marker);

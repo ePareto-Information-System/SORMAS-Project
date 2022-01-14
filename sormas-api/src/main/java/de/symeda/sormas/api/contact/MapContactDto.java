@@ -60,20 +60,23 @@ public class MapContactDto implements Serializable {
 	private String casePersonFirstName;
 	private String casePersonLastName;
 
+	private double districtLatitude;
+	private double districtLongitude;
+
 	public MapContactDto(
-		String uuid,
-		ContactClassification contactClassification,
-		Double reportLat,
-		Double reportLon,
-		Double addressLat,
-		Double addressLon,
-		Date caseOnsetDate,
-		Date caseReportDate,
-		Date contactReportDate,
-		String personFirstName,
-		String personLastName,
-		String casePersonFirstName,
-		String casePersonLastName) {
+			String uuid,
+			ContactClassification contactClassification,
+			Double reportLat,
+			Double reportLon,
+			Double addressLat,
+			Double addressLon,
+			Date caseOnsetDate,
+			Date caseReportDate,
+			Date contactReportDate,
+			String personFirstName,
+			String personLastName,
+			String casePersonFirstName,
+			String casePersonLastName) {
 
 		this.uuid = uuid;
 		this.contactClassification = contactClassification;
@@ -88,6 +91,40 @@ public class MapContactDto implements Serializable {
 		this.personLastName = personLastName;
 		this.casePersonFirstName = casePersonFirstName;
 		this.casePersonLastName = casePersonLastName;
+	}
+
+	public MapContactDto(
+		String uuid,
+		ContactClassification contactClassification,
+		Double reportLat,
+		Double reportLon,
+		Double addressLat,
+		Double addressLon,
+		Date caseOnsetDate,
+		Date caseReportDate,
+		Date contactReportDate,
+		String personFirstName,
+		String personLastName,
+		String casePersonFirstName,
+		String casePersonLastName,
+		double districtLatitude,
+		double districtLongitude) {
+
+		this.uuid = uuid;
+		this.contactClassification = contactClassification;
+		this.reportLat = reportLat;
+		this.reportLon = reportLon;
+		this.addressLat = addressLat;
+		this.addressLon = addressLon;
+		this.caseOnsetDate = caseOnsetDate;
+		this.caseReportDate = caseReportDate;
+		this.contactReportDate = contactReportDate;
+		this.personFirstName = personFirstName;
+		this.personLastName = personLastName;
+		this.casePersonFirstName = casePersonFirstName;
+		this.casePersonLastName = casePersonLastName;
+		this.districtLatitude = districtLatitude;
+		this.districtLongitude = districtLongitude;
 	}
 
 	public String getUuid() {
@@ -212,5 +249,21 @@ public class MapContactDto implements Serializable {
 			builder.append(casePersonFirstName).append(" ").append(casePersonLastName.toUpperCase());
 		}
 		return builder.toString();
+	}
+
+	public double getDistrictLatitude() {
+		return districtLatitude;
+	}
+
+	public void setDistrictLatitude(double districtLatitude) {
+		this.districtLatitude = districtLatitude;
+	}
+
+	public double getDistrictLongitude() {
+		return districtLongitude;
+	}
+
+	public void setDistrictLongitude(double districtLongitude) {
+		this.districtLongitude = districtLongitude;
 	}
 }

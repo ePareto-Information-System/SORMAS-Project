@@ -61,6 +61,8 @@ public class DistrictsGrid extends FilteredGrid<DistrictIndexDto, DistrictCriter
 			DistrictIndexDto.REGION,
 			DistrictIndexDto.EPID_CODE,
 			DistrictIndexDto.EXTERNAL_ID,
+			DistrictIndexDto.DISTRICT_LATITUDE,
+			DistrictIndexDto.DISTRICT_LONGITUDE,
 			DistrictIndexDto.POPULATION,
 			DistrictIndexDto.GROWTH_RATE);
 

@@ -38,6 +38,8 @@ public class DistrictDto extends EntityDto {
 	public static final String GROWTH_RATE = "growthRate";
 	public static final String REGION = "region";
 	public static final String EXTERNAL_ID = "externalID";
+	public static final String DISTRICT_LATITUDE = "districtLatitude";
+	public static final String DISTRICT_LONGITUDE = "districtLongitude";
 
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
 	private String name;
@@ -48,6 +50,9 @@ public class DistrictDto extends EntityDto {
 	private boolean archived;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String externalID;
+
+	private Double districtLatitude;
+	private Double districtLongitude;
 
 	public DistrictDto(
 		Date creationDate,
@@ -136,5 +141,21 @@ public class DistrictDto extends EntityDto {
 		DistrictDto dto = new DistrictDto();
 		dto.setUuid(DataHelper.createUuid());
 		return dto;
+	}
+
+	public Double getDistrictLatitude() {
+		return districtLatitude;
+	}
+
+	public void setDistrictLatitude(Double districtLatitude) {
+		this.districtLatitude = districtLatitude;
+	}
+
+	public Double getDistrictLongitude() {
+		return districtLongitude;
+	}
+
+	public void setDistrictLongitude(Double districtLongitude) {
+		this.districtLongitude = districtLongitude;
 	}
 }

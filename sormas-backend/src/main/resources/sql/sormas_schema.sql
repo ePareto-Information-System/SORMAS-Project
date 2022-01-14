@@ -8883,4 +8883,9 @@ CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON task_obse
 
 INSERT INTO schema_version (version_number, comment) VALUES (428, 'Add observers to tasks #7021');
 
+
+ALTER TABLE district ADD COLUMN IF NOT EXISTS districtlatitude double precision;
+ALTER TABLE district ADD COLUMN IF NOT EXISTS districtlongitude double precision;
+
+INSERT INTO schema_version (version_number, comment) VALUES (428, 'Add Geolocation to district #1865');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
