@@ -150,6 +150,9 @@ import de.symeda.sormas.backend.util.QueryHelper;
 import de.symeda.sormas.backend.visit.Visit;
 import de.symeda.sormas.backend.visit.VisitFacadeEjb;
 import de.symeda.sormas.utils.CaseJoins;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.hql.internal.ast.ASTQueryTranslatorFactory;
+import org.hibernate.hql.spi.QueryTranslator;
 
 @Stateless
 @LocalBean
@@ -307,7 +310,6 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 
 		CaseQueryContext caseQueryContext = new CaseQueryContext(cb, cq, caze);
 		CaseJoins<Case> joins = (CaseJoins<Case>) caseQueryContext.getJoins();
-		Join<Case, District> contactDistrict = joins.getDistrict();
 
 		Predicate filter = createMapCasesFilter(cb, cq, caze, joins, region, district, disease, from, to, dateType);
 
@@ -330,9 +332,10 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 				joins.getPersonAddress().get(Location.LATITUDE),
 				joins.getPersonAddress().get(Location.LONGITUDE),
 				JurisdictionHelper.booleanSelector(cb, inJurisdictionOrOwned(caseQueryContext)),
-				contactDistrict.get(District.DISTRICT_LATITUDE),
-				contactDistrict.get(District.DISTRICT_LONGITUDE));
-
+				joins.getResponsibleDistrict().get(District.UUID),
+				joins.getResponsibleDistrict().get(District.DISTRICT_LATITUDE),
+				joins.getResponsibleDistrict().get(District.DISTRICT_LONGITUDE)
+			);
 			result = em.createQuery(cq).getResultList();
 		} else {
 			result = Collections.emptyList();
@@ -370,9 +373,15 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 			.and(cb, cb.isNotNull(joins.getPersonAddress().get(Location.LONGITUDE)), cb.isNotNull(joins.getPersonAddress().get(Location.LATITUDE)));
 		Predicate reportLatLonNotNull =
 			CriteriaBuilderHelper.and(cb, cb.isNotNull(root.get(Case.REPORT_LON)), cb.isNotNull(root.get(Case.REPORT_LAT)));
+
+		Predicate districtLatLonNotNull = CriteriaBuilderHelper.and(cb, cb.isNotNull(joins.getResponsibleDistrict().get(District.DISTRICT_LONGITUDE)),
+				cb.isNotNull(joins.getResponsibleDistrict().get(District.DISTRICT_LATITUDE)));
+
 		Predicate facilityLatLonNotNull = CriteriaBuilderHelper
 			.and(cb, cb.isNotNull(joins.getFacility().get(Facility.LONGITUDE)), cb.isNotNull(joins.getFacility().get(Facility.LATITUDE)));
-		Predicate latLonProvided = CriteriaBuilderHelper.or(cb, personLatLonNotNull, reportLatLonNotNull, facilityLatLonNotNull);
+
+		Predicate latLonProvided = CriteriaBuilderHelper.or(cb, personLatLonNotNull, reportLatLonNotNull, facilityLatLonNotNull, districtLatLonNotNull);
+
 		filter = CriteriaBuilderHelper.and(cb, filter, latLonProvided);
 
 		if (region != null) {
