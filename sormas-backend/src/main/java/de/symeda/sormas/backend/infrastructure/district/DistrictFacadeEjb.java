@@ -144,6 +144,8 @@ public class DistrictFacadeEjb
 				case District.NAME:
 				case District.EPID_CODE:
 				case District.GROWTH_RATE:
+				case District.DISTRICT_LATITUDE:
+				case District.DISTRICT_LONGITUDE:
 				case District.EXTERNAL_ID:
 					expression = district.get(sortProperty.propertyName);
 					break;
@@ -342,7 +344,7 @@ public class DistrictFacadeEjb
 		target.setExternalID(source.getExternalID());
 
 		target.setDistrictLatitude(source.getDistrictLatitude());
-		target.setDistrictLatitude(source.getDistrictLongitude());
+		target.setDistrictLongitude(source.getDistrictLongitude());
 
 		return target;
 	}
