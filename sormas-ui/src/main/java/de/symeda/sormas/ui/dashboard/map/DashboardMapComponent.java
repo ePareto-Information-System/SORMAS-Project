@@ -118,12 +118,14 @@ public class DashboardMapComponent extends VerticalLayout {
 
 	// Entities
 	private final HashMap<FacilityReferenceDto, List<MapCaseDto>> casesByFacility = new HashMap<>();
+	private final HashMap<DistrictReferenceDto, List<MapCaseDto>> casesByDistrict = new HashMap<>();
 	private List<MapCaseDto> mapCaseDtos = new ArrayList<>();
 	private List<MapCaseDto> mapAndFacilityCases = new ArrayList<>();
 	private List<MapContactDto> mapContactDtos = new ArrayList<>();
 
 	// Map data
 	private final List<FacilityReferenceDto> markerCaseFacilities = new ArrayList<FacilityReferenceDto>();
+	private final List<DistrictReferenceDto> markerCaseDistrict = new ArrayList<DistrictReferenceDto>();
 	private final List<MapContactDto> markerContacts = new ArrayList<MapContactDto>();
 	private final List<DashboardEventDto> markerEvents = new ArrayList<DashboardEventDto>();
 	private final List<RegionReferenceDto> polygonRegions = new ArrayList<RegionReferenceDto>();
@@ -995,7 +997,9 @@ public class DashboardMapComponent extends VerticalLayout {
 
 		map.removeGroup(CASES_GROUP_ID);
 		markerCaseFacilities.clear();
+		markerCaseDistrict.clear();
 		casesByFacility.clear();
+		casesByDistrict.clear();
 		mapCaseDtos.clear();
 		mapAndFacilityCases.clear();
 	}
@@ -1063,6 +1067,9 @@ public class DashboardMapComponent extends VerticalLayout {
 			else if(caze.getReportLat() != null && caze.getReportLon() != null) {
 				marker.setLatLon(caze.getReportLat(), caze.getReportLon());
 			}
+            else if(caze.getHealthFacilityLat() != null && caze.getHealthFacilityLon() != null) {
+                marker.setLatLon(caze.getHealthFacilityLat(), caze.getHealthFacilityLon());
+            }
 			else {
 				marker.setLatLon(caze.getDistrictLatitude(), caze.getDistrictLongitude());
 			}
@@ -1081,17 +1088,25 @@ public class DashboardMapComponent extends VerticalLayout {
 				continue;
 			boolean hasCaseGps =
 				(caze.getAddressLat() != null && caze.getAddressLon() != null) || (caze.getReportLat() != null && caze.getReportLon() != null);
+
 			boolean hasFacilityGps = caze.getHealthFacilityLat() != null && caze.getHealthFacilityLon() != null;
+
+			boolean hasDistrickGps = caze.getDistrictLatitude() != null && caze.getDistrictLongitude() != null;
 
 			if (mapCaseDisplayMode == MapCaseDisplayMode.CASE_ADDRESS) {
 				if (!hasCaseGps) {
 					continue;
 				}
 				mapCaseDtos.add(caze);
-			} else {
-				if (FacilityDto.NONE_FACILITY_UUID.equals(caze.getHealthFacilityUuid())
-					|| FacilityDto.OTHER_FACILITY_UUID.equals(caze.getHealthFacilityUuid())
-					|| !hasFacilityGps) {
+			}
+			else if (hasDistrickGps){
+				mapCaseDtos.add(caze);
+				DistrictReferenceDto district = new DistrictReferenceDto();
+				district.setUuid(caze.getDistrictUuid());
+				casesByDistrict.computeIfAbsent(district, k -> new ArrayList<>());
+			}
+			else {
+				if (FacilityDto.NONE_FACILITY_UUID.equals(caze.getHealthFacilityUuid()) || FacilityDto.OTHER_FACILITY_UUID.equals(caze.getHealthFacilityUuid()) || !hasFacilityGps) {
 					if (mapCaseDisplayMode == MapCaseDisplayMode.FACILITY_OR_CASE_ADDRESS) {
 						if (!hasCaseGps) {
 							continue;
@@ -1247,6 +1262,7 @@ public class DashboardMapComponent extends VerticalLayout {
 		case CASES_GROUP_ID:
 			if (markerIndex < markerCaseFacilities.size()) {
 				FacilityReferenceDto facility = markerCaseFacilities.get(markerIndex);
+//				DistrictReferenceDto districtRef = markerCaseDistrict.get(markerIndex);
 				VerticalLayout layout = new VerticalLayout();
 				Window window = VaadinUiUtil.showPopupWindow(layout);
 				CasePopupGrid caseGrid = new CasePopupGrid(window, facility, DashboardMapComponent.this);
