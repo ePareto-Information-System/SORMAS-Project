@@ -8887,5 +8887,5 @@ INSERT INTO schema_version (version_number, comment) VALUES (428, 'Add observers
 ALTER TABLE district ADD COLUMN IF NOT EXISTS districtlatitude double precision;
 ALTER TABLE district ADD COLUMN IF NOT EXISTS districtlongitude double precision;
 
-INSERT INTO schema_version (version_number, comment) VALUES (428, 'Add Geolocation to district #1865');
+INSERT INTO schema_version (version_number, comment) VALUES (429, 'Add Geolocation to district #1865');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
