@@ -76,6 +76,32 @@ public class DistrictDto extends EntityDto {
 		this.externalID = externalID;
 	}
 
+	public DistrictDto(
+			Date creationDate,
+			Date changeDate,
+			String uuid,
+			boolean archived,
+			String name,
+			String epidCode,
+			Float growthRate,
+			String regionUuid,
+			String regionName,
+			String regionExternalId,
+			String externalID,
+			Double districtLatitude,
+			Double districtLongitude) {
+
+		super(creationDate, changeDate, uuid);
+		this.archived = archived;
+		this.name = name;
+		this.epidCode = epidCode;
+		this.growthRate = growthRate;
+		this.region = new RegionReferenceDto(regionUuid, regionName, regionExternalId);
+		this.externalID = externalID;
+		this.districtLatitude = districtLatitude;
+		this.districtLongitude = districtLongitude;
+	}
+
 	public DistrictDto() {
 		super();
 	}
