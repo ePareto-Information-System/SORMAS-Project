@@ -5505,7 +5505,7 @@ ALTER TABLE users_history ADD COLUMN hasConsentedToGdpr boolean default false;
 INSERT INTO schema_version (version_number, comment) VALUES (269, 'Add gdpr popup to user');
 
 --2020-10-22 Optimize person similarity/duplication check
-CREATE INDEX similarity_index
+CREATE INDEX IF NOT EXISTS similarity_index
     ON person using gist ((firstName || ' ' || lastName) gist_trgm_ops);
 INSERT INTO schema_version (version_number, comment) VALUES (270, 'Optimize person similarity/duplication check');
 
