@@ -45,6 +45,7 @@ public class SampleGridFilterForm extends AbstractFilterForm<SampleCriteria> {
 	protected String[] getMainFilterLocators() {
 		return new String[] {
 			SampleCriteria.PATHOGEN_TEST_RESULT,
+			SampleCriteria.PATHOGEN_TEST_TYPE,
 			SampleCriteria.SPECIMEN_CONDITION,
 			SampleCriteria.CASE_CLASSIFICATION,
 			SampleCriteria.DISEASE,
@@ -67,6 +68,11 @@ public class SampleGridFilterForm extends AbstractFilterForm<SampleCriteria> {
 				SampleCriteria.PATHOGEN_TEST_RESULT,
 				I18nProperties.getPrefixCaption(PathogenTestDto.I18N_PREFIX, PathogenTestDto.TEST_RESULT),
 				140));
+	    addField(
+					FieldConfiguration.withCaptionAndPixelSized(
+							SampleCriteria.PATHOGEN_TEST_TYPE,
+							I18nProperties.getPrefixCaption(PathogenTestDto.I18N_PREFIX, PathogenTestDto.TEST_TYPE),
+							140));
 		addField(
 			FieldConfiguration.withCaptionAndPixelSized(
 				SampleCriteria.SPECIMEN_CONDITION,
