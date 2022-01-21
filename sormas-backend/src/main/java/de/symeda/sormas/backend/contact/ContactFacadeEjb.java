@@ -70,6 +70,7 @@ import org.slf4j.LoggerFactory;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.VisitOrigin;
+import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.contact.ContactClassification;
@@ -1413,7 +1414,8 @@ public class ContactFacadeEjb implements ContactFacade {
 		DistrictReferenceDto districtRef,
 		Disease disease,
 		Date from,
-		Date to) {
+		Date to,
+		CaseClassification caseClassification) {
 
 		Region region = regionService.getByReferenceDto(regionRef);
 		District district = districtService.getByReferenceDto(districtRef);

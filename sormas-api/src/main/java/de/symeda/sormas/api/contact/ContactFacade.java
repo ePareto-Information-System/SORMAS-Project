@@ -27,6 +27,7 @@ import javax.validation.Valid;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.Language;
+import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.dashboard.DashboardContactDto;
 import de.symeda.sormas.api.externaldata.ExternalDataDto;
@@ -103,7 +104,8 @@ public interface ContactFacade {
 		DistrictReferenceDto districtRef,
 		Disease disease,
 		Date from,
-		Date to);
+		Date to,
+		CaseClassification caseClassification);
 
 	Map<ContactStatus, Long> getNewContactCountPerStatus(ContactCriteria contactCriteria);
 

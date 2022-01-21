@@ -45,5 +45,6 @@ public interface DashboardFacade {
 		Date toDate,
 		Date previousFromDate,
 		Date previousToDate,
-		CriteriaDateType newCaseDateType);
+		CriteriaDateType newCaseDateType,
+		CaseClassification caseClassification);
 }
