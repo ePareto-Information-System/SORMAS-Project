@@ -44,7 +44,6 @@ public class DiseaseBurdenComponent extends VerticalLayout {
 		grid = new DiseaseBurdenGrid();
 		grid.setHeightMode(HeightMode.ROW);
 		grid.setWidth(100, Unit.PERCENTAGE);
-
 		// layout
 		setWidth(100, Unit.PERCENTAGE);
 
