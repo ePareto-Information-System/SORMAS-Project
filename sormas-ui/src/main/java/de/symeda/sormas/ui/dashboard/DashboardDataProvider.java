@@ -37,6 +37,7 @@ import de.symeda.sormas.api.dashboard.DashboardContactDto;
 import de.symeda.sormas.api.dashboard.DashboardCriteria;
 import de.symeda.sormas.api.dashboard.DashboardEventDto;
 import de.symeda.sormas.api.dashboard.DashboardQuarantineDataDto;
+import de.symeda.sormas.api.dashboard.NewDateFilterType;
 import de.symeda.sormas.api.disease.DiseaseBurdenDto;
 import de.symeda.sormas.api.event.EventStatus;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
@@ -44,6 +45,8 @@ import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.outbreak.OutbreakCriteria;
 import de.symeda.sormas.api.sample.DashboardTestResultDto;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
+import de.symeda.sormas.api.utils.DateHelper;
+import de.symeda.sormas.api.utils.criteria.CriteriaDateType;
 
 // FIXME: 06/08/2020 this should be refactored into two specific data providers for case and contact dashboards
 public class DashboardDataProvider {
@@ -56,6 +59,8 @@ public class DashboardDataProvider {
 	private Date toDate;
 	private Date previousFromDate;
 	private Date previousToDate;
+	private CaseClassification caseClassification;
+	private NewDateFilterType dateFilterType;
 
 	private NewCaseDateType newCaseDateType = NewCaseDateType.MOST_RELEVANT;
 
@@ -85,13 +90,23 @@ public class DashboardDataProvider {
 	private Long contactsConvertedToCaseCount = 0L;
 	private Long caseWithReferenceDefinitionFulfilledCount = 0L;
 
-	public void refreshData() {
+	private final Class<? extends CriteriaDateType> dateTypeClass;
 
+	public DashboardDataProvider(Class<? extends CriteriaDateType> dateTypeClass) {
+		this.dateTypeClass = dateTypeClass;
+	}
+
+	public DashboardDataProvider() {
+		this.dateTypeClass = CriteriaDateType.class;
+	}
+
+	public void refreshData() {
+		this.getCriteria();
 		// Update the entities lists according to the filters
 		// Disease burden
 		setDiseasesBurden(
 			FacadeProvider.getDashboardFacade()
-				.getDiseaseBurden(region, district, fromDate, toDate, previousFromDate, previousToDate, newCaseDateType));
+				.getDiseaseBurden(region, district, fromDate, toDate, previousFromDate, previousToDate, newCaseDateType, caseClassification));
 
 		this.refreshDataForSelectedDisease();
 	}
@@ -166,8 +181,11 @@ public class DashboardDataProvider {
 	}
 
 	private void refreshDataForConvertedContactsToCase() {
-		DashboardCriteria dashboardCriteria =
-			new DashboardCriteria().region(region).district(district).disease(disease).dateBetween(fromDate, toDate);
+		DashboardCriteria dashboardCriteria = new DashboardCriteria(dateTypeClass).region(region)
+			.district(district)
+			.disease(disease)
+			.dateBetween(fromDate, toDate)
+			.caseClassification(caseClassification);
 		setContactsConvertedToCaseCount(FacadeProvider.getDashboardFacade().countCasesConvertedFromContacts(dashboardCriteria));
 	}
 
@@ -183,20 +201,22 @@ public class DashboardDataProvider {
 
 		if (getDashboardType() == DashboardType.CONTACTS) {
 			// Contacts
-			setContacts(FacadeProvider.getContactFacade().getContactsForDashboard(region, district, disease, fromDate, toDate));
+			setContacts(FacadeProvider.getContactFacade().getContactsForDashboard(region, district, disease, fromDate, toDate, caseClassification));
 			setPreviousContacts(
-				FacadeProvider.getContactFacade().getContactsForDashboard(region, district, disease, previousFromDate, previousToDate));
+				FacadeProvider.getContactFacade()
+					.getContactsForDashboard(region, district, disease, previousFromDate, previousToDate, caseClassification));
 
 			this.refreshDataForQuarantinedContacts();
 		}
 
 		if (getDashboardType() == DashboardType.CONTACTS || this.disease != null) {
 			// Cases
-			DashboardCriteria dashboardCriteria = new DashboardCriteria().region(region)
+			DashboardCriteria dashboardCriteria = new DashboardCriteria(dateTypeClass).region(region)
 				.district(district)
 				.disease(disease)
 				.newCaseDateType(newCaseDateType)
-				.dateBetween(fromDate, toDate);
+				.dateBetween(fromDate, toDate)
+				.caseClassification(caseClassification);
 			setCases(FacadeProvider.getDashboardFacade().getCases(dashboardCriteria));
 			setLastReportedDistrict(FacadeProvider.getDashboardFacade().getLastReportedDistrictName(dashboardCriteria));
 
@@ -216,15 +236,22 @@ public class DashboardDataProvider {
 		}
 
 		// Events
-		DashboardCriteria dashboardCriteria =
-			new DashboardCriteria().region(region).district(district).disease(disease).dateBetween(fromDate, toDate);
+		DashboardCriteria dashboardCriteria = new DashboardCriteria(dateTypeClass).region(region)
+			.district(district)
+			.disease(disease)
+			.dateBetween(fromDate, toDate)
+			.caseClassification(caseClassification);
 		setEvents(FacadeProvider.getDashboardFacade().getNewEvents(dashboardCriteria));
 		setEventCountByStatus(FacadeProvider.getDashboardFacade().getEventCountByStatus(dashboardCriteria));
 
 		setOutbreakDistrictCount(
 			FacadeProvider.getOutbreakFacade()
 				.getOutbreakDistrictCount(
-					new OutbreakCriteria().region(region).district(district).disease(disease).reportedBetween(fromDate, toDate)));
+					new OutbreakCriteria().region(region)
+						.district(district)
+						.disease(disease)
+						.reportedBetween(fromDate, toDate)
+						.caseClassification(caseClassification)));
 
 		refreshDataForQuarantinedCases();
 		refreshDataForConvertedContactsToCase();
@@ -361,6 +388,42 @@ public class DashboardDataProvider {
 		this.refreshDataForSelectedDisease();
 	}
 
+	public CaseClassification getCaseClassification() {
+		return caseClassification;
+	}
+
+	public void setCaseClassification(CaseClassification caseClassification) {
+		this.caseClassification = caseClassification;
+	}
+
+	public NewDateFilterType getDateFilterType() {
+		if (dateFilterType == NewDateFilterType.TODAY) {
+			setFromDate(DateHelper.getStartOfDay(new Date()));
+			setToDate(new Date());
+		}
+		if (dateFilterType == NewDateFilterType.YESTERDAY) {
+			setFromDate(DateHelper.getStartOfDay(DateHelper.subtractDays(new Date(), 1)));
+			setToDate(DateHelper.getEndOfDay(DateHelper.subtractDays(new Date(), 1)));
+		}
+		if (dateFilterType == NewDateFilterType.THIS_WEEK) {
+			setFromDate(DateHelper.getStartOfWeek(new Date()));
+			setToDate(new Date());
+		}
+		if (dateFilterType == NewDateFilterType.LAST_WEEK) {
+			setFromDate(DateHelper.getStartOfWeek(DateHelper.subtractWeeks(new Date(), 1)));
+			setToDate(DateHelper.getEndOfWeek(DateHelper.subtractWeeks(new Date(), 1)));
+		}
+		if (dateFilterType == NewDateFilterType.THIS_YEAR) {
+			setFromDate(DateHelper.getStartOfWeek(DateHelper.getStartOfYear(new Date())));
+			setToDate(new Date());
+		}
+		return dateFilterType;
+	}
+
+	public void setDateFilterType(NewDateFilterType dateFilterType) {
+		this.dateFilterType = dateFilterType;
+	}
+
 	public Date getFromDate() {
 		return fromDate;
 	}
@@ -458,5 +521,16 @@ public class DashboardDataProvider {
 
 	public void setCaseWithReferenceDefinitionFulfilledCount(Long caseWithReferenceDefinitionFulfilledCount) {
 		this.caseWithReferenceDefinitionFulfilledCount = caseWithReferenceDefinitionFulfilledCount;
+	}
+
+	public DashboardCriteria getCriteria() {
+		return new DashboardCriteria(dateTypeClass).region(region)
+			.district(district)
+			.disease(disease)
+			.dateBetween(fromDate, toDate)
+			.caseClassification(caseClassification)
+			.newCaseDateType(newCaseDateType)
+			.dateFilterType(dateFilterType);
+
 	}
 }
