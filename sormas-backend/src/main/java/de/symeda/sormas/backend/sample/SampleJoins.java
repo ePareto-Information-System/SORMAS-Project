@@ -25,13 +25,13 @@ import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.contact.Contact;
 import de.symeda.sormas.backend.event.Event;
 import de.symeda.sormas.backend.event.EventParticipant;
-import de.symeda.sormas.backend.infrastructure.facility.Facility;
-import de.symeda.sormas.backend.infrastructure.pointofentry.PointOfEntry;
-import de.symeda.sormas.backend.location.Location;
-import de.symeda.sormas.backend.person.Person;
 import de.symeda.sormas.backend.infrastructure.community.Community;
 import de.symeda.sormas.backend.infrastructure.district.District;
+import de.symeda.sormas.backend.infrastructure.facility.Facility;
+import de.symeda.sormas.backend.infrastructure.pointofentry.PointOfEntry;
 import de.symeda.sormas.backend.infrastructure.region.Region;
+import de.symeda.sormas.backend.location.Location;
+import de.symeda.sormas.backend.person.Person;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.util.AbstractDomainObjectJoins;
 
@@ -84,9 +84,18 @@ public class SampleJoins<T> extends AbstractDomainObjectJoins<T, Sample> {
 	private Join<Event, Location> eventLocation;
 	private Join<Event, User> eventReportingUser;
 	private Join<Event, User> eventResponsibleUser;
+	private Join<Sample, PathogenTest> pathogenTests;
 
 	public SampleJoins(From<T, Sample> root) {
 		super(root);
+	}
+
+	public Join<Sample, PathogenTest> getPathogenTests() {
+		return getOrCreate(pathogenTests, Sample.PATHOGENTESTS, JoinType.LEFT, this::setPathogenTests);
+	}
+
+	private void setPathogenTests(Join<Sample, PathogenTest> pathogenTests) {
+		this.pathogenTests = pathogenTests;
 	}
 
 	public Join<Sample, User> getReportingUser() {
