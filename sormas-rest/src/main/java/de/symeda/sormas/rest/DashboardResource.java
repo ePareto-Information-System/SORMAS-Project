@@ -37,7 +37,8 @@ public class DashboardResource extends EntityDtoResource {
 				criteria.getDateTo(),
 				criteria.getPreviousDateFrom(),
 				criteria.getPreviousDateTo(),
-				criteria.getNewCaseDateType());
+				criteria.getNewCaseDateType(),
+				criteria.getCaseClassification());
 	}
 
 	@POST
