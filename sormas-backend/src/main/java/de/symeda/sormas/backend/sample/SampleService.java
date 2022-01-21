@@ -449,6 +449,11 @@ public class SampleService extends AbstractCoreAdoService<Sample> {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.isNotNull(joins.getEventParticipant()));
 		}
 
+		if (criteria.getPathogenTestType() != null) {
+			filter =
+				CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getPathogenTests().get(PathogenTest.TEST_TYPE), criteria.getPathogenTestType()));
+		}
+
 		if (criteria.getRegion() != null) {
 			Expression<Object> regionExpression = cb.selectCase()
 				.when(cb.isNotNull(joins.getCaseRegion()), joins.getCaseRegion().get(AbstractDomainObject.UUID))
