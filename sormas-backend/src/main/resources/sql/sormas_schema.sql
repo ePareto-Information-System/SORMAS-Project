@@ -4917,9 +4917,10 @@ ALTER TABLE cases ADD COLUMN followupcomment varchar(4096);
 ALTER TABLE cases ADD COLUMN followupuntil timestamp;
 ALTER TABLE cases ADD COLUMN overwritefollowupuntil boolean;
 
-UPDATE cases SET followupstatus = 'CANCELED';
-UPDATE cases SET followupcomment = '-';
-UPDATE cases SET overwritefollowupuntil = false;
+UPDATE cases SET
+	followupstatus = 'CANCELED',
+	followupcomment = '-',
+	overwritefollowupuntil = false;
 
 ALTER TABLE cases_history ADD COLUMN followupstatus varchar(255);
 ALTER TABLE cases_history ADD COLUMN followupcomment varchar(4096);
@@ -4940,13 +4941,43 @@ UPDATE eventparticipant_history SET deleted = false;
 INSERT INTO schema_version (version_number, comment) VALUES (239, 'Update app synchronization related to event participants #2596');
 
 -- 2020-06-23 Import and use new facility types #1637
-UPDATE samples SET lab_id = (SELECT id FROM facility WHERE uuid = 'SORMAS-CONSTID-OTHERS-FACILITY') WHERE lab_id = (SELECT id FROM facility WHERE uuid = 'SORMAS-CONSTID-OTHERS-LABORATO');
-UPDATE pathogentest SET lab_id = (SELECT id FROM facility WHERE uuid = 'SORMAS-CONSTID-OTHERS-FACILITY') WHERE lab_id = (SELECT id FROM facility WHERE uuid = 'SORMAS-CONSTID-OTHERS-LABORATO');
+WITH _other_facility AS (
+	SELECT id FROM facility WHERE uuid = 'SORMAS-CONSTID-OTHERS-FACILITY'
+),
+_other_lab AS (
+	SELECT id FROM facility WHERE uuid = 'SORMAS-CONSTID-OTHERS-LABORATO'
+)
+UPDATE samples
+SET lab_id = f.id
+FROM _other_facility f
+LEFT JOIN _other_lab l ON 1 = 1
+WHERE lab_id = l.id;
+
+WITH _other_facility AS (
+	SELECT id FROM facility WHERE uuid = 'SORMAS-CONSTID-OTHERS-FACILITY'
+),
+_other_lab AS (
+	SELECT id FROM facility WHERE uuid = 'SORMAS-CONSTID-OTHERS-LABORATO'
+)
+UPDATE pathogentest
+SET lab_id = f.id
+FROM _other_facility f
+LEFT JOIN _other_lab l ON 1 = 1
+WHERE lab_id = l.id;
+
 DELETE FROM facility WHERE uuid = 'SORMAS-CONSTID-OTHERS-LABORATO';
 UPDATE facility SET type = 'HOSPITAL' WHERE NOT type = 'LABORATORY' AND uuid NOT IN ('SORMAS-CONSTID-OTHERS-FACILITY','SORMAS-CONSTID-ISNONE-FACILITY');
 ALTER TABLE cases ADD COLUMN facilitytype varchar(255);
 ALTER TABLE cases_history ADD COLUMN facilitytype varchar(255);
-UPDATE cases SET facilitytype = 'HOSPITAL' WHERE healthfacility_id != (SELECT id FROM facility WHERE uuid = 'SORMAS-CONSTID-ISNONE-FACILITY');
+
+WITH _no_facility AS (
+	SELECT id FROM facility WHERE uuid = 'SORMAS-CONSTID-ISNONE-FACILITY'
+)
+UPDATE cases
+SET facilitytype = 'HOSPITAL'
+FROM _no_facility f
+WHERE healthfacility_id != f.id;
+
 ALTER TABLE person ADD COLUMN occupationfacilitytype varchar(255);
 ALTER TABLE person_history ADD COLUMN occupationfacilitytype varchar(255);
 UPDATE person SET occupationfacilitytype = 'HOSPITAL' WHERE occupationfacility_id IS NOT NULL;
@@ -4993,11 +5024,14 @@ DO $$
     DECLARE rec RECORD;
     DECLARE new_healthcondition_id INTEGER;
     BEGIN
-        UPDATE contact SET healthconditions_id = (SELECT hc.id FROM healthconditions hc
-                                                                                inner join clinicalcourse cc on cc.healthconditions_id = hc.id
-                                                                                inner join cases ca on ca.clinicalcourse_id = cc.id
-                                                          where ca.id = resultingcase_id)
-        WHERE resultingcase_id IS NOT NULL AND healthconditions_id IS NULL;
+		UPDATE contact ct
+		SET healthconditions_id = cc.healthconditions_id
+		FROM cases ca
+		inner join clinicalcourse cc on ca.clinicalcourse_id = cc.id
+		WHERE
+			ca.id = ct.resultingcase_id
+			AND ct.resultingcase_id IS NOT NULL
+			AND ct.healthconditions_id IS NULL;
 
         FOR rec IN SELECT id FROM public.contact where resultingcase_id IS NULL and healthconditions_id IS NULL
             LOOP
@@ -5006,6 +5040,7 @@ DO $$
             END LOOP;
     END;
 $$ LANGUAGE plpgsql;
+
 INSERT INTO schema_version (version_number, comment) VALUES (242, 'update healthconditions table #2564');
 
 -- 2020-08-24 Fix problems caused by #1637
@@ -5075,7 +5110,11 @@ DROP TABLE IF EXISTS t_edbl_id_map;
 DROP TABLE IF EXISTS t_edgl_id_map;
 
 CREATE temp table t_epidata
-AS SELECT e.* FROM epidata e WHERE e.id IN (SELECT ca.epidata_id FROM cases ca) AND e.id IN (SELECT co.epidata_id FROM contact co);
+AS
+SELECT e.*
+FROM epidata e
+INNER JOIN cases ca ON ca.epidata_id = e.id
+INNER JOIN contact co ON co.epidata_id = e.id;
 
 CREATE temp table t_id_map
 AS SELECT id AS old_id,
@@ -5084,8 +5123,10 @@ create_new_uuid(uuid) AS new_uuid
 FROM t_epidata;
 
 UPDATE t_epidata te SET
-id = (SELECT new_id FROM t_id_map WHERE te.id = old_id),
-uuid = (SELECT new_uuid FROM t_id_map WHERE te.id = old_id);
+	id = m.new_id,
+	uuid = m.new_uuid
+FROM t_id_map m
+WHERE te.id = m.old_id;
 
 -- BURIALS
 
@@ -5108,16 +5149,24 @@ create_new_uuid(uuid) AS edbl_new_uuid
 FROM t_epidataburial_location;
 
 UPDATE t_epidataburial_location tedbl SET
-id = (SELECT edbl_new_id FROM t_edbl_id_map WHERE tedbl.id = edbl_old_id),
-uuid = (SELECT edbl_new_uuid FROM t_edbl_id_map WHERE tedbl.id = edbl_old_id);
+	id = m.edbl_new_id,
+	uuid = m.edbl_new_uuid
+FROM t_edbl_id_map m
+WHERE tedbl.id = m.edbl_old_id;	
 
 INSERT INTO location (SELECT * FROM t_epidataburial_location);
 
-UPDATE t_epidataburial tedb SET
-id = (SELECT edb_new_id FROM t_edb_id_map WHERE tedb.id = edb_old_id),
-uuid = (SELECT edb_new_uuid FROM t_edb_id_map WHERE tedb.id = edb_old_id),
-epidata_id = (SELECT new_id FROM t_id_map WHERE tedb.epidata_id = old_id),
-burialaddress_id = (SELECT edbl_new_id FROM t_edbl_id_map WHERE tedb.burialaddress_id = edbl_old_id);
+UPDATE t_epidataburial SET
+	id = m1.edb_new_id,
+	uuid = m1.edb_new_uuid,
+	epidata_id = m2.new_id,
+	burialaddress_id = m3.edbl_new_id
+FROM
+	t_epidataburial tedb
+	LEFT JOIN t_edb_id_map m1 ON tedb.id = m1.edb_old_id
+	LEFT JOIN t_id_map m2 ON tedb.epidata_id = m2.old_id
+	LEFT JOIN t_edbl_id_map m3 ON tedb.burialaddress_id = m3.edbl_old_id
+WHERE t_epidataburial.id = tedb.id;
 
 -- BURIALS END
 
@@ -5142,16 +5191,24 @@ create_new_uuid(uuid) AS edgl_new_uuid
 FROM t_epidatagathering_location;
 
 UPDATE t_epidatagathering_location tedgl SET
-id = (SELECT edgl_new_id FROM t_edgl_id_map WHERE tedgl.id = edgl_old_id),
-uuid = (SELECT edgl_new_uuid FROM t_edgl_id_map WHERE tedgl.id = edgl_old_id);
+	id = m.edgl_new_id,
+	uuid = m.edgl_new_uuid
+FROM t_edgl_id_map m
+WHERE tedgl.id = m.edgl_old_id;	
 
 INSERT INTO location (SELECT * FROM t_epidatagathering_location);
 
-UPDATE t_epidatagathering tedg SET
-id = (SELECT edg_new_id FROM t_edg_id_map WHERE tedg.id = edg_old_id),
-uuid = (SELECT edg_new_uuid FROM t_edg_id_map WHERE tedg.id = edg_old_id),
-epidata_id = (SELECT new_id FROM t_id_map WHERE tedg.epidata_id = old_id),
-gatheringaddress_id = (SELECT edgl_new_id FROM t_edgl_id_map WHERE tedg.gatheringaddress_id = edgl_old_id);
+UPDATE t_epidatagathering SET
+	id = m1.edg_new_id,
+	uuid = m1.edg_new_uuid,
+	epidata_id = m2.new_id,
+	gatheringaddress_id = m3.edgl_new_id
+FROM
+	t_epidatagathering tedg
+	LEFT JOIN t_edg_id_map m1 ON tedg.id = m1.edg_old_id
+	LEFT JOIN t_id_map m2 ON tedg.epidata_id = m2.old_id
+	LEFT JOIN t_edgl_id_map m3 ON tedg.gatheringaddress_id = m3.edgl_old_id
+WHERE t_epidatagathering.id = tedg.id;
 
 -- GATHERINGS END
 
@@ -5166,10 +5223,15 @@ nextval('entity_seq') AS edt_new_id,
 create_new_uuid(uuid) AS edt_new_uuid
 FROM t_epidatatravel;
 
-UPDATE t_epidatatravel tedt SET
-id = (SELECT edt_new_id FROM t_edt_id_map WHERE tedt.id = edt_old_id),
-uuid = (SELECT edt_new_uuid FROM t_edt_id_map WHERE tedt.id = edt_old_id),
-epidata_id = (SELECT new_id FROM t_id_map WHERE tedt.epidata_id = old_id);
+UPDATE t_epidatatravel SET
+	id = m1.edt_new_id,
+	uuid = m1.edt_new_uuid,
+	epidata_id = m2.new_id
+FROM
+	t_epidatatravel tedt
+	LEFT JOIN t_edt_id_map m1 ON tedt.id = m1.edt_old_id
+	LEFT JOIN t_id_map m2 ON tedt.epidata_id = m2.old_id
+WHERE t_epidatatravel.id = tedt.id;
 
 -- TRAVELS END
 
@@ -5188,7 +5250,11 @@ DROP TABLE IF EXISTS t_symptoms;
 DROP TABLE IF EXISTS t_id_map;
 
 CREATE temp table t_symptoms
-AS SELECT s.* FROM symptoms s WHERE s.id IN (SELECT ca.symptoms_id FROM cases ca) AND s.id IN (SELECT vi.symptoms_id FROM visit vi);
+AS
+SELECT s.*
+FROM symptoms s
+INNER JOIN cases ca ON ca.symptoms_id = s.id
+INNER JOIN visit vi ON vi.symptoms_id = s.id;
 
 CREATE temp table t_id_map
 AS SELECT id AS old_id,
@@ -5197,8 +5263,10 @@ create_new_uuid(uuid) AS new_uuid
 FROM t_symptoms;
 
 UPDATE t_symptoms ts SET
-id = (SELECT new_id FROM t_id_map WHERE ts.id = old_id),
-uuid = (SELECT new_uuid FROM t_id_map WHERE ts.id = old_id);
+	id = m.new_id,
+	uuid = m.new_uuid
+FROM t_id_map m
+WHERE ts.id = m.old_id;
 
 INSERT INTO symptoms (SELECT * FROM t_symptoms);
 
@@ -5854,7 +5922,11 @@ FROM last_exposure_map;
 
 DROP TABLE IF EXISTS last_exposure_map;
 CREATE TEMP TABLE empty_travels_map AS
-SELECT id as epidata_id,
+WITH _travel AS (
+	SELECT DISTINCT t.epidata_id
+	FROM epidatatravel t
+)
+SELECT e.id as epidata_id,
        nextval('entity_seq') as location_id,
        nextval('entity_seq') as exposure_id,
        overlay(overlay(overlay(
@@ -5863,7 +5935,11 @@ SELECT id as epidata_id,
        overlay(overlay(overlay(
                                substring(upper(REPLACE(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), '-', '')), 0, 30)
                                placing '-' from 7) placing '-' from 14) placing '-' from 21) as exposure_uuid
-FROM epidata WHERE traveled = 'YES' AND epidata.id NOT IN (SELECT epidatatravel.epidata_id FROM epidatatravel);
+FROM epidata e
+LEFT JOIN _travel t ON t.epidata_id = e.id
+WHERE
+	e.traveled = 'YES'
+	AND t.epidata_id IS NULL;
 
 INSERT INTO location (id, uuid, changedate, creationdate)
 SELECT location_id, location_uuid, now(), now()
@@ -5875,7 +5951,11 @@ FROM empty_travels_map;
 
 DROP TABLE IF EXISTS empty_travels_map;
 CREATE TEMP TABLE empty_gatherings_map AS
-SELECT id as epidata_id,
+WITH _gathering AS (
+	SELECT DISTINCT t.epidata_id
+	FROM epidatagathering t
+)
+SELECT e.id as epidata_id,
        nextval('entity_seq') as location_id,
        nextval('entity_seq') as exposure_id,
        overlay(overlay(overlay(
@@ -5884,7 +5964,11 @@ SELECT id as epidata_id,
        overlay(overlay(overlay(
                                substring(upper(REPLACE(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), '-', '')), 0, 30)
                                placing '-' from 7) placing '-' from 14) placing '-' from 21) as exposure_uuid
-FROM epidata WHERE gatheringattended = 'YES' AND epidata.id NOT IN (SELECT epidatagathering.epidata_id FROM epidatagathering);
+FROM epidata e
+LEFT JOIN _gathering t ON t.epidata_id = e.id
+WHERE
+	e.gatheringattended = 'YES'
+	AND t.epidata_id IS NULL;
 
 INSERT INTO location (id, uuid, changedate, creationdate)
 SELECT location_id, location_uuid, now(), now()
@@ -5896,7 +5980,11 @@ FROM empty_gatherings_map;
 
 DROP TABLE IF EXISTS empty_gatherings_map;
 CREATE TEMP TABLE empty_burials_map AS
-SELECT id as epidata_id,
+WITH _burial AS (
+	SELECT DISTINCT t.epidata_id
+	FROM epidataburial t
+)
+SELECT e.id as epidata_id,
        nextval('entity_seq') as location_id,
        nextval('entity_seq') as exposure_id,
        overlay(overlay(overlay(
@@ -5905,7 +5993,11 @@ SELECT id as epidata_id,
        overlay(overlay(overlay(
                                substring(upper(REPLACE(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), '-', '')), 0, 30)
                                placing '-' from 7) placing '-' from 14) placing '-' from 21) as exposure_uuid
-FROM epidata WHERE burialattended = 'YES' AND epidata.id NOT IN (SELECT epidataburial.epidata_id FROM epidataburial);
+FROM epidata e
+LEFT JOIN _burial t ON t.epidata_id = e.id
+WHERE
+	e.burialattended = 'YES'
+	AND t.epidata_id IS NULL;
 
 INSERT INTO location (id, uuid, changedate, creationdate)
 SELECT location_id, location_uuid, now(), now()
@@ -5958,7 +6050,11 @@ UPDATE epidata SET changedate = now();
 INSERT INTO schema_version (version_number, comment) VALUES (282, 'Epi data migration #2949');
 
 -- 2020-10-21 Set contact with source case known for all existing cases #2946
-UPDATE epidata SET contactwithsourcecaseknown = 'YES' FROM cases WHERE cases.epidata_id = epidata.id AND exists (SELECT 1 FROM contact WHERE contact.resultingcase_id = cases.id);
+UPDATE epidata ep
+SET contactwithsourcecaseknown = 'YES'
+FROM cases ca
+RIGHT JOIN contact ct ON ct.resultingcase_id = ca.id
+WHERE ca.epidata_id = ep.id;
 
 INSERT INTO schema_version (version_number, comment) VALUES (283, 'Set contact with source case known for all existing cases #2946');
 
@@ -6197,8 +6293,20 @@ INSERT INTO schema_version (version_number, comment) VALUES (304, 'Change action
 
 -- 2020-12-03 Remove hospital from event's type of place #3617
 -- 2021-01-28 [Hotfix] Fixed migration code setting facility type for all locations in the system #4120
-UPDATE location SET facilitytype = 'HOSPITAL' WHERE facilitytype IS NULL AND (SELECT typeofplace FROM events WHERE eventlocation_id = location.id) = 'HOSPITAL';
-UPDATE events SET typeofplace = 'FACILITY' WHERE (SELECT facilitytype FROM location WHERE id = events.eventlocation_id) IS NOT NULL;
+UPDATE location lc
+SET facilitytype = 'HOSPITAL'
+FROM events ev
+WHERE
+	ev.eventlocation_id = lc.id
+	AND lc.facilitytype IS NULL
+	AND ev.typeofplace = 'HOSPITAL';
+
+UPDATE events ev
+SET typeofplace = 'FACILITY'
+FROM location lc
+WHERE
+	ev.eventlocation_id = lc.id
+	AND lc.facilitytype IS NOT NULL;
 
 INSERT INTO schema_version (version_number, comment) VALUES (305, 'Remove hospital from event''s type of place #3617, #4120');
 
@@ -6529,7 +6637,27 @@ INSERT INTO schema_version (version_number, comment) VALUES (330, 'Make user rol
 -- 2020-02-12 Remove locations assigned to more than one exposure from deleted cases #4338
 ALTER TABLE exposures ALTER COLUMN location_id DROP NOT NULL;
 ALTER TABLE exposures_history ALTER COLUMN location_id DROP NOT NULL;
-UPDATE exposures SET location_id = null FROM cases WHERE cases.epidata_id = exposures.epidata_id AND cases.deleted IS true AND (SELECT COUNT(location_id) FROM exposures ex WHERE ex.location_id = exposures.location_id) > 1;
+
+WITH _exposures AS (
+	SELECT e.id, e.location_id
+	FROM exposures e
+	LEFT JOIN cases c ON c.epidata_id = e.epidata_id
+	WHERE c.deleted IS true
+),
+_locations AS (
+	SELECT
+		e.id,
+		COUNT(l.location_id) count
+	FROM _exposures e
+	LEFT JOIN exposures l ON l.location_id = e.location_id
+	GROUP BY e.id
+)
+UPDATE exposures e
+SET location_id = null
+FROM _locations l
+WHERE
+	l.id = e.id
+	AND l.count > 1;
 
 INSERT INTO schema_version (version_number, comment) VALUES (331, 'Remove locations assigned to more than one exposure from deleted cases #4338');
 
