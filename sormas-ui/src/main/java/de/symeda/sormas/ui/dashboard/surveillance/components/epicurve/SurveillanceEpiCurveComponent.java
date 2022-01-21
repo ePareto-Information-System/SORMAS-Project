@@ -62,7 +62,8 @@ public class SurveillanceEpiCurveComponent extends AbstractEpiCurveComponent {
 		DashboardCriteria dashboardCriteria = new DashboardCriteria().disease(dashboardDataProvider.getDisease())
 			.region(dashboardDataProvider.getRegion())
 			.district(dashboardDataProvider.getDistrict())
-			.newCaseDateType(dashboardDataProvider.getNewCaseDateType());
+			.newCaseDateType(dashboardDataProvider.getNewCaseDateType())
+			.caseClassification(dashboardDataProvider.getCaseClassification());
 		epiCurveChart.setHcjs(surveillanceEpiCurveBuilder.buildFrom(buildListOfFilteredDates(), dashboardCriteria));
 	}
 }
