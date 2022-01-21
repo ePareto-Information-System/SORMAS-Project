@@ -27,8 +27,8 @@ import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
-import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.utils.DateFilterOption;
 import de.symeda.sormas.api.utils.IgnoreForUrl;
@@ -46,6 +46,7 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	public static final String DISTRICT = "district";
 	public static final String LAB = "laboratory";
 	public static final String CASE_CODE_ID_LIKE = "caseCodeIdLike";
+	public static final String PATHOGEN_TEST_TYPE = "pathogenTestType";
 
 	private RegionReferenceDto region;
 	private DistrictReferenceDto district;
@@ -64,7 +65,7 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	private String caseCodeIdLike;
 	private EntityRelevanceStatus relevanceStatus;
 	private SampleAssociationType sampleAssociationType;
-
+	private PathogenTestType pathogenTestType;
 	private Date sampleReportDateFrom;
 	private Date sampleReportDateTo;
 	private DateFilterOption dateFilterOption = DateFilterOption.DATE;
@@ -283,6 +284,22 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	public SampleCriteria eventParticipantUuids(List<String> eventParticipantUuids) {
 		this.eventParticipantUuids = eventParticipantUuids;
 
+		return this;
+	}
+
+	//get pathogen test
+	public PathogenTestType getPathogenTestType() {
+		return pathogenTestType;
+	}
+
+	//set pathogen test
+	public void setPathogenTestType(PathogenTestType pathogenTestType) {
+		this.pathogenTestType = pathogenTestType;
+	}
+
+	//Sample criteria
+	public SampleCriteria pathogenTestType(PathogenTestType setPathogenTestType) {
+		setPathogenTestType(setPathogenTestType);
 		return this;
 	}
 }
