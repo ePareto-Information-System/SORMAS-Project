@@ -167,7 +167,8 @@ public class DashboardFacadeEjb implements DashboardFacade {
 			new OutbreakCriteria().region(dashboardCriteria.getRegion())
 				.district(dashboardCriteria.getDistrict())
 				.disease(dashboardCriteria.getDisease())
-				.reportedBetween(dashboardCriteria.getDateFrom(), dashboardCriteria.getDateTo()));
+				.reportedBetween(dashboardCriteria.getDateFrom(), dashboardCriteria.getDateTo())
+				.caseClassification(dashboardCriteria.getCaseClassification()));
 
 		Map<CaseClassification, Integer> casesCountByClassification =
 			dashboardService.getCasesCountByClassification(dashboardCriteria.includeNotACaseClassification(true));
@@ -193,14 +194,20 @@ public class DashboardFacadeEjb implements DashboardFacade {
 		Date toDate,
 		Date previousFromDate,
 		Date previousToDate,
-		CriteriaDateType newCaseDateType) {
+		CriteriaDateType newCaseDateType,
+		CaseClassification caseClassification) {
 
 		//diseases
 		List<Disease> diseases = diseaseConfigurationFacade.getAllDiseases(true, true, true);
 
 		//new cases
-		DashboardCriteria dashboardCriteria =
-			new DashboardCriteria().region(region).district(district).newCaseDateType(newCaseDateType).dateBetween(fromDate, toDate);
+		DashboardCriteria dashboardCriteria = new DashboardCriteria().region(region)
+			.district(district)
+			.newCaseDateType(newCaseDateType)
+			.dateBetween(fromDate, toDate)
+			.caseClassification(caseClassification)
+			.previousDateFrom(previousFromDate)
+			.previousDateTo(previousToDate);
 		Map<Disease, Long> newCases = dashboardService.getCaseCountByDisease(dashboardCriteria);
 
 		//events
@@ -210,8 +217,8 @@ public class DashboardFacadeEjb implements DashboardFacade {
 		//outbreaks
 		Map<Disease, Long> outbreakDistrictsCount;
 		if (featureConfigurationFacade.isFeatureEnabled(FeatureType.OUTBREAKS)) {
-			outbreakDistrictsCount = outbreakFacade
-				.getOutbreakDistrictCountByDisease(new OutbreakCriteria().region(region).district(district).reportedBetween(fromDate, toDate));
+			outbreakDistrictsCount = outbreakFacade.getOutbreakDistrictCountByDisease(
+				new OutbreakCriteria().region(region).district(district).reportedBetween(fromDate, toDate).caseClassification(caseClassification));
 		} else {
 			outbreakDistrictsCount = new HashMap<>();
 		}
@@ -244,7 +251,8 @@ public class DashboardFacadeEjb implements DashboardFacade {
 				eventCount,
 				outbreakDistrictCount,
 				caseFatalityCount,
-				lastReportedDistrictName);
+				lastReportedDistrictName,
+				caseClassification);
 
 		}).collect(Collectors.toList());
 
