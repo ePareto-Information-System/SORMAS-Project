@@ -45,4 +45,6 @@ public interface GeoShapeProvider {
 	GeoLatLon[][] getCountryShape();
 
 	String loadShapefileAttributions();
+
+	Double getDistrictAreaByLatLng(GeoLatLon latLon);
 }
