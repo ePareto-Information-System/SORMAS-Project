@@ -904,6 +904,7 @@ public interface Strings {
 	String messageCommunityDearchivingNotPossible = "messageCommunityDearchivingNotPossible";
 	String messageCompletenessValuesUpdated = "messageCompletenessValuesUpdated";
 	String messageConfirmCaseAfterPathogenTest = "messageConfirmCaseAfterPathogenTest";
+	String messageNoCaseAfterPathogenTest = "messageNoCaseAfterPathogenTest";
 	String messageContactCaseChanged = "messageContactCaseChanged";
 	String messageContactCaseRemoved = "messageContactCaseRemoved";
 	String messageContactCreated = "messageContactCreated";
@@ -1123,6 +1124,7 @@ public interface Strings {
 	String messageUnavailableTaskEditionDueToDifferentDistricts = "messageUnavailableTaskEditionDueToDifferentDistricts";
 	String messageUnknownFilterAttributeForPopulationData = "messageUnknownFilterAttributeForPopulationData";
 	String messageUpdateCaseWithNewDiseaseVariant = "messageUpdateCaseWithNewDiseaseVariant";
+	String messageUpdateCaseWithNegativeNewDiseaseVariant = "messageUpdateCaseWithNegativeNewDiseaseVariant";
 	String messageUploadSuccessful = "messageUploadSuccessful";
 	String messageUserRightsExportFailed = "messageUserRightsExportFailed";
 	String messageUserRoleCombination = "messageUserRoleCombination";
