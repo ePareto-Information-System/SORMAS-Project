@@ -174,6 +174,32 @@ public class PathogenTestController {
 			});
 	}
 
+	public static void showCaseUpdateWithNegativeNewDiseaseVariantDialog(
+		CaseDataDto existingCaseDto,
+		DiseaseVariant diseaseVariant,
+		String diseaseVariantDetails,
+		Runnable callback) {
+
+		VaadinUiUtil.showConfirmationPopup(
+			I18nProperties.getString(Strings.headingUpdateCaseWithNewDiseaseVariant),
+			new Label(I18nProperties.getString(Strings.messageUpdateCaseWithNegativeNewDiseaseVariant)),
+			I18nProperties.getString(Strings.yes),
+			I18nProperties.getString(Strings.no),
+			800,
+			e -> {
+				if (e) {
+					CaseDataDto caseDataByUuid = FacadeProvider.getCaseFacade().getCaseDataByUuid(existingCaseDto.getUuid());
+					caseDataByUuid.setDiseaseVariant(diseaseVariant);
+					caseDataByUuid.setDiseaseVariantDetails(diseaseVariantDetails);
+					FacadeProvider.getCaseFacade().saveCase(caseDataByUuid);
+					ControllerProvider.getCaseController().navigateToCase(caseDataByUuid.getUuid());
+				}
+				if (callback != null) {
+					callback.run();
+				}
+			});
+	}
+
 	public PathogenTestDto savePathogenTest(PathogenTestDto dto, BiConsumer<PathogenTestDto, Runnable> onSavedPathogenTest) {
 		PathogenTestDto savedDto = facade.savePathogenTest(dto);
 		final SampleDto sample = FacadeProvider.getSampleFacade().getSampleByUuid(dto.getSample().getUuid());
@@ -215,6 +241,18 @@ public class PathogenTestController {
 		Runnable callback = () -> {
 			if (equalDisease && PathogenTestResultType.NEGATIVE.equals(dto.getTestResult()) && dto.getTestResultVerified()) {
 				showChangeAssociatedSampleResultDialog(dto, handleChanges -> {
+					if (dto.getTestedDiseaseVariant() != null && !DataHelper.equal(dto.getTestedDiseaseVariant(), caze.getDiseaseVariant())) {
+						showCaseUpdateWithNegativeNewDiseaseVariantDialog(
+							caze,
+							dto.getTestedDiseaseVariant(),
+							dto.getTestedDiseaseVariantDetails(),
+							() -> {
+								//get case to see if there are changes
+								showNoCaseDialog(FacadeProvider.getCaseFacade().getByUuid(caze.getUuid()));
+							});
+					} else {
+						showNoCaseDialog(caze);
+					}
 				});
 			} else if (PathogenTestResultType.POSITIVE.equals(dto.getTestResult()) && dto.getTestResultVerified()) {
 				if (equalDisease) {
@@ -478,6 +516,30 @@ public class PathogenTestController {
 				if (confirmed) {
 					CaseDataDto caseDataByUuid = FacadeProvider.getCaseFacade().getCaseDataByUuid(caze.getUuid());
 					caseDataByUuid.setCaseClassification(CaseClassification.CONFIRMED);
+					FacadeProvider.getCaseFacade().saveCase(caseDataByUuid);
+				}
+			});
+	}
+
+	public void showNoCaseDialog(CaseDataDto caze) {
+		if (FacadeProvider.getConfigFacade().isConfiguredCountry(CountryHelper.COUNTRY_CODE_GERMANY)) {
+			return;
+		}
+
+		if (caze.getCaseClassification() == CaseClassification.NO_CASE || caze.getCaseClassification() == CaseClassification.CONFIRMED) {
+			return;
+		}
+
+		VaadinUiUtil.showConfirmationPopup(
+			I18nProperties.getCaption(Captions.caseNoCase),
+			new Label(I18nProperties.getString(Strings.messageNoCaseAfterPathogenTest)),
+			I18nProperties.getString(Strings.yes),
+			I18nProperties.getString(Strings.no),
+			800,
+			confirmed -> {
+				if (confirmed) {
+					CaseDataDto caseDataByUuid = FacadeProvider.getCaseFacade().getCaseDataByUuid(caze.getUuid());
+					caseDataByUuid.setCaseClassification(CaseClassification.NO_CASE);
 					FacadeProvider.getCaseFacade().saveCase(caseDataByUuid);
 				}
 			});
