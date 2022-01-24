@@ -251,6 +251,7 @@ public interface Captions {
 	String caseClassificationCalculationButton = "caseClassificationCalculationButton";
 	String caseCloneCaseWithNewDisease = "caseCloneCaseWithNewDisease";
 	String caseConfirmCase = "caseConfirmCase";
+	String caseNoCase = "caseNoCase";
 	String caseContacts = "caseContacts";
 	String caseCreateCase = "caseCreateCase";
 	String caseCreateNew = "caseCreateNew";
