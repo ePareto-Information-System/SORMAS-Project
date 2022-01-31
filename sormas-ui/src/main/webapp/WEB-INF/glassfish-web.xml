@@ -26,6 +26,7 @@
         <group-name>COMMUNITY_OFFICER</group-name>
         <group-name>NATIONAL_CLINICIAN</group-name>
         <group-name>HOSPITAL_INFORMANT</group-name>
+        <group-name>HOSPITAL_SUPERVISOR</group-name>
         <group-name>POE_SUPERVISOR</group-name>
         <group-name>POE_NATIONAL_USER</group-name>
     </security-role-mapping>

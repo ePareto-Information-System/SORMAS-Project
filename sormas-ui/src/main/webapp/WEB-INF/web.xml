@@ -64,6 +64,9 @@
 		<role-name>HOSPITAL_INFORMANT</role-name>
 	</security-role>
 	<security-role>
+		<role-name>HOSPITAL_SUPERVISOR</role-name>
+	</security-role>
+	<security-role>
 	  <role-name>POE_SUPERVISOR</role-name>
 	</security-role>
 	<security-role>
