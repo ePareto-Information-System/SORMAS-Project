@@ -40,6 +40,7 @@ public enum UserRole
 	ADMIN(false, false, false, false, JurisdictionLevel.NONE),
 	NATIONAL_USER(false, false, false, false, JurisdictionLevel.NATION),
 	SURVEILLANCE_SUPERVISOR(true, false, false, false, JurisdictionLevel.REGION),
+	HOSPITAL_SUPERVISOR(true, true, false, false, JurisdictionLevel.HEALTH_FACILITY),
 	ADMIN_SUPERVISOR(true, false, false, false, JurisdictionLevel.REGION), // FIXME : remove this when user rights management is doable by users
 	SURVEILLANCE_OFFICER(false, true, false, false, JurisdictionLevel.DISTRICT),
 	HOSPITAL_INFORMANT(false, false, true, false, JurisdictionLevel.HEALTH_FACILITY),
@@ -76,6 +77,7 @@ public enum UserRole
 	public static final String _NATIONAL_USER = NATIONAL_USER.name();
 	public static final String _SURVEILLANCE_SUPERVISOR = SURVEILLANCE_SUPERVISOR.name();
 	public static final String _SURVEILLANCE_OFFICER = SURVEILLANCE_OFFICER.name();
+	public static final String _HOSPITAL_SUPERVISOR = HOSPITAL_SUPERVISOR.name();
 	public static final String _HOSPITAL_INFORMANT = HOSPITAL_INFORMANT.name();
 	public static final String _COMMUNITY_OFFICER = COMMUNITY_OFFICER.name();
 	public static final String _COMMUNITY_INFORMANT = COMMUNITY_INFORMANT.name();
@@ -167,6 +169,7 @@ public enum UserRole
 			break;
 		case NATIONAL_USER:
 			collection.add(SURVEILLANCE_SUPERVISOR);
+			collection.add(HOSPITAL_SUPERVISOR);
 			collection.add(CASE_SUPERVISOR);
 			collection.add(CONTACT_SUPERVISOR);
 			collection.add(CASE_OFFICER);
@@ -192,6 +195,7 @@ public enum UserRole
 		case SURVEILLANCE_SUPERVISOR:
 			collection.add(SURVEILLANCE_OFFICER);
 			collection.add(HOSPITAL_INFORMANT);
+			collection.add(HOSPITAL_SUPERVISOR);
 			collection.add(COMMUNITY_INFORMANT);
 			break;
 		case CASE_SUPERVISOR:
