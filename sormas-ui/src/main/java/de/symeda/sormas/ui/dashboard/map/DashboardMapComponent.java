@@ -18,15 +18,8 @@
 package de.symeda.sormas.ui.dashboard.map;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
 import org.vaadin.hene.popupbutton.PopupButton;
@@ -141,6 +134,7 @@ public class DashboardMapComponent extends VerticalLayout {
 	private Consumer<Boolean> externalExpandListener;
 	private boolean emptyPopulationDistrictPresent;
 
+	private final List<DistrictReferenceDto> existingDistricts = new ArrayList<>();
 	public DashboardMapComponent(DashboardDataProvider dashboardDataProvider) {
 		this.dashboardDataProvider = dashboardDataProvider;
 
@@ -1081,6 +1075,27 @@ public class DashboardMapComponent extends VerticalLayout {
 		map.addMarkerGroup("cases", caseMarkers);
 	}
 
+	private GeoLatLon generateCoordinatesInDistrict(DistrictReferenceDto district){
+		GeoLatLon districtGeoLatLon = FacadeProvider.getGeoShapeProvider().getCenterOfDistrict(district);
+
+		Double districtArea = FacadeProvider.getGeoShapeProvider().getDistrictAreaByLatLng(districtGeoLatLon);
+		//radius  = Circumfrence/2pie, but Area is given so Radius=(SquareRoot of (Area/PI))
+		double radius =  Math.sqrt(districtArea/Math.PI);
+		for(DistrictReferenceDto districtReferenceDto : existingDistricts){
+			if (!districtReferenceDto.equals(district)){
+				return districtGeoLatLon;
+			}
+		}
+		double R = 6371; // earth radius in km
+		double longMax = districtGeoLatLon.getLon() + Math.toDegrees(radius/R/Math.cos(Math.toRadians(districtGeoLatLon.getLat())));
+		double latMax = districtGeoLatLon.getLat() + Math.toDegrees(radius/R/Math.cos(Math.toRadians(districtGeoLatLon.getLon())));
+
+		double x = (Math.random() * (latMax - districtGeoLatLon.getLat())) + districtGeoLatLon.getLat();
+		double y = (Math.random() * (longMax - districtGeoLatLon.getLon())) + districtGeoLatLon.getLon();
+
+		return new GeoLatLon(x, y);
+	}
+
 	private void fillCaseLists(List<MapCaseDto> cases) {
 		for (MapCaseDto caze : cases) {
 			// these filters need to be used for the count too
@@ -1093,7 +1108,6 @@ public class DashboardMapComponent extends VerticalLayout {
 			boolean hasFacilityGps = caze.getHealthFacilityLat() != null && caze.getHealthFacilityLon() != null;
 
 			boolean hasDistrickGps = caze.getDistrictLatitude() != null && caze.getDistrictLongitude() != null;
-//			boolean hasDistrick = caze.getDistrictUuid() != null;
 
 			if (mapCaseDisplayMode == MapCaseDisplayMode.CASE_ADDRESS) {
 				if (!hasCaseGps) {
@@ -1101,20 +1115,14 @@ public class DashboardMapComponent extends VerticalLayout {
 				}
 				mapCaseDtos.add(caze);
 			}
-			else if (hasDistrickGps){
+			else if (hasDistrickGps && !hasFacilityGps){
 				DistrictReferenceDto district = new DistrictReferenceDto();
 				district.setUuid(caze.getDistrictUuid());
-				GeoLatLon districtGeoLatLon = FacadeProvider.getGeoShapeProvider().getCenterOfDistrict(district);
-//				Will use this to scatter the corddinates on the map
-				Double districtArea = FacadeProvider.getGeoShapeProvider()
-						.getDistrictAreaByLatLng(districtGeoLatLon);
-				double radius =  Math.sqrt(districtArea/Math.PI);
-				Double diameter =  (2*radius);
-				Double circumference =  (Math.PI)*(2*radius);
 
-				double newdistrictGeoLatLon = Math.cosh(districtGeoLatLon.getLat());
-//				caze.setDistrictLatitude(districtGeoLatLon.getLat());
-//				caze.setDistrictLongitude(districtGeoLatLon.getLon());
+				GeoLatLon coordinates = generateCoordinatesInDistrict(district);
+				caze.setDistrictLatitude(coordinates.getLat());
+				caze.setDistrictLongitude(coordinates.getLon());
+				existingDistricts.add(district);
 
 				mapCaseDtos.add(caze);
 				casesByDistrict.computeIfAbsent(district, k -> new ArrayList<>());
