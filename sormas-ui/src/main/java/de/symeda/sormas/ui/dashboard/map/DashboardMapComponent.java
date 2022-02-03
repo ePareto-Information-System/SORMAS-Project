@@ -18,6 +18,7 @@
 package de.symeda.sormas.ui.dashboard.map;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
@@ -1092,6 +1093,7 @@ public class DashboardMapComponent extends VerticalLayout {
 			boolean hasFacilityGps = caze.getHealthFacilityLat() != null && caze.getHealthFacilityLon() != null;
 
 			boolean hasDistrickGps = caze.getDistrictLatitude() != null && caze.getDistrictLongitude() != null;
+//			boolean hasDistrick = caze.getDistrictUuid() != null;
 
 			if (mapCaseDisplayMode == MapCaseDisplayMode.CASE_ADDRESS) {
 				if (!hasCaseGps) {
@@ -1100,9 +1102,21 @@ public class DashboardMapComponent extends VerticalLayout {
 				mapCaseDtos.add(caze);
 			}
 			else if (hasDistrickGps){
-				mapCaseDtos.add(caze);
 				DistrictReferenceDto district = new DistrictReferenceDto();
 				district.setUuid(caze.getDistrictUuid());
+				GeoLatLon districtGeoLatLon = FacadeProvider.getGeoShapeProvider().getCenterOfDistrict(district);
+//				Will use this to scatter the corddinates on the map
+				Double districtArea = FacadeProvider.getGeoShapeProvider()
+						.getDistrictAreaByLatLng(districtGeoLatLon);
+				double radius =  Math.sqrt(districtArea/Math.PI);
+				Double diameter =  (2*radius);
+				Double circumference =  (Math.PI)*(2*radius);
+
+				double newdistrictGeoLatLon = Math.cosh(districtGeoLatLon.getLat());
+//				caze.setDistrictLatitude(districtGeoLatLon.getLat());
+//				caze.setDistrictLongitude(districtGeoLatLon.getLon());
+
+				mapCaseDtos.add(caze);
 				casesByDistrict.computeIfAbsent(district, k -> new ArrayList<>());
 			}
 			else {
