@@ -296,6 +296,9 @@ public class DistrictFacadeEjb
 		dto.setArchived(entity.isArchived());
 		dto.setExternalID(entity.getExternalID());
 
+		dto.setDistrictLatitude(entity.getDistrictLatitude());
+		dto.setDistrictLongitude(entity.getDistrictLongitude());
+
 		return dto;
 	}
 
@@ -320,6 +323,9 @@ public class DistrictFacadeEjb
 		dto.setRegion(RegionFacadeEjb.toReferenceDto(entity.getRegion()));
 		dto.setExternalID(entity.getExternalID());
 
+		dto.setDistrictLatitude(entity.getDistrictLatitude());
+		dto.setDistrictLongitude(entity.getDistrictLongitude());
+
 		return dto;
 	}
 
@@ -334,6 +340,10 @@ public class DistrictFacadeEjb
 		target.setRegion(regionService.getByReferenceDto(source.getRegion()));
 		target.setArchived(source.isArchived());
 		target.setExternalID(source.getExternalID());
+
+		target.setDistrictLatitude(source.getDistrictLatitude());
+		target.setDistrictLatitude(source.getDistrictLongitude());
+
 		return target;
 	}
 
