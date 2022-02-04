@@ -67,6 +67,9 @@ public class MapCaseDto implements Serializable {
 
 	private Boolean isInJurisdiction;
 
+	private double districtLatitude;
+	private double districtLongitude;
+
 	public MapCaseDto(
 		String uuid,
 		Date reportDate,
@@ -97,6 +100,42 @@ public class MapCaseDto implements Serializable {
 		this.addressLon = addressLon;
 		this.healthFacilityUuid = healthFacilityUuid;
 		this.isInJurisdiction = isInJurisdiction;
+	}
+
+	public MapCaseDto(
+		String uuid,
+		Date reportDate,
+		CaseClassification caseClassification,
+		Disease disease,
+		String personUuid,
+		String personFirstName,
+		String personLastName,
+		String healthFacilityUuid,
+		Double healthFacilityLat,
+		Double healthFacilityLon,
+		Double reportLat,
+		Double reportLon,
+		Double addressLat,
+		Double addressLon,
+		boolean isInJurisdiction,
+		double districtLatitude,
+		double districtLongitude) {
+
+		this.uuid = uuid;
+		this.reportDate = reportDate;
+		this.caseClassification = caseClassification;
+		this.disease = disease;
+		this.person = new PersonReferenceDto(personUuid, personFirstName, personLastName);
+		this.setHealthFacilityLat(healthFacilityLat);
+		this.setHealthFacilityLon(healthFacilityLon);
+		this.reportLat = reportLat;
+		this.reportLon = reportLon;
+		this.addressLat = addressLat;
+		this.addressLon = addressLon;
+		this.healthFacilityUuid = healthFacilityUuid;
+		this.isInJurisdiction = isInJurisdiction;
+		this.districtLatitude = districtLatitude;
+		this.districtLongitude = districtLongitude;
 	}
 
 	public String getUuid() {
@@ -198,5 +237,21 @@ public class MapCaseDto implements Serializable {
 
 	public Boolean getInJurisdiction() {
 		return isInJurisdiction;
+	}
+
+	public double getDistrictLatitude() {
+		return districtLatitude;
+	}
+
+	public void setDistrictLatitude(double districtLatitude) {
+		this.districtLatitude = districtLatitude;
+	}
+
+	public double getDistrictLongitude() {
+		return districtLongitude;
+	}
+
+	public void setDistrictLongitude(double districtLongitude) {
+		this.districtLongitude = districtLongitude;
 	}
 }
