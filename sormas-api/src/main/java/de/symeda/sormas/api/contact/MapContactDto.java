@@ -60,38 +60,9 @@ public class MapContactDto implements Serializable {
 	private String casePersonFirstName;
 	private String casePersonLastName;
 
+	private String districtUuid;
 	private double districtLatitude;
 	private double districtLongitude;
-
-	public MapContactDto(
-			String uuid,
-			ContactClassification contactClassification,
-			Double reportLat,
-			Double reportLon,
-			Double addressLat,
-			Double addressLon,
-			Date caseOnsetDate,
-			Date caseReportDate,
-			Date contactReportDate,
-			String personFirstName,
-			String personLastName,
-			String casePersonFirstName,
-			String casePersonLastName) {
-
-		this.uuid = uuid;
-		this.contactClassification = contactClassification;
-		this.reportLat = reportLat;
-		this.reportLon = reportLon;
-		this.addressLat = addressLat;
-		this.addressLon = addressLon;
-		this.caseOnsetDate = caseOnsetDate;
-		this.caseReportDate = caseReportDate;
-		this.contactReportDate = contactReportDate;
-		this.personFirstName = personFirstName;
-		this.personLastName = personLastName;
-		this.casePersonFirstName = casePersonFirstName;
-		this.casePersonLastName = casePersonLastName;
-	}
 
 	public MapContactDto(
 		String uuid,
@@ -107,6 +78,7 @@ public class MapContactDto implements Serializable {
 		String personLastName,
 		String casePersonFirstName,
 		String casePersonLastName,
+		String districtUuid,
 		double districtLatitude,
 		double districtLongitude) {
 
@@ -123,6 +95,7 @@ public class MapContactDto implements Serializable {
 		this.personLastName = personLastName;
 		this.casePersonFirstName = casePersonFirstName;
 		this.casePersonLastName = casePersonLastName;
+		this.districtUuid = districtUuid;
 		this.districtLatitude = districtLatitude;
 		this.districtLongitude = districtLongitude;
 	}
@@ -249,6 +222,14 @@ public class MapContactDto implements Serializable {
 			builder.append(casePersonFirstName).append(" ").append(casePersonLastName.toUpperCase());
 		}
 		return builder.toString();
+	}
+
+	public String getDistrictUuid() {
+		return districtUuid;
+	}
+
+	public void setDistrictUuid(String districtUuid) {
+		this.districtUuid = districtUuid;
 	}
 
 	public double getDistrictLatitude() {
