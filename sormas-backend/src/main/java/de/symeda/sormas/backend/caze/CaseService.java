@@ -307,6 +307,7 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 
 		CaseQueryContext caseQueryContext = new CaseQueryContext(cb, cq, caze);
 		CaseJoins<Case> joins = (CaseJoins<Case>) caseQueryContext.getJoins();
+		Join<Case, District> contactDistrict = joins.getDistrict();
 
 		Predicate filter = createMapCasesFilter(cb, cq, caze, joins, region, district, disease, from, to, dateType);
 
@@ -328,7 +329,9 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 				caze.get(Case.REPORT_LON),
 				joins.getPersonAddress().get(Location.LATITUDE),
 				joins.getPersonAddress().get(Location.LONGITUDE),
-				JurisdictionHelper.booleanSelector(cb, inJurisdictionOrOwned(caseQueryContext)));
+				JurisdictionHelper.booleanSelector(cb, inJurisdictionOrOwned(caseQueryContext)),
+				contactDistrict.get(District.DISTRICT_LATITUDE),
+				contactDistrict.get(District.DISTRICT_LONGITUDE));
 
 			result = em.createQuery(cq).getResultList();
 		} else {
