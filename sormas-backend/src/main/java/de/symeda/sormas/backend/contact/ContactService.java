@@ -412,15 +412,13 @@ public class ContactService extends AbstractCoreAdoService<Contact> {
 		CriteriaQuery<MapContactDto> cq = cb.createQuery(MapContactDto.class);
 
 		Root<Contact> contact = cq.from(getElementClass());
-		Join<Contact, Person> person = contact.join(Contact.PERSON, JoinType.LEFT);
-		Join<Person, Location> contactPersonAddress = person.join(Person.ADDRESS, JoinType.LEFT);
-		Join<Contact, Case> caze = contact.join(Contact.CAZE, JoinType.LEFT);
-		Join<Case, Person> casePerson = caze.join(Case.PERSON, JoinType.LEFT);
-		Join<Case, Symptoms> symptoms = caze.join(Case.SYMPTOMS, JoinType.LEFT);
 
-		Join<Contact, District> contactDistrict = contact.join(Contact.DISTRICT, JoinType.LEFT);
+		ContactQueryContext contactQueryContext = new ContactQueryContext(cb, cq, contact);
+		ContactJoins<Contact> contactJoins = (ContactJoins<Contact>) contactQueryContext.getJoins();
+		Join<Case, Symptoms> symptoms = contactJoins.getCaze().join(Case.SYMPTOMS, JoinType.LEFT);
 
-		Predicate filter = createMapContactsFilter(cb, cq, contact, caze, contactPersonAddress, region, district, disease, from, to);
+		Predicate filter = createMapContactsFilterWithContactJoins(cb, cq, contact, contactJoins, region, district, disease, from, to);
+//		Predicate filter = createMapContactsFilter(cb, cq, contact, caze, contactPersonAddress, region, district, disease, from, to);
 
 		List<MapContactDto> result;
 		if (filter != null) {
@@ -430,18 +428,18 @@ public class ContactService extends AbstractCoreAdoService<Contact> {
 				contact.get(Contact.CONTACT_CLASSIFICATION),
 				contact.get(Contact.REPORT_LAT),
 				contact.get(Contact.REPORT_LON),
-				contactPersonAddress.get(Location.LATITUDE),
-				contactPersonAddress.get(Location.LONGITUDE),
+				contactJoins.getPersonAddress().get(Location.LATITUDE),
+				contactJoins.getPersonAddress().get(Location.LONGITUDE),
 				symptoms.get(Symptoms.ONSET_DATE),
-				caze.get(Case.REPORT_DATE),
+				contactJoins.getCaze().get(Case.REPORT_DATE),
 				contact.get(Contact.REPORT_DATE_TIME),
-				person.get(Person.FIRST_NAME),
-				person.get(Person.LAST_NAME),
-				casePerson.get(Person.FIRST_NAME),
-				casePerson.get(Person.LAST_NAME),
-					contactDistrict.get(District.DISTRICT_LATITUDE),
-					contactDistrict.get(District.DISTRICT_LONGITUDE)
-					);
+				contactJoins.getPerson().get(Person.FIRST_NAME),
+				contactJoins.getPerson().get(Person.LAST_NAME),
+				contactJoins.getCasePerson().get(Person.FIRST_NAME),
+				contactJoins.getCasePerson().get(Person.LAST_NAME),
+				contactJoins.getDistrict().get(District.UUID),
+				contactJoins.getDistrict().get(District.DISTRICT_LATITUDE),
+				contactJoins.getDistrict().get(District.DISTRICT_LONGITUDE));
 
 			result = em.createQuery(cq).getResultList();
 			// #1274 Temporarily disabled because it severely impacts the performance of the
@@ -459,6 +457,50 @@ public class ContactService extends AbstractCoreAdoService<Contact> {
 		}
 
 		return result;
+	}
+
+	private Predicate createMapContactsFilterWithContactJoins(
+		CriteriaBuilder cb,
+		CriteriaQuery<?> cq,
+		Root<Contact> contactRoot,
+		ContactJoins<Contact> contactJoins,
+		Region region,
+		District district,
+		Disease disease,
+		Date from,
+		Date to) {
+		Predicate filter = createActiveContactsFilter(cb, contactRoot);
+		filter = CriteriaBuilderHelper.and(cb, filter, createUserFilter(cb, cq, contactRoot));
+
+		// Filter contacts by date; only consider contacts with reportdates within the given timeframe
+		Predicate reportDateFilter =
+			cb.between(contactRoot.get(Contact.REPORT_DATE_TIME), DateHelper.getStartOfDay(from), DateHelper.getEndOfDay(to));
+		filter = CriteriaBuilderHelper.and(cb, filter, reportDateFilter);
+
+		filter = CriteriaBuilderHelper.and(cb, filter, getRegionDistrictDiseasePredicate(region, district, disease, cb, contactRoot, contactJoins.getCaze()));
+
+		// Only retrieve contacts that are currently under follow-up
+		Predicate followUpFilter = cb.equal(contactRoot.get(Contact.FOLLOW_UP_STATUS), FollowUpStatus.FOLLOW_UP);
+		filter = CriteriaBuilderHelper.and(cb, filter, followUpFilter);
+
+		// only retrieve contacts with given coordinates
+		Predicate personLatLonNotNull = CriteriaBuilderHelper
+//			.and(cb, cb.isNotNull(contactPersonAddressJoin.get(Location.LONGITUDE)), cb.isNotNull(contactPersonAddressJoin.get(Location.LATITUDE)));
+			.and(cb, cb.isNotNull(contactJoins.getPersonAddress().get(Location.LONGITUDE)), cb.isNotNull(contactJoins.getPersonAddress().get(Location.LATITUDE)));
+
+		Predicate reportLatLonNotNull =
+			CriteriaBuilderHelper.and(cb, cb.isNotNull(contactRoot.get(Contact.REPORT_LON)), cb.isNotNull(contactRoot.get(Contact.REPORT_LAT)));
+
+		Predicate districtLatLonNotNull = CriteriaBuilderHelper
+			.and(cb, cb.isNotNull(contactJoins.getDistrict().get(District.DISTRICT_LONGITUDE)), cb.isNotNull(contactJoins.getDistrict().get(District.DISTRICT_LONGITUDE)));
+//		Predicate districtLatLonNotNull = CriteriaBuilderHelper
+//			.and(cb, cb.isNotNull(contactRoot.getJoins().get(District.DISTRICT_LONGITUDE)),cb.isNotNull(contactRoot.getJoins().get(District.DISTRICT_LATITUDE)));
+
+		Predicate latLonProvided = CriteriaBuilderHelper.or(cb, personLatLonNotNull, reportLatLonNotNull, districtLatLonNotNull);
+
+		filter = CriteriaBuilderHelper.and(cb, filter, latLonProvided);
+
+		return filter;
 	}
 
 	private Predicate createMapContactsFilter(
@@ -489,9 +531,18 @@ public class ContactService extends AbstractCoreAdoService<Contact> {
 		// only retrieve contacts with given coordinates
 		Predicate personLatLonNotNull = CriteriaBuilderHelper
 			.and(cb, cb.isNotNull(contactPersonAddressJoin.get(Location.LONGITUDE)), cb.isNotNull(contactPersonAddressJoin.get(Location.LATITUDE)));
+
 		Predicate reportLatLonNotNull =
 			CriteriaBuilderHelper.and(cb, cb.isNotNull(contactRoot.get(Contact.REPORT_LON)), cb.isNotNull(contactRoot.get(Contact.REPORT_LAT)));
-		Predicate latLonProvided = CriteriaBuilderHelper.or(cb, personLatLonNotNull, reportLatLonNotNull);
+
+		Predicate districtLatLonNotNull = CriteriaBuilderHelper
+//			.and(cb, cb.isNotNull(cazeJoin.get(District.DISTRICT_LONGITUDE)), cb.isNotNull(cazeJoin.get(District.DISTRICT_LONGITUDE)));
+			.and(cb, cb.isNotNull(contactRoot.get(District.DISTRICT_LONGITUDE)), cb.isNotNull(contactRoot.get(District.DISTRICT_LONGITUDE)));
+//		Predicate districtLatLonNotNull = CriteriaBuilderHelper
+//			.and(cb, cb.isNotNull(contactRoot.getJoins().get(District.DISTRICT_LONGITUDE)),cb.isNotNull(contactRoot.getJoins().get(District.DISTRICT_LATITUDE)));
+
+		Predicate latLonProvided = CriteriaBuilderHelper.or(cb, personLatLonNotNull, reportLatLonNotNull, districtLatLonNotNull);
+
 		filter = CriteriaBuilderHelper.and(cb, filter, latLonProvided);
 
 		return filter;
