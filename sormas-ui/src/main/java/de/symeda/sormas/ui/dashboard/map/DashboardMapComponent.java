@@ -134,7 +134,6 @@ public class DashboardMapComponent extends VerticalLayout {
 	private Consumer<Boolean> externalExpandListener;
 	private boolean emptyPopulationDistrictPresent;
 
-	private final List<DistrictReferenceDto> existingDistricts = new ArrayList<>();
 	public DashboardMapComponent(DashboardDataProvider dashboardDataProvider) {
 		this.dashboardDataProvider = dashboardDataProvider;
 
@@ -1081,11 +1080,7 @@ public class DashboardMapComponent extends VerticalLayout {
 		Double districtArea = FacadeProvider.getGeoShapeProvider().getDistrictAreaByLatLng(districtGeoLatLon);
 		//radius  = Circumfrence/2pie, but Area is given so Radius=(SquareRoot of (Area/PI))
 		double radius =  Math.sqrt(districtArea/Math.PI);
-		for(DistrictReferenceDto districtReferenceDto : existingDistricts){
-			if (!districtReferenceDto.equals(district)){
-				return districtGeoLatLon;
-			}
-		}
+
 		double R = 6371; // earth radius in km
 		double longMax = districtGeoLatLon.getLon() + Math.toDegrees(radius/R/Math.cos(Math.toRadians(districtGeoLatLon.getLat())));
 		double latMax = districtGeoLatLon.getLat() + Math.toDegrees(radius/R/Math.cos(Math.toRadians(districtGeoLatLon.getLon())));
@@ -1122,7 +1117,6 @@ public class DashboardMapComponent extends VerticalLayout {
 				GeoLatLon coordinates = generateCoordinatesInDistrict(district);
 				caze.setDistrictLatitude(coordinates.getLat());
 				caze.setDistrictLongitude(coordinates.getLon());
-				existingDistricts.add(district);
 
 				mapCaseDtos.add(caze);
 				casesByDistrict.computeIfAbsent(district, k -> new ArrayList<>());
