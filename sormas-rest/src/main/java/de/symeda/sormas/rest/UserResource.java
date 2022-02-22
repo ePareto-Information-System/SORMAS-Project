@@ -89,4 +89,20 @@ public class UserResource {
 	public List<UserReferenceWithTaskNumbersDto> getUsersWithTaskNumbers(@RequestBody TaskContextIndex taskContextIndex) {
 		return FacadeProvider.getUserFacade().getAssignableUsersWithTaskNumbers(taskContextIndex);
 	}
+
+	@POST
+	@Path("/passwordStrength")
+	public String saveNewPassword(
+		@QueryParam("uuid") String uuid,
+		@QueryParam("newPassword") String newPassword,
+		@QueryParam("currentPassword") String currentPassword) {
+		return FacadeProvider.getUserFacade().updateUserPassword(uuid, newPassword, currentPassword);
+	}
+
+	@GET
+	@Path("/generatePassword")
+	public String generatePassword() {
+		return FacadeProvider.getUserFacade().generatePassword();
+	}
+
 }
