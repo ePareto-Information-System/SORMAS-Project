@@ -2298,9 +2298,14 @@ public interface Captions {
 	String User_userEmail = "User.userEmail";
 	String User_userName = "User.userName";
 	String User_userRoles = "User.userRoles";
+	String updatePassword = "updatePassword";
+	String currentPassword = "currentPassword";
+	String confirmPassword = "confirmPassword";
+	String passwordStrength = "passwordStrength";
 	String User_uuid = "User.uuid";
 	String userNewUser = "userNewUser";
 	String userResetPassword = "userResetPassword";
+	String userGeneratePassword = "userGeneratePassword";
 	String userRight = "userRight";
 	String UserRight_description = "UserRight.description";
 	String UserRight_jurisdiction = "UserRight.jurisdiction";
