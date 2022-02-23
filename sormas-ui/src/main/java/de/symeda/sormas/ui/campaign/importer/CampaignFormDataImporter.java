@@ -1,5 +1,6 @@
 package de.symeda.sormas.ui.campaign.importer;
 
+import de.symeda.sormas.api.importexport.ImportErrorException;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.io.File;
@@ -38,10 +39,12 @@ import de.symeda.sormas.api.campaign.form.CampaignFormMetaReferenceDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.api.importexport.ImportLineResultDto;
 import de.symeda.sormas.api.importexport.InvalidColumnException;
-import de.symeda.sormas.api.region.CommunityReferenceDto;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.region.RegionReferenceDto;
+import de.symeda.sormas.api.importexport.ValueSeparator;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserFacade;
@@ -49,7 +52,6 @@ import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.ui.campaign.campaigndata.CampaignFormDataSelectionField;
 import de.symeda.sormas.ui.importer.DataImporter;
-import de.symeda.sormas.ui.importer.ImportErrorException;
 import de.symeda.sormas.ui.importer.ImportLineResult;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 
@@ -67,8 +69,10 @@ public class CampaignFormDataImporter extends DataImporter {
 		boolean hasEntityClassRow,
 		UserDto currentUser,
 		String campaignFormMetaUuid,
-		CampaignReferenceDto campaignReferenceDto) {
-		super(inputFile, hasEntityClassRow, currentUser);
+		CampaignReferenceDto campaignReferenceDto,
+		ValueSeparator csvSeparator)
+		throws IOException {
+		super(inputFile, hasEntityClassRow, currentUser, csvSeparator);
 		this.campaignFormMetaUuid = campaignFormMetaUuid;
 		this.campaignReferenceDto = campaignReferenceDto;
 
@@ -170,7 +174,7 @@ public class CampaignFormDataImporter extends DataImporter {
 				try {
 					PropertyDescriptor propertyDescriptor = new PropertyDescriptor(propertyPath, campaignFormData.getClass());
 					Class<?> propertyType = propertyDescriptor.getPropertyType();
-					if (!executeDefaultInvokings(
+					if (!executeDefaultInvoke(
 						propertyDescriptor,
 						campaignFormData,
 						entry[i],
@@ -263,13 +267,18 @@ public class CampaignFormDataImporter extends DataImporter {
 				}
 			}
 		}
+
+		ImportLineResultDto<CampaignFormDataDto> constraintErrors = validateConstraints(campaignFormData);
+		if (constraintErrors.isError()) {
+			throw new ImportErrorException(constraintErrors.getMessage());
+		}
 	}
 
 	@Override
-	protected boolean executeDefaultInvokings(PropertyDescriptor pd, Object element, String entry, String[] entryHeaderPath)
+	protected boolean executeDefaultInvoke(PropertyDescriptor pd, Object element, String entry, String[] entryHeaderPath)
 		throws InvocationTargetException, IllegalAccessException, ImportErrorException {
 
-		final boolean invokingSuccessful = super.executeDefaultInvokings(pd, element, entry, entryHeaderPath);
+		final boolean invokingSuccessful = super.executeDefaultInvoke(pd, element, entry, entryHeaderPath);
 		final Class<?> propertyType = pd.getPropertyType();
 		if (propertyType.isAssignableFrom(RegionReferenceDto.class)) {
 			final UserDto currentUserDto = userFacade.getByUuid(currentUser.getUuid());

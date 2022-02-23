@@ -44,7 +44,7 @@ public class HospitalizationDtoHelper extends AdoDtoHelper<Hospitalization, Hosp
 	}
 
 	@Override
-	protected Call<List<HospitalizationDto>> pullAllSince(long since) throws NoConnectionException {
+	protected Call<List<HospitalizationDto>> pullAllSince(long since, Integer size, String lastSynchronizedUuid)  throws NoConnectionException {
 		throw new UnsupportedOperationException("Entity is embedded");
 	}
 
@@ -66,6 +66,7 @@ public class HospitalizationDtoHelper extends AdoDtoHelper<Hospitalization, Hosp
 		a.setDischargeDate(b.getDischargeDate());
 		a.setIsolated(b.getIsolated());
 		a.setIsolationDate(b.getIsolationDate());
+		a.setDescription(b.getDescription());
 		a.setLeftAgainstAdvice(b.getLeftAgainstAdvice());
 		a.setIntensiveCareUnit(b.getIntensiveCareUnit());
 		a.setIntensiveCareUnitStart(b.getIntensiveCareUnitStart());
@@ -95,6 +96,7 @@ public class HospitalizationDtoHelper extends AdoDtoHelper<Hospitalization, Hosp
 		a.setDischargeDate(b.getDischargeDate());
 		a.setIsolated(b.getIsolated());
 		a.setIsolationDate(b.getIsolationDate());
+		a.setDescription(b.getDescription());
 		a.setLeftAgainstAdvice(b.getLeftAgainstAdvice());
 		a.setIntensiveCareUnit(b.getIntensiveCareUnit());
 		a.setIntensiveCareUnitStart(b.getIntensiveCareUnitStart());
@@ -111,4 +113,9 @@ public class HospitalizationDtoHelper extends AdoDtoHelper<Hospitalization, Hosp
 		}
 		a.setPreviousHospitalizations(previousHospitalizationDtos);
 	}
+
+    @Override
+    protected long getApproximateJsonSizeInBytes() {
+        return 0;
+    }
 }

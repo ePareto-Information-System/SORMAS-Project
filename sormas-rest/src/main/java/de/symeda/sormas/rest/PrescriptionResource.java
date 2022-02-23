@@ -32,7 +32,11 @@ import javax.ws.rs.core.MediaType;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.PushResult;
+import de.symeda.sormas.api.caze.CriteriaWithSorting;
+import de.symeda.sormas.api.therapy.PrescriptionCriteria;
 import de.symeda.sormas.api.therapy.PrescriptionDto;
+import de.symeda.sormas.api.therapy.PrescriptionIndexDto;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @Path("/prescriptions")
 @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -48,10 +52,13 @@ public class PrescriptionResource extends EntityDtoResource {
 		return FacadeProvider.getPrescriptionFacade().getAllActivePrescriptionsAfter(new Date(since));
 	}
 
-	@POST
-	@Path("/query")
-	public List<PrescriptionDto> getByUuids(List<String> uuids) {
-		return FacadeProvider.getPrescriptionFacade().getByUuids(uuids);
+	@GET
+	@Path("/all/{since}/{size}/{lastSynchronizedUuid}")
+	public List<PrescriptionDto> getAllPrescriptions(
+		@PathParam("since") long since,
+		@PathParam("size") int size,
+		@PathParam("lastSynchronizedUuid") String lastSynchronizedUuid) {
+		return FacadeProvider.getPrescriptionFacade().getAllActivePrescriptionsAfter(new Date(since), size, lastSynchronizedUuid);
 	}
 
 	@POST
@@ -64,5 +71,17 @@ public class PrescriptionResource extends EntityDtoResource {
 	@Path("/uuids")
 	public List<String> getAllActiveUuids() {
 		return FacadeProvider.getPrescriptionFacade().getAllActiveUuids();
+	}
+
+	@POST
+	@Path("/query")
+	public List<PrescriptionDto> getByUuids(List<String> uuids) {
+		return FacadeProvider.getPrescriptionFacade().getByUuids(uuids);
+	}
+
+	@POST
+	@Path("/indexList")
+	public List<PrescriptionIndexDto> getIndexList(@RequestBody CriteriaWithSorting<PrescriptionCriteria> criteriaWithSorting) {
+		return FacadeProvider.getPrescriptionFacade().getIndexList(criteriaWithSorting.getCriteria());
 	}
 }

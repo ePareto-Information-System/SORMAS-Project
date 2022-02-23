@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
+
 package de.symeda.sormas.rest;
 
 import java.util.Date;
@@ -28,11 +29,18 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.PushResult;
+import de.symeda.sormas.api.action.ActionCriteria;
 import de.symeda.sormas.api.action.ActionDto;
+import de.symeda.sormas.api.caze.CriteriaWithSorting;
+import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.event.EventActionIndexDto;
+import de.symeda.sormas.api.event.EventCriteria;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 /**
  * @see <a href="https://jersey.java.net/documentation/latest/">Jersey
@@ -77,4 +85,25 @@ public class ActionResource extends EntityDtoResource {
 	public List<String> getAllUuids() {
 		return FacadeProvider.getActionFacade().getAllUuids();
 	}
+
+	@POST
+	@Path("/indexEventActionList")
+	public Page<EventActionIndexDto> getEventActionIndexList(
+		@RequestBody CriteriaWithSorting<EventCriteria> criteriaWithSorting,
+		@QueryParam("offset") int offset,
+		@QueryParam("size") int size) {
+		return FacadeProvider.getActionFacade()
+			.getEventActionIndexPage(criteriaWithSorting.getCriteria(), offset, size, criteriaWithSorting.getSortProperties());
+	}
+
+	@POST
+	@Path("/indexActionList")
+	public Page<ActionDto> getActionList(
+		@RequestBody CriteriaWithSorting<ActionCriteria> criteriaWithSorting,
+		@QueryParam("offset") int offset,
+		@QueryParam("size") int size) {
+		return FacadeProvider.getActionFacade()
+			.getActionPage(criteriaWithSorting.getCriteria(), offset, size, criteriaWithSorting.getSortProperties());
+	}
+
 }

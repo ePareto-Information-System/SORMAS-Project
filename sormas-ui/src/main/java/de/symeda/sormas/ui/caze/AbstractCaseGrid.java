@@ -46,12 +46,10 @@ import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.person.PersonDto;
-import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.SortProperty;
-import de.symeda.sormas.api.utils.jurisdiction.UserJurisdiction;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
@@ -94,6 +92,13 @@ public abstract class AbstractCaseGrid<IndexDto extends CaseIndexDto> extends Fi
 
 		initColumns();
 
+		addItemClickListener(new ShowDetailsListener<>(CaseIndexDto.PERSON_UUID, e -> {
+			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.PERSON_MANAGEMENT)) {
+				ControllerProvider.getPersonController().navigateToPerson(e.getPersonUuid());
+			} else {
+				ControllerProvider.getCaseController().navigateToView(CasePersonView.VIEW_NAME, e.getUuid(), null);
+			}
+		}));
 		addItemClickListener(new ShowDetailsListener<>(CaseIndexDto.UUID, e -> ControllerProvider.getCaseController().navigateToCase(e.getUuid())));
 	}
 
@@ -154,6 +159,7 @@ public abstract class AbstractCaseGrid<IndexDto extends CaseIndexDto> extends Fi
 
 		Language userLanguage = I18nProperties.getUserLanguage();
 		((Column<CaseIndexDto, String>) getColumn(CaseIndexDto.UUID)).setRenderer(new UuidRenderer());
+		((Column<CaseIndexDto, String>) getColumn(CaseIndexDto.PERSON_UUID)).setRenderer(new UuidRenderer());
 		((Column<CaseIndexDto, Date>) getColumn(CaseIndexDto.REPORT_DATE))
 			.setRenderer(new DateRenderer(DateHelper.getLocalDateTimeFormat(userLanguage)));
 
@@ -192,8 +198,6 @@ public abstract class AbstractCaseGrid<IndexDto extends CaseIndexDto> extends Fi
 					LocationDto.I18N_PREFIX));
 			column.setStyleGenerator(FieldAccessColumnStyleGenerator.getDefault(getBeanType(), column.getId()));
 		}
-
-		getColumn(CaseIndexDto.VACCINATION).setCaption(I18nProperties.getCaption(Captions.VaccinationInfo_vaccinationStatus));
 	}
 
 	protected Stream<String> getGridColumns() {
@@ -205,6 +209,7 @@ public abstract class AbstractCaseGrid<IndexDto extends CaseIndexDto> extends Fi
 					CaseIndexDto.EPID_NUMBER,
 					CaseIndexDto.EXTERNAL_ID,
 					CaseIndexDto.EXTERNAL_TOKEN,
+					CaseIndexDto.INTERNAL_TOKEN,
 					DISEASE_SHORT,
 					CaseIndexDto.DISEASE_VARIANT,
 					CaseIndexDto.CASE_CLASSIFICATION,
@@ -225,13 +230,13 @@ public abstract class AbstractCaseGrid<IndexDto extends CaseIndexDto> extends Fi
 					: Stream.<String> empty(),
 				Stream.of(CaseIndexDto.QUARANTINE_TO, CaseIndexDto.CREATION_DATE),
 				getFollowUpColumns(),
-				Stream.of(CaseIndexDto.VACCINATION),
+				Stream.of(CaseIndexDto.VACCINATION_STATUS),
 				Stream.of(COLUMN_COMPLETENESS))
 			.flatMap(Function.identity());
 	}
 
 	protected Stream<String> getJurisdictionColumns() {
-		return Stream.of(CaseIndexDto.DISTRICT_NAME, CaseIndexDto.HEALTH_FACILITY_NAME, CaseIndexDto.POINT_OF_ENTRY_NAME);
+		return Stream.of(CaseIndexDto.RESPONSIBLE_DISTRICT_NAME, CaseIndexDto.HEALTH_FACILITY_NAME, CaseIndexDto.POINT_OF_ENTRY_NAME);
 	}
 
 	protected Stream<String> getReinfectionColumn() {
@@ -239,7 +244,7 @@ public abstract class AbstractCaseGrid<IndexDto extends CaseIndexDto> extends Fi
 	}
 
 	protected Stream<String> getPersonColumns() {
-		return Stream.of(CaseIndexDto.PERSON_FIRST_NAME, CaseIndexDto.PERSON_LAST_NAME);
+		return Stream.of(CaseIndexDto.PERSON_UUID, CaseIndexDto.PERSON_FIRST_NAME, CaseIndexDto.PERSON_LAST_NAME);
 	}
 
 	protected Stream<String> getEventColumns() {
@@ -264,12 +269,6 @@ public abstract class AbstractCaseGrid<IndexDto extends CaseIndexDto> extends Fi
 
 		if (getSelectionModel().isUserSelectionAllowed()) {
 			deselectAll();
-		}
-
-		if (getCriteria().getOutcome() == null) {
-			this.getColumn(CaseIndexDto.OUTCOME).setHidden(false);
-		} else if (this.getColumn(CaseIndexDto.OUTCOME) != null) {
-			this.getColumn(CaseIndexDto.OUTCOME).setHidden(true);
 		}
 
 		if (caseFollowUpEnabled) {
@@ -326,32 +325,4 @@ public abstract class AbstractCaseGrid<IndexDto extends CaseIndexDto> extends Fi
 	}
 
 	protected abstract List<IndexDto> getGridData(CaseCriteria caseCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
-
-	public static UserJurisdiction createUserJurisdiction(UserDto user) {
-
-		UserJurisdiction jurisdiction = new UserJurisdiction();
-		jurisdiction.setUuid(user.getUuid());
-
-		if (user.getRegion() != null) {
-			jurisdiction.setRegionUuid(user.getRegion().getUuid());
-		}
-		if (user.getDistrict() != null) {
-			jurisdiction.setDistrictUuid(user.getDistrict().getUuid());
-		}
-		if (user.getCommunity() != null) {
-			jurisdiction.setCommunityUuid(user.getCommunity().getUuid());
-		}
-		if (user.getHealthFacility() != null) {
-			jurisdiction.setHealthFacilityUuid(user.getHealthFacility().getUuid());
-		}
-		if (user.getPointOfEntry() != null) {
-			jurisdiction.setPointOfEntryUuid(user.getPointOfEntry().getUuid());
-		}
-
-		if (user.getLaboratory() != null) {
-			jurisdiction.setLabUuid(user.getLaboratory().getUuid());
-		}
-
-		return jurisdiction;
-	}
 }

@@ -22,15 +22,17 @@ import java.util.Date;
 import java.util.List;
 
 import de.symeda.sormas.api.EntityDto;
-import de.symeda.sormas.api.facility.FacilityReferenceDto;
-import de.symeda.sormas.api.region.CommunityReferenceDto;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
 
 public class WeeklyReportDto extends EntityDto {
 
 	private static final long serialVersionUID = -2884998571593631851L;
+
+	public static final long APPROXIMATE_JSON_SIZE_IN_BYTES = 2683;
 
 	public static final String I18N_PREFIX = "WeeklyReport";
 

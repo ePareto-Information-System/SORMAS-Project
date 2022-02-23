@@ -47,7 +47,6 @@ public class EventParticipantDao extends AbstractAdoDao<EventParticipant> {
 	public EventParticipant build() {
 
 		EventParticipant eventParticipant = super.build();
-
 		eventParticipant.setReportingUser(ConfigProvider.getUser());
 
 		return eventParticipant;
@@ -87,7 +86,7 @@ public class EventParticipantDao extends AbstractAdoDao<EventParticipant> {
 
 		try {
 			return queryBuilder().where()
-				.eq(EventParticipant.RESULTING_CASE_UUID + "_id", caze)
+				.eq(EventParticipant.RESULTING_CASE_UUID, caze.getUuid())
 				.and()
 				.eq(AbstractDomainObject.SNAPSHOT, false)
 				.query();

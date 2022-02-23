@@ -18,19 +18,29 @@ package de.symeda.sormas.api.sormastosormas;
 import java.util.List;
 
 import javax.ejb.Remote;
+import javax.validation.Valid;
+
+import de.symeda.sormas.api.sormastosormas.validation.SormasToSormasValidationException;
 
 @Remote
 public interface SormasToSormasEntityInterface {
 
-	void shareEntities(List<String> entityUuids, SormasToSormasOptionsDto options) throws SormasToSormasException;
+	void share(List<String> entityUuids, @Valid SormasToSormasOptionsDto options) throws SormasToSormasException;
+
+	void saveShareRequest(SormasToSormasEncryptedDataDto encryptedData) throws SormasToSormasException, SormasToSormasValidationException;
+
+	void acceptShareRequest(String uuid) throws SormasToSormasException, SormasToSormasValidationException;
+
+	SormasToSormasEncryptedDataDto getDataForShareRequest(SormasToSormasEncryptedDataDto encryptedRequestUuid) throws SormasToSormasException;
 
 	void saveSharedEntities(SormasToSormasEncryptedDataDto encryptedData) throws SormasToSormasException, SormasToSormasValidationException;
 
-	void returnEntity(String entityUuid, SormasToSormasOptionsDto options) throws SormasToSormasException;
-
-	void saveReturnedEntity(SormasToSormasEncryptedDataDto encryptedData) throws SormasToSormasException, SormasToSormasValidationException;
-
-	void syncEntity(String entityUuid, SormasToSormasOptionsDto options) throws SormasToSormasException;
+	void syncShares(ShareTreeCriteria criteria);
 
 	void saveSyncedEntity(SormasToSormasEncryptedDataDto encryptedData) throws SormasToSormasException, SormasToSormasValidationException;
+
+	List<SormasToSormasShareTree> getAllShares(String uuid);
+
+	SormasToSormasEncryptedDataDto getShareTrees(SormasToSormasEncryptedDataDto encryptedData) throws SormasToSormasException;
+
 }

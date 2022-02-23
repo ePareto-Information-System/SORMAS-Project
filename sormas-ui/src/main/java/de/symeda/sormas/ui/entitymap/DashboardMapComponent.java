@@ -63,17 +63,17 @@ import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.ContactFacade;
 import de.symeda.sormas.api.contact.MapContactDto;
 import de.symeda.sormas.api.dashboard.DashboardEventDto;
-import de.symeda.sormas.api.facility.FacilityDto;
-import de.symeda.sormas.api.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.geo.GeoLatLon;
+import de.symeda.sormas.api.geo.GeoShapeProvider;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.InfrastructureHelper;
-import de.symeda.sormas.api.region.DistrictDto;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.region.GeoLatLon;
-import de.symeda.sormas.api.region.GeoShapeProvider;
-import de.symeda.sormas.api.region.RegionReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.DataHelper;
@@ -368,25 +368,46 @@ public class DashboardMapComponent extends VerticalLayout {
 				singleCaseDataDto.getReportDate(),
 				singleCaseDataDto.getCaseClassification(),
 				singleCaseDataDto.getDisease(),
+
 				singleCaseDataDto.getPerson().getUuid(),
 				singleCaseDataDto.getPerson().getFirstName(),
 				singleCaseDataDto.getPerson().getLastName(),
+
 				singleCaseDataDto.getHealthFacility().getUuid(),
 				null, //singleCaseDataDto.healthFacilityLat(),
 				null, //singleCaseDataDto.healthFacilityLon(),
 				singleCaseDataDto.getReportLat(),
 				singleCaseDataDto.getReportLon(),
+
 				null, //singleCaseDataDto.getAddressLat
 				null, //singleCaseDataDto.getAddressLon
-				null, //singleCaseDataDto.getReportingUser().getUuid(),
-				null, //singleCaseDataDto.getResponsibleRegion().getUuid(),
-				null, //singleCaseDataDto.getResponsibleDistrict().getUuid(),
-				null, //singleCaseDataDto.getResponsibleCommunity().getUuid(),
-				null, //singleCaseDataDto.getRegion().getUuid(),
-				null, //singleCaseDataDto.getDistrict().getUuid(),
-				null, //singleCaseDataDto.getCommunity().getUuid(),
-				null //singleCaseDataDto.getPointOfEntry().getUuid()
+				true
 			);
+
+			/*MapCaseDto mapCase = new MapCaseDto(
+					singleCaseDataDto.getUuid(),
+					singleCaseDataDto.getReportDate(),
+					singleCaseDataDto.getCaseClassification(),
+					singleCaseDataDto.getDisease(),
+					singleCaseDataDto.getPerson().getUuid(),
+					singleCaseDataDto.getPerson().getFirstName(),
+					singleCaseDataDto.getPerson().getLastName(),
+					singleCaseDataDto.getHealthFacility().getUuid(),
+					null, //singleCaseDataDto.healthFacilityLat(),
+					null, //singleCaseDataDto.healthFacilityLon(),
+					singleCaseDataDto.getReportLat(),
+					singleCaseDataDto.getReportLon(),
+					null, //singleCaseDataDto.getAddressLat
+					null, //singleCaseDataDto.getAddressLon
+					null, //singleCaseDataDto.getReportingUser().getUuid(),
+					null, //singleCaseDataDto.getResponsibleRegion().getUuid(),
+					null, //singleCaseDataDto.getResponsibleDistrict().getUuid(),
+					null, //singleCaseDataDto.getResponsibleCommunity().getUuid(),
+					null, //singleCaseDataDto.getRegion().getUuid(),
+					null, //singleCaseDataDto.getDistrict().getUuid(),
+					null, //singleCaseDataDto.getCommunity().getUuid(),
+					null //singleCaseDataDto.getPointOfEntry().getUuid()
+			);*/
 
 			List<MapCaseDto> caseDtos = new ArrayList<>();
 			caseDtos.add(mapCase);

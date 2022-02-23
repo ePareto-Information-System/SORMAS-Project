@@ -60,6 +60,7 @@ public class MapContactDto implements Serializable {
 	private String casePersonFirstName;
 	private String casePersonLastName;
 	private int visitCount;
+	private Date unknownDate;
 
 	public MapContactDto(String uuid, ContactClassification contactClassification, Double reportLat, Double reportLon) {
 

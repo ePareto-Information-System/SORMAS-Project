@@ -17,7 +17,7 @@
  *******************************************************************************/
 package de.symeda.sormas.backend.hospitalization;
 
-import static de.symeda.sormas.api.EntityDto.COLUMN_LENGTH_DEFAULT;
+import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_BIG;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,8 +33,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import de.symeda.auditlog.api.Audited;
-import de.symeda.sormas.api.utils.MildModerateSevereCritical;
 import de.symeda.sormas.api.hospitalization.HospitalizationReasonType;
+import de.symeda.sormas.api.utils.MildModerateSevereCritical;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 
@@ -59,6 +59,7 @@ public class Hospitalization extends AbstractDomainObject {
 	public static final String INTENSIVE_CARE_UNIT_END = "intensiveCareUnitEnd";
 	public static final String PATIENT_CONDITION_ON_ADMISSION = "patientConditionOnAdmission";
 
+	public static final String DESCRIPTION = "description";
 
 	private YesNoUnknown admittedToHealthFacility;
 	private Date admissionDate;
@@ -75,6 +76,7 @@ public class Hospitalization extends AbstractDomainObject {
 	private Date intensiveCareUnitEnd;
 	private HospitalizationReasonType hospitalizationReason;
 	private String otherHospitalizationReason;
+	private String description;
 
 	private MildModerateSevereCritical patientConditionOnAdmission;
 
@@ -190,7 +192,6 @@ public class Hospitalization extends AbstractDomainObject {
 		this.intensiveCareUnitEnd = intensiveCareUnitEnd;
 	}
 	
-	@Column(length = COLUMN_LENGTH_DEFAULT)
 	public MildModerateSevereCritical getPatientConditionOnAdmission() {
 		return patientConditionOnAdmission;
 	}
@@ -216,5 +217,14 @@ public class Hospitalization extends AbstractDomainObject {
 	public void setOtherHospitalizationReason(String otherReasonForHospitalization) {
 		this.otherHospitalizationReason = otherReasonForHospitalization;
 
+	}
+
+	@Column(length = CHARACTER_LIMIT_BIG)
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }

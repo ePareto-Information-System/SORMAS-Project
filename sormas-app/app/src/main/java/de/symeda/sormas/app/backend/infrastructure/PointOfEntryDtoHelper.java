@@ -18,8 +18,8 @@ package de.symeda.sormas.app.backend.infrastructure;
 import java.util.List;
 
 import de.symeda.sormas.api.PushResult;
-import de.symeda.sormas.api.infrastructure.PointOfEntryDto;
-import de.symeda.sormas.api.infrastructure.PointOfEntryReferenceDto;
+import de.symeda.sormas.api.infrastructure.pointofentry.PointOfEntryDto;
+import de.symeda.sormas.api.infrastructure.pointofentry.PointOfEntryReferenceDto;
 import de.symeda.sormas.app.backend.common.AdoDtoHelper;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.region.District;
@@ -43,7 +43,7 @@ public class PointOfEntryDtoHelper extends AdoDtoHelper<PointOfEntry, PointOfEnt
 	}
 
 	@Override
-	protected Call<List<PointOfEntryDto>> pullAllSince(long since) throws NoConnectionException {
+	protected Call<List<PointOfEntryDto>> pullAllSince(long since, Integer size, String lastSynchronizedUuid)  throws NoConnectionException {
 		return RetroProvider.getPointOfEntryFacade().pullAllSince(since);
 	}
 
@@ -94,7 +94,12 @@ public class PointOfEntryDtoHelper extends AdoDtoHelper<PointOfEntry, PointOfEnt
 		}
 	}
 
-	public static PointOfEntryReferenceDto toReferenceDto(PointOfEntry ado) {
+    @Override
+    protected long getApproximateJsonSizeInBytes() {
+        return 0;
+    }
+
+    public static PointOfEntryReferenceDto toReferenceDto(PointOfEntry ado) {
 		if (ado == null) {
 			return null;
 		}

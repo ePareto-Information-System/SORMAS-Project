@@ -18,13 +18,13 @@
 package de.symeda.sormas.backend.common;
 
 import java.sql.Timestamp;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
@@ -46,21 +46,19 @@ import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.ReferenceDto;
-import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.backend.user.CurrentUser;
 import de.symeda.sormas.backend.user.CurrentUserQualifier;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.util.ModelConstants;
+import de.symeda.sormas.backend.util.QueryHelper;
 
 public class BaseAdoService<ADO extends AbstractDomainObject> implements AdoService<ADO> {
 
 	// protected to be used by implementations
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-	@Resource
-	private SessionContext context;
 
 	private final Class<ADO> elementClass;
 
@@ -78,6 +76,16 @@ public class BaseAdoService<ADO extends AbstractDomainObject> implements AdoServ
 
 	protected User getCurrentUser() {
 		return currentUser.get().getUser();
+	}
+
+	/**
+	 * Should only be used for testing scenarios of user rights & jurisdiction!
+	 * 
+	 * @param user
+	 */
+	@Deprecated
+	public void setCurrentUser(User user) {
+		currentUser.get().setUser(user);
 	}
 
 	protected Class<ADO> getElementClass() {
@@ -121,11 +129,7 @@ public class BaseAdoService<ADO extends AbstractDomainObject> implements AdoServ
 		Root<ADO> from = cq.from(getElementClass());
 		Path<Timestamp> changeDatePath = from.get(AbstractDomainObject.CHANGE_DATE);
 		cq.select(cb.greatest(changeDatePath));
-		try {
-			return em.createQuery(cq).getSingleResult();
-		} catch (NoResultException ex) {
-			return null;
-		}
+		return QueryHelper.getSingleResult(em, cq);
 	}
 
 	@Override
@@ -140,16 +144,19 @@ public class BaseAdoService<ADO extends AbstractDomainObject> implements AdoServ
 	}
 
 	public List<ADO> getAll(BiFunction<CriteriaBuilder, Root<ADO>, Predicate> filterBuilder) {
+		return getAll(filterBuilder, null);
+	}
+
+	public List<ADO> getAll(BiFunction<CriteriaBuilder, Root<ADO>, Predicate> filterBuilder, Integer batchSize) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<ADO> cq = cb.createQuery(getElementClass());
 		Root<ADO> from = cq.from(getElementClass());
-		cq.orderBy(cb.desc(from.get(AbstractDomainObject.CHANGE_DATE)));
 		Predicate filter = filterBuilder.apply(cb, from);
 		if (filter != null) {
 			cq.where(filter);
 		}
-		return em.createQuery(cq).getResultList();
+		return getBatchedQueryResults(cb, cq, from, batchSize);
 	}
 
 	public List<ADO> getAll(String orderProperty, boolean asc) {
@@ -160,6 +167,15 @@ public class BaseAdoService<ADO extends AbstractDomainObject> implements AdoServ
 		cq.orderBy(asc ? cb.asc(from.get(orderProperty)) : cb.desc(from.get(orderProperty)));
 
 		return em.createQuery(cq).getResultList();
+	}
+
+	public List<ADO> getBatchedQueryResults(CriteriaBuilder cb, CriteriaQuery<ADO> cq, From<?, ADO> from, Integer batchSize) {
+
+		// Ordering by UUID is relevant if a batch includes some, but not all objects with the same timestamp.
+		// the next batch can then resume with the same timestamp and the next UUID in lexicographical order.y
+		cq.orderBy(cb.asc(from.get(AbstractDomainObject.CHANGE_DATE)), cb.asc(from.get(AbstractDomainObject.UUID)));
+
+		return createQuery(cq, 0, batchSize).getResultList();
 	}
 
 	public long countAfter(Date since) {
@@ -199,6 +215,21 @@ public class BaseAdoService<ADO extends AbstractDomainObject> implements AdoServ
 		return createChangeDateFilter(cb, from, DateHelper.toTimestampUpper(date));
 	}
 
+	public Predicate createChangeDateFilter(CriteriaBuilder cb, From<?, ADO> from, Date date, String lastSynchronizedUuid) {
+		if (lastSynchronizedUuid == null || EntityDto.NO_LAST_SYNCED_UUID.equals(lastSynchronizedUuid)) {
+			return createChangeDateFilter(cb, from, date);
+		} else {
+			Timestamp timestampLower = new Timestamp(date.getTime());
+			Timestamp timestampUpper = new Timestamp(date.getTime() + 1L);
+			Predicate predicate = cb.or(
+				cb.greaterThanOrEqualTo(from.get(AbstractDomainObject.CHANGE_DATE), timestampUpper),
+				cb.and(
+					cb.greaterThanOrEqualTo(from.get(AbstractDomainObject.CHANGE_DATE), timestampLower),
+					cb.greaterThan(from.get(AbstractDomainObject.UUID), lastSynchronizedUuid)));
+			return predicate;
+		}
+	}
+
 	public Predicate recentDateFilter(CriteriaBuilder cb, Date date, Path<Date> datePath, int amountOfDays) {
 		return date != null ? cb.between(datePath, DateHelper.subtractDays(date, amountOfDays), DateHelper.addDays(date, amountOfDays)) : null;
 	}
@@ -221,8 +252,17 @@ public class BaseAdoService<ADO extends AbstractDomainObject> implements AdoServ
 		}
 	}
 
+	public List<ADO> getByReferenceDtos(Collection<? extends ReferenceDto> dtos) {
+		if (dtos == null || dtos.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		List<String> uuids = dtos.stream().map(ReferenceDto::getUuid).collect(Collectors.toList());
+		return getByUuids(uuids);
+	}
+
 	@Override
-	public ADO getByUuid(@NotNull String uuid) {
+	public ADO getByUuid(String uuid) {
 
 		if (uuid == null) {
 			return null;
@@ -242,7 +282,7 @@ public class BaseAdoService<ADO extends AbstractDomainObject> implements AdoServ
 	@Override
 	public Boolean exists(@NotNull String uuid) {
 
-		return exists((cb, root) -> cb.equal(root.get(AbstractDomainObject.UUID), uuid));
+		return exists((cb, root, cq) -> cb.equal(root.get(AbstractDomainObject.UUID), uuid));
 	}
 
 	@Override
@@ -263,7 +303,7 @@ public class BaseAdoService<ADO extends AbstractDomainObject> implements AdoServ
 
 	@Override
 	public void delete(ADO deleteme) {
-		em.remove(deleteme);
+		em.remove(em.contains(deleteme) ? deleteme : em.merge(deleteme)); // todo: investigate why the entity might be detached (example: AdditionalTest)
 		em.flush();
 	}
 
@@ -272,7 +312,7 @@ public class BaseAdoService<ADO extends AbstractDomainObject> implements AdoServ
 		em.flush();
 	}
 
-	public Boolean exists(BiFunction<CriteriaBuilder, Root<ADO>, Predicate> filterBuilder) {
+	public boolean exists(ExistsPredicateBuilder<ADO> filterBuilder) {
 
 		final CriteriaBuilder cb = em.getCriteriaBuilder();
 
@@ -282,7 +322,7 @@ public class BaseAdoService<ADO extends AbstractDomainObject> implements AdoServ
 		final Subquery<ADO> subquery = query.subquery(getElementClass());
 		final Root<ADO> subRootEntity = subquery.from(getElementClass());
 		subquery.select(subRootEntity);
-		subquery.where(filterBuilder.apply(cb, subRootEntity));
+		subquery.where(filterBuilder.buildPredicate(cb, subRootEntity, query));
 
 		final Predicate exists = cb.exists(subquery);
 		final Expression<Boolean> trueExpression = cb.literal(true);
@@ -290,6 +330,7 @@ public class BaseAdoService<ADO extends AbstractDomainObject> implements AdoServ
 		query.select(cb.selectCase().when(exists, trueExpression).otherwise(falseExpression));
 
 		final TypedQuery<Object> typedQuery = em.createQuery(query);
+		typedQuery.setMaxResults(1);
 
 		try {
 			return (Boolean) typedQuery.getSingleResult();
@@ -299,71 +340,9 @@ public class BaseAdoService<ADO extends AbstractDomainObject> implements AdoServ
 		}
 	}
 
-	/**
-	 * @return {@code true}, if the system itself is the executing user.
-	 */
-	protected boolean isSystem() {
-		return context.isCallerInRole(UserRole._SYSTEM);
-	}
+	public interface ExistsPredicateBuilder<ADO extends AbstractDomainObject> {
 
-	/**
-	 * @return {@code true}, if the executing user is {@link UserRole#ADMIN}.
-	 */
-	protected boolean isAdmin() {
-		return hasUserRole(UserRole.ADMIN);
-	}
-
-	/**
-	 * @param permission
-	 * @return {@code true}, if the executing user is {@code userRole}.
-	 */
-	protected boolean hasUserRole(UserRole userRole) {
-		return context.isCallerInRole(userRole.name());
-	}
-
-	protected Timestamp requestTransactionDate() {
-		return (Timestamp) this.em.createNativeQuery("SELECT NOW()").getSingleResult();
-	}
-
-	/**
-	 * Prüft, ob ein eindeutig zu vergebener Wert bereits durch eine andere Entity verwendet wird.
-	 * 
-	 * @param uuid
-	 *            uuid der aktuell in Bearbeitung befindlichen Entity.
-	 * @param propertyName
-	 *            Attribut-Name des zu prüfenden Werts.
-	 * @param propertyValue
-	 *            Zu prüfender eindeutiger Wert.
-	 * @return
-	 *         <ol>
-	 *         <li>{@code true}, wenn {@code propertyValue == null}.</li>
-	 *         <li>{@code true}, wenn {@code propertyValue} durch die Entity mit {@code uuid} verwendet wird.</li>
-	 *         <li>{@code false}, wenn {@code propertyValue} bereits durch einen andere Entity verwendet wird.</li>
-	 *         </ol>
-	 */
-	protected boolean isUnique(String uuid, String propertyName, Object propertyValue) {
-
-		if (propertyValue == null) {
-			return true;
-		} else {
-			ADO foundEntity = getByUniqueAttribute(propertyName, propertyValue);
-			return foundEntity == null || foundEntity.getUuid().equals(uuid);
-		}
-	}
-
-	/**
-	 * Lädt eine Entity anhand einem als eindeutig erwartetem Attribut.
-	 * 
-	 * @param propertyName
-	 *            Attribut-Name des zu prüfenden Werts.
-	 * @param propertyValue
-	 *            Zu prüfender eindeutiger Wert.
-	 * @return {@code null}, wenn es keine Entity gibt, die {@code propertyValue} gesetzt hat.
-	 */
-	protected ADO getByUniqueAttribute(String propertyName, Object propertyValue) {
-
-//		return JpaHelper.simpleSingleQuery(em, elementClass, propertyName, propertyValue);
-		return null;
+		Predicate buildPredicate(CriteriaBuilder cb, Root<ADO> root, CriteriaQuery<?> cq);
 	}
 
 	public List<Long> getIdsByReferenceDtos(List<? extends ReferenceDto> references) {
@@ -389,5 +368,15 @@ public class BaseAdoService<ADO extends AbstractDomainObject> implements AdoServ
 		cq.where(from.get(AbstractDomainObject.ID).in(ids));
 
 		return em.createQuery(cq).getResultList();
+	}
+
+	protected <T> TypedQuery<T> createQuery(CriteriaQuery<T> cq, Integer first, Integer max) {
+
+		final TypedQuery<T> query = em.createQuery(cq);
+		if (first != null && max != null) {
+			query.setFirstResult(first).setMaxResults(max);
+		}
+
+		return query;
 	}
 }

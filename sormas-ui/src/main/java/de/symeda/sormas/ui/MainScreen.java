@@ -17,6 +17,7 @@
  *******************************************************************************/
 package de.symeda.sormas.ui;
 
+import static de.symeda.sormas.ui.UiUtil.enabled;
 import static de.symeda.sormas.ui.UiUtil.permitted;
 
 import java.util.Arrays;
@@ -39,8 +40,10 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
+import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.feature.FeatureTypeProperty;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -72,14 +75,17 @@ import de.symeda.sormas.ui.dashboard.surveillance.SurveillanceDashboardView;
 import de.symeda.sormas.ui.events.EventGroupDataView;
 import de.symeda.sormas.ui.events.EventParticipantDataView;
 import de.symeda.sormas.ui.events.EventsView;
+import de.symeda.sormas.ui.immunization.ImmunizationsView;
 import de.symeda.sormas.ui.labmessage.LabMessagesView;
 import de.symeda.sormas.ui.person.PersonsView;
 import de.symeda.sormas.ui.reports.ReportsView;
 import de.symeda.sormas.ui.reports.aggregate.AggregateReportsView;
 import de.symeda.sormas.ui.samples.SamplesView;
+import de.symeda.sormas.ui.sormastosormas.ShareRequestsView;
 import de.symeda.sormas.ui.statistics.AbstractStatisticsView;
 import de.symeda.sormas.ui.statistics.StatisticsView;
 import de.symeda.sormas.ui.task.TasksView;
+import de.symeda.sormas.ui.travelentry.TravelEntriesView;
 import de.symeda.sormas.ui.user.UsersView;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
@@ -93,7 +99,7 @@ public class MainScreen extends HorizontalLayout {
 	// Add new views to this set to make sure that the right error page is shown
 	private static final Set<String> KNOWN_VIEWS = initKnownViews();
 
-	private Menu menu;
+	private final Menu menu;
 
 	public MainScreen(SormasUI ui) {
 
@@ -126,25 +132,27 @@ public class MainScreen extends HorizontalLayout {
 		});
 
 		menu = new Menu(navigator);
-		ControllerProvider.getDashboardController().registerViews(navigator);
-		if (permitted(FeatureType.CASE_SURVEILANCE, UserRight.DASHBOARD_SURVEILLANCE_ACCESS)) {
-			menu.addView(
-				SurveillanceDashboardView.class,
-				AbstractDashboardView.ROOT_VIEW_NAME,
-				I18nProperties.getCaption(Captions.mainMenuDashboard),
-				VaadinIcons.DASHBOARD);
-		} else if (permitted(FeatureType.CONTACT_TRACING, UserRight.DASHBOARD_CONTACT_ACCESS)) {
-			menu.addView(
-				ContactsDashboardView.class,
-				AbstractDashboardView.ROOT_VIEW_NAME,
-				I18nProperties.getCaption(Captions.mainMenuDashboard),
-				VaadinIcons.DASHBOARD);
-		} else if (permitted(FeatureType.CAMPAIGNS, UserRight.DASHBOARD_CAMPAIGNS_ACCESS)) {
-			menu.addView(
-				CampaignDashboardView.class,
-				AbstractDashboardView.ROOT_VIEW_NAME,
-				I18nProperties.getCaption(Captions.mainMenuDashboard),
-				VaadinIcons.DASHBOARD);
+		if (enabled(FeatureType.DASHBOARD)) {
+			ControllerProvider.getDashboardController().registerViews(navigator);
+			if (permitted(FeatureType.CASE_SURVEILANCE, UserRight.DASHBOARD_SURVEILLANCE_ACCESS)) {
+				menu.addView(
+						SurveillanceDashboardView.class,
+						AbstractDashboardView.ROOT_VIEW_NAME,
+						I18nProperties.getCaption(Captions.mainMenuDashboard),
+						VaadinIcons.DASHBOARD);
+			} else if (permitted(FeatureType.CONTACT_TRACING, UserRight.DASHBOARD_CONTACT_ACCESS)) {
+				menu.addView(
+						ContactsDashboardView.class,
+						AbstractDashboardView.ROOT_VIEW_NAME,
+						I18nProperties.getCaption(Captions.mainMenuDashboard),
+						VaadinIcons.DASHBOARD);
+			} else if (permitted(FeatureType.CAMPAIGNS, UserRight.DASHBOARD_CAMPAIGNS_ACCESS)) {
+				menu.addView(
+						CampaignDashboardView.class,
+						AbstractDashboardView.ROOT_VIEW_NAME,
+						I18nProperties.getCaption(Captions.mainMenuDashboard),
+						VaadinIcons.DASHBOARD);
+			}
 		}
 
 		if (permitted(FeatureType.TASK_MANAGEMENT, UserRight.TASK_VIEW)) {
@@ -175,10 +183,43 @@ public class MainScreen extends HorizontalLayout {
 			navigator.addView(EventGroupDataView.VIEW_NAME, EventGroupDataView.class);
 			menu.addView(EventsView.class, EventsView.VIEW_NAME, I18nProperties.getCaption(Captions.mainMenuEvents), VaadinIcons.PHONE);
 		}
+
 		if (permitted(FeatureType.SAMPLES_LAB, UserRight.SAMPLE_VIEW)) {
 			ControllerProvider.getSampleController().registerViews(navigator);
 			menu.addView(SamplesView.class, SamplesView.VIEW_NAME, I18nProperties.getCaption(Captions.mainMenuSamples), VaadinIcons.DATABASE);
 		}
+
+		if (permitted(FeatureType.IMMUNIZATION_MANAGEMENT, UserRight.IMMUNIZATION_VIEW)
+			&& !FacadeProvider.getFeatureConfigurationFacade()
+				.isPropertyValueTrue(FeatureType.IMMUNIZATION_MANAGEMENT, FeatureTypeProperty.REDUCED)) {
+			ControllerProvider.getImmunizationController().registerViews(navigator);
+			menu.addView(
+				ImmunizationsView.class,
+				ImmunizationsView.VIEW_NAME,
+				I18nProperties.getCaption(Captions.mainMenuImmunizations),
+				VaadinIcons.HEALTH_CARD);
+		}
+
+		if (permitted(FeatureType.TRAVEL_ENTRIES, UserRight.TRAVEL_ENTRY_MANAGEMENT_ACCESS)
+			&& FacadeProvider.getConfigFacade().isConfiguredCountry(CountryHelper.COUNTRY_CODE_GERMANY)) {
+			ControllerProvider.getTravelEntryController().registerViews(navigator);
+			menu.addView(
+				TravelEntriesView.class,
+				TravelEntriesView.VIEW_NAME,
+				I18nProperties.getCaption(Captions.mainMenuEntries),
+				VaadinIcons.AIRPLANE);
+		}
+
+		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.SORMAS_TO_SORMAS_ACCEPT_REJECT)
+			&& FacadeProvider.getSormasToSormasFacade().isFeatureEnabledForUser()) {
+			ControllerProvider.getSormasToSormasController().registerViews(navigator);
+			menu.addView(
+				ShareRequestsView.class,
+				ShareRequestsView.VIEW_NAME,
+				I18nProperties.getCaption(Captions.mainMenuShareRequests),
+				VaadinIcons.SHARE);
+		}
+
 		if (permitted(FeatureType.CAMPAIGNS, UserRight.CAMPAIGN_VIEW)) {
 			AbstractCampaignView.registerViews(navigator);
 			menu.addView(
@@ -294,16 +335,20 @@ public class MainScreen extends HorizontalLayout {
 				ContinentsView.VIEW_NAME,
 				SubcontinentsView.VIEW_NAME,
 				CountriesView.VIEW_NAME,
-				LabMessagesView.VIEW_NAME));
+				LabMessagesView.VIEW_NAME,
+				TravelEntriesView.VIEW_NAME,
+				ImmunizationsView.VIEW_NAME));
 
-		if (permitted(FeatureType.CASE_SURVEILANCE, UserRight.DASHBOARD_SURVEILLANCE_ACCESS)) {
-			views.add(SurveillanceDashboardView.VIEW_NAME);
-		}
-		if (permitted(FeatureType.CONTACT_TRACING, UserRight.DASHBOARD_CONTACT_ACCESS)) {
-			views.add(ContactsDashboardView.VIEW_NAME);
-		}
-		if (permitted(FeatureType.CAMPAIGNS, UserRight.DASHBOARD_CAMPAIGNS_ACCESS)) {
-			views.add(CampaignDashboardView.VIEW_NAME);
+		if (enabled(FeatureType.DASHBOARD)) {
+			if (permitted(FeatureType.CASE_SURVEILANCE, UserRight.DASHBOARD_SURVEILLANCE_ACCESS)) {
+				views.add(SurveillanceDashboardView.VIEW_NAME);
+			}
+			if (permitted(FeatureType.CONTACT_TRACING, UserRight.DASHBOARD_CONTACT_ACCESS)) {
+				views.add(ContactsDashboardView.VIEW_NAME);
+			}
+			if (permitted(FeatureType.CAMPAIGNS, UserRight.DASHBOARD_CAMPAIGNS_ACCESS)) {
+				views.add(CampaignDashboardView.VIEW_NAME);
+			}
 		}
 
 		return views;
@@ -337,7 +382,7 @@ public class MainScreen extends HorizontalLayout {
 					if (!DataHelper.isNullOrEmpty(event.getParameters())) {
 						url += event.getParameters();
 					}
-					url += "?" + urlParams.toString();
+					url += "?" + urlParams;
 					SormasUI.get().getNavigator().navigateTo(url);
 					return false;
 				}
@@ -346,11 +391,11 @@ public class MainScreen extends HorizontalLayout {
 			if (event.getViewName().isEmpty()) {
 				// redirect to default view
 				String defaultView;
-				if (permitted(FeatureType.CASE_SURVEILANCE, UserRight.DASHBOARD_SURVEILLANCE_ACCESS)) {
+				if (enabled(FeatureType.DASHBOARD) && permitted(FeatureType.CASE_SURVEILANCE, UserRight.DASHBOARD_SURVEILLANCE_ACCESS)) {
 					defaultView = SurveillanceDashboardView.VIEW_NAME;
-				} else if (permitted(FeatureType.CONTACT_TRACING, UserRight.DASHBOARD_CONTACT_ACCESS)) {
+				} else if (enabled(FeatureType.DASHBOARD) && permitted(FeatureType.CONTACT_TRACING, UserRight.DASHBOARD_CONTACT_ACCESS)) {
 					defaultView = ContactsDashboardView.VIEW_NAME;
-				} else if (permitted(FeatureType.CAMPAIGNS, UserRight.DASHBOARD_CAMPAIGNS_ACCESS)) {
+				} else if (enabled(FeatureType.DASHBOARD) && permitted(FeatureType.CAMPAIGNS, UserRight.DASHBOARD_CAMPAIGNS_ACCESS)) {
 					defaultView = CampaignDashboardView.VIEW_NAME;
 				} else if (UserProvider.getCurrent().hasUserRole(UserRole.EXTERNAL_LAB_USER)) {
 					defaultView = SamplesView.VIEW_NAME;
@@ -359,6 +404,7 @@ public class MainScreen extends HorizontalLayout {
 				} else {
 					defaultView = AboutView.VIEW_NAME;
 				}
+
 				SormasUI.get().getNavigator().navigateTo(defaultView);
 				return false;
 			}

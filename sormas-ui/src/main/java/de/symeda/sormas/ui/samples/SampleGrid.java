@@ -30,8 +30,10 @@ import de.symeda.sormas.api.ConfigFacade;
 import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.DiseaseHelper;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.sample.SampleAssociationType;
 import de.symeda.sormas.api.sample.SampleCriteria;
 import de.symeda.sormas.api.sample.SampleIndexDto;
@@ -55,6 +57,7 @@ public class SampleGrid extends FilteredGrid<SampleIndexDto, SampleCriteria> {
 
 	private static final String PATHOGEN_TEST_RESULT = Captions.Sample_pathogenTestResult;
 	private static final String DISEASE_SHORT = Captions.columnDiseaseShort;
+	private static final String LAST_PATHOGEN_TEST = Captions.columnLastPathogenTest;
 
 	private DataProviderListener<SampleIndexDto> dataProviderListener;
 
@@ -93,6 +96,21 @@ public class SampleGrid extends FilteredGrid<SampleIndexDto, SampleCriteria> {
 		pathogenTestResultColumn.setId(PATHOGEN_TEST_RESULT);
 		pathogenTestResultColumn.setSortProperty(SampleIndexDto.PATHOGEN_TEST_RESULT);
 
+		Column<SampleIndexDto, String> lastPathogenTestColumn = addColumn(sample -> {
+			PathogenTestType type = sample.getTypeOfLastTest();
+			Float cqValue = sample.getLastTestCqValue();
+			String text = null;
+			if (type != null) {
+				text = type.toString();
+				if (cqValue != null) {
+					text += " (" + cqValue + ")";
+				}
+			}
+			return text;
+		});
+		lastPathogenTestColumn.setId(LAST_PATHOGEN_TEST);
+		lastPathogenTestColumn.setSortable(false);
+
 		setColumns(
 			SampleIndexDto.UUID,
 			SampleIndexDto.LAB_SAMPLE_ID,
@@ -112,7 +130,9 @@ public class SampleGrid extends FilteredGrid<SampleIndexDto, SampleCriteria> {
 			SampleIndexDto.SAMPLE_MATERIAL,
 			SampleIndexDto.SAMPLE_PURPOSE,
 			PATHOGEN_TEST_RESULT,
-			SampleIndexDto.ADDITIONAL_TESTING_STATUS);
+			SampleIndexDto.ADDITIONAL_TESTING_STATUS,
+			LAST_PATHOGEN_TEST,
+			SampleIndexDto.PATHOGEN_TEST_COUNT);
 
 		((Column<SampleIndexDto, Date>) getColumn(SampleIndexDto.SHIPMENT_DATE)).setRenderer(new DateRenderer(DateFormatHelper.getDateFormat()));
 		((Column<SampleIndexDto, Date>) getColumn(SampleIndexDto.RECEIVED_DATE)).setRenderer(new DateRenderer(DateFormatHelper.getDateFormat()));
@@ -120,6 +140,7 @@ public class SampleGrid extends FilteredGrid<SampleIndexDto, SampleCriteria> {
 		((Column<SampleIndexDto, String>) getColumn(SampleIndexDto.RECEIVED)).setRenderer(new BooleanRenderer());
 		((Column<SampleIndexDto, String>) getColumn(SampleIndexDto.LAB)).setMaximumWidth(200);
 		((Column<SampleIndexDto, String>) getColumn(SampleIndexDto.ADDITIONAL_TESTING_STATUS)).setSortable(false);
+		((Column<SampleIndexDto, Integer>) getColumn(SampleIndexDto.PATHOGEN_TEST_COUNT)).setSortable(false);
 
 		((Column<SampleIndexDto, String>) getColumn(SampleIndexDto.UUID)).setRenderer(new UuidRenderer());
 		addItemClickListener(
@@ -143,7 +164,8 @@ public class SampleGrid extends FilteredGrid<SampleIndexDto, SampleCriteria> {
 			removeColumn(SampleIndexDto.ASSOCIATED_EVENT_PARTICIPANT);
 		}
 
-		if (!UserProvider.getCurrent().hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)) {
+		if (!UserProvider.getCurrent().hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)
+			|| !FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.ADDITIONAL_TESTS)) {
 			removeColumn(SampleIndexDto.ADDITIONAL_TESTING_STATUS);
 		}
 

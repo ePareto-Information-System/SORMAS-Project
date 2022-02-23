@@ -89,11 +89,11 @@ public class ExternalShareInfoService extends AdoServiceWithUserFilter<ExternalS
 	}
 
 	public boolean isCaseShared(Long caseId) {
-		return exists((cb, root) -> cb.equal(root.get(ExternalShareInfo.CAZE).get(Case.ID), caseId));
+		return exists((cb, root, cq) -> cb.equal(root.get(ExternalShareInfo.CAZE).get(Case.ID), caseId));
 	}
 
 	public boolean isEventShared(Long eventId) {
-		return exists((cb, root) -> cb.equal(root.get(ExternalShareInfo.EVENT).get(Event.ID), eventId));
+		return exists((cb, root, cq) -> cb.equal(root.get(ExternalShareInfo.EVENT).get(Event.ID), eventId));
 	}
 
 	private <T> void createAndPersistShareInfo(ExternalShareStatus status, T associatedEntity, BiConsumer<ExternalShareInfo, T> setAssociatedEntity) {
@@ -110,16 +110,16 @@ public class ExternalShareInfoService extends AdoServiceWithUserFilter<ExternalS
 		ensurePersisted(shareInfo);
 	}
 
-	public List<ExternalShareInfoCountAndLatestDate> getCaseShareCountAndLatestDate(List<String> caseUuids) {
-		return getShareCountAndLatestDate(caseUuids, ExternalShareInfo.CAZE);
+	public List<ExternalShareInfoCountAndLatestDate> getCaseShareCountAndLatestDate(List<Long> caseIds) {
+		return getShareCountAndLatestDate(caseIds, ExternalShareInfo.CAZE);
 	}
 
-	public List<ExternalShareInfoCountAndLatestDate> getEventShareCountAndLatestDate(List<String> eventUuids) {
-		return getShareCountAndLatestDate(eventUuids, ExternalShareInfo.EVENT);
+	public List<ExternalShareInfoCountAndLatestDate> getEventShareCountAndLatestDate(List<Long> eventIds) {
+		return getShareCountAndLatestDate(eventIds, ExternalShareInfo.EVENT);
 	}
 
-	public List<ExternalShareInfoCountAndLatestDate> getShareCountAndLatestDate(List<String> uuids, String associatedObjectName) {
-		if (uuids.size() == 0) {
+	public List<ExternalShareInfoCountAndLatestDate> getShareCountAndLatestDate(List<Long> ids, String associatedObjectName) {
+		if (ids.size() == 0) {
 			return Collections.emptyList();
 		}
 
@@ -132,25 +132,27 @@ public class ExternalShareInfoService extends AdoServiceWithUserFilter<ExternalS
 
 		Subquery<String> latestShareInfoSubQuery = cq.subquery(String.class);
 		Root<ExternalShareInfo> latestShareInfoRoot = latestShareInfoSubQuery.from(ExternalShareInfo.class);
-
+		Path<Object> latestShareInfoAssociatedObject = latestShareInfoRoot.get(associatedObjectName);
 		latestShareInfoSubQuery.select(
 			cb.function(
 				ExtendedPostgreSQL94Dialect.CONCAT_FUNCTION,
 				String.class,
-				latestShareInfoRoot.get(associatedObjectName),
+				latestShareInfoAssociatedObject.get(AbstractDomainObject.ID),
 				cb.max(latestShareInfoRoot.get(ExternalShareInfo.CREATION_DATE))));
-		latestShareInfoSubQuery.groupBy(latestShareInfoRoot.get(associatedObjectName));
+		latestShareInfoSubQuery.where(latestShareInfoAssociatedObject.get(AbstractDomainObject.ID).in(ids));
+		latestShareInfoSubQuery.groupBy(latestShareInfoAssociatedObject);
 
 		Subquery<Long> countSubQuery = cq.subquery(Long.class);
 		Root<ExternalShareInfo> countRoot = countSubQuery.from(ExternalShareInfo.class);
 		countSubQuery.select(cb.count(countRoot.get(ExternalShareInfo.ID)));
-		countSubQuery.where(cb.equal(countRoot.get(associatedObjectName), associatedObjectId));
-		countSubQuery.groupBy(countRoot.get(associatedObjectName));
+		Path<Object> countAssociatedObject = countRoot.get(associatedObjectName);
+		countSubQuery.where(cb.equal(countAssociatedObject.get(AbstractDomainObject.ID), associatedObjectId));
+		countSubQuery.groupBy(countAssociatedObject);
 
 		cq.multiselect(associatedObjectUuid, countSubQuery, creationDate, root.get(ExternalShareInfo.STATUS));
 		cq.where(
 			cb.function(ExtendedPostgreSQL94Dialect.CONCAT_FUNCTION, String.class, associatedObjectId, creationDate).in(latestShareInfoSubQuery),
-			associatedObjectUuid.in(uuids));
+			associatedObjectId.in(ids));
 
 		return em.createQuery(cq).getResultList();
 	}
@@ -188,6 +190,11 @@ public class ExternalShareInfoService extends AdoServiceWithUserFilter<ExternalS
 				buildLatestSurvToolShareDateFilter(cq, cb, from, associatedObjectName, changeDatePredicateBuilder);
 
 			filter = CriteriaBuilderHelper.and(cb, filter, changedSinceLastShareFilter);
+		}
+
+		// Exclude all entities which are not supposed to be shared with the reportingtool
+		if (filter != null && from.getJavaType().isAssignableFrom(Case.class)) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(from.get(Case.DONT_SHARE_WITH_REPORTING_TOOL)));
 		}
 
 		return filter;

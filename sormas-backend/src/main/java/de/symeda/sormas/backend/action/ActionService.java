@@ -1,20 +1,18 @@
-/*******************************************************************************
+/*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
- *
+ * Copyright © 2016-2021 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *******************************************************************************/
+ */
+
 package de.symeda.sormas.backend.action;
 
 import java.util.ArrayList;
@@ -35,23 +33,22 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import de.symeda.sormas.api.action.ActionCriteria;
+import de.symeda.sormas.api.action.ActionDto;
 import de.symeda.sormas.api.action.ActionStatEntry;
 import de.symeda.sormas.api.event.EventActionExportDto;
 import de.symeda.sormas.api.event.EventActionIndexDto;
 import de.symeda.sormas.api.event.EventCriteria;
 import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.SortProperty;
+import de.symeda.sormas.backend.action.transformers.EventActionIndexDtoReasultTransformer;
 import de.symeda.sormas.backend.common.AdoServiceWithUserFilter;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
 import de.symeda.sormas.backend.event.Event;
 import de.symeda.sormas.backend.event.EventParticipant;
 import de.symeda.sormas.backend.event.EventQueryContext;
 import de.symeda.sormas.backend.event.EventService;
-import de.symeda.sormas.backend.location.Location;
-import de.symeda.sormas.backend.region.Community;
-import de.symeda.sormas.backend.region.District;
-import de.symeda.sormas.backend.region.Region;
 import de.symeda.sormas.backend.user.User;
+import de.symeda.sormas.backend.util.QueryHelper;
 
 @Stateless
 @LocalBean
@@ -82,21 +79,6 @@ public class ActionService extends AdoServiceWithUserFilter<Action> {
 		}
 		cq.orderBy(cb.desc(from.get(Action.CHANGE_DATE)));
 		cq.distinct(true);
-		return em.createQuery(cq).getResultList();
-	}
-
-	public List<String> getAllUuids(User user) {
-
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<String> cq = cb.createQuery(String.class);
-		Root<Action> from = cq.from(getElementClass());
-
-		if (user != null) {
-			cq.where(createUserFilter(cb, cq, from));
-		}
-
-		cq.select(from.get(Action.UUID));
-
 		return em.createQuery(cq).getResultList();
 	}
 
@@ -165,7 +147,10 @@ public class ActionService extends AdoServiceWithUserFilter<Action> {
 	}
 
 	public List<Action> getActionList(ActionCriteria actionCriteria, Integer first, Integer max) {
+		return getActionList(actionCriteria, first, max, null);
+	}
 
+	public List<Action> getActionList(ActionCriteria actionCriteria, Integer first, Integer max, List<SortProperty> sortProperties) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Action> cq = cb.createQuery(getElementClass());
 		Root<Action> action = cq.from(getElementClass());
@@ -184,16 +169,35 @@ public class ActionService extends AdoServiceWithUserFilter<Action> {
 		if (filter != null) {
 			cq.where(filter);
 		}
-
-		cq.orderBy(cb.desc(action.get(Action.DATE)));
-		List<Action> actions;
-		if (first != null && max != null) {
-			actions = em.createQuery(cq).setFirstResult(first).setMaxResults(max).getResultList();
+		if (sortProperties != null && !sortProperties.isEmpty()) {
+			List<Order> order = new ArrayList<>(sortProperties.size());
+			for (SortProperty sortProperty : sortProperties) {
+				Expression<?> expression;
+				switch (sortProperty.propertyName) {
+				case ActionDto.UUID:
+				case ActionDto.ACTION_STATUS:
+				case ActionDto.ACTION_MEASURE:
+				case ActionDto.ACTION_CONTEXT:
+				case ActionDto.CHANGE_DATE:
+				case ActionDto.CREATION_DATE:
+				case ActionDto.DATE:
+				case ActionDto.PRIORITY:
+					expression = action.get(sortProperty.propertyName);
+					break;
+				case ActionDto.TITLE:
+					expression = cb.lower(action.get(sortProperty.propertyName));
+					break;
+				default:
+					throw new IllegalArgumentException(sortProperty.propertyName);
+				}
+				order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
+			}
+			cq.orderBy(order);
 		} else {
-			actions = em.createQuery(cq).getResultList();
+			cq.orderBy(cb.desc(action.get(Action.DATE)));
 		}
 
-		return actions;
+		return QueryHelper.getResultList(em, cq, first, max);
 	}
 
 	/**
@@ -223,7 +227,7 @@ public class ActionService extends AdoServiceWithUserFilter<Action> {
 		CriteriaBuilder cb = actionQueryContext.getCriteriaBuilder();
 		ActionJoins joins = (ActionJoins) actionQueryContext.getJoins();
 
-		From<Action, Action> action = (From<Action, Action>) joins.getRoot();
+		From<Action, Action> action = joins.getRoot();
 		From<Action, Event> event = joins.getEvent(JoinType.INNER);
 
 		Predicate filter = eventService.buildCriteriaFilter(criteria, new EventQueryContext(cb, actionQueryContext.getQuery(), event));
@@ -235,7 +239,16 @@ public class ActionService extends AdoServiceWithUserFilter<Action> {
 			filter =
 				CriteriaBuilderHelper.and(cb, filter, cb.greaterThanOrEqualTo(action.get(Action.CHANGE_DATE), criteria.getActionChangeDateFrom()));
 		} else if (criteria.getActionChangeDateTo() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.lessThanOrEqualTo(event.get(Event.START_DATE), criteria.getActionChangeDateTo()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.lessThanOrEqualTo(action.get(Action.CHANGE_DATE), criteria.getActionChangeDateTo()));
+		}
+
+		if (criteria.getActionDateFrom() != null && criteria.getActionDateTo() != null) {
+			filter =
+				CriteriaBuilderHelper.and(cb, filter, cb.between(action.get(Action.DATE), criteria.getActionDateFrom(), criteria.getActionDateTo()));
+		} else if (criteria.getActionDateFrom() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.greaterThanOrEqualTo(action.get(Action.DATE), criteria.getActionDateFrom()));
+		} else if (criteria.getActionDateTo() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.lessThanOrEqualTo(action.get(Action.DATE), criteria.getActionDateTo()));
 		}
 
 		if (criteria.getActionStatus() != null) {
@@ -248,7 +261,7 @@ public class ActionService extends AdoServiceWithUserFilter<Action> {
 	public List<EventActionIndexDto> getEventActionIndexList(EventCriteria criteria, Integer first, Integer max, List<SortProperty> sortProperties) {
 
 		final CriteriaBuilder cb = em.getCriteriaBuilder();
-		final CriteriaQuery<EventActionIndexDto> cq = cb.createQuery(EventActionIndexDto.class);
+		final CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
 		final Root<Action> action = cq.from(getElementClass());
 
 		final ActionQueryContext actionQueryContext = new ActionQueryContext(cb, cq, action);
@@ -275,6 +288,10 @@ public class ActionService extends AdoServiceWithUserFilter<Action> {
 		cq.multiselect(
 			event.get(Event.UUID),
 			event.get(Event.EVENT_TITLE),
+			event.get(Event.DISEASE),
+			event.get(Event.DISEASE_VARIANT),
+			event.get(Event.DISEASE_DETAILS),
+			event.get(Event.EVENT_IDENTIFICATION_SOURCE),
 			event.get(Event.START_DATE),
 			event.get(Event.END_DATE),
 			event.get(Event.EVENT_STATUS),
@@ -292,6 +309,7 @@ public class ActionService extends AdoServiceWithUserFilter<Action> {
 			action.get(Action.TITLE),
 			action.get(Action.CREATION_DATE),
 			action.get(Action.CHANGE_DATE),
+			action.get(Action.DATE),
 			action.get(Action.ACTION_STATUS),
 			action.get(Action.PRIORITY),
 			lastModifiedBy.get(User.UUID),
@@ -299,9 +317,12 @@ public class ActionService extends AdoServiceWithUserFilter<Action> {
 			lastModifiedBy.get(User.LAST_NAME),
 			creatorUser.get(User.UUID),
 			creatorUser.get(User.FIRST_NAME),
-			creatorUser.get(User.LAST_NAME));
+			creatorUser.get(User.LAST_NAME),
+			event.get(Event.CHANGE_DATE));
 
-		if (sortProperties != null && sortProperties.size() > 0) {
+		cq.distinct(true);
+
+		if (sortProperties != null && !sortProperties.isEmpty()) {
 			List<Order> order = new ArrayList<>(sortProperties.size());
 			for (SortProperty sortProperty : sortProperties) {
 				Expression<?> expression;
@@ -311,6 +332,15 @@ public class ActionService extends AdoServiceWithUserFilter<Action> {
 					break;
 				case EventActionIndexDto.EVENT_TITLE:
 					expression = cb.lower(event.get(Event.EVENT_TITLE));
+					break;
+				case EventActionIndexDto.EVENT_DISEASE:
+					expression = event.get(Event.DISEASE);
+					break;
+				case EventActionIndexDto.EVENT_DISEASE_VARIANT:
+					expression = event.get(Event.DISEASE_VARIANT);
+					break;
+				case EventActionIndexDto.EVENT_IDENTIFICATION_SOURCE:
+					expression = event.get(Event.EVENT_IDENTIFICATION_SOURCE);
 					break;
 				case EventActionIndexDto.EVENT_START_DATE:
 					expression = event.get(Event.START_DATE);
@@ -345,6 +375,9 @@ public class ActionService extends AdoServiceWithUserFilter<Action> {
 				case EventActionIndexDto.ACTION_CREATION_DATE:
 					expression = action.get(Action.CREATION_DATE);
 					break;
+				case EventActionIndexDto.ACTION_DATE:
+					expression = action.get(Action.DATE);
+					break;
 				case EventActionIndexDto.ACTION_PRIORITY:
 					expression = action.get(Action.PRIORITY);
 					break;
@@ -369,14 +402,9 @@ public class ActionService extends AdoServiceWithUserFilter<Action> {
 			cq.orderBy(cb.desc(event.get(Event.CHANGE_DATE)));
 		}
 
-		List<EventActionIndexDto> actions;
-		if (first != null && max != null) {
-			actions = em.createQuery(cq).setFirstResult(first).setMaxResults(max).getResultList();
-		} else {
-			actions = em.createQuery(cq).getResultList();
-		}
-
-		return actions;
+		return createQuery(cq, first, max).unwrap(org.hibernate.query.Query.class)
+			.setResultTransformer(new EventActionIndexDtoReasultTransformer())
+			.getResultList();
 	}
 
 	public List<EventActionExportDto> getEventActionExportList(EventCriteria criteria, Integer first, Integer max) {
@@ -407,7 +435,11 @@ public class ActionService extends AdoServiceWithUserFilter<Action> {
 		cq.multiselect(
 			event.get(Event.UUID),
 			event.get(Event.EVENT_TITLE),
+			event.get(Event.DISEASE),
+			event.get(Event.DISEASE_VARIANT),
+			event.get(Event.DISEASE_DETAILS),
 			event.get(Event.EVENT_DESC),
+			event.get(Event.EVENT_IDENTIFICATION_SOURCE),
 			event.get(Event.START_DATE),
 			event.get(Event.END_DATE),
 			event.get(Event.EVOLUTION_DATE),
@@ -425,6 +457,7 @@ public class ActionService extends AdoServiceWithUserFilter<Action> {
 			action.get(Action.TITLE),
 			action.get(Action.CREATION_DATE),
 			action.get(Action.CHANGE_DATE),
+			action.get(Action.DATE),
 			action.get(Action.ACTION_STATUS),
 			action.get(Action.PRIORITY),
 			lastModifiedBy.get(User.UUID),
@@ -436,14 +469,7 @@ public class ActionService extends AdoServiceWithUserFilter<Action> {
 
 		cq.orderBy(cb.desc(event.get(Event.CHANGE_DATE)));
 
-		List<EventActionExportDto> actions;
-		if (first != null && max != null) {
-			actions = em.createQuery(cq).setFirstResult(first).setMaxResults(max).getResultList();
-		} else {
-			actions = em.createQuery(cq).getResultList();
-		}
-
-		return actions;
+		return QueryHelper.getResultList(em, cq, first, max);
 	}
 
 	public long countEventActions(EventCriteria criteria) {
@@ -454,16 +480,37 @@ public class ActionService extends AdoServiceWithUserFilter<Action> {
 		ActionJoins actionJoins = (ActionJoins) actionQueryContext.getJoins();
 
 		Join<Action, Event> event = actionJoins.getEvent(JoinType.INNER);
-		Join<Event, Location> location = event.join(Event.EVENT_LOCATION, JoinType.LEFT);
-		Join<Location, Region> region = location.join(Location.REGION, JoinType.LEFT);
-		Join<Location, District> district = location.join(Location.DISTRICT, JoinType.LEFT);
-		Join<Location, Community> community = location.join(Location.COMMUNITY, JoinType.LEFT);
 
 		// Add filters
 		Predicate filter = eventService.createUserFilter(cb, cq, event);
 
 		if (criteria != null) {
 			Predicate criteriaFilter = buildEventCriteriaFilter(criteria, actionQueryContext);
+			filter = CriteriaBuilderHelper.and(cb, filter, criteriaFilter);
+		}
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		cq.select(cb.countDistinct(action.get(Action.UUID)));
+
+		return em.createQuery(cq).getSingleResult();
+	}
+
+	public long countActions(ActionCriteria actionCriteria) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+		Root<Action> action = cq.from(getElementClass());
+
+		// Add filters
+		Predicate filter = null;
+		if (actionCriteria == null || !actionCriteria.hasContextCriteria()) {
+			filter = createUserFilter(cb, cq, action);
+		}
+
+		if (actionCriteria != null) {
+			Predicate criteriaFilter = buildCriteriaFilter(actionCriteria, cb, action);
 			filter = CriteriaBuilderHelper.and(cb, filter, criteriaFilter);
 		}
 

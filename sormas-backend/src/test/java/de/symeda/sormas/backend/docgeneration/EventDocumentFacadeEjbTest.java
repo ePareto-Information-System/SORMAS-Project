@@ -27,6 +27,7 @@ import de.symeda.sormas.api.event.EventParticipantDto;
 import de.symeda.sormas.api.event.EventStatus;
 import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.person.PersonDto;
+import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.backend.TestDataCreator;
@@ -67,9 +68,10 @@ public class EventDocumentFacadeEjbTest extends AbstractDocGenerationTest {
 		PersonDto personDto1 = PersonDto.build();
 		personDto1.setFirstName("Isidore");
 		personDto1.setLastName("Isou");
+		personDto1.setSex(Sex.UNKNOWN);
 		personDto1.setPhone("+49 681 1234");
 
-		getPersonFacade().savePersonAndNotifyExternalJournal(personDto1);
+		getPersonFacade().savePerson(personDto1);
 
 		EventParticipantDto eventParticipantDto1 = EventParticipantDto.build(eventDto.toReference(), user.toReference());
 		eventParticipantDto1.setPerson(personDto1);
@@ -79,9 +81,10 @@ public class EventDocumentFacadeEjbTest extends AbstractDocGenerationTest {
 		PersonDto personDto2 = PersonDto.build();
 		personDto2.setFirstName("Guy");
 		personDto2.setLastName("Debord");
+		personDto2.setSex(Sex.UNKNOWN);
 		personDto2.setPhone("+49 681 4567");
 
-		getPersonFacade().savePersonAndNotifyExternalJournal(personDto2);
+		getPersonFacade().savePerson(personDto2);
 
 		EventParticipantDto eventParticipantDto2 = EventParticipantDto.build(eventDto.toReference(), user.toReference());
 		eventParticipantDto2.setPerson(personDto2);
@@ -91,9 +94,10 @@ public class EventDocumentFacadeEjbTest extends AbstractDocGenerationTest {
 		PersonDto personDto3 = PersonDto.build();
 		personDto3.setFirstName("Georges");
 		personDto3.setLastName("Bataille");
+		personDto3.setSex(Sex.UNKNOWN);
 		personDto3.setPhone("+49 681 8901");
 
-		getPersonFacade().savePersonAndNotifyExternalJournal(personDto3);
+		getPersonFacade().savePerson(personDto3);
 
 		EventParticipantDto eventParticipantDto3 = EventParticipantDto.build(eventDto.toReference(), user.toReference());
 		eventParticipantDto3.setPerson(personDto3);
@@ -130,7 +134,8 @@ public class EventDocumentFacadeEjbTest extends AbstractDocGenerationTest {
 		for (File testCaseHtml : testCasesHtml) {
 			String testcaseBasename = FilenameUtils.getBaseName(testCaseHtml.getName());
 
-			String htmlText = eventDocumentFacade.getGeneratedDocument(testcaseBasename + ".html", eventDto.toReference(), new Properties());
+			String htmlText =
+				eventDocumentFacade.getGeneratedDocument(testcaseBasename + ".html", eventDto.toReference(), new Properties(), Boolean.FALSE);
 			String actual = cleanLineSeparators(
 				htmlText.replaceAll("<p>Event-ID: <b>[A-Z0-9-]*</b></p>", "<p>Event-ID: <b>STN3WX-5JTGYV-IU2LRM-4UHCSOEE</b></p>"));
 

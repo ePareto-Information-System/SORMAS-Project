@@ -27,9 +27,9 @@ import javax.validation.Valid;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseCriteria;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
 
@@ -39,6 +39,8 @@ public interface SampleFacade {
 	List<SampleDto> getAllActiveSamplesAfter(Date date);
 
 	List<SampleIndexDto> getIndexList(SampleCriteria sampleCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
+
+	List<SampleListEntryDto> getEntriesList(SampleCriteria sampleCriteria, Integer first, Integer max);
 
 	Page<SampleIndexDto> getIndexPage(SampleCriteria sampleCriteria, Integer offset, Integer size, List<SortProperty> sortProperties);
 
@@ -60,6 +62,8 @@ public interface SampleFacade {
 
 	List<String> getAllActiveUuids();
 
+	List<SampleDto> getAllActiveSamplesAfter(Date date, Integer batchSize, String lastSynchronizedUuid);
+
 	List<SampleDto> getByUuids(List<String> uuids);
 	
 	List<SampleDto> findBy(SampleCriteria criteria);
@@ -67,6 +71,8 @@ public interface SampleFacade {
 	void deleteSample(SampleReferenceDto sampleRef);
 
 	void deleteAllSamples(List<String> sampleUuids);
+
+	List<String> deleteSamples(List<String> sampleUuids);
 
 	void validate(SampleDto sample) throws ValidationRuntimeException;
 
@@ -89,5 +95,6 @@ public interface SampleFacade {
 	boolean exists(String uuid);
 	
 	List<SampleDto> getByEventParticipantUuids(List<String> asList);
-	
+
+	List<SampleDto> getByLabSampleId(String labSampleId);
 }

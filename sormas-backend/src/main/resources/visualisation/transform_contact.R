@@ -29,15 +29,19 @@ caseClass = paste0("{", "Classification.", c(
   "NOT_CLASSIFIED",
   "SUSPECT",
   "PROBABLE",
-  "CONFIRMED"), "}")
+  "CONFIRMED",
+  "CONFIRMED_NO_SYMPTOMS",
+  "CONFIRMED_UNKNOWN_SYMPTOMS"), "}")
 
 # see CountElementStyle.POSITIVE and styles.css count-element
 caseClassColor = c(
-  "#32CD32", # positive
+  "#32CD32", # positive (==healthy)
   "#808080", # minor
   "#c8aa00", # relevant
   "#be6900", # important
-  "#c80000") # critical
+  "#c80000", # critical
+  "#C80000B2", # critical transparent
+  "#C800007F") # critical more transparent
 
 hierarchical = "T" == substr(HIERARCHICAL, 1, 1)
 defaultFont = "font-family:'Open Sans', sans-serif, 'Source Sans Pro'"
@@ -150,11 +154,11 @@ nodesS$group = nodesS$Classification
 
 # defining legend
 addNodesS <- data.frame(
-  label = c("{legend}", caseClass, "1 = {highRisk}", "2 = {lowRisk}"),
+  label = c(caseClass, "1 = {highRisk}", "2 = {lowRisk}"),
   shape = "icon",
-  icon.code = c("f0c0", rep("f007", times = length(caseClass)), "f178", "f178"),
-  icon.size = c(0.1, rep(25, times = length(caseClass)), 25, 25),
-  icon.color = c("#0d0c0c", caseClassColor, "#0d0c0c", "#0d0c0c"))
+  icon.code = c(rep("f007", times = length(caseClass)), "f178", "f178"),
+  icon.size = c(rep(25, times = length(caseClass)), 25, 25),
+  icon.color = c(caseClassColor, "#0d0c0c", "#0d0c0c"))
 
 #plotting
 
@@ -167,13 +171,13 @@ g = visNetwork(nodesS, edgesS, main = list(text = "{heading}", style = mainStyle
                #footer = list(text = "Double click on the icon to open the associated case or contact data", style = footerStyle),
                background = "white", annot = T, width = "100%") %>%
   visEdges(arrows = "to", color = "black", smooth = list(type = "continuous")) %>%
-  visOptions(selectedBy = list(variable = "Classification", main="{selectByClassification}", sort = FALSE, values = caseClass), highlightNearest = TRUE, nodesIdSelection = FALSE)
+  visOptions(selectedBy = list(variable = "Classification", main="{selectByClassification}", sort = FALSE, values = caseClass, style = "width: auto; height: auto;"), highlightNearest = TRUE, nodesIdSelection = FALSE)
 for (i in 1:length(caseClass)) {
   g = visGroups(graph = g, groupname = caseClass[i], size = 10, shape = "icon", icon = avertarIcon(caseClassColor[i]))
 }
 g = g %>%
   addFontAwesome() %>%
-  visLegend(addNodes = addNodesS, useGroups = F, position = "left", width = 0.2, ncol = 1, stepX = 100, stepY = 50)
+  visLegend(addNodes = addNodesS, useGroups = F, position = "left", width = 0.2, ncol = 1, main="{legend}")
 
 if (hierarchical) {
   g = g %>%

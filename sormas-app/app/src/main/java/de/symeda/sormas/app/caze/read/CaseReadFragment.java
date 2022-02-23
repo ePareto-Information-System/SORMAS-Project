@@ -18,18 +18,20 @@ package de.symeda.sormas.app.caze.read;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import java.util.Arrays;
+
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebView;
+
 import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseConfirmationBasis;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseOrigin;
-import de.symeda.sormas.api.caze.Vaccination;
 import de.symeda.sormas.api.event.TypeOfPlace;
-import de.symeda.sormas.api.facility.FacilityDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.YesNoUnknown;
@@ -72,21 +74,6 @@ public class CaseReadFragment extends BaseReadFragment<FragmentCaseReadLayoutBin
 			.initializeHealthFacilityDetailsFieldVisibility(contentBinding.caseDataHealthFacility, contentBinding.caseDataHealthFacilityDetails);
 		InfrastructureDaoHelper
 			.initializePointOfEntryDetailsFieldVisibility(contentBinding.caseDataPointOfEntry, contentBinding.caseDataPointOfEntryDetails);
-
-		// Vaccination date
-		if (isVisibleAllowed(CaseDataDto.class, contentBinding.caseDataVaccination)) {
-			setVisibleWhen(contentBinding.caseDataLastVaccinationDate, contentBinding.caseDataVaccination, Vaccination.VACCINATED);
-		}
-		if (isVisibleAllowed(CaseDataDto.class, contentBinding.caseDataSmallpoxVaccinationReceived)) {
-			setVisibleWhen(contentBinding.caseDataLastVaccinationDate, contentBinding.caseDataSmallpoxVaccinationReceived, YesNoUnknown.YES);
-		}
-
-		// Pregnancy
-		if (record.getPerson().getSex() != Sex.FEMALE) {
-			contentBinding.caseDataPregnant.setVisibility(GONE);
-			contentBinding.caseDataPostpartum.setVisibility(GONE);
-			contentBinding.caseDataTrimester.setVisibility(GONE);
-		}
 
 		// Port Health fields
 		if (UserRole.isPortHealthUser(ConfigProvider.getUser().getUserRoles())) {

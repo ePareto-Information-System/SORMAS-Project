@@ -22,8 +22,6 @@ package de.symeda.sormas.ui.ActivityAsCase;
 
 import java.util.Collection;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -43,6 +41,7 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.LocationHelper;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.UserProvider;
@@ -93,7 +92,9 @@ public class ActivityAsCaseField extends AbstractTableField<ActivityAsCaseDto> {
 			ActivityAsCaseDto activityAsCaseDto = (ActivityAsCaseDto) itemId;
 			String activityAsCaseString = ActivityAsCaseType.OTHER != activityAsCaseDto.getActivityAsCaseType()
 				? activityAsCaseDto.getActivityAsCaseType().toString()
-				: activityAsCaseDto.getActivityAsCaseTypeDetails();
+				: activityAsCaseDto.getActivityAsCaseTypeDetails() != null
+					? activityAsCaseDto.getActivityAsCaseTypeDetails()
+					: ActivityAsCaseType.OTHER.toString();
 
 			return new Label(activityAsCaseString, ContentMode.HTML);
 		});
@@ -103,7 +104,7 @@ public class ActivityAsCaseField extends AbstractTableField<ActivityAsCaseDto> {
 			return activityAsCase.getTypeOfPlace() != null
 				? TypeOfPlace.OTHER != activityAsCase.getTypeOfPlace()
 					? activityAsCase.getTypeOfPlace().toString()
-					: activityAsCase.getTypeOfPlaceDetails()
+					: activityAsCase.getTypeOfPlaceDetails() != null ? activityAsCase.getTypeOfPlaceDetails() : TypeOfPlace.OTHER.toString()
 				: "";
 		});
 
@@ -112,14 +113,9 @@ public class ActivityAsCaseField extends AbstractTableField<ActivityAsCaseDto> {
 			return DateFormatHelper.buildPeriodString(activityAsCase.getStartDate(), activityAsCase.getEndDate());
 		});
 
-		table.addGeneratedColumn(COLUMN_ADDRESS, (Table.ColumnGenerator) (source, itemId, columnId) -> {
-			ActivityAsCaseDto activityAsCase = (ActivityAsCaseDto) itemId;
-			String region = DataHelper.toStringNullable(activityAsCase.getLocation().getRegion());
-			String district = DataHelper.toStringNullable(activityAsCase.getLocation().getDistrict());
-			String address = DataHelper.toStringNullable(activityAsCase.getLocation().buildAddressCaption());
-
-			return Stream.of(region, district, address).filter(StringUtils::isNotBlank).collect(Collectors.joining(", "));
-		});
+		table.addGeneratedColumn(
+			COLUMN_ADDRESS,
+			(Table.ColumnGenerator) (source, itemId, columnId) -> LocationHelper.buildLocationString(((ActivityAsCaseDto) itemId).getLocation()));
 
 		table.addGeneratedColumn(COLUMN_DESCRIPTION, (Table.ColumnGenerator) (source, itemId, columnId) -> {
 			ActivityAsCaseDto activityAsCase = (ActivityAsCaseDto) itemId;

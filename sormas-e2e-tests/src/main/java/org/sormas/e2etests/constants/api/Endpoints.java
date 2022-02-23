@@ -18,5 +18,23 @@
 package org.sormas.e2etests.constants.api;
 
 public interface Endpoints {
-  String PERSONS = "persons/";
+
+  /** Main paths */
+  String PERSONS_PATH = "persons/";
+
+  String IMMUNIZATIONS_PATH = "immunizations/";
+  String CASES_PATH = "cases/";
+  String COMMUNITIES_PATH = "communities/";
+  String COUNTRIES_PATH = "countries/";
+  String FACILITIES_PATH = "facilities/";
+  String CONTACTS_PATH = "contacts/";
+  String EVENTS_PATH = "events/";
+  String SAMPLES_PATH = "samples/";
+  String TASKS_PATH = "tasks/";
+
+  /** End points actions */
+  String POST_PATH = "push";
+
+  String DELETE_PATH = "deleted/";
+  String UUIDS_PATH = "uuids";
 }

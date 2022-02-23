@@ -62,6 +62,12 @@ public class TaskResource extends EntityDtoResource {
 		return FacadeProvider.getTaskFacade().getAllActiveTasksAfter(new Date(since));
 	}
 
+	@GET
+	@Path("/all/{since}/{size}/{lastSynchronizedUuid}")
+	public List<TaskDto> getAll(@PathParam("since") long since, @PathParam("size") int size, @PathParam("lastSynchronizedUuid") String lastSynchronizedUuid) {
+		return FacadeProvider.getTaskFacade().getAllActiveTasksAfter(new Date(since), size, lastSynchronizedUuid);
+	}
+
 	@POST
 	@Path("/query")
 	public List<TaskDto> getByUuids(List<String> uuids) {
@@ -104,4 +110,11 @@ public class TaskResource extends EntityDtoResource {
 	public List<String> getArchivedUuidsSince(@PathParam("since") long since) {
 		return FacadeProvider.getTaskFacade().getArchivedUuidsSince(new Date(since));
 	}
+
+	@POST
+	@Path("/delete")
+	public List<String> delete(List<String> uuids) {
+		return FacadeProvider.getTaskFacade().deleteTasks(uuids);
+	}
+
 }

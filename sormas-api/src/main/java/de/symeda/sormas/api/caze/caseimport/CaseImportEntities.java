@@ -15,9 +15,12 @@
 
 package de.symeda.sormas.api.caze.caseimport;
 
+import de.symeda.sormas.api.vaccination.VaccinationDto;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.validation.Valid;
 
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.person.PersonDto;
@@ -29,24 +32,24 @@ public class CaseImportEntities implements Serializable {
 
 	private static final long serialVersionUID = -4565794925738392508L;
 
+	@Valid
 	private final PersonDto person;
+	@Valid
 	private final CaseDataDto caze;
+	@Valid
 	private final List<SampleDto> samples;
+	@Valid
 	private final List<PathogenTestDto> pathogenTests;
+	@Valid
+	private final List<VaccinationDto> vaccinations;
 
 	public CaseImportEntities(UserReferenceDto reportingUser) {
-		person = PersonDto.build();
+		person = PersonDto.buildImportEntity();
 		caze = createCase(person, reportingUser);
 
 		samples = new ArrayList<>();
 		pathogenTests = new ArrayList<>();
-	}
-
-	public static CaseDataDto createCase(PersonDto person, UserReferenceDto reportingUser) {
-		CaseDataDto caze = CaseDataDto.build(person.toReference(), null);
-		caze.setReportingUser(reportingUser);
-
-		return caze;
+		vaccinations = new ArrayList<>();
 	}
 
 	public CaseImportEntities(PersonDto person, CaseDataDto caze) {
@@ -55,6 +58,14 @@ public class CaseImportEntities implements Serializable {
 
 		samples = new ArrayList<>();
 		pathogenTests = new ArrayList<>();
+		vaccinations = new ArrayList<>();
+	}
+
+	public static CaseDataDto createCase(PersonDto person, UserReferenceDto reportingUser) {
+		CaseDataDto caze = CaseDataDto.build(person.toReference(), null);
+		caze.setReportingUser(reportingUser);
+
+		return caze;
 	}
 
 	public PersonDto getPerson() {
@@ -71,5 +82,9 @@ public class CaseImportEntities implements Serializable {
 
 	public List<PathogenTestDto> getPathogenTests() {
 		return pathogenTests;
+	}
+
+	public List<VaccinationDto> getVaccinations() {
+		return vaccinations;
 	}
 }

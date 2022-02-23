@@ -108,16 +108,27 @@ public final class VaadinUiUtil {
 	}
 
 	public static Window showPopupWindow(Component content, String caption) {
-
 		Window window = new Window(caption);
 		window.setModal(true);
-		window.setSizeUndefined();
 		window.setResizable(false);
 		window.center();
 		window.setContent(content);
+		UI.getCurrent().addWindow(window);
+		return window;
+	}
+
+	public static Window showPopupWindowWithWidth(Component content, String caption, Integer width) {
+		Window window = new Window(caption);
+		window.setModal(true);
+		window.setResizable(false);
+		window.center();
+		window.setContent(content);
+		if (width != null) {
+			window.setWidth(width, Unit.PERCENTAGE);
+		}
+
 
 		UI.getCurrent().addWindow(window);
-
 		return window;
 	}
 
@@ -280,6 +291,73 @@ public final class VaadinUiUtil {
 		return popupWindow;
 	}
 
+	public static Window showThreeOptionsPopup(
+		String caption,
+		Component content,
+		String optionACaption,
+		String optionBCaption,
+		String optionCCaption,
+		Integer width,
+		Consumer<PopupOption> resultConsumer) {
+
+		Window popupWindow = VaadinUiUtil.createPopupWindow();
+		if (width != null) {
+			popupWindow.setWidth(width, Unit.PIXELS);
+		} else {
+			popupWindow.setWidthUndefined();
+		}
+		popupWindow.setCaption(caption);
+
+		VerticalLayout layout = new VerticalLayout();
+		layout.setMargin(true);
+		content.setWidth(100, Unit.PERCENTAGE);
+		layout.addComponent(content);
+
+		ConfirmationComponent confirmationComponent = new ConfirmationComponent(false) {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void onConfirm() {
+				resultConsumer.accept(PopupOption.OPTION1);
+				popupWindow.close();
+			}
+
+			@Override
+			protected void onCancel() {
+				resultConsumer.accept(PopupOption.OPTION2);
+				popupWindow.close();
+			}
+		};
+		confirmationComponent.getConfirmButton().setCaption(optionACaption);
+		Button cancelButton = confirmationComponent.getCancelButton();
+		cancelButton.setCaption(optionBCaption);
+		cancelButton.removeStyleName(ValoTheme.BUTTON_LINK);
+		cancelButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
+
+		confirmationComponent
+			.addExtraButton(ButtonHelper.createButton(Strings.unsavedChanges_cancel, optionCCaption, null, ValoTheme.BUTTON_PRIMARY), buttonEvent -> {
+				resultConsumer.accept(PopupOption.OPTION3);
+				popupWindow.close();
+			});
+
+		layout.addComponent(confirmationComponent);
+		layout.setComponentAlignment(confirmationComponent, Alignment.BOTTOM_RIGHT);
+		layout.setWidth(100, Unit.PERCENTAGE);
+		layout.setSpacing(true);
+		popupWindow.setContent(layout);
+		popupWindow.setClosable(false);
+
+		UI.getCurrent().addWindow(popupWindow);
+		return popupWindow;
+	}
+
+	public enum PopupOption {
+		OPTION1,
+		OPTION2,
+		OPTION3;
+	}
+
 	public static Window showDeleteConfirmationWindow(String content, Runnable callback) {
 		Window popupWindow = VaadinUiUtil.createPopupWindow();
 
@@ -339,22 +417,35 @@ public final class VaadinUiUtil {
 	}
 
 	public static HorizontalLayout createInfoComponent(String htmlContent) {
-		return createIconComponent(htmlContent, "img/info-icon.png");
+		return createIconComponent(htmlContent, "img/info-icon.png", 35);
 
 	}
 
 	public static HorizontalLayout createWarningComponent(String htmlContent) {
-		return createIconComponent(htmlContent, "img/warning-icon.png");
+		return createWarningComponent(htmlContent, 35);
+	}
+
+	public static HorizontalLayout createWarningComponent(String htmlContent, int iconSize) {
+		return createIconComponent(htmlContent, "img/warning-icon.png", iconSize);
 
 	}
 
-	public static HorizontalLayout createIconComponent(String htmlContent, String iconName) {
+	public static HorizontalLayout createErrorComponent(String htmlContent) {
+		return createErrorComponent(htmlContent, 35);
+	}
+
+	public static HorizontalLayout createErrorComponent(String htmlContent, int iconSize) {
+		return createIconComponent(htmlContent, "img/error-icon.png", iconSize);
+
+	}
+
+	public static HorizontalLayout createIconComponent(String htmlContent, String iconName, int iconSize) {
 		HorizontalLayout infoLayout = new HorizontalLayout();
 		infoLayout.setWidth(100, Unit.PERCENTAGE);
 		infoLayout.setSpacing(true);
 		Image icon = new Image(null, new ThemeResource(iconName));
-		icon.setHeight(35, Unit.PIXELS);
-		icon.setWidth(35, Unit.PIXELS);
+		icon.setHeight(iconSize, Unit.PIXELS);
+		icon.setWidth(iconSize, Unit.PIXELS);
 		infoLayout.addComponent(icon);
 		infoLayout.setComponentAlignment(icon, Alignment.MIDDLE_LEFT);
 		Label infoLabel = new Label(htmlContent, ContentMode.HTML);

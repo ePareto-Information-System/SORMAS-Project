@@ -15,14 +15,16 @@
 
 package de.symeda.sormas.app.backend.facility;
 
+import android.content.Context;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
 import de.symeda.sormas.api.PushResult;
-import de.symeda.sormas.api.facility.FacilityDto;
-import de.symeda.sormas.api.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.app.backend.common.AbstractAdoDao;
 import de.symeda.sormas.app.backend.common.AdoDtoHelper;
 import de.symeda.sormas.app.backend.common.DaoException;
@@ -49,7 +51,7 @@ public class FacilityDtoHelper extends AdoDtoHelper<Facility, FacilityDto> {
 	}
 
 	@Override
-	protected Call<List<FacilityDto>> pullAllSince(long since) throws NoConnectionException {
+	protected Call<List<FacilityDto>> pullAllSince(long since, Integer size, String lastSynchronizedUuid)  throws NoConnectionException {
 		throw new UnsupportedOperationException("Use pullAllByRegionSince");
 	}
 
@@ -75,12 +77,13 @@ public class FacilityDtoHelper extends AdoDtoHelper<Facility, FacilityDto> {
 	 * Pulls the data chunkwise per region
 	 *
 	 * @param markAsRead
-	 * @throws DaoException
+	 * @param context
+     * @throws DaoException
 	 * @throws SQLException
 	 * @throws IOException
 	 */
 	@Override
-	public void pullEntities(final boolean markAsRead)
+	public void pullEntities(final boolean markAsRead, Context context)
 		throws DaoException, ServerCommunicationException, ServerConnectionException, NoConnectionException {
 		try {
 			final FacilityDao facilityDao = DatabaseHelper.getFacilityDao();
@@ -190,7 +193,12 @@ public class FacilityDtoHelper extends AdoDtoHelper<Facility, FacilityDto> {
 		throw new UnsupportedOperationException();
 	}
 
-	public static FacilityReferenceDto toReferenceDto(Facility ado) {
+    @Override
+    protected long getApproximateJsonSizeInBytes() {
+        return 0;
+    }
+
+    public static FacilityReferenceDto toReferenceDto(Facility ado) {
 		if (ado == null) {
 			return null;
 		}

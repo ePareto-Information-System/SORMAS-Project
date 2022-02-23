@@ -20,12 +20,12 @@ import java.util.List;
 import de.symeda.sormas.api.PushResult;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.app.backend.caze.maternalhistory.MaternalHistoryDtoHelper;
 import de.symeda.sormas.app.backend.caze.porthealthinfo.PortHealthInfoDtoHelper;
 import de.symeda.sormas.app.backend.clinicalcourse.ClinicalCourse;
 import de.symeda.sormas.app.backend.clinicalcourse.ClinicalCourseDtoHelper;
-import de.symeda.sormas.app.backend.common.AdoDtoHelper;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.epidata.EpiData;
 import de.symeda.sormas.app.backend.epidata.EpiDataDtoHelper;
@@ -36,6 +36,7 @@ import de.symeda.sormas.app.backend.hospitalization.HospitalizationDtoHelper;
 import de.symeda.sormas.app.backend.infrastructure.PointOfEntry;
 import de.symeda.sormas.app.backend.infrastructure.PointOfEntryDtoHelper;
 import de.symeda.sormas.app.backend.person.Person;
+import de.symeda.sormas.app.backend.person.PersonDependentDtoHelper;
 import de.symeda.sormas.app.backend.person.PersonDtoHelper;
 import de.symeda.sormas.app.backend.region.Community;
 import de.symeda.sormas.app.backend.region.CommunityDtoHelper;
@@ -54,7 +55,7 @@ import de.symeda.sormas.app.rest.NoConnectionException;
 import de.symeda.sormas.app.rest.RetroProvider;
 import retrofit2.Call;
 
-public class CaseDtoHelper extends AdoDtoHelper<Case, CaseDataDto> {
+public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 
 	private SymptomsDtoHelper symptomsDtoHelper = new SymptomsDtoHelper();
 	private HospitalizationDtoHelper hospitalizationDtoHelper = new HospitalizationDtoHelper();
@@ -76,8 +77,8 @@ public class CaseDtoHelper extends AdoDtoHelper<Case, CaseDataDto> {
 	}
 
 	@Override
-	protected Call<List<CaseDataDto>> pullAllSince(long since) throws NoConnectionException {
-		return RetroProvider.getCaseFacade().pullAllSince(since);
+	protected Call<List<CaseDataDto>> pullAllSince(long since, Integer size, String lastSynchronizedUuid)  throws NoConnectionException {
+		return RetroProvider.getCaseFacade().pullAllSince(since, size, lastSynchronizedUuid);
 	}
 
 	@Override
@@ -108,6 +109,7 @@ public class CaseDtoHelper extends AdoDtoHelper<Case, CaseDataDto> {
 		target.setDisease(source.getDisease());
 		target.setDiseaseVariant(source.getDiseaseVariant());
 		target.setDiseaseDetails(source.getDiseaseDetails());
+		target.setDiseaseVariantDetails(source.getDiseaseVariantDetails());
 		target.setPlagueType(source.getPlagueType());
 		target.setDengueFeverType(source.getDengueFeverType());
 
@@ -144,21 +146,10 @@ public class CaseDtoHelper extends AdoDtoHelper<Case, CaseDataDto> {
 		target.setClinicianPhone(source.getClinicianPhone());
 		target.setClinicianEmail(source.getClinicianEmail());
 		target.setPregnant(source.getPregnant());
-		target.setVaccination(source.getVaccination());
-		target.setVaccinationDoses(source.getVaccinationDoses());
-		target.setVaccinationInfoSource(source.getVaccinationInfoSource());
+		target.setVaccinationStatus(source.getVaccinationStatus());
 		target.setSmallpoxVaccinationScar(source.getSmallpoxVaccinationScar());
 		target.setSmallpoxVaccinationReceived(source.getSmallpoxVaccinationReceived());
-		target.setFirstVaccinationDate(source.getFirstVaccinationDate());
-		target.setLastVaccinationDate(source.getLastVaccinationDate());
-		target.setVaccineName(source.getVaccineName());
-		target.setOtherVaccineName(source.getOtherVaccineName());
-		target.setVaccineManufacturer(source.getVaccineManufacturer());
-		target.setOtherVaccineManufacturer(source.getOtherVaccineManufacturer());
-		target.setVaccineInn(source.getVaccineInn());
-		target.setVaccineBatchNumber(source.getVaccineBatchNumber());
-		target.setVaccineUniiCode(source.getVaccineUniiCode());
-		target.setVaccineAtcCode(source.getVaccineAtcCode());
+		target.setSmallpoxLastVaccinationDate(source.getSmallpoxLastVaccinationDate());
 		target.setEpidNumber(source.getEpidNumber());
 		target.setCaseOrigin(source.getCaseOrigin());
 
@@ -173,7 +164,6 @@ public class CaseDtoHelper extends AdoDtoHelper<Case, CaseDataDto> {
 		target.setNotifyingClinic(source.getNotifyingClinic());
 		target.setNotifyingClinicDetails(source.getNotifyingClinicDetails());
 
-		target.setVaccine(source.getVaccine());
 		target.setRabiesType(source.getRabiesType());
 
 		target.setCreationVersion(source.getCreationVersion());
@@ -181,6 +171,7 @@ public class CaseDtoHelper extends AdoDtoHelper<Case, CaseDataDto> {
 		target.setAdditionalDetails(source.getAdditionalDetails());
 		target.setExternalID(source.getExternalID());
 		target.setExternalToken(source.getExternalToken());
+		target.setInternalToken(source.getInternalToken());
 
 		target.setQuarantine(source.getQuarantine());
 		target.setQuarantineTypeDetails(source.getQuarantineTypeDetails());
@@ -224,8 +215,6 @@ public class CaseDtoHelper extends AdoDtoHelper<Case, CaseDataDto> {
 		target.setReInfection(source.getReInfection());
 		target.setPreviousInfectionDate(source.getPreviousInfectionDate());
 
-		target.setReportingDistrict(DatabaseHelper.getDistrictDao().getByReferenceDto(source.getReportingDistrict()));
-
 		target.setBloodOrganOrTissueDonated(source.getBloodOrganOrTissueDonated());
 
 		target.setSormasToSormasOriginInfo(
@@ -267,6 +256,7 @@ public class CaseDtoHelper extends AdoDtoHelper<Case, CaseDataDto> {
 		target.setDisease(source.getDisease());
 		target.setDiseaseVariant(source.getDiseaseVariant());
 		target.setDiseaseDetails(source.getDiseaseDetails());
+		target.setDiseaseVariantDetails(source.getDiseaseVariantDetails());
 		target.setPlagueType(source.getPlagueType());
 		target.setDengueFeverType(source.getDengueFeverType());
 
@@ -405,21 +395,10 @@ public class CaseDtoHelper extends AdoDtoHelper<Case, CaseDataDto> {
 		target.setClinicianPhone(source.getClinicianPhone());
 		target.setClinicianEmail(source.getClinicianEmail());
 		target.setPregnant(source.getPregnant());
-		target.setVaccination(source.getVaccination());
-		target.setVaccinationDoses(source.getVaccinationDoses());
-		target.setVaccinationInfoSource(source.getVaccinationInfoSource());
+		target.setVaccinationStatus(source.getVaccinationStatus());
 		target.setSmallpoxVaccinationScar(source.getSmallpoxVaccinationScar());
 		target.setSmallpoxVaccinationReceived(source.getSmallpoxVaccinationReceived());
-		target.setFirstVaccinationDate(source.getFirstVaccinationDate());
-		target.setLastVaccinationDate(source.getLastVaccinationDate());
-		target.setVaccineName(source.getVaccineName());
-		target.setOtherVaccineName(source.getOtherVaccineName());
-		target.setVaccineManufacturer(source.getVaccineManufacturer());
-		target.setOtherVaccineManufacturer(source.getOtherVaccineManufacturer());
-		target.setVaccineInn(source.getVaccineInn());
-		target.setVaccineBatchNumber(source.getVaccineBatchNumber());
-		target.setVaccineUniiCode(source.getVaccineUniiCode());
-		target.setVaccineAtcCode(source.getVaccineAtcCode());
+		target.setSmallpoxLastVaccinationDate(source.getSmallpoxLastVaccinationDate());
 		target.setEpidNumber(source.getEpidNumber());
 		target.setCaseOrigin(source.getCaseOrigin());
 
@@ -434,7 +413,6 @@ public class CaseDtoHelper extends AdoDtoHelper<Case, CaseDataDto> {
 		target.setNotifyingClinic(source.getNotifyingClinic());
 		target.setNotifyingClinicDetails(source.getNotifyingClinicDetails());
 
-		target.setVaccine(source.getVaccine());
 		target.setRabiesType(source.getRabiesType());
 
 		target.setCreationVersion(source.getCreationVersion());
@@ -442,6 +420,7 @@ public class CaseDtoHelper extends AdoDtoHelper<Case, CaseDataDto> {
 		target.setAdditionalDetails(source.getAdditionalDetails());
 		target.setExternalID(source.getExternalID());
 		target.setExternalToken(source.getExternalToken());
+		target.setInternalToken(source.getInternalToken());
 
 		target.setQuarantine(source.getQuarantine());
 		target.setQuarantineTypeDetails(source.getQuarantineTypeDetails());
@@ -485,13 +464,6 @@ public class CaseDtoHelper extends AdoDtoHelper<Case, CaseDataDto> {
 		target.setReInfection(source.getReInfection());
 		target.setPreviousInfectionDate(source.getPreviousInfectionDate());
 
-		if (source.getReportingDistrict() != null) {
-			District district = DatabaseHelper.getDistrictDao().queryForId(source.getReportingDistrict().getId());
-			target.setReportingDistrict(DistrictDtoHelper.toReferenceDto(district));
-		} else {
-			target.setReportingDistrict(null);
-		}
-
 		target.setBloodOrganOrTissueDonated(source.getBloodOrganOrTissueDonated());
 
 		if (source.getSormasToSormasOriginInfo() != null) {
@@ -510,6 +482,11 @@ public class CaseDtoHelper extends AdoDtoHelper<Case, CaseDataDto> {
 		target.setFollowUpStatusChangeUser(UserDtoHelper.toReferenceDto(source.getFollowUpStatusChangeUser()));
 	}
 
+	@Override
+	protected long getApproximateJsonSizeInBytes() {
+		return CaseDataDto.APPROXIMATE_JSON_SIZE_IN_BYTES;
+	}
+
 	public static CaseReferenceDto toReferenceDto(Case ado) {
 		if (ado == null) {
 			return null;
@@ -517,5 +494,10 @@ public class CaseDtoHelper extends AdoDtoHelper<Case, CaseDataDto> {
 		CaseReferenceDto dto = new CaseReferenceDto(ado.getUuid());
 
 		return dto;
+	}
+
+	@Override
+	protected PersonReferenceDto getPerson(CaseDataDto dto) {
+		return dto.getPerson();
 	}
 }

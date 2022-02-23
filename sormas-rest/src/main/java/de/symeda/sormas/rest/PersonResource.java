@@ -30,11 +30,14 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.PushResult;
 import de.symeda.sormas.api.caze.CriteriaWithSorting;
 import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.externaldata.ExternalDataDto;
+import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
 import de.symeda.sormas.api.person.PersonCriteria;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.PersonIndexDto;
@@ -62,6 +65,15 @@ public class PersonResource extends EntityDtoResource {
 		return FacadeProvider.getPersonFacade().getPersonsAfter(new Date(since));
 	}
 
+	@GET
+	@Path("/all/{since}/{size}/{lastSynchronizedUuid}")
+	public List<PersonDto> getAllPersons(
+		@PathParam("since") long since,
+		@PathParam("size") int size,
+		@PathParam("lastSynchronizedUuid") String lastSynchronizedUuid) {
+		return FacadeProvider.getPersonFacade().getPersonsAfter(new Date(since), size, lastSynchronizedUuid);
+	}
+
 	@POST
 	@Path("/query")
 	public List<PersonDto> getByUuids(List<String> uuids) {
@@ -69,9 +81,15 @@ public class PersonResource extends EntityDtoResource {
 	}
 
 	@POST
+	@Path("/query/byExternalIds")
+	public List<PersonDto> getByExternalIds(List<String> externalIds) {
+		return FacadeProvider.getPersonFacade().getByExternalIds(externalIds);
+	}
+
+	@POST
 	@Path("/push")
 	public List<PushResult> postPersons(@Valid List<PersonDto> dtos) {
-		return savePushedDto(dtos, FacadeProvider.getPersonFacade()::savePersonAndNotifyExternalJournal);
+		return savePushedDto(dtos, FacadeProvider.getPersonFacade()::savePerson);
 	}
 
 	@GET
@@ -96,4 +114,14 @@ public class PersonResource extends EntityDtoResource {
 			.getIndexPage(criteriaWithSorting.getCriteria(), offset, size, criteriaWithSorting.getSortProperties());
 	}
 
+	@POST
+	@Path("/externalData")
+	public Response updateExternalData(@Valid List<ExternalDataDto> externalData) {
+		try {
+			FacadeProvider.getPersonFacade().updateExternalData(externalData);
+			return Response.status(Response.Status.OK).build();
+		} catch (ExternalDataUpdateException e) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
 }

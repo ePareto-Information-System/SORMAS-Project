@@ -174,7 +174,7 @@
                     app:dependencyParentValue="@{Disease.NEW_INFLUENZA}"
                     style="@style/ControlSingleColumnStyle" />
 
-                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
                     android:id="@+id/sample_lab"
                     app:required="true"
                     app:dependencyParentField="@{samplePurpose}"
@@ -283,13 +283,10 @@
                         <de.symeda.sormas.app.component.controls.ControlCheckBoxField
                             android:id="@+id/sample_shipped"
                             app:value="@={data.shipped}"
-                            app:dependencyParentField="@{samplePurpose}"
-                            app:dependencyParentValue="@{SamplePurpose.EXTERNAL}"
                             style="@style/ControlFirstOfTwoColumnsStyle" />
 
                         <de.symeda.sormas.app.component.controls.ControlDateField
                             android:id="@+id/sample_shipmentDate"
-                            app:required="true"
                             app:value="@={data.shipmentDate}"
                             app:dependencyParentField="@{sampleShipped}"
                             app:dependencyParentValue="@{true}"
@@ -315,8 +312,6 @@
                         <de.symeda.sormas.app.component.controls.ControlTextImageField
                             android:id="@+id/sample_received"
                             app:receivedStatus="@{data}"
-                            app:dependencyParentField="@{samplePurpose}"
-                            app:dependencyParentValue="@{SamplePurpose.EXTERNAL}"
                             style="@style/ControlFirstOfTwoColumnsStyle" />
 
                         <de.symeda.sormas.app.component.controls.ControlTextReadField

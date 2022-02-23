@@ -17,29 +17,73 @@
  */
 package org.sormas.e2etests.helpers.api;
 
-import static org.sormas.e2etests.constants.api.Endpoints.PERSONS;
+import static org.sormas.e2etests.constants.api.Endpoints.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.http.Method;
+import io.restassured.response.Response;
+import java.io.ByteArrayOutputStream;
+import java.util.List;
 import javax.inject.Inject;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.sormas.e2etests.helpers.RestAssuredClient;
-import org.sormas.e2etests.pojo.Request;
+import org.sormas.e2etests.pojo.api.Person;
+import org.sormas.e2etests.pojo.api.Request;
+import org.sormas.e2etests.state.ApiState;
 
+@Slf4j
 public class PersonsHelper {
 
   private final RestAssuredClient restAssuredClient;
+  private final ApiState apiState;
+  private final ObjectMapper objectMapper;
 
   @Inject
-  public PersonsHelper(RestAssuredClient restAssuredClient) {
+  public PersonsHelper(
+      RestAssuredClient restAssuredClient, ObjectMapper objectMapper, ApiState apiState) {
     this.restAssuredClient = restAssuredClient;
-  }
-
-  public void getPersonByUuid(String Uuid) {
-    restAssuredClient.sendRequest(
-        Request.builder().method(Method.GET).path(PERSONS + Uuid).build());
+    this.objectMapper = objectMapper;
+    this.apiState = apiState;
   }
 
   public void getAllPersonUuid() {
     restAssuredClient.sendRequest(
-        Request.builder().method(Method.GET).path(PERSONS + "uuids").build());
+        Request.builder().method(Method.GET).path(PERSONS_PATH + UUIDS_PATH).build());
+    int totalPersons =
+        apiState.getResponse().getBody().asString().replaceAll("\"", "").split(",").length;
+    log.info("Total persons: " + totalPersons);
+  }
+
+  public Response getPersonBasedOnUUID(String personUUID) {
+    restAssuredClient.sendRequest(
+        Request.builder().method(Method.GET).path(PERSONS_PATH + personUUID).build());
+    return apiState.getResponse();
+  }
+
+  @SneakyThrows
+  public void createNewPerson(Person person) {
+    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+    List<Person> personBody = List.of(person);
+    objectMapper.writeValue(out, personBody);
+    restAssuredClient.sendRequest(
+        Request.builder()
+            .method(Method.POST)
+            .body(out.toString())
+            .path(PERSONS_PATH + POST_PATH)
+            .build());
+  }
+
+  @SneakyThrows
+  public void createMultiplePersons(List<Person> personList) {
+    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+    List<Person> personBody = personList;
+    objectMapper.writeValue(out, personBody);
+    restAssuredClient.sendRequest(
+        Request.builder()
+            .method(Method.POST)
+            .body(out.toString())
+            .path(PERSONS_PATH + POST_PATH)
+            .build());
   }
 }

@@ -40,18 +40,18 @@ import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.TextField;
 
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.contact.ContactClassification;
 import de.symeda.sormas.api.contact.ContactCriteria;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.ContactIndexDto;
-import de.symeda.sormas.api.contact.ContactJurisdictionDto;
 import de.symeda.sormas.api.contact.ContactStatus;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.Descriptions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.region.RegionReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
@@ -72,6 +72,7 @@ import de.symeda.sormas.ui.utils.LayoutUtil;
 import de.symeda.sormas.ui.utils.MenuBarHelper;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 import de.symeda.sormas.ui.utils.ViewConfiguration;
+import de.symeda.sormas.ui.utils.components.expandablebutton.ExpandableButton;
 
 public class CaseContactsView extends AbstractCaseView {
 
@@ -79,8 +80,8 @@ public class CaseContactsView extends AbstractCaseView {
 
 	public static final String VIEW_NAME = ROOT_VIEW_NAME + "/contacts";
 
-	private ContactCriteria criteria;
-	private ViewConfiguration viewConfiguration;
+	private final ContactCriteria criteria;
+	private final ViewConfiguration viewConfiguration;
 
 	private ContactGrid grid;
 
@@ -89,11 +90,11 @@ public class CaseContactsView extends AbstractCaseView {
 	private ComboBox regionFilter;
 	private ComboBox districtFilter;
 	private ComboBox officerFilter;
+	private TextField personLikeField;
 	private TextField searchField;
 	private Button resetButton;
 	private Button applyButton;
 
-	private Button newButton;
 	private DetailSubComponentWrapper gridLayout;
 	private HashMap<Button, String> statusButtons;
 	private Button activeStatusButton;
@@ -124,7 +125,7 @@ public class CaseContactsView extends AbstractCaseView {
 		regionFilter = ComboBoxHelper.createComboBoxV7();
 		if (user.getRegion() == null) {
 			regionFilter.setWidth(240, Unit.PIXELS);
-			regionFilter.setInputPrompt(I18nProperties.getPrefixCaption(ContactIndexDto.I18N_PREFIX, ContactJurisdictionDto.REGION_UUID));
+			regionFilter.setInputPrompt(I18nProperties.getPrefixCaption(ContactIndexDto.I18N_PREFIX, ContactIndexDto.REGION_UUID));
 			regionFilter.addItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
 			regionFilter.addValueChangeListener(e -> {
 				RegionReferenceDto region = (RegionReferenceDto) e.getProperty().getValue();
@@ -140,7 +141,7 @@ public class CaseContactsView extends AbstractCaseView {
 
 		districtFilter = ComboBoxHelper.createComboBoxV7();
 		districtFilter.setWidth(240, Unit.PIXELS);
-		districtFilter.setInputPrompt(I18nProperties.getPrefixCaption(ContactJurisdictionDto.I18N_PREFIX, ContactJurisdictionDto.DISTRICT_UUID));
+		districtFilter.setInputPrompt(I18nProperties.getPrefixCaption(ContactIndexDto.I18N_PREFIX, ContactIndexDto.DISTRICT_UUID));
 		districtFilter.addValueChangeListener(e -> criteria.district((DistrictReferenceDto) e.getProperty().getValue()));
 
 		if (user.getRegion() != null && user.getDistrict() == null) {
@@ -177,11 +178,18 @@ public class CaseContactsView extends AbstractCaseView {
 		topLayout.addComponent(officerFilter);
 
 		searchField = new TextField();
-		searchField.setWidth(200, Unit.PIXELS);
+		searchField.setWidth(150, Unit.PIXELS);
 		searchField.setNullRepresentation("");
 		searchField.setInputPrompt(I18nProperties.getString(Strings.promptContactsSearchField));
-		searchField.addTextChangeListener(e -> criteria.setNameUuidCaseLike(e.getText()));
+		searchField.addTextChangeListener(e -> criteria.setContactOrCaseLike(e.getText()));
 		topLayout.addComponent(searchField);
+
+		personLikeField = new TextField();
+		personLikeField.setWidth(150, Unit.PIXELS);
+		personLikeField.setNullRepresentation("");
+		personLikeField.setInputPrompt(I18nProperties.getString(Strings.promptRelatedPersonLikeField));
+		personLikeField.addTextChangeListener(e -> criteria.setPersonLike(e.getText()));
+		topLayout.addComponent(personLikeField);
 
 		resetButton = ButtonHelper.createButton(Captions.actionResetFilters, event -> {
 			ViewModelProviders.of(CaseContactsView.class).remove(ContactCriteria.class);
@@ -200,6 +208,7 @@ public class CaseContactsView extends AbstractCaseView {
 		officerFilter.addValueChangeListener(e -> updateApplyResetButtons());
 		districtFilter.addValueChangeListener(e -> updateApplyResetButtons());
 		searchField.addValueChangeListener(e -> updateApplyResetButtons());
+		personLikeField.addValueChangeListener(e -> updateApplyResetButtons());
 
 		return topLayout;
 	}
@@ -328,7 +337,13 @@ public class CaseContactsView extends AbstractCaseView {
 		}
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.CONTACT_CREATE)) {
-			newButton = ButtonHelper.createIconButtonWithCaption(
+			final CaseDataDto caseDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(this.getCaseRef().getUuid());
+			final ExpandableButton lineListingButton =
+				new ExpandableButton(Captions.lineListing).expand(e -> ControllerProvider.getContactController().openLineListingWindow(caseDto));
+
+			statusFilterLayout.addComponent(lineListingButton);
+
+			final Button newButton = ButtonHelper.createIconButtonWithCaption(
 				Captions.contactNewContact,
 				I18nProperties.getPrefixCaption(ContactDto.I18N_PREFIX, Captions.contactNewContact),
 				VaadinIcons.PLUS_CIRCLE,
@@ -397,7 +412,8 @@ public class CaseContactsView extends AbstractCaseView {
 
 		regionFilter.setValue(criteria.getRegion());
 		districtFilter.setValue(criteria.getDistrict());
-		searchField.setValue(criteria.getNameUuidCaseLike());
+		personLikeField.setValue(criteria.getPersonLike());
+		searchField.setValue(criteria.getContactOrCaseLike());
 		officerFilter.setValue(criteria.getContactOfficer());
 
 		applyingCriteria = false;
@@ -433,6 +449,7 @@ public class CaseContactsView extends AbstractCaseView {
 			|| !regionFilter.isEmpty()
 			|| !districtFilter.isEmpty()
 			|| !officerFilter.isEmpty()
+			|| !personLikeField.isEmpty()
 			|| !searchField.isEmpty();
 	}
 }

@@ -1,13 +1,32 @@
+/*
+ * SORMAS® - Surveillance Outbreak Response Management & Analysis System
+ * Copyright © 2016-2021 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 package de.symeda.sormas.ui.contact.importer;
 
+import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.feature.FeatureTypeProperty;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.opencsv.exceptions.CsvValidationException;
@@ -21,23 +40,29 @@ import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.ContactExportDto;
 import de.symeda.sormas.api.contact.SimilarContactDto;
-import de.symeda.sormas.api.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.api.importexport.ImportErrorException;
+import de.symeda.sormas.api.importexport.ImportLineResultDto;
+import de.symeda.sormas.api.importexport.ImportRelatedObjectsMapper;
 import de.symeda.sormas.api.importexport.InvalidColumnException;
+import de.symeda.sormas.api.importexport.ValueSeparator;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.PersonHelper;
 import de.symeda.sormas.api.person.PersonReferenceDto;
-import de.symeda.sormas.api.region.CommunityReferenceDto;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.user.UserDto;
+import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DataHelper.Pair;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
+import de.symeda.sormas.api.vaccination.VaccinationDto;
 import de.symeda.sormas.ui.contact.ContactSelectionField;
 import de.symeda.sormas.ui.importer.ContactImportSimilarityResult;
 import de.symeda.sormas.ui.importer.DataImporter;
-import de.symeda.sormas.ui.importer.ImportErrorException;
 import de.symeda.sormas.ui.importer.ImportLineResult;
 import de.symeda.sormas.ui.importer.ImportSimilarityResultOption;
 import de.symeda.sormas.ui.importer.ImporterPersonHelper;
@@ -61,9 +86,9 @@ public class ContactImporter extends DataImporter {
 	private CaseDataDto caze;
 	private UI currentUI;
 
-	public ContactImporter(File inputFile, boolean hasEntityClassRow, UserDto currentUser, CaseDataDto caze) {
+	public ContactImporter(File inputFile, UserDto currentUser, CaseDataDto caze, ValueSeparator csvSeparator) throws IOException {
 
-		super(inputFile, hasEntityClassRow, currentUser);
+		super(inputFile, true, currentUser, csvSeparator);
 		this.caze = caze;
 	}
 
@@ -82,7 +107,7 @@ public class ContactImporter extends DataImporter {
 		String[] entityProperties,
 		String[][] entityPropertyPaths,
 		boolean firstLine)
-		throws IOException, InvalidColumnException, InterruptedException {
+		throws IOException, InterruptedException {
 
 		// Check whether the new line has the same length as the header line
 		if (values.length > entityProperties.length) {
@@ -90,30 +115,51 @@ public class ContactImporter extends DataImporter {
 			return ImportLineResult.ERROR;
 		}
 
-		final PersonDto newPersonTemp = PersonDto.build();
+		// regenerate the UUID to prevent overwrite in case of export and import of the same entities
+		int uuidIndex = ArrayUtils.indexOf(entityProperties, ContactDto.UUID);
+		if (uuidIndex >= 0) {
+			values[uuidIndex] = DataHelper.createUuid();
+		}
+
+		final PersonDto newPersonTemp = PersonDto.buildImportEntity();
 		final ContactDto newContactTemp = caze != null ? ContactDto.build(caze) : ContactDto.build();
 		newContactTemp.setReportingUser(currentUser.toReference());
+		final List<VaccinationDto> vaccinations = new ArrayList<>();
+
+		ImportRelatedObjectsMapper.Builder relatedObjectsMapperBuilder = new ImportRelatedObjectsMapper.Builder();
+
+		if (FacadeProvider.getFeatureConfigurationFacade().isPropertyValueTrue(FeatureType.IMMUNIZATION_MANAGEMENT, FeatureTypeProperty.REDUCED)) {
+		relatedObjectsMapperBuilder.addMapper(
+			VaccinationDto.class,
+			vaccinations,
+			() -> VaccinationDto.build(currentUser.toReference()),
+			this::insertColumnEntryIntoRelatedObject);
+		}
+
+		ImportRelatedObjectsMapper relatedMapper = relatedObjectsMapperBuilder.build();
 
 		boolean contactHasImportError = insertRowIntoData(values, entityClasses, entityPropertyPaths, true, importColumnInformation -> {
-			// If the cell entry is not empty, try to insert it into the current contact or person object
-			if (!StringUtils.isEmpty(importColumnInformation.getValue())) {
-				try {
-					insertColumnEntryIntoData(
-						newContactTemp,
-						newPersonTemp,
-						importColumnInformation.getValue(),
-						importColumnInformation.getEntityPropertyPath());
-				} catch (ImportErrorException | InvalidColumnException e) {
-					return e;
+			try {
+				if (!relatedMapper.map(importColumnInformation)) {
+					// If the cell entry is not empty, try to insert it into the current contact or person object
+					if (!StringUtils.isEmpty(importColumnInformation.getValue())) {
+						insertColumnEntryIntoData(
+							newContactTemp,
+							newPersonTemp,
+							importColumnInformation.getValue(),
+							importColumnInformation.getEntityPropertyPath());
+					}
 				}
+			} catch (ImportErrorException | InvalidColumnException e) {
+				return e;
 			}
+
 			return null;
 		});
 
 		// try to assign the contact to an existing case
 		if (caze == null && newContactTemp.getCaseIdExternalSystem() != null) {
-			CaseDataDto existingCase =
-				FacadeProvider.getCaseFacade().getCaseDataByUuid(newContactTemp.getCaseIdExternalSystem().trim().toUpperCase());
+			CaseDataDto existingCase = FacadeProvider.getCaseFacade().getCaseDataByUuid(newContactTemp.getCaseIdExternalSystem().trim());
 			if (existingCase != null) {
 				newContactTemp.assignCase(existingCase);
 				newContactTemp.setCaseIdExternalSystem(null);
@@ -133,6 +179,9 @@ public class ContactImporter extends DataImporter {
 
 		PersonDto newPerson = newPersonTemp;
 
+		// Sanitize non-HOME address
+		PersonHelper.sanitizeNonHomeAddress(newPerson);
+
 		// If the contact still does not have any import errors, search for persons similar to the contact person in the database and,
 		// if there are any, display a window to resolve the conflict to the user
 		if (!contactHasImportError) {
@@ -149,7 +198,7 @@ public class ContactImporter extends DataImporter {
 						newPerson,
 						result -> consumer.onImportResult(result, personSelectLock),
 						(person, similarityResultOption) -> new ContactImportSimilarityResult(person, null, similarityResultOption),
-						Strings.infoSelectOrCreatePersonForContactImport,
+						Strings.infoSelectOrCreatePersonForImport,
 						currentUI);
 
 					try {
@@ -173,12 +222,11 @@ public class ContactImporter extends DataImporter {
 
 				// Determine the import result and, if there was no duplicate, the user did not skip over the contact 
 				// or an existing person was picked, save the contact and person to the database
-				if (contactHasImportError) {
-					return ImportLineResult.ERROR;
-				} else if (ImportSimilarityResultOption.SKIP.equals(resultOption)) {
+				if (ImportSimilarityResultOption.SKIP.equals(resultOption)) {
 					return ImportLineResult.SKIPPED;
 				} else {
-					final PersonDto savedPerson = FacadeProvider.getPersonFacade().savePersonAndNotifyExternalJournal(newPerson);
+					boolean skipPersonValidation = ImportSimilarityResultOption.PICK.equals(resultOption);
+					final PersonDto savedPerson = FacadeProvider.getPersonFacade().savePerson(newPerson, skipPersonValidation);
 					newContactTemp.setPerson(savedPerson.toReference());
 
 					ContactDto newContact = newContactTemp;
@@ -206,7 +254,13 @@ public class ContactImporter extends DataImporter {
 						}
 					}
 
+					// Workaround: Reset the change date to avoid OutdatedEntityExceptions
+					newContact.setChangeDate(new Date());
 					FacadeProvider.getContactFacade().saveContact(newContact, true, false);
+
+					for (VaccinationDto vaccination : vaccinations) {
+						FacadeProvider.getVaccinationFacade().createWithImmunization(vaccination, newContact.getRegion(), newContact.getDistrict(), newContact.getPerson(), newContact.getDisease());
+					}
 
 					consumer.result = null;
 					return ImportLineResult.SUCCESS;
@@ -277,9 +331,9 @@ public class ContactImporter extends DataImporter {
 				} else if (ContactExportDto.BIRTH_DATE.equals(headerPathElementName)) {
 					BirthDateDto birthDateDto = PersonHelper.parseBirthdate(entry, currentUser.getLanguage());
 					if (birthDateDto != null) {
-						person.setBirthdateDD(birthDateDto.getBirthdateDD());
-						person.setBirthdateMM(birthDateDto.getBirthdateMM());
-						person.setBirthdateYYYY(birthDateDto.getBirthdateYYYY());
+						person.setBirthdateDD(birthDateDto.getDateOfBirthDD());
+						person.setBirthdateMM(birthDateDto.getDateOfBirthMM());
+						person.setBirthdateYYYY(birthDateDto.getDateOfBirthYYYY());
 					}
 				} else {
 					PropertyDescriptor pd = new PropertyDescriptor(headerPathElementName, currentElement.getClass());
@@ -287,14 +341,11 @@ public class ContactImporter extends DataImporter {
 
 					// Execute the default invokes specified in the data importer; if none of those were triggered, execute additional invokes
 					// according to the types of the contact or person fields
-					if (executeDefaultInvokings(pd, currentElement, entry, entryHeaderPath)) {
+					if (executeDefaultInvoke(pd, currentElement, entry, entryHeaderPath)) {
 						continue;
 					} else if (propertyType.isAssignableFrom(DistrictReferenceDto.class)) {
 						List<DistrictReferenceDto> district = FacadeProvider.getDistrictFacade()
-							.getByName(
-								entry,
-								ImporterPersonHelper.getRegionBasedOnDistrict(pd.getName(), null, contact, person, currentElement),
-								false);
+							.getByName(entry, ImporterPersonHelper.getRegionBasedOnDistrict(pd.getName(), contact, person, currentElement), false);
 						if (district.isEmpty()) {
 							throw new ImportErrorException(
 								I18nProperties
@@ -306,8 +357,13 @@ public class ContactImporter extends DataImporter {
 							pd.getWriteMethod().invoke(currentElement, district.get(0));
 						}
 					} else if (propertyType.isAssignableFrom(CommunityReferenceDto.class)) {
-						List<CommunityReferenceDto> community =
-							FacadeProvider.getCommunityFacade().getByName(entry, ImporterPersonHelper.getPersonDistrict(pd.getName(), person), false);
+
+						DistrictReferenceDto district = currentElement instanceof ContactDto
+							? ((ContactDto) currentElement).getDistrict()
+							: (currentElement instanceof LocationDto ? ((LocationDto) currentElement).getDistrict() : null);
+						List<CommunityReferenceDto> community = FacadeProvider.getCommunityFacade()
+							.getByName(entry, district != null ? district : ImporterPersonHelper.getPersonDistrict(pd.getName(), person), false);
+
 						if (community.isEmpty()) {
 							throw new ImportErrorException(
 								I18nProperties.getValidationError(
@@ -373,6 +429,16 @@ public class ContactImporter extends DataImporter {
 				logger.error("Unexpected error when trying to import a contact: " + e.getMessage());
 				throw new ImportErrorException(I18nProperties.getValidationError(Validations.importUnexpectedError));
 			}
+		}
+
+		ImportLineResultDto<ContactDto> contactErrors = validateConstraints(contact);
+		if (contactErrors.isError()) {
+			throw new ImportErrorException(contactErrors.getMessage());
+		}
+
+		ImportLineResultDto<PersonDto> personErrors = validateConstraints(person);
+		if (personErrors.isError()) {
+			throw new ImportErrorException(personErrors.getMessage());
 		}
 	}
 

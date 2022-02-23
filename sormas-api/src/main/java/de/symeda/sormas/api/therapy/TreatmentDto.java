@@ -19,13 +19,19 @@ package de.symeda.sormas.api.therapy;
 
 import java.util.Date;
 
+import javax.validation.constraints.Size;
+
+import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.FieldConstraints;
 import de.symeda.sormas.api.utils.SensitiveData;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 
 public class TreatmentDto extends PseudonymizableDto {
 
 	private static final long serialVersionUID = 816932182306785932L;
+
+	public static final long APPROXIMATE_JSON_SIZE_IN_BYTES = 1915;
 
 	public static final String I18N_PREFIX = "Treatment";
 
@@ -44,16 +50,21 @@ public class TreatmentDto extends PseudonymizableDto {
 	private TherapyReferenceDto therapy;
 	private Date treatmentDateTime;
 	@SensitiveData
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String executingClinician;
 	private TreatmentType treatmentType;
 	@SensitiveData
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String treatmentDetails;
 	private TypeOfDrug typeOfDrug;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String dose;
 	private TreatmentRoute route;
 	@SensitiveData
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String routeDetails;
 	@SensitiveData
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_BIG, message = Validations.textTooLong)
 	private String additionalNotes;
 	private PrescriptionReferenceDto prescription;
 

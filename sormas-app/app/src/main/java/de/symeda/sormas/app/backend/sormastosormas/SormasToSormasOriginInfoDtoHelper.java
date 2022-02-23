@@ -21,7 +21,7 @@ public class SormasToSormasOriginInfoDtoHelper extends AdoDtoHelper<SormasToSorm
 	}
 
 	@Override
-	protected Call<List<SormasToSormasOriginInfoDto>> pullAllSince(long since) throws NoConnectionException {
+	protected Call<List<SormasToSormasOriginInfoDto>> pullAllSince(long since, Integer size, String lastSynchronizedUuid)  throws NoConnectionException {
 		throw new UnsupportedOperationException("Entity is embedded");
 	}
 
@@ -39,6 +39,9 @@ public class SormasToSormasOriginInfoDtoHelper extends AdoDtoHelper<SormasToSorm
 	protected void fillInnerFromDto(SormasToSormasOriginInfo sormasToSormasOriginInfo, SormasToSormasOriginInfoDto dto) {
 		sormasToSormasOriginInfo.setOrganizationId(dto.getOrganizationId());
 		sormasToSormasOriginInfo.setOwnershipHandedOver(dto.isOwnershipHandedOver());
+		sormasToSormasOriginInfo.setWithAssociatedContacts(dto.isWithAssociatedContacts());
+		sormasToSormasOriginInfo.setWithSamples(dto.isWithSamples());
+		sormasToSormasOriginInfo.setWithEventParticipants(dto.isWithEventParticipants());
 		sormasToSormasOriginInfo.setSenderName(dto.getSenderName());
 		sormasToSormasOriginInfo.setSenderEmail(dto.getSenderEmail());
 		sormasToSormasOriginInfo.setSenderPhoneNumber(dto.getSenderPhoneNumber());
@@ -49,9 +52,17 @@ public class SormasToSormasOriginInfoDtoHelper extends AdoDtoHelper<SormasToSorm
 	protected void fillInnerFromAdo(SormasToSormasOriginInfoDto dto, SormasToSormasOriginInfo sormasToSormasOriginInfo) {
 		dto.setOrganizationId(sormasToSormasOriginInfo.getOrganizationId());
 		dto.setOwnershipHandedOver(sormasToSormasOriginInfo.isOwnershipHandedOver());
+		dto.setWithAssociatedContacts(sormasToSormasOriginInfo.isWithAssociatedContacts());
+		dto.setWithSamples(sormasToSormasOriginInfo.isWithSamples());
+		dto.setWithEventParticipants(sormasToSormasOriginInfo.isWithEventParticipants());
 		dto.setSenderName(sormasToSormasOriginInfo.getSenderName());
 		dto.setSenderEmail(sormasToSormasOriginInfo.getSenderEmail());
 		dto.setSenderPhoneNumber(sormasToSormasOriginInfo.getSenderPhoneNumber());
 		dto.setComment(sormasToSormasOriginInfo.getComment());
 	}
+
+    @Override
+    protected long getApproximateJsonSizeInBytes() {
+        return 0;
+    }
 }

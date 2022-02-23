@@ -18,33 +18,34 @@
 
 package org.sormas.e2etests.steps.web.application;
 
+import static org.sormas.e2etests.enums.TestDataUser.*;
+import static org.sormas.e2etests.pages.application.dashboard.Surveillance.SurveillanceDashboardPage.LOGOUT_BUTTON;
+
 import com.google.inject.Inject;
 import cucumber.api.java8.En;
 import javax.inject.Named;
+import org.openqa.selenium.NoSuchElementException;
 import org.sormas.e2etests.helpers.WebDriverHelpers;
 import org.sormas.e2etests.pages.application.LoginPage;
-import org.sormas.e2etests.pages.application.MainPage;
+import org.sormas.e2etests.pages.application.dashboard.Surveillance.SurveillanceDashboardPage;
+import org.sormas.e2etests.steps.BaseSteps;
 
 public class LoginSteps implements En {
 
   @Inject
   public LoginSteps(
-      WebDriverHelpers webDriverHelpers, @Named("ENVIRONMENT_URL") String environmentUrl) {
-
-    When(
-        "^I fill the username with ([^\"]*)$",
-        (String userName) ->
-            webDriverHelpers.fillInWebElement(LoginPage.USER_NAME_INPUT, userName));
-
-    When(
-        "^I fill the password with ([^\"]*)$",
-        (String password) ->
-            webDriverHelpers.fillInWebElement(LoginPage.USER_PASSWORD_INPUT, password));
+      WebDriverHelpers webDriverHelpers,
+      BaseSteps baseSteps,
+      @Named("ENVIRONMENT_URL") String environmentUrl) {
 
     Given(
         "^I am logged in with name ([^\"]*)$",
-        (String name) ->
-            webDriverHelpers.checkWebElementContainsText(MainPage.LOGOUT_BUTTON, name));
+        (String name) -> {
+          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(
+              SurveillanceDashboardPage.LOGOUT_BUTTON, 40);
+          webDriverHelpers.checkWebElementContainsText(
+              SurveillanceDashboardPage.LOGOUT_BUTTON, name);
+        });
 
     Given(
         "^I navigate to SORMAS login page$", () -> webDriverHelpers.accessWebSite(environmentUrl));
@@ -53,13 +54,49 @@ public class LoginSteps implements En {
         "I click on the Log In button",
         () -> webDriverHelpers.clickOnWebElementBySelector(LoginPage.LOGIN_BUTTON));
 
-    Given(
-        "I log in with the user",
+    And(
+        "I log in with National User",
         () -> {
           webDriverHelpers.accessWebSite(environmentUrl);
-          webDriverHelpers.fillInWebElement(LoginPage.USER_NAME_INPUT, "NatUser");
-          webDriverHelpers.fillInWebElement(LoginPage.USER_PASSWORD_INPUT, "NatUser38118");
+          webDriverHelpers.waitForPageLoaded();
+          int attempts = 1;
+
+          LOOP:
+          while (attempts <= 3) {
+            webDriverHelpers.fillInWebElement(
+                LoginPage.USER_NAME_INPUT, NATIONAL_USER.getUsername());
+            webDriverHelpers.fillInWebElement(
+                LoginPage.USER_PASSWORD_INPUT, NATIONAL_USER.getPassword());
+            webDriverHelpers.clickOnWebElementBySelector(LoginPage.LOGIN_BUTTON);
+            webDriverHelpers.waitForPageLoaded();
+            boolean wasUserLoggedIn;
+            try {
+              wasUserLoggedIn =
+                  webDriverHelpers.isElementDisplayedIn20SecondsOrThrowException(
+                      SurveillanceDashboardPage.LOGOUT_BUTTON);
+            } catch (NoSuchElementException e) {
+              wasUserLoggedIn = false;
+            }
+            if (wasUserLoggedIn) {
+              break LOOP;
+            } else {
+              attempts++;
+            }
+          }
+        });
+
+    Given(
+        "^I log in as a ([^\"]*)$",
+        (String userRole) -> {
+          webDriverHelpers.accessWebSite(environmentUrl);
+          webDriverHelpers.waitUntilIdentifiedElementIsPresent(LoginPage.USER_NAME_INPUT);
+          webDriverHelpers.fillInWebElement(
+              LoginPage.USER_NAME_INPUT, gertUserByRole(userRole).getUsername());
+          webDriverHelpers.fillInWebElement(
+              LoginPage.USER_PASSWORD_INPUT, gertUserByRole(userRole).getPassword());
           webDriverHelpers.clickOnWebElementBySelector(LoginPage.LOGIN_BUTTON);
+          webDriverHelpers.waitForPageLoaded();
+          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(LOGOUT_BUTTON, 30);
         });
   }
 }

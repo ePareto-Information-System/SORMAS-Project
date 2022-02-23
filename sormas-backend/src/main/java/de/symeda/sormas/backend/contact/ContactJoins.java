@@ -24,19 +24,18 @@ import de.symeda.sormas.backend.clinicalcourse.HealthConditions;
 import de.symeda.sormas.backend.epidata.EpiData;
 import de.symeda.sormas.backend.event.Event;
 import de.symeda.sormas.backend.event.EventParticipant;
-import de.symeda.sormas.backend.facility.Facility;
-import de.symeda.sormas.backend.infrastructure.PointOfEntry;
+import de.symeda.sormas.backend.infrastructure.community.Community;
+import de.symeda.sormas.backend.infrastructure.country.Country;
+import de.symeda.sormas.backend.infrastructure.district.District;
+import de.symeda.sormas.backend.infrastructure.facility.Facility;
+import de.symeda.sormas.backend.infrastructure.pointofentry.PointOfEntry;
+import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.person.Person;
-import de.symeda.sormas.backend.region.Community;
-import de.symeda.sormas.backend.region.Country;
-import de.symeda.sormas.backend.region.District;
-import de.symeda.sormas.backend.region.Region;
-import de.symeda.sormas.backend.sormastosormas.SormasToSormasShareInfo;
+import de.symeda.sormas.backend.sample.Sample;
 import de.symeda.sormas.backend.symptoms.Symptoms;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.util.AbstractDomainObjectJoins;
-import de.symeda.sormas.backend.vaccinationinfo.VaccinationInfo;
 import de.symeda.sormas.backend.visit.Visit;
 
 public class ContactJoins<T> extends AbstractDomainObjectJoins<T, Contact> {
@@ -72,6 +71,9 @@ public class ContactJoins<T> extends AbstractDomainObjectJoins<T, Contact> {
 	private Join<EventParticipant, Event> event;
 	private Join<EventParticipant, Event> caseEvent;
 
+	private Join<Contact, Sample> samples;
+	private Join<Sample, Facility> sampleLabs;
+
 	private Join<Contact, Visit> visits;
 	private Join<Visit, Symptoms> visitSymptoms;
 	private Join<Contact, HealthConditions> healthConditions;
@@ -82,9 +84,7 @@ public class ContactJoins<T> extends AbstractDomainObjectJoins<T, Contact> {
 
 	private Join<Contact, District> reportingDistrict;
 
-	private Join<Contact, VaccinationInfo> vaccinationInfo;
-
-	private Join<Contact, SormasToSormasShareInfo> sormasToSormasShareInfo;
+	private Join<Contact, User> followUpStatusChangeUser;
 
 	public ContactJoins(From<T, Contact> contact) {
 		super(contact);
@@ -372,19 +372,27 @@ public class ContactJoins<T> extends AbstractDomainObjectJoins<T, Contact> {
 		this.reportingDistrict = reportingDistrict;
 	}
 
-	public Join<Contact, VaccinationInfo> getVaccinationInfo() {
-		return getOrCreate(vaccinationInfo, Contact.VACCINATION_INFO, JoinType.LEFT, this::setVaccinationInfo);
+	public Join<Contact, Sample> getSamples() {
+		return getOrCreate(samples, Case.SAMPLES, JoinType.LEFT, this::setSamples);
 	}
 
-	private void setVaccinationInfo(Join<Contact, VaccinationInfo> vaccinationInfo) {
-		this.vaccinationInfo = vaccinationInfo;
+	private void setSamples(Join<Contact, Sample> samples) {
+		this.samples = samples;
 	}
 
-	public Join<Contact, SormasToSormasShareInfo> getSormasToSormasShareInfo() {
-		return getOrCreate(sormasToSormasShareInfo, Contact.SORMAS_TO_SORMAS_SHARES, JoinType.LEFT, this::setSormasToSormasShareInfo);
+	public Join<Sample, Facility> getSampleLabs() {
+		return getOrCreate(sampleLabs, Sample.LAB, JoinType.LEFT, getSamples(), this::setSampleLabs);
 	}
 
-	public void setSormasToSormasShareInfo(Join<Contact, SormasToSormasShareInfo> sormasToSormasShareInfo) {
-		this.sormasToSormasShareInfo = sormasToSormasShareInfo;
+	private void setSampleLabs(Join<Sample, Facility> sampleLabs) {
+		this.sampleLabs = sampleLabs;
+	}
+
+	public Join<Contact, User> getFollowUpStatusChangeUser() {
+		return getOrCreate(followUpStatusChangeUser, Contact.FOLLOW_UP_STATUS_CHANGE_USER, JoinType.LEFT, this::setFollowUpStatusChangeUser);
+	}
+
+	private void setFollowUpStatusChangeUser(Join<Contact, User> followUpStatusChangeUser) {
+		this.followUpStatusChangeUser = followUpStatusChangeUser;
 	}
 }

@@ -53,9 +53,14 @@ public class AuditLogEntryDtoHelper extends AdoDtoHelper<AuditLogEntry, AuditLog
 	}
 
 	@Override
-	protected Call<List<AuditLogEntryDto>> pullAllSince(long since) throws NoConnectionException {
-		return null; //RetroProvider.getAuditLogEntryFacade().pullAllSince(since);
+	protected Call<List<AuditLogEntryDto>> pullAllSince(long since, Integer size, String lastSynchronizedUuid) throws NoConnectionException {
+		return null;
 	}
+
+//	@Override
+//	protected Call<List<AuditLogEntryDto>> pullAllSince(long since) throws NoConnectionException {
+//		return null; //RetroProvider.getAuditLogEntryFacade().pullAllSince(since);
+//	}
 
 	@Override
 	protected Call<List<AuditLogEntryDto>> pullByUuids(List<String> uuids) throws NoConnectionException {
@@ -180,6 +185,11 @@ public class AuditLogEntryDtoHelper extends AdoDtoHelper<AuditLogEntry, AuditLog
 //		}
 //
 //		target.setPseudonymized(source.isPseudonymized());
+	}
+
+	@Override
+	protected long getApproximateJsonSizeInBytes() {
+		return 0;
 	}
 
 	public static void logActivity (FragmentActivity fragmentActivity, HasUuid entity) {

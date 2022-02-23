@@ -17,7 +17,7 @@
  *******************************************************************************/
 package de.symeda.sormas.backend.person;
 
-import static de.symeda.sormas.api.EntityDto.COLUMN_LENGTH_DEFAULT;
+import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,7 +43,8 @@ import javax.persistence.Transient;
 
 import de.symeda.auditlog.api.Audited;
 import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.facility.FacilityType;
+import de.symeda.sormas.api.externaldata.HasExternalData;
+import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.person.ArmedForcesRelationType;
 import de.symeda.sormas.api.person.BurialConductor;
@@ -63,16 +64,18 @@ import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.messaging.ManualMessageLog;
 import de.symeda.sormas.backend.contact.Contact;
 import de.symeda.sormas.backend.event.EventParticipant;
-import de.symeda.sormas.backend.facility.Facility;
+import de.symeda.sormas.backend.immunization.entity.Immunization;
+import de.symeda.sormas.backend.infrastructure.community.Community;
+import de.symeda.sormas.backend.infrastructure.country.Country;
+import de.symeda.sormas.backend.infrastructure.district.District;
+import de.symeda.sormas.backend.infrastructure.facility.Facility;
+import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.location.Location;
-import de.symeda.sormas.backend.region.Community;
-import de.symeda.sormas.backend.region.Country;
-import de.symeda.sormas.backend.region.District;
-import de.symeda.sormas.backend.region.Region;
+import de.symeda.sormas.backend.travelentry.TravelEntry;
 
 @Entity
 @Audited
-public class Person extends AbstractDomainObject {
+public class Person extends AbstractDomainObject implements HasExternalData {
 
 	private static final long serialVersionUID = -1735038738114840087L;
 
@@ -92,6 +95,8 @@ public class Person extends AbstractDomainObject {
 	public static final String BIRTHDATE_DD = "birthdateDD";
 	public static final String BIRTHDATE_MM = "birthdateMM";
 	public static final String BIRTHDATE_YYYY = "birthdateYYYY";
+	public static final String CAUSE_OF_DEATH = "causeOfDeath";
+	public static final String CAUSE_OF_DEATH_DETAILS = "causeOfDeathDetails";
 	public static final String CAUSE_OF_DEATH_DISEASE = "causeOfDeathDisease";
 	public static final String DEATH_PLACE_TYPE = "deathPlaceType";
 	public static final String DEATH_PLACE_DESCRIPTION = "deathPlaceDescription";
@@ -109,6 +114,7 @@ public class Person extends AbstractDomainObject {
 	public static final String ARMED_FORCES_RELATION_TYPE = "armedForcesRelationType";
 	public static final String FATHERS_NAME = "fathersName";
 	public static final String MOTHERS_NAME = "mothersName";
+	public static final String NAMES_OF_GUARDIANS = "namesOfGuardians";
 	public static final String PLACE_OF_BIRTH_REGION = "placeOfBirthRegion";
 	public static final String PLACE_OF_BIRTH_DISTRICT = "placeOfBirthDistrict";
 	public static final String PLACE_OF_BIRTH_COMMUNITY = "placeOfBirthCommunity";
@@ -122,15 +128,21 @@ public class Person extends AbstractDomainObject {
 	public static final String ADDRESSES = "addresses";
 	public static final String PERSON_CONTACT_DETAILS = "personContactDetails";
 
+	public static final String HAS_COVID_APP = "hasCovidApp";
+	public static final String COVID_CODE_DELIVERED = "covidCodeDelivered";
+
 	public static final String SYMPTOM_JOURNAL_STATUS = "symptomJournalStatus";
 	public static final String EXTERNAL_ID = "externalId";
 	public static final String EXTERNAL_TOKEN = "externalToken";
+	public static final String INTERNAL_TOKEN = "internalToken";
 	public static final String BIRTH_COUNTRY = "birthCountry";
 	public static final String CITIZENSHIP = "citizenship";
 	public static final String CASES = "cases";
 	public static final String CONTACTS = "contacts";
 	public static final String EVENT_PARTICIPANTS = "eventParticipants";
+	public static final String IMMUNIZATIONS = "immunizations";
 	public static final String ADDITIONAL_DETAILS = "additionalDetails";
+	public static final String TRAVEL_ENTRIES = "travelEntries";
 
 	private String firstName;
 	private String lastName;
@@ -193,6 +205,7 @@ public class Person extends AbstractDomainObject {
 	private boolean covidCodeDelivered;
 	private String externalId;
 	private String externalToken;
+	private String internalToken;
 
 	private Country birthCountry;
 	private Country citizenship;
@@ -201,8 +214,10 @@ public class Person extends AbstractDomainObject {
 	private List<Case> cases = new ArrayList<>();
 	private List<Contact> contacts = new ArrayList<>();
 	private List<EventParticipant> eventParticipants = new ArrayList<>();
+	private List<Immunization> immunizations = new ArrayList<>();
+	private List<TravelEntry> travelEntries = new ArrayList<>();
 
-	@Column(nullable = false, length = COLUMN_LENGTH_DEFAULT)
+	@Column(nullable = false, length = CHARACTER_LIMIT_DEFAULT)
 	public String getFirstName() {
 		return firstName;
 	}
@@ -211,7 +226,7 @@ public class Person extends AbstractDomainObject {
 		this.firstName = firstName;
 	}
 
-	@Column(nullable = false, length = COLUMN_LENGTH_DEFAULT)
+	@Column(nullable = false, length = CHARACTER_LIMIT_DEFAULT)
 	public String getLastName() {
 		return lastName;
 	}
@@ -229,7 +244,7 @@ public class Person extends AbstractDomainObject {
 		this.salutation = salutation;
 	}
 
-	@Column(length = COLUMN_LENGTH_DEFAULT)
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getOtherSalutation() {
 		return otherSalutation;
 	}
@@ -238,7 +253,7 @@ public class Person extends AbstractDomainObject {
 		this.otherSalutation = otherSalutation;
 	}
 
-	@Column(length = COLUMN_LENGTH_DEFAULT)
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getBirthName() {
 		return birthName;
 	}
@@ -247,7 +262,7 @@ public class Person extends AbstractDomainObject {
 		this.birthName = birthName;
 	}
 
-	@Column(length = COLUMN_LENGTH_DEFAULT)
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getNickname() {
 		return nickname;
 	}
@@ -467,7 +482,7 @@ public class Person extends AbstractDomainObject {
 		this.armedForcesRelationType = armedForcesRelationType;
 	}
 
-	@Column(length = COLUMN_LENGTH_DEFAULT)
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getMothersName() {
 		return mothersName;
 	}
@@ -476,7 +491,7 @@ public class Person extends AbstractDomainObject {
 		this.mothersName = mothersName;
 	}
 
-	@Column(length = COLUMN_LENGTH_DEFAULT)
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getFathersName() {
 		return fathersName;
 	}
@@ -485,7 +500,7 @@ public class Person extends AbstractDomainObject {
 		this.fathersName = fathersName;
 	}
 
-	@Column(length = COLUMN_LENGTH_DEFAULT)
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getNamesOfGuardians() {
 		return namesOfGuardians;
 	}
@@ -530,7 +545,7 @@ public class Person extends AbstractDomainObject {
 		this.placeOfBirthFacility = placeOfBirthFacility;
 	}
 
-	@Column(length = COLUMN_LENGTH_DEFAULT)
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getPlaceOfBirthFacilityDetails() {
 		return placeOfBirthFacilityDetails;
 	}
@@ -661,6 +676,15 @@ public class Person extends AbstractDomainObject {
 		this.externalToken = externalToken;
 	}
 
+	@Column
+	public String getInternalToken() {
+		return internalToken;
+	}
+
+	public void setInternalToken(String internalToken) {
+		this.internalToken = internalToken;
+	}
+
 	@ManyToOne
 	public Country getBirthCountry() {
 		return birthCountry;
@@ -695,6 +719,24 @@ public class Person extends AbstractDomainObject {
 
 	public void setEventParticipants(List<EventParticipant> eventParticipants) {
 		this.eventParticipants = eventParticipants;
+	}
+
+	@OneToMany(mappedBy = Immunization.PERSON, fetch = FetchType.LAZY)
+	public List<Immunization> getImmunizations() {
+		return immunizations;
+	}
+
+	public void setImmunizations(List<Immunization> immunizations) {
+		this.immunizations = immunizations;
+	}
+
+	@OneToMany(mappedBy = TravelEntry.PERSON, fetch = FetchType.LAZY)
+	public List<TravelEntry> getTravelEntries() {
+		return travelEntries;
+	}
+
+	public void setTravelEntries(List<TravelEntry> travelEntries) {
+		this.travelEntries = travelEntries;
 	}
 
 	@OneToMany(mappedBy = Contact.PERSON, fetch = FetchType.LAZY)
@@ -761,6 +803,11 @@ public class Person extends AbstractDomainObject {
 
 	public PersonReferenceDto toReference() {
 		return new PersonReferenceDto(getUuid(), getFirstName(), getLastName());
+	}
+
+	@Transient
+	public boolean isEnrolledInExternalJournal() {
+		return SymptomJournalStatus.ACCEPTED.equals(symptomJournalStatus) || SymptomJournalStatus.REGISTERED.equals(symptomJournalStatus);
 	}
 
 	@Override

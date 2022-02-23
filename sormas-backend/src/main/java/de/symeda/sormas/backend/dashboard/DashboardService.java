@@ -12,9 +12,7 @@ import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
@@ -24,6 +22,8 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+
+import org.apache.commons.lang3.StringUtils;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseClassification;
@@ -44,12 +44,15 @@ import de.symeda.sormas.backend.event.EventQueryContext;
 import de.symeda.sormas.backend.event.EventService;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.person.Person;
-import de.symeda.sormas.backend.region.Community;
-import de.symeda.sormas.backend.region.District;
-import de.symeda.sormas.backend.region.Region;
+import de.symeda.sormas.backend.infrastructure.community.Community;
+import de.symeda.sormas.backend.infrastructure.district.District;
+import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.user.User;
+import de.symeda.sormas.backend.util.JurisdictionHelper;
 import de.symeda.sormas.backend.util.ModelConstants;
+import de.symeda.sormas.backend.util.QueryHelper;
 import de.symeda.sormas.utils.CaseJoins;
+import de.symeda.sormas.utils.EventJoins;
 
 @Stateless
 @LocalBean
@@ -78,10 +81,6 @@ public class DashboardService {
 		Predicate criteriaFilter = createCaseCriteriaFilter(dashboardCriteria, caseQueryContext);
 		filter = CriteriaBuilderHelper.and(cb, filter, criteriaFilter);
 
-		if (filter != null) {
-			cq.where(filter);
-		}
-
 		List<DashboardCaseDto> result;
 		if (filter != null) {
 			cq.where(filter);
@@ -94,7 +93,8 @@ public class DashboardService {
 				person.get(Person.PRESENT_CONDITION),
 				person.get(Person.CAUSE_OF_DEATH_DISEASE),
 				caze.get(Case.QUARANTINE_FROM),
-				caze.get(Case.QUARANTINE_TO));
+				caze.get(Case.QUARANTINE_TO),
+				caze.get(Case.CASE_REFERENCE_DEFINITION));
 
 			result = em.createQuery(cq).getResultList();
 		} else {
@@ -163,7 +163,7 @@ public class DashboardService {
 		Root<Case> caze = cq.from(Case.class);
 		final CaseQueryContext caseQueryContext = new CaseQueryContext(cb, cq, caze);
 		final CaseJoins<Case> joins = (CaseJoins<Case>) caseQueryContext.getJoins();
-		Join<Case, District> district = joins.getDistrict();
+		Join<Case, District> district = joins.getResponsibleDistrict();
 
 		Predicate filter = caseService.createUserFilter(cb, cq, caze, new CaseUserFilterCriteria().excludeCasesFromContacts(true));
 
@@ -179,12 +179,7 @@ public class DashboardService {
 		order.add(cb.desc(caze.get(Case.CREATION_DATE)));
 		cq.orderBy(order);
 
-		TypedQuery<String> query = em.createQuery(cq).setMaxResults(1);
-		try {
-			return query.getSingleResult();
-		} catch (NoResultException e) {
-			return "";
-		}
+		return QueryHelper.getFirstResult(em, cq, t -> t == null ? StringUtils.EMPTY : t);
 	}
 
 	public Map<Disease, District> getLastReportedDistrictByDisease(DashboardCriteria dashboardCriteria) {
@@ -194,7 +189,7 @@ public class DashboardService {
 		Root<Case> caze = cq.from(Case.class);
 		final CaseQueryContext caseQueryContext = new CaseQueryContext(cb, cq, caze);
 		final CaseJoins<Case> joins = (CaseJoins<Case>) caseQueryContext.getJoins();
-		Join<Case, District> districtJoin = joins.getDistrict();
+		Join<Case, District> districtJoin = joins.getResponsibleDistrict();
 
 		Predicate filter = caseService.createUserFilter(cb, cq, caze, new CaseUserFilterCriteria().excludeCasesFromContacts(true));
 
@@ -309,11 +304,13 @@ public class DashboardService {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<DashboardEventDto> cq = cb.createQuery(DashboardEventDto.class);
 		Root<Event> event = cq.from(Event.class);
-		Join<Event, Location> eventLocation = event.join(Event.EVENT_LOCATION, JoinType.LEFT);
-		Join<Location, District> eventDistrict = eventLocation.join(Location.DISTRICT, JoinType.LEFT);
+		EventQueryContext eventQueryContext = new EventQueryContext(cb, cq, event);
+		EventJoins<Event> eventJoins = (EventJoins<Event>) eventQueryContext.getJoins();
+		Join<Event, Location> eventLocation = eventJoins.getLocation();
+		Join<Location, District> eventDistrict = eventJoins.getDistrict();
 
 		Predicate filter = eventService.createDefaultFilter(cb, event);
-		filter = CriteriaBuilderHelper.and(cb, filter, buildEventCriteriaFilter(dashboardCriteria, new EventQueryContext(cb, cq, event)));
+		filter = CriteriaBuilderHelper.and(cb, filter, buildEventCriteriaFilter(dashboardCriteria, eventQueryContext));
 		filter = CriteriaBuilderHelper.and(cb, filter, eventService.createUserFilter(cb, cq, event));
 
 		List<DashboardEventDto> result;
@@ -331,12 +328,13 @@ public class DashboardService {
 				event.get(Event.REPORT_LON),
 				eventLocation.get(Location.LATITUDE),
 				eventLocation.get(Location.LONGITUDE),
-				event.join(Event.REPORTING_USER, JoinType.LEFT).get(User.UUID),
-				event.join(Event.RESPONSIBLE_USER, JoinType.LEFT).get(User.UUID),
-				eventLocation.join(Location.REGION, JoinType.LEFT).get(Region.UUID),
+				eventJoins.getReportingUser().get(User.UUID),
+				eventJoins.getResponsibleUser().get(User.UUID),
+				eventJoins.getRegion().get(Region.UUID),
 				eventDistrict.get(District.NAME),
 				eventDistrict.get(District.UUID),
-				eventLocation.join(Location.COMMUNITY, JoinType.LEFT).get(Community.UUID));
+				eventJoins.getCommunity().get(Community.UUID),
+				JurisdictionHelper.booleanSelector(cb, eventService.inJurisdictionOrOwned(eventQueryContext)));
 
 			result = em.createQuery(cq).getResultList();
 
@@ -377,18 +375,19 @@ public class DashboardService {
 		final CriteriaQuery<?> cq = caseQueryContext.getQuery();
 		final CaseJoins<Case> joins = (CaseJoins<Case>) caseQueryContext.getJoins();
 
-		Join<Case, Region> region = joins.getRegion();
-		Join<Case, District> district = joins.getDistrict();
+		Join<Case, Region> responsibleRegion = joins.getResponsibleRegion();
+		Join<Case, District> responsibleDistrict = joins.getResponsibleDistrict();
 
 		Predicate filter = null;
 		if (dashboardCriteria.getDisease() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Case.DISEASE), dashboardCriteria.getDisease()));
 		}
 		if (dashboardCriteria.getRegion() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(region.get(Region.UUID), dashboardCriteria.getRegion().getUuid()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(responsibleRegion.get(Region.UUID), dashboardCriteria.getRegion().getUuid()));
 		}
 		if (dashboardCriteria.getDistrict() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(district.get(District.UUID), dashboardCriteria.getDistrict().getUuid()));
+			filter =
+				CriteriaBuilderHelper.and(cb, filter, cb.equal(responsibleDistrict.get(District.UUID), dashboardCriteria.getDistrict().getUuid()));
 		}
 		if (dashboardCriteria.getDateFrom() != null && dashboardCriteria.getDateTo() != null) {
 			filter = CriteriaBuilderHelper.and(
@@ -406,6 +405,9 @@ public class DashboardService {
 			filter = CriteriaBuilderHelper
 				.and(cb, filter, cb.notEqual(caseQueryContext.getRoot().get(Case.CASE_CLASSIFICATION), CaseClassification.NO_CASE));
 		}
+
+		// Exclude deleted cases. Archived cases should stay included
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(from.get(Case.DELETED)));
 
 		return filter;
 	}
@@ -437,6 +439,9 @@ public class DashboardService {
 		}
 
 		filter = CriteriaBuilderHelper.and(cb, filter, createEventDateFilter(eventQueryContext.getQuery(), cb, from, dashboardCriteria));
+
+		// Exclude deleted events. Archived events should stay included
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(from.get(Event.DELETED)));
 
 		return filter;
 	}

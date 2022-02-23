@@ -23,6 +23,8 @@ import java.util.List;
 import javax.ejb.Remote;
 import javax.validation.Valid;
 
+import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
 
 @Remote
@@ -53,4 +55,11 @@ public interface PathogenTestFacade {
 	List<PathogenTestDto> getBySampleUuids(List<String> sampleUuids);
 
 	long count(SampleCriteria sampleCriteria);
+
+	PathogenTestDto getLatestPathogenTest(String uuid);
+
+	List<PathogenTestDto> getAllActivePathogenTestsAfter(Date date, Integer batchSize, String lastSynchronizedUuid);
+
+	Page<PathogenTestDto> getIndexPage(PathogenTestCriteria pathogenTestCriteria, Integer offset, Integer size, List<SortProperty> sortProperties);
+
 }

@@ -15,8 +15,8 @@
 
 package de.symeda.sormas.app.backend.auditlog;
 
-import static de.symeda.sormas.api.EntityDto.COLUMN_LENGTH_BIG;
-import static de.symeda.sormas.api.EntityDto.COLUMN_LENGTH_DEFAULT;
+//import static de.symeda.sormas.api.EntityDto.COLUMN_LENGTH_BIG;
+//import static de.symeda.sormas.api.EntityDto.COLUMN_LENGTH_DEFAULT;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -48,19 +48,19 @@ public class AuditLogEntry extends AbstractDomainObject {
 //	@DatabaseField
 //	private Long id;
 
-	@Column(length = COLUMN_LENGTH_DEFAULT)
+//	@Column(length = COLUMN_LENGTH_DEFAULT)
 	private String clazz;
 
 //	@Column(length = COLUMN_LENGTH_DEFAULT)
 //	private String uuid;
 
-	@Column(length = COLUMN_LENGTH_DEFAULT)
+//	@Column(length = COLUMN_LENGTH_DEFAULT)
 	private String editingUser;
 
 	@DatabaseField
 	private Long editingUserId;
 
-	@Column(length = COLUMN_LENGTH_DEFAULT)
+//	@Column(length = COLUMN_LENGTH_DEFAULT)
 	private String transactionId;
 
 	@DatabaseField(dataType = DataType.DATE_LONG)

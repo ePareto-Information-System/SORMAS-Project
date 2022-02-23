@@ -1,8 +1,9 @@
 package de.symeda.sormas.api.labmessage;
 
-import javax.ejb.Remote;
 import java.util.Date;
 import java.util.List;
+
+import javax.ejb.Remote;
 
 @Remote
 public interface ExternalLabResultsFacade {
@@ -29,4 +30,6 @@ public interface ExternalLabResultsFacade {
 	 * 	 *         from the external lab message server
 	 */
 	ExternalMessageResult<byte[]> convertToPDF(LabMessageDto message);
+
+	String getVersion();
 }

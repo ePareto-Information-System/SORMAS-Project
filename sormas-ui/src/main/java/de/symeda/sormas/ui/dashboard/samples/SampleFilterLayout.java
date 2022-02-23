@@ -18,10 +18,15 @@ import de.symeda.sormas.ui.dashboard.components.DashboardFilterLayout;
 import de.symeda.sormas.ui.utils.CssStyles;
 
 public class SampleFilterLayout extends DashboardFilterLayout{
+	public static final String DATE_TYPE_SELECTOR_FILTER = "dateTypeSelectorFilter";
+	private final static String[] SAMPLE_FILTERS = new String[] {
+		DATE_TYPE_SELECTOR_FILTER,
+		REGION_FILTER,
+		DISTRICT_FILTER };
 	private ComboBox diseaseFilter;
 
 	public SampleFilterLayout(AbstractDashboardView dashboardView, DashboardDataProvider dashboardDataProvider) {
-		super(dashboardView, dashboardDataProvider);
+		super(dashboardView, dashboardDataProvider, SAMPLE_FILTERS);
 	}
 
 	@Override

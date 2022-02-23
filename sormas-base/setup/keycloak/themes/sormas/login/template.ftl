@@ -45,13 +45,15 @@
         <div class="${properties.kcFormCardClass!} <#if displayWide>${properties.kcFormCardAccountClass!}</#if>">
             <header class="${properties.kcFormHeaderClass!}">
                 <#if realm.internationalizationEnabled  && locale.supported?size gt 1>
-                    <div id="kc-locale">
+                    <div class="${properties.kcLocaleMainClass!}"  id="kc-locale">
                         <div id="kc-locale-wrapper" class="${properties.kcLocaleWrapperClass!}">
-                            <div class="kc-dropdown" id="kc-locale-dropdown">
+                            <div id="kc-locale-dropdown" class="${properties.kcLocaleDropDownClass!}">
                                 <a href="#" id="kc-current-locale-link">${locale.current}</a>
-                                <ul>
+                                <ul class="${properties.kcLocaleListClass!}">
                                     <#list locale.supported as l>
-                                        <li class="kc-dropdown-item"><a href="${l.url}">${l.label}</a></li>
+                                        <li class="${properties.kcLocaleListItemClass!}">
+                                            <a class="${properties.kcLocaleItemClass!}" href="${l.url}">${l.label}</a>
+                                        </li>
                                     </#list>
                                 </ul>
                             </div>
@@ -159,15 +161,15 @@
             <img src="${url.resourcesPath}/img/sormas-logo-big-text.png" alt="Sormas">
             <h2>Surveillance,<br>Outbreak Response Management<br>and Analysis System<br></h2>
             <ul>
-                <li>${msg("LoginSidebar.diseaseDetection")}</li>
                 <li>${msg("LoginSidebar.diseasePrevention")}</li>
+                <li>${msg("LoginSidebar.diseaseDetection")}</li>
                 <li>${msg("LoginSidebar.outbreakResponse")}</li>
             </ul>
         </div>
         <div class="sidebar-branding">
             <h1>${msg("LoginSidebar.poweredBy")}</h1>
             <img src="${url.resourcesPath}/img/hzi-logo.png" alt="HZI">
-            <img src="${url.resourcesPath}/img/symeda-logo.png" alt="Symeda">
+            <img src="${url.resourcesPath}/img/vitagroup-logo.png" alt="Vitagroup">
             <img src="${url.resourcesPath}/img/giz-logo.png" alt="GIZ">
         </div>
     </div>

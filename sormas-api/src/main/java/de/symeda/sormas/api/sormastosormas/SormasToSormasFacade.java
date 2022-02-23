@@ -19,14 +19,37 @@ import java.util.List;
 
 import javax.ejb.Remote;
 
+import de.symeda.sormas.api.sormastosormas.sharerequest.ShareRequestDataType;
+import de.symeda.sormas.api.sormastosormas.validation.SormasToSormasValidationException;
+
 @Remote
 public interface SormasToSormasFacade {
 
-	List<ServerAccessDataReferenceDto> getAvailableOrganizations();
+	String getOrganizationId();
 
-	ServerAccessDataReferenceDto getOrganizationRef(String id);
+	List<SormasServerDescriptor> getAllAvailableServers();
 
-	List<SormasToSormasShareInfoDto> getShareInfoIndexList(SormasToSormasShareInfoCriteria criteria, Integer first, Integer max);
+	SormasServerDescriptor getSormasServerDescriptorById(String id);
 
-	boolean isFeatureEnabled();
+	void rejectRequest(ShareRequestDataType dataType, String uuid, String comment) throws SormasToSormasException;
+
+	void requestRejected(SormasToSormasEncryptedDataDto encryptedRejectData) throws SormasToSormasException;
+
+	void acceptShareRequest(ShareRequestDataType dataType, String uuid) throws SormasToSormasException, SormasToSormasValidationException;
+
+	void revokeShare(String shareInfoUuid) throws SormasToSormasException;
+
+	void requestsRevoked(SormasToSormasEncryptedDataDto encryptedRequestUuid) throws SormasToSormasException;
+
+	void requestAccepted(SormasToSormasEncryptedDataDto encryptedRequestUuid) throws SormasToSormasException;
+
+	boolean isFeatureEnabledForUser();
+
+	boolean isFeatureConfigured();
+
+	boolean isSharingCasesContactsAndSamplesEnabledForUser();
+
+	boolean isSharingEventsEnabledForUser();
+
+	boolean isSharingLabMessagesEnabledForUser();
 }

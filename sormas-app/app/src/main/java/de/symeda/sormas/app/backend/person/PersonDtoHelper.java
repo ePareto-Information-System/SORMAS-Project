@@ -52,8 +52,8 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 	}
 
 	@Override
-	protected Call<List<PersonDto>> pullAllSince(long since) throws NoConnectionException {
-		return RetroProvider.getPersonFacade().pullAllSince(since);
+	protected Call<List<PersonDto>> pullAllSince(long since, Integer size, String lastSynchronizedUuid)  throws NoConnectionException {
+		return RetroProvider.getPersonFacade().pullAllSince(since, size, lastSynchronizedUuid);
 	}
 
 	@Override
@@ -144,6 +144,7 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 
 		target.setExternalId(source.getExternalId());
 		target.setExternalToken(source.getExternalToken());
+		target.setInternalToken(source.getInternalToken());
 		target.setBirthCountry(DatabaseHelper.getCountryDao().getByReferenceDto(source.getBirthCountry()));
 		target.setCitizenship(DatabaseHelper.getCountryDao().getByReferenceDto(source.getCitizenship()));
 		target.setAdditionalDetails(source.getAdditionalDetails());
@@ -248,12 +249,18 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 
 		target.setExternalId(source.getExternalId());
 		target.setExternalToken(source.getExternalToken());
+		target.setInternalToken(source.getInternalToken());
 		target.setBirthCountry(CountryDtoHelper.toReferenceDto(source.getBirthCountry()));
 		target.setCitizenship(CountryDtoHelper.toReferenceDto(source.getCitizenship()));
 		target.setAdditionalDetails(source.getAdditionalDetails());
 	}
 
-	public static PersonReferenceDto toReferenceDto(Person ado) {
+    @Override
+    protected long getApproximateJsonSizeInBytes() {
+        return PersonDto.APPROXIMATE_JSON_SIZE_IN_BYTES;
+    }
+
+    public static PersonReferenceDto toReferenceDto(Person ado) {
 		if (ado == null) {
 			return null;
 		}

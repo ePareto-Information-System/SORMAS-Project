@@ -17,7 +17,7 @@
  *******************************************************************************/
 package de.symeda.sormas.backend.user;
 
-import static de.symeda.sormas.api.EntityDto.COLUMN_LENGTH_DEFAULT;
+import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -32,9 +32,13 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
+
+import org.apache.commons.lang3.StringUtils;
 
 import de.symeda.auditlog.api.Audited;
 import de.symeda.auditlog.api.AuditedAttribute;
@@ -44,19 +48,20 @@ import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
-import de.symeda.sormas.backend.facility.Facility;
-import de.symeda.sormas.backend.infrastructure.PointOfEntry;
+import de.symeda.sormas.backend.infrastructure.community.Community;
+import de.symeda.sormas.backend.infrastructure.district.District;
+import de.symeda.sormas.backend.infrastructure.facility.Facility;
+import de.symeda.sormas.backend.infrastructure.pointofentry.PointOfEntry;
+import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.location.Location;
-import de.symeda.sormas.backend.region.Community;
-import de.symeda.sormas.backend.region.District;
-import de.symeda.sormas.backend.region.Region;
 
-@Entity(name = "users")
+@Entity(name = User.TABLE_NAME)
 @Audited
 public class User extends AbstractDomainObject {
 
 	private static final long serialVersionUID = -629432920970152112L;
 
+	public static final String TABLE_NAME = "users";
 	public static final String TABLE_NAME_USERROLES = "users_userroles";
 
 	public static final String USER_NAME = "userName";
@@ -78,6 +83,7 @@ public class User extends AbstractDomainObject {
 	public static final String ASSOCIATED_OFFICER = "associatedOfficer";
 	public static final String LANGUAGE = "language";
 	public static final String HAS_CONSENTED_TO_GDPR = "hasConsentedToGdpr";
+	public static final String JURISDICTION_LEVEL = "jurisdictionLevel";
 
 	private String userName;
 	private String password;
@@ -92,6 +98,7 @@ public class User extends AbstractDomainObject {
 	private Location address;
 
 	private Set<UserRole> userRoles;
+	private JurisdictionLevel jurisdictionLevel;
 
 	private Region region;
 	private District district;
@@ -112,7 +119,7 @@ public class User extends AbstractDomainObject {
 
 	private boolean hasConsentedToGdpr;
 
-	@Column(nullable = false, length = COLUMN_LENGTH_DEFAULT)
+	@Column(nullable = false, length = CHARACTER_LIMIT_DEFAULT)
 	public String getUserName() {
 		return userName;
 	}
@@ -151,7 +158,7 @@ public class User extends AbstractDomainObject {
 		this.active = active;
 	}
 
-	@Column(nullable = false, length = COLUMN_LENGTH_DEFAULT)
+	@Column(nullable = false, length = CHARACTER_LIMIT_DEFAULT)
 	public String getFirstName() {
 		return firstName;
 	}
@@ -160,7 +167,7 @@ public class User extends AbstractDomainObject {
 		this.firstName = firstName;
 	}
 
-	@Column(nullable = false, length = COLUMN_LENGTH_DEFAULT)
+	@Column(nullable = false, length = CHARACTER_LIMIT_DEFAULT)
 	public String getLastName() {
 		return lastName;
 	}
@@ -206,7 +213,7 @@ public class User extends AbstractDomainObject {
 		this.region = region;
 	}
 
-	@ElementCollection(fetch = FetchType.LAZY)
+	@ElementCollection(fetch = FetchType.EAGER)
 	@Enumerated(EnumType.STRING)
 	@CollectionTable(name = TABLE_NAME_USERROLES,
 		joinColumns = @JoinColumn(name = "user_id", referencedColumnName = User.ID, nullable = false),
@@ -218,8 +225,28 @@ public class User extends AbstractDomainObject {
 		return userRoles;
 	}
 
+	/**
+	 * Call updateJurisdictionLevel afterwards if you need to access the jurisdiction level.
+	 * This is not done automatically to avoid unnecessary calls when setUserRoles is used by the JPA provider
+	 */
 	public void setUserRoles(Set<UserRole> userRoles) {
 		this.userRoles = userRoles;
+	}
+
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	public JurisdictionLevel getJurisdictionLevel() {
+		return jurisdictionLevel;
+	}
+
+	public void setJurisdictionLevel(JurisdictionLevel jurisdictionLevel) {
+		this.jurisdictionLevel = jurisdictionLevel;
+	}
+
+	@PrePersist
+	@PreUpdate
+	public void updateJurisdictionLevel() {
+		jurisdictionLevel = UserRole.getJurisdictionLevel(this.getUserRoles());
 	}
 
 	@ManyToOne(cascade = {})
@@ -328,8 +355,26 @@ public class User extends AbstractDomainObject {
 		return Arrays.stream(userRoles).anyMatch(getUserRoles()::contains);
 	}
 
+	/**
+	 * Deprecated: Use getJurisdictionLevel instead
+	 * 
+	 * @return
+	 */
 	@Transient
-	public JurisdictionLevel getJurisdictionLevel() {
+	@Deprecated
+	public JurisdictionLevel getCalculatedJurisdictionLevel() {
 		return UserRole.getJurisdictionLevel(this.getUserRoles());
+	}
+
+	public static String buildCaptionForNotification(User user) {
+		if (user == null) {
+			return "-";
+		}
+
+		String caption = user.getFirstName() + " " + user.getLastName();
+		if (StringUtils.isNotEmpty(user.getUserEmail())) {
+			caption += " (" + user.getUserEmail() + ")";
+		}
+		return caption;
 	}
 }

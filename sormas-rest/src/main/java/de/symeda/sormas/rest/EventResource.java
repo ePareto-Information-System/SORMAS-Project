@@ -30,6 +30,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.PushResult;
@@ -38,6 +39,8 @@ import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.event.EventCriteria;
 import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventIndexDto;
+import de.symeda.sormas.api.externaldata.ExternalDataDto;
+import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @Path("/events")
@@ -54,6 +57,26 @@ public class EventResource extends EntityDtoResource {
 		return FacadeProvider.getEventFacade().getAllActiveEventsAfter(new Date(since));
 	}
 
+	@GET
+	@Path("/all/{since}/{size}/{lastSynchronizedUuid}")
+	public List<EventDto> getAllEvents(@PathParam("since") long since, @PathParam("size") int size, @PathParam("lastSynchronizedUuid") String lastSynchronizedUuid) {
+		return FacadeProvider.getEventFacade().getAllActiveEventsAfter(new Date(since), size, lastSynchronizedUuid);
+	}
+
+	/**
+	 * This method returns the eventDto that correspond to the given uuid.
+	 * The return eventDto has the superordinateEvent of type EventDetailedReferenceDto.
+	 * 
+	 * @param uuid
+	 * @return
+	 *         The return eventDto has the superordinateEvent of type EventDetailedReferenceDto
+	 */
+	@GET
+	@Path("/{uuid}")
+	public EventDto getByUuid(@PathParam("uuid") String uuid) {
+		return FacadeProvider.getEventFacade().getEventByUuid(uuid, true);
+	}
+
 	@POST
 	@Path("/query")
 	public List<EventDto> getByUuids(List<String> uuids) {
@@ -64,8 +87,7 @@ public class EventResource extends EntityDtoResource {
 	@POST
 	@Path("/push")
 	public List<PushResult> postEvents(@Valid List<EventDto> dtos) {
-		List<PushResult> result = savePushedDto(dtos, FacadeProvider.getEventFacade()::saveEvent);
-		return result;
+		return savePushedDto(dtos, FacadeProvider.getEventFacade()::saveEvent);
 	}
 
 	@GET
@@ -86,6 +108,14 @@ public class EventResource extends EntityDtoResource {
 		return FacadeProvider.getEventFacade().getDeletedUuidsSince(new Date(since));
 	}
 
+	/**
+	 * 
+	 * @param criteriaWithSorting
+	 *            - The criteria object inside criteriaWithSorting cannot be null. Use an empty criteria instead.
+	 * @param offset
+	 * @param size
+	 * @return
+	 */
 	@POST
 	@Path("/indexList")
 	public Page<EventIndexDto> getIndexList(
@@ -93,5 +123,28 @@ public class EventResource extends EntityDtoResource {
 		@QueryParam("offset") int offset,
 		@QueryParam("size") int size) {
 		return FacadeProvider.getEventFacade().getIndexPage(criteriaWithSorting.getCriteria(), offset, size, criteriaWithSorting.getSortProperties());
+	}
+
+	@POST
+	@Path("/externalData")
+	public Response updateExternalData(List<ExternalDataDto> externalData) {
+		try {
+			FacadeProvider.getEventFacade().updateExternalData(externalData);
+			return Response.status(Response.Status.OK).build();
+		} catch (ExternalDataUpdateException e) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+		}
+	}
+
+	@POST
+	@Path("/delete")
+	public List<String> delete(List<String> uuids) {
+		return FacadeProvider.getEventFacade().deleteEvents(uuids);
+	}
+
+	@POST
+	@Path("/children")
+	public List<String> getChildrenUuids(List<String> uuids) {
+		return FacadeProvider.getEventFacade().getSubordinateEventUuids(uuids);
 	}
 }

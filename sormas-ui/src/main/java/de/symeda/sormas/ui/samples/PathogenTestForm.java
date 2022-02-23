@@ -17,17 +17,23 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.samples;
 
+import static de.symeda.sormas.ui.utils.CssStyles.H3;
 import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_3;
 import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_TOP_4;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
+import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import com.vaadin.ui.Label;
+import com.vaadin.v7.data.util.converter.Converter;
+import com.vaadin.v7.ui.AbstractSelect.ItemCaptionMode;
 import com.vaadin.v7.ui.CheckBox;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.DateField;
@@ -38,10 +44,10 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
 import de.symeda.sormas.api.disease.DiseaseVariant;
-import de.symeda.sormas.api.facility.FacilityDto;
-import de.symeda.sormas.api.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
@@ -61,36 +67,50 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 	private static final long serialVersionUID = -1218707278398543154L;
 
+	private static final String PATHOGEN_TEST_HEADING_LOC = "pathogenTestHeadingLoc";
+
 	//@formatter:off
-	private static final String HTML_LAYOUT = 
+	private static final String HTML_LAYOUT =
+			loc(PATHOGEN_TEST_HEADING_LOC) +
 			fluidRowLocs(PathogenTestDto.REPORT_DATE, PathogenTestDto.VIA_LIMS) +
-			fluidRowLocs(PathogenTestDto.TEST_TYPE, PathogenTestDto.PCR_TEST_SPECIFICATION) +
-			fluidRowLocs(PathogenTestDto.TESTED_DISEASE, PathogenTestDto.TESTED_DISEASE_VARIANT) +
-			fluidRowLocs("", PathogenTestDto.TYPING_ID) +
-			fluidRowLocs(PathogenTestDto.TEST_TYPE_TEXT, PathogenTestDto.TESTED_DISEASE_DETAILS) +
+			fluidRowLocs(PathogenTestDto.EXTERNAL_ID, PathogenTestDto.EXTERNAL_ORDER_ID) +
+			fluidRowLocs(PathogenTestDto.TEST_TYPE, PathogenTestDto.TEST_TYPE_TEXT) +
+			fluidRowLocs(PathogenTestDto.PCR_TEST_SPECIFICATION, "") +
+			fluidRowLocs(PathogenTestDto.TESTED_DISEASE, PathogenTestDto.TESTED_DISEASE_DETAILS) +
+			fluidRowLocs(PathogenTestDto.TESTED_DISEASE_VARIANT, PathogenTestDto.TESTED_DISEASE_VARIANT_DETAILS) +
+			fluidRowLocs(PathogenTestDto.TYPING_ID, "") +
 			fluidRowLocs(PathogenTestDto.TEST_DATE_TIME, PathogenTestDto.LAB) +
 			fluidRowLocs("", PathogenTestDto.LAB_DETAILS) +
 			fluidRowLocs(PathogenTestDto.TEST_RESULT, PathogenTestDto.TEST_RESULT_VERIFIED) +
-			fluidRowLocs(PathogenTestDto.FOUR_FOLD_INCREASE_ANTIBODY_TITER, "") + 
+			fluidRowLocs(PathogenTestDto.PRELIMINARY, "") +
+			fluidRowLocs(PathogenTestDto.FOUR_FOLD_INCREASE_ANTIBODY_TITER, "") +
 			fluidRowLocs(PathogenTestDto.SEROTYPE, "") + 
 			fluidRowLocs(PathogenTestDto.CQ_VALUE, "") + 
 			fluidRowLocs(PathogenTestDto.TEST_RESULT_TEXT);
 	//@formatter:on
 
 	private final SampleDto sample;
-	private int caseSampleCount;
+	private final int caseSampleCount;
+	private final boolean create;
+
+	private Label pathogenTestHeadingLabel;
+
+	private TextField testTypeTextField;
+	private ComboBox pcrTestSpecification;
+	private TextField typingIdField;
 
 	public PathogenTestForm(SampleDto sample, boolean create, int caseSampleCount, boolean isPseudonymized) {
 		super(
 			PathogenTestDto.class,
 			PathogenTestDto.I18N_PREFIX,
 			false,
-			FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
+			FieldVisibilityCheckers.withDisease(null).andWithCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
 			UiFieldAccessCheckers.forSensitiveData(!create && isPseudonymized));
 
 		this.sample = sample;
 		this.caseSampleCount = caseSampleCount;
-		setWidth(600, Unit.PIXELS);
+		this.create = create;
+		setWidth(900, Unit.PIXELS);
 
 		addFields();
 		if (create) {
@@ -104,11 +124,19 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			return;
 		}
 
+		pathogenTestHeadingLabel = new Label();
+		pathogenTestHeadingLabel.addStyleName(H3);
+		getContent().addComponent(pathogenTestHeadingLabel, PATHOGEN_TEST_HEADING_LOC);
+
 		addDateField(PathogenTestDto.REPORT_DATE, DateField.class, 0);
 		addField(PathogenTestDto.VIA_LIMS);
+		addField(PathogenTestDto.EXTERNAL_ID);
+		addField(PathogenTestDto.EXTERNAL_ORDER_ID);
 		ComboBox testTypeField = addField(PathogenTestDto.TEST_TYPE, ComboBox.class);
-		ComboBox pcrTestSpecification = addField(PathogenTestDto.PCR_TEST_SPECIFICATION, ComboBox.class);
-		TextField testTypeTextField = addField(PathogenTestDto.TEST_TYPE_TEXT, TextField.class);
+		testTypeField.setItemCaptionMode(ItemCaptionMode.ID_TOSTRING);
+		testTypeField.setImmediate(true);
+		pcrTestSpecification = addField(PathogenTestDto.PCR_TEST_SPECIFICATION, ComboBox.class);
+		testTypeTextField = addField(PathogenTestDto.TEST_TYPE_TEXT, TextField.class);
 		FieldHelper.addSoftRequiredStyle(testTypeTextField);
 		DateTimeField sampleTestDateField = addField(PathogenTestDto.TEST_DATE_TIME, DateTimeField.class);
 		sampleTestDateField.addValidator(
@@ -122,16 +150,18 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 					sampleTestDateField.getCaption(),
 					I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, SampleDto.SAMPLE_DATE_TIME),
 					DateFormatHelper.formatDate(sample.getSampleDateTime()))));
-		ComboBox lab = addField(PathogenTestDto.LAB, ComboBox.class);
+		ComboBox lab = addInfrastructureField(PathogenTestDto.LAB);
 		lab.addItems(FacadeProvider.getFacilityFacade().getAllActiveLaboratories(true));
 		TextField labDetails = addField(PathogenTestDto.LAB_DETAILS, TextField.class);
 		labDetails.setVisible(false);
-		TextField typingIdField = addField(PathogenTestDto.TYPING_ID, TextField.class);
+		typingIdField = addField(PathogenTestDto.TYPING_ID, TextField.class);
 		typingIdField.setVisible(false);
-		ComboBox diseaseField = addDiseaseField(PathogenTestDto.TESTED_DISEASE, true);
+		ComboBox diseaseField = addDiseaseField(PathogenTestDto.TESTED_DISEASE, true, create);
 		ComboBox diseaseVariantField = addField(PathogenTestDto.TESTED_DISEASE_VARIANT, ComboBox.class);
 		diseaseVariantField.setNullSelectionAllowed(true);
 		addField(PathogenTestDto.TESTED_DISEASE_DETAILS, TextField.class);
+		TextField diseaseVariantDetailsField = addField(PathogenTestDto.TESTED_DISEASE_VARIANT_DETAILS, TextField.class);
+		diseaseVariantDetailsField.setVisible(false);
 
 		ComboBox testResultField = addField(PathogenTestDto.TEST_RESULT, ComboBox.class);
 		testResultField.removeItem(PathogenTestResultType.NOT_DONE);
@@ -144,13 +174,14 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		CssStyles.style(fourFoldIncrease, VSPACE_3, VSPACE_TOP_4);
 		fourFoldIncrease.setVisible(false);
 		fourFoldIncrease.setEnabled(false);
+
 		addField(PathogenTestDto.TEST_RESULT_TEXT, TextArea.class).setRows(6);
+		addField(PathogenTestDto.PRELIMINARY).addStyleName(CssStyles.VSPACE_4);
 
 		initializeAccessAndAllowedAccesses();
 		initializeVisibilitiesAndAllowedVisibilities();
 
 		pcrTestSpecification.setVisible(false);
-		diseaseVariantField.setVisible(false);
 
 		Map<Object, List<Object>> pcrTestSpecificationVisibilityDependencies = new HashMap<Object, List<Object>>() {
 
@@ -196,13 +227,30 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			Arrays.asList(PathogenTestType.CQ_VALUE_DETECTION),
 			true);
 
-		diseaseField.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
-			Disease disease = (Disease) valueChangeEvent.getProperty().getValue();
+		Consumer<Disease> updateDiseaseVariantField = disease -> {
 			List<DiseaseVariant> diseaseVariants =
 				FacadeProvider.getCustomizableEnumFacade().getEnumValues(CustomizableEnumType.DISEASE_VARIANT, disease);
 			FieldHelper.updateItems(diseaseVariantField, diseaseVariants);
 			diseaseVariantField.setVisible(
 				disease != null && isVisibleAllowed(PathogenTestDto.TESTED_DISEASE_VARIANT) && CollectionUtils.isNotEmpty(diseaseVariants));
+		};
+
+		// trigger the update, as the disease may already be set
+		updateDiseaseVariantField.accept((Disease) diseaseField.getValue());
+
+		diseaseField.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
+			Disease disease = (Disease) valueChangeEvent.getProperty().getValue();
+			updateDiseaseVariantField.accept(disease);
+
+			FieldHelper.updateItems(
+				testTypeField,
+				Arrays.asList(PathogenTestType.values()),
+				FieldVisibilityCheckers.withDisease(disease),
+				PathogenTestType.class);
+		});
+		diseaseVariantField.addValueChangeListener(e -> {
+			DiseaseVariant diseaseVariant = (DiseaseVariant) e.getProperty().getValue();
+			diseaseVariantDetailsField.setVisible(diseaseVariant != null && diseaseVariant.matchPropertyValue(DiseaseVariant.HAS_DETAILS, true));
 		});
 
 		testTypeField.addValueChangeListener(e -> {
@@ -258,6 +306,10 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			
 			setRequired(true, PathogenTestDto.LAB);
 		}
+		if (sample.getSamplePurpose() != SamplePurpose.INTERNAL) { // this only works for already saved samples
+			setRequired(true, PathogenTestDto.LAB);
+		}
+		// setRequired(true, PathogenTestDto.TEST_TYPE, PathogenTestDto.TESTED_DISEASE, PathogenTestDto.TEST_RESULT);
 		
 		setRequired(true, PathogenTestDto.TEST_TYPE, PathogenTestDto.TESTED_DISEASE, PathogenTestDto.TEST_DATE_TIME, PathogenTestDto.TEST_RESULT);
 	}
@@ -265,5 +317,18 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	@Override
 	protected String createHtmlLayout() {
 		return HTML_LAYOUT;
+	}
+
+	@Override
+	public void setHeading(String heading) {
+		pathogenTestHeadingLabel.setValue(heading);
+	}
+
+	@Override
+	public void setValue(PathogenTestDto newFieldValue) throws ReadOnlyException, Converter.ConversionException {
+		super.setValue(newFieldValue);
+		pcrTestSpecification.setValue(newFieldValue.getPcrTestSpecification());
+		testTypeTextField.setValue(newFieldValue.getTestTypeText());
+		typingIdField.setValue(newFieldValue.getTypingId());
 	}
 }

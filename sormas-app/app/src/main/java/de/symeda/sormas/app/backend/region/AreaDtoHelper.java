@@ -21,7 +21,7 @@ package de.symeda.sormas.app.backend.region;
 import java.util.List;
 
 import de.symeda.sormas.api.PushResult;
-import de.symeda.sormas.api.region.AreaDto;
+import de.symeda.sormas.api.infrastructure.area.AreaDto;
 import de.symeda.sormas.app.backend.common.AdoDtoHelper;
 import de.symeda.sormas.app.rest.NoConnectionException;
 import de.symeda.sormas.app.rest.RetroProvider;
@@ -39,7 +39,7 @@ public class AreaDtoHelper extends AdoDtoHelper<Area, AreaDto> {
     }
 
     @Override
-    protected Call<List<AreaDto>> pullAllSince(long since) throws NoConnectionException {
+    protected Call<List<AreaDto>> pullAllSince(long since, Integer size, String lastSynchronizedUuid)  throws NoConnectionException {
         return RetroProvider.getAreaFacade().pullAllSince(since);
     }
 
@@ -63,5 +63,10 @@ public class AreaDtoHelper extends AdoDtoHelper<Area, AreaDto> {
     @Override
     protected void fillInnerFromAdo(AreaDto dto, Area area) {
         throw new UnsupportedOperationException("Entity is infrastructure");
+    }
+
+    @Override
+    protected long getApproximateJsonSizeInBytes() {
+        return 0;
     }
 }

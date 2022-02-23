@@ -15,65 +15,78 @@
 
 package de.symeda.sormas.backend.sormastosormas;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 import de.symeda.sormas.api.HasUuid;
 import de.symeda.sormas.api.i18n.Captions;
-import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.api.immunization.ImmunizationDto;
 import de.symeda.sormas.api.labmessage.LabMessageDto;
 import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.SampleDto;
-import de.symeda.sormas.api.sormastosormas.SormasToSormasValidationException;
-import de.symeda.sormas.api.sormastosormas.ValidationErrors;
+import de.symeda.sormas.api.sormastosormas.validation.SormasToSormasValidationException;
+import de.symeda.sormas.api.sormastosormas.validation.ValidationErrorGroup;
+import de.symeda.sormas.api.sormastosormas.validation.ValidationErrorMessage;
+import de.symeda.sormas.api.sormastosormas.validation.ValidationErrors;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
 
 public class ValidationHelper {
 
-	public static String buildValidationGroupName(String captionTag, HasUuid hasUuid) {
-		return String.format("%s %s", I18nProperties.getCaption(captionTag), DataHelper.getShortUuid(hasUuid.getUuid()));
+	public static ValidationErrorGroup buildValidationGroupName(String captionTag, HasUuid hasUuid) {
+		return buildValidationGroupName(captionTag, hasUuid.getUuid());
 	}
 
-	public static String buildCaseValidationGroupName(HasUuid caze) {
-		return buildValidationGroupName(Captions.CaseData, caze);
+	public static ValidationErrorGroup buildValidationGroupName(String captionTag, String uuid) {
+		return new ValidationErrorGroup(captionTag, DataHelper.getShortUuid(uuid));
 	}
 
-	public static String buildContactValidationGroupName(HasUuid contact) {
-		return buildValidationGroupName(Captions.Contact, contact);
+	public static ValidationErrorGroup buildCaseValidationGroupName(HasUuid caze) {
+		return buildValidationGroupName(Captions.CaseData_uuid, caze);
 	}
 
-	public static String buildSampleValidationGroupName(SampleDto sample) {
-		return buildValidationGroupName(Captions.Sample, sample);
+	public static ValidationErrorGroup buildContactValidationGroupName(HasUuid contact) {
+		return buildValidationGroupName(Captions.Contact_uuid, contact);
 	}
 
-	public static String buildPathogenTestValidationGroupName(PathogenTestDto pathogenTest) {
+	public static ValidationErrorGroup buildSampleValidationGroupName(SampleDto sample) {
+		return buildValidationGroupName(Captions.Sample_uuid, sample);
+	}
+
+	public static ValidationErrorGroup buildPathogenTestValidationGroupName(PathogenTestDto pathogenTest) {
 		return buildValidationGroupName(Captions.PathogenTest, pathogenTest);
 	}
 
-	public static String buildEventValidationGroupName(HasUuid event) {
-		return buildValidationGroupName(Captions.Event, event);
+	public static ValidationErrorGroup buildEventValidationGroupName(HasUuid event) {
+		return buildValidationGroupName(Captions.Event_uuid, event);
 	}
 
-	public static String buildEventParticipantValidationGroupName(HasUuid event) {
-		return buildValidationGroupName(Captions.Event, event);
+	public static ValidationErrorGroup buildEventParticipantValidationGroupName(HasUuid event) {
+		return buildValidationGroupName(Captions.EventParticipant_uuid, event);
 	}
 
-	public static String buildLabMessageValidationGroupName(LabMessageDto labMessageDto) {
+	public static ValidationErrorGroup buildImmunizationValidationGroupName(ImmunizationDto immunization) {
+		return buildValidationGroupName(Captions.Immunization_uuid, immunization);
+	}
+
+	public static ValidationErrorGroup buildLabMessageValidationGroupName(LabMessageDto labMessageDto) {
 		return buildValidationGroupName(Captions.LabMessage, labMessageDto);
 	}
 
-	public static <T> T handleValidationError(Supplier<T> saveOperation, String validationGroupCaption, String parentValidationGroup)
+	public static <T> T handleValidationError(Supplier<T> saveOperation, String validationGroupCaption, ValidationErrorGroup parentValidationGroup)
 		throws SormasToSormasValidationException {
 		try {
 			return saveOperation.get();
 		} catch (ValidationRuntimeException exception) {
-			Map<String, ValidationErrors> parentError = new HashMap<>(1);
-			parentError
-				.put(parentValidationGroup, ValidationErrors.create(I18nProperties.getCaption(validationGroupCaption), exception.getMessage()));
+			List<ValidationErrors> errors = new ArrayList<>();
 
-			throw new SormasToSormasValidationException(parentError, exception);
+			ValidationErrors validationErrors = new ValidationErrors(parentValidationGroup);
+			validationErrors.add(new ValidationErrorGroup(validationGroupCaption), new ValidationErrorMessage(Validations.sormasToSormasSaveException, exception.getMessage()));
+			errors.add(validationErrors);
+
+			throw new SormasToSormasValidationException(errors, exception);
 		}
 	}
 }

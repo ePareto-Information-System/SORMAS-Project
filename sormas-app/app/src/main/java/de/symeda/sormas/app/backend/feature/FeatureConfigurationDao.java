@@ -1,9 +1,6 @@
 package de.symeda.sormas.app.backend.feature;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import android.util.Log;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
@@ -11,10 +8,15 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
-import android.util.Log;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.feature.FeatureTypeProperty;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.app.backend.common.AbstractAdoDao;
 
@@ -72,6 +74,52 @@ public class FeatureConfigurationDao extends AbstractAdoDao<FeatureConfiguration
 			Log.e(getTableName(), "Could not perform isFeatureDisabled");
 			throw new RuntimeException(e);
 		}
+	}
+
+	public boolean isPropertyValueTrue(FeatureType featureType, FeatureTypeProperty property) {
+		if (!featureType.getSupportedProperties().contains(property)) {
+			throw new IllegalArgumentException("Feature type " + featureType + " does not support property " + property + ".");
+		}
+
+		if (!Boolean.class.isAssignableFrom(property.getReturnType())) {
+			throw new IllegalArgumentException(
+				"Feature type property " + property + " does not have specified return type " + Boolean.class.getSimpleName() + ".");
+		}
+
+		Map<FeatureTypeProperty, Object> propertyObjectMap;
+		try {
+			QueryBuilder builder = queryBuilder();
+			Where where = builder.where();
+			where.eq(FeatureConfiguration.FEATURE_TYPE, featureType);
+			builder.selectColumns(FeatureConfiguration.PROPERTIES);
+
+			FeatureConfiguration featureConfiguration = (FeatureConfiguration) builder.queryForFirst();
+
+			if (featureConfiguration != null && featureConfiguration.getPropertiesJson() != null) {
+				propertyObjectMap = featureConfiguration.getPropertiesMap();
+			} else {
+				return featureType.getSupportedPropertyDefaults().get(property) == Boolean.TRUE;
+			}
+
+		} catch (SQLException e) {
+			Log.e(getTableName(), "Could not perform isPropertyValueTrue");
+			throw new RuntimeException(e);
+		}
+
+		boolean result;
+		if (propertyObjectMap != null && propertyObjectMap.containsKey(property)) {
+			result = propertyObjectMap.get(property) == Boolean.TRUE;
+		} else {
+			// Compare the expected property value with the default value
+			result = featureType.getSupportedPropertyDefaults().get(property) == Boolean.TRUE;
+		}
+		return result;
+	}
+
+	public boolean isAnySurveillanceEnabled() {
+		return !isFeatureDisabled(FeatureType.CASE_SURVEILANCE)
+			|| !isFeatureDisabled(FeatureType.EVENT_SURVEILLANCE)
+			|| !isFeatureDisabled(FeatureType.AGGREGATE_REPORTING);
 	}
 
 	public void deleteExpiredFeatureConfigurations() {

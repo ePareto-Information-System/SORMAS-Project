@@ -27,12 +27,12 @@ import javax.persistence.TemporalType;
 
 import de.symeda.auditlog.api.Audited;
 import de.symeda.sormas.api.caze.surveillancereport.ReportingType;
-import de.symeda.sormas.api.facility.FacilityType;
+import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
-import de.symeda.sormas.backend.facility.Facility;
-import de.symeda.sormas.backend.region.District;
-import de.symeda.sormas.backend.region.Region;
+import de.symeda.sormas.backend.infrastructure.facility.Facility;
+import de.symeda.sormas.backend.infrastructure.district.District;
+import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.user.User;
 
 @Entity(name = "surveillancereports")
@@ -41,6 +41,18 @@ public class SurveillanceReport extends AbstractDomainObject {
 
 	private static final long serialVersionUID = -2599492274783441938L;
 
+	public static final String TABLE_NAME = "surveillancereports";
+
+	public static final String REPORTING_TYPE = "reportingType";
+	public static final String CREATING_USER = "creatingUser";
+	public static final String REPORT_DATE = "reportDate";
+	public static final String DATE_OF_DIAGNOSIS = "dateOfDiagnosis";
+	public static final String FACILITY_REGION = "facilityRegion";
+	public static final String FACILITY_DISTRICT = "facilityDistrict";
+	public static final String FACILITY_TYPE = "facilityType";
+	public static final String FACILITY = "facility";
+	public static final String FACILITY_DETAILS = "facilityDetails";
+	public static final String NOTIFICATION_DETAILS = "notificationDetails";
 	public static final String CAZE = "caze";
 
 	private ReportingType reportingType;

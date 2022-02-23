@@ -3,8 +3,8 @@ package de.symeda.sormas.app.backend.region;
 import java.util.List;
 
 import de.symeda.sormas.api.PushResult;
-import de.symeda.sormas.api.region.CountryDto;
-import de.symeda.sormas.api.region.CountryReferenceDto;
+import de.symeda.sormas.api.infrastructure.country.CountryDto;
+import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
 import de.symeda.sormas.app.backend.common.AdoDtoHelper;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.rest.NoConnectionException;
@@ -24,7 +24,7 @@ public class CountryDtoHelper extends AdoDtoHelper<Country, CountryDto> {
 	}
 
 	@Override
-	protected Call<List<CountryDto>> pullAllSince(long since) throws NoConnectionException {
+	protected Call<List<CountryDto>> pullAllSince(long since, Integer size, String lastSynchronizedUuid)  throws NoConnectionException {
 		return RetroProvider.getCountryFacade().pullAllSince(since);
 	}
 
@@ -51,7 +51,12 @@ public class CountryDtoHelper extends AdoDtoHelper<Country, CountryDto> {
 		throw new UnsupportedOperationException("Entity is infrastructure");
 	}
 
-	public static CountryReferenceDto toReferenceDto(Country ado) {
+    @Override
+    protected long getApproximateJsonSizeInBytes() {
+        return 0;
+    }
+
+    public static CountryReferenceDto toReferenceDto(Country ado) {
 		if (ado == null) {
 			return null;
 		}

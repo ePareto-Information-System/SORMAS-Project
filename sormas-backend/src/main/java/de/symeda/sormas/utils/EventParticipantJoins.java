@@ -7,13 +7,13 @@ import javax.persistence.criteria.JoinType;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.event.Event;
 import de.symeda.sormas.backend.event.EventParticipant;
-import de.symeda.sormas.backend.facility.Facility;
-import de.symeda.sormas.backend.infrastructure.PointOfEntry;
+import de.symeda.sormas.backend.infrastructure.community.Community;
+import de.symeda.sormas.backend.infrastructure.district.District;
+import de.symeda.sormas.backend.infrastructure.facility.Facility;
+import de.symeda.sormas.backend.infrastructure.pointofentry.PointOfEntry;
+import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.person.Person;
-import de.symeda.sormas.backend.region.Community;
-import de.symeda.sormas.backend.region.District;
-import de.symeda.sormas.backend.region.Region;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.util.AbstractDomainObjectJoins;
 
@@ -30,7 +30,6 @@ public class EventParticipantJoins<T> extends AbstractDomainObjectJoins<T, Event
 	private Join<Location, District> addressDistrict;
 	private Join<Location, Community> addressCommunity;
 	private Join<Location, Facility> addressFacility;
-
 
 	private Join<EventParticipant, Case> resultingCase;
 	private Join<Case, Person> casePerson;
@@ -58,7 +57,7 @@ public class EventParticipantJoins<T> extends AbstractDomainObjectJoins<T, Event
 		return getOrCreate(eventParticipantReportingUser, EventParticipant.REPORTING_USER, JoinType.LEFT, this::setEventParticipantReportingUser);
 	}
 
-	public void setEventParticipantReportingUser(Join<EventParticipant, User> eventParticipantReportingUser) {
+	private void setEventParticipantReportingUser(Join<EventParticipant, User> eventParticipantReportingUser) {
 		this.eventParticipantReportingUser = eventParticipantReportingUser;
 	}
 
@@ -66,7 +65,7 @@ public class EventParticipantJoins<T> extends AbstractDomainObjectJoins<T, Event
 		return getOrCreate(person, EventParticipant.PERSON, JoinType.LEFT, this::setPerson);
 	}
 
-	public void setPerson(Join<EventParticipant, Person> person) {
+	private void setPerson(Join<EventParticipant, Person> person) {
 		this.person = person;
 	}
 
@@ -74,7 +73,7 @@ public class EventParticipantJoins<T> extends AbstractDomainObjectJoins<T, Event
 		return getOrCreate(eventParticipantResponsibleRegion, EventParticipant.REGION, JoinType.LEFT, this::setEventParticipantResponsibleRegion);
 	}
 
-	public void setEventParticipantResponsibleRegion(Join<EventParticipant, Region> eventParticipantResponsibleRegion) {
+	private void setEventParticipantResponsibleRegion(Join<EventParticipant, Region> eventParticipantResponsibleRegion) {
 		this.eventParticipantResponsibleRegion = eventParticipantResponsibleRegion;
 	}
 
@@ -86,7 +85,7 @@ public class EventParticipantJoins<T> extends AbstractDomainObjectJoins<T, Event
 			this::setEventParticipantResponsibleDistrict);
 	}
 
-	public void setEventParticipantResponsibleDistrict(Join<EventParticipant, District> eventParticipantResponsibleDistrict) {
+	private void setEventParticipantResponsibleDistrict(Join<EventParticipant, District> eventParticipantResponsibleDistrict) {
 		this.eventParticipantResponsibleDistrict = eventParticipantResponsibleDistrict;
 	}
 
@@ -94,7 +93,7 @@ public class EventParticipantJoins<T> extends AbstractDomainObjectJoins<T, Event
 		return getOrCreate(address, Person.ADDRESS, JoinType.LEFT, getPerson(), this::setAddress);
 	}
 
-	public void setAddress(Join<Person, Location> address) {
+	private void setAddress(Join<Person, Location> address) {
 		this.address = address;
 	}
 
@@ -102,7 +101,7 @@ public class EventParticipantJoins<T> extends AbstractDomainObjectJoins<T, Event
 		return getOrCreate(addressRegion, Location.REGION, JoinType.LEFT, getAddress(), this::setAddressRegion);
 	}
 
-	public void setAddressRegion(Join<Location, Region> addressRegion) {
+	private void setAddressRegion(Join<Location, Region> addressRegion) {
 		this.addressRegion = addressRegion;
 	}
 
@@ -110,7 +109,7 @@ public class EventParticipantJoins<T> extends AbstractDomainObjectJoins<T, Event
 		return getOrCreate(addressDistrict, Location.DISTRICT, JoinType.LEFT, getAddress(), this::setAddressDistrict);
 	}
 
-	public void setAddressDistrict(Join<Location, District> addressDistrict) {
+	private void setAddressDistrict(Join<Location, District> addressDistrict) {
 		this.addressDistrict = addressDistrict;
 	}
 
@@ -118,7 +117,7 @@ public class EventParticipantJoins<T> extends AbstractDomainObjectJoins<T, Event
 		return getOrCreate(addressCommunity, Location.COMMUNITY, JoinType.LEFT, getAddress(), this::setAddressCommunity);
 	}
 
-	public void setAddressCommunity(Join<Location, Community> addressCommunity) {
+	private void setAddressCommunity(Join<Location, Community> addressCommunity) {
 		this.addressCommunity = addressCommunity;
 	}
 
@@ -126,7 +125,7 @@ public class EventParticipantJoins<T> extends AbstractDomainObjectJoins<T, Event
 		return getOrCreate(addressFacility, Location.FACILITY, JoinType.LEFT, getAddress(), this::setAddressFacility);
 	}
 
-	public void setAddressFacility(Join<Location, Facility> addressFacility) {
+	private void setAddressFacility(Join<Location, Facility> addressFacility) {
 		this.addressFacility = addressFacility;
 	}
 
@@ -134,7 +133,7 @@ public class EventParticipantJoins<T> extends AbstractDomainObjectJoins<T, Event
 		return getOrCreate(resultingCase, EventParticipant.RESULTING_CASE, JoinType.LEFT, this::setResultingCase);
 	}
 
-	public void setResultingCase(Join<EventParticipant, Case> resultingCase) {
+	private void setResultingCase(Join<EventParticipant, Case> resultingCase) {
 		this.resultingCase = resultingCase;
 	}
 
@@ -142,7 +141,7 @@ public class EventParticipantJoins<T> extends AbstractDomainObjectJoins<T, Event
 		return getOrCreate(casePerson, Case.PERSON, JoinType.LEFT, getResultingCase(), this::setCasePerson);
 	}
 
-	public void setCasePerson(Join<Case, Person> casePerson) {
+	private void setCasePerson(Join<Case, Person> casePerson) {
 		this.casePerson = casePerson;
 	}
 
@@ -150,7 +149,7 @@ public class EventParticipantJoins<T> extends AbstractDomainObjectJoins<T, Event
 		return getOrCreate(caseReportingUser, Case.REPORTING_USER, JoinType.LEFT, getResultingCase(), this::setCaseReportingUser);
 	}
 
-	public void setCaseReportingUser(Join<Case, User> caseReportingUser) {
+	private void setCaseReportingUser(Join<Case, User> caseReportingUser) {
 		this.caseReportingUser = caseReportingUser;
 	}
 
@@ -158,7 +157,7 @@ public class EventParticipantJoins<T> extends AbstractDomainObjectJoins<T, Event
 		return getOrCreate(caseResponsibleRegion, Case.RESPONSIBLE_REGION, JoinType.LEFT, getResultingCase(), this::setCaseResponsibleRegion);
 	}
 
-	public void setCaseResponsibleRegion(Join<Case, Region> caseResponsibleRegion) {
+	private void setCaseResponsibleRegion(Join<Case, Region> caseResponsibleRegion) {
 		this.caseResponsibleRegion = caseResponsibleRegion;
 	}
 
@@ -166,7 +165,7 @@ public class EventParticipantJoins<T> extends AbstractDomainObjectJoins<T, Event
 		return getOrCreate(caseResponsibleDistrict, Case.RESPONSIBLE_DISTRICT, JoinType.LEFT, getResultingCase(), this::setCaseResponsibleDistrict);
 	}
 
-	public void setCaseResponsibleDistrict(Join<Case, District> caseResponsibleDistrict) {
+	private void setCaseResponsibleDistrict(Join<Case, District> caseResponsibleDistrict) {
 		this.caseResponsibleDistrict = caseResponsibleDistrict;
 	}
 
@@ -179,7 +178,7 @@ public class EventParticipantJoins<T> extends AbstractDomainObjectJoins<T, Event
 			this::setCaseResponsibleCommunity);
 	}
 
-	public void setCaseResponsibleCommunity(Join<Case, Community> caseResponsibleCommunity) {
+	private void setCaseResponsibleCommunity(Join<Case, Community> caseResponsibleCommunity) {
 		this.caseResponsibleCommunity = caseResponsibleCommunity;
 	}
 
@@ -187,7 +186,7 @@ public class EventParticipantJoins<T> extends AbstractDomainObjectJoins<T, Event
 		return getOrCreate(caseRegion, Case.REGION, JoinType.LEFT, getResultingCase(), this::setCaseRegion);
 	}
 
-	public void setCaseRegion(Join<Case, Region> caseRegion) {
+	private void setCaseRegion(Join<Case, Region> caseRegion) {
 		this.caseRegion = caseRegion;
 	}
 
@@ -195,7 +194,7 @@ public class EventParticipantJoins<T> extends AbstractDomainObjectJoins<T, Event
 		return getOrCreate(caseDistrict, Case.DISTRICT, JoinType.LEFT, getResultingCase(), this::setCaseDistrict);
 	}
 
-	public void setCaseDistrict(Join<Case, District> caseDistrict) {
+	private void setCaseDistrict(Join<Case, District> caseDistrict) {
 		this.caseDistrict = caseDistrict;
 	}
 
@@ -203,7 +202,7 @@ public class EventParticipantJoins<T> extends AbstractDomainObjectJoins<T, Event
 		return getOrCreate(caseCommunity, Case.COMMUNITY, JoinType.LEFT, getResultingCase(), this::setCaseCommunity);
 	}
 
-	public void setCaseCommunity(Join<Case, Community> caseCommunity) {
+	private void setCaseCommunity(Join<Case, Community> caseCommunity) {
 		this.caseCommunity = caseCommunity;
 	}
 
@@ -211,7 +210,7 @@ public class EventParticipantJoins<T> extends AbstractDomainObjectJoins<T, Event
 		return getOrCreate(caseHealthFacility, Case.HEALTH_FACILITY, JoinType.LEFT, getResultingCase(), this::setCaseHealthFacility);
 	}
 
-	public void setCaseHealthFacility(Join<Case, Facility> caseHealthFacility) {
+	private void setCaseHealthFacility(Join<Case, Facility> caseHealthFacility) {
 		this.caseHealthFacility = caseHealthFacility;
 	}
 
@@ -219,7 +218,7 @@ public class EventParticipantJoins<T> extends AbstractDomainObjectJoins<T, Event
 		return getOrCreate(caseAsPointOfEntry, Case.POINT_OF_ENTRY, JoinType.LEFT, getResultingCase(), this::setCaseAsPointOfEntry);
 	}
 
-	public void setCaseAsPointOfEntry(Join<Case, PointOfEntry> caseAsPointOfEntry) {
+	private void setCaseAsPointOfEntry(Join<Case, PointOfEntry> caseAsPointOfEntry) {
 		this.caseAsPointOfEntry = caseAsPointOfEntry;
 	}
 
@@ -227,7 +226,7 @@ public class EventParticipantJoins<T> extends AbstractDomainObjectJoins<T, Event
 		return getOrCreate(event, EventParticipant.EVENT, JoinType.LEFT, this::setEvent);
 	}
 
-	public void setEvent(Join<EventParticipant, Event> event) {
+	private void setEvent(Join<EventParticipant, Event> event) {
 		this.event = event;
 	}
 
@@ -235,7 +234,7 @@ public class EventParticipantJoins<T> extends AbstractDomainObjectJoins<T, Event
 		return getOrCreate(eventAddress, Event.EVENT_LOCATION, JoinType.LEFT, getEvent(), this::setEventAddress);
 	}
 
-	public void setEventAddress(Join<Event, Location> eventAddress) {
+	private void setEventAddress(Join<Event, Location> eventAddress) {
 		this.eventAddress = eventAddress;
 	}
 
@@ -243,7 +242,7 @@ public class EventParticipantJoins<T> extends AbstractDomainObjectJoins<T, Event
 		return getOrCreate(eventAddressRegion, Location.REGION, JoinType.LEFT, getEventAddress(), this::setEventAddressRegion);
 	}
 
-	public void setEventAddressRegion(Join<Location, Region> eventAddressRegion) {
+	private void setEventAddressRegion(Join<Location, Region> eventAddressRegion) {
 		this.eventAddressRegion = eventAddressRegion;
 	}
 
@@ -251,7 +250,7 @@ public class EventParticipantJoins<T> extends AbstractDomainObjectJoins<T, Event
 		return getOrCreate(eventAddressDistrict, Location.DISTRICT, JoinType.LEFT, getEventAddress(), this::setEventAddressDistrict);
 	}
 
-	public void setEventAddressDistrict(Join<Location, District> eventAddressDistrict) {
+	private void setEventAddressDistrict(Join<Location, District> eventAddressDistrict) {
 		this.eventAddressDistrict = eventAddressDistrict;
 	}
 
@@ -259,7 +258,7 @@ public class EventParticipantJoins<T> extends AbstractDomainObjectJoins<T, Event
 		return getOrCreate(eventAddressCommunity, Location.COMMUNITY, JoinType.LEFT, getEventAddress(), this::setEventAddressCommunity);
 	}
 
-	public void setEventAddressCommunity(Join<Location, Community> eventAddressCommunity) {
+	private void setEventAddressCommunity(Join<Location, Community> eventAddressCommunity) {
 		this.eventAddressCommunity = eventAddressCommunity;
 	}
 }

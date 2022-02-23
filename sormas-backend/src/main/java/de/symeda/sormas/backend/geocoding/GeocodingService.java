@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -29,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
@@ -43,9 +45,8 @@ import org.slf4j.LoggerFactory;
 
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
-import com.nimbusds.jose.util.StandardCharset;
 
-import de.symeda.sormas.api.region.GeoLatLon;
+import de.symeda.sormas.api.geo.GeoLatLon;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.backend.common.ConfigFacadeEjb.ConfigFacadeEjbLocal;
 import de.symeda.sormas.backend.location.Location;
@@ -107,9 +108,19 @@ public class GeocodingService {
 
 		Client client = ClientHelper.newBuilderWithProxy().connectTimeout(10, TimeUnit.SECONDS).readTimeout(10, TimeUnit.SECONDS).build();
 		WebTarget target = client.target(targetUrl);
-		Response response = target.request(MediaType.APPLICATION_JSON_TYPE).get();
-		String responseText = readResponseAsText(response);
+		Response response = null;
 
+		// prevent timeouts on invalid addresses from causing errors
+		try {
+			response = target.request(MediaType.APPLICATION_JSON_TYPE).get();
+		} catch (ProcessingException exception) {
+			if (logger.isWarnEnabled()) {
+				logger.warn("geosearch query '{}' threw Exception with cause {}", query, exception.getCause().toString());
+			}
+			return null;
+		}
+
+		String responseText = readResponseAsText(response);
 		if (response.getStatusInfo().getFamily() != Family.SUCCESSFUL) {
 			if (logger.isErrorEnabled()) {
 				logger.error("geosearch query '{}' returned {} - {}:\n{}", query, response.getStatus(), response.getStatusInfo(), responseText);
@@ -117,14 +128,26 @@ public class GeocodingService {
 			return null;
 		}
 
+		Object jsonLatitude = null;
+		Object jsonLongitude = null;
+		// read values as object, than parse to double
+		// JsonPath.read sometimes returns Integer that can't be casted to double, @see #6506
 		try {
-			Double latitude = JsonPath.read(responseText, configFacade.getGeocodingLatitudeJsonPath());
-			Double longitude = JsonPath.read(responseText, configFacade.getGeocodingLongitudeJsonPath());
+			jsonLatitude = JsonPath.read(responseText, configFacade.getGeocodingLatitudeJsonPath());
+			Double latitude = jsonLatitude != null ? Double.parseDouble(jsonLatitude.toString()) : null;
+			jsonLongitude = JsonPath.read(responseText, configFacade.getGeocodingLongitudeJsonPath());
+			Double longitude = jsonLongitude != null ? Double.parseDouble(jsonLongitude.toString()) : null;
 
 			return new GeoLatLon(latitude, longitude);
 		} catch (PathNotFoundException e) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("geosearch coordinates not found in '{}'" + responseText);
+			}
+
+			return null;
+		} catch (NumberFormatException e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("geosearch coordinates can't be parsed: lat: {}, lon: {}", jsonLatitude, jsonLongitude);
 			}
 
 			return null;
@@ -151,7 +174,7 @@ public class GeocodingService {
 
 	private String encodeValue(String value) {
 		try {
-			return DataHelper.isNullOrEmpty(value) ? "" : URLEncoder.encode(value, StandardCharset.UTF_8.name());
+			return DataHelper.isNullOrEmpty(value) ? "" : URLEncoder.encode(value, StandardCharsets.UTF_8.name());
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException("Can't encode parameter value [" + value + "]", e);
 		}

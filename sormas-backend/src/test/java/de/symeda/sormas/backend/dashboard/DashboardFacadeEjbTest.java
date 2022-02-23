@@ -21,7 +21,7 @@ import de.symeda.sormas.api.event.EventInvestigationStatus;
 import de.symeda.sormas.api.event.EventStatus;
 import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.person.PersonDto;
-import de.symeda.sormas.api.region.CommunityDto;
+import de.symeda.sormas.api.infrastructure.community.CommunityDto;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.DateHelper;
@@ -57,7 +57,7 @@ public class DashboardFacadeEjbTest extends AbstractBeanTest {
 		caze2.setSharedToCountry(true);
 		getCaseFacade().saveCase(caze2);
 
-		DashboardCriteria dashboardCriteria = new DashboardCriteria().region(caze.getRegion())
+		DashboardCriteria dashboardCriteria = new DashboardCriteria().region(caze.getResponsibleRegion())
 			.district(caze.getDistrict())
 			.disease(caze.getDisease())
 			.newCaseDateType(NewCaseDateType.MOST_RELEVANT)

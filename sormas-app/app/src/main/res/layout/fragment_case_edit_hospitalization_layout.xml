@@ -31,7 +31,7 @@
         <import type="de.symeda.sormas.api.utils.MildModerateSevereCritical" />
         <import type="de.symeda.sormas.api.caze.CaseOutcome" />
         <import type="de.symeda.sormas.api.hospitalization.HospitalizationReasonType" />
-        <import type="de.symeda.sormas.api.facility.FacilityType" />
+        <import type="de.symeda.sormas.api.infrastructure.facility.FacilityType" />
 
         <variable name="patientCondition" type="MildModerateSevereCritical" />
         <variable name="data" type="de.symeda.sormas.app.backend.hospitalization.Hospitalization" />
@@ -195,6 +195,11 @@
                         style="@style/ControlSecondOfTwoColumnsStyle" />
 
                 </LinearLayout>
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/caseHospitalization_description"
+                    style="@style/ControlSingleColumnStyle"
+                    app:value="@={data.description}" />
 
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/caseHospitalization_hospitalizationReason"

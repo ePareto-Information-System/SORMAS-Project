@@ -1,26 +1,21 @@
-/*******************************************************************************
+/*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
- *
+ * Copyright © 2016-2022 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *******************************************************************************/
+ */
+
 package de.symeda.sormas.ui.hospitalization;
 
 import static de.symeda.sormas.ui.utils.CssStyles.H3;
-import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_TOP_3;
-import static de.symeda.sormas.ui.utils.LayoutUtil.fluidColumnLocCss;
-import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRow;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
 import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 
@@ -51,14 +46,12 @@ import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.DateField;
 import com.vaadin.v7.ui.Field;
 import com.vaadin.v7.ui.OptionGroup;
+import com.vaadin.v7.ui.TextArea;
 import com.vaadin.v7.ui.TextField;
 
-import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseOutcome;
-import de.symeda.sormas.api.facility.FacilityDto;
-import de.symeda.sormas.api.facility.FacilityReferenceDto;
-import de.symeda.sormas.api.facility.FacilityType;
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.hospitalization.HospitalizationReasonType;
 import de.symeda.sormas.api.hospitalization.PreviousHospitalizationDto;
@@ -66,7 +59,9 @@ import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
-import de.symeda.sormas.api.sample.SampleDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.YesNoUnknown;
@@ -93,6 +88,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	private static final long serialVersionUID = 1L;
 
 	private static final String HOSPITALIZATION_HEADING_LOC = "hospitalizationHeadingLoc";
+	private static final String PREVIOUS_HOSPITALIZATIONS_HEADING_LOC = "previousHospitalizationsHeadingLoc";
 	private static final String HEALTH_FACILITY = Captions.CaseHospitalization_healthFacility;
 	private static final String OUTCOME = Captions.CaseData_outcome;
 	private static final String OTHERCASEOUTCOMEDETAIL = Captions.CaseData_specify_other_outcome;
@@ -111,15 +107,20 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	//@formatter:off
 	private static final String HTML_LAYOUT =
 			loc(HOSPITALIZATION_HEADING_LOC) +
-			fluidRowLocs(HEALTH_FACILITY, HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY) +
+			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY) +
+			fluidRowLocs(HEALTH_FACILITY) +
 			fluidRowLocs(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, "") +
 			fluidRowLocs(6, OUTCOME, 3, OTHERCASEOUTCOMEDETAIL) +
 			fluidRowLocs(4, HospitalizationDto.PATIENT_CONDITION_ON_ADMISSION) +
 			fluidRowLocs(HospitalizationDto.HOSPITALIZATION_REASON, HospitalizationDto.OTHER_HOSPITALIZATION_REASON) +
-			fluidRowLocs(3, HospitalizationDto.INTENSIVE_CARE_UNIT, 3,
-							HospitalizationDto.INTENSIVE_CARE_UNIT_START, 3, HospitalizationDto.INTENSIVE_CARE_UNIT_END) +
-			fluidRowLocs(HospitalizationDto.ISOLATED, HospitalizationDto.ISOLATION_DATE, "") +
-			fluidRow(fluidColumnLocCss(VSPACE_TOP_3, 6, 0, HospitalizationDto.HOSPITALIZED_PREVIOUSLY)) +
+					fluidRowLocs(3, HospitalizationDto.INTENSIVE_CARE_UNIT, 3,
+							HospitalizationDto.INTENSIVE_CARE_UNIT_START,
+							3,
+							HospitalizationDto.INTENSIVE_CARE_UNIT_END)
+					+ fluidRowLocs(HospitalizationDto.ISOLATED, HospitalizationDto.ISOLATION_DATE, "")
+					+ fluidRowLocs(HospitalizationDto.DESCRIPTION) +
+			loc(PREVIOUS_HOSPITALIZATIONS_HEADING_LOC) +
+			fluidRowLocs(HospitalizationDto.HOSPITALIZED_PREVIOUSLY) +
 			fluidRowLocs(HospitalizationDto.PREVIOUS_HOSPITALIZATIONS);
 	//@formatter:on
 
@@ -129,13 +130,15 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			HospitalizationDto.class,
 			HospitalizationDto.I18N_PREFIX,
 			false,
-			new FieldVisibilityCheckers().add(new OutbreakFieldVisibilityChecker(viewMode)),
+			FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale())
+				.add(new OutbreakFieldVisibilityChecker(viewMode)),
 			UiFieldAccessCheckers.forSensitiveData(isPseudonymized));
 		this.caze = caze;
 		this.viewMode = viewMode;
 		addFields();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void addFields() {
 
@@ -152,6 +155,10 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 		specifyOtherOutcome = addCustomField(OTHERCASEOUTCOMEDETAIL, CaseDataDto.class, TextField.class);
 		specifyOtherOutcome.setVisible(false);
+		
+		Label previousHospitalizationsHeadingLabel = new Label(I18nProperties.getString(Strings.headingPreviousHospitalizations));
+		previousHospitalizationsHeadingLabel.addStyleName(H3);
+		getContent().addComponent(previousHospitalizationsHeadingLabel, PREVIOUS_HOSPITALIZATIONS_HEADING_LOC);
 
 		TextField facilityField = addCustomField(HEALTH_FACILITY, FacilityReferenceDto.class, TextField.class);
 		FacilityReferenceDto healthFacility = caze.getHealthFacility();
@@ -173,6 +180,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		FieldHelper
 			.setVisibleWhen(intensiveCareUnit, Arrays.asList(intensiveCareUnitStart, intensiveCareUnitEnd), Arrays.asList(YesNoUnknown.YES), true);
 		final Field isolationDateField = addField(HospitalizationDto.ISOLATION_DATE);
+		final TextArea descriptionField = addField(HospitalizationDto.DESCRIPTION, TextArea.class);
+		descriptionField.setRows(4);
 		final NullableOptionGroup isolatedField = addField(HospitalizationDto.ISOLATED, NullableOptionGroup.class);
 		
 		final NullableOptionGroup leftAgainstAdviceField = addField(HospitalizationDto.LEFT_AGAINST_ADVICE, NullableOptionGroup.class);
@@ -188,24 +197,23 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		PreviousHospitalizationsField previousHospitalizationsField =
 			addField(HospitalizationDto.PREVIOUS_HOSPITALIZATIONS, PreviousHospitalizationsField.class);
 
-		if (!FacilityType.HOSPITAL.equals(caze.getFacilityType())) {
-			FieldHelper.setEnabled(
-				false,
-				caseOutcome,
-				specifyOtherOutcome,
+		FieldHelper.setEnabledWhen(
+			admittedToHealthFacilityField,
+			Arrays.asList(YesNoUnknown.YES, YesNoUnknown.NO, YesNoUnknown.UNKNOWN),
+			Arrays.asList(
 				facilityField,
-				admittedToHealthFacilityField,
 				admissionDateField,
 				dischargeDateField,
 				intensiveCareUnit,
 				intensiveCareUnitStart,
 				intensiveCareUnitEnd,
 				isolationDateField,
+				descriptionField,
 				isolatedField,
 				leftAgainstAdviceField,
 				hospitalizationReason,
-				otherHospitalizationReason);
-		}
+				otherHospitalizationReason),
+			false);
 
 		initializeVisibilitiesAndAllowedVisibilities();
 		initializeAccessAndAllowedAccesses();

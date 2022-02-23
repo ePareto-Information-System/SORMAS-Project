@@ -23,7 +23,7 @@ import java.util.List;
 import javax.ejb.Remote;
 import javax.validation.Valid;
 
-import de.symeda.sormas.api.region.RegionReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.EpiWeek;
 
@@ -31,6 +31,8 @@ import de.symeda.sormas.api.utils.EpiWeek;
 public interface WeeklyReportFacade {
 
 	List<WeeklyReportDto> getAllWeeklyReportsAfter(Date date);
+
+	List<WeeklyReportDto> getAllWeeklyReportsAfter(Date date, Integer batchSize, String lastSynchronizedUuid);
 
 	List<WeeklyReportDto> getByUuids(List<String> uuids);
 

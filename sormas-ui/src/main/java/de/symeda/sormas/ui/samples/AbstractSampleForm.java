@@ -30,14 +30,16 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
-import de.symeda.sormas.api.facility.FacilityDto;
-import de.symeda.sormas.api.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.Descriptions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.sample.AdditionalTestType;
+import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SampleMaterial;
@@ -64,23 +66,25 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 	private static final long serialVersionUID = -2323128076462668517L;
 
-	// protected static final String REPORT_INFORMATION_LOC = "reportInformationLoc";
+//	protected static final String REPORT_INFORMATION_LOC = "reportInformationLoc";
 	protected static final String PATHOGEN_TESTING_INFO_LOC = "pathogenTestingInfoLoc";
 	protected static final String ADDITIONAL_TESTING_INFO_LOC = "additionalTestingInfoLoc";
 	protected static final String PATHOGEN_TESTING_READ_HEADLINE_LOC = "pathogenTestingReadHeadlineLoc";
 	protected static final String ADDITIONAL_TESTING_READ_HEADLINE_LOC = "additionalTestingReadHeadlineLoc";
 	protected static final String REQUESTED_PATHOGEN_TESTS_READ_LOC = "requestedPathogenTestsReadLoc";
 	protected static final String REQUESTED_ADDITIONAL_TESTS_READ_LOC = "requestedAdditionalTestsReadLoc";
+	protected static final String REPORT_INFO_LABEL_LOC = "reportInfoLabelLoc";
+	protected static final String REFERRED_FROM_BUTTON_LOC = "referredFromButtonLoc";
 
 	//@formatter:off
-   protected static final String SAMPLE_COMMON_HTML_LAYOUT =
-                    fluidRowLocs(SampleDto.UUID, SampleDto.REPORTING_USER) +
+    protected static final String SAMPLE_COMMON_HTML_LAYOUT =
+            fluidRowLocs(SampleDto.UUID, REPORT_INFO_LABEL_LOC) +
                     fluidRowLocs(SampleDto.SAMPLE_PURPOSE) +
                     fluidRowLocs(SampleDto.SAMPLE_DATE_TIME, SampleDto.SAMPLE_MATERIAL) +
                     fluidRowLocs("", SampleDto.SAMPLE_MATERIAL_TEXT) +
-					fluidRowLocs(SampleDto.SAMPLING_REASON, SampleDto.SAMPLING_REASON_DETAILS) +
-                    fluidRowLocs(SampleDto.SAMPLE_SOURCE, "") +
-                    fluidRowLocs(SampleDto.FIELD_SAMPLE_ID, SampleDto.FOR_RETEST) +
+                    fluidRowLocs(SampleDto.SAMPLING_REASON, SampleDto.SAMPLING_REASON_DETAILS) +
+                    fluidRowLocs(SampleDto.SAMPLE_SOURCE, REFERRED_FROM_BUTTON_LOC) +
+                     fluidRowLocs(SampleDto.FIELD_SAMPLE_ID, SampleDto.FOR_RETEST) +
                     fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
 
                     locCss(VSPACE_TOP_3, SampleDto.PATHOGEN_TESTING_REQUESTED) +
@@ -108,16 +112,12 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                     fluidRowLocs(SampleDto.PATHOGEN_TEST_RESULT);
     //@formatter:on
 
-	public AbstractSampleForm(Class<SampleDto> type, String propertyI18nPrefix) {
-		super(type, propertyI18nPrefix, FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()));
-	}
-
-	protected AbstractSampleForm(Class<SampleDto> type, String propertyI18nPrefix, UiFieldAccessCheckers fieldAccessCheckers) {
+	protected AbstractSampleForm(Class<SampleDto> type, String propertyI18nPrefix, Disease disease, UiFieldAccessCheckers fieldAccessCheckers) {
 		super(
 			type,
 			propertyI18nPrefix,
 			true,
-			FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
+			FieldVisibilityCheckers.withDisease(disease).andWithCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
 			fieldAccessCheckers);
 	}
 
@@ -138,7 +138,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		addDateField(SampleDto.SHIPMENT_DATE, DateField.class, 7);
 		addField(SampleDto.SHIPMENT_DETAILS, TextField.class);
 		addField(SampleDto.RECEIVED_DATE, DateField.class);
-		final ComboBox lab = addField(SampleDto.LAB, ComboBox.class);
+		final ComboBox lab = addInfrastructureField(SampleDto.LAB);
 		lab.addItems(FacadeProvider.getFacilityFacade().getAllActiveLaboratories(true));
 		final TextField labDetails = addField(SampleDto.LAB_DETAILS, TextField.class);
 		labDetails.setVisible(false);
@@ -154,7 +154,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		addField(SampleDto.SHIPPED, CheckBox.class);
 		addField(SampleDto.RECEIVED, CheckBox.class);
 
-		addField(SampleDto.PATHOGEN_TEST_RESULT, ComboBox.class);
+		ComboBox testResultField = addField(SampleDto.PATHOGEN_TEST_RESULT, ComboBox.class);
+		testResultField.removeItem(PathogenTestResultType.NOT_DONE);
 
 		addFields(SampleDto.SAMPLING_REASON, SampleDto.SAMPLING_REASON_DETAILS);
 		FieldHelper.setVisibleWhen(
@@ -163,7 +164,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			SampleDto.SAMPLING_REASON,
 			Collections.singletonList(SamplingReason.OTHER_REASON),
 			true);
-
 	}
 
 	protected void defaultValueChangeListener() {
@@ -197,11 +197,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			Arrays.asList(true),
 			Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION),
 			true);
-		FieldHelper.setRequiredWhen(
-			getFieldGroup(),
-			receivedField,
-			Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.SPECIMEN_CONDITION),
-			Arrays.asList(true));
+		FieldHelper.setRequiredWhen(getFieldGroup(), receivedField, Arrays.asList(SampleDto.SPECIMEN_CONDITION), Arrays.asList(true));
 
 		if (disease != Disease.NEW_INFLUENZA) {
 			getField(SampleDto.SAMPLE_SOURCE).setVisible(false);
@@ -222,7 +218,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 				Arrays.asList(true),
 				Arrays.asList(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS),
 				true);
-			FieldHelper.setRequiredWhen(getFieldGroup(), shippedField, Arrays.asList(SampleDto.SHIPMENT_DATE), Arrays.asList(true));
 			FieldHelper.setRequiredWhen(
 				getFieldGroup(),
 				SampleDto.SAMPLE_PURPOSE,
@@ -423,7 +418,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			&& (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_NOT_OWNED)
 				|| reportingUser != null && UserProvider.getCurrent().getUuid().equals(reportingUser.getUuid()));
 		boolean canOnlyReadRequests = !canEditRequest && showRequestFields;
-		boolean canUseAdditionalTests = UserProvider.getCurrent().hasUserRight(UserRight.ADDITIONAL_TEST_VIEW);
+		boolean canUseAdditionalTests = UserProvider.getCurrent().hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)
+			&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.ADDITIONAL_TESTS);
 
 		Field<?> pathogenTestingField = getField(SampleDto.PATHOGEN_TESTING_REQUESTED);
 		pathogenTestingField.setVisible(canEditRequest);

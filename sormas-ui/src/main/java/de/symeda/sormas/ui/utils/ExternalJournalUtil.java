@@ -8,7 +8,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 
+import com.vaadin.ui.HorizontalLayout;
+import de.symeda.sormas.api.person.SymptomJournalStatus;
+import de.symeda.sormas.api.sormastosormas.SormasToSormasShareableDto;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -47,11 +51,29 @@ public class ExternalJournalUtil {
 	 * If the person is not registered in the external journal, a create account/register button is returned
 	 * If the person is registered, a button is returned which opens a popup with further options.
 	 *
+	 * The button is:
+	 * - enabled if the associated sormasToSormasEntity(case or contact) is not shared or it is shared and the current SORMAS instance has
+	 * ownership
+	 * - disabled if the associated sormasToSormasEntity(case or contact) is shared and the current SORMAS instance does not have ownership
+	 *
 	 * @param person
 	 *            person to be managed by the external journal
+	 * @param sormasToSormasEntity
+	 *            the associated case or contact
 	 * @return Optional containing appropriate Button
 	 */
-	public static Optional<Button> getExternalJournalUiButton(PersonDto person) {
+	public static Optional<Button> getExternalJournalUiButton(PersonDto person, SormasToSormasShareableDto sormasToSormasEntity) {
+		Optional<Button> externalJournalUiButton = getExternalJournalUiButton(person);
+		return externalJournalUiButton.map(button -> {
+			boolean buttonEnabled = !sormasToSormasEntity.isOwnershipHandedOver()
+				&& (sormasToSormasEntity.getSormasToSormasOriginInfo() == null
+					|| sormasToSormasEntity.getSormasToSormasOriginInfo().isOwnershipHandedOver());
+			button.setEnabled(buttonEnabled);
+			return button;
+		});
+	}
+
+	private static Optional<Button> getExternalJournalUiButton(PersonDto person) {
 		if (FacadeProvider.getConfigFacade().getSymptomJournalConfig().isActive()) {
 			if (person.isEnrolledInExternalJournal()) {
 				return Optional.of(createSymptomJournalOptionsButton(person));
@@ -82,8 +104,7 @@ public class ExternalJournalUtil {
 		};
 		// TODO: implement cancel for PIA
 		Button.ClickListener cancelListener = clickEvent -> {
-			VaadinUiUtil.showWarningPopup(I18nProperties.getString(Strings.messageDeletionUnsupportedByExternalJournalWarning));
-			ediaryButton.setPopupVisible(false);
+			showForceDeletionPrompt(I18nProperties.getString(Strings.messageDeletionUnsupportedByExternalJournalWarning), person);
 		};
 		Button cancelButton =
 			ButtonHelper.createButton(I18nProperties.getCaption(Captions.cancelExternalFollowUpButton), cancelListener, ValoTheme.BUTTON_PRIMARY);
@@ -109,7 +130,7 @@ public class ExternalJournalUtil {
 		PopupButton ediaryButton =
 			ButtonHelper.createPopupButton(I18nProperties.getCaption(Captions.patientDiaryOptionsButton), popupLayout, ValoTheme.BUTTON_PRIMARY);
 		Button.ClickListener cancelListener = clickEvent -> {
-			showCancelFollowupConfirmationPopup(person);
+			showCancelFollowUpConfirmationPopup(person);
 			ediaryButton.setPopupVisible(false);
 		};
 		Button.ClickListener openListener = clickEvent -> {
@@ -193,7 +214,7 @@ public class ExternalJournalUtil {
 		return document.toString().getBytes(StandardCharsets.UTF_8);
 	}
 
-	private static void showCancelFollowupConfirmationPopup(PersonDto personDto) {
+	private static void showCancelFollowUpConfirmationPopup(PersonDto personDto) {
 		VaadinUiUtil.showConfirmationPopup(
 			I18nProperties.getCaption(Captions.cancelExternalFollowUpPopupTitle),
 			new Label(I18nProperties.getString(Strings.confirmationCancelExternalFollowUpPopup)),
@@ -208,15 +229,17 @@ public class ExternalJournalUtil {
 
 	private static void cancelPatientDiaryFollowUp(PersonDto personDto) {
 		PatientDiaryResult result = externalJournalFacade.cancelPatientDiaryFollowUp(personDto);
-		showPatientDiaryResultPopup(result, I18nProperties.getCaption(Captions.patientDiaryCancelError));
 		if (result.isSuccess()) {
+			showPatientDiaryResultPopup(result, null);
 			SormasUI.refreshView();
+		} else {
+			showForceDeletionPrompt(result.getMessage(), personDto);
 		}
 	}
 
 	private static void openPatientDiaryPage(String personUuid) {
 		String url = FacadeProvider.getConfigFacade().getPatientDiaryConfig().getUrl();
-		String authToken = externalJournalFacade.getPatientDiaryAuthToken();
+		String authToken = externalJournalFacade.getPatientDiaryAuthToken(true);
 		url += "/data?q=" + personUuid + "&queryKey=sicFieldIdentifier" + "&token=" + authToken;
 		UI.getCurrent().getPage().open(url, "_blank");
 	}
@@ -281,5 +304,33 @@ public class ExternalJournalUtil {
 		Window popupWindow = VaadinUiUtil.showPopupWindow(resultLayout);
 		popupWindow.addCloseListener(e -> popupWindow.close());
 		popupWindow.setWidth(400, Sizeable.Unit.PIXELS);
+	}
+
+	private static void showForceDeletionPrompt(String errorMessage, PersonDto person) {
+
+		HorizontalLayout errorLayout = VaadinUiUtil.createErrorComponent(errorMessage);
+		Label forceDeletionQuestion = new Label(I18nProperties.getString(Strings.promptExternalJournalForceDeletion));
+		forceDeletionQuestion.setWidth(500, Sizeable.Unit.PIXELS);
+		errorLayout.addComponent(forceDeletionQuestion);
+		VerticalLayout errorAndQuestion = new VerticalLayout(errorLayout, forceDeletionQuestion);
+
+		Consumer<Boolean> resultConsumer = new Consumer<Boolean>() {
+
+			@Override
+			public void accept(Boolean forceDelete) {
+				if (forceDelete) {
+					person.setSymptomJournalStatus(SymptomJournalStatus.DELETED);
+					FacadeProvider.getPersonFacade().savePerson(person);
+					SormasUI.refreshView();
+				}
+			}
+		};
+		VaadinUiUtil.showChooseOptionPopup(
+			I18nProperties.getCaption(Captions.patientDiaryCancelError),
+			errorAndQuestion,
+			I18nProperties.getString(Strings.yes),
+			I18nProperties.getString(Strings.no),
+			600,
+			resultConsumer);
 	}
 }

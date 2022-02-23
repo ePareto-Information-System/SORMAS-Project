@@ -17,32 +17,30 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.events;
 
-import static de.symeda.sormas.ui.utils.CssStyles.H3;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
 import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 
-import com.vaadin.ui.Label;
+import com.vaadin.ui.Button;
+import com.vaadin.v7.data.util.converter.Converter;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.TextField;
 
 import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventParticipantDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.person.PersonContext;
 import de.symeda.sormas.api.person.PersonDto;
-import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.person.PersonEditForm;
-import de.symeda.sormas.ui.utils.AbstractEditForm;
 import de.symeda.sormas.ui.utils.FieldHelper;
-import de.symeda.sormas.ui.vaccination.VaccinationInfoForm;
+import de.symeda.sormas.ui.utils.PersonDependentEditForm;
 
-public class EventParticipantEditForm extends AbstractEditForm<EventParticipantDto> {
+public class EventParticipantEditForm extends PersonDependentEditForm<EventParticipantDto> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -51,17 +49,22 @@ public class EventParticipantEditForm extends AbstractEditForm<EventParticipantD
 	private static final String HTML_LAYOUT = fluidRowLocs(EventParticipantDto.REGION, EventParticipantDto.DISTRICT)
 		+ fluidRowLocs(EventParticipantDto.REPORTING_USER)
 		+ fluidRowLocs(EventParticipantDto.INVOLVEMENT_DESCRIPTION)
+		+ fluidRowLocs(PERSON_SEARCH_LOC)
 		+ fluidRowLocs(EventParticipantDto.PERSON)
 		+ loc(MEDICAL_INFORMATION_LOC)
-		+ fluidRowLocs(EventParticipantDto.VACCINATION_INFO);
+		+ fluidRowLocs(EventParticipantDto.VACCINATION_STATUS);
 
 	private final EventDto event;
+	private final Boolean searchPerson;
 
 	private final boolean isPseudonymized;
 
-	private VaccinationInfoForm vaccinationForm;
+	private final boolean isPersonPseudonymized;
+	private PersonEditForm pef;
+	private PersonDto originalPerson;
+	private Button searchPersonButton;
 
-	public EventParticipantEditForm(EventDto event, boolean isPseudonymized) {
+	public EventParticipantEditForm(EventDto event, boolean isPseudonymized, boolean isPersonPseudonymized, boolean searchPerson) {
 		super(
 			EventParticipantDto.class,
 			EventParticipantDto.I18N_PREFIX,
@@ -70,6 +73,8 @@ public class EventParticipantEditForm extends AbstractEditForm<EventParticipantD
 			UiFieldAccessCheckers.getDefault(isPseudonymized));
 		this.event = event;
 		this.isPseudonymized = isPseudonymized;
+		this.isPersonPseudonymized = isPersonPseudonymized;
+		this.searchPerson = searchPerson;
 
 		addFields();
 	}
@@ -81,8 +86,13 @@ public class EventParticipantEditForm extends AbstractEditForm<EventParticipantD
 			return;
 		}
 
-		PersonEditForm pef =
-			new PersonEditForm(PersonContext.EVENT_PARTICIPANT, event.getDisease(), event.getDiseaseDetails(), null, isPseudonymized);
+		if (searchPerson) {
+			searchPersonButton = createPersonSearchButton(PERSON_SEARCH_LOC);
+			searchPersonButton.setCaption(I18nProperties.getString(Strings.infoSearchPersonOnDependentForm));
+			getContent().addComponent(searchPersonButton, PERSON_SEARCH_LOC);
+		}
+
+		pef = new PersonEditForm(PersonContext.EVENT_PARTICIPANT, event.getDisease(), event.getDiseaseDetails(), null, isPersonPseudonymized);
 		pef.setWidth(100, Unit.PERCENTAGE);
 		pef.setImmediate(true);
 		getFieldGroup().bind(pef, EventParticipantDto.PERSON);
@@ -115,12 +125,7 @@ public class EventParticipantEditForm extends AbstractEditForm<EventParticipantD
 		initializeVisibilitiesAndAllowedVisibilities();
 		initializeAccessAndAllowedAccesses();
 
-		vaccinationForm = addField(ContactDto.VACCINATION_INFO, VaccinationInfoForm.class);
-		if (vaccinationForm.isVisibleAllowed()) {
-			Label medicalInformationCaptionLabel = new Label(I18nProperties.getString(Strings.headingMedicalInformation));
-			medicalInformationCaptionLabel.addStyleName(H3);
-			getContent().addComponent(medicalInformationCaptionLabel, MEDICAL_INFORMATION_LOC);
-		}
+		addField(EventParticipantDto.VACCINATION_STATUS);
 	}
 
 	public String getPersonFirstName() {
@@ -134,5 +139,36 @@ public class EventParticipantEditForm extends AbstractEditForm<EventParticipantD
 	@Override
 	protected String createHtmlLayout() {
 		return HTML_LAYOUT;
+	}
+
+	@Override
+	public void setValue(EventParticipantDto newFieldValue) throws ReadOnlyException, Converter.ConversionException {
+		super.setValue(newFieldValue);
+		this.originalPerson = newFieldValue.getPerson();
+	}
+
+	@Override
+	public void setPerson(PersonDto person) {
+		if (person != null) {
+			this.getValue().setPerson(person);
+		} else {
+			this.getValue().setPerson(originalPerson);
+		}
+		getFieldGroup().unbind(pef);
+		pef = new PersonEditForm(
+			PersonContext.EVENT_PARTICIPANT,
+			event.getDisease(),
+			event.getDiseaseDetails(),
+			null,
+			person != null ? person.isPseudonymized() : isPersonPseudonymized);
+		pef.setWidth(100, Unit.PERCENTAGE);
+		pef.setImmediate(true);
+		getFieldGroup().bind(pef, EventParticipantDto.PERSON);
+		getContent().addComponent(pef, EventParticipantDto.PERSON);
+	}
+
+	@Override
+	protected void enablePersonFields(Boolean enable) {
+		pef.getFieldGroup().setEnabled(enable);
 	}
 }

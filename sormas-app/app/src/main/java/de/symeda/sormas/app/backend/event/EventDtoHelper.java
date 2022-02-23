@@ -1,6 +1,6 @@
 /*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+ * Copyright © 2016-2021 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -52,8 +52,8 @@ public class EventDtoHelper extends AdoDtoHelper<Event, EventDto> {
 	}
 
 	@Override
-	protected Call<List<EventDto>> pullAllSince(long since) throws NoConnectionException {
-		return RetroProvider.getEventFacade().pullAllSince(since);
+	protected Call<List<EventDto>> pullAllSince(long since, Integer size, String lastSynchronizedUuid)  throws NoConnectionException {
+		return RetroProvider.getEventFacade().pullAllSince(since, size, lastSynchronizedUuid);
 	}
 
 	@Override
@@ -71,6 +71,7 @@ public class EventDtoHelper extends AdoDtoHelper<Event, EventDto> {
 
 		target.setEventStatus(source.getEventStatus());
 		target.setRiskLevel(source.getRiskLevel());
+		target.setSpecificRisk(source.getSpecificRisk());
 		target.setEventInvestigationStatus(source.getEventInvestigationStatus());
 		target.setEventInvestigationStartDate(source.getEventInvestigationStartDate());
 		target.setEventInvestigationEndDate(source.getEventInvestigationEndDate());
@@ -108,7 +109,9 @@ public class EventDtoHelper extends AdoDtoHelper<Event, EventDto> {
 		target.setSrcMediaDetails(source.getSrcMediaDetails());
 
 		target.setDisease(source.getDisease());
+		target.setDiseaseVariant(source.getDiseaseVariant());
 		target.setDiseaseDetails(source.getDiseaseDetails());
+		target.setDiseaseVariantDetails(source.getDiseaseVariantDetails());
 
 		target.setReportLat(source.getReportLat());
 		target.setReportLon(source.getReportLon());
@@ -124,13 +127,14 @@ public class EventDtoHelper extends AdoDtoHelper<Event, EventDto> {
 
 		target.setPseudonymized(source.isPseudonymized());
 		target.setEventManagementStatus(source.getEventManagementStatus());
+		target.setEventIdentificationSource(source.getEventIdentificationSource());
 
 		target.setInfectionPathCertainty(source.getInfectionPathCertainty());
 		target.setHumanTransmissionMode(source.getHumanTransmissionMode());
 		target.setParenteralTransmissionMode(source.getParenteralTransmissionMode());
 		target.setMedicallyAssociatedTransmissionMode(source.getMedicallyAssociatedTransmissionMode());
 
-		target.setInternalId(source.getInternalId());
+		target.setInternalToken(source.getInternalToken());
 	}
 
 	@Override
@@ -138,6 +142,7 @@ public class EventDtoHelper extends AdoDtoHelper<Event, EventDto> {
 
 		target.setEventStatus(source.getEventStatus());
 		target.setRiskLevel(source.getRiskLevel());
+		target.setSpecificRisk(source.getSpecificRisk());
 		target.setEventInvestigationStatus(source.getEventInvestigationStatus());
 		target.setEventInvestigationStartDate(source.getEventInvestigationStartDate());
 		target.setEventInvestigationEndDate(source.getEventInvestigationEndDate());
@@ -192,7 +197,9 @@ public class EventDtoHelper extends AdoDtoHelper<Event, EventDto> {
 		target.setSrcMediaDetails(source.getSrcMediaDetails());
 
 		target.setDisease(source.getDisease());
+		target.setDiseaseVariant(source.getDiseaseVariant());
 		target.setDiseaseDetails(source.getDiseaseDetails());
+		target.setDiseaseVariantDetails(source.getDiseaseVariantDetails());
 
 		if (source.getResponsibleUser() != null) {
 			User user = DatabaseHelper.getUserDao().queryForId(source.getResponsibleUser().getId());
@@ -218,16 +225,22 @@ public class EventDtoHelper extends AdoDtoHelper<Event, EventDto> {
 		target.setPseudonymized(source.isPseudonymized());
 
 		target.setEventManagementStatus(source.getEventManagementStatus());
+		target.setEventIdentificationSource(source.getEventIdentificationSource());
 
 		target.setInfectionPathCertainty(source.getInfectionPathCertainty());
 		target.setHumanTransmissionMode(source.getHumanTransmissionMode());
 		target.setParenteralTransmissionMode(source.getParenteralTransmissionMode());
 		target.setMedicallyAssociatedTransmissionMode(source.getMedicallyAssociatedTransmissionMode());
 
-		target.setInternalId(source.getInternalId());
+		target.setInternalToken(source.getInternalToken());
 	}
 
-	public static EventReferenceDto toReferenceDto(Event ado) {
+    @Override
+    protected long getApproximateJsonSizeInBytes() {
+        return EventDto.APPROXIMATE_JSON_SIZE_IN_BYTES;
+    }
+
+    public static EventReferenceDto toReferenceDto(Event ado) {
 		if (ado == null) {
 			return null;
 		}

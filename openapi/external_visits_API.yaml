@@ -12,11 +12,11 @@ info:
     \ SORMAS-UI or the external visits journal API.<br><br><b>About persons, cases\
     \ and contacts:</b><br>This is a very basic concept that one needs to understand\
     \ when working with visits. In SORMAS, a person entity represents a phisically\
-    \ existing person. Cases and contacts represent epidemiological occurences. When\
+    \ existing person. Cases and contacts represent epidemiological occurrences. When\
     \ a person was in contact with an infectious environment, the person has a contact\
     \ in SORMAS. When the person was in contact with such environments twice, it gets\
     \ two contacts.When a person falls ill, it gets a case with the according disease.\
-    \ This means: In SORMAS, each contact and case relates to exaclty one person.\
+    \ This means: In SORMAS, each contact and case relates to exactly one person.\
     \ One person can have several contacts and cases, though. Follow up is done for\
     \ a contact (or a case, which can be enabled in the SORMAS feature configuration).\
     \ Contacts (or cases) initiate follow up. A person, though, either shows symptoms\
@@ -48,8 +48,11 @@ info:
     \ used to authenticate at the external journal.<br>``interface.patientdiary.defaultuser.username``:\
     \ This user will be created in SORMAS and can be used by the external journal\
     \ to authenticate.<br>``interface.patientdiary.defaultuser.password``: The above\
-    \ user's password.<br><br><ol><li><b>SORMAS fetching an authentication token from\
-    \ the external journal</b></li><br>POST to the interface.patientdiary.authurl<br>Request\
+    \ user's password.<br>``interface.patientdiary.acceptPhoneContact``: used to configure\
+    \ whether the phone number is considered relevant for registering a person in\
+    \ the external journal. It affects the validation of persons in SORMAS (see 2.\
+    \ below). Defaults to <b>true</b><br><br><ol><li><b>SORMAS fetching an authentication\
+    \ token from the external journal</b></li><br>POST to the interface.patientdiary.authurl<br>Request\
     \ body:<br>{<br>&emsp;&emsp;\"email\" : [patientdiary.email],<br>&emsp;&emsp;\"\
     password\" : [patientdiary.password]<br>}<br>where [patientdiary.email] is replaced\
     \ with interface.patientdiary.email and [patientdiary.password] with interface.patientdiary.password\
@@ -58,18 +61,19 @@ info:
     token\" : [token]<br>}<br>The token returned will be used to authenticate in other\
     \ requests.<br><br><li><b>Registration of a new person in the external journal</b></li><br>This\
     \ process involves several steps that are triggered via the REGISTER button a\
-    \ priviliged user can see in the top right corner when having opened a case or\
+    \ privileged user can see in the top right corner when having opened a case or\
     \ a contact.<br>To be able to see this button, the user must have at least one\
     \ of the following user roles: national user, contact supervisor, contact officer,\
-    \ communitiy officer,surveillance officer, surveillance supervisor, or admin supervisor.<br><br>First\
+    \ community officer,surveillance officer, surveillance supervisor, or admin supervisor.<br><br>First\
     \ comes a SORMAS-internal validation of contact details. The person to be registered\
-    \ needs to have at least an email address or a phone number to pass this validation.Also,\
-    \ when there are several email addresses or phone numbers, one of them has to\
-    \ be marked primary contact detail, so that it is clear which contact detail shall\
-    \ be used.<br><br>Then comes an external validation of the contact details. For\
-    \ this, SORMAS fetches an authentication token as in 1. Then it sends a GET request\
-    \ to the following URL for each contact detail to be used in  the external journal:<br><tt>GET\
-    \ [interface.patientdiary.probandsurl]/probands?q=[URL-encoded-query-parameter-and-value]'</tt>,\
+    \ needs to have at least an email address (or a phone number if that is accepted\
+    \ for registration, see ``interface.patientdiary.acceptPhoneContact``) to pass\
+    \ this validation.Also, when there are several email addresses or phone numbers,\
+    \ one of them has to be marked primary contact detail, so that it is clear which\
+    \ contact detail shall be used.<br><br>Then comes an external validation of the\
+    \ contact details. For this, SORMAS fetches an authentication token as in 1. Then\
+    \ it sends a GET request to the following URL for each contact detail to be used\
+    \ in  the external journal:<br><tt>GET [interface.patientdiary.probandsurl]/probands?q=[URL-encoded-query-parameter-and-value]'</tt>,\
     \ with a header like <tt>'x-access-token: [token]'</tt><br>The [URL-encoded-query-parameter-and-value]\
     \ consists of a parameter-value-pair. The parameter is either 'Email' or 'Mobile\
     \ phone'. The value holds the contact detail to be validated.<br>An unencoded\
@@ -100,7 +104,7 @@ info:
     \ contain (at least) the contact detail provided by SORMAS in the query.<br>-\
     \ endDate should hold the date after which follow up is supposed to be stopped\
     \ by the external journal.<br>``PatientDiaryIdatId``{<br>&emsp;email&emsp;&emsp;&emsp;string<br>&emsp;phone&emsp;&emsp;&emsp;``PatientDiaryPhone``<br>}<br>-\
-    \ email should hold the email adress for the person<br>- phone should hold the\
+    \ email should hold the email address for the person<br>- phone should hold the\
     \ phone number of that person:<br>``PatientDiaryPhone``{<br>&emsp;number&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;string<br>&emsp;internationalNumber&emsp;&emsp;&emsp;string<br>&emsp;nationalNumber&emsp;&emsp;&emsp;&emsp;string<br>&emsp;countryCode&emsp;&emsp;&emsp;&emsp;string<br>&emsp;dialCode&emsp;&emsp;&emsp;string<br>}<br>To\
     \ put this all together, here is an example PatientDiaryQueryResponse with one\
     \ person using the same contact detail:<br>{<br>&emsp;&emsp;\"total\" : 100,<br>&emsp;&emsp;\"\
@@ -114,17 +118,13 @@ info:
     firstName\" : \"Maria\",<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;,\"\
     lastName\" : \"Muster\",<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;\"\
     gender\" : \"female\"<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;\"\
-    birthday\" : null<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;},<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;}<br>&emsp;&emsp;&emsp;&emsp;}<br>&emsp;&emsp;]<br>}<br>Currently\
-    \ SORMAS allows the use of one contact detail for several persons when they are\
-    \ assumed to be in the same family.<br>Persons are assumed to live in the same\
-    \ family when their lastNames are identical. So currently SORMAS allows to continue\
-    \ with the registration of a new person only when all the persons of the response\
-    \ share the same lastName with it (or if the response does not contain any matches,\
-    \ which needs to show in <tt>PatientDiaryQueryResponse.count == 0</tt>).<br>This\
-    \ is going to change soon, as persons of the same family don't always share the\
-    \ same lastName. Instead, SORMAS will check if all firstNames are unique. That\
-    \ is necessary to avoid confusion of person related data.<br><br>When there are\
-    \ no validation errors in the process described above, SORMAS fetches an authentication\
+    birthday\" : null<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;},<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;}<br>&emsp;&emsp;&emsp;&emsp;}<br>&emsp;&emsp;]<br>}<br>SORMAS\
+    \ allows to continue with the registration of a new person only when the person\
+    \ has a unique first name, so when all persons of the response have a different\
+    \ one (or if the response does not contain any matches, which needs to show in\
+    \ PatientDiaryQueryResponse.count == 0). This validation is necessary to avoid\
+    \ confusion of person related data in some external journals.<br><br>When there\
+    \ are no validation errors in the process described above, SORMAS fetches an authentication\
     \ token as described in 1. and then uses it to request the external journal to\
     \ register the person:<br><tt>POST [interface.patientdiary.probandsurl]/external-data/[personUUID]</tt><br>The\
     \ [personUUID] is replaced with the UUID of the person, which is later used to\
@@ -137,14 +137,14 @@ info:
     \ API endpoint described below.<br><br><li><b>Synchronization of person data changed\
     \ in SORMAS</b></li><br>It may happen that person data (like a contact detail)\
     \ gets changed after a person is registered in an external journal. SORMAS notifies\
-    \ externl journals about such a change whith first fetching an authentication\
+    \ external journals about such a change with first fetching an authentication\
     \ token as descriced in 1., and the using this token for this request:<br><tt>PUT\
     \ [interface.patientdiary.probandsurl]/external-data/[personUUID]</tt><br>The\
     \ external journal is expected to refetch the person data via the ``/visits-external/person/{personUuid}``\
     \ API endpoint described below and save the changes.</li><br>After refetching\
     \ the person data, the symptom journal does its own internal validation and responds\
     \ to SORMAS with the synchronization result, containing eventual validation errors.The\
-    \ expected reponse body:<br>{<br>&emsp;\"success\" : [boolean]<br>&emsp;\"message\"\
+    \ expected response body:<br>{<br>&emsp;\"success\" : [boolean]<br>&emsp;\"message\"\
     \ : [messageString]<br>&emsp;\"errors\" : [<br>&emsp;&emsp;{[errorKey]:[errorString]}<br>&emsp;]<br>}<br>If\
     \ the changes were done manually by a user from the person edit form, the synchronization\
     \ result is shown to the user in a popup window, so that the user can fix eventual\
@@ -221,20 +221,27 @@ paths:
       responses:
         default:
           description: "A selection of personal data, including first and last name,\
-            \ e-mail, phone number(s) and birth date if availablefor that person.\
-            \ Note that Null value fields may not be returned. If you get an unexpected\
-            \ result, it might help to verifyif the personUuid is existing in your\
-            \ system via the isValid controller."
+            \ e-mail, phone number and birth date if available for that person. Regarding\
+            \ the e-mail and phone number: in SORMAS it is possible to store several\
+            \ e-mail addresses and phone numbers for a person. It is tried to provide\
+            \ one e-mail address and/or phone number via the external visits API in\
+            \ any feasible way.<br>if there is just one e-mail and/or phone number\
+            \ for a person, this is transmitted.<br>If there are several e-mail addresses\
+            \ and or phone numbers, SORMAS will transmit the ones marked as primary.<br>If\
+            \ there are several e-mail addresses or phone numbers without any marked\
+            \ as primary, SORMAS will request the user to mark one before registration.<br>Regarding\
+            \ the latestFollowUpEndDate: this is the latest follow up end date of\
+            \ any contact (or case, if the case follow up feature is enabled) related\
+            \ to the person. The contacts (and cases) considered are not filtered\
+            \ by disease.<br>Note that Null value fields may not be returned. If you\
+            \ get an unexpected result, it might help to verify if the personUuid\
+            \ is existing in your system via the isValid controller.<br>If you get\
+            \ \"pseudonymized\": true, the user the request was authorized with probably\
+            \ lacks the user role REST_EXTERNAL_VISITS_USER."
           content:
-            application/json:
+            application/json; charset=UTF-8:
               schema:
-                type: string
-                example: "[  {    \"pseudonymized\": false,    \"firstName\": \"Tim\"\
-                  ,    \"lastName\": \"Tahler\",    \"emailAddress\": \"test@test.de\"\
-                  \    \"phone\": \"0123456789\",    \"birthdateDD\": 6,    \"birthdateMM\"\
-                  : 4,    \"birthdateYYYY\": 1974,    \"sex\": \"MALE\",    \"uuid\"\
-                  : \"UO2OCI-BPXSAO-7Q4RHO-RMXCKC4M\",    \"latestFollowUpEndDate\"\
-                  : 1601416800000,  }]"
+                $ref: '#/components/schemas/JournalPersonDto'
   /visits-external/version:
     get:
       summary: Get API version
@@ -293,6 +300,8 @@ paths:
                   - OK
                   - TOO_OLD
                   - ERROR
+                  - VALIDATION_EXCEPTION
+                  - TRANSACTION_ROLLED_BACK_EXCEPTION
   /visits-external/person/{personUuid}/status:
     post:
       summary: Save symptom journal status
@@ -317,7 +326,7 @@ paths:
                 \  }\n]"
       responses:
         default:
-          description: "true if the status was set succesfully, false otherwise."
+          description: "true if the status was set successfully, false otherwise."
           content:
             application/json; charset=UTF-8:
               schema:
@@ -379,6 +388,9 @@ components:
       type: object
       properties:
         personUuid:
+          maxLength: 36
+          minLength: 20
+          pattern: "^[0-9a-zA-Z-]*$"
           type: string
         disease:
           type: string
@@ -449,13 +461,19 @@ components:
           - "Available, but uncooperative"
           - Available and cooperative
         visitRemarks:
+          maxLength: 512
+          minLength: 0
           type: string
         symptoms:
           $ref: '#/components/schemas/SymptomsDto'
         reportLat:
+          maximum: 90
+          minimum: -90
           type: number
           format: double
         reportLon:
+          maximum: 180
+          minimum: -180
           type: number
           format: double
         reportLatLonAccuracy:
@@ -471,6 +489,8 @@ components:
           type: string
           format: date-time
         uuid:
+          maxLength: 36
+          minLength: 20
           pattern: "^[0-9a-zA-Z-]*$"
           type: string
         pseudonymized:
@@ -864,6 +884,8 @@ components:
           type: string
           format: date-time
         onsetSymptom:
+          maxLength: 512
+          minLength: 0
           type: string
         oralUlcers:
           type: string
@@ -878,6 +900,8 @@ components:
           - "No"
           - Unknown
         otherHemorrhagicSymptomsText:
+          maxLength: 512
+          minLength: 0
           type: string
         otherNonHemorrhagicSymptoms:
           type: string
@@ -886,6 +910,8 @@ components:
           - "No"
           - Unknown
         otherNonHemorrhagicSymptomsText:
+          maxLength: 512
+          minLength: 0
           type: string
         otitisMedia:
           type: string
@@ -912,6 +938,8 @@ components:
           - "No"
           - Unknown
         patientIllLocation:
+          maxLength: 512
+          minLength: 0
           type: string
         pharyngealErythema:
           type: string
@@ -997,6 +1025,8 @@ components:
         symptomatic:
           type: boolean
         symptomsComments:
+          maxLength: 512
+          minLength: 0
           type: string
         temperature:
           type: number
@@ -1094,6 +1124,8 @@ components:
           - Ventricular septal defect (VSD)
           - Other heart defect
         congenitalHeartDiseaseDetails:
+          maxLength: 512
+          minLength: 0
           type: string
         unexplainedBleeding:
           type: string
@@ -1363,6 +1395,8 @@ components:
           - "No"
           - Unknown
         otherComplicationsText:
+          maxLength: 512
+          minLength: 0
           type: string
         seizures:
           type: string

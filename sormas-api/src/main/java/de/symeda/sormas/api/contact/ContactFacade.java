@@ -29,10 +29,13 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.dashboard.DashboardContactDto;
+import de.symeda.sormas.api.deletionconfiguration.AutomaticDeletionInfoDto;
+import de.symeda.sormas.api.externaldata.ExternalDataDto;
+import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
 import de.symeda.sormas.api.followup.FollowUpPeriodDto;
 import de.symeda.sormas.api.importexport.ExportConfigurationDto;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.region.RegionReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.visit.VisitSummaryExportDto;
 
@@ -55,6 +58,8 @@ public interface ContactFacade {
 
 	void generateContactFollowUpTasks();
 
+	List<ContactDto> getAllActiveContactsAfter(Date date, Integer batchSize, String lastSynchronizedUuid);
+
 	List<ContactDto> getByUuids(List<String> uuids);
 
 	Long countContactsForMap(RegionReferenceDto regionRef, DistrictReferenceDto districtRef, Disease disease, Date from, Date to);
@@ -63,9 +68,13 @@ public interface ContactFacade {
 
 	void deleteContact(String contactUuid);
 
+	List<String> deleteContacts(List<String> contactUuids);
+
 	FollowUpPeriodDto calculateFollowUpUntilDate(ContactDto contactDto, boolean ignoreOverwrite);
 
 	List<ContactIndexDto> getIndexList(ContactCriteria contactCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
+
+	List<ContactListEntryDto> getEntriesList(String personUuid, Integer first, Integer max);
 
 	Page<ContactIndexDto> getIndexPage(ContactCriteria contactCriteria, Integer offset, Integer size, List<SortProperty> sortProperties);
 
@@ -151,4 +160,8 @@ public interface ContactFacade {
 	void updateCompleteness(String uuid);
 
 	List<MapContactDto> getIndexListForMap(ContactCriteria contactCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
+
+	void updateExternalData(@Valid List<ExternalDataDto> externalData) throws ExternalDataUpdateException;
+
+	AutomaticDeletionInfoDto getAutomaticDeletionInfo(String uuid);
 }

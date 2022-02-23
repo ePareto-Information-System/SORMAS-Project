@@ -117,6 +117,11 @@
                 </LinearLayout>
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/contact_internalToken"
+                    app:value="@{data.internalToken}"
+                    style="@style/ControlSingleColumnStyle"/>
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/contact_disease"
                     app:value="@{data.disease}"
                     app:appendValue="@{data.diseaseDetails}"
@@ -480,20 +485,10 @@
                     app:value="@{data.highPriority}"
                     style="@style/ControlSingleColumnStyle" />
 
-<!--                // TODO [vaccination info] integrate vaccination info-->
-<!--                <TextView-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:id="@+id/medicalInformationHeader"-->
-<!--                    android:text="@string/heading_additional_medical_information"-->
-<!--                    style="@style/SubHeadingStyle" />-->
-
-<!--                <include-->
-<!--                    android:id="@+id/vaccinationInfo_layout"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    layout="@layout/fragment_vaccination_info_read_layout"-->
-<!--                    app:data="@{data.vaccinationInfo}"/>-->
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/contact_vaccinationStatus"
+                    app:value="@{data.vaccinationStatus}"
+                    style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/contact_immunosuppressiveTherapyBasicDisease"

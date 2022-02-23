@@ -22,4 +22,19 @@ import org.openqa.selenium.By;
 
 public class EventParticipantsPage {
   public static final By ADD_PARTICIPANT_BUTTON = By.cssSelector("div#eventParticipantAddPerson");
+  public static final By PARTICIPANT_FIRST_NAME_INPUT = By.cssSelector(".popupContent #firstName");
+  public static final By PARTICIPANT_LAST_NAME_INPUT = By.cssSelector(".popupContent #lastName");
+  public static final By PARTICIPANT_REGION_COMBOBOX = By.cssSelector(".popupContent #region div");
+  public static final By PARTICIPANT_DISTRICT_COMBOBOX =
+      By.cssSelector(".popupContent #district div");
+  public static final By SEX_COMBOBOX =
+      By.cssSelector(".v-window [location='sex'] [role='combobox'] div");
+  public static final By PICK_OR_CREATE_PERSON_POPUP =
+      By.xpath("//*[contains(text(),'Pick or create person')]");
+  public static final By CREATE_NEW_PERSON_RADIO_BUTTON =
+      By.xpath("//label[contains(text(),'Create a new person')]");
+  public static final By EVENT_PARTICIPANTS_TAB = By.id("tab-events-eventparticipants");
+  public static final By PICK_OR_CREATE_POPUP_SAVE_BUTTON = By.cssSelector("#commit");
+  public static final By ERROR_MESSAGE_TEXT = By.cssSelector("p.v-Notification-description");
+  public static final By DISCARD_BUTTON = By.id("discard");
 }

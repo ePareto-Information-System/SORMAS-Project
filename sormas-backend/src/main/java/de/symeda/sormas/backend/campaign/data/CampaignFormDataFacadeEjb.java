@@ -31,7 +31,6 @@ import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -45,6 +44,7 @@ import javax.persistence.criteria.Root;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import de.symeda.sormas.api.campaign.CampaignJurisdictionLevel;
 import de.symeda.sormas.api.campaign.CampaignReferenceDto;
 import de.symeda.sormas.api.campaign.data.CampaignFormDataCriteria;
 import de.symeda.sormas.api.campaign.data.CampaignFormDataDto;
@@ -61,9 +61,9 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.PopulationDataCriteria;
 import de.symeda.sormas.api.infrastructure.PopulationDataDto;
-import de.symeda.sormas.api.region.AreaReferenceDto;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.region.RegionReferenceDto;
+import de.symeda.sormas.api.infrastructure.area.AreaReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
@@ -76,21 +76,22 @@ import de.symeda.sormas.backend.campaign.form.CampaignFormMetaService;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
 import de.symeda.sormas.backend.infrastructure.PopulationDataFacadeEjb;
-import de.symeda.sormas.backend.region.Area;
-import de.symeda.sormas.backend.region.AreaService;
-import de.symeda.sormas.backend.region.Community;
-import de.symeda.sormas.backend.region.CommunityFacadeEjb;
-import de.symeda.sormas.backend.region.CommunityService;
-import de.symeda.sormas.backend.region.District;
-import de.symeda.sormas.backend.region.DistrictFacadeEjb;
-import de.symeda.sormas.backend.region.DistrictService;
-import de.symeda.sormas.backend.region.Region;
-import de.symeda.sormas.backend.region.RegionFacadeEjb;
-import de.symeda.sormas.backend.region.RegionService;
+import de.symeda.sormas.backend.infrastructure.area.Area;
+import de.symeda.sormas.backend.infrastructure.area.AreaService;
+import de.symeda.sormas.backend.infrastructure.community.Community;
+import de.symeda.sormas.backend.infrastructure.community.CommunityFacadeEjb;
+import de.symeda.sormas.backend.infrastructure.community.CommunityService;
+import de.symeda.sormas.backend.infrastructure.district.District;
+import de.symeda.sormas.backend.infrastructure.district.DistrictFacadeEjb;
+import de.symeda.sormas.backend.infrastructure.district.DistrictService;
+import de.symeda.sormas.backend.infrastructure.region.Region;
+import de.symeda.sormas.backend.infrastructure.region.RegionFacadeEjb;
+import de.symeda.sormas.backend.infrastructure.region.RegionService;
 import de.symeda.sormas.backend.user.UserFacadeEjb;
 import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.ModelConstants;
+import de.symeda.sormas.backend.util.QueryHelper;
 
 @Stateless(name = "CampaignFormDataFacade")
 public class CampaignFormDataFacadeEjb implements CampaignFormDataFacade {
@@ -127,6 +128,9 @@ public class CampaignFormDataFacadeEjb implements CampaignFormDataFacade {
 
 	@EJB
 	private RegionFacadeEjb.RegionFacadeEjbLocal regionFacadeEjb;
+
+	@EJB
+	private DistrictFacadeEjb.DistrictFacadeEjbLocal districtFacadeEjb;
 
 	public CampaignFormData fromDto(@NotNull CampaignFormDataDto source, boolean checkChangeDate) {
 		CampaignFormData target =
@@ -250,14 +254,7 @@ public class CampaignFormDataFacadeEjb implements CampaignFormDataFacade {
 
 		cq.orderBy(cb.desc(root.get(CampaignFormData.CHANGE_DATE)));
 
-		CampaignFormData resultEntity;
-		try {
-			resultEntity = em.createQuery(cq).setMaxResults(1).getSingleResult();
-		} catch (NoResultException e) {
-			resultEntity = null;
-		}
-
-		return resultEntity != null ? toDto(resultEntity) : null;
+		return QueryHelper.getFirstResult(em, cq, this::toDto);
 	}
 
 	@Override
@@ -326,14 +323,7 @@ public class CampaignFormDataFacadeEjb implements CampaignFormDataFacade {
 			cq.orderBy(cb.desc(root.get(CampaignFormData.CHANGE_DATE)));
 		}
 
-		List<CampaignFormDataIndexDto> result;
-		if (first != null && max != null) {
-			result = em.createQuery(cq).setFirstResult(first).setMaxResults(max).getResultList();
-		} else {
-			result = em.createQuery(cq).getResultList();
-		}
-
-		return result;
+		return QueryHelper.getResultList(em, cq, first, max);
 	}
 
 	@Override
@@ -361,7 +351,9 @@ public class CampaignFormDataFacadeEjb implements CampaignFormDataFacade {
 		final AreaReferenceDto area = campaignDiagramCriteria.getArea();
 		final RegionReferenceDto region = campaignDiagramCriteria.getRegion();
 		final DistrictReferenceDto district = campaignDiagramCriteria.getDistrict();
-		if (Objects.isNull(area)) {
+		final CampaignJurisdictionLevel grouping = campaignDiagramCriteria.getCampaignJurisdictionLevelGroupBy();
+
+		if (grouping == CampaignJurisdictionLevel.AREA) {
 			List<Area> areas = areaService.getAll();
 			areas.forEach(areaItem -> {
 				Integer population = populationDataFacadeEjb.getAreaPopulation(areaItem.getUuid(), diagramSeriesTotal.getPopulationGroup());
@@ -387,19 +379,25 @@ public class CampaignFormDataFacadeEjb implements CampaignFormDataFacade {
 							true));
 				}
 			});
-		} else if (Objects.isNull(region)) {
-			List<RegionReferenceDto> regions = regionFacadeEjb.getAllActiveByArea(area.getUuid());
-			if (regions.isEmpty()) {
-				resultData.add(
-					new CampaignDiagramDataDto(
-						area.getCaption(),
-						0,
-						area.getUuid(),
-						area.getCaption(),
-						diagramSeries.getFieldId(),
-						diagramSeries.getFormId(),
-						false));
-			} else {
+		} else if (grouping == CampaignJurisdictionLevel.REGION) {
+			List<RegionReferenceDto> regions;
+			if (area != null)
+				regions = regionFacadeEjb.getAllActiveByArea(area.getUuid());
+			else
+				regions = regionFacadeEjb.getAllActiveAsReference();
+
+			// this should not be needed
+//			if (regions.isEmpty()) {
+//				resultData.add(
+//					new CampaignDiagramDataDto(
+//						area.getCaption(),
+//						0,
+//						area.getUuid(),
+//						area.getCaption(),
+//						diagramSeries.getFieldId(),
+//						diagramSeries.getFormId(),
+//						false));
+//			} else {
 				regions.stream().forEach(regionReferenceDto -> {
 					PopulationDataCriteria criteria = new PopulationDataCriteria();
 					criteria.sexIsNull(true);
@@ -430,24 +428,30 @@ public class CampaignFormDataFacadeEjb implements CampaignFormDataFacade {
 								false));
 					}
 				});
-			}
-		} else if (Objects.isNull(district)) {
+//			}
+		} else if (grouping == CampaignJurisdictionLevel.DISTRICT || Objects.isNull(district)) {
 
-			List<DistrictReferenceDto> districts = districtService.getAllActiveByRegion(regionService.getByUuid(region.getUuid()))
-				.stream()
-				.map(district1 -> new DistrictReferenceDto(district1.getUuid(), district1.getName(), district1.getExternalID()))
-				.collect(Collectors.toList());
-			if (districts.isEmpty()) {
-				resultData.add(
-					new CampaignDiagramDataDto(
-						region.getCaption(),
-						0,
-						region.getUuid(),
-						region.getCaption(),
-						diagramSeries.getFieldId(),
-						diagramSeries.getFormId(),
-						false));
+			List<DistrictReferenceDto> districts;
+			if (region != null) {
+				districts = districtFacadeEjb.getAllActiveByRegion(region.getUuid());
+			} else if (area != null) {
+				districts = districtFacadeEjb.getAllActiveByArea(area.getUuid());
 			} else {
+				districts = districtFacadeEjb.getAllActiveAsReference();
+			}
+
+			// this should not be needed
+//			if (districts.isEmpty()) {
+//				resultData.add(
+//					new CampaignDiagramDataDto(
+//						region.getCaption(),
+//						0,
+//						region.getUuid(),
+//						region.getCaption(),
+//						diagramSeries.getFieldId(),
+//						diagramSeries.getFormId(),
+//						false));
+//			} else {
 				districts.stream().forEach(districtReferenceDto -> {
 					PopulationDataCriteria criteria = new PopulationDataCriteria();
 					criteria.sexIsNull(true);
@@ -479,8 +483,8 @@ public class CampaignFormDataFacadeEjb implements CampaignFormDataFacade {
 								false));
 					}
 				});
-			}
-		} else {
+//			}
+		} else if (district != null) {
 			resultData.add(
 				new CampaignDiagramDataDto(
 					district.getCaption(),

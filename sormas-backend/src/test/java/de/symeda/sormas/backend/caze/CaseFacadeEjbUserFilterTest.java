@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.is;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -33,9 +34,11 @@ import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseIndexDto;
 import de.symeda.sormas.api.caze.InvestigationStatus;
 import de.symeda.sormas.api.user.UserDto;
+import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.backend.AbstractBeanTest;
 import de.symeda.sormas.backend.TestDataCreator;
+import de.symeda.sormas.backend.infrastructure.facility.Facility;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CaseFacadeEjbUserFilterTest extends AbstractBeanTest {
@@ -49,6 +52,7 @@ public class CaseFacadeEjbUserFilterTest extends AbstractBeanTest {
 	private UserDto regionUser;
 	private UserDto communityUser;
 	private UserDto facilityUser;
+	private UserDto labUser;
 
 	@Override
 	public void init() {
@@ -96,6 +100,10 @@ public class CaseFacadeEjbUserFilterTest extends AbstractBeanTest {
 			"Inf2",
 			UserRole.HOSPITAL_INFORMANT);
 
+		labUser = creator.createUser(null, null, null, "Lab", "Off", UserRole.LAB_USER);
+		labUser.setLaboratory(rdcf1.facility);
+		getUserFacade().saveUser(labUser);
+
 	}
 
 	@Test
@@ -122,7 +130,7 @@ public class CaseFacadeEjbUserFilterTest extends AbstractBeanTest {
 	}
 
 	@Test
-	public void testGetCasesOnRegionevel() {
+	public void testGetCasesOnRegionLevel() {
 		loginWith(regionUser);
 
 		CaseDataDto visibleCase = createCase(rdcf2, districtUser2);
@@ -131,6 +139,22 @@ public class CaseFacadeEjbUserFilterTest extends AbstractBeanTest {
 		List<CaseIndexDto> indexList = getCaseFacade().getIndexList(new CaseCriteria(), 0, 100, null);
 		assertThat(indexList, hasSize(1));
 		assertThat(indexList.get(0).getUuid(), is(visibleCase.getUuid()));
+	}
+
+	@Test
+	public void testGetUsersHavingJurisdictionOverCase() {
+		loginWith(nationalUser);
+
+		CaseDataDto caze = createCase(rdcf1, districtUser1);
+
+		UserDto inactiveUser = creator.createUser(rdcf1, UserRole.SURVEILLANCE_SUPERVISOR, user -> user.setActive(false));
+
+		List<UserReferenceDto> usersHavingCaseInJurisdiction = getUserFacade().getUsersHavingCaseInJurisdiction(caze.toReference());
+		Assert.assertNotNull(usersHavingCaseInJurisdiction);
+		Assert.assertEquals(3, usersHavingCaseInJurisdiction.size()); // contains also admin as test admin user is also national user
+		Assert.assertTrue(usersHavingCaseInJurisdiction.contains(nationalUser));
+		Assert.assertTrue(usersHavingCaseInJurisdiction.contains(districtUser1));
+		Assert.assertFalse(usersHavingCaseInJurisdiction.contains(inactiveUser));
 	}
 
 	@Test
@@ -158,7 +182,7 @@ public class CaseFacadeEjbUserFilterTest extends AbstractBeanTest {
 	}
 
 	@Test
-	public void testGetCasesWithResponsibleJurisdictionOnNationalLevel() {
+	public void testGetCasesWithPlaceOfStayOnNationalLevel() {
 		loginWith(nationalUser);
 
 		createCase(rdcf1, districtUser1, rdcf2);
@@ -169,7 +193,60 @@ public class CaseFacadeEjbUserFilterTest extends AbstractBeanTest {
 	}
 
 	@Test
-	public void testGetCasesResponsibleJurisdictionOnRegionLevel() {
+	public void testGetCasesOnLaboratoryLevel() {
+		loginWith(nationalUser);
+
+		CaseDataDto visibleCase = createCase(rdcf1, nationalUser);
+
+		creator.createSample(visibleCase.toReference(), nationalUser.toReference(), rdcf1.facility, s -> {
+			s.setReportLat(46.432);
+			s.setReportLon(23.234);
+			s.setReportLatLonAccuracy(10f);
+			s.setLabDetails("Test lab details");
+			s.setShipmentDetails("Test shipment details");
+			s.setComment("Test comment");
+		});
+
+		CaseDataDto aCase = createCase(rdcf2, nationalUser);
+
+		loginWith(labUser);
+
+		CaseDataDto caseDataByUuid = getCaseFacade().getCaseDataByUuid(aCase.getUuid());
+
+		List<CaseIndexDto> indexList = getCaseFacade().getIndexList(new CaseCriteria(), 0, 100, null);
+		assertThat(indexList, hasSize(1));
+		assertThat(indexList.get(0).getUuid(), is(visibleCase.getUuid()));
+	}
+
+	@Test
+	public void testGetCasesOnLaboratoryLevelWhenCasesDoNotHaveSamplesInUserLaboratory() {
+		loginWith(nationalUser);
+
+		CaseDataDto nonvisibleCase = createCase(rdcf1, nationalUser);
+
+		Facility lab = new Facility();
+		lab.setName("Lab");
+		getFacilityService().persist(lab);
+
+		creator.createSample(nonvisibleCase.toReference(), nationalUser.toReference(), lab, s -> {
+			s.setReportLat(46.432);
+			s.setReportLon(23.234);
+			s.setReportLatLonAccuracy(10f);
+			s.setLabDetails("Test lab details");
+			s.setShipmentDetails("Test shipment details");
+			s.setComment("Test comment");
+		});
+
+		createCase(rdcf2, nationalUser);
+
+		loginWith(labUser);
+
+		List<CaseIndexDto> indexList = getCaseFacade().getIndexList(new CaseCriteria(), 0, 100, null);
+		assertThat(indexList, hasSize(0));
+	}
+
+	@Test
+	public void testGetCasesWithPlaceOfStayOnRegionLevel() {
 		loginWith(regionUser);
 
 		CaseDataDto visibleCase = createCase(rdcf1, districtUser1, rdcf2);
@@ -181,7 +258,7 @@ public class CaseFacadeEjbUserFilterTest extends AbstractBeanTest {
 	}
 
 	@Test
-	public void testGetCasesResponsibleJurisdictionOnCommunityLevel() {
+	public void testGetCasesWithPlaceOfStayOnCommunityLevel() {
 		loginWith(communityUser);
 
 		CaseDataDto visibleCase = createCase(rdcf1, districtUser1, rdcf2);
@@ -205,7 +282,7 @@ public class CaseFacadeEjbUserFilterTest extends AbstractBeanTest {
 			null);
 	}
 
-	private CaseDataDto createCase(TestDataCreator.RDCF rdcf, UserDto reportingUser, TestDataCreator.RDCF responsibleRdcf) {
+	private CaseDataDto createCase(TestDataCreator.RDCF rdcf, UserDto reportingUser, TestDataCreator.RDCF placeOfStayRdcf) {
 
 		return creator.createCase(
 			reportingUser.toReference(),
@@ -216,9 +293,10 @@ public class CaseFacadeEjbUserFilterTest extends AbstractBeanTest {
 			new Date(),
 			rdcf,
 			(c) -> {
-				c.setResponsibleRegion(responsibleRdcf.region);
-				c.setResponsibleDistrict(responsibleRdcf.district);
-				c.setResponsibleCommunity(responsibleRdcf.community);
+				c.setRegion(placeOfStayRdcf.region);
+				c.setDistrict(placeOfStayRdcf.district);
+				c.setCommunity(placeOfStayRdcf.community);
+				c.setHealthFacility(placeOfStayRdcf.facility);
 			});
 	}
 }

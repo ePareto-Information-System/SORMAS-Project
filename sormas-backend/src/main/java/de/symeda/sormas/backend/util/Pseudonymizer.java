@@ -17,6 +17,8 @@ package de.symeda.sormas.backend.util;
 
 import java.util.function.Consumer;
 
+import de.symeda.sormas.api.i18n.Captions;
+import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
@@ -39,6 +41,10 @@ public class Pseudonymizer extends DtoPseudonymizer {
 			createDefaultFieldAccessCheckers(false, rightCheck),
 			stringValuePlaceholder,
 			true);
+	}
+
+	public static Pseudonymizer getDefaultWithInaccessibleValuePlaceHolder(RightCheck rightCheck) {
+		return getDefault(rightCheck, I18nProperties.getCaption(Captions.inaccessibleValue));
 	}
 
 	public static Pseudonymizer getDefaultNoCheckers(boolean pseudonymizeMandatoryFields) {
@@ -86,7 +92,7 @@ public class Pseudonymizer extends DtoPseudonymizer {
 
 	private boolean isUserInJurisdiction(User user, User currentUser) {
 
-		if (user.getJurisdictionLevel() == JurisdictionLevel.NATION || user.getJurisdictionLevel() == JurisdictionLevel.REGION) {
+		if (user.getCalculatedJurisdictionLevel() == JurisdictionLevel.NATION || user.getCalculatedJurisdictionLevel() == JurisdictionLevel.REGION) {
 			return true;
 		}
 
@@ -106,6 +112,10 @@ public class Pseudonymizer extends DtoPseudonymizer {
 			return DataHelper.isSame(currentUser.getDistrict(), user.getDistrict());
 		}
 
+		if (currentUser.getLaboratory() != null) {
+			return DataHelper.isSame(currentUser.getLaboratory(), user.getLaboratory());
+		}
+
 		return true;
 	}
 
@@ -119,5 +129,4 @@ public class Pseudonymizer extends DtoPseudonymizer {
 
 		return FieldAccessCheckers.withCheckers(personalFieldAccessChecker, sensitiveFieldAccessChecker);
 	}
-
 }

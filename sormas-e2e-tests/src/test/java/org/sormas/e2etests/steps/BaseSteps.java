@@ -22,18 +22,23 @@ import com.google.inject.Inject;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
+import customreport.chartbuilder.ReportChartBuilder;
+import customreport.data.TableDataManager;
+import customreport.reportbuilder.CustomReportBuilder;
 import io.qameta.allure.listener.StepLifecycleListener;
-import java.util.concurrent.TimeUnit;
+import io.restassured.RestAssured;
+import io.restassured.parsing.Parser;
+import java.time.Duration;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.sormas.e2etests.ui.DriverManager;
+import org.sormas.e2etests.webdriver.DriverManager;
 import recorders.StepsLogger;
 
 @Slf4j
 public class BaseSteps implements StepLifecycleListener {
 
-  private static RemoteWebDriver driver;
+  public static RemoteWebDriver driver;
   private final DriverManager driverManager;
 
   @Inject
@@ -45,18 +50,44 @@ public class BaseSteps implements StepLifecycleListener {
     return driver;
   }
 
-  @Before
+  @Before(value = "@UI")
   public void beforeScenario(Scenario scenario) {
-    driver = driverManager.borrowRemoteWebDriver(scenario.getName());
-    StepsLogger.setRemoteWebDriver(driver);
-    WebDriver.Options options = driver.manage();
-    options.window().maximize();
-    options.timeouts().setScriptTimeout(120, TimeUnit.SECONDS);
-    options.timeouts().pageLoadTimeout(120, TimeUnit.SECONDS);
+    if (isNonApiScenario(scenario)) {
+      driver = driverManager.borrowRemoteWebDriver(scenario.getName());
+      StepsLogger.setRemoteWebDriver(driver);
+      WebDriver.Options options = driver.manage();
+      options.timeouts().setScriptTimeout(Duration.ofMinutes(2));
+      options.timeouts().pageLoadTimeout(Duration.ofMinutes(2));
+      log.info("Browser's resolution: " + driver.manage().window().getSize().toString());
+      log.info("Starting test: " + scenario.getName());
+    }
   }
 
-  @After
+  @Before(value = "@API")
+  static void setup() {
+    RestAssured.registerParser("text/html", Parser.JSON);
+  }
+
+  @After(value = "@UI")
   public void afterScenario(Scenario scenario) {
-    driverManager.releaseRemoteWebDriver(scenario.getName());
+    if (isNonApiScenario(scenario)) {
+      driverManager.releaseRemoteWebDriver(scenario.getName());
+    }
+    log.info("Finished test: " + scenario.getName());
+  }
+
+  @After(value = "@PublishCustomReport")
+  public void generateMeasurementsReport() {
+    log.info("Parsing results collected in results.txt and converting them into Row Objects");
+    TableDataManager.convertData();
+    log.info("Creating Chart for UI Meassurements report");
+    ReportChartBuilder.buildChartForData(TableDataManager.getTableRowsDataList());
+    log.info("Generating Sormas Custom report");
+    CustomReportBuilder.generateReport(TableDataManager.getTableRowsAsHtml());
+    log.info("Custom report was created!");
+  }
+
+  private static boolean isNonApiScenario(Scenario scenario) {
+    return !scenario.getSourceTagNames().contains("@API");
   }
 }

@@ -4,10 +4,10 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -26,26 +26,30 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
 import javax.persistence.criteria.Subquery;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import de.symeda.sormas.api.caze.CaseCriteria;
 import de.symeda.sormas.api.caze.CaseIndexDetailedDto;
 import de.symeda.sormas.api.caze.CaseIndexDto;
 import de.symeda.sormas.api.contact.ContactIndexDto;
 import de.symeda.sormas.api.utils.SortProperty;
+import de.symeda.sormas.backend.ExtendedPostgreSQL94Dialect;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
-import de.symeda.sormas.backend.customizableenum.CustomizableEnumFacadeEjb;
+import de.symeda.sormas.backend.contact.Contact;
 import de.symeda.sormas.backend.event.Event;
 import de.symeda.sormas.backend.event.EventParticipant;
-import de.symeda.sormas.backend.facility.Facility;
-import de.symeda.sormas.backend.infrastructure.PointOfEntry;
+import de.symeda.sormas.backend.infrastructure.community.Community;
+import de.symeda.sormas.backend.infrastructure.district.District;
+import de.symeda.sormas.backend.infrastructure.facility.Facility;
+import de.symeda.sormas.backend.infrastructure.pointofentry.PointOfEntry;
+import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.person.Person;
-import de.symeda.sormas.backend.region.Community;
-import de.symeda.sormas.backend.region.District;
-import de.symeda.sormas.backend.region.Region;
 import de.symeda.sormas.backend.sample.Sample;
 import de.symeda.sormas.backend.symptoms.Symptoms;
 import de.symeda.sormas.backend.user.User;
+import de.symeda.sormas.backend.util.JurisdictionHelper;
 import de.symeda.sormas.backend.util.ModelConstants;
 import de.symeda.sormas.utils.CaseJoins;
 
@@ -57,8 +61,6 @@ public class CaseListCriteriaBuilder {
 	private EntityManager em;
 	@EJB
 	private CaseService caseService;
-	@EJB
-	private CustomizableEnumFacadeEjb.CustomizableEnumFacadeEjbLocal customizableEnumFacade;
 
 	public CriteriaQuery<CaseIndexDto> buildIndexCriteria(CaseCriteria caseCriteria, List<SortProperty> sortProperties) {
 		return buildIndexCriteria(CaseIndexDto.class, this::getCaseIndexSelections, caseCriteria, this::getIndexOrders, sortProperties, false);
@@ -132,10 +134,15 @@ public class CaseListCriteriaBuilder {
 			selectionList.add(sampleCountSq);
 		}
 
+		// This is needed in selection because of the combination of distinct and orderBy clauses - every operator in the orderBy has to be part of the select IF distinct is used
+		Expression<Date> latestChangedDateFunction =
+			cb.function(ExtendedPostgreSQL94Dialect.GREATEST, Date.class, caze.get(Contact.CHANGE_DATE), joins.getPerson().get(Person.CHANGE_DATE));
+		selectionList.add(latestChangedDateFunction);
+
 		cq.multiselect(selectionList);
 		cq.distinct(true);
 
-		if (sortProperties != null && sortProperties.size() > 0) {
+		if (!CollectionUtils.isEmpty(sortProperties)) {
 			List<Order> order = new ArrayList<>(sortProperties.size());
 			for (SortProperty sortProperty : sortProperties) {
 				order.addAll(
@@ -146,7 +153,7 @@ public class CaseListCriteriaBuilder {
 			}
 			cq.orderBy(order);
 		} else {
-			cq.orderBy(cb.desc(caze.get(Case.CHANGE_DATE)));
+			cq.orderBy(cb.desc(latestChangedDateFunction));
 		}
 
 		CaseUserFilterCriteria caseUserFilterCriteria = new CaseUserFilterCriteria();
@@ -168,19 +175,16 @@ public class CaseListCriteriaBuilder {
 	}
 
 	public List<Selection<?>> getCaseIndexSelections(Root<Case> root, CaseQueryContext caseQueryContext) {
-
-		CaseJoins<Case> joins = (CaseJoins<Case>) caseQueryContext.getJoins();
-
-		return getCaseIndexSelections(root, joins);
-	}
-
-	public List<Selection<?>> getCaseIndexSelections(Root<Case> root, CaseJoins<Case> joins) {
+		final CaseJoins<Case> joins = (CaseJoins<Case>) caseQueryContext.getJoins();
+		final CriteriaBuilder cb = caseQueryContext.getCriteriaBuilder();
 		return Arrays.asList(
 			root.get(AbstractDomainObject.ID),
 			root.get(Case.UUID),
 			root.get(Case.EPID_NUMBER),
 			root.get(Case.EXTERNAL_ID),
 			root.get(Case.EXTERNAL_TOKEN),
+			root.get(Case.INTERNAL_TOKEN),
+			joins.getPerson().get(Person.UUID),
 			joins.getPerson().get(Person.FIRST_NAME),
 			joins.getPerson().get(Person.LAST_NAME),
 			root.get(Case.DISEASE),
@@ -190,12 +194,9 @@ public class CaseListCriteriaBuilder {
 			root.get(Case.INVESTIGATION_STATUS),
 			joins.getPerson().get(Person.PRESENT_CONDITION),
 			root.get(Case.REPORT_DATE),
-			joins.getReportingUser().get(User.UUID),
 			root.get(AbstractDomainObject.CREATION_DATE),
 			joins.getRegion().get(Region.UUID),
 			joins.getDistrict().get(District.UUID),
-			joins.getDistrict().get(District.NAME),
-			joins.getCommunity().get(Community.UUID),
 			joins.getFacility().get(Facility.UUID),
 			joins.getFacility().get(Facility.NAME),
 			root.get(Case.HEALTH_FACILITY_DETAILS),
@@ -215,12 +216,13 @@ public class CaseListCriteriaBuilder {
 			root.get(Case.FOLLOW_UP_STATUS),
 			root.get(Case.FOLLOW_UP_UNTIL),
 			joins.getPerson().get(Person.SYMPTOM_JOURNAL_STATUS),
-			root.get(Case.VACCINATION),
+			root.get(Case.VACCINATION_STATUS),
 			root.get(Case.CHANGE_DATE),
 			joins.getFacility().get(Facility.ID),
 			joins.getResponsibleRegion().get(Region.UUID),
 			joins.getResponsibleDistrict().get(District.UUID),
-			joins.getResponsibleCommunity().get(Community.UUID));
+			joins.getResponsibleDistrict().get(District.NAME),
+			JurisdictionHelper.booleanSelector(cb, caseService.inJurisdictionOrOwned(caseQueryContext)));
 	}
 
 	private List<Expression<?>> getIndexOrders(SortProperty sortProperty, Root<Case> caze, CaseJoins<Case> joins, CriteriaBuilder cb) {
@@ -231,6 +233,7 @@ public class CaseListCriteriaBuilder {
 		case CaseIndexDto.EPID_NUMBER:
 		case CaseIndexDto.EXTERNAL_ID:
 		case CaseIndexDto.EXTERNAL_TOKEN:
+		case CaseIndexDto.INTERNAL_TOKEN:
 		case CaseIndexDto.DISEASE:
 		case CaseIndexDto.DISEASE_DETAILS:
 		case CaseIndexDto.CASE_CLASSIFICATION:
@@ -243,9 +246,11 @@ public class CaseListCriteriaBuilder {
 		case CaseIndexDto.COMPLETENESS:
 		case CaseIndexDto.FOLLOW_UP_STATUS:
 		case CaseIndexDto.FOLLOW_UP_UNTIL:
-		case CaseIndexDto.VACCINATION:
+		case CaseIndexDto.VACCINATION_STATUS:
 		case CaseIndexDto.DISEASE_VARIANT:
 			return Collections.singletonList(caze.get(sortProperty.propertyName));
+		case CaseIndexDto.PERSON_UUID:
+			return Collections.singletonList(joins.getPerson().get(Person.UUID));
 		case CaseIndexDto.PERSON_FIRST_NAME:
 			return Collections.singletonList(joins.getPerson().get(Person.FIRST_NAME));
 		case CaseIndexDto.PERSON_LAST_NAME:
@@ -260,8 +265,8 @@ public class CaseListCriteriaBuilder {
 			return Collections.singletonList(joins.getRegion().get(Region.UUID));
 		case CaseIndexDto.DISTRICT_UUID:
 			return Collections.singletonList(joins.getDistrict().get(District.UUID));
-		case CaseIndexDto.DISTRICT_NAME:
-			return Collections.singletonList(joins.getDistrict().get(District.NAME));
+		case CaseIndexDto.RESPONSIBLE_DISTRICT_NAME:
+			return Collections.singletonList(joins.getResponsibleDistrict().get(District.NAME));
 		case CaseIndexDto.HEALTH_FACILITY_UUID:
 			return Collections.singletonList(joins.getFacility().get(Facility.UUID));
 		case CaseIndexDto.HEALTH_FACILITY_NAME:
@@ -289,11 +294,11 @@ public class CaseListCriteriaBuilder {
 				joins.getAddress().get(Location.ADDITIONAL_INFORMATION),
 				joins.getAddress().get(Location.POSTAL_CODE),
 				((Expression<String>) caseQueryContext.getSubqueryExpression(CaseQueryContext.PERSON_PHONE_SUBQUERY)),
+				joins.getReportingUser().get(User.UUID),
 				joins.getReportingUser().get(User.FIRST_NAME),
 				joins.getReportingUser().get(User.LAST_NAME),
 				joins.getSymptoms().get(Symptoms.ONSET_DATE),
 				joins.getResponsibleRegion().get(Region.NAME),
-				joins.getResponsibleDistrict().get(District.NAME),
 				joins.getResponsibleCommunity().get(Community.NAME)));
 
 		return selections;
@@ -316,27 +321,11 @@ public class CaseListCriteriaBuilder {
 			return Collections.singletonList(joins.getSymptoms().get(Symptoms.ONSET_DATE));
 		case CaseIndexDetailedDto.RESPONSIBLE_REGION:
 			return Collections.singletonList(joins.getResponsibleRegion().get(Region.NAME));
-		case CaseIndexDetailedDto.RESPONSIBLE_DISTRICT:
-			return Collections.singletonList(joins.getResponsibleDistrict().get(District.NAME));
 		case CaseIndexDetailedDto.RESPONSIBLE_COMMUNITY:
 			return Collections.singletonList(joins.getResponsibleCommunity().get(Community.NAME));
 		default:
 			return getIndexOrders(sortProperty, caze, joins, cb);
 		}
-	}
-
-	public Stream<Selection<?>> getJurisdictionSelections(CaseJoins<Case> joins) {
-
-		return Stream.of(
-			joins.getReportingUser().get(User.UUID),
-			joins.getResponsibleRegion().get(Region.UUID),
-			joins.getResponsibleDistrict().get(District.UUID),
-			joins.getResponsibleCommunity().get(Community.UUID),
-			joins.getRegion().get(Region.UUID),
-			joins.getDistrict().get(District.UUID),
-			joins.getCommunity().get(Community.UUID),
-			joins.getFacility().get(Facility.UUID),
-			joins.getPointOfEntry().get(PointOfEntry.UUID));
 	}
 
 	private interface OrderExpressionProvider {

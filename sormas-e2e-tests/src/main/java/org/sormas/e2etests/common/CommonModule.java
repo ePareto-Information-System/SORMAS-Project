@@ -27,11 +27,15 @@ import com.google.inject.PrivateModule;
 import com.google.inject.Provides;
 import io.restassured.RestAssured;
 import io.restassured.specification.RequestSpecification;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Locale;
-import javax.inject.Named;
+import java.util.Properties;
 import javax.inject.Singleton;
-import org.assertj.core.api.SoftAssertions;
-import org.sormas.e2etests.ui.DriverManager;
+import lombok.SneakyThrows;
+import org.sormas.e2etests.enums.TestDataUser;
+import org.sormas.e2etests.webdriver.DriverManager;
+import org.testng.asserts.SoftAssert;
 
 public class CommonModule extends PrivateModule {
 
@@ -51,8 +55,26 @@ public class CommonModule extends PrivateModule {
   @Provides
   @Singleton
   @Exposed
-  SoftAssertions provideSoftAssertions() {
-    return new SoftAssertions();
+  SoftAssert provideSoftAssertions() {
+    return new SoftAssert();
+  }
+
+  @SneakyThrows
+  @Provides
+  @Singleton
+  @Exposed
+  Properties provideProperties() {
+    Properties prop = new Properties();
+    InputStream inputStream;
+    String propFileName = "enum.properties";
+    inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
+    if (inputStream != null) {
+      prop.load(inputStream);
+    } else {
+      throw new FileNotFoundException(
+          "property file '" + propFileName + "' not found in the classpath");
+    }
+    return prop;
   }
 
   @Provides
@@ -67,8 +89,11 @@ public class CommonModule extends PrivateModule {
 
   @Provides
   @Exposed
-  RequestSpecification provideRestAssured(
-      @Named("REST_USER") String userName, @Named("REST_PASSWORD") String userPassword) {
-    return RestAssured.given().auth().preemptive().basic(userName, userPassword);
+  RequestSpecification provideRestAssured() {
+    return RestAssured.given()
+        .auth()
+        .preemptive()
+        .basic(
+            TestDataUser.REST_AUTOMATION.getUsername(), TestDataUser.REST_AUTOMATION.getPassword());
   }
 }

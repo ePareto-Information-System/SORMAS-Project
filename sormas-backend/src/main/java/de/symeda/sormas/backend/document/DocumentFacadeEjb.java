@@ -16,6 +16,7 @@ package de.symeda.sormas.backend.document;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
@@ -24,18 +25,18 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.validation.Valid;
 
+import de.symeda.sormas.api.document.DocumentCriteria;
 import de.symeda.sormas.api.document.DocumentDto;
 import de.symeda.sormas.api.document.DocumentFacade;
 import de.symeda.sormas.api.document.DocumentRelatedEntityType;
+import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.backend.caze.Case;
-import de.symeda.sormas.backend.caze.CaseJurisdictionChecker;
 import de.symeda.sormas.backend.caze.CaseService;
 import de.symeda.sormas.backend.contact.Contact;
-import de.symeda.sormas.backend.contact.ContactJurisdictionChecker;
 import de.symeda.sormas.backend.contact.ContactService;
 import de.symeda.sormas.backend.event.Event;
-import de.symeda.sormas.backend.event.EventJurisdictionChecker;
 import de.symeda.sormas.backend.event.EventService;
 import de.symeda.sormas.backend.user.UserFacadeEjb;
 import de.symeda.sormas.backend.user.UserService;
@@ -73,15 +74,9 @@ public class DocumentFacadeEjb implements DocumentFacade {
 	@EJB
 	private CaseService caseService;
 	@EJB
-	private CaseJurisdictionChecker caseJurisdictionChecker;
-	@EJB
 	private ContactService contactService;
 	@EJB
-	private ContactJurisdictionChecker contactJurisdictionChecker;
-	@EJB
 	private EventService eventService;
-	@EJB
-	private EventJurisdictionChecker eventJurisdictionChecker;
 
 	@Override
 	public DocumentDto getDocumentByUuid(String uuid) {
@@ -89,7 +84,7 @@ public class DocumentFacadeEjb implements DocumentFacade {
 	}
 
 	@Override
-	public DocumentDto saveDocument(DocumentDto dto, byte[] content) throws IOException {
+	public DocumentDto saveDocument(@Valid DocumentDto dto, byte[] content) throws IOException {
 		Document existingDocument = dto.getUuid() == null ? null : documentService.getByUuid(dto.getUuid());
 		if (existingDocument != null) {
 			throw new EntityExistsException("Tried to save a document that already exists: " + dto.getUuid());
@@ -129,6 +124,14 @@ public class DocumentFacadeEjb implements DocumentFacade {
 	public List<DocumentDto> getDocumentsRelatedToEntity(DocumentRelatedEntityType type, String uuid) {
 		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
 		return documentService.getRelatedToEntity(type, uuid).stream().map(d -> convertToDto(d, pseudonymizer)).collect(Collectors.toList());
+	}
+
+	@Override
+	public Map<String, List<DocumentDto>> getDocumentsRelatedToEntities(DocumentCriteria criteria, List<SortProperty> sortProperties) {
+		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
+		List<Document> allDocuments =
+			documentService.getRelatedToEntities(criteria.getDocumentRelatedEntityType(), criteria.getEntityUuids(), sortProperties);
+		return allDocuments.stream().map(d -> convertToDto(d, pseudonymizer)).collect(Collectors.groupingBy(DocumentDto::getRelatedEntityUuid));
 	}
 
 	@Override
@@ -187,13 +190,13 @@ public class DocumentFacadeEjb implements DocumentFacade {
 		switch (dto.getRelatedEntityType()) {
 		case CASE:
 			Case caze = caseService.getByUuid(dto.getRelatedEntityUuid());
-			return caseJurisdictionChecker.isInJurisdictionOrOwned(caze);
+			return caseService.inJurisdictionOrOwned(caze);
 		case CONTACT:
 			Contact contact = contactService.getByUuid(dto.getRelatedEntityUuid());
-			return contactJurisdictionChecker.isInJurisdictionOrOwned(contact);
+			return contactService.inJurisdictionOrOwned(contact).getInJurisdiction();
 		case EVENT:
 			Event event = eventService.getByUuid(dto.getRelatedEntityUuid());
-			return eventJurisdictionChecker.isInJurisdictionOrOwned(event);
+			return eventService.inJurisdictionOrOwned(event);
 		}
 		return true;
 	}

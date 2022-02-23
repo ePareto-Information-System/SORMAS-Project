@@ -21,13 +21,14 @@ import de.symeda.sormas.api.PushResult;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.app.backend.clinicalcourse.HealthConditions;
 import de.symeda.sormas.app.backend.clinicalcourse.HealthConditionsDtoHelper;
-import de.symeda.sormas.app.backend.common.AdoDtoHelper;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.epidata.EpiData;
 import de.symeda.sormas.app.backend.epidata.EpiDataDtoHelper;
 import de.symeda.sormas.app.backend.person.Person;
+import de.symeda.sormas.app.backend.person.PersonDependentDtoHelper;
 import de.symeda.sormas.app.backend.person.PersonDtoHelper;
 import de.symeda.sormas.app.backend.region.Community;
 import de.symeda.sormas.app.backend.region.CommunityDtoHelper;
@@ -42,13 +43,11 @@ import de.symeda.sormas.app.rest.NoConnectionException;
 import de.symeda.sormas.app.rest.RetroProvider;
 import retrofit2.Call;
 
-public class ContactDtoHelper extends AdoDtoHelper<Contact, ContactDto> {
+public class ContactDtoHelper extends PersonDependentDtoHelper<Contact, ContactDto> {
 
 	private EpiDataDtoHelper epiDataDtoHelper = new EpiDataDtoHelper();
 	private HealthConditionsDtoHelper healthConditionsDtoHelper = new HealthConditionsDtoHelper();
 	private SormasToSormasOriginInfoDtoHelper sormasToSormasOriginInfoDtoHelper = new SormasToSormasOriginInfoDtoHelper();
-	// TODO [vaccination info] integrate vaccination info
-	//	private VaccinationInfoDtoHelper vaccinationInfoDtoHelper = new VaccinationInfoDtoHelper();
 
 	public ContactDtoHelper() {
 	}
@@ -64,8 +63,8 @@ public class ContactDtoHelper extends AdoDtoHelper<Contact, ContactDto> {
 	}
 
 	@Override
-	protected Call<List<ContactDto>> pullAllSince(long since) throws NoConnectionException {
-		return RetroProvider.getContactFacade().pullAllSince(since);
+	protected Call<List<ContactDto>> pullAllSince(long since, Integer size, String lastSynchronizedUuid)  throws NoConnectionException {
+		return RetroProvider.getContactFacade().pullAllSince(since, size, lastSynchronizedUuid);
 	}
 
 	@Override
@@ -114,6 +113,7 @@ public class ContactDtoHelper extends AdoDtoHelper<Contact, ContactDto> {
 		target.setReportLatLonAccuracy(source.getReportLatLonAccuracy());
 		target.setExternalID(source.getExternalID());
 		target.setExternalToken(source.getExternalToken());
+		target.setInternalToken(source.getInternalToken());
 		target.setRegion(DatabaseHelper.getRegionDao().getByReferenceDto(source.getRegion()));
 		target.setDistrict(DatabaseHelper.getDistrictDao().getByReferenceDto(source.getDistrict()));
 		target.setCommunity(DatabaseHelper.getCommunityDao().getByReferenceDto(source.getCommunity()));
@@ -169,9 +169,7 @@ public class ContactDtoHelper extends AdoDtoHelper<Contact, ContactDto> {
 		target.setReportingDistrict(DatabaseHelper.getDistrictDao().getByReferenceDto(source.getReportingDistrict()));
 		target.setFollowUpStatusChangeDate(source.getFollowUpStatusChangeDate());
 		target.setFollowUpStatusChangeUser(DatabaseHelper.getUserDao().getByReferenceDto(source.getFollowUpStatusChangeUser()));
-
-		// TODO [vaccination info] integrate vaccination info
-//		target.setVaccinationInfo(vaccinationInfoDtoHelper.fillOrCreateFromDto(target.getVaccinationInfo(), source.getVaccinationInfo()));
+		target.setVaccinationStatus(source.getVaccinationStatus());
 	}
 
 	@Override
@@ -251,6 +249,7 @@ public class ContactDtoHelper extends AdoDtoHelper<Contact, ContactDto> {
 		target.setReportLatLonAccuracy(source.getReportLatLonAccuracy());
 		target.setExternalID(source.getExternalID());
 		target.setExternalToken(source.getExternalToken());
+		target.setInternalToken(source.getInternalToken());
 
 		target.setHighPriority(source.isHighPriority());
 		target.setImmunosuppressiveTherapyBasicDisease(source.getImmunosuppressiveTherapyBasicDisease());
@@ -318,21 +317,25 @@ public class ContactDtoHelper extends AdoDtoHelper<Contact, ContactDto> {
 		}
 		target.setFollowUpStatusChangeDate(source.getFollowUpStatusChangeDate());
 		target.setFollowUpStatusChangeUser(UserDtoHelper.toReferenceDto(source.getFollowUpStatusChangeUser()));
-
-		// TODO [vaccination info] integrate vaccination info
-//		if (source.getVaccinationInfo() != null) {
-//			target.setVaccinationInfo(vaccinationInfoDtoHelper.adoToDto(source.getVaccinationInfo()));
-//		} else {
-//			target.setVaccinationInfo(null);
-//		}
+		target.setVaccinationStatus(source.getVaccinationStatus());
 	}
 
-	public static ContactReferenceDto toReferenceDto(Contact ado) {
+    @Override
+    protected long getApproximateJsonSizeInBytes() {
+        return ContactDto.APPROXIMATE_JSON_SIZE_IN_BYTES;
+    }
+
+    public static ContactReferenceDto toReferenceDto(Contact ado) {
 		if (ado == null) {
 			return null;
 		}
 		ContactReferenceDto dto = new ContactReferenceDto(ado.getUuid());
 
 		return dto;
+	}
+
+	@Override
+	protected PersonReferenceDto getPerson(ContactDto dto) {
+		return dto.getPerson();
 	}
 }

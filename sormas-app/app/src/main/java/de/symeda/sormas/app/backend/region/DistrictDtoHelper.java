@@ -18,8 +18,8 @@ package de.symeda.sormas.app.backend.region;
 import java.util.List;
 
 import de.symeda.sormas.api.PushResult;
-import de.symeda.sormas.api.region.DistrictDto;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.app.backend.common.AdoDtoHelper;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.rest.NoConnectionException;
@@ -39,7 +39,7 @@ public class DistrictDtoHelper extends AdoDtoHelper<District, DistrictDto> {
 	}
 
 	@Override
-	protected Call<List<DistrictDto>> pullAllSince(long since) throws NoConnectionException {
+	protected Call<List<DistrictDto>> pullAllSince(long since, Integer size, String lastSynchronizedUuid) throws NoConnectionException {
 		return RetroProvider.getDistrictFacade().pullAllSince(since);
 	}
 
@@ -64,6 +64,11 @@ public class DistrictDtoHelper extends AdoDtoHelper<District, DistrictDto> {
 	@Override
 	public void fillInnerFromAdo(DistrictDto districtDto, District district) {
 		throw new UnsupportedOperationException("Entity is infrastructure");
+	}
+
+	@Override
+	protected long getApproximateJsonSizeInBytes() {
+		return 0;
 	}
 
 	public static DistrictReferenceDto toReferenceDto(District ado) {

@@ -17,14 +17,16 @@
  *******************************************************************************/
 package de.symeda.sormas.backend.task;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertTrue;
 
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
@@ -37,6 +39,7 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.InvestigationStatus;
@@ -48,7 +51,6 @@ import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.task.TaskContext;
 import de.symeda.sormas.api.task.TaskDto;
-import de.symeda.sormas.api.task.TaskIndexDto;
 import de.symeda.sormas.api.task.TaskStatus;
 import de.symeda.sormas.api.task.TaskType;
 import de.symeda.sormas.api.user.UserDto;
@@ -56,7 +58,6 @@ import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.backend.AbstractBeanTest;
-import de.symeda.sormas.backend.MockProducer;
 import de.symeda.sormas.backend.TestDataCreator.RDCF;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -188,20 +189,144 @@ public class TaskFacadeEjbTest extends AbstractBeanTest {
 	}
 
 	@Test
-	public void testFilterTasksByUserJurisdiction() {
-		RDCF rdcf1 = creator.createRDCF("Region 1", "District 1", "Community 1", "Facility 1", "Point of entry 1");
-		UserDto survOff = creator.createUser(rdcf1.region.getUuid(), rdcf1.district.getUuid(), null, "Surv", "Off", UserRole.SURVEILLANCE_OFFICER);
+	public void testGetAllActiveTasksBatched() {
+		RDCF rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
+		UserDto user = creator
+			.createUser(rdcf.region.getUuid(), rdcf.district.getUuid(), rdcf.facility.getUuid(), "Surv", "Sup", UserRole.SURVEILLANCE_SUPERVISOR);
+		PersonDto cazePerson = creator.createPerson("Case", "Person");
+		CaseDataDto caze = creator.createCase(
+			user.toReference(),
+			cazePerson.toReference(),
+			Disease.EVD,
+			CaseClassification.PROBABLE,
+			InvestigationStatus.PENDING,
+			new Date(),
+			rdcf);
+		PersonDto contactPerson = creator.createPerson("Contact", "Person");
+		ContactDto contact =
+			creator.createContact(user.toReference(), user.toReference(), contactPerson.toReference(), caze, new Date(), new Date(), null);
+		EventDto event = creator.createEvent(
+			EventStatus.SIGNAL,
+			EventInvestigationStatus.PENDING,
+			"Title",
+			"Description",
+			"First",
+			"Name",
+			"12345",
+			TypeOfPlace.PUBLIC_PLACE,
+			DateHelper.subtractDays(new Date(), 1),
+			new Date(),
+			user.toReference(),
+			user.toReference(),
+			Disease.EVD,
+			rdcf.district);
 
-		creator.createUser(
-			rdcf1.region.getUuid(),
-			rdcf1.district.getUuid(),
-			rdcf1.community.getUuid(),
+		creator.createTask(
+			TaskContext.GENERAL,
+			TaskType.OTHER,
+			TaskStatus.PENDING,
 			null,
-			"Comm",
-			"Inf",
-			UserRole.COMMUNITY_INFORMANT);
+			null,
+			null,
+			DateHelper.addDays(new Date(), 1),
+			user.toReference());
+		creator.createTask(
+			TaskContext.CASE,
+			TaskType.OTHER,
+			TaskStatus.PENDING,
+			caze.toReference(),
+			null,
+			null,
+			DateHelper.addDays(new Date(), 1),
+			user.toReference());
+		creator.createTask(
+			TaskContext.CONTACT,
+			TaskType.OTHER,
+			TaskStatus.PENDING,
+			null,
+			contact.toReference(),
+			null,
+			DateHelper.addDays(new Date(), 1),
+			user.toReference());
+		creator.createTask(
+			TaskContext.EVENT,
+			TaskType.OTHER,
+			TaskStatus.PENDING,
+			null,
+			null,
+			event.toReference(),
+			DateHelper.addDays(new Date(), 1),
+			user.toReference());
 
-		when(MockProducer.getPrincipal().getName()).thenReturn("CommInf");
+		// getAllActiveTasks batched
+		List<TaskDto> allActiveTasksAfterBatched = getTaskFacade().getAllActiveTasksAfter(null, 3, null);
+		assertEquals(3, allActiveTasksAfterBatched.size());
+		assertTrue(allActiveTasksAfterBatched.get(0).getChangeDate().getTime() <= allActiveTasksAfterBatched.get(1).getChangeDate().getTime());
+		assertTrue(allActiveTasksAfterBatched.get(1).getChangeDate().getTime() <= allActiveTasksAfterBatched.get(2).getChangeDate().getTime());
+
+		List<TaskDto> allActiveTasksAfterLargeBatch = getTaskFacade().getAllActiveTasksAfter(null, 10, null);
+		assertEquals(6, allActiveTasksAfterLargeBatch.size());
+
+		TaskDto taskRead = allActiveTasksAfterBatched.get(2);
+		List<TaskDto> allActiveTasksAfterBatchedOneMillisecondBefore =
+			getTaskFacade().getAllActiveTasksAfter(new Date(taskRead.getChangeDate().getTime() - 1L), 10, EntityDto.NO_LAST_SYNCED_UUID);
+		assertEquals(4, allActiveTasksAfterBatchedOneMillisecondBefore.size());
+
+		// getAllActiveTasks batched with Uuid
+		List<TaskDto> allActiveTasksAfterBatchedSameTime =
+			getTaskFacade().getAllActiveTasksAfter(taskRead.getChangeDate(), 10, "AAAAAA-AAAAAA-AAAAAA-AAAAAA");
+		assertEquals(4, allActiveTasksAfterBatchedSameTime.size());
+
+		List<TaskDto> allActiveTasksAfterBatchedSameTimeSameUuid =
+			getTaskFacade().getAllActiveTasksAfter(taskRead.getChangeDate(), 10, taskRead.getUuid());
+		assertEquals(3, allActiveTasksAfterBatchedSameTimeSameUuid.size());
+
+		TaskService taskService = getBean(TaskService.class);
+		Task byUuid = taskService.getByUuid(taskRead.getUuid());
+
+		Task taskWithNanoseconds = new Task();
+		Timestamp changeDate = new Timestamp(taskRead.getChangeDate().getTime());
+		changeDate.setNanos(changeDate.getNanos() + 150000);
+		taskWithNanoseconds.setChangeDate(changeDate);
+		taskWithNanoseconds.setUuid("ZZZZZZ-ZZZZZZ-ZZZZZZ-ZZZZZZ");
+		taskWithNanoseconds.setId(null);
+		taskWithNanoseconds.setTaskContext(byUuid.getTaskContext());
+		taskWithNanoseconds.setTaskType(byUuid.getTaskType());
+		taskWithNanoseconds.setCaze(byUuid.getCaze());
+		taskWithNanoseconds.setContact(byUuid.getContact());
+		taskWithNanoseconds.setTaskStatus(byUuid.getTaskStatus());
+		taskWithNanoseconds.setCreatorUser(byUuid.getCreatorUser());
+		taskWithNanoseconds.setAssigneeUser(byUuid.getAssigneeUser());
+
+		taskService.ensurePersisted(taskWithNanoseconds);
+
+		assertEquals(changeDate.getTime(), taskService.getByUuid("ZZZZZZ-ZZZZZZ-ZZZZZZ-ZZZZZZ").getChangeDate().getTime());
+
+		List<TaskDto> allAfterSeveralResultsSameTime = getTaskFacade().getAllActiveTasksAfter(taskRead.getChangeDate(), 10, taskRead.getUuid());
+		assertEquals(4, allAfterSeveralResultsSameTime.size());
+
+		List<TaskDto> allAfterSeveralResultsSameTimeWithUuid =
+			getTaskFacade().getAllActiveTasksAfter(taskRead.getChangeDate(), 10, "AAAAAA-AAAAAA-AAAAAA-AAAAAA");
+		assertEquals(5, allAfterSeveralResultsSameTimeWithUuid.size());
+
+		assertEquals(taskRead.getUuid(), allAfterSeveralResultsSameTimeWithUuid.get(0).getUuid());
+		assertEquals("ZZZZZZ-ZZZZZZ-ZZZZZZ-ZZZZZZ", allAfterSeveralResultsSameTimeWithUuid.get(1).getUuid());
+	}
+
+	@Test
+	public void testFilterTasksByUserJurisdiction() {
+
+		RDCF rdcf1 = creator.createRDCF("Region 1", "District 1", "Community 1", "Facility 1", "Point of entry 1");
+
+		// 1. Region level user without a task
+		UserDto survSup = creator.createUser(rdcf1.region.getUuid(), null, null, "Surv", "Sup", UserRole.SURVEILLANCE_SUPERVISOR);
+		loginWith(survSup);
+		assertThat(getTaskFacade().getIndexList(null, 0, 100, null), is(empty()));
+
+		// 2a. District level user with task
+		UserDto survOff = creator.createUser(rdcf1.region.getUuid(), rdcf1.district.getUuid(), null, "Surv", "Off", UserRole.SURVEILLANCE_OFFICER);
+		loginWith(survOff);
+		assertThat(getTaskFacade().getIndexList(null, 0, 100, null), is(empty()));
 
 		CaseDataDto caze = creator.createCase(survOff.toReference(), creator.createPerson("First", "Last").toReference(), rdcf1);
 		creator.createTask(
@@ -213,17 +338,32 @@ public class TaskFacadeEjbTest extends AbstractBeanTest {
 			null,
 			new Date(),
 			survOff.toReference());
+		assertThat(getTaskFacade().getIndexList(null, 0, 100, null), is(not(empty())));
 
-		List<TaskIndexDto> indexTasks = getTaskFacade().getIndexList(null, 0, 100, null);
-		assertThat(indexTasks.size(), is(0));
+		// 2b. Region user now sees tasks from district level
+		loginWith(survSup);
+		assertThat(getTaskFacade().getIndexList(null, 0, 100, null), is(not(empty())));
+
+		// 3. Community level user does not see task of district level user
+		UserDto commInf = creator.createUser(
+			rdcf1.region.getUuid(),
+			rdcf1.district.getUuid(),
+			rdcf1.community.getUuid(),
+			null,
+			"Comm",
+			"Inf",
+			UserRole.COMMUNITY_INFORMANT);
+		loginWith(commInf);
+
+		assertThat(getTaskFacade().getIndexList(null, 0, 100, null), is(empty()));
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.YEAR, 2019);
 		List<TaskDto> activeTasks = getTaskFacade().getAllActiveTasksAfter(calendar.getTime());
-		assertThat(activeTasks.size(), is(0));
+		assertThat(activeTasks, is(empty()));
 
 		List<TaskDto> tasksByCase = getTaskFacade().getAllByCase(caze.toReference());
-		assertThat(tasksByCase.size(), is(0));
+		assertThat(tasksByCase, is(empty()));
 	}
 
 	@Test

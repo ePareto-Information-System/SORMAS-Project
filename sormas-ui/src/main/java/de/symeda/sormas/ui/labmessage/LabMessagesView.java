@@ -1,21 +1,27 @@
 package de.symeda.sormas.ui.labmessage;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.Page;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.Validator;
 import com.vaadin.v7.ui.OptionGroup;
 
 import de.symeda.sormas.api.FacadeProvider;
@@ -37,6 +43,8 @@ import de.symeda.sormas.ui.samples.SamplesViewType;
 import de.symeda.sormas.ui.utils.AbstractView;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.DateTimeField;
+import de.symeda.sormas.ui.utils.FutureDateValidator;
 import de.symeda.sormas.ui.utils.LayoutUtil;
 import de.symeda.sormas.ui.utils.MenuBarHelper;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
@@ -56,6 +64,7 @@ public class LabMessagesView extends AbstractView {
 	private Map<Button, String> statusButtons;
 	private Button activeStatusButton;
 
+	private LabMessageGridFilterForm filterForm;
 	private final LabMessageGrid grid;
 
 	public LabMessagesView() {
@@ -84,7 +93,7 @@ public class LabMessagesView extends AbstractView {
 		addHeaderComponent(samplesViewSwitcher);
 
 		addHeaderComponent(ButtonHelper.createIconButton(Captions.labMessageFetch, VaadinIcons.REFRESH, e -> {
-			initiateLabMessageFetch();
+			checkForConcurrentEventsAndFetch();
 		}, ValoTheme.BUTTON_PRIMARY));
 
 		if (isBulkEditAllowed()) {
@@ -104,11 +113,15 @@ public class LabMessagesView extends AbstractView {
 		VerticalLayout gridLayout = new VerticalLayout();
 		addComponent(gridLayout);
 
+		gridLayout.addComponent(createFilterBar());
+
 		gridLayout.addComponent(createStatusFilterBar());
 
 		grid = new LabMessageGrid(criteria);
-		gridLayout.addComponent(grid);
+		grid.setDataProviderListener(e -> updateStatusButtons());
 		grid.getDataProvider().addDataProviderListener(e -> updateStatusButtons());
+
+		gridLayout.addComponent(grid);
 
 		gridLayout.setMargin(true);
 		styleGridLayout(gridLayout);
@@ -121,8 +134,34 @@ public class LabMessagesView extends AbstractView {
 			params = params.substring(1);
 			criteria.fromUrlParams(params);
 		}
-		updateStatusButtons();
+		updateFilterComponents();
 		grid.reload();
+	}
+
+	public HorizontalLayout createFilterBar() {
+
+		HorizontalLayout filterLayout = new HorizontalLayout();
+		filterLayout.setMargin(false);
+		filterLayout.setSpacing(true);
+		filterLayout.setSizeUndefined();
+		filterLayout.addStyleName("wrap");
+
+		filterForm = new LabMessageGridFilterForm();
+		filterForm.addValueChangeListener(e -> {
+			if (!filterForm.hasFilter()) {
+				this.navigateTo(null);
+			}
+		});
+		filterForm.addResetHandler(e -> {
+			ViewModelProviders.of(LabMessagesView.class).remove(LabMessageCriteria.class);
+			this.navigateTo(null, true);
+		});
+		filterForm.addApplyHandler(e -> {
+			grid.reload();
+		});
+		filterLayout.addComponent(filterForm);
+
+		return filterLayout;
 	}
 
 	public HorizontalLayout createStatusFilterBar() {
@@ -159,6 +198,13 @@ public class LabMessagesView extends AbstractView {
 		menuBarItems.add(new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkDelete), VaadinIcons.TRASH, mi -> {
 			ControllerProvider.getLabMessageController().deleteAllSelectedItems(grid.asMultiSelect().getSelectedItems(), () -> navigateTo(criteria));
 		}, true));
+		menuBarItems.add(
+			new MenuBarHelper.MenuBarItem(
+				I18nProperties.getCaption(Captions.bulkEditAssignee),
+				VaadinIcons.ELLIPSIS_H,
+				mi -> ControllerProvider.getLabMessageController()
+					.assignAllSelectedItems(grid.asMultiSelect().getSelectedItems(), () -> navigateTo(criteria)),
+				true));
 
 		MenuBar bulkOperationsDropdown = MenuBarHelper.createDropDown(Captions.bulkActions, menuBarItems);
 		bulkOperationsDropdown.setVisible(viewConfiguration.isInEagerMode());
@@ -171,6 +217,13 @@ public class LabMessagesView extends AbstractView {
 		gridLayout.setSizeFull();
 		gridLayout.setExpandRatio(grid, 1);
 		gridLayout.setStyleName("crud-main-layout");
+	}
+
+	private void updateFilterComponents() {
+		setApplyingCriteria(true);
+		updateStatusButtons();
+		filterForm.setValue(criteria);
+		setApplyingCriteria(false);
 	}
 
 	private void updateStatusButtons() {
@@ -209,7 +262,7 @@ public class LabMessagesView extends AbstractView {
 		return button;
 	}
 
-	private void initiateLabMessageFetch() {
+	private void checkForConcurrentEventsAndFetch() {
 		boolean fetchAlreadyStarted = FacadeProvider.getSystemEventFacade().existsStartedEvent(SystemEventType.FETCH_LAB_MESSAGES);
 		if (fetchAlreadyStarted) {
 			VaadinUiUtil.showConfirmationPopup(
@@ -220,16 +273,25 @@ public class LabMessagesView extends AbstractView {
 				480,
 				confirmed -> {
 					if (confirmed) {
-						fetchLabMessages();
+						askForSinceDateAndFetch();
 					}
 				});
 		} else {
-			fetchLabMessages();
+			askForSinceDateAndFetch();
 		}
 	}
-	
-	private void fetchLabMessages() {
-		LabMessageFetchResult fetchResult = FacadeProvider.getLabMessageFacade().fetchAndSaveExternalLabMessages();
+
+	private void askForSinceDateAndFetch() {
+		boolean atLeastOneFetchExecuted = FacadeProvider.getSyncFacade().atLeastOneSuccessfullSyncOf(SystemEventType.FETCH_LAB_MESSAGES);
+		if (atLeastOneFetchExecuted) {
+			fetchLabMessages(null);
+		} else {
+			showSinceDateSelectionWindow(this::fetchLabMessages);
+		}
+	}
+
+	private void fetchLabMessages(Date since) {
+		LabMessageFetchResult fetchResult = FacadeProvider.getLabMessageFacade().fetchAndSaveExternalLabMessages(since);
 		if (!fetchResult.isSuccess()) {
 			VaadinUiUtil.showWarningPopup(fetchResult.getError());
 		} else if (NewMessagesState.NO_NEW_MESSAGES.equals(fetchResult.getNewMessagesState())) {
@@ -237,6 +299,58 @@ public class LabMessagesView extends AbstractView {
 		} else {
 			grid.reload();
 		}
+	}
+
+	private void showSinceDateSelectionWindow(Consumer<Date> dateConsumer) {
+		VerticalLayout verticalLayout = new VerticalLayout();
+		Label label = new Label(I18nProperties.getString(Strings.confirmationSinceLabMessages));
+		verticalLayout.addComponent(label);
+
+		HorizontalLayout horizontalLayout = new HorizontalLayout();
+		Button yesButton = ButtonHelper.createButton(Captions.actionYes);
+		Button noButton = ButtonHelper.createButton(Captions.actionNo);
+		Button cancelButton = ButtonHelper.createButton(Captions.actionCancel);
+		cancelButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
+
+		horizontalLayout.addComponent(yesButton);
+		horizontalLayout.addComponent(noButton);
+		horizontalLayout.addComponent(cancelButton);
+		horizontalLayout.setStyleName(CssStyles.FLOAT_RIGHT);
+		verticalLayout.addComponent(horizontalLayout);
+
+		Window window = VaadinUiUtil.showPopupWindow(verticalLayout);
+
+		cancelButton.addClickListener(event -> window.close());
+		noButton.addClickListener(event -> dateConsumer.accept(null));
+		yesButton.addClickListener(yesEvent -> {
+			horizontalLayout.removeComponent(yesButton);
+			horizontalLayout.removeComponent(noButton);
+			horizontalLayout.removeComponent(cancelButton);
+
+			Button confirmButton = ButtonHelper.createButton(Captions.actionConfirm);
+			confirmButton.setStyleName(ValoTheme.BUTTON_PRIMARY);
+
+			DateTimeField dateTimeField = new DateTimeField();
+			dateTimeField.addValidator(date -> {
+				if (date == null) {
+					throw new Validator.InvalidValueException("Since date has to be set");
+				}
+			});
+			dateTimeField.addValidator(new FutureDateValidator(dateTimeField, 0, null));
+
+			horizontalLayout.addComponent(dateTimeField);
+			horizontalLayout.addComponent(confirmButton);
+
+			confirmButton.addClickListener(confirmEvent -> {
+				if (dateTimeField.isValid()) {
+					dateConsumer.accept(dateTimeField.getValue());
+					window.close();
+				} else {
+					new Notification(I18nProperties.getString(Strings.messageCheckInputData), null, Notification.Type.ERROR_MESSAGE, true)
+						.show(Page.getCurrent());
+				}
+			});
+		});
 	}
 
 	private boolean isBulkEditAllowed() {

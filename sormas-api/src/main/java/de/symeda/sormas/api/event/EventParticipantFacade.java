@@ -26,6 +26,9 @@ import javax.ejb.Remote;
 import javax.validation.Valid;
 
 import de.symeda.sormas.api.Language;
+import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.deletionconfiguration.AutomaticDeletionInfoDto;
+import de.symeda.sormas.api.importexport.ExportConfigurationDto;
 import de.symeda.sormas.api.utils.SortProperty;
 
 @Remote
@@ -53,10 +56,13 @@ public interface EventParticipantFacade {
 		Integer max,
 		List<SortProperty> sortProperties);
 
-	List<EventParticipantListEntryDto> getListEntries(
+	Page<EventParticipantIndexDto> getIndexPage(
 		EventParticipantCriteria eventParticipantCriteria,
-		Integer first,
-		Integer max);
+		Integer offset,
+		Integer size,
+		List<SortProperty> sortProperties);
+
+	List<EventParticipantListEntryDto> getListEntries(EventParticipantCriteria eventParticipantCriteria, Integer first, Integer max);
 
 	EventParticipantDto getByUuid(String uuid);
 
@@ -68,9 +74,13 @@ public interface EventParticipantFacade {
 
 	boolean exists(String uuid);
 
+	boolean exists(String personUuid, String eventUUID);
+
 	EventParticipantReferenceDto getReferenceByUuid(String uuid);
 
 	EventParticipantReferenceDto getReferenceByEventAndPerson(String eventUuid, String personUuid);
+
+	List<EventParticipantDto> getAllActiveEventParticipantsAfter(Date date, Integer batchSize, String lastSynchronizedUuid);
 
 	List<String> getDeletedUuidsSince(Date date);
 
@@ -83,11 +93,16 @@ public interface EventParticipantFacade {
 		Collection<String> selectedRows,
 		int first,
 		int max,
-		Language userLanguage);
+		Language userLanguage,
+		ExportConfigurationDto exportConfiguration);
 
 	List<EventParticipantDto> getByEventUuids(List<String> eventUuids);
 
 	List<SimilarEventParticipantDto> getMatchingEventParticipants(EventParticipantCriteria criteria);
 
-    List<EventParticipantDto> getByPersonUuids(List<String> personUuids);
+	List<EventParticipantDto> getByPersonUuids(List<String> personUuids);
+
+	List<EventParticipantDto> getByEventAndPersons(String eventUuid, List<String> personUuids);
+
+	AutomaticDeletionInfoDto getAutomaticDeletionInfo(String uuid);
 }

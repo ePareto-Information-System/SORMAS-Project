@@ -20,6 +20,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 
 import de.symeda.sormas.api.ReferenceDto;
+import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.backend.ExtendedPostgreSQL94Dialect;
 import de.symeda.sormas.backend.util.ModelConstants;
 
@@ -64,6 +65,10 @@ public class CriteriaBuilderHelper {
 		return cb.and(cb.greaterThan(path, date), cb.isNotNull(path));
 	}
 
+	public static Predicate greaterThanOrEqualToAndNotNull(CriteriaBuilder cb, Expression<? extends Date> path, Date date) {
+		return cb.and(cb.greaterThanOrEqualTo(path, date), cb.isNotNull(path));
+	}
+
 	public static Predicate greaterThanAndNotNull(CriteriaBuilder cb, Expression<? extends Date> path, Expression<? extends Date> date) {
 		return cb.and(cb.greaterThan(path, date), cb.isNotNull(path));
 	}
@@ -91,13 +96,13 @@ public class CriteriaBuilderHelper {
 		return filter;
 	}
 
-	public static Predicate andInValues(Collection<String> values, Predicate filter, CriteriaBuilder cb, Path<Object> path) {
+	public static Predicate andInValues(Collection<?> values, Predicate filter, CriteriaBuilder cb, Path<Object> path) {
 		if (CollectionUtils.isEmpty(values)) {
 			return filter;
 		}
 
 		Predicate or = null;
-		for (List<String> batch : ListUtils.partition(new ArrayList<>(values), ModelConstants.PARAMETER_LIMIT)) {
+		for (List<?> batch : ListUtils.partition(new ArrayList<>(values), ModelConstants.PARAMETER_LIMIT)) {
 			if (CollectionUtils.isNotEmpty(batch)) {
 				or = CriteriaBuilderHelper.or(cb, or, cb.in(path).value(batch));
 			}
@@ -141,5 +146,41 @@ public class CriteriaBuilderHelper {
 
 	public static Expression<String> windowCount(CriteriaBuilder cb, Path<Object> valueProperty, Path<Object> partitionProperty) {
 		return cb.function(ExtendedPostgreSQL94Dialect.WINDOW_COUNT, String.class, valueProperty, partitionProperty);
+	}
+
+	public static Predicate buildFreeTextSearchPredicate(CriteriaBuilder cb, String searchTerm, Function<String, Predicate> createTextFilter) {
+		Predicate predicate = cb.conjunction();
+
+		String[] textFilters = searchTerm.split("\\s+");
+		for (String textFilter : textFilters) {
+			if (DataHelper.isNullOrEmpty(textFilter)) {
+				continue;
+			}
+
+			predicate = CriteriaBuilderHelper.and(cb, predicate, createTextFilter.apply(textFilter));
+		}
+
+		return predicate;
+	}
+
+	@SafeVarargs
+	public static <T> Expression<T> coalesce(CriteriaBuilder cb, Class<T> type, Expression<T>... expressions) {
+		return cb.function("COALESCE", type, expressions);
+	}
+
+	@SafeVarargs
+	public static Expression<String> coalesce(CriteriaBuilder cb, Expression<String>... expressions) {
+		return coalesce(cb, String.class, expressions);
+	}
+
+	public static Predicate applyDateFilter(CriteriaBuilder cb, Predicate filter, Path path, Date fromDate, Date toDate) {
+		if (fromDate != null && toDate != null) {
+			filter = and(cb, filter, cb.between(path, fromDate, toDate));
+		} else if (fromDate != null) {
+			filter = and(cb, filter, cb.greaterThanOrEqualTo(path, fromDate));
+		} else if (toDate != null) {
+			filter = and(cb, filter, cb.lessThanOrEqualTo(path, toDate));
+		}
+		return filter;
 	}
 }

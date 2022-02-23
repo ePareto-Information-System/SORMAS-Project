@@ -30,9 +30,6 @@ import androidx.databinding.ObservableArrayList;
 import com.googlecode.openbeans.Introspector;
 import com.googlecode.openbeans.PropertyDescriptor;
 
-import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.caze.Vaccination;
-import de.symeda.sormas.api.epidata.AnimalCondition;
 import de.symeda.sormas.api.activityascase.ActivityAsCaseDto;
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.exposure.ExposureDto;

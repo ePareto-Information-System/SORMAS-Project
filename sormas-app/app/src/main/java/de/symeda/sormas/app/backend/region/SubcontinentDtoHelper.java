@@ -18,8 +18,8 @@ package de.symeda.sormas.app.backend.region;
 import java.util.List;
 
 import de.symeda.sormas.api.PushResult;
-import de.symeda.sormas.api.region.SubcontinentDto;
-import de.symeda.sormas.api.region.SubcontinentReferenceDto;
+import de.symeda.sormas.api.infrastructure.subcontinent.SubcontinentDto;
+import de.symeda.sormas.api.infrastructure.subcontinent.SubcontinentReferenceDto;
 import de.symeda.sormas.app.backend.common.AdoDtoHelper;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.rest.NoConnectionException;
@@ -39,7 +39,7 @@ public class SubcontinentDtoHelper extends AdoDtoHelper<Subcontinent, Subcontine
 	}
 
 	@Override
-	protected Call<List<SubcontinentDto>> pullAllSince(long since) throws NoConnectionException {
+	protected Call<List<SubcontinentDto>> pullAllSince(long since, Integer size, String lastSynchronizedUuid)  throws NoConnectionException {
 		return RetroProvider.getSubcontinentFacade().pullAllSince(since);
 	}
 
@@ -65,7 +65,12 @@ public class SubcontinentDtoHelper extends AdoDtoHelper<Subcontinent, Subcontine
 		throw new UnsupportedOperationException("Entity is infrastructure");
 	}
 
-	public static SubcontinentReferenceDto toReferenceDto(Subcontinent ado) {
+    @Override
+    protected long getApproximateJsonSizeInBytes() {
+        return 0;
+    }
+
+    public static SubcontinentReferenceDto toReferenceDto(Subcontinent ado) {
 		if (ado == null) {
 			return null;
 		}

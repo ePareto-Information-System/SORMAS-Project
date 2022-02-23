@@ -45,6 +45,7 @@ import de.symeda.sormas.ui.caze.porthealthinfo.PortHealthInfoView;
 import de.symeda.sormas.ui.clinicalcourse.ClinicalCourseView;
 import de.symeda.sormas.ui.epidata.CaseEpiDataView;
 import de.symeda.sormas.ui.hospitalization.HospitalizationView;
+import de.symeda.sormas.ui.labmessage.LabMessagesView;
 import de.symeda.sormas.ui.therapy.TherapyView;
 import de.symeda.sormas.ui.utils.AbstractDetailView;
 import de.symeda.sormas.ui.utils.CssStyles;
@@ -111,7 +112,8 @@ public abstract class AbstractCaseView extends AbstractDetailView<CaseReferenceD
 
 		// Handle outbreaks for the disease and district of the case
 		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.OUTBREAKS)
-			&& FacadeProvider.getOutbreakFacade().hasOutbreak(caze.getDistrict(), caze.getDisease())
+			&& (FacadeProvider.getOutbreakFacade().hasOutbreak(caze.getResponsibleDistrict(), caze.getDisease())
+				|| FacadeProvider.getOutbreakFacade().hasOutbreak(caze.getDistrict(), caze.getDisease()))
 			&& caze.getDisease().usesSimpleViewForOutbreaks()) {
 			hasOutbreak = true;
 
@@ -136,6 +138,13 @@ public abstract class AbstractCaseView extends AbstractDetailView<CaseReferenceD
 
 		menu.removeAllViews();
 		menu.addView(CasesView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, Captions.caseCasesList));
+
+		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.LAB_MESSAGES)
+			&& UserProvider.getCurrent().hasUserRight(UserRight.LAB_MESSAGES)
+			&& FacadeProvider.getLabMessageFacade().existsLabMessageForEntity(getReference())) {
+			menu.addView(LabMessagesView.VIEW_NAME, I18nProperties.getCaption(Captions.labMessageLabMessagesList));
+		}
+
 		menu.addView(CaseDataView.VIEW_NAME, I18nProperties.getCaption(CaseDataDto.I18N_PREFIX), params);
 
 		boolean showExtraMenuEntries = FacadeProvider.getFeatureConfigurationFacade().isFeatureDisabled(FeatureType.OUTBREAKS)
@@ -169,7 +178,8 @@ public abstract class AbstractCaseView extends AbstractDetailView<CaseReferenceD
 			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_SYMPTOMS)) {
 				menu.addView(CaseSymptomsView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.SYMPTOMS), params);
 			}
-			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_EPIDEMIOLOGICAL_DATA) && caze.getDisease() != Disease.CONGENITAL_RUBELLA) {
+			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_EPIDEMIOLOGICAL_DATA)
+				&& caze.getDisease() != Disease.CONGENITAL_RUBELLA) {
 				menu.addView(CaseEpiDataView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.EPI_DATA), params);
 			}
 			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_THERAPY)
@@ -203,11 +213,15 @@ public abstract class AbstractCaseView extends AbstractDetailView<CaseReferenceD
 			menu.addView(CaseContactsView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, Captions.caseContacts), params);
 		}
 
+		if (caze.getExternalData() != null && !caze.getExternalData().isEmpty()) {
+			menu.addView(CaseExternalDataView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.EXTERNAL_DATA), params);
+		}
+
 		setMainHeaderComponent(ControllerProvider.getCaseController().getCaseViewTitleLayout(caze));
 
 		if (caseFollowupEnabled && UserProvider.getCurrent().hasUserRight(UserRight.MANAGE_EXTERNAL_SYMPTOM_JOURNAL)) {
 			PersonDto casePerson = FacadeProvider.getPersonFacade().getPersonByUuid(caze.getPerson().getUuid());
-			ExternalJournalUtil.getExternalJournalUiButton(casePerson).ifPresent(getButtonsLayout()::addComponent);
+			ExternalJournalUtil.getExternalJournalUiButton(casePerson, caze).ifPresent(getButtonsLayout()::addComponent);
 		}
 	}
 
