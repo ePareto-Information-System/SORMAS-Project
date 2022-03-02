@@ -2695,8 +2695,6 @@ public class CaseFacadeEjb extends AbstractCoreEntityFacade<Case> implements Cas
 		target.setCaseTransmissionClassification(source.getCaseTransmissionClassification());
 		target.setSpecifyOtherOutcome(source.getSpecifyOtherOutcome());
 
-		target.setCaseTransmissionClassification(source.getCaseTransmissionClassification());
-
 		return target;
 	}
 
