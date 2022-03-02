@@ -2867,6 +2867,9 @@ public class CaseFacadeEjb extends AbstractCoreEntityFacade<Case> implements Cas
 		target.setPreviousQuarantineTo(source.getPreviousQuarantineTo());
 		target.setQuarantineChangeComment(source.getQuarantineChangeComment());
 
+		target.setSpecifyOtherOutcome(source.getSpecifyOtherOutcome());
+		target.setCaseTransmissionClassification(source.getCaseTransmissionClassification());
+
 		if (source.getExternalData() != null) {
 			target.setExternalData(source.getExternalData());
 		}
