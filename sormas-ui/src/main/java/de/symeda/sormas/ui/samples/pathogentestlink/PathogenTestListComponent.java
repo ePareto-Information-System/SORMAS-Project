@@ -48,7 +48,7 @@ public class PathogenTestListComponent extends SideComponent {
 			if (createOrEditAllowedCallback.get() == null) {
 				ControllerProvider.getPathogenTestController().create(sampleRef, 0, list::reload, onSavedPathogenTest);
 			} else {
-				Notification.show(null, I18nProperties.getString(Strings.messageFormHasErrorsPathogenTest), Type.ERROR_MESSAGE);
+				Notification.show(null, I18nProperties.getString(createOrEditAllowedCallback.get()), Type.ERROR_MESSAGE);
 			}
 		});
 
