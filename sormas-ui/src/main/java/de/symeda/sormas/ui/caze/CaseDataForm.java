@@ -183,35 +183,44 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 	private static final String MAIN_HTML_LAYOUT =
 			loc(CASE_DATA_HEADING_LOC) +
 					fluidRowLocs(4, CaseDataDto.UUID, 3, CaseDataDto.REPORT_DATE, 5, CaseDataDto.REPORTING_USER) +
-					inlineLocs(CaseDataDto.CASE_CLASSIFICATION, CLASSIFICATION_RULES_LOC, CASE_CONFIRMATION_BASIS, CASE_CLASSIFICATION_CALCULATE_BTN_LOC) +
+					inlineLocs(CaseDataDto.CASE_CLASSIFICATION,
+							CLASSIFICATION_RULES_LOC,
+							CASE_CONFIRMATION_BASIS,
+							CASE_CLASSIFICATION_CALCULATE_BTN_LOC) +
 					fluidRow(fluidColumnLoc(3, 0, CaseDataDto.CASE_REFERENCE_DEFINITION)) +
-					fluidRowLocs(4, CaseDataDto.CLINICAL_CONFIRMATION, 4, CaseDataDto.EPIDEMIOLOGICAL_CONFIRMATION, 4, CaseDataDto.LABORATORY_DIAGNOSTIC_CONFIRMATION) +
+					fluidRowLocs(4, CaseDataDto.CLINICAL_CONFIRMATION, 4,
+							CaseDataDto.EPIDEMIOLOGICAL_CONFIRMATION, 4,
+							CaseDataDto.LABORATORY_DIAGNOSTIC_CONFIRMATION) +
 					fluidRowLocsCss(VSPACE_3, CaseDataDto.NOT_A_CASE_REASON_NEGATIVE_TEST, CaseDataDto.NOT_A_CASE_REASON_PHYSICIAN_INFORMATION,
 							CaseDataDto.NOT_A_CASE_REASON_DIFFERENT_PATHOGEN, CaseDataDto.NOT_A_CASE_REASON_OTHER) +
 					fluidRowLocs(CaseDataDto.NOT_A_CASE_REASON_DETAILS) +
 					fluidRow(
 							fluidColumnLoc(3, 0, CaseDataDto.CLASSIFICATION_DATE),
 							fluidColumnLocCss(LAYOUT_COL_HIDE_INVSIBLE, 5, 0, CaseDataDto.CLASSIFICATION_USER),
-							fluidColumnLocCss(LAYOUT_COL_HIDE_INVSIBLE, 4, 0, CLASSIFIED_BY_SYSTEM_LOC)) +
+							fluidColumnLocCss(LAYOUT_COL_HIDE_INVSIBLE, 4, 0, CLASSIFIED_BY_SYSTEM_LOC)
+					) +
 					fluidRowLocs(9, CaseDataDto.INVESTIGATION_STATUS, 3, CaseDataDto.INVESTIGATED_DATE) +
 					fluidRowLocs(6, CaseDataDto.EPID_NUMBER, 3, ASSIGN_NEW_EPID_NUMBER_LOC) +
 					loc(EPID_NUMBER_WARNING_LOC) +
-					fluidRowLocs(CaseDataDto.EXTERNAL_ID, CaseDataDto.EXTERNAL_TOKEN) +
+					fluidRowLocs(6,CaseDataDto.EXTERNAL_ID, 6, CaseDataDto.EXTERNAL_TOKEN) +
 					fluidRowLocs("", EXTERNAL_TOKEN_WARNING_LOC) +
 					fluidRowLocs(6, CaseDataDto.CASE_ID_ISM, 6, CaseDataDto.INTERNAL_TOKEN) +
 					fluidRow(
 							fluidColumnLoc(6, 0, CaseDataDto.DISEASE),
 							fluidColumn(6, 0, locs(
-									CaseDataDto.DISEASE_DETAILS,
-									CaseDataDto.PLAGUE_TYPE,
-									CaseDataDto.DENGUE_FEVER_TYPE,
-					// 				CaseDataDto.RABIES_TYPE)),
-					// 		fluidColumnLoc(6, 0, CaseDataDto.DISEASE_VARIANT)) +
+										CaseDataDto.DISEASE_DETAILS,
+										CaseDataDto.PLAGUE_TYPE,
+										CaseDataDto.DENGUE_FEVER_TYPE,
+										CaseDataDto.RABIES_TYPE
+									)
+							)
+					) +
+//					fluidColumnLoc(6, 0, CaseDataDto.DISEASE_VARIANT)) +
 					// fluidRowLocs(CaseDataDto.RE_INFECTION, CaseDataDto.PREVIOUS_INFECTION_DATE) 
 					//  + //
 					// fluidRowLocs(7, CaseDataDto.OUTCOME, 3, CaseDataDto.OTHERCASEOUTCOMEDETAILS, 3, CaseDataDto.OUTCOME_DATE) +
 					// 		fluidColumnLoc(6, 0, CaseDataDto.DISEASE_VARIANT) +
-									CaseDataDto.RABIES_TYPE))) +
+//									CaseDataDto.RABIES_TYPE))) +
 					fluidRowLocs(CaseDataDto.DISEASE_VARIANT, CaseDataDto.DISEASE_VARIANT_DETAILS) +
 					fluidRow(
 							fluidColumnLoc(4, 0, CaseDataDto.RE_INFECTION),
@@ -225,11 +234,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 							fluidColumnLoc(6, 0, REINFECTION_DETAILS_COL_1_LOC),
 							fluidColumnLoc(6, 0, REINFECTION_DETAILS_COL_2_LOC)
 					) +
-					fluidRowLocs(9, CaseDataDto.OUTCOME, 3, CaseDataDto.OUTCOME_DATE) +
 					fluidRowLocs(3, CaseDataDto.SEQUELAE, 9, CaseDataDto.SEQUELAE_DETAILS) +
 					fluidRowLocs(CaseDataDto.CASE_IDENTIFICATION_SOURCE, CaseDataDto.SCREENING_TYPE) +
-					fluidRowLocs(4, CaseDataDto.CASE_ORIGIN, 8, CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION) +
-					fluidRowLocs(CaseDataDto.CASE_ORIGIN, "") +
+					fluidRowLocs(5, CaseDataDto.CASE_ORIGIN, 7, CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION) +
 					fluidRowLocs(RESPONSIBLE_JURISDICTION_HEADING_LOC) +
 					fluidRowLocs(CaseDataDto.RESPONSIBLE_REGION, CaseDataDto.RESPONSIBLE_DISTRICT, CaseDataDto.RESPONSIBLE_COMMUNITY) +
 					fluidRowLocs(CaseDataDto.DONT_SHARE_WITH_REPORTING_TOOL) +
