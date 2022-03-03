@@ -60,7 +60,6 @@ public class MapContactDto implements Serializable {
 	private String casePersonFirstName;
 	private String casePersonLastName;
 	private int visitCount;
-	private Date unknownDate;
 
 	public MapContactDto(String uuid, ContactClassification contactClassification, Double reportLat, Double reportLon) {
 
@@ -114,7 +113,8 @@ public class MapContactDto implements Serializable {
 		String personLastName,
 		String casePersonFirstName,
 		String casePersonLastName,
-		int visitCount) {
+		int visitCount,
+		Date lastVisitDateTime) {
 
 		this.uuid = uuid;
 		this.contactClassification = contactClassification;
@@ -130,6 +130,7 @@ public class MapContactDto implements Serializable {
 		this.casePersonFirstName = casePersonFirstName;
 		this.casePersonLastName = casePersonLastName;
 		this.visitCount = visitCount;
+		this.lastVisitDateTime = lastVisitDateTime;
 	}
 
 	public int geVisitCount() {
