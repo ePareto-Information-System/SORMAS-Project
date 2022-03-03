@@ -124,7 +124,7 @@ public interface Descriptions {
 	String PathogenTest_testType = "PathogenTest.testType";
 	String PathogenTest_testTypeText = "PathogenTest.testTypeText";
 	String Person_approximateAge = "Person.approximateAge";
-	String Person_birthdate = "Person.birthdate";
+	String Person_birthdate = "Person.birthDate";
 	String Person_deathDate = "Person.deathDate";
 	String Person_firstName = "Person.firstName";
 	String Person_lastName = "Person.lastName";
