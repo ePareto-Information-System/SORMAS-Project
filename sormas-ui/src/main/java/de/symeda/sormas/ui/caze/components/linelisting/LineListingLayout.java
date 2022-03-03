@@ -398,6 +398,7 @@ public class LineListingLayout extends VerticalLayout {
 		private TextField facilityDetails;
 		private final PersonField person;
 		private final DateField dateOfOnset;
+		private ComboBox<CaseClassification> caseClassification;
 
 		private final Button delete;
 
@@ -528,11 +529,11 @@ public class LineListingLayout extends VerticalLayout {
 //			dateOfOnset.addStyleName(CssStyles.CAPTION_FIXED_WIDTH_100);
 			binder.forField(dateOfOnset).bind(CaseLineDto.DATE_OF_ONSET);
 
-			// caseClassification = new ComboBox<>();
-			// caseClassification.setId("lineListingCaseClassification_" + lineIndex);
-			// caseClassification.setItems(CaseClassification.values());
-			// caseClassification.setWidth(250, Unit.PIXELS);
-			// binder.forField(caseClassification).bind(CaseLineDto.CASE_CLASSIFICATION);
+			 caseClassification = new ComboBox<>();
+			 caseClassification.setId("lineListingCaseClassification_" + lineIndex);
+			 caseClassification.setItems(CaseClassification.values());
+			 caseClassification.setWidth(250, Unit.PIXELS);
+			 binder.forField(caseClassification).bind(CaseLineDto.CASE_CLASSIFICATION);
 
 			// delete = ButtonHelper.createIconButtonWithCaption("delete_" + lineIndex, null, VaadinIcons.TRASH, event -> {
 			// 	lineComponent.removeComponent(this);
@@ -544,7 +545,9 @@ public class LineListingLayout extends VerticalLayout {
 
 			// }, CssStyles.FORCE_CAPTION);
 			delete = ButtonHelper
-				.createIconButtonWithCaption("delete_" + lineIndex, null, VaadinIcons.TRASH, event -> fireEvent(new DeleteLineEvent(this)));
+				.createIconButtonWithCaption("delete_" + lineIndex, null, VaadinIcons.TRASH, event ->
+						fireEvent(new DeleteLineEvent(this))
+				);
 
 			addComponent(dateOfReport);
 			if (shouldShowEpidNumber()) {
@@ -563,7 +566,7 @@ public class LineListingLayout extends VerticalLayout {
 			// 	dateOfOnset,
 			// 	caseClassification,
 			// 	delete);
-			addComponents(community, facility, facilityDetails, person, dateOfOnset, delete);
+			addComponents(community, facility, facilityDetails, person, dateOfOnset, caseClassification, delete);
 
 			if (lineIndex == 0) {
 				formatAsFirstLine();
@@ -613,7 +616,7 @@ public class LineListingLayout extends VerticalLayout {
 
 			dateOfOnset.setCaption(I18nProperties.getPrefixCaption(SymptomsDto.I18N_PREFIX, SymptomsDto.ONSET_DATE));
 			dateOfOnset.setDescription(I18nProperties.getPrefixDescription(SymptomsDto.I18N_PREFIX, SymptomsDto.ONSET_DATE));
-//			caseClassification.setCaption(I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.CASE_CLASSIFICATION));
+			caseClassification.setCaption(I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.CASE_CLASSIFICATION));
 
 			// delete.setEnabled(false);
 			// setComponentAlignment(delete, Alignment.MIDDLE_LEFT);
