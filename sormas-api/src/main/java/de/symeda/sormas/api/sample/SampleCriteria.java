@@ -287,17 +287,14 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 		return this;
 	}
 
-	//get pathogen test
 	public PathogenTestType getPathogenTestType() {
 		return pathogenTestType;
 	}
 
-	//set pathogen test
 	public void setPathogenTestType(PathogenTestType pathogenTestType) {
 		this.pathogenTestType = pathogenTestType;
 	}
 
-	//Sample criteria
 	public SampleCriteria pathogenTestType(PathogenTestType setPathogenTestType) {
 		setPathogenTestType(setPathogenTestType);
 		return this;
