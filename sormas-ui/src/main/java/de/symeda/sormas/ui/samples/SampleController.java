@@ -546,6 +546,13 @@ public class SampleController {
 		});
 		requestTaskComponent.getCancelButton().addClickListener(event -> popupWindow.close());
 	}
+	public void showChangePathogenTestResultWindow(
+			CommitDiscardWrapperComponent<? extends AbstractSampleForm> editComponent,
+			String sampleUuid,
+			PathogenTestResultType newResult,
+			Consumer<Boolean> callback) {
+		showChangePathogenTestResultWindow(editComponent, Arrays.asList(sampleUuid), newResult, callback);
+	}
 
 	public void showChangePathogenTestResultWindow(
 		CommitDiscardWrapperComponent<? extends AbstractSampleForm> editComponent,
