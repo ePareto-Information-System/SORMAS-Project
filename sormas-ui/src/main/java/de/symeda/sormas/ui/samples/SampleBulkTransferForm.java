@@ -1,47 +1,18 @@
 package de.symeda.sormas.ui.samples;
 
-import static de.symeda.sormas.api.i18n.I18nProperties.getPrefixCaption;
-import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_NONE;
-import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
+import com.vaadin.v7.ui.*;
+import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.api.sample.SampleDto;
+import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.ui.UserProvider;
+import de.symeda.sormas.ui.utils.DateComparisonValidator;
+import de.symeda.sormas.ui.utils.FieldHelper;
 
 import java.util.Arrays;
 import java.util.Date;
-
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.ValoTheme;
-import com.vaadin.v7.ui.CheckBox;
-import com.vaadin.v7.ui.ComboBox;
-import com.vaadin.v7.ui.DateField;
-import com.vaadin.v7.ui.Field;
-import com.vaadin.v7.ui.OptionGroup;
-import com.vaadin.v7.ui.TextArea;
-import com.vaadin.v7.ui.TextField;
-
-import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.caze.CaseReferenceDto;
-import de.symeda.sormas.api.contact.ContactReferenceDto;
-import de.symeda.sormas.api.facility.FacilityReferenceDto;
-import de.symeda.sormas.api.i18n.Captions;
-import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.i18n.Strings;
-import de.symeda.sormas.api.i18n.Validations;
-import de.symeda.sormas.api.sample.PathogenTestDto;
-import de.symeda.sormas.api.sample.PathogenTestResultType;
-import de.symeda.sormas.api.sample.PathogenTestType;
-import de.symeda.sormas.api.sample.SampleDto;
-import de.symeda.sormas.api.sample.SamplePurpose;
-import de.symeda.sormas.api.sample.SampleReferenceDto;
-import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.ui.ControllerProvider;
-import de.symeda.sormas.ui.UserProvider;
-import de.symeda.sormas.ui.utils.ButtonHelper;
-import de.symeda.sormas.ui.utils.DateComparisonValidator;
-import de.symeda.sormas.ui.utils.DateFormatHelper;
-import de.symeda.sormas.ui.utils.DateTimeField;
-import de.symeda.sormas.ui.utils.FieldHelper;
 
 public class SampleBulkTransferForm extends AbstractSampleForm {
 
@@ -49,8 +20,8 @@ public class SampleBulkTransferForm extends AbstractSampleForm {
 
 	private static final String HTML_LAYOUT = SAMPLE_COMMON_HTML_LAYOUT;
 	
-	public SampleBulkTransferForm() {
-		super(SampleDto.class, SampleDto.I18N_PREFIX);
+	public SampleBulkTransferForm(Disease disease) {
+		super(SampleDto.class, SampleDto.I18N_PREFIX, disease, null);
 	}
 
 	@Override
