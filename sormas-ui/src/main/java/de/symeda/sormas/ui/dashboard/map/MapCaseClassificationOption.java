@@ -22,7 +22,8 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 public enum MapCaseClassificationOption {
 
 	ALL_CASES,
-	CONFIRMED_CASES_ONLY;
+	CONFIRMED_CASES_ONLY,
+	NEW_CASES;
 
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);
