@@ -454,21 +454,7 @@ public class PathogenTestController {
 				diseaseDetails,
 				diseaseVariant,
 				diseaseVariantDetails);
-	public static void showCaseCloningWithNewDiseaseDialog(
-		CaseDataDto existingCaseDto,
-		Disease disease,
-		String diseaseDetails,
-		DiseaseVariant diseaseVariant,
-		String diseaseVariantDetails) {
 
-		VaadinUiUtil.showConfirmationPopup(
-			I18nProperties.getCaption(Captions.caseCloneCaseWithNewDisease) + " " + I18nProperties.getEnumCaption(disease) + "?",
-			new Label(I18nProperties.getString(Strings.messageCloneCaseWithNewDisease)),
-			I18nProperties.getString(Strings.yes),
-			I18nProperties.getString(Strings.no),
-			800,
-			confirmed -> {
-				if (confirmed) {
 					CaseDataDto clonedCase = FacadeProvider.getCaseFacade().cloneCase(existingCaseDto);
 					clonedCase.setCaseClassification(CaseClassification.NOT_CLASSIFIED);
 					clonedCase.setClassificationUser(null);
