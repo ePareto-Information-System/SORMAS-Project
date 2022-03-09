@@ -445,6 +445,15 @@ public class PathogenTestController {
 			});
 	}
 
+	public void showCaseCloningWithNewDiseaseDialog(
+			CaseDataDto caseDataDto, Disease disease, String diseaseDetails, DiseaseVariant diseaseVariant, String diseaseVariantDetails) {
+		showCaseCloningWithNewDiseaseDialog(
+//				caseDataDto,
+				Arrays.asList(caseDataDto),
+				disease,
+				diseaseDetails,
+				diseaseVariant,
+				diseaseVariantDetails);
 	public static void showCaseCloningWithNewDiseaseDialog(
 		CaseDataDto existingCaseDto,
 		Disease disease,
@@ -482,6 +491,10 @@ public class PathogenTestController {
 		}
 
 		if (caze.getCaseClassification() == CaseClassification.CONFIRMED) {
+	public void showConfirmCaseDialog(CaseDataDto caze) {
+		showConfirmCaseDialog(Arrays.asList(caze));
+	}
+
 			return;
 		}
 
