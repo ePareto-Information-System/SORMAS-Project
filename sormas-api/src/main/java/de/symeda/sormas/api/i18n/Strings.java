@@ -406,6 +406,7 @@ public interface Strings {
 	String headingCorrectSample = "headingCorrectSample";
 	String headingCreateAdditionalTest = "headingCreateAdditionalTest";
 	String headingCreateCampaignDataForm = "headingCreateCampaignDataForm";
+	String headingCreateBulkTests = "headingCreateBulkTests";
 	String headingCreateEntry = "headingCreateEntry";
 	String headingCreateNewAction = "headingCreateNewAction";
 	String headingCreateNewAggregateReport = "headingCreateNewAggregateReport";
@@ -566,6 +567,7 @@ public interface Strings {
 	String headingNoClinicalVisitsSelected = "headingNoClinicalVisitsSelected";
 	String headingNoContactsSelected = "headingNoContactsSelected";
 	String headingNoEventFound = "headingNoEventFound";
+	String headingNoDiseasesSelected = "headingNoDiseasesSelected";
 	String headingNoEventParticipantsSelected = "headingNoEventParticipantsSelected";
 	String headingNoEventsSelected = "headingNoEventsSelected";
 	String headingNoFile = "headingNoFile";
@@ -904,6 +906,7 @@ public interface Strings {
 	String messageCasesSentToExternalSurveillanceTool = "messageCasesSentToExternalSurveillanceTool";
 	String messageCaseTransfered = "messageCaseTransfered";
 	String messageChangePathogenTestResult = "messageChangePathogenTestResult";
+	String messageChangePathogenTestsResults = "messageChangePathogenTestsResults";
 	String messageCheckInputData = "messageCheckInputData";
 	String messageClinicalCourseSaved = "messageClinicalCourseSaved";
 	String messageClinicalVisitCreated = "messageClinicalVisitCreated";
@@ -1057,6 +1060,7 @@ public interface Strings {
 	String messageNoClinicalVisitsSelected = "messageNoClinicalVisitsSelected";
 	String messageNoContactsSelected = "messageNoContactsSelected";
 	String messageNoCsvFile = "messageNoCsvFile";
+	String messageNoDiseasesSelected = "messageNoDiseasesSelected";
 	String messageNoDocumentTemplateUploadFile = "messageNoDocumentTemplateUploadFile";
 	String messageNoDocumentUploadFile = "messageNoDocumentUploadFile";
 	String messageNoEndDate = "messageNoEndDate";
@@ -1131,6 +1135,7 @@ public interface Strings {
 	String messageTasksDeleted = "messageTasksDeleted";
 	String messageTasksEdited = "messageTasksEdited";
 	String messageTemplateNotAvailable = "messageTemplateNotAvailable";
+	String messageTestsCreated = "messageTestsCreated";
 	String messageTravelEntryArchived = "messageTravelEntryArchived";
 	String messageTravelEntryDearchived = "messageTravelEntryDearchived";
 	String messageTravelEntryPOEFilledBySystem = "messageTravelEntryPOEFilledBySystem";
