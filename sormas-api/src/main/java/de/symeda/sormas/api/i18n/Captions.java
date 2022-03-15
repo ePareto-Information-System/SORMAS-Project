@@ -2386,6 +2386,8 @@ public interface Captions {
 	String View_configuration_devMode_short = "View.configuration.devMode.short";
 	String View_configuration_districts = "View.configuration.districts";
 	String View_configuration_districts_short = "View.configuration.districts.short";
+	String View_configuration_additional = "View.configuration.additional";
+	String View_configuration_additional_short = "View.configuration.additional.short";
 	String View_configuration_documentTemplates = "View.configuration.documentTemplates";
 	String View_configuration_documentTemplates_short = "View.configuration.documentTemplates.short";
 	String View_configuration_facilities = "View.configuration.facilities";
