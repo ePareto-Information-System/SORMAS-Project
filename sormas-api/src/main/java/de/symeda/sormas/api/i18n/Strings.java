@@ -19,6 +19,7 @@ public interface Strings {
 	String between = "between";
 	String bpm = "bpm";
 	String by = "by";
+	String cadre = "cadre";
 	String classificationAllOf = "classificationAllOf";
 	String classificationClassificationRules = "classificationClassificationRules";
 	String classificationConfirmed = "classificationConfirmed";
