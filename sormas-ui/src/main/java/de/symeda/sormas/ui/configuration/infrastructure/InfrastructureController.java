@@ -32,6 +32,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.HasUuid;
+import de.symeda.sormas.api.infrastructure.cadre.CadreDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityIndexDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
@@ -173,6 +174,13 @@ public class InfrastructureController {
 		VaadinUiUtil.showModalPopupWindow(component, caption);
 	}
 
+    public void editCadre(String uuid) {
+        CadreDto cadreDto = FacadeProvider.getCadreFacade().getByUuid(uuid);
+        CommitDiscardWrapperComponent<CadreEditForm> editComponent = getCadreEditComponent(cadreDto);
+        String caption = I18nProperties.getString(Strings.headingEditContinent);
+        VaadinUiUtil.showModalPopupWindow(editComponent, caption);
+    }
+
 	private CommitDiscardWrapperComponent<FacilityEditForm> getFacilityEditComponent(FacilityDto facility) {
 
 		boolean isNew = facility == null;
@@ -235,6 +243,33 @@ public class InfrastructureController {
 		}
 
 		return editComponent;
+	}
+
+	private CommitDiscardWrapperComponent<CadreEditForm> getCadreEditComponent(CadreDto cadreDto) {
+		boolean isNew = cadreDto == null;
+		CadreEditForm editForm = new CadreEditForm(isNew);
+		if (isNew) {
+            cadreDto = CadreDto.build();
+		}
+
+		editForm.setValue(cadreDto);
+
+		final CommitDiscardWrapperComponent<CadreEditForm> editView = new CommitDiscardWrapperComponent<>(
+			editForm,
+			UserProvider.getCurrent().hasUserRight(isNew ? UserRight.INFRASTRUCTURE_CREATE : UserRight.INFRASTRUCTURE_EDIT),
+			editForm.getFieldGroup());
+
+		editView.addCommitListener(() -> {
+			FacadeProvider.getCadreFacade().save(editForm.getValue());
+			Notification.show(I18nProperties.getString(Strings.messageEntryCreated), Type.ASSISTIVE_NOTIFICATION);
+			SormasUI.get().getNavigator().navigateTo(CadreView.VIEW_NAME);
+		});
+
+		if (!isNew) {
+			extendEditComponentWithArchiveButton(editView, cadreDto.isArchived(), cadreDto.getUuid(), InfrastructureType.CADRE, null);
+		}
+
+		return editView;
 	}
 
 	private CommitDiscardWrapperComponent<ContinentEditForm> getContinentEditComponent(ContinentDto continent) {
