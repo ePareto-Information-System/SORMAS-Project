@@ -31,16 +31,7 @@ import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.ui.SubMenu;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.configuration.docgeneration.DocumentTemplatesView;
-import de.symeda.sormas.ui.configuration.infrastructure.AreasView;
-import de.symeda.sormas.ui.configuration.infrastructure.CommunitiesView;
-import de.symeda.sormas.ui.configuration.infrastructure.ContinentsView;
-import de.symeda.sormas.ui.configuration.infrastructure.CountriesView;
-import de.symeda.sormas.ui.configuration.infrastructure.DistrictsView;
-import de.symeda.sormas.ui.configuration.infrastructure.FacilitiesView;
-import de.symeda.sormas.ui.configuration.infrastructure.PointsOfEntryView;
-import de.symeda.sormas.ui.configuration.infrastructure.PopulationDataView;
-import de.symeda.sormas.ui.configuration.infrastructure.RegionsView;
-import de.symeda.sormas.ui.configuration.infrastructure.SubcontinentsView;
+import de.symeda.sormas.ui.configuration.infrastructure.*;
 import de.symeda.sormas.ui.configuration.infrastructure.components.CountryCombo;
 import de.symeda.sormas.ui.configuration.linelisting.LineListingConfigurationView;
 import de.symeda.sormas.ui.configuration.outbreak.OutbreaksView;
@@ -90,6 +81,7 @@ public abstract class AbstractConfigurationView extends AbstractSubNavigationVie
 			if (UserProvider.getCurrent().hasUserRight(UserRight.POPULATION_MANAGE)) {
 				navigator.addView(PopulationDataView.VIEW_NAME, PopulationDataView.class);
 			}
+			navigator.addView(AdditionalView.VIEW_NAME, AdditionalView.class);
 		}
 
 		//		if (LoginHelper.hasUserRight(UserRight.USER_RIGHTS_MANAGE)) {
@@ -185,6 +177,13 @@ public abstract class AbstractConfigurationView extends AbstractSubNavigationVie
 					null,
 					false);
 			}
+
+			menu.addView(
+					AdditionalView.VIEW_NAME,
+//					"New Tab",
+					I18nProperties.getPrefixCaption("View", AdditionalView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
+					null,
+					false);
 		}
 
 		//		if (LoginHelper.hasUserRight(UserRight.USER_RIGHTS_MANAGE)) {
