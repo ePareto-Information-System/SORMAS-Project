@@ -159,6 +159,7 @@ public interface Captions {
 	String AdditionalTest_wbcCount = "AdditionalTest.wbcCount";
 	String additionalTestNewTest = "additionalTestNewTest";
 	String address = "address";
+	String addCadre = "addCadre";
 	String AggregateReport_deaths = "AggregateReport.deaths";
 	String AggregateReport_disease = "AggregateReport.disease";
 	String AggregateReport_healthFacility = "AggregateReport.healthFacility";
@@ -210,6 +211,7 @@ public interface Captions {
 	String bulkTaskAssignee = "bulkTaskAssignee";
 	String bulkTaskPriority = "bulkTaskPriority";
 	String bulkTaskStatus = "bulkTaskStatus";
+	String cadre = "cadre";
 	String Campaign = "Campaign";
 	String Campaign_area = "Campaign.area";
 	String Campaign_community = "Campaign.community";
