@@ -283,7 +283,6 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 
 	public SampleCriteria eventParticipantUuids(List<String> eventParticipantUuids) {
 		this.eventParticipantUuids = eventParticipantUuids;
-
 		return this;
 	}
 
@@ -293,10 +292,5 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 
 	public void setPathogenTestType(PathogenTestType pathogenTestType) {
 		this.pathogenTestType = pathogenTestType;
-	}
-
-	public SampleCriteria pathogenTestType(PathogenTestType setPathogenTestType) {
-		setPathogenTestType(setPathogenTestType);
-		return this;
 	}
 }
