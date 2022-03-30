@@ -475,7 +475,6 @@ public class FacadeProvider {
 		return get().lookupEjbRemote(SyncFacade.class);
 	}
 
-
 	public static CadreFacade getCadreFacade() {
 		return get().lookupEjbRemote(CadreFacade.class);
 	}
