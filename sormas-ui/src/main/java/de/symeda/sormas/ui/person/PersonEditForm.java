@@ -15,9 +15,7 @@
 
 package de.symeda.sormas.ui.person;
 
-import static de.symeda.sormas.ui.utils.CssStyles.H3;
-import static de.symeda.sormas.ui.utils.CssStyles.LABEL_WHITE_SPACE_NORMAL;
-import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_3;
+import static de.symeda.sormas.ui.utils.CssStyles.*;
 import static de.symeda.sormas.ui.utils.LayoutUtil.divsCss;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidColumnLocCss;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRow;
@@ -34,6 +32,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import de.symeda.sormas.api.infrastructure.cadre.CadreDto;
+import de.symeda.sormas.api.infrastructure.cadre.CadreReferenceDto;
 import org.apache.commons.lang3.StringUtils;
 
 import com.vaadin.ui.CustomLayout;
@@ -93,6 +93,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	private static final long serialVersionUID = -1L;
 
 	private static final String PERSON_INFORMATION_HEADING_LOC = "personInformationHeadingLoc";
+	private static final String CADRE_HEADER = "headingPersonCadre";
 	private static final String OCCUPATION_HEADER = "occupationHeader";
 	private static final String ADDRESS_HEADER = "addressHeader";
 	private static final String ADDRESSES_HEADER = "addressesHeader";
@@ -132,6 +133,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
                     fluidRowLocs(PersonDto.PLACE_OF_BIRTH_FACILITY_TYPE, PersonDto.PLACE_OF_BIRTH_FACILITY, PersonDto.PLACE_OF_BIRTH_FACILITY_DETAILS) +
                     fluidRowLocs(PersonDto.GESTATION_AGE_AT_BIRTH, PersonDto.BIRTH_WEIGHT) +
                     fluidRowLocs(PersonDto.SEX, PersonDto.PRESENT_CONDITION) +
+                    fluidRow(
+							fluidRowLocs(6, PersonDto.CADRE)
+					) +
                     fluidRow(
                             oneOfFourCol(PersonDto.DEATH_DATE),
                             oneOfFourCol(PersonDto.CAUSE_OF_DEATH),
@@ -222,6 +226,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 	@Override
 	protected void addFields() {
+
+		List<CadreReferenceDto> cadres = FacadeProvider.getCadreFacade().getAllActiveAsReference();
+		addField(PersonDto.CADRE, ComboBox.class).addItems(cadres);
 
 		personInformationHeadingLabel = new Label(I18nProperties.getString(Strings.headingPersonInformation));
 		personInformationHeadingLabel.addStyleName(H3);
@@ -348,7 +355,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		causeOfDeathField = addField(PersonDto.CAUSE_OF_DEATH, ComboBox.class);
 		causeOfDeathDiseaseField = addDiseaseField(PersonDto.CAUSE_OF_DEATH_DISEASE, true);
 		causeOfDeathDetailsField = addField(PersonDto.CAUSE_OF_DEATH_DETAILS, TextField.class);
-
 		// Set requirements that don't need visibility changes and read only status
 
 		setReadOnly(true, PersonDto.APPROXIMATE_AGE_REFERENCE_DATE);
