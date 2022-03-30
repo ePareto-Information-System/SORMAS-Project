@@ -82,6 +82,7 @@ public abstract class AbstractConfigurationView extends AbstractSubNavigationVie
 				navigator.addView(PopulationDataView.VIEW_NAME, PopulationDataView.class);
 			}
 			navigator.addView(AdditionalView.VIEW_NAME, AdditionalView.class);
+			navigator.addView(CadreView.VIEW_NAME, CadreView.class);
 		}
 
 		//		if (LoginHelper.hasUserRight(UserRight.USER_RIGHTS_MANAGE)) {
@@ -180,7 +181,6 @@ public abstract class AbstractConfigurationView extends AbstractSubNavigationVie
 
 			menu.addView(
 					AdditionalView.VIEW_NAME,
-//					"New Tab",
 					I18nProperties.getPrefixCaption("View", AdditionalView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
 					null,
 					false);
