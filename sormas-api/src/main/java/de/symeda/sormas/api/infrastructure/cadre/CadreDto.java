@@ -6,8 +6,9 @@ import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.InfrastructureDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.FieldConstraints;
+import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 
-public class CadreDto extends InfrastructureDto {
+public class CadreDto extends PseudonymizableDto {
 
 	public static final String I18N_PREFIX = "cadre";
 	public static final String POSITION = "position";
@@ -23,6 +24,10 @@ public class CadreDto extends InfrastructureDto {
 		CadreDto dto = new CadreDto();
 		dto.setUuid(DataHelper.createUuid());
 		return dto;
+	}
+
+	public static String buildCaption(String position) {
+		return DataHelper.toStringNullable(position);
 	}
 
 	public String getPosition() {

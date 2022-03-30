@@ -19,70 +19,25 @@ package de.symeda.sormas.backend.cadre;
 
 import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
 
-import java.util.*;
-
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 
 import de.symeda.auditlog.api.Audited;
-import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.externaldata.HasExternalData;
-import de.symeda.sormas.api.i18n.Validations;
-import de.symeda.sormas.api.infrastructure.facility.FacilityType;
-import de.symeda.sormas.api.person.*;
-import de.symeda.sormas.api.utils.FieldConstraints;
-import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.CoreAdo;
-import de.symeda.sormas.backend.common.messaging.ManualMessageLog;
-import de.symeda.sormas.backend.contact.Contact;
-import de.symeda.sormas.backend.event.EventParticipant;
-import de.symeda.sormas.backend.immunization.entity.Immunization;
-import de.symeda.sormas.backend.infrastructure.community.Community;
-import de.symeda.sormas.backend.infrastructure.country.Country;
-import de.symeda.sormas.backend.infrastructure.district.District;
-import de.symeda.sormas.backend.infrastructure.facility.Facility;
-import de.symeda.sormas.backend.infrastructure.region.Region;
-import de.symeda.sormas.backend.location.Location;
-import de.symeda.sormas.backend.person.PersonContactDetail;
-import de.symeda.sormas.backend.travelentry.TravelEntry;
 
-@Entity
+@Entity(name = "cadre")
 @Audited
-public class Cadre extends CoreAdo implements HasExternalData {
+public class Cadre extends CoreAdo {
 	public static final String TABLE_NAME = "cadre";
-	public static final String I18N_PREFIX = "cadre";
 	public static final String EXTERNAL_ID = "externalId";
-	public static final String EXTERNAL_TOKEN = "externalToken";
-	public static final String INTERNAL_TOKEN = "internalToken";
 	public static final String POSITION = "position";
 	public static final String ARCHIVED = "archived";
 
 	private String position;
 	private String externalId;
 	private boolean archived;
-	private String externalToken;
-	private String internalToken;
 
-	@Column
-	public String getExternalToken() {
-		return externalToken;
-	}
-
-	public void setExternalToken(String externalToken) {
-		this.externalToken = externalToken;
-	}
-
-	@Column
-	public String getInternalToken() {
-		return internalToken;
-	}
-
-	public void setInternalToken(String internalToken) {
-		this.internalToken = internalToken;
-	}
-
-	@Column(nullable = false, length = CHARACTER_LIMIT_DEFAULT)
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getPosition() {
 		return position;
 	}
@@ -91,7 +46,7 @@ public class Cadre extends CoreAdo implements HasExternalData {
 		this.position = position;
 	}
 
-	@Column
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getExternalId() {
 		return externalId;
 	}
@@ -100,7 +55,6 @@ public class Cadre extends CoreAdo implements HasExternalData {
 		this.externalId = externalId;
 	}
 
-	@Column
 	public boolean isArchived() {
 		return archived;
 	}
