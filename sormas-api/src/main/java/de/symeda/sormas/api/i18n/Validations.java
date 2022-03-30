@@ -78,6 +78,7 @@ public interface Validations {
 	String importCasesPropertyTypeNotAllowed = "importCasesPropertyTypeNotAllowed";
 	String importCasesUnexpectedError = "importCasesUnexpectedError";
 	String importCommunityAlreadyExists = "importCommunityAlreadyExists";
+	String importCadreAlreadyExists = "importCadreAlreadyExists";
 	String importCommunityNotUnique = "importCommunityNotUnique";
 	String importContinentAlreadyExists = "importContinentAlreadyExists";
 	String importContinentNotUnique = "importContinentNotUnique";
@@ -201,6 +202,7 @@ public interface Validations {
 	String uuidPatternNotMatching = "uuidPatternNotMatching";
 	String vaccineDosesFormat = "vaccineDosesFormat";
 	String validCaseContactOrEventParticipant = "validCaseContactOrEventParticipant";
+	String validCadrePosition = "validCadrePosition";
 	String validCommunity = "validCommunity";
 	String validDateRange = "validDateRange";
 	String validDisease = "validDisease";
