@@ -75,6 +75,7 @@ public interface Captions {
 	String actionHide = "actionHide";
 	String actionImport = "actionImport";
 	String actionImportAllContinents = "actionImportAllContinents";
+	String actionImportAllCadre = "actionImportAllCadre";
 	String actionImportAllCountries = "actionImportAllCountries";
 	String actionImportAllSubcontinents = "actionImportAllSubcontinents";
 	String actionLastModifiedByLabel = "actionLastModifiedByLabel";
@@ -95,6 +96,7 @@ public interface Captions {
 	String actionReset = "actionReset";
 	String actionResetEnumCache = "actionResetEnumCache";
 	String actionResetFilters = "actionResetFilters";
+	String actionRefresh = "actionRefresh";
 	String actionSave = "actionSave";
 	String actionSaveAndContinue = "actionSaveAndContinue";
 	String actionSaveAndOpenCase = "actionSaveAndOpenCase";
@@ -740,8 +742,11 @@ public interface Captions {
 	String Continent_displayName = "Continent.displayName";
 	String Continent_externalId = "Continent.externalId";
 	String continentActiveContinents = "continentActiveContinents";
+	String continentActiveCadres = "continentActiveCadre";
 	String continentAllContinents = "continentAllContinents";
 	String continentArchivedContinents = "continentArchivedContinents";
+	String continentArchivedCadre = "continentArchivedCadre";
+	String continentAllCadre = "continentAllCadre";
 	String convertContactToCase = "convertContactToCase";
 	String convertEventParticipantToCase = "convertEventParticipantToCase";
 	String country = "country";
@@ -1643,6 +1648,7 @@ public interface Captions {
 	String Person_presentCondition = "Person.presentCondition";
 	String Person_salutation = "Person.salutation";
 	String Person_sex = "Person.sex";
+	String Person_cadre = "Person.cadre";
 	String Person_symptomJournalStatus = "Person.symptomJournalStatus";
 	String Person_transporter_occupationDetails = "Person.transporter.occupationDetails";
 	String Person_uuid = "Person.uuid";
@@ -2386,8 +2392,10 @@ public interface Captions {
 	String View_configuration_devMode_short = "View.configuration.devMode.short";
 	String View_configuration_districts = "View.configuration.districts";
 	String View_configuration_districts_short = "View.configuration.districts.short";
-	String View_configuration_additional = "View.configuration.additional";
-	String View_configuration_additional_short = "View.configuration.additional.short";
+	String View_configuration_listOfValue = "View.configuration.listOfValue";
+	String View_configuration_listOfValue_short = "View.configuration.listOfValue.short";
+	String View_configuration_cadre = "View.configuration.cadre";
+	String View_configuration_cadre_short = "View.configuration.cadre.short";
 	String View_configuration_documentTemplates = "View.configuration.documentTemplates";
 	String View_configuration_documentTemplates_short = "View.configuration.documentTemplates.short";
 	String View_configuration_facilities = "View.configuration.facilities";
