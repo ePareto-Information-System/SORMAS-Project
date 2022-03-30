@@ -22,6 +22,8 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
+import de.symeda.sormas.api.infrastructure.cadre.CadreDto;
+import de.symeda.sormas.api.infrastructure.cadre.CadreReferenceDto;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -120,6 +122,7 @@ public class PersonDto extends PseudonymizableDto {
 	public static final String BIRTH_COUNTRY = "birthCountry";
 	public static final String CITIZENSHIP = "citizenship";
 	public static final String ADDITIONAL_DETAILS = "additionalDetails";
+	public static final String CADRE = "cadre";
 	private static final long serialVersionUID = -8558187171374254398L;
 
 	// Fields are declared in the order they should appear in the import template
@@ -355,6 +358,9 @@ public class PersonDto extends PseudonymizableDto {
 	@S2SIgnoreProperty(configProperty = SormasToSormasConfig.SORMAS2SORMAS_IGNORE_ADDITIONAL_DETAILS)
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
 	private String additionalDetails;
+
+	@SensitiveData
+	private CadreReferenceDto cadre;
 
 	@SuppressWarnings("serial")
 	public static class SeveralNonPrimaryContactDetailsException extends RuntimeException {
@@ -972,6 +978,14 @@ public class PersonDto extends PseudonymizableDto {
 
 	public void setAdditionalDetails(String additionalDetails) {
 		this.additionalDetails = additionalDetails;
+	}
+
+	public CadreReferenceDto getCadre() {
+		return cadre;
+	}
+
+	public void setCadre(CadreReferenceDto cadre) {
+		this.cadre = cadre;
 	}
 
 	@Override
