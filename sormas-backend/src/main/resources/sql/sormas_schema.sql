@@ -9940,4 +9940,19 @@ ALTER TABLE testreport_history ADD COLUMN testeddiseasevariantdetails varchar(25
 
 INSERT INTO schema_version (version_number, comment) VALUES (439, 'Add disease variant mapping to test reports #7209');
 
+CREATE TABLE cadre (
+     id bigint NOT NULL,
+     uuid varchar(36) not null unique,
+     creationdate timestamp without time zone NOT NULL,
+     changedate timestamp not null,
+     archived boolean not null default false,
+     position varchar(255),
+     externalid varchar(255),
+     deleted boolean not null default false,
+    primary key(id)
+);
+ALTER TABLE cadre OWNER TO sormas_user;
+ALTER TABLE person ADD COLUMN cadre_id bigint;
+INSERT INTO schema_version (version_number, comment) VALUES (442, 'Created a cadre table and added a relation to person table #34');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
