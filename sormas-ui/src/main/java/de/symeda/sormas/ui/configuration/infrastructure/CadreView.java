@@ -33,8 +33,8 @@ import de.symeda.sormas.api.i18n.Descriptions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.InfrastructureType;
-import de.symeda.sormas.api.infrastructure.continent.ContinentCriteria;
-import de.symeda.sormas.api.infrastructure.continent.ContinentIndexDto;
+import de.symeda.sormas.api.infrastructure.cadre.CadreCriteria;
+import de.symeda.sormas.api.infrastructure.cadre.CadreIndexDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
@@ -48,8 +48,7 @@ public class CadreView extends AbstractConfigurationView {
 	public static final String VIEW_NAME = ROOT_VIEW_NAME + "/cadre";
 	protected Button createButton;
 	protected Button importButton;
-	protected Button importDefaultContinentsButton;
-	private ContinentCriteria criteria;
+	private CadreCriteria criteria;
 	private ViewConfiguration viewConfiguration;
 	// Filter
 	private SearchField searchField;
@@ -57,7 +56,7 @@ public class CadreView extends AbstractConfigurationView {
 	private Button resetButton;
 	private HorizontalLayout filterLayout;
 	private VerticalLayout gridLayout;
-	private ContinentsGrid grid;
+	private CadreGrid grid;
 	private MenuBar bulkOperationsDropdown;
 	private RowCount rowCount;
 
@@ -65,14 +64,14 @@ public class CadreView extends AbstractConfigurationView {
 		super(VIEW_NAME);
 
 		viewConfiguration = ViewModelProviders.of(CadreView.class).get(ViewConfiguration.class);
-		criteria = ViewModelProviders.of(CadreView.class).get(ContinentCriteria.class);
+		criteria = ViewModelProviders.of(CadreView.class).get(CadreCriteria.class);
 		if (criteria.getRelevanceStatus() == null) {
 			criteria.relevanceStatus(EntityRelevanceStatus.ACTIVE);
 		}
-		grid = new ContinentsGrid(criteria);
+		grid = new CadreGrid(criteria, this);
 		gridLayout = new VerticalLayout();
 		gridLayout.addComponent(createFilterBar());
-		rowCount = new RowCount(Strings.labelNumberOfContinents, grid.getItemCount());
+		rowCount = new RowCount(Strings.labelNoCadre, grid.getItemCount());
 		gridLayout.addComponent(rowCount);
 		gridLayout.addComponent(grid);
 		gridLayout.setMargin(true);
@@ -81,81 +80,15 @@ public class CadreView extends AbstractConfigurationView {
 		gridLayout.setSizeFull();
 		gridLayout.setStyleName("crud-main-layout");
 
-		boolean infrastructureDataEditable = FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.EDIT_INFRASTRUCTURE_DATA);
-
-		if (infrastructureDataEditable && UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_IMPORT)) {
-			importButton = ButtonHelper.createIconButton(Captions.actionImport, VaadinIcons.UPLOAD, e -> {
-				Window window = VaadinUiUtil.showPopupWindow(new InfrastructureImportLayout(InfrastructureType.CONTINENT));
-				window.setCaption(I18nProperties.getString(Strings.headingImportContinents));
-				window.addCloseListener(c -> grid.reload(true));
-			}, ValoTheme.BUTTON_PRIMARY);
-			addHeaderComponent(importButton);
-
-			importDefaultContinentsButton = ButtonHelper.createIconButton(Captions.actionImportAllContinents, VaadinIcons.UPLOAD, e -> {
-				Window window = VaadinUiUtil.showPopupWindow(new ImportDefaultContinentsLayout());
-				window.setCaption(I18nProperties.getString(Strings.headingImportAllContinents));
-				window.addCloseListener(c -> grid.reload(true));
-			}, ValoTheme.BUTTON_PRIMARY);
-			addHeaderComponent(importDefaultContinentsButton);
-		} else if (!infrastructureDataEditable) {
-			Label infrastructureDataLocked = new Label();
-			infrastructureDataLocked.setCaption(I18nProperties.getString(Strings.headingInfrastructureLocked));
-			infrastructureDataLocked.setValue(I18nProperties.getString(Strings.messageInfrastructureLocked));
-			infrastructureDataLocked.setIcon(VaadinIcons.WARNING);
-			addHeaderComponent(infrastructureDataLocked);
-		}
-
-		if (UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_EXPORT)) {
-			Button exportButton = ButtonHelper.createIconButton(Captions.export, VaadinIcons.TABLE, null, ValoTheme.BUTTON_PRIMARY);
-			exportButton.setDescription(I18nProperties.getDescription(Descriptions.descExportButton));
-			addHeaderComponent(exportButton);
-
-			StreamResource streamResource = GridExportStreamResource.createStreamResource(
-				grid,
-				ExportEntityName.CONTINENTS,
-				Collections.singletonList(ContinentsGrid.EDIT_BTN_ID),
-				Collections.singletonList(ContinentIndexDto.DEFAULT_NAME));
-			FileDownloader fileDownloader = new FileDownloader(streamResource);
-			fileDownloader.extend(exportButton);
-		}
-
-		if (infrastructureDataEditable && UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_CREATE)) {
+		if (UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_CREATE)) {
 			createButton = ButtonHelper.createIconButton(
 				Captions.actionNewEntry,
 				VaadinIcons.PLUS_CIRCLE,
-				e -> ControllerProvider.getInfrastructureController().createContinent(),
+				e -> ControllerProvider.getInfrastructureController().createCadre(this),
 				ValoTheme.BUTTON_PRIMARY);
 
+
 			addHeaderComponent(createButton);
-		}
-
-		if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
-			Button btnEnterBulkEditMode = ButtonHelper.createIconButton(Captions.actionEnterBulkEditMode, VaadinIcons.CHECK_SQUARE_O, null);
-			btnEnterBulkEditMode.setVisible(!viewConfiguration.isInEagerMode());
-			addHeaderComponent(btnEnterBulkEditMode);
-
-			Button btnLeaveBulkEditMode =
-				ButtonHelper.createIconButton(Captions.actionLeaveBulkEditMode, VaadinIcons.CLOSE, null, ValoTheme.BUTTON_PRIMARY);
-			btnLeaveBulkEditMode.setVisible(viewConfiguration.isInEagerMode());
-			addHeaderComponent(btnLeaveBulkEditMode);
-
-			btnEnterBulkEditMode.addClickListener(e -> {
-				viewConfiguration.setInEagerMode(true);
-				bulkOperationsDropdown.setVisible(isBulkOperationsDropdownVisible());
-				btnEnterBulkEditMode.setVisible(false);
-				btnLeaveBulkEditMode.setVisible(true);
-				searchField.setEnabled(false);
-				grid.setInEagerMode(true);
-				grid.reload();
-			});
-			btnLeaveBulkEditMode.addClickListener(e -> {
-				viewConfiguration.setInEagerMode(false);
-				bulkOperationsDropdown.setVisible(false);
-				btnLeaveBulkEditMode.setVisible(false);
-				btnEnterBulkEditMode.setVisible(true);
-				searchField.setEnabled(true);
-				navigateTo(criteria);
-			});
 		}
 
 		addComponent(gridLayout);
@@ -170,12 +103,12 @@ public class CadreView extends AbstractConfigurationView {
 		searchField = new SearchField();
 		searchField.addTextChangeListener(e -> {
 			criteria.nameLike(e.getText());
-			grid.reload();
+			refresh();
 		});
 		filterLayout.addComponent(searchField);
 
 		resetButton = ButtonHelper.createButton(Captions.actionResetFilters, event -> {
-			ViewModelProviders.of(CadreView.class).remove(ContinentCriteria.class);
+			ViewModelProviders.of(CadreView.class).remove(CadreCriteria.class);
 			navigateTo(null);
 		}, CssStyles.FORCE_CAPTION);
 		resetButton.setVisible(false);
@@ -192,12 +125,13 @@ public class CadreView extends AbstractConfigurationView {
 				relevanceStatusFilter.setWidth(220, Unit.PERCENTAGE);
 				relevanceStatusFilter.setNullSelectionAllowed(false);
 				relevanceStatusFilter.addItems((Object[]) EntityRelevanceStatus.values());
-				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ACTIVE, I18nProperties.getCaption(Captions.continentActiveContinents));
-				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ARCHIVED, I18nProperties.getCaption(Captions.continentArchivedContinents));
-				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ALL, I18nProperties.getCaption(Captions.continentAllContinents));
+				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ACTIVE, I18nProperties.getCaption(Captions.continentActiveCadres));
+				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ARCHIVED, I18nProperties.getCaption(Captions.continentArchivedCadre));
+				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ALL, I18nProperties.getCaption(Captions.continentAllCadre));
 				relevanceStatusFilter.addValueChangeListener(e -> {
 					criteria.relevanceStatus((EntityRelevanceStatus) e.getProperty().getValue());
 					navigateTo(criteria);
+					refresh();
 				});
 				actionButtonsLayout.addComponent(relevanceStatusFilter);
 
@@ -210,7 +144,7 @@ public class CadreView extends AbstractConfigurationView {
 								.archiveOrDearchiveAllSelectedItems(
 									true,
 									grid.asMultiSelect().getSelectedItems(),
-									InfrastructureType.CONTINENT,
+									InfrastructureType.CADRE,
 									() -> navigateTo(criteria));
 						}, EntityRelevanceStatus.ACTIVE.equals(criteria.getRelevanceStatus())),
 						new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.actionDearchive), VaadinIcons.ARCHIVE, selectedItem -> {
@@ -218,7 +152,7 @@ public class CadreView extends AbstractConfigurationView {
 								.archiveOrDearchiveAllSelectedItems(
 									false,
 									grid.asMultiSelect().getSelectedItems(),
-									InfrastructureType.CONTINENT,
+									InfrastructureType.CADRE,
 									() -> navigateTo(criteria));
 						}, EntityRelevanceStatus.ARCHIVED.equals(criteria.getRelevanceStatus())));
 
@@ -244,6 +178,11 @@ public class CadreView extends AbstractConfigurationView {
 			criteria.fromUrlParams(params);
 		}
 		updateFilterComponents();
+		grid.reload();
+		rowCount.update(grid.getItemCount());
+	}
+
+	public void refresh(){
 		grid.reload();
 		rowCount.update(grid.getItemCount());
 	}

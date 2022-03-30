@@ -15,101 +15,80 @@
 
 package de.symeda.sormas.ui.configuration.infrastructure;
 
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
+import com.vaadin.data.provider.DataProvider;
+import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.shared.data.sort.SortDirection;
 import de.symeda.sormas.api.infrastructure.cadre.CadreCriteria;
-import de.symeda.sormas.api.infrastructure.cadre.CadreIndexDto;
-import org.apache.commons.lang3.StringUtils;
-
-import de.symeda.sormas.api.EntityRelevanceStatus;
-import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.feature.FeatureType;
-import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.infrastructure.continent.ContinentCriteria;
-import de.symeda.sormas.api.infrastructure.continent.ContinentIndexDto;
-import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.ui.ControllerProvider;
-import de.symeda.sormas.ui.UserProvider;
+import de.symeda.sormas.api.infrastructure.cadre.CadreDto;
+import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.ui.ViewModelProviders;
-import de.symeda.sormas.ui.utils.FilteredGrid;
-import de.symeda.sormas.ui.utils.ViewConfiguration;
+import de.symeda.sormas.ui.utils.*;
 
-public class CadreGrid extends FilteredGrid<CadreIndexDto, CadreCriteria> {
+import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.ui.ControllerProvider;
 
-	List<CadreIndexDto> allCadre;
+public class CadreGrid extends FilteredGrid<CadreDto, CadreCriteria> {
 
-	public CadreGrid(CadreCriteria criteria) {
-		super(CadreIndexDto.class);
+	public CadreGrid(CadreCriteria criteria, CadreView cadreView) {
 
+		super(CadreDto.class);
 		setSizeFull();
 
-		ViewConfiguration viewConfiguration = ViewModelProviders.of(CadreView.class).get(ViewConfiguration.class);
+		ViewConfiguration viewConfiguration = ViewModelProviders.of(AdditionalView.class).get(ViewConfiguration.class);
 		setInEagerMode(viewConfiguration.isInEagerMode());
 
-		super.setCriteria(criteria, true);
-		if (isInEagerMode() && UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
-			setSelectionMode(SelectionMode.MULTI);
-		} else {
-			setSelectionMode(SelectionMode.NONE);
-		}
-
-		setColumns(CadreIndexDto.DISPLAY_NAME, ContinentIndexDto.EXTERNAL_ID, ContinentIndexDto.DEFAULT_NAME);
-		getColumn(CadreIndexDto.POSITION).setHidden(true);
-
-		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.EDIT_INFRASTRUCTURE_DATA)
-			&& UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_EDIT)) {
-			addEditColumn(e -> ControllerProvider.getInfrastructureController().editCadre(e.getUuid()));
-		}
-
-		for (Column<?, ?> column : getColumns()) {
-			column.setCaption(I18nProperties.getPrefixCaption(CadreIndexDto.I18N_PREFIX, column.getId(), column.getCaption()));
-		}
-
-		reload(true);
+		setLazyDataProvider();
+		setCriteria(criteria);
+		initColumns();
+		addItemClickListener(
+				new ShowDetailsListener<>(CadreDto.UUID, e -> ControllerProvider.getInfrastructureController().editCadre(e.getUuid(), cadreView)));
 	}
 
-	public void reload(boolean forceFetch) {
-		if (forceFetch || allCadre == null) {
-			allCadre = FacadeProvider.getCadreFacade().getIndexList(null, null, null, null);
+
+	private void initColumns() {
+
+		setColumns(
+				CadreDto.UUID,
+				CadreDto.POSITION,
+				CadreDto.EXTERNAL_ID);
+
+		((Column<CadreDto, String>) getColumn(CadreDto.UUID)).setRenderer(new UuidRenderer());
+
+		for (Column<CadreDto, ?> column : getColumns()) {
+			column.setCaption(I18nProperties.getPrefixCaption(CadreDto.I18N_PREFIX, column.getId(), column.getCaption()));
 		}
-		reload();
 	}
 
 	public void reload() {
-		this.setItems(createFilteredStream());
-		setSelectionMode(isInEagerMode() ? SelectionMode.MULTI : SelectionMode.NONE);
+		getDataProvider().refreshAll();
 	}
 
-	private Stream<CadreIndexDto> createFilteredStream() {
+	public void setLazyDataProvider() {
+		DataProvider<CadreDto, CadreCriteria> dataProvider = DataProvider.fromFilteringCallbacks(
+				query -> FacadeProvider.getCadreFacade()
+						.getIndexList(
+								query.getFilter().orElse(null),
+								query.getOffset(),
+								query.getLimit(),
+								query.getSortOrders()
+										.stream()
+										.map(sortOrder -> new SortProperty(sortOrder.getSorted(), sortOrder.getDirection() == SortDirection.ASCENDING))
+										.collect(Collectors.toList()))
+						.stream(),
+				query -> {
+					return (int) FacadeProvider.getCadreFacade().count(query.getFilter().orElse(null));
+				});
+		setDataProvider(dataProvider);
+		setSelectionMode(SelectionMode.NONE);
+	}
 
-		// get all filter properties
-		String nameLike = getCriteria().getNameLike() != null ? getCriteria().getNameLike().toLowerCase() : null;
-		EntityRelevanceStatus relevanceStatus = getCriteria().getRelevanceStatus();
-
-		Predicate<CadreIndexDto> filters = x -> true; // "empty" basefilter
-
-		// name filter
-		if (!StringUtils.isEmpty(nameLike)) {
-			filters = filters.and(
-				cadre -> (cadre.getPosition().toLowerCase().contains(nameLike)
-					|| cadre.getDisplayName().toLowerCase().contains(nameLike)));
-		}
-		// relevancestatus filter (active/archived/all)
-		if (relevanceStatus != null) {
-			switch (relevanceStatus) {
-			case ACTIVE:
-				filters = filters.and(continent -> (!continent.isArchived()));
-				break;
-			case ARCHIVED:
-				filters = filters.and(continent -> (continent.isArchived()));
-				break;
-			}
-		}
-
-		// apply filters
-		return allCadre.stream().filter(filters);
-
+	public void setEagerDataProvider() {
+		ListDataProvider<CadreDto> dataProvider =
+				DataProvider.fromStream(FacadeProvider.getCadreFacade().getIndexList(getCriteria(), null, null, null).stream());
+		setDataProvider(dataProvider);
+		setSelectionMode(SelectionMode.MULTI);
 	}
 }
