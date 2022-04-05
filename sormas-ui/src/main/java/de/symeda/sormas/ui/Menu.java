@@ -114,9 +114,30 @@ public class Menu extends CssLayout {
 		menuItemsLayout.setPrimaryStyleName(VALO_MENUITEMS);
 		menuPart.addComponent(menuItemsLayout);
 
-
-
+		addComponent(menuPart);
 	}
+
+	private void createViewButtonDefault(final String name, String caption, Resource icon, Button.ClickListener clickEvent) {
+		Button button = ButtonHelper.createIconButtonWithCaption(name, caption, icon, clickEvent);
+		button.setPrimaryStyleName(ValoTheme.MENU_ITEM);
+		menuItemsLayout.addComponent(button);
+		viewButtons.put(name, button);
+	}
+
+	public void addButtomMenu(){
+		createViewButtonDefault(
+				Captions.actionSettings, I18nProperties.getCaption(Captions.actionSettings),
+				VaadinIcons.COG,
+				selectedItem -> showSettingsPopup()
+		);
+
+		createViewButtonDefault(
+				Captions.actionLogout, I18nProperties.getCaption(Captions.actionLogout) + " (" + UserProvider.getCurrent().getUserName() + ")",
+				VaadinIcons.SIGN_OUT,
+				selectedItem -> LoginHelper.logout()
+		);
+	}
+
 
 	private void showSettingsPopup() {
 
@@ -168,7 +189,6 @@ public class Menu extends CssLayout {
 	 *            view icon in the menu
 	 */
 	public void addView(Class<? extends View> viewClass, final String name, String caption, Resource icon) {
-
 		navigator.addView(name, viewClass);
 		createViewButton(name, caption, icon);
 	}
