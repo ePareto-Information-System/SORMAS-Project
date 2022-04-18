@@ -359,20 +359,12 @@ public class Location extends AbstractDomainObject {
 		}
 	}
 
-	public String buildLatitudeCoordination() {
-		if (latitude == null) {
-			return "";
-		} else {
-			return latitude + "";
-		}
+	public Double buildLatitudeCoordination() {
+		return latitude;
 	}
 
-	public String buildLongitudeCoordination() {
-		if (longitude == null) {
-			return "";
-		} else {
-			return " " + longitude;
-		}
+	public Double buildLongitudeCoordination() {
+		return longitude;
 	}
 
 	public String buildLatLonCoordination() {

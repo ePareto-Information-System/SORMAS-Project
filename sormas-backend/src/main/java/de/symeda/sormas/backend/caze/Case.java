@@ -1703,9 +1703,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	}
 
 	public String buildCaseGpsCoordinationCaption() {
-		if (reportLat == null && reportLon == null) {
-			return "";
-		} else if (reportLat == null || reportLon == null) {
+		if (reportLat == null || reportLon == null) {
 			return I18nProperties.getString(Strings.messageIncompleteGpsCoordinates);
 		} else if (reportLatLonAccuracy == null) {
 			return reportLat + ", " + reportLon;
@@ -1714,27 +1712,16 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		}
 	}
 
-	public String buildCaseLatitudeCoordination() {
-		if (reportLat == null) {
-			return "";
-		} else {
-			return reportLat + "";
-		}
+	public Double buildCaseLatitudeCoordination() {
+		return reportLat;
 	}
 
-	public String buildCaseLongitudeCoordination() {
-		if (reportLon == null) {
-			return "";
-		} else {
-			return reportLon + "";
-		}
+	public Double buildCaseLongitudeCoordination() {
+		return reportLon;
 	}
 
-	public String buildCaseLatLonCoordination() {
-		if (reportLatLonAccuracy == null) {
-			return "";
-		} else {
-			return reportLatLonAccuracy + "";
-		}
+	public Float buildCaseLatLonCoordination() {
+
+		return reportLatLonAccuracy;
 	}
 }

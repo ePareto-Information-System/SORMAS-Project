@@ -347,11 +347,11 @@ public class CaseExportDto implements Serializable {
 
 	private Boolean isInJurisdiction;
 
-	private String caseLatitude;
-	private String caseLongitude;
-	private String caseLatLonAccuracy;
-	private String personLatitude;
-	private String personLongitude;
+	private Double caseLatitude;
+	private Double caseLongitude;
+	private Float caseLatLonAccuracy;
+	private Double personLatitude;
+	private Double personLongitude;
 	private String personLatLonAccuracy;
 
 	//@formatter:off
@@ -1536,7 +1536,7 @@ public class CaseExportDto implements Serializable {
 	@ExportEntity(LocationDto.class)
 	@ExportProperty(PERSON_LATITUDE)
 	@ExportGroup(ExportGroupType.SENSITIVE)
-	public String getPersonLatitude() {
+	public Double getPersonLatitude() {
 		return personLatitude;
 	}
 
@@ -1547,7 +1547,7 @@ public class CaseExportDto implements Serializable {
 	@ExportEntity(LocationDto.class)
 	@ExportProperty(PERSON_LONGITUDE)
 	@ExportGroup(ExportGroupType.SENSITIVE)
-	public String getPersonLongitude() {
+	public Double getPersonLongitude() {
 		return personLongitude;
 	}
 
@@ -2375,7 +2375,7 @@ public class CaseExportDto implements Serializable {
 		CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CASE_LATITUDE)
 	@ExportGroup(ExportGroupType.SENSITIVE)
-	public String getCaseLatitude() {
+	public Double getCaseLatitude() {
 		return caseLatitude;
 	}
 
@@ -2385,7 +2385,7 @@ public class CaseExportDto implements Serializable {
 		CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CASE_LONGITUDE)
 	@ExportGroup(ExportGroupType.SENSITIVE)
-	public String getCaseLongitude() {
+	public Double getCaseLongitude() {
 		return caseLongitude;
 	}
 
@@ -2395,7 +2395,7 @@ public class CaseExportDto implements Serializable {
 		CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CASE_LAT_LON_ACCURACY)
 	@ExportGroup(ExportGroupType.SENSITIVE)
-	public String getCaseLatLonAccuracy() {
+	public Float getCaseLatLonAccuracy() {
 		return caseLatLonAccuracy;
 	}
 
@@ -2413,15 +2413,15 @@ public class CaseExportDto implements Serializable {
 		this.followUpStatusChangeUserRoles = StringUtils.join(roles, ", ");
 	}
 
-	public void setCaseLatitude(String caseLatitude) {
+	public void setCaseLatitude(Double caseLatitude) {
 		this.caseLatitude = caseLatitude;
 	}
 
-	public void setCaseLongitude(String caseLongitude) {
+	public void setCaseLongitude(Double caseLongitude) {
 		this.caseLongitude = caseLongitude;
 	}
 
-	public void setCaseLatLonAccuracy(String caseLatLonAccuracy) {
+	public void setCaseLatLonAccuracy(Float caseLatLonAccuracy) {
 		this.caseLatLonAccuracy = caseLatLonAccuracy;
 	}
 
@@ -2429,11 +2429,11 @@ public class CaseExportDto implements Serializable {
 		this.caseGpsCoordinates = caseGpsCoordinates;
 	}
 
-	public void setPersonLatitude(String personLatitude) {
+	public void setPersonLatitude(Double personLatitude) {
 		this.personLatitude = personLatitude;
 	}
 
-	public void setPersonLongitude(String personLongitude) {
+	public void setPersonLongitude(Double personLongitude) {
 		this.personLongitude = personLongitude;
 	}
 
