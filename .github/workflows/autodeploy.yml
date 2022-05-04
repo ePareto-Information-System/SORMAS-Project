@@ -27,13 +27,13 @@ jobs:
        distribution: 'zulu' 
        java-version: '11'
 
-      - name: Build maven project
-        run: |
+    - name: Build maven project
+      run: |
             mvn -B package --file pom.xml
-     -name: Find target directory
-     run: |
+    - name: Find target directory
+      run: |
        cd target
        ls -a
-     - name: List Current directory
-       run: |
+    - name: List Current directory
+      run: |
           ls -a
