@@ -1,0 +1,51 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: Java CI with Maven
+
+env:
+  JAVA: 11
+  PRIVILEGED_RUN: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/development') || github.event.pull_request.head.repo.full_name == github.repository }}
+  CODEQL_LANGUAGES: 'java' # FIXME(@JonasCir) add 'javascript'
+
+on:
+  push:
+    branches: [ development, master, hotfix* ]
+  pull_request:
+    branches: [ development, hotfix* ] 
+  workflow_dispatch: 
+    inputs: 
+      deployment_notes: 
+        description: "Deployment notes"
+        required: true
+
+jobs:
+  ci:
+    name: SORMAS CI
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+    - name: Maven Package
+      run: mvn -B clean package -DskipTests
+    - name: Maven Verify
+      run: mvn -B clean verify
+    - name: Compile the Project
+      working-directory: github-actions-java-maven
+      run: mvn -B compile
+    - name: Upload Maven build artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: artifact.jar
+        path: github-actions-java-maven/target/github-actions-java-maven.jar
+        script: |
+            sudo /opt/payara5/bin/asadmin  stop-domain --domaindir /opt/domains sormas
+            chmod +x server-update.sh
+          
