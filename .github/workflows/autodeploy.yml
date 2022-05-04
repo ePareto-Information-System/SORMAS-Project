@@ -27,7 +27,7 @@ jobs:
        java-version: '11'
 
     - name: Build maven project
-      run: mvn -B package --file pom.xml
+      run: mvn -B package --file sormas-base/pom.xml
     - name: Find target directory
       run: |
        cd target
