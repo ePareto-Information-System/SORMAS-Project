@@ -27,5 +27,13 @@ jobs:
       
     - name: List Current directory
       run: ls -a
-    - name: SSH into test server
-      run: 217.182.96.129 -| anthony -ssh
+    - name: Install SSH Jey
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_PRIVATE_KEY}}
+        known_host: 'this is here so this doesnt fail'
+    - name: Adding Known host
+      run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+    - name: Deploy with rsync
+      run: rsync -avz ./dist/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/anthony/test_sormas
+      
