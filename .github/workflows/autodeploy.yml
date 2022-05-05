@@ -21,6 +21,8 @@ jobs:
       with:
        distribution: 'zulu' 
        java-version: '11'
+    - name: Build maven project
+      run: mvn install -DskipTests package --file sormas-base/pom.xml
     - name: Run Ant Target
       run: ant -noinput -buildfile ./sormas-base/build.xml deploy-serverlibs
     - name: Package As Artifacts
