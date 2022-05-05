@@ -22,7 +22,7 @@ jobs:
        distribution: 'zulu' 
        java-version: '11'
     - name: Run Ant Target
-      run: ant -noinput -buildfile ./sormas-base/build.xml jar
+      run: ant -noinput -buildfile ./sormas-base/build.xml install
     - name: Package As Artifacts
       uses: actions/upload-artifact@v3
       with:
