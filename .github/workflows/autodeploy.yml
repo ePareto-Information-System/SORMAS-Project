@@ -24,9 +24,6 @@ jobs:
 
     - name: Build maven project
       run: mvn -B -DskipTests package --file sormas-base/pom.xml
-    - name: Find target directory
-      run: |
-       cd target
-       ls -a
+      
     - name: List Current directory
       run: ls -a
