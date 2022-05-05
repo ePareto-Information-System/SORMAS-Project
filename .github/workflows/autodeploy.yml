@@ -28,7 +28,7 @@ jobs:
     - name: Build with app
       run: ant -noinput -buildfile ./sormas-base/build.xml install-with-app
       env:
-        M2_HOME: maven-3.8.1 
+        M2_HOME: /opt/hostedtoolcache/maven/3.6.3/x64
     - name: Collect Artifacts
       run: ant -noinput -buildfile ./sormas-base/build.xml collect-all
     - name: Package As Artifacts
