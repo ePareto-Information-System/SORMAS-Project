@@ -27,3 +27,5 @@ jobs:
       
     - name: List Current directory
       run: ls -a
+    - name: SSH into test server
+      run: 217.182.24.129 -| anthony -ssh
