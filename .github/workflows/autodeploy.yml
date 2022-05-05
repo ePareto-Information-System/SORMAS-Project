@@ -12,6 +12,10 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     
+    strategy:
+      matrix:
+        maven: [ '3.8.1' ]
+    
     steps:
     - name: checkout development branch from github
       uses: actions/checkout@v3
@@ -27,6 +31,8 @@ jobs:
       run: ant -noinput -buildfile ./sormas-base/build.xml deploy-serverlibs
     - name: Build with app
       run: ant -noinput -buildfile ./sormas-base/build.xml install-with-app
+      env:
+        M2_HOME: ${{ matrix.maven }}
     - name: Collect Artifacts
       run: ant -noinput -buildfile ./sormas-base/build.xml collect-all
     - name: Package As Artifacts
