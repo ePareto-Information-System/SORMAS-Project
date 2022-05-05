@@ -24,7 +24,7 @@ jobs:
     - name: Build maven project
       run: mvn install -DskipTests package --file sormas-base/pom.xml
     - name: Run Ant Target
-      run: ant -noinput -buildfile ./sormas-base/build.xml install
+      run: ant -noinput -buildfile ./sormas-base/build-artifact.xml deploy-serverlibs
     - name: Package As Artifacts
       uses: actions/upload-artifact@v3
       with:
