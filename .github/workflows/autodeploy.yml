@@ -25,7 +25,7 @@ jobs:
     - name: Build maven project
       run: mvn -B -DskipTests package --file sormas-base/pom.xml
     - name: Run Ant Target
-      run: ant -noinput -buildfile --file sormas-base/build.xml jar
+      run: ant -noinput -buildfile /sormas-base/build.xml jar
     - name: Package As Artifacts
       uses: actions/upload-artifact@v3
       with:
