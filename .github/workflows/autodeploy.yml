@@ -23,12 +23,12 @@ jobs:
        java-version: '11'
     - name: Build maven project
       run: mvn install -DskipTests package --file sormas-base/pom.xml
+    - name: Set Maven Env
+      run: "M2_HOME=/usr/share/apache-maven-3.8.1"
     - name: Run Ant Target
       run: ant -noinput -buildfile ./sormas-base/build.xml deploy-serverlibs
     - name: Build with app
       run: ant -noinput -buildfile ./sormas-base/build.xml install-with-app
-      env:
-        M2_HOME: /opt/hostedtoolcache/maven/3.6.3/x64
     - name: Collect Artifacts
       run: ant -noinput -buildfile ./sormas-base/build.xml collect-all
     - name: Package As Artifacts
