@@ -24,7 +24,13 @@ jobs:
 
     - name: Build maven project
       run: mvn -B -DskipTests package --file sormas-base/pom.xml
-      
+    - name: Run Ant Target
+      run: ant -noinput -buildfile build-ci.xml jar
+    - name: Package As Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+           name: Package
+           path: build/jar
     - name: List Current directory
       run: ls -a
     - name: Install SSH Key
