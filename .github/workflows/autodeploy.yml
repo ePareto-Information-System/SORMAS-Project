@@ -35,6 +35,10 @@ jobs:
       uses: allenevans/set-env@v2.0.1
       with:
         M2_HOME: /opt/hostedtoolcache/maven/3.8.1/x64
+    - name: Make gradlew executable
+      run: chmod +x ./gradlew
+    - name: build prod
+      run: ./gradlew app:bundleRelease
     - name: Run Ant Install
       run: ant -noinput -buildfile ./sormas-base/build.xml install
       env:
