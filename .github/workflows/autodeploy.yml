@@ -30,7 +30,7 @@ jobs:
     - name: Run Ant Install
       run: ant -noinput -buildfile ./sormas-base/build.xml install
       env: 
-        M2_HOME: ${{ matrix.maven }}
+        M2_HOME: /opt/hostedtoolcache/apache-maven/3.8.1/x64
     - name: Run Ant Target
       run: ant -noinput -buildfile ./sormas-base/build.xml deploy-serverlibs
     - name: Collect Artifacts
