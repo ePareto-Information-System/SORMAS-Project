@@ -34,7 +34,7 @@ jobs:
     - name: Set environment variables
       uses: allenevans/set-env@v2.0.1
       with:
-        M2_HOME: /opt/hostedtoolcache/maven/3.6.3/x64
+        M2_HOME: /opt/hostedtoolcache/maven/3.6.3
     - name: Run Ant Install
       run: ant -noinput -buildfile ./sormas-base/build.xml install
     - name: Run Ant Target
