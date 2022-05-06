@@ -41,6 +41,8 @@ jobs:
           M2_HOME: /opt/hostedtoolcache/maven/3.8.1/x64
     - name: Run Ant Deploy serverlibs
       run: ant -noinput -buildfile ./sormas-base/build.xml deploy-serverlibs
+    - name: Run Ant Install with apps
+      run: ant -noinput -buildfile ./sormas-base/build.xml install-with-app
     - name: Collect Artifacts
       run: ant -noinput -buildfile ./sormas-base/build.xml collect-all
     - name: Package As Artifacts
