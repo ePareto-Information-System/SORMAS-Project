@@ -36,7 +36,7 @@ jobs:
       with:
         M2_HOME: /opt/hostedtoolcache/maven/3.8.1/x64
     - name: Gradle wrapper
-      run: cd ./sormas-app/app/ gradle wrapper
+      run: ./sormas-app/ gradle wrapper
     - name: build prod
       run: ./gradlew app:bundleRelease
     - name: Run Ant Install
