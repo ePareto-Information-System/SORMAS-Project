@@ -43,7 +43,10 @@ jobs:
       run: |
           cd ./sormas-app/
             gradle build
-           gradle assemble
+    - name: Get Apk
+      run: |
+          cd ./sormas-app/
+              gradle assemble
     - name: Run Ant Install
       run: ant -noinput -buildfile ./sormas-base/build.xml install
       env:
