@@ -35,6 +35,13 @@ jobs:
       uses: allenevans/set-env@v2.0.1
       with:
         M2_HOME: /opt/hostedtoolcache/maven/3.8.1/x64
+    
+    - name: Run Ant Install
+      run: ant -noinput -buildfile ./sormas-base/build.xml install
+      env:
+          M2_HOME: /opt/hostedtoolcache/maven/3.8.1/x64
+    - name: Run Ant Deploy serverlibs
+      run: ant -noinput -buildfile ./sormas-base/build.xml deploy-serverlibs
     - name: Gradle wrapper
       run: |
         cd ./sormas-app/
@@ -47,12 +54,6 @@ jobs:
       run: |
           cd ./sormas-app/
               gradle assemble
-    - name: Run Ant Install
-      run: ant -noinput -buildfile ./sormas-base/build.xml install
-      env:
-          M2_HOME: /opt/hostedtoolcache/maven/3.8.1/x64
-    - name: Run Ant Deploy serverlibs
-      run: ant -noinput -buildfile ./sormas-base/build.xml deploy-serverlibs
     - name: Upload
       uses: actions/upload-artifact@v2
       with:
