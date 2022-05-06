@@ -25,8 +25,6 @@ jobs:
        java-version: '11'
     - name: Run Ant Install
       run: ant -noinput -buildfile ./sormas-base/build.xml install
-      env:
-        M2_HOME: ${{maven}}
     - name: Run Ant Target
       run: ant -noinput -buildfile ./sormas-base/build.xml deploy-serverlibs
     - name: Collect Artifacts
