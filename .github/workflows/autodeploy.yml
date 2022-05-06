@@ -40,7 +40,9 @@ jobs:
         cd ./sormas-app/
         gradle wrapper
     - name: build prod
-      run: ./gradlew app:bundleRelease
+      run: |
+          cd./sormas-app/
+          ./gradlew app:bundleRelease
     - name: Run Ant Install
       run: ant -noinput -buildfile ./sormas-base/build.xml install
       env:
