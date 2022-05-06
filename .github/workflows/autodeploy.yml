@@ -42,6 +42,12 @@ jobs:
           M2_HOME: /opt/hostedtoolcache/maven/3.8.1/x64
     - name: Run Ant Deploy serverlibs
       run: ant -noinput -buildfile ./sormas-base/build.xml deploy-serverlibs
+    - name: Decode Keystore
+      id: decode_keystore
+      uses: timheuer/base64-to-file@v1
+      with:
+          fileName: 'keystore/your_signing_keystore.jks'
+          encodedString: ${{ secrets.KEYSTORE }}
     - name: Gradle wrapper
       run: |
         cd ./sormas-app/
@@ -50,10 +56,18 @@ jobs:
       run: |
           cd ./sormas-app/
             gradle build
+      env:
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
     - name: Get Apk
       run: |
           cd ./sormas-app/
               gradle assemble
+      env:
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
     - name: Upload
       uses: actions/upload-artifact@v2
       with:
