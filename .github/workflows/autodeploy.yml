@@ -48,10 +48,6 @@ jobs:
           repository: Anthony4m/keystore
           token: ${{ secrets.KEYSTORE_REPO_TOKEN }}
           path: ./sormas-app/app/sormas-keystore.jks
-    - name: Gradle wrapper
-      run: |
-        cd ./sormas-app/
-        gradle wrapper
     - name: build prod
       run: |
           cd ./sormas-app/
