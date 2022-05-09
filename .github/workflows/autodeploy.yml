@@ -48,16 +48,10 @@ jobs:
           repository: Anthony4m/keystore
           token: ${{ secrets.KEYSTORE_REPO_TOKEN }}
           path: ./sormas-app/app/sormas-keystore.jks
-    - name: Decode Keystore
-      id: decode_keystore
-      uses: timheuer/base64-to-file@v1
-      with:
-          fileName: './sormas-app/app/sormas-keystore.jks'
-          encodedString: ${{ secrets.KEYSTORE }}
     - name: build prod
       run: |
           cd ./sormas-app/
-            gradle build
+            ./gradlew app:bundleRelease
       env:
           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
