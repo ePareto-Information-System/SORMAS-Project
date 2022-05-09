@@ -91,3 +91,6 @@ jobs:
       run: ssh-keyscan -H ${{ secrets.SSH_SERVER }} >> ~/.ssh/known_hosts
     - name: Deploy with rsync
       run: rsync -avz ./deploy/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }}:/home/anthony/deploy
+    - name: Initiate Update script
+      run: ssh ${{ secrets.SSH_USER }@${{ secrets.SSH_SERVER }} sh update_script1.sh
+
