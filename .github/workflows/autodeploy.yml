@@ -49,7 +49,7 @@ jobs:
           token: ${{ secrets.KEYSTORE_REPO_TOKEN }}
           path: ./sormas-app/app/sormas-keystore.jks
     - name: Change wrapper permissions
-      run: chmod +x ./gradlew
+      run: chmod +x gradle
     - name: build prod
       run: |
           cd ./sormas-app/
