@@ -42,12 +42,6 @@ jobs:
           M2_HOME: /opt/hostedtoolcache/maven/3.8.1/x64
     - name: Run Ant Deploy serverlibs
       run: ant -noinput -buildfile ./sormas-base/build.xml deploy-serverlibs
-    - name: Decode Keystore
-      id: decode_keystore
-      uses: timheuer/base64-to-file@v1
-      with:
-          fileName: 'keystore/sormas-app-apk-keystore-file.jks'
-          encodedString: ${{ secrets.KEYSTORE }}
     - name: Gradle wrapper
       run: |
         cd ./sormas-app/
