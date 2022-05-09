@@ -55,7 +55,7 @@ jobs:
     - name: build prod
       run: |
           cd ./sormas-app/
-             gradle assembleDebug
+             gradle buildDebug
       env:
           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
@@ -63,7 +63,7 @@ jobs:
     - name: Get Apk
       run: |
           cd ./sormas-app/
-              gradle assemble
+              gradle assembleDebug
       env:
           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
