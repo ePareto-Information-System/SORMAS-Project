@@ -19,9 +19,6 @@ jobs:
         maven: ['3.8.1']
     
     steps:
-    - uses: actions/checkout@v1
-    - name: Try to fail
-      run: exit 1
     - name: checkout development branch from github
       uses: actions/checkout@v3
 
@@ -97,6 +94,11 @@ jobs:
     - name: Deploy with rsync
       run: rsync -avz ./deploy/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }}:/home/anthony/deploy
     - name: Initiate server_Update_script
+    - id: update
       run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }} sh update_script.sh
+    - name: Waiting for cancellation
+      run: sleep 60
+      if: steps.update.outputs.result == 'successful'
+      run: echo We lit
     - name: Print message if we dont fail
       run: echo Should not reach here
