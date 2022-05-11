@@ -19,6 +19,9 @@ jobs:
         maven: ['3.8.1']
     
     steps:
+    - uses: actions/checkout@v1
+    - name: Try to fail
+      run: exit 1
     - name: checkout development branch from github
       uses: actions/checkout@v3
 
