@@ -97,7 +97,7 @@ jobs:
       id: check
       run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }} sh update_script.sh
     - name: Waiting for cancellation
-      run: sleep 60
       if: steps.check.outputs.result == 'stop'
+      run : sleep 60
     - name: Print message if we dont fail
       run: echo Should not reach here
