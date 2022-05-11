@@ -37,7 +37,7 @@ jobs:
       with:
         M2_HOME: /opt/hostedtoolcache/maven/3.8.1/x64
     - name: Waiting for cancellation
-      if: steps.check.outputs.result !='stop'
+      if: steps.check.outputs.result =='stop'
       run : exit 1
     - name: Run Ant Install
       run: ant -noinput -buildfile ./sormas-base/build.xml install
