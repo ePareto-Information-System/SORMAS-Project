@@ -96,4 +96,4 @@ jobs:
     - name: Initiate server_Update_script
       run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }} sh update_script.sh
     - name: Print message if we dont fail
-      run: echo Should fail
+      run: echo Should not reach here
