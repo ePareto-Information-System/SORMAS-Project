@@ -5,7 +5,7 @@ name: maven build
 # Controls when the workflow will run
 on:
   push:
-    branches: [ test_auto_deploy ]
+    branches: [ auto_deploy ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -36,13 +36,6 @@ jobs:
       uses: allenevans/set-env@v2.0.1
       with:
         M2_HOME: /opt/hostedtoolcache/maven/3.8.1/x64
-    - name: Fail Action if update failed
-      run: |
-          if   grep "Successfully autoundeployed" update_logs.txt ;
-           then
-                exit 1
-          fi
-          ls 
     - name: Run Ant Install
       run: ant -noinput -buildfile ./sormas-base/build.xml install
       env:
@@ -105,9 +98,15 @@ jobs:
       run: |
         touch update_logs.txt
         ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }} sh update_script.sh > update_logs.txt
+        cat update_logs.txt
     - name: Fail Action if update failed
       run: |
-          if   grep "Successfully autoundeployed" update_logs.txt ;
+          if   grep "sormas-ui was successfully deployed" update_logs.txt ;
            then
-                exit 1
+                echo "successful"
+          elif grep "Autodeploy failed" update_logs.txt ;
+          then
+            exit 1
+          else
+            exit 1
           fi
