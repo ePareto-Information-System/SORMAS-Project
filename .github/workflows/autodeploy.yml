@@ -39,11 +39,11 @@ jobs:
     - name: Write to a file
       run: |
          touch log.txt
-         wget -p https://test.surveillancegh.org > log.txt
+         curl -p https://test.surveillancegh.org >> log.txt
          cat log.txt
          ls 
          cat log.txt
-         if   grep "Reusing" log.txt ;
+         if   grep "moved" log.txt ;
          then
                 ls
           fi
