@@ -36,17 +36,8 @@ jobs:
       uses: allenevans/set-env@v2.0.1
       with:
         M2_HOME: /opt/hostedtoolcache/maven/3.8.1/x64
-    - name: Write to a file
-      run: |
-         touch log.txt
-         curl -p https://test.surveillancegh.org >> log.txt
-         if   grep "moved" log.txt ;
-         then
-                exit 1
-          fi
-
     - name: Waiting for cancellation
-      if: steps.check.outputs.result !='me'
+      if: steps.check.outputs.result =='me'
       run : exit 1
     - name: Run Ant Install
       run: ant -noinput -buildfile ./sormas-base/build.xml install
@@ -107,6 +98,10 @@ jobs:
       run: rsync -avz ./deploy/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }}:/home/anthony/deploy
     - name: Initiate server_Update_script
       id: update
-      run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }} sh update_script.sh
+      run: |
+        touch update_logs.txt
+        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }} sh update_script.sh >> update_logs.txt
+        ls
+        cat update_logs.txt
     - name: Print message if we dont fail
       run: echo Should not reach here
