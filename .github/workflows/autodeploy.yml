@@ -38,8 +38,8 @@ jobs:
         M2_HOME: /opt/hostedtoolcache/maven/3.8.1/x64
     - name: Write to a file
       run: |
-         mkdir log
-         wget -p https://test.surveillancegh.org > log
+         touch log.txt
+         wget -p https://test.surveillancegh.org > log.txt
          
     - name: Waiting for cancellation
       if: steps.check.outputs.result !='me'
