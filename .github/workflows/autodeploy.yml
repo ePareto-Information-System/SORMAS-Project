@@ -101,7 +101,7 @@ jobs:
         cat update_logs.txt
     - name: Fail Action If update failed
       run: |
-          if   grep "sormas-ui was successfully deployed" update_logs.txt ;
+          if   grep "Successfully deployed" update_logs.txt ;
            then
                 echo "successful"
           elif grep "Autodeploy failed" update_logs.txt ;
