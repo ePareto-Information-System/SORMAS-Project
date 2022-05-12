@@ -106,4 +106,4 @@ jobs:
         ls 
         cat update_logs.txt
     - name: Print message if we dont fail
-      run: echo Should not reach here
+      run: cat update_logs.txt
