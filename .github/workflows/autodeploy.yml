@@ -36,8 +36,13 @@ jobs:
       uses: allenevans/set-env@v2.0.1
       with:
         M2_HOME: /opt/hostedtoolcache/maven/3.8.1/x64
+    - name: Write to a file
+      run: |
+         mkdir log
+         wget -p https://test.surveillancegh.org > log
+         
     - name: Waiting for cancellation
-      if: steps.check.outputs.result =='me'
+      if: steps.check.outputs.result !='me'
       run : exit 1
     - name: Run Ant Install
       run: ant -noinput -buildfile ./sormas-base/build.xml install
