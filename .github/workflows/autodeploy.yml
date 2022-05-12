@@ -45,7 +45,7 @@ jobs:
          cat log.txt
          if   grep "Reusing" log.txt ;
          then
-                exit 1
+                ls
           fi
 
     - name: Waiting for cancellation
