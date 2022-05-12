@@ -100,10 +100,10 @@ jobs:
       id: update
       run: |
         touch update_logs.txt
-        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }} sh update_script.sh >> update_logs.txt
-        ls
-        cat update_logs.txt
-        ls 
-        cat update_logs.txt
-    - name: Print message if we dont fail
-      run: cat update_logs.txt
+        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }} sh update_script.sh > update_logs.txt
+    - name: Fail Action if update failed
+      run: |
+          if   grep "Successfully autoundeployed" update_logs.txt ;
+           then
+                exit 1
+          fi
