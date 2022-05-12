@@ -93,7 +93,7 @@ jobs:
       run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }} sudo rm -r deploy/
     - name: Deploy with rsync
       run: rsync -avz ./deploy/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }}:/home/anthony/deploy
-    - name: Initiate server_Update_script
+    - name: Initiate server_update_script
       id: update
       run: |
         touch update_logs.txt
