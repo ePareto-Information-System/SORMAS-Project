@@ -101,6 +101,7 @@ jobs:
         cat update_logs.txt
     - name: Fail Action if Update failed
       run: |
+          cat update_logs.txt
           if   grep "Successfully deployed" update_logs.txt ;
            then
                 echo "successful"
