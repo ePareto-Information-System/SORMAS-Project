@@ -103,7 +103,7 @@ jobs:
           if   grep "sormas-ui was successfully deployed" update_logs.txt ;
            then
                 echo "successful"
-          elif grep "sormas-ui was unsuccessfully deployed" update_logs.txt ;
+          elif grep "Autodeploy failed" update_logs.txt ;
           then
             exit 1
           else
