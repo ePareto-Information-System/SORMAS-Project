@@ -5,7 +5,7 @@ name: maven build
 # Controls when the workflow will run
 on:
   push:
-    branches: [ auto_deploy ]
+    branches: [ test_auto_deploy ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
