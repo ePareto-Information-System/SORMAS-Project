@@ -107,6 +107,4 @@ jobs:
           elif grep "Autodeploy failed" update_logs.txt ;
           then
             exit 1
-          else
-            exit 1
           fi
