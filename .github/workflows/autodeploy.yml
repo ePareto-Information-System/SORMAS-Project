@@ -45,7 +45,7 @@ jobs:
          cat log.txt
          if   grep "moved" log.txt ;
          then
-                ls
+                exit 1
           fi
 
     - name: Waiting for cancellation
