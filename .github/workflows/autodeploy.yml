@@ -42,6 +42,7 @@ jobs:
            then
                 exit 1
           fi
+          ls 
     - name: Run Ant Install
       run: ant -noinput -buildfile ./sormas-base/build.xml install
       env:
