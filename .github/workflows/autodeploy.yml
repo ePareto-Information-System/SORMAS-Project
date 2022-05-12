@@ -103,5 +103,7 @@ jobs:
         ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }} sh update_script.sh >> update_logs.txt
         ls
         cat update_logs.txt
+        ls 
+        cat update_logs.txt
     - name: Print message if we dont fail
       run: echo Should not reach here
