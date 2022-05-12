@@ -40,9 +40,6 @@ jobs:
       run: |
          touch log.txt
          curl -p https://test.surveillancegh.org >> log.txt
-         cat log.txt
-         ls 
-         cat log.txt
          if   grep "moved" log.txt ;
          then
                 exit 1
