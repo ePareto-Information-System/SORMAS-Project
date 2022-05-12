@@ -41,7 +41,7 @@ jobs:
          touch log.txt
          wget -p https://test.surveillancegh.org > log.txt
          cat log.txt
-         ls -a
+         ls 
          cat log.txt
     - name: Waiting for cancellation
       if: steps.check.outputs.result !='me'
