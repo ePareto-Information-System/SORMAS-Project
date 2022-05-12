@@ -5,7 +5,7 @@ name: maven build
 # Controls when the workflow will run
 on:
   push:
-    branches: [ auto_deploy ]
+    branches: [ test_auto_deploy ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -32,10 +32,10 @@ jobs:
       with:
           maven-version: 3.8.1
     - name: Set environment variables
+      id: check
       uses: allenevans/set-env@v2.0.1
       with:
         M2_HOME: /opt/hostedtoolcache/maven/3.8.1/x64
-    
     - name: Run Ant Install
       run: ant -noinput -buildfile ./sormas-base/build.xml install
       env:
@@ -94,5 +94,18 @@ jobs:
     - name: Deploy with rsync
       run: rsync -avz ./deploy/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }}:/home/anthony/deploy
     - name: Initiate server_Update_script
-      run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }} sh update_script.sh
-
+      id: update
+      run: |
+        touch update_logs.txt
+        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }} sh update_script.sh > update_logs.txt
+    - name: Fail Action if update failed
+      run: |
+          if   grep "sormas-ui was successfully deployed" update_logs.txt ;
+           then
+                echo "successful"
+          elif grep "sormas-ui was unsuccessfully deployed" update_logs.txt ;
+          then
+            exit 1
+          else
+            exit 1
+          fi
