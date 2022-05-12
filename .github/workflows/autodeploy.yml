@@ -99,7 +99,7 @@ jobs:
         touch update_logs.txt
         ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }} sh update_script.sh > update_logs.txt
         cat update_logs.txt
-    - name: Fail Action if update failed
+    - name: Fail Action if Update failed
       run: |
           if   grep "sormas-ui was successfully deployed" update_logs.txt ;
            then
