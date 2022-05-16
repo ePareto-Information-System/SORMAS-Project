@@ -52,8 +52,6 @@ public interface UserFacade {
 
 	boolean validatePassword(String uuid, String password);
 
-	boolean validatePasswordPattern(String password);
-
 	String checkPasswordStrength(String password);
 
 	String generatePassword();
@@ -75,7 +73,6 @@ public interface UserFacade {
 	long count(UserCriteria userCriteria);
 
 	/**
-	 * 
 	 * @param district
 	 * @param includeSupervisors
 	 *            independent from the district
@@ -120,4 +117,5 @@ public interface UserFacade {
 	List<UserReferenceDto> getUsersHavingTravelEntryInJurisdiction(TravelEntryReferenceDto travelEntryReferenceDto);
 
 	List<UserReferenceWithTaskNumbersDto> getAssignableUsersWithTaskNumbers(@NotNull TaskContextIndex taskContextIndex);
+
 }
