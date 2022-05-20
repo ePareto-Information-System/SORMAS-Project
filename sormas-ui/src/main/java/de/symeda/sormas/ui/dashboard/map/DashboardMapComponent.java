@@ -757,24 +757,24 @@ public class DashboardMapComponent extends VerticalLayout {
 		List<Date> dates;
 		String strDateFormat = "";
 		switch (periodType) {
-		case DAILY:
-			dates = DateHelper.listDaysBetween(minDate, maxDate);
-			strDateFormat = "MMM dd, yyyy";
-			break;
-		case WEEKLY:
-			dates = DateHelper.listWeeksBetween(minDate, maxDate);
-			strDateFormat = "'" + I18nProperties.getString(Strings.week) + "' w, yyyy";
-			break;
-		case MONTHLY:
-			dates = DateHelper.listMonthsBetween(minDate, maxDate);
-			strDateFormat = "MMM yyyy";
-			break;
-		case YEARLY:
-			dates = DateHelper.listYearsBetween(minDate, maxDate);
-			strDateFormat = "yyyy";
-			break;
-		default:
-			dates = Collections.emptyList();
+			case DAILY:
+				dates = DateHelper.listDaysBetween(minDate, maxDate);
+				strDateFormat = "MMM dd, yyyy";
+				break;
+			case WEEKLY:
+				dates = DateHelper.listWeeksBetween(minDate, maxDate);
+				strDateFormat = "'" + I18nProperties.getString(Strings.weekShort) + "' w, yyyy";
+				break;
+			case MONTHLY:
+				dates = DateHelper.listMonthsBetween(minDate, maxDate);
+				strDateFormat = "MMM yyyy";
+				break;
+			case YEARLY:
+				dates = DateHelper.listYearsBetween(minDate, maxDate);
+				strDateFormat = "yyyy";
+				break;
+			default:
+				dates = Collections.emptyList();
 		}
 
 		SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
