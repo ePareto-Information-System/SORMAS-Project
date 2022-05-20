@@ -1344,7 +1344,6 @@ public interface Strings {
 	String promptSamplesSearchField = "promptSamplesSearchField";
 	String promptSearch = "promptSearch";
 	String promptSelectPeriod = "promptSelectPeriod";
-<<<<<<< HEAD
 	String promptTaskDateFrom = "promptTaskDateFrom";
 	String promptTaskDateTo = "promptTaskDateTo";
 	String promptTaskDateType = "promptTaskDateType";
@@ -1356,8 +1355,6 @@ public interface Strings {
 	String promptTravelEntryEpiWeekFrom = "promptTravelEntryEpiWeekFrom";
 	String promptTravelEntryEpiWeekTo = "promptTravelEntryEpiWeekTo";
 	String promptTravelEntrySearchField = "promptTravelEntrySearchField";
-=======
->>>>>>> 44a439af3a (add placeholders to fields)
 	String promptTreatmentTextFilter = "promptTreatmentTextFilter";
 	String promptTypeToAdd = "promptTypeToAdd";
 	String promptUserSearch = "promptUserSearch";
