@@ -1,5 +1,7 @@
 package de.symeda.sormas.ui.entitymap;
 
+import static java.util.Objects.nonNull;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -140,17 +142,16 @@ public class ContactMapComponent extends VerticalLayout {
 			GeoShapeProvider geoShapeProvider = FacadeProvider.getGeoShapeProvider();
 
 			final GeoLatLon mapCenter;
-			if (UserProvider.getCurrent().hasAnyUserRole(UserRole.NATIONAL_USER, UserRole.NATIONAL_CLINICIAN, UserRole.NATIONAL_OBSERVER)) {
-				mapCenter = geoShapeProvider.getCenterOfAllRegions();
-
-			} else {
+//			if (UserProvider.getCurrent().hasAnyUserRole(UserRole.NATIONAL_USER, UserRole.NATIONAL_CLINICIAN, UserRole.NATIONAL_OBSERVER)) {
+//				mapCenter = geoShapeProvider.getCenterOfAllRegions();
+//			} else {
 				UserDto user = UserProvider.getCurrent().getUser();
 				if (user.getRegion() != null) {
 					mapCenter = geoShapeProvider.getCenterOfRegion(user.getRegion());
 				} else {
 					mapCenter = geoShapeProvider.getCenterOfAllRegions();
 				}
-			}
+//			}
 
 			GeoLatLon center = Optional.ofNullable(mapCenter).orElseGet(FacadeProvider.getConfigFacade()::getCountryCenter);
 
@@ -199,17 +200,16 @@ public class ContactMapComponent extends VerticalLayout {
 			GeoShapeProvider geoShapeProvider = FacadeProvider.getGeoShapeProvider();
 
 			final GeoLatLon mapCenter;
-			if (UserProvider.getCurrent().hasAnyUserRole(UserRole.NATIONAL_USER, UserRole.NATIONAL_CLINICIAN, UserRole.NATIONAL_OBSERVER)) {
-				mapCenter = geoShapeProvider.getCenterOfAllRegions();
-
-			} else {
+//			if (UserProvider.getCurrent().hasAnyUserRole(UserRole.NATIONAL_USER, UserRole.NATIONAL_CLINICIAN, UserRole.NATIONAL_OBSERVER)) {
+//				mapCenter = geoShapeProvider.getCenterOfAllRegions();
+//			} else {
 				UserDto user = UserProvider.getCurrent().getUser();
 				if (user.getRegion() != null) {
 					mapCenter = geoShapeProvider.getCenterOfRegion(user.getRegion());
 				} else {
 					mapCenter = geoShapeProvider.getCenterOfAllRegions();
 				}
-			}
+//			}
 
 			GeoLatLon center = Optional.ofNullable(mapCenter).orElseGet(FacadeProvider.getConfigFacade()::getCountryCenter);
 
@@ -339,9 +339,10 @@ public class ContactMapComponent extends VerticalLayout {
 				layersLayout.addComponent(mapContactDisplayModeSelect);
 				mapContactDisplayModeSelect.setEnabled(showContacts);
 
-				if (UserProvider.getCurrent().hasUserRole(UserRole.NATIONAL_USER)
-					|| UserProvider.getCurrent().hasUserRole(UserRole.NATIONAL_CLINICIAN)
-					|| UserProvider.getCurrent().hasUserRole(UserRole.NATIONAL_OBSERVER)) {
+				if (nonNull(UserProvider.getCurrent()) && UserProvider.getCurrent().hasNationJurisdictionLevel()) {
+//				if (UserProvider.getCurrent().hasUserRole(UserRole.NATIONAL_USER)
+//					|| UserProvider.getCurrent().hasUserRole(UserRole.NATIONAL_CLINICIAN)
+//					|| UserProvider.getCurrent().hasUserRole(UserRole.NATIONAL_OBSERVER)) {
 					OptionGroup regionMapVisualizationSelect = new OptionGroup();
 					regionMapVisualizationSelect.setWidth(100, Unit.PERCENTAGE);
 					regionMapVisualizationSelect.addItems((Object[]) CaseMeasure.values());

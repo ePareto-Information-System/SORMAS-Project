@@ -18,44 +18,36 @@
 package de.symeda.sormas.ui.samples.pathogentestlink;
 
 import java.util.List;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
 
+import com.vaadin.ui.Notification;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.SampleReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
+import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.PaginationList;
 
 @SuppressWarnings("serial")
 public class PathogenTestList extends PaginationList<PathogenTestDto> {
 
-	// private SampleReferenceDto sampleRef;
 	private int caseSampleCount;
-	// private BiConsumer<PathogenTestDto, Runnable> onSavedPathogenTest;
 	private Supplier<String> createOrEditAllowedCallback;
 	private static final int MAX_DISPLAYED_ENTRIES = 5;
 
 	private final SampleReferenceDto sampleRef;
-	private final BiConsumer<PathogenTestDto, Runnable> onSavedPathogenTest;
-	// private final Supplier<Boolean> createOrEditAllowedCallback;
 
-	public PathogenTestList(
-		SampleReferenceDto sampleRef,
-		BiConsumer<PathogenTestDto, Runnable> onSavedPathogenTest,
-		Supplier<String> createOrEditAllowedCallback) {
+	public PathogenTestList(SampleReferenceDto sampleRef, Consumer<Runnable> actionCallback,
+	Supplier<String> createOrEditAllowedCallback) {
 		super(MAX_DISPLAYED_ENTRIES);
-
 		this.sampleRef = sampleRef;
-		this.onSavedPathogenTest = onSavedPathogenTest;
 		this.createOrEditAllowedCallback = createOrEditAllowedCallback;
 	}
 
@@ -81,14 +73,14 @@ public class PathogenTestList extends PaginationList<PathogenTestDto> {
 			PathogenTestListEntry listEntry = new PathogenTestListEntry(pathogenTest);
 			if (UserProvider.getCurrent().hasUserRight(UserRight.PATHOGEN_TEST_EDIT)) {
 				String pathogenTestUuid = pathogenTest.getUuid();
-				listEntry.addEditButton("edit-test-" + pathogenTestUuid, (ClickListener) event -> {
-
+				listEntry.addEditButton("edit-test-" + pathogenTestUuid, (Button.ClickListener) event -> {
 					if (createOrEditAllowedCallback.get() == null) {
-						ControllerProvider.getPathogenTestController().edit(pathogenTestUuid, PathogenTestList.this::reload, onSavedPathogenTest);
-
+						ControllerProvider.getPathogenTestController()
+						.edit(pathogenTestUuid, SormasUI::refreshView, (pathogenTestDto, callback) -> callback.run());
 					} else {
-						Notification.show(null, I18nProperties.getString(createOrEditAllowedCallback.get()), Type.ERROR_MESSAGE);
+						Notification.show(null, I18nProperties.getString(createOrEditAllowedCallback.get()), Notification.Type.ERROR_MESSAGE);
 					}
+					return;
 				});
 			}
 			listLayout.addComponent(listEntry);

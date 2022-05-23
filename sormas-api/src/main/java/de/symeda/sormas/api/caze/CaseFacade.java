@@ -21,7 +21,6 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import javax.ejb.Remote;
@@ -31,11 +30,13 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import de.symeda.sormas.api.CaseMeasure;
+import de.symeda.sormas.api.CoreFacade;
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.EditPermissionType;
 import de.symeda.sormas.api.Language;
+import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
-import de.symeda.sormas.api.deletionconfiguration.AutomaticDeletionInfoDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
 import de.symeda.sormas.api.externaldata.ExternalDataDto;
 import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
@@ -53,7 +54,7 @@ import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
 
 @Remote
-public interface CaseFacade {
+public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseReferenceDto, CaseCriteria> {
 
 	List<CaseDataDto> getAllActiveCasesAfter(Date date);
 
@@ -61,8 +62,6 @@ public interface CaseFacade {
 	 * Additional change dates filters for: sample, pathogenTests, patient and location.
 	 */
 	List<CaseDataDto> getAllActiveCasesAfter(Date date, boolean includeExtendedChangeDateFilters);
-
-	long count(CaseCriteria caseCriteria);
 
 	long count(CaseCriteria caseCriteria, boolean ignoreUserFilter);
 
@@ -97,9 +96,9 @@ public interface CaseFacade {
 
 	CaseDataDto getCaseDataByUuid(String uuid);
 
-	CaseDataDto saveCase(@Valid CaseDataDto dto) throws ValidationRuntimeException;
+	CaseDataDto save(@Valid @NotNull CaseDataDto dto, boolean systemSave) throws ValidationRuntimeException;
 
-	CaseDataDto saveCase(@Valid CaseDataDto dto, Boolean systemSave) throws ValidationRuntimeException;
+	CoreAndPersonDto<CaseDataDto> save(@Valid @NotNull CoreAndPersonDto<CaseDataDto> dto) throws ValidationRuntimeException;
 
 	void setSampleAssociations(ContactReferenceDto sourceContact, CaseReferenceDto cazeRef);
 
@@ -109,15 +108,9 @@ public interface CaseFacade {
 
 	void validate(CaseDataDto dto) throws ValidationRuntimeException;
 
-	CaseReferenceDto getReferenceByUuid(String uuid);
-
 	List<String> getAllActiveUuids();
 
 	List<CaseDataDto> getAllActiveCasesAfter(Date date, Integer batchSize, String lastSynchronizedUuid);
-
-	List<CaseDataDto> getByUuids(List<String> uuids);
-
-	CaseDataDto getByUuid(String uuid);
 
 	String getUuidByUuidEpidNumberOrExternalId(String searchTerm, CaseCriteria caseCriteria);
 
@@ -141,9 +134,9 @@ public interface CaseFacade {
 
 	List<CaseDataDto> getAllCasesOfPerson(String personUuid);
 
-	void deleteCase(String caseUuid) throws ExternalSurveillanceToolException;
-
 	List<String> deleteCases(List<String> caseUuids);
+
+	void deleteWithContacts(String caseUuid, DeletionDetails deletionDetails);
 
 	void deleteCaseAsDuplicate(String caseUuid, String duplicateOfCaseUuid) throws ExternalSurveillanceToolException;
 
@@ -153,11 +146,9 @@ public interface CaseFacade {
 
 	Date getOldestCaseOutcomeDate();
 
-	boolean isArchived(String caseUuid);
-
 	boolean isDeleted(String caseUuid);
 
-	void archiveOrDearchiveCase(String caseUuid, boolean archive);
+	boolean isArchived(String caseUuid);
 
 	List<String> getArchivedUuidsSince(Date since);
 
@@ -167,7 +158,7 @@ public interface CaseFacade {
 
 	boolean doesExternalTokenExist(String externalToken, String caseUuid);
 
-	String generateEpidNumber(CaseDataDto caze);
+	String getGenerateEpidNumber(CaseDataDto caze);
 
 	void mergeCase(String leadUuid, String otherUuid);
 
@@ -181,29 +172,23 @@ public interface CaseFacade {
 
 	void archiveAllArchivableCases(int daysAfterCaseGetsArchived);
 
-	/**
-	 * @param caseUuids
-	 *            Cases identified by {@code uuid} to be archived or not.
-	 * @param archived
-	 *            {@code true} archives the Case, {@code false} unarchives it.
-	 */
-	void updateArchived(List<String> caseUuids, boolean archived);
-
 	List<CaseReferenceDto> getRandomCaseReferences(CaseCriteria criteria, int count, Random randomGenerator);
 
 	FollowUpPeriodDto calculateFollowUpUntilDate(CaseDataDto caseDto, boolean ignoreOverwrite);
 
-	boolean isCaseEditAllowed(String caseUuid);
-
-	boolean exists(String uuid);
-
-	boolean hasPositiveLabResult(String caseUuid);
+	EditPermissionType isCaseEditAllowed(String caseUuid);
 
 	List<CaseFollowUpDto> getCaseFollowUpList(
 		CaseCriteria caseCriteria,
 		Date referenceDate,
 		int interval,
 		Integer first,
+		Integer max,
+		List<SortProperty> sortProperties);
+
+	Page<CaseFollowUpDto> getCaseFollowUpIndexPage(
+		@NotNull CaseFollowUpCriteria criteria,
+		Integer offset,
 		Integer max,
 		List<SortProperty> sortProperties);
 
@@ -215,7 +200,7 @@ public interface CaseFacade {
 
 	List<String> getUuidsNotShareableWithExternalReportingTools(List<String> caseUuids);
 
-	void saveBulkCase(
+	Integer saveBulkCase(
 		List<String> caseUuidList,
 		@Valid CaseBulkEditData updatedCaseBulkEditData,
 		boolean diseaseChange,
@@ -248,7 +233,11 @@ public interface CaseFacade {
 
 	PreviousCaseDto getMostRecentPreviousCase(PersonReferenceDto person, Disease disease, Date startDate);
 
-	Map<ReinfectionDetail, Boolean> cleanUpReinfectionDetails(Map<ReinfectionDetail, Boolean> reinfectionDetails);
+	void archive(String entityUuid, Date endOfProcessingDate, boolean includeContacts);
 
-	AutomaticDeletionInfoDto getAutomaticDeletionInfo(String uuid);
+	void archive(List<String> entityUuids, boolean includeContacts);
+
+	void dearchive(List<String> entityUuids, String dearchiveReason, boolean includeContacts);
+
+	void setResultingCase(EventParticipantReferenceDto eventParticipantReferenceDto, CaseReferenceDto caseReferenceDto);
 }

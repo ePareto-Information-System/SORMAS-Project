@@ -85,16 +85,15 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	public void setRegion(RegionReferenceDto region) {
 		this.region = region;
 	}
-	
-	public SampleCriteria region(RegionReferenceDto region){
-		setRegion(region);
-
-		return this;
-	}
 
 	public SampleCriteria samplePurpose(SamplePurpose samplePurpose) {
 		setSamplePurpose(samplePurpose);
 
+		return this;
+	}
+
+	public SampleCriteria region(RegionReferenceDto region) {
+		this.region = region;
 		return this;
 	}
 
@@ -242,10 +241,9 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	public void setDisease(Disease disease) {
 		this.disease = disease;
 	}
-	
-	public SampleCriteria disease(Disease disease){
-		setDisease(disease);
 
+	public SampleCriteria disease(Disease disease) {
+		this.disease = disease;
 		return this;
 	}
 

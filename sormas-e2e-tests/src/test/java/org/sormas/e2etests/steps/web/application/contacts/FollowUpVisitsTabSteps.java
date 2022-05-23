@@ -1,6 +1,6 @@
 /*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2021 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+ * Copyright © 2016-2022 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,12 @@
 package org.sormas.e2etests.steps.web.application.contacts;
 
 import static org.sormas.e2etests.pages.application.contacts.FollowUpVisitsTabPage.*;
+import static org.sormas.e2etests.steps.BaseSteps.locale;
 
 import cucumber.api.java8.En;
 import java.time.format.DateTimeFormatter;
 import javax.inject.Inject;
-import javax.inject.Named;
+import org.sormas.e2etests.envconfig.manager.RunningConfiguration;
 import org.sormas.e2etests.helpers.WebDriverHelpers;
 import org.sormas.e2etests.pages.application.NavBarPage;
 import org.sormas.e2etests.state.ApiState;
@@ -36,7 +37,7 @@ public class FollowUpVisitsTabSteps implements En {
   public FollowUpVisitsTabSteps(
       WebDriverHelpers webDriverHelpers,
       ApiState apiState,
-      @Named("ENVIRONMENT_URL") String environmentUrl) {
+      RunningConfiguration runningConfiguration) {
 
     When(
         "^I am accessing the Follow-up visits tab using of created contact via api$",
@@ -45,7 +46,8 @@ public class FollowUpVisitsTabSteps implements En {
               NavBarPage.CONTACTS_BUTTON);
           String visitLinkPath = "/sormas-webdriver/#!contacts/visits/";
           String uuid = apiState.getCreatedContact().getUuid();
-          String URL = environmentUrl + visitLinkPath + uuid;
+          String URL =
+              runningConfiguration.getEnvironmentUrlForMarket(locale) + visitLinkPath + uuid;
           webDriverHelpers.accessWebSite(URL);
         });
 
