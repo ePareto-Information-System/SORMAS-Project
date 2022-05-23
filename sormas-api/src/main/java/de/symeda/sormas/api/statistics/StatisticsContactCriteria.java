@@ -30,20 +30,20 @@ import de.symeda.sormas.api.MonthOfYear;
 import de.symeda.sormas.api.Quarter;
 import de.symeda.sormas.api.QuarterOfYear;
 import de.symeda.sormas.api.Year;
-import de.symeda.sormas.api.caze.CaseClassification;
-import de.symeda.sormas.api.caze.CaseOutcome;
-import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.contact.ContactClassification;
+import de.symeda.sormas.api.contact.ContactStatus;
 import de.symeda.sormas.api.person.Sex;
-import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
-import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
-import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
+import de.symeda.sormas.api.region.CommunityReferenceDto;
+import de.symeda.sormas.api.region.DistrictReferenceDto;
+import de.symeda.sormas.api.region.RegionReferenceDto;
+
 import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.EpiWeek;
 
-public class StatisticsCaseCriteria implements Serializable {
+public class StatisticsContactCriteria implements Serializable {
 
-	private static final long serialVersionUID = 4997176351789123549L;
-
+	private static final long serialVersionUID = -984881518455713123L;
+	
 	private List<Year> onsetYears;
 	private List<Year> reportYears;
 	private List<Year> outcomeYears;
@@ -76,12 +76,11 @@ public class StatisticsCaseCriteria implements Serializable {
 	private List<IntegerRange> ageIntervals;
 	private List<AgeGroup> ageGroups;
 	private List<Disease> diseases;
-	private List<CaseClassification> classifications;
-	private List<CaseOutcome> outcomes;
+	private List<ContactClassification> classifications;
+	private List<ContactStatus> status;
 	private List<RegionReferenceDto> regions;
 	private List<DistrictReferenceDto> districts;
 	private List<CommunityReferenceDto> communities;
-	private List<FacilityReferenceDto> healthFacilities;
 	private List<RegionReferenceDto> personRegions;
 	private List<DistrictReferenceDto> personDistricts;
 	private List<CommunityReferenceDto> personCommunities;
@@ -217,12 +216,12 @@ public class StatisticsCaseCriteria implements Serializable {
 		return diseases;
 	}
 
-	public List<CaseClassification> getClassifications() {
+	public List<ContactClassification> getClassifications() {
 		return classifications;
 	}
 
-	public List<CaseOutcome> getOutcomes() {
-		return outcomes;
+	public List<ContactStatus> getStatus() {
+		return status;
 	}
 
 	public List<RegionReferenceDto> getRegions() {
@@ -235,10 +234,6 @@ public class StatisticsCaseCriteria implements Serializable {
 
 	public List<CommunityReferenceDto> getCommunities() {
 		return communities;
-	}
-
-	public List<FacilityReferenceDto> getHealthFacilities() {
-		return healthFacilities;
 	}
 
 	public List<RegionReferenceDto> getPersonRegions() {
@@ -265,7 +260,7 @@ public class StatisticsCaseCriteria implements Serializable {
 		return reportingUserRoles;
 	}
 
-	public StatisticsCaseCriteria years(List<Year> years, StatisticsCaseAttribute mainAttribute) {
+	public StatisticsContactCriteria years(List<Year> years, StatisticsContactAttribute mainAttribute) {
 		switch (mainAttribute) {
 		case ONSET_TIME:
 			this.onsetYears = years;
@@ -283,7 +278,7 @@ public class StatisticsCaseCriteria implements Serializable {
 		return this;
 	}
 
-	public StatisticsCaseCriteria quarters(List<Quarter> quarters, StatisticsCaseAttribute mainAttribute) {
+	public StatisticsContactCriteria quarters(List<Quarter> quarters, StatisticsContactAttribute mainAttribute) {
 		switch (mainAttribute) {
 		case ONSET_TIME:
 			this.onsetQuarters = quarters;
@@ -301,7 +296,7 @@ public class StatisticsCaseCriteria implements Serializable {
 		return this;
 	}
 
-	public StatisticsCaseCriteria months(List<Month> months, StatisticsCaseAttribute mainAttribute) {
+	public StatisticsContactCriteria months(List<Month> months, StatisticsContactAttribute mainAttribute) {
 		switch (mainAttribute) {
 		case ONSET_TIME:
 			this.onsetMonths = months;
@@ -319,7 +314,7 @@ public class StatisticsCaseCriteria implements Serializable {
 		return this;
 	}
 
-	public StatisticsCaseCriteria epiWeeks(List<EpiWeek> epiWeeks, StatisticsCaseAttribute mainAttribute) {
+	public StatisticsContactCriteria epiWeeks(List<EpiWeek> epiWeeks, StatisticsContactAttribute mainAttribute) {
 		switch (mainAttribute) {
 		case ONSET_TIME:
 			this.onsetEpiWeeks = epiWeeks;
@@ -337,7 +332,7 @@ public class StatisticsCaseCriteria implements Serializable {
 		return this;
 	}
 
-	public StatisticsCaseCriteria quartersOfYear(List<QuarterOfYear> quartersOfYear, StatisticsCaseAttribute mainAttribute) {
+	public StatisticsContactCriteria quartersOfYear(List<QuarterOfYear> quartersOfYear, StatisticsContactAttribute mainAttribute) {
 		switch (mainAttribute) {
 		case ONSET_TIME:
 			this.onsetQuartersOfYear = quartersOfYear;
@@ -355,7 +350,7 @@ public class StatisticsCaseCriteria implements Serializable {
 		return this;
 	}
 
-	public StatisticsCaseCriteria monthsOfYear(List<MonthOfYear> monthsOfYear, StatisticsCaseAttribute mainAttribute) {
+	public StatisticsContactCriteria monthsOfYear(List<MonthOfYear> monthsOfYear, StatisticsContactAttribute mainAttribute) {
 		switch (mainAttribute) {
 		case ONSET_TIME:
 			this.onsetMonthsOfYear = monthsOfYear;
@@ -373,7 +368,7 @@ public class StatisticsCaseCriteria implements Serializable {
 		return this;
 	}
 
-	public StatisticsCaseCriteria epiWeeksOfYear(List<EpiWeek> epiWeeksOfYear, StatisticsCaseAttribute mainAttribute) {
+	public StatisticsContactCriteria epiWeeksOfYear(List<EpiWeek> epiWeeksOfYear, StatisticsContactAttribute mainAttribute) {
 		switch (mainAttribute) {
 		case ONSET_TIME:
 			this.onsetEpiWeeksOfYear = epiWeeksOfYear;
@@ -391,7 +386,7 @@ public class StatisticsCaseCriteria implements Serializable {
 		return this;
 	}
 
-	public StatisticsCaseCriteria dateRange(Date from, Date to, StatisticsCaseAttribute mainAttribute) {
+	public StatisticsContactCriteria dateRange(Date from, Date to, StatisticsContactAttribute mainAttribute) {
 		switch (mainAttribute) {
 		case ONSET_TIME:
 			this.onsetDateFrom = from;
@@ -412,17 +407,17 @@ public class StatisticsCaseCriteria implements Serializable {
 		return this;
 	}
 
-	public StatisticsCaseCriteria sexes(List<Sex> sexes) {
+	public StatisticsContactCriteria sexes(List<Sex> sexes) {
 		this.sexes = sexes;
 		return this;
 	}
 
-	public StatisticsCaseCriteria sexUnknown(Boolean sexUnknown) {
+	public StatisticsContactCriteria sexUnknown(Boolean sexUnknown) {
 		this.sexUnknown = sexUnknown;
 		return this;
 	}
 
-	public StatisticsCaseCriteria addAgeIntervals(List<IntegerRange> ageIntervals) {
+	public StatisticsContactCriteria addAgeIntervals(List<IntegerRange> ageIntervals) {
 		if (this.ageIntervals == null) {
 			this.ageIntervals = new ArrayList<>();
 		}
@@ -431,7 +426,7 @@ public class StatisticsCaseCriteria implements Serializable {
 		return this;
 	}
 
-	public StatisticsCaseCriteria addAgeGroups(List<AgeGroup> ageGroups) {
+	public StatisticsContactCriteria addAgeGroups(List<AgeGroup> ageGroups) {
 		if (this.ageGroups == null) {
 			this.ageGroups = new ArrayList<>();
 		}
@@ -440,73 +435,69 @@ public class StatisticsCaseCriteria implements Serializable {
 		return this;
 	}
 
-	public StatisticsCaseCriteria diseases(List<Disease> diseases) {
+	public StatisticsContactCriteria diseases(List<Disease> diseases) {
 		this.diseases = diseases;
 		return this;
 	}
 
-	public StatisticsCaseCriteria classifications(List<CaseClassification> classifications) {
+	public StatisticsContactCriteria classifications(List<ContactClassification> classifications) {
 		this.classifications = classifications;
 		return this;
 	}
 
-	public StatisticsCaseCriteria outcomes(List<CaseOutcome> outcomes) {
-		this.outcomes = outcomes;
+	public StatisticsContactCriteria status(List<ContactStatus> status) {
+		this.status = status;
 		return this;
 	}
 
-	public StatisticsCaseCriteria regions(List<RegionReferenceDto> regions) {
+	public StatisticsContactCriteria regions(List<RegionReferenceDto> regions) {
 		this.regions = regions;
 		return this;
 	}
 
-	public StatisticsCaseCriteria districts(List<DistrictReferenceDto> districts) {
+	public StatisticsContactCriteria districts(List<DistrictReferenceDto> districts) {
 		this.districts = districts;
 		return this;
 	}
 
-	public StatisticsCaseCriteria communities(List<CommunityReferenceDto> communities) {
+	public StatisticsContactCriteria communities(List<CommunityReferenceDto> communities) {
 		this.communities = communities;
 		return this;
 	}
 
-	public StatisticsCaseCriteria healthFacilities(List<FacilityReferenceDto> healthFacilities) {
-		this.healthFacilities = healthFacilities;
-		return this;
-	}
 
-	public StatisticsCaseCriteria personRegions(List<RegionReferenceDto> personRegions) {
+	public StatisticsContactCriteria personRegions(List<RegionReferenceDto> personRegions) {
 		this.personRegions = personRegions;
 		return this;
 	}
 
-	public StatisticsCaseCriteria personDistricts(List<DistrictReferenceDto> personDistricts) {
+	public StatisticsContactCriteria personDistricts(List<DistrictReferenceDto> personDistricts) {
 		this.personDistricts = personDistricts;
 		return this;
 	}
 
-	public StatisticsCaseCriteria personCommunities(List<CommunityReferenceDto> personCommunities) {
+	public StatisticsContactCriteria personCommunities(List<CommunityReferenceDto> personCommunities) {
 		this.personCommunities = personCommunities;
 		return this;
 	}
 
-	public StatisticsCaseCriteria setPersonCity(String personCity) {
+	public StatisticsContactCriteria setPersonCity(String personCity) {
 		this.personCity = personCity;
 		return this;
 	}
 
-	public StatisticsCaseCriteria setPersonPostcode(String personPostcode) {
+	public StatisticsContactCriteria setPersonPostcode(String personPostcode) {
 		this.personPostcode = personPostcode;
 		return this;
 	}
 
-	public StatisticsCaseCriteria reportingUserRoles(List<UserRole> reportingUserRoles) {
+	public StatisticsContactCriteria reportingUserRoles(List<UserRole> reportingUserRoles) {
 		this.reportingUserRoles = reportingUserRoles;
 		return this;
 	}
 
 	public List<? extends StatisticsGroupingKey> getFilterValuesForGrouping(
-		StatisticsCaseAttribute attribute,
+		StatisticsContactAttribute attribute,
 		StatisticsSubAttribute subAttribute) {
 
 		if (subAttribute != null) {
@@ -517,8 +508,6 @@ public class StatisticsCaseCriteria implements Serializable {
 				return districts;
 			case COMMUNITY:
 				return communities;
-			case FACILITY:
-				return healthFacilities;
 			case YEAR:
 				switch (attribute) {
 				case ONSET_TIME:
@@ -607,8 +596,8 @@ public class StatisticsCaseCriteria implements Serializable {
 				return sexes;
 			case CLASSIFICATION:
 				return classifications;
-			case OUTCOME:
-				return outcomes;
+			case STATUS:
+				return status;
 			case AGE_INTERVAL_1_YEAR:
 			case AGE_INTERVAL_5_YEARS:
 			case AGE_INTERVAL_CHILDREN_COARSE:

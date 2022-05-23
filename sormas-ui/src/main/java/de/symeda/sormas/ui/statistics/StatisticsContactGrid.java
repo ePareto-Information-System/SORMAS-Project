@@ -1,51 +1,38 @@
-/*******************************************************************************
- * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *******************************************************************************/
 package de.symeda.sormas.ui.statistics;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.TreeMap;
+import java.math.BigDecimal;
 
+import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.v7.shared.ui.grid.HeightMode;
 import com.vaadin.v7.ui.Grid;
+import com.vaadin.v7.ui.Grid.CellReference;
+import com.vaadin.v7.ui.Grid.CellStyleGenerator;
+import com.vaadin.v7.ui.Grid.Column;
+import com.vaadin.v7.ui.Grid.SelectionMode;
 
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.infrastructure.InfrastructureHelper;
-import de.symeda.sormas.api.statistics.StatisticsCaseAttribute;
-import de.symeda.sormas.api.statistics.StatisticsCaseCountDto;
-import de.symeda.sormas.api.statistics.StatisticsCaseCriteria;
+import de.symeda.sormas.api.statistics.StatisticsContactAttribute;
+import de.symeda.sormas.api.statistics.StatisticsContactCriteria;
 import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 import de.symeda.sormas.api.statistics.StatisticsHelper;
 import de.symeda.sormas.api.statistics.StatisticsHelper.StatisticsKeyComparator;
 import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.statistics.StatisticsContactCountDto;
 import de.symeda.sormas.ui.utils.CssStyles;
 
-@SuppressWarnings("serial")
-public class StatisticsCaseGrid extends Grid {
-
+public class StatisticsContactGrid extends Grid{
+	
 	private static final String ROW_CAPTION_COLUMN = "RowCaptionColumn";
-	private static final String CASE_COUNT_OR_INCIDENCE_COLUMN = "CaseCountOrIncidenceColumn";
+	private static final String CONTACT_COUNT_OR_INCIDENCE_COLUMN = "ContactCountOrIncidenceColumn";
 	private static final String UNKNOWN_COLUMN = "UnknownColumn";
 	private static final String TOTAL_COLUMN = "TotalColumn";
 
-	private final class StatisticsCaseGridCellStyleGenerator implements CellStyleGenerator {
+	private final class StatisticsContactGridCellStyleGenerator implements CellStyleGenerator {
 
 		private static final long serialVersionUID = 1L;
 
@@ -63,37 +50,37 @@ public class StatisticsCaseGrid extends Grid {
 	 * @param cellValues
 	 *            Ordered by rows, then columns
 	 */
-	public StatisticsCaseGrid(
-		StatisticsCaseAttribute rowsAttribute,
+	public StatisticsContactGrid(
+		StatisticsContactAttribute rowsAttribute,
 		StatisticsSubAttribute rowsSubAttribute,
-		StatisticsCaseAttribute columnsAttribute,
+		StatisticsContactAttribute columnsAttribute,
 		StatisticsSubAttribute columnsSubAttribute,
-		boolean showCaseIncidence,
+		boolean showContactIncidence,
 		int incidenceDivisor,
-		List<StatisticsCaseCountDto> cellValues,
-		StatisticsCaseCriteria caseCriteria) {
+		List<StatisticsContactCountDto> cellValues,
+		StatisticsContactCriteria contactCriteria) {
 
 		super();
 
 		setSelectionMode(SelectionMode.NONE);
 		setHeightMode(HeightMode.UNDEFINED);
 		setWidth(100, Unit.PERCENTAGE);
-		setCellStyleGenerator(new StatisticsCaseGridCellStyleGenerator());
+		setCellStyleGenerator(new StatisticsContactGridCellStyleGenerator());
 
 		if (cellValues.isEmpty()) {
 			return;
 		}
 
-		CaseCountOrIncidence dataStyle = showCaseIncidence ? CaseCountOrIncidence.CASE_INCIDENCE : CaseCountOrIncidence.CASE_COUNT;
+		ContactCountOrIncidence dataStyle = showContactIncidence ? ContactCountOrIncidence.CONTACT_INCIDENCE : ContactCountOrIncidence.CONTACT_COUNT;
 
-		// If no displayed attributes are selected, simply show the total number or incidence of cases
+		// If no displayed attributes are selected, simply show the total number or incidence of contacts
 		if (rowsAttribute == null && columnsAttribute == null) {
-			addColumn(CASE_COUNT_OR_INCIDENCE_COLUMN);
-			getColumn(CASE_COUNT_OR_INCIDENCE_COLUMN).setHeaderCaption(dataStyle.toString());
-			if (!showCaseIncidence) {
+			addColumn(CONTACT_COUNT_OR_INCIDENCE_COLUMN);
+			getColumn(CONTACT_COUNT_OR_INCIDENCE_COLUMN).setHeaderCaption(dataStyle.toString());
+			if (!showContactIncidence) {
 				addRow(
 					new Object[] {
-						String.valueOf(cellValues.get(0).getCaseCount()) });
+						String.valueOf(cellValues.get(0).getContactCount()) });
 			} else {
 				addRow(
 					new Object[] {
@@ -114,13 +101,13 @@ public class StatisticsCaseGrid extends Grid {
 
 		TreeMap<StatisticsGroupingKey, String> columns = new TreeMap<>(new StatisticsKeyComparator());
 		if (columnsAttribute == null && columnsSubAttribute == null) {
-			// When no column grouping has been selected, simply display the number of cases or case incidence for the respective row
+			// When no column grouping has been selected, simply display the number of contacts or contact incidence for the respective row
 			totalColumnIndex = getColumns().size();
-			addColumn(CASE_COUNT_OR_INCIDENCE_COLUMN).setHeaderCaption(dataStyle.toString());
+			addColumn(CONTACT_COUNT_OR_INCIDENCE_COLUMN).setHeaderCaption(dataStyle.toString());
 		} else {
 			boolean addColumnUnknown = false;
 			// Iterate over content and add new columns to the list
-			for (StatisticsCaseCountDto cellValue : cellValues) {
+			for (StatisticsContactCountDto cellValue : cellValues) {
 				if (StatisticsHelper.isNullOrUnknown(cellValue.getColumnKey())) {
 					addColumnUnknown = true;
 				} else {
@@ -157,7 +144,7 @@ public class StatisticsCaseGrid extends Grid {
 
 		// Add a row for every value of the selected grouping
 		TreeMap<StatisticsGroupingKey, Object[]> rows = new TreeMap<>(new StatisticsKeyComparator());
-		int[] caseCountTotalRow = new int[getColumns().size()];
+		int[] contactCountTotalRow = new int[getColumns().size()];
 		int[] populationTotalRow = new int[getColumns().size()];
 
 		StatisticsGroupingKey currentRowKey = null;
@@ -165,7 +152,7 @@ public class StatisticsCaseGrid extends Grid {
 		int rowTotal = 0;
 		int rowPopulation = 0;
 
-		for (StatisticsCaseCountDto cellValue : cellValues) {
+		for (StatisticsContactCountDto cellValue : cellValues) {
 			boolean isUnknownColumn = StatisticsHelper.isNullOrUnknown(cellValue.getColumnKey());
 			boolean isUnknownRow = StatisticsHelper.isNullOrUnknown(cellValue.getRowKey());
 
@@ -175,17 +162,17 @@ public class StatisticsCaseGrid extends Grid {
 					// Calculate total
 					if (rowTotal == 0) {
 						currentRow[totalColumnIndex] = null;
-					} else if (!showCaseIncidence) {
+					} else if (!showContactIncidence) {
 						currentRow[totalColumnIndex] = String.valueOf(rowTotal);
 					} else if (rowPopulation > 0) {
 						currentRow[totalColumnIndex] =
-							String.valueOf(InfrastructureHelper.getCaseIncidence(rowTotal, rowPopulation, incidenceDivisor));
+							String.valueOf(InfrastructureHelper.getContactIncidence(rowTotal, rowPopulation, incidenceDivisor));
 					} else {
 						currentRow[totalColumnIndex] = I18nProperties.getCaption(Captions.notAvailableShort);
 					}
 
-					if (!(showCaseIncidence && rowPopulation == 0)) {
-						caseCountTotalRow[totalColumnIndex] += rowTotal;
+					if (!(showContactIncidence && rowPopulation == 0)) {
+						contactCountTotalRow[totalColumnIndex] += rowTotal;
 
 						if (rowsAttribute != null && rowsAttribute.isPopulationData()) {
 							populationTotalRow[totalColumnIndex] += rowPopulation;
@@ -223,11 +210,11 @@ public class StatisticsCaseGrid extends Grid {
 				columnIndex = columns.headMap((StatisticsGroupingKey) cellValue.getColumnKey()).size() + 1;
 			}
 
-			if (!showCaseIncidence) {
-				if (cellValue.getCaseCount() == 0) {
+			if (!showContactIncidence) {
+				if (cellValue.getContactCount() == 0) {
 					currentRow[columnIndex] = null;
 				} else {
-					currentRow[columnIndex] = String.valueOf(cellValue.getCaseCount());
+					currentRow[columnIndex] = String.valueOf(cellValue.getContactCount());
 				}
 			} else {
 				BigDecimal incidence = cellValue.getIncidence(incidenceDivisor);
@@ -242,10 +229,10 @@ public class StatisticsCaseGrid extends Grid {
 				}
 			}
 
-			if (cellValue.getCaseCount() != null && !(showCaseIncidence && cellValue.getPopulation() == null)) {
+			if (cellValue.getContactCount() != null && !(showContactIncidence && cellValue.getPopulation() == null)) {
 				// Don't add to case sum when we are looking at incidence and population is not provided 
-				rowTotal += cellValue.getCaseCount();
-				caseCountTotalRow[columnIndex] += cellValue.getCaseCount();
+				rowTotal += cellValue.getContactCount();
+				contactCountTotalRow[columnIndex] += cellValue.getContactCount();
 			}
 
 			if (cellValue.getPopulation() != null) {
@@ -268,7 +255,7 @@ public class StatisticsCaseGrid extends Grid {
 			if (columnsAttribute != null) {
 				if (rowTotal == 0) {
 					currentRow[totalColumnIndex] = null;
-				} else if (!showCaseIncidence) {
+				} else if (!showContactIncidence) {
 					currentRow[totalColumnIndex] = String.valueOf(rowTotal);
 				} else if (rowPopulation > 0) {
 					currentRow[totalColumnIndex] = String.valueOf(InfrastructureHelper.getCaseIncidence(rowTotal, rowPopulation, incidenceDivisor));
@@ -276,8 +263,8 @@ public class StatisticsCaseGrid extends Grid {
 					currentRow[totalColumnIndex] = null;
 				}
 
-				if (!(showCaseIncidence && rowPopulation == 0)) {
-					caseCountTotalRow[totalColumnIndex] += rowTotal;
+				if (!(showContactIncidence && rowPopulation == 0)) {
+					contactCountTotalRow[totalColumnIndex] += rowTotal;
 
 					if (rowsAttribute != null && rowsAttribute.isPopulationData()) {
 						populationTotalRow[totalColumnIndex] += rowPopulation;
@@ -297,17 +284,17 @@ public class StatisticsCaseGrid extends Grid {
 		// Add total row
 		Object[] totalRow = new Object[getColumns().size()];
 		totalRow[0] = I18nProperties.getCaption(StatisticsHelper.TOTAL);
-		for (int i = 1; i < caseCountTotalRow.length; i++) {
-			if (!showCaseIncidence) {
-				if (caseCountTotalRow[i] > 0) {
-					totalRow[i] = String.valueOf(caseCountTotalRow[i]);
+		for (int i = 1; i < contactCountTotalRow.length; i++) {
+			if (!showContactIncidence) {
+				if (contactCountTotalRow[i] > 0) {
+					totalRow[i] = String.valueOf(contactCountTotalRow[i]);
 				} else {
 					totalRow[i] = null;
 				}
 			} else {
-				if (caseCountTotalRow[i] > 0 && populationTotalRow[i] > 0) {
+				if (contactCountTotalRow[i] > 0 && populationTotalRow[i] > 0) {
 					totalRow[i] =
-						String.valueOf(InfrastructureHelper.getCaseIncidence((int) caseCountTotalRow[i], populationTotalRow[i], incidenceDivisor));
+						String.valueOf(InfrastructureHelper.getContactIncidence((int) contactCountTotalRow[i], populationTotalRow[i], incidenceDivisor));
 				} else {
 					totalRow[i] = null;
 				}

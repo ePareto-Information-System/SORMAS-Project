@@ -77,7 +77,7 @@ import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.statistics.StatisticsCaseAttribute;
 import de.symeda.sormas.api.statistics.StatisticsCaseCountDto;
 import de.symeda.sormas.api.statistics.StatisticsCaseCriteria;
-import de.symeda.sormas.api.statistics.StatisticsCaseSubAttribute;
+import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 import de.symeda.sormas.api.statistics.StatisticsHelper;
 import de.symeda.sormas.api.statistics.StatisticsHelper.StatisticsKeyComparator;
@@ -97,11 +97,11 @@ import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.DownloadUtil;
 import de.symeda.sormas.ui.utils.ExportEntityName;
 
-public class StatisticsView extends AbstractStatisticsView {
+public class StatisticsCasesView extends AbstractStatisticsView {
 
 	private static final long serialVersionUID = -4440568319850399685L;
 
-	public static final String VIEW_NAME = ROOT_VIEW_NAME;
+	public static final String VIEW_NAME = ROOT_VIEW_NAME + "/cases";
 
 	private VerticalLayout filtersLayout;
 	private VerticalLayout resultsLayout;
@@ -124,7 +124,7 @@ public class StatisticsView extends AbstractStatisticsView {
 	private StatisticsCaseCriteria caseCriteria;
 	private Integer populationReferenceYear;
 
-	public StatisticsView() {
+	public StatisticsCasesView() {
 		super(VIEW_NAME);
 		setWidth(100, Unit.PERCENTAGE);
 
@@ -486,9 +486,9 @@ public class StatisticsView extends AbstractStatisticsView {
 
 		StatisticsVisualizationChartType chartType = visualizationComponent.getVisualizationChartType();
 		StatisticsCaseAttribute xAxisAttribute = visualizationComponent.getColumnsAttribute();
-		StatisticsCaseSubAttribute xAxisSubAttribute = visualizationComponent.getColumnsSubAttribute();
+		StatisticsSubAttribute xAxisSubAttribute = visualizationComponent.getColumnsSubAttribute();
 		StatisticsCaseAttribute seriesAttribute = visualizationComponent.getRowsAttribute();
-		StatisticsCaseSubAttribute seriesSubAttribute = visualizationComponent.getRowsSubAttribute();
+		StatisticsSubAttribute seriesSubAttribute = visualizationComponent.getRowsSubAttribute();
 
 		HighChart chart = new HighChart();
 		chart.setWidth(100, Unit.PERCENTAGE);
@@ -1126,6 +1126,9 @@ public class StatisticsView extends AbstractStatisticsView {
 				populationReferenceYear);
 
 		StatisticsKeyComparator keyComparator = new StatisticsKeyComparator();
+
+
+
 		resultData.sort((c1, c2) -> {
 			int result = keyComparator.compare(c1.getRowKey(), c2.getRowKey());
 			if (result == 0) {

@@ -1,45 +1,29 @@
-/*******************************************************************************
- * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *******************************************************************************/
 package de.symeda.sormas.ui.statistics;
 
+import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.MenuBar.Command;
 import com.vaadin.ui.MenuBar.MenuItem;
-import com.vaadin.ui.VerticalLayout;
 
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.statistics.StatisticsCaseAttribute;
-import de.symeda.sormas.api.statistics.StatisticsCaseAttributeGroup;
+import de.symeda.sormas.api.statistics.StatisticsContactAttribute;
+import de.symeda.sormas.api.statistics.StatisticsContactAttributeGroup;
 import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.ui.utils.CssStyles;
 
 @SuppressWarnings("serial")
-public class StatisticsFilterComponent extends VerticalLayout {
+public class StatisticsContactFilterComponent extends VerticalLayout {
 
 	private static final String SPECIFY_YOUR_SELECTION = I18nProperties.getCaption(Captions.statisticsSpecifySelection);
 
-	private StatisticsCaseAttribute selectedAttribute;
+	private StatisticsContactAttribute selectedAttribute;
 	private StatisticsSubAttribute selectedSubAttribute;
 	private StatisticsFilterElement filterElement;
 
-	public StatisticsFilterComponent(int rowIndex) {
+	public StatisticsContactFilterComponent(int rowIndex) {
 		setSpacing(true);
 		setMargin(false);
 
@@ -64,12 +48,12 @@ public class StatisticsFilterComponent extends VerticalLayout {
 		MenuItem filterSubAttributeItem = filterSubAttributeDropdown.addItem(SPECIFY_YOUR_SELECTION, null);
 
 		// Add attribute groups
-		for (StatisticsCaseAttributeGroup attributeGroup : StatisticsCaseAttributeGroup.values()) {
+		for (StatisticsContactAttributeGroup attributeGroup : StatisticsContactAttributeGroup.values()) {
 			MenuItem attributeGroupItem = filterAttributeItem.addItem(attributeGroup.toString(), null);
 			attributeGroupItem.setEnabled(false);
 
 			// Add attributes belonging to the current group
-			for (StatisticsCaseAttribute attribute : attributeGroup.getAttributes()) {
+			for (StatisticsContactAttribute attribute : attributeGroup.getAttributes()) {
 				Command attributeCommand = selectedItem -> {
 					selectedAttribute = attribute;
 					selectedSubAttribute = null;
@@ -135,12 +119,12 @@ public class StatisticsFilterComponent extends VerticalLayout {
 
 		if (selectedSubAttribute == StatisticsSubAttribute.DATE_RANGE) {
 			filterElement = new StatisticsFilterDateRangeElement(rowIndex);
-		} else if (selectedAttribute == StatisticsCaseAttribute.JURISDICTION) {
+		} else if (selectedAttribute == StatisticsContactAttribute.JURISDICTION) {
 			filterElement = new StatisticsFilterJurisdictionElement(rowIndex);
-		} else if (selectedAttribute == StatisticsCaseAttribute.PLACE_OF_RESIDENCE) {
+		} else if (selectedAttribute == StatisticsContactAttribute.PLACE_OF_RESIDENCE) {
 			filterElement = new StatisticsFilterResidenceElement(rowIndex);
 		} else if (selectedAttribute.getSubAttributes().length == 0 || selectedSubAttribute != null) {
-			filterElement = new StatisticsFilterValuesElement(
+			filterElement = new StatisticsContactFilterValuesElement(
 				selectedAttribute.toString() + (selectedSubAttribute != null ? " (" + selectedSubAttribute.toString() + ")" : ""),
 				selectedAttribute,
 				selectedSubAttribute,
@@ -152,7 +136,7 @@ public class StatisticsFilterComponent extends VerticalLayout {
 		}
 	}
 
-	public StatisticsCaseAttribute getSelectedAttribute() {
+	public StatisticsContactAttribute getSelectedAttribute() {
 		return selectedAttribute;
 	}
 

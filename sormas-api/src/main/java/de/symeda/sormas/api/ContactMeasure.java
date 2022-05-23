@@ -15,25 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
-package de.symeda.sormas.ui.statistics;
+package de.symeda.sormas.api;
 
-import com.vaadin.navigator.Navigator;
+import de.symeda.sormas.api.i18n.I18nProperties;
 
-import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.ui.UserProvider;
-
-public class StatisticsController {
-
-	public StatisticsController() {
-
-	}
-
-	public void registerViews(Navigator navigator) {
-		navigator.addView(StatisticsCasesView.VIEW_NAME, StatisticsCasesView.class);
-		navigator.addView(StatisticsContactsView.VIEW_NAME, StatisticsContactsView.class);
-
-		if (UserProvider.getCurrent().hasUserRight(UserRight.DATABASE_EXPORT_ACCESS)) {
-			navigator.addView(DatabaseExportView.VIEW_NAME, DatabaseExportView.class);
-		}
-	}
+public enum ContactMeasure {
+	/**
+	 * Number of contacts
+	 */
+	CONTACT_COUNT,
+	/**
+	 * Number of contacts per DistrictDto.Contact_INCIDENCE_DIVISOR; rounded to two decimal places with rounding mode half up
+	 */
+	CONTACT_INCIDENCE;
+	public String toString() {
+		return I18nProperties.getEnumCaption(this);
+	};
 }

@@ -2013,6 +2013,8 @@ public interface Captions {
 	String statisticsAttributeSpecification = "statisticsAttributeSpecification";
 	String statisticsChartType = "statisticsChartType";
 	String statisticsDatabaseExport = "statisticsDatabaseExport";
+	String statisticsCases = "Cases";
+	String statisticsContacts = "Contacts";
 	String statisticsDataDisplayed = "statisticsDataDisplayed";
 	String statisticsDontGroupColumns = "statisticsDontGroupColumns";
 	String statisticsDontGroupRows = "statisticsDontGroupRows";
@@ -2025,6 +2027,7 @@ public interface Captions {
 	String statisticsRemoveFilter = "statisticsRemoveFilter";
 	String statisticsResetFilters = "statisticsResetFilters";
 	String statisticsShowCaseIncidence = "statisticsShowCaseIncidence";
+	String statisticsShowContactIncidence = "statisticsShowContactIncidence";
 	String statisticsShowZeroValues = "statisticsShowZeroValues";
 	String statisticsSpecifySelection = "statisticsSpecifySelection";
 	String statisticsStatistics = "statisticsStatistics";
@@ -2527,6 +2530,8 @@ public interface Captions {
 	String View_shareRequests = "View.shareRequests";
 	String View_statistics = "View.statistics";
 	String View_statistics_database_export = "View.statistics.database-export";
+	String View_statistics_contacts = "View.statistics.contacts";
+	String View_statistics_cases = "View.statistics.cases";
 	String View_tasks = "View.tasks";
 	String View_tasks_archive = "View.tasks.archive";
 	String View_tasks_sub = "View.tasks.sub";

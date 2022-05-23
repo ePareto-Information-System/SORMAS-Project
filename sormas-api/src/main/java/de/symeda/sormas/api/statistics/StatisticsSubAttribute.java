@@ -15,39 +15,47 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
-package de.symeda.sormas.api.contact;
+package de.symeda.sormas.api.statistics;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 
-public enum ContactStatus 
-	implements
-	StatisticsGroupingKey {
+public enum StatisticsSubAttribute {
 
-	ACTIVE,
-	/**
-	 * converted to case
-	 */
-	CONVERTED,
-	/**
-	 * case disproved or not a contact
-	 */
-	DROPPED;
+	YEAR(true, true),
+	QUARTER(true, true),
+	MONTH(true, true),
+	EPI_WEEK(true, true),
+	QUARTER_OF_YEAR(true, true),
+	MONTH_OF_YEAR(true, true),
+	EPI_WEEK_OF_YEAR(true, true),
+	DATE_RANGE(true, false),
+	REGION(false, true),
+	DISTRICT(false, true),
+	COMMUNITY(false, true),
+	FACILITY(false, true),
+	PERSON_REGION(false, false),
+	PERSON_DISTRICT(false, false),
+	PERSON_COMMUNITY(false, false),
+	PERSON_CITY(false, false),
+	PERSON_POSTCODE(false, false);
+
+	private boolean usedForFilters;
+	private boolean usedForGrouping;
+
+	StatisticsSubAttribute(boolean usedForFilters, boolean usedForGrouping) {
+		this.usedForFilters = usedForFilters;
+		this.usedForGrouping = usedForGrouping;
+	}
 
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);
 	}
-	@Override
-	public int keyCompareTo(StatisticsGroupingKey o) {
 
-		if (o == null) {
-			throw new NullPointerException("Can't compare to null.");
-		}
-		if (o.getClass() != this.getClass()) {
-			throw new UnsupportedOperationException(
-				"Can't compare to class " + o.getClass().getName() + " that differs from " + this.getClass().getName());
-		}
+	public boolean isUsedForFilters() {
+		return usedForFilters;
+	}
 
-		return this.toString().compareTo(o.toString());
+	public boolean isUsedForGrouping() {
+		return usedForGrouping;
 	}
 }
