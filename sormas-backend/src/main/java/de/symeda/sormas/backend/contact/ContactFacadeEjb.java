@@ -57,6 +57,7 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
@@ -1399,7 +1400,6 @@ public class ContactFacadeEjb
 		target.setQuarantineOfficialOrderSentDate(source.getQuarantineOfficialOrderSentDate());
 		target.setAdditionalDetails(source.getAdditionalDetails());
 
-
 		target.setEpiData(epiDataFacade.fromDto(source.getEpiData(), checkChangeDate));
 		target.setHealthConditions(healthConditionsMapper.fromDto(source.getHealthConditions(), checkChangeDate));
 
@@ -1958,7 +1958,7 @@ public class ContactFacadeEjb
 
 		return mapContactDtos;
 	}
-	
+
 	@RolesAllowed(UserRight._CONTACT_MERGE)
 	public void mergeContact(String leadUuid, String otherUuid) {
 		ContactDto leadContactDto = getContactWithoutPseudonyimizationByUuid(leadUuid);
@@ -2312,4 +2312,43 @@ public class ContactFacadeEjb
 		}
 	}
 
+	@Override
+	public Date getOldestContactCreationDate() {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Timestamp> cq = cb.createQuery(Timestamp.class);
+		Root<Contact> from = cq.from(Contact.class);
+		Join<Contact, Person> persons = from.join(Contact.PERSON, JoinType.LEFT);
+
+		Path<Timestamp> expression = persons.get(Person.CREATION_DATE);
+		cq.select(cb.least(expression));
+		cq.where(cb.greaterThan(persons.get(Person.CREATION_DATE), DateHelper.getDateZero(2000, 1, 1)));
+		return em.createQuery(cq).getSingleResult();
+	}
+
+	@Override
+	public Date getOldestContactReportDate() {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Timestamp> cq = cb.createQuery(Timestamp.class);
+		Root<Contact> from = cq.from(Contact.class);
+
+		final Path<Timestamp> reportDate = from.get(Contact.REPORT_DATE_TIME);
+		cq.select(cb.least(reportDate));
+		cq.where(cb.greaterThan(from.get(Contact.REPORT_DATE_TIME), DateHelper.getDateZero(2000, 1, 1)));
+		return em.createQuery(cq).getSingleResult();
+	}
+
+	@Override
+	public Date getOldestContactLastContactDate() {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Timestamp> cq = cb.createQuery(Timestamp.class);
+		Root<Contact> from = cq.from(Contact.class);
+
+		final Path<Timestamp> contactDate = from.get(Contact.LAST_CONTACT_DATE);
+		cq.select(cb.least(contactDate));
+		cq.where(cb.greaterThan(from.get(Contact.LAST_CONTACT_DATE), DateHelper.getDateZero(2000, 1, 1)));
+		return em.createQuery(cq).getSingleResult();
+	}
 }

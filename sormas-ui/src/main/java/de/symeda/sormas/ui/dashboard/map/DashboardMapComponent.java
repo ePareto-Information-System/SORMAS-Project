@@ -51,6 +51,7 @@ import com.vaadin.v7.ui.CheckBox;
 import com.vaadin.v7.ui.OptionGroup;
 
 import de.symeda.sormas.api.CaseMeasure;
+import de.symeda.sormas.api.ContactMeasure;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseClassification;
@@ -871,6 +872,115 @@ public class DashboardMapComponent extends VerticalLayout {
 
 		return regionLegendLayout;
 	}
+	
+	//CONTACT
+	public static AbstractOrderedLayout buildContactRegionLegend(
+			boolean vertical,
+			ContactMeasure contactMeasure,
+			boolean emptyPopulationDistrictPresent,
+			BigDecimal districtShapesLowerQuartile,
+			BigDecimal districtShapesMedian,
+			BigDecimal districtShapesUpperQuartile,
+			int contactIncidenceDivisor) {
+			AbstractOrderedLayout regionLegendLayout = vertical ? new VerticalLayout() : new HorizontalLayout();
+			regionLegendLayout.setSpacing(true);
+			CssStyles.style(regionLegendLayout, CssStyles.LAYOUT_MINIMAL);
+			regionLegendLayout.setSizeUndefined();
+
+			HorizontalLayout legendEntry;
+			switch (contactMeasure) {
+			case CONTACT_COUNT:
+				legendEntry = buildMapIconLegendEntry(
+					"lowest-region-small",
+					districtShapesLowerQuartile.compareTo(BigDecimal.ONE) > 0
+						? "1 - " + districtShapesLowerQuartile + " " + I18nProperties.getString(Strings.entityContacts)
+						: "1 " + I18nProperties.getString(Strings.entityContacts));
+				break;
+			case CONTACT_INCIDENCE:
+				legendEntry = buildMapIconLegendEntry(
+					"lowest-region-small",
+					"<= " + DataHelper.getTruncatedBigDecimal(districtShapesLowerQuartile) + " " + I18nProperties.getString(Strings.entityContacts) + " / "
+						+ contactIncidenceDivisor);
+				break;
+			default:
+				throw new IllegalArgumentException(contactMeasure.toString());
+			}
+			regionLegendLayout.addComponent(legendEntry);
+
+			if (districtShapesLowerQuartile.compareTo(districtShapesMedian) < 0) {
+				switch (contactMeasure) {
+				case CONTACT_COUNT:
+					legendEntry = buildMapIconLegendEntry(
+						"low-region-small",
+						districtShapesMedian.compareTo(districtShapesLowerQuartile.add(BigDecimal.ONE)) > 0
+							? districtShapesLowerQuartile.add(BigDecimal.ONE) + " - " + districtShapesMedian + " "
+								+ I18nProperties.getString(Strings.entityContacts)
+							: districtShapesMedian + " " + I18nProperties.getString(Strings.entityContacts));
+					break;
+				case CONTACT_INCIDENCE:
+					legendEntry = buildMapIconLegendEntry(
+						"low-region-small",
+						DataHelper.getTruncatedBigDecimal(districtShapesLowerQuartile.add(new BigDecimal(0.1)).setScale(1, RoundingMode.HALF_UP)) + " - "
+							+ DataHelper.getTruncatedBigDecimal(districtShapesMedian) + " " + I18nProperties.getString(Strings.entityContacts) + " / "
+							+ contactIncidenceDivisor);
+					break;
+				default:
+					throw new IllegalArgumentException(contactMeasure.toString());
+				}
+
+				regionLegendLayout.addComponent(legendEntry);
+			}
+
+			if (districtShapesMedian.compareTo(districtShapesUpperQuartile) < 0) {
+				switch (contactMeasure) {
+				case CONTACT_COUNT:
+					legendEntry = buildMapIconLegendEntry(
+						"high-region-small",
+						districtShapesUpperQuartile.compareTo(districtShapesMedian.add(BigDecimal.ONE)) > 0
+							? districtShapesMedian.add(BigDecimal.ONE) + " - " + districtShapesUpperQuartile + " "
+								+ I18nProperties.getString(Strings.entityContacts)
+							: districtShapesUpperQuartile + " " + I18nProperties.getString(Strings.entityContacts));
+					break;
+				case CONTACT_INCIDENCE:
+					legendEntry = buildMapIconLegendEntry(
+						"high-region-small",
+						DataHelper.getTruncatedBigDecimal(districtShapesMedian.add(new BigDecimal(0.1)).setScale(1, RoundingMode.HALF_UP)) + " - "
+							+ DataHelper.getTruncatedBigDecimal(districtShapesUpperQuartile) + " " + I18nProperties.getString(Strings.entityContacts) + " / "
+							+ contactIncidenceDivisor);
+					break;
+				default:
+					throw new IllegalArgumentException(contactMeasure.toString());
+				}
+
+				regionLegendLayout.addComponent(legendEntry);
+			}
+
+			switch (contactMeasure) {
+			case CONTACT_COUNT:
+				legendEntry = buildMapIconLegendEntry(
+					"highest-region-small",
+					"> " + districtShapesUpperQuartile + " " + I18nProperties.getString(Strings.entityContacts));
+				break;
+			case CONTACT_INCIDENCE:
+				legendEntry = buildMapIconLegendEntry(
+					"highest-region-small",
+					"> " + DataHelper.getTruncatedBigDecimal(districtShapesUpperQuartile) + " " + I18nProperties.getString(Strings.entityContacts) + " / "
+						+ contactIncidenceDivisor);
+				break;
+			default:
+				throw new IllegalArgumentException(contactMeasure.toString());
+			}
+			regionLegendLayout.addComponent(legendEntry);
+
+			if (contactMeasure == ContactMeasure.CONTACT_INCIDENCE && emptyPopulationDistrictPresent) {
+				legendEntry = buildMapIconLegendEntry("no-population-region-small", I18nProperties.getCaption(Captions.dashboardNoPopulationData));
+				regionLegendLayout.addComponent(legendEntry);
+			}
+
+			return regionLegendLayout;
+		}
+	
+	//
 
 	private void clearRegionShapes() {
 		map.removeGroup(REGIONS_GROUP_ID);

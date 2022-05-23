@@ -24,7 +24,7 @@ import javax.ejb.Remote;
 import de.symeda.sormas.api.statistics.StatisticsCaseAttribute;
 import de.symeda.sormas.api.statistics.StatisticsCaseCountDto;
 import de.symeda.sormas.api.statistics.StatisticsCaseCriteria;
-import de.symeda.sormas.api.statistics.StatisticsCaseSubAttribute;
+import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 
 @Remote
 public interface CaseStatisticsFacade {
@@ -32,9 +32,9 @@ public interface CaseStatisticsFacade {
 	List<StatisticsCaseCountDto> queryCaseCount(
 		StatisticsCaseCriteria caseCriteria,
 		StatisticsCaseAttribute groupingA,
-		StatisticsCaseSubAttribute subGroupingA,
+		StatisticsSubAttribute subGroupingA,
 		StatisticsCaseAttribute groupingB,
-		StatisticsCaseSubAttribute subGroupingB,
+		StatisticsSubAttribute subGroupingB,
 		boolean includePopulation,
 		boolean includeZeroValues,
 		Integer populationReferenceYear);

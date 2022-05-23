@@ -29,6 +29,10 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.function.Function;
 
+import de.symeda.sormas.api.geo.GeoLatLon;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.text.StringEscapeUtils;
 
@@ -51,7 +55,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import de.symeda.sormas.api.AgeGroup;
-import de.symeda.sormas.api.CaseMeasure;
+import de.symeda.sormas.api.ContactMeasure;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.IntegerRange;
@@ -61,23 +65,18 @@ import de.symeda.sormas.api.Quarter;
 import de.symeda.sormas.api.QuarterOfYear;
 import de.symeda.sormas.api.ReferenceDto;
 import de.symeda.sormas.api.Year;
-import de.symeda.sormas.api.caze.CaseClassification;
-import de.symeda.sormas.api.caze.CaseOutcome;
-import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.contact.ContactClassification;
+import de.symeda.sormas.api.contact.ContactStatus;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.Descriptions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.person.Sex;
-import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
-import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
-import de.symeda.sormas.api.geo.GeoLatLon;
-import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
-import de.symeda.sormas.api.statistics.StatisticsCaseAttribute;
-import de.symeda.sormas.api.statistics.StatisticsCaseCountDto;
-import de.symeda.sormas.api.statistics.StatisticsCaseCriteria;
-import de.symeda.sormas.api.statistics.StatisticsCaseSubAttribute;
+import de.symeda.sormas.api.statistics.StatisticsContactAttribute;
+import de.symeda.sormas.api.statistics.StatisticsContactCountDto;
+import de.symeda.sormas.api.statistics.StatisticsContactCriteria;
+import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 import de.symeda.sormas.api.statistics.StatisticsHelper;
 import de.symeda.sormas.api.statistics.StatisticsHelper.StatisticsKeyComparator;
@@ -97,38 +96,39 @@ import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.DownloadUtil;
 import de.symeda.sormas.ui.utils.ExportEntityName;
 
-public class StatisticsView extends AbstractStatisticsView {
 
-	private static final long serialVersionUID = -4440568319850399685L;
+public class StatisticsContactsView extends AbstractStatisticsView {
+	
+	private static final long serialVersionUID = 5219022825077756555L;
 
-	public static final String VIEW_NAME = ROOT_VIEW_NAME;
+	public static final String VIEW_NAME = ROOT_VIEW_NAME + "/contacts";
 
 	private VerticalLayout filtersLayout;
 	private VerticalLayout resultsLayout;
 	private CheckBox cbShowZeroValues;
 	private CheckBox cbHideOtherCountries;
-	private RadioButtonGroup<CaseCountOrIncidence> ogCaseCountOrIncidence;
+	private RadioButtonGroup<ContactCountOrIncidence> ogContactCountOrIncidence;
 	private TextField tfIncidenceDivisor;
 	private Button exportButton;
 	private final Label emptyResultLabel;
 	private Label referenceYearLabel;
-	private Label caseIncidenceNotPossibleLabel;
-	private boolean showCaseIncidence;
+	private Label contactIncidenceNotPossibleLabel;
+	private boolean showContactIncidence;
 	private boolean hasMissingPopulationData;
-	private boolean caseIncidencePossible;
+	private boolean contactIncidencePossible;
 	private String missingPopulationDataNames;
 	private int incidenceDivisor = 100000;
-	private StatisticsCaseGrid statisticsCaseGrid;
-	private StatisticsVisualizationComponent visualizationComponent;
-	private List<StatisticsFilterComponent> filterComponents = new ArrayList<>();
-	private StatisticsCaseCriteria caseCriteria;
+	private StatisticsContactGrid statisticsContactGrid;
+	private StatisticsContactsVisualizationComponent visualizationComponent;
+	private List<StatisticsContactFilterComponent> filterComponents = new ArrayList<>();
+	private StatisticsContactCriteria contactCriteria;
 	private Integer populationReferenceYear;
 
-	public StatisticsView() {
+	public StatisticsContactsView() {
 		super(VIEW_NAME);
 		setWidth(100, Unit.PERCENTAGE);
 
-		emptyResultLabel = new Label(I18nProperties.getString(Strings.infoNoCasesFoundStatistics));
+		emptyResultLabel = new Label(I18nProperties.getString(Strings.infoNoContactsFoundStatistics));
 
 		// Main layout
 		VerticalLayout statisticsLayout = new VerticalLayout();
@@ -144,8 +144,8 @@ public class StatisticsView extends AbstractStatisticsView {
 		visualizationTitle.setWidthUndefined();
 		CssStyles.style(visualizationTitle, CssStyles.STATISTICS_TITLE);
 		statisticsLayout.addComponent(visualizationTitle);
-
-		visualizationComponent = new StatisticsVisualizationComponent();
+		
+		visualizationComponent = new StatisticsContactsVisualizationComponent();
 		CssStyles.style(visualizationComponent, CssStyles.STATISTICS_TITLE_BOX);
 		statisticsLayout.addComponent(visualizationComponent);
 		visualizationComponent.addVisualizationTypeChangedListener(visualizationType -> {
@@ -163,7 +163,7 @@ public class StatisticsView extends AbstractStatisticsView {
 
 		// Disclaimer
 		Label disclaimer =
-			new Label(VaadinIcons.INFO_CIRCLE.getHtml() + " " + I18nProperties.getString(Strings.infoStatisticsDisclaimer), ContentMode.HTML);
+			new Label(VaadinIcons.INFO_CIRCLE.getHtml() + " " + I18nProperties.getString(Strings.infoStatisticsContactDisclaimer), ContentMode.HTML);
 		statisticsLayout.addComponent(disclaimer);
 
 		addComponent(statisticsLayout);
@@ -179,7 +179,7 @@ public class StatisticsView extends AbstractStatisticsView {
 		CssStyles.style(filtersSectionLayout, CssStyles.STATISTICS_TITLE_BOX);
 		filtersSectionLayout.setSpacing(true);
 		filtersSectionLayout.setWidth(100, Unit.PERCENTAGE);
-		Label filtersInfoText = new Label(I18nProperties.getString(Strings.infoStatisticsFilter), ContentMode.HTML);
+		Label filtersInfoText = new Label(I18nProperties.getString(Strings.infoContactsStatisticsFilter), ContentMode.HTML);
 		filtersSectionLayout.addComponent(filtersInfoText);
 
 		filtersLayout = new VerticalLayout();
@@ -215,7 +215,7 @@ public class StatisticsView extends AbstractStatisticsView {
 		filterComponentLayout.setSpacing(true);
 		filterComponentLayout.setWidth(100, Unit.PERCENTAGE);
 
-		StatisticsFilterComponent filterComponent = new StatisticsFilterComponent(filtersLayout.getComponentCount());
+		StatisticsContactFilterComponent filterComponent = new StatisticsContactFilterComponent(filtersLayout.getComponentCount());
 
 		Button removeFilterButton = ButtonHelper.createIconButtonWithCaption("close", null, VaadinIcons.CLOSE, e -> {
 			filterComponents.remove(filterComponent);
@@ -257,18 +257,18 @@ public class StatisticsView extends AbstractStatisticsView {
 		optionsLayout.setSpacing(true);
 		CssStyles.style(optionsLayout, CssStyles.STATISTICS_TITLE_BOX);
 		{
-			ogCaseCountOrIncidence = new RadioButtonGroup<CaseCountOrIncidence>(
+			ogContactCountOrIncidence = new RadioButtonGroup<ContactCountOrIncidence>(
 				I18nProperties.getCaption(Captions.statisticsDataDisplayed),
-				Arrays.asList(CaseCountOrIncidence.values()));
-			ogCaseCountOrIncidence.setId(Captions.statisticsDataDisplayed);
-			ogCaseCountOrIncidence.setValue(CaseCountOrIncidence.CASE_COUNT);
-			ogCaseCountOrIncidence.addValueChangeListener(e -> {
-				showCaseIncidence = e.getValue() == CaseCountOrIncidence.CASE_INCIDENCE;
-				tfIncidenceDivisor.setVisible(showCaseIncidence);
-				visualizationComponent.setStackedColumnAndPieEnabled(!showCaseIncidence);
+				Arrays.asList(ContactCountOrIncidence.values()));
+			ogContactCountOrIncidence.setId(Captions.statisticsDataDisplayed);
+			ogContactCountOrIncidence.setValue(ContactCountOrIncidence.CONTACT_COUNT);
+			ogContactCountOrIncidence.addValueChangeListener(e -> {
+				showContactIncidence = e.getValue() == ContactCountOrIncidence.CONTACT_INCIDENCE;
+				tfIncidenceDivisor.setVisible(showContactIncidence);
+				visualizationComponent.setStackedColumnAndPieEnabled(!showContactIncidence);
 			});
-			CssStyles.style(ogCaseCountOrIncidence, CssStyles.VSPACE_NONE, ValoTheme.OPTIONGROUP_HORIZONTAL, CssStyles.SOFT_REQUIRED);
-			optionsLayout.addComponent(ogCaseCountOrIncidence);
+			CssStyles.style(ogContactCountOrIncidence, CssStyles.VSPACE_NONE, ValoTheme.OPTIONGROUP_HORIZONTAL, CssStyles.SOFT_REQUIRED);
+			optionsLayout.addComponent(ogContactCountOrIncidence);
 
 			tfIncidenceDivisor = new TextField(I18nProperties.getCaption(Captions.statisticsIncidenceDivisor));
 			tfIncidenceDivisor.setId("incidenceDivisor");
@@ -314,9 +314,9 @@ public class StatisticsView extends AbstractStatisticsView {
 		Button generateButton = ButtonHelper.createButton(Captions.actionGenerate, e -> {
 			// Check whether there is any invalid empty filter or grouping data
 			Notification errorNotification = null;
-			for (StatisticsFilterComponent filterComponent : filterComponents) {
-				if (filterComponent.getSelectedAttribute() != StatisticsCaseAttribute.JURISDICTION
-					&& filterComponent.getSelectedAttribute() != StatisticsCaseAttribute.PLACE_OF_RESIDENCE
+			for (StatisticsContactFilterComponent filterComponent : filterComponents) {
+				if (filterComponent.getSelectedAttribute() != StatisticsContactAttribute.JURISDICTION
+					&& filterComponent.getSelectedAttribute() != StatisticsContactAttribute.PLACE_OF_RESIDENCE
 					&& (filterComponent.getSelectedAttribute() == null
 						|| filterComponent.getSelectedAttribute().getSubAttributes().length > 0
 							&& filterComponent.getSelectedSubAttribute() == null)) {
@@ -325,13 +325,13 @@ public class StatisticsView extends AbstractStatisticsView {
 				}
 			}
 
-			if (showCaseIncidence && hasPopulationFilterUnknownValue()) {
+			if (showContactIncidence && hasPopulationFilterUnknownValue()) {
 				errorNotification =
-					new Notification(I18nProperties.getString(Strings.messageUnknownFilterAttributeForPopulationData), Type.ERROR_MESSAGE);
+					new Notification(I18nProperties.getString(Strings.messageUnknownContactFilterAttributeForPopulationData), Type.ERROR_MESSAGE);
 			}
 
-			if (showCaseIncidence && (visualizationComponent.hasAgeGroupGroupingWithoutPopulationData() || hasUnsupportedPopulationAgeGroupFilter())) {
-				errorNotification = new Notification(I18nProperties.getString(Strings.messageCaseIncidenceUnsupportedAgeGroup), Type.ERROR_MESSAGE);
+			if (showContactIncidence && visualizationComponent.hasAgeGroupGroupingWithoutPopulationData() || hasUnsupportedPopulationAgeGroupFilter()) {
+				errorNotification = new Notification(I18nProperties.getString(Strings.messageContactIncidenceUnsupportedAgeGroup), Type.ERROR_MESSAGE);
 			}
 
 			if (errorNotification == null
@@ -369,46 +369,46 @@ public class StatisticsView extends AbstractStatisticsView {
 	}
 
 	public void generateTable() {
-		List<StatisticsCaseCountDto> resultData = generateStatistics();
+		List<StatisticsContactCountDto> resultData = generateStatistics();
 
 		if (resultData.isEmpty()) {
 			resultsLayout.addComponent(emptyResultLabel);
 			return;
 		}
 
-		if (showCaseIncidence
-			&& caseIncidencePossible
+		if (showContactIncidence
+			&& contactIncidencePossible
 			&& populationReferenceYear != null
 			&& populationReferenceYear != Calendar.getInstance().get(Calendar.YEAR)) {
 			referenceYearLabel = new Label(
 				VaadinIcons.INFO_CIRCLE.getHtml() + " "
-					+ String.format(I18nProperties.getString(Strings.infoPopulationReferenceYear), populationReferenceYear),
+					+ String.format(I18nProperties.getString(Strings.infoContactPopulationReferenceYear), populationReferenceYear),
 				ContentMode.HTML);
 			resultsLayout.addComponent(referenceYearLabel);
 			CssStyles.style(referenceYearLabel, CssStyles.VSPACE_TOP_4);
 		}
 
-		if (showCaseIncidence && (!caseIncidencePossible || hasMissingPopulationData)) {
-			if (!caseIncidencePossible) {
+		if (showContactIncidence && (!contactIncidencePossible || hasMissingPopulationData)) {
+			if (!contactIncidencePossible) {
 				if (hasMissingPopulationData) {
-					caseIncidenceNotPossibleLabel = new Label(
+					contactIncidenceNotPossibleLabel = new Label(
 						VaadinIcons.INFO_CIRCLE.getHtml() + " "
-							+ String.format(I18nProperties.getString(Strings.infoCaseIncidenceNotPossible), missingPopulationDataNames),
+							+ String.format(I18nProperties.getString(Strings.infoContactIncidenceNotPossible), missingPopulationDataNames),
 						ContentMode.HTML);
 				} else {
-					caseIncidenceNotPossibleLabel = new Label(
-						VaadinIcons.INFO_CIRCLE.getHtml() + " " + I18nProperties.getString(Strings.infoCaseIncidenceIncompatible),
+					contactIncidenceNotPossibleLabel = new Label(
+						VaadinIcons.INFO_CIRCLE.getHtml() + " " + I18nProperties.getString(Strings.infoContactIncidenceIncompatible),
 						ContentMode.HTML);
 				}
 			} else {
-				caseIncidenceNotPossibleLabel = new Label(
+				contactIncidenceNotPossibleLabel = new Label(
 					VaadinIcons.INFO_CIRCLE.getHtml() + " "
-						+ String.format(I18nProperties.getString(Strings.infoCaseIncidenceMissingPopulationData), missingPopulationDataNames),
+						+ String.format(I18nProperties.getString(Strings.infoContactIncidenceMissingPopulationData), missingPopulationDataNames),
 					ContentMode.HTML);
 			}
-			resultsLayout.addComponent(caseIncidenceNotPossibleLabel);
-			caseIncidenceNotPossibleLabel.setWidth(100, Unit.PERCENTAGE);
-			CssStyles.style(caseIncidenceNotPossibleLabel, CssStyles.VSPACE_TOP_4);
+			resultsLayout.addComponent(contactIncidenceNotPossibleLabel);
+			contactIncidenceNotPossibleLabel.setWidth(100, Unit.PERCENTAGE);
+			CssStyles.style(contactIncidenceNotPossibleLabel, CssStyles.VSPACE_TOP_4);
 		}
 
 		exportButton = ButtonHelper.createIconButton(Captions.export, VaadinIcons.TABLE, null, ValoTheme.BUTTON_PRIMARY);
@@ -417,78 +417,78 @@ public class StatisticsView extends AbstractStatisticsView {
 		resultsLayout.addComponent(exportButton);
 		resultsLayout.setComponentAlignment(exportButton, Alignment.TOP_RIGHT);
 
-		statisticsCaseGrid = new StatisticsCaseGrid(
+		statisticsContactGrid = new StatisticsContactGrid(
 			visualizationComponent.getRowsAttribute(),
 			visualizationComponent.getRowsSubAttribute(),
 			visualizationComponent.getColumnsAttribute(),
 			visualizationComponent.getColumnsSubAttribute(),
-			showCaseIncidence && caseIncidencePossible,
+			showContactIncidence && contactIncidencePossible,
 			incidenceDivisor,
 			resultData,
-			caseCriteria);
-		resultsLayout.addComponent(statisticsCaseGrid);
-		resultsLayout.setExpandRatio(statisticsCaseGrid, 1);
+			contactCriteria);
+		resultsLayout.addComponent(statisticsContactGrid);
+		resultsLayout.setExpandRatio(statisticsContactGrid, 1);
 
-		if (showCaseIncidence && hasMissingPopulationData && caseIncidencePossible) {
-			resultsLayout.addComponent(caseIncidenceNotPossibleLabel);
+		if (showContactIncidence && hasMissingPopulationData && contactIncidencePossible) {
+			resultsLayout.addComponent(contactIncidenceNotPossibleLabel);
 		}
 
 		StreamResource streamResource = DownloadUtil.createGridExportStreamResource(
-			statisticsCaseGrid.getContainerDataSource(),
-			statisticsCaseGrid.getColumns(),
+			statisticsContactGrid.getContainerDataSource(),
+			statisticsContactGrid.getColumns(),
 			ExportEntityName.STATISTICS);
 		FileDownloader fileDownloader = new FileDownloader(streamResource);
 		fileDownloader.extend(exportButton);
 	}
 
 	public void generateChart() {
-		List<StatisticsCaseCountDto> resultData = generateStatistics();
+		List<StatisticsContactCountDto> resultData = generateStatistics();
 
 		if (resultData.isEmpty()) {
 			resultsLayout.addComponent(emptyResultLabel);
 			return;
 		}
 
-		if (showCaseIncidence
-			&& caseIncidencePossible
+		if (showContactIncidence
+			&& contactIncidencePossible
 			&& populationReferenceYear != null
 			&& populationReferenceYear != Calendar.getInstance().get(Calendar.YEAR)) {
 			referenceYearLabel = new Label(
 				VaadinIcons.INFO_CIRCLE.getHtml() + " "
-					+ String.format(I18nProperties.getString(Strings.infoPopulationReferenceYear), populationReferenceYear),
+					+ String.format(I18nProperties.getString(Strings.infoContactPopulationReferenceYear), populationReferenceYear),
 				ContentMode.HTML);
 			resultsLayout.addComponent(referenceYearLabel);
 			CssStyles.style(referenceYearLabel, CssStyles.VSPACE_TOP_4);
 		}
 
-		if (showCaseIncidence && (!caseIncidencePossible || hasMissingPopulationData)) {
-			if (!caseIncidencePossible) {
+		if (showContactIncidence && (!contactIncidencePossible || hasMissingPopulationData)) {
+			if (!contactIncidencePossible) {
 				if (hasMissingPopulationData) {
-					caseIncidenceNotPossibleLabel = new Label(
+					contactIncidenceNotPossibleLabel = new Label(
 						VaadinIcons.INFO_CIRCLE.getHtml() + " "
-							+ String.format(I18nProperties.getString(Strings.infoCaseIncidenceNotPossible), missingPopulationDataNames),
+							+ String.format(I18nProperties.getString(Strings.infoContactIncidenceNotPossible), missingPopulationDataNames),
 						ContentMode.HTML);
 				} else {
-					caseIncidenceNotPossibleLabel = new Label(
-						VaadinIcons.INFO_CIRCLE.getHtml() + " " + I18nProperties.getString(Strings.infoCaseIncidenceIncompatible),
+					contactIncidenceNotPossibleLabel = new Label(
+						VaadinIcons.INFO_CIRCLE.getHtml() + " " + I18nProperties.getString(Strings.infoContactIncidenceIncompatible),
 						ContentMode.HTML);
 				}
 			} else {
-				caseIncidenceNotPossibleLabel = new Label(
+				contactIncidenceNotPossibleLabel = new Label(
 					VaadinIcons.INFO_CIRCLE.getHtml() + " "
-						+ String.format(I18nProperties.getString(Strings.infoCaseIncidenceMissingPopulationData), missingPopulationDataNames),
+						+ String.format(I18nProperties.getString(Strings.infoContactIncidenceMissingPopulationData), missingPopulationDataNames),
 					ContentMode.HTML);
 			}
-			resultsLayout.addComponent(caseIncidenceNotPossibleLabel);
-			caseIncidenceNotPossibleLabel.setWidth(100, Unit.PERCENTAGE);
-			CssStyles.style(caseIncidenceNotPossibleLabel, CssStyles.VSPACE_TOP_4);
+			resultsLayout.addComponent(contactIncidenceNotPossibleLabel);
+			contactIncidenceNotPossibleLabel.setWidth(100, Unit.PERCENTAGE);
+			CssStyles.style(contactIncidenceNotPossibleLabel, CssStyles.VSPACE_TOP_4);
 		}
 
 		StatisticsVisualizationChartType chartType = visualizationComponent.getVisualizationChartType();
-		StatisticsCaseAttribute xAxisAttribute = visualizationComponent.getColumnsAttribute();
-		StatisticsCaseSubAttribute xAxisSubAttribute = visualizationComponent.getColumnsSubAttribute();
-		StatisticsCaseAttribute seriesAttribute = visualizationComponent.getRowsAttribute();
-		StatisticsCaseSubAttribute seriesSubAttribute = visualizationComponent.getRowsSubAttribute();
+		StatisticsContactAttribute xAxisAttribute = visualizationComponent.getColumnsAttribute();
+		StatisticsSubAttribute xAxisSubAttribute = visualizationComponent.getColumnsSubAttribute();
+		StatisticsContactAttribute seriesAttribute = visualizationComponent.getRowsAttribute();
+		StatisticsSubAttribute seriesSubAttribute = visualizationComponent.getRowsSubAttribute();
 
 		HighChart chart = new HighChart();
 		chart.setWidth(100, Unit.PERCENTAGE);
@@ -515,15 +515,15 @@ public class StatisticsView extends AbstractStatisticsView {
 			"', " + " backgroundColor: 'transparent' " + "}," + "credits:{ enabled: false }," + "exporting:{ " + " enabled: true,"
 				+ " buttons:{ contextButton:{ theme:{ fill: 'transparent' } } }" + "}," + "title:{ text: '' },");
 
-		CaseCountOrIncidence dataStyle =
-			showCaseIncidence && caseIncidencePossible ? CaseCountOrIncidence.CASE_INCIDENCE : CaseCountOrIncidence.CASE_COUNT;
+		ContactCountOrIncidence dataStyle =
+			showContactIncidence && contactIncidencePossible ? ContactCountOrIncidence.CONTACT_INCIDENCE : ContactCountOrIncidence.CONTACT_COUNT;
 
 		TreeMap<StatisticsGroupingKey, String> xAxisCaptions = new TreeMap<>(new StatisticsKeyComparator());
 		TreeMap<StatisticsGroupingKey, String> seriesCaptions = new TreeMap<>(new StatisticsKeyComparator());
 		boolean appendUnknownXAxisCaption = false;
 		if (seriesAttribute != null || xAxisAttribute != null) {
 			// Build captions for x-axis and/or series
-			for (StatisticsCaseCountDto row : resultData) {
+			for (StatisticsContactCountDto row : resultData) {
 
 				if (xAxisAttribute != null) {
 					if (!StatisticsHelper.isNullOrUnknown(row.getColumnKey())) {
@@ -563,7 +563,7 @@ public class StatisticsView extends AbstractStatisticsView {
 				.append(dataStyle)
 				.append("' },")
 				.append("allowDecimals: false, softMax: ")
-				.append(showCaseIncidence && caseIncidencePossible ? 1 : 10)
+				.append(showContactIncidence && contactIncidencePossible ? 1 : 10)
 				.append(", stackLabels: { enabled: true, ")
 				.append(
 					"style: {fontWeight: 'normal', textOutline: '0', gridLineColor: '#000000', color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray' } } },");
@@ -602,17 +602,17 @@ public class StatisticsView extends AbstractStatisticsView {
 				.append(", data: [['")
 				.append(dataStyle)
 				.append("',");
-			if (!showCaseIncidence || !caseIncidencePossible) {
-				hcjs.append(resultData.get(0).getCaseCount().toString());
+			if (!showContactIncidence || !contactIncidencePossible) {
+				hcjs.append(resultData.get(0).getContactCount().toString());
 			} else {
 				hcjs.append(resultData.get(0).getIncidence(incidenceDivisor));
 			}
 			hcjs.append("]]}");
 		} else if (visualizationComponent.getVisualizationChartType() == StatisticsVisualizationChartType.PIE) {
 			hcjs.append("{ name: '").append(dataStyle).append("', dataLabels: { allowOverlap: false }").append(", data: [");
-			TreeMap<StatisticsGroupingKey, StatisticsCaseCountDto> seriesElements = new TreeMap<>(new StatisticsKeyComparator());
-			StatisticsCaseCountDto unknownSeriesElement = null;
-			for (StatisticsCaseCountDto row : resultData) {
+			TreeMap<StatisticsGroupingKey, StatisticsContactCountDto> seriesElements = new TreeMap<>(new StatisticsKeyComparator());
+			StatisticsContactCountDto unknownSeriesElement = null;
+			for (StatisticsContactCountDto row : resultData) {
 				Object seriesId = row.getRowKey();
 				if (StatisticsHelper.isNullOrUnknown(seriesId)) {
 					unknownSeriesElement = row;
@@ -623,8 +623,8 @@ public class StatisticsView extends AbstractStatisticsView {
 
 			seriesElements.forEach((key, value) -> {
 				Object seriesValue;
-				if (!showCaseIncidence || !caseIncidencePossible) {
-					seriesValue = value.getCaseCount();
+				if (!showContactIncidence || !contactIncidencePossible) {
+					seriesValue = value.getContactCount();
 				} else {
 					seriesValue = value.getIncidence(incidenceDivisor);
 				}
@@ -637,8 +637,8 @@ public class StatisticsView extends AbstractStatisticsView {
 			});
 			if (unknownSeriesElement != null) {
 				Object seriesValue;
-				if (!showCaseIncidence || !caseIncidencePossible) {
-					seriesValue = unknownSeriesElement.getCaseCount();
+				if (!showContactIncidence || !contactIncidencePossible) {
+					seriesValue = unknownSeriesElement.getContactCount();
 				} else {
 					seriesValue = unknownSeriesElement.getIncidence(incidenceDivisor);
 				}
@@ -653,7 +653,7 @@ public class StatisticsView extends AbstractStatisticsView {
 			final StringBuilder totalSeriesString = new StringBuilder();
 			TreeMap<Integer, Number> currentSeriesValues = new TreeMap<>();
 
-			for (StatisticsCaseCountDto row : resultData) {
+			for (StatisticsContactCountDto row : resultData) {
 				// Retrieve series caption of the current row
 				Object rowSeriesKey;
 				if (seriesAttribute != null) {
@@ -691,8 +691,8 @@ public class StatisticsView extends AbstractStatisticsView {
 				}
 
 				Object value;
-				if (!showCaseIncidence || !caseIncidencePossible) {
-					value = row.getCaseCount();
+				if (!showContactIncidence || !contactIncidencePossible) {
+					value = row.getContactCount();
 				} else {
 					value = row.getIncidence(incidenceDivisor);
 				}
@@ -755,8 +755,8 @@ public class StatisticsView extends AbstractStatisticsView {
 		resultsLayout.addComponent(chart);
 		resultsLayout.setExpandRatio(chart, 1);
 
-		if (showCaseIncidence && hasMissingPopulationData && caseIncidencePossible) {
-			resultsLayout.addComponent(caseIncidenceNotPossibleLabel);
+		if (showContactIncidence && hasMissingPopulationData && contactIncidencePossible) {
+			resultsLayout.addComponent(contactIncidenceNotPossibleLabel);
 		}
 	}
 
@@ -800,46 +800,46 @@ public class StatisticsView extends AbstractStatisticsView {
 	}
 
 	public void generateMap() {
-		List<StatisticsCaseCountDto> resultData = generateStatistics();
+		List<StatisticsContactCountDto> resultData = generateStatistics();
 
 		if (resultData.isEmpty()) {
 			resultsLayout.addComponent(emptyResultLabel);
 			return;
 		}
 
-		if (showCaseIncidence
-			&& caseIncidencePossible
+		if (showContactIncidence
+			&& contactIncidencePossible
 			&& populationReferenceYear != null
 			&& populationReferenceYear != Calendar.getInstance().get(Calendar.YEAR)) {
 			referenceYearLabel = new Label(
 				VaadinIcons.INFO_CIRCLE.getHtml() + " "
-					+ String.format(I18nProperties.getString(Strings.infoPopulationReferenceYear), populationReferenceYear),
+					+ String.format(I18nProperties.getString(Strings.infoContactPopulationReferenceYear), populationReferenceYear),
 				ContentMode.HTML);
 			resultsLayout.addComponent(referenceYearLabel);
 			CssStyles.style(referenceYearLabel, CssStyles.VSPACE_TOP_4);
 		}
 
-		if (showCaseIncidence && (!caseIncidencePossible || hasMissingPopulationData)) {
-			if (!caseIncidencePossible) {
+		if (showContactIncidence && (!contactIncidencePossible || hasMissingPopulationData)) {
+			if (!contactIncidencePossible) {
 				if (hasMissingPopulationData) {
-					caseIncidenceNotPossibleLabel = new Label(
+					contactIncidenceNotPossibleLabel = new Label(
 						VaadinIcons.INFO_CIRCLE.getHtml() + " "
-							+ String.format(I18nProperties.getString(Strings.infoCaseIncidenceNotPossible), missingPopulationDataNames),
+							+ String.format(I18nProperties.getString(Strings.infoContactIncidenceNotPossible), missingPopulationDataNames),
 						ContentMode.HTML);
 				} else {
-					caseIncidenceNotPossibleLabel = new Label(
-						VaadinIcons.INFO_CIRCLE.getHtml() + " " + I18nProperties.getString(Strings.infoCaseIncidenceIncompatible),
+					contactIncidenceNotPossibleLabel = new Label(
+						VaadinIcons.INFO_CIRCLE.getHtml() + " " + I18nProperties.getString(Strings.infoContactIncidenceIncompatible),
 						ContentMode.HTML);
 				}
 			} else {
-				caseIncidenceNotPossibleLabel = new Label(
+				contactIncidenceNotPossibleLabel = new Label(
 					VaadinIcons.INFO_CIRCLE.getHtml() + " "
-						+ String.format(I18nProperties.getString(Strings.infoCaseIncidenceMissingPopulationData), missingPopulationDataNames),
+						+ String.format(I18nProperties.getString(Strings.infoContactIncidenceMissingPopulationData), missingPopulationDataNames),
 					ContentMode.HTML);
 			}
-			resultsLayout.addComponent(caseIncidenceNotPossibleLabel);
-			caseIncidenceNotPossibleLabel.setWidth(100, Unit.PERCENTAGE);
-			CssStyles.style(caseIncidenceNotPossibleLabel, CssStyles.VSPACE_TOP_4);
+			resultsLayout.addComponent(contactIncidenceNotPossibleLabel);
+			contactIncidenceNotPossibleLabel.setWidth(100, Unit.PERCENTAGE);
+			CssStyles.style(contactIncidenceNotPossibleLabel, CssStyles.VSPACE_TOP_4);
 		}
 
 		HorizontalLayout mapLayout = new HorizontalLayout();
@@ -889,8 +889,8 @@ public class StatisticsView extends AbstractStatisticsView {
 
 		map.addPolygonGroup("outlines", outlinePolygones);
 
-		if (!showCaseIncidence || !caseIncidencePossible) {
-			resultData.sort(Comparator.comparingInt(StatisticsCaseCountDto::getCaseCount));
+		if (!showContactIncidence || !contactIncidencePossible) {
+			resultData.sort(Comparator.comparingInt(StatisticsContactCountDto::getContactCount));
 		} else {
 			resultData.sort((a, b) -> {
 				BigDecimal incidenceA = a.getIncidence(incidenceDivisor);
@@ -900,12 +900,12 @@ public class StatisticsView extends AbstractStatisticsView {
 		}
 
 		BigDecimal valuesLowerQuartile, valuesMedian, valuesUpperQuartile;
-		if (!showCaseIncidence || !caseIncidencePossible) {
+		if (!showContactIncidence || !contactIncidencePossible) {
 			valuesLowerQuartile =
-				resultData.size() > 0 ? new BigDecimal(resultData.get((int) (resultData.size() * 0.25)).getCaseCount()) : BigDecimal.ZERO;
-			valuesMedian = resultData.size() > 0 ? new BigDecimal(resultData.get((int) (resultData.size() * 0.5)).getCaseCount()) : BigDecimal.ZERO;
+				resultData.size() > 0 ? new BigDecimal(resultData.get((int) (resultData.size() * 0.25)).getContactCount()) : BigDecimal.ZERO;
+			valuesMedian = resultData.size() > 0 ? new BigDecimal(resultData.get((int) (resultData.size() * 0.5)).getContactCount()) : BigDecimal.ZERO;
 			valuesUpperQuartile =
-				resultData.size() > 0 ? new BigDecimal(resultData.get((int) (resultData.size() * 0.75)).getCaseCount()) : BigDecimal.ZERO;
+				resultData.size() > 0 ? new BigDecimal(resultData.get((int) (resultData.size() * 0.75)).getContactCount()) : BigDecimal.ZERO;
 		} else {
 			valuesLowerQuartile =
 				resultData.size() > 0 ? resultData.get((int) (resultData.size() * 0.25)).getIncidence(incidenceDivisor) : BigDecimal.ZERO;
@@ -927,12 +927,12 @@ public class StatisticsView extends AbstractStatisticsView {
 
 		boolean hasNullValue = false;
 		// Draw relevant district fills
-		for (StatisticsCaseCountDto resultRow : resultData) {
+		for (StatisticsContactCountDto resultRow : resultData) {
 			ReferenceDto regionOrDistrict = (ReferenceDto) resultRow.getRowKey();
 			String shapeUuid = regionOrDistrict.getUuid();
 			BigDecimal regionOrDistrictValue;
-			if (!showCaseIncidence || !caseIncidencePossible) {
-				regionOrDistrictValue = new BigDecimal(resultRow.getCaseCount());
+			if (!showContactIncidence || !contactIncidencePossible) {
+				regionOrDistrictValue = new BigDecimal(resultRow.getContactCount());
 			} else {
 				regionOrDistrictValue = resultRow.getIncidence(incidenceDivisor);
 			}
@@ -1019,15 +1019,15 @@ public class StatisticsView extends AbstractStatisticsView {
 		mapLayout.addComponent(map);
 		mapLayout.setExpandRatio(map, 1);
 
-		if (showCaseIncidence && caseIncidencePossible) {
+		if (showContactIncidence && contactIncidencePossible) {
 			valuesLowerQuartile = valuesLowerQuartile.setScale(2, RoundingMode.HALF_UP);
 			valuesMedian = valuesMedian.setScale(2, RoundingMode.HALF_UP);
 			valuesUpperQuartile = valuesUpperQuartile.setScale(2, RoundingMode.HALF_UP);
 		}
 
-		AbstractOrderedLayout regionLegend = DashboardMapComponent.buildRegionLegend(
+		AbstractOrderedLayout regionLegend = DashboardMapComponent.buildContactRegionLegend(
 			true,
-			showCaseIncidence && caseIncidencePossible ? CaseMeasure.CASE_INCIDENCE : CaseMeasure.CASE_COUNT,
+			showContactIncidence && contactIncidencePossible ? ContactMeasure.CONTACT_INCIDENCE : ContactMeasure.CONTACT_COUNT,
 			hasNullValue,
 			valuesLowerQuartile,
 			valuesMedian,
@@ -1043,89 +1043,86 @@ public class StatisticsView extends AbstractStatisticsView {
 		resultsLayout.addComponent(mapLayout);
 		resultsLayout.setExpandRatio(mapLayout, 1);
 
-		if (showCaseIncidence && hasMissingPopulationData && caseIncidencePossible) {
-			resultsLayout.addComponent(caseIncidenceNotPossibleLabel);
+		if (showContactIncidence && hasMissingPopulationData && contactIncidencePossible) {
+			resultsLayout.addComponent(contactIncidenceNotPossibleLabel);
 		}
 	}
 
-	private List<StatisticsCaseCountDto> generateStatistics() {
-		fillCaseCriteria(showCaseIncidence);
+	private List<StatisticsContactCountDto> generateStatistics() {
+		fillContactCriteria(showContactIncidence);
 
-		if (showCaseIncidence) {
+		if (showContactIncidence) {
 			hasMissingPopulationData = false;
-			caseIncidencePossible = !hasIncidenceIncompatibleFilter() && !visualizationComponent.hasIncidenceIncompatibleGrouping();
+			contactIncidencePossible = !hasIncidenceIncompatibleFilter() && !visualizationComponent.hasIncidenceIncompatibleGrouping();
 			missingPopulationDataNames = null;
-
-			if (caseIncidencePossible
-				&& !visualizationComponent.hasRegionGrouping()
-				&& !visualizationComponent.hasDistrictGrouping()
-				&& !visualizationComponent.hasCommunityGrouping()) {
+			
+			if (contactIncidencePossible && !visualizationComponent.hasRegionGrouping() && !visualizationComponent.hasDistrictGrouping() && !visualizationComponent.hasCommunityGrouping()) {
 				// we don't have a territorial grouping, so the system will sum up the population of all regions.
 				// make sure the user is informed about regions with missing population data
 
 				List<Long> missingPopulationDataRegionIds = FacadeProvider.getPopulationDataFacade()
-					.getMissingPopulationDataForStatistics(
-						caseCriteria,
+					.getContactMissingPopulationDataForStatistics(
+						contactCriteria,
 						false,
 						false,
 						visualizationComponent.hasSexGrouping(),
 						visualizationComponent.hasAgeGroupGroupingWithPopulationData());
 				hasMissingPopulationData = missingPopulationDataRegionIds.size() > 0;
 				if (hasMissingPopulationData) {
-					caseIncidencePossible = false;
+					contactIncidencePossible = false;
 					List<String> missingPopulationDataNamesList = FacadeProvider.getRegionFacade().getNamesByIds(missingPopulationDataRegionIds);
 					missingPopulationDataNames = HtmlHelper.cleanHtml(String.join(", ", missingPopulationDataNamesList));
 				}
 			}
 
 			// Calculate projected population by either using the current year or, if a date filter has been selected, the maximum year from the date filter
-			populationReferenceYear = calculateMaximumReferenceYear(null, caseCriteria.getOnsetYears(), Comparator.naturalOrder(), e -> e.getValue());
+			populationReferenceYear = calculateMaximumReferenceYear(null, contactCriteria.getOnsetYears(), Comparator.naturalOrder(), e -> e.getValue());
 			populationReferenceYear =
-				calculateMaximumReferenceYear(populationReferenceYear, caseCriteria.getReportYears(), Comparator.naturalOrder(), e -> e.getValue());
+				calculateMaximumReferenceYear(populationReferenceYear, contactCriteria.getReportYears(), Comparator.naturalOrder(), e -> e.getValue());
 			populationReferenceYear = calculateMaximumReferenceYear(
 				populationReferenceYear,
-				caseCriteria.getOnsetMonthsOfYear(),
+				contactCriteria.getOnsetMonthsOfYear(),
 				Comparator.naturalOrder(),
 				e -> e.getYear().getValue());
 			populationReferenceYear = calculateMaximumReferenceYear(
 				populationReferenceYear,
-				caseCriteria.getReportMonthsOfYear(),
+				contactCriteria.getReportMonthsOfYear(),
 				Comparator.naturalOrder(),
 				e -> e.getYear().getValue());
 			populationReferenceYear = calculateMaximumReferenceYear(
 				populationReferenceYear,
-				caseCriteria.getOnsetQuartersOfYear(),
+				contactCriteria.getOnsetQuartersOfYear(),
 				Comparator.naturalOrder(),
 				e -> e.getYear().getValue());
 			populationReferenceYear = calculateMaximumReferenceYear(
 				populationReferenceYear,
-				caseCriteria.getReportQuartersOfYear(),
+				contactCriteria.getReportQuartersOfYear(),
 				Comparator.naturalOrder(),
 				e -> e.getYear().getValue());
 			populationReferenceYear = calculateMaximumReferenceYear(
 				populationReferenceYear,
-				caseCriteria.getOnsetEpiWeeksOfYear(),
+				contactCriteria.getOnsetEpiWeeksOfYear(),
 				Comparator.naturalOrder(),
 				e -> e.getYear());
 			populationReferenceYear = calculateMaximumReferenceYear(
 				populationReferenceYear,
-				caseCriteria.getReportEpiWeeksOfYear(),
+				contactCriteria.getReportEpiWeeksOfYear(),
 				Comparator.naturalOrder(),
 				e -> e.getYear());
 		}
 
-		List<StatisticsCaseCountDto> resultData = FacadeProvider.getCaseStatisticsFacade()
-			.queryCaseCount(
-				caseCriteria,
+		List<StatisticsContactCountDto> resultData = FacadeProvider.getContactStatisticsFacade()
+			.queryContactCount(
+				contactCriteria,
 				visualizationComponent.getRowsAttribute(),
 				visualizationComponent.getRowsSubAttribute(),
 				visualizationComponent.getColumnsAttribute(),
 				visualizationComponent.getColumnsSubAttribute(),
-				showCaseIncidence && caseIncidencePossible,
+				showContactIncidence && contactIncidencePossible,
 				cbShowZeroValues.getValue(),
 				populationReferenceYear);
-
 		StatisticsKeyComparator keyComparator = new StatisticsKeyComparator();
+		
 		resultData.sort((c1, c2) -> {
 			int result = keyComparator.compare(c1.getRowKey(), c2.getRowKey());
 			if (result == 0) {
@@ -1138,9 +1135,9 @@ public class StatisticsView extends AbstractStatisticsView {
 	}
 
 	private boolean hasPopulationFilterUnknownValue() {
-		for (StatisticsFilterComponent filterComponent : filterComponents) {
-			if (filterComponent.getSelectedAttribute() == StatisticsCaseAttribute.SEX
-				|| filterComponent.getSelectedAttribute() == StatisticsCaseAttribute.AGE_INTERVAL_5_YEARS) {
+		for (StatisticsContactFilterComponent filterComponent : filterComponents) {
+			if (filterComponent.getSelectedAttribute() == StatisticsContactAttribute.SEX
+				|| filterComponent.getSelectedAttribute() == StatisticsContactAttribute.AGE_INTERVAL_5_YEARS) {
 				for (TokenizableValue selectedValue : filterComponent.getFilterElement().getSelectedValues()) {
 					if (selectedValue.getValue().toString().equals(I18nProperties.getString(Strings.notSpecified))) {
 						return true;
@@ -1153,12 +1150,12 @@ public class StatisticsView extends AbstractStatisticsView {
 	}
 
 	private boolean hasUnsupportedPopulationAgeGroupFilter() {
-		for (StatisticsFilterComponent filterComponent : filterComponents) {
-			if (filterComponent.getSelectedAttribute() == StatisticsCaseAttribute.AGE_INTERVAL_1_YEAR
-				|| filterComponent.getSelectedAttribute() == StatisticsCaseAttribute.AGE_INTERVAL_BASIC
-				|| filterComponent.getSelectedAttribute() == StatisticsCaseAttribute.AGE_INTERVAL_CHILDREN_COARSE
-				|| filterComponent.getSelectedAttribute() == StatisticsCaseAttribute.AGE_INTERVAL_CHILDREN_MEDIUM
-				|| filterComponent.getSelectedAttribute() == StatisticsCaseAttribute.AGE_INTERVAL_CHILDREN_FINE) {
+		for (StatisticsContactFilterComponent filterComponent : filterComponents) {
+			if (filterComponent.getSelectedAttribute() == StatisticsContactAttribute.AGE_INTERVAL_1_YEAR
+				|| filterComponent.getSelectedAttribute() == StatisticsContactAttribute.AGE_INTERVAL_BASIC
+				|| filterComponent.getSelectedAttribute() == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_COARSE
+				|| filterComponent.getSelectedAttribute() == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_MEDIUM
+				|| filterComponent.getSelectedAttribute() == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_FINE) {
 				return true;
 			}
 		}
@@ -1167,8 +1164,8 @@ public class StatisticsView extends AbstractStatisticsView {
 	}
 
 	private boolean hasIncidenceIncompatibleFilter() {
-		for (StatisticsFilterComponent filterComponent : filterComponents) {
-			if (filterComponent.getSelectedAttribute() == StatisticsCaseAttribute.JURISDICTION) {
+		for (StatisticsContactFilterComponent filterComponent : filterComponents) {
+			if (filterComponent.getSelectedAttribute() == StatisticsContactAttribute.JURISDICTION) {
 				StatisticsFilterJurisdictionElement filterElement = (StatisticsFilterJurisdictionElement) filterComponent.getFilterElement();
 				if (CollectionUtils.isNotEmpty(filterElement.getSelectedHealthFacilities())) {
 					return true;
@@ -1193,10 +1190,10 @@ public class StatisticsView extends AbstractStatisticsView {
 		return currentMaxYear != null ? ((maxYear != null && maxYear > currentMaxYear) ? maxYear : currentMaxYear) : maxYear;
 	}
 
-	private void fillCaseCriteria(boolean showCaseIncidence) {
-		caseCriteria = new StatisticsCaseCriteria();
+	private void fillContactCriteria(boolean showContactIncidence) {
+		contactCriteria = new StatisticsContactCriteria();
 
-		for (StatisticsFilterComponent filterComponent : filterComponents) {
+		for (StatisticsContactFilterComponent filterComponent : filterComponents) {
 			StatisticsFilterElement filterElement = filterComponent.getFilterElement();
 			switch (filterComponent.getSelectedAttribute()) {
 			case SEX:
@@ -1204,12 +1201,12 @@ public class StatisticsView extends AbstractStatisticsView {
 					List<Sex> sexes = new ArrayList<>();
 					for (TokenizableValue tokenizableValue : filterElement.getSelectedValues()) {
 						if (tokenizableValue.getValue().equals(I18nProperties.getString(Strings.notSpecified))) {
-							caseCriteria.sexUnknown(true);
+							contactCriteria.sexUnknown(true);
 						} else {
 							sexes.add((Sex) tokenizableValue.getValue());
 						}
 					}
-					caseCriteria.sexes(sexes);
+					contactCriteria.sexes(sexes);
 				}
 				break;
 			case DISEASE:
@@ -1218,25 +1215,25 @@ public class StatisticsView extends AbstractStatisticsView {
 					for (TokenizableValue tokenizableValue : filterElement.getSelectedValues()) {
 						diseases.add((Disease) tokenizableValue.getValue());
 					}
-					caseCriteria.diseases(diseases);
+					contactCriteria.diseases(diseases);
 				}
 				break;
 			case CLASSIFICATION:
 				if (filterElement.getSelectedValues() != null) {
-					List<CaseClassification> classifications = new ArrayList<>();
+					List<ContactClassification> classifications = new ArrayList<>();
 					for (TokenizableValue tokenizableValue : filterElement.getSelectedValues()) {
-						classifications.add((CaseClassification) tokenizableValue.getValue());
+						classifications.add((ContactClassification) tokenizableValue.getValue());
 					}
-					caseCriteria.classifications(classifications);
+					contactCriteria.classifications(classifications);
 				}
 				break;
-			case OUTCOME:
+			case STATUS:
 				if (filterElement.getSelectedValues() != null) {
-					List<CaseOutcome> outcomes = new ArrayList<>();
+					List<ContactStatus> status = new ArrayList<>();
 					for (TokenizableValue tokenizableValue : filterElement.getSelectedValues()) {
-						outcomes.add((CaseOutcome) tokenizableValue.getValue());
+						status.add((ContactStatus) tokenizableValue.getValue());
 					}
-					caseCriteria.outcomes(outcomes);
+					contactCriteria.status(status);
 				}
 				break;
 			case AGE_INTERVAL_1_YEAR:
@@ -1250,17 +1247,17 @@ public class StatisticsView extends AbstractStatisticsView {
 					for (TokenizableValue tokenizableValue : filterElement.getSelectedValues()) {
 						ageIntervals.add((IntegerRange) tokenizableValue.getValue());
 					}
-					caseCriteria.addAgeIntervals(ageIntervals);
+					contactCriteria.addAgeIntervals(ageIntervals);
 
-					// Fill age groups if 5 years interval has been selected and case incidence is shown
-					if (showCaseIncidence && filterComponent.getSelectedAttribute() == StatisticsCaseAttribute.AGE_INTERVAL_5_YEARS) {
+					// Fill age groups if 5 years interval has been selected and contact incidence is shown
+					if (showContactIncidence && filterComponent.getSelectedAttribute() == StatisticsContactAttribute.AGE_INTERVAL_5_YEARS) {
 						List<AgeGroup> ageGroups = new ArrayList<>();
 						for (IntegerRange ageInterval : ageIntervals) {
 							if (ageInterval.getFrom() != null || ageInterval.getTo() != null) {
 								ageGroups.add(AgeGroup.getAgeGroupFromIntegerRange(ageInterval));
 							}
 						}
-						caseCriteria.addAgeGroups(ageGroups);
+						contactCriteria.addAgeGroups(ageGroups);
 					}
 				}
 				break;
@@ -1271,30 +1268,22 @@ public class StatisticsView extends AbstractStatisticsView {
 					for (TokenizableValue tokenizableValue : jurisdictionElement.getSelectedRegions()) {
 						regions.add((RegionReferenceDto) tokenizableValue.getValue());
 					}
-					caseCriteria.regions(regions);
+					contactCriteria.regions(regions);
 				}
 				if (jurisdictionElement.getSelectedDistricts() != null) {
 					List<DistrictReferenceDto> districts = new ArrayList<>();
 					for (TokenizableValue tokenizableValue : jurisdictionElement.getSelectedDistricts()) {
 						districts.add((DistrictReferenceDto) tokenizableValue.getValue());
 					}
-					caseCriteria.districts(districts);
+					contactCriteria.districts(districts);
 				}
 				if (jurisdictionElement.getSelectedCommunities() != null) {
 					List<CommunityReferenceDto> communities = new ArrayList<>();
 					for (TokenizableValue tokenizableValue : jurisdictionElement.getSelectedCommunities()) {
 						communities.add((CommunityReferenceDto) tokenizableValue.getValue());
 					}
-					caseCriteria.communities(communities);
+					contactCriteria.communities(communities);
 				}
-				if (jurisdictionElement.getSelectedHealthFacilities() != null) {
-					List<FacilityReferenceDto> facilities = new ArrayList<>();
-					for (TokenizableValue tokenizableValue : jurisdictionElement.getSelectedHealthFacilities()) {
-						facilities.add((FacilityReferenceDto) tokenizableValue.getValue());
-					}
-					caseCriteria.healthFacilities(facilities);
-				}
-				break;
 			case PLACE_OF_RESIDENCE:
 				StatisticsFilterResidenceElement residenceElement = (StatisticsFilterResidenceElement) filterElement;
 				if (residenceElement.getSelectedRegions() != null) {
@@ -1302,27 +1291,27 @@ public class StatisticsView extends AbstractStatisticsView {
 					for (TokenizableValue tokenizableValue : residenceElement.getSelectedRegions()) {
 						regions.add((RegionReferenceDto) tokenizableValue.getValue());
 					}
-					caseCriteria.personRegions(regions);
+					contactCriteria.personRegions(regions);
 				}
 				if (residenceElement.getSelectedDistricts() != null) {
 					List<DistrictReferenceDto> districts = new ArrayList<>();
 					for (TokenizableValue tokenizableValue : residenceElement.getSelectedDistricts()) {
 						districts.add((DistrictReferenceDto) tokenizableValue.getValue());
 					}
-					caseCriteria.personDistricts(districts);
+					contactCriteria.personDistricts(districts);
 				}
 				if (residenceElement.getSelectedCommunities() != null) {
 					List<CommunityReferenceDto> communities = new ArrayList<>();
 					for (TokenizableValue tokenizableValue : residenceElement.getSelectedCommunities()) {
 						communities.add((CommunityReferenceDto) tokenizableValue.getValue());
 					}
-					caseCriteria.personCommunities(communities);
+					contactCriteria.personCommunities(communities);
 				}
 				if (residenceElement.getCity() != null) {
-					caseCriteria.setPersonCity(residenceElement.getCity());
+					contactCriteria.setPersonCity(residenceElement.getCity());
 				}
 				if (residenceElement.getPostcode() != null) {
-					caseCriteria.setPersonPostcode(residenceElement.getPostcode());
+					contactCriteria.setPersonPostcode(residenceElement.getPostcode());
 				}
 				break;
 			case REPORTING_USER_ROLE:
@@ -1331,7 +1320,7 @@ public class StatisticsView extends AbstractStatisticsView {
 					for (TokenizableValue tokenizableValue : filterElement.getSelectedValues()) {
 						reportingUserRoles.add((UserRole) tokenizableValue.getValue());
 					}
-					caseCriteria.reportingUserRoles(reportingUserRoles);
+					contactCriteria.reportingUserRoles(reportingUserRoles);
 				}
 				break;
 			default:
@@ -1342,7 +1331,7 @@ public class StatisticsView extends AbstractStatisticsView {
 						for (TokenizableValue tokenizableValue : filterElement.getSelectedValues()) {
 							years.add((Year) tokenizableValue.getValue());
 						}
-						caseCriteria.years(years, filterComponent.getSelectedAttribute());
+						contactCriteria.years(years, filterComponent.getSelectedAttribute());
 					}
 					break;
 				case QUARTER:
@@ -1351,7 +1340,7 @@ public class StatisticsView extends AbstractStatisticsView {
 						for (TokenizableValue tokenizableValue : filterElement.getSelectedValues()) {
 							quarters.add((Quarter) tokenizableValue.getValue());
 						}
-						caseCriteria.quarters(quarters, filterComponent.getSelectedAttribute());
+						contactCriteria.quarters(quarters, filterComponent.getSelectedAttribute());
 					}
 					break;
 				case MONTH:
@@ -1360,7 +1349,7 @@ public class StatisticsView extends AbstractStatisticsView {
 						for (TokenizableValue tokenizableValue : filterElement.getSelectedValues()) {
 							months.add((Month) tokenizableValue.getValue());
 						}
-						caseCriteria.months(months, filterComponent.getSelectedAttribute());
+						contactCriteria.months(months, filterComponent.getSelectedAttribute());
 					}
 					break;
 				case EPI_WEEK:
@@ -1369,7 +1358,7 @@ public class StatisticsView extends AbstractStatisticsView {
 						for (TokenizableValue tokenizableValue : filterElement.getSelectedValues()) {
 							epiWeeks.add((EpiWeek) tokenizableValue.getValue());
 						}
-						caseCriteria.epiWeeks(epiWeeks, filterComponent.getSelectedAttribute());
+						contactCriteria.epiWeeks(epiWeeks, filterComponent.getSelectedAttribute());
 					}
 					break;
 				case QUARTER_OF_YEAR:
@@ -1378,7 +1367,7 @@ public class StatisticsView extends AbstractStatisticsView {
 						for (TokenizableValue tokenizableValue : filterElement.getSelectedValues()) {
 							quartersOfYear.add((QuarterOfYear) tokenizableValue.getValue());
 						}
-						caseCriteria.quartersOfYear(quartersOfYear, filterComponent.getSelectedAttribute());
+						contactCriteria.quartersOfYear(quartersOfYear, filterComponent.getSelectedAttribute());
 					}
 					break;
 				case MONTH_OF_YEAR:
@@ -1387,7 +1376,7 @@ public class StatisticsView extends AbstractStatisticsView {
 						for (TokenizableValue tokenizableValue : filterElement.getSelectedValues()) {
 							monthsOfYear.add((MonthOfYear) tokenizableValue.getValue());
 						}
-						caseCriteria.monthsOfYear(monthsOfYear, filterComponent.getSelectedAttribute());
+						contactCriteria.monthsOfYear(monthsOfYear, filterComponent.getSelectedAttribute());
 					}
 					break;
 				case EPI_WEEK_OF_YEAR:
@@ -1396,11 +1385,11 @@ public class StatisticsView extends AbstractStatisticsView {
 						for (TokenizableValue tokenizableValue : filterElement.getSelectedValues()) {
 							epiWeeksOfYear.add((EpiWeek) tokenizableValue.getValue());
 						}
-						caseCriteria.epiWeeksOfYear(epiWeeksOfYear, filterComponent.getSelectedAttribute());
+						contactCriteria.epiWeeksOfYear(epiWeeksOfYear, filterComponent.getSelectedAttribute());
 					}
 					break;
 				case DATE_RANGE:
-					caseCriteria.dateRange(
+					contactCriteria.dateRange(
 						(Date) filterElement.getSelectedValues().get(0).getValue(),
 						(Date) filterElement.getSelectedValues().get(1).getValue(),
 						filterComponent.getSelectedAttribute());

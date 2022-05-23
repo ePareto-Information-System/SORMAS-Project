@@ -15,25 +15,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
-package de.symeda.sormas.ui.statistics;
+package de.symeda.sormas.api.contact;
 
-import com.vaadin.navigator.Navigator;
+import java.util.List;
 
-import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.ui.UserProvider;
+import javax.ejb.Remote;
 
-public class StatisticsController {
+import de.symeda.sormas.api.statistics.StatisticsContactAttribute;
+import de.symeda.sormas.api.statistics.StatisticsContactCountDto;
+import de.symeda.sormas.api.statistics.StatisticsContactCriteria;
+import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 
-	public StatisticsController() {
+@Remote
+public interface ContactStatisticsFacade {
 
-	}
-
-	public void registerViews(Navigator navigator) {
-		navigator.addView(StatisticsCasesView.VIEW_NAME, StatisticsCasesView.class);
-		navigator.addView(StatisticsContactsView.VIEW_NAME, StatisticsContactsView.class);
-
-		if (UserProvider.getCurrent().hasUserRight(UserRight.DATABASE_EXPORT_ACCESS)) {
-			navigator.addView(DatabaseExportView.VIEW_NAME, DatabaseExportView.class);
-		}
-	}
+	List<StatisticsContactCountDto> queryContactCount(
+			StatisticsContactCriteria contactCriteria,
+			StatisticsContactAttribute groupingA,
+			StatisticsSubAttribute subGroupingA,
+			StatisticsContactAttribute groupingB,
+			StatisticsSubAttribute subGroupingB,
+			boolean includePopulation,
+			boolean includeZeroValues,
+			Integer populationReferenceYear);
 }

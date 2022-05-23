@@ -20,7 +20,9 @@ package de.symeda.sormas.ui.statistics;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.symeda.sormas.api.caze.CaseFacade;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.explicatis.ext_token_field.ExtTokenField;
@@ -35,17 +37,13 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.caze.CaseClassification;
-import de.symeda.sormas.api.caze.CaseOutcome;
-import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.person.Sex;
-import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
-import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
-import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
-import de.symeda.sormas.api.statistics.StatisticsCaseAttribute;
+import de.symeda.sormas.api.contact.ContactClassification;
+import de.symeda.sormas.api.contact.ContactStatus;
+import de.symeda.sormas.api.statistics.StatisticsContactAttribute;
 import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 import de.symeda.sormas.api.statistics.StatisticsHelper;
@@ -54,9 +52,9 @@ import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 
 @SuppressWarnings("serial")
-public class StatisticsFilterValuesElement extends StatisticsFilterElement {
+public class StatisticsContactFilterValuesElement extends StatisticsFilterElement {
 
-	private final StatisticsCaseAttribute attribute;
+	private final StatisticsContactAttribute attribute;
 	private final StatisticsSubAttribute subAttribute;
 
 	private Registration valueChangeListenerRegistration;
@@ -70,7 +68,7 @@ public class StatisticsFilterValuesElement extends StatisticsFilterElement {
 
 	private StatisticsFilterResidenceElement residenceElement;
 
-	public StatisticsFilterValuesElement(String caption, StatisticsCaseAttribute attribute, StatisticsSubAttribute subAttribute, int rowIndex) {
+	public StatisticsContactFilterValuesElement(String caption, StatisticsContactAttribute attribute, StatisticsSubAttribute subAttribute, int rowIndex) {
 
 		setSpacing(true);
 		addStyleName(CssStyles.LAYOUT_MINIMAL);
@@ -88,9 +86,9 @@ public class StatisticsFilterValuesElement extends StatisticsFilterElement {
 		setComponentAlignment(utilityButtonsLayout, Alignment.MIDDLE_RIGHT);
 	}
 
-	public StatisticsFilterValuesElement(
+	public StatisticsContactFilterValuesElement(
 		String caption,
-		StatisticsCaseAttribute attribute,
+		StatisticsContactAttribute attribute,
 		StatisticsSubAttribute subAttribute,
 		StatisticsFilterJurisdictionElement jurisdictionElement,
 		int rowIndex) {
@@ -98,9 +96,9 @@ public class StatisticsFilterValuesElement extends StatisticsFilterElement {
 		this.jurisdictionElement = jurisdictionElement;
 	}
 
-	public StatisticsFilterValuesElement(
+	public StatisticsContactFilterValuesElement(
 		String caption,
-		StatisticsCaseAttribute attribute,
+		StatisticsContactAttribute attribute,
 		StatisticsSubAttribute subAttribute,
 		StatisticsFilterResidenceElement residenceElement,
 		int rowIndex) {
@@ -121,7 +119,6 @@ public class StatisticsFilterValuesElement extends StatisticsFilterElement {
 		tokenField.setEnableDefaultDeleteTokenAction(true);
 
 		addDropdown = new ComboBox<TokenizableValue>("", getFilterValues());
-		addDropdown.setWidth(200, Unit.PIXELS);
 		addDropdown.setId("select-" + rowIndex);
 		addDropdown.addStyleName(CssStyles.VSPACE_NONE);
 		addDropdown.setPlaceholder(I18nProperties.getString(Strings.promptTypeToAdd));
@@ -179,7 +176,7 @@ public class StatisticsFilterValuesElement extends StatisticsFilterElement {
 			case QUARTER_OF_YEAR:
 			case MONTH_OF_YEAR:
 			case EPI_WEEK_OF_YEAR:
-				List<StatisticsGroupingKey> dateValues = StatisticsHelper.getTimeGroupingKeys(attribute, subAttribute, FacadeProvider.getCaseFacade());
+				List<StatisticsGroupingKey> dateValues = StatisticsHelper.getContactTimeGroupingKeys(attribute, subAttribute);
 				return createTokens(dateValues);
 			case REGION:
 				return createTokens(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
@@ -193,34 +190,6 @@ public class StatisticsFilterValuesElement extends StatisticsFilterElement {
 					return new ArrayList<>();
 				}
 				return createCommunityTokens(jurisdictionElement.getSelectedDistricts());
-			case FACILITY:
-				if (jurisdictionElement == null) {
-					return new ArrayList<>();
-				}
-
-				List<TokenizableValue> selectedDistrictTokenizables = jurisdictionElement.getSelectedDistricts();
-				List<TokenizableValue> selectedCommunityTokenizables = jurisdictionElement.getSelectedCommunities();
-				if (CollectionUtils.isNotEmpty(selectedCommunityTokenizables)) {
-					List<FacilityReferenceDto> facilities = new ArrayList<>();
-					for (TokenizableValue selectedCommunityTokenizable : selectedCommunityTokenizables) {
-						CommunityReferenceDto selectedCommunity = (CommunityReferenceDto) selectedCommunityTokenizable.getValue();
-						facilities.addAll(
-							FacadeProvider.getFacilityFacade()
-								.getActiveFacilitiesByCommunityAndType(selectedCommunity, jurisdictionElement.getFacilityType(), false, false));
-					}
-					return createTokens(facilities);
-				} else if (CollectionUtils.isNotEmpty(selectedDistrictTokenizables)) {
-					List<FacilityReferenceDto> facilities = new ArrayList<>();
-					for (TokenizableValue selectedDistrictTokenizable : selectedDistrictTokenizables) {
-						DistrictReferenceDto selectedDistrict = (DistrictReferenceDto) selectedDistrictTokenizable.getValue();
-						facilities.addAll(
-							FacadeProvider.getFacilityFacade()
-								.getActiveFacilitiesByDistrictAndType(selectedDistrict, jurisdictionElement.getFacilityType(), false, false));
-					}
-					return createTokens(facilities);
-				} else {
-					return new ArrayList<>();
-				}
 			case PERSON_REGION:
 				return createTokens(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
 			case PERSON_DISTRICT:
@@ -251,14 +220,14 @@ public class StatisticsFilterValuesElement extends StatisticsFilterElement {
 			case AGE_INTERVAL_CHILDREN_FINE:
 			case AGE_INTERVAL_CHILDREN_MEDIUM:
 			case AGE_INTERVAL_BASIC:
-				List<StatisticsGroupingKey> ageIntervalValues = StatisticsHelper.getAgeIntervalGroupingKeys(attribute);
+				List<StatisticsGroupingKey> ageIntervalValues = StatisticsHelper.getContactAgeIntervalGroupingKeys(attribute);
 				return createTokens(ageIntervalValues);
 			case DISEASE:
 				return createTokens(FacadeProvider.getDiseaseConfigurationFacade().getAllDiseases(true, true, true));
 			case CLASSIFICATION:
-				return createTokens(CaseClassification.values());
-			case OUTCOME:
-				return createTokens(CaseOutcome.values());
+				return createTokens(ContactClassification.values());
+			case STATUS:
+				return createTokens(ContactStatus.values());
 			case REPORTING_USER_ROLE:
 				return createTokens(UserRole.values());
 			default:

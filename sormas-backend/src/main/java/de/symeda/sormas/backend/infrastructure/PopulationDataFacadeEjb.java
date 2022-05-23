@@ -34,6 +34,7 @@ import de.symeda.sormas.api.infrastructure.PopulationDataFacade;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.statistics.StatisticsCaseCriteria;
+import de.symeda.sormas.api.statistics.StatisticsContactCriteria;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.backend.infrastructure.area.Area;
 import de.symeda.sormas.backend.infrastructure.community.Community;
@@ -347,4 +348,79 @@ public class PopulationDataFacadeEjb implements PopulationDataFacade {
 	public static class PopulationDataFacadeEjbLocal extends PopulationDataFacadeEjb {
 
 	}
+// contact
+	@Override
+	public List<Long> getContactMissingPopulationDataForStatistics(
+			StatisticsContactCriteria criteria,
+			boolean groupByRegion, 
+			boolean groupByDistrict, 
+			boolean groupBySex, 
+			boolean groupByAgeGroup) {
+		StringBuilder regionsIn = new StringBuilder();
+		StringBuilder districtsIn = new StringBuilder();
+		StringBuilder sexesIn = new StringBuilder();
+		StringBuilder ageGroupsIn = new StringBuilder();
+		List<Object> parameters = new ArrayList<>();
+
+		if (!CollectionUtils.isEmpty(criteria.getRegions()) && CollectionUtils.isEmpty(criteria.getDistricts())) {
+			List<Long> regionIds = regionService.getIdsByReferenceDtos(criteria.getRegions());
+			QueryHelper.appendInFilterValues(regionsIn, parameters, regionIds, entry -> entry);
+		}
+		if (!CollectionUtils.isEmpty(criteria.getDistricts())) {
+			List<Long> districtIds = districtService.getIdsByReferenceDtos(criteria.getDistricts());
+			QueryHelper.appendInFilterValues(districtsIn, parameters, districtIds, entry -> entry);
+		}
+		if (!CollectionUtils.isEmpty(criteria.getSexes())) {
+			QueryHelper.appendInFilterValues(sexesIn, parameters, criteria.getSexes(), entry -> entry.name());
+		}
+		if (!CollectionUtils.isEmpty(criteria.getAgeGroups())) {
+			QueryHelper.appendInFilterValues(ageGroupsIn, parameters, criteria.getAgeGroups(), entry -> entry.name());
+		}
+
+		StringBuilder queryBuilder = new StringBuilder();
+		if (!groupByDistrict && CollectionUtils.isEmpty(criteria.getDistricts())) {
+			queryBuilder.append("SELECT ").append(Region.ID).append(" FROM ").append(Region.TABLE_NAME);
+
+			if (regionsIn.length() > 0) {
+				queryBuilder.append(" WHERE ").append(Region.ID).append(" IN ").append(regionsIn);
+			}
+
+			//@formatter:off
+			queryBuilder.append(" EXCEPT SELECT ").append(PopulationData.REGION).append("_id FROM ").append(PopulationData.TABLE_NAME)
+			.append(" WHERE ").append(PopulationData.TABLE_NAME).append(".").append(PopulationData.DISTRICT).append("_id IS NULL").append(" AND ");
+			//@formatter:on
+		} else {
+			queryBuilder.append("SELECT ").append(District.ID).append(" FROM ").append(District.TABLE_NAME);
+
+			if (districtsIn.length() > 0) {
+				queryBuilder.append(" WHERE ").append(District.ID).append(" IN ").append(districtsIn);
+			}
+
+			//@formatter:off
+			queryBuilder.append(" EXCEPT SELECT ").append(PopulationData.DISTRICT).append("_id FROM ").append(PopulationData.TABLE_NAME).append(" WHERE ");
+			//@formatter:on
+		}
+
+		queryBuilder.append(PopulationData.TABLE_NAME).append(".").append(PopulationData.SEX);
+		if (sexesIn.length() > 0) {
+			queryBuilder.append(" IN ").append(sexesIn);
+		} else {
+			queryBuilder.append(groupBySex ? " IS NOT NULL " : " IS NULL ");
+		}
+
+		queryBuilder.append(" AND ").append(PopulationData.TABLE_NAME).append(".").append(PopulationData.AGE_GROUP);
+		if (ageGroupsIn.length() > 0) {
+			queryBuilder.append(" IN ").append(ageGroupsIn);
+		} else {
+			queryBuilder.append(groupByAgeGroup ? " IS NOT NULL " : " IS NULL ");
+		}
+
+		Query query = em.createNativeQuery(queryBuilder.toString());
+		for (int i = 0; i < parameters.size(); i++) {
+			query.setParameter(i + 1, parameters.get(i));
+		}
+
+		return query.getResultList();
+	}
+	
 }
