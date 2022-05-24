@@ -116,29 +116,32 @@ public class Menu extends CssLayout {
 		menuItemsLayout.setPrimaryStyleName(VALO_MENUITEMS);
 		menuPart.addComponent(menuItemsLayout);
 
-		// settings menu item
-		MenuBar settingsMenu = new MenuBar();
-		settingsMenu.setId(Captions.actionSettings);
-		settingsMenu.addItem(I18nProperties.getCaption(Captions.actionSettings), VaadinIcons.COG, (Command) selectedItem -> showSettingsPopup(user));
-
-		settingsMenu.addStyleNames("user-menu", "settings-menu");
-		menuPart.addComponent(settingsMenu);
-
-		// logout menu item
-		MenuBar logoutMenu = new MenuBar();
-		logoutMenu.setId(Captions.actionLogout);
-		logoutMenu.addItem(
-			I18nProperties.getCaption(Captions.actionLogout) + " (" + UserProvider.getCurrent().getUserName() + ")",
-			VaadinIcons.SIGN_OUT,
-			(Command) selectedItem -> LoginHelper.logout());
-
-		logoutMenu.addStyleNames("user-menu", "logout-menu");
-		menuPart.addComponent(logoutMenu);
-
 		addComponent(menuPart);
 	}
 
-	private void showSettingsPopup(UserDto user) {
+	private void createViewButtonDefault(final String name, String caption, Resource icon, Button.ClickListener clickEvent) {
+		Button button = ButtonHelper.createIconButtonWithCaption(name, caption, icon, clickEvent);
+		button.setPrimaryStyleName(ValoTheme.MENU_ITEM);
+		menuItemsLayout.addComponent(button);
+		viewButtons.put(name, button);
+	}
+
+	public void addButtomMenu(){
+		createViewButtonDefault(
+				Captions.actionSettings, I18nProperties.getCaption(Captions.actionSettings),
+				VaadinIcons.COG,
+				selectedItem -> showSettingsPopup()
+		);
+
+		createViewButtonDefault(
+				Captions.actionLogout, I18nProperties.getCaption(Captions.actionLogout) + " (" + UserProvider.getCurrent().getUserName() + ")",
+				VaadinIcons.SIGN_OUT,
+				selectedItem -> LoginHelper.logout()
+		);
+	}
+
+	// private void showSettingsPopup(UserDto user) {
+	private void showSettingsPopup() {
 
 		Window window = VaadinUiUtil.createPopupWindow();
 		window.setCaption(I18nProperties.getString(Strings.headingUserSettings));
@@ -189,7 +192,6 @@ public class Menu extends CssLayout {
 	 *            view icon in the menu
 	 */
 	public void addView(Class<? extends View> viewClass, final String name, String caption, Resource icon) {
-
 		navigator.addView(name, viewClass);
 		createViewButton(name, caption, icon);
 	}
