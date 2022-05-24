@@ -5,7 +5,7 @@ name: maven build
 # Controls when the workflow will run
 on:
   push:
-    branches: [ auto_deploy ]
+    branches: [ gh-uat ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -93,13 +93,13 @@ jobs:
       run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }} sudo rm -r deploy/
     - name: Deploy with rsync
       run: rsync -avz ./deploy/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }}:/home/anthony/deploy
-    - name: Initiate server_Update_script
+    - name: Initiate server_update_script
       id: update
       run: |
         touch update_logs.txt
         ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }} sh update_script.sh > update_logs.txt
         cat update_logs.txt
-    - name: Fail Action if Update failed
+    - name: Fail Action If update failed
       run: |
           cat update_logs.txt
           if   grep "Successfully deployed" update_logs.txt ;
@@ -107,8 +107,5 @@ jobs:
                 echo "successful"
           elif grep "Autodeploy failed" update_logs.txt ;
           then
-            cat update_logs.txt
-            exit 1
-          else
             exit 1
           fi
