@@ -981,6 +981,8 @@ public interface Captions {
 	String districtAllDistricts = "districtAllDistricts";
 	String districtArchivedDistricts = "districtArchivedDistricts";
 	String districtName = "districtName";
+	String districtLatitude = "District.districtLatitude";
+	String districtLongitude = "District.districtLongitude";
 	String documentNoDocuments = "documentNoDocuments";
 	String DocumentTemplate = "DocumentTemplate";
 	String DocumentTemplate_buttonUploadTemplate = "DocumentTemplate.buttonUploadTemplate";

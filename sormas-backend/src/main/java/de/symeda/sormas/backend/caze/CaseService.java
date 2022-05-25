@@ -49,6 +49,7 @@ import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 
 import de.symeda.sormas.api.common.DeletionDetails;
+import de.symeda.sormas.backend.ExtendedPostgreSQL94Dialect;
 import org.apache.commons.lang3.StringUtils;
 
 import de.symeda.sormas.api.Disease;
@@ -93,7 +94,6 @@ import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.criteria.CriteriaDateType;
 import de.symeda.sormas.api.utils.criteria.ExternalShareDateType;
-import de.symeda.sormas.backend.ExtendedPostgreSQL94Dialect;
 import de.symeda.sormas.backend.caze.CaseFacadeEjb.CaseFacadeEjbLocal;
 import de.symeda.sormas.backend.caze.surveillancereport.SurveillanceReport;
 import de.symeda.sormas.backend.caze.surveillancereport.SurveillanceReportService;
@@ -336,8 +336,11 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 				caze.get(Case.REPORT_LON),
 				joins.getPersonAddress().get(Location.LATITUDE),
 				joins.getPersonAddress().get(Location.LONGITUDE),
-				JurisdictionHelper.booleanSelector(cb, inJurisdictionOrOwned(caseQueryContext)));
-
+				JurisdictionHelper.booleanSelector(cb, inJurisdictionOrOwned(caseQueryContext)),
+				joins.getResponsibleDistrict().get(District.UUID),
+				joins.getResponsibleDistrict().get(District.DISTRICT_LATITUDE),
+				joins.getResponsibleDistrict().get(District.DISTRICT_LONGITUDE)
+			);
 			result = em.createQuery(cq).getResultList();
 		} else {
 			result = Collections.emptyList();
@@ -378,9 +381,15 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 			.and(cb, cb.isNotNull(joins.getPersonAddress().get(Location.LONGITUDE)), cb.isNotNull(joins.getPersonAddress().get(Location.LATITUDE)));
 		Predicate reportLatLonNotNull =
 			CriteriaBuilderHelper.and(cb, cb.isNotNull(root.get(Case.REPORT_LON)), cb.isNotNull(root.get(Case.REPORT_LAT)));
+
+		Predicate districtLatLonNotNull = CriteriaBuilderHelper.and(cb, cb.isNotNull(joins.getResponsibleDistrict().get(District.DISTRICT_LONGITUDE)),
+				cb.isNotNull(joins.getResponsibleDistrict().get(District.DISTRICT_LATITUDE)));
+
 		Predicate facilityLatLonNotNull = CriteriaBuilderHelper
 			.and(cb, cb.isNotNull(joins.getFacility().get(Facility.LONGITUDE)), cb.isNotNull(joins.getFacility().get(Facility.LATITUDE)));
-		Predicate latLonProvided = CriteriaBuilderHelper.or(cb, personLatLonNotNull, reportLatLonNotNull, facilityLatLonNotNull);
+
+		Predicate latLonProvided = CriteriaBuilderHelper.or(cb, personLatLonNotNull, reportLatLonNotNull, facilityLatLonNotNull, districtLatLonNotNull);
+
 		filter = CriteriaBuilderHelper.and(cb, filter, latLonProvided);
 
 		if (region != null) {

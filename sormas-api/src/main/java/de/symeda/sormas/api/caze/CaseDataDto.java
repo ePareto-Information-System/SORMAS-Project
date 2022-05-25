@@ -223,6 +223,9 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	public static final String DELETION_REASON = "deletionReason";
 	public static final String OTHER_DELETION_REASON = "otherDeletionReason";
 
+	public static final String DISTRICT_UUID = "districtUuid";
+	public static final String DISTRICT_LATITUDE = "districtLatitude";
+	public static final String DISTRICT_LONGITUDE = "districtLongitude";
 	// Fields are declared in the order they should appear in the import template
 
 	@Outbreaks
@@ -594,6 +597,10 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	private boolean deleted;
 	private DeletionReason deletionReason;
 	private String otherDeletionReason;
+
+	private String districtUuid;
+	private Double districtLatitude;
+	private Double districtLongitude;
 
 	public static CaseDataDto build(PersonReferenceDto person, Disease disease) {
 		return build(person, disease, HealthConditionsDto.build());
@@ -1740,6 +1747,30 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 
 	public void setHealthConditions(HealthConditionsDto healthConditions) {
 		this.healthConditions = healthConditions;
+	}
+
+	public Double getDistrictLatitude() {
+		return districtLatitude;
+	}
+
+	public void setDistrictLatitude(Double districtLatitude) {
+		this.districtLatitude = districtLatitude;
+	}
+
+	public Double getDistrictLongitude() {
+		return districtLongitude;
+	}
+
+	public void setDistrictLongitude(Double districtLongitude) {
+		this.districtLongitude = districtLongitude;
+	}
+
+	public String getDistrictUuid() {
+		return districtUuid;
+	}
+
+	public void setDistrictUuid(String districtUuid) {
+		this.districtUuid = districtUuid;
 	}
 
 	@Override

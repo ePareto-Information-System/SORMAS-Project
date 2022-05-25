@@ -69,6 +69,10 @@ public class MapContactDto implements Serializable {
 		this.reportLon = reportLon;
 	}
 
+	private String districtUuid;
+	private double districtLatitude;
+	private double districtLongitude;
+
 	public MapContactDto(
 		String uuid,
 		ContactClassification contactClassification,
@@ -82,7 +86,10 @@ public class MapContactDto implements Serializable {
 		String personFirstName,
 		String personLastName,
 		String casePersonFirstName,
-		String casePersonLastName) {
+		String casePersonLastName,
+		String districtUuid,
+		double districtLatitude,
+		double districtLongitude) {
 
 		this.uuid = uuid;
 		this.contactClassification = contactClassification;
@@ -97,6 +104,9 @@ public class MapContactDto implements Serializable {
 		this.personLastName = personLastName;
 		this.casePersonFirstName = casePersonFirstName;
 		this.casePersonLastName = casePersonLastName;
+		this.districtUuid = districtUuid;
+		this.districtLatitude = districtLatitude;
+		this.districtLongitude = districtLongitude;
 	}
 
 	public MapContactDto(
@@ -265,5 +275,29 @@ public class MapContactDto implements Serializable {
 			builder.append(casePersonFirstName).append(" ").append(casePersonLastName.toUpperCase());
 		}
 		return builder.toString();
+	}
+
+	public String getDistrictUuid() {
+		return districtUuid;
+	}
+
+	public void setDistrictUuid(String districtUuid) {
+		this.districtUuid = districtUuid;
+	}
+
+	public double getDistrictLatitude() {
+		return districtLatitude;
+	}
+
+	public void setDistrictLatitude(double districtLatitude) {
+		this.districtLatitude = districtLatitude;
+	}
+
+	public double getDistrictLongitude() {
+		return districtLongitude;
+	}
+
+	public void setDistrictLongitude(double districtLongitude) {
+		this.districtLongitude = districtLongitude;
 	}
 }

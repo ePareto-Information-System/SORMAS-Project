@@ -11568,4 +11568,9 @@ ALTER TABLE pathogentest_history ADD COLUMN  otherdeletionreason text;
 
 INSERT INTO schema_version (version_number, comment) VALUES (461, 'Add reason for deletion to confirmation dialogue - #8162');
 
+
+ALTER TABLE district ADD COLUMN IF NOT EXISTS districtlatitude double precision;
+ALTER TABLE district ADD COLUMN IF NOT EXISTS districtlongitude double precision;
+
+INSERT INTO schema_version (version_number, comment) VALUES (462, 'Add Geolocation to district #1865');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

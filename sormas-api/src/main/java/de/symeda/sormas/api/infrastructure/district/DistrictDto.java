@@ -37,6 +37,8 @@ public class DistrictDto extends InfrastructureDto {
 	public static final String GROWTH_RATE = "growthRate";
 	public static final String REGION = "region";
 	public static final String EXTERNAL_ID = "externalID";
+	public static final String DISTRICT_LATITUDE = "districtLatitude";
+	public static final String DISTRICT_LONGITUDE = "districtLongitude";
 
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
 	private String name;
@@ -47,6 +49,9 @@ public class DistrictDto extends InfrastructureDto {
 	private boolean archived;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String externalID;
+
+	private Double districtLatitude;
+	private Double districtLongitude;
 
 	public DistrictDto(
 		Date creationDate,
@@ -68,6 +73,32 @@ public class DistrictDto extends InfrastructureDto {
 		this.growthRate = growthRate;
 		this.region = new RegionReferenceDto(regionUuid, regionName, regionExternalId);
 		this.externalID = externalID;
+	}
+
+	public DistrictDto(
+			Date creationDate,
+			Date changeDate,
+			String uuid,
+			boolean archived,
+			String name,
+			String epidCode,
+			Float growthRate,
+			String regionUuid,
+			String regionName,
+			String regionExternalId,
+			String externalID,
+			Double districtLatitude,
+			Double districtLongitude) {
+
+		super(creationDate, changeDate, uuid);
+		this.archived = archived;
+		this.name = name;
+		this.epidCode = epidCode;
+		this.growthRate = growthRate;
+		this.region = new RegionReferenceDto(regionUuid, regionName, regionExternalId);
+		this.externalID = externalID;
+		this.districtLatitude = districtLatitude;
+		this.districtLongitude = districtLongitude;
 	}
 
 	public DistrictDto() {
@@ -136,5 +167,21 @@ public class DistrictDto extends InfrastructureDto {
 		DistrictDto dto = new DistrictDto();
 		dto.setUuid(DataHelper.createUuid());
 		return dto;
+	}
+
+	public Double getDistrictLatitude() {
+		return districtLatitude;
+	}
+
+	public void setDistrictLatitude(Double districtLatitude) {
+		this.districtLatitude = districtLatitude;
+	}
+
+	public Double getDistrictLongitude() {
+		return districtLongitude;
+	}
+
+	public void setDistrictLongitude(Double districtLongitude) {
+		this.districtLongitude = districtLongitude;
 	}
 }
