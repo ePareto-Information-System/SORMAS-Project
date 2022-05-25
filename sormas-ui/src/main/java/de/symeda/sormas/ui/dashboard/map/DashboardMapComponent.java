@@ -145,6 +145,7 @@ public class DashboardMapComponent extends VerticalLayout {
 	private BigDecimal districtValuesUpperQuartile;
 	private Consumer<Boolean> externalExpandListener;
 	private boolean emptyPopulationDistrictPresent;
+	private MapCasePeriodOption mapCasePeriodOption;
 
 	ComboBox cmbPeriodType;
 	ComboBox cmbPeriodFilter;
@@ -188,6 +189,7 @@ public class DashboardMapComponent extends VerticalLayout {
 		if (dashboardDataProvider.getDashboardType() == DashboardType.SURVEILLANCE) {
 			showCases = true;
 			caseClassificationOption = MapCaseClassificationOption.ALL_CASES;
+			mapCasePeriodOption = MapCasePeriodOption.CASES_INCIDENCE;
 			showContacts = false;
 			showEvents = false;
 			showConfirmedContacts = true;
@@ -195,6 +197,7 @@ public class DashboardMapComponent extends VerticalLayout {
 		} else if (dashboardDataProvider.getDashboardType() == DashboardType.CONTACTS) {
 			showCases = false;
 			caseClassificationOption = MapCaseClassificationOption.ALL_CASES;
+			mapCasePeriodOption = MapCasePeriodOption.CASES_INCIDENCE;
 			showContacts = true;
 			showEvents = false;
 			showConfirmedContacts = true;
@@ -620,6 +623,32 @@ public class DashboardMapComponent extends VerticalLayout {
 			updatePeriodFilters();
 		});
 
+		//case period display
+		OptionGroup casePeriodDisplayOptions = new OptionGroup();
+		casePeriodDisplayOptions.addItems((Object[]) MapCasePeriodOption.values());
+		casePeriodDisplayOptions.setValue(mapCasePeriodOption);
+		casePeriodDisplayOptions.setEnabled(false);
+		casePeriodDisplayOptions.addValueChangeListener(event -> {
+			mapCasePeriodOption = (MapCasePeriodOption) event.getProperty().getValue();
+			Date date = (Date) cmbPeriodFilter.getValue();
+			if (date != null) {
+				if (mapCasePeriodOption.equals(MapCasePeriodOption.CASES_INCIDENCE)) {
+					dateFrom = DateHelper.getStartOfYear(date);
+
+				} else {
+					dateFrom = DateHelper.getStartOfMonth(date);
+
+				}
+				dateTo = DateHelper.getEndOfMonth(date);
+				reloadPeriodFiltersFlag = PeriodFilterReloadFlag.DONT_RELOAD;
+				dashboardDataProvider.setFromDate(dateFrom);
+				dashboardDataProvider.setToDate(dateTo);
+				refreshMap();
+			} else {
+				refreshMap(false);
+			}
+		});
+
 		cmbPeriodFilter.setInputPrompt(I18nProperties.getString(Strings.promptSelectPeriod));
 		cmbPeriodFilter.setWidth(120, Unit.PIXELS);
 		cmbPeriodFilter.setNullSelectionAllowed(false);
@@ -642,6 +671,7 @@ public class DashboardMapComponent extends VerticalLayout {
 				case MONTHLY:
 					dateFrom = DateHelper.getStartOfMonth(date);
 					dateTo = DateHelper.getEndOfMonth(date);
+					casePeriodDisplayOptions.setEnabled(true);
 					break;
 				case YEARLY:
 					dateFrom = DateHelper.getStartOfYear(date);
@@ -655,14 +685,14 @@ public class DashboardMapComponent extends VerticalLayout {
 				dateFrom = null;
 				dateTo = null;
 			}
-			
+
 			//disable arrow buttons if date is first or last item in the dropdown
-			int curDateIndex = ((List<?>)cmbPeriodFilter.getItemIds()).indexOf(date);
+			int curDateIndex = ((List<?>) cmbPeriodFilter.getItemIds()).indexOf(date);
 			Boolean hasNextDate = cmbPeriodFilter.size() > 0 && curDateIndex < cmbPeriodFilter.size() - 1;
 			Boolean hasPrevDate = cmbPeriodFilter.size() > 0 && curDateIndex > 0;
 			btnBack.setEnabled(hasPrevDate);
 			btnForward.setEnabled(hasNextDate);
-			
+
 			reloadPeriodFiltersFlag = PeriodFilterReloadFlag.DONT_RELOAD;
 
 			refreshMap();
@@ -714,6 +744,7 @@ public class DashboardMapComponent extends VerticalLayout {
 		periodFilterLayout.addComponent(cmbPeriodType);
 		periodFilterLayout.addComponent(periodSelectionLayout);
 		layersLayout.addComponent(periodFilterLayout);
+		layersLayout.addComponent(casePeriodDisplayOptions);
 	}
 
 	private enum PeriodFilterReloadFlag {
@@ -757,24 +788,24 @@ public class DashboardMapComponent extends VerticalLayout {
 		List<Date> dates;
 		String strDateFormat = "";
 		switch (periodType) {
-			case DAILY:
-				dates = DateHelper.listDaysBetween(minDate, maxDate);
-				strDateFormat = "MMM dd, yyyy";
-				break;
-			case WEEKLY:
-				dates = DateHelper.listWeeksBetween(minDate, maxDate);
-				strDateFormat = "'" + I18nProperties.getString(Strings.weekShort) + "' w, yyyy";
-				break;
-			case MONTHLY:
-				dates = DateHelper.listMonthsBetween(minDate, maxDate);
-				strDateFormat = "MMM yyyy";
-				break;
-			case YEARLY:
-				dates = DateHelper.listYearsBetween(minDate, maxDate);
-				strDateFormat = "yyyy";
-				break;
-			default:
-				dates = Collections.emptyList();
+		case DAILY:
+			dates = DateHelper.listDaysBetween(minDate, maxDate);
+			strDateFormat = "MMM dd, yyyy";
+			break;
+		case WEEKLY:
+			dates = DateHelper.listWeeksBetween(minDate, maxDate);
+			strDateFormat = "'" + I18nProperties.getString(Strings.weekShort) + "' w, yyyy";
+			break;
+		case MONTHLY:
+			dates = DateHelper.listMonthsBetween(minDate, maxDate);
+			strDateFormat = "MMM yyyy";
+			break;
+		case YEARLY:
+			dates = DateHelper.listYearsBetween(minDate, maxDate);
+			strDateFormat = "yyyy";
+			break;
+		default:
+			dates = Collections.emptyList();
 		}
 
 		SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
