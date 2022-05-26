@@ -286,6 +286,8 @@ public class PathogenTestController {
 		BiConsumer<PathogenTestDto, Runnable> onSavedPathogenTest,
 		boolean suppressSampleResultUpdatePopup,
 		boolean suppressNavigateToCase) {
+
+	//public PathogenTestDto savePathogenTest(PathogenTestDto dto, BiConsumer<PathogenTestDto, Runnable> onSavedPathogenTest) {
 		PathogenTestDto savedDto = facade.savePathogenTest(dto);
 //		facade.savePathogenTest(dto);
 		final SampleDto sample = FacadeProvider.getSampleFacade().getSampleByUuid(dto.getSample().getUuid());
@@ -301,6 +303,33 @@ public class PathogenTestController {
 		}
 		Notification.show(I18nProperties.getString(Strings.messagePathogenTestSavedShort), TRAY_NOTIFICATION);
 		return savedDto;
+	}
+
+
+	public static void showCaseUpdateWithNegativeNewDiseaseVariantDialog(
+		CaseDataDto existingCaseDto,
+		DiseaseVariant diseaseVariant,
+		String diseaseVariantDetails,
+		Runnable callback) {
+
+		VaadinUiUtil.showConfirmationPopup(
+			I18nProperties.getString(Strings.headingUpdateCaseWithNewDiseaseVariant),
+			new Label(I18nProperties.getString(Strings.messageUpdateCaseWithNegativeSampleNewDiseaseVariant)),
+			I18nProperties.getString(Strings.yes),
+			I18nProperties.getString(Strings.no),
+			800,
+			e -> {
+				if (e) {
+					CaseDataDto caseDataByUuid = FacadeProvider.getCaseFacade().getCaseDataByUuid(existingCaseDto.getUuid());
+					caseDataByUuid.setDiseaseVariant(diseaseVariant);
+					caseDataByUuid.setDiseaseVariantDetails(diseaseVariantDetails);
+					FacadeProvider.getCaseFacade().saveCase(caseDataByUuid);
+					ControllerProvider.getCaseController().navigateToCase(caseDataByUuid.getUuid());
+				}
+				if (callback != null) {
+					callback.run();
+				}
+			});
 	}
 
 	private void handleAssociatedCase(
