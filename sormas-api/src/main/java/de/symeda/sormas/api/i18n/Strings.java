@@ -1124,7 +1124,7 @@ public interface Strings {
 	String messageUnavailableTaskEditionDueToDifferentDistricts = "messageUnavailableTaskEditionDueToDifferentDistricts";
 	String messageUnknownFilterAttributeForPopulationData = "messageUnknownFilterAttributeForPopulationData";
 	String messageUpdateCaseWithNewDiseaseVariant = "messageUpdateCaseWithNewDiseaseVariant";
-	String messageUpdateCaseWithNegativeNewDiseaseVariant = "messageUpdateCaseWithNegativeNewDiseaseVariant";
+	String messageUpdateCaseWithNegativeSampleNewDiseaseVariant = "messageUpdateCaseWithNegativeSampleNewDiseaseVariant";
 	String messageUploadSuccessful = "messageUploadSuccessful";
 	String messageUserRightsExportFailed = "messageUserRightsExportFailed";
 	String messageUserRoleCombination = "messageUserRoleCombination";
