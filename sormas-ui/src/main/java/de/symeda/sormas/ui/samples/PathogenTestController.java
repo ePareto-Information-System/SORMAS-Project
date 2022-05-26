@@ -709,6 +709,24 @@ public class PathogenTestController {
 		} else {
 			Notification.show(I18nProperties.getString(Strings.messagePathogenTestSavedShort), Type.TRAY_NOTIFICATION);
 		}
+
+		if (caze.getCaseClassification() == CaseClassification.NO_CASE || caze.getCaseClassification() == CaseClassification.CONFIRMED) {
+			return;
+		}
+
+		VaadinUiUtil.showConfirmationPopup(
+			I18nProperties.getCaption(Captions.caseNoCase),
+			new Label(I18nProperties.getString(Strings.messageNoCaseAfterPathogenTests)),
+			I18nProperties.getString(Strings.yes),
+			I18nProperties.getString(Strings.no),
+			800,
+			confirmed -> {
+				if (confirmed) {
+					CaseDataDto caseDataByUuid = FacadeProvider.getCaseFacade().getCaseDataByUuid(caze.getUuid());
+					caseDataByUuid.setCaseClassification(CaseClassification.NO_CASE);
+					FacadeProvider.getCaseFacade().saveCase(caseDataByUuid);
+				}
+			});
 	}
 
 	private boolean isNewCaseClassification(CaseDataDto existingCaseDto, CaseDataDto newCaseDto) {
