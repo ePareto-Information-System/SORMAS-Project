@@ -532,7 +532,7 @@ public class PathogenTestController {
 
 		VaadinUiUtil.showConfirmationPopup(
 			I18nProperties.getCaption(Captions.caseNoCase),
-			new Label(I18nProperties.getString(Strings.messageNoCaseAfterPathogenTest)),
+			new Label(I18nProperties.getString(Strings.messageNoCaseAfterPathogenTests)),
 			I18nProperties.getString(Strings.yes),
 			I18nProperties.getString(Strings.no),
 			800,
