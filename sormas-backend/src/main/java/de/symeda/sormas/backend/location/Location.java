@@ -351,6 +351,22 @@ public class Location extends AbstractDomainObject {
 		return LocationHelper.buildGpsCoordinatesCaption(latitude, longitude, latLonAccuracy);
 	}
 
+	public Double buildLatitudeCoordination() {
+		return latitude;
+	}
+
+	public Double buildLongitudeCoordination() {
+		return longitude;
+	}
+
+	public String buildLatLonCoordination() {
+		if (latLonAccuracy == null) {
+			return "";
+		} else {
+			return latLonAccuracy + "";
+		}
+	}
+
 	@Override
 	public String toString() {
 		return LocationReferenceDto.buildCaption(

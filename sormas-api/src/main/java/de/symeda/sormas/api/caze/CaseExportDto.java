@@ -97,7 +97,8 @@ public class CaseExportDto implements Serializable {
 	public static final String MAX_SOURCE_CASE_CLASSIFICATION = "maxSourceCaseClassification";
 	public static final String ASSOCIATED_WITH_OUTBREAK = "associatedWithOutbreak";
 	public static final String BURIAL_INFO = "burialInfo";
-	public static final String ADDRESS_GPS_COORDINATES = "addressGpsCoordinates";
+	public static final String ADDRESS_GPS_COORDINATES = "person.address.gpsCoordinates";
+	public static final String CASE_GPS_COORDINATES = "caseGpsCoordinates";
 	public static final String BURIAL_ATTENDED = "burialAttended";
 	public static final String TRAVELED = "traveled";
 	public static final String TRAVEL_HISTORY = "travelHistory";
@@ -115,6 +116,12 @@ public class CaseExportDto implements Serializable {
 	public static final String LATEST_EVENT_ID = "latestEventId";
 	public static final String LATEST_EVENT_STATUS = "latestEventStatus";
 	public static final String LATEST_EVENT_TITLE = "latestEventTitle";
+	public static final String CASE_LATITUDE = "reportLat";
+	public static final String CASE_LONGITUDE = "reportLon";
+	public static final String CASE_LAT_LON_ACCURACY = "reportLatLonAccuracy";
+	public static final String PERSON_LATITUDE = "person.address.latitude";
+	public static final String PERSON_LONGITUDE = "person.address.longitude";
+	public static final String PERSON_LAT_LON_ACCURACY = "person.address.latLonAccuracy";
 
 	private String country;
 	private long id;
@@ -130,6 +137,7 @@ public class CaseExportDto implements Serializable {
 	private DiseaseVariant diseaseVariant;
 	private String diseaseVariantDetails;
 	private String personUuid;
+
 	@PersonalData
 	@SensitiveData
 	private String firstName;
@@ -217,6 +225,7 @@ public class CaseExportDto implements Serializable {
 	@PersonalData
 	@SensitiveData
 	private String addressGpsCoordinates;
+	private String caseGpsCoordinates;
 	@PersonalData
 	@SensitiveData
 	private String facility;
@@ -345,6 +354,13 @@ public class CaseExportDto implements Serializable {
 	private String quarantineChangeComment;
 
 	private Boolean isInJurisdiction;
+
+	private Double caseLatitude;
+	private Double caseLongitude;
+	private Float caseLatLonAccuracy;
+	private Double personLatitude;
+	private Double personLongitude;
+	private String personLatLonAccuracy;
 
 	//@formatter:off
 	@SuppressWarnings("unchecked")
@@ -1554,6 +1570,41 @@ public class CaseExportDto implements Serializable {
 	@ExportTarget(caseExportTypes = {
 		CaseExportType.CASE_SURVEILLANCE,
 		CaseExportType.CASE_MANAGEMENT })
+	@ExportEntity(LocationDto.class)
+	@ExportProperty(PERSON_LATITUDE)
+	@ExportGroup(ExportGroupType.SENSITIVE)
+	public Double getPersonLatitude() {
+		return personLatitude;
+	}
+
+	@Order(87)
+	@ExportTarget(caseExportTypes = {
+		CaseExportType.CASE_SURVEILLANCE,
+		CaseExportType.CASE_MANAGEMENT })
+	@ExportEntity(LocationDto.class)
+	@ExportProperty(PERSON_LONGITUDE)
+	@ExportGroup(ExportGroupType.SENSITIVE)
+	public Double getPersonLongitude() {
+		return personLongitude;
+	}
+
+	@Order(88)
+	@ExportTarget(caseExportTypes = {
+
+		CaseExportType.CASE_SURVEILLANCE,
+		CaseExportType.CASE_MANAGEMENT })
+	@ExportEntity(LocationDto.class)
+	@ExportProperty(PERSON_LAT_LON_ACCURACY)
+	@ExportGroup(ExportGroupType.SENSITIVE)
+	public String getPersonLatLonAccuracy() {
+		return personLatLonAccuracy;
+	}
+
+	@Order(89)
+	@ExportTarget(caseExportTypes = {
+		CaseExportType.CASE_SURVEILLANCE,
+		CaseExportType.CASE_MANAGEMENT })
+	@ExportEntity(LocationDto.class)
 	@ExportProperty(ADDRESS_GPS_COORDINATES)
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getAddressGpsCoordinates() {
@@ -2358,8 +2409,76 @@ public class CaseExportDto implements Serializable {
 		return followUpStatusChangeUserRoles;
 	}
 
+	@Order(179)
+	@ExportTarget(caseExportTypes = {
+		CaseExportType.CASE_SURVEILLANCE,
+		CaseExportType.CASE_MANAGEMENT })
+	@ExportProperty(CASE_LATITUDE)
+	@ExportGroup(ExportGroupType.SENSITIVE)
+	public Double getCaseLatitude() {
+		return caseLatitude;
+	}
+
+	@Order(180)
+	@ExportTarget(caseExportTypes = {
+		CaseExportType.CASE_SURVEILLANCE,
+		CaseExportType.CASE_MANAGEMENT })
+	@ExportProperty(CASE_LONGITUDE)
+	@ExportGroup(ExportGroupType.SENSITIVE)
+	public Double getCaseLongitude() {
+		return caseLongitude;
+	}
+
+	@Order(181)
+	@ExportTarget(caseExportTypes = {
+		CaseExportType.CASE_SURVEILLANCE,
+		CaseExportType.CASE_MANAGEMENT })
+	@ExportProperty(CASE_LAT_LON_ACCURACY)
+	@ExportGroup(ExportGroupType.SENSITIVE)
+	public Float getCaseLatLonAccuracy() {
+		return caseLatLonAccuracy;
+	}
+
+	@Order(182)
+	@ExportTarget(caseExportTypes = {
+		CaseExportType.CASE_SURVEILLANCE,
+		CaseExportType.CASE_MANAGEMENT })
+	@ExportProperty(CASE_GPS_COORDINATES)
+	@ExportGroup(ExportGroupType.SENSITIVE)
+	public String getCaseGpsCoordinates() {
+		return caseGpsCoordinates;
+	}
+
 	public void setFollowUpStatusChangeUserRoles(Set<UserRole> roles) {
 		this.followUpStatusChangeUserRoles = StringUtils.join(roles, ", ");
+	}
+
+	public void setCaseLatitude(Double caseLatitude) {
+		this.caseLatitude = caseLatitude;
+	}
+
+	public void setCaseLongitude(Double caseLongitude) {
+		this.caseLongitude = caseLongitude;
+	}
+
+	public void setCaseLatLonAccuracy(Float caseLatLonAccuracy) {
+		this.caseLatLonAccuracy = caseLatLonAccuracy;
+	}
+
+	public void setCaseGpsCoordinates(String caseGpsCoordinates) {
+		this.caseGpsCoordinates = caseGpsCoordinates;
+	}
+
+	public void setPersonLatitude(Double personLatitude) {
+		this.personLatitude = personLatitude;
+	}
+
+	public void setPersonLongitude(Double personLongitude) {
+		this.personLongitude = personLongitude;
+	}
+
+	public void setPersonLatLonAccuracy(String personLatLonAccuracy) {
+		this.personLatLonAccuracy = personLatLonAccuracy;
 	}
 
 	public void setCountry(String country) {
