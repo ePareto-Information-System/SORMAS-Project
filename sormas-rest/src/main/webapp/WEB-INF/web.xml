@@ -341,6 +341,12 @@
 	</security-role>
 
 	<security-role>
+        <role-name>HOSPITAL_SUPERVISOR</role-name>
+    </security-role>
+	<security-role>
+        <role-name>CASE_OFFICER</role-name>
+    </security-role>
+	<security-role>
 		<role-name>EVENTGROUP_DELETE</role-name>
 	</security-role>
 

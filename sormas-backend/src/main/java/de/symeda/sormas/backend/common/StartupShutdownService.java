@@ -450,7 +450,18 @@ public class StartupShutdownService {
                         u.setAssociatedOfficer(surveillanceOfficer);
                     });
             //@formatter:on
-
+			// Create Hospital Supervisor
+			//@formatter:off
+			createAndPersistDefaultUser(
+					UserRole.HOSPITAL_SUPERVISOR,
+					"Hospital",
+					"Informant",
+					DefaultEntityHelper.HOSP_SUP_USERNAME_AND_PASSWORD,
+					u->{
+						u.setHealthFacility(facility);
+						
+					});
+			//@formatter:on
 			// Create Community Officer
 			//@formatter:off
             createAndPersistDefaultUser(

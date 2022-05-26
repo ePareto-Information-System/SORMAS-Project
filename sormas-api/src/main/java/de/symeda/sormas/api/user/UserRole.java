@@ -34,7 +34,7 @@ import de.symeda.sormas.api.utils.ValidationException;
 
 /**
  * These are also used as user groups in the server realm
- * 
+ *
  * @Deprected until this is moved to DefaultUserRole in #4461
  */
 @Deprecated
@@ -105,6 +105,7 @@ public enum UserRole
 			NotificationType.EVENT_GROUP_CREATED,
 			NotificationType.EVENT_ADDED_TO_EVENT_GROUP,
 			NotificationType.EVENT_REMOVED_FROM_EVENT_GROUP)),
+	HOSPITAL_SUPERVISOR(true, true, false, false, JurisdictionLevel.HEALTH_FACILITY, Collections.emptyList(), Collections.emptyList()),
 	HOSPITAL_INFORMANT(false, false, true, false, JurisdictionLevel.HEALTH_FACILITY, Collections.emptyList(), Collections.emptyList()),
 	COMMUNITY_OFFICER(false, true, false, false, JurisdictionLevel.COMMUNITY, Collections.emptyList(), Collections.emptyList()),
 	COMMUNITY_INFORMANT(false, false, true, false, JurisdictionLevel.COMMUNITY, Collections.emptyList(), Collections.emptyList()),
@@ -226,6 +227,7 @@ public enum UserRole
 	public static final String _NATIONAL_USER = NATIONAL_USER.name();
 	public static final String _SURVEILLANCE_SUPERVISOR = SURVEILLANCE_SUPERVISOR.name();
 	public static final String _SURVEILLANCE_OFFICER = SURVEILLANCE_OFFICER.name();
+	public static final String _HOSPITAL_SUPERVISOR = HOSPITAL_SUPERVISOR.name();
 	public static final String _HOSPITAL_INFORMANT = HOSPITAL_INFORMANT.name();
 	public static final String _COMMUNITY_OFFICER = COMMUNITY_OFFICER.name();
 	public static final String _COMMUNITY_INFORMANT = COMMUNITY_INFORMANT.name();
@@ -335,6 +337,7 @@ public enum UserRole
 			break;
 		case NATIONAL_USER:
 			collection.add(SURVEILLANCE_SUPERVISOR);
+			collection.add(HOSPITAL_SUPERVISOR);
 			collection.add(CASE_SUPERVISOR);
 			collection.add(CONTACT_SUPERVISOR);
 			collection.add(CASE_OFFICER);
@@ -360,6 +363,7 @@ public enum UserRole
 		case SURVEILLANCE_SUPERVISOR:
 			collection.add(SURVEILLANCE_OFFICER);
 			collection.add(HOSPITAL_INFORMANT);
+			collection.add(HOSPITAL_SUPERVISOR);
 			collection.add(COMMUNITY_INFORMANT);
 			break;
 		case CASE_SUPERVISOR:
@@ -414,7 +418,7 @@ public enum UserRole
 
 	/**
 	 * Expects the roles have been validated.
-	 * 
+	 *
 	 * @param roles
 	 * @return
 	 */

@@ -93,6 +93,14 @@
 	</security-role>
 
 	<security-role>
+		<role-name>HOSPITAL_SUPERVISOR</role-name>
+	</security-role>
+	
+	<security-role>
+	  <role-name>POE_SUPERVISOR</role-name>
+	</security-role>
+
+	<security-role>
 		<role-name>PERSON_VIEW</role-name>
 	</security-role>
 
