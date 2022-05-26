@@ -971,6 +971,7 @@ public interface Strings {
 	String messageConfirmCaseAfterPathogenTest = "messageConfirmCaseAfterPathogenTest";
 	String messageConfirmCasesAfterPathogenTest = "messageConfirmCasesAfterPathogenTest";
 	String messageContactArchived = "messageContactArchived";
+	String messageNoCaseAfterPathogenTest = "messageNoCaseAfterPathogenTest";
 	String messageContactCaseChanged = "messageContactCaseChanged";
 	String messageContactCaseRemoved = "messageContactCaseRemoved";
 	String messageContactConversionFollowUpCommentLarge = "messageContactConversionFollowUpCommentLarge";
@@ -1213,6 +1214,7 @@ public interface Strings {
 	String messageUnknownFilterAttributeForPopulationData = "messageUnknownFilterAttributeForPopulationData";
 	String messageUnknownContactFilterAttributeForPopulationData = "messageUnknownContactFilterAttributeForPopulationData";
 	String messageUpdateCaseWithNewDiseaseVariant = "messageUpdateCaseWithNewDiseaseVariant";
+	String messageUpdateCaseWithNegativeNewDiseaseVariant = "messageUpdateCaseWithNegativeNewDiseaseVariant";
 	String messageUploadSuccessful = "messageUploadSuccessful";
 	String messageUserRightsExportFailed = "messageUserRightsExportFailed";
 	String messageUserRoleCombination = "messageUserRoleCombination";
