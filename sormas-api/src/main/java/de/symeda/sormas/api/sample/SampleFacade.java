@@ -96,4 +96,6 @@ public interface SampleFacade {
 	List<SampleDto> getByEventParticipantUuids(List<String> asList);
 
 	List<SampleDto> getByLabSampleId(String labSampleId);
+
+	Map<PathogenTestResultType, Long> getNewTestResultCountByResultType(List<Long> caseIds);
 }

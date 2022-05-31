@@ -21,12 +21,17 @@ import static de.symeda.sormas.ui.UiUtil.permitted;
 
 import com.vaadin.navigator.Navigator;
 
+import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.dashboard.campaigns.CampaignDashboardView;
 import de.symeda.sormas.ui.dashboard.contacts.ContactsDashboardView;
 import de.symeda.sormas.ui.dashboard.samples.SamplesDashboardView;
+import de.symeda.sormas.ui.dashboard.diseasedetails.DiseaseDetailsView;
 import de.symeda.sormas.ui.dashboard.surveillance.SurveillanceDashboardView;
 
 public class DashboardController {
@@ -48,5 +53,18 @@ public class DashboardController {
 		if (UserProvider.getCurrent().hasUserRight(UserRight.DASHBOARD_SAMPLE_ACCESS)) {
 			navigator.addView(SamplesDashboardView.VIEW_NAME, SamplesDashboardView.class);
 		}
+		if (UserProvider.getCurrent().hasUserRight(UserRight.DASHBOARD_DISEASE_DETIALS_ACCESS)) {
+			navigator.addView(DiseaseDetailsView.VIEW_NAME, DiseaseDetailsView.class);
+		}
 	}
+
+	public void navigateToDisease(Disease disease) {
+		String navigationState = DiseaseDetailsView.VIEW_NAME + "/" + disease.getName();
+		SormasUI.get().getNavigator().navigateTo(navigationState);
+	}
+
+	private CaseDataDto findCase(String uuid) {
+		return FacadeProvider.getCaseFacade().getCaseDataByUuid(uuid);
+	}
+
 }

@@ -71,6 +71,7 @@ import de.symeda.sormas.ui.contact.ContactsView;
 import de.symeda.sormas.ui.dashboard.AbstractDashboardView;
 import de.symeda.sormas.ui.dashboard.campaigns.CampaignDashboardView;
 import de.symeda.sormas.ui.dashboard.contacts.ContactsDashboardView;
+import de.symeda.sormas.ui.dashboard.diseasedetails.DiseaseDetailsView;
 import de.symeda.sormas.ui.dashboard.surveillance.SurveillanceDashboardView;
 import de.symeda.sormas.ui.events.EventGroupDataView;
 import de.symeda.sormas.ui.events.EventParticipantDataView;
@@ -340,7 +341,9 @@ public class MainScreen extends HorizontalLayout {
 				CountriesView.VIEW_NAME,
 				LabMessagesView.VIEW_NAME,
 				TravelEntriesView.VIEW_NAME,
-				ImmunizationsView.VIEW_NAME));
+				ImmunizationsView.VIEW_NAME,
+				DiseaseDetailsView.VIEW_NAME
+				));
 
 		if (enabled(FeatureType.DASHBOARD)) {
 			if (permitted(FeatureType.CASE_SURVEILANCE, UserRight.DASHBOARD_SURVEILLANCE_VIEW)) {

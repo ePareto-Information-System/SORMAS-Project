@@ -886,6 +886,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			e -> FieldHelper.updateEnumData(facilityTypeCombo, FacilityType.getAccommodationTypes((FacilityTypeGroup) facilityTypeGroup.getValue())));
 		facilityTypeCombo.addValueChangeListener(e -> updateFacility());
 		facilityCombo.addValueChangeListener(e -> updateFacilityDetails(facilityCombo, facilityDetails));
+		List<RegionReferenceDto> r = FacadeProvider.getRegionFacade().getAllActiveByServerCountry();
 		regionCombo.addItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
 
 		if (!FacadeProvider.getFeatureConfigurationFacade().isFeatureDisabled(FeatureType.NATIONAL_CASE_SHARING)) {

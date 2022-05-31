@@ -1158,6 +1158,11 @@ public class SampleFacadeEjb implements SampleFacade {
 		}
 	}
 
+	@Override
+	public Map<PathogenTestResultType, Long> getNewTestResultCountByResultType(List<Long> caseIds) {
+		return sampleService.getNewTestResultCountByResultType(caseIds);
+	}
+
 	@LocalBean
 	@Stateless
 	public static class SampleFacadeEjbLocal extends SampleFacadeEjb {

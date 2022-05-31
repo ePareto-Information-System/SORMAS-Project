@@ -18,10 +18,7 @@
 package de.symeda.sormas.api.caze;
 
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import javax.ejb.Remote;
 import javax.validation.Valid;
@@ -37,6 +34,7 @@ import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.dashboard.DashboardCaseDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
 import de.symeda.sormas.api.externaldata.ExternalDataDto;
 import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
@@ -66,7 +64,7 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 	long count(CaseCriteria caseCriteria, boolean ignoreUserFilter);
 
 	List<CaseIndexDto> getIndexList(CaseCriteria caseCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
-	
+
 	List<MapCaseDto> getIndexListForMap(CaseCriteria caseCriteria, Integer first, Integer max, String userUuid, List<SortProperty> sortProperties);
 
 	List<CaseSelectionDto> getCaseSelectionList(CaseCriteria caseCriteria);
@@ -76,23 +74,23 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 	Page<CaseIndexDto> getIndexPage(CaseCriteria caseCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
 
 	Page<CaseIndexDetailedDto> getIndexDetailedPage(
-		@NotNull CaseCriteria caseCriteria,
-		Integer offset,
-		Integer max,
-		List<SortProperty> sortProperties);
+			@NotNull CaseCriteria caseCriteria,
+			Integer offset,
+			Integer max,
+			List<SortProperty> sortProperties);
 
 	List<CaseIndexDetailedDto> getIndexDetailedList(CaseCriteria caseCriteria, Integer offset, Integer max, List<SortProperty> sortProperties);
 
 	CaseDataDto postUpdate(String uuid, JsonNode caseDataDtoJson);
 
 	List<CaseExportDto> getExportList(
-		CaseCriteria caseCriteria,
-		Collection<String> selectedRows,
-		CaseExportType exportType,
-		int first,
-		int max,
-		ExportConfigurationDto exportConfiguration,
-		Language userLanguage);
+			CaseCriteria caseCriteria,
+			Collection<String> selectedRows,
+			CaseExportType exportType,
+			int first,
+			int max,
+			ExportConfigurationDto exportConfiguration,
+			Language userLanguage);
 
 	CaseDataDto getCaseDataByUuid(String uuid);
 
@@ -115,20 +113,20 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 	String getUuidByUuidEpidNumberOrExternalId(String searchTerm, CaseCriteria caseCriteria);
 
 	List<MapCaseDto> getCasesForMap(
-		RegionReferenceDto regionRef,
-		DistrictReferenceDto districtRef,
-		Disease disease,
-		Date from,
-		Date to,
-		NewCaseDateType dateType);
+			RegionReferenceDto regionRef,
+			DistrictReferenceDto districtRef,
+			Disease disease,
+			Date from,
+			Date to,
+			NewCaseDateType dateType);
 
 	Long countCasesForMap(
-		RegionReferenceDto regionRef,
-		DistrictReferenceDto districtRef,
-		Disease disease,
-		Date from,
-		Date to,
-		NewCaseDateType dateType);
+			RegionReferenceDto regionRef,
+			DistrictReferenceDto districtRef,
+			Disease disease,
+			Date from,
+			Date to,
+			NewCaseDateType dateType);
 
 	List<Pair<DistrictDto, BigDecimal>> getCaseMeasurePerDistrict(Date onsetFromDate, Date onsetToDate, Disease disease, CaseMeasure caseMeasure);
 
@@ -179,18 +177,18 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 	EditPermissionType isCaseEditAllowed(String caseUuid);
 
 	List<CaseFollowUpDto> getCaseFollowUpList(
-		CaseCriteria caseCriteria,
-		Date referenceDate,
-		int interval,
-		Integer first,
-		Integer max,
-		List<SortProperty> sortProperties);
+			CaseCriteria caseCriteria,
+			Date referenceDate,
+			int interval,
+			Integer first,
+			Integer max,
+			List<SortProperty> sortProperties);
 
 	Page<CaseFollowUpDto> getCaseFollowUpIndexPage(
-		@NotNull CaseFollowUpCriteria criteria,
-		Integer offset,
-		Integer max,
-		List<SortProperty> sortProperties);
+			@NotNull CaseFollowUpCriteria criteria,
+			Integer offset,
+			Integer max,
+			List<SortProperty> sortProperties);
 
 	void sendMessage(List<String> caseUuids, String subject, String messageContent, MessageType... messageTypes);
 
@@ -201,23 +199,23 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 	List<String> getUuidsNotShareableWithExternalReportingTools(List<String> caseUuids);
 
 	Integer saveBulkCase(
-		List<String> caseUuidList,
-		@Valid CaseBulkEditData updatedCaseBulkEditData,
-		boolean diseaseChange,
-		boolean classificationChange,
-		boolean investigationStatusChange,
-		boolean outcomeChange,
-		boolean surveillanceOfficerChange);
+			List<String> caseUuidList,
+			@Valid CaseBulkEditData updatedCaseBulkEditData,
+			boolean diseaseChange,
+			boolean classificationChange,
+			boolean investigationStatusChange,
+			boolean outcomeChange,
+			boolean surveillanceOfficerChange);
 
 	void saveBulkEditWithFacilities(
-		List<String> caseUuidList,
-		@Valid CaseBulkEditData updatedCaseBulkEditData,
-		boolean diseaseChange,
-		boolean classificationChange,
-		boolean investigationStatusChange,
-		boolean outcomeChange,
-		boolean surveillanceOfficerChange,
-		Boolean doTransfer);
+			List<String> caseUuidList,
+			@Valid CaseBulkEditData updatedCaseBulkEditData,
+			boolean diseaseChange,
+			boolean classificationChange,
+			boolean investigationStatusChange,
+			boolean outcomeChange,
+			boolean surveillanceOfficerChange,
+			Boolean doTransfer);
 
 	List<CasePersonDto> getDuplicates(@Valid CasePersonDto casePerson, int reportDateThreshold);
 
@@ -240,4 +238,14 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 	void dearchive(List<String> entityUuids, String dearchiveReason, boolean includeContacts);
 
 	void setResultingCase(EventParticipantReferenceDto eventParticipantReferenceDto, CaseReferenceDto caseReferenceDto);
+
+	boolean hasPositiveLabResult(String caseUuid);
+
+	List<CaseDataDto> getAllCaseDataByDisease(Disease uuid);
+
+	Map<Disease, Long> getCaseCountByDisease(CaseCriteria caseCriteria, boolean excludeSharedCases, boolean excludeCasesFromContacts);
+
+	List<DashboardCaseDto> getCasesForDashboard(CaseCriteria caseCriteria);
+
+	String getLastReportedDistrictName(CaseCriteria caseCriteria, boolean excludeSharedCases, boolean excludeCasesFromContacts);
 }

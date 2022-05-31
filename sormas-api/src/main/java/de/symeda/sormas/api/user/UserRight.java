@@ -51,6 +51,11 @@ import static de.symeda.sormas.api.user.UserRole.STATE_OBSERVER;
 import static de.symeda.sormas.api.user.UserRole.SURVEILLANCE_OFFICER;
 import static de.symeda.sormas.api.user.UserRole.SURVEILLANCE_SUPERVISOR;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
+
 public enum UserRight {
 
 	//@formatter:off
@@ -1153,6 +1158,34 @@ public enum UserRight {
 			COMMUNITY_OFFICER
 	),
 	DASHBOARD_CONTACT_VIEW(
+		ADMIN,
+		NATIONAL_USER,
+		NATIONAL_OBSERVER,
+		STATE_OBSERVER,
+		DISTRICT_OBSERVER,
+		CONTACT_SUPERVISOR,
+		HOSPITAL_SUPERVISOR,
+		CONTACT_OFFICER,
+		COMMUNITY_OFFICER
+	),
+			
+	DASHBOARD_DISEASE_DETIALS_ACCESS(
+		ADMIN,
+		NATIONAL_USER,
+		NATIONAL_CLINICIAN,
+		NATIONAL_OBSERVER,
+		POE_NATIONAL_USER,
+		STATE_OBSERVER,
+		DISTRICT_OBSERVER,
+		SURVEILLANCE_SUPERVISOR,
+		CASE_SUPERVISOR,
+		POE_SUPERVISOR,
+		LAB_USER,
+		EVENT_OFFICER,
+		SURVEILLANCE_OFFICER,
+		CASE_OFFICER
+	),
+	DASHBOARD_SURVEILLANCE_ACCESS(
 			ADMIN,
 			NATIONAL_USER,
 			NATIONAL_OBSERVER,

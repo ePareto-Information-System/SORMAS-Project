@@ -316,6 +316,19 @@ public class RegionFacadeEjb extends AbstractInfrastructureFacadeEjb<Region, Reg
 		return target;
 	}
 
+
+	@Override
+	public List<RegionDto> getAllRegion() {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<RegionDto> cq = cb.createQuery(RegionDto.class);
+		Root<Region> region = cq.from(Region.class);
+
+		selectDtoFields(cq, region);
+
+		return em.createQuery(cq).getResultList();
+	}
+
 	@LocalBean
 	@Stateless
 	public static class RegionFacadeEjbLocal extends RegionFacadeEjb {

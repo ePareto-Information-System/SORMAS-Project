@@ -53,6 +53,7 @@ import javax.persistence.criteria.Subquery;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import de.symeda.sormas.backend.caze.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -116,12 +117,7 @@ import de.symeda.sormas.api.utils.DataHelper.Pair;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
-import de.symeda.sormas.backend.caze.Case;
-import de.symeda.sormas.backend.caze.CaseFacadeEjb;
 import de.symeda.sormas.backend.caze.CaseFacadeEjb.CaseFacadeEjbLocal;
-import de.symeda.sormas.backend.caze.CaseJoins;
-import de.symeda.sormas.backend.caze.CaseQueryContext;
-import de.symeda.sormas.backend.caze.CaseService;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
 import de.symeda.sormas.backend.contact.Contact;
@@ -1254,6 +1250,7 @@ public class PersonFacadeEjb implements PersonFacade {
 
 		final PersonQueryContext personQueryContext = new PersonQueryContext(cb, cq, person);
 
+
 		cq.select(person.get(Person.UUID));
 		if (!allowPersonsWithCoordinates) {
 			// filter persons by those which have no latitude or longitude given
@@ -1733,28 +1730,58 @@ public class PersonFacadeEjb implements PersonFacade {
 
 		Join<Person, ?> contextJoin;
 		switch (context) {
-		case CASE: {
-			contextJoin = joins.getCaze();
-			break;
+			case CASE: {
+				contextJoin = joins.getCaze();
+				break;
+			}
+			case CONTACT: {
+				contextJoin = joins.getContact();
+				break;
+			}
+			case EVENT_PARTICIPANT: {
+				contextJoin = joins.getEventParticipant();
+				break;
+			}
+			default: {
+				throw new RuntimeException("Not implemented yet for " + context.name());
+			}
 		}
-		case CONTACT: {
-			contextJoin = joins.getContact();
-			break;
-		}
-		case EVENT_PARTICIPANT: {
-			contextJoin = joins.getEventParticipant();
-			break;
-		}
-		default: {
-			throw new RuntimeException("Not implemented yet for " + context.name());
-		}
+			cq.where(cb.equal(contextJoin.get(AbstractDomainObject.UUID), contextUuid));
+
+			Person person = em.createQuery(cq).getSingleResult();
+
+			return convertToDto(person, Pseudonymizer.getDefault(userService::hasRight), personService.inJurisdictionOrOwned(person));
+	}
+
+	@Override
+	public Map<Disease, Long> getDeathCountByDisease(CaseCriteria caseCriteria, boolean excludeSharedCases, boolean excludeCasesFromContacts) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
+		Root<Case> root = cq.from(Case.class);
+		Join<Case, Person> person = root.join(Case.PERSON, JoinType.LEFT);
+
+		final CaseQueryContext caseQueryContext = new CaseQueryContext(cb, cq, root);
+
+		Predicate filter = caseService.createUserFilter(
+				caseQueryContext,
+				new CaseUserFilterCriteria().excludeCasesFromContacts(excludeCasesFromContacts));
+
+		filter = CriteriaBuilderHelper.and(cb, filter, caseService.createCriteriaFilter(caseCriteria, caseQueryContext));
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(person.get(Person.CAUSE_OF_DEATH_DISEASE), root.get(Case.DISEASE)));
+
+		if (filter != null) {
+			cq.where(filter);
 		}
 
-		cq.where(cb.equal(contextJoin.get(AbstractDomainObject.UUID), contextUuid));
+		cq.multiselect(person.get(Person.CAUSE_OF_DEATH_DISEASE), cb.count(person));
+		cq.groupBy(person.get(Person.CAUSE_OF_DEATH_DISEASE));
 
-		Person person = em.createQuery(cq).getSingleResult();
+		List<Object[]> results = em.createQuery(cq).getResultList();
 
-		return convertToDto(person, Pseudonymizer.getDefault(userService::hasRight), personService.inJurisdictionOrOwned(person));
+		Map<Disease, Long> outbreaks = results.stream().collect(Collectors.toMap(e -> (Disease) e[0], e -> (Long) e[1]));
+
+		return outbreaks;
 	}
 
 	@LocalBean

@@ -34,17 +34,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.CriteriaUpdate;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.ParameterExpression;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Subquery;
+import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 
@@ -61,6 +51,7 @@ import de.symeda.sormas.api.caze.CaseCriteria;
 import de.symeda.sormas.api.caze.CaseIndexDto;
 import de.symeda.sormas.api.caze.CaseListEntryDto;
 import de.symeda.sormas.api.caze.CaseLogic;
+import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseOrigin;
 import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.caze.CaseReferenceDefinition;
@@ -1251,17 +1242,16 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 			newCaseFilter = cb.or(onsetDateFilter, cb.and(cb.isNull(symptoms.get(Symptoms.ONSET_DATE)), reportDateFilter));
 		} else if (dateType == NewCaseDateType.ONSET) {
 			newCaseFilter = onsetDateFilter;
-		// } else if (newCaseDateType == NewCaseDateType.CLASSIFICATION) {
-		// 	newCaseFilter = cb.between(caze.get(Case.CLASSIFICATION_DATE), fromDate, toDate);
-		// } else if (newCaseDateType == NewCaseDateType.CREATION) {
-		// 	newCaseFilter = cb.between(caze.get(Case.CREATION_DATE), fromDate, toDate);
-		// } else if (newCaseDateType == NewCaseDateType.INVESTIGATION) {
-		// 	newCaseFilter = cb.between(caze.get(Case.INVESTIGATED_DATE), fromDate, toDate);
-		// //} else if (newCaseDateType == NewCaseDateType.LAST_TEST_RESULT) {
-		// //	newCaseFilter = cb.between(caze.get(Case.REPORT_DATE), fromDate, toDate);
-		// } else {
-
+		} else if (dateType == NewCaseDateType.CLASSIFICATION) {
+			newCaseFilter = cb.between(caze.get(Case.CLASSIFICATION_DATE), fromDate, toDate);
+		} else if (dateType == NewCaseDateType.CREATION) {
+			newCaseFilter = cb.between(caze.get(Case.CREATION_DATE), fromDate, toDate);
+		} else if (dateType == NewCaseDateType.INVESTIGATION) {
+			newCaseFilter = cb.between(caze.get(Case.INVESTIGATED_DATE), fromDate, toDate);
+			//} else if (newCaseDateType == NewCaseDateType.LAST_TEST_RESULT) {
+			//	newCaseFilter = cb.between(caze.get(Case.REPORT_DATE), fromDate, toDate);
 		} else if (dateType == NewCaseDateType.REPORT) {
+		// } else {
 			newCaseFilter = reportDateFilter;
 		} else if (dateType == ExternalShareDateType.LAST_EXTERNAL_SURVEILLANCE_TOOL_SHARE) {
 			newCaseFilter = externalShareInfoService.buildLatestSurvToolShareDateFilter(
@@ -1980,5 +1970,37 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 	private void selectIndexDtoFields(CaseQueryContext caseQueryContext) {
 		CriteriaQuery cq = caseQueryContext.getQuery();
 		cq.multiselect(listQueryBuilder.getCaseIndexSelections(caseQueryContext.getRoot(), caseQueryContext));
+	}
+
+	public List<CaseDataDto> getAllByDisease(Disease disease) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<CaseDataDto> cq = cb.createQuery(CaseDataDto.class);
+		Root<Case> from = cq.from(Case.class);
+
+		from.fetch(Case.SYMPTOMS);
+		from.fetch(Case.THERAPY);
+//		Fetch<Case, ClinicalCourse> clinicalCourseFetch = from.fetch(Case.CLINICAL_COURSE);
+//		clinicalCourseFetch.fetch(ClinicalCourse.HEALTH_CONDITIONS);
+		from.fetch(Case.HEALTH_CONDITIONS);
+		from.fetch(Case.HOSPITALIZATION);
+		from.fetch(Case.EPI_DATA);
+		from.fetch(Case.PORT_HEALTH_INFO);
+		from.fetch(Case.MATERNAL_HISTORY);
+
+		Predicate filter = createActiveCasesFilter(cb, from);
+
+		if (getCurrentUser() != null) {
+			Predicate userFilter = createUserFilter(cb, cq, from);
+			if (userFilter != null) {
+				filter = cb.and(filter, userFilter);
+			}
+		}
+
+		cq.where(filter);
+		cq.orderBy(cb.desc(from.get(Case.CHANGE_DATE)));
+		cq.distinct(true);
+
+		return em.createQuery(cq).getResultList();
 	}
 }

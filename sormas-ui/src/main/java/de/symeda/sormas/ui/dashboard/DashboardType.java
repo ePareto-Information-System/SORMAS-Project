@@ -23,6 +23,7 @@ public enum DashboardType {
 
 	SURVEILLANCE,
 	CONTACTS,
+	DISEASE,
 	CAMPAIGNS,
 	SAMPLES;
 

@@ -40,6 +40,7 @@ import de.symeda.sormas.api.customizableenum.CustomizableEnumFacade;
 import de.symeda.sormas.api.dashboard.DashboardFacade;
 import de.symeda.sormas.api.contact.ContactStatisticsFacade;
 import de.symeda.sormas.api.disease.DiseaseConfigurationFacade;
+import de.symeda.sormas.api.disease.DiseaseFacade;
 import de.symeda.sormas.api.docgeneneration.DocumentTemplateFacade;
 import de.symeda.sormas.api.docgeneneration.EventDocumentFacade;
 import de.symeda.sormas.api.docgeneneration.QuarantineOrderFacade;
@@ -107,6 +108,7 @@ import de.symeda.sormas.api.visit.VisitFacade;
 import de.symeda.sormas.api.visualization.VisualizationFacade;
 
 public class FacadeProvider {
+
 
 	private static final String JNDI_PREFIX = "java:global/sormas-ear/sormas-backend/";
 
@@ -487,6 +489,10 @@ public class FacadeProvider {
 
 	public static AuditLoggerFacade getAuditLoggerFacade() {
 		return get().lookupEjbRemote(AuditLoggerFacade.class);
+	}
+
+	public static DiseaseFacade getDiseaseFacade() {
+		return get().lookupEjbRemote(DiseaseFacade.class);
 	}
 
 	@SuppressWarnings("unchecked")
