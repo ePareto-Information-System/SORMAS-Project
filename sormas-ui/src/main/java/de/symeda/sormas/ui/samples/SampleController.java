@@ -22,6 +22,10 @@ import java.util.*;
 import static de.symeda.sormas.ui.samples.PathogenTestController.showCaseUpdateWithNewDiseaseVariantDialog;
 
 import java.util.function.BiConsumer;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_NONE;
@@ -211,7 +215,8 @@ public class SampleController {
 		// validate pathogen test create component before saving the sample
 		sampleComponent.addFieldGroups(pathogenTestForm.getFieldGroup());
 		CommitDiscardWrapperComponent.CommitListener savePathogenTest = () -> {
-			ControllerProvider.getPathogenTestController().savePathogenTest(pathogenTestForm.getValue(), null, true, true);
+			ControllerProvider.getPathogenTestController()
+					.savePathogenTest(pathogenTestForm.getValue(), null, true, true, null);
 			if (callback != null) {
 				callback.run();
 			}
@@ -301,6 +306,32 @@ public class SampleController {
 		createView.getWrappedComponent().getValue().setPathogenTestResult(PathogenTestResultType.PENDING);
 		VaadinUiUtil.showModalPopupWindow(createView, I18nProperties.getString(Strings.headingReferSample));
 	}
+	
+	public void createReferrals(Collection<? extends SampleIndexDto> samples, Runnable callback) {
+		SampleIndexDto firstSample = samples.stream().findFirst().orElse(null);
+		SampleDto sample = FacadeProvider.getSampleFacade().getSampleByUuid(firstSample.getUuid());
+		Date maxSampleDate = samples.stream().map(s -> s.getSampleDateTime()).max(Date::compareTo).get();
+		sample.setSampleDateTime(maxSampleDate);
+		
+		final SampleDto referralSample = SampleDto.buildReferralDto(UserProvider.getCurrent().getUserReference(), sample);
+		Disease disease = getDiseaseOf(referralSample);
+		final SampleBulkTransferForm createForm = new SampleBulkTransferForm(disease);
+		createForm.setValue(referralSample);
+		final CommitDiscardWrapperComponent<SampleBulkTransferForm> createView = new CommitDiscardWrapperComponent<>(
+			createForm,
+			UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_TRANSFER),
+			createForm.getFieldGroup());
+
+		createView.addCommitListener(() -> {
+			if (!createForm.getFieldGroup().isModified()) {
+				saveSamples(createForm, samples);
+				if (callback != null)
+					callback.run();
+			}
+		});
+
+		VaadinUiUtil.showModalPopupWindow(createView, I18nProperties.getString(Strings.headingReferSamples));
+	}
 
 	public CommitDiscardWrapperComponent<SampleCreateForm> getSampleReferralCreateComponent(SampleDto existingSample, Disease disease) {
 		final SampleDto referralSample = SampleDto.buildReferralDto(UserProvider.getCurrent().getUserReference(), existingSample);
@@ -318,11 +349,58 @@ public class SampleController {
 		return createView;
 	}
 
+	private void saveSamples(SampleBulkTransferForm createForm, Collection<? extends SampleIndexDto> samples) {
+
+		List<SampleDto> samplesDtos = FacadeProvider.getSampleFacade().getByUuids(samples.stream().map(s -> s.getUuid()).collect(Collectors.toList()));
+		
+		final SampleDto sampleTemplate = createForm.getValue();
+		
+		for (SampleDto sample : samplesDtos)
+		{
+			SampleDto newSample = SampleDto.buildReferralDto(UserProvider.getCurrent().getUserReference(), sample);
+			//copy basic sample data that hasn't been copied in buildReferral()
+			newSample.setSamplePurpose(sample.getSamplePurpose());
+			newSample.setFieldSampleID(sample.getFieldSampleID());
+//			newSample.setForRetest(sample.getForRetest());
+			newSample.setReportLat(sample.getReportLat());
+			newSample.setReportLon(sample.getReportLon());
+			newSample.setReportLatLonAccuracy(sample.getReportLatLonAccuracy());
+			newSample.setRequestedOtherPathogenTests(sample.getRequestedOtherPathogenTests());
+			newSample.setRequestedOtherAdditionalTests(sample.getRequestedOtherAdditionalTests());			
+			
+			//copy shipment/reception info from sample form data
+			newSample.setLab(sampleTemplate.getLab());
+			newSample.setLabDetails(sampleTemplate.getLabDetails());
+			
+			newSample.setShipped(sampleTemplate.isShipped());
+			newSample.setShipmentDate(sampleTemplate.getShipmentDate());
+			newSample.setShipmentDetails(sampleTemplate.getShipmentDetails());
+			
+			newSample.setReceived(sampleTemplate.isReceived());
+			newSample.setReceivedDate(sampleTemplate.getReceivedDate());
+			newSample.setLabSampleID(sampleTemplate.getLabSampleID());
+			newSample.setSpecimenCondition(sampleTemplate.getSpecimenCondition());
+			newSample.setNoTestPossibleReason(sampleTemplate.getNoTestPossibleReason());
+			
+			//sample's comments
+			//add newComment to originalComment
+			String originalComment = sample.getComment() == null ? "" : sample.getComment();
+			String newComment = sampleTemplate.getComment() == null ? "" : sampleTemplate.getComment();
+			newSample.setComment(originalComment + (originalComment.length() > 0 && newComment.length() > 0 ? "\n" : "") + newComment);
+			
+			FacadeProvider.getSampleFacade().saveSample(newSample);
+		}
+		
+		Notification.show(I18nProperties.getString(Strings.messageSamplesTransferred), Type.HUMANIZED_MESSAGE);
+	}
+
 	public CommitDiscardWrapperComponent<SampleEditForm> getSampleEditComponent(
 		final String sampleUuid,
 		boolean isPseudonymized,
 		Disease disease,
 		boolean showDeleteButton) {
+
+	// public CommitDiscardWrapperComponent<SampleEditForm> getSampleEditComponent(final String sampleUuid) {
 
 		SampleEditForm form = new SampleEditForm(isPseudonymized, disease);
 		form.setWidth(form.getWidth() * 10 / 12, Unit.PIXELS);
@@ -518,6 +596,13 @@ public class SampleController {
 		});
 		requestTaskComponent.getCancelButton().addClickListener(event -> popupWindow.close());
 	}
+	public void showChangePathogenTestResultWindow(
+			CommitDiscardWrapperComponent<? extends AbstractSampleForm> editComponent,
+			String sampleUuid,
+			PathogenTestResultType newResult,
+			Consumer<Boolean> callback) {
+		showChangePathogenTestResultWindow(editComponent, Arrays.asList(sampleUuid), newResult, callback);
+	}
 
 	public void showChangePathogenTestResultWindow(
 		// CommitDiscardWrapperComponent<SampleEditForm> editComponent,
@@ -567,7 +652,6 @@ public class SampleController {
 					sample.setPathogenTestResult(newResult);
 					FacadeProvider.getSampleFacade().saveSample(sample);
 				}
-
 				popupWindow.close();
 				SormasUI.refreshView();
 				if (callback != null) {

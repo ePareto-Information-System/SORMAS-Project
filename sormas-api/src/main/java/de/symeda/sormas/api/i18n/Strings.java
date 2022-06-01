@@ -640,6 +640,7 @@ public interface Strings {
 	String headingReferCaseFromPointOfEntry = "headingReferCaseFromPointOfEntry";
 	String headingReferSample = "headingReferSample";
 	String headingRejectSormasToSormasShareRequest = "headingRejectSormasToSormasShareRequest";
+	String headingReferSamples = "headingReferSamples";
 	String headingRemoveCaseFromContact = "headingRemoveCaseFromContact";
 	String headingRequestedAdditionalTests = "headingRequestedAdditionalTests";
 	String headingRequestedPathogenTests = "headingRequestedPathogenTests";
@@ -1181,6 +1182,7 @@ public interface Strings {
 	String messageSampleSaved = "messageSampleSaved";
 	String messageSamplesDeleted = "messageSamplesDeleted";
 	String messageSelectedPeriodTooLong = "messageSelectedPeriodTooLong";
+	String messageSamplesTransferred = "messageSamplesTransferred";
 	String messageSetContactRegionAndDistrict = "messageSetContactRegionAndDistrict";
 	String messageSpecifyColumnAttribute = "messageSpecifyColumnAttribute";
 	String messageSpecifyFilterAttributes = "messageSpecifyFilterAttributes";

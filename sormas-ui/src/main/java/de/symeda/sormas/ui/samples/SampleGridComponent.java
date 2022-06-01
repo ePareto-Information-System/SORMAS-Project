@@ -18,21 +18,14 @@
 package de.symeda.sormas.ui.samples;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Page;
-import com.vaadin.ui.AbstractOrderedLayout;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.TextField;
@@ -43,6 +36,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.sample.SampleAssociationType;
 import de.symeda.sormas.api.sample.SampleCriteria;
+import de.symeda.sormas.api.sample.SampleIndexDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.ui.ControllerProvider;
@@ -141,6 +135,7 @@ public class SampleGridComponent extends VerticalLayout {
 	}
 
 	public HorizontalLayout createShipmentFilterBar() {
+
 		HorizontalLayout shipmentFilterLayout = new HorizontalLayout();
 		shipmentFilterLayout.setMargin(false);
 		shipmentFilterLayout.setSpacing(true);
@@ -295,7 +290,30 @@ public class SampleGridComponent extends VerticalLayout {
 			);				
 		}
 		
+		if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_TRANSFER)) {
+			menuItems.add(
+				new MenuBarHelper.MenuBarItem(
+					I18nProperties.getCaption(Captions.bulkReferSamples),
+					VaadinIcons.ARROW_FORWARD,
+					selectedItem -> createBulkTransfer())
+			);				
+		}
+		
 		if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
+			//				bulkOperationsDropdown = MenuBarHelper.createDropDown(
+//					Captions.bulkActions,
+//					new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkDelete), VaadinIcons.TRASH, selectedItem -> {
+//						ControllerProvider.getSampleController().deleteAllSelectedItems(grid.asMultiSelect().getSelectedItems(), new Runnable() {
+//
+//							public void run() {
+//								samplesView.navigateTo(criteria);
+//							}
+//						});
+//					}));
+//
+//				bulkOperationsDropdown.setVisible(samplesView.getViewConfiguration().isInEagerMode());
+//
+//				actionButtonsLayout.addComponent(bulkOperationsDropdown);
 			menuItems.add(
 				new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkDelete), VaadinIcons.TRASH, selectedItem -> {
 					ControllerProvider.getSampleController().deleteAllSelectedItems(grid.asMultiSelect().getSelectedItems(), new Runnable() {
@@ -370,7 +388,7 @@ public class SampleGridComponent extends VerticalLayout {
 			new Notification(
 				I18nProperties.getString(Strings.headingNoDiseasesSelected),
 				I18nProperties.getString(Strings.messageNoDiseasesSelected),
-				Type.WARNING_MESSAGE,
+				 Notification.Type.WARNING_MESSAGE,
 				false).show(Page.getCurrent());
 			return;
 		}
@@ -379,11 +397,46 @@ public class SampleGridComponent extends VerticalLayout {
 			new Notification(
 				I18nProperties.getString(Strings.headingNoLaboratoriesSelected),
 				I18nProperties.getString(Strings.messageNoLaboratoriesSelected),
-				Type.WARNING_MESSAGE,
+				// I18nProperties.getString(Strings.headingNoLabMessagesSelected),
+				// I18nProperties.getString(Strings.messageNoLabMessagesSelected),
+				 Notification.Type.WARNING_MESSAGE,
 				false).show(Page.getCurrent());
 			return;
 		}
 
-		ControllerProvider.getPathogenTestController().showBulkTestResultComponent(grid.asMultiSelect().getSelectedItems(), criteria.getDisease()); 
+		ControllerProvider.getPathogenTestController().showBulkTestResultComponent(grid.asMultiSelect().getSelectedItems(), criteria.getDisease());
+	}
+
+	private void createBulkTransfer() {
+		if (criteria.getDisease() == null) {
+			new Notification(
+				I18nProperties.getString(Strings.headingNoDiseasesSelected),
+				I18nProperties.getString(Strings.messageNoDiseasesSelected),
+				Notification.Type.WARNING_MESSAGE,
+				false).show(Page.getCurrent());
+			return;
+		}
+		
+		if (criteria.getLaboratory() == null) {
+			new Notification(
+				I18nProperties.getString(Strings.headingNoLabMessagesSelected),
+				I18nProperties.getString(Strings.messageNoLabMessagesSelected),
+				Notification.Type.WARNING_MESSAGE,
+				false).show(Page.getCurrent());
+			return;
+		}
+		
+		Collection<SampleIndexDto> samples = grid.asMultiSelect().getSelectedItems();
+		
+		if (samples.size() == 0) {
+			new Notification(
+				I18nProperties.getString(Strings.headingNoSamplesSelected),
+				I18nProperties.getString(Strings.messageNoSamplesSelected),
+				Notification.Type.WARNING_MESSAGE,
+				false).show(Page.getCurrent());
+			return;
+		}
+
+		ControllerProvider.getSampleController().createReferrals(samples, () -> grid.deselectAll());
 	}
 }

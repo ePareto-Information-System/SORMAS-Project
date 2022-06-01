@@ -210,6 +210,7 @@ public interface Captions {
 	String bulkInvestigationStatus = "bulkInvestigationStatus";
 	String bulkLinkToEvent = "bulkLinkToEvent";
 	String bulkLostToFollowUp = "bulkLostToFollowUp";
+	String bulkReferSamples = "bulkReferSamples";
 	String bulkSurveillanceOfficer = "bulkSurveillanceOfficer";
 	String bulkTaskAssignee = "bulkTaskAssignee";
 	String bulkTaskPriority = "bulkTaskPriority";
