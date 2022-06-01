@@ -737,6 +737,12 @@ public class SampleService extends AbstractDeletableAdoService<Sample> {
 		} else if (sampleAssociationType == SampleAssociationType.EVENT_PARTICIPANT) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.isNotNull(joins.getEventParticipant()));
 		}
+
+		if (criteria.getPathogenTestType() != null) {
+			filter =
+				CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getPathogenTests().get(PathogenTest.TEST_TYPE), criteria.getPathogenTestType()));
+		}
+
 		if (criteria.getRegion() != null) {
 			final String regionUuid = criteria.getRegion().getUuid();
 			filter = CriteriaBuilderHelper.and(

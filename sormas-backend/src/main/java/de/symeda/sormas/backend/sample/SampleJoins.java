@@ -50,9 +50,59 @@ public class SampleJoins extends QueryJoins<Sample> {
 	private CaseJoins caseJoins;
 	private ContactJoins contactJoins;
 	private EventParticipantJoins eventParticipantJoins;
+	private Join<Case, Person> casePerson;
+	private Join<Case, User> caseReportingUser;
+	private Join<Case, Region> caseResponsibleRegion;
+	private Join<Case, District> caseResponsibleDistrict;
+	private Join<Case, Community> caseResponsibleCommunity;
+	private Join<Case, Region> caseRegion;
+	private Join<Case, District> caseDistrict;
+	private Join<Case, Community> caseCommunity;
+	private Join<Case, Facility> caseFacility;
+	private Join<Case, PointOfEntry> casePointOfEntry;
+	private Join<Case, User> contactCaseReportingUser;
+	private Join<Case, Region> contactCaseResponsibleRegion;
+	private Join<Case, District> contactCaseResponsibleDistrict;
+	private Join<Case, Community> contactCaseResponsibleCommunity;
+	private Join<Case, Region> contactCaseRegion;
+	private Join<Case, District> contactCaseDistrict;
+	private Join<Case, Community> contactCaseCommunity;
+	private Join<Case, Facility> contactCaseHealthFacility;
+	private Join<Case, PointOfEntry> contactCasePointOfEntry;
+	private Join<Contact, Person> contactPerson;
+	private Join<Contact, User> contactReportingUser;
+	private Join<Contact, Region> contactRegion;
+	private Join<Contact, District> contactDistrict;
+	private Join<Contact, Community> contactCommunity;
+	private Join<Contact, Case> contactCase;
+	private Join<Person, Location> casePersonAddress;
+	private Join<Person, Location> contactPersonAddress;
+	private Join<Location, Region> casePersonAddressRegion;
+	private Join<Location, District> casePersonAddressDistrict;
+	private Join<Location, Community> casePersonAddressCommunity;
+	private Join<Location, Region> contactPersonAddressRegion;
+	private Join<Location, District> contactPersonAddressDistrict;
+	private Join<Location, Community> contactPersonAddressCommunity;
+	private Join<Location, Region> eventRegion;
+	private Join<Location, District> eventDistrict;
+	private Join<Location, Community> eventCommunity;
+	private Join<EventParticipant, Person> eventParticipantPerson;
+	private Join<EventParticipant, Event> event;
+	private Join<Event, Location> eventLocation;
+	private Join<Event, User> eventReportingUser;
+	private Join<Event, User> eventResponsibleUser;
+	private Join<Sample, PathogenTest> pathogenTests;
 
 	public SampleJoins(From<?, Sample> root) {
 		super(root);
+	}
+
+	public Join<Sample, PathogenTest> getPathogenTests() {
+		return getOrCreate(pathogenTests, Sample.PATHOGENTESTS, JoinType.LEFT, this::setPathogenTests);
+	}
+
+	private void setPathogenTests(Join<Sample, PathogenTest> pathogenTests) {
+		this.pathogenTests = pathogenTests;
 	}
 
 	public Join<Sample, User> getReportingUser() {
