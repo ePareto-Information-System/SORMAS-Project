@@ -225,6 +225,9 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String SHIVERING = "shivering";
 	public static final String FAST_HEART_RATE = "fastHeartRate";
 	public static final String OXYGEN_SATURATION_LOWER_94 = "oxygenSaturationLower94";
+	public static final String GENERAL_BODILY_PAINS = "generalBodilyPains";
+	public static final String LESIONS_NECK = "lesionsNeck";
+	public static final String LESIONS_TRUNK = "lesionsTrunk";
 
 	public static final String WEIGHT = "weight";
 
@@ -827,14 +830,13 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState kopliksSpots;
 
 	@Diseases({
-			AFP,
-			GUINEA_WORM,
-			MONKEYPOX,
-			ANTHRAX,
-			POLIO,
-			UNDEFINED,
-			OTHER })
-	@HideForCountries
+		AFP,
+		GUINEA_WORM,
+		MONKEYPOX,
+		ANTHRAX,
+		POLIO,
+		UNDEFINED,
+		OTHER })
 	@SymptomGrouping(SymptomGroup.SKIN)
 	/** Vesiculopustular rash */
 	private SymptomState lesions;
@@ -847,7 +849,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(LESIONS)
-	@HideForCountries
 	@SymptomGrouping(SymptomGroup.SKIN)
 	private Boolean lesionsAllOverBody;
 
@@ -860,7 +861,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(LESIONS)
-	@HideForCountries
 	@SymptomGrouping(SymptomGroup.SKIN)
 	private Boolean lesionsArms;
 
@@ -873,7 +873,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(LESIONS)
-	@HideForCountries
 	@SymptomGrouping(SymptomGroup.SKIN)
 	private SymptomState lesionsDeepProfound;
 
@@ -885,7 +884,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(LESIONS)
-	@HideForCountries
 	@SymptomGrouping(SymptomGroup.SKIN)
 	private Boolean lesionsFace;
 
@@ -897,7 +895,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(LESIONS)
-	@HideForCountries
 	@SymptomGrouping(SymptomGroup.SKIN)
 	private Boolean lesionsGenitals;
 
@@ -909,7 +906,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(LESIONS)
-	@HideForCountries
 	@SymptomGrouping(SymptomGroup.SKIN)
 	private Boolean lesionsLegs;
 
@@ -917,7 +913,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		MONKEYPOX,
 		ANTHRAX })
 	@DependantOn(LESIONS)
-	@HideForCountries
+	@SymptomGrouping(SymptomGroup.SKIN)
 	private Date lesionsOnsetDate;
 
 	@Diseases({
@@ -928,30 +924,33 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(LESIONS)
-	@HideForCountries
 	@SymptomGrouping(SymptomGroup.SKIN)
 	private Boolean lesionsPalmsHands;
 
 	@Diseases({
 		MONKEYPOX })
 	@DependantOn(LESIONS)
+	@SymptomGrouping(SymptomGroup.SKIN)
 	@HideForCountries
 	private SymptomState lesionsResembleImg1;
 	@Diseases({
 		MONKEYPOX })
 	@DependantOn(LESIONS)
+	@SymptomGrouping(SymptomGroup.SKIN)
 	@HideForCountries
 	private SymptomState lesionsResembleImg2;
 
 	@Diseases({
 		MONKEYPOX })
 	@DependantOn(LESIONS)
+	@SymptomGrouping(SymptomGroup.SKIN)
 	@HideForCountries
 	private SymptomState lesionsResembleImg3;
 
 	@Diseases({
 		MONKEYPOX })
 	@DependantOn(LESIONS)
+	@SymptomGrouping(SymptomGroup.SKIN)
 	@HideForCountries
 	private SymptomState lesionsResembleImg4;
 
@@ -963,7 +962,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(LESIONS)
-	@HideForCountries
+	@SymptomGrouping(SymptomGroup.SKIN)
 	private SymptomState lesionsSameSize;
 
 	@Diseases({
@@ -974,7 +973,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(LESIONS)
-	@HideForCountries
+	@SymptomGrouping(SymptomGroup.SKIN)
 	private SymptomState lesionsSameState;
 
 	@Diseases({
@@ -985,7 +984,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(LESIONS)
-	@HideForCountries
+	@SymptomGrouping(SymptomGroup.SKIN)
 	private Boolean lesionsSolesFeet;
 
 	@Diseases({
@@ -996,7 +995,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(LESIONS)
-	@HideForCountries
+	@SymptomGrouping(SymptomGroup.SKIN)
 	private SymptomState lesionsThatItch;
 
 	@Diseases({
@@ -1203,9 +1202,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@DependantOn(UNEXPLAINED_BLEEDING)
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState otherHemorrhagicSymptoms;
 
@@ -1217,12 +1213,10 @@ public class SymptomsDto extends PseudonymizableDto {
 		PLAGUE,
 		POLIO,
 		UNSPECIFIED_VHF,
+		MONKEYPOX,
 		UNDEFINED,
 		OTHER })
 	@DependantOn(OTHER_HEMORRHAGIC_SYMPTOMS)
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	@SensitiveData
 	@SymptomGrouping(SymptomGroup.OTHER)
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
@@ -1452,6 +1446,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		CSM,
 		MEASLES,
 		DENGUE,
+		MONKEYPOX,
 		POLIO,
 		UNSPECIFIED_VHF,
 		UNDEFINED,
@@ -1635,8 +1630,8 @@ public class SymptomsDto extends PseudonymizableDto {
 	private SymptomState pigmentaryRetinopathy;
 
 	@Diseases({
-		CONGENITAL_RUBELLA })
-	@HideForCountries
+		CONGENITAL_RUBELLA,
+		MONKEYPOX })
 	@SymptomGrouping(SymptomGroup.SKIN)
 	private SymptomState purpuricRash;
 
@@ -1702,9 +1697,6 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		OTHER,
 		CORONAVIRUS })
-	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	@SymptomGrouping(SymptomGroup.OTHER)
 	private SymptomState unexplainedBleeding;
 
@@ -1928,6 +1920,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		CORONAVIRUS,
 		UNDEFINED,
+		MONKEYPOX,
 		OTHER })
 	@HideForCountries(countries = {
 		CountryHelper.COUNTRY_CODE_GERMANY,
@@ -2300,6 +2293,33 @@ public class SymptomsDto extends PseudonymizableDto {
 		COUNTRY_CODE_SWITZERLAND })
 	@SymptomGrouping(SymptomGroup.GENERAL)
 	private SymptomState shivering;
+
+	@Diseases({
+		MONKEYPOX })
+	@SymptomGrouping(SymptomGroup.GENERAL)
+	private SymptomState generalBodilyPains;
+
+	@Diseases({
+		AFP,
+		GUINEA_WORM,
+		MONKEYPOX,
+		POLIO,
+		UNDEFINED,
+		OTHER })
+	@DependantOn(LESIONS)
+	@SymptomGrouping(SymptomGroup.SKIN)
+	private Boolean lesionsNeck;
+
+	@Diseases({
+		AFP,
+		GUINEA_WORM,
+		MONKEYPOX,
+		POLIO,
+		UNDEFINED,
+		OTHER })
+	@DependantOn(LESIONS)
+	@SymptomGrouping(SymptomGroup.SKIN)
+	private Boolean lesionsTrunk;
 
 	@Order(0)
 	public Float getTemperature() {
@@ -3910,6 +3930,33 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	public void setBloodCirculationProblems(SymptomState bloodCirculationProblems) {
 		this.bloodCirculationProblems = bloodCirculationProblems;
+	}
+
+	@Order(351)
+	public SymptomState getGeneralBodilyPains() {
+		return generalBodilyPains;
+	}
+
+	public void setGeneralBodilyPains(SymptomState generalBodilyPains) {
+		this.generalBodilyPains = generalBodilyPains;
+	}
+
+	@Order(352)
+	public Boolean getLesionsNeck() {
+		return lesionsNeck;
+	}
+
+	public void setLesionsNeck(Boolean lesionsNeck) {
+		this.lesionsNeck = lesionsNeck;
+	}
+
+	@Order(353)
+	public Boolean getLesionsTrunk() {
+		return lesionsTrunk;
+	}
+
+	public void setLesionsTrunk(Boolean lesionsTrunk) {
+		this.lesionsTrunk = lesionsTrunk;
 	}
 
 }
