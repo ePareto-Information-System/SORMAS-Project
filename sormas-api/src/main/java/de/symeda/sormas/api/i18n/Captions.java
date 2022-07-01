@@ -492,6 +492,7 @@ public interface Captions {
 	String CaseHospitalization_admittedToHealthFacility = "CaseHospitalization.admittedToHealthFacility";
 	String CaseHospitalization_dischargeDate = "CaseHospitalization.dischargeDate";
 	String CaseHospitalization_healthFacility = "CaseHospitalization.healthFacility";
+	String CaseHospitalization_healthFacilityRecord = "CaseHospitalization.healthFacilityRecord";
 	String CaseHospitalization_hospitalizationReason = "CaseHospitalization.hospitalizationReason";
 	String CaseHospitalization_hospitalizedPreviously = "CaseHospitalization.hospitalizedPreviously";
 	String CaseHospitalization_intensiveCareUnit = "CaseHospitalization.intensiveCareUnit";
@@ -2051,6 +2052,7 @@ public interface Captions {
 	String Symptoms_glasgowComaScale = "Symptoms.glasgowComaScale";
 	String Symptoms_gumsBleeding = "Symptoms.gumsBleeding";
 	String Symptoms_headache = "Symptoms.headache";
+	String Symptoms_generalBodilyPains = "Symptoms.generalBodilyPains";
 	String Symptoms_hearingloss = "Symptoms.hearingloss";
 	String Symptoms_heartRate = "Symptoms.heartRate";
 	String Symptoms_height = "Symptoms.height";
@@ -2074,6 +2076,8 @@ public interface Captions {
 	String Symptoms_lesionsArms = "Symptoms.lesionsArms";
 	String Symptoms_lesionsDeepProfound = "Symptoms.lesionsDeepProfound";
 	String Symptoms_lesionsFace = "Symptoms.lesionsFace";
+	String Symptoms_lesionsNeck = "Symptoms.lesionsNeck";
+	String Symptoms_lesionsTrunk = "Symptoms.lesionsTrunk";
 	String Symptoms_lesionsGenitals = "Symptoms.lesionsGenitals";
 	String Symptoms_lesionsLegs = "Symptoms.lesionsLegs";
 	String Symptoms_lesionsLocation = "Symptoms.lesionsLocation";
