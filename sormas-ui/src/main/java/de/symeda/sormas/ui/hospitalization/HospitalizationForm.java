@@ -69,11 +69,12 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	private static final String HOSPITALIZATION_HEADING_LOC = "hospitalizationHeadingLoc";
 	private static final String PREVIOUS_HOSPITALIZATIONS_HEADING_LOC = "previousHospitalizationsHeadingLoc";
 	private static final String HEALTH_FACILITY = Captions.CaseHospitalization_healthFacility;
+//	private static final String HEALTH_FACILITY_RECORD = Captions.CaseHospitalization_healthFacilityRecord;
 	//@formatter:off
 	private static final String HTML_LAYOUT =
 			loc(HOSPITALIZATION_HEADING_LOC) +
 			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY) +
-			fluidRowLocs(HEALTH_FACILITY) +
+			fluidRowLocs(HEALTH_FACILITY,HospitalizationDto.HEALTH_FACILITY_RECORD,"") +
 			fluidRowLocs(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, "") +
 			fluidRowLocs(HospitalizationDto.HOSPITALIZATION_REASON, HospitalizationDto.OTHER_HOSPITALIZATION_REASON) +
 					fluidRowLocs(3, HospitalizationDto.INTENSIVE_CARE_UNIT, 3,
@@ -128,6 +129,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		facilityField.setValue(noneFacility || !FacilityType.HOSPITAL.equals(caze.getFacilityType()) ? null : healthFacility.toString());
 		facilityField.setReadOnly(true);
 
+		TextField facilityRecord = addField(HospitalizationDto.HEALTH_FACILITY_RECORD, TextField.class);
+
 		final NullableOptionGroup admittedToHealthFacilityField = addField(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, NullableOptionGroup.class);
 		final DateField admissionDateField = addField(HospitalizationDto.ADMISSION_DATE, DateField.class);
 		final DateField dischargeDateField = addDateField(HospitalizationDto.DISCHARGE_DATE, DateField.class, 7);
@@ -166,7 +169,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 				isolatedField,
 				leftAgainstAdviceField,
 				hospitalizationReason,
-				otherHospitalizationReason),
+				otherHospitalizationReason,
+				facilityRecord),
 			false);
 
 		initializeVisibilitiesAndAllowedVisibilities();
