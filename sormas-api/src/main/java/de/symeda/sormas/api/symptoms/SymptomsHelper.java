@@ -174,6 +174,8 @@ public final class SymptomsHelper {
 		lesionsLocationsPropertyIds.add(SymptomsDto.LESIONS_ARMS);
 		lesionsLocationsPropertyIds.add(SymptomsDto.LESIONS_GENITALS);
 		lesionsLocationsPropertyIds.add(SymptomsDto.LESIONS_ALL_OVER_BODY);
+		lesionsLocationsPropertyIds.add(SymptomsDto.LESIONS_NECK);
+		lesionsLocationsPropertyIds.add(SymptomsDto.LESIONS_TRUNK);
 	}
 
 	public static void updateIsSymptomatic(SymptomsDto dto) {
@@ -498,6 +500,9 @@ public final class SymptomsHelper {
 		appendYesSymptom(string, symptomsDto.getUrinaryRetention(), SymptomsDto.URINARY_RETENTION);
 
 		appendNotNullValue(string, symptomsDto.getOtherComplicationsText(), SymptomsDto.OTHER_COMPLICATIONS_TEXT);
+		appendNotNullValue(string, symptomsDto.getGeneralBodilyPains(), SymptomsDto.GENERAL_BODILY_PAINS);
+		appendNotNullValue(string, symptomsDto.getGeneralBodilyPains(), SymptomsDto.LESIONS_NECK);
+		appendNotNullValue(string, symptomsDto.getGeneralBodilyPains(), SymptomsDto.LESIONS_TRUNK);
 
 		// symptomsComments;
 
