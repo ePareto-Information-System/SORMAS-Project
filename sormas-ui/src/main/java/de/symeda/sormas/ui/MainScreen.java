@@ -40,7 +40,6 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
-import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.feature.FeatureTypeProperty;
@@ -136,22 +135,22 @@ public class MainScreen extends HorizontalLayout {
 			ControllerProvider.getDashboardController().registerViews(navigator);
 			if (permitted(FeatureType.CASE_SURVEILANCE, UserRight.DASHBOARD_SURVEILLANCE_ACCESS)) {
 				menu.addView(
-						SurveillanceDashboardView.class,
-						AbstractDashboardView.ROOT_VIEW_NAME,
-						I18nProperties.getCaption(Captions.mainMenuDashboard),
-						VaadinIcons.DASHBOARD);
+					SurveillanceDashboardView.class,
+					AbstractDashboardView.ROOT_VIEW_NAME,
+					I18nProperties.getCaption(Captions.mainMenuDashboard),
+					VaadinIcons.DASHBOARD);
 			} else if (permitted(FeatureType.CONTACT_TRACING, UserRight.DASHBOARD_CONTACT_ACCESS)) {
 				menu.addView(
-						ContactsDashboardView.class,
-						AbstractDashboardView.ROOT_VIEW_NAME,
-						I18nProperties.getCaption(Captions.mainMenuDashboard),
-						VaadinIcons.DASHBOARD);
+					ContactsDashboardView.class,
+					AbstractDashboardView.ROOT_VIEW_NAME,
+					I18nProperties.getCaption(Captions.mainMenuDashboard),
+					VaadinIcons.DASHBOARD);
 			} else if (permitted(FeatureType.CAMPAIGNS, UserRight.DASHBOARD_CAMPAIGNS_ACCESS)) {
 				menu.addView(
-						CampaignDashboardView.class,
-						AbstractDashboardView.ROOT_VIEW_NAME,
-						I18nProperties.getCaption(Captions.mainMenuDashboard),
-						VaadinIcons.DASHBOARD);
+					CampaignDashboardView.class,
+					AbstractDashboardView.ROOT_VIEW_NAME,
+					I18nProperties.getCaption(Captions.mainMenuDashboard),
+					VaadinIcons.DASHBOARD);
 			}
 		}
 
@@ -200,8 +199,7 @@ public class MainScreen extends HorizontalLayout {
 				VaadinIcons.HEALTH_CARD);
 		}
 
-		if (permitted(FeatureType.TRAVEL_ENTRIES, UserRight.TRAVEL_ENTRY_MANAGEMENT_ACCESS)
-			&& FacadeProvider.getConfigFacade().isConfiguredCountry(CountryHelper.COUNTRY_CODE_GERMANY)) {
+		if (permitted(FeatureType.TRAVEL_ENTRIES, UserRight.TRAVEL_ENTRY_MANAGEMENT_ACCESS)) {
 			ControllerProvider.getTravelEntryController().registerViews(navigator);
 			menu.addView(
 				TravelEntriesView.class,
