@@ -57,6 +57,7 @@ public class Hospitalization extends AbstractDomainObject {
 	public static final String INTENSIVE_CARE_UNIT_START = "intensiveCareUnitStart";
 	public static final String INTENSIVE_CARE_UNIT_END = "intensiveCareUnitEnd";
 	public static final String DESCRIPTION = "description";
+	public static final String HEALTH_FACILITY_RECORD = "healthFacilityRecord";
 
 	private YesNoUnknown admittedToHealthFacility;
 	private Date admissionDate;
@@ -74,6 +75,7 @@ public class Hospitalization extends AbstractDomainObject {
 	private HospitalizationReasonType hospitalizationReason;
 	private String otherHospitalizationReason;
 	private String description;
+	private String healthFacilityRecord;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getAdmissionDate() {
@@ -211,5 +213,13 @@ public class Hospitalization extends AbstractDomainObject {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getHealthFacilityRecord() {
+		return healthFacilityRecord;
+	}
+
+	public void setHealthFacilityRecord(String healthFacilityRecord) {
+		this.healthFacilityRecord = healthFacilityRecord;
 	}
 }
