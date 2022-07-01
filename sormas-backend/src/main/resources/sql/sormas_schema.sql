@@ -9941,3 +9941,17 @@ ALTER TABLE testreport_history ADD COLUMN testeddiseasevariantdetails varchar(25
 INSERT INTO schema_version (version_number, comment) VALUES (439, 'Add disease variant mapping to test reports #7209');
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
+
+ALTER TABLE hospitalization ADD COLUMN healthfacilityrecord varchar(255),
+ALTER TABLE symptoms ADD COLUMN generalbodilypains varchar(255);
+ALTER TABLE symptoms ADD COLUMN lesionsNeck boolean;
+ALTER TABLE symptoms ADD COLUMN lesionsTrunk boolean;
+
+ALTER TABLE hospitalization_history ADD COLUMN healthfacilityrecord varchar(255),
+ALTER TABLE symptoms_history ADD COLUMN generalbodilypains varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN lesionsNeck boolean;
+ALTER TABLE symptoms_history ADD COLUMN lesionsTrunk boolean;
+
+INSERT INTO schema_version (version_number, comment) VALUES (440, 'Enable more fields for monkeypox');
+
+-- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
