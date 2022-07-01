@@ -220,6 +220,9 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setDizzinessStandingUp(source.getDizzinessStandingUp());
 		target.setHighOrLowBloodPressure(source.getHighOrLowBloodPressure());
 		target.setUrinaryRetention(source.getUrinaryRetention());
+		target.setGeneralBodilyPains(source.getGeneralBodilyPains());
+		target.setLesionsNeck(source.getLesionsNeck());
+		target.setLesionsTrunk(source.getLesionsTrunk());
 
 		return target;
 	}
@@ -415,6 +418,9 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setDizzinessStandingUp(source.getDizzinessStandingUp());
 		target.setHighOrLowBloodPressure(source.getHighOrLowBloodPressure());
 		target.setUrinaryRetention(source.getUrinaryRetention());
+		target.setGeneralBodilyPains(source.getGeneralBodilyPains());
+		target.setLesionsNeck(source.getLesionsNeck());
+		target.setLesionsTrunk(source.getLesionsTrunk());
 
 		return target;
 	}
