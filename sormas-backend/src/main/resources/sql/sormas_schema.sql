@@ -9948,7 +9948,7 @@ ALTER TABLE symptoms ADD COLUMN lesionsNeck boolean;
 ALTER TABLE symptoms ADD COLUMN lesionsTrunk boolean;
 
 ALTER TABLE hospitalization_history ADD COLUMN healthfacilityrecord varchar(255),
-ALTER TABLE symptoms_history ADD COLUMN generalbodilypains varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN generalbodilypains boolean;
 ALTER TABLE symptoms_history ADD COLUMN lesionsNeck boolean;
 ALTER TABLE symptoms_history ADD COLUMN lesionsTrunk boolean;
 

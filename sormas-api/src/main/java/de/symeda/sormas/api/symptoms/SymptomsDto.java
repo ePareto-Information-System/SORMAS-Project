@@ -2297,7 +2297,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		MONKEYPOX })
 	@SymptomGrouping(SymptomGroup.GENERAL)
-	private SymptomState generalBodilyPains;
+	private Boolean generalBodilyPains;
 
 	@Diseases({
 		AFP,
@@ -3933,11 +3933,11 @@ public class SymptomsDto extends PseudonymizableDto {
 	}
 
 	@Order(351)
-	public SymptomState getGeneralBodilyPains() {
+	public Boolean getGeneralBodilyPains() {
 		return generalBodilyPains;
 	}
 
-	public void setGeneralBodilyPains(SymptomState generalBodilyPains) {
+	public void setGeneralBodilyPains(Boolean generalBodilyPains) {
 		this.generalBodilyPains = generalBodilyPains;
 	}
 

@@ -217,7 +217,7 @@ public class Symptoms extends AbstractDomainObject {
 	private SymptomState dizzinessStandingUp;
 	private SymptomState highOrLowBloodPressure;
 	private SymptomState urinaryRetention;
-	private SymptomState generalBodilyPains;
+	private Boolean generalBodilyPains;
 	private Boolean lesionsNeck;
 	private Boolean lesionsTrunk;
 
@@ -1845,12 +1845,11 @@ public class Symptoms extends AbstractDomainObject {
 		this.otherComplicationsText = otherComplicationsText;
 	}
 
-	@Enumerated(EnumType.STRING)
-	public SymptomState getGeneralBodilyPains() {
+	public Boolean getGeneralBodilyPains() {
 		return generalBodilyPains;
 	}
 
-	public void setGeneralBodilyPains(SymptomState generalBodilyPains) {
+	public void setGeneralBodilyPains(Boolean generalBodilyPains) {
 		this.generalBodilyPains = generalBodilyPains;
 	}
 
