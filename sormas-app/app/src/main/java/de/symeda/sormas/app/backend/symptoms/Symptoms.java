@@ -425,6 +425,12 @@ public class Symptoms extends PseudonymizableAdo {
 	private SymptomState urinaryRetention;
 	@Enumerated(EnumType.STRING)
 	private SymptomState shivering;
+	@DatabaseField
+	private Boolean generalBodilyPains;
+	@DatabaseField
+	private Boolean lesionsTrunk;
+	@DatabaseField
+	private Boolean lesionsNeck;
 
 	@Override
 	public String getI18nPrefix() {
@@ -1869,5 +1875,26 @@ public class Symptoms extends PseudonymizableAdo {
 
 	public void setShivering(SymptomState shivering) {
 		this.shivering = shivering;
+	}
+	public Boolean getGeneralBodilyPains() {
+		return generalBodilyPains;
+	}
+
+	public void setGeneralBodilyPains(Boolean generalBodilyPains) {
+		this.generalBodilyPains = generalBodilyPains;
+	}
+	public Boolean getLesionsTrunk() {
+		return lesionsTrunk;
+	}
+
+	public void setLesionsTrunk(Boolean lesionsTrunk) {
+		this.lesionsTrunk = lesionsTrunk;
+	}
+	public Boolean getLesionsNeck() {
+		return lesionsNeck;
+	}
+
+	public void setLesionsNeck(Boolean lesionsNeck) {
+		this.lesionsNeck = lesionsNeck;
 	}
 }
