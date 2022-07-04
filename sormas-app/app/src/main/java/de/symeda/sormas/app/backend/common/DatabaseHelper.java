@@ -2943,6 +2943,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(EventParticipant.class).executeRaw(
 					"UPDATE eventParticipants SET reportingUser_id = (SELECT reportingUser_id FROM events WHERE events.id = eventParticipants.event_id) WHERE reportingUser_id IS NULL;");
 
+			case 331:
+				currentVersion = 331;
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN generalBodilyPains boolean;");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN lesionsNeck boolean;");
+				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN lesionsTrunk boolean;");
+				getDao(PreviousHospitalization.class).executeRaw("ALTER TABLE previoushospitalization ADD COLUMN healthfacilityrecord varchar(255);");
+
 				// ATTENTION: break should only be done after last version
 				break;
 
