@@ -11,6 +11,9 @@ public enum SymptomGroup {
 	URINARY,
 	NERVOUS_SYSTEM,
 	SKIN,
+	RASH,
+	RASH_CHARACTERISTICS,
+	RASH_TYPE,
 	OTHER;
 
 	public String toString() {
