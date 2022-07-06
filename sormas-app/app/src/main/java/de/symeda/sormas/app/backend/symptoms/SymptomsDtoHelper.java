@@ -235,6 +235,9 @@ public class SymptomsDtoHelper extends AdoDtoHelper<Symptoms, SymptomsDto> {
 		target.setHighOrLowBloodPressure(source.getHighOrLowBloodPressure());
 		target.setUrinaryRetention(source.getUrinaryRetention());
 		target.setShivering(source.getShivering());
+		target.setGeneralBodilyPains(source.getGeneralBodilyPains());
+		target.setLesionsTrunk(source.getLesionsTrunk());
+		target.setLesionsNeck(source.getLesionsNeck());
 
 		target.setPseudonymized(source.isPseudonymized());
 	}
@@ -421,6 +424,9 @@ public class SymptomsDtoHelper extends AdoDtoHelper<Symptoms, SymptomsDto> {
 		target.setHighOrLowBloodPressure(source.getHighOrLowBloodPressure());
 		target.setUrinaryRetention(source.getUrinaryRetention());
 		target.setShivering(source.getShivering());
+		target.setGeneralBodilyPains(source.getGeneralBodilyPains());
+		target.setLesionsNeck(source.getLesionsNeck());
+		target.setLesionsTrunk(source.getLesionsTrunk());
 
 		target.setPseudonymized(source.isPseudonymized());
 	}

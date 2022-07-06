@@ -87,6 +87,9 @@ public class PreviousHospitalization extends PseudonymizableAdo {
 	@Column(length = CHARACTER_LIMIT_BIG)
 	private String description;
 
+	@Column(length = CHARACTER_LIMIT_BIG)
+	private String healthFacilityRecord;
+
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private Hospitalization hospitalization;
 
@@ -240,6 +243,15 @@ public class PreviousHospitalization extends PseudonymizableAdo {
 	public void setIntensiveCareUnitEnd(Date intensiveCareUnitEnd) {
 		this.intensiveCareUnitEnd = intensiveCareUnitEnd;
 	}
+
+	public String getHealthFacilityRecord() {
+		return healthFacilityRecord;
+	}
+
+	public void setHealthFacilityRecord(String healthFacilityRecord) {
+		this.healthFacilityRecord = healthFacilityRecord;
+	}
+
 
 	@Override
 	public String getI18nPrefix() {

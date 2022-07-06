@@ -456,7 +456,10 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			DIZZINESS_STANDING_UP,
 			HIGH_OR_LOW_BLOOD_PRESSURE,
 			URINARY_RETENTION,
-			FEVER);
+			FEVER,
+			GENERAL_BODILY_PAINS,
+			LESIONS_NECK,
+			LESIONS_TRUNK);
 
 		addField(SYMPTOMS_COMMENTS, TextField.class).setDescription(
 			I18nProperties.getPrefixDescription(I18N_PREFIX, SYMPTOMS_COMMENTS, "") + "\n" + I18nProperties.getDescription(Descriptions.descGdpr));
@@ -530,8 +533,10 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			LESIONS_PALMS_HANDS,
 			LESIONS_THORAX,
 			LESIONS_ARMS,
+			LESIONS_TRUNK,
 			LESIONS_GENITALS,
-			LESIONS_ALL_OVER_BODY);
+			LESIONS_ALL_OVER_BODY,
+			LESIONS_NECK);
 
 		unconditionalSymptomFieldIds = Arrays.asList(
 			FEVER,
@@ -663,7 +668,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			MENINGEAL_SIGNS,
 			SEIZURES,
 			SEPSIS,
-			SHOCK);
+			SHOCK,
+			GENERAL_BODILY_PAINS);
 
 		// Set visibilities
 
@@ -770,8 +776,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		}
 
 		FieldHelper.setRequiredWhen(getFieldGroup(), getFieldGroup().getField(LESIONS), lesionsFieldIds, Arrays.asList(SymptomState.YES), disease);
-		FieldHelper
-			.setRequiredWhen(getFieldGroup(), getFieldGroup().getField(LESIONS), monkeypoxImageFieldIds, Arrays.asList(SymptomState.YES), disease);
 
 		addListenerForOnsetFields(onsetSymptom, onsetDateField);
 

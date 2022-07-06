@@ -63,6 +63,7 @@ public class PreviousHospitalization extends AbstractDomainObject {
 	public static final String INTENSIVE_CARE_UNIT = "intensiveCareUnit";
 	public static final String INTENSIVE_CARE_UNIT_START = "intensiveCareUnitStart";
 	public static final String INTENSIVE_CARE_UNIT_END = "intensiveCareUnitEnd";
+	public static final String HEALTH_FACILITY_RECORD = "healthFacilityRecord";
 
 	private YesNoUnknown admittedToHealthFacility;
 	private Date admissionDate;
@@ -81,6 +82,7 @@ public class PreviousHospitalization extends AbstractDomainObject {
 	private YesNoUnknown intensiveCareUnit;
 	private Date intensiveCareUnitStart;
 	private Date intensiveCareUnitEnd;
+	private String healthFacilityRecord;
 
 	@Enumerated(EnumType.STRING)
 	public YesNoUnknown getAdmittedToHealthFacility() {
@@ -233,5 +235,13 @@ public class PreviousHospitalization extends AbstractDomainObject {
 
 	public void setIntensiveCareUnitEnd(Date intensiveCareUnitEnd) {
 		this.intensiveCareUnitEnd = intensiveCareUnitEnd;
+	}
+
+	public String getHealthFacilityRecord() {
+		return healthFacilityRecord;
+	}
+
+	public void setHealthFacilityRecord(String healthFacilityRecord) {
+		this.healthFacilityRecord = healthFacilityRecord;
 	}
 }

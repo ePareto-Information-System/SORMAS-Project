@@ -75,6 +75,7 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setLeftAgainstAdvice(source.getLeftAgainstAdvice());
 		target.setHospitalizationReason(source.getHospitalizationReason());
 		target.setOtherHospitalizationReason(source.getOtherHospitalizationReason());
+		target.setHealthFacilityRecord(source.getHealthFacilityRecord());
 
 		List<PreviousHospitalization> previousHospitalizations = new ArrayList<>();
 		for (PreviousHospitalizationDto prevDto : source.getPreviousHospitalizations()) {
@@ -92,6 +93,8 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setIntensiveCareUnitEnd(source.getIntensiveCareUnitEnd());
 		target.setPatientConditionOnAdmission(source.getPatientConditionOnAdmission());
 		target.setDescription(source.getDescription());
+		target.setHealthFacilityRecord(source.getHealthFacilityRecord());
+
 		return target;
 	}
 
@@ -120,6 +123,7 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setIntensiveCareUnit(source.getIntensiveCareUnit());
 		target.setIntensiveCareUnitStart(source.getIntensiveCareUnitStart());
 		target.setIntensiveCareUnitEnd(source.getIntensiveCareUnitEnd());
+		target.setHealthFacilityRecord(source.getHealthFacilityRecord());
 
 		return target;
 	}
@@ -144,6 +148,7 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setLeftAgainstAdvice(source.getLeftAgainstAdvice());
 		target.setHospitalizationReason(source.getHospitalizationReason());
 		target.setOtherHospitalizationReason(source.getOtherHospitalizationReason());
+		target.setHealthFacilityRecord(source.getHealthFacilityRecord());
 
 		List<PreviousHospitalizationDto> previousHospitalizations = new ArrayList<>();
 		for (PreviousHospitalization prevDto : source.getPreviousHospitalizations()) {
@@ -186,6 +191,7 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setIntensiveCareUnit(source.getIntensiveCareUnit());
 		target.setIntensiveCareUnitStart(source.getIntensiveCareUnitStart());
 		target.setIntensiveCareUnitEnd(source.getIntensiveCareUnitEnd());
+		target.setHealthFacilityRecord(source.getHealthFacilityRecord());
 
 		return target;
 	}

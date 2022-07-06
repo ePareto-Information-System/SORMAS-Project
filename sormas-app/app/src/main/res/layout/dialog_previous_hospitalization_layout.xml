@@ -119,14 +119,19 @@
 
                 <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
                     android:id="@+id/casePreviousHospitalization_community"
-                    app:value="@={data.community}"
-                    style="@style/ControlFirstOfTwoColumnsStyle" />
+                    style="@style/ControlFirstOfTwoColumnsStyle"
+                    app:value="@={data.community}" />
 
                 <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
                     android:id="@+id/casePreviousHospitalization_healthFacility"
+                    style="@style/ControlSecondOfTwoColumnsStyle"
                     app:required="true"
-                    app:value="@={data.healthFacility}"
-                    style="@style/ControlSecondOfTwoColumnsStyle" />
+                    app:value="@={data.healthFacility}" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/casePreviousHospitalization_record"
+                    style="@style/ControlSecondOfTwoColumnsStyle"
+                    app:value="@={data.healthFacilityRecord}" />
 
             </LinearLayout>
 

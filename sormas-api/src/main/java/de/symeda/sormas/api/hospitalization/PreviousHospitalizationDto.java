@@ -56,6 +56,7 @@ public class PreviousHospitalizationDto extends PseudonymizableDto {
 	public static final String INTENSIVE_CARE_UNIT = "intensiveCareUnit";
 	public static final String INTENSIVE_CARE_UNIT_START = "intensiveCareUnitStart";
 	public static final String INTENSIVE_CARE_UNIT_END = "intensiveCareUnitEnd";
+	public static final String HEALTH_FACILITY_RECORD = "healthFacilityRecord";
 
 	private YesNoUnknown admittedToHealthFacility;
 	private Date admissionDate;
@@ -82,6 +83,7 @@ public class PreviousHospitalizationDto extends PseudonymizableDto {
 	private YesNoUnknown intensiveCareUnit;
 	private Date intensiveCareUnitStart;
 	private Date intensiveCareUnitEnd;
+	private String healthFacilityRecord;
 
 	public static PreviousHospitalizationDto build(CaseDataDto caze) {
 
@@ -245,5 +247,13 @@ public class PreviousHospitalizationDto extends PseudonymizableDto {
 
 	public void setIntensiveCareUnitEnd(Date intensiveCareUnitEnd) {
 		this.intensiveCareUnitEnd = intensiveCareUnitEnd;
+	}
+
+	public String getHealthFacilityRecord() {
+		return healthFacilityRecord;
+	}
+
+	public void setHealthFacilityRecord(String healthFacilityRecord) {
+		this.healthFacilityRecord = healthFacilityRecord;
 	}
 }
