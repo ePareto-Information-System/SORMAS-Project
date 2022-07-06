@@ -10105,6 +10105,6 @@ ALTER TABLE symptoms_history ADD COLUMN generalbodilypains boolean;
 ALTER TABLE symptoms_history ADD COLUMN lesionsNeck boolean;
 ALTER TABLE symptoms_history ADD COLUMN lesionsTrunk boolean;
 
-INSERT INTO schema_version (version_number, comment) VALUES (440, 'Enable more fields for monkeypox');
+INSERT INTO schema_version (version_number, comment) VALUES (442, 'Enable more fields for monkeypox');
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
