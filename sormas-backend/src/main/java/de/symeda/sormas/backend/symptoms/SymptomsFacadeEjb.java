@@ -223,6 +223,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setGeneralBodilyPains(source.getGeneralBodilyPains());
 		target.setLesionsNeck(source.getLesionsNeck());
 		target.setLesionsTrunk(source.getLesionsTrunk());
+		target.setRashes(source.getRashes());
 
 		return target;
 	}
@@ -421,6 +422,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setGeneralBodilyPains(source.getGeneralBodilyPains());
 		target.setLesionsNeck(source.getLesionsNeck());
 		target.setLesionsTrunk(source.getLesionsTrunk());
+		target.setRashes(source.getRashes());
 
 		return target;
 	}
