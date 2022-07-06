@@ -188,7 +188,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	// any time you make changes to your database objects, you may have to increase the database version
 
 	// public static final int DATABASE_VERSION = 307;
-	public static final int DATABASE_VERSION = 331;
+	public static final int DATABASE_VERSION = 336;
 
 	private static DatabaseHelper instance = null;
 
@@ -2991,11 +2991,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(EventParticipant.class).executeRaw(
 					"UPDATE eventParticipants SET reportingUser_id = (SELECT reportingUser_id FROM events WHERE events.id = eventParticipants.event_id) WHERE reportingUser_id IS NULL;");
 
-			case 331:
-				currentVersion = 331;
+			case 336:
+				currentVersion = 336;
 				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN generalBodilyPains boolean;");
 				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN lesionsNeck boolean;");
 				getDao(Symptoms.class).executeRaw("ALTER TABLE symptoms ADD COLUMN lesionsTrunk boolean;");
+				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalization ADD COLUMN healthfacilityrecord varchar(255);");
 				getDao(PreviousHospitalization.class).executeRaw("ALTER TABLE previoushospitalization ADD COLUMN healthfacilityrecord varchar(255);");
 
 				// ATTENTION: break should only be done after last version
