@@ -10107,4 +10107,90 @@ ALTER TABLE symptoms_history ADD COLUMN lesionsTrunk boolean;
 
 INSERT INTO schema_version (version_number, comment) VALUES (442, 'Enable more fields for monkeypox');
 
+--	get person's date of birth (birthdate)
+CREATE OR REPLACE FUNCTION get_person_birthdate (_id BIGINT)
+RETURNS TIMESTAMP AS $$
+DECLARE _birthdate TIMESTAMP;
+BEGIN
+	SELECT INTO _birthdate
+		CASE
+			WHEN COALESCE(birthdate_dd, 0) > 0 AND COALESCE(birthdate_mm, 0) > 0 AND COALESCE(birthdate_yyyy, 0) > 0 
+				THEN (
+					CASE 
+						WHEN birthdate_yyyy < 10 	THEN '200' 	|| birthdate_yyyy 
+						WHEN birthdate_yyyy < 31 	THEN '20' 	|| birthdate_yyyy 
+						WHEN birthdate_yyyy < 100 	THEN '19' 	|| birthdate_yyyy 
+						WHEN birthdate_yyyy < 1800 	THEN '1800'
+						ELSE '' || birthdate_yyyy 
+					END
+					|| '-' ||
+					CASE
+						WHEN COALESCE(birthdate_mm, 0) > 12 THEN 12
+						WHEN COALESCE(birthdate_mm, 0) > 0 THEN birthdate_mm
+						ELSE 6
+					END
+					|| '-' ||
+					CASE
+						WHEN COALESCE(birthdate_dd, 0) > 28 THEN 28
+						WHEN COALESCE(birthdate_dd, 0) > 0 THEN birthdate_dd
+						ELSE 1
+					END
+				)::TIMESTAMP
+			WHEN COALESCE(approximateage, 0) > 0
+				THEN COALESCE(approximateagereferencedate, changedate) - (approximateage || COALESCE(approximateagetype, 'YEAR'))::INTERVAL
+			WHEN COALESCE(birthdate_yyyy, 0) > 0
+				THEN (
+					CASE 
+						WHEN birthdate_yyyy < 10 	THEN '200' 	|| birthdate_yyyy 
+						WHEN birthdate_yyyy < 31 	THEN '20' 	|| birthdate_yyyy 
+						WHEN birthdate_yyyy < 100 	THEN '19' 	|| birthdate_yyyy 
+						WHEN birthdate_yyyy < 1800 	THEN '1800'
+						ELSE '' || birthdate_yyyy 
+					END
+					|| '-' ||
+					CASE
+						WHEN COALESCE(birthdate_mm, 0) > 12 THEN 12
+						WHEN COALESCE(birthdate_mm, 0) > 0 THEN birthdate_mm
+						ELSE 6
+					END
+					|| '-' ||
+					CASE
+						WHEN COALESCE(birthdate_dd, 0) > 28 THEN 28
+						WHEN COALESCE(birthdate_dd, 0) > 0 THEN birthdate_dd
+						ELSE 1
+					END
+				)::TIMESTAMP
+		END
+	FROM person
+	WHERE id = _id;
+	
+	RETURN _birthdate;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_person_age (_id BIGINT, _reference_date TIMESTAMP)
+RETURNS BIGINT AS $$
+DECLARE _birthdate TIMESTAMP;
+				_age BIGINT;
+BEGIN
+	SELECT INTO _birthdate get_person_birthdate(_id);
+	
+	SELECT INTO _age
+		CASE
+			WHEN _birthdate IS NULL THEN 0
+			ELSE ABS(EXTRACT(DAY FROM COALESCE(_reference_date, NOW()) - _birthdate))
+		END;
+		
+	SELECT INTO _age
+		CASE
+			WHEN _age > 0 THEN _age / 356
+			ELSE 0
+		END;
+	
+	RETURN _age;
+END;
+$$ LANGUAGE plpgsql;
+
+INSERT INTO schema_version (version_number, comment) VALUES (443, 'Add person age functions for dhims adapter');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
