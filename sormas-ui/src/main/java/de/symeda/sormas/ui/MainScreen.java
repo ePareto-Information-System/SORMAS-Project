@@ -200,8 +200,7 @@ public class MainScreen extends HorizontalLayout {
 				VaadinIcons.HEALTH_CARD);
 		}
 
-		if (permitted(FeatureType.TRAVEL_ENTRIES, UserRight.TRAVEL_ENTRY_MANAGEMENT_ACCESS)
-			&& FacadeProvider.getConfigFacade().isConfiguredCountry(CountryHelper.COUNTRY_CODE_GERMANY)) {
+		if (permitted(FeatureType.TRAVEL_ENTRIES, UserRight.TRAVEL_ENTRY_MANAGEMENT_ACCESS)) {
 			ControllerProvider.getTravelEntryController().registerViews(navigator);
 			menu.addView(
 				TravelEntriesView.class,
