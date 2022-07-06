@@ -125,7 +125,7 @@ public class AboutView extends VerticalLayout implements View {
 		ConfigFacade configFacade = FacadeProvider.getConfigFacade();
 		String infoLabelStr = configFacade.isCustomBranding()
 			? String.format(I18nProperties.getCaption(Captions.aboutBrandedSormasVersion), configFacade.getCustomBrandingName())
-			: "SORMAS";
+			: "SORMAS (GH)";
 		Label infoLabel = new Label(VaadinIcons.INFO_CIRCLE.getHtml() + " " + infoLabelStr, ContentMode.HTML);
 		infoLayout.addComponent(infoLabel);
 
