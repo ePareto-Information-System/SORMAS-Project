@@ -9942,18 +9942,18 @@ INSERT INTO schema_version (version_number, comment) VALUES (439, 'Add disease v
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 
-ALTER TABLE hospitalization ADD COLUMN healthfacilityrecordNumber varchar(255);
-ALTER TABLE previoushospitalization ADD COLUMN healthfacilityrecordNumber varchar(255);
+ALTER TABLE hospitalization ADD COLUMN healthfacilityrecordnumber varchar(255);
+ALTER TABLE previoushospitalization ADD COLUMN healthfacilityrecordnumber varchar(255);
 ALTER TABLE symptoms ADD COLUMN generalbodilypains varchar(255);
-ALTER TABLE symptoms ADD COLUMN lesionsNeck boolean;
-ALTER TABLE symptoms ADD COLUMN lesionsTrunk boolean;
+ALTER TABLE symptoms ADD COLUMN lesionsneck boolean;
+ALTER TABLE symptoms ADD COLUMN lesionstrunk boolean;
 ALTER TABLE symptoms ADD COLUMN rashes varchar(255);
 
-ALTER TABLE hospitalization_history ADD COLUMN healthfacilityrecordNumber varchar(255);
-ALTER TABLE previoushospitalization_history ADD COLUMN healthfacilityrecordNumber varchar(255);
+ALTER TABLE hospitalization_history ADD COLUMN healthfacilityrecordnumber varchar(255);
+ALTER TABLE previoushospitalization_history ADD COLUMN healthfacilityrecordnumber varchar(255);
 ALTER TABLE symptoms_history ADD COLUMN generalbodilypains varchar(255);
-ALTER TABLE symptoms_history ADD COLUMN lesionsNeck boolean;
-ALTER TABLE symptoms_history ADD COLUMN lesionsTrunk boolean;
+ALTER TABLE symptoms_history ADD COLUMN lesionsneck boolean;
+ALTER TABLE symptoms_history ADD COLUMN lesionstrunk boolean;
 ALTER TABLE symptoms_history ADD COLUMN rashes varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (440, 'Enable more fields for monkeypox');
