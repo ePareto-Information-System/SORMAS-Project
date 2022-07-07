@@ -203,6 +203,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String SIDE_PAIN = "sidePain";
 	public static final String SKIN_BRUISING = "skinBruising";
 	public static final String SKIN_RASH = "skinRash";
+	public static final String RASHES = "rashes";
 	public static final String SKIN_ULCERS = "skinUlcers";
 	public static final String SORE_THROAT = "soreThroat";
 	public static final String SPLENOMEGALY = "splenomegaly";
@@ -837,7 +838,19 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		UNDEFINED,
 		OTHER })
-	@SymptomGrouping(SymptomGroup.SKIN)
+	@SymptomGrouping(SymptomGroup.RASH)
+	/** rashes */
+	private SymptomState rashes;
+
+	@Diseases({
+		AFP,
+		GUINEA_WORM,
+		MONKEYPOX,
+		ANTHRAX,
+		POLIO,
+		UNDEFINED,
+		OTHER })
+	@SymptomGrouping(SymptomGroup.RASH_TYPE)
 	/** Vesiculopustular rash */
 	private SymptomState lesions;
 
@@ -848,8 +861,8 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		UNDEFINED,
 		OTHER })
-	@DependantOn(LESIONS)
-	@SymptomGrouping(SymptomGroup.SKIN)
+	@DependantOn(RASHES)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private Boolean lesionsAllOverBody;
 
 	@Diseases({
@@ -860,8 +873,8 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		UNDEFINED,
 		OTHER })
-	@DependantOn(LESIONS)
-	@SymptomGrouping(SymptomGroup.SKIN)
+	@DependantOn(RASHES)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private Boolean lesionsArms;
 
 	@Diseases({
@@ -872,8 +885,8 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		UNDEFINED,
 		OTHER })
-	@DependantOn(LESIONS)
-	@SymptomGrouping(SymptomGroup.SKIN)
+	@DependantOn(RASHES)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private SymptomState lesionsDeepProfound;
 
 	@Diseases({
@@ -883,8 +896,8 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		UNDEFINED,
 		OTHER })
-	@DependantOn(LESIONS)
-	@SymptomGrouping(SymptomGroup.SKIN)
+	@DependantOn(RASHES)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private Boolean lesionsFace;
 
 	@Diseases({
@@ -894,8 +907,8 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		UNDEFINED,
 		OTHER })
-	@DependantOn(LESIONS)
-	@SymptomGrouping(SymptomGroup.SKIN)
+	@DependantOn(RASHES)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private Boolean lesionsGenitals;
 
 	@Diseases({
@@ -905,15 +918,15 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		UNDEFINED,
 		OTHER })
-	@DependantOn(LESIONS)
-	@SymptomGrouping(SymptomGroup.SKIN)
+	@DependantOn(RASHES)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private Boolean lesionsLegs;
 
 	@Diseases({
 		MONKEYPOX,
 		ANTHRAX })
-	@DependantOn(LESIONS)
-	@SymptomGrouping(SymptomGroup.SKIN)
+	@DependantOn(RASHES)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private Date lesionsOnsetDate;
 
 	@Diseases({
@@ -923,34 +936,34 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		UNDEFINED,
 		OTHER })
-	@DependantOn(LESIONS)
-	@SymptomGrouping(SymptomGroup.SKIN)
+	@DependantOn(RASHES)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private Boolean lesionsPalmsHands;
 
 	@Diseases({
 		MONKEYPOX })
-	@DependantOn(LESIONS)
-	@SymptomGrouping(SymptomGroup.SKIN)
+	@DependantOn(RASHES)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	@HideForCountries
 	private SymptomState lesionsResembleImg1;
 	@Diseases({
 		MONKEYPOX })
-	@DependantOn(LESIONS)
-	@SymptomGrouping(SymptomGroup.SKIN)
+	@DependantOn(RASHES)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	@HideForCountries
 	private SymptomState lesionsResembleImg2;
 
 	@Diseases({
 		MONKEYPOX })
-	@DependantOn(LESIONS)
-	@SymptomGrouping(SymptomGroup.SKIN)
+	@DependantOn(RASHES)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	@HideForCountries
 	private SymptomState lesionsResembleImg3;
 
 	@Diseases({
 		MONKEYPOX })
-	@DependantOn(LESIONS)
-	@SymptomGrouping(SymptomGroup.SKIN)
+	@DependantOn(RASHES)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	@HideForCountries
 	private SymptomState lesionsResembleImg4;
 
@@ -961,8 +974,8 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		UNDEFINED,
 		OTHER })
-	@DependantOn(LESIONS)
-	@SymptomGrouping(SymptomGroup.SKIN)
+	@DependantOn(RASHES)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private SymptomState lesionsSameSize;
 
 	@Diseases({
@@ -972,8 +985,8 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		UNDEFINED,
 		OTHER })
-	@DependantOn(LESIONS)
-	@SymptomGrouping(SymptomGroup.SKIN)
+	@DependantOn(RASHES)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private SymptomState lesionsSameState;
 
 	@Diseases({
@@ -983,8 +996,8 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		UNDEFINED,
 		OTHER })
-	@DependantOn(LESIONS)
-	@SymptomGrouping(SymptomGroup.SKIN)
+	@DependantOn(RASHES)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private Boolean lesionsSolesFeet;
 
 	@Diseases({
@@ -994,8 +1007,8 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		UNDEFINED,
 		OTHER })
-	@DependantOn(LESIONS)
-	@SymptomGrouping(SymptomGroup.SKIN)
+	@DependantOn(RASHES)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private SymptomState lesionsThatItch;
 
 	@Diseases({
@@ -1005,7 +1018,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		UNDEFINED,
 		OTHER })
-	@DependantOn(LESIONS)
+	@DependantOn(RASHES)
 	@HideForCountries
 	private Boolean lesionsThorax;
 
@@ -1454,7 +1467,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		CORONAVIRUS })
 	@Outbreaks
 	@HideForCountries
-	@SymptomGrouping(SymptomGroup.OTHER)
+	@SymptomGrouping(SymptomGroup.RASH_TYPE)
 	/** Maculopapular rash */
 	private SymptomState skinRash;
 
@@ -1632,7 +1645,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		CONGENITAL_RUBELLA,
 		MONKEYPOX })
-	@SymptomGrouping(SymptomGroup.SKIN)
+	@SymptomGrouping(SymptomGroup.RASH_TYPE)
 	private SymptomState purpuricRash;
 
 	@Diseases({
@@ -2297,7 +2310,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		MONKEYPOX })
 	@SymptomGrouping(SymptomGroup.GENERAL)
-	private Boolean generalBodilyPains;
+	private SymptomState generalBodilyPains;
 
 	@Diseases({
 		AFP,
@@ -2306,8 +2319,8 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		UNDEFINED,
 		OTHER })
-	@DependantOn(LESIONS)
-	@SymptomGrouping(SymptomGroup.SKIN)
+	@DependantOn(RASHES)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private Boolean lesionsNeck;
 
 	@Diseases({
@@ -2317,8 +2330,8 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		UNDEFINED,
 		OTHER })
-	@DependantOn(LESIONS)
-	@SymptomGrouping(SymptomGroup.SKIN)
+	@DependantOn(RASHES)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private Boolean lesionsTrunk;
 
 	@Order(0)
@@ -3933,11 +3946,11 @@ public class SymptomsDto extends PseudonymizableDto {
 	}
 
 	@Order(351)
-	public Boolean getGeneralBodilyPains() {
+	public SymptomState getGeneralBodilyPains() {
 		return generalBodilyPains;
 	}
 
-	public void setGeneralBodilyPains(Boolean generalBodilyPains) {
+	public void setGeneralBodilyPains(SymptomState generalBodilyPains) {
 		this.generalBodilyPains = generalBodilyPains;
 	}
 
@@ -3957,6 +3970,15 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	public void setLesionsTrunk(Boolean lesionsTrunk) {
 		this.lesionsTrunk = lesionsTrunk;
+	}
+
+	@Order(354)
+	public SymptomState getRashes() {
+		return rashes;
+	}
+
+	public void setRashes(SymptomState rashes) {
+		this.rashes = rashes;
 	}
 
 }

@@ -217,9 +217,10 @@ public class Symptoms extends AbstractDomainObject {
 	private SymptomState dizzinessStandingUp;
 	private SymptomState highOrLowBloodPressure;
 	private SymptomState urinaryRetention;
-	private Boolean generalBodilyPains;
+	private SymptomState generalBodilyPains;
 	private Boolean lesionsNeck;
 	private Boolean lesionsTrunk;
+	private SymptomState rashes;
 
 	// complications
 	private SymptomState alteredConsciousness;
@@ -1845,11 +1846,11 @@ public class Symptoms extends AbstractDomainObject {
 		this.otherComplicationsText = otherComplicationsText;
 	}
 
-	public Boolean getGeneralBodilyPains() {
+	public SymptomState getGeneralBodilyPains() {
 		return generalBodilyPains;
 	}
 
-	public void setGeneralBodilyPains(Boolean generalBodilyPains) {
+	public void setGeneralBodilyPains(SymptomState generalBodilyPains) {
 		this.generalBodilyPains = generalBodilyPains;
 	}
 
@@ -1867,5 +1868,13 @@ public class Symptoms extends AbstractDomainObject {
 
 	public void setLesionsTrunk(Boolean lesionsTrunk) {
 		this.lesionsTrunk = lesionsTrunk;
+	}
+
+	public SymptomState getRashes() {
+		return rashes;
+	}
+
+	public void setRashes(SymptomState rashes) {
+		this.rashes = rashes;
 	}
 }

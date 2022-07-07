@@ -104,6 +104,9 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 	private static final String GASTROINTESTINAL_SIGNS_AND_SYMPTOMS_HEADING_LOC = "gastrointestinalSignsAndSymptomsHeadingLoc";
 	private static final String URINARY_SIGNS_AND_SYMPTOMS_HEADING_LOC = "urinarySignsAndSymptomsHeadingLoc";
 	private static final String NERVOUS_SYSTEM_SIGNS_AND_SYMPTOMS_HEADING_LOC = "nervousSystemSignsAndSymptomsHeadingLoc";
+	private static final String RASH_AND_SYMPTOMS_HEADING_LOC = "rashAndSymptomsHeadingLoc";
+	private static final String RASH_CHARACTERISTICS_AND_SYMPTOMS_HEADING_LOC = "rashCharacteristicsAndSymptomsHeadingLoc";
+	private static final String RASH_TYPE_AND_SYMPTOMS_HEADING_LOC = "rashTypeAndSymptomsHeadingLoc";
 	private static final String SKIN_SIGNS_AND_SYMPTOMS_HEADING_LOC = "skinSignsAndSymptomsHeadingLoc";
 	private static final String OTHER_SIGNS_AND_SYMPTOMS_HEADING_LOC = "otherSignsAndSymptomsHeadingLoc";
 	private static final String BUTTONS_LOC = "buttonsLoc";
@@ -134,6 +137,9 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					createSymptomGroupLayout(SymptomGroup.GASTROINTESTINAL, GASTROINTESTINAL_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.URINARY, URINARY_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.NERVOUS_SYSTEM, NERVOUS_SYSTEM_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
+					createSymptomGroupLayout(SymptomGroup.RASH, RASH_AND_SYMPTOMS_HEADING_LOC) +
+					createSymptomGroupLayout(SymptomGroup.RASH_CHARACTERISTICS, RASH_CHARACTERISTICS_AND_SYMPTOMS_HEADING_LOC) +
+					createSymptomGroupLayout(SymptomGroup.RASH_TYPE, RASH_TYPE_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.SKIN, SKIN_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.OTHER, OTHER_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					locsCss(VSPACE_3, PATIENT_ILL_LOCATION, SYMPTOMS_COMMENTS) +
@@ -180,6 +186,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 	private transient List<String> unconditionalSymptomFieldIds;
 	private List<String> conditionalBleedingSymptomFieldIds;
 	private List<String> lesionsFieldIds;
+	private List<String> lesionsTypeIds;
 	private List<String> lesionsLocationFieldIds;
 	private List<String> monkeypoxImageFieldIds;
 
@@ -240,6 +247,10 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		final Label urinarySymptomsHeadingLabel = createLabel(SymptomGroup.URINARY.toString(), H4, URINARY_SIGNS_AND_SYMPTOMS_HEADING_LOC);
 		final Label nervousSystemSymptomsHeadingLabel =
 			createLabel(SymptomGroup.NERVOUS_SYSTEM.toString(), H4, NERVOUS_SYSTEM_SIGNS_AND_SYMPTOMS_HEADING_LOC);
+		final Label rashSymptomsHeadingLabel = createLabel(SymptomGroup.RASH.toString(), H4, RASH_AND_SYMPTOMS_HEADING_LOC);
+		final Label rashCharacteristicsSymptomsHeadingLabel =
+			createLabel(SymptomGroup.RASH_CHARACTERISTICS.toString(), H4, RASH_CHARACTERISTICS_AND_SYMPTOMS_HEADING_LOC);
+		final Label rashTypeSymptomsHeadingLabel = createLabel(SymptomGroup.RASH_TYPE.toString(), H4, RASH_TYPE_AND_SYMPTOMS_HEADING_LOC);
 		final Label skinSymptomsHeadingLabel = createLabel(SymptomGroup.SKIN.toString(), H4, SKIN_SIGNS_AND_SYMPTOMS_HEADING_LOC);
 		final Label otherSymptomsHeadingLabel = createLabel(SymptomGroup.OTHER.toString(), H4, OTHER_SIGNS_AND_SYMPTOMS_HEADING_LOC);
 
@@ -358,6 +369,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			OTHER_NON_HEMORRHAGIC_SYMPTOMS,
 			OTHER_NON_HEMORRHAGIC_SYMPTOMS_TEXT,
 			LESIONS,
+			RASHES,
 			LESIONS_THAT_ITCH,
 			LESIONS_SAME_STATE,
 			LESIONS_SAME_SIZE,
@@ -526,6 +538,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 		lesionsFieldIds = Arrays.asList(LESIONS_SAME_STATE, LESIONS_SAME_SIZE, LESIONS_DEEP_PROFOUND, LESIONS_THAT_ITCH);
 
+		lesionsTypeIds = Arrays.asList(PURPURIC_RASH, LESIONS, SKIN_RASH);
+
 		lesionsLocationFieldIds = Arrays.asList(
 			LESIONS_FACE,
 			LESIONS_LEGS,
@@ -690,11 +704,13 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 		FieldHelper.setVisibleWhen(getFieldGroup(), OTHER_COMPLICATIONS_TEXT, OTHER_COMPLICATIONS, Arrays.asList(SymptomState.YES), true);
 
-		FieldHelper.setVisibleWhen(getFieldGroup(), lesionsFieldIds, LESIONS, Arrays.asList(SymptomState.YES), true);
+		FieldHelper.setVisibleWhen(getFieldGroup(), lesionsFieldIds, RASHES, Arrays.asList(SymptomState.YES), true);
 
-		FieldHelper.setVisibleWhen(getFieldGroup(), lesionsLocationFieldIds, LESIONS, Arrays.asList(SymptomState.YES), true);
+		FieldHelper.setVisibleWhen(getFieldGroup(), lesionsTypeIds, RASHES, Arrays.asList(SymptomState.YES), true);
 
-		FieldHelper.setVisibleWhen(getFieldGroup(), LESIONS_ONSET_DATE, LESIONS, Arrays.asList(SymptomState.YES), true);
+		FieldHelper.setVisibleWhen(getFieldGroup(), lesionsLocationFieldIds, RASHES, Arrays.asList(SymptomState.YES), true);
+
+		FieldHelper.setVisibleWhen(getFieldGroup(), LESIONS_ONSET_DATE, RASHES, Arrays.asList(SymptomState.YES), true);
 
 		FieldHelper.setVisibleWhen(getFieldGroup(), CONGENITAL_HEART_DISEASE_TYPE, CONGENITAL_HEART_DISEASE, Arrays.asList(SymptomState.YES), true);
 		FieldHelper.setVisibleWhen(
@@ -725,6 +741,17 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		getFieldGroup().getField(LESIONS).addValueChangeListener(e -> {
 			getContent().getComponent(LESIONS_LOCATIONS_LOC)
 				.setVisible(FieldHelper.getNullableSourceFieldValue((Field) e.getProperty()) == SymptomState.YES);
+		});
+
+		getFieldGroup().getField(RASHES).addValueChangeListener(e -> {
+			if (FieldHelper.getNullableSourceFieldValue(getFieldGroup().getField(RASHES)) == SymptomState.YES) {
+				rashCharacteristicsSymptomsHeadingLabel.setVisible(true);
+				rashTypeSymptomsHeadingLabel.setVisible(true);
+
+			} else {
+				rashCharacteristicsSymptomsHeadingLabel.setVisible(false);
+				rashTypeSymptomsHeadingLabel.setVisible(false);
+			}
 		});
 
 		// Symptoms hint text
@@ -1041,7 +1068,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 	private void setUpMonkeypoxVisibilities() {
 		// Monkeypox picture resemblance fields
-		FieldHelper.setVisibleWhen(getFieldGroup(), monkeypoxImageFieldIds, LESIONS, Arrays.asList(SymptomState.YES), true);
+		FieldHelper.setVisibleWhen(getFieldGroup(), monkeypoxImageFieldIds, RASHES, Arrays.asList(SymptomState.YES), true);
 
 		// Set up images
 		Image lesionsImg1 = new Image(null, new ThemeResource("img/monkeypox-lesions-1.png"));
@@ -1060,13 +1087,13 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		List<String> monkeypoxImages = Arrays.asList(MONKEYPOX_LESIONS_IMG1, MONKEYPOX_LESIONS_IMG2, MONKEYPOX_LESIONS_IMG3, MONKEYPOX_LESIONS_IMG4);
 
 		// Set up initial visibility
-		boolean lesionsSetToYes = FieldHelper.getNullableSourceFieldValue(getFieldGroup().getField(LESIONS)) == SymptomState.YES;
+		boolean lesionsSetToYes = FieldHelper.getNullableSourceFieldValue(getFieldGroup().getField(RASHES)) == SymptomState.YES;
 		for (String monkeypoxImage : monkeypoxImages) {
 			getContent().getComponent(monkeypoxImage).setVisible(lesionsSetToYes);
 		}
 
 		// Set up image visibility listener
-		getFieldGroup().getField(LESIONS).addValueChangeListener(e -> {
+		getFieldGroup().getField(RASHES).addValueChangeListener(e -> {
 			for (String monkeypoxImage : monkeypoxImages) {
 				getContent().getComponent(monkeypoxImage)
 					.setVisible(FieldHelper.getNullableSourceFieldValue((Field) e.getProperty()) == SymptomState.YES);

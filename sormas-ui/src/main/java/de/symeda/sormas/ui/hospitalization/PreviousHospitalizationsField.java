@@ -106,7 +106,7 @@ public class PreviousHospitalizationsField extends AbstractTableField<PreviousHo
 			EDIT_COLUMN_ID,
 			PERIOD,
 			PreviousHospitalizationDto.HEALTH_FACILITY,
-			PreviousHospitalizationDto.HEALTH_FACILITY_RECORD,
+			PreviousHospitalizationDto.HEALTH_FACILITY_RECORD_NUMBER,
 			COMMUNITY,
 			DISTRICT,
 			PreviousHospitalizationDto.DESCRIPTION,

@@ -495,7 +495,7 @@ public interface Captions {
 	String CaseHospitalization_admittedToHealthFacility = "CaseHospitalization.admittedToHealthFacility";
 	String CaseHospitalization_dischargeDate = "CaseHospitalization.dischargeDate";
 	String CaseHospitalization_healthFacility = "CaseHospitalization.healthFacility";
-	String CaseHospitalization_healthFacilityRecord = "CaseHospitalization.healthFacilityRecord";
+	String CaseHospitalization_healthFacilityRecordNumber = "CaseHospitalization.healthFacilityRecordNumber";
 	String CaseHospitalization_hospitalizationReason = "CaseHospitalization.hospitalizationReason";
 	String CaseHospitalization_hospitalizedPreviously = "CaseHospitalization.hospitalizedPreviously";
 	String CaseHospitalization_intensiveCareUnit = "CaseHospitalization.intensiveCareUnit";
@@ -537,7 +537,7 @@ public interface Captions {
 	String CasePreviousHospitalization_isolationDate = "CasePreviousHospitalization.isolationDate";
 	String CasePreviousHospitalization_otherHospitalizationReason = "CasePreviousHospitalization.otherHospitalizationReason";
 	String CasePreviousHospitalization_prevHospPeriod = "CasePreviousHospitalization.prevHospPeriod";
-	String CasePreviousHospitalization_HealthFacilityRecord = "CasePreviousHospitalization.healthFacilityRecord";
+	String CasePreviousHospitalization_healthFacilityRecordNumber = "CasePreviousHospitalization.healthFacilityRecordNumber";
 	String caseReferToFacility = "caseReferToFacility";
 	String caseSearchCase = "caseSearchCase";
 	String caseSearchSpecificCase = "caseSearchSpecificCase";
@@ -2087,6 +2087,7 @@ public interface Captions {
 	String Symptoms_lesionsFace = "Symptoms.lesionsFace";
 	String Symptoms_lesionsNeck = "Symptoms.lesionsNeck";
 	String Symptoms_lesionsTrunk = "Symptoms.lesionsTrunk";
+	String Symptoms_rashes = "Symptoms.rashes";
 	String Symptoms_lesionsGenitals = "Symptoms.lesionsGenitals";
 	String Symptoms_lesionsLegs = "Symptoms.lesionsLegs";
 	String Symptoms_lesionsLocation = "Symptoms.lesionsLocation";

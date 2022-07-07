@@ -60,7 +60,7 @@ public class Hospitalization extends AbstractDomainObject {
 	public static final String PATIENT_CONDITION_ON_ADMISSION = "patientConditionOnAdmission";
 
 	public static final String DESCRIPTION = "description";
-	public static final String HEALTH_FACILITY_RECORD = "healthFacilityRecord";
+	public static final String HEALTH_FACILITY_RECORD = "healthFacilityRecordNumber";
 
 	private YesNoUnknown admittedToHealthFacility;
 	private Date admissionDate;
@@ -78,7 +78,7 @@ public class Hospitalization extends AbstractDomainObject {
 	private HospitalizationReasonType hospitalizationReason;
 	private String otherHospitalizationReason;
 	private String description;
-	private String healthFacilityRecord;
+	private String healthFacilityRecordNumber;
 
 	private MildModerateSevereCritical patientConditionOnAdmission;
 
@@ -230,11 +230,11 @@ public class Hospitalization extends AbstractDomainObject {
 		this.description = description;
 	}
 
-	public String getHealthFacilityRecord() {
-		return healthFacilityRecord;
+	public String getHealthFacilityRecordNumber() {
+		return healthFacilityRecordNumber;
 	}
 
-	public void setHealthFacilityRecord(String healthFacilityRecord) {
-		this.healthFacilityRecord = healthFacilityRecord;
+	public void setHealthFacilityRecordNumber(String healthFacilityRecordNumber) {
+		this.healthFacilityRecordNumber = healthFacilityRecordNumber;
 	}
 }

@@ -108,7 +108,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	private static final String HTML_LAYOUT =
 			loc(HOSPITALIZATION_HEADING_LOC) +
 			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY) +
-			fluidRowLocs(HEALTH_FACILITY,HospitalizationDto.HEALTH_FACILITY_RECORD,"") +
+			fluidRowLocs(HEALTH_FACILITY,HospitalizationDto.HEALTH_FACILITY_RECORD_NUMBER,"") +
 			fluidRowLocs(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, "") +
 			fluidRowLocs(6, OUTCOME, 3, OTHERCASEOUTCOMEDETAIL) +
 			fluidRowLocs(4, HospitalizationDto.PATIENT_CONDITION_ON_ADMISSION) +
@@ -166,7 +166,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		facilityField.setValue(noneFacility || !FacilityType.HOSPITAL.equals(caze.getFacilityType()) ? null : healthFacility.toString());
 		facilityField.setReadOnly(true);
 
-		TextField facilityRecord = addField(HospitalizationDto.HEALTH_FACILITY_RECORD, TextField.class);
+		TextField facilityRecord = addField(HospitalizationDto.HEALTH_FACILITY_RECORD_NUMBER, TextField.class);
 
 		final NullableOptionGroup admittedToHealthFacilityField = addField(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, NullableOptionGroup.class);
 		// final OptionGroup admittedToHealthFacilityField = addField(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY, OptionGroup.class);
