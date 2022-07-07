@@ -119,6 +119,12 @@
                 app:appendValue="@{data.otherHospitalizationReason}"
                 style="@style/ControlFirstOfTwoColumnsStyle" />
 
+            <de.symeda.sormas.app.component.controls.ControlTextReadField
+                android:id="@+id/casePreviousHospitalization_healthFacilityRecordNumber"
+                app:value="@{data.healthFacilityRecordNumber}"
+                app:appendValue="@{data.healthFacilityRecordNumber}"
+                style="@style/ControlSecondOfTwoColumnsStyle" />
+
         </LinearLayout>
 
         <de.symeda.sormas.app.component.controls.ControlTextReadField

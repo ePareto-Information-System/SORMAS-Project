@@ -74,6 +74,11 @@
                         app:value="@{caze.healthFacilityDetails}"
                         style="@style/ControlSecondOfTwoColumnsStyle" />
 
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/caseData_healthFacilityRecordNumber"
+                        app:value="@{data.healthFacilityRecordNumber}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
                 </LinearLayout>
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
