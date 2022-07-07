@@ -102,7 +102,7 @@ public class PreviousHospitalizationDtoHelper extends AdoDtoHelper<PreviousHospi
 		a.setIntensiveCareUnit(b.getIntensiveCareUnit());
 		a.setIntensiveCareUnitStart(b.getIntensiveCareUnitStart());
 		a.setIntensiveCareUnitEnd(b.getIntensiveCareUnitEnd());
-		a.setHealthFacilityRecord(b.getHealthFacilityRecord());
+		a.setHealthFacilityRecordNumber(b.getHealthFacilityRecordNumber());
 
 		a.setPseudonymized(b.isPseudonymized());
 	}
@@ -151,7 +151,7 @@ public class PreviousHospitalizationDtoHelper extends AdoDtoHelper<PreviousHospi
 		a.setIntensiveCareUnit(b.getIntensiveCareUnit());
 		a.setIntensiveCareUnitStart(b.getIntensiveCareUnitStart());
 		a.setIntensiveCareUnitEnd(b.getIntensiveCareUnitEnd());
-		a.setHealthFacilityRecord(b.getHealthFacilityRecord());
+		a.setHealthFacilityRecordNumber(b.getHealthFacilityRecordNumber());
 
 		a.setPseudonymized(b.isPseudonymized());
 	}
