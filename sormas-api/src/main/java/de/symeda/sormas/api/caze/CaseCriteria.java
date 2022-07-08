@@ -138,7 +138,7 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	private Date reportDateTo;
 	private FacilityTypeGroup facilityTypeGroup;
 	private FacilityType facilityType;
-	private Boolean includeCasesFromOtherJurisdictions = Boolean.FALSE;
+	private Boolean includeCasesFromOtherJurisdictions = Boolean.TRUE;
 	private String viewMode;
 	
 	public Boolean excludeSharedCases;
