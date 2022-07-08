@@ -194,6 +194,10 @@ public class SymptomsDto extends PseudonymizableDto {
 	public static final String PIGMENTARY_RETINOPATHY = "pigmentaryRetinopathy";
 	public static final String PNEUMONIA_CLINICAL_OR_RADIOLOGIC = "pneumoniaClinicalOrRadiologic";
 	public static final String PURPURIC_RASH = "purpuricRash";
+	public static final String PAPULAR_RASH = "papularRash";
+	public static final String MACULAR_RASH = "macularRash";
+	public static final String VESICULAR_RASH = "vesicularRash";
+	public static final String OTHER_LESION_AREAS = "otherLesionAreas";
 	public static final String RADIOLUCENT_BONE_DISEASE = "radiolucentBoneDisease";
 	public static final String RAPID_BREATHING = "rapidBreathing";
 	public static final String RED_BLOOD_VOMIT = "redBloodVomit";
@@ -858,12 +862,35 @@ public class SymptomsDto extends PseudonymizableDto {
 		AFP,
 		GUINEA_WORM,
 		MONKEYPOX,
+		ANTHRAX,
+		POLIO,
+		UNDEFINED,
+		OTHER })
+	@SymptomGrouping(SymptomGroup.RASH_TYPE)
+	private SymptomState vesicularRash;
+
+	@Diseases({
+		AFP,
+		GUINEA_WORM,
+		MONKEYPOX,
 		POLIO,
 		UNDEFINED,
 		OTHER })
 	@DependantOn(RASHES)
 	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private Boolean lesionsAllOverBody;
+
+	@Diseases({
+		AFP,
+		GUINEA_WORM,
+		MONKEYPOX,
+		POLIO,
+		UNDEFINED,
+		OTHER })
+	@DependantOn(RASHES)
+	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
+	private String otherLesionAreas;
 
 	@Diseases({
 		AFP,
@@ -1470,6 +1497,44 @@ public class SymptomsDto extends PseudonymizableDto {
 	@SymptomGrouping(SymptomGroup.RASH_TYPE)
 	/** Maculopapular rash */
 	private SymptomState skinRash;
+
+	@Diseases({
+		AFP,
+		EVD,
+		GUINEA_WORM,
+		LASSA,
+		NEW_INFLUENZA,
+		CSM,
+		MEASLES,
+		DENGUE,
+		MONKEYPOX,
+		POLIO,
+		UNSPECIFIED_VHF,
+		UNDEFINED,
+		OTHER,
+		CORONAVIRUS })
+	@Outbreaks
+	@HideForCountries
+	@SymptomGrouping(SymptomGroup.RASH_TYPE)
+	private SymptomState papularRash;
+
+	@Diseases({
+		AFP,
+		EVD,
+		GUINEA_WORM,
+		LASSA,
+		NEW_INFLUENZA,
+		CSM,
+		MEASLES,
+		DENGUE,
+		MONKEYPOX,
+		POLIO,
+		UNSPECIFIED_VHF,
+		UNDEFINED,
+		OTHER,
+		CORONAVIRUS })
+	@SymptomGrouping(SymptomGroup.RASH_TYPE)
+	private SymptomState macularRash;
 
 	@Diseases({
 		AFP,
@@ -3979,6 +4044,42 @@ public class SymptomsDto extends PseudonymizableDto {
 
 	public void setRashes(SymptomState rashes) {
 		this.rashes = rashes;
+	}
+
+	@Order(355)
+	public SymptomState getPapularRash() {
+		return papularRash;
+	}
+
+	public void setPapularRash(SymptomState papularRash) {
+		this.papularRash = papularRash;
+	}
+
+	@Order(356)
+	public SymptomState getMacularRash() {
+		return macularRash;
+	}
+
+	public void setMacularRash(SymptomState macularRash) {
+		this.macularRash = macularRash;
+	}
+
+	@Order(357)
+	public SymptomState getVesicularRash() {
+		return vesicularRash;
+	}
+
+	public void setVesicularRash(SymptomState vesicularRash) {
+		this.vesicularRash = vesicularRash;
+	}
+
+	@Order(358)
+	public String getOtherLesionAreas() {
+		return otherLesionAreas;
+	}
+
+	public void setOtherLesionAreas(String otherLesionAreas) {
+		this.otherLesionAreas = otherLesionAreas;
 	}
 
 }
