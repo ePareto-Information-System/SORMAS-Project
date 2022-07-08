@@ -224,6 +224,10 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setLesionsNeck(source.getLesionsNeck());
 		target.setLesionsTrunk(source.getLesionsTrunk());
 		target.setRashes(source.getRashes());
+		target.setPapularRash(source.getPapularRash());
+		target.setMacularRash(source.getMacularRash());
+		target.setVesicularRash(source.getVesicularRash());
+		target.setOtherLesionAreas(source.getOtherLesionAreas());
 
 		return target;
 	}
@@ -423,6 +427,10 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setLesionsNeck(source.getLesionsNeck());
 		target.setLesionsTrunk(source.getLesionsTrunk());
 		target.setRashes(source.getRashes());
+		target.setPapularRash(source.getPapularRash());
+		target.setMacularRash(source.getMacularRash());
+		target.setVesicularRash(source.getVesicularRash());
+		target.setOtherLesionAreas(source.getOtherLesionAreas());
 
 		return target;
 	}
