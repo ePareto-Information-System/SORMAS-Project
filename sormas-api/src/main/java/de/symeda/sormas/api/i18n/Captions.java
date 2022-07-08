@@ -2079,6 +2079,7 @@ public interface Captions {
 	String Symptoms_lesionsFace = "Symptoms.lesionsFace";
 	String Symptoms_lesionsNeck = "Symptoms.lesionsNeck";
 	String Symptoms_lesionsTrunk = "Symptoms.lesionsTrunk";
+	String Symptoms_otherLesionAreas = "Symptoms.otherLesionAreas";
 	String Symptoms_rashes = "Symptoms.rashes";
 	String Symptoms_lesionsGenitals = "Symptoms.lesionsGenitals";
 	String Symptoms_lesionsLegs = "Symptoms.lesionsLegs";
@@ -2137,6 +2138,9 @@ public interface Captions {
 	String Symptoms_pigmentaryRetinopathy = "Symptoms.pigmentaryRetinopathy";
 	String Symptoms_pneumoniaClinicalOrRadiologic = "Symptoms.pneumoniaClinicalOrRadiologic";
 	String Symptoms_purpuricRash = "Symptoms.purpuricRash";
+	String Symptoms_macularRash = "Symptoms.macularRash";
+	String Symptoms_papularRash = "Symptoms.papularRash";
+	String Symptoms_vesicularRash = "Symptoms.vesicularRash";
 	String Symptoms_radiolucentBoneDisease = "Symptoms.radiolucentBoneDisease";
 	String Symptoms_rapidBreathing = "Symptoms.rapidBreathing";
 	String Symptoms_redBloodVomit = "Symptoms.redBloodVomit";
