@@ -704,7 +704,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 
 		FieldHelper.setVisibleWhen(getFieldGroup(), OTHER_COMPLICATIONS_TEXT, OTHER_COMPLICATIONS, Arrays.asList(SymptomState.YES), true);
 
-		FieldHelper.setVisibleWhen(getFieldGroup(), lesionsFieldIds, RASHES, Arrays.asList(SymptomState.YES), true);
+		FieldHelper.setVisibleWhen(getFieldGroup(), lesionsFieldIds, LESIONS_ALL_OVER_BODY, Arrays.asList(Boolean.TRUE), true);
 
 		FieldHelper.setVisibleWhen(getFieldGroup(), lesionsTypeIds, RASHES, Arrays.asList(SymptomState.YES), true);
 
@@ -802,7 +802,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 				disease);
 		}
 
-		FieldHelper.setRequiredWhen(getFieldGroup(), getFieldGroup().getField(LESIONS), lesionsFieldIds, Arrays.asList(SymptomState.YES), disease);
+		FieldHelper
+			.setRequiredWhen(getFieldGroup(), getFieldGroup().getField(LESIONS_ALL_OVER_BODY), lesionsFieldIds, Arrays.asList(Boolean.TRUE), disease);
 
 		addListenerForOnsetFields(onsetSymptom, onsetDateField);
 
