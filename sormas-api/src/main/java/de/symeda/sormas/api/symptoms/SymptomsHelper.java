@@ -500,10 +500,13 @@ public final class SymptomsHelper {
 		appendYesSymptom(string, symptomsDto.getUrinaryRetention(), SymptomsDto.URINARY_RETENTION);
 
 		appendNotNullValue(string, symptomsDto.getOtherComplicationsText(), SymptomsDto.OTHER_COMPLICATIONS_TEXT);
-		appendNotNullValue(string, symptomsDto.getGeneralBodilyPains(), SymptomsDto.GENERAL_BODILY_PAINS);
-		appendNotNullValue(string, symptomsDto.getGeneralBodilyPains(), SymptomsDto.LESIONS_NECK);
-		appendNotNullValue(string, symptomsDto.getGeneralBodilyPains(), SymptomsDto.LESIONS_TRUNK);
-
+		appendYesSymptom(string, symptomsDto.getGeneralBodilyPains(), SymptomsDto.GENERAL_BODILY_PAINS);
+		appendYesSymptom(string, symptomsDto.getGeneralBodilyPains(), SymptomsDto.LESIONS_NECK);
+		appendYesSymptom(string, symptomsDto.getGeneralBodilyPains(), SymptomsDto.LESIONS_TRUNK);
+		appendYesSymptom(string, symptomsDto.getMacularRash(), SymptomsDto.MACULAR_RASH);
+		appendYesSymptom(string, symptomsDto.getPapularRash(), SymptomsDto.PAPULAR_RASH);
+		appendYesSymptom(string, symptomsDto.getVesicularRash(), SymptomsDto.VESICULAR_RASH);
+		appendNotNullValue(string, symptomsDto.getOtherLesionAreas(), SymptomsDto.OTHER_LESION_AREAS);
 		// symptomsComments;
 
 		return string.toString();
