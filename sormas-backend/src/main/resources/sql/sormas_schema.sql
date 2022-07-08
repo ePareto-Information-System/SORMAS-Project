@@ -9948,6 +9948,10 @@ ALTER TABLE symptoms ADD COLUMN generalbodilypains varchar(255);
 ALTER TABLE symptoms ADD COLUMN lesionsneck boolean;
 ALTER TABLE symptoms ADD COLUMN lesionstrunk boolean;
 ALTER TABLE symptoms ADD COLUMN rashes varchar(255);
+ALTER TABLE symptoms ADD COLUMN macularrash varchar(255);
+ALTER TABLE symptoms ADD COLUMN papularrash varchar(255);
+ALTER TABLE symptoms ADD COLUMN vesicularrash varchar(255);
+ALTER TABLE symptoms ADD COLUMN otherlesionareas varchar(255);
 
 ALTER TABLE hospitalization_history ADD COLUMN healthfacilityrecordnumber varchar(255);
 ALTER TABLE previoushospitalization_history ADD COLUMN healthfacilityrecordnumber varchar(255);
@@ -9955,6 +9959,10 @@ ALTER TABLE symptoms_history ADD COLUMN generalbodilypains varchar(255);
 ALTER TABLE symptoms_history ADD COLUMN lesionsneck boolean;
 ALTER TABLE symptoms_history ADD COLUMN lesionstrunk boolean;
 ALTER TABLE symptoms_history ADD COLUMN rashes varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN macularrash varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN papularrash varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN vesicularrash varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN otherlesionareas varchar(255);
 
 INSERT INTO schema_version (version_number, comment) VALUES (440, 'Enable more fields for monkeypox');
 
