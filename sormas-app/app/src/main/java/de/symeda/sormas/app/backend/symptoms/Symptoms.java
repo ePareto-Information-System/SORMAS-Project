@@ -52,6 +52,8 @@ public class Symptoms extends PseudonymizableAdo {
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String symptomsComments;
 	@DatabaseField
+	private String otherLesionAreas;
+	@DatabaseField
 	private Boolean symptomatic;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String patientIllLocation;
@@ -190,6 +192,12 @@ public class Symptoms extends PseudonymizableAdo {
 	private SymptomState lesions;
     @Enumerated(EnumType.STRING)
 	private SymptomState rashes;
+	@Enumerated(EnumType.STRING)
+	private SymptomState vesicularRash;
+	@Enumerated(EnumType.STRING)
+	private SymptomState macularRash;
+	@Enumerated(EnumType.STRING)
+	private SymptomState papularRash;
 	@Enumerated(EnumType.STRING)
 	private SymptomState lesionsThatItch;
 	@Enumerated(EnumType.STRING)
@@ -589,6 +597,27 @@ public class Symptoms extends PseudonymizableAdo {
 
 	public void setSkinRash(SymptomState skinRash) {
 		this.skinRash = skinRash;
+	}
+	public SymptomState getVesicularRash() {
+		return vesicularRash;
+	}
+
+	public void setVesicularRash(SymptomState vesicularRash) {
+		this.vesicularRash = vesicularRash;
+	}
+	public SymptomState getMacularRash() {
+		return macularRash;
+	}
+
+	public void setMacularRash(SymptomState macularRash){
+		this.macularRash = macularRash;
+	}
+	public SymptomState getPapularRash() {
+		return papularRash;
+	}
+
+	public void setPapularRash(SymptomState papularRash){
+		this.papularRash = papularRash;
 	}
 
 	public SymptomState getHiccups() {
@@ -1906,5 +1935,13 @@ public class Symptoms extends PseudonymizableAdo {
 
 	public void setLesionsNeck(Boolean lesionsNeck) {
 		this.lesionsNeck = lesionsNeck;
+	}
+
+	public String getOtherLesionAreas() {
+		return otherLesionAreas;
+	}
+
+	public void setOtherLesionAreas(String otherLesionAreas) {
+		this.otherLesionAreas = otherLesionAreas;
 	}
 }
