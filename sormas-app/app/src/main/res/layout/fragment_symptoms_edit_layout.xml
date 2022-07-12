@@ -506,6 +506,27 @@
                 style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/symptoms_vesicularRash"
+                app:enumClass="@{symptomStateClass}"
+                app:slim="true"
+                app:value="@={data.vesicularRash}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/symptoms_papularRash"
+                app:enumClass="@{symptomStateClass}"
+                app:slim="true"
+                app:value="@={data.papularRash}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/symptoms_macularRash"
+                app:enumClass="@{symptomStateClass}"
+                app:slim="true"
+                app:value="@={data.macularRash}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
                 android:id="@+id/symptoms_malaise"
                 app:enumClass="@{symptomStateClass}"
                 app:slim="true"
@@ -1178,6 +1199,11 @@
                 <de.symeda.sormas.app.component.controls.ControlCheckBoxField
                     android:id="@+id/symptoms_lesionsTrunk"
                     app:value="@={data.lesionsTrunk}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/symptoms_otherLesionAreas"
+                    app:value="@={data.otherLesionAreas}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <LinearLayout
