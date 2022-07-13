@@ -62,6 +62,10 @@ public class Hospitalization extends AbstractDomainObject {
 	private Date isolationDate;
 	@Column(length = CHARACTER_LIMIT_BIG)
 	private String description;
+
+	@Column(length = CHARACTER_LIMIT_BIG)
+	private String healthFacilityRecordNumber;
+
 	@Enumerated(EnumType.STRING)
 	private YesNoUnknown leftAgainstAdvice;
 
@@ -221,5 +225,13 @@ public class Hospitalization extends AbstractDomainObject {
 
 	public void setOtherHospitalizationReason(String otherHospitalizationReason) {
 		this.otherHospitalizationReason = otherHospitalizationReason;
+	}
+
+	public String getHealthFacilityRecordNumber() {
+		return healthFacilityRecordNumber;
+	}
+
+	public void setHealthFacilityRecordNumber(String healthFacilityRecordNumber) {
+		this.healthFacilityRecordNumber = healthFacilityRecordNumber;
 	}
 }

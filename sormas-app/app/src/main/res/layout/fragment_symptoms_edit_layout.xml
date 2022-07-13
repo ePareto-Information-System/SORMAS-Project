@@ -145,12 +145,13 @@
                 app:slim="true"
                 app:value="@={data.shivering}"
                 style="@style/ControlSingleColumnStyle" />
-<!--            <de.symeda.sormas.app.component.controls.ControlSwitchField-->
-<!--                android:id="@+id/symptoms_generalBodilyPains"-->
-<!--                app:enumClass="@{symptomStateClass}"-->
-<!--                app:slim="true"-->
-<!--                app:value="@={data.generalBodilyPains}"-->
-<!--                style="@style/ControlSingleColumnStyle" />-->
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/symptoms_generalBodilyPains"
+                app:enumClass="@{symptomStateClass}"
+                app:slim="true"
+                app:value="@={data.generalBodilyPains}"
+                style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlSwitchField
                 android:id="@+id/symptoms_headache"
@@ -1072,6 +1073,13 @@
                 app:enumClass="@{symptomStateClass}"
                 app:slim="true"
                 app:value="@={data.lesions}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/symptoms_rashes"
+                app:enumClass="@{symptomStateClass}"
+                app:slim="true"
+                app:value="@={data.rashes}"
                 style="@style/ControlSingleColumnStyle" />
 
             <LinearLayout

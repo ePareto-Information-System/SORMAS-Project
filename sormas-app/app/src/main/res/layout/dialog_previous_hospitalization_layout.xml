@@ -131,7 +131,7 @@
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/casePreviousHospitalization_record"
                     style="@style/ControlSecondOfTwoColumnsStyle"
-                    app:value="@={data.healthFacilityRecord}" />
+                    app:value="@={data.healthFacilityRecordNumber}" />
 
             </LinearLayout>
 

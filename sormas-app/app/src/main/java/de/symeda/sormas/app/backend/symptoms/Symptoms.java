@@ -188,6 +188,8 @@ public class Symptoms extends PseudonymizableAdo {
 	private SymptomState cutaneousEruption;
 	@Enumerated(EnumType.STRING)
 	private SymptomState lesions;
+    @Enumerated(EnumType.STRING)
+	private SymptomState rashes;
 	@Enumerated(EnumType.STRING)
 	private SymptomState lesionsThatItch;
 	@Enumerated(EnumType.STRING)
@@ -425,8 +427,8 @@ public class Symptoms extends PseudonymizableAdo {
 	private SymptomState urinaryRetention;
 	@Enumerated(EnumType.STRING)
 	private SymptomState shivering;
-	@DatabaseField
-	private Boolean generalBodilyPains;
+	@Enumerated(EnumType.STRING)
+	private SymptomState  generalBodilyPains;
 	@DatabaseField
 	private Boolean lesionsTrunk;
 	@DatabaseField
@@ -939,6 +941,13 @@ public class Symptoms extends PseudonymizableAdo {
 
 	public void setLesions(SymptomState lesions) {
 		this.lesions = lesions;
+	}
+    public SymptomState getRashes() {
+		return rashes;
+	}
+
+	public void setRashes(SymptomState rashes) {
+		this.rashes = rashes;
 	}
 
 	public SymptomState getLesionsThatItch() {
@@ -1876,11 +1885,12 @@ public class Symptoms extends PseudonymizableAdo {
 	public void setShivering(SymptomState shivering) {
 		this.shivering = shivering;
 	}
-	public Boolean getGeneralBodilyPains() {
+
+	public SymptomState  getGeneralBodilyPains() {
 		return generalBodilyPains;
 	}
 
-	public void setGeneralBodilyPains(Boolean generalBodilyPains) {
+	public void setGeneralBodilyPains(SymptomState  generalBodilyPains) {
 		this.generalBodilyPains = generalBodilyPains;
 	}
 	public Boolean getLesionsTrunk() {

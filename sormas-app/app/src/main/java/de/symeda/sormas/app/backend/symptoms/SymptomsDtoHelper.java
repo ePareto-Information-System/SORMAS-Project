@@ -115,6 +115,7 @@ public class SymptomsDtoHelper extends AdoDtoHelper<Symptoms, SymptomsDto> {
 		target.setRapidBreathing(source.getRapidBreathing());
 		target.setSwollenGlands(source.getSwollenGlands());
 		target.setLesions(source.getLesions());
+		target.setRashes(source.getRashes());
 		target.setLesionsSameState(source.getLesionsSameState());
 		target.setLesionsSameSize(source.getLesionsSameSize());
 		target.setLesionsDeepProfound(source.getLesionsDeepProfound());
@@ -304,6 +305,7 @@ public class SymptomsDtoHelper extends AdoDtoHelper<Symptoms, SymptomsDto> {
 		target.setRapidBreathing(source.getRapidBreathing());
 		target.setSwollenGlands(source.getSwollenGlands());
 		target.setLesions(source.getLesions());
+		target.setRashes(source.getRashes());
 		target.setLesionsSameState(source.getLesionsSameState());
 		target.setLesionsSameSize(source.getLesionsSameSize());
 		target.setLesionsDeepProfound(source.getLesionsDeepProfound());
