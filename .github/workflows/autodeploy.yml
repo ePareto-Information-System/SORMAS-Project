@@ -42,12 +42,6 @@ jobs:
           M2_HOME: /opt/hostedtoolcache/maven/3.8.1/x64
     - name: Run Ant Deploy serverlibs
       run: ant -noinput -buildfile ./sormas-base/build.xml deploy-serverlibs
-    - name: Checkout Android Keystore
-      uses: actions/checkout@v2
-      with:
-          repository: Anthony4m/keystore
-          token: ${{ secrets.KEYSTORE_REPO_TOKEN }}
-          path: ./sormas-app/app/sormas-keystore.jks
     - name: Change wrapper permissions
       run: | 
           cd ./sormas-app/
