@@ -239,7 +239,10 @@ public class SymptomsDtoHelper extends AdoDtoHelper<Symptoms, SymptomsDto> {
 		target.setGeneralBodilyPains(source.getGeneralBodilyPains());
 		target.setLesionsTrunk(source.getLesionsTrunk());
 		target.setLesionsNeck(source.getLesionsNeck());
-
+		target.setPapularRash(source.getPapularRash());
+		target.setMacularRash(source.getMacularRash());
+		target.setVesicularRash(source.getVesicularRash());
+		target.setOtherLesionAreas(source.getOtherLesionAreas());
 		target.setPseudonymized(source.isPseudonymized());
 	}
 
@@ -429,6 +432,10 @@ public class SymptomsDtoHelper extends AdoDtoHelper<Symptoms, SymptomsDto> {
 		target.setGeneralBodilyPains(source.getGeneralBodilyPains());
 		target.setLesionsNeck(source.getLesionsNeck());
 		target.setLesionsTrunk(source.getLesionsTrunk());
+		target.setPapularRash(source.getPapularRash());
+		target.setMacularRash(source.getMacularRash());
+		target.setVesicularRash(source.getVesicularRash());
+		target.setOtherLesionAreas(source.getOtherLesionAreas());
 
 		target.setPseudonymized(source.isPseudonymized());
 	}

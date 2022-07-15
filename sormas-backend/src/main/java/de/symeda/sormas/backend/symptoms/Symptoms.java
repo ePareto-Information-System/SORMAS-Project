@@ -221,6 +221,10 @@ public class Symptoms extends AbstractDomainObject {
 	private Boolean lesionsNeck;
 	private Boolean lesionsTrunk;
 	private SymptomState rashes;
+	private SymptomState papularRash;
+	private SymptomState macularRash;
+	private SymptomState vesicularRash;
+	private String otherLesionAreas;
 
 	// complications
 	private SymptomState alteredConsciousness;
@@ -1876,5 +1880,37 @@ public class Symptoms extends AbstractDomainObject {
 
 	public void setRashes(SymptomState rashes) {
 		this.rashes = rashes;
+	}
+
+	public SymptomState getPapularRash() {
+		return papularRash;
+	}
+
+	public void setPapularRash(SymptomState papularRash) {
+		this.papularRash = papularRash;
+	}
+
+	public SymptomState getMacularRash() {
+		return macularRash;
+	}
+
+	public void setMacularRash(SymptomState macularRash) {
+		this.macularRash = macularRash;
+	}
+
+	public SymptomState getVesicularRash() {
+		return vesicularRash;
+	}
+
+	public void setVesicularRash(SymptomState vesicularRash) {
+		this.vesicularRash = vesicularRash;
+	}
+
+	public String getOtherLesionAreas() {
+		return otherLesionAreas;
+	}
+
+	public void setOtherLesionAreas(String otherLesionAreas) {
+		this.otherLesionAreas = otherLesionAreas;
 	}
 }

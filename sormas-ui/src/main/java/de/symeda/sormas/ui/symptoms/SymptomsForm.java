@@ -471,7 +471,11 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			FEVER,
 			GENERAL_BODILY_PAINS,
 			LESIONS_NECK,
-			LESIONS_TRUNK);
+			LESIONS_TRUNK,
+			PAPULAR_RASH,
+			MACULAR_RASH,
+			VESICULAR_RASH,
+			OTHER_LESION_AREAS);
 
 		addField(SYMPTOMS_COMMENTS, TextField.class).setDescription(
 			I18nProperties.getPrefixDescription(I18N_PREFIX, SYMPTOMS_COMMENTS, "") + "\n" + I18nProperties.getDescription(Descriptions.descGdpr));
@@ -550,7 +554,11 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			LESIONS_TRUNK,
 			LESIONS_GENITALS,
 			LESIONS_ALL_OVER_BODY,
-			LESIONS_NECK);
+			LESIONS_NECK,
+			PAPULAR_RASH,
+			MACULAR_RASH,
+			VESICULAR_RASH,
+			OTHER_LESION_AREAS);
 
 		unconditionalSymptomFieldIds = Arrays.asList(
 			FEVER,
