@@ -67,10 +67,14 @@ public class PointOfEntryDao extends AbstractInfrastructureAdoDao<PointOfEntry> 
 	 */
 	public boolean hasActiveEntriesInDistrict() {
 		try {
+			District district = ConfigProvider.getUser().getDistrict();
+			if (district == null)
+				return false;
+
 			QueryBuilder builder = queryBuilder();
 			Where where = builder.where();
 			where.and(
-				where.eq(PointOfEntry.DISTRICT + "_id", ConfigProvider.getUser().getDistrict().getId()),
+				where.eq(PointOfEntry.DISTRICT + "_id", district.getId()),
 				where.eq(InfrastructureAdo.ARCHIVED, false),
 				where.eq(AbstractDomainObject.SNAPSHOT, false),
 				where.ne(PointOfEntry.ACTIVE, false));
