@@ -855,6 +855,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER })
 	@SymptomGrouping(SymptomGroup.RASH_TYPE)
+	@DependantOn(RASHES)
 	/** Vesiculopustular rash */
 	private SymptomState lesions;
 
@@ -866,6 +867,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		UNDEFINED,
 		OTHER })
+	@DependantOn(RASHES)
 	@SymptomGrouping(SymptomGroup.RASH_TYPE)
 	private SymptomState vesicularRash;
 
@@ -912,7 +914,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		UNDEFINED,
 		OTHER })
-	@DependantOn(RASHES)
+	@DependantOn(LESIONS_ALL_OVER_BODY)
 	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private SymptomState lesionsDeepProfound;
 
@@ -1001,7 +1003,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		UNDEFINED,
 		OTHER })
-	@DependantOn(RASHES)
+	@DependantOn(LESIONS_ALL_OVER_BODY)
 	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private SymptomState lesionsSameSize;
 
@@ -1012,7 +1014,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		UNDEFINED,
 		OTHER })
-	@DependantOn(RASHES)
+	@DependantOn(LESIONS_ALL_OVER_BODY)
 	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private SymptomState lesionsSameState;
 
@@ -1034,7 +1036,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		POLIO,
 		UNDEFINED,
 		OTHER })
-	@DependantOn(RASHES)
+	@DependantOn(LESIONS_ALL_OVER_BODY)
 	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
 	private SymptomState lesionsThatItch;
 
@@ -1494,6 +1496,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		CORONAVIRUS })
 	@Outbreaks
 	@HideForCountries
+	@DependantOn(RASHES)
 	@SymptomGrouping(SymptomGroup.RASH_TYPE)
 	/** Maculopapular rash */
 	private SymptomState skinRash;
@@ -1515,6 +1518,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		CORONAVIRUS })
 	@Outbreaks
 	@HideForCountries
+	@DependantOn(RASHES)
 	@SymptomGrouping(SymptomGroup.RASH_TYPE)
 	private SymptomState papularRash;
 
@@ -1533,6 +1537,7 @@ public class SymptomsDto extends PseudonymizableDto {
 		UNDEFINED,
 		OTHER,
 		CORONAVIRUS })
+	@DependantOn(RASHES)
 	@SymptomGrouping(SymptomGroup.RASH_TYPE)
 	private SymptomState macularRash;
 
@@ -1710,6 +1715,7 @@ public class SymptomsDto extends PseudonymizableDto {
 	@Diseases({
 		CONGENITAL_RUBELLA,
 		MONKEYPOX })
+	@DependantOn(RASHES)
 	@SymptomGrouping(SymptomGroup.RASH_TYPE)
 	private SymptomState purpuricRash;
 
