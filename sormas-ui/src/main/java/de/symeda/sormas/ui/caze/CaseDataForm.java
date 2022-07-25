@@ -17,6 +17,7 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.caze;
 
+import static de.symeda.sormas.api.symptoms.SymptomsDto.RASHES;
 import static de.symeda.sormas.ui.utils.CssStyles.ERROR_COLOR_PRIMARY;
 import static de.symeda.sormas.ui.utils.CssStyles.FORCE_CAPTION;
 import static de.symeda.sormas.ui.utils.CssStyles.H3;
@@ -117,6 +118,7 @@ import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.person.PersonDto;
+import de.symeda.sormas.api.symptoms.SymptomState;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserRight;
@@ -254,9 +256,14 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(CaseDataDto.BLOOD_ORGAN_OR_TISSUE_DONATED) +
 					fluidRowLocs(CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM) + fluidRowLocs(CaseDataDto.TRIMESTER, "") +
 					fluidRowLocs(CaseDataDto.VACCINATION_STATUS, "") +
+					
 					fluidRowLocs(CaseDataDto.SMALLPOX_VACCINATION_RECEIVED, CaseDataDto.SMALLPOX_VACCINATION_SCAR) +
-					fluidRowLocs(CaseDataDto.SMALLPOX_LAST_VACCINATION_DATE, "") +
 					fluidRowLocs(SMALLPOX_VACCINATION_SCAR_IMG) +
+
+					
+					fluidRowLocs(CaseDataDto.SMALLPOX_LAST_VACCINATION_DATE, "") +
+					
+					
 					fluidRowLocs(6, CaseDataDto.CLINICIAN_NAME) +
 					fluidRowLocs(CaseDataDto.NOTIFYING_CLINIC, CaseDataDto.NOTIFYING_CLINIC_DETAILS) +
 					fluidRowLocs(CaseDataDto.CLINICIAN_PHONE, CaseDataDto.CLINICIAN_EMAIL) +
@@ -326,6 +333,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		this.caseFollowUpEnabled = FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_FOLLOWUP);
 
 		addFields();
+		//addField(SMALLPOX_VACCINATION_SCAR_IMG);
 	}
 
 	public static void updateFacilityDetails(ComboBox cbFacility, TextField tfFacilityDetails) {
@@ -1133,6 +1141,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				CaseDataDto.SMALLPOX_VACCINATION_RECEIVED,
 				Arrays.asList(YesNoUnknown.YES),
 				true);
+			
 		}
 
 		if (isVisibleAllowed(CaseDataDto.SMALLPOX_LAST_VACCINATION_DATE)) {
@@ -1217,18 +1226,34 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 		// Other initializations
 		if (disease == Disease.MONKEYPOX) {
+			
+
 			Image smallpoxVaccinationScarImg = new Image(null, new ThemeResource("img/smallpox-vaccination-scar.jpg"));
 			style(smallpoxVaccinationScarImg, VSPACE_3);
-			getContent().addComponent(smallpoxVaccinationScarImg, SMALLPOX_VACCINATION_SCAR_IMG);
+//			
+			VerticalLayout hl4 = new VerticalLayout();
 
-			// Set up initial image visibility
-			getContent().getComponent(SMALLPOX_VACCINATION_SCAR_IMG)
+			hl4.addComponents(getContent().getComponent(CaseDataDto.SMALLPOX_VACCINATION_SCAR),smallpoxVaccinationScarImg);
+			getContent().addComponent(hl4, CaseDataDto.SMALLPOX_VACCINATION_SCAR);
+			
+
+			// Set up initial visibility
+			 getContent().getComponent(CaseDataDto.SMALLPOX_VACCINATION_SCAR)
 				.setVisible(getFieldGroup().getField(CaseDataDto.SMALLPOX_VACCINATION_RECEIVED).getValue() == YesNoUnknown.YES);
 
-			// Set up image visibility listener
-			getFieldGroup().getField(CaseDataDto.SMALLPOX_VACCINATION_RECEIVED)
-				.addValueChangeListener(
-					e -> getContent().getComponent(SMALLPOX_VACCINATION_SCAR_IMG).setVisible(e.getProperty().getValue() == YesNoUnknown.YES));
+				// Set up image visibility listener
+			getFieldGroup().getField(CaseDataDto.SMALLPOX_VACCINATION_RECEIVED).addValueChangeListener(e -> {
+				
+					getContent().getComponent( CaseDataDto.SMALLPOX_VACCINATION_SCAR)
+						.setVisible(FieldHelper.getNullableSourceFieldValue((Field) e.getProperty()) == YesNoUnknown.YES);
+				
+			});
+
+
+			
+			
+						
+					
 		}
 
 		List<String> medicalInformationFields =
