@@ -29,7 +29,7 @@ public class FeatureConfigurationService extends Service {
 		AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
 		Intent intent = new Intent(context, FeatureConfigurationService.class);
-		PendingIntent alarmIntent = PendingIntent.getService(context, 1515, intent, 0);
+		PendingIntent alarmIntent = PendingIntent.getService(context, 1515, intent, PendingIntent.FLAG_IMMUTABLE);
 
 		Date date = DateHelper.getEndOfDay(new Date());
 		alarmMgr.setInexactRepeating(
