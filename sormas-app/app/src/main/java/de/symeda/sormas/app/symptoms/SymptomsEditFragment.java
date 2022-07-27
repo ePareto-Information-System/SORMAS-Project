@@ -197,7 +197,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		initOnsetSymptomField(contentBinding);
 
 		// Remove the Complications heading for CRS; should be done automatically later
-		if (disease == Disease.CONGENITAL_RUBELLA) {
+		if (disease == Disease.CONGENITAL_RUBELLA||disease == Disease.MONKEYPOX) {
 			contentBinding.complicationsHeading.setVisibility(GONE);
 		}
 

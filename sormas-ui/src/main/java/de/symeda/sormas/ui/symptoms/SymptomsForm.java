@@ -861,7 +861,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		// Complications heading - not displayed for Rubella (dirty, should be made generic)
 		Label complicationsHeading = new Label(I18nProperties.getString(Strings.headingComplications));
 		CssStyles.style(complicationsHeading, CssStyles.H3);
-		if (disease != Disease.CONGENITAL_RUBELLA && !isConfiguredServer("de")) {
+		if (disease != Disease.CONGENITAL_RUBELLA && disease != Disease.MONKEYPOX&&!isConfiguredServer("de")) {
 			getContent().addComponent(complicationsHeading, COMPLICATIONS_HEADING);
 		}
 
