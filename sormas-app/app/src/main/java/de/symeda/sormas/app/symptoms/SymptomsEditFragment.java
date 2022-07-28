@@ -185,7 +185,7 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		}
 
 		contentBinding.symptomsOnsetDate.initializeDateField(getFragmentManager());
-
+		contentBinding.symptomsLesionsOnsetDate.initializeDateField(getFragmentManager());
 		contentBinding.symptomsTemperature.initializeSpinner(DataUtils.addEmptyItem(bodyTempList));
 		contentBinding.symptomsTemperatureSource.initializeSpinner(DataUtils.addEmptyItem(tempSourceList));
 		contentBinding.symptomsCongenitalHeartDiseaseType.initializeSpinner(congenitalHeartDiseaseList);
