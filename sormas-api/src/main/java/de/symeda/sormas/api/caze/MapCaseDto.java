@@ -21,6 +21,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.geo.GeoLatLon;
+import de.symeda.sormas.api.infrastructure.district.DistrictDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.PersonalData;
@@ -67,6 +69,10 @@ public class MapCaseDto implements Serializable {
 
 	private Boolean isInJurisdiction;
 
+	private String districtUuid;
+	private Double districtLatitude;
+	private Double districtLongitude;
+
 	public MapCaseDto(
 		String uuid,
 		Date reportDate,
@@ -82,9 +88,11 @@ public class MapCaseDto implements Serializable {
 		Double reportLon,
 		Double addressLat,
 		Double addressLon,
-		boolean isInJurisdiction
-	) {
-
+		boolean isInJurisdiction,
+		String districtUuid,
+		Double districtLatitude,
+		Double districtLongitude)
+	{
 		this.uuid = uuid;
 		this.reportDate = reportDate;
 		this.caseClassification = caseClassification;
@@ -97,6 +105,40 @@ public class MapCaseDto implements Serializable {
 		this.addressLat = addressLat;
 		this.addressLon = addressLon;
 		this.healthFacilityUuid = healthFacilityUuid;
+		this.isInJurisdiction = isInJurisdiction;
+		this.districtUuid = districtUuid;
+		this.districtLatitude = districtLatitude;
+		this.districtLongitude = districtLongitude;
+	}
+
+	public MapCaseDto(
+			String uuid,
+			Date reportDate,
+			CaseClassification caseClassification,
+			Disease disease,
+			String personUuid,
+			String personFirstName,
+			String personLastName,
+			String healthFacilityUuid,
+			Double healthFacilityLat,
+			Double healthFacilityLon,
+			Double reportLat,
+			Double reportLon,
+			Double addressLat,
+			Double addressLon,
+			boolean isInJurisdiction)
+	{
+		this.uuid = uuid;
+		this.reportDate = reportDate;
+		this.caseClassification = caseClassification;
+		this.disease = disease;
+		this.person = new PersonReferenceDto(personUuid, personFirstName, personLastName);
+		this.setHealthFacilityLat(healthFacilityLat);
+		this.setHealthFacilityLon(healthFacilityLon);
+		this.reportLat = reportLat;
+		this.reportLon = reportLon;
+		this.addressLat = addressLat;
+		this.addressLon = addressLon;
 		this.isInJurisdiction = isInJurisdiction;
 	}
 
@@ -199,5 +241,30 @@ public class MapCaseDto implements Serializable {
 
 	public Boolean getInJurisdiction() {
 		return isInJurisdiction;
+	}
+
+	public Double getDistrictLatitude() {
+		return districtLatitude;
+	}
+
+	public void setDistrictLatitude(Double districtLatitude) {
+//		this.districtLatitude = districtLatitude == null ? 0.0 : districtLatitude;
+		this.districtLatitude = districtLatitude;
+	}
+
+	public Double getDistrictLongitude() {
+		return districtLongitude;
+	}
+
+	public void setDistrictLongitude(Double districtLongitude) {
+		this.districtLongitude = districtLongitude;
+	}
+
+	public String getDistrictUuid() {
+		return districtUuid;
+	}
+
+	public void setDistrictUuid(String districtUuid) {
+		this.districtUuid = districtUuid;
 	}
 }

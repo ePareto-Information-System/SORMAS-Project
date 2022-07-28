@@ -157,7 +157,9 @@ public interface Validations {
 	String personMultiplePrimaryEmailAddresses = "personMultiplePrimaryEmailAddresses";
 	String personMultiplePrimaryPhoneNumbers = "personMultiplePrimaryPhoneNumbers";
 	String phoneNumberValidation = "phoneNumberValidation";
+	String emailAddressValidation = "emailAddressValidation";
 	String required = "required";
+	String requiredField = "requiredField";
 	String softAddEntryToList = "softAddEntryToList";
 	String softApproximateAgeTooHigh = "softApproximateAgeTooHigh";
 	String sormasToSormasCaseExists = "sormasToSormasCaseExists";
@@ -202,6 +204,7 @@ public interface Validations {
 	String vaccineDosesFormat = "vaccineDosesFormat";
 	String validCaseContactOrEventParticipant = "validCaseContactOrEventParticipant";
 	String validCommunity = "validCommunity";
+	String validDateOfArrival = "validDateOfArrival";
 	String validDateRange = "validDateRange";
 	String validDisease = "validDisease";
 	String validDistrict = "validDistrict";

@@ -30,6 +30,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import de.symeda.sormas.ui.utils.ButtonHelper;
+import de.symeda.sormas.ui.utils.DownloadUtil;
+import de.symeda.sormas.ui.utils.ExportEntityName;
 import org.apache.commons.io.IOUtils;
 
 import com.vaadin.icons.VaadinIcons;
@@ -58,13 +61,9 @@ import de.symeda.sormas.api.caze.classification.ClassificationHtmlRenderer;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.HtmlHelper;
 import de.symeda.sormas.api.utils.InfoProvider;
-import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
-import de.symeda.sormas.ui.utils.DownloadUtil;
-import de.symeda.sormas.ui.utils.ExportEntityName;
 
 @SuppressWarnings("serial")
 public class AboutView extends VerticalLayout implements View {
@@ -132,6 +131,15 @@ public class AboutView extends VerticalLayout implements View {
 		Label versionLabel = new Label(I18nProperties.getCaption(Captions.aboutVersion) + ": " + InfoProvider.get().getVersion(), ContentMode.HTML);
 		CssStyles.style(versionLabel, CssStyles.VSPACE_3);
 		infoLayout.addComponent(versionLabel);
+
+		if (InfoProvider.get().isSnapshotVersion()) {
+			Link commitLink = new Link(
+				String.format("%s (%s)", versionLabel.getValue(), InfoProvider.get().getLastCommitShortId()),
+				new ExternalResource(InfoProvider.get().getLastCommitHistoryUrl()));
+			commitLink.setTargetName("_blank");
+			CssStyles.style(commitLink, CssStyles.VSPACE_3);
+			infoLayout.replaceComponent(versionLabel, commitLink);
+		}
 
 		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.LAB_MESSAGES)) {
 			addExternalServiceVersion(
@@ -254,8 +262,7 @@ public class AboutView extends VerticalLayout implements View {
 			DownloadUtil.attachDataDictionaryDownloader(dataDictionaryButton);
 		}
 
-		if (UserProvider.getCurrent().hasUserRight(UserRight.EXPORT_DATA_PROTECTION_DATA)
-			&& FacadeProvider.getInfoFacade().isGenerateDataProtectionDictionaryAllowed()) {
+		if (FacadeProvider.getInfoFacade().isGenerateDataProtectionDictionaryAllowed()) {
 			Button dataProtectionButton =
 				ButtonHelper.createButton(Captions.aboutDataProtectionDictionary, null, ValoTheme.BUTTON_LINK, CssStyles.BUTTON_COMPACT);
 			documentsLayout.addComponent(dataProtectionButton);

@@ -27,6 +27,7 @@ import javax.validation.Valid;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseCriteria;
+import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
@@ -68,19 +69,17 @@ public interface SampleFacade {
 	
 	List<SampleDto> findBy(SampleCriteria criteria);
 
-	void deleteSample(SampleReferenceDto sampleRef);
+	void deleteSample(SampleReferenceDto sampleRef, DeletionDetails deletionDetails);
 
 	void deleteAllSamples(List<String> sampleUuids);
 
-	List<String> deleteSamples(List<String> sampleUuids);
+	List<String> deleteSamples(List<String> sampleUuids, DeletionDetails deletionDetails);
 
 	void validate(SampleDto sample) throws ValidationRuntimeException;
 
 	List<String> getDeletedUuidsSince(Date since);
 
 	boolean isDeleted(String sampleUuid);
-
-	Map<PathogenTestResultType, Long> getNewTestResultCountByResultType(List<Long> caseIds);
 
 	List<SampleDto> getByCaseUuids(List<String> caseUuids);
 	
@@ -97,4 +96,6 @@ public interface SampleFacade {
 	List<SampleDto> getByEventParticipantUuids(List<String> asList);
 
 	List<SampleDto> getByLabSampleId(String labSampleId);
+
+	Map<PathogenTestResultType, Long> getNewTestResultCountByResultType(List<Long> caseIds);
 }

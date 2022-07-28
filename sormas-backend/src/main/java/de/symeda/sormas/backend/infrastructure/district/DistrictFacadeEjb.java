@@ -49,9 +49,8 @@ import de.symeda.sormas.api.infrastructure.district.DistrictIndexDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.utils.SortProperty;
-import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.backend.feature.FeatureConfigurationFacadeEjb.FeatureConfigurationFacadeEjbLocal;
-import de.symeda.sormas.backend.infrastructure.AbstractInfrastructureEjb;
+import de.symeda.sormas.backend.infrastructure.AbstractInfrastructureFacadeEjb;
 import de.symeda.sormas.backend.infrastructure.PopulationDataFacadeEjb.PopulationDataFacadeEjbLocal;
 import de.symeda.sormas.backend.infrastructure.area.Area;
 import de.symeda.sormas.backend.infrastructure.area.AreaService;
@@ -67,7 +66,7 @@ import de.symeda.sormas.backend.util.QueryHelper;
 
 @Stateless(name = "DistrictFacade")
 public class DistrictFacadeEjb
-	extends AbstractInfrastructureEjb<District, DistrictDto, DistrictIndexDto, DistrictReferenceDto, DistrictService, DistrictCriteria>
+	extends AbstractInfrastructureFacadeEjb<District, DistrictDto, DistrictIndexDto, DistrictReferenceDto, DistrictService, DistrictCriteria>
 	implements DistrictFacade {
 
 	@EJB
@@ -146,6 +145,8 @@ public class DistrictFacadeEjb
 				case District.NAME:
 				case District.EPID_CODE:
 				case District.GROWTH_RATE:
+				case District.DISTRICT_LATITUDE:
+				case District.DISTRICT_LONGITUDE:
 				case District.EXTERNAL_ID:
 					expression = district.get(sortProperty.propertyName);
 					break;
@@ -218,12 +219,20 @@ public class DistrictFacadeEjb
 	}
 
 	@Override
-	public List<DistrictReferenceDto> getByExternalId(String externalId, boolean includeArchivedEntities) {
+	public List<DistrictReferenceDto> getReferencesByExternalId(String externalId, boolean includeArchivedEntities) {
 
 		return service.getByExternalId(externalId, includeArchivedEntities)
 			.stream()
 			.map(DistrictFacadeEjb::toReferenceDto)
 			.collect(Collectors.toList());
+	}
+
+	public List<DistrictDto> getByExternalId(String externalId, boolean includeArchivedEntities) {
+
+		return service.getByExternalId(externalId, includeArchivedEntities)
+				.stream()
+				.map(this::toDto)
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -294,6 +303,9 @@ public class DistrictFacadeEjb
 		dto.setExternalID(entity.getExternalID());
 		dto.setCentrallyManaged(entity.isCentrallyManaged());
 
+		dto.setDistrictLatitude(entity.getDistrictLatitude());
+		dto.setDistrictLongitude(entity.getDistrictLongitude());
+
 		return dto;
 	}
 
@@ -318,6 +330,9 @@ public class DistrictFacadeEjb
 		dto.setRegion(RegionFacadeEjb.toReferenceDto(entity.getRegion()));
 		dto.setExternalID(entity.getExternalID());
 
+		dto.setDistrictLatitude(entity.getDistrictLatitude());
+		dto.setDistrictLongitude(entity.getDistrictLongitude());
+
 		return dto;
 	}
 
@@ -333,6 +348,9 @@ public class DistrictFacadeEjb
 		target.setArchived(source.isArchived());
 		target.setExternalID(source.getExternalID());
 		target.setCentrallyManaged(source.isCentrallyManaged());
+
+		target.setDistrictLatitude(source.getDistrictLatitude());
+		target.setDistrictLongitude(source.getDistrictLongitude());
 
 		return target;
 	}

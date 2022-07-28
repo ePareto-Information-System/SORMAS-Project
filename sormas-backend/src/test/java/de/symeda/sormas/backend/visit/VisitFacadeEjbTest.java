@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import de.symeda.sormas.api.common.DeletionReason;
 import org.junit.Test;
 
 import de.symeda.sormas.api.Disease;
@@ -25,6 +26,7 @@ import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.caze.InvestigationStatus;
+import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolException;
@@ -251,7 +253,7 @@ public class VisitFacadeEjbTest extends AbstractBeanTest {
 
 		TestDataCreator.RDCF rdcf = creator.createRDCF();
 
-		UserDto user = creator.createUser(creator.createRDCFEntities(), "Surv", "Sup", UserRole.SURVEILLANCE_SUPERVISOR);
+		UserDto user = creator.createUser(rdcf, "Surv", "Sup", UserRole.SURVEILLANCE_SUPERVISOR);
 
 		PersonDto person = creator.createPerson();
 		PersonDto person2 = creator.createPerson();
@@ -263,12 +265,12 @@ public class VisitFacadeEjbTest extends AbstractBeanTest {
 		creator.createContact(user.toReference(), person.toReference());
 		creator.createContact(user.toReference(), person5.toReference());
 		ContactDto deletedContact = creator.createContact(user.toReference(), person2.toReference());
-		getContactFacade().deleteContact(deletedContact.getUuid());
+		getContactFacade().delete(deletedContact.getUuid(), new DeletionDetails(DeletionReason.OTHER_REASON, null));
 		// cases
 		creator.createCase(user.toReference(), person.toReference(), rdcf);
 		creator.createCase(user.toReference(), person3.toReference(), rdcf);
 		CaseDataDto deletedCase = creator.createCase(user.toReference(), person4.toReference(), rdcf);
-		getCaseFacade().deleteCase(deletedCase.getUuid());
+		getCaseFacade().delete(deletedCase.getUuid(), new DeletionDetails(DeletionReason.OTHER_REASON, null));
 
 		// Attached to case and contact
 		creator.createVisit(person.toReference());
@@ -287,9 +289,8 @@ public class VisitFacadeEjbTest extends AbstractBeanTest {
 
 	@Test
 	public void testGetAllActiveVisitsAfter() throws InterruptedException, ExternalSurveillanceToolException {
-
-		UserDto user = creator.createUser(creator.createRDCFEntities(), "Surv", "Sup", UserRole.SURVEILLANCE_SUPERVISOR);
 		TestDataCreator.RDCF rdcf = creator.createRDCF();
+		UserDto user = creator.createUser(rdcf, "Surv", "Sup", UserRole.SURVEILLANCE_SUPERVISOR);
 		Date date = new Date();
 
 		PersonDto person = creator.createPerson();
@@ -300,11 +301,11 @@ public class VisitFacadeEjbTest extends AbstractBeanTest {
 		creator.createContact(user.toReference(), person.toReference());
 		creator.createContact(user.toReference(), person3.toReference());
 		ContactDto deletedContact = creator.createContact(user.toReference(), person2.toReference());
-		getContactFacade().deleteContact(deletedContact.getUuid());
+		getContactFacade().delete(deletedContact.getUuid(), new DeletionDetails(DeletionReason.OTHER_REASON, null));
 		creator.createCase(user.toReference(), person3.toReference(), rdcf);
 		creator.createCase(user.toReference(), person4.toReference(), rdcf);
 		CaseDataDto deletedCaseDto = creator.createCase(user.toReference(), person5.toReference(), rdcf);
-		getCaseFacade().deleteCase(deletedCaseDto.getUuid());
+		getCaseFacade().delete(deletedCaseDto.getUuid(), new DeletionDetails(DeletionReason.OTHER_REASON, null));
 
 		creator.createVisit(person.toReference());
 		creator.createVisit(person3.toReference());
@@ -336,8 +337,7 @@ public class VisitFacadeEjbTest extends AbstractBeanTest {
 
 	@Test
 	public void testGetLastVisitByContact() {
-
-		UserDto user = creator.createUser(creator.createRDCFEntities(), "Surv", "Sup", UserRole.SURVEILLANCE_SUPERVISOR);
+		UserDto user = creator.createUser(creator.createRDCF(), "Surv", "Sup", UserRole.SURVEILLANCE_SUPERVISOR);
 
 		PersonDto person = creator.createPerson();
 		ContactDto contact = creator.createContact(user.toReference(), person.toReference());
@@ -351,7 +351,7 @@ public class VisitFacadeEjbTest extends AbstractBeanTest {
 	@Test
 	public void testGetVisitsByContactAndPeriod() {
 
-		UserDto user = creator.createUser(creator.createRDCFEntities(), "Surv", "Sup", UserRole.SURVEILLANCE_SUPERVISOR);
+		UserDto user = creator.createUser(creator.createRDCF(), "Surv", "Sup", UserRole.SURVEILLANCE_SUPERVISOR);
 
 		PersonDto person = creator.createPerson();
 		ContactDto contact = creator.createContact(user.toReference(), person.toReference());
@@ -377,8 +377,7 @@ public class VisitFacadeEjbTest extends AbstractBeanTest {
 
 	@Test
 	public void testGetLastVisitByCase() {
-
-		UserDto user = creator.createUser(creator.createRDCFEntities(), "Surv", "Sup", UserRole.SURVEILLANCE_SUPERVISOR);
+		UserDto user = creator.createUser(creator.createRDCF(), "Surv", "Sup", UserRole.SURVEILLANCE_SUPERVISOR);
 
 		PersonDto person = creator.createPerson();
 		CaseDataDto caze = creator.createCase(user.toReference(), person.toReference(), creator.createRDCF());
@@ -391,8 +390,7 @@ public class VisitFacadeEjbTest extends AbstractBeanTest {
 
 	@Test
 	public void testGetIndexList() {
-
-		UserDto user = creator.createUser(creator.createRDCFEntities(), "Surv", "Sup", UserRole.SURVEILLANCE_SUPERVISOR);
+		UserDto user = creator.createUser(creator.createRDCF(), "Surv", "Sup", UserRole.SURVEILLANCE_SUPERVISOR);
 
 		PersonDto person = creator.createPerson();
 		PersonDto person2 = creator.createPerson();

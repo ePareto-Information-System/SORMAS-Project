@@ -20,7 +20,6 @@ package de.symeda.sormas.rest;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -47,7 +46,6 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 @Path("/users")
 @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 @Consumes(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-@RolesAllowed("USER")
 public class UserResource {
 
 	@GET
@@ -89,4 +87,20 @@ public class UserResource {
 	public List<UserReferenceWithTaskNumbersDto> getUsersWithTaskNumbers(@RequestBody TaskContextIndex taskContextIndex) {
 		return FacadeProvider.getUserFacade().getAssignableUsersWithTaskNumbers(taskContextIndex);
 	}
+
+	@POST
+	@Path("/passwordStrength")
+	public String saveNewPassword(
+		@QueryParam("uuid") String uuid,
+		@QueryParam("newPassword") String newPassword,
+		@QueryParam("currentPassword") String currentPassword) {
+		return FacadeProvider.getUserFacade().updateUserPassword(uuid, newPassword, currentPassword);
+	}
+
+	@GET
+	@Path("/generatePassword")
+	public String generatePassword() {
+		return FacadeProvider.getUserFacade().generatePassword();
+	}
+
 }

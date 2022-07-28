@@ -19,12 +19,14 @@ package de.symeda.sormas.api.person;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Remote;
 import javax.validation.Valid;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseClassification;
+import de.symeda.sormas.api.caze.CaseCriteria;
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.contact.FollowUpStatus;
 import de.symeda.sormas.api.externaldata.ExternalDataDto;
@@ -67,7 +69,7 @@ public interface PersonFacade {
 	 * 
 	 * @return
 	 */
-	List<SimilarPersonDto> getSimilarPersonDtos(UserReferenceDto user, PersonSimilarityCriteria criteria);
+	List<SimilarPersonDto> getSimilarPersonDtos(PersonSimilarityCriteria criteria);
 
 	boolean checkMatchingNameInDatabase(UserReferenceDto userRef, PersonSimilarityCriteria criteria);
 
@@ -76,8 +78,6 @@ public interface PersonFacade {
 	List<PersonFollowUpEndDto> getLatestFollowUpEndDates(Date since, boolean forSymptomsJournal);
 
 	Date getLatestFollowUpEndDateByUuid(String uuid);
-
-	FollowUpStatus getMostRelevantFollowUpStatusByUuid(String uuid);
 
 	boolean setSymptomJournalStatus(String personUuid, SymptomJournalStatus status);
 
@@ -104,4 +104,8 @@ public interface PersonFacade {
 	void mergePerson(PersonDto leadPerson, PersonDto otherPerson);
 
 	PersonDto getByContext(PersonContext context, String contextUuid);
+
+    boolean isEnrolledInExternalJournal(String uuid);
+
+	Map<Disease, Long> getDeathCountByDisease(CaseCriteria caseCriteria, boolean excludeSharedCases, boolean excludeCasesFromContacts);
 }

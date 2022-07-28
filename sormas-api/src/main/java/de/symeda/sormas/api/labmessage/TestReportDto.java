@@ -1,18 +1,22 @@
 package de.symeda.sormas.api.labmessage;
 
+import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.sample.PCRTestSpecification;
+import de.symeda.sormas.api.utils.DependingOnFeatureType;
 import java.util.Date;
 
 import javax.validation.constraints.Size;
 
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.api.sample.PCRTestSpecification;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.FieldConstraints;
 import de.symeda.sormas.api.utils.Required;
 
+@DependingOnFeatureType(featureType = FeatureType.LAB_MESSAGES)
 public class TestReportDto extends EntityDto {
 
 	public static final String I18N_PREFIX = "TestReport";
@@ -24,6 +28,7 @@ public class TestReportDto extends EntityDto {
 	public static final String TEST_TYPE = "testType";
 	public static final String TEST_DATE_TIME = "testDateTime";
 	public static final String TEST_RESULT = "testResult";
+	public static final String TEST_PCR_TEST_SPECIFICATION = "testPcrTestSpecification";
 
 	@Required
 	private LabMessageReferenceDto labMessage;
@@ -37,7 +42,6 @@ public class TestReportDto extends EntityDto {
 	private String testLabCity;
 
 	private PathogenTestType testType;
-	private PCRTestSpecification pcrTestSpecification;
 	private Date testDateTime;
 	private PathogenTestResultType testResult;
 	private Boolean testResultVerified;
@@ -55,6 +59,7 @@ public class TestReportDto extends EntityDto {
 	private String testedDiseaseVariantDetails;
 
 	private Boolean preliminary;
+	private PCRTestSpecification testPcrTestSpecification;
 
 	public LabMessageReferenceDto getLabMessage() {
 		return labMessage;
@@ -102,14 +107,6 @@ public class TestReportDto extends EntityDto {
 
 	public void setTestType(PathogenTestType testType) {
 		this.testType = testType;
-	}
-
-	public PCRTestSpecification getPcrTestSpecification() {
-		return pcrTestSpecification;
-	}
-
-	public void setPcrTestSpecification(PCRTestSpecification pcrTestSpecification) {
-		this.pcrTestSpecification = pcrTestSpecification;
 	}
 
 	public Date getTestDateTime() {
@@ -196,5 +193,13 @@ public class TestReportDto extends EntityDto {
 
 	public void setPreliminary(Boolean preliminary) {
 		this.preliminary = preliminary;
+	}
+
+	public PCRTestSpecification getTestPcrTestSpecification() {
+		return testPcrTestSpecification;
+	}
+
+	public void setTestPcrTestSpecification(PCRTestSpecification testPcrTestSpecification) {
+		this.testPcrTestSpecification = testPcrTestSpecification;
 	}
 }

@@ -17,10 +17,6 @@ package de.symeda.sormas.api.utils;
 
 import static java.util.stream.Collectors.joining;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -213,22 +209,6 @@ public final class DataHelper {
 		public V getElement1() {
 			return element1;
 		}
-	}
-
-	public static String convertStreamToString(InputStream is) throws IOException {
-
-		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-		StringBuilder sb = new StringBuilder();
-
-		String line = null;
-		try {
-			while ((line = reader.readLine()) != null) {
-				sb.append(line).append('\n');
-			}
-		} finally {
-			is.close();
-		}
-		return sb.toString();
 	}
 
 	public static String capitalize(String input) {
@@ -454,11 +434,11 @@ public final class DataHelper {
 	}
 
 	public static boolean isValidPhoneNumber(String phoneNumber) {
-		return StringUtils.isBlank(phoneNumber) || !phoneNumber.matches(NOT_A_VALID_PHONE_NUMBER_REGEX);
+		return phoneNumber == null || phoneNumber.isEmpty() || phoneNumber.startsWith("+");
 	}
 
 	public static boolean isValidEmailAddress(String emailAddress) {
-		return StringUtils.isBlank(emailAddress) || emailAddress.matches(VALID_EMAIL_REGEX);
+		return emailAddress == null || emailAddress.isEmpty() || emailAddress.matches(VALID_EMAIL_REGEX);
 	}
 
 	public static String buildStringFromTrueValues(Map<? extends Enum<?>, Boolean> map) {

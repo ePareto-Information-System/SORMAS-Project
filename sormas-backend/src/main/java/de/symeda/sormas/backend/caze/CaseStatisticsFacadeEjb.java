@@ -51,7 +51,7 @@ import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.statistics.StatisticsCaseAttribute;
 import de.symeda.sormas.api.statistics.StatisticsCaseCountDto;
 import de.symeda.sormas.api.statistics.StatisticsCaseCriteria;
-import de.symeda.sormas.api.statistics.StatisticsCaseSubAttribute;
+import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 import de.symeda.sormas.api.statistics.StatisticsHelper;
 import de.symeda.sormas.api.user.UserDto;
@@ -108,9 +108,9 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 	public List<StatisticsCaseCountDto> queryCaseCount(
 		StatisticsCaseCriteria caseCriteria,
 		StatisticsCaseAttribute rowGrouping,
-		StatisticsCaseSubAttribute rowSubGrouping,
+		StatisticsSubAttribute rowSubGrouping,
 		StatisticsCaseAttribute columnGrouping,
-		StatisticsCaseSubAttribute columnSubGrouping,
+		StatisticsSubAttribute columnSubGrouping,
 		boolean includePopulation,
 		boolean includeZeroValues,
 		Integer populationReferenceYear) {
@@ -254,9 +254,9 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 	public Pair<String, List<Object>> buildCaseCountQuery(
 		StatisticsCaseCriteria caseCriteria,
 		StatisticsCaseAttribute groupingA,
-		StatisticsCaseSubAttribute subGroupingA,
+		StatisticsSubAttribute subGroupingA,
 		StatisticsCaseAttribute groupingB,
-		StatisticsCaseSubAttribute subGroupingB) {
+		StatisticsSubAttribute subGroupingB) {
 
 		// Steps to build the query:
 		// 1. Join the required tables
@@ -270,7 +270,7 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 
 		StringBuilder caseJoinBuilder = new StringBuilder();
 
-		if (subGroupingA == StatisticsCaseSubAttribute.FACILITY || subGroupingB == StatisticsCaseSubAttribute.FACILITY) {
+		if (subGroupingA == StatisticsSubAttribute.FACILITY || subGroupingB == StatisticsSubAttribute.FACILITY) {
 			caseJoinBuilder.append(" LEFT JOIN ")
 				.append(Facility.TABLE_NAME)
 				.append(" ON ")
@@ -282,7 +282,7 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 				.append(".")
 				.append(Facility.ID);
 		}
-		if (subGroupingA == StatisticsCaseSubAttribute.COMMUNITY || subGroupingB == StatisticsCaseSubAttribute.COMMUNITY) {
+		if (subGroupingA == StatisticsSubAttribute.COMMUNITY || subGroupingB == StatisticsSubAttribute.COMMUNITY) {
 			caseJoinBuilder.append(" LEFT JOIN ")
 				.append(Community.TABLE_NAME)
 				.append(" ON ")
@@ -294,7 +294,7 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 				.append(".")
 				.append(Community.ID);
 		}
-		if (subGroupingA == StatisticsCaseSubAttribute.DISTRICT || subGroupingB == StatisticsCaseSubAttribute.DISTRICT) {
+		if (subGroupingA == StatisticsSubAttribute.DISTRICT || subGroupingB == StatisticsSubAttribute.DISTRICT) {
 			caseJoinBuilder.append(" LEFT JOIN ")
 				.append(District.TABLE_NAME)
 				.append(" ON ")
@@ -306,7 +306,7 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 				.append(".")
 				.append(District.ID);
 		}
-		if (subGroupingA == StatisticsCaseSubAttribute.REGION || subGroupingB == StatisticsCaseSubAttribute.REGION) {
+		if (subGroupingA == StatisticsSubAttribute.REGION || subGroupingB == StatisticsSubAttribute.REGION) {
 			caseJoinBuilder.append(" LEFT JOIN ")
 				.append(Region.TABLE_NAME)
 				.append(" ON ")
@@ -939,9 +939,9 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 	public Pair<String, List<Object>> buildPopulationQuery(
 		StatisticsCaseCriteria caseCriteria,
 		StatisticsCaseAttribute groupingA,
-		StatisticsCaseSubAttribute subGroupingA,
+		StatisticsSubAttribute subGroupingA,
 		StatisticsCaseAttribute groupingB,
-		StatisticsCaseSubAttribute subGroupingB,
+		StatisticsSubAttribute subGroupingB,
 		Integer populationReferenceYear) {
 
 		////////
@@ -1015,7 +1015,7 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 			// limit either to entries with community or to entries without community
 
 			communityIds = null;
-			usesCommunitys = subGroupingA == StatisticsCaseSubAttribute.COMMUNITY || subGroupingB == StatisticsCaseSubAttribute.COMMUNITY;
+			usesCommunitys = subGroupingA == StatisticsSubAttribute.COMMUNITY || subGroupingB == StatisticsSubAttribute.COMMUNITY;
 
 			if (whereBuilder.length() > 0) {
 				whereBuilder.append(" AND ");
@@ -1047,7 +1047,7 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 			// limit either to entries with district or to entries without district
 
 			districtIds = null;
-			usesDistricts = subGroupingA == StatisticsCaseSubAttribute.DISTRICT || subGroupingB == StatisticsCaseSubAttribute.DISTRICT;
+			usesDistricts = subGroupingA == StatisticsSubAttribute.DISTRICT || subGroupingB == StatisticsSubAttribute.DISTRICT;
 
 			if (whereBuilder.length() > 0) {
 				whereBuilder.append(" AND ");
@@ -1148,7 +1148,7 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 
 		// growth rates to calculate the population
 		selectBuilder.append(" LEFT JOIN ");
-		if (communityIds != null || subGroupingA == StatisticsCaseSubAttribute.COMMUNITY || subGroupingB == StatisticsCaseSubAttribute.COMMUNITY) {
+		if (communityIds != null || subGroupingA == StatisticsSubAttribute.COMMUNITY || subGroupingB == StatisticsSubAttribute.COMMUNITY) {
 			selectBuilder.append(Community.TABLE_NAME)
 				.append(" AS growthsource ON growthsource.")
 				.append(Community.ID)
@@ -1156,8 +1156,8 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 				.append(PopulationData.COMMUNITY)
 				.append("_id");
 		} else if (districtIds != null
-			|| subGroupingA == StatisticsCaseSubAttribute.DISTRICT
-			|| subGroupingB == StatisticsCaseSubAttribute.DISTRICT) {
+			|| subGroupingA == StatisticsSubAttribute.DISTRICT
+			|| subGroupingB == StatisticsSubAttribute.DISTRICT) {
 			selectBuilder.append(District.TABLE_NAME)
 				.append(" AS growthsource ON growthsource.")
 				.append(District.ID)
@@ -1190,7 +1190,7 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 		return new ImmutablePair<String, List<Object>>(queryBuilder.toString(), filterBuilderParameters);
 	}
 
-	private String buildPopulationGroupingSelect(StatisticsCaseAttribute grouping, StatisticsCaseSubAttribute subGrouping) {
+	private String buildPopulationGroupingSelect(StatisticsCaseAttribute grouping, StatisticsSubAttribute subGrouping) {
 
 		if (grouping != null) {
 			switch (grouping) {
@@ -1389,7 +1389,7 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 		return QueryHelper.appendInFilterValues(filterBuilder, filterBuilderParameters, values, valueMapper);
 	}
 
-	private String buildCaseGroupingSelectQuery(StatisticsCaseAttribute grouping, StatisticsCaseSubAttribute subGrouping, String groupAlias) {
+	private String buildCaseGroupingSelectQuery(StatisticsCaseAttribute grouping, StatisticsSubAttribute subGrouping, String groupAlias) {
 
 		StringBuilder groupingSelectPartBuilder = new StringBuilder();
 		switch (grouping) {

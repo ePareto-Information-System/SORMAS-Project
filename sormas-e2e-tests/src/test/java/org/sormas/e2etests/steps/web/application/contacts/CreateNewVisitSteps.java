@@ -1,6 +1,6 @@
 /*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2021 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+ * Copyright © 2016-2022 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,10 +28,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import lombok.SneakyThrows;
+import org.sormas.e2etests.entities.pojo.helpers.ComparisonHelper;
+import org.sormas.e2etests.entities.pojo.web.FollowUpVisit;
+import org.sormas.e2etests.entities.services.FollowUpVisitService;
 import org.sormas.e2etests.helpers.WebDriverHelpers;
-import org.sormas.e2etests.pojo.helpers.ComparisonHelper;
-import org.sormas.e2etests.pojo.web.FollowUpVisit;
-import org.sormas.e2etests.services.FollowUpVisitService;
 import org.sormas.e2etests.state.ApiState;
 import org.sormas.e2etests.steps.BaseSteps;
 import org.testng.Assert;
@@ -55,7 +55,6 @@ public class CreateNewVisitSteps implements En {
         "^I create a new Follow-up visit",
         () -> {
           followUpVisit = followUpVisitService.buildGeneratedFollowUpVisit();
-          webDriverHelpers.waitForPageLoaded();
           selectPersonAvailableAndCooperative(followUpVisit.getPersonAvailableAndCooperative());
           fillDateAndTimeVisit(followUpVisitService.buildGeneratedFollowUpVisit().getDateOfVisit());
           fillVisitRemark(followUpVisit.getVisitRemarks());
@@ -105,7 +104,6 @@ public class CreateNewVisitSteps implements En {
         "^I change Follow-up visit fields and save$",
         () -> {
           followUpEditVisit = followUpVisitService.buildEditFollowUpVisit();
-          webDriverHelpers.waitForPageLoaded();
           selectPersonAvailableAndCooperative(followUpEditVisit.getPersonAvailableAndCooperative());
           fillDateAndTimeVisit(followUpVisitService.buildEditFollowUpVisit().getDateOfVisit());
           fillVisitRemark(followUpEditVisit.getVisitRemarks());
@@ -128,7 +126,6 @@ public class CreateNewVisitSteps implements En {
     And(
         "^I open Follow up Visits tab from contact directory$",
         () -> {
-          webDriverHelpers.waitForPageLoaded();
           webDriverHelpers.clickOnWebElementBySelector(FOLLOW_UP_VISITS_BUTTON);
           webDriverHelpers.waitUntilIdentifiedElementIsPresent(FROM_INPUT);
         });
@@ -136,7 +133,6 @@ public class CreateNewVisitSteps implements En {
     Then(
         "^I am validating the From and To dates displayed$",
         () -> {
-          webDriverHelpers.waitForPageLoaded();
           String uuid = apiState.getCreatedContact().getUuid();
           webDriverHelpers.waitUntilIdentifiedElementIsPresent(MULTIPLE_OPTIONS_SEARCH_INPUT);
           webDriverHelpers.clearAndFillInWebElement(MULTIPLE_OPTIONS_SEARCH_INPUT, uuid);

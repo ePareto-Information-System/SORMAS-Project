@@ -1,6 +1,6 @@
 /*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2021 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+ * Copyright © 2016-2022 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -32,6 +32,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -51,6 +53,7 @@ import javax.persistence.criteria.Subquery;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import de.symeda.sormas.backend.caze.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -80,6 +83,7 @@ import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.feature.FeatureTypeProperty;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.immunization.ImmunizationDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
@@ -103,25 +107,29 @@ import de.symeda.sormas.api.person.PersonIndexDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.person.PersonSimilarityCriteria;
 import de.symeda.sormas.api.person.PresentCondition;
-import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.person.SimilarPersonDto;
 import de.symeda.sormas.api.person.SymptomJournalStatus;
 import de.symeda.sormas.api.user.UserReferenceDto;
+import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.AccessDeniedException;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DataHelper.Pair;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
-import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.caze.CaseFacadeEjb.CaseFacadeEjbLocal;
-import de.symeda.sormas.backend.caze.CaseService;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
 import de.symeda.sormas.backend.contact.Contact;
+import de.symeda.sormas.backend.contact.ContactFacadeEjb;
 import de.symeda.sormas.backend.contact.ContactFacadeEjb.ContactFacadeEjbLocal;
+import de.symeda.sormas.backend.contact.ContactJoins;
+import de.symeda.sormas.backend.contact.ContactQueryContext;
 import de.symeda.sormas.backend.contact.ContactService;
+import de.symeda.sormas.backend.event.EventFacadeEjb;
 import de.symeda.sormas.backend.event.EventFacadeEjb.EventFacadeEjbLocal;
 import de.symeda.sormas.backend.event.EventParticipant;
+import de.symeda.sormas.backend.event.EventParticipantFacadeEjb;
 import de.symeda.sormas.backend.event.EventParticipantFacadeEjb.EventParticipantFacadeEjbLocal;
 import de.symeda.sormas.backend.event.EventParticipantService;
 import de.symeda.sormas.backend.externaljournal.ExternalJournalService;
@@ -161,6 +169,7 @@ import de.symeda.sormas.backend.util.Pseudonymizer;
 import de.symeda.sormas.backend.util.QueryHelper;
 
 @Stateless(name = "PersonFacade")
+@RolesAllowed(UserRight._PERSON_VIEW)
 public class PersonFacadeEjb implements PersonFacade {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -207,6 +216,8 @@ public class PersonFacadeEjb implements PersonFacade {
 	@EJB
 	private EventParticipantFacadeEjbLocal eventParticipantFacade;
 	@EJB
+	private EventFacadeEjbLocal eventFacade;
+	@EJB
 	private DistrictFacadeEjbLocal districtFacade;
 	@EJB
 	private CommunityFacadeEjbLocal communityFacade;
@@ -224,12 +235,7 @@ public class PersonFacadeEjb implements PersonFacade {
 	}
 
 	@Override
-	public List<SimilarPersonDto> getSimilarPersonDtos(UserReferenceDto userRef, PersonSimilarityCriteria criteria) {
-
-		User user = userService.getByReferenceDto(userRef);
-		if (user == null) {
-			return Collections.emptyList();
-		}
+	public List<SimilarPersonDto> getSimilarPersonDtos(PersonSimilarityCriteria criteria) {
 
 		return personService.getSimilarPersonDtos(criteria, null);
 	}
@@ -246,6 +252,9 @@ public class PersonFacadeEjb implements PersonFacade {
 	}
 
 	@Override
+	@RolesAllowed({
+		UserRight._PERSON_VIEW,
+		UserRight._EXTERNAL_VISITS })
 	public Boolean isValidPersonUuid(String personUuid) {
 		return personService.exists(personUuid);
 	}
@@ -257,11 +266,8 @@ public class PersonFacadeEjb implements PersonFacade {
 
 	@Override
 	public List<PersonDto> getPersonsAfter(Date date, Integer batchSize, String lastSynchronizedUuid) {
-		final User user = userService.getCurrentUser();
-		if (user == null) {
-			return Collections.emptyList();
-		}
-		return toPseudonymizedDtos(personService.getAllAfter(date, user, batchSize, lastSynchronizedUuid));
+
+		return toPseudonymizedDtos(personService.getAllAfter(date, batchSize, lastSynchronizedUuid));
 	}
 
 	@Override
@@ -271,10 +277,11 @@ public class PersonFacadeEjb implements PersonFacade {
 
 	@Override
 	public List<PersonDto> getByExternalIds(List<String> externalIds) {
-		return toPseudonymizedDtos(personService.getByExternalIdsBatched(externalIds));
+		return toPseudonymizedDtos(personService.getByExternalIds(externalIds));
 	}
 
 	@Override
+	@RolesAllowed(UserRight._PERSON_EDIT)
 	public void updateExternalData(@Valid List<ExternalDataDto> externalData) throws ExternalDataUpdateException {
 		personService.updateExternalData(externalData);
 	}
@@ -299,6 +306,9 @@ public class PersonFacadeEjb implements PersonFacade {
 	}
 
 	@Override
+	@RolesAllowed({
+		UserRight._PERSON_VIEW,
+		UserRight._EXTERNAL_VISITS })
 	public PersonDto getPersonByUuid(String uuid) {
 		final Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
 		return Optional.of(uuid)
@@ -308,9 +318,23 @@ public class PersonFacadeEjb implements PersonFacade {
 	}
 
 	@Override
+	@RolesAllowed({
+		UserRight._PERSON_VIEW,
+		UserRight._EXTERNAL_VISITS,
+		UserRight._SYSTEM })
 	public JournalPersonDto getPersonForJournal(String uuid) {
-		PersonDto detailedPerson = getPersonByUuid(uuid);
+		PersonDto detailedPerson = Optional.of(uuid).map(u -> personService.getByUuid(u)).map(p -> toDto(p)).orElse(null);
 		return getPersonForJournal(detailedPerson);
+	}
+
+	@Override
+	@RolesAllowed({
+		UserRight._PERSON_VIEW,
+		UserRight._EXTERNAL_VISITS,
+		UserRight._SYSTEM })
+	public boolean isEnrolledInExternalJournal(String uuid) {
+		Person person = personService.getByUuid(uuid);
+		return person != null ? person.isEnrolledInExternalJournal() : false;
 	}
 
 	public JournalPersonDto getPersonForJournal(PersonDto detailedPerson) {
@@ -344,7 +368,7 @@ public class PersonFacadeEjb implements PersonFacade {
 	 *            a detailed person object
 	 * @return a pair with element0=emailAddress and element1=phone
 	 */
-	public Pair<String, String> getContactDetails(PersonDto personDto) {
+	private Pair<String, String> getContactDetails(PersonDto personDto) {
 		String primaryEmailAddress = getEmailAddress(personDto, true);
 		String primaryPhone = getPhone(personDto, true);
 
@@ -374,7 +398,7 @@ public class PersonFacadeEjb implements PersonFacade {
 		}
 	}
 
-	public String formatPhoneNumber(String phoneNumber) {
+	private String formatPhoneNumber(String phoneNumber) {
 		try {
 			PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
 			Phonenumber.PhoneNumber numberProto = phoneUtil.parse(phoneNumber, "DE");
@@ -385,11 +409,13 @@ public class PersonFacadeEjb implements PersonFacade {
 	}
 
 	@Override
+	@RolesAllowed(UserRight._PERSON_EDIT)
 	public PersonDto savePerson(@Valid PersonDto source) throws ValidationRuntimeException {
 		return savePerson(source, true, true, false);
 	}
 
 	@Override
+	@RolesAllowed(UserRight._PERSON_EDIT)
 	public PersonDto savePerson(@Valid PersonDto source, boolean skipValidation) throws ValidationRuntimeException {
 		return savePerson(source, true, true, skipValidation);
 	}
@@ -418,6 +444,7 @@ public class PersonFacadeEjb implements PersonFacade {
 
 		restorePseudonymizedDto(source, person, existingPerson);
 
+		validateUserRights(source, existingPerson);
 		if (!skipValidation) {
 			validate(source);
 		}
@@ -460,6 +487,7 @@ public class PersonFacadeEjb implements PersonFacade {
 	 *             if the passed source person to be saved contains invalid data
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	@RolesAllowed(UserRight._PERSON_EDIT)
 	public Pair<CaseClassification, PersonDto> savePersonWithoutNotifyingExternalJournal(@Valid PersonDto source) throws ValidationRuntimeException {
 		Person existingPerson = personService.getByUuid(source.getUuid());
 		PersonDto existingPersonDto = toDto(existingPerson);
@@ -508,6 +536,18 @@ public class PersonFacadeEjb implements PersonFacade {
 				changedPerson.setApproximateAgeReferenceDate(null);
 			} else {
 				changedPerson.setApproximateAgeReferenceDate(changedPerson.getDeathDate() != null ? changedPerson.getDeathDate() : new Date());
+			}
+		}
+	}
+
+	private void validateUserRights(PersonDto person, PersonDto existingPerson) {
+		if (existingPerson != null) {
+			if (person.getSymptomJournalStatus() != existingPerson.getSymptomJournalStatus()
+				&& !(userService.hasRight(UserRight.MANAGE_EXTERNAL_SYMPTOM_JOURNAL) || userService.hasRight(UserRight.EXTERNAL_VISITS))) {
+				throw new AccessDeniedException(
+					String.format(
+						I18nProperties.getString(Strings.errorNoRightsForChangingField),
+						I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, Person.SYMPTOM_JOURNAL_STATUS)));
 			}
 		}
 	}
@@ -607,6 +647,7 @@ public class PersonFacadeEjb implements PersonFacade {
 
 	//@formatter:off
 	@Override
+	@RolesAllowed(UserRight._EXTERNAL_VISITS)
 	public List<PersonFollowUpEndDto> getLatestFollowUpEndDates(Date since, boolean forSymptomJournal) {
 		Stream<PersonFollowUpEndDto> contactLatestDates = getContactLatestFollowUpEndDates(since, forSymptomJournal);
 		boolean caseFollowupEnabled = featureConfigurationFacade.isFeatureEnabled(FeatureType.CASE_FOLLOWUP);
@@ -631,7 +672,7 @@ public class PersonFacadeEjb implements PersonFacade {
 		Root<Contact> contactRoot = cq.from(Contact.class);
 		Join<Contact, Person> personJoin = contactRoot.join(Contact.PERSON, JoinType.LEFT);
 
-		Predicate filter = contactService.createUserFilter(cb, cq, contactRoot);
+		Predicate filter = contactService.createUserFilter(new ContactQueryContext(cb, cq, new ContactJoins(contactRoot)));
 
 		if (since != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, contactService.createChangeDateFilter(cb, contactRoot, since));
@@ -661,7 +702,7 @@ public class PersonFacadeEjb implements PersonFacade {
 		Root<Case> caseRoot = cq.from(Case.class);
 		Join<Case, Person> personJoin = caseRoot.join(Case.PERSON, JoinType.LEFT);
 
-		Predicate filter = caseService.createUserFilter(cb, cq, caseRoot);
+		Predicate filter = caseService.createUserFilter(new CaseQueryContext(cb, cq, new CaseJoins(caseRoot)));
 		if (since != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, caseService.createChangeDateFilter(cb, caseRoot, since));
 		}
@@ -703,7 +744,7 @@ public class PersonFacadeEjb implements PersonFacade {
 		Root<Contact> contactRoot = cq.from(Contact.class);
 		Join<Contact, Person> personJoin = contactRoot.join(Contact.PERSON, JoinType.LEFT);
 
-		Predicate filter = contactService.createUserFilter(cb, cq, contactRoot);
+		Predicate filter = contactService.createUserFilter(new ContactQueryContext(cb, cq, new ContactJoins(contactRoot)));
 		filter = CriteriaBuilderHelper.and(cb, filter, cb.notEqual(contactRoot.get(Contact.FOLLOW_UP_STATUS), FollowUpStatus.CANCELED));
 		filter = CriteriaBuilderHelper.and(cb, filter, cb.notEqual(contactRoot.get(Contact.FOLLOW_UP_STATUS), FollowUpStatus.NO_FOLLOW_UP));
 
@@ -734,7 +775,7 @@ public class PersonFacadeEjb implements PersonFacade {
 		Root<Case> caseRoot = cq.from(Case.class);
 		Join<Case, Person> personJoin = caseRoot.join(Case.PERSON, JoinType.LEFT);
 
-		Predicate filter = caseService.createUserFilter(cb, cq, caseRoot);
+		Predicate filter = caseService.createUserFilter(new CaseQueryContext(cb, cq, new CaseJoins(caseRoot)));
 
 		filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(caseRoot.get(Case.DELETED), false));
 
@@ -757,15 +798,14 @@ public class PersonFacadeEjb implements PersonFacade {
 		}
 	}
 
-	@Override
-	public FollowUpStatus getMostRelevantFollowUpStatusByUuid(String uuid) {
+	FollowUpStatus getMostRelevantFollowUpStatusByUuid(String uuid) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<FollowUpStatusDto> cq = cb.createQuery(FollowUpStatusDto.class);
 
 		Root<Contact> contactRoot = cq.from(Contact.class);
 		Join<Contact, Person> personContactJoin = contactRoot.join(Contact.PERSON, JoinType.LEFT);
-		Predicate contactFilter = contactService.createUserFilter(cb, cq, contactRoot);
+		Predicate contactFilter = contactService.createUserFilter(new ContactQueryContext(cb, cq, new ContactJoins(contactRoot)));
 
 		contactFilter = CriteriaBuilderHelper.and(cb, contactFilter, cb.equal(contactRoot.get(Contact.DELETED), false));
 
@@ -781,7 +821,7 @@ public class PersonFacadeEjb implements PersonFacade {
 		cq = cb.createQuery(FollowUpStatusDto.class);
 		Root<Case> caseRoot = cq.from(Case.class);
 		Join<Case, Person> personCaseJoin = caseRoot.join(Case.PERSON, JoinType.LEFT);
-		Predicate caseFilter = caseService.createUserFilter(cb, cq, caseRoot);
+		Predicate caseFilter = caseService.createUserFilter(new CaseQueryContext(cb, cq, new CaseJoins(caseRoot)));
 
 		caseFilter = CriteriaBuilderHelper.and(cb, caseFilter, cb.equal(caseRoot.get(Case.DELETED), false));
 
@@ -832,6 +872,7 @@ public class PersonFacadeEjb implements PersonFacade {
 	}
 
 	@Override
+	@RolesAllowed(UserRight._EXTERNAL_VISITS)
 	public boolean setSymptomJournalStatus(String personUuid, SymptomJournalStatus status) {
 		PersonDto person = getPersonByUuid(personUuid);
 		person.setSymptomJournalStatus(status);
@@ -981,9 +1022,6 @@ public class PersonFacadeEjb implements PersonFacade {
 		return count;
 	}
 
-	@SuppressWarnings({
-		"rawtypes",
-		"unchecked" })
 	private List<Long> getPersonIds(PersonCriteria criteria) {
 
 		final CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -991,7 +1029,7 @@ public class PersonFacadeEjb implements PersonFacade {
 		final Root<Person> person = cq.from(Person.class);
 
 		final PersonQueryContext personQueryContext = new PersonQueryContext(cb, cq, person);
-		((PersonJoins) personQueryContext.getJoins()).configure(criteria);
+		personQueryContext.getJoins().configure(criteria);
 
 		Predicate filter = createIndexListFilter(criteria, personQueryContext);
 		if (filter != null) {
@@ -1017,6 +1055,7 @@ public class PersonFacadeEjb implements PersonFacade {
 	}
 
 	@Override
+	@RolesAllowed(UserRight._PERSON_EDIT)
 	public long setMissingGeoCoordinates(boolean overwriteExistingCoordinates) {
 
 		// The uuid-list is filtered by the users jurisdiction and retrieved in batches to avoid timeouts
@@ -1040,7 +1079,7 @@ public class PersonFacadeEjb implements PersonFacade {
 	 * Makes sure that there is no invalid data associated with this person. For example, when the present condition
 	 * is set to "Alive", all fields depending on the status being "Dead" or "Buried" are cleared.
 	 */
-	private void cleanUp(Person person) {
+	private void cleanup(Person person) {
 
 		if (person.getPresentCondition() == null
 			|| person.getPresentCondition() == PresentCondition.ALIVE
@@ -1059,10 +1098,12 @@ public class PersonFacadeEjb implements PersonFacade {
 		}
 	}
 
+	@PermitAll
 	public void onPersonChanged(PersonDto existingPerson, Person newPerson) {
 		onPersonChanged(existingPerson, newPerson, true);
 	}
 
+	@PermitAll
 	public void onPersonChanged(PersonDto existingPerson, Person newPerson, boolean syncShares) {
 
 		List<Case> personCases = null;
@@ -1075,7 +1116,7 @@ public class PersonFacadeEjb implements PersonFacade {
 			// Call onCaseChanged once for every case to update case classification
 			// Attention: this may lead to infinite recursion when not properly implemented
 			for (Case personCase : personCases) {
-				CaseDataDto existingCase = CaseFacadeEjbLocal.toDto(personCase);
+				CaseDataDto existingCase = CaseFacadeEjb.toCaseDto(personCase);
 				caseFacade.onCaseChanged(existingCase, personCase, syncShares);
 			}
 
@@ -1083,7 +1124,7 @@ public class PersonFacadeEjb implements PersonFacade {
 			// Call onContactChanged once for every contact
 			// Attention: this may lead to infinite recursion when not properly implemented
 			for (Contact personContact : personContacts) {
-				contactFacade.onContactChanged(ContactFacadeEjbLocal.toDto(personContact), syncShares);
+				contactFacade.onContactChanged(ContactFacadeEjb.toContactDto(personContact), syncShares);
 			}
 
 			List<EventParticipant> personEventParticipants =
@@ -1093,8 +1134,8 @@ public class PersonFacadeEjb implements PersonFacade {
 			for (EventParticipant personEventParticipant : personEventParticipants) {
 
 				eventParticipantFacade.onEventParticipantChanged(
-					EventFacadeEjbLocal.toDto(personEventParticipant.getEvent()),
-					EventParticipantFacadeEjbLocal.toDto(personEventParticipant),
+					EventFacadeEjb.toEventDto(personEventParticipant.getEvent()),
+					EventParticipantFacadeEjb.toEventParticipantDto(personEventParticipant),
 					personEventParticipant,
 					syncShares);
 			}
@@ -1122,7 +1163,7 @@ public class PersonFacadeEjb implements PersonFacade {
 						&& personCase.getOutcome() != CaseOutcome.DECEASED
 						&& (personCase.getReportDate().before(DateHelper.addDays(newPerson.getDeathDate(), 30))
 							&& personCase.getReportDate().after(DateHelper.subtractDays(newPerson.getDeathDate(), 30)))) {
-						CaseDataDto existingCase = CaseFacadeEjbLocal.toDto(personCase);
+						CaseDataDto existingCase = CaseFacadeEjb.toCaseDto(personCase);
 						personCase.setOutcome(CaseOutcome.DECEASED);
 						personCase.setOutcomeDate(newPerson.getDeathDate());
 						caseFacade.onCaseChanged(existingCase, personCase, syncShares);
@@ -1140,7 +1181,7 @@ public class PersonFacadeEjb implements PersonFacade {
 					newPerson.setCauseOfDeathDisease(null);
 					// update the latest associated case, if it was set to deceased && and if the case-disease was also the causeofdeath-disease
 					if (personCase != null && personCase.getOutcome() == CaseOutcome.DECEASED) {
-						CaseDataDto existingCase = CaseFacadeEjbLocal.toDto(personCase);
+						CaseDataDto existingCase = CaseFacadeEjb.toCaseDto(personCase);
 						personCase.setOutcome(CaseOutcome.NO_OUTCOME);
 						personCase.setOutcomeDate(null);
 						caseFacade.onCaseChanged(existingCase, personCase, syncShares);
@@ -1156,7 +1197,7 @@ public class PersonFacadeEjb implements PersonFacade {
 				if (personCase != null
 					&& personCase.getOutcome() == CaseOutcome.DECEASED
 					&& newPerson.getCauseOfDeath() == CauseOfDeath.EPIDEMIC_DISEASE) {
-					CaseDataDto existingCase = CaseFacadeEjbLocal.toDto(personCase);
+					CaseDataDto existingCase = CaseFacadeEjb.toCaseDto(personCase);
 					personCase.setOutcomeDate(newPerson.getDeathDate());
 					caseFacade.onCaseChanged(existingCase, personCase, syncShares);
 				}
@@ -1177,7 +1218,7 @@ public class PersonFacadeEjb implements PersonFacade {
 			// Update case list after previous onCaseChanged
 			personCases = caseService.findBy(new CaseCriteria().person(new PersonReferenceDto(newPerson.getUuid())), true);
 			for (Case personCase : personCases) {
-				CaseDataDto existingCase = CaseFacadeEjbLocal.toDto(personCase);
+				CaseDataDto existingCase = CaseFacadeEjb.toCaseDto(personCase);
 				if (newPerson.getApproximateAge() == null) {
 					personCase.setCaseAge(null);
 				} else if (newPerson.getApproximateAgeType() == ApproximateAgeType.MONTHS) {
@@ -1198,7 +1239,7 @@ public class PersonFacadeEjb implements PersonFacade {
 			newPerson.setSymptomJournalStatus(SymptomJournalStatus.UNREGISTERED);
 		}
 
-		cleanUp(newPerson);
+		cleanup(newPerson);
 	}
 
 	private List<String> getAllUuidsBatched(Integer batchSize, boolean allowPersonsWithCoordinates) {
@@ -1208,6 +1249,7 @@ public class PersonFacadeEjb implements PersonFacade {
 		final Root<Person> person = cq.from(Person.class);
 
 		final PersonQueryContext personQueryContext = new PersonQueryContext(cb, cq, person);
+
 
 		cq.select(person.get(Person.UUID));
 		if (!allowPersonsWithCoordinates) {
@@ -1239,9 +1281,6 @@ public class PersonFacadeEjb implements PersonFacade {
 	}
 
 	@Override
-	@SuppressWarnings({
-		"rawtypes",
-		"unchecked" })
 	public List<PersonIndexDto> getIndexList(PersonCriteria criteria, Integer first, Integer max, List<SortProperty> sortProperties) {
 
 		long startTime = DateHelper.startTime();
@@ -1250,7 +1289,7 @@ public class PersonFacadeEjb implements PersonFacade {
 		final Root<Person> person = cq.from(Person.class);
 
 		final PersonQueryContext personQueryContext = new PersonQueryContext(cb, cq, person);
-		final PersonJoins personJoins = (PersonJoins) personQueryContext.getJoins();
+		final PersonJoins personJoins = personQueryContext.getJoins();
 		personJoins.configure(criteria);
 
 		final Join<Person, Location> location = personJoins.getAddress();
@@ -1358,6 +1397,7 @@ public class PersonFacadeEjb implements PersonFacade {
 	}
 
 	@Override
+	@RolesAllowed(UserRight._PERSON_EXPORT)
 	public List<PersonExportDto> getExportList(PersonCriteria criteria, int first, int max) {
 		long startTime = DateHelper.startTime();
 		final CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -1365,7 +1405,7 @@ public class PersonFacadeEjb implements PersonFacade {
 		final Root<Person> person = cq.from(Person.class);
 
 		final PersonQueryContext personQueryContext = new PersonQueryContext(cb, cq, person);
-		PersonJoins joins = (PersonJoins) personQueryContext.getJoins();
+		PersonJoins joins = personQueryContext.getJoins();
 		joins.configure(criteria);
 
 		cq.multiselect(
@@ -1461,7 +1501,6 @@ public class PersonFacadeEjb implements PersonFacade {
 		return persons;
 	}
 
-	@SuppressWarnings("rawtypes")
 	private Predicate createIndexListFilter(PersonCriteria criteria, PersonQueryContext personQueryContext) {
 
 		CriteriaBuilder cb = personQueryContext.getCriteriaBuilder();
@@ -1657,6 +1696,7 @@ public class PersonFacadeEjb implements PersonFacade {
 	}
 
 	@Override
+	@RolesAllowed(UserRight._PERSON_EDIT)
 	public void mergePerson(PersonDto leadPerson, PersonDto otherPerson) {
 		// Make sure the resulting person does not have multiple primary contact details
 		Set primaryContactDetailTypes = new HashSet<>();
@@ -1686,32 +1726,62 @@ public class PersonFacadeEjb implements PersonFacade {
 		CriteriaQuery<Person> cq = cb.createQuery(Person.class);
 		Root<Person> root = cq.from(Person.class);
 
-		PersonJoins<Person> joins = new PersonJoins<>(root);
+		PersonJoins joins = new PersonJoins(root);
 
 		Join<Person, ?> contextJoin;
 		switch (context) {
-		case CASE: {
-			contextJoin = joins.getCaze();
-			break;
+			case CASE: {
+				contextJoin = joins.getCaze();
+				break;
+			}
+			case CONTACT: {
+				contextJoin = joins.getContact();
+				break;
+			}
+			case EVENT_PARTICIPANT: {
+				contextJoin = joins.getEventParticipant();
+				break;
+			}
+			default: {
+				throw new RuntimeException("Not implemented yet for " + context.name());
+			}
 		}
-		case CONTACT: {
-			contextJoin = joins.getContact();
-			break;
-		}
-		case EVENT_PARTICIPANT: {
-			contextJoin = joins.getEventParticipant();
-			break;
-		}
-		default: {
-			throw new RuntimeException("Not implemented yet for " + context.name());
-		}
+			cq.where(cb.equal(contextJoin.get(AbstractDomainObject.UUID), contextUuid));
+
+			Person person = em.createQuery(cq).getSingleResult();
+
+			return convertToDto(person, Pseudonymizer.getDefault(userService::hasRight), personService.inJurisdictionOrOwned(person));
+	}
+
+	@Override
+	public Map<Disease, Long> getDeathCountByDisease(CaseCriteria caseCriteria, boolean excludeSharedCases, boolean excludeCasesFromContacts) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
+		Root<Case> root = cq.from(Case.class);
+		Join<Case, Person> person = root.join(Case.PERSON, JoinType.LEFT);
+
+		final CaseQueryContext caseQueryContext = new CaseQueryContext(cb, cq, root);
+
+		Predicate filter = caseService.createUserFilter(
+				caseQueryContext,
+				new CaseUserFilterCriteria().excludeCasesFromContacts(excludeCasesFromContacts));
+
+		filter = CriteriaBuilderHelper.and(cb, filter, caseService.createCriteriaFilter(caseCriteria, caseQueryContext));
+		filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(person.get(Person.CAUSE_OF_DEATH_DISEASE), root.get(Case.DISEASE)));
+
+		if (filter != null) {
+			cq.where(filter);
 		}
 
-		cq.where(cb.equal(contextJoin.get(AbstractDomainObject.UUID), contextUuid));
+		cq.multiselect(person.get(Person.CAUSE_OF_DEATH_DISEASE), cb.count(person));
+		cq.groupBy(person.get(Person.CAUSE_OF_DEATH_DISEASE));
 
-		Person person = em.createQuery(cq).getSingleResult();
+		List<Object[]> results = em.createQuery(cq).getResultList();
 
-		return convertToDto(person, Pseudonymizer.getDefault(userService::hasRight), personService.inJurisdictionOrOwned(person));
+		Map<Disease, Long> outbreaks = results.stream().collect(Collectors.toMap(e -> (Disease) e[0], e -> (Long) e[1]));
+
+		return outbreaks;
 	}
 
 	@LocalBean

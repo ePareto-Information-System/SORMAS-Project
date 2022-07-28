@@ -48,6 +48,7 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	public static final String COMMUNITY = "community";
 	public static final String LAB = "laboratory";
 	public static final String CASE_CODE_ID_LIKE = "caseCodeIdLike";
+	public static final String PATHOGEN_TEST_TYPE = "pathogenTestType";
 
 	private RegionReferenceDto region;
 	private DistrictReferenceDto district;
@@ -71,6 +72,10 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	private Date sampleDateFrom;
 	private Date sampleDateTo;
 	private SampleDateType sampleDateType;
+	
+	private PathogenTestType pathogenTestType;
+	// private Date sampleReportDateFrom;
+	// private Date sampleReportDateTo;
 	private DateFilterOption dateFilterOption = DateFilterOption.DATE;
 	private SamplePurpose samplePurpose;
 
@@ -85,16 +90,15 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	public void setRegion(RegionReferenceDto region) {
 		this.region = region;
 	}
-	
-	public SampleCriteria region(RegionReferenceDto region){
-		setRegion(region);
-
-		return this;
-	}
 
 	public SampleCriteria samplePurpose(SamplePurpose samplePurpose) {
 		setSamplePurpose(samplePurpose);
 
+		return this;
+	}
+
+	public SampleCriteria region(RegionReferenceDto region) {
+		this.region = region;
 		return this;
 	}
 
@@ -242,10 +246,9 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	public void setDisease(Disease disease) {
 		this.disease = disease;
 	}
-	
-	public SampleCriteria disease(Disease disease){
-		setDisease(disease);
 
+	public SampleCriteria disease(Disease disease) {
+		this.disease = disease;
 		return this;
 	}
 
@@ -372,7 +375,14 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 
 	public SampleCriteria eventParticipantUuids(List<String> eventParticipantUuids) {
 		this.eventParticipantUuids = eventParticipantUuids;
-
 		return this;
+	}
+
+	public PathogenTestType getPathogenTestType() {
+		return pathogenTestType;
+	}
+
+	public void setPathogenTestType(PathogenTestType pathogenTestType) {
+		this.pathogenTestType = pathogenTestType;
 	}
 }

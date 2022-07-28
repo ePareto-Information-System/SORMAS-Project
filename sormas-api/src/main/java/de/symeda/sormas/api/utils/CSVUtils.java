@@ -90,7 +90,8 @@ public final class CSVUtils {
 
 				// begin code change from parent code
 				if(formulaPattern.matcher(nextElement).matches()) {
-					appendable.append(FORMULA_PREFIX);
+					if (!nextElement.startsWith("-"))
+						appendable.append(FORMULA_PREFIX);
 				}
 				// end
 

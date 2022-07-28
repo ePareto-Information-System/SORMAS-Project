@@ -19,6 +19,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import de.symeda.sormas.api.action.ActionFacade;
+import de.symeda.sormas.api.audit.AuditLoggerFacade;
 import de.symeda.sormas.api.auditlog.AuditLogEntryFacade;
 import de.symeda.sormas.api.bagexport.BAGExportFacade;
 import de.symeda.sormas.api.campaign.CampaignFacade;
@@ -37,7 +38,9 @@ import de.symeda.sormas.api.clinicalcourse.ClinicalVisitFacade;
 import de.symeda.sormas.api.contact.ContactFacade;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumFacade;
 import de.symeda.sormas.api.dashboard.DashboardFacade;
+import de.symeda.sormas.api.contact.ContactStatisticsFacade;
 import de.symeda.sormas.api.disease.DiseaseConfigurationFacade;
+import de.symeda.sormas.api.disease.DiseaseFacade;
 import de.symeda.sormas.api.docgeneneration.DocumentTemplateFacade;
 import de.symeda.sormas.api.docgeneneration.EventDocumentFacade;
 import de.symeda.sormas.api.docgeneneration.QuarantineOrderFacade;
@@ -106,6 +109,7 @@ import de.symeda.sormas.api.visualization.VisualizationFacade;
 
 public class FacadeProvider {
 
+
 	private static final String JNDI_PREFIX = "java:global/sormas-ear/sormas-backend/";
 
 	private final InitialContext ic;
@@ -158,6 +162,10 @@ public class FacadeProvider {
 
 	public static ContactFacade getContactFacade() {
 		return get().lookupEjbRemote(ContactFacade.class);
+	}
+	
+	public static ContactStatisticsFacade getContactStatisticsFacade() {
+		return get().lookupEjbRemote(ContactStatisticsFacade.class);
 	}
 
 	public static EventFacade getEventFacade() {
@@ -477,6 +485,14 @@ public class FacadeProvider {
 
 	public static SyncFacade getSyncFacade() {
 		return get().lookupEjbRemote(SyncFacade.class);
+	}
+
+	public static AuditLoggerFacade getAuditLoggerFacade() {
+		return get().lookupEjbRemote(AuditLoggerFacade.class);
+	}
+
+	public static DiseaseFacade getDiseaseFacade() {
+		return get().lookupEjbRemote(DiseaseFacade.class);
 	}
 
 	@SuppressWarnings("unchecked")

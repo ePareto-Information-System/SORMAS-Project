@@ -24,56 +24,56 @@ public enum StatisticsCaseAttribute {
 	ONSET_TIME(StatisticsCaseAttributeGroup.TIME,
 		false,
 		true,
-		StatisticsCaseSubAttribute.YEAR,
-		StatisticsCaseSubAttribute.QUARTER,
-		StatisticsCaseSubAttribute.MONTH,
-		StatisticsCaseSubAttribute.EPI_WEEK,
-		StatisticsCaseSubAttribute.QUARTER_OF_YEAR,
-		StatisticsCaseSubAttribute.MONTH_OF_YEAR,
-		StatisticsCaseSubAttribute.EPI_WEEK_OF_YEAR,
-		StatisticsCaseSubAttribute.DATE_RANGE),
+		StatisticsSubAttribute.YEAR,
+		StatisticsSubAttribute.QUARTER,
+		StatisticsSubAttribute.MONTH,
+		StatisticsSubAttribute.EPI_WEEK,
+		StatisticsSubAttribute.QUARTER_OF_YEAR,
+		StatisticsSubAttribute.MONTH_OF_YEAR,
+		StatisticsSubAttribute.EPI_WEEK_OF_YEAR,
+		StatisticsSubAttribute.DATE_RANGE),
 
 	REPORT_TIME(StatisticsCaseAttributeGroup.TIME,
 		false,
 		false,
-		StatisticsCaseSubAttribute.YEAR,
-		StatisticsCaseSubAttribute.QUARTER,
-		StatisticsCaseSubAttribute.MONTH,
-		StatisticsCaseSubAttribute.EPI_WEEK,
-		StatisticsCaseSubAttribute.QUARTER_OF_YEAR,
-		StatisticsCaseSubAttribute.MONTH_OF_YEAR,
-		StatisticsCaseSubAttribute.EPI_WEEK_OF_YEAR,
-		StatisticsCaseSubAttribute.DATE_RANGE),
+		StatisticsSubAttribute.YEAR,
+		StatisticsSubAttribute.QUARTER,
+		StatisticsSubAttribute.MONTH,
+		StatisticsSubAttribute.EPI_WEEK,
+		StatisticsSubAttribute.QUARTER_OF_YEAR,
+		StatisticsSubAttribute.MONTH_OF_YEAR,
+		StatisticsSubAttribute.EPI_WEEK_OF_YEAR,
+		StatisticsSubAttribute.DATE_RANGE),
 
 	OUTCOME_TIME(StatisticsCaseAttributeGroup.TIME,
 		false,
 		true,
-		StatisticsCaseSubAttribute.YEAR,
-		StatisticsCaseSubAttribute.QUARTER,
-		StatisticsCaseSubAttribute.MONTH,
-		StatisticsCaseSubAttribute.EPI_WEEK,
-		StatisticsCaseSubAttribute.QUARTER_OF_YEAR,
-		StatisticsCaseSubAttribute.MONTH_OF_YEAR,
-		StatisticsCaseSubAttribute.EPI_WEEK_OF_YEAR,
-		StatisticsCaseSubAttribute.DATE_RANGE),
+		StatisticsSubAttribute.YEAR,
+		StatisticsSubAttribute.QUARTER,
+		StatisticsSubAttribute.MONTH,
+		StatisticsSubAttribute.EPI_WEEK,
+		StatisticsSubAttribute.QUARTER_OF_YEAR,
+		StatisticsSubAttribute.MONTH_OF_YEAR,
+		StatisticsSubAttribute.EPI_WEEK_OF_YEAR,
+		StatisticsSubAttribute.DATE_RANGE),
 
 	JURISDICTION(StatisticsCaseAttributeGroup.PLACE,
 		true,
 		true,
-		StatisticsCaseSubAttribute.REGION,
-		StatisticsCaseSubAttribute.DISTRICT,
-		StatisticsCaseSubAttribute.COMMUNITY,
-		StatisticsCaseSubAttribute.FACILITY),
+		StatisticsSubAttribute.REGION,
+		StatisticsSubAttribute.DISTRICT,
+		StatisticsSubAttribute.COMMUNITY,
+		StatisticsSubAttribute.FACILITY),
 
 	PLACE_OF_RESIDENCE(StatisticsCaseAttributeGroup.PERSON,
 		true,
 		true,
 		false,
-		StatisticsCaseSubAttribute.PERSON_REGION,
-		StatisticsCaseSubAttribute.PERSON_DISTRICT,
-		StatisticsCaseSubAttribute.PERSON_COMMUNITY,
-		StatisticsCaseSubAttribute.PERSON_CITY,
-		StatisticsCaseSubAttribute.PERSON_POSTCODE),
+		StatisticsSubAttribute.PERSON_REGION,
+		StatisticsSubAttribute.PERSON_DISTRICT,
+		StatisticsSubAttribute.PERSON_COMMUNITY,
+		StatisticsSubAttribute.PERSON_CITY,
+		StatisticsSubAttribute.PERSON_POSTCODE),
 
 	SEX(StatisticsCaseAttributeGroup.PERSON, true, false),
 	AGE_INTERVAL_1_YEAR(StatisticsCaseAttributeGroup.PERSON, false, true),
@@ -91,13 +91,13 @@ public enum StatisticsCaseAttribute {
 	private final boolean sortByCaption;
 	private final boolean unknownValueAllowed;
 	private boolean usedForVisualisation = true;
-	private final StatisticsCaseSubAttribute[] subAttributes;
+	private final StatisticsSubAttribute[] subAttributes;
 
 	StatisticsCaseAttribute(
 		StatisticsCaseAttributeGroup attributeGroup,
 		boolean sortByCaption,
 		boolean unknownValueAllowed,
-		StatisticsCaseSubAttribute... subAttributes) {
+		StatisticsSubAttribute... subAttributes) {
 
 		this.attributeGroup = attributeGroup;
 		this.sortByCaption = sortByCaption;
@@ -110,7 +110,7 @@ public enum StatisticsCaseAttribute {
 		boolean sortByCaption,
 		boolean unknownValueAllowed,
 		boolean usedForVisualisation,
-		StatisticsCaseSubAttribute... subAttributes) {
+		StatisticsSubAttribute... subAttributes) {
 
 		this.usedForVisualisation = usedForVisualisation;
 		this.attributeGroup = attributeGroup;
@@ -135,7 +135,7 @@ public enum StatisticsCaseAttribute {
 		return unknownValueAllowed;
 	}
 
-	public StatisticsCaseSubAttribute[] getSubAttributes() {
+	public StatisticsSubAttribute[] getSubAttributes() {
 		return subAttributes;
 	}
 

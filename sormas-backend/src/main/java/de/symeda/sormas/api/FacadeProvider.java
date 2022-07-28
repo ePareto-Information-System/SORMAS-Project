@@ -23,9 +23,9 @@ package de.symeda.sormas.api;
  * @deprecated FacadeProvider should not be used by the business logic because the facades can be accessed locally
  */
 @Deprecated
-public final class FacadeProvider {
+class ErrorFacadeProvider {
 
-	private FacadeProvider() {
+	private ErrorFacadeProvider() {
 		//NOOP
 	}
 

@@ -58,6 +58,7 @@ import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
 import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.YesNoUnknown;
@@ -225,7 +226,7 @@ public class CaseEditFragment extends BaseEditFragment<FragmentCaseEditLayoutBin
 		contentBinding.caseDataQuarantineReduced.setVisibility(record.isQuarantineReduced() ? VISIBLE : GONE);
 
 		User user = ConfigProvider.getUser();
-		if (user.hasUserRole(UserRole.HOSPITAL_INFORMANT)) {
+		if (user.hasJurisdictionLevel(JurisdictionLevel.HEALTH_FACILITY)) {
 			// Hospital Informants are not allowed to change place of stay
 			contentBinding.caseDataDifferentPlaceOfStayJurisdiction.setEnabled(false);
 			contentBinding.caseDataDifferentPlaceOfStayJurisdiction.setVisibility(GONE);

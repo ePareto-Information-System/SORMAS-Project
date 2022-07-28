@@ -23,6 +23,7 @@ import java.util.Date;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseReferenceDefinition;
+import de.symeda.sormas.api.caze.InvestigationStatus;
 import de.symeda.sormas.api.person.PresentCondition;
 
 public class DashboardCaseDto implements Serializable {
@@ -39,8 +40,32 @@ public class DashboardCaseDto implements Serializable {
 	private PresentCondition casePersonCondition;
 	private Disease causeOfDeathDisease;
 	private CaseReferenceDefinition caseReferenceDefinition;
+	private InvestigationStatus investigationStatus;
+	private Date onsetDate;
 
 	private DashboardQuarantineDataDto dashboardQuarantineDataDto;
+
+	public DashboardCaseDto(
+			long id,
+			String uuid,
+			Date reportDate,
+			Date onsetDate,
+			CaseClassification caseClassification,
+			Disease disease,
+			InvestigationStatus investigationStatus,
+			PresentCondition casePersonCondition,
+			Disease causeOfDeathDisease) {
+
+		this.id = id;
+		this.uuid = uuid;
+		this.reportDate = reportDate;
+		this.onsetDate = onsetDate;
+		this.caseClassification = caseClassification;
+		this.disease = disease;
+		this.investigationStatus = investigationStatus;
+		this.casePersonCondition = casePersonCondition;
+		this.causeOfDeathDisease = causeOfDeathDisease;
+	}
 
 	public DashboardCaseDto(
 		long id,

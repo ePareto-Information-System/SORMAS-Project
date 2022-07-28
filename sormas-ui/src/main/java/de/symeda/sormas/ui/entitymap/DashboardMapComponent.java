@@ -19,13 +19,7 @@ package de.symeda.sormas.ui.entitymap;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
 import org.slf4j.Logger;
@@ -175,17 +169,17 @@ public class DashboardMapComponent extends VerticalLayout {
 			GeoShapeProvider geoShapeProvider = FacadeProvider.getGeoShapeProvider();
 
 			final GeoLatLon mapCenter;
-			if (UserProvider.getCurrent().hasAnyUserRole(UserRole.NATIONAL_USER, UserRole.NATIONAL_CLINICIAN, UserRole.NATIONAL_OBSERVER)) {
-				mapCenter = geoShapeProvider.getCenterOfAllRegions();
+//			if (UserProvider.getCurrent().hasAnyUserRole(UserRole.NATIONAL_USER, UserRole.NATIONAL_CLINICIAN, UserRole.NATIONAL_OBSERVER)) {
+//				mapCenter = geoShapeProvider.getCenterOfAllRegions();
+//			} else {
 
-			} else {
 				UserDto user = UserProvider.getCurrent().getUser();
 				if (user.getRegion() != null) {
 					mapCenter = geoShapeProvider.getCenterOfRegion(user.getRegion());
 				} else {
 					mapCenter = geoShapeProvider.getCenterOfAllRegions();
 				}
-			}
+//			}
 
 			GeoLatLon center = Optional.ofNullable(mapCenter).orElseGet(FacadeProvider.getConfigFacade()::getCountryCenter);
 
@@ -235,17 +229,16 @@ public class DashboardMapComponent extends VerticalLayout {
 			GeoShapeProvider geoShapeProvider = FacadeProvider.getGeoShapeProvider();
 
 			final GeoLatLon mapCenter;
-			if (UserProvider.getCurrent().hasAnyUserRole(UserRole.NATIONAL_USER, UserRole.NATIONAL_CLINICIAN, UserRole.NATIONAL_OBSERVER)) {
-				mapCenter = geoShapeProvider.getCenterOfAllRegions();
-
-			} else {
+//			if (UserProvider.getCurrent().hasAnyUserRole(UserRole.NATIONAL_USER, UserRole.NATIONAL_CLINICIAN, UserRole.NATIONAL_OBSERVER)) {
+//				mapCenter = geoShapeProvider.getCenterOfAllRegions();
+//			} else {
 				UserDto user = UserProvider.getCurrent().getUser();
 				if (user.getRegion() != null) {
 					mapCenter = geoShapeProvider.getCenterOfRegion(user.getRegion());
 				} else {
 					mapCenter = geoShapeProvider.getCenterOfAllRegions();
 				}
-			}
+//			}
 
 			GeoLatLon center = Optional.ofNullable(mapCenter).orElseGet(FacadeProvider.getConfigFacade()::getCountryCenter);
 
@@ -296,17 +289,17 @@ public class DashboardMapComponent extends VerticalLayout {
 			GeoShapeProvider geoShapeProvider = FacadeProvider.getGeoShapeProvider();
 
 			final GeoLatLon mapCenter;
-			if (UserProvider.getCurrent().hasAnyUserRole(UserRole.NATIONAL_USER, UserRole.NATIONAL_CLINICIAN, UserRole.NATIONAL_OBSERVER)) {
-				mapCenter = geoShapeProvider.getCenterOfAllRegions();
-
-			} else {
+//			if (UserProvider.getCurrent().hasAnyUserRole(UserRole.NATIONAL_USER, UserRole.NATIONAL_CLINICIAN, UserRole.NATIONAL_OBSERVER)) {
+//				mapCenter = geoShapeProvider.getCenterOfAllRegions();
+//
+//			} else {
 				UserDto user = UserProvider.getCurrent().getUser();
 				if (user.getRegion() != null) {
 					mapCenter = geoShapeProvider.getCenterOfRegion(user.getRegion());
 				} else {
 					mapCenter = geoShapeProvider.getCenterOfAllRegions();
 				}
-			}
+//			}
 
 			GeoLatLon center = Optional.ofNullable(mapCenter).orElseGet(FacadeProvider.getConfigFacade()::getCountryCenter);
 
@@ -447,7 +440,7 @@ public class DashboardMapComponent extends VerticalLayout {
 		List<ContactDto> contactsForMap = new ArrayList<>();
 		ContactFacade contactFacade = FacadeProvider.getContactFacade();
 		for (MapContactDto mapContact : hashContactMapDto.get(mapContactDto)) {
-			contactsForMap.add(contactFacade.getContactByUuid(mapContact.getUuid()));
+			contactsForMap.add(contactFacade.getByUuid(mapContact.getUuid()));
 		}
 		return contactsForMap;
 	}
@@ -518,10 +511,10 @@ public class DashboardMapComponent extends VerticalLayout {
 
 				layersLayout.addComponent(mapCaseDisplayModeSelect);
 				mapCaseDisplayModeSelect.setEnabled(showCases);
-
-				if (UserProvider.getCurrent().hasUserRole(UserRole.NATIONAL_USER)
-					|| UserProvider.getCurrent().hasUserRole(UserRole.NATIONAL_CLINICIAN)
-					|| UserProvider.getCurrent().hasUserRole(UserRole.NATIONAL_OBSERVER)) {
+				if (Objects.nonNull(UserProvider.getCurrent()) && UserProvider.getCurrent().hasNationJurisdictionLevel()) {
+//				if (UserProvider.getCurrent().hasUserRole(UserRole.NATIONAL_USER)
+//					|| UserProvider.getCurrent().hasUserRole(UserRole.NATIONAL_CLINICIAN)
+//					|| UserProvider.getCurrent().hasUserRole(UserRole.NATIONAL_OBSERVER)) {
 					OptionGroup regionMapVisualizationSelect = new OptionGroup();
 					regionMapVisualizationSelect.setWidth(100, Unit.PERCENTAGE);
 					regionMapVisualizationSelect.addItems((Object[]) CaseMeasure.values());

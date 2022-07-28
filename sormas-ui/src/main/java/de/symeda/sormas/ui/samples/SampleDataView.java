@@ -14,6 +14,7 @@
  */
 package de.symeda.sormas.ui.samples;
 
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -36,6 +37,7 @@ import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SamplePurpose;
+import de.symeda.sormas.api.sample.SampleReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
@@ -52,6 +54,7 @@ import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.DetailSubComponentWrapper;
 import de.symeda.sormas.ui.utils.LayoutUtil;
+import de.symeda.sormas.ui.utils.components.sidecomponent.SideComponentLayout;
 
 public class SampleDataView extends AbstractSampleView {
 
@@ -104,7 +107,7 @@ public class SampleDataView extends AbstractSampleView {
 
 		Disease disease = null;
 		final CaseReferenceDto associatedCase = sampleDto.getAssociatedCase();
-		if (associatedCase != null) {
+		if (associatedCase != null && UserProvider.getCurrent().hasAllUserRights(UserRight.CASE_VIEW)) {
 			final CaseDataDto caseDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(associatedCase.getUuid());
 			disease = caseDto.getDisease();
 
@@ -113,8 +116,8 @@ public class SampleDataView extends AbstractSampleView {
 			layout.addComponent(caseInfoLayout, CASE_LOC);
 		}
 		final ContactReferenceDto associatedContact = sampleDto.getAssociatedContact();
-		if (associatedContact != null) {
-			final ContactDto contactDto = FacadeProvider.getContactFacade().getContactByUuid(associatedContact.getUuid());
+		if (associatedContact != null && UserProvider.getCurrent().hasAllUserRights(UserRight.CONTACT_VIEW)) {
+			final ContactDto contactDto = FacadeProvider.getContactFacade().getByUuid(associatedContact.getUuid());
 
 			disease = contactDto.getDisease();
 
@@ -125,7 +128,7 @@ public class SampleDataView extends AbstractSampleView {
 
 		}
 		final EventParticipantReferenceDto associatedEventParticipant = sampleDto.getAssociatedEventParticipant();
-		if (associatedEventParticipant != null) {
+		if (associatedEventParticipant != null && UserProvider.getCurrent().hasAllUserRights(UserRight.EVENTPARTICIPANT_VIEW)) {
 			final EventParticipantDto eventParticipantDto =
 				FacadeProvider.getEventParticipantFacade().getEventParticipantByUuid(associatedEventParticipant.getUuid());
 			final EventDto eventDto = FacadeProvider.getEventFacade().getEventByUuid(eventParticipantDto.getEvent().getUuid(), false);
@@ -177,9 +180,12 @@ public class SampleDataView extends AbstractSampleView {
 		 		return null;
 		 };
 
-		PathogenTestListComponent pathogenTestList = new PathogenTestListComponent(getSampleRef(), onSavedPathogenTest, createOrEditAllowedCallback);
-		pathogenTestList.addStyleName(CssStyles.SIDE_COMPONENT);
-		layout.addComponent(pathogenTestList, PATHOGEN_TESTS_LOC);
+		// PathogenTestListComponent pathogenTestList = new PathogenTestListComponent(getSampleRef(), onSavedPathogenTest, createOrEditAllowedCallback);
+		// pathogenTestList.addStyleName(CssStyles.SIDE_COMPONENT);
+		// layout.addComponent(pathogenTestList, PATHOGEN_TESTS_LOC);
+		SampleReferenceDto sampleReferenceDto = getSampleRef();
+		PathogenTestListComponent pathogenTestListComponent = new PathogenTestListComponent(sampleReferenceDto, this::showUnsavedChangesPopup, createOrEditAllowedCallback);
+		layout.addComponent(new SideComponentLayout(pathogenTestListComponent), PATHOGEN_TESTS_LOC);
 
 //		if (UserProvider.getCurrent() != null
 //			&& UserProvider.getCurrent().hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)
@@ -190,7 +196,8 @@ public class SampleDataView extends AbstractSampleView {
 			layout.addComponent(additionalTestList, ADDITIONAL_TESTS_LOC);
 //		}
 		
-		if (UserProvider.getCurrent().hasUserRole(UserRole.ADMIN)) {
+//		if (UserProvider.getCurrent().hasUserRole(UserRole.ADMIN)) {
+		if (Objects.requireNonNull(UserProvider.getCurrent()).getUserRoles().equals(UserRole.ADMIN)) {
 			EntityAuditLogComponent userActivityList = new EntityAuditLogComponent(SampleDto.class, getSampleRef().getUuid());
 			userActivityList.addStyleName(CssStyles.SIDE_COMPONENT);
 			layout.addComponent(userActivityList, USER_ACTIVITY_LOG_LOC);
@@ -208,8 +215,6 @@ public class SampleDataView extends AbstractSampleView {
 
 			layout.addComponent(sormasToSormasLocLayout, SORMAS_TO_SORMAS_LOC);
 		}
-
-		//}
 
 		setSampleEditPermission(container);
 		

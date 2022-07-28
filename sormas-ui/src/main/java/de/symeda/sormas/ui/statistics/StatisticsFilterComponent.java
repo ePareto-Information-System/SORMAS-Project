@@ -27,7 +27,7 @@ import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.statistics.StatisticsCaseAttribute;
 import de.symeda.sormas.api.statistics.StatisticsCaseAttributeGroup;
-import de.symeda.sormas.api.statistics.StatisticsCaseSubAttribute;
+import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.ui.utils.CssStyles;
 
 @SuppressWarnings("serial")
@@ -36,7 +36,7 @@ public class StatisticsFilterComponent extends VerticalLayout {
 	private static final String SPECIFY_YOUR_SELECTION = I18nProperties.getCaption(Captions.statisticsSpecifySelection);
 
 	private StatisticsCaseAttribute selectedAttribute;
-	private StatisticsCaseSubAttribute selectedSubAttribute;
+	private StatisticsSubAttribute selectedSubAttribute;
 	private StatisticsFilterElement filterElement;
 
 	public StatisticsFilterComponent(int rowIndex) {
@@ -86,7 +86,7 @@ public class StatisticsFilterComponent extends VerticalLayout {
 					filterSubAttributeItem.setText(SPECIFY_YOUR_SELECTION);
 
 					if (attribute.getSubAttributes().length > 0) {
-						for (StatisticsCaseSubAttribute subAttribute : attribute.getSubAttributes()) {
+						for (StatisticsSubAttribute subAttribute : attribute.getSubAttributes()) {
 							if (subAttribute.isUsedForFilters()) {
 								Command subAttributeCommand = selectedSubItem -> {
 									selectedSubAttribute = subAttribute;
@@ -133,7 +133,7 @@ public class StatisticsFilterComponent extends VerticalLayout {
 			filterElement = null;
 		}
 
-		if (selectedSubAttribute == StatisticsCaseSubAttribute.DATE_RANGE) {
+		if (selectedSubAttribute == StatisticsSubAttribute.DATE_RANGE) {
 			filterElement = new StatisticsFilterDateRangeElement(rowIndex);
 		} else if (selectedAttribute == StatisticsCaseAttribute.JURISDICTION) {
 			filterElement = new StatisticsFilterJurisdictionElement(rowIndex);
@@ -156,7 +156,7 @@ public class StatisticsFilterComponent extends VerticalLayout {
 		return selectedAttribute;
 	}
 
-	public StatisticsCaseSubAttribute getSelectedSubAttribute() {
+	public StatisticsSubAttribute getSelectedSubAttribute() {
 		return selectedSubAttribute;
 	}
 

@@ -43,7 +43,10 @@ public class AbstractStatisticsView extends AbstractSubNavigationView<Component>
 	@Override
 	public void refreshMenu(SubMenu menu, String params) {
 		menu.removeAllViews();
-		menu.addView(StatisticsView.VIEW_NAME, I18nProperties.getCaption(Captions.statisticsStatistics), params);
+		menu.addView(StatisticsCasesView.VIEW_NAME, I18nProperties.getCaption(Captions.statisticsCases), params);
+		
+		menu.addView(StatisticsContactsView.VIEW_NAME, I18nProperties.getCaption(Captions.statisticsContacts), params);
+		
 		if (UserProvider.getCurrent().hasUserRight(UserRight.DATABASE_EXPORT_ACCESS)) {
 			menu.addView(DatabaseExportView.VIEW_NAME, I18nProperties.getCaption(Captions.statisticsDatabaseExport), params);
 		}
