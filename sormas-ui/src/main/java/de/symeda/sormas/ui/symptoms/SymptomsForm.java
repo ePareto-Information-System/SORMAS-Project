@@ -55,6 +55,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.data.fieldgroup.FieldGroup;
 import com.vaadin.v7.data.util.converter.Converter.ConversionException;
@@ -476,7 +477,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			PAPULAR_RASH,
 			MACULAR_RASH,
 			VESICULAR_RASH,
-			OTHER_LESION_AREAS);
+			OTHER_LESION_AREAS
+		);
 
 		addField(SYMPTOMS_COMMENTS, TextField.class).setDescription(
 			I18nProperties.getPrefixDescription(I18N_PREFIX, SYMPTOMS_COMMENTS, "") + "\n" + I18nProperties.getDescription(Descriptions.descGdpr));
@@ -496,14 +498,12 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			SEIZURES,
 			SEPSIS,
 			SHOCK);
-
+		
 		monkeypoxImageFieldIds = Arrays.asList(LESIONS_RESEMBLE_IMG1, LESIONS_RESEMBLE_IMG2, LESIONS_RESEMBLE_IMG3, LESIONS_RESEMBLE_IMG4);
 		for (String propertyId : monkeypoxImageFieldIds) {
-			@SuppressWarnings("rawtypes")
-			Field monkeypoxImageField = addField(propertyId);
-			CssStyles.style(monkeypoxImageField, VSPACE_NONE);
+			addField(propertyId);
 		}
-
+	
 		// Set initial visibilities
 
 		initializeVisibilitiesAndAllowedVisibilities();
@@ -747,6 +747,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		getContent().addComponent(lesionsLocationsCaption, LESIONS_LOCATIONS_LOC);
 		getContent().getComponent(LESIONS_LOCATIONS_LOC)
 			.setVisible(FieldHelper.getNullableSourceFieldValue(getFieldGroup().getField(LESIONS)) == SymptomState.YES);
+		
 		getFieldGroup().getField(LESIONS).addValueChangeListener(e -> {
 			getContent().getComponent(LESIONS_LOCATIONS_LOC)
 				.setVisible(FieldHelper.getNullableSourceFieldValue((Field) e.getProperty()) == SymptomState.YES);
@@ -1096,13 +1097,25 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		CssStyles.style(lesionsImg3, VSPACE_3);
 		Image lesionsImg4 = new Image(null, new ThemeResource("img/monkeypox-lesions-4.png"));
 		CssStyles.style(lesionsImg4, VSPACE_3);
-		getContent().addComponent(lesionsImg1, MONKEYPOX_LESIONS_IMG1);
-		getContent().addComponent(lesionsImg2, MONKEYPOX_LESIONS_IMG2);
-		getContent().addComponent(lesionsImg3, MONKEYPOX_LESIONS_IMG3);
-		getContent().addComponent(lesionsImg4, MONKEYPOX_LESIONS_IMG4);
-
-		List<String> monkeypoxImages = Arrays.asList(MONKEYPOX_LESIONS_IMG1, MONKEYPOX_LESIONS_IMG2, MONKEYPOX_LESIONS_IMG3, MONKEYPOX_LESIONS_IMG4);
-
+		
+		VerticalLayout hl = new VerticalLayout();
+		hl.addComponents(getContent().getComponent(LESIONS_RESEMBLE_IMG1),lesionsImg1);
+		getContent().addComponent(hl, LESIONS_RESEMBLE_IMG1);
+		
+		VerticalLayout hl1 = new VerticalLayout();
+		hl1.addComponents(getContent().getComponent(LESIONS_RESEMBLE_IMG2),lesionsImg2);
+		getContent().addComponent(hl1, LESIONS_RESEMBLE_IMG2);
+		
+		VerticalLayout hl3 = new VerticalLayout();
+		hl3.addComponents(getContent().getComponent(LESIONS_RESEMBLE_IMG3),lesionsImg3);
+		getContent().addComponent(hl3, LESIONS_RESEMBLE_IMG3);
+		
+		VerticalLayout hl4 = new VerticalLayout();
+		hl4.addComponents(getContent().getComponent(LESIONS_RESEMBLE_IMG4),lesionsImg4);
+		getContent().addComponent(hl4, LESIONS_RESEMBLE_IMG4);
+		
+		List<String> monkeypoxImages = Arrays.asList(LESIONS_RESEMBLE_IMG1, LESIONS_RESEMBLE_IMG2, LESIONS_RESEMBLE_IMG3, LESIONS_RESEMBLE_IMG4);
+		
 		// Set up initial visibility
 		boolean lesionsSetToYes = FieldHelper.getNullableSourceFieldValue(getFieldGroup().getField(RASHES)) == SymptomState.YES;
 		for (String monkeypoxImage : monkeypoxImages) {

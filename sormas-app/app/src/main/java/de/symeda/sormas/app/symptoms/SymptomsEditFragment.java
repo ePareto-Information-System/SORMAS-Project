@@ -190,7 +190,6 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		contentBinding.symptomsTemperatureSource.initializeSpinner(DataUtils.addEmptyItem(tempSourceList));
 		contentBinding.symptomsCongenitalHeartDiseaseType.initializeSpinner(congenitalHeartDiseaseList);
 		contentBinding.symptomsOnsetSymptom.initializeSpinner(DataUtils.toItems(null, true));
-
 		contentBinding.symptomsTemperature.setSelectionOnOpen(37.0f);
 
 		initSymptomFields(contentBinding);
@@ -204,6 +203,20 @@ public class SymptomsEditFragment extends BaseEditFragment<FragmentSymptomsEditL
 		contentBinding.symptomsCongenitalHeartDisease.addValueChangedListener(e -> {
 			if (e.getValue() != SymptomState.YES) {
 				contentBinding.symptomsCongenitalHeartDiseaseDetails.setVisibility(GONE);
+			}
+		});
+
+		if(contentBinding.symptomsLesionsAllOverBody.getValue().toString().equals("true")){
+			contentBinding.symptomsLesionscharacteristicsLayout.setVisibility(VISIBLE);
+		}else if(contentBinding.symptomsLesionsAllOverBody.getValue().toString().equals("false")) {
+			contentBinding.symptomsLesionscharacteristicsLayout.setVisibility(GONE);
+		}
+
+		contentBinding.symptomsLesionsAllOverBody.addValueChangedListener(e->{
+			if (e.getValue() != Boolean.TRUE){
+				contentBinding.symptomsLesionscharacteristicsLayout.setVisibility(GONE);
+			}else {
+				contentBinding.symptomsLesionscharacteristicsLayout.setVisibility(VISIBLE);
 			}
 		});
 	}

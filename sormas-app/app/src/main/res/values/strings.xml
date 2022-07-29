@@ -190,6 +190,8 @@
     <string name="caption_issued_on">Issued on </string>
     <string name="caption_last_case">Last case</string>
     <string name="caption_last_name">Last Name</string>
+    <string name="caption_lesions_types">Types of the lesions</string>
+    <string name="caption_lesions_characteristics">Characteristics of the lesions</string>
     <string name="caption_lesions_locations">Localisation of the lesions</string>
     <string name="caption_message">Message</string>
     <string name="caption_my_reports">My Reports</string>
