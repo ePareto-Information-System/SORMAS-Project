@@ -111,11 +111,23 @@ public class CountsTileViewLayout extends CssLayout {
 		verticalLayout.addComponent(title);
 
 		HorizontalLayout countColorHorizontalLayout = new HorizontalLayout();
+		
 		for (SampleCountType type : cTypes) {
-			CountTileComponent tile = new CountTileComponent(type, sampleCount.get(type), previousSampleCount.get(type));
+			
+			Long prevCount = previousSampleCount.get(type);
+			Long sampCount = sampleCount.get(type);
+			Long diffCount =  sampCount - prevCount;
+			
+			System.out.println("CountsTileViewLayouta + "+type +" = "+Math.abs(diffCount));
+			
+			System.out.println("CountsTileViewLayoutb "+ type +" = "+diffCount);
+			
+			CountTileComponent tile = new CountTileComponent(type, sampCount, diffCount);
 			tile.setWidth(230, Unit.PIXELS);
 			countColorHorizontalLayout.addComponent(tile);
+			
 		}
+		
 		verticalLayout.addComponent(countColorHorizontalLayout);
 		return verticalLayout;
 	}
