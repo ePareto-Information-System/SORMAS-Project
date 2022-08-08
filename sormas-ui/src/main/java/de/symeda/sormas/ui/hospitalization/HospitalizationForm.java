@@ -19,15 +19,10 @@ import static de.symeda.sormas.ui.utils.CssStyles.H3;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
 import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
-
-import com.vaadin.data.HasValue;
-import com.vaadin.server.UserError;
-import com.vaadin.server.Sizeable.Unit;
 
 import org.joda.time.DateTimeComparator;
 
@@ -35,13 +30,6 @@ import com.vaadin.server.ErrorMessage;
 import com.vaadin.server.UserError;
 import com.vaadin.shared.ui.ErrorLevel;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.PopupView;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
-import com.vaadin.ui.Window.CloseListener;
-import com.vaadin.v7.data.Property;
-import com.vaadin.v7.data.Property.ValueChangeListener;
-import com.vaadin.v7.ui.AbstractSelect;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.DateField;
 import com.vaadin.v7.ui.Field;
@@ -67,21 +55,14 @@ import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
-import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
-import de.symeda.sormas.ui.caze.BulkCaseDataForm;
-import de.symeda.sormas.ui.caze.CaseDataForm;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
-import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
-import de.symeda.sormas.ui.utils.ConfirmationComponent;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.DateComparisonValidator;
 import de.symeda.sormas.ui.utils.FieldHelper;
 import de.symeda.sormas.ui.utils.NullableOptionGroup;
 import de.symeda.sormas.ui.utils.OutbreakFieldVisibilityChecker;
-import de.symeda.sormas.ui.utils.VaadinUiUtil;
 import de.symeda.sormas.ui.utils.ViewMode;
-import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent.DoneListener;
 
 public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
@@ -91,6 +72,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	private static final String PREVIOUS_HOSPITALIZATIONS_HEADING_LOC = "previousHospitalizationsHeadingLoc";
 	private static final String HEALTH_FACILITY = Captions.CaseHospitalization_healthFacility;
 	private static final String OUTCOME = Captions.CaseData_outcome;
+	private static final String SEQUELAE = Captions.CaseData_sequelae;
+	private static final String SEQUELAE_DETAILS = Captions.CaseData_sequelaeDetails;
 	private static final String OTHERCASEOUTCOMEDETAIL = Captions.CaseData_specify_other_outcome;
 
 	private final CaseDataDto caze;
@@ -103,6 +86,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 	private OptionGroup caseOutcome;
 	private TextField specifyOtherOutcome;
+	private NullableOptionGroup sequelae;
+	private TextField sequelaeDetails;
 
 	//@formatter:off
 	private static final String HTML_LAYOUT =
@@ -110,7 +95,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			fluidRowLocs(HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY) +
 			fluidRowLocs(HEALTH_FACILITY,HospitalizationDto.HEALTH_FACILITY_RECORD_NUMBER,"") +
 			fluidRowLocs(HospitalizationDto.ADMISSION_DATE, HospitalizationDto.DISCHARGE_DATE, HospitalizationDto.LEFT_AGAINST_ADVICE, "") +
-			fluidRowLocs(6, OUTCOME, 3, OTHERCASEOUTCOMEDETAIL) +
+			fluidRowLocs(6, OUTCOME, 3, OTHERCASEOUTCOMEDETAIL) + 
+			fluidRowLocs(3, SEQUELAE, 4, SEQUELAE_DETAILS) +
 			fluidRowLocs(4, HospitalizationDto.PATIENT_CONDITION_ON_ADMISSION) +
 			fluidRowLocs(HospitalizationDto.HOSPITALIZATION_REASON, HospitalizationDto.OTHER_HOSPITALIZATION_REASON) +
 					fluidRowLocs(3, HospitalizationDto.INTENSIVE_CARE_UNIT, 3,
@@ -155,7 +141,13 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 		specifyOtherOutcome = addCustomField(OTHERCASEOUTCOMEDETAIL, CaseDataDto.class, TextField.class);
 		specifyOtherOutcome.setVisible(false);
-		
+
+		sequelae = addCustomField(SEQUELAE, CaseDataDto.class, NullableOptionGroup.class);
+		sequelae.setVisible(false);
+
+		sequelaeDetails = addCustomField(SEQUELAE_DETAILS, CaseDataDto.class, TextField.class);
+		sequelae.setVisible(false);
+
 		Label previousHospitalizationsHeadingLabel = new Label(I18nProperties.getString(Strings.headingPreviousHospitalizations));
 		previousHospitalizationsHeadingLabel.addStyleName(H3);
 		getContent().addComponent(previousHospitalizationsHeadingLabel, PREVIOUS_HOSPITALIZATIONS_HEADING_LOC);
@@ -173,7 +165,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		final OptionGroup patienConditionOnAdmission = addField(HospitalizationDto.PATIENT_CONDITION_ON_ADMISSION, OptionGroup.class);
 		final DateField admissionDateField = addField(HospitalizationDto.ADMISSION_DATE, DateField.class);
 		dischargeDateField = addDateField(HospitalizationDto.DISCHARGE_DATE, DateField.class, 7);
-		
+
 		intensiveCareUnit = addField(HospitalizationDto.INTENSIVE_CARE_UNIT, NullableOptionGroup.class);
 		intensiveCareUnitStart = addField(HospitalizationDto.INTENSIVE_CARE_UNIT_START, DateField.class);
 		intensiveCareUnitStart.setVisible(false);
@@ -185,13 +177,13 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		final TextArea descriptionField = addField(HospitalizationDto.DESCRIPTION, TextArea.class);
 		descriptionField.setRows(4);
 		final NullableOptionGroup isolatedField = addField(HospitalizationDto.ISOLATED, NullableOptionGroup.class);
-		
+
 		final NullableOptionGroup leftAgainstAdviceField = addField(HospitalizationDto.LEFT_AGAINST_ADVICE, NullableOptionGroup.class);
-		if(dischargeDateField.isModified() && caze.getOutcome() == null) {
+		if (dischargeDateField.isModified() && caze.getOutcome() == null) {
 			leftAgainstAdviceField.setVisible(true);
 			leftAgainstAdviceField.setRequired(true);
 		}
-		
+
 		final ComboBox hospitalizationReason = addField(HospitalizationDto.HOSPITALIZATION_REASON);
 		final TextField otherHospitalizationReason = addField(HospitalizationDto.OTHER_HOSPITALIZATION_REASON, TextField.class);
 		NullableOptionGroup hospitalizedPreviouslyField = addField(HospitalizationDto.HOSPITALIZED_PREVIOUSLY, NullableOptionGroup.class);
@@ -322,6 +314,8 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		previousHospitalizationsField.addValueChangeListener(e -> updatePrevHospHint(hospitalizedPreviouslyField, previousHospitalizationsField));
 		dischargeDateField.addValueChangeListener(e -> showCaseOutcome());
 		caseOutcome.addValueChangeListener(e -> addOtherOutcomeValue());
+		caseOutcome.addValueChangeListener(e -> addSequelaeValue());
+		sequelae.addValueChangeListener(e -> addSequelaeDetailsValue());
 	}
 
 	private void setDateFieldVisibilties() {
@@ -330,7 +324,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		intensiveCareUnitStart.setVisible(visible);
 		intensiveCareUnitEnd.setVisible(visible);
 	}
-	
+
 //	private void showCaseOutcome() {
 //		if ((dischargeDateField.isModified() || !dischargeDateField.equals(null)) /* && caze.getOutcome() == null */) {
 //			CaseOutcome outcome = caze.getOutcome();
@@ -360,10 +354,29 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		if (caseOutcome.getValue() == CaseOutcome.OTHER) {
 			specifyOtherOutcome.setValue(caze.getSpecifyOtherOutcome());
 			specifyOtherOutcome.setVisible(true);
-		}
-		else {
+		} else {
 			specifyOtherOutcome.setVisible(false);
 			specifyOtherOutcome.setValue(null);
+		}
+	}
+
+	private void addSequelaeValue() {
+		if (caseOutcome.getValue() == CaseOutcome.RECOVERED || caseOutcome.getValue() == CaseOutcome.UNKNOWN) {
+			sequelae.setValue(caze.getSequelae());
+			sequelae.setVisible(true);
+		} else {
+			sequelae.setVisible(false);
+			sequelae.setValue(null);
+		}
+	}
+
+	private void addSequelaeDetailsValue() {
+		if (sequelae.getValue() == YesNoUnknown.YES) {
+			sequelaeDetails.setValue(caze.getSequelaeDetails());
+			sequelaeDetails.setVisible(true);
+		} else {
+			sequelaeDetails.setVisible(false);
+			sequelaeDetails.setValue(null);
 		}
 	}
 
@@ -405,5 +418,13 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 	public void setSpecifyOtherOutcome(TextField specifyOtherOutcome) {
 		this.specifyOtherOutcome = specifyOtherOutcome;
+	}
+
+	public NullableOptionGroup getSequelae() {
+		return sequelae;
+	}
+
+	public void setSequelae(NullableOptionGroup sequelae) {
+		this.sequelae = sequelae;
 	}
 }
