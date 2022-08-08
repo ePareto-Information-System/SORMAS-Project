@@ -229,11 +229,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 							fluidColumnLoc(4, 0, CaseDataDto.PREVIOUS_INFECTION_DATE)
 					) 
 					+
+                    fluidRow(
+                            fluidColumnLoc(6, 0, REINFECTION_DETAILS_COL_1_LOC),
+                            fluidColumnLoc(6, 0, REINFECTION_DETAILS_COL_2_LOC)
+                    ) +
 					fluidRowLocs(7, CaseDataDto.OUTCOME, 3, CaseDataDto.OTHERCASEOUTCOMEDETAILS, 3, CaseDataDto.OUTCOME_DATE) +
-					fluidRow(
-							fluidColumnLoc(6, 0, REINFECTION_DETAILS_COL_1_LOC),
-							fluidColumnLoc(6, 0, REINFECTION_DETAILS_COL_2_LOC)
-					) +
 					fluidRowLocs(3, CaseDataDto.SEQUELAE, 9, CaseDataDto.SEQUELAE_DETAILS) +
 					fluidRowLocs(CaseDataDto.CASE_IDENTIFICATION_SOURCE, CaseDataDto.SCREENING_TYPE) +
 					fluidRowLocs(5, CaseDataDto.CASE_ORIGIN, 7, CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION) +
@@ -1450,7 +1450,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				reinfectionTree.initCheckboxes();
 			}
 		});
-		if(CaseDataDto.HOSPITALIZATION == null) {
+		if (CaseDataDto.HOSPITALIZATION == null) {
 			caseOutcome.setEnabled(false);
 			caseOutcome.setRequired(false);
 		}
@@ -1795,8 +1795,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 	private void addOtherOutcomeValue() {
 		if (caseOutcome.getValue() == CaseOutcome.OTHER && getValue().getHospitalization().getDischargeDate() != null) {
 			otherCaseOutComeDetails.setVisible(true);
-		}
-		else {
+		} else {
 			otherCaseOutComeDetails.setVisible(false);
 		}
 	}
@@ -1804,8 +1803,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 	private void setOtherOutomeValue() {
 		if (otherCaseOutComeDetails.getValue() != null) {
 			otherCaseOutComeDetails.setValue(otherCaseOutComeDetails.getValue());
-		}
-		else {
+		} else {
 			otherCaseOutComeDetails.setVisible(false);
 		}
 	}
