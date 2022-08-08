@@ -536,21 +536,12 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	@HideForCountriesExcept
 	private Date prohibitionToWorkUntil;
 
-	@Diseases({
-		Disease.CORONAVIRUS })
-	@HideForCountriesExcept
 	private YesNoUnknown reInfection;
-	@Diseases({
-		Disease.CORONAVIRUS })
-	@HideForCountriesExcept
+
 	private Date previousInfectionDate;
-	@Diseases({
-		Disease.CORONAVIRUS })
-	@HideForCountriesExcept
+
 	private ReinfectionStatus reinfectionStatus;
-	@Diseases({
-		Disease.CORONAVIRUS })
-	@HideForCountriesExcept
+
 	private Map<ReinfectionDetail, Boolean> reinfectionDetails;
 
 	@HideForCountriesExcept
@@ -1583,6 +1574,7 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	public void setBloodOrganOrTissueDonated(YesNoUnknown bloodOrganOrTissueDonated) {
 		this.bloodOrganOrTissueDonated = bloodOrganOrTissueDonated;
 	}
+
 	public TransmissionClassification getCaseTransmissionClassification() {
 		return caseTransmissionClassification;
 	}
@@ -1590,6 +1582,7 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	public void setCaseTransmissionClassification(TransmissionClassification caseTransmissionClassification) {
 		this.caseTransmissionClassification = caseTransmissionClassification;
 	}
+
 	// public String getOtherCaseOutcomeDetails() {
 	// 	return otherCaseOutcomeDetails;
 	// }
