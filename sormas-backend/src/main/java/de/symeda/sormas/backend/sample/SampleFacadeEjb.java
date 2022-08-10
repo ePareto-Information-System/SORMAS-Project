@@ -31,13 +31,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import de.symeda.sormas.backend.event.EventFacadeEjb;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,28 +60,19 @@ import de.symeda.sormas.api.infrastructure.facility.FacilityHelper;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.messaging.MessageType;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
-import de.symeda.sormas.api.sample.PathogenTestDto;
-import de.symeda.sormas.api.sample.PathogenTestResultType;
-import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.sample.SampleCountType;
 import de.symeda.sormas.api.sample.SampleCriteria;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SampleExportDto;
 import de.symeda.sormas.api.sample.SampleFacade;
 import de.symeda.sormas.api.sample.SampleIndexDto;
-import de.symeda.sormas.api.sample.SamplePurpose;
-import de.symeda.sormas.api.sample.SampleReferenceDto;
-import de.symeda.sormas.api.sample.SpecimenCondition;
-import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.api.user.UserRole;
-import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.DateFilterOption;
-
 import de.symeda.sormas.api.sample.SampleJurisdictionFlagsDto;
 import de.symeda.sormas.api.sample.SampleListEntryDto;
 import de.symeda.sormas.api.sample.SampleMaterial;
+import de.symeda.sormas.api.sample.SamplePurpose;
 import de.symeda.sormas.api.sample.SampleReferenceDto;
 import de.symeda.sormas.api.sample.SampleSimilarityCriteria;
+import de.symeda.sormas.api.sample.SpecimenCondition;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.AccessDeniedException;
@@ -106,7 +98,7 @@ import de.symeda.sormas.backend.contact.ContactFacadeEjb;
 import de.symeda.sormas.backend.contact.ContactFacadeEjb.ContactFacadeEjbLocal;
 import de.symeda.sormas.backend.contact.ContactService;
 import de.symeda.sormas.backend.event.Event;
-import de.symeda.sormas.backend.event.EventFacadeEjb.EventFacadeEjbLocal;
+import de.symeda.sormas.backend.event.EventFacadeEjb;
 import de.symeda.sormas.backend.event.EventParticipant;
 import de.symeda.sormas.backend.event.EventParticipantFacadeEjb;
 import de.symeda.sormas.backend.event.EventParticipantFacadeEjb.EventParticipantFacadeEjbLocal;
@@ -227,11 +219,11 @@ public class SampleFacadeEjb implements SampleFacade {
 		if (user == null) {
 			return Collections.emptyList();
 		}
-		
+
 		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
 		return sampleService.findBy(criteria, user).stream().map(c -> convertToDto(c, pseudonymizer)).collect(Collectors.toList());
 	}
-	
+
 	@Override
 	public List<SampleDto> getByCaseUuids(List<String> caseUuids) {
 		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
@@ -431,22 +423,18 @@ public class SampleFacadeEjb implements SampleFacade {
 
 		return sampleService.findBy(criteria, userService.getCurrentUser(), AbstractDomainObject.CREATION_DATE, false)
 			.stream()
-			.collect(
-				Collectors.toMap(
-					s -> associatedObjectFn.apply(s).getUuid(),
-					s -> s,
-					(s1, s2) -> {
+			.collect(Collectors.toMap(s -> associatedObjectFn.apply(s).getUuid(), s -> s, (s1, s2) -> {
 
-						// keep the positive one
-						if (s1.getPathogenTestResult() == PathogenTestResultType.POSITIVE) {
-							return s1;
-						} else if (s2.getPathogenTestResult() == PathogenTestResultType.POSITIVE) {
-							return s2;
-						}
+				// keep the positive one
+				if (s1.getPathogenTestResult() == PathogenTestResultType.POSITIVE) {
+					return s1;
+				} else if (s2.getPathogenTestResult() == PathogenTestResultType.POSITIVE) {
+					return s2;
+				}
 
-						// ordered by creation date by default, so always keep the first one
-						return s1;
-					}))
+				// ordered by creation date by default, so always keep the first one
+				return s1;
+			}))
 			.values()
 			.stream()
 			.map(s -> convertToDto(s, pseudonymizer))
@@ -499,6 +487,25 @@ public class SampleFacadeEjb implements SampleFacade {
 		SampleQueryContext<Sample> sampleQueryContext = new SampleQueryContext<>(cb, cq, sampleRoot);
 
 		SampleJoins<Sample> joins = (SampleJoins<Sample>) sampleQueryContext.getJoins();
+
+		cq.distinct(true);
+		final Join<Case, District> caseDistrict = joins.getCaseDistrict();
+		final Join<Case, District> caseResponsibleDistrict = joins.getCaseResponsibleDistrict();
+		Expression<Object> districtSelect = cb.selectCase()
+			.when(cb.isNotNull(caseDistrict), caseDistrict.get(District.NAME))
+			.otherwise(cb.selectCase().when(cb.isNotNull(caseResponsibleDistrict), caseResponsibleDistrict.get(District.NAME)));
+
+		final Join<Case, Region> caseRegion = joins.getCaseRegion();
+		final Join<Case, Region> caseResponsibleRegion = joins.getCaseResponsibleRegion();
+		Expression<Object> regionSelect = cb.selectCase()
+			.when(cb.isNotNull(caseRegion), caseRegion.get(Region.NAME))
+			.otherwise(cb.selectCase().when(cb.isNotNull(caseResponsibleRegion), caseResponsibleRegion.get(Region.NAME)));
+
+		final Join<Case, Community> caseCommunity = joins.getCaseCommunity();
+		final Join<Case, Community> caseResponsibleCommunity = joins.getCaseResponsibleCommunity();
+		Expression<Object> communitySelect = cb.selectCase()
+			.when(cb.isNotNull(caseCommunity), caseDistrict.get(Community.NAME))
+			.otherwise(cb.selectCase().when(cb.isNotNull(caseResponsibleCommunity), caseResponsibleCommunity.get(Community.NAME)));
 
 		cq.distinct(true);
 
@@ -583,9 +590,9 @@ public class SampleFacadeEjb implements SampleFacade {
 			joins.getCaze().get(Case.REPORT_DATE),
 			joins.getCaze().get(Case.CASE_CLASSIFICATION),
 			joins.getCaze().get(Case.OUTCOME),
-			joins.getCaseRegion().get(Region.NAME),
-			joins.getCaseDistrict().get(District.NAME),
-			joins.getCaseCommunity().get(Community.NAME),
+			regionSelect,
+			districtSelect,
+			communitySelect,
 			joins.getCaseFacility().get(Facility.NAME),
 			joins.getCaze().get(Case.HEALTH_FACILITY_DETAILS),
 			joins.getContactRegion().get(Region.NAME),
