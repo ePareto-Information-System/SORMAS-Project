@@ -171,6 +171,9 @@ public class SampleService extends AbstractCoreAdoService<Sample> {
 
 		final Join<Sample, Case> caze = joins.getCaze();
 		final Join<Case, District> caseDistrict = joins.getCaseDistrict();
+		final Join<Case, District> caseResponsibleDistrict = joins.getCaseResponsibleDistrict();
+		final Join<Case, Community> caseCommunity = joins.getCaseCommunity();
+		final Join<Case, Community> caseResponsibleCommunity = joins.getCaseResponsibleCommunity();
 
 		final Join<Sample, Contact> contact = joins.getContact();
 		final Join<Contact, District> contactDistrict = joins.getContactDistrict();
@@ -190,12 +193,18 @@ public class SampleService extends AbstractCoreAdoService<Sample> {
 			.when(cb.isNotNull(caseDistrict), caseDistrict.get(District.NAME))
 			.otherwise(
 				cb.selectCase()
-					.when(cb.isNotNull(contactDistrict), contactDistrict.get(District.NAME))
+					.when(cb.isNotNull(caseResponsibleDistrict), caseResponsibleDistrict.get(District.NAME))
 					.otherwise(
 						cb.selectCase()
-							.when(cb.isNotNull(contactCaseDistrict), contactCaseDistrict.get(District.NAME))
-							.otherwise(eventDistrict.get(District.NAME))));
+							.when(cb.isNotNull(contactDistrict), contactDistrict.get(District.NAME))
+							.otherwise(
+								cb.selectCase()
+									.when(cb.isNotNull(contactCaseDistrict), contactCaseDistrict.get(District.NAME))
+									.otherwise(eventDistrict.get(District.NAME)))));
 
+		Expression<Object> communitySelect = cb.selectCase()
+			.when(cb.isNotNull(caseCommunity), caseCommunity.get(Community.NAME))
+			.otherwise(cb.selectCase().when(cb.isNotNull(caseResponsibleCommunity), caseResponsibleCommunity.get(Community.NAME)));
 		cq.distinct(true);
 
 		List<Selection<?>> selections = new ArrayList<>(
@@ -231,6 +240,7 @@ public class SampleService extends AbstractCoreAdoService<Sample> {
 				sample.get(Sample.ADDITIONAL_TESTING_REQUESTED),
 				cb.isNotEmpty(sample.get(Sample.ADDITIONAL_TESTS)),
 				districtSelect,
+				communitySelect,
 				joins.getLab().get(Facility.UUID)));
 
 		// Tests count subquery
@@ -296,6 +306,9 @@ public class SampleService extends AbstractCoreAdoService<Sample> {
 					break;
 				case SampleIndexDto.DISTRICT:
 					expression = districtSelect;
+					break;
+				case SampleIndexDto.COMMUNITY:
+					expression = communitySelect;
 					break;
 				case SampleIndexDto.LAB:
 					expression = joins.getLab().get(Facility.NAME);
@@ -807,8 +820,11 @@ public class SampleService extends AbstractCoreAdoService<Sample> {
 				.when(cb.isNotNull(joins.getCaseCommunity()), joins.getCaseCommunity().get(Community.UUID))
 				.otherwise(
 					cb.selectCase()
-						.when(cb.isNotNull(joins.getContactCommunity()), joins.getContactCommunity().get(Community.UUID))
-						.otherwise(joins.getContactCaseCommunity().get(Community.UUID)));
+						.when(cb.isNotNull(joins.getCaseResponsibleCommunity()), joins.getCaseResponsibleCommunity().get(Community.UUID))
+						.otherwise(
+							cb.selectCase()
+								.when(cb.isNotNull(joins.getContactCommunity()), joins.getContactCommunity().get(Community.UUID))
+								.otherwise(joins.getContactCaseCommunity().get(Community.UUID))));
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(communityExpression, criteria.getCommunity().getUuid()));
 		}
 		if (criteria.getLaboratory() != null) {
@@ -935,10 +951,8 @@ public class SampleService extends AbstractCoreAdoService<Sample> {
 		}
 
 		if (criteria.getSampleDateFrom() != null && criteria.getSampleDateTo() != null) {
-			filter = CriteriaBuilderHelper.and(
-				cb,
-				filter,
-				cb.between(sample.get(dateProperty), criteria.getSampleDateFrom(), criteria.getSampleDateTo()));
+			filter =
+				CriteriaBuilderHelper.and(cb, filter, cb.between(sample.get(dateProperty), criteria.getSampleDateFrom(), criteria.getSampleDateTo()));
 		} else if (criteria.getSampleDateFrom() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.greaterThanOrEqualTo(sample.get(dateProperty), criteria.getSampleDateFrom()));
 		} else if (criteria.getSampleDateTo() != null) {
@@ -946,6 +960,7 @@ public class SampleService extends AbstractCoreAdoService<Sample> {
 		}
 		return filter;
 	}
+
 	private Predicate buildSampleListCriteriaFilter(SampleCriteria criteria, CriteriaBuilder cb, SampleJoins joins) {
 		Predicate filter = null;
 		final SampleAssociationType sampleAssociationType = criteria.getSampleAssociationType();
