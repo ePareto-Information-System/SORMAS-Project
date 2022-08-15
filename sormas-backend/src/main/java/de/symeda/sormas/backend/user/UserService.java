@@ -336,7 +336,7 @@ public class UserService extends AdoServiceWithUserFilter<User> {
 		Predicate filter = cb.and(
 			createDefaultFilter(cb, from),
 			cb.equal(from.get(User.LABORATORY), facility),
-			joinRoles.in(Arrays.asList(UserRole.LAB_USER, UserRole.EXTERNAL_LAB_USER)));
+			joinRoles.in(Arrays.asList(UserRole.LAB_USER, UserRole.EXTERNAL_LAB_USER, UserRole.LAB_ATTENDANT, UserRole.LAB_SUPERVISOR)));
 		cq.where(filter).distinct(true);
 
 		return em.createQuery(cq).getResultList();
