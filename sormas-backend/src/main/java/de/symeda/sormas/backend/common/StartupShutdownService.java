@@ -378,6 +378,14 @@ public class StartupShutdownService {
 				DefaultEntityHelper.POE_SUP_USERNAME_AND_PASSWORD,
 				u -> u.setRegion(region));
 
+			// Create Point of Lab Supervisor
+			createAndPersistDefaultUser(
+				UserRole.LAB_SUPERVISOR,
+				"Laboratory",
+				"Supervisor",
+				DefaultEntityHelper.LAB_SUP_USERNAME_AND_PASSWORD,
+				u -> u.setLaboratory(laboratory));
+
 			// Create Laboratory Officer
 			createAndPersistDefaultUser(
 				UserRole.LAB_USER,
