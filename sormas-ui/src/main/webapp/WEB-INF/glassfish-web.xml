@@ -17,6 +17,8 @@
         <group-name>CONTACT_OFFICER</group-name>
         <group-name>EVENT_OFFICER</group-name>
         <group-name>LAB_USER</group-name>
+        <group-name>LAB_SUPERVISOR</group-name>
+        <group-name>LAB_ATTENDANT</group-name>
         <group-name>EXTERNAL_LAB_USER</group-name>
         <group-name>NATIONAL_USER</group-name>
         <group-name>NATIONAL_OBSERVER</group-name>

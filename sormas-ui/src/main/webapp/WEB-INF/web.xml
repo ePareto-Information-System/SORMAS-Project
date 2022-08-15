@@ -37,6 +37,12 @@
 	  <role-name>LAB_USER</role-name>
 	</security-role>
 	<security-role>
+	  <role-name>LAB_SUPERVISOR</role-name>
+	</security-role>
+	<security-role>
+	  <role-name>LAB_ATTENDANT</role-name>
+	</security-role>
+	<security-role>
 	  <role-name>EXTERNAL_LAB_USER</role-name>
 	</security-role>
 	<security-role>

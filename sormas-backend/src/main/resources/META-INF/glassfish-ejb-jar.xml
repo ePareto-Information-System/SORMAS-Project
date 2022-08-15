@@ -47,6 +47,14 @@
         <group-name>LAB_USER</group-name>
     </security-role-mapping>
     <security-role-mapping>
+        <role-name>LAB_SUPERVISOR</role-name>
+        <group-name>LAB_SUPERVISOR</group-name>
+    </security-role-mapping>
+    <security-role-mapping>
+        <role-name>LAB_ATTENDANT</role-name>
+        <group-name>LAB_ATTENDANT</group-name>
+    </security-role-mapping>
+    <security-role-mapping>
         <role-name>EXTERNAL_LAB_USER</role-name>
         <group-name>EXTERNAL_LAB_USER</group-name>
     </security-role-mapping>
