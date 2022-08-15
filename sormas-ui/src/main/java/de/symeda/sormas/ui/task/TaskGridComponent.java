@@ -139,8 +139,9 @@ public class TaskGridComponent extends VerticalLayout {
 			Button myTasks = createAndAddStatusButton(Captions.taskMyTasks, MY_TASKS, buttonFilterLayout);
 
 			// Default filter for lab users (that don't have any other role) is "My tasks"
-			if ((UserProvider.getCurrent().hasUserRole(UserRole.LAB_USER) || UserProvider.getCurrent().hasUserRole(UserRole.EXTERNAL_LAB_USER))
-				&& UserProvider.getCurrent().getUserRoles().size() == 1) {
+			if ((UserProvider.getCurrent().hasUserRole(UserRole.LAB_USER)
+				|| UserProvider.getCurrent().hasUserRole(UserRole.EXTERNAL_LAB_USER)
+				|| UserProvider.getCurrent().hasUserRole(UserRole.LAB_SUPERVISOR)) && UserProvider.getCurrent().getUserRoles().size() == 1) {
 				activeStatusButton = myTasks;
 			} else {
 				activeStatusButton = allTasks;
