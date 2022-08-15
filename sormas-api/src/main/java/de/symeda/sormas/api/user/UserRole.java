@@ -51,6 +51,8 @@ public enum UserRole
 	CONTACT_OFFICER(false, true, false, false, JurisdictionLevel.DISTRICT),
 	EVENT_OFFICER(true, false, false, false, JurisdictionLevel.REGION),
 	LAB_USER(false, false, false, false, JurisdictionLevel.LABORATORY),
+	LAB_ATTENDANT(false, false, false, false, JurisdictionLevel.LABORATORY),
+	LAB_SUPERVISOR(false, false, false, false, JurisdictionLevel.LABORATORY),
 	EXTERNAL_LAB_USER(false, false, false, false, JurisdictionLevel.EXTERNAL_LABORATORY),
 	NATIONAL_OBSERVER(false, false, false, false, JurisdictionLevel.NATION),
 	STATE_OBSERVER(false, false, false, false, JurisdictionLevel.REGION),
@@ -85,6 +87,8 @@ public enum UserRole
 	public static final String _CONTACT_OFFICER = CONTACT_OFFICER.name();
 	public static final String _EVENT_OFFICER = EVENT_OFFICER.name();
 	public static final String _LAB_USER = LAB_USER.name();
+	public static final String _LAB_ATTENDANT = LAB_ATTENDANT.name();
+	public static final String _LAB_SUPERVISOR = LAB_SUPERVISOR.name();
 	public static final String _EXTERNAL_LAB_USER = EXTERNAL_LAB_USER.name();
 	public static final String _NATIONAL_OBSERVER = NATIONAL_OBSERVER.name();
 	public static final String _NATIONAL_CLINICIAN = NATIONAL_CLINICIAN.name();
@@ -173,6 +177,8 @@ public enum UserRole
 			collection.add(CONTACT_OFFICER);
 			collection.add(SURVEILLANCE_OFFICER);
 			collection.add(LAB_USER);
+			collection.add(LAB_ATTENDANT);
+			collection.add(LAB_SUPERVISOR);
 			collection.add(NATIONAL_OBSERVER);
 			collection.add(STATE_OBSERVER);
 			collection.add(DISTRICT_OBSERVER);
@@ -208,6 +214,12 @@ public enum UserRole
 			break;
 		case LAB_USER:
 			collection.add(LAB_USER);
+			break;
+		case LAB_ATTENDANT:
+			collection.add(LAB_ATTENDANT);
+			break;
+		case LAB_SUPERVISOR:
+			collection.add(LAB_SUPERVISOR);
 			break;
 		case EXTERNAL_LAB_USER:
 			collection.add(EXTERNAL_LAB_USER);
@@ -306,7 +318,10 @@ public enum UserRole
 	}
 
 	public static boolean isLabUser(Collection<UserRole> roles) {
-		return roles.contains(UserRole.LAB_USER) || roles.contains(UserRole.EXTERNAL_LAB_USER);
+		return roles.contains(UserRole.LAB_USER)
+			|| roles.contains(UserRole.EXTERNAL_LAB_USER)
+			|| roles.contains(UserRole.LAB_ATTENDANT)
+			|| roles.contains(UserRole.LAB_SUPERVISOR);
 	}
 
 	public static void validate(Collection<UserRole> roles) throws UserRoleValidationException {
