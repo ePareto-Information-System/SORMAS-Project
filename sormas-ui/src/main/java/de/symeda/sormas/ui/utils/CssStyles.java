@@ -423,18 +423,30 @@ public final class CssStyles {
 		switch (count) {
 		case TOTAL:
 			return "background-sample-count-total";
-		case INDETERMINATE:
+			
+		case SAMPLE_INDETERMINATE:
 			return "background-sample-count-indeterminate";
+		case TEST_INDETERMINATE:
+			return "background-sample-count-indeterminate";
+			
 		case ADEQUATE:
 			return "background-sample-count-adequate";
 		case INADEQUATE:
 			return "background-sample-count-inadequate";
-		case POSITIVE:
+			
+		case SAMPLE_POSITIVE:
 			return "background-sample-count-positives";
-		case NEGATIVE:
+		case TEST_POSITIVE:
+			return "background-sample-count-positives";
+		case SAMPLE_NEGATIVE:
 			return "background-sample-count-negatives";
-		case PENDING:
+		case TEST_NEGATIVE:
+			return "background-sample-count-negatives";
+		case SAMPLE_PENDING:
 			return "background-sample-count-pendings";
+		case TEST_PENDING:
+			return "background-sample-count-pendings";
+			
 		case SHIPPED:
 			return "background-sample-count-shipped";
 		case NOT_SHIPED:
