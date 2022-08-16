@@ -370,6 +370,7 @@ public final class CssStyles {
 	/**
 	 * Returns CSS style name defined in VAADIN/themes/sormas/views/disease.scss
 	 */
+	
 	public static String getDiseaseColor(Disease disease) {
 		switch (disease) {
 		case AFP:
@@ -416,5 +417,51 @@ public final class CssStyles {
 		default:
 			return "background-disease-undefined";
 		}
+	}
+
+	/**
+	 * Returns CSS style name defined in VAADIN/themes/sormas/views/samplecount.scss
+	 */
+	public static String getSampleCountColor(SampleCountType count) {
+		switch (count) {
+		
+		case TOTAL:
+			return "background-sample-count-total";
+			
+		case SAMPLE_INDETERMINATE:
+			return "background-sample-count-indeterminate";
+		case TEST_INDETERMINATE:
+			return "background-sample-count-indeterminate";
+			
+		case ADEQUATE:
+			return "background-sample-count-adequate";
+		case INADEQUATE:
+			return "background-sample-count-inadequate";
+			
+		case SAMPLE_POSITIVE:
+			return "background-sample-count-positives";
+		case TEST_POSITIVE:
+			return "background-sample-count-positives";
+		case SAMPLE_NEGATIVE:
+			return "background-sample-count-negatives";
+		case TEST_NEGATIVE:
+			return "background-sample-count-negatives";
+		case SAMPLE_PENDING:
+			return "background-sample-count-pendings";
+		case TEST_PENDING:
+			return "background-sample-count-pendings";
+			
+		case SHIPPED:
+			return "background-sample-count-shipped";
+		case NOT_SHIPED:
+			return "background-sample-count-not-shipped";
+		case RECEIVED:
+			return "background-sample-count-received";
+		case NOT_RECEIVED:
+			return "background-sample-count-not-received";
+		default:
+			throw new IllegalArgumentException(count.toString());
+		}
+		
 	}
 }

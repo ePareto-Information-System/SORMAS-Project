@@ -19,7 +19,31 @@ package de.symeda.auditlog.api;
 
 public enum ChangeType {
 
-	CREATE,
-	UPDATE,
-	DELETE;
+public enum SampleCountType {
+	TOTAL,
+	
+	SAMPLE_INDETERMINATE,
+	TEST_INDETERMINATE,
+	
+	SAMPLE_PENDING,
+	TEST_PENDING,
+
+	SAMPLE_NEGATIVE,
+	TEST_NEGATIVE,
+
+	SAMPLE_POSITIVE,
+	TEST_POSITIVE,
+
+	
+	ADEQUATE,
+	INADEQUATE,
+	SHIPPED,
+	NOT_SHIPED,
+	RECEIVED,
+	NOT_RECEIVED;
+	
+	public String toString() {
+		return I18nProperties.getEnumCaption(this);
+	}
+	
 }
