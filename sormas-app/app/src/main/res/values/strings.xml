@@ -49,6 +49,8 @@
     <string name="action_create_case_from_event_person">Create a case for this event person</string>
     <string name="action_create_treatment">Create treatment</string>
     <string name="action_edit_data">Edit data</string>
+    <string name="action_continue_synchronize_data">Continue</string>
+    <string name="action_synchronize_data_cancel">Cancel</string>
     <string name="action_delete">Delete</string>
     <string name="action_dismiss">Dismiss</string>
     <string name="action_done">Done</string>
@@ -114,6 +116,7 @@
     <string name="action_submit_report">Submit Weekly Report</string>
     <string name="action_sync">Sync</string>
     <string name="action_transfer_case">Transfer case</string>
+    <string name="action_synchronize_data">Do you want to synchronize with sormas server?</string>
     <string name="action_try_again">Try again</string>
     <string name="action_turn_on_gps">Turn On GPS</string>
     <string name="action_update_search">Update search</string>
@@ -407,6 +410,7 @@
     <string name="heading_treatment_edit">Edit Treatment</string>
     <string name="heading_treatment_new">New Treatment</string>
     <string name="heading_unsynchronized_changes">Unsynchronized Changes</string>
+    <string name="heading_synchronizing_changes">Synchronize with sormas server</string>
     <string name="heading_user_report">Report a problem</string>
     <string name="heading_change_laboratory_result">Change Laboratory Result</string>
     <string name="heading_change_case_disease">Change case disease</string>
