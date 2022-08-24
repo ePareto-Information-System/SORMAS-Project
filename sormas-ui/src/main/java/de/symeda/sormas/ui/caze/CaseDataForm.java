@@ -272,14 +272,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(CaseDataDto.BLOOD_ORGAN_OR_TISSUE_DONATED) +
 					fluidRowLocs(CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM) + fluidRowLocs(CaseDataDto.TRIMESTER, "") +
 					fluidRowLocs(CaseDataDto.VACCINATION_STATUS, "") +
-					
 					fluidRowLocs(CaseDataDto.SMALLPOX_VACCINATION_RECEIVED, CaseDataDto.SMALLPOX_VACCINATION_SCAR) +
 					fluidRowLocs(SMALLPOX_VACCINATION_SCAR_IMG) +
-
-					
 					fluidRowLocs(CaseDataDto.SMALLPOX_LAST_VACCINATION_DATE, "") +
-					
-					
 					fluidRowLocs(6, CaseDataDto.CLINICIAN_NAME) +
 					fluidRowLocs(CaseDataDto.NOTIFYING_CLINIC, CaseDataDto.NOTIFYING_CLINIC_DETAILS) +
 					fluidRowLocs(CaseDataDto.CLINICIAN_PHONE, CaseDataDto.CLINICIAN_EMAIL) +
@@ -351,7 +346,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		this.caseFollowUpEnabled = FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_FOLLOWUP);
 
 		addFields();
-		//addField(SMALLPOX_VACCINATION_SCAR_IMG);
 	}
 
 	public static void updateFacilityDetails(ComboBox cbFacility, TextField tfFacilityDetails) {
@@ -1253,34 +1247,22 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 		// Other initializations
 		if (disease == Disease.MONKEYPOX) {
-			
-
 			Image smallpoxVaccinationScarImg = new Image(null, new ThemeResource("img/smallpox-vaccination-scar.jpg"));
 			style(smallpoxVaccinationScarImg, VSPACE_3);
-//			
-			VerticalLayout hl4 = new VerticalLayout();
 
+			VerticalLayout hl4 = new VerticalLayout();
 			hl4.addComponents(getContent().getComponent(CaseDataDto.SMALLPOX_VACCINATION_SCAR),smallpoxVaccinationScarImg);
 			getContent().addComponent(hl4, CaseDataDto.SMALLPOX_VACCINATION_SCAR);
 			
-
 			// Set up initial visibility
-			 getContent().getComponent(CaseDataDto.SMALLPOX_VACCINATION_SCAR)
+			getContent().getComponent(CaseDataDto.SMALLPOX_VACCINATION_SCAR)
 				.setVisible(getFieldGroup().getField(CaseDataDto.SMALLPOX_VACCINATION_RECEIVED).getValue() == YesNoUnknown.YES);
 
 				// Set up image visibility listener
-			getFieldGroup().getField(CaseDataDto.SMALLPOX_VACCINATION_RECEIVED).addValueChangeListener(e -> {
-				
-					getContent().getComponent( CaseDataDto.SMALLPOX_VACCINATION_SCAR)
-						.setVisible(FieldHelper.getNullableSourceFieldValue((Field) e.getProperty()) == YesNoUnknown.YES);
-				
+			getFieldGroup().getField(CaseDataDto.SMALLPOX_VACCINATION_RECEIVED).addValueChangeListener(e -> {			
+				getContent().getComponent( CaseDataDto.SMALLPOX_VACCINATION_SCAR)
+					.setVisible(FieldHelper.getNullableSourceFieldValue((Field) e.getProperty()) == YesNoUnknown.YES);		
 			});
-
-
-			
-			
-						
-					
 		}
 
 		List<String> medicalInformationFields =

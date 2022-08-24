@@ -139,9 +139,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					createSymptomGroupLayout(SymptomGroup.URINARY, URINARY_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.NERVOUS_SYSTEM, NERVOUS_SYSTEM_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.RASH, RASH_AND_SYMPTOMS_HEADING_LOC) +
-					
 					createSymptomGroupLayout(SymptomGroup.RASH, "RASH_AND_SYMPTOMS_HEADING_LOC") +
-
 					createSymptomGroupLayout(SymptomGroup.RASH_CHARACTERISTICS, RASH_CHARACTERISTICS_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.RASH_TYPE, RASH_TYPE_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.SKIN, SKIN_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
@@ -480,13 +478,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			MACULAR_RASH,
 			VESICULAR_RASH,
 			OTHER_LESION_AREAS
-		
-			
-			
-
-			
-				);
-		//
+		);
 
 		addField(SYMPTOMS_COMMENTS, TextField.class).setDescription(
 			I18nProperties.getPrefixDescription(I18N_PREFIX, SYMPTOMS_COMMENTS, "") + "\n" + I18nProperties.getDescription(Descriptions.descGdpr));
@@ -506,22 +498,13 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			SEIZURES,
 			SEPSIS,
 			SHOCK);
-		
-		
 
 		monkeypoxImageFieldIds = Arrays.asList(LESIONS_RESEMBLE_IMG1, LESIONS_RESEMBLE_IMG2, LESIONS_RESEMBLE_IMG3, LESIONS_RESEMBLE_IMG4);
 
-	for (String propertyId : monkeypoxImageFieldIds) {
+		for (String propertyId : monkeypoxImageFieldIds) {
 			//@SuppressWarnings("rawtypes")
 			addField(propertyId);
-			//addField(LESIONS_RESEMBLE_IMG5);
-			//CssStyles.style(monkeypoxImageField, VSPACE_3);
-			//monkeypoxImageField.add
-			//getContent().addComponent(imgList.get(i), propertyId);
-			
-			// i++;
 		}
-	
 
 		// Set initial visibilities
 
@@ -1127,38 +1110,16 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		VerticalLayout hl4 = new VerticalLayout();
 
 		hl4.addComponents(getContent().getComponent(LESIONS_RESEMBLE_IMG4),lesionsImg4);
-		getContent().addComponent(hl4, LESIONS_RESEMBLE_IMG4);
-		
-//		getContent().addComponent(lesionsImg4, MONKEYPOX_LESIONS_IMG4);
-		
-		//getContent().addComponent(new Label("Hi"), "RASH_AND_SYMPTOMS_HEADING_LOC");
-
-		
-		
-		
-//		getContent().addComponent(lesionsImg1, LESIONS_RESEMBLE_IMG1);
-//		getContent().addComponent(lesionsImg2, LESIONS_RESEMBLE_IMG2);
-//		getContent().addComponent(lesionsImg3, LESIONS_RESEMBLE_IMG3);
-//		getContent().addComponent(lesionsImg4, LESIONS_RESEMBLE_IMG4);
-		
-//		getContent().addComponent(lesionsImg1, MONKEYPOX_LESIONS_IMG1);
-//		getContent().addComponent(lesionsImg2, LESIONS_RESEMBLE_IMG1);
-//		getContent().addComponent(lesionsImg3, MONKEYPOX_LESIONS_IMG2);
-//		getContent().addComponent(lesionsImg4, LESIONS_RESEMBLE_IMG2);
-		
+		getContent().addComponent(hl4, LESIONS_RESEMBLE_IMG4);		
 
 		//List<String> monkeypoxImages = Arrays.asList(MONKEYPOX_LESIONS_IMG11, MONKEYPOX_LESIONS_IMG2, MONKEYPOX_LESIONS_IMG3, MONKEYPOX_LESIONS_IMG4);
 		List<String> monkeypoxImages = Arrays.asList(LESIONS_RESEMBLE_IMG1, LESIONS_RESEMBLE_IMG2, LESIONS_RESEMBLE_IMG3, LESIONS_RESEMBLE_IMG4);
 	
-		
-
 		// Set up initial visibility
 		boolean lesionsSetToYes = FieldHelper.getNullableSourceFieldValue(getFieldGroup().getField(RASHES)) == SymptomState.YES;
 		for (String monkeypoxImage : monkeypoxImages) {
 			getContent().getComponent(monkeypoxImage).setVisible(lesionsSetToYes);
 		}
-		
-		
 
 		// Set up image visibility listener
 		getFieldGroup().getField(RASHES).addValueChangeListener(e -> {
