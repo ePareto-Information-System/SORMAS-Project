@@ -149,7 +149,7 @@ public class TaskNotificationService extends Service {
 				// Just for your information: The issue here was that the second argument of the getActivity call
 				// was set to 0, which leads to previous intents to be recycled; passing the task's ID instead
 				// makes sure that a new intent with the right task behind it is created
-				PendingIntent pi = PendingIntent.getActivity(context, task.getId().intValue(), notificationIntent, 0);
+				PendingIntent pi = PendingIntent.getActivity(context, task.getId().intValue(), notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 				Resources r = context.getResources();
 
 				if (!TextUtils.isEmpty(task.getCreatorComment())) {
@@ -194,7 +194,7 @@ public class TaskNotificationService extends Service {
 
 					int notificationId = (int) notificationPoint.getTime();
 					Intent notificationIntent = new Intent(context, ReportActivity.class);
-					PendingIntent pi = PendingIntent.getActivity(context, notificationId, notificationIntent, 0);
+					PendingIntent pi = PendingIntent.getActivity(context, notificationId, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
 					String title = context.getResources().getString(R.string.action_submit_report);
 

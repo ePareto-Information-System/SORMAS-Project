@@ -413,7 +413,7 @@ public class CaseDao extends AbstractAdoDao<Case> {
 
 			Intent notificationIntent = new Intent(context, CaseReadActivity.class);
 			notificationIntent.putExtras(CaseReadActivity.buildBundle(mergedCase.getUuid(), false).get());
-			PendingIntent pi = PendingIntent.getActivity(context, mergedCase.getId().intValue(), notificationIntent, 0);
+			PendingIntent pi = PendingIntent.getActivity(context, mergedCase.getId().intValue(), notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 			Resources r = context.getResources();
 
 			NotificationCompat.Builder notificationBuilder =
