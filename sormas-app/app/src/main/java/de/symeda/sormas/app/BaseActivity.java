@@ -58,6 +58,7 @@ import de.symeda.sormas.app.backend.config.ConfigProvider;
 import de.symeda.sormas.app.backend.synclog.SyncLogDao;
 import de.symeda.sormas.app.backend.user.User;
 import de.symeda.sormas.app.component.controls.ControlPropertyField;
+import de.symeda.sormas.app.component.dialog.ConfirmationDialog;
 import de.symeda.sormas.app.component.dialog.InfoDialog;
 import de.symeda.sormas.app.component.menu.PageMenuControl;
 import de.symeda.sormas.app.component.menu.PageMenuItem;
@@ -587,9 +588,30 @@ public abstract class BaseActivity extends BaseLocalizedActivity implements Noti
 	}
 
 	public void synchronizeChangedData() {
+		final ConfirmationDialog confirmationDialog = new ConfirmationDialog(
+				getActiveActivity(),
+				R.string.heading_synchronizing_changes,
+				R.string.action_synchronize_data,
+				R.string.action_continue_synchronize_data,
+				R.string.action_synchronize_data_cancel
+		);
 		SwipeRefreshLayout refreshLayout = findViewById(R.id.swiperefresh);
-		synchronizeData(SynchronizeDataAsync.SyncMode.Changes, true, true, refreshLayout, getSynchronizeResultCallback(), null);
-	}
+		confirmationDialog.setPositiveCallback(()->{
+
+					synchronizeData(SynchronizeDataAsync.SyncMode.Changes, true, true, refreshLayout, getSynchronizeResultCallback(), null);
+
+				}
+
+		);
+		confirmationDialog.setNegativeCallback(()->{
+			if (refreshLayout != null) {
+				refreshLayout.setRefreshing(false);
+			}
+			return;
+				}
+		);
+		confirmationDialog.show();
+		}
 
 	private boolean checkActiveUser() {
 		if (ConfigProvider.getUser() == null) {
