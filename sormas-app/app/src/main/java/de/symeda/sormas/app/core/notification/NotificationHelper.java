@@ -181,7 +181,7 @@ public class NotificationHelper {
 					this.nf = new WeakReference<>(nf);
 					return this;
 				}
-			}.init(notificationFrame), 3000);
+			}.init(notificationFrame),  24 * 10000000);
 		}
 	}
 
@@ -286,7 +286,7 @@ public class NotificationHelper {
 					this.nf = new WeakReference<>(nf);
 					return this;
 				}
-			}.init(notificationFrame), 3000);
+			}.init(notificationFrame), 24 * 10000000);
 		}
 	}
 
