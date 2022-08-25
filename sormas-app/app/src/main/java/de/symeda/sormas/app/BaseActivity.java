@@ -596,8 +596,9 @@ public abstract class BaseActivity extends BaseLocalizedActivity implements Noti
 				R.string.action_synchronize_data_cancel
 		);
 		SwipeRefreshLayout refreshLayout = findViewById(R.id.swiperefresh);
+		refreshLayout.setRefreshing(false);
 		confirmationDialog.setPositiveCallback(()->{
-
+					refreshLayout.setRefreshing(true);
 					synchronizeData(SynchronizeDataAsync.SyncMode.Changes, true, true, refreshLayout, getSynchronizeResultCallback(), null);
 
 				}
