@@ -2949,50 +2949,50 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 			case 331:
 				currentVersion = 331;
-				// getDao(EventParticipant.class)
-				// 	.executeRaw("ALTER TABLE eventParticipants ADD COLUMN responsibleRegion_id BIGINT REFERENCES region(id);");
-				// getDao(EventParticipant.class)
-				// 	.executeRaw("ALTER TABLE eventParticipants ADD COLUMN responsibleDistrict_id BIGINT REFERENCES district(id);");
+				 getDao(EventParticipant.class)
+				 	.executeRaw("ALTER TABLE eventParticipants ADD COLUMN responsibleRegion_id BIGINT REFERENCES region(id);");
+				 getDao(EventParticipant.class)
+				 	.executeRaw("ALTER TABLE eventParticipants ADD COLUMN responsibleDistrict_id BIGINT REFERENCES district(id);");
 
 			case 332:
 				currentVersion = 332;
-				// getDao(FeatureConfiguration.class).executeRaw("ALTER TABLE featureconfiguration ADD COLUMN properties text;");
+				 getDao(FeatureConfiguration.class).executeRaw("ALTER TABLE featureconfiguration ADD COLUMN properties text;");
 
 			case 333:
 				currentVersion = 333;
-				// Recreate immunization table because unique constraint was not taking snapshot into account
-				// getDao(Immunization.class).executeRaw("ALTER TABLE immunization RENAME TO tmp_immunization;");
-				// getDao(Immunization.class).executeRaw(
-				// 	"CREATE TABLE immunization (additionalDetails VARCHAR, "
-				// 		+ "archived boolean DEFAULT false, country_id BIGINT REFERENCES country(id), disease VARCHAR, diseaseDetails VARCHAR, endDate timestamp, externalId VARCHAR, immunizationManagementStatus VARCHAR, "
-				// 		+ "immunizationStatus VARCHAR, lastInfectionDate timestamp, meansOfImmunization VARCHAR, meansOfImmunizationDetails VARCHAR, "
-				// 		+ "numberOfDoses INTEGER, ownershipHandedOver boolean DEFAULT false, person_id BIGINT NOT NULL REFERENCES person(id), positiveTestResultDate timestamp, previousInfection VARCHAR, "
-				// 		+ "recoveryDate timestamp, relatedCase_id BIGINT REFERENCES cases(id), reportDate timestamp, reportingUser_id BIGINT REFERENCES users(id), responsibleCommunity_id BIGINT REFERENCES community(id), "
-				// 		+ "responsibleDistrict_id BIGINT REFERENCES district(id), responsibleRegion_id BIGINT REFERENCES region(id), sormasToSormasOriginInfo_id BIGINT REFERENCES sormasToSormasOriginInfo(id), startDate timestamp, pseudonymized SMALLINT, changeDate timestamp NOT NULL, "
-				// 		+ "creationDate timestamp NOT NULL, id INTEGER PRIMARY KEY AUTOINCREMENT, lastOpenedDate timestamp, localChangeDate timestamp NOT NULL, "
-				// 		+ "modified SMALLINT DEFAULT 0, snapshot SMALLINT DEFAULT 0, uuid VARCHAR, validFrom timestamp, validUntil timestamp, facilityType VARCHAR, healthFacility_id BIGINT REFERENCES facility(id), healthFacilityDetails VARCHAR, UNIQUE (snapshot ASC, uuid ASC));");
-				// getDao(Immunization.class).executeRaw(
-				// 	"INSERT INTO immunization (additionalDetails, archived, country_id, disease, diseaseDetails, endDate, externalId, immunizationManagementStatus, "
-				// 		+ "immunizationStatus, lastInfectionDate, meansOfImmunization, meansOfImmunizationDetails, numberOfDoses, ownershipHandedOver, person_id, positiveTestResultDate, previousInfection, "
-				// 		+ "recoveryDate, relatedCase_id, reportDate, reportingUser_id, responsibleCommunity_id, responsibleDistrict_id, responsibleRegion_id, sormasToSormasOriginInfo_id, startDate, pseudonymized, "
-				// 		+ "changeDate, creationDate, id, lastOpenedDate, localChangeDate, modified, snapshot, uuid, validFrom, validUntil, facilityType, healthFacility_id, healthFacilityDetails) "
-				// 		+ "SELECT additionalDetails, archived, country_id, disease, diseaseDetails, endDate, externalId, immunizationManagementStatus, "
-				// 		+ "immunizationStatus, lastInfectionDate, meansOfImmunization, meansOfImmunizationDetails, numberOfDoses, ownershipHandedOver, person_id, positiveTestResultDate, previousInfection, recoveryDate, relatedCase_id, "
-				// 		+ "reportDate, reportingUser_id, responsibleCommunity_id, responsibleDistrict_id, responsibleRegion_id, sormasToSormasOriginInfo_id, startDate, pseudonymized, changeDate, creationDate, id, lastOpenedDate, localChangeDate, "
-				// 		+ "modified, snapshot, uuid, validFrom, validUntil, facilityType, healthFacility_id, healthFacilityDetails FROM tmp_immunization;");
-				// getDao(Immunization.class).executeRaw("DROP TABLE tmp_immunization");
+//				 Recreate immunization table because unique constraint was not taking snapshot into account
+				 getDao(Immunization.class).executeRaw("ALTER TABLE immunization RENAME TO tmp_immunization;");
+				 getDao(Immunization.class).executeRaw(
+				 	"CREATE TABLE immunization (additionalDetails VARCHAR, "
+				 		+ "archived boolean DEFAULT false, country_id BIGINT REFERENCES country(id), disease VARCHAR, diseaseDetails VARCHAR, endDate timestamp, externalId VARCHAR, immunizationManagementStatus VARCHAR, "
+				 		+ "immunizationStatus VARCHAR, lastInfectionDate timestamp, meansOfImmunization VARCHAR, meansOfImmunizationDetails VARCHAR, "
+				 		+ "numberOfDoses INTEGER, ownershipHandedOver boolean DEFAULT false, person_id BIGINT NOT NULL REFERENCES person(id), positiveTestResultDate timestamp, previousInfection VARCHAR, "
+				 		+ "recoveryDate timestamp, relatedCase_id BIGINT REFERENCES cases(id), reportDate timestamp, reportingUser_id BIGINT REFERENCES users(id), responsibleCommunity_id BIGINT REFERENCES community(id), "
+				 		+ "responsibleDistrict_id BIGINT REFERENCES district(id), responsibleRegion_id BIGINT REFERENCES region(id), sormasToSormasOriginInfo_id BIGINT REFERENCES sormasToSormasOriginInfo(id), startDate timestamp, pseudonymized SMALLINT, changeDate timestamp NOT NULL, "
+				 		+ "creationDate timestamp NOT NULL, id INTEGER PRIMARY KEY AUTOINCREMENT, lastOpenedDate timestamp, localChangeDate timestamp NOT NULL, "
+				 		+ "modified SMALLINT DEFAULT 0, snapshot SMALLINT DEFAULT 0, uuid VARCHAR, validFrom timestamp, validUntil timestamp, facilityType VARCHAR, healthFacility_id BIGINT REFERENCES facility(id), healthFacilityDetails VARCHAR, UNIQUE (snapshot ASC, uuid ASC));");
+				 getDao(Immunization.class).executeRaw(
+				 	"INSERT INTO immunization (additionalDetails, archived, country_id, disease, diseaseDetails, endDate, externalId, immunizationManagementStatus, "
+				 		+ "immunizationStatus, lastInfectionDate, meansOfImmunization, meansOfImmunizationDetails, numberOfDoses, ownershipHandedOver, person_id, positiveTestResultDate, previousInfection, "
+				 		+ "recoveryDate, relatedCase_id, reportDate, reportingUser_id, responsibleCommunity_id, responsibleDistrict_id, responsibleRegion_id, sormasToSormasOriginInfo_id, startDate, pseudonymized, "
+				 		+ "changeDate, creationDate, id, lastOpenedDate, localChangeDate, modified, snapshot, uuid, validFrom, validUntil, facilityType, healthFacility_id, healthFacilityDetails) "
+				 		+ "SELECT additionalDetails, archived, country_id, disease, diseaseDetails, endDate, externalId, immunizationManagementStatus, "
+				 		+ "immunizationStatus, lastInfectionDate, meansOfImmunization, meansOfImmunizationDetails, numberOfDoses, ownershipHandedOver, person_id, positiveTestResultDate, previousInfection, recoveryDate, relatedCase_id, "
+				 		+ "reportDate, reportingUser_id, responsibleCommunity_id, responsibleDistrict_id, responsibleRegion_id, sormasToSormasOriginInfo_id, startDate, pseudonymized, changeDate, creationDate, id, lastOpenedDate, localChangeDate, "
+				 		+ "modified, snapshot, uuid, validFrom, validUntil, facilityType, healthFacility_id, healthFacilityDetails FROM tmp_immunization;");
+				 getDao(Immunization.class).executeRaw("DROP TABLE tmp_immunization");
 
 			case 334:
 				currentVersion = 334;
 
-				// if (columnDoesNotExist("vaccination", "snapshot")) {
-				// 	getDao(Vaccination.class).executeRaw("ALTER TABLE vaccination ADD COLUMN snapshot SMALLINT DEFAULT 0;");
-				// }
+				 if (columnDoesNotExist("vaccination", "snapshot")) {
+				 	getDao(Vaccination.class).executeRaw("ALTER TABLE vaccination ADD COLUMN snapshot SMALLINT DEFAULT 0;");
+				 }
 
 			case 335:
 				currentVersion = 335;
-				// getDao(EventParticipant.class).executeRaw(
-				// 	"UPDATE eventParticipants SET reportingUser_id = (SELECT reportingUser_id FROM events WHERE events.id = eventParticipants.event_id) WHERE reportingUser_id IS NULL;");
+				 getDao(EventParticipant.class).executeRaw(
+				 	"UPDATE eventParticipants SET reportingUser_id = (SELECT reportingUser_id FROM events WHERE events.id = eventParticipants.event_id) WHERE reportingUser_id IS NULL;");
 
 			case 336:
 				currentVersion = 336;
@@ -3007,13 +3007,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(Hospitalization.class).executeRaw("ALTER TABLE hospitalizations ADD COLUMN healthFacilityRecordNumber varchar(255);");
 				getDao(PreviousHospitalization.class).executeRaw("ALTER TABLE previoushospitalizations ADD COLUMN healthFacilityRecordNumber varchar(255);");
 
-			case 331:
+			case 337:
 				currentVersion = 331;
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN healthConditions_id BIGINT REFERENCES healthConditions(id);");
 				getDao(Case.class).executeRaw(
 					"UPDATE cases SET healthConditions_id = (SELECT healthConditions_id from clinicalCourse where clinicalCourse.id = cases.clinicalCourse_id);");
 
-			case 332:
+			case 338:
 				currentVersion = 332;
 				getDao(ClinicalCourse.class).executeRaw("ALTER TABLE clinicalCourse RENAME TO tmp_clinicalCourse");
 				getDao(ClinicalCourse.class).executeRaw(
@@ -3026,12 +3026,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 						+ "SELECT id, uuid, changeDate, creationDate, lastOpenedDate, localChangeDate, modified, snapshot FROM tmp_clinicalCourse");
 				getDao(ClinicalCourse.class).executeRaw("DROP TABLE tmp_clinicalCourse;");
 
-			case 333:
+			case 339:
 				currentVersion = 333;
 				getDao(User.class).executeRaw("ALTER TABLE users ADD COLUMN jurisdictionLevel varchar(255);");
 				fillJurisdictionLevels();
 
-			case 334:
+			case 340:
 				currentVersion = 334;
 				getDao(FeatureConfiguration.class).executeRaw("DELETE from featureConfiguration WHERE featureType = 'DELETE_PERMANENT';");
 				fillJurisdictionLevels();
