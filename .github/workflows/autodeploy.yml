@@ -1,0 +1,111 @@
+# This is a basic workflow to help you get started with Actions
+
+name: maven build
+
+# Controls when the workflow will run
+on:
+  push:
+    branches: [ gh-uat ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    name: Deploy server
+    # The type of runner the job will run on
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        maven: ['3.8.1']
+    
+    steps:
+    - name: checkout development branch from github
+      uses: actions/checkout@v3
+
+    - name: Set up jdk
+      uses: actions/setup-java@v3
+      with:
+       distribution: 'zulu' 
+       java-version: '11'
+    - name: Set up Maven Env
+      uses: stCarolas/setup-maven@v4
+      with:
+          maven-version: 3.8.1
+    - name: Set environment variables
+      id: check
+      uses: allenevans/set-env@v2.0.1
+      with:
+        M2_HOME: /opt/hostedtoolcache/maven/3.8.1/x64
+    - name: Run Ant Install
+      run: ant -noinput -buildfile ./sormas-base/build.xml install
+      env:
+          M2_HOME: /opt/hostedtoolcache/maven/3.8.1/x64
+    - name: Run Ant Deploy serverlibs
+      run: ant -noinput -buildfile ./sormas-base/build.xml deploy-serverlibs
+    - name: Checkout Android Keystore
+      uses: actions/checkout@v2
+      with:
+          repository: Anthony4m/keystore
+          token: ${{ secrets.KEYSTORE_REPO_TOKEN }}
+          path: ./sormas-app/app/sormas-keystore.jks
+    - name: Change wrapper permissions
+      run: | 
+          cd ./sormas-app/
+            chmod +x ./gradlew
+    - name: build prod
+      run: |
+          cd ./sormas-app/
+             gradle buildDebug
+      env:
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+    - name: Get Apk
+      run: |
+          cd ./sormas-app/
+              gradle assembleDebug
+      env:
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+    - name: Upload
+      uses: actions/upload-artifact@v2
+      with:
+          name: Build Artifacts
+          path: app/build/outputs/
+    - name: Collect Artifacts
+      run: ant -noinput -buildfile ./sormas-base/build.xml collect-all
+    - name: Package As Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+           name: Package
+           path: build/jar
+    - name: List Current directory
+      run: ls -a
+    - name: Install SSH Key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_PRIVATE_KEY }} 
+        known_hosts: 'just-a-placeholder-so-we-dont-get-errors'
+    - name: Adding Known host
+      run: ssh-keyscan -H ${{ secrets.SSH_SERVER }} >> ~/.ssh/known_hosts
+    - name: Remove old deploy folder
+      run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }} sudo rm -r deploy/
+    - name: Deploy with rsync
+      run: rsync -avz ./deploy/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }}:/home/anthony/deploy
+    - name: Initiate server_update_script
+      id: update
+      run: |
+        touch update_logs.txt
+        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }} sh update_script.sh > update_logs.txt
+        cat update_logs.txt
+    - name: Fail Action If update failed
+      run: |
+          cat update_logs.txt
+          if   grep "Successfully deployed" update_logs.txt ;
+           then
+                echo "successful"
+          elif grep "Autodeploy failed" update_logs.txt ;
+          then
+            exit 1
+          fi
