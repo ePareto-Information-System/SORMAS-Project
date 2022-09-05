@@ -65,7 +65,7 @@ public interface SampleFacade {
 	List<SampleDto> getAllActiveSamplesAfter(Date date, Integer batchSize, String lastSynchronizedUuid);
 
 	List<SampleDto> getByUuids(List<String> uuids);
-	
+
 	List<SampleDto> findBy(SampleCriteria criteria);
 
 	void deleteSample(SampleReferenceDto sampleRef);
@@ -80,10 +80,8 @@ public interface SampleFacade {
 
 	boolean isDeleted(String sampleUuid);
 
-	Map<PathogenTestResultType, Long> getNewTestResultCountByResultType(List<Long> caseIds);
-
 	List<SampleDto> getByCaseUuids(List<String> caseUuids);
-	
+
 	Map<SampleCountType, Long> getSampleCount(RegionReferenceDto regionRef, DistrictReferenceDto districtRef, Disease disease, Date from, Date to);
 
 	Boolean isSampleEditAllowed(String sampleUuid);
@@ -93,8 +91,10 @@ public interface SampleFacade {
 	List<SampleDto> getSimilarSamples(SampleSimilarityCriteria criteria);
 
 	boolean exists(String uuid);
-	
+
 	List<SampleDto> getByEventParticipantUuids(List<String> asList);
 
 	List<SampleDto> getByLabSampleId(String labSampleId);
+
+	Map<PathogenTestResultType, Long> getNewTestResultCountByResultType(List<Long> caseIds);
 }

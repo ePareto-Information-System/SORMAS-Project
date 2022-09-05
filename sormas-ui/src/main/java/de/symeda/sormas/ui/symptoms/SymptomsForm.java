@@ -19,7 +19,6 @@ import static de.symeda.sormas.api.symptoms.SymptomsDto.*;
 import static de.symeda.sormas.ui.utils.CssStyles.H3;
 import static de.symeda.sormas.ui.utils.CssStyles.H4;
 import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_3;
-import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_NONE;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidColumn;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRow;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowCss;
@@ -32,6 +31,7 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.locsCss;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -139,7 +139,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					createSymptomGroupLayout(SymptomGroup.URINARY, URINARY_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.NERVOUS_SYSTEM, NERVOUS_SYSTEM_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.RASH, RASH_AND_SYMPTOMS_HEADING_LOC) +
-					createSymptomGroupLayout(SymptomGroup.RASH, "RASH_AND_SYMPTOMS_HEADING_LOC") +
+//					createSymptomGroupLayout(SymptomGroup.RASH, "RASH_AND_SYMPTOMS_HEADING_LOC") +
 					createSymptomGroupLayout(SymptomGroup.RASH_CHARACTERISTICS, RASH_CHARACTERISTICS_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.RASH_TYPE, RASH_TYPE_AND_SYMPTOMS_HEADING_LOC) +
 					createSymptomGroupLayout(SymptomGroup.SKIN, SKIN_SIGNS_AND_SYMPTOMS_HEADING_LOC) +
@@ -477,8 +477,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			PAPULAR_RASH,
 			MACULAR_RASH,
 			VESICULAR_RASH,
-			OTHER_LESION_AREAS
-		);
+			OTHER_LESION_AREAS);
 
 		addField(SYMPTOMS_COMMENTS, TextField.class).setDescription(
 			I18nProperties.getPrefixDescription(I18N_PREFIX, SYMPTOMS_COMMENTS, "") + "\n" + I18nProperties.getDescription(Descriptions.descGdpr));
@@ -749,7 +748,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		getContent().addComponent(lesionsLocationsCaption, LESIONS_LOCATIONS_LOC);
 		getContent().getComponent(LESIONS_LOCATIONS_LOC)
 			.setVisible(FieldHelper.getNullableSourceFieldValue(getFieldGroup().getField(LESIONS)) == SymptomState.YES);
-		
+
 		getFieldGroup().getField(LESIONS).addValueChangeListener(e -> {
 			getContent().getComponent(LESIONS_LOCATIONS_LOC)
 				.setVisible(FieldHelper.getNullableSourceFieldValue((Field) e.getProperty()) == SymptomState.YES);
@@ -844,7 +843,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		// Complications heading - not displayed for Rubella (dirty, should be made generic)
 		Label complicationsHeading = new Label(I18nProperties.getString(Strings.headingComplications));
 		CssStyles.style(complicationsHeading, CssStyles.H3);
-		if (disease != Disease.CONGENITAL_RUBELLA && disease != Disease.MONKEYPOX&&!isConfiguredServer("de")) {
+		if (disease != Disease.CONGENITAL_RUBELLA && disease != Disease.MONKEYPOX && !isConfiguredServer("de")) {
 			getContent().addComponent(complicationsHeading, COMPLICATIONS_HEADING);
 		}
 
@@ -1070,7 +1069,14 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 					onsetDateField.setEnabled(true);
 				} else {
 					onsetSymptom.removeItem(sourceField.getCaption());
-					onsetDateField.setEnabled(isAnySymptomSetToYes(getFieldGroup(), allPropertyIds, Arrays.asList(SymptomState.YES)));
+					boolean isOnsetDateFieldEnabled = isAnySymptomSetToYes(getFieldGroup(), allPropertyIds, Arrays.asList(SymptomState.YES));
+					onsetDateField.setEnabled(isOnsetDateFieldEnabled);
+					Date onsetDate = getValue().getOnsetDate();
+					if (onsetDate != null) {
+						onsetDateField.setValue(onsetDate);
+					} else if (!isOnsetDateFieldEnabled) {
+						onsetDateField.setValue(null);
+					}
 				}
 				onsetSymptom.setEnabled(!onsetSymptom.getItemIds().isEmpty());
 			});
@@ -1093,28 +1099,28 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		Image lesionsImg4 = new Image(null, new ThemeResource("img/monkeypox-lesions-4.png"));
 		CssStyles.style(lesionsImg4, VSPACE_3);
 		VerticalLayout hl = new VerticalLayout();
-		
-		hl.addComponents(getContent().getComponent(LESIONS_RESEMBLE_IMG1),lesionsImg1);
+
+		hl.addComponents(getContent().getComponent(LESIONS_RESEMBLE_IMG1), lesionsImg1);
 		getContent().addComponent(hl, LESIONS_RESEMBLE_IMG1);
-		
+
 		VerticalLayout hl1 = new VerticalLayout();
 
-		hl1.addComponents(getContent().getComponent(LESIONS_RESEMBLE_IMG2),lesionsImg2);
+		hl1.addComponents(getContent().getComponent(LESIONS_RESEMBLE_IMG2), lesionsImg2);
 		getContent().addComponent(hl1, LESIONS_RESEMBLE_IMG2);
-		
+
 		VerticalLayout hl3 = new VerticalLayout();
 
-		hl3.addComponents(getContent().getComponent(LESIONS_RESEMBLE_IMG3),lesionsImg3);
+		hl3.addComponents(getContent().getComponent(LESIONS_RESEMBLE_IMG3), lesionsImg3);
 		getContent().addComponent(hl3, LESIONS_RESEMBLE_IMG3);
-		
+
 		VerticalLayout hl4 = new VerticalLayout();
 
-		hl4.addComponents(getContent().getComponent(LESIONS_RESEMBLE_IMG4),lesionsImg4);
-		getContent().addComponent(hl4, LESIONS_RESEMBLE_IMG4);		
+		hl4.addComponents(getContent().getComponent(LESIONS_RESEMBLE_IMG4), lesionsImg4);
+		getContent().addComponent(hl4, LESIONS_RESEMBLE_IMG4);
 
 		//List<String> monkeypoxImages = Arrays.asList(MONKEYPOX_LESIONS_IMG11, MONKEYPOX_LESIONS_IMG2, MONKEYPOX_LESIONS_IMG3, MONKEYPOX_LESIONS_IMG4);
 		List<String> monkeypoxImages = Arrays.asList(LESIONS_RESEMBLE_IMG1, LESIONS_RESEMBLE_IMG2, LESIONS_RESEMBLE_IMG3, LESIONS_RESEMBLE_IMG4);
-	
+
 		// Set up initial visibility
 		boolean lesionsSetToYes = FieldHelper.getNullableSourceFieldValue(getFieldGroup().getField(RASHES)) == SymptomState.YES;
 		for (String monkeypoxImage : monkeypoxImages) {
