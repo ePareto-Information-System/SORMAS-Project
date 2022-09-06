@@ -71,7 +71,6 @@ import javax.persistence.criteria.Subquery;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import de.symeda.sormas.backend.event.EventParticipantFacadeEjb;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -682,7 +681,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		Root<Case> caze = cq.from(Case.class);
 
 		final CaseQueryContext caseQueryContext = new CaseQueryContext(cb, cq, caze);
-		
+
 		selectMapDtoFields(cb, cq, caze, caseQueryContext);
 
 		Predicate filter = caseService.createUserFilter(cb, cq, caze);
@@ -692,7 +691,6 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 			filter = CriteriaBuilderHelper.and(cb, filter, criteriaFilter);
 		}
-		
 
 		if (filter != null) {
 			cq.where(filter);
@@ -1443,8 +1441,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 //			root.get(Community.UUID),
 //			root.get(PointOfEntry.UUID)
 //			caseService.inJurisdictionOrOwned(caseQueryContext)
-			JurisdictionHelper.booleanSelector(cb, caseService.inJurisdictionOrOwned(caseQueryContext))
-		);
+			JurisdictionHelper.booleanSelector(cb, caseService.inJurisdictionOrOwned(caseQueryContext)));
 	}
 
 	@Override
@@ -1629,8 +1626,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		if (!systemSave && internal && existingCase != null && !service.getEditPermissionType(existingCase).equals(EditPermissionType.ALLOWED)) {
 			throw new AccessDeniedException(I18nProperties.getString(Strings.errorCaseNotEditable));
 		}
-
-		return caseSave(dto, handleChanges, existingCase, toDto(existingCase), checkChangeDate, internal);
+		CaseDataDto existingCaseDto = handleChanges ? toDto(existingCase) : null;
+		return caseSave(dto, handleChanges, existingCase, existingCaseDto, checkChangeDate, internal);
 	}
 
 	private CaseDataDto caseSave(
@@ -2603,8 +2600,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 	@Override
 	@RolesAllowed({
-			UserRight._CASE_CREATE,
-			UserRight._CASE_EDIT })
+		UserRight._CASE_CREATE,
+		UserRight._CASE_EDIT })
 	public void setResultingCase(EventParticipantReferenceDto eventParticipantReferenceDto, CaseReferenceDto caseReferenceDto) {
 		final EventParticipant eventParticipant = eventParticipantService.getByUuid(eventParticipantReferenceDto.getUuid());
 		if (eventParticipant != null) {
@@ -2972,6 +2969,9 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			source.setTherapy(TherapyDto.build());
 		}
 		target.setTherapy(therapyFacade.fromDto(source.getTherapy(), checkChangeDate));
+		if (source.getHealthConditions() == null) {
+			source.setHealthConditions(HealthConditionsDto.build());
+		}
 		target.setHealthConditions(healthConditionsMapper.fromDto(source.getHealthConditions(), checkChangeDate));
 		if (source.getClinicalCourse() == null) {
 			source.setClinicalCourse(ClinicalCourseDto.build());
