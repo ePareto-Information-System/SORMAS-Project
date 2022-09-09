@@ -18,6 +18,9 @@
 package de.symeda.sormas.ui.samples.pathogentestlink;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import com.vaadin.ui.Notification;
 
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -30,14 +33,17 @@ import de.symeda.sormas.ui.utils.components.sidecomponent.SideComponent;
 @SuppressWarnings("serial")
 public class PathogenTestListComponent extends SideComponent {
 
-	public PathogenTestListComponent(SampleReferenceDto sampleRef, Consumer<Runnable> actionCallback) {
+	public PathogenTestListComponent(SampleReferenceDto sampleRef, Consumer<Runnable> actionCallback, Supplier<String> createOrEditAllowedCallback) {
 
 		super(I18nProperties.getString(Strings.headingTests), actionCallback);
 
-		addCreateButton(
-			I18nProperties.getCaption(Captions.pathogenTestNewTest),
-			() -> ControllerProvider.getPathogenTestController().create(sampleRef, 0, (pathogenTest, callback) -> callback.run()),
-			UserRight.PATHOGEN_TEST_CREATE);
+		addCreateButton(I18nProperties.getCaption(Captions.pathogenTestNewTest), () -> {
+			if (createOrEditAllowedCallback.get() == null) {
+				ControllerProvider.getPathogenTestController().create(sampleRef, 0, (pathogenTest, callback) -> callback.run());
+			} else {
+				Notification.show(null, I18nProperties.getString(createOrEditAllowedCallback.get()), Notification.Type.ERROR_MESSAGE);
+			}
+		}, UserRight.PATHOGEN_TEST_CREATE);
 
 		PathogenTestList pathogenTestList = new PathogenTestList(sampleRef, actionCallback);
 		addComponent(pathogenTestList);

@@ -173,7 +173,8 @@ public class SampleDataView extends AbstractSampleView {
 		layout.addComponent(editComponent, EDIT_LOC);
 
 		SampleReferenceDto sampleReferenceDto = getSampleRef();
-		PathogenTestListComponent pathogenTestListComponent = new PathogenTestListComponent(sampleReferenceDto, this::showUnsavedChangesPopup);
+		PathogenTestListComponent pathogenTestListComponent =
+			new PathogenTestListComponent(sampleReferenceDto, this::showUnsavedChangesPopup, createOrEditAllowedCallback);
 		layout.addComponent(new SideComponentLayout(pathogenTestListComponent), PATHOGEN_TESTS_LOC);
 
 //		if (UserProvider.getCurrent() != null
