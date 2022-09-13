@@ -51,17 +51,9 @@
   fill: #2D8655;
   }
   }
-  .background-sample-count-indeterminate{
-  background-color: #888888;
-  fill: #888888;
-  margin-bottom: 20px;
-  	&.background-darker {
-  background-color: #6D6D6D;
-  fill: #6D6D6D;
-  }
-  }
-  .background-sample-count-pendings {
-  background-color: #FEBA01;
+  
+ .background-sample-count-indeterminate{
+   background-color: #FEBA01;
   fill: #FEBA01;
   margin-bottom: 20px;
   	&.background-darker {
@@ -69,6 +61,16 @@
   fill: #D69C0A;
   	}
   }
+  .background-sample-count-pendings {
+    background-color: #888888;
+  fill: #888888;
+  margin-bottom: 20px;
+  	&.background-darker {
+  background-color: #6D6D6D;
+  fill: #6D6D6D;
+  }
+  }
+  
   .background-sample-count-shipped {
   background-color: #40BF79;
   fill: #40BF79;

@@ -273,6 +273,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(CaseDataDto.BLOOD_ORGAN_OR_TISSUE_DONATED) +
 					fluidRowLocs(CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM) + fluidRowLocs(CaseDataDto.TRIMESTER, "") +
 					fluidRowLocs(CaseDataDto.VACCINATION_STATUS, "") +
+					
 					fluidRowLocs(CaseDataDto.SMALLPOX_VACCINATION_RECEIVED, CaseDataDto.SMALLPOX_VACCINATION_SCAR) +
 					fluidRowLocs(SMALLPOX_VACCINATION_SCAR_IMG) +
 					fluidRowLocs(CaseDataDto.SMALLPOX_LAST_VACCINATION_DATE, "") +
@@ -349,6 +350,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		this.caseFollowUpEnabled = FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_FOLLOWUP);
 
 		addFields();
+		//addField(SMALLPOX_VACCINATION_SCAR_IMG);
 	}
 
 	public static void updateFacilityDetails(ComboBox cbFacility, TextField tfFacilityDetails) {
@@ -1231,6 +1233,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 		// Other initializations
 		if (disease == Disease.MONKEYPOX) {
+			
+
 			Image smallpoxVaccinationScarImg = new Image(null, new ThemeResource("img/smallpox-vaccination-scar.jpg"));
 			style(smallpoxVaccinationScarImg, VSPACE_3);
 

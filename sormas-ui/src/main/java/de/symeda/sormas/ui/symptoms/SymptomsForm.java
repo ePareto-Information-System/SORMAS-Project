@@ -477,7 +477,14 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			PAPULAR_RASH,
 			MACULAR_RASH,
 			VESICULAR_RASH,
-			OTHER_LESION_AREAS);
+			OTHER_LESION_AREAS
+		
+			
+			
+
+			
+				);
+		//
 
 		addField(SYMPTOMS_COMMENTS, TextField.class).setDescription(
 			I18nProperties.getPrefixDescription(I18N_PREFIX, SYMPTOMS_COMMENTS, "") + "\n" + I18nProperties.getDescription(Descriptions.descGdpr));
@@ -497,6 +504,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			SEIZURES,
 			SEPSIS,
 			SHOCK);
+		
+		
 
 		monkeypoxImageFieldIds = Arrays.asList(LESIONS_RESEMBLE_IMG1, LESIONS_RESEMBLE_IMG2, LESIONS_RESEMBLE_IMG3, LESIONS_RESEMBLE_IMG4);
 
@@ -504,6 +513,7 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 			//@SuppressWarnings("rawtypes")
 			addField(propertyId);
 		}
+	
 
 		// Set initial visibilities
 
@@ -748,7 +758,6 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		getContent().addComponent(lesionsLocationsCaption, LESIONS_LOCATIONS_LOC);
 		getContent().getComponent(LESIONS_LOCATIONS_LOC)
 			.setVisible(FieldHelper.getNullableSourceFieldValue(getFieldGroup().getField(LESIONS)) == SymptomState.YES);
-
 		getFieldGroup().getField(LESIONS).addValueChangeListener(e -> {
 			getContent().getComponent(LESIONS_LOCATIONS_LOC)
 				.setVisible(FieldHelper.getNullableSourceFieldValue((Field) e.getProperty()) == SymptomState.YES);
@@ -1126,6 +1135,8 @@ public class SymptomsForm extends AbstractEditForm<SymptomsDto> {
 		for (String monkeypoxImage : monkeypoxImages) {
 			getContent().getComponent(monkeypoxImage).setVisible(lesionsSetToYes);
 		}
+		
+		
 
 		// Set up image visibility listener
 		getFieldGroup().getField(RASHES).addValueChangeListener(e -> {

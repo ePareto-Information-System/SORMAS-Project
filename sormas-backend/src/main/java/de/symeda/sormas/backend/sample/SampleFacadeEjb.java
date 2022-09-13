@@ -766,30 +766,61 @@ public class SampleFacadeEjb implements SampleFacade {
 		long total =
 			count((new SampleCriteria()).region(regionRef).district(districtRef).disease(disease).reportDateBetween(from, to, DateFilterOption.DATE));
 
-		long indeterminateCount = pathogenTestFacade.count(
-			(new SampleCriteria()).region(regionRef)
-				.district(districtRef)
-				.disease(disease)
-				.reportDateBetween(from, to, DateFilterOption.DATE)
-				.pathogenTestResult(PathogenTestResultType.INDETERMINATE));
-		long pendingCount = pathogenTestFacade.count(
-			(new SampleCriteria()).region(regionRef)
-				.district(districtRef)
-				.disease(disease)
-				.reportDateBetween(from, to, DateFilterOption.DATE)
-				.pathogenTestResult(PathogenTestResultType.PENDING));
-		long negativeCount = pathogenTestFacade.count(
-			(new SampleCriteria()).region(regionRef)
-				.district(districtRef)
-				.disease(disease)
-				.reportDateBetween(from, to, DateFilterOption.DATE)
-				.pathogenTestResult(PathogenTestResultType.NEGATIVE));
-		long positiveCount = pathogenTestFacade.count(
-			(new SampleCriteria()).region(regionRef)
-				.district(districtRef)
-				.disease(disease)
-				.reportDateBetween(from, to, DateFilterOption.DATE)
-				.pathogenTestResult(PathogenTestResultType.POSITIVE));
+		long testIndeterminateCount = pathogenTestFacade.count(
+				(new SampleCriteria()).region(regionRef)
+					.district(districtRef)
+					.disease(disease)
+					.reportDateBetween(from, to, DateFilterOption.DATE)
+					.pathogenTestResult(PathogenTestResultType.INDETERMINATE));
+			
+			long sampleIndeterminateCount = count(
+					(new SampleCriteria()).region(regionRef)
+						.district(districtRef)
+						.disease(disease)
+						.reportDateBetween(from, to, DateFilterOption.DATE)
+						.pathogenTestResult(PathogenTestResultType.INDETERMINATE));
+			
+			long testPendingCount = pathogenTestFacade.count(
+				(new SampleCriteria()).region(regionRef)
+					.district(districtRef)
+					.disease(disease)
+					.reportDateBetween(from, to, DateFilterOption.DATE)
+					.pathogenTestResult(PathogenTestResultType.PENDING));
+			
+			long samplePendingCount = count(
+					(new SampleCriteria()).region(regionRef)
+						.district(districtRef)
+						.disease(disease)
+						.reportDateBetween(from, to, DateFilterOption.DATE)
+						.pathogenTestResult(PathogenTestResultType.PENDING));
+			
+			long testNegativeCount = pathogenTestFacade.count(
+				(new SampleCriteria()).region(regionRef)
+					.district(districtRef)
+					.disease(disease)
+					.reportDateBetween(from, to, DateFilterOption.DATE)
+					.pathogenTestResult(PathogenTestResultType.NEGATIVE));
+			
+			long sampleNegativeCount = count(
+					(new SampleCriteria()).region(regionRef)
+						.district(districtRef)
+						.disease(disease)
+						.reportDateBetween(from, to, DateFilterOption.DATE)
+						.pathogenTestResult(PathogenTestResultType.NEGATIVE));
+			
+			long testPositiveCount = pathogenTestFacade.count(
+				(new SampleCriteria()).region(regionRef)
+					.district(districtRef)
+					.disease(disease)
+					.reportDateBetween(from, to, DateFilterOption.DATE)
+					.pathogenTestResult(PathogenTestResultType.POSITIVE));
+			
+			long samplePositiveCount = count(
+					(new SampleCriteria()).region(regionRef)
+						.district(districtRef)
+						.disease(disease)
+						.reportDateBetween(from, to, DateFilterOption.DATE)
+						.pathogenTestResult(PathogenTestResultType.POSITIVE));
 
 		long adequateCount = count(
 			(new SampleCriteria()).region(regionRef)
@@ -835,10 +866,19 @@ public class SampleFacadeEjb implements SampleFacade {
 
 		Map<SampleCountType, Long> map = new HashMap<SampleCountType, Long>();
 		map.put(SampleCountType.TOTAL, total);
-		map.put(SampleCountType.INDETERMINATE, indeterminateCount);
-		map.put(SampleCountType.PENDING, pendingCount);
-		map.put(SampleCountType.POSITIVE, positiveCount);
-		map.put(SampleCountType.NEGATIVE, negativeCount);
+		
+		map.put(SampleCountType.SAMPLE_INDETERMINATE,  sampleIndeterminateCount);
+		map.put(SampleCountType.TEST_INDETERMINATE, testIndeterminateCount);
+
+		map.put(SampleCountType.SAMPLE_PENDING,  samplePendingCount);
+		map.put(SampleCountType.TEST_PENDING, testPendingCount);
+		
+		map.put(SampleCountType.SAMPLE_POSITIVE, samplePositiveCount);
+		map.put(SampleCountType.TEST_POSITIVE,  testPositiveCount);
+
+		map.put(SampleCountType.SAMPLE_NEGATIVE, sampleNegativeCount);
+		map.put(SampleCountType.TEST_NEGATIVE,  testNegativeCount);
+		
 		map.put(SampleCountType.ADEQUATE, adequateCount);
 		map.put(SampleCountType.INADEQUATE, inadequateCount);
 		map.put(SampleCountType.SHIPPED, shippedCount);
