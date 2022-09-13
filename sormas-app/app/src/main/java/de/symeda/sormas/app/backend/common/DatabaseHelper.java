@@ -191,7 +191,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	// any time you make changes to your database objects, you may have to increase the database version
 
 	// public static final int DATABASE_VERSION = 307;
-	public static final int DATABASE_VERSION = 337;
+	public static final int DATABASE_VERSION = 341;
 
 	private static DatabaseHelper instance = null;
 
@@ -3008,13 +3008,13 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(PreviousHospitalization.class).executeRaw("ALTER TABLE previoushospitalizations ADD COLUMN healthFacilityRecordNumber varchar(255);");
 
 			case 337:
-				currentVersion = 331;
+				currentVersion = 337;
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN healthConditions_id BIGINT REFERENCES healthConditions(id);");
 				getDao(Case.class).executeRaw(
 					"UPDATE cases SET healthConditions_id = (SELECT healthConditions_id from clinicalCourse where clinicalCourse.id = cases.clinicalCourse_id);");
 
 			case 338:
-				currentVersion = 332;
+				currentVersion = 338;
 				getDao(ClinicalCourse.class).executeRaw("ALTER TABLE clinicalCourse RENAME TO tmp_clinicalCourse");
 				getDao(ClinicalCourse.class).executeRaw(
 					"CREATE TABLE clinicalCourse(" + "id integer primary key autoincrement," + "uuid varchar(36) not null,"
@@ -3027,12 +3027,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(ClinicalCourse.class).executeRaw("DROP TABLE tmp_clinicalCourse;");
 
 			case 339:
-				currentVersion = 333;
+				currentVersion = 339;
 				getDao(User.class).executeRaw("ALTER TABLE users ADD COLUMN jurisdictionLevel varchar(255);");
 				fillJurisdictionLevels();
 
 			case 340:
-				currentVersion = 334;
+				currentVersion = 340;
 				getDao(FeatureConfiguration.class).executeRaw("DELETE from featureConfiguration WHERE featureType = 'DELETE_PERMANENT';");
 				fillJurisdictionLevels();
 
