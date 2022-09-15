@@ -1,0 +1,36 @@
+pipeline{
+    agent any
+
+    stages {
+    stage('build') {
+      steps {
+        echo 'Building .....'
+      }
+    }
+    stage('maven clean') {
+      steps {
+        withMaven() {
+      bat 'mvn -f ./sormas-base/pom.xml clean'
+        }
+      }
+    }
+    stage('maven install') {
+      steps {
+        withMaven() {
+      bat 'mvn -f ./sormas-base/pom.xml install'
+        }
+      }
+    }
+    stage('test') {
+      steps {
+        echo 'Testing .....'
+      }
+    }
+    stage('deploy') {
+      steps {
+        echo 'Deploying .....'
+        echo 'Done .....'
+      }
+    }
+  }
+}
