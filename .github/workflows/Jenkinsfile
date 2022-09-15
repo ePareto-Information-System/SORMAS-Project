@@ -14,14 +14,14 @@ pipeline{
         }
       }
     }
-    stage('maven install') {
+    stage('Ant install') {
       steps {
         withAnt() {
       bat 'ant -noinput -buildfile ./sormas-base/build.xml install'
         }
       }
     }
-    stage('maven Deploy serverlibs') {
+    stage('Ant Deploy serverlibs') {
       steps {
         withAnt() {
       bat 'ant -noinput -buildfile ./sormas-base/build.xml deploy-serverlibs'
@@ -29,8 +29,7 @@ pipeline{
       }
     }
     stage('Generate Apk') {
-      bat 'cd sormas-app'
-        bat    'gradle assembleDebug'
+      bat 'cd sormas-app | gradle assembleDebug'
       }
     }
     stage('maven collect-all') {
