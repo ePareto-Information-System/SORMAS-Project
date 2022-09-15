@@ -21,6 +21,19 @@ pipeline{
         }
       }
     }
+    stage('maven Deploy serverlibs') {
+      steps {
+        withAnt() {
+      bat 'ant -noinput -buildfile ./sormas-base/build.xml deploy-serverlibs'
+        }
+      }
+    }
+    stage('Generate Apk') {
+      bat 'cd sormas-app
+            gradle assembleDebug
+            '
+      }
+    }
     stage('maven collect-all') {
       steps {
         withAnt() {
