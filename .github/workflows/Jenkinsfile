@@ -28,8 +28,9 @@ pipeline{
         }
       }
     }
-    stage('Generate Apk') {
-      bat 'cd sormas-app | gradle assembleDebug'
+    stage('Gradle generate apk') {
+      steps {
+      bat ' cd sormas-app | gradle assembleDebug'
       }
     }
     stage('maven collect-all') {
@@ -51,3 +52,4 @@ pipeline{
       }
     }
   }
+}
