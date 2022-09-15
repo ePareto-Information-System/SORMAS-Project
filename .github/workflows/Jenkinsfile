@@ -16,8 +16,15 @@ pipeline{
     }
     stage('maven install') {
       steps {
-        withMaven() {
-      bat 'mvn -f ./sormas-base/pom.xml install -DskipTests'
+        withAnt() {
+      bat 'ant -noinput -buildfile ./sormas-base/build.xml install'
+        }
+      }
+    }
+    stage('maven collect-all') {
+      steps {
+        withAnt() {
+      bat 'ant -noinput -buildfile ./sormas-base/build.xml collect-all'
         }
       }
     }
