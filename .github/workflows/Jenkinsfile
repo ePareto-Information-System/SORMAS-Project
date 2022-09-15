@@ -17,7 +17,7 @@ pipeline{
     stage('maven install') {
       steps {
         withMaven() {
-      bat 'mvn -f ./sormas-base/pom.xml install'
+      bat 'mvn -f ./sormas-base/pom.xml install -DskipTests'
         }
       }
     }
