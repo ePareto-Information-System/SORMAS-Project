@@ -1,10 +1,5 @@
 pipeline{
     agent any
-	
-	
-    environment {
-        ANDROID_SDK_ROOT = 'C:\Users\opata\AppData\Local\Android\Sdk'
-    }
 
     stages {
     stage('build') {
