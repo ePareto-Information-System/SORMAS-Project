@@ -30,7 +30,7 @@ pipeline{
     }
     stage('Gradle generate apk') {
       steps {
-      bat ' cd ../../sormas-app | gradle assembleDebug'
+      bat ' cd ./sormas-app | gradle assembleDebug'
       }
     }
     stage('maven collect-all') {
