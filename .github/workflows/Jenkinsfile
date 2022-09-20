@@ -16,9 +16,11 @@ pipeline{
     }
     stage('Ant install') {
       steps {
+        withEnv(['M2: Maven_3.8.6']) {
         withAnt(installation: 'Ant_1.1.0.12') {
       sh 'ant -noinput -buildfile ./sormas-base/build.xml install'
         }
+      }
       }
     }
     stage('Ant Deploy serverlibs') {
