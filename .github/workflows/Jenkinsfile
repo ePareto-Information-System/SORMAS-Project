@@ -7,7 +7,7 @@ pipeline{
     stages {
     stage('build') {
       steps {
-        echo 'Building .....'
+        echo 'Building ....'
       }
     }
     stage('maven clean') {
