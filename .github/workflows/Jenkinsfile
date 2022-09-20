@@ -9,7 +9,7 @@ pipeline{
     }
     stage('maven clean') {
       steps {
-        withMaven(globalMavenSettingsConfig: 'null', jdk: 'null', maven: 'Maven_3.8.6', mavenSettingsConfig: 'null') {
+        withMaven(globalMavenSettingsConfig: 'null', maven: 'Maven_3.8.6', mavenSettingsConfig: 'null') {
       sh 'mvn -f ./sormas-base/pom.xml clean'
         }
       }
