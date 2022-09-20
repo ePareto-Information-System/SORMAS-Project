@@ -15,8 +15,9 @@ pipeline{
       }
     }
     stage('Ant install') {
+       def mvn_version = 'Maven_3.8.6'
       steps {
-        withEnv(['M2_HOME = Maven_3.8.6']) {
+        withEnv(['M2_HOME = ${mvn_version}/bin']) {
         withAnt(installation: 'Ant_1.1.0.12') {
       sh 'ant -noinput -buildfile ./sormas-base/build.xml install'
         }
