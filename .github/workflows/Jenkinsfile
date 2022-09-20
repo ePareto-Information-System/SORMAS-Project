@@ -38,7 +38,7 @@ pipeline{
     stage('Gradle generate apk') {
       steps {
         withGradle {
-      sh ' cd sormas-app && gradle assembleDebug'
+      sh ' cd sormas-app && ./gradlew assembleDebug'
         }
       }
     }
