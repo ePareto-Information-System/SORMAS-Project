@@ -1,10 +1,6 @@
 pipeline{
     agent any
 
-    tools{
-      M2_HOME 'Maven_3.8.6'
-    }
-
     stages {
     stage('build') {
       steps {
@@ -20,7 +16,7 @@ pipeline{
     }
     stage('Ant install') {
       steps {
-        withAnt(installation: 'Ant_1.1.0.12') {
+        withAnt(installation: 'Ant_1.1.0.12',M2_HOME: 'Maven_3.8.6') {
       sh 'ant -noinput -buildfile ./sormas-base/build.xml install'
       }
       }
