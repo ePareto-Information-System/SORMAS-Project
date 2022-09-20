@@ -9,33 +9,35 @@ pipeline{
     }
     stage('maven clean') {
       steps {
-        withMaven() {
+        withMaven(globalMavenSettingsConfig: 'null', jdk: 'null', maven: 'Maven_3.8.6', mavenSettingsConfig: 'null') {
       sh 'mvn -f ./sormas-base/pom.xml clean'
         }
       }
     }
     stage('Ant install') {
       steps {
-        withAnt() {
+        withAnt(installation: 'Ant_1.1.0.12') {
       sh 'ant -noinput -buildfile ./sormas-base/build.xml install'
         }
       }
     }
     stage('Ant Deploy serverlibs') {
       steps {
-        withAnt() {
+        withAnt(installation: 'Ant_1.1.0.12') {
       sh 'ant -noinput -buildfile ./sormas-base/build.xml deploy-serverlibs'
         }
       }
     }
     stage('Gradle generate apk') {
       steps {
+        withGradle {
       sh ' cd sormas-app && gradle assembleDebug'
+        }
       }
     }
     stage('maven collect-all') {
       steps {
-        withAnt() {
+        withAnt(installation: 'Ant_1.1.0.12') {
       sh 'ant -noinput -buildfile ./sormas-base/build.xml collect-all'
         }
       }
