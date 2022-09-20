@@ -18,7 +18,7 @@
 	</target>
 
 	<target name="install" description="Compile main source tree java files and install" unless="shared.installed">
-		<artifact:mvn dir="${basedir}" fork="true" mavenhome="${env.M2_HOME}" failonerror="true">
+		<artifact:mvn dir="${basedir}" fork="true" mavenhome="${env.M2_HOME}" failonerror="false">
 			<sysproperty key="maven.multiModuleProjectDirectory" value="${basedir}" />
 			<arg value="install" />
 			<arg value="-Dmaven.test.skip=true" />
