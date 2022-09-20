@@ -10,33 +10,33 @@ pipeline{
     stage('maven clean') {
       steps {
         withMaven() {
-      bat 'mvn -f ./sormas-base/pom.xml clean'
+      sh 'mvn -f ./sormas-base/pom.xml clean'
         }
       }
     }
     stage('Ant install') {
       steps {
         withAnt() {
-      bat 'ant -noinput -buildfile ./sormas-base/build.xml install'
+      sh 'ant -noinput -buildfile ./sormas-base/build.xml install'
         }
       }
     }
     stage('Ant Deploy serverlibs') {
       steps {
         withAnt() {
-      bat 'ant -noinput -buildfile ./sormas-base/build.xml deploy-serverlibs'
+      sh 'ant -noinput -buildfile ./sormas-base/build.xml deploy-serverlibs'
         }
       }
     }
     stage('Gradle generate apk') {
       steps {
-      bat ' cd sormas-app & gradle assembleDebug'
+      sh ' cd sormas-app && gradle assembleDebug'
       }
     }
     stage('maven collect-all') {
       steps {
         withAnt() {
-      bat 'ant -noinput -buildfile ./sormas-base/build.xml collect-all'
+      sh 'ant -noinput -buildfile ./sormas-base/build.xml collect-all'
         }
       }
     }
