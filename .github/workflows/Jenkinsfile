@@ -19,7 +19,7 @@ pipeline{
     }
     stage('Ant install') {
       steps {
-        withAnt(installation: 'Ant_1.1.0.12') {
+        withAnt(installation: 'Ant_1.10.12') {
       sh 'ant -noinput -buildfile ./sormas-base/build.xml install'
       }
       script {
@@ -30,7 +30,7 @@ pipeline{
     }
     stage('Ant Deploy serverlibs') {
       steps {
-        withAnt(installation: 'Ant_1.1.0.12') {
+        withAnt(installation: 'Ant_1.10.12') {
       sh 'ant -noinput -buildfile ./sormas-base/build.xml deploy-serverlibs'
         }
       }
@@ -44,7 +44,7 @@ pipeline{
     }
     stage('maven collect-all') {
       steps {
-        withAnt(installation: 'Ant_1.1.0.12') {
+        withAnt(installation: 'Ant_1.10.12') {
       sh 'ant -noinput -buildfile ./sormas-base/build.xml collect-all'
         }
       }
