@@ -13,7 +13,7 @@ pipeline{
     stage('maven clean') {
       steps {
         withMaven(maven: 'Maven_3.8.6') {
-      sh 'mvn -f ./sormas-base/pom.xml clean compile'
+      sh 'mvn -f ./sormas-base/pom.xml clean'
         }
       }
     }
