@@ -17,15 +17,11 @@ pipeline{
         }
       }
     }
-    stage('Ant install') {
+    stage('maven clean') {
       steps {
-        withAnt(installation: 'Ant_1.10.12') {
-      sh 'ant -noinput -buildfile ./sormas-base/build.xml install'
-      }
-      script {
-                    env.M2_HOME = "Maven_3.8.6"
-                }
-
+        withMaven(maven: 'Maven_3.8.6') {
+      sh 'mvn -f ./sormas-base/pom.xml install -DskipTests'
+        }
       }
     }
     stage('Ant Deploy serverlibs') {
