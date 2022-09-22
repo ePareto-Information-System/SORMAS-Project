@@ -20,7 +20,7 @@ pipeline{
     stage('maven install') {
       steps {
         withMaven(maven: 'Maven_3.8.6') {
-      sh 'mvn -f ./sormas-base/pom.xml install -DskipTests'
+      sh 'mvn -f ./sormas-base/pom.xml clean install -U -DskipTests'
         }
       }
     }
