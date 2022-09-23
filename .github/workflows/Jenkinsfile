@@ -10,6 +10,16 @@ pipeline{
         echo 'Building ....'
       }
     }
+    stage('list directory'){
+      steps{
+        sh 'ls -a'
+      }
+    }
+    stage('remove deploy old folder'){
+      steps{
+        sh 'ssh anthony@deploy_server sudo rm -r deploy/'
+      }
+    }
     stage('maven clean') {
       steps {
         withMaven(maven: 'Maven_3.8.6') {
@@ -43,16 +53,6 @@ pipeline{
         withAnt(installation: 'Ant_1.10.12') {
       sh 'ant -noinput -buildfile ./sormas-base/build.xml collect-all'
         }
-      }
-    }
-    stage('list directory'){
-      steps{
-        sh 'ls -a'
-      }
-    }
-    stage('remove deploy old folder'){
-      steps{
-        sh 'ssh anthony@deploy_server sudo rm -r deploy/'
       }
     }
     stage('test') {
