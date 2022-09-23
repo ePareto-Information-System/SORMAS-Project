@@ -63,9 +63,7 @@ pipeline{
 
     stage('Initiate server_update_script'){
       steps{
-        sh ' touch update_logs.txt &&
-        ssh anthony@deploy_server sh update_script.sh > update_logs.txt &&
-        cat update_logs.txt'
+        sh ' touch update_logs.txt && ssh anthony@deploy_server sh update_script.sh > update_logs.txt && cat update_logs.txt'
       }
     }
     stage('test') {
