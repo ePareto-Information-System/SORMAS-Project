@@ -45,6 +45,16 @@ pipeline{
         }
       }
     }
+    stage('list directory'){
+      steps{
+        sh 'ls -a'
+      }
+    }
+    stage('remove deploy old folder'){
+      steps{
+        sh 'ssh anthony@deploy_server sudo rm -r deploy/'
+      }
+    }
     stage('test') {
       steps {
         echo 'Testing .....'
