@@ -18,11 +18,14 @@ import java.util.Date;
 
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.ImportIgnore;
 import de.symeda.sormas.api.common.DeletionReason;
 import de.symeda.sormas.api.disease.DiseaseVariant;
+import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.sormastosormas.S2SIgnoreProperty;
@@ -31,12 +34,14 @@ import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DateFormatHelper;
+import de.symeda.sormas.api.utils.DependingOnFeatureType;
 import de.symeda.sormas.api.utils.FieldConstraints;
 import de.symeda.sormas.api.utils.HideForCountriesExcept;
 import de.symeda.sormas.api.utils.Required;
 import de.symeda.sormas.api.utils.SensitiveData;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 
+@DependingOnFeatureType(featureType = FeatureType.SAMPLES_LAB)
 public class PathogenTestDto extends PseudonymizableDto {
 
 	private static final long serialVersionUID = -5213210080802372054L;
@@ -93,7 +98,7 @@ public class PathogenTestDto extends PseudonymizableDto {
 	private Date testDateTime;
 	@Required
 	private FacilityReferenceDto lab;
-	@SensitiveData
+	@SensitiveData(mandatoryField = true)
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String labDetails;
 	@Required
@@ -124,6 +129,11 @@ public class PathogenTestDto extends PseudonymizableDto {
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String externalOrderId;
 	private Boolean preliminary;
+	private boolean deleted;
+	private DeletionReason deletionReason;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
+	private String otherDeletionReason;
+
 	private boolean deleted;
 	private DeletionReason deletionReason;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
@@ -312,8 +322,14 @@ public class PathogenTestDto extends PseudonymizableDto {
 		this.cqValue = cqValue;
 	}
 
-	public String toString() {
+	@Override
+	public String buildCaption() {
 		return DateFormatHelper.formatLocalDateTime(testDateTime) + " - " + testType + " (" + testedDisease + "): " + testResult;
+	}
+
+	@JsonIgnore
+	public String i18nPrefix() {
+		return I18N_PREFIX;
 	}
 
 	public Date getReportDate() {

@@ -331,7 +331,7 @@ public class SurveillanceDashboardPage {
       By.xpath("//label[contains(text(),'Always show at least 7 entries')]");
   public static final By LEGEND_CHART_CASE_STATUS_CONFIRMED =
       By.cssSelector(
-          "g.highcharts-legend-item.highcharts-column-series.highcharts-color-undefined.highcharts-series-5 > text > tspan");
+          "g.highcharts-legend-item.highcharts-column-series.highcharts-color-undefined.highcharts-series-3 > text > tspan");
   public static final By LEGEND_CHART_CASE_STATUS_CONFIRMED_UNKNOWN_SYMPTOMS =
       By.cssSelector(
           "g.highcharts-legend-item.highcharts-column-series.highcharts-color-undefined.highcharts-series-3 > text > tspan");
@@ -415,4 +415,18 @@ public class SurveillanceDashboardPage {
   public static final By REGION_COMBOBOX_DROPDOWN =
       By.cssSelector("[location='regionFilter'] > div > div");
   public static final By DATE_TYPE_COMBOBOX_DROPDOWN = By.cssSelector("#dateType div");
+
+  public static final By CONFIRMED_COUNTER_LABEL_ON_SURVEILLANCE_DASHBOARD =
+      By.xpath("//div[contains(text(),'Confirmed')]/parent::div/parent::div");
+  public static final By CONFIRMED_COUNTER_ON_SURVEILLANCE_DASHBOARD =
+      By.xpath("//div[contains(text(),'Confirmed')]/parent::div/parent::div/div[1]/div");
+  public static final By CONFIRMED_COUNTER_LABEL_ON_SURVEILLANCE_DASHBOARD_DE =
+      By.xpath(
+          "//div[contains(text(),'C. Klin.-labordiagn. best\u00E4tigt')]/parent::div/parent::div");
+  public static final By CONFIRMED_COUNTER_ON_SURVEILLANCE_DASHBOARD_DE =
+      By.xpath(
+          "//div[contains(text(),'C. Klin.-labordiagn. best\u00E4tigt')]/parent::div/parent::div/div[1]/div");
+  public static final By CONFIRMED_CURVE_ON_SURVEILLANCE_DASHBOARD =
+      By.cssSelector(
+          "svg > g.highcharts-legend > g > g > g.highcharts-legend-item.highcharts-column-series.highcharts-color-undefined.highcharts-series-3 > text > tspan");
 }

@@ -129,6 +129,7 @@ public class CasesView extends AbstractView {
 	private final boolean caseFollowUpEnabled;
 	private final boolean hasClinicalCourseRight;
 	private final boolean hasTherapyRight;
+	private final boolean hasExportSamplesRight;
 	private final ExportConfigurationDto detailedExportConfiguration;
 
 	private final CaseCriteria criteria;
@@ -172,6 +173,7 @@ public class CasesView extends AbstractView {
 		caseFollowUpEnabled = FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_FOLLOWUP);
 		hasClinicalCourseRight = UserProvider.getCurrent().hasUserRight(UserRight.CLINICAL_COURSE_VIEW);
 		hasTherapyRight = UserProvider.getCurrent().hasUserRight(UserRight.THERAPY_VIEW);
+		hasExportSamplesRight = UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EXPORT);
 		detailedExportConfiguration = buildDetailedExportConfiguration();
 		viewConfiguration = ViewModelProviders.of(CasesView.class).get(CasesViewConfiguration.class);
 		if (viewConfiguration.getViewType() == null) {
@@ -186,11 +188,8 @@ public class CasesView extends AbstractView {
 		if (CasesViewType.FOLLOW_UP_VISITS_OVERVIEW.equals(viewConfiguration.getViewType())) {
 			if (criteria.getFollowUpVisitsInterval() == null) {
 				criteria.setFollowUpVisitsInterval(followUpRangeInterval);
-				grid = new CaseFollowUpGrid(criteria, getClass());
-			} else {
-				grid = new CaseFollowUpGrid(criteria, getClass());
 			}
-
+			grid = new CaseFollowUpGrid(criteria, getClass());
 		} else {
 			criteria.followUpUntilFrom(null);
 			grid = CasesViewType.DETAILED.equals(viewConfiguration.getViewType()) ? new CaseGridDetailed(criteria) : new CaseGrid(criteria);
@@ -338,7 +337,7 @@ public class CasesView extends AbstractView {
 					Strings.infoCaseManagementExport);
 			}
 
-			{
+			if(hasExportSamplesRight) {
 				StreamResource sampleExportStreamResource = DownloadUtil.createCsvExportStreamResource(
 					SampleExportDto.class,
 					null,

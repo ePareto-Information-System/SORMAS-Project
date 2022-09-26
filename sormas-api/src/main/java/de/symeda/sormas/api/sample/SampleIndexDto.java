@@ -28,12 +28,14 @@ import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityHelper;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.utils.DateFormatHelper;
 import de.symeda.sormas.api.utils.EmbeddedPersonalData;
 import de.symeda.sormas.api.utils.EmbeddedSensitiveData;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableIndexDto;
 import de.symeda.sormas.api.utils.pseudonymization.Pseudonymizer;
 import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.EmptyValuePseudonymizer;
+import org.apache.commons.lang3.StringUtils;
 
 public class SampleIndexDto extends PseudonymizableIndexDto implements Serializable {
 
@@ -65,7 +67,6 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 	public static final String ADDITIONAL_TESTING_STATUS = "additionalTestingStatus";
 	public static final String PATHOGEN_TEST_COUNT = "pathogenTestCount";
 
-	private String uuid;
 	@EmbeddedPersonalData
 	@EmbeddedSensitiveData
 	@Pseudonymizer(EmptyValuePseudonymizer.class)
@@ -122,7 +123,7 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
   
 	//@formatter:on
 
-		this.uuid = uuid;
+		super(uuid);
 		if (associatedCaseUuid != null) {
 			this.associatedCase = new CaseReferenceDto(associatedCaseUuid, associatedCaseFirstName, associatedCaseLastName);
 		}
@@ -401,7 +402,7 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 	public SampleReferenceDto toReference() {
 
 		return new SampleReferenceDto(
-			uuid,
+			getUuid(),
 			getSampleMaterial(),
 			getAssociatedCase() != null ? getAssociatedCase().getUuid() : null,
 			getAssociatedContact() != null ? getAssociatedContact().getUuid() : null,
@@ -476,7 +477,7 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 		this.lastTestCqValue = lastTestCqValue;
 	}
 
-	public String toString() {
+	public String getCaption() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(DateFormatHelper.formatLocalDateTime(sampleDateTime)).append(" - ");
 		sb.append(sampleMaterial);

@@ -20,13 +20,13 @@ package de.symeda.sormas.api.sample;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Remote;
 import javax.validation.Valid;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseCriteria;
+import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
@@ -69,14 +69,18 @@ public interface SampleFacade {
 	List<SampleDto> findBy(SampleCriteria criteria);
 
 	void deleteSample(SampleReferenceDto sampleRef);
+	
+	void deleteSample(SampleReferenceDto sampleRef, DeletionDetails deletionDetails);
 
-	void deleteAllSamples(List<String> sampleUuids);
+	void deleteAllSamples(List<String> sampleUuids, DeletionDetails deletionDetails);
 
-	List<String> deleteSamples(List<String> sampleUuids);
+	List<String> deleteSamples(List<String> sampleUuids, DeletionDetails deletionDetails);
 
-	void validate(SampleDto sample) throws ValidationRuntimeException;
+	void validate(SampleDto sample, boolean checkAssociatedEntities) throws ValidationRuntimeException;
 
 	List<String> getDeletedUuidsSince(Date since);
+
+	List<String> getObsoleteUuidsSince(Date since);
 
 	boolean isDeleted(String sampleUuid);
 
@@ -89,6 +93,8 @@ public interface SampleFacade {
 	List<SampleDto> getByContactUuids(List<String> contactUuids);
 
 	List<SampleDto> getSimilarSamples(SampleSimilarityCriteria criteria);
+
+	List<SampleDto> getSamplesByCriteria(SampleCriteria criteria);
 
 	boolean exists(String uuid);
 

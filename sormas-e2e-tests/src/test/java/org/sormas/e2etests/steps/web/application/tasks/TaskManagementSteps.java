@@ -92,13 +92,11 @@ public class TaskManagementSteps implements En {
           webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(
               ASSIGNED_USER_FILTER_INPUT);
           String assignedUser = CreateNewTaskSteps.task.getAssignedTo();
-          int indexToSubstring = assignedUser.indexOf("-");
-          webDriverHelpers.fillInWebElement(
-              ASSIGNED_USER_FILTER_INPUT, assignedUser.substring(0, indexToSubstring).trim());
+          webDriverHelpers.fillInWebElement(ASSIGNED_USER_FILTER_INPUT, assignedUser);
           webDriverHelpers.clickOnWebElementBySelector(APPLY_FILTER);
           webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(lastTaskEditButton, 40);
           webDriverHelpers.clickElementSeveralTimesUntilNextElementIsDisplayed(
-              lastTaskEditButton, TASK_STATUS_OPTIONS, 5);
+              lastTaskEditButton, TASK_STATUS_OPTIONS, 6);
         });
 
     When(
@@ -153,6 +151,20 @@ public class TaskManagementSteps implements En {
               });
           softly.assertAll();
         });
+    When(
+        "^I check displayed task's context of first result is ([^\"]*)$",
+        (String taskContext) -> {
+          softly.assertEquals(
+              webDriverHelpers.getTextFromWebElement(TASK_CONTEXT_FIRST_RESULT),
+              taskContext,
+              "Task context is not correct displayed");
+          softly.assertAll();
+        });
+    When(
+        "^I click on associated link to Travel Entry$",
+        () -> {
+          webDriverHelpers.clickOnWebElementBySelector(ASSOCIATED_LINK_FIRST_RESULT);
+        });
 
     When(
         "^I filter Task status ([^\"]*)$",
@@ -198,6 +210,20 @@ public class TaskManagementSteps implements En {
           webDriverHelpers.fillAndSubmitInWebElement(
               GENERAL_SEARCH_INPUT, apiState.getCreatedContact().getUuid());
           webDriverHelpers.waitForPageLoadingSpinnerToDisappear(40);
+        });
+
+    When(
+        "^I open last created task by API using Contact UUID$",
+        () -> {
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(40);
+          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(
+              GENERAL_SEARCH_INPUT, 50);
+          webDriverHelpers.fillAndSubmitInWebElement(
+              GENERAL_SEARCH_INPUT, apiState.getCreatedContact().getUuid());
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(40);
+          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(
+              EDIT_FIRST_SEARCH_RESULT);
+          webDriverHelpers.clickOnWebElementBySelector(EDIT_FIRST_SEARCH_RESULT);
         });
     When(
         "^I select first (\\d+) results in grid in Task Directory$",
@@ -252,7 +278,7 @@ public class TaskManagementSteps implements En {
         "I click to bulk change assignee for selected tasks",
         () -> {
           webDriverHelpers.clickOnWebElementBySelector(CHANGE_ASSIGNEE_CHECKBOX);
-          webDriverHelpers.selectFromCombobox(TASK_ASSIGNEE_COMBOBOX, "Surveillance OFFICER");
+          webDriverHelpers.selectFromCombobox(TASK_ASSIGNEE_COMBOBOX, "Surveillance SUPERVISOR");
         });
     When(
         "I click to bulk change priority for selected tasks",

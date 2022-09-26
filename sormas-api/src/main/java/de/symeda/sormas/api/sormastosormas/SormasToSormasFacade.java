@@ -15,6 +15,8 @@
 
 package de.symeda.sormas.api.sormastosormas;
 
+import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.sormastosormas.shareinfo.SormasToSormasShareInfoDto;
 import java.util.List;
 
 import javax.ejb.Remote;
@@ -51,5 +53,5 @@ public interface SormasToSormasFacade {
 
 	boolean isSharingEventsEnabledForUser();
 
-	boolean isSharingLabMessagesEnabledForUser();
+	boolean isSharingExternalMessagesEnabledForUser();
 }

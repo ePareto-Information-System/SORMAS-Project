@@ -16,6 +16,7 @@ public enum SymptomGroup {
 	RASH_TYPE,
 	OTHER;
 
+	@Override
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);
 	}

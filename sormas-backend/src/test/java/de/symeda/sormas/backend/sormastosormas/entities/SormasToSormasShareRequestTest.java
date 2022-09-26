@@ -18,8 +18,11 @@ package de.symeda.sormas.backend.sormastosormas.entities;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
+import de.symeda.sormas.backend.sormastosormas.share.shareinfo.ShareRequestInfo;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -46,8 +49,8 @@ import de.symeda.sormas.api.sormastosormas.shareinfo.SormasToSormasShareInfoCrit
 import de.symeda.sormas.api.sormastosormas.shareinfo.SormasToSormasShareInfoDto;
 import de.symeda.sormas.api.sormastosormas.sharerequest.ShareRequestStatus;
 import de.symeda.sormas.api.sormastosormas.sharerequest.SormasToSormasCasePreview;
+import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserReferenceDto;
-import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.backend.MockProducer;
 import de.symeda.sormas.backend.sormastosormas.SormasToSormasTest;
@@ -73,7 +76,8 @@ public class SormasToSormasShareRequestTest extends SormasToSormasTest {
 		useSurveillanceOfficerLogin(rdcf);
 
 		PersonDto person = creator.createPerson("John", "Doe", Sex.MALE, 1964, 4, 12);
-		UserReferenceDto officer = creator.createUser(rdcf, UserRole.SURVEILLANCE_OFFICER).toReference();
+		UserReferenceDto officer =
+			creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER)).toReference();
 		CaseDataDto caze = creator.createCase(officer, rdcf, dto -> {
 			dto.setPerson(person.toReference());
 			dto.setDisease(Disease.CORONAVIRUS);
@@ -125,7 +129,7 @@ public class SormasToSormasShareRequestTest extends SormasToSormasTest {
 
 		assertThat(shareInfoList.size(), is(1));
 		assertThat(shareInfoList.get(0).getTargetDescriptor().getId(), is(SECOND_SERVER_ID));
-		assertThat(shareInfoList.get(0).getSender().getCaption(), is("Surv OFF - Surveillance Officer"));
+		assertThat(shareInfoList.get(0).getSender().getCaption(), is("Surv OFF"));
 		assertThat(shareInfoList.get(0).getComment(), is("Test comment"));
 		assertThat(shareInfoList.get(0).getRequestStatus(), is(ShareRequestStatus.PENDING));
 	}
@@ -135,22 +139,27 @@ public class SormasToSormasShareRequestTest extends SormasToSormasTest {
 		useSurveillanceOfficerLogin(rdcf);
 
 		PersonDto person = creator.createPerson("John", "Doe", Sex.MALE, 1964, 4, 12);
-		UserReferenceDto officer = creator.createUser(rdcf, UserRole.SURVEILLANCE_OFFICER).toReference();
+		UserReferenceDto officer =
+			creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER)).toReference();
 		CaseDataDto caze = creator.createCase(officer, rdcf, dto -> {
 			dto.setPerson(person.toReference());
 			dto.setDisease(Disease.CORONAVIRUS);
 			dto.setCaseClassification(CaseClassification.SUSPECT);
 			dto.setOutcome(CaseOutcome.NO_OUTCOME);
 		});
-		User officerUser = getUserService().getByReferenceDto(officer);
-		getShareRequestInfoService().persist(createShareRequestInfo(officerUser, SECOND_SERVER_ID, false, i -> {
-			i.setCaze(getCaseService().getByReferenceDto(caze.toReference()));
-		}));
+
+		ShareRequestInfo shareRequestInfo = createShareRequestInfo(
+			getUserService().getByUuid(officer.getUuid()),
+			SECOND_SERVER_ID,
+			false,
+			ShareRequestStatus.ACCEPTED,
+			i -> i.setCaze(getCaseService().getByUuid(caze.getUuid())));
+		getShareRequestInfoService().persist(shareRequestInfo);
 
 		Mockito
 			.when(
 				MockProducer.getSormasToSormasClient()
-					.put(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.any(), ArgumentMatchers.any()))
+					.post(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.any(), ArgumentMatchers.any()))
 			.thenAnswer(invocation -> {
 				assertThat(invocation.getArgument(0, String.class), is(SECOND_SERVER_ID));
 				assertThat(invocation.getArgument(1, String.class), is("/sormasToSormas/cases/request"));
@@ -178,7 +187,7 @@ public class SormasToSormasShareRequestTest extends SormasToSormasTest {
 				assertThat(postBody.getOriginInfo().isOwnershipHandedOver(), is(true));
 				assertThat(postBody.getOriginInfo().getComment(), is("New comment"));
 
-				assertThat(postBody.getRequestUuid(), is("test-uuid"));
+				assertThat(postBody.getRequestUuid(), not(is(shareRequestInfo.getUuid())));
 
 				return Response.noContent().build();
 			});
@@ -195,10 +204,50 @@ public class SormasToSormasShareRequestTest extends SormasToSormasTest {
 
 		assertThat(shareInfoList.size(), is(1));
 		assertThat(shareInfoList.get(0).getTargetDescriptor().getId(), is(SECOND_SERVER_ID));
-		assertThat(shareInfoList.get(0).getSender().getCaption(), is("Surv OFF - Surveillance Officer"));
+		assertThat(shareInfoList.get(0).getSender().getCaption(), is("Surv OFF"));
 		assertThat(shareInfoList.get(0).isOwnershipHandedOver(), is(true));
 		assertThat(shareInfoList.get(0).getComment(), is("New comment"));
 		assertThat(shareInfoList.get(0).getRequestStatus(), is(ShareRequestStatus.PENDING));
+	}
+
+	@Test(expected = SormasToSormasException.class)
+	public void testResendCaseShareRequestWithoutResponodingToFirstOne() throws SormasToSormasException {
+		useSurveillanceOfficerLogin(rdcf);
+
+		PersonDto person = creator.createPerson("John", "Doe", Sex.MALE, 1964, 4, 12);
+		UserReferenceDto officer = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER)).toReference();
+		CaseDataDto caze = creator.createCase(officer, rdcf, dto -> {
+			dto.setPerson(person.toReference());
+			dto.setDisease(Disease.CORONAVIRUS);
+			dto.setCaseClassification(CaseClassification.SUSPECT);
+			dto.setOutcome(CaseOutcome.NO_OUTCOME);
+		});
+
+		ShareRequestInfo shareRequestInfo = createShareRequestInfo(
+			getUserService().getByUuid(officer.getUuid()),
+			SECOND_SERVER_ID,
+			false,
+			ShareRequestStatus.PENDING,
+			i -> i.setCaze(getCaseService().getByUuid(caze.getUuid())));
+		getShareRequestInfoService().persist(shareRequestInfo);
+
+		Mockito
+			.when(
+				MockProducer.getSormasToSormasClient()
+					.post(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.any(), ArgumentMatchers.any()))
+			.thenAnswer(invocation -> Response.noContent().build());
+
+		SormasToSormasOptionsDto options = new SormasToSormasOptionsDto();
+		options.setOrganization(new SormasServerDescriptor(SECOND_SERVER_ID));
+		options.setHandOverOwnership(true);
+		options.setComment("New comment");
+
+		getSormasToSormasCaseFacade().share(Collections.singletonList(caze.getUuid()), options);
+
+		List<SormasToSormasShareInfoDto> shareInfoList =
+			getSormasToSormasShareInfoFacade().getIndexList(new SormasToSormasShareInfoCriteria().caze(caze.toReference()), 0, 100);
+
+		assertThat(shareInfoList.size(), is(1));
 	}
 
 	@Test
@@ -206,25 +255,30 @@ public class SormasToSormasShareRequestTest extends SormasToSormasTest {
 		useSurveillanceOfficerLogin(rdcf);
 
 		PersonDto person = creator.createPerson("John", "Doe", Sex.MALE, 1964, 4, 12);
-		UserReferenceDto officer = creator.createUser(rdcf, UserRole.SURVEILLANCE_OFFICER).toReference();
+		UserReferenceDto officer =
+			creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER)).toReference();
 		CaseDataDto caze = creator.createCase(officer, rdcf, dto -> {
 			dto.setPerson(person.toReference());
 			dto.setDisease(Disease.CORONAVIRUS);
 			dto.setCaseClassification(CaseClassification.SUSPECT);
 			dto.setOutcome(CaseOutcome.NO_OUTCOME);
 		});
-		User officerUser = getUserService().getByReferenceDto(officer);
-		getShareRequestInfoService().persist(createShareRequestInfo(officerUser, SECOND_SERVER_ID, false, i -> {
-			i.setCaze(getCaseService().getByReferenceDto(caze.toReference()));
-		}));
+
+		ShareRequestInfo shareRequestInfo = createShareRequestInfo(
+			getUserService().getByUuid(officer.getUuid()),
+			SECOND_SERVER_ID,
+			false,
+			ShareRequestStatus.ACCEPTED,
+			i -> i.setCaze(getCaseService().getByUuid(caze.getUuid())));
+		getShareRequestInfoService().persist(shareRequestInfo);
 
 		Mockito
 			.when(
 				MockProducer.getSormasToSormasClient()
-					.put(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.any(), ArgumentMatchers.any()))
+					.post(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.any(), ArgumentMatchers.any()))
 			.thenAnswer(invocation -> {
 				assertThat(invocation.getArgument(0, String.class), is(SECOND_SERVER_ID));
-				assertThat(invocation.getArgument(1, String.class), is("/sormasToSormas/cases/sync"));
+				assertThat(invocation.getArgument(1, String.class), is("/sormasToSormas/cases/request"));
 
 				ShareRequestData postBody = invocation.getArgument(2, ShareRequestData.class);
 				assertThat(postBody.getPreviews().getCases(), hasSize(1));
@@ -249,7 +303,7 @@ public class SormasToSormasShareRequestTest extends SormasToSormasTest {
 				assertThat(postBody.getOriginInfo().isOwnershipHandedOver(), is(true));
 				assertThat(postBody.getOriginInfo().getComment(), is("New comment"));
 
-				assertThat(postBody.getRequestUuid(), is("test-uuid"));
+				assertThat(postBody.getRequestUuid(), not(is(shareRequestInfo.getUuid())));
 
 				return Response.noContent().build();
 			});
@@ -266,7 +320,7 @@ public class SormasToSormasShareRequestTest extends SormasToSormasTest {
 
 		assertThat(shareInfoList.size(), is(1));
 		assertThat(shareInfoList.get(0).getTargetDescriptor().getId(), is(SECOND_SERVER_ID));
-		assertThat(shareInfoList.get(0).getSender().getCaption(), is("Surv OFF - Surveillance Officer"));
+		assertThat(shareInfoList.get(0).getSender().getCaption(), is("Surv OFF"));
 		assertThat(shareInfoList.get(0).isOwnershipHandedOver(), is(true));
 		assertThat(shareInfoList.get(0).getComment(), is("New comment"));
 		assertThat(shareInfoList.get(0).getRequestStatus(), is(ShareRequestStatus.PENDING));

@@ -490,3 +490,479 @@ Feature: Contacts end to end tests
     When I click on the Persons button from navbar
     And I open the last created Person via API
     And I check that SEE CONTACTS FOR THIS PERSON button appears on Edit Person page
+
+  @issue=SORDEV-6140 @env_main
+  Scenario: Ask user to automatically convert some additional contacts and event participants to case
+    Given API: I create a new event
+    Then API: I check that POST call body is "OK"
+    And API: I check that POST call status code is 200
+    Given I log in with National User
+    When I click on the Contacts button from navbar
+    Then I click on the NEW CONTACT button
+    And I fill a new contact form with specific person data
+    And I click on SAVE new contact button
+    Then I check the created data is correctly displayed on Edit Contact page
+    And I click Link Event button on Edit Contact Page
+    And I select 2 event in Link Event popup and create and Event Participant
+    And I click Save in Add Event Participant form on Edit Contact Page
+    And I click Link Event button on Edit Contact Page
+    And I select 3 event in Link Event popup and create and Event Participant
+    And I click Save in Add Event Participant form on Edit Contact Page
+    And I click Link Event button on Edit Contact Page
+    And I select 5 event in Link Event popup and create and Event Participant
+    And I click Save in Add Event Participant form on Edit Contact Page
+    When I navigate to the last created through API Event page via URL
+    And I click on the Event participant tab
+    And I add same person data as one used for Contact creation for event participant
+    And I navigate to the last created UI contact via the url
+   And I click on CONFIRMED CONTACT radio button Contact Person tab
+    Then I click SAVE button on Edit Contact Page
+    And I click Create Case from Contact button
+    And I create a new case for contact with specific data
+    And I click Yes, for some in conversion to case form
+    And I click on checkbox to select all available options
+    And I check if there are entities assigned to new created case from contact
+
+  @issue=SORDEV-6140 @env_main
+  Scenario: Ask user to automatically convert all additional contacts and event participants to case
+    Given API: I create a new event
+    Then API: I check that POST call body is "OK"
+    And API: I check that POST call status code is 200
+    Given I log in with National User
+    When I click on the Contacts button from navbar
+    Then I click on the NEW CONTACT button
+    And I fill a new contact form with specific person data
+    And I click on SAVE new contact button
+    Then I check the created data is correctly displayed on Edit Contact page
+    And I click Link Event button on Edit Contact Page
+    And I select 2 event in Link Event popup and create and Event Participant
+    And I click Save in Add Event Participant form on Edit Contact Page
+    And I click Link Event button on Edit Contact Page
+    And I select 3 event in Link Event popup and create and Event Participant
+    And I click Save in Add Event Participant form on Edit Contact Page
+    And I click Link Event button on Edit Contact Page
+    And I select 5 event in Link Event popup and create and Event Participant
+    And I click Save in Add Event Participant form on Edit Contact Page
+    When I navigate to the last created through API Event page via URL
+    And I click on the Event participant tab
+    And I add same person data as one used for Contact creation for event participant
+    And I navigate to the last created UI contact via the url
+    And I click on CONFIRMED CONTACT radio button Contact Person tab
+    Then I click SAVE button on Edit Contact Page
+    And I click Create Case from Contact button
+    And I create a new case for contact with specific data
+    And I click Yes, for all in conversion to case form
+    And I check if there are entities assigned to new created case from contact
+
+  @issue=SORDEV-6140 @env_main
+  Scenario: Ask user to automatically convert no additional contacts and event participants to case
+    Given API: I create a new event
+    Then API: I check that POST call body is "OK"
+    And API: I check that POST call status code is 200
+    Given I log in with National User
+    When I click on the Contacts button from navbar
+    Then I click on the NEW CONTACT button
+    And I fill a new contact form with specific person data
+    And I click on SAVE new contact button
+    Then I check the created data is correctly displayed on Edit Contact page
+    And I click Link Event button on Edit Contact Page
+    And I select 2 event in Link Event popup and create and Event Participant
+    And I click Save in Add Event Participant form on Edit Contact Page
+    And I click Link Event button on Edit Contact Page
+    And I select 3 event in Link Event popup and create and Event Participant
+    And I click Save in Add Event Participant form on Edit Contact Page
+    And I click Link Event button on Edit Contact Page
+    And I select 5 event in Link Event popup and create and Event Participant
+    And I click Save in Add Event Participant form on Edit Contact Page
+    When I navigate to the last created through API Event page via URL
+    And I click on the Event participant tab
+    And I add same person data as one used for Contact creation for event participant
+    And I navigate to the last created UI contact via the url
+    And I click on CONFIRMED CONTACT radio button Contact Person tab
+    Then I click SAVE button on Edit Contact Page
+    And I click Create Case from Contact button
+    And I create a new case for contact with specific data
+    And I click No in conversion to case form
+    And I check if there are no entities assigned to new created case from contact
+
+    @issue=SORDEV-10265 @env_main
+    Scenario: Manual archiving for contacts
+      When API: I create a new person
+      Then API: I check that POST call body is "OK"
+      And API: I check that POST call status code is 200
+      Then API: I create a new contact
+      Then API: I check that POST call body is "OK"
+      And API: I check that POST call status code is 200
+      Given I log in as a Admin User
+      When I click on the Contacts button from navbar
+      Then I search after last created contact via API by UUID and open
+      Then I click on the Archive contact button
+      And I check if Archive contact popup is displayed correctly
+      Then I check the end of processing date in the archive popup
+      And I check if Archive button changed name to De-Archive
+      Then I click on the Contacts button from navbar
+      When I choose Archived contacts form combobox on Contact Directory Page
+      Then I open the first contact from contacts list
+      And I check if Archive button changed name to De-Archive
+
+  @issue=SORDEV-9786 @env_main
+  Scenario: Test The "urine p.m." enum value should be hidden when Covid19 is selected as disease
+    When API: I create a new person
+    Then API: I check that POST call body is "OK"
+    And API: I check that POST call status code is 200
+    Then API: I create a new contact
+    Then API: I check that POST call body is "OK"
+    And API: I check that POST call status code is 200
+    Given I log in as a Admin User
+    When I click on the Contacts button from navbar
+    Then I search after last created contact via API by UUID and open
+    And I check that the value selected from Disease combobox is "COVID-19" on Edit Contact page
+    Then I click on New Sample
+    And I check if value "Urine p.m" is unavailable in Type of Sample combobox on Create new Sample page
+
+  @env_main @issue=SORDEV-9155
+  Scenario: Test Vaccinations get lost when merging contacts with duplicate persons
+    Then API: I create a new person
+    And API: I check that POST call body is "OK"
+    And API: I check that POST call status code is 200
+    Then API: I create a new case
+    Then API: I check that POST call body is "OK"
+    And API: I check that POST call status code is 200
+    Given I log in as a Admin User
+    And I click on the Contacts button from navbar
+    And I click on the NEW CONTACT button
+    When I fill a new contact form for duplicated contact with same person data
+    And I click on SAVE button in create contact form
+    And I click on the CHOOSE SOURCE CASE button from CONTACT page
+    And I click yes on the DISCARD UNSAVED CHANGES popup from CONTACT page
+    And I search for the last case uuid created via Api in the CHOOSE SOURCE Contact window
+    And I open the first found result in the CHOOSE SOURCE window
+    Then I click SAVE button on Edit Contact Page
+    Then I click on the Contacts button from navbar
+    And I click on the NEW CONTACT button
+    When I fill a new contact form for duplicated contact with same person data
+    And I click on SAVE button in create contact form
+    And I Pick a new person in Pick or create person popup during contact creation
+    When I check the created data for duplicated contact is correctly displayed on Edit Contact page
+    And I click on the CHOOSE SOURCE CASE button from CONTACT page
+    And I click yes on the DISCARD UNSAVED CHANGES popup from CONTACT page
+    And I search for the last case uuid created via Api in the CHOOSE SOURCE Contact window
+    And I open the first found result in the CHOOSE SOURCE window
+    And I set Vaccination status to "Vaccinated" on Edit Contact page
+    Then I click SAVE button on Edit Contact Page
+    And I click on the Contacts button from navbar
+    And I click on the More button on Contact directory page
+    Then I click on Merge Duplicates on Contact directory page
+    And I click on Merge button of leading case in Merge Duplicate Contact page
+    Then I click to Confirm action in Merge Duplicates Cases popup
+    And I click on the Contacts button from navbar
+    And I apply filter by duplicated contact Person data on Contact Directory Page
+    Then I open the first contact from contacts list
+    And I check if Vaccination Status is set to "Vaccinated" on Edit Contact page
+
+  @issue=SORDEV-7460 @env_main
+  Scenario: Test Extend the exposure and event startDate and endDate to include a startTime and endTime
+    Given API: I create a new person
+    Then API: I check that POST call body is "OK"
+    And API: I check that POST call status code is 200
+    Then API: I create a new contact
+    Then API: I check that POST call body is "OK"
+    And API: I check that POST call status code is 200
+    Given I log in with National User
+    When I click on the Contacts button from navbar
+    Then I open the last created contact
+    Then I click on the Epidemiological Data button tab in Contact form
+    And I click on Exposure details known with YES option
+    Then I click on New Entry in Exposure Details Known
+    And I set Start and End of activity by current date in Exposure form
+    And I select a Type of activity Work option in Exposure for Epidemiological data tab in Cases
+    And I click on SAVE button in Exposure form
+    And I collect the Date of Start and End Exposure from Exposure page
+    Then I check that Date field displays start date and end date in table Exposure on Epidemiological data tab
+
+  @issue=SORDEV-5613 @env_main
+  Scenario: Option to attach document like pdf, word, jpeg to contacts
+    When API: I create a new person
+    Then API: I check that POST call body is "OK"
+    And API: I check that POST call status code is 200
+    Then API: I create a new contact
+    Then API: I check that POST call body is "OK"
+    And API: I check that POST call status code is 200
+    Given I log in with National User
+    When I click on the Contacts button from navbar
+    Then I search after last created contact via API by name and uuid then open
+    Then I click on START DATA IMPORT button from New document in contact tab
+    And I upload pdf file to the contact
+    And I check if pdf file is available in contact documents
+    Then I download last updated document file from contact tab
+    And I check if pdf file for contact is downloaded correctly
+    Then I delete last uploaded document file from contact tab
+    And I check if last uploaded file was deleted from document files in contact tab
+    Then I click on START DATA IMPORT button from New document in contact tab
+    And I upload docx file to the contact
+    And I check if docx file is available in contact documents
+    Then I download last updated document file from contact tab
+    And I check if docx file for contact is downloaded correctly
+    Then I delete last uploaded document file from contact tab
+    And I check if last uploaded file was deleted from document files in contact tab
+    Then I click on START DATA IMPORT button from New document in contact tab
+    And I upload jpg file to the contact
+    And I check if jpg file is available in contact documents
+    Then I download last updated document file from contact tab
+    And I check if jpg file for contact is downloaded correctly
+    Then I delete last uploaded document file from contact tab
+    And I check if last uploaded file was deleted from document files in contact tab
+
+  @issue=SORDEV-10254 @env_main
+    Scenario: Manual archive Cases and Contacts
+    When API: I create a new person
+    Then API: I check that POST call body is "OK"
+    And API: I check that POST call status code is 200
+    Then API: I create a new case
+    Then API: I check that POST call body is "OK"
+    And API: I check that POST call status code is 200
+    Given I log in as a Admin User
+    When I open the Case Contacts tab of the created case via api
+    Then I click on new contact button from Case Contacts tab
+    Then I create a new contact from Cases Contacts tab
+    And I click on the Cases button from navbar
+    And I open the last created Case via API
+    Then I click on the Archive case button
+    Then I check the end of processing date in the archive popup and not select Archive contacts checkbox
+    And I check if Archive button changed name to De-Archive
+    Then I click on the Contacts button from navbar
+    When I choose Active contacts form combobox on Contact Directory Page
+    Then I filter by last created contact via api
+    Then I open the first contact from contacts list
+    And I check if Archive button changed name to Archive
+
+  @issue=SORDEV-9788 @env_de
+  Scenario: Test Hide country specific fields in the 'Person search option' pop-up in Contact directory
+    Given I log in with National User
+    And I click on the Contacts button from navbar
+    When I click on the NEW CONTACT button
+    And I click on the person search button in create new contact form
+    Then I check that National Health ID is not visible in Person search popup
+    And I check that Passport Number is not visible in Person search popup
+    And I check that Nickname is not visible in Person search popup
+    
+  @issue=SORDEV-9946 @env_de
+  Scenario: Test Hide country specific fields in the 'Pick or create person' form of the duplicate detection pop-up, in German and French systems
+    Given I log in as a Admin User
+    Then I click on the Contacts button from navbar
+    And I click on the NEW CONTACT button
+    And I fill a new contact form with same person data for DE version
+    And I click on SAVE new contact button
+    Then I click on the Contacts button from navbar
+    And I click on the NEW CONTACT button
+    And I fill a new contact form with same person data for DE version
+    And I click on SAVE new contact case button
+    And I check if National Health Id, Nickname and Passport number appear in Pick or create person popup
+
+  @issue=SORDEV-6434 @env_main
+  Scenario: Check if username shows up in visit origin
+    Given I log in with National User
+    And I click on the Contacts button from navbar
+    And I click on the NEW CONTACT button
+    And I fill a new contact form
+    And I click on SAVE new contact button
+    And I navigate to follow-up visits tab
+    When I click on new Visit button
+    And I create a new Visit with specific data
+    Then I check that username is displayed in the Visit Origin column
+
+  @issue=SORDEV-5563 @env_de
+  Scenario: Add contact person details to facilities contacts
+    Given I log in as a Admin User
+    Then I click on the Configuration button from navbar
+    And I navigate to facilities tab in Configuration
+    And I click on New Entry button in Facilities tab in Configuration
+    Then I set name, region and district in Facilities tab in Configuration
+    And I set Facility Category to "Medizinische Einrichtung" and Facility Type to "Krankenhaus" in Facilities tab in Configuration
+    And I set Facility Contact person first and last name with email address and phone number
+    Then I click on Save Button in new Facility form
+    And I click on the Contacts button from navbar
+    And I click on the NEW CONTACT button
+    And I fill a mandatory fields for a new contact form for DE
+    And I click on SAVE new contact button
+    Then I open Contact Person tab
+    And I set Region to "Voreingestellte Bundesländer" and District to "Voreingestellter Landkreis"
+    Then I set Facility Category to "Medizinische Einrichtung" and  Facility Type to "Krankenhaus"
+    And I set facility name to created facility
+    And I check if data for created facility is automatically imported to the correct fields in Case Person tab
+    And I click on save button from Edit Person page
+    Then I click on the Configuration button from navbar
+    And I navigate to facilities tab in Configuration
+    Then I search last created facility
+    Then I click on edit button for the last searched facility
+    And I archive facility
+
+  @env_main @#8565
+  Scenario: Check an archived contact if its read only
+    Given API: I create a new person
+    And API: I check that POST call body is "OK"
+    And API: I check that POST call status code is 200
+    Given API: I create a new case
+    Then API: I check that POST call body is "OK"
+    And API: I check that POST call status code is 200
+    Given API: I create a new contact
+    Then API: I check that POST call body is "OK"
+    And API: I check that POST call status code is 200
+    Then I log in as a Admin User
+    Then I open last edited contact by API via URL navigation
+    Then I click on the Archive contact button and confirm popup
+    Then I click on logout button from navbar
+    Then I log in with National User
+    Then I open last edited contact by API via URL navigation
+    Then I check if editable fields are read only for an archived contact
+
+  @env_main @issue=SORDEV-7453
+  Scenario: Check contacts order after contact edit
+    Given I log in as a National User
+    And I click on the Contacts button from navbar
+    And I click on the NEW CONTACT button
+    And I fill a new contact form
+    And I click on SAVE new contact button
+    And I click on the Contacts button from navbar
+    And I click on the NEW CONTACT button
+    And I fill a new contact form
+    And I click on SAVE new contact button
+    And I click on the Contacts button from navbar
+    Then I get two last contacts ID from cases list
+    And I open 2 contact in order from list
+    And I fill general comment in contact edit page with EDITED
+    And I click SAVE button on Edit Contact Page
+    And I click on the Contacts button from navbar
+    Then I compare previous first contact ID on the list with actually second contact ID on list
+
+  @issue=SORDEV-6461 @env_main
+  Scenario: Test the task type in the contact's new task form
+    Given I log in as a National User
+    Then I click on the Contacts button from navbar
+    And I open the first contact from contacts list
+    And I click on the NEW TASK button
+    And I check if New task form is displayed correctly
+    And I check that required fields are marked as mandatory
+    And I clear Due Date field in the New task form
+    And I click SAVE button on New Task form
+    Then I check that all required fields are mandatory in the New task form
+    When I close input data error popup in Contact Directory
+    And I check that values listed in the task type combobox are correct
+    And I choose Other task as described in comments option from task type combobox in the New task form
+    Then I check that Comments on task field is mandatory in the New task form
+
+  @issue=SORDEV-6609 @env_main
+  Scenario: Test for contact internal token
+    Given I log in as a National User
+    And I click on the Contacts button from navbar
+    And I click on the NEW CONTACT button
+    And I fill a new contact form
+    And I click on SAVE new contact button
+    When I fill in the Internal Token field in Edit Case page with SAMPLE TOKEN
+    And I click on save button in the case popup
+    And I click on the Contacts button from navbar
+    And I check that the Internal Token column is present
+    And I filter for SAMPLE TOKEN in Contacts Directory
+    Then I check that at least one SAMPLE TOKEN is displayed in table
+
+  @issue=SORDEV-6102 @env_main
+  Scenario: Merge duplicate contacts
+    Then API: I create a new person
+    And API: I check that POST call body is "OK"
+    And API: I check that POST call status code is 200
+    Then API: I create a new case
+    Then API: I check that POST call body is "OK"
+    And API: I check that POST call status code is 200
+    Given I log in as a Admin User
+    And I click on the Contacts button from navbar
+    And I click on the NEW CONTACT button
+    When I fill a new contact form for duplicated contact with same person data
+    And I click on SAVE button in create contact form
+    And I click on the CHOOSE SOURCE CASE button from CONTACT page
+    And I click yes on the DISCARD UNSAVED CHANGES popup from CONTACT page
+    And I search for the last case uuid created via Api in the CHOOSE SOURCE Contact window
+    And I open the first found result in the CHOOSE SOURCE window
+    Then I click SAVE button on Edit Contact Page
+    Then I click on the Contacts button from navbar
+    And I click on the NEW CONTACT button
+    When I fill a new contact form for duplicated contact with same person data
+    And I click on SAVE button in create contact form
+    And I Pick a new person in Pick or create person popup during contact creation
+    When I check the created data for duplicated contact is correctly displayed on Edit Contact page
+    And I click on the CHOOSE SOURCE CASE button from CONTACT page
+    And I click yes on the DISCARD UNSAVED CHANGES popup from CONTACT page
+    And I search for the last case uuid created via Api in the CHOOSE SOURCE Contact window
+    And I open the first found result in the CHOOSE SOURCE window
+    Then I click SAVE button on Edit Contact Page
+    And I click on the Contacts button from navbar
+    And I click on the More button on Contact directory page
+    Then I click on Merge Duplicates on Contact directory page
+    And I click on Merge button of leading case in Merge Duplicate Contact page
+    Then I click to Confirm action in Merge Duplicates Cases popup
+    And I click on the Contacts button from navbar
+    And I apply filter by duplicated contact Person data on Contact Directory Page
+    And I check that number of displayed contact results is 1
+
+  @issue=SORDEV-11451 @env_main
+  Scenario: Add reason for deletion to confirmation dialogue
+    Given I log in as a Admin User
+    When I click on the Contacts button from navbar
+    And I click on the NEW CONTACT button
+    And I fill a new contact form
+    And I click on SAVE new contact button
+    And I copy url of current contact
+    Then I click on Delete button from contact
+    And I check if reason for deletion as "Deletion request by affected person according to GDPR" is available
+    And I check if reason for deletion as "Deletion request by another authority" is available
+    And I check if reason for deletion as "Entity created without legal reason" is available
+    And I check if reason for deletion as "Responsibility transferred to another authority" is available
+    And I check if reason for deletion as "Deletion of duplicate entries" is available
+    And I check if reason for deletion as "Other reason" is available
+    Then I click on No option in Confirm deletion popup
+    Then I click on Delete button from contact
+    And I click on Yes option in Confirm deletion popup
+    Then I check if exclamation mark with message "Please choose a reason for deletion" appears next to Reason for deletion
+    When I set Reason for deletion as "Other reason"
+    Then I check if "Reason for deletion details" field is available in Confirm deletion popup in Immunization
+    And I click on Yes option in Confirm deletion popup
+    Then I check if exclamation mark with message "Please add a reason for deletion" appears next to Reason for deletion
+    Then I click on No option in Confirm deletion popup
+    Then I click on Delete button from contact
+    And I set Reason for deletion as "Deletion request by affected person according to GDPR"
+    And I click on Yes option in Confirm deletion popup
+    When I back to deleted contact by url
+    Then I check if reason of deletion is set to "Deletion request by affected person according to GDPR"
+    And I check if External token input on case edit page is disabled
+    And I check if Case or event information text area on case edit page is disabled
+
+  @issue=SORDEV-11451 @env_de
+  Scenario: Add reason for deletion to confirmation dialogue for DE version
+    Given I log in as a Admin User
+    When I click on the Contacts button from navbar
+    And I click on the NEW CONTACT button
+    And I fill a new contact form for DE version without multicontact
+    And I click on SAVE new contact button
+    And I copy url of current contact
+    Then I click on Delete button from contact
+    And I check if reason for deletion as "Löschen auf Anforderung der betroffenen Person nach DSGVO" is available
+    And I check if reason for deletion as "Löschen auf Anforderung einer anderen Behörde" is available
+    And I check if reason for deletion as "Entität ohne Rechtsgrund angelegt" is available
+    And I check if reason for deletion as "Abgabe des Vorgangs wegen Nicht-Zuständigkeit" is available
+    And I check if reason for deletion as "Löschen von Duplikaten" is available
+    And I check if reason for deletion as "Anderer Grund" is available
+    Then I click on No option in Confirm deletion popup
+    Then I click on Delete button from contact
+    And I click on Yes option in Confirm deletion popup
+    Then I check if exclamation mark with message "Bitte wählen Sie einen Grund fürs Löschen" appears next to Reason for deletion
+    When I set Reason for deletion as "Anderer Grund"
+    Then I check if "DETAILS ZUM GRUND DES LÖSCHENS" field is available in Confirm deletion popup in Immunization
+    And I click on Yes option in Confirm deletion popup
+    Then I check if exclamation mark with message "Bitte geben Sie einen Grund fürs Löschen an" appears next to Reason for deletion
+    Then I click on No option in Confirm deletion popup
+    Then I click on Delete button from contact
+    And I set Reason for deletion as "Löschen auf Anforderung der betroffenen Person nach DSGVO"
+    And I click on Yes option in Confirm deletion popup
+    When I back to deleted contact by url
+    Then I check if reason of deletion is set to "Löschen auf Anforderung der betroffenen Person nach DSGVO"
+    And I check if External token input on case edit page is disabled
+    And I check if Case or event information text area on case edit page is disabled

@@ -204,8 +204,8 @@ public class PathogenTestController {
 		Window popupWindow = VaadinUiUtil.createPopupWindow();
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.PATHOGEN_TEST_DELETE)) {
-			editView.addDeleteListener(() -> {
-				FacadeProvider.getPathogenTestFacade().deletePathogenTest(pathogenTestUuid);
+			editView.addDeleteWithReasonListener((deleteDetails) -> {
+				FacadeProvider.getPathogenTestFacade().deletePathogenTest(pathogenTestUuid, deleteDetails);
 				UI.getCurrent().removeWindow(popupWindow);
 				doneCallback.run();
 			}, I18nProperties.getCaption(PathogenTestDto.I18N_PREFIX));
@@ -286,6 +286,7 @@ public class PathogenTestController {
 		BiConsumer<PathogenTestDto, Runnable> onSavedPathogenTest,
 		boolean suppressSampleResultUpdatePopup,
 		boolean suppressNavigateToCase) {
+
 		PathogenTestDto savedDto = facade.savePathogenTest(dto);
 //		facade.savePathogenTest(dto);
 		final SampleDto sample = FacadeProvider.getSampleFacade().getSampleByUuid(dto.getSample().getUuid());
@@ -309,6 +310,10 @@ public class PathogenTestController {
 		CaseReferenceDto associatedCase,
 		boolean suppressSampleResultUpdatePopup,
 		boolean suppressNavigateToCase) {
+
+		if (!UserProvider.getCurrent().hasUserRight(UserRight.CASE_EDIT)) {
+			return;
+		}
 
 		// Negative test result AND test result verified
 		// a) Tested disease == case disease AND test result != sample pathogen test result: Ask user whether to update the sample pathogen test result
@@ -363,6 +368,10 @@ public class PathogenTestController {
 		ContactReferenceDto associatedContact,
 		boolean suppressSampleResultUpdatePopup) {
 
+		if (!UserProvider.getCurrent().hasUserRight(UserRight.CONTACT_EDIT)) {
+			return;
+		}
+
 		// Negative test result AND test result verified
 		// a) Tested disease == contact disease AND test result != sample pathogen test result: Ask user whether to update the sample pathogen test result
 		// b) Tested disease != contact disease: Do nothing
@@ -411,6 +420,10 @@ public class PathogenTestController {
 		BiConsumer<PathogenTestDto, Runnable> onSavedPathogenTest,
 		EventParticipantReferenceDto associatedEventParticipant,
 		boolean suppressSampleResultUpdatePopup) {
+
+		if (!UserProvider.getCurrent().hasUserRight(UserRight.EVENTPARTICIPANT_EDIT)) {
+			return;
+		}
 
 		// Negative test result AND test result verified
 		// a) Tested disease == event disease AND test result != sample pathogen test result: Ask user whether to update the sample pathogen test result

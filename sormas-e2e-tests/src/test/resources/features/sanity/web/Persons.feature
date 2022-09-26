@@ -140,31 +140,20 @@ Feature: Edit Persons
     Then I navigate to the last created via api Person page via URL
 
   @issue=SORDEV-8467 @env_main
-  Scenario: Test for columns in Person directory
+  Scenario: Test column structure in Person directory
     Given I log in with National User
     And I click on the Persons button from navbar
     Then I check that the Person table structure is correct
-    When I click the header of column 1 in Person directory
-    Then I check that column 1 is sorted in ascending order
-    And I check that an upwards arrow appears in the header of column 1
-    When I click the header of column 1 in Person directory
-    And I check that column 1 is sorted in descending order
-    Then I check that a downwards arrow appears in the header of column 1
-    When I click the header of column 2 in Person directory
-    Then I check that column 2 is sorted in ascending order
-    And I check that an upwards arrow appears in the header of column 2
-    When I click the header of column 2 in Person directory
-    And I check that column 2 is sorted in descending order
-    Then I check that a downwards arrow appears in the header of column 2
-    When I click the header of column 3 in Person directory
-    Then I check that column 3 is sorted in ascending order
-    And I check that an upwards arrow appears in the header of column 3
-    When I click the header of column 3 in Person directory
-    And I check that column 3 is sorted in descending order
-    Then I check that a downwards arrow appears in the header of column 3
-    When I click the header of column 5 in Person directory
-    Then I check that column 5 is sorted in ascending order
-    And I check that an upwards arrow appears in the header of column 5
-    When I click the header of column 5 in Person directory
-    And I check that column 5 is sorted in descending order
-    Then I check that a downwards arrow appears in the header of column 5
+
+
+  @issue=SORDEV-7424 @env_main
+  Scenario: Test event participant person sex required
+    Given API: I create a new event
+    Then API: I check that POST call body is "OK"
+    And API: I check that POST call status code is 200
+    When I log in with National User
+    And I click on the Events button from navbar
+    And I navigate to the last created through API Event page via URL
+    And I click on the Event participant tab
+    And I add only first and last name data and check is sex combobox required for event participant creation
+    When I check if error display correctly expecting sex error

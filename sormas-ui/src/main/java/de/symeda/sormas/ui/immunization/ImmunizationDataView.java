@@ -37,7 +37,7 @@ public class ImmunizationDataView extends AbstractImmunizationView {
 
 		ImmunizationDto immunization = FacadeProvider.getImmunizationFacade().getByUuid(getReference().getUuid());
 
-		editComponent = ControllerProvider.getImmunizationController().getImmunizationDataEditComponent(immunization);
+		editComponent = ControllerProvider.getImmunizationController().getImmunizationDataEditComponent(immunization, this::showUnsavedChangesPopup);
 
 		DetailSubComponentWrapper container = new DetailSubComponentWrapper(() -> editComponent);
 		container.setWidth(100, Unit.PERCENTAGE);
@@ -61,7 +61,7 @@ public class ImmunizationDataView extends AbstractImmunizationView {
 			layout.addComponent(sormasToSormasLocLayout, SORMAS_TO_SORMAS_LOC);
 		}
 
-		EditPermissionType immunizationEditAllowed = FacadeProvider.getImmunizationFacade().isImmunizationEditAllowed(immunization.getUuid());
+		EditPermissionType immunizationEditAllowed = FacadeProvider.getImmunizationFacade().isEditAllowed(immunization.getUuid());
 
 		if (immunizationEditAllowed.equals(EditPermissionType.ARCHIVING_STATUS_ONLY)) {
 			layout.disable(ArchivingController.ARCHIVE_DEARCHIVE_BUTTON_ID);

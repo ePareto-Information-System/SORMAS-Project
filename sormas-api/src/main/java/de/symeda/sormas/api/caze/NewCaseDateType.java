@@ -36,6 +36,7 @@ public enum NewCaseDateType
 	INVESTIGATION;
 	//LAST_TEST_RESULT;
 
+	@Override
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);
 	}

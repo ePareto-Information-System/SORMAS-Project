@@ -34,12 +34,12 @@ import de.symeda.sormas.api.CoreFacade;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EditPermissionType;
 import de.symeda.sormas.api.Language;
+import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
 import de.symeda.sormas.api.externaldata.ExternalDataDto;
 import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
-import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolException;
 import de.symeda.sormas.api.followup.FollowUpPeriodDto;
 import de.symeda.sormas.api.importexport.ExportConfigurationDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictDto;
@@ -95,6 +95,8 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 
 	CaseDataDto getCaseDataByUuid(String uuid);
 
+	CaseDataDto updateFollowUpComment(@Valid @NotNull CaseDataDto dto) throws ValidationRuntimeException;
+
 	CaseDataDto save(@Valid @NotNull CaseDataDto dto, boolean systemSave) throws ValidationRuntimeException;
 
 	CoreAndPersonDto<CaseDataDto> save(@Valid @NotNull CoreAndPersonDto<CaseDataDto> dto) throws ValidationRuntimeException;
@@ -104,8 +106,6 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 	void setSampleAssociations(EventParticipantReferenceDto sourceEventParticipant, CaseReferenceDto cazeRef);
 
 	void setSampleAssociationsUnrelatedDisease(EventParticipantReferenceDto sourceEventParticipant, CaseReferenceDto cazeRef);
-
-	void validate(CaseDataDto dto) throws ValidationRuntimeException;
 
 	List<String> getAllActiveUuids();
 
@@ -133,11 +133,11 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 
 	List<CaseDataDto> getAllCasesOfPerson(String personUuid);
 
-	List<String> deleteCases(List<String> caseUuids);
+	List<String> deleteCases(List<String> caseUuids, DeletionDetails deletionDetails);
 
-	void deleteWithContacts(String caseUuid);
+	void deleteWithContacts(String caseUuid, DeletionDetails deletionDetails);
 
-	void deleteCaseAsDuplicate(String caseUuid, String duplicateOfCaseUuid) throws ExternalSurveillanceToolException;
+	void deleteCaseAsDuplicate(String caseUuid, String duplicateOfCaseUuid);
 
 	Date getOldestCaseOnsetDate();
 
@@ -174,8 +174,6 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 	List<CaseReferenceDto> getRandomCaseReferences(CaseCriteria criteria, int count, Random randomGenerator);
 
 	FollowUpPeriodDto calculateFollowUpUntilDate(CaseDataDto caseDto, boolean ignoreOverwrite);
-
-	EditPermissionType isCaseEditAllowed(String caseUuid);
 
 	List<CaseFollowUpDto> getCaseFollowUpList(
 		CaseCriteria caseCriteria,
@@ -239,4 +237,5 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 	void dearchive(List<String> entityUuids, String dearchiveReason, boolean includeContacts);
 
 	void setResultingCase(EventParticipantReferenceDto eventParticipantReferenceDto, CaseReferenceDto caseReferenceDto);
+	EditPermissionType isEditContactAllowed(String uuid);
 }
