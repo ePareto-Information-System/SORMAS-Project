@@ -134,11 +134,6 @@ public class PathogenTestDto extends PseudonymizableDto {
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
 	private String otherDeletionReason;
 
-	private boolean deleted;
-	private DeletionReason deletionReason;
-	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
-	private String otherDeletionReason;
-
 	public static PathogenTestDto build(SampleDto sample, UserDto currentUser) {
 
 		PathogenTestDto pathogenTest = new PathogenTestDto();
