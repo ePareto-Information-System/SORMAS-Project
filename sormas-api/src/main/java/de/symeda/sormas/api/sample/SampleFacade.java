@@ -20,6 +20,7 @@ package de.symeda.sormas.api.sample;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Remote;
 import javax.validation.Valid;
@@ -69,7 +70,7 @@ public interface SampleFacade {
 	List<SampleDto> findBy(SampleCriteria criteria);
 
 	void deleteSample(SampleReferenceDto sampleRef);
-	
+
 	void deleteSample(SampleReferenceDto sampleRef, DeletionDetails deletionDetails);
 
 	void deleteAllSamples(List<String> sampleUuids, DeletionDetails deletionDetails);
