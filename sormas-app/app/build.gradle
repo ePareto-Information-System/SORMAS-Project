@@ -84,6 +84,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'androidx.core:core:1.8.0'
     def lifecycle_version = "2.2.0"
     def paging_version = "3.0.1"
 
