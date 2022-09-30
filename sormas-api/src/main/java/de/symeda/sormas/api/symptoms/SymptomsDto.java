@@ -976,31 +976,23 @@ public class SymptomsDto extends PseudonymizableDto {
 		MONKEYPOX })
 	@DependantOn(RASHES)
 	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
-	@HideForCountries
-	@SymptomGrouping(SymptomGroup.SKIN)
 	private SymptomState lesionsResembleImg1;
 	@Diseases({
 		MONKEYPOX })
 	@DependantOn(RASHES)
 	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
-	@HideForCountries
-	@SymptomGrouping(SymptomGroup.SKIN)
 	private SymptomState lesionsResembleImg2;
 
 	@Diseases({
 		MONKEYPOX })
 	@DependantOn(RASHES)
 	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
-	@HideForCountries
-	@SymptomGrouping(SymptomGroup.SKIN)
 	private SymptomState lesionsResembleImg3;
 
 	@Diseases({
 		MONKEYPOX })
 	@DependantOn(RASHES)
 	@SymptomGrouping(SymptomGroup.RASH_CHARACTERISTICS)
-	@HideForCountries
-	@SymptomGrouping(SymptomGroup.SKIN)
 	private SymptomState lesionsResembleImg4;
 
 	@Diseases({
