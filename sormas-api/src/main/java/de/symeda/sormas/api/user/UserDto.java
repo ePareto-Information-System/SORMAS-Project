@@ -17,6 +17,7 @@
  *******************************************************************************/
 package de.symeda.sormas.api.user;
 
+import java.util.Collections;
 import java.util.Set;
 
 import javax.validation.Valid;
@@ -85,7 +86,9 @@ public class UserDto extends EntityDto {
 	@Valid
 	private LocationDto address;
 
-	private Set<UserRoleReferenceDto> userRoles;
+	private Set<DefaultUserRole> defaultUserRoles;
+
+	private Set<UserRoleReferenceDto> userRoles = Collections.emptySet();
 
 	private RegionReferenceDto region;
 	private DistrictReferenceDto district;
@@ -173,6 +176,14 @@ public class UserDto extends EntityDto {
 
 	public void setAddress(LocationDto address) {
 		this.address = address;
+	}
+
+	public Set<DefaultUserRole> getDefaultUserRoles() {
+		return defaultUserRoles;
+	}
+
+	public void setDefaultUserRoles(Set<DefaultUserRole> defaultUserRoles) {
+		this.defaultUserRoles = defaultUserRoles;
 	}
 
 	public Set<UserRoleReferenceDto> getUserRoles() {
