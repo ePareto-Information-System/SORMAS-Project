@@ -60,7 +60,7 @@ public class UserProvider {
 		return user;
 	}
 
-	public boolean hasUserRole(UserRole userRole) {
+	public boolean hasUserRole(DefaultUserRole userRole) {
 		return getUser().getUserRoles().contains(userRole);
 	}
 
@@ -104,7 +104,7 @@ public class UserProvider {
 	}
 
 	public boolean isAdmin() {
-		return (user.getUserRoles().stream().filter(i->i.getCaption().contains(I18nProperties.getEnumCaption(DefaultUserRole.ADMIN))).count() == 1);
+		return (user.getUserRoles().stream().filter(i -> i.getCaption().contains(I18nProperties.getEnumCaption(DefaultUserRole.ADMIN))).count() == 1);
 	}
 
 	public boolean hasRegionJurisdictionLevel() {
@@ -170,10 +170,12 @@ public class UserProvider {
 	/**
 	 * Checks if the User possesses any of the specified userRoles
 	 */
-	public boolean hasAnyUserRole(UserRole... userRoles) {
-		Set<UserRole> currentUserRoles = getUser().getUserRoles();
+	public boolean hasAnyUserRole(UserRight... userRoles) {
+//		return getUserRights().contains(Arrays.asList(userRights));
+		Set<UserRight> currentUserRoles = getUserRights();
 		return Arrays.stream(userRoles).anyMatch(currentUserRoles::contains);
 	}
+
 	public boolean isPortHealthUser() {
 		if (portHealthUser == null) {
 			portHealthUser = FacadeProvider.getUserRoleFacade().isPortHealthUser(getUserRoles());

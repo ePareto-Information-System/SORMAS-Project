@@ -74,8 +74,9 @@ import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
+import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
-import de.symeda.sormas.api.user.UserRole;
+import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DataHelper.Pair;
 import de.symeda.sormas.ui.ControllerProvider;
@@ -175,7 +176,7 @@ public class DashboardMapComponent extends VerticalLayout {
 			GeoShapeProvider geoShapeProvider = FacadeProvider.getGeoShapeProvider();
 
 			final GeoLatLon mapCenter;
-			if (UserProvider.getCurrent().hasAnyUserRole(UserRole.NATIONAL_USER, UserRole.NATIONAL_CLINICIAN, UserRole.NATIONAL_OBSERVER)) {
+			if (UserProvider.getCurrent().hasAnyUserRole(UserRight.CASE_VIEW, UserRight.CONTACT_VIEW, UserRight.DASHBOARD_SURVEILLANCE_VIEW)) {
 				mapCenter = geoShapeProvider.getCenterOfAllRegions();
 
 			} else {
@@ -235,7 +236,7 @@ public class DashboardMapComponent extends VerticalLayout {
 			GeoShapeProvider geoShapeProvider = FacadeProvider.getGeoShapeProvider();
 
 			final GeoLatLon mapCenter;
-			if (UserProvider.getCurrent().hasAnyUserRole(UserRole.NATIONAL_USER, UserRole.NATIONAL_CLINICIAN, UserRole.NATIONAL_OBSERVER)) {
+			if (UserProvider.getCurrent().hasAnyUserRole(UserRight.CASE_VIEW, UserRight.CONTACT_VIEW, UserRight.DASHBOARD_SURVEILLANCE_VIEW)) {
 				mapCenter = geoShapeProvider.getCenterOfAllRegions();
 
 			} else {
@@ -296,7 +297,7 @@ public class DashboardMapComponent extends VerticalLayout {
 			GeoShapeProvider geoShapeProvider = FacadeProvider.getGeoShapeProvider();
 
 			final GeoLatLon mapCenter;
-			if (UserProvider.getCurrent().hasAnyUserRole(UserRole.NATIONAL_USER, UserRole.NATIONAL_CLINICIAN, UserRole.NATIONAL_OBSERVER)) {
+			if (UserProvider.getCurrent().hasAnyUserRole(UserRight.CASE_VIEW, UserRight.CONTACT_VIEW, UserRight.DASHBOARD_SURVEILLANCE_VIEW)) {
 				mapCenter = geoShapeProvider.getCenterOfAllRegions();
 
 			} else {
@@ -381,33 +382,34 @@ public class DashboardMapComponent extends VerticalLayout {
 
 				null, //singleCaseDataDto.getAddressLat
 				null, //singleCaseDataDto.getAddressLon
-				true
-			);
+				true);
 
-			/*MapCaseDto mapCase = new MapCaseDto(
-					singleCaseDataDto.getUuid(),
-					singleCaseDataDto.getReportDate(),
-					singleCaseDataDto.getCaseClassification(),
-					singleCaseDataDto.getDisease(),
-					singleCaseDataDto.getPerson().getUuid(),
-					singleCaseDataDto.getPerson().getFirstName(),
-					singleCaseDataDto.getPerson().getLastName(),
-					singleCaseDataDto.getHealthFacility().getUuid(),
-					null, //singleCaseDataDto.healthFacilityLat(),
-					null, //singleCaseDataDto.healthFacilityLon(),
-					singleCaseDataDto.getReportLat(),
-					singleCaseDataDto.getReportLon(),
-					null, //singleCaseDataDto.getAddressLat
-					null, //singleCaseDataDto.getAddressLon
-					null, //singleCaseDataDto.getReportingUser().getUuid(),
-					null, //singleCaseDataDto.getResponsibleRegion().getUuid(),
-					null, //singleCaseDataDto.getResponsibleDistrict().getUuid(),
-					null, //singleCaseDataDto.getResponsibleCommunity().getUuid(),
-					null, //singleCaseDataDto.getRegion().getUuid(),
-					null, //singleCaseDataDto.getDistrict().getUuid(),
-					null, //singleCaseDataDto.getCommunity().getUuid(),
-					null //singleCaseDataDto.getPointOfEntry().getUuid()
-			);*/
+			/*
+			 * MapCaseDto mapCase = new MapCaseDto(
+			 * singleCaseDataDto.getUuid(),
+			 * singleCaseDataDto.getReportDate(),
+			 * singleCaseDataDto.getCaseClassification(),
+			 * singleCaseDataDto.getDisease(),
+			 * singleCaseDataDto.getPerson().getUuid(),
+			 * singleCaseDataDto.getPerson().getFirstName(),
+			 * singleCaseDataDto.getPerson().getLastName(),
+			 * singleCaseDataDto.getHealthFacility().getUuid(),
+			 * null, //singleCaseDataDto.healthFacilityLat(),
+			 * null, //singleCaseDataDto.healthFacilityLon(),
+			 * singleCaseDataDto.getReportLat(),
+			 * singleCaseDataDto.getReportLon(),
+			 * null, //singleCaseDataDto.getAddressLat
+			 * null, //singleCaseDataDto.getAddressLon
+			 * null, //singleCaseDataDto.getReportingUser().getUuid(),
+			 * null, //singleCaseDataDto.getResponsibleRegion().getUuid(),
+			 * null, //singleCaseDataDto.getResponsibleDistrict().getUuid(),
+			 * null, //singleCaseDataDto.getResponsibleCommunity().getUuid(),
+			 * null, //singleCaseDataDto.getRegion().getUuid(),
+			 * null, //singleCaseDataDto.getDistrict().getUuid(),
+			 * null, //singleCaseDataDto.getCommunity().getUuid(),
+			 * null //singleCaseDataDto.getPointOfEntry().getUuid()
+			 * );
+			 */
 
 			List<MapCaseDto> caseDtos = new ArrayList<>();
 			caseDtos.add(mapCase);
@@ -519,9 +521,9 @@ public class DashboardMapComponent extends VerticalLayout {
 				layersLayout.addComponent(mapCaseDisplayModeSelect);
 				mapCaseDisplayModeSelect.setEnabled(showCases);
 
-				if (UserProvider.getCurrent().hasUserRole(UserRole.NATIONAL_USER)
-					|| UserProvider.getCurrent().hasUserRole(UserRole.NATIONAL_CLINICIAN)
-					|| UserProvider.getCurrent().hasUserRole(UserRole.NATIONAL_OBSERVER)) {
+				if (UserProvider.getCurrent().hasUserRole(DefaultUserRole.NATIONAL_USER)
+					|| UserProvider.getCurrent().hasUserRole(DefaultUserRole.NATIONAL_CLINICIAN)
+					|| UserProvider.getCurrent().hasUserRole(DefaultUserRole.NATIONAL_OBSERVER)) {
 					OptionGroup regionMapVisualizationSelect = new OptionGroup();
 					regionMapVisualizationSelect.setWidth(100, Unit.PERCENTAGE);
 					regionMapVisualizationSelect.addItems((Object[]) CaseMeasure.values());

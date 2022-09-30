@@ -34,8 +34,8 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SamplePurpose;
 import de.symeda.sormas.api.sample.SampleReferenceDto;
+import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UiUtil;
@@ -186,7 +186,7 @@ public class SampleDataView extends AbstractSampleView {
 		layout.addComponent(additionalTestList, ADDITIONAL_TESTS_LOC);
 //		}
 
-		if (UserProvider.getCurrent().hasUserRole(UserRole.ADMIN)) {
+		if (UserProvider.getCurrent().hasUserRole(DefaultUserRole.ADMIN)) {
 			EntityAuditLogComponent userActivityList = new EntityAuditLogComponent(SampleDto.class, getSampleRef().getUuid());
 			userActivityList.addStyleName(CssStyles.SIDE_COMPONENT);
 			layout.addComponent(userActivityList, USER_ACTIVITY_LOG_LOC);
