@@ -24,18 +24,14 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
-import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
-import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityHelper;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
-import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.utils.DateFormatHelper;
 import de.symeda.sormas.api.utils.EmbeddedPersonalData;
 import de.symeda.sormas.api.utils.EmbeddedSensitiveData;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableIndexDto;
 import de.symeda.sormas.api.utils.pseudonymization.Pseudonymizer;
 import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.EmptyValuePseudonymizer;
-import org.apache.commons.lang3.StringUtils;
 
 public class SampleIndexDto extends PseudonymizableIndexDto implements Serializable {
 
@@ -67,6 +63,7 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 	public static final String ADDITIONAL_TESTING_STATUS = "additionalTestingStatus";
 	public static final String PATHOGEN_TEST_COUNT = "pathogenTestCount";
 
+	private String uuid;
 	@EmbeddedPersonalData
 	@EmbeddedSensitiveData
 	@Pseudonymizer(EmptyValuePseudonymizer.class)
@@ -196,21 +193,21 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 		}
 		if (associatedContactUuid != null) {
 			this.associatedContact =
-					new ContactReferenceDto(associatedContactUuid, associatedContactFirstName, associatedContactLastName, null, null);
+				new ContactReferenceDto(associatedContactUuid, associatedContactFirstName, associatedContactLastName, null, null);
 		}
 		if (associatedEventParticipantUuid != null) {
 			this.associatedEventParticipant = new EventParticipantReferenceDto(
-					associatedEventParticipantUuid,
-					associatedEventParticipantFirstName,
-					associatedEventParticipantLastName);
+				associatedEventParticipantUuid,
+				associatedEventParticipantFirstName,
+				associatedEventParticipantLastName);
 		}
 		this.pathogenTestCount = pathogenTestCount;
 		this.sampleJurisdictionFlagsDto = new SampleJurisdictionFlagsDto(
-				isInJurisdiction,
-				isCaseInJurisdiction,
-				isContactInJurisdiction,
-				isContactCaseInJurisdiction,
-				isEventParticipantInJurisdiction);
+			isInJurisdiction,
+			isCaseInJurisdiction,
+			isContactInJurisdiction,
+			isContactCaseInJurisdiction,
+			isEventParticipantInJurisdiction);
 
 		this.additionalTest = additionalTest;
 		this.epidNumber = epidNumber;
@@ -231,8 +228,8 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 		this.specimenCondition = specimenCondition;
 		this.pathogenTestResult = pathogenTestResult;
 		this.additionalTestingStatus = Boolean.TRUE.equals(additionalTestPerformed)
-				? AdditionalTestingStatus.PERFORMED
-				: (Boolean.TRUE.equals(additionalTestingRequested) ? AdditionalTestingStatus.REQUESTED : AdditionalTestingStatus.NOT_REQUESTED);
+			? AdditionalTestingStatus.PERFORMED
+			: (Boolean.TRUE.equals(additionalTestingRequested) ? AdditionalTestingStatus.REQUESTED : AdditionalTestingStatus.NOT_REQUESTED);
 		this.samplingReason = samplingReason;
 		this.samplingReasonDetails = samplingReasonDetails;
 		this.district = district;
@@ -302,11 +299,11 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 	public void setLabSampleID(String labSampleID) {
 		this.labSampleID = labSampleID;
 	}
-	
+
 	public String getFieldSampleID() {
 		return fieldSampleID;
 	}
-	
+
 	public void setFieldSampleID(String fieldSampleID) {
 		this.fieldSampleID = fieldSampleID;
 	}
