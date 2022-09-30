@@ -776,10 +776,10 @@ public class StartupShutdownService {
 						.executeUpdate();
 				}
 				break;
-			case 460:
+			case 464:
 				fillDefaultUserRoles();
 				break;
-			case 463:
+			case 467:
 				List<User> usersWithoutUserRoles =
 					userService.getAll().stream().filter(user -> user.getUserRoles().isEmpty()).collect(Collectors.toList());
 				if (!usersWithoutUserRoles.isEmpty()) {
@@ -795,14 +795,14 @@ public class StartupShutdownService {
 					}
 				}
 				break;
-			case 469:
+			case 473:
 				UserRole userRole = userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.COMMUNITY_INFORMANT));
 				if (userRole != null) {
 					userRole.getUserRights().removeIf(userRight -> userRight == UserRight.DASHBOARD_CAMPAIGNS_VIEW);
 					userRoleService.ensurePersisted(userRole);
 				}
 				break;
-			case 471:
+			case 475:
 				// Hacky solution because it's possible that the user role has been re-configured in the meantime; #9645 will make sure that
 				// default user roles are not changed.
 				userRole = userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.EXTERNAL_LAB_USER));

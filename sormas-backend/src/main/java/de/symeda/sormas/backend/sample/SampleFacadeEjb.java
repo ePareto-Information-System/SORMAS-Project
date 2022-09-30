@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -220,6 +221,11 @@ public class SampleFacadeEjb implements SampleFacade {
 
 		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
 		return sampleService.findBy(criteria, user).stream().map(c -> convertToDto(c, pseudonymizer)).collect(Collectors.toList());
+	}
+
+	@Override
+	public void deleteSample(SampleReferenceDto sampleRef) {
+		return;
 	}
 
 	@Override
@@ -434,22 +440,18 @@ public class SampleFacadeEjb implements SampleFacade {
 
 		return sampleService.findBy(criteria, userService.getCurrentUser(), AbstractDomainObject.CREATION_DATE, false)
 			.stream()
-			.collect(
-				Collectors.toMap(
-					s -> associatedObjectFn.apply(s).getUuid(),
-					s -> s,
-					(s1, s2) -> {
+			.collect(Collectors.toMap(s -> associatedObjectFn.apply(s).getUuid(), s -> s, (s1, s2) -> {
 
-						// keep the positive one
-						if (s1.getPathogenTestResult() == PathogenTestResultType.POSITIVE) {
-							return s1;
-						} else if (s2.getPathogenTestResult() == PathogenTestResultType.POSITIVE) {
-							return s2;
-						}
+				// keep the positive one
+				if (s1.getPathogenTestResult() == PathogenTestResultType.POSITIVE) {
+					return s1;
+				} else if (s2.getPathogenTestResult() == PathogenTestResultType.POSITIVE) {
+					return s2;
+				}
 
-						// ordered by creation date by default, so always keep the first one
-						return s1;
-					}))
+				// ordered by creation date by default, so always keep the first one
+				return s1;
+			}))
 			.values()
 			.stream()
 			.map(s -> convertToDto(s, pseudonymizer))

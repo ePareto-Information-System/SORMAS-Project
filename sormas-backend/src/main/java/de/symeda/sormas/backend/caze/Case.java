@@ -120,7 +120,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public static final String EPIDEMIOLOGICAL_CONFIRMATION = "epidemiologicalConfirmation";
 	public static final String LABORATORY_DIAGNOSTIC_CONFIRMATION = "laboratoryDiagnosticConfirmation";
 	public static final String SYSTEM_CASE_CLASSIFICATION = "systemCaseClassification";
-	public static final String CLASSIFICATION_DATE = "classificationDate";
 	public static final String INVESTIGATION_STATUS = "investigationStatus";
 	public static final String PERSON = "person";
 	public static final String PERSON_ID = "personId";
@@ -1449,7 +1448,8 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public Integer getCaseIdIsm() {
 		return caseIdIsm;
 	}
-		public String getSpecifyOtherOutcome() {
+
+	public String getSpecifyOtherOutcome() {
 		return specifyOtherOutcome;
 	}
 
@@ -1685,7 +1685,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public void setSormasToSormasShares(List<SormasToSormasShareInfo> sormasToSormasShares) {
 		this.sormasToSormasShares = sormasToSormasShares;
 	}
-	
+
 	@Enumerated(EnumType.STRING)
 	public TransmissionClassification getCaseTransmissionClassification() {
 		return caseTransmissionClassification;
@@ -1694,6 +1694,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public void setCaseTransmissionClassification(TransmissionClassification caseTransmissionClassification) {
 		this.caseTransmissionClassification = caseTransmissionClassification;
 	}
+
 	@OneToMany(mappedBy = ExternalShareInfo.CAZE, fetch = FetchType.LAZY)
 	public List<ExternalShareInfo> getExternalShares() {
 		return externalShares;

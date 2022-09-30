@@ -11676,7 +11676,7 @@ ALTER TABLE pathogentest ADD COLUMN  otherdeletionreason text;
 ALTER TABLE pathogentest_history ADD COLUMN  deletionreason varchar(255);
 ALTER TABLE pathogentest_history ADD COLUMN  otherdeletionreason text;
 
-INSERT INTO schema_version (version_number, comment) VALUES (459, 'Add reason for deletion to confirmation dialogue - #8162');
+INSERT INTO schema_version (version_number, comment) VALUES (463, 'Add reason for deletion to confirmation dialogue - #8162');
 
 
 -- 2022-03-18 Replace hard-coded user roles with fully configurable user roles #4461
@@ -11783,7 +11783,7 @@ CREATE TRIGGER delete_history_trigger_userroles_smsnotificationtypes
     AFTER DELETE ON userroles
     FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('userroles_smsnotificationtypes_history', 'userrole_id');
 
-INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (460, 'Replace hard-coded user roles with fully configurable user roles #4461', true);
+INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (464, 'Replace hard-coded user roles with fully configurable user roles #4461', true);
 
 -- 2022-05-30 Add indices to improve person fetch #8946
 DROP INDEX IF EXISTS idx_cases_person_id;
@@ -11796,7 +11796,7 @@ CREATE INDEX IF NOT EXISTS idx_eventparticipant_person_id ON eventparticipant US
 CREATE INDEX IF NOT EXISTS idx_immunization_person_id ON immunization USING btree (person_id);
 CREATE INDEX IF NOT EXISTS idx_travelentry_person_id ON travelentry USING btree (person_id);
 
-INSERT INTO schema_version (version_number, comment) VALUES (461, 'Add hash indices to improve person fetch #8946');
+INSERT INTO schema_version (version_number, comment) VALUES (465, 'Add hash indices to improve person fetch #8946');
 
 -- 2022-05-17 Rename lab message to external message #8895
 ALTER TABLE labmessage RENAME TO externalmessage;
@@ -11823,10 +11823,10 @@ INSERT INTO userroles_userrights (userrole_id, userright) SELECT userrole_id, 'E
 
 UPDATE systemevent SET type = 'FETCH_EXTERNAL_MESSAGES' WHERE type = 'FETCH_LAB_MESSAGES';
 
-INSERT INTO schema_version (version_number, comment) VALUES (462, 'Rename lab message to external message #8895');
+INSERT INTO schema_version (version_number, comment) VALUES (466, 'Rename lab message to external message #8895');
 
 -- 2022-05-30 Handle users without userroles #4461
-INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (463, 'Handle users without userroles #4461', true);
+INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (467, 'Handle users without userroles #4461', true);
 
 -- 2022-06-02 Fixed triggers on externalmessage table #8895
 DROP TRIGGER IF EXISTS versioning_trigger ON externalmessage;
@@ -11837,13 +11837,13 @@ CREATE TRIGGER delete_history_trigger
     AFTER DELETE ON externalmessage
     FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('externalmessage_history', 'id');
 
-INSERT INTO schema_version (version_number, comment) VALUES (464, 'Fixed triggers on externalmessage table #8895');
+INSERT INTO schema_version (version_number, comment) VALUES (468, 'Fixed triggers on externalmessage table #8895');
 
 
 ALTER TABLE externalmessage ADD COLUMN personpresentcondition integer;
 ALTER TABLE externalmessage_history ADD COLUMN personpresentcondition integer;
 
-INSERT INTO schema_version (version_number, comment) VALUES (465, 'Add present condition mapping - #6692');
+INSERT INTO schema_version (version_number, comment) VALUES (469, 'Add present condition mapping - #6692');
 
 -- 2022-05-20 Addition of age categories to aggregate module (mSERS) [5] #8967
 ALTER TABLE diseaseconfiguration ADD COLUMN agegroups text;
@@ -11851,7 +11851,7 @@ ALTER TABLE diseaseconfiguration_history ADD COLUMN agegroups text;
 ALTER TABLE aggregatereport ADD COLUMN agegroup varchar(255);
 ALTER TABLE aggregatereport_history ADD COLUMN agegroup varchar(255);
 
-INSERT INTO schema_version (version_number, comment) VALUES (466, 'Addition of age categories to aggregate module (mSERS) [5] #8967');
+INSERT INTO schema_version (version_number, comment) VALUES (470, 'Addition of age categories to aggregate module (mSERS) [5] #8967');
 
 -- 2022-06-07 [DEMIS2SORMAS] Introduce processing for physician reports #8980
 ALTER TABLE externalmessage ADD COLUMN caze_id bigint;
@@ -11859,7 +11859,7 @@ ALTER TABLE externalmessage ADD CONSTRAINT fk_externalmessage_caze_id FOREIGN KE
 
 ALTER TABLE externalmessage_history ADD COLUMN caze_id bigint;
 
-INSERT INTO schema_version (version_number, comment) VALUES (467, '[DEMIS2SORMAS] Introduce processing for physician reports #8980');
+INSERT INTO schema_version (version_number, comment) VALUES (471, '[DEMIS2SORMAS] Introduce processing for physician reports #8980');
 
 -- 2022-06-13 lab organization ids #8949
 ALTER TABLE externalmessage ALTER COLUMN labexternalid TYPE VARCHAR(255)[] USING ARRAY[labexternalid];
@@ -11874,9 +11874,9 @@ ALTER TABLE testreport_history ALTER COLUMN testlabexternalid TYPE VARCHAR(255)[
 ALTER TABLE testreport RENAME COLUMN testlabexternalid TO testlabexternalids;
 ALTER TABLE testreport_history RENAME COLUMN testlabexternalid TO testlabexternalids;
 
-INSERT INTO schema_version (version_number, comment) VALUES (468, 'Compare the list of Organization Ids with facilities in SORMAS #8949');
+INSERT INTO schema_version (version_number, comment) VALUES (472, 'Compare the list of Organization Ids with facilities in SORMAS #8949');
 
-INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (469, 'Remove UserRight DASHBOARD_CAMPAIGNS_VIEW from COMMUNITY_INFORMANT #4461', true);
+INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (473, 'Remove UserRight DASHBOARD_CAMPAIGNS_VIEW from COMMUNITY_INFORMANT #4461', true);
 
 -- 2022-06-14 Allow surveillance officer to create aggregate reports #9052
 INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
@@ -11905,15 +11905,15 @@ WHERE uu.userright = 'AGGREGATE_REPORT_VIEW'
                  WHERE uu2.userrole_id = uu.userrole_id
                    AND uu2.userright = 'AGGREGATE_REPORT_EXPORT');
 
-INSERT INTO schema_version (version_number, comment) VALUES (470, 'Allow surveillance officer to create aggregate reports #9052');
+INSERT INTO schema_version (version_number, comment) VALUES (474, 'Allow surveillance officer to create aggregate reports #9052');
 
 -- 2022-06-27 Allow external lab users to edit samples #8892
-INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (471, 'Allow external lab users to edit samples #8892', true);
+INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (475, 'Allow external lab users to edit samples #8892', true);
 
 
 -- 2022-07-05 Adjust password hashes with leading zeros #9726
 UPDATE users SET password = LPAD(password, 64, '0') WHERE LENGTH(password) < 64;
-INSERT INTO schema_version (version_number, comment) VALUES (472, 'Adjust password hashes with leading zeros #9726');
+INSERT INTO schema_version (version_number, comment) VALUES (476, 'Adjust password hashes with leading zeros #9726');
 
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

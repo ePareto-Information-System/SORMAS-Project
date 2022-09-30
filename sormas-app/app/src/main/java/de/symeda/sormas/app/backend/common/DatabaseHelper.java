@@ -191,7 +191,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	// any time you make changes to your database objects, you may have to increase the database version
 
 	// public static final int DATABASE_VERSION = 307;
-	public static final int DATABASE_VERSION = 341;
+	public static final int DATABASE_VERSION = 343;
 
 	private static DatabaseHelper instance = null;
 
@@ -3038,8 +3038,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(FeatureConfiguration.class).executeRaw("DELETE from featureConfiguration WHERE featureType = 'DELETE_PERMANENT';");
 				fillJurisdictionLevels();
 
-			case 335:
-				currentVersion = 335;
+			case 341:
+				currentVersion = 341;
 				getDao(UserRole.class).executeRaw("DROP TABLE userrolesconfig;");
 				getDao(UserRole.class).executeRaw(
 					"CREATE TABLE userRoles(id integer primary key autoincrement, uuid varchar(36), changeDate timestamp, creationDate timestamp, lastOpenedDate timestamp, "
@@ -3047,8 +3047,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 						+ "hasOptionalHealthFacility boolean, hasAssociatedDistrictUser boolean, portHealthUser boolean, jurisdictionLevel varchar(255));");
 				getDao(UserRole.class).executeRaw("CREATE TABLE users_userRoles(user_id integer, userRole_id integer);");
 
-			case 336:
-				currentVersion = 336;
+			case 342:
+				currentVersion = 342;
 				getDao(AggregateReport.class).executeRaw("ALTER TABLE aggregateReport ADD COLUMN ageGroup varchar(255);");
 				getDao(AggregateReport.class).executeRaw("UPDATE aggregateReport SET changeDate = 0;");
 				getDao(DiseaseConfiguration.class).executeRaw("ALTER TABLE diseaseConfiguration ADD COLUMN ageGroupsString text;");

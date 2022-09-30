@@ -39,12 +39,11 @@ import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
+import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.DateHelper;
-import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.ButtonHelper;
@@ -499,62 +498,62 @@ public class LineListingLayout extends VerticalLayout {
 			facilityDetails.setVisible(false);
 			updateFacilityFields(facility, facilityDetails);
 			binder.forField(facilityDetails)
-			// 	.asRequired(new FieldVisibleAndNotEmptyValidator<String>(I18nProperties.getString(Strings.errorFieldValidationFailed)))
-			// 	.bind(CaseLineDto.FACILITIY_DETAILS);
+				// 	.asRequired(new FieldVisibleAndNotEmptyValidator<String>(I18nProperties.getString(Strings.errorFieldValidationFailed)))
+				// 	.bind(CaseLineDto.FACILITIY_DETAILS);
 
-			// firstname = new TextField();
-			// firstname.setId("lineListingFirstName_" + lineIndex);
-			// binder.forField(firstname).asRequired().bind(CaseLineDto.FIRST_NAME);
+				// firstname = new TextField();
+				// firstname.setId("lineListingFirstName_" + lineIndex);
+				// binder.forField(firstname).asRequired().bind(CaseLineDto.FIRST_NAME);
 
-			// lastname = new TextField();
-			// firstname.setId("lineListingLastName_" + lineIndex);
-			// binder.forField(lastname).asRequired().bind(CaseLineDto.LAST_NAME);
+				// lastname = new TextField();
+				// firstname.setId("lineListingLastName_" + lineIndex);
+				// binder.forField(lastname).asRequired().bind(CaseLineDto.LAST_NAME);
 
-			// dateOfBirthYear = new ComboBox<>();
-			// dateOfBirthYear.setId("lineListingDateOfBirthYear_" + lineIndex);
-			// dateOfBirthYear.setEmptySelectionAllowed(true);
-			// dateOfBirthYear.setItems(DateHelper.getYearsToNow());
-			// dateOfBirthYear.setWidth(80, Unit.PIXELS);
-			// dateOfBirthYear.addStyleName(CssStyles.CAPTION_OVERFLOW);
-			// // binder.forField(dateOfBirthYear).bind(CaseLineDto.DATE_OF_BIRTH_YYYY);
-			// binder.forField(dateOfBirthYear).withValidator((e, context) -> {
-			// 	try {
-			// 		ControllerProvider.getPersonController().validateBirthDate(e, dateOfBirthMonth.getValue(), dateOfBirthDay.getValue());
-			// 		return ValidationResult.ok();
-			// 	} catch (Validator.InvalidValueException ex) {
-			// 		return ValidationResult.error(ex.getMessage());
-			// 	}
-			// }).bind(CaseLineDto.DATE_OF_BIRTH_YYYY);
+				// dateOfBirthYear = new ComboBox<>();
+				// dateOfBirthYear.setId("lineListingDateOfBirthYear_" + lineIndex);
+				// dateOfBirthYear.setEmptySelectionAllowed(true);
+				// dateOfBirthYear.setItems(DateHelper.getYearsToNow());
+				// dateOfBirthYear.setWidth(80, Unit.PIXELS);
+				// dateOfBirthYear.addStyleName(CssStyles.CAPTION_OVERFLOW);
+				// // binder.forField(dateOfBirthYear).bind(CaseLineDto.DATE_OF_BIRTH_YYYY);
+				// binder.forField(dateOfBirthYear).withValidator((e, context) -> {
+				// 	try {
+				// 		ControllerProvider.getPersonController().validateBirthDate(e, dateOfBirthMonth.getValue(), dateOfBirthDay.getValue());
+				// 		return ValidationResult.ok();
+				// 	} catch (Validator.InvalidValueException ex) {
+				// 		return ValidationResult.error(ex.getMessage());
+				// 	}
+				// }).bind(CaseLineDto.DATE_OF_BIRTH_YYYY);
 
-			// dateOfBirthMonth = new ComboBox<>();
-			// dateOfBirthMonth.setId("lineListingDateOfBirthMonth_" + lineIndex);
-			// dateOfBirthMonth.setEmptySelectionAllowed(true);
-			// dateOfBirthMonth.setItems(DateHelper.getMonthsInYear());
-			// dateOfBirthMonth.setPageLength(12);
-			// setItemCaptionsForMonths(dateOfBirthMonth);
-			// dateOfBirthMonth.setWidth(120, Unit.PIXELS);
-			// // binder.forField(dateOfBirthMonth).bind(CaseLineDto.DATE_OF_BIRTH_MM);
-			// binder.forField(dateOfBirthMonth).withValidator((e, context) -> {
-			// 	try {
-			// 		ControllerProvider.getPersonController().validateBirthDate(dateOfBirthYear.getValue(), e, dateOfBirthDay.getValue());
-			// 		return ValidationResult.ok();
-			// 	} catch (Validator.InvalidValueException ex) {
-			// 		return ValidationResult.error(ex.getMessage());
-			// 	}
-			// }).bind(CaseLineDto.DATE_OF_BIRTH_MM);
+				// dateOfBirthMonth = new ComboBox<>();
+				// dateOfBirthMonth.setId("lineListingDateOfBirthMonth_" + lineIndex);
+				// dateOfBirthMonth.setEmptySelectionAllowed(true);
+				// dateOfBirthMonth.setItems(DateHelper.getMonthsInYear());
+				// dateOfBirthMonth.setPageLength(12);
+				// setItemCaptionsForMonths(dateOfBirthMonth);
+				// dateOfBirthMonth.setWidth(120, Unit.PIXELS);
+				// // binder.forField(dateOfBirthMonth).bind(CaseLineDto.DATE_OF_BIRTH_MM);
+				// binder.forField(dateOfBirthMonth).withValidator((e, context) -> {
+				// 	try {
+				// 		ControllerProvider.getPersonController().validateBirthDate(dateOfBirthYear.getValue(), e, dateOfBirthDay.getValue());
+				// 		return ValidationResult.ok();
+				// 	} catch (Validator.InvalidValueException ex) {
+				// 		return ValidationResult.error(ex.getMessage());
+				// 	}
+				// }).bind(CaseLineDto.DATE_OF_BIRTH_MM);
 
-			// dateOfBirthDay = new ComboBox<>();
-			// dateOfBirthDay.setId("lineListingDateOfBirthDay_" + lineIndex);
-			// dateOfBirthDay.setEmptySelectionAllowed(true);
-			// dateOfBirthDay.setWidth(80, Unit.PIXELS);
-			// binder.forField(dateOfBirthDay).withValidator((e, context) -> {
-			// 	try {
-			// 		ControllerProvider.getPersonController().validateBirthDate(dateOfBirthYear.getValue(), dateOfBirthMonth.getValue(), e);
-			// 		return ValidationResult.ok();
-			// 	} catch (Validator.InvalidValueException ex) {
-			// 		return ValidationResult.error(ex.getMessage());
-			// 	}
-			// }).bind(CaseLineDto.DATE_OF_BIRTH_DD);
+				// dateOfBirthDay = new ComboBox<>();
+				// dateOfBirthDay.setId("lineListingDateOfBirthDay_" + lineIndex);
+				// dateOfBirthDay.setEmptySelectionAllowed(true);
+				// dateOfBirthDay.setWidth(80, Unit.PIXELS);
+				// binder.forField(dateOfBirthDay).withValidator((e, context) -> {
+				// 	try {
+				// 		ControllerProvider.getPersonController().validateBirthDate(dateOfBirthYear.getValue(), dateOfBirthMonth.getValue(), e);
+				// 		return ValidationResult.ok();
+				// 	} catch (Validator.InvalidValueException ex) {
+				// 		return ValidationResult.error(ex.getMessage());
+				// 	}
+				// }).bind(CaseLineDto.DATE_OF_BIRTH_DD);
 				.asRequired(new FieldVisibleAndNotEmptyValidator<>(I18nProperties.getString(Strings.errorFieldValidationFailed)))
 				.bind(CaseLineDto.FACILITY_DETAILS);
 
@@ -568,11 +567,11 @@ public class LineListingLayout extends VerticalLayout {
 //			dateOfOnset.addStyleName(CssStyles.CAPTION_FIXED_WIDTH_100);
 			binder.forField(dateOfOnset).bind(CaseLineDto.DATE_OF_ONSET);
 
-			 caseClassification = new ComboBox<>();
-			 caseClassification.setId("lineListingCaseClassification_" + lineIndex);
-			 caseClassification.setItems(CaseClassification.values());
-			 caseClassification.setWidth(250, Unit.PIXELS);
-			 binder.forField(caseClassification).bind(CaseLineDto.CASE_CLASSIFICATION);
+			caseClassification = new ComboBox<>();
+			caseClassification.setId("lineListingCaseClassification_" + lineIndex);
+			caseClassification.setItems(CaseClassification.values());
+			caseClassification.setWidth(250, Unit.PIXELS);
+			binder.forField(caseClassification).bind(CaseLineDto.CASE_CLASSIFICATION);
 
 			// delete = ButtonHelper.createIconButtonWithCaption("delete_" + lineIndex, null, VaadinIcons.TRASH, event -> {
 			// 	lineComponent.removeComponent(this);
@@ -584,9 +583,7 @@ public class LineListingLayout extends VerticalLayout {
 
 			// }, CssStyles.FORCE_CAPTION);
 			delete = ButtonHelper
-				.createIconButtonWithCaption("delete_" + lineIndex, null, VaadinIcons.TRASH, event ->
-						fireEvent(new DeleteLineEvent(this))
-				);
+				.createIconButtonWithCaption("delete_" + lineIndex, null, VaadinIcons.TRASH, event -> fireEvent(new DeleteLineEvent(this)));
 
 			addComponent(dateOfReport);
 			if (shouldShowEpidNumber()) {
@@ -674,7 +671,7 @@ public class LineListingLayout extends VerticalLayout {
 //			firstname.setRequiredIndicatorVisible(visible);
 //			lastname.setRequiredIndicatorVisible(visible);
 		}
-		
+
 		private void setItemCaptionsForMonths(ComboBox<Integer> comboBox) {
 			comboBox.setItemCaptionGenerator(item -> I18nProperties.getEnumCaption(Month.of(item)));
 		}

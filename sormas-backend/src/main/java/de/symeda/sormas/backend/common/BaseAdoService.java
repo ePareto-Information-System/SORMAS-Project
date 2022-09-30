@@ -423,20 +423,20 @@ public class BaseAdoService<ADO extends AbstractDomainObject> implements AdoServ
 		cq.select(from.get(AbstractDomainObject.ID));
 		return em.createQuery(cq).getResultList();
 	}
-	
-	public List<ADO> getByIds(List<Long> ids) {
 
-		if (ids == null || ids.isEmpty()) {
-			return null;
-		}
-
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<ADO> cq = cb.createQuery(getElementClass());
-		Root<ADO> from = cq.from(getElementClass());
-		cq.where(from.get(AbstractDomainObject.ID).in(ids));
-
-		return em.createQuery(cq).getResultList();
-	}
+//	public List<ADO> getByIds(List<Long> ids) {
+//
+//		if (ids == null || ids.isEmpty()) {
+//			return null;
+//		}
+//
+//		CriteriaBuilder cb = em.getCriteriaBuilder();
+//		CriteriaQuery<ADO> cq = cb.createQuery(getElementClass());
+//		Root<ADO> from = cq.from(getElementClass());
+//		cq.where(from.get(AbstractDomainObject.ID).in(ids));
+//
+//		return em.createQuery(cq).getResultList();
+//	}
 
 	protected <T> TypedQuery<T> createQuery(CriteriaQuery<T> cq, Integer first, Integer max) {
 

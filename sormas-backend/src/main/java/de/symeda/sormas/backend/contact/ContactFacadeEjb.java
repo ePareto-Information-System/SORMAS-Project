@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -342,6 +343,7 @@ public class ContactFacadeEjb
 	public ContactDto getContactByUuid(String uuid) {
 		return convertToDto(contactService.getByUuid(uuid), Pseudonymizer.getDefault(userService::hasRight));
 	}
+
 	@RightsAllowed({
 		UserRight._CONTACT_CREATE,
 		UserRight._CONTACT_EDIT })
@@ -1946,12 +1948,12 @@ public class ContactFacadeEjb
 				cb.notEqual(contactRoot.get(Contact.DELETED), Boolean.TRUE)));
 	}
 
-	@Override
-	public EditPermissionType isContactEditAllowed(String contactUuid) {
-		Contact contact = service.getByUuid(contactUuid);
-
-		return service.isContactEditAllowed(contact);
-	}
+//	@Override
+//	public EditPermissionType isContactEditAllowed(String contactUuid) {
+//		Contact contact = service.getByUuid(contactUuid);
+//
+//		return service.isContactEditAllowed(contact);
+//	}
 
 	@Override
 	public List<MapContactDto> getIndexListForMap(ContactCriteria contactCriteria, Integer first, Integer max, List<SortProperty> sortProperties) {
