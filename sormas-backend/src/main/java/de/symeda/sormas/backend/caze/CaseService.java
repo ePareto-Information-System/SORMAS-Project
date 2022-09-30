@@ -1206,8 +1206,15 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 
 	@Override
 	@SuppressWarnings("rawtypes")
-	protected Predicate createUserFilterInternal(CriteriaBuilder cb, CriteriaQuery cq, From<?, Case> from) {
+	public Predicate createUserFilterInternal(CriteriaBuilder cb, CriteriaQuery cq, From<?, Case> from) {
 		return createUserFilter(new CaseQueryContext(cb, cq, from));
+	}
+
+	// XXX To be removed when merging with #8747
+	@SuppressWarnings("rawtypes")
+	@Override
+	public Predicate createUserFilter(CriteriaBuilder cb, CriteriaQuery cq, From<?, Case> casePath) {
+		return createUserFilter(new CaseQueryContext(cb, cq, casePath));
 	}
 
 	public Predicate createUserFilter(CaseQueryContext caseQueryContext) {
@@ -1370,15 +1377,15 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 			newCaseFilter = cb.or(onsetDateFilter, cb.and(cb.isNull(symptoms.get(Symptoms.ONSET_DATE)), reportDateFilter));
 		} else if (dateType == NewCaseDateType.ONSET) {
 			newCaseFilter = onsetDateFilter;
-		// } else if (newCaseDateType == NewCaseDateType.CLASSIFICATION) {
-		// 	newCaseFilter = cb.between(caze.get(Case.CLASSIFICATION_DATE), fromDate, toDate);
-		// } else if (newCaseDateType == NewCaseDateType.CREATION) {
-		// 	newCaseFilter = cb.between(caze.get(Case.CREATION_DATE), fromDate, toDate);
-		// } else if (newCaseDateType == NewCaseDateType.INVESTIGATION) {
-		// 	newCaseFilter = cb.between(caze.get(Case.INVESTIGATED_DATE), fromDate, toDate);
-		// //} else if (newCaseDateType == NewCaseDateType.LAST_TEST_RESULT) {
-		// //	newCaseFilter = cb.between(caze.get(Case.REPORT_DATE), fromDate, toDate);
-		// } else {
+			// } else if (newCaseDateType == NewCaseDateType.CLASSIFICATION) {
+			// 	newCaseFilter = cb.between(caze.get(Case.CLASSIFICATION_DATE), fromDate, toDate);
+			// } else if (newCaseDateType == NewCaseDateType.CREATION) {
+			// 	newCaseFilter = cb.between(caze.get(Case.CREATION_DATE), fromDate, toDate);
+			// } else if (newCaseDateType == NewCaseDateType.INVESTIGATION) {
+			// 	newCaseFilter = cb.between(caze.get(Case.INVESTIGATED_DATE), fromDate, toDate);
+			// //} else if (newCaseDateType == NewCaseDateType.LAST_TEST_RESULT) {
+			// //	newCaseFilter = cb.between(caze.get(Case.REPORT_DATE), fromDate, toDate);
+			// } else {
 
 		} else if (dateType == NewCaseDateType.REPORT) {
 			newCaseFilter = reportDateFilter;
