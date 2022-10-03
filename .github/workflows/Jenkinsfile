@@ -52,7 +52,7 @@ pipeline{
     }
     stage('remove deploy old folder'){
       steps{
-        sh 'ssh $JENKINS_USER@training sudo rm -r $DEPLOY_FILE/'
+        sh 'ssh $JENKINS_USER@training_server sudo rm -r $DEPLOY_FILE/'
       }
     }
     stage('deploying to test server with rsync'){
@@ -63,7 +63,7 @@ pipeline{
 
     stage('Initiate server_update_script'){
       steps{
-        sh ' touch update_logs.txt && ssh $JENKINS_USER@training sh update_script.sh > update_logs.txt && cat update_logs.txt'
+        sh ' touch update_logs.txt && ssh $JENKINS_USER@training_server sh update_script.sh > update_logs.txt && cat update_logs.txt'
       }
     }
     stage('test') {
