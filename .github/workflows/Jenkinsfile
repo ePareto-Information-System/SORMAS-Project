@@ -1,0 +1,81 @@
+pipeline{
+    agent any
+    environment {
+        M2_HOME = "/root/.jenkins/tools/hudson.tasks.Maven_MavenInstallation/Maven_3.8.6"
+    }
+
+    stages {
+    stage('build') {
+      steps {
+        echo 'Building ....'
+      }
+    }
+    stage('maven clean') {
+      steps {
+        withMaven(maven: 'Maven_3.8.6') {
+      sh 'mvn -f ./sormas-base/pom.xml clean'
+        }
+      }
+    }
+    stage('maven install') {
+      steps {
+        withMaven(maven: 'Maven_3.8.6') {
+      sh 'mvn -f ./sormas-base/pom.xml clean install -U -DskipTests'
+        }
+      }
+    }
+    stage('Ant Deploy serverlibs') {
+      steps {
+        withAnt(installation: 'Ant_1.10.12') {
+      sh 'ant -noinput -buildfile ./sormas-base/build.xml deploy-serverlibs'
+        }
+      }
+    }
+    stage('Gradle generate apk') {
+      steps {
+        withGradle {
+      sh ' cd sormas-app && ./gradlew assembleDebug'
+        }
+      }
+    }
+    stage('maven collect-all') {
+      steps {
+        withAnt(installation: 'Ant_1.10.12') {
+      sh 'ant -noinput -buildfile ./sormas-base/build.xml collect-all'
+        }
+      }
+    }
+    stage('list directory'){
+      steps{
+        sh 'ls -a'
+      }
+    }
+    stage('remove deploy old folder'){
+      steps{
+        sh 'ssh $JENKINS_USER@deploy_server sudo rm -r $DEPLOY_FILE/'
+      }
+    }
+    stage('deploying to test server with rsync'){
+      steps{
+        sh 'rsync -avz ./$DEPLOY_FILE/ $JENKINS_USER@deploy_server:/home/$JENKINS_USER/$DEPLOY_FILE'
+      }
+    }
+
+    stage('Initiate server_update_script'){
+      steps{
+        sh ' touch update_logs.txt && ssh $JENKINS_USER@deploy_server sh update_script.sh > update_logs.txt && cat update_logs.txt'
+      }
+    }
+    stage('test') {
+      steps {
+        echo 'Testing .....'
+      }
+    }
+    stage('deploy') {
+      steps {
+        echo 'Deploying .....'
+        echo 'Done .....'
+      }
+    }
+  }
+}
