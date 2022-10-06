@@ -28,17 +28,17 @@ import com.vaadin.v7.ui.ComboBox;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
-import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
-import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
-import de.symeda.sormas.api.infrastructure.facility.FacilityType;
-import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityType;
+import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.statistics.StatisticsCaseAttribute;
-import de.symeda.sormas.api.statistics.StatisticsCaseSubAttribute;
+import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.ui.utils.ComboBoxHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.FieldHelper;
@@ -63,19 +63,19 @@ public class StatisticsFilterJurisdictionElement extends StatisticsFilterElement
 		regionElement = new StatisticsFilterValuesElement(
 			I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.REGION),
 			StatisticsCaseAttribute.JURISDICTION,
-			StatisticsCaseSubAttribute.REGION,
+			StatisticsSubAttribute.REGION,
 			this,
 			rowIndex);
 		districtElement = new StatisticsFilterValuesElement(
 			I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.DISTRICT),
 			StatisticsCaseAttribute.JURISDICTION,
-			StatisticsCaseSubAttribute.DISTRICT,
+			StatisticsSubAttribute.DISTRICT,
 			this,
 			rowIndex);
 		communityElement = new StatisticsFilterValuesElement(
 			I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.COMMUNITY),
 			StatisticsCaseAttribute.JURISDICTION,
-			StatisticsCaseSubAttribute.COMMUNITY,
+			StatisticsSubAttribute.COMMUNITY,
 			this,
 			rowIndex);
 		HorizontalLayout facilityTypeFilterLayout = new HorizontalLayout();
@@ -93,7 +93,7 @@ public class StatisticsFilterJurisdictionElement extends StatisticsFilterElement
 		facilityElement = new StatisticsFilterValuesElement(
 			I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.HEALTH_FACILITY),
 			StatisticsCaseAttribute.JURISDICTION,
-			StatisticsCaseSubAttribute.FACILITY,
+			StatisticsSubAttribute.FACILITY,
 			this,
 			rowIndex);
 

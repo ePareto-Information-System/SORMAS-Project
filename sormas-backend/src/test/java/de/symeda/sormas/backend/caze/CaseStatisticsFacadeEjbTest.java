@@ -25,7 +25,7 @@ import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.statistics.StatisticsCaseAttribute;
 import de.symeda.sormas.api.statistics.StatisticsCaseCountDto;
 import de.symeda.sormas.api.statistics.StatisticsCaseCriteria;
-import de.symeda.sormas.api.statistics.StatisticsCaseSubAttribute;
+import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.utils.DateHelper;
@@ -74,11 +74,11 @@ public class CaseStatisticsFacadeEjbTest extends AbstractBeanTest {
 
 		// try all groupings
 		for (StatisticsCaseAttribute groupingAttribute : StatisticsCaseAttribute.values()) {
-			StatisticsCaseSubAttribute[] subAttributes = groupingAttribute.getSubAttributes();
+			StatisticsSubAttribute[] subAttributes = groupingAttribute.getSubAttributes();
 			if (subAttributes.length == 0) {
 				getCaseStatisticsFacade().queryCaseCount(criteria, groupingAttribute, null, null, null, false, false, null);
 			} else {
-				for (StatisticsCaseSubAttribute subGroupingAttribute : groupingAttribute.getSubAttributes()) {
+				for (StatisticsSubAttribute subGroupingAttribute : groupingAttribute.getSubAttributes()) {
 					if (subGroupingAttribute.isUsedForGrouping()) {
 						getCaseStatisticsFacade().queryCaseCount(criteria, groupingAttribute, subGroupingAttribute, null, null, false, false, null);
 					}
@@ -156,7 +156,7 @@ public class CaseStatisticsFacadeEjbTest extends AbstractBeanTest {
 		criteria.regions(Arrays.asList(rdcf.region));
 
 		List<StatisticsCaseCountDto> results = getCaseStatisticsFacade()
-			.queryCaseCount(criteria, StatisticsCaseAttribute.JURISDICTION, StatisticsCaseSubAttribute.REGION, null, null, true, false, null);
+			.queryCaseCount(criteria, StatisticsCaseAttribute.JURISDICTION, StatisticsSubAttribute.REGION, null, null, true, false, null);
 		assertNull(results.get(0).getPopulation());
 
 		PopulationDataDto populationData = PopulationDataDto.build(new Date());
@@ -170,7 +170,7 @@ public class CaseStatisticsFacadeEjbTest extends AbstractBeanTest {
 		results = getCaseStatisticsFacade().queryCaseCount(
 			criteria,
 			StatisticsCaseAttribute.JURISDICTION,
-			StatisticsCaseSubAttribute.REGION,
+			StatisticsSubAttribute.REGION,
 			null,
 			null,
 			true,

@@ -19,7 +19,7 @@ package de.symeda.sormas.api.statistics;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
 
-public enum StatisticsCaseSubAttribute {
+public enum StatisticsSubAttribute {
 
 	YEAR(true, true),
 	QUARTER(true, true),
@@ -42,7 +42,7 @@ public enum StatisticsCaseSubAttribute {
 	private boolean usedForFilters;
 	private boolean usedForGrouping;
 
-	StatisticsCaseSubAttribute(boolean usedForFilters, boolean usedForGrouping) {
+	StatisticsSubAttribute(boolean usedForFilters, boolean usedForGrouping) {
 		this.usedForFilters = usedForFilters;
 		this.usedForGrouping = usedForGrouping;
 	}

@@ -84,7 +84,7 @@ import de.symeda.sormas.ui.reports.aggregate.ReportDataView;
 import de.symeda.sormas.ui.samples.SamplesView;
 import de.symeda.sormas.ui.sormastosormas.ShareRequestsView;
 import de.symeda.sormas.ui.statistics.AbstractStatisticsView;
-import de.symeda.sormas.ui.statistics.StatisticsView;
+import de.symeda.sormas.ui.statistics.StatisticsCasesView;
 import de.symeda.sormas.ui.task.TasksView;
 import de.symeda.sormas.ui.travelentry.TravelEntriesView;
 import de.symeda.sormas.ui.user.UsersView;
@@ -245,7 +245,7 @@ public class MainScreen extends HorizontalLayout {
 		if (permitted(FeatureType.CASE_SURVEILANCE, UserRight.STATISTICS_ACCESS)) {
 			ControllerProvider.getStatisticsController().registerViews(navigator);
 			menu.addView(
-				StatisticsView.class,
+				StatisticsCasesView.class,
 				AbstractStatisticsView.ROOT_VIEW_NAME,
 				I18nProperties.getCaption(Captions.mainMenuStatistics),
 				VaadinIcons.BAR_CHART);
@@ -334,7 +334,7 @@ public class MainScreen extends HorizontalLayout {
 				CampaignDataView.VIEW_NAME,
 				CampaignStatisticsView.VIEW_NAME,
 				ReportsView.VIEW_NAME,
-				StatisticsView.VIEW_NAME,
+				StatisticsCasesView.VIEW_NAME,
 				PersonsView.VIEW_NAME,
 				UsersView.VIEW_NAME,
 				OutbreaksView.VIEW_NAME,

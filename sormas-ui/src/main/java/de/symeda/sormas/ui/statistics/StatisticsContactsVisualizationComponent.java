@@ -1,20 +1,3 @@
-/*******************************************************************************
- * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *******************************************************************************/
 package de.symeda.sormas.ui.statistics;
 
 import java.util.ArrayList;
@@ -23,6 +6,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -33,7 +17,7 @@ import com.vaadin.v7.ui.OptionGroup;
 
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.statistics.StatisticsCaseAttribute;
+import de.symeda.sormas.api.statistics.StatisticsContactAttribute;
 import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.ui.statistics.StatisticsVisualizationType.StatisticsVisualizationChartType;
 import de.symeda.sormas.ui.statistics.StatisticsVisualizationType.StatisticsVisualizationMapType;
@@ -41,7 +25,7 @@ import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 
 @SuppressWarnings("serial")
-public class StatisticsVisualizationComponent extends HorizontalLayout {
+public class StatisticsContactsVisualizationComponent extends HorizontalLayout {
 
 	private StatisticsVisualizationType visualizationType;
 	private StatisticsVisualizationMapType visualizationMapType;
@@ -50,13 +34,13 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 	private final OptionGroup visualizationSelect;
 	private final OptionGroup visualizationMapSelect;
 	private final OptionGroup visualizationChartSelect;
-	private StatisticsVisualizationElement rowsElement;
-	private StatisticsVisualizationElement columnsElement;
+	private StatisticsContactVisualizationElement rowsElement;
+	private StatisticsContactVisualizationElement columnsElement;
 	private Button switchRowsAndColumnsButton;
 	private final List<Consumer<StatisticsVisualizationType>> visualizationTypeChangedListeners =
 		new ArrayList<Consumer<StatisticsVisualizationType>>();
 
-	public StatisticsVisualizationComponent() {
+	public StatisticsContactsVisualizationComponent() {
 		setSpacing(true);
 		setWidth(100, Unit.PERCENTAGE);
 
@@ -117,14 +101,14 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 		addComponent(visualizationChartSelect);
 		setExpandRatio(visualizationChartSelect, 0);
 
-		rowsElement = new StatisticsVisualizationElement(StatisticsVisualizationElementType.ROWS, visualizationType);
+		rowsElement = new StatisticsContactVisualizationElement(StatisticsVisualizationElementType.ROWS, visualizationType);
 		addComponent(rowsElement);
 		setExpandRatio(rowsElement, 0);
 
 		switchRowsAndColumnsButton = ButtonHelper.createIconButtonWithCaption("switchRowsAndColumns", null, VaadinIcons.EXCHANGE, event -> {
-			StatisticsVisualizationElement newRowsElement = columnsElement;
+			StatisticsContactVisualizationElement newRowsElement = columnsElement;
 			newRowsElement.setType(StatisticsVisualizationElementType.ROWS, visualizationType);
-			StatisticsVisualizationElement newColumnsElement = rowsElement;
+			StatisticsContactVisualizationElement newColumnsElement = rowsElement;
 			newColumnsElement.setType(StatisticsVisualizationElementType.COLUMNS, visualizationType);
 			removeComponent(rowsElement);
 			removeComponent(columnsElement);
@@ -140,7 +124,7 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 		addComponent(switchRowsAndColumnsButton);
 		setExpandRatio(switchRowsAndColumnsButton, 0);
 
-		columnsElement = new StatisticsVisualizationElement(StatisticsVisualizationElementType.COLUMNS, visualizationType);
+		columnsElement = new StatisticsContactVisualizationElement(StatisticsVisualizationElementType.COLUMNS, visualizationType);
 		addComponent(columnsElement);
 		setExpandRatio(columnsElement, 0);
 
@@ -152,7 +136,7 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 		visualizationChartSelect.setValue(StatisticsVisualizationChartType.STACKED_COLUMN);
 		visualizationMapSelect.setValue(StatisticsVisualizationMapType.REGIONS);
 	}
-
+	
 	private void updateComponentVisibility() {
 		visualizationMapSelect.setVisible(visualizationType == StatisticsVisualizationType.MAP);
 		visualizationChartSelect.setVisible(visualizationType == StatisticsVisualizationType.CHART);
@@ -168,16 +152,16 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 				|| (visualizationType == StatisticsVisualizationType.CHART && visualizationChartType != StatisticsVisualizationChartType.PIE));
 	}
 
-	public StatisticsCaseAttribute getRowsAttribute() {
+	public StatisticsContactAttribute getRowsAttribute() {
 		switch (visualizationType) {
 		case MAP:
-			return StatisticsCaseAttribute.JURISDICTION;
+			return StatisticsContactAttribute.JURISDICTION;
 		default:
 			break;
 		}
-		return rowsElement.getAttribute();
+		return rowsElement.getContactAttribute();
 	}
-
+	
 	public StatisticsSubAttribute getRowsSubAttribute() {
 		switch (visualizationType) {
 		case MAP:
@@ -192,10 +176,10 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 		default:
 			break;
 		}
-		return rowsElement.getSubAttribute();
+		return rowsElement.getContactSubAttribute();
 	}
-
-	public StatisticsCaseAttribute getColumnsAttribute() {
+	
+	public StatisticsContactAttribute getColumnsAttribute() {
 		switch (visualizationType) {
 		case MAP:
 			return null;
@@ -203,16 +187,13 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 			switch (visualizationChartType) {
 			case PIE:
 				return null;
-			//$CASES-OMITTED$
 			default:
 				break;
 			}
-			break;
-		//$CASES-OMITTED$
 		default:
 			break;
 		}
-		return columnsElement.getAttribute();
+		return columnsElement.getContactAttribute();
 	}
 
 	public StatisticsSubAttribute getColumnsSubAttribute() {
@@ -223,18 +204,15 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 			switch (visualizationChartType) {
 			case PIE:
 				return null;
-			//$CASES-OMITTED$
 			default:
 				break;
 			}
-			break;
-		//$CASES-OMITTED$
 		default:
 			break;
 		}
-		return columnsElement.getSubAttribute();
+		return columnsElement.getContactSubAttribute();
 	}
-
+	
 	public StatisticsVisualizationType getVisualizationType() {
 		return visualizationType;
 	}
@@ -246,13 +224,13 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 	public StatisticsVisualizationChartType getVisualizationChartType() {
 		return visualizationChartType;
 	}
-
+	
 	public boolean hasRegionGrouping() {
 		switch (visualizationType) {
 		case TABLE:
 		case CHART:
-			return rowsElement.getSubAttribute() == StatisticsSubAttribute.REGION
-				|| columnsElement.getSubAttribute() == StatisticsSubAttribute.REGION;
+			return rowsElement.getContactSubAttribute() == StatisticsSubAttribute.REGION
+				|| columnsElement.getContactSubAttribute() == StatisticsSubAttribute.REGION;
 		case MAP:
 			return visualizationMapType == StatisticsVisualizationMapType.REGIONS;
 		default:
@@ -264,8 +242,8 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 		switch (visualizationType) {
 		case TABLE:
 		case CHART:
-			return rowsElement.getSubAttribute() == StatisticsSubAttribute.DISTRICT
-				|| columnsElement.getSubAttribute() == StatisticsSubAttribute.DISTRICT;
+			return rowsElement.getContactSubAttribute() == StatisticsSubAttribute.DISTRICT
+				|| columnsElement.getContactSubAttribute() == StatisticsSubAttribute.DISTRICT;
 		case MAP:
 			return visualizationMapType == StatisticsVisualizationMapType.DISTRICTS;
 		default:
@@ -277,8 +255,8 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 		switch (visualizationType) {
 			case TABLE:
 			case CHART:
-				return rowsElement.getSubAttribute() == StatisticsSubAttribute.COMMUNITY
-						|| columnsElement.getSubAttribute() == StatisticsSubAttribute.COMMUNITY;
+				return rowsElement.getContactSubAttribute() == StatisticsSubAttribute.COMMUNITY
+						|| columnsElement.getContactSubAttribute() == StatisticsSubAttribute.COMMUNITY;
 			//TODO: Community Grouping on this Visualisationtype may be implemented later
 			case MAP:
 				return false;
@@ -286,17 +264,17 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 				throw new IllegalArgumentException(visualizationType.toString());
 		}
 	}
-
+	
 	public boolean hasIncidenceIncompatibleGrouping() {
-		return rowsElement.getSubAttribute() == StatisticsSubAttribute.FACILITY
-			|| columnsElement.getSubAttribute() == StatisticsSubAttribute.FACILITY;
+		return rowsElement.getContactSubAttribute() == StatisticsSubAttribute.DISTRICT
+			|| columnsElement.getContactSubAttribute() == StatisticsSubAttribute.DISTRICT;
 	}
 
 	public boolean hasSexGrouping() {
 		switch (visualizationType) {
 		case TABLE:
 		case CHART:
-			return rowsElement.getAttribute() == StatisticsCaseAttribute.SEX || columnsElement.getAttribute() == StatisticsCaseAttribute.SEX;
+			return rowsElement.getContactAttribute() == StatisticsContactAttribute.SEX || columnsElement.getContactAttribute() == StatisticsContactAttribute.SEX;
 		case MAP:
 			return false;
 		default:
@@ -308,8 +286,8 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 		switch (visualizationType) {
 		case TABLE:
 		case CHART:
-			return rowsElement.getAttribute() == StatisticsCaseAttribute.AGE_INTERVAL_5_YEARS
-				|| columnsElement.getAttribute() == StatisticsCaseAttribute.AGE_INTERVAL_5_YEARS;
+			return rowsElement.getContactAttribute() == StatisticsContactAttribute.AGE_INTERVAL_5_YEARS
+				|| columnsElement.getContactAttribute() == StatisticsContactAttribute.AGE_INTERVAL_5_YEARS;
 		case MAP:
 			return false;
 		default:
@@ -321,12 +299,12 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 		switch (visualizationType) {
 		case TABLE:
 		case CHART:
-			return (rowsElement.getAttribute() != null
-				&& rowsElement.getAttribute().isAgeGroup()
-				&& rowsElement.getAttribute() != StatisticsCaseAttribute.AGE_INTERVAL_5_YEARS)
-				|| (columnsElement.getAttribute() != null
-					&& columnsElement.getAttribute().isAgeGroup()
-					&& columnsElement.getAttribute() != StatisticsCaseAttribute.AGE_INTERVAL_5_YEARS);
+			return (rowsElement.getContactAttribute() != null
+				&& rowsElement.getContactAttribute().isAgeGroup()
+				&& rowsElement.getContactAttribute() != StatisticsContactAttribute.AGE_INTERVAL_5_YEARS)
+				|| (columnsElement.getContactAttribute() != null
+					&& columnsElement.getContactAttribute().isAgeGroup()
+					&& columnsElement.getContactAttribute() != StatisticsContactAttribute.AGE_INTERVAL_5_YEARS);
 		case MAP:
 			return false;
 		default:
@@ -356,4 +334,5 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 	public void removeVisualizationTypeChangedListener(Consumer<StatisticsVisualizationType> visualizationTypeChangedListener) {
 		visualizationTypeChangedListeners.remove(visualizationTypeChangedListener);
 	}
+
 }

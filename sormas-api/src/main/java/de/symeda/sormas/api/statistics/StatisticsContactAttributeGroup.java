@@ -15,40 +15,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
-package de.symeda.sormas.api.contact;
+package de.symeda.sormas.api.statistics;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 
-public enum ContactStatus 
-	implements
-	StatisticsGroupingKey {
+public enum StatisticsContactAttributeGroup {
+	TIME,
+	PLACE,
+	PERSON,
+	CONTACT;
 
-	ACTIVE,
-	/**
-	 * converted to case
-	 */
-	CONVERTED,
-	/**
-	 * case disproved or not a contact
-	 */
-	DROPPED;
+	private List<StatisticsContactAttribute> attributes;
 
-	@Override
+	public List<StatisticsContactAttribute> getAttributes() {
+
+		if (attributes == null) {
+			attributes = new ArrayList<>();
+			for (StatisticsContactAttribute attribute : StatisticsContactAttribute.values()) {
+				if (attribute.getAttributeGroup() == this) {
+					attributes.add(attribute);
+				}
+			}
+		}
+
+		return attributes;
+	}
+
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);
-	}
-	@Override
-	public int keyCompareTo(StatisticsGroupingKey o) {
-
-		if (o == null) {
-			throw new NullPointerException("Can't compare to null.");
-		}
-		if (o.getClass() != this.getClass()) {
-			throw new UnsupportedOperationException(
-				"Can't compare to class " + o.getClass().getName() + " that differs from " + this.getClass().getName());
-		}
-
-		return this.toString().compareTo(o.toString());
 	}
 }

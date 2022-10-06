@@ -19,9 +19,9 @@ package de.symeda.sormas.api.statistics;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
 
-public enum StatisticsCaseAttribute {
+public enum StatisticsContactAttribute {
 
-	ONSET_TIME(StatisticsCaseAttributeGroup.TIME,
+	ONSET_TIME(StatisticsContactAttributeGroup.TIME,
 		false,
 		true,
 		StatisticsSubAttribute.YEAR,
@@ -33,7 +33,7 @@ public enum StatisticsCaseAttribute {
 		StatisticsSubAttribute.EPI_WEEK_OF_YEAR,
 		StatisticsSubAttribute.DATE_RANGE),
 
-	REPORT_TIME(StatisticsCaseAttributeGroup.TIME,
+	REPORT_TIME(StatisticsContactAttributeGroup.TIME,
 		false,
 		false,
 		StatisticsSubAttribute.YEAR,
@@ -45,7 +45,7 @@ public enum StatisticsCaseAttribute {
 		StatisticsSubAttribute.EPI_WEEK_OF_YEAR,
 		StatisticsSubAttribute.DATE_RANGE),
 
-	OUTCOME_TIME(StatisticsCaseAttributeGroup.TIME,
+	OUTCOME_TIME(StatisticsContactAttributeGroup.TIME,
 		false,
 		true,
 		StatisticsSubAttribute.YEAR,
@@ -57,15 +57,14 @@ public enum StatisticsCaseAttribute {
 		StatisticsSubAttribute.EPI_WEEK_OF_YEAR,
 		StatisticsSubAttribute.DATE_RANGE),
 
-	JURISDICTION(StatisticsCaseAttributeGroup.PLACE,
+	JURISDICTION(StatisticsContactAttributeGroup.PLACE,
 		true,
 		true,
 		StatisticsSubAttribute.REGION,
 		StatisticsSubAttribute.DISTRICT,
-		StatisticsSubAttribute.COMMUNITY,
-		StatisticsSubAttribute.FACILITY),
+		StatisticsSubAttribute.COMMUNITY),
 
-	PLACE_OF_RESIDENCE(StatisticsCaseAttributeGroup.PERSON,
+	PLACE_OF_RESIDENCE(StatisticsContactAttributeGroup.PERSON,
 		true,
 		true,
 		false,
@@ -75,26 +74,26 @@ public enum StatisticsCaseAttribute {
 		StatisticsSubAttribute.PERSON_CITY,
 		StatisticsSubAttribute.PERSON_POSTCODE),
 
-	SEX(StatisticsCaseAttributeGroup.PERSON, true, false),
-	AGE_INTERVAL_1_YEAR(StatisticsCaseAttributeGroup.PERSON, false, true),
-	AGE_INTERVAL_5_YEARS(StatisticsCaseAttributeGroup.PERSON, false, true),
-	AGE_INTERVAL_CHILDREN_COARSE(StatisticsCaseAttributeGroup.PERSON, false, true),
-	AGE_INTERVAL_CHILDREN_FINE(StatisticsCaseAttributeGroup.PERSON, false, true),
-	AGE_INTERVAL_CHILDREN_MEDIUM(StatisticsCaseAttributeGroup.PERSON, false, true),
-	AGE_INTERVAL_BASIC(StatisticsCaseAttributeGroup.PERSON, false, true),
-	DISEASE(StatisticsCaseAttributeGroup.CASE, true, false),
-	CLASSIFICATION(StatisticsCaseAttributeGroup.CASE, true, false),
-	OUTCOME(StatisticsCaseAttributeGroup.CASE, true, false),
-	REPORTING_USER_ROLE(StatisticsCaseAttributeGroup.CASE, true, false);
+	SEX(StatisticsContactAttributeGroup.PERSON, true, true),
+	AGE_INTERVAL_1_YEAR(StatisticsContactAttributeGroup.PERSON, false, true),
+	AGE_INTERVAL_5_YEARS(StatisticsContactAttributeGroup.PERSON, false, true),
+	AGE_INTERVAL_CHILDREN_COARSE(StatisticsContactAttributeGroup.PERSON, false, true),
+	AGE_INTERVAL_CHILDREN_FINE(StatisticsContactAttributeGroup.PERSON, false, true),
+	AGE_INTERVAL_CHILDREN_MEDIUM(StatisticsContactAttributeGroup.PERSON, false, true),
+	AGE_INTERVAL_BASIC(StatisticsContactAttributeGroup.PERSON, false, true),
+	DISEASE(StatisticsContactAttributeGroup.CONTACT, true, false),
+	CLASSIFICATION(StatisticsContactAttributeGroup.CONTACT, true, false),
+	STATUS(StatisticsContactAttributeGroup.CONTACT, true, false),
+	REPORTING_USER_ROLE(StatisticsContactAttributeGroup.CONTACT, true, false);
 
-	private final StatisticsCaseAttributeGroup attributeGroup;
+	private final StatisticsContactAttributeGroup attributeGroup;
 	private final boolean sortByCaption;
 	private final boolean unknownValueAllowed;
 	private boolean usedForVisualisation = true;
 	private final StatisticsSubAttribute[] subAttributes;
 
-	StatisticsCaseAttribute(
-		StatisticsCaseAttributeGroup attributeGroup,
+	StatisticsContactAttribute(
+		StatisticsContactAttributeGroup attributeGroup,
 		boolean sortByCaption,
 		boolean unknownValueAllowed,
 		StatisticsSubAttribute... subAttributes) {
@@ -105,8 +104,8 @@ public enum StatisticsCaseAttribute {
 		this.subAttributes = subAttributes;
 	}
 
-	StatisticsCaseAttribute(
-		StatisticsCaseAttributeGroup attributeGroup,
+	StatisticsContactAttribute(
+		StatisticsContactAttributeGroup attributeGroup,
 		boolean sortByCaption,
 		boolean unknownValueAllowed,
 		boolean usedForVisualisation,
@@ -119,7 +118,7 @@ public enum StatisticsCaseAttribute {
 		this.subAttributes = subAttributes;
 	}
 
-	public StatisticsCaseAttributeGroup getAttributeGroup() {
+	public StatisticsContactAttributeGroup getAttributeGroup() {
 		return attributeGroup;
 	}
 
@@ -139,7 +138,6 @@ public enum StatisticsCaseAttribute {
 		return subAttributes;
 	}
 
-	@Override
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);
 	}

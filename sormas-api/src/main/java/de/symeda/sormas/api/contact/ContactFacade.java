@@ -163,4 +163,10 @@ public interface ContactFacade extends CoreFacade<ContactDto, ContactIndexDto, C
 	long getContactCount(CaseReferenceDto caze);
 
 	ContactDto getContactByUuid(String uuid);
+
+	Date getOldestContactCreationDate();
+
+	Date getOldestContactReportDate();
+
+	Date getOldestContactLastContactDate();
 }

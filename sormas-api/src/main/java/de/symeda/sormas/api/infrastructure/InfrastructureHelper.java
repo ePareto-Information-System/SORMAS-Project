@@ -17,6 +17,7 @@ public final class InfrastructureHelper {
 	}
 
 	public static final int CASE_INCIDENCE_DIVISOR = 100000;
+	public static final int CONTACT_INCIDENCE_DIVISOR = 100000;
 
 	public static String buildPointOfEntryString(String pointOfEntryUuid, String pointOfEntryName, String pointOfEntryDetails) {
 
@@ -91,5 +92,9 @@ public final class InfrastructureHelper {
 		default:
 			return JurisdictionLevel.NONE;
 		}
+	}
+
+	public static BigDecimal getContactIncidence(int contactCount, int population, int divisor) {
+		return new BigDecimal(contactCount).divide(new BigDecimal((double) population / divisor), 2, RoundingMode.HALF_UP);
 	}
 }
