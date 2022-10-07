@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 
 import com.vaadin.ui.Label;
 import com.vaadin.v7.data.Validator;
+import com.vaadin.v7.data.validator.EmailValidator;
 import com.vaadin.v7.ui.CheckBox;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.Field;
@@ -119,7 +120,8 @@ public class UserEditForm extends AbstractEditForm<UserDto> {
 
         addField(UserDto.FIRST_NAME, TextField.class);
         addField(UserDto.LAST_NAME, TextField.class);
-        addField(UserDto.USER_EMAIL, TextField.class);
+        TextField email =  addField(UserDto.USER_EMAIL, TextField.class);
+        email.addValidator(new EmailValidator(I18nProperties.getValidationError(Validations.emailAddressValidation)));
         TextField phone = addField(UserDto.PHONE, TextField.class);
         phone.addValidator(new UserPhoneNumberValidator(I18nProperties.getValidationError(Validations.phoneNumberValidation)));
         if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.AGGREGATE_REPORTING) || FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.EVENT_SURVEILLANCE) || FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.WEEKLY_REPORTING) || FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_SURVEILANCE)) {

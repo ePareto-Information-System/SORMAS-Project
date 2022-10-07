@@ -162,6 +162,7 @@ public interface Validations {
 	String personMultiplePrimaryEmailAddresses = "personMultiplePrimaryEmailAddresses";
 	String personMultiplePrimaryPhoneNumbers = "personMultiplePrimaryPhoneNumbers";
 	String phoneNumberValidation = "phoneNumberValidation";
+	String emailAddressValidation = "emailAddressValidation";
 	String required = "required";
 	String requiredField = "requiredField";
 	String softAddEntryToList = "softAddEntryToList";
