@@ -651,6 +651,22 @@ public class UserService extends AdoServiceWithUserFilter<User> {
 		return password;
 	}
 
+	public String generatePassword() {
+		return PasswordHelper.createPass(12);
+	}
+
+	public String updatePassword(String userUuid, String password) {
+		User user = getByUuid(userUuid);
+
+		if (user == null && password == null) {
+			return null;
+		}
+		assert user != null;
+		user.setPassword(PasswordHelper.encodePassword(password, user.getSeed()));
+		ensurePersisted(user);
+		return password;
+	};
+
 	public Predicate buildCriteriaFilter(UserCriteria userCriteria, CriteriaBuilder cb, Root<User> from) {
 
 		Predicate filter = null;

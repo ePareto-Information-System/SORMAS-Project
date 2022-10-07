@@ -48,6 +48,16 @@ public interface UserFacade {
 
 	String resetPassword(String uuid);
 
+	String updatePassword(String uuid, String password);
+
+	String updateUserPassword(String uuid, String newPassword, String currentPassword);
+
+	boolean validatePassword(String uuid, String password);
+
+	String checkPasswordStrength(String password);
+
+	String generatePassword();
+
 	List<UserDto> getAllAfter(Date date);
 
 	UserDto getByUserName(String userName);
@@ -75,7 +85,6 @@ public interface UserFacade {
 	long count(UserCriteria userCriteria);
 
 	/**
-	 * 
 	 * @param district
 	 *            reference of the district to be filtered for. When this district is null, it is not filtered in this regard.
 	 *            NOTE: some users don't have a district (often users with NATIONAL_USER role, for example). They will
