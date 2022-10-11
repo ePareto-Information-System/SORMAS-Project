@@ -98,9 +98,9 @@ public class UserEditForm extends AbstractEditForm<UserDto> {
 
         setWidth(640, Unit.PIXELS);
 
-        if (create) {
-            hideValidationUntilNextCommit();
-        }
+//        if (create) {
+//            hideValidationUntilNextCommit();
+//        }
     }
 
     @Override

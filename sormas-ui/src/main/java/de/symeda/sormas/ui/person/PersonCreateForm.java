@@ -209,7 +209,7 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 
 		initializeVisibilitiesAndAllowedVisibilities();
 		initializeAccessAndAllowedAccesses();
-		hideValidationUntilNextCommit();
+		//hideValidationUntilNextCommit();
 		setRequired(true, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.SEX);
 	}
 
