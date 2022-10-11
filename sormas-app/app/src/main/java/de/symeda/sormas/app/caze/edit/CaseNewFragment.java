@@ -281,10 +281,10 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 			contentBinding.caseDataEpidNumber.setVisibility(GONE);
 		}
 
-		contentBinding.caseDataResponsibleRegion.setEnabled(false);
-		contentBinding.caseDataResponsibleRegion.setRequired(false);
-		contentBinding.caseDataResponsibleDistrict.setEnabled(false);
-		contentBinding.caseDataResponsibleDistrict.setRequired(false);
+		contentBinding.caseDataResponsibleRegion.setEnabled(true);
+		contentBinding.caseDataResponsibleRegion.setRequired(true);
+		contentBinding.caseDataResponsibleDistrict.setEnabled(true);
+		contentBinding.caseDataResponsibleDistrict.setRequired(true);
 
 		User user = ConfigProvider.getUser();
 
