@@ -55,6 +55,7 @@ public final class DataHelper {
 
 	public static final String VALID_EMAIL_REGEX = "^([a-zA-Z0-9_\\.\\-+])+@[a-zA-Z0-9-.]+\\.[a-zA-Z0-9-]{2,}$";
 	public static final String NOT_A_VALID_PHONE_NUMBER_REGEX = ".*[a-zA-Z].*";
+	public static final String allCountryRegex = "^(\\+\\d{1,3}( )?)?((\\(\\d{1,3}\\))|\\d{1,3})[- .]?\\d{3,4}[- .]?\\d{4}$";
 
 	private DataHelper() {
 		// Hide Utility Class Constructor
@@ -434,7 +435,7 @@ public final class DataHelper {
 	}
 
 	public static boolean isValidPhoneNumber(String phoneNumber) {
-		return phoneNumber == null || phoneNumber.isEmpty() || phoneNumber.startsWith("+");
+		return phoneNumber == null || phoneNumber.isEmpty() || (phoneNumber.startsWith("+") && phoneNumber.matches(allCountryRegex));
 	}
 
 	public static boolean isValidEmailAddress(String emailAddress) {

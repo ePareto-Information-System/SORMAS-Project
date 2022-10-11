@@ -21,14 +21,15 @@ import com.vaadin.v7.data.validator.AbstractValidator;
 
 @SuppressWarnings("serial")
 public class UserPhoneNumberValidator extends AbstractValidator<String> {
-
 	public UserPhoneNumberValidator(String errorMessage) {
 		super(errorMessage);
 	}
-
+	
+    String allCountryRegex = "^(\\+\\d{1,3}( )?)?((\\(\\d{1,3}\\))|\\d{1,3})[- .]?\\d{3,4}[- .]?\\d{4}$";
+	
 	@Override
 	protected boolean isValidValue(String phoneNumber) {
-		return phoneNumber == null || phoneNumber.isEmpty() || phoneNumber.startsWith("+");
+		return phoneNumber == null || phoneNumber.isEmpty() || (phoneNumber.startsWith("+") && phoneNumber.matches(allCountryRegex));
 	}
 
 	@Override
