@@ -803,7 +803,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		boolean exportOutbreakInfo = ExportHelper.shouldExportFields(exportConfiguration, CaseExportDto.ASSOCIATED_WITH_OUTBREAK);
 
 		//@formatter:off
-		cq.multiselect(caseRoot.get(Case.ID), joins.getPerson().get(Person.ID),
+		cq.multiselect(caseRoot.get(Case.ID), joins.getPerson().get(Person.ID),joins.getPersonAddress().get(Location.ID),
 				exportGpsCoordinates ? joins.getPersonAddress().get(Location.LATITUDE) : cb.nullLiteral(Double.class),
 				exportGpsCoordinates ? joins.getPersonAddress().get(Location.LONGITUDE) : cb.nullLiteral(Double.class),
 				exportGpsCoordinates ? joins.getPersonAddress().get(Location.LATLONACCURACY) : cb.nullLiteral(Float.class),
@@ -928,6 +928,42 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			symptomsList = em.createQuery(symptomsCq).setHint(ModelConstants.HINT_HIBERNATE_READ_ONLY, true).getResultList();
 			Map<Long, Symptoms> symptoms = symptomsList.stream().collect(Collectors.toMap(Symptoms::getId, Function.identity()));
 
+			Map<Long, Case> caseAddresses = null;
+			if (ExportHelper.shouldExportFields(
+				exportConfiguration,
+				CaseDataDto.REPORT_LAT,
+				CaseExportDto.CASE_LATITUDE,
+				CaseExportDto.CASE_LONGITUDE,
+				CaseExportDto.CASE_LAT_LON_ACCURACY,
+				CaseExportDto.CASE_GPS_COORDINATES)) {
+				CriteriaQuery<Case> caseAddressesCq = cb.createQuery(Case.class);
+				Root<Case> caseAddressRoot = caseAddressesCq.from(Case.class);
+				Expression<String> caseAddressesIdsExpr = caseAddressRoot.get(Case.ID);
+				caseAddressesCq.where(caseAddressesIdsExpr.in(resultList.stream().map(CaseExportDto::getId).collect(Collectors.toList())));
+				List<Case> caseAddressesList = em.createQuery(caseAddressesCq).setHint(ModelConstants.HINT_HIBERNATE_READ_ONLY, true).getResultList();
+				caseAddresses = caseAddressesList.stream().collect(Collectors.toMap(Case::getId, Function.identity()));
+			}
+
+			Map<Long, Location> personAddresses = null;
+			if (ExportHelper.shouldExportFields(
+				exportConfiguration,
+				PersonDto.ADDRESS,
+				CaseExportDto.ADDRESS_GPS_COORDINATES,
+				CaseExportDto.PERSON_LATITUDE,
+				CaseExportDto.PERSON_LONGITUDE)) {
+				CriteriaQuery<Location> personAddressesCq = cb.createQuery(Location.class);
+				Root<Location> personAddressesRoot = personAddressesCq.from(Location.class);
+				Expression<String> personAddressesIdsExpr = personAddressesRoot.get(Location.ID);
+				personAddressesCq
+					.where(personAddressesIdsExpr.in(resultList.stream().map(CaseExportDto::getPersonAddressId).collect(Collectors.toList())));
+				List<Location> personAddressesList =
+					em.createQuery(personAddressesCq).setHint(ModelConstants.HINT_HIBERNATE_READ_ONLY, true).getResultList();
+				personAddresses = personAddressesList.stream().collect(Collectors.toMap(Location::getId, Function.identity()));
+			}
+
+			Map<Long, Integer> prescriptionCounts = null;
+			Map<Long, Integer> treatmentCounts = null;
+			Map<Long, Integer> clinicalVisitCounts = null;
 			Map<Long, HealthConditions> healthConditions = null;
 			if (exportType == null || exportType == CaseExportType.CASE_MANAGEMENT) {
 				if (ExportHelper.shouldExportFields(exportConfiguration, CaseDataDto.HEALTH_CONDITIONS)) {
@@ -1083,6 +1119,50 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				if (ExportHelper.shouldExportFields(exportConfiguration, CaseDataDto.SYMPTOMS)) {
 					Optional.ofNullable(symptoms.get(exportDto.getSymptomsId()))
 						.ifPresent(symptom -> exportDto.setSymptoms(SymptomsFacadeEjb.toDto(symptom)));
+				}
+				if (exportConfiguration == null || exportConfiguration.getProperties().contains(CaseExportDto.CASE_LATITUDE)) {
+					Optional.ofNullable(caseAddresses.get(exportDto.getId()))
+						.ifPresent(caseAddress -> exportDto.setCaseLatitude(caseAddress.buildCaseLatitudeCoordination()));
+				}
+				if (exportConfiguration == null || exportConfiguration.getProperties().contains(CaseExportDto.CASE_LONGITUDE)) {
+					Optional.ofNullable(caseAddresses.get(exportDto.getId()))
+						.ifPresent(caseAddress -> exportDto.setCaseLongitude(caseAddress.buildCaseLongitudeCoordination()));
+				}
+				if (exportConfiguration == null || exportConfiguration.getProperties().contains(CaseExportDto.CASE_LAT_LON_ACCURACY)) {
+					Optional.ofNullable(caseAddresses.get(exportDto.getId()))
+						.ifPresent(caseAddress -> exportDto.setCaseLatLonAccuracy(caseAddress.buildCaseLatLonCoordination()));
+				}
+				if (exportConfiguration == null || exportConfiguration.getProperties().contains(CaseExportDto.CASE_GPS_COORDINATES)) {
+					Optional.ofNullable(caseAddresses.get(exportDto.getId()))
+						.ifPresent(caseAddress -> exportDto.setCaseGpsCoordinates(caseAddress.buildCaseGpsCoordinationCaption()));
+				}
+				if (exportConfiguration == null || exportConfiguration.getProperties().contains(CaseExportDto.PERSON_LATITUDE)) {
+					Optional.ofNullable(personAddresses.get(exportDto.getPersonAddressId()))
+						.ifPresent(personAddress -> exportDto.setPersonLatitude(personAddress.buildLatitudeCoordination()));
+				}
+				if (exportConfiguration == null || exportConfiguration.getProperties().contains(CaseExportDto.PERSON_LONGITUDE)) {
+					Optional.ofNullable(personAddresses.get(exportDto.getPersonAddressId()))
+						.ifPresent(personAddress -> exportDto.setPersonLongitude(personAddress.buildLongitudeCoordination()));
+				}
+				if (exportConfiguration == null || exportConfiguration.getProperties().contains(CaseExportDto.PERSON_LAT_LON_ACCURACY)) {
+					Optional.ofNullable(personAddresses.get(exportDto.getPersonAddressId()))
+						.ifPresent(personAddress -> exportDto.setPersonLatLonAccuracy(personAddress.buildLatLonCoordination()));
+				}
+				if (personAddresses != null || exportConfiguration.getProperties().contains(CaseExportDto.ADDRESS_GPS_COORDINATES)) {
+					Optional.ofNullable(personAddresses.get(exportDto.getPersonAddressId()))
+						.ifPresent(personAddress -> exportDto.setAddressGpsCoordinates(personAddress.buildGpsCoordinatesCaption()));
+				}
+				if (prescriptionCounts != null) {
+					Optional.ofNullable(prescriptionCounts.get(exportDto.getId()))
+						.ifPresent(prescriptionCount -> exportDto.setNumberOfPrescriptions(prescriptionCount));
+				}
+				if (treatmentCounts != null) {
+					Optional.ofNullable(treatmentCounts.get(exportDto.getId()))
+						.ifPresent(treatmentCount -> exportDto.setNumberOfTreatments(treatmentCount));
+				}
+				if (clinicalVisitCounts != null) {
+					Optional.ofNullable(clinicalVisitCounts.get(exportDto.getId()))
+						.ifPresent(clinicalVisitCount -> exportDto.setNumberOfClinicalVisits(clinicalVisitCount));
 				}
 				if (healthConditions != null) {
 					Optional.ofNullable(healthConditions.get(exportDto.getHealthConditionsId()))

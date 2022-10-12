@@ -31,8 +31,11 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 
 import de.symeda.auditlog.api.Audited;
+import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.area.AreaType;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
+import de.symeda.sormas.api.location.LocationReferenceDto;
 import de.symeda.sormas.api.person.PersonAddressType;
 import de.symeda.sormas.api.utils.LocationHelper;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
@@ -348,5 +351,33 @@ public class Location extends AbstractDomainObject {
 
 	public String buildGpsCoordinatesCaption() {
 		return LocationHelper.buildGpsCoordinatesCaption(latitude, longitude, latLonAccuracy);
+	}
+
+	public Double buildLatitudeCoordination() {
+		return latitude;
+	}
+
+	public Double buildLongitudeCoordination() {
+		return longitude;
+	}
+
+	public String buildLatLonCoordination() {
+		if (latLonAccuracy == null) {
+			return "";
+		} else {
+			return latLonAccuracy + "";
+		}
+	}
+
+	@Override
+	public String toString() {
+		return LocationReferenceDto.buildCaption(
+			region != null ? region.getName() : null,
+			district != null ? district.getName() : null,
+			community != null ? community.getName() : null,
+			city,
+			street,
+			houseNumber,
+			additionalInformation);
 	}
 }

@@ -72,6 +72,8 @@ import de.symeda.sormas.api.contact.FollowUpStatus;
 import de.symeda.sormas.api.contact.QuarantineType;
 import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.externaldata.HasExternalData;
+import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.utils.PersonalData;
 import de.symeda.sormas.api.utils.YesNoUnknown;
@@ -1766,5 +1768,28 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setExternalData(Map<String, String> externalData) {
 		this.externalData = externalData;
+	}
+
+	public String buildCaseGpsCoordinationCaption() {
+		if (reportLat == null || reportLon == null) {
+			return I18nProperties.getString(Strings.messageIncompleteGpsCoordinates);
+		} else if (reportLatLonAccuracy == null) {
+			return reportLat + ", " + reportLon;
+		} else {
+			return reportLat + ", " + reportLon + " +-" + Math.round(reportLatLonAccuracy) + "m";
+		}
+	}
+
+	public Double buildCaseLatitudeCoordination() {
+		return reportLat;
+	}
+
+	public Double buildCaseLongitudeCoordination() {
+		return reportLon;
+	}
+
+	public Float buildCaseLatLonCoordination() {
+
+		return reportLatLonAccuracy;
 	}
 }
