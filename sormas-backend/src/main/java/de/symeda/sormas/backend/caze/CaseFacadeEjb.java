@@ -1563,6 +1563,11 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	}
 
 	@Override
+	public CaseDataDto saveCase(@Valid CaseDataDto dto) throws ValidationRuntimeException {
+		return saveCase(dto, true, true);
+	}
+
+	@Override
 	@RightsAllowed({
 		UserRight._CASE_CREATE,
 		UserRight._CASE_EDIT })
@@ -1717,6 +1722,24 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		if (updatedCaseBulkEditData.getDontShareWithReportingTool() != null) {
 			existingCase.setDontShareWithReportingTool(updatedCaseBulkEditData.getDontShareWithReportingTool());
 		}
+	}
+
+	public CaseDataDto saveCase(@Valid CaseDataDto dto, boolean handleChanges, boolean checkChangeDate) {
+		return saveCase(dto, handleChanges, checkChangeDate, true);
+	}
+
+	public CaseDataDto saveCase(@Valid CaseDataDto dto, boolean handleChanges, boolean checkChangeDate, boolean internal)
+		throws ValidationRuntimeException {
+
+		Case existingCase = caseService.getByUuid(dto.getUuid());
+
+		if (internal && existingCase != null && !caseService.isCaseEditAllowed(existingCase)) {
+			throw new AccessDeniedException(I18nProperties.getString(Strings.errorCaseNotEditable));
+		}
+
+		CaseDataDto existingCaseDto = handleChanges ? toDto(existingCase) : null;
+
+		return caseSave(dto, handleChanges, existingCase, existingCaseDto, checkChangeDate, internal);
 	}
 
 	@RightsAllowed({
@@ -4055,6 +4078,12 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			diseaseConfigurationFacade.getCaseFollowUpDuration(caseDto.getDisease()),
 			ignoreOverwrite,
 			featureConfigurationFacade.isPropertyValueTrue(FeatureType.CASE_FOLLOWUP, FeatureTypeProperty.ALLOW_FREE_FOLLOW_UP_OVERWRITE));
+	}
+
+	public boolean isCaseEditAllowed(String caseUuid) {
+		Case caze = caseService.getByUuid(caseUuid);
+
+		return caseService.isCaseEditAllowed(caze);
 	}
 
 	@Override

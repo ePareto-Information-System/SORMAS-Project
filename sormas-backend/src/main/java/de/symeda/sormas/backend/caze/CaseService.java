@@ -1552,6 +1552,15 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 		// todo compared to ContactService this seems strange.
 		return getEditPermissionType(entity);
 	}
+	
+	public boolean isCaseEditAllowed(Case caze) {
+
+		if (caze.getSormasToSormasOriginInfo() != null && !caze.getSormasToSormasOriginInfo().isOwnershipHandedOver()) {
+			return false;
+		}
+
+		return inJurisdictionOrOwned(caze) && !sormasToSormasShareInfoService.isCaseOwnershipHandedOver(caze);
+	}
 
 	public boolean inJurisdiction(Case caze, User user) {
 

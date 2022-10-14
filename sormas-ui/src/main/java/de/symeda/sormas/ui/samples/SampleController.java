@@ -535,8 +535,6 @@ public class SampleController {
 		if (samplesUuids == null || samplesUuids.size() == 0)
 			return;
 
-		if (samplesUuids == null || samplesUuids.size() == 0)
-			return;
 
 		VerticalLayout layout = new VerticalLayout();
 		layout.setMargin(true);
@@ -567,7 +565,7 @@ public class SampleController {
 			public void buttonClick(ClickEvent event) {
 				if (editComponent != null && !SampleCreateForm.class.equals(editComponent.getWrappedComponent().getClass())) {
 					editComponent.commit();
-
+				}
 				List<SampleDto> samples = FacadeProvider.getSampleFacade().getByUuids(samplesUuids);
 				for (SampleDto sample : samples) {
 					sample.setPathogenTestResult(newResult);
@@ -579,7 +577,7 @@ public class SampleController {
 				if (callback != null) {
 					callback.accept(true);
 				}
-			}
+			
 		}});
 
 		confirmationComponent.getCancelButton().addClickListener(new ClickListener() {
