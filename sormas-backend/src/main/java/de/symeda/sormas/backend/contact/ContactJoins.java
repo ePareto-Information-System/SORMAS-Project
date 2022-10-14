@@ -61,7 +61,7 @@ public class ContactJoins extends QueryJoins<Contact> {
 
 	private Join<Contact, Visit> visits;
 	private Join<Contact, HealthConditions> healthConditions;
-
+	private Join<Person, Location> personAddress;
 	private Join<Contact, District> reportingDistrict;
 
 	private Join<Contact, User> followUpStatusChangeUser;
@@ -226,6 +226,14 @@ public class ContactJoins extends QueryJoins<Contact> {
 
 	public void setHealthConditions(Join<Contact, HealthConditions> healthConditions) {
 		this.healthConditions = healthConditions;
+	}
+	
+	public Join<Person, Location> getPersonAddress() {
+		return getOrCreate(personAddress, Person.ADDRESS, JoinType.LEFT, getPerson(), this::setPersonAddress);
+	}
+
+	private void setPersonAddress(Join<Person, Location> personAddress) {
+		this.personAddress = personAddress;
 	}
 
 	public Join<Person, EventParticipant> getEventParticipants() {

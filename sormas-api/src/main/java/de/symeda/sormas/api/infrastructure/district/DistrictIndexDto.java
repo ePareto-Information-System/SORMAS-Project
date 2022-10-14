@@ -20,6 +20,7 @@ package de.symeda.sormas.api.infrastructure.district;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.symeda.sormas.api.EntityDto;
+import de.symeda.sormas.api.geo.GeoLatLon;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
 
@@ -36,6 +37,8 @@ public class DistrictIndexDto extends EntityDto {
 	public static final String GROWTH_RATE = "growthRate";
 	public static final String REGION = "region";
 	public static final String EXTERNAL_ID = "externalID";
+	public static final String DISTRICT_LATITUDE = "districtLatitude";
+	public static final String DISTRICT_LONGITUDE = "districtLongitude";
 
 	private String name;
 	private String epidCode;
@@ -43,6 +46,9 @@ public class DistrictIndexDto extends EntityDto {
 	private Float growthRate;
 	private RegionReferenceDto region;
 	private String externalID;
+
+	private Double districtLatitude;
+	private Double districtLongitude;
 
 	public DistrictIndexDto() {
 		super();
@@ -114,5 +120,21 @@ public class DistrictIndexDto extends EntityDto {
 		DistrictIndexDto dto = new DistrictIndexDto();
 		dto.setUuid(DataHelper.createUuid());
 		return dto;
+	}
+
+	public Double getDistrictLatitude() {
+		return districtLatitude;
+	}
+
+	public void setDistrictLatitude(Double districtLatitude) {
+		this.districtLatitude = districtLatitude;
+	}
+
+	public Double getDistrictLongitude() {
+		return districtLongitude;
+	}
+
+	public void setDistrictLongitude(Double districtLongitude) {
+		this.districtLongitude = districtLongitude;
 	}
 }

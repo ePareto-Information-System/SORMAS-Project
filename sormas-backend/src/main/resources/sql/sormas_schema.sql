@@ -11916,4 +11916,8 @@ UPDATE users SET password = LPAD(password, 64, '0') WHERE LENGTH(password) < 64;
 INSERT INTO schema_version (version_number, comment) VALUES (476, 'Adjust password hashes with leading zeros #9726');
 
 
+ALTER TABLE district ADD COLUMN IF NOT EXISTS districtlatitude double precision;
+ALTER TABLE district ADD COLUMN IF NOT EXISTS districtlongitude double precision;
+
+INSERT INTO schema_version (version_number, comment) VALUES (477, 'Add Geolocation to district #1865');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

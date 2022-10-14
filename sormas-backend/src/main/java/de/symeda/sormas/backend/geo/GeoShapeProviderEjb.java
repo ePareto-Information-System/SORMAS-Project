@@ -145,6 +145,19 @@ public class GeoShapeProviderEjb implements GeoShapeProvider {
 	}
 
 	@Override
+	public Double getDistrictAreaByLatLng(GeoLatLon latLon) {
+		for (Entry<DistrictReferenceDto, MultiPolygon> districtMultiPolygon : districtMultiPolygons.entrySet()) {
+			if (districtMultiPolygon.getValue()
+					.contains(
+							GeometryFactory
+									.createPointFromInternalCoord(new Coordinate(latLon.getLon(), latLon.getLat()), districtMultiPolygon.getValue()))) {
+				return districtMultiPolygon.getValue().getArea();
+			}
+		}
+		return null;
+	}
+
+	@Override
 	public DistrictReferenceDto getDistrictByCoord(GeoLatLon latLon) {
 
 		for (Entry<DistrictReferenceDto, MultiPolygon> districtMultiPolygon : districtMultiPolygons.entrySet()) {

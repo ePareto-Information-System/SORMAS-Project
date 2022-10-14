@@ -145,6 +145,8 @@ public class DistrictFacadeEjb
 				case District.NAME:
 				case District.EPID_CODE:
 				case District.GROWTH_RATE:
+				case District.DISTRICT_LATITUDE:
+				case District.DISTRICT_LONGITUDE:
 				case District.EXTERNAL_ID:
 					expression = district.get(sortProperty.propertyName);
 					break;
@@ -301,6 +303,9 @@ public class DistrictFacadeEjb
 		dto.setExternalID(entity.getExternalID());
 		dto.setCentrallyManaged(entity.isCentrallyManaged());
 
+		dto.setDistrictLatitude(entity.getDistrictLatitude());
+		dto.setDistrictLongitude(entity.getDistrictLongitude());
+
 		return dto;
 	}
 
@@ -325,6 +330,9 @@ public class DistrictFacadeEjb
 		dto.setRegion(RegionFacadeEjb.toReferenceDto(entity.getRegion()));
 		dto.setExternalID(entity.getExternalID());
 
+		dto.setDistrictLatitude(entity.getDistrictLatitude());
+		dto.setDistrictLongitude(entity.getDistrictLongitude());
+
 		return dto;
 	}
 
@@ -340,6 +348,9 @@ public class DistrictFacadeEjb
 		target.setArchived(source.isArchived());
 		target.setExternalID(source.getExternalID());
 		target.setCentrallyManaged(source.isCentrallyManaged());
+
+		target.setDistrictLatitude(source.getDistrictLatitude());
+		target.setDistrictLongitude(source.getDistrictLongitude());
 
 		return target;
 	}

@@ -21,13 +21,7 @@ import static java.util.Objects.nonNull;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
 import org.vaadin.hene.popupbutton.PopupButton;
@@ -120,12 +114,14 @@ public class DashboardMapComponent extends VerticalLayout {
 
 	// Entities
 	private final HashMap<FacilityReferenceDto, List<MapCaseDto>> casesByFacility = new HashMap<>();
+	private final HashMap<DistrictReferenceDto, List<MapCaseDto>> casesByDistrict = new HashMap<>();
 	private List<MapCaseDto> mapCaseDtos = new ArrayList<>();
 	private List<MapCaseDto> mapAndFacilityCases = new ArrayList<>();
 	private List<MapContactDto> mapContactDtos = new ArrayList<>();
 
 	// Map data
 	private final List<FacilityReferenceDto> markerCaseFacilities = new ArrayList<FacilityReferenceDto>();
+	private final List<DistrictReferenceDto> markerCaseDistrict = new ArrayList<DistrictReferenceDto>();
 	private final List<MapContactDto> markerContacts = new ArrayList<MapContactDto>();
 	private final List<DashboardEventDto> markerEvents = new ArrayList<DashboardEventDto>();
 	private final List<RegionReferenceDto> polygonRegions = new ArrayList<RegionReferenceDto>();
@@ -1098,7 +1094,9 @@ public class DashboardMapComponent extends VerticalLayout {
 
 		map.removeGroup(CASES_GROUP_ID);
 		markerCaseFacilities.clear();
+		markerCaseDistrict.clear();
 		casesByFacility.clear();
+		casesByDistrict.clear();
 		mapCaseDtos.clear();
 		mapAndFacilityCases.clear();
 	}
@@ -1162,14 +1160,38 @@ public class DashboardMapComponent extends VerticalLayout {
 
 			if (caze.getAddressLat() != null && caze.getAddressLon() != null) {
 				marker.setLatLon(caze.getAddressLat(), caze.getAddressLon());
-			} else {
+			}
+			else if(caze.getReportLat() != null && caze.getReportLon() != null) {
 				marker.setLatLon(caze.getReportLat(), caze.getReportLon());
+			}
+            else if(caze.getHealthFacilityLat() != null && caze.getHealthFacilityLon() != null) {
+                marker.setLatLon(caze.getHealthFacilityLat(), caze.getHealthFacilityLon());
+            }
+			else {
+				marker.setLatLon(caze.getDistrictLatitude(), caze.getDistrictLongitude());
 			}
 
 			caseMarkers.add(marker);
 		}
 
 		map.addMarkerGroup("cases", caseMarkers);
+	}
+
+	private GeoLatLon generateCoordinatesInDistrict(DistrictReferenceDto district){
+		GeoLatLon districtGeoLatLon = FacadeProvider.getGeoShapeProvider().getCenterOfDistrict(district);
+
+		Double districtArea = FacadeProvider.getGeoShapeProvider().getDistrictAreaByLatLng(districtGeoLatLon);
+		//radius  = Circumfrence/2pie, but Area is given so Radius=(SquareRoot of (Area/PI))
+		double radius =  Math.sqrt(districtArea/Math.PI);
+
+		double R = 6371; // earth radius in km
+		double longMax = districtGeoLatLon.getLon() + Math.toDegrees(radius/R/Math.cos(Math.toRadians(districtGeoLatLon.getLat())));
+		double latMax = districtGeoLatLon.getLat() + Math.toDegrees(radius/R/Math.cos(Math.toRadians(districtGeoLatLon.getLon())));
+
+		double x = (Math.random() * (latMax - districtGeoLatLon.getLat())) + districtGeoLatLon.getLat();
+		double y = (Math.random() * (longMax - districtGeoLatLon.getLon())) + districtGeoLatLon.getLon();
+
+		return new GeoLatLon(x, y);
 	}
 
 	private void fillCaseLists(List<MapCaseDto> cases) {
@@ -1180,17 +1202,30 @@ public class DashboardMapComponent extends VerticalLayout {
 				continue;
 			boolean hasCaseGps =
 				(caze.getAddressLat() != null && caze.getAddressLon() != null) || (caze.getReportLat() != null && caze.getReportLon() != null);
+
 			boolean hasFacilityGps = caze.getHealthFacilityLat() != null && caze.getHealthFacilityLon() != null;
+
+			boolean hasDistrickGps = caze.getDistrictLatitude() != null && caze.getDistrictLongitude() != null;
 
 			if (mapCaseDisplayMode == MapCaseDisplayMode.CASE_ADDRESS) {
 				if (!hasCaseGps) {
 					continue;
 				}
 				mapCaseDtos.add(caze);
-			} else {
-				if (FacilityDto.NONE_FACILITY_UUID.equals(caze.getHealthFacilityUuid())
-					|| FacilityDto.OTHER_FACILITY_UUID.equals(caze.getHealthFacilityUuid())
-					|| !hasFacilityGps) {
+			}
+			else if (hasDistrickGps && !hasFacilityGps){
+				DistrictReferenceDto district = new DistrictReferenceDto();
+				district.setUuid(caze.getDistrictUuid());
+
+				GeoLatLon coordinates = generateCoordinatesInDistrict(district);
+				caze.setDistrictLatitude(coordinates.getLat());
+				caze.setDistrictLongitude(coordinates.getLon());
+
+				mapCaseDtos.add(caze);
+				casesByDistrict.computeIfAbsent(district, k -> new ArrayList<>());
+			}
+			else {
+				if (FacilityDto.NONE_FACILITY_UUID.equals(caze.getHealthFacilityUuid()) || FacilityDto.OTHER_FACILITY_UUID.equals(caze.getHealthFacilityUuid()) || !hasFacilityGps) {
 					if (mapCaseDisplayMode == MapCaseDisplayMode.FACILITY_OR_CASE_ADDRESS) {
 						if (!hasCaseGps) {
 							continue;
@@ -1277,8 +1312,12 @@ public class DashboardMapComponent extends VerticalLayout {
 			marker.setIcon(icon);
 			if (contact.getAddressLat() != null && contact.getAddressLon() != null) {
 				marker.setLatLon(contact.getAddressLat(), contact.getAddressLon());
-			} else {
+			}
+			else if(contact.getReportLat() != null && contact.getReportLon() != null) {
 				marker.setLatLon(contact.getReportLat(), contact.getReportLon());
+			}
+			else {
+				marker.setLatLon(contact.getDistrictLatitude(), contact.getDistrictLongitude());
 			}
 			markerContacts.add(contact);
 			contactMarkers.add(marker);
@@ -1342,6 +1381,7 @@ public class DashboardMapComponent extends VerticalLayout {
 		case CASES_GROUP_ID:
 			if (markerIndex < markerCaseFacilities.size()) {
 				FacilityReferenceDto facility = markerCaseFacilities.get(markerIndex);
+//				DistrictReferenceDto districtRef = markerCaseDistrict.get(markerIndex);
 				VerticalLayout layout = new VerticalLayout();
 				Window window = VaadinUiUtil.showPopupWindow(layout);
 				CasePopupGrid caseGrid = new CasePopupGrid(window, facility, DashboardMapComponent.this);

@@ -23,7 +23,8 @@ public enum MapCaseDisplayMode {
 
 	CASE_ADDRESS,
 	FACILITY_OR_CASE_ADDRESS,
-	FACILITY;
+	FACILITY,
+	DISTRICT;
 
 	@Override
 	public String toString() {
