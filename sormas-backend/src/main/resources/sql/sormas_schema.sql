@@ -11920,4 +11920,35 @@ ALTER TABLE district ADD COLUMN IF NOT EXISTS districtlatitude double precision;
 ALTER TABLE district ADD COLUMN IF NOT EXISTS districtlongitude double precision;
 
 INSERT INTO schema_version (version_number, comment) VALUES (477, 'Add Geolocation to district #1865');
+
+
+CREATE TABLE cadre (
+     id bigint NOT NULL,
+     uuid varchar(36) not null unique,
+     creationdate timestamp without time zone NOT NULL,
+     changedate timestamp not null,
+     archived boolean not null default false,
+     position varchar(255),
+     externalid varchar(255),
+     deleted boolean not null default false,
+    primary key(id)
+);
+
+ALTER TABLE cadre OWNER TO sormas_user;
+ALTER TABLE person ADD COLUMN cadre_id bigint;
+
+ALTER TABLE cadre ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE cadre ADD COLUMN  deletionreason varchar(255);
+ALTER TABLE cadre ADD COLUMN  otherdeletionreason text;
+
+
+ALTER TABLE cadre ADD COLUMN endofprocessingdate timestamp without time zone;
+ALTER TABLE cadre ADD COLUMN archiveundonereason character varying(512);
+                            
+INSERT INTO schema_version (version_number, comment) VALUES (478, 'Created a cadre table and added a relation to person table #34');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

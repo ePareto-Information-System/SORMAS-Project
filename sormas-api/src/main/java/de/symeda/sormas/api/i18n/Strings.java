@@ -19,6 +19,7 @@ public interface Strings {
 	String between = "between";
 	String bpm = "bpm";
 	String by = "by";
+	String cadre = "cadre";
 	String classificationAllOf = "classificationAllOf";
 	String classificationClassificationRules = "classificationClassificationRules";
 	String classificationConfirmed = "classificationConfirmed";
@@ -75,6 +76,7 @@ public interface Strings {
 	String confirmationArchiveLaboratories = "confirmationArchiveLaboratories";
 	String confirmationArchiveLaboratory = "confirmationArchiveLaboratory";
 	String confirmationArchivePointOfEntry = "confirmationArchivePointOfEntry";
+	String confirmationArchiveCadre = "confirmationArchiveCadre";
 	String confirmationArchivePointsOfEntry = "confirmationArchivePointsOfEntry";
 	String confirmationArchiveRegion = "confirmationArchiveRegion";
 	String confirmationArchiveRegions = "confirmationArchiveRegions";
@@ -112,6 +114,7 @@ public interface Strings {
 	String confirmationDearchiveLaboratories = "confirmationDearchiveLaboratories";
 	String confirmationDearchiveLaboratory = "confirmationDearchiveLaboratory";
 	String confirmationDearchivePointOfEntry = "confirmationDearchivePointOfEntry";
+	String confirmationDearchiveCadre = "confirmationDearchiveCadre";
 	String confirmationDearchivePointsOfEntry = "confirmationDearchivePointsOfEntry";
 	String confirmationDearchiveRegion = "confirmationDearchiveRegion";
 	String confirmationDearchiveRegions = "confirmationDearchiveRegions";
@@ -433,6 +436,7 @@ public interface Strings {
 	String headingCreateNewAggregateReport = "headingCreateNewAggregateReport";
 	String headingCreateNewCampaign = "headingCreateNewCampaign";
 	String headingCreateNewCase = "headingCreateNewCase";
+	String headingCreateNewCadre = "headingCreateNewCadre";
 	String headingCreateNewCaseIssue = "headingCreateNewCaseIssue";
 	String headingCreateNewClinicalVisit = "headingCreateNewClinicalVisit";
 	String headingCreateNewContact = "headingCreateNewContact";
@@ -550,6 +554,7 @@ public interface Strings {
 	String headingImportContinents = "headingImportContinents";
 	String headingImportCountries = "headingImportCountries";
 	String headingImportCsvFile = "headingImportCsvFile";
+	String headingImportCadre = "headingImportCadre";
 	String headingImportDistricts = "headingImportDistricts";
 	String headingImportedCaseInfo = "headingImportedCaseInfo";
 	String headingImportedPersonInfo = "headingImportedPersonInfo";
@@ -620,6 +625,7 @@ public interface Strings {
 	String passwordStrength = "passwordStrength";
 	String headingPersonInformation = "headingPersonInformation";
 	String headingPersonOccupation = "headingPersonOccupation";
+	String headingPersonCadre = "headingCadre";
 	String headingPickOrCreateCase = "headingPickOrCreateCase";
 	String headingPickOrCreateContact = "headingPickOrCreateContact";
 	String headingPickOrCreateEntry = "headingPickOrCreateEntry";
@@ -900,6 +906,7 @@ public interface Strings {
 	String labelNumberOfSubcontinents = "labelNumberOfSubcontinents";
 	String labelNumberOfTemplates = "labelNumberOfTemplates";
 	String labelNumberOfUsers = "labelNumberOfUsers";
+	String labelNoCadre = "labelNoCadre";
 	String lastTwoDays = "lastTwoDays";
 	String lastTwoWeeks = "lastTwoWeeks";
 	String lastTwoYears = "lastTwoYears";
@@ -971,10 +978,12 @@ public interface Strings {
 	String messageCloneCaseWithNewDisease = "messageCloneCaseWithNewDisease";
 	String messageCommunitiesArchived = "messageCommunitiesArchived";
 	String messageCommunitiesArchivingNotPossible = "messageCommunitiesArchivingNotPossible";
+	String messageCadresArchivingNotPossible = "messageCadresArchivingNotPossible";
 	String messageCommunitiesDearchived = "messageCommunitiesDearchived";
 	String messageCommunitiesDearchivingNotPossible = "messageCommunitiesDearchivingNotPossible";
 	String messageCommunityArchived = "messageCommunityArchived";
 	String messageCommunityArchivingNotPossible = "messageCommunityArchivingNotPossible";
+	String messageCadreArchivingNotPossible = "messageCadreArchivingNotPossible";
 	String messageCommunityDearchived = "messageCommunityDearchived";
 	String messageCommunityDearchivingNotPossible = "messageCommunityDearchivingNotPossible";
 	String messageCompletenessValuesUpdated = "messageCompletenessValuesUpdated";
@@ -1168,7 +1177,9 @@ public interface Strings {
 	String messagePersonSavedClassificationChanged = "messagePersonSavedClassificationChanged";
 	String messagePlagueTypeChange = "messagePlagueTypeChange";
 	String messagePointOfEntryArchived = "messagePointOfEntryArchived";
+	String messageCadreArchived = "messageCadreArchived";
 	String messagePointOfEntryDearchived = "messagePointOfEntryDearchived";
+	String messageCadreDearchived = "messageCadreDearchived";
 	String messagePointOfEntryDearchivingNotPossible = "messagePointOfEntryDearchivingNotPossible";
 	String messagePointsOfEntryArchived = "messagePointsOfEntryArchived";
 	String messagePointsOfEntryDearchived = "messagePointsOfEntryDearchived";

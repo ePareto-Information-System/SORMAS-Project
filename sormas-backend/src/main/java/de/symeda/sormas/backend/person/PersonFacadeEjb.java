@@ -52,6 +52,8 @@ import javax.persistence.criteria.Subquery;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import de.symeda.sormas.backend.cadre.CadreFacadeEjb;
+import de.symeda.sormas.backend.cadre.CadreService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -230,6 +232,8 @@ public class PersonFacadeEjb implements PersonFacade {
 	private FacilityFacadeEjbLocal facilityFacade;
 	@EJB
 	private ImmunizationFacadeEjb.ImmunizationFacadeEjbLocal immunizationFacade;
+	@EJB
+	private CadreService cadreService;
 
 	@Override
 	public List<String> getAllUuids() {
@@ -995,6 +999,8 @@ public class PersonFacadeEjb implements PersonFacade {
 		target.setCitizenship(CountryFacadeEjb.toReferenceDto(source.getCitizenship()));
 		target.setAdditionalDetails(source.getAdditionalDetails());
 
+		target.setCadre(CadreFacadeEjb.toReferenceDto(source.getCadre()));
+
 		return target;
 	}
 
@@ -1676,6 +1682,8 @@ public class PersonFacadeEjb implements PersonFacade {
 		target.setBirthCountry(countryService.getByReferenceDto(source.getBirthCountry()));
 		target.setCitizenship(countryService.getByReferenceDto(source.getCitizenship()));
 		target.setAdditionalDetails(source.getAdditionalDetails());
+
+		target.setCadre(cadreService.getByReferenceDto(source.getCadre()));
 
 		return target;
 	}

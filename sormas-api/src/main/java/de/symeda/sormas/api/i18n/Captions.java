@@ -42,6 +42,7 @@ public interface Captions {
 	String actionAdjustChanges = "actionAdjustChanges";
 	String actionApplyDateFilter = "actionApplyDateFilter";
 	String actionApplyFilters = "actionApplyFilters";
+	String actionArchive = "actionArchive";
 	String actionArchiveCoreEntity = "actionArchiveCoreEntity";
 	String actionArchiveInfrastructure = "actionArchiveInfrastructure";
 	String actionAssignNewEpidNumber = "actionAssignNewEpidNumber";
@@ -57,6 +58,7 @@ public interface Captions {
 	String actionContinue = "actionContinue";
 	String actionCreate = "actionCreate";
 	String actionCreatingLabel = "actionCreatingLabel";
+	String actionDearchive = "actionDearchive";
 	String actionDearchiveCoreEntity = "actionDearchiveCoreEntity";
 	String actionDearchiveInfrastructure = "actionDearchiveInfrastructure";
 	String actionDelete = "actionDelete";
@@ -77,6 +79,7 @@ public interface Captions {
 	String actionHide = "actionHide";
 	String actionImport = "actionImport";
 	String actionImportAllContinents = "actionImportAllContinents";
+	String actionImportAllCadre = "actionImportAllCadre";
 	String actionImportAllCountries = "actionImportAllCountries";
 	String actionImportAllSubcontinents = "actionImportAllSubcontinents";
 	String actionLastModifiedByLabel = "actionLastModifiedByLabel";
@@ -98,6 +101,7 @@ public interface Captions {
 	String actionReset = "actionReset";
 	String actionResetEnumCache = "actionResetEnumCache";
 	String actionResetFilters = "actionResetFilters";
+	String actionRefresh = "actionRefresh";
 	String actionSave = "actionSave";
 	String actionSaveAndContinue = "actionSaveAndContinue";
 	String actionSaveAndOpenCase = "actionSaveAndOpenCase";
@@ -163,6 +167,7 @@ public interface Captions {
 	String AdditionalTest_wbcCount = "AdditionalTest.wbcCount";
 	String additionalTestNewTest = "additionalTestNewTest";
 	String address = "address";
+	String addCadre = "addCadre";
 	String AggregateReport_deaths = "AggregateReport.deaths";
 	String AggregateReport_disease = "AggregateReport.disease";
 	String AggregateReport_grouping = "AggregateReport.grouping";
@@ -219,6 +224,7 @@ public interface Captions {
 	String bulkTaskAssignee = "bulkTaskAssignee";
 	String bulkTaskPriority = "bulkTaskPriority";
 	String bulkTaskStatus = "bulkTaskStatus";
+	String cadre = "cadre";
 	String Campaign = "Campaign";
 	String Campaign_area = "Campaign.area";
 	String Campaign_community = "Campaign.community";
@@ -780,8 +786,11 @@ public interface Captions {
 	String Continent_displayName = "Continent.displayName";
 	String Continent_externalId = "Continent.externalId";
 	String continentActiveContinents = "continentActiveContinents";
+	String continentActiveCadres = "continentActiveCadre";
 	String continentAllContinents = "continentAllContinents";
 	String continentArchivedContinents = "continentArchivedContinents";
+	String continentArchivedCadre = "continentArchivedCadre";
+	String continentAllCadre = "continentAllCadre";
 	String convertContactToCase = "convertContactToCase";
 	String convertEventParticipantToCase = "convertEventParticipantToCase";
 	String Country = "Country";
@@ -1728,6 +1737,7 @@ public interface Captions {
 	String Person_presentCondition = "Person.presentCondition";
 	String Person_salutation = "Person.salutation";
 	String Person_sex = "Person.sex";
+	String Person_cadre = "Person.cadre";
 	String Person_symptomJournalStatus = "Person.symptomJournalStatus";
 	String Person_transporter_occupationDetails = "Person.transporter.occupationDetails";
 	String Person_uuid = "Person.uuid";
@@ -2532,6 +2542,10 @@ public interface Captions {
 	String View_configuration_devMode_short = "View.configuration.devMode.short";
 	String View_configuration_districts = "View.configuration.districts";
 	String View_configuration_districts_short = "View.configuration.districts.short";
+	String View_configuration_listOfValue = "View.configuration.listOfValue";
+	String View_configuration_listOfValue_short = "View.configuration.listOfValue.short";
+	String View_configuration_cadre = "View.configuration.cadre";
+	String View_configuration_cadre_short = "View.configuration.cadre.short";
 	String View_configuration_documentTemplates = "View.configuration.documentTemplates";
 	String View_configuration_documentTemplates_short = "View.configuration.documentTemplates.short";
 	String View_configuration_facilities = "View.configuration.facilities";

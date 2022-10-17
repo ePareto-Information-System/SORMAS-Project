@@ -11,5 +11,6 @@ public enum InfrastructureType {
 	POPULATION_DATA,
 	COUNTRY,
 	SUBCONTINENT,
-	CONTINENT;
+	CONTINENT,
+	CADRE;
 }

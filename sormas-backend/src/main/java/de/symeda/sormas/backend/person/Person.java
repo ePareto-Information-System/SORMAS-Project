@@ -53,11 +53,13 @@ import de.symeda.sormas.api.person.DeathPlaceType;
 import de.symeda.sormas.api.person.EducationType;
 import de.symeda.sormas.api.person.OccupationType;
 import de.symeda.sormas.api.person.PersonContactDetailType;
+import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.person.Salutation;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.person.SymptomJournalStatus;
+import de.symeda.sormas.backend.cadre.Cadre;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.messaging.ManualMessageLog;
@@ -71,6 +73,8 @@ import de.symeda.sormas.backend.infrastructure.facility.Facility;
 import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.travelentry.TravelEntry;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 @Entity
 @Audited
@@ -142,6 +146,7 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	public static final String IMMUNIZATIONS = "immunizations";
 	public static final String ADDITIONAL_DETAILS = "additionalDetails";
 	public static final String TRAVEL_ENTRIES = "travelEntries";
+	public static final String CADRE = "cadre";
 
 	private String firstName;
 	private String lastName;
@@ -215,6 +220,8 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	private List<EventParticipant> eventParticipants = new ArrayList<>();
 	private List<Immunization> immunizations = new ArrayList<>();
 	private List<TravelEntry> travelEntries = new ArrayList<>();
+
+	private Cadre cadre;
 
 	@Column(nullable = false, length = CHARACTER_LIMIT_DEFAULT)
 	public String getFirstName() {
@@ -807,5 +814,21 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	@Transient
 	public boolean isEnrolledInExternalJournal() {
 		return SymptomJournalStatus.ACCEPTED.equals(symptomJournalStatus) || SymptomJournalStatus.REGISTERED.equals(symptomJournalStatus);
+	}
+
+	@Override
+	public String toString() {
+		return PersonDto.buildCaption(firstName, lastName);
+	}
+
+	@JoinColumn(nullable = false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@NotFound(action = NotFoundAction.IGNORE)
+	public Cadre getCadre() {
+		return cadre;
+	}
+
+	public void setCadre(Cadre cadre) {
+		this.cadre = cadre;
 	}
 }

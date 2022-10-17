@@ -23,6 +23,15 @@ public abstract class AbstractDeletableAdoService<ADO extends DeletableAdo> exte
 		em.persist(ado);
 		em.flush();
 	}
+	
+
+	public void delete(ADO deleteme) {
+
+		deleteme.setDeleted(true);
+		em.persist(deleteme);
+		em.flush();
+	}
+	
 
 	protected <C> Predicate changeDateFilter(CriteriaBuilder cb, Timestamp date, From<?, C> path, String... joinFields) {
 		From<?, ?> parent = path;

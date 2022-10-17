@@ -36,6 +36,7 @@ public class DeletionConfigurationService extends BaseAdoService<DeletionConfigu
 		return getCoreEntityTypeConfig(coreEntityType, false);
 	}
 
+
 	/**
 	 * Retrieves the deletion configuration for the specified core entity type with deletion reference == DELETION.
 	 */

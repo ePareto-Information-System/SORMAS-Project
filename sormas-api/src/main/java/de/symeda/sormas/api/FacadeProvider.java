@@ -54,6 +54,9 @@ import de.symeda.sormas.api.externalmessage.ExternalMessageAdapterFacade;
 import de.symeda.sormas.api.externalmessage.ExternalMessageFacade;
 import de.symeda.sormas.api.externalmessage.labmessage.TestReportFacade;
 import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolFacade;
+import de.symeda.sormas.api.infrastructure.ClientInfraSyncFacade;
+import de.symeda.sormas.api.infrastructure.cadre.CadreFacade;
+import de.symeda.sormas.api.infrastructure.facility.FacilityFacade;
 import de.symeda.sormas.api.feature.FeatureConfigurationFacade;
 import de.symeda.sormas.api.geo.GeoShapeProvider;
 import de.symeda.sormas.api.geocoding.GeocodingFacade;
@@ -487,6 +490,9 @@ public class FacadeProvider {
 
 	public static AuditLoggerFacade getAuditLoggerFacade() {
 		return get().lookupEjbRemote(AuditLoggerFacade.class);
+	}
+	public static CadreFacade getCadreFacade() {
+		return get().lookupEjbRemote(CadreFacade.class);
 	}
 
 	@SuppressWarnings("unchecked")

@@ -26,7 +26,7 @@ public class DeletionConfiguration extends AbstractDomainObject {
 	public static final String DELETION_PERIOD = "deletionPeriod";
 
 	private CoreEntityType entityType;
-	private DeletionReference deletionReference;
+	DeletionReference deletionReference;
 
 	@Min(value = 7, message = Validations.numberTooSmall)
 	@Max(value = Integer.MAX_VALUE, message = Validations.numberTooBig)

@@ -32,6 +32,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.HasUuid;
+import de.symeda.sormas.api.infrastructure.cadre.CadreDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityIndexDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
@@ -173,6 +174,18 @@ public class InfrastructureController {
 		VaadinUiUtil.showModalPopupWindow(component, caption);
 	}
 
+	public void createCadre(CadreView cadreView) {
+		CommitDiscardWrapperComponent<CadreEditForm> component = getCadreEditComponent(null, cadreView);
+		VaadinUiUtil.showModalPopupWindow(component, I18nProperties.getString(Strings.headingCreateEntry));
+	}
+
+    public void editCadre(String uuid, CadreView cadreView) {
+        CadreDto cadreDto = FacadeProvider.getCadreFacade().getByUuid(uuid);
+        CommitDiscardWrapperComponent<CadreEditForm> editComponent = getCadreEditComponent(cadreDto, cadreView);
+        String caption = I18nProperties.getString(Strings.headingEditContinent);
+        VaadinUiUtil.showModalPopupWindow(editComponent, caption);
+    }
+
 	private CommitDiscardWrapperComponent<FacilityEditForm> getFacilityEditComponent(FacilityDto facility) {
 
 		boolean isNew = facility == null;
@@ -235,6 +248,32 @@ public class InfrastructureController {
 		}
 
 		return editComponent;
+	}
+
+	private CommitDiscardWrapperComponent<CadreEditForm> getCadreEditComponent(CadreDto cadreDto, CadreView cadreView) {
+		boolean isNew = cadreDto == null;
+		CadreEditForm editForm = new CadreEditForm(isNew);
+		if (isNew) {
+            cadreDto = CadreDto.build();
+		}
+		editForm.setValue(cadreDto);
+
+		final CommitDiscardWrapperComponent<CadreEditForm> editView = new CommitDiscardWrapperComponent<>(
+			editForm,
+			UserProvider.getCurrent().hasUserRight(isNew ? UserRight.INFRASTRUCTURE_CREATE : UserRight.INFRASTRUCTURE_EDIT),
+			editForm.getFieldGroup());
+
+		editView.addCommitListener(() -> {
+			FacadeProvider.getCadreFacade().saveCadre(editForm.getValue());
+			Notification.show(I18nProperties.getString(Strings.messageEntryCreated), Type.ASSISTIVE_NOTIFICATION);
+			cadreView.refresh();
+		});
+
+		if (!isNew) {
+			extendEditComponentWithArchiveButton(editView, cadreDto.isArchived(), cadreDto.getUuid(), InfrastructureType.CADRE, null);
+		}
+
+		return editView;
 	}
 
 	private CommitDiscardWrapperComponent<ContinentEditForm> getContinentEditComponent(ContinentDto continent) {
@@ -475,7 +514,10 @@ public class InfrastructureController {
 						|| InfrastructureType.FACILITY.equals(infrastructureType)
 							&& FacadeProvider.getFacilityFacade().hasArchivedParentInfrastructure(Arrays.asList(uuid))
 						|| InfrastructureType.POINT_OF_ENTRY.equals(infrastructureType)
-							&& FacadeProvider.getPointOfEntryFacade().hasArchivedParentInfrastructure(Arrays.asList(uuid))) {
+							&& FacadeProvider.getPointOfEntryFacade().hasArchivedParentInfrastructure(Arrays.asList(uuid))
+//							|| InfrastructureType.CADRE.equals(infrastructureType)
+//							&& FacadeProvider.getCaseFacade().hasArchivedParentInfrastructure(Arrays.asList(uuid))
+					) {
 						showDearchivingNotPossibleWindow(infrastructureType, false);
 						return;
 					}
@@ -517,6 +559,10 @@ public class InfrastructureController {
 		case COMMUNITY:
 			contentText = I18nProperties
 				.getString(bulkArchiving ? Strings.messageCommunitiesArchivingNotPossible : Strings.messageCommunityArchivingNotPossible);
+			break;
+		case CADRE:
+			contentText = I18nProperties
+				.getString(bulkArchiving ? Strings.messageCadresArchivingNotPossible : Strings.messageCadreArchivingNotPossible);
 			break;
 		default:
 			throw new IllegalArgumentException(infrastructureType.name());
@@ -600,6 +646,11 @@ public class InfrastructureController {
 			contentLabel
 				.setValue(I18nProperties.getString(archive ? Strings.confirmationArchivePointOfEntry : Strings.confirmationDearchivePointOfEntry));
 			notificationMessage = I18nProperties.getString(archive ? Strings.messagePointOfEntryArchived : Strings.messagePointOfEntryDearchived);
+			break;
+		case CADRE:
+			contentLabel
+					.setValue(I18nProperties.getString(archive ? Strings.confirmationArchiveCadre : Strings.confirmationDearchivePointOfEntry));
+			notificationMessage = I18nProperties.getString(archive ? Strings.messageCadreArchived : Strings.messageCadreDearchived);
 			break;
 		default:
 			throw new IllegalArgumentException(infrastructureType.name());
@@ -685,6 +736,14 @@ public class InfrastructureController {
 							FacadeProvider.getPointOfEntryFacade().dearchive(entityUuid);
 						}
 						SormasUI.get().getNavigator().navigateTo(PointsOfEntryView.VIEW_NAME);
+						break;
+					case CADRE:
+						if (archive) {
+							FacadeProvider.getCadreFacade().archive(entityUuid);
+						} else {
+							FacadeProvider.getCadreFacade().dearchive(entityUuid);
+						}
+						SormasUI.get().getNavigator().navigateTo(CadreView.VIEW_NAME);
 						break;
 					default:
 						throw new IllegalArgumentException(infrastructureType.name());
