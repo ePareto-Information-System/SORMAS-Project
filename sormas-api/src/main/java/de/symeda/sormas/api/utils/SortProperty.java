@@ -41,5 +41,10 @@ public class SortProperty implements Serializable {
 		this.ascending = ascending;
 	}
 
+	@Override
+	public String toString() {
+		return "SortProperty [propertyName=" + propertyName + ", ascending=" + ascending + "]";
+	}
+
 
 }

@@ -182,7 +182,7 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 						  Disease disease, String diseaseDetails, PathogenTestResultType pathogenTestResult,
 						  Boolean additionalTestingRequested,
 //						  String additionalTest,
-						  Boolean additionalTestPerformed, String district, String labUuid, Long pathogenTestCount,
+						  Boolean additionalTestPerformed, String district,String community, String labUuid, Long pathogenTestCount,
 						  boolean isInJurisdiction, boolean isCaseInJurisdiction,
 						  boolean isContactInJurisdiction,  boolean isContactCaseInJurisdiction, boolean isEventParticipantInJurisdiction) {
 		//@formatter:on
@@ -233,6 +233,7 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 		this.samplingReason = samplingReason;
 		this.samplingReasonDetails = samplingReasonDetails;
 		this.district = district;
+		this.community = community;
 
 	}
 

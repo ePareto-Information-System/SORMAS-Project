@@ -182,21 +182,33 @@ public class SampleService extends AbstractDeletableAdoService<Sample> {
 		SampleJoins joins = sampleQueryContext.getJoins();
 
 		final Join<Sample, Case> caze = joins.getCaze();
-		final Join<Case, District> caseDistrict = joins.getCaseDistrict();
+		final Join<Case, District> caseDistrict = joins.getCaseResponsibleDistrict();
+		final Join<Case, Community> caseCommunity = joins.getCaseResponsibleCommunity();
+
 
 		final Join<Sample, Contact> contact = joins.getContact();
 		final Join<Contact, District> contactDistrict = joins.getContactDistrict();
 		final Join<Case, District> contactCaseDistrict = joins.getContactCaseDistrict();
+		
+		final Join<Contact, Community> contactCommunity = joins.getContactCommunity();
+		final Join<Case, Community> contactCaseCommunity = joins.getContactCaseCommunity();
+
 
 		final Join<EventParticipant, Event> event = joins.getEvent();
 		final Join<Location, District> eventDistrict = joins.getEventDistrict();
+		final Join<Location, Community> eventCommunity = joins.getEventCommunity();
+
 
 		Expression<Object> diseaseSelect = cb.selectCase()
 			.when(cb.isNotNull(caze), caze.get(Case.DISEASE))
 			.otherwise(cb.selectCase().when(cb.isNotNull(contact), contact.get(Contact.DISEASE)).otherwise(event.get(Event.DISEASE)));
+		
 		Expression<Object> diseaseDetailsSelect = cb.selectCase()
 			.when(cb.isNotNull(caze), caze.get(Case.DISEASE_DETAILS))
-			.otherwise(cb.selectCase().when(cb.isNotNull(contact), contact.get(Contact.DISEASE_DETAILS)).otherwise(event.get(Event.DISEASE_DETAILS)));
+			.otherwise(
+					cb.selectCase()
+						.when(cb.isNotNull(contact), contact.get(Contact.DISEASE_DETAILS))
+							.otherwise(event.get(Event.DISEASE_DETAILS)));
 
 		Expression<Object> districtSelect = cb.selectCase()
 			.when(cb.isNotNull(caseDistrict), caseDistrict.get(District.NAME))
@@ -207,6 +219,17 @@ public class SampleService extends AbstractDeletableAdoService<Sample> {
 						cb.selectCase()
 							.when(cb.isNotNull(contactCaseDistrict), contactCaseDistrict.get(District.NAME))
 							.otherwise(eventDistrict.get(District.NAME))));
+		
+		Expression<Object> communitySelect = cb.selectCase()
+				.when(cb.isNotNull(caseCommunity), caseCommunity.get(Community.NAME))
+				.otherwise(
+						cb.selectCase()
+							.when(cb.isNotNull(contactCommunity), contactCommunity.get(Community.NAME))
+							.otherwise(
+								cb.selectCase()
+									.when(cb.isNotNull(contactCaseCommunity), contactCaseCommunity.get(Community.NAME))
+									.otherwise(eventCommunity.get(Community.NAME))));
+
 
 		cq.distinct(true);
 
@@ -243,7 +266,10 @@ public class SampleService extends AbstractDeletableAdoService<Sample> {
 				sample.get(Sample.ADDITIONAL_TESTING_REQUESTED),
 				cb.isNotEmpty(sample.get(Sample.ADDITIONAL_TESTS)),
 				districtSelect,
+				communitySelect,
 				joins.getLab().get(Facility.UUID)));
+		
+			
 
 		// Tests count subquery
 		Subquery<Long> testCountSq = cq.subquery(Long.class);
@@ -308,6 +334,9 @@ public class SampleService extends AbstractDeletableAdoService<Sample> {
 					break;
 				case SampleIndexDto.DISTRICT:
 					expression = districtSelect;
+					break;
+				case SampleIndexDto.COMMUNITY:
+					expression = communitySelect;
 					break;
 				case SampleIndexDto.LAB:
 					expression = joins.getLab().get(Facility.NAME);
@@ -832,13 +861,28 @@ public class SampleService extends AbstractDeletableAdoService<Sample> {
 					cb.equal(joins.getEventParticipantJoins().getEventParticipantResponsibleDistrict().get(District.UUID), districtUuid)));
 		}
 		if (criteria.getCommunity() != null) {
-			Expression<Object> communityExpression = cb.selectCase()
-				.when(cb.isNotNull(joins.getCaseCommunity()), joins.getCaseCommunity().get(Community.UUID))
-				.otherwise(
-					cb.selectCase()
-						.when(cb.isNotNull(joins.getContactCommunity()), joins.getContactCommunity().get(Community.UUID))
-						.otherwise(joins.getContactCaseCommunity().get(Community.UUID)));
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(communityExpression, criteria.getCommunity().getUuid()));
+//			Expression<Object> communityExpression = cb.selectCase()
+//				.when(cb.isNotNull(joins.getCaseCommunity()), joins.getCaseCommunity().get(Community.UUID))
+//				.otherwise(
+//					cb.selectCase()
+//						.when(cb.isNotNull(joins.getContactCommunity()), joins.getContactCommunity().get(Community.UUID))
+//						.otherwise(joins.getContactCaseCommunity().get(Community.UUID)));
+//			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(communityExpression, criteria.getCommunity().getUuid()));
+			final String communityUuid = criteria.getCommunity().getUuid();
+
+			filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					CriteriaBuilderHelper.or(
+						cb,
+						cb.equal(joins.getCaseCommunity().get(Community.UUID), communityUuid),
+						cb.equal(joins.getCaseResponsibleCommunity().get(Community.UUID), communityUuid),
+						cb.equal(joins.getContactCommunity().get(Community.UUID), communityUuid),
+						cb.equal(joins.getContactCaseCommunity().get(Community.UUID), communityUuid),
+						cb.equal(joins.getContactCaseResponsibleCommunity().get(Community.UUID), communityUuid),
+						cb.equal(joins.getEventCommunity().get(Community.UUID), communityUuid)
+));
+		
 		}
 		if (criteria.getLaboratory() != null) {
 			filter =

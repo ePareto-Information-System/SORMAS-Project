@@ -119,6 +119,12 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	public void setCommunity(CommunityReferenceDto community) {
 		this.community = community;
 	}
+	
+	public SampleCriteria community(CommunityReferenceDto community) {
+		setCommunity(community);
+
+		return this;
+	}
 
 	public FacilityReferenceDto getLaboratory() {
 		return laboratory;
@@ -375,4 +381,21 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 
 		return this;
 	}
+
+	@Override
+	public String toString() {
+		return "SampleCriteria [region=" + region + ", district=" + district + ", community=" + community
+				+ ", laboratory=" + laboratory + ", shipped=" + shipped + ", received=" + received + ", referred="
+				+ referred + ", pathogenTestResult=" + pathogenTestResult + ", caseClassification=" + caseClassification
+				+ ", disease=" + disease + ", specimenCondition=" + specimenCondition + ", caze=" + caze + ", contact="
+				+ contact + ", eventParticipant=" + eventParticipant + ", deleted=" + deleted + ", caseCodeIdLike="
+				+ caseCodeIdLike + ", relevanceStatus=" + relevanceStatus + ", sampleAssociationType="
+				+ sampleAssociationType + ", sampleDateFrom=" + sampleDateFrom + ", sampleDateTo=" + sampleDateTo
+				+ ", sampleDateType=" + sampleDateType + ", dateFilterOption=" + dateFilterOption + ", samplePurpose="
+				+ samplePurpose + ", caseUuids=" + caseUuids + ", contactUuids=" + contactUuids
+				+ ", eventParticipantUuids=" + eventParticipantUuids + "]";
+	}
+	
+	
+	
 }
