@@ -32,6 +32,7 @@ import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.caze.CoreAndPersonDto;
 import de.symeda.sormas.api.common.DeletionDetails;
+import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.dashboard.DashboardContactDto;
 import de.symeda.sormas.api.externaldata.ExternalDataDto;
@@ -101,7 +102,15 @@ public interface ContactFacade extends CoreFacade<ContactDto, ContactIndexDto, C
 		DistrictReferenceDto districtRef,
 		Disease disease,
 		Date from,
-		Date to);
+		Date to,
+		CaseClassification caseClassification);
+	
+	List<DashboardContactDto> getContactsForDashboard(
+			RegionReferenceDto regionRef,
+			DistrictReferenceDto districtRef,
+			Disease disease,
+			Date from,
+			Date to);
 
 	Map<ContactStatus, Long> getNewContactCountPerStatus(ContactCriteria contactCriteria);
 

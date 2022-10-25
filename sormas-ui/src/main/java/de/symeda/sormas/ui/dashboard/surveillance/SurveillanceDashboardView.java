@@ -38,16 +38,21 @@ public class SurveillanceDashboardView extends AbstractDashboardView {
 	protected SurveillanceDiseaseCarouselLayout diseaseCarouselLayout;
 
 	public SurveillanceDashboardView() {
+		//super(VIEW_NAME);
 		super(VIEW_NAME, DashboardType.SURVEILLANCE);
 
-		dashboardDataProvider = new DashboardDataProvider();
+		//dashboardDataProvider = new DashboardDataProvider();
+		
+		dashboardDataProvider = new DashboardDataProvider(NewCaseDateType.class);
 		if (dashboardDataProvider.getDashboardType() == null) {
 			dashboardDataProvider.setDashboardType(DashboardType.SURVEILLANCE);
 		}
 		if (DashboardType.CONTACTS.equals(dashboardDataProvider.getDashboardType())) {
 			dashboardDataProvider.setDisease(FacadeProvider.getDiseaseConfigurationFacade().getDefaultDisease());
 		}
+		dashboardDataProvider.setNewCaseDateType(NewCaseDateType.MOST_RELEVANT);
 		filterLayout = new SurveillanceFilterLayout(this, dashboardDataProvider);
+
 		filterLayout.addDateTypeValueChangeListener(e -> {
 			dashboardDataProvider.setNewCaseDateType((NewCaseDateType) e.getProperty().getValue());
 		});
@@ -84,15 +89,16 @@ public class SurveillanceDashboardView extends AbstractDashboardView {
 
 	@Override
 	public void enter(ViewChangeListener.ViewChangeEvent event) {
+		filterLayout.reload(event);
 		refreshDashboard();
 	}
 
 	public void refreshDashboard() {
 		dashboardDataProvider.refreshData();
-
 		// Update disease burden
-		if (surveillanceOverviewLayout != null)
+		if (surveillanceOverviewLayout != null) {
 			surveillanceOverviewLayout.refresh();
+		}
 
 		//Update disease carousel
 		if (diseaseCarouselLayout != null)

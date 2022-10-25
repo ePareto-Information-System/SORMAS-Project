@@ -250,7 +250,8 @@ public class DashboardFacadeEjbTest extends AbstractBeanTest {
 			DateHelper.getEndOfDay(DateHelper.addDays(referenceDate, 10)),
 			DateHelper.getStartOfDay(DateHelper.subtractDays(referenceDate, 10)),
 			DateHelper.getEndOfDay(DateHelper.subtractDays(referenceDate, 1)),
-			NewCaseDateType.MOST_RELEVANT);
+			NewCaseDateType.MOST_RELEVANT,
+			CaseClassification.PROBABLE);
 
 		DiseaseBurdenDto evdBurden = diseaseBurdenForDashboard.stream().filter(dto -> dto.getDisease() == Disease.EVD).findFirst().get();
 		assertEquals(new Long(3), evdBurden.getCaseCount());

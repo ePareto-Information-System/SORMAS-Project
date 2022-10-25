@@ -87,7 +87,7 @@ public abstract class BaseCriteria implements Serializable {
 					} else if (CustomizableEnum.class.isAssignableFrom(type)) {
 						stringValue = ((CustomizableEnum) value).getValue();
 					} else {
-						throw new NotImplementedException(type.toString());
+						throw new NotImplementedException(String.valueOf(type));
 					}
 					urlFilter.append(URLEncoder.encode(stringValue, encoding));
 				}

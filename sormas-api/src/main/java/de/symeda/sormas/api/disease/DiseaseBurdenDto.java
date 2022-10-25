@@ -20,6 +20,7 @@ package de.symeda.sormas.api.disease;
 import java.io.Serializable;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.caze.CaseClassification;
 
 public class DiseaseBurdenDto implements Serializable {
 
@@ -45,6 +46,7 @@ public class DiseaseBurdenDto implements Serializable {
 	private Long outbreakDistrictCount;
 	private Long caseDeathCount;
 	private String lastReportedDistrictName;
+	private CaseClassification caseClassification;
 
 	public DiseaseBurdenDto(
 		Disease disease,
@@ -53,7 +55,8 @@ public class DiseaseBurdenDto implements Serializable {
 		Long eventCount,
 		Long outbreakDistrictCount,
 		Long caseDeathCount,
-		String lastReportedDistrictName) {
+		String lastReportedDistrictName,
+		CaseClassification caseClassification) {
 
 		this.disease = disease;
 		this.caseCount = caseCount;
@@ -62,6 +65,7 @@ public class DiseaseBurdenDto implements Serializable {
 		this.outbreakDistrictCount = outbreakDistrictCount;
 		this.caseDeathCount = caseDeathCount;
 		this.lastReportedDistrictName = lastReportedDistrictName;
+		this.caseClassification = caseClassification;
 	}
 
 	public Disease getDisease() {
@@ -70,6 +74,14 @@ public class DiseaseBurdenDto implements Serializable {
 
 	public void setDisease(Disease disease) {
 		this.disease = disease;
+	}
+
+	public CaseClassification getCaseClassification() {
+		return caseClassification;
+	}
+
+	public void setCaseClassification(CaseClassification caseClassification) {
+		this.caseClassification = caseClassification;
 	}
 
 	public Long getCaseCount() {

@@ -18,66 +18,64 @@ import de.symeda.sormas.ui.utils.CssStyles;
 
 public class DiseaseOverviewComponent extends HorizontalLayout {
 
-    private static final int NUMBER_OF_DISEASES_COLLAPSED = 6;
+	private static final int NUMBER_OF_DISEASES_COLLAPSED = 6;
 
-    private final DiseaseBurdenComponent diseaseBurdenComponent;
-    private final DiseaseTileViewLayout diseaseTileViewLayout;
+	private final DiseaseBurdenComponent diseaseBurdenComponent;
+	private final DiseaseTileViewLayout diseaseTileViewLayout;
+	private final Button showTableViewButton;
 
-    private final Button showTableViewButton;
+	public DiseaseOverviewComponent() {
+		setWidth(100, Sizeable.Unit.PERCENTAGE);
+		setMargin(false);
+		diseaseBurdenComponent = new DiseaseBurdenComponent();
+		diseaseTileViewLayout = new DiseaseTileViewLayout();
 
-    public DiseaseOverviewComponent() {
-        setWidth(100, Sizeable.Unit.PERCENTAGE);
-        setMargin(false);
+		addComponent(diseaseTileViewLayout);
+		setExpandRatio(diseaseTileViewLayout, 1);
 
-        diseaseBurdenComponent = new DiseaseBurdenComponent();
-        diseaseTileViewLayout = new DiseaseTileViewLayout();
+		// "Expand" and "Collapse" buttons
+		showTableViewButton =
+			ButtonHelper.createIconButtonWithCaption("showTableView", "", VaadinIcons.TABLE, null, CssStyles.BUTTON_SUBTLE, CssStyles.VSPACE_NONE);
+		Button showTileViewButton = ButtonHelper
+			.createIconButtonWithCaption("showTileView", "", VaadinIcons.SQUARE_SHADOW, null, CssStyles.BUTTON_SUBTLE, CssStyles.VSPACE_NONE);
 
-        addComponent(diseaseTileViewLayout);
-        setExpandRatio(diseaseTileViewLayout, 1);
+		showTableViewButton.addClickListener(e -> {
+			removeComponent(diseaseTileViewLayout);
+			addComponent(diseaseBurdenComponent);
+			setExpandRatio(diseaseBurdenComponent, 1);
 
-        // "Expand" and "Collapse" buttons
-        showTableViewButton =
-            ButtonHelper.createIconButtonWithCaption("showTableView", "", VaadinIcons.TABLE, null, CssStyles.BUTTON_SUBTLE, CssStyles.VSPACE_NONE);
-        Button showTileViewButton = ButtonHelper
-            .createIconButtonWithCaption("showTileView", "", VaadinIcons.SQUARE_SHADOW, null, CssStyles.BUTTON_SUBTLE, CssStyles.VSPACE_NONE);
+			removeComponent(showTableViewButton);
+			addComponent(showTileViewButton);
+			setComponentAlignment(showTileViewButton, Alignment.TOP_RIGHT);
+		});
+		showTileViewButton.addClickListener(e -> {
+			removeComponent(diseaseBurdenComponent);
+			addComponent(diseaseTileViewLayout);
+			setExpandRatio(diseaseTileViewLayout, 1);
 
-        showTableViewButton.addClickListener(e -> {
-            removeComponent(diseaseTileViewLayout);
-            addComponent(diseaseBurdenComponent);
-            setExpandRatio(diseaseBurdenComponent, 1);
+			removeComponent(showTileViewButton);
+			addComponent(showTableViewButton);
+			setComponentAlignment(showTableViewButton, Alignment.TOP_RIGHT);
+		});
 
-            removeComponent(showTableViewButton);
-            addComponent(showTileViewButton);
-            setComponentAlignment(showTileViewButton, Alignment.TOP_RIGHT);
-        });
-        showTileViewButton.addClickListener(e -> {
-            removeComponent(diseaseBurdenComponent);
-            addComponent(diseaseTileViewLayout);
-            setExpandRatio(diseaseTileViewLayout, 1);
+		addComponent(showTableViewButton);
+		setComponentAlignment(showTableViewButton, Alignment.TOP_RIGHT);
+	}
 
-            removeComponent(showTileViewButton);
-            addComponent(showTableViewButton);
-            setComponentAlignment(showTableViewButton, Alignment.TOP_RIGHT);
-        });
+	public void refresh(List<DiseaseBurdenDto> diseasesBurden, boolean isShowingAllDiseases) {
+		// sort, limit and filter
+		Stream<DiseaseBurdenDto> diseasesBurdenStream =
+			diseasesBurden.stream().sorted((dto1, dto2) -> (int) (dto2.getCaseCount() - dto1.getCaseCount()));
+		if (!isShowingAllDiseases) {
+			diseasesBurdenStream = diseasesBurdenStream.limit(NUMBER_OF_DISEASES_COLLAPSED);
+		}
+		diseasesBurden = diseasesBurdenStream.collect(Collectors.toList());
 
-        addComponent(showTableViewButton);
-        setComponentAlignment(showTableViewButton, Alignment.TOP_RIGHT);
-    }
+		diseaseBurdenComponent.refresh(diseasesBurden);
+		diseaseTileViewLayout.refresh(diseasesBurden);
+	}
 
-    public void refresh(List<DiseaseBurdenDto> diseasesBurden, boolean isShowingAllDiseases) {
-        // sort, limit and filter
-        Stream<DiseaseBurdenDto> diseasesBurdenStream =
-            diseasesBurden.stream().sorted((dto1, dto2) -> (int) (dto2.getCaseCount() - dto1.getCaseCount()));
-        if (!isShowingAllDiseases) {
-            diseasesBurdenStream = diseasesBurdenStream.limit(NUMBER_OF_DISEASES_COLLAPSED);
-        }
-        diseasesBurden = diseasesBurdenStream.collect(Collectors.toList());
-
-        diseaseBurdenComponent.refresh(diseasesBurden);
-        diseaseTileViewLayout.refresh(diseasesBurden);
-    }
-
-    public Button getShowTableViewButton() {
-        return showTableViewButton;
-    }
+	public Button getShowTableViewButton() {
+		return showTableViewButton;
+	}
 }

@@ -72,6 +72,7 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EditPermissionType;
 import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.VisitOrigin;
+import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.caze.CoreAndPersonDto;
 import de.symeda.sormas.api.common.CoreEntityType;
@@ -1488,6 +1489,21 @@ public class ContactFacadeEjb
 		}
 	}
 
+	@Override
+	public List<DashboardContactDto> getContactsForDashboard(
+		RegionReferenceDto regionRef,
+		DistrictReferenceDto districtRef,
+		Disease disease,
+		Date from,
+		Date to,
+		CaseClassification caseClassification) {
+
+		Region region = regionService.getByReferenceDto(regionRef);
+		District district = districtService.getByReferenceDto(districtRef);
+
+		return service.getContactsForDashboard(region, district, disease, from, to);
+	}
+	
 	@Override
 	public List<DashboardContactDto> getContactsForDashboard(
 		RegionReferenceDto regionRef,

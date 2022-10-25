@@ -861,27 +861,27 @@ public class SampleService extends AbstractDeletableAdoService<Sample> {
 					cb.equal(joins.getEventParticipantJoins().getEventParticipantResponsibleDistrict().get(District.UUID), districtUuid)));
 		}
 		if (criteria.getCommunity() != null) {
-//			Expression<Object> communityExpression = cb.selectCase()
-//				.when(cb.isNotNull(joins.getCaseCommunity()), joins.getCaseCommunity().get(Community.UUID))
-//				.otherwise(
-//					cb.selectCase()
-//						.when(cb.isNotNull(joins.getContactCommunity()), joins.getContactCommunity().get(Community.UUID))
-//						.otherwise(joins.getContactCaseCommunity().get(Community.UUID)));
-//			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(communityExpression, criteria.getCommunity().getUuid()));
-			final String communityUuid = criteria.getCommunity().getUuid();
-
-			filter = CriteriaBuilderHelper.and(
-					cb,
-					filter,
-					CriteriaBuilderHelper.or(
-						cb,
-						cb.equal(joins.getCaseCommunity().get(Community.UUID), communityUuid),
-						cb.equal(joins.getCaseResponsibleCommunity().get(Community.UUID), communityUuid),
-						cb.equal(joins.getContactCommunity().get(Community.UUID), communityUuid),
-						cb.equal(joins.getContactCaseCommunity().get(Community.UUID), communityUuid),
-						cb.equal(joins.getContactCaseResponsibleCommunity().get(Community.UUID), communityUuid),
-						cb.equal(joins.getEventCommunity().get(Community.UUID), communityUuid)
-));
+			Expression<Object> communityExpression = cb.selectCase()
+				.when(cb.isNotNull(joins.getCaseCommunity()), joins.getCaseCommunity().get(Community.UUID))
+				.otherwise(
+					cb.selectCase()
+						.when(cb.isNotNull(joins.getContactCommunity()), joins.getContactCommunity().get(Community.UUID))
+						.otherwise(joins.getContactCaseCommunity().get(Community.UUID)));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(communityExpression, criteria.getCommunity().getUuid()));
+//			final String communityUuid = criteria.getCommunity().getUuid();
+//
+//			filter = CriteriaBuilderHelper.and(
+//					cb,
+//					filter,
+//					CriteriaBuilderHelper.or(
+//						cb,
+//						cb.equal(joins.getCaseCommunity().get(Community.UUID), communityUuid),
+//						cb.equal(joins.getCaseResponsibleCommunity().get(Community.UUID), communityUuid),
+//						cb.equal(joins.getContactCommunity().get(Community.UUID), communityUuid),
+//						cb.equal(joins.getContactCaseCommunity().get(Community.UUID), communityUuid),
+//						cb.equal(joins.getContactCaseResponsibleCommunity().get(Community.UUID), communityUuid),
+//						cb.equal(joins.getEventCommunity().get(Community.UUID), communityUuid)
+//));
 		
 		}
 		if (criteria.getLaboratory() != null) {

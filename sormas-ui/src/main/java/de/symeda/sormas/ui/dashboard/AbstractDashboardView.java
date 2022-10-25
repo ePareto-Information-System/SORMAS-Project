@@ -124,6 +124,44 @@ public abstract class AbstractDashboardView extends AbstractView {
 		addComponent(dashboardLayout);
 		setExpandRatio(dashboardLayout, 1);
 	}
+	
+	@SuppressWarnings("deprecation")
+	protected AbstractDashboardView(String viewName) {
+
+		super(viewName);
+
+		addStyleName(DashboardCssStyles.DASHBOARD_SCREEN);
+
+		CssStyles.style(dashboardSwitcher, CssStyles.FORCE_CAPTION, ValoTheme.OPTIONGROUP_HORIZONTAL, CssStyles.OPTIONGROUP_HORIZONTAL_PRIMARY);
+		if (permitted(FeatureType.CASE_SURVEILANCE, UserRight.DASHBOARD_SURVEILLANCE_ACCESS)) {
+			dashboardSwitcher.addItem(DashboardType.SURVEILLANCE);
+			dashboardSwitcher.setItemCaption(DashboardType.SURVEILLANCE, I18nProperties.getEnumCaption(DashboardType.SURVEILLANCE));
+		}
+		if (permitted(FeatureType.CONTACT_TRACING, UserRight.DASHBOARD_CONTACT_ACCESS)) {
+			dashboardSwitcher.addItem(DashboardType.CONTACTS);
+			dashboardSwitcher.setItemCaption(DashboardType.CONTACTS, I18nProperties.getEnumCaption(DashboardType.CONTACTS));
+		}
+		if (permitted(FeatureType.CAMPAIGNS, UserRight.DASHBOARD_CAMPAIGNS_ACCESS)) {
+			dashboardSwitcher.addItem(DashboardType.CAMPAIGNS);
+			dashboardSwitcher.setItemCaption(DashboardType.CAMPAIGNS, I18nProperties.getEnumCaption(DashboardType.CAMPAIGNS));
+		}
+		addHeaderComponent(dashboardSwitcher);
+
+		// Hide the dashboard switcher if only one dashboard is accessible to the user
+		if (dashboardSwitcher.size() <= 1) {
+			dashboardSwitcher.setVisible(false);
+		}
+
+		// Dashboard layout
+		dashboardLayout = new VerticalLayout();
+		dashboardLayout.setMargin(false);
+		dashboardLayout.setSpacing(false);
+		dashboardLayout.setSizeFull();
+		dashboardLayout.setStyleName("crud-main-layout");
+
+		addComponent(dashboardLayout);
+		setExpandRatio(dashboardLayout, 1);
+	}
 
 	protected void navigateToDashboardView(Property.ValueChangeEvent e) {
 		if (DashboardType.SURVEILLANCE.equals(e.getProperty().getValue())) {

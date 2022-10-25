@@ -459,6 +459,9 @@ public class DashboardService {
 		if (dashboardCriteria.getDisease() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Case.DISEASE), dashboardCriteria.getDisease()));
 		}
+		if (dashboardCriteria.getCaseClassification() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Case.CASE_CLASSIFICATION), dashboardCriteria.getCaseClassification()));
+		}
 		if (dashboardCriteria.getRegion() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(responsibleRegion.get(Region.UUID), dashboardCriteria.getRegion().getUuid()));
 		}
@@ -476,7 +479,7 @@ public class DashboardService {
 					DateHelper.getEndOfDay(dashboardCriteria.getDateTo()),
 					dashboardCriteria.getNewCaseDateType()));
 		}
-		if (!dashboardCriteria.shouldIncludeNotACaseClassification()) {
+		if (dashboardCriteria.isIncludeNotACaseClassification()==null||dashboardCriteria.isIncludeNotACaseClassification()==false) {
 			filter = CriteriaBuilderHelper
 				.and(cb, filter, cb.notEqual(caseQueryContext.getRoot().get(Case.CASE_CLASSIFICATION), CaseClassification.NO_CASE));
 		}
