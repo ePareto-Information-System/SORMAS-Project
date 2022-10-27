@@ -36,6 +36,13 @@
 		<role-name>CASE_INVESTIGATE</role-name>
 	</security-role>
 
+<security-role>
+        <role-name>HOSPITAL_SUPERVISOR</role-name>
+    </security-role>
+	
+	<security-role>
+        <role-name>CASE_OFFICER</role-name>
+    </security-role>
 	<security-role>
 		<role-name>CASE_CLASSIFY</role-name>
 	</security-role>

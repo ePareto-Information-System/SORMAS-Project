@@ -448,7 +448,42 @@ public class StartupShutdownService {
 					u.setHealthFacility(facility);
 					u.setAssociatedOfficer(surveillanceOfficer);
 				});
+		// Create Hospital Supervisor
+			createAndPersistDefaultUser(
+				userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.HOSPITAL_SUPERVISOR)),
+				"Hospital",
+				"Superviser",
+				DefaultEntityHelper.HOSP_INF_USERNAME_AND_PASSWORD,
+				u -> {
+					u.setHealthFacility(facility);
+				});
 
+
+			//@formatter:off
+            // createAndPersistDefaultUser(
+            //         UserRole.HOSPITAL_INFORMANT,
+            //         "Hospital",
+            //         "Informant",
+            //         DefaultEntityHelper.HOSP_INF_USERNAME_AND_PASSWORD,
+            //         u -> {
+            //             u.setRegion(region);
+            //             u.setDistrict(district);
+            //             u.setHealthFacility(facility);
+            //             u.setAssociatedOfficer(surveillanceOfficer);
+            //         });
+            //@formatter:on
+			// Create Hospital Supervisor
+			//@formatter:off
+			// createAndPersistDefaultUser(
+			// 		UserRole.HOSPITAL_SUPERVISOR,
+			// 		"Hospital",
+			// 		"Informant",
+			// 		DefaultEntityHelper.HOSP_SUP_USERNAME_AND_PASSWORD,
+			// 		u->{
+			// 			u.setHealthFacility(facility);
+						
+			// 		});
+			//@formatter:on
 			// Create Community Officer
 			createAndPersistDefaultUser(
 				userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.COMMUNITY_OFFICER)),
@@ -779,6 +814,9 @@ public class StartupShutdownService {
 			case 464:
 				fillDefaultUserRoles();
 				break;
+			case 479:
+				fillDefaultUserRole();
+				break;
 			case 467:
 				List<User> usersWithoutUserRoles =
 					userService.getAll().stream().filter(user -> user.getUserRoles().isEmpty()).collect(Collectors.toList());
@@ -830,6 +868,24 @@ public class StartupShutdownService {
 	 */
 	private void fillDefaultUserRoles() {
 		Arrays.stream(DefaultUserRole.values()).forEach(role -> {
+			UserRole userRole = userRoleService.getByCaption(role.name());
+			userRole.setCaption(I18nProperties.getEnumCaption(role));
+			userRole.setPortHealthUser(role.isPortHealthUser());
+			userRole.setHasAssociatedDistrictUser(role.hasAssociatedDistrictUser());
+			userRole.setHasOptionalHealthFacility(DefaultUserRole.hasOptionalHealthFacility(Collections.singleton(role)));
+			userRole.setEnabled(true);
+			userRole.setJurisdictionLevel(role.getJurisdictionLevel());
+			userRole.setSmsNotificationTypes(role.getSmsNotificationTypes());
+			userRole.setEmailNotificationTypes(role.getEmailNotificationTypes());
+			userRole.setUserRights(role.getDefaultUserRights());
+			userRoleService.persist(userRole);
+		});
+	}
+	
+	private void fillDefaultUserRole() {			
+			Arrays.stream(DefaultUserRole.values()).filter(string -> string.equals(DefaultUserRole.HOSPITAL_SUPERVISOR))
+	         .collect(Collectors.toList()).forEach(role -> {
+			
 			UserRole userRole = userRoleService.getByCaption(role.name());
 			userRole.setCaption(I18nProperties.getEnumCaption(role));
 			userRole.setPortHealthUser(role.isPortHealthUser());

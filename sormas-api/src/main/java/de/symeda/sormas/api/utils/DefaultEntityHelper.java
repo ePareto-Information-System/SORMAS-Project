@@ -38,6 +38,7 @@ public class DefaultEntityHelper {
 	public static final DataHelper.Pair<String, String> NAT_CLIN_USERNAME_AND_PASSWORD = new DataHelper.Pair<>("NatClin", "NatClin");
 	public static final DataHelper.Pair<String, String> SURV_OFF_USERNAME_AND_PASSWORD = new DataHelper.Pair<>("SurvOff", "SurvOff");
 	public static final DataHelper.Pair<String, String> HOSP_INF_USERNAME_AND_PASSWORD = new DataHelper.Pair<>("HospInf", "HospInf");
+	public static final DataHelper.Pair<String, String> HOSP_SUP_USERNAME_AND_PASSWORD = new DataHelper.Pair<>("HospSup", "HospSup");
 	public static final DataHelper.Pair<String, String> COMM_OFF_USERNAME_AND_PASSWORD = new DataHelper.Pair<>("CommOff", "CommOff");
 	public static final DataHelper.Pair<String, String> POE_INF_USERNAME_AND_PASSWORD = new DataHelper.Pair<>("PoeInf", "PoeInf");
 	public static final String SORMAS_TO_SORMAS_USER_NAME = "Sormas2Sormas";
@@ -57,6 +58,7 @@ public class DefaultEntityHelper {
 			NAT_CLIN_USERNAME_AND_PASSWORD,
 			SURV_OFF_USERNAME_AND_PASSWORD,
 			HOSP_INF_USERNAME_AND_PASSWORD,
+			HOSP_SUP_USERNAME_AND_PASSWORD,
 			COMM_OFF_USERNAME_AND_PASSWORD,
 			POE_INF_USERNAME_AND_PASSWORD);
 	}

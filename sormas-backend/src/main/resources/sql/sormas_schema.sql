@@ -9408,6 +9408,7 @@ UPDATE users u set jurisdictionLevel = 'NATION' where 'POE_NATIONAL_USER' in (se
 UPDATE users u set jurisdictionLevel = 'NATION' where 'REST_EXTERNAL_VISITS_USER' in (select userrole from users_userroles uu where uu.user_id = u.id);
 UPDATE users u set jurisdictionLevel = 'NATION' where 'SORMAS_TO_SORMAS_CLIENT' in (select userrole from users_userroles uu where uu.user_id = u.id);
 
+
 INSERT INTO schema_version (version_number, comment) VALUES (423, 'Assigned to user list of task should consider related entities jurisdiction #6867');
 
 ALTER TABLE hospitalization ADD COLUMN description varchar(512);
@@ -11950,5 +11951,11 @@ ALTER TABLE cadre ADD COLUMN endofprocessingdate timestamp without time zone;
 ALTER TABLE cadre ADD COLUMN archiveundonereason character varying(512);
                             
 INSERT INTO schema_version (version_number, comment) VALUES (478, 'Created a cadre table and added a relation to person table #34');
+
+-- 2022-26-10 Update userroles with HOSPITAL_SUPERVISOR
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'HOSPITAL_SUPERVISOR');
+
+
+INSERT INTO schema_version (version_number, comment ,upgradeneeded) VALUES (479, 'Update userroles with HOSPITAL_SUPERVISOR', true);
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
