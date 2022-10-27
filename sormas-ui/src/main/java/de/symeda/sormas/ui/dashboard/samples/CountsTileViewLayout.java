@@ -58,11 +58,21 @@ public class CountsTileViewLayout extends CssLayout {
 		SampleCountType[] totalCol = {
 			SampleCountType.TOTAL };
 
-		SampleCountType[] resultTypeCol = {
-			SampleCountType.INDETERMINATE,
-			SampleCountType.PENDING,
-			SampleCountType.NEGATIVE,
-			SampleCountType.POSITIVE };
+		SampleCountType[] testResultTypeCol = {
+				SampleCountType.TEST_PENDING,
+				SampleCountType.TEST_NEGATIVE,
+				SampleCountType.TEST_POSITIVE ,
+				SampleCountType.TEST_INDETERMINATE,
+
+			};
+			
+		SampleCountType[] sampleResultTypeCol = {
+				SampleCountType.SAMPLE_PENDING,
+				SampleCountType.SAMPLE_NEGATIVE,
+				SampleCountType.SAMPLE_POSITIVE,
+				SampleCountType.SAMPLE_INDETERMINATE,
+
+				};
 
 		SampleCountType[] conditionCol = {
 			SampleCountType.ADEQUATE,
@@ -89,8 +99,13 @@ public class CountsTileViewLayout extends CssLayout {
 
 		HorizontalLayout sampleTestResultHorizontalLayout = new HorizontalLayout();
 		sampleTestResultHorizontalLayout.setWidth(100, Unit.PERCENTAGE);
-		sampleTestResultHorizontalLayout.addComponent(createCountRow(resultTypeCol, sampleCount, previousSampleCount, Captions.Sample_testResult));
+		sampleTestResultHorizontalLayout.addComponent(createCountRow( sampleResultTypeCol, sampleCount, previousSampleCount, Captions.Sample_testResult));
 		addComponent(sampleTestResultHorizontalLayout);
+		
+		HorizontalLayout sampleByPathogenTestResultHorizontalLayout = new HorizontalLayout();
+		sampleByPathogenTestResultHorizontalLayout.setWidth(100, Unit.PERCENTAGE);
+		sampleByPathogenTestResultHorizontalLayout.addComponent(createCountRow(testResultTypeCol, sampleCount, previousSampleCount, Captions.Sample_test_PathogenResult));
+		addComponent(sampleByPathogenTestResultHorizontalLayout);
 
 		HorizontalLayout shipmentHorizontalLayout = new HorizontalLayout();
 		shipmentHorizontalLayout.setWidth(100, Unit.PERCENTAGE);
@@ -111,11 +126,23 @@ public class CountsTileViewLayout extends CssLayout {
 		verticalLayout.addComponent(title);
 
 		HorizontalLayout countColorHorizontalLayout = new HorizontalLayout();
+		
 		for (SampleCountType type : cTypes) {
-			CountTileComponent tile = new CountTileComponent(type, sampleCount.get(type), previousSampleCount.get(type));
+			
+			Long prevCount = previousSampleCount.get(type);
+			Long sampCount = sampleCount.get(type);
+			Long diffCount =  sampCount - prevCount;
+			
+			System.out.println("CountsTileViewLayouta + "+type +" = "+Math.abs(diffCount));
+			
+			System.out.println("CountsTileViewLayoutb "+ type +" = "+diffCount);
+			
+			CountTileComponent tile = new CountTileComponent(type, sampCount, diffCount);
 			tile.setWidth(230, Unit.PIXELS);
 			countColorHorizontalLayout.addComponent(tile);
+			
 		}
+		
 		verticalLayout.addComponent(countColorHorizontalLayout);
 		return verticalLayout;
 	}

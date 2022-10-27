@@ -70,18 +70,24 @@ public class CountTileComponent extends VerticalLayout {
 
 		String chevronIconType = VaadinIcons.CHEVRON_LEFT.getHtml();
 		Label countLabelDifference = new Label(countDifference.toString(), ContentMode.HTML);
-
-		if (countDifference < count) {
+		//if countDifference is positive
+		if (countDifference > 0) {
 			chevronIconType = VaadinIcons.CHEVRON_UP.getHtml();
-		} else if (countDifference > count) {
+			// countDifference is negative
+		} else if (countDifference < 0) {
 			chevronIconType = VaadinIcons.CHEVRON_DOWN.getHtml();
 		} else {
+			// countDifference is zero
 			chevronIconType = VaadinIcons.CHEVRON_RIGHT.getHtml();
 		}
+		
+		
+		Long countDiff= Math.abs(countDifference);
+		
 		countLabelDifference.setValue(
 			"<div class=\"v-label v-widget " + CssStyles.LABEL_WHITE + " v-label-" + CssStyles.LABEL_WHITE
 				+ " align-center v-label-align-center bold v-label-bold v-has-width\" " + ">" + "<span class=\"v-icon\" style=\"font-size: 12px;\">"
-				+ chevronIconType + " </span> " + countDifference.toString() + "</div>");
+				+ chevronIconType + " </span> " + countDiff.toString() + "</div>");
 
 		CssStyles.style(
 			countLabelDifference,
