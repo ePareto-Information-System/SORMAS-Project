@@ -300,6 +300,9 @@ public class MainScreen extends HorizontalLayout {
 
 		ui.setNavigator(navigator);
 
+//		Add default buttons last
+		//menu.addButtomMenu();
+
 		addComponent(menu);
 		addComponent(viewContainer);
 

@@ -139,6 +139,8 @@ public class Menu extends CssLayout {
 	}
 
 	private void showSettingsPopup(UserDto user) {
+			addComponent(menuPart);
+	
 
 		Window window = VaadinUiUtil.createPopupWindow();
 		window.setCaption(I18nProperties.getString(Strings.headingUserSettings));
@@ -189,7 +191,6 @@ public class Menu extends CssLayout {
 	 *            view icon in the menu
 	 */
 	public void addView(Class<? extends View> viewClass, final String name, String caption, Resource icon) {
-
 		navigator.addView(name, viewClass);
 		createViewButton(name, caption, icon);
 	}
