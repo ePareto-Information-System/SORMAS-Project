@@ -68,6 +68,10 @@ public abstract class DashboardFilterLayout extends HorizontalLayout {
 	public static final String REGION_FILTER = "regionFilter";
 	public static final String DISTRICT_FILTER = "districtFilter";
 	private static final String RESET_AND_APPLY_BUTTONS = "resetAndApplyButtons";
+	private static final String INFO_LABEL_FILTER = "infoLabelFilter";
+	public static final String DISEASE_FILTER = "diseaseFilter";
+
+
 
 	protected AbstractDashboardView dashboardView;
 	protected DashboardDataProvider dashboardDataProvider;
@@ -121,7 +125,7 @@ public abstract class DashboardFilterLayout extends HorizontalLayout {
 //		 createResetAndApplyButtons();
 		String[] templateLocs = new String[] {
 			DATE_FILTER,
-			RESET_AND_APPLY_BUTTONS };
+			RESET_AND_APPLY_BUTTONS ,INFO_LABEL_FILTER,DISEASE_FILTER};
 		templateLocs = ArrayUtils.insert(1, templateLocs, templateContent);
 
 		customLayout = new CustomLayout();

@@ -23,6 +23,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
@@ -32,12 +33,14 @@ import com.vaadin.ui.VerticalLayout;
 
 import de.symeda.sormas.api.ConfigFacade;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.caze.NewCaseDateType;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.dashboard.AbstractDashboardView;
 import de.symeda.sormas.ui.dashboard.DashboardCssStyles;
+import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
 import de.symeda.sormas.ui.dashboard.DashboardType;
 import de.symeda.sormas.ui.dashboard.contacts.ContactsDashboardStatisticsComponent;
 import de.symeda.sormas.ui.dashboard.contacts.ContactsDashboardView;
@@ -61,18 +64,45 @@ public class SamplesDashboardView extends AbstractDashboardView {
 		super(VIEW_NAME, DashboardType.SAMPLES);
 
 //		filterLayout.setInfoLabelText(I18nProperties.getString(Strings.infoSampleDashboard));
-		filterLayout = new SampleFilterLayout(this, dashboardDataProvider);
-		dashboardLayout.addComponent(filterLayout);
+		
 //		addComponent(dashboardLayout);
+		dashboardDataProvider = new DashboardDataProvider();
+		if (dashboardDataProvider.getDashboardType() == null) {
+			dashboardDataProvider.setDashboardType(DashboardType.SAMPLES);
+		}
+		if (DashboardType.SAMPLES.equals(dashboardDataProvider.getDashboardType())) {
+			dashboardDataProvider.setDisease(FacadeProvider.getDiseaseConfigurationFacade().getDefaultDisease());
+		}
+		
+		filterLayout = new SampleFilterLayout(this, dashboardDataProvider);
+//		filterLayout.addDateTypeValueChangeListener(e -> {
+//			dashboardDataProvider.setNewCaseDateType((NewCaseDateType) e.getProperty().getValue());
+//		});
+		
+		dashboardLayout.addComponent(filterLayout);
 
+		dashboardSwitcher.setValue(DashboardType.SAMPLES);
+		dashboardSwitcher.addValueChangeListener(e -> {
+			dashboardDataProvider.setDashboardType((DashboardType) e.getProperty().getValue());
+			navigateToDashboardView(e);
+		});
+		
 		//add samples
 		countsTileViewLayout = new CountsTileViewLayout(dashboardDataProvider);
 		dashboardLayout.addComponent(countsTileViewLayout);
 		dashboardLayout.setExpandRatio(countsTileViewLayout, 1);
+		dashboardLayout.setSpacing(false);
+		
+	}
+	
+	@Override
+	public void enter(ViewChangeListener.ViewChangeEvent event) {
+		refreshDashboard();
 	}
 
 	public void refreshDashboard() {
-		super.refreshDashboard();
+		//super.refreshDashboard();
+		dashboardDataProvider.refreshData();
 
 		// Update counts
 		if (countsTileViewLayout != null)

@@ -82,11 +82,7 @@ public abstract class AbstractDashboardView extends AbstractView {
 			dashboardSwitcher.addItem(DashboardType.SAMPLES);
 			dashboardSwitcher.setItemCaption(DashboardType.SAMPLES, I18nProperties.getEnumCaption(DashboardType.SAMPLES));
 		}
-		if (UserProvider.getCurrent().hasUserRight(UserRight.DASHBOARD_SAMPLE_ACCESS)) {
-			dashboardSwitcher.addItem(DashboardType.SAMPLES);
-			dashboardSwitcher.setItemCaption(DashboardType.SAMPLES,
-					I18nProperties.getEnumCaption(DashboardType.SAMPLES));
-		}
+		
 		dashboardSwitcher.setValue(dashboardType);
 		dashboardSwitcher.addValueChangeListener(e -> {
 			dashboardDataProvider.setDashboardType((DashboardType) e.getProperty().getValue());
