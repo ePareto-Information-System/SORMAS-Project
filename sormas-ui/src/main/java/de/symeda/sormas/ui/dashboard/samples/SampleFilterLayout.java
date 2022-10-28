@@ -5,6 +5,7 @@ import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Label;
+import com.vaadin.v7.data.Property;
 import com.vaadin.v7.ui.ComboBox;
 
 import de.symeda.sormas.api.Disease;
@@ -16,14 +17,21 @@ import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
 import de.symeda.sormas.ui.dashboard.DashboardType;
 import de.symeda.sormas.ui.dashboard.components.DashboardFilterLayout;
 import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.components.datetypeselector.DateTypeSelectorComponent;
 
 public class SampleFilterLayout extends DashboardFilterLayout{
 	public static final String DATE_TYPE_SELECTOR_FILTER = "dateTypeSelectorFilter";
+
+	public static final String DISEASE_FILTER = "diseaseFilter";
+	public static final String INFO_LABEL_FILTER = "infoLabelFilter";
+	private DateTypeSelectorComponent dateTypeSelectorComponent;
+
 	private final static String[] SAMPLE_FILTERS = new String[] {
 		DATE_TYPE_SELECTOR_FILTER,
 		REGION_FILTER,
 		DISTRICT_FILTER };
 	private ComboBox diseaseFilter;
+	
 
 	public SampleFilterLayout(AbstractDashboardView dashboardView, DashboardDataProvider dashboardDataProvider) {
 		super(dashboardView, dashboardDataProvider, SAMPLE_FILTERS);
@@ -31,17 +39,22 @@ public class SampleFilterLayout extends DashboardFilterLayout{
 
 	@Override
 	public void populateLayout() {
+		super.populateLayout();
 		createDateFilters();
 		createInfoLabel();
 		createRegionAndDistrictFilter();
 		if (dashboardDataProvider.getDashboardType() == DashboardType.SAMPLES) {
 			createDiseaseFilter();
 		}
-		createResetAndApplyButtons();		
+		//createResetAndApplyButtons();		
 	}
 	
 	public boolean hasDiseaseSelected() {
 		return diseaseFilter.getValue() != null;
+	}
+	
+	public void addDateTypeValueChangeListener(Property.ValueChangeListener listener) {
+		dateTypeSelectorComponent.addValueChangeListener(listener);
 	}
 
 	private void createInfoLabel() {
@@ -49,11 +62,13 @@ public class SampleFilterLayout extends DashboardFilterLayout{
 		infoLabel.setSizeUndefined();
 		infoLabel.setDescription(I18nProperties.getString(Strings.infoContactDashboard));
 		CssStyles.style(infoLabel, CssStyles.LABEL_XLARGE, CssStyles.LABEL_SECONDARY);
-		addComponent(infoLabel);
-		setComponentAlignment(infoLabel, Alignment.TOP_RIGHT);
+		//addComponent(infoLabel);
+		//setComponentAlignment(infoLabel, Alignment.TOP_RIGHT);
+		addCustomComponent(infoLabel,INFO_LABEL_FILTER);
 	}
 
-	private void createDiseaseFilter() {
+
+	public void createDiseaseFilter() {
 		this.diseaseFilter = new ComboBox();
 		diseaseFilter.setWidth(200, Unit.PIXELS);
 		diseaseFilter.setInputPrompt(I18nProperties.getString(Strings.promptDisease));
@@ -62,7 +77,7 @@ public class SampleFilterLayout extends DashboardFilterLayout{
 		diseaseFilter.addValueChangeListener(e -> {
 			dashboardDataProvider.setDisease((Disease) diseaseFilter.getValue());
 		});
-		addComponent(diseaseFilter);
+		//addComponent(diseaseFilter);
+		addCustomComponent(diseaseFilter,DISEASE_FILTER);
 	}
-
 }
