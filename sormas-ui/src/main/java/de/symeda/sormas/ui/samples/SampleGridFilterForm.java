@@ -22,6 +22,7 @@ import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.SampleDateType;
 import de.symeda.sormas.api.sample.SampleCriteria;
+import de.symeda.sormas.api.sample.SampleDateType;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SampleIndexDto;
 import de.symeda.sormas.api.user.UserDto;
@@ -138,7 +139,7 @@ public class SampleGridFilterForm extends AbstractFilterForm<SampleCriteria> {
 //				I18nProperties.getString(Strings.promptSampleDateType),
 //				SampleDateType.COLLECTION);
 				
-		SampleDateType[] sampleTypes = {SampleDateType.REPORT, SampleDateType.RESULT, SampleDateType.COLLECTION, SampleDateType.RECEIVED, SampleDateType.SHIPPED};
+		SampleDateType[] sampleTypes = {SampleDateType.REPORT, SampleDateType.RESULT, SampleDateType.COLLECTION, SampleDateType.RECIPIENCE, SampleDateType.SHIPMENT};
 		EpiWeekAndDateFilterComponent<SampleDateType> weekAndDateFilter =
 			new EpiWeekAndDateFilterComponent<>(false, false, I18nProperties.getString(Strings.promptSampleDateType), sampleTypes, this);
 
@@ -177,14 +178,15 @@ public class SampleGridFilterForm extends AbstractFilterForm<SampleCriteria> {
 		}
 
 		if ((fromDate != null && toDate != null) || (fromDate == null && toDate == null)) {
-				//applyButton.removeStyleName(ValoTheme.BUTTON_PRIMARY);
+				//applyButton.removeStyleName(ValoTheme.BUTTON_PRIMARY); not
 				
-				SampleDateType sampleDateType = (SampleDateType) weekAndDateFilter.getDateTypeSelector().getValue();
-				sampleDateType = sampleDateType != null ? sampleDateType : SampleDateType.COLLECTION;
+				// SampleDateType sampleDateType = (SampleDateType) weekAndDateFilter.getDateTypeSelector().getValue();
+				// sampleDateType = sampleDateType != null ? sampleDateType : SampleDateType.COLLECTION;
 						
-				criteria.reportDateBetween(fromDate, toDate, sampleDateType, dateFilterOption);
+				// criteria.reportDateBetween(fromDate, toDate, sampleDateType, dateFilterOption);
 
-				fireValueChange(true);
+				// fireValueChange(true);
+			criteria.sampleDateBetween(fromDate, toDate, SampleDateType.REPORT, dateFilterOption);
 		} else {
 			weekAndDateFilter.setNotificationsForMissingFilters();
 		}

@@ -1898,8 +1898,10 @@ public interface Captions {
 	String sampleReferredShort = "sampleReferredShort";
 	String sampleReferredTo = "sampleReferredTo";
 	String sampleReferredToInternal = "sampleReferredToInternal";
+	String sampleSamples = "sampleSamples";
 	String sampleSamplesList = "sampleSamplesList";
 	String sampleSelect = "sampleSelect";
+	String sampleShipmentStatus = "sampleShipmentStatus";
 	String sampleShipped = "sampleShipped";
 	String sampleSpecimenNotAdequate = "sampleSpecimenNotAdequate";
 	String sex = "sex";
@@ -2437,6 +2439,7 @@ public interface Captions {
 	String View_contacts_visits = "View.contacts.visits";
 	String View_dashboard_campaigns = "View.dashboard.campaigns";
 	String View_dashboard_contacts = "View.dashboard.contacts";
+	String View_dashboard_samples = "View.dashboard.samples";
 	String View_dashboard_surveillance = "View.dashboard.surveillance";
 	String View_dashboard_sample = "View.dashboard.samples";
 	String View_events = "View.events";

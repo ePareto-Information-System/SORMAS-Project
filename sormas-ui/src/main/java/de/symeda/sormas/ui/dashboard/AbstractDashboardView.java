@@ -78,27 +78,31 @@ public abstract class AbstractDashboardView extends AbstractView {
 			dashboardSwitcher.addItem(DashboardType.CAMPAIGNS);
 			dashboardSwitcher.setItemCaption(DashboardType.CAMPAIGNS, I18nProperties.getEnumCaption(DashboardType.CAMPAIGNS));
 		}
-		if (UserProvider.getCurrent().hasUserRight(UserRight.DASHBOARD_SAMPLE_ACCESS)) {
+		// if (UserProvider.getCurrent().hasUserRight(UserRight.DASHBOARD_SAMPLE_ACCESS)) {
+		// 	dashboardSwitcher.addItem(DashboardType.SAMPLES);
+		// 	dashboardSwitcher.setItemCaption(DashboardType.SAMPLES, I18nProperties.getEnumCaption(DashboardType.SAMPLES));
+		// }
+		
+		// dashboardSwitcher.setValue(dashboardType);
+		// dashboardSwitcher.addValueChangeListener(e -> {
+		// 	dashboardDataProvider.setDashboardType((DashboardType) e.getProperty().getValue());
+		// 	if (DashboardType.SURVEILLANCE.equals(e.getProperty().getValue())) {
+		// 		SormasUI.get().getNavigator().navigateTo(SurveillanceDashboardView.VIEW_NAME);
+		// 	} else if (DashboardType.CONTACTS.equals(e.getProperty().getValue())) {
+		// 		SormasUI.get().getNavigator().navigateTo(ContactsDashboardView.VIEW_NAME);
+		// 	} 
+		// 	else if (DashboardType.SAMPLES.equals(e.getProperty().getValue())) {
+		// 		SormasUI.get().getNavigator().navigateTo(SamplesDashboardView.VIEW_NAME);
+		// 	}
+		// 	else {
+		// 		SormasUI.get().getNavigator().navigateTo(CampaignDashboardView.VIEW_NAME);
+		// 	}
+		// });
+		
+		if (permitted(FeatureType.SAMPLES_LAB, UserRight.DASHBOARD_SAMPLE_ACCESS)) {
 			dashboardSwitcher.addItem(DashboardType.SAMPLES);
 			dashboardSwitcher.setItemCaption(DashboardType.SAMPLES, I18nProperties.getEnumCaption(DashboardType.SAMPLES));
 		}
-		
-		dashboardSwitcher.setValue(dashboardType);
-		dashboardSwitcher.addValueChangeListener(e -> {
-			dashboardDataProvider.setDashboardType((DashboardType) e.getProperty().getValue());
-			if (DashboardType.SURVEILLANCE.equals(e.getProperty().getValue())) {
-				SormasUI.get().getNavigator().navigateTo(SurveillanceDashboardView.VIEW_NAME);
-			} else if (DashboardType.CONTACTS.equals(e.getProperty().getValue())) {
-				SormasUI.get().getNavigator().navigateTo(ContactsDashboardView.VIEW_NAME);
-			} 
-			else if (DashboardType.SAMPLES.equals(e.getProperty().getValue())) {
-				SormasUI.get().getNavigator().navigateTo(SamplesDashboardView.VIEW_NAME);
-			}
-			else {
-				SormasUI.get().getNavigator().navigateTo(CampaignDashboardView.VIEW_NAME);
-			}
-		});
-		
 		addHeaderComponent(dashboardSwitcher);
 
 		// Hide the dashboard switcher if only one dashboard is accessible to the user
@@ -130,8 +134,13 @@ public abstract class AbstractDashboardView extends AbstractView {
 		}
 		else if (DashboardType.SAMPLES.equals(e.getProperty().getValue())) {
 			SormasUI.get().getNavigator().navigateTo(SamplesDashboardView.VIEW_NAME);
-		}else {
+		}
+		//else {
+		//} 
+		else if (DashboardType.CAMPAIGNS.equals(e.getProperty().getValue()))  {
 			SormasUI.get().getNavigator().navigateTo(CampaignDashboardView.VIEW_NAME);
+		} else {
+			SormasUI.get().getNavigator().navigateTo(SamplesDashboardView.VIEW_NAME);
 		}
 	}
 

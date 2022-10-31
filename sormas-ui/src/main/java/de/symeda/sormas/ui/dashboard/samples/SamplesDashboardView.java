@@ -52,20 +52,37 @@ import de.symeda.sormas.ui.dashboard.surveillance.SurveillanceDiseaseCarouselLay
 import de.symeda.sormas.ui.dashboard.surveillance.SurveillanceOverviewLayout;
 import de.symeda.sormas.ui.dashboard.visualisation.DashboardNetworkComponent;
 import de.symeda.sormas.ui.utils.CssStyles;
+//  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//  * GNU General Public License for more details.
+//  *
+//  * You should have received a copy of the GNU General Public License
+//  * along with this program. If not, see <https://www.gnu.org/licenses/>.
+//  *******************************************************************************/
+// package de.symeda.sormas.ui.dashboard.samples;
+
+// import com.vaadin.navigator.ViewChangeListener;
+
+// import de.symeda.sormas.api.FacadeProvider;
+// import de.symeda.sormas.ui.dashboard.AbstractDashboardView;
+// import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
+// import de.symeda.sormas.ui.dashboard.DashboardType;
 
 @SuppressWarnings("serial")
 public class SamplesDashboardView extends AbstractDashboardView {
 
 	public static final String VIEW_NAME = ROOT_VIEW_NAME + "/samples";
 
-	protected CountsTileViewLayout countsTileViewLayout;
-
+	protected SampleCountsTileViewLayout countsTileViewLayout;
+	protected DashboardSampleFilterLayout filterLayout;
+	protected DashboardDataProvider dashboardDataProvider;
+	
 	public SamplesDashboardView() {
 		super(VIEW_NAME, DashboardType.SAMPLES);
 
-//		filterLayout.setInfoLabelText(I18nProperties.getString(Strings.infoSampleDashboard));
 		
-//		addComponent(dashboardLayout);
+	
+
+
 		dashboardDataProvider = new DashboardDataProvider();
 		if (dashboardDataProvider.getDashboardType() == null) {
 			dashboardDataProvider.setDashboardType(DashboardType.SAMPLES);
@@ -74,11 +91,10 @@ public class SamplesDashboardView extends AbstractDashboardView {
 			dashboardDataProvider.setDisease(FacadeProvider.getDiseaseConfigurationFacade().getDefaultDisease());
 		}
 		
-		filterLayout = new SampleFilterLayout(this, dashboardDataProvider);
-//		filterLayout.addDateTypeValueChangeListener(e -> {
-//			dashboardDataProvider.setNewCaseDateType((NewCaseDateType) e.getProperty().getValue());
-//		});
+
 		
+
+		filterLayout = new DashboardSampleFilterLayout(this, dashboardDataProvider);
 		dashboardLayout.addComponent(filterLayout);
 
 		dashboardSwitcher.setValue(DashboardType.SAMPLES);
@@ -87,21 +103,21 @@ public class SamplesDashboardView extends AbstractDashboardView {
 			navigateToDashboardView(e);
 		});
 		
+
+
 		//add samples
-		countsTileViewLayout = new CountsTileViewLayout(dashboardDataProvider);
+		countsTileViewLayout = new SampleCountsTileViewLayout(dashboardDataProvider);
 		dashboardLayout.addComponent(countsTileViewLayout);
 		dashboardLayout.setExpandRatio(countsTileViewLayout, 1);
 		dashboardLayout.setSpacing(false);
-		
 	}
-	
+
 	@Override
 	public void enter(ViewChangeListener.ViewChangeEvent event) {
 		refreshDashboard();
 	}
 
 	public void refreshDashboard() {
-		//super.refreshDashboard();
 		dashboardDataProvider.refreshData();
 
 		// Update counts

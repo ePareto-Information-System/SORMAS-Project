@@ -45,7 +45,8 @@ public class DashboardController {
 		if (permitted(FeatureType.CAMPAIGNS, UserRight.DASHBOARD_CAMPAIGNS_ACCESS)) {
 			navigator.addView(CampaignDashboardView.VIEW_NAME, CampaignDashboardView.class);
 		}
-		if (UserProvider.getCurrent().hasUserRight(UserRight.DASHBOARD_SAMPLE_ACCESS)) {
+		//if (UserProvider.getCurrent().hasUserRight(UserRight.DASHBOARD_SAMPLE_ACCESS)) {
+		if (permitted(FeatureType.SAMPLES_LAB, UserRight.DASHBOARD_SAMPLE_ACCESS)) {
 			navigator.addView(SamplesDashboardView.VIEW_NAME, SamplesDashboardView.class);
 		}
 	}

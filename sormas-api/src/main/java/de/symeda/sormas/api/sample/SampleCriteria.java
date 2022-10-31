@@ -67,12 +67,12 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	private String caseCodeIdLike;
 	private EntityRelevanceStatus relevanceStatus;
 	private SampleAssociationType sampleAssociationType;
+	private SamplePurpose samplePurpose;
 
 	private Date sampleDateFrom;
 	private Date sampleDateTo;
 	private SampleDateType sampleDateType;
 	private DateFilterOption dateFilterOption = DateFilterOption.DATE;
-	private SamplePurpose samplePurpose;
 
 	private List<String> caseUuids;
 	private List<String> contactUuids;
@@ -92,11 +92,7 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 		return this;
 	}
 
-	public SampleCriteria samplePurpose(SamplePurpose samplePurpose) {
-		setSamplePurpose(samplePurpose);
 
-		return this;
-	}
 
 	public DistrictReferenceDto getDistrict() {
 		return district;
@@ -184,15 +180,30 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	public SampleCriteria reportDateBetween(Date reportDateFrom, Date reportDateTo, DateFilterOption dateFilterOption) {
 		this.sampleDateFrom = reportDateFrom;
 		this.sampleDateTo = reportDateTo;
+			this.dateFilterOption = dateFilterOption;
+		return this;
+	}
+	public SampleCriteria sampleDateBetween (Date dateFrom, Date dateTo, SampleDateType dateType, DateFilterOption dateFilterOption) {
+		this.sampleDateFrom = dateFrom;
+		this.sampleDateTo = dateTo;
+		this.sampleDateType = dateType;
 		this.dateFilterOption = dateFilterOption;
 		return this;
 	}
 
+	public SampleDateType getSampleDateType() {
+		return sampleDateType;
+	}
+	
+	public void setSampleDateType(SampleDateType dateType) {
+		this.sampleDateType = dateType;
+	}
+	
 	public SampleCriteria dateFilterOption(DateFilterOption dateFilterOption) {
 		this.dateFilterOption = dateFilterOption;
 		return this;
 	}
-
+	
 	public DateFilterOption getDateFilterOption() {
 		return dateFilterOption;
 	}
@@ -227,6 +238,7 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 		return this;
 	}
 
+
 	public CaseClassification getCaseClassification() {
 		return caseClassification;
 	}
@@ -248,6 +260,7 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 
 		return this;
 	}
+
 
 	public CaseReferenceDto getCaze() {
 		return caze;
@@ -330,21 +343,6 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 		return caseCodeIdLike;
 	}
 
-	public SampleDateType getSampleDateType() {
-		return sampleDateType;
-	}
-
-	public void setSampleDateType(SampleDateType sampleActivity) {
-		this.sampleDateType = sampleActivity;
-	}
-
-	public SamplePurpose getSamplePurpose() {
-		return samplePurpose;
-	}
-
-	public void setSamplePurpose(SamplePurpose samplePurpose) {
-		this.samplePurpose = samplePurpose;
-	}
 
 	public List<String> getCaseUuids() {
 		return caseUuids;
@@ -373,6 +371,19 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	public SampleCriteria eventParticipantUuids(List<String> eventParticipantUuids) {
 		this.eventParticipantUuids = eventParticipantUuids;
 
+		return this;
+	}
+
+	public SamplePurpose getSamplePurpose() {
+		return samplePurpose;
+	}
+
+	public void setSamplePurpose(SamplePurpose samplePurpose) {
+		this.samplePurpose = samplePurpose;
+	}
+
+	public SampleCriteria samplePurpose(SamplePurpose samplePurpose) {
+		setSamplePurpose(samplePurpose);
 		return this;
 	}
 }

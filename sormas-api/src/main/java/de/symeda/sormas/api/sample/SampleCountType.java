@@ -20,7 +20,7 @@ package de.symeda.sormas.api.sample;
 import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum SampleCountType {
-	TOTAL,
+	COLLECTED,
 	
 	SAMPLE_INDETERMINATE,
 	TEST_INDETERMINATE,
