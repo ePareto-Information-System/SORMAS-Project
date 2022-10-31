@@ -62,6 +62,7 @@ import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.SampleCountType;
 import de.symeda.sormas.api.sample.SampleCriteria;
+import de.symeda.sormas.api.sample.SampleDateType;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SampleExportDto;
 import de.symeda.sormas.api.sample.SampleFacade;
@@ -349,6 +350,7 @@ public class SampleFacadeEjb implements SampleFacade {
 		return sampleService.getDeletedUuidsSince(user, since);
 	}
 
+	
 	@Override
 	public List<String> getObsoleteUuidsSince(Date since) {
 
@@ -440,7 +442,12 @@ public class SampleFacadeEjb implements SampleFacade {
 
 		return sampleService.findBy(criteria, userService.getCurrentUser(), AbstractDomainObject.CREATION_DATE, false)
 			.stream()
-			.collect(Collectors.toMap(s -> associatedObjectFn.apply(s).getUuid(), s -> s, (s1, s2) -> {
+			.collect(
+				Collectors.toMap(
+					s -> associatedObjectFn.apply(s).getUuid(),
+					s -> s,
+					(s1, s2) -> {
+			//.collect(Collectors.toMap(s -> associatedObjectFn.apply(s).getUuid(), (s) -> s, (s1, s2) -> {
 
 				// keep the positive one
 				if (s1.getPathogenTestResult() == PathogenTestResultType.POSITIVE) {
@@ -794,7 +801,7 @@ public class SampleFacadeEjb implements SampleFacade {
 	}
 
 	@Override
-	public Map<SampleCountType, Long> getSampleCount(
+	public Map<SampleCountType, Long> getSampleCounts(
 		RegionReferenceDto regionRef,
 		DistrictReferenceDto districtRef,
 		Disease disease,
@@ -902,7 +909,7 @@ public class SampleFacadeEjb implements SampleFacade {
 				.samplePurpose(SamplePurpose.EXTERNAL));
 
 		Map<SampleCountType, Long> map = new HashMap<SampleCountType, Long>();
-		map.put(SampleCountType.TOTAL, total);
+		map.put(SampleCountType.COLLECTED, total);
 		
 		map.put(SampleCountType.SAMPLE_INDETERMINATE,  sampleIndeterminateCount);
 		map.put(SampleCountType.TEST_INDETERMINATE, testIndeterminateCount);
@@ -925,6 +932,71 @@ public class SampleFacadeEjb implements SampleFacade {
 
 		return map;
 	}
+
+//	private SampleDashboardCount getSampleDashboardCounts(SampleCriteria sampleCriteria) {
+//		final CriteriaBuilder cb = em.getCriteriaBuilder();
+//		final CriteriaQuery<SampleDashboardCount> cq = cb.createQuery(SampleDashboardCount.class);
+//		final Root<Sample> root = cq.from(Sample.class);
+//		SampleJoins<Sample> joins = new SampleJoins<>(root);
+//		Predicate filter = sampleService.createUserFilter(cq, cb, joins, sampleCriteria);
+//		if (sampleCriteria != null) {
+//			Predicate criteriaFilter = sampleService.buildCriteriaFilter(sampleCriteria, cb, joins);
+//			filter = CriteriaBuilderHelper.and(cb, filter, criteriaFilter);
+//		}
+//		if (filter != null) {
+//			cq.where(filter);
+//		}
+//		cq.multiselect(
+//			cb.sum(
+//				cb.selectCase()
+//					.when(cb.equal(root.get(Sample.PATHOGEN_TEST_RESULT), PathogenTestResultType.NEGATIVE), 1)
+//					.otherwise(0)
+//					.as(Long.class)),
+//			cb.sum(
+//				cb.selectCase()
+//					.when(cb.equal(root.get(Sample.PATHOGEN_TEST_RESULT), PathogenTestResultType.POSITIVE), 1)
+//					.otherwise(0)
+//					.as(Long.class)),
+//			cb.sum(
+//				cb.selectCase().when(cb.equal(root.get(Sample.PATHOGEN_TEST_RESULT), PathogenTestResultType.PENDING), 1).otherwise(0).as(Long.class)),
+//			cb.sum(
+//				cb.selectCase()
+//					.when(cb.equal(root.get(Sample.PATHOGEN_TEST_RESULT), PathogenTestResultType.INDETERMINATE), 1)
+//					.otherwise(0)
+//					.as(Long.class)),
+//			cb.sum(
+//				cb.selectCase()
+//					.when(cb.equal(root.get(Sample.SHIPPED), true), 1)
+//					.otherwise(0)
+//					.as(Long.class)),
+//			cb.sum(
+//				cb.selectCase()
+//					.when(cb.equal(root.get(Sample.SHIPPED), false), 1)
+//					.otherwise(0)
+//					.as(Long.class)),
+//			cb.sum(
+//				cb.selectCase()
+//					.when(cb.equal(root.get(Sample.RECEIVED), true), 1)
+//					.otherwise(0)
+//					.as(Long.class)),
+//			cb.sum(
+//				cb.selectCase()
+//					.when(cb.equal(root.get(Sample.RECEIVED), false), 1)
+//					.otherwise(0)
+//					.as(Long.class)),
+//			cb.sum(
+//				cb.selectCase()
+//					.when(cb.equal(root.get(Sample.SPECIMEN_CONDITION), SpecimenCondition.ADEQUATE), 1)
+//					.otherwise(0)
+//					.as(Long.class)),
+//			cb.sum(
+//				cb.selectCase()
+//					.when(cb.equal(root.get(Sample.SPECIMEN_CONDITION), SpecimenCondition.NOT_ADEQUATE), 1)
+//					.otherwise(0)
+//					.as(Long.class)));
+//
+//		return em.createQuery(cq).getSingleResult();
+//	}
 
 	public Sample fromDto(@NotNull SampleDto source, boolean checkChangeDate) {
 
@@ -1126,13 +1198,12 @@ public class SampleFacadeEjb implements SampleFacade {
 
 	private void onSampleChanged(SampleDto existingSample, Sample newSample, boolean syncShares) {
 		// Change pathogenTestResultChangeDate if the pathogen test result has changed
-		if (existingSample != null
-			&& existingSample.getPathogenTestResult() != null
-			&& existingSample.getPathogenTestResult() != newSample.getPathogenTestResult()) {
+		if (existingSample == null || existingSample.getPathogenTestResult() != newSample.getPathogenTestResult()) {
+
 			Date latestPathogenTestDate = pathogenTestFacade.getLatestPathogenTestDate(newSample.getUuid());
-			if (latestPathogenTestDate != null) {
-				newSample.setPathogenTestResultChangeDate(latestPathogenTestDate);
-			}
+			Date changeDate = latestPathogenTestDate != null ? latestPathogenTestDate : newSample.getSampleDateTime();
+
+			newSample.setPathogenTestResultChangeDate(changeDate);
 		}
 
 		handleAssociatedEntityChanges(newSample, syncShares);

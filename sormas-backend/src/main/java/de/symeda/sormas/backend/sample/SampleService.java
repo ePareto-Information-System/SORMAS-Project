@@ -888,6 +888,9 @@ public class SampleService extends AbstractDeletableAdoService<Sample> {
 			filter =
 				CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getLab().get(AbstractDomainObject.UUID), criteria.getLaboratory().getUuid()));
 		}
+		if (criteria.getSamplePurpose() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(sample.get(Sample.SAMPLE_PURPOSE), criteria.getSamplePurpose()));
+		}
 		if (criteria.getShipped() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(sample.get(Sample.SHIPPED), criteria.getShipped()));
 		}
@@ -997,20 +1000,22 @@ public class SampleService extends AbstractDeletableAdoService<Sample> {
 	private Predicate createSampleDateFilter(CriteriaBuilder cb, Predicate filter, From<?, ?> sample, SampleCriteria criteria) {
 
 		String dateProperty = Sample.SAMPLE_DATE_TIME;
+
 		if (criteria.getSampleDateType() != null) {
 			switch (criteria.getSampleDateType()) {
 			case REPORT:
 				dateProperty = Sample.REPORT_DATE_TIME;
 				break;
-			case SHIPPED:
+			case SHIPMENT:
 				dateProperty = Sample.SHIPMENT_DATE;
 				break;
-			case RECEIVED:
+			case RECIPIENCE:
 				dateProperty = Sample.RECEIVED_DATE;
 				break;
 			case RESULT:
 				dateProperty = Sample.PATHOGEN_TEST_RESULT_CHANGE_DATE;
 				break;
+			case COLLECTION:
 			default:
 				dateProperty = Sample.SAMPLE_DATE_TIME;
 				break;

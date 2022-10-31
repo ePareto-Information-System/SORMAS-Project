@@ -81,13 +81,13 @@ public interface SampleFacade {
 
 	List<String> getDeletedUuidsSince(Date since);
 
-	List<String> getObsoleteUuidsSince(Date since);
+	Map<SampleCountType, Long> getSampleCounts(RegionReferenceDto regionRef, DistrictReferenceDto districtRef, Disease disease, Date from, Date to);
 
 	boolean isDeleted(String sampleUuid);
 
 	List<SampleDto> getByCaseUuids(List<String> caseUuids);
-
-	Map<SampleCountType, Long> getSampleCount(RegionReferenceDto regionRef, DistrictReferenceDto districtRef, Disease disease, Date from, Date to);
+	
+	//Map<SampleCountType, Long> getSampleCount(RegionReferenceDto regionRef, DistrictReferenceDto districtRef, Disease disease, Date from, Date to);
 
 	Boolean isSampleEditAllowed(String sampleUuid);
 
@@ -104,4 +104,6 @@ public interface SampleFacade {
 	List<SampleDto> getByLabSampleId(String labSampleId);
 
 	Map<PathogenTestResultType, Long> getNewTestResultCountByResultType(List<Long> caseIds);
+
+	List<String> getObsoleteUuidsSince(Date since);
 }

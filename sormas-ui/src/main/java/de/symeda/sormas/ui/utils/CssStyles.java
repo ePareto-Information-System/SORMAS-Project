@@ -280,6 +280,8 @@ public final class CssStyles {
 	public static final String TEXTFIELD_CAPTION_INLINE = "caption-inline";
 
 	public static final String FLOAT_RIGHT = "float-right";
+	public static final String D_FLEX = "d-flex";
+	public static final String FLEX_WRAP = "flex-wrap";
 
 	/**
 	 * Example: <code>LayoutUtil.fluidColumnLocCss(CssStyles.LAYOUT_COL_HIDE_INVSIBLE, 3, 0, PersonDto.CAUSE_OF_DEATH_DISEASE)</code>
@@ -422,32 +424,35 @@ public final class CssStyles {
 	 */
 	public static String getSampleCountColor(SampleCountType count) {
 		switch (count) {
-		case TOTAL:
-			return "background-sample-count-total";
+		// case TOTAL:
+		// 	return "background-sample-count-total";
 			
 		case SAMPLE_INDETERMINATE:
 			return "background-sample-count-indeterminate";
 		case TEST_INDETERMINATE:
 			return "background-sample-count-indeterminate";
 			
+		case COLLECTED:
+			return "background-sample-count-total";
+		// case INDETERMINATE:
+		// 	return "background-sample-count-indeterminate";
 		case ADEQUATE:
 			return "background-sample-count-adequate";
 		case INADEQUATE:
 			return "background-sample-count-inadequate";
 			
 		case SAMPLE_POSITIVE:
-			return "background-sample-count-positives";
+			return "background-sample-count-positive";
 		case TEST_POSITIVE:
-			return "background-sample-count-positives";
+			return "background-sample-count-positive";
 		case SAMPLE_NEGATIVE:
-			return "background-sample-count-negatives";
+			return "background-sample-count-negative";
 		case TEST_NEGATIVE:
-			return "background-sample-count-negatives";
+			return "background-sample-count-negative";
 		case SAMPLE_PENDING:
-			return "background-sample-count-pendings";
+			return "background-sample-count-pending";
 		case TEST_PENDING:
-			return "background-sample-count-pendings";
-			
+			return "background-sample-count-pending";
 		case SHIPPED:
 			return "background-sample-count-shipped";
 		case NOT_SHIPED:

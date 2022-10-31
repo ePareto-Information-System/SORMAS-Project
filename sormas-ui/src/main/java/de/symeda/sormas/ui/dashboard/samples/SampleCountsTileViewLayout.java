@@ -35,12 +35,12 @@ import de.symeda.sormas.api.sample.SampleCountType;
 import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
 import de.symeda.sormas.ui.dashboard.surveillance.components.disease.tile.DiseaseTileComponent;
 
-public class CountsTileViewLayout extends CssLayout {
+public class SampleCountsTileViewLayout extends CssLayout {
 	private static final long serialVersionUID = 6582975657305031105L;
 
 	private DashboardDataProvider dashboardDataProvider;
 
-	public CountsTileViewLayout(DashboardDataProvider dashboardDataProvider) {
+	public SampleCountsTileViewLayout(DashboardDataProvider dashboardDataProvider) {
 		this.dashboardDataProvider = dashboardDataProvider;
 	}
 
@@ -56,7 +56,7 @@ public class CountsTileViewLayout extends CssLayout {
 		this.removeAllComponents();
 
 		SampleCountType[] totalCol = {
-			SampleCountType.TOTAL };
+			SampleCountType.COLLECTED };
 
 		SampleCountType[] testResultTypeCol = {
 				SampleCountType.TEST_PENDING,

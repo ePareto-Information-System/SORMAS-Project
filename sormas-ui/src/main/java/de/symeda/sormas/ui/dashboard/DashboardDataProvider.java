@@ -92,6 +92,8 @@ public class DashboardDataProvider {
 	private Long contactsConvertedToCaseCount = 0L;
 	private Map<SampleCountType, Long> previousSampleCount = new HashMap<SampleCountType, Long>();
 	private Long caseWithReferenceDefinitionFulfilledCount = 0L;
+	private Map<SampleCountType, Long> sampleCounts = new HashMap<SampleCountType, Long>();
+	private Map<SampleCountType, Long> previousSampleCounts = new HashMap<SampleCountType, Long>();
 
 	private final Class<? extends CriteriaDateType> dateTypeClass;
 
@@ -214,8 +216,8 @@ public class DashboardDataProvider {
 
 		if (getDashboardType() == DashboardType.SAMPLES) {
 			//Samples counts
-			setSampleCount(FacadeProvider.getSampleFacade().getSampleCount(region, district, disease, fromDate, toDate));
-			setPreviousSampleCount(FacadeProvider.getSampleFacade().getSampleCount(region, district, disease, previousFromDate, previousToDate));
+			setSampleCount(FacadeProvider.getSampleFacade().getSampleCounts(region, district, disease, fromDate, toDate));
+			setPreviousSampleCount(FacadeProvider.getSampleFacade().getSampleCounts(region, district, disease, previousFromDate, previousToDate));
 		}
 
 		if (getDashboardType() == DashboardType.CONTACTS || getDashboardType() == DashboardType.SAMPLES || this.disease != null) {
@@ -241,7 +243,14 @@ public class DashboardDataProvider {
 			setCasesCountByClassification(FacadeProvider.getDashboardFacade().getCasesCountByClassification(dashboardCriteria));
 		}
 
-		if (this.disease == null || getDashboardType() == DashboardType.CONTACTS || getDashboardType() == DashboardType.SAMPLES) {
+		//if (this.disease == null || getDashboardType() == DashboardType.CONTACTS || getDashboardType() == DashboardType.SAMPLES) {
+		if (getDashboardType() == DashboardType.SAMPLES) {
+			//Samples counts
+			setSampleCounts(FacadeProvider.getSampleFacade().getSampleCounts(region, district, disease, fromDate, toDate));
+			setPreviousSampleCounts(FacadeProvider.getSampleFacade().getSampleCounts(region, district, disease, previousFromDate, previousToDate));
+		}
+
+		if (this.disease == null || getDashboardType() == DashboardType.CONTACTS) {
 			return;
 		}
 
@@ -557,6 +566,20 @@ public class DashboardDataProvider {
 			.caseClassification(caseClassification)
 			.newCaseDateType(newCaseDateType)
 			.dateFilterType(dateFilterType);
+	}
+	public Map<SampleCountType, Long> getSampleCounts() {
+		return sampleCounts;
+	}
 
+	public void setSampleCounts(Map<SampleCountType, Long> sampleCounts) {
+		this.sampleCounts = sampleCounts;
+	}
+
+	public Map<SampleCountType, Long> getPreviousSampleCounts() {
+		return previousSampleCounts;
+	}
+
+	public void setPreviousSampleCounts(Map<SampleCountType, Long> previousSampleCounts) {
+		this.previousSampleCounts = previousSampleCounts;
 	}
 }
