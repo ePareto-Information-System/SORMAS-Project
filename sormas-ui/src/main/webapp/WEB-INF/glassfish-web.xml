@@ -536,6 +536,11 @@
     </security-role-mapping>
 
     <security-role-mapping>
+        <role-name>DASHBOARD_DISEASE_DETAILS_ACCESS</role-name>
+        <group-name>DASHBOARD_DISEASE_DETAILS_ACCESS</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
         <role-name>DASHBOARD_CONTACT_VIEW</role-name>
         <group-name>DASHBOARD_CONTACT_VIEW</group-name>
     </security-role-mapping>

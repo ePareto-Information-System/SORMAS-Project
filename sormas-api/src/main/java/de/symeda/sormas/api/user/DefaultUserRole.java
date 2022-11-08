@@ -205,7 +205,8 @@ public enum DefaultUserRole {
 	IMPORT_USER(false, false, false, false, JurisdictionLevel.NONE, Collections.emptyList(), Collections.emptyList()),
 	REST_EXTERNAL_VISITS_USER(false, false, false, false, JurisdictionLevel.NATION, Collections.emptyList(), Collections.emptyList()),
 	SORMAS_TO_SORMAS_CLIENT(false, false, false, false, JurisdictionLevel.NATION, Collections.emptyList(), Collections.emptyList()),
-	BAG_USER(false, false, false, false, JurisdictionLevel.NONE, Collections.emptyList(), Collections.emptyList());
+	BAG_USER(false, false, false, false, JurisdictionLevel.NONE, Collections.emptyList(), Collections.emptyList()),
+	REST_USER(false, false, false, false, JurisdictionLevel.NONE,Collections.emptyList(), Collections.emptyList());
 
 	private final boolean supervisor;
 	private final boolean hasOptionalHealthFacility;
@@ -1126,7 +1127,8 @@ public enum DefaultUserRole {
 					TRAVEL_ENTRY_CREATE,
 					TRAVEL_ENTRY_EDIT,
 					SORMAS_REST,
-					SORMAS_UI));
+					SORMAS_UI,
+					DASHBOARD_DISEASE_DETAILS_ACCESS));
 			break;
 		case NATIONAL_CLINICIAN:
 			userRights.addAll(
@@ -1228,7 +1230,9 @@ public enum DefaultUserRole {
 					TRAVEL_ENTRY_VIEW,
 					OUTBREAK_VIEW,
 					SORMAS_REST,
-					SORMAS_UI));
+					SORMAS_UI,
+					DASHBOARD_DISEASE_DETAILS_ACCESS
+					));
 			break;
 		case NATIONAL_USER:
 			userRights.addAll(
@@ -1342,7 +1346,9 @@ public enum DefaultUserRole {
 					OUTBREAK_VIEW,
 					OUTBREAK_EDIT,
 					SORMAS_REST,
-					SORMAS_UI));
+					SORMAS_UI,
+					DASHBOARD_DISEASE_DETAILS_ACCESS
+					));
 			break;
 		case POE_INFORMANT:
 			userRights.addAll(
@@ -1412,7 +1418,8 @@ public enum DefaultUserRole {
 					TRAVEL_ENTRY_EDIT,
 					OUTBREAK_VIEW,
 					SORMAS_REST,
-					SORMAS_UI));
+					SORMAS_UI,
+					DASHBOARD_DISEASE_DETAILS_ACCESS));
 			break;
 		case POE_SUPERVISOR:
 			userRights.addAll(
@@ -1510,7 +1517,8 @@ public enum DefaultUserRole {
 					TRAVEL_ENTRY_VIEW,
 					OUTBREAK_VIEW,
 					SORMAS_REST,
-					SORMAS_UI));
+					SORMAS_UI,
+					DASHBOARD_DISEASE_DETAILS_ACCESS));
 			break;
 		case SURVEILLANCE_OFFICER:
 			userRights.addAll(
@@ -1578,7 +1586,8 @@ public enum DefaultUserRole {
 					TRAVEL_ENTRY_CREATE,
 					TRAVEL_ENTRY_EDIT,
 					SORMAS_REST,
-					SORMAS_UI));
+					SORMAS_UI,
+					DASHBOARD_DISEASE_DETAILS_ACCESS));
 			break;
 		case SURVEILLANCE_SUPERVISOR:
 			userRights.addAll(
@@ -1669,13 +1678,24 @@ public enum DefaultUserRole {
 					OUTBREAK_VIEW,
 					OUTBREAK_EDIT,
 					SORMAS_REST,
-					SORMAS_UI));
+					SORMAS_UI,
+					DASHBOARD_DISEASE_DETAILS_ACCESS));
 			break;
+			
+//		case REST_USER:
+//			userRights.addAll(
+//					Arrays.asList(
+//							DASHBOARD_SURVEILLANCE_ACCESS
+//					));
+//			break;
 		default:
 			throw new IllegalArgumentException(this.toString());
 		}
 		return userRights;
 	}
+	
+	public static final String _SYSTEM = "SYSTEM";
+
 
 	public boolean hasOptionalHealthFacility() {
 		return hasOptionalHealthFacility;

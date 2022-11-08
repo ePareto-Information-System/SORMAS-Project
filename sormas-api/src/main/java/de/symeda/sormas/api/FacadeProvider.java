@@ -39,7 +39,9 @@ import de.symeda.sormas.api.contact.ContactFacade;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumFacade;
 import de.symeda.sormas.api.dashboard.DashboardFacade;
 import de.symeda.sormas.api.contact.ContactStatisticsFacade;
+import de.symeda.sormas.api.disease.DiseaseBurdenDto;
 import de.symeda.sormas.api.disease.DiseaseConfigurationFacade;
+import de.symeda.sormas.api.disease.DiseaseFacade;
 import de.symeda.sormas.api.docgeneneration.DocumentTemplateFacade;
 import de.symeda.sormas.api.docgeneneration.EventDocumentFacade;
 import de.symeda.sormas.api.docgeneneration.QuarantineOrderFacade;
@@ -312,6 +314,10 @@ public class FacadeProvider {
 	public static DashboardFacade getDashboardFacade() {
 		return get().lookupEjbRemote(DashboardFacade.class);
 	}
+	
+	public static DiseaseFacade getDiseaseFacade() {
+		return get().lookupEjbRemote(DiseaseFacade.class);
+	}
 
 	public static DiseaseConfigurationFacade getDiseaseConfigurationFacade() {
 		return get().lookupEjbRemote(DiseaseConfigurationFacade.class);
@@ -507,4 +513,6 @@ public class FacadeProvider {
 	public static String buildJndiLookupName(Class<?> clazz) {
 		return JNDI_PREFIX + clazz.getSimpleName();
 	}
+
+	
 }

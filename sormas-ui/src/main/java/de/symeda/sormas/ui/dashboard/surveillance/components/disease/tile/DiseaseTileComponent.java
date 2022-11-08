@@ -20,15 +20,19 @@ package de.symeda.sormas.ui.dashboard.surveillance.components.disease.tile;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.ValoTheme;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.disease.DiseaseBurdenDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.ui.ControllerProvider;
+import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 
 public class DiseaseTileComponent extends VerticalLayout {
@@ -44,7 +48,11 @@ public class DiseaseTileComponent extends VerticalLayout {
 			diseaseBurden.getCaseCount(),
 			diseaseBurden.getPreviousCaseCount(),
 			diseaseBurden.getOutbreakDistrictCount() > 0);
-		addStatsLayout(diseaseBurden.getCaseDeathCount(), diseaseBurden.getEventCount(), diseaseBurden.getLastReportedDistrictName());
+		addStatsLayout(
+			diseaseBurden.getCaseDeathCount(),
+			diseaseBurden.getEventCount(),
+			diseaseBurden.getLastReportedDistrictName(),
+			diseaseBurden.getDisease());
 	}
 
 	private void addTopLayout(Disease disease, Long casesCount, Long previousCasesCount, boolean isOutbreak) {
@@ -147,7 +155,7 @@ public class DiseaseTileComponent extends VerticalLayout {
 		addComponent(layout);
 	}
 
-	private void addStatsLayout(Long fatalities, Long events, String district) {
+	private void addStatsLayout(Long fatalities, Long events, String district, Disease disease) {
 		VerticalLayout layout = new VerticalLayout();
 		layout.setWidth(100, Unit.PERCENTAGE);
 		layout.setMargin(false);
@@ -165,6 +173,48 @@ public class DiseaseTileComponent extends VerticalLayout {
 		noOfEventsItem.addStyleName(CssStyles.VSPACE_4);
 		layout.addComponent(noOfEventsItem);
 
+		layout.addComponent(addDiseaseButton(disease));
+
 		addComponent(layout);
+	}
+
+	private HorizontalLayout createStatsItem(String label, String value, boolean isCritical, boolean singleColumn) {
+		HorizontalLayout layout = new HorizontalLayout();
+		layout.setWidth(100, Unit.PERCENTAGE);
+		layout.setMargin(false);
+		layout.setSpacing(false);
+
+		Label nameLabel = new Label(label);
+		CssStyles.style(nameLabel, CssStyles.LABEL_PRIMARY, isCritical ? CssStyles.LABEL_CRITICAL : "", CssStyles.HSPACE_LEFT_3);
+		layout.addComponent(nameLabel);
+		if (!singleColumn) {
+			layout.setExpandRatio(nameLabel, 1);
+		}
+
+		Label valueLabel = new Label(value);
+		CssStyles.style(
+			valueLabel,
+			CssStyles.LABEL_PRIMARY,
+			isCritical ? CssStyles.LABEL_CRITICAL : "",
+			singleColumn ? CssStyles.HSPACE_LEFT_5 : CssStyles.ALIGN_CENTER);
+		layout.addComponent(valueLabel);
+		layout.setExpandRatio(valueLabel, singleColumn ? 1f : 0.65f);
+
+		return layout;
+	}
+
+	private Button addDiseaseButton(Disease diseaseName) {
+		Button diseaseDetailButton = ButtonHelper
+			.createIconButton(null, VaadinIcons.ELLIPSIS_DOTS_H, null, ValoTheme.BUTTON_BORDERLESS, CssStyles.VSPACE_TOP_NONE, CssStyles.VSPACE_4);
+		diseaseDetailButton.setVisible(true);
+		diseaseDetailButton.addClickListener(click -> ControllerProvider.getDashboardController().navigateToDisease(diseaseName));
+
+//		Button diseaseDetailButton = ButtonHelper
+//			.createIconButton(null, VaadinIcons.ELLIPSIS_DOTS_H, null, ValoTheme.BUTTON_BORDERLESS, CssStyles.VSPACE_TOP_NONE, CssStyles.VSPACE_4);
+//		diseaseDetailButton.setVisible(true);
+//		layout.addComponent(diseaseDetailButton);
+//		diseaseDetailButton.addClickListener(click -> ControllerProvider.getDashboardController().navigateToDisease(disease.getName()));
+
+		return diseaseDetailButton;
 	}
 }

@@ -84,6 +84,7 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	public static final String ONLY_CASES_WITH_DONT_SHARE_WITH_EXTERNAL_SURV_TOOL = "onlyCasesWithDontShareWithExternalSurvTool";
 	public static final String ONLY_SHOW_CASES_WITH_FULFILLED_REFERENCE_DEFINITION = "onlyShowCasesWithFulfilledReferenceDefinition";
 	public static final String PERSON_LIKE = "personLike";
+	public static final String NAME_UUID_EPID_NUMBER_LIKE = "nameUuidEpidNumberLike";
 
 	private UserRoleReferenceDto reportingUserRole;
 	private Disease disease;
@@ -150,6 +151,8 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	private Boolean onlyCasesWithDontShareWithExternalSurvTool;
 	private Boolean onlyShowCasesWithFulfilledReferenceDefinition;
 	private String personLike;
+	private String nameUuidEpidNumberLike;
+	
 
 	public CaseCriteria() {
 		super(NewCaseDateType.class);
@@ -296,6 +299,8 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	public void setNewCaseDateType(CriteriaDateType newCaseDateType) {
 		this.newCaseDateType = newCaseDateType;
 	}
+	
+	
 
 	public CaseCriteria newCaseDateType(CriteriaDateType newCaseDateType) {
 		setNewCaseDateType(newCaseDateType);
@@ -769,5 +774,21 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	public CaseCriteria personLike(String personLike) {
 		setPersonLike(personLike);
 		return this;
+	}
+	public void setNameUuidEpidNumberLike(String nameUuidEpidNumberLike) {
+		this.nameUuidEpidNumberLike = nameUuidEpidNumberLike;
+	}
+	
+	@IgnoreForUrl
+	public String getNameUuidEpidNumberLike() {
+		return nameUuidEpidNumberLike;
+	}
+
+	public Boolean getExcludeSharedCases() {
+		return excludeSharedCases;
+	}
+
+	public void setExcludeSharedCases(Boolean excludeSharedCases) {
+		this.excludeSharedCases = excludeSharedCases;
 	}
 }

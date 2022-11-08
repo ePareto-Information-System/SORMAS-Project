@@ -8,6 +8,7 @@ public class CaseUserFilterCriteria {
 	private boolean excludeCasesFromContacts;
 	private Boolean includeCasesFromOtherJurisdictions = Boolean.FALSE;
 	private boolean excludeLimitedSyncRestrictions;
+	private boolean excludeSharedCases;
 
 	public boolean isExcludeCasesFromContacts() {
 		return excludeCasesFromContacts;
@@ -37,6 +38,14 @@ public class CaseUserFilterCriteria {
 
 	public CaseUserFilterCriteria excludeLimitedSyncRestrictions(boolean excludeLimitedSyncRestrictions) {
 		this.excludeLimitedSyncRestrictions = excludeLimitedSyncRestrictions;
+		return this;
+	}
+
+	public boolean isExcludeSharedCases() {
+		return excludeSharedCases;
+	}
+	public CaseUserFilterCriteria excludeSharedCases(boolean excludeSharedCases) {
+		this.excludeSharedCases = excludeSharedCases;
 		return this;
 	}
 }

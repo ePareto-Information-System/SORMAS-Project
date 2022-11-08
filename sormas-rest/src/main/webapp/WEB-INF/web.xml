@@ -444,6 +444,10 @@
 	</security-role>
 
 	<security-role>
+        <role-name>DASHBOARD_DISEASE_DETAILS_ACCESS</role-name>
+    </security-role>
+
+	<security-role>
 		<role-name>DASHBOARD_CONTACT_VIEW</role-name>
 	</security-role>
 

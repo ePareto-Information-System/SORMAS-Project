@@ -53,6 +53,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.ui.TextArea;
 
 import de.symeda.sormas.api.CountryHelper;
+
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.DiseaseHelper;
 import de.symeda.sormas.api.EntityDto;

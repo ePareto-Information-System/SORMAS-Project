@@ -11958,4 +11958,12 @@ INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (next
 
 INSERT INTO schema_version (version_number, comment ,upgradeneeded) VALUES (479, 'Update userroles with HOSPITAL_SUPERVISOR', true);
 
+-- 2022-07-11 Assigning DASHBOARD_DISEASE_DETAILS_ACCESS right to userroles that can view surveilance dashboard 
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT userrole_id, 'DASHBOARD_DISEASE_DETAILS_ACCESS' FROM userroles_userrights WHERE userright = 'DASHBOARD_SURVEILLANCE_VIEW';
+
+
+INSERT INTO schema_version (version_number, comment) VALUES (480, 'Assigning DASHBOARD_DISEASE_DETAILS_ACCESS right to userroles that can view surveilance dashboard');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
+
+

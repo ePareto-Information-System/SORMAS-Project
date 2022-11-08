@@ -63,6 +63,7 @@ import de.symeda.sormas.ui.contact.ContactsView;
 import de.symeda.sormas.ui.dashboard.AbstractDashboardView;
 import de.symeda.sormas.ui.dashboard.campaigns.CampaignDashboardView;
 import de.symeda.sormas.ui.dashboard.contacts.ContactsDashboardView;
+import de.symeda.sormas.ui.dashboard.diseasedetails.DiseaseDetailsView;
 import de.symeda.sormas.ui.dashboard.surveillance.SurveillanceDashboardView;
 import de.symeda.sormas.ui.events.EventGroupDataView;
 import de.symeda.sormas.ui.events.EventParticipantDataView;
@@ -92,6 +93,7 @@ public class MainScreen extends HorizontalLayout {
 
 	// Add new views to this set to make sure that the right error page is shown
 	private static final Set<String> KNOWN_VIEWS = initKnownViews();
+
 
 	private final Menu menu;
 
@@ -320,6 +322,9 @@ public class MainScreen extends HorizontalLayout {
 	private static Set<String> initKnownViews() {
 		final Set<String> views = new HashSet<>(
 			Arrays.asList(
+				SurveillanceDashboardView.VIEW_NAME,
+				ContactsDashboardView.VIEW_NAME,
+				DiseaseDetailsView.VIEW_NAME,
 				TasksView.VIEW_NAME,
 				CasesView.VIEW_NAME,
 				ContactsView.VIEW_NAME,

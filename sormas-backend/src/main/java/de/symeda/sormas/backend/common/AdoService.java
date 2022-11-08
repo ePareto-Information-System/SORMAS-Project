@@ -28,7 +28,7 @@ public interface AdoService<ADO extends AbstractDomainObject> {
 
 	ADO getById(long id);
 
-	ADO getByUuid(String uuid);
+	ADO getByUuid(String uuid); //@NotNull
 
 	Boolean exists(@NotNull String uuid);
 
@@ -62,4 +62,6 @@ public interface AdoService<ADO extends AbstractDomainObject> {
 	 * JPA-Session flushen
 	 */
 	void doFlush();
+
+	void delete(ADO deleteme);
 }

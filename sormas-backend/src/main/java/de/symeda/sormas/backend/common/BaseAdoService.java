@@ -447,4 +447,10 @@ public class BaseAdoService<ADO extends AbstractDomainObject> implements AdoServ
 
 		return query;
 	}
+
+	@Override
+	public void delete(ADO deleteme) {
+		em.remove(deleteme);
+		em.flush();
+	}
 }

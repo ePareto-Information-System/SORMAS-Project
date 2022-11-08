@@ -78,6 +78,9 @@ public class RegionFacadeEjb extends AbstractInfrastructureFacadeEjb<Region, Reg
 	private CountryService countryService;
 	@EJB
 	private CountryFacadeEjbLocal countryFacade;
+	
+	@EJB
+	private RegionService regionService;
 
 	public RegionFacadeEjb() {
 	}
@@ -328,4 +331,23 @@ public class RegionFacadeEjb extends AbstractInfrastructureFacadeEjb<Region, Reg
 			super(service, featureConfiguration, userService);
 		}
 	}
+
+	@Override
+	public List<RegionDto> getAllRegion() {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<RegionDto> cq = cb.createQuery(RegionDto.class);
+		Root<Region> region = cq.from(Region.class);
+
+		selectDtoFields(cq, region);
+
+		return em.createQuery(cq).getResultList();
+	}
+	
+	@Override
+	public RegionDto getRegionByUuid(String uuid) {
+		return toDto(regionService.getByUuid(uuid));
+	}
+	
+	
 }

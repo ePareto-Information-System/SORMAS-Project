@@ -144,6 +144,7 @@ public class DashboardMapComponent extends VerticalLayout {
 		setSizeFull();
 
 		map = new LeafletMap();
+
 		map.setSizeFull();
 		map.addMarkerClickListener(event -> onMarkerClicked(event.getGroupId(), event.getMarkerIndex()));
 
@@ -168,6 +169,12 @@ public class DashboardMapComponent extends VerticalLayout {
 				map.setCenter(center);
 			}
 
+			GeoLatLon center = Optional.ofNullable(mapCenter).orElseGet(FacadeProvider.getConfigFacade()::getCountryCenter);
+
+			if (center == null || (center.getLat() == 0.0 && center.getLon() == 0)) {
+				center = new GeoLatLon(8.134, 1.423);
+			}
+			map.setCenter(center);
 		}
 
 		map.setZoom(FacadeProvider.getConfigFacade().getMapZoom());
@@ -179,10 +186,20 @@ public class DashboardMapComponent extends VerticalLayout {
 			showEvents = false;
 			showConfirmedContacts = true;
 			showUnconfirmedContacts = true;
-		} else if (dashboardDataProvider.getDashboardType() == DashboardType.CONTACTS) {
+		}
+		else if (dashboardDataProvider.getDashboardType() == DashboardType.CONTACTS) {
 			showCases = false;
 			caseClassificationOption = MapCaseClassificationOption.ALL_CASES;
 			showContacts = true;
+			showEvents = false;
+			showConfirmedContacts = true;
+			showUnconfirmedContacts = true;
+		}
+		else if (dashboardDataProvider.getDashboardType() == DashboardType.DISEASE) {
+			map.setZoom(6);
+			showCases = true;
+			caseClassificationOption = MapCaseClassificationOption.ALL_CASES;
+			showContacts = false;
 			showEvents = false;
 			showConfirmedContacts = true;
 			showUnconfirmedContacts = true;
@@ -356,11 +373,16 @@ public class DashboardMapComponent extends VerticalLayout {
 		Label mapLabel = new Label();
 		if (dashboardDataProvider.getDashboardType() == DashboardType.SURVEILLANCE) {
 			mapLabel.setValue(I18nProperties.getString(Strings.headingCaseStatusMap));
-		} else {
+			CssStyles.style(mapLabel, CssStyles.H2, CssStyles.VSPACE_4, CssStyles.VSPACE_TOP_NONE);
+		}else if (dashboardDataProvider.getDashboardType() == DashboardType.DISEASE) {
+			mapLabel.setValue(I18nProperties.getCaption(Captions.diseaseDetailMap));
+			CssStyles.style(mapLabel, CssStyles.H4, CssStyles.VSPACE_4, CssStyles.VSPACE_NONE);
+		}
+		else {
 			mapLabel.setValue(I18nProperties.getString(Strings.headingContactMap));
+			CssStyles.style(mapLabel, CssStyles.H2, CssStyles.VSPACE_4, CssStyles.VSPACE_TOP_NONE);
 		}
 		mapLabel.setSizeUndefined();
-		CssStyles.style(mapLabel, CssStyles.H2, CssStyles.VSPACE_4, CssStyles.VSPACE_TOP_NONE);
 
 		mapHeaderLayout.addComponent(mapLabel);
 		mapHeaderLayout.setComponentAlignment(mapLabel, Alignment.BOTTOM_LEFT);
@@ -384,8 +406,11 @@ public class DashboardMapComponent extends VerticalLayout {
 			mapHeaderLayout.addComponent(expandMapButton);
 			mapHeaderLayout.setComponentAlignment(expandMapButton, Alignment.MIDDLE_RIGHT);
 		});
-		mapHeaderLayout.addComponent(expandMapButton);
-		mapHeaderLayout.setComponentAlignment(expandMapButton, Alignment.MIDDLE_RIGHT);
+		
+		if (dashboardDataProvider.getDashboardType() != DashboardType.DISEASE){
+			mapHeaderLayout.addComponent(expandMapButton);
+			mapHeaderLayout.setComponentAlignment(expandMapButton, Alignment.MIDDLE_RIGHT);
+		}
 
 		return mapHeaderLayout;
 	}

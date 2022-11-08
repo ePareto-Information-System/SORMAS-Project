@@ -224,6 +224,7 @@ import de.symeda.sormas.backend.clinicalcourse.ClinicalVisitFacadeEjb.ClinicalVi
 import de.symeda.sormas.backend.clinicalcourse.ClinicalVisitService;
 import de.symeda.sormas.backend.clinicalcourse.HealthConditions;
 import de.symeda.sormas.backend.clinicalcourse.HealthConditionsMapper;
+import de.symeda.sormas.backend.common.AbstractAdoService;
 import de.symeda.sormas.backend.common.AbstractCoreFacadeEjb;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.ConfigFacadeEjb.ConfigFacadeEjbLocal;
@@ -4359,4 +4360,85 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			super(service, userService);
 		}
 	}
+
+	@Override
+	public List<CaseDataDto> getAllCaseDataByDisease(Disease disease) {
+		return caseService.getAllByDisease(disease);
+	}
+
+	@Override
+	public boolean hasPositiveLabResult(String caseUuid) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	
+	@Override
+	public Map<Disease, Long> getCaseCountByDisease(CaseCriteria caseCriteria, boolean excludeSharedCases, boolean excludeCasesFromContacts) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
+		Root<Case> caze = cq.from(Case.class);
+
+		Predicate filter = caseService.createUserFilter(
+			cb,
+			cq,
+			caze,
+			new CaseUserFilterCriteria().excludeSharedCases(excludeSharedCases).excludeCasesFromContacts(excludeCasesFromContacts));
+
+		filter = AbstractAdoService.and(cb, filter, caseService.createCriteriaFilter(caseCriteria, cb, cq, caze));
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		cq.groupBy(caze.get(Case.DISEASE));
+		cq.multiselect(caze.get(Case.DISEASE), cb.count(caze));
+		List<Object[]> results = em.createQuery(cq).getResultList();
+
+		Map<Disease, Long> resultMap = results.stream().collect(Collectors.toMap(e -> (Disease) e[0], e -> (Long) e[1]));
+
+		return resultMap;
+	}
+	
+	public Map<Disease, District> getLastReportedDistrictByDisease(
+			CaseCriteria caseCriteria,
+			boolean excludeSharedCases,
+			boolean excludeCasesFromContacts) {
+
+			CriteriaBuilder cb = em.getCriteriaBuilder();
+			CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
+			Root<Case> caze = cq.from(Case.class);
+			Join<Case, District> districtJoin = caze.join(Case.DISTRICT, JoinType.LEFT);
+
+			Predicate filter = caseService.createUserFilter(
+				cb,
+				cq,
+				caze,
+				new CaseUserFilterCriteria().excludeSharedCases(excludeSharedCases).excludeCasesFromContacts(excludeCasesFromContacts));
+
+			filter = AbstractAdoService.and(cb, filter, caseService.createCriteriaFilter(caseCriteria, cb, cq, caze));
+
+			if (filter != null) {
+				cq.where(filter);
+			}
+
+			Expression<Number> maxReportDate = cb.max(caze.get(Case.REPORT_DATE));
+			cq.multiselect(caze.get(Case.DISEASE), districtJoin, maxReportDate);
+			cq.groupBy(caze.get(Case.DISEASE), districtJoin);
+			cq.orderBy(cb.desc(maxReportDate));
+
+			List<Object[]> results = em.createQuery(cq).getResultList();
+
+			Map<Disease, District> resultMap = new HashMap<>();
+			for (Object[] e : results) {
+				Disease disease = (Disease) e[0];
+				if (!resultMap.containsKey(disease)) {
+					District district = (District) e[1];
+					resultMap.put(disease, district);
+				}
+			}
+
+			return resultMap;
+		}
 }

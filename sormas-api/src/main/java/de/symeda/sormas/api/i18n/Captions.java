@@ -833,6 +833,8 @@ public interface Captions {
 	String dashboardDead = "dashboardDead";
 	String dashboardDiscarded = "dashboardDiscarded";
 	String dashboardDiseaseBurdenInfo = "dashboardDiseaseBurdenInfo";
+	String dashboardRegionalDiseaseBurden = "dashboardRegionalDiseaseBurden";
+	String diseaseDetailMap = "diseaseDetailMap";
 	String dashboardDiseaseBurdenOutbreakDistricts = "dashboardDiseaseBurdenOutbreakDistricts";
 	String dashboardDiseaseCarouselSlideShow = "dashboardDiseaseCarouselSlideShow";
 	String dashboardDiseaseDifference = "dashboardDiseaseDifference";
@@ -2588,6 +2590,7 @@ public interface Captions {
 	String View_dashboard_samples = "View.dashboard.samples";
 	String View_dashboard_surveillance = "View.dashboard.surveillance";
 	String View_dashboard_sample = "View.dashboard.samples";
+	String View_dashboard_disease = "View.dashboard.disease";
 	String View_events = "View.events";
 	String View_events_archive = "View.events.archive";
 	String View_events_data = "View.events.data";
@@ -2629,6 +2632,7 @@ public interface Captions {
 	String Visit_visitStatus = "Visit.visitStatus";
 	String Visit_visitUser = "Visit.visitUser";
 	String visitNewVisit = "visitNewVisit";
+	String viewMore = "viewMore";
 	String WeeklyReport_epiWeek = "WeeklyReport.epiWeek";
 	String WeeklyReport_year = "WeeklyReport.year";
 	String WeeklyReportEntry_numberOfCases = "WeeklyReportEntry.numberOfCases";
@@ -2665,4 +2669,5 @@ public interface Captions {
 	String EntityAuditLogComponent_showUniqueActivities = "EntityAuditLogComponent.showUniqueActivities";
 	String EntityAuditLogComponent_selectActivities = "EntityAuditLogComponent.selectActivities";
 	String years = "years";
+	String dashboardLastReportedDistrict = "Dash Board Last Reported District";
 }

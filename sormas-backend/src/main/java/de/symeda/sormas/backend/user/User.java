@@ -346,6 +346,10 @@ public class User extends AbstractDomainObject {
 	public boolean hasAnyUserRole(UserRole... userRoles) {
 		return Arrays.stream(userRoles).anyMatch(getUserRoles()::contains);
 	}
+	
+	public boolean hasAnyUserRole(DefaultUserRole... userRoles) {
+		return Arrays.stream(userRoles).anyMatch(getUserRoles()::contains);
+	}
 
 	public boolean hasAnyUserRole(Collection<UserRole> userRoles) {
 		return userRoles.stream().anyMatch(getUserRoles()::contains);

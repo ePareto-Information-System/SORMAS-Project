@@ -26,6 +26,12 @@ import java.util.Set;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
 
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
+
 public enum UserRight {
 
 	//@formatter:off
@@ -207,7 +213,8 @@ public enum UserRight {
 	SORMAS_UI,
 	SORMAS_TO_SORMAS_CLIENT,
 	EXTERNAL_VISITS,
-	DEV_MODE;
+	DEV_MODE, 
+	DASHBOARD_DISEASE_DETAILS_ACCESS;
 	//@formatter:on
 
 	/*

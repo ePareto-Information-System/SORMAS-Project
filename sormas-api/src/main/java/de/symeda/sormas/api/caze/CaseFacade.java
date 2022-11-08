@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import javax.ejb.Remote;
@@ -240,4 +241,14 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 
 	void setResultingCase(EventParticipantReferenceDto eventParticipantReferenceDto, CaseReferenceDto caseReferenceDto);
 	EditPermissionType isEditContactAllowed(String uuid);
+	boolean hasPositiveLabResult(String caseUuid);
+
+	List<CaseDataDto> getAllCaseDataByDisease(Disease uuid);
+
+	Map<Disease, Long> getCaseCountByDisease(CaseCriteria caseCriteria, boolean excludeSharedCases,
+			boolean excludeCasesFromContacts);
+
+//	Map<Disease, Long> getCaseCountByDisease(CaseCriteria caseCriteria, boolean excludeSharedCases,
+//			boolean excludeCasesFromContacts);
+
 }

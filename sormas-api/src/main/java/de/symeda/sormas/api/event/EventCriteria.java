@@ -98,7 +98,8 @@ public class EventCriteria extends CriteriaWithDateType implements ExternalShare
 	private Boolean hasNoSuperordinateEvent;
 	private EventManagementStatus eventManagementStatus;
 	private EventIdentificationSource eventIdentificationSource;
-
+	private Date reportedDateFrom;
+	private Date reportedDateTo;
 	// Actions criterias
 	private ActionStatus actionStatus;
 	private Date actionChangeDateFrom;
@@ -706,5 +707,12 @@ public class EventCriteria extends CriteriaWithDateType implements ExternalShare
 
 	public void setOnlyEntitiesChangedSinceLastSharedWithExternalSurvTool(Boolean onlyEntitiesChangedSinceLastSharedWithExternalSurvTool) {
 		this.onlyEntitiesChangedSinceLastSharedWithExternalSurvTool = onlyEntitiesChangedSinceLastSharedWithExternalSurvTool;
+	}
+
+	public EventCriteria reportedBetween(Date reportedDateFrom, Date reportedDateTo) {
+
+		this.reportedDateFrom = reportedDateFrom;
+		this.reportedDateTo = reportedDateTo;
+		return this;
 	}
 }

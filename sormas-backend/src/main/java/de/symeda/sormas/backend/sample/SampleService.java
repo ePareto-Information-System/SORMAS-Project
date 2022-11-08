@@ -84,6 +84,7 @@ import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.caze.CaseFacadeEjb;
 import de.symeda.sormas.backend.caze.CaseQueryContext;
 import de.symeda.sormas.backend.caze.CaseService;
+import de.symeda.sormas.backend.common.AbstractAdoService;
 import de.symeda.sormas.backend.common.AbstractDeletableAdoService;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
@@ -1267,6 +1268,35 @@ public class SampleService extends AbstractDeletableAdoService<Sample> {
 	private <T> java.util.function.Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
 		Set<Object> seen = ConcurrentHashMap.newKeySet();
 		return t -> seen.add(keyExtractor.apply(t));
+	}
+	
+	public Predicate createUserFilterWithoutCase(CriteriaBuilder cb, SampleJoins joins) {
+		Predicate filter = null;
+		// user that reported it is not able to access it. Otherwise they would also need to access the case
+		//filter = cb.equal(samplePath.get(Sample.REPORTING_USER), user);
+
+		User currentUser = getCurrentUser();
+		final JurisdictionLevel jurisdictionLevel = currentUser.getJurisdictionLevel();
+		// lab users can see samples assigned to their laboratory
+		if (jurisdictionLevel == JurisdictionLevel.LABORATORY || jurisdictionLevel == JurisdictionLevel.EXTERNAL_LABORATORY) {
+			if (currentUser.getLaboratory() != null) {
+				filter = AbstractAdoService.or(cb, filter, cb.equal(joins.getRoot().get(Sample.LAB), currentUser.getLaboratory()));
+			}
+		}
+
+		// only show samples of a specific disease if a limited disease is set
+		if (filter != null && currentUser.getLimitedDisease() != null) {
+			filter = AbstractAdoService.and(
+				cb,
+				filter,
+				cb.equal(
+					cb.selectCase()
+						.when(cb.isNotNull(joins.getCaze()), joins.getCaze().get(Case.DISEASE))
+						.otherwise(joins.getContact().get(Contact.DISEASE)),
+					currentUser.getLimitedDisease()));
+		}
+
+		return filter;
 	}
 
 }
