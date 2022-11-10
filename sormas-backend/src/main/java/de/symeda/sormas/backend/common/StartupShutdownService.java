@@ -452,7 +452,7 @@ public class StartupShutdownService {
 			createAndPersistDefaultUser(
 				userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.HOSPITAL_SUPERVISOR)),
 				"Hospital",
-				"Superviser",
+				"Supervisor",
 				DefaultEntityHelper.HOSP_INF_USERNAME_AND_PASSWORD,
 				u -> {
 					u.setHealthFacility(facility);
@@ -882,11 +882,12 @@ public class StartupShutdownService {
 		});
 	}
 	
-	private void fillDefaultUserRole() {			
+	private void fillDefaultUserRole() {	
+
 			Arrays.stream(DefaultUserRole.values()).filter(string -> string.equals(DefaultUserRole.HOSPITAL_SUPERVISOR))
 	         .collect(Collectors.toList()).forEach(role -> {
-			
-			UserRole userRole = userRoleService.getByCaption(role.name());
+	        	
+			UserRole userRole = userRoleService.getByCaption(role.toString());
 			userRole.setCaption(I18nProperties.getEnumCaption(role));
 			userRole.setPortHealthUser(role.isPortHealthUser());
 			userRole.setHasAssociatedDistrictUser(role.hasAssociatedDistrictUser());

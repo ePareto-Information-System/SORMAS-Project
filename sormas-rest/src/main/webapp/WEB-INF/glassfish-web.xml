@@ -17,8 +17,9 @@
         <group-name>POE_INFORMANT</group-name>
         <group-name>LAB_USER</group-name>
         <group-name>EXTERNAL_LAB_USER</group-name>
-        </security-role-mapping>
-         <security-role-mapping>
+    </security-role-mapping>
+    
+    <security-role-mapping>
         <role-name>CASE_CREATE</role-name>
         <group-name>CASE_CREATE</group-name>
     </security-role-mapping>

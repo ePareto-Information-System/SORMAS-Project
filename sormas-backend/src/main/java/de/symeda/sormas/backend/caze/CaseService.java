@@ -2396,7 +2396,9 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 		Predicate filter = null;
 
 		final JurisdictionLevel jurisdictionLevel = currentUser.getJurisdictionLevel();
-		if (jurisdictionLevel != JurisdictionLevel.NATION && !currentUser.hasAnyUserRole(DefaultUserRole.REST_USER)) {
+		//if (jurisdictionLevel != JurisdictionLevel.NATION && !currentUser.hasAnyUserRole(DefaultUserRole.REST_USER)) {
+		if (jurisdictionLevel != JurisdictionLevel.NATION ) {
+
 			// whoever created the case or is assigned to it is allowed to access it
 			filterResponsible = cb.equal(casePath.join(Case.REPORTING_USER, JoinType.LEFT), currentUser);
 			filterResponsible = cb.or(filterResponsible, cb.equal(casePath.join(Case.SURVEILLANCE_OFFICER, JoinType.LEFT), currentUser));

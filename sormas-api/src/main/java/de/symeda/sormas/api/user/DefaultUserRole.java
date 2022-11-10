@@ -205,8 +205,8 @@ public enum DefaultUserRole {
 	IMPORT_USER(false, false, false, false, JurisdictionLevel.NONE, Collections.emptyList(), Collections.emptyList()),
 	REST_EXTERNAL_VISITS_USER(false, false, false, false, JurisdictionLevel.NATION, Collections.emptyList(), Collections.emptyList()),
 	SORMAS_TO_SORMAS_CLIENT(false, false, false, false, JurisdictionLevel.NATION, Collections.emptyList(), Collections.emptyList()),
-	BAG_USER(false, false, false, false, JurisdictionLevel.NONE, Collections.emptyList(), Collections.emptyList()),
-	REST_USER(false, false, false, false, JurisdictionLevel.NONE,Collections.emptyList(), Collections.emptyList());
+	BAG_USER(false, false, false, false, JurisdictionLevel.NONE, Collections.emptyList(), Collections.emptyList());
+	//REST_USER(false, false, false, false, JurisdictionLevel.NONE,Collections.emptyList(), Collections.emptyList());
 
 	private final boolean supervisor;
 	private final boolean hasOptionalHealthFacility;
