@@ -807,12 +807,6 @@
 			 
  			</dependency> 
  			
- 	<!-- <dependency>
-      <groupId>info.novatec</groupId>
-      <artifactId>bean-test</artifactId>
-      <version>0.2.0.Final</version>
-      <scope>test</scope>
-    </dependency> -->
 
 			<dependency>
 				<groupId>org.jboss.weld.se</groupId>
@@ -1344,13 +1338,6 @@
 			</snapshots>
 		</repository>
 		
-<!-- 	<repository>
-       <id>Novatec</id>
-       <name>Novatec Repository</name>
-       <url>http://repository.novatec-gmbh.de/content/repositories/novatec</url>
-    </repository> -->
-		
-
 	</repositories>
 
 	<pluginRepositories>
