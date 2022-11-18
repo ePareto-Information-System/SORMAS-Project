@@ -435,7 +435,9 @@ public final class DataHelper {
 	}
 
 	public static boolean isValidPhoneNumber(String phoneNumber) {
-		return phoneNumber == null || phoneNumber.isEmpty() || (phoneNumber.startsWith("+") && phoneNumber.matches(allCountryRegex));
+		return phoneNumber == null || phoneNumber.isEmpty() || (phoneNumber.matches(allCountryRegex));
+		//return phoneNumber == null || phoneNumber.isEmpty() || (phoneNumber.startsWith("+") && phoneNumber.matches(allCountryRegex));
+
 	}
 
 	public static boolean isValidEmailAddress(String emailAddress) {
