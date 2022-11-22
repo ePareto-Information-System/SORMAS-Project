@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.jboss.weld.exceptions.UnsupportedOperationException;
 import org.junit.Before;
 import org.junit.Test;
 
