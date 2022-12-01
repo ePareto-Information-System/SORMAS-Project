@@ -225,7 +225,7 @@ public final class StatisticsHelper {
 		default:
 			return new ArrayList<>();
 		}
-
+		if(oldestCaseDate!=null) {
 		LocalDate earliest = oldestCaseDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		LocalDate now = LocalDate.now();
 
@@ -276,6 +276,10 @@ public final class StatisticsHelper {
 		default:
 			return new ArrayList<>();
 		}
+}else {
+	return new ArrayList<>();
+
+}
 	}
 	//get contact time Groupings
 	public static List<StatisticsGroupingKey> getContactTimeGroupingKeys(StatisticsContactAttribute attribute, StatisticsSubAttribute subAttribute) {
