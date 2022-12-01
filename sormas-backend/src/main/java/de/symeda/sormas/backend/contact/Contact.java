@@ -100,6 +100,7 @@ public class Contact extends CoreAdo implements SormasToSormasShareable, HasExte
 	public static final String CONTACT_PROXIMITY = "contactProximity";
 	public static final String CONTACT_PROXIMITY_DETAILS = "contactProximityDetails";
 	public static final String CONTACT_STATUS = "contactStatus";
+	public static final String CONTACT_AGE = "contactAge";
 	public static final String DESCRIPTION = "description";
 	public static final String DISEASE = "disease";
 	public static final String DISEASE_DETAILS = "diseaseDetails";

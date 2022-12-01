@@ -32,6 +32,7 @@ import de.symeda.sormas.api.QuarterOfYear;
 import de.symeda.sormas.api.Year;
 import de.symeda.sormas.api.contact.ContactClassification;
 import de.symeda.sormas.api.contact.ContactStatus;
+import de.symeda.sormas.api.contact.FollowUpStatus;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
@@ -81,6 +82,7 @@ public class StatisticsContactCriteria implements Serializable {
 	private List<DistrictReferenceDto> districts;
 	private List<CommunityReferenceDto> communities;
 	private List<RegionReferenceDto> personRegions;
+	private List<FollowUpStatus> followUpStatuses;
 	private List<DistrictReferenceDto> personDistricts;
 	private List<CommunityReferenceDto> personCommunities;
 	private String personCity;
@@ -257,6 +259,11 @@ public class StatisticsContactCriteria implements Serializable {
 
 	public List<UserRoleReferenceDto> getReportingUserRoles() {
 		return reportingUserRoles;
+	}
+	
+	
+	public List<FollowUpStatus> getFollowUpStatuses() {
+		return followUpStatuses;
 	}
 
 	public StatisticsContactCriteria years(List<Year> years, StatisticsContactAttribute mainAttribute) {
@@ -491,6 +498,15 @@ public class StatisticsContactCriteria implements Serializable {
 
 	public StatisticsContactCriteria reportingUserRoles(List<UserRoleReferenceDto> reportingUserRoles) {
 		this.reportingUserRoles = reportingUserRoles;
+		return this;
+	}
+	
+	
+	
+	
+
+	public StatisticsContactCriteria setFollowUpStatuses(List<FollowUpStatus> followUpStatuses) {
+		this.followUpStatuses = followUpStatuses;
 		return this;
 	}
 

@@ -1294,6 +1294,7 @@ public class StatisticsContactsView extends AbstractStatisticsView {
 					}
 					contactCriteria.communities(communities);
 				}
+				break;
 			case PLACE_OF_RESIDENCE:
 				StatisticsFilterResidenceElement residenceElement = (StatisticsFilterResidenceElement) filterElement;
 				if (residenceElement.getSelectedRegions() != null) {
