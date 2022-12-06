@@ -11964,6 +11964,16 @@ INSERT INTO userroles_userrights (userrole_id, userright) SELECT userrole_id, 'D
 
 INSERT INTO schema_version (version_number, comment) VALUES (480, 'Assigning DASHBOARD_DISEASE_DETAILS_ACCESS right to userroles that can view surveilance dashboard');
 
+
+-- 2022-05-12 Assigning DASHBOARD_DISEASE_DETAILS_ACCESS right to userroles hospital supervisor
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT userrole_id, 'DASHBOARD_SURVEILLANCE_VIEW' FROM userroles_userrights WHERE userright = 'DASHBOARD_SURVEILLANCE_ACCESS';
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT userrole_id, 'SORMAS_UI' FROM userroles_userrights WHERE userright = 'DASHBOARD_SURVEILLANCE_ACCESS';
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT userrole_id, 'DASHBOARD_CONTACT_VIEW' FROM userroles_userrights WHERE userright = 'DASHBOARD_SURVEILLANCE_ACCESS';
+DELETE FROM userroles_userrights WHERE userright = 'DASHBOARD_SURVEILLANCE_ACCESS';
+
+
+INSERT INTO schema_version (version_number, comment) VALUES (481, 'Assigning DASHBOARD_SURVEILLANCE_VIEW,SORMAS_UI, DASHBOARD_CONTACT_VIEW, DASHBOARD_SAMPLE_ACCESS right to HOSPITAL_SUPERVISOR');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 
 
