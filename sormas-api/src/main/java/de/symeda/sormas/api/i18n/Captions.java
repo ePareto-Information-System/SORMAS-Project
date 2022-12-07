@@ -1465,6 +1465,7 @@ public interface Captions {
 	String importDownloadErrorReport = "importDownloadErrorReport";
 	String importDownloadImportGuide = "importDownloadImportGuide";
 	String importDownloadImportTemplate = "importDownloadImportTemplate";
+	String importDownloadImportTemplateXlsm = "importDownloadImportTemplateXlsm";
 	String importDuplicates = "importDuplicates";
 	String importErrorDescription = "importErrorDescription";
 	String importErrors = "importErrors";

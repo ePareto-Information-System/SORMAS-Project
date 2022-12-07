@@ -141,4 +141,8 @@ public interface ImportFacade {
 	String getContactImportTemplateFilePath();
 
 	String getImportTemplateContent(String templateFilePath) throws IOException;
+
+	String getCaseImportTemplateXlsmFilePath();
+
+	String getCaseImportTemplateXlsmFileName();
 }

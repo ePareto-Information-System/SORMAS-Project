@@ -53,7 +53,9 @@ import org.slf4j.LoggerFactory;
 import com.opencsv.CSVWriter;
 import com.vaadin.server.ClassResource;
 import com.vaadin.server.FileDownloader;
+import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
+import com.vaadin.server.Resource;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.server.VaadinSession;
@@ -662,6 +664,10 @@ public final class DownloadUtil {
 		String exportDate = DateHelper.formatDateForExport(new Date());
 		return String.join("_", processedInstanceName, processedEntityName, exportDate, fileExtension);
 	}
+	
+	public static String createFileName(String entityName, String fileExtension) {
+		return String.join("_", entityName, fileExtension);
+	}
 
 	public static void attachDataDictionaryDownloader(AbstractComponent target) {
 		new FileDownloader(new StreamResource(() -> new DownloadUtil.DelayedInputStream((out) -> {
@@ -677,5 +683,12 @@ public final class DownloadUtil {
 			}
 		}, (e) -> {
 		}), createFileNameWithCurrentDate(ExportEntityName.DATA_DICTIONARY, ".xlsx"))).extend(target);
+	}
+	
+	public static void attachDataCaseTemplateDownloader(AbstractComponent target,String templateFilePath,String templateFileName) {
+
+		Resource res = new FileResource(new File(templateFilePath ));
+		FileDownloader fd = new FileDownloader(res);
+		fd.extend(target);
 	}
 }
