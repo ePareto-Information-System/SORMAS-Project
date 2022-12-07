@@ -208,6 +208,7 @@ public class ImportFacadeEjb implements ImportFacade {
 	private ImportParserService importParserService;
 
 	private static final String CASE_IMPORT_TEMPLATE_FILE_NAME = "import_case_template.csv";
+	private static final String CASE_IMPORT_MACRO_TEMPLATE_FILE_NAME = "import_case_template.xlsm";
 	private static final String EVENT_IMPORT_TEMPLATE_FILE_NAME = "import_event_template.csv";
 	private static final String EVENT_PARTICIPANT_IMPORT_TEMPLATE_FILE_NAME = "import_eventparticipant_template.csv";
 	private static final String CASE_CONTACT_IMPORT_TEMPLATE_FILE_NAME = "import_case_contact_template.csv";
@@ -225,7 +226,6 @@ public class ImportFacadeEjb implements ImportFacade {
 	private static final String CONTACT_IMPORT_TEMPLATE_FILE_NAME = "import_contact_template.csv";
 	private static final String CAMPAIGN_FORM_IMPORT_TEMPLATE_FILE_NAME = "import_campaign_form_data_template.csv";
 	private static final String TRAVEL_ENTRY_IMPORT_TEMPLATE_FILE_NAME = "import_travel_entry_template.csv";
-
 	private static final String ALL_COUNTRIES_IMPORT_FILE_NAME = "sormas_import_all_countries.csv";
 	private static final String ALL_SUBCONTINENTS_IMPORT_FILE_NAME = "sormas_import_all_subcontinents.csv";
 	private static final String ALL_CONTINENTS_IMPORT_FILE_NAME = "sormas_import_all_continents.csv";
@@ -552,6 +552,17 @@ public class ImportFacadeEjb implements ImportFacade {
 	@Override
 	public String getCaseImportTemplateFilePath() {
 		return getImportTemplateFilePath(CASE_IMPORT_TEMPLATE_FILE_NAME);
+	}
+	
+	@Override
+	public String getCaseImportTemplateXlsmFilePath() {
+		return getImportTemplateFilePath(CASE_IMPORT_MACRO_TEMPLATE_FILE_NAME);
+	}
+	
+	
+	@Override
+	public String getCaseImportTemplateXlsmFileName() {
+		return getImportTemplateFileName(CASE_IMPORT_MACRO_TEMPLATE_FILE_NAME);
 	}
 
 	@Override

@@ -20,18 +20,26 @@ package de.symeda.sormas.ui.caze.importer;
 import java.io.IOException;
 
 import com.opencsv.exceptions.CsvValidationException;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.ClassResource;
+import com.vaadin.server.FileDownloader;
 import com.vaadin.server.Page;
+import com.vaadin.server.Resource;
+import com.vaadin.server.StreamResource;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.importexport.ImportFacade;
 import de.symeda.sormas.api.importexport.ValueSeparator;
 import de.symeda.sormas.ui.importer.AbstractImportLayout;
+import de.symeda.sormas.ui.importer.ImportLayoutComponent;
 import de.symeda.sormas.ui.importer.ImportReceiver;
+import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.DownloadUtil;
 
 @SuppressWarnings("serial")
 public class CaseImportLayout extends AbstractImportLayout {
@@ -43,8 +51,12 @@ public class CaseImportLayout extends AbstractImportLayout {
 		ImportFacade importFacade = FacadeProvider.getImportFacade();
 
 		addDownloadResourcesComponent(1, new ClassResource("/SORMAS_Import_Guide.pdf"));
+		
 		addDownloadImportTemplateComponent(2, importFacade.getCaseImportTemplateFilePath(), importFacade.getCaseImportTemplateFileName());
-		addImportCsvComponent(3, new ImportReceiver("_case_import_", file -> {
+		
+		addDownloadImportTemplateXlm(3, importFacade.getCaseImportTemplateXlsmFilePath(), importFacade.getCaseImportTemplateXlsmFileName());
+
+		addImportCsvComponent(4, new ImportReceiver("_case_import_", file -> {
 			resetDownloadErrorReportButton();
 
 			try {
@@ -58,6 +70,33 @@ public class CaseImportLayout extends AbstractImportLayout {
 					false).show(Page.getCurrent());
 			}
 		}));
-		addDownloadErrorReportComponent(4);
+		
+		addDownloadErrorReportComponent(5);
+		
+
+		
+		
+	}
+	
+	protected void addDownloadImportTemplateXlm(int step, String templateFilePath, String templateFileName) {
+		String headline = I18nProperties.getString(Strings.headingDownloadImportTemplateXlsm);
+		String infoText = I18nProperties.getString(Strings.infoDownloadImportTemplateXlsm);
+		Resource buttonIcon = VaadinIcons.DOWNLOAD;
+		String buttonCaption = I18nProperties.getCaption(Captions.importDownloadImportTemplateXlsm);
+		ImportLayoutComponent importTemplateComponent = new ImportLayoutComponent(step, headline, infoText, buttonIcon, buttonCaption);
+
+		try {
+
+			DownloadUtil.attachDataCaseTemplateDownloader(importTemplateComponent.getButton(), templateFilePath, templateFileName);
+
+			CssStyles.style(importTemplateComponent, CssStyles.VSPACE_2);
+			addComponent(importTemplateComponent);
+		} catch (Exception e) {
+			new Notification(
+				I18nProperties.getString(Strings.headingTemplateNotAvailable),
+				I18nProperties.getString(Strings.messageTemplateNotAvailable),
+				Notification.Type.ERROR_MESSAGE,
+				false).show(Page.getCurrent());
+		}
 	}
 }

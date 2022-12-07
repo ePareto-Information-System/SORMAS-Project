@@ -481,6 +481,8 @@ public interface Strings {
 	String headingDownloadErrorReport = "headingDownloadErrorReport";
 	String headingDownloadImportGuide = "headingDownloadImportGuide";
 	String headingDownloadImportTemplate = "headingDownloadImportTemplate";
+	String headingDownloadImportTemplateXlsm = "headingDownloadImportTemplateXlsm";
+
 	String headingEditAction = "headingEditAction";
 	String headingEditAdditionalTest = "headingEditAdditionalTest";
 	String headingEditAggregateReport = "headingEditAggregateReport";
@@ -788,6 +790,9 @@ public interface Strings {
 	String infoDownloadExport = "infoDownloadExport";
 	String infoDownloadImportGuide = "infoDownloadImportGuide";
 	String infoDownloadImportTemplate = "infoDownloadImportTemplate";
+	String infoDownloadImportTemplateXlsm = "infoDownloadImportTemplateXlsm";
+
+	
 	String infoEditExportConfiguration = "infoEditExportConfiguration";
 	String infoEpiDataFieldsHint = "infoEpiDataFieldsHint";
 	String infoEpiDataSourceCaseContacts = "infoEpiDataSourceCaseContacts";
