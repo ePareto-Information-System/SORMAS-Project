@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.auditlog.api;
 
@@ -25,14 +25,11 @@ import java.io.Serializable;
  * @author Oliver Milke
  * @since 12.11.2015
  */
-public class UserId implements Serializable {
+public final class UserId implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private String name;
-
-	public UserId() {
-	}
+	private final String name;
 
 	public UserId(String name) {
 		this.name = name;
@@ -41,9 +38,4 @@ public class UserId implements Serializable {
 	public String getName() {
 		return name;
 	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
 }

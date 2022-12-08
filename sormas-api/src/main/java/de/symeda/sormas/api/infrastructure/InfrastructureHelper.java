@@ -5,27 +5,35 @@ import java.math.RoundingMode;
 import java.util.Date;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.infrastructure.pointofentry.PointOfEntryDto;
+import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DateHelper;
 
-public class InfrastructureHelper {
+public final class InfrastructureHelper {
+
+	private InfrastructureHelper() {
+		// Hide Utility Class Constructor
+	}
 
 	public static final int CASE_INCIDENCE_DIVISOR = 100000;
-	
+
 	public static String buildPointOfEntryString(String pointOfEntryUuid, String pointOfEntryName, String pointOfEntryDetails) {
+
 		StringBuilder result = new StringBuilder();
 		result.append(buildPointOfEntryString(pointOfEntryUuid, pointOfEntryName));
 
 		if (!DataHelper.isNullOrEmpty(pointOfEntryDetails)) {
 			if (result.length() > 0) {
-				result.append(" - ");			
+				result.append(" - ");
 			}
 			result.append(pointOfEntryDetails);
-		}		
+		}
 		return result.toString();
 	}
 
 	public static String buildPointOfEntryString(String pointOfEntryUuid, String pointOfEntryName) {
+
 		if (pointOfEntryUuid != null) {
 			if (pointOfEntryUuid.equals(PointOfEntryDto.OTHER_AIRPORT_UUID)) {
 				return I18nProperties.getPrefixCaption(PointOfEntryDto.I18N_PREFIX, PointOfEntryDto.OTHER_AIRPORT);
@@ -50,6 +58,7 @@ public class InfrastructureHelper {
 	}
 
 	public static Integer getProjectedPopulation(Integer population, Date collectionDate, Float growthRate) {
+
 		if (population != null && population > 0) {
 			Integer yearsBetween = DateHelper.getYearsBetween(collectionDate, new Date());
 			int calculatedYears = 0;
@@ -63,9 +72,29 @@ public class InfrastructureHelper {
 	}
 
 	public static BigDecimal getCaseIncidence(int caseCount, int population, int divisor) {
-		return new BigDecimal(caseCount).divide(
-				new BigDecimal((double)population / divisor), 2,
-				RoundingMode.HALF_UP);
+		return new BigDecimal(caseCount).divide(new BigDecimal((double) population / divisor), 2, RoundingMode.HALF_UP);
 	}
 
+	public static JurisdictionLevel getSuperordinateJurisdiction(JurisdictionLevel jurisdiction) {
+		switch (jurisdiction) {
+		case REGION:
+			return JurisdictionLevel.NATION;
+		case DISTRICT:
+			return JurisdictionLevel.REGION;
+		case COMMUNITY:
+		case POINT_OF_ENTRY:
+		case HEALTH_FACILITY:
+			return JurisdictionLevel.DISTRICT;
+		case LABORATORY:
+		case EXTERNAL_LABORATORY:
+		case NATION:
+		default:
+			return JurisdictionLevel.NONE;
+		}
+	}
+
+	public static BigDecimal getContactIncidence(int intValue, int intValue2, int divisor) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

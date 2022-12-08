@@ -2,6 +2,8 @@ package de.symeda.sormas.ui.utils;
 
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.vaadin.v7.data.validator.AbstractValidator;
 import com.vaadin.v7.ui.Field;
 
@@ -16,12 +18,24 @@ public class FutureDateValidator extends AbstractValidator<Date> {
 	private int allowedDaysInFuture;
 
 	public FutureDateValidator(Field<?> field, int allowedDaysInFuture, String caption) {
-		super(allowedDaysInFuture > 0 ?
-				I18nProperties.getValidationError(Validations.futureDate, caption, allowedDaysInFuture) :
-					I18nProperties.getValidationError(Validations.futureDateStrict, caption));
+
+		super(renderErrorMessage(allowedDaysInFuture, caption));
 
 		this.field = field;
 		this.allowedDaysInFuture = allowedDaysInFuture;
+	}
+
+	private static String renderErrorMessage(int allowedDaysInFuture, String caption) {
+		return allowedDaysInFuture > 0
+			? I18nProperties.getValidationError(Validations.futureDate, caption, allowedDaysInFuture)
+			: I18nProperties.getValidationError(Validations.futureDateStrict, caption);
+	}
+
+	public void resetWithCaption() {
+		String caption = field.getCaption();
+		if (!StringUtils.isEmpty(caption)) {
+			setErrorMessage(renderErrorMessage(allowedDaysInFuture, caption));
+		}
 	}
 
 	@Override
@@ -29,15 +43,15 @@ public class FutureDateValidator extends AbstractValidator<Date> {
 		if (field.isReadOnly()) {
 			return true;
 		}
-		
+
 		if (date == null) {
 			return true;
 		}
-		
+
 		if (date.before(new Date())) {
 			return true;
 		}
-		
+
 		if (allowedDaysInFuture > 0) {
 			return DateHelper.getFullDaysBetween(new Date(), date) <= allowedDaysInFuture;
 		} else {
@@ -49,5 +63,4 @@ public class FutureDateValidator extends AbstractValidator<Date> {
 	public Class<Date> getType() {
 		return Date.class;
 	}
-
 }

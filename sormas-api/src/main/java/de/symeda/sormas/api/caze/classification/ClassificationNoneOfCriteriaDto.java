@@ -9,18 +9,20 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.caze.classification;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.person.PersonDto;
@@ -34,25 +36,25 @@ import de.symeda.sormas.api.sample.PathogenTestDto;
 public class ClassificationNoneOfCriteriaDto extends ClassificationCriteriaDto implements ClassificationCollectiveCriteria {
 
 	private static final long serialVersionUID = 2199852259112272090L;
-	
+
 	protected List<ClassificationCriteriaDto> classificationCriteria;
 
 	public ClassificationNoneOfCriteriaDto() {
-		
+
 	}
-	
+
 	public ClassificationNoneOfCriteriaDto(ClassificationCriteriaDto... criteria) {
 		this.classificationCriteria = Arrays.asList(criteria);
 	}
 
 	@Override
-	public boolean eval(CaseDataDto caze, PersonDto person, List<PathogenTestDto> sampleTests) {
+	public boolean eval(CaseDataDto caze, PersonDto person, List<PathogenTestDto> sampleTests, List<EventDto> events, Date lastVaccinationDate) {
 		for (ClassificationCriteriaDto classificationCriteria : classificationCriteria) {
-			if (classificationCriteria.eval(caze, person, sampleTests)) {
+			if (classificationCriteria.eval(caze, person, sampleTests, events, lastVaccinationDate)) {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 
@@ -66,12 +68,12 @@ public class ClassificationNoneOfCriteriaDto extends ClassificationCriteriaDto i
 		}
 		return stringBuilder.toString();
 	}
-	
+
 	@Override
 	public String getCriteriaName() {
 		return "<b>" + I18nProperties.getString(Strings.classificationNoneOf).toUpperCase() + "</b>";
 	}
-	
+
 	@Override
 	public List<ClassificationCriteriaDto> getSubCriteria() {
 		return classificationCriteria;
@@ -84,5 +86,4 @@ public class ClassificationNoneOfCriteriaDto extends ClassificationCriteriaDto i
 	public void setClassificationCriteria(List<ClassificationCriteriaDto> classificationCriteria) {
 		this.classificationCriteria = classificationCriteria;
 	}
-
 }

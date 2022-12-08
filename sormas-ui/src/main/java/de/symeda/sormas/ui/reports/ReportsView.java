@@ -9,39 +9,41 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.reports;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
-import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.v7.shared.ui.grid.HeightMode;
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.v7.ui.AbstractSelect;
-import com.vaadin.v7.ui.AbstractSelect.ItemCaptionMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.v7.ui.ComboBox;
-import com.vaadin.v7.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.v7.shared.ui.grid.HeightMode;
+import com.vaadin.v7.ui.AbstractSelect;
+import com.vaadin.v7.ui.AbstractSelect.ItemCaptionMode;
+import com.vaadin.v7.ui.Grid;
 
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
-import de.symeda.sormas.api.user.UserRole;
+import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.EpiWeek;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.AbstractView;
+import de.symeda.sormas.ui.utils.ButtonHelper;
+import de.symeda.sormas.ui.utils.ComboBoxHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 
 public class ReportsView extends AbstractView {
@@ -58,7 +60,8 @@ public class ReportsView extends AbstractView {
 	public ReportsView() {
 		super(VIEW_NAME);
 
-		if (UserRole.isNational(UserProvider.getCurrent().getUserRoles())) {
+		JurisdictionLevel jurisdictionLevel = Objects.requireNonNull(UserProvider.getCurrent().getJurisdictionLevel());
+		if (jurisdictionLevel == JurisdictionLevel.NONE || jurisdictionLevel == JurisdictionLevel.NATION) {
 			grid = new WeeklyReportRegionsGrid();
 		} else {
 			grid = new WeeklyReportOfficersGrid();
@@ -88,7 +91,8 @@ public class ReportsView extends AbstractView {
 		int year = prevEpiWeek.getYear();
 		int week = prevEpiWeek.getWeek();
 
-		yearFilter = new ComboBox();
+		yearFilter = ComboBoxHelper.createComboBoxV7();
+		yearFilter.setId(Strings.year);
 		yearFilter.setWidth(200, Unit.PIXELS);
 		yearFilter.setNullSelectionAllowed(false);
 		yearFilter.addItems(DateHelper.getYearsToNow());
@@ -101,7 +105,8 @@ public class ReportsView extends AbstractView {
 		});
 		filterLayout.addComponent(yearFilter);
 
-		epiWeekFilter = new ComboBox();
+		epiWeekFilter = ComboBoxHelper.createComboBoxV7();
+		epiWeekFilter.setId(Strings.epiWeek);
 		epiWeekFilter.setWidth(200, Unit.PIXELS);
 		epiWeekFilter.setNullSelectionAllowed(false);
 		updateEpiWeeks(year, week);
@@ -111,13 +116,16 @@ public class ReportsView extends AbstractView {
 		});
 		filterLayout.addComponent(epiWeekFilter);
 
-		Button lastWeekButton = new Button(String.format(I18nProperties.getCaption(Captions.dashboardLastWeek), DateHelper.getPreviousEpiWeek(new Date()).toString()));
-		lastWeekButton.addStyleName(CssStyles.FORCE_CAPTION);
-		lastWeekButton.addClickListener(e -> {
-			EpiWeek epiWeek = DateHelper.getPreviousEpiWeek(new Date());
-			yearFilter.select(epiWeek.getYear());
-			epiWeekFilter.select(epiWeek.getWeek());
-		});
+		Button lastWeekButton = ButtonHelper.createButton(
+			Captions.dashboardLastWeek,
+			String.format(I18nProperties.getCaption(Captions.dashboardLastWeek), DateHelper.getPreviousEpiWeek(new Date()).toString()),
+			e -> {
+				EpiWeek epiWeek = DateHelper.getPreviousEpiWeek(new Date());
+				yearFilter.select(epiWeek.getYear());
+				epiWeekFilter.select(epiWeek.getWeek());
+			},
+			CssStyles.FORCE_CAPTION);
+
 		filterLayout.addComponent(lastWeekButton);
 
 		Label infoLabel = new Label(VaadinIcons.INFO_CIRCLE.getHtml(), ContentMode.HTML);
@@ -149,8 +157,8 @@ public class ReportsView extends AbstractView {
 		if (grid instanceof WeeklyReportRegionsGrid) {
 			((WeeklyReportRegionsGrid) grid).reload((int) yearFilter.getValue(), (int) epiWeekFilter.getValue());
 		} else {
-			((WeeklyReportOfficersGrid) grid).reload(UserProvider.getCurrent().getUser().getRegion(),
-					(int) yearFilter.getValue(), (int) epiWeekFilter.getValue());
+			((WeeklyReportOfficersGrid) grid)
+				.reload(UserProvider.getCurrent().getUser().getRegion(), (int) yearFilter.getValue(), (int) epiWeekFilter.getValue());
 		}
 	}
 }

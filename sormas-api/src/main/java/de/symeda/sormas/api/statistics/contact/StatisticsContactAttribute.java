@@ -17,43 +17,58 @@
  *******************************************************************************/
 package de.symeda.sormas.api.statistics.contact;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
 import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.statistics.StatisticsSubAttributeEnum;
+import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 
-public enum StatisticsContactAttribute {
+@SuppressWarnings("hiding")
+public class StatisticsContactAttribute {
 
-	REPORT_TIME(StatisticsContactAttributeGroup.TIME, false, false, StatisticsSubAttributeEnum.YEAR,StatisticsSubAttributeEnum.QUARTER,StatisticsSubAttributeEnum.MONTH,StatisticsSubAttributeEnum.EPI_WEEK,
-			StatisticsSubAttributeEnum.QUARTER_OF_YEAR,StatisticsSubAttributeEnum.MONTH_OF_YEAR,StatisticsSubAttributeEnum.EPI_WEEK_OF_YEAR,StatisticsSubAttributeEnum.DATE_RANGE),
-	REGION_DISTRICT(StatisticsContactAttributeGroup.PLACE, true, false, StatisticsSubAttributeEnum.REGION,StatisticsSubAttributeEnum.DISTRICT),
-	SEX(StatisticsContactAttributeGroup.PERSON, true, true),
-	AGE_INTERVAL_1_YEAR(StatisticsContactAttributeGroup.PERSON, false, true),
-	AGE_INTERVAL_5_YEARS(StatisticsContactAttributeGroup.PERSON, false, true),
-	AGE_INTERVAL_CHILDREN_COARSE(StatisticsContactAttributeGroup.PERSON, false, true),
-	AGE_INTERVAL_CHILDREN_FINE(StatisticsContactAttributeGroup.PERSON, false, true),
-	AGE_INTERVAL_CHILDREN_MEDIUM(StatisticsContactAttributeGroup.PERSON, false, true),
-	AGE_INTERVAL_BASIC(StatisticsContactAttributeGroup.PERSON, false, true),
+	@SuppressWarnings("rawtypes")
+	private final Enum _enum;	
+	StatisticsContactAttributeEnum baseEnum;
+	StatisticsGroupingKey[] groupingKeys;
+	private IValuesGetter valuesGetter;
 	
-	DISEASE(StatisticsContactAttributeGroup.CONTACT, true, false),
-	CLASSIFICATION(StatisticsContactAttributeGroup.CONTACT, true, false),
-	FOLLOW_UP_STATUS(StatisticsContactAttributeGroup.CONTACT, true, false), 
-	REPORTING_USER_ROLE(StatisticsContactAttributeGroup.CONTACT, true, false);
-	
-	private final StatisticsContactAttributeGroup attributeGroup;
 	private final boolean sortByCaption;
 	private final boolean unknownValueAllowed;
-	private final StatisticsSubAttributeEnum[] subAttributes;
+	private List<StatisticsContactSubAttribute> subAttributes = new ArrayList<StatisticsContactSubAttribute>();
+	
+	
+	@SuppressWarnings("rawtypes")
+	public StatisticsContactAttribute (Enum _enum, StatisticsContactAttributeEnum baseEnum, boolean sortByCaption, boolean unknownValueAllowed, List<StatisticsContactSubAttribute> subAttributes, StatisticsGroupingKey[] groupingKeys) {
+		this._enum = _enum;
+		this.baseEnum = baseEnum;
+		this.groupingKeys = groupingKeys;
 
-	StatisticsContactAttribute(StatisticsContactAttributeGroup attributeGroup, boolean sortByCaption, boolean unknownValueAllowed, StatisticsSubAttributeEnum ...subAttributes) {
-		this.attributeGroup = attributeGroup;
 		this.sortByCaption = sortByCaption;
 		this.unknownValueAllowed = unknownValueAllowed;
 		this.subAttributes = subAttributes;
-	}
+	}	
 	
-	public StatisticsContactAttributeGroup getAttributeGroup() {
-		return attributeGroup;
+	@SuppressWarnings("rawtypes")
+	public StatisticsContactAttribute (Enum _enum, StatisticsContactAttributeEnum baseEnum, boolean sortByCaption, boolean unknownValueAllowed, List<StatisticsContactSubAttribute> subAttributes, IValuesGetter valuesGetter) {
+		this._enum = _enum;
+		this.baseEnum = baseEnum;
+		this.valuesGetter = valuesGetter;
+
+		this.sortByCaption = sortByCaption;
+		this.unknownValueAllowed = unknownValueAllowed;
+		this.subAttributes = subAttributes;
+	}	
+
+	public StatisticsContactAttribute(StatisticsContactAttribute attribute, Object baseEnum2, boolean sortByCaption2,
+			boolean unknownValueAllowed2, List<StatisticsContactSubAttribute> subs,
+			StatisticsGroupingKey[] groupingKeys2) {
+				this._enum = null;
+				this.sortByCaption =sortByCaption2 ;
+				this.unknownValueAllowed = unknownValueAllowed2;
 	}
-	
+
 	public boolean isSortByCaption() {
 		return sortByCaption;
 	}
@@ -62,21 +77,52 @@ public enum StatisticsContactAttribute {
 		return unknownValueAllowed;
 	}
 	
-	public StatisticsSubAttributeEnum[] getSubAttributes() {
+	public List<StatisticsContactSubAttribute> getSubAttributes() {
 		return subAttributes;
 	}
 	
 	public String toString() {
-		return I18nProperties.getEnumCaption(this);
+		return I18nProperties.getEnumCaption(_enum != null ? _enum : baseEnum);
 	}
 	
 	public boolean isAgeGroup() {
-		return this == AGE_INTERVAL_1_YEAR || this == AGE_INTERVAL_5_YEARS || this == AGE_INTERVAL_BASIC || this == AGE_INTERVAL_CHILDREN_COARSE
-				|| this == AGE_INTERVAL_CHILDREN_FINE || this == AGE_INTERVAL_CHILDREN_MEDIUM;
+		return baseEnum == StatisticsContactAttributeEnum.AGE_INTERVAL_1_YEAR 
+				|| baseEnum == StatisticsContactAttributeEnum.AGE_INTERVAL_5_YEARS 
+				|| baseEnum == StatisticsContactAttributeEnum.AGE_INTERVAL_BASIC 
+				|| baseEnum == StatisticsContactAttributeEnum.AGE_INTERVAL_CHILDREN_COARSE
+				|| baseEnum == StatisticsContactAttributeEnum.AGE_INTERVAL_CHILDREN_FINE 
+				|| baseEnum == StatisticsContactAttributeEnum.AGE_INTERVAL_CHILDREN_MEDIUM;
 	}
 	
 	public boolean isPopulationData() {
-		return this == REGION_DISTRICT || this == SEX || this.isAgeGroup();
+		return baseEnum == StatisticsContactAttributeEnum.JURISDICTION 
+				|| baseEnum == StatisticsContactAttributeEnum.SEX 
+				|| isAgeGroup();
 	}
 	
+	public StatisticsContactAttributeEnum getBaseEnum () {
+		return baseEnum;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public static Enum getEnum (StatisticsContactAttribute attribute) {
+		return attribute == null ? null : attribute._enum;
+	}
+	
+	
+	
+	public static StatisticsContactAttributeEnum getBaseEnum (StatisticsContactAttribute attribute) {
+		return attribute == null ? null : attribute.baseEnum;
+	}
+	
+	public Collection<? extends StatisticsGroupingKey> getValues () {
+		if (valuesGetter != null)
+			return valuesGetter.get(this);
+		
+		return Arrays.asList(groupingKeys);
+	}
+
+	public interface IValuesGetter {
+		Collection<? extends StatisticsGroupingKey> get(StatisticsContactAttribute attribute);
+	}
 }

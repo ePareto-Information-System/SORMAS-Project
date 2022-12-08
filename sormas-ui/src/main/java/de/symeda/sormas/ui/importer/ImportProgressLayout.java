@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.importer;
 
@@ -33,11 +33,12 @@ import com.vaadin.v7.ui.ProgressBar;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 
 @SuppressWarnings("serial")
 public class ImportProgressLayout extends VerticalLayout {
-	
+
 	// Components
 	private ProgressBar progressBar;
 	private Label processedImportsLabel;
@@ -48,15 +49,15 @@ public class ImportProgressLayout extends VerticalLayout {
 	private Button closeCancelButton;
 	private HorizontalLayout infoLayout;
 	private Label infoLabel;
-	
+
 	private ProgressBar progressCircle;
 	private Image errorIcon;
 	private Image successIcon;
 	private Image warningIcon;
 	private Component currentInfoComponent;
-	
+
 	private ClickListener cancelListener;
-	
+
 	// Counts
 	private int processedImportsCount;
 	private int successfulImportsCount;
@@ -64,13 +65,17 @@ public class ImportProgressLayout extends VerticalLayout {
 	private int importSkipsCount;
 	private int importDuplicatesCount;
 	private int totalCount;
-	
+
 	private UI currentUI;
-	
+
 	public ImportProgressLayout(int totalCount, UI currentUI, Runnable cancelCallback, boolean duplicatesPossible) {
+		this(totalCount, currentUI, cancelCallback, duplicatesPossible, true);
+	}
+
+	public ImportProgressLayout(int totalCount, UI currentUI, Runnable cancelCallback, boolean duplicatesPossible, boolean skipPossible) {
 		this.totalCount = totalCount;
 		this.currentUI = currentUI;
-		
+
 		setWidth(100, Unit.PERCENTAGE);
 		setMargin(true);
 
@@ -85,15 +90,15 @@ public class ImportProgressLayout extends VerticalLayout {
 		infoLabel.setContentMode(ContentMode.HTML);
 		infoLayout.addComponent(infoLabel);
 		infoLayout.setExpandRatio(infoLabel, 1);
-		
+
 		addComponent(infoLayout);
-		
+
 		// Progress bar
 		progressBar = new ProgressBar(0.0f);
 		CssStyles.style(progressBar, CssStyles.VSPACE_TOP_3);
 		addComponent(progressBar);
 		progressBar.setWidth(100, Unit.PERCENTAGE);
-		
+
 		// Progress info
 		HorizontalLayout progressInfoLayout = new HorizontalLayout();
 		CssStyles.style(progressInfoLayout, CssStyles.VSPACE_TOP_5);
@@ -113,26 +118,26 @@ public class ImportProgressLayout extends VerticalLayout {
 		}
 		importSkipsLabel = new Label(String.format(I18nProperties.getCaption(Captions.importSkips), 0));
 		CssStyles.style(importSkipsLabel, CssStyles.LABEL_MINOR);
-		progressInfoLayout.addComponent(importSkipsLabel);
+		if (skipPossible) {
+			progressInfoLayout.addComponent(importSkipsLabel);
+		}
 		addComponent(progressInfoLayout);
 		setComponentAlignment(progressInfoLayout, Alignment.TOP_RIGHT);
-		
+
 		// Cancel button
-		closeCancelButton = new Button(I18nProperties.getCaption(Captions.actionCancel));
-		CssStyles.style(closeCancelButton, CssStyles.VSPACE_TOP_2);
-		cancelListener = e -> {
-			cancelCallback.run();
-		};
-		closeCancelButton.addClickListener(cancelListener);
+		cancelListener = e -> cancelCallback.run();
+
+		closeCancelButton = ButtonHelper.createButton(Captions.actionCancel, cancelListener, CssStyles.VSPACE_TOP_2);
+
 		addComponent(closeCancelButton);
 		setComponentAlignment(closeCancelButton, Alignment.MIDDLE_RIGHT);
 	}
-	
+
 	private void initializeInfoComponents() {
 		progressCircle = new ProgressBar();
 		progressCircle.setIndeterminate(true);
 		CssStyles.style(progressCircle, "v-progressbar-indeterminate-large");
-		
+
 		errorIcon = new Image(null, new ThemeResource("img/error-icon.png"));
 		errorIcon.setHeight(35, Unit.PIXELS);
 		errorIcon.setWidth(35, Unit.PIXELS);
@@ -143,59 +148,53 @@ public class ImportProgressLayout extends VerticalLayout {
 		warningIcon.setHeight(35, Unit.PIXELS);
 		warningIcon.setWidth(35, Unit.PIXELS);
 	}
-	
-	public void updateProgress(ImportLineResult result) {		
-		currentUI.access(new Runnable() {
-			@Override
-			public void run() {
-				processedImportsCount++;
-				if (result == ImportLineResult.SUCCESS) {
-					successfulImportsCount++;
-					successfulImportsLabel.setValue(String.format(I18nProperties.getCaption(Captions.importImports), successfulImportsCount));
-				} else if (result == ImportLineResult.ERROR) {
-					importErrorsCount++;
-					importErrorsLabel.setValue(String.format(I18nProperties.getCaption(Captions.importErrors), importErrorsCount));
-				} else if (result == ImportLineResult.SKIPPED) {
-					importSkipsCount++;
-					importSkipsLabel.setValue(String.format(I18nProperties.getCaption(Captions.importSkips), importSkipsCount));
-				} else if (result == ImportLineResult.DUPLICATE) {
-					importDuplicatesCount++;
-					importDuplicatesLabel.setValue(String.format(I18nProperties.getCaption(Captions.importDuplicates), importDuplicatesCount));
-				}
-				processedImportsLabel.setValue(String.format(I18nProperties.getCaption(Captions.importProcessed), processedImportsCount, totalCount));
-				progressBar.setValue((float) processedImportsCount / (float) totalCount);
+
+	public void updateProgress(ImportLineResult result) {
+		currentUI.access(() -> {
+			processedImportsCount++;
+			if (result == ImportLineResult.SUCCESS) {
+				successfulImportsCount++;
+				successfulImportsLabel.setValue(String.format(I18nProperties.getCaption(Captions.importImports), successfulImportsCount));
+			} else if (result == ImportLineResult.ERROR) {
+				importErrorsCount++;
+				importErrorsLabel.setValue(String.format(I18nProperties.getCaption(Captions.importErrors), importErrorsCount));
+			} else if (result == ImportLineResult.SKIPPED) {
+				importSkipsCount++;
+				importSkipsLabel.setValue(String.format(I18nProperties.getCaption(Captions.importSkips), importSkipsCount));
+			} else if (result == ImportLineResult.DUPLICATE) {
+				importDuplicatesCount++;
+				importDuplicatesLabel.setValue(String.format(I18nProperties.getCaption(Captions.importDuplicates), importDuplicatesCount));
 			}
+			processedImportsLabel.setValue(String.format(I18nProperties.getCaption(Captions.importProcessed), processedImportsCount, totalCount));
+			progressBar.setValue((float) processedImportsCount / (float) totalCount);
 		});
 	}
-	
+
 	public void makeClosable(Runnable closeCallback) {
 		closeCancelButton.setCaption(I18nProperties.getCaption(Captions.actionClose));
 		closeCancelButton.removeClickListener(cancelListener);
-		closeCancelButton.addClickListener(e -> {
-			closeCallback.run();
-		});
+		closeCancelButton.addClickListener(e -> closeCallback.run());
 	}
-	
+
 	public void setInfoLabelText(String text) {
 		infoLabel.setValue(text);
 	}
-	
+
 	public void displayErrorIcon() {
 		infoLayout.removeComponent(currentInfoComponent);
 		currentInfoComponent = errorIcon;
 		infoLayout.addComponentAsFirst(currentInfoComponent);
 	}
-	
+
 	public void displaySuccessIcon() {
 		infoLayout.removeComponent(currentInfoComponent);
 		currentInfoComponent = successIcon;
 		infoLayout.addComponentAsFirst(currentInfoComponent);
 	}
-	
+
 	public void displayWarningIcon() {
 		infoLayout.removeComponent(currentInfoComponent);
 		currentInfoComponent = warningIcon;
 		infoLayout.addComponentAsFirst(currentInfoComponent);
 	}
-	
 }

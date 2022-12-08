@@ -9,39 +9,85 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.contact;
 
 import java.util.Date;
+import java.util.List;
 
-import de.symeda.sormas.api.utils.DateHelper;
+import de.symeda.sormas.api.followup.FollowUpLogic;
+import de.symeda.sormas.api.followup.FollowUpPeriodDto;
+import de.symeda.sormas.api.followup.FollowUpStartDateType;
+import de.symeda.sormas.api.sample.SampleDto;
+import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.visit.VisitDto;
 
-public class ContactLogic {
+public final class ContactLogic {
 
-	public static int getNumberOfRequiredVisitsSoFar(Date contactReportDate, Date contactFollowUpUntil) {
-		if (contactFollowUpUntil == null) {
-			return 0;
-		}
-		
-		Date now = new Date();
-		if (now.before(contactFollowUpUntil)) {
-			return DateHelper.getDaysBetween(DateHelper.addDays(contactReportDate, 1), now);
-		} else {
-			return DateHelper.getDaysBetween(DateHelper.addDays(contactReportDate, 1), contactFollowUpUntil);
-		}
+	private ContactLogic() {
+		// Hide Utility Class Constructor
 	}
-	
+
+	public static Date getStartDate(ContactDto contactDto) {
+		return getStartDate(contactDto.getLastContactDate(), contactDto.getReportDateTime());
+	}
+
 	public static Date getStartDate(Date lastContactDate, Date reportDate) {
-		if (lastContactDate != null) {
-			return lastContactDate;
-		} else {
-			return reportDate;
-		}
+		return lastContactDate != null ? lastContactDate : reportDate;
 	}
-	
+
+	public static FollowUpPeriodDto getFollowUpStartDate(ContactDto contactDto, List<SampleDto> samples) {
+		return getFollowUpStartDate(contactDto.getLastContactDate(), contactDto.getReportDateTime(), samples);
+	}
+
+	public static FollowUpPeriodDto getFollowUpStartDate(Date lastContactDate, Date reportDate, List<SampleDto> samples) {
+
+		if (lastContactDate != null) {
+			return new FollowUpPeriodDto(lastContactDate, FollowUpStartDateType.LAST_CONTACT_DATE);
+		}
+		return FollowUpLogic.getFollowUpStartDate(reportDate, samples);
+	}
+
+	public static FollowUpPeriodDto getFollowUpStartDate(Date lastContactDate, Date reportDate, Date earliestSampleDate) {
+
+		if (lastContactDate != null) {
+			return new FollowUpPeriodDto(lastContactDate, FollowUpStartDateType.LAST_CONTACT_DATE);
+		}
+		return FollowUpLogic.getFollowUpStartDate(reportDate, earliestSampleDate);
+	}
+
+	public static Date getEndDate(Date lastContactDate, Date reportDate, Date followUpUntil) {
+		return followUpUntil != null ? followUpUntil : lastContactDate != null ? lastContactDate : reportDate;
+	}
+
+	/**
+	 * Calculates the follow-up until date of the contact based on its start date (last contact or report date), the follow-up duration of
+	 * the disease, the current follow-up until date and the date of the last cooperative visit.
+	 * 
+	 * @param ignoreOverwrite
+	 *            Returns the expected follow-up until date based on contact start date, follow-up duration of the disease and date of the
+	 *            last cooperative visit. Ignores current follow-up until date and whether or not follow-up until has been overwritten.
+	 */
+	public static FollowUpPeriodDto calculateFollowUpUntilDate(
+		ContactDto contact,
+		FollowUpPeriodDto followUpPeriod,
+		List<VisitDto> visits,
+		int followUpDuration,
+		boolean ignoreOverwrite,
+		boolean allowFreeOverwrite) {
+
+		Date overwriteUntilDate = !ignoreOverwrite && contact.isOverwriteFollowUpUntil() ? contact.getFollowUpUntil() : null;
+		return FollowUpLogic.calculateFollowUpUntilDate(followUpPeriod, overwriteUntilDate, visits, followUpDuration, allowFreeOverwrite);
+	}
+
+	public static String extendFollowUpStatusComment(String followUpComment, String extensionComment) {
+		return extensionComment != null && extensionComment.equals(followUpComment)
+			? followUpComment
+			: DataHelper.joinStrings("\n", followUpComment, extensionComment);
+	}
 }

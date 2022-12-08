@@ -1,9 +1,11 @@
 package de.symeda.sormas.api.caze.classification;
 
+import java.util.Date;
 import java.util.List;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.person.PersonDto;
@@ -25,10 +27,12 @@ public class ClassificationPathogenTestOtherPositiveResultCriteriaDto extends Cl
 	}
 
 	@Override
-	public boolean eval(CaseDataDto caze, PersonDto person, List<PathogenTestDto> pathogenTests) {
+	public boolean eval(CaseDataDto caze, PersonDto person, List<PathogenTestDto> pathogenTests, List<EventDto> events, Date lastVaccinationDate) {
+
 		for (PathogenTestDto pathogenTest : pathogenTests) {
-			if (pathogenTest.getTestResult() == PathogenTestResultType.POSITIVE && testedDisease != null
-					&& pathogenTest.getTestedDisease() != testedDisease) {
+			if (pathogenTest.getTestResult() == PathogenTestResultType.POSITIVE
+				&& testedDisease != null
+				&& pathogenTest.getTestedDisease() != testedDisease) {
 				return true;
 			}
 		}
@@ -37,11 +41,10 @@ public class ClassificationPathogenTestOtherPositiveResultCriteriaDto extends Cl
 
 	@Override
 	public String buildDescription() {
-		
+
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append(I18nProperties.getString(Strings.classificationOneOtherPositiveTestResult)).append(" ");
-		
+
 		return stringBuilder.toString();
 	}
-
 }

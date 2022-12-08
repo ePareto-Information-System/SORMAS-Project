@@ -17,45 +17,68 @@
  *******************************************************************************/
 package de.symeda.sormas.api.statistics.caze;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
 import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.statistics.StatisticsSubAttributeEnum;
+import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
+import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
+import de.symeda.sormas.api.statistics.caze.StatisticsHelper.getAttributeValues;
 
-public enum StatisticsCaseAttribute {
+@SuppressWarnings("hiding")
+public class StatisticsCaseAttribute {
 
-	ONSET_TIME(StatisticsCaseAttributeGroup.TIME, false, true, StatisticsSubAttributeEnum.YEAR,StatisticsSubAttributeEnum.QUARTER,StatisticsSubAttributeEnum.MONTH,StatisticsSubAttributeEnum.EPI_WEEK,
-			StatisticsSubAttributeEnum.QUARTER_OF_YEAR,StatisticsSubAttributeEnum.MONTH_OF_YEAR,StatisticsSubAttributeEnum.EPI_WEEK_OF_YEAR,StatisticsSubAttributeEnum.DATE_RANGE),
-	REPORT_TIME(StatisticsCaseAttributeGroup.TIME, false, false, StatisticsSubAttributeEnum.YEAR,StatisticsSubAttributeEnum.QUARTER,StatisticsSubAttributeEnum.MONTH,StatisticsSubAttributeEnum.EPI_WEEK,
-			StatisticsSubAttributeEnum.QUARTER_OF_YEAR,StatisticsSubAttributeEnum.MONTH_OF_YEAR,StatisticsSubAttributeEnum.EPI_WEEK_OF_YEAR,StatisticsSubAttributeEnum.DATE_RANGE),
-	REGION_DISTRICT(StatisticsCaseAttributeGroup.PLACE, true, false, StatisticsSubAttributeEnum.REGION,StatisticsSubAttributeEnum.DISTRICT),
-	SEX(StatisticsCaseAttributeGroup.PERSON, true, true),
-	AGE_INTERVAL_1_YEAR(StatisticsCaseAttributeGroup.PERSON, false, true),
-	AGE_INTERVAL_5_YEARS(StatisticsCaseAttributeGroup.PERSON, false, true),
-	AGE_INTERVAL_CHILDREN_COARSE(StatisticsCaseAttributeGroup.PERSON, false, true),
-	AGE_INTERVAL_CHILDREN_FINE(StatisticsCaseAttributeGroup.PERSON, false, true),
-	AGE_INTERVAL_CHILDREN_MEDIUM(StatisticsCaseAttributeGroup.PERSON, false, true),
-	AGE_INTERVAL_BASIC(StatisticsCaseAttributeGroup.PERSON, false, true),
+	@SuppressWarnings("rawtypes")
+	private final Enum _enum;	
+	StatisticsCaseAttributeEnum baseEnum;
 	
-	DISEASE(StatisticsCaseAttributeGroup.CASE, true, false),
-	CLASSIFICATION(StatisticsCaseAttributeGroup.CASE, true, false),
-	OUTCOME(StatisticsCaseAttributeGroup.CASE, true, false), 
-	REPORTING_USER_ROLE(StatisticsCaseAttributeGroup.CASE, true, false);
+	StatisticsGroupingKey[] groupingKeys;
+	private IValuesGetter valuesGetter;
 	
-	private final StatisticsCaseAttributeGroup attributeGroup;
 	private final boolean sortByCaption;
 	private final boolean unknownValueAllowed;
-	private final StatisticsSubAttributeEnum[] subAttributes;
+	private List<StatisticsCaseSubAttribute> subAttributes = new ArrayList<StatisticsCaseSubAttribute>();
+	
+	
+	@SuppressWarnings("rawtypes")
+	public StatisticsCaseAttribute (Enum _enum, StatisticsCaseAttributeEnum baseEnum, boolean sortByCaption, boolean unknownValueAllowed, List<StatisticsCaseSubAttribute> subAttributes, StatisticsGroupingKey[] groupingKeys) {
+		this._enum = _enum;
+		this.baseEnum = baseEnum;
+		this.groupingKeys = groupingKeys;
 
-	StatisticsCaseAttribute(StatisticsCaseAttributeGroup attributeGroup, boolean sortByCaption, boolean unknownValueAllowed, StatisticsSubAttributeEnum ...subAttributes) {
-		this.attributeGroup = attributeGroup;
 		this.sortByCaption = sortByCaption;
 		this.unknownValueAllowed = unknownValueAllowed;
 		this.subAttributes = subAttributes;
-	}
+	}	
 	
-	public StatisticsCaseAttributeGroup getAttributeGroup() {
-		return attributeGroup;
+	@SuppressWarnings("rawtypes")
+	public StatisticsCaseAttribute (Enum _enum, StatisticsCaseAttributeEnum baseEnum, boolean sortByCaption, boolean unknownValueAllowed, List<StatisticsCaseSubAttribute> subAttributes, IValuesGetter valuesGetter) {
+		this._enum = _enum;
+		this.baseEnum = baseEnum;
+		this.valuesGetter = valuesGetter;
+
+		this.sortByCaption = sortByCaption;
+		this.unknownValueAllowed = unknownValueAllowed;
+		this.subAttributes = subAttributes;
+	}	
+
+	public StatisticsCaseAttribute(StatisticsCaseAttributeEnum attribute, Object baseEnum2, boolean sortByCaption2,
+			boolean unknownValueAllowed2, List<StatisticsSubAttribute> subs, StatisticsGroupingKey[] groupingKeys2) {
+				this._enum = null;
+				this.sortByCaption = sortByCaption2;
+				this.unknownValueAllowed = unknownValueAllowed2;
 	}
-	
+
+	public StatisticsCaseAttribute(StatisticsCaseAttributeEnum attribute, StatisticsCaseAttributeEnum enum1,
+			boolean sortByCaption2, boolean unknownValueAllowed2, List<StatisticsSubAttribute> subs,
+			getAttributeValues getAttributeValues) {
+		this._enum = null;
+		this.sortByCaption = sortByCaption2;
+		this.unknownValueAllowed = unknownValueAllowed2;
+	}
+
 	public boolean isSortByCaption() {
 		return sortByCaption;
 	}
@@ -64,21 +87,60 @@ public enum StatisticsCaseAttribute {
 		return unknownValueAllowed;
 	}
 	
-	public StatisticsSubAttributeEnum[] getSubAttributes() {
+	public List<StatisticsCaseSubAttribute> getSubAttributes() {
 		return subAttributes;
 	}
 	
 	public String toString() {
-		return I18nProperties.getEnumCaption(this);
+		return I18nProperties.getEnumCaption(_enum != null ? _enum : baseEnum);
 	}
 	
 	public boolean isAgeGroup() {
-		return this == AGE_INTERVAL_1_YEAR || this == AGE_INTERVAL_5_YEARS || this == AGE_INTERVAL_BASIC || this == AGE_INTERVAL_CHILDREN_COARSE
-				|| this == AGE_INTERVAL_CHILDREN_FINE || this == AGE_INTERVAL_CHILDREN_MEDIUM;
+		return baseEnum == StatisticsCaseAttributeEnum.AGE_INTERVAL_1_YEAR 
+				|| baseEnum == StatisticsCaseAttributeEnum.AGE_INTERVAL_5_YEARS 
+				|| baseEnum == StatisticsCaseAttributeEnum.AGE_INTERVAL_BASIC 
+				|| baseEnum == StatisticsCaseAttributeEnum.AGE_INTERVAL_CHILDREN_COARSE
+				|| baseEnum == StatisticsCaseAttributeEnum.AGE_INTERVAL_CHILDREN_FINE 
+				|| baseEnum == StatisticsCaseAttributeEnum.AGE_INTERVAL_CHILDREN_MEDIUM;
 	}
+	
+//	public boolean isPopulationData() {
+//		return baseEnum == StatisticsCaseAttributeEnum.REGION_DISTRICT 
+//				|| baseEnum == StatisticsCaseAttributeEnum.SEX 
+//				|| isAgeGroup();
+//	}
 	
 	public boolean isPopulationData() {
-		return this == REGION_DISTRICT || this == SEX || this.isAgeGroup();
+		return  baseEnum == StatisticsCaseAttributeEnum.JURISDICTION 
+				|| baseEnum == StatisticsCaseAttributeEnum.SEX 
+				|| isAgeGroup();
 	}
 	
+	public StatisticsCaseAttributeEnum getBaseEnum () {
+		return baseEnum;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public static Enum getEnum (StatisticsCaseAttribute attribute) {
+		return attribute == null ? null : attribute._enum;
+	}
+	
+	
+	
+	public static StatisticsCaseAttributeEnum getBaseEnum (StatisticsCaseAttribute attribute) {
+		return attribute == null ? null : attribute.baseEnum;
+	}
+	
+	public Collection<? extends StatisticsGroupingKey> getValues () {
+		if (valuesGetter != null)
+			return valuesGetter.get(this);
+		
+		return Arrays.asList(groupingKeys);
+	}
+
+	public interface IValuesGetter {
+		Collection<? extends StatisticsGroupingKey> get(StatisticsCaseAttribute attribute);
+	}
+
+
 }

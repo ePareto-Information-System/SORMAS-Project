@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.statistics;
 
@@ -36,24 +36,43 @@ import de.symeda.sormas.api.MonthOfYear;
 import de.symeda.sormas.api.Quarter;
 import de.symeda.sormas.api.QuarterOfYear;
 import de.symeda.sormas.api.Year;
+import de.symeda.sormas.api.caze.CaseClassification;
+import de.symeda.sormas.api.caze.CaseFacade;
+import de.symeda.sormas.api.caze.CaseOutcome;
+import de.symeda.sormas.api.disease.DiseaseConfigurationFacade;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictFacade;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionFacade;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.person.Sex;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.region.RegionReferenceDto;
-import de.symeda.sormas.api.user.UserRole;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseAttribute;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseAttributeEnum;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseSubAttributeEnum;
+import de.symeda.sormas.api.statistics.contact.StatisticsContactSubAttributeEnum;
+import de.symeda.sormas.api.user.DefaultUserRole;
+import de.symeda.sormas.api.user.UserRoleFacade;
+import de.symeda.sormas.api.user.UserRoleReferenceDto;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.EpiWeek;
 
 public class StatisticsHelper {
 
+	protected StatisticsHelper() {
+		// Hide Utility Class Constructor
+	}
+
 	public static final String VALUE_UNKNOWN = "VALUE_UNKNOWN";
 	public static final String TOTAL = "total";
 	public static final String UNKNOWN = "unknown";
+	public static final String NOT_SPECIFIED = "notspecified";
 	
- 	public static StatisticsGroupingKey buildGroupingKey(Object attributeValue, StatisticsAttributeEnum attribute, StatisticsSubAttributeEnum subAttribute, Function<Integer, RegionReferenceDto> regionProvider, Function<Integer, DistrictReferenceDto> districtProvider) {
+ 	public static StatisticsGroupingKey buildGroupingKey(Object attributeValue, StatisticsAttributeEnum attribute, StatisticsSubAttributeEnum subAttribute, Function<Integer, RegionReferenceDto> regionProvider, Function<Integer, DistrictReferenceDto> districtProvider,Function<Integer, CommunityReferenceDto> communityProvider,Function<Integer, FacilityReferenceDto> facilityProvider) {
 		if (isNullOrUnknown(attributeValue)) {
 			return null;
 		}
-		
+
 		if (subAttribute != null) {
 			switch (subAttribute) {
 			case YEAR:
@@ -66,17 +85,27 @@ public class StatisticsHelper {
 				return new EpiWeek(null, (int) attributeValue);
 			case QUARTER_OF_YEAR:
 				String entryAsString = String.valueOf(attributeValue);
-				return new QuarterOfYear(new Quarter(Integer.valueOf(entryAsString.substring(entryAsString.length() - 1))), new Year(Integer.valueOf(entryAsString.substring(0, entryAsString.length() - 1))));
+				return new QuarterOfYear(
+					new Quarter(Integer.valueOf(entryAsString.substring(entryAsString.length() - 1))),
+					new Year(Integer.valueOf(entryAsString.substring(0, entryAsString.length() - 1))));
 			case MONTH_OF_YEAR:
 				entryAsString = String.valueOf(attributeValue);
-				return new MonthOfYear(Month.values()[Integer.valueOf(entryAsString.substring(entryAsString.length() - 2)) - 1], new Year(Integer.valueOf(entryAsString.substring(0, entryAsString.length() - 2))));
+				return new MonthOfYear(
+					Month.values()[Integer.valueOf(entryAsString.substring(entryAsString.length() - 2)) - 1],
+					new Year(Integer.valueOf(entryAsString.substring(0, entryAsString.length() - 2))));
 			case EPI_WEEK_OF_YEAR:
 				entryAsString = String.valueOf(attributeValue);
-				return new EpiWeek(Integer.valueOf(entryAsString.substring(0, entryAsString.length() - 2)), Integer.valueOf(entryAsString.substring(entryAsString.length() - 2)));
+				return new EpiWeek(
+					Integer.valueOf(entryAsString.substring(0, entryAsString.length() - 2)),
+					Integer.valueOf(entryAsString.substring(entryAsString.length() - 2)));
 			case REGION:
 				return regionProvider.apply(((Number) attributeValue).intValue());
 			case DISTRICT:
 				return districtProvider.apply(((Number) attributeValue).intValue());
+			case COMMUNITY:
+				return communityProvider.apply(((Number) attributeValue).intValue());
+			case FACILITY:
+				return facilityProvider.apply(((Number) attributeValue).intValue());
 			default:
 				throw new IllegalArgumentException(subAttribute.toString());
 			}
@@ -101,23 +130,25 @@ public class StatisticsHelper {
 						// This is fine; continue to build the IntegerGroup based on the entry string
 					}
 				}
-				
+
 				if (entryAsString.contains("-")) {
-					return new IntegerRange(Integer.valueOf(entryAsString.substring(0, entryAsString.indexOf("-"))), Integer.valueOf(entryAsString.substring(entryAsString.indexOf("-") + 1)));
+					return new IntegerRange(
+						Integer.valueOf(entryAsString.substring(0, entryAsString.indexOf("-"))),
+						Integer.valueOf(entryAsString.substring(entryAsString.indexOf("-") + 1)));
 				} else if (entryAsString.contains("+")) {
 					return new IntegerRange(Integer.valueOf(entryAsString.substring(0, entryAsString.indexOf("+"))), null);
 				} else {
 					return new IntegerRange(Integer.valueOf(entryAsString), Integer.valueOf(entryAsString));
 				}
 			case USER_ROLE:
-				return UserRole.valueOf(attributeValue.toString());
+				return DefaultUserRole.valueOf(attributeValue.toString());
 			default:
 				throw new IllegalArgumentException(attribute.toString());
 			}
 		}
 	}
 	
-	public static List<StatisticsGroupingKey> getAgeIntervalGroupingKeys(StatisticsAttributeEnum attribute) {
+	public static List<StatisticsGroupingKey> getAgeIntervalGroupingKeys(StatisticsCaseAttributeEnum attribute) {
 		List<StatisticsGroupingKey> ageIntervalList = new ArrayList<>();
 		
 		switch (attribute) {
@@ -169,10 +200,10 @@ public class StatisticsHelper {
 				throw new IllegalArgumentException(attribute.toString());
 		}
 
-		if (attribute != StatisticsAttributeEnum.AGE_INTERVAL_BASIC) {
+		if (attribute != StatisticsCaseAttributeEnum.AGE_INTERVAL_BASIC) {
 			ageIntervalList.add(new IntegerRange(80, null));
 		}
-		ageIntervalList.add(null);//new IntegerRange(null, null));
+		ageIntervalList.add(new IntegerRange(null, null));
 		return ageIntervalList;
 	}
 
@@ -235,10 +266,148 @@ public class StatisticsHelper {
 			default:
 				return new ArrayList<>();
 		}
-	}	
+	}
 	
+	
+	public static List<StatisticsGroupingKey> getTimeGroupingKeys(StatisticsCaseSubAttributeEnum subAttribute, Date oldestDate) {
+
+		if (oldestDate == null)
+			return new ArrayList<>();
+		
+		LocalDate earliest = oldestDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate now = LocalDate.now();
+		
+		switch (subAttribute) {
+			case YEAR:
+				List<StatisticsGroupingKey> years = new ArrayList<>();
+				for (int i = earliest.getYear(); i <= now.getYear(); i++) {
+					years.add(new Year(i));
+				}
+				return years;
+			case QUARTER:
+				List<StatisticsGroupingKey> quarters = new ArrayList<>();
+				for (int i = 1; i <= 4; i++) {
+					quarters.add(new Quarter(i));
+				}
+				return quarters;
+			case MONTH:
+				List<StatisticsGroupingKey> months = new ArrayList<>();
+				for (Month month : Month.values()) {
+					months.add(month);
+				}
+				return months;
+			case EPI_WEEK:
+				List<StatisticsGroupingKey> epiWeeks = new ArrayList<>();
+				for (int i = 1; i <= DateHelper.getMaximumEpiWeekNumber(); i++) {
+					epiWeeks.add(new EpiWeek(null, i));
+				}
+				return epiWeeks;
+			case QUARTER_OF_YEAR:
+				List<StatisticsGroupingKey> quarterOfYearList = new ArrayList<>();
+				QuarterOfYear earliestQuarter = new QuarterOfYear(new Quarter(1), new Year(earliest.getYear()));
+				QuarterOfYear latestQuarter = new QuarterOfYear(new Quarter(4), new Year(now.getYear()));
+				while (earliestQuarter.getYear().getValue() <= latestQuarter.getYear().getValue()) {
+					quarterOfYearList.add(new QuarterOfYear(earliestQuarter.getQuarter(), earliestQuarter.getYear()));
+					earliestQuarter.increaseQuarter();
+				}
+				return quarterOfYearList;
+			case MONTH_OF_YEAR:
+				List<StatisticsGroupingKey> monthOfYearList = new ArrayList<>();
+				for (int year = earliest.getYear(); year <= now.getYear(); year++) {
+					for (Month month : Month.values()) {
+						monthOfYearList.add(new MonthOfYear(month, year));
+					}
+				}
+				return monthOfYearList;
+			case EPI_WEEK_OF_YEAR:
+				List<StatisticsGroupingKey> epiWeekOfYearList = new ArrayList<>();
+				for (int year = earliest.getYear(); year <= now.getYear(); year++) {
+					epiWeekOfYearList.addAll(DateHelper.createEpiWeekList(year));
+				}
+				return epiWeekOfYearList;
+			default:
+				return new ArrayList<>();
+		}
+	}
+	
+	
+	public static List<StatisticsGroupingKey> getTimeGroupingKeys(StatisticsContactSubAttributeEnum subAttribute, Date oldestDate) {
+
+		if (oldestDate == null)
+			return new ArrayList<>();
+		
+		LocalDate earliest = oldestDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate now = LocalDate.now();
+		
+		switch (subAttribute) {
+			case YEAR:
+				List<StatisticsGroupingKey> years = new ArrayList<>();
+				for (int i = earliest.getYear(); i <= now.getYear(); i++) {
+					years.add(new Year(i));
+				}
+				return years;
+			case QUARTER:
+				List<StatisticsGroupingKey> quarters = new ArrayList<>();
+				for (int i = 1; i <= 4; i++) {
+					quarters.add(new Quarter(i));
+				}
+				return quarters;
+			case MONTH:
+				List<StatisticsGroupingKey> months = new ArrayList<>();
+				for (Month month : Month.values()) {
+					months.add(month);
+				}
+				return months;
+			case EPI_WEEK:
+				List<StatisticsGroupingKey> epiWeeks = new ArrayList<>();
+				for (int i = 1; i <= DateHelper.getMaximumEpiWeekNumber(); i++) {
+					epiWeeks.add(new EpiWeek(null, i));
+				}
+				return epiWeeks;
+			case QUARTER_OF_YEAR:
+				List<StatisticsGroupingKey> quarterOfYearList = new ArrayList<>();
+				QuarterOfYear earliestQuarter = new QuarterOfYear(new Quarter(1), new Year(earliest.getYear()));
+				QuarterOfYear latestQuarter = new QuarterOfYear(new Quarter(4), new Year(now.getYear()));
+				while (earliestQuarter.getYear().getValue() <= latestQuarter.getYear().getValue()) {
+					quarterOfYearList.add(new QuarterOfYear(earliestQuarter.getQuarter(), earliestQuarter.getYear()));
+					earliestQuarter.increaseQuarter();
+				}
+				return quarterOfYearList;
+			case MONTH_OF_YEAR:
+				List<StatisticsGroupingKey> monthOfYearList = new ArrayList<>();
+				for (int year = earliest.getYear(); year <= now.getYear(); year++) {
+					for (Month month : Month.values()) {
+						monthOfYearList.add(new MonthOfYear(month, year));
+					}
+				}
+				return monthOfYearList;
+			case EPI_WEEK_OF_YEAR:
+				List<StatisticsGroupingKey> epiWeekOfYearList = new ArrayList<>();
+				for (int year = earliest.getYear(); year <= now.getYear(); year++) {
+					epiWeekOfYearList.addAll(DateHelper.createEpiWeekList(year));
+				}
+				return epiWeekOfYearList;
+			default:
+				return new ArrayList<>();
+		}
+	}
+
+	/**
+	 *
+	 * @param attribute
+	 * @param subAttribute
+	 * @param diseaseConfigurationFacade
+	 *            Needed for StatisticsCaseAttribute.DISEASE
+	 * @param caseFacade
+	 *            Needed for StatisticsCaseAttribute.ONSET_TIME, REPORT_TIME, OUTCOME_TIME
+	 * @param regionFacade
+	 *            Needed for StatisticsCaseSubAttribute.REGION
+	 * @param districtFacade
+	 *            Needed for StatisticsCaseSubAttribute.DISTRICT
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
-	public static List<StatisticsGroupingKey> getAttributeGroupingKeys(StatisticsAttributeEnum attribute, StatisticsSubAttributeEnum subAttribute) {
+	public static List<StatisticsGroupingKey> getAttributeGroupingKeys(StatisticsCaseAttributeEnum attribute, StatisticsSubAttributeEnum subAttribute,RegionFacade regionFacade,DistrictFacade districtFacade) {
 		
 		if (subAttribute != null) {
 			switch (subAttribute) {
@@ -251,20 +420,19 @@ public class StatisticsHelper {
 			case EPI_WEEK_OF_YEAR:
 				return getTimeGroupingKeys(subAttribute, null);
 			case REGION:
-				return (List<StatisticsGroupingKey>)(List<? extends StatisticsGroupingKey>)FacadeProvider.getRegionFacade().getAllActiveAsReference();
+				return (List<StatisticsGroupingKey>) (List<? extends StatisticsGroupingKey>) regionFacade.getAllActiveByServerCountry();
 			case DISTRICT:
-				return (List<StatisticsGroupingKey>)(List<? extends StatisticsGroupingKey>)FacadeProvider.getDistrictFacade().getAllActiveAsReference();
+				return (List<StatisticsGroupingKey>) (List<? extends StatisticsGroupingKey>) districtFacade.getAllActiveAsReference();
+			case COMMUNITY:
+			case FACILITY:
+				return new ArrayList<>();
 			default:
 				throw new IllegalArgumentException(subAttribute.toString());
 			}
 		} else {
 			switch (attribute) {
 			case SEX:
-				ArrayList<StatisticsGroupingKey> sexList = new ArrayList<>();
-				for (Sex sex : Sex.values()) {
-					sexList.add(sex);
-				}
-				return sexList;
+				return toGroupingKeys(Sex.values());
 			case DISEASE:
 				ArrayList<StatisticsGroupingKey> diseaseList = new ArrayList<>();
 				for (Disease disease : FacadeProvider.getDiseaseConfigurationFacade().getAllDiseases(true, true, true)) {
@@ -278,9 +446,9 @@ public class StatisticsHelper {
 			case AGE_INTERVAL_CHILDREN_MEDIUM:
 			case AGE_INTERVAL_BASIC:
 				return getAgeIntervalGroupingKeys(attribute);
-			case USER_ROLE:
+			case REPORTING_USER_ROLE:
 				ArrayList<StatisticsGroupingKey> roleList = new ArrayList<>();
-				for (UserRole role : UserRole.values()) {
+				for (DefaultUserRole role : DefaultUserRole.values()) {
 					roleList.add(role);
 				}
 				return roleList;
@@ -291,8 +459,11 @@ public class StatisticsHelper {
 	}
 	
 	
-	public static StatisticsAttributeEnum getBaseEnum (StatisticsAttribute attribute) {
-		return StatisticsAttribute.getBaseEnum(attribute);
+	
+	
+	
+	public static StatisticsCaseAttributeEnum getBaseEnum (StatisticsCaseAttribute attribute) {
+		return  StatisticsCaseAttribute.getBaseEnum(attribute);
 	}
 
 	public static StatisticsSubAttributeEnum getBaseEnum (StatisticsSubAttribute attribute) {
@@ -300,42 +471,46 @@ public class StatisticsHelper {
 	}
 
 	
+	
+	
 	public static boolean isNullOrUnknown(Object value) {
+
 		if (value == null) {
 			return true;
 		}
 		if (value instanceof IntegerRange && ((IntegerRange) value).getFrom() == null && ((IntegerRange) value).getTo() == null) {
 			return true;
 		}
-		
+
 		return isUnknown(value);
 	}
-	
+
 	public static boolean isUnknown(Object value) {
 		return value.toString().equalsIgnoreCase(VALUE_UNKNOWN);
 	}
-	
+
 	public static class StatisticsKeyComparator implements Comparator<StatisticsGroupingKey> {
+
 		public int compare(StatisticsGroupingKey a, StatisticsGroupingKey b) {
 			if (a == null && b == null) {
 				return 0;
 			}
-			
+
 			if (a == null && b != null) {
 				return -1;
 			}
-			
+
 			if (b == null && a != null) {
 				return 1;
 			}
-			
+
 			return a.keyCompareTo(b);
 		}
 	}
 	
-	public static Collection<? extends StatisticsGroupingKey> getAttributeValues (StatisticsAttribute attribute) {
+	public static Collection<? extends StatisticsGroupingKey> getAttributeValues (StatisticsCaseAttribute attribute) {
 		
-		StatisticsAttributeEnum _attribute = getBaseEnum(attribute);
+		StatisticsCaseAttributeEnum _attribute = getBaseEnum(attribute);
 		
 		switch (_attribute) {
 			case SEX:
@@ -349,10 +524,114 @@ public class StatisticsHelper {
 				return getAgeIntervalGroupingKeys(_attribute);
 			case DISEASE:
 				return FacadeProvider.getDiseaseConfigurationFacade().getAllDiseases(true, true, true);
-			case USER_ROLE:
-				return Arrays.asList(UserRole.values());
+			case REPORTING_USER_ROLE:
+				return Arrays.asList(DefaultUserRole.values());
 			default:
 				throw new IllegalArgumentException(attribute.toString());
 		}
 	}
+	
+	
+	/**
+	 * Converts the given values to a {@link List} of {@link StatisticsGroupingKey}s.
+	 */
+	protected static <K extends StatisticsGroupingKey> List<StatisticsGroupingKey> toGroupingKeys(K[] keys) {
+
+		List<StatisticsGroupingKey> keyList = new ArrayList<>();
+		for (K ur : keys) {
+			keyList.add(ur);
+		}
+		return keyList;
+	}
+
+	/**
+	 * Converts the given values to a {@link List} of {@link StatisticsGroupingKey}s.
+	 */
+	protected static <K extends StatisticsGroupingKey> List<StatisticsGroupingKey> toGroupingKeys(Collection<K> keys) {
+
+		List<StatisticsGroupingKey> keyList = new ArrayList<>();
+		keyList.addAll(keys);
+		return keyList;
+	}
+	
+	
+	public static List<StatisticsGroupingKey> getTimeGroupingKeys(
+			StatisticsCaseAttributeEnum attribute,
+			StatisticsCaseSubAttributeEnum subAttribute,
+			CaseFacade caseFacade) {
+
+			Date oldestCaseDate = null;
+			switch (attribute) {
+			case ONSET_TIME:
+				oldestCaseDate = caseFacade.getOldestCaseOnsetDate();
+				break;
+			case REPORT_TIME:
+				oldestCaseDate = caseFacade.getOldestCaseReportDate();
+				break;
+			case OUTCOME_TIME:
+				oldestCaseDate = caseFacade.getOldestCaseOutcomeDate();
+				break;
+			default:
+				return new ArrayList<>();
+			}
+
+			LocalDate earliest = oldestCaseDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			LocalDate now = LocalDate.now();
+
+			switch (subAttribute) {
+			case YEAR:
+				List<StatisticsGroupingKey> years = new ArrayList<>();
+				for (int i = earliest.getYear(); i <= now.getYear(); i++) {
+					years.add(new Year(i));
+				}
+				return years;
+			case QUARTER:
+				List<StatisticsGroupingKey> quarters = new ArrayList<>();
+				for (int i = 1; i <= 4; i++) {
+					quarters.add(new Quarter(i));
+				}
+				return quarters;
+			case MONTH:
+				return toGroupingKeys(Month.values());
+			case EPI_WEEK:
+				List<StatisticsGroupingKey> epiWeeks = new ArrayList<>();
+				for (int i = 1; i <= DateHelper.getMaximumEpiWeekNumber(); i++) {
+					epiWeeks.add(new EpiWeek(null, i));
+				}
+				return epiWeeks;
+			case QUARTER_OF_YEAR:
+				List<StatisticsGroupingKey> quarterOfYearList = new ArrayList<>();
+				QuarterOfYear earliestQuarter = new QuarterOfYear(new Quarter(1), new Year(earliest.getYear()));
+				QuarterOfYear latestQuarter = new QuarterOfYear(new Quarter(4), new Year(now.getYear()));
+				while (earliestQuarter.getYear().getValue() <= latestQuarter.getYear().getValue()) {
+					quarterOfYearList.add(new QuarterOfYear(earliestQuarter.getQuarter(), earliestQuarter.getYear()));
+					earliestQuarter.increaseQuarter();
+				}
+				return quarterOfYearList;
+			case MONTH_OF_YEAR:
+				List<StatisticsGroupingKey> monthOfYearList = new ArrayList<>();
+				for (int year = earliest.getYear(); year <= now.getYear(); year++) {
+					for (Month month : Month.values()) {
+						monthOfYearList.add(new MonthOfYear(month, year));
+					}
+				}
+				return monthOfYearList;
+			case EPI_WEEK_OF_YEAR:
+				List<StatisticsGroupingKey> epiWeekOfYearList = new ArrayList<>();
+				for (int year = earliest.getYear(); year <= now.getYear(); year++) {
+					epiWeekOfYearList.addAll(DateHelper.createEpiWeekList(year));
+				}
+				return epiWeekOfYearList;
+			default:
+				return new ArrayList<>();
+			}
+		}
+
+
+
+	
+
+	
+
+	
 }

@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.statistics;
 
@@ -34,21 +34,34 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.caze.CaseClassification;
+import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.region.RegionReferenceDto;
+
 import de.symeda.sormas.api.statistics.StatisticsAttribute;
 import de.symeda.sormas.api.statistics.StatisticsAttributeEnum;
 import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseAttribute;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseAttributeEnum;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseSubAttribute;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseSubAttributeEnum;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
+import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
+import de.symeda.sormas.api.statistics.StatisticsHelper;
+import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 
 @SuppressWarnings("serial")
 public class StatisticsFilterValuesElement extends StatisticsFilterElement {
 
-	private final StatisticsAttribute attribute;
-	private final StatisticsSubAttribute subAttribute;
+	private final StatisticsCaseAttributeEnum attribute;
+	private final StatisticsCaseSubAttributeEnum subAttribute;
 
 	private Registration valueChangeListenerRegistration;
 	private ExtTokenField tokenField;
@@ -57,18 +70,22 @@ public class StatisticsFilterValuesElement extends StatisticsFilterElement {
 	/**
 	 * Only needed when this element is part of a Region/District element.
 	 */
-	private StatisticsFilterRegionDistrictElement regionDistrictElement;
+	private StatisticsFilterJurisdictionElement jurisdictionElement;
 
-	public StatisticsFilterValuesElement(String caption, StatisticsAttribute attribute, StatisticsSubAttribute subAttribute) {
+	private StatisticsFilterResidenceElement residenceElement;
+
+	public StatisticsFilterValuesElement(String caption, StatisticsCaseAttributeEnum selectedAttribute, StatisticsCaseSubAttributeEnum subAttribute, int rowIndex) {
+
+	//public StatisticsFilterValuesElement(String caption, StatisticsAttribute attribute, StatisticsSubAttribute subAttribute) {
 		setSpacing(true);
 		addStyleName(CssStyles.LAYOUT_MINIMAL);
 		setWidth(100, Unit.PERCENTAGE);
 
-		this.attribute = attribute;
+		this.attribute = selectedAttribute;
 		this.subAttribute = subAttribute;
 
-		ExtTokenField tokenField = createTokenField(caption);
-		VerticalLayout utilityButtonsLayout = createUtilityButtonsLayout();
+		ExtTokenField tokenField = createTokenField(caption, rowIndex);
+		VerticalLayout utilityButtonsLayout = createUtilityButtonsLayout(rowIndex);
 		addComponent(tokenField);
 		addComponent(utilityButtonsLayout);
 		setExpandRatio(tokenField, 1);
@@ -76,22 +93,67 @@ public class StatisticsFilterValuesElement extends StatisticsFilterElement {
 		setComponentAlignment(utilityButtonsLayout, Alignment.MIDDLE_RIGHT);
 	}
 
-	public StatisticsFilterValuesElement(String caption, StatisticsAttribute attribute, StatisticsSubAttribute subAttribute, StatisticsFilterRegionDistrictElement regionDistrictElement) {
-		this(caption, attribute, subAttribute);
-		this.regionDistrictElement = regionDistrictElement;
+	// public StatisticsFilterValuesElement(String caption, StatisticsAttribute attribute, StatisticsSubAttribute subAttribute, StatisticsFilterRegionDistrictElement regionDistrictElement) {
+	// 	this(caption, attribute, subAttribute);
+	// 	this.regionDistrictElement = regionDistrictElement;
+	public StatisticsFilterValuesElement(
+		String caption,
+		StatisticsCaseAttributeEnum attribute,
+		StatisticsCaseSubAttributeEnum subAttribute,
+		StatisticsFilterJurisdictionElement jurisdictionElement,
+		int rowIndex) {
+		this(caption, attribute, subAttribute, rowIndex);
+		this.jurisdictionElement = jurisdictionElement;
+	}
+
+	public StatisticsFilterValuesElement(
+		String caption,
+		StatisticsCaseAttributeEnum attribute,
+		StatisticsCaseSubAttributeEnum subAttribute,
+		StatisticsFilterResidenceElement residenceElement,
+		int rowIndex) {
+		this(caption, attribute, subAttribute, rowIndex);
+		this.residenceElement = residenceElement;
+	}
+
+	public StatisticsFilterValuesElement(String prefixCaption,
+			StatisticsCaseAttributeEnum attribute2,
+			StatisticsCaseSubAttributeEnum subAttribute2
+			
+) {
+				this.attribute = attribute2;
+				this.subAttribute = subAttribute2;
+	}
+
+	public StatisticsFilterValuesElement(String prefixCaption, StatisticsCaseAttribute statisticsCaseAttribute,
+			StatisticsCaseSubAttribute statisticsCaseSubAttribute) {
+				this.attribute = null;
+				this.subAttribute = null;
+		// TODO Auto-generated constructor stub
+	}
+
+	public StatisticsFilterValuesElement(String prefixCaption, StatisticsCaseAttribute statisticsCaseAttribute,
+			StatisticsCaseSubAttributeEnum subAttribute2) {
+				this.attribute = null;
+				this.subAttribute = null;
+		// TODO Auto-generated constructor stub
 	}
 
 	public void updateDropdownContent() {
 		addDropdown.setItems(getFilterValues());
 	}
 
-	private ExtTokenField createTokenField(String caption) {
+	private ExtTokenField createTokenField(String caption, int rowIndex) {
+
 		tokenField = new ExtTokenField();
+		tokenField.setId("tokens-" + rowIndex);
 		tokenField.setCaption(caption);
 		tokenField.setWidth(100, Unit.PERCENTAGE);
 		tokenField.setEnableDefaultDeleteTokenAction(true);
 
 		addDropdown = new ComboBox<TokenizableValue>("", getFilterValues());
+		addDropdown.setWidth(200, Unit.PIXELS);
+		addDropdown.setId("select-" + rowIndex);
 		addDropdown.addStyleName(CssStyles.VSPACE_NONE);
 		addDropdown.setPlaceholder(I18nProperties.getString(Strings.promptTypeToAdd));
 		tokenField.setInputField(addDropdown);
@@ -106,27 +168,30 @@ public class StatisticsFilterValuesElement extends StatisticsFilterElement {
 		return tokenField;
 	}
 
-	private VerticalLayout createUtilityButtonsLayout() {
+	protected VerticalLayout createUtilityButtonsLayout(int rowIndex) {
+
 		VerticalLayout utilityButtonsLayout = new VerticalLayout();
 		utilityButtonsLayout.setMargin(false);
 		utilityButtonsLayout.setSpacing(false);
 		utilityButtonsLayout.setSizeUndefined();
 
-		Button addAllButton = new Button(I18nProperties.getCaption(Captions.all), VaadinIcons.PLUS_CIRCLE);
-		CssStyles.style(addAllButton, ValoTheme.BUTTON_LINK);
-		addAllButton.addClickListener(e -> {
-			for (TokenizableValue tokenizable : getFilterValues()) {
-				tokenField.addTokenizable(tokenizable);
-			}
-		});
+		Button addAllButton = ButtonHelper
+			.createIconButtonWithCaption(Captions.all + "-" + rowIndex, I18nProperties.getCaption(Captions.all), VaadinIcons.PLUS_CIRCLE, e -> {
+				for (TokenizableValue tokenizable : getFilterValues()) {
+					tokenField.addTokenizable(tokenizable);
+				}
+			}, ValoTheme.BUTTON_LINK);
 
-		Button removeAllButton = new Button(I18nProperties.getCaption(Captions.actionClear), VaadinIcons.CLOSE_CIRCLE);
-		CssStyles.style(removeAllButton, ValoTheme.BUTTON_LINK);
-		removeAllButton.addClickListener(e -> {
-			for (Tokenizable tokenizable : tokenField.getValue()) {
-				tokenField.removeTokenizable(tokenizable);
-			}
-		});
+		Button removeAllButton = ButtonHelper.createIconButtonWithCaption(
+			Captions.actionClear + "-" + rowIndex,
+			I18nProperties.getCaption(Captions.actionClear),
+			VaadinIcons.CLOSE_CIRCLE,
+			e -> {
+				for (Tokenizable tokenizable : tokenField.getValue()) {
+					tokenField.removeTokenizable(tokenizable);
+				}
+			},
+			ValoTheme.BUTTON_LINK);
 
 		utilityButtonsLayout.addComponent(addAllButton);
 		utilityButtonsLayout.addComponent(removeAllButton);
@@ -135,41 +200,163 @@ public class StatisticsFilterValuesElement extends StatisticsFilterElement {
 	}
 
 	private List<TokenizableValue> getFilterValues() {
+
 		if (subAttribute != null) {
-			switch (StatisticsSubAttribute.getBaseEnum(subAttribute)) {
-				case REGION:
-					return createTokens(FacadeProvider.getRegionFacade().getAllActiveAsReference());
-				case DISTRICT:
-					if (regionDistrictElement == null) {
-						return createTokens(FacadeProvider.getDistrictFacade().getAllActiveAsReference());
-					}
+		// 	switch (StatisticsSubAttribute.getBaseEnum(subAttribute)) {
+		// 		case REGION:
+		// 			return createTokens(FacadeProvider.getRegionFacade().getAllActiveAsReference());
+		// 		case DISTRICT:
+		// 			if (regionDistrictElement == null) {
+		// 				return createTokens(FacadeProvider.getDistrictFacade().getAllActiveAsReference());
+		// 			}
 					
-					List<TokenizableValue> selectedRegionTokenizables = regionDistrictElement.getSelectedRegions();
-					if (CollectionUtils.isNotEmpty(selectedRegionTokenizables)) {
-						List<DistrictReferenceDto> districts = new ArrayList<>();
-						for (TokenizableValue selectedRegionTokenizable : selectedRegionTokenizables) {
-							RegionReferenceDto selectedRegion = (RegionReferenceDto) selectedRegionTokenizable.getValue();
-							districts.addAll(FacadeProvider.getDistrictFacade().getAllActiveByRegion(selectedRegion.getUuid()));
-						}
-						return createTokens(districts);
-					} else {
-						return createTokens(FacadeProvider.getDistrictFacade().getAllActiveAsReference());
+		// 			List<TokenizableValue> selectedRegionTokenizables = regionDistrictElement.getSelectedRegions();
+		// 			if (CollectionUtils.isNotEmpty(selectedRegionTokenizables)) {
+		// 				List<DistrictReferenceDto> districts = new ArrayList<>();
+		// 				for (TokenizableValue selectedRegionTokenizable : selectedRegionTokenizables) {
+		// 					RegionReferenceDto selectedRegion = (RegionReferenceDto) selectedRegionTokenizable.getValue();
+		// 					districts.addAll(FacadeProvider.getDistrictFacade().getAllActiveByRegion(selectedRegion.getUuid()));
+		// 				}
+		// 				return createTokens(districts);
+		// 			} else {
+		// 				return createTokens(FacadeProvider.getDistrictFacade().getAllActiveAsReference());
+		// 			}
+		// 		default:
+		// 			return createTokens(subAttribute.getValues(attribute));
+		// 	}
+		// }
+		// else {
+		// 	List<TokenizableValue> tokens = createTokens(attribute.getValues());
+			
+		// 	if (attribute.getBaseEnum() == StatisticsAttributeEnum.SEX)
+		// 		tokens.add(new TokenizableValue(I18nProperties.getCaption(Captions.unknown), tokens.size()));
+			
+		// 	return tokens;
+			switch (subAttribute) {
+			case YEAR:
+			case QUARTER:
+			case MONTH:
+			case EPI_WEEK:
+			case QUARTER_OF_YEAR:
+			case MONTH_OF_YEAR:
+			case EPI_WEEK_OF_YEAR:
+				List<StatisticsGroupingKey> dateValues =
+					StatisticsHelper.getTimeGroupingKeys(attribute, subAttribute, FacadeProvider.getCaseFacade());
+				return createTokens(dateValues);
+			case REGION:
+				return createTokens(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
+			case DISTRICT:
+				if (jurisdictionElement == null) {
+					return createTokens(FacadeProvider.getDistrictFacade().getAllActiveAsReference());
+				}
+				return createDistrictTokens(jurisdictionElement.getSelectedRegions());
+			case COMMUNITY:
+				if (jurisdictionElement == null) {
+					return new ArrayList<>();
+				}
+				return createCommunityTokens(jurisdictionElement.getSelectedDistricts());
+			case FACILITY:
+				if (jurisdictionElement == null) {
+					return new ArrayList<>();
+				}
+
+				List<TokenizableValue> selectedDistrictTokenizables = jurisdictionElement.getSelectedDistricts();
+				List<TokenizableValue> selectedCommunityTokenizables = jurisdictionElement.getSelectedCommunities();
+				if (CollectionUtils.isNotEmpty(selectedCommunityTokenizables)) {
+					List<FacilityReferenceDto> facilities = new ArrayList<>();
+					for (TokenizableValue selectedCommunityTokenizable : selectedCommunityTokenizables) {
+						CommunityReferenceDto selectedCommunity = (CommunityReferenceDto) selectedCommunityTokenizable.getValue();
+						facilities.addAll(
+							FacadeProvider.getFacilityFacade()
+								.getActiveFacilitiesByCommunityAndType(selectedCommunity, jurisdictionElement.getFacilityType(), false, false));
 					}
-				default:
-					return createTokens(subAttribute.getValues(attribute));
+					return createTokens(facilities);
+				} else if (CollectionUtils.isNotEmpty(selectedDistrictTokenizables)) {
+					List<FacilityReferenceDto> facilities = new ArrayList<>();
+					for (TokenizableValue selectedDistrictTokenizable : selectedDistrictTokenizables) {
+						DistrictReferenceDto selectedDistrict = (DistrictReferenceDto) selectedDistrictTokenizable.getValue();
+						facilities.addAll(
+							FacadeProvider.getFacilityFacade()
+								.getActiveFacilitiesByDistrictAndType(selectedDistrict, jurisdictionElement.getFacilityType(), false, false));
+					}
+					return createTokens(facilities);
+				} else {
+					return new ArrayList<>();
+				}
+			case PERSON_REGION:
+				return createTokens(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
+			case PERSON_DISTRICT:
+				if (residenceElement == null) {
+					return createTokens(FacadeProvider.getDistrictFacade().getAllActiveAsReference());
+				}
+				return createDistrictTokens(residenceElement.getSelectedRegions());
+			case PERSON_COMMUNITY:
+				if (residenceElement == null) {
+					return new ArrayList<>();
+				}
+				return createCommunityTokens(residenceElement.getSelectedDistricts());
+			case PERSON_CITY:
+			case PERSON_POSTCODE:
+				return new ArrayList<>();
+			default:
+				throw new IllegalArgumentException(this.toString());
+			}
+		} else {
+			switch (attribute) {
+			case SEX:
+				List<TokenizableValue> tokens = createTokens(Sex.values());
+				tokens.add(new TokenizableValue(I18nProperties.getCaption(Captions.notSpecified), tokens.size()));
+				return tokens;
+			case AGE_INTERVAL_1_YEAR:
+			case AGE_INTERVAL_5_YEARS:
+			case AGE_INTERVAL_CHILDREN_COARSE:
+			case AGE_INTERVAL_CHILDREN_FINE:
+			case AGE_INTERVAL_CHILDREN_MEDIUM:
+			case AGE_INTERVAL_BASIC:
+				List<StatisticsGroupingKey> ageIntervalValues = StatisticsHelper.getAgeIntervalGroupingKeys(attribute);
+				return createTokens(ageIntervalValues);
+			case DISEASE:
+				return createTokens(FacadeProvider.getDiseaseConfigurationFacade().getAllDiseases(true, true, true));
+			case CLASSIFICATION:
+				return createTokens(CaseClassification.values());
+			case OUTCOME:
+				return createTokens(CaseOutcome.values());
+			case REPORTING_USER_ROLE:
+				return createTokens(FacadeProvider.getUserRoleFacade().getAllAsReference());
+			default:
+				throw new IllegalArgumentException(this.toString());
 			}
 		}
-		else {
-			List<TokenizableValue> tokens = createTokens(attribute.getValues());
-			
-			if (attribute.getBaseEnum() == StatisticsAttributeEnum.SEX)
-				tokens.add(new TokenizableValue(I18nProperties.getCaption(Captions.unknown), tokens.size()));
-			
-			return tokens;
+	}
+
+	private List<TokenizableValue> createCommunityTokens(List<TokenizableValue> selectedDistrictTokenizables) {
+		if (CollectionUtils.isNotEmpty(selectedDistrictTokenizables)) {
+			List<CommunityReferenceDto> communities = new ArrayList<>();
+			for (TokenizableValue selectedDistrictTokenizable : selectedDistrictTokenizables) {
+				DistrictReferenceDto selectedDistrict = (DistrictReferenceDto) selectedDistrictTokenizable.getValue();
+				communities.addAll(FacadeProvider.getCommunityFacade().getAllActiveByDistrict(selectedDistrict.getUuid()));
+			}
+			return createTokens(communities);
+		} else {
+			return new ArrayList<>();
+		}
+	}
+
+	private List<TokenizableValue> createDistrictTokens(List<TokenizableValue> selectedResidenceRegionTokenizables) {
+		if (CollectionUtils.isNotEmpty(selectedResidenceRegionTokenizables)) {
+			List<DistrictReferenceDto> districts = new ArrayList<>();
+			for (TokenizableValue selectedRegionTokenizable : selectedResidenceRegionTokenizables) {
+				RegionReferenceDto selectedRegion = (RegionReferenceDto) selectedRegionTokenizable.getValue();
+				districts.addAll(FacadeProvider.getDistrictFacade().getAllActiveByRegion(selectedRegion.getUuid()));
+			}
+			return createTokens(districts);
+		} else {
+			return createTokens(FacadeProvider.getDistrictFacade().getAllActiveAsReference());
 		}
 	}
 
 	public void setValueChangeListener(ValueChangeListener<List<Tokenizable>> valueChangeListener) {
+
 		if (valueChangeListenerRegistration != null) {
 			valueChangeListenerRegistration.remove();
 			valueChangeListenerRegistration = null;
@@ -183,11 +370,10 @@ public class StatisticsFilterValuesElement extends StatisticsFilterElement {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<TokenizableValue> getSelectedValues() {
-		return (List<TokenizableValue>)(List<? extends Tokenizable>)tokenField.getValue();
+		return (List<TokenizableValue>) (List<? extends Tokenizable>) tokenField.getValue();
 	}
 
 	public ExtTokenField getTokenField() {
 		return tokenField;
 	}
-	
 }

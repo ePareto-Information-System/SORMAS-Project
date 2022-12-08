@@ -9,32 +9,36 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.statistics;
 
+import de.symeda.sormas.api.ConfigFacade;
+import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.feature.FeatureConfigurationDto;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FileDownloader;
-import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.v7.ui.CheckBox;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.ui.CheckBox;
 
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -42,6 +46,7 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.importexport.DatabaseTable;
 import de.symeda.sormas.api.importexport.DatabaseTableType;
 import de.symeda.sormas.api.utils.DateHelper;
+import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.DownloadUtil;
 
@@ -55,6 +60,7 @@ public class DatabaseExportView extends AbstractStatisticsView {
 	private Map<CheckBox, DatabaseTable> databaseTableToggles;
 
 	public DatabaseExportView() {
+
 		super(VIEW_NAME);
 
 		databaseTableToggles = new HashMap<>();
@@ -70,11 +76,14 @@ public class DatabaseExportView extends AbstractStatisticsView {
 		headerLayout.addComponent(createSelectionButtonsLayout());
 		databaseExportLayout.addComponent(headerLayout);
 		databaseExportLayout.addComponent(createDatabaseTablesLayout());
-		Button exportButton = new Button(I18nProperties.getCaption(Captions.export), VaadinIcons.DOWNLOAD);
-		CssStyles.style(exportButton, ValoTheme.BUTTON_PRIMARY);
-		StreamResource streamResource = DownloadUtil.createDatabaseExportStreamResource(this, "sormas_export_" + DateHelper.formatDateForExport(new Date()) + ".zip", "application/zip");
+
+		Button exportButton = ButtonHelper.createIconButton(Captions.export, VaadinIcons.DOWNLOAD, null, ValoTheme.BUTTON_PRIMARY);
+
+		StreamResource streamResource = DownloadUtil
+			.createDatabaseExportStreamResource(this, "sormas_export_" + DateHelper.formatDateForExport(new Date()) + ".zip", "application/zip");
 		FileDownloader fileDownloader = new FileDownloader(streamResource);
 		fileDownloader.extend(exportButton);
+
 		databaseExportLayout.addComponent(exportButton);
 		databaseExportLayout.setMargin(true);
 		databaseExportLayout.setSpacing(true);
@@ -83,27 +92,27 @@ public class DatabaseExportView extends AbstractStatisticsView {
 	}
 
 	public void showExportErrorNotification() {
-		new Notification(I18nProperties.getString(Strings.headingDatabaseExportFailed), 
-				I18nProperties.getString(Strings.messageDatabaseExportFailed), Type.ERROR_MESSAGE, false).show(Page.getCurrent());
+		new Notification(
+			I18nProperties.getString(Strings.headingDatabaseExportFailed),
+			I18nProperties.getString(Strings.messageDatabaseExportFailed),
+			Type.ERROR_MESSAGE,
+			false).show(Page.getCurrent());
 	}
-	
+
 	private HorizontalLayout createSelectionButtonsLayout() {
 		HorizontalLayout selectionButtonsLayout = new HorizontalLayout();
 		selectionButtonsLayout.setMargin(false);
 		selectionButtonsLayout.setSpacing(true);
-		
-		Button selectAll = new Button(I18nProperties.getCaption(Captions.actionSelectAll));
-		CssStyles.style(selectAll, ValoTheme.BUTTON_LINK);
-		selectAll.addClickListener(e -> {
+
+		Button selectAll = ButtonHelper.createButton(Captions.actionSelectAll, e -> {
 			for (CheckBox checkBox : databaseTableToggles.keySet()) {
 				checkBox.setValue(true);
 			}
-		});
+		}, ValoTheme.BUTTON_LINK);
+
 		selectionButtonsLayout.addComponent(selectAll);
-		
-		Button selectAllSormasData = new Button(I18nProperties.getCaption(Captions.exportSelectSormasData));
-		CssStyles.style(selectAllSormasData, ValoTheme.BUTTON_LINK);
-		selectAllSormasData.addClickListener(e -> {
+
+		Button selectAllSormasData = ButtonHelper.createButton(Captions.exportSelectSormasData, e -> {
 			for (CheckBox checkBox : databaseTableToggles.keySet()) {
 				if (databaseTableToggles.get(checkBox).getDatabaseTableType() == DatabaseTableType.SORMAS) {
 					checkBox.setValue(true);
@@ -111,18 +120,18 @@ public class DatabaseExportView extends AbstractStatisticsView {
 					checkBox.setValue(false);
 				}
 			}
-		});
+		}, ValoTheme.BUTTON_LINK);
+
 		selectionButtonsLayout.addComponent(selectAllSormasData);
-		
-		Button deselectAll = new Button (I18nProperties.getCaption(Captions.actionDeselectAll));
-		CssStyles.style(deselectAll, ValoTheme.BUTTON_LINK);
-		deselectAll.addClickListener(e -> {
+
+		Button deselectAll = ButtonHelper.createButton(Captions.actionDeselectAll, e -> {
 			for (CheckBox checkBox : databaseTableToggles.keySet()) {
 				checkBox.setValue(false);
 			}
-		});
+		}, ValoTheme.BUTTON_LINK);
+
 		selectionButtonsLayout.addComponent(deselectAll);
-		
+
 		return selectionButtonsLayout;
 	}
 
@@ -130,22 +139,43 @@ public class DatabaseExportView extends AbstractStatisticsView {
 		HorizontalLayout databaseTablesLayout = new HorizontalLayout();
 		databaseTablesLayout.setMargin(false);
 		databaseTablesLayout.setSpacing(true);
-		
+
 		VerticalLayout sormasDataLayout = new VerticalLayout();
 		sormasDataLayout.setMargin(false);
 		sormasDataLayout.setSpacing(false);
 		Label sormasDataHeadline = new Label(I18nProperties.getCaption(Captions.exportSormasData));
 		CssStyles.style(sormasDataHeadline, CssStyles.H4);
 		sormasDataLayout.addComponent(sormasDataHeadline);
-		
+
 		VerticalLayout infrastructureDataLayout = new VerticalLayout();
 		infrastructureDataLayout.setMargin(false);
 		infrastructureDataLayout.setSpacing(false);
 		Label infrastructureDataHeadline = new Label(I18nProperties.getCaption(Captions.exportInfrastructureData));
 		CssStyles.style(infrastructureDataHeadline, CssStyles.H4);
 		infrastructureDataLayout.addComponent(infrastructureDataHeadline);
-		
+
+		VerticalLayout configurationDataLayout = new VerticalLayout();
+		configurationDataLayout.setMargin(false);
+		configurationDataLayout.setSpacing(false);
+		Label configurationDataHeadline = new Label(I18nProperties.getCaption(Captions.exportConfigurationData));
+		CssStyles.style(configurationDataHeadline, CssStyles.H4);
+		configurationDataLayout.addComponent(configurationDataHeadline);
+
+		VerticalLayout externalDataLayout = new VerticalLayout();
+		externalDataLayout.setMargin(false);
+		externalDataLayout.setSpacing(false);
+		Label externalDataHeadline = new Label(I18nProperties.getCaption(Captions.exportExternalData));
+		CssStyles.style(externalDataHeadline, CssStyles.H4);
+		externalDataLayout.addComponent(externalDataHeadline);
+
+		List<FeatureConfigurationDto> featureConfigurations = FacadeProvider.getFeatureConfigurationFacade().getActiveServerFeatureConfigurations();
+		ConfigFacade configFacade = FacadeProvider.getConfigFacade();
+
 		for (DatabaseTable databaseTable : DatabaseTable.values()) {
+			if(!databaseTable.isEnabled(featureConfigurations, configFacade)) {
+				continue;
+			}
+
 			CheckBox checkBox = new CheckBox(databaseTable.toString());
 			int indent = getIndent(databaseTable);
 			if (indent == 1) {
@@ -156,20 +186,35 @@ public class DatabaseExportView extends AbstractStatisticsView {
 				CssStyles.style(checkBox, CssStyles.INDENT_LEFT_3);
 			}
 
-			if (databaseTable.getDatabaseTableType() == DatabaseTableType.SORMAS) {
+			switch (databaseTable.getDatabaseTableType()) {
+			case SORMAS:
 				sormasDataLayout.addComponent(checkBox);
-			} else {
+				break;
+			case INFRASTRUCTURE:
 				infrastructureDataLayout.addComponent(checkBox);
+				break;
+			case CONFIGURATION:
+				configurationDataLayout.addComponent(checkBox);
+				break;
+			case EXTERNAL:
+				externalDataLayout.addComponent(checkBox);
+				break;
+			default:
+				throw new IllegalArgumentException(databaseTable.getDatabaseTableType().toString());
 			}
+
 			databaseTableToggles.put(checkBox, databaseTable);
 		}
-		
+
 		databaseTablesLayout.addComponent(sormasDataLayout);
 		databaseTablesLayout.addComponent(infrastructureDataLayout);
+		databaseTablesLayout.addComponent(configurationDataLayout);
+		databaseTablesLayout.addComponent(externalDataLayout);
 		return databaseTablesLayout;
 	}
 
 	private int getIndent(DatabaseTable databaseTable) {
+
 		int indent = 0;
 		while (databaseTable.getParentTable() != null) {
 			indent++;
@@ -186,5 +231,4 @@ public class DatabaseExportView extends AbstractStatisticsView {
 	public Map<CheckBox, DatabaseTable> getDatabaseTableToggles() {
 		return databaseTableToggles;
 	}
-
 }

@@ -34,7 +34,7 @@ SET default_with_oids = false;
 
 --
 -- TOC entry 142 (class 1259 OID 341910)
--- Name: cases; Type: TABLE; Schema: public; Owner: sormas_user; Tablespace: 
+-- Name: cases; Type: TABLE; Schema: public; Owner: sormas_user; Tablespace:
 --
 
 CREATE TABLE cases (
@@ -70,7 +70,7 @@ ALTER TABLE cases OWNER TO sormas_user;
 
 --
 -- TOC entry 148 (class 1259 OID 341964)
--- Name: community; Type: TABLE; Schema: public; Owner: sormas_user; Tablespace: 
+-- Name: community; Type: TABLE; Schema: public; Owner: sormas_user; Tablespace:
 --
 
 CREATE TABLE community (
@@ -87,7 +87,7 @@ ALTER TABLE community OWNER TO sormas_user;
 
 --
 -- TOC entry 147 (class 1259 OID 341957)
--- Name: district; Type: TABLE; Schema: public; Owner: sormas_user; Tablespace: 
+-- Name: district; Type: TABLE; Schema: public; Owner: sormas_user; Tablespace:
 --
 
 CREATE TABLE district (
@@ -119,7 +119,7 @@ ALTER TABLE entity_seq OWNER TO sormas_user;
 
 --
 -- TOC entry 149 (class 1259 OID 341971)
--- Name: facility; Type: TABLE; Schema: public; Owner: sormas_user; Tablespace: 
+-- Name: facility; Type: TABLE; Schema: public; Owner: sormas_user; Tablespace:
 --
 
 CREATE TABLE facility (
@@ -138,7 +138,7 @@ ALTER TABLE facility OWNER TO sormas_user;
 
 --
 -- TOC entry 144 (class 1259 OID 341930)
--- Name: location; Type: TABLE; Schema: public; Owner: sormas_user; Tablespace: 
+-- Name: location; Type: TABLE; Schema: public; Owner: sormas_user; Tablespace:
 --
 
 CREATE TABLE location (
@@ -161,7 +161,7 @@ ALTER TABLE location OWNER TO sormas_user;
 
 --
 -- TOC entry 143 (class 1259 OID 341920)
--- Name: person; Type: TABLE; Schema: public; Owner: sormas_user; Tablespace: 
+-- Name: person; Type: TABLE; Schema: public; Owner: sormas_user; Tablespace:
 --
 
 CREATE TABLE person (
@@ -194,7 +194,7 @@ ALTER TABLE person OWNER TO sormas_user;
 
 --
 -- TOC entry 146 (class 1259 OID 341950)
--- Name: region; Type: TABLE; Schema: public; Owner: sormas_user; Tablespace: 
+-- Name: region; Type: TABLE; Schema: public; Owner: sormas_user; Tablespace:
 --
 
 CREATE TABLE region (
@@ -210,7 +210,7 @@ ALTER TABLE region OWNER TO sormas_user;
 
 --
 -- TOC entry 150 (class 1259 OID 341981)
--- Name: userroles; Type: TABLE; Schema: public; Owner: sormas_user; Tablespace: 
+-- Name: userroles; Type: TABLE; Schema: public; Owner: sormas_user; Tablespace:
 --
 
 CREATE TABLE userroles (
@@ -223,7 +223,7 @@ ALTER TABLE userroles OWNER TO sormas_user;
 
 --
 -- TOC entry 145 (class 1259 OID 341940)
--- Name: users; Type: TABLE; Schema: public; Owner: sormas_user; Tablespace: 
+-- Name: users; Type: TABLE; Schema: public; Owner: sormas_user; Tablespace:
 --
 
 CREATE TABLE users (
@@ -249,7 +249,7 @@ ALTER TABLE users OWNER TO sormas_user;
 
 --
 -- TOC entry 1732 (class 2606 OID 341917)
--- Name: cases_pkey; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace: 
+-- Name: cases_pkey; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace:
 --
 
 ALTER TABLE ONLY cases
@@ -258,7 +258,7 @@ ALTER TABLE ONLY cases
 
 --
 -- TOC entry 1734 (class 2606 OID 341919)
--- Name: cases_uuid_key; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace: 
+-- Name: cases_uuid_key; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace:
 --
 
 ALTER TABLE ONLY cases
@@ -267,7 +267,7 @@ ALTER TABLE ONLY cases
 
 --
 -- TOC entry 1756 (class 2606 OID 341968)
--- Name: community_pkey; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace: 
+-- Name: community_pkey; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace:
 --
 
 ALTER TABLE ONLY community
@@ -276,7 +276,7 @@ ALTER TABLE ONLY community
 
 --
 -- TOC entry 1758 (class 2606 OID 341970)
--- Name: community_uuid_key; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace: 
+-- Name: community_uuid_key; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace:
 --
 
 ALTER TABLE ONLY community
@@ -285,7 +285,7 @@ ALTER TABLE ONLY community
 
 --
 -- TOC entry 1752 (class 2606 OID 341961)
--- Name: district_pkey; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace: 
+-- Name: district_pkey; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace:
 --
 
 ALTER TABLE ONLY district
@@ -294,7 +294,7 @@ ALTER TABLE ONLY district
 
 --
 -- TOC entry 1754 (class 2606 OID 341963)
--- Name: district_uuid_key; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace: 
+-- Name: district_uuid_key; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace:
 --
 
 ALTER TABLE ONLY district
@@ -303,7 +303,7 @@ ALTER TABLE ONLY district
 
 --
 -- TOC entry 1760 (class 2606 OID 341978)
--- Name: facility_pkey; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace: 
+-- Name: facility_pkey; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace:
 --
 
 ALTER TABLE ONLY facility
@@ -312,7 +312,7 @@ ALTER TABLE ONLY facility
 
 --
 -- TOC entry 1762 (class 2606 OID 341980)
--- Name: facility_uuid_key; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace: 
+-- Name: facility_uuid_key; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace:
 --
 
 ALTER TABLE ONLY facility
@@ -321,7 +321,7 @@ ALTER TABLE ONLY facility
 
 --
 -- TOC entry 1740 (class 2606 OID 341937)
--- Name: location_pkey; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace: 
+-- Name: location_pkey; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace:
 --
 
 ALTER TABLE ONLY location
@@ -330,7 +330,7 @@ ALTER TABLE ONLY location
 
 --
 -- TOC entry 1742 (class 2606 OID 341939)
--- Name: location_uuid_key; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace: 
+-- Name: location_uuid_key; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace:
 --
 
 ALTER TABLE ONLY location
@@ -339,7 +339,7 @@ ALTER TABLE ONLY location
 
 --
 -- TOC entry 1736 (class 2606 OID 341927)
--- Name: person_pkey; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace: 
+-- Name: person_pkey; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace:
 --
 
 ALTER TABLE ONLY person
@@ -348,7 +348,7 @@ ALTER TABLE ONLY person
 
 --
 -- TOC entry 1738 (class 2606 OID 341929)
--- Name: person_uuid_key; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace: 
+-- Name: person_uuid_key; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace:
 --
 
 ALTER TABLE ONLY person
@@ -357,7 +357,7 @@ ALTER TABLE ONLY person
 
 --
 -- TOC entry 1748 (class 2606 OID 341954)
--- Name: region_pkey; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace: 
+-- Name: region_pkey; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace:
 --
 
 ALTER TABLE ONLY region
@@ -366,7 +366,7 @@ ALTER TABLE ONLY region
 
 --
 -- TOC entry 1750 (class 2606 OID 341956)
--- Name: region_uuid_key; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace: 
+-- Name: region_uuid_key; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace:
 --
 
 ALTER TABLE ONLY region
@@ -375,7 +375,7 @@ ALTER TABLE ONLY region
 
 --
 -- TOC entry 1764 (class 2606 OID 341985)
--- Name: unq_userroles_0; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace: 
+-- Name: unq_userroles_0; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace:
 --
 
 ALTER TABLE ONLY userroles
@@ -384,7 +384,7 @@ ALTER TABLE ONLY userroles
 
 --
 -- TOC entry 1744 (class 2606 OID 341947)
--- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace: 
+-- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace:
 --
 
 ALTER TABLE ONLY users
@@ -393,7 +393,7 @@ ALTER TABLE ONLY users
 
 --
 -- TOC entry 1746 (class 2606 OID 341949)
--- Name: users_uuid_key; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace: 
+-- Name: users_uuid_key; Type: CONSTRAINT; Schema: public; Owner: sormas_user; Tablespace:
 --
 
 ALTER TABLE ONLY users
@@ -623,7 +623,7 @@ ALTER TABLE ONLY users
 --
 
 ALTER TABLE person ADD COLUMN phoneowner character varying(255);
-  
+
 INSERT INTO schema_version (version_number, comment) VALUES (1, 'Init database');
 
 
@@ -638,7 +638,7 @@ INSERT INTO schema_version (version_number, comment) VALUES (2, 'Split person bi
 
 -- 2016-10-04; #58
 CREATE TABLE symptoms (
-id bigint not null, 
+id bigint not null,
 abdominalpain varchar(255),
 anorexiaappetiteloss varchar(255),
 bleedingvagina varchar(255),
@@ -674,7 +674,7 @@ othernonhemorrhagic varchar(255),
 othernonhemorrhagicsymptoms varchar(255),
 petechiae varchar(255),
 skinrash varchar(255),
-sorethroat varchar(255), 
+sorethroat varchar(255),
 onsetdate timestamp without time zone,
 temperature real,
 temperaturesource varchar(255),
@@ -696,20 +696,20 @@ INSERT INTO schema_version (version_number, comment) VALUES (3, 'Symptoms');
 
 CREATE TABLE task (
 id bigint not null,
-assigneereply varchar(512), 
-changedate timestamp not null, 
-creationdate timestamp not null, 
-creatorcomment varchar(512), 
-duedate timestamp, 
-perceivedstart timestamp, 
-statuschangedate timestamp, 
-taskcontext varchar(255), 
-taskstatus varchar(255), 
-tasktype varchar(255), 
-uuid varchar(36) not null unique, 
-assigneeuser_id bigint, 
-caze_id bigint, 
-creatoruser_id bigint, 
+assigneereply varchar(512),
+changedate timestamp not null,
+creationdate timestamp not null,
+creatorcomment varchar(512),
+duedate timestamp,
+perceivedstart timestamp,
+statuschangedate timestamp,
+taskcontext varchar(255),
+taskstatus varchar(255),
+tasktype varchar(255),
+uuid varchar(36) not null unique,
+assigneeuser_id bigint,
+caze_id bigint,
+creatoruser_id bigint,
 PRIMARY KEY (id));
 
 ALTER TABLE task OWNER TO sormas_user;
@@ -724,7 +724,7 @@ INSERT INTO schema_version (version_number, comment) VALUES (4, 'Task');
 
 ALTER TABLE task ADD COLUMN priority varchar(255);
 ALTER TABLE task ADD COLUMN suggestedstart timestamp;
-DELETE FROM task; 
+DELETE FROM task;
 
 INSERT INTO schema_version (version_number, comment) VALUES (5, 'Task priority & suggested start');
 
@@ -782,17 +782,17 @@ INSERT INTO schema_version (version_number, comment) VALUES (7, 'Case + User: re
 -- 2016-11-10; Contact #85
 
 CREATE TABLE contact (
-id bigint not null, 
-changedate timestamp not null, 
-contactproximity varchar(255), 
-contactstatus varchar(255), 
-creationdate timestamp not null, 
-lastcontactdate timestamp, 
-reportdatetime timestamp not null, 
-uuid varchar(36) not null unique, 
+id bigint not null,
+changedate timestamp not null,
+contactproximity varchar(255),
+contactstatus varchar(255),
+creationdate timestamp not null,
+lastcontactdate timestamp,
+reportdatetime timestamp not null,
+uuid varchar(36) not null unique,
 caze_id bigint not null,
-person_id bigint not null, 
-reportinguser_id bigint not null, 
+person_id bigint not null,
+reportinguser_id bigint not null,
 primary key (id));
 
 ALTER TABLE contact ADD CONSTRAINT fk_contact_person_id FOREIGN KEY (person_id) REFERENCES person (id);
@@ -807,7 +807,7 @@ INSERT INTO schema_version (version_number, comment) VALUES (8, 'Contact; Cases 
 -- 2016-11-15; Contact #85
 
 ALTER TABLE contact ADD COLUMN description varchar(512);
- 
+
 INSERT INTO schema_version (version_number, comment) VALUES (9, 'Contact.description');
 
 -- 2016-11-16; Contact #85
@@ -826,12 +826,12 @@ ALTER TABLE contact ADD COLUMN followupstatus varchar(255);
 ALTER TABLE contact ADD COLUMN followupuntil timestamp;
 
 CREATE TABLE visit (
-	id bigint not null, 
-	uuid varchar(36) not null unique, 
-	changedate timestamp not null, 
+	id bigint not null,
+	uuid varchar(36) not null unique,
+	changedate timestamp not null,
 	creationdate timestamp not null,
-	person_id bigint not null, 
-	visituser_id bigint not null, 
+	person_id bigint not null,
+	visituser_id bigint not null,
     visitremarks character varying(512),
     disease character varying(255),
 	visitdatetime timestamp not null,
@@ -1024,10 +1024,10 @@ CREATE TABLE sampletest(
 	testresulttext varchar(512) not null,
 	testresultverified boolean not null,
 	primary key(id));
-	
+
 ALTER TABLE samples OWNER TO sormas_user;
 ALTER TABLE sampletest OWNER TO sormas_user;
-	
+
 INSERT INTO schema_version (version_number, comment) VALUES (24, 'Sample and SampleTest backend');
 
 -- 2017-02-03 Foreign keys for samples and sampletests #106
@@ -1249,7 +1249,7 @@ INSERT INTO schema_version (version_number, comment) VALUES (36, 'Epidemiologica
 
 
 CREATE TEMP TABLE tmp_caseids AS SELECT cases.id AS caseid, nextval('entity_seq') AS epiid FROM cases WHERE cases.epidata_id IS NULL;
-INSERT INTO epidata (id, changedate, creationdate, uuid) 
+INSERT INTO epidata (id, changedate, creationdate, uuid)
 	SELECT epiid, now(), now(), uuid_in(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS cstring)) FROM tmp_caseids;
 UPDATE cases SET epidata_id = epiid FROM tmp_caseids t where cases.id = t.caseid;
 DROP TABLE tmp_caseids;
@@ -1520,7 +1520,6 @@ INSERT INTO schema_version (version_number, comment) VALUES (49, 'data history f
 ALTER TABLE cases ADD COLUMN healthfacilitydetails varchar(512);
 
 -- 2017-07-20 Database wipe for new infrastructure data #237
-BEGIN;
 DELETE FROM task;
 DELETE FROM sampletest;
 DELETE FROM samples;
@@ -1544,7 +1543,6 @@ DELETE FROM facility;
 DELETE FROM community;
 DELETE FROM district;
 DELETE FROM region;
-COMMIT;
 
 INSERT INTO schema_version (version_number, comment) VALUES (50, 'other health facility description for cases #238');
 
@@ -2062,9 +2060,9 @@ CREATE FUNCTION export_database(table_name text, path text, file_name text)
 	AS $BODY$
 		BEGIN
 			EXECUTE '
-				COPY (SELECT * FROM 
+				COPY (SELECT * FROM
 					' || quote_ident(table_name) || '
-				) TO 
+				) TO
 					' || quote_literal(path || file_name) || '
 				WITH (
 					FORMAT CSV, DELIMITER '';'', HEADER
@@ -2081,16 +2079,16 @@ CREATE FUNCTION export_database_join(table_name text, join_table_name text, colu
 	AS $BODY$
 		BEGIN
 			EXECUTE '
-				COPY (SELECT * FROM 
-					' || quote_ident(table_name) || ' 
-				INNER JOIN 
-					' || quote_ident(join_table_name) || ' 
-				ON 
-					' || column_name || ' 
-				= 
-					' || join_column_name || ' 
-				) TO 
-					' || quote_literal(path || file_name) || ' 
+				COPY (SELECT * FROM
+					' || quote_ident(table_name) || '
+				INNER JOIN
+					' || quote_ident(join_table_name) || '
+				ON
+					' || column_name || '
+				=
+					' || join_column_name || '
+				) TO
+					' || quote_literal(path || file_name) || '
 				WITH (
 					FORMAT CSV, DELIMITER '';'', HEADER
 				);
@@ -2112,7 +2110,7 @@ INSERT INTO schema_version (version_number, comment) VALUES (95, 'Resulting case
 
 CREATE OR REPLACE FUNCTION add_health_facility(_name character varying(512), _islaboratory boolean, _regionname character varying(512), _districtname character varying(512), _communityname character varying(512), _city character varying(512), _latitude double precision, _longitude double precision)
 RETURNS bigint AS $resultid$
-DECLARE 
+DECLARE
 	_type character varying(512);
 	_id bigint;
 	_uuid character varying(36);
@@ -2152,11 +2150,11 @@ BEGIN
 	IF ((SELECT facility.id FROM facility WHERE facility.name = _name AND facility.region_id = _region_id AND facility.district_id = _district_id) IS NOT NULL) THEN
 		RAISE EXCEPTION 'facility % allready exists in district', _name;
 	END IF;
-	
+
 	INSERT INTO facility(
-            id, changedate, creationdate, name, publicownership, type, uuid, 
+            id, changedate, creationdate, name, publicownership, type, uuid,
             region_id, district_id, community_id, city, latitude, longitude)
-	VALUES (_id, now(), now(), _name, FALSE, _type, _uuid, 
+	VALUES (_id, now(), now(), _name, FALSE, _type, _uuid,
             _region_id, _district_id, _community_id, _city, _latitude, _longitude);
 
         RETURN _id;
@@ -2189,9 +2187,9 @@ CREATE FUNCTION export_database(table_name text, file_path text)
 	AS $BODY$
 		BEGIN
 			EXECUTE '
-				COPY (SELECT * FROM 
+				COPY (SELECT * FROM
 					' || quote_ident(table_name) || '
-				) TO 
+				) TO
 					' || quote_literal(file_path) || '
 				WITH (
 					FORMAT CSV, DELIMITER '';'', HEADER
@@ -2208,16 +2206,16 @@ CREATE FUNCTION export_database_join(table_name text, join_table_name text, colu
 	AS $BODY$
 		BEGIN
 			EXECUTE '
-				COPY (SELECT * FROM 
-					' || quote_ident(table_name) || ' 
-				INNER JOIN 
-					' || quote_ident(join_table_name) || ' 
-				ON 
-					' || column_name || ' 
-				= 
-					' || join_column_name || ' 
-				) TO 
-					' || quote_literal(file_path) || ' 
+				COPY (SELECT * FROM
+					' || quote_ident(table_name) || '
+				INNER JOIN
+					' || quote_ident(join_table_name) || '
+				ON
+					' || column_name || '
+				=
+					' || join_column_name || '
+				) TO
+					' || quote_literal(file_path) || '
 				WITH (
 					FORMAT CSV, DELIMITER '';'', HEADER
 				);
@@ -2259,7 +2257,7 @@ INSERT INTO schema_version (version_number, comment) VALUES (102, 'Case age fiel
 -- week starts monday
 -- 1st of january is always in week 1
 CREATE OR REPLACE FUNCTION epi_week (indate timestamp)
-RETURNS integer AS 
+RETURNS integer AS
 $result$
 DECLARE year integer;
 	doy integer;
@@ -2288,7 +2286,7 @@ BEGIN
 	isodow_start := date_part('isodow', date (year || '-01-01'));
 	epi_week := ceil((doy + isodow_start - 1) / 7.0);
    END if;
-   
+
    RETURN epi_week;
 END;
 $result$
@@ -2296,7 +2294,7 @@ LANGUAGE plpgsql;
 
 -- see epi_week
 CREATE OR REPLACE FUNCTION epi_year (indate timestamp)
-RETURNS integer AS 
+RETURNS integer AS
 $result$
 DECLARE year integer;
 	doy integer;
@@ -2315,10 +2313,10 @@ BEGIN
    ELSE
 	epi_year := year;
    END if;
-   
+
    RETURN epi_year;
 END;
-$result$ 
+$result$
 LANGUAGE plpgsql;
 
 -- e.g. SELECT epi_week('2015-12-27'), epi_year('2015-12-27'); -- 52-2015
@@ -2670,7 +2668,7 @@ CREATE TABLE prescription(
 	dose varchar(512),
 	route varchar(255),
 	routedetails varchar(512),
-	additionalnotes varchar(512),	
+	additionalnotes varchar(512),
 	sys_period tstzrange not null,
 	primary key(id)
 );
@@ -2917,11 +2915,11 @@ CREATE TABLE additionaltest(
 	conjbilirubin integer,
 	wbccount integer,
 	platelets integer,
-	prothrombintime integer,	
-	othertestresults varchar(512), 
+	prothrombintime integer,
+	othertestresults varchar(512),
 	sys_period tstzrange not null,
 	primary key(id));
-	
+
 ALTER TABLE additionaltest OWNER TO sormas_user;
 ALTER TABLE additionaltest ADD CONSTRAINT fk_additionaltest_sample_id FOREIGN KEY (sample_id) REFERENCES samples (id);
 
@@ -3098,16 +3096,16 @@ CREATE FUNCTION export_database_join(table_name text, join_table_name text, colu
 			EXECUTE '
 				COPY (SELECT
 					' || quote_ident(table_name) || '
-				.* FROM 
-					' || quote_ident(table_name) || ' 
-				INNER JOIN 
-					' || quote_ident(join_table_name) || ' 
-				ON 
-					' || column_name || ' 
-				= 
-					' || join_column_name || ' 
-				) TO 
-					' || quote_literal(file_path) || ' 
+				.* FROM
+					' || quote_ident(table_name) || '
+				INNER JOIN
+					' || quote_ident(join_table_name) || '
+				ON
+					' || column_name || '
+				=
+					' || join_column_name || '
+				) TO
+					' || quote_literal(file_path) || '
 				WITH (
 					FORMAT CSV, DELIMITER '';'', HEADER
 				);
@@ -3145,7 +3143,7 @@ CREATE TABLE diseaseconfiguration(
 	followupduration integer,
 	sys_period tstzrange not null,
 	primary key(id));
-	
+
 ALTER TABLE diseaseconfiguration OWNER TO sormas_user;
 
 CREATE TABLE diseaseconfiguration_history (LIKE diseaseconfiguration);
@@ -3387,7 +3385,7 @@ CREATE TABLE pointofentry(
 	district_id bigint,
 	latitude double precision,
 	longitude double precision,
-	active boolean, 
+	active boolean,
 	primary key(id)
 );
 ALTER TABLE pointofentry OWNER TO sormas_user;
@@ -3510,9 +3508,9 @@ CREATE FUNCTION export_database(table_name text, file_path text)
 	AS $BODY$
 		BEGIN
 			EXECUTE '
-				COPY (SELECT * FROM 
+				COPY (SELECT * FROM
 					' || quote_ident(table_name) || '
-				) TO 
+				) TO
 					' || quote_literal(file_path) || '
 				WITH (
 					FORMAT CSV, DELIMITER '';'', HEADER
@@ -3530,16 +3528,16 @@ CREATE FUNCTION export_database_join(table_name text, join_table_name text, colu
 	AS $BODY$
 		BEGIN
 			EXECUTE '
-				COPY (SELECT * FROM 
-					' || quote_ident(table_name) || ' 
-				INNER JOIN 
-					' || quote_ident(join_table_name) || ' 
-				ON 
-					' || column_name || ' 
-				= 
-					' || join_column_name || ' 
-				) TO 
-					' || quote_literal(file_path) || ' 
+				COPY (SELECT * FROM
+					' || quote_ident(table_name) || '
+				INNER JOIN
+					' || quote_ident(join_table_name) || '
+				ON
+					' || column_name || '
+				=
+					' || join_column_name || '
+				) TO
+					' || quote_literal(file_path) || '
 				WITH (
 					FORMAT CSV, DELIMITER '';'', HEADER
 				);
@@ -4074,3 +4072,7596 @@ UPDATE contact SET contactage = p.approximateage FROM person p WHERE contact.per
 UPDATE contact SET contactage = 0 FROM person p WHERE contact.person_id = p.id AND p.approximateage IS NOT NULL AND p.approximateagetype = 'MONTHS';
 
 INSERT INTO schema_version (version_number, comment) VALUES (198, 'Contact age field #1281');
+-- 2020-04-15 Reworking of quarantine #1762
+
+-- 2020-04-29 #1891 keep the old quarantineto database colum
+-- UPDATE contact SET 	followupuntil = quarantineto WHERE quarantineto > followupuntil;
+-- ALTER TABLE contact DROP COLUMN quarantineto;
+-- ALTER TABLE contact_history DROP COLUMN quarantineto;
+
+ALTER TABLE contact ADD COLUMN quarantineordermeans varchar(255);
+ALTER TABLE contact_history ADD COLUMN quarantineordermeans varchar(255);
+
+ALTER TABLE contact ADD COLUMN quarantinehelpneeded varchar(512);
+ALTER TABLE contact_history ADD COLUMN quarantinehelpneeded varchar(512);
+
+INSERT INTO schema_version (version_number, comment) VALUES (199, 'Reworking of quarantine #1762');
+
+-- 2020-04-20 Add fields for intensive care unit to hospitalization #1830
+ALTER TABLE hospitalization ADD COLUMN intensivecareunit varchar(255);
+ALTER TABLE hospitalization_history ADD COLUMN intensivecareunit varchar(255);
+ALTER TABLE hospitalization ADD COLUMN intensivecareunitstart timestamp;
+ALTER TABLE hospitalization_history ADD COLUMN intensivecareunitstart timestamp;
+ALTER TABLE hospitalization ADD COLUMN intensivecareunitend timestamp;
+ALTER TABLE hospitalization_history ADD COLUMN intensivecareunitend timestamp;
+
+UPDATE hospitalization SET 	intensivecareunit = 'YES' WHERE accommodation = 'ICU';
+
+ALTER TABLE hospitalization DROP COLUMN accommodation;
+ALTER TABLE hospitalization_history DROP COLUMN accommodation;
+
+INSERT INTO schema_version (version_number, comment) VALUES (200, 'Add fields for intensive care unit to hospitalization #1830');
+
+-- 2020-04-22 Remove export functions which are now maintained within java code  #1830
+DROP FUNCTION export_database(text, text);
+DROP FUNCTION export_database_join(text, text, text, text, text);
+
+INSERT INTO schema_version (version_number, comment) VALUES (201, 'Remove export functions which are now maintained within java code #1830');
+
+-- 2020-04-23 Re-introduce quarantine end date #1891
+-- 2020-05-11 #1952: Was needed for #1891 to make sure existing SORMAS systems
+-- pre and schema version 198 were correctly updated. No removed due to incompatibility with PostgreSQL 9.5
+-- ALTER TABLE contact ADD COLUMN IF NOT EXISTS quarantineto timestamp;
+-- ALTER TABLE contact_history ADD COLUMN IF NOT EXISTS quarantineto timestamp;
+
+INSERT INTO schema_version (version_number, comment) VALUES (202, 'Re-introduce quarantine end date #1891');
+
+-- 2020-04-24 Additional quarantine fields #1906
+ALTER TABLE cases ADD COLUMN quarantinehelpneeded varchar(512);
+ALTER TABLE cases ADD COLUMN quarantineorderedverbally boolean;
+ALTER TABLE cases ADD COLUMN quarantineorderedofficialdocument boolean;
+ALTER TABLE cases ADD COLUMN quarantineorderedverballydate timestamp;
+ALTER TABLE cases ADD COLUMN quarantineorderedofficialdocumentdate timestamp;
+ALTER TABLE cases ADD COLUMN quarantinehomepossible varchar(255);
+ALTER TABLE cases ADD COLUMN quarantinehomepossiblecomment varchar(512);
+ALTER TABLE cases ADD COLUMN quarantinehomesupplyensured varchar(255);
+ALTER TABLE cases ADD COLUMN quarantinehomesupplyensuredcomment varchar(512);
+ALTER TABLE cases_history ADD COLUMN quarantinehelpneeded varchar(512);
+ALTER TABLE cases_history ADD COLUMN quarantineorderedverbally boolean;
+ALTER TABLE cases_history ADD COLUMN quarantineorderedofficialdocument boolean;
+ALTER TABLE cases_history ADD COLUMN quarantineorderedverballydate timestamp;
+ALTER TABLE cases_history ADD COLUMN quarantineorderedofficialdocumentdate timestamp;
+ALTER TABLE cases_history ADD COLUMN quarantinehomepossible varchar(255);
+ALTER TABLE cases_history ADD COLUMN quarantinehomepossiblecomment varchar(512);
+ALTER TABLE cases_history ADD COLUMN quarantinehomesupplyensured varchar(255);
+ALTER TABLE cases_history ADD COLUMN quarantinehomesupplyensuredcomment varchar(512);
+
+UPDATE cases SET quarantineorderedverbally = false;
+UPDATE cases SET quarantineorderedofficialdocument = false;
+
+ALTER TABLE contact ADD COLUMN quarantineorderedverbally boolean;
+ALTER TABLE contact ADD COLUMN quarantineorderedofficialdocument boolean;
+ALTER TABLE contact ADD COLUMN quarantineorderedverballydate timestamp;
+ALTER TABLE contact ADD COLUMN quarantineorderedofficialdocumentdate timestamp;
+ALTER TABLE contact ADD COLUMN quarantinehomepossible varchar(255);
+ALTER TABLE contact ADD COLUMN quarantinehomepossiblecomment varchar(512);
+ALTER TABLE contact ADD COLUMN quarantinehomesupplyensured varchar(255);
+ALTER TABLE contact ADD COLUMN quarantinehomesupplyensuredcomment varchar(512);
+ALTER TABLE contact_history ADD COLUMN quarantineorderedverbally boolean;
+ALTER TABLE contact_history ADD COLUMN quarantineorderedofficialdocument boolean;
+ALTER TABLE contact_history ADD COLUMN quarantineorderedverballydate timestamp;
+ALTER TABLE contact_history ADD COLUMN quarantineorderedofficialdocumentdate timestamp;
+ALTER TABLE contact_history ADD COLUMN quarantinehomepossible varchar(255);
+ALTER TABLE contact_history ADD COLUMN quarantinehomepossiblecomment varchar(512);
+ALTER TABLE contact_history ADD COLUMN quarantinehomesupplyensured varchar(255);
+ALTER TABLE contact_history ADD COLUMN quarantinehomesupplyensuredcomment varchar(512);
+
+UPDATE contact SET quarantineorderedverbally = CASE WHEN quarantineordermeans = 'VERBALLY' THEN true ELSE false END;
+UPDATE contact SET quarantineorderedofficialdocument = CASE WHEN quarantineordermeans = 'OFFICIAL_DOCUMENT' THEN true ELSE false END;
+
+ALTER TABLE contact DROP COLUMN quarantineordermeans;
+ALTER TABLE contact_history DROP COLUMN quarantineordermeans;
+
+INSERT INTO schema_version (version_number, comment) VALUES (203, 'Additional quarantine fields #1906');
+
+-- 2020-04-24 Add type of reporting to cases #1833
+ALTER TABLE cases ADD COLUMN reportingtype varchar(255);
+ALTER TABLE cases_history ADD COLUMN reportingtype varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (204, 'Add type of reporting to cases #1833');
+
+-- 2020-04-26 Add fieldSampleID to sample #1863
+ALTER TABLE samples ADD COLUMN fieldsampleid varchar(512);
+ALTER TABLE samples_history ADD COLUMN fieldsampleid varchar(512);
+
+INSERT INTO schema_version (version_number, comment) VALUES (205, 'Add fieldSampleID to sample #1863');
+
+-- 2020-04-29 Added symptoms loss of taste and loss of smell #1936
+ALTER TABLE symptoms ADD COLUMN lossoftaste varchar(255);
+ALTER TABLE symptoms ADD COLUMN lossofsmell varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN lossoftaste varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN lossofsmell varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (206, 'Added symptoms loss of taste and loss of smell #1936');
+
+-- 2020-05-05 Add new symptoms and health conditions #1824
+ALTER TABLE symptoms ADD COLUMN coughWithSputum varchar(255);
+ALTER TABLE symptoms ADD COLUMN coughWithHeamoptysis varchar(255);
+ALTER TABLE symptoms ADD COLUMN lymphadenopathy varchar(255);
+ALTER TABLE symptoms ADD COLUMN wheezing varchar(255);
+ALTER TABLE symptoms ADD COLUMN skinUlcers varchar(255);
+ALTER TABLE symptoms ADD COLUMN inabilityToWalk varchar(255);
+ALTER TABLE symptoms ADD COLUMN inDrawingOfChestWall varchar(255);
+ALTER TABLE symptoms ADD COLUMN otherComplications varchar(255);
+ALTER TABLE symptoms ADD COLUMN otherComplicationsText varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN coughWithSputum varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN coughWithHeamoptysis varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN lymphadenopathy varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN wheezing varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN skinUlcers varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN inabilityToWalk varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN inDrawingOfChestWall varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN otherComplications varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN otherComplicationsText varchar(255);
+
+ALTER TABLE healthconditions ADD COLUMN obesity varchar(255);
+ALTER TABLE healthconditions ADD COLUMN currentSmoker varchar(255);
+ALTER TABLE healthconditions ADD COLUMN formerSmoker varchar(255);
+ALTER TABLE healthconditions ADD COLUMN asthma varchar(255);
+ALTER TABLE healthconditions ADD COLUMN sickleCellDisease varchar(255);
+ALTER TABLE healthconditions_history ADD COLUMN obesity varchar(255);
+ALTER TABLE healthconditions_history ADD COLUMN currentSmoker varchar(255);
+ALTER TABLE healthconditions_history ADD COLUMN formerSmoker varchar(255);
+ALTER TABLE healthconditions_history ADD COLUMN asthma varchar(255);
+ALTER TABLE healthconditions_history ADD COLUMN sickleCellDisease varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (207, 'Add new symptoms and health conditions #1824');
+
+-- 2020-05-05 Added table for contact-visit association #1329
+CREATE TABLE contacts_visits(
+	contact_id bigint NOT NULL,
+	visit_id bigint NOT NULL,
+	sys_period tstzrange NOT NULL
+);
+
+ALTER TABLE contacts_visits OWNER TO sormas_user;
+ALTER TABLE ONLY contacts_visits ADD CONSTRAINT unq_contacts_visits_0 UNIQUE (contact_id, visit_id);
+ALTER TABLE ONLY contacts_visits ADD CONSTRAINT fk_contacts_visits_contact_id FOREIGN KEY (contact_id) REFERENCES contact(id);
+ALTER TABLE ONLY contacts_visits ADD CONSTRAINT fk_contacts_visits_visit_id FOREIGN KEY (visit_id) REFERENCES visit(id);
+
+CREATE TABLE contacts_visits_history (LIKE contacts_visits);
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON contacts_visits
+FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'contacts_visits_history', true);
+ALTER TABLE contacts_visits_history OWNER TO sormas_user;
+
+WITH ids AS
+(SELECT c.id AS contact_id, v.id AS visit_id FROM contact c, visit v WHERE c.person_id = v.person_id AND c.disease = v.disease AND
+CASE
+WHEN c.lastcontactdate IS NOT NULL THEN v.visitdatetime >= (c.lastcontactdate - interval '30' day)
+ELSE v.visitdatetime >= (c.reportdatetime - interval '30' day)
+END
+AND
+CASE
+WHEN c.followupuntil IS NOT NULL THEN v.visitdatetime <= (c.followupuntil + interval '30' day)
+WHEN c.lastcontactdate IS NOT NULL THEN v.visitdatetime <= (c.lastcontactdate + interval '30' day)
+ELSE v.visitdatetime <= (c.reportdatetime + interval '30' day)
+END)
+INSERT INTO contacts_visits (contact_id, visit_id) SELECT contact_id, visit_id FROM ids;
+
+INSERT INTO schema_version (version_number, comment) VALUES (208, 'Added table for contact-visit association #1329');
+
+-- 2020-05-11 Add additionalDetails to contact #1933
+ALTER TABLE contact ADD COLUMN additionaldetails varchar(512);
+ALTER TABLE contact_history ADD COLUMN additionaldetails varchar(512);
+
+INSERT INTO schema_version (version_number, comment) VALUES (209, 'Add additionalDetails to contact #1933');
+
+-- 2020-05-18 Add Trimester and Postpartum selection to case #1981
+ALTER TABLE cases ADD COLUMN postpartum varchar(255);
+ALTER TABLE cases ADD COLUMN trimester varchar(255);
+ALTER TABLE cases_history ADD COLUMN postpartum varchar(255);
+ALTER TABLE cases_history ADD COLUMN trimester varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (210, 'Add Trimester and Postpartum selection to case #1981');
+
+-- 2020-05-20 Adjust COVID-19 symptoms and health conditions for Germany #2097
+ALTER TABLE symptoms ADD COLUMN respiratorydiseaseventilation varchar(255);
+ALTER TABLE symptoms ADD COLUMN generalsignsofdisease varchar(255);
+ALTER TABLE symptoms ADD COLUMN fastheartrate varchar(255);
+ALTER TABLE symptoms ADD COLUMN oxygensaturationlower94 varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN respiratorydiseaseventilation varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN generalsignsofdisease varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN fastheartrate varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN oxygensaturationlower94 varchar(255);
+
+ALTER TABLE healthconditions ADD COLUMN immunodeficiencyincludinghiv varchar(255);
+ALTER TABLE healthconditions_history ADD COLUMN immunodeficiencyincludinghiv varchar(255);
+
+UPDATE healthconditions SET immunodeficiencyincludinghiv = 'YES' WHERE hiv = 'YES' OR immunodeficiencyotherthanhiv = 'YES';
+UPDATE healthconditions SET immunodeficiencyincludinghiv = 'NO' WHERE hiv = 'NO' AND immunodeficiencyotherthanhiv = 'NO';
+UPDATE healthconditions SET immunodeficiencyincludinghiv = 'UNKNOWN' WHERE hiv = 'UNKNOWN ' AND immunodeficiencyotherthanhiv = 'UNKNOWN';
+
+INSERT INTO schema_version (version_number, comment) VALUES (211, 'Adjust COVID-19 symptoms and health conditions for Germany #2097');
+
+-- 2020-05-07 Add samples to contacts #1753
+ALTER TABLE samples ADD COLUMN associatedcontact_id bigint;
+ALTER TABLE samples ADD CONSTRAINT fk_samples_associatedcontact_id FOREIGN KEY (associatedcontact_id) REFERENCES contact (id);
+ALTER TABLE samples ALTER COLUMN associatedcase_id DROP NOT NULL;
+ALTER TABLE samples_history ADD COLUMN associatedcontact_id bigint;
+ALTER TABLE samples_history ALTER COLUMN associatedcase_id DROP NOT NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (212, 'Add samples to contacts #1753');
+
+-- 2020-05-28 Rename misspelled enum values #2094
+UPDATE contact SET contactproximity = 'MEDICAL_UNSAFE' WHERE contactproximity = 'MEDICAL_UNSAVE';
+UPDATE contact SET contactproximity = 'MEDICAL_SAFE' WHERE contactproximity = 'MEDICAL_SAVE';
+
+INSERT INTO schema_version (version_number, comment) VALUES (213, 'Rename misspelled enum values #2094');
+
+-- 2020-05-25 Add campaigns #1984
+CREATE TABLE campaigns(
+	id bigint not null,
+	uuid varchar(36) not null unique,
+	changedate timestamp not null,
+	creationdate timestamp not null,
+	name varchar(255),
+	description varchar(512),
+	startdate timestamp,
+	enddate timestamp,
+	creatinguser_id bigint,
+	deleted boolean DEFAULT false,
+	archived boolean DEFAULT false,
+	sys_period tstzrange not null,
+	primary key(id)
+);
+
+ALTER TABLE campaigns OWNER TO sormas_user;
+ALTER TABLE campaigns ADD CONSTRAINT fk_campaigns_creatinguser_id FOREIGN KEY (creatinguser_id) REFERENCES users(id);
+CREATE TABLE campaigns_history (LIKE campaigns);
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON campaigns
+FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'campaigns_history', true);
+ALTER TABLE campaigns_history OWNER TO sormas_user;
+
+INSERT INTO schema_version (version_number, comment) VALUES (214, 'Add campaigns #1984');
+
+-- 2020-06-04 Change text field lengths #580´
+ALTER TABLE campaigns ALTER COLUMN description TYPE varchar(4096);
+ALTER TABLE campaigns_history ALTER COLUMN description TYPE varchar(4096);
+
+ALTER TABLE cases ALTER COLUMN description TYPE varchar(4096);
+ALTER TABLE cases ALTER COLUMN additionalDetails TYPE varchar(4096);
+ALTER TABLE cases_history ALTER COLUMN description TYPE varchar(4096);
+ALTER TABLE cases_history ALTER COLUMN additionalDetails TYPE varchar(4096);
+
+ALTER TABLE porthealthinfo ALTER COLUMN details TYPE varchar(4096);
+ALTER TABLE porthealthinfo_history ALTER COLUMN details TYPE varchar(4096);
+
+ALTER TABLE healthconditions ALTER COLUMN otherconditions TYPE varchar(4096);
+ALTER TABLE healthconditions_history ALTER COLUMN otherconditions TYPE varchar(4096);
+
+ALTER TABLE contact ALTER COLUMN followUpComment TYPE varchar(4096);
+ALTER TABLE contact ALTER COLUMN caseoreventinformation TYPE varchar(4096);
+ALTER TABLE contact ALTER COLUMN additionaldetails TYPE varchar(4096);
+ALTER TABLE contact ALTER COLUMN description TYPE varchar(4096);
+ALTER TABLE contact_history ADD COLUMN followUpComment varchar(4096);
+ALTER TABLE contact_history ALTER COLUMN caseoreventinformation TYPE varchar(4096);
+ALTER TABLE contact_history ALTER COLUMN additionaldetails TYPE varchar(4096);
+ALTER TABLE contact_history ALTER COLUMN description TYPE varchar(4096);
+
+ALTER TABLE epidatagathering ALTER COLUMN description TYPE varchar(4096);
+ALTER TABLE epidatagathering_history ALTER COLUMN description TYPE varchar(4096);
+
+ALTER TABLE events ALTER COLUMN eventdesc TYPE varchar(4096);
+ALTER TABLE events_history ALTER COLUMN eventdesc TYPE varchar(4096);
+
+ALTER TABLE previoushospitalization ALTER COLUMN description TYPE varchar(4096);
+ALTER TABLE previoushospitalization_history ALTER COLUMN description TYPE varchar(4096);
+
+ALTER TABLE location ALTER COLUMN address TYPE varchar(4096);
+ALTER TABLE location_history ALTER COLUMN address TYPE varchar(4096);
+
+ALTER TABLE additionaltest ALTER COLUMN othertestresults TYPE varchar(4096);
+ALTER TABLE additionaltest_history ALTER COLUMN othertestresults TYPE varchar(4096);
+
+ALTER TABLE pathogentest ALTER COLUMN testresulttext TYPE varchar(4096);
+ALTER TABLE pathogentest_history ALTER COLUMN testresulttext TYPE varchar(4096);
+
+ALTER TABLE samples ALTER COLUMN comment TYPE varchar(4096);
+ALTER TABLE samples_history ALTER COLUMN comment TYPE varchar(4096);
+
+ALTER TABLE task ALTER COLUMN creatorcomment TYPE varchar(4096);
+ALTER TABLE task ALTER COLUMN assigneereply TYPE varchar(4096);
+ALTER TABLE task_history ALTER COLUMN creatorcomment TYPE varchar(4096);
+ALTER TABLE task_history ALTER COLUMN assigneereply TYPE varchar(4096);
+
+ALTER TABLE prescription ALTER COLUMN additionalnotes TYPE varchar(4096);
+ALTER TABLE prescription_history ALTER COLUMN additionalnotes TYPE varchar(4096);
+
+ALTER TABLE treatment ALTER COLUMN additionalnotes TYPE varchar(4096);
+ALTER TABLE treatment_history ALTER COLUMN additionalnotes TYPE varchar(4096);
+
+ALTER TABLE cases ALTER COLUMN diseasedetails TYPE varchar(512);
+ALTER TABLE cases ALTER COLUMN classificationcomment TYPE varchar(512);
+ALTER TABLE cases ALTER COLUMN healthfacilitydetails TYPE varchar(512);
+ALTER TABLE cases ALTER COLUMN cliniciandetails TYPE varchar(512);
+ALTER TABLE cases ALTER COLUMN clinicianphone TYPE varchar(512);
+ALTER TABLE cases ALTER COLUMN clinicianemail TYPE varchar(512);
+ALTER TABLE cases ALTER COLUMN vaccinationdoses TYPE varchar(512);
+ALTER TABLE cases ALTER COLUMN vaccine TYPE varchar(512);
+ALTER TABLE cases ALTER COLUMN epidnumber TYPE varchar(512);
+ALTER TABLE cases ALTER COLUMN sequelaedetails TYPE varchar(512);
+ALTER TABLE cases ALTER COLUMN notifyingclinicdetails TYPE varchar(512);
+ALTER TABLE cases ALTER COLUMN pointofentrydetails TYPE varchar(512);
+ALTER TABLE cases ALTER COLUMN externalid TYPE varchar(512);
+ALTER TABLE cases ALTER COLUMN quarantinehelpneeded TYPE varchar(512);
+ALTER TABLE cases ALTER COLUMN quarantinehomepossiblecomment TYPE varchar(512);
+ALTER TABLE cases ALTER COLUMN quarantinehomesupplyensuredcomment TYPE varchar(512);
+ALTER TABLE cases_history ADD COLUMN diseasedetails varchar(512);
+ALTER TABLE cases_history ADD COLUMN classificationcomment varchar(512);
+ALTER TABLE cases_history ADD COLUMN healthfacilitydetails varchar(512);
+ALTER TABLE cases_history ALTER COLUMN cliniciandetails TYPE varchar(512);
+ALTER TABLE cases_history ALTER COLUMN clinicianphone TYPE varchar(512);
+ALTER TABLE cases_history ALTER COLUMN clinicianemail TYPE varchar(512);
+ALTER TABLE cases_history ALTER COLUMN vaccinationdoses TYPE varchar(512);
+ALTER TABLE cases_history ALTER COLUMN vaccine TYPE varchar(512);
+ALTER TABLE cases_history ALTER COLUMN epidnumber TYPE varchar(512);
+ALTER TABLE cases_history ALTER COLUMN sequelaedetails TYPE varchar(512);
+ALTER TABLE cases_history ALTER COLUMN notifyingclinicdetails TYPE varchar(512);
+ALTER TABLE cases_history ALTER COLUMN pointofentrydetails TYPE varchar(512);
+ALTER TABLE cases_history ALTER COLUMN externalid TYPE varchar(512);
+ALTER TABLE cases_history ALTER COLUMN quarantinehelpneeded TYPE varchar(512);
+ALTER TABLE cases_history ALTER COLUMN quarantinehomepossiblecomment TYPE varchar(512);
+ALTER TABLE cases_history ALTER COLUMN quarantinehomesupplyensuredcomment TYPE varchar(512);
+
+ALTER TABLE maternalhistory ALTER COLUMN othercomplicationsdetails TYPE varchar(512);
+ALTER TABLE maternalhistory_history ALTER COLUMN othercomplicationsdetails TYPE varchar(512);
+
+ALTER TABLE porthealthinfo ALTER COLUMN airlinename TYPE varchar(512);
+ALTER TABLE porthealthinfo ALTER COLUMN flightnumber TYPE varchar(512);
+ALTER TABLE porthealthinfo ALTER COLUMN seatnumber TYPE varchar(512);
+ALTER TABLE porthealthinfo ALTER COLUMN departureairport TYPE varchar(512);
+ALTER TABLE porthealthinfo ALTER COLUMN transitstopdetails1 TYPE varchar(512);
+ALTER TABLE porthealthinfo ALTER COLUMN transitstopdetails2 TYPE varchar(512);
+ALTER TABLE porthealthinfo ALTER COLUMN transitstopdetails3 TYPE varchar(512);
+ALTER TABLE porthealthinfo ALTER COLUMN transitstopdetails4 TYPE varchar(512);
+ALTER TABLE porthealthinfo ALTER COLUMN transitstopdetails5 TYPE varchar(512);
+ALTER TABLE porthealthinfo ALTER COLUMN vesselname TYPE varchar(512);
+ALTER TABLE porthealthinfo ALTER COLUMN vesseldetails TYPE varchar(512);
+ALTER TABLE porthealthinfo ALTER COLUMN portofdeparture TYPE varchar(512);
+ALTER TABLE porthealthinfo ALTER COLUMN lastportofcall TYPE varchar(512);
+ALTER TABLE porthealthinfo ALTER COLUMN conveyancetypedetails TYPE varchar(512);
+ALTER TABLE porthealthinfo ALTER COLUMN departurelocation TYPE varchar(512);
+ALTER TABLE porthealthinfo ALTER COLUMN finaldestination TYPE varchar(512);
+ALTER TABLE porthealthinfo_history ALTER COLUMN airlinename TYPE varchar(512);
+ALTER TABLE porthealthinfo_history ALTER COLUMN flightnumber TYPE varchar(512);
+ALTER TABLE porthealthinfo_history ALTER COLUMN seatnumber TYPE varchar(512);
+ALTER TABLE porthealthinfo_history ALTER COLUMN departureairport TYPE varchar(512);
+ALTER TABLE porthealthinfo_history ALTER COLUMN transitstopdetails1 TYPE varchar(512);
+ALTER TABLE porthealthinfo_history ALTER COLUMN transitstopdetails2 TYPE varchar(512);
+ALTER TABLE porthealthinfo_history ALTER COLUMN transitstopdetails3 TYPE varchar(512);
+ALTER TABLE porthealthinfo_history ALTER COLUMN transitstopdetails4 TYPE varchar(512);
+ALTER TABLE porthealthinfo_history ALTER COLUMN transitstopdetails5 TYPE varchar(512);
+ALTER TABLE porthealthinfo_history ALTER COLUMN vesselname TYPE varchar(512);
+ALTER TABLE porthealthinfo_history ALTER COLUMN vesseldetails TYPE varchar(512);
+ALTER TABLE porthealthinfo_history ALTER COLUMN portofdeparture TYPE varchar(512);
+ALTER TABLE porthealthinfo_history ALTER COLUMN lastportofcall TYPE varchar(512);
+ALTER TABLE porthealthinfo_history ALTER COLUMN conveyancetypedetails TYPE varchar(512);
+ALTER TABLE porthealthinfo_history ALTER COLUMN departurelocation TYPE varchar(512);
+ALTER TABLE porthealthinfo_history ALTER COLUMN finaldestination TYPE varchar(512);
+
+ALTER TABLE clinicalvisit ALTER COLUMN visitremarks TYPE varchar(512);
+ALTER TABLE clinicalvisit ALTER COLUMN visitingperson TYPE varchar(512);
+ALTER TABLE clinicalvisit_history ALTER COLUMN visitremarks TYPE varchar(512);
+ALTER TABLE clinicalvisit_history ALTER COLUMN visitingperson TYPE varchar(512);
+
+ALTER TABLE contact ALTER COLUMN diseasedetails TYPE varchar(512);
+ALTER TABLE contact ALTER COLUMN relationdescription TYPE varchar(512);
+ALTER TABLE contact ALTER COLUMN externalid TYPE varchar(512);
+ALTER TABLE contact ALTER COLUMN immunosuppressiveTherapyBasicDiseaseDetails TYPE varchar(512);
+ALTER TABLE contact ALTER COLUMN caseidexternalsystem TYPE varchar(512);
+ALTER TABLE contact ALTER COLUMN contactproximitydetails TYPE varchar(512);
+ALTER TABLE contact ALTER COLUMN quarantinehelpneeded TYPE varchar(512);
+ALTER TABLE contact ALTER COLUMN quarantinehomepossiblecomment TYPE varchar(512);
+ALTER TABLE contact ALTER COLUMN quarantinehomesupplyensuredcomment TYPE varchar(512);
+ALTER TABLE contact_history ALTER COLUMN diseasedetails TYPE varchar(512);
+ALTER TABLE contact_history ADD COLUMN relationdescription varchar(512);
+ALTER TABLE contact_history ALTER COLUMN externalid TYPE varchar(512);
+ALTER TABLE contact_history ALTER COLUMN immunosuppressiveTherapyBasicDiseaseDetails TYPE varchar(512);
+ALTER TABLE contact_history ALTER COLUMN caseidexternalsystem TYPE varchar(512);
+ALTER TABLE contact_history ALTER COLUMN contactproximitydetails TYPE varchar(512);
+ALTER TABLE contact_history ALTER COLUMN quarantinehelpneeded TYPE varchar(512);
+ALTER TABLE contact_history ALTER COLUMN quarantinehomepossiblecomment TYPE varchar(512);
+ALTER TABLE contact_history ALTER COLUMN quarantinehomesupplyensuredcomment TYPE varchar(512);
+
+ALTER TABLE epidata ALTER COLUMN otheranimalsdetails TYPE varchar(512);
+ALTER TABLE epidata ALTER COLUMN watersourceother TYPE varchar(512);
+ALTER TABLE epidata ALTER COLUMN waterbodydetails TYPE varchar(512);
+ALTER TABLE epidata ALTER COLUMN kindofexposuredetails TYPE varchar(512);
+ALTER TABLE epidata ALTER COLUMN placeoflastexposure TYPE varchar(512);
+ALTER TABLE epidata ALTER COLUMN sickdeadanimalsdetails TYPE varchar(512);
+ALTER TABLE epidata ALTER COLUMN sickdeadanimalslocation TYPE varchar(512);
+ALTER TABLE epidata ALTER COLUMN eatingrawanimalsdetails TYPE varchar(512);
+ALTER TABLE epidata_history ALTER COLUMN otheranimalsdetails TYPE varchar(512);
+ALTER TABLE epidata_history ALTER COLUMN watersourceother TYPE varchar(512);
+ALTER TABLE epidata_history ALTER COLUMN waterbodydetails TYPE varchar(512);
+ALTER TABLE epidata_history ALTER COLUMN kindofexposuredetails TYPE varchar(512);
+ALTER TABLE epidata_history ALTER COLUMN placeoflastexposure TYPE varchar(512);
+ALTER TABLE epidata_history ALTER COLUMN sickdeadanimalsdetails TYPE varchar(512);
+ALTER TABLE epidata_history ALTER COLUMN sickdeadanimalslocation TYPE varchar(512);
+ALTER TABLE epidata_history ALTER COLUMN eatingrawanimalsdetails TYPE varchar(512);
+
+ALTER TABLE epidataburial ALTER COLUMN burialpersonname TYPE varchar(512);
+ALTER TABLE epidataburial ALTER COLUMN burialrelation TYPE varchar(512);
+ALTER TABLE epidataburial_history ALTER COLUMN burialpersonname TYPE varchar(512);
+ALTER TABLE epidataburial_history ALTER COLUMN burialrelation TYPE varchar(512);
+
+ALTER TABLE epidatatravel ALTER COLUMN traveldestination TYPE varchar(512);
+ALTER TABLE epidatatravel_history ALTER COLUMN traveldestination TYPE varchar(512);
+
+ALTER TABLE events ALTER COLUMN srcfirstname TYPE varchar(512);
+ALTER TABLE events ALTER COLUMN srclastname TYPE varchar(512);
+ALTER TABLE events ALTER COLUMN srctelno TYPE varchar(512);
+ALTER TABLE events ALTER COLUMN srcemail TYPE varchar(512);
+ALTER TABLE events ALTER COLUMN diseasedetails TYPE varchar(512);
+ALTER TABLE events ALTER COLUMN typeofplacetext TYPE varchar(512);
+ALTER TABLE events_history ALTER COLUMN srcfirstname TYPE varchar(512);
+ALTER TABLE events_history ALTER COLUMN srclastname TYPE varchar(512);
+ALTER TABLE events_history ALTER COLUMN srctelno TYPE varchar(512);
+ALTER TABLE events_history ALTER COLUMN srcemail TYPE varchar(512);
+ALTER TABLE events_history ADD COLUMN diseasedetails varchar(512);
+ALTER TABLE events_history ALTER COLUMN typeofplacetext TYPE varchar(512);
+
+ALTER TABLE facility ALTER COLUMN city TYPE varchar(512);
+ALTER TABLE facility ALTER COLUMN externalid TYPE varchar(512);
+
+ALTER TABLE previoushospitalization ALTER COLUMN healthfacilitydetails TYPE varchar(512);
+ALTER TABLE previoushospitalization_history ALTER COLUMN healthfacilitydetails TYPE varchar(512);
+
+ALTER TABLE exportconfiguration ALTER COLUMN name TYPE varchar(512);
+ALTER TABLE exportconfiguration_history ALTER COLUMN name TYPE varchar(512);
+
+ALTER TABLE pointofentry ALTER COLUMN name TYPE varchar(512);
+ALTER TABLE pointofentry ALTER COLUMN externalid TYPE varchar(512);
+ALTER TABLE pointofentry ALTER COLUMN name TYPE varchar(512);
+ALTER TABLE pointofentry ALTER COLUMN externalid TYPE varchar(512);
+
+ALTER TABLE location ALTER COLUMN details TYPE varchar(512);
+ALTER TABLE location ALTER COLUMN city TYPE varchar(512);
+ALTER TABLE location ALTER COLUMN postalcode TYPE varchar(512);
+ALTER TABLE location_history ALTER COLUMN details TYPE varchar(512);
+ALTER TABLE location_history ALTER COLUMN city TYPE varchar(512);
+ALTER TABLE location_history ALTER COLUMN postalcode TYPE varchar(512);
+
+ALTER TABLE person ALTER COLUMN firstname TYPE varchar(512);
+ALTER TABLE person ALTER COLUMN lastname TYPE varchar(512);
+ALTER TABLE person ALTER COLUMN nickname TYPE varchar(512);
+ALTER TABLE person ALTER COLUMN mothersname TYPE varchar(512);
+ALTER TABLE person ALTER COLUMN fathersname TYPE varchar(512);
+ALTER TABLE person ALTER COLUMN placeofbirthfacilitydetails TYPE varchar(512);
+ALTER TABLE person ALTER COLUMN generalpractitionerdetails TYPE varchar(512);
+ALTER TABLE person_history ALTER COLUMN firstname TYPE varchar(512);
+ALTER TABLE person_history ALTER COLUMN lastname TYPE varchar(512);
+ALTER TABLE person_history ALTER COLUMN nickname TYPE varchar(512);
+ALTER TABLE person_history ALTER COLUMN mothersname TYPE varchar(512);
+ALTER TABLE person_history ALTER COLUMN fathersname TYPE varchar(512);
+ALTER TABLE person_history ALTER COLUMN placeofbirthfacilitydetails TYPE varchar(512);
+ALTER TABLE person_history ALTER COLUMN generalpractitionerdetails TYPE varchar(512);
+
+ALTER TABLE users ALTER COLUMN username TYPE varchar(512);
+ALTER TABLE users ALTER COLUMN firstname TYPE varchar(512);
+ALTER TABLE users ALTER COLUMN lastname TYPE varchar(512);
+ALTER TABLE users_history ALTER COLUMN username TYPE varchar(512);
+ALTER TABLE users_history ALTER COLUMN firstname TYPE varchar(512);
+ALTER TABLE users_history ALTER COLUMN lastname TYPE varchar(512);
+
+ALTER TABLE community ALTER COLUMN externalid TYPE varchar(512);
+ALTER TABLE district ALTER COLUMN externalid TYPE varchar(512);
+ALTER TABLE region ALTER COLUMN externalid TYPE varchar(512);
+
+ALTER TABLE pathogentest ALTER COLUMN testeddiseasedetails TYPE varchar(512);
+ALTER TABLE pathogentest ALTER COLUMN testtypetext TYPE varchar(512);
+ALTER TABLE pathogentest ALTER COLUMN labdetails TYPE varchar(512);
+ALTER TABLE pathogentest ALTER COLUMN serotype TYPE varchar(512);
+ALTER TABLE pathogentest_history ALTER COLUMN testeddiseasedetails TYPE varchar(512);
+ALTER TABLE pathogentest_history ALTER COLUMN testtypetext TYPE varchar(512);
+ALTER TABLE pathogentest_history ALTER COLUMN labdetails TYPE varchar(512);
+ALTER TABLE pathogentest_history ALTER COLUMN serotype TYPE varchar(512);
+
+ALTER TABLE samples ALTER COLUMN labsampleid TYPE varchar(512);
+ALTER TABLE samples ALTER COLUMN fieldsampleid TYPE varchar(512);
+ALTER TABLE samples ALTER COLUMN samplematerialtext TYPE varchar(512);
+ALTER TABLE samples ALTER COLUMN labdetails TYPE varchar(512);
+ALTER TABLE samples ALTER COLUMN shipmentdetails TYPE varchar(512);
+ALTER TABLE samples ALTER COLUMN notestpossiblereason TYPE varchar(512);
+ALTER TABLE samples ALTER COLUMN requestedotherpathogentests TYPE varchar(512);
+ALTER TABLE samples ALTER COLUMN requestedotheradditionaltests TYPE varchar(512);
+ALTER TABLE samples_history ALTER COLUMN labsampleid TYPE varchar(512);
+ALTER TABLE samples_history ALTER COLUMN fieldsampleid TYPE varchar(512);
+ALTER TABLE samples_history ALTER COLUMN samplematerialtext TYPE varchar(512);
+ALTER TABLE samples_history ALTER COLUMN labdetails TYPE varchar(512);
+ALTER TABLE samples_history ALTER COLUMN shipmentdetails TYPE varchar(512);
+ALTER TABLE samples_history ALTER COLUMN notestpossiblereason TYPE varchar(512);
+ALTER TABLE samples_history ALTER COLUMN requestedotherpathogentests TYPE varchar(512);
+ALTER TABLE samples_history ALTER COLUMN requestedotheradditionaltests TYPE varchar(512);
+
+ALTER TABLE symptoms ALTER COLUMN patientilllocation TYPE varchar(512);
+ALTER TABLE symptoms ALTER COLUMN onsetsymptom TYPE varchar(512);
+ALTER TABLE symptoms ALTER COLUMN otherhemorrhagicsymptomstext TYPE varchar(512);
+ALTER TABLE symptoms ALTER COLUMN othernonhemorrhagicsymptomstext TYPE varchar(512);
+ALTER TABLE symptoms ALTER COLUMN congenitalheartdiseasedetails TYPE varchar(512);
+ALTER TABLE symptoms ALTER COLUMN symptomscomments TYPE varchar(512);
+ALTER TABLE symptoms ALTER COLUMN otherComplicationsText TYPE varchar(512);
+ALTER TABLE symptoms_history ALTER COLUMN patientilllocation TYPE varchar(512);
+ALTER TABLE symptoms_history ALTER COLUMN onsetsymptom TYPE varchar(512);
+ALTER TABLE symptoms_history ALTER COLUMN otherhemorrhagicsymptomstext TYPE varchar(512);
+ALTER TABLE symptoms_history ALTER COLUMN othernonhemorrhagicsymptomstext TYPE varchar(512);
+ALTER TABLE symptoms_history ALTER COLUMN congenitalheartdiseasedetails TYPE varchar(512);
+ALTER TABLE symptoms_history ALTER COLUMN symptomscomments TYPE varchar(512);
+ALTER TABLE symptoms_history ALTER COLUMN otherComplicationsText TYPE varchar(512);
+
+ALTER TABLE prescription ALTER COLUMN prescribingclinician TYPE varchar(512);
+ALTER TABLE prescription ALTER COLUMN prescriptiondetails TYPE varchar(512);
+ALTER TABLE prescription ALTER COLUMN frequency TYPE varchar(512);
+ALTER TABLE prescription ALTER COLUMN dose TYPE varchar(512);
+ALTER TABLE prescription ALTER COLUMN routedetails TYPE varchar(512);
+ALTER TABLE prescription_history ALTER COLUMN prescribingclinician TYPE varchar(512);
+ALTER TABLE prescription_history ALTER COLUMN prescriptiondetails TYPE varchar(512);
+ALTER TABLE prescription_history ALTER COLUMN frequency TYPE varchar(512);
+ALTER TABLE prescription_history ALTER COLUMN dose TYPE varchar(512);
+ALTER TABLE prescription_history ALTER COLUMN routedetails TYPE varchar(512);
+
+ALTER TABLE treatment ALTER COLUMN executingclinician TYPE varchar(512);
+ALTER TABLE treatment ALTER COLUMN treatmentdetails TYPE varchar(512);
+ALTER TABLE treatment ALTER COLUMN dose TYPE varchar(512);
+ALTER TABLE treatment ALTER COLUMN routedetails TYPE varchar(512);
+ALTER TABLE treatment_history ALTER COLUMN executingclinician TYPE varchar(512);
+ALTER TABLE treatment_history ALTER COLUMN treatmentdetails TYPE varchar(512);
+ALTER TABLE treatment_history ALTER COLUMN dose TYPE varchar(512);
+ALTER TABLE treatment_history ALTER COLUMN routedetails TYPE varchar(512);
+
+ALTER TABLE visit ALTER COLUMN visitremarks TYPE varchar(512);
+ALTER TABLE visit_history ALTER COLUMN visitremarks TYPE varchar(512);
+
+INSERT INTO schema_version (version_number, comment) VALUES (215, 'Change text field lengths #580');
+
+-- 2020-06-10 Remove wrongly assigned surveillance officers from cases #2284
+UPDATE cases SET surveillanceofficer_id = null FROM users WHERE cases.surveillanceofficer_id = users.id AND cases.district_id != users.district_id;
+
+INSERT INTO schema_version (version_number, comment) VALUES (216, 'Remove wrongly assigned surveillance officers from cases #2284');
+
+-- 2020-06-18 Add campaign forms #2268
+CREATE TABLE campaignforms(
+	id bigint not null,
+	uuid varchar(36) not null unique,
+	changedate timestamp not null,
+	creationdate timestamp not null,
+	formid varchar(255),
+	languagecode varchar(255),
+	campaignformelements text,
+	campaignformtranslations text,
+	sys_period tstzrange not null,
+	primary key(id)
+);
+
+ALTER TABLE campaignforms OWNER TO sormas_user;
+
+CREATE TABLE campaignforms_history (LIKE campaigns);
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON campaignforms
+FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'campaignforms_history', true);
+ALTER TABLE campaignforms_history OWNER TO sormas_user;
+
+INSERT INTO schema_version (version_number, comment) VALUES (217, 'Add campaign forms #2268');
+
+-- 2020-06-19 Add Area as new infrastructure type #1983
+CREATE TABLE areas(
+	id bigint not null,
+	uuid varchar(36) not null unique,
+	changedate timestamp not null,
+	creationdate timestamp not null,
+	name varchar(512),
+	externalid varchar(512),
+	archived boolean DEFAULT false,
+	sys_period tstzrange not null,
+	primary key(id)
+);
+
+ALTER TABLE areas OWNER TO sormas_user;
+
+CREATE TABLE areas_history (LIKE areas);
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON areas
+FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'areas_history', true);
+ALTER TABLE areas_history OWNER TO sormas_user;
+
+ALTER TABLE region ADD COLUMN area_id bigint;
+ALTER TABLE region ADD CONSTRAINT fk_region_area_id FOREIGN KEY (area_id) REFERENCES areas(id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (218, 'Add Area as new infrastructure type #1983');
+
+CREATE TABLE campaignformdata(
+	id bigint not null,
+	uuid varchar(36) not null unique,
+	changedate timestamp not null,
+	creationdate timestamp not null,
+	formData text,
+	campaign_id bigint NOT NULL,
+	campaignform_id bigint NOT NULL,
+	region_id bigint NOT NULL,
+	district_id bigint NOT NULL,
+	community_id bigint,
+	sys_period tstzrange not null,
+	primary key(id)
+);
+ALTER TABLE campaignformdata OWNER TO sormas_user;
+CREATE TABLE campaignformdata_history (LIKE campaignformdata);
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON campaignformdata
+FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'campaignformdata_history', true);
+ALTER TABLE campaignformdata_history OWNER TO sormas_user;
+
+INSERT INTO schema_version (version_number, comment) VALUES (219, 'Add campaignformdata #1992');
+
+-- 2020-06-30 Add "Other" and a text field to QuarantineType #2219
+ALTER TABLE cases ADD COLUMN quarantinetypedetails varchar(512);
+ALTER TABLE contact ADD COLUMN quarantinetypedetails varchar(512);
+
+ALTER TABLE cases_history ADD COLUMN quarantinetypedetails varchar(512);
+ALTER TABLE contact_history ADD COLUMN quarantinetypedetails varchar(512);
+
+INSERT INTO schema_version (version_number, comment) VALUES (220, 'Add "Other" and a text field to QuarantineType #2219');
+
+-- 2020-06-29 Add samples to event participants #2395
+ALTER TABLE samples
+    ADD COLUMN associatedeventparticipant_id bigint;
+ALTER TABLE samples
+    ADD CONSTRAINT fk_samples_associatedeventparticipant_id FOREIGN KEY (associatedeventparticipant_id) REFERENCES eventparticipant (id);
+ALTER TABLE samples_history
+    ADD COLUMN associatedeventparticipant_id bigint;
+
+INSERT INTO schema_version (version_number, comment) VALUES (221, 'Add samples to event participants #2395');
+
+-- 2020-06-29 Extend event details #2391
+UPDATE events set eventstatus='SIGNAL' where eventstatus='POSSIBLE';
+UPDATE events set eventstatus='EVENT' where eventstatus='CONFIRMED';
+UPDATE events set eventstatus='DROPPED' where eventstatus='NO_EVENT';
+
+ALTER TABLE events RENAME COLUMN eventdate TO startdate;
+ALTER TABLE events ADD COLUMN enddate timestamp;
+ALTER TABLE events ADD COLUMN externalId varchar(512);
+ALTER TABLE events ADD COLUMN nosocomial varchar(255);
+ALTER TABLE events ADD COLUMN srcType varchar(255);
+ALTER TABLE events ADD COLUMN srcMediaWebsite varchar(512);
+ALTER TABLE events ADD COLUMN srcMediaName varchar(512);
+ALTER TABLE events ADD COLUMN srcMediaDetails varchar(4096);
+
+UPDATE events set srcType='HOTLINE_PERSON' where LENGTH(CONCAT(srcfirstname, srclastname, srctelno, srcemail)) > 0;
+
+INSERT INTO schema_version (version_number, comment) VALUES (222, 'Extend event details #2391');
+
+-- 2020-06-18 Remove wrongly assigned surveillance officers from cases #2284
+ALTER TABLE contact ADD COLUMN epidata_id bigint;
+ALTER TABLE contact_history ADD COLUMN epidata_id bigint;
+ALTER TABLE contact ADD CONSTRAINT fk_contact_epidata_id FOREIGN KEY (epidata_id) REFERENCES epidata(id);
+
+DO $$
+    DECLARE rec RECORD;
+        DECLARE new_epidata_id INTEGER;
+    BEGIN
+        FOR rec IN SELECT id FROM public.contact WHERE epidata_id IS NULL
+            LOOP
+                INSERT INTO epidata(id, uuid, creationdate, changedate) VALUES (nextval('entity_seq'), upper(substring(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), 3, 29)), now(), now()) RETURNING id INTO new_epidata_id;
+                UPDATE contact SET epidata_id = new_epidata_id WHERE id = rec.id;
+            END LOOP;
+    END;
+$$ LANGUAGE plpgsql;
+
+INSERT INTO schema_version (version_number, comment) VALUES (223, 'Add Epidemiological data to contacts');
+
+-- 2020-07-02 Rename formData field #2268
+ALTER TABLE campaignformdata RENAME formData TO formvalues;
+ALTER TABLE campaignformdata_history RENAME formData to formvalues;
+
+INSERT INTO schema_version (version_number, comment) VALUES (224, 'Rename formData field #2268');
+
+-- 2020-07-10 Add archived column to campaign form data #2268
+ALTER TABLE campaignformdata ADD COLUMN archived boolean NOT NULL DEFAULT false;
+ALTER TABLE campaignformdata_history ADD COLUMN archived boolean;
+
+INSERT INTO schema_version (version_number, comment) VALUES (225, 'Add archived column to campaign form data #2268');
+
+-- 2020-07-15 Add form date to campaign form data #1997
+ALTER TABLE campaignformdata ADD COLUMN formdate timestamp;
+ALTER TABLE campaignformdata_history ADD COLUMN formdate timestamp;
+
+INSERT INTO schema_version (version_number, comment) VALUES (226, 'Add form date to campaign form data #1997');
+
+-- 2020-07-03 Add case classification for Germany #2230
+ALTER TABLE cases ADD COLUMN clinicalconfirmation varchar(255);
+ALTER TABLE cases ADD COLUMN epidemiologicalconfirmation varchar(255);
+ALTER TABLE cases ADD COLUMN laboratorydiagnosticconfirmation varchar(255);
+ALTER TABLE cases_history ADD COLUMN clinicalconfirmation varchar(255);
+ALTER TABLE cases_history ADD COLUMN epidemiologicalconfirmation varchar(255);
+ALTER TABLE cases_history ADD COLUMN laboratorydiagnosticconfirmation varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (227, 'Add case classification for Germany #2230');
+
+-- 2020-07-16 Add source of identification as contact to contacts #2070
+ALTER TABLE contact ADD COLUMN contactidentificationsource varchar(255);
+ALTER TABLE contact ADD COLUMN contactidentificationsourcedetails varchar(512);
+ALTER TABLE contact ADD COLUMN tracingapp varchar(255);
+ALTER TABLE contact ADD COLUMN tracingappdetails varchar(512);
+ALTER TABLE contact_history ADD COLUMN contactidentificationsource varchar(255);
+ALTER TABLE contact_history ADD COLUMN contactidentificationsourcedetails varchar(512);
+ALTER TABLE contact_history ADD COLUMN tracingapp varchar(255);
+ALTER TABLE contact_history ADD COLUMN tracingappdetails varchar(512);
+
+INSERT INTO schema_version (version_number, comment) VALUES (228, 'Add source of identification as contact to contacts #2070');
+
+-- 2020-07-27 Add form name to campaign forms and creating user to form data #1993
+ALTER TABLE campaignforms ADD COLUMN formname varchar(512);
+ALTER TABLE campaignforms_history ADD COLUMN formname varchar(512);
+ALTER TABLE campaignformdata ADD COLUMN creatinguser_id bigint;
+ALTER TABLE campaignformdata_history ADD COLUMN creatinguser_id bigint;
+
+ALTER TABLE campaignformdata ADD CONSTRAINT fk_campaignformdata_creatinguser_id FOREIGN KEY (creatinguser_id) REFERENCES users(id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (229, 'Add form name to campaign forms and creating user to form data #1993');
+
+-- 2020-07-27 Rename campaignforms to campaignformmeta #1997
+ALTER TABLE campaignforms RENAME TO campaignformmeta;
+ALTER TABLE campaignforms_history RENAME TO campaignformmeta_history;
+ALTER TABLE campaignformdata RENAME COLUMN campaignform_id TO campaignformmeta_id;
+ALTER TABLE campaignformdata_history RENAME COLUMN campaignform_id TO campaignformmeta_id;
+
+ALTER TABLE campaignformdata ADD CONSTRAINT fk_campaignformdata_campaign_id FOREIGN KEY (campaign_id) REFERENCES campaigns(id);
+ALTER TABLE campaignformdata ADD CONSTRAINT fk_campaignformdata_campaignformmeta_id FOREIGN KEY (campaignformmeta_id) REFERENCES campaignformmeta(id);
+ALTER TABLE campaignformdata ADD CONSTRAINT fk_campaignformdata_region_id FOREIGN KEY (region_id) REFERENCES region(id);
+ALTER TABLE campaignformdata ADD CONSTRAINT fk_campaignformdata_district_id FOREIGN KEY (district_id) REFERENCES district(id);
+ALTER TABLE campaignformdata ADD CONSTRAINT fk_campaignformdata_community_id FOREIGN KEY (community_id) REFERENCES community(id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (230, 'Rename campaignforms to campaignformmeta #1997');
+
+-- 2020-07-27 Drop and re-create versioning trigger for campaignformmeta #1997
+DROP TRIGGER versioning_trigger ON campaignformmeta;
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON campaignformmeta
+FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'campaignformmeta_history', true);
+
+INSERT INTO schema_version (version_number, comment) VALUES (231, 'Drop and re-create versioning trigger for campaignformmeta #1997');
+
+-- 2020-07-27 Add list elements to campaignformmeta #2515
+ALTER TABLE campaignformmeta ADD COLUMN campaignformlistelements varchar(4096);
+ALTER TABLE campaignformmeta_history ADD COLUMN campaignformlistelements varchar(4096);
+
+INSERT INTO schema_version (version_number, comment) VALUES (232, 'Add list elements to campaignformmeta #2515');
+
+-- 2020-06-10 Add actions
+
+CREATE TABLE action (
+id bigint not null,
+reply varchar(4096),
+changedate timestamp not null,
+creationdate timestamp not null,
+description varchar(4096),
+date timestamp,
+statuschangedate timestamp,
+actioncontext varchar(512),
+actionstatus varchar(512),
+uuid varchar(36) not null unique,
+event_id bigint,
+creatoruser_id bigint,
+priority varchar(512),
+replyinguser_id bigint,
+sys_period tstzrange not null,
+PRIMARY KEY (id));
+
+ALTER TABLE action OWNER TO sormas_user;
+
+ALTER TABLE action ADD CONSTRAINT fk_action_event_id FOREIGN KEY (event_id) REFERENCES events (id);
+ALTER TABLE action ADD CONSTRAINT fk_action_creatoruser_id FOREIGN KEY (creatoruser_id) REFERENCES users (id);
+
+UPDATE action SET sys_period=tstzrange(creationdate, null);
+ALTER TABLE action ALTER COLUMN sys_period SET NOT NULL;
+CREATE TABLE action_history (LIKE action);
+CREATE TRIGGER versioning_trigger
+BEFORE INSERT OR UPDATE OR DELETE ON action
+FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'action_history', true);
+ALTER TABLE action_history OWNER TO sormas_user;
+
+INSERT INTO schema_version (version_number, comment) VALUES (233, 'Adds actions to events');
+
+-- 2020-07-29 - Remove list elements from campaignformmeta #2515
+ALTER TABLE campaignformmeta DROP COLUMN campaignformlistelements;
+ALTER TABLE campaignformmeta_history DROP COLUMN campaignformlistelements;
+
+INSERT INTO schema_version (version_number, comment) VALUES (234, 'Remove list elements from campaignformmeta #2515');
+
+-- 2020-07-29 Campaign diagram definition
+CREATE TABLE campaigndiagramdefinition(
+                              id bigint not null,
+                              uuid varchar(36) not null unique,
+                              changedate timestamp not null,
+                              creationdate timestamp not null,
+                              diagramId varchar(255) not null unique,
+                              diagramType varchar(255),
+                              campaignDiagramSeries text,
+                              sys_period tstzrange not null,
+                              primary key(id)
+);
+
+ALTER TABLE campaigndiagramdefinition OWNER TO sormas_user;
+
+CREATE TABLE campaigndiagramdefinition_history (LIKE campaigndiagramdefinition);
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON campaigndiagramdefinition
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'campaigndiagramdefinition_history', true);
+ALTER TABLE campaigndiagramdefinition_history OWNER TO sormas_user;
+
+INSERT INTO schema_version (version_number, comment) VALUES (235, 'Campaign diagram definition');
+
+-- 2020-07-30 - Store if quarantine period has been extended #2264
+ALTER TABLE cases ADD COLUMN quarantineextended boolean DEFAULT false;
+ALTER TABLE contact ADD COLUMN quarantineextended boolean DEFAULT false;
+
+ALTER TABLE cases_history ADD COLUMN quarantineextended boolean DEFAULT false;
+ALTER TABLE contact_history ADD COLUMN quarantineextended boolean DEFAULT false;
+
+INSERT INTO schema_version (version_number, comment) VALUES (236, 'Store if quarantine period has been extended #2264');
+
+-- 2020-08-10 Add responsible community to contact #2104
+ALTER TABLE contact ADD COLUMN community_id bigint;
+ALTER TABLE contact_history ADD COLUMN community_id bigint;
+ALTER TABLE contact ADD CONSTRAINT community_id FOREIGN KEY (community_id) REFERENCES community (id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (237, 'Add responsible community to contact #2104');
+
+-- 2020-08-13 Adds visit to cases
+
+ALTER TABLE cases ADD COLUMN followupstatus varchar(255);
+ALTER TABLE cases ADD COLUMN followupcomment varchar(4096);
+ALTER TABLE cases ADD COLUMN followupuntil timestamp;
+ALTER TABLE cases ADD COLUMN overwritefollowupuntil boolean;
+
+UPDATE cases SET followupstatus = 'CANCELED';
+UPDATE cases SET followupcomment = '-';
+UPDATE cases SET overwritefollowupuntil = false;
+
+ALTER TABLE cases_history ADD COLUMN followupstatus varchar(255);
+ALTER TABLE cases_history ADD COLUMN followupcomment varchar(4096);
+ALTER TABLE cases_history ADD COLUMN followupuntil timestamp;
+ALTER TABLE cases_history ADD COLUMN overwritefollowupuntil boolean;
+
+ALTER TABLE visit ADD COLUMN caze_id bigint;
+ALTER TABLE visit_history ADD COLUMN caze_id bigint;
+
+INSERT INTO schema_version (version_number, comment) VALUES (238, 'Adds visit to cases');
+
+-- 2020-08-10 - Update app synchronization related to event participants #2596
+ALTER TABLE  eventparticipant ADD COLUMN deleted boolean;
+ALTER TABLE  eventparticipant_history ADD COLUMN deleted boolean;
+UPDATE eventparticipant SET deleted = false;
+UPDATE eventparticipant_history SET deleted = false;
+
+INSERT INTO schema_version (version_number, comment) VALUES (239, 'Update app synchronization related to event participants #2596');
+
+-- 2020-06-23 Import and use new facility types #1637
+UPDATE samples SET lab_id = (SELECT id FROM facility WHERE uuid = 'SORMAS-CONSTID-OTHERS-FACILITY') WHERE lab_id = (SELECT id FROM facility WHERE uuid = 'SORMAS-CONSTID-OTHERS-LABORATO');
+UPDATE pathogentest SET lab_id = (SELECT id FROM facility WHERE uuid = 'SORMAS-CONSTID-OTHERS-FACILITY') WHERE lab_id = (SELECT id FROM facility WHERE uuid = 'SORMAS-CONSTID-OTHERS-LABORATO');
+DELETE FROM facility WHERE uuid = 'SORMAS-CONSTID-OTHERS-LABORATO';
+UPDATE facility SET type = 'HOSPITAL' WHERE NOT type = 'LABORATORY' AND uuid NOT IN ('SORMAS-CONSTID-OTHERS-FACILITY','SORMAS-CONSTID-ISNONE-FACILITY');
+ALTER TABLE cases ADD COLUMN facilitytype varchar(255);
+ALTER TABLE cases_history ADD COLUMN facilitytype varchar(255);
+UPDATE cases SET facilitytype = 'HOSPITAL' WHERE healthfacility_id != (SELECT id FROM facility WHERE uuid = 'SORMAS-CONSTID-ISNONE-FACILITY');
+ALTER TABLE person ADD COLUMN occupationfacilitytype varchar(255);
+ALTER TABLE person_history ADD COLUMN occupationfacilitytype varchar(255);
+UPDATE person SET occupationfacilitytype = 'HOSPITAL' WHERE occupationfacility_id IS NOT NULL;
+ALTER TABLE person ADD COLUMN placeofbirthfacilitytype varchar(255);
+ALTER TABLE person_history ADD COLUMN placeofbirthfacilitytype varchar(255);
+UPDATE person SET placeofbirthfacilitytype = 'HOSPITAL' WHERE placeofbirthfacility_id IS NOT NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (240, 'Import and use new facility types #1637');
+
+-- 2020-08-20 Adjust Covid-19 Symptoms for Switzerland #2669
+ALTER TABLE symptoms ADD COLUMN feverishFeeling varchar(255);
+ALTER TABLE symptoms ADD COLUMN weakness varchar(255);
+ALTER TABLE symptoms ADD COLUMN fatigue varchar(255);
+ALTER TABLE symptoms ADD COLUMN coughWithoutSputum varchar(255);
+ALTER TABLE symptoms ADD COLUMN breathlessness varchar(255);
+ALTER TABLE symptoms ADD COLUMN chestPressure varchar(255);
+ALTER TABLE symptoms ADD COLUMN blueLips varchar(255);
+ALTER TABLE symptoms ADD COLUMN bloodCirculationProblems varchar(255);
+ALTER TABLE symptoms ADD COLUMN palpitations varchar(255);
+ALTER TABLE symptoms ADD COLUMN dizzinessStandingUp varchar(255);
+ALTER TABLE symptoms ADD COLUMN highOrLowBloodPressure varchar(255);
+ALTER TABLE symptoms ADD COLUMN urinaryRetention varchar(255);
+
+ALTER TABLE symptoms_history ADD COLUMN feverishFeeling varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN weakness varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN fatigue varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN coughWithoutSputum varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN breathlessness varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN chestPressure varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN blueLips varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN bloodCirculationProblems varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN palpitations varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN dizzinessStandingUp varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN highOrLowBloodPressure varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN urinaryRetention varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (241, 'Adjust Covid-19 Symptoms for Switzerland #2669');
+
+-- 2020-08-19 - Add pre-existing conditions to contacts #2564 - update healthconditions table
+ALTER TABLE  contact ADD COLUMN healthconditions_id bigint;
+ALTER TABLE contact ADD CONSTRAINT fk_contact_healthconditions_id FOREIGN KEY (healthconditions_id) REFERENCES healthconditions (id);
+
+DO $$
+    DECLARE rec RECORD;
+    DECLARE new_healthcondition_id INTEGER;
+    BEGIN
+        UPDATE contact SET healthconditions_id = (SELECT hc.id FROM healthconditions hc
+                                                                                inner join clinicalcourse cc on cc.healthconditions_id = hc.id
+                                                                                inner join cases ca on ca.clinicalcourse_id = cc.id
+                                                          where ca.id = resultingcase_id)
+        WHERE resultingcase_id IS NOT NULL AND healthconditions_id IS NULL;
+
+        FOR rec IN SELECT id FROM public.contact where resultingcase_id IS NULL and healthconditions_id IS NULL
+            LOOP
+                INSERT INTO healthconditions(id, uuid, creationdate, changedate) VALUES (nextval('entity_seq'), upper(substring(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), 3, 29)), now(), now()) RETURNING id INTO new_healthcondition_id;
+                UPDATE contact SET healthconditions_id = new_healthcondition_id WHERE id = rec.id;
+            END LOOP;
+    END;
+$$ LANGUAGE plpgsql;
+INSERT INTO schema_version (version_number, comment) VALUES (242, 'update healthconditions table #2564');
+
+-- 2020-08-24 Fix problems caused by #1637
+UPDATE facility SET type = 'HOSPITAL' WHERE type ISNULL AND uuid NOT IN ('SORMAS-CONSTID-OTHERS-FACILITY','SORMAS-CONSTID-ISNONE-FACILITY');
+UPDATE cases SET facilitytype = null WHERE healthfacility_id ISNULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (243, 'Fix problems caused by #1637');
+
+-- 2020-07-29 Campaign diagram visualisation
+
+ALTER TABLE campaigndiagramdefinition ALTER COLUMN campaignDiagramSeries TYPE json USING campaignDiagramSeries::json;
+ALTER TABLE campaigndiagramdefinition_history ALTER COLUMN campaignDiagramSeries TYPE json USING campaignDiagramSeries::json;
+ALTER TABLE campaignformdata ALTER COLUMN formvalues TYPE json USING formvalues::json;
+ALTER TABLE campaignformdata_history ALTER COLUMN formvalues TYPE json USING formvalues::json;
+ALTER TABLE campaigndiagramdefinition ADD COLUMN diagramCaption varchar(255);
+ALTER TABLE campaigndiagramdefinition_history ADD COLUMN diagramCaption varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (244, 'Campaign diagram visualization #2526');
+
+-- 2020-08-25 Person address refinement #2562
+ALTER TABLE location RENAME COLUMN address TO street;
+ALTER TABLE location_history RENAME COLUMN address TO street;
+ALTER TABLE location ADD COLUMN housenumber varchar(255);
+ALTER TABLE location_history ADD COLUMN housenumber varchar(255);
+ALTER TABLE location ADD COLUMN additionalinformation varchar(255);
+ALTER TABLE location_history ADD COLUMN additionalinformation varchar(255);
+ALTER TABLE location ADD COLUMN addresstype varchar(255);
+ALTER TABLE location_history ADD COLUMN addresstype varchar(255);
+ALTER TABLE location ADD COLUMN addresstypedetails varchar(255);
+ALTER TABLE location_history ADD COLUMN addresstypedetails varchar(255);
+ALTER TABLE location ADD COLUMN person_id bigint;
+ALTER TABLE location_history ADD COLUMN person_id bigint;
+ALTER TABLE location ADD CONSTRAINT fk_location_person_id FOREIGN KEY (person_id) REFERENCES person (id);
+
+ALTER TABLE person ADD COLUMN changedateofembeddedlists timestamp without time zone;
+
+INSERT INTO schema_version (version_number, comment) VALUES (245, 'Person address refinement #2562');
+
+-- 2020-08-28 Clone symptoms and epi data linked to cases and contacts/visits at the same time #2735
+
+CREATE OR REPLACE FUNCTION create_new_uuid(uuid varchar) RETURNS varchar
+AS 'SELECT LEFT(uuid, 21) ||
+CASE SUBSTRING(uuid FROM 22 FOR 1)
+WHEN ''9'' THEN ''A''
+WHEN ''Z'' THEN ''0''
+ELSE chr(ascii(SUBSTRING(uuid FROM 22 FOR 1)) + 1)
+END ||
+SUBSTRING(uuid FROM 23)
+AS new_uuid;'
+LANGUAGE SQL;
+
+ALTER FUNCTION create_new_uuid(varchar) OWNER TO sormas_user;
+
+-- EPI DATA
+
+DROP TABLE IF EXISTS t_epidata;
+DROP TABLE IF EXISTS t_epidataburial;
+DROP TABLE IF EXISTS t_epidatagathering;
+DROP TABLE IF EXISTS t_epidatatravel;
+DROP TABLE IF EXISTS t_id_map;
+DROP TABLE IF EXISTS t_edb_id_map;
+DROP TABLE IF EXISTS t_edg_id_map;
+DROP TABLE IF EXISTS t_edt_id_map;
+DROP TABLE IF EXISTS t_epidataburial_location;
+DROP TABLE IF EXISTS t_epidatagathering_location;
+DROP TABLE IF EXISTS t_edbl_id_map;
+DROP TABLE IF EXISTS t_edgl_id_map;
+
+CREATE temp table t_epidata
+AS SELECT e.* FROM epidata e WHERE e.id IN (SELECT ca.epidata_id FROM cases ca) AND e.id IN (SELECT co.epidata_id FROM contact co);
+
+CREATE temp table t_id_map
+AS SELECT id AS old_id,
+nextval('entity_seq') AS new_id,
+create_new_uuid(uuid) AS new_uuid
+FROM t_epidata;
+
+UPDATE t_epidata te SET
+id = (SELECT new_id FROM t_id_map WHERE te.id = old_id),
+uuid = (SELECT new_uuid FROM t_id_map WHERE te.id = old_id);
+
+-- BURIALS
+
+CREATE temp table t_epidataburial
+AS SELECT edb.* FROM epidataburial edb, t_id_map WHERE edb.epidata_id = t_id_map.old_id;
+
+CREATE temp table t_edb_id_map
+AS SELECT id AS edb_old_id,
+nextval('entity_seq') AS edb_new_id,
+create_new_uuid(uuid) AS edb_new_uuid
+FROM t_epidataburial;
+
+CREATE temp table t_epidataburial_location
+AS SELECT edbl.* FROM location edbl, t_epidataburial edb WHERE edb.burialaddress_id = edbl.id;
+
+CREATE temp table t_edbl_id_map
+AS SELECT id AS edbl_old_id,
+nextval('entity_seq') AS edbl_new_id,
+create_new_uuid(uuid) AS edbl_new_uuid
+FROM t_epidataburial_location;
+
+UPDATE t_epidataburial_location tedbl SET
+id = (SELECT edbl_new_id FROM t_edbl_id_map WHERE tedbl.id = edbl_old_id),
+uuid = (SELECT edbl_new_uuid FROM t_edbl_id_map WHERE tedbl.id = edbl_old_id);
+
+INSERT INTO location (SELECT * FROM t_epidataburial_location);
+
+UPDATE t_epidataburial tedb SET
+id = (SELECT edb_new_id FROM t_edb_id_map WHERE tedb.id = edb_old_id),
+uuid = (SELECT edb_new_uuid FROM t_edb_id_map WHERE tedb.id = edb_old_id),
+epidata_id = (SELECT new_id FROM t_id_map WHERE tedb.epidata_id = old_id),
+burialaddress_id = (SELECT edbl_new_id FROM t_edbl_id_map WHERE tedb.burialaddress_id = edbl_old_id);
+
+-- BURIALS END
+
+-- GATHERINGS
+
+CREATE temp table t_epidatagathering
+AS SELECT edg.* FROM epidatagathering edg, t_id_map WHERE edg.epidata_id = t_id_map.old_id;
+
+CREATE temp table t_edg_id_map
+AS SELECT id AS edg_old_id,
+nextval('entity_seq') AS edg_new_id,
+create_new_uuid(uuid) AS edg_new_uuid
+FROM t_epidatagathering;
+
+CREATE temp table t_epidatagathering_location
+AS SELECT edgl.* FROM location edgl, t_epidatagathering edg WHERE edg.gatheringaddress_id = edgl.id;
+
+CREATE temp table t_edgl_id_map
+AS SELECT id AS edgl_old_id,
+nextval('entity_seq') AS edgl_new_id,
+create_new_uuid(uuid) AS edgl_new_uuid
+FROM t_epidatagathering_location;
+
+UPDATE t_epidatagathering_location tedgl SET
+id = (SELECT edgl_new_id FROM t_edgl_id_map WHERE tedgl.id = edgl_old_id),
+uuid = (SELECT edgl_new_uuid FROM t_edgl_id_map WHERE tedgl.id = edgl_old_id);
+
+INSERT INTO location (SELECT * FROM t_epidatagathering_location);
+
+UPDATE t_epidatagathering tedg SET
+id = (SELECT edg_new_id FROM t_edg_id_map WHERE tedg.id = edg_old_id),
+uuid = (SELECT edg_new_uuid FROM t_edg_id_map WHERE tedg.id = edg_old_id),
+epidata_id = (SELECT new_id FROM t_id_map WHERE tedg.epidata_id = old_id),
+gatheringaddress_id = (SELECT edgl_new_id FROM t_edgl_id_map WHERE tedg.gatheringaddress_id = edgl_old_id);
+
+-- GATHERINGS END
+
+-- TRAVELS
+
+CREATE temp table t_epidatatravel
+AS SELECT edt.* FROM epidatatravel edt, t_id_map WHERE edt.epidata_id = t_id_map.old_id;
+
+CREATE temp table t_edt_id_map
+AS SELECT id AS edt_old_id,
+nextval('entity_seq') AS edt_new_id,
+create_new_uuid(uuid) AS edt_new_uuid
+FROM t_epidatatravel;
+
+UPDATE t_epidatatravel tedt SET
+id = (SELECT edt_new_id FROM t_edt_id_map WHERE tedt.id = edt_old_id),
+uuid = (SELECT edt_new_uuid FROM t_edt_id_map WHERE tedt.id = edt_old_id),
+epidata_id = (SELECT new_id FROM t_id_map WHERE tedt.epidata_id = old_id);
+
+-- TRAVELS END
+
+INSERT INTO epidata (SELECT * FROM t_epidata);
+INSERT INTO epidataburial (SELECT * FROM t_epidataburial);
+INSERT INTO epidatagathering (SELECT * FROM t_epidatagathering);
+INSERT INTO epidatatravel (SELECT * FROM t_epidatatravel);
+
+UPDATE cases SET epidata_id = m.new_id FROM t_id_map m WHERE cases.epidata_id = m.old_id;
+
+-- EPI DATA END
+
+-- SYMPTOMS
+
+DROP TABLE IF EXISTS t_symptoms;
+DROP TABLE IF EXISTS t_id_map;
+
+CREATE temp table t_symptoms
+AS SELECT s.* FROM symptoms s WHERE s.id IN (SELECT ca.symptoms_id FROM cases ca) AND s.id IN (SELECT vi.symptoms_id FROM visit vi);
+
+CREATE temp table t_id_map
+AS SELECT id AS old_id,
+nextval('entity_seq') AS new_id,
+create_new_uuid(uuid) AS new_uuid
+FROM t_symptoms;
+
+UPDATE t_symptoms ts SET
+id = (SELECT new_id FROM t_id_map WHERE ts.id = old_id),
+uuid = (SELECT new_uuid FROM t_id_map WHERE ts.id = old_id);
+
+INSERT INTO symptoms (SELECT * FROM t_symptoms);
+
+UPDATE cases SET symptoms_id = m.new_id FROM t_id_map m WHERE cases.symptoms_id = m.old_id;
+
+-- SYMPTOMS END
+
+DROP TABLE IF EXISTS t_epidata;
+DROP TABLE IF EXISTS t_epidataburial;
+DROP TABLE IF EXISTS t_epidatagathering;
+DROP TABLE IF EXISTS t_epidatatravel;
+DROP TABLE IF EXISTS t_id_map;
+DROP TABLE IF EXISTS t_edb_id_map;
+DROP TABLE IF EXISTS t_edg_id_map;
+DROP TABLE IF EXISTS t_edt_id_map;
+DROP TABLE IF EXISTS t_epidataburial_location;
+DROP TABLE IF EXISTS t_epidatagathering_location;
+DROP TABLE IF EXISTS t_edbl_id_map;
+DROP TABLE IF EXISTS t_edgl_id_map;
+
+INSERT INTO schema_version (version_number, comment) VALUES (246, 'Clone symptoms and epi data linked to cases and contacts/visits at the same time #2735');
+
+-- 2020-09-01 - Store the status of the PIA account for a person
+ALTER TABLE person ADD COLUMN symptomjournalstatus varchar(255);
+ALTER TABLE person_history ADD COLUMN symptomjournalstatus varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (247, 'Add SymptomJournalStatus to allow status exchange with external journals. #1970');
+
+-- 2020-09-03 - Add "Has COVID app" and "COVID Code generated and delivered" fields on person
+ALTER TABLE person ADD COLUMN hasCovidApp boolean DEFAULT false;
+ALTER TABLE person_history ADD COLUMN hasCovidApp boolean DEFAULT false;
+
+ALTER TABLE person ADD COLUMN covidCodeDelivered boolean DEFAULT false;
+ALTER TABLE person_history ADD COLUMN covidCodeDelivered boolean DEFAULT false;
+
+INSERT INTO schema_version (version_number, comment) VALUES (248, 'SwissCOVID-App fields (for Switzerland and COVID only), #2725');
+
+-- 2020-09-07 - Add reporting user on event participant
+ALTER TABLE eventparticipant ADD COLUMN reportingUser_id bigint;
+ALTER TABLE eventparticipant ADD CONSTRAINT fk_eventparticipant_reportingUser_id FOREIGN KEY (reportingUser_id) REFERENCES users(id);
+
+ALTER TABLE eventparticipant_history ADD COLUMN reportingUser_id bigint;
+ALTER TABLE eventparticipant_history ADD CONSTRAINT fk_eventparticipant_history_reportingUser_id FOREIGN KEY (reportingUser_id) REFERENCES users(id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (249, 'Add reporting user on event participant #2789');
+
+-- 2020-09-08 - Add "Official order sent" and corresponding date to cases and contacts #2847
+ALTER TABLE cases ADD COLUMN quarantineofficialordersent boolean DEFAULT false;
+ALTER TABLE cases ADD COLUMN quarantineofficialordersentdate timestamp;
+ALTER TABLE cases_history ADD COLUMN quarantineofficialordersent boolean DEFAULT false;
+ALTER TABLE cases_history ADD COLUMN quarantineofficialordersentdate timestamp;
+
+ALTER TABLE contact ADD COLUMN quarantineofficialordersent boolean DEFAULT false;
+ALTER TABLE contact ADD COLUMN quarantineofficialordersentdate timestamp;
+ALTER TABLE contact_history ADD COLUMN quarantineofficialordersent boolean DEFAULT false;
+ALTER TABLE contact_history ADD COLUMN quarantineofficialordersentdate timestamp;
+
+INSERT INTO schema_version (version_number, comment) VALUES (250, 'Add "Official order sent" and corresponding date to cases and contacts #2847');
+
+-- 2020-07-29 Campaign diagram visualisation refinement
+
+-- Hotfix additions to avoid errors for servers older than 2 months
+ALTER TABLE campaignformmeta DROP COLUMN IF EXISTS campaignformtranslations;
+ALTER TABLE campaignformmeta_history DROP COLUMN IF EXISTS campaignformtranslations;
+ALTER TABLE campaignformmeta ADD COLUMN campaignformtranslations json;
+-- End of hotfix additions
+
+ALTER TABLE campaignformmeta ALTER COLUMN campaignformelements TYPE json USING campaignformelements::json;
+ALTER TABLE campaignformmeta ALTER COLUMN campaignformtranslations TYPE json USING campaignformtranslations::json;
+ALTER TABLE campaignformmeta_history ADD COLUMN campaignformelements json;
+ALTER TABLE campaignformmeta_history ADD COLUMN campaignformtranslations json;
+
+INSERT INTO schema_version (version_number, comment) VALUES (251, 'Campaign diagram visualization refinement #2753');
+
+-- 2020-09-07 Campaign dashboard element
+
+ALTER TABLE campaigns ADD COLUMN dashboardElements json;
+ALTER TABLE campaigns_history ADD COLUMN dashboardElements json;
+
+create or replace function cast_to_int(text, integer) returns integer as $$
+begin
+    return cast($1 as integer);
+exception
+    when invalid_text_representation then
+        return $2;
+end;
+$$ language plpgsql immutable;
+
+INSERT INTO schema_version (version_number, comment) VALUES (252, 'Campaign dashboard element #2527');
+
+-- 2020-09-14 Add person_locations table and remove person reference from locations #2746
+
+CREATE TABLE person_locations(
+	person_id bigint NOT NULL,
+	location_id bigint NOT NULL,
+	sys_period tstzrange NOT NULL
+);
+
+ALTER TABLE person_locations OWNER TO sormas_user;
+ALTER TABLE ONLY person_locations ADD CONSTRAINT unq_person_locations_0 UNIQUE (person_id, location_id);
+ALTER TABLE ONLY person_locations ADD CONSTRAINT fk_person_locations_person_id FOREIGN KEY (person_id) REFERENCES person(id);
+ALTER TABLE ONLY person_locations ADD CONSTRAINT fk_person_locations_location_id FOREIGN KEY (location_id) REFERENCES location(id);
+
+CREATE TABLE person_locations_history (LIKE person_locations);
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON person_locations
+FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'person_locations_history', true);
+ALTER TABLE person_locations_history OWNER TO sormas_user;
+
+INSERT INTO person_locations (person_id, location_id) SELECT l.person_id, l.id FROM location l WHERE l.person_id IS NOT NULL;
+
+ALTER TABLE location DROP COLUMN person_id;
+
+INSERT INTO schema_version (version_number, comment) VALUES (253, 'Add person_locations table and remove person reference from locations #2746');
+
+-- 2020-09-21 - Store if quarantine period has been reduced #2235
+ALTER TABLE cases ADD COLUMN quarantinereduced boolean DEFAULT false;
+ALTER TABLE contact ADD COLUMN quarantinereduced boolean DEFAULT false;
+
+ALTER TABLE cases_history ADD COLUMN quarantinereduced boolean DEFAULT false;
+ALTER TABLE contact_history ADD COLUMN quarantinereduced boolean DEFAULT false;
+
+INSERT INTO schema_version (version_number, comment) VALUES (254, 'Store if quarantine period has been reduced #2235');
+
+-- 2020-09-21 Add new field externalId as per feature #2670
+ALTER TABLE person ADD COLUMN externalid varchar(255);
+ALTER TABLE person_history ADD COLUMN externalid varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (255, 'Add new field externalId as per feature #2670');
+
+-- 2020-09-18 Add action title
+ALTER TABLE action ADD COLUMN title character varying(512);
+ALTER TABLE action_history ADD COLUMN title character varying(512);
+
+INSERT INTO schema_version (version_number, comment) VALUES (256, 'Add action.title');
+
+-- 2020-09-18 Add event title
+ALTER TABLE events ADD COLUMN eventTitle character varying(512);
+ALTER TABLE events_history ADD COLUMN eventTitle character varying(512);
+
+INSERT INTO schema_version (version_number, comment) VALUES (257, 'Add event.eventTitle');
+
+-- 2020-09-25 Cases > Minimal Essential Data (MED) for Switzerland #2959
+ALTER TABLE cases
+    ADD COLUMN caseidism integer,
+    ADD COLUMN covidtestreason varchar(255),
+    ADD COLUMN covidtestreasondetails varchar(512),
+    ADD COLUMN contacttracingfirstcontacttype varchar(255),
+    ADD COLUMN contacttracingfirstcontactdate timestamp,
+    ADD COLUMN quarantinereasonbeforeisolation varchar(255),
+    ADD COLUMN quarantinereasonbeforeisolationdetails varchar(512),
+    ADD COLUMN endofisolationreason varchar(255),
+    ADD COLUMN endofisolationreasondetails varchar(512);
+
+ALTER TABLE cases_history
+    ADD COLUMN caseidism integer,
+    ADD COLUMN covidtestreason varchar(255),
+    ADD COLUMN covidtestreasondetails varchar(512),
+    ADD COLUMN contacttracingfirstcontacttype varchar(255),
+    ADD COLUMN contacttracingfirstcontactdate timestamp,
+    ADD COLUMN quarantinereasonbeforeisolation varchar(255),
+    ADD COLUMN quarantinereasonbeforeisolationdetails varchar(512),
+    ADD COLUMN endofisolationreason varchar(255),
+    ADD COLUMN endofisolationreasondetails varchar(512);
+
+INSERT INTO schema_version (version_number, comment) VALUES (258, 'Cases > Minimal Essential Data (MED) for Switzerland #2959');
+
+-- 2020-09-22 Add facility fields to location and refactor occupation facilities for persons #2456
+ALTER TABLE location ADD COLUMN facilitytype varchar(255);
+ALTER TABLE location_history ADD COLUMN facilitytype varchar(255);
+ALTER TABLE location ADD COLUMN facility_id bigint;
+ALTER TABLE location_history ADD COLUMN facility_id bigint;
+ALTER TABLE location ADD CONSTRAINT fk_location_facility_id FOREIGN KEY (facility_id) REFERENCES facility(id);
+ALTER TABLE location ADD COLUMN facilitydetails varchar(512);
+ALTER TABLE location_history ADD COLUMN facilitydetails varchar(512);
+
+CREATE temp table t_id_map
+AS SELECT id AS person_id, nextval('entity_seq') AS location_id, create_new_uuid(uuid) AS uuid, occupationregion_id, occupationdistrict_id, occupationcommunity_id, occupationfacility_id, occupationfacilitydetails, occupationfacilitytype
+FROM person WHERE occupationregion_id IS NOT NULL OR occupationdistrict_id IS NOT NULL OR occupationcommunity_id IS NOT NULL OR occupationfacility_id IS NOT NULL;
+
+INSERT INTO location (id, uuid, changedate, creationdate, region_id, district_id, community_id, facility_id, facilitydetails, facilitytype, addresstype)
+SELECT location_id, uuid, now(), now(), occupationregion_id, occupationdistrict_id, occupationcommunity_id, occupationfacility_id, occupationfacilitydetails, occupationfacilitytype, 'PLACE_OF_WORK'
+FROM t_id_map;
+INSERT INTO person_locations (person_id, location_id) SELECT person_id, location_id FROM t_id_map;
+ALTER TABLE person DROP COLUMN occupationregion_id, DROP COLUMN occupationdistrict_id, DROP COLUMN occupationcommunity_id, DROP COLUMN occupationfacilitytype, DROP COLUMN occupationfacility_id, DROP COLUMN occupationfacilitydetails;
+
+INSERT INTO schema_version (version_number, comment) VALUES (259, 'Add facility fields to location and refactor occupation facilities for persons #2456');
+
+-- 202-10-01 Split general signs of disease #2916
+ALTER TABLE symptoms ADD COLUMN shivering character varying(255);
+ALTER TABLE symptoms RENAME generalsignsofdisease to feelingill;
+
+ALTER TABLE symptoms_history ADD COLUMN shivering character varying(255);
+ALTER TABLE symptoms_history RENAME generalsignsofdisease to feelingill;
+
+
+INSERT INTO schema_version (version_number, comment) VALUES (260, 'Split general signs of disease #2916');
+
+-- 2020-10-01 Contacts > Minimal Essential Data (MED) for Switzerland #2960
+ALTER TABLE contact
+    ADD COLUMN endofquarantinereason varchar(255),
+    ADD COLUMN endofquarantinereasondetails varchar(512);
+
+ALTER TABLE contact_history
+    ADD COLUMN endofquarantinereason varchar(255),
+    ADD COLUMN endofquarantinereasondetails varchar(512);
+
+INSERT INTO schema_version (version_number, comment) VALUES (261, 'Contacts > Minimal Essential Data (MED) for Switzerland #2960');
+
+-- 2020-09-16 Add total series to campaigndiagramdefinition to calculate percentage values #2528
+ALTER TABLE campaigndiagramdefinition ADD COLUMN campaignseriestotal json;
+ALTER TABLE campaigndiagramdefinition_history ADD COLUMN campaignseriestotal json;
+
+INSERT INTO schema_version (version_number, comment) VALUES (262, 'Add series total to campaigndiagramdefinition to calculate percentage values #2528');
+
+-- 2020-10-01 Add possibility to set percentage visualization as default for campaign diagram definitions #2528
+ALTER TABLE campaigndiagramdefinition ADD COLUMN percentagedefault boolean DEFAULT false;
+ALTER TABLE campaigndiagramdefinition_history ADD COLUMN percentagedefault boolean DEFAULT false;
+
+INSERT INTO schema_version (version_number, comment) VALUES (263, 'Add possibility to set percentage visualization as default for campaign diagram definitions #2528');
+
+-- 2020-10-02 Add new field returningTraveler to contact
+ALTER TABLE contact ADD COLUMN returningtraveler varchar(255);
+ALTER TABLE contact_history ADD COLUMN returningtraveler varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (264, 'Add new field returningTraveler to contact #2603');
+-- 2020-08-13 Sormas 2 Sormas sharing information #2624
+CREATE TABLE sormastosormasorigininfo (
+    id bigint NOT NULL,
+    uuid varchar(36) not null unique,
+    creationdate timestamp without time zone NOT NULL,
+    changedate timestamp not null,
+    organizationid varchar(512),
+    sendername varchar(512),
+    senderemail varchar(512),
+    senderphonenumber varchar(512),
+    ownershiphandedover boolean NOT NULL DEFAULT false,
+    comment varchar(4096),
+    primary key(id)
+);
+ALTER TABLE sormastosormasorigininfo OWNER TO sormas_user;
+
+ALTER TABLE cases ADD COLUMN sormasToSormasOriginInfo_id bigint;
+ALTER TABLE cases ADD CONSTRAINT fk_cases_sormasToSormasOriginInfo_id FOREIGN KEY (sormasToSormasOriginInfo_id) REFERENCES sormastosormasorigininfo (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+ALTER TABLE contact ADD COLUMN sormasToSormasOriginInfo_id bigint;
+ALTER TABLE contact ADD CONSTRAINT fk_contact_sormasToSormasOriginInfo_id FOREIGN KEY (sormasToSormasOriginInfo_id) REFERENCES sormastosormasorigininfo (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+CREATE TABLE sormastosormasshareinfo (
+    id bigint NOT NULL,
+    uuid varchar(36) not null unique,
+    creationdate timestamp without time zone NOT NULL,
+    changedate timestamp not null,
+    caze_id bigint,
+    contact_id bigint,
+    organizationid varchar(512),
+    sender_id bigint,
+    ownershiphandedover boolean NOT NULL DEFAULT false,
+    comment varchar(4096),
+    primary key(id)
+);
+
+ALTER TABLE sormastosormasshareinfo OWNER TO sormas_user;
+ALTER TABLE sormastosormasshareinfo ADD CONSTRAINT fk_sormastosormasshareinfo_caze_id FOREIGN KEY (caze_id) REFERENCES cases (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE sormastosormasshareinfo ADD CONSTRAINT fk_sormastosormasshareinfo_contact_id FOREIGN KEY (contact_id) REFERENCES contact (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE sormastosormasshareinfo ADD CONSTRAINT fk_sormastosormasshareinfo_sender_id FOREIGN KEY (sender_id) REFERENCES users (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+INSERT INTO schema_version (version_number, comment) VALUES (265, 'Store Sormas 2 Sormas sharing information #2624');
+
+-- 2020-10-05 Add new field: Quarantine before isolation #2977
+ALTER TABLE cases
+    ADD COLUMN wasInQuarantineBeforeIsolation varchar(255);
+
+ALTER TABLE cases_history
+    ADD COLUMN wasInQuarantineBeforeIsolation varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (266, 'Add new field: Quarantine before isolation #2977');
+-- 2020-09-23 CampaignFormMeta to Campaigns relation #2855
+
+CREATE TABLE campaign_campaignformmeta(
+                                campaign_id bigint NOT NULL,
+                                campaignformmeta_id bigint NOT NULL,
+                                sys_period tstzrange NOT NULL
+);
+
+ALTER TABLE campaign_campaignformmeta OWNER TO sormas_user;
+ALTER TABLE ONLY campaign_campaignformmeta ADD CONSTRAINT unq_campaign_campaignformmeta_0 UNIQUE (campaign_id, campaignformmeta_id);
+ALTER TABLE ONLY campaign_campaignformmeta ADD CONSTRAINT fk_campaign_campaignformmeta_campaign_id FOREIGN KEY (campaign_id) REFERENCES campaigns(id);
+ALTER TABLE ONLY campaign_campaignformmeta ADD CONSTRAINT fk_campaign_campaignformmeta_meta_id FOREIGN KEY (campaignformmeta_id) REFERENCES campaignformmeta(id);
+
+CREATE TABLE campaign_campaignformmeta_history (LIKE campaign_campaignformmeta);
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON campaign_campaignformmeta
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'campaign_campaignformmeta_history', true);
+ALTER TABLE campaign_campaignformmeta_history OWNER TO sormas_user;
+
+INSERT INTO schema_version (version_number, comment) VALUES (267, 'CampaignFormMeta to Campaigns relation #2855');
+
+--2020-10-09 Add boolean to users to active window GDPR
+ALTER TABLE users ADD COLUMN hasConsentedToGdpr boolean default false;
+ALTER TABLE users_history ADD COLUMN hasConsentedToGdpr boolean default false;
+INSERT INTO schema_version (version_number, comment) VALUES (268, 'Add gdpr popup to user');
+
+--2020-10-22 Optimize person similarity/duplication check
+CREATE INDEX similarity_index
+    ON person using gist ((firstName || ' ' || lastName) gist_trgm_ops);
+INSERT INTO schema_version (version_number, comment) VALUES (269, 'Optimize person similarity/duplication check');
+
+-- 2020-10-27 - Store visit source #2083
+ALTER TABLE visit ADD COLUMN origin varchar(255);
+ALTER TABLE visit_history ADD COLUMN origin varchar(255);
+UPDATE visit SET origin='USER';
+
+INSERT INTO schema_version (version_number, comment) VALUES (270, 'Add new field origin to visits as per feature #2083');
+-- 2020-10-22 Sormas 2 Sormas samples #3210
+ALTER TABLE samples ADD COLUMN sormasToSormasOriginInfo_id bigint;
+ALTER TABLE samples ADD CONSTRAINT fk_samples_sormasToSormasOriginInfo_id FOREIGN KEY (sormasToSormasOriginInfo_id) REFERENCES sormastosormasorigininfo (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+
+ALTER TABLE sormastosormasshareinfo ADD COLUMN sample_id bigint;
+ALTER TABLE sormastosormasshareinfo ADD CONSTRAINT fk_sormastosormasshareinfo_sample_id FOREIGN KEY (sample_id) REFERENCES samples (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+INSERT INTO schema_version (version_number, comment) VALUES (271, 'Sormas 2 Sormas samples #3210');
+
+-- 2020-10-12 Add event investigation status
+ALTER TABLE events ADD COLUMN eventInvestigationStatus varchar(255);
+ALTER TABLE events_history ADD COLUMN eventInvestigationStatus varchar(255);
+ALTER TABLE events ADD COLUMN eventInvestigationStartDate timestamp;
+ALTER TABLE events_history ADD COLUMN eventInvestigationStartDate timestamp;
+ALTER TABLE events ADD COLUMN eventInvestigationEndDate timestamp;
+ALTER TABLE events_history ADD COLUMN eventInvestigationEndDate timestamp;
+
+INSERT INTO schema_version (version_number, comment) VALUES (272, 'Add event.eventInvestigationStatus #2992');
+
+-- 2020-10-30 Increase case directory performance #3137
+ALTER TABLE visit DROP CONSTRAINT IF EXISTS fk_visit_caze_id;
+ALTER TABLE visit ADD CONSTRAINT fk_visit_caze_id FOREIGN KEY (caze_id) REFERENCES cases (id);
+CREATE INDEX IF NOT EXISTS idx_visit_caze_id ON visit USING HASH (caze_id);
+CREATE INDEX IF NOT EXISTS idx_eventparticipant_resultingcase_id ON eventparticipant USING hash (resultingcase_id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (273, 'Increase case directory performance #3137');
+
+-- 2020-11-02 Drop not null constraint from event description #3223
+ALTER TABLE events ALTER COLUMN eventdesc DROP NOT NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (274, 'Drop not null constraint from event description #3223');
+
+-- 2020-11-05 Drop not null constraint from event history description #3391
+ALTER TABLE events_history ALTER COLUMN eventdesc DROP NOT NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (275, 'Drop not null constraint from event history description #3391');
+
+-- 2020-11-06 Split follow-up duration #3100
+ALTER TABLE diseaseconfiguration ADD COLUMN casefollowupduration integer;
+ALTER TABLE diseaseconfiguration ADD COLUMN eventparticipantfollowupduration integer;
+ALTER TABLE diseaseconfiguration_history ADD COLUMN casefollowupduration integer;
+ALTER TABLE diseaseconfiguration_history ADD COLUMN eventparticipantfollowupduration integer;
+UPDATE diseaseconfiguration SET casefollowupduration = followupduration;
+UPDATE diseaseconfiguration SET eventparticipantfollowupduration = followupduration;
+
+INSERT INTO schema_version (version_number, comment) VALUES (276, 'Split follow-up duration #3100');
+
+-- 2020-??-?? Create country table #2993
+CREATE TABLE country (
+    id bigint NOT NULL,
+    uuid varchar(36) not null unique,
+    creationdate timestamp without time zone NOT NULL,
+    changedate timestamp not null,
+    archived boolean not null default false,
+    defaultname varchar(255),
+    externalid varchar(255),
+    isocode varchar(3) unique not null,
+    unocode varchar(3) unique,
+    primary key(id)
+);
+ALTER TABLE country OWNER TO sormas_user;
+
+INSERT INTO schema_version (version_number, comment) VALUES (277, 'Create country table #2993');
+
+-- 2020-11-10 Add documents
+
+CREATE TABLE documents (
+    id bigint PRIMARY KEY NOT NULL,
+    uuid character varying(36) NOT NULL,
+    changedate timestamp without time zone NOT NULL,
+    creationdate timestamp without time zone NOT NULL,
+    deleted boolean DEFAULT false,
+    uploadinguser_id bigint NOT NULL,
+    name character varying(255) NOT NULL,
+    mimetype character varying(255) NOT NULL,
+    size bigint NOT NULL,
+    storage_reference character varying(255) NOT NULL,
+    relatedentity_uuid character varying(36) NOT NULL,
+    relatedentity_type character varying(255) NOT NULL,
+
+    CONSTRAINT fk_documents_uploadinguser_id FOREIGN KEY (uploadinguser_id) REFERENCES users(id)
+);
+ALTER TABLE documents OWNER TO sormas_user;
+
+INSERT INTO schema_version (version_number, comment) VALUES (278, 'Add documents #2328');
+
+-- 2020-11-06 Extend event participant jurisdiction calculation #2902
+ALTER TABLE eventparticipant ADD COLUMN region_id bigint;
+ALTER TABLE eventparticipant ADD COLUMN district_id bigint;
+ALTER TABLE eventparticipant ADD CONSTRAINT fk_eventparticipant_region_id FOREIGN KEY (region_id) REFERENCES region (id);
+ALTER TABLE eventparticipant ADD CONSTRAINT fk_eventparticipant_district_id FOREIGN KEY (district_id) REFERENCES district (id);
+INSERT INTO schema_version (version_number, comment) VALUES (279, 'Extend event participant jurisdiction calculation #2902');
+
+-- 2020-10-15 New exposure entity and migration #2948
+ALTER TABLE epidata ADD COLUMN exposuredetailsknown varchar(255);
+ALTER TABLE epidata_history ADD COLUMN exposuredetailsknown varchar(255);
+
+UPDATE epidata SET exposuredetailsknown =
+CASE
+WHEN traveled = 'YES' OR gatheringattended = 'YES' OR burialattended = 'YES' THEN 'YES'
+WHEN traveled = 'NO' OR gatheringattended = 'NO' OR burialattended = 'NO' THEN 'NO'
+WHEN traveled = 'UNKNOWN' OR gatheringattended = 'UNKNOWN' OR burialattended = 'UNKNOWN' THEN 'UNKNOWN'
+END;
+
+CREATE TABLE exposures(
+    id bigint not null,
+    uuid varchar(36) not null unique,
+    changedate timestamp not null,
+    creationdate timestamp not null,
+    epidata_id bigint not null,
+    reportinguser_id bigint,
+    startdate timestamp,
+    enddate timestamp,
+    description text,
+    exposuretype varchar(255) not null,
+    exposuretypedetails text,
+    location_id bigint not null,
+    typeofplace varchar(255),
+    typeofplacedetails text,
+    meansoftransport varchar(255),
+    meansoftransportdetails text,
+    connectionnumber varchar(512),
+    seatnumber varchar(512),
+    indoors varchar(255),
+    outdoors varchar(255),
+    wearingmask varchar(255),
+    wearingppe varchar(255),
+    otherprotectivemeasures varchar(255),
+    protectivemeasuresdetails text,
+    shortdistance varchar(255),
+    longfacetofacecontact varchar(255),
+    animalmarket varchar(255),
+    percutaneous varchar(255),
+    contacttobodyfluids varchar(255),
+    handlingsamples varchar(255),
+    eatingrawanimalproducts varchar(255),
+    handlinganimals varchar(255),
+    animalcondition varchar(255),
+    animalvaccinated varchar(255),
+    animalcontacttype varchar(255),
+    animalcontacttypedetails text,
+    bodyofwater varchar(255),
+    watersource varchar(255),
+    watersourcedetails text,
+    contacttocase_id bigint,
+    gatheringtype varchar(255),
+    gatheringdetails text,
+    habitationtype varchar(255),
+    habitationdetails text,
+    typeofanimal varchar(255),
+    typeofanimaldetails text,
+    physicalcontactduringpreparation varchar(255),
+    physicalcontactwithbody varchar(255),
+    deceasedpersonill varchar(255),
+    deceasedpersonname varchar(512),
+    deceasedpersonrelation varchar(512),
+    prophylaxis varchar(255),
+    prophylaxisdate timestamp,
+    riskarea varchar(255),
+    sys_period tstzrange not null,
+    primary key(id)
+);
+
+ALTER TABLE exposures OWNER TO sormas_user;
+ALTER TABLE exposures ADD CONSTRAINT fk_exposures_epidata_id FOREIGN KEY (epidata_id) REFERENCES epidata(id);
+ALTER TABLE exposures ADD CONSTRAINT fk_exposures_reportinguser_id FOREIGN KEY (reportinguser_id) REFERENCES users(id);
+ALTER TABLE exposures ADD CONSTRAINT fk_exposures_location_id FOREIGN KEY (location_id) REFERENCES location(id);
+ALTER TABLE exposures ADD CONSTRAINT fk_exposures_contacttocase_id FOREIGN KEY (contacttocase_id) REFERENCES contact(id);
+
+CREATE TABLE exposures_history (LIKE exposures);
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON exposures
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'exposures_history', true);
+ALTER TABLE exposures_history OWNER TO sormas_user;
+
+INSERT INTO exposures(
+    id, uuid, changedate, creationdate, epidata_id, location_id, deceasedpersonname, deceasedpersonrelation, physicalcontactwithbody,
+    deceasedpersonill, startdate, enddate, exposuretype)
+SELECT nextval('entity_seq'),
+       overlay(overlay(overlay(
+            substring(upper(REPLACE(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), '-', '')), 0, 30)
+            placing '-' from 7) placing '-' from 14) placing '-' from 21),
+       now(), now(), b.epidata_id, b.burialaddress_id, b.burialpersonname, b.burialrelation, b.burialtouching,
+       b.burialill, b.burialdatefrom, b.burialdateto, 'BURIAL'
+FROM epidataburial b;
+
+INSERT INTO exposures(
+    id, uuid, changedate, creationdate, epidata_id, location_id, startdate, enddate, description, exposuretype)
+SELECT nextval('entity_seq'),
+       overlay(overlay(overlay(
+                               substring(upper(REPLACE(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), '-', '')), 0, 30)
+                               placing '-' from 7) placing '-' from 14) placing '-' from 21),
+       now(), now(), g.epidata_id, g.gatheringaddress_id, g.gatheringdate, g.gatheringdate, g.description, 'GATHERING'
+FROM epidatagathering g;
+
+DROP TABLE IF EXISTS tl_map;
+
+CREATE temp table tl_map
+AS SELECT id AS travel_id,
+          nextval('entity_seq') AS location_id,
+          create_new_uuid(uuid) AS location_uuid,
+          epidata_id,
+          traveldatefrom,
+          traveldateto,
+          concat_ws(', ', regexp_replace(traveltype, '_', ' '), traveldestination) AS traveldetails
+   FROM epidatatravel;
+
+INSERT INTO location (id, uuid, changedate, creationdate, details)
+SELECT location_id, location_uuid, now(), now(), traveldetails
+FROM tl_map;
+
+INSERT INTO exposures(
+    id, uuid, changedate, creationdate, epidata_id, location_id, startdate, enddate, exposuretype)
+SELECT nextval('entity_seq'),
+       overlay(overlay(overlay(
+                               substring(upper(REPLACE(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), '-', '')), 0, 30)
+                               placing '-' from 7) placing '-' from 14) placing '-' from 21),
+       now(), now(), tl.epidata_id, tl.location_id, tl.traveldatefrom, tl.traveldateto, 'TRAVEL'
+FROM tl_map tl;
+
+DROP TABLE IF EXISTS tl_map;
+
+INSERT INTO schema_version (version_number, comment) VALUES (280, 'New exposure entity and migration #2948');
+
+-- 2020-10-21 Epi data migration #2949
+ALTER TABLE epidata ADD COLUMN contactwithsourcecaseknown varchar(255);
+ALTER TABLE epidata ADD COLUMN hightransmissionriskarea varchar(255);
+ALTER TABLE epidata ADD COLUMN largeoutbreaksarea varchar(255);
+ALTER TABLE epidata_history ADD COLUMN contactwithsourcecaseknown varchar(255);
+ALTER TABLE epidata_history ADD COLUMN hightransmissionriskarea varchar(255);
+ALTER TABLE epidata_history ADD COLUMN largeoutbreaksarea varchar(255);
+
+CREATE OR REPLACE FUNCTION migrate_epidata(epidata_field_name text, exposures_field_name text, exposures_field_value text, exposuretype text,
+epidata_startdate_field_name text default 'null', epidata_enddate_field_name text default 'null', epidata_description_field_name text default 'null',
+epidata_locationinfo_field_name text default 'null')
+RETURNS VOID
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS
+$BODY$
+BEGIN
+EXECUTE
+    'DROP TABLE IF EXISTS id_map;
+    CREATE TEMP TABLE id_map AS
+    SELECT id as epidata_id,
+           nextval(''entity_seq'') as location_id,
+           nextval(''entity_seq'') as exposure_id,
+           overlay(overlay(overlay(
+               substring(upper(REPLACE(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), ''-'', '''')), 0, 30)
+               placing ''-'' from 7) placing ''-'' from 14) placing ''-'' from 21) as location_uuid,
+           overlay(overlay(overlay(
+               substring(upper(REPLACE(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), ''-'', '''')), 0, 30)
+               placing ''-'' from 7) placing ''-'' from 14) placing ''-'' from 21) as exposure_uuid,
+           CAST (' || epidata_startdate_field_name || ' AS timestamp) as startdate,
+           CAST (' || epidata_enddate_field_name || ' AS timestamp) as enddate,
+           ' || epidata_description_field_name || ' as description,
+           ' || epidata_locationinfo_field_name || ' as locationinfo
+    FROM epidata WHERE ' || epidata_field_name || ' = ''YES'';
+
+    INSERT INTO location (id, uuid, changedate, creationdate, details)
+    SELECT location_id, location_uuid, now(), now(), locationinfo
+    FROM id_map;
+
+    INSERT INTO exposures(id, uuid, changedate, creationdate, epidata_id, location_id, exposuretype, ' || exposures_field_name || ', startdate, enddate, description)
+    SELECT exposure_id, exposure_uuid, now(), now(), epidata_id, location_id, ' || quote_literal(exposuretype) || ', ' || quote_literal(exposures_field_value) || ',
+    startdate, enddate, description FROM id_map;';
+END;
+$BODY$;
+
+ALTER FUNCTION migrate_epidata(text, text, text, text, text, text, text, text) OWNER TO sormas_user;
+
+UPDATE epidata SET areainfectedanimals = 'YES', eatingrawanimals = 'YES' WHERE eatingrawanimalsininfectedarea = 'YES';
+
+DO $$ BEGIN
+PERFORM migrate_epidata('processingconfirmedcasefluidunsafe', 'handlingsamples', 'YES', 'WORK');
+PERFORM migrate_epidata('percutaneouscaseblood', 'percutaneous', 'YES', 'WORK');
+PERFORM migrate_epidata('directcontactdeadunsafe', 'physicalcontactwithbody', 'YES', 'BURIAL');
+PERFORM migrate_epidata('processingsuspectedcasesampleunsafe', 'handlingsamples', 'YES', 'WORK');
+PERFORM migrate_epidata('sickdeadanimals', 'animalcondition', 'DEAD', 'ANIMAL_CONTACT', 'sickdeadanimalsdate', 'sickdeadanimalsdate', 'sickdeadanimalsdetails', 'sickdeadanimalslocation');
+PERFORM migrate_epidata('eatingrawanimals', 'eatingrawanimalproducts', 'YES', 'ANIMAL_CONTACT', 'null', 'null', 'eatingrawanimalsdetails', 'null');
+PERFORM migrate_epidata('rodents', 'typeofanimal', 'RODENT', 'ANIMAL_CONTACT');
+PERFORM migrate_epidata('bats', 'typeofanimal', 'BAT', 'ANIMAL_CONTACT');
+PERFORM migrate_epidata('primates', 'typeofanimal', 'PRIMATE', 'ANIMAL_CONTACT');
+PERFORM migrate_epidata('swine', 'typeofanimal', 'SWINE', 'ANIMAL_CONTACT');
+PERFORM migrate_epidata('birds', 'typeofanimal', 'POULTRY', 'ANIMAL_CONTACT');
+PERFORM migrate_epidata('rabbits', 'typeofanimal', 'RABBIT', 'ANIMAL_CONTACT');
+PERFORM migrate_epidata('cattle', 'typeofanimal', 'CATTLE', 'ANIMAL_CONTACT');
+PERFORM migrate_epidata('dogs', 'typeofanimal', 'DOG', 'ANIMAL_CONTACT');
+PERFORM migrate_epidata('cats', 'typeofanimal', 'CAT', 'ANIMAL_CONTACT');
+PERFORM migrate_epidata('canidae', 'typeofanimal', 'CANIDAE', 'ANIMAL_CONTACT');
+PERFORM migrate_epidata('camels', 'typeofanimal', 'CAMEL', 'ANIMAL_CONTACT');
+PERFORM migrate_epidata('snakes', 'typeofanimal', 'SNAKE', 'ANIMAL_CONTACT');
+PERFORM migrate_epidata('tickbite', 'typeofanimal', 'TICK', 'ANIMAL_CONTACT');
+PERFORM migrate_epidata('fleabite', 'typeofanimal', 'FLEA', 'ANIMAL_CONTACT');
+PERFORM migrate_epidata('otheranimals', 'typeofanimal', 'OTHER', 'ANIMAL_CONTACT');
+PERFORM migrate_epidata('waterbody', 'bodyofwater', 'YES', 'OTHER', 'null', 'null', 'waterbodydetails', 'null');
+PERFORM migrate_epidata('visitedhealthfacility', 'habitationtype', 'MEDICAL', 'HABITATION');
+PERFORM migrate_epidata('visitedanimalmarket', 'animalmarket', 'YES', 'OTHER');
+PERFORM migrate_epidata('areaconfirmedcases', 'riskarea', 'YES', 'TRAVEL');
+PERFORM migrate_epidata('kindofexposurebite', 'animalcontacttype', 'BITE', 'ANIMAL_CONTACT');
+PERFORM migrate_epidata('kindofexposuretouch', 'animalcontacttype', 'TOUCH', 'ANIMAL_CONTACT');
+PERFORM migrate_epidata('kindofexposurescratch', 'animalcontacttype', 'SCRATCH', 'ANIMAL_CONTACT');
+PERFORM migrate_epidata('kindofexposurelick', 'animalcontacttype', 'LICK', 'ANIMAL_CONTACT');
+PERFORM migrate_epidata('kindofexposureother', 'animalcontacttype', 'OTHER', 'ANIMAL_CONTACT');
+END $$;
+
+DROP TABLE IF EXISTS id_map;
+
+DROP TABLE IF EXISTS last_exposure_map;
+CREATE TEMP TABLE last_exposure_map AS
+SELECT id as epidata_id,
+       nextval('entity_seq') as location_id,
+       nextval('entity_seq') as exposure_id,
+       overlay(overlay(overlay(
+                               substring(upper(REPLACE(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), '-', '')), 0, 30)
+                               placing '-' from 7) placing '-' from 14) placing '-' from 21) as location_uuid,
+       overlay(overlay(overlay(
+                               substring(upper(REPLACE(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), '-', '')), 0, 30)
+                               placing '-' from 7) placing '-' from 14) placing '-' from 21) as exposure_uuid,
+       dateoflastexposure,
+       placeoflastexposure,
+       animalcondition,
+       animalvaccinationstatus,
+       prophylaxisstatus,
+       dateofprophylaxis
+FROM epidata WHERE dateoflastexposure IS NOT NULL OR placeoflastexposure IS NOT NULL OR animalcondition IS NOT NULL OR animalvaccinationstatus IS NOT NULL OR prophylaxisstatus IS NOT NULL OR dateofprophylaxis IS NOT NULL;
+
+INSERT INTO location (id, uuid, changedate, creationdate, details)
+SELECT location_id, location_uuid, now(), now(), placeoflastexposure
+FROM last_exposure_map;
+
+INSERT INTO exposures(id, uuid, changedate, creationdate, epidata_id, location_id, exposuretype, startdate, enddate, animalcondition, animalvaccinated, prophylaxis, prophylaxisdate, description)
+SELECT exposure_id, exposure_uuid, now(), now(), epidata_id, location_id, 'ANIMAL_CONTACT', dateoflastexposure, dateoflastexposure, animalcondition,
+       CASE WHEN animalvaccinationstatus = 'VACCINATED' THEN 'YES' WHEN animalvaccinationstatus = 'UNVACCINATED' THEN 'NO' WHEN animalvaccinationstatus = 'UNKNOWN' THEN 'UNKNOWN' END,
+       prophylaxisstatus, dateofprophylaxis, 'Automatic epi data migration based on last exposure details. This exposure may be merged with another exposure with the activity type Animal Contact.'
+FROM last_exposure_map;
+
+DROP TABLE IF EXISTS last_exposure_map;
+CREATE TEMP TABLE empty_travels_map AS
+SELECT id as epidata_id,
+       nextval('entity_seq') as location_id,
+       nextval('entity_seq') as exposure_id,
+       overlay(overlay(overlay(
+                               substring(upper(REPLACE(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), '-', '')), 0, 30)
+                               placing '-' from 7) placing '-' from 14) placing '-' from 21) as location_uuid,
+       overlay(overlay(overlay(
+                               substring(upper(REPLACE(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), '-', '')), 0, 30)
+                               placing '-' from 7) placing '-' from 14) placing '-' from 21) as exposure_uuid
+FROM epidata WHERE traveled = 'YES' AND epidata.id NOT IN (SELECT epidatatravel.epidata_id FROM epidatatravel);
+
+INSERT INTO location (id, uuid, changedate, creationdate)
+SELECT location_id, location_uuid, now(), now()
+FROM empty_travels_map;
+
+INSERT INTO exposures(id, uuid, changedate, creationdate, epidata_id, location_id, exposuretype)
+SELECT exposure_id, exposure_uuid, now(), now(), epidata_id, location_id, 'TRAVEL'
+FROM empty_travels_map;
+
+DROP TABLE IF EXISTS empty_travels_map;
+CREATE TEMP TABLE empty_gatherings_map AS
+SELECT id as epidata_id,
+       nextval('entity_seq') as location_id,
+       nextval('entity_seq') as exposure_id,
+       overlay(overlay(overlay(
+                               substring(upper(REPLACE(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), '-', '')), 0, 30)
+                               placing '-' from 7) placing '-' from 14) placing '-' from 21) as location_uuid,
+       overlay(overlay(overlay(
+                               substring(upper(REPLACE(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), '-', '')), 0, 30)
+                               placing '-' from 7) placing '-' from 14) placing '-' from 21) as exposure_uuid
+FROM epidata WHERE gatheringattended = 'YES' AND epidata.id NOT IN (SELECT epidatagathering.epidata_id FROM epidatagathering);
+
+INSERT INTO location (id, uuid, changedate, creationdate)
+SELECT location_id, location_uuid, now(), now()
+FROM empty_gatherings_map;
+
+INSERT INTO exposures(id, uuid, changedate, creationdate, epidata_id, location_id, exposuretype)
+SELECT exposure_id, exposure_uuid, now(), now(), epidata_id, location_id, 'GATHERING'
+FROM empty_gatherings_map;
+
+DROP TABLE IF EXISTS empty_gatherings_map;
+CREATE TEMP TABLE empty_burials_map AS
+SELECT id as epidata_id,
+       nextval('entity_seq') as location_id,
+       nextval('entity_seq') as exposure_id,
+       overlay(overlay(overlay(
+                               substring(upper(REPLACE(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), '-', '')), 0, 30)
+                               placing '-' from 7) placing '-' from 14) placing '-' from 21) as location_uuid,
+       overlay(overlay(overlay(
+                               substring(upper(REPLACE(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), '-', '')), 0, 30)
+                               placing '-' from 7) placing '-' from 14) placing '-' from 21) as exposure_uuid
+FROM epidata WHERE burialattended = 'YES' AND epidata.id NOT IN (SELECT epidataburial.epidata_id FROM epidataburial);
+
+INSERT INTO location (id, uuid, changedate, creationdate)
+SELECT location_id, location_uuid, now(), now()
+FROM empty_burials_map;
+
+INSERT INTO exposures(id, uuid, changedate, creationdate, epidata_id, location_id, exposuretype)
+SELECT exposure_id, exposure_uuid, now(), now(), epidata_id, location_id, 'BURIAL'
+FROM empty_burials_map;
+
+DROP TABLE IF EXISTS empty_burials_map;
+
+UPDATE exposures SET typeofanimaldetails = otheranimalsdetails FROM epidata WHERE epidata.id = epidata_id AND typeofanimal = 'OTHER';
+UPDATE exposures SET animalcontacttypedetails = kindofexposuredetails FROM epidata WHERE epidata.id = epidata_id AND animalcontacttype = 'OTHER';
+UPDATE exposures SET watersource = epidata.watersource, watersourcedetails = epidata.watersourceother FROM epidata WHERE epidata.id = epidata_id AND bodyofwater = 'YES';
+UPDATE exposures SET description = 'Automatic epi data migration based on selected kinds of exposure. This exposure may be merged with another exposure of the activity type Animal Contact.' WHERE exposuretype = 'ANIMAL_CONTACT' AND typeofanimal IS NULL;
+
+UPDATE epidata SET contactwithsourcecaseknown = 'YES' WHERE directcontactconfirmedcase = 'YES' OR directcontactprobablecase = 'YES' OR closecontactprobablecase = 'YES' OR contactwithsourcerespiratorycase = 'YES';
+UPDATE epidata SET exposuredetailsknown = 'YES' FROM exposures WHERE (exposuredetailsknown IS NULL OR exposuredetailsknown != 'YES') AND exposures.epidata_id = epidata.id;
+
+UPDATE epidata SET changedate = now();
+
+INSERT INTO schema_version (version_number, comment) VALUES (281, 'Epi data migration #2949');
+
+-- 2020-10-21 Set contact with source case known for all existing cases #2946
+UPDATE epidata SET contactwithsourcecaseknown = 'YES' FROM cases WHERE cases.epidata_id = epidata.id AND exists (SELECT 1 FROM contact WHERE contact.resultingcase_id = cases.id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (282, 'Set contact with source case known for all existing cases #2946');
+
+-- 2020-11-18 Add date of first contact #3408
+ALTER TABLE contact ADD column multidaycontact boolean default false;
+ALTER TABLE contact ADD column firstcontactdate timestamp;
+
+INSERT INTO schema_version (version_number, comment) VALUES (283, 'Add date of first contact #3408');
+
+ALTER TABLE person ADD COLUMN armedforcesrelationtype varchar(255);
+ALTER TABLE person_history ADD COLUMN armedforcesrelationtype varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (284, 'Add column armedforcesrelationtype #3418');
+
+-- 2020-11-27 SurvNet Adaptations - Create new field “nosocomial outbreak” to cases #3416
+ALTER TABLE cases
+    ADD COLUMN nosocomialOutbreak boolean default false,
+    ADD COLUMN infectionSetting varchar(255);
+
+ALTER TABLE cases_history
+    ADD COLUMN nosocomialoutbreak boolean default false,
+    ADD COLUMN infectionsetting varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (285, 'SurvNet Adaptations - Create new field “nosocomial outbreak” to cases #3416');
+
+-- 2020-12-03 SurvNet Adaptations - Create new field “name of guardians” for persons #3413
+ALTER TABLE person
+    ADD COLUMN namesofotherguardians varchar(512);
+
+ALTER TABLE person_history
+    ADD COLUMN namesofotherguardians varchar(512);
+
+INSERT INTO schema_version (version_number, comment) VALUES (286, 'SurvNet Adaptations - Create new field “name of guardians” for persons #3413');
+
+-- 2020-12-08 SurvNet Adaptations - Add multi day contat to contact history #3408
+
+ALTER TABLE contact_history ADD column multidaycontact boolean;
+ALTER TABLE contact_history ADD column firstcontactdate timestamp;
+
+INSERT INTO schema_version (version_number, comment) VALUES (287, 'Add date of first contact for contact history #3408');
+
+-- 2020-11-25 SurvNet Adaptations - Create new field “Prohibition to work” for case and contact #3409
+ALTER TABLE cases
+    ADD COLUMN prohibitiontowork varchar(255),
+    ADD COLUMN prohibitiontoworkfrom timestamp,
+    ADD COLUMN prohibitiontoworkuntil timestamp;
+
+ALTER TABLE cases_history
+    ADD COLUMN prohibitiontowork varchar(255),
+    ADD COLUMN prohibitiontoworkfrom timestamp,
+    ADD COLUMN prohibitiontoworkuntil timestamp;
+
+ALTER TABLE contact
+    ADD COLUMN prohibitiontowork varchar(255),
+    ADD COLUMN prohibitiontoworkfrom timestamp,
+    ADD COLUMN prohibitiontoworkuntil timestamp;
+
+ALTER TABLE contact_history
+    ADD COLUMN prohibitiontowork varchar(255),
+    ADD COLUMN prohibitiontoworkfrom timestamp,
+    ADD COLUMN prohibitiontoworkuntil timestamp;
+
+INSERT INTO schema_version (version_number, comment) VALUES (288, 'Create new field “Prohibition to work” for case and contact #3409');
+
+-- 2020-11-27 Add institutional partner option to events source type #3207
+ALTER TABLE events ADD COLUMN srcInstitutionalPartnerType varchar(255);
+ALTER TABLE events_history ADD COLUMN srcInstitutionalPartnerType varchar(255);
+ALTER TABLE events ADD COLUMN srcInstitutionalPartnerTypeDetails varchar(512);
+ALTER TABLE events_history ADD COLUMN srcInstitutionalPartnerTypeDetails varchar(512);
+
+INSERT INTO schema_version (version_number, comment) VALUES (289, 'Add institutional partner option to events source type #3207');
+
+-- 2020-11-30 Add riskLevel to events with cluster status #3271
+ALTER TABLE events ADD column risklevel varchar(255);
+ALTER TABLE events_history ADD column risklevel varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (290, 'Add riskLevel to events with cluster status #3271');
+
+-- 2020-11-17 Manually send SMS #3253
+CREATE TABLE manualmessagelog
+(
+    id             bigint                      NOT NULL,
+    changedate     timestamp without time zone NOT NULL,
+    creationdate   timestamp without time zone NOT NULL,
+    uuid           character varying(36)       NOT NULL,
+    messagetype    character varying(255)      NOT NULL,
+    sentdate       timestamp                   NOT NULL,
+    sendinguser_id bigint                      NOT NULL,
+    recipientperson_id bigint                  NOT NULL,
+    PRIMARY KEY (id)
+);
+
+ALTER TABLE manualmessagelog OWNER TO sormas_user;
+ALTER TABLE manualmessagelog ADD CONSTRAINT fk_manualmessagelog_sendinguser_id FOREIGN KEY (sendinguser_id) REFERENCES users(id);
+ALTER TABLE manualmessagelog ADD CONSTRAINT fk_manualmessagelog_recipientperson_id FOREIGN KEY (recipientperson_id) REFERENCES person(id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (291, 'Manually send SMS #3253');
+
+-- 2020-12-07 Add LabMessage #3486
+CREATE TABLE labmessage (
+        id bigint not null,
+        uuid varchar(36) not null unique,
+        changedate timestamp not null,
+        creationdate timestamp not null,
+        sampledatetime timestamp,
+        samplereceiveddate timestamp,
+        labsampleid text,
+        samplematerial varchar(255),
+        testlabname varchar(255),
+        testlabexternalid varchar(255),
+        testlabpostalcode varchar(255),
+        testlabcity varchar(255),
+        specimencondition varchar(255),
+        testtype varchar(255),
+        testeddisease varchar(255),
+        testdatetime timestamp,
+        testresult varchar(255),
+        personfirstName varchar(255),
+        personlastName varchar(255),
+        personsex varchar(255),
+        personbirthdatedd integer,
+        personbirthdatemm integer,
+        personbirthdateyyyy integer,
+        personpostalcode varchar(255),
+        personcity varchar(255),
+        personstreet varchar(255),
+        personhousenumber varchar(255),
+        labMessageDetails text,
+        processed boolean default false,
+        sys_period tstzrange not null,
+        primary key(id)
+);
+
+CREATE TABLE labmessage_history (LIKE labmessage);
+
+INSERT INTO schema_version (version_number, comment) VALUES (292, 'Add LabMessage #3486');
+
+-- 2020-12-11 Create contacts-visits index #3673
+CREATE INDEX IF NOT EXISTS idx_contacts_visits_contact_id ON contacts_visits USING HASH (contact_id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (293, 'Create contacts-visits index #3673');
+
+-- SurvNet Adaptations - Create new field “Salutation” for persons #3411
+ALTER TABLE person
+    ADD COLUMN salutation varchar(255),
+    ADD COLUMN othersalutation text;
+
+ALTER TABLE person_history
+    ADD COLUMN salutation varchar(255),
+    ADD COLUMN othersalutation text;
+
+INSERT INTO schema_version (version_number, comment) VALUES (294, 'SurvNet Adaptations - Create new field “Salutation” for persons #3411');
+
+-- 2020-12-11 - Add patient exposition role to exposures #3407
+ALTER TABLE exposures ADD COLUMN patientexpositionrole varchar(255);
+ALTER TABLE exposures_history ADD COLUMN patientexpositionrole varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (295, 'Add patient exposition role to exposures #3407');
+
+-- 2020-12-09 SurvNet Adaptations - Create new fields “Country of birth” and “nationality” for persons #3412
+ALTER TABLE person
+    ADD COLUMN birthname varchar(512),
+    ADD COLUMN birthcountry_id bigint,
+    ADD COLUMN citizenship_id bigint,
+    ADD CONSTRAINT fk_person_placeofbirthcountry_id FOREIGN KEY (birthcountry_id) REFERENCES country (id),
+    ADD CONSTRAINT fk_person_nationality_id FOREIGN KEY (citizenship_id) REFERENCES country (id);
+
+ALTER TABLE person_history
+    ADD COLUMN birthname varchar(512),
+    ADD COLUMN birthcountry_id bigint,
+    ADD COLUMN citizenship_id bigint,
+    ADD CONSTRAINT fk_person_birthcountry_id FOREIGN KEY (birthcountry_id) REFERENCES country (id),
+    ADD CONSTRAINT fk_person_citizenship_id FOREIGN KEY (citizenship_id) REFERENCES country (id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (296, 'SurvNet Adaptations - Create new fields “Country of birth” and “nationality” for persons #3412');
+
+-- 2020-12-14 Change namesOfOtherGuardians to namesOfGuardians #3413
+ALTER TABLE person RENAME COLUMN namesofotherguardians TO namesofguardians;
+ALTER TABLE person_history RENAME COLUMN namesofotherguardians TO namesofguardians;
+
+INSERT INTO schema_version (version_number, comment) VALUES (297, 'Change namesOfOtherGuardians to namesOfGuardians #3413');
+
+-- 2020-12-7 Add a means of transports field to events #3618
+ALTER TABLE events ADD COLUMN meansOfTransport varchar(255);
+ALTER TABLE events_history ADD COLUMN meansOfTransport varchar(255);
+ALTER TABLE events ADD COLUMN meansOfTransportDetails text;
+ALTER TABLE events_history ADD COLUMN meansOfTransportDetails text;
+
+INSERT INTO schema_version (version_number, comment) VALUES (298, 'Add a means of transports field to events #3618');
+
+-- 2021-01-05 Add reporting district to cases & contacts #3410
+ALTER TABLE cases ADD COLUMN reportingdistrict_id bigint;
+ALTER TABLE cases
+    ADD CONSTRAINT fk_cases_reportingdistrict_id FOREIGN KEY (reportingdistrict_id) REFERENCES district(id);
+
+ALTER TABLE cases_history ADD COLUMN reportingdistrict_id bigint;
+ALTER TABLE cases_history
+    ADD CONSTRAINT fk_cases_history_reportingdistrict_id FOREIGN KEY (reportingdistrict_id) REFERENCES district(id);
+
+ALTER TABLE contact ADD COLUMN reportingdistrict_id bigint;
+ALTER TABLE contact
+    ADD CONSTRAINT fk_contact_reportingdistrict_id FOREIGN KEY (reportingdistrict_id) REFERENCES district(id);
+
+ALTER TABLE contact_history ADD COLUMN reportingdistrict_id bigint;
+ALTER TABLE contact_history
+    ADD CONSTRAINT fk_contact_history_reportingdistrict_id FOREIGN KEY (reportingdistrict_id) REFERENCES district(id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (299, 'Add reporting district to cases & contacts #3410');
+
+-- 2021-01-07 Add index for resulting cases of contacts #3926
+CREATE INDEX IF NOT EXISTS idx_contact_resultingcase_id ON contact USING hash (resultingcase_id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (300, 'Add index for resulting cases of contacts #3926');
+
+-- 2021-01-05 Type of place details in events entities #2947
+ALTER TABLE events ADD COLUMN connectionNumber varchar(512);
+ALTER TABLE events_history ADD COLUMN connectionNumber varchar(512);
+ALTER TABLE events ADD COLUMN travelDate timestamp without time zone;
+ALTER TABLE events_history ADD COLUMN travelDate timestamp without time zone;
+
+INSERT INTO schema_version (version_number, comment) VALUES (301, 'Type of place details in events entities #2947');
+
+-- 2020-01-04 Change action's columns description and reply type from varchar to text #3848
+ALTER TABLE action ALTER COLUMN description TYPE text;
+ALTER TABLE action_history ALTER COLUMN description TYPE text;
+ALTER TABLE action ALTER COLUMN reply TYPE text;
+ALTER TABLE action_history ALTER COLUMN reply TYPE text;
+
+INSERT INTO schema_version (version_number, comment) VALUES (302, 'Change action''s columns description and reply type from varchar to text #3848');
+
+-- 2020-12-03 Remove hospital from event's type of place #3617
+-- 2021-01-28 [Hotfix] Fixed migration code setting facility type for all locations in the system #4120
+UPDATE location SET facilitytype = 'HOSPITAL' WHERE facilitytype IS NULL AND (SELECT typeofplace FROM events WHERE eventlocation_id = location.id) = 'HOSPITAL';
+UPDATE events SET typeofplace = 'FACILITY' WHERE (SELECT facilitytype FROM location WHERE id = events.eventlocation_id) IS NOT NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (303, 'Remove hospital from event''s type of place #3617, #4120');
+
+-- 2020-01-11 SurvNet Adaptation - Dedicated fields for technical and non-technical external IDs #3524
+ALTER TABLE cases ADD COLUMN externaltoken varchar(512);
+ALTER TABLE cases_history ADD COLUMN externaltoken varchar(512);
+
+ALTER TABLE contact ADD COLUMN externaltoken varchar(512);
+ALTER TABLE contact_history ADD COLUMN externaltoken varchar(512);
+-- increasing person and person_history externalid size without loosing data.
+ALTER TABLE person ALTER COLUMN externalid type character varying (512);
+ALTER TABLE person_history ALTER COLUMN externalid type character varying (512);
+
+ALTER TABLE person ADD COLUMN externaltoken varchar(512);
+ALTER TABLE person_history ADD COLUMN externaltoken varchar(512);
+
+ALTER TABLE events ADD COLUMN externaltoken varchar(512);
+ALTER TABLE events_history ADD COLUMN externaltoken varchar(512);
+
+INSERT INTO schema_version (version_number, comment) VALUES (304, 'SurvNet Adaptation - Dedicated fields for technical and non-technical external IDs #3524');
+
+-- 2021-01-07 Add system events #3927
+CREATE TABLE systemevent (
+    id bigint not null,
+    uuid varchar(36) not null unique,
+    changedate timestamp not null,
+    creationdate timestamp not null,
+    type varchar(255) not null,
+    startdate timestamp not null,
+    enddate timestamp,
+    status varchar(255) not null,
+    additionalInfo text,
+    primary key(id)
+);
+
+ALTER TABLE systemevent OWNER TO sormas_user;
+
+INSERT INTO schema_version (version_number, comment) VALUES (305, 'Add system events #3927');
+
+-- 2020-12-17 Change action's replyingUser to lastModifiedBy #3719
+ALTER TABLE action RENAME COLUMN replyinguser_id TO lastmodifiedby_id;
+ALTER TABLE action_history RENAME COLUMN replyinguser_id TO lastmodifiedby_id;
+
+INSERT INTO schema_version (version_number, comment) VALUES (306, 'Change action''s replyingUser to lastModifiedBy #3719');
+
+-- 2021-01-14 - Add new fields to outbreak events needed for SurvNet #4013
+ALTER TABLE action ADD COLUMN actionmeasure varchar(255);
+ALTER TABLE action_history ADD COLUMN actionmeasure varchar(255);
+ALTER TABLE events ADD COLUMN transregionaloutbreak varchar(255);
+ALTER TABLE events_history ADD COLUMN transregionaloutbreak varchar(255);
+ALTER TABLE events ADD COLUMN diseasetransmissionmode varchar(255);
+ALTER TABLE events_history ADD COLUMN diseasetransmissionmode varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (307, 'Add new fields to outbreak events needed for SurvNet #4013');
+
+-- 2020-01-12 Store sormas to sormas share options #3763
+ALTER TABLE sormastosormasshareinfo
+    ADD COLUMN withassociatedcontacts boolean DEFAULT false,
+    ADD COLUMN withsamples boolean DEFAULT false,
+    ADD COLUMN pseudonymizedpersonaldata boolean DEFAULT false,
+    ADD COLUMN pseudonymizedsensitivedata boolean DEFAULT false;
+
+INSERT INTO schema_version (version_number, comment) VALUES (308, 'Store sormas to sormas share options #3763');
+
+-- 2021-01-15 - Add superordinate event to events #4020
+ALTER TABLE events ADD COLUMN superordinateevent_id bigint;
+ALTER TABLE events_history ADD COLUMN superordinateevent_id bigint;
+
+ALTER TABLE events ADD CONSTRAINT fk_events_superordinateevent_id FOREIGN KEY (superordinateevent_id) REFERENCES events(id);
+CREATE INDEX IF NOT EXISTS idx_events_superordinateevent_id ON events USING hash (superordinateevent_id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (309, 'Add superordinate event to events #4020');
+
+-- 2020-12-03 Remove hospital from exposure type of places #3680
+-- 2021-01-28 [Hotfix] Fixed migration code setting facility type for all locations in the system #4120
+UPDATE location SET facilitytype = 'HOSPITAL' WHERE facilitytype IS NULL AND (SELECT typeofplace FROM exposures WHERE location_id = location.id) = 'HOSPITAL';
+UPDATE exposures SET typeofplace = 'FACILITY' WHERE (SELECT facilitytype FROM location WHERE id = exposures.location_id) IS NOT NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (310, 'Remove hospital from exposure type of places #3680, #4120');
+
+-- 2020-12-21 Fix labmessage table #3486
+ALTER TABLE labmessage OWNER TO sormas_user;
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON labmessage
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'labmessage_history', true);
+ALTER TABLE labmessage_history OWNER TO sormas_user;
+ALTER TABLE labmessage ADD COLUMN messagedatetime timestamp;
+ALTER TABLE labmessage_history ADD COLUMN messagedatetime timestamp;
+
+INSERT INTO schema_version (version_number, comment) VALUES (311, 'Fix labmessage table #3486');
+
+-- 2021-01-07 Add evolution date and comment to events #3753
+ALTER TABLE events ADD COLUMN evolutionDate timestamp;
+ALTER TABLE events_history ADD COLUMN evolutionDate timestamp;
+ALTER TABLE events ADD COLUMN evolutionComment text;
+ALTER TABLE events_history ADD COLUMN evolutionComment text;
+
+INSERT INTO schema_version (version_number, comment) VALUES (312, 'Add evolution date and comment to events #3753');
+
+-- 2020-01-13 Add indexes to optimize event directory performance #3276
+CREATE INDEX IF NOT EXISTS idx_eventparticipant_person_id ON eventparticipant USING hash (person_id);
+CREATE INDEX IF NOT EXISTS idx_eventparticipant_event_id ON eventparticipant USING hash (event_id);
+CREATE INDEX IF NOT EXISTS idx_contact_person_id ON contact USING hash (person_id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (313, 'Add indexes to optimize event directory performance #3276');
+
+-- 2020-01-27
+ALTER TABLE exportconfiguration
+    ADD COLUMN sharedToPublic boolean default false;
+
+ALTER TABLE exportconfiguration_history
+    ADD COLUMN sharedToPublic boolean default false;
+
+INSERT INTO schema_version (version_number, comment) VALUES (314, 'Allow specific users to create public custom exports #1754');
+
+-- 2021-01-11 Add testresulttext to labmessage #3820
+ALTER TABLE labmessage ADD COLUMN testresulttext TEXT;
+ALTER TABLE labmessage_history ADD COLUMN testresulttext TEXT;
+
+INSERT INTO schema_version (version_number, comment) VALUES (315, 'Add testresulttext to labmessage #3820');
+
+-- 2021-02-03 Activate vaccination status for COVID-19 cases, contacts and event participant #4137
+ALTER TABLE cases
+    RENAME COLUMN vaccinationdate TO lastvaccinationdate;
+ALTER TABLE cases
+    ADD COLUMN firstvaccinationdate timestamp,
+    ADD COLUMN vaccinename varchar(255),
+    ADD COLUMN othervaccinename text,
+    ADD COLUMN vaccinemanufacturer varchar(255),
+    ADD COLUMN othervaccinemanufacturer text,
+    ADD COLUMN vaccineinn text,
+    ADD COLUMN vaccinebatchnumber text,
+    ADD COLUMN vaccineuniicode text,
+    ADD COLUMN vaccineatccode text;
+
+ALTER TABLE cases_history
+    RENAME COLUMN vaccinationdate TO lastvaccinationdate;
+ALTER TABLE cases_history
+    ADD COLUMN firstvaccinationdate timestamp,
+    ADD COLUMN vaccinename varchar(255),
+    ADD COLUMN othervaccinename text,
+    ADD COLUMN vaccinemanufacturer varchar(255),
+    ADD COLUMN othervaccinemanufacturer text,
+    ADD COLUMN vaccineinn text,
+    ADD COLUMN vaccinebatchnumber text,
+    ADD COLUMN vaccineuniicode text,
+    ADD COLUMN vaccineatccode text;
+
+INSERT INTO schema_version (version_number, comment) VALUES (316, 'Activate vaccination status for COVID-19 cases, contacts and event participant #4137');
+
+-- 2021-01-19 Add DiseaseVariant entity #4042
+CREATE TABLE diseasevariant(
+	id bigint not null,
+	uuid varchar(36) not null unique,
+	changedate timestamp not null,
+	creationdate timestamp not null,
+	disease varchar(255) not null,
+	name varchar(512) not null,
+	sys_period tstzrange not null,
+	primary key(id));
+
+ALTER TABLE diseasevariant OWNER TO sormas_user;
+
+CREATE TABLE diseasevariant_history (LIKE diseasevariant);
+CREATE TRIGGER versioning_trigger
+BEFORE INSERT OR UPDATE OR DELETE ON diseasevariant
+FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'diseasevariant_history', true);
+ALTER TABLE diseasevariant_history OWNER TO sormas_user;
+
+ALTER TABLE cases ADD COLUMN diseasevariant_id bigint;
+ALTER TABLE cases_history ADD COLUMN diseasevariant_id bigint;
+ALTER TABLE cases ADD CONSTRAINT fk_cases_diseasevariant_id FOREIGN KEY (diseasevariant_id) REFERENCES diseasevariant(id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (317, 'Add DiseaseVariant entity #4042');
+
+ -- 2020-02-03
+ALTER TABLE pathogentest ADD COLUMN typingId text;
+ALTER TABLE pathogentest_history ADD COLUMN typingId text;
+
+INSERT INTO schema_version (version_number, comment) VALUES (318, 'Add typing ID to pathogen tests #3957');
+
+-- 2021-01-07 Change event's surveillanceOfficer to responsibleUser allow more roles to be it #3827
+ALTER TABLE events RENAME surveillanceofficer_id to responsibleuser_id;
+ALTER TABLE events_history RENAME surveillanceofficer_id to responsibleuser_id;
+
+INSERT INTO schema_version (version_number, comment) VALUES (319, 'Change event''s surveillanceOfficer to responsibleUser allow more roles to be it #3827');
+
+--2020-02-02
+ALTER TABLE exposures RENAME patientexpositionrole TO exposureRole;
+ALTER TABLE exposures_history RENAME patientexpositionrole TO exposureRole;
+
+UPDATE exposures SET exposureRole = NULL WHERE exposureRole = 'NOT_COLLECTED';
+UPDATE exposures SET exposureRole = 'STAFF' WHERE exposureRole = 'WORKING_AT';
+UPDATE exposures SET exposureRole = 'GUEST' WHERE exposureRole = 'ACCOMMODATED_IN';
+UPDATE exposures SET exposureRole = 'PATIENT' WHERE exposureRole = 'CARED_FOR';
+
+INSERT INTO schema_version (version_number, comment) VALUES (320, '[SurvNet Interface] Change title of role field in exposures and add new field #4036');
+-- 2021-02-04 Add vaccination for contacts and event participant #4137
+
+CREATE TABLE vaccinationinfo (
+    id bigint NOT NULL,
+    changedate timestamp without time zone NOT NULL,
+    creationdate timestamp without time zone NOT NULL,
+    uuid character varying(36) NOT NULL,
+    vaccination varchar(255),
+    vaccinationdoses varchar(512),
+    vaccinationinfosource varchar(255),
+    firstvaccinationdate timestamp,
+    lastvaccinationdate timestamp,
+    vaccinename varchar(255),
+    othervaccinename text,
+    vaccinemanufacturer varchar(255),
+    othervaccinemanufacturer text,
+    vaccineinn text,
+    vaccinebatchnumber text,
+    vaccineuniicode text,
+    vaccineatccode text,
+    sys_period tstzrange not null,
+    primary key (id)
+);
+
+ALTER TABLE vaccinationinfo OWNER TO sormas_user;
+
+CREATE TABLE vaccinationinfo_history (LIKE vaccinationinfo);
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE OR DELETE ON vaccinationinfo
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'vaccinationinfo_history', true);
+ALTER TABLE vaccinationinfo_history OWNER TO sormas_user;
+
+ALTER TABLE contact
+    ADD COLUMN vaccinationinfo_id bigint;
+
+ALTER TABLE contact ADD CONSTRAINT fk_contact_vaccinationinfo_id FOREIGN KEY (vaccinationinfo_id) REFERENCES vaccinationinfo(id);
+
+ALTER TABLE eventparticipant
+    ADD COLUMN vaccinationinfo_id bigint;
+
+ALTER TABLE eventparticipant ADD CONSTRAINT fk_eventparticipant_vaccinationinfo_id FOREIGN KEY (vaccinationinfo_id) REFERENCES vaccinationinfo(id);
+
+DO $$
+    DECLARE rec RECORD;
+        DECLARE new_vaccination_info_id INTEGER;
+    BEGIN
+        FOR rec IN SELECT id FROM public.contact WHERE contact.vaccinationinfo_id IS NULL
+            LOOP
+                INSERT INTO vaccinationinfo(id, uuid, creationdate, changedate) VALUES (nextval('entity_seq'), upper(substring(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), 3, 29)), now(), now()) RETURNING id INTO new_vaccination_info_id;
+                UPDATE contact SET vaccinationinfo_id = new_vaccination_info_id WHERE id = rec.id;
+            END LOOP;
+
+        FOR rec IN SELECT id FROM public.eventparticipant WHERE eventparticipant.vaccinationinfo_id IS NULL
+            LOOP
+                INSERT INTO vaccinationinfo(id, uuid, creationdate, changedate) VALUES (nextval('entity_seq'), upper(substring(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), 3, 29)), now(), now()) RETURNING id INTO new_vaccination_info_id;
+                UPDATE eventparticipant SET vaccinationinfo_id = new_vaccination_info_id WHERE id = rec.id;
+            END LOOP;
+    END;
+$$ LANGUAGE plpgsql;
+
+INSERT INTO schema_version (version_number, comment) VALUES (321, 'Add vaccination for contacts and event participant #4137');
+
+
+-- 2021-02-04 - [SurvNet Interface] Add fields next to type of place #4038
+ALTER TABLE exposures ADD COLUMN workenvironment varchar(255);
+ALTER TABLE exposures_history ADD COLUMN workenvironment varchar(255);
+ALTER TABLE events ADD COLUMN workenvironment varchar(255);
+ALTER TABLE events_history ADD COLUMN workenvironment varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (322, '[SurvNet Interface] Add fields next to type of place #4038');
+
+-- 2020-02-08 Add UNIQUE constraint to documents uuid #3661
+ALTER TABLE ONLY documents ADD CONSTRAINT documents_uuid_key UNIQUE (uuid);
+
+INSERT INTO schema_version (version_number, comment) VALUES (323, 'Add UNIQUE contraint to documents uuid field #3661');
+
+-- 2020-02-08 SurvNet Adaptations - Create new field “Blood donation in the last 6 months” for cases #3414
+ALTER TABLE cases ADD COLUMN bloodorganortissuedonated varchar(255);
+ALTER TABLE cases_history ADD COLUMN bloodorganortissuedonated varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (324, '2020-02-08 SurvNet Adaptations - Create new field “Blood donation in the last 6 months” for cases #3414');
+
+-- 2021-02-05 Case identification source #3420
+ALTER TABLE cases ADD COLUMN caseidentificationsource character varying(255);
+ALTER TABLE cases_history ADD COLUMN caseidentificationsource character varying(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (325, 'Case identification source #3420');
+
+-- 2021-02-10 SurvNet Adaptations - Create new field “Suspicious case” to cases
+
+ALTER TABLE cases ADD COLUMN notACaseReasonNegativeTest boolean default false;
+ALTER TABLE cases_history ADD COLUMN notACaseReasonNegativeTest boolean default false;
+
+ALTER TABLE cases ADD COLUMN notACaseReasonPhysicianInformation boolean default false;
+ALTER TABLE cases_history ADD COLUMN notACaseReasonPhysicianInformation boolean default false;
+
+ALTER TABLE cases ADD COLUMN notACaseReasonDifferentPathogen boolean default false;
+ALTER TABLE cases_history ADD COLUMN notACaseReasonDifferentPathogen boolean default false;
+
+ALTER TABLE cases ADD COLUMN notACaseReasonOther boolean default false;
+ALTER TABLE cases_history ADD COLUMN notACaseReasonOther boolean default false;
+
+ALTER TABLE cases ADD COLUMN notACaseReasonDetails text;
+ALTER TABLE cases_history ADD COLUMN notACaseReasonDetails text;
+
+INSERT INTO schema_version (version_number, comment) VALUES (326, 'SurvNet Adaptations - Create new field “Suspicious case” to cases #3419');
+
+-- 2020-02-09 #3831 SurvNet Adaptations - Create new field “Reinfection” for cases
+ALTER TABLE cases
+    ADD COLUMN reinfection varchar(255),
+    ADD COLUMN previousinfectiondate timestamp;
+
+ALTER TABLE cases_history
+    ADD COLUMN reinfection varchar(255),
+    ADD COLUMN previousinfectiondate timestamp;
+
+INSERT INTO schema_version (version_number, comment) VALUES (327, 'SurvNet Adaptations - Create new field “Reinfection” for cases #3831');
+
+-- 2021-02-10 - Make user roles deactivateable #3716
+ALTER TABLE userrolesconfig ADD COLUMN enabled boolean NOT NULL default true;
+ALTER TABLE userrolesconfig_history ADD COLUMN enabled boolean NOT NULL default true;
+
+INSERT INTO schema_version (version_number, comment) VALUES (328, 'Make user roles deactivateable #3716');
+
+-- 2020-02-12 Remove locations assigned to more than one exposure from deleted cases #4338
+ALTER TABLE exposures ALTER COLUMN location_id DROP NOT NULL;
+ALTER TABLE exposures_history ALTER COLUMN location_id DROP NOT NULL;
+UPDATE exposures SET location_id = null FROM cases WHERE cases.epidata_id = exposures.epidata_id AND cases.deleted IS true AND (SELECT COUNT(location_id) FROM exposures ex WHERE ex.location_id = exposures.location_id) > 1;
+
+INSERT INTO schema_version (version_number, comment) VALUES (329, 'Remove locations assigned to more than one exposure from deleted cases #4338');
+
+-- 2020-02-15 Add missing indexes #3481
+CREATE INDEX IF NOT EXISTS idx_samples_associatedcase_id ON samples USING btree (associatedcase_id);
+CREATE INDEX IF NOT EXISTS idx_eventparticipant_reporting_user_id ON eventparticipant USING btree (reportinguser_id);
+CREATE INDEX IF NOT EXISTS idx_cases_reporting_user_id ON cases USING hash (reportinguser_id);
+CREATE INDEX IF NOT EXISTS idx_cases_person_id ON cases USING btree (person_id);
+CREATE INDEX IF NOT EXISTS idx_contact_reporting_user_id ON contact USING btree (reportinguser_id);
+CREATE INDEX IF NOT EXISTS idx_diseaseconfiguration_changedate on diseaseconfiguration (changedate DESC);
+CREATE INDEX IF NOT EXISTS idx_person_uuid ON person USING hash(uuid);
+CREATE INDEX IF NOT EXISTS idx_contact_uuid ON contact USING hash(uuid);
+CREATE INDEX IF NOT EXISTS idx_users_uuid ON users USING hash(uuid);
+CREATE INDEX IF NOT EXISTS idx_users_username ON users USING hash(username);
+
+INSERT INTO schema_version (version_number, comment) VALUES (330, 'evaluate performance cases #3481');
+
+-- 2020-02-12 [SurvNet Interface] Add Reports to case information #4282
+
+CREATE TABLE surveillancereports (
+    id bigint NOT NULL,
+    changedate timestamp without time zone NOT NULL,
+    creationdate timestamp without time zone NOT NULL,
+    uuid character varying(36) NOT NULL,
+    reportingtype varchar(255),
+    creatinguser_id bigint,
+    reportdate timestamp NOT NULL,
+    dateofdiagnosis timestamp,
+    facilityregion_id bigint,
+    facilitydistrict_id bigint,
+    facilitytype varchar(255),
+    facility_id bigint,
+    facilitydetails text,
+    notificationdetails text,
+    caze_id bigint,
+    sys_period tstzrange not null,
+    primary key (id)
+);
+
+ALTER TABLE surveillancereports OWNER TO sormas_user;
+
+ALTER TABLE surveillancereports ADD CONSTRAINT fk_surveillancereports_creatinguser_id FOREIGN KEY (creatinguser_id) REFERENCES users(id);
+ALTER TABLE surveillancereports ADD CONSTRAINT fk_surveillancereports_facilityregion_id FOREIGN KEY (facilityregion_id) REFERENCES region(id);
+ALTER TABLE surveillancereports ADD CONSTRAINT fk_surveillancereports_facilitydistrict_id FOREIGN KEY (facilitydistrict_id) REFERENCES district(id);
+ALTER TABLE surveillancereports ADD CONSTRAINT fk_surveillancereports_facility_id FOREIGN KEY (facility_id) REFERENCES facility(id);
+ALTER TABLE surveillancereports ADD CONSTRAINT fk_surveillancereports_caze_id FOREIGN KEY (caze_id) REFERENCES cases(id);
+
+CREATE TABLE surveillancereports_history (LIKE surveillancereports);
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE OR DELETE ON surveillancereports
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'surveillancereports_history', true);
+ALTER TABLE surveillancereports_history OWNER TO sormas_user;
+
+DO $$
+    DECLARE rec RECORD;
+    BEGIN
+        FOR rec IN SELECT id as _caze_id, reportingtype as _reportingtype, reportdate as _reportdate, reportinguser_id as _reportinguser_id
+        FROM public.cases WHERE cases.reportingtype IS NOT NULL and cases.reportingtype <> 'LABORATORY'
+            LOOP
+                INSERT INTO surveillancereports(id, uuid, creationdate, changedate, reportingtype, reportdate, creatinguser_id, caze_id)
+                VALUES (nextval('entity_seq'),
+                        overlay(overlay(overlay(
+                            substring(upper(REPLACE(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), '-', '')), 0, 30)
+                            placing '-' from 7) placing '-' from 14) placing '-' from 21),
+                        now(), now(),
+                        rec._reportingtype, rec._reportdate, rec._reportinguser_id, rec._caze_id);
+            END LOOP;
+    END;
+$$ LANGUAGE plpgsql;
+
+ALTER TABLE cases DROP COLUMN reportingtype;
+
+INSERT INTO schema_version (version_number, comment) VALUES (331, '[SurvNet Interface] Add Reports to case information #4282');
+
+-- 2021-02-05 Add reason hospitalization #4187
+ALTER TABLE hospitalization ADD COLUMN hospitalizationreason varchar(255);
+ALTER TABLE hospitalization_history ADD COLUMN hospitalizationreason varchar(255);
+
+ALTER TABLE hospitalization ADD COLUMN otherhospitalizationreason text;
+ALTER TABLE hospitalization_history ADD COLUMN otherhospitalizationreason text;
+
+ALTER TABLE previoushospitalization ADD COLUMN hospitalizationreason varchar(255);
+ALTER TABLE previoushospitalization_history ADD COLUMN hospitalizationreason varchar(255);
+
+ALTER TABLE previoushospitalization ADD COLUMN otherhospitalizationreason text;
+ALTER TABLE previoushospitalization_history ADD COLUMN otherhospitalizationreason text;
+
+INSERT INTO schema_version (version_number, comment) VALUES (332, '#4187 add reason for hospitalization');
+
+-- 2021-02-15 Add reportDate to pathogen test #4363
+ALTER TABLE pathogentest ADD COLUMN reportdate timestamp;
+ALTER TABLE pathogentest_history ADD COLUMN reportdate timestamp;
+
+INSERT INTO schema_version (version_number, comment) VALUES (333, 'Add reportDate to pathogen test #4363');
+
+-- 2021-02-15 Case identification source - screening #3420
+ALTER TABLE cases ADD COLUMN screeningtype character varying(255);
+ALTER TABLE cases_history ADD COLUMN screeningtype character varying(255);
+UPDATE cases SET screeningtype = 'ON_HOSPITAL_ADMISSION', caseidentificationsource = 'SCREENING' where caseidentificationsource = 'ON_HOSPITAL_ADMISSION';
+UPDATE cases SET screeningtype = 'ON_CARE_HOME_ADMISSION', caseidentificationsource = 'SCREENING' where caseidentificationsource = 'ON_CARE_HOME_ADMISSION';
+UPDATE cases SET screeningtype = 'ON_ASYLUM_ADMISSION', caseidentificationsource = 'SCREENING' where caseidentificationsource = 'ON_ASYLUM_ADMISSION';
+UPDATE cases SET screeningtype = 'ON_ENTRY_FROM_RISK_AREA', caseidentificationsource = 'SCREENING' where caseidentificationsource = 'ON_ENTRY_FROM_RISK_AREA';
+UPDATE cases SET screeningtype = 'HEALTH_SECTOR_EMPLOYEE', caseidentificationsource = 'SCREENING' where caseidentificationsource = 'HEALTH_SECTOR_EMPLOYEE';
+UPDATE cases SET screeningtype = 'EDUCATIONAL_INSTITUTIONS', caseidentificationsource = 'SCREENING' where caseidentificationsource = 'EDUCATIONAL_INSTITUTIONS';
+
+INSERT INTO schema_version (version_number, comment) VALUES (334, 'Case identification source - screening type #3420');
+
+-- 2021-02-16 - Make user roles deactivateable #3716
+-- initial deploy was in schema version 327 but without "default true" statement. This has been installed on most servers
+-- but on some servers which had data in userrolesconfig table the change crashed as we would need to add a default value
+-- in order to make script available in both situations on already installed and on crashed servers the change consists in
+--  a) add "default true" statement to schema version 327 to resolve the servers which are crashing
+--  b) add schema version 334 in order to add "default true" to servers which ran already version 327 and need the default true for future use
+ALTER TABLE userrolesconfig DROP COLUMN IF EXISTS enabled;
+ALTER TABLE userrolesconfig_history DROP COLUMN IF EXISTS enabled;
+
+ALTER TABLE userrolesconfig ADD COLUMN enabled boolean NOT NULL default true;
+ALTER TABLE userrolesconfig_history ADD COLUMN enabled boolean NOT NULL default true;
+
+INSERT INTO schema_version (version_number, comment) VALUES (335, 'Make user roles deactivateable #3716');
+
+-- 2020-02-09 Add indexes #4307
+CREATE INDEX IF NOT EXISTS idx_cases_epid_number ON cases USING gist (epidnumber gist_trgm_ops);
+CREATE INDEX IF NOT EXISTS idx_cases_person_id ON cases (person_id);
+CREATE INDEX IF NOT EXISTS idx_cases_region_id ON cases (region_id);
+CREATE INDEX IF NOT EXISTS idx_cases_district_id ON cases (district_id);
+CREATE INDEX IF NOT EXISTS idx_cases_disease ON cases (disease);
+
+CREATE INDEX IF NOT EXISTS idx_contact_region_id ON contact (region_id);
+CREATE INDEX IF NOT EXISTS idx_contact_district_id ON contact (district_id);
+CREATE INDEX IF NOT EXISTS idx_contact_case_id ON contact (caze_id);
+
+CREATE INDEX IF NOT EXISTS idx_eventparticipant_event_id ON eventparticipant (event_id);
+CREATE INDEX IF NOT EXISTS idx_eventparticipant_person_id ON eventparticipant (person_id);
+CREATE INDEX IF NOT EXISTS idx_eventparticipant_resultingcase_id ON eventparticipant (resultingcase_id);
+
+CREATE INDEX IF NOT EXISTS idx_samples_associatedcontact_id ON samples (associatedcontact_id);
+CREATE INDEX IF NOT EXISTS idx_samples_associatedcase_id ON samples (associatedcase_id);
+CREATE INDEX IF NOT EXISTS idx_samples_associatedeventparticipant_id ON samples (associatedeventparticipant_id);
+CREATE INDEX IF NOT EXISTS idx_samples_lab_id ON samples (lab_id);
+
+CREATE INDEX IF NOT EXISTS idx_task_contact_id ON task (contact_id);
+CREATE INDEX IF NOT EXISTS idx_task_case_id ON task (caze_id);
+CREATE INDEX IF NOT EXISTS idx_task_event_id ON task (event_id);
+
+CREATE INDEX IF NOT EXISTS idx_visit_person_id ON visit (person_id);
+
+CREATE INDEX IF NOT EXISTS idx_pathogentest_sample_id ON pathogentest (sample_id);
+
+CREATE INDEX IF NOT EXISTS idx_additionaltest_sample_id ON additionaltest (sample_id);
+
+CREATE INDEX IF NOT EXISTS idx_outbreak_district_id ON outbreak (district_id);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_events_location_id ON events (eventlocation_id);
+
+CREATE INDEX IF NOT EXISTS idx_location_region_id ON location (region_id);
+CREATE INDEX IF NOT EXISTS idx_location_district_id ON location (district_id);
+
+CREATE INDEX IF NOT EXISTS idx_facility_region_id ON facility (region_id);
+CREATE INDEX IF NOT EXISTS idx_facility_district_id ON facility (district_id);
+
+CREATE INDEX IF NOT EXISTS idx_exposures_epidata_id ON exposures (epidata_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_exposures_location_id ON exposures (location_id);
+
+CREATE INDEX IF NOT EXISTS idx_previoushospitalization_hospitalization_id ON previoushospitalization (hospitalization_id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (336, '2020-02-09 Add indexes #4307');
+
+-- 2021-02-16 - [SurvNet Interface] Care/accommodation/work in facility #4163
+ALTER TABLE epidata ADD COLUMN activityascasedetailsknown varchar(255);
+ALTER TABLE epidata_history ADD COLUMN activityascasedetailsknown varchar(255);
+
+CREATE TABLE activityascase(
+      id bigint not null,
+      uuid varchar(36) not null unique,
+      changedate timestamp not null,
+      creationdate timestamp not null,
+      epidata_id bigint not null,
+      reportinguser_id bigint,
+      startdate timestamp,
+      enddate timestamp,
+      description text,
+      activityAsCaseType varchar(255) not null,
+      activityAsCaseTypeDetails text,
+      location_id bigint not null,
+      role varchar(255),
+      typeofplace varchar(255),
+      typeofplacedetails text,
+      meansoftransport varchar(255),
+      meansoftransportdetails text,
+      connectionnumber varchar(512),
+      seatnumber varchar(512),
+      workEnvironment varchar(255),
+
+      gatheringtype varchar(255),
+      gatheringdetails text,
+      habitationtype varchar(255),
+      habitationdetails text,
+      typeofanimal varchar(255),
+      typeofanimaldetails text,
+
+      sys_period tstzrange not null,
+      primary key(id)
+);
+
+ALTER TABLE activityascase OWNER TO sormas_user;
+ALTER TABLE activityascase ADD CONSTRAINT fk_activityascase_epidata_id FOREIGN KEY (epidata_id) REFERENCES epidata(id);
+ALTER TABLE activityascase ADD CONSTRAINT fk_activityascase_reportinguser_id FOREIGN KEY (reportinguser_id) REFERENCES users(id);
+ALTER TABLE activityascase ADD CONSTRAINT fk_activityascase_location_id FOREIGN KEY (location_id) REFERENCES location(id);
+
+CREATE TABLE activityascase_history (LIKE activityascase);
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON activityascase
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'activityascase_history', true);
+ALTER TABLE activityascase_history OWNER TO sormas_user;
+
+INSERT INTO schema_version (version_number, comment) VALUES (337, '[SurvNet Interface] Care/accommodation/work in facility #4163');
+
+-- 2020-02-18 Add Country to location details #2994
+ALTER TABLE location ADD COLUMN country_id bigint;
+ALTER TABLE location_history ADD COLUMN country_id bigint;
+ALTER TABLE location ADD CONSTRAINT fk_location_country_id FOREIGN KEY (country_id) REFERENCES country(id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (338, 'Add Country to location details #2994');
+
+-- 2020-02-12 [SORMAS 2 SORMAS] Send and receive Events #4348
+ALTER TABLE events ADD COLUMN sormasToSormasOriginInfo_id bigint;
+ALTER TABLE events ADD CONSTRAINT fk_events_sormasToSormasOriginInfo_id FOREIGN KEY (sormasToSormasOriginInfo_id) REFERENCES sormastosormasorigininfo (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+ALTER TABLE eventparticipant ADD COLUMN sormasToSormasOriginInfo_id bigint;
+ALTER TABLE eventparticipant ADD CONSTRAINT fk_eventparticipant_sormasToSormasOriginInfo_id FOREIGN KEY (sormasToSormasOriginInfo_id) REFERENCES sormastosormasorigininfo (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+ALTER TABLE sormastosormasshareinfo ADD COLUMN event_id bigint;
+ALTER TABLE sormastosormasshareinfo ADD CONSTRAINT fk_sormastosormasshareinfo_event_id FOREIGN KEY (event_id) REFERENCES events (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+ALTER TABLE sormastosormasshareinfo
+    ADD COLUMN eventparticipant_id bigint,
+    ADD COLUMN witheventparticipants boolean DEFAULT false;
+ALTER TABLE sormastosormasshareinfo ADD CONSTRAINT fk_sormastosormasshareinfo_eventparticipant_id FOREIGN KEY (eventparticipant_id) REFERENCES eventparticipant (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+INSERT INTO schema_version (version_number, comment) VALUES (339, '[SORMAS 2 SORMAS] Send and receive Events #4348');
+
+-- 2021-02-28 Add optional translation to CampaignDiagramDefinition #4090
+ALTER TABLE campaigndiagramdefinition ADD COLUMN campaigndiagramtranslations json;
+ALTER TABLE campaigndiagramdefinition_history ADD COLUMN campaigndiagramtranslations json;
+
+INSERT INTO schema_version (version_number, comment) VALUES (340, 'Add optional translation to CampaignDiagramDefinition #4090');
+
+-- 2021-03-03 Add facilities' address #4027
+ALTER TABLE facility ADD COLUMN street varchar(4096);
+ALTER TABLE facility ADD COLUMN housenumber varchar(512);
+ALTER TABLE facility ADD COLUMN additionalinformation varchar(255);
+ALTER TABLE facility ADD COLUMN postalcode varchar(512);
+ALTER TABLE facility ADD COLUMN areatype varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (341, 'Add facilities address #4027');
+
+-- 2021-02-23 Add event management status to Event #4255
+
+ALTER TABLE events ADD COLUMN eventmanagementstatus varchar(255);
+ALTER TABLE events_history ADD COLUMN eventmanagementstatus varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (342, 'Add event management status to Event #4255');
+
+-- 2021-03-04 Extend exposure #4549
+ALTER TABLE exposures ADD COLUMN largeattendancenumber varchar(255);
+ALTER TABLE exposures_history ADD COLUMN largeattendancenumber varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (343, 'Extend exposure #4549');
+
+-- 2021-03-04 Add person email, person phone, testResultVerified to LabMessage #4106
+ALTER TABLE labmessage ADD COLUMN personphone VARCHAR(255);
+ALTER TABLE labmessage ADD COLUMN personemail VARCHAR(255);
+ALTER TABLE labmessage_history ADD COLUMN personphone VARCHAR(255);
+ALTER TABLE labmessage_history ADD COLUMN personemail VARCHAR(255);
+ALTER TABLE labmessage ADD COLUMN testresultverified boolean;
+ALTER TABLE labmessage_history ADD COLUMN testresultverified boolean;
+UPDATE labmessage SET testresultverified = true;
+
+INSERT INTO schema_version (version_number, comment) VALUES (344, 'Add person email, person phone, testResultVerified to LabMessage #4106');
+
+-- 2021-03-03 Add a "sampling reason" field in the sample #4555
+ALTER TABLE samples
+    ADD COLUMN samplingreason varchar(255),
+    ADD COLUMN samplingreasondetails text;
+ALTER TABLE samples_history
+    ADD COLUMN samplingreason varchar(255),
+    ADD COLUMN samplingreasondetails text;
+
+DO $$
+    DECLARE rec RECORD;
+        DECLARE latest_sample RECORD;
+        DECLARE _samplingreason text;
+    BEGIN
+        FOR rec IN SELECT id as _caseid, covidtestreason as _covidtestreason, covidtestreasondetails as _covidtestreasondetails, reportdate as _reportdate, reportinguser_id as _reportinguser_id
+                   FROM cases WHERE cases.covidtestreason IS NOT NULL
+            LOOP
+                _samplingreason = CASE WHEN rec._covidtestreason='REQUIREMENT_OF_EMPLOYER' THEN 'PROFESSIONAL_REASON'
+                                       WHEN rec._covidtestreason='DURING_QUARANTINE' THEN 'QUARANTINE_REGULATIONS'
+                                       WHEN rec._covidtestreason='COHORT_SCREENING' THEN 'SCREENING'
+                                       WHEN rec._covidtestreason='OUTBREAK_INVESTIGATION_SCREENING' THEN 'OUTBREAK'
+                                       WHEN rec._covidtestreason='AFTER_CONTACT_TRACING' THEN 'CONTACT_TO_CASE'
+                                       ELSE rec._covidtestreason
+                    END;
+
+                SELECT id as _id FROM samples where associatedcase_id = rec._caseid and deleted = false order by sampledatetime DESC limit 1 INTO latest_sample;
+
+                IF latest_sample IS NULL THEN
+                    INSERT INTO samples (id, uuid, creationdate, changedate, associatedcase_id, samplepurpose, sampledatetime, reportdatetime, reportinguser_id, samplematerial, samplematerialtext, comment,
+                                         deleted, shipped, received,
+                                         samplingreason, samplingreasondetails)
+                    values (nextval('entity_seq'),
+                            overlay(overlay(overlay(
+                                                    substring(upper(REPLACE(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), '-', '')), 0, 30)
+                                                    placing '-' from 7) placing '-' from 14) placing '-' from 21),
+                            now(), now(),
+                            rec._caseid, 'INTERNAL', rec._reportdate, rec._reportdate, rec._reportinguser_id, 'OTHER', 'Unknown', '[System] Automatically generated sample due to covid test reason migration',
+                            false, false, false,
+                            _samplingreason, rec._covidtestreasondetails);
+                ELSE
+                    UPDATE samples set samplingreason = _samplingreason, samplingreasondetails = rec._covidtestreasondetails where id = latest_sample._id;
+                END IF;
+            END LOOP;
+    END;
+$$ LANGUAGE plpgsql;
+
+ALTER TABLE cases
+    DROP COLUMN covidtestreason,
+    DROP COLUMN covidtestreasondetails;
+
+INSERT INTO schema_version (version_number, comment) VALUES (345, 'Add a "sampling reason" field in the sample #4555');
+
+-- 2021-03-03 Introduce disease properties to switch between basic and extended classification #4218
+ALTER TABLE diseaseconfiguration ADD COLUMN extendedClassification boolean DEFAULT false;
+ALTER TABLE diseaseconfiguration ADD COLUMN extendedClassificationMulti boolean DEFAULT false;
+
+ALTER TABLE diseaseconfiguration_history ADD COLUMN extendedClassification boolean;
+ALTER TABLE diseaseconfiguration_history ADD COLUMN extendedClassificationMulti boolean;
+
+UPDATE diseaseconfiguration SET extendedClassification = false WHERE disease not in ('CORONAVIRUS', 'MEASLES');
+UPDATE diseaseconfiguration SET extendedClassificationMulti = false WHERE disease not in ('CORONAVIRUS');
+UPDATE diseaseconfiguration SET extendedClassification = TRUE WHERE disease in ('CORONAVIRUS', 'MEASLES');
+UPDATE diseaseconfiguration SET extendedClassificationMulti = TRUE WHERE disease in ('CORONAVIRUS');
+
+INSERT INTO schema_version (version_number, comment) VALUES (346, 'Introduce disease properties to switch between basic and extended classification #4218');
+
+-- 2021-03-03 [SurvNet Interface] Add "via DEMIS" to pathogen tests #4562
+ALTER TABLE pathogentest ADD COLUMN vialims boolean DEFAULT false;
+ALTER TABLE pathogentest_history ADD COLUMN vialims boolean DEFAULT false;
+
+INSERT INTO schema_version (version_number, comment) VALUES (347, '[SurvNet Interface] Add "via DEMIS" to pathogen tests #4562');
+
+-- 2021-03-11 [SurvNet Interface] Add additional fields to event clusters #4720
+ALTER TABLE events
+    ADD COLUMN infectionpathcertainty varchar(255),
+    ADD COLUMN humantransmissionmode varchar(255),
+    ADD COLUMN parenteraltransmissionmode varchar(255),
+    ADD COLUMN medicallyassociatedtransmissionmode varchar(255);
+
+ALTER TABLE events_history
+    ADD COLUMN infectionpathcertainty varchar(255),
+    ADD COLUMN humantransmissionmode varchar(255),
+    ADD COLUMN parenteraltransmissionmode varchar(255),
+    ADD COLUMN medicallyassociatedtransmissionmode varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (348, '[SurvNet Interface] Add additional fields to event clusters #4720');
+
+-- 2021-03-12 [SurvNet Interface] Events > Add new field "Internal ID" #4668
+ALTER TABLE events ADD COLUMN internalid text;
+ALTER TABLE events_history ADD COLUMN internalid text;
+
+INSERT INTO schema_version (version_number, comment) VALUES (349, '[SurvNet Interface] Events > Add new field "Internal ID" #4668');
+
+-- 2020-02-19 Person contact details #2744
+create table personcontactdetail(
+     id bigint not null,
+     uuid varchar(36) not null unique,
+     changedate timestamp not null,
+     creationdate timestamp not null,
+     person_id bigint not null,
+     primarycontact boolean DEFAULT false,
+     personcontactdetailtype varchar(255),
+     phonenumbertype varchar(255),
+     details text,
+     contactInformation text,
+     additionalInformation text,
+     thirdParty boolean DEFAULT false,
+     thirdPartyRole text,
+     thirdPartyName text
+);
+ALTER TABLE personcontactdetail OWNER TO sormas_user;
+
+ALTER TABLE personcontactdetail
+    ADD CONSTRAINT fk_personcontactdetail_person_id FOREIGN KEY (person_id) REFERENCES person(id);
+
+ALTER TABLE personcontactdetail ADD COLUMN sys_period tstzrange;
+CREATE TABLE personcontactdetail_history (LIKE personcontactdetail);
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE OR DELETE ON personcontactdetail
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'personcontactdetail_history', true);
+ALTER TABLE personcontactdetail_history OWNER TO sormas_user;
+
+CREATE INDEX IF NOT EXISTS idx_personcontactdetail_person_id ON personcontactdetail (person_id);
+CREATE INDEX IF NOT EXISTS idx_personcontactdetail_primarycontact ON personcontactdetail (primarycontact);
+
+INSERT INTO personcontactdetail(id, uuid, changedate, creationdate, person_id, primarycontact, personcontactdetailtype, contactinformation, thirdparty)
+SELECT nextval('entity_seq'), upper(substring(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), 3, 29)), now(), now(), id, true, 'PHONE', phone, false
+FROM person WHERE (phone <> '' AND phone IS NOT NULL) IS TRUE AND (phoneowner <> '' AND phoneowner IS NOT NULL) IS FALSE;
+
+INSERT INTO personcontactdetail(id, uuid, changedate, creationdate, person_id, primarycontact, personcontactdetailtype, contactinformation, thirdparty)
+SELECT nextval('entity_seq'), upper(substring(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), 3, 29)), now(), now(), id, true, 'EMAIL', emailaddress, false
+FROM person WHERE (emailaddress <> '' AND emailaddress IS NOT NULL) IS TRUE;
+
+INSERT INTO personcontactdetail(id, uuid, changedate, creationdate, person_id, primarycontact, personcontactdetailtype, contactinformation, thirdparty, thirdpartyname)
+SELECT nextval('entity_seq'), upper(substring(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), 3, 29)), now(), now(), id, false, 'PHONE', phone, true, phoneowner
+FROM person WHERE (phone <> '' AND phone IS NOT NULL) IS TRUE AND (phoneowner <> '' AND phoneowner IS NOT NULL) IS TRUE;
+
+INSERT INTO personcontactdetail(id, uuid, changedate, creationdate, person_id, primarycontact, personcontactdetailtype, additionalinformation, thirdparty, thirdpartyrole, thirdpartyname)
+SELECT nextval('entity_seq'), upper(substring(CAST(CAST(md5(CAST(random() AS text) || CAST(clock_timestamp() AS text)) AS uuid) AS text), 3, 29)), now(), now(), id, false, 'OTHER', generalpractitionerdetails, true, 'General practitioner', generalpractitionerdetails
+FROM person WHERE (generalpractitionerdetails <> '' AND generalpractitionerdetails IS NOT NULL) IS TRUE;
+
+ALTER TABLE person DROP COLUMN phone;
+ALTER TABLE person DROP COLUMN phoneowner;
+ALTER TABLE person DROP COLUMN emailaddress;
+ALTER TABLE person DROP COLUMN generalpractitionerdetails;
+
+INSERT INTO schema_version (version_number, comment) VALUES (350, 'Person contact details #2744');
+
+-- 2021-03-12 Show "sent to SurvNet" including the last Date of sending bellow the Send to SurvNet Button #4771
+
+CREATE TABLE externalshareinfo (
+    id bigint NOT NULL,
+    uuid varchar(36) not null unique,
+    creationdate timestamp without time zone NOT NULL,
+    changedate timestamp not null,
+    caze_id bigint,
+    event_id bigint,
+    sender_id bigint,
+    status varchar(255),
+    primary key(id)
+);
+
+ALTER TABLE externalshareinfo OWNER TO sormas_user;
+ALTER TABLE externalshareinfo ADD CONSTRAINT fk_externalshareinfo_caze_id FOREIGN KEY (caze_id) REFERENCES cases (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE externalshareinfo ADD CONSTRAINT fk_externalshareinfo_event_id FOREIGN KEY (event_id) REFERENCES events (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE externalshareinfo ADD CONSTRAINT fk_externalshareinfo_sender_id FOREIGN KEY (sender_id) REFERENCES users (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+INSERT INTO schema_version (version_number, comment) VALUES (351, 'Show "sent to SurvNet" including the last Date of sending bellow the Send to SurvNet Button #4771');
+
+-- 2021-03-09 Add fields for intensive care unit to previous hospitalization #4591
+ALTER TABLE previoushospitalization ADD COLUMN intensivecareunit varchar(255);
+ALTER TABLE previoushospitalization_history ADD COLUMN intensivecareunit varchar(255);
+ALTER TABLE previoushospitalization ADD COLUMN intensivecareunitstart timestamp;
+ALTER TABLE previoushospitalization_history ADD COLUMN intensivecareunitstart timestamp;
+ALTER TABLE previoushospitalization ADD COLUMN intensivecareunitend timestamp;
+ALTER TABLE previoushospitalization_history ADD COLUMN intensivecareunitend timestamp;
+
+INSERT INTO schema_version (version_number, comment) VALUES (352, 'Add fields for intensive care unit to previous hospitalization #4591');
+
+-- 2020-03-17 Create continent and subcontinent #4775
+CREATE TABLE continent (
+                           id bigint NOT NULL,
+                           uuid varchar(36) not null unique,
+                           creationdate timestamp without time zone NOT NULL,
+                           changedate timestamp not null,
+                           archived boolean not null default false,
+                           defaultname varchar(255) NOT NULL,
+                           externalid varchar(255),
+                           primary key(id)
+);
+
+CREATE TABLE subcontinent (
+                              id bigint NOT NULL,
+                              uuid varchar(36) not null unique,
+                              creationdate timestamp without time zone NOT NULL,
+                              changedate timestamp not null,
+                              archived boolean not null default false,
+                              defaultname varchar(255) NOT NULL,
+                              externalid varchar(255),
+                              continent_id bigint NOT NULL,
+                              primary key(id)
+);
+
+ALTER TABLE continent OWNER TO sormas_user;
+ALTER TABLE subcontinent OWNER TO sormas_user;
+
+ALTER TABLE subcontinent ADD CONSTRAINT fk_subcontinent_continent_id FOREIGN KEY (continent_id) REFERENCES continent (id);
+
+ALTER TABLE country ADD COLUMN subcontinent_id BIGINT;
+ALTER TABLE country ADD CONSTRAINT fk_country_subcontinent_id FOREIGN KEY (subcontinent_id) REFERENCES subcontinent (id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (353, '2020-03-17 Create continent and subcontinent #4775');
+
+-- 2021-03-22 Provide SQL function to generate a UUIDv4 encoded as base32 #4805
+DROP FUNCTION IF EXISTS encode_base32(bytea,int);
+DROP FUNCTION IF EXISTS generate_base32_uuid();
+
+/** base 32 encoding based on de.symeda.sormas.api.utils.Base32 **/
+CREATE FUNCTION encode_base32(bytes bytea, separatorBlockSize int)
+    RETURNS text
+    LANGUAGE plpgsql
+AS $BODY$
+DECLARE
+    byteCount int;
+
+    alphabet bytea = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'; /* RFC 4648/3548 */
+    SHIFT int = 5; /* SHIFT is the number of bits per output character, so the length of the output is the length of the input multiplied by 8/SHIFT, rounded up.*/
+    MASK int = 31;
+
+    result text = '';
+    outputLength int;
+    buffer int;
+    next int;
+    bitsLeft int;
+    pad int;
+    index int;
+
+BEGIN
+    byteCount = length(bytes);
+    outputLength = (byteCount * 8 + SHIFT - 1) / SHIFT;
+    if (separatorBlockSize > 0) THEN
+        outputLength = outputLength + outputLength / separatorBlockSize - 1;
+    END IF;
+
+    buffer = get_byte(bytes,0);
+    next = 1;
+    bitsLeft = 8;
+    while bitsLeft > 0 OR next < byteCount LOOP
+            if (bitsLeft < SHIFT) THEN
+                if (next < byteCount) THEN
+                    buffer = buffer << 8;
+                    buffer = buffer | (get_byte(bytes, next) & 255);
+                    next = next+1;
+                    bitsLeft = bitsLeft + 8;
+                ELSE
+                    pad = SHIFT - bitsLeft;
+                    buffer = buffer << pad;
+                    bitsLeft = bitsLeft + pad;
+                END IF;
+            END IF;
+
+            index = MASK & (buffer >> (bitsLeft - SHIFT));
+            bitsLeft = bitsLeft - SHIFT;
+            result = result || chr(get_byte(alphabet,index));
+
+            IF (separatorBlockSize > 0
+                AND (length(result) + 1) % (separatorBlockSize + 1) = 0
+                AND outputLength - length(result) > separatorBlockSize / 2) THEN
+                result = result || '-';
+            END IF;
+        END LOOP;
+    RETURN result;
+END;
+$BODY$;
+
+CREATE FUNCTION generate_base32_uuid()
+    RETURNS text
+    LANGUAGE plpgsql
+AS $BODY$
+DECLARE
+    uuidBytes bytea;
+
+BEGIN
+    uuidBytes = gen_random_bytes(16);
+    uuidBytes = set_byte(uuidBytes, 6, (get_byte(uuidBytes,6) & 15) | 64);  /* clear version, set to version 4 */
+    uuidBytes = set_byte(uuidBytes, 8, (get_byte(uuidBytes,8) & 63) | 128);  /* clear variant, set to to IETF variant */
+    return encode_base32(uuidBytes, 6);
+END;
+$BODY$;
+
+INSERT INTO schema_version (version_number, comment) VALUES (354, 'Provide SQL function to generate a UUIDv4 encoded as base32 #4805');
+
+-- 2021-03-17 Add a country field to regions #4784
+ALTER TABLE region ADD COLUMN country_id bigint;
+ALTER TABLE region ADD CONSTRAINT fk_region_country_id FOREIGN KEY (country_id) REFERENCES country (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (355, 'Add a country field to regions #4784', true);
+
+-- 2021-03-22 [SurvNet Interface] Add checkbox "probable infection environment" to exposures
+ALTER TABLE exposures ADD COLUMN probableinfectionenvironment boolean DEFAULT false;
+ALTER TABLE exposures_history ADD COLUMN probableinfectionenvironment boolean DEFAULT false;
+
+INSERT INTO schema_version (version_number, comment) VALUES (356, '[SurvNet Interface] Add checkbox "probable infection environment" to exposures');
+
+-- 2021-03-19 Add continent and subcontinent to location #4777
+
+ALTER TABLE location ADD COLUMN continent_id BIGINT;
+ALTER TABLE location ADD COLUMN subcontinent_id BIGINT;
+ALTER TABLE location ADD CONSTRAINT fk_location_continent_id FOREIGN KEY (continent_id) REFERENCES continent (id);
+ALTER TABLE location ADD CONSTRAINT fk_location_subcontinent_id FOREIGN KEY (subcontinent_id) REFERENCES subcontinent (id);
+ALTER TABLE location_history ADD COLUMN continent_id BIGINT;
+ALTER TABLE location_history ADD COLUMN subcontinent_id BIGINT;
+
+INSERT INTO schema_version (version_number, comment) VALUES (357, '2020-03-19 Add continent and subcontinent to location #4777');
+
+-- 2021-03-07 Add Community Reference to PopulationData entity #4271
+ALTER TABLE populationdata ADD COLUMN community_id bigint;
+ALTER TABLE populationdata ADD CONSTRAINT fk_populationdata_community_id FOREIGN KEY (community_id) REFERENCES community(id);
+ALTER TABLE community ADD COLUMN growthRate real;
+INSERT INTO schema_version (version_number, comment) VALUES (358, 'Add Community reference to PopulationData entity #4271');
+
+-- 2021-04-06 Add date and responsible user of last follow-up status change #4138
+ALTER TABLE cases ADD COLUMN followupstatuschangedate timestamp without time zone;
+ALTER TABLE cases ADD COLUMN followupstatuschangeuser_id BIGINT;
+ALTER TABLE contact ADD COLUMN followupstatuschangedate timestamp without time zone;
+ALTER TABLE contact ADD COLUMN followupstatuschangeuser_id BIGINT;
+ALTER TABLE cases_history ADD COLUMN followupstatuschangedate timestamp without time zone;
+ALTER TABLE cases_history ADD COLUMN followupstatuschangeuser_id BIGINT;
+ALTER TABLE contact_history ADD COLUMN followupstatuschangedate timestamp without time zone;
+ALTER TABLE contact_history ADD COLUMN followupstatuschangeuser_id BIGINT;
+ALTER TABLE cases ADD CONSTRAINT fk_cases_followupstatuschangeuser_id FOREIGN KEY (followupstatuschangeuser_id) REFERENCES users (id);
+ALTER TABLE contact ADD CONSTRAINT fk_contact_followupstatuschangeuser_id FOREIGN KEY (followupstatuschangeuser_id) REFERENCES users (id);
+ALTER TABLE cases_history ADD CONSTRAINT fk_cases_followupstatuschangeuser_id FOREIGN KEY (followupstatuschangeuser_id) REFERENCES users (id);
+ALTER TABLE contact_history ADD CONSTRAINT fk_contact_followupstatuschangeuser_id FOREIGN KEY (followupstatuschangeuser_id) REFERENCES users (id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (359, '2021-04-06 Add date and responsible user of last follow-up status change #4138');
+
+-- 2021-04-12 [DEMIS Interface] Introduce option to reject lab messages #4851
+
+ALTER TABLE labmessage ADD COLUMN status varchar(255);
+
+UPDATE labmessage SET status = CASE WHEN processed=true THEN 'PROCESSED'
+                                    ELSE 'UNPROCESSED'
+                                END;
+ALTER TABLE labmessage
+    ALTER COLUMN status SET NOT NULL,
+    DROP COLUMN processed;
+
+INSERT INTO schema_version (version_number, comment) VALUES (360, '[DEMIS Interface] Introduce option to reject lab messages #4851');
+
+-- 2021-02-18 - Management of EventGroups #4571
+CREATE TABLE eventgroups(
+    id bigint not null,
+    uuid varchar(36) not null unique,
+    name text not null,
+    changedate timestamp not null,
+    creationdate timestamp not null,
+    archived boolean not null default false,
+    sys_period tstzrange not null,
+    PRIMARY KEY (id)
+);
+ALTER TABLE eventgroups OWNER TO sormas_user;
+
+CREATE TABLE eventgroups_history (LIKE eventgroups);
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON eventgroups
+FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'eventgroups_history', true);
+ALTER TABLE eventgroups_history OWNER TO sormas_user;
+
+CREATE TABLE events_eventgroups(
+    event_id bigint not null,
+    eventgroup_id bigint not null,
+    sys_period tstzrange not null,
+    PRIMARY KEY (event_id, eventgroup_id)
+);
+ALTER TABLE events_eventgroups OWNER TO sormas_user;
+ALTER TABLE events_eventgroups ADD CONSTRAINT fk_events_eventgroups_event_id FOREIGN KEY (event_id) REFERENCES events(id);
+ALTER TABLE events_eventgroups ADD CONSTRAINT fk_events_eventgroups_eventgroup_id FOREIGN KEY (eventgroup_id) REFERENCES eventgroups(id);
+
+CREATE TABLE events_eventgroups_history (LIKE events_eventgroups);
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON events_eventgroups
+FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'events_eventgroups_history', true);
+ALTER TABLE events_eventgroups_history OWNER TO sormas_user;
+
+INSERT INTO schema_version (version_number, comment) VALUES (361, 'Management of EventGroups #4571');
+
+
+-- 2020-04-06 Add contact person details to facilities #4755
+ALTER TABLE facility ADD COLUMN contactPersonFirstName text;
+ALTER TABLE facility ADD COLUMN contactPersonLastName text;
+ALTER TABLE facility ADD COLUMN contactPersonPhone text;
+ALTER TABLE facility ADD COLUMN contactPersonEmail text;
+
+ALTER TABLE location ADD COLUMN contactPersonFirstName text;
+ALTER TABLE location ADD COLUMN contactPersonLastName text;
+ALTER TABLE location ADD COLUMN contactPersonPhone text;
+ALTER TABLE location ADD COLUMN contactPersonEmail text;
+
+ALTER TABLE location_history ADD COLUMN contactPersonFirstName text;
+ALTER TABLE location_history ADD COLUMN contactPersonLastName text;
+ALTER TABLE location_history ADD COLUMN contactPersonPhone text;
+ALTER TABLE location_history ADD COLUMN contactPersonEmail text;
+
+INSERT INTO schema_version (version_number, comment) VALUES (362, '#4755 Add contact person details to facilities');
+
+-- 2021-03-26 [DEMIS Interface] visualize respective lab messages in sample and pathogen test sections #4853
+ALTER TABLE labmessage ADD COLUMN pathogentest_id BIGINT;
+ALTER TABLE labmessage ADD CONSTRAINT fk_labmessage_pathogentest FOREIGN KEY(pathogentest_id) REFERENCES pathogentest(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+INSERT INTO schema_version (version_number, comment) VALUES (363, '[DEMIS Interface] visualize respective lab messages in sample and pathogen test sections #4853');
+
+-- 2021-04-20 Change column type of case additional details #5148
+ALTER TABLE cases ALTER COLUMN additionaldetails TYPE text;
+ALTER TABLE cases_history ALTER COLUMN additionaldetails TYPE text;
+
+INSERT INTO schema_version (version_number, comment) VALUES (364, 'Change column type of case additional details #5148');
+
+-- 2021-04-12 Add additional details to person #3936
+ALTER TABLE person ADD COLUMN additionaldetails text;
+ALTER TABLE person_history ADD COLUMN additionaldetails text;
+INSERT INTO schema_version (version_number, comment) VALUES (365, 'Add additional details to person #3936');
+
+-- 2021-04-15 Add variant specific Nucleic acid detecion methods #5029
+ALTER TABLE pathogentest ADD COLUMN pcrtestspecification varchar(255);
+ALTER TABLE pathogentest ADD COLUMN testeddiseasevariant_id bigint;
+ALTER TABLE pathogentest_history ADD COLUMN pcrtestspecification varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN testeddiseasevariant_id bigint;
+ALTER TABLE pathogentest ADD CONSTRAINT fk_pathogentest_diseasevariant_id FOREIGN KEY (testeddiseasevariant_id) REFERENCES diseasevariant(id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (366, '2021-04-15 Add variant specific Nucleic acid detecion methods #5029');
+
+-- 2021-04-23 Decouple Place of stay from the responsible jurisdiction from cases #3254
+ALTER TABLE cases
+    ADD COLUMN responsibleregion_id BIGINT,
+    ADD CONSTRAINT fk_cases_responsibleregion_id FOREIGN KEY (responsibleregion_id) REFERENCES region(id),
+    ADD COLUMN responsibledistrict_id BIGINT,
+    ADD CONSTRAINT fk_cases_responsibledistrict_id FOREIGN KEY (responsibledistrict_id) REFERENCES district(id),
+    ADD COLUMN responsiblecommunity_id BIGINT,
+    ADD CONSTRAINT fk_cases_responsiblecommunity_id FOREIGN KEY (responsiblecommunity_id) REFERENCES community(id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (367, 'Decouple Place of stay from the responsible jurisdiction from cases #3254');
+
+-- 2021-04-29 Add evidence fields for event clusters #5061
+
+ALTER TABLE events ADD COLUMN epidemiologicalevidence varchar(255);
+ALTER TABLE events ADD COLUMN epidemiologicalevidencedetails json;
+ALTER TABLE events ADD COLUMN laboratorydiagnosticEvidence varchar(255);
+ALTER TABLE events ADD COLUMN laboratorydiagnosticEvidencedetails json;
+
+INSERT INTO schema_version (version_number, comment) VALUES (368, ' 2021-04-29 Add evidence fields for event clusters #5061');
+
+-- 2021-05-07 Fix equality issue by using jsonb #5061
+
+ALTER TABLE events ALTER COLUMN epidemiologicalevidencedetails set DATA TYPE jsonb using epidemiologicalevidencedetails::jsonb;
+ALTER TABLE events ALTER COLUMN laboratorydiagnosticEvidencedetails set DATA TYPE jsonb using laboratorydiagnosticEvidencedetails::jsonb;
+
+INSERT INTO schema_version (version_number, comment) VALUES (369, '2021-05-07 Fix equality issue by using jsonb #5061');
+
+-- 2021-05-07 Move new enum values to screeningType #5063
+UPDATE cases SET
+    caseidentificationsource = 'SCREENING',
+    screeningtype = 'SELF_CONDUCTED_TEST'
+WHERE caseidentificationsource = 'SELF_CONDUCTED_TEST';
+
+UPDATE cases SET
+    caseidentificationsource = 'SCREENING',
+    screeningtype = 'SELF_ARRANGED_TEST'
+WHERE caseidentificationsource = 'SELF_ARRANGED_TEST';
+
+INSERT INTO schema_version (version_number, comment) VALUES (370, 'Move new enum values to screeningType #5063');
+
+-- 2021-03-19 Add sample material text to lab message #4773
+ALTER TABLE labmessage ADD COLUMN samplematerialtext VARCHAR(255);
+ALTER TABLE labmessage_history ADD COLUMN samplematerialtext VARCHAR(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (371, 'Add sample material text to lab message #4773');
+
+-- 2020-03-03 Add archived to task #3430
+ALTER TABLE task ADD COLUMN archived boolean NOT NULL DEFAULT false;
+ALTER TABLE task_history ADD COLUMN archived boolean NOT NULL DEFAULT false;
+
+INSERT INTO schema_version (version_number, comment) VALUES (372, 'Add archived to task #3430');
+
+-- 2021-04-29 Add customizable enums #5247
+CREATE TABLE customizableenumvalue(
+    id bigint not null,
+    uuid varchar(36) not null unique,
+    datatype varchar(255) not null,
+    value text not null,
+    caption text not null,
+    translations text,
+    diseases text,
+    description text,
+    descriptiontranslations text,
+    properties text,
+    changedate timestamp not null,
+    creationdate timestamp not null,
+    sys_period tstzrange not null,
+    PRIMARY KEY (id)
+);
+ALTER TABLE customizableenumvalue OWNER TO sormas_user;
+
+CREATE TABLE customizableenumvalue_history (LIKE customizableenumvalue);
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON customizableenumvalue
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'customizableenumvalue_history', true);
+ALTER TABLE customizableenumvalue_history OWNER TO sormas_user;
+
+ALTER TABLE cases DROP CONSTRAINT fk_cases_diseasevariant_id;
+ALTER TABLE cases RENAME COLUMN diseasevariant_id TO diseasevariant;
+ALTER TABLE cases ALTER COLUMN diseasevariant TYPE text USING diseasevariant::text;
+ALTER TABLE pathogentest DROP CONSTRAINT fk_pathogentest_diseasevariant_id;
+ALTER TABLE pathogentest RENAME COLUMN testeddiseasevariant_id TO testeddiseasevariant;
+ALTER TABLE pathogentest ALTER COLUMN testeddiseasevariant TYPE text USING testeddiseasevariant::text;
+
+DO $$
+    DECLARE rec RECORD;
+    BEGIN
+        FOR rec IN SELECT id, disease, name FROM diseasevariant
+            LOOP
+                INSERT INTO customizableenumvalue(id, uuid, changedate, creationdate, datatype, value, caption, diseases) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'DISEASE_VARIANT', UPPER(REGEXP_REPLACE(rec.name, ' ', '_', 'g')), rec.name, rec.disease);
+                UPDATE cases SET diseasevariant = UPPER(REGEXP_REPLACE(rec.name, ' ', '_', 'g')) WHERE diseasevariant = rec.id::text;
+                UPDATE pathogentest SET testeddiseasevariant = UPPER(REGEXP_REPLACE(rec.name, ' ', '_', 'g')) WHERE testeddiseasevariant = rec.id::text;
+            END LOOP;
+    END;
+$$ LANGUAGE plpgsql;
+
+DROP TABLE diseasevariant;
+DROP TABLE diseasevariant_history;
+
+INSERT INTO schema_version (version_number, comment) VALUES (373, '2021-04-29 Add customizable enums #5247');
+
+-- 2021-03-01 Make contacts mergeable #2409
+ALTER TABLE contact ADD COLUMN completeness real;
+ALTER TABLE contact_history ADD COLUMN completeness real;
+
+ALTER TABLE contact ADD COLUMN duplicateof_id bigint;
+ALTER TABLE contact_history ADD COLUMN duplicateof_id bigint;
+
+ALTER TABLE contact ADD CONSTRAINT fk_contact_duplicateof_id FOREIGN KEY (duplicateof_id) REFERENCES contact(id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (374, 'Make contacts mergeable #2409');
+
+-- 2021-05-19 Indexing by deleted flag on all containing entities should be applied #5465
+CREATE INDEX IF NOT EXISTS idx_cases_deleted ON cases (deleted);
+CREATE INDEX IF NOT EXISTS idx_contact_deleted ON contact (deleted);
+CREATE INDEX IF NOT EXISTS idx_events_deleted ON events (deleted);
+CREATE INDEX IF NOT EXISTS idx_samples_deleted ON samples (deleted);
+CREATE INDEX IF NOT EXISTS idx_pathogentest_deleted ON pathogentest (deleted);
+CREATE INDEX IF NOT EXISTS idx_campaigns_deleted ON campaigns (deleted);
+CREATE INDEX IF NOT EXISTS idx_eventparticipant_deleted ON eventparticipant (deleted);
+CREATE INDEX IF NOT EXISTS idx_documents_deleted ON documents (deleted);
+
+INSERT INTO schema_version (version_number, comment) VALUES (375, 'Indexing by deleted flag on all containing entities should be applied #5465');
+
+-- 2021-04-30 [SORMAS2SORMAS] accept or reject a shared case from another SORMAS Instance #4423
+CREATE TABLE sormastosormassharerequest(
+    id bigint not null,
+    uuid varchar(36) not null unique,
+    changedate timestamp not null,
+    creationdate timestamp not null,
+
+    dataType varchar(255),
+    status  varchar(255),
+    originInfo_id bigint,
+    cases json,
+    contacts json,
+    events json,
+
+    sys_period tstzrange not null,
+    PRIMARY KEY (id)
+);
+
+ALTER TABLE sormastosormassharerequest OWNER TO sormas_user;
+ALTER TABLE sormastosormassharerequest ADD CONSTRAINT fk_sormastosormassharerequest_originInfo_id FOREIGN KEY (originInfo_id) REFERENCES sormastosormasorigininfo (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+CREATE TABLE sormastosormassharerequest_history (LIKE sormastosormassharerequest);
+ALTER TABLE sormastosormassharerequest_history OWNER TO sormas_user;
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON sormastosormassharerequest
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'sormastosormassharerequest_history', true);
+
+CREATE TABLE sormastosormasshareinfo_entities(
+    id bigint not null,
+    uuid varchar(36) not null unique,
+    changedate timestamp not null,
+    creationdate timestamp not null,
+
+    type varchar(255),
+    shareinfo_id bigint,
+    caze_id bigint,
+    contact_id bigint,
+    sample_id bigint,
+    event_id bigint,
+    eventparticipant_id bigint
+);
+ALTER TABLE sormastosormasshareinfo_entities OWNER TO sormas_user;
+ALTER TABLE sormastosormasshareinfo_entities ADD CONSTRAINT fk_sormastosormasshareinfo_entities_shareinfo_id FOREIGN KEY (shareinfo_id) REFERENCES sormastosormasshareinfo (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE sormastosormasshareinfo_entities ADD CONSTRAINT fk_sormastosormasshareinfo_entities_caze_id FOREIGN KEY (caze_id) REFERENCES cases (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE sormastosormasshareinfo_entities ADD CONSTRAINT fk_sormastosormasshareinfo_entities_contact_id FOREIGN KEY (contact_id) REFERENCES contact (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE sormastosormasshareinfo_entities ADD CONSTRAINT fk_sormastosormasshareinfo_entities_sample_id FOREIGN KEY (sample_id) REFERENCES samples (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE sormastosormasshareinfo_entities ADD CONSTRAINT fk_sormastosormasshareinfo_entities_event_id FOREIGN KEY (event_id) REFERENCES events (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE sormastosormasshareinfo_entities ADD CONSTRAINT fk_sormastosormasshareinfo_entities_eventparticipant_id FOREIGN KEY (eventparticipant_id) REFERENCES eventparticipant (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+insert into sormastosormasshareinfo_entities (id, uuid, changedate, creationdate, type, shareinfo_id, caze_id, contact_id, sample_id, event_id, eventparticipant_id)
+select nextval('entity_seq'), generate_base32_uuid(), now(), now(),
+            CASE WHEN caze_id is not null THEN 'CASE'
+            WHEN contact_id is not null THEN 'CONTACT'
+            WHEN sample_id is not null THEN 'SAMPLE'
+            WHEN event_id is not null THEN 'EVENT'
+            WHEN eventparticipant_id is not null THEN 'EVENT_PARTICIPANT'
+            ELSE null END, id, caze_id, contact_id, sample_id, event_id, eventparticipant_id from sormastosormasshareinfo;
+
+ALTER TABLE sormastosormasshareinfo
+    ADD COLUMN requestUuid varchar(36) unique,
+    ADD COLUMN requestStatus varchar(255),
+    DROP COLUMN caze_id,
+    DROP COLUMN contact_id,
+    DROP COLUMN sample_id,
+    DROP COLUMN event_id,
+    DROP COLUMN eventparticipant_id;
+
+update sormastosormasshareinfo set requestUuid = generate_base32_uuid(), requestStatus = 'ACCEPTED';
+
+ALTER TABLE sormastosormasshareinfo
+    ALTER COLUMN requestUuid SET NOT NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (376, '[SORMAS2SORMAS] accept or reject a shared case from another SORMAS Instance #4423');
+
+-- 2020-05-26 Introduce an internal token field #5224
+ALTER TABLE cases ADD COLUMN internaltoken text;
+ALTER TABLE cases_history ADD COLUMN internaltoken text;
+
+ALTER TABLE contact ADD COLUMN internaltoken text;
+ALTER TABLE contact_history ADD COLUMN internaltoken text;
+
+ALTER TABLE person ADD COLUMN internaltoken text;
+ALTER TABLE person_history ADD COLUMN internaltoken text;
+
+ALTER TABLE events RENAME internalid TO internaltoken;
+ALTER TABLE events_history RENAME internalid TO internaltoken;
+
+INSERT INTO schema_version (version_number, comment) VALUES (377, 'Introduce an internal token field #5224');
+
+
+-- 2021-06-02 Add a checkbox to avoid sending this case to SurvNet #5324
+ALTER TABLE cases ADD COLUMN dontsharewithreportingtool boolean DEFAULT false;
+ALTER TABLE cases_history ADD COLUMN dontsharewithreportingtool boolean DEFAULT false;
+
+INSERT INTO schema_version (version_number, comment) VALUES (378, 'Add a checkbox to avoid sending this case to SurvNet #5324');
+
+-- 2021-06-22 Set contact with source case known for all existing cases #5841
+UPDATE epidata SET contactwithsourcecaseknown = 'YES' FROM cases WHERE cases.epidata_id = epidata.id AND exists (SELECT 1 FROM contact WHERE contact.resultingcase_id = cases.id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (379, 'Set contact with source case known for all existing cases #5841');
+
+-- 2021-06-22 Refine the split of jurisdiction and place of stay #5852
+DO $$
+    DECLARE _case RECORD;
+    BEGIN
+        FOR _case IN SELECT * FROM cases WHERE responsibleregion_id IS NULL
+                                           AND (reportingdistrict_id IS NULL OR reportingdistrict_id = district_id)
+            LOOP
+                UPDATE cases
+                    SET responsibleregion_id = _case.region_id,
+                        responsibledistrict_id = _case.district_id,
+                        responsiblecommunity_id = _case.community_id,
+                        region_id = null,
+                        district_id = null,
+                        community_id = null,
+                        reportingdistrict_id = null
+                where id = _case.id;
+            END LOOP;
+
+        FOR _case IN SELECT * FROM cases WHERE responsibleregion_id IS NULL AND reportingdistrict_id IS NOT NULL
+            LOOP
+                UPDATE cases
+                SET responsibleregion_id = (SELECT region_id from district where id = _case.reportingdistrict_id),
+                    responsibledistrict_id = _case.reportingdistrict_id,
+                    reportingdistrict_id = null
+                where id = _case.id;
+            END LOOP;
+    END;
+$$ LANGUAGE plpgsql;
+
+ALTER TABLE cases DROP COLUMN reportingdistrict_id;
+
+INSERT INTO schema_version (version_number, comment) VALUES (380, 'Refine the split of jurisdiction and place of stay #5852');
+
+-- 2021-06-25 [Sormas2Sormas] Returning cases without contacts or samples leaves contacts and samples disabled in both instances #5562
+ALTER TABLE sormastosormasorigininfo
+    ADD COLUMN withassociatedcontacts boolean DEFAULT false,
+    ADD COLUMN withsamples boolean DEFAULT false,
+    ADD COLUMN witheventparticipants boolean DEFAULT false;
+
+INSERT INTO schema_version (version_number, comment) VALUES (381, '[Sormas2Sormas] Returning cases without contacts or samples leaves contacts and samples disabled in both instances #5562');
+
+-- 2021-06-29 Immunizations I: Entities, DTOs and backend logic #4756
+CREATE TABLE immunization (
+                        id bigint not null,
+                        uuid varchar(36) not null unique,
+                        changedate timestamp not null,
+                        creationdate timestamp not null,
+                        disease varchar(255) not null,
+                        person_id bigint not null,
+                        reportdate timestamp not null,
+                        reportinguser_id bigint not null,
+                        archived boolean DEFAULT false,
+                        immunizationstatus varchar(255) not null,
+                        meansofimmunization varchar(255) not null,
+                        meansOfImmunizationDetails varchar(512),
+                        immunizationmanagementstatus varchar(255) not null,
+                        externalid varchar(255) not null,
+                        responsibleregion_id bigint,
+                        responsibledistrict_id bigint,
+                        responsiblecommunity_id bigint,
+                        country_id bigint,
+                        startdate timestamp,
+                        enddate timestamp,
+                        numberofdoses int,
+                        previousinfection varchar(255),
+                        lastinfectiondate timestamp,
+                        additionaldetails varchar(512),
+                        positivetestresultdate timestamp not null,
+                        recoverydate timestamp not null,
+                        relatedcase_id bigint,
+                        deleted boolean DEFAULT false,
+                        sys_period tstzrange not null,
+                        primary key(id));
+ALTER TABLE immunization OWNER TO sormas_user;
+
+ALTER TABLE immunization ADD CONSTRAINT fk_immunization_person_id FOREIGN KEY (person_id) REFERENCES person(id);
+ALTER TABLE immunization ADD CONSTRAINT fk_immunization_reportinguser_id FOREIGN KEY (reportinguser_id) REFERENCES users(id);
+ALTER TABLE immunization ADD CONSTRAINT fk_immunization_responsibleregion_id FOREIGN KEY (responsibleregion_id) REFERENCES region(id);
+ALTER TABLE immunization ADD CONSTRAINT fk_immunization_responsibledistrict_id FOREIGN KEY (responsibledistrict_id) REFERENCES district(id);
+ALTER TABLE immunization ADD CONSTRAINT fk_immunization_responsiblecommunity_id FOREIGN KEY (responsiblecommunity_id) REFERENCES community(id);
+ALTER TABLE immunization ADD CONSTRAINT fk_immunization_country_id FOREIGN KEY (country_id) REFERENCES country(id);
+ALTER TABLE immunization ADD CONSTRAINT fk_immunization_relatedcase_id FOREIGN KEY (relatedcase_id) REFERENCES cases(id);
+
+CREATE INDEX IF NOT EXISTS idx_immunization_deleted ON immunization (deleted);
+
+CREATE TABLE immunization_history (LIKE immunization);
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE OR DELETE ON immunization
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'immunization_history', true);
+ALTER TABLE immunization_history OWNER TO sormas_user;
+
+INSERT INTO schema_version (version_number, comment) VALUES (382, 'Immunizations I: Entities, DTOs and backend logic #4756');
+
+-- 2021-07-05 DEA TravelEntry entity and backend logic #6022
+CREATE TABLE travelentry(
+    id bigint not null,
+    uuid varchar(36) not null unique,
+    changedate timestamp not null,
+    creationdate timestamp not null,
+    person_id bigint not null,
+    reportdate timestamp not null,
+    reportinguser_id bigint not null,
+    archived boolean DEFAULT false,
+    deleted boolean DEFAULT false,
+    disease varchar(255) not null,
+    diseasedetails text,
+    diseasevariant text,
+    responsibleregion_id bigint not null,
+    responsibledistrict_id bigint not null,
+    responsiblecommunity_id bigint,
+    pointofentryregion_id bigint,
+    pointofentrydistrict_id bigint,
+    pointofentry_id bigint not null,
+    pointofentrydetails text,
+    resultingcase_id bigint,
+    externalid varchar(255),
+    recovered boolean,
+    vaccinated boolean,
+    testednegative boolean,
+    deacontent text,
+    quarantine varchar(255),
+    quarantinetypedetails text,
+    quarantinefrom timestamp,
+    quarantineto timestamp,
+    quarantinehelpneeded text,
+    quarantineorderedverbally boolean,
+    quarantineorderedofficialdocument boolean,
+    quarantineorderedverballydate timestamp,
+    quarantineorderedofficialdocumentdate timestamp,
+    quarantinehomepossible varchar(255),
+    quarantinehomepossiblecomment text,
+    quarantinehomesupplyensured varchar(255),
+    quarantinehomesupplyensuredcomment text,
+    quarantineextended boolean DEFAULT false,
+    quarantinereduced boolean DEFAULT false,
+    quarantineofficialordersent boolean DEFAULT false,
+    quarantineofficialordersentdate timestamp,
+    sys_period tstzrange not null,
+    primary key(id));
+
+ALTER TABLE travelentry OWNER TO sormas_user;
+
+ALTER TABLE travelentry ADD CONSTRAINT fk_travelentry_person_id FOREIGN KEY (person_id) REFERENCES person(id);
+ALTER TABLE travelentry ADD CONSTRAINT fk_travelentry_reportinguser_id FOREIGN KEY (reportinguser_id) REFERENCES users(id);
+ALTER TABLE travelentry ADD CONSTRAINT fk_travelentry_responsibleregion_id FOREIGN KEY (responsibleregion_id) REFERENCES region(id);
+ALTER TABLE travelentry ADD CONSTRAINT fk_travelentry_responsibledistrict_id FOREIGN KEY (responsibledistrict_id) REFERENCES district(id);
+ALTER TABLE travelentry ADD CONSTRAINT fk_travelentry_responsiblecommunity_id FOREIGN KEY (responsiblecommunity_id) REFERENCES community(id);
+ALTER TABLE travelentry ADD CONSTRAINT fk_travelentry_pointofentryregion_id FOREIGN KEY (pointofentryregion_id) REFERENCES region(id);
+ALTER TABLE travelentry ADD CONSTRAINT fk_travelentry_pointofentrydistrict_id FOREIGN KEY (pointofentrydistrict_id) REFERENCES district(id);
+ALTER TABLE travelentry ADD CONSTRAINT fk_travelentry_pointofentry_id FOREIGN KEY (pointofentry_id) REFERENCES pointofentry(id);
+ALTER TABLE travelentry ADD CONSTRAINT fk_travelentry_resultingcase_id FOREIGN KEY (resultingcase_id) REFERENCES cases(id);
+
+CREATE INDEX IF NOT EXISTS idx_travelentry_deleted ON travelentry (deleted);
+
+CREATE TABLE travelentry_history (LIKE travelentry);
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE OR DELETE ON travelentry
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'travelentry_history', true);
+ALTER TABLE travelentry_history OWNER TO sormas_user;
+
+INSERT INTO schema_version (version_number, comment) VALUES (383, 'DEA TravelEntry entity and backend logic #6022');
+
+-- 2021-07-12 Add disease variant to event #5525
+ALTER TABLE events ADD COLUMN diseasevariant text;
+ALTER TABLE events_history ADD COLUMN diseasevariant text;
+
+INSERT INTO schema_version (version_number, comment) VALUES (384, 'Add disease variant to event #5525');
+
+-- 2021-07-13 Add missing columns to history tables #6078
+ALTER TABLE cases_history ADD COLUMN classificationdate timestamp without time zone;
+ALTER TABLE cases_history ADD COLUMN classificationuser_id bigint;
+ALTER TABLE cases_history ADD COLUMN creationversion  varchar(32);
+ALTER TABLE cases_history ADD COLUMN denguefevertype character varying(255);
+ALTER TABLE cases_history RENAME COLUMN diseasevariant_id TO diseasevariant;
+ALTER TABLE cases_history ALTER COLUMN diseasevariant TYPE text USING diseasevariant::text;
+ALTER TABLE cases_history ADD COLUMN responsibledistrict_id BIGINT;
+ALTER TABLE cases_history ADD COLUMN responsibleregion_id BIGINT;
+ALTER TABLE cases_history DROP COLUMN covidtestreason;
+ALTER TABLE cases_history DROP COLUMN covidtestreasondetails;
+ALTER TABLE cases_history DROP COLUMN reportingtype;
+ALTER TABLE cases_history ADD COLUMN sormasToSormasOriginInfo_id bigint;
+
+ALTER TABLE contact_history ADD COLUMN vaccinationinfo_id bigint;
+ALTER TABLE contact_history ADD COLUMN sormasToSormasOriginInfo_id bigint;
+
+ALTER TABLE eventparticipant_history ADD COLUMN region_id bigint;
+ALTER TABLE eventparticipant_history ADD COLUMN district_id bigint;
+ALTER TABLE eventparticipant_history ADD COLUMN vaccinationinfo_id bigint;
+ALTER TABLE eventparticipant_history ADD COLUMN sormasToSormasOriginInfo_id bigint;
+
+ALTER TABLE samples_history ADD COLUMN sormasToSormasOriginInfo_id bigint;
+
+ALTER TABLE labmessage_history ADD COLUMN status varchar(255);
+
+ALTER TABLE events_history RENAME COLUMN eventdate TO startdate;
+ALTER TABLE events_history ADD COLUMN enddate timestamp;
+ALTER TABLE events_history ADD COLUMN externalId varchar(512);
+ALTER TABLE events_history ADD COLUMN nosocomial varchar(255);
+ALTER TABLE events_history ADD COLUMN srcType varchar(255);
+ALTER TABLE events_history ADD COLUMN srcMediaWebsite varchar(512);
+ALTER TABLE events_history ADD COLUMN srcMediaName varchar(512);
+ALTER TABLE events_history ADD COLUMN srcMediaDetails varchar(4096);
+ALTER TABLE events_history ADD COLUMN epidemiologicalevidence varchar(255);
+ALTER TABLE events_history ADD COLUMN epidemiologicalevidencedetails json;
+ALTER TABLE events_history ALTER COLUMN epidemiologicalevidencedetails set DATA TYPE jsonb using epidemiologicalevidencedetails::jsonb;
+ALTER TABLE events_history ADD COLUMN laboratorydiagnosticEvidence varchar(255);
+ALTER TABLE events_history ADD COLUMN laboratorydiagnosticEvidencedetails json;
+ALTER TABLE events_history ALTER COLUMN laboratorydiagnosticEvidencedetails set DATA TYPE jsonb using laboratorydiagnosticEvidencedetails::jsonb;
+ALTER TABLE events_history ADD COLUMN sormasToSormasOriginInfo_id bigint;
+
+ALTER TABLE person_history DROP COLUMN occupationregion_id, DROP COLUMN occupationdistrict_id, DROP COLUMN occupationcommunity_id, DROP COLUMN occupationfacilitytype, DROP COLUMN occupationfacility_id, DROP COLUMN occupationfacilitydetails;
+ALTER TABLE person_history DROP COLUMN phone;
+ALTER TABLE person_history DROP COLUMN phoneowner;
+ALTER TABLE person_history DROP COLUMN emailaddress;
+ALTER TABLE person_history DROP COLUMN generalpractitionerdetails;
+
+ALTER TABLE symptoms_history ADD COLUMN convulsion varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN backache varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN eyesbleeding varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN jaundice varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN darkurine varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN stomachbleeding varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN rapidbreathing varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN swollenglands varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (385, 'Add missing history columns #6078');
+
+-- 2021-07-15 Event identification source (#5526)
+ALTER TABLE events ADD COLUMN eventidentificationsource varchar(255);
+ALTER TABLE events_history ADD COLUMN eventidentificationsource varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (386, 'Event identification source (#5526)');
+
+-- 2021-07-19 DEA Travel entry form #6025 - Change dea content column type to JSON
+ALTER TABLE travelentry ALTER COLUMN deacontent TYPE json USING deacontent::json;
+ALTER TABLE travelentry_history ALTER COLUMN deacontent TYPE json USING deacontent::json;
+
+INSERT INTO schema_version (version_number, comment) VALUES (387, 'DEA Travel entry form #6025 - Change dea content column type to JSON');
+
+-- 2021-07-20 [Sormas2Sormas] View share chain for each case shared/received trough S2S #6033
+ALTER TABLE sormastosormassharerequest ALTER COLUMN cases TYPE json USING cases::json;
+ALTER TABLE sormastosormassharerequest ALTER COLUMN contacts TYPE json USING contacts::json;
+ALTER TABLE sormastosormassharerequest ALTER COLUMN events TYPE json USING events::json;
+ALTER TABLE sormastosormassharerequest_history ALTER COLUMN cases TYPE json USING cases::json;
+ALTER TABLE sormastosormassharerequest_history ALTER COLUMN contacts TYPE json USING contacts::json;
+ALTER TABLE sormastosormassharerequest_history ALTER COLUMN events TYPE json USING events::json;
+
+INSERT INTO schema_version (version_number, comment) VALUES (388, '[Sormas2Sormas] View share chain for each case shared/received trough S2S #6033');
+
+-- 2021-07-15 Immunization data type correction #4756
+ALTER TABLE immunization ALTER COLUMN additionaldetails set DATA TYPE text;
+ALTER TABLE immunization ALTER COLUMN meansOfImmunizationDetails set DATA TYPE text;
+ALTER TABLE immunization_history ALTER COLUMN additionaldetails set DATA TYPE text;
+ALTER TABLE immunization_history ALTER COLUMN meansOfImmunizationDetails set DATA TYPE text;
+
+INSERT INTO schema_version (version_number, comment) VALUES (389, 'Immunization data type correction #4756');
+
+-- 2021-06-25 [DEMIS2SORMAS] Handle New Profile: Allow LabMessages to lead to several PathogenTestResults
+ALTER TABLE labmessage RENAME COLUMN testlabname TO labname;
+ALTER TABLE labmessage RENAME COLUMN testlabexternalid TO labexternalid;
+ALTER TABLE labmessage RENAME COLUMN testlabpostalcode TO labpostalcode;
+ALTER TABLE labmessage RENAME COLUMN testlabcity TO labcity;
+
+ALTER TABLE labmessage_history RENAME COLUMN testlabname TO labname;
+ALTER TABLE labmessage_history RENAME COLUMN testlabexternalid TO labexternalid;
+ALTER TABLE labmessage_history RENAME COLUMN testlabpostalcode TO labpostalcode;
+ALTER TABLE labmessage_history RENAME COLUMN testlabcity TO labcity;
+
+CREATE TABLE testreport (
+    id bigint not null,
+    uuid varchar(36) not null unique,
+    changedate timestamp not null,
+    creationdate timestamp not null,
+    deleted boolean DEFAULT false,
+    sys_period tstzrange not null,
+    labmessage_id bigint not null,
+    testlabname text,
+    testlabexternalid text,
+    testlabpostalcode text,
+    testlabcity text,
+    testtype varchar(255),
+    testdatetime timestamp,
+    testresult varchar(255),
+    testresultverified boolean,
+    testresulttext text,
+    pathogentest_id BIGINT,
+    PRIMARY KEY (id));
+
+CREATE TABLE testreport_history (LIKE testreport);
+
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE OR DELETE ON testreport
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'testreport_history', true);
+ALTER TABLE testreport OWNER TO sormas_user;
+ALTER TABLE testreport_history OWNER TO sormas_user;
+
+ALTER TABLE testreport ADD CONSTRAINT fk_testreport_labmessage_id FOREIGN KEY (labmessage_id) REFERENCES labmessage (id);
+
+
+DO $$
+    DECLARE rec RECORD;
+    BEGIN
+        FOR rec IN SELECT id, labname, labexternalid, labpostalcode, labcity, testtype, testdatetime, testresult, testresultverified, testresulttext, pathogentest_id FROM labmessage
+             LOOP
+                INSERT INTO testreport(id, uuid, changedate, creationdate, labmessage_id, testlabname, testlabexternalid, testlabpostalcode, testlabcity, testtype, testdatetime, testresult, testresultverified, testresulttext, pathogentest_id)
+                VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), rec.id, rec.labname, rec.labexternalid, rec.labpostalcode, rec.labcity, rec.testtype, rec.testdatetime, rec.testresult, rec.testresultverified, rec.testresulttext, rec.pathogentest_id);
+            END LOOP;
+        END;
+$$ LANGUAGE plpgsql;
+
+ALTER TABLE labmessage
+    DROP COLUMN testtype,
+    DROP COLUMN testdatetime,
+    DROP COLUMN testresult,
+    DROP COLUMN testresultverified,
+    DROP COLUMN testresulttext;
+
+ALTER TABLE labmessage_history
+    DROP COLUMN testtype,
+    DROP COLUMN testdatetime,
+    DROP COLUMN testresult,
+    DROP COLUMN testresultverified,
+    DROP COLUMN testresulttext;
+
+INSERT INTO schema_version (version_number, comment) VALUES (390, 'Introduce testreport entity #5539');
+
+-- 2021-07-21 SymptomJournalStatus default to UNREGISTERED
+UPDATE person SET symptomjournalstatus = 'UNREGISTERED' WHERE symptomjournalstatus IS NULL;
+ALTER TABLE person ALTER COLUMN symptomjournalstatus SET DEFAULT 'UNREGISTERED';
+
+INSERT INTO schema_version (version_number, comment) VALUES (391, 'symptonjournalstatus = UNREGISTERED as default #6146');
+
+--2021-07-28 make pathogentest result datetime non-compulsory #3308
+ALTER TABLE pathogentest ALTER COLUMN testdatetime DROP NOT NULL;
+ALTER TABLE pathogentest_history ALTER COLUMN testdatetime DROP NOT NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (392, 'make pathogentest result datetime non-compulsory #3308');
+
+-- 2021-07-29 Add specificrisk column to events table #5940
+
+ALTER TABLE events ADD COLUMN specificrisk TEXT;
+ALTER TABLE events_history ADD COLUMN specificrisk TEXT;
+
+INSERT INTO schema_version (version_number, comment) VALUES (393, 'Add SpecificRisk field into events #5940');
+
+-- 2021-07-13 Immunizations II: Vaccination Entity #4763
+CREATE TABLE vaccination (
+                             id bigint not null,
+                             uuid varchar(36) not null unique,
+                             changedate timestamp not null,
+                             creationdate timestamp not null,
+                             immunization_id bigint not null,
+                             healthconditions_id bigint not null,
+                             reportdate timestamp not null,
+                             reportinguser_id bigint,
+                             vaccinationDate timestamp,
+                             vaccinename varchar(255),
+                             othervaccinename text,
+                             vaccinenamedetails text,
+                             vaccinemanufacturer varchar(255),
+                             othervaccinemanufacturer text,
+                             vaccinemanufacturerdetails text,
+                             vaccineinn text,
+                             vaccinebatchnumber text,
+                             vaccineuniicode text,
+                             vaccineatccode text,
+                             vaccinationinfosource varchar(255),
+                             pregnant varchar(255),
+                             trimester varchar(255),
+                             sys_period tstzrange not null,
+                             primary key(id));
+ALTER TABLE vaccination OWNER TO sormas_user;
+
+ALTER TABLE vaccination ADD CONSTRAINT fk_vaccination_immunization_id FOREIGN KEY (immunization_id) REFERENCES immunization(id);
+ALTER TABLE vaccination ADD CONSTRAINT fk_vaccination_reportinguser_id FOREIGN KEY (reportinguser_id) REFERENCES users(id);
+ALTER TABLE vaccination ADD CONSTRAINT fk_vaccination_healthconditions_id FOREIGN KEY (healthconditions_id) REFERENCES healthconditions(id);
+
+
+CREATE TABLE vaccination_history (LIKE vaccination);
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE OR DELETE ON vaccination
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'vaccination_history', true);
+ALTER TABLE vaccination_history OWNER TO sormas_user;
+
+INSERT INTO schema_version (version_number, comment) VALUES (394, 'Immunizations II: Vaccination Entity #4763');
+
+-- 2021-08-04 Add missing vaccination columns #4763
+
+ALTER TABLE vaccination ADD COLUMN vaccinetype text;
+ALTER TABLE vaccination ADD COLUMN vaccinedose text;
+ALTER TABLE vaccination_history ADD COLUMN vaccinetype text;
+ALTER TABLE vaccination_history ADD COLUMN vaccinedose text;
+
+INSERT INTO schema_version (version_number, comment) VALUES (395, 'Add missing vaccination columns #4763');
+
+-- 2021-06-30 Add reportId to labMessage #5622
+ALTER TABLE labmessage ADD COLUMN reportid varchar(512);
+ALTER TABLE labmessage_history ADD COLUMN reportid varchar(512);
+
+INSERT INTO schema_version (version_number, comment) VALUES (396, 'Add reportId to labMessage #5622');
+
+-- 2021-08-05 perosn sex default to UNKNOWN
+UPDATE person SET sex = 'UNKNOWN' WHERE sex IS NULL;
+ALTER TABLE person ALTER COLUMN sex SET DEFAULT 'UNKNOWN';
+
+INSERT INTO schema_version (version_number, comment) VALUES (397, 'sex = UNKNOWN as default #6248');
+
+-- 2021-08-09 Sub-continent association change New Caledonia #5774
+UPDATE country SET subcontinent_id = (SELECT subcontinent.id FROM subcontinent WHERE subcontinent.defaultname = 'Western Europe') WHERE isocode = 'NCL';
+UPDATE location SET subcontinent_id = (SELECT subcontinent.id FROM subcontinent WHERE subcontinent.defaultname = 'Western Europe') WHERE location.subcontinent_id IS NOT NULL AND location.country_id = (SELECT country.id FROM country WHERE isocode = 'NCL');
+UPDATE location SET continent_id = (SELECT continent.id FROM continent WHERE continent.defaultname = 'Europe') WHERE location.continent_id IS NOT NULL AND location.country_id = (SELECT country.id FROM country WHERE isocode = 'NCL');
+
+INSERT INTO schema_version (version_number, comment) VALUES (398, 'Sub-continent association change New Caledonia #5774');
+
+-- 2021-08-12 Sub-continent association change Germany #5689
+UPDATE country SET subcontinent_id = (SELECT subcontinent.id FROM subcontinent WHERE subcontinent.defaultname = 'Central Europe') WHERE isocode = 'DEU';
+UPDATE location SET subcontinent_id = (SELECT subcontinent.id FROM subcontinent WHERE subcontinent.defaultname = 'Central Europe') WHERE location.subcontinent_id IS NOT NULL AND location.country_id = (SELECT country.id FROM country WHERE isocode = 'DEU');
+
+INSERT INTO schema_version (version_number, comment) VALUES (399, 'Sub-continent association change Germany #5689');
+
+-- 2021-08-06 - Introduce a reference definition for cases
+ALTER TABLE cases ADD COLUMN casereferencedefinition varchar(255);
+ALTER TABLE cases_history ADD COLUMN casereferencedefinition varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (400, 'Introduce a reference definition for cases #5594');
+
+ALTER TABLE testreport ADD COLUMN typingId text;
+ALTER TABLE testreport_history ADD COLUMN typingId text;
+
+INSERT INTO schema_version (version_number, comment) VALUES (401, 'Add typingId to TestReport #5917');
+
+-- 2021-08-03 Update history tables #6269
+ALTER TABLE campaignformmeta_history DROP COLUMN archived;
+ALTER TABLE campaignformmeta_history DROP COLUMN creatinguser_id;
+ALTER TABLE campaignformmeta_history DROP COLUMN deleted;
+ALTER TABLE campaignformmeta_history DROP COLUMN description;
+ALTER TABLE campaignformmeta_history DROP COLUMN name;
+ALTER TABLE campaignformmeta_history DROP COLUMN enddate;
+ALTER TABLE campaignformmeta_history DROP COLUMN startdate;
+ALTER TABLE campaignformmeta_history ADD COLUMN languagecode varchar(255);
+ALTER TABLE campaignformmeta_history ADD COLUMN formid varchar(255);
+
+ALTER TABLE cases_history ADD COLUMN responsiblecommunity_id BIGINT;
+ALTER TABLE cases_history DROP COLUMN reportingdistrict_id;
+
+ALTER TABLE contact_history ADD COLUMN healthconditions_id BIGINT;
+
+ALTER TABLE labmessage_history ADD COLUMN pathogentest_id BIGINT;
+ALTER TABLE labmessage_history DROP COLUMN processed;
+
+ALTER TABLE location_history DROP COLUMN person_id;
+
+ALTER TABLE pathogentest_history RENAME COLUMN testeddiseasevariant_id TO testeddiseasevariant;
+ALTER TABLE pathogentest_history ALTER COLUMN testeddiseasevariant TYPE text USING testeddiseasevariant::text;
+
+ALTER TABLE person_history ADD COLUMN changedateofembeddedlists timestamp without time zone;
+
+ALTER TABLE samples_history DROP COLUMN suggestedtypeoftest;
+ALTER TABLE samples_history ADD COLUMN shipped boolean;
+ALTER TABLE samples_history ADD COLUMN received boolean;
+ALTER TABLE samples_history ADD COLUMN referredto_id BIGINT;
+
+INSERT INTO schema_version (version_number, comment) VALUES (402, 'Update history tables #6269');
+
+-- 2021-08-23 set symptomatic to null when visit was performed unsuccessfully
+
+UPDATE symptoms SET symptomatic=null FROM visit WHERE visit.symptoms_id = symptoms.id AND visit.visitstatus!='COOPERATIVE';
+
+INSERT INTO schema_version (version_number, comment) VALUES (403, 'Update symptomatic-status for visits #6466');
+
+-- 2021-08-01 Modifications to immunization tables #6025
+ALTER TABLE immunization ALTER COLUMN externalid DROP NOT NULL;
+ALTER TABLE immunization ALTER COLUMN positivetestresultdate DROP NOT NULL;
+ALTER TABLE immunization ALTER COLUMN recoverydate DROP NOT NULL;
+ALTER TABLE immunization ADD COLUMN diseasedetails varchar(512);
+ALTER TABLE immunization ADD COLUMN healthfacility_id bigint;
+ALTER TABLE immunization ADD COLUMN healthfacilitydetails varchar(512);
+ALTER TABLE immunization ADD COLUMN facilitytype varchar(255);
+ALTER TABLE immunization ADD COLUMN validfrom timestamp;
+ALTER TABLE immunization ADD COLUMN validuntil timestamp;
+ALTER TABLE immunization ADD CONSTRAINT fk_immunization_healthfacility_id FOREIGN KEY (healthfacility_id) REFERENCES facility(id);
+
+ALTER TABLE immunization_history ALTER COLUMN externalid DROP NOT NULL;
+ALTER TABLE immunization_history ALTER COLUMN positivetestresultdate DROP NOT NULL;
+ALTER TABLE immunization_history ALTER COLUMN recoverydate DROP NOT NULL;
+ALTER TABLE immunization_history ADD COLUMN diseasedetails varchar(512);
+ALTER TABLE immunization_history ADD COLUMN healthfacility_id bigint;
+ALTER TABLE immunization_history ADD COLUMN healthfacilitydetails varchar(512);
+ALTER TABLE immunization_history ADD COLUMN facilitytype varchar(255);
+ALTER TABLE immunization_history ADD COLUMN validfrom timestamp;
+ALTER TABLE immunization_history ADD COLUMN validuntil timestamp;
+
+INSERT INTO schema_version (version_number, comment) VALUES (404, 'Modifications to immunization tables #6025');
+
+-- 2021-08-30 - Add TravelEntries to tasks #5844
+ALTER TABLE task ADD COLUMN travelentry_id bigint;
+ALTER TABLE task ADD CONSTRAINT fk_task_travelentry_id FOREIGN KEY (travelentry_id) REFERENCES travelentry (id);
+ALTER TABLE task_history ADD COLUMN travelentry_id bigint;
+
+INSERT INTO schema_version (version_number, comment) VALUES (405, 'Add TravelEntries to tasks #5844');
+
+-- 2021-09-13 - Vaccination drop details columns #5843
+ALTER TABLE vaccination DROP COLUMN vaccinenamedetails;
+ALTER TABLE vaccination DROP COLUMN vaccinemanufacturerdetails;
+ALTER TABLE vaccination_history DROP COLUMN vaccinenamedetails;
+ALTER TABLE vaccination_history DROP COLUMN vaccinemanufacturerdetails;
+
+INSERT INTO schema_version (version_number, comment) VALUES (406, 'Vaccination drop details columns #5843');
+
+-- 2021-09-03 Vaccination refactoring #5909
+/* Fix event participants without a missing reporting user before starting the migration (#7531) */
+UPDATE eventparticipant SET reportinguser_id = (SELECT reportinguser_id FROM events WHERE events.id = eventparticipant.event_id) WHERE reportinguser_id IS NULL;
+
+/* Vaccination refactoring */
+/* Step 1: Create a temporary table containing the latest vaccination information for each disease of each person */
+DROP TABLE IF EXISTS tmp_vaccinated_entities;
+DROP TABLE IF EXISTS tmp_healthconditions;
+CREATE TEMP TABLE tmp_healthconditions (LIKE healthconditions);
+CREATE TEMP TABLE tmp_vaccinated_entities AS
+(
+    SELECT DISTINCT ON (person.id, cases.disease)
+        person.id AS person_id, cases.disease, cases.reportdate AS reportdate, cases.diseasedetails, cases.reportinguser_id,
+        cases.responsibleregion_id AS responsibleregion_id, cases.responsibledistrict_id AS responsibledistrict_id, cases.responsiblecommunity_id AS responsiblecommunity_id,
+        cases.firstvaccinationdate, cases.lastvaccinationdate,
+        CASE
+            WHEN
+                /* Valid numbers of doses are 1 to 10 */
+                    cases.vaccinationdoses ~ '^(10|[1-9])$'
+                THEN
+                CAST(cases.vaccinationdoses AS int)
+            WHEN
+                /* If the number of doses is neither valid nor empty, we assume 1 dose */
+                (cases.vaccinationdoses IS NOT NULL AND cases.vaccinationdoses != '')
+                THEN
+                1
+            ELSE
+                null
+            END
+            AS vaccinationdoses,
+        /* If the number of doses is not valid, save the value as vaccinationdoses_details */
+        CASE
+            WHEN
+                    cases.vaccinationdoses ~ '^(10|[1-9])$'
+                THEN
+                null
+            ELSE
+                cases.vaccinationdoses
+            END
+            AS vaccinationdoses_details,
+        CASE
+            WHEN
+                (cases.vaccinename IS NOT NULL OR cases.vaccine IS NULL)
+                THEN
+                vaccinename
+            ELSE
+                'OTHER'
+            END
+            AS vaccinename,
+        CASE
+            WHEN
+                    cases.vaccinename = 'OTHER'
+                THEN
+                cases.othervaccinename
+            ELSE
+                cases.vaccine
+            END
+            AS othervaccinename,
+        cases.vaccinemanufacturer, cases.othervaccinemanufacturer, cases.vaccinationinfosource, cases.vaccineinn, cases.vaccinebatchnumber,
+        cases.vaccineuniicode, cases.vaccineatccode, cases.pregnant AS pregnant, cases.trimester AS trimester, clinicalcourse.healthconditions_id AS healthconditions_id,
+        coalesce(symptoms.onsetdate, cases.reportdate) AS relevancedate
+    FROM person
+             LEFT JOIN cases ON cases.person_id = person.id
+             LEFT JOIN clinicalcourse ON cases.clinicalcourse_id = clinicalcourse.id
+             LEFT JOIN symptoms ON cases.symptoms_id = symptoms.id
+    WHERE cases.vaccination = 'VACCINATED' AND cases.deleted = false
+    ORDER BY person.id, cases.disease, relevancedate DESC
+)
+UNION
+(
+    SELECT DISTINCT ON (person.id, contact.disease)
+        person.id AS person_id, contact.disease, contact.reportdatetime AS reportdate, contact.diseasedetails, contact.reportinguser_id,
+        CASE
+            WHEN
+                contact.region_id IS NOT NULL
+                THEN
+                contact.region_id
+            ELSE
+                cases.responsibleregion_id
+            END
+                  AS responsibleregion_id,
+        CASE
+            WHEN
+                contact.district_id IS NOT NULL
+                THEN
+                contact.district_id
+            ELSE
+                cases.responsibledistrict_id
+            END
+                  AS responsibledistrict_id,
+        CASE
+            WHEN
+                contact.community_id IS NOT NULL
+                THEN
+                contact.community_id
+            ELSE
+                cases.responsiblecommunity_id
+            END
+                  AS responsiblecommunity_id,
+        vaccinationinfo.firstvaccinationdate, vaccinationinfo.lastvaccinationdate,
+        CASE
+            WHEN
+                /* Valid numbers of doses are 1 to 10 */
+                    vaccinationinfo.vaccinationdoses ~ '^(10|[1-9])$'
+                THEN
+                CAST(vaccinationinfo.vaccinationdoses AS int)
+            WHEN
+                /* If the number of doses is neither valid nor empty, we assume 1 dose */
+                (vaccinationinfo.vaccinationdoses IS NOT NULL AND vaccinationinfo.vaccinationdoses != '')
+                THEN
+                1
+            ELSE
+                null
+            END
+                  AS vaccinationdoses,
+        /* If the number of doses is not valid, save the value as vaccinationdoses_details */
+        CASE
+            WHEN
+                    vaccinationinfo.vaccinationdoses ~ '^(10|[1-9])$'
+                THEN
+                null
+            ELSE
+                vaccinationinfo.vaccinationdoses
+            END
+                  AS vaccinationdoses_details,
+        vaccinationinfo.vaccinename AS vaccinename, vaccinationinfo.othervaccinename AS othervaccinename, vaccinationinfo.vaccinemanufacturer,
+        vaccinationinfo.othervaccinemanufacturer, vaccinationinfo.vaccinationinfosource, vaccinationinfo.vaccineinn, vaccinationinfo.vaccinebatchnumber,
+        vaccinationinfo.vaccineuniicode, vaccinationinfo.vaccineatccode, null AS pregnant, null AS trimester, contact.healthconditions_id AS healthconditions_id,
+        coalesce(contact.lastcontactdate, contact.reportdatetime) AS relevancedate
+    FROM person
+             LEFT JOIN contact ON contact.person_id = person.id
+             LEFT JOIN cases ON contact.caze_id = cases.id
+             LEFT JOIN vaccinationinfo ON contact.vaccinationinfo_id = vaccinationinfo.id
+    WHERE vaccinationinfo.vaccination = 'VACCINATED' AND contact.deleted = false
+    ORDER BY person.id, contact.disease, relevancedate DESC
+)
+UNION
+(
+    SELECT DISTINCT ON (person.id, events.disease)
+        person.id AS person_id, events.disease, events.reportdatetime AS reportdate, events.diseasedetails, eventparticipant.reportinguser_id,
+        CASE
+            WHEN
+                eventparticipant.region_id IS NOT NULL
+                THEN
+                eventparticipant.region_id
+            ELSE
+                location.region_id
+            END
+                  AS responsibleregion_id,
+        CASE
+            WHEN
+                eventparticipant.district_id IS NOT NULL
+                THEN
+                eventparticipant.district_id
+            ELSE
+                location.district_id
+            END
+                  AS responsibledistrict_id,
+        location.community_id AS responsiblecommunity, vaccinationinfo.firstvaccinationdate, vaccinationinfo.lastvaccinationdate,
+        CASE
+            WHEN
+                /* Valid numbers of doses are 1 to 10 */
+                    vaccinationinfo.vaccinationdoses ~ '^(10|[1-9])$'
+                THEN
+                CAST(vaccinationinfo.vaccinationdoses AS int)
+            WHEN
+                /* If the number of doses is neither valid nor empty, we assume 1 dose */
+                (vaccinationinfo.vaccinationdoses IS NOT NULL AND vaccinationinfo.vaccinationdoses != '')
+                THEN
+                1
+            ELSE
+                null
+            END
+            AS vaccinationdoses,
+        /* If the number of doses is not valid, save the value as vaccinationdoses_details */
+        CASE
+            WHEN
+                    vaccinationinfo.vaccinationdoses ~ '^(10|[1-9])$'
+                THEN
+                null
+            ELSE
+                vaccinationinfo.vaccinationdoses
+            END
+            AS vaccinationdoses_details,
+        vaccinationinfo.vaccinename AS vaccinename, vaccinationinfo.othervaccinename AS othervaccinename,
+        vaccinationinfo.vaccinemanufacturer, vaccinationinfo.othervaccinemanufacturer, vaccinationinfo.vaccinationinfosource, vaccinationinfo.vaccineinn,
+        vaccinationinfo.vaccinebatchnumber, vaccinationinfo.vaccineuniicode, vaccinationinfo.vaccineatccode, null AS pregnant, null AS trimester, null AS healthconditions_id,
+        coalesce(events.startdate, events.enddate, events.reportdatetime) AS relevancedate
+    FROM person
+             LEFT JOIN eventparticipant ON eventparticipant.person_id = person.id
+             LEFT JOIN events ON eventparticipant.event_id = events.id
+             LEFT JOIN location ON events.eventlocation_id = location.id
+             LEFT JOIN vaccinationinfo ON eventparticipant.vaccinationinfo_id = vaccinationinfo.id
+    WHERE vaccinationinfo.vaccination = 'VACCINATED' AND eventparticipant.deleted = false AND events.disease IS NOT NULL
+    ORDER BY person.id, events.disease, relevancedate DESC
+);
+
+DROP TABLE IF EXISTS tmp_vaccinated_persons;
+CREATE TEMP TABLE tmp_vaccinated_persons AS
+SELECT DISTINCT ON (person_id, disease) person_id,
+                                        disease, diseasedetails, reportdate, reportinguser_id, responsibleregion_id, responsibledistrict_id,
+                                        responsiblecommunity_id, firstvaccinationdate, lastvaccinationdate, vaccinationdoses, vaccinationdoses_details,
+                                        vaccinename, othervaccinename, vaccinemanufacturer, othervaccinemanufacturer, vaccinationinfosource, vaccineinn,
+                                        vaccinebatchnumber, vaccineuniicode, vaccineatccode, pregnant, trimester, healthconditions_id,
+                                        nextval('entity_seq') AS immunization_id, relevancedate
+FROM tmp_vaccinated_entities
+ORDER BY person_id, disease, relevancedate DESC;
+
+DROP TABLE IF EXISTS tmp_earlier_vaccinated_entities;
+CREATE TEMP TABLE tmp_earlier_vaccinated_entities AS
+(
+    SELECT person.id                      AS person_id,
+           cases.disease                  AS disease,
+           cases.firstvaccinationdate     AS firstvaccinationdate,
+           cases.lastvaccinationdate      AS lastvaccinationdate,
+           cases.reportdate               AS reportdate,
+           cases.vaccineName              AS vaccineName,
+           cases.otherVaccineName         AS otherVaccineName,
+           cases.vaccineManufacturer      AS vaccineManufacturer,
+           cases.otherVaccineManufacturer AS otherVaccineManufacturer,
+           cases.vaccineInn               AS vaccineInn,
+           cases.vaccineBatchNumber       AS vaccineBatchNumber,
+           cases.vaccineUniiCode          AS vaccineUniiCode,
+           cases.vaccineAtcCode           AS vaccineAtcCode,
+           cases.vaccinationInfoSource    AS vaccinationInfoSource,
+           coalesce(symptoms.onsetdate,
+                    cases.reportdate)     AS relevancedate
+    FROM person
+             LEFT JOIN cases ON cases.person_id = person.id
+             LEFT JOIN symptoms ON cases.symptoms_id = symptoms.id
+    WHERE cases.vaccination = 'VACCINATED'
+      AND cases.deleted = false
+    ORDER BY person.id, cases.disease, relevancedate ASC
+)
+UNION
+(
+    SELECT person.id                                AS person_id,
+           contact.disease                          AS disease,
+           vaccinationinfo.firstvaccinationdate     AS firstvaccinationdate,
+           vaccinationinfo.lastvaccinationdate      AS lastvaccinationdate,
+           contact.reportdatetime                   AS reportdate,
+           vaccinationinfo.vaccineName              AS vaccineName,
+           vaccinationinfo.otherVaccineName         AS otherVaccineName,
+           vaccinationinfo.vaccineManufacturer      AS vaccineManufacturer,
+           vaccinationinfo.otherVaccineManufacturer AS otherVaccineManufacturer,
+           vaccinationinfo.vaccineInn               AS vaccineInn,
+           vaccinationinfo.vaccineBatchNumber       AS vaccineBatchNumber,
+           vaccinationinfo.vaccineUniiCode          AS vaccineUniiCode,
+           vaccinationinfo.vaccineAtcCode           AS vaccineAtcCode,
+           vaccinationinfo.vaccinationInfoSource    AS vaccinationInfoSource,
+           coalesce(contact.lastcontactdate,
+                    contact.reportdatetime)         AS relevancedate
+    FROM person
+             LEFT JOIN contact ON contact.person_id = person.id
+             LEFT JOIN vaccinationinfo ON contact.vaccinationinfo_id = vaccinationinfo.id
+    WHERE vaccinationinfo.vaccination = 'VACCINATED'
+      AND contact.deleted = false
+    ORDER BY person.id, contact.disease, relevancedate ASC
+)
+UNION
+(
+    SELECT person.id                                AS person_id,
+           events.disease                           AS disease,
+           vaccinationinfo.firstvaccinationdate     AS firstvaccinationdate,
+           vaccinationinfo.lastvaccinationdate      AS lastvaccinationdate,
+           events.reportdatetime                    AS reportdate,
+           vaccinationinfo.vaccineName              AS vaccineName,
+           vaccinationinfo.otherVaccineName         AS otherVaccineName,
+           vaccinationinfo.vaccineManufacturer      AS vaccineManufacturer,
+           vaccinationinfo.otherVaccineManufacturer AS otherVaccineManufacturer,
+           vaccinationinfo.vaccineInn               AS vaccineInn,
+           vaccinationinfo.vaccineBatchNumber       AS vaccineBatchNumber,
+           vaccinationinfo.vaccineUniiCode          AS vaccineUniiCode,
+           vaccinationinfo.vaccineAtcCode           AS vaccineAtcCode,
+           vaccinationinfo.vaccinationInfoSource    AS vaccinationInfoSource,
+           coalesce(events.startdate,
+                    events.enddate, events.reportdatetime) AS relevancedate
+    FROM person
+             LEFT JOIN eventparticipant ON eventparticipant.person_id = person.id
+             LEFT JOIN events ON eventparticipant.event_id = events.id
+             LEFT JOIN vaccinationinfo ON eventparticipant.vaccinationinfo_id = vaccinationinfo.id
+    WHERE vaccinationinfo.vaccination = 'VACCINATED'
+      AND eventparticipant.deleted = false
+      AND events.disease IS NOT NULL
+
+    ORDER BY person.id, events.disease, relevancedate ASC
+);
+
+/* set earliest report date  */
+DROP TABLE IF EXISTS tmp_earliest_reported_vaccinated_persons;
+CREATE TEMP TABLE tmp_earliest_reported_vaccinated_persons AS
+SELECT DISTINCT ON (person_id, disease) person_id, disease, reportdate
+FROM tmp_earlier_vaccinated_entities
+ORDER BY person_id, disease, reportdate ASC;
+
+DO
+$$
+    DECLARE
+        rec RECORD;
+    BEGIN
+        FOR rec IN SELECT * FROM tmp_earliest_reported_vaccinated_persons
+            LOOP
+                UPDATE tmp_vaccinated_persons
+                SET reportdate = rec.reportdate
+                WHERE tmp_vaccinated_persons.person_id = rec.person_id
+                  AND tmp_vaccinated_persons.disease = rec.disease;
+            end loop;
+    END;
+$$ LANGUAGE plpgsql;
+
+/* set earliest first vaccination date  */
+DROP TABLE IF EXISTS tmp_earliest_firstvaccinationdate_vaccinated_persons;
+CREATE TEMP TABLE tmp_earliest_firstvaccinationdate_vaccinated_persons AS
+SELECT DISTINCT ON (person_id, disease) person_id, disease, firstvaccinationdate
+FROM tmp_earlier_vaccinated_entities
+WHERE tmp_earlier_vaccinated_entities.firstvaccinationdate IS NOT NULL
+ORDER BY person_id, disease, firstvaccinationdate ASC;
+
+DO
+$$
+    DECLARE
+        rec RECORD;
+    BEGIN
+        FOR rec IN SELECT * FROM tmp_earliest_firstvaccinationdate_vaccinated_persons
+            LOOP
+                UPDATE tmp_vaccinated_persons
+                SET firstvaccinationdate = rec.firstvaccinationdate
+                WHERE tmp_vaccinated_persons.person_id = rec.person_id
+                  AND tmp_vaccinated_persons.disease = rec.disease
+                  AND firstvaccinationdate IS NULL
+                  AND rec.firstvaccinationdate IS NOT NULL;
+            end loop;
+    END;
+$$ LANGUAGE plpgsql;
+
+/* set latest last vaccination date  */
+DROP TABLE IF EXISTS tmp_latest_lastvaccinationdate_vaccinated_persons;
+CREATE TEMP TABLE tmp_latest_lastvaccinationdate_vaccinated_persons AS
+SELECT DISTINCT ON (person_id, disease) person_id, disease, lastvaccinationdate
+FROM tmp_earlier_vaccinated_entities
+WHERE tmp_earlier_vaccinated_entities.lastvaccinationdate IS NOT NULL
+ORDER BY person_id, disease, lastvaccinationdate DESC;
+
+DO
+$$
+    DECLARE
+        rec RECORD;
+    BEGIN
+        FOR rec IN SELECT * FROM tmp_latest_lastvaccinationdate_vaccinated_persons
+            LOOP
+                UPDATE tmp_vaccinated_persons
+                SET lastvaccinationdate = rec.lastvaccinationdate
+                WHERE tmp_vaccinated_persons.person_id = rec.person_id
+                  AND tmp_vaccinated_persons.disease = rec.disease
+                  AND lastvaccinationdate IS NULL
+                  AND rec.lastvaccinationdate IS NOT NULL;
+            end loop;
+    END;
+$$ LANGUAGE plpgsql;
+
+/* set latest available vaccine name  */
+DROP TABLE IF EXISTS tmp_latest_vaccinename;
+CREATE TEMP TABLE tmp_latest_vaccinename AS
+SELECT DISTINCT ON (person_id, disease) person_id, disease, vaccineName, otherVaccineName, relevancedate
+FROM tmp_earlier_vaccinated_entities
+WHERE tmp_earlier_vaccinated_entities.vaccineName IS NOT NULL
+ORDER BY person_id, disease, relevancedate DESC;
+
+DO
+$$
+    DECLARE
+        rec RECORD;
+    BEGIN
+        FOR rec IN SELECT * FROM tmp_latest_vaccinename
+            LOOP
+                UPDATE tmp_vaccinated_persons
+                SET vaccineName      = rec.vaccineName,
+                    otherVaccineName = rec.otherVaccineName
+                WHERE tmp_vaccinated_persons.person_id = rec.person_id
+                  AND tmp_vaccinated_persons.disease = rec.disease
+                  AND vaccineName IS NULL
+                  AND rec.vaccineName IS NOT NULL;
+            end loop;
+    END;
+$$ LANGUAGE plpgsql;
+
+/* set latest available vaccine manufacturer  */
+DROP TABLE IF EXISTS tmp_latest_vaccinemanufacturer;
+CREATE TEMP TABLE tmp_latest_vaccinemanufacturer AS
+SELECT DISTINCT ON (person_id, disease) person_id, disease, vaccineManufacturer, otherVaccineManufacturer, relevancedate
+FROM tmp_earlier_vaccinated_entities
+WHERE tmp_earlier_vaccinated_entities.vaccineManufacturer IS NOT NULL
+ORDER BY person_id, disease, relevancedate DESC;
+
+DO
+$$
+    DECLARE
+        rec RECORD;
+    BEGIN
+        FOR rec IN SELECT * FROM tmp_latest_vaccinemanufacturer
+            LOOP
+                UPDATE tmp_vaccinated_persons
+                SET vaccineManufacturer      = rec.vaccineManufacturer,
+                    otherVaccineManufacturer = rec.otherVaccineManufacturer
+                WHERE tmp_vaccinated_persons.person_id = rec.person_id
+                  AND tmp_vaccinated_persons.disease = rec.disease
+                  AND vaccineManufacturer IS NULL
+                  AND rec.vaccineManufacturer IS NOT NULL;
+            end loop;
+    END;
+$$ LANGUAGE plpgsql;
+
+/* set latest available vaccineInn  */
+DROP TABLE IF EXISTS tmp_latest_vaccineinn;
+CREATE TEMP TABLE tmp_latest_vaccineinn AS
+SELECT DISTINCT ON (person_id, disease) person_id, disease, vaccineInn, relevancedate
+FROM tmp_earlier_vaccinated_entities
+WHERE tmp_earlier_vaccinated_entities.vaccineInn IS NOT NULL
+ORDER BY person_id, disease, relevancedate DESC;
+
+DO
+$$
+    DECLARE
+        rec RECORD;
+    BEGIN
+        FOR rec IN SELECT * FROM tmp_latest_vaccineinn
+            LOOP
+                UPDATE tmp_vaccinated_persons
+                SET vaccineInn = rec.vaccineInn
+                WHERE tmp_vaccinated_persons.person_id = rec.person_id
+                  AND tmp_vaccinated_persons.disease = rec.disease
+                  AND vaccineInn IS NULL
+                  AND rec.vaccineInn IS NOT NULL;
+            end loop;
+    END;
+$$ LANGUAGE plpgsql;
+
+/* set latest available vaccineBatchNumber  */
+DROP TABLE IF EXISTS tmp_latest_vaccinebatchnumber;
+CREATE TEMP TABLE tmp_latest_vaccinebatchnumber AS
+SELECT DISTINCT ON (person_id, disease) person_id, disease, vaccineBatchNumber, relevancedate
+FROM tmp_earlier_vaccinated_entities
+WHERE tmp_earlier_vaccinated_entities.vaccineBatchNumber IS NOT NULL
+ORDER BY person_id, disease, relevancedate DESC;
+
+DO
+$$
+    DECLARE
+        rec RECORD;
+    BEGIN
+        FOR rec IN SELECT * FROM tmp_latest_vaccinebatchnumber
+            LOOP
+                UPDATE tmp_vaccinated_persons
+                SET vaccineBatchNumber = rec.vaccineBatchNumber
+                WHERE tmp_vaccinated_persons.person_id = rec.person_id
+                  AND tmp_vaccinated_persons.disease = rec.disease
+                  AND vaccineBatchNumber IS NULL
+                  AND rec.vaccineBatchNumber IS NOT NULL;
+            end loop;
+    END;
+$$ LANGUAGE plpgsql;
+
+/* set latest available vaccineUniiCode  */
+DROP TABLE IF EXISTS tmp_latest_vaccineuniicode;
+CREATE TEMP TABLE tmp_latest_vaccineuniicode AS
+SELECT DISTINCT ON (person_id, disease) person_id, disease, vaccineUniiCode, relevancedate
+FROM tmp_earlier_vaccinated_entities
+WHERE tmp_earlier_vaccinated_entities.vaccineUniiCode IS NOT NULL
+ORDER BY person_id, disease, relevancedate DESC;
+
+DO
+$$
+    DECLARE
+        rec RECORD;
+    BEGIN
+        FOR rec IN SELECT * FROM tmp_latest_vaccineuniicode
+            LOOP
+                UPDATE tmp_vaccinated_persons
+                SET vaccineUniiCode = rec.vaccineUniiCode
+                WHERE tmp_vaccinated_persons.person_id = rec.person_id
+                  AND tmp_vaccinated_persons.disease = rec.disease
+                  AND vaccineUniiCode IS NULL
+                  AND rec.vaccineUniiCode IS NOT NULL;
+            end loop;
+    END;
+$$ LANGUAGE plpgsql;
+
+/* set latest available vaccineAtcCode  */
+DROP TABLE IF EXISTS tmp_latest_vaccineatccode;
+CREATE TEMP TABLE tmp_latest_vaccineatccode AS
+SELECT DISTINCT ON (person_id, disease) person_id, disease, vaccineAtcCode, relevancedate
+FROM tmp_earlier_vaccinated_entities
+WHERE tmp_earlier_vaccinated_entities.vaccineAtcCode IS NOT NULL
+ORDER BY person_id, disease, relevancedate DESC;
+
+DO
+$$
+    DECLARE
+        rec RECORD;
+    BEGIN
+        FOR rec IN SELECT * FROM tmp_latest_vaccineatccode
+            LOOP
+                UPDATE tmp_vaccinated_persons
+                SET vaccineAtcCode = rec.vaccineAtcCode
+                WHERE tmp_vaccinated_persons.person_id = rec.person_id
+                  AND tmp_vaccinated_persons.disease = rec.disease
+                  AND vaccineAtcCode IS NULL
+                  AND rec.vaccineAtcCode IS NOT NULL;
+            end loop;
+    END;
+$$ LANGUAGE plpgsql;
+
+/* set latest available vaccinationInfoSource  */
+DROP TABLE IF EXISTS tmp_latest_vaccinationinfosource;
+CREATE TEMP TABLE tmp_latest_vaccinationinfosource AS
+SELECT DISTINCT ON (person_id, disease) person_id, disease, vaccinationInfoSource, relevancedate
+FROM tmp_earlier_vaccinated_entities
+WHERE tmp_earlier_vaccinated_entities.vaccinationInfoSource IS NOT NULL
+ORDER BY person_id, disease, relevancedate DESC;
+
+DO
+$$
+    DECLARE
+        rec RECORD;
+    BEGIN
+        FOR rec IN SELECT * FROM tmp_latest_vaccinationinfosource
+            LOOP
+                UPDATE tmp_vaccinated_persons
+                SET vaccinationInfoSource = rec.vaccinationInfoSource
+                WHERE tmp_vaccinated_persons.person_id = rec.person_id
+                  AND tmp_vaccinated_persons.disease = rec.disease
+                  AND vaccinationInfoSource IS NULL
+                  AND rec.vaccinationInfoSource IS NOT NULL;
+            end loop;
+    END;
+$$ LANGUAGE plpgsql;
+
+/* Step 2: Create a new immunization entity for each person-disease combination */
+ALTER TABLE immunization ADD COLUMN numberofdoses_details varchar(255);
+ALTER TABLE immunization_history ADD COLUMN numberofdoses_details varchar(255);
+
+INSERT INTO immunization
+(
+    id, uuid, disease, diseasedetails, person_id, reportdate, reportinguser_id, immunizationstatus, meansofimmunization, immunizationmanagementstatus, responsibleregion_id,
+    responsibledistrict_id, responsiblecommunity_id, startdate, enddate, numberofdoses, numberofdoses_details, changedate, creationdate
+)
+SELECT
+    immunization_id, generate_base32_uuid(), disease, diseasedetails, person_id, reportdate, reportinguser_id, 'ACQUIRED', 'VACCINATION', 'COMPLETED',
+    responsibleregion_id, responsibledistrict_id, responsiblecommunity_id, firstvaccinationdate, lastvaccinationdate, vaccinationdoses, vaccinationdoses_details, now(), now()
+FROM tmp_vaccinated_persons;
+
+/* Step 3: Create a new vaccination entity for each immunization start and date (or for each immunization without a start or end date) */
+CREATE OR REPLACE FUNCTION clone_healthconditions(healthconditions_id bigint)
+    RETURNS bigint
+    LANGUAGE plpgsql
+    SECURITY DEFINER AS
+$BODY$
+DECLARE new_id bigint;
+BEGIN
+    INSERT INTO tmp_healthconditions SELECT * FROM healthconditions WHERE id = healthconditions_id;
+    UPDATE tmp_healthconditions SET id = nextval('entity_seq'), uuid = generate_base32_uuid(), changedate = now(), creationdate = now(), sys_period = tstzrange(now(), null) WHERE id = healthconditions_id RETURNING id INTO new_id;
+    INSERT INTO healthconditions SELECT * FROM tmp_healthconditions WHERE id = new_id;
+    RETURN new_id;
+END;
+$BODY$;
+ALTER FUNCTION clone_healthconditions(bigint) OWNER TO sormas_user;
+
+CREATE OR REPLACE FUNCTION create_healthconditions()
+    RETURNS bigint
+    LANGUAGE plpgsql
+    SECURITY DEFINER AS
+$BODY$
+DECLARE new_id bigint;
+BEGIN
+    INSERT INTO healthconditions (id, uuid, changedate, creationdate) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now()) RETURNING id INTO new_id;
+    RETURN new_id;
+END;
+$BODY$;
+ALTER FUNCTION create_healthconditions() OWNER TO sormas_user;
+
+CREATE OR REPLACE FUNCTION create_vaccination(
+    immunization_id bigint, new_healthconditions_id bigint, reportdate timestamp, reportinguser_id bigint, vaccinationdate timestamp, vaccinename varchar(255),
+    othervaccinename text, vaccinemanufacturer varchar(255), othervaccinemanufacturer text, vaccineinn text, vaccinebatchnumber text, vaccineuniicode text,
+    vaccineatccode text, vaccinationinfosource varchar(255), pregnant varchar(255), trimester varchar(255))
+    RETURNS void
+    LANGUAGE plpgsql
+    SECURITY DEFINER AS
+$BODY$
+BEGIN
+    INSERT INTO vaccination (
+        id, uuid, changedate, creationdate, immunization_id, healthconditions_id, reportdate, reportinguser_id, vaccinationdate, vaccinename, othervaccinename,
+        vaccinemanufacturer, othervaccinemanufacturer, vaccineinn, vaccinebatchnumber, vaccineuniicode, vaccineatccode, vaccinationinfosource, pregnant, trimester
+    )
+    VALUES (
+               nextval('entity_seq'), generate_base32_uuid(), now(), now(), immunization_id, new_healthconditions_id, reportdate, reportinguser_id,
+               vaccinationdate, vaccinename, othervaccinename, vaccinemanufacturer, othervaccinemanufacturer, vaccineinn, vaccinebatchnumber, vaccineuniicode,
+               vaccineatccode, vaccinationinfosource, pregnant, trimester
+           );
+END;
+$BODY$;
+ALTER FUNCTION create_vaccination(
+    bigint, bigint, timestamp, bigint, timestamp, varchar(255), text, varchar(255), text, text, text, text, text, varchar(255),
+    varchar(255), varchar(255)
+    ) OWNER TO sormas_user;
+
+DO $$
+    DECLARE rec RECORD;
+        DECLARE new_healthconditions_id bigint;
+    BEGIN
+        FOR rec IN SELECT * FROM tmp_vaccinated_persons
+            LOOP
+                IF (
+                    rec.vaccinationdoses IS NULL
+                    )
+                THEN
+                    IF (
+                            rec.firstvaccinationdate IS NOT NULL OR
+                            (
+                                    rec.firstvaccinationdate IS NULL AND
+                                    rec.lastvaccinationdate IS NULL
+                                )
+                        )
+                    THEN
+                        PERFORM create_vaccination(
+                                rec.immunization_id,
+                                CASE
+                                    WHEN rec.healthconditions_id IS NOT NULL
+                                        THEN (SELECT * FROM clone_healthconditions(rec.healthconditions_id))
+                                    ELSE (SELECT * FROM create_healthconditions()) END,
+                                rec.reportdate, rec.reportinguser_id, rec.firstvaccinationdate,
+                                CASE
+                                    WHEN
+                                                rec.vaccinename = 'ASTRA_ZENECA_COMIRNATY' OR
+                                                rec.vaccinename = 'ASTRA_ZENECA_MRNA_1273'
+                                        THEN
+                                        'OXFORD_ASTRA_ZENECA'
+                                    ELSE
+                                        rec.vaccinename
+                                    END,
+                                rec.othervaccinename,
+                                CASE
+                                    WHEN
+                                                rec.vaccinename = 'ASTRA_ZENECA_COMIRNATY' OR
+                                                rec.vaccinename = 'ASTRA_ZENECA_MRNA_1273'
+                                        THEN
+                                        'ASTRA_ZENECA'
+                                    ELSE
+                                        rec.vaccinemanufacturer
+                                    END,
+                                rec.othervaccinemanufacturer, rec.vaccineinn, rec.vaccinebatchnumber,
+                                rec.vaccineuniicode, rec.vaccineatccode, rec.vaccinationinfosource,
+                                rec.pregnant, rec.trimester
+                            );
+                    END IF;
+
+                    IF (
+                            rec.lastvaccinationdate IS NOT NULL OR
+                            rec.vaccinename = 'ASTRA_ZENECA_COMIRNATY' OR
+                            rec.vaccinename = 'ASTRA_ZENECA_MRNA_1273'
+                        )
+                    THEN
+                        PERFORM create_vaccination(
+                                rec.immunization_id,
+                                CASE
+                                    WHEN rec.healthconditions_id IS NOT NULL
+                                        THEN (SELECT * FROM clone_healthconditions(rec.healthconditions_id))
+                                    ELSE (SELECT * FROM create_healthconditions()) END,
+                                rec.reportdate, rec.reportinguser_id, rec.lastvaccinationdate,
+                                CASE
+                                    WHEN
+                                            rec.vaccinename = 'ASTRA_ZENECA_COMIRNATY'
+                                        THEN
+                                        'COMIRNATY'
+                                    WHEN
+                                            rec.vaccinename = 'ASTRA_ZENECA_MRNA_1273'
+                                        THEN
+                                        'MRNA_1273'
+                                    ELSE
+                                        rec.vaccinename
+                                    END,
+                                rec.othervaccinename,
+                                CASE
+                                    WHEN
+                                            rec.vaccinename = 'ASTRA_ZENECA_COMIRNATY'
+                                        THEN
+                                        'BIONTECH_PFIZER'
+                                    WHEN
+                                            rec.vaccinename = 'ASTRA_ZENECA_MRNA_1273'
+                                        THEN
+                                        'MODERNA'
+                                    ELSE
+                                        rec.vaccinemanufacturer
+                                    END,
+                                rec.othervaccinemanufacturer, rec.vaccineinn, rec.vaccinebatchnumber,
+                                rec.vaccineuniicode, rec.vaccineatccode, rec.vaccinationinfosource,
+                                rec.pregnant, rec.trimester
+                            );
+                    END IF;
+                END IF;
+
+                IF (
+                        rec.vaccinationdoses = 1
+                    )
+                THEN
+                    PERFORM create_vaccination(
+                            rec.immunization_id,
+                            CASE
+                                WHEN rec.healthconditions_id IS NOT NULL
+                                    THEN (SELECT * FROM clone_healthconditions(rec.healthconditions_id))
+                                ELSE (SELECT * FROM create_healthconditions()) END,
+                            rec.reportdate, rec.reportinguser_id, coalesce(rec.lastvaccinationdate, rec.firstvaccinationdate),
+                            CASE
+                                WHEN
+                                            rec.vaccinename = 'ASTRA_ZENECA_COMIRNATY' OR
+                                            rec.vaccinename = 'ASTRA_ZENECA_MRNA_1273'
+                                    THEN
+                                    'OXFORD_ASTRA_ZENECA'
+                                ELSE
+                                    rec.vaccinename
+                                END,
+                            rec.othervaccinename,
+                            CASE
+                                WHEN
+                                            rec.vaccinename = 'ASTRA_ZENECA_COMIRNATY' OR
+                                            rec.vaccinename = 'ASTRA_ZENECA_MRNA_1273'
+                                    THEN
+                                    'ASTRA_ZENECA'
+                                ELSE
+                                    rec.vaccinemanufacturer
+                                END,
+                            rec.othervaccinemanufacturer, rec.vaccineinn, rec.vaccinebatchnumber,
+                            rec.vaccineuniicode, rec.vaccineatccode, rec.vaccinationinfosource,
+                            rec.pregnant, rec.trimester
+                        );
+                END IF;
+
+                IF (
+                        rec.vaccinationdoses >= 2
+                    )
+                THEN
+                    PERFORM create_vaccination(
+                            rec.immunization_id,
+                            CASE WHEN rec.healthconditions_id IS NOT NULL THEN (SELECT * FROM clone_healthconditions(rec.healthconditions_id)) ELSE (SELECT * FROM create_healthconditions()) END,
+                            rec.reportdate, rec.reportinguser_id, rec.firstvaccinationdate,
+                            CASE
+                                WHEN
+                                            rec.vaccinename = 'ASTRA_ZENECA_COMIRNATY' OR rec.vaccinename = 'ASTRA_ZENECA_MRNA_1273'
+                                    THEN
+                                    'OXFORD_ASTRA_ZENECA'
+                                ELSE
+                                    rec.vaccinename
+                                END,
+                            rec.othervaccinename,
+                            CASE
+                                WHEN
+                                            rec.vaccinename = 'ASTRA_ZENECA_COMIRNATY' OR rec.vaccinename = 'ASTRA_ZENECA_MRNA_1273'
+                                    THEN
+                                    'ASTRA_ZENECA'
+                                ELSE
+                                    rec.vaccinemanufacturer
+                                END,
+                            rec.othervaccinemanufacturer, rec.vaccineinn, rec.vaccinebatchnumber,
+                            rec.vaccineuniicode, rec.vaccineatccode, rec.vaccinationinfosource,
+                            rec.pregnant, rec.trimester
+                        );
+                    BEGIN
+                        FOR vaccCounter IN 2 .. rec.vaccinationdoses - 1
+                            LOOP
+                                PERFORM create_vaccination(
+                                        rec.immunization_id,
+                                        CASE WHEN rec.healthconditions_id IS NOT NULL THEN (SELECT * FROM clone_healthconditions(rec.healthconditions_id)) ELSE (SELECT * FROM create_healthconditions()) END,
+                                        rec.reportdate, rec.reportinguser_id, null,
+                                        CASE
+                                            WHEN
+                                                    rec.vaccinename = 'ASTRA_ZENECA_COMIRNATY'
+                                                THEN
+                                                'COMIRNATY'
+                                            WHEN
+                                                    rec.vaccinename = 'ASTRA_ZENECA_MRNA_1273'
+                                                THEN
+                                                'MRNA_1273'
+                                            ELSE
+                                                rec.vaccinename
+                                            END,
+                                        rec.othervaccinename,
+                                        CASE
+                                            WHEN
+                                                    rec.vaccinename = 'ASTRA_ZENECA_COMIRNATY'
+                                                THEN
+                                                'BIONTECH_PFIZER'
+                                            WHEN
+                                                    rec.vaccinename = 'ASTRA_ZENECA_MRNA_1273'
+                                                THEN
+                                                'MODERNA'
+                                            ELSE
+                                                rec.vaccinemanufacturer
+                                            END,
+                                        rec.othervaccinemanufacturer, rec.vaccineinn, rec.vaccinebatchnumber,
+                                        rec.vaccineuniicode, rec.vaccineatccode, rec.vaccinationinfosource,
+                                        rec.pregnant, rec.trimester
+                                    );
+                            END LOOP;
+                    END;
+                    PERFORM create_vaccination(
+                            rec.immunization_id,
+                            CASE WHEN rec.healthconditions_id IS NOT NULL THEN (SELECT * FROM clone_healthconditions(rec.healthconditions_id)) ELSE (SELECT * FROM create_healthconditions()) END,
+                            rec.reportdate, rec.reportinguser_id, rec.lastvaccinationdate,
+                            CASE
+                                WHEN
+                                        rec.vaccinename = 'ASTRA_ZENECA_COMIRNATY'
+                                    THEN
+                                    'COMIRNATY'
+                                WHEN
+                                        rec.vaccinename = 'ASTRA_ZENECA_MRNA_1273'
+                                    THEN
+                                    'MRNA_1273'
+                                ELSE
+                                    rec.vaccinename
+                                END,
+                            rec.othervaccinename,
+                            CASE
+                                WHEN
+                                        rec.vaccinename = 'ASTRA_ZENECA_COMIRNATY'
+                                    THEN
+                                    'BIONTECH_PFIZER'
+                                WHEN
+                                        rec.vaccinename = 'ASTRA_ZENECA_MRNA_1273'
+                                    THEN
+                                    'MODERNA'
+                                ELSE
+                                    rec.vaccinemanufacturer
+                                END,
+                            rec.othervaccinemanufacturer, rec.vaccineinn, rec.vaccinebatchnumber,
+                            rec.vaccineuniicode, rec.vaccineatccode, rec.vaccinationinfosource,
+                            rec.pregnant, rec.trimester
+                        );
+                END IF;
+            END LOOP;
+    END;
+$$ LANGUAGE plpgsql;
+
+DROP TABLE IF EXISTS tmp_vaccinated_entities;
+DROP TABLE IF EXISTS tmp_vaccinated_persons;
+DROP TABLE IF EXISTS tmp_earlier_vaccinated_entities;
+DROP TABLE IF EXISTS tmp_earliest_reported_vaccinated_persons;
+DROP TABLE IF EXISTS tmp_earliest_firstvaccinationdate_vaccinated_persons;
+DROP TABLE IF EXISTS tmp_latest_lastvaccinationdate_vaccinated_persons;
+DROP TABLE IF EXISTS tmp_latest_vaccinename;
+DROP TABLE IF EXISTS tmp_latest_othervaccinename;
+DROP TABLE IF EXISTS tmp_latest_vaccinemanufacturer;
+DROP TABLE IF EXISTS tmp_latest_othervaccinemanufacturer;
+DROP TABLE IF EXISTS tmp_latest_vaccineinn;
+DROP TABLE IF EXISTS tmp_latest_vaccinebatchnumber;
+DROP TABLE IF EXISTS tmp_latest_vaccineuniicode;
+DROP TABLE IF EXISTS tmp_latest_vaccineatccode;
+DROP TABLE IF EXISTS tmp_latest_vaccinationinfosource;
+DROP TABLE IF EXISTS tmp_healthconditions;
+
+DROP FUNCTION IF EXISTS clone_healthconditions(bigint);
+DROP FUNCTION IF EXISTS create_healthconditions();
+DROP FUNCTION IF EXISTS create_vaccination(bigint, bigint, timestamp, bigint, timestamp, varchar(255), text, varchar(255), text, text, text, text, text, varchar(255), varchar(255), varchar(255));
+
+/* Step 4: Clean up cases, contacts and event participants */
+ALTER TABLE cases RENAME COLUMN vaccination TO vaccinationstatus;
+ALTER TABLE cases_history RENAME COLUMN vaccination TO vaccinationstatus;
+-- last vaccination date has been moved to the vaccination entity, but still has to be used for Monkeypox
+ALTER TABLE cases RENAME COLUMN lastvaccinationdate TO smallpoxlastvaccinationdate;
+ALTER TABLE cases_history RENAME COLUMN lastvaccinationdate TO smallpoxlastvaccinationdate;
+UPDATE cases SET smallpoxlastvaccinationdate = null WHERE disease != 'MONKEYPOX';
+
+ALTER TABLE cases DROP COLUMN vaccinationdoses;
+ALTER TABLE cases DROP COLUMN vaccinationinfosource;
+ALTER TABLE cases DROP COLUMN firstvaccinationdate;
+ALTER TABLE cases DROP COLUMN vaccinename;
+ALTER TABLE cases DROP COLUMN othervaccinename;
+ALTER TABLE cases DROP COLUMN vaccinemanufacturer;
+ALTER TABLE cases DROP COLUMN othervaccinemanufacturer;
+ALTER TABLE cases DROP COLUMN vaccineinn;
+ALTER TABLE cases DROP COLUMN vaccinebatchnumber;
+ALTER TABLE cases DROP COLUMN vaccineuniicode;
+ALTER TABLE cases DROP COLUMN vaccineatccode;
+ALTER TABLE cases DROP COLUMN vaccine;
+
+ALTER TABLE contact ADD COLUMN vaccinationstatus varchar(255);
+ALTER TABLE contact_history ADD COLUMN vaccinationstatus varchar(255);
+ALTER TABLE eventparticipant ADD COLUMN vaccinationstatus varchar(255);
+ALTER TABLE eventparticipant_history ADD COLUMN vaccinationstatus varchar(255);
+
+UPDATE contact SET vaccinationstatus = vaccinationinfo.vaccination, changedate = now() FROM vaccinationinfo WHERE contact.vaccinationinfo_id = vaccinationinfo.id;
+UPDATE eventparticipant SET vaccinationstatus = vaccinationinfo.vaccination, changedate = now() FROM vaccinationinfo WHERE eventparticipant.vaccinationinfo_id = vaccinationinfo.id;
+
+ALTER TABLE contact DROP COLUMN vaccinationinfo_id;
+ALTER TABLE eventparticipant DROP COLUMN vaccinationinfo_id;
+DROP TABLE IF EXISTS vaccinationinfo;
+
+UPDATE exportconfiguration SET propertiesstring = replace(propertiesstring, 'vaccination,', 'vaccinationstatus,');
+
+UPDATE featureconfiguration SET enabled = true, changedate = now() WHERE featuretype = 'IMMUNIZATION_MANAGEMENT';
+UPDATE featureconfiguration SET enabled = true, changedate = now() WHERE featuretype = 'IMMUNIZATION_STATUS_AUTOMATION';
+
+/* End of vaccination refactoring */
+
+INSERT INTO schema_version (version_number, comment) VALUES (407, 'Vaccination refactoring #5909');
+
+-- 2021-09-28 - [S2S] re-share data with the same organization #6639
+CREATE TABLE sharerequestinfo(
+    id bigint not null,
+    uuid varchar(36) not null unique,
+    changedate timestamp not null,
+    creationdate timestamp not null,
+
+    requeststatus varchar(255),
+    sender_id bigint,
+    withassociatedcontacts boolean,
+    withsamples boolean,
+    witheventparticipants boolean,
+    pseudonymizedpersonaldata boolean,
+    pseudonymizedsensitivedata boolean,
+    comment text,
+
+    sys_period tstzrange not null,
+    PRIMARY KEY (id)
+);
+
+ALTER TABLE sharerequestinfo OWNER TO sormas_user;
+ALTER TABLE sharerequestinfo ADD CONSTRAINT fk_sharerequestinfo_sender_id FOREIGN KEY (sender_id) REFERENCES users (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+CREATE TABLE sharerequestinfo_history (LIKE sharerequestinfo);
+ALTER TABLE sharerequestinfo_history OWNER TO sormas_user;
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON sharerequestinfo
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'sharerequestinfo_history', true);
+
+CREATE TABLE sharerequestinfo_shareinfo(
+    sharerequestinfo_id bigint,
+    shareinfo_id bigint
+);
+
+ALTER TABLE sharerequestinfo_shareinfo OWNER TO sormas_user;
+ALTER TABLE sharerequestinfo_shareinfo ADD CONSTRAINT fk_sharerequestinfo_shareinfo_sharerequestinfo_id FOREIGN KEY (sharerequestinfo_id) REFERENCES sharerequestinfo (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE sharerequestinfo_shareinfo ADD CONSTRAINT fk_sharerequestinfo_shareinfo_shareinfo_id FOREIGN KEY (shareinfo_id) REFERENCES sormastosormasshareinfo (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+ALTER TABLE sormastosormasshareinfo
+    ADD COLUMN caze_id bigint,
+    ADD COLUMN contact_id bigint,
+    ADD COLUMN event_id bigint,
+    ADD COLUMN eventparticipant_id bigint,
+    ADD COLUMN sample_id bigint,
+    ALTER COLUMN requestuuid DROP NOT NULL;
+
+ALTER TABLE sormastosormasshareinfo ADD CONSTRAINT fk_sormastosormasshareinfo_caze_id FOREIGN KEY (caze_id) REFERENCES cases (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE sormastosormasshareinfo ADD CONSTRAINT fk_sormastosormasshareinfo_contact_id FOREIGN KEY (contact_id) REFERENCES contact (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE sormastosormasshareinfo ADD CONSTRAINT fk_sormastosormasshareinfo_event_id FOREIGN KEY (event_id) REFERENCES events (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE sormastosormasshareinfo ADD CONSTRAINT fk_sormastosormasshareinfo_eventparticipant_id FOREIGN KEY (eventparticipant_id) REFERENCES eventparticipant (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE sormastosormasshareinfo ADD CONSTRAINT fk_sormastosormasshareinfo_sample_id FOREIGN KEY (sample_id) REFERENCES samples (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+DO $$
+    DECLARE shared_entity RECORD;
+        DECLARE share_info RECORD;
+        DECLARE request_info_id bigint;
+        DECLARE new_share_info_id bigint;
+    BEGIN
+        FOR shared_entity IN SELECT * FROM sormastosormasshareinfo_entities
+            LOOP
+                SELECT * FROM sormastosormasshareinfo where id = shared_entity.shareinfo_id INTO share_info;
+
+                SELECT id FROM sharerequestinfo where uuid = share_info.requestUuid INTO request_info_id;
+                IF (request_info_id IS NULL) THEN
+                    INSERT INTO sharerequestinfo(
+                        id, uuid, changedate, creationdate, requeststatus, sender_id,
+                        withassociatedcontacts, withsamples, witheventparticipants, pseudonymizedpersonaldata, pseudonymizedsensitivedata, comment)
+                    VALUES (nextval('entity_seq'), share_info.requestUuid, share_info.creationdate, now(), share_info.requestStatus, share_info.sender_id,
+                            share_info.withassociatedcontacts, share_info.withsamples, share_info.witheventparticipants, share_info.pseudonymizedpersonaldata, share_info.pseudonymizedpersonaldata, share_info.comment)
+                    RETURNING id INTO request_info_id;
+                END IF;
+
+                INSERT INTO sormastosormasshareinfo(id, uuid, changedate, creationdate,
+                                                    organizationid, ownershiphandedover,
+                                                    caze_id, contact_id, event_id, eventparticipant_id, sample_id)
+                VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(),
+                        share_info.organizationid, share_info.ownershiphandedover,
+                        shared_entity.caze_id, shared_entity.contact_id, shared_entity.event_id, shared_entity.eventparticipant_id, shared_entity.sample_id)
+                RETURNING id INTO new_share_info_id;
+
+                INSERT INTO sharerequestinfo_shareinfo (sharerequestinfo_id, shareinfo_id)
+                VALUES (request_info_id, new_share_info_id);
+            END LOOP;
+    END;
+$$ LANGUAGE plpgsql;
+
+ALTER TABLE sormastosormasshareinfo
+    DROP COLUMN requestuuid,
+    DROP COLUMN requeststatus,
+    DROP COLUMN comment,
+    DROP COLUMN withassociatedcontacts,
+    DROP COLUMN withsamples,
+    DROP COLUMN pseudonymizedpersonaldata,
+    DROP COLUMN pseudonymizedsensitivedata,
+    DROP COLUMN witheventparticipants;
+
+DROP TABLE sormastosormasshareinfo_entities;
+DELETE FROM sormastosormasshareinfo WHERE caze_id IS NULL and contact_id IS NULL and event_id IS NULL and eventparticipant_id IS NULL and sample_id is null;
+
+ALTER TABLE sormastosormassharerequest ADD COLUMN eventParticipants json;
+ALTER TABLE sormastosormassharerequest ALTER COLUMN eventParticipants TYPE json USING eventParticipants::json;
+ALTER TABLE sormastosormassharerequest_history ADD COLUMN eventParticipants json;
+ALTER TABLE sormastosormassharerequest_history ALTER COLUMN eventParticipants TYPE json USING eventParticipants::json;
+
+INSERT INTO schema_version (version_number, comment) VALUES (408, '[S2S] re-share data with the same organization #6639');
+
+-- [S2S] When sharing a case the immunization and vaccination information should be shared as well #6886
+ALTER TABLE sormastosormasorigininfo ADD COLUMN withimmunizations boolean DEFAULT false;
+ALTER TABLE sharerequestinfo ADD COLUMN withimmunizations boolean DEFAULT false;
+ALTER TABLE sharerequestinfo_history ADD COLUMN withimmunizations boolean DEFAULT false;
+
+ALTER TABLE sormastosormassharerequest ADD COLUMN withimmunizations boolean DEFAULT false;
+ALTER TABLE sormastosormassharerequest_history ADD COLUMN withimmunizations boolean DEFAULT false;
+
+ALTER TABLE sormastosormasshareinfo ADD COLUMN immunization_id bigint;
+ALTER TABLE sormastosormasshareinfo ADD CONSTRAINT fk_sormastosormasshareinfo_immunization_id FOREIGN KEY (immunization_id) REFERENCES immunization (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+ALTER TABLE immunization ADD COLUMN sormastosormasorigininfo_id bigint;
+ALTER TABLE immunization ADD CONSTRAINT fk_immunization_sormastosormasorigininfo_id FOREIGN KEY (sormastosormasorigininfo_id) REFERENCES sormastosormasorigininfo (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+ALTER TABLE immunization_history ADD COLUMN sormastosormasorigininfo_id bigint;
+ALTER TABLE immunization_history ADD CONSTRAINT fk_immunization_history_sormastosormasorigininfo_id FOREIGN KEY (sormastosormasorigininfo_id) REFERENCES sormastosormasorigininfo (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+INSERT INTO schema_version (version_number, comment) VALUES (409, '[S2S] When sharing a case the immunization and vaccination information should be shared as well #6886');
+
+-- 2021-10-14 add immunization columns if update 406 completed before fix #6861
+DO $$
+    BEGIN
+        BEGIN
+            ALTER TABLE immunization ADD COLUMN numberofdoses_details varchar(255);
+        EXCEPTION
+            WHEN duplicate_column THEN RAISE NOTICE 'column numberofdoses_details already exists in immunization.';
+        END;
+        BEGIN
+            ALTER TABLE immunization_history ADD COLUMN numberofdoses_details varchar(255);
+        EXCEPTION
+            WHEN duplicate_column THEN RAISE NOTICE 'column numberofdoses_details already exists in immunization_history.';
+        END;
+    END;
+$$ LANGUAGE plpgsql;
+
+INSERT INTO schema_version (version_number, comment) VALUES (410, 'add immunization columns if update 406 completed before fix #6861');
+
+-- 2021-09-30 Make contact classification required in the API and backend #6828
+UPDATE contact set contactclassification = 'UNCONFIRMED' where contactclassification IS NULL;
+ALTER TABLE contact ALTER COLUMN contactclassification SET NOT NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (411, 'Make contact classification required in the API and backend #6828');
+
+-- 2021-10-15 - rerun 407 from 1.64.1: [S2S] re-share data with the same organization #6639
+DO $$
+    BEGIN
+        CREATE TABLE sharerequestinfo(
+            id bigint not null,
+            uuid varchar(36) not null unique,
+            changedate timestamp not null,
+            creationdate timestamp not null,
+
+            requeststatus varchar(255),
+            sender_id bigint,
+            withassociatedcontacts boolean,
+            withsamples boolean,
+            witheventparticipants boolean,
+            pseudonymizedpersonaldata boolean,
+            pseudonymizedsensitivedata boolean,
+            comment text,
+
+            sys_period tstzrange not null,
+            PRIMARY KEY (id)
+        );
+
+        ALTER TABLE sharerequestinfo OWNER TO sormas_user;
+        ALTER TABLE sharerequestinfo ADD CONSTRAINT fk_sharerequestinfo_sender_id FOREIGN KEY (sender_id) REFERENCES users (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+        CREATE TABLE sharerequestinfo_history (LIKE sharerequestinfo);
+        ALTER TABLE sharerequestinfo_history OWNER TO sormas_user;
+        CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON sharerequestinfo
+            FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'sharerequestinfo_history', true);
+
+        CREATE TABLE sharerequestinfo_shareinfo(
+            sharerequestinfo_id bigint,
+            shareinfo_id bigint
+        );
+
+        ALTER TABLE sharerequestinfo_shareinfo OWNER TO sormas_user;
+        ALTER TABLE sharerequestinfo_shareinfo ADD CONSTRAINT fk_sharerequestinfo_shareinfo_sharerequestinfo_id FOREIGN KEY (sharerequestinfo_id) REFERENCES sharerequestinfo (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+        ALTER TABLE sharerequestinfo_shareinfo ADD CONSTRAINT fk_sharerequestinfo_shareinfo_shareinfo_id FOREIGN KEY (shareinfo_id) REFERENCES sormastosormasshareinfo (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+        ALTER TABLE sormastosormasshareinfo
+            ADD COLUMN caze_id bigint,
+            ADD COLUMN contact_id bigint,
+            ADD COLUMN event_id bigint,
+            ADD COLUMN eventparticipant_id bigint,
+            ADD COLUMN sample_id bigint,
+            ALTER COLUMN requestuuid DROP NOT NULL;
+
+        ALTER TABLE sormastosormasshareinfo ADD CONSTRAINT fk_sormastosormasshareinfo_caze_id FOREIGN KEY (caze_id) REFERENCES cases (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+        ALTER TABLE sormastosormasshareinfo ADD CONSTRAINT fk_sormastosormasshareinfo_contact_id FOREIGN KEY (contact_id) REFERENCES contact (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+        ALTER TABLE sormastosormasshareinfo ADD CONSTRAINT fk_sormastosormasshareinfo_event_id FOREIGN KEY (event_id) REFERENCES events (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+        ALTER TABLE sormastosormasshareinfo ADD CONSTRAINT fk_sormastosormasshareinfo_eventparticipant_id FOREIGN KEY (eventparticipant_id) REFERENCES eventparticipant (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+        ALTER TABLE sormastosormasshareinfo ADD CONSTRAINT fk_sormastosormasshareinfo_sample_id FOREIGN KEY (sample_id) REFERENCES samples (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+        DECLARE shared_entity RECORD;
+            DECLARE share_info RECORD;
+            DECLARE request_info_id bigint;
+            DECLARE new_share_info_id bigint;
+        BEGIN
+            FOR shared_entity IN SELECT * FROM sormastosormasshareinfo_entities
+                LOOP
+                    SELECT * FROM sormastosormasshareinfo where id = shared_entity.shareinfo_id INTO share_info;
+
+                    SELECT id FROM sharerequestinfo where uuid = share_info.requestUuid INTO request_info_id;
+                    IF (request_info_id IS NULL) THEN
+                        INSERT INTO sharerequestinfo(
+                            id, uuid, changedate, creationdate, requeststatus, sender_id,
+                            withassociatedcontacts, withsamples, witheventparticipants, pseudonymizedpersonaldata, pseudonymizedsensitivedata, comment)
+                        VALUES (nextval('entity_seq'), share_info.requestUuid, share_info.creationdate, now(), share_info.requestStatus, share_info.sender_id,
+                                share_info.withassociatedcontacts, share_info.withsamples, share_info.witheventparticipants, share_info.pseudonymizedpersonaldata, share_info.pseudonymizedpersonaldata, share_info.comment)
+                        RETURNING id INTO request_info_id;
+                    END IF;
+
+                    INSERT INTO sormastosormasshareinfo(id, uuid, changedate, creationdate,
+                                                        organizationid, ownershiphandedover,
+                                                        caze_id, contact_id, event_id, eventparticipant_id, sample_id)
+                    VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(),
+                            share_info.organizationid, share_info.ownershiphandedover,
+                            shared_entity.caze_id, shared_entity.contact_id, shared_entity.event_id, shared_entity.eventparticipant_id, shared_entity.sample_id)
+                    RETURNING id INTO new_share_info_id;
+
+                    INSERT INTO sharerequestinfo_shareinfo (sharerequestinfo_id, shareinfo_id)
+                    VALUES (request_info_id, new_share_info_id);
+                END LOOP;
+        END;
+
+        ALTER TABLE sormastosormasshareinfo
+            DROP COLUMN requestuuid,
+            DROP COLUMN requeststatus,
+            DROP COLUMN comment,
+            DROP COLUMN withassociatedcontacts,
+            DROP COLUMN withsamples,
+            DROP COLUMN pseudonymizedpersonaldata,
+            DROP COLUMN pseudonymizedsensitivedata,
+            DROP COLUMN witheventparticipants;
+
+        DROP TABLE sormastosormasshareinfo_entities;
+        DELETE FROM sormastosormasshareinfo WHERE caze_id IS NULL and contact_id IS NULL and event_id IS NULL and eventparticipant_id IS NULL and sample_id is null;
+
+        ALTER TABLE sormastosormassharerequest ADD COLUMN eventParticipants json;
+        ALTER TABLE sormastosormassharerequest ALTER COLUMN eventParticipants TYPE json USING eventParticipants::json;
+        ALTER TABLE sormastosormassharerequest_history ADD COLUMN eventParticipants json;
+        ALTER TABLE sormastosormassharerequest_history ALTER COLUMN eventParticipants TYPE json USING eventParticipants::json;
+    EXCEPTION
+        WHEN duplicate_table THEN RAISE NOTICE 'Skip update 411, update already executed previously';
+    END;
+$$ LANGUAGE plpgsql;
+
+INSERT INTO schema_version (version_number, comment) VALUES (412, 'rerun 407 from 1.64.1 - [S2S] re-share data with the same organization #6639');
+
+-- 2021-10-15 rerun 408 [S2S] When sharing a case the immunization and vaccination information should be shared as well #6886
+DO $$
+    BEGIN
+        ALTER TABLE sormastosormasorigininfo ADD COLUMN withimmunizations boolean DEFAULT false;
+        ALTER TABLE sharerequestinfo ADD COLUMN withimmunizations boolean DEFAULT false;
+        ALTER TABLE sharerequestinfo_history ADD COLUMN withimmunizations boolean DEFAULT false;
+
+        ALTER TABLE sormastosormassharerequest ADD COLUMN withimmunizations boolean DEFAULT false;
+        ALTER TABLE sormastosormassharerequest_history ADD COLUMN withimmunizations boolean DEFAULT false;
+
+        ALTER TABLE sormastosormasshareinfo ADD COLUMN immunization_id bigint;
+        ALTER TABLE sormastosormasshareinfo ADD CONSTRAINT fk_sormastosormasshareinfo_immunization_id FOREIGN KEY (immunization_id) REFERENCES immunization (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+        ALTER TABLE immunization ADD COLUMN sormastosormasorigininfo_id bigint;
+        ALTER TABLE immunization ADD CONSTRAINT fk_immunization_sormastosormasorigininfo_id FOREIGN KEY (sormastosormasorigininfo_id) REFERENCES sormastosormasorigininfo (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+        ALTER TABLE immunization_history ADD COLUMN sormastosormasorigininfo_id bigint;
+        ALTER TABLE immunization_history ADD CONSTRAINT fk_immunization_history_sormastosormasorigininfo_id FOREIGN KEY (sormastosormasorigininfo_id) REFERENCES sormastosormasorigininfo (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+    EXCEPTION
+        WHEN duplicate_column THEN RAISE NOTICE 'Skip update 412, update already executed previously';
+    END;
+$$ LANGUAGE plpgsql;
+
+INSERT INTO schema_version (version_number, comment) VALUES (413, 'rerun 408 from 1.64.1 - [S2S] When sharing a case the immunization and vaccination information should be shared as well #6886');
+
+-- 2021-10-15 rerun 409 from 1.64.1: add immunization columns if update 406 completed before fix #6861
+DO $$
+    BEGIN
+        BEGIN
+            ALTER TABLE immunization ADD COLUMN numberofdoses_details varchar(255);
+        EXCEPTION
+            WHEN duplicate_column THEN RAISE NOTICE 'column numberofdoses_details already exists in immunization.';
+        END;
+        BEGIN
+            ALTER TABLE immunization_history ADD COLUMN numberofdoses_details varchar(255);
+        EXCEPTION
+            WHEN duplicate_column THEN RAISE NOTICE 'column numberofdoses_details already exists in immunization_history.';
+        END;
+    END;
+$$ LANGUAGE plpgsql;
+
+INSERT INTO schema_version (version_number, comment) VALUES (414, 'rerun 408 from 1.64.1 - add immunization columns if update 406 completed before fix #6861');
+
+-- 2021-10-15 rerun 407 from 1.65.0-SNAPSHOT: Make Person.sex required #6673
+UPDATE person SET sex = 'UNKNOWN' WHERE sex IS NULL;
+ALTER TABLE person ALTER COLUMN sex DROP DEFAULT;
+ALTER TABLE person ALTER COLUMN sex SET NOT NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (415, 'rerun 407 from 1.65.0-SNAPSHOT - Make Person.sex required #6673');
+
+-- 2021-09-27 Add disease variant details #5935
+DO $$
+    BEGIN
+        ALTER TABLE cases ADD COLUMN diseasevariantdetails varchar(512);
+        ALTER TABLE cases_history ADD COLUMN diseasevariantdetails varchar(512);
+        ALTER TABLE events ADD COLUMN diseasevariantdetails varchar(512);
+        ALTER TABLE events_history ADD COLUMN diseasevariantdetails varchar(512);
+        ALTER TABLE pathogentest ADD COLUMN testeddiseasevariantdetails varchar(512);
+        ALTER TABLE pathogentest_history ADD COLUMN testeddiseasevariantdetails varchar(512);
+        ALTER TABLE travelentry ADD COLUMN diseasevariantdetails text;
+        ALTER TABLE travelentry_history ADD COLUMN diseasevariantdetails text;
+    EXCEPTION
+        WHEN duplicate_column THEN RAISE NOTICE 'Skip update 415, update already executed previously';
+    END;
+$$ LANGUAGE plpgsql;
+
+INSERT INTO schema_version (version_number, comment) VALUES (416, 'rerun 408 from 1.65.0-SNAPSHOT - Add disease variant details #5935');
+
+-- 2021-10-06 - Add PathogenTest.externalId and transfer it from lab messages #5713
+DO $$
+    BEGIN
+        ALTER TABLE pathogentest ADD COLUMN externalid varchar(512);
+        ALTER TABLE pathogentest_history ADD COLUMN externalid varchar(512);
+
+        ALTER TABLE testreport ADD COLUMN externalid varchar(512);
+        ALTER TABLE testreport_history ADD COLUMN externalid varchar(512);
+    EXCEPTION
+        WHEN duplicate_column THEN RAISE NOTICE 'Skip update 416, update already executed previously';
+    END;
+$$ LANGUAGE plpgsql;
+
+INSERT INTO schema_version (version_number, comment) VALUES (417, 'rerun 409 from 1.65.0-SNAPSHOT - Add PathogenTest.externalId and transfer it from lab messages #5713');
+
+-- 2021-10-14 [DEMIS2SORMAS] Handle New Profile: DiagnosticReport.basedOn #5139
+ALTER TABLE pathogentest ADD COLUMN externalOrderId varchar(512);
+ALTER TABLE pathogentest_history ADD COLUMN externalOrderId varchar(512);
+
+ALTER TABLE testreport ADD COLUMN externalOrderId varchar(512);
+ALTER TABLE testreport_history ADD COLUMN externalOrderId varchar(512);
+
+INSERT INTO schema_version (version_number, comment) VALUES (418, '[DEMIS2SORMAS] Handle New Profile: DiagnosticReport.basedOn #5139');
+
+-- 2021-10-19 [SORMAS2SORMAS] Shares > Share Requests > Response Comment (reject/accept) #6122
+ALTER TABLE sharerequestinfo ADD COLUMN responseComment text;
+ALTER TABLE sharerequestinfo_history ADD COLUMN responseComment text;
+
+ALTER TABLE sormastosormassharerequest ADD COLUMN responseComment text;
+ALTER TABLE sormastosormassharerequest_history ADD COLUMN responseComment text;
+
+INSERT INTO schema_version (version_number, comment) VALUES (419, '[SORMAS2SORMAS] Shares > Share Requests > Response Comment (reject/accept) #6122');
+
+-- 2021-09-23 - Change of quarantine end should be documented #6782
+ALTER TABLE cases ADD COLUMN previousquarantineto timestamp;
+ALTER TABLE cases ADD COLUMN quarantinechangecomment varchar(4096);
+ALTER TABLE cases_history ADD COLUMN previousquarantineto timestamp;
+ALTER TABLE cases_history ADD COLUMN quarantinechangecomment varchar(4096);
+ALTER TABLE contact ADD COLUMN previousquarantineto timestamp;
+ALTER TABLE contact ADD COLUMN quarantinechangecomment varchar(4096);
+ALTER TABLE contact_history ADD COLUMN previousquarantineto timestamp;
+ALTER TABLE contact_history ADD COLUMN quarantinechangecomment varchar(4096);
+
+INSERT INTO schema_version (version_number, comment) VALUES (420, 'Change of quarantine end should be documented #6782');
+
+-- 2021-10-20 Create missing history tables for S2S tables #6949
+ALTER TABLE sormastosormasorigininfo ADD COLUMN sys_period tstzrange;
+UPDATE sormastosormasorigininfo SET sys_period=tstzrange(creationdate, null);
+ALTER TABLE sormastosormasorigininfo ALTER COLUMN sys_period set NOT NULL;
+
+CREATE TABLE sormastosormasorigininfo_history (LIKE sormastosormasorigininfo);
+ALTER TABLE sormastosormasorigininfo_history OWNER TO sormas_user;
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON sormastosormasorigininfo
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'sormastosormasorigininfo_history', true);
+
+ALTER TABLE sormastosormasshareinfo ADD COLUMN sys_period tstzrange;
+UPDATE sormastosormasshareinfo SET sys_period=tstzrange(creationdate, null);
+ALTER TABLE sormastosormasshareinfo ALTER COLUMN sys_period set NOT NULL;
+CREATE TABLE sormastosormasshareinfo_history (LIKE sormastosormasshareinfo);
+ALTER TABLE sormastosormasshareinfo_history OWNER TO sormas_user;
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON sormastosormasshareinfo
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'sormastosormasshareinfo_history', true);
+
+ALTER TABLE sharerequestinfo_shareinfo ADD COLUMN sys_period tstzrange;
+UPDATE sharerequestinfo_shareinfo SET sys_period=tstzrange((SELECT sharerequestinfo.creationdate FROM sharerequestinfo WHERE sharerequestinfo.id = sharerequestinfo_shareinfo.sharerequestinfo_id), null);
+ALTER TABLE sharerequestinfo_shareinfo ALTER COLUMN sys_period set NOT NULL;
+CREATE TABLE sharerequestinfo_shareinfo_history (LIKE sharerequestinfo_shareinfo);
+ALTER TABLE sharerequestinfo_shareinfo_history OWNER TO sormas_user;
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON sharerequestinfo_shareinfo
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'sharerequestinfo_shareinfo_history', true);
+
+INSERT INTO schema_version (version_number, comment) VALUES (421, 'Create missing history tables for S2S tables #6949');
+
+-- 2021-10-19 Assigned to user list of task should consider related entities jurisdiction #6867
+ALTER TABLE users ADD COLUMN jurisdictionLevel varchar(255);
+ALTER TABLE users_history ADD COLUMN jurisdictionLevel varchar(255);
+
+UPDATE users u set jurisdictionLevel = 'NONE' where 'ADMIN' in (select userrole from users_userroles uu where uu.user_id = u.id);
+UPDATE users u set jurisdictionLevel = 'NONE' where 'IMPORT_USER' in (select userrole from users_userroles uu where uu.user_id = u.id);
+UPDATE users u set jurisdictionLevel = 'NONE' where 'REST_USER' in (select userrole from users_userroles uu where uu.user_id = u.id);
+UPDATE users u set jurisdictionLevel = 'NONE' where 'BAG_USER' in (select userrole from users_userroles uu where uu.user_id = u.id);
+
+UPDATE users u set jurisdictionLevel = 'POINT_OF_ENTRY' where 'POE_INFORMANT' in (select userrole from users_userroles uu where uu.user_id = u.id);
+UPDATE users u set jurisdictionLevel = 'EXTERNAL_LABORATORY' where 'EXTERNAL_LAB_USER' in (select userrole from users_userroles uu where uu.user_id = u.id);
+UPDATE users u set jurisdictionLevel = 'LABORATORY' where 'LAB_USER' in (select userrole from users_userroles uu where uu.user_id = u.id);
+UPDATE users u set jurisdictionLevel = 'HEALTH_FACILITY' where 'HOSPITAL_INFORMANT' in (select userrole from users_userroles uu where uu.user_id = u.id);
+
+UPDATE users u set jurisdictionLevel = 'COMMUNITY' where 'COMMUNITY_OFFICER' in (select userrole from users_userroles uu where uu.user_id = u.id);
+UPDATE users u set jurisdictionLevel = 'COMMUNITY' where 'COMMUNITY_INFORMANT' in (select userrole from users_userroles uu where uu.user_id = u.id);
+
+UPDATE users u set jurisdictionLevel = 'DISTRICT' where 'SURVEILLANCE_OFFICER' in (select userrole from users_userroles uu where uu.user_id = u.id);
+UPDATE users u set jurisdictionLevel = 'DISTRICT' where 'CASE_OFFICER' in (select userrole from users_userroles uu where uu.user_id = u.id);
+UPDATE users u set jurisdictionLevel = 'DISTRICT' where 'CONTACT_OFFICER' in (select userrole from users_userroles uu where uu.user_id = u.id);
+UPDATE users u set jurisdictionLevel = 'DISTRICT' where 'DISTRICT_OBSERVER' in (select userrole from users_userroles uu where uu.user_id = u.id);
+
+UPDATE users u set jurisdictionLevel = 'REGION' where 'SURVEILLANCE_SUPERVISOR' in (select userrole from users_userroles uu where uu.user_id = u.id);
+UPDATE users u set jurisdictionLevel = 'REGION' where 'ADMIN_SUPERVISOR' in (select userrole from users_userroles uu where uu.user_id = u.id);
+UPDATE users u set jurisdictionLevel = 'REGION' where 'CASE_SUPERVISOR' in (select userrole from users_userroles uu where uu.user_id = u.id);
+UPDATE users u set jurisdictionLevel = 'REGION' where 'CONTACT_SUPERVISOR' in (select userrole from users_userroles uu where uu.user_id = u.id);
+UPDATE users u set jurisdictionLevel = 'REGION' where 'EVENT_OFFICER' in (select userrole from users_userroles uu where uu.user_id = u.id);
+UPDATE users u set jurisdictionLevel = 'REGION' where 'STATE_OBSERVER' in (select userrole from users_userroles uu where uu.user_id = u.id);
+UPDATE users u set jurisdictionLevel = 'REGION' where 'POE_SUPERVISOR' in (select userrole from users_userroles uu where uu.user_id = u.id);
+
+UPDATE users u set jurisdictionLevel = 'NATION' where 'NATIONAL_USER' in (select userrole from users_userroles uu where uu.user_id = u.id);
+UPDATE users u set jurisdictionLevel = 'NATION' where 'NATIONAL_OBSERVER' in (select userrole from users_userroles uu where uu.user_id = u.id);
+UPDATE users u set jurisdictionLevel = 'NATION' where 'NATIONAL_CLINICIAN' in (select userrole from users_userroles uu where uu.user_id = u.id);
+UPDATE users u set jurisdictionLevel = 'NATION' where 'POE_NATIONAL_USER' in (select userrole from users_userroles uu where uu.user_id = u.id);
+UPDATE users u set jurisdictionLevel = 'NATION' where 'REST_EXTERNAL_VISITS_USER' in (select userrole from users_userroles uu where uu.user_id = u.id);
+UPDATE users u set jurisdictionLevel = 'NATION' where 'SORMAS_TO_SORMAS_CLIENT' in (select userrole from users_userroles uu where uu.user_id = u.id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (422, 'Assigned to user list of task should consider related entities jurisdiction #6867');
+
+ALTER TABLE hospitalization ADD COLUMN description varchar(512);
+ALTER TABLE hospitalization_history ADD COLUMN description varchar(512);
+ALTER TABLE previoushospitalization ADD COLUMN admittedtohealthfacility varchar(255);
+ALTER TABLE previoushospitalization_history ADD COLUMN admittedtohealthfacility varchar(255);
+ALTER TABLE previoushospitalization ADD COLUMN isolationdate timestamp;
+ALTER TABLE previoushospitalization_history ADD COLUMN isolationdate timestamp;
+
+INSERT INTO schema_version (version_number, comment) VALUES (423, 'Add additional fields to hospitalization #4593');
+
+
+ALTER TABLE users ALTER COLUMN jurisdictionLevel set NOT NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (424, 'Add not null constraint to user jurisdiction level #6867');
+
+-- 2021-10-29 Allow to store external data for a case #7068
+ALTER TABLE cases ADD COLUMN externalData json;
+ALTER TABLE cases ALTER COLUMN externalData TYPE json USING externalData::json;
+ALTER TABLE cases_history ADD COLUMN externalData json;
+ALTER TABLE cases_history ALTER COLUMN externalData TYPE json USING externalData::json;
+
+INSERT INTO schema_version (version_number, comment) VALUES (425, 'Allow to store external data for a case #7068');
+
+-- 2021-11-03 Change case external data from json to jsonb #7068
+ALTER TABLE cases ALTER COLUMN externalData set DATA TYPE jsonb using externalData::jsonb;
+ALTER TABLE cases_history ALTER COLUMN externalData set DATA TYPE jsonb using externalData::jsonb;
+
+INSERT INTO schema_version (version_number, comment) VALUES (426, 'Change case externalData from JSON to JSONB #7068');
+
+-- 2021-11-09 [DEMIS2SORMAS] Handle New Profile: Process multiple test reports #5899
+/*
+change reference from
+  test report references pathogen test
+  to
+  lab message references sample
+ */
+
+ALTER TABLE labmessage
+    ADD COLUMN sample_id bigint;
+ALTER TABLE labmessage_history
+    ADD COLUMN sample_id bigint;
+
+ALTER TABLE labmessage
+    ADD CONSTRAINT fk_labmessage_sample_id FOREIGN KEY (sample_id) REFERENCES samples (id);
+
+UPDATE labmessage
+SET sample_id = p.sample_id FROM
+testreport AS t
+INNER JOIN pathogentest AS p
+ON t.pathogentest_id = p.id
+WHERE labmessage.id = t.labmessage_id;
+
+/*
+ Make lab message a CoreAdo
+ */
+
+ALTER TABLE labmessage ADD COLUMN deleted boolean DEFAULT false;
+ALTER TABLE labmessage_history ADD COLUMN deleted boolean;
+
+/*
+ Delete obsolete columns
+ */
+ALTER TABLE testreport DROP COLUMN pathogentest_id;
+ALTER TABLE testreport_history DROP COLUMN pathogentest_id;
+
+ALTER TABLE labmessage DROP COLUMN pathogentest_id;
+ALTER TABLE labmessage_history DROP COLUMN pathogentest_id;
+
+INSERT INTO schema_version (version_number, comment) VALUES (427, '[DEMIS2SORMAS] Handle New Profile: Process multiple test reports #5899');
+
+-- 2021-11-05 Add properties to feature configurations #7111
+ALTER TABLE featureconfiguration ADD COLUMN properties text;
+ALTER TABLE featureconfiguration_history ADD COLUMN properties text;
+
+INSERT INTO schema_version (version_number, comment) VALUES (428, 'Add properties to feature configurations #7111');
+
+-- 2021-11-04 Add observers to tasks #7021
+CREATE TABLE task_observer(
+    task_id bigint not null,
+    user_id bigint not null,
+
+    sys_period tstzrange not null,
+    PRIMARY KEY (task_id, user_id)
+);
+
+ALTER TABLE task_observer OWNER TO sormas_user;
+ALTER TABLE task_observer ADD CONSTRAINT fk_task_observer_task_id FOREIGN KEY (task_id) REFERENCES task (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE task_observer ADD CONSTRAINT fk_task_observer_user_id FOREIGN KEY (user_id) REFERENCES users (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+CREATE TABLE task_observer_history (LIKE task_observer);
+ALTER TABLE task_observer_history OWNER TO sormas_user;
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON task_observer
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'task_observer_history', true);
+
+INSERT INTO schema_version (version_number, comment) VALUES (429, 'Add observers to tasks #7021');
+
+-- 2021-11-18 Drop unused epi data columns and tables #7301
+ALTER TABLE epidata DROP COLUMN IF EXISTS rodents, DROP COLUMN IF EXISTS bats, DROP COLUMN IF EXISTS primates, DROP COLUMN IF EXISTS swine, DROP COLUMN IF EXISTS birds, DROP COLUMN IF EXISTS eatingrawanimals, DROP COLUMN IF EXISTS sickdeadanimals,
+                    DROP COLUMN IF EXISTS sickdeadanimalsdetails, DROP COLUMN IF EXISTS sickdeadanimalsdate, DROP COLUMN IF EXISTS sickdeadanimalslocation, DROP COLUMN IF EXISTS cattle, DROP COLUMN IF EXISTS otheranimals, DROP COLUMN IF EXISTS otheranimalsdetails,
+                    DROP COLUMN IF EXISTS watersource, DROP COLUMN IF EXISTS watersourceother, DROP COLUMN IF EXISTS waterbody, DROP COLUMN IF EXISTS waterbodydetails, DROP COLUMN IF EXISTS tickbite, DROP COLUMN IF EXISTS burialattended, DROP COLUMN IF EXISTS gatheringattended,
+                    DROP COLUMN IF EXISTS traveled, DROP COLUMN IF EXISTS dateoflastexposure, DROP COLUMN IF EXISTS placeoflastexposure, DROP COLUMN IF EXISTS animalcondition, DROP COLUMN IF EXISTS fleabite, DROP COLUMN IF EXISTS directcontactconfirmedcase,
+                    DROP COLUMN IF EXISTS directcontactprobablecase, DROP COLUMN IF EXISTS closecontactprobablecase, DROP COLUMN IF EXISTS areaconfirmedcases, DROP COLUMN IF EXISTS processingconfirmedcasefluidunsafe, DROP COLUMN IF EXISTS percutaneouscaseblood,
+                    DROP COLUMN IF EXISTS directcontactdeadunsafe, DROP COLUMN IF EXISTS processingsuspectedcasesampleunsafe, DROP COLUMN IF EXISTS eatingrawanimalsininfectedarea, DROP COLUMN IF EXISTS eatingrawanimalsdetails,
+                    DROP COLUMN IF EXISTS kindofexposurebite, DROP COLUMN IF EXISTS kindofexposuretouch, DROP COLUMN IF EXISTS kindofexposurescratch, DROP COLUMN IF EXISTS kindofexposurelick, DROP COLUMN IF EXISTS kindofexposureother,
+                    DROP COLUMN IF EXISTS kindofexposuredetails, DROP COLUMN IF EXISTS animalvaccinationstatus, DROP COLUMN IF EXISTS dogs, DROP COLUMN IF EXISTS cats, DROP COLUMN IF EXISTS canidae, DROP COLUMN IF EXISTS rabbits, DROP COLUMN IF EXISTS prophylaxisstatus,
+                    DROP COLUMN IF EXISTS dateofprophylaxis, DROP COLUMN IF EXISTS visitedhealthfacility, DROP COLUMN IF EXISTS contactwithsourcerespiratorycase, DROP COLUMN IF EXISTS visitedanimalmarket, DROP COLUMN IF EXISTS camels, DROP COLUMN IF EXISTS snakes;
+ALTER TABLE epidata_history DROP COLUMN IF EXISTS rodents, DROP COLUMN IF EXISTS bats, DROP COLUMN IF EXISTS primates, DROP COLUMN IF EXISTS swine, DROP COLUMN IF EXISTS birds, DROP COLUMN IF EXISTS eatingrawanimals, DROP COLUMN IF EXISTS sickdeadanimals,
+                            DROP COLUMN IF EXISTS sickdeadanimalsdetails, DROP COLUMN IF EXISTS sickdeadanimalsdate, DROP COLUMN IF EXISTS sickdeadanimalslocation, DROP COLUMN IF EXISTS cattle, DROP COLUMN IF EXISTS otheranimals, DROP COLUMN IF EXISTS otheranimalsdetails,
+                            DROP COLUMN IF EXISTS watersource, DROP COLUMN IF EXISTS watersourceother, DROP COLUMN IF EXISTS waterbody, DROP COLUMN IF EXISTS waterbodydetails, DROP COLUMN IF EXISTS tickbite, DROP COLUMN IF EXISTS burialattended, DROP COLUMN IF EXISTS gatheringattended,
+                            DROP COLUMN IF EXISTS traveled, DROP COLUMN IF EXISTS dateoflastexposure, DROP COLUMN IF EXISTS placeoflastexposure, DROP COLUMN IF EXISTS animalcondition, DROP COLUMN IF EXISTS fleabite, DROP COLUMN IF EXISTS directcontactconfirmedcase,
+                            DROP COLUMN IF EXISTS directcontactprobablecase, DROP COLUMN IF EXISTS closecontactprobablecase, DROP COLUMN IF EXISTS areaconfirmedcases, DROP COLUMN IF EXISTS processingconfirmedcasefluidunsafe, DROP COLUMN IF EXISTS percutaneouscaseblood,
+                            DROP COLUMN IF EXISTS directcontactdeadunsafe, DROP COLUMN IF EXISTS processingsuspectedcasesampleunsafe, DROP COLUMN IF EXISTS eatingrawanimalsininfectedarea, DROP COLUMN IF EXISTS eatingrawanimalsdetails,
+                            DROP COLUMN IF EXISTS kindofexposurebite, DROP COLUMN IF EXISTS kindofexposuretouch, DROP COLUMN IF EXISTS kindofexposurescratch, DROP COLUMN IF EXISTS kindofexposurelick, DROP COLUMN IF EXISTS kindofexposureother,
+                            DROP COLUMN IF EXISTS kindofexposuredetails, DROP COLUMN IF EXISTS animalvaccinationstatus, DROP COLUMN IF EXISTS dogs, DROP COLUMN IF EXISTS cats, DROP COLUMN IF EXISTS canidae, DROP COLUMN IF EXISTS rabbits, DROP COLUMN IF EXISTS prophylaxisstatus,
+                            DROP COLUMN IF EXISTS dateofprophylaxis, DROP COLUMN IF EXISTS visitedhealthfacility, DROP COLUMN IF EXISTS contactwithsourcerespiratorycase, DROP COLUMN IF EXISTS visitedanimalmarket, DROP COLUMN IF EXISTS camels, DROP COLUMN IF EXISTS snakes;
+
+DROP TABLE IF EXISTS epidataburial;
+DROP TABLE IF EXISTS epidatagathering;
+DROP TABLE IF EXISTS epidatatravel;
+DROP TABLE IF EXISTS epidataburial_history;
+DROP TABLE IF EXISTS epidatagathering_history;
+DROP TABLE IF EXISTS epidatatravel_history;
+
+INSERT INTO schema_version (version_number, comment) VALUES (430, 'Drop unused epi data columns and tables #7301');
+
+-- 2021-11-04 [DEMIS2SORMAS] Handle New Profile: DiagnosticReport.conclusionCode #5159
+ALTER TABLE labmessage ADD COLUMN sampleoveralltestresult varchar(255);
+ALTER TABLE labmessage_history ADD COLUMN sampleoveralltestresult varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (431, '[DEMIS2SORMAS] Handle New Profile: DiagnosticReport.conclusionCode #5159');
+
+-- 2021-11-04 [DEMIS2SORMAS] Handle New Profile: Preliminary Test Results #5551
+ALTER TABLE pathogentest ADD COLUMN preliminary boolean;
+ALTER TABLE pathogentest_history ADD COLUMN preliminary boolean;
+ALTER TABLE testreport ADD COLUMN preliminary boolean;
+ALTER TABLE testreport_history ADD COLUMN preliminary boolean;
+
+INSERT INTO schema_version (version_number, comment) VALUES (432, '[DEMIS2SORMAS] Handle New Profile: Preliminary Test Results #5551');
+
+-- 2021-12-03 [S2S] Implement outgoing S2S entity validation #7070
+ALTER TABLE areas ADD COLUMN centrally_managed boolean DEFAULT false;
+ALTER TABLE areas_history ADD COLUMN centrally_managed boolean DEFAULT false;
+
+ALTER TABLE community ADD COLUMN centrally_managed boolean DEFAULT false;
+ALTER TABLE continent ADD COLUMN centrally_managed boolean DEFAULT false;
+ALTER TABLE country ADD COLUMN centrally_managed boolean DEFAULT false;
+ALTER TABLE district ADD COLUMN centrally_managed boolean DEFAULT false;
+ALTER TABLE facility ADD COLUMN centrally_managed boolean DEFAULT false;
+ALTER TABLE pointofentry ADD COLUMN centrally_managed boolean DEFAULT false;
+ALTER TABLE region ADD COLUMN centrally_managed boolean DEFAULT false;
+ALTER TABLE subcontinent ADD COLUMN centrally_managed boolean DEFAULT false;
+
+INSERT INTO schema_version (version_number, comment) VALUES (433, ' [S2S] Implement outgoing S2S entity validation #7070');
+
+-- 2021-12-16 Fill missing reporting users of event participants #7531
+UPDATE eventparticipant SET reportinguser_id = (SELECT reportinguser_id FROM events WHERE events.id = eventparticipant.event_id) WHERE reportinguser_id IS NULL;
+ALTER TABLE eventparticipant ALTER COLUMN reportinguser_id SET NOT NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (434, 'Fill missing reporting users of event participants #7531');
+
+-- 2021-12-07 Added assignee to labmassage #7310
+ALTER TABLE labmessage ADD COLUMN assignee_id bigint;
+ALTER TABLE labmessage_history ADD COLUMN assignee_id bigint;
+ALTER TABLE labmessage ADD CONSTRAINT fk_labmessage_assignee_id FOREIGN KEY (assignee_id) REFERENCES users(id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (435, 'Added assignee to labmassage #7310');
+
+-- 2022-01-03 Add reinfection details and status #7182
+
+ALTER TABLE cases ADD COLUMN reinfectionstatus varchar(255);
+ALTER TABLE cases ADD COLUMN reinfectiondetails jsonb;
+ALTER TABLE cases_history ADD COLUMN reinfectionstatus varchar(255);
+ALTER TABLE cases_history ADD COLUMN reinfectiondetails jsonb;
+
+INSERT INTO schema_version (version_number, comment) VALUES (436, 'Add reinfection details and status #7182');
+
+-- 2022-01-18 Set timestamp precision to milliseconds #7303
+
+ALTER TABLE action ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE action ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE action_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE action_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE activityascase ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE activityascase ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE activityascase_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE activityascase_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE additionaltest ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE additionaltest ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE additionaltest_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE additionaltest_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE aggregatereport ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE aggregatereport ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE aggregatereport_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE aggregatereport_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE areas ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE areas ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE areas_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE areas_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE campaigndiagramdefinition ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE campaigndiagramdefinition ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE campaigndiagramdefinition_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE campaigndiagramdefinition_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE campaignformdata ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE campaignformdata ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE campaignformdata_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE campaignformdata_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE campaignformmeta ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE campaignformmeta ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE campaignformmeta_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE campaignformmeta_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE campaigns ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE campaigns ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE campaigns_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE campaigns_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE cases ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE cases ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE cases_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE cases_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE clinicalcourse ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE clinicalcourse ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE clinicalcourse_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE clinicalcourse_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE clinicalvisit ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE clinicalvisit ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE clinicalvisit_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE clinicalvisit_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE community ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE community ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE contact ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE contact ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE contact_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE contact_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE continent ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE continent ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE country ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE country ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE customizableenumvalue ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE customizableenumvalue ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE customizableenumvalue_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE customizableenumvalue_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE diseaseconfiguration ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE diseaseconfiguration ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE diseaseconfiguration_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE diseaseconfiguration_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE district ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE district ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE documents ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE documents ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE epidata ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE epidata ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE epidata_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE epidata_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE eventgroups ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE eventgroups ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE eventgroups_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE eventgroups_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE eventparticipant ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE eventparticipant ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE eventparticipant_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE eventparticipant_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE events ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE events ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE events_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE events_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE exportconfiguration ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE exportconfiguration ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE exportconfiguration_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE exportconfiguration_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE exposures ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE exposures ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE exposures_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE exposures_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE externalshareinfo ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE externalshareinfo ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE facility ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE facility ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE featureconfiguration ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE featureconfiguration ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE featureconfiguration_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE featureconfiguration_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE healthconditions ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE healthconditions ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE healthconditions_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE healthconditions_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE hospitalization ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE hospitalization ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE hospitalization_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE hospitalization_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE immunization ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE immunization ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE immunization_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE immunization_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE labmessage ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE labmessage ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE labmessage_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE labmessage_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE location ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE location ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE location_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE location_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE manualmessagelog ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE manualmessagelog ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE maternalhistory ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE maternalhistory ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE maternalhistory_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE maternalhistory_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE outbreak ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE outbreak ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE outbreak_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE outbreak_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE pathogentest ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE pathogentest ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE pathogentest_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE pathogentest_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE person ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE person ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE person_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE person_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE personcontactdetail ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE personcontactdetail ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE personcontactdetail_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE personcontactdetail_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE pointofentry ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE pointofentry ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE populationdata ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE populationdata ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE porthealthinfo ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE porthealthinfo ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE porthealthinfo_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE porthealthinfo_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE prescription ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE prescription ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE prescription_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE prescription_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE previoushospitalization ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE previoushospitalization ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE previoushospitalization_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE previoushospitalization_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE region ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE region ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE samples ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE samples ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE samples_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE samples_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE sharerequestinfo ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE sharerequestinfo ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE sharerequestinfo_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE sharerequestinfo_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE sormastosormasorigininfo ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE sormastosormasorigininfo ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE sormastosormasorigininfo_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE sormastosormasorigininfo_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE sormastosormasshareinfo ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE sormastosormasshareinfo ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE sormastosormasshareinfo_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE sormastosormasshareinfo_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE sormastosormassharerequest ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE sormastosormassharerequest ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE sormastosormassharerequest_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE sormastosormassharerequest_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE subcontinent ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE subcontinent ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE surveillancereports ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE surveillancereports ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE surveillancereports_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE surveillancereports_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE symptoms ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE symptoms ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE symptoms_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE symptoms_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE systemevent ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE systemevent ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE task ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE task ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE task_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE task_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE testreport ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE testreport ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE testreport_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE testreport_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE therapy ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE therapy ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE therapy_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE therapy_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE travelentry ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE travelentry ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE travelentry_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE travelentry_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE treatment ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE treatment ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE treatment_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE treatment_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE userrolesconfig ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE userrolesconfig ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE userrolesconfig_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE userrolesconfig_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE users ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE users ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE users_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE users_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE vaccination ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE vaccination ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE vaccination_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE vaccination_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE vaccinationinfo_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE vaccinationinfo_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE visit ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE visit ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE visit_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE visit_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE weeklyreport ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE weeklyreport ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE weeklyreport_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE weeklyreport_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE weeklyreportentry ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE weeklyreportentry ALTER COLUMN creationdate TYPE timestamp(3);
+
+ALTER TABLE weeklyreportentry_history ALTER COLUMN changedate TYPE timestamp(3);
+ALTER TABLE weeklyreportentry_history ALTER COLUMN creationdate TYPE timestamp(3);
+
+INSERT INTO schema_version (version_number, comment) VALUES (437, 'Set timestamp precision to milliseconds #7303');
+
+-- 2022-01-25 Add configurations for each entity to trigger automated deletion #7008
+CREATE TABLE deletionconfiguration(
+                                     id bigint not null,
+                                     uuid varchar(36) not null unique,
+                                     changedate timestamp not null,
+                                     creationdate timestamp not null,
+                                     entityType varchar(255),
+                                     deletionReference varchar(255),
+                                     deletionPeriod integer,
+                                     sys_period tstzrange not null,
+                                     primary key(id)
+);
+ALTER TABLE deletionconfiguration OWNER TO sormas_user;
+ALTER TABLE ONLY deletionconfiguration ADD CONSTRAINT deletionconfiguration_entity_key UNIQUE (entityType);
+
+CREATE TABLE deletionconfiguration_history (LIKE deletionconfiguration);
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE OR DELETE ON deletionconfiguration
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'deletionconfiguration_history', true);
+ALTER TABLE deletionconfiguration_history OWNER TO sormas_user;
+
+INSERT INTO schema_version (version_number, comment) VALUES (438, 'Add configurations for each entity to trigger automated deletion #7008');
+
+-- 2022-02-04 Create missing history tables for entities #7113
+ALTER TABLE community ADD COLUMN sys_period tstzrange;
+UPDATE community SET sys_period=tstzrange(creationdate, null);
+ALTER TABLE community ALTER COLUMN sys_period SET NOT NULL;
+CREATE TABLE community_history (LIKE community);
+CREATE TRIGGER versioning_trigger
+BEFORE INSERT OR UPDATE OR DELETE ON community
+FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'community_history', true);
+ALTER TABLE community_history OWNER TO sormas_user;
+
+ALTER TABLE continent ADD COLUMN sys_period tstzrange;
+UPDATE continent SET sys_period=tstzrange(creationdate, null);
+ALTER TABLE continent ALTER COLUMN sys_period SET NOT NULL;
+CREATE TABLE continent_history (LIKE continent);
+CREATE TRIGGER versioning_trigger
+BEFORE INSERT OR UPDATE OR DELETE ON continent
+FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'continent_history', true);
+ALTER TABLE continent_history OWNER TO sormas_user;
+
+ALTER TABLE country ADD COLUMN sys_period tstzrange;
+UPDATE country SET sys_period=tstzrange(creationdate, null);
+ALTER TABLE country ALTER COLUMN sys_period SET NOT NULL;
+CREATE TABLE country_history (LIKE country);
+CREATE TRIGGER versioning_trigger
+BEFORE INSERT OR UPDATE OR DELETE ON country
+FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'country_history', true);
+ALTER TABLE country_history OWNER TO sormas_user;
+
+ALTER TABLE district ADD COLUMN sys_period tstzrange;
+UPDATE district SET sys_period=tstzrange(creationdate, null);
+ALTER TABLE district ALTER COLUMN sys_period SET NOT NULL;
+CREATE TABLE district_history (LIKE district);
+CREATE TRIGGER versioning_trigger
+BEFORE INSERT OR UPDATE OR DELETE ON district
+FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'district_history', true);
+ALTER TABLE district_history OWNER TO sormas_user;
+
+ALTER TABLE documents ADD COLUMN sys_period tstzrange;
+UPDATE documents SET sys_period=tstzrange(creationdate, null);
+ALTER TABLE documents ALTER COLUMN sys_period SET NOT NULL;
+CREATE TABLE documents_history (LIKE documents);
+CREATE TRIGGER versioning_trigger
+BEFORE INSERT OR UPDATE OR DELETE ON documents
+FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'documents_history', true);
+ALTER TABLE documents_history OWNER TO sormas_user;
+
+ALTER TABLE externalshareinfo ADD COLUMN sys_period tstzrange;
+UPDATE externalshareinfo SET sys_period=tstzrange(creationdate, null);
+ALTER TABLE externalshareinfo ALTER COLUMN sys_period SET NOT NULL;
+CREATE TABLE externalshareinfo_history (LIKE externalshareinfo);
+CREATE TRIGGER versioning_trigger
+BEFORE INSERT OR UPDATE OR DELETE ON externalshareinfo
+FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'externalshareinfo_history', true);
+ALTER TABLE externalshareinfo_history OWNER TO sormas_user;
+
+ALTER TABLE facility ADD COLUMN sys_period tstzrange;
+UPDATE facility SET sys_period=tstzrange(creationdate, null);
+ALTER TABLE facility ALTER COLUMN sys_period SET NOT NULL;
+CREATE TABLE facility_history (LIKE facility);
+CREATE TRIGGER versioning_trigger
+BEFORE INSERT OR UPDATE OR DELETE ON facility
+FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'facility_history', true);
+ALTER TABLE facility_history OWNER TO sormas_user;
+
+ALTER TABLE manualmessagelog ADD COLUMN sys_period tstzrange;
+UPDATE manualmessagelog SET sys_period=tstzrange(creationdate, null);
+ALTER TABLE manualmessagelog ALTER COLUMN sys_period SET NOT NULL;
+CREATE TABLE manualmessagelog_history (LIKE manualmessagelog);
+CREATE TRIGGER versioning_trigger
+BEFORE INSERT OR UPDATE OR DELETE ON manualmessagelog
+FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'manualmessagelog_history', true);
+ALTER TABLE manualmessagelog_history OWNER TO sormas_user;
+
+ALTER TABLE pointofentry ADD COLUMN sys_period tstzrange;
+UPDATE pointofentry SET sys_period=tstzrange(creationdate, null);
+ALTER TABLE pointofentry ALTER COLUMN sys_period SET NOT NULL;
+CREATE TABLE pointofentry_history (LIKE pointofentry);
+CREATE TRIGGER versioning_trigger
+BEFORE INSERT OR UPDATE OR DELETE ON pointofentry
+FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'pointofentry_history', true);
+ALTER TABLE pointofentry_history OWNER TO sormas_user;
+
+ALTER TABLE populationdata ADD COLUMN sys_period tstzrange;
+UPDATE populationdata SET sys_period=tstzrange(creationdate, null);
+ALTER TABLE populationdata ALTER COLUMN sys_period SET NOT NULL;
+CREATE TABLE populationdata_history (LIKE populationdata);
+CREATE TRIGGER versioning_trigger
+BEFORE INSERT OR UPDATE OR DELETE ON populationdata
+FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'populationdata_history', true);
+ALTER TABLE populationdata_history OWNER TO sormas_user;
+
+ALTER TABLE region ADD COLUMN sys_period tstzrange;
+UPDATE region SET sys_period=tstzrange(creationdate, null);
+ALTER TABLE region ALTER COLUMN sys_period SET NOT NULL;
+CREATE TABLE region_history (LIKE region);
+CREATE TRIGGER versioning_trigger
+BEFORE INSERT OR UPDATE OR DELETE ON region
+FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'region_history', true);
+ALTER TABLE region_history OWNER TO sormas_user;
+
+ALTER TABLE subcontinent ADD COLUMN sys_period tstzrange;
+UPDATE subcontinent SET sys_period=tstzrange(creationdate, null);
+ALTER TABLE subcontinent ALTER COLUMN sys_period SET NOT NULL;
+CREATE TABLE subcontinent_history (LIKE subcontinent);
+CREATE TRIGGER versioning_trigger
+BEFORE INSERT OR UPDATE OR DELETE ON subcontinent
+FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'subcontinent_history', true);
+ALTER TABLE subcontinent_history OWNER TO sormas_user;
+
+INSERT INTO schema_version (version_number, comment) VALUES (439, 'Create missing history tables for entities #7113');
+
+ALTER TABLE testreport ADD COLUMN testeddiseasevariant varchar(255);
+ALTER TABLE testreport ADD COLUMN testeddiseasevariantdetails varchar(255);
+
+ALTER TABLE testreport_history ADD COLUMN testeddiseasevariant varchar(255);
+ALTER TABLE testreport_history ADD COLUMN testeddiseasevariantdetails varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (440, 'Add disease variant mapping to test reports #7209');
+
+-- 2022-02-02 Refactor CoreAdo to include archiving #7246
+
+ALTER TABLE contact ADD COLUMN archived BOOLEAN;
+ALTER TABLE contact_history ADD COLUMN archived BOOLEAN;
+ALTER TABLE eventparticipant ADD COLUMN archived BOOLEAN;
+ALTER TABLE eventparticipant_history ADD COLUMN archived BOOLEAN;
+
+INSERT INTO schema_version (version_number, comment) VALUES (441, 'Refactor CoreAdo to include archiving #7246');
+
+-- 2022-02-09 Align username handling of Keycloak and legacy login #7907
+/*
+* In case the current DB violates the new uniqueness constraint on usernames, please use the following script to detect
+* all conflicting usernames. Usernames are case-insensitive now, that means "ADMIN" and "admin" will both map to the
+* same user in the DB. To resolve the conflict, rename the conflicting usernames found with the script.
+*
+* SELECT username, creationdate, id, uuid FROM users
+* WHERE LOWER(username) IN
+*      (SELECT LOWER(username) FROM users GROUP BY LOWER(username) HAVING COUNT(*) > 1)
+* ORDER BY username, creationdate;
+*
+*/
+
+DROP INDEX idx_users_username;
+CREATE UNIQUE INDEX idx_users_username_lower ON users(LOWER(username));
+REINDEX INDEX idx_users_username_lower;
+
+INSERT INTO schema_version (version_number, comment) VALUES (442, ' Align username handling of Keycloak and legacy login #7907 ');
+
+-- 2022-02-02 Refactor CoreAdo to include archiving #7246
+
+UPDATE contact set archived = false;
+UPDATE contact_history set archived = false;
+UPDATE eventparticipant set archived = false;
+UPDATE eventparticipant_history set archived = false;
+ALTER TABLE contact ALTER COLUMN archived SET NOT NULL;
+ALTER TABLE contact ALTER COLUMN archived SET DEFAULT false;
+ALTER TABLE contact_history ALTER COLUMN archived SET NOT NULL;
+ALTER TABLE contact_history ALTER COLUMN archived SET DEFAULT false;
+ALTER TABLE eventparticipant ALTER COLUMN archived SET NOT NULL;
+ALTER TABLE eventparticipant ALTER COLUMN archived SET DEFAULT false;
+ALTER TABLE eventparticipant_history ALTER COLUMN archived SET NOT NULL;
+ALTER TABLE eventparticipant_history ALTER COLUMN archived SET DEFAULT false;
+
+INSERT INTO schema_version (version_number, comment) VALUES (443, 'Refactor CoreAdo to include archiving #7246');
+
+-- 2022-02-11 Map variant specific Nucleic acid detection methods #5285
+ALTER TABLE testreport ADD COLUMN testpcrtestspecification varchar(255);
+ALTER TABLE testreport_history ADD COLUMN testpcrtestspecification varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (444, 'Map variant specific Nucleic acid detection methods #5285');
+
+-- 2022-02-02 Move health conditions from clinical course to the case #6879
+
+ALTER TABLE cases ADD COLUMN healthconditions_id bigint;
+ALTER TABLE cases_history ADD COLUMN healthconditions_id bigint;
+ALTER TABLE cases ADD CONSTRAINT fk_cases_healthconditions_id FOREIGN KEY (healthconditions_id) REFERENCES healthconditions (id);
+
+UPDATE cases c SET healthconditions_id = (SELECT cc.healthconditions_id from clinicalcourse cc where cc.id = c.clinicalcourse_id);
+
+ALTER TABLE clinicalcourse DROP CONSTRAINT fk_clinicalcourse_healthconditions_id;
+ALTER TABLE clinicalcourse DROP COLUMN healthconditions_id;
+
+INSERT INTO schema_version (version_number, comment) VALUES (445, 'Move health conditions from clinical course to the case #6879');
+
+-- 2022-01-31 CoreAdo: Introduce "end of processing date" #7247
+ALTER TABLE cases ADD COLUMN endofprocessingdate timestamp without time zone;
+ALTER TABLE cases ADD COLUMN archiveundonereason character varying(512);
+
+ALTER TABLE cases_history ADD COLUMN endofprocessingdate timestamp without time zone;
+ALTER TABLE cases_history ADD COLUMN archiveundonereason character varying(512);
+
+ALTER TABLE contact ADD COLUMN endofprocessingdate timestamp without time zone;
+ALTER TABLE contact ADD COLUMN archiveundonereason character varying(512);
+
+ALTER TABLE contact_history ADD COLUMN endofprocessingdate timestamp without time zone;
+ALTER TABLE contact_history ADD COLUMN archiveundonereason character varying(512);
+
+ALTER TABLE events ADD COLUMN endofprocessingdate timestamp without time zone;
+ALTER TABLE events ADD COLUMN archiveundonereason character varying(512);
+
+ALTER TABLE events_history ADD COLUMN endofprocessingdate timestamp without time zone;
+ALTER TABLE events_history ADD COLUMN archiveundonereason character varying(512);
+
+ALTER TABLE eventparticipant ADD COLUMN endofprocessingdate timestamp without time zone;
+ALTER TABLE eventparticipant ADD COLUMN archiveundonereason character varying(512);
+
+ALTER TABLE eventparticipant_history ADD COLUMN endofprocessingdate timestamp without time zone;
+ALTER TABLE eventparticipant_history ADD COLUMN archiveundonereason character varying(512);
+
+ALTER TABLE immunization ADD COLUMN endofprocessingdate timestamp without time zone;
+ALTER TABLE immunization ADD COLUMN archiveundonereason character varying(512);
+
+ALTER TABLE immunization_history ADD COLUMN endofprocessingdate timestamp without time zone;
+ALTER TABLE immunization_history ADD COLUMN archiveundonereason character varying(512);
+
+ALTER TABLE travelentry ADD COLUMN endofprocessingdate timestamp without time zone;
+ALTER TABLE travelentry ADD COLUMN archiveundonereason character varying(512);
+
+ALTER TABLE travelentry_history ADD COLUMN endofprocessingdate timestamp without time zone;
+ALTER TABLE travelentry_history ADD COLUMN archiveundonereason character varying(512);
+
+ALTER TABLE campaigns ADD COLUMN endofprocessingdate timestamp without time zone;
+ALTER TABLE campaigns ADD COLUMN archiveundonereason character varying(512);
+
+ALTER TABLE campaigns_history ADD COLUMN endofprocessingdate timestamp without time zone;
+ALTER TABLE campaigns_history ADD COLUMN archiveundonereason character varying(512);
+
+INSERT INTO schema_version (version_number, comment) VALUES (446, 'CoreAdo: Introduce "end of processing date" #7247');
+
+-- 2022-03-04 Configuration for automatic archiving #7775
+ALTER TABLE featureconfiguration ADD COLUMN entitytype character varying(255);
+ALTER TABLE featureconfiguration_history ADD COLUMN entitytype character varying(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (447, 'Configuration for automatic archiving #7775');
+
+-- 2022-03-10 change by user #7323
+ALTER TABLE action ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE action_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE activityascase ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE activityascase_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE additionaltest ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE additionaltest_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE aggregatereport ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE aggregatereport_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE areas ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE areas_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE campaigndiagramdefinition ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE campaigndiagramdefinition_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE campaignformdata ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE campaignformdata_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE campaignformmeta ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE campaignformmeta_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE campaigns ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE campaigns_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE cases ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE cases_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE clinicalcourse ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE clinicalcourse_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE clinicalvisit ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE clinicalvisit_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE community ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE community_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE contact ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE contact_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE continent ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE continent_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE country ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE country_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE customizableenumvalue ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE customizableenumvalue_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE deletionconfiguration ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE deletionconfiguration_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE diseaseconfiguration ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE diseaseconfiguration_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE district ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE district_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE documents ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE documents_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE epidata ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE epidata_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE eventgroups ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE eventgroups_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE eventparticipant ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE eventparticipant_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE events ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE events_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE exportconfiguration ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE exportconfiguration_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE exposures ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE exposures_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE externalshareinfo ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE externalshareinfo_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE facility ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE facility_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE featureconfiguration ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE featureconfiguration_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE healthconditions ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE healthconditions_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE hospitalization ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE hospitalization_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE immunization ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE immunization_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE labmessage ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE labmessage_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE location ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE location_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE manualmessagelog ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE manualmessagelog_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE maternalhistory ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE maternalhistory_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE outbreak ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE outbreak_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE pathogentest ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE pathogentest_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE person ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE person_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE personcontactdetail ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE personcontactdetail_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE pointofentry ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE pointofentry_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE populationdata ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE populationdata_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE porthealthinfo ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE porthealthinfo_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE prescription ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE prescription_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE previoushospitalization ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE previoushospitalization_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE region ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE region_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE samples ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE samples_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE sharerequestinfo ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE sharerequestinfo_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE sormastosormasorigininfo ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE sormastosormasorigininfo_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE sormastosormasshareinfo ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE sormastosormasshareinfo_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE sormastosormassharerequest ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE sormastosormassharerequest_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE subcontinent ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE subcontinent_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE surveillancereports ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE surveillancereports_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE symptoms ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE symptoms_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE systemevent ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE task ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE task_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE testreport ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE testreport_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE therapy ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE therapy_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE travelentry ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE travelentry_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE treatment ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE treatment_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE userrolesconfig ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE userrolesconfig_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE users ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE users_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE vaccination ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE vaccination_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE vaccinationinfo_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE visit ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE visit_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE weeklyreport ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE weeklyreport_history ADD COLUMN change_user_id BIGINT;
+
+ALTER TABLE weeklyreportentry ADD COLUMN change_user_id BIGINT,
+                            ADD CONSTRAINT fk_change_user_id
+                            FOREIGN KEY (change_user_id)
+                            REFERENCES users (id);
+
+ALTER TABLE weeklyreportentry_history ADD COLUMN change_user_id BIGINT;
+
+INSERT INTO schema_version (version_number, comment) VALUES (448, 'Changed by user #7323');
+
+-- 2022-03-17 Index on externalshareinfo (caze_id, creationDate) #7656
+DROP INDEX IF EXISTS externalshareinfo_caze_id_creationdate_idx;
+CREATE INDEX externalshareinfo_caze_id_creationdate_idx ON externalshareinfo (caze_id, creationDate DESC);
+
+INSERT INTO schema_version (version_number, comment) VALUES (449, 'Index on externalshareinfo (caze_id, creationDate) #7656');
+
+-- 2022-03-08 Add dateOfArrival to travel entries #7845
+ALTER TABLE travelentry ADD COLUMN dateofarrival timestamp without time zone;
+ALTER TABLE travelentry_history ADD COLUMN dateofarrival timestamp without time zone;
+
+UPDATE travelentry SET dateofarrival = TO_TIMESTAMP(dea_entry->>'value', 'DD.MM.YYYY')
+    FROM travelentry t
+    CROSS JOIN LATERAL json_array_elements(t.deacontent) dea_entry
+    WHERE dea_entry->>'caption' ilike 'eingangsdatum' and t.id = travelentry.id;
+
+UPDATE travelentry SET dateofarrival = creationdate where dateofarrival is null;
+
+ALTER TABLE travelentry ALTER COLUMN dateofarrival SET NOT NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (450, 'Add dateOfArrival to travel entries #7845');
+
+-- 2022-03-14 - #7774 Automatic & manual archiving for all core entities
+UPDATE contact ct
+SET archived = TRUE
+FROM cases cs
+WHERE ct.caze_id = cs.id AND cs.archived IS TRUE AND ct.archived IS FALSE;
+
+UPDATE eventparticipant ep
+SET archived = TRUE
+FROM events ev
+WHERE ep.event_id = ev.id AND ev.archived IS TRUE AND ep.archived IS FALSE;
+
+INSERT INTO schema_version (version_number, comment) VALUES (451, 'Automatic & manual archiving for all core entities #7774 ');
+
+-- 2022-03-16 Delete history data on permanent deletion of entities #7713
+
+CREATE OR REPLACE FUNCTION delete_history_trigger()
+    RETURNS trigger AS
+$$
+BEGIN
+    EXECUTE format('DELETE FROM %s WHERE %s = %s', TG_ARGV[0], TG_ARGV[1], OLD.ID);
+    RETURN NEW;
+END;
+$$
+    language 'plpgsql';
+
+DROP TRIGGER IF EXISTS versioning_trigger ON deletionconfiguration;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON deletionconfiguration
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'deletionconfiguration_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON deletionconfiguration;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON deletionconfiguration
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('deletionconfiguration_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON contact;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON contact
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'contact_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON contact;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON contact
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('contact_history', 'id');
+DROP TRIGGER IF EXISTS delete_history_trigger_contacts_visits ON contact;
+CREATE TRIGGER delete_history_trigger_contacts_visits
+    AFTER DELETE ON contact
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('contacts_visits_history', 'contact_id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON events;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON events
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'events_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON events;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON events
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('events_history', 'id');
+DROP TRIGGER IF EXISTS delete_history_trigger_events_eventgroups ON events;
+CREATE TRIGGER delete_history_trigger_events_eventgroups
+    AFTER DELETE ON events
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('events_eventgroups_history', 'event_id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON populationdata;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON populationdata
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'populationdata_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON populationdata;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON populationdata
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('populationdata_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON users;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON users
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'users_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON users;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON users
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('users_history', 'id');
+DROP TRIGGER IF EXISTS delete_history_trigger_task_observer ON users;
+CREATE TRIGGER delete_history_trigger_task_observer
+    AFTER DELETE ON users
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('task_observer_history', 'user_id');
+DROP TRIGGER IF EXISTS delete_history_trigger_users_userroles ON users;
+CREATE TRIGGER delete_history_trigger_users_userroles
+    AFTER DELETE ON users
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('users_userroles_history', 'user_id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON customizableenumvalue;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON customizableenumvalue
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'customizableenumvalue_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON customizableenumvalue;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON customizableenumvalue
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('customizableenumvalue_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON eventparticipant;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON eventparticipant
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'eventparticipant_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON eventparticipant;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON eventparticipant
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('eventparticipant_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON clinicalvisit;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON clinicalvisit
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'clinicalvisit_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON clinicalvisit;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON clinicalvisit
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('clinicalvisit_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON clinicalcourse;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON clinicalcourse
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'clinicalcourse_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON clinicalcourse;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON clinicalcourse
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('clinicalcourse_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON immunization;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON immunization
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'immunization_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON immunization;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON immunization
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('immunization_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON labmessage;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON labmessage
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'labmessage_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON labmessage;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON labmessage
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('labmessage_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON outbreak;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON outbreak
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'outbreak_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON outbreak;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON outbreak
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('outbreak_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON porthealthinfo;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON porthealthinfo
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'porthealthinfo_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON porthealthinfo;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON porthealthinfo
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('porthealthinfo_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON prescription;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON prescription
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'prescription_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON prescription;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON prescription
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('prescription_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON additionaltest;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON additionaltest
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'additionaltest_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON additionaltest;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON additionaltest
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('additionaltest_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON sharerequestinfo;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON sharerequestinfo
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'sharerequestinfo_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON sharerequestinfo;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON sharerequestinfo
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('sharerequestinfo_history', 'id');
+DROP TRIGGER IF EXISTS delete_history_trigger_sharerequestinfo_shareinfo ON sharerequestinfo;
+CREATE TRIGGER delete_history_trigger_sharerequestinfo_shareinfo
+    AFTER DELETE ON sharerequestinfo
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('sharerequestinfo_shareinfo_history', 'sharerequestinfo_id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON sormastosormassharerequest;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON sormastosormassharerequest
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'sormastosormassharerequest_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON sormastosormassharerequest;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON sormastosormassharerequest
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('sormastosormassharerequest_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON aggregatereport;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON aggregatereport
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'aggregatereport_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON aggregatereport;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON aggregatereport
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('aggregatereport_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON featureconfiguration;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON featureconfiguration
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'featureconfiguration_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON featureconfiguration;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON featureconfiguration
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('featureconfiguration_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON pointofentry;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON pointofentry
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'pointofentry_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON pointofentry;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON pointofentry
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('pointofentry_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON task;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON task
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'task_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON task;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON task
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('task_history', 'id');
+DROP TRIGGER IF EXISTS delete_history_trigger_task_observer ON task;
+CREATE TRIGGER delete_history_trigger_task_observer
+    AFTER DELETE ON task
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('task_observer_history', 'task_id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON testreport;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON testreport
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'testreport_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON testreport;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON testreport
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('testreport_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON therapy;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON therapy
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'therapy_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON therapy;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON therapy
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('therapy_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON travelentry;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON travelentry
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'travelentry_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON travelentry;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON travelentry
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('travelentry_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON treatment;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON treatment
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'treatment_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON treatment;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON treatment
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('treatment_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON areas;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON areas
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'areas_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON areas;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON areas
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('areas_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON userrolesconfig;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON userrolesconfig
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'userrolesconfig_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON userrolesconfig;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON userrolesconfig
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('userrolesconfig_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON vaccination;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON vaccination
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'vaccination_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON vaccination;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON vaccination
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('vaccination_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON weeklyreport;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON weeklyreport
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'weeklyreport_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON weeklyreport;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON weeklyreport
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('weeklyreport_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON healthconditions;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON healthconditions
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'healthconditions_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON healthconditions;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON healthconditions
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('healthconditions_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON weeklyreportentry;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON weeklyreportentry
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'weeklyreportentry_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON weeklyreportentry;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON weeklyreportentry
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('weeklyreportentry_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON campaignformdata;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON campaignformdata
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'campaignformdata_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON campaignformdata;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON campaignformdata
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('campaignformdata_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON symptoms;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON symptoms
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'symptoms_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON symptoms;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON symptoms
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('symptoms_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON campaignformmeta;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON campaignformmeta
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'campaignformmeta_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON campaignformmeta;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON campaignformmeta
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('campaignformmeta_history', 'id');
+DROP TRIGGER IF EXISTS delete_history_trigger_campaign_campaignformmeta ON campaignformmeta;
+CREATE TRIGGER delete_history_trigger_campaign_campaignformmeta
+    AFTER DELETE ON campaignformmeta
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('campaign_campaignformmeta_history', 'campaignformmeta_id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON campaigns;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON campaigns
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'campaigns_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON campaigns;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON campaigns
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('campaigns_history', 'id');
+DROP TRIGGER IF EXISTS delete_history_trigger_campaign_campaignformmeta ON campaigns;
+CREATE TRIGGER delete_history_trigger_campaign_campaignformmeta
+    AFTER DELETE ON campaigns
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('campaign_campaignformmeta_history', 'campaign_id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON visit;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON visit
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'visit_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON visit;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON visit
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('visit_history', 'id');
+DROP TRIGGER IF EXISTS delete_history_trigger_contacts_visits ON visit;
+CREATE TRIGGER delete_history_trigger_contacts_visits
+    AFTER DELETE ON visit
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('contacts_visits_history', 'visit_id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON documents;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON documents
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'documents_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON documents;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON documents
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('documents_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON manualmessagelog;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON manualmessagelog
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'manualmessagelog_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON manualmessagelog;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON manualmessagelog
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('manualmessagelog_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON action;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON action
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'action_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON action;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON action
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('action_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON exportconfiguration;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON exportconfiguration
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'exportconfiguration_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON exportconfiguration;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON exportconfiguration
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('exportconfiguration_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON district;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON district
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'district_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON district;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON district
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('district_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON hospitalization;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON hospitalization
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'hospitalization_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON hospitalization;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON hospitalization
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('hospitalization_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON surveillancereports;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON surveillancereports
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'surveillancereports_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON surveillancereports;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON surveillancereports
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('surveillancereports_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON activityascase;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON activityascase
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'activityascase_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON activityascase;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON activityascase
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('activityascase_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON epidata;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON epidata
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'epidata_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON epidata;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON epidata
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('epidata_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON sormastosormasorigininfo;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON sormastosormasorigininfo
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'sormastosormasorigininfo_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON sormastosormasorigininfo;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON sormastosormasorigininfo
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('sormastosormasorigininfo_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON campaigndiagramdefinition;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON campaigndiagramdefinition
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'campaigndiagramdefinition_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON campaigndiagramdefinition;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON campaigndiagramdefinition
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('campaigndiagramdefinition_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON samples;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON samples
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'samples_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON samples;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON samples
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('samples_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON sormastosormasshareinfo;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON sormastosormasshareinfo
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'sormastosormasshareinfo_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON sormastosormasshareinfo;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON sormastosormasshareinfo
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('sormastosormasshareinfo_history', 'id');
+DROP TRIGGER IF EXISTS delete_history_trigger_sharerequestinfo_shareinfo ON sormastosormasshareinfo;
+CREATE TRIGGER delete_history_trigger_sharerequestinfo_shareinfo
+    AFTER DELETE ON sormastosormasshareinfo
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('sharerequestinfo_shareinfo_history', 'shareinfo_id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON diseaseconfiguration;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON diseaseconfiguration
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'diseaseconfiguration_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON diseaseconfiguration;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON diseaseconfiguration
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('diseaseconfiguration_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON externalshareinfo;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON externalshareinfo
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'externalshareinfo_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON externalshareinfo;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON externalshareinfo
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('externalshareinfo_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON personcontactdetail;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON personcontactdetail
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'personcontactdetail_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON personcontactdetail;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON personcontactdetail
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('personcontactdetail_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON previoushospitalization;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON previoushospitalization
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'previoushospitalization_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON previoushospitalization;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON previoushospitalization
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('previoushospitalization_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON continent;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON continent
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'continent_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON continent;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON continent
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('continent_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON country;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON country
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'country_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON country;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON country
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('country_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON exposures;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON exposures
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'exposures_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON exposures;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON exposures
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('exposures_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON region;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON region
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'region_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON region;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON region
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('region_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON subcontinent;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON subcontinent
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'subcontinent_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON subcontinent;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON subcontinent
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('subcontinent_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON cases;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON cases
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'cases_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON cases;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON cases
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('cases_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON community;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON community
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'community_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON community;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON community
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('community_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON eventgroups;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON eventgroups
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'eventgroups_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON eventgroups;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON eventgroups
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('eventgroups_history', 'id');
+DROP TRIGGER IF EXISTS delete_history_trigger_events_eventgroups ON eventgroups;
+CREATE TRIGGER delete_history_trigger_events_eventgroups
+    AFTER DELETE ON eventgroups
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('events_eventgroups_history', 'eventgroup_id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON facility;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON facility
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'facility_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON facility;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON facility
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('facility_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON location;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON location
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'location_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON location;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON location
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('location_history', 'id');
+DROP TRIGGER IF EXISTS delete_history_trigger_person_locations ON location;
+CREATE TRIGGER delete_history_trigger_person_locations
+    AFTER DELETE ON location
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('person_locations_history', 'location_id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON pathogentest;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON pathogentest
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'pathogentest_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON pathogentest;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON pathogentest
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('pathogentest_history', 'id');
+
+DROP TRIGGER IF EXISTS versioning_trigger ON person;
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON person
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'person_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON person;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON person
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('person_history', 'id');
+DROP TRIGGER IF EXISTS delete_history_trigger_person_locations ON person;
+CREATE TRIGGER delete_history_trigger_person_locations
+    AFTER DELETE ON person
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('person_locations_history', 'person_id');
+
+INSERT INTO schema_version (version_number, comment) VALUES (452, 'Delete history data on permanent deletion of entities #7713');
+
+-- 2022-03-29 Persisting systemevent on latest develop fails with SQL error #8585
+
+DROP TRIGGER IF EXISTS versioning_trigger ON systemevent;
+DROP TRIGGER IF EXISTS delete_history_trigger ON systemevent;
+
+INSERT INTO schema_version (version_number, comment) VALUES (453, 'Persisting systemevent on latest develop fails with SQL error #8585');
+
+-- 2022-04-08 Initial UI support for physician's reports #8276
+
+ALTER TABLE labmessage ADD COLUMN type varchar(255);
+ALTER TABLE labmessage_history ADD COLUMN type varchar(255);
+
+UPDATE labmessage SET type = CASE
+    WHEN labmessagedetails LIKE '%profile value="https://demis.rki.de/fhir/StructureDefinition/NotificationDiseaseCVDD"%' THEN 'PHYSICIANS_REPORT'
+    ELSE 'LAB_MESSAGE'
+    END;
+
+INSERT INTO schema_version (version_number, comment) VALUES (454, 'Initial UI support for physicians reports #8276');
+
+-- 2022-04-07 Refactor unique constraint on deletionconfiguration table #8295
+
+ALTER TABLE deletionconfiguration DROP CONSTRAINT IF EXISTS deletionconfiguration_entity_key;
+ALTER TABLE deletionconfiguration ADD CONSTRAINT unq_deletionconfiguration_entity_reference UNIQUE (entitytype, deletionreference);
+
+INSERT INTO schema_version (version_number, comment) VALUES (455, 'Refactor unique constraint on deletionconfiguration table #8295');
+
+-- 2022-04-08 Drop deleted column from lab messages and remove deleted lab messages #8295
+
+DELETE FROM testreport USING labmessage WHERE testreport.labmessage_id = labmessage.id AND labmessage.deleted IS TRUE;
+DELETE FROM labmessage WHERE deleted IS TRUE;
+ALTER TABLE labmessage DROP COLUMN deleted;
+ALTER TABLE labmessage_history DROP COLUMN deleted;
+
+INSERT INTO schema_version (version_number, comment) VALUES (456, 'Drop deleted column from lab messages and remove deleted lab messages #8295');
+
+-- 2022-04-11 Remove DELETE_PERMANENT feature type #8295
+
+DELETE FROM featureconfiguration WHERE featuretype = 'DELETE_PERMANENT';
+
+INSERT INTO schema_version (version_number, comment) VALUES (457, 'Remove DELETE_PERMANENT feature type #8295');
+
+-- 2022-04-11 Investigate and add indexes #8778
+
+CREATE INDEX IF NOT EXISTS idx_cases_responsibleregion_id ON cases (responsibleregion_id);
+CREATE INDEX IF NOT EXISTS idx_cases_responsibledistrict_id ON cases (responsibledistrict_id);
+
+CREATE INDEX IF NOT EXISTS idx_cases_archived ON cases (archived);
+CREATE INDEX IF NOT EXISTS idx_contact_archived ON contact (archived);
+CREATE INDEX IF NOT EXISTS idx_events_archived ON events (archived);
+CREATE INDEX IF NOT EXISTS idx_eventpartivipant_archived ON eventparticipant (archived);
+CREATE INDEX IF NOT EXISTS idx_immunization_archived ON immunization (archived);
+CREATE INDEX IF NOT EXISTS idx_travelentry_archived ON travelentry (archived);
+CREATE INDEX IF NOT EXISTS idx_campaigns_archived ON campaigns (archived);
+CREATE INDEX IF NOT EXISTS idx_task_archived ON task (archived);
+
+INSERT INTO schema_version (version_number, comment) VALUES (458, 'Investigate and add indexes #8778');
+
+-- 2022-05-03 Permanent Deletion | Immunization | healthconditions_id violates not-null constraint error #8983
+DROP TABLE IF EXISTS tmp_healthconditions;
+DROP TABLE IF EXISTS added_healthconditions;
+CREATE TEMP TABLE tmp_healthconditions
+(
+    LIKE healthconditions
+);
+insert into tmp_healthconditions
+select *
+from healthconditions hc
+where hc.id in (select distinct v.healthconditions_id
+                from vaccination v
+                         join (select vc.healthconditions_id
+                               from vaccination vc
+                               group by healthconditions_id
+                               HAVING count(*) > 1) b
+                              on v.healthconditions_id = b.healthconditions_id);
+
+CREATE TEMP TABLE added_healthconditions(LIKE healthconditions);
+
+CREATE OR REPLACE FUNCTION clone_healthconditions(healthconditions_id bigint)
+    RETURNS bigint
+    LANGUAGE plpgsql
+    SECURITY DEFINER AS
+$BODY$
+DECLARE
+    new_id bigint;
+BEGIN
+    INSERT INTO added_healthconditions SELECT * FROM healthconditions WHERE id = healthconditions_id;
+    UPDATE added_healthconditions
+    SET id           = nextval('entity_seq'),
+        uuid         = generate_base32_uuid(),
+        sys_period   = tstzrange(now(), null)
+    WHERE id = healthconditions_id
+    RETURNING id INTO new_id;
+    INSERT INTO healthconditions SELECT * FROM added_healthconditions WHERE id = new_id;
+    RETURN new_id;
+END;
+$BODY$;
+ALTER FUNCTION clone_healthconditions(bigint) OWNER TO sormas_user;
+
+CREATE OR REPLACE FUNCTION create_additional_healthconditions()
+    RETURNS bigint
+    LANGUAGE plpgsql
+    SECURITY DEFINER AS
+
+$BODY$
+DECLARE
+    new_id bigint;
+BEGIN
+    INSERT INTO healthconditions (id, uuid, changedate, creationdate)
+    VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now())
+    RETURNING id INTO new_id;
+    RETURN new_id;
+END;
+$BODY$;
+
+ALTER FUNCTION create_additional_healthconditions() OWNER TO sormas_user;
+DO
+$$
+    DECLARE
+        rec_health         RECORD;
+        rec_vaccination    RECORD;
+        count_vaccinations integer;
+        new_healthcondition_id bigint;
+    BEGIN
+        FOR rec_health IN SELECT * FROM tmp_healthconditions
+            LOOP
+                BEGIN
+                    count_vaccinations = (SELECT count(*) FROM vaccination WHERE healthconditions_id = rec_health.id);
+                    FOR rec_vaccination IN (SELECT * FROM vaccination WHERE healthconditions_id = rec_health.id)
+                        LOOP
+                            if count_vaccinations > 1 then
+                                new_healthcondition_id = clone_healthconditions(rec_health.id);
+                                update vaccination set healthconditions_id = new_healthcondition_id where id = rec_vaccination.id;
+                            end if;
+                            count_vaccinations = count_vaccinations - 1;
+                        end loop;
+                end;
+            END LOOP;
+    END;
+$$ LANGUAGE plpgsql;
+
+DROP TABLE IF EXISTS tmp_healthconditions;
+DROP TABLE IF EXISTS added_healthconditions;
+
+DROP FUNCTION IF EXISTS clone_healthconditions(bigint);
+DROP FUNCTION IF EXISTS create_additional_healthconditions();
+
+INSERT INTO schema_version (version_number, comment) VALUES (459, 'Permanent Deletion | Immunization | healthconditions_id violates not-null constraint error #8983');
+
+-- 2022-05-10 Add reason for deletion to confirmation dialogue - #8162
+ALTER TABLE cases ADD COLUMN  deletionreason varchar(255);
+ALTER TABLE cases ADD COLUMN  otherdeletionreason text;
+
+ALTER TABLE cases_history ADD COLUMN  deletionreason varchar(255);
+ALTER TABLE cases_history ADD COLUMN  otherdeletionreason text;
+
+ALTER TABLE contact ADD COLUMN  deletionreason varchar(255);
+ALTER TABLE contact ADD COLUMN  otherdeletionreason text;
+
+ALTER TABLE contact_history ADD COLUMN  deletionreason varchar(255);
+ALTER TABLE contact_history ADD COLUMN  otherdeletionreason text;
+
+ALTER TABLE events ADD COLUMN  deletionreason varchar(255);
+ALTER TABLE events ADD COLUMN  otherdeletionreason text;
+
+ALTER TABLE events_history ADD COLUMN  deletionreason varchar(255);
+ALTER TABLE events_history ADD COLUMN  otherdeletionreason text;
+
+ALTER TABLE eventparticipant ADD COLUMN  deletionreason varchar(255);
+ALTER TABLE eventparticipant ADD COLUMN  otherdeletionreason text;
+
+ALTER TABLE eventparticipant_history ADD COLUMN  deletionreason varchar(255);
+ALTER TABLE eventparticipant_history ADD COLUMN  otherdeletionreason text;
+
+ALTER TABLE immunization ADD COLUMN  deletionreason varchar(255);
+ALTER TABLE immunization ADD COLUMN  otherdeletionreason text;
+
+ALTER TABLE immunization_history ADD COLUMN  deletionreason varchar(255);
+ALTER TABLE immunization_history ADD COLUMN  otherdeletionreason text;
+
+ALTER TABLE travelentry ADD COLUMN  deletionreason varchar(255);
+ALTER TABLE travelentry ADD COLUMN  otherdeletionreason text;
+
+ALTER TABLE travelentry_history ADD COLUMN  deletionreason varchar(255);
+ALTER TABLE travelentry_history ADD COLUMN  otherdeletionreason text;
+
+ALTER TABLE campaigns ADD COLUMN  deletionreason varchar(255);
+ALTER TABLE campaigns ADD COLUMN  otherdeletionreason text;
+
+ALTER TABLE campaigns_history ADD COLUMN  deletionreason varchar(255);
+ALTER TABLE campaigns_history ADD COLUMN  otherdeletionreason text;
+
+ALTER TABLE samples ADD COLUMN  deletionreason varchar(255);
+ALTER TABLE samples ADD COLUMN  otherdeletionreason text;
+
+ALTER TABLE samples_history ADD COLUMN  deletionreason varchar(255);
+ALTER TABLE samples_history ADD COLUMN  otherdeletionreason text;
+
+ALTER TABLE pathogentest ADD COLUMN  deletionreason varchar(255);
+ALTER TABLE pathogentest ADD COLUMN  otherdeletionreason text;
+
+ALTER TABLE pathogentest_history ADD COLUMN  deletionreason varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN  otherdeletionreason text;
+
+INSERT INTO schema_version (version_number, comment) VALUES (460, 'Add reason for deletion to confirmation dialogue - #8162');
+
+
+-- 2022-03-18 Replace hard-coded user roles with fully configurable user roles #4461
+ALTER TABLE userrolesconfig DROP COLUMN userrole;
+ALTER TABLE userrolesconfig_history DROP COLUMN userrole;
+ALTER TABLE userrolesconfig RENAME TO userroles;
+ALTER TABLE userrolesconfig_history RENAME TO userroles_history;
+DROP TRIGGER IF EXISTS versioning_trigger ON userroles;
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE ON userroles
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'userroles_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON userroles;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON userroles
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('userroles_history', 'id');
+
+TRUNCATE TABLE userroles CASCADE;
+TRUNCATE TABLE userroles_history CASCADE;
+
+ALTER TABLE userroles ADD COLUMN caption varchar(512);
+ALTER TABLE userroles_history ADD COLUMN caption varchar(512);
+ALTER TABLE userroles ADD COLUMN description varchar(4096);
+ALTER TABLE userroles_history ADD COLUMN description varchar(4096);
+ALTER TABLE userroles ADD COLUMN hasoptionalhealthfacility boolean default false;
+ALTER TABLE userroles_history ADD COLUMN hasoptionalhealthfacility boolean default false;
+ALTER TABLE userroles ADD COLUMN hasassociateddistrictuser boolean default false;
+ALTER TABLE userroles_history ADD COLUMN hasassociateddistrictuser boolean default false;
+ALTER TABLE userroles ADD COLUMN porthealthuser boolean default false;
+ALTER TABLE userroles_history ADD COLUMN porthealthuser boolean default false;
+ALTER TABLE userroles ADD COLUMN jurisdictionlevel varchar(255);
+ALTER TABLE userroles_history ADD COLUMN jurisdictionlevel varchar(255);
+
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'ADMIN');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'NATIONAL_USER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'SURVEILLANCE_SUPERVISOR');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'ADMIN_SUPERVISOR');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'SURVEILLANCE_OFFICER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'HOSPITAL_INFORMANT');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'COMMUNITY_OFFICER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'COMMUNITY_INFORMANT');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'CASE_SUPERVISOR');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'CASE_OFFICER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'CONTACT_SUPERVISOR');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'CONTACT_OFFICER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'EVENT_OFFICER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'LAB_USER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'EXTERNAL_LAB_USER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'NATIONAL_OBSERVER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'STATE_OBSERVER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'DISTRICT_OBSERVER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'NATIONAL_CLINICIAN');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'POE_INFORMANT');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'POE_SUPERVISOR');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'POE_NATIONAL_USER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'IMPORT_USER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'REST_EXTERNAL_VISITS_USER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'SORMAS_TO_SORMAS_CLIENT');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'BAG_USER');
+
+ALTER TABLE users_userroles ADD COLUMN userrole_id bigint;
+ALTER TABLE ONLY users_userroles RENAME CONSTRAINT fk_userroles_user_id TO fk_users_userroles_user_id;
+ALTER TABLE ONLY users_userroles ADD CONSTRAINT fk_users_userroles_userrole_id FOREIGN KEY (userrole_id) REFERENCES userroles(id);
+
+DELETE FROM users_userroles WHERE userrole = 'REST_USER';
+UPDATE users_userroles SET userrole_id = (SELECT userroles.id FROM userroles WHERE userroles.caption = users_userroles.userrole);
+
+ALTER TABLE users_userroles DROP COLUMN userrole;
+ALTER TABLE users_userroles ALTER COLUMN userrole_id SET NOT NULL;
+ALTER TABLE users_userroles_history ADD COLUMN userrole_id bigint;
+ALTER TABLE users_userroles_history DROP COLUMN userrole;
+DROP TRIGGER IF EXISTS delete_history_trigger_users_userroles ON userroles;
+CREATE TRIGGER delete_history_trigger_users_userroles
+    AFTER DELETE ON userroles
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('users_userroles_history', 'userrole_id');
+
+CREATE TABLE userroles_emailnotificationtypes (
+    userrole_id bigint NOT NULL,
+    notificationtype character varying(255) NOT NULL,
+    sys_period tstzrange not null
+);
+ALTER TABLE userroles_emailnotificationtypes ADD CONSTRAINT fk_userrole_id FOREIGN KEY (userrole_id) REFERENCES userroles (id);
+ALTER TABLE userroles_emailnotificationtypes OWNER TO sormas_user;
+
+CREATE TABLE userroles_emailnotificationtypes_history (LIKE userroles_emailnotificationtypes);
+ALTER TABLE userroles_emailnotificationtypes_history OWNER TO sormas_user;
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON userroles_emailnotificationtypes
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'userroles_emailnotificationtypes_history', true);
+CREATE TRIGGER delete_history_trigger_userroles_emailnotificationtypes
+    AFTER DELETE ON userroles
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('userroles_emailnotificationtypes_history', 'userrole_id');
+
+CREATE TABLE userroles_smsnotificationtypes (
+    userrole_id bigint NOT NULL,
+    notificationtype character varying(255) NOT NULL,
+    sys_period tstzrange not null
+);
+ALTER TABLE userroles_smsnotificationtypes ADD CONSTRAINT fk_userrole_id FOREIGN KEY (userrole_id) REFERENCES userroles (id);
+ALTER TABLE userroles_smsnotificationtypes OWNER TO sormas_user;
+
+CREATE TABLE userroles_smsnotificationtypes_history (LIKE userroles_smsnotificationtypes);
+ALTER TABLE userroles_smsnotificationtypes_history OWNER TO sormas_user;
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON userroles_smsnotificationtypes
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'userroles_smsnotificationtypes_history', true);
+CREATE TRIGGER delete_history_trigger_userroles_smsnotificationtypes
+    AFTER DELETE ON userroles
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('userroles_smsnotificationtypes_history', 'userrole_id');
+
+INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (461, 'Replace hard-coded user roles with fully configurable user roles #4461', true);
+
+-- 2022-05-30 Add indices to improve person fetch #8946
+DROP INDEX IF EXISTS idx_cases_person_id;
+DROP INDEX IF EXISTS idx_eventparticipant_person_id;
+DROP INDEX IF EXISTS idx_contact_person_id;
+CREATE INDEX IF NOT EXISTS idx_person_changedate_uuid_id ON person USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_cases_person_id ON cases USING btree (person_id);
+CREATE INDEX IF NOT EXISTS idx_contact_person_id ON contact USING btree (person_id);
+CREATE INDEX IF NOT EXISTS idx_eventparticipant_person_id ON eventparticipant USING btree (person_id);
+CREATE INDEX IF NOT EXISTS idx_immunization_person_id ON immunization USING btree (person_id);
+CREATE INDEX IF NOT EXISTS idx_travelentry_person_id ON travelentry USING btree (person_id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (462, 'Add hash indices to improve person fetch #8946');
+
+-- 2022-05-17 Rename lab message to external message #8895
+ALTER TABLE labmessage RENAME TO externalmessage;
+ALTER TABLE externalmessage RENAME COLUMN labname to reportername;
+ALTER TABLE externalmessage RENAME COLUMN labcity to reportercity;
+ALTER TABLE externalmessage RENAME COLUMN labpostalcode to reporterpostalcode;
+ALTER TABLE externalmessage RENAME COLUMN labMessageDetails to externalmessagedetails;
+ALTER TABLE labmessage_history RENAME TO externalmessage_history;
+ALTER TABLE externalmessage_history RENAME COLUMN labname to reportername;
+ALTER TABLE externalmessage_history RENAME COLUMN labcity to reportercity;
+ALTER TABLE externalmessage_history RENAME COLUMN labpostalcode to reporterpostalcode;
+ALTER TABLE externalmessage_history RENAME COLUMN labMessageDetails to externalmessagedetails;
+DROP TRIGGER IF EXISTS versioning_trigger ON externalmessage;
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE OR DELETE ON externalmessage
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'externalmessage_history', true);
+
+UPDATE featureconfiguration SET featuretype = 'EXTERNAL_MESSAGES' WHERE featuretype = 'LAB_MESSAGES';
+UPDATE featureconfiguration SET featuretype = 'SORMAS_TO_SORMAS_SHARE_EXTERNAL_MESSAGES' WHERE featuretype = 'SORMAS_TO_SORMAS_SHARE_LAB_MESSAGES';
+
+UPDATE userroles_userrights SET userright = 'PERFORM_BULK_OPERATIONS_EXTERNAL_MESSAGES' WHERE userright = 'PERFORM_BULK_OPERATIONS_LAB_MESSAGES';
+UPDATE userroles_userrights SET userright = 'EXTERNAL_MESSAGE_VIEW' WHERE userright = 'LAB_MESSAGES';
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT userrole_id, 'EXTERNAL_MESSAGE_PROCESS' FROM userroles_userrights WHERE userright = 'EXTERNAL_MESSAGE_VIEW';
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT userrole_id, 'EXTERNAL_MESSAGE_DELETE' FROM userroles_userrights WHERE userright = 'EXTERNAL_MESSAGE_VIEW';
+
+UPDATE systemevent SET type = 'FETCH_EXTERNAL_MESSAGES' WHERE type = 'FETCH_LAB_MESSAGES';
+
+INSERT INTO schema_version (version_number, comment) VALUES (463, 'Rename lab message to external message #8895');
+
+-- 2022-05-30 Handle users without userroles #4461
+INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (464, 'Handle users without userroles #4461', true);
+
+-- 2022-06-02 Fixed triggers on externalmessage table #8895
+DROP TRIGGER IF EXISTS versioning_trigger ON externalmessage;
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE ON externalmessage
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'externalmessage_history', true);
+DROP TRIGGER IF EXISTS delete_history_trigger ON externalmessage;
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON externalmessage
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('externalmessage_history', 'id');
+
+INSERT INTO schema_version (version_number, comment) VALUES (465, 'Fixed triggers on externalmessage table #8895');
+
+
+ALTER TABLE externalmessage ADD COLUMN personpresentcondition integer;
+ALTER TABLE externalmessage_history ADD COLUMN personpresentcondition integer;
+
+INSERT INTO schema_version (version_number, comment) VALUES (466, 'Add present condition mapping - #6692');
+
+-- 2022-05-20 Addition of age categories to aggregate module (mSERS) [5] #8967
+ALTER TABLE diseaseconfiguration ADD COLUMN agegroups text;
+ALTER TABLE diseaseconfiguration_history ADD COLUMN agegroups text;
+ALTER TABLE aggregatereport ADD COLUMN agegroup varchar(255);
+ALTER TABLE aggregatereport_history ADD COLUMN agegroup varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (467, 'Addition of age categories to aggregate module (mSERS) [5] #8967');
+
+-- 2022-06-07 [DEMIS2SORMAS] Introduce processing for physician reports #8980
+ALTER TABLE externalmessage ADD COLUMN caze_id bigint;
+ALTER TABLE externalmessage ADD CONSTRAINT fk_externalmessage_caze_id FOREIGN KEY (caze_id) REFERENCES cases (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+ALTER TABLE externalmessage_history ADD COLUMN caze_id bigint;
+
+INSERT INTO schema_version (version_number, comment) VALUES (468, '[DEMIS2SORMAS] Introduce processing for physician reports #8980');
+
+-- 2022-06-13 lab organization ids #8949
+ALTER TABLE externalmessage ALTER COLUMN labexternalid TYPE VARCHAR(255)[] USING ARRAY[labexternalid];
+ALTER TABLE externalmessage_history ALTER COLUMN labexternalid TYPE VARCHAR(255)[] USING ARRAY[labexternalid];
+
+ALTER TABLE externalmessage RENAME COLUMN labexternalid TO reporterexternalids;
+ALTER TABLE externalmessage_history RENAME COLUMN labexternalid TO reporterexternalids;
+
+ALTER TABLE testreport ALTER COLUMN testlabexternalid TYPE VARCHAR(255)[] USING ARRAY[testlabexternalid];
+ALTER TABLE testreport_history ALTER COLUMN testlabexternalid TYPE VARCHAR(255)[] USING ARRAY[testlabexternalid];
+
+ALTER TABLE testreport RENAME COLUMN testlabexternalid TO testlabexternalids;
+ALTER TABLE testreport_history RENAME COLUMN testlabexternalid TO testlabexternalids;
+
+INSERT INTO schema_version (version_number, comment) VALUES (469, 'Compare the list of Organization Ids with facilities in SORMAS #8949');
+
+INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (470, 'Remove UserRight DASHBOARD_CAMPAIGNS_VIEW from COMMUNITY_INFORMANT #4461', true);
+
+-- 2022-06-14 Allow surveillance officer to create aggregate reports #9052
+INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+SELECT userrole_id, 'AGGREGATE_REPORT_EDIT', tstzrange(now(), null)
+FROM userroles_userrights uu
+WHERE uu.userright = 'AGGREGATE_REPORT_VIEW'
+  AND exists(SELECT uu2.userrole_id
+             FROM userroles_userrights uu2
+             WHERE uu2.userrole_id = uu.userrole_id
+               AND uu2.userright = 'CASE_EDIT')
+  AND NOT exists(SELECT uu2.userrole_id
+                 FROM userroles_userrights uu2
+                 WHERE uu2.userrole_id = uu.userrole_id
+                   AND uu2.userright = 'AGGREGATE_REPORT_EDIT');
+
+INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+SELECT userrole_id, 'AGGREGATE_REPORT_EXPORT', tstzrange(now(), null)
+FROM userroles_userrights uu
+WHERE uu.userright = 'AGGREGATE_REPORT_VIEW'
+  AND exists(SELECT uu2.userrole_id
+             FROM userroles_userrights uu2
+             WHERE uu2.userrole_id = uu.userrole_id
+               AND uu2.userright = 'CASE_EXPORT')
+  AND NOT exists(SELECT uu2.userrole_id
+                 FROM userroles_userrights uu2
+                 WHERE uu2.userrole_id = uu.userrole_id
+                   AND uu2.userright = 'AGGREGATE_REPORT_EXPORT');
+
+INSERT INTO schema_version (version_number, comment) VALUES (471, 'Allow surveillance officer to create aggregate reports #9052');
+
+-- 2022-06-27 Allow external lab users to edit samples #8892
+INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (472, 'Allow external lab users to edit samples #8892', true);
+
+
+-- 2022-07-05 Adjust password hashes with leading zeros #9726
+UPDATE users SET password = LPAD(password, 64, '0') WHERE LENGTH(password) < 64;
+INSERT INTO schema_version (version_number, comment) VALUES (473, 'Adjust password hashes with leading zeros #9726');
+
+
+-- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

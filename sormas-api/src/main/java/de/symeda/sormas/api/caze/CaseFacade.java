@@ -9,104 +9,229 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.caze;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
+import java.util.Random;
 
 import javax.ejb.Remote;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import de.symeda.sormas.api.CaseMeasure;
+import de.symeda.sormas.api.CoreFacade;
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.EditPermissionType;
+import de.symeda.sormas.api.Language;
+import de.symeda.sormas.api.common.DeletionDetails;
+import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.event.EventParticipantReferenceDto;
+import de.symeda.sormas.api.externaldata.ExternalDataDto;
+import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
+import de.symeda.sormas.api.followup.FollowUpPeriodDto;
 import de.symeda.sormas.api.importexport.ExportConfigurationDto;
-import de.symeda.sormas.api.person.PresentCondition;
-import de.symeda.sormas.api.region.DistrictDto;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.region.RegionReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
+import de.symeda.sormas.api.messaging.ManualMessageLogDto;
+import de.symeda.sormas.api.messaging.MessageType;
+import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper.Pair;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
 
 @Remote
-public interface CaseFacade {
+public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseReferenceDto, CaseCriteria> {
 
-	List<CaseDataDto> getAllActiveCasesAfter(Date date, String userUuid);
+	List<CaseDataDto> getAllActiveCasesAfter(Date date);
 
-	long count(CaseCriteria caseCriteria, String userUuid);
-	
-	List<CaseIndexDto> getIndexList(CaseCriteria caseCriteria, Integer first, Integer max, String userUuid, List<SortProperty> sortProperties);
-	
-	List<CaseExportDto> getExportList(CaseCriteria caseCriteria, CaseExportType exportType, int first, int max, String userUuid, ExportConfigurationDto exportConfiguration);
-	
+	/**
+	 * Additional change dates filters for: sample, pathogenTests, patient and location.
+	 */
+	List<CaseDataDto> getAllActiveCasesAfter(Date date, boolean includeExtendedChangeDateFilters);
+
+	long count(CaseCriteria caseCriteria, boolean ignoreUserFilter);
+
+	List<CaseSelectionDto> getCaseSelectionList(CaseCriteria caseCriteria);
+
+	List<CaseListEntryDto> getEntriesList(String personUuid, Integer first, Integer max);
+
+	Page<CaseIndexDto> getIndexPage(CaseCriteria caseCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
+
+	Page<CaseIndexDetailedDto> getIndexDetailedPage(
+		@NotNull CaseCriteria caseCriteria,
+		Integer offset,
+		Integer max,
+		List<SortProperty> sortProperties);
+
+	List<CaseIndexDetailedDto> getIndexDetailedList(CaseCriteria caseCriteria, Integer offset, Integer max, List<SortProperty> sortProperties);
+
+	CaseDataDto postUpdate(String uuid, JsonNode caseDataDtoJson);
+
+	List<CaseExportDto> getExportList(
+		CaseCriteria caseCriteria,
+		Collection<String> selectedRows,
+		CaseExportType exportType,
+		int first,
+		int max,
+		ExportConfigurationDto exportConfiguration,
+		Language userLanguage);
+
 	CaseDataDto getCaseDataByUuid(String uuid);
-    
-    CaseDataDto saveCase(CaseDataDto dto) throws ValidationRuntimeException;
-    
-    void validate(CaseDataDto dto) throws ValidationRuntimeException;
 
-	CaseReferenceDto getReferenceByUuid(String uuid);
-	
-	List<String> getAllActiveUuids(String userUuid);
+	CaseDataDto updateFollowUpComment(@Valid @NotNull CaseDataDto dto) throws ValidationRuntimeException;
 
-	List<CaseDataDto> getByUuids(List<String> uuids);
-	
-	String getUuidByUuidEpidNumberOrExternalId(String searchTerm);
-	
-	List<DashboardCaseDto> getCasesForDashboard(CaseCriteria caseCriteria, String userUuid);
+	CaseDataDto save(@Valid @NotNull CaseDataDto dto, boolean systemSave) throws ValidationRuntimeException;
 
-	List<MapCaseDto> getCasesForMap(RegionReferenceDto regionRef, DistrictReferenceDto districtRef, Disease disease, Date from, Date to, String userUuid);
-	
-	Map<CaseClassification, Long> getCaseCountPerClassification(CaseCriteria caseCriteria, String userUuid);
-	
-	Map<PresentCondition, Long> getCaseCountPerPersonCondition(CaseCriteria caseCriteria, String userUuid);
-	
-	Map<Disease, Long> getCaseCountByDisease(CaseCriteria caseCriteria, String userUuid);
-	
-	String getLastReportedDistrictName(CaseCriteria caseCriteria, String userUuid);
-	
+	CoreAndPersonDto<CaseDataDto> save(@Valid @NotNull CoreAndPersonDto<CaseDataDto> dto) throws ValidationRuntimeException;
+
+	void setSampleAssociations(ContactReferenceDto sourceContact, CaseReferenceDto cazeRef);
+
+	void setSampleAssociations(EventParticipantReferenceDto sourceEventParticipant, CaseReferenceDto cazeRef);
+
+	void setSampleAssociationsUnrelatedDisease(EventParticipantReferenceDto sourceEventParticipant, CaseReferenceDto cazeRef);
+
+	List<String> getAllActiveUuids();
+
+	List<CaseDataDto> getAllActiveCasesAfter(Date date, Integer batchSize, String lastSynchronizedUuid);
+
+	String getUuidByUuidEpidNumberOrExternalId(String searchTerm, CaseCriteria caseCriteria);
+
+	List<MapCaseDto> getCasesForMap(
+		RegionReferenceDto regionRef,
+		DistrictReferenceDto districtRef,
+		Disease disease,
+		Date from,
+		Date to,
+		NewCaseDateType dateType);
+
+	Long countCasesForMap(
+		RegionReferenceDto regionRef,
+		DistrictReferenceDto districtRef,
+		Disease disease,
+		Date from,
+		Date to,
+		NewCaseDateType dateType);
+
 	List<Pair<DistrictDto, BigDecimal>> getCaseMeasurePerDistrict(Date onsetFromDate, Date onsetToDate, Disease disease, CaseMeasure caseMeasure);
 
-	List<CaseDataDto> getAllCasesOfPerson(String personUuid, String userUuid);
-	
-	void deleteCase(String caseUuid, String userUuid);
-	
-	void deleteCaseAsDuplicate(String caseUuid, String duplicateOfCaseUuid, String userUuid);
-	
+	List<CaseDataDto> getAllCasesOfPerson(String personUuid);
+
+	List<String> deleteCases(List<String> caseUuids, DeletionDetails deletionDetails);
+
+	void deleteWithContacts(String caseUuid, DeletionDetails deletionDetails);
+
+	void deleteCaseAsDuplicate(String caseUuid, String duplicateOfCaseUuid);
+
 	Date getOldestCaseOnsetDate();
-	
+
 	Date getOldestCaseReportDate();
-	
-	boolean isArchived(String caseUuid);
-	
+
+	Date getOldestCaseOutcomeDate();
+
 	boolean isDeleted(String caseUuid);
-	
-	void archiveOrDearchiveCase(String caseUuid, boolean archive);
-	
-	List<String> getArchivedUuidsSince(String userUuid, Date since);
-	
-	List<String> getDeletedUuidsSince(String userUuid, Date since);
-	
+
+	boolean isArchived(String caseUuid);
+
+	List<String> getArchivedUuidsSince(Date since);
+
+	List<String> getDeletedUuidsSince(Date since);
+
 	boolean doesEpidNumberExist(String epidNumber, String caseUuid, Disease disease);
-	
-	String generateEpidNumber(CaseReferenceDto caze);
+
+	boolean doesExternalTokenExist(String externalToken, String caseUuid);
+
+	String getGenerateEpidNumber(CaseDataDto caze);
 
 	void mergeCase(String leadUuid, String otherUuid);
-	
-	List<CaseIndexDto> getSimilarCases(CaseSimilarityCriteria criteria, String userUuid);
-	
-	List<CaseIndexDto[]> getCasesForDuplicateMerging(CaseCriteria criteria, String userUuid, boolean showDuplicatesWithDifferentRegion);
-	
+
+	List<CaseSelectionDto> getSimilarCases(CaseSimilarityCriteria criteria);
+
+	List<CaseIndexDto[]> getCasesForDuplicateMerging(CaseCriteria criteria, boolean showDuplicatesWithDifferentRegion);
+
 	void updateCompleteness(String caseUuid);
 
 	CaseDataDto cloneCase(CaseDataDto existingCaseDto);
 
 	void archiveAllArchivableCases(int daysAfterCaseGetsArchived);
+
+	List<CaseReferenceDto> getRandomCaseReferences(CaseCriteria criteria, int count, Random randomGenerator);
+
+	FollowUpPeriodDto calculateFollowUpUntilDate(CaseDataDto caseDto, boolean ignoreOverwrite);
+
+	List<CaseFollowUpDto> getCaseFollowUpList(
+		CaseCriteria caseCriteria,
+		Date referenceDate,
+		int interval,
+		Integer first,
+		Integer max,
+		List<SortProperty> sortProperties);
+
+	Page<CaseFollowUpDto> getCaseFollowUpIndexPage(
+		@NotNull CaseFollowUpCriteria criteria,
+		Integer offset,
+		Integer max,
+		List<SortProperty> sortProperties);
+
+	void sendMessage(List<String> caseUuids, String subject, String messageContent, MessageType... messageTypes);
+
+	long countCasesWithMissingContactInformation(List<String> caseUuids, MessageType messageType);
+
+	List<ManualMessageLogDto> getMessageLog(String caseUuid, MessageType messageType);
+
+	List<String> getUuidsNotShareableWithExternalReportingTools(List<String> caseUuids);
+
+	Integer saveBulkCase(
+		List<String> caseUuidList,
+		@Valid CaseBulkEditData updatedCaseBulkEditData,
+		boolean diseaseChange,
+		boolean classificationChange,
+		boolean investigationStatusChange,
+		boolean outcomeChange,
+		boolean surveillanceOfficerChange);
+
+	void saveBulkEditWithFacilities(
+		List<String> caseUuidList,
+		@Valid CaseBulkEditData updatedCaseBulkEditData,
+		boolean diseaseChange,
+		boolean classificationChange,
+		boolean investigationStatusChange,
+		boolean outcomeChange,
+		boolean surveillanceOfficerChange,
+		Boolean doTransfer);
+
+	List<CasePersonDto> getDuplicates(@Valid CasePersonDto casePerson, int reportDateThreshold);
+
+	List<CasePersonDto> getDuplicates(@Valid CasePersonDto casePerson);
+
+	List<CaseDataDto> getByPersonUuids(List<String> personUuids);
+
+	List<CaseDataDto> getByExternalId(String externalId);
+
+	void updateExternalData(@Valid List<ExternalDataDto> externalData) throws ExternalDataUpdateException;
+
+	int updateCompleteness();
+
+	PreviousCaseDto getMostRecentPreviousCase(PersonReferenceDto person, Disease disease, Date startDate);
+
+	void archive(String entityUuid, Date endOfProcessingDate, boolean includeContacts);
+
+	void archive(List<String> entityUuids, boolean includeContacts);
+
+	void dearchive(List<String> entityUuids, String dearchiveReason, boolean includeContacts);
+
+	void setResultingCase(EventParticipantReferenceDto eventParticipantReferenceDto, CaseReferenceDto caseReferenceDto);
+	EditPermissionType isEditContactAllowed(String uuid);
 }

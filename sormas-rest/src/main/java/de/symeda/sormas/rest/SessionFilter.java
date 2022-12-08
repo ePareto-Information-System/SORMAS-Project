@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.rest;
 
@@ -27,26 +27,41 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
+
+import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.RequestContextHolder;
+import de.symeda.sormas.api.RequestContextTO;
 
 @WebFilter(asyncSupported = true, urlPatterns = "/*")
 public class SessionFilter implements Filter {
 
-	//protected static final Logger LOGGER = LoggerFactory.getLogger(SessionFilter.class);
-	
 	@EJB
 	private SessionFilterBean sessionFilterBean;
 
 	@Override
 	public void destroy() {
+
 	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		sessionFilterBean.doFilter(chain, request, response);
+		try {
+			sessionFilterBean.doFilter((req, resp) -> {
+				final String isMobileSyncHeader = ((HttpServletRequest) request).getHeader("mobile-sync");
+				final RequestContextTO requestContext = new RequestContextTO(isMobileSyncHeader != null ? Boolean.valueOf(isMobileSyncHeader) : false);
+				RequestContextHolder.setRequestContext(requestContext);
+				FacadeProvider.getConfigFacade().setRequestContext(requestContext);
+				chain.doFilter(req, response);
+			}, request, response);
+		} finally {
+			RequestContextHolder.reset();
+			FacadeProvider.getConfigFacade().resetRequestContext();
+		}
 	}
 
 	@Override
 	public void init(FilterConfig cfg) throws ServletException {
-	}
 
+	}
 }

@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.configuration.outbreak;
 
@@ -34,10 +34,10 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.outbreak.OutbreakCriteria;
 import de.symeda.sormas.api.outbreak.OutbreakDto;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DataHelper;
@@ -49,85 +49,89 @@ import de.symeda.sormas.ui.utils.LayoutUtil;
 @SuppressWarnings("serial")
 public class OutbreakOverviewGrid extends Grid implements ItemClickListener {
 
-	private static final String REGION = Captions.region;
+	private static final String REGION = Captions.Region;
 
 	private UserDto user;
 
 	public OutbreakOverviewGrid() {
 		super();
 		setSizeFull();
-		setSelectionMode(SelectionMode.NONE);		
+		setSelectionMode(SelectionMode.NONE);
 
 		user = UserProvider.getCurrent().getUser();
 
 		addColumn(REGION, RegionReferenceDto.class).setMaximumWidth(200);
-		getColumn(REGION).setHeaderCaption(I18nProperties.getCaption(Captions.region));
+		getColumn(REGION).setHeaderCaption(I18nProperties.getCaption(Captions.Region));
 
 		for (Disease disease : FacadeProvider.getDiseaseConfigurationFacade().getAllDiseases(true, true, true)) {
-			addColumn(disease, OutbreakRegionConfiguration.class)
-			.setMaximumWidth(200)
-			.setHeaderCaption(disease.toShortString())			
-			.setConverter(new Converter<String,OutbreakRegionConfiguration>() {
-				@Override
-				public OutbreakRegionConfiguration convertToModel(String value,
-						Class<? extends OutbreakRegionConfiguration> targetType, Locale locale)
-								throws ConversionException {
-					throw new UnsupportedOperationException("Can only convert from OutbreakRegionConfiguration to String");
-				}
+			addColumn(disease, OutbreakRegionConfiguration.class).setMaximumWidth(200)
+				.setHeaderCaption(disease.toShortString())
+				.setConverter(new Converter<String, OutbreakRegionConfiguration>() {
 
-				@Override
-				public String convertToPresentation(OutbreakRegionConfiguration value,
-						Class<? extends String> targetType, Locale locale) throws ConversionException {
-
-					boolean styleAsButton = UserProvider.getCurrent().hasUserRight(UserRight.OUTBREAK_CONFIGURE_ALL) || 
-							(UserProvider.getCurrent().hasUserRight(UserRight.OUTBREAK_CONFIGURE_RESTRICTED) 
-									&& DataHelper.equal(UserProvider.getCurrent().getUser().getRegion(), value.getRegion()));
-					boolean moreThanHalfOfDistricts = value.getAffectedDistricts().size( )>= value.getTotalDistricts() / 2.0f;
-
-					String styles;
-					if (styleAsButton) {
-						if (moreThanHalfOfDistricts) {
-							styles = CssStyles.buildVaadinStyle(CssStyles.VAADIN_BUTTON, CssStyles.BUTTON_CRITICAL);
-						} else if (!value.getAffectedDistricts().isEmpty()) {
-							styles = CssStyles.buildVaadinStyle(CssStyles.VAADIN_BUTTON, CssStyles.BUTTON_WARNING);
-						} else {
-							styles = CssStyles.buildVaadinStyle(CssStyles.VAADIN_BUTTON);
-						}
-
-					} else {
-						if (moreThanHalfOfDistricts) {
-							styles = CssStyles.buildVaadinStyle(CssStyles.VAADIN_LABEL, CssStyles.LABEL_CRITICAL);
-						} else if (!value.getAffectedDistricts().isEmpty()) {
-							styles = CssStyles.buildVaadinStyle(CssStyles.VAADIN_LABEL, CssStyles.LABEL_WARNING);
-						} else {
-							styles = CssStyles.buildVaadinStyle(CssStyles.VAADIN_LABEL);
-						}
+					@Override
+					public OutbreakRegionConfiguration convertToModel(
+						String value,
+						Class<? extends OutbreakRegionConfiguration> targetType,
+						Locale locale)
+						throws ConversionException {
+						throw new UnsupportedOperationException("Can only convert from OutbreakRegionConfiguration to String");
 					}
-					return LayoutUtil.divCss(styles, value.toString());
-				}
 
-				@Override
-				public Class<OutbreakRegionConfiguration> getModelType() {
-					return OutbreakRegionConfiguration.class;
-				}
+					@Override
+					public String convertToPresentation(OutbreakRegionConfiguration value, Class<? extends String> targetType, Locale locale)
+						throws ConversionException {
 
-				@Override
-				public Class<String> getPresentationType() {
-					return String.class;
-				}
+						boolean styleAsButton =
+							(UserProvider.getCurrent().hasNoneJurisdictionLevel() || UserProvider.getCurrent().hasNationJurisdictionLevel())
+								|| UserProvider.getCurrent().hasUserRight(UserRight.OUTBREAK_EDIT)
+									&& DataHelper.equal(UserProvider.getCurrent().getUser().getRegion(), value.getRegion());
+						boolean moreThanHalfOfDistricts = value.getAffectedDistricts().size() >= value.getTotalDistricts() / 2.0f;
 
-			})
-			.setRenderer(new HtmlRenderer());
+						String styles;
+						if (styleAsButton) {
+							if (moreThanHalfOfDistricts) {
+								styles = CssStyles.buildVaadinStyle(CssStyles.VAADIN_BUTTON, CssStyles.BUTTON_CRITICAL);
+							} else if (!value.getAffectedDistricts().isEmpty()) {
+								styles = CssStyles.buildVaadinStyle(CssStyles.VAADIN_BUTTON, CssStyles.BUTTON_WARNING);
+							} else {
+								styles = CssStyles.buildVaadinStyle(CssStyles.VAADIN_BUTTON);
+							}
+
+						} else {
+							if (moreThanHalfOfDistricts) {
+								styles = CssStyles.buildVaadinStyle(CssStyles.VAADIN_LABEL, CssStyles.LABEL_CRITICAL);
+							} else if (!value.getAffectedDistricts().isEmpty()) {
+								styles = CssStyles.buildVaadinStyle(CssStyles.VAADIN_LABEL, CssStyles.LABEL_WARNING);
+							} else {
+								styles = CssStyles.buildVaadinStyle(CssStyles.VAADIN_LABEL);
+							}
+						}
+						return LayoutUtil.divCss(styles, value.toString());
+					}
+
+					@Override
+					public Class<OutbreakRegionConfiguration> getModelType() {
+						return OutbreakRegionConfiguration.class;
+					}
+
+					@Override
+					public Class<String> getPresentationType() {
+						return String.class;
+					}
+
+				})
+				.setRenderer(new HtmlRenderer());
 		}
 
 		setCellDescriptionGenerator(cell -> getCellDescription(cell));
 
 		setCellStyleGenerator(new CellStyleGenerator() {
+
 			@Override
 			public String getStyle(CellReference cell) {
 				if (cell.getProperty().getValue() instanceof OutbreakRegionConfiguration) {
 					return CssStyles.ALIGN_CENTER;
-				} 
+				}
 				return null;
 			}
 		});
@@ -142,7 +146,8 @@ public class OutbreakOverviewGrid extends Grid implements ItemClickListener {
 			return "";
 		}
 
-		Set<DistrictReferenceDto> affectedDistricts = ((OutbreakRegionConfiguration) item.getItemProperty((Disease) cell.getPropertyId()).getValue()).getAffectedDistricts();
+		Set<DistrictReferenceDto> affectedDistricts =
+			((OutbreakRegionConfiguration) item.getItemProperty((Disease) cell.getPropertyId()).getValue()).getAffectedDistricts();
 
 		if (affectedDistricts.isEmpty()) {
 			return I18nProperties.getCaption(Captions.outbreakNoOutbreak);
@@ -164,11 +169,12 @@ public class OutbreakOverviewGrid extends Grid implements ItemClickListener {
 	}
 
 	public void reload() {
+
 		Container.Indexed container = getContainerDataSource();
 		container.removeAllItems();
 
 		// Initially set all columns to their default value
-		for (RegionReferenceDto region : FacadeProvider.getRegionFacade().getAllActiveAsReference()) {
+		for (RegionReferenceDto region : FacadeProvider.getRegionFacade().getAllActiveByServerCountry()) {
 			addItem(region);
 		}
 
@@ -177,9 +183,9 @@ public class OutbreakOverviewGrid extends Grid implements ItemClickListener {
 		criteria.disease(UserProvider.getCurrent().getUser().getLimitedDisease());
 		List<OutbreakDto> activeOutbreaks = FacadeProvider.getOutbreakFacade().getActive(criteria);
 
-		for (OutbreakDto outbreak : activeOutbreaks) {			
+		for (OutbreakDto outbreak : activeOutbreaks) {
 			DistrictReferenceDto outbreakDistrict = outbreak.getDistrict();
-			RegionReferenceDto outbreakRegion = FacadeProvider.getDistrictFacade().getDistrictByUuid(outbreakDistrict.getUuid()).getRegion();
+			RegionReferenceDto outbreakRegion = FacadeProvider.getDistrictFacade().getByUuid(outbreakDistrict.getUuid()).getRegion();
 			Disease outbreakDisease = outbreak.getDisease();
 
 			// Only show the Outbreak if its Disease is active on the system
@@ -195,6 +201,7 @@ public class OutbreakOverviewGrid extends Grid implements ItemClickListener {
 
 	@SuppressWarnings("unchecked")
 	private void addItem(RegionReferenceDto region) {
+
 		int totalDistricts = FacadeProvider.getDistrictFacade().getCountByRegion(region.getUuid());
 		Item item = getContainerDataSource().addItem(region);
 		item.getItemProperty(REGION).setValue(region);
@@ -214,17 +221,18 @@ public class OutbreakOverviewGrid extends Grid implements ItemClickListener {
 		// Open the outbreak configuration window for the clicked row when
 		// a) the user is allowed to configure all existing outbreaks or
 		// b) the user is allowed to configure outbreaks in his assigned region and has clicked the respective row
-		if (UserProvider.getCurrent().hasUserRight(UserRight.OUTBREAK_CONFIGURE_ALL)) {
-			ControllerProvider.getOutbreakController().openOutbreakConfigurationWindow((Disease) event.getPropertyId(), (OutbreakRegionConfiguration) clickedItem.getItemProperty((Disease) event.getPropertyId()).getValue());
-		} else if (UserProvider.getCurrent().hasUserRight(UserRight.OUTBREAK_CONFIGURE_RESTRICTED)) {
-			if (user.getRegion().equals(clickedItem.getItemProperty(REGION).getValue())) {
-				ControllerProvider.getOutbreakController().openOutbreakConfigurationWindow((Disease) event.getPropertyId(), (OutbreakRegionConfiguration) clickedItem.getItemProperty((Disease) event.getPropertyId()).getValue());
-			}
+		if (UserProvider.getCurrent().hasNoneJurisdictionLevel() || UserProvider.getCurrent().hasNationJurisdictionLevel()) {
+			ControllerProvider.getOutbreakController()
+				.openOutbreakConfigurationWindow(
+					(Disease) event.getPropertyId(),
+					(OutbreakRegionConfiguration) clickedItem.getItemProperty((Disease) event.getPropertyId()).getValue());
+		} else if (clickedItem.getItemProperty(REGION).getValue().equals(user.getRegion())) {
+			ControllerProvider.getOutbreakController()
+				.openOutbreakConfigurationWindow(
+					(Disease) event.getPropertyId(),
+					(OutbreakRegionConfiguration) clickedItem.getItemProperty((Disease) event.getPropertyId()).getValue());
 		} else {
 			return;
 		}
 	}
-
-
-
 }

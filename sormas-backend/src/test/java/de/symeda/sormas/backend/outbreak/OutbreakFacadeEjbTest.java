@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.backend.outbreak;
 
@@ -24,8 +24,8 @@ import static org.mockito.Mockito.when;
 import org.junit.Test;
 
 import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.user.UserRole;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.backend.AbstractBeanTest;
 import de.symeda.sormas.backend.MockProducer;
 import de.symeda.sormas.backend.TestDataCreator.RDCFEntities;
@@ -39,8 +39,13 @@ public class OutbreakFacadeEjbTest extends AbstractBeanTest {
 		super.init();
 
 		rdcf = creator.createRDCFEntities("Region", "District", "Community", "Facility");
-		creator.createUser(rdcf.region.getUuid(), rdcf.district.getUuid(), rdcf.facility.getUuid(), "Surv", "Sup",
-				UserRole.SURVEILLANCE_SUPERVISOR);
+		creator.createUser(
+			rdcf.region.getUuid(),
+			rdcf.district.getUuid(),
+			rdcf.facility.getUuid(),
+			"Surv",
+			"Sup",
+			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
 
 		when(MockProducer.getPrincipal().getName()).thenReturn("SurvSup");
 	}
@@ -48,7 +53,7 @@ public class OutbreakFacadeEjbTest extends AbstractBeanTest {
 	@Test
 	public void testOutbreakCreationAndDeletion() {
 
-		DistrictReferenceDto district = new DistrictReferenceDto(rdcf.district.getUuid());
+		DistrictReferenceDto district = new DistrictReferenceDto(rdcf.district.getUuid(), null, null);
 		Disease disease = Disease.EVD;
 
 		getOutbreakFacade().startOutbreak(district, disease);

@@ -9,15 +9,13 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.backend.symptoms;
-
-import java.sql.Timestamp;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -29,28 +27,19 @@ import de.symeda.sormas.backend.util.DtoHelper;
 
 @Stateless(name = "SymptomsFacade")
 public class SymptomsFacadeEjb implements SymptomsFacade {
-	
+
 	@EJB
 	private SymptomsService service;
 
-	public Symptoms fromDto(SymptomsDto dto) {		
-		if (dto == null) {
+	public Symptoms fromDto(SymptomsDto source, boolean checkChangeDate) {
+
+		if (source == null) {
 			return null;
 		}
-		
-		Symptoms symptoms = service.getByUuid(dto.getUuid());
-		if (symptoms == null) {
-			symptoms = new Symptoms();
-			symptoms.setUuid(dto.getUuid());
-			if (dto.getCreationDate() != null) {
-				symptoms.setCreationDate(new Timestamp(dto.getCreationDate().getTime()));
-			}
-		} 
-		
-		Symptoms target = symptoms;
-		SymptomsDto source = dto;
-		DtoHelper.validateDto(source, target);
-		
+
+		String uuid = source.getUuid();
+		Symptoms target = DtoHelper.fillOrBuildEntity(source, uuid != null ? service.getByUuid(uuid) : null, Symptoms::new, checkChangeDate);
+
 		target.setAbdominalPain(source.getAbdominalPain());
 		target.setAlteredConsciousness(source.getAlteredConsciousness());
 		target.setAnorexiaAppetiteLoss(source.getAnorexiaAppetiteLoss());
@@ -203,23 +192,49 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setConjunctivalInjection(source.getConjunctivalInjection());
 		target.setAcuteRespiratoryDistressSyndrome(source.getAcuteRespiratoryDistressSyndrome());
 		target.setPneumoniaClinicalOrRadiologic(source.getPneumoniaClinicalOrRadiologic());
-		
-		return symptoms;
+		target.setLossOfTaste(source.getLossOfTaste());
+		target.setLossOfSmell(source.getLossOfSmell());
+		target.setCoughWithSputum(source.getCoughWithSputum());
+		target.setCoughWithHeamoptysis(source.getCoughWithHeamoptysis());
+		target.setLymphadenopathy(source.getLymphadenopathy());
+		target.setWheezing(source.getWheezing());
+		target.setSkinUlcers(source.getSkinUlcers());
+		target.setInabilityToWalk(source.getInabilityToWalk());
+		target.setInDrawingOfChestWall(source.getInDrawingOfChestWall());
+		target.setOtherComplications(source.getOtherComplications());
+		target.setOtherComplicationsText(source.getOtherComplicationsText());
+		target.setRespiratoryDiseaseVentilation(source.getRespiratoryDiseaseVentilation());
+		target.setFeelingIll(source.getFeelingIll());
+		target.setShivering(source.getShivering());
+		target.setFastHeartRate(source.getFastHeartRate());
+		target.setOxygenSaturationLower94(source.getOxygenSaturationLower94());
+		target.setFeverishFeeling(source.getFeverishFeeling());
+		target.setWeakness(source.getWeakness());
+		target.setFatigue(source.getFatigue());
+		target.setCoughWithoutSputum(source.getCoughWithoutSputum());
+		target.setBreathlessness(source.getBreathlessness());
+		target.setChestPressure(source.getChestPressure());
+		target.setBlueLips(source.getBlueLips());
+		target.setBloodCirculationProblems(source.getBloodCirculationProblems());
+		target.setPalpitations(source.getPalpitations());
+		target.setDizzinessStandingUp(source.getDizzinessStandingUp());
+		target.setHighOrLowBloodPressure(source.getHighOrLowBloodPressure());
+		target.setUrinaryRetention(source.getUrinaryRetention());
+
+		return target;
 	}
-	
+
 	public static SymptomsDto toDto(Symptoms symptoms) {
-		
+
 		if (symptoms == null) {
 			return null;
 		}
 
 		SymptomsDto target = new SymptomsDto();
 		Symptoms source = symptoms;
-		
-		target.setCreationDate(source.getCreationDate());
-		target.setChangeDate(source.getChangeDate());
-		target.setUuid(source.getUuid());
-		
+
+		DtoHelper.fillDto(target, source);
+
 		target.setAbdominalPain(source.getAbdominalPain());
 		target.setAlteredConsciousness(source.getAlteredConsciousness());
 		target.setAnorexiaAppetiteLoss(source.getAnorexiaAppetiteLoss());
@@ -311,7 +326,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setBulgingFontanelle(source.getBulgingFontanelle());
 		target.setBloodPressureDiastolic(source.getBloodPressureDiastolic());
 		target.setBloodPressureSystolic(source.getBloodPressureSystolic());
-		target.setHeartRate(source.getHeartRate());		
+		target.setHeartRate(source.getHeartRate());
 		target.setPharyngealErythema(source.getPharyngealErythema());
 		target.setPharyngealExudate(source.getPharyngealExudate());
 		target.setOedemaFaceNeck(source.getOedemaFaceNeck());
@@ -372,13 +387,41 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setConjunctivalInjection(source.getConjunctivalInjection());
 		target.setAcuteRespiratoryDistressSyndrome(source.getAcuteRespiratoryDistressSyndrome());
 		target.setPneumoniaClinicalOrRadiologic(source.getPneumoniaClinicalOrRadiologic());
+		target.setLossOfTaste(source.getLossOfTaste());
+		target.setLossOfSmell(source.getLossOfSmell());
+		target.setCoughWithSputum(source.getCoughWithSputum());
+		target.setCoughWithHeamoptysis(source.getCoughWithHeamoptysis());
+		target.setLymphadenopathy(source.getLymphadenopathy());
+		target.setWheezing(source.getWheezing());
+		target.setSkinUlcers(source.getSkinUlcers());
+		target.setInabilityToWalk(source.getInabilityToWalk());
+		target.setInDrawingOfChestWall(source.getInDrawingOfChestWall());
+		target.setOtherComplications(source.getOtherComplications());
+		target.setOtherComplicationsText(source.getOtherComplicationsText());
+		target.setRespiratoryDiseaseVentilation(source.getRespiratoryDiseaseVentilation());
+		target.setFeelingIll(source.getFeelingIll());
+		target.setShivering(source.getShivering());
+		target.setFastHeartRate(source.getFastHeartRate());
+		target.setOxygenSaturationLower94(source.getOxygenSaturationLower94());
+		target.setFeverishFeeling(source.getFeverishFeeling());
+		target.setWeakness(source.getWeakness());
+		target.setFatigue(source.getFatigue());
+		target.setCoughWithoutSputum(source.getCoughWithoutSputum());
+		target.setBreathlessness(source.getBreathlessness());
+		target.setChestPressure(source.getChestPressure());
+		target.setBlueLips(source.getBlueLips());
+		target.setBloodCirculationProblems(source.getBloodCirculationProblems());
+		target.setPalpitations(source.getPalpitations());
+		target.setDizzinessStandingUp(source.getDizzinessStandingUp());
+		target.setHighOrLowBloodPressure(source.getHighOrLowBloodPressure());
+		target.setUrinaryRetention(source.getUrinaryRetention());
 
 		return target;
 	}
-	
+
 	@LocalBean
 	@Stateless
 	public static class SymptomsFacadeEjbLocal extends SymptomsFacadeEjb {
+
 	}
 }
-

@@ -9,35 +9,48 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.backend.util;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.commons.collections4.CollectionUtils;
 
 import de.symeda.sormas.api.user.UserHelper;
-import de.symeda.sormas.api.user.UserRole;
+import de.symeda.sormas.api.utils.PasswordHelper;
 import de.symeda.sormas.backend.user.User;
+import de.symeda.sormas.backend.user.UserRole;
 
-public class MockDataGenerator {
-	
-    public static User createUser(UserRole userRole, String firstName, String lastName, String password) {
-    	User user = new User();
-    	user.setFirstName(firstName);
-    	user.setLastName(lastName);
-    	if (userRole != null) {
-    		user.setUserRoles(new HashSet<UserRole>(Arrays.asList(userRole)));
-    	}
-    	user.setUserName(UserHelper.getSuggestedUsername(user.getFirstName(), user.getLastName()));
+public final class MockDataGenerator {
+
+	private MockDataGenerator() {
+		// Hide Utility Class Constructor
+	}
+
+	public static User createUser(UserRole userRole, String firstName, String lastName, String password) {
+		Set<UserRole> userRoles = userRole != null ? Collections.singleton(userRole) : null;
+		return createUser(userRoles, firstName, lastName, password);
+	}
+
+	public static User createUser(Set<UserRole> userRoles, String firstName, String lastName, String password) {
+
+		User user = new User();
+		user.setFirstName(firstName);
+		user.setLastName(lastName);
+		if (CollectionUtils.isNotEmpty(userRoles)) {
+			user.setUserRoles(new HashSet<>(userRoles));
+		}
+		user.updateJurisdictionLevel();
+		user.setUserName(UserHelper.getSuggestedUsername(user.getFirstName(), user.getLastName()));
 		user.setSeed(PasswordHelper.createPass(16));
 		user.setPassword(PasswordHelper.encodePassword(password, user.getSeed()));
-    	return user;
-    }
-    
+		return user;
+	}
 }
-

@@ -1,26 +1,22 @@
 /*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
- *
+ * Copyright © 2016-2021 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.symeda.sormas.app.backend.event;
 
-import com.j256.ormlite.field.DataType;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
+import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_BIG;
+import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
 
 import java.util.Date;
 
@@ -28,40 +24,84 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Transient;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
+import de.symeda.sormas.api.disease.DiseaseVariant;
+import de.symeda.sormas.api.event.DiseaseTransmissionMode;
+import de.symeda.sormas.api.event.EventIdentificationSource;
+import de.symeda.sormas.api.event.EventInvestigationStatus;
+import de.symeda.sormas.api.event.EventManagementStatus;
 import de.symeda.sormas.api.event.EventReferenceDto;
+import de.symeda.sormas.api.event.EventSourceType;
 import de.symeda.sormas.api.event.EventStatus;
+import de.symeda.sormas.api.event.HumanTransmissionMode;
+import de.symeda.sormas.api.event.InfectionPathCertainty;
+import de.symeda.sormas.api.event.InstitutionalPartnerType;
+import de.symeda.sormas.api.event.MeansOfTransport;
+import de.symeda.sormas.api.event.MedicallyAssociatedTransmissionMode;
+import de.symeda.sormas.api.event.ParenteralTransmissionMode;
+import de.symeda.sormas.api.event.RiskLevel;
+import de.symeda.sormas.api.event.SpecificRisk;
 import de.symeda.sormas.api.event.TypeOfPlace;
-import de.symeda.sormas.app.backend.common.AbstractDomainObject;
+import de.symeda.sormas.api.exposure.WorkEnvironment;
+import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.app.backend.common.DatabaseHelper;
+import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 import de.symeda.sormas.app.backend.location.Location;
+import de.symeda.sormas.app.backend.sormastosormas.SormasToSormasOriginInfo;
 import de.symeda.sormas.app.backend.user.User;
 
-@Entity(name=Event.TABLE_NAME)
+@Entity(name = Event.TABLE_NAME)
 @DatabaseTable(tableName = Event.TABLE_NAME)
-public class Event extends AbstractDomainObject {
+public class Event extends PseudonymizableAdo {
 
 	private static final long serialVersionUID = 4964495716032049582L;
 
 	public static final String TABLE_NAME = "events";
 	public static final String I18N_PREFIX = "Event";
-	
+
 	public static final String EVENT_STATUS = "eventStatus";
+	public static final String RISK_LEVEL = "riskLevel";
+	public static final String EVENT_MANAGEMENT_STATUS = "eventManagementStatus";
+	public static final String EVENT_IDENTIFICATION_SOURCE = "eventIdentificationSource";
+	public static final String EVENT_INVESTIGATION_STATUS = "eventInvestigationStatus";
+	public static final String EVENT_INVESTIGATION_START_DATE = "eventInvestigationStartDate";
+	public static final String EVENT_INVESTIGATION_END_DATE = "eventInvestigationEndDate";
 	public static final String EVENT_PERSONS = "eventPersons";
+	public static final String EVENT_TITLE = "eventTitle";
 	public static final String EVENT_DESC = "eventDesc";
-	public static final String EVENT_DATE = "eventDate";
+	public static final String START_DATE = "startDate";
 	public static final String REPORT_DATE_TIME = "reportDateTime";
 	public static final String REPORTING_USER = "reportingUser";
+	public static final String EVOLUTION_DATE = "evolutionDate";
+	public static final String EVOLUTION_COMMENT = "evolutionComment";
 	public static final String EVENT_LOCATION = "eventLocation";
 	public static final String TYPE_OF_PLACE = "typeOfPlace";
+	public static final String MEANS_OF_TRANSPORT = "meansOfTransport";
+	public static final String MEANS_OF_TRANSPORT_DETAILS = "meansOfTransportDetails";
+	public static final String SRC_INSTITUTIONAL_PARTNER_TYPE = "srcInstitutionalPartnerType";
+	public static final String SRC_INSTITUTIONAL_PARTNER_TYPE_DETAILS = "srcInstitutionalPartnerTypeDetails";
 	public static final String SRC_FIRST_NAME = "srcFirstName";
 	public static final String SRC_LAST_NAME = "srcLastName";
 	public static final String SRC_TEL_NO = "srcTelNo";
 	public static final String SRC_EMAIL = "srcEmail";
 	public static final String DISEASE = "disease";
 	public static final String DISEASE_DETAILS = "diseaseDetails";
-	public static final String SURVEILLANCE_OFFICER = "surveillanceOfficer";
+	public static final String RESPONSIBLE_USER = "responsibleUser";
 	public static final String TYPE_OF_PLACE_TEXT = "typeOfPlaceText";
+	public static final String CONNECTION_NUMBER = "connectionNumber";
+	public static final String TRAVEL_DATE = "travelDate";
+
+	@DatabaseField
+	private String superordinateEventUuid;
 
 	@Deprecated
 	@DatabaseField
@@ -70,11 +110,42 @@ public class Event extends AbstractDomainObject {
 	@Enumerated(EnumType.STRING)
 	private EventStatus eventStatus;
 
-	@Column(length=512)
-	private String eventDesc;
+	@Enumerated(EnumType.STRING)
+	private RiskLevel riskLevel;
+
+	@Column(name = "specificRisk")
+	private String specificRiskString;
+	private SpecificRisk specificRisk;
+
+	@Enumerated(EnumType.STRING)
+	private EventInvestigationStatus eventInvestigationStatus;
 
 	@DatabaseField(dataType = DataType.DATE_LONG)
-	private Date eventDate;
+	private Date eventInvestigationStartDate;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date eventInvestigationEndDate;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String externalId;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String externalToken;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String eventTitle;
+
+	@Column(length = CHARACTER_LIMIT_BIG)
+	private String eventDesc;
+
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown nosocomial;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date startDate;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date endDate;
 
 	@DatabaseField(dataType = DataType.DATE_LONG)
 	private Date reportDateTime;
@@ -82,34 +153,80 @@ public class Event extends AbstractDomainObject {
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private User reportingUser;
 
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date evolutionDate;
+
+	@DatabaseField
+	private String evolutionComment;
+
 	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 2)
 	private Location eventLocation;
 
 	@Enumerated(EnumType.STRING)
 	private TypeOfPlace typeOfPlace;
 
-	@Column(length=512)
+	@Enumerated(EnumType.STRING)
+	private MeansOfTransport meansOfTransport;
+
+	@Column(columnDefinition = "text")
+	private String meansOfTransportDetails;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String connectionNumber;
+
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date travelDate;
+
+	@Enumerated(EnumType.STRING)
+	private WorkEnvironment workEnvironment;
+
+	@Enumerated(EnumType.STRING)
+	private EventSourceType srcType;
+
+	@Enumerated(EnumType.STRING)
+	private InstitutionalPartnerType srcInstitutionalPartnerType;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String srcInstitutionalPartnerTypeDetails;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String srcFirstName;
 
-	@Column(length=512)
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String srcLastName;
 
-	@Column(length=512)
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String srcTelNo;
 
-	@Column(length=512)
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String srcEmail;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String srcMediaWebsite;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String srcMediaName;
+
+	@Column(length = CHARACTER_LIMIT_BIG)
+	private String srcMediaDetails;
 
 	@Enumerated(EnumType.STRING)
 	private Disease disease;
 
-	@Column(length=512)
+	@Column(name = "diseaseVariant")
+	private String diseaseVariantString;
+	private DiseaseVariant diseaseVariant;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String diseaseDetails;
 
-	@DatabaseField(foreign = true, foreignAutoRefresh = true)
-	private User surveillanceOfficer;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String diseaseVariantDetails;
 
-	@Column(length=512)
+	@DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "surveillanceOfficer_id")
+	private User responsibleUser;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String typeOfPlaceText;
 
 	@DatabaseField
@@ -119,111 +236,362 @@ public class Event extends AbstractDomainObject {
 	@DatabaseField
 	private Float reportLatLonAccuracy;
 
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown transregionalOutbreak;
+	@Enumerated(EnumType.STRING)
+	private DiseaseTransmissionMode diseaseTransmissionMode;
+
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private SormasToSormasOriginInfo sormasToSormasOriginInfo;
+	@DatabaseField
+	private boolean ownershipHandedOver;
+
+	@Enumerated(EnumType.STRING)
+	private EventManagementStatus eventManagementStatus;
+
+	@Enumerated(EnumType.STRING)
+	private EventIdentificationSource eventIdentificationSource;
+
+	@Enumerated(EnumType.STRING)
+	private InfectionPathCertainty infectionPathCertainty;
+	@Enumerated(EnumType.STRING)
+	private HumanTransmissionMode humanTransmissionMode;
+	@Enumerated(EnumType.STRING)
+	private ParenteralTransmissionMode parenteralTransmissionMode;
+	@Enumerated(EnumType.STRING)
+	private MedicallyAssociatedTransmissionMode medicallyAssociatedTransmissionMode;
+
+	@Column(name = "internalId")
+	private String internalToken;
 
 	public EventStatus getEventStatus() {
 		return eventStatus;
 	}
+
 	public void setEventStatus(EventStatus eventStatus) {
 		this.eventStatus = eventStatus;
 	}
-	
+
+	public RiskLevel getRiskLevel() {
+		return riskLevel;
+	}
+
+	public void setRiskLevel(RiskLevel riskLevel) {
+		this.riskLevel = riskLevel;
+	}
+
+	public String getSpecificRiskString() {
+		return specificRiskString;
+	}
+
+	public void setSpecificRiskString(String specificRiskString) {
+		this.specificRiskString = specificRiskString;
+	}
+
+	@Transient
+	public SpecificRisk getSpecificRisk() {
+		if (StringUtils.isBlank(specificRiskString)) {
+			return null;
+		} else {
+			return DatabaseHelper.getCustomizableEnumValueDao().getEnumValue(CustomizableEnumType.SPECIFIC_EVENT_RISK, specificRiskString);
+		}
+	}
+
+	public void setSpecificRisk(SpecificRisk specificRisk) {
+		this.specificRisk = specificRisk;
+		if (specificRisk == null) {
+			specificRiskString = null;
+		} else {
+			specificRiskString = specificRisk.getValue();
+		}
+	}
+
+	public EventInvestigationStatus getEventInvestigationStatus() {
+		return eventInvestigationStatus;
+	}
+
+	public void setEventInvestigationStatus(EventInvestigationStatus eventInvestigationStatus) {
+		this.eventInvestigationStatus = eventInvestigationStatus;
+	}
+
+	public Date getEventInvestigationStartDate() {
+		return eventInvestigationStartDate;
+	}
+
+	public void setEventInvestigationStartDate(Date eventInvestigationStartDate) {
+		this.eventInvestigationStartDate = eventInvestigationStartDate;
+	}
+
+	public Date getEventInvestigationEndDate() {
+		return eventInvestigationEndDate;
+	}
+
+	public void setEventInvestigationEndDate(Date eventInvestigationEndDate) {
+		this.eventInvestigationEndDate = eventInvestigationEndDate;
+	}
+
+	public String getExternalId() {
+		return externalId;
+	}
+
+	public void setExternalId(String externalId) {
+		this.externalId = externalId;
+	}
+
+	public String getExternalToken() {
+		return externalToken;
+	}
+
+	public void setExternalToken(String externalToken) {
+		this.externalToken = externalToken;
+	}
+
+	public String getEventTitle() {
+		return eventTitle;
+	}
+
+	public void setEventTitle(String eventTitle) {
+		this.eventTitle = eventTitle;
+	}
 
 	public String getEventDesc() {
 		return eventDesc;
 	}
+
 	public void setEventDesc(String eventDesc) {
 		this.eventDesc = eventDesc;
 	}
 
+	public YesNoUnknown getNosocomial() {
+		return nosocomial;
+	}
 
-	public Date getEventDate() {
-		return eventDate;
+	public void setNosocomial(YesNoUnknown nosocomial) {
+		this.nosocomial = nosocomial;
 	}
-	public void setEventDate(Date eventDate) {
-		this.eventDate = eventDate;
+
+	public Date getStartDate() {
+		return startDate;
 	}
-	
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
 	public Date getReportDateTime() {
 		return reportDateTime;
 	}
+
 	public void setReportDateTime(Date reportDateTime) {
 		this.reportDateTime = reportDateTime;
 	}
-	
+
 	public User getReportingUser() {
 		return reportingUser;
 	}
+
 	public void setReportingUser(User reportingUser) {
 		this.reportingUser = reportingUser;
 	}
-	
+
+	public Date getEvolutionDate() {
+		return evolutionDate;
+	}
+
+	public void setEvolutionDate(Date evolutionDate) {
+		this.evolutionDate = evolutionDate;
+	}
+
+	public String getEvolutionComment() {
+		return evolutionComment;
+	}
+
+	public void setEvolutionComment(String evolutionComment) {
+		this.evolutionComment = evolutionComment;
+	}
+
 	public Location getEventLocation() {
 		return eventLocation;
 	}
-	
+
 	public void setEventLocation(Location eventLocation) {
 		this.eventLocation = eventLocation;
 	}
-	
+
 	public TypeOfPlace getTypeOfPlace() {
 		return typeOfPlace;
 	}
+
 	public void setTypeOfPlace(TypeOfPlace typeOfPlace) {
 		this.typeOfPlace = typeOfPlace;
 	}
-	
+
+	public MeansOfTransport getMeansOfTransport() {
+		return meansOfTransport;
+	}
+
+	public void setMeansOfTransport(MeansOfTransport meansOfTransport) {
+		this.meansOfTransport = meansOfTransport;
+	}
+
+	public String getMeansOfTransportDetails() {
+		return meansOfTransportDetails;
+	}
+
+	public void setMeansOfTransportDetails(String meansOfTransportDetails) {
+		this.meansOfTransportDetails = meansOfTransportDetails;
+	}
+
+	public EventSourceType getSrcType() {
+		return srcType;
+	}
+
+	public void setSrcType(EventSourceType srcType) {
+		this.srcType = srcType;
+	}
+
+	public InstitutionalPartnerType getSrcInstitutionalPartnerType() {
+		return srcInstitutionalPartnerType;
+	}
+
+	public void setSrcInstitutionalPartnerType(InstitutionalPartnerType srcInstitutionalPartnerType) {
+		this.srcInstitutionalPartnerType = srcInstitutionalPartnerType;
+	}
+
+	public String getSrcInstitutionalPartnerTypeDetails() {
+		return srcInstitutionalPartnerTypeDetails;
+	}
+
+	public void setSrcInstitutionalPartnerTypeDetails(String srcInstitutionalPartnerTypeDetails) {
+		this.srcInstitutionalPartnerTypeDetails = srcInstitutionalPartnerTypeDetails;
+	}
+
 	public String getSrcFirstName() {
 		return srcFirstName;
 	}
+
 	public void setSrcFirstName(String srcFirstName) {
 		this.srcFirstName = srcFirstName;
 	}
-	
+
 	public String getSrcLastName() {
 		return srcLastName;
 	}
+
 	public void setSrcLastName(String srcLastName) {
 		this.srcLastName = srcLastName;
 	}
-	
+
 	public String getSrcTelNo() {
 		return srcTelNo;
 	}
+
 	public void setSrcTelNo(String srcTelNo) {
 		this.srcTelNo = srcTelNo;
 	}
-	
+
 	public String getSrcEmail() {
 		return srcEmail;
 	}
+
 	public void setSrcEmail(String srcEmail) {
 		this.srcEmail = srcEmail;
 	}
-	
+
+	public String getSrcMediaWebsite() {
+		return srcMediaWebsite;
+	}
+
+	public void setSrcMediaWebsite(String srcMediaWebsite) {
+		this.srcMediaWebsite = srcMediaWebsite;
+	}
+
+	public String getSrcMediaName() {
+		return srcMediaName;
+	}
+
+	public void setSrcMediaName(String srcMediaName) {
+		this.srcMediaName = srcMediaName;
+	}
+
+	public String getSrcMediaDetails() {
+		return srcMediaDetails;
+	}
+
+	public void setSrcMediaDetails(String srcMediaDetails) {
+		this.srcMediaDetails = srcMediaDetails;
+	}
+
 	public Disease getDisease() {
 		return disease;
 	}
+
 	public void setDisease(Disease disease) {
 		this.disease = disease;
+	}
+
+	public String getDiseaseVariantString() {
+		return diseaseVariantString;
+	}
+
+	public void setDiseaseVariantString(String diseaseVariantString) {
+		this.diseaseVariantString = diseaseVariantString;
+	}
+
+	@Transient
+	public DiseaseVariant getDiseaseVariant() {
+		if (StringUtils.isBlank(diseaseVariantString)) {
+			return null;
+		} else {
+			return DatabaseHelper.getCustomizableEnumValueDao().getEnumValue(CustomizableEnumType.DISEASE_VARIANT, diseaseVariantString);
+		}
+	}
+
+	public void setDiseaseVariant(DiseaseVariant diseaseVariant) {
+		this.diseaseVariant = diseaseVariant;
+		if (diseaseVariant == null) {
+			diseaseVariantString = null;
+		} else {
+			diseaseVariantString = diseaseVariant.getValue();
+		}
 	}
 
 	public String getDiseaseDetails() {
 		return diseaseDetails;
 	}
+
 	public void setDiseaseDetails(String diseaseDetails) {
 		this.diseaseDetails = diseaseDetails;
 	}
 
-	public User getSurveillanceOfficer() {
-		return surveillanceOfficer;
+	public String getDiseaseVariantDetails() {
+		return diseaseVariantDetails;
 	}
-	public void setSurveillanceOfficer(User surveillanceOfficer) {
-		this.surveillanceOfficer = surveillanceOfficer;
+
+	public void setDiseaseVariantDetails(String diseaseVariantDetails) {
+		this.diseaseVariantDetails = diseaseVariantDetails;
 	}
-	
+
+	public User getResponsibleUser() {
+		return responsibleUser;
+	}
+
+	public void setResponsibleUser(User responsibleUser) {
+		this.responsibleUser = responsibleUser;
+	}
+
 	public String getTypeOfPlaceText() {
 		return typeOfPlaceText;
 	}
+
 	public void setTypeOfPlaceText(String typeOfPlaceText) {
 		this.typeOfPlaceText = typeOfPlaceText;
 	}
@@ -244,9 +612,57 @@ public class Event extends AbstractDomainObject {
 		this.reportLon = reportLon;
 	}
 
+	public YesNoUnknown getTransregionalOutbreak() {
+		return transregionalOutbreak;
+	}
+
+	public void setTransregionalOutbreak(YesNoUnknown transregionalOutbreak) {
+		this.transregionalOutbreak = transregionalOutbreak;
+	}
+
+	public DiseaseTransmissionMode getDiseaseTransmissionMode() {
+		return diseaseTransmissionMode;
+	}
+
+	public void setDiseaseTransmissionMode(DiseaseTransmissionMode diseaseTransmissionMode) {
+		this.diseaseTransmissionMode = diseaseTransmissionMode;
+	}
+
+	public String getSuperordinateEventUuid() {
+		return superordinateEventUuid;
+	}
+
+	public void setSuperordinateEventUuid(String superordinateEventUuid) {
+		this.superordinateEventUuid = superordinateEventUuid;
+	}
+
+	public String getConnectionNumber() {
+		return connectionNumber;
+	}
+
+	public void setConnectionNumber(String connectionNumber) {
+		this.connectionNumber = connectionNumber;
+	}
+
+	public Date getTravelDate() {
+		return travelDate;
+	}
+
+	public void setTravelDate(Date travelDate) {
+		this.travelDate = travelDate;
+	}
+
+	public WorkEnvironment getWorkEnvironment() {
+		return workEnvironment;
+	}
+
+	public void setWorkEnvironment(WorkEnvironment workEnvironment) {
+		this.workEnvironment = workEnvironment;
+	}
+
 	@Override
 	public String toString() {
-		return EventReferenceDto.buildCaption(getDisease(), getDiseaseDetails(), getEventStatus(), getEventDate());
+		return EventReferenceDto.buildCaption(getDisease(), getDiseaseDetails(), getEventStatus(), getEventInvestigationStatus(), getStartDate());
 	}
 
 	@Override
@@ -260,5 +676,77 @@ public class Event extends AbstractDomainObject {
 
 	public void setReportLatLonAccuracy(Float reportLatLonAccuracy) {
 		this.reportLatLonAccuracy = reportLatLonAccuracy;
+	}
+
+	public SormasToSormasOriginInfo getSormasToSormasOriginInfo() {
+		return sormasToSormasOriginInfo;
+	}
+
+	public void setSormasToSormasOriginInfo(SormasToSormasOriginInfo sormasToSormasOriginInfo) {
+		this.sormasToSormasOriginInfo = sormasToSormasOriginInfo;
+	}
+
+	public boolean isOwnershipHandedOver() {
+		return ownershipHandedOver;
+	}
+
+	public void setOwnershipHandedOver(boolean ownershipHandedOver) {
+		this.ownershipHandedOver = ownershipHandedOver;
+	}
+
+	public EventManagementStatus getEventManagementStatus() {
+		return eventManagementStatus;
+	}
+
+	public void setEventManagementStatus(EventManagementStatus eventManagementStatus) {
+		this.eventManagementStatus = eventManagementStatus;
+	}
+
+	public EventIdentificationSource getEventIdentificationSource() {
+		return eventIdentificationSource;
+	}
+
+	public void setEventIdentificationSource(EventIdentificationSource eventIdentificationSource) {
+		this.eventIdentificationSource = eventIdentificationSource;
+	}
+
+	public InfectionPathCertainty getInfectionPathCertainty() {
+		return infectionPathCertainty;
+	}
+
+	public void setInfectionPathCertainty(InfectionPathCertainty infectionPathCertainty) {
+		this.infectionPathCertainty = infectionPathCertainty;
+	}
+
+	public HumanTransmissionMode getHumanTransmissionMode() {
+		return humanTransmissionMode;
+	}
+
+	public void setHumanTransmissionMode(HumanTransmissionMode humanTransmissionMode) {
+		this.humanTransmissionMode = humanTransmissionMode;
+	}
+
+	public ParenteralTransmissionMode getParenteralTransmissionMode() {
+		return parenteralTransmissionMode;
+	}
+
+	public void setParenteralTransmissionMode(ParenteralTransmissionMode parenteralTransmissionMode) {
+		this.parenteralTransmissionMode = parenteralTransmissionMode;
+	}
+
+	public MedicallyAssociatedTransmissionMode getMedicallyAssociatedTransmissionMode() {
+		return medicallyAssociatedTransmissionMode;
+	}
+
+	public void setMedicallyAssociatedTransmissionMode(MedicallyAssociatedTransmissionMode medicallyAssociatedTransmissionMode) {
+		this.medicallyAssociatedTransmissionMode = medicallyAssociatedTransmissionMode;
+	}
+
+	public String getInternalToken() {
+		return internalToken;
+	}
+
+	public void setInternalToken(String internalToken) {
+		this.internalToken = internalToken;
 	}
 }

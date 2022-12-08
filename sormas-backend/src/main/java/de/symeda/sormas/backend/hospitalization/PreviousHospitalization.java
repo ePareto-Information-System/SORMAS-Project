@@ -9,13 +9,16 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.backend.hospitalization;
+
+import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_BIG;
+import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
 
 import java.util.Date;
 
@@ -29,21 +32,23 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import de.symeda.auditlog.api.Audited;
+import de.symeda.sormas.api.hospitalization.HospitalizationReasonType;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
-import de.symeda.sormas.backend.facility.Facility;
-import de.symeda.sormas.backend.region.Community;
-import de.symeda.sormas.backend.region.District;
-import de.symeda.sormas.backend.region.Region;
+import de.symeda.sormas.backend.infrastructure.community.Community;
+import de.symeda.sormas.backend.infrastructure.district.District;
+import de.symeda.sormas.backend.infrastructure.facility.Facility;
+import de.symeda.sormas.backend.infrastructure.region.Region;
 
-@Entity(name="previoushospitalization")
+@Entity(name = "previoushospitalization")
 @Audited
 public class PreviousHospitalization extends AbstractDomainObject {
 
 	private static final long serialVersionUID = 768263094433806267L;
 
 	public static final String TABLE_NAME = "previoushospitalization";
-	
+
+	public static final String ADMITTED_TO_HEALTH_FACILITY = "admittedToHealthFacility";
 	public static final String ADMISSION_DATE = "admissionDate";
 	public static final String DISCHARGE_DATE = "dischargeDate";
 	public static final String REGION = "region";
@@ -52,9 +57,14 @@ public class PreviousHospitalization extends AbstractDomainObject {
 	public static final String HEALTH_FACILIY = "healthFacility";
 	public static final String HEALTH_FACILITY_DETAILS = "healthFacilityDetails";
 	public static final String ISOLATED = "isolated";
+	public static final String ISOLATION_DATE = "isolationDate";
 	public static final String DESCRIPTION = "description";
 	public static final String HOSPITALIZATION = "hospitalization";
-	
+	public static final String INTENSIVE_CARE_UNIT = "intensiveCareUnit";
+	public static final String INTENSIVE_CARE_UNIT_START = "intensiveCareUnitStart";
+	public static final String INTENSIVE_CARE_UNIT_END = "intensiveCareUnitEnd";
+
+	private YesNoUnknown admittedToHealthFacility;
 	private Date admissionDate;
 	private Date dischargeDate;
 	private Region region;
@@ -63,21 +73,38 @@ public class PreviousHospitalization extends AbstractDomainObject {
 	private Facility healthFacility;
 	private String healthFacilityDetails;
 	private YesNoUnknown isolated;
+	private Date isolationDate;
 	private String description;
 	private Hospitalization hospitalization;
+	private HospitalizationReasonType hospitalizationReason;
+	private String otherHospitalizationReason;
+	private YesNoUnknown intensiveCareUnit;
+	private Date intensiveCareUnitStart;
+	private Date intensiveCareUnitEnd;
+
+	@Enumerated(EnumType.STRING)
+	public YesNoUnknown getAdmittedToHealthFacility() {
+		return admittedToHealthFacility;
+	}
+
+	public void setAdmittedToHealthFacility(YesNoUnknown admittedToHealthFacility) {
+		this.admittedToHealthFacility = admittedToHealthFacility;
+	}
 
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getAdmissionDate() {
 		return admissionDate;
 	}
+
 	public void setAdmissionDate(Date admissionDate) {
 		this.admissionDate = admissionDate;
 	}
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getDischargeDate() {
 		return dischargeDate;
 	}
+
 	public void setDischargeDate(Date dischargeDate) {
 		this.dischargeDate = dischargeDate;
 	}
@@ -86,65 +113,125 @@ public class PreviousHospitalization extends AbstractDomainObject {
 	public Region getRegion() {
 		return region;
 	}
+
 	public void setRegion(Region region) {
 		this.region = region;
 	}
-	
+
 	@ManyToOne(cascade = {})
 	public District getDistrict() {
 		return district;
 	}
+
 	public void setDistrict(District district) {
 		this.district = district;
 	}
-	
+
 	@ManyToOne(cascade = {})
 	public Community getCommunity() {
 		return community;
 	}
+
 	public void setCommunity(Community community) {
 		this.community = community;
 	}
-	
+
 	@ManyToOne(cascade = {})
 	public Facility getHealthFacility() {
 		return healthFacility;
 	}
+
 	public void setHealthFacility(Facility healthFacility) {
 		this.healthFacility = healthFacility;
 	}
-	
+
 	@Enumerated(EnumType.STRING)
 	public YesNoUnknown getIsolated() {
 		return isolated;
 	}
+
 	public void setIsolated(YesNoUnknown isolated) {
 		this.isolated = isolated;
 	}
-	
-	@Column(length = 512)
+
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getIsolationDate() {
+		return isolationDate;
+	}
+
+	public void setIsolationDate(Date isolationDate) {
+		this.isolationDate = isolationDate;
+	}
+
+	@Column(length = CHARACTER_LIMIT_BIG)
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	@ManyToOne(cascade = {})
 	@JoinColumn(nullable = false)
 	public Hospitalization getHospitalization() {
 		return hospitalization;
 	}
+
 	public void setHospitalization(Hospitalization hospitalization) {
 		this.hospitalization = hospitalization;
 	}
 
-	@Column(length = 512)
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getHealthFacilityDetails() {
 		return healthFacilityDetails;
 	}
+
 	public void setHealthFacilityDetails(String healthFacilityDetails) {
 		this.healthFacilityDetails = healthFacilityDetails;
 	}
-	
+
+	@Enumerated(EnumType.STRING)
+	public HospitalizationReasonType getHospitalizationReason() {
+		return hospitalizationReason;
+	}
+
+	public void setHospitalizationReason(HospitalizationReasonType reasonForHospitalization) {
+		this.hospitalizationReason = reasonForHospitalization;
+	}
+
+	public String getOtherHospitalizationReason() {
+		return otherHospitalizationReason;
+	}
+
+	public void setOtherHospitalizationReason(String otherReasonForHospitalization) {
+		this.otherHospitalizationReason = otherReasonForHospitalization;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public YesNoUnknown getIntensiveCareUnit() {
+		return intensiveCareUnit;
+	}
+
+	public void setIntensiveCareUnit(YesNoUnknown intensiveCareUnit) {
+		this.intensiveCareUnit = intensiveCareUnit;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getIntensiveCareUnitStart() {
+		return intensiveCareUnitStart;
+	}
+
+	public void setIntensiveCareUnitStart(Date intensiveCareUnitStart) {
+		this.intensiveCareUnitStart = intensiveCareUnitStart;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getIntensiveCareUnitEnd() {
+		return intensiveCareUnitEnd;
+	}
+
+	public void setIntensiveCareUnitEnd(Date intensiveCareUnitEnd) {
+		this.intensiveCareUnitEnd = intensiveCareUnitEnd;
+	}
 }

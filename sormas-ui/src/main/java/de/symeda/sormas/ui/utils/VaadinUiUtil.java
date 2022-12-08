@@ -9,19 +9,26 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.utils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.shared.Registration;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -36,13 +43,18 @@ import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.data.Item;
 import com.vaadin.v7.data.util.GeneratedPropertyContainer;
 import com.vaadin.v7.data.util.PropertyValueGenerator;
+import com.vaadin.v7.ui.Grid;
+import com.vaadin.v7.ui.renderers.HtmlRenderer;
 
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
-import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent.DoneListener;
 
-public class VaadinUiUtil {
+public final class VaadinUiUtil {
+
+	private VaadinUiUtil() {
+		// Hide Utility Class Constructor
+	}
 
 	public static Window createPopupWindow() {
 		Window window = new Window(null);
@@ -55,24 +67,36 @@ public class VaadinUiUtil {
 	}
 
 	public static Window showSimplePopupWindow(String caption, String contentText) {
+		return showSimplePopupWindow(caption, contentText, ContentMode.TEXT, null);
+	}
+
+	public static Window showSimplePopupWindow(String caption, String contentText, ContentMode contentMode) {
+		return showSimplePopupWindow(caption, contentText, contentMode, null);
+	}
+
+	public static Window showSimplePopupWindow(String caption, String contentText, ContentMode contentMode, Integer width) {
 		Window window = new Window(null);
 		window.setModal(true);
 		window.setSizeUndefined();
 		window.setResizable(false);
+
+		if (width != null) {
+			window.setWidth(width, Unit.PIXELS);
+		}
+
 		window.center();
 
 		VerticalLayout popupLayout = new VerticalLayout();
 		popupLayout.setMargin(true);
 		popupLayout.setSpacing(true);
 		popupLayout.setSizeUndefined();
-		Label contentLabel = new Label(contentText);
+		Label contentLabel = new Label(contentText, contentMode);
 		contentLabel.setWidth(100, Unit.PERCENTAGE);
 		popupLayout.addComponent(contentLabel);
-		Button okayButton = new Button(I18nProperties.getCaption(Captions.actionOkay));
-		okayButton.addClickListener(e -> {
+		Button okayButton = ButtonHelper.createButton(Captions.actionOkay, e -> {
 			window.close();
-		});
-		CssStyles.style(okayButton, ValoTheme.BUTTON_PRIMARY);
+		}, ValoTheme.BUTTON_PRIMARY);
+
 		popupLayout.addComponent(okayButton);
 		popupLayout.setComponentAlignment(okayButton, Alignment.BOTTOM_RIGHT);
 
@@ -86,40 +110,87 @@ public class VaadinUiUtil {
 
 	public static Window showPopupWindow(Component content) {
 
-		Window window = new Window(null);
+		return showPopupWindow(content, null);
+	}
+
+	public static Window showPopupWindow(Component content, String caption) {
+		Window window = new Window(caption);
 		window.setModal(true);
-		window.setSizeUndefined();
 		window.setResizable(false);
 		window.center();
 		window.setContent(content);
+		UI.getCurrent().addWindow(window);
+		return window;
+	}
+
+	public static Window showPopupWindowWithWidth(Component content, String caption, Integer width) {
+		Window window = new Window(caption);
+		window.setModal(true);
+		window.setResizable(false);
+		window.center();
+		window.setContent(content);
+		if (width != null) {
+			window.setWidth(width, Unit.PERCENTAGE);
+		}
 
 		UI.getCurrent().addWindow(window);
-
 		return window;
 	}
 
 	public static Window showModalPopupWindow(CommitDiscardWrapperComponent<?> content, String caption) {
+		return showModalPopupWindow(content, caption, false);
+	}
 
+	public static Window showModalPopupWindow(CommitDiscardWrapperComponent<?> content, String caption, boolean discardOnClose) {
+		return showModalPopupWindow(content, caption, discardOnClose, null);
+	}
+
+	public static Window showModalPopupWindow(CommitDiscardWrapperComponent<?> content, String caption, Consumer<Boolean> callback) {
+		return showModalPopupWindow(content, caption, false, callback);
+	}
+
+	public static Window showModalPopupWindow(
+		CommitDiscardWrapperComponent<?> content,
+		String caption,
+		boolean discardOnClose,
+		Consumer<Boolean> callback) {
 		final Window popupWindow = VaadinUiUtil.showPopupWindow(content);
 		popupWindow.setCaption(caption);
 		content.setMargin(true);
 
-		content.addDoneListener(new DoneListener() {
-			public void onDone() {
-				popupWindow.close();
+		final Registration closeListener;
+		if (discardOnClose) {
+			closeListener = popupWindow.addCloseListener(e -> content.discard());
+		} else {
+			closeListener = null;
+		}
+
+		content.addDoneListener(() -> {
+			if (closeListener != null) {
+				closeListener.remove();
 			}
+
+			popupWindow.close();
 		});
+
+		if (callback != null) {
+			content.addCommitListener(() -> callback.accept(true));
+			content.addDiscardListener(() -> callback.accept(false));
+		}
 
 		return popupWindow;
 	}
 
 	@SuppressWarnings("serial")
-	public static void addIconColumn(GeneratedPropertyContainer container, String iconPropertyId, VaadinIcons VaadinIconsIcon) {
+	public static void addIconColumn(GeneratedPropertyContainer container, String iconPropertyId, VaadinIcons vaadinIconsIcon) {
+
 		container.addGeneratedProperty(iconPropertyId, new PropertyValueGenerator<String>() {
+
 			@Override
 			public String getValue(Item item, Object itemId, Object propertyId) {
-				return VaadinIconsIcon.getHtml();
+				return vaadinIconsIcon.getHtml();
 			}
+
 			@Override
 			public Class<String> getType() {
 				return String.class;
@@ -127,7 +198,132 @@ public class VaadinUiUtil {
 		});
 	}
 
-	public static Window showConfirmationPopup(String caption, Component content, String confirmCaption, String cancelCaption, Integer width, Consumer<Boolean> resultConsumer) {
+	public static void setupEditColumn(Grid.Column column) {
+		column.setRenderer(new HtmlRenderer());
+		column.setWidth(20);
+		column.setSortable(false);
+		column.setHeaderCaption("");
+	}
+
+	public static Window showConfirmationPopup(
+		String caption,
+		Component content,
+		String confirmCaption,
+		String cancelCaption,
+		Consumer<Boolean> resultConsumer) {
+
+		return showConfirmationPopup(caption, content, confirmCaption, cancelCaption, getEstimatedWidth(caption.length()), resultConsumer);
+	}
+
+	public static Integer getEstimatedWidth(int length) {
+		BigDecimal width = new BigDecimal(length).multiply(BigDecimal.valueOf(13.6));
+		width = width.setScale(0, RoundingMode.HALF_UP);
+		return width.intValue();
+	}
+
+	public static Window showConfirmationPopup(
+		String caption,
+		Component content,
+		String confirmCaption,
+		String cancelCaption,
+		Integer width,
+		Consumer<Boolean> resultConsumer) {
+
+		return showConfirmationPopup(caption, content, popupWindow -> {
+			ConfirmationComponent confirmationComponent = new ConfirmationComponent(false) {
+
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				protected void onConfirm() {
+					resultConsumer.accept(true);
+					popupWindow.close();
+				}
+
+				@Override
+				protected void onCancel() {
+					resultConsumer.accept(false);
+					popupWindow.close();
+				}
+			};
+
+			confirmationComponent.getConfirmButton().setCaption(confirmCaption);
+			confirmationComponent.getCancelButton().setCaption(cancelCaption);
+
+			return confirmationComponent;
+		}, width);
+	}
+
+	public static CompletionStage<Boolean> showConfirmationPopup(String caption, Component content, String confirmCaption, String cancelCaption) {
+
+		CompletableFuture<Boolean> ret = new CompletableFuture<>();
+
+		VaadinUiUtil.showConfirmationPopup(caption, content, confirmCaption, cancelCaption, null, ret::complete, true);
+
+		return ret;
+	}
+
+	public static Window showConfirmationPopup(
+		String caption,
+		Component content,
+		String confirmCaption,
+		String cancelCaption,
+		Integer width,
+		UnaryOperator<Boolean> resultConsumer) {
+		return showConfirmationPopup(caption, content, confirmCaption, cancelCaption, width, resultConsumer, false);
+	}
+
+	public static Window showConfirmationPopup(
+		String caption,
+		Component content,
+		String confirmCaption,
+		String cancelCaption,
+		Integer width,
+		UnaryOperator<Boolean> resultConsumer,
+		boolean cancelOnClose) {
+
+		return showConfirmationPopup(caption, content, popupWindow -> {
+
+			Registration closeListener = popupWindow.addCloseListener(e -> {
+				if (cancelOnClose) {
+					resultConsumer.apply(false);
+				}
+			});
+
+			ConfirmationComponent confirmationComponent = new ConfirmationComponent(false) {
+
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				protected void onConfirm() {
+					if (Boolean.TRUE.equals(resultConsumer.apply(true))) {
+						closeListener.remove();
+						popupWindow.close();
+					}
+				}
+
+				@Override
+				protected void onCancel() {
+					if (Boolean.TRUE.equals(resultConsumer.apply(false))) {
+						closeListener.remove();
+						popupWindow.close();
+					}
+				}
+			};
+
+			confirmationComponent.getConfirmButton().setCaption(confirmCaption);
+			confirmationComponent.getCancelButton().setCaption(cancelCaption);
+
+			return confirmationComponent;
+		}, width);
+	}
+
+	public static Window showConfirmationPopup(
+		String caption,
+		Component content,
+		Function<Window, ConfirmationComponent> confirmationComponentProvider,
+		Integer width) {
+
 		Window popupWindow = VaadinUiUtil.createPopupWindow();
 		if (width != null) {
 			popupWindow.setWidth(width, Unit.PIXELS);
@@ -141,37 +337,48 @@ public class VaadinUiUtil {
 		content.setWidth(100, Unit.PERCENTAGE);
 		layout.addComponent(content);
 
-		ConfirmationComponent confirmationComponent = new ConfirmationComponent(false) {
-			private static final long serialVersionUID = 1L;
-			@Override
-			protected void onConfirm() {
-				resultConsumer.accept(true);
-				popupWindow.close();
-			}
-			@Override
-			protected void onCancel() {
-				resultConsumer.accept(false);
-				popupWindow.close();
-			}
-		};
-		confirmationComponent.getConfirmButton().setCaption(confirmCaption);
-		confirmationComponent.getCancelButton().setCaption(cancelCaption);
+		ConfirmationComponent confirmationComponent = confirmationComponentProvider.apply(popupWindow);
 
 		layout.addComponent(confirmationComponent);
 		layout.setComponentAlignment(confirmationComponent, Alignment.BOTTOM_RIGHT);
 		layout.setWidth(100, Unit.PERCENTAGE);
 		layout.setSpacing(true);
+
 		popupWindow.setContent(layout);
 		popupWindow.setClosable(false);
-		
+
 		UI.getCurrent().addWindow(popupWindow);
+
 		return popupWindow;
 	}
 
 	/**
-	 * @param resultConsumer TRUE: Option A, FALSE: Option B
+	 * @param resultConsumer
+	 *            TRUE: Option A, FALSE: Option B
 	 */
-	public static Window showChooseOptionPopup(String caption, Component content, String optionACaption, String optionBCaption, Integer width, Consumer<Boolean> resultConsumer) {
+	public static Window showChooseOptionPopup(
+			String caption,
+			Component content,
+			String optionACaption,
+			String optionBCaption,
+			Integer width,
+			Consumer<Boolean> resultConsumer) {
+		return showChooseOptionPopup(caption, content, optionACaption, optionBCaption, width, resultConsumer, false);
+	}
+
+	/**
+	 * @param resultConsumer
+	 *            TRUE: Option A, FALSE: Option B
+	 */
+	public static Window showChooseOptionPopup(
+		String caption,
+		Component content,
+		String optionACaption,
+		String optionBCaption,
+		Integer width,
+		Consumer<Boolean> resultConsumer,
+		boolean closable) {
+
 		Window popupWindow = VaadinUiUtil.createPopupWindow();
 		if (width != null) {
 			popupWindow.setWidth(width, Unit.PIXELS);
@@ -186,12 +393,15 @@ public class VaadinUiUtil {
 		layout.addComponent(content);
 
 		ConfirmationComponent confirmationComponent = new ConfirmationComponent(false) {
+
 			private static final long serialVersionUID = 1L;
+
 			@Override
 			protected void onConfirm() {
 				resultConsumer.accept(true);
 				popupWindow.close();
 			}
+
 			@Override
 			protected void onCancel() {
 				resultConsumer.accept(false);
@@ -209,26 +419,95 @@ public class VaadinUiUtil {
 		layout.setWidth(100, Unit.PERCENTAGE);
 		layout.setSpacing(true);
 		popupWindow.setContent(layout);
-		popupWindow.setClosable(false);
-		
+		popupWindow.setClosable(closable);
+
 		UI.getCurrent().addWindow(popupWindow);
 		return popupWindow;
 	}
-	
+
+	public static Window showThreeOptionsPopup(
+		String caption,
+		Component content,
+		String optionACaption,
+		String optionBCaption,
+		String optionCCaption,
+		Integer width,
+		Consumer<PopupOption> resultConsumer) {
+
+		Window popupWindow = VaadinUiUtil.createPopupWindow();
+		if (width != null) {
+			popupWindow.setWidth(width, Unit.PIXELS);
+		} else {
+			popupWindow.setWidthUndefined();
+		}
+		popupWindow.setCaption(caption);
+
+		VerticalLayout layout = new VerticalLayout();
+		layout.setMargin(true);
+		content.setWidth(100, Unit.PERCENTAGE);
+		layout.addComponent(content);
+
+		ConfirmationComponent confirmationComponent = new ConfirmationComponent(false) {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void onConfirm() {
+				resultConsumer.accept(PopupOption.OPTION1);
+				popupWindow.close();
+			}
+
+			@Override
+			protected void onCancel() {
+				resultConsumer.accept(PopupOption.OPTION2);
+				popupWindow.close();
+			}
+		};
+		confirmationComponent.getConfirmButton().setCaption(optionACaption);
+		Button cancelButton = confirmationComponent.getCancelButton();
+		cancelButton.setCaption(optionBCaption);
+		cancelButton.removeStyleName(ValoTheme.BUTTON_LINK);
+		cancelButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
+
+		confirmationComponent
+			.addExtraButton(ButtonHelper.createButton(Strings.unsavedChanges_cancel, optionCCaption, null, ValoTheme.BUTTON_PRIMARY), buttonEvent -> {
+				resultConsumer.accept(PopupOption.OPTION3);
+				popupWindow.close();
+			});
+
+		layout.addComponent(confirmationComponent);
+		layout.setComponentAlignment(confirmationComponent, Alignment.BOTTOM_RIGHT);
+		layout.setWidth(100, Unit.PERCENTAGE);
+		layout.setSpacing(true);
+		popupWindow.setContent(layout);
+		popupWindow.setClosable(false);
+
+		UI.getCurrent().addWindow(popupWindow);
+		return popupWindow;
+	}
+
+	public enum PopupOption {
+		OPTION1,
+		OPTION2,
+		OPTION3;
+	}
+
 	public static Window showDeleteConfirmationWindow(String content, Runnable callback) {
-		Window popupWindow = VaadinUiUtil.createPopupWindow();	
-		
+		Window popupWindow = VaadinUiUtil.createPopupWindow();
+
 		VerticalLayout deleteLayout = new VerticalLayout();
 		deleteLayout.setMargin(true);
 		deleteLayout.setSizeUndefined();
 		deleteLayout.setSpacing(true);
-	
+
 		Label description = new Label(content);
 		description.setWidth(100, Unit.PERCENTAGE);
 		deleteLayout.addComponent(description);
-		
+
 		ConfirmationComponent deleteConfirmationComponent = new ConfirmationComponent(false) {
+
 			private static final long serialVersionUID = 1L;
+
 			@Override
 			protected void onConfirm() {
 				popupWindow.close();
@@ -245,20 +524,23 @@ public class VaadinUiUtil {
 		deleteConfirmationComponent.getCancelButton().setCaption(I18nProperties.getString(Strings.no));
 		deleteLayout.addComponent(deleteConfirmationComponent);
 		deleteLayout.setComponentAlignment(deleteConfirmationComponent, Alignment.BOTTOM_RIGHT);
-		
+
 		popupWindow.setCaption(I18nProperties.getString(Strings.headingConfirmDeletion));
 		popupWindow.setContent(deleteLayout);
 		UI.getCurrent().addWindow(popupWindow);
-		
+
 		return popupWindow;
 	}
-	
+
 	public static ConfirmationComponent buildYesNoConfirmationComponent() {
 		ConfirmationComponent requestTaskComponent = new ConfirmationComponent(false) {
+
 			private static final long serialVersionUID = 1L;
+
 			@Override
 			protected void onConfirm() {
 			}
+
 			@Override
 			protected void onCancel() {
 			}
@@ -267,17 +549,40 @@ public class VaadinUiUtil {
 		requestTaskComponent.getCancelButton().setCaption(I18nProperties.getString(Strings.no));
 		return requestTaskComponent;
 	}
-	
-	public static HorizontalLayout createInfoComponent(String text) {
+
+	public static HorizontalLayout createInfoComponent(String htmlContent) {
+		return createIconComponent(htmlContent, "img/info-icon.png", 35);
+
+	}
+
+	public static HorizontalLayout createWarningComponent(String htmlContent) {
+		return createWarningComponent(htmlContent, 35);
+	}
+
+	public static HorizontalLayout createWarningComponent(String htmlContent, int iconSize) {
+		return createIconComponent(htmlContent, "img/warning-icon.png", iconSize);
+
+	}
+
+	public static HorizontalLayout createErrorComponent(String htmlContent) {
+		return createErrorComponent(htmlContent, 35);
+	}
+
+	public static HorizontalLayout createErrorComponent(String htmlContent, int iconSize) {
+		return createIconComponent(htmlContent, "img/error-icon.png", iconSize);
+
+	}
+
+	public static HorizontalLayout createIconComponent(String htmlContent, String iconName, int iconSize) {
 		HorizontalLayout infoLayout = new HorizontalLayout();
 		infoLayout.setWidth(100, Unit.PERCENTAGE);
 		infoLayout.setSpacing(true);
-		Image icon = new Image(null, new ThemeResource("img/info-icon.png"));
-		icon.setHeight(35, Unit.PIXELS);
-		icon.setWidth(35, Unit.PIXELS);
+		Image icon = new Image(null, new ThemeResource(iconName));
+		icon.setHeight(iconSize, Unit.PIXELS);
+		icon.setWidth(iconSize, Unit.PIXELS);
 		infoLayout.addComponent(icon);
 		infoLayout.setComponentAlignment(icon, Alignment.MIDDLE_LEFT);
-		Label infoLabel = new Label(text, ContentMode.HTML);
+		Label infoLabel = new Label(htmlContent, ContentMode.HTML);
 		infoLabel.setWidth(100, Unit.PERCENTAGE);
 		infoLayout.addComponent(infoLabel);
 		infoLayout.setExpandRatio(infoLabel, 1);
@@ -285,4 +590,24 @@ public class VaadinUiUtil {
 		return infoLayout;
 	}
 
+	public static VerticalLayout createWarningLayout() {
+		VerticalLayout warningLayout = new VerticalLayout();
+		warningLayout.setMargin(true);
+		Image warningIcon = new Image(null, new ThemeResource("img/warning-icon.png"));
+		warningIcon.setHeight(35, Unit.PIXELS);
+		warningIcon.setWidth(35, Unit.PIXELS);
+		warningLayout.addComponentAsFirst(warningIcon);
+		CssStyles.style(warningLayout, CssStyles.ALIGN_CENTER);
+		return warningLayout;
+	}
+
+	public static void showWarningPopup(String message) {
+		VerticalLayout warningLayout = createWarningLayout();
+		Window popupWindow = VaadinUiUtil.showPopupWindow(warningLayout);
+		Label infoLabel = new Label(message);
+		CssStyles.style(infoLabel, CssStyles.LABEL_LARGE, CssStyles.LABEL_WHITE_SPACE_NORMAL);
+		warningLayout.addComponent(infoLabel);
+		popupWindow.addCloseListener(e -> popupWindow.close());
+		popupWindow.setWidth(400, Unit.PIXELS);
+	}
 }

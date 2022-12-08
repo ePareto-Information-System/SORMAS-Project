@@ -28,7 +28,12 @@
         <import type="de.symeda.sormas.api.sample.SpecimenCondition" />
         <import type="de.symeda.sormas.api.sample.SampleMaterial" />
         <import type="de.symeda.sormas.api.sample.SamplePurpose" />
+        <import type="de.symeda.sormas.api.sample.SamplingReason" />
         <import type="de.symeda.sormas.api.Disease" />
+        <import type="android.view.View" />
+        <import type="de.symeda.sormas.app.component.controls.ControlButtonType"/>
+        <import type="de.symeda.sormas.api.i18n.I18nProperties" />
+        <import type="de.symeda.sormas.api.i18n.Captions" />
 
         <variable name="data" type="de.symeda.sormas.app.backend.sample.Sample"/>
         <variable name="referredSample" type="de.symeda.sormas.app.backend.sample.Sample"/>
@@ -57,6 +62,18 @@
                 android:id="@+id/main_content">
 
                 <requestFocus/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/sample_uuid"
+                        app:shortUuidValue="@{data.uuid}"
+                        style="@style/ControlSingleColumnStyle" />
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -113,6 +130,37 @@
                 </LinearLayout>
 
                 <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                    android:id="@+id/sample_samplingReason"
+                    style="@style/ControlSingleColumnStyle"
+                    app:value="@={data.samplingReason}" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextEditField
+                    android:id="@+id/sample_samplingReasonDetails"
+                    app:dependencyParentField="@{sampleSamplingReason}"
+                    app:dependencyParentValue="@{SamplingReason.OTHER_REASON}"
+                    app:value="@={data.samplingReasonDetails}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlButton
+                        android:id="@+id/button_scan_field_sample_id"
+                        android:textColor="@color/whiteOpaque"
+                        android:text="@string/scan_field_sample_id"
+                        app:buttonType="@{ControlButtonType.PRIMARY}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextEditField
+                        android:id="@+id/sample_fieldSampleID"
+                        app:value="@={data.fieldSampleID}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/sample_sampleSource"
                     app:value="@={data.sampleSource}"
                     app:softRequired="true"
@@ -120,7 +168,7 @@
                     app:dependencyParentValue="@{Disease.NEW_INFLUENZA}"
                     style="@style/ControlSingleColumnStyle" />
 
-                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
                     android:id="@+id/sample_lab"
                     app:required="true"
                     app:dependencyParentField="@{samplePurpose}"
@@ -141,9 +189,10 @@
                     app:value="@={data.comment}"
                     style="@style/ControlSingleColumnStyle" />
 
-                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
                     android:id="@+id/sample_pathogenTestResult"
-                    app:value="@{data.pathogenTestResult}"
+                    app:required="true"
+                    app:value="@={data.pathogenTestResult}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <LinearLayout
@@ -228,13 +277,10 @@
                         <de.symeda.sormas.app.component.controls.ControlCheckBoxField
                             android:id="@+id/sample_shipped"
                             app:value="@={data.shipped}"
-                            app:dependencyParentField="@{samplePurpose}"
-                            app:dependencyParentValue="@{SamplePurpose.EXTERNAL}"
                             style="@style/ControlFirstOfTwoColumnsStyle" />
 
                         <de.symeda.sormas.app.component.controls.ControlDateField
                             android:id="@+id/sample_shipmentDate"
-                            app:required="true"
                             app:value="@={data.shipmentDate}"
                             app:dependencyParentField="@{sampleShipped}"
                             app:dependencyParentValue="@{true}"
@@ -260,8 +306,6 @@
                         <de.symeda.sormas.app.component.controls.ControlTextImageField
                             android:id="@+id/sample_received"
                             app:receivedStatus="@{data}"
-                            app:dependencyParentField="@{samplePurpose}"
-                            app:dependencyParentValue="@{SamplePurpose.EXTERNAL}"
                             style="@style/ControlFirstOfTwoColumnsStyle" />
 
                         <de.symeda.sormas.app.component.controls.ControlTextReadField
@@ -296,7 +340,7 @@
 
                     <de.symeda.sormas.app.component.controls.ControlLinkField
                         android:id="@+id/sample_referredToUuid"
-                        app:value="@{referredSample.lab}"
+                        app:value="@{referredSample.lab == null ? referredSample : referredSample.lab }"
                         app:goneIfEmpty="@{referredSample}"
                         style="@style/ControlSingleColumnStyle" />
 

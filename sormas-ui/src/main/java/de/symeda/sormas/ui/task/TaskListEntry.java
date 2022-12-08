@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.task;
 
@@ -31,8 +31,9 @@ import de.symeda.sormas.api.task.TaskDto;
 import de.symeda.sormas.api.task.TaskIndexDto;
 import de.symeda.sormas.api.task.TaskPriority;
 import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.DateHelper;
+import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.DateFormatHelper;
 
 @SuppressWarnings("serial")
 public class TaskListEntry extends HorizontalLayout {
@@ -41,7 +42,7 @@ public class TaskListEntry extends HorizontalLayout {
 	private Button editButton;
 
 	public TaskListEntry(TaskIndexDto task) {
-		
+
 		this.task = task;
 
 		setMargin(false);
@@ -55,49 +56,54 @@ public class TaskListEntry extends HorizontalLayout {
 		topLayout.setWidth(100, Unit.PERCENTAGE);
 		addComponent(topLayout);
 		setExpandRatio(topLayout, 1);
-		
+
 		// TOP LEFT
 		VerticalLayout topLeftLayout = new VerticalLayout();
-				
+
 		topLeftLayout.setMargin(false);
 		topLeftLayout.setSpacing(false);
-	
+
 		Label taskTypeLabel = new Label(DataHelper.toStringNullable(task.getTaskType()));
 		CssStyles.style(taskTypeLabel, CssStyles.LABEL_BOLD, CssStyles.LABEL_UPPERCASE);
+		taskTypeLabel.setWidth(100, Unit.PERCENTAGE);
 		topLeftLayout.addComponent(taskTypeLabel);
-		
-		Label suggestedStartLabel = new Label(I18nProperties.getPrefixCaption(TaskDto.I18N_PREFIX, TaskDto.SUGGESTED_START)
-				+ ": " + DateHelper.formatLocalShortDate(task.getSuggestedStart()));
+
+		Label statusLabel = new Label(DataHelper.toStringNullable(task.getTaskStatus()));
+		CssStyles.style(statusLabel, CssStyles.LABEL_BOLD, CssStyles.LABEL_UPPERCASE);
+		topLeftLayout.addComponent(statusLabel);
+
+		Label priorityLabel = new Label(
+			DataHelper.toStringNullable(I18nProperties.getPrefixCaption(TaskDto.I18N_PREFIX, TaskDto.PRIORITY) + ": " + task.getPriority()));
+		if (TaskPriority.HIGH == task.getPriority()) {
+			priorityLabel.addStyleName(CssStyles.LABEL_IMPORTANT);
+		} else if (TaskPriority.NORMAL == task.getPriority()) {
+			priorityLabel.addStyleName(CssStyles.LABEL_NEUTRAL);
+		}
+		topLeftLayout.addComponent(priorityLabel);
+
+		Label suggestedStartLabel = new Label(
+			I18nProperties.getPrefixCaption(TaskDto.I18N_PREFIX, TaskDto.SUGGESTED_START) + ": "
+				+ DateFormatHelper.formatDate(task.getSuggestedStart()));
 		topLeftLayout.addComponent(suggestedStartLabel);
-		
-		Label dueDateLabel = new Label(I18nProperties.getPrefixCaption(TaskDto.I18N_PREFIX, TaskDto.DUE_DATE)
-				+ ": " + DateHelper.formatLocalShortDate(task.getDueDate()));
-		topLeftLayout.addComponent(dueDateLabel);		
-		
+
+		Label dueDateLabel =
+			new Label(I18nProperties.getPrefixCaption(TaskDto.I18N_PREFIX, TaskDto.DUE_DATE) + ": " + DateFormatHelper.formatDate(task.getDueDate()));
+		topLeftLayout.addComponent(dueDateLabel);
+
 		topLayout.addComponent(topLeftLayout);
 
 		// TOP RIGHT
 		VerticalLayout topRightLayout = new VerticalLayout();
 
 		topRightLayout.addStyleName(CssStyles.ALIGN_RIGHT);
-		topRightLayout.setMargin(false);
-		topRightLayout.setSpacing(false);
-		
-		Label statusLabel = new Label(DataHelper.toStringNullable(task.getTaskStatus()));
-		CssStyles.style(statusLabel, CssStyles.LABEL_BOLD, CssStyles.LABEL_UPPERCASE);
-		topRightLayout.addComponent(statusLabel);
-		
-		Label priorityLabel = new Label(DataHelper.toStringNullable(I18nProperties.getPrefixCaption(TaskDto.I18N_PREFIX, TaskDto.PRIORITY) + ": " + task.getPriority()));
-		if (TaskPriority.HIGH == task.getPriority()) {
-			priorityLabel.addStyleName(CssStyles.LABEL_IMPORTANT);
-		} else if (TaskPriority.NORMAL == task.getPriority()) {
-			priorityLabel.addStyleName(CssStyles.LABEL_NEUTRAL);				
-		}
-		topRightLayout.addComponent(priorityLabel);
-		
-		Label userLabel = new Label(I18nProperties.getPrefixCaption(TaskDto.I18N_PREFIX, TaskDto.ASSIGNEE_USER) + ": "
-				+ task.getAssigneeUser().getCaption());
-		topRightLayout.addComponent(userLabel);
+		/*
+		 * topRightLayout.setMargin(false);
+		 * topRightLayout.setSpacing(false);
+		 */
+
+		Label userLabel =
+			new Label(I18nProperties.getPrefixCaption(TaskDto.I18N_PREFIX, TaskDto.ASSIGNEE_USER) + ": " + task.getAssigneeUser().getCaption());
+		topLeftLayout.addComponent(userLabel);
 
 		topLayout.addComponent(topRightLayout);
 		topLayout.setComponentAlignment(topRightLayout, Alignment.TOP_RIGHT);
@@ -115,6 +121,7 @@ public class TaskListEntry extends HorizontalLayout {
 			break;
 		default:
 			statusStyle = null;
+			break;
 		}
 
 		if (statusStyle != null) {
@@ -127,14 +134,21 @@ public class TaskListEntry extends HorizontalLayout {
 		}
 	}
 
-	public void addEditListener(ClickListener editClickListener) {
+	public void addEditListener(int rowIndex, ClickListener editClickListener) {
 		if (editButton == null) {
-			editButton = new Button(VaadinIcons.PENCIL);
-			CssStyles.style(editButton, ValoTheme.BUTTON_LINK, CssStyles.BUTTON_COMPACT);
+			editButton = ButtonHelper.createIconButtonWithCaption(
+				"edit-task-" + rowIndex,
+				null,
+				VaadinIcons.PENCIL,
+				null,
+				ValoTheme.BUTTON_LINK,
+				CssStyles.BUTTON_COMPACT);
+
 			addComponent(editButton);
-			setComponentAlignment(editButton, Alignment.MIDDLE_RIGHT);
+			setComponentAlignment(editButton, Alignment.TOP_RIGHT);
 			setExpandRatio(editButton, 0);
 		}
+
 		editButton.addClickListener(editClickListener);
 	}
 

@@ -9,41 +9,55 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.utils;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Zum einfacheren Erstellen von CustomLayouts.<br/>
- * 
+ * <p>
  * Ist weder performant noch gegen Injection abgesichert.
- * 
- * @author HReise
  *
+ * @author HReise
  */
-public class LayoutUtil {
+public final class LayoutUtil {
 
+	private LayoutUtil() {
+		// Hide Utility Class Constructor
+	}
 
 	public static String locCss(String cssClasses, String location) {
+		return locCss(cssClasses, location, null);
+	}
+
+	public static String locCss(String cssClasses, String location, String elementType) {
+		String tag = elementType == null ? "div" : elementType;
 		StringBuilder sb = new StringBuilder();
-		sb.append("<div ");
+		sb.append("<").append(tag).append(" ");
 		if (cssClasses != null) {
 			sb.append("class='").append(cssClasses).append("' ");
 		}
-		sb.append("location='").append(location).append("'></div>");
+		sb.append("location='").append(location).append("'></").append(tag).append(">");
 
 		return sb.toString();
 	}
-	
+
 	public static String loc(String location) {
 		return locCss(null, location);
 	}
 
 	public static String locs(String... locations) {
+		return locs(Arrays.asList(locations));
+	}
+
+	public static String locs(List<String> locations) {
 		StringBuilder sb = new StringBuilder();
 		for (String location : locations) {
 			sb.append("<div location='").append(location).append("'></div>\n");
@@ -55,13 +69,25 @@ public class LayoutUtil {
 		return divCss(css, locs(locations));
 	}
 
+	public static String locsCss(String css, List<String> locations) {
+		return divCss(css, locs(locations));
+	}
+
 	public static String inlineLocs(String... locations) {
 		return locsCss("inline-container", locations);
 	}
-	
+
+	public static String filterLocs(String... locations) {
+		return locsCss("filters-container", locations);
+	}
+
+	public static String filterLocsCss(String css, String... locations) {
+		return locsCss("filters-container" + " " + css, locations);
+	}
+
 	/**
 	 * Ein Html-Element
-	 * 
+	 *
 	 * @param cssClasses
 	 * @param meta
 	 * @return
@@ -80,19 +106,19 @@ public class LayoutUtil {
 
 		return sb.toString();
 	}
-	
+
 	public static String div(String content) {
 		return divCss(null, content);
 	}
-	
+
 	public static String divCss(String cssClasses, String content) {
 		return element("div", cssClasses, content);
-	}	
-	
+	}
+
 	public static String divs(String... contents) {
 		return divsCss(null, contents);
 	}
-	
+
 	public static String divsCss(String cssClasses, String... contents) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<div ");
@@ -109,7 +135,7 @@ public class LayoutUtil {
 
 		sb.append("</div>");
 		return sb.toString();
-	}	
+	}
 
 	public static String span(String content) {
 		return element("span", null, content);
@@ -119,26 +145,50 @@ public class LayoutUtil {
 		return element("span", cssClasses, content);
 	}
 
+	/**
+	 * This method must not be used with an internationalized string in an html layout, otherwise the internationalization will not work
+	 * properly.
+	 */
 	public static String h1(String content) {
 		return element("h1", null, span(content));
 	}
 
+	/**
+	 * This method must not be used with an internationalized string in an html layout, otherwise the internationalization will not work
+	 * properly.
+	 */
 	public static String h2(String content) {
 		return element("h2", null, span(content));
 	}
 
+	/**
+	 * This method must not be used with an internationalized string in an html layout, otherwise the internationalization will not work
+	 * properly.
+	 */
 	public static String h3(String content) {
 		return element("h3", null, span(content));
 	}
 
+	/**
+	 * This method must not be used with an internationalized string in an html layout, otherwise the internationalization will not work
+	 * properly.
+	 */
 	public static String h4(String content) {
 		return element("h4", null, span(content));
 	}
 
+	/**
+	 * This method must not be used with an internationalized string in an html layout, otherwise the internationalization will not work
+	 * properly.
+	 */
 	public static String strong(String cssClasses, String content) {
 		return element("strong", cssClasses, content);
 	}
 
+	/**
+	 * This method must not be used with an internationalized string in an html layout, otherwise the internationalization will not work
+	 * properly.
+	 */
 	public static String small(String cssClasses, String content) {
 		return element("small", cssClasses, content);
 	}
@@ -171,7 +221,7 @@ public class LayoutUtil {
 	public static String fluidRowLocs(String... locs) {
 		return fluidRowLocsCss(null, locs);
 	}
-	
+
 	public static String fluidRowLocsCss(String cssClasses, String... locs) {
 		FluidColumn[] cols = new FluidColumn[locs.length];
 		int w = calcFluidColWidth(cols);
@@ -186,6 +236,10 @@ public class LayoutUtil {
 		return LayoutUtil.fluidRow(fluidColumnLoc(spanA, 0, locA));
 	}
 
+	public static String fluidRowLocs(int spanA, String locA) {
+		return LayoutUtil.fluidRow(fluidColumnLoc(spanA, 0, locA));
+	}
+
 	public static String fluidRowLocs(int spanA, String locA, int spanB, String locB) {
 		return LayoutUtil.fluidRow(fluidColumnLoc(spanA, 0, locA), fluidColumnLoc(spanB, 0, locB));
 	}
@@ -197,7 +251,7 @@ public class LayoutUtil {
 	public static String fluidRow(String... columns) {
 		return fluidRowCss(null, columns);
 	}
-	
+
 	public static String fluidRowCss(String cssClasses, String... columns) {
 
 		FluidColumn[] cols = new FluidColumn[columns.length];
@@ -255,7 +309,6 @@ public class LayoutUtil {
 		return new FluidColumn(cssClasses, span, offset, loc, null);
 	}
 
-	
 	public static FluidColumn oneOfThreeCol(String loc) {
 		return fluidColumnLoc(4, 0, loc);
 	}
@@ -271,11 +324,11 @@ public class LayoutUtil {
 	public static FluidColumn oneOfFourCol(String loc) {
 		return fluidColumnLoc(3, 0, loc);
 	}
-	
+
 	public static FluidColumn threeOfFourCol(String loc) {
 		return fluidColumnLoc(9, 0, loc);
 	}
-	
+
 	public static FluidColumn oneOfSixCol(String loc) {
 		return fluidColumnLoc(2, 0, loc);
 	}
@@ -283,9 +336,8 @@ public class LayoutUtil {
 	public static final class FluidColumn {
 
 		private final String str;
-		
-		public FluidColumn(String cssClasses, int span, int offset,
-				int spanSmall, int offsetSmall, String location, String content) {
+
+		public FluidColumn(String cssClasses, int span, int offset, int spanSmall, int offsetSmall, String location, String content) {
 
 			StringBuilder sb = new StringBuilder();
 			sb.append("<div ");
@@ -307,7 +359,7 @@ public class LayoutUtil {
 			if (location != null) {
 				sb.append(" location='").append(location).append("'");
 			}
-			
+
 			sb.append(">");
 
 			if (content != null) {
@@ -319,8 +371,7 @@ public class LayoutUtil {
 			str = sb.toString();
 		}
 
-		public FluidColumn(String cssClasses, int span, int offset,
-				String location, String content) {
+		public FluidColumn(String cssClasses, int span, int offset, String location, String content) {
 
 			StringBuilder sb = new StringBuilder();
 			sb.append("<div ");
@@ -342,7 +393,7 @@ public class LayoutUtil {
 			if (location != null) {
 				sb.append(" location='").append(location).append("'");
 			}
-			
+
 			sb.append(">");
 
 			if (content != null) {
@@ -358,6 +409,5 @@ public class LayoutUtil {
 		public String toString() {
 			return str;
 		}
-
 	}
 }

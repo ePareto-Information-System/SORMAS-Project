@@ -1,7 +1,7 @@
 
 #*******************************************************************************
 # SORMAS® - Surveillance Outbreak Response Management & Analysis System
-# Copyright © 2016-2018 Helmholtz-Zentrum f�r Infektionsforschung GmbH (HZI)
+# Copyright © 2016-2022 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 #!/bin/bash
 
-rm setup.log
+rm -f setup.log
 exec > >(tee -ia setup.log)
 exec 2> >(tee -ia setup.log)
 
@@ -49,10 +49,10 @@ else
 fi
 
 # The Java JDK for the payara server (note that spaces in the path are not supported by payara at the moment)
-#AS_JAVA_NATIVE='C:\zulu-8'
-#AS_JAVA_NATIVE='/opt/zulu-8'
+#AS_JAVA_NATIVE='C:\zulu-11'
+#AS_JAVA_NATIVE='/opt/zulu-11'
 
-PAYARA_VERSION=5.192
+PAYARA_VERSION=5.2021.10
 
 if [[ $(expr substr "$(uname -a)" 1 5) = "Linux" ]]; then
 	LINUX=true
@@ -66,27 +66,43 @@ if [[ ${LINUX} = true ]]; then
 	# make sure to update payara-sormas script when changing the user name
 	USER_NAME=payara
 	DOWNLOAD_DIR=${ROOT_PREFIX}/var/www/sormas/downloads
-else 
+else
 	ROOT_PREFIX=/c
 fi
 
+
+
+echo "--- Select an authentication provider for SORMAS"
+select LS in "SORMAS" "KEYCLOAK"; do
+  case $LS in
+    SORMAS ) AUTHENTICATION_PROVIDER="SORMAS"; break;;
+    KEYCLOAK ) AUTHENTICATION_PROVIDER="KEYCLOAK"; break;;
+  esac
+done
+
 TEMP_DIR=${ROOT_PREFIX}/opt/sormas/temp
+DOCUMENTS_DIR=${ROOT_PREFIX}/opt/sormas/documents
 GENERATED_DIR=${ROOT_PREFIX}/opt/sormas/generated
 CUSTOM_DIR=${ROOT_PREFIX}/opt/sormas/custom
+ABOUT_FILES_DIR=${CUSTOM_DIR}/aboutfiles
 PAYARA_HOME=${ROOT_PREFIX}/opt/payara5
 DOMAINS_HOME=${ROOT_PREFIX}/opt/domains
+SORMAS2SORMAS_DIR=${ROOT_PREFIX}/opt/sormas/sormas2sormas
 
 DOMAIN_NAME=sormas
 PORT_BASE=6000
 PORT_ADMIN=6048
 DOMAIN_DIR=${DOMAINS_HOME}/${DOMAIN_NAME}
+DOMAIN_XMX=4096m
 
 # DB
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=sormas_db
 DB_NAME_AUDIT=sormas_audit_db
+# Name of the database user; DO NOT CHANGE THIS!
 DB_USER=sormas_user
+DB_JDBC_MAXPOOLSIZE=128
 
 # ------ Config END ------
 
@@ -104,12 +120,16 @@ fi
 echo "Custom Java JDK: ${AS_JAVA_NATIVE}"
 echo "Payara: ${PAYARA_VERSION}"
 echo "Temp directory: ${TEMP_DIR}"
+echo "Directory for documents: ${DOCUMENTS_DIR}"
 echo "Directory for generated files: ${GENERATED_DIR}"
 echo "Directory for custom files: ${CUSTOM_DIR}"
+echo "Directory for custom documents: ${ABOUT_FILES_DIR}"
 echo "Payara home: ${PAYARA_HOME}"
 echo "Domain directory: ${DOMAIN_DIR}"
+echo "SORMAS to SORMAS directory:" ${SORMAS2SORMAS_DIR}
 echo "Base port: ${PORT_BASE}"
 echo "Admin port: ${PORT_ADMIN}"
+echo "Authentication provider: ${AUTHENTICATION_PROVIDER}"
 echo "---"
 read -p "Press [Enter] to continue or [Ctrl+C] to cancel and adjust the values..."
 
@@ -124,8 +144,11 @@ echo "Starting server setup..."
 mkdir -p "${PAYARA_HOME}"
 mkdir -p "${DOMAINS_HOME}"
 mkdir -p "${TEMP_DIR}"
+mkdir -p "${DOCUMENTS_DIR}"
 mkdir -p "${GENERATED_DIR}"
 mkdir -p "${CUSTOM_DIR}"
+mkdir -p "${ABOUT_FILES_DIR}"
+mkdir -p "${SORMAS2SORMAS_DIR}"
 
 if [[ ${LINUX} = true ]]; then
 	mkdir -p "${DOWNLOAD_DIR}"
@@ -133,12 +156,17 @@ if [[ ${LINUX} = true ]]; then
 	adduser ${USER_NAME}
 	setfacl -m u:${USER_NAME}:rwx "${DOMAINS_HOME}"
 	setfacl -m u:${USER_NAME}:rwx "${TEMP_DIR}"
+	setfacl -m u:${USER_NAME}:rwx "${DOCUMENTS_DIR}"
 	setfacl -m u:${USER_NAME}:rwx "${GENERATED_DIR}"
 	setfacl -m u:${USER_NAME}:rwx "${CUSTOM_DIR}"
+	setfacl -m u:${USER_NAME}:rwx "${ABOUT_FILES_DIR}"
+	setfacl -m u:${USER_NAME}:rwx "${SORMAS2SORMAS_DIR}"
 
-	setfacl -m u:postgres:rwx "${TEMP_DIR} "
+	setfacl -m u:postgres:rwx "${TEMP_DIR}"
+	setfacl -m u:postgres:rwx "${DOCUMENTS_DIR}"
 	setfacl -m u:postgres:rwx "${GENERATED_DIR}"
 	setfacl -m u:postgres:rwx "${CUSTOM_DIR}"
+	setfacl -m u:postgres:rwx "${ABOUT_FILES_DIR}"
 fi
 
 # Download and unzip payara
@@ -200,26 +228,27 @@ else
 fi
 
 # Check Java JDK
+JAVA_JDK_VERSION=11
 JAVA_VERSION=$("${JAVAC}" -version 2>&1 | sed 's/^.\+ //;s/^1\.//;s/[^0-9].*//')
 if [[ ! "${JAVA_VERSION}" =~ ^[0-9]+$ ]]; then
 	if [[ -z "${PAYARA_ZIP_FILE}" ]]; then
 		if [[ -z "${AS_JAVA}" ]]; then
-			echo "ERROR: No Java JDK found. Please install a Java 8 JDK or specify the JDK you want to use by adding AS_JAVA={PATH_TO_YOUR_JAVA_DIRECTORY} to ${ASENV_PATH}."
+			echo "ERROR: No Java JDK found. Please install a Java ${JAVA_JDK_VERSION} JDK or specify the JDK you want to use by adding AS_JAVA={PATH_TO_YOUR_JAVA_DIRECTORY} to ${ASENV_PATH}."
 		else
 			echo "ERROR: No Java JDK found in the path specified in ${ASENV_PATH}. Please adjust the value of the AS_JAVA entry."
 		fi
 	else
 		if [[ -z "${AS_JAVA}" ]]; then
-			echo "ERROR: No Java JDK found. Please install a Java 8 JDK or specify the JDK you want to use by specifying AS_JAVA_NATIVE variable in this script."
+			echo "ERROR: No Java JDK found. Please install a Java ${JAVA_JDK_VERSION} JDK or specify the JDK you want to use by specifying AS_JAVA_NATIVE variable in this script."
 		else
 			echo "ERROR: No Java JDK found in the path specified in this script. Please adjust the value of the AS_JAVA_NATIVE variable."
 		fi
 	fi
 	exit 1
-elif [[ "${JAVA_VERSION}" -eq 8 ]]; then
+elif [[ "${JAVA_VERSION}" -eq "${JAVA_JDK_VERSION}" ]]; then
 	echo "Found Java ${JAVA_VERSION} JDK."
-elif [[ "${JAVA_VERSION}" -gt 8 ]]; then
-	read -p "Found Java ${JAVA_VERSION} JDK - This version may be too new, SORMAS functionality cannot be guaranteed. Consider downgrading to Java 8 SDK and restarting the script. Press [Enter] to continue or [Ctrl+C] to cancel."
+elif [[ "${JAVA_VERSION}" -gt "${JAVA_JDK_VERSION}" ]]; then
+	read -p "Found Java ${JAVA_VERSION} JDK - This version may be too new, SORMAS functionality cannot be guaranteed. Consider downgrading to Java ${JAVA_JDK_VERSION} JDK and restarting the script. Press [Enter] to continue or [Ctrl+C] to cancel."
 else
 	echo "ERROR: Found Java ${JAVA_VERSION} JDK - This version is too old."
 	exit 1
@@ -237,10 +266,21 @@ fi
 # Set up the database
 echo "Starting database setup..."
 
+echo "--- Are you connecting to an already existing DB?"
+select LS in "YES" "NO"; do
+  case $LS in
+    YES ) DB_EXISTS=true; break;;
+    NO ) DB_EXISTS=false; break;;
+  esac
+done
+
 while [[ -z "${DB_PW}" ]]; do
 	read -p "--- Enter a password for the new database user '${DB_USER}': " DB_PW
 done
 
+if [[ ${DB_EXISTS} = true ]]; then
+  read -p "Before connecting to the existing DB, please make sure to backup all the data. Press [Enter] to continue or [Ctrl+C] to cancel."
+else
 cat > setup.sql <<-EOF
 CREATE USER $DB_USER WITH PASSWORD '$DB_PW' CREATEDB;
 CREATE DATABASE $DB_NAME WITH OWNER = '$DB_USER' ENCODING = 'UTF8';
@@ -250,6 +290,8 @@ CREATE OR REPLACE PROCEDURAL LANGUAGE plpgsql;
 ALTER PROCEDURAL LANGUAGE plpgsql OWNER TO $DB_USER;
 CREATE EXTENSION temporal_tables;
 CREATE EXTENSION pg_trgm;
+CREATE EXTENSION pgcrypto;
+CREATE EXTENSION IF NOT EXISTS unaccent;
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO $DB_USER;
 \c $DB_NAME_AUDIT
 CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
@@ -258,27 +300,28 @@ GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO $DB_USER;
 ALTER TABLE IF EXISTS schema_version OWNER TO $DB_USER;
 EOF
 
-if [[ ${LINUX} = true ]]; then
-	# no host is specified as by default the postgres user has only local access
-	su postgres -c "psql -p ${DB_PORT} -f setup.sql"
-else
-	PSQL_DEFAULT="${PROGRAMFILES//\\/\/}/PostgreSQL/10/"
-	echo "--- Enter the name install path of Postgres on your system (default: \"${PSQL_DEFAULT}\":"
-	read -r PSQL_DIR
-	if [[ -z "${PSQL_DIR}" ]]; then
-		PSQL_DIR="${PSQL_DEFAULT}"
-	fi
-	PSQL="${PSQL_DIR}/bin/psql.exe"
-	while [[ -z "${DB_PG_PW}" ]]; do
-		read -r -p "--- Enter the password for the 'postgres' user of your database: " DB_PG_PW
-	done
-	"${PSQL}" --no-password --file=setup.sql "postgresql://postgres:${DB_PG_PW}@${DB_HOST}:${DB_PORT}/postgres"
+  if [[ ${LINUX} = true ]]; then
+    # no host is specified as by default the postgres user has only local access
+    su postgres -c "psql -p ${DB_PORT} < setup.sql"
+  else
+    PSQL_DEFAULT="${PROGRAMFILES//\\/\/}/PostgreSQL/10/"
+    echo "--- Enter the name install path of Postgres on your system (default: \"${PSQL_DEFAULT}\":"
+    read -r PSQL_DIR
+    if [[ -z "${PSQL_DIR}" ]]; then
+      PSQL_DIR="${PSQL_DEFAULT}"
+    fi
+    PSQL="${PSQL_DIR}/bin/psql.exe"
+    while [[ -z "${DB_PG_PW}" ]]; do
+      read -r -p "--- Enter the password for the 'postgres' user of your database: " DB_PG_PW
+    done
+    "${PSQL}" --no-password --file=setup.sql "postgresql://postgres:${DB_PG_PW}@${DB_HOST}:${DB_PORT}/postgres"
+  fi
+
+  rm setup.sql
+
+  echo "---"
+  read -p "Database setup completed. Please check the output for any error. Press [Enter] to continue or [Ctrl+C] to cancel."
 fi
-
-rm setup.sql
-
-echo "---"
-read -p "Database setup completed. Please check the output for any error. Press [Enter] to continue or [Ctrl+C] to cancel."
 
 # Setting ASADMIN_CALL and creating domain
 echo "Creating domain for Payara..."
@@ -304,15 +347,21 @@ done
 echo "Configuring domain..."
 
 # General domain settings
+${ASADMIN} delete-jvm-options '-client'
 ${ASADMIN} delete-jvm-options -Xmx512m
-${ASADMIN} create-jvm-options -Xmx4096m
+${ASADMIN} create-jvm-options -Xmx${DOMAIN_XMX}
+${ASADMIN} create-jvm-options '-XX\:+IgnoreUnrecognizedVMOptions'
+${ASADMIN} create-system-properties --target server-config fish.payara.classloading.delegate=false
+${ASADMIN} get configs.config.server-config.ejb-container.max-pool-size
+${ASADMIN} set configs.config.server-config.ejb-container.max-pool-size=128
+${ASADMIN} set configs.config.server-config.thread-pools.thread-pool.http-thread-pool.max-thread-pool-size=50
 
 # JDBC pool
-${ASADMIN} create-jdbc-connection-pool --restype javax.sql.ConnectionPoolDataSource --datasourceclassname org.postgresql.ds.PGConnectionPoolDataSource --isconnectvalidatereq true --validationmethod custom-validation --validationclassname org.glassfish.api.jdbc.validation.PostgresConnectionValidation --property "portNumber=${DB_PORT}:databaseName=${DB_NAME}:serverName=${DB_HOST}:user=${DB_USER}:password=${DB_PW}" ${DOMAIN_NAME}DataPool
-${ASADMIN} create-jdbc-resource --connectionpoolid ${DOMAIN_NAME}DataPool jdbc/${DOMAIN_NAME}DataPool
+${ASADMIN} create-jdbc-connection-pool --restype javax.sql.ConnectionPoolDataSource --datasourceclassname org.postgresql.ds.PGConnectionPoolDataSource --isconnectvalidatereq true --validationmethod custom-validation --validationclassname org.glassfish.api.jdbc.validation.PostgresConnectionValidation --maxpoolsize ${DB_JDBC_MAXPOOLSIZE} --property "portNumber=${DB_PORT}:databaseName=${DB_NAME}:serverName=${DB_HOST}:user=${DB_USER}:password=${DB_PW}" ${DOMAIN_NAME}DataPool
+${ASADMIN} create-jdbc-resource --connectionpoolid ${DOMAIN_NAME}DataPool jdbc/sormasDataPool
 
 # Pool for audit log
-${ASADMIN} create-jdbc-connection-pool --restype javax.sql.XADataSource --datasourceclassname org.postgresql.xa.PGXADataSource --isconnectvalidatereq true --validationmethod custom-validation --validationclassname org.glassfish.api.jdbc.validation.PostgresConnectionValidation --property "portNumber=${DB_PORT}:databaseName=${DB_NAME_AUDIT}:serverName=${DB_HOST}:user=${DB_USER}:password=${DB_PW}" ${DOMAIN_NAME}AuditlogPool
+${ASADMIN} create-jdbc-connection-pool --restype javax.sql.XADataSource --datasourceclassname org.postgresql.xa.PGXADataSource --isconnectvalidatereq true --validationmethod custom-validation --validationclassname org.glassfish.api.jdbc.validation.PostgresConnectionValidation --maxpoolsize ${DB_JDBC_MAXPOOLSIZE} --property "portNumber=${DB_PORT}:databaseName=${DB_NAME_AUDIT}:serverName=${DB_HOST}:user=${DB_USER}:password=${DB_PW}" ${DOMAIN_NAME}AuditlogPool
 ${ASADMIN} create-jdbc-resource --connectionpoolid ${DOMAIN_NAME}AuditlogPool jdbc/AuditlogPool
 
 ${ASADMIN} create-javamail-resource --mailhost localhost --mailuser user --fromaddress "${MAIL_FROM}" mail/MailSession
@@ -328,6 +377,7 @@ if [[ ${DEV_SYSTEM} = true ]] && [[ ${LINUX} != true ]]; then
 	cp cacerts.jks.bin "${DOMAIN_DIR}/config/cacerts.jks"
 fi
 cp loginsidebar.html "${CUSTOM_DIR}"
+cp loginsidebar-header.html "${CUSTOM_DIR}"
 cp logindetails.html "${CUSTOM_DIR}"
 if [[ ${DEMO_SYSTEM} = true ]]; then
 	cp demologinmain.html "${CUSTOM_DIR}/loginmain.html"
@@ -349,6 +399,7 @@ read -p "--- Press [Enter] to continue..."
 # Logging
 echo "Configuring logging..."
 ${ASADMIN} create-jvm-options "-Dlogback.configurationFile=\${com.sun.aas.instanceRoot}/config/logback.xml"
+${ASADMIN} create-jvm-options "-DlogbackDisableServletContainerInitializer=true"
 ${ASADMIN} set-log-attributes com.sun.enterprise.server.logging.GFFileHandler.maxHistoryFiles=14
 ${ASADMIN} set-log-attributes com.sun.enterprise.server.logging.GFFileHandler.rotationLimitInBytes=0
 ${ASADMIN} set-log-attributes com.sun.enterprise.server.logging.GFFileHandler.rotationOnDateChange=true
@@ -368,6 +419,20 @@ if [[ ${DEV_SYSTEM} != true ]]; then
 	${ASADMIN} set configs.config.server-config.jms-service.jms-host.default_JMS_host.host=127.0.0.1
 	${ASADMIN} set configs.config.server-config.admin-service.jmx-connector.system.address=127.0.0.1
 	${ASADMIN} set-hazelcast-configuration --enabled=false
+fi
+
+
+if [[ ${AUTHENTICATION_PROVIDER} = "KEYCLOAK" ]];then
+  read -p "Starting Keycloak setup. Press [Enter] to continue..."
+  export PORT_BASE
+  export PORT_ADMIN
+  export PAYARA_HOME
+  export DOMAINS_HOME
+  export DOMAIN_NAME
+  export PSQL
+  export DB_PG_PW
+	cd keycloak
+	./keycloak-setup.sh
 fi
 
 # don't stop the domain, because we need it running for the update script
@@ -390,3 +455,4 @@ if [[ ${DEV_SYSTEM} != true ]]; then
 	echo "  - Execute the sormas-update.sh file to populate the database and deploy the server"
 	echo "  - Configure the apache web server according to the server setup guide"
 fi
+	echo "  - Execute the r-setup.sh file to enable disease network diagrams"

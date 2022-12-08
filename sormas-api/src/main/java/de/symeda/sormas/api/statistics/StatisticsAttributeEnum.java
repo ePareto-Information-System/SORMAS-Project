@@ -18,6 +18,7 @@
 package de.symeda.sormas.api.statistics;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseSubAttribute;
 
 public enum StatisticsAttributeEnum {
 
@@ -35,18 +36,42 @@ public enum StatisticsAttributeEnum {
 	DISEASE(StatisticsAttributeGroupEnum.ENTITY, true, false),
 	USER_ROLE(StatisticsAttributeGroupEnum.ENTITY, true, false);
 	
+	
+	
+	
 	private final StatisticsAttributeGroupEnum attributeGroup;
 	private final boolean sortByCaption;
 	private final boolean unknownValueAllowed;
-	private final StatisticsSubAttributeEnum[] subAttributes;
+	private final StatisticsCaseSubAttribute[] subAttributes;
 	
-	StatisticsAttributeEnum(StatisticsAttributeGroupEnum attributeGroup, boolean sortByCaption, boolean unknownValueAllowed, StatisticsSubAttributeEnum ...subAttributes) {
+	StatisticsAttributeEnum(StatisticsAttributeGroupEnum attributeGroup, boolean sortByCaption, boolean unknownValueAllowed, StatisticsCaseSubAttribute ...subAttributes) {
 		this.attributeGroup = attributeGroup;
 		this.sortByCaption = sortByCaption;
 		this.unknownValueAllowed = unknownValueAllowed;
 		this.subAttributes = subAttributes;
 	}
 	
+	StatisticsAttributeEnum(StatisticsAttributeGroupEnum attributeGroup, boolean sortByCaption, 
+			boolean unknownValueAllowed, StatisticsSubAttributeEnum subAttributes,
+			StatisticsSubAttributeEnum district) {
+		this.attributeGroup = attributeGroup;
+		this.sortByCaption = sortByCaption;
+		this.unknownValueAllowed = unknownValueAllowed;
+		//this.subAttributes = subAttributes;
+		this.subAttributes = null;
+	}
+
+	StatisticsAttributeEnum(StatisticsAttributeGroupEnum attributeGroup, boolean sortByCaption, boolean unknownValueAllowed, StatisticsSubAttributeEnum year,
+			StatisticsSubAttributeEnum quarter, StatisticsSubAttributeEnum month, StatisticsSubAttributeEnum epiWeek,
+			StatisticsSubAttributeEnum quarterOfYear, StatisticsSubAttributeEnum monthOfYear,
+			StatisticsSubAttributeEnum epiWeekOfYear, StatisticsSubAttributeEnum dateRange) {
+		
+		this.attributeGroup = attributeGroup;
+		this.sortByCaption = sortByCaption;
+		this.unknownValueAllowed = unknownValueAllowed;
+		this.subAttributes = null;
+	}
+
 	public StatisticsAttributeGroupEnum getAttributeGroup() {
 		return attributeGroup;
 	}
@@ -59,7 +84,7 @@ public enum StatisticsAttributeEnum {
 		return unknownValueAllowed;
 	}
 	
-	public StatisticsSubAttributeEnum[] getSubAttributes() {
+	public StatisticsCaseSubAttribute[] getSubAttributes() {
 		return subAttributes;
 	}
 	

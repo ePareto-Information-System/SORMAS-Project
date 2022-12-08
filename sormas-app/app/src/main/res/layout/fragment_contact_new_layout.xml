@@ -29,6 +29,7 @@
         <import type="de.symeda.sormas.api.i18n.Strings" />
 
         <variable name="data" type="de.symeda.sormas.app.backend.contact.Contact" />
+        <variable name="yesNoUnknownClass" type="Class" />
     </data>
 
     <ScrollView
@@ -47,6 +48,7 @@
             <de.symeda.sormas.app.component.controls.ControlDateField
                 android:id="@+id/contact_reportDateTime"
                 app:value="@={data.reportDateTime}"
+                app:required="true"
                 style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlTextEditField
@@ -65,6 +67,7 @@
 
             <de.symeda.sormas.app.component.controls.ControlSpinnerField
                 android:id="@+id/person_sex"
+                app:required="true"
                 app:value="@={data.person.sex}"
                 style="@style/ControlSingleColumnStyle" />
 
@@ -103,6 +106,12 @@
 
             </LinearLayout>
 
+            <de.symeda.sormas.app.component.controls.ControlSwitchField
+                android:id="@+id/contact_returningTraveler"
+                app:value="@={data.returningTraveler}"
+                app:enumClass="@{yesNoUnknownClass}"
+                style="@style/ControlSingleColumnStyle" />
+
             <de.symeda.sormas.app.component.controls.ControlSpinnerField
                 android:id="@+id/contact_disease"
                 app:value="@={data.disease}"
@@ -120,17 +129,35 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
                     android:id="@+id/contact_region"
                     style="@style/ControlFirstOfTwoColumnsStyle"
                     app:value="@={data.region}" />
 
-                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
                     android:id="@+id/contact_district"
                     style="@style/ControlSecondOfTwoColumnsStyle"
                     app:value="@={data.district}" />
 
             </LinearLayout>
+
+            <de.symeda.sormas.app.component.controls.InfrastructureSpinnerField
+                android:id="@+id/contact_community"
+                style="@style/ControlSingleColumnStyle"
+                app:value="@={data.community}" />
+
+            <de.symeda.sormas.app.component.controls.ControlCheckBoxField
+                android:id="@+id/contact_multiDayContact"
+                app:value="@={data.multiDayContact}"
+                style="@style/ControlSingleColumnStyle" />
+
+            <de.symeda.sormas.app.component.controls.ControlDateField
+                android:id="@+id/contact_firstContactDate"
+                app:value="@={data.firstContactDate}"
+                app:softRequired="true"
+                app:dependencyParentField="@{contactMultiDayContact}"
+                app:dependencyParentValue="@{true}"
+                style="@style/ControlSingleColumnStyle" />
 
             <de.symeda.sormas.app.component.controls.ControlDateField
                 android:id="@+id/contact_lastContactDate"

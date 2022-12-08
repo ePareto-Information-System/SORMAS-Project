@@ -45,7 +45,8 @@ window.de_symeda_sormas_ui_map_LeafletMap = function () {
 		zoom: 13,
 		trackResize: true,
 		});
-	
+
+
 	// full-screen control
 	map.addControl(new L.Control.Fullscreen({
 		position: 'topright',
@@ -72,6 +73,15 @@ window.de_symeda_sormas_ui_map_LeafletMap = function () {
 	var openStreetMapsLayer = L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
 		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors. Tiles courtesy of Humanitarian OpenStreetMap Team'
 	});
+
+	this.setTileLayer = function(layerUri, attribution){
+		openStreetMapsLayer.remove();
+		openStreetMapsLayer = L.tileLayer(layerUri, {
+			attribution: attribution
+		});
+
+		this.onStateChange();
+	}
 
 	this.onStateChange = function () {
 
@@ -172,6 +182,10 @@ window.de_symeda_sormas_ui_map_LeafletMap = function () {
 		    	map.removeLayer(layer);
 		    }
 		});
+	}
+
+	this.addShapefileAttribution = function(attribution){
+		map.attributionControl.addAttribution(attribution);
 	}
  	
 	function featureGroupClick(event) {

@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.contact;
 
@@ -21,21 +21,23 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 
 public enum FollowUpStatus implements StatisticsGroupingKey {
+//public enum FollowUpStatus {
+
 	FOLLOW_UP,
 	COMPLETED,
 	CANCELED,
 	LOST,
-	NO_FOLLOW_UP,
-	;
-	
+	NO_FOLLOW_UP;
+
+	@Override
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);
 	}
-	
+
 	public String toShortString() {
 		return I18nProperties.getEnumCaptionShort(this);
 	}
-	
+
 	public String getDescription() {
 		return I18nProperties.getEnumDescription(this);
 	}

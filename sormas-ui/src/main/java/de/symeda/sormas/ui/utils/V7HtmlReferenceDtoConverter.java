@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.utils;
 
@@ -23,9 +23,10 @@ import com.vaadin.v7.data.util.converter.Converter;
 
 import de.symeda.sormas.api.ReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.HtmlHelper;
 
 @SuppressWarnings("serial")
-public class V7HtmlReferenceDtoConverter implements Converter<String,ReferenceDto> {
+public class V7HtmlReferenceDtoConverter implements Converter<String, ReferenceDto> {
 
 	@Override
 	public ReferenceDto convertToModel(String value, Class<? extends ReferenceDto> targetType, Locale locale) throws ConversionException {
@@ -34,10 +35,13 @@ public class V7HtmlReferenceDtoConverter implements Converter<String,ReferenceDt
 
 	@Override
 	public String convertToPresentation(ReferenceDto value, Class<? extends String> targetType, Locale locale) throws ConversionException {
-		String html;
+
+		final String html;
 		if (value != null) {
-			String uuid = value.getUuid();
-			html = "<a title='" + uuid + "'>" + DataHelper.getShortUuid(uuid) + "</a> (" + value.getCaption() + ")";
+			html = String.format(
+				"%s (%s)",
+				HtmlHelper.buildHyperlinkTitle(value.getUuid(), DataHelper.getShortUuid(value.getUuid())),
+				HtmlHelper.cleanHtml(value.getCaption()));
 		} else {
 			html = "";
 		}
@@ -53,5 +57,4 @@ public class V7HtmlReferenceDtoConverter implements Converter<String,ReferenceDt
 	public Class<String> getPresentationType() {
 		return String.class;
 	}
-
 }

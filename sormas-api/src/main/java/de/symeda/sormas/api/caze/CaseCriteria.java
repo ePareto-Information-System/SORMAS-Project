@@ -9,52 +9,92 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.caze;
 
 import java.util.Date;
 
-import de.symeda.sormas.api.BaseCriteria;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityRelevanceStatus;
-import de.symeda.sormas.api.facility.FacilityReferenceDto;
-import de.symeda.sormas.api.infrastructure.PointOfEntryReferenceDto;
+import de.symeda.sormas.api.contact.FollowUpStatus;
+import de.symeda.sormas.api.contact.QuarantineType;
+import de.symeda.sormas.api.disease.DiseaseVariant;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityType;
+import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
+import de.symeda.sormas.api.infrastructure.pointofentry.PointOfEntryReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.person.PresentCondition;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.region.RegionReferenceDto;
+import de.symeda.sormas.api.person.SymptomJournalStatus;
+import de.symeda.sormas.api.share.ExternalShareCriteria;
 import de.symeda.sormas.api.user.UserReferenceDto;
-import de.symeda.sormas.api.user.UserRole;
+import de.symeda.sormas.api.user.UserRoleReferenceDto;
+import de.symeda.sormas.api.utils.DateFilterOption;
 import de.symeda.sormas.api.utils.IgnoreForUrl;
+import de.symeda.sormas.api.utils.criteria.CriteriaDateType;
+import de.symeda.sormas.api.utils.criteria.CriteriaWithDateType;
 
-public class CaseCriteria extends BaseCriteria implements Cloneable {
+public class CaseCriteria extends CriteriaWithDateType implements ExternalShareCriteria, Cloneable {
 
 	private static final long serialVersionUID = 5114202107622217837L;
 
+	public static final String PRESENT_CONDITION = "presentCondition";
+	public static final String REPORTING_USER_ROLE = "reportingUserRole";
+	public static final String MUST_HAVE_NO_GEO_COORDINATES = "mustHaveNoGeoCoordinates";
+	public static final String MUST_BE_PORT_HEALTH_CASE_WITHOUT_FACILITY = "mustBePortHealthCaseWithoutFacility";
+	public static final String MUST_HAVE_CASE_MANAGEMENT_DATA = "mustHaveCaseManagementData";
+	public static final String WITHOUT_RESPONSIBLE_OFFICER = "withoutResponsibleOfficer";
+	public static final String WITH_EXTENDED_QUARANTINE = "withExtendedQuarantine";
+	public static final String WITH_REDUCED_QUARANTINE = "withReducedQuarantine";
+	public static final String ONLY_QUARANTINE_HELP_NEEDED = "onlyQuarantineHelpNeeded";
 	public static final String CREATION_DATE_FROM = "creationDateFrom";
 	public static final String CREATION_DATE_TO = "creationDateTo";
-	public static final String DISEASE = "disease";
-	public static final String NAME_UUID_EPID_NUMBER_LIKE = "nameUuidEpidNumberLike";
+	public static final String CASE_LIKE = "caseLike";
+	public static final String EVENT_LIKE = "eventLike";
+	public static final String ONLY_CASES_WITH_EVENTS = "onlyCasesWithEvents";
 	public static final String REPORTING_USER_LIKE = "reportingUserLike";
-	public static final String REGION = "region";
-	public static final String DISTRICT = "district";
 	public static final String NEW_CASE_DATE_TYPE = "newCaseDateType";
 	public static final String NEW_CASE_DATE_FROM = "newCaseDateFrom";
 	public static final String NEW_CASE_DATE_TO = "newCaseDateTo";
-	
-	private UserRole reportingUserRole;
+	public static final String BIRTHDATE_YYYY = "birthdateYYYY";
+	public static final String BIRTHDATE_MM = "birthdateMM";
+	public static final String BIRTHDATE_DD = "birthdateDD";
+	public static final String QUARANTINE_TYPE = "quarantineType";
+	public static final String FOLLOW_UP_UNTIL_TO = "followUpUntilTo";
+	public static final String SYMPTOM_JOURNAL_STATUS = "symptomJournalStatus";
+	public static final String VACCINATION_STATUS = "vaccinationStatus";
+	public static final String REINFECTION_STATUS = "reinfectionStatus";
+	public static final String FACILITY_TYPE_GROUP = "facilityTypeGroup";
+	public static final String FACILITY_TYPE = "facilityType";
+	public static final String INCLUDE_CASES_FROM_OTHER_JURISDICTIONS = "includeCasesFromOtherJurisdictions";
+	public static final String ONLY_CONTACTS_FROM_OTHER_INSTANCES = "onlyContactsFromOtherInstances";
+	public static final String ONLY_CASES_WITH_REINFECTION = "onlyCasesWithReinfection";
+	public static final String ONLY_ENTITIES_NOT_SHARED_WITH_EXTERNAL_SURV_TOOL = "onlyEntitiesNotSharedWithExternalSurvTool";
+	public static final String ONLY_ENTITIES_SHARED_WITH_EXTERNAL_SURV_TOOL = "onlyEntitiesSharedWithExternalSurvTool";
+	public static final String ONLY_ENTITIES_CHANGED_SINCE_LAST_SHARED_WITH_EXTERNAL_SURV_TOOL =
+		"onlyEntitiesChangedSinceLastSharedWithExternalSurvTool";
+	public static final String ONLY_CASES_WITH_DONT_SHARE_WITH_EXTERNAL_SURV_TOOL = "onlyCasesWithDontShareWithExternalSurvTool";
+	public static final String ONLY_SHOW_CASES_WITH_FULFILLED_REFERENCE_DEFINITION = "onlyShowCasesWithFulfilledReferenceDefinition";
+	public static final String PERSON_LIKE = "personLike";
+
+	private UserRoleReferenceDto reportingUserRole;
 	private Disease disease;
+	private DiseaseVariant diseaseVariant;
 	private CaseOutcome outcome;
 	private CaseClassification caseClassification;
 	private InvestigationStatus investigationStatus;
 	private PresentCondition presentCondition;
 	private RegionReferenceDto region;
 	private DistrictReferenceDto district;
+	private CommunityReferenceDto community;
 	private FacilityReferenceDto healthFacility;
 	private PointOfEntryReferenceDto pointOfEntry;
 	private UserReferenceDto surveillanceOfficer;
@@ -62,94 +102,171 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 	private Date newCaseDateTo;
 	private Date creationDateFrom;
 	private Date creationDateTo;
-	private NewCaseDateType newCaseDateType;
+	private CriteriaDateType newCaseDateType;
+	// Used to re-construct whether users have filtered by epi weeks or dates
+	private DateFilterOption dateFilterOption = DateFilterOption.DATE;
 	private PersonReferenceDto person;
 	private Boolean mustHaveNoGeoCoordinates;
 	private Boolean mustBePortHealthCaseWithoutFacility;
 	private Boolean mustHaveCaseManagementData;
+	private Boolean withoutResponsibleOfficer;
+	private Boolean withExtendedQuarantine;
+	private Boolean withReducedQuarantine;
+	private Boolean onlyQuarantineHelpNeeded;
 	private Boolean deleted = Boolean.FALSE;
-	private String nameUuidEpidNumberLike;
+	private String caseLike;
+	private String eventLike;
+	private Boolean onlyCasesWithEvents = Boolean.FALSE;
 	private String reportingUserLike;
 	private CaseOrigin caseOrigin;
 	private EntityRelevanceStatus relevanceStatus;
 	private String sourceCaseInfoLike;
 	private Date quarantineTo;
-	
+	private Integer birthdateYYYY;
+	private Integer birthdateMM;
+	private Integer birthdateDD;
+	private QuarantineType quarantineType;
+	private FollowUpStatus followUpStatus;
+	private Date followUpUntilTo;
+	private Date followUpUntilFrom;
+	private Date followUpVisitsFrom;
+	private Date followUpVisitsTo;
+	private Integer followUpVisitsInterval;
+	private SymptomJournalStatus symptomJournalStatus;
+	private VaccinationStatus vaccinationStatus;
+	private ReinfectionStatus reinfectionStatus;
+	private Date reportDateTo;
+	private FacilityTypeGroup facilityTypeGroup;
+	private FacilityType facilityType;
+	private Boolean includeCasesFromOtherJurisdictions = Boolean.FALSE;
+	private Boolean onlyContactsFromOtherInstances;
+	private Boolean onlyCasesWithReinfection;
+	private Boolean onlyEntitiesNotSharedWithExternalSurvTool;
+	private Boolean onlyEntitiesSharedWithExternalSurvTool;
+	private Boolean onlyEntitiesChangedSinceLastSharedWithExternalSurvTool;
+	private Boolean onlyCasesWithDontShareWithExternalSurvTool;
+	private Boolean onlyShowCasesWithFulfilledReferenceDefinition;
+	private String personLike;
+
+	public CaseCriteria() {
+		super(NewCaseDateType.class);
+	}
+
 	@Override
 	public CaseCriteria clone() {
+
 		try {
-			return (CaseCriteria)super.clone();
+			return (CaseCriteria) super.clone();
 		} catch (CloneNotSupportedException e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
-	public CaseCriteria reportingUserRole(UserRole reportingUserRole) {
+
+	public void setReportingUserRole(UserRoleReferenceDto reportingUserRole) {
 		this.reportingUserRole = reportingUserRole;
-		return this;
 	}
 
-	public UserRole getReportingUserRole() {
+	public UserRoleReferenceDto getReportingUserRole() {
 		return reportingUserRole;
 	}
 
-	public CaseCriteria outcome(CaseOutcome outcome) {
+	public void setOutcome(CaseOutcome outcome) {
 		this.outcome = outcome;
-		return this;
 	}
-	
+
 	public CaseOutcome getOutcome() {
 		return outcome;
 	}
 
-	public CaseCriteria caseOrigin(CaseOrigin caseOrigin) {
+	public void setCaseOrigin(CaseOrigin caseOrigin) {
 		this.caseOrigin = caseOrigin;
-		return this;
 	}
-	
+
 	public CaseOrigin getCaseOrigin() {
 		return caseOrigin;
 	}
-	
-	public CaseCriteria disease(Disease disease) {
+
+	public void setDisease(Disease disease) {
 		this.disease = disease;
+	}
+
+	public CaseCriteria disease(Disease disease) {
+		setDisease(disease);
 		return this;
 	}
-	
+
 	public Disease getDisease() {
 		return disease;
 	}
 
-	public CaseCriteria region(RegionReferenceDto region) {
-		this.region = region;
+	public void setDiseaseVariant(DiseaseVariant diseaseVariant) {
+		this.diseaseVariant = diseaseVariant;
+	}
+
+	public CaseCriteria diseaseVariant(DiseaseVariant diseaseVariant) {
+		setDiseaseVariant(diseaseVariant);
 		return this;
 	}
-	
+
+	public DiseaseVariant getDiseaseVariant() {
+		return diseaseVariant;
+	}
+
+	public void setRegion(RegionReferenceDto region) {
+		this.region = region;
+	}
+
+	public CaseCriteria region(RegionReferenceDto region) {
+		setRegion(region);
+		return this;
+	}
+
 	public RegionReferenceDto getRegion() {
 		return region;
 	}
 
-	public CaseCriteria district(DistrictReferenceDto district) {
+	public void setDistrict(DistrictReferenceDto district) {
 		this.district = district;
+	}
+
+	public CaseCriteria district(DistrictReferenceDto district) {
+		setDistrict(district);
 		return this;
 	}
-	
+
 	public DistrictReferenceDto getDistrict() {
 		return district;
 	}
 
+	public CommunityReferenceDto getCommunity() {
+		return community;
+	}
+
+	public void setCommunity(CommunityReferenceDto community) {
+		this.community = community;
+	}
+
+	public CaseCriteria newCaseDateBetween(Date newCaseDateFrom, Date newCaseDateTo) {
+
+		this.newCaseDateFrom = newCaseDateFrom;
+		this.newCaseDateTo = newCaseDateTo;
+		return this;
+	}
+
 	/**
-	 * @param newCaseDateTo will automatically be set to the end of the day
+	 * @param newCaseDateTo
+	 *            will automatically be set to the end of the day
 	 */
-	public CaseCriteria newCaseDateBetween(Date newCaseDateFrom, Date newCaseDateTo, NewCaseDateType newCaseDateType) {
+	public CaseCriteria newCaseDateBetween(Date newCaseDateFrom, Date newCaseDateTo, CriteriaDateType newCaseDateType) {
+
 		this.newCaseDateFrom = newCaseDateFrom;
 		this.newCaseDateTo = newCaseDateTo;
 		this.newCaseDateType = newCaseDateType;
 		return this;
 	}
-	
+
 	public CaseCriteria newCaseDateFrom(Date newCaseDateFrom) {
-		this.newCaseDateFrom = newCaseDateFrom;
+		setNewCaseDateFrom(newCaseDateFrom);
 		return this;
 	}
 
@@ -157,67 +274,115 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 		return newCaseDateFrom;
 	}
 
-	public CaseCriteria newCaseDateTo(Date newCaseDateTo) {
-		this.newCaseDateTo = newCaseDateTo;
-		return this;
+	public void setNewCaseDateFrom(Date newCaseDateFrom) {
+		this.newCaseDateFrom = newCaseDateFrom;
 	}
 
 	public Date getNewCaseDateTo() {
 		return newCaseDateTo;
 	}
 
-	public CaseCriteria newCaseDateType(NewCaseDateType newCaseDateType) {
-		this.newCaseDateType = newCaseDateType;
-		return this;
+	public void setNewCaseDateTo(Date newCaseDateTo) {
+		this.newCaseDateTo = newCaseDateTo;
 	}
 
-	public NewCaseDateType getNewCaseDateType() {
+	public CriteriaDateType getNewCaseDateType() {
 		return newCaseDateType;
 	}
 
-	public CaseCriteria person(PersonReferenceDto person) {
-		this.person = person;
+	public void setNewCaseDateType(CriteriaDateType newCaseDateType) {
+		this.newCaseDateType = newCaseDateType;
+	}
+
+	public CaseCriteria newCaseDateType(CriteriaDateType newCaseDateType) {
+		setNewCaseDateType(newCaseDateType);
 		return this;
 	}
-	
+
+	public CaseCriteria dateFilterOption(DateFilterOption dateFilterOption) {
+		this.dateFilterOption = dateFilterOption;
+		return this;
+	}
+
+	public DateFilterOption getDateFilterOption() {
+		return dateFilterOption;
+	}
+
 	public PersonReferenceDto getPerson() {
 		return person;
 	}
 
-	public CaseCriteria mustHaveNoGeoCoordinates(Boolean mustHaveNoGeoCoordinates) {
-		this.mustHaveNoGeoCoordinates = mustHaveNoGeoCoordinates;
+	public void setPerson(PersonReferenceDto person) {
+		this.person = person;
+	}
+
+	public CaseCriteria person(PersonReferenceDto person) {
+		setPerson(person);
 		return this;
 	}
-	
-	public Boolean isMustHaveNoGeoCoordinates() {
+
+	public void setMustHaveNoGeoCoordinates(Boolean mustHaveNoGeoCoordinates) {
+		this.mustHaveNoGeoCoordinates = mustHaveNoGeoCoordinates;
+	}
+
+	public Boolean getMustHaveNoGeoCoordinates() {
 		return mustHaveNoGeoCoordinates;
 	}
-	
-	public CaseCriteria mustBePortHealthCaseWithoutFacility(Boolean mustBePortHealthCaseWithoutFacility) {
+
+	public void setMustBePortHealthCaseWithoutFacility(Boolean mustBePortHealthCaseWithoutFacility) {
 		this.mustBePortHealthCaseWithoutFacility = mustBePortHealthCaseWithoutFacility;
-		return this;
 	}
-	
-	public Boolean isMustBePortHealthCaseWithoutFacility() {
+
+	public Boolean getMustBePortHealthCaseWithoutFacility() {
 		return mustBePortHealthCaseWithoutFacility;
 	}
-	
-	public CaseCriteria mustHaveCaseManagementData(Boolean mustHaveCaseManagementData) {
+
+	public void setMustHaveCaseManagementData(Boolean mustHaveCaseManagementData) {
 		this.mustHaveCaseManagementData = mustHaveCaseManagementData;
-		return this;
 	}
-	
-	public Boolean isMustHaveCaseManagementData() {
+
+	public Boolean getMustHaveCaseManagementData() {
 		return mustHaveCaseManagementData;
 	}
-	
-	public CaseCriteria caseClassification(CaseClassification caseClassification) {
-		this.caseClassification = caseClassification;
-		return this;
+
+	public void setWithoutResponsibleOfficer(Boolean withoutResponsibleOfficer) {
+		this.withoutResponsibleOfficer = withoutResponsibleOfficer;
+	}
+
+	public Boolean getWithoutResponsibleOfficer() {
+		return this.withoutResponsibleOfficer;
+	}
+
+	public Boolean getWithExtendedQuarantine() {
+		return withExtendedQuarantine;
+	}
+
+	public void setWithExtendedQuarantine(Boolean withExtendedQuarantine) {
+		this.withExtendedQuarantine = withExtendedQuarantine;
+	}
+
+	public Boolean getWithReducedQuarantine() {
+		return withReducedQuarantine;
+	}
+
+	public void setWithReducedQuarantine(Boolean withReducedQuarantine) {
+		this.withReducedQuarantine = withReducedQuarantine;
+	}
+
+	public Boolean getOnlyQuarantineHelpNeeded() {
+		return onlyQuarantineHelpNeeded;
+	}
+
+	public void setOnlyQuarantineHelpNeeded(Boolean onlyQuarantineHelpNeeded) {
+		this.onlyQuarantineHelpNeeded = onlyQuarantineHelpNeeded;
 	}
 
 	public CaseClassification getCaseClassification() {
 		return caseClassification;
+	}
+
+	public void setCaseClassification(CaseClassification caseClassification) {
+		this.caseClassification = caseClassification;
 	}
 
 	public CaseCriteria investigationStatus(InvestigationStatus investigationStatus) {
@@ -229,52 +394,48 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 		return investigationStatus;
 	}
 
-	public CaseCriteria presentCondition(PresentCondition presentCondition) {
+	public void setPresentCondition(PresentCondition presentCondition) {
 		this.presentCondition = presentCondition;
-		return this;
 	}
 
 	public PresentCondition getPresentCondition() {
 		return presentCondition;
 	}
 
-	public CaseCriteria healthFacility(FacilityReferenceDto healthFacility) {
+	public void setHealthFacility(FacilityReferenceDto healthFacility) {
 		this.healthFacility = healthFacility;
-		return this;
 	}
 
 	public FacilityReferenceDto getHealthFacility() {
 		return healthFacility;
 	}
-	
-	public CaseCriteria pointOfEntry(PointOfEntryReferenceDto pointOfEntry) {
+
+	public void setPointOfEntry(PointOfEntryReferenceDto pointOfEntry) {
 		this.pointOfEntry = pointOfEntry;
-		return this;
 	}
-	
+
 	public PointOfEntryReferenceDto getPointOfEntry() {
 		return pointOfEntry;
 	}
 
-	public CaseCriteria surveillanceOfficer(UserReferenceDto surveillanceOfficer) {
+	public void setSurveillanceOfficer(UserReferenceDto surveillanceOfficer) {
 		this.surveillanceOfficer = surveillanceOfficer;
-		return this;
 	}
 
 	public UserReferenceDto getSurveillanceOfficer() {
 		return surveillanceOfficer;
 	}
-	
+
 	public CaseCriteria relevanceStatus(EntityRelevanceStatus relevanceStatus) {
 		this.relevanceStatus = relevanceStatus;
 		return this;
 	}
-	
+
 	@IgnoreForUrl
 	public EntityRelevanceStatus getRelevanceStatus() {
 		return relevanceStatus;
 	}
-	
+
 	public CaseCriteria deleted(Boolean deleted) {
 		this.deleted = deleted;
 		return this;
@@ -288,14 +449,45 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 	/**
 	 * returns all entries that match ALL of the passed words
 	 */
-	public CaseCriteria nameUuidEpidNumberLike(String nameUuidEpidNumberLike) {
-		this.nameUuidEpidNumberLike = nameUuidEpidNumberLike;
+	public void setCaseLike(String caseLike) {
+		this.caseLike = caseLike;
+	}
+
+	public CaseCriteria caseLike(String caseLike) {
+		setCaseLike(caseLike);
 		return this;
 	}
 
 	@IgnoreForUrl
-	public String getNameUuidEpidNumberLike() {
-		return nameUuidEpidNumberLike;
+	public String getCaseLike() {
+		return caseLike;
+	}
+
+	public void setEventLike(String eventLike) {
+		this.eventLike = eventLike;
+	}
+
+	public String getEventLike() {
+		return eventLike;
+	}
+
+	public CaseCriteria eventLike(String eventLike) {
+		setEventLike(eventLike);
+		return this;
+	}
+
+	public void setOnlyCasesWithEvents(Boolean onlyCasesWithEvents) {
+		this.onlyCasesWithEvents = onlyCasesWithEvents;
+	}
+
+	@IgnoreForUrl
+	public Boolean getOnlyCasesWithEvents() {
+		return onlyCasesWithEvents;
+	}
+
+	public CaseCriteria onlyCasesWithEvents(Boolean onlyCasesWithEvents) {
+		this.onlyCasesWithEvents = onlyCasesWithEvents;
+		return this;
 	}
 
 	@IgnoreForUrl
@@ -308,11 +500,10 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 		return this;
 	}
 
-	public CaseCriteria reportingUserLike(String reportingUserLike) {
+	public void setReportingUserLike(String reportingUserLike) {
 		this.reportingUserLike = reportingUserLike;
-		return this;
 	}
-	
+
 	@IgnoreForUrl
 	public String getReportingUserLike() {
 		return reportingUserLike;
@@ -322,8 +513,12 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 		return creationDateFrom;
 	}
 
-	public CaseCriteria creationDateFrom(Date creationDateFrom) {
+	public void setCreationDateFrom(Date creationDateFrom) {
 		this.creationDateFrom = creationDateFrom;
+	}
+
+	public CaseCriteria creationDateFrom(Date creationDateFrom) {
+		setCreationDateFrom(creationDateFrom);
 		return this;
 	}
 
@@ -331,62 +526,236 @@ public class CaseCriteria extends BaseCriteria implements Cloneable {
 		return creationDateTo;
 	}
 
-	public CaseCriteria creationDateTo(Date creationDateTo) {
-		this.creationDateTo = creationDateTo;
-		return this;
-	}
-
-	public void setDisease(Disease disease) {
-		this.disease = disease;
-	}
-
-	public void setRegion(RegionReferenceDto region) {
-		this.region = region;
-	}
-
-	public void setDistrict(DistrictReferenceDto district) {
-		this.district = district;
-	}
-
-	public void setCreationDateFrom(Date creationDateFrom) {
-		this.creationDateFrom = creationDateFrom;
-	}
-
 	public void setCreationDateTo(Date creationDateTo) {
 		this.creationDateTo = creationDateTo;
 	}
 
-	public void setNameUuidEpidNumberLike(String nameUuidEpidNumberLike) {
-		this.nameUuidEpidNumberLike = nameUuidEpidNumberLike;
+	public CaseCriteria creationDateTo(Date creationDateTo) {
+		setCreationDateTo(creationDateTo);
+		return this;
 	}
 
-	public void setReportingUserLike(String reportingUserLike) {
-		this.reportingUserLike = reportingUserLike;
-	}
-
-	public void setNewCaseDateFrom(Date newCaseDateFrom) {
-		this.newCaseDateFrom = newCaseDateFrom;
-	}
-
-	public void setNewCaseDateTo(Date newCaseDateTo) {
-		this.newCaseDateTo = newCaseDateTo;
-	}
-
-	public void setNewCaseDateType(NewCaseDateType newCaseDateType) {
-		this.newCaseDateType = newCaseDateType;
-	}
-	
 	public Date getQuarantineTo() {
 		return quarantineTo;
 	}
-	
-	public CaseCriteria quarantineTo(Date quarantineTo) {
-		this.quarantineTo = quarantineTo;
-		return this;
-	}
-	
+
 	public void setQuarantineTo(Date quarantineTo) {
 		this.quarantineTo = quarantineTo;
 	}
-	
+
+	public Integer getBirthdateYYYY() {
+		return birthdateYYYY;
+	}
+
+	public void setBirthdateYYYY(Integer birthdateYYYY) {
+		this.birthdateYYYY = birthdateYYYY;
+	}
+
+	public Integer getBirthdateMM() {
+		return birthdateMM;
+	}
+
+	public void setBirthdateMM(Integer birthdateMM) {
+		this.birthdateMM = birthdateMM;
+	}
+
+	public Integer getBirthdateDD() {
+		return birthdateDD;
+	}
+
+	public void setBirthdateDD(Integer birthdateDD) {
+		this.birthdateDD = birthdateDD;
+	}
+
+	public QuarantineType getQuarantineType() {
+		return quarantineType;
+	}
+
+	public void setQuarantineType(QuarantineType quarantineType) {
+		this.quarantineType = quarantineType;
+	}
+
+	public FollowUpStatus getFollowUpStatus() {
+		return followUpStatus;
+	}
+
+	public void setFollowUpStatus(FollowUpStatus followUpStatus) {
+		this.followUpStatus = followUpStatus;
+	}
+
+	public void setFollowUpUntilTo(Date followUpUntilTo) {
+		this.followUpUntilTo = followUpUntilTo;
+	}
+
+	public CaseCriteria followUpUntilTo(Date followUpUntilTo) {
+		this.followUpUntilTo = followUpUntilTo;
+		return this;
+	}
+
+	public Date getFollowUpUntilTo() {
+		return followUpUntilTo;
+	}
+
+	public CaseCriteria followUpUntilFrom(Date followUpUntilFrom) {
+		this.followUpUntilFrom = followUpUntilFrom;
+		return this;
+	}
+
+	public Date getFollowUpUntilFrom() {
+		return followUpUntilFrom;
+	}
+
+	public CaseCriteria reportDateTo(Date reportDateTo) {
+		this.reportDateTo = reportDateTo;
+		return this;
+	}
+
+	public SymptomJournalStatus getSymptomJournalStatus() {
+		return symptomJournalStatus;
+	}
+
+	public void setSymptomJournalStatus(SymptomJournalStatus symptomJournalStatus) {
+		this.symptomJournalStatus = symptomJournalStatus;
+	}
+
+	public VaccinationStatus getVaccinationStatus() {
+		return vaccinationStatus;
+	}
+
+	public void setVaccinationStatus(VaccinationStatus vaccinationStatus) {
+		this.vaccinationStatus = vaccinationStatus;
+	}
+
+	public ReinfectionStatus getReinfectionStatus() {
+		return reinfectionStatus;
+	}
+
+	public void setReinfectionStatus(ReinfectionStatus reinfectionStatus) {
+		this.reinfectionStatus = reinfectionStatus;
+	}
+
+	public Date getReportDateTo() {
+		return reportDateTo;
+	}
+
+	public void setReportDateTo(Date reportDateTo) {
+		this.reportDateTo = reportDateTo;
+	}
+
+	public FacilityTypeGroup getFacilityTypeGroup() {
+		return facilityTypeGroup;
+	}
+
+	public void setFacilityTypeGroup(FacilityTypeGroup typeGroup) {
+		this.facilityTypeGroup = typeGroup;
+	}
+
+	public FacilityType getFacilityType() {
+		return facilityType;
+	}
+
+	public void setFacilityType(FacilityType type) {
+		this.facilityType = type;
+	}
+
+	public Boolean getIncludeCasesFromOtherJurisdictions() {
+		return includeCasesFromOtherJurisdictions;
+	}
+
+	public void setIncludeCasesFromOtherJurisdictions(Boolean includeCasesFromOtherJurisdictions) {
+		this.includeCasesFromOtherJurisdictions = includeCasesFromOtherJurisdictions;
+	}
+
+	public Boolean getOnlyContactsFromOtherInstances() {
+		return onlyContactsFromOtherInstances;
+	}
+
+	public void setOnlyContactsFromOtherInstances(Boolean onlyContactsFromOtherInstances) {
+		this.onlyContactsFromOtherInstances = onlyContactsFromOtherInstances;
+	}
+
+	public Boolean getOnlyCasesWithReinfection() {
+		return onlyCasesWithReinfection;
+	}
+
+	public void setOnlyCasesWithReinfection(Boolean onlyCasesWithReinfection) {
+		this.onlyCasesWithReinfection = onlyCasesWithReinfection;
+	}
+
+	public Boolean getOnlyEntitiesNotSharedWithExternalSurvTool() {
+		return onlyEntitiesNotSharedWithExternalSurvTool;
+	}
+
+	public void setOnlyEntitiesNotSharedWithExternalSurvTool(Boolean onlyEntitiesNotSharedWithExternalSurvTool) {
+		this.onlyEntitiesNotSharedWithExternalSurvTool = onlyEntitiesNotSharedWithExternalSurvTool;
+	}
+
+	public Boolean getOnlyEntitiesSharedWithExternalSurvTool() {
+		return onlyEntitiesSharedWithExternalSurvTool;
+	}
+
+	public void setOnlyEntitiesSharedWithExternalSurvTool(Boolean onlyEntitiesSharedWithExternalSurvTool) {
+		this.onlyEntitiesSharedWithExternalSurvTool = onlyEntitiesSharedWithExternalSurvTool;
+	}
+
+	public Boolean getOnlyEntitiesChangedSinceLastSharedWithExternalSurvTool() {
+		return onlyEntitiesChangedSinceLastSharedWithExternalSurvTool;
+	}
+
+	public void setOnlyEntitiesChangedSinceLastSharedWithExternalSurvTool(Boolean onlyEntitiesChangedSinceLastSharedWithExternalSurvTool) {
+		this.onlyEntitiesChangedSinceLastSharedWithExternalSurvTool = onlyEntitiesChangedSinceLastSharedWithExternalSurvTool;
+	}
+
+	public Boolean getOnlyCasesWithDontShareWithExternalSurvTool() {
+		return onlyCasesWithDontShareWithExternalSurvTool;
+	}
+
+	public void setOnlyCasesWithDontShareWithExternalSurvTool(Boolean onlyCasesWithDontShareWithExternalSurvTool) {
+		this.onlyCasesWithDontShareWithExternalSurvTool = onlyCasesWithDontShareWithExternalSurvTool;
+	}
+
+	public Boolean getOnlyShowCasesWithFulfilledReferenceDefinition() {
+		return onlyShowCasesWithFulfilledReferenceDefinition;
+	}
+
+	public void setOnlyShowCasesWithFulfilledReferenceDefinition(Boolean onlyShowCasesWithFulfilledReferenceDefinition) {
+		this.onlyShowCasesWithFulfilledReferenceDefinition = onlyShowCasesWithFulfilledReferenceDefinition;
+	}
+
+	public Date getFollowUpVisitsFrom() {
+		return followUpVisitsFrom;
+	}
+
+	public void setFollowUpVisitsFrom(Date followUpVisitsFrom) {
+		this.followUpVisitsFrom = followUpVisitsFrom;
+	}
+
+	public Date getFollowUpVisitsTo() {
+		return followUpVisitsTo;
+	}
+
+	public void setFollowUpVisitsTo(Date followUpVisitsTo) {
+		this.followUpVisitsTo = followUpVisitsTo;
+	}
+
+	public Integer getFollowUpVisitsInterval() {
+		return followUpVisitsInterval;
+	}
+
+	public void setFollowUpVisitsInterval(Integer followUpVisitsInterval) {
+		this.followUpVisitsInterval = followUpVisitsInterval;
+	}
+
+	public String getPersonLike() {
+		return personLike;
+	}
+
+	public void setPersonLike(String personLike) {
+		this.personLike = personLike;
+	}
+
+	public CaseCriteria personLike(String personLike) {
+		setPersonLike(personLike);
+		return this;
+	}
 }

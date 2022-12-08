@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.importexport;
 
@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.ejb.Remote;
+import javax.validation.Valid;
 
 import de.symeda.sormas.api.utils.ExportErrorException;
 
@@ -33,13 +34,12 @@ public interface ExportFacade {
 	 * to the zip archive that can then be used to offer it as a download.
 	 */
 	String generateDatabaseExportArchive(List<DatabaseTable> databaseTables) throws ExportErrorException, IOException;
-	
-	String generateZipArchive(String date, int randomNumber);
-	
-	List<ExportConfigurationDto> getExportConfigurations(String userUuid);
-	
-	void saveExportConfiguration(ExportConfigurationDto exportConfiguration);
-	
-	void deleteExportConfiguration(String exportConfigurationUuid);
 
+	String generateZipArchive(String date, int randomNumber);
+
+	List<ExportConfigurationDto> getExportConfigurations(ExportConfigurationCriteria criteria, boolean isPublic);
+
+	void saveExportConfiguration(@Valid ExportConfigurationDto exportConfiguration);
+
+	void deleteExportConfiguration(String exportConfigurationUuid);
 }

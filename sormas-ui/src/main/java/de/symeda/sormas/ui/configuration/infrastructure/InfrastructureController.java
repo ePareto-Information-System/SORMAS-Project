@@ -9,16 +9,17 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.configuration.infrastructure;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.vaadin.server.Page;
@@ -30,21 +31,29 @@ import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.themes.ValoTheme;
 
 import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.facility.FacilityDto;
-import de.symeda.sormas.api.facility.FacilityType;
+import de.symeda.sormas.api.HasUuid;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityIndexDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.InfrastructureType;
-import de.symeda.sormas.api.infrastructure.PointOfEntryDto;
-import de.symeda.sormas.api.region.CommunityDto;
-import de.symeda.sormas.api.region.DistrictDto;
-import de.symeda.sormas.api.region.DistrictIndexDto;
-import de.symeda.sormas.api.region.RegionDto;
-import de.symeda.sormas.api.region.RegionIndexDto;
+import de.symeda.sormas.api.infrastructure.pointofentry.PointOfEntryDto;
+import de.symeda.sormas.api.infrastructure.area.AreaDto;
+import de.symeda.sormas.api.infrastructure.community.CommunityDto;
+import de.symeda.sormas.api.infrastructure.continent.ContinentDto;
+import de.symeda.sormas.api.infrastructure.country.CountryDto;
+import de.symeda.sormas.api.infrastructure.country.CountryIndexDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictIndexDto;
+import de.symeda.sormas.api.infrastructure.region.RegionDto;
+import de.symeda.sormas.api.infrastructure.region.RegionIndexDto;
+import de.symeda.sormas.api.infrastructure.subcontinent.SubcontinentDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.UserProvider;
+import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent.CommitListener;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
@@ -55,15 +64,63 @@ public class InfrastructureController {
 
 	}
 
-	public void createHealthFacility(boolean laboratory) {
-		CommitDiscardWrapperComponent<FacilityEditForm> createComponent = getFacilityEditComponent(null, laboratory);
+	public void createFacility() {
+		CommitDiscardWrapperComponent<FacilityEditForm> createComponent = getFacilityEditComponent(null);
+		VaadinUiUtil.showModalPopupWindow(createComponent, I18nProperties.getString(Strings.headingCreateNewFacility));
+	}
+
+	public void editFacility(String uuid) {
+		FacilityDto facility = FacadeProvider.getFacilityFacade().getByUuid(uuid);
+		CommitDiscardWrapperComponent<FacilityEditForm> editComponent = getFacilityEditComponent(facility);
+		String caption = I18nProperties.getString(Strings.edit) + " " + facility.getName();
+		VaadinUiUtil.showModalPopupWindow(editComponent, caption);
+	}
+
+	public void createArea() {
+		CommitDiscardWrapperComponent<AreaEditForm> createComponent = getAreaEditComponent(null);
 		VaadinUiUtil.showModalPopupWindow(createComponent, I18nProperties.getString(Strings.headingCreateEntry));
 	}
 
-	public void editHealthFacility(String uuid) {
-		FacilityDto facility = FacadeProvider.getFacilityFacade().getByUuid(uuid);
-		CommitDiscardWrapperComponent<FacilityEditForm> editComponent = getFacilityEditComponent(facility, facility.getType() == FacilityType.LABORATORY);
-		String caption = I18nProperties.getString(Strings.edit) + " " + facility.getName();
+	public void editArea(String uuid) {
+		AreaDto area = FacadeProvider.getAreaFacade().getByUuid(uuid);
+		CommitDiscardWrapperComponent<AreaEditForm> editComponent = getAreaEditComponent(area);
+		String caption = I18nProperties.getString(Strings.edit) + " " + area.getName();
+		VaadinUiUtil.showModalPopupWindow(editComponent, caption);
+	}
+
+	public void createContinent() {
+		CommitDiscardWrapperComponent<ContinentEditForm> createComponent = getContinentEditComponent(null);
+		VaadinUiUtil.showModalPopupWindow(createComponent, I18nProperties.getString(Strings.headingCreateEntry));
+	}
+
+	public void editContinent(String uuid) {
+		ContinentDto continentDto = FacadeProvider.getContinentFacade().getByUuid(uuid);
+		CommitDiscardWrapperComponent<ContinentEditForm> editComponent = getContinentEditComponent(continentDto);
+		String caption = I18nProperties.getString(Strings.headingEditContinent);
+		VaadinUiUtil.showModalPopupWindow(editComponent, caption);
+	}
+
+	public void createSubcontinent() {
+		CommitDiscardWrapperComponent<SubcontinentEditForm> createComponent = getSubcontinentEditComponent(null);
+		VaadinUiUtil.showModalPopupWindow(createComponent, I18nProperties.getString(Strings.headingCreateEntry));
+	}
+
+	public void editSubcontinent(String uuid) {
+		SubcontinentDto subcontinentDto = FacadeProvider.getSubcontinentFacade().getByUuid(uuid);
+		CommitDiscardWrapperComponent<SubcontinentEditForm> editComponent = getSubcontinentEditComponent(subcontinentDto);
+		String caption = I18nProperties.getString(Strings.headingEditSubcontinent);
+		VaadinUiUtil.showModalPopupWindow(editComponent, caption);
+	}
+
+	public void createCountry() {
+		CommitDiscardWrapperComponent<CountryEditForm> createComponent = getCountryEditComponent(null);
+		VaadinUiUtil.showModalPopupWindow(createComponent, I18nProperties.getString(Strings.headingCreateEntry));
+	}
+
+	public void editCountry(String uuid) {
+		CountryDto country = FacadeProvider.getCountryFacade().getByUuid(uuid);
+		CommitDiscardWrapperComponent<CountryEditForm> editComponent = getCountryEditComponent(country);
+		String caption = I18nProperties.getString(Strings.headingEditCountry);
 		VaadinUiUtil.showModalPopupWindow(editComponent, caption);
 	}
 
@@ -73,7 +130,7 @@ public class InfrastructureController {
 	}
 
 	public void editRegion(String uuid) {
-		RegionDto region = FacadeProvider.getRegionFacade().getRegionByUuid(uuid);
+		RegionDto region = FacadeProvider.getRegionFacade().getByUuid(uuid);
 		CommitDiscardWrapperComponent<RegionEditForm> editComponent = getRegionEditComponent(region);
 		String caption = I18nProperties.getString(Strings.edit) + " " + region.getName();
 		VaadinUiUtil.showModalPopupWindow(editComponent, caption);
@@ -85,7 +142,7 @@ public class InfrastructureController {
 	}
 
 	public void editDistrict(String uuid) {
-		DistrictDto district = FacadeProvider.getDistrictFacade().getDistrictByUuid(uuid);
+		DistrictDto district = FacadeProvider.getDistrictFacade().getByUuid(uuid);
 		CommitDiscardWrapperComponent<DistrictEditForm> editComponent = getDistrictEditComponent(district);
 		String caption = I18nProperties.getString(Strings.edit) + " " + district.getName();
 		VaadinUiUtil.showModalPopupWindow(editComponent, caption);
@@ -108,57 +165,164 @@ public class InfrastructureController {
 		VaadinUiUtil.showModalPopupWindow(component, I18nProperties.getString(Strings.headingCreateEntry));
 	}
 
-
 	public void editPointOfEntry(String uuid) {
+
 		PointOfEntryDto pointOfEntry = FacadeProvider.getPointOfEntryFacade().getByUuid(uuid);
 		CommitDiscardWrapperComponent<PointOfEntryForm> component = getPointOfEntryEditComponent(pointOfEntry);
 		String caption = I18nProperties.getString(Strings.edit) + " " + pointOfEntry.getName();
 		VaadinUiUtil.showModalPopupWindow(component, caption);
 	}
 
-	private CommitDiscardWrapperComponent<FacilityEditForm> getFacilityEditComponent(FacilityDto facility, boolean laboratory) {
+	private CommitDiscardWrapperComponent<FacilityEditForm> getFacilityEditComponent(FacilityDto facility) {
+
 		boolean isNew = facility == null;
-		FacilityEditForm editForm = new FacilityEditForm(
-				isNew ? UserRight.INFRASTRUCTURE_CREATE : UserRight.INFRASTRUCTURE_EDIT,
-				isNew, laboratory);
+		FacilityEditForm editForm = new FacilityEditForm(isNew);
 		if (isNew) {
 			facility = FacilityDto.build();
-			if (laboratory) {
-				facility.setType(FacilityType.LABORATORY);
-			}
 		}
 
 		editForm.setValue(facility);
 
 		final CommitDiscardWrapperComponent<FacilityEditForm> editView = new CommitDiscardWrapperComponent<FacilityEditForm>(
-				editForm, editForm.getFieldGroup());
+			editForm,
+			UserProvider.getCurrent().hasUserRight(isNew ? UserRight.INFRASTRUCTURE_CREATE : UserRight.INFRASTRUCTURE_EDIT),
+			editForm.getFieldGroup());
 
 		editView.addCommitListener(new CommitListener() {
+
 			@Override
 			public void onCommit() {
-				FacadeProvider.getFacilityFacade().saveFacility(editForm.getValue());
-				if (laboratory) {
-					Notification.show(I18nProperties.getString(Strings.messageEntryCreated), Type.ASSISTIVE_NOTIFICATION);
-					SormasUI.get().getNavigator().navigateTo(LaboratoriesView.VIEW_NAME);
-				} else {
-					Notification.show(I18nProperties.getString(Strings.messageEntryCreated), Type.ASSISTIVE_NOTIFICATION);
-					SormasUI.get().getNavigator().navigateTo(HealthFacilitiesView.VIEW_NAME);
-				}
+				FacadeProvider.getFacilityFacade().save(editForm.getValue());
+				Notification.show(I18nProperties.getString(Strings.messageEntryCreated), Type.ASSISTIVE_NOTIFICATION);
+				SormasUI.get().getNavigator().navigateTo(FacilitiesView.VIEW_NAME);
 			}
 		});
 
 		if (!isNew) {
-			extendEditComponentWithArchiveButton(editView, facility.isArchived(), facility.getUuid(),
-					InfrastructureType.FACILITY, facility.getType());
+			extendEditComponentWithArchiveButton(
+				editView,
+				facility.isArchived(),
+				facility.getUuid(),
+				InfrastructureType.FACILITY,
+				facility.getType());
+		}
+
+		return editView;
+	}
+
+	private CommitDiscardWrapperComponent<AreaEditForm> getAreaEditComponent(AreaDto area) {
+		boolean isNew = area == null;
+		AreaEditForm editForm = new AreaEditForm(isNew);
+		if (isNew) {
+			area = AreaDto.build();
+		}
+
+		editForm.setValue(area);
+
+		final CommitDiscardWrapperComponent<AreaEditForm> editComponent = new CommitDiscardWrapperComponent<>(
+			editForm,
+			UserProvider.getCurrent().hasUserRight(isNew ? UserRight.INFRASTRUCTURE_CREATE : UserRight.INFRASTRUCTURE_EDIT),
+			editForm.getFieldGroup());
+
+		editComponent.addCommitListener(() -> {
+			FacadeProvider.getAreaFacade().save(editForm.getValue());
+			Notification.show(I18nProperties.getString(Strings.messageEntryCreated), Type.ASSISTIVE_NOTIFICATION);
+			SormasUI.get().getNavigator().navigateTo(AreasView.VIEW_NAME);
+		});
+
+		if (!isNew) {
+			extendEditComponentWithArchiveButton(editComponent, area.isArchived(), area.getUuid(), InfrastructureType.AREA, null);
+		}
+
+		return editComponent;
+	}
+
+	private CommitDiscardWrapperComponent<ContinentEditForm> getContinentEditComponent(ContinentDto continent) {
+		boolean isNew = continent == null;
+		ContinentEditForm editForm = new ContinentEditForm(isNew);
+		if (isNew) {
+			continent = ContinentDto.build();
+		}
+
+		editForm.setValue(continent);
+
+		final CommitDiscardWrapperComponent<ContinentEditForm> editView = new CommitDiscardWrapperComponent<>(
+			editForm,
+			UserProvider.getCurrent().hasUserRight(isNew ? UserRight.INFRASTRUCTURE_CREATE : UserRight.INFRASTRUCTURE_EDIT),
+			editForm.getFieldGroup());
+
+		editView.addCommitListener(() -> {
+			FacadeProvider.getContinentFacade().save(editForm.getValue());
+			Notification.show(I18nProperties.getString(Strings.messageEntryCreated), Type.ASSISTIVE_NOTIFICATION);
+			SormasUI.get().getNavigator().navigateTo(ContinentsView.VIEW_NAME);
+		});
+
+		if (!isNew) {
+			extendEditComponentWithArchiveButton(editView, continent.isArchived(), continent.getUuid(), InfrastructureType.CONTINENT, null);
+		}
+
+		return editView;
+	}
+
+	private CommitDiscardWrapperComponent<SubcontinentEditForm> getSubcontinentEditComponent(SubcontinentDto subcontinent) {
+		boolean isNew = subcontinent == null;
+		SubcontinentEditForm editForm = new SubcontinentEditForm(isNew);
+		if (isNew) {
+			subcontinent = SubcontinentDto.build();
+		}
+
+		editForm.setValue(subcontinent);
+
+		final CommitDiscardWrapperComponent<SubcontinentEditForm> editView = new CommitDiscardWrapperComponent<>(
+			editForm,
+			UserProvider.getCurrent().hasUserRight(isNew ? UserRight.INFRASTRUCTURE_CREATE : UserRight.INFRASTRUCTURE_EDIT),
+			editForm.getFieldGroup());
+
+		editView.addCommitListener(() -> {
+			FacadeProvider.getSubcontinentFacade().save(editForm.getValue());
+			Notification.show(I18nProperties.getString(Strings.messageEntryCreated), Type.ASSISTIVE_NOTIFICATION);
+			SormasUI.get().getNavigator().navigateTo(SubcontinentsView.VIEW_NAME);
+		});
+
+		if (!isNew) {
+			extendEditComponentWithArchiveButton(editView, subcontinent.isArchived(), subcontinent.getUuid(), InfrastructureType.SUBCONTINENT, null);
+		}
+
+		return editView;
+	}
+
+	private CommitDiscardWrapperComponent<CountryEditForm> getCountryEditComponent(CountryDto country) {
+
+		boolean isNew = country == null;
+		CountryEditForm editForm = new CountryEditForm(isNew);
+		if (isNew) {
+			country = CountryDto.build();
+		}
+
+		editForm.setValue(country);
+
+		final CommitDiscardWrapperComponent<CountryEditForm> editView = new CommitDiscardWrapperComponent<>(
+			editForm,
+			UserProvider.getCurrent().hasUserRight(isNew ? UserRight.INFRASTRUCTURE_CREATE : UserRight.INFRASTRUCTURE_EDIT),
+			editForm.getFieldGroup());
+
+		editView.addCommitListener(() -> {
+			FacadeProvider.getCountryFacade().save(editForm.getValue());
+			Notification.show(I18nProperties.getString(Strings.messageEntryCreated), Type.ASSISTIVE_NOTIFICATION);
+			SormasUI.get().getNavigator().navigateTo(CountriesView.VIEW_NAME);
+		});
+
+		if (!isNew) {
+			extendEditComponentWithArchiveButton(editView, country.isArchived(), country.getUuid(), InfrastructureType.COUNTRY, null);
 		}
 
 		return editView;
 	}
 
 	private CommitDiscardWrapperComponent<RegionEditForm> getRegionEditComponent(RegionDto region) {
+
 		boolean isNew = region == null;
-		RegionEditForm editForm = new RegionEditForm(
-				isNew ? UserRight.INFRASTRUCTURE_CREATE : UserRight.INFRASTRUCTURE_EDIT, isNew);
+		RegionEditForm editForm = new RegionEditForm(isNew);
 		if (isNew) {
 			region = RegionDto.build();
 		}
@@ -166,29 +330,27 @@ public class InfrastructureController {
 		editForm.setValue(region);
 
 		final CommitDiscardWrapperComponent<RegionEditForm> editView = new CommitDiscardWrapperComponent<RegionEditForm>(
-				editForm, editForm.getFieldGroup());
+			editForm,
+			UserProvider.getCurrent().hasUserRight(isNew ? UserRight.INFRASTRUCTURE_CREATE : UserRight.INFRASTRUCTURE_EDIT),
+			editForm.getFieldGroup());
 
-		editView.addCommitListener(new CommitListener() {
-			@Override
-			public void onCommit() {
-				FacadeProvider.getRegionFacade().saveRegion(editForm.getValue());
-				Notification.show(I18nProperties.getString(Strings.messageEntryCreated), Type.ASSISTIVE_NOTIFICATION);
-				SormasUI.get().getNavigator().navigateTo(RegionsView.VIEW_NAME);
-			}
+		editView.addCommitListener(() -> {
+			FacadeProvider.getRegionFacade().save(editForm.getValue());
+			Notification.show(I18nProperties.getString(Strings.messageEntryCreated), Type.ASSISTIVE_NOTIFICATION);
+			SormasUI.get().getNavigator().navigateTo(RegionsView.VIEW_NAME);
 		});
 
 		if (!isNew) {
-			extendEditComponentWithArchiveButton(editView, region.isArchived(), region.getUuid(),
-					InfrastructureType.REGION, null);
+			extendEditComponentWithArchiveButton(editView, region.isArchived(), region.getUuid(), InfrastructureType.REGION, null);
 		}
 
 		return editView;
 	}
 
 	private CommitDiscardWrapperComponent<DistrictEditForm> getDistrictEditComponent(DistrictDto district) {
+
 		boolean isNew = district == null;
-		DistrictEditForm editForm = new DistrictEditForm(
-				isNew ? UserRight.INFRASTRUCTURE_CREATE : UserRight.INFRASTRUCTURE_EDIT, isNew);
+		DistrictEditForm editForm = new DistrictEditForm(isNew);
 		if (isNew) {
 			district = DistrictDto.build();
 		}
@@ -196,29 +358,31 @@ public class InfrastructureController {
 		editForm.setValue(district);
 
 		final CommitDiscardWrapperComponent<DistrictEditForm> editView = new CommitDiscardWrapperComponent<DistrictEditForm>(
-				editForm, editForm.getFieldGroup());
+			editForm,
+			UserProvider.getCurrent().hasUserRight(isNew ? UserRight.INFRASTRUCTURE_CREATE : UserRight.INFRASTRUCTURE_EDIT),
+			editForm.getFieldGroup());
 
 		editView.addCommitListener(new CommitListener() {
+
 			@Override
 			public void onCommit() {
-				FacadeProvider.getDistrictFacade().saveDistrict(editForm.getValue());
+				FacadeProvider.getDistrictFacade().save(editForm.getValue());
 				Notification.show(I18nProperties.getString(Strings.messageEntryCreated), Type.ASSISTIVE_NOTIFICATION);
 				SormasUI.get().getNavigator().navigateTo(DistrictsView.VIEW_NAME);
 			}
 		});
 
 		if (!isNew) {
-			extendEditComponentWithArchiveButton(editView, district.isArchived(), district.getUuid(),
-					InfrastructureType.DISTRICT, null);
+			extendEditComponentWithArchiveButton(editView, district.isArchived(), district.getUuid(), InfrastructureType.DISTRICT, null);
 		}
 
 		return editView;
 	}
 
 	private CommitDiscardWrapperComponent<CommunityEditForm> getCommunityEditComponent(CommunityDto community) {
+
 		boolean isNew = community == null;
-		CommunityEditForm editForm = new CommunityEditForm(
-				isNew ? UserRight.INFRASTRUCTURE_CREATE : UserRight.INFRASTRUCTURE_EDIT, isNew);
+		CommunityEditForm editForm = new CommunityEditForm(isNew);
 		if (isNew) {
 			community = CommunityDto.build();
 		}
@@ -226,36 +390,41 @@ public class InfrastructureController {
 		editForm.setValue(community);
 
 		final CommitDiscardWrapperComponent<CommunityEditForm> editView = new CommitDiscardWrapperComponent<CommunityEditForm>(
-				editForm, editForm.getFieldGroup());
+			editForm,
+			UserProvider.getCurrent().hasUserRight(isNew ? UserRight.INFRASTRUCTURE_CREATE : UserRight.INFRASTRUCTURE_EDIT),
+			editForm.getFieldGroup());
 
 		editView.addCommitListener(new CommitListener() {
+
 			@Override
 			public void onCommit() {
-				FacadeProvider.getCommunityFacade().saveCommunity(editForm.getValue());
+				FacadeProvider.getCommunityFacade().save(editForm.getValue());
 				Notification.show(I18nProperties.getString(Strings.messageEntryCreated), Type.ASSISTIVE_NOTIFICATION);
 				SormasUI.get().getNavigator().navigateTo(CommunitiesView.VIEW_NAME);
 			}
 		});
 
 		if (!isNew) {
-			extendEditComponentWithArchiveButton(editView, community.isArchived(), community.getUuid(),
-					InfrastructureType.COMMUNITY, null);
+			extendEditComponentWithArchiveButton(editView, community.isArchived(), community.getUuid(), InfrastructureType.COMMUNITY, null);
 		}
 
 		return editView;
 	}
 
 	private CommitDiscardWrapperComponent<PointOfEntryForm> getPointOfEntryEditComponent(PointOfEntryDto pointOfEntry) {
+
 		boolean isNew = pointOfEntry == null;
-		PointOfEntryForm form = new PointOfEntryForm(
-				isNew ? UserRight.INFRASTRUCTURE_CREATE : UserRight.INFRASTRUCTURE_EDIT, isNew);
+		PointOfEntryForm form = new PointOfEntryForm(isNew);
 		if (isNew) {
 			pointOfEntry = PointOfEntryDto.build();
 		}
 
 		form.setValue(pointOfEntry);
 
-		final CommitDiscardWrapperComponent<PointOfEntryForm> view = new CommitDiscardWrapperComponent<PointOfEntryForm>(form, form.getFieldGroup());
+		final CommitDiscardWrapperComponent<PointOfEntryForm> view = new CommitDiscardWrapperComponent<PointOfEntryForm>(
+			form,
+			UserProvider.getCurrent().hasUserRight(isNew ? UserRight.INFRASTRUCTURE_CREATE : UserRight.INFRASTRUCTURE_EDIT),
+			form.getFieldGroup());
 		view.addCommitListener(() -> {
 			FacadeProvider.getPointOfEntryFacade().save(form.getValue());
 			Notification.show(I18nProperties.getString(Strings.messageEntryCreated), Type.ASSISTIVE_NOTIFICATION);
@@ -263,43 +432,58 @@ public class InfrastructureController {
 		});
 
 		if (!isNew) {
-			extendEditComponentWithArchiveButton(view, pointOfEntry.isArchived(), pointOfEntry.getUuid(),
-					InfrastructureType.POINT_OF_ENTRY, null);
+			extendEditComponentWithArchiveButton(view, pointOfEntry.isArchived(), pointOfEntry.getUuid(), InfrastructureType.POINT_OF_ENTRY, null);
 		}
 
 		return view;
 	}
 
-	private void extendEditComponentWithArchiveButton(CommitDiscardWrapperComponent<?> component, boolean isArchived, String uuid, InfrastructureType infrastructureType, FacilityType facilityType) {
+	private void extendEditComponentWithArchiveButton(
+		CommitDiscardWrapperComponent<?> component,
+		boolean isArchived,
+		String uuid,
+		InfrastructureType infrastructureType,
+		FacilityType facilityType) {
+
 		if (UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_ARCHIVE)) {
-			Button archiveButton = new Button();
-			archiveButton.addStyleName(ValoTheme.BUTTON_LINK);
-			if (isArchived) {
-				archiveButton.setCaption(I18nProperties.getCaption(Captions.actionDearchive));
-			} else {
-				archiveButton.setCaption(I18nProperties.getCaption(Captions.actionArchive));
-			}
-			archiveButton.addClickListener(e -> {
+			Button archiveButton = ButtonHelper.createButton(isArchived ? Captions.actionDearchiveInfrastructure : Captions.actionArchiveInfrastructure, e -> {
 				if (!isArchived) {
-					if (InfrastructureType.REGION.equals(infrastructureType) && FacadeProvider.getRegionFacade().isUsedInOtherInfrastructureData(Arrays.asList(uuid)) ||
-							InfrastructureType.DISTRICT.equals(infrastructureType) && FacadeProvider.getDistrictFacade().isUsedInOtherInfrastructureData(Arrays.asList(uuid)) ||
-							InfrastructureType.COMMUNITY.equals(infrastructureType) && FacadeProvider.getCommunityFacade().isUsedInOtherInfrastructureData(Arrays.asList(uuid))) {
+					if (InfrastructureType.CONTINENT.equals(infrastructureType)
+						&& FacadeProvider.getContinentFacade().isUsedInOtherInfrastructureData(Arrays.asList(uuid))
+						|| InfrastructureType.SUBCONTINENT.equals(infrastructureType)
+							&& FacadeProvider.getSubcontinentFacade().isUsedInOtherInfrastructureData(Arrays.asList(uuid))
+						|| InfrastructureType.AREA.equals(infrastructureType)
+							&& FacadeProvider.getAreaFacade().isUsedInOtherInfrastructureData(Arrays.asList(uuid))
+						|| InfrastructureType.REGION.equals(infrastructureType)
+							&& FacadeProvider.getRegionFacade().isUsedInOtherInfrastructureData(Arrays.asList(uuid))
+						|| InfrastructureType.DISTRICT.equals(infrastructureType)
+							&& FacadeProvider.getDistrictFacade().isUsedInOtherInfrastructureData(Arrays.asList(uuid))
+						|| InfrastructureType.COMMUNITY.equals(infrastructureType)
+							&& FacadeProvider.getCommunityFacade().isUsedInOtherInfrastructureData(Arrays.asList(uuid))) {
 						showArchivingNotPossibleWindow(infrastructureType, false);
 						return;
 					}
 				} else {
-					if (InfrastructureType.DISTRICT.equals(infrastructureType) && FacadeProvider.getDistrictFacade().hasArchivedParentInfrastructure(Arrays.asList(uuid)) ||
-							InfrastructureType.COMMUNITY.equals(infrastructureType) && FacadeProvider.getCommunityFacade().hasArchivedParentInfrastructure(Arrays.asList(uuid)) ||
-							InfrastructureType.FACILITY.equals(infrastructureType) && FacadeProvider.getFacilityFacade().hasArchivedParentInfrastructure(Arrays.asList(uuid)) ||
-							InfrastructureType.POINT_OF_ENTRY.equals(infrastructureType) && FacadeProvider.getPointOfEntryFacade().hasArchivedParentInfrastructure(Arrays.asList(uuid))) {
-						showDearchivingNotPossibleWindow(infrastructureType, facilityType, false);
+					if (InfrastructureType.COUNTRY.equals(infrastructureType)
+						&& FacadeProvider.getCountryFacade().hasArchivedParentInfrastructure(Arrays.asList(uuid))
+						|| InfrastructureType.SUBCONTINENT.equals(infrastructureType)
+							&& FacadeProvider.getSubcontinentFacade().hasArchivedParentInfrastructure(Arrays.asList(uuid))
+						|| InfrastructureType.DISTRICT.equals(infrastructureType)
+							&& FacadeProvider.getDistrictFacade().hasArchivedParentInfrastructure(Arrays.asList(uuid))
+						|| InfrastructureType.COMMUNITY.equals(infrastructureType)
+							&& FacadeProvider.getCommunityFacade().hasArchivedParentInfrastructure(Arrays.asList(uuid))
+						|| InfrastructureType.FACILITY.equals(infrastructureType)
+							&& FacadeProvider.getFacilityFacade().hasArchivedParentInfrastructure(Arrays.asList(uuid))
+						|| InfrastructureType.POINT_OF_ENTRY.equals(infrastructureType)
+							&& FacadeProvider.getPointOfEntryFacade().hasArchivedParentInfrastructure(Arrays.asList(uuid))) {
+						showDearchivingNotPossibleWindow(infrastructureType, false);
 						return;
 					}
 				}
-				
+
 				component.commit();
-				archiveOrDearchiveInfrastructure(!isArchived, uuid, infrastructureType, facilityType);
-			});
+				archiveOrDearchiveInfrastructure(!isArchived, uuid, infrastructureType);
+			}, ValoTheme.BUTTON_LINK);
 
 			component.getButtonsPanel().addComponentAsFirst(archiveButton);
 			component.getButtonsPanel().setComponentAlignment(archiveButton, Alignment.BOTTOM_LEFT);
@@ -307,17 +491,32 @@ public class InfrastructureController {
 	}
 
 	private void showArchivingNotPossibleWindow(InfrastructureType infrastructureType, boolean bulkArchiving) {
-		String contentText;
 
+		final String contentText;
 		switch (infrastructureType) {
+		case CONTINENT:
+			contentText = I18nProperties
+				.getString(bulkArchiving ? Strings.messageContinentsArchivingNotPossible : Strings.messageContinentArchivingNotPossible);
+			break;
+		case SUBCONTINENT:
+			contentText = I18nProperties
+				.getString(bulkArchiving ? Strings.messageSubcontinentsArchivingNotPossible : Strings.messageSubcontinentArchivingNotPossible);
+			break;
+		case AREA:
+			contentText =
+				I18nProperties.getString(bulkArchiving ? Strings.messageAreasArchivingNotPossible : Strings.messageAreaArchivingNotPossible);
+			break;
 		case REGION:
-			contentText = I18nProperties.getString(bulkArchiving ? Strings.messageRegionsArchivingNotPossible : Strings.messageRegionArchivingNotPossible);
+			contentText =
+				I18nProperties.getString(bulkArchiving ? Strings.messageRegionsArchivingNotPossible : Strings.messageRegionArchivingNotPossible);
 			break;
 		case DISTRICT:
-			contentText = I18nProperties.getString(bulkArchiving ? Strings.messageDistrictsArchivingNotPossible : Strings.messageDistrictArchivingNotPossible);
+			contentText =
+				I18nProperties.getString(bulkArchiving ? Strings.messageDistrictsArchivingNotPossible : Strings.messageDistrictArchivingNotPossible);
 			break;
 		case COMMUNITY:
-			contentText = I18nProperties.getString(bulkArchiving ? Strings.messageCommunitiesArchivingNotPossible : Strings.messageCommunityArchivingNotPossible);
+			contentText = I18nProperties
+				.getString(bulkArchiving ? Strings.messageCommunitiesArchivingNotPossible : Strings.messageCommunityArchivingNotPossible);
 			break;
 		default:
 			throw new IllegalArgumentException(infrastructureType.name());
@@ -325,25 +524,33 @@ public class InfrastructureController {
 		VaadinUiUtil.showSimplePopupWindow(I18nProperties.getString(Strings.headingArchivingNotPossible), contentText);
 	}
 
-	private void showDearchivingNotPossibleWindow(InfrastructureType infrastructureType, FacilityType facilityType, boolean bulkArchiving) {
-		String contentText;
+	private void showDearchivingNotPossibleWindow(InfrastructureType infrastructureType, boolean bulkArchiving) {
 
+		final String contentText;
 		switch (infrastructureType) {
+		case COUNTRY:
+			contentText = I18nProperties
+				.getString(bulkArchiving ? Strings.messageCountriesDearchivingNotPossible : Strings.messageCountryDearchivingNotPossible);
+			break;
+		case SUBCONTINENT:
+			contentText = I18nProperties
+				.getString(bulkArchiving ? Strings.messageSubcontinentsDearchivingNotPossible : Strings.messageSubcontinentDearchivingNotPossible);
+			break;
 		case DISTRICT:
-			contentText = I18nProperties.getString(bulkArchiving ? Strings.messageDistrictsDearchivingNotPossible : Strings.messageDistrictDearchivingNotPossible);
+			contentText = I18nProperties
+				.getString(bulkArchiving ? Strings.messageDistrictsDearchivingNotPossible : Strings.messageDistrictDearchivingNotPossible);
 			break;
 		case COMMUNITY:
-			contentText = I18nProperties.getString(bulkArchiving ? Strings.messageCommunitiesDearchivingNotPossible : Strings.messageCommunityDearchivingNotPossible);
+			contentText = I18nProperties
+				.getString(bulkArchiving ? Strings.messageCommunitiesDearchivingNotPossible : Strings.messageCommunityDearchivingNotPossible);
 			break;
 		case FACILITY:
-			if (FacilityType.LABORATORY.equals(facilityType)) {
-				contentText = I18nProperties.getString(bulkArchiving ? Strings.messageLaboratoriesDearchivingNotPossible : Strings.messageLaboratoryDearchivingNotPossible);
-			} else {
-				contentText = I18nProperties.getString(bulkArchiving ? Strings.messageFacilitiesDearchivingNotPossible : Strings.messageFacilityDearchivingNotPossible);
-			}
+			contentText = I18nProperties
+				.getString(bulkArchiving ? Strings.messageFacilitiesDearchivingNotPossible : Strings.messageFacilityDearchivingNotPossible);
 			break;
 		case POINT_OF_ENTRY:
-			contentText = I18nProperties.getString(bulkArchiving ? Strings.messagePointsOfEntryDearchivingNotPossible : Strings.messagePointOfEntryDearchivingNotPossible);
+			contentText = I18nProperties
+				.getString(bulkArchiving ? Strings.messagePointsOfEntryDearchivingNotPossible : Strings.messagePointOfEntryDearchivingNotPossible);
 			break;
 		default:
 			throw new IllegalArgumentException(infrastructureType.name());
@@ -351,11 +558,28 @@ public class InfrastructureController {
 		VaadinUiUtil.showSimplePopupWindow(I18nProperties.getString(Strings.headingDearchivingNotPossible), contentText);
 	}
 
-	private void archiveOrDearchiveInfrastructure(boolean archive, String entityUuid, InfrastructureType infrastructureType, FacilityType facilityType) {
-		Label contentLabel = new Label();
-		String notificationMessage;
+	private void archiveOrDearchiveInfrastructure(boolean archive, String entityUuid, InfrastructureType infrastructureType) {
 
+		Label contentLabel = new Label();
+		final String notificationMessage;
 		switch (infrastructureType) {
+		case CONTINENT:
+			contentLabel.setValue(I18nProperties.getString(archive ? Strings.confirmationArchiveContinent : Strings.confirmationDearchiveContinent));
+			notificationMessage = I18nProperties.getString(archive ? Strings.messageContinentArchived : Strings.messageContinentDearchived);
+			break;
+		case SUBCONTINENT:
+			contentLabel
+				.setValue(I18nProperties.getString(archive ? Strings.confirmationArchiveSubcontinent : Strings.confirmationDearchiveSubcontinent));
+			notificationMessage = I18nProperties.getString(archive ? Strings.messageSubcontinentArchived : Strings.messageSubcontinentDearchived);
+			break;
+		case AREA:
+			contentLabel.setValue(I18nProperties.getString(archive ? Strings.confirmationArchiveArea : Strings.confirmationDearchiveArea));
+			notificationMessage = I18nProperties.getString(archive ? Strings.messageAreaArchived : Strings.messageAreaDearchived);
+			break;
+		case COUNTRY:
+			contentLabel.setValue(I18nProperties.getString(archive ? Strings.confirmationArchiveCountry : Strings.confirmationDearchiveCountry));
+			notificationMessage = I18nProperties.getString(archive ? Strings.messageCountryArchived : Strings.messageCountryDearchived);
+			break;
 		case REGION:
 			contentLabel.setValue(I18nProperties.getString(archive ? Strings.confirmationArchiveRegion : Strings.confirmationDearchiveRegion));
 			notificationMessage = I18nProperties.getString(archive ? Strings.messageRegionArchived : Strings.messageRegionDearchived);
@@ -369,199 +593,327 @@ public class InfrastructureController {
 			notificationMessage = I18nProperties.getString(archive ? Strings.messageCommunityArchived : Strings.messageCommunityDearchived);
 			break;
 		case FACILITY:
-			if (FacilityType.LABORATORY.equals(facilityType)) {
-				contentLabel.setValue(I18nProperties.getString(archive ? Strings.confirmationArchiveLaboratory : Strings.confirmationDearchiveLaboratory));
-				notificationMessage = I18nProperties.getString(archive ? Strings.messageLaboratoryArchived : Strings.messageLaboratoryDearchived);
-			} else {
-				contentLabel.setValue(I18nProperties.getString(archive ? Strings.confirmationArchiveFacility : Strings.confirmationDearchiveFacility));
-				notificationMessage = I18nProperties.getString(archive ? Strings.messageFacilityArchived : Strings.messageFacilityDearchived);
-			}
+			contentLabel.setValue(I18nProperties.getString(archive ? Strings.confirmationArchiveFacility : Strings.confirmationDearchiveFacility));
+			notificationMessage = I18nProperties.getString(archive ? Strings.messageFacilityArchived : Strings.messageFacilityDearchived);
 			break;
 		case POINT_OF_ENTRY:
-			contentLabel.setValue(I18nProperties.getString(archive ? Strings.confirmationArchivePointOfEntry : Strings.confirmationDearchivePointOfEntry));
+			contentLabel
+				.setValue(I18nProperties.getString(archive ? Strings.confirmationArchivePointOfEntry : Strings.confirmationDearchivePointOfEntry));
 			notificationMessage = I18nProperties.getString(archive ? Strings.messagePointOfEntryArchived : Strings.messagePointOfEntryDearchived);
 			break;
 		default:
 			throw new IllegalArgumentException(infrastructureType.name());
 		}
 
-		VaadinUiUtil.showConfirmationPopup(I18nProperties.getString(archive ? Strings.headingConfirmArchiving : Strings.headingConfirmDearchiving), 
-				contentLabel, I18nProperties.getString(Strings.yes), I18nProperties.getString(Strings.no), 640, e -> {
-					if (e.booleanValue()) {
-
-						switch (infrastructureType) {
-						case REGION:
-							if (archive) {
-								FacadeProvider.getRegionFacade().archive(entityUuid);
-							} else {
-								FacadeProvider.getRegionFacade().dearchive(entityUuid);
-							}
-							SormasUI.get().getNavigator().navigateTo(RegionsView.VIEW_NAME);
-							break;
-						case DISTRICT:
-							if (archive) {
-								FacadeProvider.getDistrictFacade().archive(entityUuid);
-							} else {
-								FacadeProvider.getDistrictFacade().dearchive(entityUuid);
-							}
-							SormasUI.get().getNavigator().navigateTo(DistrictsView.VIEW_NAME);
-							break;
-						case COMMUNITY:
-							if (archive) {
-								FacadeProvider.getCommunityFacade().archive(entityUuid);
-							} else {
-								FacadeProvider.getCommunityFacade().dearchive(entityUuid);
-							}
-							SormasUI.get().getNavigator().navigateTo(CommunitiesView.VIEW_NAME);
-							break;
-						case FACILITY:
-							if (archive) {
-								FacadeProvider.getFacilityFacade().archive(entityUuid);
-							} else {
-								FacadeProvider.getFacilityFacade().dearchive(entityUuid);
-							}
-							if (FacilityType.LABORATORY.equals(facilityType)) {
-								SormasUI.get().getNavigator().navigateTo(LaboratoriesView.VIEW_NAME);
-							} else {
-								SormasUI.get().getNavigator().navigateTo(HealthFacilitiesView.VIEW_NAME);
-							}
-							break;
-						case POINT_OF_ENTRY:
-							if (archive) {
-								FacadeProvider.getPointOfEntryFacade().archive(entityUuid);
-							} else {
-								FacadeProvider.getPointOfEntryFacade().dearchive(entityUuid);
-							}
-							SormasUI.get().getNavigator().navigateTo(PointsOfEntryView.VIEW_NAME);
-							break;
-						default:
-							throw new IllegalArgumentException(infrastructureType.name());
+		VaadinUiUtil.showConfirmationPopup(
+			I18nProperties.getString(archive ? Strings.headingConfirmArchiving : Strings.headingConfirmDearchiving),
+			contentLabel,
+			I18nProperties.getString(Strings.yes),
+			I18nProperties.getString(Strings.no),
+			640,
+			e -> {
+				if (e.booleanValue()) {
+					switch (infrastructureType) {
+					case CONTINENT:
+						if (archive) {
+							FacadeProvider.getContinentFacade().archive(entityUuid);
+						} else {
+							FacadeProvider.getContinentFacade().dearchive(entityUuid);
 						}
-
-						Notification.show(notificationMessage, Type.ASSISTIVE_NOTIFICATION);
+						SormasUI.get().getNavigator().navigateTo(ContinentsView.VIEW_NAME);
+						break;
+					case SUBCONTINENT:
+						if (archive) {
+							FacadeProvider.getSubcontinentFacade().archive(entityUuid);
+						} else {
+							FacadeProvider.getSubcontinentFacade().dearchive(entityUuid);
+						}
+						SormasUI.get().getNavigator().navigateTo(SubcontinentsView.VIEW_NAME);
+						break;
+					case AREA:
+						if (archive) {
+							FacadeProvider.getAreaFacade().archive(entityUuid);
+						} else {
+							FacadeProvider.getAreaFacade().dearchive(entityUuid);
+						}
+						SormasUI.get().getNavigator().navigateTo(AreasView.VIEW_NAME);
+						break;
+					case COUNTRY:
+						if (archive) {
+							FacadeProvider.getCountryFacade().archive(entityUuid);
+						} else {
+							FacadeProvider.getCountryFacade().dearchive(entityUuid);
+						}
+						SormasUI.get().getNavigator().navigateTo(CountriesView.VIEW_NAME);
+						break;
+					case REGION:
+						if (archive) {
+							FacadeProvider.getRegionFacade().archive(entityUuid);
+						} else {
+							FacadeProvider.getRegionFacade().dearchive(entityUuid);
+						}
+						SormasUI.get().getNavigator().navigateTo(RegionsView.VIEW_NAME);
+						break;
+					case DISTRICT:
+						if (archive) {
+							FacadeProvider.getDistrictFacade().archive(entityUuid);
+						} else {
+							FacadeProvider.getDistrictFacade().dearchive(entityUuid);
+						}
+						SormasUI.get().getNavigator().navigateTo(DistrictsView.VIEW_NAME);
+						break;
+					case COMMUNITY:
+						if (archive) {
+							FacadeProvider.getCommunityFacade().archive(entityUuid);
+						} else {
+							FacadeProvider.getCommunityFacade().dearchive(entityUuid);
+						}
+						SormasUI.get().getNavigator().navigateTo(CommunitiesView.VIEW_NAME);
+						break;
+					case FACILITY:
+						if (archive) {
+							FacadeProvider.getFacilityFacade().archive(entityUuid);
+						} else {
+							FacadeProvider.getFacilityFacade().dearchive(entityUuid);
+						}
+						SormasUI.get().getNavigator().navigateTo(FacilitiesView.VIEW_NAME);
+						break;
+					case POINT_OF_ENTRY:
+						if (archive) {
+							FacadeProvider.getPointOfEntryFacade().archive(entityUuid);
+						} else {
+							FacadeProvider.getPointOfEntryFacade().dearchive(entityUuid);
+						}
+						SormasUI.get().getNavigator().navigateTo(PointsOfEntryView.VIEW_NAME);
+						break;
+					default:
+						throw new IllegalArgumentException(infrastructureType.name());
 					}
-				});
+
+					Notification.show(notificationMessage, Type.ASSISTIVE_NOTIFICATION);
+				}
+			});
 	}
 
-	public void archiveOrDearchiveAllSelectedItems(boolean archive, Collection<?> selectedRows, InfrastructureType infrastructureType, FacilityType facilityType, Runnable callback) {
-		if (InfrastructureType.REGION.equals(infrastructureType) && FacadeProvider.getRegionFacade().isUsedInOtherInfrastructureData(
-				selectedRows.stream().map(row -> ((RegionIndexDto) row).getUuid()).collect(Collectors.toSet())) ||
-				InfrastructureType.DISTRICT.equals(infrastructureType) && FacadeProvider.getDistrictFacade().isUsedInOtherInfrastructureData(
-						selectedRows.stream().map(row -> ((DistrictIndexDto) row).getUuid()).collect(Collectors.toSet())) ||
-				InfrastructureType.COMMUNITY.equals(infrastructureType) && FacadeProvider.getCommunityFacade().isUsedInOtherInfrastructureData(
-						selectedRows.stream().map(row -> ((CommunityDto) row).getUuid()).collect(Collectors.toSet()))) {
+	@SuppressWarnings("unchecked")
+	public void archiveOrDearchiveAllSelectedItems(
+		boolean archive,
+		Collection<?> selectedRows,
+		InfrastructureType infrastructureType,
+		Runnable callback) {
+
+		// Check that at least one entry is selected
+		if (selectedRows.isEmpty()) {
+			new Notification(
+				I18nProperties.getString(Strings.headingNoRowsSelected),
+				I18nProperties.getString(Strings.messageNoRowsSelected),
+				Type.WARNING_MESSAGE,
+				false).show(Page.getCurrent());
+			return;
+		}
+
+		// Check if archiving/dearchiving is allowed concerning the hierarchy
+		Set<String> selectedRowsUuids = selectedRows.stream().map(row -> ((HasUuid) row).getUuid()).collect(Collectors.toSet());
+		if (InfrastructureType.AREA.equals(infrastructureType) && FacadeProvider.getAreaFacade().isUsedInOtherInfrastructureData(selectedRowsUuids)
+			|| InfrastructureType.CONTINENT.equals(infrastructureType)
+				&& FacadeProvider.getContinentFacade().isUsedInOtherInfrastructureData(selectedRowsUuids)
+			|| InfrastructureType.SUBCONTINENT.equals(infrastructureType)
+				&& FacadeProvider.getSubcontinentFacade().isUsedInOtherInfrastructureData(selectedRowsUuids)
+			|| InfrastructureType.REGION.equals(infrastructureType)
+				&& FacadeProvider.getRegionFacade().isUsedInOtherInfrastructureData(selectedRowsUuids)
+			|| InfrastructureType.DISTRICT.equals(infrastructureType)
+				&& FacadeProvider.getDistrictFacade().isUsedInOtherInfrastructureData(selectedRowsUuids)
+			|| InfrastructureType.COMMUNITY.equals(infrastructureType)
+				&& FacadeProvider.getCommunityFacade().isUsedInOtherInfrastructureData(selectedRowsUuids)) {
 			showArchivingNotPossibleWindow(infrastructureType, true);
 			return;
 		}
-		if (InfrastructureType.DISTRICT.equals(infrastructureType) && FacadeProvider.getDistrictFacade().hasArchivedParentInfrastructure(
-				selectedRows.stream().map(row -> ((DistrictIndexDto) row).getUuid()).collect(Collectors.toSet())) ||
-				InfrastructureType.COMMUNITY.equals(infrastructureType) && FacadeProvider.getCommunityFacade().hasArchivedParentInfrastructure(
-						selectedRows.stream().map(row -> ((CommunityDto) row).getUuid()).collect(Collectors.toSet())) ||
-				InfrastructureType.FACILITY.equals(infrastructureType) && FacadeProvider.getFacilityFacade().hasArchivedParentInfrastructure(
-						selectedRows.stream().map(row -> ((FacilityDto) row).getUuid()).collect(Collectors.toSet())) ||
-				InfrastructureType.POINT_OF_ENTRY.equals(infrastructureType) && FacadeProvider.getPointOfEntryFacade().hasArchivedParentInfrastructure(
-						selectedRows.stream().map(row -> ((PointOfEntryDto) row).getUuid()).collect(Collectors.toSet()))) {
-			showDearchivingNotPossibleWindow(infrastructureType, facilityType, false);
+		if (InfrastructureType.COUNTRY.equals(infrastructureType)
+			&& FacadeProvider.getCountryFacade().hasArchivedParentInfrastructure(selectedRowsUuids)
+			|| InfrastructureType.SUBCONTINENT.equals(infrastructureType)
+				&& FacadeProvider.getSubcontinentFacade().hasArchivedParentInfrastructure(selectedRowsUuids)
+			|| InfrastructureType.DISTRICT.equals(infrastructureType)
+				&& FacadeProvider.getDistrictFacade().hasArchivedParentInfrastructure(selectedRowsUuids)
+			|| InfrastructureType.COMMUNITY.equals(infrastructureType)
+				&& FacadeProvider.getCommunityFacade().hasArchivedParentInfrastructure(selectedRowsUuids)
+			|| InfrastructureType.FACILITY.equals(infrastructureType)
+				&& FacadeProvider.getFacilityFacade().hasArchivedParentInfrastructure(selectedRowsUuids)
+			|| InfrastructureType.POINT_OF_ENTRY.equals(infrastructureType)
+				&& FacadeProvider.getPointOfEntryFacade().hasArchivedParentInfrastructure(selectedRowsUuids)) {
+			showDearchivingNotPossibleWindow(infrastructureType, false);
 			return;
 		}
 
-		if (selectedRows.size() == 0) {
-			new Notification(I18nProperties.getString(Strings.headingNoRowsSelected),
-					I18nProperties.getString(Strings.messageNoRowsSelected), Type.WARNING_MESSAGE, false)
-			.show(Page.getCurrent());
-		} else {
-			String confirmationMessage, notificationMessage;
-
-			switch (infrastructureType) {
-			case REGION:
-				confirmationMessage = archive ? I18nProperties.getString(Strings.confirmationArchiveRegions) : I18nProperties.getString(Strings.confirmationDearchiveRegions);
-				notificationMessage = archive ? I18nProperties.getString(Strings.messageRegionsArchived) : I18nProperties.getString(Strings.messageRegionsDearchived);
-				break;
-			case DISTRICT:
-				confirmationMessage = archive ? I18nProperties.getString(Strings.confirmationArchiveDistricts) : I18nProperties.getString(Strings.confirmationDearchiveDistricts);
-				notificationMessage = archive ? I18nProperties.getString(Strings.messageDistrictsArchived) : I18nProperties.getString(Strings.messageDistrictsDearchived);
-				break;
-			case COMMUNITY:
-				confirmationMessage = archive ? I18nProperties.getString(Strings.confirmationArchiveCommunities) : I18nProperties.getString(Strings.confirmationDearchiveCommunities);
-				notificationMessage = archive ? I18nProperties.getString(Strings.messageCommunitiesArchived) : I18nProperties.getString(Strings.messageCommunitiesDearchived);
-				break;
-			case FACILITY:
-				if (FacilityType.LABORATORY.equals(facilityType)) {
-					confirmationMessage = archive ? I18nProperties.getString(Strings.confirmationArchiveLaboratories) : I18nProperties.getString(Strings.confirmationDearchiveLaboratories);
-					notificationMessage = archive ? I18nProperties.getString(Strings.messageLaboratoriesArchived) : I18nProperties.getString(Strings.messageLaboratoriesDearchived);
-				} else {
-					confirmationMessage = archive ? I18nProperties.getString(Strings.confirmationArchiveFacilities) : I18nProperties.getString(Strings.confirmationDearchiveFacilities);
-					notificationMessage = archive ? I18nProperties.getString(Strings.messageFacilitiesArchived) : I18nProperties.getString(Strings.messageFacilitiesDearchived);
-				}
-				break;
-			case POINT_OF_ENTRY:
-				confirmationMessage = archive ? I18nProperties.getString(Strings.confirmationArchivePointsOfEntry) : I18nProperties.getString(Strings.confirmationDearchivePointsOfEntry);
-				notificationMessage = archive ? I18nProperties.getString(Strings.messagePointsOfEntryArchived) : I18nProperties.getString(Strings.messagePointsOfEntryDearchived);
-				break;
-			default:
-				throw new IllegalArgumentException(infrastructureType.name());
-			}
-
-			VaadinUiUtil.showConfirmationPopup(I18nProperties.getString(Strings.headingConfirmArchiving),
-					new Label(String.format(confirmationMessage, selectedRows.size())),
-					I18nProperties.getString(Strings.yes), I18nProperties.getString(Strings.no), null, e -> {
-						if (e.booleanValue()) {
-
-							switch (infrastructureType) {
-							case REGION:
-								for (RegionIndexDto selectedRow : (Collection<RegionIndexDto>) selectedRows) {
-									if (archive) {
-										FacadeProvider.getRegionFacade().archive(selectedRow.getUuid());
-									} else {
-										FacadeProvider.getRegionFacade().dearchive(selectedRow.getUuid());
-									}
-								}
-								break;
-							case DISTRICT:
-								for (DistrictIndexDto selectedRow : (Collection<DistrictIndexDto>) selectedRows) {
-									if (archive) {
-										FacadeProvider.getDistrictFacade().archive(selectedRow.getUuid());
-									} else {
-										FacadeProvider.getDistrictFacade().dearchive(selectedRow.getUuid());
-									}
-								}
-								break;
-							case COMMUNITY:
-								for (CommunityDto selectedRow : (Collection<CommunityDto>) selectedRows) {
-									if (archive) {
-										FacadeProvider.getCommunityFacade().archive(selectedRow.getUuid());
-									} else {
-										FacadeProvider.getCommunityFacade().dearchive(selectedRow.getUuid());
-									}
-								}
-								break;
-							case FACILITY:
-								for (FacilityDto selectedRow : (Collection<FacilityDto>) selectedRows) {
-									if (archive) {
-										FacadeProvider.getFacilityFacade().archive(selectedRow.getUuid());
-									} else {
-										FacadeProvider.getFacilityFacade().dearchive(selectedRow.getUuid());
-									}
-								}
-								break;
-							case POINT_OF_ENTRY:
-								for (PointOfEntryDto selectedRow : (Collection<PointOfEntryDto>) selectedRows) {
-									if (archive) {
-										FacadeProvider.getPointOfEntryFacade().archive(selectedRow.getUuid());
-									} else {
-										FacadeProvider.getPointOfEntryFacade().dearchive(selectedRow.getUuid());
-									}
-								}
-								break;
-							default:
-								throw new IllegalArgumentException(infrastructureType.name());
-							}
-
-							callback.run();
-							Notification.show(notificationMessage, Type.ASSISTIVE_NOTIFICATION);
-						}
-					});
+		final String confirmationMessage;
+		final String notificationMessage;
+		switch (infrastructureType) {
+		case CONTINENT:
+			confirmationMessage = archive
+				? I18nProperties.getString(Strings.confirmationArchiveContinents)
+				: I18nProperties.getString(Strings.confirmationDearchiveContinents);
+			notificationMessage =
+				archive ? I18nProperties.getString(Strings.messageContinentsArchived) : I18nProperties.getString(Strings.messageContinentsDearchived);
+			break;
+		case SUBCONTINENT:
+			confirmationMessage = archive
+				? I18nProperties.getString(Strings.confirmationArchiveSubcontinents)
+				: I18nProperties.getString(Strings.confirmationDearchiveSubcontinents);
+			notificationMessage = archive
+				? I18nProperties.getString(Strings.messageSubcontinentsArchived)
+				: I18nProperties.getString(Strings.messageSubcontinentsDearchived);
+			break;
+		case AREA:
+			confirmationMessage =
+				archive ? I18nProperties.getString(Strings.confirmationArchiveAreas) : I18nProperties.getString(Strings.confirmationDearchiveAreas);
+			notificationMessage =
+				archive ? I18nProperties.getString(Strings.messageAreasArchived) : I18nProperties.getString(Strings.messageAreasDearchived);
+			break;
+		case COUNTRY:
+			confirmationMessage = archive
+				? I18nProperties.getString(Strings.confirmationArchiveCountries)
+				: I18nProperties.getString(Strings.confirmationDearchiveCountries);
+			notificationMessage =
+				archive ? I18nProperties.getString(Strings.messageCountriesArchived) : I18nProperties.getString(Strings.messageCountriesDearchived);
+			break;
+		case REGION:
+			confirmationMessage = archive
+				? I18nProperties.getString(Strings.confirmationArchiveRegions)
+				: I18nProperties.getString(Strings.confirmationDearchiveRegions);
+			notificationMessage =
+				archive ? I18nProperties.getString(Strings.messageRegionsArchived) : I18nProperties.getString(Strings.messageRegionsDearchived);
+			break;
+		case DISTRICT:
+			confirmationMessage = archive
+				? I18nProperties.getString(Strings.confirmationArchiveDistricts)
+				: I18nProperties.getString(Strings.confirmationDearchiveDistricts);
+			notificationMessage =
+				archive ? I18nProperties.getString(Strings.messageDistrictsArchived) : I18nProperties.getString(Strings.messageDistrictsDearchived);
+			break;
+		case COMMUNITY:
+			confirmationMessage = archive
+				? I18nProperties.getString(Strings.confirmationArchiveCommunities)
+				: I18nProperties.getString(Strings.confirmationDearchiveCommunities);
+			notificationMessage = archive
+				? I18nProperties.getString(Strings.messageCommunitiesArchived)
+				: I18nProperties.getString(Strings.messageCommunitiesDearchived);
+			break;
+		case FACILITY:
+			confirmationMessage = archive
+				? I18nProperties.getString(Strings.confirmationArchiveFacilities)
+				: I18nProperties.getString(Strings.confirmationDearchiveFacilities);
+			notificationMessage =
+				archive ? I18nProperties.getString(Strings.messageFacilitiesArchived) : I18nProperties.getString(Strings.messageFacilitiesDearchived);
+			break;
+		case POINT_OF_ENTRY:
+			confirmationMessage = archive
+				? I18nProperties.getString(Strings.confirmationArchivePointsOfEntry)
+				: I18nProperties.getString(Strings.confirmationDearchivePointsOfEntry);
+			notificationMessage = archive
+				? I18nProperties.getString(Strings.messagePointsOfEntryArchived)
+				: I18nProperties.getString(Strings.messagePointsOfEntryDearchived);
+			break;
+		default:
+			throw new IllegalArgumentException(infrastructureType.name());
 		}
-	}
 
+		VaadinUiUtil.showConfirmationPopup(
+			I18nProperties.getString(Strings.headingConfirmArchiving),
+			new Label(String.format(confirmationMessage, selectedRows.size())),
+			I18nProperties.getString(Strings.yes),
+			I18nProperties.getString(Strings.no),
+			null,
+			e -> {
+				if (e.booleanValue()) {
+
+					switch (infrastructureType) {
+					case CONTINENT:
+						for (ContinentDto selectedRow : (Collection<ContinentDto>) selectedRows) {
+							if (archive) {
+								FacadeProvider.getContinentFacade().archive(selectedRow.getUuid());
+							} else {
+								FacadeProvider.getContinentFacade().dearchive(selectedRow.getUuid());
+							}
+						}
+						break;
+					case SUBCONTINENT:
+						for (SubcontinentDto selectedRow : (Collection<SubcontinentDto>) selectedRows) {
+							if (archive) {
+								FacadeProvider.getSubcontinentFacade().archive(selectedRow.getUuid());
+							} else {
+								FacadeProvider.getSubcontinentFacade().dearchive(selectedRow.getUuid());
+							}
+						}
+						break;
+					case AREA:
+						for (AreaDto selectedRow : (Collection<AreaDto>) selectedRows) {
+							if (archive) {
+								FacadeProvider.getAreaFacade().archive(selectedRow.getUuid());
+							} else {
+								FacadeProvider.getAreaFacade().dearchive(selectedRow.getUuid());
+							}
+						}
+						break;
+					case COUNTRY:
+						for (CountryIndexDto selectedRow : (Collection<CountryIndexDto>) selectedRows) {
+							if (archive) {
+								FacadeProvider.getCountryFacade().archive(selectedRow.getUuid());
+							} else {
+								FacadeProvider.getCountryFacade().dearchive(selectedRow.getUuid());
+							}
+						}
+						break;
+					case REGION:
+						for (RegionIndexDto selectedRow : (Collection<RegionIndexDto>) selectedRows) {
+							if (archive) {
+								FacadeProvider.getRegionFacade().archive(selectedRow.getUuid());
+							} else {
+								FacadeProvider.getRegionFacade().dearchive(selectedRow.getUuid());
+							}
+						}
+						break;
+					case DISTRICT:
+						for (DistrictIndexDto selectedRow : (Collection<DistrictIndexDto>) selectedRows) {
+							if (archive) {
+								FacadeProvider.getDistrictFacade().archive(selectedRow.getUuid());
+							} else {
+								FacadeProvider.getDistrictFacade().dearchive(selectedRow.getUuid());
+							}
+						}
+						break;
+					case COMMUNITY:
+						for (CommunityDto selectedRow : (Collection<CommunityDto>) selectedRows) {
+							if (archive) {
+								FacadeProvider.getCommunityFacade().archive(selectedRow.getUuid());
+							} else {
+								FacadeProvider.getCommunityFacade().dearchive(selectedRow.getUuid());
+							}
+						}
+						break;
+					case FACILITY:
+						for (FacilityIndexDto selectedRow : (Collection<FacilityIndexDto>) selectedRows) {
+							if (archive) {
+								FacadeProvider.getFacilityFacade().archive(selectedRow.getUuid());
+							} else {
+								FacadeProvider.getFacilityFacade().dearchive(selectedRow.getUuid());
+							}
+						}
+						break;
+					case POINT_OF_ENTRY:
+						for (PointOfEntryDto selectedRow : (Collection<PointOfEntryDto>) selectedRows) {
+							if (archive) {
+								FacadeProvider.getPointOfEntryFacade().archive(selectedRow.getUuid());
+							} else {
+								FacadeProvider.getPointOfEntryFacade().dearchive(selectedRow.getUuid());
+							}
+						}
+						break;
+					default:
+						throw new IllegalArgumentException(infrastructureType.name());
+					}
+
+					callback.run();
+					Notification.show(notificationMessage, Type.ASSISTIVE_NOTIFICATION);
+				}
+			});
+	}
 }

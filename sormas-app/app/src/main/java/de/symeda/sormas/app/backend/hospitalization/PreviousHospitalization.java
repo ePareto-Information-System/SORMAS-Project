@@ -1,26 +1,22 @@
 /*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
  * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.symeda.sormas.app.backend.hospitalization;
 
-import com.j256.ormlite.field.DataType;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
+import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_BIG;
+import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
 
 import java.util.Date;
 
@@ -29,14 +25,19 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
-import de.symeda.sormas.api.utils.DateHelper;
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
+import de.symeda.sormas.api.hospitalization.HospitalizationReasonType;
 import de.symeda.sormas.api.utils.YesNoUnknown;
-import de.symeda.sormas.app.backend.common.AbstractDomainObject;
 import de.symeda.sormas.app.backend.common.EmbeddedAdo;
+import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 import de.symeda.sormas.app.backend.facility.Facility;
 import de.symeda.sormas.app.backend.region.Community;
 import de.symeda.sormas.app.backend.region.District;
 import de.symeda.sormas.app.backend.region.Region;
+import de.symeda.sormas.app.util.DateFormatHelper;
 
 /**
  * Created by Mate Strysewske on 22.02.2017.
@@ -45,130 +46,208 @@ import de.symeda.sormas.app.backend.region.Region;
 @Entity(name = PreviousHospitalization.TABLE_NAME)
 @DatabaseTable(tableName = PreviousHospitalization.TABLE_NAME)
 @EmbeddedAdo(parentAccessor = PreviousHospitalization.HOSPITALIZATION)
-public class PreviousHospitalization extends AbstractDomainObject {
+public class PreviousHospitalization extends PseudonymizableAdo {
 
-    private static final long serialVersionUID = 768263094433806267L;
+	private static final long serialVersionUID = 768263094433806267L;
 
-    public static final String TABLE_NAME = "previoushospitalizations";
-    public static final String I18N_PREFIX = "CasePreviousHospitalization";
-    public static final String HOSPITALIZATION = "hospitalization";
+	public static final String TABLE_NAME = "previoushospitalizations";
+	public static final String I18N_PREFIX = "CasePreviousHospitalization";
+	public static final String HOSPITALIZATION = "hospitalization";
 
-    @DatabaseField(dataType = DataType.DATE_LONG)
-    private Date admissionDate;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown admittedToHealthFacility;
 
-    @DatabaseField(dataType = DataType.DATE_LONG)
-    private Date dischargeDate;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date admissionDate;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
-    private Region region;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date dischargeDate;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
-    private District district;
+	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
+	private Region region;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
-    private Community community;
+	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
+	private District district;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
-    private Facility healthFacility;
+	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
+	private Community community;
 
-    @Column(length=512)
-    private String healthFacilityDetails;
+	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
+	private Facility healthFacility;
 
-    @Enumerated(EnumType.STRING)
-    private YesNoUnknown isolated;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String healthFacilityDetails;
 
-    @Column(length=512)
-    private String description;
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown isolated;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true)
-    private Hospitalization hospitalization;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date isolationDate;
 
-    public Date getAdmissionDate() {
-        return admissionDate;
-    }
+	@Column(length = CHARACTER_LIMIT_BIG)
+	private String description;
 
-    public void setAdmissionDate(Date admissionDate) {
-        this.admissionDate = admissionDate;
-    }
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private Hospitalization hospitalization;
 
-    public Date getDischargeDate() {
-        return dischargeDate;
-    }
+	@Enumerated(EnumType.STRING)
+	private HospitalizationReasonType hospitalizationReason;
 
-    public void setDischargeDate(Date dischargeDate) {
-        this.dischargeDate = dischargeDate;
-    }
+	@Column(columnDefinition = "text")
+	private String otherHospitalizationReason;
 
-    public Region getRegion() {
-        return region;
-    }
+	@Enumerated(EnumType.STRING)
+	private YesNoUnknown intensiveCareUnit;
 
-    public void setRegion(Region region) {
-        this.region = region;
-    }
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date intensiveCareUnitStart;
 
-    public District getDistrict() {
-        return district;
-    }
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date intensiveCareUnitEnd;
 
-    public void setDistrict(District district) {
-        this.district = district;
-    }
+	public YesNoUnknown getAdmittedToHealthFacility() {
+		return admittedToHealthFacility;
+	}
 
-    public Community getCommunity() {
-        return community;
-    }
+	public void setAdmittedToHealthFacility(YesNoUnknown admittedToHealthFacility) {
+		this.admittedToHealthFacility = admittedToHealthFacility;
+	}
 
-    public void setCommunity(Community community) {
-        this.community = community;
-    }
+	public Date getAdmissionDate() {
+		return admissionDate;
+	}
 
-    public Facility getHealthFacility() {
-        return healthFacility;
-    }
+	public void setAdmissionDate(Date admissionDate) {
+		this.admissionDate = admissionDate;
+	}
 
-    public void setHealthFacility(Facility healthFacility) {
-        this.healthFacility = healthFacility;
-    }
+	public Date getDischargeDate() {
+		return dischargeDate;
+	}
 
-    public String getHealthFacilityDetails() {
-        return healthFacilityDetails;
-    }
-    public void setHealthFacilityDetails(String healthFacilityDetails) {
-        this.healthFacilityDetails = healthFacilityDetails;
-    }
+	public void setDischargeDate(Date dischargeDate) {
+		this.dischargeDate = dischargeDate;
+	}
 
-    public YesNoUnknown getIsolated() {
-        return isolated;
-    }
+	public Region getRegion() {
+		return region;
+	}
 
-    public void setIsolated(YesNoUnknown isolated) {
-        this.isolated = isolated;
-    }
+	public void setRegion(Region region) {
+		this.region = region;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public District getDistrict() {
+		return district;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setDistrict(District district) {
+		this.district = district;
+	}
 
-    public Hospitalization getHospitalization() {
-        return hospitalization;
-    }
+	public Community getCommunity() {
+		return community;
+	}
 
-    public void setHospitalization(Hospitalization hospitalization) {
-        this.hospitalization = hospitalization;
-    }
+	public void setCommunity(Community community) {
+		this.community = community;
+	}
 
-    @Override
-    public String getI18nPrefix() {
-        return I18N_PREFIX;
-    }
+	public Facility getHealthFacility() {
+		return healthFacility;
+	}
 
-    @Override
-    public String toString() {
-        return super.toString() + " " + DateHelper.formatLocalShortDate(getDischargeDate());
-    }
+	public void setHealthFacility(Facility healthFacility) {
+		this.healthFacility = healthFacility;
+	}
+
+	public String getHealthFacilityDetails() {
+		return healthFacilityDetails;
+	}
+
+	public void setHealthFacilityDetails(String healthFacilityDetails) {
+		this.healthFacilityDetails = healthFacilityDetails;
+	}
+
+	public YesNoUnknown getIsolated() {
+		return isolated;
+	}
+
+	public void setIsolated(YesNoUnknown isolated) {
+		this.isolated = isolated;
+	}
+
+	public Date getIsolationDate() {
+		return isolationDate;
+	}
+
+	public void setIsolationDate(Date isolationDate) {
+		this.isolationDate = isolationDate;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Hospitalization getHospitalization() {
+		return hospitalization;
+	}
+
+	public void setHospitalization(Hospitalization hospitalization) {
+		this.hospitalization = hospitalization;
+	}
+
+	public HospitalizationReasonType getHospitalizationReason() {
+		return hospitalizationReason;
+	}
+
+	public void setHospitalizationReason(HospitalizationReasonType hospitalizationReason) {
+		this.hospitalizationReason = hospitalizationReason;
+	}
+
+	public String getOtherHospitalizationReason() {
+		return otherHospitalizationReason;
+	}
+
+	public void setOtherHospitalizationReason(String otherHospitalizationReason) {
+		this.otherHospitalizationReason = otherHospitalizationReason;
+	}
+
+	public YesNoUnknown getIntensiveCareUnit() {
+		return intensiveCareUnit;
+	}
+
+	public void setIntensiveCareUnit(YesNoUnknown intensiveCareUnit) {
+		this.intensiveCareUnit = intensiveCareUnit;
+	}
+
+	public Date getIntensiveCareUnitStart() {
+		return intensiveCareUnitStart;
+	}
+
+	public void setIntensiveCareUnitStart(Date intensiveCareUnitStart) {
+		this.intensiveCareUnitStart = intensiveCareUnitStart;
+	}
+
+	public Date getIntensiveCareUnitEnd() {
+		return intensiveCareUnitEnd;
+	}
+
+	public void setIntensiveCareUnitEnd(Date intensiveCareUnitEnd) {
+		this.intensiveCareUnitEnd = intensiveCareUnitEnd;
+	}
+
+	@Override
+	public String getI18nPrefix() {
+		return I18N_PREFIX;
+	}
+
+	@Override
+	public String toString() {
+		return super.toString() + " " + DateFormatHelper.formatLocalDate(getDischargeDate());
+	}
 }

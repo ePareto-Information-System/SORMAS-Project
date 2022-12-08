@@ -9,16 +9,19 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.statistics;
 
-import com.vaadin.ui.Label;
+import com.vaadin.server.ExternalResource;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.Link;
 
+import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.user.UserRight;
@@ -27,27 +30,45 @@ import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.statistics.caze.CaseStatisticsView;
 import de.symeda.sormas.ui.statistics.contact.ContactStatisticsView;
 import de.symeda.sormas.ui.utils.AbstractSubNavigationView;
+import de.symeda.sormas.ui.utils.CssStyles;
+import org.apache.commons.lang3.StringUtils;
 
 
 @SuppressWarnings("serial")
-public class AbstractStatisticsView extends AbstractSubNavigationView {
-	
+public class AbstractStatisticsView extends AbstractSubNavigationView<Component> {
+
 	public static final String ROOT_VIEW_NAME = "statistics";
-	
+
 	protected AbstractStatisticsView(String viewName) {
 		super(viewName);
 	}
+	
+	
+
+
+
+
 
 	@Override
-	public void refreshMenu(SubMenu menu, Label infoLabel, Label infoLabelSub, String params) {
+	public void refreshMenu(SubMenu menu, String params) {
 		menu.removeAllViews();
 		menu.addView(CaseStatisticsView.VIEW_NAME, I18nProperties.getCaption(Captions.statisticsCase), params);
 		menu.addView(ContactStatisticsView.VIEW_NAME, I18nProperties.getCaption(Captions.statisticsContact), params);
+		//menu.addView(StatisticsView.VIEW_NAME, I18nProperties.getCaption(Captions.statisticsStatistics), params);
 		if (UserProvider.getCurrent().hasUserRight(UserRight.DATABASE_EXPORT_ACCESS)) {
 			menu.addView(DatabaseExportView.VIEW_NAME, I18nProperties.getCaption(Captions.statisticsDatabaseExport), params);
 		}
-	
-		hideInfoLabel();
+
+		String sormasStatsUrl = FacadeProvider.getConfigFacade().getSormasStatsUrl();
+		if (StringUtils.isNotBlank(sormasStatsUrl)) {
+			Link sormasStatsLink = new Link(
+				I18nProperties.getCaption(Captions.statisticsOpenSormasStats),
+				new ExternalResource(sormasStatsUrl));
+			sormasStatsLink.addStyleNames(CssStyles.LINK_BUTTON, CssStyles.LINK_BUTTON_PRIMARY);
+			this.addHeaderComponent(sormasStatsLink);
+		}
 	}
+	
+	
 	
 }

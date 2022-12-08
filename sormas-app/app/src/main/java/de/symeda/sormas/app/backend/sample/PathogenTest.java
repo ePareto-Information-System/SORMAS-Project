@@ -1,26 +1,22 @@
 /*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
  * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.symeda.sormas.app.backend.sample;
 
-import com.j256.ormlite.field.DataType;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
+import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_BIG;
+import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
 
 import java.util.Date;
 
@@ -28,195 +24,296 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
+import de.symeda.sormas.api.disease.DiseaseVariant;
+import de.symeda.sormas.api.sample.PCRTestSpecification;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
-import de.symeda.sormas.api.utils.DateHelper;
-import de.symeda.sormas.app.backend.common.AbstractDomainObject;
+import de.symeda.sormas.app.backend.common.DatabaseHelper;
+import de.symeda.sormas.app.backend.common.PseudonymizableAdo;
 import de.symeda.sormas.app.backend.facility.Facility;
 import de.symeda.sormas.app.backend.user.User;
+import de.symeda.sormas.app.util.DateFormatHelper;
 
-@Entity(name= PathogenTest.TABLE_NAME)
+@Entity(name = PathogenTest.TABLE_NAME)
 @DatabaseTable(tableName = PathogenTest.TABLE_NAME)
-public class PathogenTest extends AbstractDomainObject {
+public class PathogenTest extends PseudonymizableAdo {
 
-    private static final long serialVersionUID = 2290351143518627813L;
+	private static final long serialVersionUID = 2290351143518627813L;
 
-    public static final String TABLE_NAME = "pathogenTest";
-    public static final String I18N_PREFIX = "PathogenTest";
+	public static final String TABLE_NAME = "pathogenTest";
+	public static final String I18N_PREFIX = "PathogenTest";
 
-    public static final String TEST_DATE_TIME = "testDateTime";
-    public static final String SAMPLE = "sample";
+	public static final String TEST_DATE_TIME = "testDateTime";
+	public static final String SAMPLE = "sample";
 
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private Sample sample;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true)
-    private Sample sample;
+	@Enumerated(EnumType.STRING)
+	private PathogenTestType testType;
 
-    @Enumerated(EnumType.STRING)
-    private PathogenTestType testType;
+	@Enumerated(EnumType.STRING)
+	private PCRTestSpecification pcrTestSpecification;
 
-    @Column
-    private String testTypeText;
+	@Column
+	private String testTypeText;
 
-    @Enumerated(EnumType.STRING)
-    private Disease testedDisease;
+	@Enumerated(EnumType.STRING)
+	private Disease testedDisease;
 
-    @Column(length = 512)
-    private String testedDiseaseDetails;
+	@Column(name = "testedDiseaseVariant")
+	private String testedDiseaseVariantString;
+	private DiseaseVariant testedDiseaseVariant;
 
-    @Enumerated(EnumType.STRING)
-    @Column
-    private PathogenTestResultType testResult;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String testedDiseaseDetails;
 
-    @Column
-    private Boolean testResultVerified;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String testedDiseaseVariantDetails;
 
-    @Column(length=512)
-    private String testResultText;
+	@Column
+	private String typingId;
 
-    @DatabaseField(dataType = DataType.DATE_LONG)
-    private Date testDateTime;
+	@Enumerated(EnumType.STRING)
+	@Column
+	private PathogenTestResultType testResult;
 
-    @Column
-    private boolean fourFoldIncreaseAntibodyTiter;
+	@Column
+	private Boolean testResultVerified;
 
-    @Column(length=255)
-    private String serotype;
+	@Column(length = CHARACTER_LIMIT_BIG)
+	private String testResultText;
 
-    @DatabaseField
-    private Float cqValue;
+	@DatabaseField(dataType = DataType.DATE_LONG)
+	private Date testDateTime;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
-    private Facility lab;
+	@Column
+	private boolean fourFoldIncreaseAntibodyTiter;
 
-    @Column
-    private String labDetails;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String serotype;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true)
-    private User labUser;
+	@DatabaseField
+	private Float cqValue;
 
-    public Sample getSample() {
-        return sample;
-    }
+	@DatabaseField(dataType = DataType.DATE_LONG, canBeNull = true)
+	private Date reportDate;
 
-    public void setSample(Sample sample) {
-        this.sample = sample;
-    }
+	@DatabaseField(foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 3)
+	private Facility lab;
 
-    public PathogenTestType getTestType() {
-        return testType;
-    }
+	@Column
+	private String labDetails;
 
-    public void setTestType(PathogenTestType testType) {
-        this.testType = testType;
-    }
+	@DatabaseField(foreign = true, foreignAutoRefresh = true)
+	private User labUser;
 
-    public Disease getTestedDisease() {
-        return testedDisease;
-    }
+	@Column
+	private boolean viaLims;
 
-    public void setTestedDisease(Disease testedDisease) {
-        this.testedDisease = testedDisease;
-    }
+	public Sample getSample() {
+		return sample;
+	}
 
-    public String getTestedDiseaseDetails() {
-        return testedDiseaseDetails;
-    }
+	public void setSample(Sample sample) {
+		this.sample = sample;
+	}
 
-    public void setTestedDiseaseDetails(String testedDiseaseDetails) {
-        this.testedDiseaseDetails = testedDiseaseDetails;
-    }
+	public PathogenTestType getTestType() {
+		return testType;
+	}
 
-    public PathogenTestResultType getTestResult() {
-        return testResult;
-    }
+	public void setTestType(PathogenTestType testType) {
+		this.testType = testType;
+	}
 
-    public Boolean getTestResultVerified() {
-        return testResultVerified;
-    }
-    public void setTestResultVerified(Boolean testResultVerified) {
-        this.testResultVerified = testResultVerified;
-    }
+	public PCRTestSpecification getPcrTestSpecification() {
+		return pcrTestSpecification;
+	}
 
-    public String getTestResultText() {
-        return testResultText;
-    }
-    public void setTestResultText(String testResultText) {
-        this.testResultText = testResultText;
-    }
-    public Facility getLab() {
-        return lab;
-    }
-    public void setLab(Facility lab) {
-        this.lab = lab;
-    }
-    public void setTestResult(PathogenTestResultType testResult) {
-        this.testResult = testResult;
-    }
-    public User getLabUser() {
-        return labUser;
-    }
-    public void setLabUser(User labUser) {
-        this.labUser = labUser;
-    }
-    public Date getTestDateTime() {
-        return testDateTime;
-    }
-    public void setTestDateTime(Date testDateTime) {
-        this.testDateTime = testDateTime;
-    }
+	public void setPcrTestSpecification(PCRTestSpecification pcrTestSpecification) {
+		this.pcrTestSpecification = pcrTestSpecification;
+	}
 
-    public String getLabDetails() {
-        return  labDetails;
-    }
+	public Disease getTestedDisease() {
+		return testedDisease;
+	}
 
-    public void setLabDetails(String labDetails) {
-        this.labDetails = labDetails;
-    }
+	public void setTestedDisease(Disease testedDisease) {
+		this.testedDisease = testedDisease;
+	}
 
-    public boolean isFourFoldIncreaseAntibodyTiter() {
-        return fourFoldIncreaseAntibodyTiter;
-    }
+	public String getTestedDiseaseVariantString() {
+		return testedDiseaseVariantString;
+	}
 
-    public void setFourFoldIncreaseAntibodyTiter(boolean fourFoldIncreaseAntibodyTiter) {
-        this.fourFoldIncreaseAntibodyTiter = fourFoldIncreaseAntibodyTiter;
-    }
+	public void setTestedDiseaseVariantString(String testedDiseaseVariantString) {
+		this.testedDiseaseVariantString = testedDiseaseVariantString;
+	}
 
-    public String getTestTypeText() {
-        return testTypeText;
-    }
+	@Transient
+	public DiseaseVariant getTestedDiseaseVariant() {
+		if (StringUtils.isBlank(testedDiseaseVariantString)) {
+			return null;
+		} else {
+			return DatabaseHelper.getCustomizableEnumValueDao().getEnumValue(CustomizableEnumType.DISEASE_VARIANT, testedDiseaseVariantString);
+		}
+	}
 
-    public void setTestTypeText(String testTypeText) {
-        this.testTypeText = testTypeText;
-    }
+	public void setTestedDiseaseVariant(DiseaseVariant testedDiseaseVariant) {
+		this.testedDiseaseVariant = testedDiseaseVariant;
+		if (testedDiseaseVariant == null) {
+			testedDiseaseVariantString = null;
+		} else {
+			testedDiseaseVariantString = testedDiseaseVariant.getValue();
+		}
+	}
 
-    public String getSerotype() {
-        return serotype;
-    }
+	public String getTestedDiseaseDetails() {
+		return testedDiseaseDetails;
+	}
 
-    public void setSerotype(String serotype) {
-        this.serotype = serotype;
-    }
+	public void setTestedDiseaseDetails(String testedDiseaseDetails) {
+		this.testedDiseaseDetails = testedDiseaseDetails;
+	}
 
-    public Float getCqValue() {
-        return cqValue;
-    }
+	public String getTestedDiseaseVariantDetails() {
+		return testedDiseaseVariantDetails;
+	}
 
-    public void setCqValue(Float cqValue) {
-        this.cqValue = cqValue;
-    }
+	public void setTestedDiseaseVariantDetails(String testedDiseaseVariantDetails) {
+		this.testedDiseaseVariantDetails = testedDiseaseVariantDetails;
+	}
 
+	public String getTypingId() {
+		return typingId;
+	}
 
-    @Override
-    public String getI18nPrefix() {
-        return I18N_PREFIX;
-    }
+	public void setTypingId(String typingId) {
+		this.typingId = typingId;
+	}
 
-    @Override
-    public String toString() {
-        return super.toString() + DateHelper.formatLocalShortDate(getTestDateTime());
-    }
+	public PathogenTestResultType getTestResult() {
+		return testResult;
+	}
+
+	public Boolean getTestResultVerified() {
+		return testResultVerified;
+	}
+
+	public void setTestResultVerified(Boolean testResultVerified) {
+		this.testResultVerified = testResultVerified;
+	}
+
+	public String getTestResultText() {
+		return testResultText;
+	}
+
+	public void setTestResultText(String testResultText) {
+		this.testResultText = testResultText;
+	}
+
+	public Facility getLab() {
+		return lab;
+	}
+
+	public void setLab(Facility lab) {
+		this.lab = lab;
+	}
+
+	public void setTestResult(PathogenTestResultType testResult) {
+		this.testResult = testResult;
+	}
+
+	public User getLabUser() {
+		return labUser;
+	}
+
+	public void setLabUser(User labUser) {
+		this.labUser = labUser;
+	}
+
+	public Date getTestDateTime() {
+		return testDateTime;
+	}
+
+	public void setTestDateTime(Date testDateTime) {
+		this.testDateTime = testDateTime;
+	}
+
+	public String getLabDetails() {
+		return labDetails;
+	}
+
+	public void setLabDetails(String labDetails) {
+		this.labDetails = labDetails;
+	}
+
+	public boolean isFourFoldIncreaseAntibodyTiter() {
+		return fourFoldIncreaseAntibodyTiter;
+	}
+
+	public void setFourFoldIncreaseAntibodyTiter(boolean fourFoldIncreaseAntibodyTiter) {
+		this.fourFoldIncreaseAntibodyTiter = fourFoldIncreaseAntibodyTiter;
+	}
+
+	public String getTestTypeText() {
+		return testTypeText;
+	}
+
+	public void setTestTypeText(String testTypeText) {
+		this.testTypeText = testTypeText;
+	}
+
+	public String getSerotype() {
+		return serotype;
+	}
+
+	public void setSerotype(String serotype) {
+		this.serotype = serotype;
+	}
+
+	public Float getCqValue() {
+		return cqValue;
+	}
+
+	public void setCqValue(Float cqValue) {
+		this.cqValue = cqValue;
+	}
+
+	public Date getReportDate() {
+		return reportDate;
+	}
+
+	public void setReportDate(Date reportDate) {
+		this.reportDate = reportDate;
+	}
+
+	public boolean isViaLims() {
+		return viaLims;
+	}
+
+	public void setViaLims(boolean viaLims) {
+		this.viaLims = viaLims;
+	}
+
+	@Override
+	public String getI18nPrefix() {
+		return I18N_PREFIX;
+	}
+
+	@Override
+	public String toString() {
+		return super.toString() + DateFormatHelper.formatLocalDate(getTestDateTime());
+	}
 }

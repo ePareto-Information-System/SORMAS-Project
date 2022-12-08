@@ -9,20 +9,24 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.task;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Remote;
+import javax.validation.Valid;
 
 import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.event.EventReferenceDto;
 import de.symeda.sormas.api.utils.SortProperty;
@@ -30,39 +34,49 @@ import de.symeda.sormas.api.utils.SortProperty;
 @Remote
 public interface TaskFacade {
 
-    TaskDto saveTask(TaskDto dto);
-	
-	List<TaskDto> getAllActiveTasksAfter(Date date, String userUuid);
-	
+	TaskDto saveTask(@Valid TaskDto dto);
+
+	List<TaskDto> getAllActiveTasksAfter(Date date);
+
 	List<TaskDto> getAllByCase(CaseReferenceDto caseRef);
-	
+
+	List<TaskDto> getAllActiveTasksAfter(Date date, Integer batchSize, String lastSynchronizedUuid);
+
+	Page<TaskIndexDto> getIndexPage(TaskCriteria taskCriteria, Integer offset, Integer size, List<SortProperty> sortProperties);
+
 	List<TaskDto> getAllByContact(ContactReferenceDto contactRef);
-	
+
 	List<TaskDto> getAllByEvent(EventReferenceDto eventRef);
-	
+
 	List<TaskDto> getAllPendingByCase(CaseReferenceDto caseDataDto);
 
 	List<TaskDto> getByUuids(List<String> uuids);
-	
-	List<DashboardTaskDto> getAllByUserForDashboard(TaskStatus taskStatus, Date from, Date to, String userUuid);
-	
-	long getPendingTaskCountByCase(CaseReferenceDto caseDto);
-	
+
 	long getPendingTaskCountByContact(ContactReferenceDto contactDto);
-	
+
 	long getPendingTaskCountByEvent(EventReferenceDto eventDto);
-	
-	long getPendingTaskCount(String userUuid);
+
+	Map<String, Long> getPendingTaskCountPerUser(List<String> userUuids);
 
 	TaskDto getByUuid(String uuid);
 
-	List<String> getAllActiveUuids(String userUuid);
-	
-	void deleteTask(TaskDto taskDto, String userUuid);
+	List<String> getAllActiveUuids();
 
-	long count(String userUuid, TaskCriteria criteria);
-	
-	List<TaskIndexDto> getIndexList(String userUuid, TaskCriteria criteria, Integer first, Integer max, List<SortProperty> sortProperties);
+	void deleteTask(TaskDto taskDto);
+
+	List<String> deleteTasks(List<String> taskUuids);
+
+	long count(TaskCriteria criteria);
+
+	List<TaskIndexDto> getIndexList(TaskCriteria criteria, Integer first, Integer max, List<SortProperty> sortProperties);
+
+	List<TaskExportDto> getExportList(TaskCriteria criteria, Collection<String> selectedRows, int first, int max);
 
 	void sendNewAndDueTaskMessages();
+
+	void updateArchived(List<String> taskUuids, boolean archived);
+
+	List<String> getArchivedUuidsSince(Date since);
+
+	List<String> getObsoleteUuidsSince(Date since);
 }

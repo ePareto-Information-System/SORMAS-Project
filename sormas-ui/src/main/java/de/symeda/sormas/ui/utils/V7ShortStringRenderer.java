@@ -9,38 +9,39 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.utils;
 
 import com.vaadin.v7.ui.renderers.HtmlRenderer;
 
+import de.symeda.sormas.api.utils.HtmlHelper;
 import elemental.json.JsonValue;
 
 @SuppressWarnings("serial")
 public class V7ShortStringRenderer extends HtmlRenderer {
-	
+
 	private final int length;
-	
+
 	public V7ShortStringRenderer(int length) {
 		this.length = length;
 	}
-	
+
 	@Override
 	public JsonValue encode(String value) {
-		if(value != null && !value.isEmpty()) {
-			if(value.length() > length) {
+
+		if (value != null && !value.isEmpty()) {
+			if (value.length() > length) {
 				value = value.substring(0, length);
 				value += "...";
 			}
-			return super.encode(value);
+			return super.encode(HtmlHelper.cleanHtml(value));
 		} else {
 			return null;
 		}
 	}
-
 }

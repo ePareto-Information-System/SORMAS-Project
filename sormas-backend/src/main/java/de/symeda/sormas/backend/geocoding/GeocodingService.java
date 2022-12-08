@@ -9,326 +9,174 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.backend.geocoding;
 
-import java.io.Serializable;
-import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
-import java.util.Optional;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.ws.rs.core.Response.Status.Family;
 
-import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringSubstitutor;
 import org.apache.http.client.utils.URIBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.PathNotFoundException;
 
-import de.symeda.sormas.api.region.GeoLatLon;
+import de.symeda.sormas.api.geo.GeoLatLon;
+import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.backend.common.ConfigFacadeEjb.ConfigFacadeEjbLocal;
+import de.symeda.sormas.backend.location.Location;
+import de.symeda.sormas.backend.util.ClientHelper;
 
-/**
- * Geocoding for German addresses using the OpenSearch GeoTemporal Service (OSGTS)  
- * @see https://www.bkg.bund.de/SharedDocs/Produktinformationen/BKG/DE/P-2015/150119-Geokodierung.html
- */
 @Stateless
 @LocalBean
 public class GeocodingService {
+
+	private final Logger logger = LoggerFactory.getLogger(getClass());
+
+	private static final String HOUSE_NUMBER_PLACEHOLDER = "houseNumber";
+	private static final String STREET_PLACEHOLDER = "street";
+	private static final String POSTAL_CODE_PLACEHOLDER = "postalCode";
+	private static final String CITY_PLACEHOLDER = "city";
 
 	@EJB
 	private ConfigFacadeEjbLocal configFacade;
 
 	public boolean isEnabled() {
-		return configFacade.getGeocodingOsgtsEndpoint() != null; 
+		return configFacade.getGeocodingServiceUrlTemplate() != null;
 	}
-	
-	
-	public GeoLatLon getLatLon(String query) {
-		
-		String endpoint = configFacade.getGeocodingOsgtsEndpoint();
-		if (endpoint == null) {
+
+	public GeoLatLon getLatLon(Location location) {
+
+		String street = Objects.toString(location.getStreet(), "");
+		String houseNumber = Objects.toString(location.getHouseNumber(), "");
+		String city = Objects.toString(location.getCity(), "");
+		String postalCode = Objects.toString(location.getPostalCode(), "");
+		if (StringUtils.isNotBlank(street) && (StringUtils.isNotBlank(city) || StringUtils.isNotBlank(postalCode))) {
+			return getLatLon(new LocationQuery(houseNumber, street, postalCode, city));
+		}
+		return null;
+	}
+
+	public GeoLatLon getLatLon(LocationQuery query) {
+
+		String urlTemplate = configFacade.getGeocodingServiceUrlTemplate();
+		if (DataHelper.isNullOrEmpty(urlTemplate)
+			|| DataHelper.isNullOrEmpty(configFacade.getGeocodingLatitudeJsonPath())
+			|| DataHelper.isNullOrEmpty(configFacade.getGeocodingLongitudeJsonPath())) {
 			return null;
 		}
-		
-		return getLatLon(query, endpoint);
-	}
-		
-		
-	 GeoLatLon getLatLon(String query, String endpoint) {
-		
-		Client client = ClientBuilder.newBuilder()
-		.connectTimeout(10, TimeUnit.SECONDS)
-		.readTimeout(10, TimeUnit.SECONDS)
-		.build();
 
-		URI url;   
-		
+		return getLatLon(query, urlTemplate);
+	}
+
+	private GeoLatLon getLatLon(LocationQuery query, String urlTemplate) {
+
+		StringSubstitutor substitutor = new StringSubstitutor(buildQuerySubstitutions(query));
+		String url = substitutor.replace(urlTemplate);
+
+		URI targetUrl;
 		try {
-			URIBuilder ub = new URIBuilder(endpoint + "/geosearch.json");
-			ub.addParameter("query", query);
-			ub.addParameter("filter", "typ:haus");
-			ub.addParameter("count", "2");
-			
-			url = ub.build();
+			targetUrl = new URIBuilder(url).build();
 		} catch (URISyntaxException e) {
-			throw new RuntimeException(e); 
-		}
-		
-		
-	    WebTarget target = client.target(url);
-	    Response response = target.request(MediaType.APPLICATION_JSON_TYPE).get();
-	    
-	    FeatureCollection fc = response.readEntity(FeatureCollection.class);
-	    
-	    return Optional.of(fc)
-	    		.map(c -> c.getFeatures())
-	    		.filter(ArrayUtils::isNotEmpty)
-	    		.map(a -> a[0])
-	    		.map(f -> f.getGeometry())
-	    		.map(g -> g.getCoordinates())
-	    		//reverse coordinates
-	    		.map(g -> new GeoLatLon(g[1], g[0]))
-	    		.orElse(null);  
-	}
-	
-	@XmlRootElement
-	@JsonIgnoreProperties(ignoreUnknown = true)
-	public static class FeatureCollection implements Serializable {
-		private static final long serialVersionUID = -1;
-		public String type;
-		private Feature[] features;
-
-		@Override
-		public String toString() {
-			return "type " + type + "\n" + ArrayUtils.toString(getFeatures());
+			throw new IllegalArgumentException(e);
 		}
 
-		public Feature[] getFeatures() {
-			return features;
+		Client client = ClientHelper.newBuilderWithProxy().connectTimeout(10, TimeUnit.SECONDS).readTimeout(10, TimeUnit.SECONDS).build();
+		WebTarget target = client.target(targetUrl);
+		Response response = null;
+
+		// prevent timeouts on invalid addresses from causing errors
+		try {
+			response = target.request(MediaType.APPLICATION_JSON_TYPE).get();
+		} catch (ProcessingException exception) {
+			if (logger.isWarnEnabled()) {
+				logger.warn("geosearch query '{}' threw Exception with cause {}", query, exception.getCause().toString());
+			}
+			return null;
 		}
 
-		public void setFeatures(Feature[] features) {
-			this.features = features;
-		}
-		
-	}
-
-	@JsonIgnoreProperties(ignoreUnknown = true)
-	public static class Feature implements Serializable {
-		private static final long serialVersionUID = -1;
-		private Geometry geometry;
-		public FeatureProperties properties;
-
-		@Override
-		public String toString() {
-			return "geometry " + getGeometry() + "\n properties " + properties;
+		String responseText = readResponseAsText(response);
+		if (response.getStatusInfo().getFamily() != Family.SUCCESSFUL) {
+			if (logger.isErrorEnabled()) {
+				logger.error("geosearch query '{}' returned {} - {}:\n{}", query, response.getStatus(), response.getStatusInfo(), responseText);
+			}
+			return null;
 		}
 
-		public Geometry getGeometry() {
-			return geometry;
-		}
+		Object jsonLatitude = null;
+		Object jsonLongitude = null;
+		// read values as object, than parse to double
+		// JsonPath.read sometimes returns Integer that can't be casted to double, @see #6506
+		try {
+			jsonLatitude = JsonPath.read(responseText, configFacade.getGeocodingLatitudeJsonPath());
+			Double latitude = jsonLatitude != null ? Double.parseDouble(jsonLatitude.toString()) : null;
+			jsonLongitude = JsonPath.read(responseText, configFacade.getGeocodingLongitudeJsonPath());
+			Double longitude = jsonLongitude != null ? Double.parseDouble(jsonLongitude.toString()) : null;
 
-		public void setGeometry(Geometry geometry) {
-			this.geometry = geometry;
-		}
-		
-	}
+			return new GeoLatLon(latitude, longitude);
+		} catch (PathNotFoundException e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("geosearch coordinates not found in '{}'" + responseText);
+			}
 
-	@JsonIgnoreProperties(ignoreUnknown = true)
-	public static class Geometry implements Serializable {
-		private static final long serialVersionUID = -1;
-		private String type;
-		private double[] coordinates;
+			return null;
+		} catch (NumberFormatException e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("geosearch coordinates can't be parsed: lat: {}, lon: {}", jsonLatitude, jsonLongitude);
+			}
 
-		@Override
-		public String toString() {
-			return "\ntype " + getType() + "\n coordinates " + getCoordinates();
-		}
-
-		public String getType() {
-			return type;
-		}
-
-		public void setType(String type) {
-			this.type = type;
-		}
-
-		public double[] getCoordinates() {
-			return coordinates;
-		}
-
-		public void setCoordinates(double[] coordinates) {
-			this.coordinates = coordinates;
+			return null;
 		}
 	}
 
-	@JsonIgnoreProperties(ignoreUnknown = true)
-	public static class FeatureProperties implements Serializable {
-		private static final long serialVersionUID = -1;
-
-		private String text;
-		private String typ;
-		private double score;
-		private String ags;
-		private String rs;
-		private String schluessel;
-		private String bundesland;
-		private String kreis;
-		private String verwgem;
-		private String gemeinde;
-		private String plz;
-		private String ort;
-		private String ortsteil;
-		private String strasse;
-		private String haus;
-		private String qualitaet;
-		
-		public String getText() {
-			return text;
+	private String readResponseAsText(Response response) {
+		try {
+			return response.readEntity(String.class).trim();
+		} catch (RuntimeException e) {
+			return "(Exception when retrieving body: " + e + ")";
 		}
-
-		public void setText(String text) {
-			this.text = text;
-		}
-
-		public String getTyp() {
-			return typ;
-		}
-
-		public void setTyp(String typ) {
-			this.typ = typ;
-		}
-
-		public double getScore() {
-			return score;
-		}
-
-		public void setScore(double score) {
-			this.score = score;
-		}
-
-		public String getAgs() {
-			return ags;
-		}
-
-		public void setAgs(String ags) {
-			this.ags = ags;
-		}
-
-		public String getRs() {
-			return rs;
-		}
-
-		public void setRs(String rs) {
-			this.rs = rs;
-		}
-
-		public String getSchluessel() {
-			return schluessel;
-		}
-
-		public void setSchluessel(String schluessel) {
-			this.schluessel = schluessel;
-		}
-
-		public String getBundesland() {
-			return bundesland;
-		}
-
-		public void setBundesland(String bundesland) {
-			this.bundesland = bundesland;
-		}
-
-		public String getKreis() {
-			return kreis;
-		}
-
-		public void setKreis(String kreis) {
-			this.kreis = kreis;
-		}
-
-		public String getVerwgem() {
-			return verwgem;
-		}
-
-		public void setVerwgem(String verwgem) {
-			this.verwgem = verwgem;
-		}
-
-		public String getGemeinde() {
-			return gemeinde;
-		}
-
-		public void setGemeinde(String gemeinde) {
-			this.gemeinde = gemeinde;
-		}
-
-		public String getPlz() {
-			return plz;
-		}
-
-		public void setPlz(String plz) {
-			this.plz = plz;
-		}
-
-		public String getOrt() {
-			return ort;
-		}
-
-		public void setOrt(String ort) {
-			this.ort = ort;
-		}
-
-		public String getOrtsteil() {
-			return ortsteil;
-		}
-
-		public void setOrtsteil(String ortsteil) {
-			this.ortsteil = ortsteil;
-		}
-
-		public String getStrasse() {
-			return strasse;
-		}
-
-		public void setStrasse(String strasse) {
-			this.strasse = strasse;
-		}
-
-		public String getHaus() {
-			return haus;
-		}
-
-		public void setHaus(String haus) {
-			this.haus = haus;
-		}
-
-		public String getQualitaet() {
-			return qualitaet;
-		}
-
-		public void setQualitaet(String qualitaet) {
-			this.qualitaet = qualitaet;
-		}
-
 	}
-	
-	
+
+	public Map<String, String> buildQuerySubstitutions(LocationQuery query) {
+		Map<String, String> replacement = new HashMap<>();
+		replacement.put(STREET_PLACEHOLDER, encodeValue(query.getStreet()));
+		replacement.put(HOUSE_NUMBER_PLACEHOLDER, encodeValue(query.getHouseNumber()));
+		replacement.put(POSTAL_CODE_PLACEHOLDER, encodeValue(query.getPostalCode()));
+		replacement.put(CITY_PLACEHOLDER, encodeValue(query.getCity()));
+
+		return replacement;
+	}
+
+	private String encodeValue(String value) {
+		try {
+			return DataHelper.isNullOrEmpty(value) ? "" : URLEncoder.encode(value, StandardCharsets.UTF_8.name());
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException("Can't encode parameter value [" + value + "]", e);
+		}
+	}
 }

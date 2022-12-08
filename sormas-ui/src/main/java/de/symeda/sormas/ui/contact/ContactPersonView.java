@@ -9,35 +9,41 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.contact;
 
-import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.contact.ContactDto;
+import de.symeda.sormas.api.person.PersonContext;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
+import de.symeda.sormas.ui.person.PersonEditForm;
+import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
 
 public class ContactPersonView extends AbstractContactView {
 
 	private static final long serialVersionUID = -1L;
-	
+
 	public static final String VIEW_NAME = ROOT_VIEW_NAME + "/person";
 
-    public ContactPersonView() {
-    	super(VIEW_NAME);
-    }
+	public ContactPersonView() {
+		super(VIEW_NAME);
+	}
 
-    @Override
-    public void enter(ViewChangeEvent event) {
-    	super.enter(event);
-    	ContactDto dto = FacadeProvider.getContactFacade().getContactByUuid(getContactRef().getUuid());
-    	setSubComponent(ControllerProvider.getPersonController().getPersonEditComponent(dto.getPerson().getUuid(), dto.getDisease(), dto.getDiseaseDetails(), UserRight.CONTACT_EDIT, null));
-    }
+	@Override
+	protected void initView(String params) {
+
+		ContactDto dto = FacadeProvider.getContactFacade().getByUuid(getContactRef().getUuid());
+
+		CommitDiscardWrapperComponent<PersonEditForm> contactPersonComponent = ControllerProvider.getPersonController()
+			.getPersonEditComponent(PersonContext.CONTACT,dto.getPerson().getUuid(), dto.getDisease(), dto.getDiseaseDetails(), UserRight.CONTACT_EDIT, null);
+		setSubComponent(contactPersonComponent);
+
+		setContactEditPermission(contactPersonComponent);
+	}
 }

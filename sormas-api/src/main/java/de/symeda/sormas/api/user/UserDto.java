@@ -9,32 +9,41 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.user;
 
 import java.util.Set;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.Language;
-import de.symeda.sormas.api.facility.FacilityReferenceDto;
-import de.symeda.sormas.api.infrastructure.PointOfEntryReferenceDto;
+import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.infrastructure.pointofentry.PointOfEntryReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.location.LocationDto;
-import de.symeda.sormas.api.region.CommunityReferenceDto;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.FeatureIndependent;
+import de.symeda.sormas.api.utils.FieldConstraints;
 
+@FeatureIndependent
 public class UserDto extends EntityDto {
 
 	private static final long serialVersionUID = -8558187171374254398L;
 
-	public static final String COLUMN_NAME_USERROLE = "userrole";
+	public static final String COLUMN_NAME_USERROLE = "userrole_id";
 	public static final String COLUMN_NAME_USER_ID = "user_id";
 
 	public static final String I18N_PREFIX = "User";
@@ -57,18 +66,26 @@ public class UserDto extends EntityDto {
 	public static final String POINT_OF_ENTRY = "pointOfEntry";
 	public static final String LIMITED_DISEASE = "limitedDisease";
 	public static final String LANGUAGE = "language";
+	public static final String HAS_CONSENTED_TO_GDPR = "hasConsentedToGdpr";
+	public static final String JURISDICTION_LEVEL = "jurisdictionLevel";
 
 	private boolean active = true;
-	
+
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String userName;
-	
+
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String firstName;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String lastName;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
 	private String userEmail;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
 	private String phone;
-	private LocationDto address;	
-	
-	private Set<UserRole> userRoles;
+	@Valid
+	private LocationDto address;
+
+	private Set<UserRoleReferenceDto> userRoles;
 
 	private RegionReferenceDto region;
 	private DistrictReferenceDto district;
@@ -82,18 +99,22 @@ public class UserDto extends EntityDto {
 	private PointOfEntryReferenceDto pointOfEntry;
 
 	private UserReferenceDto associatedOfficer;
-	
+
 	private Disease limitedDisease;
-	
+
 	private Language language;
-	
+
+	private boolean hasConsentedToGdpr;
+
+	private JurisdictionLevel jurisdictionLevel;
+
 	public static UserDto build() {
 		UserDto user = new UserDto();
 		user.setUuid(DataHelper.createUuid());
 		user.setAddress(LocationDto.build());
 		return user;
 	}
-	
+
 	public boolean isActive() {
 		return active;
 	}
@@ -101,7 +122,7 @@ public class UserDto extends EntityDto {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 	public String getUserName() {
 		return userName;
 	}
@@ -109,27 +130,27 @@ public class UserDto extends EntityDto {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-	
+
 	public String getFirstName() {
 		return firstName;
 	}
-	
+
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
-	
+
 	public String getLastName() {
 		return lastName;
 	}
-	
+
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-	
+
 	public String getName() {
 		return firstName + " " + lastName;
 	}
-	
+
 	public String getUserEmail() {
 		return userEmail;
 	}
@@ -153,21 +174,25 @@ public class UserDto extends EntityDto {
 	public void setAddress(LocationDto address) {
 		this.address = address;
 	}
-	
-	public Set<UserRole> getUserRoles() {
+
+	public Set<UserRoleReferenceDto> getUserRoles() {
 		return userRoles;
 	}
 
-	public void setUserRoles(Set<UserRole> userRoles) {
+	public void setUserRoles(Set<UserRoleReferenceDto> userRoles) {
 		this.userRoles = userRoles;
 	}
-	
+
 	@Override
-	public String toString() {
-		return UserReferenceDto.buildCaption(firstName, lastName, userRoles);
+	public String buildCaption() {
+		return UserReferenceDto.buildCaption(firstName, lastName);
 	}
 
-	
+	@JsonIgnore
+	public String i18nPrefix() {
+		return I18N_PREFIX;
+	}
+
 	public UserReferenceDto getAssociatedOfficer() {
 		return associatedOfficer;
 	}
@@ -207,15 +232,15 @@ public class UserDto extends EntityDto {
 	public void setHealthFacility(FacilityReferenceDto healthFacility) {
 		this.healthFacility = healthFacility;
 	}
-	
+
 	public FacilityReferenceDto getLaboratory() {
 		return laboratory;
 	}
-	
+
 	public void setLaboratory(FacilityReferenceDto laboratory) {
 		this.laboratory = laboratory;
 	}
-	
+
 	public PointOfEntryReferenceDto getPointOfEntry() {
 		return pointOfEntry;
 	}
@@ -225,7 +250,7 @@ public class UserDto extends EntityDto {
 	}
 
 	public UserReferenceDto toReference() {
-		return new UserReferenceDto(getUuid(), getFirstName(), getLastName(), getUserRoles());
+		return new UserReferenceDto(getUuid(), getFirstName(), getLastName());
 	}
 
 	public Disease getLimitedDisease() {
@@ -243,5 +268,20 @@ public class UserDto extends EntityDto {
 	public void setLanguage(Language language) {
 		this.language = language;
 	}
-	
+
+	public boolean isHasConsentedToGdpr() {
+		return hasConsentedToGdpr;
+	}
+
+	public void setHasConsentedToGdpr(boolean hasConsentedToGdpr) {
+		this.hasConsentedToGdpr = hasConsentedToGdpr;
+	}
+
+	public JurisdictionLevel getJurisdictionLevel() {
+		return jurisdictionLevel;
+	}
+
+	public void setJurisdictionLevel(JurisdictionLevel jurisdictionLevel) {
+		this.jurisdictionLevel = jurisdictionLevel;
+	}
 }

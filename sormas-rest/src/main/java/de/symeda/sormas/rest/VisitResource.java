@@ -9,32 +9,35 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.rest;
 
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.security.RolesAllowed;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.SecurityContext;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.PushResult;
-import de.symeda.sormas.api.user.UserReferenceDto;
+import de.symeda.sormas.api.caze.CriteriaWithSorting;
+import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.visit.VisitCriteria;
 import de.symeda.sormas.api.visit.VisitDto;
+import de.symeda.sormas.api.visit.VisitIndexDto;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 /**
  * @see <a href="https://jersey.java.net/documentation/latest/">Jersey
@@ -45,25 +48,29 @@ import de.symeda.sormas.api.visit.VisitDto;
  *
  */
 @Path("/visits")
-@Produces({ MediaType.APPLICATION_JSON + "; charset=UTF-8" })
-@Consumes({ MediaType.APPLICATION_JSON + "; charset=UTF-8" })
-@RolesAllowed("USER")
+@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+@Consumes(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 public class VisitResource extends EntityDtoResource {
 
+	/**
+	 * Attention: For now this only returns the visits of contacts, since case visits are not yet implemented in the mobile app
+	 */
 	@GET
 	@Path("/all/{since}")
-	public List<VisitDto> getAllVisits(@Context SecurityContext sc, @PathParam("since") long since) {
+	public List<VisitDto> getAllVisits(@PathParam("since") long since) {
 
-		UserReferenceDto userDto = FacadeProvider.getUserFacade()
-				.getByUserNameAsReference(sc.getUserPrincipal().getName());
-		List<VisitDto> result = FacadeProvider.getVisitFacade().getAllActiveVisitsAfter(new Date(since),
-				userDto.getUuid());
-		return result;
+		return FacadeProvider.getVisitFacade().getAllActiveVisitsAfter(new Date(since));
+	}
+
+	@GET
+	@Path("/all/{since}/{size}/{lastSynchronizedUuid}")
+	public List<VisitDto> getAllVisits(@PathParam("since") long since, @PathParam("size") int size, @PathParam("lastSynchronizedUuid") String lastSynchronizedUuid) {
+		return FacadeProvider.getVisitFacade().getAllActiveVisitsAfter(new Date(since), size, lastSynchronizedUuid);
 	}
 
 	@POST
 	@Path("/query")
-	public List<VisitDto> getByUuids(@Context SecurityContext sc, List<String> uuids) {
+	public List<VisitDto> getByUuids(List<String> uuids) {
 
 		List<VisitDto> result = FacadeProvider.getVisitFacade().getByUuids(uuids);
 		return result;
@@ -71,7 +78,7 @@ public class VisitResource extends EntityDtoResource {
 
 	@POST
 	@Path("/push")
-	public List<PushResult> postVisits(List<VisitDto> dtos) {
+	public List<PushResult> postVisits(@Valid List<VisitDto> dtos) {
 
 		List<PushResult> result = savePushedDto(dtos, FacadeProvider.getVisitFacade()::saveVisit);
 		return result;
@@ -79,12 +86,17 @@ public class VisitResource extends EntityDtoResource {
 
 	@GET
 	@Path("/uuids")
-	public List<String> getAllActiveUuids(@Context SecurityContext sc) {
-
-		UserReferenceDto userDto = FacadeProvider.getUserFacade()
-				.getByUserNameAsReference(sc.getUserPrincipal().getName());
-		List<String> uuids = FacadeProvider.getVisitFacade().getAllActiveUuids(userDto.getUuid());
-		return uuids;
+	public List<String> getAllActiveUuids() {
+		return FacadeProvider.getVisitFacade().getAllActiveUuids();
 	}
-	
+
+	@POST
+	@Path("/indexList")
+	public Page<VisitIndexDto> getIndexList(
+		@RequestBody CriteriaWithSorting<VisitCriteria> criteriaWithSorting,
+		@QueryParam("offset") int offset,
+		@QueryParam("size") int size) {
+		return FacadeProvider.getVisitFacade().getIndexPage(criteriaWithSorting.getCriteria(), offset, size, criteriaWithSorting.getSortProperties());
+	}
+
 }

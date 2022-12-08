@@ -9,37 +9,33 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.visit;
 
 import java.util.Date;
-import java.util.stream.Collectors;
 
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.ListDataProvider;
-import com.vaadin.icons.VaadinIcons;
-import com.vaadin.shared.data.sort.SortDirection;
-import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.renderers.DateRenderer;
-import com.vaadin.ui.renderers.HtmlRenderer;
 
 import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.contact.ContactCriteria;
-import de.symeda.sormas.api.contact.ContactIndexDto;
+import de.symeda.sormas.api.VisitOrigin;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DateHelper;
-import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.visit.VisitCriteria;
 import de.symeda.sormas.api.visit.VisitIndexDto;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.BooleanRenderer;
+import de.symeda.sormas.ui.utils.FieldAccessColumnStyleGenerator;
 import de.symeda.sormas.ui.utils.FilteredGrid;
 
 @SuppressWarnings("serial")
@@ -55,37 +51,56 @@ public class VisitGrid extends FilteredGrid<VisitIndexDto, VisitCriteria> {
 		setInEagerMode(true);
 		setCriteria(criteria);
 		setEagerDataProvider();
-		
+
 		if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
-        	setSelectionMode(SelectionMode.MULTI);
-        } else {
-        	setSelectionMode(SelectionMode.NONE);
-        }
-
-		Column<VisitIndexDto, String> editColumn = addColumn(entry -> VaadinIcons.EDIT.getHtml(), new HtmlRenderer());
-		editColumn.setId(EDIT_BTN_ID);
-		editColumn.setWidth(20);
-
-		setColumns(EDIT_BTN_ID, VisitIndexDto.VISIT_DATE_TIME, VisitIndexDto.VISIT_STATUS, VisitIndexDto.VISIT_REMARKS, 
-				VisitIndexDto.DISEASE, VisitIndexDto.SYMPTOMATIC, VisitIndexDto.TEMPERATURE);
-		
-		((Column<VisitIndexDto, Date>) getColumn(VisitIndexDto.VISIT_DATE_TIME)).setRenderer(new DateRenderer(DateHelper.getLocalDateTimeFormat()));
-		((Column<VisitIndexDto, String>) getColumn(VisitIndexDto.SYMPTOMATIC)).setRenderer(new BooleanRenderer());
-
-		for(Column<?, ?> column : getColumns()) {
-			column.setCaption(I18nProperties.getPrefixCaption(
-					VisitIndexDto.I18N_PREFIX, column.getId().toString(), column.getCaption()));
+			setSelectionMode(SelectionMode.MULTI);
+		} else {
+			setSelectionMode(SelectionMode.NONE);
 		}
 
-		addItemClickListener(e -> {
-			if (e.getColumn() != null && (EDIT_BTN_ID.equals(e.getColumn().getId()) || e.getMouseEventDetails().isDoubleClick())) {
-				ControllerProvider.getVisitController().editVisit(e.getItem().getUuid(), getCriteria().getContact(), r -> reload());
+		addEditColumn(
+			e -> ControllerProvider.getVisitController().editVisit(e.getUuid(), getCriteria().getContact(), getCriteria().getCaze(), r -> reload()));
+
+		removeColumn(VisitIndexDto.ORIGIN);
+		addComponentColumn(visitIndexDto -> {
+			VisitOrigin origin = visitIndexDto.getOrigin();
+
+			String displayText = origin.toString();
+
+			if (origin == VisitOrigin.USER && visitIndexDto.getVisitUser() != null) {
+				displayText += " " + visitIndexDto.getVisitUser().getShortCaption();
 			}
-		});
+
+			return new Label(displayText);
+		}).setId(VisitIndexDto.ORIGIN);
+
+		setColumns(
+			EDIT_BTN_ID,
+			VisitIndexDto.VISIT_DATE_TIME,
+			VisitIndexDto.VISIT_STATUS,
+			VisitIndexDto.VISIT_REMARKS,
+			VisitIndexDto.DISEASE,
+			VisitIndexDto.SYMPTOMATIC,
+			VisitIndexDto.TEMPERATURE,
+			VisitIndexDto.ORIGIN);
+
+		((Column<VisitIndexDto, Date>) getColumn(VisitIndexDto.VISIT_DATE_TIME))
+			.setRenderer(new DateRenderer(DateHelper.getLocalDateTimeFormat(I18nProperties.getUserLanguage())));
+		((Column<VisitIndexDto, String>) getColumn(VisitIndexDto.SYMPTOMATIC)).setRenderer(new BooleanRenderer());
+
+		for (Column<VisitIndexDto, ?> column : getColumns()) {
+			final String columnId = column.getId();
+			final String i18nPrefix = columnId.equals(VisitIndexDto.SYMPTOMATIC) || columnId.equals(VisitIndexDto.TEMPERATURE)
+				? SymptomsDto.I18N_PREFIX
+				: VisitIndexDto.I18N_PREFIX;
+			column.setCaption(I18nProperties.getPrefixCaption(i18nPrefix, columnId, column.getCaption()));
+			column.setStyleGenerator(FieldAccessColumnStyleGenerator.getDefault(getBeanType(), columnId));
+		}
 	}
-	
+
 	public void setEagerDataProvider() {
-		ListDataProvider<VisitIndexDto> dataProvider = DataProvider.fromStream(FacadeProvider.getVisitFacade().getIndexList(getCriteria(), null, null, null).stream());
+		ListDataProvider<VisitIndexDto> dataProvider =
+			DataProvider.fromStream(FacadeProvider.getVisitFacade().getIndexList(getCriteria(), null, null, null).stream());
 		setDataProvider(dataProvider);
 	}
 
@@ -97,7 +112,4 @@ public class VisitGrid extends FilteredGrid<VisitIndexDto, VisitCriteria> {
 		//getDataProvider().refreshAll(); // does not work for eager data providers
 		setEagerDataProvider();
 	}
-
 }
-
-

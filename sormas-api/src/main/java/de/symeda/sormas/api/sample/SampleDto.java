@@ -1,41 +1,54 @@
-/*******************************************************************************
+/*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
- *
+ * Copyright © 2016-2021 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *******************************************************************************/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 package de.symeda.sormas.api.sample;
 
+import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.utils.DependingOnFeatureType;
 import java.util.Date;
 import java.util.Set;
 
-import de.symeda.sormas.api.EntityDto;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
+
 import de.symeda.sormas.api.ImportIgnore;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
-import de.symeda.sormas.api.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.common.DeletionReason;
+import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.event.EventParticipantReferenceDto;
+import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.sormastosormas.SormasToSormasShareableDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.FieldConstraints;
 import de.symeda.sormas.api.utils.Required;
+import de.symeda.sormas.api.utils.SensitiveData;
 
-public class SampleDto extends EntityDto {
+@DependingOnFeatureType(featureType = FeatureType.SAMPLES_LAB)
+public class SampleDto extends SormasToSormasShareableDto {
 
 	private static final long serialVersionUID = -6975445672442728938L;
+
+	public static final long APPROXIMATE_JSON_SIZE_IN_BYTES = 6210;
 
 	public static final String I18N_PREFIX = "Sample";
 
 	public static final String ASSOCIATED_CASE = "associatedCase";
 	public static final String LAB_SAMPLE_ID = "labSampleID";
+	public static final String FIELD_SAMPLE_ID = "fieldSampleID";
 	public static final String SAMPLE_DATE_TIME = "sampleDateTime";
 	public static final String REPORT_DATE_TIME = "reportDateTime";
 	public static final String REPORTING_USER = "reportingUser";
@@ -61,10 +74,18 @@ public class SampleDto extends EntityDto {
 	public static final String PATHOGEN_TEST_RESULT = "pathogenTestResult";
 	public static final String REQUESTED_OTHER_PATHOGEN_TESTS = "requestedOtherPathogenTests";
 	public static final String REQUESTED_OTHER_ADDITIONAL_TESTS = "requestedOtherAdditionalTests";
-	
-	@Required
+	public static final String SAMPLING_REASON = "samplingReason";
+	public static final String SAMPLING_REASON_DETAILS = "samplingReasonDetails";
+	public static final String DELETION_REASON = "deletionReason";
+	public static final String OTHER_DELETION_REASON = "otherDeletionReason";
+
 	private CaseReferenceDto associatedCase;
+	private ContactReferenceDto associatedContact;
+	private EventParticipantReferenceDto associatedEventParticipant;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String labSampleID;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
+	private String fieldSampleID;
 	@Required
 	private Date sampleDateTime;
 
@@ -72,23 +93,40 @@ public class SampleDto extends EntityDto {
 	private Date reportDateTime;
 	@Required
 	private UserReferenceDto reportingUser;
+	@SensitiveData
+	@Min(value = -90, message = Validations.numberTooSmall)
+	@Max(value = 90, message = Validations.numberTooBig)
 	private Double reportLat;
+	@SensitiveData
+	@Min(value = -180, message = Validations.numberTooSmall)
+	@Max(value = 180, message = Validations.numberTooBig)
 	private Double reportLon;
+
 	private Float reportLatLonAccuracy;
 
 	@Required
 	private SampleMaterial sampleMaterial;
+	@SensitiveData
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String sampleMaterialText;
 	@Required
 	private SamplePurpose samplePurpose;
-	@Required
+
 	private FacilityReferenceDto lab;
+	@SensitiveData(mandatoryField = true)
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String labDetails;
 	private Date shipmentDate;
+	@SensitiveData
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String shipmentDetails;
 	private Date receivedDate;
 	private SpecimenCondition specimenCondition;
+	@SensitiveData
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String noTestPossibleReason;
+	@SensitiveData
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_BIG, message = Validations.textTooLong)
 	private String comment;
 	private SampleSource sampleSource;
 	private SampleReferenceDto referredTo;
@@ -100,8 +138,20 @@ public class SampleDto extends EntityDto {
 	private Boolean additionalTestingRequested;
 	private Set<PathogenTestType> requestedPathogenTests;
 	private Set<AdditionalTestType> requestedAdditionalTests;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String requestedOtherPathogenTests;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String requestedOtherAdditionalTests;
+
+	private SamplingReason samplingReason;
+	@SensitiveData
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
+	private String samplingReasonDetails;
+
+	private boolean deleted;
+	private DeletionReason deletionReason;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
+	private String otherDeletionReason;
 
 	@ImportIgnore
 	public CaseReferenceDto getAssociatedCase() {
@@ -112,12 +162,38 @@ public class SampleDto extends EntityDto {
 		this.associatedCase = associatedCase;
 	}
 
+	@ImportIgnore
+	public ContactReferenceDto getAssociatedContact() {
+		return associatedContact;
+	}
+
+	public void setAssociatedContact(ContactReferenceDto associatedContact) {
+		this.associatedContact = associatedContact;
+	}
+
+	@ImportIgnore
+	public EventParticipantReferenceDto getAssociatedEventParticipant() {
+		return associatedEventParticipant;
+	}
+
+	public void setAssociatedEventParticipant(EventParticipantReferenceDto associatedEventParticipant) {
+		this.associatedEventParticipant = associatedEventParticipant;
+	}
+
 	public String getLabSampleID() {
 		return labSampleID;
 	}
 
 	public void setLabSampleID(String labSampleID) {
 		this.labSampleID = labSampleID;
+	}
+
+	public String getFieldSampleID() {
+		return fieldSampleID;
+	}
+
+	public void setFieldSampleID(String fieldSampleID) {
+		this.fieldSampleID = fieldSampleID;
 	}
 
 	public Date getSampleDateTime() {
@@ -136,10 +212,12 @@ public class SampleDto extends EntityDto {
 		this.reportDateTime = reportDateTime;
 	}
 
+	@Override
 	public UserReferenceDto getReportingUser() {
 		return reportingUser;
 	}
 
+	@Override
 	public void setReportingUser(UserReferenceDto reportingUser) {
 		this.reportingUser = reportingUser;
 	}
@@ -159,7 +237,7 @@ public class SampleDto extends EntityDto {
 	public void setSampleMaterialText(String sampleMaterialText) {
 		this.sampleMaterialText = sampleMaterialText;
 	}
-	
+
 	public SamplePurpose getSamplePurpose() {
 		return samplePurpose;
 	}
@@ -277,7 +355,7 @@ public class SampleDto extends EntityDto {
 	public Boolean getPathogenTestingRequested() {
 		return pathogenTestingRequested;
 	}
-	
+
 	public void setPathogenTestingRequested(Boolean pathogenTestingRequested) {
 		this.pathogenTestingRequested = pathogenTestingRequested;
 	}
@@ -286,7 +364,7 @@ public class SampleDto extends EntityDto {
 	public Boolean getAdditionalTestingRequested() {
 		return additionalTestingRequested;
 	}
-	
+
 	public void setAdditionalTestingRequested(Boolean additionalTestingRequested) {
 		this.additionalTestingRequested = additionalTestingRequested;
 	}
@@ -327,10 +405,48 @@ public class SampleDto extends EntityDto {
 		this.requestedOtherAdditionalTests = requestedOtherAdditionalTests;
 	}
 
+	public SamplingReason getSamplingReason() {
+		return samplingReason;
+	}
+
+	public void setSamplingReason(SamplingReason samplingReason) {
+		this.samplingReason = samplingReason;
+	}
+
+	public String getSamplingReasonDetails() {
+		return samplingReasonDetails;
+	}
+
+	public void setSamplingReasonDetails(String samplingReasonDetails) {
+		this.samplingReasonDetails = samplingReasonDetails;
+	}
+
 	public static SampleDto build(UserReferenceDto userRef, CaseReferenceDto caseRef) {
+
+		final SampleDto sampleDto = getSampleDto(userRef);
+		sampleDto.setAssociatedCase(caseRef);
+		return sampleDto;
+	}
+
+	public static SampleDto build(UserReferenceDto userRef, EventParticipantReferenceDto eventParticipantRef) {
+
+		final SampleDto sampleDto = getSampleDto(userRef);
+		sampleDto.setAssociatedEventParticipant(eventParticipantRef);
+		return sampleDto;
+	}
+
+	public static SampleDto build(UserReferenceDto userRef, ContactReferenceDto contactRef) {
+
+		final SampleDto sampleDto = getSampleDto(userRef);
+		sampleDto.setAssociatedContact(contactRef);
+		return sampleDto;
+	}
+
+	private static SampleDto getSampleDto(UserReferenceDto userRef) {
+
 		SampleDto sample = new SampleDto();
 		sample.setUuid(DataHelper.createUuid());
-		sample.setAssociatedCase(caseRef);
+
 		sample.setReportingUser(userRef);
 		sample.setReportDateTime(new Date());
 		sample.setPathogenTestResult(PathogenTestResultType.PENDING);
@@ -338,19 +454,48 @@ public class SampleDto extends EntityDto {
 		return sample;
 	}
 
-	public static SampleDto buildReferral(UserReferenceDto userRef, SampleDto referredSample) {
-		SampleDto sample = build(userRef, referredSample.getAssociatedCase());
-		sample.setSampleDateTime(referredSample.getSampleDateTime());
-		sample.setSampleMaterial(referredSample.getSampleMaterial());
-		sample.setSampleMaterialText(referredSample.getSampleMaterialText());
-		sample.setSampleSource(referredSample.getSampleSource());
-		sample.setPathogenTestingRequested(referredSample.getPathogenTestingRequested());
-		sample.setAdditionalTestingRequested(referredSample.getAdditionalTestingRequested());
-		sample.setRequestedPathogenTests(referredSample.getRequestedPathogenTests());
-		sample.setRequestedAdditionalTests(referredSample.getRequestedAdditionalTests());
-		sample.setPathogenTestResult(PathogenTestResultType.PENDING);
+	public static SampleDto buildReferralDto(UserReferenceDto userRef, SampleDto referredSample) {
+
+		final SampleDto sample;
+		final CaseReferenceDto associatedCase = referredSample.getAssociatedCase();
+		final ContactReferenceDto associatedContact = referredSample.getAssociatedContact();
+		final EventParticipantReferenceDto associatedEventParticipant = referredSample.getAssociatedEventParticipant();
+		if (associatedCase != null) {
+			sample = build(userRef, associatedCase);
+		} else if (associatedContact != null) {
+			sample = build(userRef, associatedContact);
+		} else {
+			sample = build(userRef, associatedEventParticipant);
+		}
+		migrateAttributesOfPhysicalSample(referredSample, sample);
 
 		return sample;
+	}
+
+	/**
+	 * The physical sample is neither the source, nor the target. This method is about migrating the attributes that belong to the real
+	 * (physical) sample out there in the labs.
+	 * Source and target should both refer to the physical sample, but have different values for some attributes. For example, the
+	 * specimenCondition may be different in source and target.
+	 * In one lab (source), the specimenCondition may be ADEQUATE. But then during transport to another lab (target) the specimenCondition
+	 * can change to NOT_ADEQUATE.
+	 *
+	 * In contrast, the attributes of the physical sample don't change (e.g. samplingReason) and thus should be migrated when a sample
+	 * referral is created in SORMAS.
+	 */
+	private static void migrateAttributesOfPhysicalSample(SampleDto source, SampleDto target) {
+		target.setSampleDateTime(source.getSampleDateTime());
+		target.setSampleMaterial(source.getSampleMaterial());
+		target.setSampleMaterialText(source.getSampleMaterialText());
+		target.setSampleSource(source.getSampleSource());
+		target.setPathogenTestingRequested(source.getPathogenTestingRequested());
+		target.setAdditionalTestingRequested(source.getAdditionalTestingRequested());
+		target.setRequestedPathogenTests(source.getRequestedPathogenTests());
+		target.setRequestedAdditionalTests(source.getRequestedAdditionalTests());
+		target.setFieldSampleID(source.getFieldSampleID());
+		target.setSamplingReason(source.getSamplingReason());
+		target.setSamplingReasonDetails(source.getSamplingReasonDetails());
+		target.setSamplePurpose(source.getSamplePurpose());
 	}
 
 	@ImportIgnore
@@ -382,5 +527,34 @@ public class SampleDto extends EntityDto {
 
 	public SampleReferenceDto toReference() {
 		return new SampleReferenceDto(getUuid());
+	}
+
+	@Override
+	public SampleDto clone() throws CloneNotSupportedException {
+		return (SampleDto) super.clone();
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+
+	public DeletionReason getDeletionReason() {
+		return deletionReason;
+	}
+
+	public void setDeletionReason(DeletionReason deletionReason) {
+		this.deletionReason = deletionReason;
+	}
+
+	public String getOtherDeletionReason() {
+		return otherDeletionReason;
+	}
+
+	public void setOtherDeletionReason(String otherDeletionReason) {
+		this.otherDeletionReason = otherDeletionReason;
 	}
 }

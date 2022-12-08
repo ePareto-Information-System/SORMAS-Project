@@ -9,19 +9,27 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.backend.caze;
 
+import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_BIG;
+import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -32,54 +40,92 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.Type;
 
 import de.symeda.auditlog.api.Audited;
 import de.symeda.auditlog.api.AuditedIgnore;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseClassification;
+import de.symeda.sormas.api.caze.CaseIdentificationSource;
 import de.symeda.sormas.api.caze.CaseOrigin;
 import de.symeda.sormas.api.caze.CaseOutcome;
+import de.symeda.sormas.api.caze.CaseReferenceDefinition;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.caze.ContactTracingContactType;
 import de.symeda.sormas.api.caze.DengueFeverType;
+import de.symeda.sormas.api.caze.EndOfIsolationReason;
 import de.symeda.sormas.api.caze.HospitalWardType;
+import de.symeda.sormas.api.caze.InfectionSetting;
 import de.symeda.sormas.api.caze.InvestigationStatus;
 import de.symeda.sormas.api.caze.PlagueType;
+import de.symeda.sormas.api.caze.QuarantineReason;
 import de.symeda.sormas.api.caze.RabiesType;
-import de.symeda.sormas.api.caze.Vaccination;
-import de.symeda.sormas.api.caze.VaccinationInfoSource;
+import de.symeda.sormas.api.caze.ReinfectionDetail;
+import de.symeda.sormas.api.caze.ReinfectionStatus;
+import de.symeda.sormas.api.caze.ScreeningType;
+import de.symeda.sormas.api.caze.Trimester;
+import de.symeda.sormas.api.caze.VaccinationStatus;
+import de.symeda.sormas.api.contact.FollowUpStatus;
 import de.symeda.sormas.api.contact.QuarantineType;
+import de.symeda.sormas.api.disease.DiseaseVariant;
+import de.symeda.sormas.api.externaldata.HasExternalData;
+import de.symeda.sormas.api.infrastructure.facility.FacilityType;
+import de.symeda.sormas.api.utils.PersonalData;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.backend.caze.maternalhistory.MaternalHistory;
 import de.symeda.sormas.backend.caze.porthealthinfo.PortHealthInfo;
+import de.symeda.sormas.backend.caze.surveillancereport.SurveillanceReport;
 import de.symeda.sormas.backend.clinicalcourse.ClinicalCourse;
+import de.symeda.sormas.backend.clinicalcourse.HealthConditions;
 import de.symeda.sormas.backend.common.CoreAdo;
+import de.symeda.sormas.backend.contact.Contact;
+import de.symeda.sormas.backend.disease.DiseaseVariantConverter;
 import de.symeda.sormas.backend.epidata.EpiData;
-import de.symeda.sormas.backend.facility.Facility;
+import de.symeda.sormas.backend.event.EventParticipant;
 import de.symeda.sormas.backend.hospitalization.Hospitalization;
-import de.symeda.sormas.backend.infrastructure.PointOfEntry;
+import de.symeda.sormas.backend.infrastructure.community.Community;
+import de.symeda.sormas.backend.infrastructure.district.District;
+import de.symeda.sormas.backend.infrastructure.facility.Facility;
+import de.symeda.sormas.backend.infrastructure.pointofentry.PointOfEntry;
+import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.person.Person;
-import de.symeda.sormas.backend.region.Community;
-import de.symeda.sormas.backend.region.District;
-import de.symeda.sormas.backend.region.Region;
+import de.symeda.sormas.backend.sample.Sample;
+import de.symeda.sormas.backend.share.ExternalShareInfo;
+import de.symeda.sormas.backend.sormastosormas.entities.SormasToSormasShareable;
+import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfo;
+import de.symeda.sormas.backend.sormastosormas.share.shareinfo.SormasToSormasShareInfo;
 import de.symeda.sormas.backend.symptoms.Symptoms;
 import de.symeda.sormas.backend.task.Task;
 import de.symeda.sormas.backend.therapy.Therapy;
 import de.symeda.sormas.backend.user.User;
+import de.symeda.sormas.backend.util.ModelConstants;
+import de.symeda.sormas.backend.visit.Visit;
 
 @Entity(name = "cases")
 @Audited
-public class Case extends CoreAdo {
+public class Case extends CoreAdo implements SormasToSormasShareable, HasExternalData {
 
 	private static final long serialVersionUID = -2697795184663562129L;
 
 	public static final String TABLE_NAME = "cases";
 
 	public static final String CASE_CLASSIFICATION = "caseClassification";
+	public static final String CASE_IDENTIFICATION_SOURCE = "caseIdentificationSource";
+	public static final String CLASSIFICATION_DATE = "classificationDate";
+	public static final String SCREENING_TYPE = "screeningType";
+	public static final String CLINICAL_CONFIRMATION = "clinicalConfirmation";
+	public static final String EPIDEMIOLOGICAL_CONFIRMATION = "epidemiologicalConfirmation";
+	public static final String LABORATORY_DIAGNOSTIC_CONFIRMATION = "laboratoryDiagnosticConfirmation";
 	public static final String SYSTEM_CASE_CLASSIFICATION = "systemCaseClassification";
 	public static final String INVESTIGATION_STATUS = "investigationStatus";
 	public static final String PERSON = "person";
+	public static final String PERSON_ID = "personId";
 	public static final String DISEASE = "disease";
+	public static final String DISEASE_VARIANT = "diseaseVariant";
 	public static final String DISEASE_DETAILS = "diseaseDetails";
+	public static final String DISEASE_VARIANT_DETAILS = "diseaseVariantDetails";
 	public static final String PLAGUE_TYPE = "plagueType";
 	public static final String RABIES_TYPE = "rabiesType";
 	public static final String HEALTH_FACILITY = "healthFacility";
@@ -89,9 +135,15 @@ public class Case extends CoreAdo {
 	public static final String INVESTIGATED_DATE = "investigatedDate";
 	public static final String DISTRICT_LEVEL_DATE = "districtLevelDate";
 	public static final String SURVEILLANCE_OFFICER = "surveillanceOfficer";
+	public static final String CLINICIAN_NAME = "clinicianName";
+	public static final String CLINICIAN_PHONE = "clinicianPhone";
+	public static final String CLINICIAN_EMAIL = "clinicianEmail";
 	public static final String CASE_OFFICER = "caseOfficer";
 	public static final String SYMPTOMS = "symptoms";
 	public static final String TASKS = "tasks";
+	public static final String RESPONSIBLE_REGION = "responsibleRegion";
+	public static final String RESPONSIBLE_DISTRICT = "responsibleDistrict";
+	public static final String RESPONSIBLE_COMMUNITY = "responsibleCommunity";
 	public static final String REGION = "region";
 	public static final String DISTRICT = "district";
 	public static final String COMMUNITY = "community";
@@ -100,13 +152,11 @@ public class Case extends CoreAdo {
 	public static final String CLINICAL_COURSE = "clinicalCourse";
 	public static final String MATERNAL_HISTORY = "maternalHistory";
 	public static final String PORT_HEALTH_INFO = "portHealthInfo";
+
+	public static final String HEALTH_CONDITIONS = "healthConditions";
+
 	public static final String PREGNANT = "pregnant";
-	public static final String VACCINATION = "vaccination";
-	public static final String VACCINATION_DOSES = "vaccinationDoses";
-	public static final String VACCINATION_DATE = "vaccinationDate";
-	public static final String VACCINATION_INFO_SOURCE = "vaccinationInfoSource";
-	public static final String WHICH_VACCINE = "whichVaccine";
-	public static final String SMALLPOX_VACCINATION_SCAR = "smallpoxVaccinationScar";
+	public static final String VACCINATION_STATUS = "vaccinationStatus";
 	public static final String EPID_NUMBER = "epidNumber";
 	public static final String REPORT_LAT = "reportLat";
 	public static final String REPORT_LON = "reportLon";
@@ -115,7 +165,7 @@ public class Case extends CoreAdo {
 	public static final String SEQUELAE = "sequelae";
 	public static final String SEQUELAE_DETAILS = "sequelaeDetails";
 	public static final String CASE_AGE = "caseAge";
-	public static final String ARCHIVED = "archived";
+
 	public static final String THERAPY = "therapy";
 	public static final String CLINICIAN_DETAILS = "clinicianDetails";
 	public static final String CASE_ORIGIN = "caseOrigin";
@@ -124,24 +174,97 @@ public class Case extends CoreAdo {
 	public static final String COMPLETENESS = "completeness";
 	public static final String ADDITIONAL_DETAILS = "additionalDetails";
 	public static final String EXTERNAL_ID = "externalID";
-	public static final String SHARED_TO_COUNTRY = "sharedToCountry";	
+	public static final String EXTERNAL_TOKEN = "externalToken";
+	public static final String INTERNAL_TOKEN = "internalToken";
+	public static final String SHARED_TO_COUNTRY = "sharedToCountry";
+	public static final String NOSOCOMIAL_OUTBREAK = "nosocomialOutbreak";
+	public static final String INFECTION_SETTING = "infectionSetting";
+	public static final String PROHIBITION_TO_WORK = "prohibitionToWork";
+	public static final String PROHIBITION_TO_WORK_FROM = "prohibitionToWorkFrom";
+	public static final String PROHIBITION_TO_WORK_UNTIL = "prohibitionToWorkUntil";
 	public static final String QUARANTINE = "quarantine";
+	public static final String QUARANTINE_TYPE_DETAILS = "quarantineTypeDetails";
 	public static final String QUARANTINE_FROM = "quarantineFrom";
 	public static final String QUARANTINE_TO = "quarantineTo";
+	public static final String QUARANTINE_HELP_NEEDED = "quarantineHelpNeeded";
+	public static final String QUARANTINE_ORDERED_VERBALLY = "quarantineOrderedVerbally";
+	public static final String QUARANTINE_ORDERED_OFFICIAL_DOCUMENT = "quarantineOrderedOfficialDocument";
+	public static final String QUARANTINE_ORDERED_VERBALLY_DATE = "quarantineOrderedVerballyDate";
+	public static final String QUARANTINE_ORDERED_OFFICIAL_DOCUMENT_DATE = "quarantineOrderedOfficialDocumentDate";
+	public static final String QUARANTINE_HOME_POSSIBLE = "quarantineHomePossible";
+	public static final String QUARANTINE_HOME_POSSIBLE_COMMENT = "quarantineHomePossibleComment";
+	public static final String QUARANTINE_HOME_SUPPLY_ENSURED = "quarantineHomeSupplyEnsured";
+	public static final String QUARANTINE_HOME_SUPPLY_ENSURED_COMMENT = "quarantineHomeSupplyEnsuredComment";
+	public static final String QUARANTINE_EXTENDED = "quarantineExtended";
+	public static final String QUARANTINE_REDUCED = "quarantineReduced";
+	public static final String QUARANTINE_OFFICIAL_ORDER_SENT = "quarantineOfficialOrderSent";
+	public static final String QUARANTINE_OFFICIAL_ORDER_SENT_DATE = "quarantineOfficialOrderSentDate";
+	public static final String POSTPARTUM = "postpartum";
+	public static final String TRIMESTER = "trimester";
+	public static final String SAMPLES = "samples";
+	public static final String FOLLOW_UP_STATUS = "followUpStatus";
+	public static final String FOLLOW_UP_COMMENT = "followUpComment";
+	public static final String FOLLOW_UP_UNTIL = "followUpUntil";
+	public static final String OVERWRITE_FOLLOW_UP_UNTIL = "overwriteFollowUpUntil";
+	public static final String VISITS = "visits";
+	public static final String SURVEILLANCE_REPORTS = "surveillanceReports";
+	public static final String FACILITY_TYPE = "facilityType";
+	public static final String CONTACTS = "contacts";
+	public static final String CONVERTED_FROM_CONTACT = "convertedContact";
+	public static final String EVENT_PARTICIPANTS = "eventParticipants";
+	public static final String SORMAS_TO_SORMAS_ORIGIN_INFO = "sormasToSormasOriginInfo";
+	public static final String SORMAS_TO_SORMAS_SHARES = "sormasToSormasShares";
+	public static final String EXTERNAL_SHARES = "externalShares";
+
+	public static final String CASE_ID_ISM = "caseIdIsm";
+	public static final String CONTACT_TRACING_FIRST_CONTACT_DATE = "contactTracingFirstContactDate";
+	public static final String WAS_IN_QUARANTINE_BEFORE_ISOLATION = "wasInQuarantineBeforeIsolation";
+	public static final String QUARANTINE_REASON_BEFORE_ISOLATION = "quarantineReasonBeforeIsolation";
+	public static final String QUARANTINE_REASON_BEFORE_ISOLATION_DETAILS = "quarantineReasonBeforeIsolationDetails";
+	public static final String END_OF_ISOLATION_REASON = "endOfIsolationReason";
+	public static final String END_OF_ISOLATION_REASON_DETAILS = "endOfIsolationReasonDetails";
+
+	public static final String RE_INFECTION = "reInfection";
+	public static final String REINFECTION_STATUS = "reinfectionStatus";
+	public static final String REINFECTION_DETAILS = "reinfectionDetails";
+	public static final String PREVIOUS_INFECTION_DATE = "previousInfectionDate";
+
+	public static final String BLOOD_ORGAN_OR_TISSUE_DONATED = "bloodOrganOrTissueDonated";
+	public static final String NOT_A_CASE_REASON_NEGATIVE_TEST = "notACaseReasonNegativeTest";
+	public static final String NOT_A_CASE_REASON_PHYSICIAN_INFORMATION = "notACaseReasonPhysicianInformation";
+	public static final String NOT_A_CASE_REASON_DIFFERENT_PATHOGEN = "notACaseReasonDifferentPathogen";
+	public static final String NOT_A_CASE_REASON_OTHER = "notACaseReasonOther";
+	public static final String NOT_A_CASE_REASON_DETAILS = "notACaseReasonDetails";
+	public static final String FOLLOW_UP_STATUS_CHANGE_DATE = "followUpStatusChangeDate";
+	public static final String FOLLOW_UP_STATUS_CHANGE_USER = "followUpStatusChangeUser";
+	public static final String DONT_SHARE_WITH_REPORTING_TOOL = "dontShareWithReportingTool";
+	public static final String CASE_REFERENCE_DEFINITION = "caseReferenceDefinition";
+	public static final String PREVIOUS_QUARANTINE_TO = "previousQuarantineTo";
+	public static final String QUARANTINE_CHANGE_COMMENT = "quarantineChangeComment";
+	public static final String DUPLICATE_OF = "duplicateOf";
+	public static final String CREATION_VERSION = "creationVersion";
 
 	private Person person;
 	private String description;
 	private Disease disease;
+	private DiseaseVariant diseaseVariant;
 	private String diseaseDetails;
+	private String diseaseVariantDetails;
 	private PlagueType plagueType;
 	private DengueFeverType dengueFeverType;
 	private RabiesType rabiesType;
 
 	private CaseClassification caseClassification;
 	private CaseClassification systemCaseClassification;
+	private CaseIdentificationSource caseIdentificationSource;
+	private ScreeningType screeningType;
 	private User classificationUser;
 	private Date classificationDate;
 	private String classificationComment;
+
+	private YesNoUnknown clinicalConfirmation;
+	private YesNoUnknown epidemiologicalConfirmation;
+	private YesNoUnknown laboratoryDiagnosticConfirmation;
 
 	private InvestigationStatus investigationStatus;
 	private Hospitalization hospitalization;
@@ -150,10 +273,15 @@ public class Case extends CoreAdo {
 	private ClinicalCourse clinicalCourse;
 	private MaternalHistory maternalHistory;
 	private PortHealthInfo portHealthInfo;
-	
+
+	private Region responsibleRegion;
+	private District responsibleDistrict;
+	private Community responsibleCommunity;
+
 	private Region region;
 	private District district;
 	private Community community;
+	private FacilityType facilityType;
 	private Facility healthFacility;
 	private String healthFacilityDetails;
 
@@ -173,21 +301,20 @@ public class Case extends CoreAdo {
 	private String clinicianPhone;
 	private String clinicianEmail;
 	private User caseOfficer;
-	
+
 	private HospitalWardType notifyingClinic;
 	private String notifyingClinicDetails;
 
 	private Symptoms symptoms;
 
+	private HealthConditions healthConditions;
+
 	private YesNoUnknown pregnant;
 
-	private Vaccination vaccination;
-	private String vaccinationDoses;
-	private VaccinationInfoSource vaccinationInfoSource;
-	private Date vaccinationDate;
-	private String vaccine;
+	private VaccinationStatus vaccinationStatus;
 	private YesNoUnknown smallpoxVaccinationScar;
 	private YesNoUnknown smallpoxVaccinationReceived;
+	private Date smallpoxLastVaccinationDate;
 
 	private String epidNumber;
 
@@ -197,25 +324,111 @@ public class Case extends CoreAdo {
 	private String sequelaeDetails;
 
 	private Integer caseAge;
-	
-	private boolean archived;
+
 	private String creationVersion;
 	private Case duplicateOf;
-	
+
 	private CaseOrigin caseOrigin;
+	@PersonalData
 	private PointOfEntry pointOfEntry;
 	private String pointOfEntryDetails;
-	
+
 	private Float completeness;
 	private String additionalDetails;
 	private String externalID;
+	private String externalToken;
+	private String internalToken;
 	private boolean sharedToCountry;
-	
+
 	private QuarantineType quarantine;
+	private String quarantineTypeDetails;
 	private Date quarantineFrom;
 	private Date quarantineTo;
+	private String quarantineHelpNeeded;
+	private boolean quarantineOrderedVerbally;
+	private boolean quarantineOrderedOfficialDocument;
+	private Date quarantineOrderedVerballyDate;
+	private Date quarantineOrderedOfficialDocumentDate;
+	private YesNoUnknown quarantineHomePossible;
+	private String quarantineHomePossibleComment;
+	private YesNoUnknown quarantineHomeSupplyEnsured;
+	private String quarantineHomeSupplyEnsuredComment;
+	private boolean quarantineExtended;
+	private boolean quarantineReduced;
+	private boolean quarantineOfficialOrderSent;
+	private Date quarantineOfficialOrderSentDate;
+
+	private FollowUpStatus followUpStatus;
+	private String followUpComment;
+	private Date followUpUntil;
+	private boolean overwriteFollowUpUntil;
+
+	private YesNoUnknown postpartum;
+	private Trimester trimester;
 
 	private List<Task> tasks;
+	private Set<Sample> samples = new HashSet<>();
+	private Set<Visit> visits = new HashSet<>();
+	private Set<SurveillanceReport> surveillanceReports = new HashSet<>();
+	private Set<EventParticipant> eventParticipants;
+	private List<Contact> contacts;
+	private List<Contact> convertedContact;
+
+	private Integer caseIdIsm;
+	private ContactTracingContactType contactTracingFirstContactType;
+	private Date contactTracingFirstContactDate;
+	private YesNoUnknown wasInQuarantineBeforeIsolation;
+	private QuarantineReason quarantineReasonBeforeIsolation;
+	private String quarantineReasonBeforeIsolationDetails;
+	private EndOfIsolationReason endOfIsolationReason;
+	private String endOfIsolationReasonDetails;
+
+	private boolean nosocomialOutbreak;
+	private InfectionSetting infectionSetting;
+
+	private YesNoUnknown prohibitionToWork;
+	private Date prohibitionToWorkFrom;
+	private Date prohibitionToWorkUntil;
+
+	private YesNoUnknown reInfection;
+	private Date previousInfectionDate;
+	private ReinfectionStatus reinfectionStatus;
+	private Map<ReinfectionDetail, Boolean> reinfectionDetails;
+
+	private boolean notACaseReasonNegativeTest;
+	private boolean notACaseReasonPhysicianInformation;
+	private boolean notACaseReasonDifferentPathogen;
+	private boolean notACaseReasonOther;
+	private String notACaseReasonDetails;
+	/**
+	 * Blood/organ/tissue donation in the last 6 months
+	 */
+	private YesNoUnknown bloodOrganOrTissueDonated;
+	private Date followUpStatusChangeDate;
+	private User followUpStatusChangeUser;
+
+	private boolean dontShareWithReportingTool;
+
+	private SormasToSormasOriginInfo sormasToSormasOriginInfo;
+	private List<SormasToSormasShareInfo> sormasToSormasShares = new ArrayList<>(0);
+	private List<ExternalShareInfo> externalShares = new ArrayList<>(0);
+
+	private CaseReferenceDefinition caseReferenceDefinition;
+	private Date previousQuarantineTo;
+	private String quarantineChangeComment;
+
+	private Long personId;
+
+	private Map<String, String> externalData;
+
+	@Column(name = "person_id", updatable = false, insertable = false)
+	public Long getPersonId() {
+		return personId;
+	}
+
+	public void setPersonId(Long personId) {
+		this.personId = personId;
+	}
 
 	@ManyToOne(cascade = {})
 	@JoinColumn(nullable = false)
@@ -227,7 +440,7 @@ public class Case extends CoreAdo {
 		this.person = person;
 	}
 
-	@Column(length = 512)
+	@Column(length = CHARACTER_LIMIT_BIG)
 	public String getDescription() {
 		return description;
 	}
@@ -245,13 +458,32 @@ public class Case extends CoreAdo {
 		this.disease = disease;
 	}
 
-	@Column(length = 512)
+	@Column
+	@Convert(converter = DiseaseVariantConverter.class)
+	public DiseaseVariant getDiseaseVariant() {
+		return diseaseVariant;
+	}
+
+	public void setDiseaseVariant(DiseaseVariant diseaseVariant) {
+		this.diseaseVariant = diseaseVariant;
+	}
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getDiseaseDetails() {
 		return diseaseDetails;
 	}
 
 	public void setDiseaseDetails(String diseaseDetails) {
 		this.diseaseDetails = diseaseDetails;
+	}
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public String getDiseaseVariantDetails() {
+		return diseaseVariantDetails;
+	}
+
+	public void setDiseaseVariantDetails(String diseaseVariantDetails) {
+		this.diseaseVariantDetails = diseaseVariantDetails;
 	}
 
 	@Enumerated(EnumType.STRING)
@@ -291,6 +523,24 @@ public class Case extends CoreAdo {
 		this.caseClassification = caseStatus;
 	}
 
+	@Enumerated(EnumType.STRING)
+	public CaseIdentificationSource getCaseIdentificationSource() {
+		return caseIdentificationSource;
+	}
+
+	public void setCaseIdentificationSource(CaseIdentificationSource caseIdentificationSource) {
+		this.caseIdentificationSource = caseIdentificationSource;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public ScreeningType getScreeningType() {
+		return screeningType;
+	}
+
+	public void setScreeningType(ScreeningType screeningType) {
+		this.screeningType = screeningType;
+	}
+
 	@ManyToOne(cascade = {})
 	@JoinColumn(nullable = true)
 	public User getClassificationUser() {
@@ -310,13 +560,40 @@ public class Case extends CoreAdo {
 		this.classificationDate = classificationDate;
 	}
 
-	@Column(length = 512)
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getClassificationComment() {
 		return classificationComment;
 	}
 
 	public void setClassificationComment(String classificationComment) {
 		this.classificationComment = classificationComment;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public YesNoUnknown getClinicalConfirmation() {
+		return clinicalConfirmation;
+	}
+
+	public void setClinicalConfirmation(YesNoUnknown clinicalConfirmation) {
+		this.clinicalConfirmation = clinicalConfirmation;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public YesNoUnknown getEpidemiologicalConfirmation() {
+		return epidemiologicalConfirmation;
+	}
+
+	public void setEpidemiologicalConfirmation(YesNoUnknown epidemiologicalConfirmation) {
+		this.epidemiologicalConfirmation = epidemiologicalConfirmation;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public YesNoUnknown getLaboratoryDiagnosticConfirmation() {
+		return laboratoryDiagnosticConfirmation;
+	}
+
+	public void setLaboratoryDiagnosticConfirmation(YesNoUnknown laboratoryDiagnosticConfirmation) {
+		this.laboratoryDiagnosticConfirmation = laboratoryDiagnosticConfirmation;
 	}
 
 	@ManyToOne(cascade = {})
@@ -384,7 +661,7 @@ public class Case extends CoreAdo {
 		this.healthFacility = healthFacility;
 	}
 
-	@Column(length = 512)
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getHealthFacilityDetails() {
 		return healthFacilityDetails;
 	}
@@ -402,7 +679,7 @@ public class Case extends CoreAdo {
 		this.surveillanceOfficer = surveillanceOfficer;
 	}
 
-	@Column(length = 512, name = "cliniciandetails")
+	@Column(length = CHARACTER_LIMIT_DEFAULT, name = "cliniciandetails")
 	public String getClinicianName() {
 		return clinicianName;
 	}
@@ -411,7 +688,7 @@ public class Case extends CoreAdo {
 		this.clinicianName = clinicianName;
 	}
 
-	@Column(length = 512)
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getClinicianPhone() {
 		return clinicianPhone;
 	}
@@ -420,7 +697,7 @@ public class Case extends CoreAdo {
 		this.clinicianPhone = clinicianPhone;
 	}
 
-	@Column(length = 512)
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getClinicianEmail() {
 		return clinicianEmail;
 	}
@@ -449,6 +726,33 @@ public class Case extends CoreAdo {
 
 	public void setSymptoms(Symptoms symptoms) {
 		this.symptoms = symptoms;
+	}
+
+	@ManyToOne(cascade = {})
+	public Region getResponsibleRegion() {
+		return responsibleRegion;
+	}
+
+	public void setResponsibleRegion(Region responsibleRegion) {
+		this.responsibleRegion = responsibleRegion;
+	}
+
+	@ManyToOne(cascade = {})
+	public District getResponsibleDistrict() {
+		return responsibleDistrict;
+	}
+
+	public void setResponsibleDistrict(District responsibleDistrict) {
+		this.responsibleDistrict = responsibleDistrict;
+	}
+
+	@ManyToOne(cascade = {})
+	public Community getResponsibleCommunity() {
+		return responsibleCommunity;
+	}
+
+	public void setResponsibleCommunity(Community responsibleCommunity) {
+		this.responsibleCommunity = responsibleCommunity;
 	}
 
 	@ManyToOne(cascade = {})
@@ -518,7 +822,7 @@ public class Case extends CoreAdo {
 	public Therapy getTherapy() {
 		return therapy;
 	}
-	
+
 	public void setTherapy(Therapy therapy) {
 		this.therapy = therapy;
 	}
@@ -531,11 +835,11 @@ public class Case extends CoreAdo {
 	public ClinicalCourse getClinicalCourse() {
 		return clinicalCourse;
 	}
-	
+
 	public void setClinicalCourse(ClinicalCourse clinicalCourse) {
 		this.clinicalCourse = clinicalCourse;
 	}
-	
+
 	// It's necessary to do a lazy fetch here because having three eager fetching
 	// one to one relations
 	// produces an error where two non-xa connections are opened
@@ -548,7 +852,7 @@ public class Case extends CoreAdo {
 	public void setMaternalHistory(MaternalHistory maternalHistory) {
 		this.maternalHistory = maternalHistory;
 	}
-	
+
 	// It's necessary to do a lazy fetch here because having three eager fetching
 	// one to one relations produces an error where two non-xa connections are opened
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -561,6 +865,34 @@ public class Case extends CoreAdo {
 		this.portHealthInfo = portHealthInfo;
 	}
 
+	@OneToMany(mappedBy = Contact.CAZE, fetch = FetchType.LAZY)
+	public List<Contact> getContacts() {
+		return contacts;
+	}
+
+	public void setContacts(List<Contact> contacts) {
+		this.contacts = contacts;
+	}
+
+	@OneToMany(mappedBy = Contact.RESULTING_CASE, fetch = FetchType.LAZY)
+	public List<Contact> getConvertedContact() {
+		return convertedContact;
+	}
+
+	public void setConvertedContact(List<Contact> convertedContact) {
+		this.convertedContact = convertedContact;
+	}
+
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@AuditedIgnore
+	public HealthConditions getHealthConditions() {
+		return healthConditions;
+	}
+
+	public void setHealthConditions(HealthConditions healthConditions) {
+		this.healthConditions = healthConditions;
+	}
+
 	@Enumerated(EnumType.STRING)
 	public YesNoUnknown getPregnant() {
 		return pregnant;
@@ -571,39 +903,12 @@ public class Case extends CoreAdo {
 	}
 
 	@Enumerated(EnumType.STRING)
-	public Vaccination getVaccination() {
-		return vaccination;
+	public VaccinationStatus getVaccinationStatus() {
+		return vaccinationStatus;
 	}
 
-	public void setVaccination(Vaccination vaccination) {
-		this.vaccination = vaccination;
-	}
-
-	@Column(length = 512)
-	public String getVaccinationDoses() {
-		return vaccinationDoses;
-	}
-
-	public void setVaccinationDoses(String vaccinationDoses) {
-		this.vaccinationDoses = vaccinationDoses;
-	}
-
-	@Enumerated(EnumType.STRING)
-	public VaccinationInfoSource getVaccinationInfoSource() {
-		return vaccinationInfoSource;
-	}
-
-	public void setVaccinationInfoSource(VaccinationInfoSource vaccinationInfoSource) {
-		this.vaccinationInfoSource = vaccinationInfoSource;
-	}
-
-	@Column(length = 512)
-	public String getVaccine() {
-		return vaccine;
-	}
-
-	public void setVaccine(String vaccine) {
-		this.vaccine = vaccine;
+	public void setVaccinationStatus(VaccinationStatus vaccination) {
+		this.vaccinationStatus = vaccination;
 	}
 
 	@Enumerated(EnumType.STRING)
@@ -625,15 +930,15 @@ public class Case extends CoreAdo {
 	}
 
 	@Temporal(TemporalType.TIMESTAMP)
-	public Date getVaccinationDate() {
-		return vaccinationDate;
+	public Date getSmallpoxLastVaccinationDate() {
+		return smallpoxLastVaccinationDate;
 	}
 
-	public void setVaccinationDate(Date vaccinationDate) {
-		this.vaccinationDate = vaccinationDate;
+	public void setSmallpoxLastVaccinationDate(Date smallpoxLastVaccinationDate) {
+		this.smallpoxLastVaccinationDate = smallpoxLastVaccinationDate;
 	}
 
-	@Column(length = 512)
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getEpidNumber() {
 		return epidNumber;
 	}
@@ -642,22 +947,55 @@ public class Case extends CoreAdo {
 		this.epidNumber = epidNumber;
 	}
 
-	@Override
-	public String toString() {
-		return CaseReferenceDto.buildCaption(getUuid(), person.getFirstName(), person.getLastName());
-	}
-
 	public CaseReferenceDto toReference() {
 		return new CaseReferenceDto(getUuid(), person.getFirstName(), person.getLastName());
 	}
 
-	@OneToMany(cascade = {}, mappedBy = Task.CAZE)
+	@OneToMany(cascade = {}, mappedBy = Task.CAZE, fetch = FetchType.LAZY)
 	public List<Task> getTasks() {
 		return tasks;
 	}
 
 	public void setTasks(List<Task> tasks) {
 		this.tasks = tasks;
+	}
+
+	@AuditedIgnore
+	@OneToMany(mappedBy = Visit.CAZE, fetch = FetchType.LAZY)
+	public Set<Visit> getVisits() {
+		return visits;
+	}
+
+	public void setVisits(Set<Visit> visits) {
+		this.visits = visits;
+	}
+
+	@AuditedIgnore
+	@OneToMany(mappedBy = SurveillanceReport.CAZE, fetch = FetchType.LAZY)
+	public Set<SurveillanceReport> getSurveillanceReports() {
+		return surveillanceReports;
+	}
+
+	public void setSurveillanceReports(Set<SurveillanceReport> surveillanceReports) {
+		this.surveillanceReports = surveillanceReports;
+	}
+
+	@OneToMany(mappedBy = Sample.ASSOCIATED_CASE, fetch = FetchType.LAZY)
+	public Set<Sample> getSamples() {
+		return samples;
+	}
+
+	public void setSamples(Set<Sample> samples) {
+		this.samples = samples;
+	}
+
+	@OneToMany(cascade = {}, mappedBy = EventParticipant.RESULTING_CASE, fetch = FetchType.LAZY)
+	public Set<EventParticipant> getEventParticipants() {
+		return eventParticipants;
+	}
+
+	public void setEventParticipants(Set<EventParticipant> eventParticipants) {
+		this.eventParticipants = eventParticipants;
 	}
 
 	@Enumerated(EnumType.STRING)
@@ -720,8 +1058,8 @@ public class Case extends CoreAdo {
 	public void setSequelae(YesNoUnknown sequelae) {
 		this.sequelae = sequelae;
 	}
-	
-	@Column(length = 512)
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getSequelaeDetails() {
 		return sequelaeDetails;
 	}
@@ -739,7 +1077,7 @@ public class Case extends CoreAdo {
 		this.notifyingClinic = notifyingClinic;
 	}
 
-	@Column(length = 512)
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getNotifyingClinicDetails() {
 		return notifyingClinicDetails;
 	}
@@ -756,24 +1094,15 @@ public class Case extends CoreAdo {
 		this.caseAge = caseAge;
 	}
 
-	@Column
-	public boolean isArchived() {
-		return archived;
-	}
-
-	public void setArchived(boolean archived) {
-		this.archived = archived;
-	}
-
 	@Column(length = 32)
 	public String getCreationVersion() {
 		return creationVersion;
 	}
-	
+
 	public void setCreationVersion(String creationVersion) {
 		this.creationVersion = creationVersion;
 	}
-	
+
 	@OneToOne(cascade = {}, fetch = FetchType.LAZY)
 	@AuditedIgnore
 	public Case getDuplicateOf() {
@@ -812,7 +1141,7 @@ public class Case extends CoreAdo {
 		this.pointOfEntry = pointOfEntry;
 	}
 
-	@Column(length = 512)
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getPointOfEntryDetails() {
 		return pointOfEntryDetails;
 	}
@@ -829,7 +1158,7 @@ public class Case extends CoreAdo {
 		this.completeness = completeness;
 	}
 
-	@Column(length = 512)
+	@Column(columnDefinition = "text")
 	public String getAdditionalDetails() {
 		return additionalDetails;
 	}
@@ -838,13 +1167,51 @@ public class Case extends CoreAdo {
 		this.additionalDetails = additionalDetails;
 	}
 
-	@Column(length = 255)
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getExternalID() {
 		return externalID;
 	}
 
 	public void setExternalID(String externalID) {
 		this.externalID = externalID;
+	}
+
+	/**
+	 * Extra getter for externalID needed to comply with the HasExternalData interface
+	 *
+	 * @return the externalID
+	 */
+	@Transient
+	public String getExternalId() {
+		return externalID;
+	}
+
+	/**
+	 * Extra setter for externalID needed to comply with the HasExternalData interface
+	 * 
+	 * @param externalId
+	 *            the value to be set for externalID
+	 */
+	public void setExternalId(String externalId) {
+		this.externalID = externalId;
+	}
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public String getExternalToken() {
+		return externalToken;
+	}
+
+	public void setExternalToken(String externalToken) {
+		this.externalToken = externalToken;
+	}
+
+	@Column(columnDefinition = "text")
+	public String getInternalToken() {
+		return internalToken;
+	}
+
+	public void setInternalToken(String internalToken) {
+		this.internalToken = internalToken;
 	}
 
 	@Column
@@ -865,6 +1232,15 @@ public class Case extends CoreAdo {
 		this.quarantine = quarantine;
 	}
 
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public String getQuarantineTypeDetails() {
+		return quarantineTypeDetails;
+	}
+
+	public void setQuarantineTypeDetails(String quarantineTypeDetails) {
+		this.quarantineTypeDetails = quarantineTypeDetails;
+	}
+
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getQuarantineFrom() {
 		return quarantineFrom;
@@ -883,4 +1259,489 @@ public class Case extends CoreAdo {
 		this.quarantineTo = quarantineTo;
 	}
 
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public String getQuarantineHelpNeeded() {
+		return quarantineHelpNeeded;
+	}
+
+	public void setQuarantineHelpNeeded(String quarantineHelpNeeded) {
+		this.quarantineHelpNeeded = quarantineHelpNeeded;
+	}
+
+	@Column
+	public boolean isQuarantineOrderedVerbally() {
+		return quarantineOrderedVerbally;
+	}
+
+	public void setQuarantineOrderedVerbally(boolean quarantineOrderedVerbally) {
+		this.quarantineOrderedVerbally = quarantineOrderedVerbally;
+	}
+
+	@Column
+	public boolean isQuarantineOrderedOfficialDocument() {
+		return quarantineOrderedOfficialDocument;
+	}
+
+	public void setQuarantineOrderedOfficialDocument(boolean quarantineOrderedOfficialDocument) {
+		this.quarantineOrderedOfficialDocument = quarantineOrderedOfficialDocument;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getQuarantineOrderedVerballyDate() {
+		return quarantineOrderedVerballyDate;
+	}
+
+	public void setQuarantineOrderedVerballyDate(Date quarantineOrderedVerballyDate) {
+		this.quarantineOrderedVerballyDate = quarantineOrderedVerballyDate;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getQuarantineOrderedOfficialDocumentDate() {
+		return quarantineOrderedOfficialDocumentDate;
+	}
+
+	public void setQuarantineOrderedOfficialDocumentDate(Date quarantineOrderedOfficialDocumentDate) {
+		this.quarantineOrderedOfficialDocumentDate = quarantineOrderedOfficialDocumentDate;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public YesNoUnknown getQuarantineHomePossible() {
+		return quarantineHomePossible;
+	}
+
+	public void setQuarantineHomePossible(YesNoUnknown quarantineHomePossible) {
+		this.quarantineHomePossible = quarantineHomePossible;
+	}
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public String getQuarantineHomePossibleComment() {
+		return quarantineHomePossibleComment;
+	}
+
+	public void setQuarantineHomePossibleComment(String quarantineHomePossibleComment) {
+		this.quarantineHomePossibleComment = quarantineHomePossibleComment;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public YesNoUnknown getQuarantineHomeSupplyEnsured() {
+		return quarantineHomeSupplyEnsured;
+	}
+
+	public void setQuarantineHomeSupplyEnsured(YesNoUnknown quarantineHomeSupplyEnsured) {
+		this.quarantineHomeSupplyEnsured = quarantineHomeSupplyEnsured;
+	}
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public String getQuarantineHomeSupplyEnsuredComment() {
+		return quarantineHomeSupplyEnsuredComment;
+	}
+
+	public void setQuarantineHomeSupplyEnsuredComment(String quarantineHomeSupplyEnsuredComment) {
+		this.quarantineHomeSupplyEnsuredComment = quarantineHomeSupplyEnsuredComment;
+	}
+
+	@Column
+	public boolean isQuarantineExtended() {
+		return quarantineExtended;
+	}
+
+	public void setQuarantineExtended(boolean quarantineExtended) {
+		this.quarantineExtended = quarantineExtended;
+	}
+
+	@Column
+	public boolean isQuarantineReduced() {
+		return quarantineReduced;
+	}
+
+	public void setQuarantineReduced(boolean quarantineReduced) {
+		this.quarantineReduced = quarantineReduced;
+	}
+
+	@Column
+	public boolean isQuarantineOfficialOrderSent() {
+		return quarantineOfficialOrderSent;
+	}
+
+	public void setQuarantineOfficialOrderSent(boolean quarantineOfficialOrderSent) {
+		this.quarantineOfficialOrderSent = quarantineOfficialOrderSent;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getQuarantineOfficialOrderSentDate() {
+		return quarantineOfficialOrderSentDate;
+	}
+
+	public void setQuarantineOfficialOrderSentDate(Date quarantineOfficialOrderSentDate) {
+		this.quarantineOfficialOrderSentDate = quarantineOfficialOrderSentDate;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public YesNoUnknown getPostpartum() {
+		return postpartum;
+	}
+
+	public void setPostpartum(YesNoUnknown postpartum) {
+		this.postpartum = postpartum;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public Trimester getTrimester() {
+		return trimester;
+	}
+
+	public void setTrimester(Trimester trimester) {
+		this.trimester = trimester;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public FollowUpStatus getFollowUpStatus() {
+		return followUpStatus;
+	}
+
+	public void setFollowUpStatus(FollowUpStatus followUpStatus) {
+		this.followUpStatus = followUpStatus;
+	}
+
+	@Column(length = CHARACTER_LIMIT_BIG)
+	public String getFollowUpComment() {
+		return followUpComment;
+	}
+
+	public void setFollowUpComment(String followUpComment) {
+		this.followUpComment = followUpComment;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getFollowUpUntil() {
+		return followUpUntil;
+	}
+
+	public void setFollowUpUntil(Date followUpUntil) {
+		this.followUpUntil = followUpUntil;
+	}
+
+	@Column
+	public boolean isOverwriteFollowUpUntil() {
+		return overwriteFollowUpUntil;
+	}
+
+	public void setOverwriteFollowUpUntil(boolean overwriteFollowUpUntil) {
+		this.overwriteFollowUpUntil = overwriteFollowUpUntil;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public FacilityType getFacilityType() {
+		return facilityType;
+	}
+
+	public void setFacilityType(FacilityType facilityType) {
+		this.facilityType = facilityType;
+	}
+
+	@Column
+	public Integer getCaseIdIsm() {
+		return caseIdIsm;
+	}
+
+	public void setCaseIdIsm(Integer caseIdIsm) {
+		this.caseIdIsm = caseIdIsm;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public ContactTracingContactType getContactTracingFirstContactType() {
+		return contactTracingFirstContactType;
+	}
+
+	public void setContactTracingFirstContactType(ContactTracingContactType contactTracingContactType) {
+		this.contactTracingFirstContactType = contactTracingContactType;
+	}
+
+	@Column
+	public Date getContactTracingFirstContactDate() {
+		return contactTracingFirstContactDate;
+	}
+
+	public void setContactTracingFirstContactDate(Date contactTracingContactDate) {
+		this.contactTracingFirstContactDate = contactTracingContactDate;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public YesNoUnknown getWasInQuarantineBeforeIsolation() {
+		return wasInQuarantineBeforeIsolation;
+	}
+
+	public void setWasInQuarantineBeforeIsolation(YesNoUnknown wasInQuarantineBeforeIsolation) {
+		this.wasInQuarantineBeforeIsolation = wasInQuarantineBeforeIsolation;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public QuarantineReason getQuarantineReasonBeforeIsolation() {
+		return quarantineReasonBeforeIsolation;
+	}
+
+	public void setQuarantineReasonBeforeIsolation(QuarantineReason quarantineReasonBeforeIsolation) {
+		this.quarantineReasonBeforeIsolation = quarantineReasonBeforeIsolation;
+	}
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public String getQuarantineReasonBeforeIsolationDetails() {
+		return quarantineReasonBeforeIsolationDetails;
+	}
+
+	public void setQuarantineReasonBeforeIsolationDetails(String quarantineReasonBeforeIsolationDetails) {
+		this.quarantineReasonBeforeIsolationDetails = quarantineReasonBeforeIsolationDetails;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public EndOfIsolationReason getEndOfIsolationReason() {
+		return endOfIsolationReason;
+	}
+
+	public void setEndOfIsolationReason(EndOfIsolationReason endOfIsolationReason) {
+		this.endOfIsolationReason = endOfIsolationReason;
+	}
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public String getEndOfIsolationReasonDetails() {
+		return endOfIsolationReasonDetails;
+	}
+
+	public void setEndOfIsolationReasonDetails(String endOfIsolationReasonDetails) {
+		this.endOfIsolationReasonDetails = endOfIsolationReasonDetails;
+	}
+
+	@Column
+	public boolean isNosocomialOutbreak() {
+		return nosocomialOutbreak;
+	}
+
+	public void setNosocomialOutbreak(boolean nosocomialOutbreak) {
+		this.nosocomialOutbreak = nosocomialOutbreak;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public InfectionSetting getInfectionSetting() {
+		return infectionSetting;
+	}
+
+	public void setInfectionSetting(InfectionSetting infectionSetting) {
+		this.infectionSetting = infectionSetting;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public YesNoUnknown getProhibitionToWork() {
+		return prohibitionToWork;
+	}
+
+	public void setProhibitionToWork(YesNoUnknown prohibitionToWork) {
+		this.prohibitionToWork = prohibitionToWork;
+	}
+
+	@Temporal(TemporalType.DATE)
+	public Date getProhibitionToWorkFrom() {
+		return prohibitionToWorkFrom;
+	}
+
+	public void setProhibitionToWorkFrom(Date prohibitionToWorkFrom) {
+		this.prohibitionToWorkFrom = prohibitionToWorkFrom;
+	}
+
+	@Temporal(TemporalType.DATE)
+	public Date getProhibitionToWorkUntil() {
+		return prohibitionToWorkUntil;
+	}
+
+	public void setProhibitionToWorkUntil(Date prohibitionToWorkUntil) {
+		this.prohibitionToWorkUntil = prohibitionToWorkUntil;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public YesNoUnknown getReInfection() {
+		return reInfection;
+	}
+
+	public void setReInfection(YesNoUnknown reInfection) {
+		this.reInfection = reInfection;
+	}
+
+	@Temporal(TemporalType.DATE)
+	public Date getPreviousInfectionDate() {
+		return previousInfectionDate;
+	}
+
+	public void setPreviousInfectionDate(Date previousInfectionDate) {
+		this.previousInfectionDate = previousInfectionDate;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public ReinfectionStatus getReinfectionStatus() {
+		return reinfectionStatus;
+	}
+
+	public void setReinfectionStatus(ReinfectionStatus reinfectionStatus) {
+		this.reinfectionStatus = reinfectionStatus;
+	}
+
+	@Type(type = ModelConstants.HIBERNATE_TYPE_JSON)
+	@Column(columnDefinition = ModelConstants.COLUMN_DEFINITION_JSON)
+	public Map<ReinfectionDetail, Boolean> getReinfectionDetails() {
+		return reinfectionDetails;
+	}
+
+	public void setReinfectionDetails(Map<ReinfectionDetail, Boolean> reinfectionDetails) {
+		this.reinfectionDetails = reinfectionDetails;
+	}
+
+	@Column
+	public boolean isNotACaseReasonNegativeTest() {
+		return notACaseReasonNegativeTest;
+	}
+
+	public void setNotACaseReasonNegativeTest(boolean notACaseReasonNegativeTest) {
+		this.notACaseReasonNegativeTest = notACaseReasonNegativeTest;
+	}
+
+	@Column
+	public boolean isNotACaseReasonPhysicianInformation() {
+		return notACaseReasonPhysicianInformation;
+	}
+
+	public void setNotACaseReasonPhysicianInformation(boolean notACaseReasonPhysicianInformation) {
+		this.notACaseReasonPhysicianInformation = notACaseReasonPhysicianInformation;
+	}
+
+	@Column
+	public boolean isNotACaseReasonDifferentPathogen() {
+		return notACaseReasonDifferentPathogen;
+	}
+
+	public void setNotACaseReasonDifferentPathogen(boolean notACaseReasonDifferentPathogen) {
+		this.notACaseReasonDifferentPathogen = notACaseReasonDifferentPathogen;
+	}
+
+	@Column
+	public boolean isNotACaseReasonOther() {
+		return notACaseReasonOther;
+	}
+
+	public void setNotACaseReasonOther(boolean notACaseReasonOther) {
+		this.notACaseReasonOther = notACaseReasonOther;
+	}
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public String getNotACaseReasonDetails() {
+		return notACaseReasonDetails;
+	}
+
+	public void setNotACaseReasonDetails(String notACaseReasonDetails) {
+		this.notACaseReasonDetails = notACaseReasonDetails;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public YesNoUnknown getBloodOrganOrTissueDonated() {
+		return bloodOrganOrTissueDonated;
+	}
+
+	public void setBloodOrganOrTissueDonated(YesNoUnknown bloodOrganOrTissueDonated) {
+		this.bloodOrganOrTissueDonated = bloodOrganOrTissueDonated;
+	}
+
+	@Override
+	@ManyToOne(cascade = {
+		CascadeType.PERSIST,
+		CascadeType.MERGE,
+		CascadeType.DETACH,
+		CascadeType.REFRESH })
+	@AuditedIgnore
+	public SormasToSormasOriginInfo getSormasToSormasOriginInfo() {
+		return sormasToSormasOriginInfo;
+	}
+
+	@Override
+	public void setSormasToSormasOriginInfo(SormasToSormasOriginInfo originInfo) {
+		this.sormasToSormasOriginInfo = originInfo;
+	}
+
+	@OneToMany(mappedBy = SormasToSormasShareInfo.CAZE, fetch = FetchType.LAZY)
+	@AuditedIgnore
+	public List<SormasToSormasShareInfo> getSormasToSormasShares() {
+		return sormasToSormasShares;
+	}
+
+	public void setSormasToSormasShares(List<SormasToSormasShareInfo> sormasToSormasShares) {
+		this.sormasToSormasShares = sormasToSormasShares;
+	}
+
+	@OneToMany(mappedBy = ExternalShareInfo.CAZE, fetch = FetchType.LAZY)
+	public List<ExternalShareInfo> getExternalShares() {
+		return externalShares;
+	}
+
+	public void setExternalShares(List<ExternalShareInfo> externalShares) {
+		this.externalShares = externalShares;
+	}
+
+	@Temporal(TemporalType.DATE)
+	public Date getFollowUpStatusChangeDate() {
+		return followUpStatusChangeDate;
+	}
+
+	public void setFollowUpStatusChangeDate(Date followUpStatusChangeDate) {
+		this.followUpStatusChangeDate = followUpStatusChangeDate;
+	}
+
+	@ManyToOne(cascade = {})
+	public User getFollowUpStatusChangeUser() {
+		return followUpStatusChangeUser;
+	}
+
+	public void setFollowUpStatusChangeUser(User followUpStatusChangeUser) {
+		this.followUpStatusChangeUser = followUpStatusChangeUser;
+	}
+
+	public boolean isDontShareWithReportingTool() {
+		return dontShareWithReportingTool;
+	}
+
+	public void setDontShareWithReportingTool(boolean dontShareWithReportingTool) {
+		this.dontShareWithReportingTool = dontShareWithReportingTool;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public CaseReferenceDefinition getCaseReferenceDefinition() {
+		return caseReferenceDefinition;
+	}
+
+	public void setCaseReferenceDefinition(CaseReferenceDefinition caseReferenceDefinition) {
+		this.caseReferenceDefinition = caseReferenceDefinition;
+	}
+
+	@Temporal(TemporalType.DATE)
+	public Date getPreviousQuarantineTo() {
+		return previousQuarantineTo;
+	}
+
+	public void setPreviousQuarantineTo(Date previousQuarantineTo) {
+		this.previousQuarantineTo = previousQuarantineTo;
+	}
+
+	@Column(length = CHARACTER_LIMIT_BIG)
+	public String getQuarantineChangeComment() {
+		return quarantineChangeComment;
+	}
+
+	public void setQuarantineChangeComment(String quarantineChangeComment) {
+		this.quarantineChangeComment = quarantineChangeComment;
+	}
+
+	@Type(type = ModelConstants.HIBERNATE_TYPE_JSON)
+	@Column(columnDefinition = ModelConstants.COLUMN_DEFINITION_JSON)
+	public Map<String, String> getExternalData() {
+		return externalData;
+	}
+
+	public void setExternalData(Map<String, String> externalData) {
+		this.externalData = externalData;
+	}
 }

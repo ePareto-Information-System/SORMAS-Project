@@ -9,30 +9,35 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.user;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import com.vaadin.v7.data.Validator;
 
-import de.symeda.sormas.api.user.UserRole;
-import de.symeda.sormas.api.user.UserRole.UserRoleValidationException;
+import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.user.UserRoleDto;
+import de.symeda.sormas.api.user.UserRoleReferenceDto;
 
 @SuppressWarnings("serial")
 public final class UserRolesValidator implements Validator {
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void validate(Object value) throws InvalidValueException {
 		try {
-			UserRole.validate((Collection<UserRole>) value);
-		} catch (UserRoleValidationException e) {
+			Collection<UserRoleReferenceDto> values = (Collection<UserRoleReferenceDto>) value;
+			FacadeProvider.getUserRoleFacade()
+				.validateUserRoleCombination(
+					values.stream().map(u -> FacadeProvider.getUserRoleFacade().getByUuid(u.getUuid())).collect(Collectors.toSet()));
+		} catch (UserRoleDto.UserRoleValidationException e) {
 			throw new InvalidValueException(e.getMessage());
 		}
 	}

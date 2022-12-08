@@ -1,38 +1,38 @@
 /*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
  * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.symeda.sormas.app.backend.common;
-
-import android.util.Log;
-
-import com.j256.ormlite.logger.Logger;
-import com.j256.ormlite.logger.LoggerFactory;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import com.j256.ormlite.logger.Logger;
+import com.j256.ormlite.logger.LoggerFactory;
+
+import android.content.Context;
+import android.util.Log;
+
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.PushResult;
+import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.app.rest.NoConnectionException;
 import de.symeda.sormas.app.rest.RetroProvider;
 import de.symeda.sormas.app.rest.ServerCommunicationException;
@@ -43,274 +43,368 @@ import retrofit2.Response;
 
 public abstract class AdoDtoHelper<ADO extends AbstractDomainObject, DTO extends EntityDto> {
 
-    private static final Logger logger = LoggerFactory.getLogger(AdoDtoHelper.class);
+	private static final Logger logger = LoggerFactory.getLogger(AdoDtoHelper.class);
 
-    protected abstract Class<ADO> getAdoClass();
+	private Date lastSyncedEntityDate;
+	private String lastSyncedEntityUuid;
 
-    protected abstract Class<DTO> getDtoClass();
+	protected abstract Class<ADO> getAdoClass();
 
-    protected abstract Call<List<DTO>> pullAllSince(long since) throws NoConnectionException;
+	protected abstract Class<DTO> getDtoClass();
 
-    /**
-     * Explicitly pull missing entities.
-     * This is needed, because entities are synced based on user access rights and these might change
-     * e.g. when the district or region of a case is changed.
-     */
-    protected abstract Call<List<DTO>> pullByUuids(List<String> uuids) throws NoConnectionException;
+	protected abstract Call<List<DTO>> pullAllSince(long since, Integer size, String lastSynchronizedUuid) throws NoConnectionException;
 
-    protected abstract Call<List<PushResult>> pushAll(List<DTO> dtos) throws NoConnectionException;
+	/**
+	 * Explicitly pull missing entities.
+	 * This is needed, because entities are synced based on user access rights and these might change
+	 * e.g. when the district or region of a case is changed.
+	 */
+	protected abstract Call<List<DTO>> pullByUuids(List<String> uuids) throws NoConnectionException;
 
-    protected abstract void fillInnerFromDto(ADO ado, DTO dto);
+	protected abstract Call<List<PushResult>> pushAll(List<DTO> dtos) throws NoConnectionException;
 
-    protected abstract void fillInnerFromAdo(DTO dto, ADO ado);
+	protected abstract void fillInnerFromDto(ADO ado, DTO dto);
 
-    protected void preparePulledResult(List<DTO> result) {
-    }
+	protected abstract void fillInnerFromAdo(DTO dto, ADO ado);
 
-    /**
-     * @return another pull needed?
-     */
-    public boolean pullAndPushEntities()
-            throws DaoException, ServerConnectionException, ServerCommunicationException, NoConnectionException {
+	protected void preparePulledResult(List<DTO> result)
+		throws NoConnectionException, ServerCommunicationException, ServerConnectionException, DaoException {
+	}
 
-        pullEntities(false);
+	protected abstract long getApproximateJsonSizeInBytes();
 
-        return pushEntities(false);
-    }
+	/**
+	 * Override if access to viewing /editing is restricted
+	 */
+	protected UserRight getUserRightView() {
+		return null;
+	}
 
-    public void pullEntities(final boolean markAsRead) throws DaoException, ServerCommunicationException, ServerConnectionException, NoConnectionException {
-        try {
-            final AbstractAdoDao<ADO> dao = DatabaseHelper.getAdoDao(getAdoClass());
+	protected UserRight getUserRightEdit() {
+		return null;
+	}
 
-            Date maxModifiedDate = dao.getLatestChangeDate();
-            Call<List<DTO>> dtoCall = pullAllSince(maxModifiedDate != null ? maxModifiedDate.getTime() : 0);
-            if (dtoCall == null) {
-                return;
-            }
+	/**
+	 * @return another pull needed?
+	 * @param context
+	 */
+	public boolean pullAndPushEntities(Context context)
+		throws DaoException, ServerConnectionException, ServerCommunicationException, NoConnectionException {
 
-            Response<List<DTO>> response;
-            try {
-                response = dtoCall.execute();
-            } catch (IOException e) {
-                throw new ServerCommunicationException(e);
-            }
+		pullEntities(false, context);
 
-            handlePullResponse(markAsRead, dao, response);
+		return pushEntities(false);
+	}
 
-        } catch (RuntimeException e) {
-            Log.e(getClass().getName(), "Exception thrown when trying to pull entities");
-            throw new DaoException(e);
-        }
-    }
+	public void pullEntities(final boolean markAsRead, Context context)
+		throws DaoException, ServerCommunicationException, ServerConnectionException, NoConnectionException {
 
-    public void repullEntities() throws DaoException, ServerCommunicationException, ServerConnectionException, NoConnectionException {
-        try {
-            final AbstractAdoDao<ADO> dao = DatabaseHelper.getAdoDao(getAdoClass());
+		if (!isViewAllowed()) {
+			return;
+		}
 
-            Call<List<DTO>> dtoCall = pullAllSince(0);
-            if (dtoCall == null) {
-                return;
-            }
+		try {
+			final AbstractAdoDao<ADO> dao = DatabaseHelper.getAdoDao(getAdoClass());
 
-            Response<List<DTO>> response;
-            try {
-                response = dtoCall.execute();
-            } catch (IOException e) {
-                throw new ServerCommunicationException(e);
-            }
+			Date maxModifiedDate = dao.getLatestChangeDate();
+			long approximateJsonSizeInBytes = getApproximateJsonSizeInBytes();
+			final int batchSize = approximateJsonSizeInBytes != 0
+				? RetroProvider.getNumberOfEntitiesToBePulledInOneBatch(approximateJsonSizeInBytes, context)
+				: Integer.MAX_VALUE;
+			int lastBatchSize = batchSize;
 
-            handlePullResponse(false, dao, response);
+			lastSyncedEntityDate = maxModifiedDate;
 
-        } catch (RuntimeException e) {
-            Log.e(getClass().getName(), "Exception thrown when trying to pull entities");
-            throw new DaoException(e);
-        }
-    }
+			while (lastBatchSize == batchSize) {
+				Call<List<DTO>> dtoCall = pullAllSince(
+					lastSyncedEntityDate.getTime(),
+					batchSize,
+					lastSyncedEntityDate != null && lastSyncedEntityUuid != null ? lastSyncedEntityUuid : EntityDto.NO_LAST_SYNCED_UUID);
 
-    /**
-     * @return Number of pulled entities
-     */
-    protected int handlePullResponse(final boolean markAsRead, final AbstractAdoDao<ADO> dao, Response<List<DTO>> response) throws ServerCommunicationException, DaoException, ServerConnectionException {
-        if (!response.isSuccessful()) {
-            RetroProvider.throwException(response);
-        }
+				if (dtoCall == null) {
+					return;
+				}
 
-        final List<DTO> result = response.body();
-        if (result != null && result.size() > 0) {
-            return handlePulledList(dao, result);
-        }
-        return 0;
-    }
+				Response<List<DTO>> response;
+				try {
+					response = dtoCall.execute();
+				} catch (IOException e) {
+					throw new ServerCommunicationException(e);
+				}
 
-    public int handlePulledList(AbstractAdoDao<ADO> dao, List<DTO> result) throws DaoException {
-        preparePulledResult(result);
-        dao.callBatchTasks((Callable<Void>) () -> {
-//            boolean empty = dao.countOf() == 0;
-            for (DTO dto : result) {
-                handlePulledDto(dao, dto);
-                // TODO #704
-//                        if (entity != null && markAsRead) {
-//                            dao.markAsRead(entity);
-//                        }
-            }
-            return null;
-        });
+				lastBatchSize = handlePullResponse(markAsRead, dao, response);
+			}
+		} catch (RuntimeException e) {
+			Log.e(getClass().getName(), "Exception thrown when trying to pull entities");
+			throw new DaoException(e);
+		}
+	}
 
-        Log.d(dao.getTableName(), "Pulled: " + result.size());
-        return result.size();
-    }
+	public void repullEntities(Context context) throws DaoException, ServerCommunicationException, ServerConnectionException, NoConnectionException {
 
-    /**
-     * @return The resulting entity. May be null!
-     */
-    protected ADO handlePulledDto(AbstractAdoDao<ADO> dao, DTO dto) throws DaoException, SQLException {
-        ADO source = fillOrCreateFromDto(null, dto);
-        return dao.mergeOrCreate(source);
-    }
+		if (!isViewAllowed()) {
+			return;
+		}
 
-    private int pushedTooOldCount, pushedErrorCount;
+		try {
+			final AbstractAdoDao<ADO> dao = DatabaseHelper.getAdoDao(getAdoClass());
 
-    /**
-     * @return true: another pull is needed, because data has been changed on the server
-     */
-    public boolean pushEntities(boolean onlyNewEntities) throws DaoException, ServerConnectionException, ServerCommunicationException, NoConnectionException {
-        final AbstractAdoDao<ADO> dao = DatabaseHelper.getAdoDao(getAdoClass());
+			long approximateJsonSizeInBytes = getApproximateJsonSizeInBytes();
+			final int batchSize = approximateJsonSizeInBytes != 0
+				? RetroProvider.getNumberOfEntitiesToBePulledInOneBatch(approximateJsonSizeInBytes, context)
+				: Integer.MAX_VALUE;
+			int lastBatchSize = batchSize;
 
-        final List<ADO> modifiedAdos =
-                onlyNewEntities ? dao.queryForNull(ADO.CHANGE_DATE) : dao.queryForEq(ADO.MODIFIED, true);
+			while (lastBatchSize == batchSize) {
+				Call<List<DTO>> dtoCall = pullAllSince(
+					lastSyncedEntityDate != null ? lastSyncedEntityDate.getTime() : 0,
+					batchSize,
+					lastSyncedEntityDate != null && lastSyncedEntityUuid != null ? lastSyncedEntityUuid : EntityDto.NO_LAST_SYNCED_UUID);
 
-        List<DTO> modifiedDtos = new ArrayList<>(modifiedAdos.size());
-        for (ADO ado : modifiedAdos) {
-            DTO dto = adoToDto(ado);
-            modifiedDtos.add(dto);
-        }
+				if (dtoCall == null) {
+					return;
+				}
 
-        if (modifiedDtos.isEmpty()) {
-            return false;
-        }
+				Response<List<DTO>> response;
+				try {
+					response = dtoCall.execute();
+				} catch (IOException e) {
+					throw new ServerCommunicationException(e);
+				}
 
-        Call<List<PushResult>> call = pushAll(modifiedDtos);
-        Response<List<PushResult>> response;
-        try {
-            response = call.execute();
-        } catch (IOException e) {
-            throw new ServerCommunicationException(e);
-        }
+				lastBatchSize = handlePullResponse(false, dao, response);
+			}
 
-        if (!response.isSuccessful()) {
-            RetroProvider.throwException(response);
-        }
+		} catch (RuntimeException e) {
+			Log.e(getClass().getName(), "Exception thrown when trying to pull entities");
+			throw new DaoException(e);
+		}
+	}
 
-        final List<PushResult> pushResults = response.body();
-        if (pushResults.size() != modifiedDtos.size()) {
-            throw new ServerCommunicationException("Server responded with wrong count of received entities: " + pushResults.size() + " - expected: " + modifiedDtos.size());
-        }
+	/**
+	 * @return Number of pulled entities
+	 */
+	protected int handlePullResponse(final boolean markAsRead, final AbstractAdoDao<ADO> dao, Response<List<DTO>> response)
+		throws ServerCommunicationException, DaoException, ServerConnectionException, NoConnectionException {
+		if (!response.isSuccessful()) {
+			RetroProvider.throwException(response);
+		}
 
-        pushedTooOldCount = 0;
-        pushedErrorCount = 0;
-        dao.callBatchTasks(new Callable<Void>() {
-            public Void call() throws Exception {
-                for (int i = 0; i < modifiedAdos.size(); i++) {
-                    ADO ado = modifiedAdos.get(i);
-                    PushResult pushResult = pushResults.get(i);
-                    switch (pushResult) {
-                        case OK:
-                            // data has been pushed, we no longer need the old unmodified version
-                            dao.accept(ado);
-                            break;
-                        case TOO_OLD:
-                            pushedTooOldCount++;
-                            break;
-                        case ERROR:
-                            pushedErrorCount++;
-                            break;
-                        default:
-                            throw new IllegalArgumentException(pushResult.toString());
-                    }
-                }
-                return null;
-            }
-        });
+		final List<DTO> result = response.body();
+		if (result != null && result.size() > 0) {
+			return handlePulledList(dao, result);
+		}
+		return 0;
+	}
 
-        if (modifiedAdos.size() > 0) {
-            Log.d(dao.getTableName(), "Pushed: " + modifiedAdos.size() + " Too old: " + pushedTooOldCount + " Erros: " + pushedErrorCount);
-        }
+	/**
+	 * Calls handlePulledDto for each DTO that has been pulled from the server, and returns the
+	 * number of pulled DTOs.
+	 */
+	public int handlePulledList(AbstractAdoDao<ADO> dao, List<DTO> result)
+		throws DaoException, NoConnectionException, ServerConnectionException, ServerCommunicationException {
 
-        return true;
-    }
+		if (result == null) {
+			return 0;
+		}
 
-    public boolean isAnyMissing(List<String> uuids) {
+		preparePulledResult(result);
+		dao.callBatchTasks((Callable<Void>) () -> {
+// 		boolean empty = dao.countOf() == 0;
+			Iterator<DTO> iterator = result.iterator();
+			while (iterator.hasNext()) {
+				final DTO dto = iterator.next();
+				handlePulledDto(dao, dto);
+				// TODO #704
+//				if (entity != null && markAsRead) {
+//					dao.markAsRead(entity);
+//				}
+				if (!iterator.hasNext()) {
+					lastSyncedEntityUuid = dto.getUuid();
+					lastSyncedEntityDate = dto.getChangeDate();
+				}
+			}
+			return null;
+		});
 
-        final AbstractAdoDao<ADO> dao = DatabaseHelper.getAdoDao(getAdoClass());
-        uuids = dao.filterMissing(uuids);
-        return !uuids.isEmpty();
-    }
+		Log.d(dao.getTableName(), "Pulled: " + result.size());
+		return result.size();
+	}
 
-    public void pullMissing(List<String> uuids) throws ServerCommunicationException, ServerConnectionException, DaoException, NoConnectionException {
+	/**
+	 * @return The resulting entity. May be null!
+	 */
+	protected ADO handlePulledDto(AbstractAdoDao<ADO> dao, DTO dto) throws DaoException, SQLException {
+		ADO source = fillOrCreateFromDto(null, dto);
+		return dao.mergeOrCreate(source);
+	}
 
-        final AbstractAdoDao<ADO> dao = DatabaseHelper.getAdoDao(getAdoClass());
-        uuids = dao.filterMissing(uuids);
+	private int pushedTooOldCount, pushedErrorCount;
 
-        if (!uuids.isEmpty()) {
-            Response<List<DTO>> response;
-            try {
-                response = pullByUuids(uuids).execute();
-            } catch (IOException e) {
-                throw new ServerCommunicationException(e);
-            }
+	/**
+	 * @return true: another pull is needed, because data has been changed on the server
+	 */
+	public boolean pushEntities(boolean onlyNewEntities)
+		throws DaoException, ServerConnectionException, ServerCommunicationException, NoConnectionException {
 
-            handlePullResponse(false, dao, response);
-        }
-    }
+		if (!isEditAllowed()) {
+			return false;
+		}
 
-    public ADO fillOrCreateFromDto(ADO ado, DTO dto) {
-        if (dto == null) {
-            return null;
-        }
+		final AbstractAdoDao<ADO> dao = DatabaseHelper.getAdoDao(getAdoClass());
 
-        try {
-            if (ado == null) {
-                ado = getAdoClass().newInstance();
-                ado.setCreationDate(dto.getCreationDate());
-                ado.setUuid(dto.getUuid());
-            } else if (!ado.getUuid().equals(dto.getUuid())) {
-                throw new RuntimeException("Existing object uuid does not match dto: " + ado.getUuid() + " vs. " + dto.getUuid());
-            }
+		final List<ADO> modifiedAdos = onlyNewEntities ? dao.queryForNew() : dao.queryForModified();
 
-            ado.setChangeDate(dto.getChangeDate());
+		List<DTO> modifiedDtos = new ArrayList<>(modifiedAdos.size());
+		for (ADO ado : modifiedAdos) {
+			DTO dto = adoToDto(ado);
+			modifiedDtos.add(dto);
+		}
 
-            fillInnerFromDto(ado, dto);
+		if (modifiedDtos.isEmpty()) {
+			return false;
+		}
 
-            return ado;
-        } catch (InstantiationException e) {
-            Log.e(DataUtils.class.getName(), "Could not perform fillOrCreateFromDto", e);
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            Log.e(DataUtils.class.getName(), "Could not perform fillOrCreateFromDto", e);
-            throw new RuntimeException(e);
-        }
-    }
+		Call<List<PushResult>> call = pushAll(modifiedDtos);
+		Response<List<PushResult>> response;
+		try {
+			response = call.execute();
+		} catch (IOException e) {
+			throw new ServerCommunicationException(e);
+		}
 
-    public DTO adoToDto(ADO ado) {
-        try {
-            DTO dto = getDtoClass().newInstance();
-            dto.setUuid(ado.getUuid());
-            dto.setChangeDate(new Timestamp(ado.getChangeDate().getTime()));
-            dto.setCreationDate(new Timestamp(ado.getCreationDate().getTime()));
-            fillInnerFromAdo(dto, ado);
-            return dto;
-        } catch (InstantiationException e) {
-            Log.e(DataUtils.class.getName(), "Could not perform createNew", e);
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            Log.e(DataUtils.class.getName(), "Could not perform createNew", e);
-            throw new RuntimeException(e);
-        }
-    }
+		if (!response.isSuccessful()) {
+			RetroProvider.throwException(response);
+		}
 
-    public static void fillDto(EntityDto dto, AbstractDomainObject ado) {
-        dto.setChangeDate(ado.getChangeDate());
-        dto.setCreationDate(ado.getCreationDate());
-        dto.setUuid(ado.getUuid());
-    }
+		final List<PushResult> pushResults = response.body();
+		if (pushResults.size() != modifiedDtos.size()) {
+			throw new ServerCommunicationException(
+				"Server responded with wrong count of received entities: " + pushResults.size() + " - expected: " + modifiedDtos.size());
+		}
+
+		pushedTooOldCount = 0;
+		pushedErrorCount = 0;
+		dao.callBatchTasks(new Callable<Void>() {
+
+			public Void call() throws Exception {
+				for (int i = 0; i < modifiedAdos.size(); i++) {
+					ADO ado = modifiedAdos.get(i);
+					PushResult pushResult = pushResults.get(i);
+					switch (pushResult) {
+					case OK:
+						// data has been pushed, we no longer need the old unmodified version
+						dao.accept(ado);
+						break;
+					case TOO_OLD:
+						pushedTooOldCount++;
+						break;
+					case ERROR:
+						pushedErrorCount++;
+						break;
+					default:
+						throw new IllegalArgumentException(pushResult.toString());
+					}
+				}
+				return null;
+			}
+		});
+
+		if (modifiedAdos.size() > 0) {
+			Log.d(dao.getTableName(), "Pushed: " + modifiedAdos.size() + " Too old: " + pushedTooOldCount + " Erros: " + pushedErrorCount);
+		}
+
+		return true;
+	}
+
+	public boolean isAnyMissing(List<String> uuids) {
+
+		final AbstractAdoDao<ADO> dao = DatabaseHelper.getAdoDao(getAdoClass());
+		uuids = dao.filterMissing(uuids);
+		return !uuids.isEmpty();
+	}
+
+	public void pullMissing(List<String> uuids) throws ServerCommunicationException, ServerConnectionException, DaoException, NoConnectionException {
+
+		final AbstractAdoDao<ADO> dao = DatabaseHelper.getAdoDao(getAdoClass());
+		uuids = dao.filterMissing(uuids);
+
+		if (!uuids.isEmpty()) {
+			Response<List<DTO>> response;
+			try {
+				response = pullByUuids(uuids).execute();
+			} catch (IOException e) {
+				throw new ServerCommunicationException(e);
+			}
+
+			handlePullResponse(false, dao, response);
+		}
+	}
+
+	public ADO fillOrCreateFromDto(ADO ado, DTO dto) {
+		if (dto == null) {
+			return null;
+		}
+
+		try {
+			if (ado == null) {
+				ado = getAdoClass().newInstance();
+				ado.setCreationDate(dto.getCreationDate());
+				ado.setUuid(dto.getUuid());
+			} else if (!ado.getUuid().equals(dto.getUuid())) {
+				throw new RuntimeException("Existing object uuid does not match dto: " + ado.getUuid() + " vs. " + dto.getUuid());
+			}
+
+			ado.setChangeDate(dto.getChangeDate());
+
+			fillInnerFromDto(ado, dto);
+
+			return ado;
+		} catch (InstantiationException e) {
+			Log.e(DataUtils.class.getName(), "Could not perform fillOrCreateFromDto", e);
+			throw new RuntimeException(e);
+		} catch (IllegalAccessException e) {
+			Log.e(DataUtils.class.getName(), "Could not perform fillOrCreateFromDto", e);
+			throw new RuntimeException(e);
+		}
+	}
+
+	public DTO adoToDto(ADO ado) {
+		try {
+			DTO dto = getDtoClass().newInstance();
+			dto.setUuid(ado.getUuid());
+			dto.setChangeDate(new Timestamp(ado.getChangeDate().getTime()));
+			dto.setCreationDate(new Timestamp(ado.getCreationDate().getTime()));
+			fillInnerFromAdo(dto, ado);
+			return dto;
+		} catch (InstantiationException e) {
+			Log.e(DataUtils.class.getName(), "Could not perform createNew", e);
+			throw new RuntimeException(e);
+		} catch (IllegalAccessException e) {
+			Log.e(DataUtils.class.getName(), "Could not perform createNew", e);
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static void fillDto(EntityDto dto, AbstractDomainObject ado) {
+		dto.setChangeDate(ado.getChangeDate());
+		dto.setCreationDate(ado.getCreationDate());
+		dto.setUuid(ado.getUuid());
+	}
+
+	public boolean isViewAllowed() {
+		try {
+			return DtoUserRightsHelper.isViewAllowed(getDtoClass());
+		} catch (UnsupportedOperationException e) {
+			return true;
+		}
+	}
+
+	public boolean isEditAllowed() {
+		try {
+			return DtoUserRightsHelper.isEditAllowed(getDtoClass());
+		} catch (UnsupportedOperationException e) {
+			return true;
+		}
+	}
 }

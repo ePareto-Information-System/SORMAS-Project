@@ -9,20 +9,25 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.backend.sample;
+
+import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_BIG;
+import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
 
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
@@ -30,23 +35,31 @@ import javax.persistence.TemporalType;
 
 import de.symeda.auditlog.api.Audited;
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.disease.DiseaseVariant;
+import de.symeda.sormas.api.sample.PCRTestSpecification;
+import de.symeda.sormas.api.sample.PathogenTestReferenceDto;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
-import de.symeda.sormas.backend.common.CoreAdo;
-import de.symeda.sormas.backend.facility.Facility;
+import de.symeda.sormas.backend.common.DeletableAdo;
+import de.symeda.sormas.backend.disease.DiseaseVariantConverter;
+import de.symeda.sormas.backend.infrastructure.facility.Facility;
 import de.symeda.sormas.backend.user.User;
 
 @Entity
 @Audited
-public class PathogenTest extends CoreAdo {
+public class PathogenTest extends DeletableAdo {
 
 	private static final long serialVersionUID = 2290351143518627813L;
 
 	public static final String TABLE_NAME = "pathogentest";
-	
+
 	public static final String SAMPLE = "sample";
 	public static final String TESTED_DISEASE = "testedDisease";
+	public static final String TESTED_DISEASE_VARIANT = "testedDiseaseVariant";
+	public static final String TESTED_DISEASE_VARIANT_DETAILS = "testedDiseaseVariantDetails";
+	public static final String TYPING_ID = "typingId";
 	public static final String TEST_TYPE = "testType";
+	public static final String PCR_TEST_SPECIFICATION = "pcrTestSpecification";
 	public static final String TEST_TYPE_TEXT = "testTypeText";
 	public static final String TEST_DATE_TIME = "testDateTime";
 	public static final String LAB = "lab";
@@ -58,11 +71,17 @@ public class PathogenTest extends CoreAdo {
 	public static final String FOUR_FOLD_INCREASE_ANTIBODY_TITER = "fourFoldIncreaseAntibodyTiter";
 	public static final String SEROTYPE = "serotype";
 	public static final String CQ_VALUE = "cqValue";
-	
+	public static final String REPORT_DATE = "reportDate";
+
 	private Sample sample;
 	private Disease testedDisease;
+	@Convert(converter = DiseaseVariantConverter.class)
+	private DiseaseVariant testedDiseaseVariant;
 	private String testedDiseaseDetails;
+	private String testedDiseaseVariantDetails;
+	private String typingId;
 	private PathogenTestType testType;
+	private PCRTestSpecification pcrTestSpecification;
 	private String testTypeText;
 	private Date testDateTime;
 	private Facility lab;
@@ -74,12 +93,18 @@ public class PathogenTest extends CoreAdo {
 	private boolean fourFoldIncreaseAntibodyTiter;
 	private String serotype;
 	private Float cqValue;
-	
-	@ManyToOne(cascade = {})
+	private Date reportDate;
+	private boolean viaLims;
+	private String externalId;
+	private String externalOrderId;
+	private Boolean preliminary;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(nullable = false)
 	public Sample getSample() {
 		return sample;
 	}
+
 	public void setSample(Sample sample) {
 		this.sample = sample;
 	}
@@ -88,117 +113,216 @@ public class PathogenTest extends CoreAdo {
 	public Disease getTestedDisease() {
 		return testedDisease;
 	}
+
 	public void setTestedDisease(Disease testedDisease) {
 		this.testedDisease = testedDisease;
 	}
 
-	@Column(length=512)
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getTestedDiseaseDetails() {
 		return testedDiseaseDetails;
 	}
+
 	public void setTestedDiseaseDetails(String testedDiseaseDetails) {
 		this.testedDiseaseDetails = testedDiseaseDetails;
 	}
-	
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public String getTestedDiseaseVariantDetails() {
+		return testedDiseaseVariantDetails;
+	}
+
+	public void setTestedDiseaseVariantDetails(String testedDiseaseVariantDetails) {
+		this.testedDiseaseVariantDetails = testedDiseaseVariantDetails;
+	}
+
+	@Column
+	@Convert(converter = DiseaseVariantConverter.class)
+	public DiseaseVariant getTestedDiseaseVariant() {
+		return testedDiseaseVariant;
+	}
+
+	public void setTestedDiseaseVariant(DiseaseVariant diseaseVariant) {
+		this.testedDiseaseVariant = diseaseVariant;
+	}
+
+	@Column
+	public String getTypingId() {
+		return typingId;
+	}
+
+	public void setTypingId(String typingId) {
+		this.typingId = typingId;
+	}
+
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	public PathogenTestType getTestType() {
 		return testType;
 	}
+
 	public void setTestType(PathogenTestType testType) {
 		this.testType = testType;
 	}
-	
-	@Column(length=512)
+
+	@Enumerated(EnumType.STRING)
+	public PCRTestSpecification getPcrTestSpecification() {
+		return pcrTestSpecification;
+	}
+
+	public void setPcrTestSpecification(PCRTestSpecification pcrTestSpecification) {
+		this.pcrTestSpecification = pcrTestSpecification;
+	}
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getTestTypeText() {
 		return testTypeText;
 	}
+
 	public void setTestTypeText(String testTypeText) {
 		this.testTypeText = testTypeText;
 	}
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable = false)
 	public Date getTestDateTime() {
 		return testDateTime;
 	}
+
 	public void setTestDateTime(Date testDateTime) {
 		this.testDateTime = testDateTime;
 	}
-	
-	@ManyToOne(cascade = {})
+
+	@ManyToOne()
 	@JoinColumn
 	public Facility getLab() {
 		return lab;
 	}
+
 	public void setLab(Facility lab) {
 		this.lab = lab;
 	}
 
-	@Column(length=512)
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getLabDetails() {
 		return labDetails;
 	}
+
 	public void setLabDetails(String labDetails) {
 		this.labDetails = labDetails;
 	}
-	
-	@ManyToOne(cascade = {})
+
+	@ManyToOne()
 	@JoinColumn
 	public User getLabUser() {
 		return labUser;
 	}
+
 	public void setLabUser(User labUser) {
 		this.labUser = labUser;
 	}
-	
+
 	@Enumerated(EnumType.STRING)
 	@JoinColumn(nullable = false)
 	public PathogenTestResultType getTestResult() {
 		return testResult;
 	}
+
 	public void setTestResult(PathogenTestResultType testResult) {
 		this.testResult = testResult;
 	}
-	
-	@Column(length=512)
+
+	@Column(length = CHARACTER_LIMIT_BIG)
 	public String getTestResultText() {
 		return testResultText;
 	}
+
 	public void setTestResultText(String testResultText) {
 		this.testResultText = testResultText;
 	}
-	
+
 	@Column(nullable = false)
 	public Boolean getTestResultVerified() {
 		return testResultVerified;
 	}
+
 	public void setTestResultVerified(Boolean testResultVerified) {
 		this.testResultVerified = testResultVerified;
 	}
-	
+
 	@Column
 	public boolean isFourFoldIncreaseAntibodyTiter() {
 		return fourFoldIncreaseAntibodyTiter;
 	}
+
 	public void setFourFoldIncreaseAntibodyTiter(boolean fourFoldIncreaseAntibodyTiter) {
 		this.fourFoldIncreaseAntibodyTiter = fourFoldIncreaseAntibodyTiter;
 	}
-	
-	@Column(length=255)
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getSerotype() {
 		return serotype;
 	}
+
 	public void setSerotype(String serotype) {
 		this.serotype = serotype;
 	}
-	
+
 	@Column
 	public Float getCqValue() {
 		return cqValue;
 	}
+
 	public void setCqValue(Float cqValue) {
 		this.cqValue = cqValue;
 	}
-	
+
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getReportDate() {
+		return reportDate;
+	}
+
+	public void setReportDate(Date reportDate) {
+		this.reportDate = reportDate;
+	}
+
+	@Column
+	public boolean isViaLims() {
+		return viaLims;
+	}
+
+	public void setViaLims(boolean viaLims) {
+		this.viaLims = viaLims;
+	}
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public String getExternalId() {
+		return externalId;
+	}
+
+	public void setExternalId(String externalId) {
+		this.externalId = externalId;
+	}
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public String getExternalOrderId() {
+		return externalOrderId;
+	}
+
+	public void setExternalOrderId(String externalOrderId) {
+		this.externalOrderId = externalOrderId;
+	}
+
+	@Column
+	public Boolean getPreliminary() {
+		return preliminary;
+	}
+
+	public void setPreliminary(Boolean preliminary) {
+		this.preliminary = preliminary;
+	}
+
+	public PathogenTestReferenceDto toReference() {
+		return new PathogenTestReferenceDto(getUuid());
+	}
 }

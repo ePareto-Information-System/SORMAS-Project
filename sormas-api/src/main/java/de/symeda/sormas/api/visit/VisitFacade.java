@@ -9,47 +9,69 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.visit;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Remote;
+import javax.validation.Valid;
 
+import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.importexport.ExportConfigurationDto;
 import de.symeda.sormas.api.utils.SortProperty;
 
 @Remote
 public interface VisitFacade {
 
-	List<VisitDto> getAllActiveVisitsAfter(Date date, String userUuid);
+	List<VisitDto> getAllActiveVisitsAfter(Date date);
+
+	List<VisitDto> getVisitsByCase(CaseReferenceDto caseRef);
 
 	VisitDto getVisitByUuid(String uuid);
 
-	VisitReferenceDto getReferenceByUuid(String uuid);
+	VisitDto saveVisit(@Valid VisitDto dto);
 
-	VisitDto saveVisit(VisitDto dto);
+	void validate(VisitDto dto);
 
-	List<String> getAllActiveUuids(String userUuid);
+	ExternalVisitDto saveExternalVisit(@Valid ExternalVisitDto dto);
+
+	List<String> getAllActiveUuids();
+
+	List<VisitDto> getAllActiveVisitsAfter(Date date, Integer batchSize, String lastSynchronizedUuid);
 
 	List<VisitDto> getByUuids(List<String> uuids);
-	
-	void deleteVisit(String visitUuid, String userUuid);
-	
-	int getNumberOfVisits(ContactReferenceDto contactRef, VisitStatus visitStatus);
-	
-	List<DashboardVisitDto> getDashboardVisitsByContact(ContactReferenceDto contactRef, Date from, Date to);
-	
+
+	void deleteVisit(String visitUuid);
+
 	List<VisitIndexDto> getIndexList(VisitCriteria visitCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
-	
+
 	long count(VisitCriteria visitCriteria);
-	
+
+	Page<VisitIndexDto> getIndexPage(VisitCriteria visitCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
+
+	List<VisitExportDto> getVisitsExportList(
+		VisitCriteria visitCriteria,
+		Collection<String> selectedRows,
+		VisitExportType exportType,
+		int first,
+		int max,
+		ExportConfigurationDto exportConfiguration);
+
 	VisitDto getLastVisitByContact(ContactReferenceDto contactRef);
-	
+
+	List<VisitDto> getVisitsByContact(ContactReferenceDto contactRef);
+
+	List<VisitDto> getVisitsByContactAndPeriod(ContactReferenceDto contactRef, Date begin, Date end);
+
+	VisitDto getLastVisitByCase(CaseReferenceDto caseRef);
 }

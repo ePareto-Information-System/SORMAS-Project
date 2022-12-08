@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.utils;
 
@@ -24,52 +24,60 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.Page;
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.Button;
-import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
+import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.PopupDateField;
-import com.vaadin.ui.themes.ValoTheme;
 
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.api.utils.DateFilterOption;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.EpiWeek;
-import de.symeda.sormas.ui.dashboard.DateFilterOption;
 
-public class EpiWeekAndDateFilterComponent<E extends Enum<E>> extends HorizontalLayout {
+public class EpiWeekAndDateFilterComponent<DATE_TYPE> extends HorizontalLayout {
 
 	private static final long serialVersionUID = 8752630393182185034L;
 
-	private ComboBox dateFilterOptionFilter;
-	private ComboBox dateTypeSelector;
-	private ComboBox weekFromFilter;
-	private ComboBox weekToFilter;
-	private PopupDateField dateFromFilter;
-	private PopupDateField dateToFilter;
+	private final ComboBox dateFilterOptionFilter;
+	private final ComboBox dateTypeSelector;
+	private final ComboBox weekFromFilter;
+	private final ComboBox weekToFilter;
+	private final PopupDateField dateFromFilter;
+	private final PopupDateField dateToFilter;
 
-	public EpiWeekAndDateFilterComponent(Button applyButton, boolean fillAutomatically, boolean showCaption, String infoText) {
-		this(applyButton, fillAutomatically, showCaption, infoText, null, null, null);
+	public EpiWeekAndDateFilterComponent(boolean fillAutomatically, boolean showCaption, String infoText, AbstractFilterForm parentFilterForm) {
+		this(fillAutomatically, showCaption, infoText, null, null, null, parentFilterForm);
 	}
 
-	public EpiWeekAndDateFilterComponent(Button applyButton, boolean fillAutomatically, boolean showCaption,
-			String infoText, Class<E> dateType, String dateTypePrompt, Enum<E> defaultDateType) {
+	public EpiWeekAndDateFilterComponent(
+		boolean fillAutomatically,
+		boolean showCaption,
+		String infoText,
+		DATE_TYPE[] dateTypes,
+		String dateTypePrompt,
+		DATE_TYPE defaultDateType,
+		AbstractFilterForm parentFilterForm) {
 		setSpacing(true);
 
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date());
 
-		dateFilterOptionFilter = new ComboBox();
-		dateTypeSelector = new ComboBox();
-		weekFromFilter = new ComboBox();
-		weekToFilter = new ComboBox();
+		dateFilterOptionFilter = ComboBoxHelper.createComboBoxV7();
+		dateTypeSelector = ComboBoxHelper.createComboBoxV7();
+		weekFromFilter = ComboBoxHelper.createComboBoxV7();
+		weekToFilter = ComboBoxHelper.createComboBoxV7();
 		dateFromFilter = new PopupDateField();
 		dateToFilter = new PopupDateField();
 
 		// Date filter options
+		dateFilterOptionFilter.setId("dateFilterOption");
 		dateFilterOptionFilter.setWidth(200, Unit.PIXELS);
-		dateFilterOptionFilter.addItems((Object[])DateFilterOption.values());
+		dateFilterOptionFilter.addItems((Object[]) DateFilterOption.values());
 		dateFilterOptionFilter.setNullSelectionAllowed(false);
 		dateFilterOptionFilter.select(DateFilterOption.EPI_WEEK);
 		if (showCaption) {
@@ -90,7 +98,7 @@ public class EpiWeekAndDateFilterComponent<E extends Enum<E>> extends Horizontal
 				if (fillAutomatically) {
 					dateToFilter.setValue(c.getTime());
 				}
-			} else {
+			} else if (getComponentIndex(dateFromFilter) != -1) {
 				int newIndex = getComponentIndex(dateFromFilter);
 				removeComponent(dateFromFilter);
 				removeComponent(dateToFilter);
@@ -108,9 +116,10 @@ public class EpiWeekAndDateFilterComponent<E extends Enum<E>> extends Horizontal
 		addComponent(dateFilterOptionFilter);
 
 		// New case date type selector
-		if (dateType != null) {
+		if (dateTypes != null) {
+			dateTypeSelector.setId("dateType");
 			dateTypeSelector.setWidth(200, Unit.PIXELS);
-			dateTypeSelector.addItems((Object[]) dateType.getEnumConstants());
+			dateTypeSelector.addItems(dateTypes);
 			if (dateTypePrompt != null) {
 				dateTypeSelector.setInputPrompt(dateTypePrompt);
 			}
@@ -134,6 +143,7 @@ public class EpiWeekAndDateFilterComponent<E extends Enum<E>> extends Horizontal
 		// Epi week filter
 		List<EpiWeek> epiWeekList = DateHelper.createEpiWeekList(c.get(Calendar.YEAR), c.get(Calendar.WEEK_OF_YEAR));
 
+		weekFromFilter.setId("weekFrom");
 		weekFromFilter.setWidth(200, Unit.PIXELS);
 		for (EpiWeek week : epiWeekList) {
 			weekFromFilter.addItem(week);
@@ -145,14 +155,9 @@ public class EpiWeekAndDateFilterComponent<E extends Enum<E>> extends Horizontal
 		if (showCaption) {
 			weekFromFilter.setCaption(I18nProperties.getCaption(Captions.epiWeekFrom));
 		}
-		if (applyButton != null) {
-			weekFromFilter.addValueChangeListener(e -> {
-				applyButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
-				applyButton.setEnabled(true);
-			});
-		}
 		addComponent(weekFromFilter);
 
+		weekToFilter.setId("weekTo");
 		weekToFilter.setWidth(200, Unit.PIXELS);
 		for (EpiWeek week : epiWeekList) {
 			weekToFilter.addItem(week);
@@ -164,38 +169,51 @@ public class EpiWeekAndDateFilterComponent<E extends Enum<E>> extends Horizontal
 		if (showCaption) {
 			weekToFilter.setCaption(I18nProperties.getCaption(Captions.epiWeekTo));
 		}
-		if (applyButton != null) {
-			weekToFilter.addValueChangeListener(e -> {
-				applyButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
-				applyButton.setEnabled(true);
-			});
-		}
 		addComponent(weekToFilter);
 
 		// Date filter
+		dateFromFilter.setId("dateFrom");
 		dateFromFilter.setWidth(200, Unit.PIXELS);
 		if (showCaption) {
 			dateFromFilter.setCaption(I18nProperties.getCaption(Captions.from));
 		}
-		if (applyButton != null) {
-			dateFromFilter.addValueChangeListener(e -> {
-				applyButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
-				applyButton.setEnabled(true);
-			});
-		}
 
+		dateToFilter.setId("dateTo");
 		dateToFilter.setWidth(200, Unit.PIXELS);
 		if (showCaption) {
 			dateToFilter.setCaption(I18nProperties.getCaption(Captions.to));
 		}
-		if (applyButton != null) {
-			dateToFilter.addValueChangeListener(e -> {
-				applyButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
-				applyButton.setEnabled(true);
-			});
+
+		if (parentFilterForm != null) {
+			dateFilterOptionFilter.addValueChangeListener(e -> parentFilterForm.onChange());
+			dateTypeSelector.addValueChangeListener(e -> parentFilterForm.onChange());
+			weekFromFilter.addValueChangeListener(e -> parentFilterForm.onChange());
+			weekToFilter.addValueChangeListener(e -> parentFilterForm.onChange());
+			dateFromFilter.addValueChangeListener(e -> parentFilterForm.onChange());
+			dateToFilter.addValueChangeListener(e -> parentFilterForm.onChange());
 		}
-	}	
-	
+	}
+
+	public void setNotificationsForMissingFilters() {
+		DateFilterOption dateFilterOption = (DateFilterOption) dateFilterOptionFilter.getValue();
+		Notification notification;
+		if (dateFilterOption == DateFilterOption.DATE) {
+			notification = new Notification(
+				I18nProperties.getString(Strings.headingMissingDateFilter),
+				I18nProperties.getString(Strings.messageMissingDateFilter),
+				Notification.Type.WARNING_MESSAGE,
+				false);
+		} else {
+			notification = new Notification(
+				I18nProperties.getString(Strings.headingMissingEpiWeekFilter),
+				I18nProperties.getString(Strings.messageMissingEpiWeekFilter),
+				Notification.Type.WARNING_MESSAGE,
+				false);
+		}
+		notification.setDelayMsec(-1);
+		notification.show(Page.getCurrent());
+	}
+
 	public ComboBox getDateFilterOptionFilter() {
 		return dateFilterOptionFilter;
 	}
@@ -219,5 +237,4 @@ public class EpiWeekAndDateFilterComponent<E extends Enum<E>> extends Horizontal
 	public PopupDateField getDateToFilter() {
 		return dateToFilter;
 	}
-
 }

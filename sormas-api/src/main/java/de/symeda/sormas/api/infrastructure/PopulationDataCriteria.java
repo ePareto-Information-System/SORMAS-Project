@@ -1,18 +1,21 @@
 package de.symeda.sormas.api.infrastructure;
 
 import de.symeda.sormas.api.AgeGroup;
-import de.symeda.sormas.api.BaseCriteria;
 import de.symeda.sormas.api.person.Sex;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.region.RegionReferenceDto;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
+import de.symeda.sormas.api.utils.criteria.BaseCriteria;
 
 public class PopulationDataCriteria extends BaseCriteria implements Cloneable {
 
 	private static final long serialVersionUID = -876047405287325714L;
-	
+
 	private RegionReferenceDto region;
 	private DistrictReferenceDto district;
+	private CommunityReferenceDto community;
 	private boolean districtIsNull;
+	private boolean communityIsNull;
 	private Sex sex;
 	private boolean sexIsNull;
 	private AgeGroup ageGroup;
@@ -22,7 +25,7 @@ public class PopulationDataCriteria extends BaseCriteria implements Cloneable {
 		this.region = region;
 		return this;
 	}
-	
+
 	public RegionReferenceDto getRegion() {
 		return region;
 	}
@@ -31,25 +34,34 @@ public class PopulationDataCriteria extends BaseCriteria implements Cloneable {
 		this.district = district;
 		return this;
 	}
-	
+
 	public DistrictReferenceDto getDistrict() {
 		return district;
 	}
-	
+
+	public PopulationDataCriteria community(CommunityReferenceDto community) {
+		this.community = community;
+		return this;
+	}
+
+	public CommunityReferenceDto getCommunity() {
+		return community;
+	}
+
 	public PopulationDataCriteria sex(Sex sex) {
 		this.sex = sex;
 		return this;
 	}
-	
+
 	public Sex getSex() {
 		return sex;
 	}
-	
+
 	public PopulationDataCriteria ageGroup(AgeGroup ageGroup) {
 		this.ageGroup = ageGroup;
 		return this;
 	}
-	
+
 	public AgeGroup getAgeGroup() {
 		return ageGroup;
 	}
@@ -60,6 +72,14 @@ public class PopulationDataCriteria extends BaseCriteria implements Cloneable {
 
 	public PopulationDataCriteria districtIsNull(boolean districtIsNull) {
 		this.districtIsNull = districtIsNull;
+		return this;
+	}
+	public boolean isCommunityIsNull() {
+		return communityIsNull;
+	}
+
+	public PopulationDataCriteria communityIsNull(boolean communityIsNull) {
+		this.communityIsNull = communityIsNull;
 		return this;
 	}
 
@@ -80,5 +100,4 @@ public class PopulationDataCriteria extends BaseCriteria implements Cloneable {
 		this.ageGroupIsNull = ageGroupIsNull;
 		return this;
 	}
-	
 }

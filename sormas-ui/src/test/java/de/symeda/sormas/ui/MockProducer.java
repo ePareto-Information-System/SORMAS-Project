@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 
 package de.symeda.sormas.ui;
@@ -25,19 +25,29 @@ import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Field;
 import java.security.Principal;
+import java.util.Hashtable;
 import java.util.Properties;
 
 import javax.ejb.SessionContext;
 import javax.ejb.TimerService;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.enterprise.inject.Produces;
 import javax.jms.ConnectionFactory;
 import javax.jms.Topic;
 import javax.mail.Session;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.naming.spi.InitialContextFactory;
 import javax.transaction.UserTransaction;
+
+import de.symeda.sormas.backend.user.CurrentUserService;
+import org.apache.james.mime4j.field.address.Mailbox;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.utils.InfoProvider;
 import de.symeda.sormas.backend.common.ConfigFacadeEjb;
+
 
 /**
  * Creates mocks for resources needed in bean test / external services. <br />
@@ -45,7 +55,16 @@ import de.symeda.sormas.backend.common.ConfigFacadeEjb;
  * 
  * @author Stefan Kock
  */
-public class MockProducer {
+public class MockProducer implements InitialContextFactory {
+
+	@Override
+	public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
+		// this is used to provide the current user to the ADO Listener taking care of updating the last change user
+		CurrentUserService currentUserService = mock(CurrentUserService.class);
+		InitialContext mockCtx = mock(InitialContext.class);
+		when(mockCtx.lookup("java:global/sormas-ear/sormas-backend/CurrentUserService")).thenReturn(currentUserService);
+		return mockCtx;
+	}
 
 	private static SessionContext sessionContext = mock(SessionContext.class);
 	private static Principal principal = mock(Principal.class);
@@ -54,15 +73,17 @@ public class MockProducer {
 	private static TimerService timerService = mock(TimerService.class);
 	private static Properties properties = new Properties();
 	private static UserTransaction userTransaction = mock(UserTransaction.class);
-	
+	private static ManagedScheduledExecutorService managedScheduledExecutorService = mock(ManagedScheduledExecutorService.class);
+
 	private static FacadeProvider facadeProvider = new FacadeProviderMock();
 
 	// Receiving e-mail server is mocked: org. jvnet. mock_javamail. mailbox
 	private static Session mailSession;
 	static {
-		properties.setProperty(ConfigFacadeEjb.COUNTRY_NAME,"nigeria");
+		properties.setProperty(ConfigFacadeEjb.COUNTRY_NAME, "nigeria");
 		properties.setProperty(ConfigFacadeEjb.CSV_SEPARATOR, ",");
-		
+		properties.setProperty(ConfigFacadeEjb.COUNTRY_EPID_PREFIX, "ng");
+
 		try {
 			Field instance = InfoProvider.class.getDeclaredField("instance");
 			instance.setAccessible(true);
@@ -70,14 +91,14 @@ public class MockProducer {
 		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
-		
-	    try {
-	        Field instance = FacadeProvider.class.getDeclaredField("instance");
-	        instance.setAccessible(true);
-	        instance.set(instance, facadeProvider);
-	    } catch (Exception e) {
-	        throw new RuntimeException(e);
-	    }
+
+		try {
+			Field instance = FacadeProvider.class.getDeclaredField("instance");
+			instance.setAccessible(true);
+			instance.set(instance, facadeProvider);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 
 		// Make sure that the default session does not use a local mail server (if mock-javamail is removed)
 		mailSession = Session.getInstance(properties);
@@ -89,7 +110,7 @@ public class MockProducer {
 
 	public static void resetMocks() {
 
-		reset(sessionContext, principal, topic, connectionFactory, timerService, userTransaction);
+		reset(sessionContext, principal, topic, connectionFactory, timerService, userTransaction, managedScheduledExecutorService);
 		wireMocks();
 	}
 
@@ -131,5 +152,15 @@ public class MockProducer {
 	@Produces
 	public static UserTransaction getUserTransaction() {
 		return userTransaction;
+	}
+
+	@Produces
+	public static Principal getPrincipal() {
+		return principal;
+	}
+
+	@Produces
+	public static ManagedScheduledExecutorService getManagedScheduledExecutorService() {
+		return managedScheduledExecutorService;
 	}
 }

@@ -9,18 +9,17 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.rest;
 
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -31,8 +30,7 @@ import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.classification.DiseaseClassificationCriteriaDto;
 
 @Path("/classification")
-@Produces({ MediaType.APPLICATION_JSON + "; charset=UTF-8" })
-@RolesAllowed("USER")
+@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 public class ClassificationResource {
 
 	@GET
@@ -40,5 +38,4 @@ public class ClassificationResource {
 	public List<DiseaseClassificationCriteriaDto> getAll(@PathParam("since") long since) {
 		return FacadeProvider.getCaseClassificationFacade().getAllSince(new Date(since));
 	}
-
 }

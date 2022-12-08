@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.map;
 
@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import java.util.EventObject;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +32,8 @@ import com.vaadin.ui.AbstractJavaScriptComponent;
 import com.vaadin.ui.JavaScriptFunction;
 import com.vaadin.util.ReflectTools;
 
-import de.symeda.sormas.api.region.GeoLatLon;
+import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.geo.GeoLatLon;
 import elemental.json.Json;
 import elemental.json.JsonArray;
 
@@ -41,21 +43,29 @@ import elemental.json.JsonArray;
  * 
  * @author Martin Wahnschaffe
  */
-@JavaScript({ "vaadin://map/leaflet.js", "vaadin://map/leaflet.fullscreen.js", "vaadin://map/leaflet-easy-print.js", "vaadin://map/leaflet.markercluster.js", "vaadin://map/leaflet-connector.js" })
-@StyleSheet({ "vaadin://map/leaflet.css", "vaadin://map/leaflet.fullscreen.css", "vaadin://map/MarkerCluster.css" })
+@JavaScript({
+	"vaadin://map/leaflet.js",
+	"vaadin://map/leaflet.fullscreen.js",
+	"vaadin://map/leaflet-easy-print.js",
+	"vaadin://map/leaflet.markercluster.js",
+	"vaadin://map/leaflet-connector.js" })
+@StyleSheet({
+	"vaadin://map/leaflet.css",
+	"vaadin://map/leaflet.fullscreen.css",
+	"vaadin://map/MarkerCluster.css" })
 public class LeafletMap extends AbstractJavaScriptComponent {
 
-	final static Logger logger = LoggerFactory.getLogger(LeafletMap.class);
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private static final long serialVersionUID = 1671451734103288729L;
 
-	protected static int currMapId = 0;
+	private static int currMapId = 0;
 
 	public static int nextMapId() {
 		return ++currMapId;
 	}
 
-	protected int mapId = nextMapId();
+	private int mapId = nextMapId();
 
 	/**
 	 * Creates the chart object.
@@ -67,7 +77,15 @@ public class LeafletMap extends AbstractJavaScriptComponent {
 		getState().setTileLayerVisible(true);
 		getState().setTileLayerOpacity(1);
 
+		String tilesUrl = FacadeProvider.getConfigFacade().getMapTilersUrl();
+		if(StringUtils.isNoneBlank(tilesUrl)) {
+			callFunction(
+					"setTileLayer",
+					tilesUrl,
+					FacadeProvider.getConfigFacade().getMapTilersAttribution());
+		}
 		addFunction("onClick", new JavaScriptFunction() {
+
 			@Override
 			public void call(JsonArray arguments) {
 				String groupId = arguments.getString(0);
@@ -75,6 +93,9 @@ public class LeafletMap extends AbstractJavaScriptComponent {
 				LeafletMap.this.fireEvent(new MarkerClickEvent(LeafletMap.this, groupId, markerIndex));
 			}
 		});
+		// credit where credit's due
+		String attribution = FacadeProvider.getGeoShapeProvider().loadShapefileAttributions();
+		this.addShapefileAttribution(attribution);
 	}
 
 	/**
@@ -107,7 +128,7 @@ public class LeafletMap extends AbstractJavaScriptComponent {
 		getState().setCenterLatitude(coordinates.getLat());
 		getState().setCenterLongitude(coordinates.getLon());
 	}
-	
+
 	public void setTileLayerVisible(boolean tileLayerVisible) {
 		getState().setTileLayerVisible(tileLayerVisible);
 	}
@@ -140,16 +161,26 @@ public class LeafletMap extends AbstractJavaScriptComponent {
 		addListener(MarkerClickEvent.class, listener, MarkerClickListener.MARKER_CLICK_METHOD);
 	}
 
+	/**
+	 * Append the give attribution to the Leaflet attribution list.
+	 * See https://leafletjs.com/reference-1.7.1.html#control-attribution
+	 * 
+	 * @param attribution
+	 *            The attribution to be given.
+	 */
+	public void addShapefileAttribution(String attribution) {
+		callFunction("addShapefileAttribution", attribution);
+	}
+
 	public interface MarkerClickListener extends Serializable {
 
-		public static final Method MARKER_CLICK_METHOD = ReflectTools.findMethod(MarkerClickListener.class,
-				"markerClick", MarkerClickEvent.class);
+		Method MARKER_CLICK_METHOD = ReflectTools.findMethod(MarkerClickListener.class, "markerClick", MarkerClickEvent.class);
 
-		public void markerClick(MarkerClickEvent event);
-
+		void markerClick(MarkerClickEvent event);
 	}
 
 	public static class MarkerClickEvent extends EventObject {
+
 		private static final long serialVersionUID = -2607378360765308016L;
 		private final String groupId;
 		private final int markerIndex;

@@ -17,35 +17,46 @@
  *******************************************************************************/
 package de.symeda.sormas.api.statistics.caze;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
 
-public enum StatisticsCaseAttributeGroup {
+@SuppressWarnings("rawtypes")
+public class StatisticsCaseAttributeGroup {
 	
-	TIME,
-	PLACE,
-	PERSON,
-	CASE;
+	private Enum _enum;
+	
+	private List<StatisticsCaseAttributeEnum>  attributes_;
 	
 	private List<StatisticsCaseAttribute> attributes;
 	
-	public List<StatisticsCaseAttribute> getAttributes() {
-		if (attributes == null) {
-			attributes = new ArrayList<>();
-			for (StatisticsCaseAttribute attribute : StatisticsCaseAttribute.values()) {
-				if (attribute.getAttributeGroup() == this) {
-					attributes.add(attribute);
-				}
-			}
-		}
+	private List<StatisticsCaseSubAttributeEnum> attributeEnum;
 
+	
+	public StatisticsCaseAttributeGroup (Enum _enum, List<StatisticsCaseAttributeEnum> attributes) {
+		this._enum = _enum;
+		this.attributes_ = attributes;
+	}
+	
+	public StatisticsCaseAttributeGroup(StatisticsCaseAttributeGroupEnum person,
+			List<StatisticsCaseAttribute> attributes2) {
+		// TODO Auto-generated constructor stub
+	}
+
+	public String toString() {
+		return I18nProperties.getEnumCaption(_enum);
+	}
+	
+	public List<StatisticsCaseAttributeEnum> getAttributes_ () {
+		return attributes_;
+	}
+	
+	public List<StatisticsCaseAttribute>  getAttributes() {
 		return attributes;
 	}
 	
-	public String toString() {
-		return I18nProperties.getEnumCaption(this);
+	public List<StatisticsCaseSubAttributeEnum> getAttributesEnum() {
+		return attributeEnum;
 	}
-	
 }

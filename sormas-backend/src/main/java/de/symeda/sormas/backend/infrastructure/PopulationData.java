@@ -12,8 +12,9 @@ import javax.persistence.TemporalType;
 import de.symeda.sormas.api.AgeGroup;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
-import de.symeda.sormas.backend.region.District;
-import de.symeda.sormas.backend.region.Region;
+import de.symeda.sormas.backend.infrastructure.community.Community;
+import de.symeda.sormas.backend.infrastructure.district.District;
+import de.symeda.sormas.backend.infrastructure.region.Region;
 
 @Entity
 public class PopulationData extends AbstractDomainObject {
@@ -21,16 +22,18 @@ public class PopulationData extends AbstractDomainObject {
 	private static final long serialVersionUID = 238546887753417535L;
 
 	public static final String TABLE_NAME = "populationdata";
-	
+
 	public static final String REGION = "region";
 	public static final String DISTRICT = "district";
+	public static final String COMMUNITY = "community";
 	public static final String SEX = "sex";
 	public static final String AGE_GROUP = "ageGroup";
 	public static final String POPULATION = "population";
 	public static final String COLLECTION_DATE = "collectionDate";
-	
+
 	private Region region;
 	private District district;
+	private Community community;
 	private Sex sex;
 	private AgeGroup ageGroup;
 	private Integer population;
@@ -40,7 +43,7 @@ public class PopulationData extends AbstractDomainObject {
 	public Region getRegion() {
 		return region;
 	}
-	
+
 	public void setRegion(Region region) {
 		this.region = region;
 	}
@@ -49,16 +52,25 @@ public class PopulationData extends AbstractDomainObject {
 	public District getDistrict() {
 		return district;
 	}
-	
+
 	public void setDistrict(District district) {
 		this.district = district;
+	}
+
+	@ManyToOne(cascade = {})
+	public Community getCommunity() {
+		return community;
+	}
+
+	public void setCommunity(Community community) {
+		this.community = community;
 	}
 
 	@Enumerated(EnumType.STRING)
 	public Sex getSex() {
 		return sex;
 	}
-	
+
 	public void setSex(Sex sex) {
 		this.sex = sex;
 	}
@@ -67,15 +79,15 @@ public class PopulationData extends AbstractDomainObject {
 	public AgeGroup getAgeGroup() {
 		return ageGroup;
 	}
-	
+
 	public void setAgeGroup(AgeGroup ageGroup) {
 		this.ageGroup = ageGroup;
 	}
-	
+
 	public Integer getPopulation() {
 		return population;
 	}
-	
+
 	public void setPopulation(Integer population) {
 		this.population = population;
 	}
@@ -84,9 +96,8 @@ public class PopulationData extends AbstractDomainObject {
 	public Date getCollectionDate() {
 		return collectionDate;
 	}
-	
+
 	public void setCollectionDate(Date collectionDate) {
 		this.collectionDate = collectionDate;
 	}
-	
 }

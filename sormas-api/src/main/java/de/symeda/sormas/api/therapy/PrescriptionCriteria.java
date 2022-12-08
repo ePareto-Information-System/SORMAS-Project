@@ -1,7 +1,7 @@
 package de.symeda.sormas.api.therapy;
 
-import de.symeda.sormas.api.BaseCriteria;
 import de.symeda.sormas.api.utils.IgnoreForUrl;
+import de.symeda.sormas.api.utils.criteria.BaseCriteria;
 
 public class PrescriptionCriteria extends BaseCriteria implements Cloneable {
 
@@ -10,7 +10,7 @@ public class PrescriptionCriteria extends BaseCriteria implements Cloneable {
 	private TherapyReferenceDto therapy;
 	private TreatmentType prescriptionType;
 	private String textFilter;
-	
+
 	@Override
 	public PrescriptionCriteria clone() {
 		try {
@@ -19,21 +19,21 @@ public class PrescriptionCriteria extends BaseCriteria implements Cloneable {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	@IgnoreForUrl
 	public TherapyReferenceDto getTherapy() {
 		return therapy;
 	}
-	
+
 	public PrescriptionCriteria therapy(TherapyReferenceDto therapy) {
 		this.therapy = therapy;
 		return this;
 	}
-	
+
 	public TreatmentType getPrescriptionType() {
 		return prescriptionType;
 	}
-	
+
 	public PrescriptionCriteria prescriptionType(TreatmentType prescriptionType) {
 		this.prescriptionType = prescriptionType;
 		return this;
@@ -43,10 +43,9 @@ public class PrescriptionCriteria extends BaseCriteria implements Cloneable {
 	public String getTextFilter() {
 		return textFilter;
 	}
-	
+
 	public PrescriptionCriteria textFilter(String textFilter) {
 		this.textFilter = textFilter;
 		return this;
 	}
-	
 }

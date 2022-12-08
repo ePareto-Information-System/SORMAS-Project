@@ -9,56 +9,65 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.dashboard.visualisation;
 
-import java.time.LocalDate;
 import java.util.Collections;
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
+import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
+import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.VaadinUiUtil;
 
 @SuppressWarnings("serial")
 public class DashboardNetworkComponent extends VerticalLayout {
 
-	final static Logger logger = LoggerFactory.getLogger(DashboardNetworkComponent.class);
-
+	public static final int MAX_CONTACTS_SUPPORTED = 5000;
 	// Layouts and components
 	private final DashboardDataProvider dashboardDataProvider;
-	private final NetworkDiagram diagram;
+	private HorizontalLayout mapHeaderLayout;
+	private Button expandMapButton;
+	private Button collapseMapButton;
+	private final NetworkDiagram networkDiagram;
 
 	private Consumer<Boolean> externalExpandListener;
-	
+
 	private String getNetworkDiagramJson() {
-		LocalDate from = LocalDate.now().minusYears(1);
-		LocalDate to = LocalDate.now();
-		Set<Disease> diseases = Optional.of(dashboardDataProvider)
-				.map(DashboardDataProvider::getDisease)
-				.map(Collections::singleton)
-				.orElseGet(() -> EnumSet.allOf(Disease.class));
-		
-		String networkJson = FacadeProvider.getVisualizationFacade().buildTransmissionChainJson(from, to, diseases);
-		return networkJson;
+		Set<Disease> diseases =
+			Optional.of(dashboardDataProvider.getDisease()).map(Collections::singleton).orElseGet(() -> EnumSet.allOf(Disease.class));
+
+		Date fromDate = dashboardDataProvider.getFromDate();
+		Date toDate = dashboardDataProvider.getToDate();
+		RegionReferenceDto region = dashboardDataProvider.getRegion();
+		DistrictReferenceDto district = dashboardDataProvider.getDistrict();
+
+		return FacadeProvider.getVisualizationFacade()
+			.buildTransmissionChainJson(fromDate, toDate, region, district, diseases, UserProvider.getCurrent().getUser().getLanguage());
 	}
 
 	public DashboardNetworkComponent(DashboardDataProvider dashboardDataProvider) {
@@ -68,22 +77,64 @@ public class DashboardNetworkComponent extends VerticalLayout {
 		setSpacing(false);
 		setSizeFull();
 
-		diagram = new NetworkDiagram();
-		diagram.setSizeFull();
+		networkDiagram = new NetworkDiagram();
+		networkDiagram.setSizeFull();
 
 		this.setMargin(true);
 
 		// Add components
 		addComponent(createHeader());
-		addComponent(diagram);
+		addComponent(networkDiagram);
 //		addComponent(createFooter());
-		setExpandRatio(diagram, 1);
+		setExpandRatio(networkDiagram, 1);
+		networkDiagram.setVisible(false);
 	}
 
+	boolean dirty = true;
+
 	public void refreshDiagram() {
+		dirty = true;
+		updateDiagram();
 
-		diagram.updateDiagram(getNetworkDiagramJson());
+	}
 
+	private void updateDiagram() {
+		if (dirty && networkDiagram.isVisible()) {
+
+			Long contactCount = FacadeProvider.getVisualizationFacade()
+				.getContactCount(
+					dashboardDataProvider.getFromDate(),
+					dashboardDataProvider.getToDate(),
+					dashboardDataProvider.getRegion(),
+					dashboardDataProvider.getDistrict(),
+					Optional.of(dashboardDataProvider.getDisease()).map(Collections::singleton).orElseGet(() -> EnumSet.allOf(Disease.class)));
+
+			if (contactCount <= MAX_CONTACTS_SUPPORTED) {
+				updateNetworkDiagram();
+			} else {
+				VaadinUiUtil.showConfirmationPopup(
+					I18nProperties.getString(Strings.headingNetworkDiagramTooManyContacts),
+					new Label(
+						String.format(
+							"%s<br/><br/>%s",
+							String.format(I18nProperties.getString(Strings.warningNetworkDiagramTooManyContacts), contactCount),
+							I18nProperties.getString(Strings.confirmNetworkDiagramTooManyContacts)),
+						ContentMode.HTML),
+					I18nProperties.getString(Strings.yes),
+					I18nProperties.getString(Strings.no),
+					640,
+					confirmed -> {
+						if (confirmed) {
+							updateNetworkDiagram();
+						}
+					});
+			}
+		}
+	}
+
+	private void updateNetworkDiagram() {
+		networkDiagram.updateDiagram(getNetworkDiagramJson());
+		dirty = false;
 	}
 
 	public void setExpandListener(Consumer<Boolean> listener) {
@@ -91,7 +142,7 @@ public class DashboardNetworkComponent extends VerticalLayout {
 	}
 
 	private HorizontalLayout createHeader() {
-		HorizontalLayout mapHeaderLayout = new HorizontalLayout();
+		mapHeaderLayout = new HorizontalLayout();
 		mapHeaderLayout.setWidth(100, Unit.PERCENTAGE);
 		mapHeaderLayout.setSpacing(true);
 		CssStyles.style(mapHeaderLayout, CssStyles.VSPACE_4);
@@ -106,31 +157,36 @@ public class DashboardNetworkComponent extends VerticalLayout {
 //			mapHeaderLayout.setComponentAlignment(diagramLabel, Alignment.BOTTOM_LEFT);
 //			mapHeaderLayout.setExpandRatio(diagramLabel, 1);
 //		}
+		expandMapButton = ButtonHelper.createIconButtonWithCaption(
+			Strings.infoDisplayNetworkDiagram,
+			I18nProperties.getString(Strings.infoDisplayNetworkDiagram),
+			VaadinIcons.EXPAND,
+			e -> expandMap(true),
+			CssStyles.BUTTON_SUBTLE,
+			CssStyles.VSPACE_NONE);
+		collapseMapButton = ButtonHelper
+			.createIconButtonWithCaption("", "", VaadinIcons.COMPRESS, e -> expandMap(false), CssStyles.BUTTON_SUBTLE, CssStyles.VSPACE_NONE);
 
-		// "Expand" and "Collapse" buttons
-		Button expandMapButton = new Button("", VaadinIcons.EXPAND);
-		CssStyles.style(expandMapButton, CssStyles.BUTTON_SUBTLE);
-		expandMapButton.addStyleName(CssStyles.VSPACE_NONE);
-		Button collapseMapButton = new Button("", VaadinIcons.COMPRESS);
-		CssStyles.style(collapseMapButton, CssStyles.BUTTON_SUBTLE);
-		collapseMapButton.addStyleName(CssStyles.VSPACE_NONE);
-
-		expandMapButton.addClickListener(e -> {
-			externalExpandListener.accept(true);
-			mapHeaderLayout.removeComponent(expandMapButton);
-			mapHeaderLayout.addComponent(collapseMapButton);
-			mapHeaderLayout.setComponentAlignment(collapseMapButton, Alignment.MIDDLE_RIGHT);
-		});
-		collapseMapButton.addClickListener(e -> {
-			externalExpandListener.accept(false);
-			mapHeaderLayout.removeComponent(collapseMapButton);
-			mapHeaderLayout.addComponent(expandMapButton);
-			mapHeaderLayout.setComponentAlignment(expandMapButton, Alignment.MIDDLE_RIGHT);
-		});
 		mapHeaderLayout.addComponent(expandMapButton);
 		mapHeaderLayout.setComponentAlignment(expandMapButton, Alignment.MIDDLE_RIGHT);
 
 		return mapHeaderLayout;
+	}
+
+	private void expandMap(boolean expand) {
+		externalExpandListener.accept(expand);
+		if (expand) {
+			mapHeaderLayout.removeComponent(expandMapButton);
+			mapHeaderLayout.addComponent(collapseMapButton);
+			mapHeaderLayout.setComponentAlignment(collapseMapButton, Alignment.MIDDLE_RIGHT);
+			networkDiagram.setVisible(true);
+			updateDiagram();
+		} else {
+			mapHeaderLayout.removeComponent(collapseMapButton);
+			mapHeaderLayout.addComponent(expandMapButton);
+			mapHeaderLayout.setComponentAlignment(expandMapButton, Alignment.MIDDLE_RIGHT);
+			networkDiagram.setVisible(false);
+		}
 	}
 
 //	private HorizontalLayout createFooter() {

@@ -12,6 +12,8 @@
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-feature android:name="android.hardware.location.gps" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
         android:name=".SormasApplication"
@@ -24,9 +26,12 @@
         <uses-library android:name="android.test.runner"
             android:required="false" />
 
+        <uses-library android:name ="org.apache.http.legacy" android:required ="false"/>
+
         <activity android:name=".login.LoginActivity"
             android:theme="@style/LoginActivityTheme"
             android:screenOrientation="portrait"
+            android:exported="true"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -270,6 +275,37 @@
         </activity>
 
         <activity
+            android:name=".campaign.list.CampaignFormDataListActivity"
+            android:theme="@style/ActivityWithOverflowMenuTheme"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
+        </activity>
+
+        <activity
+            android:name=".campaign.read.CampaignFormDataReadActivity"
+            android:theme="@style/ActivityWithOverflowMenuTheme"
+            android:parentActivityName=".campaign.list.CampaignFormDataListActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
+        </activity>
+
+        <activity
+            android:name=".campaign.edit.CampaignFormDataEditActivity"
+            android:theme="@style/ActivityWithOverflowMenuTheme"
+            android:parentActivityName=".campaign.read.CampaignFormDataReadActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
+        </activity>
+
+        <activity
+            android:name=".campaign.edit.CampaignFormDataNewActivity"
+            android:theme="@style/ActivityWithOverflowMenuTheme"
+            android:parentActivityName=".campaign.list.CampaignFormDataListActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
+        </activity>
+
+        <activity
             android:name=".report.ReportActivity"
             android:theme="@style/ActivityWithOverflowMenuTheme"
             android:launchMode="singleTop" />
@@ -338,13 +374,66 @@
             android:launchMode="singleTop">
         </activity>
 
+        <activity
+            android:name=".immunization.list.ImmunizationListActivity"
+            android:theme="@style/ActivityWithOverflowMenuTheme"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
+        </activity>
+
+        <activity android:name=".immunization.read.ImmunizationReadActivity"
+            android:theme="@style/ActivityWithOverflowMenuTheme"
+            android:parentActivityName=".immunization.list.ImmunizationListActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
+        </activity>
+
+        <activity android:name=".immunization.edit.ImmunizationEditActivity"
+            android:theme="@style/ActivityWithOverflowMenuTheme"
+            android:parentActivityName=".immunization.read.ImmunizationReadActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
+        </activity>
+
+        <activity
+            android:name=".immunization.edit.ImmunizationNewActivity"
+            android:theme="@style/ActivityWithOverflowMenuTheme"
+            android:parentActivityName=".immunization.list.ImmunizationListActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
+        </activity>
+
+        <activity android:name=".immunization.vaccination.VaccinationNewActivity"
+            android:theme="@style/ActivityWithOverflowMenuTheme"
+            android:parentActivityName=".immunization.edit.ImmunizationEditActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
+        </activity>
+
+        <activity android:name=".immunization.vaccination.VaccinationReadActivity"
+            android:theme="@style/ActivityWithOverflowMenuTheme"
+            android:parentActivityName=".immunization.edit.ImmunizationEditActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
+        </activity>
+
+        <activity android:name=".immunization.vaccination.VaccinationEditActivity"
+            android:theme="@style/ActivityWithOverflowMenuTheme"
+            android:parentActivityName=".immunization.vaccination.VaccinationReadActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
+        </activity>
         <!-- Only needed for androidTest - found no other way to manifest this -->
         <activity
             android:name=".TestBackendActivity" />
 
+        <activity
+            android:name=".barcode.BarcodeActivity" />
+
         <receiver
             android:name=".SormasBootstrap"
-            android:enabled="true">
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
@@ -402,6 +491,16 @@
             <!--android:name=".core.TaskNotificationService"-->
             <!--android:enabled="true" />-->
 
+        <receiver
+            android:name=".LbdsRecevierComponent"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

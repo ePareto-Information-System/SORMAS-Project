@@ -9,19 +9,27 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api;
 
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.api.utils.FieldConstraints;
 import de.symeda.sormas.api.utils.Outbreaks;
 
 /**
@@ -41,10 +49,13 @@ public abstract class EntityDto implements Serializable, Cloneable, HasUuid {
 	public static final String CREATION_DATE = "creationDate";
 	public static final String CHANGE_DATE = "changeDate";
 	public static final String UUID = "uuid";
+	public static final String NO_LAST_SYNCED_UUID = "NO_LAST_SYNCED_UUID";
 
 	private Date creationDate;
 	private Date changeDate;
 	@Outbreaks
+	@Pattern(regexp = UUID_REGEX, message = Validations.uuidPatternNotMatching)
+	@Size(min = FieldConstraints.CHARACTER_LIMIT_UUID_MIN, max = FieldConstraints.CHARACTER_LIMIT_UUID_MAX, message = Validations.textSizeNotInRange)
 	private String uuid;
 
 	protected EntityDto() {
@@ -52,6 +63,7 @@ public abstract class EntityDto implements Serializable, Cloneable, HasUuid {
 	}
 
 	protected EntityDto(Date creationDate, Date changeDate, String uuid) {
+
 		this.creationDate = creationDate;
 		this.changeDate = changeDate;
 		this.uuid = uuid;
@@ -84,6 +96,7 @@ public abstract class EntityDto implements Serializable, Cloneable, HasUuid {
 
 	@Override
 	public boolean equals(Object o) {
+
 		if (this == o) {
 			return true;
 		}
@@ -102,6 +115,7 @@ public abstract class EntityDto implements Serializable, Cloneable, HasUuid {
 
 	@Override
 	public int hashCode() {
+
 		if (getUuid() != null) {
 			return getUuid().hashCode();
 		}
@@ -110,9 +124,25 @@ public abstract class EntityDto implements Serializable, Cloneable, HasUuid {
 
 	@Override
 	public EntityDto clone() throws CloneNotSupportedException {
+
 		if (getUuid() == null) {
 			throw new CloneNotSupportedException("DataTransferObject must have uuid in order to be cloneable");
 		}
+
 		return (EntityDto) super.clone();
+	}
+
+	@JsonIgnore
+	public String buildCaption() {
+		return toString();
+	}
+
+	public String i18nPrefix() {
+		return null;
+	}
+
+	@Override
+	public String toString() {
+		return (i18nPrefix() != null ? i18nPrefix() : getClass().getSimpleName()) + StringUtils.SPACE + this.getUuid();
 	}
 }

@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.statistics;
 
@@ -25,11 +25,15 @@ import com.vaadin.ui.MenuBar.MenuItem;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.statistics.StatisticsAttribute;
-import de.symeda.sormas.api.statistics.StatisticsAttributesContainer;
 import de.symeda.sormas.api.statistics.StatisticsAttributeEnum;
 import de.symeda.sormas.api.statistics.StatisticsAttributeGroup;
 import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
-import de.symeda.sormas.api.statistics.StatisticsSubAttributeEnum;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseAttribute;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseAttributeEnum;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseAttributeGroup;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseAttributeGroupEnum;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseSubAttribute;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseSubAttributeEnum;
 import de.symeda.sormas.ui.utils.CssStyles;
 
 @SuppressWarnings("serial")
@@ -43,32 +47,40 @@ public class StatisticsVisualizationElement extends HorizontalLayout {
 
 	private StatisticsVisualizationElementType type;
 	private StatisticsVisualizationType visualizationType;
-	private StatisticsAttribute attribute;
-	private StatisticsSubAttribute subAttribute;
+	// private StatisticsAttribute attribute;
+	// private StatisticsSubAttribute subAttribute;
 	
-	private StatisticsAttributesContainer statisticsAttributes;
 	
-	public StatisticsVisualizationElement(StatisticsAttributesContainer statisticsAttributes, StatisticsVisualizationElementType type, StatisticsVisualizationType visualizationType) {
-		this.statisticsAttributes = statisticsAttributes;
+	// public StatisticsVisualizationElement(StatisticsAttributesContainer statisticsAttributes, StatisticsVisualizationElementType type, StatisticsVisualizationType visualizationType) {
+	// 	this.statisticsAttributes = statisticsAttributes;
+	private StatisticsCaseAttributeEnum attribute;
+	private StatisticsCaseSubAttributeEnum subAttribute;
+
+
+
+	public StatisticsVisualizationElement(StatisticsVisualizationElementType type, StatisticsVisualizationType visualizationType) {
 		this.type = type;
 		this.visualizationType = visualizationType;
-		
+
 		CssStyles.style(this, CssStyles.LAYOUT_MINIMAL);
 		setSpacing(true);
 		setWidthUndefined();
-		
+
 		createAndAddComponents();
 	}
-	
+
+
 	private void createAndAddComponents() {
 		displayedAttributeDropdown = new MenuBar();
+		displayedAttributeDropdown.setId("visualizationType");
 		displayedAttributeDropdown.setCaption(type.toString(visualizationType));
 		displayedAttributeItem = displayedAttributeDropdown.addItem(type.getEmptySelectionString(visualizationType), null);
-		
+
 		displayedSubAttributeDropdown = new MenuBar();
+		displayedSubAttributeDropdown.setId("displayedSubAttribute");
 		CssStyles.style(displayedSubAttributeDropdown, CssStyles.FORCE_CAPTION);
 		displayedSubAttributeItem = displayedSubAttributeDropdown.addItem(I18nProperties.getCaption(Captions.statisticsSpecifySelection), null);
-		
+
 		// Empty selections
 		Command emptyItemCommand = selectedItem -> {
 			attribute = null;
@@ -78,80 +90,106 @@ public class StatisticsVisualizationElement extends HorizontalLayout {
 			removeSelections(displayedAttributeItem);
 		};
 		emptySelectionItem = displayedAttributeItem.addItem(type.getEmptySelectionString(visualizationType), emptyItemCommand);
-		
+
 		// Add attribute groups
-		for (StatisticsAttributeGroup attributeGroup : this.statisticsAttributes.values()) {
+		
+		for (StatisticsCaseAttributeGroupEnum attributeGroup : StatisticsCaseAttributeGroupEnum.values()) {
 			MenuItem attributeGroupItem = displayedAttributeItem.addItem(attributeGroup.toString(), null);
 			attributeGroupItem.setEnabled(false);
-			
+
 			// Add attributes belonging to the current group
-			for (StatisticsAttribute attribute : attributeGroup.getAttributes()) {
-				Command attributeCommand = selectedItem -> {
-					resetSubAttributeDropdown();
-					this.attribute = attribute;
-					this.subAttribute = null;
-					displayedAttributeItem.setText(attribute.toString());
-					removeSelections(displayedAttributeItem);
-					selectedItem.setStyleName("selected-filter");
+			// for (StatisticsAttribute attribute : attributeGroup.getAttributes()) {
+			// 	Command attributeCommand = selectedItem -> {
+			// 		resetSubAttributeDropdown();
+			// 		this.attribute = attribute;
+			// 		this.subAttribute = null;
+			// 		displayedAttributeItem.setText(attribute.toString());
+			// 		removeSelections(displayedAttributeItem);
+			// 		selectedItem.setStyleName("selected-filter");
 					
-					// Build sub attribute dropdown
-					if (attribute.getSubAttributes().size() > 0) {
-						for (StatisticsSubAttribute subAttribute : attribute.getSubAttributes()) {
-							if (subAttribute.isUsedForGrouping()) {
-								Command subAttributeCommand = selectedSubItem -> {
-									this.subAttribute = subAttribute;
-									displayedSubAttributeItem.setText(subAttribute.toString());
-									removeSelections(displayedSubAttributeItem);
-									selectedSubItem.setStyleName("selected-filter");
-								};
+			// 		// Build sub attribute dropdown
+			// 		if (attribute.getSubAttributes().size() > 0) {
+			// 			for (StatisticsSubAttribute subAttribute : attribute.getSubAttributes()) {
+			// 				if (subAttribute.isUsedForGrouping()) {
+			// 					Command subAttributeCommand = selectedSubItem -> {
+			// 						this.subAttribute = subAttribute;
+			// 						displayedSubAttributeItem.setText(subAttribute.toString());
+			// 						removeSelections(displayedSubAttributeItem);
+			// 						selectedSubItem.setStyleName("selected-filter");
+			// 					};
 								
-								displayedSubAttributeItem.addItem(subAttribute.toString(), subAttributeCommand);
+			// 					displayedSubAttributeItem.addItem(subAttribute.toString(), subAttributeCommand);
+			for (StatisticsCaseAttributeEnum attribute : attributeGroup.getAttributes()) {
+				if (attribute.isUsedForVisualisation()) {
+					Command attributeCommand = selectedItem -> {
+						resetSubAttributeDropdown();
+						this.attribute = attribute;
+						this.subAttribute = null;
+						displayedAttributeItem.setText(attribute.toString());
+						removeSelections(displayedAttributeItem);
+						selectedItem.setStyleName("selected-filter");
+
+						// Build sub attribute dropdown
+						if (attribute.getSubAttributes().length > 0) {
+							for (StatisticsCaseSubAttributeEnum subAttribute : attribute.getSubAttributes()) {
+								if (subAttribute.isUsedForGrouping()) {
+									Command subAttributeCommand = selectedSubItem -> {
+										this.subAttribute = subAttribute;
+										displayedSubAttributeItem.setText(subAttribute.toString());
+										removeSelections(displayedSubAttributeItem);
+										selectedSubItem.setStyleName("selected-filter");
+									};
+
+									displayedSubAttributeItem.addItem(subAttribute.toString(), subAttributeCommand);
+								}
 							}
+
+							addComponent(displayedSubAttributeDropdown);
 						}
-						
-						addComponent(displayedSubAttributeDropdown);
-					}
-				};
-				
-				displayedAttributeItem.addItem(attribute.toString(), attributeCommand);
-			}		
+					};
+
+					displayedAttributeItem.addItem(attribute.toString(), attributeCommand);
+				}
+			}
 		}
+
 		
 		addComponent(displayedAttributeDropdown);
 	}
-	
+
 	private void removeSelections(MenuItem parentItem) {
 		for (MenuItem childItem : parentItem.getChildren()) {
 			childItem.setStyleName(null);
 		}
 	}
-	
+
 	private void resetSubAttributeDropdown() {
 		displayedSubAttributeItem.removeChildren();
 		displayedSubAttributeItem.setText(I18nProperties.getCaption(Captions.statisticsSpecifySelection));
 		removeComponent(displayedSubAttributeDropdown);
 	}
 
-	public StatisticsAttribute getAttribute() {
+	public StatisticsCaseAttributeEnum getAttribute() {
 		return attribute;
 	}
 
-	public StatisticsAttributeEnum getAttributeEnum() {
-		return attribute == null ? null : attribute.getBaseEnum();
-	}
+//	public StatisticsCaseAttributeEnum getAttributeEnum() {
+//		return attribute == null ? null : attribute.getBaseEnum();
+//	}
 
-	public StatisticsSubAttribute getSubAttribute() {
+	public StatisticsCaseSubAttributeEnum getSubAttribute() {
 		return subAttribute;
 	}
 
-	public StatisticsSubAttributeEnum getSubAttributeEnum() {
-		return subAttribute == null ? null : subAttribute.getBaseEnum();
-	}
+	
+//	public StatisticsCaseSubAttributeEnum getSubAttributeEnum() {
+//		return subAttribute == null ? null : subAttribute.getBaseEnum();
+//	}
 
 	public StatisticsVisualizationElementType getType() {
 		return type;
 	}
-	
+
 	public void setType(StatisticsVisualizationElementType type, StatisticsVisualizationType visualizationType) {
 		this.type = type;
 		this.visualizationType = visualizationType;
@@ -161,5 +199,6 @@ public class StatisticsVisualizationElement extends HorizontalLayout {
 			displayedAttributeItem.setText(type.getEmptySelectionString(visualizationType));
 		}
 	}
+
 	
 }

@@ -7,9 +7,9 @@ public enum AdditionalTestingStatus {
 	NOT_REQUESTED,
 	REQUESTED,
 	PERFORMED;
-	
+
+	@Override
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);
 	}
-	
 }

@@ -28,6 +28,7 @@
         <import type="de.symeda.sormas.api.sample.PathogenTestType" />
         <import type="de.symeda.sormas.api.sample.PathogenTestResultType" />
         <import type="de.symeda.sormas.api.Disease" />
+        <import type="de.symeda.sormas.api.disease.DiseaseVariant" />
 
         <variable name="data" type="de.symeda.sormas.app.backend.sample.PathogenTest"/>
     </data>
@@ -52,6 +53,11 @@
 
                 <requestFocus/>
 
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/pathogenTest_reportDate"
+                    app:value="@{data.reportDate}"
+                    style="@style/ControlSingleColumnStyle" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -65,13 +71,50 @@
                         style="@style/ControlFirstOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlTextReadField
-                        android:id="@+id/pathogenTest_testedDisease"
-                        app:value="@{data.testedDisease}"
-                        app:appendValue="@{data.testedDiseaseDetails}"
+                        android:id="@+id/pathogenTest_pcrTestSpecification"
+                        app:value="@{data.pcrTestSpecification}"
                         app:valueFormat="@string/two_strings_with_hyphen_format"
                         style="@style/ControlSecondOfTwoColumnsStyle" />
 
                 </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/pathogenTest_testedDisease"
+                        app:value="@{data.testedDisease}"
+                        app:appendValue="@{data.testedDiseaseDetails}"
+                        app:valueFormat="@string/two_strings_with_hyphen_format"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/pathogenTest_testedDiseaseVariant"
+                        app:value="@{data.testedDiseaseVariant}"
+                        app:valueFormat="@string/two_strings_with_hyphen_format"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/pathogenTest_testedDiseaseVariantDetails"
+                    app:value="@{data.testedDiseaseVariantDetails}"
+                    app:customizableEnumField="@{pathogenTestTestedDiseaseVariant}"
+                    app:customizableEnumProperty="@{DiseaseVariant.HAS_DETAILS}"
+                    app:customizableEnumValue="@{Boolean.TRUE}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/pathogenTest_typingId"
+                        app:value="@{data.typingId}"
+                        app:dependencyParentField="@{pathogenTestTestType}"
+                        app:dependencyParentValue="@{PathogenTestType.DNA_MICROARRAY}"
+                        app:dependencyParentValue2="@{PathogenTestType.PCR_RT_PCR}"
+                        app:dependencyParentValue3="@{PathogenTestType.SEQUENCING}"
+                        app:valueFormat="@string/two_strings_with_hyphen_format"
+                        style="@style/ControlSingleColumnStyle" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -108,8 +151,6 @@
 
                     <de.symeda.sormas.app.component.controls.ControlTextReadField
                         android:id="@+id/pathogenTest_cqValue"
-                        app:dependencyParentField="@{pathogenTestTestType}"
-                        app:dependencyParentValue="@{PathogenTestType.CQ_VALUE_DETECTION}"
                         app:value="@{data.cqValue}"
                         style="@style/ControlSecondOfTwoColumnsStyle" />
 

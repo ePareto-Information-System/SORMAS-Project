@@ -1,23 +1,22 @@
-/*******************************************************************************
+/*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
- *
+ * Copyright © 2016-2021 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *******************************************************************************/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package de.symeda.sormas.ui.configuration.infrastructure;
 
-import java.util.Date;
+import java.util.Collections;
+import java.util.Set;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
@@ -26,30 +25,36 @@ import com.vaadin.server.StreamResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.MenuBar.Command;
-import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.ui.ComboBox;
-import com.vaadin.v7.ui.TextField;
 
 import de.symeda.sormas.api.EntityRelevanceStatus;
+import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.Descriptions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.InfrastructureType;
-import de.symeda.sormas.api.region.RegionCriteria;
+import de.symeda.sormas.api.infrastructure.region.RegionCriteria;
+import de.symeda.sormas.api.infrastructure.region.RegionIndexDto;
 import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.configuration.AbstractConfigurationView;
+import de.symeda.sormas.ui.configuration.infrastructure.components.SearchField;
+import de.symeda.sormas.ui.utils.ButtonHelper;
+import de.symeda.sormas.ui.utils.ComboBoxHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.ExportEntityName;
 import de.symeda.sormas.ui.utils.GridExportStreamResource;
+import de.symeda.sormas.ui.utils.MenuBarHelper;
+import de.symeda.sormas.ui.utils.RowCount;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 import de.symeda.sormas.ui.utils.ViewConfiguration;
 
@@ -63,31 +68,32 @@ public class RegionsView extends AbstractConfigurationView {
 	private ViewConfiguration viewConfiguration;
 
 	// Filter
-	private TextField searchField;
+	private SearchField searchField;
 	private ComboBox relevanceStatusFilter;
+	private ComboBox countryFilter;
 	private Button resetButton;
 
 	private HorizontalLayout filterLayout;
 	private VerticalLayout gridLayout;
-	private RegionsGrid grid;	
+	private RegionsGrid grid;
 	protected Button createButton;
 	protected Button importButton;
 	private MenuBar bulkOperationsDropdown;
-	private MenuItem archiveItem;
-	private MenuItem dearchiveItem;
 
 	public RegionsView() {
+
 		super(VIEW_NAME);
 
 		viewConfiguration = ViewModelProviders.of(RegionsView.class).get(ViewConfiguration.class);
-		criteria = ViewModelProviders.of(RegionsView.class).get(RegionCriteria.class);	
+		criteria = ViewModelProviders.of(RegionsView.class)
+			.get(RegionCriteria.class, new RegionCriteria().country(FacadeProvider.getCountryFacade().getServerCountry()));
 		if (criteria.getRelevanceStatus() == null) {
 			criteria.relevanceStatus(EntityRelevanceStatus.ACTIVE);
-		}	
-
+		}
 		grid = new RegionsGrid(criteria);
 		gridLayout = new VerticalLayout();
 		gridLayout.addComponent(createFilterBar());
+		gridLayout.addComponent(new RowCount(Strings.labelNumberOfRegions, grid.getItemCount()));
 		gridLayout.addComponent(grid);
 		gridLayout.setMargin(true);
 		gridLayout.setSpacing(false);
@@ -95,58 +101,60 @@ public class RegionsView extends AbstractConfigurationView {
 		gridLayout.setSizeFull();
 		gridLayout.setStyleName("crud-main-layout");
 
-		if (UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_IMPORT)) {
-			importButton = new Button(I18nProperties.getCaption(Captions.actionImport));
-			importButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
-			importButton.setIcon(VaadinIcons.UPLOAD);
-			importButton.addClickListener(e -> {
+		boolean infrastructureDataEditable = FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.EDIT_INFRASTRUCTURE_DATA);
+
+		if (infrastructureDataEditable && UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_IMPORT)) {
+			importButton = ButtonHelper.createIconButton(Captions.actionImport, VaadinIcons.UPLOAD, e -> {
 				Window window = VaadinUiUtil.showPopupWindow(new InfrastructureImportLayout(InfrastructureType.REGION));
 				window.setCaption(I18nProperties.getString(Strings.headingImportRegions));
 				window.addCloseListener(c -> {
 					grid.reload();
 				});
-			});
+			}, ValoTheme.BUTTON_PRIMARY);
+
 			addHeaderComponent(importButton);
+		} else if (!infrastructureDataEditable) {
+			Label infrastructureDataLocked = new Label();
+			infrastructureDataLocked.setCaption(I18nProperties.getString(Strings.headingInfrastructureLocked));
+			infrastructureDataLocked.setValue(I18nProperties.getString(Strings.messageInfrastructureLocked));
+			infrastructureDataLocked.setIcon(VaadinIcons.WARNING);
+			addHeaderComponent(infrastructureDataLocked);
 		}
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_EXPORT)) {
-			Button exportButton = new Button(I18nProperties.getCaption(Captions.export));
+			Button exportButton = ButtonHelper.createIconButton(Captions.export, VaadinIcons.TABLE, null, ValoTheme.BUTTON_PRIMARY);
 			exportButton.setDescription(I18nProperties.getDescription(Descriptions.descExportButton));
-			exportButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
-			exportButton.setIcon(VaadinIcons.TABLE);
 			addHeaderComponent(exportButton);
 
-			StreamResource streamResource = new GridExportStreamResource(grid, "sormas_regions", "sormas_regions_" + DateHelper.formatDateForExport(new Date()) + ".csv", RegionsGrid.EDIT_BTN_ID);
+			StreamResource streamResource = GridExportStreamResource
+				.createStreamResourceWithSelectedItems(grid, this::getSelectedRows, ExportEntityName.REGIONS, RegionsGrid.EDIT_BTN_ID);
 			FileDownloader fileDownloader = new FileDownloader(streamResource);
 			fileDownloader.extend(exportButton);
 		}
 
-		if (UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_CREATE)) {
-			createButton = new Button(I18nProperties.getCaption(Captions.actionNewEntry));
-			createButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
-			createButton.setIcon(VaadinIcons.PLUS_CIRCLE);
-			createButton.addClickListener(
-					e -> ControllerProvider.getInfrastructureController().createRegion());
+		if (infrastructureDataEditable && UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_CREATE)) {
+			createButton = ButtonHelper.createIconButton(
+				Captions.actionNewEntry,
+				VaadinIcons.PLUS_CIRCLE,
+				e -> ControllerProvider.getInfrastructureController().createRegion(),
+				ValoTheme.BUTTON_PRIMARY);
+
 			addHeaderComponent(createButton);
 		}
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
-			Button btnEnterBulkEditMode = new Button(I18nProperties.getCaption(Captions.actionEnterBulkEditMode));
-			btnEnterBulkEditMode.setId("enterBulkEditMode");
-			btnEnterBulkEditMode.setIcon(VaadinIcons.CHECK_SQUARE_O);
+			Button btnEnterBulkEditMode = ButtonHelper.createIconButton(Captions.actionEnterBulkEditMode, VaadinIcons.CHECK_SQUARE_O, null);
 			btnEnterBulkEditMode.setVisible(!viewConfiguration.isInEagerMode());
 			addHeaderComponent(btnEnterBulkEditMode);
 
-			Button btnLeaveBulkEditMode = new Button(I18nProperties.getCaption(Captions.actionLeaveBulkEditMode));
-			btnLeaveBulkEditMode.setId("leaveBulkEditMode");
-			btnLeaveBulkEditMode.setIcon(VaadinIcons.CLOSE);
+			Button btnLeaveBulkEditMode =
+				ButtonHelper.createIconButton(Captions.actionLeaveBulkEditMode, VaadinIcons.CLOSE, null, ValoTheme.BUTTON_PRIMARY);
 			btnLeaveBulkEditMode.setVisible(viewConfiguration.isInEagerMode());
-			btnLeaveBulkEditMode.setStyleName(ValoTheme.BUTTON_PRIMARY);
 			addHeaderComponent(btnLeaveBulkEditMode);
 
 			btnEnterBulkEditMode.addClickListener(e -> {
-				bulkOperationsDropdown.setVisible(true);
 				viewConfiguration.setInEagerMode(true);
+				bulkOperationsDropdown.setVisible(isBulkOperationsDropdownVisible());
 				btnEnterBulkEditMode.setVisible(false);
 				btnLeaveBulkEditMode.setVisible(true);
 				searchField.setEnabled(false);
@@ -154,8 +162,8 @@ public class RegionsView extends AbstractConfigurationView {
 				grid.reload();
 			});
 			btnLeaveBulkEditMode.addClickListener(e -> {
-				bulkOperationsDropdown.setVisible(false);
 				viewConfiguration.setInEagerMode(false);
+				bulkOperationsDropdown.setVisible(false);
 				btnLeaveBulkEditMode.setVisible(false);
 				btnEnterBulkEditMode.setVisible(true);
 				searchField.setEnabled(true);
@@ -166,38 +174,45 @@ public class RegionsView extends AbstractConfigurationView {
 		addComponent(gridLayout);
 	}
 
+	private Set<RegionIndexDto> getSelectedRows() {
+		RegionsGrid facilitiesGrid = this.grid;
+		return this.viewConfiguration.isInEagerMode() ? facilitiesGrid.asMultiSelect().getSelectedItems() : Collections.emptySet();
+	}
+
 	private HorizontalLayout createFilterBar() {
+
 		filterLayout = new HorizontalLayout();
 		filterLayout.setMargin(false);
 		filterLayout.setSpacing(true);
 		filterLayout.setWidth(100, Unit.PERCENTAGE);
 
-		searchField = new TextField();
-		searchField.setWidth(200, Unit.PIXELS);
-		searchField.setInputPrompt(I18nProperties.getString(Strings.promptSearch));
-		searchField.setNullRepresentation("");
+		searchField = new SearchField();
 		searchField.addTextChangeListener(e -> {
 			criteria.nameEpidLike(e.getText());
-			navigateTo(criteria);
+			grid.reload();
 		});
-		CssStyles.style(searchField, CssStyles.FORCE_CAPTION);
 		filterLayout.addComponent(searchField);
 
-		resetButton = new Button(I18nProperties.getCaption(Captions.actionResetFilters));
-		resetButton.setVisible(false);
-		CssStyles.style(resetButton, CssStyles.FORCE_CAPTION);
-		resetButton.addClickListener(event -> {
+		countryFilter = addCountryFilter(filterLayout, country -> {
+			criteria.country(country);
+			grid.reload();
+		}, null);
+
+		resetButton = ButtonHelper.createButton(Captions.actionResetFilters, event -> {
 			ViewModelProviders.of(RegionsView.class).remove(RegionCriteria.class);
 			navigateTo(null);
-		});
+		}, CssStyles.FORCE_CAPTION);
+		resetButton.setVisible(false);
+
 		filterLayout.addComponent(resetButton);
 
 		HorizontalLayout actionButtonsLayout = new HorizontalLayout();
 		actionButtonsLayout.setSpacing(true);
 		{
 			// Show active/archived/all dropdown
-			if (UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_VIEW_ARCHIVED)) {
-				relevanceStatusFilter = new ComboBox();
+			if (UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_VIEW)) {
+				relevanceStatusFilter = ComboBoxHelper.createComboBoxV7();
+				relevanceStatusFilter.setId("relevanceStatus");
 				relevanceStatusFilter.setWidth(220, Unit.PERCENTAGE);
 				relevanceStatusFilter.setNullSelectionAllowed(false);
 				relevanceStatusFilter.addItems((Object[]) EntityRelevanceStatus.values());
@@ -212,30 +227,34 @@ public class RegionsView extends AbstractConfigurationView {
 
 				// Bulk operation dropdown
 				if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
-					bulkOperationsDropdown = new MenuBar();	
-					MenuItem bulkOperationsItem = bulkOperationsDropdown.addItem(I18nProperties.getCaption(Captions.bulkActions), null);
+					bulkOperationsDropdown = MenuBarHelper.createDropDown(
+						Captions.bulkActions,
+						new MenuBarHelper.MenuBarItem(
+							I18nProperties.getCaption(Captions.actionArchiveInfrastructure),
+							VaadinIcons.ARCHIVE,
+							selectedItem -> {
+								ControllerProvider.getInfrastructureController()
+									.archiveOrDearchiveAllSelectedItems(
+										true,
+										grid.asMultiSelect().getSelectedItems(),
+										InfrastructureType.REGION,
+										() -> navigateTo(criteria));
+							},
+							EntityRelevanceStatus.ACTIVE.equals(criteria.getRelevanceStatus())),
+						new MenuBarHelper.MenuBarItem(
+							I18nProperties.getCaption(Captions.actionDearchiveInfrastructure),
+							VaadinIcons.ARCHIVE,
+							selectedItem -> {
+								ControllerProvider.getInfrastructureController()
+									.archiveOrDearchiveAllSelectedItems(
+										false,
+										grid.asMultiSelect().getSelectedItems(),
+										InfrastructureType.REGION,
+										() -> navigateTo(criteria));
+							},
+							EntityRelevanceStatus.ARCHIVED.equals(criteria.getRelevanceStatus())));
 
-					Command archiveCommand = selectedItem -> {
-						ControllerProvider.getInfrastructureController().archiveOrDearchiveAllSelectedItems(true, grid.asMultiSelect().getSelectedItems(), InfrastructureType.REGION, null, new Runnable() {
-							public void run() {
-								navigateTo(criteria);
-							}
-						});
-					};
-					archiveItem = bulkOperationsItem.addItem(I18nProperties.getCaption(Captions.actionArchive), VaadinIcons.ARCHIVE, archiveCommand);
-					archiveItem.setVisible(EntityRelevanceStatus.ACTIVE.equals(criteria.getRelevanceStatus()));
-
-					Command dearchiveCommand = selectedItem -> {
-						ControllerProvider.getInfrastructureController().archiveOrDearchiveAllSelectedItems(false, grid.asMultiSelect().getSelectedItems(), InfrastructureType.REGION, null, new Runnable() {
-							public void run() {
-								navigateTo(criteria);
-							}
-						});
-					};
-					dearchiveItem = bulkOperationsItem.addItem(I18nProperties.getCaption(Captions.actionDearchive), VaadinIcons.ARCHIVE, dearchiveCommand);
-					dearchiveItem.setVisible(EntityRelevanceStatus.ARCHIVED.equals(criteria.getRelevanceStatus()));
-
-					bulkOperationsDropdown.setVisible(viewConfiguration.isInEagerMode() && !EntityRelevanceStatus.ALL.equals(criteria.getRelevanceStatus()));
+					bulkOperationsDropdown.setVisible(isBulkOperationsDropdownVisible());
 					actionButtonsLayout.addComponent(bulkOperationsDropdown);
 				}
 			}
@@ -249,6 +268,7 @@ public class RegionsView extends AbstractConfigurationView {
 
 	@Override
 	public void enter(ViewChangeEvent event) {
+
 		super.enter(event);
 		String params = event.getParameters().trim();
 		if (params.startsWith("?")) {
@@ -260,6 +280,7 @@ public class RegionsView extends AbstractConfigurationView {
 	}
 
 	public void updateFilterComponents() {
+
 		// TODO replace with Vaadin 8 databinding
 		applyingCriteria = true;
 
@@ -269,8 +290,16 @@ public class RegionsView extends AbstractConfigurationView {
 			relevanceStatusFilter.setValue(criteria.getRelevanceStatus());
 		}
 		searchField.setValue(criteria.getNameEpidLike());
+		countryFilter.setValue(criteria.getCountry());
 
 		applyingCriteria = false;
 	}
 
+	private boolean isBulkOperationsDropdownVisible() {
+		boolean infrastructureDataEditable = FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.EDIT_INFRASTRUCTURE_DATA);
+
+		return viewConfiguration.isInEagerMode()
+			&& (EntityRelevanceStatus.ACTIVE.equals(criteria.getRelevanceStatus())
+				|| (infrastructureDataEditable && EntityRelevanceStatus.ARCHIVED.equals(criteria.getRelevanceStatus())));
+	}
 }

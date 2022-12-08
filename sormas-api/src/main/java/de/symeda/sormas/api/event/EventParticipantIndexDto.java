@@ -1,54 +1,88 @@
 package de.symeda.sormas.api.event;
 
 import java.io.Serializable;
+import java.util.Date;
 
+import de.symeda.sormas.api.caze.VaccinationStatus;
 import de.symeda.sormas.api.person.ApproximateAgeType;
-import de.symeda.sormas.api.person.ApproximateAgeType.ApproximateAgeHelper;
 import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.api.sample.PathogenTestResultType;
+import de.symeda.sormas.api.utils.PersonalData;
+import de.symeda.sormas.api.utils.SensitiveData;
+import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableIndexDto;
 
-public class EventParticipantIndexDto implements Serializable {
+public class EventParticipantIndexDto extends PseudonymizableIndexDto implements Serializable {
 
 	private static final long serialVersionUID = 1136399297437006739L;
 
 	public static final String I18N_PREFIX = "EventParticipant";
-	
+
 	public static final String UUID = "uuid";
 	public static final String PERSON_UUID = "personUuid";
 	public static final String CASE_UUID = "caseUuid";
 	public static final String EVENT_UUID = "eventUuid";
-	public static final String NAME = "name";
+	public static final String FIRST_NAME = "firstName";
+	public static final String LAST_NAME = "lastName";
 	public static final String SEX = "sex";
 	public static final String APPROXIMATE_AGE = "approximateAge";
 	public static final String INVOLVEMENT_DESCRIPTION = "involvementDescription";
-	
-	private String uuid;
+	public static final String CONTACT_COUNT = "contactCount";
+	public static final String VACCINATION_STATUS = "vaccinationStatus";
+
 	private String personUuid;
 	private String caseUuid;
 	private String eventUuid;
-	private String name;
+	@PersonalData
+	@SensitiveData
+	private String firstName;
+	@SensitiveData
+	private String lastName;
 	private Sex sex;
-	private String approximateAge;
+	private Integer approximateAge;
+	@SensitiveData
 	private String involvementDescription;
-	
-	public EventParticipantIndexDto(String uuid, String personUuid, String caseUuid, String eventUuid, String firstName,
-			String lastName, Sex sex, Integer approximateAge, ApproximateAgeType approximateAgeType, 
-			String involvementDescription) {
-		this.uuid = uuid;
+	private long contactCount;
+
+	private PathogenTestResultType pathogenTestResult;
+	private Date sampleDateTime;
+
+	private VaccinationStatus vaccinationStatus;
+
+	private boolean isInJurisdiction;
+	private boolean isInJurisdictionOrOwned;
+
+	public EventParticipantIndexDto(
+		String uuid,
+		String personUuid,
+		String caseUuid,
+		String eventUuid,
+		String firstName,
+		String lastName,
+		Sex sex,
+		Integer approximateAge,
+		ApproximateAgeType approximateAgeType,
+		String involvementDescription,
+		PathogenTestResultType pathogenTestResult,
+		Date sampleDateTime,
+		VaccinationStatus vaccinationStatus,
+		String reportingUserUuid,
+		boolean isInJurisdiction,
+		boolean isInJurisdictionOrOwned) {
+
+		super(uuid);
 		this.personUuid = personUuid;
 		this.caseUuid = caseUuid;
 		this.eventUuid = eventUuid;
-		this.name = firstName + " " + lastName;
+		this.firstName = firstName;
+		this.lastName = lastName;
 		this.sex = sex;
-		this.approximateAge = ApproximateAgeHelper.formatApproximateAge(approximateAge, approximateAgeType);
+		this.approximateAge = approximateAge;
 		this.involvementDescription = involvementDescription;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
+		this.pathogenTestResult = pathogenTestResult;
+		this.sampleDateTime = sampleDateTime;
+		this.vaccinationStatus = vaccinationStatus;
+		this.isInJurisdiction = isInJurisdiction;
+		this.isInJurisdictionOrOwned = isInJurisdictionOrOwned;
 	}
 
 	public String getPersonUuid() {
@@ -75,12 +109,20 @@ public class EventParticipantIndexDto implements Serializable {
 		this.eventUuid = eventUuid;
 	}
 
-	public String getName() {
-		return name;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
 	public Sex getSex() {
@@ -91,11 +133,11 @@ public class EventParticipantIndexDto implements Serializable {
 		this.sex = sex;
 	}
 
-	public String getApproximateAge() {
+	public Integer getApproximateAge() {
 		return approximateAge;
 	}
 
-	public void setApproximateAge(String approximateAge) {
+	public void setApproximateAge(Integer approximateAge) {
 		this.approximateAge = approximateAge;
 	}
 
@@ -106,5 +148,48 @@ public class EventParticipantIndexDto implements Serializable {
 	public void setInvolvementDescription(String involvementDescription) {
 		this.involvementDescription = involvementDescription;
 	}
-	
+
+	public long getContactCount() {
+		return contactCount;
+	}
+
+	public void setContactCount(long contactCount) {
+		this.contactCount = contactCount;
+	}
+
+	public PathogenTestResultType getPathogenTestResult() {
+		return pathogenTestResult;
+	}
+
+	public void setPathogenTestResult(PathogenTestResultType pathogenTestResult) {
+		this.pathogenTestResult = pathogenTestResult;
+	}
+
+	public Date getSampleDateTime() {
+		return sampleDateTime;
+	}
+
+	public void setSampleDateTime(Date sampleDateTime) {
+		this.sampleDateTime = sampleDateTime;
+	}
+
+	public VaccinationStatus getVaccinationStatus() {
+		return vaccinationStatus;
+	}
+
+	public void setVaccinationStatus(VaccinationStatus vaccinationStatus) {
+		this.vaccinationStatus = vaccinationStatus;
+	}
+
+	public boolean getInJurisdiction() {
+		return isInJurisdiction;
+	}
+
+	public boolean getInJurisdictionOrOwned() {
+		return isInJurisdictionOrOwned;
+	}
+
+	public EventParticipantReferenceDto toReference() {
+		return new EventParticipantReferenceDto(getUuid(), firstName, lastName);
+	}
 }

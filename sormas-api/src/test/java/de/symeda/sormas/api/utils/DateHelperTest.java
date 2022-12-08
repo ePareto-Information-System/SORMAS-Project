@@ -9,83 +9,215 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.utils;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Test;
+
+import de.symeda.sormas.api.Language;
 
 public class DateHelperTest {
 
 	@Test
+	public void testGetDaysInMonth() {
+
+		assertDays(DateHelper.getDaysInMonth(1, 2010), 31);
+		assertDays(DateHelper.getDaysInMonth(2, 2010), 28);
+		assertDays(DateHelper.getDaysInMonth(3, 2010), 31);
+		assertDays(DateHelper.getDaysInMonth(4, 2010), 30);
+		assertDays(DateHelper.getDaysInMonth(5, 2010), 31);
+		assertDays(DateHelper.getDaysInMonth(6, 2010), 30);
+		assertDays(DateHelper.getDaysInMonth(7, 2010), 31);
+		assertDays(DateHelper.getDaysInMonth(8, 2010), 31);
+		assertDays(DateHelper.getDaysInMonth(9, 2010), 30);
+		assertDays(DateHelper.getDaysInMonth(10, 2010), 31);
+		assertDays(DateHelper.getDaysInMonth(11, 2010), 30);
+		assertDays(DateHelper.getDaysInMonth(12, 2010), 31);
+	}
+
+	@Test
+	public void testGetDaysInMonthLeapYear() {
+
+		// No leap year
+		assertDays(DateHelper.getDaysInMonth(2, 1900), 28);
+		assertDays(DateHelper.getDaysInMonth(2, 2009), 28);
+		assertDays(DateHelper.getDaysInMonth(2, 2010), 28);
+		assertDays(DateHelper.getDaysInMonth(2, 2011), 28);
+
+		// Leap year
+		assertDays(DateHelper.getDaysInMonth(2, null), 29);
+		assertDays(DateHelper.getDaysInMonth(2, 2000), 29);
+		assertDays(DateHelper.getDaysInMonth(2, 2008), 29);
+	}
+
+	/**
+	 * Asserts that all expected days are present in order from 1 to {@code maxDayInMonth}.
+	 */
+	private static void assertDays(List<Integer> days, int maxDayInMonth) {
+
+		Integer[] expectedDays = new Integer[maxDayInMonth];
+		for (int d = 0; d < maxDayInMonth; d++) {
+			expectedDays[d] = d + 1;
+		}
+		assertThat(days, contains(expectedDays));
+	}
+
+	@Test
 	public void testCalculateProperTimePeriodDifferences() {
+
 		Date date = new Date();
-		
+
 		Date start = DateHelper.getStartOfWeek(date);
 		Date end = DateHelper.getEndOfWeek(date);
-		
+
 		// This should be 7
 		int period = DateHelper.getDaysBetween(start, end);
-		
+
 		Date previousStart = DateHelper.getStartOfDay(DateHelper.subtractDays(start, period));
 		Date previousEnd = DateHelper.getEndOfDay(DateHelper.subtractDays(end, period));
-		
+
 		assertEquals(DateHelper.getStartOfWeek(DateHelper.subtractWeeks(date, 1)), previousStart);
 		assertEquals(DateHelper.getEndOfWeek(DateHelper.subtractWeeks(date, 1)), previousEnd);
 	}
-	
+
 	@Test
 	public void testEpiWeekUsesCorrectYear() {
+
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.DAY_OF_MONTH, 31);
 		calendar.set(Calendar.MONTH, 11);
 		calendar.set(Calendar.YEAR, 2018);
-		
+
 		EpiWeek epiWeek = DateHelper.getEpiWeek(calendar.getTime());
-		
+
 		assertEquals(new Integer(1), epiWeek.getWeek());
 		assertEquals(new Integer(2019), epiWeek.getYear());
 	}
-	
+
+	@Test
+	public void testGetSameEpiWeek() {
+
+		EpiWeek selectedEpiWeek = DateHelper.getEpiWeek(DateHelper.getDateZero(2022, Calendar.JANUARY, 17));
+
+		// 0. Edge cases concerning null/empty
+		{
+			assertNull(DateHelper.getSameEpiWeek(null, null));
+			assertNull(DateHelper.getSameEpiWeek(null, Collections.emptyList()));
+			assertNull(DateHelper.getSameEpiWeek(selectedEpiWeek, null));
+			assertNull(DateHelper.getSameEpiWeek(selectedEpiWeek, Collections.emptyList()));
+		}
+
+		int otherYear = 2021;
+
+		// 1a. Get another year with begin of year
+		{
+			EpiWeek result = DateHelper.getSameEpiWeek(selectedEpiWeek, DateHelper.createEpiWeekList(otherYear));
+			assertThat(selectedEpiWeek.getWeek(), equalTo(4));
+			assertThat(result.getWeek(), equalTo(selectedEpiWeek.getWeek()));
+			assertThat(result.getYear(), equalTo(otherYear));
+		}
+
+		selectedEpiWeek = DateHelper.getEpiWeek(DateHelper.getDateZero(2022, Calendar.DECEMBER, 24));
+
+		// 1b. Get another year with end of year
+		{
+			EpiWeek result = DateHelper.getSameEpiWeek(selectedEpiWeek, DateHelper.createEpiWeekList(otherYear));
+			assertThat(selectedEpiWeek.getWeek(), equalTo(52));
+			assertThat(result.getWeek(), equalTo(selectedEpiWeek.getWeek()));
+			assertThat(result.getYear(), equalTo(otherYear));
+		}
+
+		otherYear = 2023;
+
+		// 3. Get another year with 53 epiWeeks
+		{
+			EpiWeek result = DateHelper.getSameEpiWeek(selectedEpiWeek, DateHelper.createEpiWeekList(otherYear));
+			assertThat(selectedEpiWeek.getWeek(), equalTo(52));
+			assertThat(result.getWeek(), equalTo(selectedEpiWeek.getWeek()));
+			assertThat(result.getYear(), equalTo(otherYear));
+		}
+
+		otherYear = 2022;
+		selectedEpiWeek = DateHelper.getEpiWeek(DateHelper.getDateZero(2023, Calendar.DECEMBER, 26));
+
+		// 3. Get from year with 53 epiWeeks
+		{
+			EpiWeek result = DateHelper.getSameEpiWeek(selectedEpiWeek, DateHelper.createEpiWeekList(otherYear));
+			assertThat(selectedEpiWeek.getWeek(), equalTo(53));
+			assertNull(result);
+		}
+	}
+
 	@Test
 	public void testTwoDigitDateTransformationToCurrentCentury() {
+
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(2018, 1, 0);
 		Date referenceDate = calendar.getTime();
-		
+
 		calendar.set(18, 1, 0);
 		Date date = calendar.getTime();
-		
+
 		assertEquals(referenceDate, DateHelper.toCorrectCentury(date, referenceDate));
-		
+
 		calendar.set(87, 1, 0);
 		date = calendar.getTime();
-		
+
 		Date correctCenturyDate = DateHelper.toCorrectCentury(date, referenceDate);
 		calendar.setTime(correctCenturyDate);
-		
+
 		assertEquals(calendar.get(Calendar.YEAR), 1987);
 	}
 
 	@Test
 	public void testToTimestampUpper() throws Exception {
-		
+
 		Date date = new Date(2323231232l);
 		Timestamp timestamp = DateHelper.toTimestampUpper(date);
 		assertEquals(date.getTime(), timestamp.getTime());
 		assertTrue(timestamp.after(new Timestamp(date.getTime())));
 		assertEquals(999999, timestamp.getNanos() % 1000000);
 	}
-	
+
+	@Test
+	public void testFormatBirthdateEN() throws Exception {
+		assertEquals("", DateHelper.formatLocalDate(null, null, null, Language.EN));
+		assertEquals("1990", DateHelper.formatLocalDate(null, null, 1990, Language.EN));
+		assertEquals("7//1990", DateHelper.formatLocalDate(null, 7, 1990, Language.EN));
+		assertEquals("7", DateHelper.formatLocalDate(null, 7, null, Language.EN));
+		assertEquals("7/5", DateHelper.formatLocalDate(5, 7, null, Language.EN));
+		assertEquals("5", DateHelper.formatLocalDate(5, null, null, Language.EN));
+		assertEquals("5/1990", DateHelper.formatLocalDate(5, null, 1990, Language.EN));
+		assertEquals("7/5/1990", DateHelper.formatLocalDate(5, 7, 1990, Language.EN));
+	}
+
+	@Test
+	public void testFormatBirthdateDE() throws Exception {
+		assertEquals("", DateHelper.formatLocalDate(null, null, null, Language.DE));
+		assertEquals("1990", DateHelper.formatLocalDate(null, null, 1990, Language.DE));
+		assertEquals("7.1990", DateHelper.formatLocalDate(null, 7, 1990, Language.DE));
+		assertEquals("7", DateHelper.formatLocalDate(null, 7, null, Language.DE));
+		assertEquals("5.7", DateHelper.formatLocalDate(5, 7, null, Language.DE));
+		assertEquals("5", DateHelper.formatLocalDate(5, null, null, Language.DE));
+		assertEquals("5..1990", DateHelper.formatLocalDate(5, null, 1990, Language.DE));
+		assertEquals("5.7.1990", DateHelper.formatLocalDate(5, 7, 1990, Language.DE));
+	}
 }

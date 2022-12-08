@@ -9,201 +9,827 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.backend.sample;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.hamcrest.MatcherAssert;
+import org.junit.Assert;
 import org.junit.Test;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.InvestigationStatus;
+import de.symeda.sormas.api.common.DeletionDetails;
+import de.symeda.sormas.api.common.DeletionReason;
+import de.symeda.sormas.api.contact.ContactDto;
+import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.event.EventDto;
+import de.symeda.sormas.api.event.EventInvestigationStatus;
+import de.symeda.sormas.api.event.EventParticipantDto;
+import de.symeda.sormas.api.event.EventStatus;
+import de.symeda.sormas.api.event.TypeOfPlace;
+import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.person.PersonDto;
-import de.symeda.sormas.api.person.PersonReferenceDto;
+import de.symeda.sormas.api.sample.AdditionalTestDto;
 import de.symeda.sormas.api.sample.AdditionalTestingStatus;
-import de.symeda.sormas.api.sample.DashboardTestResultDto;
 import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
+import de.symeda.sormas.api.sample.SampleAssociationType;
+import de.symeda.sormas.api.sample.SampleCriteria;
 import de.symeda.sormas.api.sample.SampleDto;
-import de.symeda.sormas.api.sample.SampleFacade;
 import de.symeda.sormas.api.sample.SampleIndexDto;
 import de.symeda.sormas.api.sample.SampleMaterial;
+import de.symeda.sormas.api.sample.SamplePurpose;
+import de.symeda.sormas.api.sample.SampleSimilarityCriteria;
+import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
-import de.symeda.sormas.api.user.UserReferenceDto;
-import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.DateHelper;
+import de.symeda.sormas.api.utils.SortProperty;
+import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.backend.AbstractBeanTest;
+import de.symeda.sormas.backend.TestDataCreator;
 import de.symeda.sormas.backend.TestDataCreator.RDCFEntities;
-import de.symeda.sormas.backend.facility.Facility;
 
 public class SampleFacadeEjbTest extends AbstractBeanTest {
 
 	@Test
-	public void testDashboardTestResultListCreation() {
-		RDCFEntities rdcf = creator.createRDCFEntities("Region", "District", "Community", "Facility");
-		UserDto user = creator.createUser(rdcf.region.getUuid(), rdcf.district.getUuid(), rdcf.facility.getUuid(), "Surv", "Sup", UserRole.SURVEILLANCE_SUPERVISOR);
-		PersonDto cazePerson = creator.createPerson("Case", "Person");
-		CaseDataDto caze = creator.createCase(user.toReference(), cazePerson.toReference(), Disease.EVD, CaseClassification.PROBABLE,
-				InvestigationStatus.PENDING, new Date(), rdcf);
-		SampleDto sample = creator.createSample(caze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
-		creator.createPathogenTest(sample.toReference(), PathogenTestType.MICROSCOPY, caze.getDisease(), new Date(), rdcf.facility, user.toReference(), PathogenTestResultType.POSITIVE, "Positive", true);
-
-		List<DashboardTestResultDto> dashboardTestResultDtos = getSampleTestFacade().getNewTestResultsForDashboard(caze.getRegion(), caze.getDistrict(), caze.getDisease(), DateHelper.subtractDays(new Date(),  1), DateHelper.addDays(new Date(), 1), user.getUuid());
-
-		// List should have one entry
-		assertEquals(1, dashboardTestResultDtos.size());
-	}
-
-	@Test
 	public void testGetIndexList() {
+
 		RDCFEntities rdcf = creator.createRDCFEntities("Region", "District", "Community", "Facility");
-		UserDto user = creator.createUser(rdcf.region.getUuid(), rdcf.district.getUuid(), rdcf.facility.getUuid(), "Surv", "Sup", UserRole.SURVEILLANCE_SUPERVISOR);
+		UserDto user = creator.createUser(
+			rdcf.region.getUuid(),
+			rdcf.district.getUuid(),
+			rdcf.facility.getUuid(),
+			"Surv",
+			"Sup",
+			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
 		PersonDto cazePerson = creator.createPerson("Case", "Person");
-		CaseDataDto caze = creator.createCase(user.toReference(), cazePerson.toReference(), Disease.EVD, CaseClassification.PROBABLE,
-				InvestigationStatus.PENDING, new Date(), rdcf);
+		CaseDataDto caze = creator.createCase(
+			user.toReference(),
+			cazePerson.toReference(),
+			Disease.EVD,
+			CaseClassification.PROBABLE,
+			InvestigationStatus.PENDING,
+			new Date(),
+			rdcf);
 		SampleDto sample = creator.createSample(caze.toReference(), user.toReference(), rdcf.facility);
 		SampleDto referredSample = creator.createSample(caze.toReference(), user.toReference(), rdcf.facility);
 		sample.setReferredTo(referredSample.toReference());
 		creator.createAdditionalTest(sample.toReference());
 		creator.createAdditionalTest(sample.toReference());
-		
-		List<SampleIndexDto> sampleIndexDtos = getSampleFacade().getIndexList(user.getUuid(), null, 0, 100, null);
-		
-		// List should have one entry
+		creator.createPathogenTest(sample.toReference(), caze);
+		PathogenTestDto test = creator.createPathogenTest(
+			sample.toReference(),
+			PathogenTestType.CQ_VALUE_DETECTION,
+			caze.getDisease(),
+			new Date(),
+			rdcf.facility,
+			caze.getReportingUser(),
+			PathogenTestResultType.PENDING,
+			"",
+			false);
+		test.setCqValue(1.5F);
+		getPathogenTestFacade().savePathogenTest(test);
+
+		List<SampleIndexDto> sampleIndexDtos = getSampleFacade().getIndexList(new SampleCriteria(), 0, 100, null);
+
 		assertEquals(2, sampleIndexDtos.size());
-		
+
 		// First sample should have an additional test
 		assertEquals(AdditionalTestingStatus.PERFORMED, sampleIndexDtos.get(1).getAdditionalTestingStatus());
+
+		assertEquals(PathogenTestType.CQ_VALUE_DETECTION, sampleIndexDtos.get(1).getTypeOfLastTest());
+		assertTrue(sampleIndexDtos.get(1).getLastTestCqValue().equals(1.5F));
+
+		// Referenced user has to find his samples
+		loginWith(user);
+		List<SampleIndexDto> result = getSampleFacade().getIndexList(new SampleCriteria(), 0, 100, null);
+		assertThat(
+			result.stream().map(e -> e.getUuid()).collect(Collectors.toList()),
+			containsInAnyOrder(sample.getUuid(), referredSample.getUuid()));
+	}
+
+	@Test
+	public void testCount() {
+
+		RDCFEntities rdcf = creator.createRDCFEntities("Region", "District", "Community", "Facility");
+		UserDto user = creator.createUser(
+			rdcf.region.getUuid(),
+			rdcf.district.getUuid(),
+			rdcf.facility.getUuid(),
+			"Surv",
+			"Sup",
+			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
+		PersonDto cazePerson = creator.createPerson("Case", "Person");
+		CaseDataDto caze = creator.createCase(
+			user.toReference(),
+			cazePerson.toReference(),
+			Disease.EVD,
+			CaseClassification.PROBABLE,
+			InvestigationStatus.PENDING,
+			new Date(),
+			rdcf);
+		SampleDto sample = creator.createSample(caze.toReference(), user.toReference(), rdcf.facility);
+		SampleDto referredSample = creator.createSample(caze.toReference(), user.toReference(), rdcf.facility);
+		sample.setReferredTo(referredSample.toReference());
+		creator.createAdditionalTest(sample.toReference());
+		creator.createAdditionalTest(sample.toReference());
+
+		long count = getSampleFacade().count(new SampleCriteria());
+		assertEquals(2, count);
+	}
+
+	@Test
+	public void testGetIndexListBySampleAssociationType() {
+
+		TestDataCreator.RDCF rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
+		UserDto user = useSurveillanceOfficerLogin(rdcf);
+		PersonDto cazePerson = creator.createPerson("Case", "Person1");
+		CaseDataDto caze = creator.createCase(
+			user.toReference(),
+			cazePerson.toReference(),
+			Disease.EVD,
+			CaseClassification.PROBABLE,
+			InvestigationStatus.PENDING,
+			new Date(),
+			rdcf);
+
+		PersonDto contactPerson = creator.createPerson("Contact", "Person2");
+		ContactDto contact = creator.createContact(user.toReference(), contactPerson.toReference(), caze);
+		SampleDto cazeSample = creator.createSample(caze.toReference(), user.toReference(), rdcf.facility);
+		cazeSample.setSampleDateTime(DateHelper.subtractDays(new Date(), 5));
+		getSampleFacade().saveSample(cazeSample);
+		SampleDto sample = creator.createSample(
+			contact.toReference(),
+			DateHelper.subtractDays(new Date(), 4),
+			new Date(),
+			user.toReference(),
+			SampleMaterial.BLOOD,
+			rdcf.facility);
+		SampleDto referredSample = creator.createSample(
+			contact.toReference(),
+			DateHelper.subtractDays(new Date(), 3),
+			new Date(),
+			user.toReference(),
+			SampleMaterial.BLOOD,
+			rdcf.facility);
+		sample.setReferredTo(referredSample.toReference());
+		creator.createAdditionalTest(sample.toReference());
+
+		EventDto event = creator.createEvent(
+			EventStatus.SIGNAL,
+			EventInvestigationStatus.PENDING,
+			"Title",
+			"Description",
+			"First",
+			"Name",
+			"12345",
+			TypeOfPlace.PUBLIC_PLACE,
+			DateHelper.subtractDays(new Date(), 2),
+			new Date(),
+			user.toReference(),
+			user.toReference(),
+			Disease.EVD,
+			rdcf.district);
+
+		EventParticipantDto eventParticipant = creator.createEventParticipant(event.toReference(), cazePerson, user.toReference());
+		SampleDto sampleOfEventParticipant = creator.createSample(
+			eventParticipant.toReference(),
+			DateHelper.subtractDays(new Date(), 2),
+			new Date(),
+			user.toReference(),
+			SampleMaterial.BLOOD,
+			rdcf.facility);
+
+		long count = getSampleFacade().count(new SampleCriteria());
+		assertEquals(4, count);
+
+		final ArrayList<SortProperty> sortProperties = new ArrayList<>();
+		sortProperties.add(new SortProperty(SampleIndexDto.SAMPLE_DATE_TIME));
+		sortProperties.add(new SortProperty(SampleIndexDto.ASSOCIATED_EVENT_PARTICIPANT, false));
+		final List<SampleIndexDto> sampleList1 = getSampleFacade().getIndexList(new SampleCriteria(), 0, 100, sortProperties);
+		assertEquals(4, sampleList1.size());
+
+		final SampleIndexDto sample11 = sampleList1.get(0);
+		Assert.assertEquals(cazeSample.getUuid(), sample11.getUuid());
+		Assert.assertEquals(caze.getUuid(), sample11.getAssociatedCase().getUuid());
+		Assert.assertTrue(sample11.getAssociatedCase().getCaption().startsWith("Case PERSON1"));
+
+		final SampleIndexDto sample12 = sampleList1.get(1);
+		Assert.assertEquals(sample.getUuid(), sample12.getUuid());
+		Assert.assertEquals(contact.getUuid(), sample12.getAssociatedContact().getUuid());
+		Assert.assertTrue(sample12.getAssociatedContact().getCaption().startsWith("Contact PERSON2"));
+
+		final SampleIndexDto sample13 = sampleList1.get(2);
+		Assert.assertEquals(referredSample.getUuid(), sample13.getUuid());
+		Assert.assertEquals(contact.getUuid(), sample13.getAssociatedContact().getUuid());
+		Assert.assertTrue(sample13.getAssociatedContact().getCaption().startsWith("Contact PERSON2"));
+
+		final SampleIndexDto sample14 = sampleList1.get(3);
+		Assert.assertEquals(sampleOfEventParticipant.getUuid(), sample14.getUuid());
+		Assert.assertEquals(eventParticipant.getUuid(), sample14.getAssociatedEventParticipant().getUuid());
+		Assert.assertEquals(rdcf.district.getCaption(), sample14.getDistrict());
+
+		assertEquals(2, getSampleFacade().count(new SampleCriteria().sampleAssociationType(SampleAssociationType.CONTACT)));
+		assertEquals(
+			2,
+			getSampleFacade().getIndexList(new SampleCriteria().sampleAssociationType(SampleAssociationType.CONTACT), 0, 100, null).size());
+		assertEquals(1, getSampleFacade().getIndexList(new SampleCriteria().sampleAssociationType(SampleAssociationType.CASE), 0, 100, null).size());
+		assertEquals(
+			1,
+			getSampleFacade().getIndexList(new SampleCriteria().sampleAssociationType(SampleAssociationType.EVENT_PARTICIPANT), 0, 100, null).size());
+	}
+
+	@Test
+	public void testGetIndexListForCaseConvertedFromContact() {
+
+		RDCFEntities rdcf = creator.createRDCFEntities("Region", "District", "Community", "Facility");
+		UserDto user = creator.createUser(
+			rdcf.region.getUuid(),
+			rdcf.district.getUuid(),
+			rdcf.facility.getUuid(),
+			"Surv",
+			"Sup",
+			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
+		PersonDto cazePerson = creator.createPerson("Case", "Person1");
+		CaseDataDto caze = creator.createCase(
+			user.toReference(),
+			cazePerson.toReference(),
+			Disease.EVD,
+			CaseClassification.PROBABLE,
+			InvestigationStatus.PENDING,
+			new Date(),
+			rdcf);
+
+		PersonDto contactPerson = creator.createPerson("Contact", "Person2");
+		ContactDto contact = creator.createContact(user.toReference(), contactPerson.toReference(), caze);
+		SampleDto cazeSample = creator.createSample(caze.toReference(), user.toReference(), rdcf.facility);
+		cazeSample.setSampleDateTime(DateHelper.subtractDays(new Date(), 5));
+		getSampleFacade().saveSample(cazeSample);
+		SampleDto sample = creator.createSample(
+			contact.toReference(),
+			DateHelper.subtractDays(new Date(), 4),
+			new Date(),
+			user.toReference(),
+			SampleMaterial.BLOOD,
+			rdcf.facility);
+		SampleDto referredSample = creator.createSample(
+			contact.toReference(),
+			DateHelper.subtractDays(new Date(), 3),
+			new Date(),
+			user.toReference(),
+			SampleMaterial.BLOOD,
+			rdcf.facility);
+		sample.setReferredTo(referredSample.toReference());
+		creator.createAdditionalTest(sample.toReference());
+
+		CaseDataDto caseDataDto = CaseDataDto.buildFromContact(contact);
+		caseDataDto.setResponsibleRegion(new RegionReferenceDto(rdcf.region.getUuid(), null, null));
+		caseDataDto.setResponsibleDistrict(new DistrictReferenceDto(rdcf.district.getUuid(), null, null));
+		caseDataDto.setFacilityType(rdcf.facility.getType());
+		caseDataDto.setHealthFacility(new FacilityReferenceDto(rdcf.facility.getUuid(), null, null));
+		caseDataDto.setReportingUser(user.toReference());
+		CaseDataDto caseConvertedFromContact = getCaseFacade().save(caseDataDto);
+
+		getCaseFacade().setSampleAssociations(contact.toReference(), caseConvertedFromContact.toReference());
+
+		final SampleCriteria samplesConnectedToConvertedCaseCriteria = new SampleCriteria().caze(caseConvertedFromContact.toReference());
+		assertEquals(2, getSampleFacade().count(samplesConnectedToConvertedCaseCriteria));
+
+		final ArrayList<SortProperty> sortProperties = new ArrayList<>();
+		sortProperties.add(new SortProperty(SampleIndexDto.SAMPLE_DATE_TIME));
+		sortProperties.add(new SortProperty(SampleIndexDto.ASSOCIATED_CONTACT));
+		final List<SampleIndexDto> samplesOfConvertedCase =
+			getSampleFacade().getIndexList(samplesConnectedToConvertedCaseCriteria, 0, 100, sortProperties);
+		assertEquals(2, samplesOfConvertedCase.size());
+
+		final SampleIndexDto sample11 = samplesOfConvertedCase.get(0);
+		Assert.assertEquals(sample.getUuid(), sample11.getUuid());
+		Assert.assertEquals(caseConvertedFromContact.getUuid(), sample11.getAssociatedCase().getUuid());
+		Assert.assertEquals(contact.getUuid(), sample11.getAssociatedContact().getUuid());
+
+		final SampleIndexDto sample12 = samplesOfConvertedCase.get(1);
+		Assert.assertEquals(referredSample.getUuid(), sample12.getUuid());
+		Assert.assertEquals(contact.getUuid(), sample12.getAssociatedContact().getUuid());
+		Assert.assertEquals(caseConvertedFromContact.getUuid(), sample11.getAssociatedCase().getUuid());
 	}
 
 	@Test
 	public void testSampleDeletion() {
+
 		Date since = new Date();
-		
+
 		RDCFEntities rdcf = creator.createRDCFEntities("Region", "District", "Community", "Facility");
-		UserDto user = creator.createUser(rdcf.region.getUuid(), rdcf.district.getUuid(), rdcf.facility.getUuid(), "Surv", "Sup", UserRole.SURVEILLANCE_SUPERVISOR);
-		UserDto admin = creator.createUser(rdcf.region.getUuid(), rdcf.district.getUuid(), rdcf.facility.getUuid(), "Ad", "Min", UserRole.ADMIN);
+		UserDto user = creator.createUser(
+			rdcf.region.getUuid(),
+			rdcf.district.getUuid(),
+			rdcf.facility.getUuid(),
+			"Surv",
+			"Sup",
+			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
+		UserDto admin = getUserFacade().getByUserName("admin");
 		String adminUuid = admin.getUuid();
 		PersonDto cazePerson = creator.createPerson("Case", "Person");
-		CaseDataDto caze = creator.createCase(user.toReference(), cazePerson.toReference(), Disease.EVD, CaseClassification.PROBABLE,
-				InvestigationStatus.PENDING, new Date(), rdcf);
+		CaseDataDto caze = creator.createCase(
+			user.toReference(),
+			cazePerson.toReference(),
+			Disease.EVD,
+			CaseClassification.PROBABLE,
+			InvestigationStatus.PENDING,
+			new Date(),
+			rdcf);
 		SampleDto sample = creator.createSample(caze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
-		PathogenTestDto sampleTest = creator.createPathogenTest(sample.toReference(), PathogenTestType.MICROSCOPY, caze.getDisease(), new Date(), rdcf.facility, user.toReference(), PathogenTestResultType.POSITIVE, "Positive", true);
+		PathogenTestDto sampleTest = creator.createPathogenTest(
+			sample.toReference(),
+			PathogenTestType.MICROSCOPY,
+			caze.getDisease(),
+			new Date(),
+			rdcf.facility,
+			user.toReference(),
+			PathogenTestResultType.POSITIVE,
+			"Positive",
+			true);
 
 		// Database should contain the created sample and sample test
 		assertNotNull(getSampleFacade().getSampleByUuid(sample.getUuid()));
 		assertNotNull(getSampleTestFacade().getByUuid(sampleTest.getUuid()));
 
-		getSampleFacade().deleteSample(sample.toReference(), adminUuid);
+		getSampleFacade().deleteSample(sample.toReference(), new DeletionDetails(DeletionReason.OTHER_REASON, "test reason"));
 
 		// Sample and pathogen test should be marked as deleted
-		assertTrue(getSampleFacade().getDeletedUuidsSince(user.getUuid(), since).contains(sample.getUuid()));
-		assertTrue(getSampleTestFacade().getDeletedUuidsSince(user.getUuid(), since).contains(sampleTest.getUuid()));
+		assertTrue(getSampleFacade().getDeletedUuidsSince(since).contains(sample.getUuid()));
+		assertTrue(getSampleTestFacade().getDeletedUuidsSince(since).contains(sampleTest.getUuid()));
+		assertEquals(DeletionReason.OTHER_REASON, getSampleFacade().getSampleByUuid(sample.getUuid()).getDeletionReason());
+		assertEquals("test reason", getSampleFacade().getSampleByUuid(sample.getUuid()).getOtherDeletionReason());
 	}
-	
+
+	@Test
+	public void testAllSamplesDeletionWithOneAdditionalTest() {
+
+		Date since = new Date();
+
+		RDCFEntities rdcf = creator.createRDCFEntities("Region", "District", "Community", "Facility");
+		UserDto user = creator.createUser(
+			rdcf.region.getUuid(),
+			rdcf.district.getUuid(),
+			rdcf.facility.getUuid(),
+			"Surv",
+			"Sup",
+			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
+
+		//1st Case person
+		PersonDto firstCazePerson = creator.createPerson("FirstCase", "FirstPerson");
+		CaseDataDto firstCaze = creator.createCase(
+			user.toReference(),
+			firstCazePerson.toReference(),
+			Disease.EVD,
+			CaseClassification.PROBABLE,
+			InvestigationStatus.PENDING,
+			new Date(),
+			rdcf);
+		SampleDto firstSample =
+			creator.createSample(firstCaze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
+		SampleDto secondSample =
+			creator.createSample(firstCaze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
+		PathogenTestDto firstSamplePathogenTest = creator.createPathogenTest(
+			firstSample.toReference(),
+			PathogenTestType.MICROSCOPY,
+			firstCaze.getDisease(),
+			new Date(),
+			rdcf.facility,
+			user.toReference(),
+			PathogenTestResultType.POSITIVE,
+			"Positive",
+			true);
+		AdditionalTestDto firstSampleAdditionalTest = creator.createAdditionalTest(firstSample.toReference());
+
+		// Database should contain the created sample and sample test
+		assertNotNull(getSampleTestFacade().getByUuid(firstSamplePathogenTest.getUuid()));
+		assertNotNull(getAdditionalTestFacade().getByUuid(firstSampleAdditionalTest.getUuid()));
+
+		getSampleFacade().deleteAllSamples(
+			Arrays.asList(firstSample.getUuid(), secondSample.getUuid()),
+			new DeletionDetails(DeletionReason.OTHER_REASON, "test reason"));
+
+		// Sample and pathogen test should be marked as deleted, additional test should be deleted
+		List<String> sampleUuids = getSampleFacade().getDeletedUuidsSince(since);
+		assertTrue(sampleUuids.contains(firstSample.getUuid()));
+		assertTrue(sampleUuids.contains(secondSample.getUuid()));
+		assertTrue(getSampleTestFacade().getDeletedUuidsSince(since).contains(firstSamplePathogenTest.getUuid()));
+		assertNull(getAdditionalTestFacade().getByUuid(firstSampleAdditionalTest.getUuid()));
+	}
+
+	@Test
+	public void testAllSamplesDeletionWithMultipleAdditionalTest() {
+
+		Date since = new Date();
+
+		RDCFEntities rdcf = creator.createRDCFEntities("Region", "District", "Community", "Facility");
+		UserDto user = creator.createUser(
+			rdcf.region.getUuid(),
+			rdcf.district.getUuid(),
+			rdcf.facility.getUuid(),
+			"Surv",
+			"Sup",
+			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
+
+		PersonDto secondCazePerson = creator.createPerson("SecondCase", "SecondPerson");
+		CaseDataDto secondCaze = creator.createCase(
+			user.toReference(),
+			secondCazePerson.toReference(),
+			Disease.ACUTE_VIRAL_HEPATITIS,
+			CaseClassification.NOT_CLASSIFIED,
+			InvestigationStatus.PENDING,
+			new Date(),
+			rdcf);
+		SampleDto thirdSample =
+			creator.createSample(secondCaze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
+		SampleDto forthSample =
+			creator.createSample(secondCaze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
+		PathogenTestDto secondSamplePathogenTest = creator.createPathogenTest(
+			thirdSample.toReference(),
+			PathogenTestType.RAPID_TEST,
+			secondCaze.getDisease(),
+			new Date(),
+			rdcf.facility,
+			user.toReference(),
+			PathogenTestResultType.INDETERMINATE,
+			"Indeterminate",
+			true);
+		PathogenTestDto thirdSamplePathogenTest = creator.createPathogenTest(
+			forthSample.toReference(),
+			PathogenTestType.CQ_VALUE_DETECTION,
+			secondCaze.getDisease(),
+			new Date(),
+			rdcf.facility,
+			user.toReference(),
+			PathogenTestResultType.NOT_DONE,
+			"Not done",
+			true);
+		AdditionalTestDto secondSampleAdditionalTest = creator.createAdditionalTest(thirdSample.toReference());
+		AdditionalTestDto thirdSampleAdditionalTest = creator.createAdditionalTest(forthSample.toReference());
+
+		// Database should contain the created sample, sample test and additional tests
+		assertNotNull(getSampleTestFacade().getByUuid(secondSamplePathogenTest.getUuid()));
+		assertNotNull(getSampleTestFacade().getByUuid(thirdSamplePathogenTest.getUuid()));
+		assertNotNull(getAdditionalTestFacade().getByUuid(secondSampleAdditionalTest.getUuid()));
+		assertNotNull(getAdditionalTestFacade().getByUuid(thirdSampleAdditionalTest.getUuid()));
+
+		getSampleFacade().deleteAllSamples(
+			Arrays.asList(thirdSample.getUuid(), forthSample.getUuid()),
+			new DeletionDetails(DeletionReason.OTHER_REASON, "test reason"));
+
+		// Sample and pathogen test should be marked as deleted, additional tests should be deleted
+		List<String> sampleUuids = getSampleFacade().getDeletedUuidsSince(since);
+		assertTrue(sampleUuids.contains(thirdSample.getUuid()));
+		assertTrue(sampleUuids.contains(forthSample.getUuid()));
+		assertTrue(getSampleTestFacade().getDeletedUuidsSince(since).contains(secondSamplePathogenTest.getUuid()));
+		assertTrue(getSampleTestFacade().getDeletedUuidsSince(since).contains(thirdSamplePathogenTest.getUuid()));
+		assertNull(getAdditionalTestFacade().getByUuid(secondSampleAdditionalTest.getUuid()));
+		assertNull(getAdditionalTestFacade().getByUuid(thirdSampleAdditionalTest.getUuid()));
+	}
+
 	@Test
 	public void testArchivedSampleNotGettingTransfered() {
+
 		RDCFEntities rdcf = creator.createRDCFEntities("Region", "District", "Community", "Facility");
-		UserDto user = creator.createUser(rdcf.region.getUuid(), rdcf.district.getUuid(), rdcf.facility.getUuid(), "Surv", "Sup", UserRole.SURVEILLANCE_SUPERVISOR);
+		UserDto user = creator.createUser(
+			rdcf.region.getUuid(),
+			rdcf.district.getUuid(),
+			rdcf.facility.getUuid(),
+			"Surv",
+			"Sup",
+			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
 		PersonDto cazePerson = creator.createPerson("Case", "Person");
-		CaseDataDto caze = creator.createCase(user.toReference(), cazePerson.toReference(), Disease.EVD, CaseClassification.PROBABLE,
-				InvestigationStatus.PENDING, new Date(), rdcf);
+		CaseDataDto caze = creator.createCase(
+			user.toReference(),
+			cazePerson.toReference(),
+			Disease.EVD,
+			CaseClassification.PROBABLE,
+			InvestigationStatus.PENDING,
+			new Date(),
+			rdcf);
 		SampleDto sample = creator.createSample(caze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
-		creator.createPathogenTest(sample.toReference(), PathogenTestType.MICROSCOPY, caze.getDisease(), new Date(), rdcf.facility, user.toReference(), PathogenTestResultType.POSITIVE, "Positive", true);
+		creator.createPathogenTest(
+			sample.toReference(),
+			PathogenTestType.MICROSCOPY,
+			caze.getDisease(),
+			new Date(),
+			rdcf.facility,
+			user.toReference(),
+			PathogenTestResultType.POSITIVE,
+			"Positive",
+			true);
 
 		// getAllActiveSamples/getAllActiveSampleTests and getAllUuids should return length 1
-		assertEquals(1, getSampleFacade().getAllActiveSamplesAfter(null, user.getUuid()).size());
-		assertEquals(1, getSampleFacade().getAllActiveUuids(user.getUuid()).size());
-		assertEquals(1, getSampleTestFacade().getAllActivePathogenTestsAfter(null, user.getUuid()).size());
-		assertEquals(1, getSampleTestFacade().getAllActiveUuids(user.getUuid()).size());
-		
-		getCaseFacade().archiveOrDearchiveCase(caze.getUuid(), true);
-		
+		assertEquals(1, getSampleFacade().getAllActiveSamplesAfter(null).size());
+		assertEquals(1, getSampleFacade().getAllActiveUuids().size());
+		assertEquals(1, getSampleTestFacade().getAllActivePathogenTestsAfter(null).size());
+		assertEquals(1, getSampleTestFacade().getAllActiveUuids().size());
+
+		getCaseFacade().archive(caze.getUuid(), null);
+
 		// getAllActiveSamples/getAllActiveSampleTests and getAllUuids should return length 0
-		assertEquals(0, getSampleFacade().getAllActiveSamplesAfter(null, user.getUuid()).size());
-		assertEquals(0, getSampleFacade().getAllActiveUuids(user.getUuid()).size());
-		assertEquals(0, getSampleTestFacade().getAllActivePathogenTestsAfter(null, user.getUuid()).size());
-		assertEquals(0, getSampleTestFacade().getAllActiveUuids(user.getUuid()).size());
+		assertEquals(0, getSampleFacade().getAllActiveSamplesAfter(null).size());
+		assertEquals(0, getSampleFacade().getAllActiveUuids().size());
+		assertEquals(0, getSampleTestFacade().getAllActivePathogenTestsAfter(null).size());
+		assertEquals(0, getSampleTestFacade().getAllActiveUuids().size());
 
-		getCaseFacade().archiveOrDearchiveCase(caze.getUuid(), false);
+		getCaseFacade().dearchive(Collections.singletonList(caze.getUuid()), null);
 
 		// getAllActiveSamples/getAllActiveSampleTests and getAllUuids should return length 1
-		assertEquals(1, getSampleFacade().getAllActiveSamplesAfter(null, user.getUuid()).size());
-		assertEquals(1, getSampleFacade().getAllActiveUuids(user.getUuid()).size());
-		assertEquals(1, getSampleTestFacade().getAllActivePathogenTestsAfter(null, user.getUuid()).size());
-		assertEquals(1, getSampleTestFacade().getAllActiveUuids(user.getUuid()).size());
+		assertEquals(1, getSampleFacade().getAllActiveSamplesAfter(null).size());
+		assertEquals(1, getSampleFacade().getAllActiveUuids().size());
+		assertEquals(1, getSampleTestFacade().getAllActivePathogenTestsAfter(null).size());
+		assertEquals(1, getSampleTestFacade().getAllActiveUuids().size());
 	}
 
 	@Test
-	public void testGetNewTestResultCountByResultType() {
+	public void testGetByCaseUuids() {
 
-		RDCFEntities rdcf = creator.createRDCFEntities();
-		UserReferenceDto user = creator.createUser(rdcf).toReference();
-		PersonReferenceDto person1 = creator.createPerson("Heinz", "First").toReference();
-		PersonReferenceDto person2 = creator.createPerson("Heinz", "Second").toReference();
-		CaseDataDto case1 = creator.createCase(user, person1, rdcf);
-		CaseDataDto case2 = creator.createCase(user, person2, rdcf);
-		
-		List<Long> caseIds = getCaseService().getAllIds(null);
+		RDCFEntities rdcf = creator.createRDCFEntities("Region", "District", "Community", "Facility");
+		UserDto user = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
+		PersonDto person = creator.createPerson();
+		CaseDataDto caze = creator.createCase(user.toReference(), person.toReference(), rdcf);
+		CaseDataDto caze2 = creator.createCase(user.toReference(), person.toReference(), rdcf);
+		CaseDataDto caze3 = creator.createCase(user.toReference(), person.toReference(), rdcf);
 
-		// no existing samples
-		SampleFacade sampleFacade = getSampleFacade();
-		Map<PathogenTestResultType, Long> resultMap = sampleFacade.getNewTestResultCountByResultType(caseIds);
-		assertEquals(new Long(0), resultMap.values().stream().collect(Collectors.summingLong(Long::longValue)));
-		assertNull(resultMap.getOrDefault(PathogenTestResultType.INDETERMINATE, null));
-		assertNull(resultMap.getOrDefault(PathogenTestResultType.NEGATIVE, null));
-		assertNull(resultMap.getOrDefault(PathogenTestResultType.PENDING, null));
-		assertNull(resultMap.getOrDefault(PathogenTestResultType.POSITIVE, null));
+		SampleDto sample = creator.createSample(caze.toReference(), user.toReference(), rdcf.facility);
+		SampleDto sample2 = creator.createSample(caze.toReference(), user.toReference(), rdcf.facility);
+		SampleDto sample3 = creator.createSample(caze2.toReference(), user.toReference(), rdcf.facility);
+		creator.createSample(caze3.toReference(), user.toReference(), rdcf.facility);
 
-		// one pending sample with in one case
-		Facility lab = creator.createFacility("facility", rdcf.region, rdcf.district, rdcf.community);
-		creator.createSample(case1.toReference(), user, lab);
+		List<SampleDto> samples = getSampleFacade().getByCaseUuids(Arrays.asList(caze.getUuid(), caze2.getUuid()));
 
-		resultMap = sampleFacade.getNewTestResultCountByResultType(caseIds);
-		assertEquals(new Long(1), resultMap.values().stream().collect(Collectors.summingLong(Long::longValue)));
-		assertNull(resultMap.getOrDefault(PathogenTestResultType.INDETERMINATE, null));
-		assertNull(resultMap.getOrDefault(PathogenTestResultType.NEGATIVE, null));
-		assertEquals(new Long(1), resultMap.getOrDefault(PathogenTestResultType.PENDING, null));
-		assertNull(resultMap.getOrDefault(PathogenTestResultType.POSITIVE, null));
+		assertThat(samples, hasSize(3));
+		assertThat(samples, contains(sample, sample2, sample3));
+	}
 
-		// one pending sample in each of two cases
-		creator.createSample(case2.toReference(), user, lab);
+	@Test
+	public void testGetSimilarSamples() {
+		TestDataCreator.RDCF rdcf = creator.createRDCF();
+		UserDto officer = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER));
+		CaseDataDto caze = creator.createCase(officer.toReference(), creator.createPerson().toReference(), rdcf);
 
-		resultMap = sampleFacade.getNewTestResultCountByResultType(caseIds);
-		assertEquals(new Long(2), resultMap.values().stream().collect(Collectors.summingLong(Long::longValue)));
-		assertNull(resultMap.getOrDefault(PathogenTestResultType.INDETERMINATE, null));
-		assertNull(resultMap.getOrDefault(PathogenTestResultType.NEGATIVE, null));
-		assertEquals(new Long(2), resultMap.getOrDefault(PathogenTestResultType.PENDING, null));
-		assertNull(resultMap.getOrDefault(PathogenTestResultType.POSITIVE, null));
+		Date sampleDateTime1 = DateHelper.parseDate("11.02.2021", new SimpleDateFormat("dd.MM.yyyy"));
+		creator.createSample(caze.toReference(), officer.toReference(), rdcf.facility, (s) -> {
+			s.setLabSampleID("case_sample_id");
+			s.setSampleDateTime(sampleDateTime1);
+			s.setSampleMaterial(SampleMaterial.BLOOD);
+		});
 
-		// one pending sample in each of two cases
-		// and one positive sample in one of the two cases
-		SampleDto sample = creator.createSample(case1.toReference(), user, lab);
-		sample.setPathogenTestResult(PathogenTestResultType.POSITIVE);
-		sampleFacade.saveSample(sample);
+		Date sampleDateTime2 = DateHelper.parseDate("08.02.2021", new SimpleDateFormat("dd.MM.yyyy"));
+		creator.createSample(caze.toReference(), officer.toReference(), rdcf.facility, (s) -> {
+			s.setLabSampleID("case_sample_id_2");
+			s.setSampleDateTime(sampleDateTime2);
+			s.setSampleMaterial(SampleMaterial.BLOOD);
+		});
 
-		resultMap = sampleFacade.getNewTestResultCountByResultType(caseIds);
-		assertEquals(new Long(2), resultMap.values().stream().collect(Collectors.summingLong(Long::longValue)));
-		assertNull(resultMap.getOrDefault(PathogenTestResultType.INDETERMINATE, null));
-		assertNull(resultMap.getOrDefault(PathogenTestResultType.NEGATIVE, null));
-		assertEquals(new Long(1), resultMap.getOrDefault(PathogenTestResultType.PENDING, null));
-		assertEquals(new Long(1), resultMap.getOrDefault(PathogenTestResultType.POSITIVE, null));
+		ContactReferenceDto contact = creator.createContact(officer.toReference(), creator.createPerson().toReference()).toReference();
+		SampleDto contactSample =
+			creator.createSample(contact, sampleDateTime1, new Date(), officer.toReference(), SampleMaterial.BLOOD, rdcf.facility);
+
+		EventParticipantDto eventParticipant =
+			creator.createEventParticipant(creator.createEvent(officer.toReference()).toReference(), creator.createPerson(), officer.toReference());
+		SampleDto eventParticipantSample = creator
+			.createSample(eventParticipant.toReference(), sampleDateTime1, new Date(), officer.toReference(), SampleMaterial.BLOOD, rdcf.facility);
+
+		SampleSimilarityCriteria criteria = new SampleSimilarityCriteria();
+		criteria.sampleCriteria(new SampleCriteria().caze(caze.toReference()));
+
+		criteria.setLabSampleId("case_sample_id");
+		List<SampleDto> similarSamples = getSampleFacade().getSimilarSamples(criteria);
+		MatcherAssert.assertThat(similarSamples, hasSize(1));
+
+		// should return no samples for unknown lab sample id and missing date and material
+		criteria.setLabSampleId("unknown_id");
+		similarSamples = getSampleFacade().getSimilarSamples(criteria);
+		MatcherAssert.assertThat(similarSamples, hasSize(0));
+
+		criteria.setSampleMaterial(SampleMaterial.BLOOD);
+
+		criteria.setSampleDateTime(DateHelper.addDays(sampleDateTime2, 1));
+		similarSamples = getSampleFacade().getSimilarSamples(criteria);
+		MatcherAssert.assertThat(similarSamples, hasSize(2));
+
+		criteria.setSampleDateTime(DateHelper.subtractDays(sampleDateTime2, 1));
+		similarSamples = getSampleFacade().getSimilarSamples(criteria);
+		MatcherAssert.assertThat(similarSamples, hasSize(1));
+
+		criteria.setSampleDateTime(DateHelper.addDays(sampleDateTime1, 3));
+		similarSamples = getSampleFacade().getSimilarSamples(criteria);
+		MatcherAssert.assertThat(similarSamples, hasSize(0));
+
+		criteria.setSampleDateTime(DateHelper.subtractDays(sampleDateTime2, 3));
+		similarSamples = getSampleFacade().getSimilarSamples(criteria);
+		MatcherAssert.assertThat(similarSamples, hasSize(0));
+
+		// contact samples
+		SampleSimilarityCriteria contactSampleCriteria = new SampleSimilarityCriteria().sampleCriteria(new SampleCriteria().contact(contact));
+		contactSampleCriteria.setSampleDateTime(sampleDateTime1);
+		contactSampleCriteria.setSampleMaterial(SampleMaterial.BLOOD);
+
+		List<SampleDto> contactSimilarSamples = getSampleFacade().getSimilarSamples(contactSampleCriteria);
+		MatcherAssert.assertThat(contactSimilarSamples, hasSize(1));
+		MatcherAssert.assertThat(contactSimilarSamples.get(0).getUuid(), is(contactSample.getUuid()));
+
+		// event participant samples
+		SampleSimilarityCriteria eventParticipantSampleCriteria =
+			new SampleSimilarityCriteria().sampleCriteria(new SampleCriteria().eventParticipant(eventParticipant.toReference()));
+		eventParticipantSampleCriteria.setSampleDateTime(sampleDateTime1);
+		eventParticipantSampleCriteria.setSampleMaterial(SampleMaterial.BLOOD);
+
+		List<SampleDto> eventParticipantSimilarSamples = getSampleFacade().getSimilarSamples(eventParticipantSampleCriteria);
+		MatcherAssert.assertThat(eventParticipantSimilarSamples, hasSize(1));
+		MatcherAssert.assertThat(eventParticipantSimilarSamples.get(0).getUuid(), is(eventParticipantSample.getUuid()));
+	}
+
+	@Test
+	public void testGetByLabSampleId() {
+
+		String labSampleId = "1234";
+		TestDataCreator.RDCF rdcf = creator.createRDCF();
+		UserDto officer = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER));
+		CaseDataDto caze = creator.createCase(officer.toReference(), creator.createPerson().toReference(), rdcf);
+
+		SampleDto sample = creator.createSample(caze.toReference(), officer.toReference(), rdcf.facility, (s) -> {
+			s.setLabSampleID(labSampleId);
+		});
+
+		//create noise
+		creator.createSample(caze.toReference(), officer.toReference(), rdcf.facility, (s) -> {
+			s.setLabSampleID("some-other-id");
+		});
+
+		List<SampleDto> result = getSampleFacade().getByLabSampleId(null);
+		assertTrue(result.isEmpty());
+
+		result = getSampleFacade().getByLabSampleId(labSampleId);
+		MatcherAssert.assertThat(result, hasSize(1));
+		MatcherAssert.assertThat(result, contains(equalTo(sample)));
+
+		SampleDto sample2 = creator.createSample(caze.toReference(), officer.toReference(), rdcf.facility, (s) -> {
+			s.setLabSampleID(labSampleId);
+		});
+
+		result = getSampleFacade().getByLabSampleId(labSampleId);
+		MatcherAssert.assertThat(result, hasSize(2));
+		MatcherAssert.assertThat(result, containsInAnyOrder(equalTo(sample), equalTo(sample2)));
+
+		getSampleFacade().deleteSample(sample2.toReference(), new DeletionDetails(DeletionReason.OTHER_REASON, "test reason"));
+
+		result = getSampleFacade().getByLabSampleId(labSampleId);
+		MatcherAssert.assertThat(result, hasSize(1));
+		MatcherAssert.assertThat(result, contains(equalTo(sample)));
+	}
+
+	@Test
+	public void testSaveSampleWithUnexistingCase() {
+
+		TestDataCreator.RDCF rdcf = creator.createRDCF();
+		UserDto user = useSurveillanceOfficerLogin(rdcf);
+		PersonDto cazePerson = creator.createPerson();
+
+		CaseDataDto unexistingCase = CaseDataDto.build(cazePerson.toReference(), Disease.DENGUE);
+
+		SampleDto cazeSample = SampleDto.build(user.toReference(), unexistingCase.toReference());
+		cazeSample.setSampleDateTime(new Date());
+		cazeSample.setSampleMaterial(SampleMaterial.BLOOD);
+		cazeSample.setSamplePurpose(SamplePurpose.INTERNAL);
+
+		try {
+			getSampleFacade().saveSample(cazeSample);
+			fail();
+		} catch (ValidationRuntimeException e) {
+			assertEquals(I18nProperties.getValidationError(Validations.noCaseWithUuid), e.getMessage());
+		}
+	}
+
+	@Test
+	public void testSaveSampleWithUnexistingContact() {
+
+		TestDataCreator.RDCF rdcf = creator.createRDCF();
+		UserDto user = useSurveillanceOfficerLogin(rdcf);
+		PersonDto cazePerson = creator.createPerson();
+		CaseDataDto caze = creator.createCase(user.toReference(), cazePerson.toReference(), rdcf);
+		ContactDto unexistingContact = ContactDto.build(caze);
+
+		SampleDto contactSample = SampleDto.build(user.toReference(), unexistingContact.toReference());
+		contactSample.setSampleDateTime(new Date());
+		contactSample.setSampleMaterial(SampleMaterial.BLOOD);
+		contactSample.setSamplePurpose(SamplePurpose.INTERNAL);
+
+		try {
+			getSampleFacade().saveSample(contactSample);
+			fail();
+		} catch (ValidationRuntimeException e) {
+			assertEquals(I18nProperties.getValidationError(Validations.noContactWithUuid), e.getMessage());
+		}
+	}
+
+	@Test
+	public void testSaveSampleWithUnexistingEventParticipant() {
+
+		TestDataCreator.RDCF rdcf = creator.createRDCF();
+		UserDto user = useSurveillanceOfficerLogin(rdcf);
+		PersonDto cazePerson = creator.createPerson();
+		CaseDataDto caze = creator.createCase(user.toReference(), cazePerson.toReference(), rdcf);
+		EventDto event = creator.createEvent(user.toReference());
+
+		EventParticipantDto unexstingEventParticipant =
+			EventParticipantDto.buildFromCase(caze.toReference(), cazePerson, event.toReference(), user.toReference());
+
+		SampleDto eventParticipantSample = SampleDto.build(user.toReference(), unexstingEventParticipant.toReference());
+		eventParticipantSample.setSampleDateTime(new Date());
+		eventParticipantSample.setSampleMaterial(SampleMaterial.BLOOD);
+		eventParticipantSample.setSamplePurpose(SamplePurpose.INTERNAL);
+
+		try {
+			getSampleFacade().saveSample(eventParticipantSample);
+			fail();
+		} catch (ValidationRuntimeException e) {
+			assertEquals(I18nProperties.getValidationError(Validations.noEventParticipantWithUuid), e.getMessage());
+		}
+	}
+
+	@Test
+	public void testSaveSampleWithUnexistingLaboratory() {
+
+		TestDataCreator.RDCF rdcf = creator.createRDCF();
+		UserDto user = useSurveillanceOfficerLogin(rdcf);
+		PersonDto cazePerson = creator.createPerson();
+		CaseDataDto caze = creator.createCase(user.toReference(), cazePerson.toReference(), rdcf);
+
+		SampleDto cazeSample = SampleDto.build(user.toReference(), caze.toReference());
+		cazeSample.setSampleDateTime(new Date());
+		cazeSample.setSampleMaterial(SampleMaterial.BLOOD);
+		cazeSample.setSamplePurpose(SamplePurpose.INTERNAL);
+
+		FacilityDto unexistingLaboratory = FacilityDto.build();
+		cazeSample.setLab(unexistingLaboratory.toReference());
+
+		try {
+			getSampleFacade().saveSample(cazeSample);
+			fail();
+		} catch (ValidationRuntimeException e) {
+			assertEquals(I18nProperties.getValidationError(Validations.noLaboratoryWithUuid), e.getMessage());
+		}
+	}
+
+	@Test
+	public void testSaveSampleWithUnexistingReportingUser() {
+
+		TestDataCreator.RDCF rdcf = creator.createRDCF();
+		UserDto user = useSurveillanceOfficerLogin(rdcf);
+		PersonDto cazePerson = creator.createPerson();
+		CaseDataDto caze = creator.createCase(user.toReference(), cazePerson.toReference(), rdcf);
+
+		SampleDto sample = SampleDto.build(user.toReference(), caze.toReference());
+		sample.setSampleDateTime(new Date());
+		sample.setSampleMaterial(SampleMaterial.BLOOD);
+		sample.setSamplePurpose(SamplePurpose.INTERNAL);
+
+		UserDto unexistingUser = UserDto.build();
+		sample.setReportingUser(unexistingUser.toReference());
+
+		try {
+			getSampleFacade().saveSample(sample);
+			fail();
+		} catch (ValidationRuntimeException e) {
+			assertEquals(I18nProperties.getValidationError(Validations.noReportingUserWithUuid), e.getMessage());
+		}
 	}
 
 }

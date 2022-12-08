@@ -7,24 +7,40 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.utils.Order;
+import de.symeda.sormas.api.utils.PersonalData;
+import de.symeda.sormas.api.utils.SensitiveData;
 
 public class ClinicalVisitExportDto implements Serializable {
 
 	private static final long serialVersionUID = -5724133522485897878L;
 
 	public static final String I18N_PREFIX = "ClinicalVisitExport";
-	
+
 	private String caseUuid;
+	@PersonalData
 	private String caseName;
 	private Disease disease;
 	private Date visitDateTime;
+	@SensitiveData
 	private String visitRemarks;
+	@SensitiveData
 	private String visitingPerson;
 	private long symptomsId;
 	private SymptomsDto symptoms;
-	
-	public ClinicalVisitExportDto(String caseUuid, String caseFirstName, String caseLastName, Disease disease,
-			Date visitDateTime, String visitRemarks, String visitingPerson, long symptomsId) {
+
+	private Boolean isInJurisdiction;
+
+	public ClinicalVisitExportDto(
+		String caseUuid,
+		String caseFirstName,
+		String caseLastName,
+		Disease disease,
+		Date visitDateTime,
+		String visitRemarks,
+		String visitingPerson,
+		long symptomsId,
+		boolean isInJurisdiction) {
+
 		this.caseUuid = caseUuid;
 		this.caseName = PersonDto.buildCaption(caseFirstName, caseLastName);
 		this.disease = disease;
@@ -32,6 +48,7 @@ public class ClinicalVisitExportDto implements Serializable {
 		this.visitRemarks = visitRemarks;
 		this.visitingPerson = visitingPerson;
 		this.symptomsId = symptomsId;
+		this.isInJurisdiction = isInJurisdiction;
 	}
 
 	@Order(0)
@@ -104,5 +121,8 @@ public class ClinicalVisitExportDto implements Serializable {
 	public void setSymptomsId(long symptomsId) {
 		this.symptomsId = symptomsId;
 	}
-	
+
+	public Boolean getInJurisdiction() {
+		return isInJurisdiction;
+	}
 }

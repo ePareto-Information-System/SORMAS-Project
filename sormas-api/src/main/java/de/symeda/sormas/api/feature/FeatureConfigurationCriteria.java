@@ -1,9 +1,9 @@
 package de.symeda.sormas.api.feature;
 
-import de.symeda.sormas.api.BaseCriteria;
 import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.region.RegionReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
+import de.symeda.sormas.api.utils.criteria.BaseCriteria;
 
 public class FeatureConfigurationCriteria extends BaseCriteria implements Cloneable {
 
@@ -14,44 +14,49 @@ public class FeatureConfigurationCriteria extends BaseCriteria implements Clonea
 	public static final String DISTRICT = "district";
 	public static final String DISEASE = "disease";
 	public static final String ENABLED = "enabled";
-	
-	private FeatureType featureType;
+
+	private FeatureType[] featureTypes;
 	private RegionReferenceDto region;
 	private DistrictReferenceDto district;
 	private Disease disease;
 	private Boolean enabled;
-	
-	public FeatureType getFeatureType() {
-		return featureType;
+	private String searchText;
+
+	public FeatureType[] getFeatureTypes() {
+		return featureTypes;
 	}
-	
-	public FeatureConfigurationCriteria featureType(FeatureType featureType) {
-		this.featureType = featureType;
+
+	public FeatureConfigurationCriteria featureType(FeatureType... featureTypes) {
+		this.featureTypes = featureTypes;
 		return this;
 	}
-	
+
+	public String getSearchText() {
+		return searchText;
+	}
+
 	public RegionReferenceDto getRegion() {
 		return region;
 	}
-	
+
 	public FeatureConfigurationCriteria region(RegionReferenceDto region) {
 		this.region = region;
 		return this;
 	}
-	
+
 	public DistrictReferenceDto getDistrict() {
 		return district;
 	}
-	
+
 	public FeatureConfigurationCriteria district(DistrictReferenceDto district) {
 		this.district = district;
 		return this;
 	}
-	
+
 	public Disease getDisease() {
 		return disease;
 	}
-	
+
 	public FeatureConfigurationCriteria disease(Disease disease) {
 		this.disease = disease;
 		return this;
@@ -65,5 +70,8 @@ public class FeatureConfigurationCriteria extends BaseCriteria implements Clonea
 		this.enabled = enabled;
 		return this;
 	}
-	
+
+	public void setFeatureTypes(FeatureType... featureTypes) {
+		this.featureTypes = featureTypes;
+	}
 }

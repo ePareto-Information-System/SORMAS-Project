@@ -41,6 +41,8 @@ LOG_FILE_PATH=$DOMAIN_PATH/$DOMAIN_NAME/logs
 UPDATE_LOG_PATH=$DOMAIN_PATH/$DOMAIN_NAME/update-logs
 UPDATE_LOG_FILE_NAME=server_update_`date +"%Y-%m-%d_%H-%M-%S"`.txt
 CUSTOM_DIR=/opt/sormas/custom
+ABOUT_FILES_DIR=$CUSTOM_DIR/aboutfiles
+DOCUMENTS_DIR=/opt/sormas/documents
 USER_NAME=payara
 CONTINUOUS_DELIVERY=no
 
@@ -100,6 +102,18 @@ if [ ! -d $CUSTOM_DIR ]; then
 	setfacl -m u:postgres:rwx ${CUSTOM_DIR}
 fi
 
+if [ ! -d ABOUT_FILES_DIR ]; then
+	mkdir -p ${ABOUT_FILES_DIR}
+	setfacl -m u:${USER_NAME}:rwx ${ABOUT_FILES_DIR}
+	setfacl -m u:postgres:rwx ${ABOUT_FILES_DIR}
+fi
+
+if [ ! -d $DOCUMENTS_DIR ]; then
+  mkdir -p ${DOCUMENTS_DIR}
+  setfacl -m u:${USER_NAME}:rwx ${DOCUMENTS_DIR}
+  setfacl -m u:postgres:rwx ${DOCUMENTS_DIR}
+fi
+
 # Create a file to log errors and messages not produced by this script during the update process
 if [ ! -d $UPDATE_LOG_PATH ]; then
 	mkdir $UPDATE_LOG_PATH 2>/dev/null
@@ -157,6 +171,11 @@ fi
 # Wait for undeployment and shutdown of the domain
 sleep 10s
 
+if [ -d $DEPLOY_PATH/glassfish-modules ]; then
+	echo "Patching glassfish modules..."
+	cp $DEPLOY_PATH/glassfish-modules/*.jar $GLASSFISH_PATH/modules/
+fi
+
 rm $DOMAIN_PATH/$DOMAIN_NAME/lib/*.jar
 
 echo "Copying server libs..."
@@ -165,6 +184,10 @@ cp $DEPLOY_PATH/serverlibs/* $DOMAIN_PATH/$DOMAIN_NAME/lib/
 
 if [ ! -f $CUSTOM_DIR/loginsidebar.html ]; then
 	cp loginsidebar.html ${CUSTOM_DIR}
+fi
+
+if [ ! -f $CUSTOM_DIR/loginsidebar-header.html ]; then
+  cp loginsidebar-header.html ${CUSTOM_DIR}
 fi
 
 if [ ! -f $CUSTOM_DIR/logindetails.html ]; then

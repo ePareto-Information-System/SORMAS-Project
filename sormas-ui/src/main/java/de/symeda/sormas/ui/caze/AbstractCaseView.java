@@ -9,33 +9,33 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.caze;
 
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Label;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.data.Property;
-import com.vaadin.v7.data.Property.ValueChangeEvent;
-import com.vaadin.v7.data.Property.ValueChangeListener;
 import com.vaadin.v7.ui.OptionGroup;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.EditPermissionType;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseOrigin;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.contact.FollowUpStatus;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.api.user.UserRole;
-import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.SubMenu;
 import de.symeda.sormas.ui.UserProvider;
@@ -43,79 +43,79 @@ import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.caze.maternalhistory.MaternalHistoryView;
 import de.symeda.sormas.ui.caze.porthealthinfo.PortHealthInfoView;
 import de.symeda.sormas.ui.clinicalcourse.ClinicalCourseView;
-import de.symeda.sormas.ui.epidata.EpiDataView;
+import de.symeda.sormas.ui.epidata.CaseEpiDataView;
+import de.symeda.sormas.ui.externalmessage.ExternalMessagesView;
 import de.symeda.sormas.ui.hospitalization.HospitalizationView;
 import de.symeda.sormas.ui.therapy.TherapyView;
-import de.symeda.sormas.ui.utils.AbstractSubNavigationView;
+import de.symeda.sormas.ui.utils.AbstractDetailView;
 import de.symeda.sormas.ui.utils.CssStyles;
+import de.symeda.sormas.ui.utils.DirtyStateComponent;
+import de.symeda.sormas.ui.utils.ExternalJournalUtil;
 import de.symeda.sormas.ui.utils.ViewConfiguration;
 import de.symeda.sormas.ui.utils.ViewMode;
 
 @SuppressWarnings("serial")
-public abstract class AbstractCaseView extends AbstractSubNavigationView {
+public abstract class AbstractCaseView extends AbstractDetailView<CaseReferenceDto> {
 
 	public static final String VIEW_MODE_URL_PREFIX = "v";
 
 	public static final String ROOT_VIEW_NAME = CasesView.VIEW_NAME;
 
-	private CaseReferenceDto caseRef = null;
 	private Boolean hasOutbreak;
+	private boolean caseFollowupEnabled;
 
-	private ViewConfiguration viewConfiguration;
+	private final ViewConfiguration viewConfiguration;
+	private final boolean redirectSimpleModeToCaseDataView;
 	private final OptionGroup viewModeToggle;
 	private final Property.ValueChangeListener viewModeToggleListener;
 
-	protected AbstractCaseView(String viewName) {
+	protected AbstractCaseView(String viewName, boolean redirectSimpleModeToCaseDataView) {
 		super(viewName);
+		caseFollowupEnabled = FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_FOLLOWUP);
 
 		if (!ViewModelProviders.of(AbstractCaseView.class).has(ViewConfiguration.class)) {
 			// init default view mode
-			ViewConfiguration initViewConfiguration = UserProvider.getCurrent().hasUserRight(UserRight.CASE_MANAGEMENT_ACCESS) ? new ViewConfiguration(ViewMode.NORMAL) : new ViewConfiguration(ViewMode.SIMPLE);
+			ViewConfiguration initViewConfiguration = UserProvider.getCurrent().hasUserRight(UserRight.CLINICAL_COURSE_VIEW)
+				|| UserProvider.getCurrent().hasUserRight(UserRight.THERAPY_VIEW)
+					? new ViewConfiguration(ViewMode.NORMAL)
+					: new ViewConfiguration(ViewMode.SIMPLE);
 			ViewModelProviders.of(AbstractCaseView.class).get(ViewConfiguration.class, initViewConfiguration);
 		}
 
-		viewConfiguration = ViewModelProviders.of(AbstractCaseView.class).get(ViewConfiguration.class);
+		this.viewConfiguration = ViewModelProviders.of(AbstractCaseView.class).get(ViewConfiguration.class);
+		this.redirectSimpleModeToCaseDataView = redirectSimpleModeToCaseDataView;
 
 		viewModeToggle = new OptionGroup();
-		CssStyles.style(viewModeToggle, 
-				ValoTheme.OPTIONGROUP_HORIZONTAL, CssStyles.OPTIONGROUP_HORIZONTAL_PRIMARY,
-				CssStyles.VSPACE_TOP_3);
+		CssStyles.style(viewModeToggle, ValoTheme.OPTIONGROUP_HORIZONTAL, CssStyles.OPTIONGROUP_HORIZONTAL_PRIMARY, CssStyles.VSPACE_TOP_3);
 		viewModeToggle.addItems((Object[]) ViewMode.values());
 		viewModeToggle.setItemCaption(ViewMode.SIMPLE, I18nProperties.getEnumCaption(ViewMode.SIMPLE));
 		viewModeToggle.setItemCaption(ViewMode.NORMAL, I18nProperties.getEnumCaption(ViewMode.NORMAL));
 		// View mode toggle is hidden by default
 		viewModeToggle.setVisible(false);
-		addHeaderComponent(viewModeToggle);     
+		addHeaderComponent(viewModeToggle);
 
-		viewModeToggleListener = new ValueChangeListener() {
-			@Override
-			public void valueChange(ValueChangeEvent event) {
-				viewConfiguration.setViewMode((ViewMode) event.getProperty().getValue());
-				// refresh
-				ControllerProvider.getCaseController().navigateToCase(getCaseRef().getUuid());
-			}
-		};        
+		viewModeToggleListener = event -> {
+			viewConfiguration.setViewMode((ViewMode) event.getProperty().getValue());
+			// refresh
+			ControllerProvider.getCaseController().navigateToCase(getReference().getUuid());
+		};
 		viewModeToggle.addValueChangeListener(viewModeToggleListener);
 	}
 
 	@Override
-	public void refreshMenu(SubMenu menu, Label infoLabel, Label infoLabelSub, String params) {
-		String[] passedParams = params.split("\\?");
-		if (passedParams.length > 0) {
-			// Remove possible slash from filters
-			String uuid = passedParams[0].replaceAll("/", "");
-			caseRef = FacadeProvider.getCaseFacade().getReferenceByUuid(uuid);
-		}
+	public void refreshMenu(SubMenu menu, String params) {
 
-		if (caseRef == null) {
-			ControllerProvider.getCaseController().navigateToIndex();
+		if (!findReferenceByParams(params)) {
 			return;
 		}
-		
-		CaseDataDto caze = FacadeProvider.getCaseFacade().getCaseDataByUuid(caseRef.getUuid());
+
+		CaseDataDto caze = FacadeProvider.getCaseFacade().getCaseDataByUuid(getReference().getUuid());
 
 		// Handle outbreaks for the disease and district of the case
-		if (FacadeProvider.getOutbreakFacade().hasOutbreak(caze.getDistrict(), caze.getDisease()) && caze.getDisease().usesSimpleViewForOutbreaks()) {
+		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.OUTBREAKS)
+			&& (FacadeProvider.getOutbreakFacade().hasOutbreak(caze.getResponsibleDistrict(), caze.getDisease())
+				|| FacadeProvider.getOutbreakFacade().hasOutbreak(caze.getDistrict(), caze.getDisease()))
+			&& caze.getDisease().usesSimpleViewForOutbreaks()) {
 			hasOutbreak = true;
 
 			//			viewConfiguration.setViewMode(ViewMode.SIMPLE);
@@ -139,53 +139,136 @@ public abstract class AbstractCaseView extends AbstractSubNavigationView {
 
 		menu.removeAllViews();
 		menu.addView(CasesView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, Captions.caseCasesList));
+
+		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.EXTERNAL_MESSAGES)
+			&& UserProvider.getCurrent().hasUserRight(UserRight.EXTERNAL_MESSAGE_VIEW)
+			&& FacadeProvider.getExternalMessageFacade().existsExternalMessageForEntity(getReference())) {
+			menu.addView(ExternalMessagesView.VIEW_NAME, I18nProperties.getCaption(Captions.externalMessagesList));
+		}
+
 		menu.addView(CaseDataView.VIEW_NAME, I18nProperties.getCaption(CaseDataDto.I18N_PREFIX), params);
 
-		if (!hasOutbreak || !caze.getDisease().usesSimpleViewForOutbreaks() || viewConfiguration.getViewMode() != ViewMode.SIMPLE) {
+		boolean showExtraMenuEntries = FacadeProvider.getFeatureConfigurationFacade().isFeatureDisabled(FeatureType.OUTBREAKS)
+			|| !hasOutbreak
+			|| !caze.getDisease().usesSimpleViewForOutbreaks()
+			|| viewConfiguration.getViewMode() != ViewMode.SIMPLE;
+		if (showExtraMenuEntries) {
 			menu.addView(CasePersonView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.PERSON), params);
 			if (caze.getDisease() == Disease.CONGENITAL_RUBELLA) {
-				menu.addView(MaternalHistoryView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.MATERNAL_HISTORY), params);
+				menu.addView(
+					MaternalHistoryView.VIEW_NAME,
+					I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.MATERNAL_HISTORY),
+					params);
 			}
-			if (!caze.isUnreferredPortHealthCase() && !UserRole.isPortHealthUser(UserProvider.getCurrent().getUserRoles())) {
-				menu.addView(HospitalizationView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.HOSPITALIZATION), params);
+			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_HOSPITALIZATION)
+				&& !caze.checkIsUnreferredPortHealthCase()
+				&& !UserProvider.getCurrent().isPortHealthUser()) {
+				menu.addView(
+					HospitalizationView.VIEW_NAME,
+					I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.HOSPITALIZATION),
+					params);
 			}
-			if (caze.getCaseOrigin() == CaseOrigin.POINT_OF_ENTRY && UserProvider.getCurrent().hasUserRight(UserRight.PORT_HEALTH_INFO_VIEW)) {
-				menu.addView(PortHealthInfoView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.PORT_HEALTH_INFO), params);
+			if (caze.getCaseOrigin() == CaseOrigin.POINT_OF_ENTRY
+				&& caze.getPointOfEntry() != null
+				&& UserProvider.getCurrent().hasUserRight(UserRight.PORT_HEALTH_INFO_VIEW)) {
+				menu.addView(
+					PortHealthInfoView.VIEW_NAME,
+					I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.PORT_HEALTH_INFO),
+					params);
 			}
-			menu.addView(CaseSymptomsView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.SYMPTOMS), params);
-			if (caze.getDisease() != Disease.CONGENITAL_RUBELLA) {
-				menu.addView(EpiDataView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.EPI_DATA), params);
+			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_SYMPTOMS)) {
+				menu.addView(CaseSymptomsView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.SYMPTOMS), params);
 			}
-			if (UserProvider.getCurrent().hasUserRight(UserRight.THERAPY_VIEW) && !caze.isUnreferredPortHealthCase() && !FacadeProvider.getFeatureConfigurationFacade().isFeatureDisabled(FeatureType.CLINICAL_MANAGEMENT)) {
+			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_EPIDEMIOLOGICAL_DATA)
+				&& caze.getDisease() != Disease.CONGENITAL_RUBELLA) {
+				menu.addView(CaseEpiDataView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.EPI_DATA), params);
+			}
+			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_THERAPY)
+				&& UserProvider.getCurrent().hasUserRight(UserRight.THERAPY_VIEW)
+				&& !caze.checkIsUnreferredPortHealthCase()
+				&& !FacadeProvider.getFeatureConfigurationFacade().isFeatureDisabled(FeatureType.CLINICAL_MANAGEMENT)) {
 				menu.addView(TherapyView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.THERAPY), params);
 			}
-			if (UserProvider.getCurrent().hasUserRight(UserRight.CLINICAL_COURSE_VIEW) && !caze.isUnreferredPortHealthCase() && !FacadeProvider.getFeatureConfigurationFacade().isFeatureDisabled(FeatureType.CLINICAL_MANAGEMENT)) {
-				menu.addView(ClinicalCourseView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.CLINICAL_COURSE), params);
+		}
+
+		if (caseFollowupEnabled
+			&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_FOLLOW_UP)
+			&& caze.getFollowUpStatus() != FollowUpStatus.NO_FOLLOW_UP) {
+			menu.addView(CaseVisitsView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.VISITS), params);
+		}
+
+		if (showExtraMenuEntries) {
+			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.VIEW_TAB_CASES_FOLLOW_UP)
+				&& UserProvider.getCurrent().hasUserRight(UserRight.CLINICAL_COURSE_VIEW)
+				&& !caze.checkIsUnreferredPortHealthCase()
+				&& !FacadeProvider.getFeatureConfigurationFacade().isFeatureDisabled(FeatureType.CLINICAL_MANAGEMENT)) {
+				menu.addView(
+					ClinicalCourseView.VIEW_NAME,
+					I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.CLINICAL_COURSE),
+					params);
 			}
 		}
-		if (FacadeProvider.getDiseaseConfigurationFacade().hasFollowUp(caze.getDisease()) && UserProvider.getCurrent().hasUserRight(UserRight.CONTACT_VIEW) &&
-				!caze.isUnreferredPortHealthCase()) {
+		if (FacadeProvider.getDiseaseConfigurationFacade().hasFollowUp(caze.getDisease())
+			&& UserProvider.getCurrent().hasUserRight(UserRight.CONTACT_VIEW)
+			&& !caze.checkIsUnreferredPortHealthCase()) {
 			menu.addView(CaseContactsView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, Captions.caseContacts), params);
 		}
 
-		infoLabel.setValue(caseRef.getCaption());
+		if (caze.getExternalData() != null && !caze.getExternalData().isEmpty()) {
+			menu.addView(CaseExternalDataView.VIEW_NAME, I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.EXTERNAL_DATA), params);
+		}
 
-		infoLabelSub.setValue(caze.getDisease() != Disease.OTHER
-				? DataHelper.toStringNullable(caze.getDisease())
-						: DataHelper.toStringNullable(caze.getDiseaseDetails()));
+		setMainHeaderComponent(ControllerProvider.getCaseController().getCaseViewTitleLayout(caze));
+
+		if (caseFollowupEnabled && UserProvider.getCurrent().hasUserRight(UserRight.MANAGE_EXTERNAL_SYMPTOM_JOURNAL)) {
+			PersonDto casePerson = FacadeProvider.getPersonFacade().getPersonByUuid(caze.getPerson().getUuid());
+			ExternalJournalUtil.getExternalJournalUiButton(casePerson, caze).ifPresent(getButtonsLayout()::addComponent);
+		}
 	}
-	
+
 	@Override
-	protected void setSubComponent(Component newComponent) {
+	public void enter(ViewChangeEvent event) {
+
+		super.enter(event);
+
+		if (getReference() == null) {
+			UI.getCurrent().getNavigator().navigateTo(getRootViewName());
+		} else if (redirectSimpleModeToCaseDataView && getViewMode() == ViewMode.SIMPLE) {
+			ControllerProvider.getCaseController().navigateToCase(getReference().getUuid());
+		} else {
+			initView(event.getParameters().trim());
+		}
+	}
+
+	@Override
+	protected String getRootViewName() {
+		return ROOT_VIEW_NAME;
+	}
+
+	@Override
+	protected CaseReferenceDto getReferenceByUuid(String uuid) {
+
+		final CaseReferenceDto reference;
+		if (FacadeProvider.getCaseFacade().exists(uuid)) {
+			reference = FacadeProvider.getCaseFacade().getReferenceByUuid(uuid);
+		} else {
+			reference = null;
+		}
+		return reference;
+	}
+
+	@Override
+	protected void setSubComponent(DirtyStateComponent newComponent) {
+
 		super.setSubComponent(newComponent);
-		
-		if (caseRef != null && FacadeProvider.getCaseFacade().isDeleted(caseRef.getUuid())) {
+
+		if (getReference() != null && FacadeProvider.getCaseFacade().isDeleted(getReference().getUuid())) {
 			newComponent.setEnabled(false);
 		}
 	}
 
 	public CaseReferenceDto getCaseRef() {
-		return caseRef;
+		return (CaseReferenceDto) getReference();
 	}
 
 	public boolean isHasOutbreak() {
@@ -193,10 +276,22 @@ public abstract class AbstractCaseView extends AbstractSubNavigationView {
 	}
 
 	public ViewMode getViewMode() {
+
 		if (Boolean.FALSE.equals(hasOutbreak)) {
 			return ViewMode.NORMAL;
 		}
 
 		return viewConfiguration.getViewMode();
+	}
+
+	public void setCaseEditPermission(Component component) {
+
+		if (!isCaseEditAllowed()) {
+			component.setEnabled(false);
+		}
+	}
+
+	protected boolean isCaseEditAllowed() {
+		return FacadeProvider.getCaseFacade().isEditAllowed(getReference().getUuid()).equals(EditPermissionType.ALLOWED);
 	}
 }

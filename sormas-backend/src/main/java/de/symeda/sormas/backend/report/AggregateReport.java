@@ -9,16 +9,18 @@ import javax.persistence.ManyToOne;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
-import de.symeda.sormas.backend.facility.Facility;
-import de.symeda.sormas.backend.infrastructure.PointOfEntry;
-import de.symeda.sormas.backend.region.District;
-import de.symeda.sormas.backend.region.Region;
+import de.symeda.sormas.backend.infrastructure.district.District;
+import de.symeda.sormas.backend.infrastructure.facility.Facility;
+import de.symeda.sormas.backend.infrastructure.pointofentry.PointOfEntry;
+import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.user.User;
 
 @Entity(name = "aggregatereport")
 public class AggregateReport extends AbstractDomainObject {
 
 	private static final long serialVersionUID = -2809338755584760337L;
+
+	public static final String TABLE_NAME = "aggregatereport";
 
 	public static final String REPORTING_USER = "reportingUser";
 	public static final String DISEASE = "disease";
@@ -31,7 +33,8 @@ public class AggregateReport extends AbstractDomainObject {
 	public static final String NEW_CASES = "newCases";
 	public static final String LAB_CONFIRMATIONS = "labConfirmations";
 	public static final String DEATHS = "deaths";
-	
+	public static final String AGE_GROUP = "ageGroup";
+
 	private User reportingUser;
 	private Disease disease;
 	private Integer year;
@@ -43,7 +46,8 @@ public class AggregateReport extends AbstractDomainObject {
 	private Integer newCases;
 	private Integer labConfirmations;
 	private Integer deaths;
-	
+	private String ageGroup;
+
 	@ManyToOne(cascade = {})
 	@JoinColumn
 	public User getReportingUser() {
@@ -100,7 +104,7 @@ public class AggregateReport extends AbstractDomainObject {
 	public void setDistrict(District district) {
 		this.district = district;
 	}
-	
+
 	@ManyToOne(cascade = {})
 	public Facility getHealthFacility() {
 		return healthFacility;
@@ -146,4 +150,12 @@ public class AggregateReport extends AbstractDomainObject {
 		this.deaths = deaths;
 	}
 
+	@Column
+	public String getAgeGroup() {
+		return ageGroup;
+	}
+
+	public void setAgeGroup(String ageGroup) {
+		this.ageGroup = ageGroup;
+	}
 }

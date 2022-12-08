@@ -9,20 +9,22 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.caze.classification;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.List;
 
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.person.PersonDto;
@@ -38,8 +40,9 @@ public class ClassificationPathogenTestCriteriaDto extends ClassificationCaseCri
 	public ClassificationPathogenTestCriteriaDto() {
 		super();
 	}
-	
+
 	public ClassificationPathogenTestCriteriaDto(String propertyId, List<PathogenTestType> testTypes, Object... propertyValues) {
+
 		super(propertyId, propertyValues);
 		this.testTypes = testTypes;
 	}
@@ -50,7 +53,8 @@ public class ClassificationPathogenTestCriteriaDto extends ClassificationCaseCri
 	}
 
 	@Override
-	public boolean eval(CaseDataDto caze, PersonDto person, List<PathogenTestDto> pathogenTests) {		
+	public boolean eval(CaseDataDto caze, PersonDto person, List<PathogenTestDto> pathogenTests, List<EventDto> events, Date lastVaccinationDate) {
+
 		for (PathogenTestDto pathogenTest : pathogenTests) {
 			if (!testTypes.contains(pathogenTest.getTestType())) {
 				continue;
@@ -84,6 +88,7 @@ public class ClassificationPathogenTestCriteriaDto extends ClassificationCaseCri
 
 	@Override
 	public String buildDescription() {
+
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append(I18nProperties.getPrefixCaption(PathogenTestDto.I18N_PREFIX, propertyId));
 		if (testTypes != null && !testTypes.isEmpty()) {
@@ -110,5 +115,4 @@ public class ClassificationPathogenTestCriteriaDto extends ClassificationCaseCri
 	public void setTestTypes(List<PathogenTestType> testTypes) {
 		this.testTypes = testTypes;
 	}
-
 }

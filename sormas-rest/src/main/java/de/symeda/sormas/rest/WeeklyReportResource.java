@@ -9,18 +9,18 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.rest;
 
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.security.RolesAllowed;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -34,22 +34,26 @@ import javax.ws.rs.core.SecurityContext;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.PushResult;
 import de.symeda.sormas.api.report.WeeklyReportDto;
-import de.symeda.sormas.api.user.UserReferenceDto;
 
 @Path("/weeklyreports")
-@Produces({ MediaType.APPLICATION_JSON + "; charset=UTF-8" })
-@Consumes({ MediaType.APPLICATION_JSON + "; charset=UTF-8" })
-@RolesAllowed("USER")
+@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+@Consumes(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 public class WeeklyReportResource extends EntityDtoResource {
 
 	@GET
 	@Path("/all/{since}")
 	public List<WeeklyReportDto> getAllWeeklyReports(@Context SecurityContext sc, @PathParam("since") long since) {
-		UserReferenceDto userDto = FacadeProvider.getUserFacade()
-				.getByUserNameAsReference(sc.getUserPrincipal().getName());
-		List<WeeklyReportDto> weeklyReports = FacadeProvider.getWeeklyReportFacade()
-				.getAllWeeklyReportsAfter(new Date(since), userDto.getUuid());
-		return weeklyReports;
+		return FacadeProvider.getWeeklyReportFacade().getAllWeeklyReportsAfter(new Date(since));
+	}
+
+	@GET
+	@Path("/all/{since}/{size}/{lastSynchronizedUuid}")
+	public List<WeeklyReportDto> getAllWeeklyReports(
+		@Context SecurityContext sc,
+		@PathParam("since") long since,
+		@PathParam("size") int size,
+		@PathParam("lastSynchronizedUuid") String lastSynchronizedUuid) {
+		return FacadeProvider.getWeeklyReportFacade().getAllWeeklyReportsAfter(new Date(since), size, lastSynchronizedUuid);
 	}
 
 	@POST
@@ -61,7 +65,7 @@ public class WeeklyReportResource extends EntityDtoResource {
 
 	@POST
 	@Path("/push")
-	public List<PushResult> postWeeklyReports(List<WeeklyReportDto> dtos) {
+	public List<PushResult> postWeeklyReports(@Valid List<WeeklyReportDto> dtos) {
 		List<PushResult> result = savePushedDto(dtos, FacadeProvider.getWeeklyReportFacade()::saveWeeklyReport);
 		return result;
 	}
@@ -69,10 +73,6 @@ public class WeeklyReportResource extends EntityDtoResource {
 	@GET
 	@Path("/uuids")
 	public List<String> getAllUuids(@Context SecurityContext sc) {
-		UserReferenceDto userDto = FacadeProvider.getUserFacade()
-				.getByUserNameAsReference(sc.getUserPrincipal().getName());
-		List<String> uuids = FacadeProvider.getWeeklyReportFacade().getAllUuids(userDto.getUuid());
-		return uuids;
+		return FacadeProvider.getWeeklyReportFacade().getAllUuids();
 	}
-
 }

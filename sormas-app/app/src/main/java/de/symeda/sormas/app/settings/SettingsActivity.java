@@ -1,19 +1,16 @@
 /*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
  * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.symeda.sormas.app.settings;
@@ -35,102 +32,121 @@ import de.symeda.sormas.app.backend.config.ConfigProvider;
 import de.symeda.sormas.app.core.notification.NotificationHelper;
 import de.symeda.sormas.app.core.notification.NotificationPosition;
 import de.symeda.sormas.app.core.notification.NotificationType;
+import de.symeda.sormas.app.login.LoginActivity;
 import de.symeda.sormas.app.util.AppUpdateController;
 
 public class SettingsActivity extends BaseLandingActivity {
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
 
-        super.onCreateOptionsMenu(menu);
+		super.onCreateOptionsMenu(menu);
 
-        MenuItem syncMenuItem = menu.findItem(R.id.action_sync);
-        syncMenuItem.setVisible(false);
+		MenuItem syncMenuItem = menu.findItem(R.id.action_sync);
+		syncMenuItem.setVisible(false);
 
-        return true;
-    }
+		return true;
+	}
 
-    @Override
-    public SettingsFragment getActiveFragment() {
-        return (SettingsFragment)super.getActiveFragment();
-    }
+	@Override
+	public SettingsFragment getActiveFragment() {
+		return (SettingsFragment) super.getActiveFragment();
+	}
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                if (ConfigProvider.getUser() == null) {
-                    onBackPressed(); // Settings don't have a parent -> go back instead of up
-                    return true;
-                }
-                return super.onOptionsItemSelected(item);
+	@Override
+	public void onBackPressed() {
+		// this should always either open the side menu, or return to the login page
+		if (ConfigProvider.getUser() == null) {
+			// open login page
+			Intent intent = new Intent(getContext(), LoginActivity.class);
+			startActivity(intent);
+		} else {
+			// normally open sidebar here; However, it is not possible to create an ActionMenuItem here and then call super.onOptionsItemSelected(item)
+			// so just return so that the app won't be closed
+			return;
+		}
+		super.onBackPressed();
+	}
 
-            case R.id.action_save:
-                String serverUrl = getActiveFragment().getServerUrl();
-                ConfigProvider.setServerRestUrl(serverUrl);
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			if (ConfigProvider.getUser() == null) {
+				onBackPressed(); // Settings don't have a parent -> go back instead of up
+				return true;
+			}
+			return super.onOptionsItemSelected(item);
 
-                onBackPressed(); // Settings don't have a parent -> go back instead of up
+		case R.id.action_save:
+			String serverUrl = getActiveFragment().getServerUrl();
+			ConfigProvider.setServerRestUrl(serverUrl);
 
-                NotificationHelper.showNotification(this, NotificationPosition.BOTTOM, NotificationType.SUCCESS, R.string.message_settings_saved);
+			String lbdsDebugUrl = getActiveFragment().getLbdsDebugUrl();
+			ConfigProvider.setServerLbdsDebugUrl(lbdsDebugUrl);
 
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+			onBackPressed(); // Settings don't have a parent -> go back instead of up
 
-    @Override
-    public Enum getPageStatus() {
-        return null;
-    }
+			NotificationHelper.showNotification(this, NotificationPosition.BOTTOM, NotificationType.SUCCESS, R.string.message_settings_saved);
 
-    @Override
-    public boolean isAccessNeeded() {
-        return false;
-    }
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 
-    @Override
-    public BaseLandingFragment buildLandingFragment() {
-        return new SettingsFragment();
-    }
+	@Override
+	public Enum getPageStatus() {
+		return null;
+	}
 
-    /**
-     * Is a sub-activity when the user needs to go back to the LoginActivity
-     * @see SettingsActivity#onOptionsItemSelected(MenuItem)
-     */
-    @Override
-    protected boolean isSubActivity() {
-        return ConfigProvider.getUser() == null;
-    }
+	@Override
+	public boolean isAccessNeeded() {
+		return false;
+	}
 
-    protected int getActivityTitle() {
-        return R.string.main_menu_settings;
-    }
+	@Override
+	public BaseLandingFragment buildLandingFragment() {
+		return new SettingsFragment();
+	}
 
-    @Override
-    // Handles the result of the attempt to install a new app version - should be added to every activity that uses the UpdateAppDialog
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
-        if (requestCode == AppUpdateController.INSTALL_RESULT) {
-            switch (resultCode) {
-                // Do nothing if the installation was successful
-                case Activity.RESULT_OK:
-                case Activity.RESULT_CANCELED:
-                    break;
-                // Everything else probably is an error
-                default:
-                    AppUpdateController.getInstance().handleInstallFailure();
-                    break;
-            }
-        }
-    }
+	/**
+	 * Is a sub-activity when the user needs to go back to the LoginActivity
+	 * 
+	 * @see SettingsActivity#onOptionsItemSelected(MenuItem)
+	 */
+	@Override
+	protected boolean isSubActivity() {
+		return ConfigProvider.getUser() == null;
+	}
 
-    public void setNewLocale(AppCompatActivity mContext, Language language) {
-        LocaleManager.setNewLocale(this, language);
-        if (ConfigProvider.getUser() != null) {
-            I18nProperties.setUserLanguage(ConfigProvider.getUser().getLanguage());
-        }
-        Intent intent = mContext.getIntent();
-        startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
-    }
+	protected int getActivityTitle() {
+		return R.string.main_menu_settings;
+	}
 
+	@Override
+	// Handles the result of the attempt to install a new app version - should be added to every activity that uses the UpdateAppDialog
+	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+		super.onActivityResult(requestCode, resultCode, intent);
+		if (requestCode == AppUpdateController.INSTALL_RESULT) {
+			switch (resultCode) {
+			// Do nothing if the installation was successful
+			case Activity.RESULT_OK:
+			case Activity.RESULT_CANCELED:
+			case Activity.RESULT_FIRST_USER:
+				finishAndRemoveTask();
+				break;
+			// Everything else probably is an error
+			default:
+				AppUpdateController.getInstance().handleInstallFailure();
+				break;
+			}
+		}
+	}
+
+	public void setNewLocale(AppCompatActivity mContext, Language language) {
+		LocaleManager.setNewLocale(this, language);
+		I18nProperties.setUserLanguage(language);
+		Intent intent = mContext.getIntent();
+		startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
+	}
 }

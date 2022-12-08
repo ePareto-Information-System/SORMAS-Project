@@ -9,36 +9,25 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.backend.location;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Predicate;
 
-import de.symeda.sormas.backend.common.AbstractAdoService;
-import de.symeda.sormas.backend.user.User;
+import de.symeda.sormas.backend.common.BaseAdoService;
 
 @Stateless
 @LocalBean
-public class LocationService extends AbstractAdoService<Location> {
-	
+public class LocationService extends BaseAdoService<Location> {
+
 	public LocationService() {
 		super(Location.class);
 	}
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	public Predicate createUserFilter(CriteriaBuilder cb, CriteriaQuery cq, From<Location, Location> from, User user) {
-		// A user should not directly query for this
-		throw new UnsupportedOperationException();
-	}
 }

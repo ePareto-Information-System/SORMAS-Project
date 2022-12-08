@@ -9,38 +9,40 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.utils;
 
-import com.vaadin.ui.renderers.HtmlRenderer;
+import java.util.Optional;
+
+import com.vaadin.ui.renderers.TextRenderer;
 
 import elemental.json.JsonValue;
 
 @SuppressWarnings("serial")
-public class ShortStringRenderer extends HtmlRenderer {
-	
+public class ShortStringRenderer extends TextRenderer {
+
 	private final int length;
-	
+
 	public ShortStringRenderer(int length) {
 		this.length = length;
 	}
-	
-	@Override
-	public JsonValue encode(String value) {
-		if(value != null && !value.isEmpty()) {
-			if(value.length() > length) {
-				value = value.substring(0, length);
-				value += "...";
-			}
-			return super.encode(value);
-		} else {
-			return null;
-		}
-	}
 
+	@Override
+	public JsonValue encode(Object value) {
+
+		String val = Optional.ofNullable(value).map(o -> o.toString()).filter(s -> !s.isEmpty()).map(s -> {
+			if (s.length() <= length) {
+				return s;
+			} else {
+				return s.substring(0, length) + "...";
+			}
+		}).orElse(null);
+
+		return super.encode(val);
+	}
 }

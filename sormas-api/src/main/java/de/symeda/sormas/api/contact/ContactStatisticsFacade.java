@@ -21,15 +21,42 @@ import java.util.List;
 
 import javax.ejb.Remote;
 
-import de.symeda.sormas.api.statistics.StatisticsCountDto;
-import de.symeda.sormas.api.statistics.StatisticsSubAttributeEnum;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseAttribute;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseAttributeEnum;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseCountDto;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseCriteria;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseSubAttribute;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseSubAttributeEnum;
 import de.symeda.sormas.api.statistics.contact.StatisticsContactAttribute;
+import de.symeda.sormas.api.statistics.contact.StatisticsContactAttributeEnum;
+import de.symeda.sormas.api.statistics.contact.StatisticsContactCountDto;
 import de.symeda.sormas.api.statistics.contact.StatisticsContactCriteria;
+import de.symeda.sormas.api.statistics.contact.StatisticsContactSubAttribute;
+import de.symeda.sormas.api.statistics.contact.StatisticsContactSubAttributeEnum;
 
 @Remote
 public interface ContactStatisticsFacade {
 
-	List<StatisticsCountDto> queryContactCount(StatisticsContactCriteria caseCriteria, StatisticsContactAttribute groupingA, StatisticsSubAttributeEnum subGroupingA,
-			StatisticsContactAttribute groupingB, StatisticsSubAttributeEnum subGroupingB, boolean includePopulation, boolean includeZeroValues, Integer populationReferenceYear);
+//	List<StatisticsCaseCountDto> queryContactCount(StatisticsContactCriteria caseCriteria, StatisticsContactAttribute groupingA, StatisticsCaseSubAttribute subGroupingA,
+//			StatisticsContactAttribute groupingB, StatisticsCaseSubAttribute subGroupingB, boolean includePopulation, boolean includeZeroValues, Integer populationReferenceYear);
+	
+//	public List<StatisticsContactCountDto> queryContactCount(StatisticsContactCriteria caseCriteria, 
+//			StatisticsContactAttribute rowGrouping, StatisticsContactSubAttribute rowSubGrouping,
+//			StatisticsContactAttribute columnGrouping, StatisticsContactSubAttribute columnSubGrouping,
+//			boolean includePopulation, boolean includeZeroValues, Integer populationReferenceYear) ;
+
+	List<StatisticsContactCountDto> queryContactCount(StatisticsContactCriteria caseCriteria,
+			StatisticsContactAttributeEnum rowGrouping, StatisticsContactAttributeEnum statisticsContactAttributeEnum,
+			StatisticsContactAttributeEnum columnGrouping, StatisticsContactAttributeEnum statisticsContactAttributeEnum2,
+			boolean includePopulation, boolean includeZeroValues, Integer populationReferenceYear);
+
+	List<StatisticsContactCountDto> queryContactCount(StatisticsContactCriteria caseCriteria,
+			StatisticsContactAttributeEnum rowGrouping, StatisticsContactSubAttributeEnum rowSubGrouping,
+			StatisticsContactAttributeEnum columnGrouping, StatisticsContactSubAttributeEnum columnSubGrouping,
+			boolean includePopulation, boolean includeZeroValues, Integer populationReferenceYear);
+
+	
+
+	
 
 }

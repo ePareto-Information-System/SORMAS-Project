@@ -17,35 +17,27 @@
  *******************************************************************************/
 package de.symeda.sormas.api.statistics.contact;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
 
-public enum StatisticsContactAttributeGroup {
+@SuppressWarnings("rawtypes")
+public class StatisticsContactAttributeGroup {
 	
-	TIME,
-	PLACE,
-	PERSON,
-	CONTACT;
+	private Enum _enum;
 	
 	private List<StatisticsContactAttribute> attributes;
 	
-	public List<StatisticsContactAttribute> getAttributes() {
-		if (attributes == null) {
-			attributes = new ArrayList<>();
-			for (StatisticsContactAttribute attribute : StatisticsContactAttribute.values()) {
-				if (attribute.getAttributeGroup() == this) {
-					attributes.add(attribute);
-				}
-			}
-		}
-
-		return attributes;
+	public StatisticsContactAttributeGroup (Enum _enum, List<StatisticsContactAttribute> attributes) {
+		this._enum = _enum;
+		this.attributes = attributes;
 	}
 	
 	public String toString() {
-		return I18nProperties.getEnumCaption(this);
+		return I18nProperties.getEnumCaption(_enum);
 	}
 	
+	public List<StatisticsContactAttribute> getAttributes () {
+		return attributes;
+	}
 }

@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.sample;
 
@@ -21,37 +21,44 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Remote;
+import javax.validation.Valid;
 
-import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.region.RegionReferenceDto;
+import de.symeda.sormas.api.common.DeletionDetails;
+import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
 
 @Remote
 public interface PathogenTestFacade {
 
-	List<PathogenTestDto> getAllActivePathogenTestsAfter(Date date, String userUuid);
-	
-	List<PathogenTestDto> getAllBySample(SampleReferenceDto sampleRef);
-	
-	PathogenTestDto getByUuid(String uuid);
-	
-	PathogenTestDto savePathogenTest(PathogenTestDto dto);
+	List<PathogenTestDto> getAllActivePathogenTestsAfter(Date date);
 
-	List<String> getAllActiveUuids(String userUuid);
+	List<PathogenTestDto> getAllBySample(SampleReferenceDto sampleRef);
+
+	PathogenTestDto getByUuid(String uuid);
+
+	PathogenTestDto savePathogenTest(@Valid PathogenTestDto dto);
+
+	List<String> getAllActiveUuids();
 
 	List<PathogenTestDto> getByUuids(List<String> uuids);
-	
-	List<DashboardTestResultDto> getNewTestResultsForDashboard(RegionReferenceDto regionRef, DistrictReferenceDto districtRef, Disease disease, Date from, Date to, String userUuid);
-	
-	void deletePathogenTest(String pathogenTestUuid, String userUuid);
-	
+
+	void deletePathogenTest(String pathogenTestUuid, DeletionDetails deletionDetails);
+
 	boolean hasPathogenTest(SampleReferenceDto sample);
-	
+
 	void validate(PathogenTestDto pathogenTest) throws ValidationRuntimeException;
-	
-	List<String> getDeletedUuidsSince(String userUuid, Date since);
-	
+
+	List<String> getDeletedUuidsSince(Date since);
+
 	Date getLatestPathogenTestDate(String sampleUuid);
-	
+
+	List<PathogenTestDto> getBySampleUuids(List<String> sampleUuids);
+
+	PathogenTestDto getLatestPathogenTest(String uuid);
+
+	List<PathogenTestDto> getAllActivePathogenTestsAfter(Date date, Integer batchSize, String lastSynchronizedUuid);
+
+	Page<PathogenTestDto> getIndexPage(PathogenTestCriteria pathogenTestCriteria, Integer offset, Integer size, List<SortProperty> sortProperties);
+
 }

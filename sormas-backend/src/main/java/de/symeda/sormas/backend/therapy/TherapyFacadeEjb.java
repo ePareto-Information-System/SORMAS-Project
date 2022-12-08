@@ -20,18 +20,19 @@ import de.symeda.sormas.backend.util.ModelConstants;
 public class TherapyFacadeEjb implements TherapyFacade {
 
 	@PersistenceContext(unitName = ModelConstants.PERSISTENCE_UNIT_NAME)
-	protected EntityManager em;
-	
+	private EntityManager em;
+
 	@EJB
-	TherapyService service;
+	private TherapyService service;
 	@EJB
 	private UserService userService;
 
 	public static TherapyReferenceDto toReferenceDto(Therapy entity) {
+
 		if (entity == null) {
 			return null;
 		}
-		
+
 		TherapyReferenceDto dto = new TherapyReferenceDto(entity.getUuid(), entity.toString());
 		return dto;
 	}
@@ -46,26 +47,23 @@ public class TherapyFacadeEjb implements TherapyFacade {
 		return target;
 	}
 
-	public Therapy fromDto(@NotNull TherapyDto source) {
-		Therapy target = service.getByUuid(source.getUuid());
-		
-		if (target == null) {
-			target = new Therapy();
-			target.setUuid(source.getUuid());
-			if (source.getCreationDate() != null) {
-				target.setCreationDate(new Timestamp(source.getCreationDate().getTime()));
-			}
-		}
+	public Therapy fromDto(@NotNull TherapyDto source, boolean checkChangeDate) {
 
-		DtoHelper.validateDto(source, target);
+		Therapy target = DtoHelper.fillOrBuildEntity(source, service.getByUuid(source.getUuid()), () -> {
+			Therapy newTherapy = new Therapy();
+			if (source.getChangeDate() != null) {
+				newTherapy.setChangeDate(new Timestamp(source.getChangeDate().getTime()));
+			}
+
+			return newTherapy;
+		}, checkChangeDate);
 
 		return target;
 	}
-	
+
 	@LocalBean
 	@Stateless
 	public static class TherapyFacadeEjbLocal extends TherapyFacadeEjb {
 
 	}
-
 }

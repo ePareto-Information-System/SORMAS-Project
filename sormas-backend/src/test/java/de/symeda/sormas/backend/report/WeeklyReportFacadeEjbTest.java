@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.backend.report;
 
@@ -27,19 +27,19 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.symeda.sormas.api.region.CommunityReferenceDto;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.report.WeeklyReportDto;
 import de.symeda.sormas.api.report.WeeklyReportOfficerSummaryDto;
 import de.symeda.sormas.api.report.WeeklyReportRegionSummaryDto;
+import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
-import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.EpiWeek;
 import de.symeda.sormas.backend.AbstractBeanTest;
 import de.symeda.sormas.backend.TestDataCreator.RDCFEntities;
-import de.symeda.sormas.backend.facility.Facility;
-import de.symeda.sormas.backend.region.Community;
-import de.symeda.sormas.backend.region.District;
+import de.symeda.sormas.backend.infrastructure.community.Community;
+import de.symeda.sormas.backend.infrastructure.district.District;
+import de.symeda.sormas.backend.infrastructure.facility.Facility;
 
 public class WeeklyReportFacadeEjbTest extends AbstractBeanTest {
 
@@ -51,20 +51,49 @@ public class WeeklyReportFacadeEjbTest extends AbstractBeanTest {
 
 	@Before
 	public void setupData() {
-		RDCFEntities rdcf = creator.createRDCFEntities("Region", "District", "Community", "Facility");
-		officer = creator.createUser(rdcf.region.getUuid(), rdcf.district.getUuid(), null, "Off", "One", UserRole.SURVEILLANCE_OFFICER);
 
-		informant1 = creator.createUser(rdcf.region.getUuid(), rdcf.district.getUuid(), rdcf.facility.getUuid(), "Info", "One", UserRole.HOSPITAL_INFORMANT);
+		RDCFEntities rdcf = creator.createRDCFEntities("Region", "District", "Community", "Facility");
+		officer = creator.createUser(
+			rdcf.region.getUuid(),
+			rdcf.district.getUuid(),
+			null,
+			"Off",
+			"One",
+			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER));
+
+		informant1 = creator.createUser(
+			rdcf.region.getUuid(),
+			rdcf.district.getUuid(),
+			rdcf.facility.getUuid(),
+			"Info",
+			"One",
+			creator.getUserRoleReference(DefaultUserRole.HOSPITAL_INFORMANT));
 		informant1.setAssociatedOfficer(officer.toReference());
 		getUserFacade().saveUser(informant1);
-		
-		informant2 = creator.createUser(rdcf.region.getUuid(), rdcf.district.getUuid(), rdcf.facility.getUuid(), "Info", "Two", UserRole.HOSPITAL_INFORMANT);
+
+		informant2 = creator.createUser(
+			rdcf.region.getUuid(),
+			rdcf.district.getUuid(),
+			rdcf.facility.getUuid(),
+			"Info",
+			"Two",
+			creator.getUserRoleReference(DefaultUserRole.HOSPITAL_INFORMANT));
 		informant2.setAssociatedOfficer(officer.toReference());
 		getUserFacade().saveUser(informant2);
 
-		RDCFEntities rdcf2 = new RDCFEntities(rdcf.region, rdcf.district, rdcf.community, creator.createFacility("Facility2", rdcf.region, rdcf.district, rdcf.community));
-		informant3 = creator.createUser(rdcf2.region.getUuid(), rdcf2.district.getUuid(), rdcf2.facility.getUuid(), "Info", "Three", UserRole.COMMUNITY_INFORMANT);
-		informant3.setCommunity(new CommunityReferenceDto(rdcf.community.getUuid()));
+		RDCFEntities rdcf2 = new RDCFEntities(
+			rdcf.region,
+			rdcf.district,
+			rdcf.community,
+			creator.createFacility("Facility2", rdcf.region, rdcf.district, rdcf.community));
+		informant3 = creator.createUser(
+			rdcf2.region.getUuid(),
+			rdcf2.district.getUuid(),
+			rdcf2.facility.getUuid(),
+			"Info",
+			"Three",
+			creator.getUserRoleReference(DefaultUserRole.COMMUNITY_INFORMANT));
+		informant3.setCommunity(new CommunityReferenceDto(rdcf.community.getUuid(), null, null));
 		informant3.setAssociatedOfficer(officer.toReference());
 		getUserFacade().saveUser(informant3);
 
@@ -72,12 +101,18 @@ public class WeeklyReportFacadeEjbTest extends AbstractBeanTest {
 		Community community2 = creator.createCommunity("Community2", district2);
 		Facility facility3 = creator.createFacility("Facility3", rdcf.region, district2, community2);
 		RDCFEntities rdcf3 = new RDCFEntities(rdcf.region, district2, community2, facility3);
-		informant4 = creator.createUser(rdcf3.region.getUuid(), rdcf3.district.getUuid(), rdcf3.facility.getUuid(), "Info", "Four", UserRole.HOSPITAL_INFORMANT);
+		informant4 = creator.createUser(
+			rdcf3.region.getUuid(),
+			rdcf3.district.getUuid(),
+			rdcf3.facility.getUuid(),
+			"Info",
+			"Four",
+			creator.getUserRoleReference(DefaultUserRole.HOSPITAL_INFORMANT));
 		informant4.setAssociatedOfficer(officer.toReference());
 		getUserFacade().saveUser(informant4);
 
 	}
-	
+
 	@Test
 	public void testGetSummariesPerRegion() {
 
@@ -85,7 +120,7 @@ public class WeeklyReportFacadeEjbTest extends AbstractBeanTest {
 		createFacilityInformantReport(informant1, new Date(), previousEpiWeek.getWeek(), previousEpiWeek.getYear(), 1);
 		createCommunityInformantReport(informant3, new Date(), previousEpiWeek.getWeek(), previousEpiWeek.getYear(), 1);
 		createFacilityInformantReport(informant4, new Date(), previousEpiWeek.getWeek(), previousEpiWeek.getYear(), 0);
-		
+
 		List<WeeklyReportRegionSummaryDto> summariesPerRegion = getWeeklyReportFacade().getSummariesPerRegion(previousEpiWeek);
 		assertEquals(1, summariesPerRegion.size());
 		WeeklyReportRegionSummaryDto summary = summariesPerRegion.get(0);
@@ -98,7 +133,7 @@ public class WeeklyReportFacadeEjbTest extends AbstractBeanTest {
 		assertEquals(2, summary.getInformantCaseReports());
 		assertEquals(1, summary.getInformantZeroReports());
 		assertEquals(1, summary.getInformantMissingReports());
-		
+
 		createOfficerReport(officer, new Date(), previousEpiWeek.getWeek(), previousEpiWeek.getYear(), 1);
 
 		summariesPerRegion = getWeeklyReportFacade().getSummariesPerRegion(previousEpiWeek);
@@ -109,7 +144,7 @@ public class WeeklyReportFacadeEjbTest extends AbstractBeanTest {
 		assertEquals(1, summary.getOfficerCaseReports());
 		assertEquals(0, summary.getOfficerZeroReports());
 	}
-	
+
 	@Test
 	public void testGetSummariesPerOfficer() {
 
@@ -117,7 +152,7 @@ public class WeeklyReportFacadeEjbTest extends AbstractBeanTest {
 		createFacilityInformantReport(informant1, new Date(), previousEpiWeek.getWeek(), previousEpiWeek.getYear(), 1);
 		createCommunityInformantReport(informant3, new Date(), previousEpiWeek.getWeek(), previousEpiWeek.getYear(), 1);
 		createFacilityInformantReport(informant4, new Date(), previousEpiWeek.getWeek(), previousEpiWeek.getYear(), 0);
-		
+
 		List<WeeklyReportOfficerSummaryDto> summariesPerRegion = getWeeklyReportFacade().getSummariesPerOfficer(officer.getRegion(), previousEpiWeek);
 		assertEquals(1, summariesPerRegion.size());
 		WeeklyReportOfficerSummaryDto summary = summariesPerRegion.get(0);
@@ -126,20 +161,21 @@ public class WeeklyReportFacadeEjbTest extends AbstractBeanTest {
 		assertEquals(1, summary.getInformantZeroReports());
 		assertEquals(1, summary.getInformantMissingReports());
 	}
-	
+
 	@Test
 	public void testGetByEpiWeekAndUser() {
 
 		EpiWeek previousEpiWeek = DateHelper.getPreviousEpiWeek(new Date());
 		createFacilityInformantReport(informant1, new Date(), previousEpiWeek.getWeek(), previousEpiWeek.getYear(), 1);
-		
+
 		WeeklyReportDto report = getWeeklyReportFacade().getByEpiWeekAndUser(previousEpiWeek, informant1.toReference());
 		assertNotNull(report);
 		report = getWeeklyReportFacade().getByEpiWeekAndUser(previousEpiWeek, informant2.toReference());
 		assertNull(report);
 	}
-	
-	public WeeklyReportDto createFacilityInformantReport(UserDto reportingUser, Date reportDateTime, int epiWeek, int year, int numberOfCases) {
+
+	private WeeklyReportDto createFacilityInformantReport(UserDto reportingUser, Date reportDateTime, int epiWeek, int year, int numberOfCases) {
+
 		WeeklyReportDto report = WeeklyReportDto.build(reportingUser.toReference());
 		report.setAssignedOfficer(reportingUser.getAssociatedOfficer());
 		report.setDistrict(reportingUser.getDistrict());
@@ -152,8 +188,9 @@ public class WeeklyReportFacadeEjbTest extends AbstractBeanTest {
 		report = getWeeklyReportFacade().saveWeeklyReport(report);
 		return report;
 	}
-	
-	public WeeklyReportDto createCommunityInformantReport(UserDto reportingUser, Date reportDateTime, int epiWeek, int year, int numberOfCases) {
+
+	private WeeklyReportDto createCommunityInformantReport(UserDto reportingUser, Date reportDateTime, int epiWeek, int year, int numberOfCases) {
+
 		WeeklyReportDto report = WeeklyReportDto.build(reportingUser.toReference());
 		report.setAssignedOfficer(reportingUser.getAssociatedOfficer());
 		report.setDistrict(reportingUser.getDistrict());
@@ -167,7 +204,8 @@ public class WeeklyReportFacadeEjbTest extends AbstractBeanTest {
 		return report;
 	}
 
-	public WeeklyReportDto createOfficerReport(UserDto reportingUser, Date reportDateTime, int epiWeek, int year, int numberOfCases) {
+	private WeeklyReportDto createOfficerReport(UserDto reportingUser, Date reportDateTime, int epiWeek, int year, int numberOfCases) {
+
 		WeeklyReportDto report = WeeklyReportDto.build(reportingUser.toReference());
 		report.setDistrict(reportingUser.getDistrict());
 		report.setReportDateTime(reportDateTime);
@@ -178,5 +216,4 @@ public class WeeklyReportFacadeEjbTest extends AbstractBeanTest {
 		report = getWeeklyReportFacade().saveWeeklyReport(report);
 		return report;
 	}
-
 }

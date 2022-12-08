@@ -5,6 +5,9 @@
 *.metadata
 *.recommenders
 *.idea
+*.iml
+.vscode
+
 /sormas-backend/bin
 /sormas-rest/bin
 /sormas-surveillance-ui/bin
@@ -22,3 +25,23 @@ deploy
 /sormas-app/java_pid21052.hprof
 bin
 /sormas-base/setup/setup.log
+
+# Exclude maven wrapper
+!/.mvn/wrapper/maven-wrapper.jar
+
+/sormas-cargoserver/.env
+/sormas-cargoserver/custom.env
+/sormas-cargoserver/custom.properties
+
+/sormas-e2e-tests/allureReports/
+/sormas-e2e-tests/allure-results
+/sormas-e2e-tests/build/
+/sormas-e2e-tests/screenshots/
+/sormas-e2e-tests/target/
+/sormas-e2e-tests/out/
+/sormas-e2e-tests/*.DS_Store
+/sormas-e2e-tests/.gradle
+/sormas-e2e-tests/.DS_Store
+/sormas-e2e-tests/logs
+
+.DS_Store

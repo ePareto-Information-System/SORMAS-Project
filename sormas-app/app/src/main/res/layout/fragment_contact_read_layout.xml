@@ -29,6 +29,8 @@
         <import type="de.symeda.sormas.api.contact.ContactRelation" />
         <import type="de.symeda.sormas.api.utils.YesNoUnknown" />
         <import type="de.symeda.sormas.api.contact.QuarantineType" />
+        <import type="de.symeda.sormas.api.contact.ContactIdentificationSource" />
+        <import type="de.symeda.sormas.api.contact.TracingApp" />
 
         <variable name="data" type="de.symeda.sormas.app.backend.contact.Contact"/>
         <variable name="caze" type="de.symeda.sormas.app.backend.caze.Case"/>
@@ -63,6 +65,23 @@
                         style="@style/ControlFirstOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/contact_multiDayContact"
+                        app:value="@{data.multiDayContact}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/contact_firstContactDate"
+                        app:value="@{data.firstContactDate}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
                         android:id="@+id/contact_lastContactDate"
                         app:value="@{data.lastContactDate}"
                         style="@style/ControlSecondOfTwoColumnsStyle" />
@@ -80,13 +99,22 @@
                         style="@style/ControlFirstOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlTextReadField
-                        android:id="@+id/contact_disease"
-                        app:value="@{data.disease}"
-                        app:appendValue="@{data.diseaseDetails}"
-                        app:valueFormat="@string/two_strings_with_hyphen_format"
-                        style="@style/ControlSecondOfTwoColumnsStyle" />
-
+                        android:id="@+id/contact_externalToken"
+                        app:value="@{data.externalToken}"
+                        style="@style/ControlSecondOfTwoColumnsStyle"/>
                 </LinearLayout>
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/contact_internalToken"
+                    app:value="@{data.internalToken}"
+                    style="@style/ControlSingleColumnStyle"/>
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/contact_disease"
+                    app:value="@{data.disease}"
+                    app:appendValue="@{data.diseaseDetails}"
+                    app:valueFormat="@string/two_strings_with_hyphen_format"
+                    style="@style/ControlSingleColumnStyle" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -104,6 +132,11 @@
                         style="@style/ControlSecondOfTwoColumnsStyle" />
 
                 </LinearLayout>
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/contact_returningTraveler"
+                    app:value="@{data.returningTraveler}"
+                    style="@style/ControlSingleColumnStyle" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -123,6 +156,11 @@
                 </LinearLayout>
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/contact_community"
+                    style="@style/ControlSingleColumnStyle"
+                    app:value="@{data.community}" />
+                
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/contact_caseIdExternalSystem"
                     app:value="@{data.caseIdExternalSystem}"
                     style="@style/ControlSingleColumnStyle" />
@@ -136,8 +174,80 @@
                     style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/contact_prohibitionToWork"
+                    style="@style/ControlSingleColumnStyle"
+                    app:value="@{data.prohibitionToWork}" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/contact_prohibitionToWorkFrom"
+                        style="@style/ControlFirstOfTwoColumnsStyle"
+                        app:dependencyParentField="@{contactProhibitionToWork}"
+                        app:dependencyParentValue="@{YesNoUnknown.YES}"
+                        app:value="@{data.prohibitionToWorkFrom}" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/contact_prohibitionToWorkUntil"
+                        style="@style/ControlSecondOfTwoColumnsStyle"
+                        app:dependencyParentField="@{contactProhibitionToWork}"
+                        app:dependencyParentValue="@{YesNoUnknown.YES}"
+                        app:value="@{data.prohibitionToWorkUntil}" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/contact_quarantineHomePossible"
+                        app:value="@{data.quarantineHomePossible}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/contact_quarantineHomePossibleComment"
+                        app:dependencyParentField="@{contactQuarantineHomePossible}"
+                        app:dependencyParentValue="@{YesNoUnknown.NO}"
+                        app:value="@{data.quarantineHomePossibleComment}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/contact_quarantineHomeSupplyEnsured"
+                        app:dependencyParentField="@{contactQuarantineHomePossible}"
+                        app:dependencyParentValue="@{YesNoUnknown.YES}"
+                        app:value="@{data.quarantineHomeSupplyEnsured}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/contact_quarantineHomeSupplyEnsuredComment"
+                        app:dependencyParentField="@{contactQuarantineHomeSupplyEnsured}"
+                        app:dependencyParentValue="@{YesNoUnknown.NO}"
+                        app:value="@{data.quarantineHomeSupplyEnsuredComment}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/contact_quarantine"
                     app:value="@{data.quarantine}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/contact_quarantineTypeDetails"
+                    app:dependencyParentField="@{contactQuarantine}"
+                    app:dependencyParentValue="@{QuarantineType.OTHER}"
+                    app:value="@{data.quarantineTypeDetails}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <LinearLayout
@@ -162,6 +272,80 @@
                         style="@style/ControlSecondOfTwoColumnsStyle" />
 
                 </LinearLayout>
+
+                <de.symeda.sormas.app.component.controls.ControlTextImageField
+                    android:id="@+id/contact_quarantineExtended"
+                    app:dependencyParentField="@{contactQuarantine}"
+                    app:dependencyParentValue="@{QuarantineType.HOME}"
+                    app:dependencyParentValue2="@{QuarantineType.INSTITUTIONELL}"
+                    app:value="@{data.quarantineExtended}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextImageField
+                    android:id="@+id/contact_quarantineReduced"
+                    app:dependencyParentField="@{contactQuarantine}"
+                    app:dependencyParentValue="@{QuarantineType.HOME}"
+                    app:dependencyParentValue2="@{QuarantineType.INSTITUTIONELL}"
+                    app:value="@{data.quarantineReduced}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextImageField
+                    android:id="@+id/contact_quarantineOrderedVerbally"
+                    app:dependencyParentField="@{contactQuarantine}"
+                    app:dependencyParentValue="@{QuarantineType.HOME}"
+                    app:dependencyParentValue2="@{QuarantineType.INSTITUTIONELL}"
+                    app:value="@{data.quarantineOrderedVerbally}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/contact_quarantineOrderedVerballyDate"
+                    app:dependencyParentField="@{contactQuarantineOrderedVerbally}"
+                    app:dependencyParentValue="@{true}"
+                    app:value="@{data.quarantineOrderedVerballyDate}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextImageField
+                    android:id="@+id/contact_quarantineOrderedOfficialDocument"
+                    app:dependencyParentField="@{contactQuarantine}"
+                    app:dependencyParentValue="@{QuarantineType.HOME}"
+                    app:dependencyParentValue2="@{QuarantineType.INSTITUTIONELL}"
+                    app:value="@{data.quarantineOrderedOfficialDocument}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/contact_quarantineOrderedOfficialDocumentDate"
+                    app:dependencyParentField="@{contactQuarantineOrderedOfficialDocument}"
+                    app:dependencyParentValue="@{true}"
+                    app:value="@{data.quarantineOrderedOfficialDocumentDate}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextImageField
+                    android:id="@+id/contact_quarantineOfficialOrderSent"
+                    app:dependencyParentField="@{contactQuarantineOrderedOfficialDocument}"
+                    app:dependencyParentValue="@{true}"
+                    app:value="@{data.quarantineOfficialOrderSent}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/contact_quarantineOfficialOrderSentDate"
+                    app:dependencyParentField="@{contactQuarantineOfficialOrderSent}"
+                    app:dependencyParentValue="@{true}"
+                    app:value="@{data.quarantineOfficialOrderSentDate}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/contact_quarantineHelpNeeded"
+                    app:dependencyParentField="@{contactQuarantine}"
+                    app:dependencyParentValue="@{QuarantineType.HOME}"
+                    app:dependencyParentValue2="@{QuarantineType.INSTITUTIONELL}"
+                    app:value="@{data.quarantineHelpNeeded}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/contact_endOfQuarantineReason"
+                    app:appendValue="@{data.endOfQuarantineReasonDetails}"
+                    app:value="@{data.endOfQuarantineReason}"
+                    style="@style/ControlSingleColumnStyle" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -208,6 +392,51 @@
                 </LinearLayout>
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/contact_reportingDistrict"
+                    style="@style/ControlSingleColumnStyle"
+                    app:value="@{data.reportingDistrict}" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/contact_contactIdentificationSource"
+                        app:value="@{data.contactIdentificationSource}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/contact_contactIdentificationSourceDetails"
+                        app:dependencyParentField="@{contactContactIdentificationSource}"
+                        app:dependencyParentValue="@{ContactIdentificationSource.OTHER}"
+                        app:value="@{data.contactIdentificationSourceDetails}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/contact_tracingApp"
+                        app:value="@{data.tracingApp}"
+                        app:dependencyParentField="@{contactContactIdentificationSource}"
+                        app:dependencyParentValue="@{ContactIdentificationSource.TRACING_APP}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/contact_tracingAppDetails"
+                        app:dependencyParentField="@{contactTracingApp}"
+                        app:dependencyParentValue="@{TracingApp.OTHER}"
+                        app:value="@{data.tracingAppDetails}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/contact_contactProximity"
                     app:value="@{data.contactProximity}"
                     style="@style/ControlSingleColumnStyle" />
@@ -242,6 +471,11 @@
                 <de.symeda.sormas.app.component.controls.ControlTextImageField
                     android:id="@+id/contact_highPriority"
                     app:value="@{data.highPriority}"
+                    style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/contact_vaccinationStatus"
+                    app:value="@{data.vaccinationStatus}"
                     style="@style/ControlSingleColumnStyle" />
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
@@ -344,6 +578,23 @@
                     </LinearLayout>
 
                 </LinearLayout>
+
+                <ImageView style="@style/FullHorizontalDividerStyle"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/heading_additional_details"
+                    style="@style/SubHeadingStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/contact_additionalDetails"
+                    app:value="@{data.additionalDetails}"
+                    app:showCaption="false"
+                    app:singleLine="false"
+                    app:maxLines="3"
+                    app:textArea="true"
+                    style="@style/ControlSingleColumnStyle" />
 
             </LinearLayout>
 

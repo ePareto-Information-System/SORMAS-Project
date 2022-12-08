@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.therapy;
 
@@ -22,32 +22,54 @@ import java.util.Date;
 
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.utils.Order;
+import de.symeda.sormas.api.utils.SensitiveData;
 
 public class PrescriptionExportDto implements Serializable {
 
 	private static final long serialVersionUID = -8150207970598300997L;
 
 	public static final String I18N_PREFIX = "PrescriptionExport";
-	
+
 	private String caseUuid;
+	@SensitiveData
 	private String caseName;
 	private Date prescriptionDate;
 	private Date prescriptionStart;
 	private Date prescriptionEnd;
+	@SensitiveData
 	private String prescribingClinician;
 	private TreatmentType prescriptionType;
+	@SensitiveData
 	private String prescriptionDetails;
 	private TypeOfDrug typeOfDrug;
 	private String frequency;
 	private String dose;
 	private TreatmentRoute route;
+	@SensitiveData
 	private String routeDetails;
+	@SensitiveData
 	private String additionalNotes;
-	
-	public PrescriptionExportDto(String caseUuid, String caseFirstName, String caseLastName, Date prescriptionDate, Date prescriptionStart,
-			Date prescriptionEnd, String prescribingClinician, TreatmentType prescriptionType, String prescriptionDetails,
-			TypeOfDrug typeOfDrug, String frequency, String dose, TreatmentRoute route, String routeDetails,
-			String additionalNotes) {
+
+	private Boolean isInJurisdiction;
+
+	public PrescriptionExportDto(
+		String caseUuid,
+		String caseFirstName,
+		String caseLastName,
+		Date prescriptionDate,
+		Date prescriptionStart,
+		Date prescriptionEnd,
+		String prescribingClinician,
+		TreatmentType prescriptionType,
+		String prescriptionDetails,
+		TypeOfDrug typeOfDrug,
+		String frequency,
+		String dose,
+		TreatmentRoute route,
+		String routeDetails,
+		String additionalNotes,
+		boolean isInJurisdiction) {
+
 		this.caseUuid = caseUuid;
 		this.caseName = PersonDto.buildCaption(caseFirstName, caseLastName);
 		this.prescriptionDate = prescriptionDate;
@@ -62,6 +84,7 @@ public class PrescriptionExportDto implements Serializable {
 		this.route = route;
 		this.routeDetails = routeDetails;
 		this.additionalNotes = additionalNotes;
+		this.isInJurisdiction = isInJurisdiction;
 	}
 
 	@Order(0)
@@ -189,5 +212,8 @@ public class PrescriptionExportDto implements Serializable {
 	public void setAdditionalNotes(String additionalNotes) {
 		this.additionalNotes = additionalNotes;
 	}
-	
+
+	public Boolean getInJurisdiction() {
+		return isInJurisdiction;
+	}
 }

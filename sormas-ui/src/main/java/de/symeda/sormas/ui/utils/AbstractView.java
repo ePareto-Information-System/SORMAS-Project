@@ -9,27 +9,38 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.utils;
 
+import java.util.Arrays;
+import java.util.Objects;
+
+import org.vaadin.hene.popupbutton.PopupButton;
+
+import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.FileDownloader;
+import com.vaadin.server.Resource;
+import com.vaadin.server.StreamResource;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.ValoTheme;
 
-import de.symeda.sormas.api.BaseCriteria;
-import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.criteria.BaseCriteria;
+import de.symeda.sormas.ui.SormasUI;
 
 public abstract class AbstractView extends VerticalLayout implements View {
 
@@ -37,11 +48,14 @@ public abstract class AbstractView extends VerticalLayout implements View {
 
 	protected final String viewName;
 	private final HorizontalLayout viewHeader;
+	private final VerticalLayout viewTitleLayout;
 	private final Label viewTitleLabel;
 	private final Label viewSubTitleLabel;
 
 	protected boolean applyingCriteria;
-
+	
+	
+	
 	protected AbstractView(String viewName) {
 		this.viewName = viewName;
 
@@ -56,7 +70,7 @@ public abstract class AbstractView extends VerticalLayout implements View {
 		viewHeader.setSpacing(true);
 		CssStyles.style(viewHeader, "view-header");
 
-		VerticalLayout viewTitleLayout = new VerticalLayout();
+		viewTitleLayout = new VerticalLayout();
 		{
 			viewTitleLayout.setSizeUndefined();
 			viewTitleLayout.setSpacing(false);
@@ -81,9 +95,17 @@ public abstract class AbstractView extends VerticalLayout implements View {
 		setExpandRatio(viewHeader, 0);
 	}
 
+	
+
 	protected void addHeaderComponent(Component c) {
 		viewHeader.addComponent(c);
 		viewHeader.setComponentAlignment(c, Alignment.MIDDLE_RIGHT);
+	}
+
+	protected void setMainHeaderComponent(Component c) {
+		viewHeader.removeComponent(viewTitleLayout);
+		viewHeader.addComponent(c, 0);
+		viewHeader.setExpandRatio(c, 1);
 	}
 
 	@Override
@@ -99,41 +121,108 @@ public abstract class AbstractView extends VerticalLayout implements View {
 	public Label getViewTitleLabel() {
 		return viewTitleLabel;
 	}
-	
+
 	public Label getViewSubTitleLabel() {
 		return viewSubTitleLabel;
 	}
 
-	public void navigateTo(BaseCriteria criteria) {
+	public boolean navigateTo(BaseCriteria criteria) {
+		return navigateTo(criteria, true);
+	}
+
+	public boolean navigateTo(BaseCriteria criteria, boolean force) {
 		if (applyingCriteria) {
-			return;
+			return false;
 		}
 		applyingCriteria = true;
 
-		String state = getUI().getNavigator().getState();
-		int paramsIndex = state.lastIndexOf('?');
-		if (paramsIndex >= 0) {
-			state = state.substring(0, paramsIndex);
+		Navigator navigator = SormasUI.get().getNavigator();
+
+		String state = navigator.getState();
+		String newState = buildNavigationState(state, criteria);
+
+		boolean didNavigate = false;
+		if (!newState.equals(state) || force) {
+			navigator.navigateTo(newState);
+
+			didNavigate = true;
 		}
-		if (state.charAt(state.length()-1) != '/')
-			state += "/";
+		applyingCriteria = false;
+
+		return didNavigate;
+	}
+
+	public static String buildNavigationState(String currentState, BaseCriteria criteria) {
+
+		String newState = currentState;
+		int paramsIndex = newState.lastIndexOf('?');
+		if (paramsIndex >= 0) {
+			newState = newState.substring(0, paramsIndex);
+		}
+
 		if (criteria != null) {
 			String params = criteria.toUrlParams();
 			if (!DataHelper.isNullOrEmpty(params)) {
-				state += "?" + params;
+				if (newState.charAt(newState.length() - 1) != '/') {
+					newState += "/";
+				}
+
+				newState += "?" + params;
 			}
 		}
-		
-		getUI().getNavigator().navigateTo(state);
 
-		applyingCriteria = false;
+		return newState;
 	}
 
 	public void setApplyingCriteria(boolean applyingCriteria) {
 		this.applyingCriteria = applyingCriteria;
 	}
 
-	protected boolean isGermanServer() {
-		return FacadeProvider.getConfigFacade().isGermanServer();
+	protected void addExportButton(
+		StreamResource streamResource,
+		PopupButton exportPopupButton,
+		VerticalLayout exportLayout,
+		Resource icon,
+		String captionKey,
+		String descriptionKey) {
+
+		Button exportButton = ButtonHelper.createIconButton(captionKey, icon, e -> {
+
+			Button button = e.getButton();
+			int buttonPos = exportLayout.getComponentIndex(button);
+
+			DownloadUtil.showExportWaitDialog(button, ce -> {
+				//restore the button
+				exportLayout.addComponent(button, buttonPos);
+				button.setEnabled(true);
+			});
+			exportPopupButton.setPopupVisible(false);
+		}, ValoTheme.BUTTON_PRIMARY);
+
+		exportButton.setDisableOnClick(true);
+		exportButton.setDescription(I18nProperties.getDescription(descriptionKey));
+		exportButton.setWidth(100, Unit.PERCENTAGE);
+
+		exportLayout.addComponent(exportButton);
+
+		new FileDownloader(streamResource).extend(exportButton);
+	}
+
+	/**
+	 * Iterates through the prefixes to determines the caption for the specified propertyId.
+	 *
+	 * @return
+	 */
+	protected static String findPrefixCaption(String propertyId, String... prefixes) {
+
+		return Arrays.stream(prefixes)
+			.map(p -> I18nProperties.getPrefixCaption(p, propertyId, null))
+			.filter(Objects::nonNull)
+			.findFirst()
+			.orElse(propertyId);
+	}
+
+	protected String createFileNameWithCurrentDate(ExportEntityName entityName, String fileExtension) {
+		return DownloadUtil.createFileNameWithCurrentDate(entityName, fileExtension);
 	}
 }

@@ -9,32 +9,35 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.rest;
 
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.security.RolesAllowed;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.SecurityContext;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.PushResult;
+import de.symeda.sormas.api.caze.CriteriaWithSorting;
+import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.task.TaskCriteria;
 import de.symeda.sormas.api.task.TaskDto;
-import de.symeda.sormas.api.user.UserReferenceDto;
+import de.symeda.sormas.api.task.TaskIndexDto;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 /**
  * @see <a href="https://jersey.java.net/documentation/latest/">Jersey
@@ -45,25 +48,28 @@ import de.symeda.sormas.api.user.UserReferenceDto;
  *
  */
 @Path("/tasks")
-@Produces({ MediaType.APPLICATION_JSON + "; charset=UTF-8" })
-@Consumes({ MediaType.APPLICATION_JSON + "; charset=UTF-8" })
-@RolesAllowed("USER")
+@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+@Consumes(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 public class TaskResource extends EntityDtoResource {
 
 	@GET
 	@Path("/all/{since}")
-	public List<TaskDto> getAll(@Context SecurityContext sc, @PathParam("since") long since) {
+	public List<TaskDto> getAll(@PathParam("since") long since) {
+		return FacadeProvider.getTaskFacade().getAllActiveTasksAfter(new Date(since));
+	}
 
-		UserReferenceDto userDto = FacadeProvider.getUserFacade()
-				.getByUserNameAsReference(sc.getUserPrincipal().getName());
-		List<TaskDto> result = FacadeProvider.getTaskFacade().getAllActiveTasksAfter(new Date(since),
-				userDto.getUuid());
-		return result;
+	@GET
+	@Path("/all/{since}/{size}/{lastSynchronizedUuid}")
+	public List<TaskDto> getAll(
+		@PathParam("since") long since,
+		@PathParam("size") int size,
+		@PathParam("lastSynchronizedUuid") String lastSynchronizedUuid) {
+		return FacadeProvider.getTaskFacade().getAllActiveTasksAfter(new Date(since), size, lastSynchronizedUuid);
 	}
 
 	@POST
 	@Path("/query")
-	public List<TaskDto> getByUuids(@Context SecurityContext sc, List<String> uuids) {
+	public List<TaskDto> getByUuids(List<String> uuids) {
 
 		List<TaskDto> result = FacadeProvider.getTaskFacade().getByUuids(uuids);
 		return result;
@@ -71,7 +77,7 @@ public class TaskResource extends EntityDtoResource {
 
 	@POST
 	@Path("/push")
-	public List<PushResult> postTasks(List<TaskDto> dtos) {
+	public List<PushResult> postTasks(@Valid List<TaskDto> dtos) {
 
 		List<PushResult> result = savePushedDto(dtos, FacadeProvider.getTaskFacade()::saveTask);
 		return result;
@@ -79,11 +85,41 @@ public class TaskResource extends EntityDtoResource {
 
 	@GET
 	@Path("/uuids")
-	public List<String> getAllActiveUuids(@Context SecurityContext sc) {
-
-		UserReferenceDto userDto = FacadeProvider.getUserFacade()
-				.getByUserNameAsReference(sc.getUserPrincipal().getName());
-		List<String> uuids = FacadeProvider.getTaskFacade().getAllActiveUuids(userDto.getUuid());
-		return uuids;
+	public List<String> getAllActiveUuids() {
+		return FacadeProvider.getTaskFacade().getAllActiveUuids();
 	}
+
+	@POST
+	@Path("/indexList")
+	public Page<TaskIndexDto> getIndexList(
+		@RequestBody CriteriaWithSorting<TaskCriteria> criteriaWithSorting,
+		@QueryParam("offset") int offset,
+		@QueryParam("size") int size) {
+		return FacadeProvider.getTaskFacade().getIndexPage(criteriaWithSorting.getCriteria(), offset, size, criteriaWithSorting.getSortProperties());
+	}
+
+	@GET
+	@Path("/{uuid}")
+	public TaskDto getByUuid(@PathParam("uuid") String uuid) {
+		return FacadeProvider.getTaskFacade().getByUuid(uuid);
+	}
+
+	@GET
+	@Path("/archived/{since}")
+	public List<String> getArchivedUuidsSince(@PathParam("since") long since) {
+		return FacadeProvider.getTaskFacade().getArchivedUuidsSince(new Date(since));
+	}
+
+	@GET
+	@Path("/obsolete/{since}")
+	public List<String> getObsoleteUuidsSince(@PathParam("since") long since) {
+		return FacadeProvider.getTaskFacade().getObsoleteUuidsSince(new Date(since));
+	}
+
+	@POST
+	@Path("/delete")
+	public List<String> delete(List<String> uuids) {
+		return FacadeProvider.getTaskFacade().deleteTasks(uuids);
+	}
+
 }

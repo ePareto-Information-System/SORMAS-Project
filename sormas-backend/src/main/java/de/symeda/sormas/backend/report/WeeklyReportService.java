@@ -9,23 +9,21 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.backend.report;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
@@ -36,23 +34,22 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import de.symeda.sormas.api.report.WeeklyReportCriteria;
-import de.symeda.sormas.api.report.WeeklyReportOfficerSummaryDto;
-import de.symeda.sormas.api.user.UserReferenceDto;
-import de.symeda.sormas.api.user.UserRole;
+import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.utils.EpiWeek;
-import de.symeda.sormas.backend.common.AbstractAdoService;
-import de.symeda.sormas.backend.facility.Facility;
-import de.symeda.sormas.backend.region.DistrictFacadeEjb;
-import de.symeda.sormas.backend.region.DistrictService;
-import de.symeda.sormas.backend.region.Region;
-import de.symeda.sormas.backend.region.RegionService;
+import de.symeda.sormas.backend.common.AdoServiceWithUserFilter;
+import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
+import de.symeda.sormas.backend.infrastructure.district.DistrictService;
+import de.symeda.sormas.backend.infrastructure.facility.Facility;
+import de.symeda.sormas.backend.infrastructure.region.Region;
+import de.symeda.sormas.backend.infrastructure.region.RegionService;
 import de.symeda.sormas.backend.user.User;
-import de.symeda.sormas.backend.user.UserFacadeEjb;
+import de.symeda.sormas.backend.user.UserRole;
 import de.symeda.sormas.backend.user.UserService;
+import de.symeda.sormas.backend.util.QueryHelper;
 
 @Stateless
 @LocalBean
-public class WeeklyReportService extends AbstractAdoService<WeeklyReport> {
+public class WeeklyReportService extends AdoServiceWithUserFilter<WeeklyReport> {
 
 	@EJB
 	private RegionService regionService;
@@ -66,32 +63,36 @@ public class WeeklyReportService extends AbstractAdoService<WeeklyReport> {
 	}
 
 	public long getNumberOfWeeklyReportsByFacility(Facility facility, EpiWeek epiWeek) {
+
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
 		Root<WeeklyReport> from = cq.from(getElementClass());
 
 		cq.select(cb.count(from));
-		Predicate filter = and (cb, 
-			createUserFilter(cb, cq, from, userService.getCurrentUser()),
-			cb.equal(from.get(WeeklyReport.HEALTH_FACILITY), facility), 
+		Predicate filter = CriteriaBuilderHelper.and(
+			cb,
+			createUserFilter(cb, cq, from),
+			cb.equal(from.get(WeeklyReport.HEALTH_FACILITY), facility),
 			cb.equal(from.get(WeeklyReport.YEAR), epiWeek.getYear()),
 			cb.equal(from.get(WeeklyReport.EPI_WEEK), epiWeek.getWeek()));
 
 		cq.where(filter);
-		
+
 		return em.createQuery(cq).getSingleResult();
 	}
 
 	public List<WeeklyReport> getByFacility(Facility facility, EpiWeek epiWeek) {
+
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<WeeklyReport> cq = cb.createQuery(getElementClass());
 		Root<WeeklyReport> from = cq.from(getElementClass());
 
-		Predicate filter = and(cb,
-				createUserFilter(cb, cq, from, userService.getCurrentUser()),
-				cb.equal(from.get(WeeklyReport.HEALTH_FACILITY), facility),
-				cb.equal(from.get(WeeklyReport.YEAR), epiWeek.getYear()),
-				cb.equal(from.get(WeeklyReport.EPI_WEEK), epiWeek.getWeek()));
+		Predicate filter = CriteriaBuilderHelper.and(
+			cb,
+			createUserFilter(cb, cq, from),
+			cb.equal(from.get(WeeklyReport.HEALTH_FACILITY), facility),
+			cb.equal(from.get(WeeklyReport.YEAR), epiWeek.getYear()),
+			cb.equal(from.get(WeeklyReport.EPI_WEEK), epiWeek.getWeek()));
 
 		cq.where(filter);
 		cq.orderBy(cb.asc(from.get(WeeklyReport.HEALTH_FACILITY)));
@@ -99,6 +100,7 @@ public class WeeklyReportService extends AbstractAdoService<WeeklyReport> {
 	}
 
 	public WeeklyReport getByEpiWeekAndUser(EpiWeek epiWeek, User user) {
+
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<WeeklyReport> cq = cb.createQuery(getElementClass());
 		Root<WeeklyReport> from = cq.from(getElementClass());
@@ -108,53 +110,7 @@ public class WeeklyReportService extends AbstractAdoService<WeeklyReport> {
 		filter = cb.and(filter, cb.equal(from.get(WeeklyReport.REPORTING_USER), user));
 
 		cq.where(filter);
-		try {
-			return em.createQuery(cq).getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
-
-	public List<WeeklyReportOfficerSummaryDto> getWeeklyReportSummariesPerOfficer(Region region, EpiWeek epiWeek) {
-
-		WeeklyReportCriteria officerReportCriteria = new WeeklyReportCriteria().epiWeek(epiWeek);
-		WeeklyReportCriteria informantsReportCriteria = new WeeklyReportCriteria().epiWeek(epiWeek).officerReport(false);
-
-		Stream<User> officers = userService.getAllByRegionAndUserRoles(region, UserRole.SURVEILLANCE_OFFICER).stream();
-		officers = filterWeeklyReportUsers(userService.getCurrentUser(), officers);
-
-		List<WeeklyReportOfficerSummaryDto> summaryDtos = officers
-		.map(officer -> {
-			officerReportCriteria.reportingUser(new UserReferenceDto(officer.getUuid()));
-			List<WeeklyReport> officerReports = queryByCriteria(officerReportCriteria, null, null, true);
-
-			WeeklyReportOfficerSummaryDto summaryDto = new WeeklyReportOfficerSummaryDto();
-			summaryDto.setOfficer(UserFacadeEjb.toReferenceDto(officer));
-			summaryDto.setDistrict(DistrictFacadeEjb.toReferenceDto(officer.getDistrict()));
-
-			if (officerReports.size() > 0) {
-				WeeklyReport officerReport = officerReports.get(0);
-				summaryDto.setOfficerReportDate(officerReport.getReportDateTime());
-				summaryDto.setTotalCaseCount(officerReport.getTotalNumberOfCases());
-			}
-
-			Long informants = userService.countByAssignedOfficer(officer);
-			summaryDto.setInformants(informants.intValue());
-
-			informantsReportCriteria.assignedOfficer(summaryDto.getOfficer());
-			informantsReportCriteria.zeroReport(false);
-			Long informantCaseReports = countByCriteria(informantsReportCriteria, null);
-			summaryDto.setInformantCaseReports(informantCaseReports.intValue());
-
-			informantsReportCriteria.zeroReport(true);
-			Long informantZeroReports = countByCriteria(informantsReportCriteria, null);
-			summaryDto.setInformantZeroReports(informantZeroReports.intValue());
-
-			return summaryDto;
-		})
-		.collect(Collectors.toList());
-
-		return summaryDtos;
+		return QueryHelper.getSingleResult(em, cq);
 	}
 
 	/**
@@ -162,41 +118,27 @@ public class WeeklyReportService extends AbstractAdoService<WeeklyReport> {
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public Predicate createUserFilter(CriteriaBuilder cb, CriteriaQuery cq, From<WeeklyReport, WeeklyReport> from,
-			User user) {
+	public Predicate createUserFilter(CriteriaBuilder cb, CriteriaQuery cq, From<?, WeeklyReport> from) {
 
-		if (user == null) {
+		User currentUser = getCurrentUser();
+		if (currentUser == null) {
 			return null;
 		}
 
-		// National users can access all reports in the system
-		if (user.hasAnyUserRole(
-				UserRole.NATIONAL_USER,
-				UserRole.NATIONAL_CLINICIAN,
-				UserRole.NATIONAL_OBSERVER)) {
+		final JurisdictionLevel jurisdictionLevel = currentUser.getJurisdictionLevel();
+		if ((jurisdictionLevel == JurisdictionLevel.NATION && !UserRole.isPortHealthUser(currentUser.getUserRoles()))) {
 			return null;
 		}
 
-		// Whoever created the weekly report is allowed to access it
 		Join<WeeklyReport, User> informant = from.join(WeeklyReport.REPORTING_USER, JoinType.LEFT);
-		Predicate filter = cb.equal(informant, user);
+		Predicate filter = cb.equal(informant, currentUser);
 
-		// Allow access based on user role
-		
-		// Supervisors see all reports from users in their region
-		if (user.getRegion() != null && 
-			user.hasAnyUserRole(
-				UserRole.SURVEILLANCE_SUPERVISOR,
-				UserRole.CONTACT_SUPERVISOR,
-				UserRole.CASE_SUPERVISOR,
-				UserRole.STATE_OBSERVER)) {
-				filter = cb.or(filter, cb.equal(
-						from.join(WeeklyReport.REPORTING_USER, JoinType.LEFT).get(User.REGION), user.getRegion()));
-			 }
-		
-		// Officers see all reports from their assigned informants
-		if (user.hasAnyUserRole(UserRole.SURVEILLANCE_OFFICER)) {
-				filter = cb.or(filter, cb.equal(informant.get(User.ASSOCIATED_OFFICER), user));
+		if (currentUser.getRegion() != null && jurisdictionLevel == JurisdictionLevel.REGION) {
+			filter = cb.or(filter, cb.equal(from.join(WeeklyReport.REPORTING_USER, JoinType.LEFT).get(User.REGION), currentUser.getRegion()));
+		}
+
+		if (JurisdictionLevel.DISTRICT.equals(currentUser.getJurisdictionLevel())) {
+			filter = cb.or(filter, cb.equal(informant.get(User.ASSOCIATED_OFFICER), currentUser));
 		}
 
 		return filter;
@@ -204,6 +146,7 @@ public class WeeklyReportService extends AbstractAdoService<WeeklyReport> {
 
 	/**
 	 * Filters users analogous to reportingUsers in ::createUserFilter
+	 * 
 	 * @see /sormas-backend/doc/UserDataAccess.md
 	 */
 	public Stream<User> filterWeeklyReportUsers(User user, Stream<User> usersStream) {
@@ -212,11 +155,9 @@ public class WeeklyReportService extends AbstractAdoService<WeeklyReport> {
 			return usersStream;
 		}
 
+		final JurisdictionLevel jurisdictionLevel = user.getJurisdictionLevel();
 		// National users can access all reports in the system
-		if (user.hasAnyUserRole(
-				UserRole.NATIONAL_USER, 
-				UserRole.NATIONAL_CLINICIAN, 
-				UserRole.NATIONAL_OBSERVER)) {
+		if (jurisdictionLevel == JurisdictionLevel.NATION && !UserRole.isPortHealthUser(user.getUserRoles())) {
 			return usersStream;
 		}
 
@@ -226,40 +167,28 @@ public class WeeklyReportService extends AbstractAdoService<WeeklyReport> {
 		// Allow access based on user role
 
 		// Supervisors see all reports from users in their region
-		if (user.getRegion() != null && 
-			user.hasAnyUserRole(
-					UserRole.SURVEILLANCE_SUPERVISOR,
-					UserRole.CONTACT_SUPERVISOR,
-					UserRole.CASE_SUPERVISOR,
-					UserRole.STATE_OBSERVER)) {
+		if (user.getRegion() != null && jurisdictionLevel == JurisdictionLevel.REGION) {
 			constraints = constraints.or(u -> user.getRegion().equals(u.getRegion()));
 		}
 
 		// Officers see all reports from their assigned informants
-		if (user.hasAnyUserRole(UserRole.SURVEILLANCE_OFFICER)) {
+		if (JurisdictionLevel.DISTRICT.equals(user.getJurisdictionLevel())) {
 			constraints = constraints.or(u -> user.equals(u.getAssociatedOfficer()));
 		}
 
 		return usersStream.filter(constraints);
 	}
 
-	public List<WeeklyReport> queryByCriteria(WeeklyReportCriteria criteria, User user, String orderProperty,
-			boolean asc) {
+	public List<WeeklyReport> queryByCriteria(WeeklyReportCriteria criteria, User user, String orderProperty, boolean asc) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<WeeklyReport> cq = cb.createQuery(WeeklyReport.class);
 		Root<WeeklyReport> from = cq.from(WeeklyReport.class);
 
-		Optional.ofNullable(orderProperty)
-		.map(from::get)
-		.map(p -> asc ? cb.asc(p) : cb.desc(p))
-		.ifPresent(cq::orderBy);
-		
-		and(cb, 
-			Optional.ofNullable(createUserFilter(cb, cq, from, user)),
-			buildCriteriaFilter(criteria, cb, from)
-		)
-		.ifPresent(cq::where);
+		Optional.ofNullable(orderProperty).map(from::get).map(p -> asc ? cb.asc(p) : cb.desc(p)).ifPresent(cq::orderBy);
+
+		CriteriaBuilderHelper.and(cb, Optional.ofNullable(createUserFilter(cb, cq, from)), buildCriteriaFilter(criteria, cb, from))
+			.ifPresent(cq::where);
 
 		return em.createQuery(cq).getResultList();
 	}
@@ -270,11 +199,8 @@ public class WeeklyReportService extends AbstractAdoService<WeeklyReport> {
 		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
 		Root<WeeklyReport> from = cq.from(WeeklyReport.class);
 
-		and(cb, 
-			Optional.ofNullable(createUserFilter(cb, cq, from, user)),
-			buildCriteriaFilter(criteria, cb, from)
-		)
-		.ifPresent(cq::where);
+		CriteriaBuilderHelper.and(cb, Optional.ofNullable(createUserFilter(cb, cq, from)), buildCriteriaFilter(criteria, cb, from))
+			.ifPresent(cq::where);
 
 		cq.select(cb.count(from));
 
@@ -282,14 +208,15 @@ public class WeeklyReportService extends AbstractAdoService<WeeklyReport> {
 	}
 
 	public Optional<Predicate> buildCriteriaFilter(WeeklyReportCriteria criteria, CriteriaBuilder cb, Root<WeeklyReport> from) {
-		
+
 		Optional<WeeklyReportCriteria> c = Optional.of(criteria);
-		
-		Optional<Predicate> filter = and(cb,
+
+		//@formatter:off
+		Optional<Predicate> filter = CriteriaBuilderHelper.and(cb,
 				//EpiWeek
 				c.map(WeeklyReportCriteria::getEpiWeek)
 				.map(w ->
-					and(cb,
+					CriteriaBuilderHelper.and(cb,
 						cb.equal(from.get(WeeklyReport.YEAR), w.getYear()),
 						cb.equal(from.get(WeeklyReport.EPI_WEEK), w.getWeek()))
 				),
@@ -325,7 +252,8 @@ public class WeeklyReportService extends AbstractAdoService<WeeklyReport> {
 				}
 				)
 			);
-			
+		//@formatter:on
+
 		return filter;
 	}
 }

@@ -17,7 +17,10 @@ import javax.ejb.TransactionAttributeType;
  * <li>Inject {@link TransactionWrapper} with {@code @EJB}.</li>
  * <li>Inject the {@code function} to be called using {@code @Inject}.</li>
  * </ol>
+ *
+ * <b>This has to stay a local bean - otherwise the function would be serialized which may have unwanted side effects.</b>
  */
+
 @LocalBean
 @Stateless
 @PermitAll
@@ -25,9 +28,13 @@ public class TransactionWrapper {
 
 	/**
 	 * Calls the passed function in a new JTA transaction.
-	 * 
-	 * @param function The business logic to be executed.
-	 * @param data The data to be processed.
+	 *
+	 * <b>Don't access the context of the calling bean from within the function. E.g. don't use the entity manager of the calling bean.</b>
+	 *
+	 * @param function
+	 *            The business logic to be executed.
+	 * @param data
+	 *            The data to be processed.
 	 * @return The return value of the processing defined by {@code function} (typically a result/report).
 	 */
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

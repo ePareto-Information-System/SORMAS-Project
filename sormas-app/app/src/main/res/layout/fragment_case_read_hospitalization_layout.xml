@@ -24,10 +24,13 @@
 
     <data>
         <import type="de.symeda.sormas.api.utils.YesNoUnknown" />
+        <import type="de.symeda.sormas.api.hospitalization.HospitalizationReasonType" />
+        <import type="de.symeda.sormas.api.infrastructure.facility.FacilityType" />
 
         <variable name="data" type="de.symeda.sormas.app.backend.hospitalization.Hospitalization" />
         <variable name="caze" type="de.symeda.sormas.app.backend.caze.Case" />
         <variable name="previousHospitalizationList" type="androidx.databinding.ObservableList&lt;de.symeda.sormas.app.backend.hospitalization.PreviousHospitalization&gt;" />
+        <variable name="previousHospitalizationBindCallback" type="de.symeda.sormas.app.util.TemplateBindingCallback" />
     </data>
 
     <ScrollView
@@ -46,7 +49,9 @@
                 android:padding="@dimen/fragment_padding"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
-                android:id="@+id/main_content">
+                android:id="@+id/main_content"
+                app:goneIfVariable="@{caze.facilityType}"
+                app:goneIfNotValue="@{FacilityType.HOSPITAL}">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -95,22 +100,36 @@
 
                 </LinearLayout>
 
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/caseHospitalization_intensiveCareUnit"
+                    app:value="@{data.intensiveCareUnit}"
+                    style="@style/ControlSingleColumnStyle" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <de.symeda.sormas.app.component.controls.ControlTextReadField
-                        android:id="@+id/caseHospitalization_accommodation"
-                        app:value="@{data.accommodation}"
+                        android:id="@+id/caseHospitalization_intensiveCareUnitStart"
+                        dependencyParentField="@{caseHospitalizationIntensiveCareUnit}"
+                        dependencyParentValue="@{YesNoUnknown.YES}"
+                        app:value="@{data.intensiveCareUnitStart}"
                         style="@style/ControlFirstOfTwoColumnsStyle" />
 
                     <de.symeda.sormas.app.component.controls.ControlTextReadField
-                        android:id="@+id/caseHospitalization_leftAgainstAdvice"
-                        app:value="@{data.leftAgainstAdvice}"
+                        android:id="@+id/caseHospitalization_intensiveCareUnitEnd"
+                        dependencyParentField="@{caseHospitalizationIntensiveCareUnit}"
+                        dependencyParentValue="@{YesNoUnknown.YES}"
+                        app:value="@{data.intensiveCareUnitEnd}"
                         style="@style/ControlSecondOfTwoColumnsStyle" />
 
                 </LinearLayout>
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/caseHospitalization_leftAgainstAdvice"
+                    app:value="@{data.leftAgainstAdvice}"
+                    style="@style/ControlSingleColumnStyle" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -134,9 +153,30 @@
                 </LinearLayout>
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
-                    android:id="@+id/caseHospitalization_hospitalizedPreviously"
-                    app:value="@{data.hospitalizedPreviously}"
+                    android:id="@+id/caseHospitalization_hospitalizationReason"
+                    app:value="@{data.hospitalizationReason}"
+                    app:appendValue="@{data.otherHospitalizationReason}"
                     style="@style/ControlSingleColumnStyle" />
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/caseHospitalization_description"
+                    style="@style/ControlSingleColumnStyle"
+                    app:value="@{data.description}" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/fragment_padding"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true">
+
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/caseHospitalization_hospitalizedPreviously"
+                        app:value="@{data.hospitalizedPreviously}"
+                        style="@style/ControlSingleColumnStyle" />
 
             </LinearLayout>
 
@@ -163,7 +203,8 @@
                     android:clipToPadding="false"
                     android:padding="@dimen/rowListItemParentElevationVerticalPadding"
                     app:entries="@{previousHospitalizationList}"
-                    app:layout="@{@layout/row_case_previous_hospitalization_layout}" />
+                    app:layout="@{@layout/row_case_previous_hospitalization_layout}"
+                    app:bindCallback="@{previousHospitalizationBindCallback}" />
 
             </LinearLayout>
 

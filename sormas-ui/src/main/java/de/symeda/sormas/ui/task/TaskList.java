@@ -9,17 +9,16 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.task;
 
 import java.util.List;
 
-import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Label;
 
@@ -33,6 +32,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.task.TaskContext;
 import de.symeda.sormas.api.task.TaskCriteria;
 import de.symeda.sormas.api.task.TaskIndexDto;
+import de.symeda.sormas.api.travelentry.TravelEntryReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
@@ -42,12 +42,11 @@ import de.symeda.sormas.ui.utils.PaginationList;
 public class TaskList extends PaginationList<TaskIndexDto> {
 
 	private final TaskCriteria taskCriteria = new TaskCriteria();
-	private final TaskContext context;
-	
-	public TaskList(TaskContext context, ReferenceDto entityRef) {
-		super(5);
-		this.context = context;
+	private final Label noTasksLabel;
 
+	public TaskList(TaskContext context, ReferenceDto entityRef) {
+
+		super(5);
 		switch (context) {
 		case CASE:
 			taskCriteria.caze((CaseReferenceDto) entityRef);
@@ -58,37 +57,42 @@ public class TaskList extends PaginationList<TaskIndexDto> {
 		case EVENT:
 			taskCriteria.event((EventReferenceDto) entityRef);
 			break;
+		case TRAVEL_ENTRY:
+			taskCriteria.travelEntry((TravelEntryReferenceDto) entityRef);
+			break;
 		default:
 			throw new IndexOutOfBoundsException(context.toString());
 		}
+		noTasksLabel = new Label(String.format(I18nProperties.getCaption(Captions.taskNoTasks), context.toString().toLowerCase()));
 	}
 
 	@Override
 	public void reload() {
-		List<TaskIndexDto> tasks = FacadeProvider.getTaskFacade()
-				.getIndexList(UserProvider.getCurrent().getUuid(), taskCriteria, 0, maxDisplayedEntries * 20, null);
+		List<TaskIndexDto> tasks = FacadeProvider.getTaskFacade().getIndexList(taskCriteria, 0, maxDisplayedEntries * 20, null);
 
 		setEntries(tasks);
 		if (!tasks.isEmpty()) {
 			showPage(1);
 		} else {
+			listLayout.removeAllComponents();
 			updatePaginationLayout();
-			Label noTasksLabel = new Label(String.format(I18nProperties.getCaption(Captions.taskNoTasks), context.toString()));
 			listLayout.addComponent(noTasksLabel);
 		}
 	}
-	
+
 	@Override
 	protected void drawDisplayedEntries() {
-		for (TaskIndexDto task : getDisplayedEntries()) {
+
+		List<TaskIndexDto> displayedEntries = getDisplayedEntries();
+
+		for (int i = 0, displayedEntriesSize = displayedEntries.size(); i < displayedEntriesSize; i++) {
+			TaskIndexDto task = displayedEntries.get(i);
 			TaskListEntry listEntry = new TaskListEntry(task);
 			if (UserProvider.getCurrent().hasUserRight(UserRight.TASK_EDIT)) {
-				listEntry.addEditListener(new ClickListener() {
-					@Override
-					public void buttonClick(ClickEvent event) {
-						ControllerProvider.getTaskController().edit(listEntry.getTask(), TaskList.this::reload);		
-					}
-				});
+				listEntry.addEditListener(
+					i,
+					(ClickListener) event -> ControllerProvider.getTaskController()
+						.edit(listEntry.getTask(), TaskList.this::reload, false, listEntry.getTask().getDisease()));
 			}
 			listLayout.addComponent(listEntry);
 		}

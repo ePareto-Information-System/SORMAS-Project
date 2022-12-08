@@ -64,17 +64,29 @@
                         app:value="@{data.involvementDescription}"
                         style="@style/ControlSingleColumnStyle" />
 
-                    <ImageView style="@style/FullHorizontalDividerStyle"/>
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/contact_vaccinationStatus"
+                        app:value="@{data.vaccinationStatus}"
+                        style="@style/ControlSingleColumnStyle" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <de.symeda.sormas.app.component.controls.ControlTextReadField
+                            android:id="@+id/eventParticipant_responsibleRegion"
+                            style="@style/ControlFirstOfTwoColumnsStyle"
+                            app:value="@{data.responsibleRegion}" />
+
+                        <de.symeda.sormas.app.component.controls.ControlTextReadField
+                            android:id="@+id/eventParticipant_responsibleDistrict"
+                            style="@style/ControlSecondOfTwoColumnsStyle"
+                            app:value="@{data.responsibleDistrict}" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
-
-                <include
-                    android:id="@+id/eventParticipant_person_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="-64dp"
-                    layout="@layout/fragment_person_read_layout"
-                    app:data="@{data.person}"/>
 
             </LinearLayout>
 

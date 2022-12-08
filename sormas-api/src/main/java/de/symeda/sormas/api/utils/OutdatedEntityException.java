@@ -9,15 +9,18 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.utils;
 
 import de.symeda.sormas.api.EntityDto;
+
+import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * Thrown when a entity that is supposed to be saved is older than the current
@@ -26,8 +29,13 @@ import de.symeda.sormas.api.EntityDto;
 @SuppressWarnings("serial")
 public class OutdatedEntityException extends ValidationRuntimeException {
 
-	public OutdatedEntityException(String entityUuid, Class<? extends EntityDto> entityClass) {
-		super(entityClass.getSimpleName() + " is older than current version on server: '" + entityUuid + "'");
+	public OutdatedEntityException(String entityUuid, Class<? extends EntityDto> entityClass, Date dtoChangeDate, Timestamp entityChangeDate) {
+		super(
+			String.format(
+				"%s is older (%s) than current version on server (%s): '%s'",
+				entityClass.getSimpleName(),
+				dtoChangeDate,
+				entityChangeDate,
+				entityUuid));
 	}
-
 }

@@ -98,7 +98,9 @@ public class StatisticsAttribute {
 	@SuppressWarnings("rawtypes")
 	public static Enum getEnum (StatisticsAttribute attribute) {
 		return attribute == null ? null : attribute._enum;
-	}	
+	}
+	
+	
 	
 	public static StatisticsAttributeEnum getBaseEnum (StatisticsAttribute attribute) {
 		return attribute == null ? null : attribute.baseEnum;

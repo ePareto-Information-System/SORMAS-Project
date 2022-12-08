@@ -1,177 +1,105 @@
-/*******************************************************************************
+/*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
- *
+ * Copyright © 2016-2022 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *******************************************************************************/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package de.symeda.sormas.ui.utils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import com.vaadin.ui.Component;
-import com.vaadin.ui.CustomLayout;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.data.Item;
 import com.vaadin.v7.data.Validator;
 import com.vaadin.v7.data.Validator.InvalidValueException;
-import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroup;
 import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitEvent;
 import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitHandler;
-import com.vaadin.v7.data.util.BeanItem;
 import com.vaadin.v7.data.util.converter.Converter.ConversionException;
 import com.vaadin.v7.ui.AbstractField;
+import com.vaadin.v7.ui.AbstractTextField;
 import com.vaadin.v7.ui.ComboBox;
-import com.vaadin.v7.ui.CustomField;
-import com.vaadin.v7.ui.DateField;
 import com.vaadin.v7.ui.Field;
-import com.vaadin.v7.ui.OptionGroup;
 
 import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.InfrastructureDataReferenceDto;
+import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.api.utils.Diseases;
-import de.symeda.sormas.api.utils.Outbreaks;
-import de.symeda.sormas.ui.UserProvider;
+import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
+import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 
-public abstract class AbstractEditForm <DTO extends EntityDto> extends CustomField<DTO> implements CommitHandler {// implements DtoEditForm<DTO> {
-		
-		private static final long serialVersionUID = 1L;
-		
+public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements FieldGroup.CommitHandler {// implements DtoEditForm<DTO> {
 
-	private final BeanFieldGroup<DTO> fieldGroup;
+	private static final long serialVersionUID = 1L;
 
-	private final String propertyI18nPrefix;
+	protected final FieldVisibilityCheckers fieldVisibilityCheckers;
+	protected final UiFieldAccessCheckers fieldAccessCheckers;
 
-	private Class<DTO> type;
 	private boolean hideValidationUntilNextCommit = false;
-	private List<Field<?>> customFields = new ArrayList<>();
 	private List<Field<?>> visibleAllowedFields = new ArrayList<>();
+	private boolean visibilitiesInitialized;
+	private List<Field<?>> editableAllowedFields = new ArrayList<>();
+	private boolean fieldAccessesInitialized;
 
-	protected AbstractEditForm(Class<DTO> type, String propertyI18nPrefix, UserRight editOrCreateUserRight) {
-		this(type, propertyI18nPrefix, editOrCreateUserRight, true);
+	private ComboBox diseaseField;
+	private boolean setServerDiseaseAsDefault;
+
+	protected AbstractEditForm(Class<DTO> type, String propertyI18nPrefix) {
+		this(type, propertyI18nPrefix, true, null, null);
 	}
 
-	protected AbstractEditForm(Class<DTO> type, String propertyI18nPrefix, UserRight editOrCreateUserRight, boolean addFields) {
-		this.type = type;
-		this.propertyI18nPrefix = propertyI18nPrefix;
+	protected AbstractEditForm(Class<DTO> type, String propertyI18nPrefix, boolean addFields) {
+		this(type, propertyI18nPrefix, addFields, null, null);
+	}
 
-		fieldGroup = new BeanFieldGroup<DTO>(type) {
+	protected AbstractEditForm(Class<DTO> type, String propertyI18nPrefix, FieldVisibilityCheckers fieldVisibilityCheckers) {
+		this(type, propertyI18nPrefix, true, fieldVisibilityCheckers, null);
+	}
 
-			@Override
-			protected void configureField(Field<?> field) {
+	protected AbstractEditForm(Class<DTO> type, String propertyI18nPrefix, boolean addFields, FieldVisibilityCheckers fieldVisibilityCheckers) {
+		this(type, propertyI18nPrefix, addFields, fieldVisibilityCheckers, null);
+	}
 
-				field.setBuffered(isBuffered());
-				if (!isEnabled()) {
-					field.setEnabled(false);
-				}			
+	protected AbstractEditForm(
+		Class<DTO> type,
+		String propertyI18nPrefix,
+		boolean addFields,
+		FieldVisibilityCheckers fieldVisibilityCheckers,
+		UiFieldAccessCheckers fieldAccessCheckers) {
 
-				if (field.getPropertyDataSource().isReadOnly()) {
-					field.setReadOnly(true);
-				} else if (isReadOnly()) {
-					field.setReadOnly(true);
-				}
-			}
-		};
+		super(type, propertyI18nPrefix, new SormasFieldGroupFieldFactory(fieldVisibilityCheckers, fieldAccessCheckers), false);
+		this.fieldVisibilityCheckers = fieldVisibilityCheckers;
+		this.fieldAccessCheckers = fieldAccessCheckers;
 
-		fieldGroup.addCommitHandler(this);
-
-		fieldGroup.setFieldFactory(new SormasFieldGroupFieldFactory(editOrCreateUserRight));
-
+		getFieldGroup().addCommitHandler(this);
 		setWidth(900, Unit.PIXELS);
-		setHeightUndefined();
 
 		if (addFields) {
 			addFields();
 		}
-
-		if (editOrCreateUserRight != null && !UserProvider.getCurrent().hasUserRight(editOrCreateUserRight)) {
-			getFieldGroup().setReadOnly(true);
-		}
 	}
-
-	@SuppressWarnings("rawtypes")
-	public static CommitDiscardWrapperComponent<? extends AbstractEditForm> buildCommitDiscardWrapper(AbstractEditForm wrappedForm) {
-		return new CommitDiscardWrapperComponent<>(wrappedForm, wrappedForm.getFieldGroup());
-	}
-
-	@SuppressWarnings("rawtypes")
-	public static CommitDiscardWrapperComponent<VerticalLayout> buildCommitDiscardWrapper(AbstractEditForm ...wrappedForms) {
-		VerticalLayout formsLayout = new VerticalLayout();
-		if (wrappedForms.length > 0) { // not perfect, but necessary to make this work in grid views like CaseDataView
-			formsLayout.setWidth(wrappedForms[0].getWidth(), wrappedForms[0].getWidthUnits());
-		}
-		FieldGroup[] fieldGroups = new FieldGroup[wrappedForms.length];
-		for (int i=0; i<wrappedForms.length; i++) {
-			formsLayout.addComponent(wrappedForms[i]);
-			wrappedForms[i].setWidth(100, Unit.PERCENTAGE);
-			fieldGroups[i] = wrappedForms[i].getFieldGroup();
-		}
-		return new CommitDiscardWrapperComponent<>(formsLayout, fieldGroups);
-	}
-
-	@Override
-	public CustomLayout initContent() {
-
-		String htmlLayout = createHtmlLayout();
-		CustomLayout layout = new CustomLayout();
-		layout.setTemplateContents(htmlLayout);
-		layout.setWidth(100, Unit.PERCENTAGE);
-		layout.setHeightUndefined();
-
-		return layout;
-	}
-
-	@Override
-	public Class<? extends DTO> getType() {
-		return type;
-	}
-
-	@Override
-	protected CustomLayout getContent() {
-		return (CustomLayout)super.getContent();
-	}
-
-	protected abstract String createHtmlLayout();
-	protected abstract void addFields();	
 
 	@Override
 	public void setValue(DTO newFieldValue) throws com.vaadin.v7.data.Property.ReadOnlyException, ConversionException {
 		super.setValue(newFieldValue);
-	}
-
-	@Override
-	protected DTO getInternalValue() {
-		BeanItem<DTO> beanItem = getFieldGroup().getItemDataSource();
-		if (beanItem == null) {
-			return null;
-		} else {
-			return beanItem.getBean();
+		// this method should only be called once upon initializing the form, thus allowing us to set the default disease here
+		if (diseaseField != null && diseaseField.getValue() == null && setServerDiseaseAsDefault) {
+			setDefaultDiseaseValue();
 		}
-	}
-
-	@Override
-	protected void setInternalValue(DTO newValue) {
-		super.setInternalValue(newValue);
-		BeanFieldGroup<DTO> fieldGroup = getFieldGroup();
-		fieldGroup.setItemDataSource(newValue);
 	}
 
 	@Override
@@ -185,18 +113,20 @@ public abstract class AbstractEditForm <DTO extends EntityDto> extends CustomFie
 	@Override
 	public void preCommit(CommitEvent commitEvent) throws CommitException {
 
+		List<Field<?>> customFields = getCustomFields();
+
 		if (hideValidationUntilNextCommit) {
 			hideValidationUntilNextCommit = false;
 			for (Field<?> field : getFieldGroup().getFields()) {
 				if (field instanceof AbstractField) {
-					AbstractField<?> abstractField = (AbstractField<?>)field;
+					AbstractField<?> abstractField = (AbstractField<?>) field;
 					abstractField.setValidationVisible(true);
 				}
 			}
 
 			for (Field<?> field : customFields) {
 				if (field instanceof AbstractField) {
-					AbstractField<?> abstractField = (AbstractField<?>)field;
+					AbstractField<?> abstractField = (AbstractField<?>) field;
 					abstractField.setValidationVisible(true);
 				}
 			}
@@ -219,8 +149,10 @@ public abstract class AbstractEditForm <DTO extends EntityDto> extends CustomFie
 		} catch (CommitException e) {
 			if (e.getInvalidFields().size() > 0) {
 				throw new InvalidValueException(
-						e.getInvalidFields().keySet().stream().map(f -> f.getCaption()).collect(Collectors.joining(", ")), 
-						e.getInvalidFields().values().stream().toArray(InvalidValueException[]::new));
+					e.getInvalidFields().keySet().stream().map(f -> f.getCaption()).collect(Collectors.joining(", ")),
+					e.getInvalidFields().values().stream().toArray(InvalidValueException[]::new));
+			} else if (e.getCause() instanceof InvalidValueException) {
+				throw (InvalidValueException) e.getCause();
 			} else {
 				throw new SourceException(this, e);
 			}
@@ -239,31 +171,8 @@ public abstract class AbstractEditForm <DTO extends EntityDto> extends CustomFie
 		super.discard();
 	}
 
-	public BeanFieldGroup<DTO> getFieldGroup() {
-		return this.fieldGroup;
-	}
-
-	protected void addFields(String ...properties) {
-		for (String property: properties) {
-			addField(property);
-		}
-	}
-
-	@SuppressWarnings("rawtypes")
-	protected <T extends Field> void addFields(Class<T> fieldType, String ...properties) {
-		for (String property : properties) {
-			addField(property, fieldType);
-		}
-	}
-
-	@SuppressWarnings("rawtypes")
-	protected <T extends Field> T addCustomField(String fieldId, Class<?> dataType, Class<T> fieldType) {
-		T field = getFieldGroup().getFieldFactory().createField(dataType, fieldType);
-		formatField(field, fieldId);
-		addDefaultAdditionalValidators(field);
-		getContent().addComponent(field, fieldId);
-		customFields.add(field);
-		return field;
+	protected ComboBox addDiseaseField(String fieldId, boolean showNonPrimaryDiseases) {
+		return addDiseaseField(fieldId, showNonPrimaryDiseases, false);
 	}
 
 	/**
@@ -271,154 +180,169 @@ public abstract class AbstractEditForm <DTO extends EntityDto> extends CustomFie
 	 * that makes sure the value that is about to be selected is added to the list of allowed values. This is intended
 	 * to be used for Disease fields that might contain a disease that is no longer active in the system and thus will
 	 * not be returned by DiseaseHelper.isActivePrimaryDisease(disease).
+	 * 
+	 * @param showNonPrimaryDiseases
+	 *            Whether or not diseases that have been configured as non-primary should be included
+	 * @param setServerDiseaseAsDefault
+	 *            If only a single diseases is active on the server, set it as the default value
 	 */
-	@SuppressWarnings("rawtypes")
-	protected ComboBox addDiseaseField(String fieldId, boolean showNonPrimaryDiseases) {
-		ComboBox field = addField(fieldId, ComboBox.class);
+	@SuppressWarnings("unchecked")
+	protected ComboBox addDiseaseField(String fieldId, boolean showNonPrimaryDiseases, boolean setServerDiseaseAsDefault) {
+
+		diseaseField = addField(fieldId, ComboBox.class);
+		this.setServerDiseaseAsDefault = setServerDiseaseAsDefault;
 		if (showNonPrimaryDiseases) {
-			addNonPrimaryDiseasesTo(field);
+			addNonPrimaryDiseasesTo(diseaseField);
 		}
+
+		if (setServerDiseaseAsDefault) {
+			setDefaultDiseaseValue();
+		}
+
 		// Make sure that the ComboBox still contains a pre-selected inactive disease
-		field.addValueChangeListener(e -> {
+		diseaseField.addValueChangeListener(e -> {
 			Object value = e.getProperty().getValue();
-			if (value != null && !field.containsId(value)) {
-				Item newItem = field.addItem(value);
+			if (value != null && !diseaseField.containsId(value)) {
+				Item newItem = diseaseField.addItem(value);
 				newItem.getItemProperty(SormasFieldGroupFieldFactory.CAPTION_PROPERTY_ID).setValue(value.toString());
 			}
 		});
-		return field;
+		return diseaseField;
 	}
-	
+
+	/**
+	 * If the server is only configured for one disease, automatically set this as the default value of the disease field.
+	 * Disease.OTHER and Disease.UNDEFINED are not counted as disease
+	 */
+	private void setDefaultDiseaseValue() {
+		Disease defaultDisease = FacadeProvider.getDiseaseConfigurationFacade().getDefaultDisease();
+		if (defaultDisease != null) {
+			diseaseField.setValue(defaultDisease);
+		} else if (diseaseField.getItemIds().size() == 1) {
+			diseaseField.setValue(diseaseField.getItemIds().stream().findFirst().get());
+		}
+	}
+
 	protected ComboBox addInfrastructureField(String fieldId) {
+		return addInfrastructureField(fieldId, true);
+	}
+
+	protected ComboBox addInfrastructureField(String fieldId, boolean showInactiveTag) {
 		ComboBox field = addField(fieldId, ComboBox.class);
 		// Make sure that the ComboBox still contains a pre-selected inactive infrastructure entity
 		field.addValueChangeListener(e -> {
-			Object value = e.getProperty().getValue();
+			InfrastructureDataReferenceDto value = (InfrastructureDataReferenceDto) e.getProperty().getValue();
 			if (value != null && !field.containsId(value)) {
-				Item newItem = field.addItem(value);
+				InfrastructureDataReferenceDto inactiveValue = value.clone();
+				if (showInactiveTag) {
+					inactiveValue.setCaption(value.getCaption() + " (" + I18nProperties.getString(Strings.inactive) + ")");
+				} else {
+					inactiveValue.setCaption(value.getCaption());
+				}
+				field.addItem(inactiveValue);
 			}
 		});
 		return field;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({
+		"unchecked",
+		"rawtypes" })
+	@Override
 	protected <T extends Field> T addField(String propertyId) {
 		return (T) addField(propertyId, Field.class);
 	}
 
-	@SuppressWarnings("rawtypes")
-	protected <T extends Field> T addField(String propertyId, Class<T> fieldType) {
-		T field = getFieldGroup().buildAndBind(propertyId, (Object)propertyId, fieldType);
-		formatField(field, propertyId);
-		field.setId(propertyId);
-		getContent().addComponent(field, propertyId);	
-		addDefaultAdditionalValidators(field);	
-		return field;
-	}
-
-	@SuppressWarnings("rawtypes")
 	/**
-	 * @param allowedDaysInFuture How many days in the future the value of this field can be or
-	 * -1 for no restriction at all
+	 * @param allowedDaysInFuture
+	 *            How many days in the future the value of this field can be or
+	 *            -1 for no restriction at all
 	 */
+	@SuppressWarnings("rawtypes")
+	@Override
 	protected <T extends Field> T addDateField(String propertyId, Class<T> fieldType, int allowedDaysInFuture) {
-		T field = getFieldGroup().buildAndBind(propertyId, (Object)propertyId, fieldType);
+		T field = createField(propertyId, fieldType);
 		formatField(field, propertyId);
 		field.setId(propertyId);
-		getContent().addComponent(field, propertyId);	
-		addFutureDateValidator(field, allowedDaysInFuture);	
+		getContent().addComponent(field, propertyId);
+		addFutureDateValidator(field, allowedDaysInFuture);
 		return field;
 	}
 
 	@SuppressWarnings("rawtypes")
-	protected <T extends Field> T formatField(T field, String propertyId) {
+	@Override
+	protected <T extends Field> void formatField(T field, String propertyId) {
+		formatField(field, propertyId, I18nProperties.getPrefixCaption(propertyI18nPrefix, propertyId, field.getCaption()));
+	}
 
-		String caption = I18nProperties.getPrefixCaption(getPropertyI18nPrefix(), propertyId, field.getCaption());
-		field.setCaption(caption);
+	@SuppressWarnings("rawtypes")
+	@Override
+	protected <T extends Field> void formatField(T field, String propertyId, String customCaption) {
+
+		super.formatField(field, propertyId);
+
+		field.setCaption(customCaption);
 
 		if (field instanceof AbstractField) {
-			AbstractField abstractField = (AbstractField)field;
-			abstractField.setDescription(I18nProperties.getPrefixDescription(
-					getPropertyI18nPrefix(), propertyId, abstractField.getDescription()));
+			AbstractField<?> abstractField = (AbstractField) field;
+			abstractField.setDescription(I18nProperties.getPrefixDescription(propertyI18nPrefix, propertyId, abstractField.getDescription()));
 
-			if (hideValidationUntilNextCommit) {
-				if (!abstractField.isInvalidCommitted()) {
-					abstractField.setValidationVisible(false);
-				}
+			if (hideValidationUntilNextCommit && !abstractField.isInvalidCommitted()) {
+				abstractField.setValidationVisible(false);
 			}
 		}
 
-		String validationError = I18nProperties.getPrefixValidationError(getPropertyI18nPrefix(), propertyId, caption);
+		String validationError = I18nProperties.getPrefixValidationError(propertyI18nPrefix, propertyId, customCaption);
 		field.setRequiredError(validationError);
 
 		field.setWidth(100, Unit.PERCENTAGE);
-
-		return field;
-	}
-
-	@SuppressWarnings("rawtypes")
-	protected <T extends Field> T addDefaultAdditionalValidators(T field) {
-		addFutureDateValidator(field, 0);
-		return field;
-	}
-
-	@SuppressWarnings("rawtypes")
-	protected <T extends Field> T addFutureDateValidator(T field, int amountOfDays) {
-		if (amountOfDays < 0) {
-			return field;
-		}
-
-		if (DateField.class.isAssignableFrom(field.getClass())
-				|| DateTimeField.class.isAssignableFrom(field.getClass())) {
-			field.addValidator(new FutureDateValidator(field, amountOfDays, field.getCaption()));
-		}
-
-		return field;
-	}
-
-	public Field<?> getField(String fieldOrPropertyId) {
-		Field<?> field = getFieldGroup().getField(fieldOrPropertyId);
-		if (field == null) {
-			// try to get the field from the layout
-			Component component = getContent().getComponent(fieldOrPropertyId);
-			if (component instanceof Field<?>) {
-				field = (Field<?>)component;
-			}
-		}
-		return field;
 	}
 
 	protected void styleAsOptionGroupHorizontal(List<String> fields) {
-		for(String field : fields) {
-			CssStyles.style((OptionGroup)getFieldGroup().getField(field), ValoTheme.OPTIONGROUP_HORIZONTAL);
+		for (String field : fields) {
+			CssStyles.style((NullableOptionGroup) getFieldGroup().getField(field), ValoTheme.OPTIONGROUP_HORIZONTAL);
 		}
 	}
 
-	protected void setReadOnly(boolean readOnly, String ...fieldOrPropertyIds) {
+	protected void setReadOnly(boolean readOnly, String... fieldOrPropertyIds) {
+
 		for (String propertyId : fieldOrPropertyIds) {
-			getField(propertyId).setReadOnly(readOnly);
+			if (readOnly || isEditableAllowed(propertyId)) {
+				getField(propertyId).setReadOnly(readOnly);
+			}
 		}
 	}
-	
+
+	protected void setEnabled(boolean enabled, String... fieldOrPropertyIds) {
+
+		for (String propertyId : fieldOrPropertyIds) {
+			if (enabled || isEditableAllowed(propertyId)) {
+				getField(propertyId).setEnabled(enabled);
+			}
+		}
+	}
+
 	@Override
 	public void clear() {
 		// clear the fields instead of the form itself
-		for (Field<?> field : fieldGroup.getFields()) {
+		for (Field<?> field : getFieldGroup().getFields()) {
 			field.clear();
 		}
 	}
-	
-	protected void setVisible(boolean visible, String ...fieldOrPropertyIds) {
+
+	protected void setVisible(boolean visible, String... fieldOrPropertyIds) {
+
 		for (String propertyId : fieldOrPropertyIds) {
-			if (visible == false || isVisibleAllowed(propertyId)) {
+			if (!visible || isVisibleAllowed(propertyId)) {
 				getField(propertyId).setVisible(visible);
 			}
 		}
 	}
 
-	protected void setVisibleClear(boolean visible, String ...fieldOrPropertyIds) {
+	protected void setVisibleClear(boolean visible, String... fieldOrPropertyIds) {
+
 		for (String propertyId : fieldOrPropertyIds) {
-			if (visible == false || isVisibleAllowed(propertyId)) {
+			if (!visible || isVisibleAllowed(propertyId)) {
 				Field<?> field = getField(propertyId);
 				if (!visible) {
 					field.clear();
@@ -428,20 +352,27 @@ public abstract class AbstractEditForm <DTO extends EntityDto> extends CustomFie
 		}
 	}
 
-	protected void discard(String ...propertyIds) {
+	protected void discard(String... propertyIds) {
+
 		for (String propertyId : propertyIds) {
 			getField(propertyId).discard();
 		}
 	}
 
-	protected void setRequired(boolean required, String ...fieldOrPropertyIds) {
+	protected void setRequired(boolean required, String... fieldOrPropertyIds) {
+
 		for (String propertyId : fieldOrPropertyIds) {
-			Field<?> field = getField(propertyId);
-			field.setRequired(required);
+			if (!required || isEditableAllowed(propertyId)) {
+				Field<?> field = getField(propertyId);
+				if (!field.isReadOnly()) {
+					field.setRequired(required);
+				}
+			}
 		}
 	}
 
-	protected void setSoftRequired(boolean required, String ...fieldOrPropertyIds) {
+	protected void setSoftRequired(boolean required, String... fieldOrPropertyIds) {
+
 		for (String propertyId : fieldOrPropertyIds) {
 			Field<?> field = getField(propertyId);
 			if (required) {
@@ -452,38 +383,45 @@ public abstract class AbstractEditForm <DTO extends EntityDto> extends CustomFie
 		}
 	}
 
-	protected void addFieldListeners(String fieldOrPropertyId, ValueChangeListener ...listeners) {
+	protected void addFieldListeners(String fieldOrPropertyId, ValueChangeListener... listeners) {
+
 		for (ValueChangeListener listener : listeners) {
 			getField(fieldOrPropertyId).addValueChangeListener(listener);
 		}
 	}
 
 	protected void addValidators(String fieldOrPropertyId, Validator... validators) {
+
 		for (Validator validator : validators) {
 			getField(fieldOrPropertyId).addValidator(validator);
 		}
 	}
 
+	protected boolean areFieldsValid(String... propertyIds) {
+		return Stream.of(propertyIds).allMatch(p -> getField(p).isValid());
+	}
+
+	@Override
 	protected String getPropertyI18nPrefix() {
 		return propertyI18nPrefix;
 	}
 
 	public void hideValidationUntilNextCommit() {
 
-		this.hideValidationUntilNextCommit  = true;
+		this.hideValidationUntilNextCommit = true;
 
 		for (Field<?> field : getFieldGroup().getFields()) {
 			if (field instanceof AbstractField) {
-				AbstractField<?> abstractField = (AbstractField<?>)field;
+				AbstractField<?> abstractField = (AbstractField<?>) field;
 				if (!abstractField.isInvalidCommitted()) {
 					abstractField.setValidationVisible(false);
 				}
 			}
 		}
 
-		for (Field<?> field : customFields) {
+		for (Field<?> field : getCustomFields()) {
 			if (field instanceof AbstractField) {
-				AbstractField<?> abstractField = (AbstractField<?>)field;
+				AbstractField<?> abstractField = (AbstractField<?>) field;
 				if (!abstractField.isInvalidCommitted()) {
 					abstractField.setValidationVisible(false);
 				}
@@ -491,7 +429,9 @@ public abstract class AbstractEditForm <DTO extends EntityDto> extends CustomFie
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void addNonPrimaryDiseasesTo(ComboBox diseaseField) {
+
 		List<Disease> diseases = FacadeProvider.getDiseaseConfigurationFacade().getAllDiseases(true, false, true);
 		for (Disease disease : diseases) {
 			if (diseaseField.getItem(disease) != null) {
@@ -504,36 +444,27 @@ public abstract class AbstractEditForm <DTO extends EntityDto> extends CustomFie
 	}
 
 	/**
-	 * Sets the initial visibilities based on annotations and builds a list of all fields in a form that are allowed to be visible - 
-	 * this is either because the @Diseases and @Outbreaks annotations are not relevant or at least one of these annotations are present on the respective field.
-	 * 
-	 * @param disease	Not null if the @Diseases annotation should be taken into account
-	 * @param viewMode	Not null if the @Outbreaks annotation should be taken into account
+	 * Sets the initial visibilities based on annotations and builds a list of all fields in a form that are allowed to be visible -
+	 * this is either because the @Diseases and @Outbreaks annotations are not relevant or at least one of these annotations are present on
+	 * the respective field.
 	 */
-	protected void initializeVisibilitiesAndAllowedVisibilities(Disease disease, ViewMode viewMode) {
+	protected void initializeVisibilitiesAndAllowedVisibilities() {
+
+		if (fieldVisibilityCheckers == null) {
+			throw new RuntimeException("Visibility checker is not set!");
+		}
+
 		for (Object propertyId : getFieldGroup().getBoundPropertyIds()) {
 			Field<?> field = getFieldGroup().getField(propertyId);
-			boolean diseaseVisibility = true;
-			boolean outbreakVisibility = true;
 
-			if (disease != null) {
-				if (!Diseases.DiseasesConfiguration.isDefinedOrMissing(getType(), (String) propertyId, disease)) {
-					diseaseVisibility = false;
-				}
-			}
-
-			if (viewMode != null && viewMode == ViewMode.SIMPLE) {
-				if (!Outbreaks.OutbreaksConfiguration.isDefined(getType(), (String) propertyId)) {
-					outbreakVisibility = false;
-				}
-			}
-
-			if (diseaseVisibility && outbreakVisibility) {
+			if (fieldVisibilityCheckers.isVisible(getType(), propertyId.toString())) {
 				visibleAllowedFields.add(field);
 			} else {
 				field.setVisible(false);
 			}
 		}
+
+		visibilitiesInitialized = true;
 	}
 
 	/**
@@ -541,15 +472,59 @@ public abstract class AbstractEditForm <DTO extends EntityDto> extends CustomFie
 	 * the given field. This needs to be called before EVERY setVisible or setVisibleWhen call.
 	 */
 	protected boolean isVisibleAllowed(Field<?> field) {
-		return visibleAllowedFields.isEmpty() || visibleAllowedFields.contains(field);
+		return !visibilitiesInitialized || visibleAllowedFields.contains(field);
 	}
 
 	protected boolean isVisibleAllowed(String propertyId) {
 		return isVisibleAllowed(getFieldGroup().getField(propertyId));
 	}
-	
-	protected boolean isGermanServer() {
-		return FacadeProvider.getConfigFacade().isGermanServer();
+
+	/**
+	 * Sets the initial enabled states based on annotations and builds a list of all fields in a form
+	 * that are allowed to be enabled based on access rights
+	 */
+	protected void initializeAccessAndAllowedAccesses() {
+
+		if (fieldAccessCheckers == null) {
+			throw new RuntimeException("Access checker is not set!");
+		}
+		for (Object propertyId : getFieldGroup().getBoundPropertyIds()) {
+			Field<?> field = getFieldGroup().getField(propertyId);
+
+			if (fieldAccessCheckers.isAccessible(getType(), propertyId.toString())) {
+				editableAllowedFields.add(field);
+			} else {
+				field.setEnabled(false);
+				field.setRequired(false);
+				field.addStyleName(CssStyles.INACCESSIBLE_FIELD);
+
+				if (field instanceof AbstractTextField) {
+					((AbstractTextField) field).setInputPrompt(I18nProperties.getCaption(Captions.inaccessibleValue));
+				}
+
+				if (field instanceof ComboBoxWithPlaceholder) {
+					ComboBoxWithPlaceholder combo = (ComboBoxWithPlaceholder) field;
+					combo.setPlaceholder(I18nProperties.getCaption(Captions.inaccessibleValue));
+				}
+			}
+		}
+
+		fieldAccessesInitialized = true;
 	}
 
+	/**
+	 * Returns true if the enabledAllowedFields list is either empty (because all fields are allowed to be enabled) or contains
+	 * the given field. This needs to be called before EVERY setEnabled or setEnabledWhen call.
+	 */
+	protected boolean isEditableAllowed(Field<?> field) {
+		return !fieldAccessesInitialized || editableAllowedFields.contains(field);
+	}
+
+	protected boolean isEditableAllowed(String propertyId) {
+		return isEditableAllowed(getFieldGroup().getField(propertyId));
+	}
+
+	public void setHeading(String heading) {
+		throw new RuntimeException("setHeading should be implemented in " + getClass().getSimpleName());
+	}
 }

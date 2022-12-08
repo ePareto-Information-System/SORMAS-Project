@@ -9,32 +9,27 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.importer;
 
-import de.symeda.sormas.api.caze.CaseIndexDto;
+import de.symeda.sormas.api.caze.CaseSelectionDto;
+import de.symeda.sormas.api.person.SimilarPersonDto;
 
-public class CaseImportSimilarityResult {
+public class CaseImportSimilarityResult extends PersonImportSimilarityResult {
 
-	private final CaseIndexDto matchingCase;
-	private final ImportSimilarityResultOption resultOption;
-	
-	public CaseImportSimilarityResult(CaseIndexDto matchingCase, ImportSimilarityResultOption resultOption) {
+	private final CaseSelectionDto matchingCase;
+
+	public CaseImportSimilarityResult(SimilarPersonDto matchingPerson, CaseSelectionDto matchingCase, ImportSimilarityResultOption resultOption) {
+		super(matchingPerson, resultOption);
 		this.matchingCase = matchingCase;
-		this.resultOption = resultOption;
 	}
 
-	public CaseIndexDto getMatchingCase() {
+	public CaseSelectionDto getMatchingCase() {
 		return matchingCase;
 	}
-	
-	public ImportSimilarityResultOption getResultOption() {
-		return resultOption;
-	}
-	
 }

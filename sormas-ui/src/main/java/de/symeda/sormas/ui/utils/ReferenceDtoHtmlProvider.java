@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.utils;
 
@@ -21,20 +21,23 @@ import com.vaadin.data.ValueProvider;
 
 import de.symeda.sormas.api.ReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.HtmlHelper;
 
 @SuppressWarnings("serial")
 public class ReferenceDtoHtmlProvider implements ValueProvider<ReferenceDto, String> {
 
 	@Override
 	public String apply(ReferenceDto source) {
-		String html;
+
+		final String html;
 		if (source != null) {
-			String uuid = source.getUuid();
-			html = "<a title='" + uuid + "'>" + DataHelper.getShortUuid(uuid) + "</a> (" + source.getCaption() + ")";
+			html = String.format(
+				"%s (%s)",
+				HtmlHelper.buildHyperlinkTitle(source.getUuid(), DataHelper.getShortUuid(source.getUuid())),
+				HtmlHelper.cleanHtml(source.getCaption()));
 		} else {
 			html = "";
 		}
 		return html;
 	}
-
 }

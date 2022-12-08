@@ -9,19 +9,21 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.caze.classification;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.person.PersonDto;
@@ -41,15 +43,16 @@ public class ClassificationPathogenTestPositiveResultCriteriaDto extends Classif
 	}
 
 	public ClassificationPathogenTestPositiveResultCriteriaDto(Disease testedDisease, PathogenTestType... pathogenTestTypes) {
+
 		this.testedDisease = testedDisease;
 		this.pathogenTestTypes = Arrays.asList(pathogenTestTypes);
 	}
 
 	@Override
-	public boolean eval(CaseDataDto caze, PersonDto person, List<PathogenTestDto> pathogenTests) {
+	public boolean eval(CaseDataDto caze, PersonDto person, List<PathogenTestDto> pathogenTests, List<EventDto> events, Date lastVaccinationDate) {
+
 		for (PathogenTestDto pathogenTest : pathogenTests) {
-			if (pathogenTest.getTestResult() == PathogenTestResultType.POSITIVE
-					&& pathogenTestTypes.contains(pathogenTest.getTestType())) {
+			if (pathogenTest.getTestResult() == PathogenTestResultType.POSITIVE && pathogenTestTypes.contains(pathogenTest.getTestType())) {
 				if (testedDisease == null || pathogenTest.getTestedDisease() == testedDisease) {
 					return true;
 				}
@@ -60,6 +63,7 @@ public class ClassificationPathogenTestPositiveResultCriteriaDto extends Classif
 
 	@Override
 	public String buildDescription() {
+
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append(I18nProperties.getString(Strings.classificationOnePositiveTestResult)).append(" ");
 		for (int i = 0; i < pathogenTestTypes.size(); i++) {
@@ -71,9 +75,9 @@ public class ClassificationPathogenTestPositiveResultCriteriaDto extends Classif
 				}
 			}
 
-			stringBuilder.append(pathogenTestTypes.get(i).toString());	
+			stringBuilder.append(pathogenTestTypes.get(i).toString());
 		}
-		
+
 		if (testedDisease != null) {
 			stringBuilder.append(" ").append(I18nProperties.getString(Strings.classificationForDisease)).append(" ").append(testedDisease.toString());
 		}
@@ -88,5 +92,4 @@ public class ClassificationPathogenTestPositiveResultCriteriaDto extends Classif
 	public void setSampleTestTypes(List<PathogenTestType> pathogenTestTypes) {
 		this.pathogenTestTypes = pathogenTestTypes;
 	}
-
 }

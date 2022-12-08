@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.caze;
 
@@ -23,6 +23,11 @@ import java.util.Date;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.PersonalData;
+import de.symeda.sormas.api.utils.SensitiveData;
+import de.symeda.sormas.api.utils.pseudonymization.Pseudonymizer;
+import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.LatitudePseudonymizer;
+import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.LongitudePseudonymizer;
 
 public class MapCaseDto implements Serializable {
 
@@ -35,30 +40,63 @@ public class MapCaseDto implements Serializable {
 	private CaseClassification caseClassification;
 	private Disease disease;
 	private PersonReferenceDto person;
-	private String healthFacilityUuid;
+	@PersonalData
+	@SensitiveData
+	@Pseudonymizer(LatitudePseudonymizer.class)
 	private Double healthFacilityLat;
+	@PersonalData
+	@SensitiveData
+	@Pseudonymizer(LongitudePseudonymizer.class)
 	private Double healthFacilityLon;
+	@SensitiveData
+	@Pseudonymizer(LatitudePseudonymizer.class)
 	private Double reportLat;
+	@SensitiveData
+	@Pseudonymizer(LongitudePseudonymizer.class)
 	private Double reportLon;
+	@PersonalData
+	@SensitiveData
+	@Pseudonymizer(LatitudePseudonymizer.class)
 	private Double addressLat;
+	@PersonalData
+	@SensitiveData
+	@Pseudonymizer(LongitudePseudonymizer.class)
 	private Double addressLon;
 
-	public MapCaseDto(String uuid, Date reportDate, CaseClassification caseClassification, Disease disease,
-			String personUuid, String personFirstName, String personLastName, 
-			String healthFacilityUuid, Double healthFacilityLat, Double healthFacilityLon,
-			Double reportLat, Double reportLon, Double addressLat, Double addressLon) {
+	private String healthFacilityUuid;
+
+	private Boolean isInJurisdiction;
+
+	public MapCaseDto(
+		String uuid,
+		Date reportDate,
+		CaseClassification caseClassification,
+		Disease disease,
+		String personUuid,
+		String personFirstName,
+		String personLastName,
+		String healthFacilityUuid,
+		Double healthFacilityLat,
+		Double healthFacilityLon,
+		Double reportLat,
+		Double reportLon,
+		Double addressLat,
+		Double addressLon,
+		boolean isInJurisdiction) {
+
 		this.uuid = uuid;
 		this.reportDate = reportDate;
 		this.caseClassification = caseClassification;
 		this.disease = disease;
 		this.person = new PersonReferenceDto(personUuid, personFirstName, personLastName);
-		this.healthFacilityUuid = healthFacilityUuid;
 		this.setHealthFacilityLat(healthFacilityLat);
 		this.setHealthFacilityLon(healthFacilityLon);
 		this.reportLat = reportLat;
 		this.reportLon = reportLon;
 		this.addressLat = addressLat;
 		this.addressLon = addressLon;
+		this.healthFacilityUuid = healthFacilityUuid;
+		this.isInJurisdiction = isInJurisdiction;
 	}
 
 	public String getUuid() {
@@ -97,10 +135,6 @@ public class MapCaseDto implements Serializable {
 		return healthFacilityUuid;
 	}
 
-	public void setHealthFacilityUuid(String healthFacilityUuid) {
-		this.healthFacilityUuid = healthFacilityUuid;
-	}
-
 	public PersonReferenceDto getPerson() {
 		return person;
 	}
@@ -123,8 +157,8 @@ public class MapCaseDto implements Serializable {
 
 	public void setReportLon(Double reportLon) {
 		this.reportLon = reportLon;
-	}	
-	
+	}
+
 	public Double getAddressLat() {
 		return addressLat;
 	}
@@ -162,4 +196,7 @@ public class MapCaseDto implements Serializable {
 		this.healthFacilityLon = healthFacilityLon;
 	}
 
+	public Boolean getInJurisdiction() {
+		return isInJurisdiction;
+	}
 }

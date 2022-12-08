@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.statistics;
 
@@ -24,8 +24,6 @@ import java.util.function.Consumer;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.themes.ValoTheme;
@@ -36,12 +34,15 @@ import com.vaadin.v7.ui.OptionGroup;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.statistics.StatisticsAttribute;
-import de.symeda.sormas.api.statistics.StatisticsAttributesContainer;
 import de.symeda.sormas.api.statistics.StatisticsAttributeEnum;
 import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
-import de.symeda.sormas.api.statistics.StatisticsSubAttributeEnum;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseAttribute;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseAttributeEnum;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseSubAttribute;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseSubAttributeEnum;
 import de.symeda.sormas.ui.statistics.StatisticsVisualizationType.StatisticsVisualizationChartType;
 import de.symeda.sormas.ui.statistics.StatisticsVisualizationType.StatisticsVisualizationMapType;
+import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 
 @SuppressWarnings("serial")
@@ -57,18 +58,120 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 	private StatisticsVisualizationElement rowsElement;
 	private StatisticsVisualizationElement columnsElement;
 	private Button switchRowsAndColumnsButton;
-	private final List<Consumer<StatisticsVisualizationType>> visualizationTypeChangedListeners = new ArrayList<Consumer<StatisticsVisualizationType>>();
+	//private final List<Consumer<StatisticsVisualizationType>> visualizationTypeChangedListeners = new ArrayList<Consumer<StatisticsVisualizationType>>();
 	
-	private StatisticsAttributesContainer statisticsAttributes;
+	private final List<Consumer<StatisticsVisualizationType>> visualizationTypeChangedListeners =
+		new ArrayList<Consumer<StatisticsVisualizationType>>();
 
-	public StatisticsVisualizationComponent(StatisticsAttributesContainer statisticsAttributes) {
-		this.statisticsAttributes = statisticsAttributes;
-		
+//	public StatisticsVisualizationComponent() {
+//		
+//		setSpacing(true);
+//		setWidth(100, Unit.PERCENTAGE);
+//
+//		visualizationSelect =
+//			new OptionGroup(I18nProperties.getCaption(Captions.statisticsVisualizationType), Arrays.asList(StatisticsVisualizationType.values()));
+//		visualizationSelect.setId(Captions.statisticsVisualizationType);
+//		visualizationSelect.addValueChangeListener(new ValueChangeListener() {
+//
+//			@Override
+//			public void valueChange(ValueChangeEvent event) {
+//				visualizationType = (StatisticsVisualizationType) event.getProperty().getValue();
+//				updateComponentVisibility();
+//				if (rowsElement != null) {
+//					rowsElement.setType(rowsElement.getType(), visualizationType);
+//				}
+//				if (columnsElement != null) {
+//					columnsElement.setType(columnsElement.getType(), visualizationType);
+//				}
+//
+//				for (Consumer<StatisticsVisualizationType> visualizationTypeChangedListener : visualizationTypeChangedListeners) {
+//					visualizationTypeChangedListener.accept(visualizationType);
+//				}
+//			}
+//		});
+//		CssStyles.style(visualizationSelect, CssStyles.VSPACE_NONE, ValoTheme.OPTIONGROUP_HORIZONTAL, CssStyles.SOFT_REQUIRED);
+//		visualizationSelect.setNullSelectionAllowed(false);
+//		addComponent(visualizationSelect);
+//		setExpandRatio(visualizationSelect, 0);
+//
+//		visualizationMapSelect =
+//			new OptionGroup(I18nProperties.getCaption(Captions.statisticsMapType), Arrays.asList(StatisticsVisualizationMapType.values()));
+//		visualizationMapSelect.setId(Captions.statisticsMapType);
+//		visualizationMapSelect.addValueChangeListener(new ValueChangeListener() {
+//
+//			@Override
+//			public void valueChange(ValueChangeEvent event) {
+//				visualizationMapType = (StatisticsVisualizationMapType) event.getProperty().getValue();
+//			}
+//		});
+//		CssStyles.style(visualizationMapSelect, CssStyles.VSPACE_NONE, ValoTheme.OPTIONGROUP_HORIZONTAL, CssStyles.SOFT_REQUIRED);
+//		visualizationMapSelect.setNullSelectionAllowed(false);
+//		addComponent(visualizationMapSelect);
+//		setExpandRatio(visualizationSelect, 0);
+//
+//		visualizationChartSelect =
+//			new OptionGroup(I18nProperties.getCaption(Captions.statisticsChartType), Arrays.asList(StatisticsVisualizationChartType.values()));
+//		visualizationChartSelect.setId(Captions.statisticsChartType);
+//		visualizationChartSelect.addValueChangeListener(new ValueChangeListener() {
+//
+//			@Override
+//			public void valueChange(ValueChangeEvent event) {
+//				visualizationChartType = (StatisticsVisualizationChartType) event.getProperty().getValue();
+//				updateComponentVisibility();
+//			}
+//		});
+//		CssStyles.style(visualizationChartSelect, CssStyles.VSPACE_NONE, ValoTheme.OPTIONGROUP_HORIZONTAL, CssStyles.SOFT_REQUIRED);
+//		visualizationChartSelect.setNullSelectionAllowed(false);
+//		addComponent(visualizationChartSelect);
+//		setExpandRatio(visualizationChartSelect, 0);
+//
+//		rowsElement = new StatisticsVisualizationElement(this.statisticsAttributes, StatisticsVisualizationElementType.ROWS, visualizationType);
+//		addComponent(rowsElement);
+//		setExpandRatio(rowsElement, 0);
+//
+//		switchRowsAndColumnsButton = ButtonHelper.createIconButtonWithCaption("switchRowsAndColumns", null, VaadinIcons.EXCHANGE, event -> {
+//			StatisticsVisualizationElement newRowsElement = columnsElement;
+//			newRowsElement.setType(StatisticsVisualizationElementType.ROWS, visualizationType);
+//			StatisticsVisualizationElement newColumnsElement = rowsElement;
+//			newColumnsElement.setType(StatisticsVisualizationElementType.COLUMNS, visualizationType);
+//			removeComponent(rowsElement);
+//			removeComponent(columnsElement);
+//			addComponent(newRowsElement, getComponentIndex(switchRowsAndColumnsButton));
+//			addComponent(newColumnsElement, getComponentIndex(switchRowsAndColumnsButton) + 1);
+//			replaceComponent(rowsElement, newRowsElement);
+//			replaceComponent(columnsElement, newColumnsElement);
+//			rowsElement = newRowsElement;
+//			columnsElement = newColumnsElement;
+//		}, CssStyles.FORCE_CAPTION);
+//		switchRowsAndColumnsButton.setDescription(I18nProperties.getCaption(Captions.statisticsExchange));
+//
+//		addComponent(switchRowsAndColumnsButton);
+//		setExpandRatio(switchRowsAndColumnsButton, 0);
+//
+//		columnsElement = new StatisticsVisualizationElement(this.statisticsAttributes, StatisticsVisualizationElementType.COLUMNS, visualizationType);
+//		addComponent(columnsElement);
+//		setExpandRatio(columnsElement, 0);
+//
+//		Label spacer = new Label();
+//		addComponent(spacer);
+//		setExpandRatio(spacer, 1);
+//
+//		visualizationSelect.setValue(StatisticsVisualizationType.TABLE);
+//		visualizationChartSelect.setValue(StatisticsVisualizationChartType.STACKED_COLUMN);
+//		visualizationMapSelect.setValue(StatisticsVisualizationMapType.REGIONS);
+//	}
+
+	
+	
+	public StatisticsVisualizationComponent() {
 		setSpacing(true);
 		setWidth(100, Unit.PERCENTAGE);
 
-		visualizationSelect = new OptionGroup(I18nProperties.getCaption(Captions.statisticsVisualizationType), Arrays.asList(StatisticsVisualizationType.values()));
+		visualizationSelect =
+			new OptionGroup(I18nProperties.getCaption(Captions.statisticsVisualizationType), Arrays.asList(StatisticsVisualizationType.values()));
+		visualizationSelect.setId(Captions.statisticsVisualizationType);
 		visualizationSelect.addValueChangeListener(new ValueChangeListener() {
+
 			@Override
 			public void valueChange(ValueChangeEvent event) {
 				visualizationType = (StatisticsVisualizationType) event.getProperty().getValue();
@@ -79,75 +182,72 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 				if (columnsElement != null) {
 					columnsElement.setType(columnsElement.getType(), visualizationType);
 				}
-				
+
 				for (Consumer<StatisticsVisualizationType> visualizationTypeChangedListener : visualizationTypeChangedListeners) {
 					visualizationTypeChangedListener.accept(visualizationType);
 				}
 			}
 		});
-		CssStyles.style(visualizationSelect, CssStyles.VSPACE_NONE, ValoTheme.OPTIONGROUP_HORIZONTAL,
-				CssStyles.SOFT_REQUIRED);
+		CssStyles.style(visualizationSelect, CssStyles.VSPACE_NONE, ValoTheme.OPTIONGROUP_HORIZONTAL, CssStyles.SOFT_REQUIRED);
 		visualizationSelect.setNullSelectionAllowed(false);
 		addComponent(visualizationSelect);
 		setExpandRatio(visualizationSelect, 0);
 
-		visualizationMapSelect = new OptionGroup(I18nProperties.getCaption(Captions.statisticsMapType), Arrays.asList(StatisticsVisualizationMapType.values()));
+		visualizationMapSelect =
+			new OptionGroup(I18nProperties.getCaption(Captions.statisticsMapType), Arrays.asList(StatisticsVisualizationMapType.values()));
+		visualizationMapSelect.setId(Captions.statisticsMapType);
 		visualizationMapSelect.addValueChangeListener(new ValueChangeListener() {
+
 			@Override
 			public void valueChange(ValueChangeEvent event) {
 				visualizationMapType = (StatisticsVisualizationMapType) event.getProperty().getValue();
 			}
 		});
-		CssStyles.style(visualizationMapSelect, CssStyles.VSPACE_NONE, ValoTheme.OPTIONGROUP_HORIZONTAL,
-				CssStyles.SOFT_REQUIRED);
+		CssStyles.style(visualizationMapSelect, CssStyles.VSPACE_NONE, ValoTheme.OPTIONGROUP_HORIZONTAL, CssStyles.SOFT_REQUIRED);
 		visualizationMapSelect.setNullSelectionAllowed(false);
 		addComponent(visualizationMapSelect);
 		setExpandRatio(visualizationSelect, 0);
 
-		visualizationChartSelect = new OptionGroup(I18nProperties.getCaption(Captions.statisticsChartType),
-				Arrays.asList(StatisticsVisualizationChartType.values()));
+		visualizationChartSelect =
+			new OptionGroup(I18nProperties.getCaption(Captions.statisticsChartType), Arrays.asList(StatisticsVisualizationChartType.values()));
+		visualizationChartSelect.setId(Captions.statisticsChartType);
 		visualizationChartSelect.addValueChangeListener(new ValueChangeListener() {
+
 			@Override
 			public void valueChange(ValueChangeEvent event) {
 				visualizationChartType = (StatisticsVisualizationChartType) event.getProperty().getValue();
 				updateComponentVisibility();
 			}
 		});
-		CssStyles.style(visualizationChartSelect, CssStyles.VSPACE_NONE, ValoTheme.OPTIONGROUP_HORIZONTAL,
-				CssStyles.SOFT_REQUIRED);
+		CssStyles.style(visualizationChartSelect, CssStyles.VSPACE_NONE, ValoTheme.OPTIONGROUP_HORIZONTAL, CssStyles.SOFT_REQUIRED);
 		visualizationChartSelect.setNullSelectionAllowed(false);
 		addComponent(visualizationChartSelect);
 		setExpandRatio(visualizationChartSelect, 0);
 
-		rowsElement = new StatisticsVisualizationElement(this.statisticsAttributes, StatisticsVisualizationElementType.ROWS, visualizationType);
+		rowsElement = new StatisticsVisualizationElement(StatisticsVisualizationElementType.ROWS, visualizationType);
 		addComponent(rowsElement);
 		setExpandRatio(rowsElement, 0);
 
-		switchRowsAndColumnsButton = new Button();
-		CssStyles.style(switchRowsAndColumnsButton, CssStyles.FORCE_CAPTION);
-		switchRowsAndColumnsButton.setIcon(VaadinIcons.EXCHANGE);
+		switchRowsAndColumnsButton = ButtonHelper.createIconButtonWithCaption("switchRowsAndColumns", null, VaadinIcons.EXCHANGE, event -> {
+			StatisticsVisualizationElement newRowsElement = columnsElement;
+			newRowsElement.setType(StatisticsVisualizationElementType.ROWS, visualizationType);
+			StatisticsVisualizationElement newColumnsElement = rowsElement;
+			newColumnsElement.setType(StatisticsVisualizationElementType.COLUMNS, visualizationType);
+			removeComponent(rowsElement);
+			removeComponent(columnsElement);
+			addComponent(newRowsElement, getComponentIndex(switchRowsAndColumnsButton));
+			addComponent(newColumnsElement, getComponentIndex(switchRowsAndColumnsButton) + 1);
+			replaceComponent(rowsElement, newRowsElement);
+			replaceComponent(columnsElement, newColumnsElement);
+			rowsElement = newRowsElement;
+			columnsElement = newColumnsElement;
+		}, CssStyles.FORCE_CAPTION);
 		switchRowsAndColumnsButton.setDescription(I18nProperties.getCaption(Captions.statisticsExchange));
-		switchRowsAndColumnsButton.addClickListener(new ClickListener() {
-			@Override
-			public void buttonClick(ClickEvent event) {
-				StatisticsVisualizationElement newRowsElement = columnsElement;
-				newRowsElement.setType(StatisticsVisualizationElementType.ROWS, visualizationType);
-				StatisticsVisualizationElement newColumnsElement = rowsElement;
-				newColumnsElement.setType(StatisticsVisualizationElementType.COLUMNS, visualizationType);
-				removeComponent(rowsElement);
-				removeComponent(columnsElement);
-				addComponent(newRowsElement, getComponentIndex(switchRowsAndColumnsButton));
-				addComponent(newColumnsElement, getComponentIndex(switchRowsAndColumnsButton) + 1);
-				replaceComponent(rowsElement, newRowsElement);
-				replaceComponent(columnsElement, newColumnsElement);		
-				rowsElement = newRowsElement;
-				columnsElement = newColumnsElement;
-			}
-		});
+
 		addComponent(switchRowsAndColumnsButton);
 		setExpandRatio(switchRowsAndColumnsButton, 0);
 
-		columnsElement = new StatisticsVisualizationElement(this.statisticsAttributes, StatisticsVisualizationElementType.COLUMNS, visualizationType);
+		columnsElement = new StatisticsVisualizationElement(StatisticsVisualizationElementType.COLUMNS, visualizationType);
 		addComponent(columnsElement);
 		setExpandRatio(columnsElement, 0);
 
@@ -159,41 +259,61 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 		visualizationChartSelect.setValue(StatisticsVisualizationChartType.STACKED_COLUMN);
 		visualizationMapSelect.setValue(StatisticsVisualizationMapType.REGIONS);
 	}
+	
 
 	private void updateComponentVisibility() {
 		visualizationMapSelect.setVisible(visualizationType == StatisticsVisualizationType.MAP);
 		visualizationChartSelect.setVisible(visualizationType == StatisticsVisualizationType.CHART);
 
-		rowsElement.setVisible(visualizationType == StatisticsVisualizationType.TABLE
-				|| visualizationType == StatisticsVisualizationType.CHART);
+		rowsElement.setVisible(visualizationType == StatisticsVisualizationType.TABLE || visualizationType == StatisticsVisualizationType.CHART);
 
-		switchRowsAndColumnsButton.setVisible(visualizationType == StatisticsVisualizationType.TABLE
-				|| (visualizationType == StatisticsVisualizationType.CHART
-				&& visualizationChartType != StatisticsVisualizationChartType.PIE));
+		switchRowsAndColumnsButton.setVisible(
+			visualizationType == StatisticsVisualizationType.TABLE
+				|| (visualizationType == StatisticsVisualizationType.CHART && visualizationChartType != StatisticsVisualizationChartType.PIE));
 
-		columnsElement.setVisible(visualizationType == StatisticsVisualizationType.TABLE
-				|| (visualizationType == StatisticsVisualizationType.CHART
-				&& visualizationChartType != StatisticsVisualizationChartType.PIE));
+		columnsElement.setVisible(
+			visualizationType == StatisticsVisualizationType.TABLE
+				|| (visualizationType == StatisticsVisualizationType.CHART && visualizationChartType != StatisticsVisualizationChartType.PIE));
 	}
 
-	public StatisticsAttribute getRowsAttribute() {
+	public StatisticsCaseAttributeEnum getRowsAttribute() {
 		switch (visualizationType) {
 		case MAP:
-			return statisticsAttributes.get(StatisticsAttributeEnum.REGION_DISTRICT);
+			//return statisticsAttributes.get(StatisticsAttributeEnum.REGION_DISTRICT);
+			return StatisticsCaseAttributeEnum.JURISDICTION;
 		default:
 			break;
 		}
 		return rowsElement.getAttribute();
 	}
+	
+	
 
-	public StatisticsSubAttribute getRowsSubAttribute() {
+//	public StatisticsCaseSubAttributeEnum getRowsSubAttribute() {
+//		switch (visualizationType) {
+//		case MAP:
+//			switch (visualizationMapType) {
+//			case REGIONS:
+//				return statisticsAttributes.get(StatisticsCaseSubAttributeEnum.REGION);
+//			case DISTRICTS:
+//				return statisticsAttributes.get(StatisticsCaseSubAttributeEnum.DISTRICT);
+//			default:
+//				throw new IllegalArgumentException(visualizationMapType.toString());
+//			}
+//		default:
+//			break;
+//		}
+//		return rowsElement.getSubAttribute();
+//	}
+	
+	public StatisticsCaseSubAttributeEnum getRowsSubAttribute() {
 		switch (visualizationType) {
 		case MAP:
 			switch (visualizationMapType) {
 			case REGIONS:
-				return statisticsAttributes.get(StatisticsSubAttributeEnum.REGION);
+				return StatisticsCaseSubAttributeEnum.REGION;
 			case DISTRICTS:
-				return statisticsAttributes.get(StatisticsSubAttributeEnum.DISTRICT);
+				return StatisticsCaseSubAttributeEnum.DISTRICT;
 			default:
 				throw new IllegalArgumentException(visualizationMapType.toString());
 			}
@@ -203,7 +323,7 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 		return rowsElement.getSubAttribute();
 	}
 
-	public StatisticsAttribute getColumnsAttribute() {
+	public StatisticsCaseAttributeEnum getColumnsAttribute() {
 		switch (visualizationType) {
 		case MAP:
 			return null;
@@ -211,16 +331,19 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 			switch (visualizationChartType) {
 			case PIE:
 				return null;
+			//$CASES-OMITTED$
 			default:
 				break;
 			}
+			break;
+		//$CASES-OMITTED$
 		default:
 			break;
 		}
 		return columnsElement.getAttribute();
 	}
 
-	public StatisticsSubAttribute getColumnsSubAttribute() {
+	public StatisticsCaseSubAttributeEnum getColumnsSubAttribute() {
 		switch (visualizationType) {
 		case MAP:
 			return null;
@@ -228,9 +351,12 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 			switch (visualizationChartType) {
 			case PIE:
 				return null;
+			//$CASES-OMITTED$
 			default:
 				break;
 			}
+			break;
+		//$CASES-OMITTED$
 		default:
 			break;
 		}
@@ -248,82 +374,114 @@ public class StatisticsVisualizationComponent extends HorizontalLayout {
 	public StatisticsVisualizationChartType getVisualizationChartType() {
 		return visualizationChartType;
 	}
-	
+
 	public boolean hasRegionGrouping() {
 		switch (visualizationType) {
 		case TABLE:
 		case CHART:
-			return rowsElement.getSubAttributeEnum() == StatisticsSubAttributeEnum.REGION || columnsElement.getSubAttributeEnum() == StatisticsSubAttributeEnum.REGION;
+			//return rowsElement.getSubAttributeEnum() == StatisticsCaseSubAttribute.REGION || columnsElement.getSubAttributeEnum() == StatisticsCaseSubAttribute.REGION;
+			return rowsElement.getSubAttribute() == StatisticsCaseSubAttributeEnum.REGION
+				|| columnsElement.getSubAttribute() == StatisticsCaseSubAttributeEnum.REGION;
 		case MAP:
 			return visualizationMapType == StatisticsVisualizationMapType.REGIONS;
 		default:
 			throw new IllegalArgumentException(visualizationType.toString());
 		}
 	}
-	
+
 	public boolean hasDistrictGrouping() {
 		switch (visualizationType) {
 		case TABLE:
 		case CHART:
-			return rowsElement.getSubAttributeEnum() == StatisticsSubAttributeEnum.DISTRICT || columnsElement.getSubAttributeEnum() == StatisticsSubAttributeEnum.DISTRICT;
+			//return rowsElement.getSubAttributeEnum() == StatisticsCaseSubAttribute.DISTRICT || columnsElement.getSubAttributeEnum() == StatisticsCaseSubAttribute.DISTRICT;
+			return rowsElement.getSubAttribute() == StatisticsCaseSubAttributeEnum.DISTRICT
+				|| columnsElement.getSubAttribute() == StatisticsCaseSubAttributeEnum.DISTRICT;
 		case MAP:
 			return visualizationMapType == StatisticsVisualizationMapType.DISTRICTS;
 		default:
 			throw new IllegalArgumentException(visualizationType.toString());
 		}
 	}
-	
+
+	public boolean hasCommunityGrouping() {
+		switch (visualizationType) {
+		case TABLE:
+		case CHART:
+			return rowsElement.getSubAttribute() == StatisticsCaseSubAttributeEnum.COMMUNITY
+				|| columnsElement.getSubAttribute() == StatisticsCaseSubAttributeEnum.COMMUNITY;
+		//TODO: Community Grouping on this Visualisationtype may be implemented later
+		case MAP:
+			return false;
+		default:
+			throw new IllegalArgumentException(visualizationType.toString());
+		}
+	}
+
+	public boolean hasIncidenceIncompatibleGrouping() {
+		return rowsElement.getSubAttribute() == StatisticsCaseSubAttributeEnum.FACILITY
+			|| columnsElement.getSubAttribute() == StatisticsCaseSubAttributeEnum.FACILITY;
+	}
+
 	public boolean hasSexGrouping() {
 		switch (visualizationType) {
 		case TABLE:
 		case CHART:
-			return rowsElement.getAttributeEnum() == StatisticsAttributeEnum.SEX || columnsElement.getAttributeEnum() == StatisticsAttributeEnum.SEX;
+			return rowsElement.getAttribute() == StatisticsCaseAttributeEnum.SEX || columnsElement.getAttribute() == StatisticsCaseAttributeEnum.SEX;
 		case MAP:
 			return false;
 		default:
 			throw new IllegalArgumentException(visualizationType.toString());
 		}
 	}
-	
+
 	public boolean hasAgeGroupGroupingWithPopulationData() {
 		switch (visualizationType) {
 		case TABLE:
 		case CHART:
-			return rowsElement.getAttributeEnum() == StatisticsAttributeEnum.AGE_INTERVAL_5_YEARS || columnsElement.getAttributeEnum() == StatisticsAttributeEnum.AGE_INTERVAL_5_YEARS;
+			//return rowsElement.getAttributeEnum() == StatisticsAttributeEnum.AGE_INTERVAL_5_YEARS || columnsElement.getAttributeEnum() == StatisticsAttributeEnum.AGE_INTERVAL_5_YEARS;
+			return rowsElement.getAttribute() == StatisticsCaseAttributeEnum.AGE_INTERVAL_5_YEARS
+				|| columnsElement.getAttribute() == StatisticsCaseAttributeEnum.AGE_INTERVAL_5_YEARS;
 		case MAP:
 			return false;
 		default:
 			throw new IllegalArgumentException(visualizationType.toString());
 		}
 	}
-	
+
 	public boolean hasAgeGroupGroupingWithoutPopulationData() {
 		switch (visualizationType) {
 		case TABLE:
 		case CHART:
-			return (rowsElement.getAttribute() != null && rowsElement.getAttribute().isAgeGroup() && rowsElement.getAttributeEnum() != StatisticsAttributeEnum.AGE_INTERVAL_5_YEARS)
-					|| (columnsElement.getAttribute() != null && columnsElement.getAttribute().isAgeGroup() && columnsElement.getAttributeEnum() != StatisticsAttributeEnum.AGE_INTERVAL_5_YEARS);
+			// return (rowsElement.getAttribute() != null && rowsElement.getAttribute().isAgeGroup() && rowsElement.getAttributeEnum() != StatisticsAttributeEnum.AGE_INTERVAL_5_YEARS)
+			// 		|| (columnsElement.getAttribute() != null && columnsElement.getAttribute().isAgeGroup() && columnsElement.getAttributeEnum() != StatisticsAttributeEnum.AGE_INTERVAL_5_YEARS);
+			return (rowsElement.getAttribute() != null
+				&& rowsElement.getAttribute().isAgeGroup()
+				&& rowsElement.getAttribute() != StatisticsCaseAttributeEnum.AGE_INTERVAL_5_YEARS)
+				|| (columnsElement.getAttribute() != null
+					&& columnsElement.getAttribute().isAgeGroup()
+					&& columnsElement.getAttribute() != StatisticsCaseAttributeEnum.AGE_INTERVAL_5_YEARS);
 		case MAP:
 			return false;
 		default:
 			throw new IllegalArgumentException(visualizationType.toString());
 		}
 	}
-	
+
 	public boolean hasPopulationGrouping() {
 		return hasRegionGrouping() || hasDistrictGrouping() || hasSexGrouping() || hasAgeGroupGroupingWithPopulationData();
 	}
-	
+
 	public void setStackedColumnAndPieEnabled(boolean enabled) {
 		visualizationChartSelect.setItemEnabled(StatisticsVisualizationChartType.STACKED_COLUMN, enabled);
 		visualizationChartSelect.setItemEnabled(StatisticsVisualizationChartType.PIE, enabled);
-		
-		if (!enabled && (StatisticsVisualizationChartType.STACKED_COLUMN == visualizationChartSelect.getValue()
+
+		if (!enabled
+			&& (StatisticsVisualizationChartType.STACKED_COLUMN == visualizationChartSelect.getValue()
 				|| StatisticsVisualizationChartType.PIE == visualizationChartSelect.getValue())) {
 			visualizationChartSelect.setValue(StatisticsVisualizationChartType.COLUMN);
 		}
 	}
-	
+
 	public void addVisualizationTypeChangedListener(Consumer<StatisticsVisualizationType> visualizationTypeChangedListener) {
 		visualizationTypeChangedListeners.add(visualizationTypeChangedListener);
 	}

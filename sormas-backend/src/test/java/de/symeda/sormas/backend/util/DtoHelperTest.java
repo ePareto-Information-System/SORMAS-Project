@@ -1,41 +1,46 @@
 package de.symeda.sormas.backend.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.Map;
 
 import org.junit.Test;
 
 import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.caze.ReinfectionDetail;
 import de.symeda.sormas.api.clinicalcourse.HealthConditionsDto;
-import de.symeda.sormas.api.epidata.EpiDataBurialDto;
-import de.symeda.sormas.api.facility.FacilityType;
+import de.symeda.sormas.api.exposure.ExposureDto;
+import de.symeda.sormas.api.exposure.ExposureType;
+import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.person.PersonDto;
-import de.symeda.sormas.api.sample.AdditionalTestType;
 import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.symptoms.SymptomState;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
+import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
-import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.backend.AbstractBeanTest;
+import de.symeda.sormas.backend.TestDataCreator;
 import de.symeda.sormas.backend.TestDataCreator.RDCFEntities;
 
 public class DtoHelperTest extends AbstractBeanTest {
 
 	@Test
-	public void testFillDto() throws Exception {
+	public void testFillDto() {
 
 		RDCFEntities rdcf = creator.createRDCFEntities();
 		RDCFEntities rdcf2 = creator.createRDCFEntities();
 		rdcf2.facility.setType(FacilityType.LABORATORY);
-		
-		UserDto user = creator.createUser(rdcf, UserRole.ADMIN);
+
+		UserDto user = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.ADMIN));
 
 		// Test simple values
 		{
@@ -52,7 +57,7 @@ public class DtoHelperTest extends AbstractBeanTest {
 			// lead has no value, other has
 			sourceDto.setDiabetes(YesNoUnknown.YES);
 
-			DtoHelper.fillDto(targetDto, sourceDto, false);
+			DtoHelper.copyDtoValues(targetDto, sourceDto, false);
 
 			// Check no values
 			assertNull(targetDto.getHiv());
@@ -93,7 +98,7 @@ public class DtoHelperTest extends AbstractBeanTest {
 			targetDto.setSymptoms(targetSymptomsDto);
 			sourceDto.setSymptoms(sourceSymptomsDto);
 
-			DtoHelper.fillDto(targetDto, sourceDto, false);
+			DtoHelper.copyDtoValues(targetDto, sourceDto, false);
 
 			// Check no values
 			assertNull(targetDto.getSymptoms().getBackache());
@@ -114,76 +119,113 @@ public class DtoHelperTest extends AbstractBeanTest {
 			CaseDataDto targetDto = creator.createCase(user.toReference(), person.toReference(), rdcf);
 			CaseDataDto sourceDto = creator.createCase(user.toReference(), person.toReference(), rdcf);
 
-			EpiDataBurialDto subDto1 = EpiDataBurialDto.build();
-			EpiDataBurialDto subDto2 = EpiDataBurialDto.build();
+			ExposureDto subDto1 = ExposureDto.build(ExposureType.TRAVEL);
+			ExposureDto subDto2 = ExposureDto.build(ExposureType.TRAVEL);
 
 			// lead and other have different values
-			ArrayList<EpiDataBurialDto> targetList1 = new ArrayList<EpiDataBurialDto>();
+			ArrayList<ExposureDto> targetList1 = new ArrayList<>();
 			targetList1.add(subDto1);
 
-			ArrayList<EpiDataBurialDto> sourceList1 = new ArrayList<EpiDataBurialDto>();
+			ArrayList<ExposureDto> sourceList1 = new ArrayList<>();
 			sourceList1.add(subDto2);
 
 			// lead has values, other has not
-			ArrayList<EpiDataBurialDto> targetList2 = new ArrayList<EpiDataBurialDto>();
+			ArrayList<ExposureDto> targetList2 = new ArrayList<>();
 			targetList2.add(subDto1);
 			targetList2.add(subDto2);
 
 			// lead has no values, other has
-			ArrayList<EpiDataBurialDto> sourceList2 = new ArrayList<EpiDataBurialDto>();
+			ArrayList<ExposureDto> sourceList2 = new ArrayList<>();
 			sourceList2.add(subDto1);
 			sourceList2.add(subDto2);
 
 			// Check no values
-			DtoHelper.fillDto(targetDto, sourceDto, false);
-			assertTrue(targetDto.getEpiData().getBurials().isEmpty());
+			DtoHelper.copyDtoValues(targetDto, sourceDto, false);
+			assertTrue(targetDto.getEpiData().getExposures().isEmpty());
 
 			// Check 'lead has still same entries'
-			targetDto.getEpiData().setBurials(targetList1);
-			sourceDto.getEpiData().setBurials(sourceList1);
-			String existingUuid = targetList1.get(0).getUuid(); 
-			DtoHelper.fillDto(targetDto, sourceDto, false);
-			
-			assertEquals(targetList1.size(), targetDto.getEpiData().getBurials().size());
-			assertNotNull(targetDto.getEpiData().getBurials().get(0).getUuid());
-			assertEquals(existingUuid, targetDto.getEpiData().getBurials().get(0).getUuid());
-			assertNotEquals(existingUuid, sourceDto.getEpiData().getBurials().get(0).getUuid());
+			targetDto.getEpiData().setExposures(targetList1);
+			sourceDto.getEpiData().setExposures(sourceList1);
+			String existingUuid = targetList1.get(0).getUuid();
+			DtoHelper.copyDtoValues(targetDto, sourceDto, false);
+
+			assertEquals(targetList1.size(), targetDto.getEpiData().getExposures().size());
+			assertNotNull(targetDto.getEpiData().getExposures().get(0).getUuid());
+			assertEquals(existingUuid, targetDto.getEpiData().getExposures().get(0).getUuid());
+			assertNotEquals(existingUuid, sourceDto.getEpiData().getExposures().get(0).getUuid());
 
 			// Check 'lead has value, other has not'
-			targetDto.getEpiData().setBurials(targetList2);
-			sourceDto.getEpiData().setBurials(null);
-			DtoHelper.fillDto(targetDto, sourceDto, false);
+			targetDto.getEpiData().setExposures(targetList2);
+			sourceDto.getEpiData().setExposures(null);
+			DtoHelper.copyDtoValues(targetDto, sourceDto, false);
 
-			assertNotNull(targetDto.getEpiData().getBurials().get(0).getUuid());
-			assertEquals(targetList2.size(), targetDto.getEpiData().getBurials().size());
-			assertEquals(targetList2.get(0).getUuid(), targetDto.getEpiData().getBurials().get(0).getUuid());
-			assertEquals(targetList2.get(1).getUuid(), targetDto.getEpiData().getBurials().get(1).getUuid());
+			assertNotNull(targetDto.getEpiData().getExposures().get(0).getUuid());
+			assertEquals(targetList2.size(), targetDto.getEpiData().getExposures().size());
+			assertEquals(targetList2.get(0).getUuid(), targetDto.getEpiData().getExposures().get(0).getUuid());
+			assertEquals(targetList2.get(1).getUuid(), targetDto.getEpiData().getExposures().get(1).getUuid());
 
 			// Check 'lead has no value, other has'
-			targetDto.getEpiData().setBurials(null);
-			sourceDto.getEpiData().setBurials(sourceList2);
-			DtoHelper.fillDto(targetDto, sourceDto, false);
+			targetDto.getEpiData().setExposures(null);
+			sourceDto.getEpiData().setExposures(sourceList2);
+			DtoHelper.copyDtoValues(targetDto, sourceDto, false);
 
-			assertNotNull(targetDto.getEpiData().getBurials().get(0).getUuid());
-			assertEquals(sourceList2.size(), targetDto.getEpiData().getBurials().size());
-			assertNotEquals(sourceList2.get(0).getUuid(), targetDto.getEpiData().getBurials().get(0).getUuid());
-			assertNotEquals(sourceList2.get(1).getUuid(), targetDto.getEpiData().getBurials().get(1).getUuid());
+			assertNotNull(targetDto.getEpiData().getExposures().get(0).getUuid());
+			assertEquals(sourceList2.size(), targetDto.getEpiData().getExposures().size());
+			assertNotEquals(sourceList2.get(0).getUuid(), targetDto.getEpiData().getExposures().get(0).getUuid());
+			assertNotEquals(sourceList2.get(1).getUuid(), targetDto.getEpiData().getExposures().get(1).getUuid());
 		}
-		
+
 		// test non-entity list
-		{ 
+		{
 			PersonDto person = creator.createPerson("First", "Last");
 			CaseDataDto targetCaseDto = creator.createCase(user.toReference(), person.toReference(), rdcf);
 			CaseDataDto sourceCaseDto = creator.createCase(user.toReference(), person.toReference(), rdcf);
-			
+
 			SampleDto sourceDto = creator.createSample(sourceCaseDto.toReference(), user.toReference(), rdcf2.facility);
 			sourceDto.setPathogenTestingRequested(true);
 			sourceDto.getRequestedPathogenTests().add(PathogenTestType.ANTIGEN_DETECTION);
 			sourceDto.getRequestedPathogenTests().add(PathogenTestType.NEUTRALIZING_ANTIBODIES);
 
 			SampleDto targetDto = SampleDto.build(user.toReference(), targetCaseDto.toReference());
-			DtoHelper.fillDto(targetDto, sourceDto, false);
+			DtoHelper.copyDtoValues(targetDto, sourceDto, false);
 			assertEquals(2, targetDto.getRequestedPathogenTests().size());
+		}
+
+		// test map
+		{
+			TestDataCreator.RDCF caseRdcf = creator.createRDCF();
+
+			Map<ReinfectionDetail, Boolean> map1 = new EnumMap<>(ReinfectionDetail.class);
+			map1.put(ReinfectionDetail.GENOME_SEQUENCE_CURRENT_INFECTION_KNOWN, true);
+			map1.put(ReinfectionDetail.PREVIOUS_ASYMPTOMATIC_INFECTION, true);
+			map1.put(ReinfectionDetail.LAST_PCR_DETECTION_NOT_RECENT, false);
+
+			PersonDto person = creator.createPerson();
+			CaseDataDto sourceCase = creator.createCase(user.toReference(), person.toReference(), caseRdcf);
+			CaseDataDto targetCase = creator.createCase(user.toReference(), person.toReference(), caseRdcf);
+
+			// Map must not be persisted because H2 can't map it to JSON
+			sourceCase.setReinfectionDetails(map1);
+
+			DtoHelper.copyDtoValues(targetCase, sourceCase, false);
+			assertEquals(3, targetCase.getReinfectionDetails().size());
+
+			sourceCase.getReinfectionDetails().put(ReinfectionDetail.PREVIOUS_ASYMPTOMATIC_INFECTION, false);
+			sourceCase.getReinfectionDetails().put(ReinfectionDetail.TESTED_NEGATIVE_AFTER_PREVIOUS_INFECTION, true);
+
+			DtoHelper.copyDtoValues(targetCase, sourceCase, false);
+			assertEquals(4, targetCase.getReinfectionDetails().size());
+			assertTrue(targetCase.getReinfectionDetails().get(ReinfectionDetail.PREVIOUS_ASYMPTOMATIC_INFECTION));
+
+			DtoHelper.copyDtoValues(targetCase, sourceCase, true);
+			assertEquals(4, targetCase.getReinfectionDetails().size());
+			assertFalse(targetCase.getReinfectionDetails().get(ReinfectionDetail.PREVIOUS_ASYMPTOMATIC_INFECTION));
+
+			sourceCase.setReinfectionDetails(null);
+			DtoHelper.copyDtoValues(targetCase, sourceCase, false);
+			assertEquals(4, targetCase.getReinfectionDetails().size());
+			DtoHelper.copyDtoValues(targetCase, sourceCase, true);
+			assertEquals(4, targetCase.getReinfectionDetails().size());
 		}
 	}
 }

@@ -9,40 +9,80 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.event;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Remote;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
+import de.symeda.sormas.api.CoreFacade;
+import de.symeda.sormas.api.Language;
+import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.importexport.ExportConfigurationDto;
 import de.symeda.sormas.api.utils.SortProperty;
 
 @Remote
-public interface EventParticipantFacade {
-	
-	List<EventParticipantDto> getAllEventParticipantsByEventAfter(Date date, String eventUuid, String userUuid);
+public interface EventParticipantFacade
+	extends CoreFacade<EventParticipantDto, EventParticipantIndexDto, EventParticipantReferenceDto, EventParticipantCriteria> {
 
-	List<EventParticipantDto> getAllActiveEventParticipantsAfter(Date date, String userUuid);
+	List<EventParticipantDto> getAllEventParticipantsByEventAfter(Date date, String eventUuid);
+
+	List<EventParticipantDto> getAllActiveEventParticipantsByEvent(String eventUuid);
+
+	List<EventParticipantDto> getAllActiveEventParticipantsAfter(Date date);
 
 	EventParticipantDto getEventParticipantByUuid(String uuid);
-	
-	EventParticipantDto saveEventParticipant(EventParticipantDto dto);
 
-	List<String> getAllActiveUuids(String userUuid);
+	EventParticipantDto save(@Valid @NotNull EventParticipantDto dto);
 
-	List<EventParticipantDto> getByUuids(List<String> uuids);
+	List<String> getAllActiveUuids();
 
-	void deleteEventParticipant(EventParticipantReferenceDto eventParticipantRef, String userUuid);
-	
-	List<EventParticipantIndexDto> getIndexList(EventParticipantCriteria eventParticipantCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
-	
-	long count(EventParticipantCriteria eventParticipantCriteria);
-	
+	Page<EventParticipantIndexDto> getIndexPage(
+		EventParticipantCriteria eventParticipantCriteria,
+		Integer offset,
+		Integer size,
+		List<SortProperty> sortProperties);
+
+	List<EventParticipantListEntryDto> getListEntries(EventParticipantCriteria eventParticipantCriteria, Integer first, Integer max);
+
+	Map<String, Long> getContactCountPerEventParticipant(List<String> eventParticipantUuids, EventParticipantCriteria eventParticipantCriteria);
+
+	boolean exists(String personUuid, String eventUUID);
+
+	EventParticipantReferenceDto getReferenceByEventAndPerson(String eventUuid, String personUuid);
+
+	List<EventParticipantDto> getAllActiveEventParticipantsAfter(Date date, Integer batchSize, String lastSynchronizedUuid);
+
+	List<String> getArchivedUuidsSince(Date since);
+
+	List<String> getDeletedUuidsSince(Date date);
+
+	EventParticipantDto getFirst(EventParticipantCriteria eventParticipantCriteria);
+
+	List<EventParticipantExportDto> getExportList(
+		EventParticipantCriteria eventParticipantCriteria,
+		Collection<String> selectedRows,
+		int first,
+		int max,
+		Language userLanguage,
+		ExportConfigurationDto exportConfiguration);
+
+	List<EventParticipantDto> getByEventUuids(List<String> eventUuids);
+
+	List<SimilarEventParticipantDto> getMatchingEventParticipants(EventParticipantCriteria criteria);
+
+	List<EventParticipantDto> getByPersonUuids(List<String> personUuids);
+
+	List<EventParticipantDto> getByEventAndPersons(String eventUuid, List<String> personUuids);
 }

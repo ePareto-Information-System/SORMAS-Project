@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui;
 
@@ -24,9 +24,6 @@ import javax.ejb.Startup;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -35,9 +32,6 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 @Startup
 @TransactionManagement(TransactionManagementType.CONTAINER)
 public class StartupShutdownService {
-
-	@SuppressWarnings("unused")
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@PostConstruct
 	public void startup() {
@@ -48,5 +42,4 @@ public class StartupShutdownService {
 	public void shutdown() {
 
 	}
-	
 }

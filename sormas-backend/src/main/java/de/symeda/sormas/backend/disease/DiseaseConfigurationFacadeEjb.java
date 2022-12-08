@@ -1,10 +1,10 @@
 package de.symeda.sormas.backend.disease;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,9 +14,10 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.validation.constraints.NotNull;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.disease.DiseaseConfigurationDto;
@@ -24,13 +25,11 @@ import de.symeda.sormas.api.disease.DiseaseConfigurationFacade;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
-import de.symeda.sormas.backend.util.ModelConstants;
 
 @Stateless(name = "DiseaseConfigurationFacade")
 public class DiseaseConfigurationFacadeEjb implements DiseaseConfigurationFacade {
 
-	@PersistenceContext(unitName = ModelConstants.PERSISTENCE_UNIT_NAME)
-	protected EntityManager em;
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@EJB
 	private DiseaseConfigurationService service;
@@ -44,27 +43,27 @@ public class DiseaseConfigurationFacadeEjb implements DiseaseConfigurationFacade
 	private List<Disease> caseBasedDiseases = new ArrayList<>();
 	private List<Disease> aggregateDiseases = new ArrayList<>();
 	private List<Disease> followUpEnabledDiseases = new ArrayList<>();
-	private Map<Disease, Integer> followUpDurations = new HashMap<>();
+
+	private Map<Disease, Boolean> extendedClassificationDiseases = new EnumMap<>(Disease.class);
+	private Map<Disease, Boolean> extendedClassificationMultiDiseases = new EnumMap<>(Disease.class);
+
+	private Map<Disease, Integer> followUpDurations = new EnumMap<>(Disease.class);
+	private Map<Disease, Integer> caseFollowUpDurations = new EnumMap<>(Disease.class);
+	private Map<Disease, Integer> eventParticipantFollowUpDurations = new EnumMap<>(Disease.class);
 
 	@Override
 	public List<DiseaseConfigurationDto> getAllAfter(Date date) {
-		return service.getAllAfter(date, null)
-				.stream()
-				.map(d -> toDto(d))
-				.collect(Collectors.toList());
+		return service.getAllAfter(date).stream().map(d -> toDto(d)).collect(Collectors.toList());
 	}
 
 	@Override
 	public List<DiseaseConfigurationDto> getByUuids(List<String> uuids) {
-		return service.getByUuids(uuids)
-				.stream()
-				.map(d -> toDto(d))
-				.collect(Collectors.toList());
+		return service.getByUuids(uuids).stream().map(d -> toDto(d)).collect(Collectors.toList());
 	}
 
 	@Override
 	public List<String> getAllUuids() {
-		return service.getAllUuids(null);
+		return service.getAllUuids();
 	}
 
 	@Override
@@ -73,56 +72,70 @@ public class DiseaseConfigurationFacadeEjb implements DiseaseConfigurationFacade
 	}
 
 	@Override
-	public List<Disease> getAllDiseases(Boolean active, Boolean primary, Boolean caseBased) {
-		User currentUser = userService.getCurrentUser();
+	public List<Disease> getAllDiseases(Boolean active, Boolean primary, boolean caseBased) {
 
-		Set<Disease> diseases = new HashSet<>();
-
-		if (currentUser.getLimitedDisease() == null) {
-			if (Boolean.TRUE.equals(active)) {
-				diseases.addAll(activeDiseases);
-			} else if (Boolean.FALSE.equals(active)) {
-				diseases.addAll(inactiveDiseases);
-			}
-
-			if (Boolean.TRUE.equals(primary)) {
-				diseases.retainAll(primaryDiseases);
-			} else if (Boolean.FALSE.equals(primary)) {
-				diseases.retainAll(nonPrimaryDiseases);
-			}
-
-			if (Boolean.TRUE.equals(caseBased)) {
-				diseases.retainAll(caseBasedDiseases);
-			} else if (Boolean.FALSE.equals(caseBased)) {
-				diseases.retainAll(aggregateDiseases);
-			}
-		} else if (active != null || primary != null || caseBased != null) {
-			Disease limitedDisease = currentUser.getLimitedDisease();
-			if ((active == null || (Boolean.TRUE.equals(active) && activeDiseases.contains(limitedDisease)) || (Boolean.FALSE.equals(active) && inactiveDiseases.contains(limitedDisease)))
-					&& (primary == null || (Boolean.TRUE.equals(primary) && primaryDiseases.contains(limitedDisease)) || (Boolean.FALSE.equals(primary) && nonPrimaryDiseases.contains(limitedDisease)))
-					&& (caseBased == null || (Boolean.TRUE.equals(caseBased) && caseBasedDiseases.contains(limitedDisease)) || (Boolean.FALSE.equals(caseBased) && aggregateDiseases.contains(limitedDisease)))) {
-				diseases.add(limitedDisease);
-			}
+		// not an ideal solution, but will be changed with #9629 anyway
+		if (!caseBased && primary != null) {
+			primary = null;
+			logger.warn("primary should not be used for non-case-based diseases");
 		}
 
-		List<Disease> diseaseList = new ArrayList<>(diseases);
-		diseaseList.sort((d1, d2) -> d1.toString().compareTo(d2.toString()));
-		return diseaseList;
+		User currentUser = userService.getCurrentUser();
+
+		Set<Disease> diseases = EnumSet.noneOf(Disease.class);
+
+		if (caseBased) {
+			if (currentUser.getLimitedDisease() != null) {
+				Disease limitedDisease = currentUser.getLimitedDisease();
+				diseases.add(limitedDisease);
+			} else {
+				diseases.addAll(caseBasedDiseases);
+			}
+
+			if (isTrue(primary)) {
+				diseases.retainAll(primaryDiseases);
+			} else if (isFalse(primary)) {
+				diseases.retainAll(nonPrimaryDiseases);
+			}
+		} else {
+			diseases.addAll(aggregateDiseases);
+		}
+
+		if (isTrue(active)) {
+			diseases.retainAll(activeDiseases);
+		} else if (isFalse(active)) {
+			diseases.retainAll(inactiveDiseases);
+		}
+
+		return diseases.stream().sorted(Comparator.comparing(Disease::toString)).collect(Collectors.toList());
 	}
-	
+
+	private static boolean isFalse(Boolean value) {
+		return Boolean.FALSE.equals(value);
+	}
+
+	private static boolean isTrue(Boolean value) {
+		return Boolean.TRUE.equals(value);
+	}
+
 	@Override
-	public List<Disease> getAllDiseasesWithFollowUp(Boolean active, Boolean primary, Boolean caseBased) {
+	public List<Disease> getAllDiseasesWithFollowUp(Boolean active, Boolean primary, boolean caseBased) {
 		return getAllDiseases(active, primary, caseBased).stream().filter(d -> followUpEnabledDiseases.contains(d)).collect(Collectors.toList());
 	}
 
 	@Override
+	public boolean usesExtendedClassification(Disease disease) {
+		return extendedClassificationDiseases.get(disease);
+	}
+
+	@Override
+	public boolean usesExtendedClassificationMulti(Disease disease) {
+		return extendedClassificationMultiDiseases.get(disease);
+	}
+
+	@Override
 	public List<Disease> getAllActiveDiseases() {
-		User currentUser = userService.getCurrentUser();
-		if (currentUser.getLimitedDisease() != null) {
-			return activeDiseases.stream().filter(d -> d == currentUser.getLimitedDisease()).collect(Collectors.toList());
-		} else {
-			return activeDiseases;
-		}
+		return activeDiseases;
 	}
 
 	@Override
@@ -132,6 +145,7 @@ public class DiseaseConfigurationFacadeEjb implements DiseaseConfigurationFacade
 
 	@Override
 	public List<Disease> getAllPrimaryDiseases() {
+
 		User currentUser = userService.getCurrentUser();
 		if (currentUser.getLimitedDisease() != null) {
 			return primaryDiseases.stream().filter(d -> d == currentUser.getLimitedDisease()).collect(Collectors.toList());
@@ -147,6 +161,7 @@ public class DiseaseConfigurationFacadeEjb implements DiseaseConfigurationFacade
 
 	@Override
 	public List<Disease> getAllDiseasesWithFollowUp() {
+
 		User currentUser = userService.getCurrentUser();
 		if (currentUser.getLimitedDisease() != null) {
 			return followUpEnabledDiseases.stream().filter(d -> d == currentUser.getLimitedDisease()).collect(Collectors.toList());
@@ -160,25 +175,8 @@ public class DiseaseConfigurationFacadeEjb implements DiseaseConfigurationFacade
 		return followUpDurations.get(disease);
 	}
 
-	@Override
-	public void saveDiseaseConfiguration(DiseaseConfigurationDto configuration) {
-		service.ensurePersisted(fromDto(configuration));
-	}
-	
-	@Override
-	public Disease getDefaultDisease() {
-		List<Disease> diseases = getAllDiseases(true, true, true).stream()
-				.filter(d -> d != Disease.OTHER && d != Disease.UNDEFINED)
-				.collect(Collectors.toList());
-		
-		if (diseases.size() == 1) {
-			return diseases.get(0);
-		}
-		
-		return null;
-	}
-	
 	public static DiseaseConfigurationDto toDto(DiseaseConfiguration source) {
+
 		if (source == null) {
 			return null;
 		}
@@ -192,20 +190,57 @@ public class DiseaseConfigurationFacadeEjb implements DiseaseConfigurationFacade
 		target.setCaseBased(source.getCaseBased());
 		target.setFollowUpEnabled(source.getFollowUpEnabled());
 		target.setFollowUpDuration(source.getFollowUpDuration());
+		target.setCaseFollowUpDuration(source.getCaseFollowUpDuration());
+		target.setEventParticipantFollowUpDuration(source.getEventParticipantFollowUpDuration());
+		target.setExtendedClassification(source.getExtendedClassification());
+		target.setExtendedClassificationMulti(source.getExtendedClassificationMulti());
+		target.setAgeGroups(source.getAgeGroups());
 
 		return target;
 	}
 
-	public DiseaseConfiguration fromDto(@NotNull DiseaseConfigurationDto source) {
-		DiseaseConfiguration target = service.getByUuid(source.getUuid());
-		if (target == null) {
-			target = new DiseaseConfiguration();
-			target.setUuid(source.getUuid());
-			if (source.getCreationDate() != null) {
-				target.setCreationDate(new Timestamp(source.getCreationDate().getTime()));
-			}
+	@Override
+	public int getCaseFollowUpDuration(Disease disease) {
+		return caseFollowUpDurations.get(disease);
+	}
+
+	@Override
+	public int getEventParticipantFollowUpDuration(Disease disease) {
+		return eventParticipantFollowUpDurations.get(disease);
+	}
+
+	@Override
+	public void saveDiseaseConfiguration(DiseaseConfigurationDto configuration) {
+		service.ensurePersisted(fromDto(configuration, true));
+	}
+
+	@Override
+	public Disease getDefaultDisease() {
+
+		List<Disease> diseases =
+			getAllDiseases(true, true, true).stream().filter(d -> d != Disease.OTHER && d != Disease.UNDEFINED).collect(Collectors.toList());
+
+		if (diseases.size() == 1) {
+			return diseases.get(0);
 		}
-		DtoHelper.validateDto(source, target);
+
+		return null;
+	}
+
+	@Override
+	public List<String> getAgeGroups(Disease disease) {
+		return service.getDiseaseConfiguration(disease).getAgeGroups();
+	}
+
+	@Override
+	public String getFirstAgeGroup(Disease disease) {
+		return getAgeGroups(disease) != null ? getAgeGroups(disease).get(0) : null;
+	}
+
+	public DiseaseConfiguration fromDto(@NotNull DiseaseConfigurationDto source, boolean checkChangeDate) {
+
+		DiseaseConfiguration target =
+			DtoHelper.fillOrBuildEntity(source, service.getByUuid(source.getUuid()), DiseaseConfiguration::new, checkChangeDate);
 
 		target.setDisease(source.getDisease());
 		target.setActive(source.getActive());
@@ -213,12 +248,13 @@ public class DiseaseConfigurationFacadeEjb implements DiseaseConfigurationFacade
 		target.setCaseBased(source.getCaseBased());
 		target.setFollowUpEnabled(source.getFollowUpEnabled());
 		target.setFollowUpDuration(source.getFollowUpDuration());
+		target.setCaseFollowUpDuration(source.getCaseFollowUpDuration());
+		target.setEventParticipantFollowUpDuration(source.getEventParticipantFollowUpDuration());
+		target.setExtendedClassification(source.getExtendedClassification());
+		target.setExtendedClassificationMulti(source.getExtendedClassificationMulti());
+		target.setAgeGroups(source.getAgeGroups());
 
 		return target;
-	}
-
-	public DiseaseConfigurationDto getDiseaseConfiguration(Disease disease) {
-		return toDto(service.getDiseaseConfiguration(disease));
 	}
 
 	@PostConstruct
@@ -231,38 +267,66 @@ public class DiseaseConfigurationFacadeEjb implements DiseaseConfigurationFacade
 		aggregateDiseases.clear();
 		followUpEnabledDiseases.clear();
 		followUpDurations.clear();
+		extendedClassificationDiseases.clear();
+		extendedClassificationMultiDiseases.clear();
+		caseFollowUpDurations.clear();
+		eventParticipantFollowUpDurations.clear();
 
-		for (Disease disease : Disease.values()) {
-			DiseaseConfigurationDto configuration = getDiseaseConfiguration(disease);
+		for (DiseaseConfiguration configuration : service.getAll()) {
+			Disease disease = configuration.getDisease();
 
-			if (Boolean.TRUE.equals(configuration.getActive()) 
-					|| (configuration.getActive() == null && disease.isDefaultActive())) {
+			if (enabled(configuration.getActive(), disease.isDefaultActive())) {
 				activeDiseases.add(disease);
 			} else {
 				inactiveDiseases.add(disease);
 			}
-			if (Boolean.TRUE.equals(configuration.getPrimaryDisease())
-					|| (configuration.getPrimaryDisease() == null && disease.isDefaultPrimary())) {
+			if (enabled(configuration.getPrimaryDisease(), disease.isDefaultPrimary())) {
 				primaryDiseases.add(disease);
 			} else {
 				nonPrimaryDiseases.add(disease);
 			}
-			if (Boolean.TRUE.equals(configuration.getCaseBased())
-					|| (configuration.getCaseBased() == null && disease.isDefaultCaseBased())) {
+			if (enabled(configuration.getCaseBased(), disease.isDefaultCaseBased())) {
 				caseBasedDiseases.add(disease);
 			} else {
 				aggregateDiseases.add(disease);
 			}
-			if (Boolean.TRUE.equals(configuration.getFollowUpEnabled()) 
-					|| (configuration.getFollowUpEnabled() == null && disease.isDefaultFollowUpEnabled())) {
+			if (Boolean.TRUE.equals(configuration.getFollowUpEnabled())
+				|| (configuration.getFollowUpEnabled() == null && disease.isDefaultFollowUpEnabled())) {
 				followUpEnabledDiseases.add(disease);
 			}
+
+			if (configuration.getExtendedClassification() == null) {
+				extendedClassificationDiseases.put(disease, disease.isDefaultExtendedClassification());
+			} else {
+				extendedClassificationDiseases.put(disease, configuration.getExtendedClassification());
+			}
+
+			if (configuration.getExtendedClassificationMulti() == null) {
+				extendedClassificationMultiDiseases.put(disease, disease.isDefaultExtendedClassificationMulti());
+			} else {
+				extendedClassificationMultiDiseases.put(disease, configuration.getExtendedClassificationMulti());
+			}
+
 			if (configuration.getFollowUpDuration() != null) {
 				followUpDurations.put(disease, configuration.getFollowUpDuration());
 			} else {
 				followUpDurations.put(disease, disease.getDefaultFollowUpDuration());
 			}
+			if (configuration.getCaseFollowUpDuration() != null) {
+				caseFollowUpDurations.put(disease, configuration.getCaseFollowUpDuration());
+			} else {
+				caseFollowUpDurations.put(disease, followUpDurations.get(disease));
+			}
+			if (configuration.getFollowUpDuration() != null) {
+				eventParticipantFollowUpDurations.put(disease, configuration.getFollowUpDuration());
+			} else {
+				eventParticipantFollowUpDurations.put(disease, followUpDurations.get(disease));
+			}
 		}
+	}
+
+	private boolean enabled(Boolean configValue, boolean defaultValue) {
+		return isTrue(configValue) || (configValue == null && defaultValue);
 	}
 
 	@LocalBean
@@ -270,5 +334,4 @@ public class DiseaseConfigurationFacadeEjb implements DiseaseConfigurationFacade
 	public static class DiseaseConfigurationFacadeEjbLocal extends DiseaseConfigurationFacadeEjb {
 
 	}
-
 }

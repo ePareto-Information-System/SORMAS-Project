@@ -9,10 +9,10 @@ import com.vaadin.v7.ui.TextField;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Validations;
-import de.symeda.sormas.api.infrastructure.PointOfEntryDto;
-import de.symeda.sormas.api.region.RegionDto;
-import de.symeda.sormas.api.region.RegionReferenceDto;
-import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.infrastructure.pointofentry.PointOfEntryDto;
+import de.symeda.sormas.api.infrastructure.region.RegionDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
+import de.symeda.sormas.ui.location.AccessibleTextField;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
 import de.symeda.sormas.ui.utils.FieldHelper;
 import de.symeda.sormas.ui.utils.StringToAngularLocationConverter;
@@ -21,19 +21,19 @@ public class PointOfEntryForm extends AbstractEditForm<PointOfEntryDto> {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final String HTML_LAYOUT = 
-			fluidRowLocs(PointOfEntryDto.NAME, PointOfEntryDto.POINT_OF_ENTRY_TYPE) +
-			fluidRowLocs(PointOfEntryDto.REGION, PointOfEntryDto.DISTRICT) +
-			fluidRowLocs(PointOfEntryDto.LATITUDE, PointOfEntryDto.LONGITUDE) +
-			fluidRowLocs(RegionDto.EXTERNAL_ID) +
-			fluidRowLocs(PointOfEntryDto.ACTIVE, "");
-	
+	private static final String HTML_LAYOUT = fluidRowLocs(PointOfEntryDto.NAME, PointOfEntryDto.POINT_OF_ENTRY_TYPE)
+		+ fluidRowLocs(PointOfEntryDto.REGION, PointOfEntryDto.DISTRICT)
+		+ fluidRowLocs(PointOfEntryDto.LATITUDE, PointOfEntryDto.LONGITUDE)
+		+ fluidRowLocs(RegionDto.EXTERNAL_ID)
+		+ fluidRowLocs(PointOfEntryDto.ACTIVE, "");
+
 	private boolean create;
-	
-	public PointOfEntryForm(UserRight editOrCreateUserRight, boolean create) {
-		super(PointOfEntryDto.class, PointOfEntryDto.I18N_PREFIX, editOrCreateUserRight, false);
+
+	public PointOfEntryForm(boolean create) {
+
+		super(PointOfEntryDto.class, PointOfEntryDto.I18N_PREFIX, false);
 		this.create = create;
-		
+
 		setWidth(540, Unit.PIXELS);
 
 		if (create) {
@@ -41,30 +41,31 @@ public class PointOfEntryForm extends AbstractEditForm<PointOfEntryDto> {
 		}
 		addFields();
 	}
-	
+
 	@Override
 	protected void addFields() {
+
 		addField(PointOfEntryDto.NAME, TextField.class);
 		addField(PointOfEntryDto.POINT_OF_ENTRY_TYPE, ComboBox.class);
 		addField(PointOfEntryDto.ACTIVE, CheckBox.class);
-		TextField tfLatitude = addField(PointOfEntryDto.LATITUDE, TextField.class);
-		TextField tfLongitude = addField(PointOfEntryDto.LONGITUDE, TextField.class);
+		AccessibleTextField tfLatitude = addField(PointOfEntryDto.LATITUDE, AccessibleTextField.class);
+		AccessibleTextField tfLongitude = addField(PointOfEntryDto.LONGITUDE, AccessibleTextField.class);
 		ComboBox cbRegion = addInfrastructureField(PointOfEntryDto.REGION);
 		ComboBox cbDistrict = addInfrastructureField(PointOfEntryDto.DISTRICT);
 		addField(RegionDto.EXTERNAL_ID, TextField.class);
 
 		tfLatitude.setConverter(new StringToAngularLocationConverter());
 		tfLatitude.setConversionError(I18nProperties.getValidationError(Validations.onlyGeoCoordinatesAllowed, tfLatitude.getCaption()));
-		tfLongitude.setConverter(new StringToAngularLocationConverter());
+        tfLongitude.setConverter(new StringToAngularLocationConverter());
 		tfLongitude.setConversionError(I18nProperties.getValidationError(Validations.onlyGeoCoordinatesAllowed, tfLongitude.getCaption()));
 
-		cbRegion.addValueChangeListener(e -> {
+        cbRegion.addValueChangeListener(e -> {
 			RegionReferenceDto regionDto = (RegionReferenceDto) e.getProperty().getValue();
-			FieldHelper.updateItems(cbDistrict,
-					regionDto != null ? FacadeProvider.getDistrictFacade().getAllActiveByRegion(regionDto.getUuid()) : null);
+			FieldHelper
+				.updateItems(cbDistrict, regionDto != null ? FacadeProvider.getDistrictFacade().getAllActiveByRegion(regionDto.getUuid()) : null);
 		});
 		cbRegion.addItems(FacadeProvider.getRegionFacade().getAllActiveAsReference());
-		
+
 		setRequired(true, PointOfEntryDto.NAME, PointOfEntryDto.POINT_OF_ENTRY_TYPE);
 		if (!create) {
 			cbRegion.setEnabled(false);
@@ -78,5 +79,4 @@ public class PointOfEntryForm extends AbstractEditForm<PointOfEntryDto> {
 	protected String createHtmlLayout() {
 		return HTML_LAYOUT;
 	}
-
 }

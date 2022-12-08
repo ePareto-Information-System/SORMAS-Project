@@ -1,38 +1,52 @@
 /*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
  * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.symeda.sormas.app.sample.edit;
 
-import android.view.View;
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.android.gms.common.api.CommonStatusCodes;
 
-import de.symeda.sormas.api.facility.FacilityDto;
+import android.content.Intent;
+import android.view.View;
+
+import androidx.annotation.Nullable;
+
+import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.sample.AdditionalTestType;
+import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
-import de.symeda.sormas.api.sample.SamplePurpose;
+import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SampleMaterial;
+import de.symeda.sormas.api.sample.SamplePurpose;
 import de.symeda.sormas.api.sample.SampleSource;
+import de.symeda.sormas.api.sample.SamplingReason;
 import de.symeda.sormas.api.sample.SpecimenCondition;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
+import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
@@ -41,229 +55,307 @@ import de.symeda.sormas.app.backend.facility.Facility;
 import de.symeda.sormas.app.backend.sample.AdditionalTest;
 import de.symeda.sormas.app.backend.sample.PathogenTest;
 import de.symeda.sormas.app.backend.sample.Sample;
+import de.symeda.sormas.app.barcode.BarcodeActivity;
 import de.symeda.sormas.app.component.Item;
 import de.symeda.sormas.app.databinding.FragmentSampleEditLayoutBinding;
 import de.symeda.sormas.app.sample.read.SampleReadActivity;
 import de.symeda.sormas.app.util.DataUtils;
 
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
-
 public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayoutBinding, Sample, Sample> {
 
-    private Sample record;
-    private Sample referredSample;
-    private PathogenTest mostRecentTest;
-    private AdditionalTest mostRecentAdditionalTests;
+	private Sample record;
+	private Sample referredSample;
+	private PathogenTest mostRecentTest;
+	private AdditionalTest mostRecentAdditionalTests;
 
-    // Enum lists
+	// Enum lists
 
-    private List<Item> sampleMaterialList;
-    private List<Item> sampleSourceList;
-    private List<Facility> labList;
-    private List<Item> samplePurposeList;
-    private List<String> requestedPathogenTests = new ArrayList<>();
-    private List<String> requestedAdditionalTests = new ArrayList<>();
+	private List<Item> sampleMaterialList;
+	private List<Item> sampleSourceList;
+	private List<Facility> labList;
+	private List<Item> samplePurposeList;
+	private List<Item> samplingReasonList;
+	private List<String> requestedPathogenTests = new ArrayList<>();
+	private List<String> requestedAdditionalTests = new ArrayList<>();
+	private List<Item> finalTestResults;
 
-    public static SampleEditFragment newInstance(Sample activityRootData) {
-        return newInstance(SampleEditFragment.class, null, activityRootData);
-    }
+	public static SampleEditFragment newInstance(Sample activityRootData) {
+		return newInstanceWithFieldCheckers(
+			SampleEditFragment.class,
+			null,
+			activityRootData,
+			FieldVisibilityCheckers.withDisease(getDiseaseOfAssociatedEntity(activityRootData)).andWithCountry(ConfigProvider.getServerCountryCode()),
+			UiFieldAccessCheckers.forSensitiveData(activityRootData.isPseudonymized()));
+	}
 
-    private void setUpControlListeners(FragmentSampleEditLayoutBinding contentBinding) {
-        if (!StringUtils.isEmpty(record.getReferredToUuid())) {
-            contentBinding.sampleReferredToUuid.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (referredSample != null) {
-                        // Activity needs to be destroyed because it is only resumed, not created otherwise
-                        // and therefore the record uuid is not changed
-                        if (getActivity() != null) {
-                            getActivity().finish();
-                        }
-                        SampleReadActivity.startActivity(getActivity(), record.getUuid());
-                    }
-                }
-            });
-        }
-    }
+	private void setUpControlListeners(FragmentSampleEditLayoutBinding contentBinding) {
+		if (!StringUtils.isEmpty(record.getReferredToUuid())) {
+			contentBinding.sampleReferredToUuid.setOnClickListener(new View.OnClickListener() {
 
-    private void setUpFieldVisibilities(final FragmentSampleEditLayoutBinding contentBinding) {
-        // Most recent test layout
-        if (!record.isReceived() || record.getSpecimenCondition() != SpecimenCondition.ADEQUATE) {
-            contentBinding.mostRecentTestLayout.setVisibility(GONE);
-        } else {
-            if (mostRecentTest != null) {
-                contentBinding.noRecentTest.setVisibility(GONE);
-            }
-        }
+				@Override
+				public void onClick(View view) {
+					if (referredSample != null) {
+						// Activity needs to be destroyed because it is only resumed, not created otherwise
+						// and therefore the record uuid is not changed
+						if (getActivity() != null) {
+							getActivity().finish();
+						}
+						SampleReadActivity.startActivity(getActivity(), record.getUuid());
+					}
+				}
+			});
+		}
+	}
 
-        // Most recent additional tests layout
-        if (ConfigProvider.hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)) {
-            if (!record.isReceived() || record.getSpecimenCondition() != SpecimenCondition.ADEQUATE
-                    || !record.getAdditionalTestingRequested() || mostRecentAdditionalTests == null) {
-                contentBinding.mostRecentAdditionalTestsLayout.setVisibility(GONE);
-            } else {
-                if (!mostRecentAdditionalTests.hasArterialVenousGasValue()) {
-                    contentBinding.mostRecentAdditionalTests.arterialVenousGasLayout.setVisibility(GONE);
-                }
-            }
-        } else {
-            contentBinding.mostRecentAdditionalTestsLayout.setVisibility(GONE);
-        }
-    }
+	private void setUpFieldVisibilities(final FragmentSampleEditLayoutBinding contentBinding) {
+		// Most recent test layout
+		if (!record.isReceived() || record.getSpecimenCondition() != SpecimenCondition.ADEQUATE) {
+			contentBinding.mostRecentTestLayout.setVisibility(GONE);
+		} else {
+			if (mostRecentTest != null) {
+				contentBinding.noRecentTest.setVisibility(GONE);
+			}
+		}
 
-    // Overrides
+		// Most recent additional tests layout
+		if (ConfigProvider.hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)
+			&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.ADDITIONAL_TESTS)) {
+			if (!record.isReceived()
+				|| record.getSpecimenCondition() != SpecimenCondition.ADEQUATE
+				|| !record.getAdditionalTestingRequested()
+				|| mostRecentAdditionalTests == null) {
+				contentBinding.mostRecentAdditionalTestsLayout.setVisibility(GONE);
+			} else {
+				if (!mostRecentAdditionalTests.hasArterialVenousGasValue()) {
+					contentBinding.mostRecentAdditionalTests.arterialVenousGasLayout.setVisibility(GONE);
+				}
+			}
+		} else {
+			contentBinding.mostRecentAdditionalTestsLayout.setVisibility(GONE);
+		}
 
-    @Override
-    protected String getSubHeadingTitle() {
-        return getResources().getString(R.string.caption_sample_information);
-    }
+		if (record.getId() == null) {
+			contentBinding.samplePathogenTestResult.setVisibility(GONE);
+		}
+	}
 
-    @Override
-    public Sample getPrimaryData() {
-        return record;
-    }
+	// Overrides
 
-    @Override
-    protected void prepareFragmentData() {
-        record = getActivityRootData();
-        if (record.getId() != null) {
-            mostRecentTest = DatabaseHelper.getSampleTestDao().queryMostRecentBySample(record);
-            if (ConfigProvider.hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)) {
-                mostRecentAdditionalTests = DatabaseHelper.getAdditionalTestDao().queryMostRecentBySample(record);
-            }
-        }
-        if (!StringUtils.isEmpty(record.getReferredToUuid())) {
-            referredSample = DatabaseHelper.getSampleDao().queryUuid(record.getReferredToUuid());
-        } else {
-            referredSample = null;
-        }
+	@Override
+	protected String getSubHeadingTitle() {
+		return getResources().getString(R.string.caption_sample_information);
+	}
 
-        sampleMaterialList = DataUtils.getEnumItems(SampleMaterial.class, true);
-        sampleSourceList = DataUtils.getEnumItems(SampleSource.class, true);
-        labList = DatabaseHelper.getFacilityDao().getActiveLaboratories(true);
-        samplePurposeList = DataUtils.getEnumItems(SamplePurpose.class, true);
+	@Override
+	public Sample getPrimaryData() {
+		return record;
+	}
 
-        for (PathogenTestType pathogenTest : record.getRequestedPathogenTests()) {
-            requestedPathogenTests.clear();
-            if (pathogenTest != PathogenTestType.OTHER) {
-                requestedPathogenTests.add(pathogenTest.toString());
-            }
-        }
-        if (ConfigProvider.hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)) {
-            requestedAdditionalTests.clear();
-            for (AdditionalTestType additionalTest : record.getRequestedAdditionalTests()) {
-                requestedAdditionalTests.add(additionalTest.toString());
-            }
-        }
-    }
+	@Override
+	protected void prepareFragmentData() {
+		record = getActivityRootData();
+		if (record.getId() != null) {
+			mostRecentTest = DatabaseHelper.getSampleTestDao().queryMostRecentBySample(record);
+			if (ConfigProvider.hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)
+				&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.ADDITIONAL_TESTS)) {
+				mostRecentAdditionalTests = DatabaseHelper.getAdditionalTestDao().queryMostRecentBySample(record);
+			}
+		}
+		if (!StringUtils.isEmpty(record.getReferredToUuid())) {
+			referredSample = DatabaseHelper.getSampleDao().queryUuid(record.getReferredToUuid());
+		} else {
+			referredSample = null;
+		}
 
-    @Override
-    public void onLayoutBinding(FragmentSampleEditLayoutBinding contentBinding) {
-        setUpControlListeners(contentBinding);
+		sampleMaterialList = DataUtils.getEnumItems(SampleMaterial.class, true, getFieldVisibilityCheckers());
+		sampleSourceList = DataUtils.getEnumItems(SampleSource.class, true);
+		labList = DatabaseHelper.getFacilityDao().getActiveLaboratories(true);
+		samplePurposeList = DataUtils.getEnumItems(SamplePurpose.class, true);
+		samplingReasonList = DataUtils.getEnumItems(SamplingReason.class, true, getFieldVisibilityCheckers());
 
-        contentBinding.setData(record);
-        contentBinding.setPathogenTest(mostRecentTest);
-        contentBinding.setAdditionalTest(mostRecentAdditionalTests);
-        contentBinding.setReferredSample(referredSample);
+		for (PathogenTestType pathogenTest : record.getRequestedPathogenTests()) {
+			requestedPathogenTests.clear();
+			if (pathogenTest != PathogenTestType.OTHER) {
+				requestedPathogenTests.add(pathogenTest.toString());
+			}
+		}
+		if (ConfigProvider.hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)
+			&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.ADDITIONAL_TESTS)) {
+			requestedAdditionalTests.clear();
+			for (AdditionalTestType additionalTest : record.getRequestedAdditionalTests()) {
+				requestedAdditionalTests.add(additionalTest.toString());
+			}
+		}
 
-        SampleValidator.initializeSampleValidation(contentBinding);
+		if (record.getId() != null) {
+			if (DatabaseHelper.getSampleTestDao()
+				.queryBySample(record)
+				.stream()
+				.allMatch(pathogenTest -> pathogenTest.getTestResult() == PathogenTestResultType.PENDING)) {
+				finalTestResults = DataUtils.toItems(Arrays.asList(PathogenTestResultType.values()));
+			} else {
+				finalTestResults = DataUtils.toItems(
+					Arrays.stream(PathogenTestResultType.values())
+						.filter(type -> type != PathogenTestResultType.NOT_DONE)
+						.collect(Collectors.toList()));
+			}
+		}
+	}
 
-        contentBinding.setPathogenTestTypeClass(PathogenTestType.class);
-        contentBinding.setAdditionalTestTypeClass(AdditionalTestType.class);
-    }
+	@Override
+	public void onLayoutBinding(FragmentSampleEditLayoutBinding contentBinding) {
+		setUpControlListeners(contentBinding);
 
-    @Override
-    public void onAfterLayoutBinding(final FragmentSampleEditLayoutBinding contentBinding) {
-        setUpFieldVisibilities(contentBinding);
+		contentBinding.setData(record);
+		contentBinding.setPathogenTest(mostRecentTest);
+		contentBinding.setAdditionalTest(mostRecentAdditionalTests);
+		contentBinding.setReferredSample(referredSample);
 
-        // Initialize ControlSpinnerFields
-        contentBinding.sampleSampleMaterial.initializeSpinner(sampleMaterialList);
-        contentBinding.sampleSampleSource.initializeSpinner(sampleSourceList);
-        contentBinding.sampleLab.initializeSpinner(DataUtils.toItems(labList), field -> {
-            Facility laboratory = (Facility) field.getValue();
-            if (laboratory != null && laboratory.getUuid().equals(FacilityDto.OTHER_LABORATORY_UUID)) {
-                contentBinding.sampleLabDetails.setVisibility(View.VISIBLE);
-            } else {
-                contentBinding.sampleLabDetails.hideField(true);
-            }
-        });
-        contentBinding.samplePurpose.initializeSpinner(samplePurposeList, field -> {
-            SamplePurpose samplePurpose = (SamplePurpose) field.getValue();
-            if (SamplePurpose.EXTERNAL == samplePurpose) {
-                contentBinding.externalSampleFieldsLayout.setVisibility(VISIBLE);
-                contentBinding.samplePathogenTestingRequested.setVisibility(
-                        ConfigProvider.getUser().equals(record.getReportingUser()) ? VISIBLE : GONE);
-                contentBinding.sampleAdditionalTestingRequested.setVisibility(
-                        ConfigProvider.getUser().equals(record.getReportingUser()) ? VISIBLE : GONE);
-            } else {
-                contentBinding.externalSampleFieldsLayout.setVisibility(GONE);
-                contentBinding.samplePathogenTestingRequested.setVisibility(GONE);
-                contentBinding.sampleAdditionalTestingRequested.setVisibility(GONE);
-            }
-        });
+		SampleValidator.initializeSampleValidation(contentBinding);
 
-        // Initialize ControlDateFields and ControlDateTimeFields
-        contentBinding.sampleSampleDateTime.initializeDateTimeField(getFragmentManager());
-        contentBinding.sampleShipmentDate.initializeDateField(getFragmentManager());
+		contentBinding.setPathogenTestTypeClass(PathogenTestType.class);
+		contentBinding.setAdditionalTestTypeClass(AdditionalTestType.class);
+	}
 
-        // Disable fields the user doesn't have access to - this involves almost all fields when
-        // the user is not the one that originally reported the sample
-        if (!ConfigProvider.getUser().equals(record.getReportingUser())) {
-            contentBinding.sampleSampleDateTime.setEnabled(false);
-            contentBinding.sampleSampleMaterial.setEnabled(false);
-            contentBinding.sampleSampleMaterialText.setEnabled(false);
-            contentBinding.sampleSampleSource.setEnabled(false);
-            contentBinding.sampleLab.setEnabled(false);
-            contentBinding.sampleLabDetails.setEnabled(false);
-            contentBinding.sampleShipped.setEnabled(false);
-            contentBinding.sampleShipmentDate.setEnabled(false);
-            contentBinding.sampleShipmentDetails.setEnabled(false);
-            contentBinding.samplePurpose.setEnabled(false);
-            contentBinding.samplePathogenTestingRequested.setVisibility(GONE);
-            contentBinding.sampleRequestedPathogenTests.setVisibility(GONE);
-            contentBinding.sampleAdditionalTestingRequested.setVisibility(GONE);
-            contentBinding.sampleRequestedAdditionalTests.setVisibility(GONE);
+	@Override
+	public void onAfterLayoutBinding(final FragmentSampleEditLayoutBinding contentBinding) {
+		setFieldVisibilitiesAndAccesses(SampleDto.class, contentBinding.mainContent);
+		setUpFieldVisibilities(contentBinding);
 
-            if (!requestedPathogenTests.isEmpty()) {
-                contentBinding.sampleRequestedPathogenTestsTags.setTags(requestedPathogenTests);
-                if (StringUtils.isEmpty(record.getRequestedOtherPathogenTests())) {
-                    contentBinding.sampleRequestedOtherPathogenTests.setVisibility(GONE);
-                }
-            } else {
-                contentBinding.sampleRequestedPathogenTestsTags.setVisibility(GONE);
-                contentBinding.sampleRequestedOtherPathogenTests.setVisibility(GONE);
-            }
+		// Initialize ControlSpinnerFields
+		contentBinding.sampleSampleMaterial.initializeSpinner(sampleMaterialList);
+		contentBinding.sampleSampleSource.initializeSpinner(sampleSourceList);
+		contentBinding.samplePurpose.setEnabled(referredSample == null || record.getSamplePurpose() != SamplePurpose.EXTERNAL);
+		contentBinding.sampleLab.initializeSpinner(DataUtils.toItems(labList), field -> {
+			Facility laboratory = (Facility) field.getValue();
+			if (laboratory != null && laboratory.getUuid().equals(FacilityDto.OTHER_FACILITY_UUID)) {
+				contentBinding.sampleLabDetails.setVisibility(View.VISIBLE);
+			} else {
+				contentBinding.sampleLabDetails.hideField(true);
+			}
+		});
 
-            if (ConfigProvider.hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)) {
-                if (!requestedAdditionalTests.isEmpty()) {
-                    contentBinding.sampleRequestedAdditionalTestsTags.setTags(requestedAdditionalTests);
-                    if (StringUtils.isEmpty(record.getRequestedOtherAdditionalTests())) {
-                        contentBinding.sampleRequestedOtherAdditionalTests.setVisibility(GONE);
-                    }
-                } else {
-                    contentBinding.sampleRequestedAdditionalTestsTags.setVisibility(GONE);
-                    contentBinding.sampleRequestedOtherAdditionalTests.setVisibility(GONE);
-                }
-            }
+		if (finalTestResults != null) {
+			contentBinding.samplePathogenTestResult.initializeSpinner(finalTestResults);
+			if (contentBinding.samplePathogenTestResult.getValue() == null) {
+				contentBinding.samplePathogenTestResult.setValue(PathogenTestResultType.PENDING);
+			}
+		}
 
-            if (requestedPathogenTests.isEmpty() && requestedAdditionalTests.isEmpty()) {
-                contentBinding.pathogenTestingDivider.setVisibility(GONE);
-            }
-        } else {
-            contentBinding.sampleRequestedPathogenTestsTags.setVisibility(GONE);
-            contentBinding.sampleRequestedPathogenTests.removeItem(PathogenTestType.OTHER);
-            contentBinding.sampleRequestedAdditionalTestsTags.setVisibility(GONE);
-        }
+		contentBinding.samplePurpose.initializeSpinner(samplePurposeList, field -> {
+			SamplePurpose samplePurpose = (SamplePurpose) field.getValue();
+			if (SamplePurpose.EXTERNAL == samplePurpose) {
+				contentBinding.externalSampleFieldsLayout.setVisibility(VISIBLE);
+				contentBinding.samplePathogenTestingRequested
+					.setVisibility(ConfigProvider.getUser().equals(record.getReportingUser()) ? VISIBLE : GONE);
+				contentBinding.sampleAdditionalTestingRequested
+					.setVisibility(ConfigProvider.getUser().equals(record.getReportingUser()) ? VISIBLE : GONE);
+			} else {
+				contentBinding.sampleShipped.setValue(null);
+				contentBinding.sampleShipmentDate.setValue(null);
+				contentBinding.sampleShipmentDetails.setValue(null);
+				contentBinding.externalSampleFieldsLayout.setVisibility(GONE);
+				contentBinding.samplePathogenTestingRequested.setVisibility(GONE);
+				contentBinding.sampleAdditionalTestingRequested.setVisibility(GONE);
+			}
+		});
 
-        if (!ConfigProvider.hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)) {
-            contentBinding.additionalTestingLayout.setVisibility(GONE);
-        }
-    }
+		contentBinding.sampleSamplingReason.initializeSpinner(samplingReasonList);
 
-    @Override
-    public int getEditLayout() {
-        return R.layout.fragment_sample_edit_layout;
-    }
+		// Initialize ControlDateFields and ControlDateTimeFields
+		contentBinding.sampleSampleDateTime.initializeDateTimeField(getFragmentManager());
+		contentBinding.sampleShipmentDate.initializeDateField(getFragmentManager());
 
+		// Initialize on clicks
+		contentBinding.buttonScanFieldSampleId.setOnClickListener((View v) -> {
+			Intent intent = new Intent(getContext(), BarcodeActivity.class);
+			startActivityForResult(intent, BarcodeActivity.RC_BARCODE_CAPTURE);
+		});
+
+		// Disable fields the user doesn't have access to - this involves almost all fields when
+		// the user is not the one that originally reported the sample
+		if (!ConfigProvider.getUser().equals(record.getReportingUser())) {
+			contentBinding.sampleSampleDateTime.setEnabled(false);
+			contentBinding.sampleSampleMaterial.setEnabled(false);
+			contentBinding.sampleSampleMaterialText.setEnabled(false);
+			contentBinding.sampleSampleSource.setEnabled(false);
+			contentBinding.sampleLab.setEnabled(false);
+			contentBinding.sampleLabDetails.setEnabled(false);
+			contentBinding.sampleShipped.setEnabled(false);
+			contentBinding.sampleShipmentDate.setEnabled(false);
+			contentBinding.sampleShipmentDetails.setEnabled(false);
+			contentBinding.samplePurpose.setEnabled(false);
+			contentBinding.sampleReceived.setEnabled(false);
+			contentBinding.sampleLabSampleID.setEnabled(false);
+			contentBinding.sampleSpecimenCondition.setEnabled(false);
+			contentBinding.samplePathogenTestingRequested.setVisibility(GONE);
+			contentBinding.sampleRequestedPathogenTests.setVisibility(GONE);
+			contentBinding.sampleAdditionalTestingRequested.setVisibility(GONE);
+			contentBinding.sampleRequestedAdditionalTests.setVisibility(GONE);
+
+			if (!requestedPathogenTests.isEmpty()) {
+				contentBinding.sampleRequestedPathogenTestsTags.setTags(requestedPathogenTests);
+				if (StringUtils.isEmpty(record.getRequestedOtherPathogenTests())) {
+					contentBinding.sampleRequestedOtherPathogenTests.setVisibility(GONE);
+				}
+			} else {
+				contentBinding.sampleRequestedPathogenTestsTags.setVisibility(GONE);
+				contentBinding.sampleRequestedOtherPathogenTests.setVisibility(GONE);
+			}
+
+			if (ConfigProvider.hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)
+				&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.ADDITIONAL_TESTS)) {
+				if (!requestedAdditionalTests.isEmpty()) {
+					contentBinding.sampleRequestedAdditionalTestsTags.setTags(requestedAdditionalTests);
+					if (StringUtils.isEmpty(record.getRequestedOtherAdditionalTests())) {
+						contentBinding.sampleRequestedOtherAdditionalTests.setVisibility(GONE);
+					}
+				} else {
+					contentBinding.sampleRequestedAdditionalTestsTags.setVisibility(GONE);
+					contentBinding.sampleRequestedOtherAdditionalTests.setVisibility(GONE);
+				}
+			}
+
+			if (requestedPathogenTests.isEmpty() && requestedAdditionalTests.isEmpty()) {
+				contentBinding.pathogenTestingDivider.setVisibility(GONE);
+			}
+		} else {
+			contentBinding.sampleRequestedPathogenTestsTags.setVisibility(GONE);
+			contentBinding.sampleRequestedPathogenTests.removeItem(PathogenTestType.OTHER);
+			contentBinding.sampleRequestedAdditionalTestsTags.setVisibility(GONE);
+		}
+
+		if (!ConfigProvider.hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)
+			&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.ADDITIONAL_TESTS)) {
+			contentBinding.additionalTestingLayout.setVisibility(GONE);
+		}
+	}
+
+	@Override
+	public int getEditLayout() {
+		return R.layout.fragment_sample_edit_layout;
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+		if (requestCode == BarcodeActivity.RC_BARCODE_CAPTURE) {
+			if (resultCode == CommonStatusCodes.SUCCESS && data != null) {
+				getContentBinding().sampleFieldSampleID.setValue(data.getStringExtra(BarcodeActivity.BARCODE_RESULT));
+			}
+		} else {
+			super.onActivityResult(requestCode, resultCode, data);
+		}
+	}
+
+	protected static Disease getDiseaseOfAssociatedEntity(Sample sample) {
+		if (sample.getAssociatedCase() != null) {
+			return sample.getAssociatedCase().getDisease();
+		} else if (sample.getAssociatedContact() != null) {
+			return sample.getAssociatedContact().getDisease();
+		} else if (sample.getAssociatedEventParticipant() != null) {
+			return sample.getAssociatedEventParticipant().getEvent().getDisease();
+		} else {
+			return null;
+		}
+	}
 }

@@ -33,13 +33,13 @@ import de.symeda.sormas.api.Year;
 import de.symeda.sormas.api.contact.ContactClassification;
 import de.symeda.sormas.api.contact.FollowUpStatus;
 import de.symeda.sormas.api.infrastructure.PopulationStatisticsCriteria;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.person.Sex;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.region.RegionReferenceDto;
-import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.EpiWeek;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
-import de.symeda.sormas.api.statistics.StatisticsSubAttributeEnum;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseSubAttribute;
+import de.symeda.sormas.api.user.DefaultUserRole;
 
 public class StatisticsContactCriteria implements Serializable, PopulationStatisticsCriteria {
 
@@ -72,7 +72,7 @@ public class StatisticsContactCriteria implements Serializable, PopulationStatis
 	private List<FollowUpStatus> followUpStatuses;
 	private List<RegionReferenceDto> regions;
 	private List<DistrictReferenceDto> districts;
-	private List<UserRole> reportingUserRoles;
+	private List<DefaultUserRole> reportingUserRoles;
 	
 	public List<Year> getOnsetYears() {
 		return onsetYears;
@@ -182,11 +182,11 @@ public class StatisticsContactCriteria implements Serializable, PopulationStatis
 		return districts;
 	}
 
-	public List<UserRole> getReportingUserRoles() {
+	public List<DefaultUserRole> getReportingUserRoles() {
 		return reportingUserRoles;
 	}
 
-	public StatisticsContactCriteria years(List<Year> years, StatisticsContactAttribute mainAttribute) {
+	public StatisticsContactCriteria years(List<Year> years, StatisticsContactAttributeEnum mainAttribute) {
 		switch (mainAttribute) {
 		case REPORT_TIME:
 			this.reportYears = years;
@@ -198,7 +198,7 @@ public class StatisticsContactCriteria implements Serializable, PopulationStatis
 		return this;
 	}
 
-	public StatisticsContactCriteria quarters(List<Quarter> quarters, StatisticsContactAttribute mainAttribute) {
+	public StatisticsContactCriteria quarters(List<Quarter> quarters, StatisticsContactAttributeEnum mainAttribute) {
 		switch (mainAttribute) {
 		case REPORT_TIME:
 			this.reportQuarters = quarters;
@@ -210,7 +210,7 @@ public class StatisticsContactCriteria implements Serializable, PopulationStatis
 		return this;
 	}
 
-	public StatisticsContactCriteria months(List<Month> months, StatisticsContactAttribute mainAttribute) {
+	public StatisticsContactCriteria months(List<Month> months, StatisticsContactAttributeEnum mainAttribute) {
 		switch (mainAttribute) {
 		case REPORT_TIME:
 			this.reportMonths = months;
@@ -222,7 +222,7 @@ public class StatisticsContactCriteria implements Serializable, PopulationStatis
 		return this;
 	}
 
-	public StatisticsContactCriteria epiWeeks(List<EpiWeek> epiWeeks, StatisticsContactAttribute mainAttribute) {
+	public StatisticsContactCriteria epiWeeks(List<EpiWeek> epiWeeks, StatisticsContactAttributeEnum mainAttribute) {
 		switch (mainAttribute) {
 		case REPORT_TIME:
 			this.reportEpiWeeks = epiWeeks;
@@ -234,7 +234,7 @@ public class StatisticsContactCriteria implements Serializable, PopulationStatis
 		return this;
 	}
 
-	public StatisticsContactCriteria quartersOfYear(List<QuarterOfYear> quartersOfYear, StatisticsContactAttribute mainAttribute) {
+	public StatisticsContactCriteria quartersOfYear(List<QuarterOfYear> quartersOfYear, StatisticsContactAttributeEnum mainAttribute) {
 		switch (mainAttribute) {
 		case REPORT_TIME:
 			this.reportQuartersOfYear = quartersOfYear;
@@ -246,7 +246,7 @@ public class StatisticsContactCriteria implements Serializable, PopulationStatis
 		return this;
 	}
 
-	public StatisticsContactCriteria monthsOfYear(List<MonthOfYear> monthsOfYear, StatisticsContactAttribute mainAttribute) {
+	public StatisticsContactCriteria monthsOfYear(List<MonthOfYear> monthsOfYear, StatisticsContactAttributeEnum mainAttribute) {
 		switch (mainAttribute) {
 		case REPORT_TIME:
 			this.reportMonthsOfYear = monthsOfYear;
@@ -258,7 +258,7 @@ public class StatisticsContactCriteria implements Serializable, PopulationStatis
 		return this;
 	}
 
-	public StatisticsContactCriteria epiWeeksOfYear(List<EpiWeek> epiWeeksOfYear, StatisticsContactAttribute mainAttribute) {
+	public StatisticsContactCriteria epiWeeksOfYear(List<EpiWeek> epiWeeksOfYear, StatisticsContactAttributeEnum mainAttribute) {
 		switch (mainAttribute) {
 		case REPORT_TIME:
 			this.reportEpiWeeksOfYear = epiWeeksOfYear;
@@ -270,7 +270,7 @@ public class StatisticsContactCriteria implements Serializable, PopulationStatis
 		return this;
 	}
 
-	public StatisticsContactCriteria dateRange(Date from, Date to, StatisticsContactAttribute mainAttribute) {
+	public StatisticsContactCriteria dateRange(Date from, Date to, StatisticsContactAttributeEnum mainAttribute) {
 		switch (mainAttribute) {
 		case REPORT_TIME:
 			this.reportDateFrom = from;
@@ -336,12 +336,12 @@ public class StatisticsContactCriteria implements Serializable, PopulationStatis
 		return this;
 	}
 
-	public StatisticsContactCriteria reportingUserRoles(List<UserRole> reportingUserRoles) {
+	public StatisticsContactCriteria reportingUserRoles(List<DefaultUserRole> reportingUserRoles) {
 		this.reportingUserRoles = reportingUserRoles;
 		return this;
 	}
 
-	public List<? extends StatisticsGroupingKey> getFilterValuesForGrouping(StatisticsContactAttribute attribute, StatisticsSubAttributeEnum subAttribute) {
+	public List<? extends StatisticsGroupingKey> getFilterValuesForGrouping(StatisticsContactAttributeEnum attribute, StatisticsContactSubAttributeEnum subAttribute) {
 		if (subAttribute != null) {
 			switch (subAttribute) {
 			case REGION:

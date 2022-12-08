@@ -1,6 +1,11 @@
 package de.symeda.sormas.backend.disease;
 
+import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_TEXT;
+
+import java.util.List;
+
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -14,29 +19,35 @@ import de.symeda.sormas.backend.common.AbstractDomainObject;
 public class DiseaseConfiguration extends AbstractDomainObject {
 
 	private static final long serialVersionUID = -7653585175036656526L;
-	
+
 	public static final String TABLE_NAME = "diseaseconfiguration";
-	
+
 	public static final String DISEASE = "disease";
-	
+
 	private Disease disease;
 	private Boolean active;
 	private Boolean primaryDisease;
 	private Boolean caseBased;
 	private Boolean followUpEnabled;
 	private Integer followUpDuration;
-	
+	private Integer caseFollowUpDuration;
+	private Integer eventParticipantFollowUpDuration;
+	private Boolean extendedClassification;
+	private Boolean extendedClassificationMulti;
+	private List<String> ageGroups;
+
 	public static DiseaseConfiguration build(Disease disease) {
 		DiseaseConfiguration configuration = new DiseaseConfiguration();
 		configuration.setDisease(disease);
 		return configuration;
 	}
-	
+
 	@Enumerated(EnumType.STRING)
 	@Column(unique = true)
 	public Disease getDisease() {
 		return disease;
 	}
+
 	public void setDisease(Disease disease) {
 		this.disease = disease;
 	}
@@ -45,6 +56,7 @@ public class DiseaseConfiguration extends AbstractDomainObject {
 	public Boolean getActive() {
 		return active;
 	}
+
 	public void setActive(Boolean active) {
 		this.active = active;
 	}
@@ -53,6 +65,7 @@ public class DiseaseConfiguration extends AbstractDomainObject {
 	public Boolean getPrimaryDisease() {
 		return primaryDisease;
 	}
+
 	public void setPrimaryDisease(Boolean primaryDisease) {
 		this.primaryDisease = primaryDisease;
 	}
@@ -61,6 +74,7 @@ public class DiseaseConfiguration extends AbstractDomainObject {
 	public Boolean getCaseBased() {
 		return caseBased;
 	}
+
 	public void setCaseBased(Boolean caseBased) {
 		this.caseBased = caseBased;
 	}
@@ -69,6 +83,7 @@ public class DiseaseConfiguration extends AbstractDomainObject {
 	public Boolean getFollowUpEnabled() {
 		return followUpEnabled;
 	}
+
 	public void setFollowUpEnabled(Boolean followUpEnabled) {
 		this.followUpEnabled = followUpEnabled;
 	}
@@ -77,8 +92,54 @@ public class DiseaseConfiguration extends AbstractDomainObject {
 	public Integer getFollowUpDuration() {
 		return followUpDuration;
 	}
+
 	public void setFollowUpDuration(Integer followUpDuration) {
 		this.followUpDuration = followUpDuration;
 	}
-	
+
+	@Column
+	public Integer getCaseFollowUpDuration() {
+		return caseFollowUpDuration;
+	}
+
+	public void setCaseFollowUpDuration(Integer caseFollowUpDuration) {
+		this.caseFollowUpDuration = caseFollowUpDuration;
+	}
+
+	@Column
+	public Integer getEventParticipantFollowUpDuration() {
+		return eventParticipantFollowUpDuration;
+	}
+
+	public void setEventParticipantFollowUpDuration(Integer eventParticipantFollowUpDuration) {
+		this.eventParticipantFollowUpDuration = eventParticipantFollowUpDuration;
+	}
+
+	@Column
+	public Boolean getExtendedClassification() {
+		return extendedClassification;
+	}
+
+	public void setExtendedClassification(Boolean extendedClassification) {
+		this.extendedClassification = extendedClassification;
+	}
+
+	@Column
+	public Boolean getExtendedClassificationMulti() {
+		return extendedClassificationMulti;
+	}
+
+	public void setExtendedClassificationMulti(Boolean extendedClassificationMulti) {
+		this.extendedClassificationMulti = extendedClassificationMulti;
+	}
+
+	@Column(length = CHARACTER_LIMIT_TEXT)
+	@Convert(converter = AgeGroupsConverter.class)
+	public List<String> getAgeGroups() {
+		return ageGroups;
+	}
+
+	public void setAgeGroups(List<String> ageGroups) {
+		this.ageGroups = ageGroups;
+	}
 }

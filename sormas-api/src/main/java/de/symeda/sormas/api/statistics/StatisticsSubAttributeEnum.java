@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.statistics;
 
@@ -21,6 +21,8 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum StatisticsSubAttributeEnum {
 	
+//public enum StatisticsCaseSubAttribute {
+
 	YEAR(true, true),
 	QUARTER(true, true),
 	MONTH(true, true),
@@ -30,26 +32,35 @@ public enum StatisticsSubAttributeEnum {
 	EPI_WEEK_OF_YEAR(true, true),
 	DATE_RANGE(true, false),
 	REGION(false, true),
-	DISTRICT(false, true);
-	
+	DISTRICT(false, true),
+	COMMUNITY(false, true),
+	FACILITY(false, true),
+	PERSON_REGION(false, false),
+	PERSON_DISTRICT(false, false),
+	PERSON_COMMUNITY(false, false),
+	PERSON_CITY(false, false),
+	PERSON_POSTCODE(false, false);
+
 	private boolean usedForFilters;
 	private boolean usedForGrouping;
 	
 	StatisticsSubAttributeEnum(boolean usedForFilters, boolean usedForGrouping) {
+
+	//StatisticsCaseSubAttribute(boolean usedForFilters, boolean usedForGrouping) {
 		this.usedForFilters = usedForFilters;
 		this.usedForGrouping = usedForGrouping;
 	}
-	
+
+	@Override
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);
 	}
 
 	public boolean isUsedForFilters() {
 		return usedForFilters;
-	}	
-	
+	}
+
 	public boolean isUsedForGrouping() {
 		return usedForGrouping;
 	}
-	
 }

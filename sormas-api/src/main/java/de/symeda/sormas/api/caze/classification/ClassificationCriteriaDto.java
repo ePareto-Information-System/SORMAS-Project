@@ -9,15 +9,16 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.caze.classification;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -26,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.sample.PathogenTestDto;
 
@@ -36,32 +38,41 @@ import de.symeda.sormas.api.sample.PathogenTestDto;
  * criteria can be evaluated in order to determine whether the case should be classified as
  * suspect, probable, confirmed or not classified at all.
  */
-@JsonTypeInfo(use=Id.NAME, include=As.PROPERTY)
+@JsonTypeInfo(use = Id.NAME, include = As.PROPERTY)
 @JsonSubTypes({
 	@JsonSubTypes.Type(value = ClassificationAllOfCriteriaDto.class, name = "ClassificationAllOfCriteriaDto"),
 	@JsonSubTypes.Type(value = ClassificationCaseCriteriaDto.class, name = "ClassificationCaseCriteriaDto"),
 	@JsonSubTypes.Type(value = ClassificationNoneOfCriteriaDto.class, name = "ClassificationNoneOfCrieriaDto"),
 	@JsonSubTypes.Type(value = ClassificationPersonAgeBetweenYearsCriteriaDto.class, name = "ClassificationPersonAgeBetweenYearsCriteriaDto"),
-	@JsonSubTypes.Type(value = ClassificationPathogenTestPositiveResultCriteriaDto.class, name = "ClassificationPathogenTestPositiveResultCriteriaDto"),
-	@JsonSubTypes.Type(value = ClassificationPathogenTestNegativeResultCriteriaDto.class, name = "ClassificationPathogenTestNegativeResultCriteriaDto"),
-	@JsonSubTypes.Type(value = ClassificationPathogenTestOtherPositiveResultCriteriaDto.class, name = "ClassificationPathogenTestOtherPositiveResultCriteriaDto"),
+	@JsonSubTypes.Type(value = ClassificationPathogenTestPositiveResultCriteriaDto.class,
+		name = "ClassificationPathogenTestPositiveResultCriteriaDto"),
+	@JsonSubTypes.Type(value = ClassificationPathogenTestNegativeResultCriteriaDto.class,
+		name = "ClassificationPathogenTestNegativeResultCriteriaDto"),
+	@JsonSubTypes.Type(value = ClassificationPathogenTestOtherPositiveResultCriteriaDto.class,
+		name = "ClassificationPathogenTestOtherPositiveResultCriteriaDto"),
 	@JsonSubTypes.Type(value = ClassificationXOfCriteriaDto.class, name = "ClassificationXOfCriteriaDto"),
-})
+	@JsonSubTypes.Type(value = ClassificationAllSymptomsCriteriaDto.class, name = "ClassificationAllSymptomsCriteriaDto"),
+	@JsonSubTypes.Type(value = ClassificationEventClusterCriteriaDto.class, name = "ClassificationEventClusterCriteriaDto") })
 public abstract class ClassificationCriteriaDto implements Serializable {
-	
+
 	protected String type = getClass().getSimpleName();
-	
+
 	private static final long serialVersionUID = -3686569295881034008L;
-	
-	public abstract boolean eval(CaseDataDto caze, PersonDto person, List<PathogenTestDto> sampleTests);
+
+	public abstract boolean eval(
+		CaseDataDto caze,
+		PersonDto person,
+		List<PathogenTestDto> pathogenTests,
+		List<EventDto> events,
+		Date lastVaccinationDate);
+
 	public abstract String buildDescription();
-	
+
 	public String getType() {
 		return type;
 	}
-	
+
 	public void setType(String type) {
 		this.type = type;
 	}
-	
 }

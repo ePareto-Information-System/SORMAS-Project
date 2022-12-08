@@ -9,11 +9,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.utils;
 
@@ -21,27 +21,32 @@ import java.util.Collection;
 
 import com.vaadin.data.ValueProvider;
 
+import de.symeda.sormas.api.utils.HtmlHelper;
+
 /**
  * A ValueProvider that allows displaying a collection as a comma separated list of
  * strings.
  */
-@SuppressWarnings({ "serial", "rawtypes" })
-public class CollectionValueProvider<T extends Collection> implements
-        ValueProvider<T, String> {
+@SuppressWarnings({
+	"serial",
+	"rawtypes" })
+public class CollectionValueProvider<T extends Collection> implements ValueProvider<T, String> {
 
-    @Override
-    public String apply(T source) {
-    	if (source == null)
-            return "";
-        StringBuilder b = new StringBuilder();
-        for (Object o : source) {
-            b.append(o.toString());
-            b.append(", ");
-        }
-        if (b.length() >= 2) {
-        	return b.substring(0, b.length() - 2);
-        }
-        return "";
-    }
+	@Override
+	public String apply(T source) {
 
+		if (source == null) {
+			return "";
+		}
+
+		StringBuilder b = new StringBuilder();
+		for (Object o : source) {
+			b.append(o.toString());
+			b.append(", ");
+		}
+		if (b.length() >= 2) {
+			return HtmlHelper.cleanHtml(b.substring(0, b.length() - 2));
+		}
+		return "";
+	}
 }

@@ -1,6 +1,5 @@
 package de.symeda.sormas.backend.sample;
 
-import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -11,112 +10,143 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.sample.AdditionalTestCriteria;
 import de.symeda.sormas.api.sample.AdditionalTestDto;
 import de.symeda.sormas.api.sample.AdditionalTestFacade;
-import de.symeda.sormas.api.user.UserRole;
+import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.ModelConstants;
+import de.symeda.sormas.backend.util.Pseudonymizer;
 
 @Stateless(name = "AdditionalTestFacade")
 public class AdditionalTestFacadeEjb implements AdditionalTestFacade {
 
 	@PersistenceContext(unitName = ModelConstants.PERSISTENCE_UNIT_NAME)
-	protected EntityManager em;
-	
+	private EntityManager em;
+
 	@EJB
 	private AdditionalTestService service;
 	@EJB
 	private SampleService sampleService;
 	@EJB
 	private UserService userService;
-	
+
 	@Override
 	public AdditionalTestDto getByUuid(String uuid) {
 		return toDto(service.getByUuid(uuid));
 	}
-	
+
 	@Override
 	public List<AdditionalTestDto> getAllBySample(String sampleUuid) {
+
 		if (sampleUuid == null) {
 			return Collections.emptyList();
 		}
-		
+
 		Sample sample = sampleService.getByUuid(sampleUuid);
-		
-		return service.getAllBySample(sample).stream()
-				.map(s -> toDto(s))
-				.collect(Collectors.toList());
+		return service.getAllBySample(sample).stream().map(s -> toDto(s)).collect(Collectors.toList());
 	}
-	
+
+	public List<AdditionalTestDto> getIndexList(
+		AdditionalTestCriteria additionalTestCriteria,
+		Integer first,
+		Integer max,
+		List<SortProperty> sortProperties) {
+
+		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
+
+		return service.getIndexList(additionalTestCriteria, first, max, sortProperties)
+			.stream()
+			.map(p -> convertToDto(p, pseudonymizer))
+			.collect(Collectors.toList());
+	}
+
+	public Page<AdditionalTestDto> getIndexPage(
+		AdditionalTestCriteria additionalTestCriteria,
+		Integer offset,
+		Integer size,
+		List<SortProperty> sortProperties) {
+
+		List<AdditionalTestDto> additionalTestList = getIndexList(additionalTestCriteria, offset, size, sortProperties);
+		long totalElementCount = service.count(additionalTestCriteria);
+		return new Page<>(additionalTestList, offset, size, totalElementCount);
+
+	}
+
 	@Override
-	public AdditionalTestDto saveAdditionalTest(AdditionalTestDto additionalTest) {
-		AdditionalTest entity = fromDto(additionalTest);
-		
+	public AdditionalTestDto saveAdditionalTest(@Valid AdditionalTestDto additionalTest) {
+		return saveAdditionalTest(additionalTest, true);
+	}
+
+	public AdditionalTestDto saveAdditionalTest(@Valid AdditionalTestDto additionalTest, boolean checkChangeDate) {
+
+		AdditionalTest entity = fromDto(additionalTest, checkChangeDate);
 		service.ensurePersisted(entity);
-		
 		return toDto(entity);
 	}
-	
+
 	@Override
-	public void deleteAdditionalTest(String additionalTestUuid, String userUuid) {
-		User user = userService.getByUuid(userUuid);
-		// TODO replace this with a proper user right call #944
-		if (!user.getUserRoles().contains(UserRole.ADMIN)) {
-			throw new UnsupportedOperationException("Only admins are allowed to delete entities");
+	public void deleteAdditionalTest(String additionalTestUuid) {
+
+		if (!userService.hasRight(UserRight.ADDITIONAL_TEST_DELETE)) {
+			throw new UnsupportedOperationException("Your user is not allowed to delete additional tests");
 		}
-		
+
 		AdditionalTest additionalTest = service.getByUuid(additionalTestUuid);
-		service.delete(additionalTest);
-	}	
+		service.deletePermanent(additionalTest);
+	}
 
 	@Override
-	public List<AdditionalTestDto> getAllActiveAdditionalTestsAfter(Date date, String userUuid) {
-		User user = userService.getByUuid(userUuid);
+	public List<AdditionalTestDto> getAllActiveAdditionalTestsAfter(Date date) {
+		return getAllActiveAdditionalTestsAfter(date, null, null);
+	}
 
-		if(user == null) {
+	@Override
+	public List<AdditionalTestDto> getAllActiveAdditionalTestsAfter(Date date, Integer batchSize, String lastSynchronizedUuid) {
+		User user = userService.getCurrentUser();
+		if (user == null) {
 			return Collections.emptyList();
 		}
 
-		return service.getAllActiveAdditionalTestsAfter(date, user).stream()
-				.map(e -> toDto(e))
-				.collect(Collectors.toList());
+		return service.getAllActiveAdditionalTestsAfter(date, user, batchSize, lastSynchronizedUuid).stream().map(e -> toDto(e)).collect(Collectors.toList());
 	}
 
 	@Override
 	public List<AdditionalTestDto> getByUuids(List<String> uuids) {
-		return service.getByUuids(uuids)
-				.stream()
-				.map(c -> toDto(c))
-				.collect(Collectors.toList());
+		return service.getByUuids(uuids).stream().map(c -> toDto(c)).collect(Collectors.toList());
 	}
-	
-	@Override
-	public List<String> getAllActiveUuids(String userUuid) {
-		User user = userService.getByUuid(userUuid);
 
+	@Override
+	public List<String> getAllActiveUuids() {
+
+		User user = userService.getCurrentUser();
 		if (user == null) {
 			return Collections.emptyList();
 		}
 
 		return service.getAllActiveUuids(user);
-	}	
-	
-	public AdditionalTest fromDto(@NotNull AdditionalTestDto source) {
-		AdditionalTest target = service.getByUuid(source.getUuid());
-		if (target == null) {
-			target = new AdditionalTest();
-			target.setUuid(source.getUuid());
-			if (source.getCreationDate() != null) {
-				target.setCreationDate(new Timestamp(source.getCreationDate().getTime()));
-			}
-		}
-		
-		DtoHelper.validateDto(source, target);
-		
+	}
+
+	public AdditionalTestDto convertToDto(AdditionalTest source, Pseudonymizer pseudonymizer) {
+		AdditionalTestDto dto = toDto(source);
+
+		pseudonymizer
+			.pseudonymizeDto(AdditionalTestDto.class, dto, sampleService.inJurisdictionOrOwned(source.getSample()).getInJurisdiction(), null);
+
+		return dto;
+	}
+
+	public AdditionalTest fromDto(@NotNull AdditionalTestDto source, boolean checkChangeDate) {
+
+		AdditionalTest target = DtoHelper.fillOrBuildEntity(source, service.getByUuid(source.getUuid()), AdditionalTest::new, checkChangeDate);
+
 		target.setSample(sampleService.getByReferenceDto(source.getSample()));
 		target.setTestDateTime(source.getTestDateTime());
 		target.setHaemoglobinuria(source.getHaemoglobinuria());
@@ -137,17 +167,18 @@ public class AdditionalTestFacadeEjb implements AdditionalTestFacade {
 		target.setConjBilirubin(source.getConjBilirubin());
 		target.setWbcCount(source.getWbcCount());
 		target.setPlatelets(source.getPlatelets());
-		target.setProthrombinTime(source.getPlatelets());
+		target.setProthrombinTime(source.getProthrombinTime());
 		target.setOtherTestResults(source.getOtherTestResults());
-		
+
 		return target;
 	}
-	
-	public AdditionalTestDto toDto(AdditionalTest source) {
+
+	public static AdditionalTestDto toDto(AdditionalTest source) {
+
 		if (source == null) {
 			return null;
 		}
-		
+
 		AdditionalTestDto target = new AdditionalTestDto();
 		DtoHelper.fillDto(target, source);
 
@@ -171,15 +202,16 @@ public class AdditionalTestFacadeEjb implements AdditionalTestFacade {
 		target.setConjBilirubin(source.getConjBilirubin());
 		target.setWbcCount(source.getWbcCount());
 		target.setPlatelets(source.getPlatelets());
-		target.setProthrombinTime(source.getPlatelets());
+		target.setProthrombinTime(source.getProthrombinTime());
 		target.setOtherTestResults(source.getOtherTestResults());
-		
+
 		return target;
 	}
 
 	@LocalBean
 	@Stateless
 	public static class AdditionalTestFacadeEjbLocal extends AdditionalTestFacadeEjb {
+
 	}
-	
+
 }

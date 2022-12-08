@@ -9,15 +9,16 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.backend.auditlog;
 
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.enterprise.context.Dependent;
@@ -28,6 +29,7 @@ import de.symeda.auditlog.api.Auditor;
 import de.symeda.auditlog.api.Current;
 import de.symeda.auditlog.api.TransactionId;
 import de.symeda.auditlog.api.UserId;
+import de.symeda.sormas.backend.common.ConfigFacadeEjb;
 
 /**
  * Provides the relevant environment for the Auditlog.
@@ -37,6 +39,9 @@ import de.symeda.auditlog.api.UserId;
  */
 @Stateless
 public class AuditContextProducer {
+
+	@EJB
+	private ConfigFacadeEjb.ConfigFacadeEjbLocal configFacade;
 
 	@Resource
 	private SessionContext context;
@@ -57,8 +62,7 @@ public class AuditContextProducer {
 	@Current
 	@TransactionScoped
 	public Auditor provideAuditor() {
-
-		return new Auditor();
+		return new Auditor(configFacade.isAuditorAttributeLoggingEnabled());
 	}
 
 	@Produces

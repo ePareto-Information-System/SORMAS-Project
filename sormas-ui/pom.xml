@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>sormas-base</artifactId>
 		<groupId>de.symeda.sormas</groupId>
-		<version>1.38.0-SNAPSHOT</version>
+		<version>1.74.3</version>
 		<relativePath>../sormas-base</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -12,7 +12,7 @@
 	<name>${project.artifactId}</name>
 	<packaging>war</packaging>
 
-	<properties>    
+	<properties>
 		<m2e.jpa.activation>false</m2e.jpa.activation>
 	</properties>
 
@@ -37,7 +37,17 @@
 			<artifactId>sormas-widgetset</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
+
+		<dependency>
+			<groupId>com.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-compatibility-server</artifactId>
@@ -46,7 +56,7 @@
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-themes</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.vaadin.addons</groupId>
 			<artifactId>popupbutton</artifactId>
@@ -58,8 +68,18 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.wcs.wcslib</groupId>
+			<artifactId>wcslib-vaadin-widget-multifileupload</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
 		</dependency>
 
 		<!-- Testing -->
@@ -68,29 +88,44 @@
 			<artifactId>javaee-api</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>sormas-backend</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
-		    <groupId>org.hibernate</groupId>
-		    <artifactId>hibernate-core</artifactId>
+			<groupId>com.github.mpkorstanje</groupId>
+			<artifactId>simmetrics-core</artifactId>
 		</dependency>
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
 		</dependency>
-			
+
 		<dependency>
-		    <groupId>org.glassfish</groupId>
-		    <artifactId>javax.el</artifactId>
+			<groupId>com.vladmihalcea</groupId>
+			<artifactId>hibernate-types-55</artifactId>
 		</dependency>
-		
+
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.el</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish.corba</groupId>
+			<artifactId>glassfish-corba-omgapi</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
@@ -100,7 +135,59 @@
 			<groupId>info.novatec</groupId>
 			<artifactId>bean-test</artifactId>
 		</dependency>
-		
+		<dependency>
+			<groupId>org.jboss.weld.se</groupId>
+			<artifactId>weld-se</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.deltaspike.core</groupId>
+			<artifactId>deltaspike-core-impl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.deltaspike.cdictrl</groupId>
+			<artifactId>deltaspike-cdictrl-weld</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.geronimo.config</groupId>
+			<artifactId>geronimo-config-impl</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.keycloak</groupId>
+			<artifactId>keycloak-core</artifactId>
+		</dependency>
+
+		<!-- OpenID -->
+		<dependency>
+			<groupId>fish.payara.api</groupId>
+			<artifactId>payara-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>fish.payara.security.connectors</groupId>
+			<artifactId>security-connector-oidc-client</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.microprofile.config</groupId>
+			<artifactId>microprofile-config-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish.soteria</groupId>
+			<artifactId>javax.security.enterprise</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -111,23 +198,13 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
-					<!-- By attaching the classes to a separate JAR, we can import them 
-						directly in the production overlay project, making it easier to compile a 
+					<!-- By attaching the classes to a separate JAR, we can import them
+						directly in the production overlay project, making it easier to compile a
 						separate widgetset for production mode. -->
 					<attachClasses>true</attachClasses>
 					<!-- Exclude some unnecessary files generated by the GWT compiler. -->
 					<packagingExcludes>WEB-INF/classes/VAADIN/gwt-unitCache/**,
 						WEB-INF/classes/VAADIN/widgetsets/WEB-INF/**</packagingExcludes>
-				</configuration>
-			</plugin>
-			<!-- The Jetty plugin allows us to easily test the development build by 
-				running jetty:run on the command line. -->
-			<plugin>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-maven-plugin</artifactId>
-				<version>${jetty.plugin.version}</version>
-				<configuration>
-					<scanIntervalSeconds>2</scanIntervalSeconds>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -143,9 +220,9 @@
 				</configuration>
 				<executions>
 					<execution>
-                    	<configuration>
-                    		<!-- if you don't specify any modules, the plugin will find them -->
-                    	</configuration>
+						<configuration>
+							<!-- if you don't specify any modules, the plugin will find them -->
+						</configuration>
 						<goals>
 							<goal>update-theme</goal>
 							<!-- Comment out compile-theme goal to use on-the-fly theme compilation -->

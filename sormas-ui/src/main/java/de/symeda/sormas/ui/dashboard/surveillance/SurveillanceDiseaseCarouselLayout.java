@@ -9,28 +9,25 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.ui.dashboard.surveillance;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.vaadin.event.UIEvents.PollListener;
 import com.vaadin.shared.Registration;
 import com.vaadin.ui.Alignment;
-import com.vaadin.v7.ui.CheckBox;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.v7.ui.CheckBox;
 
 import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.DiseaseHelper;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -39,6 +36,7 @@ import de.symeda.sormas.ui.SubMenu;
 import de.symeda.sormas.ui.dashboard.DashboardCssStyles;
 import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
 import de.symeda.sormas.ui.dashboard.map.DashboardMapComponent;
+import de.symeda.sormas.ui.dashboard.surveillance.components.epicurve.SurveillanceEpiCurveComponent;
 import de.symeda.sormas.ui.utils.CssStyles;
 
 @SuppressWarnings("serial")
@@ -49,7 +47,6 @@ public class SurveillanceDiseaseCarouselLayout extends VerticalLayout {
 	private DiseaseStatisticsComponent statisticsComponent;
 	private SurveillanceEpiCurveComponent epiCurveComponent;
 	private DashboardMapComponent mapComponent;
-
 	private Consumer<Boolean> externalExpandListener;
 	private SubMenu carouselMenu;
 	private List<Disease> diseases;
@@ -59,6 +56,7 @@ public class SurveillanceDiseaseCarouselLayout extends VerticalLayout {
 		this.dashboardDataProvider = dashboardDataProvider;
 
 		statisticsComponent = new DiseaseStatisticsComponent(dashboardDataProvider);
+
 		epiCurveComponent = new SurveillanceEpiCurveComponent(dashboardDataProvider);
 		mapComponent = new DashboardMapComponent(dashboardDataProvider);
 		diseases = FacadeProvider.getDiseaseConfigurationFacade().getAllDiseases(true, true, true);
@@ -104,13 +102,15 @@ public class SurveillanceDiseaseCarouselLayout extends VerticalLayout {
 		carouselMenu = new SubMenu();
 
 		for (Disease disease : diseases) {
-			carouselMenu.addView(disease.getName(), disease.toShortString(), (e) -> {
-				this.changeSelectedDisease(disease);
+			carouselMenu.addView(disease.getName(), disease.toShortString(), () -> {
+				this.changeSelectedDisease(disease, true);
+
+				return true;
 			});
 		}
 
 		if (diseases.size() > 0) {
-			this.setActiveDisease(diseases.get(0));
+			this.setActiveDisease(diseases.get(0), false);
 		}
 
 		layout.addComponent(carouselMenu);
@@ -136,6 +136,7 @@ public class SurveillanceDiseaseCarouselLayout extends VerticalLayout {
 			} else {
 				addComponent(statisticsComponent, 1);
 				epiCurveAndMapLayout.addComponent(mapComponent, 1);
+				mapComponent.refreshMap();
 				epiCurveAndMapLayout.setHeight(BASE_HEIGHT, Unit.PIXELS);
 				setHeightUndefined();
 			}
@@ -172,31 +173,33 @@ public class SurveillanceDiseaseCarouselLayout extends VerticalLayout {
 		});
 
 		// enabled by default
-		autoSlide.setValue(true);
+		autoSlide.setValue(false);
 
 		return autoSlide;
 	}
 
-	private void setActiveDisease(Disease selectedDisease) {
+	private void setActiveDisease(Disease selectedDisease, boolean doRefresh) {
 		carouselMenu.setActiveView(selectedDisease.getName());
-		this.changeSelectedDisease(selectedDisease);
+		this.changeSelectedDisease(selectedDisease, doRefresh);
 	}
 
-	private void changeSelectedDisease(Disease disease) {
+	private void changeSelectedDisease(Disease disease, boolean doRefresh) {
 		this.dashboardDataProvider.setDisease(disease);
-		refresh();
+		if (doRefresh) {
+			refresh();
+		}
 	}
-	
+
 	@Override
 	public void detach() {
 		super.detach();
-		
+
 		// deactivate polling
 		changeAutoSlideOption(false);
 	}
 
 	private void changeAutoSlideOption(boolean isActivated) {
-		
+
 		if (isActivated) {
 			SormasUI.getCurrent().setPollInterval(1000 * 90);
 
@@ -205,21 +208,21 @@ public class SurveillanceDiseaseCarouselLayout extends VerticalLayout {
 				pollRegistration = SormasUI.getCurrent().addPollListener(e -> {
 					Disease selectedDisease = dashboardDataProvider.getDisease();
 					int nextDiseaseIndex = 0;
-	
+
 					if (selectedDisease != null) {
 						nextDiseaseIndex = diseases.indexOf(selectedDisease) + 1;
-	
+
 						if (nextDiseaseIndex >= diseases.size()) {
 							nextDiseaseIndex = 0;
 						}
 					}
-	
-					this.setActiveDisease(diseases.get(nextDiseaseIndex));
+
+					this.setActiveDisease(diseases.get(nextDiseaseIndex), true);
 				});
 			}
 		} else {
 			SormasUI.getCurrent().setPollInterval(-1);
-			
+
 			if (pollRegistration != null) {
 				pollRegistration.remove();
 				pollRegistration = null;

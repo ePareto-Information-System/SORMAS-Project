@@ -9,23 +9,22 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.geocoding;
 
 import javax.ejb.Remote;
 
-import de.symeda.sormas.api.region.GeoLatLon;
+import de.symeda.sormas.api.geo.GeoLatLon;
 
 @Remote
 public interface GeocodingFacade {
 
 	boolean isEnabled();
 
-	GeoLatLon getLatLon(String address, String postalCode, String city);
-	
+	GeoLatLon getLatLon(String street, String houseNumber, String postalCode, String city);
 }

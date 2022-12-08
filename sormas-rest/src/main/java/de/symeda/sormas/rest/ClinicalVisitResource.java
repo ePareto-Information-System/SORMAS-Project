@@ -9,53 +9,56 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.rest;
 
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.security.RolesAllowed;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.SecurityContext;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.PushResult;
+import de.symeda.sormas.api.caze.CriteriaWithSorting;
+import de.symeda.sormas.api.clinicalcourse.ClinicalVisitCriteria;
 import de.symeda.sormas.api.clinicalcourse.ClinicalVisitDto;
-import de.symeda.sormas.api.user.UserReferenceDto;
+import de.symeda.sormas.api.clinicalcourse.ClinicalVisitIndexDto;
+import de.symeda.sormas.api.common.Page;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @Path("/clinicalvisits")
-@Produces({ MediaType.APPLICATION_JSON + "; charset=UTF-8" })
-@Consumes({ MediaType.APPLICATION_JSON + "; charset=UTF-8" })
-@RolesAllowed("USER")
+@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+@Consumes(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 public class ClinicalVisitResource extends EntityDtoResource {
 
 	@GET
 	@Path("/all/{since}")
-	public List<ClinicalVisitDto> getAllVisits(@Context SecurityContext sc, @PathParam("since") long since) {
+	public List<ClinicalVisitDto> getAllVisits(@PathParam("since") long since) {
+		return FacadeProvider.getClinicalVisitFacade().getAllActiveClinicalVisitsAfter(new Date(since));
+	}
 
-		UserReferenceDto userDto = FacadeProvider.getUserFacade()
-				.getByUserNameAsReference(sc.getUserPrincipal().getName());
-		List<ClinicalVisitDto> result = FacadeProvider.getClinicalVisitFacade().getAllActiveClinicalVisitsAfter(new Date(since),
-				userDto.getUuid());
-		return result;
+	@GET
+	@Path("/all/{since}/{size}/{lastSynchronizedUuid}")
+	public List<ClinicalVisitDto> getAllVisits(@PathParam("since") long since, @PathParam("size") int size, @PathParam("lastSynchronizedUuid") String lastSynchronizedUuid) {
+		return FacadeProvider.getClinicalVisitFacade().getAllActiveClinicalVisitsAfter(new Date(since), size, lastSynchronizedUuid);
 	}
 
 	@POST
 	@Path("/query")
-	public List<ClinicalVisitDto> getByUuids(@Context SecurityContext sc, List<String> uuids) {
+	public List<ClinicalVisitDto> getByUuids(List<String> uuids) {
 
 		List<ClinicalVisitDto> result = FacadeProvider.getClinicalVisitFacade().getByUuids(uuids);
 		return result;
@@ -63,20 +66,25 @@ public class ClinicalVisitResource extends EntityDtoResource {
 
 	@POST
 	@Path("/push")
-	public List<PushResult> postVisits(List<ClinicalVisitDto> dtos) {
+	public List<PushResult> postVisits(@Valid List<ClinicalVisitDto> dtos) {
 
 		List<PushResult> result = savePushedDto(dtos, FacadeProvider.getClinicalVisitFacade()::saveClinicalVisit);
 		return result;
 	}
 
-	@GET	
+	@GET
 	@Path("/uuids")
-	public List<String> getAllActiveUuids(@Context SecurityContext sc) {
-
-		UserReferenceDto userDto = FacadeProvider.getUserFacade()
-				.getByUserNameAsReference(sc.getUserPrincipal().getName());
-		List<String> uuids = FacadeProvider.getClinicalVisitFacade().getAllActiveUuids(userDto.getUuid());
-		return uuids;
+	public List<String> getAllActiveUuids() {
+		return FacadeProvider.getClinicalVisitFacade().getAllActiveUuids();
 	}
-	
+
+	@POST
+	@Path("/indexList")
+	public Page<ClinicalVisitIndexDto> getIndexList(
+		@RequestBody CriteriaWithSorting<ClinicalVisitCriteria> criteriaWithSorting,
+		@QueryParam("offset") int offset,
+		@QueryParam("size") int size) {
+		return FacadeProvider.getClinicalVisitFacade()
+			.getIndexPage(criteriaWithSorting.getCriteria(), offset, size, criteriaWithSorting.getSortProperties());
+	}
 }

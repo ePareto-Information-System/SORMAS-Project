@@ -1,22 +1,25 @@
 /*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
  * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 package de.symeda.sormas.app.component.controls;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Date;
+
+import org.apache.commons.lang3.StringUtils;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -28,16 +31,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import org.apache.commons.lang3.StringUtils;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Date;
-
 import androidx.databinding.BindingAdapter;
 import androidx.databinding.BindingMethod;
 import androidx.databinding.BindingMethods;
 import androidx.databinding.InverseBindingListener;
+
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
@@ -49,360 +47,470 @@ import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.common.AbstractDomainObject;
 import de.symeda.sormas.app.backend.person.Person;
 import de.symeda.sormas.app.backend.symptoms.Symptoms;
+import de.symeda.sormas.app.util.DateFormatHelper;
 import de.symeda.sormas.app.util.ResourceUtils;
 
-@BindingMethods({@BindingMethod(type = ControlTextReadField.class, attribute = "valueFormat", method = "setValueFormat")})
+@BindingMethods({
+	@BindingMethod(type = ControlTextReadField.class, attribute = "valueFormat", method = "setValueFormat") })
 public class ControlTextReadField extends ControlPropertyField<String> {
 
-    // Views
+	// Views
 
-    protected TextView textView;
+	protected TextView textView;
 
-    // Attributes
+	// Attributes
 
-    private int maxLines;
-    private boolean distinct;
-    private Object internalValue;
+	private int maxLines;
+	private boolean distinct;
+	private Object internalValue;
+	private String inaccessibleValue;
 
-    // Listeners
+	// Listeners
 
-    protected InverseBindingListener inverseBindingListener;
+	protected InverseBindingListener inverseBindingListener;
 
-    // Constructors
+	// Constructors
 
-    public ControlTextReadField(Context context) {
-        super(context);
-    }
+	public ControlTextReadField(Context context) {
+		super(context);
+	}
 
-    public ControlTextReadField(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
+	public ControlTextReadField(Context context, AttributeSet attrs) {
+		super(context, attrs);
+	}
 
-    public ControlTextReadField(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-    }
+	public ControlTextReadField(Context context, AttributeSet attrs, int defStyle) {
+		super(context, attrs, defStyle);
+	}
 
-    // Instance methods
+	// Instance methods
 
-    protected String getDefaultValue(String defaultValue) {
-        if (defaultValue != null) {
-            return defaultValue;
-        } else {
-            return getContext().getResources().getString(R.string.notAnswered);
-        }
-    }
+	protected String getDefaultValue(String defaultValue) {
+		if (inaccessibleValue != null) {
+			return inaccessibleValue;
+		} else if (defaultValue != null) {
+			return defaultValue;
+		} else {
+			return getContext().getResources().getString(R.string.notAnswered);
+		}
+	}
 
-    // Overrides
+	// Overrides
 
-    @Override
-    protected void initialize(Context context, AttributeSet attrs, int defStyle) {
-        if (attrs != null) {
-            TypedArray a = context.getTheme().obtainStyledAttributes(
-                    attrs,
-                    R.styleable.ControlTextReadField,
-                    0, 0);
+	@Override
+	protected void initialize(Context context, AttributeSet attrs, int defStyle) {
+		if (attrs != null) {
+			TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.ControlTextReadField, 0, 0);
 
-            try {
-                maxLines = a.getInt(R.styleable.ControlTextReadField_maxLines, 2);
-                distinct = a.getBoolean(R.styleable.ControlTextReadField_distinct, false);
-            } finally {
-                a.recycle();
-            }
-        }
-    }
+			try {
+				maxLines = a.getInt(R.styleable.ControlTextReadField_maxLines, 2);
+				distinct = a.getBoolean(R.styleable.ControlTextReadField_distinct, false);
+			} finally {
+				a.recycle();
+			}
+		}
+	}
 
-    @Override
-    protected void inflateView(Context context, AttributeSet attrs, int defStyle) {
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	@Override
+	protected void inflateView(Context context, AttributeSet attrs, int defStyle) {
+		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        if (inflater != null) {
-            if (distinct) {
-                if (isSlim()) {
-                    inflater.inflate(R.layout.control_textfield_read_distinct_slim_layout, this);
-                } else {
-                    inflater.inflate(R.layout.control_textfield_read_distinct_layout, this);
-                }
-            } else {
-                if (isSlim()) {
-                    inflater.inflate(R.layout.control_textfield_read_slim_layout, this);
-                } else {
-                    inflater.inflate(R.layout.control_textfield_read_layout, this);
-                }
-            }
-        } else {
-            throw new RuntimeException("Unable to inflate layout in " + getClass().getName());
-        }
-    }
+		if (inflater != null) {
+			if (distinct) {
+				if (isSlim()) {
+					inflater.inflate(R.layout.control_textfield_read_distinct_slim_layout, this);
+				} else {
+					inflater.inflate(R.layout.control_textfield_read_distinct_layout, this);
+				}
+			} else {
+				if (isSlim()) {
+					inflater.inflate(R.layout.control_textfield_read_slim_layout, this);
+				} else {
+					inflater.inflate(R.layout.control_textfield_read_layout, this);
+				}
+			}
+		} else {
+			throw new RuntimeException("Unable to inflate layout in " + getClass().getName());
+		}
+	}
 
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
+	@Override
+	protected void onFinishInflate() {
+		super.onFinishInflate();
 
-        textView = (TextView) this.findViewById(R.id.text_view);
-        textView.setMaxLines(maxLines);
-        textView.setImeOptions(getImeOptions());
-        textView.setTextAlignment(getTextAlignment());
-        if(getTextAlignment() == View.TEXT_ALIGNMENT_GRAVITY) {
-            textView.setGravity(getGravity());
-        }
+		initTextView();
+	}
 
-        textView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if (inverseBindingListener != null) {
-                    inverseBindingListener.onChange();
-                }
-                onValueChanged();
-            }
-        });
-    }
+	protected void initTextView() {
+		textView = (TextView) this.findViewById(R.id.text_view);
+		textView.setMaxLines(getMaxLines());
+		textView.setImeOptions(getImeOptions());
+		textView.setTextAlignment(getTextAlignment());
+		if (getTextAlignment() == View.TEXT_ALIGNMENT_GRAVITY) {
+			textView.setGravity(getGravity());
+		}
 
-    @Override
-    public void setBackgroundResource(int resId) {
-        setBackgroundResourceFor(textView, resId);
-    }
+		textView.addTextChangedListener(new TextWatcher() {
 
-    @Override
-    public void setBackground(Drawable background) {
-        setBackgroundFor(textView, background);
-    }
+			@Override
+			public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+			}
 
-    @Override
-    protected void requestFocusForContentView(View nextView) {
-        ((ControlTextReadField) nextView).textView.requestFocus();
-    }
+			@Override
+			public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+			}
 
-    // Data binding, getters & setters
+			@Override
+			public void afterTextChanged(Editable editable) {
+				if (inverseBindingListener != null) {
+					inverseBindingListener.onChange();
+				}
+				onValueChanged();
+			}
+		});
+	}
 
-    public void setInputType(int inputType) {
-        textView.setInputType(inputType);
-    }
+	@Override
+	public void setBackgroundResource(int resId) {
+		setBackgroundResourceFor(textView, resId);
+	}
 
-    public int getMaxLines() {
-        return maxLines;
-    }
+	@Override
+	public void setBackground(Drawable background) {
+		setBackgroundFor(textView, background);
+	}
 
-    public void setMaxLines(int maxLines) {
-        this.maxLines = maxLines;
-        textView.setMaxLines(maxLines);
-    }
+	@Override
+	protected void requestFocusForContentView(View nextView) {
+		((ControlTextReadField) nextView).textView.requestFocus();
+	}
 
-    @Override
-    protected void setFieldValue(String value) {
-        textView.setText(value);
-    }
+	// Data binding, getters & setters
 
-    @Override
-    protected String getFieldValue() {
-        return textView.getText().toString();
-    }
+	public void setInputType(int inputType) {
+		textView.setInputType(inputType);
+	}
 
-    @Override
-    public void setValue(Object value) {
-        internalValue = value;
-        setFieldValue(DataHelper.toStringNullable(value));
-    }
+	public int getMaxLines() {
+		return maxLines;
+	}
 
-    public void setValue(Object value, Object internalValue) {
-        this.internalValue = internalValue;
-        setFieldValue(DataHelper.toStringNullable(value));
-    }
+	public void setMaxLines(int maxLines) {
+		this.maxLines = maxLines;
+		textView.setMaxLines(maxLines);
+	}
 
-    public void applyDefaultValueStyle() {
-        textView.setTextColor(textView.getTextColors().withAlpha(145).getDefaultColor());
-    }
+	@Override
+	protected void setFieldValue(String value) {
+		textView.setText(value);
+	}
 
-    @Override
-    public Object getValue() {
-        return internalValue;
-    }
+	@Override
+	protected String getFieldValue() {
+		return textView.getText().toString();
+	}
 
-    @Override
-    public void setEnabled(boolean enabled) {
-        super.setEnabled(enabled);
-        textView.setEnabled(enabled);
-        label.setEnabled(enabled);
-    }
+	@Override
+	public void setValue(Object value) {
+		String stringValue = DataHelper.toStringNullable(value);
+		stringValue = DataHelper.isNullOrEmpty(stringValue) && inaccessibleValue != null ? inaccessibleValue : stringValue;
 
-    @Override
-    public void hideField(boolean eraseValue) {
-        setVisibility(GONE);
-    }
+		internalValue = value;
+		setFieldValue(stringValue);
+	}
 
-    public static void setValue(ControlTextReadField textField, String stringValue, String appendValue, String valueFormat, String defaultValue, Object originalValue) {
-        if (StringUtils.isEmpty(stringValue)) {
-            textField.setValue(textField.getDefaultValue(defaultValue), originalValue);
-            textField.applyDefaultValueStyle();
-        } else {
-            // TODO reset default style?
+	public void setValue(Object value, Object internalValue) {
+		String stringValue = DataHelper.toStringNullable(value);
+		stringValue = DataHelper.isNullOrEmpty(stringValue) && inaccessibleValue != null ? inaccessibleValue : stringValue;
 
-            if (!StringUtils.isEmpty(valueFormat) && !StringUtils.isEmpty(appendValue)) {
-                textField.setValue(String.format(valueFormat, stringValue, appendValue), originalValue);
-            } else if (!StringUtils.isEmpty(appendValue)){
-                // Default fallback if no valueFormat has been specified
-                textField.setValue(stringValue + " - " + appendValue, originalValue);
-            } else {
-                textField.setValue(stringValue, originalValue);
-            }
-        }
-    }
+		this.internalValue = internalValue;
+		setFieldValue(stringValue);
+	}
 
-    @BindingAdapter(value = {"value", "appendValue", "valueFormat", "defaultValue"}, requireAll = false)
-    public static void setValue(ControlTextReadField textField, String stringValue, String appendValue, String valueFormat, String defaultValue) {
-       setValue(textField, stringValue, appendValue, valueFormat, defaultValue, stringValue);
-    }
+	public void applyDefaultValueStyle() {
+		textView.setTextColor(textView.getTextColors().withAlpha(145).getDefaultColor());
+	}
 
-    @BindingAdapter(value = {"value", "valueFormat", "defaultValue"}, requireAll = false)
-    public static void setValue(ControlTextReadField textField, String stringValue, String valueFormat, String defaultValue) {
-        setValue(textField, stringValue, null, valueFormat, defaultValue, stringValue);
-    }
+	@Override
+	public Object getValue() {
+		return internalValue;
+	}
 
-    // Integer
-    @BindingAdapter(value = {"value", "appendValue", "valueFormat", "defaultValue"}, requireAll = false)
-    public static void setValue(ControlTextReadField textField, Integer integerValue, String appendValue, String valueFormat, String defaultValue) {
-        setValue(textField, integerValue != null ? integerValue.toString() : null, appendValue, valueFormat, defaultValue, integerValue);
-    }
+	public void setInaccessibleValue(String value) {
+		this.inaccessibleValue = value;
+		setValue(null);
+	}
 
-    // Float
-    @BindingAdapter(value = {"value", "appendValue", "valueFormat", "defaultValue"}, requireAll = false)
-    public static void setValue(ControlTextReadField textField, Float floatValue, String appendValue, String valueFormat, String defaultValue) {
-        setValue(textField, floatValue != null ? floatValue.toString() : null, appendValue, valueFormat, defaultValue, floatValue);
-    }
+	@Override
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
+		textView.setEnabled(enabled);
+		label.setEnabled(enabled);
+	}
 
-    // Enum
-    @BindingAdapter(value = {"value", "appendValue", "valueFormat", "defaultValue"}, requireAll = false)
-    public static void setValue(ControlTextReadField textField, Enum enumValue, String appendValue, String valueFormat, String defaultValue) {
-        setValue(textField, enumValue != null ? enumValue.toString() : null, appendValue, valueFormat, defaultValue, enumValue);
-    }
+	@Override
+	public void hideField(boolean eraseValue) {
+		setVisibility(GONE);
+	}
 
-    // Abstract Domain Object
-    @BindingAdapter(value = {"value", "appendValue", "valueFormat", "defaultValue"}, requireAll = false)
-    public static void setValue(ControlTextReadField textField, AbstractDomainObject ado, String appendValue, String valueFormat, String defaultValue) {
-        setValue(textField, ado != null ? ado.toString() : null, appendValue, valueFormat, defaultValue, ado);
-    }
+	public static void setValue(
+		ControlTextReadField textField,
+		String stringValue,
+		String appendValue,
+		String valueFormat,
+		String defaultValue,
+		Object originalValue) {
+		if (StringUtils.isEmpty(stringValue)) {
+			textField.setValue(textField.getDefaultValue(defaultValue), originalValue);
+			textField.applyDefaultValueStyle();
+		} else {
+			// TODO reset default style?
 
-    // Date & date range
-    @BindingAdapter(value = {"value", "appendValue", "valueFormat", "defaultValue"}, requireAll = false)
-    public static void setValue(ControlTextReadField textField, Date dateValue, Date appendValue, String valueFormat, String defaultValue) {
-        if (dateValue == null || appendValue == null) {
-            setValue(textField, dateValue != null ? DateHelper.formatLocalShortDate(dateValue)
-                    : appendValue != null ? DateHelper.formatLocalShortDate(appendValue)
-                    : null, null, valueFormat, defaultValue, dateValue);
-        } else {
-            setValue(textField, DateHelper.formatLocalShortDate(dateValue), DateHelper.formatLocalShortDate(appendValue),
-                    valueFormat, defaultValue, dateValue);
-        }
-    }
+			if (!StringUtils.isEmpty(valueFormat) && !StringUtils.isEmpty(appendValue)) {
+				textField.setValue(String.format(valueFormat, stringValue, appendValue), originalValue);
+			} else if (!StringUtils.isEmpty(appendValue)) {
+				// Default fallback if no valueFormat has been specified
+				textField.setValue(stringValue + " - " + appendValue, originalValue);
+			} else {
+				textField.setValue(stringValue, originalValue);
+			}
+		}
+	}
 
-    /* Value types that need a different variable and method name */
+	@BindingAdapter(value = {
+		"value",
+		"appendValue",
+		"valueFormat",
+		"defaultValue" }, requireAll = false)
+	public static void setValue(ControlTextReadField textField, String stringValue, String appendValue, String valueFormat, String defaultValue) {
+		setValue(textField, stringValue, appendValue, valueFormat, defaultValue, stringValue);
+	}
 
-    @BindingAdapter(value = {"lesionsLocations", "valueFormat", "defaultValue"}, requireAll = false)
-    public static void setLesionsLocations(ControlTextReadField textField, Symptoms symptoms, String valueFormat, String defaultValue) {
-        StringBuilder lesionsLocationsString = new StringBuilder();
-        for (String lesionsLocationId : SymptomsHelper.getLesionsLocationsPropertyIds()) {
-            try {
-                Method getter = Symptoms.class.getDeclaredMethod("get" + DataHelper.capitalize(lesionsLocationId));
-                Boolean lesionsLocation = (Boolean) getter.invoke(symptoms);
-                if (lesionsLocation != null) {
-                    if (lesionsLocation) {
-                        lesionsLocationsString.append(I18nProperties.getPrefixCaption(SymptomsDto.I18N_PREFIX, lesionsLocationId))
-                                .append(", ");
-                    }
-                }
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                throw new RuntimeException(e);
-            }
-        }
+	@BindingAdapter(value = {
+		"value",
+		"valueFormat",
+		"defaultValue" }, requireAll = false)
+	public static void setValue(ControlTextReadField textField, String stringValue, String valueFormat, String defaultValue) {
+		setValue(textField, stringValue, null, valueFormat, defaultValue, stringValue);
+	}
 
-        if (lesionsLocationsString.length() > 0) {
-            lesionsLocationsString.delete(lesionsLocationsString.lastIndexOf(", "), lesionsLocationsString.length());
-        }
+	// Integer
+	@BindingAdapter(value = {
+		"value",
+		"appendValue",
+		"valueFormat",
+		"defaultValue" }, requireAll = false)
+	public static void setValue(ControlTextReadField textField, Integer integerValue, String appendValue, String valueFormat, String defaultValue) {
+		setValue(textField, integerValue != null ? integerValue.toString() : null, appendValue, valueFormat, defaultValue, integerValue);
+	}
 
-        setValue(textField, lesionsLocationsString.toString(), valueFormat, defaultValue);
-    }
+	// Float
+	@BindingAdapter(value = {
+		"value",
+		"appendValue",
+		"valueFormat",
+		"defaultValue" }, requireAll = false)
+	public static void setValue(ControlTextReadField textField, Float floatValue, String appendValue, String valueFormat, String defaultValue) {
+		setValue(textField, floatValue != null ? floatValue.toString() : null, appendValue, valueFormat, defaultValue, floatValue);
+	}
 
-    @BindingAdapter(value = {"value", "valueFormat", "defaultValue"}, requireAll = false)
-    public static void setValue(ControlTextReadField textField, Boolean booleanValue, String valueFormat, String defaultValue) {
-        setValue(textField, booleanValue == null ? "" : (Boolean.TRUE.equals(booleanValue) ? YesNoUnknown.YES.toString() : YesNoUnknown.NO.toString()), null, valueFormat, defaultValue, booleanValue);
-    }
+	// Enum
+	@BindingAdapter(value = {
+		"value",
+		"appendValue",
+		"valueFormat",
+		"defaultValue" }, requireAll = false)
+	public static void setValue(ControlTextReadField textField, Enum enumValue, String appendValue, String valueFormat, String defaultValue) {
+		setValue(textField, enumValue != null ? enumValue.toString() : null, appendValue, valueFormat, defaultValue, enumValue);
+	}
 
-    // Time
-    @BindingAdapter(value = {"timeValue", "valueFormat", "defaultValue"}, requireAll = false)
-    public static void setTimeValue(ControlTextReadField textField, Date dateValue, String valueFormat, String defaultValue) {
-        setValue(textField, dateValue != null ? DateHelper.formatTime(dateValue) : null, null, valueFormat, defaultValue, dateValue);
-    }
+	// Abstract Domain Object
+	@BindingAdapter(value = {
+		"value",
+		"appendValue",
+		"valueFormat",
+		"defaultValue" }, requireAll = false)
+	public static void setValue(
+		ControlTextReadField textField,
+		AbstractDomainObject ado,
+		String appendValue,
+		String valueFormat,
+		String defaultValue) {
+		setValue(textField, ado != null ? ado.toString() : null, appendValue, valueFormat, defaultValue, ado);
+	}
 
-    // Date & time
-    @BindingAdapter(value = {"dateTimeValue", "valueFormat", "defaultValue"}, requireAll = false)
-    public static void setDateTimeValue(ControlTextReadField textField, Date dateValue, String valueFormat, String defaultValue) {
-        setValue(textField, dateValue != null ? DateHelper.formatLocalShortDateTime(dateValue) : null, null, valueFormat, defaultValue, dateValue);
-    }
+	// Date & date range
+	@BindingAdapter(value = {
+		"value",
+		"appendValue",
+		"valueFormat",
+		"defaultValue" }, requireAll = false)
+	public static void setValue(ControlTextReadField textField, Date dateValue, Date appendValue, String valueFormat, String defaultValue) {
+		if (dateValue == null || appendValue == null) {
+			setValue(
+				textField,
+				dateValue != null
+					? DateFormatHelper.formatLocalDate(dateValue)
+					: appendValue != null ? DateFormatHelper.formatLocalDate(appendValue) : null,
+				null,
+				valueFormat,
+				defaultValue,
+				dateValue);
+		} else {
+			setValue(
+				textField,
+				DateFormatHelper.formatLocalDate(dateValue),
+				DateFormatHelper.formatLocalDate(appendValue),
+				valueFormat,
+				defaultValue,
+				dateValue);
+		}
+	}
 
-    // Short uuid
-    @BindingAdapter(value = {"shortUuidValue", "valueFormat", "defaultValue"}, requireAll = false)
-    public static void setShortUuidValue(ControlTextReadField textField, String uuid, String valueFormat, String defaultValue) {
-        setValue(textField, uuid != null ? DataHelper.getShortUuid(uuid) : null, null, valueFormat, defaultValue, uuid);
-    }
+	/* Value types that need a different variable and method name */
 
-    // Decimal value
-    @BindingAdapter(value = {"decimalValue"})
-    public static void setDecimalValue(ControlTextReadField textField, Integer value) {
-        textField.setValue(value != null ? SymptomsHelper.getDecimalString(value) : null);
-    }
+	@BindingAdapter(value = {
+		"lesionsLocations",
+		"valueFormat",
+		"defaultValue" }, requireAll = false)
+	public static void setLesionsLocations(ControlTextReadField textField, Symptoms symptoms, String valueFormat, String defaultValue) {
+		StringBuilder lesionsLocationsString = new StringBuilder();
+		for (String lesionsLocationId : SymptomsHelper.getLesionsLocationsPropertyIds()) {
+			try {
+				Method getter = Symptoms.class.getDeclaredMethod("get" + DataHelper.capitalize(lesionsLocationId));
+				Boolean lesionsLocation = (Boolean) getter.invoke(symptoms);
+				if (lesionsLocation != null) {
+					if (lesionsLocation) {
+						lesionsLocationsString.append(I18nProperties.getPrefixCaption(SymptomsDto.I18N_PREFIX, lesionsLocationId)).append(", ");
+					}
+				}
+			} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+				throw new RuntimeException(e);
+			}
+		}
 
-    // Age with date
-    @BindingAdapter(value = {"ageWithDateValue", "valueFormat", "defaultValue"}, requireAll = false)
-    public static void setAgeWithDateValue(ControlTextReadField textField, Person person, String valueFormat, String defaultValue) {
-        if (valueFormat == null) {
-            valueFormat = ResourceUtils.getString(textField.getContext(), R.string.age_with_birth_date_format);
-        }
+		if (lesionsLocationsString.length() > 0) {
+			lesionsLocationsString.delete(lesionsLocationsString.lastIndexOf(", "), lesionsLocationsString.length());
+		}
 
-        if (person == null || person.getApproximateAge() == null) {
-            setValue(textField, (String) null, valueFormat, defaultValue);
-        } else {
-            String age = person.getApproximateAge().toString();
-            ApproximateAgeType ageType = person.getApproximateAgeType();
-            String day = person.getBirthdateDD() != null ? person.getBirthdateDD().toString() : null;
-            String month = person.getBirthdateMM() != null ? person.getBirthdateMM().toString() : null;
-            String year = person.getBirthdateYYYY() != null ? person.getBirthdateYYYY().toString() : null;
+		setValue(textField, lesionsLocationsString.toString(), valueFormat, defaultValue);
+	}
 
-            StringBuilder ageWithDateBuilder = new StringBuilder();
-            ageWithDateBuilder.append(age).append(" ").append(ageType != null ? ageType.toString() : "");
+	@BindingAdapter(value = {
+		"value",
+		"valueFormat",
+		"defaultValue" }, requireAll = false)
+	public static void setValue(ControlTextReadField textField, boolean booleanValue, String valueFormat, String defaultValue) {
+		setValue(textField, Boolean.valueOf(booleanValue), valueFormat, defaultValue);
+	}
 
-            String dateOfBirth = null;
-            if (year != null) {
-                if (month != null) {
-                    if (day != null) {
-                        dateOfBirth = String.format(
-                                ResourceUtils.getString(textField.getContext(), R.string.date_format),
-                                day, month, year);
-                    } else {
-                        dateOfBirth = String.format(
-                                ResourceUtils.getString(textField.getContext(), R.string.date_two_values_format),
-                                month, year);
-                    }
-                } else {
-                    dateOfBirth = year;
-                }
-            } else if (month != null && day != null) {
-                dateOfBirth = String.format(
-                        ResourceUtils.getString(textField.getContext(), R.string.date_two_values_format),
-                        day, month);
-            }
+	@BindingAdapter(value = {
+		"value",
+		"valueFormat",
+		"defaultValue" }, requireAll = false)
+	public static void setValue(ControlTextReadField textField, Boolean booleanValue, String valueFormat, String defaultValue) {
+		setValue(
+			textField,
+			booleanValue == null ? "" : (Boolean.TRUE.equals(booleanValue) ? YesNoUnknown.YES.toString() : YesNoUnknown.NO.toString()),
+			null,
+			valueFormat,
+			defaultValue,
+			booleanValue);
+	}
 
-            if (dateOfBirth != null) {
-                ageWithDateBuilder.append(" (").append(dateOfBirth).append(")");
-            }
+	@BindingAdapter(value = {
+		"enumValue",
+		"detailsEnumValue",
+		"detailsValue" })
+	public static void setEnumValueWithDetails(ControlTextReadField textField, Enum<?> value, Enum<?> detailsEnumValue, String detailsValue) {
+		String fieldValue = null;
+		if (value != null) {
+			if (value == detailsEnumValue && StringUtils.isNotBlank(detailsValue)) {
+				fieldValue = detailsValue;
+			} else {
+				fieldValue = value.toString();
+			}
+		}
 
-            textField.setValue(ageWithDateBuilder.toString());
-        }
-    }
+		setValue(textField, fieldValue, null, null, null, null);
+	}
+
+	// Time
+	@BindingAdapter(value = {
+		"timeValue",
+		"valueFormat",
+		"defaultValue" }, requireAll = false)
+	public static void setTimeValue(ControlTextReadField textField, Date dateValue, String valueFormat, String defaultValue) {
+		setValue(textField, dateValue != null ? DateHelper.formatTime(dateValue) : null, null, valueFormat, defaultValue, dateValue);
+	}
+
+	// Date & time
+	@BindingAdapter(value = {
+		"dateTimeValue",
+		"valueFormat",
+		"defaultValue",
+		"appendValue"}, requireAll = false)
+	public static void setDateTimeValue(ControlTextReadField textField, Date dateValue, String valueFormat, String defaultValue, Date appendDateValue) {
+		String appendValue = appendDateValue != null ? DateFormatHelper.formatLocalDateTime(appendDateValue) : null;
+		String stringValue;
+		if (dateValue != null) {
+			stringValue = DateFormatHelper.formatLocalDateTime(dateValue);
+		} else {
+			stringValue = appendValue;
+			appendValue = null;
+		}
 
 
+		setValue(textField, stringValue, appendValue, valueFormat, defaultValue, dateValue);
+	}
 
+	// Short uuid
+	@BindingAdapter(value = {
+		"shortUuidValue",
+		"valueFormat",
+		"defaultValue" }, requireAll = false)
+	public static void setShortUuidValue(ControlTextReadField textField, String uuid, String valueFormat, String defaultValue) {
+		setValue(textField, uuid != null ? DataHelper.getShortUuid(uuid) : null, null, valueFormat, defaultValue, uuid);
+	}
+
+	// Decimal value
+	@BindingAdapter(value = {
+		"decimalValue" })
+	public static void setDecimalValue(ControlTextReadField textField, Integer value) {
+		textField.setValue(value != null ? SymptomsHelper.getDecimalString(value) : null);
+	}
+
+	// Age with date
+	@BindingAdapter(value = {
+		"ageWithDateValue",
+		"valueFormat",
+		"defaultValue",
+		"showDay" }, requireAll = false)
+	public static void setAgeWithDateValue(ControlTextReadField textField, Person person, String valueFormat, String defaultValue, Boolean showDay) {
+		if (valueFormat == null) {
+			valueFormat = ResourceUtils.getString(textField.getContext(), R.string.age_with_birth_date_format);
+		}
+
+		if (showDay == null) {
+			showDay = true;
+		}
+
+		if (person == null || person.getApproximateAge() == null) {
+			setValue(textField, (String) null, valueFormat, defaultValue);
+		} else {
+			String age = person.getApproximateAge().toString();
+			ApproximateAgeType ageType = person.getApproximateAgeType();
+			String dateOfBirth =
+				DateFormatHelper.formatBirthdate(showDay ? person.getBirthdateDD() : null, person.getBirthdateMM(), person.getBirthdateYYYY());
+
+			StringBuilder ageWithDateBuilder = new StringBuilder().append(age)
+				.append(" ")
+				.append(ageType != null ? ageType.toString() : "")
+				.append(" (")
+				.append(dateOfBirth)
+				.append(")");
+
+			textField.setValue(ageWithDateBuilder.toString());
+		}
+	}
 }

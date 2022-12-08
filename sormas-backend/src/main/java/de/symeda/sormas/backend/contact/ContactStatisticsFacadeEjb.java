@@ -41,26 +41,42 @@ import org.apache.commons.lang3.tuple.Pair;
 import de.symeda.sormas.api.AgeGroup;
 import de.symeda.sormas.api.IntegerRange;
 import de.symeda.sormas.api.contact.ContactStatisticsFacade;
-import de.symeda.sormas.api.region.DistrictReferenceDto;
-import de.symeda.sormas.api.region.RegionReferenceDto;
+import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
+import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.statistics.contact.StatisticsContactAttribute;
+import de.symeda.sormas.api.statistics.contact.StatisticsContactAttributeEnum;
+import de.symeda.sormas.api.statistics.contact.StatisticsContactCountDto;
 import de.symeda.sormas.api.statistics.contact.StatisticsContactCriteria;
-import de.symeda.sormas.api.statistics.StatisticsSubAttributeEnum;
-import de.symeda.sormas.api.statistics.StatisticsCountDto;
+import de.symeda.sormas.api.statistics.contact.StatisticsContactSubAttribute;
+import de.symeda.sormas.api.statistics.contact.StatisticsContactSubAttributeEnum;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseAttribute;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseAttributeEnum;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseCountDto;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseCriteria;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseSubAttribute;
+import de.symeda.sormas.api.statistics.caze.StatisticsCaseSubAttributeEnum;
 import de.symeda.sormas.api.statistics.contact.StatisticsHelper;
 import de.symeda.sormas.api.user.UserDto;
-import de.symeda.sormas.backend.common.AbstractAdoService;
+import de.symeda.sormas.api.user.UserRoleReferenceDto;
+import de.symeda.sormas.backend.disease.DiseaseConfigurationFacadeEjb;
 import de.symeda.sormas.backend.infrastructure.PopulationData;
+import de.symeda.sormas.backend.infrastructure.community.CommunityFacadeEjb;
+import de.symeda.sormas.backend.infrastructure.district.District;
+import de.symeda.sormas.backend.infrastructure.district.DistrictFacadeEjb.DistrictFacadeEjbLocal;
+import de.symeda.sormas.backend.infrastructure.district.DistrictService;
+import de.symeda.sormas.backend.infrastructure.facility.FacilityFacadeEjb;
+import de.symeda.sormas.backend.infrastructure.region.Region;
+import de.symeda.sormas.backend.infrastructure.region.RegionFacadeEjb.RegionFacadeEjbLocal;
+import de.symeda.sormas.backend.infrastructure.region.RegionService;
 import de.symeda.sormas.backend.person.Person;
-import de.symeda.sormas.backend.region.District;
-import de.symeda.sormas.backend.region.DistrictFacadeEjb.DistrictFacadeEjbLocal;
-import de.symeda.sormas.backend.region.DistrictService;
-import de.symeda.sormas.backend.region.Region;
-import de.symeda.sormas.backend.region.RegionFacadeEjb.RegionFacadeEjbLocal;
-import de.symeda.sormas.backend.region.RegionService;
+
 import de.symeda.sormas.backend.user.User;
+import de.symeda.sormas.backend.user.UserRoleFacadeEjb;
 import de.symeda.sormas.backend.util.ModelConstants;
+import de.symeda.sormas.backend.util.QueryHelper;
 
 @Stateless(name = "ContactStatisticsFacade")
 public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
@@ -77,12 +93,22 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 	private RegionFacadeEjbLocal regionFacade;
 	@EJB
 	private DistrictFacadeEjbLocal districtFacade;
-
+	@EJB
+	private DiseaseConfigurationFacadeEjb.DiseaseConfigurationFacadeEjbLocal diseaseConfigurationFacade;
+	@EJB
+	private ContactFacadeEjb.ContactFacadeEjbLocal contactFacade;
+	@EJB
+	private CommunityFacadeEjb.CommunityFacadeEjbLocal communityFacade;
+	@EJB
+	private FacilityFacadeEjb.FacilityFacadeEjbLocal facilityFacade;
+	@EJB
+	private UserRoleFacadeEjb.UserRoleFacadeEjbLocal userRoleFacade;
+	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<StatisticsCountDto> queryContactCount(StatisticsContactCriteria caseCriteria, 
-			StatisticsContactAttribute rowGrouping, StatisticsSubAttributeEnum rowSubGrouping,
-			StatisticsContactAttribute columnGrouping, StatisticsSubAttributeEnum columnSubGrouping,
+	public List<StatisticsContactCountDto> queryContactCount(StatisticsContactCriteria caseCriteria, 
+			StatisticsContactAttributeEnum rowGrouping, StatisticsContactSubAttributeEnum rowSubGrouping,
+			StatisticsContactAttributeEnum columnGrouping, StatisticsContactSubAttributeEnum columnSubGrouping,
 			boolean includePopulation, boolean includeZeroValues, Integer populationReferenceYear) {
 
 		// case counts
@@ -95,23 +121,56 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 		
 		Function<Integer, RegionReferenceDto> regionProvider = id -> regionFacade.getRegionReferenceById(id);
 		Function<Integer, DistrictReferenceDto> districtProvider = id -> districtFacade.getDistrictReferenceById(id);
+		Function<Integer, CommunityReferenceDto> communityProvider = id -> communityFacade.getCommunityReferenceById(id);
+		Function<Integer, FacilityReferenceDto> healthFacilityProvider = id -> facilityFacade.getFacilityReferenceById(id);
+		Function<Integer, UserRoleReferenceDto> userRoleProvider = id -> userRoleFacade.getUserRoleReferenceById(id);
+
 		
-		List<StatisticsCountDto> caseCountResults = ((Stream<Object[]>) caseCountQuery.getResultStream())
+		List<StatisticsContactCountDto> caseCountResults = ((Stream<Object[]>) caseCountQuery.getResultStream())
 				.map(result -> {
 					Object rowKey = "".equals(result[1]) ? null : result[1];
 					Object columnKey = "".equals(result[2]) ? null : result[2];
-					return new StatisticsCountDto(result[0] != null ? ((Number)result[0]).intValue() : null, null,
-						StatisticsHelper.buildGroupingKey(rowKey, rowGrouping, rowSubGrouping, regionProvider, districtProvider),
-						StatisticsHelper.buildGroupingKey(columnKey, columnGrouping, columnSubGrouping, regionProvider, districtProvider));
-				})
-				.collect(Collectors.toList());
+					//return new StatisticsContactCountDto(result[0] != null ? ((Number)result[0]).intValue() : null, null,
+//						StatisticsHelper.buildGroupingKey(rowKey, rowGrouping, rowSubGrouping, regionProvider, districtProvider),
+//						StatisticsHelper.buildGroupingKey(columnKey, columnGrouping, columnSubGrouping, regionProvider, districtProvider));
+							
+							return new StatisticsContactCountDto(
+									result[0] != null ? ((Number) result[0]).intValue() : null,
+									null,
+									StatisticsHelper.buildGroupingKey(
+										rowKey,
+										rowGrouping,
+										rowSubGrouping,
+										regionProvider,
+										districtProvider,
+										communityProvider,
+										healthFacilityProvider,
+										userRoleProvider),
+									StatisticsHelper.buildGroupingKey(
+										columnKey,
+										columnGrouping,
+										columnSubGrouping,
+										regionProvider,
+										districtProvider,
+										communityProvider,
+										healthFacilityProvider,
+										userRoleProvider));
+							}).collect(Collectors.toList());
+//				})
+//				.collect(Collectors.toList());
 		
 		if (includeZeroValues) {
 			List<StatisticsGroupingKey> allRowKeys;
 			if (rowGrouping != null) {
 				allRowKeys = (List<StatisticsGroupingKey>) caseCriteria.getFilterValuesForGrouping(rowGrouping, rowSubGrouping);
 				if (allRowKeys == null) {
-					allRowKeys = StatisticsHelper.getAttributeGroupingKeys(rowGrouping, rowSubGrouping);
+					allRowKeys = StatisticsHelper.getAttributeGroupingKeys(rowGrouping, rowSubGrouping,
+							diseaseConfigurationFacade,
+							contactFacade,
+							regionFacade,
+							districtFacade,
+							userRoleFacade
+							);
 				}
 			} else {
 				allRowKeys = Arrays.asList((StatisticsGroupingKey)null);
@@ -120,7 +179,14 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 			if (columnGrouping != null) {
 				allColumnKeys = (List<StatisticsGroupingKey>) caseCriteria.getFilterValuesForGrouping(columnGrouping, columnSubGrouping);
 				if (allColumnKeys == null) {
-					allColumnKeys = StatisticsHelper.getAttributeGroupingKeys(columnGrouping, columnSubGrouping);
+					allColumnKeys = StatisticsHelper.getAttributeGroupingKeys(columnGrouping, columnSubGrouping,
+							diseaseConfigurationFacade,
+							contactFacade,
+							regionFacade,
+							districtFacade,
+							userRoleFacade
+							
+							);
 				}
 			} else {
 				allColumnKeys = Arrays.asList((StatisticsGroupingKey)null);
@@ -128,7 +194,7 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 			
 			for (StatisticsGroupingKey rowKey : allRowKeys) {
 				for (StatisticsGroupingKey columnKey : allColumnKeys) {
-					StatisticsCountDto zeroDto = new StatisticsCountDto(0, null, rowKey, columnKey);
+					StatisticsContactCountDto zeroDto = new StatisticsContactCountDto(0, null, rowKey, columnKey);
 					if (!caseCountResults.contains(zeroDto)) {
 						caseCountResults.add(zeroDto);
 					}
@@ -145,15 +211,38 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 				populationQuery.setParameter(i + 1, populationQueryAndParams.getValue().get(i));
 			}
 			
-			List<StatisticsCountDto> populationResults = ((Stream<Object[]>) populationQuery.getResultStream())
+			List<StatisticsContactCountDto> populationResults = ((Stream<Object[]>) populationQuery.getResultStream())
 					.map(result -> {
 						Object rowKey = "".equals(result[1]) ? null : result[1];
 						Object columnKey = "".equals(result[2]) ? null : result[2];
-						return new StatisticsCountDto(null, result[0] != null ? ((Number)result[0]).intValue() : null,
-							StatisticsHelper.buildGroupingKey(rowKey, rowGrouping, rowSubGrouping, regionProvider, districtProvider),
-							StatisticsHelper.buildGroupingKey(columnKey, columnGrouping, columnSubGrouping, regionProvider, districtProvider));
-					})
-					.collect(Collectors.toList());
+//						return new StatisticsContactCountDto(null, result[0] != null ? ((Number)result[0]).intValue() : null,
+//							StatisticsHelper.buildGroupingKey(rowKey, rowGrouping, rowSubGrouping, regionProvider, districtProvider),
+//							StatisticsHelper.buildGroupingKey(columnKey, columnGrouping, columnSubGrouping, regionProvider, districtProvider));
+//					})
+//					.collect(Collectors.toList());
+						
+						return new StatisticsContactCountDto(
+								null,
+								result[0] != null ? ((Number) result[0]).intValue() : null,
+								StatisticsHelper.buildGroupingKey(
+									rowKey,
+									rowGrouping,
+									rowSubGrouping,
+									regionProvider,
+									districtProvider,
+									communityProvider,
+									healthFacilityProvider,
+									userRoleProvider),
+								StatisticsHelper.buildGroupingKey(
+									columnKey,
+									columnGrouping,
+									columnSubGrouping,
+									regionProvider,
+									districtProvider,
+									communityProvider,
+									healthFacilityProvider,
+									userRoleProvider));
+						}).collect(Collectors.toList());
 
 			boolean rowIsPopulation = rowGrouping != null && rowGrouping.isPopulationData();
 			boolean columnIsPopulation = columnGrouping != null && columnGrouping.isPopulationData();
@@ -164,8 +253,8 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 			
 			// add the population data to the case counts
 			// when a key is not a population data key, we use null instead
-			StatisticsCountDto searchDto = new StatisticsCountDto(null, null, null, null);
-			for (StatisticsCountDto caseCountResult : caseCountResults) {
+			StatisticsContactCountDto searchDto = new StatisticsContactCountDto(null, null, null, null);
+			for (StatisticsContactCountDto caseCountResult : caseCountResults) {
 				
 				if (rowIsPopulation) {
 					searchDto.setRowKey(caseCountResult.getRowKey());
@@ -185,304 +274,306 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 	}
 
 	/**
-	private void replaceIdsWithGroupingKeys(List<StatisticsContactCountDto> results, StatisticsContactAttribute groupingA,
-		for (StatisticsContactCountDto result : results) {
-	 * Builds SQL query string and list of parameters (for filters)
+	 * private void replaceIdsWithGroupingKeys(List<StatisticsContactCountDto>
+	 * results, StatisticsContactAttribute groupingA, for (StatisticsContactCountDto
+	 * result : results) { Builds SQL query string and list of parameters (for
+	 * filters)
 	 */
-	public Pair<String, List<Object>> buildContactCountQuery(StatisticsContactCriteria caseCriteria, 
-				StatisticsContactAttribute groupingA, StatisticsSubAttributeEnum subGroupingA, 
-				StatisticsContactAttribute groupingB, StatisticsSubAttributeEnum subGroupingB) {
-	
-			// Steps to build the query:
-			// 1. Join the required tables
-			// 2. Build the filter query
-			// 3. Add selected groupings
-			// 4. Retrieve and prepare the results
-	
-			/////////////
-			// 1. Join tables that cases are grouped by or that are used in the caseCriteria
-			/////////////
-	
-			StringBuilder caseJoinBuilder = new StringBuilder();
-	
-			if (subGroupingA == StatisticsSubAttributeEnum.DISTRICT || subGroupingB == StatisticsSubAttributeEnum.DISTRICT) {
-				caseJoinBuilder.append(" LEFT JOIN ").append(District.TABLE_NAME).append(" ON ").append(Contact.TABLE_NAME)
-				.append(".").append(Contact.DISTRICT).append("_id").append(" = ").append(District.TABLE_NAME)
-				.append(".").append(District.ID);
-			} else {
-				caseJoinBuilder.append(" LEFT JOIN ").append(Region.TABLE_NAME).append(" ON ").append(Contact.TABLE_NAME)
-				.append(".").append(Contact.REGION).append("_id").append(" = ").append(Region.TABLE_NAME).append(".").append(Region.ID);
-			}
-			
-	
+	public Pair<String, List<Object>> buildContactCountQuery(StatisticsContactCriteria caseCriteria,
+			StatisticsContactAttributeEnum groupingA, StatisticsContactSubAttributeEnum subGroupingA,
+			StatisticsContactAttributeEnum groupingB, StatisticsContactSubAttributeEnum subGroupingB) {
+
+		// Steps to build the query:
+		// 1. Join the required tables
+		// 2. Build the filter query
+		// 3. Add selected groupings
+		// 4. Retrieve and prepare the results
+
+		/////////////
+		// 1. Join tables that cases are grouped by or that are used in the caseCriteria
+		/////////////
+
+		StringBuilder caseJoinBuilder = new StringBuilder();
+
+		if (subGroupingA == StatisticsContactSubAttributeEnum.DISTRICT
+				|| subGroupingB == StatisticsContactSubAttributeEnum.DISTRICT) {
+			caseJoinBuilder.append(" LEFT JOIN ").append(District.TABLE_NAME).append(" ON ").append(Contact.TABLE_NAME)
+					.append(".").append(Contact.DISTRICT).append("_id").append(" = ").append(District.TABLE_NAME)
+					.append(".").append(District.ID);
+		} else {
+			caseJoinBuilder.append(" LEFT JOIN ").append(Region.TABLE_NAME).append(" ON ").append(Contact.TABLE_NAME)
+					.append(".").append(Contact.REGION).append("_id").append(" = ").append(Region.TABLE_NAME)
+					.append(".").append(Region.ID);
+		}
+
 //			if (groupingA == StatisticsContactAttribute.ONSET_TIME || groupingB == StatisticsContactAttribute.ONSET_TIME
 //					|| caseCriteria.hasOnsetDate()) {
 //				caseJoinBuilder.append(" LEFT JOIN ").append(Symptoms.TABLE_NAME).append(" ON ").append(Contact.TABLE_NAME)
 //				.append(".").append(Contact.SYMPTOMS).append("_id").append(" = ").append(Symptoms.TABLE_NAME).append(".").append(Symptoms.ID);
 //			}
-	
-			if (groupingA == StatisticsContactAttribute.SEX || groupingB == StatisticsContactAttribute.SEX
-					|| groupingA == StatisticsContactAttribute.AGE_INTERVAL_1_YEAR
-					|| groupingB == StatisticsContactAttribute.AGE_INTERVAL_1_YEAR
-					|| groupingA == StatisticsContactAttribute.AGE_INTERVAL_5_YEARS
-					|| groupingB == StatisticsContactAttribute.AGE_INTERVAL_5_YEARS
-					|| groupingA == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_COARSE
-					|| groupingB == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_COARSE
-					|| groupingA == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_FINE
-					|| groupingB == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_FINE
-					|| groupingA == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_MEDIUM
-					|| groupingB == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_MEDIUM
-					|| groupingA == StatisticsContactAttribute.AGE_INTERVAL_BASIC
-					|| groupingB == StatisticsContactAttribute.AGE_INTERVAL_BASIC || caseCriteria.getSexes() != null
-					|| caseCriteria.getAgeIntervals() != null) {
-				caseJoinBuilder.append(" LEFT JOIN ").append(Person.TABLE_NAME).append(" ON ").append(Contact.TABLE_NAME)
-				.append(".").append(Contact.PERSON).append("_id").append(" = ").append(Person.TABLE_NAME).append(".")
-				.append(Person.ID);
+
+		if (groupingA == StatisticsContactAttributeEnum.SEX || groupingB == StatisticsContactAttributeEnum.SEX
+				|| groupingA == StatisticsContactAttributeEnum.AGE_INTERVAL_1_YEAR
+				|| groupingB == StatisticsContactAttributeEnum.AGE_INTERVAL_1_YEAR
+				|| groupingA == StatisticsContactAttributeEnum.AGE_INTERVAL_5_YEARS
+				|| groupingB == StatisticsContactAttributeEnum.AGE_INTERVAL_5_YEARS
+				|| groupingA == StatisticsContactAttributeEnum.AGE_INTERVAL_CHILDREN_COARSE
+				|| groupingB == StatisticsContactAttributeEnum.AGE_INTERVAL_CHILDREN_COARSE
+				|| groupingA == StatisticsContactAttributeEnum.AGE_INTERVAL_CHILDREN_FINE
+				|| groupingB == StatisticsContactAttributeEnum.AGE_INTERVAL_CHILDREN_FINE
+				|| groupingA == StatisticsContactAttributeEnum.AGE_INTERVAL_CHILDREN_MEDIUM
+				|| groupingB == StatisticsContactAttributeEnum.AGE_INTERVAL_CHILDREN_MEDIUM
+				|| groupingA == StatisticsContactAttributeEnum.AGE_INTERVAL_BASIC
+				|| groupingB == StatisticsContactAttributeEnum.AGE_INTERVAL_BASIC || caseCriteria.getSexes() != null
+				|| caseCriteria.getAgeIntervals() != null) {
+			caseJoinBuilder.append(" LEFT JOIN ").append(Person.TABLE_NAME).append(" ON ").append(Contact.TABLE_NAME)
+					.append(".").append(Contact.PERSON).append("_id").append(" = ").append(Person.TABLE_NAME)
+					.append(".").append(Person.ID);
+		}
+
+		if (CollectionUtils.isNotEmpty(caseCriteria.getReportingUserRoles())
+				|| groupingA == StatisticsContactAttributeEnum.REPORTING_USER_ROLE
+				|| groupingB == StatisticsContactAttributeEnum.REPORTING_USER_ROLE) {
+			caseJoinBuilder.append(" LEFT JOIN ").append(User.TABLE_NAME_USERROLES).append(" ON ")
+					.append(Contact.TABLE_NAME).append(".").append(Contact.REPORTING_USER).append("_id").append(" = ")
+					.append(User.TABLE_NAME_USERROLES).append(".").append(UserDto.COLUMN_NAME_USER_ID);
+		}
+
+		/////////////
+		// 2. Build filter based on caseCriteria
+		/////////////
+
+		StringBuilder caseFilterBuilder = new StringBuilder(" WHERE ");
+
+		caseFilterBuilder.append("(").append(Contact.TABLE_NAME).append(".").append(Contact.DELETED).append(" = false");
+		// needed for the full join on population
+		caseFilterBuilder.append(" OR ").append(Contact.TABLE_NAME).append(".").append(Contact.DELETED)
+				.append(" IS NULL ");
+		caseFilterBuilder.append(")");
+		List<Object> filterBuilderParameters = new ArrayList<Object>();
+
+		if (CollectionUtils.isNotEmpty(caseCriteria.getReportYears())) {
+			extendFilterBuilderWithDateElement(caseFilterBuilder, filterBuilderParameters, "YEAR", Contact.TABLE_NAME,
+					Contact.REPORT_DATE_TIME, caseCriteria.getReportYears(), dateValue -> (dateValue.getValue()));
+		}
+
+		if (CollectionUtils.isNotEmpty(caseCriteria.getReportQuarters())) {
+			extendFilterBuilderWithDateElement(caseFilterBuilder, filterBuilderParameters, "QUARTER",
+					Contact.TABLE_NAME, Contact.REPORT_DATE_TIME, caseCriteria.getReportQuarters(),
+					dateValue -> (dateValue.getValue()));
+		}
+
+		if (CollectionUtils.isNotEmpty(caseCriteria.getReportMonths())) {
+			extendFilterBuilderWithDateElement(caseFilterBuilder, filterBuilderParameters, "MONTH", Contact.TABLE_NAME,
+					Contact.REPORT_DATE_TIME, caseCriteria.getReportMonths(), dateValue -> (dateValue.ordinal() + 1));
+		}
+
+		if (CollectionUtils.isNotEmpty(caseCriteria.getReportEpiWeeks())) {
+			extendFilterBuilderWithEpiWeek(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
+					Contact.REPORT_DATE_TIME, caseCriteria.getReportEpiWeeks(), value -> value.getWeek());
+		}
+
+		if (CollectionUtils.isNotEmpty(caseCriteria.getReportQuartersOfYear())) {
+			extendFilterBuilderWithQuarterOfYear(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
+					Contact.REPORT_DATE_TIME, caseCriteria.getReportQuartersOfYear(),
+					value -> value.getYear().getValue() * 10 + value.getQuarter().getValue());
+		}
+
+		if (CollectionUtils.isNotEmpty(caseCriteria.getReportMonthsOfYear())) {
+			extendFilterBuilderWithMonthOfYear(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
+					Contact.REPORT_DATE_TIME, caseCriteria.getReportMonthsOfYear(),
+					value -> value.getYear().getValue() * 100 + (value.getMonth().ordinal() + 1));
+		}
+
+		if (CollectionUtils.isNotEmpty(caseCriteria.getReportEpiWeeksOfYear())) {
+			extendFilterBuilderWithEpiWeekOfYear(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
+					Contact.REPORT_DATE_TIME, caseCriteria.getReportEpiWeeksOfYear(),
+					value -> value.getYear() * 100 + value.getWeek());
+		}
+
+		if (caseCriteria.getReportDateFrom() != null || caseCriteria.getReportDateTo() != null) {
+			extendFilterBuilderWithDate(caseFilterBuilder, filterBuilderParameters, caseCriteria.getReportDateFrom(),
+					caseCriteria.getReportDateTo(), Contact.TABLE_NAME, Contact.REPORT_DATE_TIME);
+		}
+
+		if (CollectionUtils.isNotEmpty(caseCriteria.getSexes()) || caseCriteria.isSexUnknown() != null) {
+			if (caseFilterBuilder.length() > 0) {
+				caseFilterBuilder.append(" AND ");
 			}
 
-			if (CollectionUtils.isNotEmpty(caseCriteria.getReportingUserRoles())
-					|| groupingA == StatisticsContactAttribute.REPORTING_USER_ROLE
-					|| groupingB == StatisticsContactAttribute.REPORTING_USER_ROLE) {
-				caseJoinBuilder.append(" LEFT JOIN ").append(User.TABLE_NAME_USERROLES).append(" ON ")
-						.append(Contact.TABLE_NAME).append(".").append(Contact.REPORTING_USER).append("_id").append(" = ")
-						.append(User.TABLE_NAME_USERROLES).append(".").append(UserDto.COLUMN_NAME_USER_ID);
+			caseFilterBuilder.append("(");
+			StringBuilder subFilterBuilder = new StringBuilder();
+
+			if (CollectionUtils.isNotEmpty(caseCriteria.getSexes())) {
+				extendFilterBuilderWithSimpleValue(subFilterBuilder, filterBuilderParameters, Person.TABLE_NAME,
+						Person.SEX, caseCriteria.getSexes(), entry -> entry.name());
 			}
 
-			/////////////
-			// 2. Build filter based on caseCriteria
-			/////////////
-	
-			StringBuilder caseFilterBuilder = new StringBuilder(" WHERE ");
-	
-			caseFilterBuilder.append("(").append(Contact.TABLE_NAME).append(".").append(Contact.DELETED).append(" = false");
-			// needed for the full join on population
-			caseFilterBuilder.append(" OR ").append(Contact.TABLE_NAME).append(".").append(Contact.DELETED).append(" IS NULL ");
+			if (caseCriteria.isSexUnknown() != null) {
+				if (subFilterBuilder.length() > 0) {
+					subFilterBuilder.append(" OR ");
+				}
+				subFilterBuilder.append(Person.TABLE_NAME).append(".").append(Person.SEX).append(" IS ")
+						.append(caseCriteria.isSexUnknown() == true ? "NULL" : "NOT NULL");
+			}
+
+			caseFilterBuilder.append(subFilterBuilder);
 			caseFilterBuilder.append(")");
-			List<Object> filterBuilderParameters = new ArrayList<Object>();
-	
-			if (CollectionUtils.isNotEmpty(caseCriteria.getReportYears())) {
-				extendFilterBuilderWithDateElement(caseFilterBuilder, filterBuilderParameters, "YEAR", Contact.TABLE_NAME,
-						Contact.REPORT_DATE_TIME, caseCriteria.getReportYears(), dateValue -> (dateValue.getValue()));
-			}
-	
-			if (CollectionUtils.isNotEmpty(caseCriteria.getReportQuarters())) {
-				extendFilterBuilderWithDateElement(caseFilterBuilder, filterBuilderParameters, "QUARTER", Contact.TABLE_NAME,
-						Contact.REPORT_DATE_TIME, caseCriteria.getReportQuarters(), dateValue -> (dateValue.getValue()));
-			}
-	
-			if (CollectionUtils.isNotEmpty(caseCriteria.getReportMonths())) {
-				extendFilterBuilderWithDateElement(caseFilterBuilder, filterBuilderParameters, "MONTH", Contact.TABLE_NAME,
-						Contact.REPORT_DATE_TIME, caseCriteria.getReportMonths(), dateValue -> (dateValue.ordinal() + 1));
-			}
-	
-			if (CollectionUtils.isNotEmpty(caseCriteria.getReportEpiWeeks())) {
-				extendFilterBuilderWithEpiWeek(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME, Contact.REPORT_DATE_TIME,
-						caseCriteria.getReportEpiWeeks(), value -> value.getWeek());
-			}
-	
-			if (CollectionUtils.isNotEmpty(caseCriteria.getReportQuartersOfYear())) {
-				extendFilterBuilderWithQuarterOfYear(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
-						Contact.REPORT_DATE_TIME, caseCriteria.getReportQuartersOfYear(),
-						value -> value.getYear().getValue() * 10 + value.getQuarter().getValue());
-			}
-	
-			if (CollectionUtils.isNotEmpty(caseCriteria.getReportMonthsOfYear())) {
-				extendFilterBuilderWithMonthOfYear(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
-						Contact.REPORT_DATE_TIME, caseCriteria.getReportMonthsOfYear(),
-						value -> value.getYear().getValue() * 100 + (value.getMonth().ordinal() + 1));
-			}
-	
-			if (CollectionUtils.isNotEmpty(caseCriteria.getReportEpiWeeksOfYear())) {
-				extendFilterBuilderWithEpiWeekOfYear(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
-						Contact.REPORT_DATE_TIME, caseCriteria.getReportEpiWeeksOfYear(),
-						value -> value.getYear() * 100 + value.getWeek());
-			}
-	
-			if (caseCriteria.getReportDateFrom() != null || caseCriteria.getReportDateTo() != null) {
-				extendFilterBuilderWithDate(caseFilterBuilder, filterBuilderParameters, caseCriteria.getReportDateFrom(),
-						caseCriteria.getReportDateTo(), Contact.TABLE_NAME, Contact.REPORT_DATE_TIME);
-			}
-	
-			if (CollectionUtils.isNotEmpty(caseCriteria.getSexes()) || caseCriteria.isSexUnknown() != null) {
-				if (caseFilterBuilder.length() > 0) {
-					caseFilterBuilder.append(" AND ");
-				}
-	
-				caseFilterBuilder.append("(");
-				StringBuilder subFilterBuilder = new StringBuilder();
-	
-				if (CollectionUtils.isNotEmpty(caseCriteria.getSexes())) {
-					extendFilterBuilderWithSimpleValue(subFilterBuilder, filterBuilderParameters, Person.TABLE_NAME,
-							Person.SEX, caseCriteria.getSexes(), entry -> entry.name());
-				}
-	
-				if (caseCriteria.isSexUnknown() != null) {
-					if (subFilterBuilder.length() > 0) {
-						subFilterBuilder.append(" OR ");
-					}
-					subFilterBuilder.append(Person.TABLE_NAME).append(".").append(Person.SEX).append(" IS ")
-					.append(caseCriteria.isSexUnknown() == true ? "NULL" : "NOT NULL");
-				}
-	
-				caseFilterBuilder.append(subFilterBuilder);
-				caseFilterBuilder.append(")");
-			}
-	
-			if (CollectionUtils.isNotEmpty(caseCriteria.getAgeIntervals())) {
-				if (caseFilterBuilder.length() > 0) {
-					caseFilterBuilder.append(" AND ");
-				}
-	
-				caseFilterBuilder.append("(");
-				StringBuilder subFilterBuilder = new StringBuilder();
-	
-				Integer upperRangeBoundary = null;
-				boolean appendUnknown = false;
-				List<Integer> agesList = new ArrayList<Integer>();
-				for (IntegerRange range : caseCriteria.getAgeIntervals()) {
-					if (range.getTo() == null) {
-						if (range.getFrom() == null) {
-							appendUnknown = true;
-						} else {
-							upperRangeBoundary = range.getFrom();
-						}
-					} else {
-						agesList.addAll(
-								IntStream.rangeClosed(range.getFrom(), range.getTo()).boxed().collect(Collectors.toList()));
-					}
-				}
-	
-				if (agesList.size() > 0) {
-					extendFilterBuilderWithSimpleValue(subFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
-							Contact.CONTACT_AGE, agesList, value -> value);
-				}
-	
-				if (upperRangeBoundary != null) {
-					if (subFilterBuilder.length() > 0) {
-						subFilterBuilder.append(" OR ");
-					}
-					subFilterBuilder.append(Contact.TABLE_NAME).append(".").append(Contact.CONTACT_AGE).append(" >= ?")
-					.append(filterBuilderParameters.size() + 1);
-					filterBuilderParameters.add(upperRangeBoundary);
-				}
-	
-				if (appendUnknown) {
-					if (subFilterBuilder.length() > 0) {
-						subFilterBuilder.append(" OR ");
-					}
-					subFilterBuilder.append(Contact.TABLE_NAME).append(".").append(Contact.CONTACT_AGE).append(" IS NULL");
-				}
-	
-				caseFilterBuilder.append(subFilterBuilder);
-				caseFilterBuilder.append(")");
-			}
-	
-			if (CollectionUtils.isNotEmpty(caseCriteria.getDiseases())) {
-				extendFilterBuilderWithSimpleValue(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME, Contact.DISEASE,
-						caseCriteria.getDiseases(), entry -> entry.name());
-			}
-	
-			if (CollectionUtils.isNotEmpty(caseCriteria.getClassifications())) {
-				extendFilterBuilderWithSimpleValue(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
-						Contact.CONTACT_CLASSIFICATION, caseCriteria.getClassifications(), entry -> entry.name());
-			}
-	
-			if (CollectionUtils.isNotEmpty(caseCriteria.getFollowUpStatuses())) {
-				extendFilterBuilderWithSimpleValue(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME, Contact.FOLLOW_UP_STATUS,
-						caseCriteria.getFollowUpStatuses(), entry -> entry.name());
-			}
-	
-			if (CollectionUtils.isNotEmpty(caseCriteria.getRegions())) {
-				List<Long> regionIds = regionService.getIdsByReferenceDtos(caseCriteria.getRegions());
-				extendFilterBuilderWithSimpleValue(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME, Contact.REGION + "_id",
-						regionIds, entry -> entry);
-			}
-	
-			List<Long> districtIds;
-			if (CollectionUtils.isNotEmpty(caseCriteria.getDistricts())) {
-				districtIds = districtService.getIdsByReferenceDtos(caseCriteria.getDistricts());
-				extendFilterBuilderWithSimpleValue(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME, Contact.DISTRICT + "_id",
-						districtIds, entry -> entry);
-			} else {
-				districtIds = null;
+		}
+
+		if (CollectionUtils.isNotEmpty(caseCriteria.getAgeIntervals())) {
+			if (caseFilterBuilder.length() > 0) {
+				caseFilterBuilder.append(" AND ");
 			}
 
-			if (CollectionUtils.isNotEmpty(caseCriteria.getReportingUserRoles())) {
-				extendFilterBuilderWithSimpleValue(caseFilterBuilder, filterBuilderParameters, User.TABLE_NAME_USERROLES,
-						UserDto.COLUMN_NAME_USERROLE, caseCriteria.getReportingUserRoles(), entry -> entry.name());
+			caseFilterBuilder.append("(");
+			StringBuilder subFilterBuilder = new StringBuilder();
+
+			Integer upperRangeBoundary = null;
+			boolean appendUnknown = false;
+			List<Integer> agesList = new ArrayList<Integer>();
+			for (IntegerRange range : caseCriteria.getAgeIntervals()) {
+				if (range.getTo() == null) {
+					if (range.getFrom() == null) {
+						appendUnknown = true;
+					} else {
+						upperRangeBoundary = range.getFrom();
+					}
+				} else {
+					agesList.addAll(
+							IntStream.rangeClosed(range.getFrom(), range.getTo()).boxed().collect(Collectors.toList()));
+				}
 			}
-	
-			//////////////
-			// 3. Add selected groupings
-			/////////////
-			
-			String groupingSelectQueryA = null, groupingSelectQueryB = null;
-			StringBuilder caseGroupByBuilder = new StringBuilder();
-			StringBuilder orderByBuilder = new StringBuilder();
-			String groupAAlias = "groupA";
-			String groupBAlias = "groupB";
-			
-			if (groupingA != null || groupingB != null) {
-				caseGroupByBuilder.append(" GROUP BY ");
-	
-				if (groupingA != null) {
-					groupingSelectQueryA = buildContactGroupingSelectQuery(groupingA, subGroupingA, groupAAlias);
-					caseGroupByBuilder.append(groupAAlias);
-				} 
-				if (groupingB != null) {
-					groupingSelectQueryB = buildContactGroupingSelectQuery(groupingB, subGroupingB, groupBAlias);
-					caseGroupByBuilder.append(",").append(groupBAlias);
-				} 
+
+			if (agesList.size() > 0) {
+				extendFilterBuilderWithSimpleValue(subFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
+						Contact.CONTACT_AGE, agesList, value -> value);
 			}
-			
-			//////////////
-			// 4. Order results
-			/////////////
-	
-			orderByBuilder.append(" ORDER BY ");
+
+			if (upperRangeBoundary != null) {
+				if (subFilterBuilder.length() > 0) {
+					subFilterBuilder.append(" OR ");
+				}
+				subFilterBuilder.append(Contact.TABLE_NAME).append(".").append(Contact.CONTACT_AGE).append(" >= ?")
+						.append(filterBuilderParameters.size() + 1);
+				filterBuilderParameters.add(upperRangeBoundary);
+			}
+
+			if (appendUnknown) {
+				if (subFilterBuilder.length() > 0) {
+					subFilterBuilder.append(" OR ");
+				}
+				subFilterBuilder.append(Contact.TABLE_NAME).append(".").append(Contact.CONTACT_AGE).append(" IS NULL");
+			}
+
+			caseFilterBuilder.append(subFilterBuilder);
+			caseFilterBuilder.append(")");
+		}
+
+		if (CollectionUtils.isNotEmpty(caseCriteria.getDiseases())) {
+			extendFilterBuilderWithSimpleValue(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
+					Contact.DISEASE, caseCriteria.getDiseases(), entry -> entry.name());
+		}
+
+		if (CollectionUtils.isNotEmpty(caseCriteria.getClassifications())) {
+			extendFilterBuilderWithSimpleValue(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
+					Contact.CONTACT_CLASSIFICATION, caseCriteria.getClassifications(), entry -> entry.name());
+		}
+
+		if (CollectionUtils.isNotEmpty(caseCriteria.getFollowUpStatuses())) { 
+			extendFilterBuilderWithSimpleValue(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
+					Contact.FOLLOW_UP_STATUS, caseCriteria.getFollowUpStatuses(), entry -> entry.name());
+		}
+
+		if (CollectionUtils.isNotEmpty(caseCriteria.getRegions())) {
+			List<Long> regionIds = regionService.getIdsByReferenceDtos(caseCriteria.getRegions());
+			extendFilterBuilderWithSimpleValue(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
+					Contact.REGION + "_id", regionIds, entry -> entry);
+		}
+
+		List<Long> districtIds;
+		if (CollectionUtils.isNotEmpty(caseCriteria.getDistricts())) {
+			districtIds = districtService.getIdsByReferenceDtos(caseCriteria.getDistricts());
+			extendFilterBuilderWithSimpleValue(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
+					Contact.DISTRICT + "_id", districtIds, entry -> entry);
+		} else {
+			districtIds = null;
+		}
+
+		if (CollectionUtils.isNotEmpty(caseCriteria.getReportingUserRoles())) {
+			extendFilterBuilderWithSimpleValue(caseFilterBuilder, filterBuilderParameters, User.TABLE_NAME_USERROLES,
+					UserDto.COLUMN_NAME_USERROLE, caseCriteria.getReportingUserRoles(), entry -> entry.name());
+		}
+
+		//////////////
+		// 3. Add selected groupings
+		/////////////
+
+		String groupingSelectQueryA = null, groupingSelectQueryB = null;
+		StringBuilder caseGroupByBuilder = new StringBuilder();
+		StringBuilder orderByBuilder = new StringBuilder();
+		String groupAAlias = "groupA";
+		String groupBAlias = "groupB";
+
+		if (groupingA != null || groupingB != null) {
+			caseGroupByBuilder.append(" GROUP BY ");
+
 			if (groupingA != null) {
-				orderByBuilder.append(groupAAlias).append(" NULLS LAST");
+				groupingSelectQueryA = buildContactGroupingSelectQuery(groupingA, subGroupingA, groupAAlias);
+				caseGroupByBuilder.append(groupAAlias);
 			}
 			if (groupingB != null) {
-				if (groupingA != null) {
-					orderByBuilder.append(",");
-				}
-				orderByBuilder.append(groupBAlias).append(" NULLS LAST");
+				groupingSelectQueryB = buildContactGroupingSelectQuery(groupingB, subGroupingB, groupBAlias);
+				caseGroupByBuilder.append(",").append(groupBAlias);
 			}
-	
-			StringBuilder queryBuilder = new StringBuilder();
-
-			queryBuilder.append("SELECT COUNT(*) AS casecount ");
-	
-			if (groupingSelectQueryA != null) {
-				queryBuilder.append(", ").append(groupingSelectQueryA);
-			} else {
-				queryBuilder.append(", null\\:\\:text AS ").append(groupAAlias);
-			}
-			if (groupingSelectQueryB != null) {
-				queryBuilder.append(", ").append(groupingSelectQueryB);
-			} else {
-				queryBuilder.append(", null\\:\\:text AS ").append(groupBAlias);
-			}
-			
-			queryBuilder.append(" FROM ").append(Contact.TABLE_NAME)
-			.append(caseJoinBuilder)
-			.append(caseFilterBuilder)
-			.append(caseGroupByBuilder);
-			
-			if (groupingA != null || groupingB != null) {
-				queryBuilder.append(orderByBuilder);
-			}
-	
-			return new ImmutablePair<String, List<Object>>(queryBuilder.toString(), filterBuilderParameters);
 		}
+
+		//////////////
+		// 4. Order results
+		/////////////
+
+		orderByBuilder.append(" ORDER BY ");
+		if (groupingA != null) {
+			orderByBuilder.append(groupAAlias).append(" NULLS LAST");
+		}
+		if (groupingB != null) {
+			if (groupingA != null) {
+				orderByBuilder.append(",");
+			}
+			orderByBuilder.append(groupBAlias).append(" NULLS LAST");
+		}
+
+		StringBuilder queryBuilder = new StringBuilder();
+
+		queryBuilder.append("SELECT COUNT(*) AS casecount ");
+
+		if (groupingSelectQueryA != null) {
+			queryBuilder.append(", ").append(groupingSelectQueryA);
+		} else {
+			queryBuilder.append(", null\\:\\:text AS ").append(groupAAlias);
+		}
+		if (groupingSelectQueryB != null) {
+			queryBuilder.append(", ").append(groupingSelectQueryB);
+		} else {
+			queryBuilder.append(", null\\:\\:text AS ").append(groupBAlias);
+		}
+
+		queryBuilder.append(" FROM ").append(Contact.TABLE_NAME).append(caseJoinBuilder).append(caseFilterBuilder)
+				.append(caseGroupByBuilder);
+
+		if (groupingA != null || groupingB != null) {
+			queryBuilder.append(orderByBuilder);
+		}
+
+		return new ImmutablePair<String, List<Object>>(queryBuilder.toString(), filterBuilderParameters);
+	}
 
 	/**
 	 * Builds SQL query string and list of parameters (for filters)
 	 */
 	public Pair<String, List<Object>> buildPopulationQuery(StatisticsContactCriteria caseCriteria, 
-			StatisticsContactAttribute groupingA, StatisticsSubAttributeEnum subGroupingA, 
-			StatisticsContactAttribute groupingB, StatisticsSubAttributeEnum subGroupingB,
+			StatisticsContactAttributeEnum groupingA, StatisticsContactSubAttributeEnum subGroupingA, 
+			StatisticsContactAttributeEnum groupingB, StatisticsContactSubAttributeEnum subGroupingB,
 			Integer populationReferenceYear) {
 
 		////////
@@ -547,7 +638,7 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 			// limit either to entries with district our to entries without district
 			
 			districtIds = null;
-			usesDistricts = subGroupingA == StatisticsSubAttributeEnum.DISTRICT || subGroupingB == StatisticsSubAttributeEnum.DISTRICT;
+			usesDistricts = subGroupingA == StatisticsContactSubAttributeEnum.DISTRICT || subGroupingB == StatisticsContactSubAttributeEnum.DISTRICT;
 			
 			if (whereBuilder.length() > 0) {
 				whereBuilder.append(" AND ");
@@ -573,7 +664,7 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 			
 		} else {
 			
-			boolean usesSex = groupingA == StatisticsContactAttribute.SEX || groupingB == StatisticsContactAttribute.SEX;
+			boolean usesSex = groupingA == StatisticsContactAttributeEnum.SEX || groupingB == StatisticsContactAttributeEnum.SEX;
 			whereBuilder.append(PopulationData.TABLE_NAME).append(".").append(PopulationData.SEX);
 			if (usesSex) {
 				whereBuilder.append(" IS NOT NULL");
@@ -603,7 +694,7 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 
 		} else {
 			
-			boolean usesAgeGroup = groupingA == StatisticsContactAttribute.AGE_INTERVAL_5_YEARS || groupingB == StatisticsContactAttribute.AGE_INTERVAL_5_YEARS;
+			boolean usesAgeGroup = groupingA == StatisticsContactAttributeEnum.AGE_INTERVAL_5_YEARS || groupingB == StatisticsContactAttributeEnum.AGE_INTERVAL_5_YEARS;
 			whereBuilder.append(PopulationData.TABLE_NAME).append(".").append(PopulationData.AGE_GROUP);
 			if (usesAgeGroup) {
 				whereBuilder.append(" IS NOT NULL");
@@ -635,7 +726,7 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 		
 		// growth rates to calculate the population
 		selectBuilder.append(" LEFT JOIN ");
-		if (districtIds != null || subGroupingA == StatisticsSubAttributeEnum.DISTRICT || subGroupingB == StatisticsSubAttributeEnum.DISTRICT) {
+		if (districtIds != null || subGroupingA == StatisticsContactSubAttributeEnum.DISTRICT || subGroupingB == StatisticsContactSubAttributeEnum.DISTRICT) {
 			selectBuilder.append(District.TABLE_NAME).append(" AS growthsource ON growthsource.").append(District.ID)
 				.append(" = ").append(PopulationData.DISTRICT).append("_id");
 		} else {
@@ -662,11 +753,11 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 		return new ImmutablePair<String, List<Object>>(queryBuilder.toString(), filterBuilderParameters);
 	}
 
-	private String buildPopulationGroupingSelect(StatisticsContactAttribute grouping,
-			StatisticsSubAttributeEnum subGrouping) {
+	private String buildPopulationGroupingSelect(StatisticsContactAttributeEnum grouping,
+			StatisticsContactSubAttributeEnum subGrouping) {
 		if (grouping != null) {
 			switch (grouping) {
-			case REGION_DISTRICT: {
+			case JURISDICTION: {
 				switch (subGrouping) {
 				case REGION: 
 					return PopulationData.TABLE_NAME + "." + PopulationData.REGION + "_id";
@@ -695,7 +786,7 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 		}
 
 		filterBuilder.append(tableName).append(".").append(fieldName).append(" IN ");
-		return AbstractAdoService.appendInFilterValues(filterBuilder, filterBuilderParameters, values, valueMapper);
+		return QueryHelper.appendInFilterValues(filterBuilder, filterBuilderParameters, values, valueMapper);
 	}
 
 	private StringBuilder extendFilterBuilderWithDate(StringBuilder filterBuilder, List<Object> filterBuilderParameters,
@@ -735,7 +826,7 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 
 		filterBuilder.append("(CAST(EXTRACT(" + dateElementToExtract + " FROM ").append(tableName).append(".")
 		.append(fieldName).append(")  AS integer))").append(" IN ");
-		return AbstractAdoService.appendInFilterValues(filterBuilder, filterBuilderParameters, values, valueMapper);
+		return QueryHelper.appendInFilterValues(filterBuilder, filterBuilderParameters, values, valueMapper);
 	}
 
 	private <T> StringBuilder extendFilterBuilderWithEpiWeek(StringBuilder filterBuilder,
@@ -746,7 +837,7 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 		}
 
 		filterBuilder.append("epi_week(").append(tableName).append(".").append(fieldName).append(")").append(" IN ");
-		return AbstractAdoService.appendInFilterValues(filterBuilder, filterBuilderParameters, values, valueMapper);
+		return QueryHelper.appendInFilterValues(filterBuilder, filterBuilderParameters, values, valueMapper);
 	}
 
 	private <T> StringBuilder extendFilterBuilderWithEpiWeekOfYear(StringBuilder filterBuilder,
@@ -758,7 +849,7 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 
 		filterBuilder.append("(epi_year(").append(tableName).append(".").append(fieldName).append(")").append(" * 100")
 		.append(" + epi_week(").append(tableName).append(".").append(fieldName).append("))").append(" IN ");
-		return AbstractAdoService.appendInFilterValues(filterBuilder, filterBuilderParameters, values, valueMapper);
+		return QueryHelper.appendInFilterValues(filterBuilder, filterBuilderParameters, values, valueMapper);
 	}
 
 	private <T> StringBuilder extendFilterBuilderWithQuarterOfYear(StringBuilder filterBuilder,
@@ -771,7 +862,7 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 		filterBuilder.append("(CAST(EXTRACT(YEAR FROM ").append(tableName).append(".").append(fieldName).append(")")
 		.append(" * 10 AS integer)) + (CAST(EXTRACT(QUARTER FROM ").append(tableName).append(".")
 		.append(fieldName).append(") AS integer))").append(" IN ");
-		return AbstractAdoService.appendInFilterValues(filterBuilder, filterBuilderParameters, values, valueMapper);
+		return QueryHelper.appendInFilterValues(filterBuilder, filterBuilderParameters, values, valueMapper);
 	}
 
 	private <T> StringBuilder extendFilterBuilderWithMonthOfYear(StringBuilder filterBuilder,
@@ -784,10 +875,10 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 		filterBuilder.append("(CAST(EXTRACT(YEAR FROM ").append(tableName).append(".").append(fieldName).append(")")
 		.append(" * 100 AS integer)) + (CAST(EXTRACT(MONTH FROM ").append(tableName).append(".")
 		.append(fieldName).append(") AS integer))").append(" IN ");
-		return AbstractAdoService.appendInFilterValues(filterBuilder, filterBuilderParameters, values, valueMapper);
+		return QueryHelper.appendInFilterValues(filterBuilder, filterBuilderParameters, values, valueMapper);
 	}
 
-	private String buildContactGroupingSelectQuery(StatisticsContactAttribute grouping, StatisticsSubAttributeEnum subGrouping, String groupAlias) {
+	private String buildContactGroupingSelectQuery(StatisticsContactAttributeEnum grouping, StatisticsContactSubAttributeEnum subGrouping, String groupAlias) {
 		StringBuilder groupingSelectPartBuilder = new StringBuilder();
 		switch (grouping) {
 		case SEX:
@@ -806,7 +897,7 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 			groupingSelectPartBuilder.append(Contact.TABLE_NAME).append(".").append(Contact.FOLLOW_UP_STATUS).append(" AS ")
 			.append(groupAlias);
 			break;
-		case REGION_DISTRICT: {
+		case JURISDICTION: {
 			switch (subGrouping) {
 			case REGION:
 				groupingSelectPartBuilder.append(Region.TABLE_NAME).append(".").append(Region.ID).append(" AS ")
@@ -941,7 +1032,7 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 		.append(fieldName).append(") AS integer)) AS ").append(groupAlias);
 	}
 
-	private void extendGroupingBuilderWithAgeInterval(StringBuilder groupingBuilder, StatisticsContactAttribute grouping, String groupAlias) {
+	private void extendGroupingBuilderWithAgeInterval(StringBuilder groupingBuilder, StatisticsContactAttributeEnum grouping, String groupAlias) {
 		groupingBuilder.append("CASE ");
 		switch (grouping) {
 		case AGE_INTERVAL_1_YEAR:
@@ -997,8 +1088,8 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 			throw new IllegalArgumentException(grouping.toString());
 		}
 
-		if (grouping != StatisticsContactAttribute.AGE_INTERVAL_BASIC
-				&& grouping != StatisticsContactAttribute.AGE_INTERVAL_5_YEARS) {
+		if (grouping != StatisticsContactAttributeEnum.AGE_INTERVAL_BASIC
+				&& grouping != StatisticsContactAttributeEnum.AGE_INTERVAL_5_YEARS) {
 			groupingBuilder.append("WHEN ").append(Contact.TABLE_NAME).append(".").append(Contact.CONTACT_AGE)
 				.append(" >= 80 THEN '80+' ");
 		}
@@ -1024,9 +1115,29 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 		}
 		groupingBuilder.append(" THEN '").append(ageGroup.name()).append("' ");
 	}
+	
+	
+
+	
 
 	@LocalBean
 	@Stateless
 	public static class ContactStatisticsFacadeEjbLocal extends ContactStatisticsFacadeEjb {
 	}
+
+
+
+
+
+	@Override
+	public List<StatisticsContactCountDto> queryContactCount(StatisticsContactCriteria caseCriteria,
+			StatisticsContactAttributeEnum rowGrouping, StatisticsContactAttributeEnum statisticsContactAttributeEnum,
+			StatisticsContactAttributeEnum columnGrouping,
+			StatisticsContactAttributeEnum statisticsContactAttributeEnum2, boolean includePopulation,
+			boolean includeZeroValues, Integer populationReferenceYear) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
 }

@@ -9,28 +9,31 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
 package de.symeda.sormas.api.caze;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.utils.criteria.CriteriaDateType;
 
 /**
  * Contains the different types of date that are used to determine the start date of a case.
  * Normally, symptom onset (ONSET) date is considered first, then case report (REPORT) date.
  */
-public enum NewCaseDateType {
+public enum NewCaseDateType
+	implements
+	CriteriaDateType {
 
 	MOST_RELEVANT,
 	ONSET,
 	REPORT;
-	
+
+	@Override
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);
-	}	
-	
+	}
 }

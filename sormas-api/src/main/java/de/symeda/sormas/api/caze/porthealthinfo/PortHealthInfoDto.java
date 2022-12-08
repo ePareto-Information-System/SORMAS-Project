@@ -1,17 +1,24 @@
 package de.symeda.sormas.api.caze.porthealthinfo;
 
+import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.utils.DependingOnFeatureType;
 import java.util.Date;
 
+import javax.validation.constraints.Size;
+
 import de.symeda.sormas.api.EntityDto;
+import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.FieldConstraints;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 
+@DependingOnFeatureType(featureType = FeatureType.CASE_SURVEILANCE)
 public class PortHealthInfoDto extends EntityDto {
 
 	private static final long serialVersionUID = 3289289799891965437L;
 
 	public static final String I18N_PREFIX = "PortHealthInfo";
-	
+
 	public static final String AIRLINE_NAME = "airlineName";
 	public static final String FLIGHT_NUMBER = "flightNumber";
 	public static final String DEPARTURE_DATE_TIME = "departureDateTime";
@@ -34,35 +41,52 @@ public class PortHealthInfoDto extends EntityDto {
 	public static final String DEPARTURE_LOCATION = "departureLocation";
 	public static final String FINAL_DESTINATION = "finalDestination";
 	public static final String DETAILS = "details";
-	
+
 	// Airport
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String airlineName;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String flightNumber;
 	private Date departureDateTime;
 	private Date arrivalDateTime;
 	private YesNoUnknown freeSeating;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String seatNumber;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String departureAirport;
 	private Integer numberOfTransitStops;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String transitStopDetails1;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String transitStopDetails2;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String transitStopDetails3;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String transitStopDetails4;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String transitStopDetails5;
-	
+
 	// Seaport
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String vesselName;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String vesselDetails;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String portOfDeparture;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String lastPortOfCall;
-	
+
 	// Ground Crossing
 	private ConveyanceType conveyanceType;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String conveyanceTypeDetails;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String departureLocation;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String finalDestination;
-	
+
 	// Other
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_BIG, message = Validations.textTooLong)
 	private String details;
 
 	public static PortHealthInfoDto build() {
@@ -70,7 +94,7 @@ public class PortHealthInfoDto extends EntityDto {
 		portHealthInfo.setUuid(DataHelper.createUuid());
 		return portHealthInfo;
 	}
-	
+
 	public String getAirlineName() {
 		return airlineName;
 	}
@@ -246,5 +270,4 @@ public class PortHealthInfoDto extends EntityDto {
 	public void setDetails(String details) {
 		this.details = details;
 	}
-	
 }
