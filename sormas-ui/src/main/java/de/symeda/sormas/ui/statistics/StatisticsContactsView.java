@@ -933,6 +933,7 @@ public class StatisticsContactsView extends AbstractStatisticsView {
 		// Draw relevant district fills
 		for (StatisticsContactCountDto resultRow : resultData) {
 			ReferenceDto regionOrDistrict = (ReferenceDto) resultRow.getRowKey();
+			if(regionOrDistrict!=null) {
 			String shapeUuid = regionOrDistrict.getUuid();
 
 			BigDecimal regionOrDistrictValue;
@@ -990,6 +991,8 @@ public class StatisticsContactsView extends AbstractStatisticsView {
 						+ "}");
 				polygon.setLatLons(shapePart);
 				resultPolygons.add(polygon);
+			}
+			
 			}
 		}
 		// sort polygon array, so that polygons which are completely contained by another appear on top
