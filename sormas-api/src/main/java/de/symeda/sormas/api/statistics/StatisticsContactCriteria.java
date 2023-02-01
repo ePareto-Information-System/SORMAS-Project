@@ -30,11 +30,14 @@ import de.symeda.sormas.api.MonthOfYear;
 import de.symeda.sormas.api.Quarter;
 import de.symeda.sormas.api.QuarterOfYear;
 import de.symeda.sormas.api.Year;
+import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.contact.ContactClassification;
+import de.symeda.sormas.api.contact.ContactFollowUpStatus;
 import de.symeda.sormas.api.contact.ContactStatus;
 import de.symeda.sormas.api.contact.FollowUpStatus;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.user.UserRoleReferenceDto;
@@ -82,12 +85,15 @@ public class StatisticsContactCriteria implements Serializable {
 	private List<DistrictReferenceDto> districts;
 	private List<CommunityReferenceDto> communities;
 	private List<RegionReferenceDto> personRegions;
-	private List<FollowUpStatus> followUpStatuses;
+	private List<ContactFollowUpStatus> followUpStatuses;
 	private List<DistrictReferenceDto> personDistricts;
 	private List<CommunityReferenceDto> personCommunities;
 	private String personCity;
 	private String personPostcode;
 	private List<UserRoleReferenceDto> reportingUserRoles;
+	private List<FacilityReferenceDto> healthFacilities;
+	//private List<ContactOutcome> outcomes;
+
 
 	public List<Year> getOnsetYears() {
 		return onsetYears;
@@ -262,21 +268,29 @@ public class StatisticsContactCriteria implements Serializable {
 	}
 	
 	
-	public List<FollowUpStatus> getFollowUpStatuses() {
+	public List<ContactFollowUpStatus> getFollowUpStatuses() {
 		return followUpStatuses;
 	}
 
+//	public List<CaseOutcome> getOutcomes() {
+//		return outcomes;
+//	}
+	
+	public List<FacilityReferenceDto> getHealthFacilities() {
+		return healthFacilities;
+	}
+	
 	public StatisticsContactCriteria years(List<Year> years, StatisticsContactAttribute mainAttribute) {
 		switch (mainAttribute) {
-		case ONSET_TIME:
-			this.onsetYears = years;
-			break;
+//		case ONSET_TIME:
+//			this.onsetYears = years;
+//			break;
 		case REPORT_TIME:
 			this.reportYears = years;
 			break;
-		case OUTCOME_TIME:
-			this.outcomeYears = years;
-			break;
+//		case OUTCOME_TIME:
+//			this.outcomeYears = years;
+//			break;
 		default:
 			throw new IllegalArgumentException(mainAttribute.toString());
 		}
@@ -286,15 +300,15 @@ public class StatisticsContactCriteria implements Serializable {
 
 	public StatisticsContactCriteria quarters(List<Quarter> quarters, StatisticsContactAttribute mainAttribute) {
 		switch (mainAttribute) {
-		case ONSET_TIME:
-			this.onsetQuarters = quarters;
-			break;
+//		case ONSET_TIME:
+//			this.onsetQuarters = quarters;
+//			break;
 		case REPORT_TIME:
 			this.reportQuarters = quarters;
 			break;
-		case OUTCOME_TIME:
-			this.outcomeQuarters = quarters;
-			break;
+//		case OUTCOME_TIME:
+//			this.outcomeQuarters = quarters;
+//			break;
 		default:
 			throw new IllegalArgumentException(mainAttribute.toString());
 		}
@@ -304,15 +318,15 @@ public class StatisticsContactCriteria implements Serializable {
 
 	public StatisticsContactCriteria months(List<Month> months, StatisticsContactAttribute mainAttribute) {
 		switch (mainAttribute) {
-		case ONSET_TIME:
-			this.onsetMonths = months;
-			break;
+//		case ONSET_TIME:
+//			this.onsetMonths = months;
+//			break;
 		case REPORT_TIME:
 			this.reportMonths = months;
 			break;
-		case OUTCOME_TIME:
-			this.outcomeMonths = months;
-			break;
+//		case OUTCOME_TIME:
+//			this.outcomeMonths = months;
+//			break;
 		default:
 			throw new IllegalArgumentException(mainAttribute.toString());
 		}
@@ -322,15 +336,15 @@ public class StatisticsContactCriteria implements Serializable {
 
 	public StatisticsContactCriteria epiWeeks(List<EpiWeek> epiWeeks, StatisticsContactAttribute mainAttribute) {
 		switch (mainAttribute) {
-		case ONSET_TIME:
-			this.onsetEpiWeeks = epiWeeks;
-			break;
+//		case ONSET_TIME:
+//			this.onsetEpiWeeks = epiWeeks;
+//			break;
 		case REPORT_TIME:
 			this.reportEpiWeeks = epiWeeks;
 			break;
-		case OUTCOME_TIME:
-			this.outcomeEpiWeeks = epiWeeks;
-			break;
+//		case OUTCOME_TIME:
+//			this.outcomeEpiWeeks = epiWeeks;
+//			break;
 		default:
 			throw new IllegalArgumentException(mainAttribute.toString());
 		}
@@ -340,15 +354,15 @@ public class StatisticsContactCriteria implements Serializable {
 
 	public StatisticsContactCriteria quartersOfYear(List<QuarterOfYear> quartersOfYear, StatisticsContactAttribute mainAttribute) {
 		switch (mainAttribute) {
-		case ONSET_TIME:
-			this.onsetQuartersOfYear = quartersOfYear;
-			break;
+//		case ONSET_TIME:
+//			this.onsetQuartersOfYear = quartersOfYear;
+//			break;
 		case REPORT_TIME:
 			this.reportQuartersOfYear = quartersOfYear;
 			break;
-		case OUTCOME_TIME:
-			this.outcomeQuartersOfYear = quartersOfYear;
-			break;
+//		case OUTCOME_TIME:
+//			this.outcomeQuartersOfYear = quartersOfYear;
+//			break;
 		default:
 			throw new IllegalArgumentException(mainAttribute.toString());
 		}
@@ -358,15 +372,15 @@ public class StatisticsContactCriteria implements Serializable {
 
 	public StatisticsContactCriteria monthsOfYear(List<MonthOfYear> monthsOfYear, StatisticsContactAttribute mainAttribute) {
 		switch (mainAttribute) {
-		case ONSET_TIME:
-			this.onsetMonthsOfYear = monthsOfYear;
-			break;
+//		case ONSET_TIME:
+//			this.onsetMonthsOfYear = monthsOfYear;
+//			break;
 		case REPORT_TIME:
 			this.reportMonthsOfYear = monthsOfYear;
 			break;
-		case OUTCOME_TIME:
-			this.outcomeMonthsOfYear = monthsOfYear;
-			break;
+//		case OUTCOME_TIME:
+//			this.outcomeMonthsOfYear = monthsOfYear;
+//			break;
 		default:
 			throw new IllegalArgumentException(mainAttribute.toString());
 		}
@@ -376,15 +390,15 @@ public class StatisticsContactCriteria implements Serializable {
 
 	public StatisticsContactCriteria epiWeeksOfYear(List<EpiWeek> epiWeeksOfYear, StatisticsContactAttribute mainAttribute) {
 		switch (mainAttribute) {
-		case ONSET_TIME:
-			this.onsetEpiWeeksOfYear = epiWeeksOfYear;
-			break;
+//		case ONSET_TIME:
+//			this.onsetEpiWeeksOfYear = epiWeeksOfYear;
+//			break;
 		case REPORT_TIME:
 			this.reportEpiWeeksOfYear = epiWeeksOfYear;
 			break;
-		case OUTCOME_TIME:
-			this.outcomeEpiWeeksOfYear = epiWeeksOfYear;
-			break;
+//		case OUTCOME_TIME:
+//			this.outcomeEpiWeeksOfYear = epiWeeksOfYear;
+//			break;
 		default:
 			throw new IllegalArgumentException(mainAttribute.toString());
 		}
@@ -394,18 +408,18 @@ public class StatisticsContactCriteria implements Serializable {
 
 	public StatisticsContactCriteria dateRange(Date from, Date to, StatisticsContactAttribute mainAttribute) {
 		switch (mainAttribute) {
-		case ONSET_TIME:
-			this.onsetDateFrom = from;
-			this.onsetDateTo = to;
-			break;
+//		case ONSET_TIME:
+//			this.onsetDateFrom = from;
+//			this.onsetDateTo = to;
+//			break;
 		case REPORT_TIME:
 			this.reportDateFrom = from;
 			this.reportDateTo = to;
 			break;
-		case OUTCOME_TIME:
-			this.outcomeDateFrom = from;
-			this.outcomeDateTo = to;
-			break;
+//		case OUTCOME_TIME:
+//			this.outcomeDateFrom = from;
+//			this.outcomeDateTo = to;
+//			break;
 		default:
 			throw new IllegalArgumentException(mainAttribute.toString());
 		}
@@ -502,14 +516,23 @@ public class StatisticsContactCriteria implements Serializable {
 	}
 	
 	
-	
+//	public StatisticsContactCriteria outcomes(List<CaseOutcome> outcomes) {
+//		this.outcomes = outcomes;
+//		return this;
+//	}
+
 	
 
-	public StatisticsContactCriteria setFollowUpStatuses(List<FollowUpStatus> followUpStatuses) {
-		this.followUpStatuses = followUpStatuses;
+	public StatisticsContactCriteria setFollowUpStatuses(List<ContactFollowUpStatus> statuses) {
+		this.followUpStatuses = statuses;
 		return this;
 	}
 
+	public StatisticsContactCriteria healthFacilities(List<FacilityReferenceDto> healthFacilities) {
+		this.healthFacilities = healthFacilities;
+		return this;
+	}
+	
 	public List<? extends StatisticsGroupingKey> getFilterValuesForGrouping(
 		StatisticsContactAttribute attribute,
 		StatisticsSubAttribute subAttribute) {
@@ -522,80 +545,82 @@ public class StatisticsContactCriteria implements Serializable {
 				return districts;
 			case COMMUNITY:
 				return communities;
+			case FACILITY:
+				return healthFacilities;
 			case YEAR:
 				switch (attribute) {
-				case ONSET_TIME:
-					return onsetYears;
+//				case ONSET_TIME:
+//					return onsetYears;
 				case REPORT_TIME:
 					return reportYears;
-				case OUTCOME_TIME:
-					return outcomeYears;
+//				case OUTCOME_TIME:
+//					return outcomeYears;
 				default:
 					throw new IllegalArgumentException(attribute.toString());
 				}
 			case QUARTER:
 				switch (attribute) {
-				case ONSET_TIME:
-					return onsetQuarters;
+//				case ONSET_TIME:
+//					return onsetQuarters;
 				case REPORT_TIME:
 					return reportQuarters;
-				case OUTCOME_TIME:
-					return outcomeQuarters;
+//				case OUTCOME_TIME:
+//					return outcomeQuarters;
 				default:
 					throw new IllegalArgumentException(attribute.toString());
 				}
 			case MONTH:
 				switch (attribute) {
-				case ONSET_TIME:
-					return onsetMonths;
+//				case ONSET_TIME:
+//					return onsetMonths;
 				case REPORT_TIME:
 					return reportMonths;
-				case OUTCOME_TIME:
-					return outcomeMonths;
+//				case OUTCOME_TIME:
+//					return outcomeMonths;
 				default:
 					throw new IllegalArgumentException(attribute.toString());
 				}
 			case EPI_WEEK:
 				switch (attribute) {
-				case ONSET_TIME:
-					return onsetEpiWeeks;
+//				case ONSET_TIME:
+//					return onsetEpiWeeks;
 				case REPORT_TIME:
 					return reportEpiWeeks;
-				case OUTCOME_TIME:
-					return outcomeEpiWeeks;
+//				case OUTCOME_TIME:
+//					return outcomeEpiWeeks;
 				default:
 					throw new IllegalArgumentException(attribute.toString());
 				}
 			case QUARTER_OF_YEAR:
 				switch (attribute) {
-				case ONSET_TIME:
-					return onsetQuartersOfYear;
+//				case ONSET_TIME:
+//					return onsetQuartersOfYear;
 				case REPORT_TIME:
 					return reportQuartersOfYear;
-				case OUTCOME_TIME:
-					return outcomeQuartersOfYear;
+//				case OUTCOME_TIME:
+//					return outcomeQuartersOfYear;
 				default:
 					throw new IllegalArgumentException(attribute.toString());
 				}
 			case MONTH_OF_YEAR:
 				switch (attribute) {
-				case ONSET_TIME:
-					return onsetMonthsOfYear;
+//				case ONSET_TIME:
+//					return onsetMonthsOfYear;
 				case REPORT_TIME:
 					return reportMonthsOfYear;
-				case OUTCOME_TIME:
-					return outcomeMonthsOfYear;
+//				case OUTCOME_TIME:
+//					return outcomeMonthsOfYear;
 				default:
 					throw new IllegalArgumentException(attribute.toString());
 				}
 			case EPI_WEEK_OF_YEAR:
 				switch (attribute) {
-				case ONSET_TIME:
-					return onsetEpiWeeksOfYear;
+//				case ONSET_TIME:
+//					return onsetEpiWeeksOfYear;
 				case REPORT_TIME:
 					return reportEpiWeeksOfYear;
-				case OUTCOME_TIME:
-					return outcomeEpiWeeksOfYear;
+//				case OUTCOME_TIME:
+//					return outcomeEpiWeeksOfYear;
 				default:
 					throw new IllegalArgumentException(attribute.toString());
 				}
@@ -610,6 +635,8 @@ public class StatisticsContactCriteria implements Serializable {
 				return sexes;
 			case CLASSIFICATION:
 				return classifications;
+//			case OUTCOME:
+//				return outcomes;
 			case STATUS:
 				return status;
 			case AGE_INTERVAL_1_YEAR:

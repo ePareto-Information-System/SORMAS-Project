@@ -31,7 +31,9 @@ import de.symeda.sormas.api.Quarter;
 import de.symeda.sormas.api.QuarterOfYear;
 import de.symeda.sormas.api.Year;
 import de.symeda.sormas.api.caze.CaseClassification;
+import de.symeda.sormas.api.caze.CaseFollowUpStatus;
 import de.symeda.sormas.api.caze.CaseOutcome;
+import de.symeda.sormas.api.contact.FollowUpStatus;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
@@ -88,6 +90,7 @@ public class StatisticsCaseCriteria implements Serializable {
 	private String personCity;
 	private String personPostcode;
 	private List<UserRoleReferenceDto> reportingUserRoles;
+	private List<CaseFollowUpStatus> followUpStatuses;
 
 	public List<Year> getOnsetYears() {
 		return onsetYears;
@@ -263,6 +266,10 @@ public class StatisticsCaseCriteria implements Serializable {
 
 	public List<UserRoleReferenceDto> getReportingUserRoles() {
 		return reportingUserRoles;
+	}
+	
+	public List<CaseFollowUpStatus> getFollowUpStatuses() {
+		return followUpStatuses;
 	}
 
 	public StatisticsCaseCriteria years(List<Year> years, StatisticsCaseAttribute mainAttribute) {
@@ -622,6 +629,11 @@ public class StatisticsCaseCriteria implements Serializable {
 				throw new IllegalArgumentException(attribute.toString());
 			}
 		}
+	}
+	
+	public StatisticsCaseCriteria setFollowUpStatuses(List<CaseFollowUpStatus> followUpStatuses) {
+		this.followUpStatuses = followUpStatuses;
+		return this;
 	}
 
 	public boolean hasOnsetDate() {

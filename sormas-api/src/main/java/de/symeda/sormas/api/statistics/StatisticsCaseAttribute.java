@@ -85,7 +85,9 @@ public enum StatisticsCaseAttribute {
 	DISEASE(StatisticsCaseAttributeGroup.CASE, true, false),
 	CLASSIFICATION(StatisticsCaseAttributeGroup.CASE, true, false),
 	OUTCOME(StatisticsCaseAttributeGroup.CASE, true, false),
-	REPORTING_USER_ROLE(StatisticsCaseAttributeGroup.CASE, true, false);
+	REPORTING_USER_ROLE(StatisticsCaseAttributeGroup.CASE, true, false),
+	FOLLOW_UP_STATUS(StatisticsCaseAttributeGroup.CASE, true, false);
+	
 
 	private final StatisticsCaseAttributeGroup attributeGroup;
 	private final boolean sortByCaption;
@@ -157,4 +159,5 @@ public enum StatisticsCaseAttribute {
 	public boolean isPopulationData() {
 		return this == JURISDICTION || this == SEX || this.isAgeGroup();
 	}
+	
 }

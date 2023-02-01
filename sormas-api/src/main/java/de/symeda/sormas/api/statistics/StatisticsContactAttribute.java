@@ -21,33 +21,21 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 
 public enum StatisticsContactAttribute {
 
-	ONSET_TIME(StatisticsContactAttributeGroup.TIME,
-		false,
-		true,
-		StatisticsSubAttribute.YEAR,
-		StatisticsSubAttribute.QUARTER,
-		StatisticsSubAttribute.MONTH,
-		StatisticsSubAttribute.EPI_WEEK,
-		StatisticsSubAttribute.QUARTER_OF_YEAR,
-		StatisticsSubAttribute.MONTH_OF_YEAR,
-		StatisticsSubAttribute.EPI_WEEK_OF_YEAR,
-		StatisticsSubAttribute.DATE_RANGE),
+//	ONSET_TIME(StatisticsContactAttributeGroup.TIME,
+//		false,
+//		true,
+//		StatisticsSubAttribute.YEAR,
+//		StatisticsSubAttribute.QUARTER,
+//		StatisticsSubAttribute.MONTH,
+//		StatisticsSubAttribute.EPI_WEEK,
+//		StatisticsSubAttribute.QUARTER_OF_YEAR,
+//		StatisticsSubAttribute.MONTH_OF_YEAR,
+//		StatisticsSubAttribute.EPI_WEEK_OF_YEAR,
+//		StatisticsSubAttribute.DATE_RANGE),
 
 	REPORT_TIME(StatisticsContactAttributeGroup.TIME,
 		false,
 		false,
-		StatisticsSubAttribute.YEAR,
-		StatisticsSubAttribute.QUARTER,
-		StatisticsSubAttribute.MONTH,
-		StatisticsSubAttribute.EPI_WEEK,
-		StatisticsSubAttribute.QUARTER_OF_YEAR,
-		StatisticsSubAttribute.MONTH_OF_YEAR,
-		StatisticsSubAttribute.EPI_WEEK_OF_YEAR,
-		StatisticsSubAttribute.DATE_RANGE),
-
-	OUTCOME_TIME(StatisticsContactAttributeGroup.TIME,
-		false,
-		true,
 		StatisticsSubAttribute.YEAR,
 		StatisticsSubAttribute.QUARTER,
 		StatisticsSubAttribute.MONTH,
@@ -62,7 +50,8 @@ public enum StatisticsContactAttribute {
 		true,
 		StatisticsSubAttribute.REGION,
 		StatisticsSubAttribute.DISTRICT,
-		StatisticsSubAttribute.COMMUNITY),
+		StatisticsSubAttribute.COMMUNITY,
+		StatisticsSubAttribute.FACILITY),
 
 	PLACE_OF_RESIDENCE(StatisticsContactAttributeGroup.PERSON,
 		true,
@@ -84,7 +73,9 @@ public enum StatisticsContactAttribute {
 	DISEASE(StatisticsContactAttributeGroup.CONTACT, true, false),
 	CLASSIFICATION(StatisticsContactAttributeGroup.CONTACT, true, false),
 	STATUS(StatisticsContactAttributeGroup.CONTACT, true, false),
+	FOLLOW_UP_STATUS(StatisticsContactAttributeGroup.CONTACT, true, false), 
 	REPORTING_USER_ROLE(StatisticsContactAttributeGroup.CONTACT, true, false);
+	
 
 	private final StatisticsContactAttributeGroup attributeGroup;
 	private final boolean sortByCaption;

@@ -37,9 +37,11 @@ import de.symeda.sormas.api.QuarterOfYear;
 import de.symeda.sormas.api.Year;
 import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseFacade;
+import de.symeda.sormas.api.caze.CaseFollowUpStatus;
 import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.contact.ContactClassification;
 import de.symeda.sormas.api.contact.ContactFacade;
+import de.symeda.sormas.api.contact.ContactFollowUpStatus;
 import de.symeda.sormas.api.contact.ContactStatus;
 import de.symeda.sormas.api.disease.DiseaseConfigurationFacade;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
@@ -124,6 +126,8 @@ public final class StatisticsHelper {
 				return CaseClassification.valueOf(attributeValue.toString());
 			case OUTCOME:
 				return CaseOutcome.valueOf(attributeValue.toString());
+			case FOLLOW_UP_STATUS:
+				return CaseFollowUpStatus.valueOf(attributeValue.toString());
 			case AGE_INTERVAL_1_YEAR:
 			case AGE_INTERVAL_5_YEARS:
 			case AGE_INTERVAL_CHILDREN_COARSE:
@@ -305,15 +309,15 @@ public final class StatisticsHelper {
 
 		Date oldestContactDate = null;
 		switch (attribute) {
-		case ONSET_TIME:
-			oldestContactDate = FacadeProvider.getContactFacade().getOldestContactCreationDate();
-			break;
+//		case ONSET_TIME:
+//			oldestContactDate = FacadeProvider.getContactFacade().getOldestContactCreationDate();
+//			break;
 		case REPORT_TIME:
 			oldestContactDate = FacadeProvider.getContactFacade().getOldestContactReportDate();
 			break;
-		case OUTCOME_TIME:
-			oldestContactDate = FacadeProvider.getContactFacade().getOldestContactLastContactDate();
-			break;
+//		case OUTCOME_TIME:
+//			oldestContactDate = FacadeProvider.getContactFacade().getOldestContactLastContactDate();
+//			break;
 		default:
 			return new ArrayList<>();
 		}
@@ -474,6 +478,8 @@ public final class StatisticsHelper {
 				return districtProvider.apply(((Number) attributeValue).intValue());
 			case COMMUNITY:
 				return communityProvider.apply(((Number) attributeValue).intValue());
+			case FACILITY:
+				return communityProvider.apply(((Number) attributeValue).intValue());
 			default:
 				throw new IllegalArgumentException(subAttribute.toString());
 			}
@@ -487,6 +493,8 @@ public final class StatisticsHelper {
 				return ContactClassification.valueOf(attributeValue.toString());
 			case STATUS:
 				return ContactStatus.valueOf(attributeValue.toString());
+			case FOLLOW_UP_STATUS:
+				return ContactFollowUpStatus.valueOf(attributeValue.toString());
 			case AGE_INTERVAL_1_YEAR:
 			case AGE_INTERVAL_5_YEARS:
 			case AGE_INTERVAL_CHILDREN_COARSE:
@@ -547,6 +555,13 @@ public final class StatisticsHelper {
 				return (List<StatisticsGroupingKey>) (List<? extends StatisticsGroupingKey>) FacadeProvider.getDistrictFacade()
 					.getAllActiveAsReference();
 			case COMMUNITY:
+				return new ArrayList<>();
+//				return (List<StatisticsGroupingKey>) (List<? extends StatisticsGroupingKey>) FacadeProvider.getCommunityFacade()
+//						.getAllActiveAsReference();
+			case FACILITY:
+				return new ArrayList<>();
+//				return (List<StatisticsGroupingKey>) (List<? extends StatisticsGroupingKey>) FacadeProvider.getFacilityFacade()
+//					.getAllActiveAsReference();
 			default:
 				throw new IllegalArgumentException(subAttribute.toString());
 			}

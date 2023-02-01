@@ -173,6 +173,18 @@ public class Contact extends CoreAdo implements SormasToSormasShareable, HasExte
 	public static final String VACCINATION_STATUS = "vaccinationStatus";
 	public static final String VISITS = "visits";
 	public static final String DUPLICATE_OF	= "duplicateOf";
+	
+	public static final String OUTCOME_DATE = "outcomeDate";
+	public static final String HEALTH_FACILITY = "healthFacility";
+	public static final String RESPONSIBLE_COMMUNITY = "responsibleCommunity";
+	public static final String RESPONSIBLE_DISTRICT = "responsibleDistrict";
+	public static final String RESPONSIBLE_REGION = "responsibleRegion";
+	public static final String SYMPTOMS = "symptoms";
+	public static final String REPORT_DATE = "reportDate";
+	//public static final String OUTCOME = "outcome";
+	public static final String CASE_CLASSIFICATION = "contactClassification";
+
+
 
 	private Date reportDateTime;
 	private User reportingUser;

@@ -893,6 +893,16 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 				userRoleIds,
 				entry -> entry);
 		}
+		
+		if (CollectionUtils.isNotEmpty(caseCriteria.getFollowUpStatuses())) {
+			extendFilterBuilderWithSimpleValue(
+				caseFilterBuilder,
+				filterBuilderParameters,
+				Case.TABLE_NAME,
+				Case.FOLLOW_UP_STATUS,
+				caseCriteria.getFollowUpStatuses(),
+				entry -> entry.name());
+		}
 
 		//////////////
 		// 3. Add selected groupings
@@ -952,6 +962,14 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 
 		queryBuilder.append(" FROM ").append(Case.TABLE_NAME).append(caseJoinBuilder).append(caseFilterBuilder).append(caseGroupByBuilder);
 
+		System.out.println("=======print queryBuilder======");
+
+		System.out.println(queryBuilder);
+		
+		System.out.println("=======print filterBuilderParameters======");
+
+		System.out.println(filterBuilderParameters);
+		
 		if (groupingA != null || groupingB != null) {
 			queryBuilder.append(orderByBuilder);
 		}
@@ -1545,6 +1563,9 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 				.append(UserDto.COLUMN_NAME_USERROLE)
 				.append(" AS ")
 				.append(groupAlias);
+			break;
+		case FOLLOW_UP_STATUS:
+			groupingSelectPartBuilder.append(Case.TABLE_NAME).append(".").append(Case.FOLLOW_UP_STATUS).append(" AS ").append(groupAlias);
 			break;
 		default:
 			throw new IllegalArgumentException(grouping.toString());

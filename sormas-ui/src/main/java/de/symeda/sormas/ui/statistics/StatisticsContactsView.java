@@ -62,7 +62,9 @@ import de.symeda.sormas.api.QuarterOfYear;
 import de.symeda.sormas.api.ReferenceDto;
 import de.symeda.sormas.api.Year;
 import de.symeda.sormas.api.contact.ContactClassification;
+import de.symeda.sormas.api.contact.ContactFollowUpStatus;
 import de.symeda.sormas.api.contact.ContactStatus;
+import de.symeda.sormas.api.contact.FollowUpStatus;
 import de.symeda.sormas.api.geo.GeoLatLon;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.Descriptions;
@@ -1244,6 +1246,15 @@ public class StatisticsContactsView extends AbstractStatisticsView {
 						status.add((ContactStatus) tokenizableValue.getValue());
 					}
 					contactCriteria.status(status);
+				}
+				break;
+			case FOLLOW_UP_STATUS:
+				if (filterElement.getSelectedValues() != null) {
+					List<ContactFollowUpStatus> statuses = new ArrayList<>();
+					for (TokenizableValue tokenizableValue : filterElement.getSelectedValues()) {
+						statuses.add((ContactFollowUpStatus) tokenizableValue.getValue());
+					}
+					contactCriteria.setFollowUpStatuses(statuses);
 				}
 				break;
 			case AGE_INTERVAL_1_YEAR:

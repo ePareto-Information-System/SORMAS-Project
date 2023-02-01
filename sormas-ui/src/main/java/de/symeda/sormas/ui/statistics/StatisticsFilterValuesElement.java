@@ -35,6 +35,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseClassification;
+import de.symeda.sormas.api.caze.CaseFollowUpStatus;
 import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -260,6 +261,8 @@ public class StatisticsFilterValuesElement extends StatisticsFilterElement {
 				return createTokens(CaseOutcome.values());
 			case REPORTING_USER_ROLE:
 				return createTokens(FacadeProvider.getUserRoleFacade().getAllAsReference());
+			case FOLLOW_UP_STATUS:
+				return createTokens(CaseFollowUpStatus.values());
 			default:
 				throw new IllegalArgumentException(this.toString());
 			}
