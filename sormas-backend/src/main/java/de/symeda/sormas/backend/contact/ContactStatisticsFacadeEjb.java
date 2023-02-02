@@ -1378,7 +1378,7 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 				|| contactCriteria.getPersonCity() != null
 				|| contactCriteria.getPersonPostcode() != null) {
 				
-				if (subGroupingA != StatisticsSubAttribute.FACILITY || subGroupingB != StatisticsSubAttribute.FACILITY) {
+				if (subGroupingA != StatisticsSubAttribute.FACILITY && subGroupingB != StatisticsSubAttribute.FACILITY) {
 					caseJoinBuilder.append(" LEFT JOIN ")
 						.append(Person.TABLE_NAME)
 						.append(" ON ")
