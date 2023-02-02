@@ -51,7 +51,8 @@ public enum StatisticsContactAttribute {
 		StatisticsSubAttribute.REGION,
 		StatisticsSubAttribute.DISTRICT,
 		StatisticsSubAttribute.COMMUNITY,
-		StatisticsSubAttribute.FACILITY),
+		StatisticsSubAttribute.FACILITY
+		),
 
 	PLACE_OF_RESIDENCE(StatisticsContactAttributeGroup.PERSON,
 		true,
