@@ -41,6 +41,7 @@ import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.contact.ContactClassification;
 import de.symeda.sormas.api.contact.ContactFacade;
 import de.symeda.sormas.api.contact.ContactStatus;
+import de.symeda.sormas.api.contact.UserRoleValue;
 import de.symeda.sormas.api.contact.ContactFollowUpStatus;
 import de.symeda.sormas.api.caze.CaseFollowUpStatus;
 
@@ -155,7 +156,9 @@ public final class StatisticsHelper {
 					return new IntegerRange(Integer.valueOf(entryAsString), Integer.valueOf(entryAsString));
 				}
 			case REPORTING_USER_ROLE:
-				return userRoleProvider.apply(((Number) attributeValue).intValue());
+				//return userRoleProvider.apply(((Number) attributeValue).intValue());
+				return new UserRoleValue(attributeValue.toString());
+
 			default:
 				throw new IllegalArgumentException(attribute.toString());
 			}
@@ -522,7 +525,21 @@ public final class StatisticsHelper {
 					return new IntegerRange(Integer.valueOf(entryAsString), Integer.valueOf(entryAsString));
 				}
 			case REPORTING_USER_ROLE:
-				return userRoleProvider.apply(((Number) attributeValue).intValue());
+				try {
+					
+				System.out.println("printing attributeValue");
+				System.out.println(attributeValue);
+				
+				return new UserRoleValue(attributeValue.toString());
+
+					//return userRoleProvider.apply(((Number) attributeValue).intValue());
+					
+				}catch(Exception e){
+					
+					e.printStackTrace();
+					
+				}
+				
 			default:
 				throw new IllegalArgumentException(attribute.toString());
 			}
