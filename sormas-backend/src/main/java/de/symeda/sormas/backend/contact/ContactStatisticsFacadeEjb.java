@@ -1328,6 +1328,7 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 					.append(".")
 					.append(District.ID);
 			}
+			
 			if (subGroupingA == StatisticsSubAttribute.REGION || subGroupingB == StatisticsSubAttribute.REGION) {
 				caseJoinBuilder.append(" LEFT JOIN ")
 					.append(Region.TABLE_NAME)
@@ -1376,17 +1377,21 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 				|| contactCriteria.getPersonCommunities() != null
 				|| contactCriteria.getPersonCity() != null
 				|| contactCriteria.getPersonPostcode() != null) {
-				caseJoinBuilder.append(" LEFT JOIN ")
-					.append(Person.TABLE_NAME)
-					.append(" ON ")
-					.append(Contact.TABLE_NAME)
-					.append(".")
-					.append(Contact.PERSON)
-					.append("_id")
-					.append(" = ")
-					.append(Person.TABLE_NAME)
-					.append(".")
-					.append(Person.ID);
+				
+				if (subGroupingA != StatisticsSubAttribute.FACILITY || subGroupingB != StatisticsSubAttribute.FACILITY) {
+					caseJoinBuilder.append(" LEFT JOIN ")
+						.append(Person.TABLE_NAME)
+						.append(" ON ")
+						.append(Contact.TABLE_NAME)
+						.append(".")
+						.append(Contact.PERSON)
+						.append("_id")
+						.append(" = ")
+						.append(Person.TABLE_NAME)
+						.append(".")
+						.append(Person.ID);
+				}
+				
 			}
 
 			if (contactCriteria.getPersonRegions() != null
