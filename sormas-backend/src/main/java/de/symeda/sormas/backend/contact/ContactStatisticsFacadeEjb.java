@@ -1299,10 +1299,7 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 					
 			}
 			
-			
-			
-			
-			
+
 			
 			if (subGroupingA == StatisticsSubAttribute.COMMUNITY || subGroupingB == StatisticsSubAttribute.COMMUNITY) {
 				caseJoinBuilder.append(" LEFT JOIN ")
