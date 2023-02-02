@@ -35,6 +35,7 @@ public class UserRoleConfigDto extends EntityDto {
 
 	private UserRole userRole;
 	private Set<UserRight> userRights;
+	private String caption;
 
 	public static UserRoleConfigDto build(UserRole userRole, UserRight... userRights) {
 
@@ -61,5 +62,13 @@ public class UserRoleConfigDto extends EntityDto {
 
 	public void setUserRights(Set<UserRight> userRights) {
 		this.userRights = userRights;
+	}
+
+	public UserRoleReferenceDto toReference() {
+		return new UserRoleReferenceDto(getUuid(), getCaption());
+	}
+	
+	public String getCaption() {
+		return caption;
 	}
 }

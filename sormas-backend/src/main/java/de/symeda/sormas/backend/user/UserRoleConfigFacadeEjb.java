@@ -36,6 +36,7 @@ import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.user.UserRoleConfigDto;
 import de.symeda.sormas.api.user.UserRoleConfigFacade;
+import de.symeda.sormas.api.user.UserRoleReferenceDto;
 import de.symeda.sormas.backend.util.DtoHelper;
 
 @Stateless(name = "UserRoleConfigFacade")
@@ -151,6 +152,20 @@ public class UserRoleConfigFacadeEjb implements UserRoleConfigFacade {
 
 		return target;
 	}
+	
+	public static UserRoleReferenceDto toReferenceDto(UserRoleConfig entity) {
+
+		if (entity == null) {
+			return null;
+		}
+
+		return new UserRoleReferenceDto(entity.getUuid(), entity.getUserRole().name());
+	}
+
+	@Override
+	public UserRoleReferenceDto getUserRoleReferenceById(long id) {
+		return toReferenceDto(userRoleConfigService.getById(id));
+	}
 
 	@LocalBean
 	@Stateless
@@ -191,5 +206,11 @@ public class UserRoleConfigFacadeEjb implements UserRoleConfigFacade {
 		});
 
 		return map;
+	}
+
+	@Override
+	public Set<UserRoleReferenceDto> getAllAsReference() {
+		List<UserRoleConfigDto> all = getAll();
+		return all != null ? all.stream().map(userRole -> userRole.toReference()).collect(Collectors.toSet()) : null;
 	}
 }

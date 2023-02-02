@@ -33,9 +33,7 @@ import de.symeda.sormas.api.utils.ValidationException;
 /**
  * These are also used as user groups in the server realm
  */
-public enum UserRole
-	implements
-	StatisticsGroupingKey {
+public enum UserRole implements StatisticsGroupingKey {
 
 	ADMIN(false, false, false, false, JurisdictionLevel.NONE),
 	NATIONAL_USER(false, false, false, false, JurisdictionLevel.NATION),
@@ -369,4 +367,6 @@ public enum UserRole
 
 		return ret;
 	}
+
+	
 }

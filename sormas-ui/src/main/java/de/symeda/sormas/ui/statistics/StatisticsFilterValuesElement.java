@@ -35,6 +35,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseClassification;
+import de.symeda.sormas.api.caze.CaseFollowUpStatus;
 import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.i18n.Captions;
@@ -177,7 +178,7 @@ public class StatisticsFilterValuesElement extends StatisticsFilterElement {
 			case QUARTER_OF_YEAR:
 			case MONTH_OF_YEAR:
 			case EPI_WEEK_OF_YEAR:
-				List<StatisticsGroupingKey> dateValues = StatisticsHelper.getTimeGroupingKeys(attribute, subAttribute);
+				List<StatisticsGroupingKey> dateValues = StatisticsHelper.getTimeGroupingKeys(attribute, subAttribute,FacadeProvider.getCaseFacade());
 				return createTokens(dateValues);
 			case REGION:
 				return createTokens(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
@@ -257,6 +258,8 @@ public class StatisticsFilterValuesElement extends StatisticsFilterElement {
 				return createTokens(CaseClassification.values());
 			case OUTCOME:
 				return createTokens(CaseOutcome.values());
+			case FOLLOW_UP_STATUS:
+				return createTokens(CaseFollowUpStatus.values());
 			case REPORTING_USER_ROLE:
 				return createTokens(UserRole.values());
 			default:

@@ -36,15 +36,24 @@ import de.symeda.sormas.api.Quarter;
 import de.symeda.sormas.api.QuarterOfYear;
 import de.symeda.sormas.api.Year;
 import de.symeda.sormas.api.caze.CaseClassification;
+import de.symeda.sormas.api.caze.CaseFacade;
 import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.contact.ContactClassification;
+import de.symeda.sormas.api.contact.ContactFacade;
 import de.symeda.sormas.api.contact.ContactStatus;
+import de.symeda.sormas.api.contact.ContactFollowUpStatus;
+import de.symeda.sormas.api.caze.CaseFollowUpStatus;
+
+import de.symeda.sormas.api.disease.DiseaseConfigurationFacade;
 import de.symeda.sormas.api.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.region.CommunityReferenceDto;
+import de.symeda.sormas.api.region.DistrictFacade;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
+import de.symeda.sormas.api.region.RegionFacade;
 import de.symeda.sormas.api.region.RegionReferenceDto;
-import de.symeda.sormas.api.user.UserRole;
+import de.symeda.sormas.api.user.UserRoleConfigFacade;
+import de.symeda.sormas.api.user.UserRoleReferenceDto;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.EpiWeek;
 
@@ -65,7 +74,8 @@ public final class StatisticsHelper {
 		Function<Integer, RegionReferenceDto> regionProvider,
 		Function<Integer, DistrictReferenceDto> districtProvider,
 		Function<Integer, CommunityReferenceDto> communityProvider,
-		Function<Integer, FacilityReferenceDto> facilityProvider) {
+		Function<Integer, FacilityReferenceDto> facilityProvider,
+		Function<Integer, UserRoleReferenceDto> userRoleProvider) {
 
 		if (isNullOrUnknown(attributeValue)) {
 			return null;
@@ -117,6 +127,8 @@ public final class StatisticsHelper {
 				return CaseClassification.valueOf(attributeValue.toString());
 			case OUTCOME:
 				return CaseOutcome.valueOf(attributeValue.toString());
+			case FOLLOW_UP_STATUS:
+				return CaseFollowUpStatus.valueOf(attributeValue.toString());
 			case AGE_INTERVAL_1_YEAR:
 			case AGE_INTERVAL_5_YEARS:
 			case AGE_INTERVAL_CHILDREN_COARSE:
@@ -143,7 +155,7 @@ public final class StatisticsHelper {
 					return new IntegerRange(Integer.valueOf(entryAsString), Integer.valueOf(entryAsString));
 				}
 			case REPORTING_USER_ROLE:
-				return UserRole.valueOf(attributeValue.toString());
+				return userRoleProvider.apply(((Number) attributeValue).intValue());
 			default:
 				throw new IllegalArgumentException(attribute.toString());
 			}
@@ -209,18 +221,29 @@ public final class StatisticsHelper {
 		return ageIntervalList;
 	}
 
-	public static List<StatisticsGroupingKey> getTimeGroupingKeys(StatisticsCaseAttribute attribute, StatisticsSubAttribute subAttribute) {
+	/**
+	 *
+	 * @param attribute
+	 * @param subAttribute
+	 * @param caseFacade
+	 *            Needed for StatisticsCaseAttribute.ONSET_TIME, REPORT_TIME, OUTCOME_TIME
+	 * @return
+	 */
+	public static List<StatisticsGroupingKey> getTimeGroupingKeys(
+		StatisticsCaseAttribute attribute,
+		StatisticsSubAttribute subAttribute,
+		CaseFacade caseFacade) {
 
 		Date oldestCaseDate = null;
 		switch (attribute) {
 		case ONSET_TIME:
-			oldestCaseDate = FacadeProvider.getCaseFacade().getOldestCaseOnsetDate();
+			oldestCaseDate = caseFacade.getOldestCaseOnsetDate();
 			break;
 		case REPORT_TIME:
-			oldestCaseDate = FacadeProvider.getCaseFacade().getOldestCaseReportDate();
+			oldestCaseDate = caseFacade.getOldestCaseReportDate();
 			break;
 		case OUTCOME_TIME:
-			oldestCaseDate = FacadeProvider.getCaseFacade().getOldestCaseOutcomeDate();
+			oldestCaseDate = caseFacade.getOldestCaseOutcomeDate();
 			break;
 		default:
 			return new ArrayList<>();
@@ -281,20 +304,21 @@ public final class StatisticsHelper {
 
 }
 	}
+
 	//get contact time Groupings
 	public static List<StatisticsGroupingKey> getContactTimeGroupingKeys(StatisticsContactAttribute attribute, StatisticsSubAttribute subAttribute) {
 
 		Date oldestContactDate = null;
 		switch (attribute) {
-		case ONSET_TIME:
-			oldestContactDate = FacadeProvider.getContactFacade().getOldestContactCreationDate();
-			break;
+//		case ONSET_TIME:
+//			oldestContactDate = FacadeProvider.getContactFacade().getOldestContactCreationDate();
+//			break;
 		case REPORT_TIME:
 			oldestContactDate = FacadeProvider.getContactFacade().getOldestContactReportDate();
 			break;
-		case OUTCOME_TIME:
-			oldestContactDate = FacadeProvider.getContactFacade().getOldestContactLastContactDate();
-			break;
+//		case OUTCOME_TIME:
+//			oldestContactDate = FacadeProvider.getContactFacade().getOldestContactLastContactDate();
+//			break;
 		default:
 			return new ArrayList<>();
 		}
@@ -350,7 +374,7 @@ public final class StatisticsHelper {
 			return new ArrayList<>();
 		}
 	}
-	
+
 	public static List<StatisticsGroupingKey> getContactAgeIntervalGroupingKeys(StatisticsContactAttribute attribute) {
 
 		List<StatisticsGroupingKey> ageIntervalList = new ArrayList<>();
@@ -409,98 +433,111 @@ public final class StatisticsHelper {
 		ageIntervalList.add(new IntegerRange(null, null));
 		return ageIntervalList;
 	}
-	
+
 	public static StatisticsGroupingKey buildContactGroupingKey(
-			Object attributeValue,
-			StatisticsContactAttribute attribute,
-			StatisticsSubAttribute subAttribute,
-			Function<Integer, RegionReferenceDto> regionProvider,
-			Function<Integer, DistrictReferenceDto> districtProvider,
-			Function<Integer, CommunityReferenceDto> communityProvider) {
+		Object attributeValue,
+		StatisticsContactAttribute attribute,
+		StatisticsSubAttribute subAttribute,
+		Function<Integer, RegionReferenceDto> regionProvider,
+		Function<Integer, DistrictReferenceDto> districtProvider,
+		Function<Integer, CommunityReferenceDto> communityProvider,
+		Function<Integer, FacilityReferenceDto> healthFacilityProvider,
+		Function<Integer, UserRoleReferenceDto> userRoleProvider) {
 
-			if (isNullOrUnknown(attributeValue)) {
-				return null;
+		if (isNullOrUnknown(attributeValue)) {
+			return null;
+		}
+
+		if (subAttribute != null) {
+			switch (subAttribute) {
+			case YEAR:
+				return new Year((int) attributeValue);
+			case QUARTER:
+				return new Quarter((int) attributeValue);
+			case MONTH:
+				return Month.values()[(int) attributeValue - 1];
+			case EPI_WEEK:
+				return new EpiWeek(null, (int) attributeValue);
+			case QUARTER_OF_YEAR:
+				String entryAsString = String.valueOf(attributeValue);
+				return new QuarterOfYear(
+					new Quarter(Integer.valueOf(entryAsString.substring(entryAsString.length() - 1))),
+					new Year(Integer.valueOf(entryAsString.substring(0, entryAsString.length() - 1))));
+			case MONTH_OF_YEAR:
+				entryAsString = String.valueOf(attributeValue);
+				return new MonthOfYear(
+					Month.values()[Integer.valueOf(entryAsString.substring(entryAsString.length() - 2)) - 1],
+					new Year(Integer.valueOf(entryAsString.substring(0, entryAsString.length() - 2))));
+			case EPI_WEEK_OF_YEAR:
+				entryAsString = String.valueOf(attributeValue);
+				return new EpiWeek(
+					Integer.valueOf(entryAsString.substring(0, entryAsString.length() - 2)),
+					Integer.valueOf(entryAsString.substring(entryAsString.length() - 2)));
+			case REGION:
+				return regionProvider.apply(((Number) attributeValue).intValue());
+			case DISTRICT:
+				return districtProvider.apply(((Number) attributeValue).intValue());
+			case COMMUNITY:
+				return communityProvider.apply(((Number) attributeValue).intValue());
+			case FACILITY:
+				return communityProvider.apply(((Number) attributeValue).intValue());
+			default:
+				throw new IllegalArgumentException(subAttribute.toString());
 			}
-
-			if (subAttribute != null) {
-				switch (subAttribute) {
-				case YEAR:
-					return new Year((int) attributeValue);
-				case QUARTER:
-					return new Quarter((int) attributeValue);
-				case MONTH:
-					return Month.values()[(int) attributeValue - 1];
-				case EPI_WEEK:
-					return new EpiWeek(null, (int) attributeValue);
-				case QUARTER_OF_YEAR:
-					String entryAsString = String.valueOf(attributeValue);
-					return new QuarterOfYear(
-						new Quarter(Integer.valueOf(entryAsString.substring(entryAsString.length() - 1))),
-						new Year(Integer.valueOf(entryAsString.substring(0, entryAsString.length() - 1))));
-				case MONTH_OF_YEAR:
-					entryAsString = String.valueOf(attributeValue);
-					return new MonthOfYear(
-						Month.values()[Integer.valueOf(entryAsString.substring(entryAsString.length() - 2)) - 1],
-						new Year(Integer.valueOf(entryAsString.substring(0, entryAsString.length() - 2))));
-				case EPI_WEEK_OF_YEAR:
-					entryAsString = String.valueOf(attributeValue);
-					return new EpiWeek(
-						Integer.valueOf(entryAsString.substring(0, entryAsString.length() - 2)),
-						Integer.valueOf(entryAsString.substring(entryAsString.length() - 2)));
-				case REGION:
-					return regionProvider.apply(((Number) attributeValue).intValue());
-				case DISTRICT:
-					return districtProvider.apply(((Number) attributeValue).intValue());
-				case COMMUNITY:
-					return communityProvider.apply(((Number) attributeValue).intValue());
-				default:
-					throw new IllegalArgumentException(subAttribute.toString());
-				}
-			} else {
-				switch (attribute) {
-				case DISEASE:
-					return Disease.valueOf(attributeValue.toString());
-				case SEX:
-					return Sex.valueOf(attributeValue.toString());
-				case CLASSIFICATION:
-					return ContactClassification.valueOf(attributeValue.toString());
-				case STATUS:
-					return ContactStatus.valueOf(attributeValue.toString());
-				case AGE_INTERVAL_1_YEAR:
-				case AGE_INTERVAL_5_YEARS:
-				case AGE_INTERVAL_CHILDREN_COARSE:
-				case AGE_INTERVAL_CHILDREN_FINE:
-				case AGE_INTERVAL_CHILDREN_MEDIUM:
-				case AGE_INTERVAL_BASIC:
-					String entryAsString = attributeValue.toString();
-					if (attribute == StatisticsContactAttribute.AGE_INTERVAL_5_YEARS) {
-						try {
-							AgeGroup ageGroup = AgeGroup.valueOf(entryAsString);
-							return ageGroup.toIntegerRange();
-						} catch (IllegalArgumentException e) {
-							// This is fine; continue to build the IntegerGroup based on the entry string
-						}
+		} else {
+			switch (attribute) {
+			case DISEASE:
+				return Disease.valueOf(attributeValue.toString());
+			case SEX:
+				return Sex.valueOf(attributeValue.toString());
+			case CLASSIFICATION:
+				return ContactClassification.valueOf(attributeValue.toString());
+			case STATUS:
+				return ContactStatus.valueOf(attributeValue.toString());
+			case FOLLOW_UP_STATUS:
+				return ContactFollowUpStatus.valueOf(attributeValue.toString());
+			case AGE_INTERVAL_1_YEAR:
+			case AGE_INTERVAL_5_YEARS:
+			case AGE_INTERVAL_CHILDREN_COARSE:
+			case AGE_INTERVAL_CHILDREN_FINE:
+			case AGE_INTERVAL_CHILDREN_MEDIUM:
+			case AGE_INTERVAL_BASIC:
+				String entryAsString = attributeValue.toString();
+				if (attribute == StatisticsContactAttribute.AGE_INTERVAL_5_YEARS) {
+					try {
+						AgeGroup ageGroup = AgeGroup.valueOf(entryAsString);
+						return ageGroup.toIntegerRange();
+					} catch (IllegalArgumentException e) {
+						// This is fine; continue to build the IntegerGroup based on the entry string
 					}
-
-					if (entryAsString.contains("-")) {
-						return new IntegerRange(
-							Integer.valueOf(entryAsString.substring(0, entryAsString.indexOf("-"))),
-							Integer.valueOf(entryAsString.substring(entryAsString.indexOf("-") + 1)));
-					} else if (entryAsString.contains("+")) {
-						return new IntegerRange(Integer.valueOf(entryAsString.substring(0, entryAsString.indexOf("+"))), null);
-					} else {
-						return new IntegerRange(Integer.valueOf(entryAsString), Integer.valueOf(entryAsString));
-					}
-				case REPORTING_USER_ROLE:
-					return UserRole.valueOf(attributeValue.toString());
-				default:
-					throw new IllegalArgumentException(attribute.toString());
 				}
+
+				if (entryAsString.contains("-")) {
+					return new IntegerRange(
+						Integer.valueOf(entryAsString.substring(0, entryAsString.indexOf("-"))),
+						Integer.valueOf(entryAsString.substring(entryAsString.indexOf("-") + 1)));
+				} else if (entryAsString.contains("+")) {
+					return new IntegerRange(Integer.valueOf(entryAsString.substring(0, entryAsString.indexOf("+"))), null);
+				} else {
+					return new IntegerRange(Integer.valueOf(entryAsString), Integer.valueOf(entryAsString));
+				}
+			case REPORTING_USER_ROLE:
+				return userRoleProvider.apply(((Number) attributeValue).intValue());
+			default:
+				throw new IllegalArgumentException(attribute.toString());
 			}
 		}
-	
+	}
+
 	@SuppressWarnings("unchecked")
-	public static List<StatisticsGroupingKey> getContactAttributeGroupingKeys(StatisticsContactAttribute attribute,StatisticsSubAttribute subAttribute) {
+	public static List<StatisticsGroupingKey> getContactAttributeGroupingKeys(
+		StatisticsContactAttribute attribute,
+		StatisticsSubAttribute subAttribute,
+		DiseaseConfigurationFacade diseaseConfigurationFacade,
+		ContactFacade contactFacade,
+		RegionFacade regionFacade,
+		DistrictFacade districtFacade,
+		UserRoleConfigFacade userRoleFacade) {
 
 		if (subAttribute != null) {
 			switch (subAttribute) {
@@ -519,6 +556,13 @@ public final class StatisticsHelper {
 				return (List<StatisticsGroupingKey>) (List<? extends StatisticsGroupingKey>) FacadeProvider.getDistrictFacade()
 					.getAllActiveAsReference();
 			case COMMUNITY:
+				return new ArrayList<>();
+//				return (List<StatisticsGroupingKey>) (List<? extends StatisticsGroupingKey>) FacadeProvider.getCommunityFacade()
+//						.getAllActiveAsReference();
+			case FACILITY:
+				return new ArrayList<>();
+//				return (List<StatisticsGroupingKey>) (List<? extends StatisticsGroupingKey>) FacadeProvider.getFacilityFacade()
+//					.getAllActiveAsReference();
 			default:
 				throw new IllegalArgumentException(subAttribute.toString());
 			}
@@ -540,15 +584,36 @@ public final class StatisticsHelper {
 			case AGE_INTERVAL_BASIC:
 				return StatisticsHelper.getContactAgeIntervalGroupingKeys(attribute);
 			case REPORTING_USER_ROLE:
-				return toGroupingKeys(UserRole.values());
+				return (List<StatisticsGroupingKey>) (List<? extends StatisticsGroupingKey>) userRoleFacade.getAllAsReference();
 			default:
 				throw new IllegalArgumentException(attribute.toString());
 			}
 		}
 	}
 
+	/**
+	 *
+	 * @param attribute
+	 * @param subAttribute
+	 * @param diseaseConfigurationFacade
+	 *            Needed for StatisticsCaseAttribute.DISEASE
+	 * @param caseFacade
+	 *            Needed for StatisticsCaseAttribute.ONSET_TIME, REPORT_TIME, OUTCOME_TIME
+	 * @param regionFacade
+	 *            Needed for StatisticsCaseSubAttribute.REGION
+	 * @param districtFacade
+	 *            Needed for StatisticsCaseSubAttribute.DISTRICT
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
-	public static List<StatisticsGroupingKey> getAttributeGroupingKeys(StatisticsCaseAttribute attribute, StatisticsSubAttribute subAttribute) {
+	public static List<StatisticsGroupingKey> getAttributeGroupingKeys(
+		StatisticsCaseAttribute attribute,
+		StatisticsSubAttribute subAttribute,
+		DiseaseConfigurationFacade diseaseConfigurationFacade,
+		CaseFacade caseFacade,
+		RegionFacade regionFacade,
+		DistrictFacade districtFacade,
+		UserRoleConfigFacade userRoleFacade) {
 
 		if (subAttribute != null) {
 			switch (subAttribute) {
@@ -559,13 +624,11 @@ public final class StatisticsHelper {
 			case QUARTER_OF_YEAR:
 			case MONTH_OF_YEAR:
 			case EPI_WEEK_OF_YEAR:
-				return StatisticsHelper.getTimeGroupingKeys(attribute, subAttribute);
+				return StatisticsHelper.getTimeGroupingKeys(attribute, subAttribute, caseFacade);
 			case REGION:
-				return (List<StatisticsGroupingKey>) (List<? extends StatisticsGroupingKey>) FacadeProvider.getRegionFacade()
-					.getAllActiveByServerCountry();
+				return (List<StatisticsGroupingKey>) (List<? extends StatisticsGroupingKey>) regionFacade.getAllActiveByServerCountry();
 			case DISTRICT:
-				return (List<StatisticsGroupingKey>) (List<? extends StatisticsGroupingKey>) FacadeProvider.getDistrictFacade()
-					.getAllActiveAsReference();
+				return (List<StatisticsGroupingKey>) (List<? extends StatisticsGroupingKey>) districtFacade.getAllActiveAsReference();
 			case COMMUNITY:
 			case FACILITY:
 				return new ArrayList<>();
@@ -577,7 +640,7 @@ public final class StatisticsHelper {
 			case SEX:
 				return toGroupingKeys(Sex.values());
 			case DISEASE:
-				return toGroupingKeys(FacadeProvider.getDiseaseConfigurationFacade().getAllDiseases(true, true, true));
+				return toGroupingKeys(diseaseConfigurationFacade.getAllDiseases(true, true, true));
 			case CLASSIFICATION:
 				return toGroupingKeys(CaseClassification.values());
 			case OUTCOME:
@@ -590,7 +653,7 @@ public final class StatisticsHelper {
 			case AGE_INTERVAL_BASIC:
 				return StatisticsHelper.getAgeIntervalGroupingKeys(attribute);
 			case REPORTING_USER_ROLE:
-				return toGroupingKeys(UserRole.values());
+				return (List<StatisticsGroupingKey>) (List<? extends StatisticsGroupingKey>) userRoleFacade.getAllAsReference();
 			default:
 				throw new IllegalArgumentException(attribute.toString());
 			}

@@ -25,53 +25,75 @@ import org.apache.commons.lang3.tuple.Pair;
 import de.symeda.sormas.api.AgeGroup;
 import de.symeda.sormas.api.IntegerRange;
 import de.symeda.sormas.api.contact.ContactStatisticsFacade;
+import de.symeda.sormas.api.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.region.CommunityReferenceDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.statistics.StatisticsContactAttribute;
+import de.symeda.sormas.api.statistics.StatisticsContactCriteria;
+import de.symeda.sormas.api.statistics.StatisticsContactAttribute;
 import de.symeda.sormas.api.statistics.StatisticsContactCountDto;
 import de.symeda.sormas.api.statistics.StatisticsContactCriteria;
-import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 import de.symeda.sormas.api.statistics.StatisticsHelper;
+import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.api.user.UserDto;
+import de.symeda.sormas.api.user.UserRoleReferenceDto;
+import de.symeda.sormas.backend.disease.DiseaseConfigurationFacadeEjb;
+import de.symeda.sormas.backend.facility.Facility;
+import de.symeda.sormas.backend.facility.FacilityFacadeEjb;
+import de.symeda.sormas.backend.facility.FacilityService;
 import de.symeda.sormas.backend.infrastructure.PopulationData;
+
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.person.Person;
 import de.symeda.sormas.backend.region.Community;
+import de.symeda.sormas.backend.region.CommunityFacadeEjb;
 import de.symeda.sormas.backend.region.CommunityService;
 import de.symeda.sormas.backend.region.District;
+import de.symeda.sormas.backend.region.DistrictFacadeEjb;
 import de.symeda.sormas.backend.region.DistrictService;
 import de.symeda.sormas.backend.region.Region;
+import de.symeda.sormas.backend.region.RegionFacadeEjb;
 import de.symeda.sormas.backend.region.RegionService;
-import de.symeda.sormas.backend.region.CommunityFacadeEjb.CommunityFacadeEjbLocal;
-import de.symeda.sormas.backend.region.DistrictFacadeEjb.DistrictFacadeEjbLocal;
-import de.symeda.sormas.backend.region.RegionFacadeEjb.RegionFacadeEjbLocal;
 import de.symeda.sormas.backend.symptoms.Symptoms;
 import de.symeda.sormas.backend.user.User;
+import de.symeda.sormas.backend.user.UserRoleConfigFacadeEjb;
+import de.symeda.sormas.backend.user.UserRoleConfigService;
 import de.symeda.sormas.backend.util.ModelConstants;
 import de.symeda.sormas.backend.util.QueryHelper;
 
 @Stateless(name = "ContactStatisticsFacade")
 public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 
-
 	@PersistenceContext(unitName = ModelConstants.PERSISTENCE_UNIT_NAME)
 	private EntityManager em;
-
+	@EJB
+	private UserRoleConfigService userRoleService;
 	@EJB
 	private RegionService regionService;
 	@EJB
 	private DistrictService districtService;
 	@EJB
 	private CommunityService communityService;
-
+	
 	@EJB
-	private RegionFacadeEjbLocal regionFacade;
+	private FacilityService facilityService;
+	
 	@EJB
-	private DistrictFacadeEjbLocal districtFacade;
+	private DiseaseConfigurationFacadeEjb.DiseaseConfigurationFacadeEjbLocal diseaseConfigurationFacade;
 	@EJB
-	private CommunityFacadeEjbLocal communityFacade;
+	private ContactFacadeEjb.ContactFacadeEjbLocal contactFacade;
+	@EJB
+	private RegionFacadeEjb.RegionFacadeEjbLocal regionFacade;
+	@EJB
+	private DistrictFacadeEjb.DistrictFacadeEjbLocal districtFacade;
+	@EJB
+	private CommunityFacadeEjb.CommunityFacadeEjbLocal communityFacade;
+	@EJB
+	private FacilityFacadeEjb.FacilityFacadeEjbLocal facilityFacade;
+	@EJB
+	private UserRoleConfigFacadeEjb.UserRoleConfigFacadeEjbLocal userRoleFacade;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -97,6 +119,8 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 		Function<Integer, RegionReferenceDto> regionProvider = id -> regionFacade.getRegionReferenceById(id);
 		Function<Integer, DistrictReferenceDto> districtProvider = id -> districtFacade.getDistrictReferenceById(id);
 		Function<Integer, CommunityReferenceDto> communityProvider = id -> communityFacade.getCommunityReferenceById(id);
+		Function<Integer, FacilityReferenceDto> healthFacilityProvider = id -> facilityFacade.getFacilityReferenceById(id);
+		Function<Integer, UserRoleReferenceDto> userRoleProvider = id -> userRoleFacade.getUserRoleReferenceById(id);
 
 		List<StatisticsContactCountDto> contactCountResults = ((Stream<Object[]>) contactCountQuery.getResultStream()).map(result -> {
 			Object rowKey = "".equals(result[1]) ? null : result[1];
@@ -110,14 +134,18 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 					rowSubGrouping,
 					regionProvider,
 					districtProvider,
-					communityProvider),
+					communityProvider,
+					healthFacilityProvider,
+					userRoleProvider),
 				StatisticsHelper.buildContactGroupingKey(
 					columnKey,
 					columnGrouping,
 					columnSubGrouping,
 					regionProvider,
 					districtProvider,
-					communityProvider));
+					communityProvider,
+					healthFacilityProvider,
+					userRoleProvider));
 		}).collect(Collectors.toList());
 
 		if (includeZeroValues) {
@@ -125,7 +153,14 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 			if (rowGrouping != null) {
 				allRowKeys = (List<StatisticsGroupingKey>) contactCriteria.getFilterValuesForGrouping(rowGrouping, rowSubGrouping);
 				if (allRowKeys == null) {
-					allRowKeys = StatisticsHelper.getContactAttributeGroupingKeys(rowGrouping, rowSubGrouping);
+					allRowKeys = StatisticsHelper.getContactAttributeGroupingKeys(
+						rowGrouping,
+						rowSubGrouping,
+						diseaseConfigurationFacade,
+						contactFacade,
+						regionFacade,
+						districtFacade,
+						userRoleFacade);
 				}
 			} else {
 				allRowKeys = Arrays.asList((StatisticsGroupingKey) null);
@@ -134,7 +169,14 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 			if (columnGrouping != null) {
 				allColumnKeys = (List<StatisticsGroupingKey>) contactCriteria.getFilterValuesForGrouping(columnGrouping, columnSubGrouping);
 				if (allColumnKeys == null) {
-					allColumnKeys = StatisticsHelper.getContactAttributeGroupingKeys(columnGrouping, columnSubGrouping);
+					allColumnKeys = StatisticsHelper.getContactAttributeGroupingKeys(
+						columnGrouping,
+						columnSubGrouping,
+						diseaseConfigurationFacade,
+						contactFacade,
+						regionFacade,
+						districtFacade,
+						userRoleFacade);
 				}
 			} else {
 				allColumnKeys = Arrays.asList((StatisticsGroupingKey) null);
@@ -172,14 +214,18 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 						rowSubGrouping,
 						regionProvider,
 						districtProvider,
-						communityProvider),
+						communityProvider,
+						healthFacilityProvider,
+						userRoleProvider),
 					StatisticsHelper.buildContactGroupingKey(
 						columnKey,
 						columnGrouping,
 						columnSubGrouping,
 						regionProvider,
 						districtProvider,
-						communityProvider));
+						communityProvider,
+						healthFacilityProvider,
+						userRoleProvider));
 			}).collect(Collectors.toList());
 
 			boolean rowIsPopulation = rowGrouping != null && rowGrouping.isPopulationData();
@@ -886,327 +932,1058 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 	
 	
 	
-	public Pair<String, List<Object>> buildContactCountQuery(StatisticsContactCriteria contactCriteria,
-			StatisticsContactAttribute groupingA, StatisticsSubAttribute subGroupingA,
-			StatisticsContactAttribute groupingB, StatisticsSubAttribute subGroupingB) {
+//	public Pair<String, List<Object>> buildContactCountQuery(StatisticsContactCriteria contactCriteria,
+//			StatisticsContactAttribute groupingA, StatisticsSubAttribute subGroupingA,
+//			StatisticsContactAttribute groupingB, StatisticsSubAttribute subGroupingB) {
+//
+//		// Steps to build the query:
+//		// 1. Join the required tables
+//		// 2. Build the filter query
+//		// 3. Add selected groupings
+//		// 4. Retrieve and prepare the results
+//
+//		/////////////
+//		// 1. Join tables that cases are grouped by or that are used in the contactCriteria
+//		/////////////
+//
+//		StringBuilder caseJoinBuilder = new StringBuilder();
+//
+//		if (subGroupingA == StatisticsSubAttribute.DISTRICT
+//				|| subGroupingB == StatisticsSubAttribute.DISTRICT) {
+//			caseJoinBuilder.append(" LEFT JOIN ").append(District.TABLE_NAME).append(" ON ").append(Contact.TABLE_NAME)
+//					.append(".").append(Contact.DISTRICT).append("_id").append(" = ").append(District.TABLE_NAME)
+//					.append(".").append(District.ID);
+//		} else {
+//			caseJoinBuilder.append(" LEFT JOIN ").append(Region.TABLE_NAME).append(" ON ").append(Contact.TABLE_NAME)
+//					.append(".").append(Contact.REGION).append("_id").append(" = ").append(Region.TABLE_NAME)
+//					.append(".").append(Region.ID);
+//		}
+//
+////			if (groupingA == StatisticsContactAttribute.ONSET_TIME || groupingB == StatisticsContactAttribute.ONSET_TIME
+////					|| contactCriteria.hasOnsetDate()) {
+////				caseJoinBuilder.append(" LEFT JOIN ").append(Symptoms.TABLE_NAME).append(" ON ").append(Contact.TABLE_NAME)
+////				.append(".").append(Contact.SYMPTOMS).append("_id").append(" = ").append(Symptoms.TABLE_NAME).append(".").append(Symptoms.ID);
+////			}
+//
+//		if (groupingA == StatisticsContactAttribute.SEX || groupingB == StatisticsContactAttribute.SEX
+//				|| groupingA == StatisticsContactAttribute.AGE_INTERVAL_1_YEAR
+//				|| groupingB == StatisticsContactAttribute.AGE_INTERVAL_1_YEAR
+//				|| groupingA == StatisticsContactAttribute.AGE_INTERVAL_5_YEARS
+//				|| groupingB == StatisticsContactAttribute.AGE_INTERVAL_5_YEARS
+//				|| groupingA == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_COARSE
+//				|| groupingB == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_COARSE
+//				|| groupingA == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_FINE
+//				|| groupingB == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_FINE
+//				|| groupingA == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_MEDIUM
+//				|| groupingB == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_MEDIUM
+//				|| groupingA == StatisticsContactAttribute.AGE_INTERVAL_BASIC
+//				|| groupingB == StatisticsContactAttribute.AGE_INTERVAL_BASIC || contactCriteria.getSexes() != null
+//				|| contactCriteria.getAgeIntervals() != null) {
+//			caseJoinBuilder.append(" LEFT JOIN ").append(Person.TABLE_NAME).append(" ON ").append(Contact.TABLE_NAME)
+//					.append(".").append(Contact.PERSON).append("_id").append(" = ").append(Person.TABLE_NAME)
+//					.append(".").append(Person.ID);
+//		}
+//
+//		if (CollectionUtils.isNotEmpty(contactCriteria.getReportingUserRoles())
+//				|| groupingA == StatisticsContactAttribute.REPORTING_USER_ROLE
+//				|| groupingB == StatisticsContactAttribute.REPORTING_USER_ROLE) {
+//			caseJoinBuilder.append(" LEFT JOIN ").append(User.TABLE_NAME_USERROLES).append(" ON ")
+//					.append(Contact.TABLE_NAME).append(".").append(Contact.REPORTING_USER).append("_id").append(" = ")
+//					.append(User.TABLE_NAME_USERS_USERROLES).append(".").append(UserDto.COLUMN_NAME_USER_ID);
+//		}
+//
+//		/////////////
+//		// 2. Build filter based on contactCriteria
+//		/////////////
+//
+//		StringBuilder caseFilterBuilder = new StringBuilder(" WHERE ");
+//
+//		caseFilterBuilder.append("(").append(Contact.TABLE_NAME).append(".").append(Contact.DELETED).append(" = false");
+//		// needed for the full join on population
+//		caseFilterBuilder.append(" OR ").append(Contact.TABLE_NAME).append(".").append(Contact.DELETED)
+//				.append(" IS NULL ");
+//		caseFilterBuilder.append(")");
+//		List<Object> filterBuilderParameters = new ArrayList<Object>();
+//
+//		if (CollectionUtils.isNotEmpty(contactCriteria.getReportYears())) {
+//			extendFilterBuilderWithDateElement(caseFilterBuilder, filterBuilderParameters, "YEAR", Contact.TABLE_NAME,
+//					Contact.REPORT_DATE_TIME, contactCriteria.getReportYears(), dateValue -> (dateValue.getValue()));
+//		}
+//
+//		if (CollectionUtils.isNotEmpty(contactCriteria.getReportQuarters())) {
+//			extendFilterBuilderWithDateElement(caseFilterBuilder, filterBuilderParameters, "QUARTER",
+//					Contact.TABLE_NAME, Contact.REPORT_DATE_TIME, contactCriteria.getReportQuarters(),
+//					dateValue -> (dateValue.getValue()));
+//		}
+//
+//		if (CollectionUtils.isNotEmpty(contactCriteria.getReportMonths())) {
+//			extendFilterBuilderWithDateElement(caseFilterBuilder, filterBuilderParameters, "MONTH", Contact.TABLE_NAME,
+//					Contact.REPORT_DATE_TIME, contactCriteria.getReportMonths(), dateValue -> (dateValue.ordinal() + 1));
+//		}
+//
+//		if (CollectionUtils.isNotEmpty(contactCriteria.getReportEpiWeeks())) {
+//			extendFilterBuilderWithEpiWeek(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
+//					Contact.REPORT_DATE_TIME, contactCriteria.getReportEpiWeeks(), value -> value.getWeek());
+//		}
+//
+//		if (CollectionUtils.isNotEmpty(contactCriteria.getReportQuartersOfYear())) {
+//			extendFilterBuilderWithQuarterOfYear(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
+//					Contact.REPORT_DATE_TIME, contactCriteria.getReportQuartersOfYear(),
+//					value -> value.getYear().getValue() * 10 + value.getQuarter().getValue());
+//		}
+//
+//		if (CollectionUtils.isNotEmpty(contactCriteria.getReportMonthsOfYear())) {
+//			extendFilterBuilderWithMonthOfYear(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
+//					Contact.REPORT_DATE_TIME, contactCriteria.getReportMonthsOfYear(),
+//					value -> value.getYear().getValue() * 100 + (value.getMonth().ordinal() + 1));
+//		}
+//
+//		if (CollectionUtils.isNotEmpty(contactCriteria.getReportEpiWeeksOfYear())) {
+//			extendFilterBuilderWithEpiWeekOfYear(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
+//					Contact.REPORT_DATE_TIME, contactCriteria.getReportEpiWeeksOfYear(),
+//					value -> value.getYear() * 100 + value.getWeek());
+//		}
+//
+//		if (contactCriteria.getReportDateFrom() != null || contactCriteria.getReportDateTo() != null) {
+//			extendFilterBuilderWithDate(caseFilterBuilder, filterBuilderParameters, contactCriteria.getReportDateFrom(),
+//					contactCriteria.getReportDateTo(), Contact.TABLE_NAME, Contact.REPORT_DATE_TIME);
+//		}
+//
+//		if (CollectionUtils.isNotEmpty(contactCriteria.getSexes()) || contactCriteria.isSexUnknown() != null) {
+//			if (caseFilterBuilder.length() > 0) {
+//				caseFilterBuilder.append(" AND ");
+//			}
+//
+//			caseFilterBuilder.append("(");
+//			StringBuilder subFilterBuilder = new StringBuilder();
+//
+//			if (CollectionUtils.isNotEmpty(contactCriteria.getSexes())) {
+//				extendFilterBuilderWithSimpleValue(subFilterBuilder, filterBuilderParameters, Person.TABLE_NAME,
+//						Person.SEX, contactCriteria.getSexes(), entry -> entry.name());
+//			}
+//
+//			if (contactCriteria.isSexUnknown() != null) {
+//				if (subFilterBuilder.length() > 0) {
+//					subFilterBuilder.append(" OR ");
+//				}
+//				subFilterBuilder.append(Person.TABLE_NAME).append(".").append(Person.SEX).append(" IS ")
+//						.append(contactCriteria.isSexUnknown() == true ? "NULL" : "NOT NULL");
+//			}
+//
+//			caseFilterBuilder.append(subFilterBuilder);
+//			caseFilterBuilder.append(")");
+//		}
+//
+//		if (CollectionUtils.isNotEmpty(contactCriteria.getAgeIntervals())) {
+//			if (caseFilterBuilder.length() > 0) {
+//				caseFilterBuilder.append(" AND ");
+//			}
+//
+//			caseFilterBuilder.append("(");
+//			StringBuilder subFilterBuilder = new StringBuilder();
+//
+//			Integer upperRangeBoundary = null;
+//			boolean appendUnknown = false;
+//			List<Integer> agesList = new ArrayList<Integer>();
+//			for (IntegerRange range : contactCriteria.getAgeIntervals()) {
+//				if (range.getTo() == null) {
+//					if (range.getFrom() == null) {
+//						appendUnknown = true;
+//					} else {
+//						upperRangeBoundary = range.getFrom();
+//					}
+//				} else {
+//					agesList.addAll(
+//							IntStream.rangeClosed(range.getFrom(), range.getTo()).boxed().collect(Collectors.toList()));
+//				}
+//			}
+//
+//			if (agesList.size() > 0) {
+//				extendFilterBuilderWithSimpleValue(subFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
+//						Contact.CONTACT_AGE, agesList, value -> value);
+//			}
+//
+//			if (upperRangeBoundary != null) {
+//				if (subFilterBuilder.length() > 0) {
+//					subFilterBuilder.append(" OR ");
+//				}
+//				subFilterBuilder.append(Contact.TABLE_NAME).append(".").append(Contact.CONTACT_AGE).append(" >= ?")
+//						.append(filterBuilderParameters.size() + 1);
+//				filterBuilderParameters.add(upperRangeBoundary);
+//			}
+//
+//			if (appendUnknown) {
+//				if (subFilterBuilder.length() > 0) {
+//					subFilterBuilder.append(" OR ");
+//				}
+//				subFilterBuilder.append(Contact.TABLE_NAME).append(".").append(Contact.CONTACT_AGE).append(" IS NULL");
+//			}
+//
+//			caseFilterBuilder.append(subFilterBuilder);
+//			caseFilterBuilder.append(")");
+//		}
+//
+//		if (CollectionUtils.isNotEmpty(contactCriteria.getDiseases())) {
+//			extendFilterBuilderWithSimpleValue(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
+//					Contact.DISEASE, contactCriteria.getDiseases(), entry -> entry.name());
+//		}
+//
+//		if (CollectionUtils.isNotEmpty(contactCriteria.getClassifications())) {
+//			extendFilterBuilderWithSimpleValue(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
+//					Contact.CONTACT_CLASSIFICATION, contactCriteria.getClassifications(), entry -> entry.name());
+//		}
+//
+//		if (CollectionUtils.isNotEmpty(contactCriteria.getFollowUpStatuses())) {
+//			extendFilterBuilderWithSimpleValue(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
+//					Contact.FOLLOW_UP_STATUS, contactCriteria.getFollowUpStatuses(), entry -> entry.name());
+//		}
+//
+//		if (CollectionUtils.isNotEmpty(contactCriteria.getRegions())) {
+//			List<Long> regionIds = regionService.getIdsByReferenceDtos(contactCriteria.getRegions());
+//			extendFilterBuilderWithSimpleValue(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
+//					Contact.REGION + "_id", regionIds, entry -> entry);
+//		}
+//
+//		List<Long> districtIds;
+//		if (CollectionUtils.isNotEmpty(contactCriteria.getDistricts())) {
+//			districtIds = districtService.getIdsByReferenceDtos(contactCriteria.getDistricts());
+//			extendFilterBuilderWithSimpleValue(caseFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
+//					Contact.DISTRICT + "_id", districtIds, entry -> entry);
+//		} else {
+//			districtIds = null;
+//		}
+//
+//		if (CollectionUtils.isNotEmpty(contactCriteria.getReportingUserRoles())) {
+//			extendFilterBuilderWithSimpleValue(caseFilterBuilder, filterBuilderParameters, User.TABLE_NAME_USERROLES,
+//					UserDto.COLUMN_NAME_USERROLE, contactCriteria.getReportingUserRoles(), entry -> entry.getCaption());
+//		}
+//
+//		//////////////
+//		// 3. Add selected groupings
+//		/////////////
+//
+//		String groupingSelectQueryA = null, groupingSelectQueryB = null;
+//		StringBuilder caseGroupByBuilder = new StringBuilder();
+//		StringBuilder orderByBuilder = new StringBuilder();
+//		String groupAAlias = "groupA";
+//		String groupBAlias = "groupB";
+//
+//		if (groupingA != null || groupingB != null) {
+//			caseGroupByBuilder.append(" GROUP BY ");
+//
+//			if (groupingA != null) {
+//				groupingSelectQueryA = buildContactGroupingSelectQuery(groupingA, subGroupingA, groupAAlias);
+//				caseGroupByBuilder.append(groupAAlias);
+//			}
+//			if (groupingB != null) {
+//				groupingSelectQueryB = buildContactGroupingSelectQuery(groupingB, subGroupingB, groupBAlias);
+//				caseGroupByBuilder.append(",").append(groupBAlias);
+//			}
+//		}
+//
+//		//////////////
+//		// 4. Order results
+//		/////////////
+//
+//		orderByBuilder.append(" ORDER BY ");
+//		if (groupingA != null) {
+//			orderByBuilder.append(groupAAlias).append(" NULLS LAST");
+//		}
+//		if (groupingB != null) {
+//			if (groupingA != null) {
+//				orderByBuilder.append(",");
+//			}
+//			orderByBuilder.append(groupBAlias).append(" NULLS LAST");
+//		}
+//
+//		StringBuilder queryBuilder = new StringBuilder();
+//
+//		queryBuilder.append("SELECT COUNT(*) AS casecount ");
+//
+//		if (groupingSelectQueryA != null) {
+//			queryBuilder.append(", ").append(groupingSelectQueryA);
+//		} else {
+//			queryBuilder.append(", null\\:\\:text AS ").append(groupAAlias);
+//		}
+//		if (groupingSelectQueryB != null) {
+//			queryBuilder.append(", ").append(groupingSelectQueryB);
+//		} else {
+//			queryBuilder.append(", null\\:\\:text AS ").append(groupBAlias);
+//		}
+//
+//		queryBuilder.append(" FROM ").append(Contact.TABLE_NAME).append(caseJoinBuilder).append(caseFilterBuilder)
+//				.append(caseGroupByBuilder);
+//
+//		if (groupingA != null || groupingB != null) {
+//			queryBuilder.append(orderByBuilder);
+//		}
+//
+//		return new ImmutablePair<String, List<Object>>(queryBuilder.toString(), filterBuilderParameters);
+//	}
+	
+	
+	public Pair<String, List<Object>> buildContactCountQuery(
+			StatisticsContactCriteria contactCriteria,
+			StatisticsContactAttribute groupingA,
+			StatisticsSubAttribute subGroupingA,
+			StatisticsContactAttribute groupingB,
+			StatisticsSubAttribute subGroupingB) {
 
-		// Steps to build the query:
-		// 1. Join the required tables
-		// 2. Build the filter query
-		// 3. Add selected groupings
-		// 4. Retrieve and prepare the results
+			// Steps to build the query:
+			// 1. Join the required tables
+			// 2. Build the filter query
+			// 3. Add selected groupings
+			// 4. Retrieve and prepare the results
 
-		/////////////
-		// 1. Join tables that cases are grouped by or that are used in the caseCriteria
-		/////////////
+			/////////////
+			// 1. Join tables that cases are grouped by or that are used in the contactCriteria
+			/////////////
 
-		StringBuilder contactJoinBuilder = new StringBuilder();
+			StringBuilder caseJoinBuilder = new StringBuilder();
 
-		if (subGroupingA == StatisticsSubAttribute.DISTRICT
-				|| subGroupingB == StatisticsSubAttribute.DISTRICT) {
-			contactJoinBuilder.append(" LEFT JOIN ").append(District.TABLE_NAME).append(" ON ").append(Contact.TABLE_NAME)
-					.append(".").append(Contact.DISTRICT).append("_id").append(" = ").append(District.TABLE_NAME)
-					.append(".").append(District.ID);
-		} else {
-			contactJoinBuilder.append(" LEFT JOIN ").append(Region.TABLE_NAME).append(" ON ").append(Contact.TABLE_NAME)
-					.append(".").append(Contact.REGION).append("_id").append(" = ").append(Region.TABLE_NAME)
-					.append(".").append(Region.ID);
-		}
+//			if (subGroupingA == StatisticsSubAttribute.FACILITY || subGroupingB == StatisticsSubAttribute.FACILITY) {
+//				caseJoinBuilder.append(" LEFT JOIN ")
+//					.append(Facility.TABLE_NAME)
+//					.append(" ON ")
+//					.append(Contact.TABLE_NAME)
+//					.append(".")
+//					.append(Contact.HEALTH_FACILITY)
+//					.append("_id = ")
+//					.append(Facility.TABLE_NAME)
+//					.append(".")
+//					.append(Facility.ID);
+//			}
+			
 
-		if (groupingA == StatisticsContactAttribute.ONSET_TIME || groupingB == StatisticsContactAttribute.ONSET_TIME || contactCriteria.hasOnsetDate()) {
-			contactJoinBuilder.append(" LEFT JOIN ")
-				.append(Symptoms.TABLE_NAME)
-				.append(" ON ")
-				.append(Contact.TABLE_NAME)
-				.append(".")
-				.append(Contact.PERSON)
-				.append("_id")
-				.append(" = ")
-				.append(Symptoms.TABLE_NAME)
-				.append(".")
-				.append(Symptoms.ID);
-//			if (groupingA == StatisticsContactAttribute.ONSET_TIME || groupingB == StatisticsContactAttribute.ONSET_TIME
-//					|| caseCriteria.hasOnsetDate()) {
-//				contactJoinBuilder.append(" LEFT JOIN ").append(Symptoms.TABLE_NAME).append(" ON ").append(Contact.TABLE_NAME)
-//				.append(".").append(Contact.SYMPTOMS).append("_id").append(" = ").append(Symptoms.TABLE_NAME).append(".").append(Symptoms.ID);
+//			if (subGroupingA == StatisticsSubAttribute.FACILITY || subGroupingB == StatisticsSubAttribute.FACILITY) {
+//				caseJoinBuilder.append(" FROM ")
+//					
+//					.append(Contact.TABLE_NAME);
+//			}
+			
+			if (subGroupingA == StatisticsSubAttribute.FACILITY || subGroupingB == StatisticsSubAttribute.FACILITY) {
+				caseJoinBuilder.append(" LEFT JOIN ")
+					.append(Person.TABLE_NAME)
+					.append(" ON ")
+					.append(Contact.TABLE_NAME)
+					.append(".")
+					.append(Contact.PERSON)
+					.append("_id = ")
+					.append(Person.TABLE_NAME)
+					.append(".")
+					.append(Person.ID)
+					
+					.append(" LEFT JOIN ")
+					.append(Location.TABLE_NAME)
+					.append(" ON ")
+					.append(Person.TABLE_NAME)
+					.append(".")
+					.append(Person.ADDRESS)
+					.append("_id = ")
+					.append(Location.TABLE_NAME)
+					.append(".")
+					.append(Location.ID)
+			
+
+					.append(" LEFT JOIN ")
+					.append(Facility.TABLE_NAME)
+					.append(" ON ")
+					.append(Location.TABLE_NAME)
+					.append(".")
+					.append(Location.FACILITY)
+					.append("_id = ")
+					.append(Facility.TABLE_NAME)
+					.append(".")
+					.append(Facility.ID);
+			
+			
+					
+			}
+			
+
+			
+			if (subGroupingA == StatisticsSubAttribute.COMMUNITY || subGroupingB == StatisticsSubAttribute.COMMUNITY) {
+				caseJoinBuilder.append(" LEFT JOIN ")
+					.append(Community.TABLE_NAME)
+					.append(" ON ")
+					.append(Contact.TABLE_NAME)
+					.append(".")
+					.append(Contact.COMMUNITY)
+					.append("_id = ")
+					.append(Community.TABLE_NAME)
+					.append(".")
+					.append(Community.ID);
+			}
+			if (subGroupingA == StatisticsSubAttribute.DISTRICT || subGroupingB == StatisticsSubAttribute.DISTRICT) {
+				caseJoinBuilder.append(" LEFT JOIN ")
+					.append(District.TABLE_NAME)
+					.append(" ON ")
+					.append(Contact.TABLE_NAME)
+					.append(".")
+					.append(Contact.DISTRICT)
+					.append("_id = ")
+					.append(District.TABLE_NAME)
+					.append(".")
+					.append(District.ID);
+			}
+			
+			if (subGroupingA == StatisticsSubAttribute.REGION || subGroupingB == StatisticsSubAttribute.REGION) {
+				caseJoinBuilder.append(" LEFT JOIN ")
+					.append(Region.TABLE_NAME)
+					.append(" ON ")
+					.append(Contact.TABLE_NAME)
+					.append(".")
+					.append(Contact.REGION)
+					.append("_id = ")
+					.append(Region.TABLE_NAME)
+					.append(".")
+					.append(Region.ID);
+			}
+
+//			if (groupingA == StatisticsContactAttribute.ONSET_TIME || groupingB == StatisticsContactAttribute.ONSET_TIME || contactCriteria.hasOnsetDate()) {
+//				caseJoinBuilder.append(" LEFT JOIN ")
+//					.append(Symptoms.TABLE_NAME)
+//					.append(" ON ")
+//					.append(Contact.TABLE_NAME)
+//					.append(".")
+//					.append(Contact.SYMPTOMS)
+//					.append("_id")
+//					.append(" = ")
+//					.append(Symptoms.TABLE_NAME)
+//					.append(".")
+//					.append(Symptoms.ID);
 //			}
 
-		// if (groupingA == StatisticsContactAttribute.SEX || groupingB == StatisticsContactAttribute.SEX
-		// 		|| groupingA == StatisticsContactAttribute.AGE_INTERVAL_1_YEAR
-		// 		|| groupingB == StatisticsContactAttribute.AGE_INTERVAL_1_YEAR
-		// 		|| groupingA == StatisticsContactAttribute.AGE_INTERVAL_5_YEARS
-		// 		|| groupingB == StatisticsContactAttribute.AGE_INTERVAL_5_YEARS
-		// 		|| groupingA == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_COARSE
-		// 		|| groupingB == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_COARSE
-		// 		|| groupingA == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_FINE
-		// 		|| groupingB == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_FINE
-		// 		|| groupingA == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_MEDIUM
-		// 		|| groupingB == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_MEDIUM
-		// 		|| groupingA == StatisticsContactAttribute.AGE_INTERVAL_BASIC
-		// 		|| groupingB == StatisticsContactAttribute.AGE_INTERVAL_BASIC || caseCriteria.getSexes() != null
-		// 		|| caseCriteria.getAgeIntervals() != null) {
-		// 	contactJoinBuilder.append(" LEFT JOIN ").append(Person.TABLE_NAME).append(" ON ").append(Contact.TABLE_NAME)
-		// 			.append(".").append(Contact.PERSON).append("_id").append(" = ").append(Person.TABLE_NAME)
-		// 			.append(".").append(Person.ID);
-		}
+			if (groupingA == StatisticsContactAttribute.SEX
+				|| groupingB == StatisticsContactAttribute.SEX
+				|| groupingA == StatisticsContactAttribute.AGE_INTERVAL_1_YEAR
+				|| groupingB == StatisticsContactAttribute.AGE_INTERVAL_1_YEAR
+				|| groupingA == StatisticsContactAttribute.AGE_INTERVAL_5_YEARS
+				|| groupingB == StatisticsContactAttribute.AGE_INTERVAL_5_YEARS
+				|| groupingA == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_COARSE
+				|| groupingB == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_COARSE
+				|| groupingA == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_FINE
+				|| groupingB == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_FINE
+				|| groupingA == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_MEDIUM
+				|| groupingB == StatisticsContactAttribute.AGE_INTERVAL_CHILDREN_MEDIUM
+				|| groupingA == StatisticsContactAttribute.AGE_INTERVAL_BASIC
+				|| groupingB == StatisticsContactAttribute.AGE_INTERVAL_BASIC
+				|| contactCriteria.getSexes() != null
+				|| contactCriteria.getAgeIntervals() != null
+				|| contactCriteria.getPersonRegions() != null
+				|| contactCriteria.getPersonDistricts() != null
+				|| contactCriteria.getPersonCommunities() != null
+				|| contactCriteria.getPersonCity() != null
+				|| contactCriteria.getPersonPostcode() != null) {
+				
+				if (subGroupingA != StatisticsSubAttribute.FACILITY && subGroupingB != StatisticsSubAttribute.FACILITY) {
+					caseJoinBuilder.append(" LEFT JOIN ")
+						.append(Person.TABLE_NAME)
+						.append(" ON ")
+						.append(Contact.TABLE_NAME)
+						.append(".")
+						.append(Contact.PERSON)
+						.append("_id")
+						.append(" = ")
+						.append(Person.TABLE_NAME)
+						.append(".")
+						.append(Person.ID);
+				}
+				
+			}
 
-		if (CollectionUtils.isNotEmpty(contactCriteria.getReportingUserRoles())
+			if (contactCriteria.getPersonRegions() != null
+				|| contactCriteria.getPersonDistricts() != null
+				|| contactCriteria.getPersonCommunities() != null
+				|| contactCriteria.getPersonCity() != null
+				|| contactCriteria.getPersonPostcode() != null) {
+				caseJoinBuilder.append(" LEFT JOIN ")
+					.append(Location.TABLE_NAME)
+					.append(" ON ")
+					.append(Person.TABLE_NAME)
+					.append(".")
+					.append(Person.ADDRESS)
+					.append("_id")
+					.append(" = ")
+					.append(Location.TABLE_NAME)
+					.append(".")
+					.append(Location.ID);
+			}
+
+			if (CollectionUtils.isNotEmpty(contactCriteria.getReportingUserRoles())
 				|| groupingA == StatisticsContactAttribute.REPORTING_USER_ROLE
 				|| groupingB == StatisticsContactAttribute.REPORTING_USER_ROLE) {
-			contactJoinBuilder.append(" LEFT JOIN ").append(User.TABLE_NAME_USERROLES).append(" ON ")
-					.append(Contact.TABLE_NAME).append(".").append(Contact.REPORTING_USER).append("_id").append(" = ")
-					.append(User.TABLE_NAME_USERROLES).append(".").append(UserDto.COLUMN_NAME_USER_ID);
-		}
+				caseJoinBuilder.append(" LEFT JOIN ")
+					.append(User.TABLE_NAME_USERROLES)
+					.append(" ON ")
+					.append(Contact.TABLE_NAME)
+					.append(".")
+					.append(Contact.REPORTING_USER)
+					.append("_id")
+					.append(" = ")
+					.append(User.TABLE_NAME_USERROLES)
+					.append(".")
+					.append(UserDto.COLUMN_NAME_USER_ID);
+			}
 
-		/////////////
-		// 2. Build filter based on caseCriteria
-		/////////////
+			/////////////
+			// 2. Build filter based on contactCriteria
+			/////////////
 
-		StringBuilder contactFilterBuilder = new StringBuilder(" WHERE ");
+			StringBuilder contactFilterBuilder = new StringBuilder(" WHERE ");
 
-		contactFilterBuilder.append("(").append(Contact.TABLE_NAME).append(".").append(Contact.DELETED).append(" = false");
-		// needed for the full join on population
-		contactFilterBuilder.append(" OR ").append(Contact.TABLE_NAME).append(".").append(Contact.DELETED)
-				.append(" IS NULL ");
-		contactFilterBuilder.append(")");
-		List<Object> filterBuilderParameters = new ArrayList<Object>();
+			contactFilterBuilder.append("(").append(Contact.TABLE_NAME).append(".").append(Contact.DELETED).append(" = false");
+			// needed for the full join on population
+			contactFilterBuilder.append(" OR ").append(Contact.TABLE_NAME).append(".").append(Contact.DELETED).append(" IS NULL ");
+			contactFilterBuilder.append(")");
+			List<Object> filterBuilderParameters = new ArrayList<Object>();
 
-		if (CollectionUtils.isNotEmpty(contactCriteria.getReportYears())) {
-			extendFilterBuilderWithDateElement(contactFilterBuilder, filterBuilderParameters, "YEAR", Contact.TABLE_NAME,
-					Contact.REPORT_DATE_TIME, contactCriteria.getReportYears(), dateValue -> (dateValue.getValue()));
-		}
+//			if (CollectionUtils.isNotEmpty(contactCriteria.getOnsetYears())) {
+//				extendFilterBuilderWithDateElement(
+//					caseFilterBuilder,
+//					filterBuilderParameters,
+//					"YEAR",
+//					Symptoms.TABLE_NAME,
+//					Symptoms.ONSET_DATE,
+//					contactCriteria.getOnsetYears(),
+//					dateValue -> (dateValue.getValue()));
+//			}
+//
+//			if (CollectionUtils.isNotEmpty(contactCriteria.getOnsetQuarters())) {
+//				extendFilterBuilderWithDateElement(
+//					caseFilterBuilder,
+//					filterBuilderParameters,
+//					"QUARTER",
+//					Symptoms.TABLE_NAME,
+//					Symptoms.ONSET_DATE,
+//					contactCriteria.getOnsetQuarters(),
+//					dateValue -> (dateValue.getValue()));
+//			}
+//
+//			if (CollectionUtils.isNotEmpty(contactCriteria.getOnsetMonths())) {
+//				extendFilterBuilderWithDateElement(
+//					caseFilterBuilder,
+//					filterBuilderParameters,
+//					"MONTH",
+//					Symptoms.TABLE_NAME,
+//					Symptoms.ONSET_DATE,
+//					contactCriteria.getOnsetMonths(),
+//					dateValue -> (dateValue.ordinal() + 1));
+//			}
+//
+//			if (CollectionUtils.isNotEmpty(contactCriteria.getOnsetEpiWeeks())) {
+//				extendFilterBuilderWithEpiWeek(
+//					caseFilterBuilder,
+//					filterBuilderParameters,
+//					Symptoms.TABLE_NAME,
+//					Symptoms.ONSET_DATE,
+//					contactCriteria.getOnsetEpiWeeks(),
+//					value -> value.getWeek());
+//			}
 
-		if (CollectionUtils.isNotEmpty(contactCriteria.getReportQuarters())) {
-			extendFilterBuilderWithDateElement(contactFilterBuilder, filterBuilderParameters, "QUARTER",
-					Contact.TABLE_NAME, Contact.REPORT_DATE_TIME, contactCriteria.getReportQuarters(),
+//			if (CollectionUtils.isNotEmpty(contactCriteria.getOnsetQuartersOfYear())) {
+//				extendFilterBuilderWithQuarterOfYear(
+//					caseFilterBuilder,
+//					filterBuilderParameters,
+//					Symptoms.TABLE_NAME,
+//					Symptoms.ONSET_DATE,
+//					contactCriteria.getOnsetQuartersOfYear(),
+//					value -> value.getYear().getValue() * 10 + value.getQuarter().getValue());
+//			}
+//
+//			if (CollectionUtils.isNotEmpty(contactCriteria.getOnsetMonthsOfYear())) {
+//				extendFilterBuilderWithMonthOfYear(
+//					caseFilterBuilder,
+//					filterBuilderParameters,
+//					Symptoms.TABLE_NAME,
+//					Symptoms.ONSET_DATE,
+//					contactCriteria.getOnsetMonthsOfYear(),
+//					value -> value.getYear().getValue() * 100 + (value.getMonth().ordinal() + 1));
+//			}
+
+//			if (CollectionUtils.isNotEmpty(contactCriteria.getOnsetEpiWeeksOfYear())) {
+//				extendFilterBuilderWithEpiWeekOfYear(
+//					caseFilterBuilder,
+//					filterBuilderParameters,
+//					Symptoms.TABLE_NAME,
+//					Symptoms.ONSET_DATE,
+//					contactCriteria.getOnsetEpiWeeksOfYear(),
+//					value -> value.getYear() * 100 + value.getWeek());
+//			}
+//
+//			if (contactCriteria.getOnsetDateFrom() != null || contactCriteria.getOnsetDateTo() != null) {
+//				extendFilterBuilderWithDate(
+//					caseFilterBuilder,
+//					filterBuilderParameters,
+//					contactCriteria.getOnsetDateFrom(),
+//					contactCriteria.getOnsetDateTo(),
+//					Symptoms.TABLE_NAME,
+//					Symptoms.ONSET_DATE);
+//			}
+
+			if (CollectionUtils.isNotEmpty(contactCriteria.getReportYears())) {
+				extendFilterBuilderWithDateElement(
+					contactFilterBuilder,
+					filterBuilderParameters,
+					"YEAR",
+					Contact.TABLE_NAME,
+					Contact.REPORT_DATE_TIME,
+					contactCriteria.getReportYears(),
 					dateValue -> (dateValue.getValue()));
-		}
+			}
 
-		if (CollectionUtils.isNotEmpty(contactCriteria.getReportMonths())) {
-			extendFilterBuilderWithDateElement(contactFilterBuilder, filterBuilderParameters, "MONTH", Contact.TABLE_NAME,
-					Contact.REPORT_DATE_TIME, contactCriteria.getReportMonths(), dateValue -> (dateValue.ordinal() + 1));
-		}
+			if (CollectionUtils.isNotEmpty(contactCriteria.getReportQuarters())) {
+				extendFilterBuilderWithDateElement(
+					contactFilterBuilder,
+					filterBuilderParameters,
+					"QUARTER",
+					Contact.TABLE_NAME,
+					Contact.REPORT_DATE_TIME,
+					contactCriteria.getReportQuarters(),
+					dateValue -> (dateValue.getValue()));
+			}
 
-		if (CollectionUtils.isNotEmpty(contactCriteria.getReportEpiWeeks())) {
-			extendFilterBuilderWithEpiWeek(contactFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
-					Contact.REPORT_DATE_TIME, contactCriteria.getReportEpiWeeks(), value -> value.getWeek());
-		}
+			if (CollectionUtils.isNotEmpty(contactCriteria.getReportMonths())) {
+				extendFilterBuilderWithDateElement(
+					contactFilterBuilder,
+					filterBuilderParameters,
+					"MONTH",
+					Contact.TABLE_NAME,
+					Contact.REPORT_DATE_TIME,
+					contactCriteria.getReportMonths(),
+					dateValue -> (dateValue.ordinal() + 1));
+			}
 
-		if (CollectionUtils.isNotEmpty(contactCriteria.getReportQuartersOfYear())) {
-			extendFilterBuilderWithQuarterOfYear(contactFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
-					Contact.REPORT_DATE_TIME, contactCriteria.getReportQuartersOfYear(),
+			if (CollectionUtils.isNotEmpty(contactCriteria.getReportEpiWeeks())) {
+				extendFilterBuilderWithEpiWeek(
+					contactFilterBuilder,
+					filterBuilderParameters,
+					Contact.TABLE_NAME,
+					Contact.REPORT_DATE_TIME,
+					contactCriteria.getReportEpiWeeks(),
+					value -> value.getWeek());
+			}
+
+			if (CollectionUtils.isNotEmpty(contactCriteria.getReportQuartersOfYear())) {
+				extendFilterBuilderWithQuarterOfYear(
+					contactFilterBuilder,
+					filterBuilderParameters,
+					Contact.TABLE_NAME,
+					Contact.REPORT_DATE_TIME,
+					contactCriteria.getReportQuartersOfYear(),
 					value -> value.getYear().getValue() * 10 + value.getQuarter().getValue());
-		}
+			}
 
-		if (CollectionUtils.isNotEmpty(contactCriteria.getReportMonthsOfYear())) {
-			extendFilterBuilderWithMonthOfYear(contactFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
-					Contact.REPORT_DATE_TIME, contactCriteria.getReportMonthsOfYear(),
+			if (CollectionUtils.isNotEmpty(contactCriteria.getReportMonthsOfYear())) {
+				extendFilterBuilderWithMonthOfYear(
+					contactFilterBuilder,
+					filterBuilderParameters,
+					Contact.TABLE_NAME,
+					Contact.REPORT_DATE_TIME,
+					contactCriteria.getReportMonthsOfYear(),
 					value -> value.getYear().getValue() * 100 + (value.getMonth().ordinal() + 1));
-		}
+			}
 
-		if (CollectionUtils.isNotEmpty(contactCriteria.getReportEpiWeeksOfYear())) {
-			extendFilterBuilderWithEpiWeekOfYear(contactFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
-					Contact.REPORT_DATE_TIME, contactCriteria.getReportEpiWeeksOfYear(),
+			if (CollectionUtils.isNotEmpty(contactCriteria.getReportEpiWeeksOfYear())) {
+				extendFilterBuilderWithEpiWeekOfYear(
+					contactFilterBuilder,
+					filterBuilderParameters,
+					Contact.TABLE_NAME,
+					Contact.REPORT_DATE_TIME,
+					contactCriteria.getReportEpiWeeksOfYear(),
 					value -> value.getYear() * 100 + value.getWeek());
-		}
-
-		if (contactCriteria.getReportDateFrom() != null || contactCriteria.getReportDateTo() != null) {
-			extendFilterBuilderWithDate(contactFilterBuilder, filterBuilderParameters, contactCriteria.getReportDateFrom(),
-					contactCriteria.getReportDateTo(), Contact.TABLE_NAME, Contact.REPORT_DATE_TIME);
-		}
-
-		if (CollectionUtils.isNotEmpty(contactCriteria.getSexes()) || contactCriteria.isSexUnknown() != null) {
-			if (contactFilterBuilder.length() > 0) {
-				contactFilterBuilder.append(" AND ");
 			}
 
-			contactFilterBuilder.append("(");
-			StringBuilder subFilterBuilder = new StringBuilder();
-
-			if (CollectionUtils.isNotEmpty(contactCriteria.getSexes())) {
-				extendFilterBuilderWithSimpleValue(subFilterBuilder, filterBuilderParameters, Person.TABLE_NAME,
-						Person.SEX, contactCriteria.getSexes(), entry -> entry.name());
+			if (contactCriteria.getReportDateFrom() != null || contactCriteria.getReportDateTo() != null) {
+				extendFilterBuilderWithDate(
+					contactFilterBuilder,
+					filterBuilderParameters,
+					contactCriteria.getReportDateFrom(),
+					contactCriteria.getReportDateTo(),
+					Contact.TABLE_NAME,
+					Contact.REPORT_DATE_TIME);
 			}
 
-			if (contactCriteria.isSexUnknown() != null) {
-				if (subFilterBuilder.length() > 0) {
-					subFilterBuilder.append(" OR ");
+//			if (CollectionUtils.isNotEmpty(contactCriteria.getOutcomeYears())) {
+//				extendFilterBuilderWithDateElement(
+//					contactFilterBuilder,
+//					filterBuilderParameters,
+//					"YEAR",
+//					Contact.TABLE_NAME,
+//					Contact.OUTCOME_DATE,
+//					contactCriteria.getOutcomeYears(),
+//					dateValue -> (dateValue.getValue()));
+//			}
+//
+//			if (CollectionUtils.isNotEmpty(contactCriteria.getOutcomeQuarters())) {
+//				extendFilterBuilderWithDateElement(
+//					contactFilterBuilder,
+//					filterBuilderParameters,
+//					"QUARTER",
+//					Contact.TABLE_NAME,
+//					Contact.OUTCOME_DATE,
+//					contactCriteria.getOutcomeQuarters(),
+//					dateValue -> (dateValue.getValue()));
+//			}
+//
+//			if (CollectionUtils.isNotEmpty(contactCriteria.getOutcomeMonths())) {
+//				extendFilterBuilderWithDateElement(
+//					contactFilterBuilder,
+//					filterBuilderParameters,
+//					"MONTH",
+//					Contact.TABLE_NAME,
+//					Contact.OUTCOME_DATE,
+//					contactCriteria.getOutcomeMonths(),
+//					dateValue -> (dateValue.ordinal() + 1));
+//			}
+//
+//			if (CollectionUtils.isNotEmpty(contactCriteria.getOutcomeEpiWeeks())) {
+//				extendFilterBuilderWithEpiWeek(
+//					contactFilterBuilder,
+//					filterBuilderParameters,
+//					Contact.TABLE_NAME,
+//					Contact.OUTCOME_DATE,
+//					contactCriteria.getOutcomeEpiWeeks(),
+//					value -> value.getWeek());
+//			}
+//
+//			if (CollectionUtils.isNotEmpty(contactCriteria.getOutcomeQuartersOfYear())) {
+//				extendFilterBuilderWithQuarterOfYear(
+//					contactFilterBuilder,
+//					filterBuilderParameters,
+//					Contact.TABLE_NAME,
+//					Contact.OUTCOME_DATE,
+//					contactCriteria.getOutcomeQuartersOfYear(),
+//					value -> value.getYear().getValue() * 10 + value.getQuarter().getValue());
+//			}
+//
+//			if (CollectionUtils.isNotEmpty(contactCriteria.getOutcomeMonthsOfYear())) {
+//				extendFilterBuilderWithMonthOfYear(
+//					contactFilterBuilder,
+//					filterBuilderParameters,
+//					Contact.TABLE_NAME,
+//					Contact.OUTCOME_DATE,
+//					contactCriteria.getOutcomeMonthsOfYear(),
+//					value -> value.getYear().getValue() * 100 + (value.getMonth().ordinal() + 1));
+//			}
+//
+//			if (CollectionUtils.isNotEmpty(contactCriteria.getOutcomeEpiWeeksOfYear())) {
+//				extendFilterBuilderWithEpiWeekOfYear(
+//					contactFilterBuilder,
+//					filterBuilderParameters,
+//					Contact.TABLE_NAME,
+//					Contact.OUTCOME_DATE,
+//					contactCriteria.getOutcomeEpiWeeksOfYear(),
+//					value -> value.getYear() * 100 + value.getWeek());
+//			}
+//
+//			if (contactCriteria.getOutcomeDateFrom() != null || contactCriteria.getOutcomeDateTo() != null) {
+//				extendFilterBuilderWithDate(
+//					contactFilterBuilder,
+//					filterBuilderParameters,
+//					contactCriteria.getOutcomeDateFrom(),
+//					contactCriteria.getOutcomeDateTo(),
+//					Contact.TABLE_NAME,
+//					Contact.OUTCOME_DATE);
+//			}
+
+			if (CollectionUtils.isNotEmpty(contactCriteria.getPersonRegions())) {
+				List<Long> regionIds = regionService.getIdsByReferenceDtos(contactCriteria.getPersonRegions());
+				extendFilterBuilderWithSimpleValue(
+					contactFilterBuilder,
+					filterBuilderParameters,
+					Location.TABLE_NAME,
+					Location.REGION + "_id",
+					regionIds,
+					entry -> entry);
+			}
+			
+			if (CollectionUtils.isNotEmpty(contactCriteria.getPersonDistricts())) {
+				List<Long> districtIds = districtService.getIdsByReferenceDtos(contactCriteria.getPersonDistricts());
+				extendFilterBuilderWithSimpleValue(
+					contactFilterBuilder,
+					filterBuilderParameters,
+					Location.TABLE_NAME,
+					Location.DISTRICT + "_id",
+					districtIds,
+					entry -> entry);
+			}
+			
+			if (CollectionUtils.isNotEmpty(contactCriteria.getPersonCommunities())) {
+				List<Long> communityIds = communityService.getIdsByReferenceDtos(contactCriteria.getPersonCommunities());
+				extendFilterBuilderWithSimpleValue(
+					contactFilterBuilder,
+					filterBuilderParameters,
+					Location.TABLE_NAME,
+					Location.COMMUNITY + "_id",
+					communityIds,
+					entry -> entry);
+			}
+			
+			
+			if (StringUtils.isNotEmpty(contactCriteria.getPersonCity())) {
+				extendFilterBuilderWithLike(contactFilterBuilder, Location.TABLE_NAME, Location.CITY, contactCriteria.getPersonCity());
+			}
+			
+			if (StringUtils.isNotEmpty(contactCriteria.getPersonPostcode())) {
+				extendFilterBuilderWithLike(contactFilterBuilder, Location.TABLE_NAME, Location.POSTAL_CODE, contactCriteria.getPersonPostcode());
+			}
+
+			if (CollectionUtils.isNotEmpty(contactCriteria.getSexes()) || contactCriteria.isSexUnknown() != null) {
+				if (contactFilterBuilder.length() > 0) {
+					contactFilterBuilder.append(" AND ");
 				}
-				subFilterBuilder.append(Person.TABLE_NAME).append(".").append(Person.SEX).append(" IS ")
-						.append(contactCriteria.isSexUnknown() == true ? "NULL" : "NOT NULL");
-			}
 
-			contactFilterBuilder.append(subFilterBuilder);
-			contactFilterBuilder.append(")");
-		}
+				contactFilterBuilder.append("(");
+				StringBuilder subFilterBuilder = new StringBuilder();
 
-		if (CollectionUtils.isNotEmpty(contactCriteria.getAgeIntervals())) {
-			if (contactFilterBuilder.length() > 0) {
-				contactFilterBuilder.append(" AND ");
-			}
+				if (CollectionUtils.isNotEmpty(contactCriteria.getSexes())) {
+					extendFilterBuilderWithSimpleValue(
+						subFilterBuilder,
+						filterBuilderParameters,
+						Person.TABLE_NAME,
+						Person.SEX,
+						contactCriteria.getSexes(),
+						entry -> entry.name());
+				}
 
-			contactFilterBuilder.append("(");
-			StringBuilder subFilterBuilder = new StringBuilder();
-
-			Integer upperRangeBoundary = null;
-			boolean appendUnknown = false;
-			List<Integer> agesList = new ArrayList<Integer>();
-			for (IntegerRange range : contactCriteria.getAgeIntervals()) {
-				if (range.getTo() == null) {
-					if (range.getFrom() == null) {
-						appendUnknown = true;
-					} else {
-						upperRangeBoundary = range.getFrom();
+				if (contactCriteria.isSexUnknown() != null) {
+					if (subFilterBuilder.length() > 0) {
+						subFilterBuilder.append(" OR ");
 					}
-				} else {
-					agesList.addAll(
-							IntStream.rangeClosed(range.getFrom(), range.getTo()).boxed().collect(Collectors.toList()));
+					subFilterBuilder.append(Person.TABLE_NAME)
+						.append(".")
+						.append(Person.SEX)
+						.append(" IS ")
+						.append(contactCriteria.isSexUnknown() == true ? "NULL" : "NOT NULL");
+				}
+
+				contactFilterBuilder.append(subFilterBuilder);
+				contactFilterBuilder.append(")");
+			}
+
+			if (CollectionUtils.isNotEmpty(contactCriteria.getAgeIntervals())) {
+				if (contactFilterBuilder.length() > 0) {
+					contactFilterBuilder.append(" AND ");
+				}
+
+				contactFilterBuilder.append("(");
+				StringBuilder subFilterBuilder = new StringBuilder();
+
+				Integer upperRangeBoundary = null;
+				boolean appendUnknown = false;
+				List<Integer> agesList = new ArrayList<Integer>();
+				for (IntegerRange range : contactCriteria.getAgeIntervals()) {
+					if (range.getTo() == null) {
+						if (range.getFrom() == null) {
+							appendUnknown = true;
+						} else {
+							upperRangeBoundary = range.getFrom();
+						}
+					} else {
+						agesList.addAll(IntStream.rangeClosed(range.getFrom(), range.getTo()).boxed().collect(Collectors.toList()));
+					}
+				}
+
+				if (agesList.size() > 0) {
+					extendFilterBuilderWithSimpleValue(
+						subFilterBuilder,
+						filterBuilderParameters,
+						Contact.TABLE_NAME,
+						Contact.CONTACT_AGE,
+						agesList,
+						value -> value);
+				}
+
+				if (upperRangeBoundary != null) {
+					if (subFilterBuilder.length() > 0) {
+						subFilterBuilder.append(" OR ");
+					}
+					subFilterBuilder.append(Contact.TABLE_NAME).append(".").append(Contact.CONTACT_AGE).append(" >= ?").append(filterBuilderParameters.size() + 1);
+					filterBuilderParameters.add(upperRangeBoundary);
+				}
+
+				if (appendUnknown) {
+					if (subFilterBuilder.length() > 0) {
+						subFilterBuilder.append(" OR ");
+					}
+					subFilterBuilder.append(Contact.TABLE_NAME).append(".").append(Contact.CONTACT_AGE).append(" IS NULL");
+				}
+
+				contactFilterBuilder.append(subFilterBuilder);
+				contactFilterBuilder.append(")");
+			}
+
+			if (CollectionUtils.isNotEmpty(contactCriteria.getDiseases())) {
+				extendFilterBuilderWithSimpleValue(
+					contactFilterBuilder,
+					filterBuilderParameters,
+					Contact.TABLE_NAME,
+					Contact.DISEASE,
+					contactCriteria.getDiseases(),
+					entry -> entry.name());
+			}
+
+			if (CollectionUtils.isNotEmpty(contactCriteria.getClassifications())) {
+				extendFilterBuilderWithSimpleValue(
+					contactFilterBuilder,
+					filterBuilderParameters,
+					Contact.TABLE_NAME,
+					Contact.CONTACT_CLASSIFICATION,
+					contactCriteria.getClassifications(),
+					entry -> entry.name());
+			}
+
+//			if (CollectionUtils.isNotEmpty(contactCriteria.getOutcomes())) {
+//				extendFilterBuilderWithSimpleValue(
+//					caseFilterBuilder,
+//					filterBuilderParameters,
+//					Contact.TABLE_NAME,
+//					Contact.OUTCOME,
+//					contactCriteria.getOutcomes(),
+//					entry -> entry.name());
+//			}
+
+			if (CollectionUtils.isNotEmpty(contactCriteria.getRegions())) {
+				List<Long> regionIds = regionService.getIdsByReferenceDtos(contactCriteria.getRegions());
+				extendFilterBuilderWithSimpleValue(
+					contactFilterBuilder,
+					filterBuilderParameters,
+					Contact.TABLE_NAME,
+					Contact.REGION + "_id",
+					regionIds,
+					entry -> entry);
+			}
+
+			if (CollectionUtils.isNotEmpty(contactCriteria.getDistricts())) {
+				List<Long> districtIds = districtService.getIdsByReferenceDtos(contactCriteria.getDistricts());
+				extendFilterBuilderWithSimpleValue(
+					contactFilterBuilder,
+					filterBuilderParameters,
+					Contact.TABLE_NAME,
+					Contact.DISTRICT + "_id",
+					districtIds,
+					entry -> entry);
+			}
+
+			if (CollectionUtils.isNotEmpty(contactCriteria.getCommunities())) {
+				List<Long> communityIds = communityService.getIdsByReferenceDtos(contactCriteria.getCommunities());
+				extendFilterBuilderWithSimpleValue(
+					contactFilterBuilder,
+					filterBuilderParameters,
+					Contact.TABLE_NAME,
+					Contact.COMMUNITY + "_id",
+					communityIds,
+					entry -> entry);
+			}
+
+			if (CollectionUtils.isNotEmpty(contactCriteria.getHealthFacilities())) {
+				List<Long> facilityIds = facilityService.getIdsByReferenceDtos(contactCriteria.getHealthFacilities());
+				extendFilterBuilderWithSimpleValue(
+					contactFilterBuilder,
+					filterBuilderParameters,
+					Location.TABLE_NAME,
+					Location.FACILITY + "_id",
+					facilityIds,
+					entry -> entry);
+			}
+
+			if (CollectionUtils.isNotEmpty(contactCriteria.getReportingUserRoles())) {
+				List<Long> userRoleIds = userRoleService.getIdsByReferenceDtos(contactCriteria.getReportingUserRoles());
+				extendFilterBuilderWithSimpleValue(
+					contactFilterBuilder,
+					filterBuilderParameters,
+					User.TABLE_NAME_USERROLES,
+					UserDto.COLUMN_NAME_USERROLE,
+					userRoleIds,
+					entry -> entry);
+			}
+			
+			if (CollectionUtils.isNotEmpty(contactCriteria.getFollowUpStatuses())) {
+				extendFilterBuilderWithSimpleValue(
+					contactFilterBuilder,
+					filterBuilderParameters,
+					Contact.TABLE_NAME,
+					Contact.FOLLOW_UP_STATUS,
+					contactCriteria.getFollowUpStatuses(),
+					entry -> entry.name());
+			}
+
+			//////////////
+			// 3. Add selected groupings
+			/////////////
+
+			String groupingSelectQueryA = null, groupingSelectQueryB = null;
+			StringBuilder caseGroupByBuilder = new StringBuilder();
+			StringBuilder orderByBuilder = new StringBuilder();
+			String groupAAlias = "groupA";
+			String groupBAlias = "groupB";
+
+			if (groupingA != null || groupingB != null) {
+				caseGroupByBuilder.append(" GROUP BY ");
+
+				if (groupingA != null) {
+					groupingSelectQueryA = buildContactGroupingSelectQuery(groupingA, subGroupingA, groupAAlias);
+					caseGroupByBuilder.append(groupAAlias);
+				}
+				if (groupingB != null) {
+					groupingSelectQueryB = buildContactGroupingSelectQuery(groupingB, subGroupingB, groupBAlias);
+					if (groupingA != null) {
+						caseGroupByBuilder.append(",");
+					}
+					caseGroupByBuilder.append(groupBAlias);
 				}
 			}
 
-			if (agesList.size() > 0) {
-				extendFilterBuilderWithSimpleValue(subFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
-						Contact.CONTACT_AGE, agesList, value -> value);
-			}
+			//////////////
+			// 4. Order results
+			/////////////
 
-			if (upperRangeBoundary != null) {
-				if (subFilterBuilder.length() > 0) {
-					subFilterBuilder.append(" OR ");
-				}
-				subFilterBuilder.append(Person.TABLE_NAME).append(".").append(Person.APPROXIMATE_AGE).append(" >= ?").append(filterBuilderParameters.size() + 1);
-				// subFilterBuilder.append(Contact.TABLE_NAME).append(".").append(Contact.CONTACT_AGE).append(" >= ?")
-				// 		.append(filterBuilderParameters.size() + 1);
-				filterBuilderParameters.add(upperRangeBoundary);
-			}
-
-			if (appendUnknown) {
-				if (subFilterBuilder.length() > 0) {
-					subFilterBuilder.append(" OR ");
-				}
-				subFilterBuilder.append(Contact.TABLE_NAME).append(".").append(Contact.CONTACT_AGE).append(" IS NULL");
-			}
-
-			contactFilterBuilder.append(subFilterBuilder);
-			contactFilterBuilder.append(")");
-		}
-
-		if (CollectionUtils.isNotEmpty(contactCriteria.getDiseases())) {
-			extendFilterBuilderWithSimpleValue(contactFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
-					Contact.DISEASE, contactCriteria.getDiseases(), entry -> entry.name());
-		}
-
-		if (CollectionUtils.isNotEmpty(contactCriteria.getClassifications())) {
-			extendFilterBuilderWithSimpleValue(contactFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
-					Contact.CONTACT_CLASSIFICATION, contactCriteria.getClassifications(), entry -> entry.name());
-		}
-
-		if (CollectionUtils.isNotEmpty(contactCriteria.getFollowUpStatuses())) {
-			extendFilterBuilderWithSimpleValue(contactFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
-					Contact.FOLLOW_UP_STATUS, contactCriteria.getFollowUpStatuses(), entry -> entry.name());
-		}
-
-		if (CollectionUtils.isNotEmpty(contactCriteria.getRegions())) {
-			List<Long> regionIds = regionService.getIdsByReferenceDtos(contactCriteria.getRegions());
-			extendFilterBuilderWithSimpleValue(contactFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
-					Contact.REGION + "_id", regionIds, entry -> entry);
-		}
-
-		List<Long> districtIds;
-		if (CollectionUtils.isNotEmpty(contactCriteria.getDistricts())) {
-			districtIds = districtService.getIdsByReferenceDtos(contactCriteria.getDistricts());
-			extendFilterBuilderWithSimpleValue(contactFilterBuilder, filterBuilderParameters, Contact.TABLE_NAME,
-					Contact.DISTRICT + "_id", districtIds, entry -> entry);
-		} else {
-			districtIds = null;
-		}
-
-		if (CollectionUtils.isNotEmpty(contactCriteria.getCommunities())) {
-			List<Long> communityIds = communityService.getIdsByReferenceDtos(contactCriteria.getCommunities());
-			extendFilterBuilderWithSimpleValue(
-				contactFilterBuilder,
-				filterBuilderParameters,
-				Contact.TABLE_NAME,
-				Contact.COMMUNITY + "_id",
-				communityIds,
-				entry -> entry);
-		}
-
-		if (CollectionUtils.isNotEmpty(contactCriteria.getReportingUserRoles())) {
-			extendFilterBuilderWithSimpleValue(
-				contactFilterBuilder,
-				filterBuilderParameters,
-				User.TABLE_NAME_USERROLES,
-				UserDto.COLUMN_NAME_USERROLE,
-				contactCriteria.getReportingUserRoles(),
-				entry -> entry.name());
-		// if (CollectionUtils.isNotEmpty(caseCriteria.getReportingUserRoles())) {
-		// 	extendFilterBuilderWithSimpleValue(contactFilterBuilder, filterBuilderParameters, User.TABLE_NAME_USERROLES,
-		// 			UserDto.COLUMN_NAME_USERROLE, caseCriteria.getReportingUserRoles(), entry -> entry.getCaption());
-		}
-
-		//////////////
-		// 3. Add selected groupings
-		/////////////
-
-		String groupingSelectQueryA = null, groupingSelectQueryB = null;
-		StringBuilder contactGroupByBuilder = new StringBuilder();
-		StringBuilder orderByBuilder = new StringBuilder();
-		String groupAAlias = "groupA";
-		String groupBAlias = "groupB";
-
-		if (groupingA != null || groupingB != null) {
-			contactGroupByBuilder.append(" GROUP BY ");
-
+			orderByBuilder.append(" ORDER BY ");
 			if (groupingA != null) {
-				groupingSelectQueryA = buildContactGroupingSelectQuery(groupingA, subGroupingA, groupAAlias);
-				contactGroupByBuilder.append(groupAAlias);
+				orderByBuilder.append(groupAAlias).append(" NULLS LAST");
 			}
 			if (groupingB != null) {
-				groupingSelectQueryB = buildContactGroupingSelectQuery(groupingB, subGroupingB, groupBAlias);
-				contactGroupByBuilder.append(",").append(groupBAlias);
+				if (groupingA != null) {
+					orderByBuilder.append(",");
+				}
+				orderByBuilder.append(groupBAlias).append(" NULLS LAST");
 			}
-		}
 
-		//////////////
-		// 4. Order results
-		/////////////
+			StringBuilder queryBuilder = new StringBuilder();
 
-		orderByBuilder.append(" ORDER BY ");
-		if (groupingA != null) {
-			orderByBuilder.append(groupAAlias).append(" NULLS LAST");
-		}
-		if (groupingB != null) {
-			if (groupingA != null) {
-				orderByBuilder.append(",");
+			queryBuilder.append("SELECT COUNT(*) AS casecount ");
+
+			if (groupingSelectQueryA != null) {
+				queryBuilder.append(", ").append(groupingSelectQueryA);
+			} else {
+				queryBuilder.append(", null\\:\\:text AS ").append(groupAAlias);
 			}
-			orderByBuilder.append(groupBAlias).append(" NULLS LAST");
+			
+			if (groupingSelectQueryB != null) {
+				queryBuilder.append(", ").append(groupingSelectQueryB);
+			} else {
+				queryBuilder.append(", null\\:\\:text AS ").append(groupBAlias);
+			}
+
+			queryBuilder.append(" FROM ").append(Contact.TABLE_NAME).append(caseJoinBuilder).append(contactFilterBuilder).append(caseGroupByBuilder);
+
+			System.out.println("=======print queryBuilder======");
+
+			System.out.println(queryBuilder);
+			
+			System.out.println("=======print filterBuilderParameters======");
+
+			System.out.println(filterBuilderParameters);
+			
+			
+			if (groupingA != null || groupingB != null) {
+				queryBuilder.append(orderByBuilder);
+			}
+
+			return new ImmutablePair<String, List<Object>>(queryBuilder.toString(), filterBuilderParameters);
 		}
 
-		StringBuilder queryBuilder = new StringBuilder();
-
-		queryBuilder.append("SELECT COUNT(*) AS casecount ");
-
-		if (groupingSelectQueryA != null) {
-			queryBuilder.append(", ").append(groupingSelectQueryA);
-		} else {
-			queryBuilder.append(", null\\:\\:text AS ").append(groupAAlias);
-		}
-		if (groupingSelectQueryB != null) {
-			queryBuilder.append(", ").append(groupingSelectQueryB);
-		} else {
-			queryBuilder.append(", null\\:\\:text AS ").append(groupBAlias);
-		}
-
-		queryBuilder.append(" FROM ").append(Contact.TABLE_NAME).append(contactJoinBuilder).append(contactFilterBuilder).append(contactGroupByBuilder);
-		// queryBuilder.append(" FROM ").append(Contact.TABLE_NAME).append(contactJoinBuilder).append(contactFilterBuilder)
-		// 		.append(contactGroupByBuilder);
-
-		if (groupingA != null || groupingB != null) {
-			queryBuilder.append(orderByBuilder);
-		}
-
-		return new ImmutablePair<String, List<Object>>(queryBuilder.toString(), filterBuilderParameters);
-	}
 
 	/**
 	 * Builds SQL query string and list of parameters (for filters)
@@ -1227,6 +2004,14 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 		String groupBAlias = "groupB";
 		String groupASelect = buildPopulationGroupingSelect(groupingA, subGroupingA);
 		String groupBSelect = buildPopulationGroupingSelect(groupingB, subGroupingB);
+		
+		System.out.println("======groupASelect====");
+
+		System.out.println(groupASelect);
+		
+		System.out.println("======groupBSelect====");
+
+		System.out.println(groupBSelect);
 
 		StringBuilder groupByBuilder = new StringBuilder();
 		if (groupASelect != null || groupBSelect != null) {
@@ -1279,12 +2064,12 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 
 			communityIds = communityService.getIdsByReferenceDtos(contactCriteria.getCommunities());
 			extendFilterBuilderWithSimpleValue(
-					whereBuilder,
-					filterBuilderParameters,
-					PopulationData.TABLE_NAME,
-					PopulationData.COMMUNITY + "_id",
-					communityIds,
-					entry -> entry);
+				whereBuilder,
+				filterBuilderParameters,
+				PopulationData.TABLE_NAME,
+				PopulationData.COMMUNITY + "_id",
+				communityIds,
+				entry -> entry);
 			usesCommunitys = true;
 		} else {
 			// limit either to entries with community or to entries without community
@@ -1420,7 +2205,8 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 		}
 		selectBuilder.append(groupASelect).append(", ").append(groupBSelect);
 		selectBuilder.append(" FROM ").append(PopulationData.TABLE_NAME);
-
+		
+	
 		// growth rates to calculate the population
 		selectBuilder.append(" LEFT JOIN ");
 		if (communityIds != null || subGroupingA == StatisticsSubAttribute.COMMUNITY || subGroupingB == StatisticsSubAttribute.COMMUNITY) {
@@ -1430,9 +2216,7 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 				.append(" = ")
 				.append(PopulationData.COMMUNITY)
 				.append("_id");
-		} else if (districtIds != null
-			|| subGroupingA == StatisticsSubAttribute.DISTRICT
-			|| subGroupingB == StatisticsSubAttribute.DISTRICT) {
+		} else if (districtIds != null || subGroupingA == StatisticsSubAttribute.DISTRICT || subGroupingB == StatisticsSubAttribute.DISTRICT) {
 			selectBuilder.append(District.TABLE_NAME)
 				.append(" AS growthsource ON growthsource.")
 				.append(District.ID)
@@ -1691,6 +2475,11 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 			case COMMUNITY:
 				groupingSelectPartBuilder.append(Community.TABLE_NAME).append(".").append(Community.ID).append(" AS ").append(groupAlias);
 				break;
+				
+			case FACILITY:
+				groupingSelectPartBuilder.append(Facility.TABLE_NAME).append(".").append(Facility.ID).append(" AS ").append(groupAlias);
+				break;
+				
 			default:
 				throw new IllegalArgumentException(subGrouping.toString());
 			}
@@ -1704,33 +2493,33 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 		case AGE_INTERVAL_BASIC:
 			extendGroupingBuilderWithAgeInterval(groupingSelectPartBuilder, grouping, groupAlias);
 			break;
-		case ONSET_TIME:
-			switch (subGrouping) {
-			case YEAR:
-				extendGroupingBuilderWithDate(groupingSelectPartBuilder, "YEAR", Symptoms.TABLE_NAME, Symptoms.ONSET_DATE, groupAlias);
-				break;
-			case QUARTER:
-				extendGroupingBuilderWithDate(groupingSelectPartBuilder, "QUARTER", Symptoms.TABLE_NAME, Symptoms.ONSET_DATE, groupAlias);
-				break;
-			case MONTH:
-				extendGroupingBuilderWithDate(groupingSelectPartBuilder, "MONTH", Symptoms.TABLE_NAME, Symptoms.ONSET_DATE, groupAlias);
-				break;
-			case EPI_WEEK:
-				extendGroupingBuilderWithEpiWeek(groupingSelectPartBuilder, Symptoms.TABLE_NAME, Symptoms.ONSET_DATE, groupAlias);
-				break;
-			case QUARTER_OF_YEAR:
-				extendGroupingBuilderWithQuarterOfYear(groupingSelectPartBuilder, Symptoms.TABLE_NAME, Symptoms.ONSET_DATE, groupAlias);
-				break;
-			case MONTH_OF_YEAR:
-				extendGroupingBuilderWithMonthOfYear(groupingSelectPartBuilder, Symptoms.TABLE_NAME, Symptoms.ONSET_DATE, groupAlias);
-				break;
-			case EPI_WEEK_OF_YEAR:
-				extendGroupingBuilderWithEpiWeekOfYear(groupingSelectPartBuilder, Symptoms.TABLE_NAME, Symptoms.ONSET_DATE, groupAlias);
-				break;
-			default:
-				throw new IllegalArgumentException(subGrouping.toString());
-			}
-			break;
+//		case ONSET_TIME:
+//			switch (subGrouping) {
+//			case YEAR:
+//				extendGroupingBuilderWithDate(groupingSelectPartBuilder, "YEAR", Symptoms.TABLE_NAME, Contact.ONSET_DATE, groupAlias);
+//				break;
+//			case QUARTER:
+//				extendGroupingBuilderWithDate(groupingSelectPartBuilder, "QUARTER", Symptoms.TABLE_NAME, Contact.ONSET_DATE, groupAlias);
+//				break;
+//			case MONTH:
+//				extendGroupingBuilderWithDate(groupingSelectPartBuilder, "MONTH", Contact.TABLE_NAME, Contact.ONSET_DATE, groupAlias);
+//				break;
+//			case EPI_WEEK:
+//				extendGroupingBuilderWithEpiWeek(groupingSelectPartBuilder, Contact.TABLE_NAME, Contact.ONSET_DATE, groupAlias);
+//				break;
+//			case QUARTER_OF_YEAR:
+//				extendGroupingBuilderWithQuarterOfYear(groupingSelectPartBuilder, Contact.TABLE_NAME, Contact.ONSET_DATE, groupAlias);
+//				break;
+//			case MONTH_OF_YEAR:
+//				extendGroupingBuilderWithMonthOfYear(groupingSelectPartBuilder, Contact.TABLE_NAME, Contact.ONSET_DATE, groupAlias);
+//				break;
+//			case EPI_WEEK_OF_YEAR:
+//				extendGroupingBuilderWithEpiWeekOfYear(groupingSelectPartBuilder, Contact.TABLE_NAME, Contact.ONSET_DATE, groupAlias);
+//				break;
+//			default:
+//				throw new IllegalArgumentException(subGrouping.toString());
+//			}
+//			break;
 		case REPORT_TIME:
 			switch (subGrouping) {
 			case YEAR:
@@ -1758,39 +2547,42 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 				throw new IllegalArgumentException(subGrouping.toString());
 			}
 			break;
-		case OUTCOME_TIME:
-			switch (subGrouping) {
-			case YEAR:
-				extendGroupingBuilderWithDate(groupingSelectPartBuilder, "YEAR", Contact.TABLE_NAME, Contact.LAST_CONTACT_DATE, groupAlias);
-				break;
-			case QUARTER:
-				extendGroupingBuilderWithDate(groupingSelectPartBuilder, "QUARTER", Contact.TABLE_NAME, Contact.LAST_CONTACT_DATE, groupAlias);
-				break;
-			case MONTH:
-				extendGroupingBuilderWithDate(groupingSelectPartBuilder, "MONTH", Contact.TABLE_NAME, Contact.LAST_CONTACT_DATE, groupAlias);
-				break;
-			case EPI_WEEK:
-				extendGroupingBuilderWithEpiWeek(groupingSelectPartBuilder, Contact.TABLE_NAME, Contact.LAST_CONTACT_DATE, groupAlias);
-				break;
-			case QUARTER_OF_YEAR:
-				extendGroupingBuilderWithQuarterOfYear(groupingSelectPartBuilder, Contact.TABLE_NAME, Contact.LAST_CONTACT_DATE, groupAlias);
-				break;
-			case MONTH_OF_YEAR:
-				extendGroupingBuilderWithMonthOfYear(groupingSelectPartBuilder, Contact.TABLE_NAME, Contact.LAST_CONTACT_DATE, groupAlias);
-				break;
-			case EPI_WEEK_OF_YEAR:
-				extendGroupingBuilderWithEpiWeekOfYear(groupingSelectPartBuilder, Contact.TABLE_NAME, Contact.LAST_CONTACT_DATE, groupAlias);
-				break;
-			default:
-				throw new IllegalArgumentException(subGrouping.toString());
-			}
-			break;
+//		case OUTCOME_TIME:
+//			switch (subGrouping) {
+//			case YEAR:
+//				extendGroupingBuilderWithDate(groupingSelectPartBuilder, "YEAR", Contact.TABLE_NAME, Contact.LAST_CONTACT_DATE, groupAlias);
+//				break;
+//			case QUARTER:
+//				extendGroupingBuilderWithDate(groupingSelectPartBuilder, "QUARTER", Contact.TABLE_NAME, Contact.LAST_CONTACT_DATE, groupAlias);
+//				break;
+//			case MONTH:
+//				extendGroupingBuilderWithDate(groupingSelectPartBuilder, "MONTH", Contact.TABLE_NAME, Contact.LAST_CONTACT_DATE, groupAlias);
+//				break;
+//			case EPI_WEEK:
+//				extendGroupingBuilderWithEpiWeek(groupingSelectPartBuilder, Contact.TABLE_NAME, Contact.LAST_CONTACT_DATE, groupAlias);
+//				break;
+//			case QUARTER_OF_YEAR:
+//				extendGroupingBuilderWithQuarterOfYear(groupingSelectPartBuilder, Contact.TABLE_NAME, Contact.LAST_CONTACT_DATE, groupAlias);
+//				break;
+//			case MONTH_OF_YEAR:
+//				extendGroupingBuilderWithMonthOfYear(groupingSelectPartBuilder, Contact.TABLE_NAME, Contact.LAST_CONTACT_DATE, groupAlias);
+//				break;
+//			case EPI_WEEK_OF_YEAR:
+//				extendGroupingBuilderWithEpiWeekOfYear(groupingSelectPartBuilder, Contact.TABLE_NAME, Contact.LAST_CONTACT_DATE, groupAlias);
+//				break;
+//			default:
+//				throw new IllegalArgumentException(subGrouping.toString());
+//			}
+//			break;
 		case REPORTING_USER_ROLE:
 			groupingSelectPartBuilder.append(User.TABLE_NAME_USERROLES)
 				.append(".")
 				.append(UserDto.COLUMN_NAME_USERROLE)
 				.append(" AS ")
 				.append(groupAlias);
+			break;
+		case FOLLOW_UP_STATUS:
+			groupingSelectPartBuilder.append(Contact.TABLE_NAME).append(".").append(Contact.FOLLOW_UP_STATUS).append(" AS ").append(groupAlias);
 			break;
 		default:
 			throw new IllegalArgumentException(grouping.toString());

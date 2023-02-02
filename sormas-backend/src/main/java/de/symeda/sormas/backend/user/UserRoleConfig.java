@@ -83,4 +83,7 @@ public class UserRoleConfig extends AbstractDomainObject {
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
+	
+	
+	
 }

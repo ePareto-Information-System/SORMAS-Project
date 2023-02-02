@@ -31,6 +31,7 @@ import de.symeda.sormas.api.Quarter;
 import de.symeda.sormas.api.QuarterOfYear;
 import de.symeda.sormas.api.Year;
 import de.symeda.sormas.api.caze.CaseClassification;
+import de.symeda.sormas.api.caze.CaseFollowUpStatus;
 import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.person.Sex;
@@ -38,6 +39,7 @@ import de.symeda.sormas.api.region.CommunityReferenceDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.user.UserRole;
+import de.symeda.sormas.api.user.UserRoleReferenceDto;
 import de.symeda.sormas.api.utils.EpiWeek;
 
 public class StatisticsCaseCriteria implements Serializable {
@@ -87,8 +89,8 @@ public class StatisticsCaseCriteria implements Serializable {
 	private List<CommunityReferenceDto> personCommunities;
 	private String personCity;
 	private String personPostcode;
-	private List<UserRole> reportingUserRoles;
-
+	private List<UserRoleReferenceDto> reportingUserRoles;
+	private List<CaseFollowUpStatus> followUpStatuses;
 	public List<Year> getOnsetYears() {
 		return onsetYears;
 	}
@@ -261,8 +263,22 @@ public class StatisticsCaseCriteria implements Serializable {
 		return personPostcode;
 	}
 
-	public List<UserRole> getReportingUserRoles() {
+	
+
+	public List<UserRoleReferenceDto> getReportingUserRoles() {
 		return reportingUserRoles;
+	}
+
+	public void setReportingUserRoles(List<UserRoleReferenceDto> reportingUserRoles) {
+		this.reportingUserRoles = reportingUserRoles;
+	}
+
+	public List<CaseFollowUpStatus> getFollowUpStatuses() {
+		return followUpStatuses;
+	}
+
+	public void setFollowUpStatuses(List<CaseFollowUpStatus> followUpStatuses) {
+		this.followUpStatuses = followUpStatuses;
 	}
 
 	public StatisticsCaseCriteria years(List<Year> years, StatisticsCaseAttribute mainAttribute) {
@@ -500,10 +516,7 @@ public class StatisticsCaseCriteria implements Serializable {
 		return this;
 	}
 
-	public StatisticsCaseCriteria reportingUserRoles(List<UserRole> reportingUserRoles) {
-		this.reportingUserRoles = reportingUserRoles;
-		return this;
-	}
+	
 
 	public List<? extends StatisticsGroupingKey> getFilterValuesForGrouping(
 		StatisticsCaseAttribute attribute,

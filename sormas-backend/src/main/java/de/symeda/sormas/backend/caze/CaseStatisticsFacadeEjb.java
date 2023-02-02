@@ -53,16 +53,20 @@ import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 import de.symeda.sormas.api.statistics.StatisticsHelper;
 import de.symeda.sormas.api.user.UserDto;
-import de.symeda.sormas.backend.facility.Facility;
+import de.symeda.sormas.api.user.UserRoleReferenceDto;
+import de.symeda.sormas.backend.disease.DiseaseConfigurationFacadeEjb;
 import de.symeda.sormas.backend.facility.FacilityFacadeEjb.FacilityFacadeEjbLocal;
 import de.symeda.sormas.backend.facility.FacilityService;
 import de.symeda.sormas.backend.infrastructure.PopulationData;
+
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.person.Person;
 import de.symeda.sormas.backend.region.Community;
 import de.symeda.sormas.backend.region.CommunityFacadeEjb.CommunityFacadeEjbLocal;
 import de.symeda.sormas.backend.region.CommunityService;
 import de.symeda.sormas.backend.region.District;
+import de.symeda.sormas.backend.facility.Facility;
+
 import de.symeda.sormas.backend.region.DistrictFacadeEjb.DistrictFacadeEjbLocal;
 import de.symeda.sormas.backend.region.DistrictService;
 import de.symeda.sormas.backend.region.Region;
@@ -70,6 +74,8 @@ import de.symeda.sormas.backend.region.RegionFacadeEjb.RegionFacadeEjbLocal;
 import de.symeda.sormas.backend.region.RegionService;
 import de.symeda.sormas.backend.symptoms.Symptoms;
 import de.symeda.sormas.backend.user.User;
+import de.symeda.sormas.backend.user.UserRoleConfigFacadeEjb;
+import de.symeda.sormas.backend.user.UserRoleConfigService;
 import de.symeda.sormas.backend.util.ModelConstants;
 import de.symeda.sormas.backend.util.QueryHelper;
 
@@ -87,7 +93,13 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 	private CommunityService communityService;
 	@EJB
 	private FacilityService facilityService;
+	@EJB
+	private UserRoleConfigService userRoleService;
 
+	@EJB
+	private DiseaseConfigurationFacadeEjb.DiseaseConfigurationFacadeEjbLocal diseaseConfigurationFacade;
+	@EJB
+	private CaseFacadeEjb.CaseFacadeEjbLocal caseFacade;
 	@EJB
 	private RegionFacadeEjbLocal regionFacade;
 	@EJB
@@ -96,6 +108,8 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 	private CommunityFacadeEjbLocal communityFacade;
 	@EJB
 	private FacilityFacadeEjbLocal facilityFacade;
+	@EJB
+	private UserRoleConfigFacadeEjb.UserRoleConfigFacadeEjbLocal userRoleFacade;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -122,6 +136,7 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 		Function<Integer, DistrictReferenceDto> districtProvider = id -> districtFacade.getDistrictReferenceById(id);
 		Function<Integer, CommunityReferenceDto> communityProvider = id -> communityFacade.getCommunityReferenceById(id);
 		Function<Integer, FacilityReferenceDto> healthFacilityProvider = id -> facilityFacade.getFacilityReferenceById(id);
+		Function<Integer, UserRoleReferenceDto> userRoleProvider = id -> userRoleFacade.getUserRoleReferenceById(id);
 
 		List<StatisticsCaseCountDto> caseCountResults = ((Stream<Object[]>) caseCountQuery.getResultStream()).map(result -> {
 			Object rowKey = "".equals(result[1]) ? null : result[1];
@@ -136,7 +151,8 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 					regionProvider,
 					districtProvider,
 					communityProvider,
-					healthFacilityProvider),
+					healthFacilityProvider,
+					userRoleProvider),
 				StatisticsHelper.buildGroupingKey(
 					columnKey,
 					columnGrouping,
@@ -144,7 +160,8 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 					regionProvider,
 					districtProvider,
 					communityProvider,
-					healthFacilityProvider));
+					healthFacilityProvider,
+					userRoleProvider));
 		}).collect(Collectors.toList());
 
 		if (includeZeroValues) {
@@ -152,7 +169,14 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 			if (rowGrouping != null) {
 				allRowKeys = (List<StatisticsGroupingKey>) caseCriteria.getFilterValuesForGrouping(rowGrouping, rowSubGrouping);
 				if (allRowKeys == null) {
-					allRowKeys = StatisticsHelper.getAttributeGroupingKeys(rowGrouping, rowSubGrouping);
+					allRowKeys = StatisticsHelper.getAttributeGroupingKeys(
+						rowGrouping,
+						rowSubGrouping,
+						diseaseConfigurationFacade,
+						caseFacade,
+						regionFacade,
+						districtFacade,
+						userRoleFacade);
 				}
 			} else {
 				allRowKeys = Arrays.asList((StatisticsGroupingKey) null);
@@ -161,7 +185,14 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 			if (columnGrouping != null) {
 				allColumnKeys = (List<StatisticsGroupingKey>) caseCriteria.getFilterValuesForGrouping(columnGrouping, columnSubGrouping);
 				if (allColumnKeys == null) {
-					allColumnKeys = StatisticsHelper.getAttributeGroupingKeys(columnGrouping, columnSubGrouping);
+					allColumnKeys = StatisticsHelper.getAttributeGroupingKeys(
+						columnGrouping,
+						columnSubGrouping,
+						diseaseConfigurationFacade,
+						caseFacade,
+						regionFacade,
+						districtFacade,
+						userRoleFacade);
 				}
 			} else {
 				allColumnKeys = Arrays.asList((StatisticsGroupingKey) null);
@@ -200,7 +231,8 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 						regionProvider,
 						districtProvider,
 						communityProvider,
-						healthFacilityProvider),
+						healthFacilityProvider,
+						userRoleProvider),
 					StatisticsHelper.buildGroupingKey(
 						columnKey,
 						columnGrouping,
@@ -208,7 +240,8 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 						regionProvider,
 						districtProvider,
 						communityProvider,
-						healthFacilityProvider));
+						healthFacilityProvider,
+						userRoleProvider));
 			}).collect(Collectors.toList());
 
 			boolean rowIsPopulation = rowGrouping != null && rowGrouping.isPopulationData();
@@ -853,12 +886,23 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 		}
 
 		if (CollectionUtils.isNotEmpty(caseCriteria.getReportingUserRoles())) {
+			List<Long> userRoleIds = userRoleService.getIdsByReferenceDtos(caseCriteria.getReportingUserRoles());
 			extendFilterBuilderWithSimpleValue(
 				caseFilterBuilder,
 				filterBuilderParameters,
 				User.TABLE_NAME_USERROLES,
 				UserDto.COLUMN_NAME_USERROLE,
-				caseCriteria.getReportingUserRoles(),
+				userRoleIds,
+				entry -> entry);
+		}
+		
+		if (CollectionUtils.isNotEmpty(caseCriteria.getFollowUpStatuses())) {
+			extendFilterBuilderWithSimpleValue(
+				caseFilterBuilder,
+				filterBuilderParameters,
+				Case.TABLE_NAME,
+				Case.FOLLOW_UP_STATUS,
+				caseCriteria.getFollowUpStatuses(),
 				entry -> entry.name());
 		}
 
@@ -920,6 +964,14 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 
 		queryBuilder.append(" FROM ").append(Case.TABLE_NAME).append(caseJoinBuilder).append(caseFilterBuilder).append(caseGroupByBuilder);
 
+		System.out.println("=======print queryBuilder======");
+
+		System.out.println(queryBuilder);
+		
+		System.out.println("=======print filterBuilderParameters======");
+
+		System.out.println(filterBuilderParameters);
+		
 		if (groupingA != null || groupingB != null) {
 			queryBuilder.append(orderByBuilder);
 		}
@@ -998,12 +1050,12 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 
 			communityIds = communityService.getIdsByReferenceDtos(caseCriteria.getCommunities());
 			extendFilterBuilderWithSimpleValue(
-					whereBuilder,
-					filterBuilderParameters,
-					PopulationData.TABLE_NAME,
-					PopulationData.COMMUNITY + "_id",
-					communityIds,
-					entry -> entry);
+				whereBuilder,
+				filterBuilderParameters,
+				PopulationData.TABLE_NAME,
+				PopulationData.COMMUNITY + "_id",
+				communityIds,
+				entry -> entry);
 			usesCommunitys = true;
 		} else {
 			// limit either to entries with community or to entries without community
@@ -1513,6 +1565,9 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 				.append(UserDto.COLUMN_NAME_USERROLE)
 				.append(" AS ")
 				.append(groupAlias);
+			break;
+		case FOLLOW_UP_STATUS:
+			groupingSelectPartBuilder.append(Case.TABLE_NAME).append(".").append(Case.FOLLOW_UP_STATUS).append(" AS ").append(groupAlias);
 			break;
 		default:
 			throw new IllegalArgumentException(grouping.toString());

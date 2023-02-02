@@ -81,4 +81,6 @@ public class UserRoleConfigService extends AdoServiceWithUserFilter<UserRoleConf
 		List<String> results = (List<String>) nativeQuery.getResultList();
 		return results;
 	}
+
+
 }

@@ -62,6 +62,7 @@ import de.symeda.sormas.api.QuarterOfYear;
 import de.symeda.sormas.api.ReferenceDto;
 import de.symeda.sormas.api.Year;
 import de.symeda.sormas.api.contact.ContactClassification;
+import de.symeda.sormas.api.contact.ContactFollowUpStatus;
 import de.symeda.sormas.api.contact.ContactStatus;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.Descriptions;
@@ -81,6 +82,7 @@ import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 import de.symeda.sormas.api.statistics.StatisticsHelper;
 import de.symeda.sormas.api.statistics.StatisticsHelper.StatisticsKeyComparator;
 import de.symeda.sormas.api.user.UserRole;
+import de.symeda.sormas.api.user.UserRoleReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.EpiWeek;
 import de.symeda.sormas.api.utils.HtmlHelper;
@@ -1059,14 +1061,14 @@ public class StatisticsContactsView extends AbstractStatisticsView {
 			if (contactIncidencePossible && !visualizationComponent.hasRegionGrouping() && !visualizationComponent.hasDistrictGrouping() && !visualizationComponent.hasCommunityGrouping()) {
 				// we don't have a territorial grouping, so the system will sum up the population of all regions.
 				// make sure the user is informed about regions with missing population data
-
 				List<Long> missingPopulationDataRegionIds = FacadeProvider.getPopulationDataFacade()
-					.getContactMissingPopulationDataForStatistics(
-						contactCriteria,
-						false,
-						false,
-						visualizationComponent.hasSexGrouping(),
-						visualizationComponent.hasAgeGroupGroupingWithPopulationData());
+						.getContactMissingPopulationDataForStatistics(
+							contactCriteria,
+							false,
+							false,
+							visualizationComponent.hasSexGrouping(),
+							visualizationComponent.hasAgeGroupGroupingWithPopulationData());
+				
 				hasMissingPopulationData = missingPopulationDataRegionIds.size() > 0;
 				if (hasMissingPopulationData) {
 					contactIncidencePossible = false;
@@ -1236,6 +1238,15 @@ public class StatisticsContactsView extends AbstractStatisticsView {
 					contactCriteria.status(status);
 				}
 				break;
+			case FOLLOW_UP_STATUS:
+				if (filterElement.getSelectedValues() != null) {
+					List<ContactFollowUpStatus> statuses = new ArrayList<>();
+					for (TokenizableValue tokenizableValue : filterElement.getSelectedValues()) {
+						statuses.add((ContactFollowUpStatus) tokenizableValue.getValue());
+					}
+					contactCriteria.setFollowUpStatuses(statuses);
+				}
+				break;
 			case AGE_INTERVAL_1_YEAR:
 			case AGE_INTERVAL_5_YEARS:
 			case AGE_INTERVAL_CHILDREN_COARSE:
@@ -1317,11 +1328,11 @@ public class StatisticsContactsView extends AbstractStatisticsView {
 				break;
 			case REPORTING_USER_ROLE:
 				if (filterElement.getSelectedValues() != null) {
-					List<UserRole> reportingUserRoles = new ArrayList<>();
+					List<UserRoleReferenceDto> reportingUserRoles = new ArrayList<>();
 					for (TokenizableValue tokenizableValue : filterElement.getSelectedValues()) {
-						reportingUserRoles.add((UserRole) tokenizableValue.getValue());
+						reportingUserRoles.add((UserRoleReferenceDto) tokenizableValue.getValue());
 					}
-					contactCriteria.reportingUserRoles(reportingUserRoles);
+					contactCriteria.setReportingUserRoles(reportingUserRoles);
 				}
 				break;
 			default:

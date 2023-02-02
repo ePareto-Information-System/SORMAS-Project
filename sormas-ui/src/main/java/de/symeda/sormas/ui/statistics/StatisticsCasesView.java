@@ -82,6 +82,7 @@ import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 import de.symeda.sormas.api.statistics.StatisticsHelper;
 import de.symeda.sormas.api.statistics.StatisticsHelper.StatisticsKeyComparator;
 import de.symeda.sormas.api.user.UserRole;
+import de.symeda.sormas.api.user.UserRoleReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.EpiWeek;
 import de.symeda.sormas.api.utils.HtmlHelper;
@@ -1059,20 +1060,16 @@ public class StatisticsCasesView extends AbstractStatisticsView {
 			if (caseIncidencePossible && !visualizationComponent.hasRegionGrouping() && !visualizationComponent.hasDistrictGrouping() && !visualizationComponent.hasCommunityGrouping()) {
 				// we don't have a territorial grouping, so the system will sum up the population of all regions.
 				// make sure the user is informed about regions with missing population data
-
-				List<Long> missingPopulationDataRegionIds = FacadeProvider.getPopulationDataFacade()
-					.getMissingPopulationDataForStatistics(
-						caseCriteria,
-						false,
-						false,
-						visualizationComponent.hasSexGrouping(),
-						visualizationComponent.hasAgeGroupGroupingWithPopulationData());
+				List<Long> missingPopulationDataRegionIds = FacadeProvider.getPopulationDataFacade().getMissingPopulationDataForStatistics(caseCriteria,false,false,visualizationComponent.hasSexGrouping(),visualizationComponent.hasAgeGroupGroupingWithPopulationData());
+							
+			
 				hasMissingPopulationData = missingPopulationDataRegionIds.size() > 0;
 				if (hasMissingPopulationData) {
 					caseIncidencePossible = false;
 					List<String> missingPopulationDataNamesList = FacadeProvider.getRegionFacade().getNamesByIds(missingPopulationDataRegionIds);
 					missingPopulationDataNames = HtmlHelper.cleanHtml(String.join(", ", missingPopulationDataNamesList));
 				}
+
 			}
 
 			// Calculate projected population by either using the current year or, if a date filter has been selected, the maximum year from the date filter
@@ -1327,11 +1324,11 @@ public class StatisticsCasesView extends AbstractStatisticsView {
 				break;
 			case REPORTING_USER_ROLE:
 				if (filterElement.getSelectedValues() != null) {
-					List<UserRole> reportingUserRoles = new ArrayList<>();
+					List<UserRoleReferenceDto> reportingUserRoles = new ArrayList<>();
 					for (TokenizableValue tokenizableValue : filterElement.getSelectedValues()) {
-						reportingUserRoles.add((UserRole) tokenizableValue.getValue());
+						reportingUserRoles.add((UserRoleReferenceDto) tokenizableValue.getValue());
 					}
-					caseCriteria.reportingUserRoles(reportingUserRoles);
+					caseCriteria.setReportingUserRoles(reportingUserRoles);
 				}
 				break;
 			default:

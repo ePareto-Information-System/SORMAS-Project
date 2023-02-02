@@ -15,44 +15,41 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
-package de.symeda.sormas.api.user;
+package de.symeda.sormas.api.contact;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 
-import javax.ejb.Remote;
+public enum ContactFollowUpStatus
+	implements
+	StatisticsGroupingKey {
 
-@Remote
-public interface UserRoleConfigFacade {
+	FOLLOW_UP,
+	COMPLETED,
+	CANCELED,
+	LOST,
+	NO_FOLLOW_UP;
 
-	List<UserRoleConfigDto> getAllAfter(Date date);
+	public String getName() {
+		return this.name();
+	}
 
-	List<UserRoleConfigDto> getAll();
+	@Override
+	public String toString() {
+		return I18nProperties.getEnumCaption(this);
+	}
 
-	List<String> getAllUuids();
+	@Override
+	public int keyCompareTo(StatisticsGroupingKey o) {
 
-	List<String> getDeletedUuids(Date date);
+		if (o == null) {
+			throw new NullPointerException("Can't compare to null.");
+		}
+		if (o.getClass() != this.getClass()) {
+			throw new UnsupportedOperationException(
+				"Can't compare to class " + o.getClass().getName() + " that differs from " + this.getClass().getName());
+		}
 
-	UserRoleConfigDto getByUuid(String uuid);
-	
-	UserRoleReferenceDto getUserRoleReferenceById(long id);
-
-
-	UserRoleConfigDto saveUserRoleConfig(UserRoleConfigDto dto);
-
-	void deleteUserRoleConfig(UserRoleConfigDto dto);
-
-	/**
-	 * Will fallback to default user rights for each role that has no configuration defined
-	 */
-	Set<UserRight> getEffectiveUserRights(UserRole... userRoles);
-
-	Set<UserRole> getEnabledUserRoles();
-
-	Map<UserRole, Set<UserRight>> getAllAsMap();
-	
-	Set<UserRoleReferenceDto> getAllAsReference();
-
+		return this.toString().compareTo(o.toString());
+	}
 }

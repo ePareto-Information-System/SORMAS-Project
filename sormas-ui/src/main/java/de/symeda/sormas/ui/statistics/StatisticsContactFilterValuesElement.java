@@ -42,6 +42,7 @@ import de.symeda.sormas.api.region.CommunityReferenceDto;
 import de.symeda.sormas.api.region.DistrictReferenceDto;
 import de.symeda.sormas.api.region.RegionReferenceDto;
 import de.symeda.sormas.api.contact.ContactClassification;
+import de.symeda.sormas.api.contact.ContactFollowUpStatus;
 import de.symeda.sormas.api.contact.ContactStatus;
 import de.symeda.sormas.api.statistics.StatisticsContactAttribute;
 import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
@@ -228,6 +229,8 @@ public class StatisticsContactFilterValuesElement extends StatisticsFilterElemen
 				return createTokens(ContactClassification.values());
 			case STATUS:
 				return createTokens(ContactStatus.values());
+			case FOLLOW_UP_STATUS:
+				return createTokens(ContactFollowUpStatus.values());
 			case REPORTING_USER_ROLE:
 				return createTokens(UserRole.values());
 			default:
