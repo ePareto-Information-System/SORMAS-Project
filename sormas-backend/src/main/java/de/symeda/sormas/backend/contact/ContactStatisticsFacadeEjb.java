@@ -1788,8 +1788,8 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 					extendFilterBuilderWithSimpleValue(
 						subFilterBuilder,
 						filterBuilderParameters,
-						Contact.TABLE_NAME,
-						Contact.CONTACT_AGE,
+						Person.TABLE_NAME,
+						Person.APPROXIMATE_AGE,
 						agesList,
 						value -> value);
 				}
