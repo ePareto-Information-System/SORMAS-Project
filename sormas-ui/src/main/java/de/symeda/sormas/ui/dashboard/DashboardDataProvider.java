@@ -205,7 +205,7 @@ public class DashboardDataProvider {
 		setCaseWithReferenceDefinitionFulfilledCount(Long.valueOf(casesWithReferenceDefinitionFulfilled.size()));
 	}
 		
-		public void refreshDiseaseData() {
+	public void refreshDiseaseData() {
 		setDiseaseBurdenDetail(
 			FacadeProvider.getDiseaseFacade().getDiseaseForDashboard(region, district, disease, fromDate, toDate, previousFromDate, previousToDate));
 

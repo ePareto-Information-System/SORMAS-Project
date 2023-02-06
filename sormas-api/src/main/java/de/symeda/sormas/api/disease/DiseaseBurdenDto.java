@@ -299,9 +299,9 @@ public class DiseaseBurdenDto implements Serializable {
 	}
 
 
-	public DiseaseBurdenDto getDiseaseGridForDashboard(RegionReferenceDto reference, Object object, Disease disease2,
-			Date fromDate, Date toDate, Date previousFromDate, Date previousToDate) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	public DiseaseBurdenDto getDiseaseGridForDashboard(RegionReferenceDto reference, Object object, Disease disease2,
+//			Date fromDate, Date toDate, Date previousFromDate, Date previousToDate) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 }

@@ -50,6 +50,16 @@ public class RegionalDiseaseBurdenGrid extends Grid {
 		activeCaseColumn = getColumn(DiseaseBurdenDto.ACTIVE_CASE);
 		recoveredCasesColumn = getColumn(DiseaseBurdenDto.RECOVERED_CASES);
 		deathColumn = getColumn(DiseaseBurdenDto.DEATH);
+		
+		System.out.println("printing regionColumn");
+
+		System.out.println(regionColumn);
+		
+		System.out.println("printing totalColumn");
+
+		System.out.println(totalColumn);
+		
+		
 	}
 
 	public void refresh(){
@@ -78,7 +88,17 @@ public class RegionalDiseaseBurdenGrid extends Grid {
 								dashboardDataProvider.getToDate(),
 								dashboardDataProvider.getPreviousFromDate(),
 								dashboardDataProvider.getPreviousToDate());
+			
+			System.out.println("Print total"+regionDto.getName());
 
+			System.out.println(diseaseBurdenDto.getTotal());
+			
+			System.out.println("Print casePercental"+regionDto.getName());
+
+			System.out.println("Print casePercental"+casePercental);
+
+			
+			
 			diseaseBurdenDto.setTotal(makeDIvs(Long.parseLong(diseaseBurdenDto.getTotal()), casePercental, "#5a95f4bf","#2f7df9"));
 			diseaseBurdenDto.setActiveCases(makeDIvs(Long.parseLong(diseaseBurdenDto.getActiveCases()), casePercental,  "#feba0199", "#dfa507"));
 			diseaseBurdenDto.setRecovered(makeDIvs(Long.parseLong(diseaseBurdenDto.getRecovered()), casePercental, "#00e0a19c", "#038d66"));

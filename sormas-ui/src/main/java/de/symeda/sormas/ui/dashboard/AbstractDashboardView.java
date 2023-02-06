@@ -169,6 +169,12 @@ public abstract class AbstractDashboardView extends AbstractView {
 			dashboardSwitcher.addItem(DashboardType.CAMPAIGNS);
 			dashboardSwitcher.setItemCaption(DashboardType.CAMPAIGNS, I18nProperties.getEnumCaption(DashboardType.CAMPAIGNS));
 		}
+		
+		if (permitted(FeatureType.DISEASE_DETAILS,UserRight.DASHBOARD_DISEASE_DETAILS_ACCESS)) {
+			dashboardSwitcher.addItem(DashboardType.DISEASE);
+			dashboardSwitcher.setItemCaption(DashboardType.DISEASE, I18nProperties.getEnumCaption(DashboardType.DISEASE));		
+		}
+		
 		addHeaderComponent(dashboardSwitcher);
 
 		// Hide the dashboard switcher if only one dashboard is accessible to the user
@@ -217,10 +223,15 @@ public abstract class AbstractDashboardView extends AbstractView {
 
 	@Override
 	public void enter(ViewChangeEvent event) {
-		if (!DashboardType.DISEASE.equals(dashboardDataProvider.getDashboardType()))
-//			refreshDiseaseData();
-//		else
+		if (!DashboardType.DISEASE.equals(dashboardDataProvider.getDashboardType())) {
 			refreshDashboard();
+		}
+//		else {
+//			refreshDiseaseData();
+//		}
+			//
+//		else
+			
 	}
 
 	public void setDiseases(Disease disease) {

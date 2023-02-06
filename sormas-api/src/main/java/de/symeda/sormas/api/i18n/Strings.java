@@ -758,6 +758,8 @@ public interface Strings {
 	String infoContactCompletenessMerge = "infoContactCompletenessMerge";
 	String infoContactCreationSourceCase = "infoContactCreationSourceCase";
 	String infoContactDashboard = "infoContactDashboard";
+	String infoDiseaseDashboard = "infoDiseaseDashboard";
+
 	String infoContactMergeIgnoreRegion = "infoContactMergeIgnoreRegion";
 	String infoContactMergingExplanation = "infoContactMergingExplanation";
 	String infoContactMergingHideDescription = "infoContactMergingHideDescription";

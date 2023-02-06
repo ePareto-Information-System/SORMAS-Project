@@ -7,6 +7,7 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.ui.dashboard.AbstractDashboardView;
 import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
 import de.symeda.sormas.ui.dashboard.DashboardType;
+import de.symeda.sormas.ui.dashboard.contacts.components.ContactsFilterLayout;
 import de.symeda.sormas.ui.utils.ViewConfiguration;
 
 import static com.vaadin.navigator.ViewChangeListener.*;
@@ -21,8 +22,7 @@ public class DiseaseDetailsView extends AbstractDashboardView {
 
 	public DiseaseDetailsView() {
 		super(VIEW_NAME, DashboardType.DISEASE);
-		//filterLayout.setInfoLabelText(I18nProperties.getString(Strings.classificationForDisease));
-		//filterLayout = new DashboardFilterLayout(this, dashboardDataProvider);
+		
 		dashboardLayout.setSpacing(false);
 		
 		dashboardDataProvider = new DashboardDataProvider();
@@ -30,10 +30,13 @@ public class DiseaseDetailsView extends AbstractDashboardView {
 		if (dashboardDataProvider.getDashboardType() == null) {
 			dashboardDataProvider.setDashboardType(DashboardType.DISEASE);
 		}
-		if (DashboardType.DISEASE.equals(dashboardDataProvider.getDashboardType())) {
-			dashboardDataProvider.setDisease(FacadeProvider.getDiseaseConfigurationFacade().getDefaultDisease());
-		}
+//		if (DashboardType.DISEASE.equals(dashboardDataProvider.getDashboardType())) {
+//			dashboardDataProvider.setDisease(FacadeProvider.getDiseaseConfigurationFacade().getDefaultDisease());
+//		}
 		
+
+		filterLayout = new DiseaseFilterLayout(this, dashboardDataProvider);
+		dashboardLayout.addComponent(filterLayout);
 		
 		dashboardSwitcher.setValue(DashboardType.DISEASE);
 		dashboardSwitcher.addValueChangeListener(e -> {
