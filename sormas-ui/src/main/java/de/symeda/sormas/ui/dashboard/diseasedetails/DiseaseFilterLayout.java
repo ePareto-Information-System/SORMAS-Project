@@ -11,6 +11,7 @@ import com.vaadin.v7.ui.ComboBox;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.NewCaseDateType;
+import de.symeda.sormas.api.dashboard.DashboardCriteria;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
@@ -29,12 +30,10 @@ public class DiseaseFilterLayout extends DashboardFilterLayout {
 	private DateTypeSelectorComponent dateTypeSelectorComponent;
 
 	private final static String[] DISEASE_FILTERS = new String[]{
-			INFO_LABEL,
-			REGION_FILTER, 
-			DISTRICT_FILTER,
-			DISEASE_FILTER,
 			DATE_TYPE_SELECTOR_FILTER,
-			CASE_CLASSIFICATION_FILTER 
+			REGION_FILTER,
+			DISTRICT_FILTER,
+			CASE_CLASSIFICATION_FILTER
 			};
 	private ComboBox diseaseFilter;
 
@@ -44,41 +43,18 @@ public class DiseaseFilterLayout extends DashboardFilterLayout {
 
 	@Override
 	public void populateLayout() {
+		
+		System.out.println("populateLayout dashboardDataProvider.getFromDate()");
+
+		System.out.println(dashboardDataProvider.getFromDate());
 
 		super.populateLayout();
-		createInfoLabel();
 		createRegionAndDistrictFilter();
 		createDateTypeSelectorFilter();
 		createCaseClassificationFilter();
-		if (dashboardDataProvider.getDashboardType() == DashboardType.DISEASE) {
-			createDiseaseFilter();
-		}
+
 	}
 
-	public boolean hasDiseaseSelected() {
-		return diseaseFilter.getValue() != null;
-	}
-
-	private void createInfoLabel() {
-		Label infoLabel = new Label(VaadinIcons.INFO_CIRCLE.getHtml(), ContentMode.HTML);
-		infoLabel.setSizeUndefined();
-		infoLabel.setDescription(I18nProperties.getString(Strings.infoDiseaseDashboard));
-		CssStyles.style(infoLabel, CssStyles.LABEL_XLARGE, CssStyles.LABEL_SECONDARY);
-
-		addCustomComponent(infoLabel, INFO_LABEL);
-	}
-
-	private void createDiseaseFilter() {
-		this.diseaseFilter = ComboBoxHelper.createComboBoxV7();
-		diseaseFilter.setWidth(200, Unit.PIXELS);
-		diseaseFilter.setInputPrompt(I18nProperties.getString(Strings.promptDisease));
-		diseaseFilter.addItems(FacadeProvider.getDiseaseConfigurationFacade().getAllDiseasesWithFollowUp(true, true, true).toArray());
-		diseaseFilter.setValue(dashboardDataProvider.getDisease());
-		diseaseFilter.addValueChangeListener(e -> {
-			dashboardDataProvider.setDisease((Disease) diseaseFilter.getValue());
-		});
-		addCustomComponent(diseaseFilter, DISEASE_FILTER);
-	}
 	public void addDateTypeValueChangeListener(Property.ValueChangeListener listener) {
 		dateTypeSelectorComponent.addValueChangeListener(listener);
 	}
@@ -89,6 +65,11 @@ public class DiseaseFilterLayout extends DashboardFilterLayout {
 				.build();
 		dateTypeSelectorComponent.setValue(dashboardDataProvider.getNewCaseDateType());
 		addCustomComponent(dateTypeSelectorComponent, DATE_TYPE_SELECTOR_FILTER);
+	}
+
+	public void setCriteria(DashboardCriteria criteria) {
+		super.setCriteria(criteria);
+		dateTypeSelectorComponent.setValue(criteria.getNewCaseDateType());
 	}
 	
 }

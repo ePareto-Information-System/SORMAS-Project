@@ -23,14 +23,18 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.filterLocs;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.vaadin.hene.popupbutton.PopupButton;
 
 import com.vaadin.event.ShortcutAction;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.shared.ui.MarginInfo;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomLayout;
@@ -42,6 +46,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.ui.ComboBox;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.caze.CaseClassification;
@@ -71,7 +76,7 @@ import de.symeda.sormas.ui.utils.DateFormatHelper;
 import de.symeda.sormas.ui.utils.EpiWeekAndDateFilterComponent;
 
 @SuppressWarnings("serial")
-public abstract class DashboardFilterLayout extends HorizontalLayout {
+public  class DashboardFilterLayout extends HorizontalLayout {
 
 	public static final String DATE_FILTER = "dateFilter";
 	public static final String REGION_FILTER = "regionFilter";
@@ -98,6 +103,7 @@ public abstract class DashboardFilterLayout extends HorizontalLayout {
 	private PopupButton btnComparisonPeriod;
 	private Set<Button> dateFilterButtons;
 	private Set<Button> dateComparisonButtons;
+	private Label infoLabel;
 
 	// Buttons
 	private Button btnShowCustomPeriod;
@@ -111,6 +117,8 @@ public abstract class DashboardFilterLayout extends HorizontalLayout {
 	private Button activeComparisonButton;
 	private Button resetButton;
 	private Button applyButton;
+	private ComboBox diseaseFilter;
+	private Consumer<Boolean> diseaseFilterChangeCallback;
 
 
 	private DateFilterType currentDateFilterType;
@@ -150,7 +158,7 @@ public abstract class DashboardFilterLayout extends HorizontalLayout {
 		populateLayout();
 
 		//createDateFilters();
-//		createRegionAndDistrictFilter();
+		//createRegionAndDistrictFilter();
 		if (dashboardDataProvider.getDashboardType() == DashboardType.SURVEILLANCE) {
 			createRegionAndDistrictFilter();
 		}
@@ -159,13 +167,71 @@ public abstract class DashboardFilterLayout extends HorizontalLayout {
 			//createDiseaseFilter();
 		}
 	}
+	
+	
+	public DashboardFilterLayout(AbstractDashboardView dashboardView, DashboardDataProvider dashboardDataProvider) {
+		this.dashboardView = dashboardView;
+		this.dashboardDataProvider = dashboardDataProvider;
+		this.regionFilter = new ComboBox();
+		this.districtFilter = new ComboBox();
+		this.diseaseFilter = new ComboBox();
+		dateFilterButtons = new HashSet<>();
+		dateComparisonButtons = new HashSet<>();
+
+		setSpacing(true);
+		setSizeUndefined();
+		setMargin(new MarginInfo(true, true, false, true));
+
+		
+		System.out.println("DashboardFilterLayout constructor dashboardDataProvider.getFromDate()");
+
+		System.out.println(dashboardDataProvider.getFromDate());
+		
+		System.out.println(dashboardDataProvider.getDateFilterType());
+		
+		System.out.println(dashboardDataProvider.getDisease());
+
+
+		
+		createDateFiltersNew(dashboardDataProvider);
+		
+		//createRegionAndDistrictFilter();
+		if (dashboardDataProvider.getDashboardType() == DashboardType.SURVEILLANCE) {
+			createRegionAndDistrictFilter();
+		}
+		if (dashboardDataProvider.getDashboardType() == DashboardType.CONTACTS) {
+			createRegionAndDistrictFilter();
+			createDiseaseFilter();
+		}
+	}
+	
+	private void createDiseaseFilter() {
+		diseaseFilter.setWidth(200, Unit.PIXELS);
+		diseaseFilter.setInputPrompt(I18nProperties.getString(Strings.promptDisease));
+		if (dashboardDataProvider.getDashboardType() == DashboardType.CONTACTS) {
+			diseaseFilter.addItems(FacadeProvider.getDiseaseConfigurationFacade().getAllDiseasesWithFollowUp(true, true, true).toArray());
+			diseaseFilter.setValue(dashboardDataProvider.getDisease());
+		} else {
+			diseaseFilter.addItems(FacadeProvider.getDiseaseConfigurationFacade().getAllDiseases(true, true, true).toArray());
+		}
+		diseaseFilter.addValueChangeListener(e -> {
+			if (diseaseFilterChangeCallback != null) {
+				diseaseFilterChangeCallback.accept(diseaseFilter.getValue() != null);
+			}
+			dashboardDataProvider.setDisease((Disease) diseaseFilter.getValue());
+			dashboardView.refreshDashboard();
+		});
+		addComponent(diseaseFilter);
+	}
 
 	public void populateLayout() {
 		createDateFilters();
 		createResetAndApplyButtons();
 	}
 
-	
+	public void setInfoLabelText(String text) {
+		infoLabel.setDescription(text);
+	}
 
 	//Case Classification filter
 	public void createCaseClassificationFilter() {
@@ -256,6 +322,12 @@ public abstract class DashboardFilterLayout extends HorizontalLayout {
 
 		dateFilterLayout.addComponents(btnCurrentPeriod, lblComparedTo, btnComparisonPeriod);
 
+//		infoLabel = new Label(VaadinIcons.INFO_CIRCLE.getHtml(), ContentMode.HTML);
+//		infoLabel.setSizeUndefined();
+//		CssStyles.style(infoLabel, CssStyles.LABEL_XLARGE, CssStyles.LABEL_SECONDARY);
+//		addComponent(infoLabel);
+//		setComponentAlignment(infoLabel, Alignment.TOP_RIGHT);
+		
 		// Set initial date filter
 		CssStyles.style(btnThisWeek, CssStyles.BUTTON_FILTER_DARK);
 		CssStyles.removeStyles(btnThisWeek, CssStyles.BUTTON_FILTER_LIGHT);
@@ -275,6 +347,63 @@ public abstract class DashboardFilterLayout extends HorizontalLayout {
 
 		}
 
+	}
+	
+	private void createDateFiltersNew(DashboardDataProvider dashboardDataProvider) {
+		HorizontalLayout dateFilterLayout = new HorizontalLayout();
+		dateFilterLayout.setSpacing(true);
+		CssStyles.style(dateFilterLayout, CssStyles.VSPACE_3);
+		addComponent(dateFilterLayout);
+
+		btnCurrentPeriod = ButtonHelper.createIconPopupButton(
+			"currentPeriod",
+			null,
+			new VerticalLayout(createDateFilterButtonsLayout(), createCustomDateFilterLayout()),
+			CssStyles.BUTTON_FILTER,
+			CssStyles.BUTTON_FILTER_LIGHT);
+
+		Label lblComparedTo = new Label(I18nProperties.getCaption(Captions.dashboardComparedTo));
+		CssStyles.style(lblComparedTo, CssStyles.VSPACE_TOP_4, CssStyles.LABEL_BOLD);
+
+		btnComparisonPeriod = ButtonHelper.createIconPopupButton(
+			"comparisonPeriod",
+			null,
+			createDateComparisonButtonsLayout(),
+			ValoTheme.BUTTON_BORDERLESS,
+			CssStyles.BUTTON_FILTER,
+			CssStyles.BUTTON_FILTER_LIGHT);
+
+		dateFilterLayout.addComponents(btnCurrentPeriod, lblComparedTo, btnComparisonPeriod);
+
+		infoLabel = new Label(VaadinIcons.INFO_CIRCLE.getHtml(), ContentMode.HTML);
+		infoLabel.setSizeUndefined();
+		CssStyles.style(infoLabel, CssStyles.LABEL_XLARGE, CssStyles.LABEL_SECONDARY);
+		addComponent(infoLabel);
+		setComponentAlignment(infoLabel, Alignment.TOP_RIGHT);
+
+		// Set initial date filter
+		CssStyles.style(btnThisWeek, CssStyles.BUTTON_FILTER_DARK);
+		CssStyles.removeStyles(btnThisWeek, CssStyles.BUTTON_FILTER_LIGHT);
+		CssStyles.style(btnPeriodBefore, CssStyles.BUTTON_FILTER_DARK);
+		CssStyles.removeStyles(btnPeriodBefore, CssStyles.BUTTON_FILTER_LIGHT);
+		activeComparisonButton = btnPeriodBefore;
+		
+		
+		System.out.println("got date dashboardDataProvider.getFromDate()");
+
+		System.out.println(dashboardDataProvider.getFromDate());
+		
+		System.out.println(dashboardDataProvider.getDateFilterType());
+		
+		setDateFilter(dashboardDataProvider.getFromDate(), dashboardDataProvider.getToDate());
+		
+		
+		//setDateFilter(DateHelper.getStartOfWeek(new Date()), new Date());
+		
+		updateComparisonButtons(dashboardDataProvider.getDateFilterType(), dashboardDataProvider.getFromDate(), dashboardDataProvider.getToDate(), false);
+
+		//updateComparisonButtons(DateFilterType.THIS_WEEK, DateHelper.getStartOfWeek(new Date()), new Date(), false);
+		btnCurrentPeriod.setCaption(btnThisWeek.getCaption());
 	}
 
 	private HorizontalLayout createDateFilterButtonsLayout() {
@@ -781,6 +910,8 @@ public abstract class DashboardFilterLayout extends HorizontalLayout {
 		String params = event.getParameters().trim();
 		if (params.startsWith("?")) {
 			params = params.substring(1);
+			System.out.println("===params===");
+			System.out.println(params);
 			criteria.fromUrlParams(params);
 			updateFilterDates(criteria);
 		}

@@ -2249,15 +2249,26 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 				filter,
 				cb.equal(from.join(Case.SURVEILLANCE_OFFICER, JoinType.LEFT).get(User.UUID), caseCriteria.getSurveillanceOfficer().getUuid()));
 		}
+		
 		if (caseCriteria.getCaseClassification() != null) {
+			
 			filter = AbstractAdoService.and(cb, filter, cb.equal(from.get(Case.CASE_CLASSIFICATION), caseCriteria.getCaseClassification()));
+		
+		}else {
+			filter = AbstractAdoService.and(cb, filter, cb.notEqual(from.get(Case.CASE_CLASSIFICATION), CaseClassification.NO_CASE));
+
 		}
+		
+
+
 		if (caseCriteria.getInvestigationStatus() != null) {
 			filter = AbstractAdoService.and(cb, filter, cb.equal(from.get(Case.INVESTIGATION_STATUS), caseCriteria.getInvestigationStatus()));
 		}
+		
 		if (caseCriteria.getPresentCondition() != null) {
 			filter = AbstractAdoService.and(cb, filter, cb.equal(person.get(Person.PRESENT_CONDITION), caseCriteria.getPresentCondition()));
 		}
+		
 		if (caseCriteria.getNewCaseDateFrom() != null && caseCriteria.getNewCaseDateTo() != null) {
 			filter = AbstractAdoService.and(
 				cb,

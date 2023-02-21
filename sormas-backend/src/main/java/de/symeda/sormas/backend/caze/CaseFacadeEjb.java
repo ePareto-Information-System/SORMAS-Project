@@ -55,6 +55,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -132,6 +133,8 @@ import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.contact.ContactCriteria;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.dashboard.DashboardCaseDto;
+import de.symeda.sormas.api.dashboard.DashboardCriteria;
 import de.symeda.sormas.api.document.DocumentRelatedEntityType;
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.epidata.EpiDataHelper;
@@ -4387,6 +4390,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			new CaseUserFilterCriteria().excludeSharedCases(excludeSharedCases).excludeCasesFromContacts(excludeCasesFromContacts));
 
 		filter = AbstractAdoService.and(cb, filter, caseService.createCriteriaFilter(caseCriteria, cb, cq, caze));
+		//filter = CriteriaBuilderHelper.and(cb, filter, createCaseCriteriaFilter(caseCriteria, cq));
 
 		if (filter != null) {
 			cq.where(filter);
@@ -4400,6 +4404,52 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 		return resultMap;
 	}
+	
+	private <T extends AbstractDomainObject> Predicate createCaseCriteriaFilter(
+			DashboardCriteria dashboardCriteria,
+			CaseQueryContext caseQueryContext) {
+
+			final From<?, Case> from = caseQueryContext.getRoot();
+			final CriteriaBuilder cb = caseQueryContext.getCriteriaBuilder();
+			final CaseJoins joins = caseQueryContext.getJoins();
+
+			Join<Case, Region> responsibleRegion = joins.getResponsibleRegion();
+			Join<Case, District> responsibleDistrict = joins.getResponsibleDistrict();
+
+			Predicate filter = null;
+			if (dashboardCriteria.getDisease() != null) {
+				filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Case.DISEASE), dashboardCriteria.getDisease()));
+			}
+			if (dashboardCriteria.getCaseClassification() != null) {
+				filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Case.CASE_CLASSIFICATION), dashboardCriteria.getCaseClassification()));
+			}
+			if (dashboardCriteria.getRegion() != null) {
+				filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(responsibleRegion.get(Region.UUID), dashboardCriteria.getRegion().getUuid()));
+			}
+			if (dashboardCriteria.getDistrict() != null) {
+				filter =
+					CriteriaBuilderHelper.and(cb, filter, cb.equal(responsibleDistrict.get(District.UUID), dashboardCriteria.getDistrict().getUuid()));
+			}
+			if (dashboardCriteria.getDateFrom() != null && dashboardCriteria.getDateTo() != null) {
+				filter = CriteriaBuilderHelper.and(
+					cb,
+					filter,
+					caseService.createNewCaseFilter(
+						caseQueryContext,
+						DateHelper.getStartOfDay(dashboardCriteria.getDateFrom()),
+						DateHelper.getEndOfDay(dashboardCriteria.getDateTo()),
+						dashboardCriteria.getNewCaseDateType()));
+			}
+			if (dashboardCriteria.isIncludeNotACaseClassification()==null||dashboardCriteria.isIncludeNotACaseClassification()==false) {
+				filter = CriteriaBuilderHelper
+					.and(cb, filter, cb.notEqual(caseQueryContext.getRoot().get(Case.CASE_CLASSIFICATION), CaseClassification.NO_CASE));
+			}
+
+			// Exclude deleted cases. Archived cases should stay included
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(from.get(Case.DELETED)));
+
+			return filter;
+		}
 	
 	public Map<Disease, District> getLastReportedDistrictByDisease(
 			CaseCriteria caseCriteria,
@@ -4441,4 +4491,76 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 			return resultMap;
 		}
+	
+	@Override
+	public List<DashboardCaseDto> getCasesForDashboard(CaseCriteria caseCriteria) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<DashboardCaseDto> cq = cb.createQuery(DashboardCaseDto.class);
+		Root<Case> caze = cq.from(Case.class);
+		Join<Case, Symptoms> symptoms = caze.join(Case.SYMPTOMS, JoinType.LEFT);
+		Join<Case, Person> person = caze.join(Case.PERSON, JoinType.LEFT);
+
+		Predicate filter =
+			caseService.createUserFilter(cb, cq, caze, new CaseUserFilterCriteria().excludeSharedCases(true).excludeCasesFromContacts(true));
+		Predicate criteriaFilter = caseService.createCriteriaFilter(caseCriteria, cb, cq, caze);
+		filter = AbstractAdoService.and(cb, filter, criteriaFilter);
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		List<DashboardCaseDto> result;
+		if (filter != null) {
+			cq.where(filter);
+			cq.multiselect(
+				caze.get(Case.ID),
+				caze.get(Case.UUID),
+				caze.get(Case.REPORT_DATE),
+				symptoms.get(Symptoms.ONSET_DATE),
+				caze.get(Case.CASE_CLASSIFICATION),
+				caze.get(Case.DISEASE),
+				caze.get(Case.INVESTIGATION_STATUS),
+				person.get(Person.PRESENT_CONDITION),
+				person.get(Person.CAUSE_OF_DEATH_DISEASE));
+
+			result = em.createQuery(cq).getResultList();
+		} else {
+			result = Collections.emptyList();
+		}
+
+		return result;
+	}
+	
+	@Override
+	public String getLastReportedDistrictName(CaseCriteria caseCriteria, boolean excludeSharedCases, boolean excludeCasesFromContacts) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<String> cq = cb.createQuery(String.class);
+		Root<Case> caze = cq.from(Case.class);
+		Join<Case, District> district = caze.join(Case.DISTRICT, JoinType.LEFT);
+
+		Predicate filter = caseService.createUserFilter(
+			cb,
+			cq,
+			caze,
+			new CaseUserFilterCriteria().excludeSharedCases(excludeSharedCases).excludeCasesFromContacts(excludeCasesFromContacts));
+
+		filter = AbstractAdoService.and(cb, filter, caseService.createCriteriaFilter(caseCriteria, cb, cq, caze));
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		cq.select(district.get(District.NAME));
+		cq.orderBy(cb.desc(caze.get(Case.REPORT_DATE)));
+
+		TypedQuery<String> query = em.createQuery(cq).setMaxResults(1);
+		try {
+			return query.getSingleResult();
+		} catch (NoResultException e) {
+			return "";
+		}
+	}
+
 }

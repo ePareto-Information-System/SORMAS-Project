@@ -67,6 +67,9 @@ public class DiseaseBurdenDto implements Serializable {
 	private RegionDto region;
 	private String recovered;
 	private String activeCases;
+	
+	private Date to;
+	private Date from;
 
 	public DiseaseBurdenDto(
 			RegionDto regionDto,
@@ -101,6 +104,30 @@ public class DiseaseBurdenDto implements Serializable {
 		this.caseDeathCount = caseDeathCount;
 		this.lastReportedDistrictName = lastReportedDistrictName;
 		this.outbreakDistrict = outbreakDistrict;
+	}
+	
+	public DiseaseBurdenDto(
+			Disease disease,
+			Long caseCount,
+			Long previousCaseCount,
+			Long eventCount,
+			Long outbreakDistrictCount,
+			Long caseDeathCount,
+			String lastReportedDistrictName,
+			String outbreakDistrict,
+			Date from,
+			Date to) {
+
+		this.disease = disease;
+		this.caseCount = caseCount;
+		this.previousCaseCount = previousCaseCount;
+		this.eventCount = eventCount;
+		this.outbreakDistrictCount = outbreakDistrictCount;
+		this.caseDeathCount = caseDeathCount;
+		this.lastReportedDistrictName = lastReportedDistrictName;
+		this.outbreakDistrict = outbreakDistrict;
+		this.from= from;
+		this.to=to;
 	}
 
 	public DiseaseBurdenDto(
@@ -298,6 +325,40 @@ public class DiseaseBurdenDto implements Serializable {
 		this.total = total;
 	}
 
+
+	public Date getTo() {
+		return to;
+	}
+
+
+	public void setTo(Date to) {
+		this.to = to;
+	}
+
+
+	public Date getFrom() {
+		return from;
+	}
+
+
+	public void setFrom(Date from) {
+		this.from = from;
+	}
+
+
+	@Override
+	public String toString() {
+		return "DiseaseBurdenDto [disease=" + disease + ", total=" + total + ", caseCount=" + caseCount
+				+ ", previousCaseCount=" + previousCaseCount + ", eventCount=" + eventCount + ", outbreakDistrictCount="
+				+ outbreakDistrictCount + ", caseDeathCount=" + caseDeathCount + ", lastReportedDistrictName="
+				+ lastReportedDistrictName + ", caseClassification=" + caseClassification + ", cfr=" + cfr
+				+ ", lastReportedDistrict=" + lastReportedDistrict + ", outbreakDistrict=" + outbreakDistrict
+				+ ", deaths=" + deaths + ", region=" + region + ", recovered=" + recovered + ", activeCases="
+				+ activeCases + ", to=" + to + ", from=" + from + "]";
+	}
+
+	
+	
 
 //	public DiseaseBurdenDto getDiseaseGridForDashboard(RegionReferenceDto reference, Object object, Disease disease2,
 //			Date fromDate, Date toDate, Date previousFromDate, Date previousToDate) {

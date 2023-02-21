@@ -754,6 +754,7 @@ public class DashboardFacadeEjb implements DashboardFacade {
 			.caseClassification(caseClassification)
 			.previousDateFrom(previousFromDate)
 			.previousDateTo(previousToDate);
+		
 		Map<Disease, Long> newCases = dashboardService.getCaseCountByDisease(dashboardCriteria);
 
 		//events

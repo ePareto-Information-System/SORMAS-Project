@@ -388,6 +388,12 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	public CaseClassification getCaseClassification() {
 		return caseClassification;
 	}
+	
+	public CaseCriteria caseClassification(CaseClassification caseClassification) {
+		setCaseClassification(caseClassification);
+		return this;
+	}
+
 
 	public void setCaseClassification(CaseClassification caseClassification) {
 		this.caseClassification = caseClassification;
@@ -791,4 +797,44 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	public void setExcludeSharedCases(Boolean excludeSharedCases) {
 		this.excludeSharedCases = excludeSharedCases;
 	}
+
+	@Override
+	public String toString() {
+		return "CaseCriteria [reportingUserRole=" + reportingUserRole + ", disease=" + disease + ", diseaseVariant="
+				+ diseaseVariant + ", outcome=" + outcome + ", caseClassification=" + caseClassification
+				+ ", investigationStatus=" + investigationStatus + ", presentCondition=" + presentCondition
+				+ ", region=" + region + ", district=" + district + ", community=" + community + ", healthFacility="
+				+ healthFacility + ", pointOfEntry=" + pointOfEntry + ", surveillanceOfficer=" + surveillanceOfficer
+				+ ", newCaseDateFrom=" + newCaseDateFrom + ", newCaseDateTo=" + newCaseDateTo + ", creationDateFrom="
+				+ creationDateFrom + ", creationDateTo=" + creationDateTo + ", newCaseDateType=" + newCaseDateType
+				+ ", dateFilterOption=" + dateFilterOption + ", person=" + person + ", mustHaveNoGeoCoordinates="
+				+ mustHaveNoGeoCoordinates + ", mustBePortHealthCaseWithoutFacility="
+				+ mustBePortHealthCaseWithoutFacility + ", mustHaveCaseManagementData=" + mustHaveCaseManagementData
+				+ ", withoutResponsibleOfficer=" + withoutResponsibleOfficer + ", withExtendedQuarantine="
+				+ withExtendedQuarantine + ", withReducedQuarantine=" + withReducedQuarantine
+				+ ", onlyQuarantineHelpNeeded=" + onlyQuarantineHelpNeeded + ", deleted=" + deleted + ", caseLike="
+				+ caseLike + ", eventLike=" + eventLike + ", onlyCasesWithEvents=" + onlyCasesWithEvents
+				+ ", reportingUserLike=" + reportingUserLike + ", caseOrigin=" + caseOrigin + ", relevanceStatus="
+				+ relevanceStatus + ", sourceCaseInfoLike=" + sourceCaseInfoLike + ", quarantineTo=" + quarantineTo
+				+ ", birthdateYYYY=" + birthdateYYYY + ", birthdateMM=" + birthdateMM + ", birthdateDD=" + birthdateDD
+				+ ", quarantineType=" + quarantineType + ", followUpStatus=" + followUpStatus + ", followUpUntilTo="
+				+ followUpUntilTo + ", followUpUntilFrom=" + followUpUntilFrom + ", followUpVisitsFrom="
+				+ followUpVisitsFrom + ", followUpVisitsTo=" + followUpVisitsTo + ", followUpVisitsInterval="
+				+ followUpVisitsInterval + ", symptomJournalStatus=" + symptomJournalStatus + ", vaccinationStatus="
+				+ vaccinationStatus + ", reinfectionStatus=" + reinfectionStatus + ", reportDateTo=" + reportDateTo
+				+ ", facilityTypeGroup=" + facilityTypeGroup + ", facilityType=" + facilityType
+				+ ", includeCasesFromOtherJurisdictions=" + includeCasesFromOtherJurisdictions + ", viewMode="
+				+ viewMode + ", excludeSharedCases=" + excludeSharedCases + ", onlyContactsFromOtherInstances="
+				+ onlyContactsFromOtherInstances + ", onlyCasesWithReinfection=" + onlyCasesWithReinfection
+				+ ", onlyEntitiesNotSharedWithExternalSurvTool=" + onlyEntitiesNotSharedWithExternalSurvTool
+				+ ", onlyEntitiesSharedWithExternalSurvTool=" + onlyEntitiesSharedWithExternalSurvTool
+				+ ", onlyEntitiesChangedSinceLastSharedWithExternalSurvTool="
+				+ onlyEntitiesChangedSinceLastSharedWithExternalSurvTool
+				+ ", onlyCasesWithDontShareWithExternalSurvTool=" + onlyCasesWithDontShareWithExternalSurvTool
+				+ ", onlyShowCasesWithFulfilledReferenceDefinition=" + onlyShowCasesWithFulfilledReferenceDefinition
+				+ ", personLike=" + personLike + ", nameUuidEpidNumberLike=" + nameUuidEpidNumberLike + "]";
+	}
+	
+	
+	
 }

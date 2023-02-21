@@ -11,6 +11,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 
 import de.symeda.sormas.api.disease.DiseaseBurdenDto;
+import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
 import de.symeda.sormas.ui.dashboard.surveillance.components.disease.burden.DiseaseBurdenComponent;
 import de.symeda.sormas.ui.dashboard.surveillance.components.disease.tile.DiseaseTileViewLayout;
 import de.symeda.sormas.ui.utils.ButtonHelper;
@@ -24,11 +25,11 @@ public class DiseaseOverviewComponent extends HorizontalLayout {
 	private final DiseaseTileViewLayout diseaseTileViewLayout;
 	private final Button showTableViewButton;
 
-	public DiseaseOverviewComponent() {
+	public DiseaseOverviewComponent(DashboardDataProvider dashboardDataProvider) {
 		setWidth(100, Sizeable.Unit.PERCENTAGE);
 		setMargin(false);
 		diseaseBurdenComponent = new DiseaseBurdenComponent();
-		diseaseTileViewLayout = new DiseaseTileViewLayout();
+		diseaseTileViewLayout = new DiseaseTileViewLayout(dashboardDataProvider);
 
 		addComponent(diseaseTileViewLayout);
 		setExpandRatio(diseaseTileViewLayout, 1);

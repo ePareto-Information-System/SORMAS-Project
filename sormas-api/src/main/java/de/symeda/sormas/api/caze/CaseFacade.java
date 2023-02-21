@@ -38,6 +38,7 @@ import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.dashboard.DashboardCaseDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
 import de.symeda.sormas.api.externaldata.ExternalDataDto;
 import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
@@ -247,6 +248,10 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 
 	Map<Disease, Long> getCaseCountByDisease(CaseCriteria caseCriteria, boolean excludeSharedCases,
 			boolean excludeCasesFromContacts);
+
+	List<DashboardCaseDto> getCasesForDashboard(CaseCriteria caseCriteria);
+
+	String getLastReportedDistrictName(CaseCriteria caseCriteria, boolean b, boolean c);
 
 //	Map<Disease, Long> getCaseCountByDisease(CaseCriteria caseCriteria, boolean excludeSharedCases,
 //			boolean excludeCasesFromContacts);

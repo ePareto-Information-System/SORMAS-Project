@@ -206,13 +206,30 @@ public class DashboardDataProvider {
 	}
 		
 	public void refreshDiseaseData() {
-		setDiseaseBurdenDetail(
-			FacadeProvider.getDiseaseFacade().getDiseaseForDashboard(region, district, disease, fromDate, toDate, previousFromDate, previousToDate));
+		DiseaseBurdenDto dbd= FacadeProvider.getDiseaseFacade().getDiseaseForDashboard(region, district, disease, fromDate, toDate, previousFromDate, previousToDate
+				,newCaseDateType
+				,caseClassification);
+		
+				
+		System.out.println("printint dbd");
+
+		System.out.println(dbd);
+		
+		System.out.println("dbd.getFrom()");
+
+		System.out.println(dbd.getFrom());
+		
+		System.out.println("dbd.getTo()");
+
+		System.out.println(dbd.getTo());
+
+		
+		setDiseaseBurdenDetail(dbd);
 
 		setOutbreakDistrictCount(
 			FacadeProvider.getOutbreakFacade()
 				.getOutbreakDistrictCount(
-					new OutbreakCriteria().region(region).district(district).disease(disease).reportedBetween(fromDate, toDate)));
+					new OutbreakCriteria().region(region).district(district).disease(disease).reportedBetween(fromDate, toDate).caseClassification(caseClassification)));
 
 		this.refreshDataForSelectedDisease();
 	}
@@ -258,6 +275,11 @@ public class DashboardDataProvider {
 
 			dashboardCriteria.dateBetween(fromDate, toDate).includeNotACaseClassification(true);
 			setCasesCountByClassification(FacadeProvider.getDashboardFacade().getCasesCountByClassification(dashboardCriteria));
+			
+			System.out.println("===dashboardCriteria===");
+
+			System.out.println(dashboardCriteria);
+			
 		}
 
 		//if (this.disease == null || getDashboardType() == DashboardType.CONTACTS || getDashboardType() == DashboardType.SAMPLES) {
@@ -272,10 +294,12 @@ public class DashboardDataProvider {
 			CaseCriteria caseCriteria = new CaseCriteria();
 			caseCriteria.region(region).district(district).disease(disease).newCaseDateBetween(fromDate, toDate, NewCaseDateType.MOST_RELEVANT);
 			//setCases(FacadeProvider.getCaseFacade().getCasesForDashboard(caseCriteria));
-			//setLastReportedDistrict(FacadeProvider.getCaseFacade().getLastReportedDistrictName(caseCriteria, true, true));
+			setLastReportedDistrict(FacadeProvider.getCaseFacade().getLastReportedDistrictName(caseCriteria, true, true));
 
 			caseCriteria.newCaseDateBetween(previousFromDate, previousToDate, NewCaseDateType.MOST_RELEVANT);
-			//setPreviousCases(FacadeProvider.getCaseFacade().getCasesForDashboard(caseCriteria));
+			caseCriteria.setCaseClassification(CaseClassification.NO_CASE);
+
+			setPreviousCases(FacadeProvider.getCaseFacade().getCasesForDashboard(caseCriteria));
 
 			if (getCases().size() > 0) {
 				setTestResultCountByResultType(
@@ -284,6 +308,10 @@ public class DashboardDataProvider {
 			} else {
 				setTestResultCountByResultType(new HashMap<>());
 			}
+			
+			System.out.println("===caseCriteria===");
+
+			System.out.println(caseCriteria);
 		}
 
 		if (this.disease == null || getDashboardType() == DashboardType.CONTACTS) {
@@ -311,6 +339,11 @@ public class DashboardDataProvider {
 		refreshDataForQuarantinedCases();
 		refreshDataForConvertedContactsToCase();
 		refreshDataForCasesWithReferenceDefinitionFulfilled();
+		
+		System.out.println("===caseCriteria===");
+
+		System.out.println(dashboardCriteria);
+		
 	}
 
 	public List<DashboardCaseDto> getCases() {
@@ -600,7 +633,7 @@ public class DashboardDataProvider {
 
 	public void setCaseWithReferenceDefinitionFulfilledCount(Long caseWithReferenceDefinitionFulfilledCount) {
 		this.caseWithReferenceDefinitionFulfilledCount = caseWithReferenceDefinitionFulfilledCount;
-	}
+	} 
 
 	public DashboardCriteria getCriteria() {
 		return new DashboardCriteria(dateTypeClass).region(region)

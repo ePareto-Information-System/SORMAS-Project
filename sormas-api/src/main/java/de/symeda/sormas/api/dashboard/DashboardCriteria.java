@@ -211,6 +211,16 @@ public class DashboardCriteria extends CriteriaWithDateType implements Serializa
 	public void setDateFilterType(NewDateFilterType dateFilterType) {
 		this.dateFilterType = dateFilterType;
 	}
+
+	@Override
+	public String toString() {
+		return "DashboardCriteria [region=" + region + ", district=" + district + ", disease=" + disease
+				+ ", newCaseDateType=" + newCaseDateType + ", dateFrom=" + dateFrom + ", dateTo=" + dateTo
+				+ ", previousDateFrom=" + previousDateFrom + ", previousDateTo=" + previousDateTo
+				+ ", epiCurveGrouping=" + epiCurveGrouping + ", showMinimumEntries=" + showMinimumEntries
+				+ ", caseMeasure=" + caseMeasure + ", caseClassification=" + caseClassification + ", dateFilterType="
+				+ dateFilterType + ", includeNotACaseClassification=" + includeNotACaseClassification + "]";
+	}
 	
 	
 	

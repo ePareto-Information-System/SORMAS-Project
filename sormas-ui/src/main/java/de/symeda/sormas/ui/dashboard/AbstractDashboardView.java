@@ -72,7 +72,15 @@ public abstract class AbstractDashboardView extends AbstractView {
 		if (DashboardType.DISEASE.equals(dashboardDataProvider.getDashboardType())) {
 			dashboardDataProvider.setDisease(getDiseases());
 		}
+		
+		System.out.println("++AbstractDashboardView  dashboardDataProvider.getDashboardType()");
 
+		System.out.println(dashboardDataProvider.getDashboardType());
+
+		System.out.println("++AbstractDashboardView  dashboardDataProvider.getFromDate()");
+
+		System.out.println(dashboardDataProvider.getFromDate());
+		
 		CssStyles.style(dashboardSwitcher, CssStyles.FORCE_CAPTION, ValoTheme.OPTIONGROUP_HORIZONTAL, CssStyles.OPTIONGROUP_HORIZONTAL_PRIMARY);
 		if (permitted(FeatureType.CASE_SURVEILANCE, UserRight.DASHBOARD_SURVEILLANCE_VIEW)) {
 			dashboardSwitcher.addItem(DashboardType.SURVEILLANCE);
@@ -88,6 +96,7 @@ public abstract class AbstractDashboardView extends AbstractView {
 		}
 
 		if (permitted(FeatureType.DISEASE_DETAILS,UserRight.DASHBOARD_DISEASE_DETAILS_ACCESS)) {
+		
 			dashboardSwitcher.addItem(DashboardType.DISEASE);
 			dashboardSwitcher.setItemCaption(DashboardType.DISEASE, I18nProperties.getEnumCaption(DashboardType.DISEASE));		
 		}
@@ -122,6 +131,7 @@ public abstract class AbstractDashboardView extends AbstractView {
 			if (DashboardType.SURVEILLANCE.equals(e.getProperty().getValue())) {
 				SormasUI.get().getNavigator().navigateTo(SurveillanceDashboardView.VIEW_NAME);
 			} else if (DashboardType.DISEASE.equals(e.getProperty().getValue())) {
+				
 				SormasUI.get().getNavigator().navigateTo(DiseaseDetailsView.VIEW_NAME);
 			} else {
 				SormasUI.get().getNavigator().navigateTo(ContactsDashboardView.VIEW_NAME);
@@ -172,6 +182,10 @@ public abstract class AbstractDashboardView extends AbstractView {
 		
 		if (permitted(FeatureType.DISEASE_DETAILS,UserRight.DASHBOARD_DISEASE_DETAILS_ACCESS)) {
 			dashboardSwitcher.addItem(DashboardType.DISEASE);
+			
+			System.out.println("printing");
+
+			System.out.println("go to disease");
 			dashboardSwitcher.setItemCaption(DashboardType.DISEASE, I18nProperties.getEnumCaption(DashboardType.DISEASE));		
 		}
 		
@@ -204,6 +218,7 @@ public abstract class AbstractDashboardView extends AbstractView {
 			SormasUI.get().getNavigator().navigateTo(SamplesDashboardView.VIEW_NAME);
 		}
 		else if (DashboardType.DISEASE.equals(e.getProperty().getValue())) {
+		
 			SormasUI.get().getNavigator().navigateTo(DiseaseDetailsView.VIEW_NAME);
 		}
 		else if (DashboardType.CAMPAIGNS.equals(e.getProperty().getValue()))  {

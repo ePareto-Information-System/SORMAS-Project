@@ -61,15 +61,15 @@ public class SurveillanceOverviewLayout extends CustomLayout {
 
 		diseaseDifferenceComponent = new CaseCountDifferenceComponent(dashboardDataProvider);
 
-		addDiseaseBurdenView();
+		addDiseaseBurdenView(dashboardDataProvider);
 
 		addComponent(diseaseDifferenceComponent, DIFFERENCE_LOC);
 
 		addShowMoreAndLessButtons();
 	}
 
-	private void addDiseaseBurdenView() {
-		diseaseOverviewComponent = new DiseaseOverviewComponent();
+	private void addDiseaseBurdenView(DashboardDataProvider dashboardDataProvider) {
+		diseaseOverviewComponent = new DiseaseOverviewComponent(dashboardDataProvider);
 		addComponent(diseaseOverviewComponent, BURDEN_LOC);
 
 		if (UserProvider.getCurrent().hasRegionJurisdictionLevel())

@@ -32,6 +32,7 @@ import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseCriteria;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseOutcome;
+import de.symeda.sormas.api.dashboard.DashboardCriteria;
 import de.symeda.sormas.api.disease.DiseaseBurdenDto;
 import de.symeda.sormas.api.disease.DiseaseFacade;
 import de.symeda.sormas.api.event.EventCriteria;
@@ -40,7 +41,7 @@ import de.symeda.sormas.api.infrastructure.region.RegionDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.outbreak.OutbreakCriteria;
 import de.symeda.sormas.api.person.PresentCondition;
-
+import de.symeda.sormas.api.utils.criteria.CriteriaDateType;
 import de.symeda.sormas.backend.caze.CaseFacadeEjb.CaseFacadeEjbLocal;
 import de.symeda.sormas.backend.disease.DiseaseConfigurationFacadeEjb.DiseaseConfigurationFacadeEjbLocal;
 import de.symeda.sormas.backend.event.EventFacadeEjb.EventFacadeEjbLocal;
@@ -102,6 +103,10 @@ public class DiseaseFacadeEjb implements DiseaseFacade {
 		caseCriteria.newCaseDateBetween(previousFrom, previousTo, null);
 		Map<Disease, Long> previousCases = caseFacade.getCaseCountByDisease(caseCriteria, true, true);
 
+		System.out.println("==printing criteria==");
+
+		System.out.println(caseCriteria);
+		
 		//build diseasesBurden
 		List<DiseaseBurdenDto> diseasesBurden = diseases.stream().map(disease -> {
 			Long caseCount = newCases.getOrDefault(disease, 0L);
@@ -135,12 +140,16 @@ public class DiseaseFacadeEjb implements DiseaseFacade {
 		Date from,
 		Date to,
 		Date previousFrom,
-		Date previousTo) {
+		Date previousTo,
+		CriteriaDateType newCaseDateType,
+		CaseClassification caseClassification) {
 
 		//new cases
 		CaseCriteria caseCriteria = new CaseCriteria()
-				.newCaseDateBetween(from, to, null).region(regionRef).district(districtRef).disease(disease);
+				.newCaseDateBetween(from, to, newCaseDateType).region(regionRef).district(districtRef).disease(disease).caseClassification(caseClassification);
 
+	
+		
 		Map<Disease, Long> newCases = caseFacade.getCaseCountByDisease(caseCriteria, true, true);
 
 		//events
@@ -190,15 +199,53 @@ public class DiseaseFacadeEjb implements DiseaseFacade {
 //				"",
 //				null
 //				);
-			return new DiseaseBurdenDto(
-					disease,
-					caseCount,
-					previousCaseCount,
-					eventCount,
-					outbreakDistrictCount,
-					caseFatalityCount,
-					lastReportedDistrictName,
-					outbreakDistrictName);
+		
+		//this
+//			return new DiseaseBurdenDto(
+//					disease,
+//					caseCount,
+//					previousCaseCount,
+//					eventCount,
+//					outbreakDistrictCount,
+//					caseFatalityCount,
+//					lastReportedDistrictName,
+//					outbreakDistrictName);
+		
+		
+		System.out.println("print to to");
+
+		System.out.println(to);
+		
+		System.out.println("print from");
+
+		System.out.println(from);
+		
+		System.out.println("previousFrom");
+
+		System.out.println(previousFrom);
+		
+		System.out.println("previousTo");
+
+		System.out.println(previousTo);
+
+		System.out.println("==printing criteria2==");
+
+		System.out.println(caseCriteria);
+		
+		return new DiseaseBurdenDto(
+				disease,
+				caseCount,
+				previousCaseCount,
+				eventCount,
+				outbreakDistrictCount,
+				caseFatalityCount,
+				lastReportedDistrictName,
+				outbreakDistrictName,
+				from,
+				to
+				);
+			
+			
 //
 //		}).collect(Collectors.toList())
 

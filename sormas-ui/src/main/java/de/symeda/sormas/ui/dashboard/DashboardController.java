@@ -19,12 +19,18 @@ package de.symeda.sormas.ui.dashboard;
 
 import static de.symeda.sormas.ui.UiUtil.permitted;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 import com.vaadin.navigator.Navigator;
 
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.dashboard.NewDateFilterType;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.UiUtil;
@@ -36,6 +42,8 @@ import de.symeda.sormas.ui.dashboard.diseasedetails.DiseaseDetailsView;
 import de.symeda.sormas.ui.dashboard.surveillance.SurveillanceDashboardView;
 
 public class DashboardController {
+
+
 
 	public DashboardController() {
 
@@ -62,13 +70,47 @@ public class DashboardController {
 		}
 	}
 
-	public void navigateToDisease(Disease disease) {
+	public void navigateToDisease(Disease disease,DashboardDataProvider dashboardDataProvider) {
+		Date dateFrom = dashboardDataProvider.getFromDate();
+		
+		Date dateTo = dashboardDataProvider.getToDate();
+
+		NewDateFilterType type = dashboardDataProvider.getDateFilterType();
+
+		
+		System.out.println("dateFrom***");
+
+		System.out.println(dateFrom);
+		
+		System.out.println("dateTo***");
+
+		System.out.println(dateTo);
+//		
+		TimeZone tz = TimeZone.getTimeZone("UTC");
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd"); // Quoted "Z" to indicate UTC, no timezone offset
+		df.setTimeZone(tz);
+		String dateFromAsISO = df.format(dateFrom);
+		String dateToAsISO = df.format(dateTo);
+//
+		String paramData = dateFromAsISO+"/"+dateToAsISO+"/"+type;
+//		
+		DiseaseDetailsView.setData(paramData);
+		//DiseaseDetailsView.setProvider(dashboardDataProvider);
+
 		String navigationState = DiseaseDetailsView.VIEW_NAME + "/" + disease.getName();
+		//+"/"+dateFromAsISO+"/"+dateToAsISO+"/"+type.toString();
+		//String navigationState = DiseaseDetailsView.VIEW_NAME + "/?disease=" + disease.getName();
 		SormasUI.get().getNavigator().navigateTo(navigationState);
+		
+	
+
+		//SormasUI.get().getSession().setAttribute("paramdata", dateFromAsISO+"/"+dateToAsISO+"/"+type);
 	}
 
 	private CaseDataDto findCase(String uuid) {
 		return FacadeProvider.getCaseFacade().getCaseDataByUuid(uuid);
 	}
+	
+  
 
 }

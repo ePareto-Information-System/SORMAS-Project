@@ -25,4 +25,6 @@ public enum NewDateFilterType {
 	LAST_WEEK,
 	THIS_YEAR,
 	CUSTOM;
+	
+	
 }
