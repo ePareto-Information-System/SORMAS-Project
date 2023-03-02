@@ -4186,4 +4186,27 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			super(service, userService);
 		}
 	}
+	
+	@Override
+	public CaseDataDto saveCase(@Valid CaseDataDto dto) throws ValidationRuntimeException {
+		return saveCase(dto, true, true);
+	}
+	
+	public CaseDataDto saveCase(@Valid CaseDataDto dto, boolean handleChanges, boolean checkChangeDate, boolean internal)
+			throws ValidationRuntimeException {
+
+			Case existingCase = caseService.getByUuid(dto.getUuid());
+
+			if (internal && existingCase != null && !caseService.isCaseEditAllowed(existingCase)) {
+				throw new AccessDeniedException(I18nProperties.getString(Strings.errorCaseNotEditable));
+			}
+
+			CaseDataDto existingCaseDto = handleChanges ? toDto(existingCase) : null;
+
+			return caseSave(dto, handleChanges, existingCase, existingCaseDto, checkChangeDate, internal);
+		}
+	
+	public CaseDataDto saveCase(@Valid CaseDataDto dto, boolean handleChanges, boolean checkChangeDate) {
+		return saveCase(dto, handleChanges, checkChangeDate, true);
+	}
 }

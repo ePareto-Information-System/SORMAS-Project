@@ -1966,4 +1966,13 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 		CriteriaQuery cq = caseQueryContext.getQuery();
 		cq.multiselect(listQueryBuilder.getCaseIndexSelections(caseQueryContext.getRoot(), caseQueryContext));
 	}
+
+	public boolean isCaseEditAllowed(Case caze) {
+
+		if (caze.getSormasToSormasOriginInfo() != null && !caze.getSormasToSormasOriginInfo().isOwnershipHandedOver()) {
+			return false;
+		}
+
+		return inJurisdictionOrOwned(caze) && !sormasToSormasShareInfoService.isCaseOwnershipHandedOver(caze);
+	}
 }
