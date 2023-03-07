@@ -18,6 +18,7 @@
 package de.symeda.sormas.backend.disease;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -211,27 +212,7 @@ public class DiseaseFacadeEjb implements DiseaseFacade {
 //					lastReportedDistrictName,
 //					outbreakDistrictName);
 		
-		
-		System.out.println("print to to");
 
-		System.out.println(to);
-		
-		System.out.println("print from");
-
-		System.out.println(from);
-		
-		System.out.println("previousFrom");
-
-		System.out.println(previousFrom);
-		
-		System.out.println("previousTo");
-
-		System.out.println(previousTo);
-
-		System.out.println("==printing criteria2==");
-
-		System.out.println(caseCriteria);
-		
 		return new DiseaseBurdenDto(
 				disease,
 				caseCount,
@@ -260,26 +241,42 @@ public class DiseaseFacadeEjb implements DiseaseFacade {
 			Date from,
 			Date to,
 			Date previousFrom,
-			Date previousTo) {
+			Date previousTo,
+			CriteriaDateType newCaseDateType,
+			CaseClassification caseClassification) {
 
 		//Get the region
 		RegionDto regionDto = regionFacade.getRegionByUuid(regionRef.getUuid());
+		
+		System.out.println("**===regionDto===**");
+
 
 		//new cases
-		CaseCriteria caseCriteria = new CaseCriteria().newCaseDateBetween(from, to, null).region(regionRef).disease(disease);
+		CaseCriteria caseCriteria = new CaseCriteria().newCaseDateBetween(from, to, newCaseDateType).region(regionRef).disease(disease).caseClassification(caseClassification);
+		
+		System.out.println("+++++ case outcome +++++");
+
+		System.out.println(caseCriteria.getOutcome());
 
 		//Load count all dead/ fatalities
 		Map<Disease, Long> allCasesFetched = caseFacade.getCaseCountByDisease(caseCriteria, true, true);
+		
 
-		//case fatalities
-//		caseCriteria.setOutcome(CaseOutcome.DECEASED);
 		Map<Disease, Long> caseFatalities = personFacade.getDeathCountByDisease(caseCriteria, true, true);
 
-		caseCriteria.setOutcome(CaseOutcome.RECOVERED);
-		Map<Disease, Long> recoveredCase = personFacade.getDeathCountByDisease(caseCriteria, true, true);
+		System.out.println("**===caseFatalities===**");
 
+		System.out.println(caseFatalities);
+		
+		caseCriteria.setOutcome(CaseOutcome.NO_OUTCOME);
 		caseCriteria.relevanceStatus(EntityRelevanceStatus.ACTIVE);
 		Map<Disease, Long> archievedCase = caseFacade.getCaseCountByDisease(caseCriteria, true, true);
+		caseCriteria.relevanceStatus(null);
+		
+		
+		caseCriteria.setOutcome(CaseOutcome.RECOVERED);
+		Map<Disease, Long> recoveredCase =  caseFacade.getCaseCountByDisease(caseCriteria, true, true);
+		
 
 		//build diseasesBurden
 		Long totalCaseCount = allCasesFetched.getOrDefault(disease, 0L);

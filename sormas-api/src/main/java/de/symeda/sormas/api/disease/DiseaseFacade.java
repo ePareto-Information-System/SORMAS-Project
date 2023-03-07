@@ -59,7 +59,8 @@ public interface DiseaseFacade {
 		Date previousFromDate,
 		Date previousToDate,
 		CriteriaDateType newCaseDateType,
-		CaseClassification caseClassification);
+		CaseClassification caseClassification
+		);
 //
 	DiseaseBurdenDto getDiseaseGridForDashboard(
 			RegionReferenceDto regionRef,
@@ -68,6 +69,9 @@ public interface DiseaseFacade {
 			Date from,
 			Date to,
 			Date previousFromDate,
-			Date previousToDate);
+			Date previousToDate,
+			CriteriaDateType newCaseDateType,
+			CaseClassification caseClassification
+			);
 }
 

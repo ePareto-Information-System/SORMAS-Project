@@ -4399,7 +4399,16 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		cq.groupBy(caze.get(Case.DISEASE));
 		cq.multiselect(caze.get(Case.DISEASE), cb.count(caze));
 		List<Object[]> results = em.createQuery(cq).getResultList();
-
+		System.out.println("**==results==**");
+			System.out.println(results);
+			
+			System.out.println("**==cq==**");
+			System.out.println(cq);
+			
+			System.out.println("**==caze==**");
+			System.out.println(caze);
+			
+			
 		Map<Disease, Long> resultMap = results.stream().collect(Collectors.toMap(e -> (Disease) e[0], e -> (Long) e[1]));
 
 		return resultMap;

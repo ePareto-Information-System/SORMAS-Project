@@ -121,6 +121,7 @@ public class DiseaseDetailsComponent extends CssLayout {
 
 		countLayout.addComponent(countLabel);
 		countLayout.setComponentAlignment(countLabel, Alignment.MIDDLE_CENTER);
+		
 
 //		HorizontalLayout comparisonLayout = new HorizontalLayout();
 //		{
@@ -171,6 +172,10 @@ public class DiseaseDetailsComponent extends CssLayout {
 
 		CssStyles.style(layout, CssStyles.getDiseaseColor(disease), CssStyles.BACKGROUND_DARKER);
 		float cfrPercent = calculateCfr(fatalities, totalCase);
+		
+		System.out.println("===cfrPercent===");
+
+		System.out.println(cfrPercent);
 
 		layout.addComponent(createDeathCfrItem(I18nProperties.getCaption(Captions.dashboardFatalities)+": ",
 				fatalities.toString()+"", fatalities > 0,
@@ -211,6 +216,10 @@ public class DiseaseDetailsComponent extends CssLayout {
 
 		fatalityNameLabel.setValue("<div style='float: left; width: 50px; margin-top: 10px;'>" + fatalityLabel + "</div> " +
 				"<div style='float: left; margin-top: 10px; margin-right: 60px;'>" + fatalityValue+ "</div>");
+		
+		System.out.println("===fatalityValue===");
+
+		System.out.println(fatalityValue);
 
 		layout.addComponent(fatalityNameLabel);
 		layout.setExpandRatio(fatalityNameLabel, 1);

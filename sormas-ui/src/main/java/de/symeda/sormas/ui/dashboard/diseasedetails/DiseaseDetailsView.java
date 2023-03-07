@@ -56,10 +56,12 @@ public class DiseaseDetailsView extends AbstractDashboardView {
 			String dateTo =data.split("/")[1];
 			
 			String type =data.split("/")[2];
+			
+			String caseClassification =data.split("/")[3];
 
-			System.out.println(dateFrom+"-"+dateTo+"-"+type);
 			
-			
+
+		
 	           if(dateFrom!=null) {
      	   System.out.println("print dateFrom");
      	   System.out.println(dateFrom);
@@ -112,6 +114,30 @@ public class DiseaseDetailsView extends AbstractDashboardView {
      	   
      	   //dashboardDataProvider.setFromDate(new Date(params[2]));
         }
+        
+//        if(caseClassification!=null) {
+//      	   System.out.println("print caseClassification");
+//      	   
+//      	   String caseClass = caseClassification.replace("case", "").toUpperCase().trim();
+//      	   
+//      	   System.out.println(caseClass);
+//      	   
+//      	   
+//      	 if(!caseClass.equals("NULL")) {
+//      	dashboardDataProvider.setCaseClassification(EnumSet.allOf(CaseClassification.class)
+//	               .stream()
+//	               .filter(e -> e.name().equals(caseClass))
+//	               .findFirst()
+//	               .orElseThrow(() -> new IllegalStateException(String.format("Unsupported type %s.", caseClass))));
+//	
+//      	   
+//      	   //dashboardDataProvider.setFromDate(new Date(params[2]));
+//         }
+//        }else {
+//        	dashboardDataProvider.setCaseClassification(CaseClassification.NOT_CLASSIFIED);
+//        }
+        
+        
 		
    }
 
@@ -130,9 +156,7 @@ public class DiseaseDetailsView extends AbstractDashboardView {
 		}
 		
 		dashboardDataProvider.setNewCaseDateType(NewCaseDateType.MOST_RELEVANT);
-		System.out.println("DashboardFilterLayout instance dashboardDataProvider.getFromDate()");
-
-		System.out.println(dashboardDataProvider.getFromDate());
+	
 		
 		//filterLayout = new DashboardFilterLayout(this, dashboardDataProvider);
 		//filterLayout.setInfoLabelText(I18nProperties.getString(Strings.classificationForDisease));
@@ -157,10 +181,6 @@ public class DiseaseDetailsView extends AbstractDashboardView {
 		
 		super.refreshDiseaseData();
 		
-		System.out.println("dashboardDataProvider.getFromDate()");
-
-		System.out.println(dashboardDataProvider.getFromDate());
-		
 		
 		
 		if (diseaseDetailsViewLayout != null)
@@ -170,8 +190,6 @@ public class DiseaseDetailsView extends AbstractDashboardView {
 	@Override
 	public void enter(ViewChangeEvent event) {
 		super.enter(event);
-
-		System.out.println("printing para1");
 
 		//System.out.println(event.getParameters().toString());
 		

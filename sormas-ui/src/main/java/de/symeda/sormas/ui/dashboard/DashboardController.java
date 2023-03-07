@@ -29,6 +29,7 @@ import com.vaadin.navigator.Navigator;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.dashboard.NewDateFilterType;
 import de.symeda.sormas.api.user.UserRight;
@@ -76,15 +77,8 @@ public class DashboardController {
 		Date dateTo = dashboardDataProvider.getToDate();
 
 		NewDateFilterType type = dashboardDataProvider.getDateFilterType();
-
 		
-		System.out.println("dateFrom***");
-
-		System.out.println(dateFrom);
-		
-		System.out.println("dateTo***");
-
-		System.out.println(dateTo);
+		CaseClassification caseClassification= dashboardDataProvider.getCaseClassification();
 //		
 		TimeZone tz = TimeZone.getTimeZone("UTC");
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd"); // Quoted "Z" to indicate UTC, no timezone offset
@@ -92,7 +86,7 @@ public class DashboardController {
 		String dateFromAsISO = df.format(dateFrom);
 		String dateToAsISO = df.format(dateTo);
 //
-		String paramData = dateFromAsISO+"/"+dateToAsISO+"/"+type;
+		String paramData = dateFromAsISO+"/"+dateToAsISO+"/"+type+"/"+caseClassification;
 //		
 		DiseaseDetailsView.setData(paramData);
 		//DiseaseDetailsView.setProvider(dashboardDataProvider);

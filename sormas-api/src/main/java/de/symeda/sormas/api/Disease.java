@@ -191,6 +191,8 @@ public enum Disease
 
 		return this.toString().compareTo(o.toString());
 	}
+	
+	
 
 	public static List<Disease> DISEASE_LIST = Arrays.asList(Disease.values());
 }

@@ -44,13 +44,24 @@ public class DiseaseBurdenDto implements Serializable {
 
 	//Regional specific Disease Details
 	public static final String CASES_TOTAL = "total";
+	public static final String CASES_COUNT_TOTAL = "totalCount";
+
 	public static final String CASES_REGION = "region";
+	
 	public static final String ACTIVE_CASE = "activeCases";
+	public static final String ACTIVE_COUNT_CASE = "activeCountCases";
+
 	public static final String RECOVERED_CASES = "recovered";
+	public static final String RECOVERED_COUNT_CASES = "recoveredCount";
+
 	public static final String DEATH = "deaths";
+	public static final String DEATH_COUNT = "deathsCount";
+
 
 	private Disease disease;
 	private String total;
+	private String totalCount;
+	
 	private Long caseCount;
 	private Long previousCaseCount;
 	private Long eventCount;
@@ -62,11 +73,19 @@ public class DiseaseBurdenDto implements Serializable {
 	private Integer cfr;
 	private String lastReportedDistrict;
 	private String outbreakDistrict;
+	
 	private String deaths;
+	private String deathsCount;
+
 
 	private RegionDto region;
+	
 	private String recovered;
+	private String recoveredCount;
+
 	private String activeCases;
+	private String activeCountCases;
+
 	
 	private Date to;
 	private Date from;
@@ -343,6 +362,47 @@ public class DiseaseBurdenDto implements Serializable {
 
 	public void setFrom(Date from) {
 		this.from = from;
+	}
+
+	
+
+	public String getTotalCount() {
+		return totalCount;
+	}
+
+
+	public void setTotalCount(String totalCount) {
+		this.totalCount = totalCount;
+	}
+
+
+	public String getDeathsCount() {
+		return deathsCount;
+	}
+
+
+	public void setDeathsCount(String deathsCount) {
+		this.deathsCount = deathsCount;
+	}
+
+
+	public String getRecoveredCount() {
+		return recoveredCount;
+	}
+
+
+	public void setRecoveredCount(String recoveredCount) {
+		this.recoveredCount = recoveredCount;
+	}
+
+
+	public String getActiveCountCases() {
+		return activeCountCases;
+	}
+
+
+	public void setActiveCountCases(String activeCountCases) {
+		this.activeCountCases = activeCountCases;
 	}
 
 

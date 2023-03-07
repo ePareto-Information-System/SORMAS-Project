@@ -46,15 +46,6 @@ public class DiseaseTileComponent extends VerticalLayout {
 	public DiseaseTileComponent(DiseaseBurdenDto diseaseBurden,DashboardDataProvider dashboardDataProvider) {
 		setMargin(false);
 		setSpacing(false);
-		System.out.println("+++diseaseBurden.getTo()+++");
-
-		System.out.println(diseaseBurden.getTo());
-		
-		System.out.println("----dashboardDataProvider.getFromDate()----");
-
-		System.out.println(dashboardDataProvider.getFromDate());
-
-		
 
 		addTopLayout(diseaseBurden.getDisease(), diseaseBurden.getCaseCount(), diseaseBurden.getPreviousCaseCount(),
 				diseaseBurden.getOutbreakDistrictCount() > 0);
@@ -257,12 +248,6 @@ public class DiseaseTileComponent extends VerticalLayout {
 		Date from =dashboardDataProvider.getFromDate();
 		Date to = dashboardDataProvider.getToDate();
 		NewDateFilterType type = dashboardDataProvider.getDateFilterType();
-		
-		System.out.println(" addDiseaseButton dateFrom==");
-		System.out.println(from);
-
-		System.out.println("addDiseaseButton dateTo==");
-		System.out.println(to);
 
 		Button diseaseDetailButton = ButtonHelper.createIconButton(null, VaadinIcons.ELLIPSIS_DOTS_H, null,
 				ValoTheme.BUTTON_BORDERLESS, CssStyles.VSPACE_TOP_NONE, CssStyles.VSPACE_4);

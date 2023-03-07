@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -2183,6 +2184,8 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 		Join<Case, Person> person = from.join(Case.PERSON, JoinType.LEFT);
 		Join<Case, User> reportingUser = from.join(Case.REPORTING_USER, JoinType.LEFT);
 		Join<Case, Region> region = from.join(Case.REGION, JoinType.LEFT);
+		Join<Case, Region> responsibleRegion = from.join(Case.RESPONSIBLE_REGION, JoinType.LEFT);
+
 		Join<Case, District> district = from.join(Case.DISTRICT, JoinType.LEFT);
 		Join<Case, Community> community = from.join(Case.COMMUNITY, JoinType.LEFT);
 		Join<Case, Facility> facility = from.join(Case.HEALTH_FACILITY, JoinType.LEFT);
@@ -2198,7 +2201,12 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 			filter = AbstractAdoService.and(cb, filter, cb.equal(from.get(Case.OUTCOME), caseCriteria.getOutcome()));
 		}
 		if (caseCriteria.getRegion() != null) {
-			filter = AbstractAdoService.and(cb, filter, cb.equal(region.get(Region.UUID), caseCriteria.getRegion().getUuid()));
+		
+			filter = AbstractAdoService.and(cb, filter,
+					cb.or(
+					cb.and(cb.equal(region.get(Region.UUID), caseCriteria.getRegion().getUuid()),cb.isNotNull(region.get(Region.UUID))),
+					cb.and(cb.equal(responsibleRegion.get(Region.UUID), caseCriteria.getRegion().getUuid()),cb.isNull(region.get(Region.UUID)))));
+
 		}
 		if (caseCriteria.getDistrict() != null) {
 			filter = AbstractAdoService.and(cb, filter, cb.equal(district.get(District.UUID), caseCriteria.getDistrict().getUuid()));
@@ -2383,6 +2391,15 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 				}
 			}
 		}
+		
+		System.out.println("**==caseCriteria==**");
+
+		System.out.println(caseCriteria);
+		
+		System.out.println("**==cb==**");
+
+		System.out.println(cb);
+
 		return filter;
 	}
 	

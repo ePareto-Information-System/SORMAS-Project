@@ -209,19 +209,6 @@ public class DashboardDataProvider {
 		DiseaseBurdenDto dbd= FacadeProvider.getDiseaseFacade().getDiseaseForDashboard(region, district, disease, fromDate, toDate, previousFromDate, previousToDate
 				,newCaseDateType
 				,caseClassification);
-		
-				
-		System.out.println("printint dbd");
-
-		System.out.println(dbd);
-		
-		System.out.println("dbd.getFrom()");
-
-		System.out.println(dbd.getFrom());
-		
-		System.out.println("dbd.getTo()");
-
-		System.out.println(dbd.getTo());
 
 		
 		setDiseaseBurdenDetail(dbd);
@@ -340,10 +327,7 @@ public class DashboardDataProvider {
 		refreshDataForConvertedContactsToCase();
 		refreshDataForCasesWithReferenceDefinitionFulfilled();
 		
-		System.out.println("===caseCriteria===");
 
-		System.out.println(dashboardCriteria);
-		
 	}
 
 	public List<DashboardCaseDto> getCases() {

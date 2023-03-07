@@ -134,6 +134,7 @@ public class RegionFacadeEjb extends AbstractInfrastructureFacadeEjb<Region, Reg
 			root.get(Region.EPID_CODE),
 			root.get(Region.GROWTH_RATE),
 			root.get(Region.EXTERNAL_ID),
+			//root.get(Region.ID),
 			country.get(AbstractDomainObject.UUID),
 			country.get(Country.DEFAULT_NAME),
 			country.get(Country.ISO_CODE),

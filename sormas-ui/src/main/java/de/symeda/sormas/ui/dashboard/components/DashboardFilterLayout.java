@@ -182,14 +182,6 @@ public  class DashboardFilterLayout extends HorizontalLayout {
 		setSizeUndefined();
 		setMargin(new MarginInfo(true, true, false, true));
 
-		
-		System.out.println("DashboardFilterLayout constructor dashboardDataProvider.getFromDate()");
-
-		System.out.println(dashboardDataProvider.getFromDate());
-		
-		System.out.println(dashboardDataProvider.getDateFilterType());
-		
-		System.out.println(dashboardDataProvider.getDisease());
 
 
 		
@@ -388,12 +380,7 @@ public  class DashboardFilterLayout extends HorizontalLayout {
 		CssStyles.removeStyles(btnPeriodBefore, CssStyles.BUTTON_FILTER_LIGHT);
 		activeComparisonButton = btnPeriodBefore;
 		
-		
-		System.out.println("got date dashboardDataProvider.getFromDate()");
 
-		System.out.println(dashboardDataProvider.getFromDate());
-		
-		System.out.println(dashboardDataProvider.getDateFilterType());
 		
 		setDateFilter(dashboardDataProvider.getFromDate(), dashboardDataProvider.getToDate());
 		
