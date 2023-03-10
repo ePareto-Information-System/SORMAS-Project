@@ -49,7 +49,7 @@ public class DiseaseBurdenDto implements Serializable {
 	public static final String CASES_REGION = "region";
 	
 	public static final String ACTIVE_CASE = "activeCases";
-	public static final String ACTIVE_COUNT_CASE = "activeCountCases";
+	public static final String ACTIVE_COUNT_CASE = "activeCount";
 
 	public static final String RECOVERED_CASES = "recovered";
 	public static final String RECOVERED_COUNT_CASES = "recoveredCount";
@@ -84,7 +84,7 @@ public class DiseaseBurdenDto implements Serializable {
 	private String recoveredCount;
 
 	private String activeCases;
-	private String activeCountCases;
+	private String activeCount;
 
 	
 	private Date to;
@@ -396,13 +396,16 @@ public class DiseaseBurdenDto implements Serializable {
 	}
 
 
-	public String getActiveCountCases() {
-		return activeCountCases;
+
+
+
+	public String getActiveCount() {
+		return activeCount;
 	}
 
 
-	public void setActiveCountCases(String activeCountCases) {
-		this.activeCountCases = activeCountCases;
+	public void setActiveCount(String activeCount) {
+		this.activeCount = activeCount;
 	}
 
 

@@ -48,15 +48,15 @@ public class RegionalDiseaseBurdenGrid extends Grid {
 		setWidth(1000, Unit.PIXELS);
 
 		setColumns(
-				DiseaseBurdenDto.CASES_REGION,
-				DiseaseBurdenDto.CASES_COUNT_TOTAL,
-				DiseaseBurdenDto.CASES_TOTAL,
-				DiseaseBurdenDto.ACTIVE_COUNT_CASE,
-				DiseaseBurdenDto.ACTIVE_CASE,
-				DiseaseBurdenDto.RECOVERED_COUNT_CASES,
-				DiseaseBurdenDto.RECOVERED_CASES,
-				DiseaseBurdenDto.DEATH_COUNT,
-				DiseaseBurdenDto.DEATH
+			DiseaseBurdenDto.CASES_REGION,
+			DiseaseBurdenDto.CASES_COUNT_TOTAL,
+			DiseaseBurdenDto.CASES_TOTAL,
+			DiseaseBurdenDto.ACTIVE_COUNT_CASE,
+			DiseaseBurdenDto.ACTIVE_CASE,
+			DiseaseBurdenDto.RECOVERED_COUNT_CASES,
+			DiseaseBurdenDto.RECOVERED_CASES,
+			DiseaseBurdenDto.DEATH_COUNT,
+			DiseaseBurdenDto.DEATH
 		);
 
 		regionColumn = getColumn(DiseaseBurdenDto.CASES_REGION);
@@ -77,8 +77,6 @@ public class RegionalDiseaseBurdenGrid extends Grid {
 
 		deathColumn = getColumn(DiseaseBurdenDto.DEATH);
 		
-
-		
 	}
 
 	public void refresh(){
@@ -93,22 +91,40 @@ public class RegionalDiseaseBurdenGrid extends Grid {
 		Long casePercental = dashboardDataProvider.getDiseaseBurdenDetail().getCaseCount();
 
 		regionColumn.setWidth(100);
+		regionColumn.setHeaderCaption("REGION NAME");
+
 		
-		totalCountColumn.setRenderer(new HtmlRenderer()).setWidth(180);
+		totalCountColumn.setRenderer(new HtmlRenderer()).setWidth(100);
+		
 
 		totalColumn.setRenderer(new HtmlRenderer()).setWidth(180);
+		
+		
 
-		activeCaseCountColumn.setRenderer(new HtmlRenderer()).setWidth(180);
+		totalColumn.setHeaderCaption("TOTAL %");
+
+		activeCaseCountColumn.setRenderer(new HtmlRenderer()).setWidth(100);
 
 		activeCaseColumn.setRenderer(new HtmlRenderer()).setWidth(180);
+		
+		activeCaseColumn.setHeaderCaption("ACTIVE CASES %");
 
-		recoveredCasesCountColumn.setRenderer(new HtmlRenderer()).setWidth(180);
-
+		recoveredCasesCountColumn.setRenderer(new HtmlRenderer()).setWidth(100);
+		
+		recoveredCasesCountColumn.setHeaderCaption("RECOVER COUNT");
+		//recoveredCasesCountColumn.setHeaderCaption(makeDIvsNone( "RECOVER COUNT", "#bf8678ba", "#91675d"));
+		
 		recoveredCasesColumn.setRenderer(new HtmlRenderer()).setWidth(180);
+		
+		recoveredCasesColumn.setHeaderCaption("RECOVERED CASES %");
 
-		deathCountColumn.setRenderer(new HtmlRenderer()).setWidth(180);
+
+		deathCountColumn.setRenderer(new HtmlRenderer()).setWidth(100);
 
 		deathColumn.setRenderer(new HtmlRenderer()).setWidth(180);
+		
+		deathColumn.setHeaderCaption("DEATH CASES %");
+
 
 		for (RegionDto regionDto : regionDtoList){
 			DiseaseBurdenDto diseaseBurdenDto = FacadeProvider.getDiseaseFacade().getDiseaseGridForDashboard(
@@ -123,14 +139,8 @@ public class RegionalDiseaseBurdenGrid extends Grid {
 								dashboardDataProvider.getCaseClassification()
 					);
 			
-//			System.out.println("==regionDto.getId()==");
-//
-//			System.out.println(regionDto.getId());
-			
-	
+
 			String total = diseaseBurdenDto.getTotal();
-			
-		
 			
 			String activeCases = diseaseBurdenDto.getActiveCases();
 
@@ -138,20 +148,20 @@ public class RegionalDiseaseBurdenGrid extends Grid {
 
 			String deaths = diseaseBurdenDto.getDeaths();
 			
-
 			diseaseBurdenDto.setTotal(makeDIvs(Long.parseLong(total), casePercental, "#5a95f4bf","#2f7df9",diseaseBurdenDto.getRegion()+" total"));
 
 			diseaseBurdenDto.setTotalCount(makeDIvsCount(total, "#5a95f4bf","#2f7df9",diseaseBurdenDto.getRegion()+" totaldeathsCount"));
 
 			diseaseBurdenDto.setActiveCases(makeDIvs(Long.parseLong(activeCases), casePercental,  "#feba0199", "#dfa507",diseaseBurdenDto.getRegion()+" active"));
-			diseaseBurdenDto.setActiveCountCases(makeDIvsCount(activeCases,  "#feba0199", "#dfa507",diseaseBurdenDto.getRegion()+" activedeathsCount"));
-
 			
+			diseaseBurdenDto.setActiveCount(makeDIvsCount(activeCases,  "#feba0199", "#dfa507",diseaseBurdenDto.getRegion()+" activedeathsCount"));
+
 			diseaseBurdenDto.setRecovered(makeDIvs(Long.parseLong(recovered), casePercental, "#00e0a19c", "#038d66",diseaseBurdenDto.getRegion()+" recovered"));
+			
 			diseaseBurdenDto.setRecoveredCount(makeDIvsCount(recovered, "#00e0a19c", "#038d66",diseaseBurdenDto.getRegion()+" recovereddeathsCount"));
 
-			
 			diseaseBurdenDto.setDeaths(makeDIvs(Long.parseLong(deaths), casePercental,"#bf8678ba", "#91675d",diseaseBurdenDto.getRegion()+" deaths"));
+			
 			diseaseBurdenDto.setDeathsCount(makeDIvsCount(deaths,"#bf8678ba", "#91675d",diseaseBurdenDto.getRegion()+" deathsCount"));
 
 			diseaseBurdenDtoList.add(diseaseBurdenDto);
@@ -192,7 +202,7 @@ public String makeDIvsCount(String num, String lightColor, String deepColor,Stri
 //		if (num.equals("0") )
 //			return ("0");
 
-		String mainStyle = "text-align: center; height:15px; width: 100%;";
+		String mainStyle = "text-align: center; height:15px; width: 100%; ";
 				//+ " background:"+lightColor;
 		//String progressPercentStyle = "position: absolute; width: 20%; color: #ffffff; font-weight: 700; margin: -1px;";
 		String regionalTotal = num;
@@ -211,6 +221,16 @@ public String makeDIvsCount(String num, String lightColor, String deepColor,Stri
 
 //		return "<div style='"+mainStyle+"'>" + element("div" , style, content) + "</div>";
 	}
+
+public String makeDIvsNone(String value, String lightColor, String deepColor) {
+	
+	String mainStyle = "text-align: center; height:15px; width: 100%; ";
+			
+	String regionalTotal = value;
+
+	return "<div style='"+mainStyle+"'>"+ regionalTotal+"</div>";
+			
+}
 
 	public String element(String type, String style, String content) {
 		StringBuilder sb = new StringBuilder();

@@ -66,7 +66,8 @@ public class DashboardDataProvider {
 	private CaseClassification caseClassification;
 	private NewDateFilterType dateFilterType;
 
-	private NewCaseDateType newCaseDateType = NewCaseDateType.MOST_RELEVANT;
+	private NewCaseDateType newCaseDateType ;
+	//= NewCaseDateType.MOST_RELEVANT;
 
 	// overall
 	private List<DiseaseBurdenDto> diseasesBurden = new ArrayList<>();
@@ -260,7 +261,8 @@ public class DashboardDataProvider {
 				setTestResultCountByResultType(FacadeProvider.getDashboardFacade().getTestResultCountByResultType(dashboardCriteria));
 			}
 
-			dashboardCriteria.dateBetween(fromDate, toDate).includeNotACaseClassification(true);
+			dashboardCriteria.dateBetween(fromDate, toDate).includeNotACaseClassification(false);
+			
 			setCasesCountByClassification(FacadeProvider.getDashboardFacade().getCasesCountByClassification(dashboardCriteria));
 			
 			System.out.println("===dashboardCriteria===");
@@ -279,13 +281,14 @@ public class DashboardDataProvider {
 		if (getDashboardType() == DashboardType.DISEASE || this.disease != null) {
 			// Cases
 			CaseCriteria caseCriteria = new CaseCriteria();
-			caseCriteria.region(region).district(district).disease(disease).newCaseDateBetween(fromDate, toDate, NewCaseDateType.MOST_RELEVANT);
+			caseCriteria.region(region).district(district).disease(disease).newCaseDateBetween(fromDate, toDate, newCaseDateType);
 			//setCases(FacadeProvider.getCaseFacade().getCasesForDashboard(caseCriteria));
 			setLastReportedDistrict(FacadeProvider.getCaseFacade().getLastReportedDistrictName(caseCriteria, true, true));
 
-			caseCriteria.newCaseDateBetween(previousFromDate, previousToDate, NewCaseDateType.MOST_RELEVANT);
-			caseCriteria.setCaseClassification(CaseClassification.NO_CASE);
-
+			caseCriteria.newCaseDateBetween(previousFromDate, previousToDate, newCaseDateType);
+			caseCriteria.setCaseClassification(caseClassification);
+			caseCriteria.setNewCaseDateType(newCaseDateType);
+			
 			setPreviousCases(FacadeProvider.getCaseFacade().getCasesForDashboard(caseCriteria));
 
 			if (getCases().size() > 0) {
@@ -311,7 +314,9 @@ public class DashboardDataProvider {
 			.disease(disease)
 			.dateBetween(fromDate, toDate)
 			.caseClassification(caseClassification);
+		
 		setEvents(FacadeProvider.getDashboardFacade().getNewEvents(dashboardCriteria));
+		
 		setEventCountByStatus(FacadeProvider.getDashboardFacade().getEventCountByStatus(dashboardCriteria));
 
 		setOutbreakDistrictCount(

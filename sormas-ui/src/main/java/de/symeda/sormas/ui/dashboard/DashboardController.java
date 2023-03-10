@@ -31,6 +31,7 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.caze.NewCaseDateType;
 import de.symeda.sormas.api.dashboard.NewDateFilterType;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.SormasUI;
@@ -85,8 +86,10 @@ public class DashboardController {
 		df.setTimeZone(tz);
 		String dateFromAsISO = df.format(dateFrom);
 		String dateToAsISO = df.format(dateTo);
+		
+		NewCaseDateType newCaseDateType = dashboardDataProvider.getNewCaseDateType();
 //
-		String paramData = dateFromAsISO+"/"+dateToAsISO+"/"+type+"/"+caseClassification;
+		String paramData = dateFromAsISO+"/"+dateToAsISO+"/"+type+"/"+caseClassification+"/"+newCaseDateType;
 //		
 		DiseaseDetailsView.setData(paramData);
 		//DiseaseDetailsView.setProvider(dashboardDataProvider);

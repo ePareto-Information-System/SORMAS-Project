@@ -34,7 +34,7 @@ public class DiseaseFilterLayout extends DashboardFilterLayout {
 			REGION_FILTER,
 			DISTRICT_FILTER,
 			CASE_CLASSIFICATION_FILTER
-			};
+	};
 	private ComboBox diseaseFilter;
 
 	public DiseaseFilterLayout(DiseaseDetailsView dashboardView, DashboardDataProvider dashboardDataProvider) {
@@ -48,10 +48,10 @@ public class DiseaseFilterLayout extends DashboardFilterLayout {
 
 		System.out.println(dashboardDataProvider.getFromDate());
 
-		super.populateLayout();
-		createRegionAndDistrictFilter();
-		createDateTypeSelectorFilter();
-		createCaseClassificationFilter();
+//		super.populateLayout();
+//		createRegionAndDistrictFilter();
+//		createDateTypeSelectorFilter();
+//		createCaseClassificationFilter();
 
 	}
 

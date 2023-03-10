@@ -2670,5 +2670,5 @@ public interface Captions {
 	String EntityAuditLogComponent_showUniqueActivities = "EntityAuditLogComponent.showUniqueActivities";
 	String EntityAuditLogComponent_selectActivities = "EntityAuditLogComponent.selectActivities";
 	String years = "years";
-	String dashboardLastReportedDistrict = "Dash Board Last Reported District";
+	String dashboardLastReportedDistrict = "Last Reported District";
 }

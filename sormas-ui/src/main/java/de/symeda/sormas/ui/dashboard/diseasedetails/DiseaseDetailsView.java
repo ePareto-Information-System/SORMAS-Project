@@ -41,136 +41,158 @@ public class DiseaseDetailsView extends AbstractDashboardView {
 //	}
 	public DiseaseDetailsView() {
 		super(VIEW_NAME, DashboardType.DISEASE);
-		
+
 		dashboardLayout.setSpacing(false);
-		
+
 		String paramData = (String) SormasUI.get().getSession().getAttribute("paramdata");
-		
+
 		System.out.println("paramdata");
-		
+
 		System.out.println(data);
-		
-		if(data!=null) {
-			String dateFrom =data.split("/")[0];
-			
-			String dateTo =data.split("/")[1];
-			
-			String type =data.split("/")[2];
-			
-			String caseClassification =data.split("/")[3];
 
-			
+		if (data != null) {
 
-		
-	           if(dateFrom!=null) {
-     	   System.out.println("print dateFrom");
-     	   System.out.println(dateFrom);
-     	   
-     	   DateFormat df1 = new SimpleDateFormat("yyyy-MM-dd");
-     	   String string1 = dateFrom;
-     	   try {
-				Date result1 = df1.parse(string1);
-				dashboardDataProvider.setFromDate(result1);
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			String dateFrom = data.split("/")[0];
+
+			String dateTo = data.split("/")[1];
+
+			String type = data.split("/")[2];
+
+			String caseClassification = data.split("/")[3];
+
+			String newCaseDateType = data.split("/")[4];
+
+			//String region = data.split("/")[5];
+
+			if (dateFrom != null) {
+				System.out.println("print dateFrom");
+				System.out.println(dateFrom);
+
+				DateFormat df1 = new SimpleDateFormat("yyyy-MM-dd");
+				String string1 = dateFrom;
+				try {
+					Date result1 = df1.parse(string1);
+					dashboardDataProvider.setFromDate(result1);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				// dashboardDataProvider.setFromDate(new Date(params[1]));
 			}
-     	   //dashboardDataProvider.setFromDate(new Date(params[1]));
-        }
-        
-        if(dateTo!=null) {
-     	   System.out.println("print dateTo");
-     	   System.out.println(dateTo);
-     	   
-     	   
-     	   DateFormat df1 = new SimpleDateFormat("yyyy-MM-dd");
-     	   String string1 = dateTo;
-     	   try {
-				Date result1 = df1.parse(string1);
-				dashboardDataProvider.setToDate(result1);
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+
+			if (dateTo != null) {
+				System.out.println("print dateTo");
+				System.out.println(dateTo);
+
+				DateFormat df1 = new SimpleDateFormat("yyyy-MM-dd");
+				String string1 = dateTo;
+				try {
+					Date result1 = df1.parse(string1);
+					dashboardDataProvider.setToDate(result1);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				// dashboardDataProvider.setFromDate(new Date(params[2]));
 			}
-     	   
-     	   //dashboardDataProvider.setFromDate(new Date(params[2]));
-        }
-        
-        if(type!=null) {
-     	   System.out.println("print params[3]");
-     	   System.out.println(type);
-     	   
-     	  
-     	 
-     	   
-     	   
-     	  // NewDateFilterType.values();
-				dashboardDataProvider.setDateFilterType(EnumSet.allOf(NewDateFilterType.class)
-			               .stream()
-			               .filter(e -> e.name().equals(type))
-			               .findFirst()
-			               .orElseThrow(() -> new IllegalStateException(String.format("Unsupported type %s.", type))));
+
+			if (type != null) {
+				System.out.println("==type==");
+				System.out.println(type);
+
+				// NewDateFilterType.values();
+				dashboardDataProvider.setDateFilterType(EnumSet.allOf(NewDateFilterType.class).stream()
+						.filter(e -> e.name().equals(type)).findFirst()
+						.orElseThrow(() -> new IllegalStateException(String.format("Unsupported type %s.", type))));
+
+				// dashboardDataProvider.setFromDate(new Date(params[2]));
+			}
+
+			// dashboardDataProvider.setRegion(region);
+
+			if (caseClassification != null) {
+				System.out.println("print caseClassification");
+
+				String caseClass = caseClassification.replace("case", "").toUpperCase().trim();
+
+				if (!caseClass.equals("NULL")) {
+
+					System.out.println(caseClass);
+
+					dashboardDataProvider.setCaseClassification(EnumSet.allOf(CaseClassification.class).stream()
+							.filter(e -> e.name().equals(caseClass)).findFirst().orElseThrow(
+									() -> new IllegalStateException(String.format("Unsupported type %s.", caseClass))));
+
+					// dashboardDataProvider.setFromDate(new Date(params[2]));
+					//dashboardDataProvider.setCaseClassification(CaseClassification.CONFIRMED);
+
+				}
+			} else {
+				dashboardDataProvider.setCaseClassification(CaseClassification.NOT_CLASSIFIED);
+			}
 			
-     	   
-     	   //dashboardDataProvider.setFromDate(new Date(params[2]));
-        }
-        
-//        if(caseClassification!=null) {
-//      	   System.out.println("print caseClassification");
-//      	   
-//      	   String caseClass = caseClassification.replace("case", "").toUpperCase().trim();
-//      	   
-//      	   System.out.println(caseClass);
-//      	   
-//      	   
-//      	 if(!caseClass.equals("NULL")) {
-//      	dashboardDataProvider.setCaseClassification(EnumSet.allOf(CaseClassification.class)
-//	               .stream()
-//	               .filter(e -> e.name().equals(caseClass))
-//	               .findFirst()
-//	               .orElseThrow(() -> new IllegalStateException(String.format("Unsupported type %s.", caseClass))));
-//	
-//      	   
-//      	   //dashboardDataProvider.setFromDate(new Date(params[2]));
-//         }
-//        }else {
-//        	dashboardDataProvider.setCaseClassification(CaseClassification.NOT_CLASSIFIED);
-//        }
-        
-        
-		
-   }
-
-		
 
 
-		//dashboardDataProvider = new DashboardDataProvider();
-		//dashboardDataProvider = new DashboardDataProvider(NewCaseDateType.class);
+			if (newCaseDateType != null) {
+				System.out.println("==newCaseDateType==");
+				System.out.println(newCaseDateType);
+				NewCaseDateType enumNewCaseDateType;
+				switch (newCaseDateType) {
+				case "Creation date":
+					enumNewCaseDateType = NewCaseDateType.CREATION;
+					break;
+				case "Investigation date":
+					enumNewCaseDateType = NewCaseDateType.INVESTIGATION;
+					break;
+				case "Most relevant date":
+					enumNewCaseDateType = NewCaseDateType.MOST_RELEVANT;
+					break;
+				case "Symptom onset date":
+					enumNewCaseDateType = NewCaseDateType.ONSET;
+					break;
+				case "Case report date":
+					enumNewCaseDateType = NewCaseDateType.REPORT;
+					break;
+				case "Classification date":
+					enumNewCaseDateType = NewCaseDateType.CLASSIFICATION;
+					break;
+				default:
+					enumNewCaseDateType = NewCaseDateType.MOST_RELEVANT;
+				}
+
+				dashboardDataProvider.setNewCaseDateType(enumNewCaseDateType);
+			}
+
+		}
+		// dashboardDataProvider = new DashboardDataProvider();
+		// dashboardDataProvider = new DashboardDataProvider(NewCaseDateType.class);
 
 		if (dashboardDataProvider.getDashboardType() == null) {
 			dashboardDataProvider.setDashboardType(DashboardType.DISEASE);
 		}
-		
+
 		if (DashboardType.DISEASE.equals(dashboardDataProvider.getDashboardType())) {
 			dashboardDataProvider.setDisease(FacadeProvider.getDiseaseConfigurationFacade().getDefaultDisease());
 		}
-		
-		dashboardDataProvider.setNewCaseDateType(NewCaseDateType.MOST_RELEVANT);
-	
-		
-		//filterLayout = new DashboardFilterLayout(this, dashboardDataProvider);
-		//filterLayout.setInfoLabelText(I18nProperties.getString(Strings.classificationForDisease));
+
+		// dashboardDataProvider.setNewCaseDateType(NewCaseDateType.MOST_RELEVANT);
+
+		// filterLayout = new DashboardFilterLayout(this, dashboardDataProvider);
+		// filterLayout.setInfoLabelText(I18nProperties.getString(Strings.classificationForDisease));
 //		
+		
+
 		filterLayout = new DiseaseFilterLayout(this, dashboardDataProvider);
 		dashboardLayout.addComponent(filterLayout);
-		
+
 		dashboardSwitcher.setValue(DashboardType.DISEASE);
 		dashboardSwitcher.addValueChangeListener(e -> {
 			dashboardDataProvider.setDashboardType((DashboardType) e.getProperty().getValue());
 			navigateToDashboardView(e);
 		});
-		
-		//Added Component
+
+		// Added Component
 		diseaseDetailsViewLayout = new DiseaseDetailsViewLayout(dashboardDataProvider);
 		dashboardLayout.addComponent(diseaseDetailsViewLayout);
 		dashboardLayout.setExpandRatio(diseaseDetailsViewLayout, 1);

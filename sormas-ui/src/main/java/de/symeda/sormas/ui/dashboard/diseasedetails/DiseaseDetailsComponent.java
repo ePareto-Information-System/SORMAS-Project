@@ -214,7 +214,7 @@ public class DiseaseDetailsComponent extends CssLayout {
 		Label fatalityNameLabel = new Label("", ContentMode.HTML);
 		CssStyles.style(fatalityNameLabel, CssStyles.LABEL_WHITE, CssStyles.LABEL_PRIMARY, isCritical ? CssStyles.LABEL_CRITICAL : "", CssStyles.HSPACE_LEFT_3);
 
-		fatalityNameLabel.setValue("<div style='float: left; width: 50px; margin-top: 10px;'>" + fatalityLabel + "</div> " +
+		fatalityNameLabel.setValue("<div style='float: left; width: 60px; margin-top: 10px;'>" + fatalityLabel + "</div> " +
 				"<div style='float: left; margin-top: 10px; margin-right: 60px;'>" + fatalityValue+ "</div>");
 		
 		System.out.println("===fatalityValue===");
