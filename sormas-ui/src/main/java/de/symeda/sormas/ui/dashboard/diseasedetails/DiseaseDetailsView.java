@@ -178,12 +178,12 @@ public class DiseaseDetailsView extends AbstractDashboardView {
 
 		// dashboardDataProvider.setNewCaseDateType(NewCaseDateType.MOST_RELEVANT);
 
-		// filterLayout = new DashboardFilterLayout(this, dashboardDataProvider);
+		 filterLayout = new DashboardFilterLayout(this, dashboardDataProvider);
 		// filterLayout.setInfoLabelText(I18nProperties.getString(Strings.classificationForDisease));
 //		
 		
 
-		filterLayout = new DiseaseFilterLayout(this, dashboardDataProvider);
+		//filterLayout = new DiseaseFilterLayout(this, dashboardDataProvider);
 		dashboardLayout.addComponent(filterLayout);
 
 		dashboardSwitcher.setValue(DashboardType.DISEASE);
