@@ -121,10 +121,30 @@ public class DiseaseDetailsView extends AbstractDashboardView {
 
 					System.out.println(caseClass);
 
+					if(caseClass.equals("NOT YET CLASSIFIED")) {
+						
+						dashboardDataProvider.setCaseClassification(CaseClassification.NOT_CLASSIFIED);
+					
+					}else if (caseClass.equals("CONFIRMED  WITH UNKNOWN SYMPTOMS")){
+						
+						dashboardDataProvider.setCaseClassification(CaseClassification.CONFIRMED_UNKNOWN_SYMPTOMS);
+
+					}
+					else if (caseClass.equals("NOT A")){
+						
+						dashboardDataProvider.setCaseClassification(CaseClassification.NO_CASE);
+
+					}else if(caseClass.equals("CONFIRMED  WITH NO SYMPTOMS")) {
+						
+						dashboardDataProvider.setCaseClassification(CaseClassification.CONFIRMED_NO_SYMPTOMS);
+
+					}
+					else {
+					
 					dashboardDataProvider.setCaseClassification(EnumSet.allOf(CaseClassification.class).stream()
 							.filter(e -> e.name().equals(caseClass)).findFirst().orElseThrow(
 									() -> new IllegalStateException(String.format("Unsupported type %s.", caseClass))));
-
+					}
 					// dashboardDataProvider.setFromDate(new Date(params[2]));
 					//dashboardDataProvider.setCaseClassification(CaseClassification.CONFIRMED);
 

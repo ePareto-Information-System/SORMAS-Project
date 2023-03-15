@@ -108,9 +108,6 @@ public class DiseaseFacadeEjb implements DiseaseFacade {
 		caseCriteria.newCaseDateBetween(previousFrom, previousTo, null);
 		Map<Disease, Long> previousCases = caseFacade.getCaseCountByDisease(caseCriteria, true, true);
 
-		System.out.println("==printing criteria==");
-
-		System.out.println(caseCriteria);
 		
 		//build diseasesBurden
 		List<DiseaseBurdenDto> diseasesBurden = diseases.stream().map(disease -> {
@@ -253,18 +250,12 @@ public class DiseaseFacadeEjb implements DiseaseFacade {
 		RegionDto regionDto = null;
 		if(Objects.nonNull(regionRef)){
 			regionDto = regionFacade.getRegionByUuid(regionRef.getUuid());
-			System.out.println("**===regionDto===**");
-			System.out.println(regionDto);
-
 		}
 
 
 		//new cases
 		CaseCriteria caseCriteria = new CaseCriteria().newCaseDateBetween(from, to, newCaseDateType).region(regionRef).district(districtRef).disease(disease).caseClassification(caseClassification);
 		
-		System.out.println("+++++ case outcome +++++");
-
-		System.out.println(caseCriteria.getOutcome());
 		
 		
 		//Map<Disease, Long> allCasesFetched = dashboardService.getCaseCountByDisease(caseCriteria);
@@ -275,12 +266,9 @@ public class DiseaseFacadeEjb implements DiseaseFacade {
 
 		Map<Disease, Long> caseFatalities = personFacade.getDeathCountByDisease(caseCriteria, true, true);
 
-		System.out.println("**===caseFatalities===**");
-
-		System.out.println(caseFatalities);
 		
 		caseCriteria.setOutcome(CaseOutcome.NO_OUTCOME);
-		caseCriteria.relevanceStatus(EntityRelevanceStatus.ACTIVE);
+		//caseCriteria.relevanceStatus(EntityRelevanceStatus.ACTIVE);
 		Map<Disease, Long> archievedCase = caseFacade.getCaseCountByDisease(caseCriteria, true, true);
 		caseCriteria.relevanceStatus(null);
 		
