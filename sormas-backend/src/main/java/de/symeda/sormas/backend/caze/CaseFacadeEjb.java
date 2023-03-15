@@ -4389,8 +4389,12 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			caze,
 			new CaseUserFilterCriteria().excludeSharedCases(excludeSharedCases).excludeCasesFromContacts(excludeCasesFromContacts));
 
-		filter = AbstractAdoService.and(cb, filter, caseService.createCriteriaFilter(caseCriteria, cb, cq, caze));
-		//filter = CriteriaBuilderHelper.and(cb, filter, createCaseCriteriaFilter(caseCriteria, cq));
+		//final CaseQueryContext caseQueryContext = new CaseQueryContext(cb, cq, caze);
+		
+		filter = AbstractAdoService.and(cb, filter, caseService.createCriteriaFilter(caseCriteria,cb, cq, caze));
+
+		//filter = AbstractAdoService.and(cb, filter, createCaseCriteriaFilter(caseCriteria, caseQueryContext));
+		//filter = CriteriaBuilderHelper.and(cb, filter, caseService.createCaseCriteriaFilterDiseaseDetails(caseCriteria, cq));
 
 		if (filter != null) {
 			cq.where(filter);
@@ -4415,7 +4419,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	}
 	
 	private <T extends AbstractDomainObject> Predicate createCaseCriteriaFilter(
-			DashboardCriteria dashboardCriteria,
+			CaseCriteria dashboardCriteria,
 			CaseQueryContext caseQueryContext) {
 
 			final From<?, Case> from = caseQueryContext.getRoot();
@@ -4439,14 +4443,14 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				filter =
 					CriteriaBuilderHelper.and(cb, filter, cb.equal(responsibleDistrict.get(District.UUID), dashboardCriteria.getDistrict().getUuid()));
 			}
-			if (dashboardCriteria.getDateFrom() != null && dashboardCriteria.getDateTo() != null) {
+			if (dashboardCriteria.getNewCaseDateFrom() != null && dashboardCriteria.getNewCaseDateTo() != null) {
 				filter = CriteriaBuilderHelper.and(
 					cb,
 					filter,
 					caseService.createNewCaseFilter(
 						caseQueryContext,
-						DateHelper.getStartOfDay(dashboardCriteria.getDateFrom()),
-						DateHelper.getEndOfDay(dashboardCriteria.getDateTo()),
+						DateHelper.getStartOfDay(dashboardCriteria.getNewCaseDateFrom()),
+						DateHelper.getEndOfDay(dashboardCriteria.getNewCaseDateTo()),
 						dashboardCriteria.getNewCaseDateType()));
 			}
 			if (dashboardCriteria.isIncludeNotACaseClassification()==null||dashboardCriteria.isIncludeNotACaseClassification()==false) {

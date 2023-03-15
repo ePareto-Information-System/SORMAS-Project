@@ -78,6 +78,7 @@ import de.symeda.sormas.api.clinicalcourse.ClinicalVisitCriteria;
 import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.contact.ContactStatus;
 import de.symeda.sormas.api.contact.FollowUpStatus;
+import de.symeda.sormas.api.dashboard.DashboardCriteria;
 import de.symeda.sormas.api.document.DocumentRelatedEntityType;
 import de.symeda.sormas.api.externaldata.ExternalDataDto;
 import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
@@ -2179,14 +2180,18 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 	}
 	
 	
+
+	
 	public Predicate createCriteriaFilter(CaseCriteria caseCriteria, CriteriaBuilder cb, CriteriaQuery<?> cq, From<?, Case> from) {
 
 		Join<Case, Person> person = from.join(Case.PERSON, JoinType.LEFT);
 		Join<Case, User> reportingUser = from.join(Case.REPORTING_USER, JoinType.LEFT);
-		Join<Case, Region> region = from.join(Case.REGION, JoinType.LEFT);
+		//Join<Case, Region> region = from.join(Case.REGION, JoinType.LEFT);
 		Join<Case, Region> responsibleRegion = from.join(Case.RESPONSIBLE_REGION, JoinType.LEFT);
 
-		Join<Case, District> district = from.join(Case.DISTRICT, JoinType.LEFT);
+		//Join<Case, District> district = from.join(Case.DISTRICT, JoinType.LEFT);
+		Join<Case, District> responsibleDistrict = from.join(Case.RESPONSIBLE_DISTRICT, JoinType.LEFT);
+
 		Join<Case, Community> community = from.join(Case.COMMUNITY, JoinType.LEFT);
 		Join<Case, Facility> facility = from.join(Case.HEALTH_FACILITY, JoinType.LEFT);
 		Predicate filter = null;
@@ -2202,14 +2207,18 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 		}
 		if (caseCriteria.getRegion() != null) {
 		
-			filter = AbstractAdoService.and(cb, filter,
-					cb.or(
-					cb.and(cb.equal(region.get(Region.UUID), caseCriteria.getRegion().getUuid()),cb.isNotNull(region.get(Region.UUID))),
-					cb.and(cb.equal(responsibleRegion.get(Region.UUID), caseCriteria.getRegion().getUuid()),cb.isNull(region.get(Region.UUID)))));
+			filter = AbstractAdoService.and(cb, filter, cb.equal(responsibleRegion.get(Region.UUID), caseCriteria.getRegion().getUuid()));
+
+//			filter = AbstractAdoService.and(cb, filter,
+//					cb.or(
+//					cb.and(cb.equal(region.get(Region.UUID), caseCriteria.getRegion().getUuid()),cb.isNotNull(region.get(Region.UUID))),
+//					cb.and(cb.equal(responsibleRegion.get(Region.UUID), caseCriteria.getRegion().getUuid()),cb.isNull(region.get(Region.UUID)))));
 
 		}
+		
+
 		if (caseCriteria.getDistrict() != null) {
-			filter = AbstractAdoService.and(cb, filter, cb.equal(district.get(District.UUID), caseCriteria.getDistrict().getUuid()));
+			filter = AbstractAdoService.and(cb, filter, cb.equal(responsibleDistrict.get(District.UUID), caseCriteria.getDistrict().getUuid()));
 		}
 		if (caseCriteria.getCommunity() != null) {
 			filter = AbstractAdoService.and(cb, filter, cb.equal(community.get(Community.UUID), caseCriteria.getCommunity().getUuid()));
@@ -2224,7 +2233,7 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 						cb.not(
 							cb.and(
 								cb.equal(from.get(Case.SHARED_TO_COUNTRY), true),
-								cb.notEqual(region.get(District.UUID), currentUser.getDistrict().getUuid()))));
+								cb.notEqual(responsibleRegion.get(District.UUID), currentUser.getDistrict().getUuid()))));
 				} else if (currentUser.getRegion() != null) {
 					filter = AbstractAdoService.and(
 						cb,
@@ -2232,7 +2241,7 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 						cb.not(
 							cb.and(
 								cb.equal(from.get(Case.SHARED_TO_COUNTRY), true),
-								cb.notEqual(region.get(Region.UUID), currentUser.getRegion().getUuid()))));
+								cb.notEqual(responsibleRegion.get(Region.UUID), currentUser.getRegion().getUuid()))));
 				}
 			}
 		}
@@ -2262,11 +2271,15 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 			
 			filter = AbstractAdoService.and(cb, filter, cb.equal(from.get(Case.CASE_CLASSIFICATION), caseCriteria.getCaseClassification()));
 		
-		}else {
-			filter = AbstractAdoService.and(cb, filter, cb.notEqual(from.get(Case.CASE_CLASSIFICATION), CaseClassification.NO_CASE));
-
 		}
+//		else {
+//			filter = AbstractAdoService.and(cb, filter, cb.notEqual(from.get(Case.CASE_CLASSIFICATION), CaseClassification.NO_CASE));
+//
+//		}
 		
+		if (caseCriteria.isIncludeNotACaseClassification()==null||caseCriteria.isIncludeNotACaseClassification()==false) {
+			filter = AbstractAdoService.and(cb, filter, cb.notEqual(from.get(Case.CASE_CLASSIFICATION), CaseClassification.NO_CASE));
+		}
 
 
 		if (caseCriteria.getInvestigationStatus() != null) {
@@ -2391,6 +2404,7 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 				}
 			}
 		}
+		
 		
 		System.out.println("**==caseCriteria==**");
 

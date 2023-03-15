@@ -22,11 +22,14 @@ import static de.symeda.sormas.ui.UiUtil.permitted;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 import java.util.TimeZone;
 
 import com.vaadin.navigator.Navigator;
+import com.vaadin.navigator.ViewChangeListener;
 
 import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseClassification;
@@ -88,8 +91,17 @@ public class DashboardController {
 		String dateToAsISO = df.format(dateTo);
 		
 		NewCaseDateType newCaseDateType = dashboardDataProvider.getNewCaseDateType();
+		
+		RegionReferenceDto region = dashboardDataProvider.getRegion();
+		String regionId = null;
+		if(Objects.nonNull(region)&&region.getUuid()!=null){
+			 regionId= region.getUuid();
+		}
+		System.out.println(regionId);
+
+
 //
-		String paramData = dateFromAsISO+"/"+dateToAsISO+"/"+type+"/"+caseClassification+"/"+newCaseDateType;
+		String paramData = dateFromAsISO+"/"+dateToAsISO+"/"+type+"/"+caseClassification+"/"+newCaseDateType+"/"+regionId;
 //		
 		DiseaseDetailsView.setData(paramData);
 		//DiseaseDetailsView.setProvider(dashboardDataProvider);
@@ -103,6 +115,8 @@ public class DashboardController {
 
 		//SormasUI.get().getSession().setAttribute("paramdata", dateFromAsISO+"/"+dateToAsISO+"/"+type);
 	}
+	
+
 
 	private CaseDataDto findCase(String uuid) {
 		return FacadeProvider.getCaseFacade().getCaseDataByUuid(uuid);

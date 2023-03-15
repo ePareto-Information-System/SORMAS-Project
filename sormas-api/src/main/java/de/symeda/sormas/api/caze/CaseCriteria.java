@@ -23,6 +23,7 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.contact.FollowUpStatus;
 import de.symeda.sormas.api.contact.QuarantineType;
+import de.symeda.sormas.api.dashboard.DashboardCriteria;
 import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
@@ -152,7 +153,8 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	private Boolean onlyShowCasesWithFulfilledReferenceDefinition;
 	private String personLike;
 	private String nameUuidEpidNumberLike;
-	
+	private Boolean includeNotACaseClassification;
+
 
 	public CaseCriteria() {
 		super(NewCaseDateType.class);
@@ -797,6 +799,21 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	public void setExcludeSharedCases(Boolean excludeSharedCases) {
 		this.excludeSharedCases = excludeSharedCases;
 	}
+	
+	
+
+	public Boolean shouldIncludeNotACaseClassification() {
+		return includeNotACaseClassification;
+	}
+
+	public CaseCriteria includeNotACaseClassification(Boolean includeNotACaseClassification) {
+		this.includeNotACaseClassification = includeNotACaseClassification;
+		return this;
+	}
+	
+	public Boolean isIncludeNotACaseClassification() {
+		return includeNotACaseClassification;
+	}
 
 	@Override
 	public String toString() {
@@ -834,6 +851,7 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 				+ ", onlyShowCasesWithFulfilledReferenceDefinition=" + onlyShowCasesWithFulfilledReferenceDefinition
 				+ ", personLike=" + personLike + ", nameUuidEpidNumberLike=" + nameUuidEpidNumberLike + "]";
 	}
+
 	
 	
 	

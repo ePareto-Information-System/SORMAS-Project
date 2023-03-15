@@ -211,6 +211,14 @@ public class DashboardDataProvider {
 				,newCaseDateType
 				,caseClassification);
 
+		System.out.println("+++++region++++");
+
+		System.out.println(region);
+		
+		System.out.println(dbd);
+		
+		System.out.println("====dbd====");
+
 		
 		setDiseaseBurdenDetail(dbd);
 
@@ -289,6 +297,8 @@ public class DashboardDataProvider {
 			caseCriteria.setCaseClassification(caseClassification);
 			caseCriteria.setNewCaseDateType(newCaseDateType);
 			
+			//setCases(FacadeProvider.getCaseFacade().getCasesForDashboard(caseCriteria));
+
 			setPreviousCases(FacadeProvider.getCaseFacade().getCasesForDashboard(caseCriteria));
 
 			if (getCases().size() > 0) {

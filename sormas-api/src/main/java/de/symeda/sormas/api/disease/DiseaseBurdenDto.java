@@ -47,6 +47,7 @@ public class DiseaseBurdenDto implements Serializable {
 	public static final String CASES_COUNT_TOTAL = "totalCount";
 
 	public static final String CASES_REGION = "region";
+	public static final String CASES_DISTRICT = "district";
 	
 	public static final String ACTIVE_CASE = "activeCases";
 	public static final String ACTIVE_COUNT_CASE = "activeCount";

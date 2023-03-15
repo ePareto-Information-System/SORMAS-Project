@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
@@ -44,6 +45,7 @@ import de.symeda.sormas.api.outbreak.OutbreakCriteria;
 import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.utils.criteria.CriteriaDateType;
 import de.symeda.sormas.backend.caze.CaseFacadeEjb.CaseFacadeEjbLocal;
+import de.symeda.sormas.backend.dashboard.DashboardService;
 import de.symeda.sormas.backend.disease.DiseaseConfigurationFacadeEjb.DiseaseConfigurationFacadeEjbLocal;
 import de.symeda.sormas.backend.event.EventFacadeEjb.EventFacadeEjbLocal;
 import de.symeda.sormas.backend.infrastructure.district.District;
@@ -59,6 +61,8 @@ public class DiseaseFacadeEjb implements DiseaseFacade {
 
 	@EJB
 	private CaseFacadeEjbLocal caseFacade;
+//	@EJB
+//	private DashboardService dashboardService;
 	@EJB
 	private EventFacadeEjbLocal eventFacade;
 	@EJB
@@ -246,17 +250,24 @@ public class DiseaseFacadeEjb implements DiseaseFacade {
 			CaseClassification caseClassification) {
 
 		//Get the region
-		RegionDto regionDto = regionFacade.getRegionByUuid(regionRef.getUuid());
-		
-		System.out.println("**===regionDto===**");
+		RegionDto regionDto = null;
+		if(Objects.nonNull(regionRef)){
+			regionDto = regionFacade.getRegionByUuid(regionRef.getUuid());
+			System.out.println("**===regionDto===**");
+			System.out.println(regionDto);
+
+		}
 
 
 		//new cases
-		CaseCriteria caseCriteria = new CaseCriteria().newCaseDateBetween(from, to, newCaseDateType).region(regionRef).disease(disease).caseClassification(caseClassification);
+		CaseCriteria caseCriteria = new CaseCriteria().newCaseDateBetween(from, to, newCaseDateType).region(regionRef).district(districtRef).disease(disease).caseClassification(caseClassification);
 		
 		System.out.println("+++++ case outcome +++++");
 
 		System.out.println(caseCriteria.getOutcome());
+		
+		
+		//Map<Disease, Long> allCasesFetched = dashboardService.getCaseCountByDisease(caseCriteria);
 
 		//Load count all dead/ fatalities
 		Map<Disease, Long> allCasesFetched = caseFacade.getCaseCountByDisease(caseCriteria, true, true);

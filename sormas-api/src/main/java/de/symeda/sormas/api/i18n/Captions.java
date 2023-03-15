@@ -834,6 +834,7 @@ public interface Captions {
 	String dashboardDiscarded = "dashboardDiscarded";
 	String dashboardDiseaseBurdenInfo = "dashboardDiseaseBurdenInfo";
 	String dashboardRegionalDiseaseBurden = "dashboardRegionalDiseaseBurden";
+	String dashboardDistrictDiseaseBurden="dashboardDistrictDiseaseBurden";
 	String diseaseDetailMap = "diseaseDetailMap";
 	String dashboardDiseaseBurdenOutbreakDistricts = "dashboardDiseaseBurdenOutbreakDistricts";
 	String dashboardDiseaseCarouselSlideShow = "dashboardDiseaseCarouselSlideShow";

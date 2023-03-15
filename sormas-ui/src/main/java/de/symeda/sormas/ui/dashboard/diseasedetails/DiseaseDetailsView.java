@@ -7,6 +7,7 @@ import de.symeda.sormas.api.caze.NewCaseDateType;
 import de.symeda.sormas.api.dashboard.NewDateFilterType;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.api.infrastructure.region.RegionDto;
 import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.dashboard.AbstractDashboardView;
 import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
@@ -62,7 +63,7 @@ public class DiseaseDetailsView extends AbstractDashboardView {
 
 			String newCaseDateType = data.split("/")[4];
 
-			//String region = data.split("/")[5];
+			String regionId = data.split("/")[5];
 
 			if (dateFrom != null) {
 				System.out.println("print dateFrom");
@@ -163,6 +164,20 @@ public class DiseaseDetailsView extends AbstractDashboardView {
 
 				dashboardDataProvider.setNewCaseDateType(enumNewCaseDateType);
 			}
+			
+			if(!regionId.equals("null")) {
+				
+				System.out.println("====regionId====");
+
+				System.out.println(regionId);
+				
+				RegionDto region = FacadeProvider.getRegionFacade().getRegionByUuid(regionId);
+				
+				dashboardDataProvider.setRegion(region.toReference());
+				
+				
+				
+			}
 
 		}
 		// dashboardDataProvider = new DashboardDataProvider();
@@ -178,12 +193,12 @@ public class DiseaseDetailsView extends AbstractDashboardView {
 
 		// dashboardDataProvider.setNewCaseDateType(NewCaseDateType.MOST_RELEVANT);
 
-		 filterLayout = new DashboardFilterLayout(this, dashboardDataProvider);
+		// filterLayout = new DashboardFilterLayout(this, dashboardDataProvider);
 		// filterLayout.setInfoLabelText(I18nProperties.getString(Strings.classificationForDisease));
 //		
 		
 
-		//filterLayout = new DiseaseFilterLayout(this, dashboardDataProvider);
+		filterLayout = new DiseaseFilterLayout(this, dashboardDataProvider);
 		dashboardLayout.addComponent(filterLayout);
 
 		dashboardSwitcher.setValue(DashboardType.DISEASE);
@@ -202,9 +217,7 @@ public class DiseaseDetailsView extends AbstractDashboardView {
 	public void refreshDiseaseData() {
 		
 		super.refreshDiseaseData();
-		
-		
-		
+
 		if (diseaseDetailsViewLayout != null)
 			diseaseDetailsViewLayout.refresh();
 	}
