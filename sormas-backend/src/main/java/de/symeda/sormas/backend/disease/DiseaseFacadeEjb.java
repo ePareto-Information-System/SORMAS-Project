@@ -277,19 +277,31 @@ public class DiseaseFacadeEjb implements DiseaseFacade {
 		Map<Disease, Long> recoveredCase =  caseFacade.getCaseCountByDisease(caseCriteria, true, true);
 		
 
+		caseCriteria.setOutcome(CaseOutcome.UNKNOWN);
+		
+		Map<Disease, Long> unknown =  caseFacade.getCaseCountByDisease(caseCriteria, true, true);
+		
+		caseCriteria.setOutcome(CaseOutcome.OTHER);
+
+		Map<Disease, Long> other =  caseFacade.getCaseCountByDisease(caseCriteria, true, true);
+
 		//build diseasesBurden
 		Long totalCaseCount = allCasesFetched.getOrDefault(disease, 0L);
 		Long activeCaseCount = archievedCase.getOrDefault(disease, 0L);
 		Long recoveredCaseCount = recoveredCase.getOrDefault(disease, 0L);
 		Long caseFatalityCount = caseFatalities.getOrDefault(disease, 0L);
+		Long otherCaseCount = other.getOrDefault(disease, 0L)+unknown.getOrDefault(disease, 0L);
+
 
 		return new DiseaseBurdenDto(
 				regionDto,
 				totalCaseCount.toString(),
 				activeCaseCount.toString(),
 				recoveredCaseCount.toString(),
-				caseFatalityCount.toString()
+				caseFatalityCount.toString(),
+				otherCaseCount.toString()
 		);
+		
 	}
 
 	@LocalBean

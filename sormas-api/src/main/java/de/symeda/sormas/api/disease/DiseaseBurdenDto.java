@@ -57,6 +57,10 @@ public class DiseaseBurdenDto implements Serializable {
 
 	public static final String DEATH = "deaths";
 	public static final String DEATH_COUNT = "deathsCount";
+	
+	
+	public static final String OTHER = "other";
+	public static final String OTHER_COUNT = "otherCount";
 
 
 	private Disease disease;
@@ -86,6 +90,9 @@ public class DiseaseBurdenDto implements Serializable {
 
 	private String activeCases;
 	private String activeCount;
+	
+	private String other;
+	private String otherCount;
 
 	
 	private Date to;
@@ -96,13 +103,14 @@ public class DiseaseBurdenDto implements Serializable {
 			String total,
 			String activeCases,
 			String recovered,
-			String deaths) {
+			String deaths,String other) {
 
 		this.region = regionDto;
 		this.total = total;
 		this.activeCases = activeCases;
 		this.recovered = recovered;
 		this.deaths = deaths;
+		this.other=other;
 	}
 
 
@@ -407,6 +415,29 @@ public class DiseaseBurdenDto implements Serializable {
 
 	public void setActiveCount(String activeCount) {
 		this.activeCount = activeCount;
+	}
+
+
+	public String getOther() {
+		return other;
+	}
+
+
+	public void setOther(String other) {
+		this.other = other;
+	}
+	
+	
+	
+
+
+	public String getOtherCount() {
+		return otherCount;
+	}
+
+
+	public void setOtherCount(String otherCount) {
+		this.otherCount = otherCount;
 	}
 
 
