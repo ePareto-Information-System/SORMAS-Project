@@ -208,9 +208,10 @@ public class RegionalDiseaseBurdenGrid extends Grid {
 				
 				diseaseBurdenDto.setRecoveredCount(makeDIvsCount(recovered, "#00e0a19c", "#038d66"));
 
-				diseaseBurdenDto.setDeaths(makeDIvs(Long.parseLong(deaths), casePercental,"#bf8678ba", "#91675d"));
 				
-				diseaseBurdenDto.setDeathsCount(makeDIvsCount(deaths,"#bf8678ba", "#91675d"));
+				diseaseBurdenDto.setDeaths(makeDIvs(Long.parseLong(deaths), casePercental,"#FFAEAE", "#FF4040"));
+				
+				diseaseBurdenDto.setDeathsCount(makeDIvsCount(deaths,"#FFAEAE", "#FF4040"));
 
 				
 				
