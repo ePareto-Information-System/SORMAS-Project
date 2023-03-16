@@ -11974,6 +11974,13 @@ DELETE FROM userroles_userrights WHERE userright = 'DASHBOARD_SURVEILLANCE_ACCES
 
 INSERT INTO schema_version (version_number, comment) VALUES (481, 'Assigning DASHBOARD_SURVEILLANCE_VIEW,SORMAS_UI, DASHBOARD_CONTACT_VIEW, DASHBOARD_SAMPLE_ACCESS right to HOSPITAL_SUPERVISOR');
 
+
+-- 2023-16-03 Updating outcome with null values to value  No outcome yet
+UPDATE cases SET outcome='NO_OUTCOME' WHERE outcome is null;
+
+
+INSERT INTO schema_version (version_number, comment) VALUES (482, 'Updating outcome with null values to value  NO_OUTCOME');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 
 
