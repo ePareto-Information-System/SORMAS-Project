@@ -135,7 +135,7 @@ public class RegionalDiseaseBurdenGrid extends Grid {
 		
 		recoveredCasesColumn.setRenderer(new HtmlRenderer()).setWidth(100);
 		
-		recoveredCasesColumn.setHeaderCaption("RECOVERED CASES %");
+		recoveredCasesColumn.setHeaderCaption("RECOVER CASES %");
 
 
 		deathCountColumn.setRenderer(new HtmlRenderer()).setWidth(100);
