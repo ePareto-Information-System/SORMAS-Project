@@ -11983,13 +11983,12 @@ INSERT INTO schema_version (version_number, comment) VALUES (482, 'Updating outc
 
 
 -- 2023-21-03 Assiging PERFORM_BULK_OPERATIONS right to Lab Officer
-INSERT INTO userroles_userrights(
-	userright, sys_period, userrole_id)
-	SELECT 'PERFORM_BULK_OPERATIONS', tstzrange(now(), null),id AS userrole_id FROM userroles ur WHERE caption = 'Lab Officer' 
+INSERT INTO userroles_userrights(userright, sys_period, userrole_id)
+	SELECT 'PERFORM_BULK_OPERATIONS_CASE_SAMPLES', tstzrange(now(), null),id AS userrole_id FROM userroles ur WHERE caption = 'Lab Officer' 
 	AND NOT exists(SELECT uu.userrole_id
                  FROM userroles_userrights uu
                  WHERE uu.userrole_id = ur.id
-                   AND uu.userright = 'PERFORM_BULK_OPERATIONS');
+                   AND uu.userright = 'PERFORM_BULK_OPERATIONS_CASE_SAMPLES');
 
 INSERT INTO schema_version (version_number, comment) VALUES (483, 'Assiging PERFORM_BULK_OPERATIONS right to Lab Officer');
 
