@@ -282,6 +282,8 @@ public class DashboardMapComponent extends VerticalLayout {
 		setMargin(false);
 		setSpacing(false);
 		setSizeFull();
+		
+	
 
 		map.setWidth(100, Unit.PERCENTAGE);
 		map.setHeight(350, Unit.PIXELS);
@@ -357,12 +359,22 @@ public class DashboardMapComponent extends VerticalLayout {
 		}
 
 		if (showRegions) {
-			//showRegionsShapes(caseMeasure, fromDate, toDate, dashboardDataProvider.getDisease());
+			//showRegionsShappes(caseMeasure, dashboardDataProvider.getFromDate(), dashboardDataProvider.getToDate(), dashboardDataProvider.getDisease());
 		}
+		
+		System.out.println("==singleCaseDataDto==");
+
+		System.out.println(singleCaseDataDto);
+		
+		System.out.println("+==criteria==+");
+
+		System.out.println(criteria);
+
 		if (showCases) {
 			showCaseMarkers(FacadeProvider.getCaseFacade().getIndexListForMap(criteria, null, null, UserProvider.getCurrent().getUuid(), null));
 		}
 
+	
 		if (showCase) {
 			MapCaseDto mapCase = new MapCaseDto(
 				singleCaseDataDto.getUuid(),
@@ -382,8 +394,13 @@ public class DashboardMapComponent extends VerticalLayout {
 
 				null, //singleCaseDataDto.getAddressLat
 				null, //singleCaseDataDto.getAddressLon
-				true);
-
+				true,
+				singleCaseDataDto.getResponsibleDistrict().getUuid(),
+				null,
+				null
+					);
+			
+		
 			/*
 			 * MapCaseDto mapCase = new MapCaseDto(
 			 * singleCaseDataDto.getUuid(),
@@ -413,7 +430,8 @@ public class DashboardMapComponent extends VerticalLayout {
 
 			List<MapCaseDto> caseDtos = new ArrayList<>();
 			caseDtos.add(mapCase);
-
+			
+			
 			showCaseMarkers(caseDtos);
 		}
 		if (showContacts) {
@@ -424,11 +442,27 @@ public class DashboardMapComponent extends VerticalLayout {
 				singleContactDto.getUuid(),
 				singleContactDto.getContactClassification(),
 				singleContactDto.getReportLat(),
-				singleContactDto.getReportLon());
+				singleContactDto.getReportLon(),
+				null,
+				null,
+				null,
+				null,
+				null,
+				singleContactDto.getPerson().getFirstName(),
+				singleContactDto.getPerson().getLastName(),
+				null,
+				null,
+				singleContactDto.getDistrict().getUuid(),
+				null,
+				null);
 
 			List<MapContactDto> contactDtos = new ArrayList<>();
 			contactDtos.add(mapContact);
+			
+			System.out.println("==contactDtos==");
 
+			System.out.println(contactDtos);
+			
 			showContactMarkers(contactDtos);
 		}
 
@@ -993,7 +1027,15 @@ public class DashboardMapComponent extends VerticalLayout {
 
 			if (caze.getAddressLat() != null && caze.getAddressLon() != null) {
 				marker.setLatLon(caze.getAddressLat(), caze.getAddressLon());
-			} else {
+			} 
+			
+			else if (caze.getDistrictLatitude() != null && caze.getDistrictLongitude() != null) {
+				marker.setLatLon(caze.getDistrictLatitude(), caze.getDistrictLongitude());
+
+			}
+
+			
+			else {
 				marker.setLatLon(caze.getReportLat(), caze.getReportLon());
 			}
 
@@ -1063,7 +1105,12 @@ public class DashboardMapComponent extends VerticalLayout {
 			if ((contact.getAddressLat() != null || contact.getAddressLat() != 0)
 				&& (contact.getAddressLon() != null || contact.getAddressLon() != 0)) {
 				marker.setLatLon(contact.getAddressLat(), contact.getAddressLon());
-			} else if (contact.getReportLat() != 0 && contact.getReportLon() != 0) {
+			} 
+			else if (contact.getDistrictLatitude() != null && contact.getDistrictLongitude() != null) {
+				marker.setLatLon(contact.getDistrictLatitude(), contact.getDistrictLongitude());
+
+			}
+			else if (contact.getReportLat() != 0 && contact.getReportLon() != 0) {
 				marker.setLatLon(contact.getReportLat(), contact.getReportLon());
 			}
 
@@ -1083,7 +1130,9 @@ public class DashboardMapComponent extends VerticalLayout {
 				boolean hasCaseGps =
 					(caze.getAddressLat() != null && caze.getAddressLon() != null) || (caze.getReportLat() != null || caze.getReportLon() != null);
 				boolean hasFacilityGps = caze.getHealthFacilityLat() != null && caze.getHealthFacilityLon() != null;
-				if (!hasCaseGps && !hasFacilityGps) {
+				boolean hasDistrictGps = caze.getDistrictLatitude() != null && caze.getDistrictLongitude() != null;
+
+				if (!hasCaseGps && !hasFacilityGps && !hasDistrictGps) {
 					continue; // no gps at all
 				}
 
@@ -1092,7 +1141,15 @@ public class DashboardMapComponent extends VerticalLayout {
 						continue;
 					}
 					mapCaseDtos.add(caze);
-				} else {
+				}
+				
+				else if (mapCaseDisplayMode == MapCaseDisplayMode.DISTRICT_ADDRESS) {
+					if (!hasDistrictGps) {
+						continue;
+					}
+					mapCaseDtos.add(caze);
+				}  
+				else {
 					if (FacilityDto.NONE_FACILITY_UUID.equals(caze.getHealthFacilityUuid())
 						|| FacilityDto.OTHER_FACILITY_UUID.equals(caze.getHealthFacilityUuid())
 						|| !hasFacilityGps) {
@@ -1131,6 +1188,9 @@ public class DashboardMapComponent extends VerticalLayout {
 					|| (contact.getReportLat() != null || contact.getReportLon() != null);
 
 				boolean hasReportGps = contact.getReportLat() != null && contact.getReportLon() != null;
+				
+				boolean hasDistrictGps = contact.getDistrictLatitude() != null && contact.getDistrictLongitude() != null;
+
 				if (!hasContactGps && !hasReportGps) {
 					continue; // no gps at all
 				}
@@ -1140,7 +1200,15 @@ public class DashboardMapComponent extends VerticalLayout {
 						continue;
 					}
 					mapContactDtos.add(contact);
-				} else {
+				} 
+				else if (mapCaseDisplayMode == MapCaseDisplayMode.DISTRICT_ADDRESS) {
+					if (!hasDistrictGps) {
+						continue;
+					}
+					mapContactDtos.add(contact);
+				}  
+				
+				else {
 					if (FacilityDto.NONE_FACILITY_UUID.equals(contact.getUuid())
 						|| FacilityDto.OTHER_FACILITY_UUID.equals(contact.getUuid())
 						|| !hasReportGps) {

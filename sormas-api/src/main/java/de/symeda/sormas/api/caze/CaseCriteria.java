@@ -138,6 +138,8 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	private VaccinationStatus vaccinationStatus;
 	private ReinfectionStatus reinfectionStatus;
 	private Date reportDateTo;
+	private Date reportDateFrom;
+
 	private FacilityTypeGroup facilityTypeGroup;
 	private FacilityType facilityType;
 	private Boolean includeCasesFromOtherJurisdictions = Boolean.TRUE;
@@ -634,6 +636,11 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 		this.reportDateTo = reportDateTo;
 		return this;
 	}
+	
+	public CaseCriteria reportDateFrom(Date reportDateFrom) {
+		this.reportDateFrom = reportDateFrom;
+		return this;
+	}
 
 	public SymptomJournalStatus getSymptomJournalStatus() {
 		return symptomJournalStatus;
@@ -665,6 +672,16 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 
 	public void setReportDateTo(Date reportDateTo) {
 		this.reportDateTo = reportDateTo;
+	}
+
+	
+	
+	public Date getReportDateFrom() {
+		return reportDateFrom;
+	}
+
+	public void setReportDateFrom(Date reportDateFrom) {
+		this.reportDateFrom = reportDateFrom;
 	}
 
 	public FacilityTypeGroup getFacilityTypeGroup() {

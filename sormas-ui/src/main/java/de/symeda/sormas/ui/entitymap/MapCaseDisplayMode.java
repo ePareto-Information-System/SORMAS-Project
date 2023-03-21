@@ -23,7 +23,8 @@ public enum MapCaseDisplayMode {
 	
 	CASE_ADDRESS,
 	HEALTH_FACILITY_OR_CASE_ADDRESS,
-	HEALTH_FACILITY;
+	HEALTH_FACILITY,
+	DISTRICT_ADDRESS;
 	
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);

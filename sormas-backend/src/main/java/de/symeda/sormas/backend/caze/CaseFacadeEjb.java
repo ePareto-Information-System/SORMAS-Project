@@ -1520,6 +1520,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		Join<Case, Person> person = root.join(Case.PERSON, JoinType.LEFT);
 		Join<Person, Location> personAddress = person.join(Person.ADDRESS, JoinType.LEFT);
 		Join<Case, Facility> facility = root.join(Case.HEALTH_FACILITY, JoinType.LEFT);
+		Join<Case, District> district = root.join(Case.RESPONSIBLE_DISTRICT, JoinType.LEFT);
 
 //		JurisdictionHelper.booleanSelector(cb, caseService.inJurisdictionOrOwned(caseQueryContext));
 		cq.multiselect(
@@ -1535,6 +1536,9 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			facility.get(Facility.UUID),
 			facility.get(Facility.LATITUDE),
 			facility.get(Facility.LONGITUDE),
+			
+		
+			
 			root.get(Case.REPORT_LAT),
 			root.get(Case.REPORT_LON),
 
@@ -1549,7 +1553,12 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 //			root.get(Community.UUID),
 //			root.get(PointOfEntry.UUID)
 //			caseService.inJurisdictionOrOwned(caseQueryContext)
-			JurisdictionHelper.booleanSelector(cb, caseService.inJurisdictionOrOwned(caseQueryContext)));
+			JurisdictionHelper.booleanSelector(cb, caseService.inJurisdictionOrOwned(caseQueryContext)),
+			district.get(District.UUID),
+			district.get(District.DISTRICT_LATITUDE),
+			district.get(District.DISTRICT_LONGITUDE)
+			);
+	
 	}
 
 	@Override

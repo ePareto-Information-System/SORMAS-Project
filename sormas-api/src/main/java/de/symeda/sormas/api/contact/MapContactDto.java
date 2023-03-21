@@ -70,8 +70,8 @@ public class MapContactDto implements Serializable {
 	}
 
 	private String districtUuid;
-	private double districtLatitude;
-	private double districtLongitude;
+	private Double districtLatitude;
+	private Double districtLongitude;
 
 	public MapContactDto(
 		String uuid,
@@ -88,8 +88,8 @@ public class MapContactDto implements Serializable {
 		String casePersonFirstName,
 		String casePersonLastName,
 		String districtUuid,
-		double districtLatitude,
-		double districtLongitude) {
+		Double districtLatitude,
+		Double districtLongitude) {
 
 		this.uuid = uuid;
 		this.contactClassification = contactClassification;
@@ -285,19 +285,21 @@ public class MapContactDto implements Serializable {
 		this.districtUuid = districtUuid;
 	}
 
-	public double getDistrictLatitude() {
+	public Double getDistrictLatitude() {
 		return districtLatitude;
 	}
 
-	public void setDistrictLatitude(double districtLatitude) {
+	public void setDistrictLatitude(Double districtLatitude) {
 		this.districtLatitude = districtLatitude;
 	}
 
-	public double getDistrictLongitude() {
+	public Double getDistrictLongitude() {
 		return districtLongitude;
 	}
 
-	public void setDistrictLongitude(double districtLongitude) {
+	public void setDistrictLongitude(Double districtLongitude) {
 		this.districtLongitude = districtLongitude;
 	}
+	
+	
 }

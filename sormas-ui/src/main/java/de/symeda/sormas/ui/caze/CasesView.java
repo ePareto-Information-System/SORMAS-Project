@@ -863,6 +863,10 @@ public class CasesView extends AbstractView {
 			gridLayout.addComponent(mapLayout);
 
 			gridLayout.setExpandRatio(mapLayout, 1);
+			
+			System.out.println("== map criteria ==");
+			
+			System.out.println(criteria);
 
 			showGridViewButton.setVisible(true);
 		} else {

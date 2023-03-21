@@ -702,9 +702,15 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 		if (caseCriteria.getReinfectionStatus() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Case.REINFECTION_STATUS), caseCriteria.getReinfectionStatus()));
 		}
-		if (caseCriteria.getReportDateTo() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.lessThanOrEqualTo(from.get(Case.REPORT_DATE), caseCriteria.getReportDateTo()));
+		
+		if (caseCriteria.getReportDateFrom() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.greaterThanOrEqualTo(from.get(Case.REPORT_DATE), DateHelper.getStartOfDay(caseCriteria.getReportDateFrom())));
 		}
+		
+		if (caseCriteria.getReportDateTo() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.lessThanOrEqualTo(from.get(Case.REPORT_DATE), DateHelper.getEndOfDay(caseCriteria.getReportDateTo())));
+		}
+		
 		if (caseCriteria.getCaseOrigin() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Case.CASE_ORIGIN), caseCriteria.getCaseOrigin()));
 		}
@@ -712,6 +718,8 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 			filter =
 				CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getFacility().get(Facility.UUID), caseCriteria.getHealthFacility().getUuid()));
 		}
+		
+		
 		if (caseCriteria.getFacilityTypeGroup() != null) {
 			filter =
 				CriteriaBuilderHelper.and(cb, filter, from.get(Case.FACILITY_TYPE).in(FacilityType.getTypes(caseCriteria.getFacilityTypeGroup())));
@@ -921,6 +929,8 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 				from,
 				ExternalShareInfo.CAZE,
 				(latestShareDate) -> createChangeDateFilter(cq, cb, from, latestShareDate, true, true)));
+				System.out.println("++++caseCriteria====");
+				System.out.println(caseCriteria);
 
 		return filter;
 	}
@@ -1408,6 +1418,9 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 			// } else {
 
 		} else if (dateType == NewCaseDateType.REPORT) {
+			
+			newCaseFilter = cb.between(caze.get(Case.REPORT_DATE), fromDate, toDate);
+
 		} else if (dateType == NewCaseDateType.CLASSIFICATION) {
 			newCaseFilter = cb.between(caze.get(Case.CLASSIFICATION_DATE), fromDate, toDate);
 		} else if (dateType == NewCaseDateType.CREATION) {
