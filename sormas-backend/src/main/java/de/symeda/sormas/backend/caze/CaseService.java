@@ -415,7 +415,7 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 		filter = CriteriaBuilderHelper.or(cb, filter, latLonProvided);
 
 		if (region != null) {
-			Predicate regionFilter = cb.equal(root.get(Case.REGION), region);
+			Predicate regionFilter = cb.equal(root.get(Case.RESPONSIBLE_REGION), region);
 			if (filter != null) {
 				filter = cb.and(filter, regionFilter);
 			} else {
@@ -424,7 +424,7 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 		}
 
 		if (district != null) {
-			Predicate districtFilter = cb.equal(root.get(Case.DISTRICT), district);
+			Predicate districtFilter = cb.equal(root.get(Case.RESPONSIBLE_DISTRICT), district);
 			if (filter != null) {
 				filter = cb.and(filter, districtFilter);
 			} else {

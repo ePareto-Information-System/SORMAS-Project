@@ -359,7 +359,7 @@ public class DashboardMapComponent extends VerticalLayout {
 		}
 
 		if (showRegions) {
-			//showRegionsShappes(caseMeasure, dashboardDataProvider.getFromDate(), dashboardDataProvider.getToDate(), dashboardDataProvider.getDisease());
+			showRegionsShappes(caseMeasure, dashboardDataProvider.getFromDate(), dashboardDataProvider.getToDate(), dashboardDataProvider.getDisease());
 		}
 		
 		System.out.println("==singleCaseDataDto==");
