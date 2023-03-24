@@ -89,7 +89,13 @@ public class MapContactDto implements Serializable {
 		String casePersonLastName,
 		String districtUuid,
 		Double districtLatitude,
-		Double districtLongitude) {
+		Double districtLongitude,
+		
+		
+		int visitCount,
+		Date lastVisitDateTime
+		
+			) {
 
 		this.uuid = uuid;
 		this.contactClassification = contactClassification;
@@ -107,6 +113,8 @@ public class MapContactDto implements Serializable {
 		this.districtUuid = districtUuid;
 		this.districtLatitude = districtLatitude;
 		this.districtLongitude = districtLongitude;
+		this.visitCount = visitCount;
+		this.lastVisitDateTime = lastVisitDateTime;
 	}
 
 	public MapContactDto(

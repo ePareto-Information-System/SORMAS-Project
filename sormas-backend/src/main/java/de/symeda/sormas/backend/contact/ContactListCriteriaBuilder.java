@@ -23,6 +23,7 @@ import javax.persistence.criteria.Selection;
 
 import org.apache.commons.collections4.CollectionUtils;
 
+import de.symeda.sormas.api.contact.ContactClassification;
 import de.symeda.sormas.api.contact.ContactCriteria;
 import de.symeda.sormas.api.contact.ContactIndexDetailedDto;
 import de.symeda.sormas.api.contact.ContactIndexDto;
@@ -138,12 +139,17 @@ public class ContactListCriteriaBuilder {
 
 			joins.getPerson().get(Person.FIRST_NAME),
 			joins.getPerson().get(Person.LAST_NAME),
-			joins.getCasePerson().get(User.FIRST_NAME),
+			joins.getCasePerson().get(Person.FIRST_NAME),
 			joins.getCasePerson().get(Person.LAST_NAME),
 			joins.getDistrict().get(District.UUID),
 			joins.getDistrict().get(District.DISTRICT_LATITUDE),
 			joins.getDistrict().get(District.DISTRICT_LONGITUDE)
+			
+
+
 				);
+		
+		
 	}
 
 	// private List<Expression<?>> getIndexOrders(SortProperty sortProperty, Root<Contact> contact, ContactJoins joins) {
@@ -333,6 +339,11 @@ public class ContactListCriteriaBuilder {
 			Predicate criteriaFilter = contactService.buildCriteriaFilter(contactCriteria, contactQueryContext);
 			filter = CriteriaBuilderHelper.and(contactQueryContext.getCriteriaBuilder(), filter, criteriaFilter);
 		}
+		
+		System.out.println("buildContactFilter ==contactCriteria==");
+
+		System.out.println(contactCriteria);
+		
 		return filter;
 	}
 

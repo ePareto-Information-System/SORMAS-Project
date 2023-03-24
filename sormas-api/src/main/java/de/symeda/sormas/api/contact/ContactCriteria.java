@@ -733,4 +733,40 @@ public class ContactCriteria extends BaseCriteria implements Serializable {
 		this.excludeLimitedSyncRestrictions = excludeLimitedSyncRestrictions;
 		return this;
 	}
+
+	@Override
+	public String toString() {
+		return "ContactCriteria [reportingUserRole=" + reportingUserRole + ", disease=" + disease + ", diseaseVariant="
+				+ diseaseVariant + ", caze=" + caze + ", resultingCase=" + resultingCase + ", region=" + region
+				+ ", district=" + district + ", community=" + community + ", contactOfficer=" + contactOfficer
+				+ ", contactClassification=" + contactClassification + ", contactStatus=" + contactStatus
+				+ ", followUpStatus=" + followUpStatus + ", reportDateFrom=" + reportDateFrom + ", reportDateTo="
+				+ reportDateTo + ", dateFilterOption=" + dateFilterOption + ", followUpUntilFrom=" + followUpUntilFrom
+				+ ", followUpUntilTo=" + followUpUntilTo + ", followUpVisitsFrom=" + followUpVisitsFrom
+				+ ", followUpVisitsTo=" + followUpVisitsTo + ", followUpVisitsInterval=" + followUpVisitsInterval
+				+ ", followUpUntilToPrecise=" + followUpUntilToPrecise + ", symptomJournalStatus="
+				+ symptomJournalStatus + ", vaccinationStatus=" + vaccinationStatus + ", relationToCase="
+				+ relationToCase + ", lastContactDateFrom=" + lastContactDateFrom + ", lastContactDateTo="
+				+ lastContactDateTo + ", deleted=" + deleted + ", contactOrCaseLike=" + contactOrCaseLike
+				+ ", relevanceStatus=" + relevanceStatus + ", onlyHighPriorityContacts=" + onlyHighPriorityContacts
+				+ ", contactCategory=" + contactCategory + ", caseClassification=" + caseClassification
+				+ ", quarantineType=" + quarantineType + ", quarantineFrom=" + quarantineFrom + ", quarantineTo="
+				+ quarantineTo + ", onlyQuarantineHelpNeeded=" + onlyQuarantineHelpNeeded
+				+ ", quarantineOrderedVerbally=" + quarantineOrderedVerbally + ", quarantineOrderedOfficialDocument="
+				+ quarantineOrderedOfficialDocument + ", quarantineNotOrdered=" + quarantineNotOrdered
+				+ ", withExtendedQuarantine=" + withExtendedQuarantine + ", withReducedQuarantine="
+				+ withReducedQuarantine + ", person=" + person + ", birthdateYYYY=" + birthdateYYYY + ", birthdateMM="
+				+ birthdateMM + ", birthdateDD=" + birthdateDD + ", returningTraveler=" + returningTraveler
+				+ ", eventLike=" + eventLike + ", eventUuid=" + eventUuid + ", includeContactsFromOtherJurisdictions="
+				+ includeContactsFromOtherJurisdictions + ", onlyContactsSharingEventWithSourceCase="
+				+ onlyContactsSharingEventWithSourceCase + ", eventParticipant=" + eventParticipant
+				+ ", onlyContactsWithSourceCaseInGivenEvent=" + onlyContactsWithSourceCaseInGivenEvent
+				+ ", onlyContactsFromOtherInstances=" + onlyContactsFromOtherInstances + ", creationDateFrom="
+				+ creationDateFrom + ", creationDateTo=" + creationDateTo + ", reportingUserLike=" + reportingUserLike
+				+ ", personLike=" + personLike + ", excludeLimitedSyncRestrictions=" + excludeLimitedSyncRestrictions
+				+ ", viewMode=" + viewMode + "]";
+	}
+	
+	
+	
 }

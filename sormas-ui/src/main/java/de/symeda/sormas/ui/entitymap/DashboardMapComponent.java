@@ -448,13 +448,16 @@ public class DashboardMapComponent extends VerticalLayout {
 				null,
 				null,
 				null,
-				singleContactDto.getPerson().getFirstName(),
-				singleContactDto.getPerson().getLastName(),
+				null,
+				null,
 				null,
 				null,
 				singleContactDto.getDistrict().getUuid(),
 				null,
-				null);
+				null,
+				0,
+				null
+				);
 
 			List<MapContactDto> contactDtos = new ArrayList<>();
 			contactDtos.add(mapContact);
@@ -533,11 +536,30 @@ public class DashboardMapComponent extends VerticalLayout {
 					showCasesLayout.setMargin(false);
 					showCasesLayout.setSpacing(false);
 					CheckBox showCasesCheckBox = new CheckBox();
-					showCasesCheckBox.setCaption(I18nProperties.getCaption(Captions.dashboardShowCases));
-					showCasesCheckBox.setValue(showCases);
+					//showCasesCheckBox.setValue(showCases);
+					
+					if(showCases) {
+						showCasesCheckBox.setValue(showCases);
+						showCasesCheckBox.setCaption(I18nProperties.getCaption(Captions.dashboardShowCases));
+
+					}
+					if(showContacts) {
+						showCasesCheckBox.setCaption(I18nProperties.getCaption(Captions.dashboardShowContacts));
+
+						showCasesCheckBox.setValue(showContact);
+
+					}
+					
 					showCasesCheckBox.addValueChangeListener(e -> {
-						showCases = (boolean) e.getProperty().getValue();
-						mapCaseDisplayModeSelect.setEnabled(showCases);
+						if(showCases) {
+							showCases = (boolean) e.getProperty().getValue();
+							mapCaseDisplayModeSelect.setEnabled(showCases);
+						}
+						if(showContacts) {
+							showContacts = (boolean) e.getProperty().getValue();
+							mapCaseDisplayModeSelect.setEnabled(showContacts);
+						}
+						
 						mapCaseDisplayModeSelect.setValue(mapCaseDisplayMode);
 						refreshMap();
 					});
@@ -553,7 +575,15 @@ public class DashboardMapComponent extends VerticalLayout {
 				layersLayout.addComponent(showCasesLayout);
 
 				layersLayout.addComponent(mapCaseDisplayModeSelect);
-				mapCaseDisplayModeSelect.setEnabled(showCases);
+				
+				if(showCases) {
+					mapCaseDisplayModeSelect.setEnabled(showCases);
+
+				}
+				if(showContacts) {
+					mapCaseDisplayModeSelect.setEnabled(showContacts);
+
+				}
 
 				if (UserProvider.getCurrent().hasUserRole(DefaultUserRole.NATIONAL_USER)
 					|| UserProvider.getCurrent().hasUserRole(DefaultUserRole.NATIONAL_CLINICIAN)
@@ -1102,11 +1132,13 @@ public class DashboardMapComponent extends VerticalLayout {
 				marker.setIcon(MarkerIcon.CASE_UNCLASSIFIED);
 			}
 
-			if ((contact.getAddressLat() != null || contact.getAddressLat() != 0)
-				&& (contact.getAddressLon() != null || contact.getAddressLon() != 0)) {
-				marker.setLatLon(contact.getAddressLat(), contact.getAddressLon());
-			} 
-			else if (contact.getDistrictLatitude() != null && contact.getDistrictLongitude() != null) {
+//			if ((contact.getAddressLat() != null || contact.getAddressLat() != 0)
+//				&& (contact.getAddressLon() != null || contact.getAddressLon() != 0)) {
+//				marker.setLatLon(contact.getAddressLat(), contact.getAddressLon());
+//			} 
+//			else
+				
+			if (contact.getDistrictLatitude() != null && contact.getDistrictLongitude() != null) {
 				marker.setLatLon(contact.getDistrictLatitude(), contact.getDistrictLongitude());
 
 			}
