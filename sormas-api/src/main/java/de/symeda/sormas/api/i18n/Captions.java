@@ -1912,7 +1912,7 @@ public interface Captions {
 	String Sample_specimenCondition = "Sample.specimenCondition";
 	String Sample_suggestedTypeOfTest = "Sample.suggestedTypeOfTest";
 	
-	String Sample_testResult = "Sample.testResult";
+	String Sample_testResult = "Sample.test_Result";
 	String Sample_test_PathogenResult = "Sample.test_pathogenResult";
 	
 	String Sample_testStatusGen = "Sample.testStatusGen";

@@ -91,8 +91,10 @@ public abstract class AbstractDashboardView extends AbstractView {
 
 		if (permitted(FeatureType.DISEASE_DETAILS,UserRight.DASHBOARD_DISEASE_DETAILS_ACCESS)) {
 		
+			if(dashboardDataProvider.getDashboardType()==DashboardType.DISEASE) {
 			dashboardSwitcher.addItem(DashboardType.DISEASE);
-			dashboardSwitcher.setItemCaption(DashboardType.DISEASE, I18nProperties.getEnumCaption(DashboardType.DISEASE));		
+			dashboardSwitcher.setItemCaption(DashboardType.DISEASE, I18nProperties.getEnumCaption(DashboardType.DISEASE));	
+			}
 		}
 		// if (UserProvider.getCurrent().hasUserRight(UserRight.DASHBOARD_SAMPLE_ACCESS)) {
 		// 	dashboardSwitcher.addItem(DashboardType.SAMPLES);
@@ -127,7 +129,12 @@ public abstract class AbstractDashboardView extends AbstractView {
 			} else if (DashboardType.DISEASE.equals(e.getProperty().getValue())) {
 				
 				SormasUI.get().getNavigator().navigateTo(DiseaseDetailsView.VIEW_NAME);
-			} else {
+			}
+			
+			else if (DashboardType.SAMPLES.equals(e.getProperty().getValue())) {
+				
+				SormasUI.get().getNavigator().navigateTo(SamplesDashboardView.VIEW_NAME);
+			}else {
 				SormasUI.get().getNavigator().navigateTo(ContactsDashboardView.VIEW_NAME);
 			}
 		});
