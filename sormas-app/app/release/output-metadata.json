@@ -1,0 +1,20 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "de.symeda.sormas.app",
+  "variantName": "release",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 1074039,
+      "versionName": "1.74.3",
+      "outputFile": "sormas-1.74.3-release.apk"
+    }
+  ],
+  "elementType": "File"
+}
