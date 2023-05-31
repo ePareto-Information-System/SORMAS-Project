@@ -29,11 +29,7 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Selection;
+import javax.persistence.criteria.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -617,9 +613,9 @@ public class SampleFacadeEjb implements SampleFacade {
 			joins.getCaze().get(Case.REPORT_DATE),
 			joins.getCaze().get(Case.CASE_CLASSIFICATION),
 			joins.getCaze().get(Case.OUTCOME),
-			joins.getCaseRegion().get(Region.NAME),
-			joins.getCaseDistrict().get(District.NAME),
-			joins.getCaseCommunity().get(Community.NAME),
+			joins.getCaseResponsibleRegion().get(Region.NAME),
+			joins.getCaseResponsibleDistrict().get(District.NAME),
+			joins.getCaseResponsibleCommunity().get(Community.NAME),
 			joins.getCaseFacility().get(Facility.NAME),
 			joins.getCaze().get(Case.HEALTH_FACILITY_DETAILS),
 			joins.getContactRegion().get(Region.NAME),
