@@ -15,6 +15,12 @@
 
 package de.symeda.sormas.api.sample;
 
+import de.symeda.sormas.api.caze.CaseCriteria;
+import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.caze.CaseLogic;
+import de.symeda.sormas.api.caze.CaseSimilarityCriteria;
+import de.symeda.sormas.api.utils.IgnoreForUrl;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -26,6 +32,7 @@ public class SampleSimilarityCriteria implements Serializable {
 	private String labSampleId;
 	private Date sampleDateTime;
 	private SampleMaterial sampleMaterial;
+	private Date reportDate;
 
 	public SampleCriteria getSampleCriteria() {
 		return sampleCriteria;
@@ -59,5 +66,21 @@ public class SampleSimilarityCriteria implements Serializable {
 
 	public void setSampleMaterial(SampleMaterial sampleMaterial) {
 		this.sampleMaterial = sampleMaterial;
+	}
+	public static SampleSimilarityCriteria forSample(SampleDto sample, String personUuid) {
+		SampleCriteria caseCriteria = new SampleCriteria().lab(sample.getLab());
+		//return new SampleSimilarityCriteria().personUuid(personUuid).caseCriteria(caseCriteria).reportDate(caze.getReportDate());
+
+		return new SampleSimilarityCriteria().sampleCriteria(caseCriteria).reportDate(sample.getReportDateTime());
+	}
+
+	@IgnoreForUrl
+	public Date getReportDate() {
+		return reportDate;
+	}
+
+	public SampleSimilarityCriteria reportDate(Date reportDate) {
+		this.reportDate = reportDate;
+		return this;
 	}
 }

@@ -24,6 +24,7 @@ import java.util.List;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.caze.CaseClassification;
+import de.symeda.sormas.api.caze.CaseCriteria;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
@@ -405,5 +406,14 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 
 	public void setPathogenTestType(PathogenTestType pathogenTestType) {
 		this.pathogenTestType = pathogenTestType;
+	}
+
+	public void setLab(FacilityReferenceDto laboratory) {
+		this.laboratory = laboratory;
+	}
+
+	public SampleCriteria lab(FacilityReferenceDto laboratory) {
+		setLab(laboratory);
+		return this;
 	}
 }

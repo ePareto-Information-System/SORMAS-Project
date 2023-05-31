@@ -384,6 +384,7 @@ public enum UserRight {
 	public static final String _SORMAS_UI = "SORMAS_UI";
 	public static final String _SORMAS_TO_SORMAS_CLIENT = "SORMAS_TO_SORMAS_CLIENT";
 	public static final String _EXTERNAL_VISITS = "EXTERNAL_VISITS";
+	public static final String _SAMPLE_IMPORT ="SAMPLE_IMPORT" ;
 
 	@Override
 	public String toString() {

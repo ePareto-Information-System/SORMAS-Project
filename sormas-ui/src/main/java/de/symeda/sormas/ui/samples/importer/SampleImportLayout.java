@@ -15,22 +15,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
-package de.symeda.sormas.ui.caze.importer;
-
-import java.io.IOException;
+package de.symeda.sormas.ui.samples.importer;
 
 import com.opencsv.exceptions.CsvValidationException;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.ClassResource;
-import com.vaadin.server.FileDownloader;
 import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
-import com.vaadin.server.StreamResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
-
 import com.vaadin.ui.themes.ValoTheme;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.Captions;
@@ -38,6 +33,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.importexport.ImportFacade;
 import de.symeda.sormas.api.importexport.ValueSeparator;
+import de.symeda.sormas.ui.caze.importer.CaseImporter;
 import de.symeda.sormas.ui.importer.AbstractImportLayout;
 import de.symeda.sormas.ui.importer.ImportLayoutComponent;
 import de.symeda.sormas.ui.importer.ImportReceiver;
@@ -45,10 +41,12 @@ import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.DownloadUtil;
 
-@SuppressWarnings("serial")
-public class CaseImportLayout extends AbstractImportLayout {
+import java.io.IOException;
 
-	public CaseImportLayout() {
+@SuppressWarnings("serial")
+public class SampleImportLayout extends AbstractImportLayout {
+
+	public SampleImportLayout() {
 
 		super();
 
@@ -115,7 +113,7 @@ public class CaseImportLayout extends AbstractImportLayout {
 			new Notification(
 				I18nProperties.getString(Strings.headingTemplateNotAvailable),
 				I18nProperties.getString(Strings.messageTemplateNotAvailable),
-				Notification.Type.ERROR_MESSAGE,
+				Type.ERROR_MESSAGE,
 				false).show(Page.getCurrent());
 		}
 	}

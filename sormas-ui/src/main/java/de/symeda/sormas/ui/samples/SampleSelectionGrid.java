@@ -10,6 +10,7 @@ import com.vaadin.v7.ui.renderers.DateRenderer;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.sample.SampleDto;
+import de.symeda.sormas.api.sample.SampleSelectionDto;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.ui.utils.V7UuidRenderer;
 

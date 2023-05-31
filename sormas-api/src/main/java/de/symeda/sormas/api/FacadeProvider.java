@@ -86,6 +86,7 @@ import de.symeda.sormas.api.report.WeeklyReportFacade;
 import de.symeda.sormas.api.sample.AdditionalTestFacade;
 import de.symeda.sormas.api.sample.PathogenTestFacade;
 import de.symeda.sormas.api.sample.SampleFacade;
+import de.symeda.sormas.api.sample.sampleimport.SampleImportFacade;
 import de.symeda.sormas.api.share.ExternalShareInfoFacade;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasEncryptionFacade;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasFacade;
@@ -157,6 +158,10 @@ public class FacadeProvider {
 
 	public static CaseImportFacade getCaseImportFacade() {
 		return get().lookupEjbRemote(CaseImportFacade.class);
+	}
+
+	public static SampleImportFacade getSampleImportFacade() {
+		return get().lookupEjbRemote(SampleImportFacade.class);
 	}
 
 	public static TravelEntryImportFacade getTravelEntryImportFacade() {

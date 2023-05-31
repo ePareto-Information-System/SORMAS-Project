@@ -307,14 +307,14 @@ public class SampleExportDto implements Serializable {
 	public String getFirstName() {
 		return sampleAssociatedCase != null
 			? sampleAssociatedCase.getFirstName()
-			: associatedContact != null ? associatedContact.getContactName().getFirstName() : associatedEventParticipant.getFirstName();
+			: associatedContact != null ? associatedContact.getContactName().getFirstName() : associatedEventParticipant != null?associatedEventParticipant.getFirstName():"";
 	}
 
 	@Order(5)
 	public String getLastName() {
 		return sampleAssociatedCase != null
 			? sampleAssociatedCase.getLastName()
-			: associatedContact != null ? associatedContact.getContactName().getLastName() : associatedEventParticipant.getLastName();
+			: associatedContact != null ? associatedContact.getContactName().getLastName() : associatedEventParticipant != null?associatedEventParticipant.getFirstName():"";
 	}
 
 	@Order(6)

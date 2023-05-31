@@ -37,6 +37,8 @@ import javax.persistence.criteria.Selection;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import de.symeda.sormas.api.caze.CaseSelectionDto;
+import de.symeda.sormas.api.caze.CaseSimilarityCriteria;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -284,12 +286,26 @@ public class SampleFacadeEjb implements SampleFacade {
 		return samples.stream().map(s -> convertToDto(s, pseudonymizer)).collect(Collectors.toList());
 	}
 
+
+	@Override
+	public List<SampleDto> getSimilarSamplesSelection(SampleSimilarityCriteria criteria) {
+
+		List<SampleDto> entries = sampleService.getSimilarSamples(criteria);
+
+		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight, I18nProperties.getCaption(Captions.inaccessibleValue));
+		pseudonymizer.pseudonymizeDtoCollection(SampleDto.class, entries, SampleDto::isInJurisdiction, null);
+
+		return entries;
+	}
+
+
 	public List<SampleDto> getSamplesByCriteria(SampleCriteria criteria) {
 		final CriteriaBuilder cb = em.getCriteriaBuilder();
 		final CriteriaQuery<Sample> cq = cb.createQuery(Sample.class);
 		final Root<Sample> root = cq.from(Sample.class);
 
 		SampleQueryContext sampleQueryContext = new SampleQueryContext(cb, cq, root);
+
 
 		Predicate filter = sampleService.createUserFilter(sampleQueryContext, criteria);
 		filter = CriteriaBuilderHelper.and(cb, filter, sampleService.buildCriteriaFilter(criteria, sampleQueryContext));

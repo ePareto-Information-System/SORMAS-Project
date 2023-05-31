@@ -20,8 +20,16 @@ package de.symeda.sormas.ui.samples;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.vaadin.ui.Component;
+import com.vaadin.ui.Window;
+import de.symeda.sormas.ui.caze.AbstractCaseGrid;
+import de.symeda.sormas.ui.caze.importer.CaseImportLayout;
+import de.symeda.sormas.ui.caze.importer.LineListingImportLayout;
+import de.symeda.sormas.ui.samples.importer.SampleImportLayout;
+import de.symeda.sormas.ui.utils.*;
 import org.vaadin.hene.popupbutton.PopupButton;
 
 import com.vaadin.icons.VaadinIcons;
@@ -46,14 +54,6 @@ import de.symeda.sormas.api.sample.SampleIndexDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
-import de.symeda.sormas.ui.utils.AbstractView;
-import de.symeda.sormas.ui.utils.ButtonHelper;
-import de.symeda.sormas.ui.utils.CssStyles;
-import de.symeda.sormas.ui.utils.DateFormatHelper;
-import de.symeda.sormas.ui.utils.DownloadUtil;
-import de.symeda.sormas.ui.utils.ExportEntityName;
-import de.symeda.sormas.ui.utils.GridExportStreamResource;
-import de.symeda.sormas.ui.utils.ViewConfiguration;
 
 @SuppressWarnings("serial")
 public class SamplesView extends AbstractView {
@@ -71,6 +71,22 @@ public class SamplesView extends AbstractView {
 		sampleListComponent = new SampleGridComponent(getViewTitleLabel(), this);
 		setSizeFull();
 		addComponent(sampleListComponent);
+
+		//if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_IMPORT)) {
+			VerticalLayout importLayout = new VerticalLayout();
+			{
+				importLayout.setSpacing(true);
+				importLayout.setMargin(true);
+				importLayout.addStyleName(CssStyles.LAYOUT_MINIMAL);
+				importLayout.setWidth(250, Unit.PIXELS);
+
+				PopupButton importButton = ButtonHelper.createIconPopupButton(Captions.actionImport, VaadinIcons.UPLOAD, importLayout);
+
+				addHeaderComponent(importButton);
+			}
+			addImportButton(importLayout, Captions.importLineListing, Strings.headingLineListingImport, LineListingImportLayout::new);
+			addImportButton(importLayout, Captions.importDetailed, Strings.headingImportCases, SampleImportLayout::new);
+		//}
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EXPORT)) {
 			VerticalLayout exportLayout = new VerticalLayout();
@@ -187,4 +203,16 @@ public class SamplesView extends AbstractView {
 	public ViewConfiguration getViewConfiguration() {
 		return viewConfiguration;
 	}
+
+	private void addImportButton(VerticalLayout importLayout, String captionKey, String windowHeadingKey, Supplier<Component> windowContentSupplier) {
+		Button lineListingImportButton = ButtonHelper.createIconButton(captionKey, VaadinIcons.UPLOAD, e -> {
+			Window popupWindow = VaadinUiUtil.showPopupWindow(windowContentSupplier.get());
+			popupWindow.setCaption(I18nProperties.getString(windowHeadingKey));
+			SampleGrid sampleGrid =this.sampleListComponent.getGrid();
+			popupWindow.addCloseListener(c -> sampleGrid.reload());
+		}, ValoTheme.BUTTON_PRIMARY);
+		lineListingImportButton.setWidth(100, Unit.PERCENTAGE);
+		importLayout.addComponent(lineListingImportButton);
+	}
 }
+

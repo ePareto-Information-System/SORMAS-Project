@@ -1457,4 +1457,6 @@ public interface Strings {
 	String yes = "yes";
 	String yesterday = "yesterday";
 	String messageFormHasErrorsPathogenTest = "messageFormHasErrorsPathogenTest";
+    String infoPickOrCreateSampleNewSample ="Pick or Create" ;
+	String headingImportedSampleInfo ="Imported Sample Info" ;
 }

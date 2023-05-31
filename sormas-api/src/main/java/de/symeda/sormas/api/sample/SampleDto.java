@@ -568,4 +568,9 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public void setOtherDeletionReason(String otherDeletionReason) {
 		this.otherDeletionReason = otherDeletionReason;
 	}
+
+
+	public static <DTO> boolean isInJurisdiction(DTO dto) {
+		return false;
+	}
 }

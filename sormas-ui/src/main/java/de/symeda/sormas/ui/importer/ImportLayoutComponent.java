@@ -40,7 +40,7 @@ public class ImportLayoutComponent extends VerticalLayout {
 		setSpacing(false);
 		setMargin(false);
 
-		headlineLabel = new Label(I18nProperties.getString(Strings.step) + " " + step + ": " + headline);
+		headlineLabel = step>0?new Label(I18nProperties.getString(Strings.step) + " " + step + ": " + headline):new Label();
 		CssStyles.style(headlineLabel, CssStyles.H3);
 		addComponent(headlineLabel);
 

@@ -95,6 +95,9 @@ public interface SampleFacade {
 
 	List<SampleDto> getSimilarSamples(SampleSimilarityCriteria criteria);
 
+	List<SampleDto> getSimilarSamplesSelection(SampleSimilarityCriteria criteria);
+
+
 	List<SampleDto> getSamplesByCriteria(SampleCriteria criteria);
 
 	boolean exists(String uuid);
