@@ -19,5 +19,6 @@ public enum ImportLineResult {
 	SUCCESS,
 	ERROR,
 	DUPLICATE,
-	SKIPPED;
+	SKIPPED,
+	MERGE;
 }

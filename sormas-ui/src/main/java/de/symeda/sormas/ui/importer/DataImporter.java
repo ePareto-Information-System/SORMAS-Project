@@ -131,6 +131,9 @@ public abstract class DataImporter {
 
 	private final EnumCaptionCache enumCaptionCache;
 
+	public Consumer<ImportResultStatus> onRunImportComplete;
+
+
 	public DataImporter(File inputFile, boolean hasEntityClassRow, UserDto currentUser, ValueSeparator csvSeparator) throws IOException {
 		this.inputFile = inputFile;
 		this.hasEntityClassRow = hasEntityClassRow;
@@ -198,6 +201,10 @@ public abstract class DataImporter {
 						if (importResult == ImportResultStatus.COMPLETED_WITH_ERRORS || importResult == ImportResultStatus.CANCELED_WITH_ERRORS) {
 							StreamResource streamResource = createErrorReportStreamResource();
 							errorReportConsumer.accept(streamResource);
+						}
+
+						if(onRunImportComplete!=null) {
+							onRunImportComplete.accept(importResult);
 						}
 					});
 

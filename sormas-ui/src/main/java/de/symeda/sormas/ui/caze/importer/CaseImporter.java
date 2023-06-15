@@ -16,9 +16,26 @@ package de.symeda.sormas.ui.caze.importer;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
+import com.vaadin.icons.VaadinIcons;
+import com.vaadin.ui.VerticalLayout;
+import de.symeda.sormas.api.caze.*;
+import de.symeda.sormas.api.importexport.*;
+import de.symeda.sormas.api.person.PersonNameDto;
+import de.symeda.sormas.ui.UserProvider;
+import de.symeda.sormas.ui.ViewModelProviders;
+import de.symeda.sormas.ui.caze.CasesView;
+import de.symeda.sormas.ui.caze.CasesViewConfiguration;
+import de.symeda.sormas.ui.caze.MergeImportedCasesGrid;
+import de.symeda.sormas.ui.importer.*;
+import de.symeda.sormas.ui.importer.ImportLineResult;
+import de.symeda.sormas.ui.utils.CaseDownloadUtil;
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.opencsv.exceptions.CsvValidationException;
@@ -28,27 +45,15 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.UI;
 
 import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.caze.CaseDataDto;
-import de.symeda.sormas.api.caze.CaseFacade;
-import de.symeda.sormas.api.caze.CaseSelectionDto;
-import de.symeda.sormas.api.caze.CaseSimilarityCriteria;
 import de.symeda.sormas.api.caze.caseimport.CaseImportEntities;
 import de.symeda.sormas.api.caze.caseimport.CaseImportFacade;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
-import de.symeda.sormas.api.importexport.ImportLineResultDto;
-import de.symeda.sormas.api.importexport.InvalidColumnException;
-import de.symeda.sormas.api.importexport.ValueSeparator;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.PersonFacade;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.ui.importer.CaseImportSimilarityInput;
-import de.symeda.sormas.ui.importer.CaseImportSimilarityResult;
-import de.symeda.sormas.ui.importer.DataImporter;
-import de.symeda.sormas.ui.importer.ImportLineResult;
-import de.symeda.sormas.ui.importer.ImportSimilarityResultOption;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent.DiscardListener;
@@ -74,6 +79,13 @@ public class CaseImporter extends DataImporter {
 	private final PersonFacade personFacade;
 	private final CaseFacade caseFacade;
 
+	private boolean showAllDuplicatesAfter;
+	private List<String> duplicateSimilarCaseIds;
+	private List<String> duplicateSimilarPersonIds;
+	private MergeImportedCasesGrid mergeImportedCasesGrid;
+	private final ExportConfigurationDto detailedExportConfiguration;
+	private final CasesViewConfiguration viewConfiguration;
+
 	public CaseImporter(File inputFile, boolean hasEntityClassRow, UserDto currentUser, ValueSeparator csvSeparator) throws IOException {
 		super(inputFile, hasEntityClassRow, currentUser, csvSeparator);
 
@@ -81,6 +93,9 @@ public class CaseImporter extends DataImporter {
 
 		personFacade = FacadeProvider.getPersonFacade();
 		caseFacade = FacadeProvider.getCaseFacade();
+		mergeImportedCasesGrid = new MergeImportedCasesGrid();
+		detailedExportConfiguration = buildDetailedExportConfiguration();
+		viewConfiguration = ViewModelProviders.of(CasesView.class).get(CasesViewConfiguration.class);
 	}
 
 	@Override
@@ -91,25 +106,133 @@ public class CaseImporter extends DataImporter {
 		super.startImport(addErrorReportToLayoutCallback, currentUI, duplicatesPossible);
 	}
 
+
+	public void startImport(Consumer<StreamResource> addErrorReportToLayoutCallback, UI currentUI, boolean duplicatesPossible, boolean showAllDuplicatesAfter)
+			throws IOException, CsvValidationException {
+
+		this.showAllDuplicatesAfter = showAllDuplicatesAfter;
+		if(showAllDuplicatesAfter){
+			this.duplicateSimilarCaseIds = new ArrayList<>();
+			this.duplicateSimilarPersonIds = new ArrayList<>();
+			this.onRunImportComplete = (ImportResultStatus result)->{
+				handleDuplicatesMerge();
+			};
+		}
+		this.startImport(addErrorReportToLayoutCallback, currentUI, duplicatesPossible);
+	}
+	private Set<String> getSelectedRows() {
+		MergeImportedCasesGrid exportMergeGrid = this.mergeImportedCasesGrid;
+//		return exportMergeGrid.asMultiSelect().getSelectedItems().stream().map(CaseIndexDto::getUuid).collect(Collectors.toSet());
+		return this.viewConfiguration.isInEagerMode()
+				? exportMergeGrid.asMultiSelect().getSelectedItems().stream().map(CaseIndexDto::getUuid).collect(Collectors.toSet())
+				: Collections.emptySet();
+	}
+
+	private ExportConfigurationDto buildDetailedExportConfiguration() {
+		ExportConfigurationDto config = ExportConfigurationDto.build(UserProvider.getCurrent().getUserReference(), ExportType.CASE);
+
+		config.setProperties(
+				ImportExportUtils.getCaseExportProperties(CaseDownloadUtil::getPropertyCaption, true, true)
+						.stream()
+						.map(ExportPropertyMetaInfo::getPropertyId)
+						.collect(Collectors.toSet()));
+		return config;
+	}
+
+	protected void handleDuplicatesMerge(){
+		System.out.println("The case uuids founds ------------------: " + duplicateSimilarCaseIds.size());
+		System.out.println("The person uuids founds------------------: " + duplicateSimilarPersonIds.size());
+
+		if (duplicateSimilarCaseIds.isEmpty() && duplicateSimilarPersonIds.isEmpty()) {
+			return;
+		}
+
+		CaseCriteria criteria = new CaseCriteria().region(currentUser.getRegion());
+		criteria.setCaseUuids(duplicateSimilarCaseIds);
+		criteria.setPersonsUuids(duplicateSimilarPersonIds);
+		mergeImportedCasesGrid.setCriteria(criteria);
+		mergeImportedCasesGrid.reload();
+		VerticalLayout mergeLayout = new VerticalLayout();
+
+		StreamResource exportStreamResource = CaseDownloadUtil.createCaseExportResource(
+				mergeImportedCasesGrid.getCriteria(),
+				this::getSelectedRows,
+				CaseExportType.CASE_SURVEILLANCE,
+				detailedExportConfiguration);
+
+		mergeImportedCasesGrid.addExportButton(
+				exportStreamResource,
+				mergeLayout,
+				VaadinIcons.FILE_TEXT,
+				Captions.exportDownloadMergeFile,
+				Strings.infoDetailedExport);
+
+		mergeLayout.addComponent(mergeImportedCasesGrid);
+		if(mergeImportedCasesGrid.dataCount>0){
+			currentUI.accessSynchronously(()->{
+				final CommitDiscardWrapperComponent<VerticalLayout> component =
+						new CommitDiscardWrapperComponent<VerticalLayout>(mergeLayout);
+				component.getDiscardButton().setVisible(false);
+				component.getCommitButton().setCaption(I18nProperties.getCaption(Captions.actionClose));
+				component.addCommitListener(() -> {
+					//closed
+				});
+
+				VaadinUiUtil.showModalPopupWindow(component, I18nProperties.getCaption(Captions.caseMergeDuplicates));
+			});
+		}
+
+	}
+
 	@Override
 	protected ImportLineResult importDataFromCsvLine(
-		String[] values,
-		String[] entityClasses,
-		String[] entityProperties,
-		String[][] entityPropertyPaths,
-		boolean firstLine)
-		throws IOException, InvalidColumnException, InterruptedException {
+			String[] values,
+			String[] entityClasses,
+			String[] entityProperties,
+			String[][] entityPropertyPaths,
+			boolean firstLine)
+			throws IOException, InvalidColumnException, InterruptedException {
 
 		// regenerate the UUID to prevent overwrite in case of export and import of the same entities
-		setValueUuid(values, entityProperties, DataHelper.createUuid());
+		int uuidIndex = ArrayUtils.indexOf(entityProperties, CaseDataDto.UUID);
+		if (uuidIndex >= 0) {
+			values[uuidIndex] = DataHelper.createUuid();
+		}
 
 		ImportLineResultDto<CaseImportEntities> importResult =
-			caseImportFacade.importCaseData(values, entityClasses, entityProperties, entityPropertyPaths, !firstLine);
+				caseImportFacade.importCaseData(values, entityClasses, entityProperties, entityPropertyPaths, !firstLine);
 
 		if (importResult.isError()) {
 			writeImportError(values, importResult.getMessage());
 			return ImportLineResult.ERROR;
-		} else if (importResult.isDuplicate()) {
+		}
+		else if (importResult.isMerge()) {
+			CaseImportEntities entities = importResult.getImportEntities();
+			CaseDataDto importCase = entities.getCaze();
+			PersonDto importPerson = entities.getPerson();
+			List<PersonNameDto> similarPersons = entities.getSimilarPersons();
+
+
+			if(showAllDuplicatesAfter){
+//				duplicateSimilarPersonIds.add(entities.getSimilarPersons().get(0).getUuid() );
+				similarPersons.forEach( personNameDto -> {
+					duplicateSimilarPersonIds.add(personNameDto.getUuid());
+				});
+//				duplicateSimilarCaseIds.add(importCase.getUuid());
+				List<CaseDataDto> listSimilarCases = caseFacade.getByPersonUuids(duplicateSimilarPersonIds);
+				listSimilarCases.forEach(
+						listSimilarCase ->
+								duplicateSimilarCaseIds.add(listSimilarCase.getUuid())
+				);
+			}
+			else{
+				duplicateSimilarCaseIds.add(importCase.getUuid());
+				duplicateSimilarPersonIds.add(importPerson.getUuid());
+			}
+
+			return ImportLineResult.DUPLICATE;
+		}
+		else if (importResult.isDuplicate()) {
 			CaseImportEntities entities = importResult.getImportEntities();
 			CaseDataDto importCase = entities.getCaze();
 			PersonDto importPerson = entities.getPerson();
@@ -117,87 +240,95 @@ public class CaseImporter extends DataImporter {
 			String selectedPersonUuid = null;
 			String selectedCaseUuid = null;
 
+
 			CaseImportConsumer consumer = new CaseImportConsumer();
 			ImportSimilarityResultOption resultOption = null;
 
-//			CaseImportLock personSelectLock = new CaseImportLock();
-			// We need to pause the current thread to prevent the import from continuing until the user has acted
-//			synchronized (personSelectLock) {
-//				// Call the logic that allows the user to handle the similarity; once this has been done, the LOCK should be notified
-//				// to allow the importer to resume
-//				handlePersonSimilarity(
-//					importPerson,
-//					result -> consumer.onImportResult(result, personSelectLock),
-//					(person, similarityResultOption) -> new CaseImportSimilarityResult(person, null, similarityResultOption),
-//					Strings.infoSelectOrCreatePersonForImport,
-//					currentUI);
-//
-//				try {
-//					if (!personSelectLock.wasNotified) {
-//						personSelectLock.wait();
-//					}
-//				} catch (InterruptedException e) {
-//					logger.error("InterruptedException when trying to perform LOCK.wait() in case import: " + e.getMessage());
-//					throw e;
-//				}
-//
-//				if (consumer.result != null) {
-//					resultOption = consumer.result.getResultOption();
-//				}
-//
-//				// If the user picked an existing person, override the case person with it
-//				if (ImportSimilarityResultOption.PICK.equals(resultOption)) {
-//					selectedPersonUuid = consumer.result.getMatchingPerson().getUuid();
-//					// Reset the importResult option for case selection
-//					resultOption = null;
-//				}
-//			}
+			if(showAllDuplicatesAfter){
+				duplicateSimilarPersonIds.add(entities.getSimilarPersons().get(0).getUuid() );
+			}else {
+				CaseImportLock personSelectLock = new CaseImportLock();
+				// We need to pause the current thread to prevent the import from continuing until the user has acted
+				synchronized (personSelectLock) {
+					// Call the logic that allows the user to handle the similarity; once this has been done, the LOCK should be notified
+					// to allow the importer to resume
+					handlePersonSimilarity(
+							importPerson,
+							result -> consumer.onImportResult(result, personSelectLock),
+							(person, similarityResultOption) -> new CaseImportSimilarityResult(person, null, similarityResultOption),
+							Strings.infoSelectOrCreatePersonForImport,
+							currentUI);
+					try {
+						if (!personSelectLock.wasNotified) {
+							personSelectLock.wait();
+						}
+					} catch (InterruptedException e) {
+						logger.error("InterruptedException when trying to perform LOCK.wait() in case import: " + e.getMessage());
+						throw e;
+					}
 
-//			if (ImportSimilarityResultOption.SKIP.equals(resultOption)) {
-//				return ImportLineResult.SKIPPED;
-//			} else {
-//				final CaseImportLock caseSelectLock = new CaseImportLock();
-//				synchronized (caseSelectLock) {
-//					// Retrieve all similar cases from the database
-//					CaseSimilarityCriteria criteria =
-//						CaseSimilarityCriteria.forCase(importCase, selectedPersonUuid != null ? selectedPersonUuid : importPerson.getUuid());
-//
-//					List<CaseSelectionDto> similarCases = caseFacade.getSimilarCases(criteria);
-//
-//					if (similarCases.size() > 0) {
-//						// Call the logic that allows the user to handle the similarity; once this has been done, the LOCK should be notified
-//						// to allow the importer to resume
-//						if (selectedPersonUuid != null) {
-//							importPerson = personFacade.getPersonByUuid(selectedPersonUuid);
-//						}
-//
-////						handleCaseSimilarity(
-////							new CaseImportSimilarityInput(importCase, importPerson, similarCases),
-////							result -> consumer.onImportResult(result, caseSelectLock));
-//
-//						try {
-//							if (!caseSelectLock.wasNotified) {
-//								caseSelectLock.wait();
-//							}
-//						} catch (InterruptedException e) {
-//							logger.error("InterruptedException when trying to perform LOCK.wait() in case import: " + e.getMessage());
-//							throw e;
-//						}
-//
-//						if (consumer.result != null) {
-//							resultOption = consumer.result.getResultOption();
-//						}
-//
-//						// If the user chose to override an existing case with the imported case, insert the new data into the existing case and associate the imported samples with it
-//						if (resultOption == ImportSimilarityResultOption.OVERRIDE
-//							&& consumer.result != null
-//							&& consumer.result.getMatchingCase() != null) {
-//							selectedCaseUuid = consumer.result.getMatchingCase().getUuid();
-//							setValueUuid(values, entityProperties, selectedCaseUuid);
-//						}
-//					}
-//				}
-//			}
+					if (consumer.result != null) {
+						resultOption = consumer.result.getResultOption();
+					}
+
+					// If the user picked an existing person, override the case person with it
+					if (ImportSimilarityResultOption.PICK.equals(resultOption)) {
+						selectedPersonUuid = consumer.result.getMatchingPerson().getUuid();
+						// Reset the importResult option for case selection
+						resultOption = null;
+					}
+				}
+			}
+
+			if (ImportSimilarityResultOption.SKIP.equals(resultOption)) {
+				return ImportLineResult.SKIPPED;
+			}
+			else {
+				final CaseImportLock caseSelectLock = new CaseImportLock();
+				synchronized (caseSelectLock) {
+					// Retrieve all similar cases from the database
+					CaseSimilarityCriteria criteria =
+							CaseSimilarityCriteria.forCase(importCase, selectedPersonUuid != null ? selectedPersonUuid : importPerson.getUuid());
+
+					List<CaseSelectionDto> similarCases = caseFacade.getSimilarCases(criteria);
+
+					if (similarCases.size() > 0) {
+						// Call the logic that allows the user to handle the similarity; once this has been done, the LOCK should be notified
+						// to allow the importer to resume
+						if (selectedPersonUuid != null) {
+							importPerson = personFacade.getPersonByUuid(selectedPersonUuid);
+						}
+
+						if(showAllDuplicatesAfter){
+							duplicateSimilarCaseIds.add(similarCases.get(0).getUuid());
+						}else {
+							handleCaseSimilarity(
+									new CaseImportSimilarityInput(importCase, importPerson, similarCases),
+									result -> consumer.onImportResult(result, caseSelectLock));
+						}
+
+						try {
+							if (!caseSelectLock.wasNotified) {
+								caseSelectLock.wait();
+							}
+						} catch (InterruptedException e) {
+							logger.error("InterruptedException when trying to perform LOCK.wait() in case import: " + e.getMessage());
+							throw e;
+						}
+
+						if (consumer.result != null) {
+							resultOption = consumer.result.getResultOption();
+						}
+
+						// If the user chose to override an existing case with the imported case, insert the new data into the existing case and associate the imported samples with it
+						if (resultOption == ImportSimilarityResultOption.OVERRIDE
+								&& consumer.result != null
+								&& consumer.result.getMatchingCase() != null) {
+							selectedCaseUuid = consumer.result.getMatchingCase().getUuid();
+						}
+					}
+				}
+			}
 
 			if (resultOption == ImportSimilarityResultOption.SKIP) {
 				consumer.result = null;
@@ -210,17 +341,11 @@ public class CaseImporter extends DataImporter {
 				return ImportLineResult.SKIPPED;
 			} else {
 				ImportLineResultDto<CaseImportEntities> saveResult;
-				boolean skipPersonValidation = selectedPersonUuid != null;
 				if (selectedPersonUuid != null || selectedCaseUuid != null) {
-					saveResult = caseImportFacade.updateCaseWithImportData(
-						selectedPersonUuid,
-						selectedCaseUuid,
-						values,
-						entityClasses,
-						entityPropertyPaths,
-						skipPersonValidation);
+					saveResult =
+							caseImportFacade.updateCaseWithImportData(selectedPersonUuid, selectedCaseUuid, values, entityClasses, entityPropertyPaths,false);
 				} else {
-					saveResult = caseImportFacade.saveImportedEntities(entities, skipPersonValidation);
+					saveResult = caseImportFacade.saveImportedEntities(entities,false);
 				}
 
 				if (saveResult.isError()) {
@@ -232,6 +357,150 @@ public class CaseImporter extends DataImporter {
 
 		return ImportLineResult.SUCCESS;
 	}
+
+//	@Override
+//	protected ImportLineResult importDataFromCsvLine(
+//		String[] values,
+//		String[] entityClasses,
+//		String[] entityProperties,
+//		String[][] entityPropertyPaths,
+//		boolean firstLine)
+//		throws IOException, InvalidColumnException, InterruptedException {
+//
+//		// regenerate the UUID to prevent overwrite in case of export and import of the same entities
+//		setValueUuid(values, entityProperties, DataHelper.createUuid());
+//
+//		ImportLineResultDto<CaseImportEntities> importResult =
+//			caseImportFacade.importCaseData(values, entityClasses, entityProperties, entityPropertyPaths, !firstLine);
+//
+//		if (importResult.isError()) {
+//			writeImportError(values, importResult.getMessage());
+//			return ImportLineResult.ERROR;
+//		}
+//
+//		else if (importResult.isDuplicate()) {
+//			CaseImportEntities entities = importResult.getImportEntities();
+//			CaseDataDto importCase = entities.getCaze();
+//			PersonDto importPerson = entities.getPerson();
+//
+//			String selectedPersonUuid = null;
+//			String selectedCaseUuid = null;
+//
+//			CaseImportConsumer consumer = new CaseImportConsumer();
+//			ImportSimilarityResultOption resultOption = null;
+//
+////			CaseImportLock personSelectLock = new CaseImportLock();
+//			// We need to pause the current thread to prevent the import from continuing until the user has acted
+////			synchronized (personSelectLock) {
+////				// Call the logic that allows the user to handle the similarity; once this has been done, the LOCK should be notified
+////				// to allow the importer to resume
+////				handlePersonSimilarity(
+////					importPerson,
+////					result -> consumer.onImportResult(result, personSelectLock),
+////					(person, similarityResultOption) -> new CaseImportSimilarityResult(person, null, similarityResultOption),
+////					Strings.infoSelectOrCreatePersonForImport,
+////					currentUI);
+////
+////				try {
+////					if (!personSelectLock.wasNotified) {
+////						personSelectLock.wait();
+////					}
+////				} catch (InterruptedException e) {
+////					logger.error("InterruptedException when trying to perform LOCK.wait() in case import: " + e.getMessage());
+////					throw e;
+////				}
+////
+////				if (consumer.result != null) {
+////					resultOption = consumer.result.getResultOption();
+////				}
+////
+////				// If the user picked an existing person, override the case person with it
+////				if (ImportSimilarityResultOption.PICK.equals(resultOption)) {
+////					selectedPersonUuid = consumer.result.getMatchingPerson().getUuid();
+////					// Reset the importResult option for case selection
+////					resultOption = null;
+////				}
+////			}
+//
+////			if (ImportSimilarityResultOption.SKIP.equals(resultOption)) {
+////				return ImportLineResult.SKIPPED;
+////			} else {
+////				final CaseImportLock caseSelectLock = new CaseImportLock();
+////				synchronized (caseSelectLock) {
+////					// Retrieve all similar cases from the database
+////					CaseSimilarityCriteria criteria =
+////						CaseSimilarityCriteria.forCase(importCase, selectedPersonUuid != null ? selectedPersonUuid : importPerson.getUuid());
+////
+////					List<CaseSelectionDto> similarCases = caseFacade.getSimilarCases(criteria);
+////
+////					if (similarCases.size() > 0) {
+////						// Call the logic that allows the user to handle the similarity; once this has been done, the LOCK should be notified
+////						// to allow the importer to resume
+////						if (selectedPersonUuid != null) {
+////							importPerson = personFacade.getPersonByUuid(selectedPersonUuid);
+////						}
+////
+//////						handleCaseSimilarity(
+//////							new CaseImportSimilarityInput(importCase, importPerson, similarCases),
+//////							result -> consumer.onImportResult(result, caseSelectLock));
+////
+////						try {
+////							if (!caseSelectLock.wasNotified) {
+////								caseSelectLock.wait();
+////							}
+////						} catch (InterruptedException e) {
+////							logger.error("InterruptedException when trying to perform LOCK.wait() in case import: " + e.getMessage());
+////							throw e;
+////						}
+////
+////						if (consumer.result != null) {
+////							resultOption = consumer.result.getResultOption();
+////						}
+////
+////						// If the user chose to override an existing case with the imported case, insert the new data into the existing case and associate the imported samples with it
+////						if (resultOption == ImportSimilarityResultOption.OVERRIDE
+////							&& consumer.result != null
+////							&& consumer.result.getMatchingCase() != null) {
+////							selectedCaseUuid = consumer.result.getMatchingCase().getUuid();
+////							setValueUuid(values, entityProperties, selectedCaseUuid);
+////						}
+////					}
+////				}
+////			}
+//
+//			if (resultOption == ImportSimilarityResultOption.SKIP) {
+//				consumer.result = null;
+//				return ImportLineResult.SKIPPED;
+//			} else if (resultOption == ImportSimilarityResultOption.PICK) {
+//				consumer.result = null;
+//				return ImportLineResult.DUPLICATE;
+//			} else if (resultOption == ImportSimilarityResultOption.CANCEL) {
+//				cancelImport();
+//				return ImportLineResult.SKIPPED;
+//			} else {
+//				ImportLineResultDto<CaseImportEntities> saveResult;
+//				boolean skipPersonValidation = selectedPersonUuid != null;
+//				if (selectedPersonUuid != null || selectedCaseUuid != null) {
+//					saveResult = caseImportFacade.updateCaseWithImportData(
+//						selectedPersonUuid,
+//						selectedCaseUuid,
+//						values,
+//						entityClasses,
+//						entityPropertyPaths,
+//						skipPersonValidation);
+//				} else {
+//					saveResult = caseImportFacade.saveImportedEntities(entities, skipPersonValidation);
+//				}
+//
+//				if (saveResult.isError()) {
+//					writeImportError(values, importResult.getMessage());
+//					return ImportLineResult.ERROR;
+//				}
+//			}
+//		}
+//
+//		return ImportLineResult.SUCCESS;
+//	}
 
 	private void setValueUuid(String[] values, String[] entityProperties, String uuid) {
 		int uuidIndex = ArrayUtils.indexOf(entityProperties, CaseDataDto.UUID);

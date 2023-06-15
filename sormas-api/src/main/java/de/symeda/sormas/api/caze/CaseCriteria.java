@@ -18,6 +18,7 @@
 package de.symeda.sormas.api.caze;
 
 import java.util.Date;
+import java.util.List;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityRelevanceStatus;
@@ -147,6 +148,10 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	private Boolean onlyCasesWithDontShareWithExternalSurvTool;
 	private Boolean onlyShowCasesWithFulfilledReferenceDefinition;
 	private String personLike;
+
+	private List<String> caseUuids;
+	private List<String> personsUuids;
+
 
 	public CaseCriteria() {
 		super(NewCaseDateType.class);
@@ -757,5 +762,21 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	public CaseCriteria personLike(String personLike) {
 		setPersonLike(personLike);
 		return this;
+	}
+
+	public List<String> getCaseUuids() {
+		return caseUuids;
+	}
+
+	public void setCaseUuids(List<String> caseUuids) {
+		this.caseUuids = caseUuids;
+	}
+
+	public List<String> getPersonsUuids() {
+		return personsUuids;
+	}
+
+	public void setPersonsUuids(List<String> personsUuids) {
+		this.personsUuids = personsUuids;
 	}
 }

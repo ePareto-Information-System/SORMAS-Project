@@ -52,6 +52,7 @@ import javax.persistence.criteria.Subquery;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import de.symeda.sormas.api.person.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -87,26 +88,7 @@ import de.symeda.sormas.api.immunization.ImmunizationDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.location.LocationDto;
-import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.person.ApproximateAgeType.ApproximateAgeHelper;
-import de.symeda.sormas.api.person.CauseOfDeath;
-import de.symeda.sormas.api.person.JournalPersonDto;
-import de.symeda.sormas.api.person.PersonAssociation;
-import de.symeda.sormas.api.person.PersonContactDetailDto;
-import de.symeda.sormas.api.person.PersonContactDetailType;
-import de.symeda.sormas.api.person.PersonContext;
-import de.symeda.sormas.api.person.PersonCriteria;
-import de.symeda.sormas.api.person.PersonDto;
-import de.symeda.sormas.api.person.PersonExportDto;
-import de.symeda.sormas.api.person.PersonFacade;
-import de.symeda.sormas.api.person.PersonFollowUpEndDto;
-import de.symeda.sormas.api.person.PersonHelper;
-import de.symeda.sormas.api.person.PersonIndexDto;
-import de.symeda.sormas.api.person.PersonReferenceDto;
-import de.symeda.sormas.api.person.PersonSimilarityCriteria;
-import de.symeda.sormas.api.person.PresentCondition;
-import de.symeda.sormas.api.person.SimilarPersonDto;
-import de.symeda.sormas.api.person.SymptomJournalStatus;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.AccessDeniedException;
@@ -1765,7 +1747,40 @@ public class PersonFacadeEjb implements PersonFacade {
 		return convertToDto(person, Pseudonymizer.getDefault(userService::hasRight), personService.inJurisdictionOrOwned(person));
 	}
 
-	@LocalBean
+	public List<PersonNameDto> similarExistingPersons(PersonDto referencePerson) {
+
+		PersonSimilarityCriteria criteria = new PersonSimilarityCriteria().firstName(referencePerson.getFirstName())
+				.lastName(referencePerson.getLastName())
+				.sex(referencePerson.getSex())
+				.birthdateDD(referencePerson.getBirthdateDD())
+				.birthdateMM(referencePerson.getBirthdateMM())
+				.birthdateYYYY(referencePerson.getBirthdateYYYY())
+				.passportNumber(referencePerson.getPassportNumber())
+				.nationalHealthId(referencePerson.getNationalHealthId());
+
+		User user = userService.getByReferenceDto(userFacade.getCurrentUser().toReference());
+		if (user == null) {
+			return null;
+		}
+		return personService.getMatchingNameDtos(criteria,3);
+	}
+
+	@Override
+	public List<PersonNameDto> getMatchingNameDtos(UserReferenceDto userRef, PersonSimilarityCriteria criteria) {
+
+		User user = userService.getByReferenceDto(userRef);
+		if (user == null) {
+			return Collections.emptyList();
+		}
+
+		return new ArrayList<>(personService.getMatchingNameDtos(criteria, null));
+	}
+
+	
+
+
+
+    @LocalBean
 	@Stateless
 	public static class PersonFacadeEjbLocal extends PersonFacadeEjb {
 

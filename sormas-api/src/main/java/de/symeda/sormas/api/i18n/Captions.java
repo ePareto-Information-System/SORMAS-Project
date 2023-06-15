@@ -2598,4 +2598,5 @@ public interface Captions {
 	String WeeklyReportRegionSummary_region = "WeeklyReportRegionSummary.region";
 	String weeklyReportsInDistrict = "weeklyReportsInDistrict";
 	String years = "years";
+    String exportDownloadMergeFile ="exportDownloadMergeFile" ;
 }
