@@ -29,6 +29,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
+import de.symeda.sormas.api.utils.*;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -66,19 +67,6 @@ import de.symeda.sormas.api.therapy.TherapyDto;
 import de.symeda.sormas.api.travelentry.TravelEntryDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.DependingOnFeatureType;
-import de.symeda.sormas.api.utils.DependingOnUserRight;
-import de.symeda.sormas.api.utils.Diseases;
-import de.symeda.sormas.api.utils.EmbeddedPersonalData;
-import de.symeda.sormas.api.utils.FieldConstraints;
-import de.symeda.sormas.api.utils.HideForCountries;
-import de.symeda.sormas.api.utils.HideForCountriesExcept;
-import de.symeda.sormas.api.utils.Outbreaks;
-import de.symeda.sormas.api.utils.PersonalData;
-import de.symeda.sormas.api.utils.Required;
-import de.symeda.sormas.api.utils.SensitiveData;
-import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.pseudonymization.Pseudonymizer;
 import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.LatitudePseudonymizer;
 import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.LongitudePseudonymizer;
@@ -589,6 +577,10 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	private DeletionReason deletionReason;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
 	private String otherDeletionReason;
+
+	private NewExisting existingCase;
+
+	private PickMerge importUpdateCaseStatus;
 
 	public static CaseDataDto build(PersonReferenceDto person, Disease disease) {
 		return build(person, disease, HealthConditionsDto.build());
@@ -1739,6 +1731,14 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 		this.healthConditions = healthConditions;
 	}
 
+
+	public NewExisting getExistingCase() {
+		return existingCase;
+	}
+
+	public void setExistingCase(NewExisting existingCase) {
+		this.existingCase = existingCase;
+	}
 	@JsonIgnore
 	public String i18nPrefix() {
 		return I18N_PREFIX;
@@ -1747,5 +1747,13 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	@Override
 	public String toString() {
 		return super.toString() + (StringUtils.isNotBlank(this.getExternalID()) ? " - " + this.getExternalID() : StringUtils.EMPTY);
+	}
+
+	public PickMerge getImportUpdateCaseStatus() {
+		return importUpdateCaseStatus;
+	}
+
+	public void setImportUpdateCaseStatus(PickMerge importUpdateCaseStatus) {
+		this.importUpdateCaseStatus = importUpdateCaseStatus;
 	}
 }

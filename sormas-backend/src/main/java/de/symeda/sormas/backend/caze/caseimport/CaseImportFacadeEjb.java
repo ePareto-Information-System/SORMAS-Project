@@ -31,6 +31,8 @@ import javax.ejb.Stateless;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
+import de.symeda.sormas.api.person.PersonNameDto;
+import de.symeda.sormas.api.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,9 +73,6 @@ import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SampleReferenceDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.DateHelper;
-import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.api.vaccination.VaccinationDto;
 import de.symeda.sormas.backend.caze.CaseFacadeEjb.CaseFacadeEjbLocal;
 import de.symeda.sormas.backend.common.EnumService;
@@ -124,15 +123,16 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
 	@EJB
 	private VaccinationFacadeEjbLocal vaccinationFacade;
 
+
 	@Override
 	@Transactional
 	public ImportLineResultDto<CaseImportEntities> importCaseData(
-		String[] values,
-		String[] entityClasses,
-		String[] entityProperties,
-		String[][] entityPropertyPaths,
-		boolean ignoreEmptyEntries)
-		throws InvalidColumnException {
+			String[] values,
+			String[] entityClasses,
+			String[] entityProperties,
+			String[][] entityPropertyPaths,
+			boolean ignoreEmptyEntries)
+			throws InvalidColumnException {
 
 		// Check whether the new line has the same length as the header line
 		if (values.length > entityProperties.length) {
@@ -141,7 +141,7 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
 
 		final CaseImportEntities entities = new CaseImportEntities(userService.getCurrentUser().toReference());
 		ImportLineResultDto<CaseImportEntities> importResult =
-			buildEntities(values, entityClasses, entityPropertyPaths, ignoreEmptyEntries, entities);
+				buildEntities(values, entityClasses, entityPropertyPaths, ignoreEmptyEntries, entities);
 		if (importResult.isError()) {
 			return importResult;
 		}
@@ -152,15 +152,93 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
 		}
 
 		PersonDto person = entities.getPerson();
+		List<PersonNameDto> similarPersons = personFacade.similarExistingPersons(person);
+		CaseDataDto caseDataDto = null;
+		PickMerge pickMerge = entities.getCaze().getImportUpdateCaseStatus();
+		if (pickMerge == null)
+			pickMerge = PickMerge.CANCEL;
 
-		if (personFacade.isPersonSimilarToExisting(person)) {
-			return ImportLineResultDto.duplicateResult(entities);
+		if (pickMerge.equals(PickMerge.PICK) && entities.getCaze().getUuid() != null)
+			caseDataDto = caseFacade.getCaseDataByUuid(entities.getCaze().getUuid());
+
+		if (pickMerge.equals(PickMerge.MERGE) && entities.getCaze().getUuid() != null ) {
+			caseDataDto = caseFacade.getCaseDataByUuid(entities.getCaze().getUuid());
+			String uuid = caseDataDto.getUuid();
+			caseDataDto = entities.getCaze();
+			caseDataDto.setUuid(uuid);
 		}
+//		CaseDataDto caseDataDto = entities.getCaze().getUuid() == null ? caseFacade.getCaseDataByUuid(entities.getCaze().getUuid())
+//				: caseFacade.getByExternalId(entities.getCaze().getExternalID());
+		ImportLineResultDto<CaseImportEntities> result;
 
-		ImportLineResultDto<CaseImportEntities> result = saveImportedEntities(entities, false);
+//		if (personFacade.isPersonSimilarToExisting(person)) {
+//			return ImportLineResultDto.duplicateResult(entities);
+//		}
+
+		NewExisting newExisting = entities.getCaze().getExistingCase();
+		if (newExisting == null)
+			newExisting = NewExisting.NEW_CASE;
+
+		if(similarPersons.size() > 0 && newExisting.equals(NewExisting.EXISTING_CASE) && caseDataDto == null) {
+			entities.setSimilarPersons(similarPersons);
+			return ImportLineResultDto.mergeResult(entities);
+		}
+		//Nii here, to remove
+//		if (personFacade.isPersonSimilarToExisting(person) && newExisting.equals(NewExisting.EXISTING_CASE)) {
+////			entities.setSimilarPersons(similarPersons);
+//			return ImportLineResultDto.duplicateResult(entities);
+//		}
+		if (caseDataDto != null){
+			result = updateCaseWithImportData(caseDataDto.getPerson().getUuid(),
+					caseDataDto.getUuid(), values, entityClasses, entityPropertyPaths,false);
+		}
+		else {
+			result = saveImportedEntities(entities,false);
+		}
+//		ImportLineResultDto<CaseImportEntities> result = saveImportedEntities(entities);
 
 		return result;
 	}
+
+//	@Override
+//	@Transactional
+//	public ImportLineResultDto<CaseImportEntities> importCaseData(
+//		String[] values,
+//		String[] entityClasses,
+//		String[] entityProperties,
+//		String[][] entityPropertyPaths,
+//		boolean ignoreEmptyEntries)
+//		throws InvalidColumnException {
+//
+//		// Check whether the new line has the same length as the header line
+//		if (values.length > entityProperties.length) {
+//			return ImportLineResultDto.errorResult(I18nProperties.getValidationError(Validations.importLineTooLong));
+//		}
+//
+//		final CaseImportEntities entities = new CaseImportEntities(userService.getCurrentUser().toReference());
+//		ImportLineResultDto<CaseImportEntities> importResult =
+//			buildEntities(values, entityClasses, entityPropertyPaths, ignoreEmptyEntries, entities);
+//		if (importResult.isError()) {
+//			return importResult;
+//		}
+//
+//		ImportLineResultDto<CaseImportEntities> validationResult = validateEntities(entities);
+//		if (validationResult.isError()) {
+//			return validationResult;
+//		}
+//
+//		PersonDto person = entities.getPerson();
+//
+//		if (personFacade.isPersonSimilarToExisting(person)) {
+//			return ImportLineResultDto.duplicateResult(entities);
+//		}
+//
+//		ImportLineResultDto<CaseImportEntities> result = saveImportedEntities(entities, false);
+//
+//		return result;
+//	}
+
+
 
 	@Override
 	public ImportLineResultDto<CaseImportEntities> updateCaseWithImportData(
@@ -613,6 +691,7 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
 	protected String buildEntityProperty(String[] entityPropertyPath) {
 		return String.join(".", entityPropertyPath);
 	}
+
 
 	@LocalBean
 	@Stateless

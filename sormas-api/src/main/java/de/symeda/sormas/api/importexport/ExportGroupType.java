@@ -17,7 +17,8 @@ public enum ExportGroupType {
 	LOCATION,
 	EVENT,
 	EVENT_GROUP,
-	EVENT_SOURCE;
+	EVENT_SOURCE,
+	CASE_MANAGEMENT;
 
 	@Override
 	public String toString() {

@@ -43,19 +43,11 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.ParameterExpression;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Subquery;
+import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 
+import de.symeda.sormas.api.person.*;
 import org.apache.commons.lang3.StringUtils;
 
 import de.symeda.sormas.api.Disease;
@@ -67,13 +59,6 @@ import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.feature.FeatureTypeProperty;
 import de.symeda.sormas.api.geo.GeoLatLon;
-import de.symeda.sormas.api.person.ApproximateAgeType;
-import de.symeda.sormas.api.person.PersonAssociation;
-import de.symeda.sormas.api.person.PersonCriteria;
-import de.symeda.sormas.api.person.PersonHelper;
-import de.symeda.sormas.api.person.PersonSimilarityCriteria;
-import de.symeda.sormas.api.person.Sex;
-import de.symeda.sormas.api.person.SimilarPersonDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.backend.caze.Case;
@@ -1005,4 +990,110 @@ public class PersonService extends AdoServiceWithUserFilter<Person> {
 		visitService.deletePersonVisits(uuids);
 		super.deletePermanentByUuids(uuids);
 	}
+
+	public List<PersonNameDto> getMatchingNameDtos(PersonSimilarityCriteria criteria, Integer limit) {
+
+		setSimilarityThresholdQuery();
+		boolean activeEntriesOnly = configFacade.isDuplicateChecksExcludePersonsOfArchivedEntries();
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		//final CriteriaQuery<Object[]> personQuery = cb.createQuery(Object[].class);
+		final CriteriaQuery<PersonNameDto> personQuery = cb.createQuery(PersonNameDto.class);
+
+		final Root<Person> personRoot = personQuery.from(Person.class);
+		final PersonQueryContext personQueryContext = new PersonQueryContext(cb, personQuery, personRoot);
+		final PersonJoins joins = personQueryContext.getJoins();
+
+//		CriteriaQuery<PersonNameDto> personQuery = cb.createQuery(PersonNameDto.class);
+//		Root<Person> personRoot = personQuery.from(Person.class);
+
+
+		Join<Person, Case> personCaseJoin = joins.getCaze();
+
+
+
+		Join<Person, Contact> personContactJoin = joins.getContact();
+		Join<Person, EventParticipant> personEventParticipantJoin = joins.getEventParticipant();
+		Join<Person, Immunization> personImmunizationJoin = joins.getImmunization();
+		Join<Person, TravelEntry> personTravelEntryJoin = joins.getTravelEntry();
+
+		personQuery.multiselect(personRoot.get(Person.FIRST_NAME), personRoot.get(Person.LAST_NAME), personRoot.get(Person.UUID));
+
+		// Persons of active cases
+		Predicate personSimilarityFilter = buildSimilarityCriteriaFilter(criteria, cb, personRoot);
+		Predicate activeCasesFilter =
+				activeEntriesOnly ? caseService.createActiveCasesFilter(cb, personCaseJoin) : caseService.createDefaultFilter(cb, personCaseJoin);
+
+		final CaseQueryContext caseQueryContext = new CaseQueryContext(cb, personQuery, joins.getCaseJoins());
+
+		Predicate caseUserFilter = caseService.createUserFilter(caseQueryContext);
+		Predicate personCasePredicate = and(cb, personCaseJoin.get(Case.ID).isNotNull(), activeCasesFilter, caseUserFilter);
+
+		// Persons of active contacts
+		Predicate activeContactsFilter = activeEntriesOnly
+				? contactService.createActiveContactsFilter(cb, personContactJoin)
+				: contactService.createDefaultFilter(cb, personContactJoin);
+		final ContactQueryContext contactQueryContext =
+				new ContactQueryContext(cb, personQuery, joins.getContactJoins());
+		Predicate contactUserFilter = contactService.createUserFilter(contactQueryContext);
+		Predicate personContactPredicate = and(cb, personContactJoin.get(Contact.ID).isNotNull(), contactUserFilter, activeContactsFilter);
+
+		// Persons of event participants in active events
+		Predicate activeEventParticipantsFilter = activeEntriesOnly
+				? eventParticipantService.createActiveEventParticipantsInActiveEventsFilter(cb, personEventParticipantJoin)
+				: eventParticipantService.createDefaultInUndeletedEventsFilter(cb, personEventParticipantJoin);
+
+		final EventParticipantQueryContext eventParticipantQueryContext =
+				new EventParticipantQueryContext(cb, personQuery, joins.getEventParticipantJoins());
+
+		Predicate eventParticipantUserFilter = eventParticipantService.createUserFilter(eventParticipantQueryContext);
+		Predicate personEventParticipantPredicate =
+				and(cb, personEventParticipantJoin.get(EventParticipant.ID).isNotNull(), activeEventParticipantsFilter, eventParticipantUserFilter);
+
+		// Persons of active immunizations
+		Predicate activeImmunizationsFilter = activeEntriesOnly
+				? immunizationService.createActiveImmunizationsFilter(cb, personImmunizationJoin)
+				: immunizationService.createDefaultFilter(cb, personImmunizationJoin);
+
+		final ImmunizationQueryContext immunizationQueryContext =
+				new ImmunizationQueryContext(cb, personQuery, joins.getImmunizationJoins());
+
+		Predicate immunizationUserFilter = immunizationService.createUserFilter(immunizationQueryContext);
+		Predicate personImmunizationPredicate =
+				and(cb, personImmunizationJoin.get(Immunization.ID).isNotNull(), immunizationUserFilter, activeImmunizationsFilter);
+
+		// Persons of active travel entries
+		Predicate activeTravelEntriesFilter = activeEntriesOnly
+				? travelEntryService.createActiveTravelEntriesFilter(cb, personTravelEntryJoin)
+				: travelEntryService.createDefaultFilter(cb, personTravelEntryJoin);
+
+
+		final TravelEntryQueryContext travelEntryQueryContext =
+				new TravelEntryQueryContext(cb, personQuery, joins.getTravelEntryJoins());
+
+		Predicate travelEntryUserFilter = travelEntryService.createUserFilter(travelEntryQueryContext);
+		Predicate personTravelEntryPredicate =
+				and(cb, personTravelEntryJoin.get(TravelEntry.ID).isNotNull(), travelEntryUserFilter, activeTravelEntriesFilter);
+
+		Predicate finalPredicate = CriteriaBuilderHelper.or(
+				cb,
+				personCasePredicate,
+				personContactPredicate,
+				personEventParticipantPredicate,
+				personImmunizationPredicate,
+				personTravelEntryPredicate);
+
+		personQuery.where(and(cb, personSimilarityFilter, finalPredicate));
+		personQuery.distinct(true);
+
+		TypedQuery<PersonNameDto> query = em.createQuery(personQuery);
+		if (limit != null) {
+			query.setMaxResults(limit);
+		}
+		return query.getResultList();
+	}
+
+
+
+
 }

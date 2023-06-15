@@ -70,4 +70,12 @@ public class ImportLineResultDto<E> implements Serializable {
 	public static <E> ImportLineResultDto<E> skippedResult(String message) {
 		return new ImportLineResultDto<>(ImportLineResult.SKIPPED, message, null);
 	}
+
+	public static <E> ImportLineResultDto<E> mergeResult(E entities) {
+		return new ImportLineResultDto<>(ImportLineResult.MERGE, null, entities);
+	}
+
+	public boolean isMerge() {
+		return result == ImportLineResult.MERGE;
+	}
 }

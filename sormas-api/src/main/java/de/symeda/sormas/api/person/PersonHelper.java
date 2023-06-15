@@ -132,6 +132,38 @@ public final class PersonHelper {
 			: !StringUtils.isEmpty(birthdateStr) ? birthdateStr : "";
 	}
 
+	public static String getAgeAndBirthdateString(
+			Integer age,
+			ApproximateAgeType ageType,
+			Integer birthdateDD,
+			Integer birthdateMM,
+			Integer birthdateYYYY,
+			Language language) {
+
+		String ageStr = ApproximateAgeHelper.formatApproximateAge(age, ageType);
+		String birthdateStr = formatBirthdate(birthdateDD, birthdateMM, birthdateYYYY, language);
+		return !StringUtils.isEmpty(ageStr)
+				? (ageStr + (!StringUtils.isEmpty(birthdateStr) ? " (" + birthdateStr + ")" : ""))
+				: !StringUtils.isEmpty(birthdateStr) ? birthdateStr : "";
+	}
+
+	public static String formatBirthdate(Integer birthdateDD, Integer birthdateMM, Integer birthdateYYYY, Language language) {
+
+		if (birthdateDD == null && birthdateMM == null && birthdateYYYY == null) {
+			return "";
+		} else {
+			String birthDate = DateHelper.getLocalDateFormat(language).toPattern();
+			birthDate = birthDate.replaceAll("d+", birthdateDD != null ? birthdateDD.toString() : "");
+			birthDate = birthDate.replaceAll("M+", birthdateMM != null ? birthdateMM.toString() : "");
+			birthDate = birthDate.replaceAll("y+", birthdateYYYY != null ? birthdateYYYY.toString() : "");
+			birthDate = birthDate.replaceAll("^[^\\d]*", "").replaceAll("[^\\d]*$", "");
+
+			return birthDate;
+		}
+	}
+
+
+
 	public static void validateBirthDate(Integer year, Integer month, Integer day) throws ValidationRuntimeException {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setLenient(false);

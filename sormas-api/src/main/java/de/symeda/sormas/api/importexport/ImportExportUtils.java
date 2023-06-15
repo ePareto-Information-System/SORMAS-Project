@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import de.symeda.sormas.api.FacadeProvider;
 import org.apache.commons.lang3.CharUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -67,6 +68,9 @@ public final class ImportExportUtils {
 		}, propertyCaptionProvider, countryLocale);
 	}
 
+
+
+
 	public static List<ExportPropertyMetaInfo> getEventExportProperties(
 		PropertyCaptionProvider propertyCaptionProvider,
 		final boolean withEventGroups,
@@ -78,6 +82,27 @@ public final class ImportExportUtils {
 				return ExportGroupType.EVENT_GROUP != groupType || withEventGroups;
 			}
 		}, propertyCaptionProvider, countryLocale);
+	}
+
+	public static List<ExportPropertyMetaInfo> getCaseExportProperties(
+			PropertyCaptionProvider propertyCaptionProvider,
+			final boolean withFollowUp,
+			final boolean withCaseManagement) {
+		return getExportProperties(CaseExportDto.class, new PropertyTypeFilter() {
+
+			@Override
+			public boolean accept(ExportGroupType groupType) {
+				if (ExportGroupType.CASE_MANAGEMENT == groupType && !withCaseManagement) {
+					return false;
+				}
+
+				if (ExportGroupType.FOLLOW_UP == groupType && !withFollowUp) {
+					return false;
+				}
+
+				return true;
+			}
+		}, propertyCaptionProvider);
 	}
 
 	public static List<ExportPropertyMetaInfo> getContactExportProperties(PropertyCaptionProvider propertyCaptionProvider, String countryLocale) {
@@ -178,6 +203,68 @@ public final class ImportExportUtils {
 			}
 			properties.add(
 				new ExportPropertyMetaInfo(property, propertyCaptionProvider.get(propertyPath[propertyPath.length - 1], i18n_prefix), groupType));
+
+		}
+
+		return properties;
+	}
+
+	private static List<ExportPropertyMetaInfo> getExportProperties(
+			Class<?> exportDtoClass,
+			PropertyTypeFilter filterExportGroup,
+			PropertyCaptionProvider propertyCaptionProvider) {
+		List<Method> readMethods = new ArrayList<>();
+		for (Method method : exportDtoClass.getDeclaredMethods()) {
+			if ((!method.getName().startsWith("get") && !method.getName().startsWith("is")) || !method.isAnnotationPresent(ExportGroup.class)) {
+				continue;
+			}
+			readMethods.add(method);
+		}
+		Collections.sort(readMethods, new Comparator<Method>() {
+
+			@Override
+			public int compare(Method m1, Method m2) {
+				return Integer.compare(getOrderValue(m1), getOrderValue(m2));
+			}
+		});
+
+		CountryFieldVisibilityChecker countryFieldVisibilityChecker =
+				new CountryFieldVisibilityChecker(FacadeProvider.getConfigFacade().getCountryLocale());
+		Set<String> combinedProperties = new HashSet<>();
+		List<ExportPropertyMetaInfo> properties = new ArrayList<>();
+		for (Method method : readMethods) {
+
+			if (!countryFieldVisibilityChecker.isVisible(method)) {
+				continue;
+			}
+
+			ExportGroupType groupType = method.getAnnotation(ExportGroup.class).value();
+
+			if (!filterExportGroup.accept(groupType)) {
+				continue;
+			}
+
+			String[] propertyPath = method.getAnnotation(ExportProperty.class).value();
+			String property = StringUtils.join(propertyPath, ".");
+			if (method.getAnnotation(ExportProperty.class).combined()) {
+				if (!combinedProperties.add(property)) {
+					continue;
+				}
+			}
+
+			// prepare ExportPropertyMetaInfo
+			// In order to get the correct caption, we try to fetch the i18n-prefix of the methods declaring class
+			String i18n_prefix = null;
+			ExportEntity MethodClassEntity = method.getAnnotation(ExportEntity.class);
+			if (MethodClassEntity != null) {
+				try {
+					i18n_prefix = (String) MethodClassEntity.value().getDeclaredField("I18N_PREFIX").get(null);
+				} catch (NoSuchFieldException | IllegalAccessException ex) {
+					// Field doesn't exist or is private
+				}
+			}
+			properties.add(
+					new ExportPropertyMetaInfo(property, propertyCaptionProvider.get(propertyPath[propertyPath.length - 1], i18n_prefix), groupType));
 
 		}
 

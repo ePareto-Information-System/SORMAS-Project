@@ -591,4 +591,19 @@ public class EventParticipantService extends AbstractCoreAdoService<EventPartici
 
 		em.createQuery(cu).executeUpdate();
 	}
+
+	public Predicate createDefaultInUndeletedEventsFilter(CriteriaBuilder cb, From<?, EventParticipant> root) {
+
+		Join<EventParticipant, Event> eventJoin = root.join(EventParticipant.EVENT, JoinType.LEFT);
+		return CriteriaBuilderHelper.and(cb, createDefaultFilter(cb, root), cb.isFalse(eventJoin.get(Event.DELETED)));
+	}
+
+	public Predicate createActiveEventParticipantsInActiveEventsFilter(CriteriaBuilder cb, Join<?, EventParticipant> eventParticipantJoin) {
+
+		Join<EventParticipant, Event> event = eventParticipantJoin.join(EventParticipant.EVENT, JoinType.LEFT);
+		return cb.and(
+				cb.isFalse(eventParticipantJoin.get(EventParticipant.DELETED)),
+				cb.isFalse(event.get(Event.ARCHIVED)),
+				cb.isFalse(event.get(Event.DELETED)));
+	}
 }

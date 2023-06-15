@@ -17,7 +17,9 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.caze.importer;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.function.Consumer;
 
 import com.opencsv.exceptions.CsvValidationException;
 import com.vaadin.icons.VaadinIcons;
@@ -53,21 +55,42 @@ public class CaseImportLayout extends AbstractImportLayout {
 		addDownloadResourcesComponent(1, new ClassResource("/SORMAS_Import_Guide.pdf"));
 		
 		addDownloadImportTemplateComponent(2, importFacade.getCaseImportTemplateFilePath(), importFacade.getCaseImportTemplateFileName());
-		
-		addDownloadImportTemplateXlm(3, importFacade.getCaseImportTemplateXlsmFilePath(), importFacade.getCaseImportTemplateXlsmFileName());
+//		addImportCsvComponent(3, new ImportReceiver("_case_import_", file -> {
+//			resetDownloadErrorReportButton();
+//
+//			try {
+//				CaseImporter importer = new CaseImporter(file, true, currentUser, (ValueSeparator) separator.getValue());
+//				//importer.startImport(this::extendDownloadErrorReportButton, currentUI, true);
+//				importer.startImport(resource -> extendDownloadErrorReportButton(resource), currentUI, true,true);
+//
+//			} catch (IOException | CsvValidationException e) {
+//				new Notification(
+//					I18nProperties.getString(Strings.headingImportFailed),
+//					I18nProperties.getString(Strings.messageImportFailed),
+//					Type.ERROR_MESSAGE,
+//					false).show(Page.getCurrent());
+//			}
+//		}));
+//		addDownloadErrorReportComponent(4);
 
-		addImportCsvComponent(4, new ImportReceiver("_case_import_", file -> {
-			resetDownloadErrorReportButton();
+		addImportCsvComponent(3, new ImportReceiver("_case_import_", new Consumer<File>() {
 
-			try {
-				CaseImporter importer = new CaseImporter(file, true, currentUser, (ValueSeparator) separator.getValue());
-				importer.startImport(this::extendDownloadErrorReportButton, currentUI, true);
-			} catch (IOException | CsvValidationException e) {
-				new Notification(
-					I18nProperties.getString(Strings.headingImportFailed),
-					I18nProperties.getString(Strings.messageImportFailed),
-					Type.ERROR_MESSAGE,
-					false).show(Page.getCurrent());
+			@Override
+			public void accept(File file) {
+				resetDownloadErrorReportButton();
+
+				try {
+					CaseImporter importer = new CaseImporter(file, true, currentUser, (ValueSeparator) separator.getValue());
+					//CaseImporter importer = new CaseImporter(file, true, currentUser);
+//					importer.startImport(resource -> extendDownloadErrorReportButton(resource), currentUI, true);
+					importer.startImport(resource -> extendDownloadErrorReportButton(resource), currentUI, true,true);
+				} catch (IOException | CsvValidationException e) {
+					new Notification(
+							I18nProperties.getString(Strings.headingImportFailed),
+							I18nProperties.getString(Strings.messageImportFailed),
+							Type.ERROR_MESSAGE,
+							false).show(Page.getCurrent());
+				}
 			}
 		}));
 		

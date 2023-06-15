@@ -2672,4 +2672,5 @@ public interface Captions {
 	String EntityAuditLogComponent_selectActivities = "EntityAuditLogComponent.selectActivities";
 	String years = "years";
 	String dashboardLastReportedDistrict = "Last Reported District";
+    String exportDownloadMergeFile ="exportDownloadMergeFile" ;
 }
