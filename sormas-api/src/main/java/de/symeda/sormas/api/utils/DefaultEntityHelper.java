@@ -32,6 +32,7 @@ public class DefaultEntityHelper {
 	public static final DataHelper.Pair<String, String> CASE_SUP_USERNAME_AND_PASSWORD = new DataHelper.Pair<>("CaseSup", "CaseSup");
 	public static final DataHelper.Pair<String, String> CONT_SUP_USERNAME_AND_PASSWORD = new DataHelper.Pair<>("ContSup", "ContSup");
 	public static final DataHelper.Pair<String, String> POE_SUP_USERNAME_AND_PASSWORD = new DataHelper.Pair<>("PoeSup", "PoeSup");
+	public static final DataHelper.Pair<String, String> LAB_SUP_USERNAME_AND_PASSWORD = new DataHelper.Pair<>("LabSup", "LabSup");
 	public static final DataHelper.Pair<String, String> LAB_OFF_USERNAME_AND_PASSWORD = new DataHelper.Pair<>("LabOff", "LabOff");
 	public static final DataHelper.Pair<String, String> EVE_OFF_USERNAME_AND_PASSWORD = new DataHelper.Pair<>("EveOff", "EveOff");
 	public static final DataHelper.Pair<String, String> NAT_USER_USERNAME_AND_PASSWORD = new DataHelper.Pair<>("NatUser", "NatUser");
@@ -51,6 +52,7 @@ public class DefaultEntityHelper {
 			CASE_SUP_USERNAME_AND_PASSWORD,
 			CONT_SUP_USERNAME_AND_PASSWORD,
 			POE_SUP_USERNAME_AND_PASSWORD,
+			LAB_SUP_USERNAME_AND_PASSWORD,
 			LAB_OFF_USERNAME_AND_PASSWORD,
 			EVE_OFF_USERNAME_AND_PASSWORD,
 			NAT_USER_USERNAME_AND_PASSWORD,

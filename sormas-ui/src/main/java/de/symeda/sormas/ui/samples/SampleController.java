@@ -294,7 +294,6 @@ public class SampleController {
 	}
 
 	public void createReferral(SampleDto existingSample, Disease disease) {
-
 		CommitDiscardWrapperComponent<SampleCreateForm> createView = getSampleReferralCreateComponent(existingSample, disease);
 		createView.addDoneListener(() -> navigateToData(existingSample.getUuid()));
 		createView.getWrappedComponent().getValue().setPathogenTestResult(PathogenTestResultType.PENDING);
@@ -309,7 +308,6 @@ public class SampleController {
 
 		createView.addCommitListener(() -> {
 			if (!createView.getWrappedComponent().getFieldGroup().isModified()) {
-
 				SampleDto updatedSample = FacadeProvider.getSampleFacade().getSampleByUuid(existingSample.getUuid());
 				updatedSample.setReferredTo(referralSample.toReference());
 				FacadeProvider.getSampleFacade().saveSample(updatedSample);
@@ -443,6 +441,10 @@ public class SampleController {
 				}
 
 			});
+		}
+
+		if  (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO)){
+			referOrLinkToOtherLabButton.setEnabled(false);
 		}
 
 		if (referOrLinkToOtherLabButton != null) {

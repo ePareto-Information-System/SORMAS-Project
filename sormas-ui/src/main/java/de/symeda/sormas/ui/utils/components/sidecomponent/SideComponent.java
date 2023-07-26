@@ -52,6 +52,9 @@ public class SideComponent extends VerticalLayout {
 	protected void addCreateButton(String caption, Runnable callback, UserRight... userRights) {
 		if (userHasRight(userRights)) {
 			Button createButton = ButtonHelper.createButton(caption);
+			if(UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO) ) {
+				createButton.setEnabled(false);
+			}
 			createButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
 			createButton.setIcon(VaadinIcons.PLUS_CIRCLE);
 			createButton.addClickListener(e -> actionCallback.accept(callback));

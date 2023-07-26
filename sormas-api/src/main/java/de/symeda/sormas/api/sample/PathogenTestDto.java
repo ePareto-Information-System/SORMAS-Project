@@ -30,6 +30,7 @@ import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.sormastosormas.S2SIgnoreProperty;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasConfig;
+import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
@@ -142,6 +143,9 @@ public class PathogenTestDto extends PseudonymizableDto {
 		pathogenTest.setSample(sample.toReference());
 		if (sample.getSamplePurpose() == SamplePurpose.INTERNAL) {
 			pathogenTest.setTestResultVerified(true);
+		}
+		if (currentUser.getUserRoles().contains(DefaultUserRole.LAB_USER)) {
+			pathogenTest.setTestResultVerified(false);
 		}
 		pathogenTest.setLab(currentUser.getLaboratory());
 		if (pathogenTest.getLab() == null) {

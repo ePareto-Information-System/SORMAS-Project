@@ -585,6 +585,7 @@ public class UserService extends AdoServiceWithUserFilter<User> {
 			cb.equal(from.get(User.LABORATORY), facility),
 			from.get(User.JURISDICTION_LEVEL).in(JurisdictionLevel.LABORATORY, JurisdictionLevel.EXTERNAL_LABORATORY));
 
+			//joinRoles.in(Arrays.asList(UserRole.LAB_USER, UserRole.EXTERNAL_LAB_USER, UserRole.LAB_ATTENDANT, UserRole.LAB_SUPERVISOR)));
 		cq.where(filter).distinct(true);
 
 		return em.createQuery(cq).getResultList();

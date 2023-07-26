@@ -146,6 +146,9 @@ public class SampleGrid extends FilteredGrid<SampleIndexDto, SampleCriteria> {
 			new ShowDetailsListener<>(SampleIndexDto.UUID, e -> ControllerProvider.getSampleController().navigateToData(e.getUuid())));
 
 		if (nonNull(UserProvider.getCurrent()) && UserProvider.getCurrent().hasLaboratoryOrExternalLaboratoryJurisdictionLevel()) {
+		// if (UserProvider.getCurrent().hasUserRole(UserRole.LAB_USER)
+		// 	|| UserProvider.getCurrent().hasUserRole(UserRole.EXTERNAL_LAB_USER)
+		// 	|| UserProvider.getCurrent().hasUserRole(UserRole.LAB_SUPERVISOR)) {
 			removeColumn(SampleIndexDto.SHIPMENT_DATE);
 		} else {
 			removeColumn(SampleIndexDto.RECEIVED_DATE);

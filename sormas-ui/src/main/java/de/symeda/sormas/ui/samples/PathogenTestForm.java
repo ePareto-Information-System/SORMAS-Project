@@ -23,12 +23,11 @@ import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_TOP_4;
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
 import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
+import de.symeda.sormas.api.user.DefaultUserRole;
+import de.symeda.sormas.api.user.UserRoleReferenceDto;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.vaadin.ui.Label;
@@ -55,6 +54,7 @@ import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SamplePurpose;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
+import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.DateComparisonValidator;
@@ -125,7 +125,6 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		if (sample == null) {
 			return;
 		}
-
 		pathogenTestHeadingLabel = new Label();
 		pathogenTestHeadingLabel.addStyleName(H3);
 		getContent().addComponent(pathogenTestHeadingLabel, PATHOGEN_TEST_HEADING_LOC);
@@ -172,11 +171,24 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		cqValueField.setConversionError(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, cqValueField.getCaption()));
 		NullableOptionGroup testResultVerifiedField = addField(PathogenTestDto.TEST_RESULT_VERIFIED, NullableOptionGroup.class);
 		testResultVerifiedField.setRequired(true);
+		Set<UserRoleReferenceDto> userRoles =UserProvider.getCurrent().getUser().getUserRoles();
+
+		String valLabUser=I18nProperties.getEnumCaption(DefaultUserRole.LAB_USER);
+		UserRoleReferenceDto userRoleToFind = new UserRoleReferenceDto(null, valLabUser);
+
+		if (userRoles.contains(userRoleToFind)) {
+			testResultVerifiedField.setRequired(false);
+			testResultVerifiedField.setVisible(false);
+		}
+		//if (UserProvider.getCurrent().hasLaboratoryOrExternalLaboratoryJurisdictionLevel()==true){//  hasUserRole(DefaultUserRole.LAB_USER)) {
+//			testResultVerifiedField.setRequired(false);
+//			testResultVerifiedField.setVisible(false);
+
+		//}
 		CheckBox fourFoldIncrease = addField(PathogenTestDto.FOUR_FOLD_INCREASE_ANTIBODY_TITER, CheckBox.class);
 		CssStyles.style(fourFoldIncrease, VSPACE_3, VSPACE_TOP_4);
 		fourFoldIncrease.setVisible(false);
 		fourFoldIncrease.setEnabled(false);
-
 		addField(PathogenTestDto.TEST_RESULT_TEXT, TextArea.class).setRows(6);
 		addField(PathogenTestDto.PRELIMINARY).addStyleName(CssStyles.VSPACE_4);
 
