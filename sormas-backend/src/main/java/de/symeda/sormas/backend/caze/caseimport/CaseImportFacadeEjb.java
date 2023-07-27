@@ -19,18 +19,22 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
+import javax.ejb.Stateful;
 import javax.ejb.Stateless;
+
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
+import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.caze.*;
+import de.symeda.sormas.api.caze.caseimport.CaseDMImportEntities;
+import de.symeda.sormas.api.caze.caseimport.EntityImportResultDto;
+import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolRuntimeException;
 import de.symeda.sormas.api.person.PersonNameDto;
 import de.symeda.sormas.api.utils.*;
 import org.apache.commons.lang3.StringUtils;
@@ -38,11 +42,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.symeda.sormas.api.Language;
-import de.symeda.sormas.api.caze.BirthDateDto;
-import de.symeda.sormas.api.caze.CaseDataDto;
-import de.symeda.sormas.api.caze.CaseExportDto;
-import de.symeda.sormas.api.caze.CaseLogic;
-import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.caze.caseimport.CaseImportEntities;
 import de.symeda.sormas.api.caze.caseimport.CaseImportFacade;
 import de.symeda.sormas.api.contact.FollowUpStatus;
@@ -94,111 +93,162 @@ import de.symeda.sormas.backend.vaccination.VaccinationFacadeEjb.VaccinationFaca
 @RightsAllowed(UserRight._CASE_IMPORT)
 public class CaseImportFacadeEjb implements CaseImportFacade {
 
-	private final Logger LOGGER = LoggerFactory.getLogger(CaseImportFacadeEjb.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(CaseImportFacadeEjb.class);
 
-	protected static final String ERROR_COLUMN_NAME = I18nProperties.getCaption(Captions.importErrorDescription);
+    protected static final String ERROR_COLUMN_NAME = I18nProperties.getCaption(Captions.importErrorDescription);
 
-	@EJB
-	private UserService userService;
-	@EJB
-	private PersonFacadeEjbLocal personFacade;
-	@EJB
-	private CaseFacadeEjbLocal caseFacade;
-	@EJB
-	private SampleFacadeEjbLocal sampleFacade;
-	@EJB
-	private PathogenTestFacadeEjbLocal pathogenTestFacade;
-	@EJB
-	private DistrictFacadeEjbLocal districtFacade;
-	@EJB
-	private CommunityFacadeEjbLocal communityFacade;
-	@EJB
-	private FacilityFacadeEjbLocal facilityFacade;
-	@EJB
-	private PointOfEntryFacadeEjbLocal pointOfEntryFacade;
-	@EJB
-	private FeatureConfigurationFacadeEjbLocal featureConfigurationFacade;
-	@EJB
-	private ImportFacadeEjbLocal importFacade;
-	@EJB
-	private VaccinationFacadeEjbLocal vaccinationFacade;
+    @EJB
+    private UserService userService;
+    @EJB
+    private PersonFacadeEjbLocal personFacade;
+    @EJB
+    private CaseFacadeEjbLocal caseFacade;
+    @EJB
+    private SampleFacadeEjbLocal sampleFacade;
+    @EJB
+    private PathogenTestFacadeEjbLocal pathogenTestFacade;
+    @EJB
+    private DistrictFacadeEjbLocal districtFacade;
+    @EJB
+    private CommunityFacadeEjbLocal communityFacade;
+    @EJB
+    private FacilityFacadeEjbLocal facilityFacade;
+    @EJB
+    private PointOfEntryFacadeEjbLocal pointOfEntryFacade;
+    @EJB
+    private FeatureConfigurationFacadeEjbLocal featureConfigurationFacade;
+    @EJB
+    private ImportFacadeEjbLocal importFacade;
+    @EJB
+    private VaccinationFacadeEjbLocal vaccinationFacade;
 
 
-	@Override
-	@Transactional
-	public ImportLineResultDto<CaseImportEntities> importCaseData(
-			String[] values,
-			String[] entityClasses,
-			String[] entityProperties,
-			String[][] entityPropertyPaths,
-			boolean ignoreEmptyEntries)
-			throws InvalidColumnException {
+    @Override
+    @Transactional
+    public ImportLineResultDto<CaseImportEntities> importCaseData(
+            String[] values,
+            String[] entityClasses,
+            String[] entityProperties,
+            String[][] entityPropertyPaths,
+            boolean ignoreEmptyEntries)
+            throws InvalidColumnException {
 
-		// Check whether the new line has the same length as the header line
-		if (values.length > entityProperties.length) {
-			return ImportLineResultDto.errorResult(I18nProperties.getValidationError(Validations.importLineTooLong));
-		}
+        // Check whether the new line has the same length as the header line
+        if (values.length > entityProperties.length) {
+            return ImportLineResultDto.errorResult(I18nProperties.getValidationError(Validations.importLineTooLong));
+        }
 
-		final CaseImportEntities entities = new CaseImportEntities(userService.getCurrentUser().toReference());
-		ImportLineResultDto<CaseImportEntities> importResult =
-				buildEntities(values, entityClasses, entityPropertyPaths, ignoreEmptyEntries, entities);
-		if (importResult.isError()) {
-			return importResult;
-		}
+         CaseImportEntities entities = new CaseImportEntities(userService.getCurrentUser().toReference());
+        ImportLineResultDto<CaseImportEntities> importResult =
+                buildEntities(values, entityClasses, entityPropertyPaths, ignoreEmptyEntries, entities);
+        if (importResult.isError()) {
+            return importResult;
+        }
 
-		ImportLineResultDto<CaseImportEntities> validationResult = validateEntities(entities);
-		if (validationResult.isError()) {
-			return validationResult;
-		}
+        ImportLineResultDto<CaseImportEntities> validationResult = validateEntities(entities);
+        if (validationResult.isError()) {
+            return validationResult;
+        }
 
-		PersonDto person = entities.getPerson();
-		List<PersonNameDto> similarPersons = personFacade.similarExistingPersons(person);
-		CaseDataDto caseDataDto = null;
-		PickMerge pickMerge = entities.getCaze().getImportUpdateCaseStatus();
-		if (pickMerge == null)
-			pickMerge = PickMerge.CANCEL;
-
-		if (pickMerge.equals(PickMerge.PICK) && entities.getCaze().getUuid() != null)
-			caseDataDto = caseFacade.getCaseDataByUuid(entities.getCaze().getUuid());
-
-		if (pickMerge.equals(PickMerge.MERGE) && entities.getCaze().getUuid() != null ) {
-			caseDataDto = caseFacade.getCaseDataByUuid(entities.getCaze().getUuid());
-			String uuid = caseDataDto.getUuid();
-			caseDataDto = entities.getCaze();
-			caseDataDto.setUuid(uuid);
-		}
+        PersonDto person = entities.getPerson();
+        List<PersonNameDto> similarPersons = personFacade.similarExistingPersons(person);
+        CaseDataDto caseDataDto = null;
+        //PickMerge pickMerge = entities.getCaze().getImportUpdateCaseStatus();
+//        if (pickMerge == null) {
+//            pickMerge = PickMerge.CANCEL;
+//        }
+        //pickMerge.equals(PickMerge.PICK) &&
+        if ( entities.getCaze().getUuid() != null) {
+            caseDataDto = caseFacade.getCaseDataByUuid(entities.getCaze().getUuid());
+        }
+        //pickMerge.equals(PickMerge.MERGE) &&
+        if ( entities.getCaze().getUuid() != null) {
+            caseDataDto = caseFacade.getCaseDataByUuid(entities.getCaze().getUuid());
+            String uuid = caseDataDto.getUuid();
+            caseDataDto = entities.getCaze();
+            caseDataDto.setUuid(uuid);
+            List<SampleDto> samplesList = sampleFacade.getByPersonNames(similarPersons);
+            List<PathogenTestDto> pathogenTests = pathogenTestFacade.getByPersonNames(similarPersons);
+            List<VaccinationDto> vaccinationDtoList = vaccinationFacade.getByPersonNames(similarPersons);
+            entities = new CaseImportEntities(person, caseDataDto,samplesList,pathogenTests,vaccinationDtoList);
+        }
 //		CaseDataDto caseDataDto = entities.getCaze().getUuid() == null ? caseFacade.getCaseDataByUuid(entities.getCaze().getUuid())
 //				: caseFacade.getByExternalId(entities.getCaze().getExternalID());
-		ImportLineResultDto<CaseImportEntities> result;
+        ImportLineResultDto<CaseImportEntities> result;
 
 //		if (personFacade.isPersonSimilarToExisting(person)) {
 //			return ImportLineResultDto.duplicateResult(entities);
 //		}
 
-		NewExisting newExisting = entities.getCaze().getExistingCase();
-		if (newExisting == null)
-			newExisting = NewExisting.NEW_CASE;
+        NewExisting newExisting = entities.getCaze().getExistingCase();
+        if (newExisting == null) {
+            newExisting = NewExisting.NEW_CASE;
+        }
 
-		if(similarPersons.size() > 0 && newExisting.equals(NewExisting.EXISTING_CASE) && caseDataDto == null) {
-			entities.setSimilarPersons(similarPersons);
-			return ImportLineResultDto.mergeResult(entities);
-		}
-		//Nii here, to remove
+        if (similarPersons.size() > 0 && newExisting.equals(NewExisting.EXISTING_CASE) && caseDataDto == null) {
+            entities.setSimilarPersons(similarPersons);
+            return ImportLineResultDto.mergeResult(entities);
+        }
+        //Nii here, to remove
 //		if (personFacade.isPersonSimilarToExisting(person) && newExisting.equals(NewExisting.EXISTING_CASE)) {
 ////			entities.setSimilarPersons(similarPersons);
 //			return ImportLineResultDto.duplicateResult(entities);
 //		}
-		if (caseDataDto != null){
-			result = updateCaseWithImportData(caseDataDto.getPerson().getUuid(),
-					caseDataDto.getUuid(), values, entityClasses, entityPropertyPaths,false);
-		}
-		else {
-			result = saveImportedEntities(entities,false);
-		}
+        if (caseDataDto != null) {
+            result = updateCaseWithImportData(entities.getPerson()!=null?entities.getPerson().getUuid():caseDataDto.getPerson().getUuid(),
+                    caseDataDto.getUuid(), values, entityClasses, entityPropertyPaths, false);
+        } else {
+            result = saveImportedEntities(entities, false);
+        }
 //		ImportLineResultDto<CaseImportEntities> result = saveImportedEntities(entities);
 
-		return result;
-	}
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public EntityImportResultDto importCaseDataPopulateModal(
+            String[] values,
+            String[] entityClasses,
+            String[] entityProperties,
+            String[][] entityPropertyPaths,
+            boolean ignoreEmptyEntries,CaseDMImportEntities saveentities
+
+    )
+            throws InvalidColumnException {
+
+
+        // Check whether the new line has the same length as the header line
+//		if (values.length > entityProperties.length) {
+//			return ImportLineResultDto.errorResult(I18nProperties.getValidationError(Validations.importLineTooLong));
+//		}
+
+
+        final CaseDMImportEntities entities = new CaseDMImportEntities();
+        EntityImportResultDto importResult =
+                buildEntitiesToPopulateModal(values, entityClasses, entityPropertyPaths, ignoreEmptyEntries,entities);
+
+        //importResult.getImportEntities().getCaseMDDataDtoList().add(importResult.getImportEntities().getCaseMDDataDto());
+        //ImportLineResultDto<CaseImportEntities> validationResult = validateEntities(entities);
+//		if (validationResult.isError()) {
+//			return validationResult;
+//		}
+
+
+        // CaseDataDto caseDataDto = null;
+
+
+
+
+
+       // EntityImportResultDto entityImportResultDto = new EntityImportResultDto(importResult, entities);
+
+
+        return importResult;
+        //return importResult;
+    }
+
+
 
 //	@Override
 //	@Transactional
@@ -239,463 +289,593 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
 //	}
 
 
+    @Override
+    public ImportLineResultDto<CaseImportEntities> updateCaseWithImportData(
+            String personUuid,
+            String caseUuid,
+            String[] values,
+            String[] entityClasses,
+            String[][] entityPropertyPaths,
+            boolean skipPersonValidation)
+            throws InvalidColumnException {
 
-	@Override
-	public ImportLineResultDto<CaseImportEntities> updateCaseWithImportData(
-		String personUuid,
-		String caseUuid,
-		String[] values,
-		String[] entityClasses,
-		String[][] entityPropertyPaths,
-		boolean skipPersonValidation)
-		throws InvalidColumnException {
+        final PersonDto person;
+        if (personUuid != null) {
+            person = personFacade.getPersonByUuid(personUuid);
+        } else {
+            person = PersonDto.buildImportEntity();
+        }
 
-		final PersonDto person;
-		if (personUuid != null) {
-			person = personFacade.getPersonByUuid(personUuid);
-		} else {
-			person = PersonDto.buildImportEntity();
-		}
+        final CaseDataDto caze;
+        if (caseUuid != null) {
+            caze = caseFacade.getCaseDataByUuid(caseUuid);
+        } else {
+            caze = CaseImportEntities.createCase(person, userService.getCurrentUser().toReference());
+        }
 
-		final CaseDataDto caze;
-		if (caseUuid != null) {
-			caze = caseFacade.getCaseDataByUuid(caseUuid);
-		} else {
-			caze = CaseImportEntities.createCase(person, userService.getCurrentUser().toReference());
-		}
+        CaseImportEntities entities = new CaseImportEntities(person, caze);
+        ImportLineResultDto<CaseImportEntities> importResult = buildEntities(values, entityClasses, entityPropertyPaths, true, entities);
 
-		CaseImportEntities entities = new CaseImportEntities(person, caze);
-		ImportLineResultDto<CaseImportEntities> importResult = buildEntities(values, entityClasses, entityPropertyPaths, true, entities);
+        if (importResult.isError()) {
+            return importResult;
+        }
 
-		if (importResult.isError()) {
-			return importResult;
-		}
+        return saveImportedEntities(entities, skipPersonValidation);
+    }
 
-		return saveImportedEntities(entities, skipPersonValidation);
-	}
+    @Override
+    public ImportLineResultDto<CaseImportEntities> saveImportedEntities(@Valid CaseImportEntities entities, boolean skipPersonValidation) {
 
-	@Override
-	public ImportLineResultDto<CaseImportEntities> saveImportedEntities(@Valid CaseImportEntities entities, boolean skipPersonValidation) {
+        CaseDataDto caze = entities.getCaze();
+        PersonDto person = entities.getPerson();
+        List<SampleDto> samples = entities.getSamples();
+        List<PathogenTestDto> pathogenTests = entities.getPathogenTests();
+        List<VaccinationDto> vaccinations = entities.getVaccinations();
 
-		CaseDataDto caze = entities.getCaze();
-		PersonDto person = entities.getPerson();
-		List<SampleDto> samples = entities.getSamples();
-		List<PathogenTestDto> pathogenTests = entities.getPathogenTests();
-		List<VaccinationDto> vaccinations = entities.getVaccinations();
+        try {
+            // Necessary to make sure that the follow-up information is retained
+            if (featureConfigurationFacade.isFeatureEnabled(FeatureType.CASE_FOLLOWUP) && caze.getFollowUpStatus() == null) {
+                caze.setFollowUpStatus(FollowUpStatus.FOLLOW_UP);
+            }
 
-		try {
-			// Necessary to make sure that the follow-up information is retained
-			if (featureConfigurationFacade.isFeatureEnabled(FeatureType.CASE_FOLLOWUP) && caze.getFollowUpStatus() == null) {
-				caze.setFollowUpStatus(FollowUpStatus.FOLLOW_UP);
-			}
-
-			if (caze.getEpidNumber() != null && caseFacade.doesEpidNumberExist(caze.getEpidNumber(), caze.getUuid(), caze.getDisease())) {
-				return ImportLineResultDto.errorResult(I18nProperties.getString(Strings.messageEpidNumberWarning));
-			}
+            if (caze.getEpidNumber() != null && caseFacade.doesEpidNumberExist(caze.getEpidNumber(), caze.getUuid(), caze.getDisease())) {
+                return ImportLineResultDto.errorResult(I18nProperties.getString(Strings.messageEpidNumberWarning));
+            }
 
 //			PersonDto savedPerson = personFacade.savePerson(person);
-			final PersonDto savedPerson = personFacade.savePerson(person, skipPersonValidation);
-			caze.setPerson(savedPerson.toReference());
-			// Workaround: Reset the change date to avoid OutdatedEntityExceptions
-			// Should be changed when doing #2265
-			caze.setChangeDate(new Date());
-			caseFacade.save(caze);
-			for (SampleDto sample : samples) {
-				sampleFacade.saveSample(sample);
-			}
-			for (PathogenTestDto pathogenTest : pathogenTests) {
-				pathogenTestFacade.savePathogenTest(pathogenTest);
-			}
+            final PersonDto savedPerson = personFacade.savePerson(person, skipPersonValidation);
+            caze.setPerson(savedPerson.toReference());
+            // Workaround: Reset the change date to avoid OutdatedEntityExceptions
+            // Should be changed when doing #2265
+            caze.setChangeDate(new Date());
+            caseFacade.save(caze);
+            for (SampleDto sample : samples) {
+                sampleFacade.saveSample(sample);
+            }
+            for (PathogenTestDto pathogenTest : pathogenTests) {
+                pathogenTestFacade.savePathogenTest(pathogenTest);
+            }
 
-			for (VaccinationDto vaccination : vaccinations) {
-				vaccinationFacade.createWithImmunization(
-					vaccination,
-					caze.getResponsibleRegion(),
-					caze.getResponsibleDistrict(),
-					caze.getPerson(),
-					caze.getDisease());
-			}
+            for (VaccinationDto vaccination : vaccinations) {
+                vaccinationFacade.createWithImmunization(
+                        vaccination,
+                        caze.getResponsibleRegion(),
+                        caze.getResponsibleDistrict(),
+                        caze.getPerson(),
+                        caze.getDisease());
+            }
 
-			return ImportLineResultDto.successResult();
-		} catch (ValidationRuntimeException e) {
-			return ImportLineResultDto.errorResult(e.getMessage());
-		}
-	}
+            return ImportLineResultDto.successResult();
+        } catch (ValidationRuntimeException e) {
+            return ImportLineResultDto.errorResult(e.getMessage());
+        }
+    }
 
-	private ImportLineResultDto<CaseImportEntities> validateEntities(CaseImportEntities entities) {
+    private ImportLineResultDto<CaseImportEntities> validateEntities(CaseImportEntities entities) {
 
-		ImportLineResultDto<CaseImportEntities> validationResult = importFacade.validateConstraints(entities);
-		if (validationResult.isError()) {
-			return validationResult;
-		}
+        ImportLineResultDto<CaseImportEntities> validationResult = importFacade.validateConstraints(entities);
+        if (validationResult.isError()) {
+            return validationResult;
+        }
 
-		try {
-			personFacade.validate(entities.getPerson());
-			caseFacade.validate(entities.getCaze());
-			for (SampleDto sample : entities.getSamples()) {
-				sampleFacade.validate(sample, false);
-			}
-			for (PathogenTestDto pathogenTest : entities.getPathogenTests()) {
-				pathogenTestFacade.validate(pathogenTest);
-			}
-		} catch (ValidationRuntimeException e) {
-			return ImportLineResultDto.errorResult(e.getMessage());
-		}
+        try {
+            personFacade.validate(entities.getPerson());
+            caseFacade.validate(entities.getCaze());
+            for (SampleDto sample : entities.getSamples()) {
+                sampleFacade.validate(sample, false);
+            }
+            for (PathogenTestDto pathogenTest : entities.getPathogenTests()) {
+                pathogenTestFacade.validate(pathogenTest);
+            }
+        } catch (ValidationRuntimeException e) {
+            return ImportLineResultDto.errorResult(e.getMessage());
+        }
 
-		return ImportLineResultDto.successResult();
-	}
+        return ImportLineResultDto.successResult();
+    }
 
-	private ImportLineResultDto<CaseImportEntities> buildEntities(
-		String[] values,
-		String[] entityClasses,
-		String[][] entityPropertyPaths,
-		boolean ignoreEmptyEntries,
-		CaseImportEntities entities) {
+    private ImportLineResultDto<CaseImportEntities> buildEntities(
+            String[] values,
+            String[] entityClasses,
+            String[][] entityPropertyPaths,
+            boolean ignoreEmptyEntries,
+            CaseImportEntities entities) {
 
-		final UserReferenceDto currentUserRef = userService.getCurrentUser().toReference();
+        final UserReferenceDto currentUserRef = userService.getCurrentUser().toReference();
 
-		final List<SampleDto> samples = entities.getSamples();
-		final List<PathogenTestDto> pathogenTests = entities.getPathogenTests();
-		final List<VaccinationDto> vaccinations = entities.getVaccinations();
+        final List<SampleDto> samples = entities.getSamples();
+        final List<PathogenTestDto> pathogenTests = entities.getPathogenTests();
+        final List<VaccinationDto> vaccinations = entities.getVaccinations();
 
-		ImportRelatedObjectsMapper.Builder relatedObjectsMapperBuilder =
-			new ImportRelatedObjectsMapper.Builder()
-				.addMapper(
-					SampleDto.class,
-					samples,
-					() -> SampleDto.build(currentUserRef, new CaseReferenceDto(entities.getCaze().getUuid())),
-					this::insertColumnEntryIntoRelatedObject)
-				.addMapper(PathogenTestDto.class, pathogenTests, () -> {
-					if (samples.isEmpty()) {
-						return null;
-					}
+        ImportRelatedObjectsMapper.Builder relatedObjectsMapperBuilder =
+                new ImportRelatedObjectsMapper.Builder()
+                        .addMapper(
+                                SampleDto.class,
+                                samples,
+                                () -> SampleDto.build(currentUserRef, new CaseReferenceDto(entities.getCaze().getUuid())),
+                                this::insertColumnEntryIntoRelatedObject)
+                        .addMapper(PathogenTestDto.class, pathogenTests, () -> {
+                            if (samples.isEmpty()) {
+                                return null;
+                            }
 
-					SampleDto referenceSample = samples.get(samples.size() - 1);
-					return PathogenTestDto.build(new SampleReferenceDto(referenceSample.getUuid()), currentUserRef);
-				}, this::insertColumnEntryIntoRelatedObject);
+                            SampleDto referenceSample = samples.get(samples.size() - 1);
+                            return PathogenTestDto.build(new SampleReferenceDto(referenceSample.getUuid()), currentUserRef);
+                        }, this::insertColumnEntryIntoRelatedObject);
 
-		if (featureConfigurationFacade.isPropertyValueTrue(FeatureType.IMMUNIZATION_MANAGEMENT, FeatureTypeProperty.REDUCED)) {
-			relatedObjectsMapperBuilder
-				.addMapper(VaccinationDto.class, vaccinations, () -> VaccinationDto.build(currentUserRef), this::insertColumnEntryIntoRelatedObject);
-		}
+        if (featureConfigurationFacade.isPropertyValueTrue(FeatureType.IMMUNIZATION_MANAGEMENT, FeatureTypeProperty.REDUCED)) {
+            relatedObjectsMapperBuilder
+                    .addMapper(VaccinationDto.class, vaccinations, () -> VaccinationDto.build(currentUserRef), this::insertColumnEntryIntoRelatedObject);
+        }
 
-		ImportRelatedObjectsMapper relatedMapper = relatedObjectsMapperBuilder.build();
+        ImportRelatedObjectsMapper relatedMapper = relatedObjectsMapperBuilder.build();
 
-		final ImportLineResultDto<CaseImportEntities> result =
-			insertRowIntoData(values, entityClasses, entityPropertyPaths, ignoreEmptyEntries, (cellData) -> {
-				try {
+        final ImportLineResultDto<CaseImportEntities> result =
+                insertRowIntoData(values, entityClasses, entityPropertyPaths, ignoreEmptyEntries, (cellData) -> {
+                    try {
 
-					CaseDataDto caze = entities.getCaze();
+                        CaseDataDto caze = entities.getCaze();
 
-					if (!relatedMapper.map(cellData)) {
-						if (StringUtils.isNotEmpty(cellData.getValue())) {
-							// If the cell entry is not empty, try to insert it into the current case or its person
-							insertColumnEntryIntoData(caze, entities.getPerson(), cellData.getValue(), cellData.getEntityPropertyPath());
-						}
-					}
-				} catch (ImportErrorException | InvalidColumnException e) {
-					return e;
-				}
+                        if (!relatedMapper.map(cellData)) {
+                            if (StringUtils.isNotEmpty(cellData.getValue())) {
+                                // If the cell entry is not empty, try to insert it into the current case or its person
+                                insertColumnEntryIntoData(caze, entities.getPerson(), cellData.getValue(), cellData.getEntityPropertyPath());
+                            }
+                        }
+                    } catch (ImportErrorException | InvalidColumnException e) {
+                        return e;
+                    }
 
-				return null;
-			});
+                    return null;
+                });
 
-		// Sanitize non-HOME address
-		PersonHelper.sanitizeNonHomeAddress(entities.getPerson());
+        // Sanitize non-HOME address
+        PersonHelper.sanitizeNonHomeAddress(entities.getPerson());
 
-		return result;
-	}
-
-	protected ImportLineResultDto<CaseImportEntities> insertRowIntoData(
-		String[] values,
-		String[] entityClasses,
-		String[][] entityPropertyPaths,
-		boolean ignoreEmptyEntries,
-		Function<ImportCellData, Exception> insertCallback) {
-
-		String importError = null;
-		List<String> invalidColumns = new ArrayList<>();
-
-		for (int i = 0; i < values.length; i++) {
-			String value = StringUtils.trimToNull(values[i]);
-			if (ignoreEmptyEntries && (value == null || value.isEmpty())) {
-				continue;
-			}
-
-			String[] entityPropertyPath = entityPropertyPaths[i];
-			// Error description column is ignored
-			if (entityPropertyPath[0].equals(ERROR_COLUMN_NAME)) {
-				continue;
-			}
-
-			if (!(ignoreEmptyEntries && StringUtils.isEmpty(value))) {
-				Exception exception =
-					insertCallback.apply(new ImportCellData(value, entityClasses != null ? entityClasses[i] : null, entityPropertyPath));
-				if (exception != null) {
-					if (exception instanceof ImportErrorException) {
-						importError = exception.getMessage();
-						StringBuilder additionalInfo = new StringBuilder();
-						for (int j = 0; j < entityPropertyPath.length; j++) {
-							additionalInfo.append(" ").append(entityPropertyPath[j]);
-						}
-						importError += additionalInfo;
-						importError += "value:" + value;
-						break;
-					} else if (exception instanceof InvalidColumnException) {
-						invalidColumns.add(((InvalidColumnException) exception).getColumnName());
-					}
-				}
-			}
-		}
-
-		if (invalidColumns.size() > 0) {
-			LOGGER.warn("Unhandled columns [{}]", String.join(", ", invalidColumns));
-		}
-
-		return importError != null ? ImportLineResultDto.errorResult(importError) : ImportLineResultDto.successResult();
-	}
-
-	/**
-	 * Inserts the entry of a single cell into the case or its person.
-	 */
-	private void insertColumnEntryIntoData(CaseDataDto caze, PersonDto person, String entry, String[] entryHeaderPath)
-		throws InvalidColumnException, ImportErrorException {
-
-		Object currentElement = caze;
-		for (int i = 0; i < entryHeaderPath.length; i++) {
-			String headerPathElementName = entryHeaderPath[i];
-
-			Language language = I18nProperties.getUserLanguage();
-			try {
-				if (i != entryHeaderPath.length - 1) {
-					currentElement = new PropertyDescriptor(headerPathElementName, currentElement.getClass()).getReadMethod().invoke(currentElement);
-					// Set the current element to the created person
-					if (currentElement instanceof PersonReferenceDto) {
-						currentElement = person;
-					}
-				} else if (CaseExportDto.BIRTH_DATE.equals(headerPathElementName)) {
-					BirthDateDto birthDateDto = PersonHelper.parseBirthdate(entry, language);
-					if (birthDateDto != null) {
-						person.setBirthdateDD(birthDateDto.getDateOfBirthDD());
-						person.setBirthdateMM(birthDateDto.getDateOfBirthMM());
-						person.setBirthdateYYYY(birthDateDto.getDateOfBirthYYYY());
-					}
-				} else {
-					PropertyDescriptor pd = new PropertyDescriptor(headerPathElementName, currentElement.getClass());
-					Class<?> propertyType = pd.getPropertyType();
-
-					// Execute the default invokes specified in the data importer; if none of those were triggered, execute additional invokes
-					// according to the types of the case or person fields
-					if (importFacade.executeDefaultInvoke(pd, currentElement, entry, entryHeaderPath, false)) {
-						continue;
-					} else if (propertyType.isAssignableFrom(DistrictReferenceDto.class)) {
-						List<DistrictReferenceDto> district = districtFacade
-							.getByName(entry, ImportHelper.getRegionBasedOnDistrict(pd.getName(), caze, null, null, person, currentElement), false);
-						if (district.isEmpty()) {
-							throw new ImportErrorException(
-								I18nProperties
-									.getValidationError(Validations.importEntryDoesNotExistDbOrRegion, entry, buildEntityProperty(entryHeaderPath)));
-						} else if (district.size() > 1) {
-							throw new ImportErrorException(
-								I18nProperties.getValidationError(Validations.importDistrictNotUnique, entry, buildEntityProperty(entryHeaderPath)));
-						} else {
-							pd.getWriteMethod().invoke(currentElement, district.get(0));
-						}
-					} else if (propertyType.isAssignableFrom(CommunityReferenceDto.class)) {
-						List<CommunityReferenceDto> community = communityFacade
-							.getByName(entry, ImportHelper.getDistrictBasedOnCommunity(pd.getName(), caze, person, currentElement), false);
-						if (community.isEmpty()) {
-							throw new ImportErrorException(
-								I18nProperties.getValidationError(
-									Validations.importEntryDoesNotExistDbOrDistrict,
-									entry,
-									buildEntityProperty(entryHeaderPath)));
-						} else if (community.size() > 1) {
-							throw new ImportErrorException(
-								I18nProperties.getValidationError(Validations.importCommunityNotUnique, entry, buildEntityProperty(entryHeaderPath)));
-						} else {
-							pd.getWriteMethod().invoke(currentElement, community.get(0));
-						}
-					} else if (propertyType.isAssignableFrom(FacilityReferenceDto.class)) {
-						DataHelper.Pair<DistrictReferenceDto, CommunityReferenceDto> infrastructureData =
-							ImportHelper.getDistrictAndCommunityBasedOnFacility(pd.getName(), caze, person, currentElement);
-
-						if (I18nProperties.getPrefixCaption(FacilityDto.I18N_PREFIX, FacilityDto.OTHER_FACILITY).equals(entry)) {
-							entry = FacilityDto.OTHER_FACILITY;
-						}
-
-						if (I18nProperties.getPrefixCaption(FacilityDto.I18N_PREFIX, FacilityDto.NO_FACILITY).equals(entry)) {
-							entry = FacilityDto.NO_FACILITY;
-						}
-
-						List<FacilityReferenceDto> facilities = facilityFacade.getByNameAndType(
-							entry,
-							infrastructureData.getElement0(),
-							infrastructureData.getElement1(),
-							getTypeOfFacility(pd.getName(), currentElement),
-							false);
-
-						if (facilities.isEmpty()) {
-							if (infrastructureData.getElement1() != null) {
-								throw new ImportErrorException(
-									I18nProperties.getValidationError(
-										Validations.importEntryDoesNotExistDbOrCommunity,
-										entry,
-										buildEntityProperty(entryHeaderPath)));
-							} else {
-								throw new ImportErrorException(
-									I18nProperties.getValidationError(
-										Validations.importEntryDoesNotExistDbOrDistrict,
-										entry,
-										buildEntityProperty(entryHeaderPath)));
-							}
-						} else if (facilities.size() > 1 && infrastructureData.getElement1() == null) {
-							throw new ImportErrorException(
-								I18nProperties
-									.getValidationError(Validations.importFacilityNotUniqueInDistrict, entry, buildEntityProperty(entryHeaderPath)));
-						} else if (facilities.size() > 1 && infrastructureData.getElement1() != null) {
-							throw new ImportErrorException(
-								I18nProperties
-									.getValidationError(Validations.importFacilityNotUniqueInCommunity, entry, buildEntityProperty(entryHeaderPath)));
-						} else {
-							pd.getWriteMethod().invoke(currentElement, facilities.get(0));
-						}
-					} else if (propertyType.isAssignableFrom(PointOfEntryReferenceDto.class)) {
-						PointOfEntryReferenceDto pointOfEntryReference;
-						DistrictReferenceDto pointOfEntryDistrict = CaseLogic.getDistrictWithFallback(caze);
-						List<PointOfEntryReferenceDto> customPointsOfEntry = pointOfEntryFacade.getByName(entry, pointOfEntryDistrict, false);
-						if (customPointsOfEntry.isEmpty()) {
-							final String poeName = entry;
-							List<PointOfEntryDto> defaultPointOfEntries = pointOfEntryFacade.getByUuids(PointOfEntryDto.CONSTANT_POE_UUIDS);
-							Optional<PointOfEntryDto> defaultPointOfEntry = defaultPointOfEntries.stream()
-								.filter(
-									defaultPoe -> InfrastructureHelper.buildPointOfEntryString(defaultPoe.getUuid(), defaultPoe.getName())
-										.equals(poeName))
-								.findFirst();
-							if (!defaultPointOfEntry.isPresent()) {
-								throw new ImportErrorException(
-									I18nProperties.getValidationError(
-										Validations.importEntryDoesNotExistDbOrDistrict,
-										entry,
-										buildEntityProperty(entryHeaderPath)));
-							}
-							pointOfEntryReference = defaultPointOfEntry.get().toReference();
-						} else if (customPointsOfEntry.size() > 1) {
-							throw new ImportErrorException(
-								I18nProperties.getValidationError(
-									Validations.importPointOfEntryNotUniqueInDistrict,
-									entry,
-									buildEntityProperty(entryHeaderPath)));
-
-						} else {
-							pointOfEntryReference = customPointsOfEntry.get(0);
-						}
-
-						pd.getWriteMethod().invoke(currentElement, pointOfEntryReference);
-					} else {
-						throw new UnsupportedOperationException(
-							I18nProperties.getValidationError(Validations.importCasesPropertyTypeNotAllowed, propertyType.getName()));
-					}
-				}
-			} catch (IntrospectionException e) {
-				throw new InvalidColumnException(buildEntityProperty(entryHeaderPath));
-			} catch (InvocationTargetException | IllegalAccessException e) {
-				throw new ImportErrorException(
-					I18nProperties.getValidationError(Validations.importErrorInColumn, buildEntityProperty(entryHeaderPath)));
-			} catch (IllegalArgumentException | EnumService.InvalidEnumCaptionException e) {
-				throw new ImportErrorException(entry, buildEntityProperty(entryHeaderPath));
-			} catch (ParseException e) {
-				throw new ImportErrorException(
-					I18nProperties.getValidationError(
-						Validations.importInvalidDate,
-						buildEntityProperty(entryHeaderPath),
-						DateHelper.getAllowedDateFormats(language.getDateFormat())));
-			} catch (ImportErrorException e) {
-				throw e;
-			} catch (Exception e) {
-				LOGGER.error("Unexpected error when trying to import a case: " + e.getMessage(), e);
-				throw new ImportErrorException(I18nProperties.getValidationError(Validations.importCasesUnexpectedError));
-			}
-		}
-	}
-
-	/**
-	 * Inserts the entry of a single cell into the sample, pathogen test, vaccinations or any other related object
-	 */
-	private void insertColumnEntryIntoRelatedObject(Object currentElement, String entry, String[] entryHeaderPath)
-		throws InvalidColumnException, ImportErrorException {
-		for (int i = 0; i < entryHeaderPath.length; i++) {
-			String headerPathElementName = entryHeaderPath[i];
-
-			try {
-				if (i != entryHeaderPath.length - 1) {
-					currentElement = new PropertyDescriptor(headerPathElementName, currentElement.getClass()).getReadMethod().invoke(currentElement);
-				} else {
-					PropertyDescriptor pd = new PropertyDescriptor(headerPathElementName, currentElement.getClass());
-					Class<?> propertyType = pd.getPropertyType();
-
-					// Execute the default invokes specified in the data importer; if none of those were triggered, execute additional invokes
-					// according to the types of the sample or pathogen test fields
-					if (importFacade.executeDefaultInvoke(pd, currentElement, entry, entryHeaderPath, false)) {
-						continue;
-					} else if (propertyType.isAssignableFrom(FacilityReferenceDto.class)) {
-						List<FacilityReferenceDto> lab = facilityFacade.getLaboratoriesByName(entry, false);
-						if (lab.isEmpty()) {
-							throw new ImportErrorException(
-								I18nProperties.getValidationError(Validations.importEntryDoesNotExist, entry, buildEntityProperty(entryHeaderPath)));
-						} else if (lab.size() > 1) {
-							throw new ImportErrorException(
-								I18nProperties.getValidationError(Validations.importLabNotUnique, entry, buildEntityProperty(entryHeaderPath)));
-						} else {
-							pd.getWriteMethod().invoke(currentElement, lab.get(0));
-						}
-					} else {
-						throw new UnsupportedOperationException(
-							I18nProperties.getValidationError(Validations.importCasesPropertyTypeNotAllowed, propertyType.getName()));
-					}
-				}
-			} catch (IntrospectionException e) {
-				throw new InvalidColumnException(buildEntityProperty(entryHeaderPath));
-			} catch (InvocationTargetException | IllegalAccessException e) {
-				throw new ImportErrorException(
-					I18nProperties.getValidationError(Validations.importErrorInColumn, buildEntityProperty(entryHeaderPath)));
-			} catch (IllegalArgumentException e) {
-				throw new ImportErrorException(entry, buildEntityProperty(entryHeaderPath));
-			} catch (ParseException e) {
-				throw new ImportErrorException(
-					I18nProperties.getValidationError(
-						Validations.importInvalidDate,
-						buildEntityProperty(entryHeaderPath),
-						DateHelper.getAllowedDateFormats(I18nProperties.getUserLanguage().getDateFormat())));
-			} catch (ImportErrorException e) {
-				throw e;
-			} catch (Exception e) {
-				LOGGER.error("Unexpected error when trying to import a case: " + e.getMessage());
-				throw new ImportErrorException(I18nProperties.getValidationError(Validations.importCasesUnexpectedError));
-			}
-		}
-	}
-
-	protected FacilityType getTypeOfFacility(String propertyName, Object currentElement)
-		throws IntrospectionException, InvocationTargetException, IllegalAccessException {
-		String typeProperty;
-		if (CaseDataDto.class.equals(currentElement.getClass()) && CaseDataDto.HEALTH_FACILITY.equals(propertyName)) {
-			typeProperty = CaseDataDto.FACILITY_TYPE;
-		} else {
-			typeProperty = propertyName + "Type";
-		}
-		PropertyDescriptor pd = new PropertyDescriptor(typeProperty, currentElement.getClass());
-		return (FacilityType) pd.getReadMethod().invoke(currentElement);
-	}
-
-	protected String buildEntityProperty(String[] entityPropertyPath) {
-		return String.join(".", entityPropertyPath);
-	}
+        return result;
+    }
 
 
-	@LocalBean
-	@Stateless
-	public static class CaseImportFacadeEjbLocal extends CaseImportFacadeEjb {
+    private EntityImportResultDto buildEntitiesToPopulateModal(
+            String[] values,
+            String[] entityClasses,
+            String[][] entityPropertyPaths,
+            boolean ignoreEmptyEntries,
+            CaseDMImportEntities entities) {
 
-	}
+        //final UserReferenceDto currentUserRef = userService.getCurrentUser().toReference();
+
+
+        ImportRelatedObjectsMapper relatedMapper = new ImportRelatedObjectsMapper.Builder().build();
+
+         ImportLineResultDto<CaseDMImportEntities> result = insertRowIntoDataToPopulateModal(values, entityClasses, entityPropertyPaths, ignoreEmptyEntries, (cellData) -> {
+                    try {
+                        CaseMDDataDto caze = entities.getCaseMDDataDto();
+
+                        if (!relatedMapper.map(cellData)) {
+                            if (StringUtils.isNotEmpty(cellData.getValue())) {
+                                // If the cell entry is not empty, try to insert it into the current case
+                                insertColumnEntryIntoDataToPopulateDataIntoModal(caze, cellData.getValue(), cellData.getEntityPropertyPath());
+                            }
+                        }
+                    } catch (ImportErrorException | InvalidColumnException e) {
+                        return e;
+                    }
+
+                    return null;
+                });
+
+        // Sanitize non-HOME address
+        //PersonHelper.sanitizeNonHomeAddress(entities.getPerson());
+        EntityImportResultDto entityImportResultDto = new EntityImportResultDto(result,null,entities);
+        return entityImportResultDto;
+    }
+
+    protected ImportLineResultDto<CaseImportEntities> insertRowIntoData(
+            String[] values,
+            String[] entityClasses,
+            String[][] entityPropertyPaths,
+            boolean ignoreEmptyEntries,
+            Function<ImportCellData, Exception> insertCallback) {
+
+        String importError = null;
+        List<String> invalidColumns = new ArrayList<>();
+
+        for (int i = 0; i < values.length; i++) {
+            String value = StringUtils.trimToNull(values[i]);
+            if (ignoreEmptyEntries && (value == null || value.isEmpty())) {
+                continue;
+            }
+
+            String[] entityPropertyPath = entityPropertyPaths[i];
+            // Error description column is ignored
+            if (entityPropertyPath[0].equals(ERROR_COLUMN_NAME)) {
+                continue;
+            }
+
+            if (!(ignoreEmptyEntries && StringUtils.isEmpty(value))) {
+                Exception exception =
+                        insertCallback.apply(new ImportCellData(value, entityClasses != null ? entityClasses[i] : null, entityPropertyPath));
+                if (exception != null) {
+                    if (exception instanceof ImportErrorException) {
+                        importError = exception.getMessage();
+                        StringBuilder additionalInfo = new StringBuilder();
+                        for (int j = 0; j < entityPropertyPath.length; j++) {
+                            additionalInfo.append(" ").append(entityPropertyPath[j]);
+                        }
+                        importError += additionalInfo;
+                        importError += "value:" + value;
+                        break;
+                    } else if (exception instanceof InvalidColumnException) {
+                        invalidColumns.add(((InvalidColumnException) exception).getColumnName());
+                    }
+                }
+            }
+        }
+
+        if (invalidColumns.size() > 0) {
+            LOGGER.warn("Unhandled columns [{}]", String.join(", ", invalidColumns));
+        }
+
+        return importError != null ? ImportLineResultDto.errorResult(importError) : ImportLineResultDto.successResult();
+    }
+
+    protected ImportLineResultDto<CaseDMImportEntities> insertRowIntoDataToPopulateModal(
+            String[] values,
+            String[] entityClasses,
+            String[][] entityPropertyPaths,
+            boolean ignoreEmptyEntries,
+            Function<ImportCellData, Exception> insertCallback) {
+
+        String importError = null;
+        List<String> invalidColumns = new ArrayList<>();
+
+        for (int i = 0; i < values.length; i++) {
+            String value = StringUtils.trimToNull(values[i]);
+            if (ignoreEmptyEntries && (value == null || value.isEmpty())) {
+                continue;
+            }
+
+            String[] entityPropertyPath = entityPropertyPaths[i];
+            // Error description column is ignored
+            if (entityPropertyPath[0].equals(ERROR_COLUMN_NAME)) {
+                continue;
+            }
+
+            if (!(ignoreEmptyEntries && StringUtils.isEmpty(value))) {
+                Exception exception =
+                        insertCallback.apply(new ImportCellData(value, entityClasses != null ? entityClasses[i] : null, entityPropertyPath));
+                if (exception != null) {
+                    if (exception instanceof ImportErrorException) {
+                        importError = exception.getMessage();
+                        StringBuilder additionalInfo = new StringBuilder();
+                        for (int j = 0; j < entityPropertyPath.length; j++) {
+                            additionalInfo.append(" ").append(entityPropertyPath[j]);
+                        }
+                        importError += additionalInfo;
+                        importError += "value:" + value;
+                        break;
+                    } else if (exception instanceof InvalidColumnException) {
+                        invalidColumns.add(((InvalidColumnException) exception).getColumnName());
+                    }
+                }
+            }
+        }
+
+        if (invalidColumns.size() > 0) {
+            LOGGER.warn("Unhandled columns [{}]", String.join(", ", invalidColumns));
+        }
+
+
+        return importError != null ? ImportLineResultDto.errorResult(importError) : ImportLineResultDto.successResult();
+    }
+
+    /**
+     * Inserts the entry of a single cell into the case or its person.
+     */
+    private void insertColumnEntryIntoData(CaseDataDto caze, PersonDto person, String entry, String[] entryHeaderPath)
+            throws InvalidColumnException, ImportErrorException {
+
+        Object currentElement = caze;
+        for (int i = 0; i < entryHeaderPath.length; i++) {
+            String headerPathElementName = entryHeaderPath[i];
+
+            Language language = I18nProperties.getUserLanguage();
+            try {
+                if (i != entryHeaderPath.length - 1) {
+                    currentElement = new PropertyDescriptor(headerPathElementName, currentElement.getClass()).getReadMethod().invoke(currentElement);
+                    // Set the current element to the created person
+                    if (currentElement instanceof PersonReferenceDto) {
+                        currentElement = person;
+                    }
+                } else if (CaseExportDto.BIRTH_DATE.equals(headerPathElementName)) {
+                    BirthDateDto birthDateDto = PersonHelper.parseBirthdate(entry, language);
+                    if (birthDateDto != null) {
+                        person.setBirthdateDD(birthDateDto.getDateOfBirthDD());
+                        person.setBirthdateMM(birthDateDto.getDateOfBirthMM());
+                        person.setBirthdateYYYY(birthDateDto.getDateOfBirthYYYY());
+                    }
+                } else {
+                    PropertyDescriptor pd = new PropertyDescriptor(headerPathElementName, currentElement.getClass());
+                    Class<?> propertyType = pd.getPropertyType();
+
+                    // Execute the default invokes specified in the data importer; if none of those were triggered, execute additional invokes
+                    // according to the types of the case or person fields
+                    if (importFacade.executeDefaultInvoke(pd, currentElement, entry, entryHeaderPath, false)) {
+                        continue;
+                    } else if (propertyType.isAssignableFrom(DistrictReferenceDto.class)) {
+                        List<DistrictReferenceDto> district = districtFacade
+                                .getByName(entry, ImportHelper.getRegionBasedOnDistrict(pd.getName(), caze, null, null, person, currentElement), false);
+                        if (district.isEmpty()) {
+                            throw new ImportErrorException(
+                                    I18nProperties
+                                            .getValidationError(Validations.importEntryDoesNotExistDbOrRegion, entry, buildEntityProperty(entryHeaderPath)));
+                        } else if (district.size() > 1) {
+                            throw new ImportErrorException(
+                                    I18nProperties.getValidationError(Validations.importDistrictNotUnique, entry, buildEntityProperty(entryHeaderPath)));
+                        } else {
+                            pd.getWriteMethod().invoke(currentElement, district.get(0));
+                        }
+                    } else if (propertyType.isAssignableFrom(CommunityReferenceDto.class)) {
+                        List<CommunityReferenceDto> community = communityFacade
+                                .getByName(entry, ImportHelper.getDistrictBasedOnCommunity(pd.getName(), caze, person, currentElement), false);
+                        if (community.isEmpty()) {
+                            throw new ImportErrorException(
+                                    I18nProperties.getValidationError(
+                                            Validations.importEntryDoesNotExistDbOrDistrict,
+                                            entry,
+                                            buildEntityProperty(entryHeaderPath)));
+                        } else if (community.size() > 1) {
+                            throw new ImportErrorException(
+                                    I18nProperties.getValidationError(Validations.importCommunityNotUnique, entry, buildEntityProperty(entryHeaderPath)));
+                        } else {
+                            pd.getWriteMethod().invoke(currentElement, community.get(0));
+                        }
+                    } else if (propertyType.isAssignableFrom(FacilityReferenceDto.class)) {
+                        DataHelper.Pair<DistrictReferenceDto, CommunityReferenceDto> infrastructureData =
+                                ImportHelper.getDistrictAndCommunityBasedOnFacility(pd.getName(), caze, person, currentElement);
+
+                        if (I18nProperties.getPrefixCaption(FacilityDto.I18N_PREFIX, FacilityDto.OTHER_FACILITY).equals(entry)) {
+                            entry = FacilityDto.OTHER_FACILITY;
+                        }
+
+                        if (I18nProperties.getPrefixCaption(FacilityDto.I18N_PREFIX, FacilityDto.NO_FACILITY).equals(entry)) {
+                            entry = FacilityDto.NO_FACILITY;
+                        }
+
+                        List<FacilityReferenceDto> facilities = facilityFacade.getByNameAndType(
+                                entry,
+                                infrastructureData.getElement0(),
+                                infrastructureData.getElement1(),
+                                getTypeOfFacility(pd.getName(), currentElement),
+                                false);
+
+                        if (facilities.isEmpty()) {
+                            if (infrastructureData.getElement1() != null) {
+                                throw new ImportErrorException(
+                                        I18nProperties.getValidationError(
+                                                Validations.importEntryDoesNotExistDbOrCommunity,
+                                                entry,
+                                                buildEntityProperty(entryHeaderPath)));
+                            } else {
+                                throw new ImportErrorException(
+                                        I18nProperties.getValidationError(
+                                                Validations.importEntryDoesNotExistDbOrDistrict,
+                                                entry,
+                                                buildEntityProperty(entryHeaderPath)));
+                            }
+                        } else if (facilities.size() > 1 && infrastructureData.getElement1() == null) {
+                            throw new ImportErrorException(
+                                    I18nProperties
+                                            .getValidationError(Validations.importFacilityNotUniqueInDistrict, entry, buildEntityProperty(entryHeaderPath)));
+                        } else if (facilities.size() > 1 && infrastructureData.getElement1() != null) {
+                            throw new ImportErrorException(
+                                    I18nProperties
+                                            .getValidationError(Validations.importFacilityNotUniqueInCommunity, entry, buildEntityProperty(entryHeaderPath)));
+                        } else {
+                            pd.getWriteMethod().invoke(currentElement, facilities.get(0));
+                        }
+                    } else if (propertyType.isAssignableFrom(PointOfEntryReferenceDto.class)) {
+                        PointOfEntryReferenceDto pointOfEntryReference;
+                        DistrictReferenceDto pointOfEntryDistrict = CaseLogic.getDistrictWithFallback(caze);
+                        List<PointOfEntryReferenceDto> customPointsOfEntry = pointOfEntryFacade.getByName(entry, pointOfEntryDistrict, false);
+                        if (customPointsOfEntry.isEmpty()) {
+                            final String poeName = entry;
+                            List<PointOfEntryDto> defaultPointOfEntries = pointOfEntryFacade.getByUuids(PointOfEntryDto.CONSTANT_POE_UUIDS);
+                            Optional<PointOfEntryDto> defaultPointOfEntry = defaultPointOfEntries.stream()
+                                    .filter(
+                                            defaultPoe -> InfrastructureHelper.buildPointOfEntryString(defaultPoe.getUuid(), defaultPoe.getName())
+                                                    .equals(poeName))
+                                    .findFirst();
+                            if (!defaultPointOfEntry.isPresent()) {
+                                throw new ImportErrorException(
+                                        I18nProperties.getValidationError(
+                                                Validations.importEntryDoesNotExistDbOrDistrict,
+                                                entry,
+                                                buildEntityProperty(entryHeaderPath)));
+                            }
+                            pointOfEntryReference = defaultPointOfEntry.get().toReference();
+                        } else if (customPointsOfEntry.size() > 1) {
+                            throw new ImportErrorException(
+                                    I18nProperties.getValidationError(
+                                            Validations.importPointOfEntryNotUniqueInDistrict,
+                                            entry,
+                                            buildEntityProperty(entryHeaderPath)));
+
+                        } else {
+                            pointOfEntryReference = customPointsOfEntry.get(0);
+                        }
+
+                        pd.getWriteMethod().invoke(currentElement, pointOfEntryReference);
+                    } else {
+                        throw new UnsupportedOperationException(
+                                I18nProperties.getValidationError(Validations.importCasesPropertyTypeNotAllowed, propertyType.getName()));
+                    }
+                }
+            } catch (IntrospectionException e) {
+                throw new InvalidColumnException(buildEntityProperty(entryHeaderPath));
+            } catch (InvocationTargetException | IllegalAccessException e) {
+                throw new ImportErrorException(
+                        I18nProperties.getValidationError(Validations.importErrorInColumn, buildEntityProperty(entryHeaderPath)));
+            } catch (IllegalArgumentException | EnumService.InvalidEnumCaptionException e) {
+                throw new ImportErrorException(entry, buildEntityProperty(entryHeaderPath));
+            } catch (ParseException e) {
+                throw new ImportErrorException(
+                        I18nProperties.getValidationError(
+                                Validations.importInvalidDate,
+                                buildEntityProperty(entryHeaderPath),
+                                DateHelper.getAllowedDateFormats(language.getDateFormat())));
+            } catch (ImportErrorException e) {
+                throw e;
+            } catch (Exception e) {
+                LOGGER.error("Unexpected error when trying to import a case: " + e.getMessage(), e);
+                throw new ImportErrorException(I18nProperties.getValidationError(Validations.importCasesUnexpectedError));
+            }
+        }
+    }
+
+
+    private void insertColumnEntryIntoDataToPopulateDataIntoModal(CaseMDDataDto caze, String entry, String[] entryHeaderPath)
+            throws InvalidColumnException, ImportErrorException {
+
+        Object currentElement = caze;
+        for (int i = 0; i < entryHeaderPath.length; i++) {
+            String headerPathElementName = entryHeaderPath[i];
+
+            Language language = I18nProperties.getUserLanguage();
+            try {
+
+                PropertyDescriptor pd = new PropertyDescriptor(headerPathElementName, currentElement.getClass());
+                Class<?> propertyType = pd.getPropertyType();
+
+                // Execute the default invokes specified in the data importer; if none of those were triggered, execute additional invokes
+                // according to the types of the case or person fields
+                if (importFacade.executeDefaultInvoke(pd, currentElement, entry, entryHeaderPath, false)) {
+                    continue;
+                } else {
+                    throw new UnsupportedOperationException(
+                            I18nProperties.getValidationError(Validations.importCasesPropertyTypeNotAllowed, propertyType.getName()));
+                }
+
+            } catch (IntrospectionException e) {
+                throw new InvalidColumnException(buildEntityProperty(entryHeaderPath));
+            } catch (InvocationTargetException | IllegalAccessException e) {
+                throw new ImportErrorException(
+                        I18nProperties.getValidationError(Validations.importErrorInColumn, buildEntityProperty(entryHeaderPath)));
+            } catch (IllegalArgumentException | EnumService.InvalidEnumCaptionException e) {
+                throw new ImportErrorException(entry, buildEntityProperty(entryHeaderPath));
+            } catch (ParseException e) {
+                throw new ImportErrorException(
+                        I18nProperties.getValidationError(
+                                Validations.importInvalidDate,
+                                buildEntityProperty(entryHeaderPath),
+                                DateHelper.getAllowedDateFormats(language.getDateFormat())));
+            } catch (ImportErrorException e) {
+                throw e;
+            } catch (Exception e) {
+                LOGGER.error("Unexpected error when trying to import a case: " + e.getMessage(), e);
+                throw new ImportErrorException(I18nProperties.getValidationError(Validations.importCasesUnexpectedError));
+            }
+        }
+    }
+
+    /**
+     * Inserts the entry of a single cell into the sample, pathogen test, vaccinations or any other related object
+     */
+    private void insertColumnEntryIntoRelatedObject(Object currentElement, String entry, String[] entryHeaderPath)
+            throws InvalidColumnException, ImportErrorException {
+        for (int i = 0; i < entryHeaderPath.length; i++) {
+            String headerPathElementName = entryHeaderPath[i];
+
+            try {
+                if (i != entryHeaderPath.length - 1) {
+                    currentElement = new PropertyDescriptor(headerPathElementName, currentElement.getClass()).getReadMethod().invoke(currentElement);
+                } else {
+                    PropertyDescriptor pd = new PropertyDescriptor(headerPathElementName, currentElement.getClass());
+                    Class<?> propertyType = pd.getPropertyType();
+
+                    // Execute the default invokes specified in the data importer; if none of those were triggered, execute additional invokes
+                    // according to the types of the sample or pathogen test fields
+                    if (importFacade.executeDefaultInvoke(pd, currentElement, entry, entryHeaderPath, false)) {
+                        continue;
+                    } else if (propertyType.isAssignableFrom(FacilityReferenceDto.class)) {
+                        List<FacilityReferenceDto> lab = facilityFacade.getLaboratoriesByName(entry, false);
+                        if (lab.isEmpty()) {
+                            throw new ImportErrorException(
+                                    I18nProperties.getValidationError(Validations.importEntryDoesNotExist, entry, buildEntityProperty(entryHeaderPath)));
+                        } else if (lab.size() > 1) {
+                            throw new ImportErrorException(
+                                    I18nProperties.getValidationError(Validations.importLabNotUnique, entry, buildEntityProperty(entryHeaderPath)));
+                        } else {
+                            pd.getWriteMethod().invoke(currentElement, lab.get(0));
+                        }
+                    } else {
+                        throw new UnsupportedOperationException(
+                                I18nProperties.getValidationError(Validations.importCasesPropertyTypeNotAllowed, propertyType.getName()));
+                    }
+                }
+            } catch (IntrospectionException e) {
+                throw new InvalidColumnException(buildEntityProperty(entryHeaderPath));
+            } catch (InvocationTargetException | IllegalAccessException e) {
+                throw new ImportErrorException(
+                        I18nProperties.getValidationError(Validations.importErrorInColumn, buildEntityProperty(entryHeaderPath)));
+            } catch (IllegalArgumentException e) {
+                throw new ImportErrorException(entry, buildEntityProperty(entryHeaderPath));
+            } catch (ParseException e) {
+                throw new ImportErrorException(
+                        I18nProperties.getValidationError(
+                                Validations.importInvalidDate,
+                                buildEntityProperty(entryHeaderPath),
+                                DateHelper.getAllowedDateFormats(I18nProperties.getUserLanguage().getDateFormat())));
+            } catch (ImportErrorException e) {
+                throw e;
+            } catch (Exception e) {
+                LOGGER.error("Unexpected error when trying to import a case: " + e.getMessage());
+                throw new ImportErrorException(I18nProperties.getValidationError(Validations.importCasesUnexpectedError));
+            }
+        }
+    }
+
+    protected FacilityType getTypeOfFacility(String propertyName, Object currentElement)
+            throws IntrospectionException, InvocationTargetException, IllegalAccessException {
+        String typeProperty;
+        if (CaseDataDto.class.equals(currentElement.getClass()) && CaseDataDto.HEALTH_FACILITY.equals(propertyName)) {
+            typeProperty = CaseDataDto.FACILITY_TYPE;
+        } else {
+            typeProperty = propertyName + "Type";
+        }
+        PropertyDescriptor pd = new PropertyDescriptor(typeProperty, currentElement.getClass());
+        return (FacilityType) pd.getReadMethod().invoke(currentElement);
+    }
+
+    protected String buildEntityProperty(String[] entityPropertyPath) {
+        return String.join(".", entityPropertyPath);
+    }
+
+
+    @LocalBean
+    @Stateless
+    public static class CaseImportFacadeEjbLocal extends CaseImportFacadeEjb {
+
+    }
 }

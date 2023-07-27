@@ -30,7 +30,9 @@ import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
+import de.symeda.sormas.api.person.PersonNameDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
+import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.utils.SortProperty;
 
 @Remote
@@ -95,4 +97,7 @@ public interface VaccinationFacade {
 	VaccinationDto getByUuid(String uuid);
 
 	VaccinationDto postUpdate(String uuid, JsonNode vaccinationDtoJson);
+
+	List<VaccinationDto> getByPersonNames(List<PersonNameDto> personUuid);
+
 }

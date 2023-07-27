@@ -18,13 +18,7 @@
 package de.symeda.sormas.backend.common;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -336,6 +330,96 @@ public class BaseAdoService<ADO extends AbstractDomainObject> implements AdoServ
 
 		return q.getResultList().stream().findFirst().orElse(null);
 	}
+
+
+//	@Override
+//	public List<ADO> getByParentAndChildUuid(String partialParentUuid, String partialChildUuid) {
+//		if (partialParentUuid == null || partialChildUuid == null) {
+//			return Collections.emptyList();
+//		}
+//
+//		CriteriaBuilder cb = em.getCriteriaBuilder();
+//		ParameterExpression<String> partialParentUuidParam = cb.parameter(String.class, AbstractDomainObject.UUID);
+//		ParameterExpression<String> partialChildUuidParam = cb.parameter(String.class, AbstractDomainObject.UUID);
+//		CriteriaQuery<ADO> cq = cb.createQuery(getElementClass());
+//		Root<ADO> from = cq.from(getElementClass());
+//		cq.where(
+//				cb.and(
+//						cb.like(from.get(AbstractDomainObject.UUID), cb.concat(partialParentUuidParam, "%")),
+//						cb.like(from.get(AbstractDomainObject.UUID), cb.concat(partialChildUuidParam, "%"))
+//				)
+//		);
+//
+//		TypedQuery<ADO> q = em.createQuery(cq)
+//				.setParameter(partialParentUuidParam, partialParentUuid)
+//				.setParameter(partialChildUuidParam, partialChildUuid);
+//
+//		return q.getResultList();
+//	}
+
+	@Override
+	public LinkedHashMap<ADO, ADO> getByParentAndChildUuid(String partialParentUuid, String partialChildUuid) {
+		if (partialParentUuid == null || partialChildUuid == null) {
+			return new LinkedHashMap<>();
+		}
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+
+		CriteriaQuery<ADO> cq = cb.createQuery(getElementClass());
+		Root<ADO> from = cq.from(getElementClass());
+		cq.where(cb.or(
+						cb.like(from.get("uuid"), partialParentUuid + "%"),
+						cb.like(from.get("uuid"), partialChildUuid + "%")
+				),
+				cb.notEqual(from.get("deleted"), true)
+		);
+
+		cq.orderBy(
+				cb.asc(
+						cb.selectCase()
+								.when(
+										cb.like(from.get("uuid"), partialParentUuid + "%"),
+										0
+								)
+								.otherwise(1)
+				),
+				cb.asc(from.get("uuid"))
+		);
+
+		TypedQuery<ADO> q = em.createQuery(cq);
+
+
+		List<ADO> resultList = q.getResultList();
+
+		LinkedHashMap<ADO, ADO> resultMap = new LinkedHashMap<>();
+
+
+		if (!resultList.isEmpty()) {
+			for (ADO ado : resultList) {
+				addItem(resultMap, ado);
+			}
+		}
+
+
+		return resultMap;
+	}
+
+	public void addItem(LinkedHashMap<ADO, ADO> resultMap, ADO item) {
+		if (item == null) {
+			resultMap.put(null, null);
+		} else if (resultMap.isEmpty()) {
+			resultMap.put(item, null);
+		} else {
+			//ADO previousItem = resultMap.lastKey();
+			ADO previousItem = null;
+			for (ADO key : resultMap.keySet()) {
+				previousItem = key;
+			}
+			resultMap.put(previousItem, item);
+		}
+	}
+
+
 
 	@Override
 	public Boolean exists(@NotNull String uuid) {

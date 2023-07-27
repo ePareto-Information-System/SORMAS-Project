@@ -27,7 +27,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import de.symeda.sormas.backend.common.AbstractAdoService;
+
+import de.symeda.sormas.api.caze.*;
+import de.symeda.sormas.backend.common.*;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -57,22 +59,6 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EditPermissionType;
 import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.RequestContextHolder;
-import de.symeda.sormas.api.caze.CaseClassification;
-import de.symeda.sormas.api.caze.CaseCriteria;
-import de.symeda.sormas.api.caze.CaseIndexDto;
-import de.symeda.sormas.api.caze.CaseListEntryDto;
-import de.symeda.sormas.api.caze.CaseLogic;
-import de.symeda.sormas.api.caze.CaseDataDto;
-import de.symeda.sormas.api.caze.CaseOrigin;
-import de.symeda.sormas.api.caze.CaseOutcome;
-import de.symeda.sormas.api.caze.CaseReferenceDefinition;
-import de.symeda.sormas.api.caze.CaseSelectionDto;
-import de.symeda.sormas.api.caze.CaseSimilarityCriteria;
-import de.symeda.sormas.api.caze.InvestigationStatus;
-import de.symeda.sormas.api.caze.MapCaseDto;
-import de.symeda.sormas.api.caze.NewCaseDateType;
-import de.symeda.sormas.api.caze.PreviousCaseDto;
-import de.symeda.sormas.api.caze.VaccinationStatus;
 import de.symeda.sormas.api.clinicalcourse.ClinicalCourseReferenceDto;
 import de.symeda.sormas.api.clinicalcourse.ClinicalVisitCriteria;
 import de.symeda.sormas.api.common.DeletionDetails;
@@ -110,12 +96,6 @@ import de.symeda.sormas.backend.caze.transformers.CaseSelectionDtoResultTransfor
 import de.symeda.sormas.backend.clinicalcourse.ClinicalCourse;
 import de.symeda.sormas.backend.clinicalcourse.ClinicalVisit;
 import de.symeda.sormas.backend.clinicalcourse.ClinicalVisitService;
-import de.symeda.sormas.backend.common.AbstractCoreAdoService;
-import de.symeda.sormas.backend.common.AbstractDomainObject;
-import de.symeda.sormas.backend.common.ChangeDateBuilder;
-import de.symeda.sormas.backend.common.ChangeDateFilterBuilder;
-import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
-import de.symeda.sormas.backend.common.DeletableAdo;
 import de.symeda.sormas.backend.contact.Contact;
 import de.symeda.sormas.backend.contact.ContactJoins;
 import de.symeda.sormas.backend.contact.ContactQueryContext;
@@ -224,6 +204,9 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 	private ExternalSurveillanceToolGatewayFacadeEjb.ExternalSurveillanceToolGatewayFacadeEjbLocal externalSurveillanceToolGatewayFacade;
 	@EJB
 	private VaccinationService vaccinationService;
+
+	private ConfigFacadeEjb.ConfigFacadeEjbLocal configFacade;
+
 
 	public CaseService() {
 		super(Case.class);
@@ -929,8 +912,7 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 				from,
 				ExternalShareInfo.CAZE,
 				(latestShareDate) -> createChangeDateFilter(cq, cb, from, latestShareDate, true, true)));
-				System.out.println("++++caseCriteria====");
-				System.out.println(caseCriteria);
+				
 
 		return filter;
 	}
@@ -1855,6 +1837,7 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 		filter = CriteriaBuilderHelper.and(cb, filter, regionFilter);
 		filter = CriteriaBuilderHelper.and(cb, filter, reportDateFilter);
 
+
 		cq.where(filter);
 
 		return em.createQuery(cq)
@@ -1862,6 +1845,8 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 			.setResultTransformer(new CaseSelectionDtoResultTransformer())
 			.getResultList();
 	}
+
+
 
 	public List<CaseIndexDto[]> getCasesForDuplicateMerging(CaseCriteria criteria, boolean ignoreRegion, double nameSimilarityThreshold) {
 
@@ -1976,9 +1961,27 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 		filter = cb.and(filter, creationDateFilter);
 		filter = cb.and(filter, cb.notEqual(root.get(Case.ID), root2.get(Case.ID)));
 
+
+		if(criteria.getCaseUuids()!=null && criteria.getCaseUuids().size()>0){
+			Predicate casesFilter = cb.or(
+					root.get(Case.UUID).in(criteria.getCaseUuids()),
+					root2.get(Case.UUID).in(criteria.getCaseUuids())
+			);
+			filter = cb.and( filter, casesFilter);
+		}
+
+		if(criteria.getPersonsUuids()!=null && criteria.getPersonsUuids().size()>0){
+			Predicate personsFilter = cb.or(
+					person.get(Person.UUID).in(criteria.getPersonsUuids()),
+					person2.get(Person.UUID).in(criteria.getPersonsUuids())
+			);
+			filter = cb.and( filter, personsFilter);
+		}
+
 		cq.where(filter);
 		cq.multiselect(root.get(Case.ID), root2.get(Case.ID), root.get(Case.CREATION_DATE));
 		cq.orderBy(cb.desc(root.get(Case.CREATION_DATE)));
+		//cq.orderBy(cb.desc(root.get(Case.CREATION_DATE)), cb.desc(root.get(Case.ID)), cb.desc(root2.get(Case.ID)));
 
 		List<Object[]> foundIds = em.createQuery(cq).setParameter("date_type", "epoch").getResultList();
 		List<CaseIndexDto[]> resultList = new ArrayList<>();
@@ -2020,6 +2023,183 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 		return resultList;
 	}
 
+
+	public List<CaseIndexExportDto[]> getCasesForDuplicateMergingExport(CaseCriteria criteria, boolean ignoreRegion, double nameSimilarityThreshold, int start, int max) {
+
+		final CriteriaBuilder cb = em.getCriteriaBuilder();
+		final CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
+		final Root<Case> root = cq.from(Case.class);
+		final CaseQueryContext caseQueryContext = new CaseQueryContext(cb, cq, root);
+		final CaseJoins joins = caseQueryContext.getJoins();
+
+		final Root<Case> root2 = cq.from(Case.class);
+		final CaseQueryContext caseQueryContext2 = new CaseQueryContext(cb, cq, root2);
+		final CaseJoins joins2 = caseQueryContext2.getJoins();
+
+		Join<Case, Person> person = joins.getPerson();
+		Join<Case, Person> person2 = joins2.getPerson();
+		Join<Case, Region> responsibleRegion = joins.getResponsibleRegion();
+		Join<Case, Region> responsibleRegion2 = joins2.getResponsibleRegion();
+		Join<Case, Region> region = joins.getRegion();
+		Join<Case, Region> region2 = joins2.getRegion();
+		Join<Case, Symptoms> symptoms = joins.getSymptoms();
+		Join<Case, Symptoms> symptoms2 = joins2.getSymptoms();
+
+		cq.distinct(true);
+
+		// similarity:
+		// * first & last name concatenated with whitespace. Similarity function with default threshold of 0.65D
+		// uses postgres pg_trgm: https://www.postgresql.org/docs/9.6/pgtrgm.html
+		// * same disease
+		// * same region (optional)
+		// * report date within 30 days of each other
+		// * same sex or same birth date (when defined)
+		// * same birth date (when fully defined)
+		// * onset date within 30 days of each other (when defined)
+
+		Predicate userFilter = createUserFilter(caseQueryContext);
+		Predicate criteriaFilter = criteria != null ? createCriteriaFilter(criteria, caseQueryContext) : null;
+		Expression<String> nameSimilarityExpr = cb.concat(person.get(Person.FIRST_NAME), " ");
+		nameSimilarityExpr = cb.concat(nameSimilarityExpr, person.get(Person.LAST_NAME));
+		Expression<String> nameSimilarityExpr2 = cb.concat(person2.get(Person.FIRST_NAME), " ");
+		nameSimilarityExpr2 = cb.concat(nameSimilarityExpr2, person2.get(Person.LAST_NAME));
+		Predicate nameSimilarityFilter =
+				cb.gt(cb.function("similarity", double.class, nameSimilarityExpr, nameSimilarityExpr2), nameSimilarityThreshold);
+		Predicate diseaseFilter = cb.equal(root.get(Case.DISEASE), root2.get(Case.DISEASE));
+		Predicate regionFilter = cb.and(
+				cb.equal(responsibleRegion.get(Region.ID), responsibleRegion2.get(Region.ID)),
+				cb.or(cb.and(cb.isNull(region)), cb.equal(region.get(Region.ID), region2.get(Region.ID))));
+		Predicate reportDateFilter = cb.lessThanOrEqualTo(
+				cb.abs(
+						cb.diff(
+								cb.function("date_part", Long.class, cb.parameter(String.class, "date_type"), root.get(Case.REPORT_DATE)),
+								cb.function("date_part", Long.class, cb.parameter(String.class, "date_type"), root2.get(Case.REPORT_DATE)))),
+				SECONDS_30_DAYS);
+
+		// // todo this should use PersonService.buildSimilarityCriteriaFilter
+		// Sex filter: only when sex is filled in for both cases
+		Predicate sexFilter = cb.or(
+				cb.or(cb.isNull(person.get(Person.SEX)), cb.isNull(person2.get(Person.SEX))),
+				cb.or(cb.equal(person.get(Person.SEX), Sex.UNKNOWN), cb.equal(person2.get(Person.SEX), Sex.UNKNOWN)),
+				cb.equal(person.get(Person.SEX), person2.get(Person.SEX)));
+		// Birth date filter: only when birth date is filled in for both cases
+		Predicate birthDateFilter = cb.or(
+				cb.or(
+						cb.isNull(person.get(Person.BIRTHDATE_DD)),
+						cb.isNull(person.get(Person.BIRTHDATE_MM)),
+						cb.isNull(person.get(Person.BIRTHDATE_YYYY)),
+						cb.isNull(person2.get(Person.BIRTHDATE_DD)),
+						cb.isNull(person2.get(Person.BIRTHDATE_MM)),
+						cb.isNull(person2.get(Person.BIRTHDATE_YYYY))),
+				cb.and(
+						cb.equal(person.get(Person.BIRTHDATE_DD), person2.get(Person.BIRTHDATE_DD)),
+						cb.equal(person.get(Person.BIRTHDATE_MM), person2.get(Person.BIRTHDATE_MM)),
+						cb.equal(person.get(Person.BIRTHDATE_YYYY), person2.get(Person.BIRTHDATE_YYYY))));
+		// Onset date filter: only when onset date is filled in for both cases
+		Predicate onsetDateFilter = cb.or(
+				cb.or(cb.isNull(symptoms.get(Symptoms.ONSET_DATE)), cb.isNull(symptoms2.get(Symptoms.ONSET_DATE))),
+				cb.lessThanOrEqualTo(
+						cb.abs(
+								cb.diff(
+										cb.function("date_part", Long.class, cb.parameter(String.class, "date_type"), symptoms.get(Symptoms.ONSET_DATE)),
+										cb.function("date_part", Long.class, cb.parameter(String.class, "date_type"), symptoms2.get(Symptoms.ONSET_DATE)))),
+						SECONDS_30_DAYS));
+
+		Predicate creationDateFilter = cb.or(
+				cb.lessThan(root.get(Case.CREATION_DATE), root2.get(Case.CREATION_DATE)),
+				cb.or(
+						cb.lessThanOrEqualTo(root2.get(Case.CREATION_DATE), DateHelper.getStartOfDay(criteria.getCreationDateFrom())),
+						cb.greaterThanOrEqualTo(root2.get(Case.CREATION_DATE), DateHelper.getEndOfDay(criteria.getCreationDateTo()))));
+
+		Predicate filter = cb.and(createDefaultFilter(cb, root), createDefaultFilter(cb, root2));
+		if (userFilter != null) {
+			filter = cb.and(filter, userFilter);
+		}
+		if (filter != null) {
+			filter = cb.and(filter, criteriaFilter);
+		} else {
+			filter = criteriaFilter;
+		}
+		if (filter != null) {
+			filter = cb.and(filter, nameSimilarityFilter);
+		} else {
+			filter = nameSimilarityFilter;
+		}
+		filter = cb.and(filter, diseaseFilter);
+
+		if (!ignoreRegion) {
+			filter = cb.and(filter, regionFilter);
+		}
+
+		filter = cb.and(filter, reportDateFilter);
+		filter = cb.and(filter, cb.and(sexFilter, birthDateFilter));
+		filter = cb.and(filter, onsetDateFilter);
+		filter = cb.and(filter, creationDateFilter);
+		filter = cb.and(filter, cb.notEqual(root.get(Case.ID), root2.get(Case.ID)));
+
+
+		if(criteria.getCaseUuids()!=null && criteria.getCaseUuids().size()>0){
+			Predicate casesFilter = cb.or(
+					root.get(Case.UUID).in(criteria.getCaseUuids()),
+					root2.get(Case.UUID).in(criteria.getCaseUuids())
+			);
+			filter = cb.and( filter, casesFilter);
+		}
+
+		if(criteria.getPersonsUuids()!=null && criteria.getPersonsUuids().size()>0){
+			Predicate personsFilter = cb.or(
+					person.get(Person.UUID).in(criteria.getPersonsUuids()),
+					person2.get(Person.UUID).in(criteria.getPersonsUuids())
+			);
+			filter = cb.and( filter, personsFilter);
+		}
+
+
+		cq.where(filter);
+		cq.multiselect(root.get(Case.ID), root2.get(Case.ID), root.get(Case.CREATION_DATE));
+		cq.orderBy(cb.desc(root.get(Case.CREATION_DATE)));
+
+		List<Object[]> foundIds = em.createQuery(cq).setParameter("date_type", "epoch").getResultList();
+		List<CaseIndexExportDto[]> resultList = new ArrayList<>();
+
+		if (!foundIds.isEmpty()) {
+			CriteriaQuery<CaseIndexDto> indexCasesCq = cb.createQuery(CaseIndexDto.class);
+			Root<Case> indexRoot = indexCasesCq.from(Case.class);
+			selectIndexDtoFields(new CaseQueryContext(cb, indexCasesCq, indexRoot));
+			indexCasesCq.where(
+					indexRoot.get(Case.ID).in(foundIds.stream().map(a -> Arrays.copyOf(a, 2)).flatMap(Arrays::stream).collect(Collectors.toSet())));
+			Map<Long, CaseIndexDto> indexCases =
+					em.createQuery(indexCasesCq).getResultStream().collect(Collectors.toMap(c -> c.getId(), Function.identity()));
+
+			for (Object[] idPair : foundIds) {
+				try {
+					// Cloning is necessary here to allow us to add the same CaseIndexDto to the grid multiple times
+					CaseIndexExportDto parent = (CaseIndexExportDto) indexCases.get(idPair[0]).clone();
+					CaseIndexExportDto child = (CaseIndexExportDto) indexCases.get(idPair[1]).clone();
+
+					if (parent.getCompleteness() == null && child.getCompleteness() == null
+							|| parent.getCompleteness() != null
+							&& (child.getCompleteness() == null || (parent.getCompleteness() >= child.getCompleteness()))) {
+						resultList.add(
+								new CaseIndexExportDto[] {
+										parent,
+										child });
+					} else {
+						resultList.add(
+								new CaseIndexExportDto[] {
+										child,
+										parent });
+					}
+				} catch (CloneNotSupportedException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}
+
+
+
+		return resultList;
+	}
 	@Transactional(rollbackOn = Exception.class)
 	public void updateExternalData(List<ExternalDataDto> externalData) throws ExternalDataUpdateException {
 		ExternalDataUtil.updateExternalData(externalData, this::getByUuids, this::ensurePersisted);
@@ -2418,14 +2598,7 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 			}
 		}
 		
-		
-		System.out.println("**==caseCriteria==**");
-
-		System.out.println(caseCriteria);
-		
-		System.out.println("**==cb==**");
-
-		System.out.println(cb);
+	
 
 		return filter;
 	}

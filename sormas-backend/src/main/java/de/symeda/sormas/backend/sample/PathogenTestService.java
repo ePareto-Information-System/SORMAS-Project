@@ -42,6 +42,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import de.symeda.sormas.api.common.DeletionDetails;
+import de.symeda.sormas.api.person.PersonNameDto;
 import de.symeda.sormas.api.sample.PathogenTestCriteria;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.SampleCriteria;
@@ -55,8 +56,11 @@ import de.symeda.sormas.backend.common.DeletableAdo;
 import de.symeda.sormas.backend.contact.Contact;
 import de.symeda.sormas.backend.event.EventParticipant;
 import de.symeda.sormas.backend.infrastructure.region.Region;
+import de.symeda.sormas.backend.person.Person;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.util.QueryHelper;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 
 @Stateless
 @LocalBean
@@ -166,6 +170,36 @@ public class PathogenTestService extends AbstractDeletableAdoService<PathogenTes
 
 		return em.createQuery(cq).getResultList();
 	}
+
+
+	public List<PathogenTest> getByPersonNames(List<PersonNameDto> personNames) {
+		Session session = em.unwrap(Session.class);
+		CriteriaBuilder cb = session.getCriteriaBuilder();
+		CriteriaQuery<PathogenTest> cq = cb.createQuery(PathogenTest.class);
+		Root<PathogenTest> pathogenTestRoot = cq.from(PathogenTest.class);
+		Join<PathogenTest, Sample> sampleJoin = pathogenTestRoot.join(PathogenTest.SAMPLE);
+		Join<Sample, Case> caseJoin = sampleJoin.join(Sample.ASSOCIATED_CASE);
+		Join<Case, Person> personJoin = caseJoin.join(Case.PERSON);
+
+		Predicate[] predicates = new Predicate[personNames.size()];
+
+		for (int i = 0; i < personNames.size(); i++) {
+			PersonNameDto personName = personNames.get(i);
+			Predicate firstNamePredicate = cb.equal(personJoin.get(Person.FIRST_NAME), personName.getFirstName());
+			Predicate lastNamePredicate = cb.equal(personJoin.get(Person.LAST_NAME), personName.getLastName());
+			Predicate uuidPredicate = cb.equal(personJoin.get(Person.UUID), personName.getUuid());
+
+			predicates[i] = cb.and(firstNamePredicate, lastNamePredicate, uuidPredicate);
+		}
+
+		Predicate filter = cb.and(createDefaultFilter(cb, pathogenTestRoot), cb.or(predicates));
+
+		cq.where(filter);
+		Query<PathogenTest> query = session.createQuery(cq);
+		return query.getResultList();
+	}
+
+
 
 	public boolean hasPathogenTest(Sample sample) {
 

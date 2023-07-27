@@ -1967,13 +1967,7 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 
 			queryBuilder.append(" FROM ").append(Contact.TABLE_NAME).append(caseJoinBuilder).append(contactFilterBuilder).append(caseGroupByBuilder);
 
-			System.out.println("=======print queryBuilder======");
-
-			System.out.println(queryBuilder);
-			
-			System.out.println("=======print filterBuilderParameters======");
-
-			System.out.println(filterBuilderParameters);
+		
 			
 			
 			if (groupingA != null || groupingB != null) {
@@ -2004,13 +1998,6 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 		String groupASelect = buildPopulationGroupingSelect(groupingA, subGroupingA);
 		String groupBSelect = buildPopulationGroupingSelect(groupingB, subGroupingB);
 		
-		System.out.println("======groupASelect====");
-
-		System.out.println(groupASelect);
-		
-		System.out.println("======groupBSelect====");
-
-		System.out.println(groupBSelect);
 
 		StringBuilder groupByBuilder = new StringBuilder();
 		if (groupASelect != null || groupBSelect != null) {

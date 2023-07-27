@@ -18,11 +18,7 @@
 package de.symeda.sormas.api.caze;
 
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import javax.ejb.Remote;
 import javax.validation.Valid;
@@ -95,7 +91,18 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 		ExportConfigurationDto exportConfiguration,
 		Language userLanguage);
 
+	List<CaseIndexExportDto[]> getExportListDuplicates(
+			CaseCriteria caseCriteria,
+			Collection<String> selectedRows,
+			CaseExportType exportType,
+			int first,
+			int max,
+			ExportConfigurationDto exportConfiguration,
+			Language userLanguage,boolean ignoreRegion);
+
 	CaseDataDto getCaseDataByUuid(String uuid);
+
+	LinkedHashMap<CaseDataDto, CaseDataDto> getCaseDataByParentAndChildUuid(String parentUuid, String childUuid);
 
 	CaseDataDto saveCase(@Valid CaseDataDto dto) throws ValidationRuntimeException;
 

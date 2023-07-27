@@ -20,6 +20,7 @@ import static de.symeda.sormas.api.CountryHelper.COUNTRY_CODE_GERMANY;
 import static de.symeda.sormas.api.CountryHelper.COUNTRY_CODE_SWITZERLAND;
 import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_BIG;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +73,7 @@ import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.LatitudeP
 import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.LongitudePseudonymizer;
 
 @DependingOnFeatureType(featureType = FeatureType.CASE_SURVEILANCE)
-public class CaseDataDto extends SormasToSormasShareableDto {
+public class CaseDataDto extends SormasToSormasShareableDto implements Serializable{
 
 	private static final long serialVersionUID = 5007131477733638086L;
 	private static final long MILLISECONDS_30_DAYS = 30L * 24L * 60L * 60L * 1000L;
@@ -214,6 +215,8 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	public static final String EXTERNAL_DATA = "externalData";
 	public static final String DELETION_REASON = "deletionReason";
 	public static final String OTHER_DELETION_REASON = "otherDeletionReason";
+
+	public static final String NEW_EXISTING = "existingCase";
 
 	// Fields are declared in the order they should appear in the import template
 
@@ -580,7 +583,7 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 
 	private NewExisting existingCase;
 
-	private PickMerge importUpdateCaseStatus;
+	//private PickMerge importUpdateCaseStatus;
 
 	public static CaseDataDto build(PersonReferenceDto person, Disease disease) {
 		return build(person, disease, HealthConditionsDto.build());
@@ -1749,11 +1752,11 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 		return super.toString() + (StringUtils.isNotBlank(this.getExternalID()) ? " - " + this.getExternalID() : StringUtils.EMPTY);
 	}
 
-	public PickMerge getImportUpdateCaseStatus() {
-		return importUpdateCaseStatus;
-	}
-
-	public void setImportUpdateCaseStatus(PickMerge importUpdateCaseStatus) {
-		this.importUpdateCaseStatus = importUpdateCaseStatus;
-	}
+//	public PickMerge getImportUpdateCaseStatus() {
+//		return importUpdateCaseStatus;
+//	}
+//
+//	public void setImportUpdateCaseStatus(PickMerge importUpdateCaseStatus) {
+//		this.importUpdateCaseStatus = importUpdateCaseStatus;
+//	}
 }

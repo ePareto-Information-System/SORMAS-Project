@@ -133,9 +133,6 @@ public class SampleCountsTileViewLayout extends CssLayout {
 			Long sampCount = sampleCount.get(type);
 			Long diffCount =  sampCount - prevCount;
 			
-			System.out.println("CountsTileViewLayouta + "+type +" = "+Math.abs(diffCount));
-			
-			System.out.println("CountsTileViewLayoutb "+ type +" = "+diffCount);
 			
 			CountTileComponent tile = new CountTileComponent(type, sampCount, diffCount);
 			tile.setWidth(230, Unit.PIXELS);

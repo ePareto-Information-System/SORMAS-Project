@@ -580,6 +580,9 @@ public interface Strings {
 	String headingLastReportedDistrict = "headingLastReportedDistrict";
 	String headingLineListing = "headingLineListing";
 	String headingLineListingImport = "headingLineListingImport";
+
+	String headingDuplicateMergeExcelImport = "headingDuplicateMergeExcelImport";
+
 	String headingLocation = "headingLocation";
 	String headingLoginFailed = "headingLoginFailed";
 	String headingUpdatePasswordFailed = "headingUpdatePasswordFailed";

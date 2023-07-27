@@ -44,7 +44,7 @@ public class DiseaseTileViewLayout extends CssLayout {
 		this.removeAllComponents();
 
 		for (DiseaseBurdenDto diseaseBurden : diseasesBurden) {
-			System.out.println();
+
 			DiseaseTileComponent tile = new DiseaseTileComponent(diseaseBurden,this.dashboardDataProvider);
 			tile.setWidth(230, Unit.PIXELS);
 			addComponent(tile);

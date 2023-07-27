@@ -362,13 +362,7 @@ public class DashboardMapComponent extends VerticalLayout {
 			showRegionsShappes(caseMeasure, dashboardDataProvider.getFromDate(), dashboardDataProvider.getToDate(), dashboardDataProvider.getDisease());
 		}
 		
-		System.out.println("==singleCaseDataDto==");
 
-		System.out.println(singleCaseDataDto);
-		
-		System.out.println("+==criteria==+");
-
-		System.out.println(criteria);
 
 		if (showCases) {
 			showCaseMarkers(FacadeProvider.getCaseFacade().getIndexListForMap(criteria, null, null, UserProvider.getCurrent().getUuid(), null));
@@ -462,9 +456,6 @@ public class DashboardMapComponent extends VerticalLayout {
 			List<MapContactDto> contactDtos = new ArrayList<>();
 			contactDtos.add(mapContact);
 			
-			System.out.println("==contactDtos==");
-
-			System.out.println(contactDtos);
 			
 			showContactMarkers(contactDtos);
 		}
@@ -1236,9 +1227,6 @@ public class DashboardMapComponent extends VerticalLayout {
 				
 				boolean hasDistrictGps = contact.getDistrictLatitude() != null && contact.getDistrictLongitude() != null;
 
-				System.out.println("print hasReportGps");
-				System.out.println(hasReportGps);
-				System.out.println(hasContactGps);
 
 				
 				if (!hasContactGps && !hasReportGps && !hasDistrictGps) {
@@ -1248,7 +1236,6 @@ public class DashboardMapComponent extends VerticalLayout {
 			
 
 				if (mapCaseDisplayMode == MapCaseDisplayMode.CASE_ADDRESS) {
-					System.out.println("selected CASE_ADDRESS");
 
 					if (!hasContactGps) {
 						continue;
@@ -1256,7 +1243,6 @@ public class DashboardMapComponent extends VerticalLayout {
 					mapContactDtos.add(contact);
 				} 
 				else if (mapCaseDisplayMode == MapCaseDisplayMode.DISTRICT_ADDRESS) {
-					System.out.println("selected DISTRICT_ADDRESS");
 
 					if (!hasDistrictGps) {
 						continue;
@@ -1266,8 +1252,6 @@ public class DashboardMapComponent extends VerticalLayout {
 				
 				else {
 					
-					System.out.println("selected NONE_FACILITY_UUID");
-
 					if (FacilityDto.NONE_FACILITY_UUID.equals(contact.getUuid())
 						|| FacilityDto.OTHER_FACILITY_UUID.equals(contact.getUuid())
 						|| !hasReportGps) {

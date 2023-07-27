@@ -42,4 +42,8 @@ public interface CaseImportFacade {
 		throws InvalidColumnException;
 
 	ImportLineResultDto<CaseImportEntities> saveImportedEntities(@Valid CaseImportEntities entities, boolean skipPersonValidation);
+
+
+	EntityImportResultDto importCaseDataPopulateModal(String[] values, String[] entityClasses, String[] entityProperties,
+																		  String[][] entityPropertyPaths, boolean b,CaseDMImportEntities entities)throws InvalidColumnException ;
 }

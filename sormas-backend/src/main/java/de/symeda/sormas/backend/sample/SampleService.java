@@ -57,6 +57,7 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
 import javax.persistence.criteria.Subquery;
 
+import de.symeda.sormas.api.person.PersonNameDto;
 import org.apache.commons.collections.CollectionUtils;
 
 import de.symeda.sormas.api.EntityRelevanceStatus;
@@ -613,6 +614,31 @@ public class SampleService extends AbstractDeletableAdoService<Sample> {
 		cq.where(filter);
 		return em.createQuery(cq).getResultList();
 	}
+
+	public List<Sample> getByPersonNames(List<PersonNameDto> personNames) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Sample> cq = cb.createQuery(Sample.class);
+		Root<Sample> sampleRoot = cq.from(Sample.class);
+		Join<Sample, Case> caseJoin = sampleRoot.join(Sample.ASSOCIATED_CASE);
+		Join<Case, Person> personJoin = caseJoin.join(Case.PERSON);
+
+		Predicate[] predicates = new Predicate[personNames.size()];
+
+		for (int i = 0; i < personNames.size(); i++) {
+			PersonNameDto personName = personNames.get(i);
+			Predicate firstNamePredicate = cb.equal(personJoin.get(Person.FIRST_NAME), personName.getFirstName());
+			Predicate lastNamePredicate = cb.equal(personJoin.get(Person.LAST_NAME), personName.getLastName());
+			Predicate uuidPredicate = cb.equal(personJoin.get(Person.UUID), personName.getUuid());
+
+			predicates[i] = cb.and(firstNamePredicate, lastNamePredicate, uuidPredicate);
+		}
+
+		Predicate filter = cb.and(createDefaultFilter(cb, sampleRoot), cb.or(predicates));
+
+		cq.where(filter);
+		return em.createQuery(cq).getResultList();
+	}
+
 
 	public List<Sample> getByEventParticipantUuids(List<String> eventParticipantUuids) {
 

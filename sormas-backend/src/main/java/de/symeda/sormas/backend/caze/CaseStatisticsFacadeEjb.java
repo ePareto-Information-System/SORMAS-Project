@@ -962,13 +962,7 @@ public class CaseStatisticsFacadeEjb implements CaseStatisticsFacade {
 
 		queryBuilder.append(" FROM ").append(Case.TABLE_NAME).append(caseJoinBuilder).append(caseFilterBuilder).append(caseGroupByBuilder);
 
-		System.out.println("=======print queryBuilder======");
-
-		System.out.println(queryBuilder);
 		
-		System.out.println("=======print filterBuilderParameters======");
-
-		System.out.println(filterBuilderParameters);
 		
 		if (groupingA != null || groupingB != null) {
 			queryBuilder.append(orderByBuilder);

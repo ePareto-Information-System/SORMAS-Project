@@ -44,6 +44,7 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.person.PersonNameDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.SortProperty;
@@ -58,7 +59,9 @@ import de.symeda.sormas.backend.event.Event;
 import de.symeda.sormas.backend.immunization.ImmunizationEntityHelper;
 import de.symeda.sormas.backend.immunization.entity.Immunization;
 import de.symeda.sormas.backend.person.Person;
+import de.symeda.sormas.backend.sample.PathogenTest;
 import de.symeda.sormas.backend.symptoms.Symptoms;
+import org.hibernate.Session;
 
 @Stateless
 @LocalBean
@@ -323,4 +326,33 @@ public class VaccinationService extends BaseAdoService<Vaccination> {
 		return vaccination.getVaccinationDate() != null ? vaccination.getVaccinationDate() : DateHelper.subtractDays(vaccination.getReportDate(), 14);
 	}
 
+	public List<Vaccination> getByPersonNames(List<PersonNameDto> personNames) {
+		Session session = em.unwrap(Session.class);
+		CriteriaBuilder cb = session.getCriteriaBuilder();
+		CriteriaQuery<Vaccination> cq = cb.createQuery(Vaccination.class);
+		Root<Vaccination> vaccinationRoot = cq.from(Vaccination.class);
+		Join<Vaccination, Person> personJoin = vaccinationRoot.join(Vaccination.REPORTING_USER);
+
+		Predicate[] predicates = new Predicate[personNames.size()];
+
+		for (int i = 0; i < personNames.size(); i++) {
+			PersonNameDto personName = personNames.get(i);
+			Predicate firstNamePredicate = cb.equal(personJoin.get(Person.FIRST_NAME), personName.getFirstName());
+			Predicate lastNamePredicate = cb.equal(personJoin.get(Person.LAST_NAME), personName.getLastName());
+			Predicate uuidPredicate = cb.equal(personJoin.get(Person.UUID), personName.getUuid());
+
+			predicates[i] = cb.and(firstNamePredicate, lastNamePredicate, uuidPredicate);
+		}
+
+		//Predicate filter = cb.and(createDefaultFilter(cb, vaccinationRoot), cb.or(predicates));
+		Predicate filter = cb.or(predicates);
+
+		cq.where(filter);
+		Query query = session.createQuery(cq);
+		return query.getResultList();
+	}
+
+	public Predicate createDefaultFilter(CriteriaBuilder cb, Root<Vaccination> root) {
+		return cb.isFalse(root.get(PathogenTest.DELETED));
+	}
 }

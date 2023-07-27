@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import de.symeda.sormas.ui.caze.importer.DuplicateMergeExcelImportLayout;
 import org.vaadin.hene.popupbutton.PopupButton;
 
 import com.vaadin.icons.VaadinIcons;
@@ -286,7 +287,11 @@ public class CasesView extends AbstractView {
 				addHeaderComponent(importButton);
 			}
 			addImportButton(importLayout, Captions.importLineListing, Strings.headingLineListingImport, LineListingImportLayout::new);
+
 			addImportButton(importLayout, Captions.importDetailed, Strings.headingImportCases, CaseImportLayout::new);
+
+			addImportButton(importLayout, Captions.importDuplicatesMergeExcel, Strings.headingDuplicateMergeExcelImport, DuplicateMergeExcelImportLayout::new);
+
 		}
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.CASE_EXPORT)) {

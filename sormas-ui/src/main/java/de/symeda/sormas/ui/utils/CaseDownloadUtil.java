@@ -15,17 +15,17 @@
 
 package de.symeda.sormas.ui.utils;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.function.Supplier;
 
 import com.vaadin.server.StreamResource;
 
 import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.caze.CaseCriteria;
-import de.symeda.sormas.api.caze.CaseDataDto;
-import de.symeda.sormas.api.caze.CaseExportDto;
-import de.symeda.sormas.api.caze.CaseExportType;
+import de.symeda.sormas.api.caze.*;
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -54,6 +54,26 @@ public class CaseDownloadUtil {
 			exportConfiguration);
 	}
 
+
+	public static StreamResource createCaseExportResourceDuplicates(
+			CaseCriteria criteria,
+			Supplier<Collection<String>> selectedRows,
+			CaseExportType exportType,
+			ExportConfigurationDto exportConfiguration,boolean ignoreRegion) {
+
+		return DownloadUtil.createCsvExportStreamResourceDuplicate(
+				CaseIndexExportDto[].class,
+				exportType,
+				(Integer start, Integer max) -> FacadeProvider.getCaseFacade()
+						.getExportListDuplicates(criteria, selectedRows.get(), exportType, start,
+								max, exportConfiguration, I18nProperties.getUserLanguage(),ignoreRegion),
+						//.getExportList(criteria, selectedRows.get(), exportType, start, max, exportConfiguration, I18nProperties.getUserLanguage()),
+				CaseDownloadUtil::captionProvider,
+				ExportEntityName.CASES,
+				exportConfiguration);
+	}
+
+
 	public static String getPropertyCaption(String propertyId, String prefixId) {
 		if (prefixId != null) {
 			return I18nProperties.getPrefixCaption(prefixId, propertyId);
@@ -68,7 +88,11 @@ public class CaseDownloadUtil {
 			EpiDataDto.I18N_PREFIX,
 			ImmunizationDto.I18N_PREFIX,
 			VaccinationDto.I18N_PREFIX,
-			HospitalizationDto.I18N_PREFIX);
+			HospitalizationDto.I18N_PREFIX,
+				CaseIndexExportDto.I18N_PREFIX
+
+
+				);
 	}
 
 	private static String captionProvider(String propertyId, Class<?> type) {

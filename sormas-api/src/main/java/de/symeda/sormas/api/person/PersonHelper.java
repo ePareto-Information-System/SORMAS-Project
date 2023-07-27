@@ -237,11 +237,13 @@ public final class PersonHelper {
 	}
 
 	public static void sanitizeNonHomeAddress(PersonDto person) {
-		if (person.getAddress() != null
-			&& person.getAddress().getAddressType() != null
-			&& person.getAddress().getAddressType() != PersonAddressType.HOME) {
-			person.addAddress(person.getAddress());
-			person.setAddress(LocationDto.build());
+		if(person!=null) {
+			if (person.getAddress() != null
+					&& person.getAddress().getAddressType() != null
+					&& person.getAddress().getAddressType() != PersonAddressType.HOME) {
+				person.addAddress(person.getAddress());
+				person.setAddress(LocationDto.build());
+			}
 		}
 	}
 }

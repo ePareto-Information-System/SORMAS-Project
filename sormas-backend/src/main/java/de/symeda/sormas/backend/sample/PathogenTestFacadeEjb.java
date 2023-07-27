@@ -36,6 +36,8 @@ import javax.persistence.criteria.Root;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import de.symeda.sormas.api.person.PersonNameDto;
+import de.symeda.sormas.api.sample.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,12 +46,6 @@ import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Validations;
-import de.symeda.sormas.api.sample.PathogenTestCriteria;
-import de.symeda.sormas.api.sample.PathogenTestDto;
-import de.symeda.sormas.api.sample.PathogenTestFacade;
-import de.symeda.sormas.api.sample.PathogenTestResultType;
-import de.symeda.sormas.api.sample.SampleCriteria;
-import de.symeda.sormas.api.sample.SampleReferenceDto;
 import de.symeda.sormas.api.user.NotificationType;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DataHelper;
@@ -209,6 +205,12 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 			.filter(p -> !p.isDeleted())
 			.map(p -> convertToDto(p, pseudonymizer))
 			.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<PathogenTestDto> getByPersonNames(List<PersonNameDto> personNameDtos) {
+		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
+		return pathogenTestService.getByPersonNames(personNameDtos).stream().map(c -> convertToDto(c, pseudonymizer)).collect(Collectors.toList());
 	}
 
 	@Override
@@ -572,5 +574,9 @@ public class PathogenTestFacadeEjb implements PathogenTestFacade {
 		Long count = em.createQuery(cq).getSingleResult();
 		return count;
 	}
+
+
+
+
 
 }

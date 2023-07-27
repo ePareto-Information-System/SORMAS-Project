@@ -130,7 +130,6 @@ public abstract class AbstractCoreFacadeEjb<ADO extends CoreAdo, DTO extends Ent
 	}
 
 	public DTO convertToDto(ADO source, Pseudonymizer pseudonymizer) {
-
 		DTO dto = toDto(source);
 		pseudonymizeDto(source, dto, pseudonymizer);
 		return dto;

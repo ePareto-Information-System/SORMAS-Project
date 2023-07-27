@@ -1498,11 +1498,18 @@ public interface Captions {
 	String importDownloadImportTemplate = "importDownloadImportTemplate";
 	String importDownloadImportTemplateXlsm = "importDownloadImportTemplateXlsm";
 	String importDuplicates = "importDuplicates";
+
+	String importPicked = "importPicked";
+
+	String importMerged ="importMerged" +
+			"" ;
 	String importErrorDescription = "importErrorDescription";
 	String importErrors = "importErrors";
 	String importImportData = "importImportData";
 	String importImports = "importImports";
 	String importLineListing = "importLineListing";
+
+	String importDuplicatesMergeExcel = "importDuplicatesMergeExcel";
 	String importProcessed = "importProcessed";
 	String importSkips = "importSkips";
 	String importValueSeparator = "importValueSeparator";

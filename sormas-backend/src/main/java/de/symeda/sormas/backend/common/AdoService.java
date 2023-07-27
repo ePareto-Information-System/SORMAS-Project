@@ -17,6 +17,7 @@
  *******************************************************************************/
 package de.symeda.sormas.backend.common;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.persistence.EntityExistsException;
@@ -29,6 +30,8 @@ public interface AdoService<ADO extends AbstractDomainObject> {
 	ADO getById(long id);
 
 	ADO getByUuid(String uuid); //@NotNull
+
+	LinkedHashMap<ADO, ADO> getByParentAndChildUuid(String parentUuid, String childUuid);
 
 	Boolean exists(@NotNull String uuid);
 

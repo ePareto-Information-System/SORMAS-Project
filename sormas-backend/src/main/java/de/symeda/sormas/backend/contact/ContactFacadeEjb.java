@@ -1984,9 +1984,7 @@ public class ContactFacadeEjb
 			mapContactDtos = em.createQuery(query).getResultList();
 		}
 		
-		System.out.println("==contactCriteria==");
-
-		System.out.println(contactCriteria);
+	
 
 		return mapContactDtos;
 	}

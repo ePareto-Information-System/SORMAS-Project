@@ -46,6 +46,11 @@ public class ImportProgressLayout extends VerticalLayout {
 	private Label importErrorsLabel;
 	private Label importSkipsLabel;
 	private Label importDuplicatesLabel;
+
+	private Label importMergedLabel;
+
+	private Label importPickedLabel;
+
 	private Button closeCancelButton;
 	private HorizontalLayout infoLayout;
 	private Label infoLabel;
@@ -64,12 +69,20 @@ public class ImportProgressLayout extends VerticalLayout {
 	private int importErrorsCount;
 	private int importSkipsCount;
 	private int importDuplicatesCount;
+
+	private int importMergedCount;
+
+	private int importPickedCount;
+
+
 	private int totalCount;
 
 	private UI currentUI;
 
 	public ImportProgressLayout(int totalCount, UI currentUI, Runnable cancelCallback, boolean duplicatesPossible) {
 		this(totalCount, currentUI, cancelCallback, duplicatesPossible, true);
+
+
 	}
 
 	public ImportProgressLayout(int totalCount, UI currentUI, Runnable cancelCallback, boolean duplicatesPossible, boolean skipPossible) {
@@ -121,6 +134,20 @@ public class ImportProgressLayout extends VerticalLayout {
 		if (skipPossible) {
 			progressInfoLayout.addComponent(importSkipsLabel);
 		}
+
+		importPickedLabel = new Label(String.format(I18nProperties.getCaption(Captions.importPicked), 0));
+		CssStyles.style(importPickedLabel, CssStyles.LABEL_WARNING);
+
+//		if (duplicatesPossible) {
+//			progressInfoLayout.addComponent(importPickedLabel);
+//		}
+
+		importMergedLabel = new Label(String.format(I18nProperties.getCaption(Captions.importMerged), 0));
+		CssStyles.style(importMergedLabel, CssStyles.LABEL_WARNING);
+//		if (duplicatesPossible) {
+//			progressInfoLayout.addComponent(importMergedLabel);
+//		}
+
 		addComponent(progressInfoLayout);
 		setComponentAlignment(progressInfoLayout, Alignment.TOP_RIGHT);
 
@@ -133,6 +160,81 @@ public class ImportProgressLayout extends VerticalLayout {
 		setComponentAlignment(closeCancelButton, Alignment.MIDDLE_RIGHT);
 	}
 
+
+	public ImportProgressLayout(int totalCount, UI currentUI, Runnable cancelCallback, boolean duplicatesPossible, boolean skipPossible,boolean exportExcel) {
+		this.totalCount = totalCount;
+		this.currentUI = currentUI;
+
+		setWidth(100, Unit.PERCENTAGE);
+		setMargin(true);
+
+		// Info text and icon/progress circle
+		infoLayout = new HorizontalLayout();
+		infoLayout.setWidth(100, Unit.PERCENTAGE);
+		infoLayout.setSpacing(true);
+		initializeInfoComponents();
+		currentInfoComponent = progressCircle;
+		infoLayout.addComponent(currentInfoComponent);
+		infoLabel = new Label(String.format(I18nProperties.getString(Strings.infoImportProcess), totalCount));
+		infoLabel.setContentMode(ContentMode.HTML);
+		infoLayout.addComponent(infoLabel);
+		infoLayout.setExpandRatio(infoLabel, 1);
+
+		addComponent(infoLayout);
+
+		// Progress bar
+		progressBar = new ProgressBar(0.0f);
+		CssStyles.style(progressBar, CssStyles.VSPACE_TOP_3);
+		addComponent(progressBar);
+		progressBar.setWidth(100, Unit.PERCENTAGE);
+
+		// Progress info
+		HorizontalLayout progressInfoLayout = new HorizontalLayout();
+		CssStyles.style(progressInfoLayout, CssStyles.VSPACE_TOP_5);
+		progressInfoLayout.setSpacing(true);
+		processedImportsLabel = new Label(String.format(I18nProperties.getCaption(Captions.importProcessed), 0, totalCount));
+		progressInfoLayout.addComponent(processedImportsLabel);
+		successfulImportsLabel = new Label(String.format(I18nProperties.getCaption(Captions.importImports), 0));
+		CssStyles.style(successfulImportsLabel, CssStyles.LABEL_POSITIVE);
+		progressInfoLayout.addComponent(successfulImportsLabel);
+		importErrorsLabel = new Label(String.format(I18nProperties.getCaption(Captions.importErrors), 0));
+		CssStyles.style(importErrorsLabel, CssStyles.LABEL_CRITICAL);
+		progressInfoLayout.addComponent(importErrorsLabel);
+		importDuplicatesLabel = new Label(String.format(I18nProperties.getCaption(Captions.importDuplicates), 0));
+		CssStyles.style(importDuplicatesLabel, CssStyles.LABEL_WARNING);
+		if (duplicatesPossible) {
+			progressInfoLayout.addComponent(importDuplicatesLabel);
+		}
+		importSkipsLabel = new Label(String.format(I18nProperties.getCaption(Captions.importSkips), 0));
+		CssStyles.style(importSkipsLabel, CssStyles.LABEL_MINOR);
+		if (skipPossible) {
+			progressInfoLayout.addComponent(importSkipsLabel);
+		}
+
+		importPickedLabel = new Label(String.format(I18nProperties.getCaption(Captions.importPicked), 0));
+		CssStyles.style(importPickedLabel, CssStyles.LABEL_WARNING);
+
+		if (exportExcel) {
+			progressInfoLayout.addComponent(importPickedLabel);
+		}
+
+		importMergedLabel = new Label(String.format(I18nProperties.getCaption(Captions.importMerged), 0));
+		CssStyles.style(importMergedLabel, CssStyles.LABEL_WARNING);
+		if (exportExcel) {
+			progressInfoLayout.addComponent(importMergedLabel);
+		}
+
+		addComponent(progressInfoLayout);
+		setComponentAlignment(progressInfoLayout, Alignment.TOP_RIGHT);
+
+		// Cancel button
+		cancelListener = e -> cancelCallback.run();
+
+		closeCancelButton = ButtonHelper.createButton(Captions.actionCancel, cancelListener, CssStyles.VSPACE_TOP_2);
+
+		addComponent(closeCancelButton);
+		setComponentAlignment(closeCancelButton, Alignment.MIDDLE_RIGHT);
+	}
 	private void initializeInfoComponents() {
 		progressCircle = new ProgressBar();
 		progressCircle.setIndeterminate(true);
@@ -167,6 +269,38 @@ public class ImportProgressLayout extends VerticalLayout {
 			}
 			processedImportsLabel.setValue(String.format(I18nProperties.getCaption(Captions.importProcessed), processedImportsCount, totalCount));
 			progressBar.setValue((float) processedImportsCount / (float) totalCount);
+		});
+	}
+
+	public void updateProgressMergedDuplicate(ImportLineResult result) {
+		currentUI.access(() -> {
+			processedImportsCount++;
+//			if (result == ImportLineResult.SUCCESS) {
+//				successfulImportsCount++;
+//				successfulImportsLabel.setValue(String.format(I18nProperties.getCaption(Captions.importImports), successfulImportsCount));
+//			}
+			 if (result == ImportLineResult.ERROR) {
+				importErrorsCount++;
+				importErrorsLabel.setValue(String.format(I18nProperties.getCaption(Captions.importErrors), importErrorsCount));
+			} else if (result == ImportLineResult.PICKED) {
+				importPickedCount++;
+				successfulImportsCount++;
+				importPickedLabel.setValue(String.format(I18nProperties.getCaption(Captions.importPicked), importPickedCount));
+				 successfulImportsLabel.setValue(String.format(I18nProperties.getCaption(Captions.importImports), successfulImportsCount));
+
+			 } else if (result == ImportLineResult.MERGED) {
+				importMergedCount++;
+				successfulImportsCount++;
+				importMergedLabel.setValue(String.format(I18nProperties.getCaption(Captions.importMerged), importMergedCount));
+				successfulImportsLabel.setValue(String.format(I18nProperties.getCaption(Captions.importImports), successfulImportsCount));
+
+			 }
+			 else if (result == ImportLineResult.SKIPPED) {
+				 importSkipsCount++;
+				 importSkipsLabel.setValue(String.format(I18nProperties.getCaption(Captions.importSkips), importSkipsCount));
+			 }
+			processedImportsLabel.setValue(String.format(I18nProperties.getCaption(Captions.importProcessed), processedImportsCount, totalCount));
+			progressBar.setValue((float) processedImportsCount / (float) (totalCount));
 		});
 	}
 

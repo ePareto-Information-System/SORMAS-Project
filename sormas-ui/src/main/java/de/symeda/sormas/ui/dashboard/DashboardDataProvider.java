@@ -211,14 +211,6 @@ public class DashboardDataProvider {
 				,newCaseDateType
 				,caseClassification);
 
-		System.out.println("+++++region++++");
-
-		System.out.println(region);
-		
-		System.out.println(dbd);
-		
-		System.out.println("====dbd====");
-
 		
 		setDiseaseBurdenDetail(dbd);
 
@@ -309,9 +301,6 @@ public class DashboardDataProvider {
 				setTestResultCountByResultType(new HashMap<>());
 			}
 			
-			System.out.println("===caseCriteria===");
-
-			System.out.println(caseCriteria);
 		}
 
 		if (this.disease == null || getDashboardType() == DashboardType.CONTACTS) {

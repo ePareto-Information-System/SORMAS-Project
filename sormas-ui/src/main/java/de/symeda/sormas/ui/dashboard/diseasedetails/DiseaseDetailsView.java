@@ -47,9 +47,6 @@ public class DiseaseDetailsView extends AbstractDashboardView {
 
 		String paramData = (String) SormasUI.get().getSession().getAttribute("paramdata");
 
-		System.out.println("paramdata");
-
-		System.out.println(data);
 
 		if (data != null) {
 
@@ -66,8 +63,7 @@ public class DiseaseDetailsView extends AbstractDashboardView {
 			String regionId = data.split("/")[5];
 
 			if (dateFrom != null) {
-				System.out.println("print dateFrom");
-				System.out.println(dateFrom);
+				
 
 				DateFormat df1 = new SimpleDateFormat("yyyy-MM-dd");
 				String string1 = dateFrom;
@@ -82,8 +78,6 @@ public class DiseaseDetailsView extends AbstractDashboardView {
 			}
 
 			if (dateTo != null) {
-				System.out.println("print dateTo");
-				System.out.println(dateTo);
 
 				DateFormat df1 = new SimpleDateFormat("yyyy-MM-dd");
 				String string1 = dateTo;
@@ -99,8 +93,7 @@ public class DiseaseDetailsView extends AbstractDashboardView {
 			}
 
 			if (type != null) {
-				System.out.println("==type==");
-				System.out.println(type);
+				
 
 				// NewDateFilterType.values();
 				dashboardDataProvider.setDateFilterType(EnumSet.allOf(NewDateFilterType.class).stream()
@@ -113,13 +106,11 @@ public class DiseaseDetailsView extends AbstractDashboardView {
 			// dashboardDataProvider.setRegion(region);
 
 			if (caseClassification != null) {
-				System.out.println("print caseClassification");
 
 				String caseClass = caseClassification.replace("case", "").toUpperCase().trim();
 
 				if (!caseClass.equals("NULL")) {
 
-					System.out.println(caseClass);
 
 					if(caseClass.equals("NOT YET CLASSIFIED")) {
 						
@@ -156,8 +147,7 @@ public class DiseaseDetailsView extends AbstractDashboardView {
 
 
 			if (newCaseDateType != null) {
-				System.out.println("==newCaseDateType==");
-				System.out.println(newCaseDateType);
+
 				NewCaseDateType enumNewCaseDateType;
 				switch (newCaseDateType) {
 				case "Creation date":
@@ -186,10 +176,7 @@ public class DiseaseDetailsView extends AbstractDashboardView {
 			}
 			
 			if(!regionId.equals("null")) {
-				
-				System.out.println("====regionId====");
 
-				System.out.println(regionId);
 				
 				RegionDto region = FacadeProvider.getRegionFacade().getRegionByUuid(regionId);
 				

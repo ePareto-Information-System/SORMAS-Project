@@ -27,6 +27,7 @@ import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.DownloadUtil;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.vaadin.hene.popupbutton.PopupButton;
 
 import java.text.DecimalFormat;
@@ -123,7 +124,7 @@ public class MergeImportedCasesGrid extends TreeGrid<CaseIndexDto> {
 		for (Column<?, ?> column : getColumns()) {
 			column.setCaption(I18nProperties.getPrefixCaption(CaseIndexDto.I18N_PREFIX, column.getId().toString(), column.getCaption()));
 		}
-		getColumn(COLUMN_ACTIONS).setCaption("");
+		getColumn(COLUMN_ACTIONS).setCaption(StringUtils.capitalize(COLUMN_ACTIONS));
 		getColumn(COLUMN_UUID).setCaption(I18nProperties.getPrefixCaption(CaseIndexDto.I18N_PREFIX, CaseIndexDto.UUID));
 		getColumn(COLUMN_COMPLETENESS).setCaption(I18nProperties.getPrefixCaption(CaseIndexDto.I18N_PREFIX, CaseIndexDto.COMPLETENESS));
 		getColumn(COLUMN_COMPLETENESS).setSortable(false);
@@ -239,6 +240,8 @@ public class MergeImportedCasesGrid extends TreeGrid<CaseIndexDto> {
 //		}
 	}
 
+
+
 	@SuppressWarnings("unchecked")
 	public void reload() {
 
@@ -251,6 +254,7 @@ public class MergeImportedCasesGrid extends TreeGrid<CaseIndexDto> {
 		}
 
 		List<CaseIndexDto[]> casePairs = FacadeProvider.getCaseFacade().getCasesForDuplicateMerging(criteria, ignoreRegion);
+//if(casePairs>0){
 		for (CaseIndexDto[] casePair : casePairs) {
 			boolean uuidPairExists = false;
 			for (String[] hiddenUuidPair : hiddenUuidPairs) {
@@ -269,8 +273,12 @@ public class MergeImportedCasesGrid extends TreeGrid<CaseIndexDto> {
 		dataCount = casePairs.size();
 
 		expandRecursively(data.getRootItems(), 0);
+
 		dataProvider.refreshAll();
+
 	}
+
+
 
 	public void reload(boolean ignoreRegion) {
 		this.ignoreRegion = ignoreRegion;

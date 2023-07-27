@@ -108,7 +108,7 @@ import de.symeda.sormas.backend.visit.Visit;
 
 @Entity(name = "cases")
 @Audited
-public class Case extends CoreAdo implements SormasToSormasShareable, HasExternalData {
+public class Case extends CoreAdo implements SormasToSormasShareable, HasExternalData, Comparable<Case>  {
 
 	private static final long serialVersionUID = -2697795184663562129L;
 
@@ -1791,5 +1791,14 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public Float buildCaseLatLonCoordination() {
 
 		return reportLatLonAccuracy;
+	}
+
+
+	@Override
+	public int compareTo(Case otherCase) {
+		// Implement comparison logic based on your requirements
+		// Return a negative value if this case is smaller, positive if larger, or 0 if equal
+		// For example, if you have a caseId field, you can compare based on that:
+		return this.getUuid().compareTo(otherCase.getUuid());
 	}
 }

@@ -25,6 +25,7 @@ import javax.validation.Valid;
 
 import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.person.PersonNameDto;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
 
@@ -62,5 +63,7 @@ public interface PathogenTestFacade {
 	List<PathogenTestDto> getAllActivePathogenTestsAfter(Date date, Integer batchSize, String lastSynchronizedUuid);
 
 	Page<PathogenTestDto> getIndexPage(PathogenTestCriteria pathogenTestCriteria, Integer offset, Integer size, List<SortProperty> sortProperties);
+
+	List<PathogenTestDto> getByPersonNames(List<PersonNameDto> personUuid);
 
 }

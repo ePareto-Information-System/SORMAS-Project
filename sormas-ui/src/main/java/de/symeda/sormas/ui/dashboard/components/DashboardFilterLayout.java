@@ -897,8 +897,7 @@ public  class DashboardFilterLayout extends HorizontalLayout {
 		String params = event.getParameters().trim();
 		if (params.startsWith("?")) {
 			params = params.substring(1);
-			System.out.println("===params===");
-			System.out.println(params);
+	
 			criteria.fromUrlParams(params);
 			updateFilterDates(criteria);
 		}

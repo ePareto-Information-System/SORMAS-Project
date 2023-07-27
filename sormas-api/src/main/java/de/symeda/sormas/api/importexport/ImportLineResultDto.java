@@ -59,6 +59,9 @@ public class ImportLineResultDto<E> implements Serializable {
 		return new ImportLineResultDto<>(ImportLineResult.SUCCESS, null, null);
 	}
 
+	public static <E> ImportLineResultDto<E> successResult(E entities) {
+		return new ImportLineResultDto<>(ImportLineResult.SUCCESS, null, entities);
+	}
 	public static <E> ImportLineResultDto<E> errorResult(String message) {
 		return new ImportLineResultDto<>(ImportLineResult.ERROR, message, null);
 	}

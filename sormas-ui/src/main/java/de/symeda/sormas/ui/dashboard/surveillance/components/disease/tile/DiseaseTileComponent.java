@@ -191,12 +191,6 @@ public class DiseaseTileComponent extends VerticalLayout {
 		Date dateFrom = diseaseBurden.getFrom();
 		Date dateTo = diseaseBurden.getTo();
 
-		System.out.println("dateFrom==");
-		System.out.println(dateFrom);
-
-		System.out.println("dateTo==");
-		System.out.println(dateTo);
-
 		VerticalLayout layout = new VerticalLayout();
 		layout.setWidth(100, Unit.PERCENTAGE);
 		layout.setMargin(false);

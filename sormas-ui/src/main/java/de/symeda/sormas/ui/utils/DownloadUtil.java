@@ -47,6 +47,7 @@ import java.util.function.Supplier;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import de.symeda.sormas.api.caze.CaseExportDto;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.LoggerFactory;
 
@@ -298,6 +299,16 @@ public final class DownloadUtil {
 		return populationDataStreamResource;
 	}
 
+//	public static <T> StreamResource createCsvExportStreamResource(Class<CaseExportDto> caseExportDtoClass,
+//																   CaseExportType exportType,
+//																   CsvStreamUtils.SupplierBiFunction<Integer,
+//																		   Integer,
+//																		   List<T>> integerIntegerListSupplierBiFunction,
+//																   CsvStreamUtils.SupplierBiFunction<String, Class<?>, String> captionProvider,
+//																   ExportEntityName entityName, ExportConfigurationDto exportConfiguration) {
+//	}
+
+
 	public static StreamResource createCaseManagementExportResource(
 		CaseCriteria criteria,
 		Supplier<Collection<String>> selectedRows,
@@ -391,6 +402,51 @@ public final class DownloadUtil {
 		result.writeTo(zos);
 		zos.closeEntry();
 	}
+
+
+	public static <T> StreamResource createCsvExportStreamResourceDuplicate(
+			Class<T> exportRowClass,
+			Enum<?> exportType,
+			CsvStreamUtils.SupplierBiFunction<Integer, Integer, List<T>> exportRowsSupplier,
+			CsvStreamUtils.SupplierBiFunction<String, Class<?>, String> propertyIdCaptionFunction,
+			ExportEntityName entityName,
+			ExportConfigurationDto exportConfiguration) {
+
+		String exportFileName = createFileNameWithCurrentDate(entityName, ".csv");
+		StreamResource extendedStreamResource = new StreamResource(() -> new DelayedInputStream((out) -> {
+			try {
+				CsvStreamUtils.writeCsvContentToStream(
+						exportRowClass,
+						exportRowsSupplier,
+						propertyIdCaptionFunction,
+						exportConfiguration,
+						(o) -> exportType == null || hasExportTarget(exportType, (Method) o),
+						FacadeProvider.getConfigFacade(),
+						out);
+			} catch (Exception e) {
+				LoggerFactory.getLogger(DownloadUtil.class).error(e.getMessage(), e);
+
+				throw e;
+			}
+
+		},
+				e -> {
+					// TODO This currently requires the user to click the "Export" button again or reload the page
+					//  as the UI
+					// is not automatically updated; this should be changed once Vaadin push is enabled (see #516)
+					VaadinSession.getCurrent()
+							.access(
+									() -> new Notification(
+											I18nProperties.getString(Strings.headingExportFailed),
+											I18nProperties.getString(Strings.messageExportFailed),
+											Type.ERROR_MESSAGE,
+											false).show(Page.getCurrent()));
+				}), exportFileName);
+		extendedStreamResource.setMIMEType("text/csv");
+		extendedStreamResource.setCacheTime(0);
+		return extendedStreamResource;
+	}
+
 
 	public static interface OutputStreamConsumer {
 

@@ -44,9 +44,6 @@ public class DiseaseFilterLayout extends DashboardFilterLayout {
 	@Override
 	public void populateLayout() {
 		
-		System.out.println("populateLayout dashboardDataProvider.getFromDate()");
-
-		System.out.println(dashboardDataProvider.getFromDate());
 
 //		super.populateLayout();
 //		createRegionAndDistrictFilter();

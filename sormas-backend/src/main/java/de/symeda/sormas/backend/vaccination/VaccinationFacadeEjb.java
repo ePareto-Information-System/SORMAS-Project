@@ -29,6 +29,8 @@ import javax.ejb.Stateless;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import de.symeda.sormas.api.person.PersonNameDto;
+import de.symeda.sormas.api.sample.PathogenTestDto;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -259,6 +261,12 @@ public class VaccinationFacadeEjb implements VaccinationFacade {
 	}
 
 	@Override
+	public List<VaccinationDto> getByPersonNames(List<PersonNameDto> personNameDtos) {
+		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
+		return vaccinationService.getByPersonNames(personNameDtos).stream().map(c -> convertToDto(c, pseudonymizer)).collect(Collectors.toList());
+	}
+
+	@Override
 	public List<VaccinationListEntryDto> getEntriesList(
 		VaccinationListCriteria criteria,
 		Integer first,
@@ -324,6 +332,7 @@ public class VaccinationFacadeEjb implements VaccinationFacade {
 							: Strings.messageVaccinationNoDateNotRelevantForContact)))
 			.collect(Collectors.toList());
 	}
+
 
 	@Override
 	public List<VaccinationListEntryDto> getEntriesListWithRelevance(
