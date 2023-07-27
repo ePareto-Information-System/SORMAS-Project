@@ -54,6 +54,7 @@ public class AdditionalTestListComponent extends VerticalLayout {
 			componentHeader.addComponent(createButton);
 			componentHeader.setComponentAlignment(createButton, Alignment.MIDDLE_RIGHT);
 		}
+		
 	}
 
 	public void reload() {

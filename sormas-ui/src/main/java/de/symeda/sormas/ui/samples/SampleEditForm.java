@@ -31,6 +31,8 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Label;
 import com.vaadin.v7.ui.ComboBox;
 
+import com.vaadin.v7.ui.DateField;
+import com.vaadin.v7.ui.TextField;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -86,7 +88,27 @@ public class SampleEditForm extends AbstractSampleForm {
 			} else {
 				getField(SampleDto.PATHOGEN_TEST_RESULT).setEnabled(false);
 			}
-			fillPathogenTestResult();
+			//fillPathogenTestResult();
+
+				fillPathogenTestResult();
+
+			if(UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO) ){
+
+				getField(SampleDto.REQUESTED_OTHER_PATHOGEN_TESTS).setEnabled(false);
+				getField(SampleDto.REQUESTED_PATHOGEN_TESTS).setEnabled(false);
+				getField(SampleDto.PATHOGEN_TEST_RESULT).setEnabled(false);
+				getField(SampleDto.SHIPMENT_DATE).setEnabled(false);
+				getField(SampleDto.SHIPMENT_DETAILS).setEnabled(false);
+				getField(SampleDto.PATHOGEN_TESTING_REQUESTED).setEnabled(false);
+				getField(SampleDto.ADDITIONAL_TESTING_REQUESTED).setEnabled(false);
+
+				//getField(SampleDto.SHIPMENT_DETAILS).setEnabled(false);
+				//getField(SampleDto.REFERRED_TO).setEnabled(false);
+				//getField("referredFrom").setEnabled(false);
+
+
+			}
+
 			UserReferenceDto reportingUser = getValue().getReportingUser();
 			if (!(UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_NOT_OWNED)
 				|| (reportingUser != null && UserProvider.getCurrent().getUuid().equals(reportingUser.getUuid())))) {
@@ -95,6 +117,7 @@ public class SampleEditForm extends AbstractSampleForm {
 				getField(SampleDto.SAMPLING_REASON_DETAILS).setEnabled(false);
 				getField(SampleDto.FIELD_SAMPLE_ID).setEnabled(false);
 			}
+
 		});
 	}
 

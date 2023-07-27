@@ -12003,6 +12003,30 @@ INSERT INTO userroles_userrights(userright, sys_period, userrole_id)
 
 INSERT INTO schema_version (version_number, comment) VALUES (484, 'Assiging PERFORM_BULK_OPERATIONS right to Lab Officer');
 
+
+-- 2023-07-21 Create user roles LAB_ATTENDANT and LAB_SUPERVISOR Assigning userrights to roles 'LAB_ATTENDANT' and 'LAB_SUPERVISOR' 
+-- and assigning new right 'SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO' to LAB_ATTEDANT  #37
+INSERT INTO userroles (id,uuid, changedate,creationdate, caption, description, enabled, hasoptionalhealthfacility, hasassociateddistrictuser, porthealthuser, jurisdictionlevel)
+VALUES
+    (nextval('entity_seq'),generate_base32_uuid(), now(),now(), 'Lab Attendant', 'Role for Lab Attendant', true, false, false, false, 'LABORATORY'),
+    (nextval('entity_seq'),generate_base32_uuid(), now(),now(), 'Lab Supervisor', 'Role for Lab Supervisor', true, false, false, false, 'LABORATORY');
+
+INSERT INTO userroles_userrights (userright, userrole_id)
+SELECT userright, (SELECT id FROM userroles WHERE caption = 'Lab Supervisor' LIMIT 1)
+FROM userroles_userrights
+WHERE userrole_id = (SELECT id FROM userroles WHERE caption = 'Lab Officer' LIMIT 1);
+
+INSERT INTO userroles_userrights (userright, userrole_id)
+SELECT userright, (SELECT id FROM userroles WHERE caption = 'Lab Attendant' LIMIT 1)
+FROM userroles_userrights
+WHERE userrole_id = (SELECT id FROM userroles WHERE caption = 'Lab Officer' LIMIT 1);
+
+INSERT INTO userroles_userrights (userright, userrole_id)
+VALUES 
+    ('SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO', (SELECT id FROM userroles WHERE caption = 'Lab Attendant' LIMIT 1));
+INSERT INTO schema_version (version_number, comment) VALUES (485, 'Create user roles Lab Attendant and Lab Supervisor and Assigning userrights to roles LAB_ATTENDANT and LAB_SUPERVISOR and assigning new right SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO to LAB_ATTEDANT  #37');
+
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 
 

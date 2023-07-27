@@ -3,6 +3,8 @@ package de.symeda.sormas.api.user;
 import de.symeda.sormas.api.ReferenceDto;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 
+import java.util.Objects;
+
 public class UserRoleReferenceDto extends ReferenceDto implements StatisticsGroupingKey {
 
 	public UserRoleReferenceDto() { super(); }
@@ -28,5 +30,18 @@ public class UserRoleReferenceDto extends ReferenceDto implements StatisticsGrou
 		} else {
 			return this.getUuid().compareTo(((UserRoleReferenceDto) o).getUuid());
 		}
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		UserRoleReferenceDto that = (UserRoleReferenceDto) o;
+		return Objects.equals(getCaption(), that.getCaption());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getCaption());
 	}
 }

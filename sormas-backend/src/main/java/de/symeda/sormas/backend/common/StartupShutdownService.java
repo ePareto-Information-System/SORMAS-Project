@@ -391,6 +391,15 @@ public class StartupShutdownService {
 				DefaultEntityHelper.POE_SUP_USERNAME_AND_PASSWORD,
 				u -> u.setRegion(region));
 
+			// Create Point of Lab Supervisor
+			createAndPersistDefaultUser(
+				//UserRole.LAB_SUPERVISOR,
+					userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.LAB_USER)),
+				"Laboratory",
+				"Supervisor",
+				DefaultEntityHelper.LAB_SUP_USERNAME_AND_PASSWORD,
+				u -> u.setLaboratory(laboratory));
+
 			// Create Laboratory Officer
 			createAndPersistDefaultUser(
 				userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.LAB_USER)),
@@ -817,6 +826,7 @@ public class StartupShutdownService {
 			case 479:
 				fillDefaultUserRole();
 				break;
+
 			case 467:
 				List<User> usersWithoutUserRoles =
 					userService.getAll().stream().filter(user -> user.getUserRoles().isEmpty()).collect(Collectors.toList());
@@ -850,6 +860,8 @@ public class StartupShutdownService {
 				}
 				break;
 
+
+
 			default:
 				throw new NoSuchElementException(DataHelper.toStringNullable(versionNeedingUpgrade));
 			}
@@ -881,6 +893,8 @@ public class StartupShutdownService {
 			userRoleService.persist(userRole);
 		});
 	}
+
+
 	
 	private void fillDefaultUserRole() {	
 

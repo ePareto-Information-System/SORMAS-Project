@@ -28,6 +28,7 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.sample.SampleReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
+import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.components.sidecomponent.SideComponent;
 
 @SuppressWarnings("serial")
@@ -46,6 +47,11 @@ public class PathogenTestListComponent extends SideComponent {
 		}, UserRight.PATHOGEN_TEST_CREATE);
 
 		PathogenTestList pathogenTestList = new PathogenTestList(sampleRef, actionCallback);
+
+		if(UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO) ) {
+			pathogenTestList.setEnabled(false);
+		}
+
 		addComponent(pathogenTestList);
 		pathogenTestList.reload();
 	}

@@ -81,6 +81,11 @@ public class PathogenTestList extends PaginationList<PathogenTestDto> {
 							.edit(pathogenTestUuid, SormasUI::refreshView, (pathogenTestDto, callback) -> callback.run())));
 			}
 			listLayout.addComponent(listEntry);
+
+//			if(!UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_PATHOGEN_TEST_CONFIRM)){
+//				listLayout.setEnabled(false);
+//			}
+
 		}
 	}
 }

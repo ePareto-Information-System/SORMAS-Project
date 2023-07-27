@@ -71,6 +71,8 @@ public enum UserRight {
 	SAMPLE_VIEW,
 	SAMPLE_EDIT,
 	SAMPLE_EDIT_NOT_OWNED,
+	SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO,
+	SAMPLE_EDIT_PATHOGEN_TEST_CONFIRM,
 	SAMPLE_DELETE,
 	SAMPLE_TRANSFER,
 	SAMPLE_EXPORT,
@@ -251,6 +253,12 @@ public enum UserRight {
 	public static final String _SAMPLE_VIEW = "SAMPLE_VIEW";
 	public static final String _SAMPLE_EDIT = "SAMPLE_EDIT";
 	public static final String _SAMPLE_EDIT_NOT_OWNED = "SAMPLE_EDIT_NOT_OWNED";
+
+	public static final String _SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO = "SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO";
+
+	public static final String _SAMPLE_EDIT_PATHOGEN_TEST_CONFIRM = "SAMPLE_EDIT_PATHOGEN_TEST_CONFIRM";
+
+
 	public static final String _SAMPLE_DELETE = "SAMPLE_DELETE";
 	public static final String _SAMPLE_TRANSFER = "SAMPLE_TRANSFER";
 	public static final String _SAMPLE_EXPORT = "SAMPLE_EXPORT";
