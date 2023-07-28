@@ -614,7 +614,7 @@ public class DashboardMapComponent extends VerticalLayout {
 					cmbPeriodFilter.clear();
 					
 					if (periodType == null) {
-						cmbPeriodFilter.setVisible(false);						
+						cmbPeriodFilter.setEnabled(false);						
 						dateFrom = null;
 						dateTo = null;
 						
@@ -623,7 +623,7 @@ public class DashboardMapComponent extends VerticalLayout {
 						return;
 					}
 					
-					cmbPeriodFilter.setVisible(true);
+					cmbPeriodFilter.setEnabled(true);
 					
 					if (mapCaseDtos.size() == 0)
 						return;
@@ -662,6 +662,7 @@ public class DashboardMapComponent extends VerticalLayout {
 						cmbPeriodFilter.setItemCaption(date, DateHelper.formatLocalDate(date, dateFormat));
 				});
 				
+				cmbPeriodFilter.setEnabled(false);
 				cmbPeriodFilter.addValueChangeListener(e -> {
 					Date date = (Date) e.getProperty().getValue();
 					
