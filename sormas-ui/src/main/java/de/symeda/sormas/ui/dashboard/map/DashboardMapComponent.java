@@ -777,7 +777,7 @@ public class DashboardMapComponent extends VerticalLayout {
 		}
 
 		cmbPeriodFilter.setEnabled(true);
-
+//		checks if map has a case before rendering period dropdown
 		if (mapAndFacilityCases.size() == 0)
 			return;
 
