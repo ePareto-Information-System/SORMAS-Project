@@ -21,7 +21,9 @@ import static java.util.Objects.nonNull;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,6 +31,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.vaadin.hene.popupbutton.PopupButton;
 
@@ -48,6 +51,7 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.shared.ui.grid.HeightMode;
 import com.vaadin.v7.ui.CheckBox;
+import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.OptionGroup;
 
 import de.symeda.sormas.api.CaseMeasure;
@@ -75,6 +79,7 @@ import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DataHelper.Pair;
+import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.dashboard.DashboardCssStyles;
@@ -116,6 +121,8 @@ public class DashboardMapComponent extends VerticalLayout {
 	private boolean showRegions;
 	private boolean hideOtherCountries;
 	private boolean showCurrentEpiSituation;
+	private Date dateFrom = null;
+	private Date dateTo = null;
 
 	// Entities
 	private final HashMap<FacilityReferenceDto, List<MapCaseDto>> casesByFacility = new HashMap<>();
@@ -138,6 +145,10 @@ public class DashboardMapComponent extends VerticalLayout {
 	private BigDecimal districtValuesUpperQuartile;
 	private Consumer<Boolean> externalExpandListener;
 	private boolean emptyPopulationDistrictPresent;
+	private MapCasePeriodOption mapCasePeriodOption;
+
+	ComboBox cmbPeriodType;
+	ComboBox cmbPeriodFilter;
 
 	public DashboardMapComponent(DashboardDataProvider dashboardDataProvider) {
 		this.dashboardDataProvider = dashboardDataProvider;
@@ -178,6 +189,7 @@ public class DashboardMapComponent extends VerticalLayout {
 		if (dashboardDataProvider.getDashboardType() == DashboardType.SURVEILLANCE) {
 			showCases = true;
 			caseClassificationOption = MapCaseClassificationOption.ALL_CASES;
+			mapCasePeriodOption = MapCasePeriodOption.CASES_INCIDENCE;
 			showContacts = false;
 			showEvents = false;
 			showConfirmedContacts = true;
@@ -185,6 +197,7 @@ public class DashboardMapComponent extends VerticalLayout {
 		} else if (dashboardDataProvider.getDashboardType() == DashboardType.CONTACTS) {
 			showCases = false;
 			caseClassificationOption = MapCaseClassificationOption.ALL_CASES;
+			mapCasePeriodOption = MapCasePeriodOption.CASES_INCIDENCE;
 			showContacts = true;
 			showEvents = false;
 			showConfirmedContacts = true;
@@ -335,6 +348,8 @@ public class DashboardMapComponent extends VerticalLayout {
 
 		// Re-create the map key layout to only show the keys for the selected layers
 		legendDropdown.setContent(createLegend());
+
+		updatePeriodFilters();
 	}
 
 	public List<CaseDataDto> getCasesForFacility(FacilityReferenceDto facility) {
@@ -446,6 +461,7 @@ public class DashboardMapComponent extends VerticalLayout {
 					showCasesCheckBox.addValueChangeListener(e -> {
 						showCases = (boolean) e.getProperty().getValue();
 						mapCaseDisplayModeSelect.setEnabled(showCases);
+						caseClassificationOptions.setEnabled(showCases);
 						mapCaseDisplayModeSelect.setValue(mapCaseDisplayMode);
 						caseClassificationOptions.setEnabled(showCases);
 						refreshMap(true);
@@ -460,6 +476,9 @@ public class DashboardMapComponent extends VerticalLayout {
 					showCasesLayout.setComponentAlignment(infoLabel, Alignment.TOP_CENTER);
 				}
 				layersLayout.addComponent(showCasesLayout);
+
+				layersLayout.addComponent(caseClassificationOptions);
+				caseClassificationOptions.setEnabled(showCases);
 
 				layersLayout.addComponent(mapCaseDisplayModeSelect);
 				mapCaseDisplayModeSelect.setEnabled(showCases);
@@ -574,6 +593,8 @@ public class DashboardMapComponent extends VerticalLayout {
 					refreshMap(true);
 				});
 				layersLayout.addComponent(showCurrentEpiSituationCB);
+
+				createPeriodFilters(layersLayout);
 			}
 		}
 
@@ -585,13 +606,221 @@ public class DashboardMapComponent extends VerticalLayout {
 		return mapFooterLayout;
 	}
 
+	private PeriodFilterReloadFlag reloadPeriodFiltersFlag = PeriodFilterReloadFlag.RELOAD_AND_KEEP_VALUE;
+
+	private void createPeriodFilters(VerticalLayout layersLayout) {
+		cmbPeriodType = new ComboBox();
+		cmbPeriodFilter = new ComboBox();
+
+		Button btnBack = new Button(VaadinIcons.CHEVRON_LEFT);
+		Button btnForward = new Button(VaadinIcons.CHEVRON_RIGHT);
+
+		cmbPeriodType.addItems(MapPeriodType.values());
+		cmbPeriodType.setInputPrompt(I18nProperties.getString(Strings.promptFilterByPeriod));
+		cmbPeriodType.setWidth(132, Unit.PIXELS);
+		cmbPeriodType.addValueChangeListener(e -> {
+			reloadPeriodFiltersFlag = PeriodFilterReloadFlag.RELOAD_AND_CLEAR_VALUE;
+			updatePeriodFilters();
+		});
+
+		//case period display
+		OptionGroup casePeriodDisplayOptions = new OptionGroup();
+		casePeriodDisplayOptions.addItems((Object[]) MapCasePeriodOption.values());
+		casePeriodDisplayOptions.setValue(mapCasePeriodOption);
+		casePeriodDisplayOptions.setEnabled(false);
+		casePeriodDisplayOptions.addValueChangeListener(event -> {
+			mapCasePeriodOption = (MapCasePeriodOption) event.getProperty().getValue();
+			Date date = (Date) cmbPeriodFilter.getValue();
+			if (date != null) {
+				if (mapCasePeriodOption.equals(MapCasePeriodOption.CASES_INCIDENCE)) {
+					dateFrom = DateHelper.getStartOfYear(date);
+
+				} else {
+					dateFrom = DateHelper.getStartOfMonth(date);
+
+				}
+				dateTo = DateHelper.getEndOfMonth(date);
+				reloadPeriodFiltersFlag = PeriodFilterReloadFlag.DONT_RELOAD;
+				dashboardDataProvider.setFromDate(dateFrom);
+				dashboardDataProvider.setToDate(dateTo);
+				refreshMap();
+			} else {
+				refreshMap(false);
+			}
+		});
+
+		cmbPeriodFilter.setInputPrompt(I18nProperties.getString(Strings.promptSelectPeriod));
+		cmbPeriodFilter.setWidth(120, Unit.PIXELS);
+		cmbPeriodFilter.setNullSelectionAllowed(false);
+		cmbPeriodFilter.setEnabled(false);
+		cmbPeriodFilter.addValueChangeListener(e -> {
+			Date date = (Date) e.getProperty().getValue();
+
+			if (date != null) {
+				MapPeriodType periodType = (MapPeriodType) cmbPeriodType.getValue();
+
+				switch (periodType) {
+				case DAILY:
+					dateFrom = DateHelper.getStartOfDay(date);
+					dateTo = DateHelper.getEndOfDay(date);
+					break;
+				case WEEKLY:
+					dateFrom = DateHelper.getStartOfWeek(date);
+					dateTo = DateHelper.getEndOfWeek(date);
+					break;
+				case MONTHLY:
+					dateFrom = DateHelper.getStartOfMonth(date);
+					dateTo = DateHelper.getEndOfMonth(date);
+					casePeriodDisplayOptions.setEnabled(true);
+					break;
+				case YEARLY:
+					dateFrom = DateHelper.getStartOfYear(date);
+					dateTo = DateHelper.getEndOfYear(date);
+					break;
+				default:
+					dateFrom = null;
+					dateTo = null;
+				}
+			} else {
+				dateFrom = null;
+				dateTo = null;
+			}
+
+			//disable arrow buttons if date is first or last item in the dropdown
+			int curDateIndex = ((List<?>) cmbPeriodFilter.getItemIds()).indexOf(date);
+			Boolean hasNextDate = cmbPeriodFilter.size() > 0 && curDateIndex < cmbPeriodFilter.size() - 1;
+			Boolean hasPrevDate = cmbPeriodFilter.size() > 0 && curDateIndex > 0;
+			btnBack.setEnabled(hasPrevDate);
+			btnForward.setEnabled(hasNextDate);
+
+			reloadPeriodFiltersFlag = PeriodFilterReloadFlag.DONT_RELOAD;
+
+			refreshMap();
+		});
+		cmbPeriodFilter.addItemSetChangeListener(e -> {
+			cmbPeriodFilter.setEnabled(cmbPeriodFilter.size() > 0);
+			btnForward.setEnabled(cmbPeriodFilter.size() > 0);
+		});
+
+		CssStyles.style(btnBack, ValoTheme.BUTTON_BORDERLESS);
+		btnBack.setEnabled(false);
+		btnBack.addClickListener(e -> {
+			Date curDate = (Date) cmbPeriodFilter.getValue();
+			int curDateIndex = ((List<?>) cmbPeriodFilter.getItemIds()).indexOf(curDate);
+
+			if (curDateIndex <= 0)
+				return;
+
+			int prevDateIndex = curDateIndex - 1;
+			Date prevDate = (Date) ((List<?>) cmbPeriodFilter.getItemIds()).get(prevDateIndex);
+
+			cmbPeriodFilter.setValue(prevDate);
+		});
+
+		CssStyles.style(btnForward, ValoTheme.BUTTON_BORDERLESS);
+		btnForward.setEnabled(false);
+		btnForward.addClickListener(e -> {
+			Date curDate = (Date) cmbPeriodFilter.getValue();
+			int curDateIndex = ((List<?>) cmbPeriodFilter.getItemIds()).indexOf(curDate);
+
+			if (curDateIndex >= cmbPeriodFilter.size() - 1)
+				return;
+
+			int nextDateIndex = curDateIndex + 1;
+			Date nextDate = (Date) ((List<?>) cmbPeriodFilter.getItemIds()).get(nextDateIndex);
+
+			cmbPeriodFilter.setValue(nextDate);
+		});
+
+		HorizontalLayout periodSelectionLayout = new HorizontalLayout();
+		periodSelectionLayout.setSpacing(false);
+
+		periodSelectionLayout.addComponent(btnBack);
+		periodSelectionLayout.addComponent(cmbPeriodFilter);
+		periodSelectionLayout.addComponent(btnForward);
+
+		HorizontalLayout periodFilterLayout = new HorizontalLayout();
+		periodFilterLayout.setStyleName(CssStyles.VSPACE_TOP_2);
+		periodFilterLayout.addComponent(cmbPeriodType);
+		periodFilterLayout.addComponent(periodSelectionLayout);
+		layersLayout.addComponent(periodFilterLayout);
+		layersLayout.addComponent(casePeriodDisplayOptions);
+	}
+
 	private enum PeriodFilterReloadFlag {
 		RELOAD_AND_KEEP_VALUE,
 		RELOAD_AND_CLEAR_VALUE,
 		DONT_RELOAD
 	}
 
-	private PeriodFilterReloadFlag reloadPeriodFiltersFlag = PeriodFilterReloadFlag.RELOAD_AND_KEEP_VALUE;
+	private void updatePeriodFilters() {
+		MapPeriodType periodType = (MapPeriodType) cmbPeriodType.getValue();
+
+		//store current flag and reset it
+		PeriodFilterReloadFlag reloadFlag = reloadPeriodFiltersFlag;
+		reloadPeriodFiltersFlag = PeriodFilterReloadFlag.RELOAD_AND_KEEP_VALUE;
+
+		String cachedDateValue = cmbPeriodFilter.getCaption();
+
+		if (reloadFlag != PeriodFilterReloadFlag.DONT_RELOAD)
+			cmbPeriodFilter.removeAllItems();
+
+		if (periodType == null) {
+			cmbPeriodFilter.setEnabled(false);
+			dateFrom = null;
+			dateTo = null;
+
+			if (reloadFlag != PeriodFilterReloadFlag.RELOAD_AND_KEEP_VALUE)
+				refreshMap();
+
+			return;
+		}
+
+		cmbPeriodFilter.setEnabled(true);
+
+		if (mapAndFacilityCases.size() == 0)
+			return;
+
+		List<Date> reportedDates = mapAndFacilityCases.stream().map(c -> c.getReportDate()).collect(Collectors.toList());
+		Date minDate = reportedDates.stream().min(Date::compareTo).get();
+		Date maxDate = reportedDates.stream().max(Date::compareTo).get();
+
+		List<Date> dates;
+		String strDateFormat = "";
+		switch (periodType) {
+		case DAILY:
+			dates = DateHelper.listDaysBetween(minDate, maxDate);
+			strDateFormat = "MMM dd, yyyy";
+			break;
+		case WEEKLY:
+			dates = DateHelper.listWeeksBetween(minDate, maxDate);
+			strDateFormat = "'" + I18nProperties.getString(Strings.weekShort) + "' w, yyyy";
+			break;
+		case MONTHLY:
+			dates = DateHelper.listMonthsBetween(minDate, maxDate);
+			strDateFormat = "MMM yyyy";
+			break;
+		case YEARLY:
+			dates = DateHelper.listYearsBetween(minDate, maxDate);
+			strDateFormat = "yyyy";
+			break;
+		default:
+			dates = Collections.emptyList();
+		}
+
+		SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
+
+		cmbPeriodFilter.addItems(dates);
+		for (Date date : dates) {
+			String caption = DateHelper.formatLocalDate(date, dateFormat);
+			cmbPeriodFilter.setItemCaption(date, caption);
+			if (reloadFlag != PeriodFilterReloadFlag.RELOAD_AND_CLEAR_VALUE && caption.equals(cachedDateValue))
+				cmbPeriodFilter.setValue(date);
+		}
+
+		if (reloadFlag == PeriodFilterReloadFlag.RELOAD_AND_CLEAR_VALUE)
+			cmbPeriodFilter.setValue(cmbPeriodFilter.getItemIds().iterator().next());
+	}
 
 	private VerticalLayout createLegend() {
 		VerticalLayout legendLayout = new VerticalLayout();
@@ -1068,8 +1297,12 @@ public class DashboardMapComponent extends VerticalLayout {
 			CaseClassification classification = caze.getCaseClassification();
 			if (caseClassificationOption == MapCaseClassificationOption.CONFIRMED_CASES_ONLY && classification != CaseClassification.CONFIRMED)
 				continue;
+			if (caseClassificationOption == MapCaseClassificationOption.CONFIRMED_CASES_ONLY && classification != CaseClassification.CONFIRMED)
+				continue;
+			if (dateTo != null && !(caze.getReportDate() == dateTo || caze.getReportDate().before(dateTo) || dateTo.after(caze.getReportDate())))
+				continue;
 			boolean hasCaseGps =
-				(caze.getAddressLat() != null && caze.getAddressLon() != null) || (caze.getReportLat() != null && caze.getReportLon() != null);
+				(caze.getAddressLat() != null && caze.getAddressLon() != null) || (caze.getReportLat() != null || caze.getReportLon() != null);
 			boolean hasFacilityGps = caze.getHealthFacilityLat() != null && caze.getHealthFacilityLon() != null;
 
 			if (mapCaseDisplayMode == MapCaseDisplayMode.CASE_ADDRESS) {
@@ -1129,6 +1362,12 @@ public class DashboardMapComponent extends VerticalLayout {
 				continue;
 			}
 			if (!showConfirmedContacts && contact.getContactClassification() != ContactClassification.UNCONFIRMED) {
+				continue;
+			}
+			if (dateTo != null
+				&& !(contact.getCaseReportDate() == dateTo
+					|| contact.getCaseReportDate().before(dateTo)
+					|| dateTo.after(contact.getCaseReportDate()))) {
 				continue;
 			}
 
@@ -1196,6 +1435,10 @@ public class DashboardMapComponent extends VerticalLayout {
 				icon = MarkerIcon.EVENT_RUMOR;
 				break;
 			default:
+				continue;
+			}
+
+			if (dateTo != null && !(event.getEventDate() == dateTo || event.getEventDate().before(dateTo) || dateTo.after(event.getEventDate()))) {
 				continue;
 			}
 

@@ -415,7 +415,7 @@ public final class DateHelper {
 	 * Calculate full days between the two given dates.
 	 */
 	public static int getFullDaysBetween(Date start, Date end) {
-		return Days.daysBetween(new LocalDate(start.getTime()), new LocalDate(end.getTime())).getDays();
+		return Days.daysBetween(new LocalDate(start.getTime()), new LocalDate(end.getTime())).getDays() + 5;
 	}
 
 	/**
@@ -423,7 +423,7 @@ public final class DateHelper {
 	 * end dates, so a one-week period from Monday to Sunday will return 7.
 	 */
 	public static int getDaysBetween(Date start, Date end) {
-		return Days.daysBetween(new LocalDate(start.getTime()), new LocalDate(end.getTime())).getDays() + 1;
+		return Days.daysBetween(new LocalDate(start.getTime()), new LocalDate(end.getTime())).getDays() + 3;
 	}
 
 	/**
