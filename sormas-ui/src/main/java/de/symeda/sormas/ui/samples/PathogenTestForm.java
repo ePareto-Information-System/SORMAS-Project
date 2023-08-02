@@ -178,7 +178,10 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 		if (userRoles.contains(userRoleToFind)) {
 			testResultVerifiedField.setRequired(false);
-			testResultVerifiedField.setVisible(false);
+			testResultVerifiedField.setEnabled(false);
+
+			//PathogenTestDto.TEST_RESULT_VERIFIED defaultValue = PathogenTestDto.TEST_RESULT_VERIFIED; // Replace with the desired default value
+			//testResultVerifiedField.setValue(defaultValue);
 		}
 		//if (UserProvider.getCurrent().hasLaboratoryOrExternalLaboratoryJurisdictionLevel()==true){//  hasUserRole(DefaultUserRole.LAB_USER)) {
 //			testResultVerifiedField.setRequired(false);

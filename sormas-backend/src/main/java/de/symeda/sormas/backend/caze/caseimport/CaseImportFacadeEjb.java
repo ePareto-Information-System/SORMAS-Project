@@ -162,8 +162,9 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
             caseDataDto = caseFacade.getCaseDataByUuid(entities.getCaze().getUuid());
         }
         //pickMerge.equals(PickMerge.MERGE) &&
-        if ( entities.getCaze().getUuid() != null) {
-            caseDataDto = caseFacade.getCaseDataByUuid(entities.getCaze().getUuid());
+        //caseDataDto = caseFacade.getCaseDataByUuid(entities.getCaze().getUuid());
+
+        if ( entities.getCaze().getUuid() != null && caseDataDto!=null) {
             String uuid = caseDataDto.getUuid();
             caseDataDto = entities.getCaze();
             caseDataDto.setUuid(uuid);

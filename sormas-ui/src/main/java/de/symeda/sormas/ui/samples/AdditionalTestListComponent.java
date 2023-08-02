@@ -53,6 +53,12 @@ public class AdditionalTestListComponent extends VerticalLayout {
 
 			componentHeader.addComponent(createButton);
 			componentHeader.setComponentAlignment(createButton, Alignment.MIDDLE_RIGHT);
+
+
+		}
+		if(UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO) ) {
+			createButton.setEnabled(false);
+			list.setEnabled(false);
 		}
 		
 	}

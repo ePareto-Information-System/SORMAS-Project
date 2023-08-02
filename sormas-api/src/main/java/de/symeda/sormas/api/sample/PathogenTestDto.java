@@ -26,6 +26,7 @@ import de.symeda.sormas.api.ImportIgnore;
 import de.symeda.sormas.api.common.DeletionReason;
 import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.sormastosormas.S2SIgnoreProperty;
@@ -33,6 +34,7 @@ import de.symeda.sormas.api.sormastosormas.SormasToSormasConfig;
 import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
+import de.symeda.sormas.api.user.UserRoleReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DateFormatHelper;
 import de.symeda.sormas.api.utils.DependingOnFeatureType;
@@ -143,7 +145,11 @@ public class PathogenTestDto extends PseudonymizableDto {
 		if (sample.getSamplePurpose() == SamplePurpose.INTERNAL) {
 			pathogenTest.setTestResultVerified(true);
 		}
-		if (currentUser.getUserRoles().contains(DefaultUserRole.LAB_USER)) {
+
+		String valLabUser= I18nProperties.getEnumCaption(DefaultUserRole.LAB_USER);
+		UserRoleReferenceDto userRoleToFind = new UserRoleReferenceDto(null, valLabUser);
+
+		if (currentUser.getUserRoles().contains(userRoleToFind)) {
 			pathogenTest.setTestResultVerified(false);
 		}
 		pathogenTest.setLab(currentUser.getLaboratory());
