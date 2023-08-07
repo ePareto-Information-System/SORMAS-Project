@@ -880,17 +880,21 @@ public class StartupShutdownService {
 	 */
 	private void fillDefaultUserRoles() {
 		Arrays.stream(DefaultUserRole.values()).forEach(role -> {
-			UserRole userRole = userRoleService.getByCaption(role.name());
-			userRole.setCaption(I18nProperties.getEnumCaption(role));
-			userRole.setPortHealthUser(role.isPortHealthUser());
-			userRole.setHasAssociatedDistrictUser(role.hasAssociatedDistrictUser());
-			userRole.setHasOptionalHealthFacility(DefaultUserRole.hasOptionalHealthFacility(Collections.singleton(role)));
-			userRole.setEnabled(true);
-			userRole.setJurisdictionLevel(role.getJurisdictionLevel());
-			userRole.setSmsNotificationTypes(role.getSmsNotificationTypes());
-			userRole.setEmailNotificationTypes(role.getEmailNotificationTypes());
-			userRole.setUserRights(role.getDefaultUserRights());
-			userRoleService.persist(userRole);
+
+				UserRole userRole = userRoleService.getByCaption(role.name());
+				if(userRole!=null) {
+					userRole.setCaption(I18nProperties.getEnumCaption(role));
+					userRole.setPortHealthUser(role.isPortHealthUser());
+					userRole.setHasAssociatedDistrictUser(role.hasAssociatedDistrictUser());
+					userRole.setHasOptionalHealthFacility(DefaultUserRole.hasOptionalHealthFacility(Collections.singleton(role)));
+					userRole.setEnabled(true);
+					userRole.setJurisdictionLevel(role.getJurisdictionLevel());
+					userRole.setSmsNotificationTypes(role.getSmsNotificationTypes());
+					userRole.setEmailNotificationTypes(role.getEmailNotificationTypes());
+					userRole.setUserRights(role.getDefaultUserRights());
+					userRoleService.persist(userRole);
+				}
+
 		});
 	}
 
