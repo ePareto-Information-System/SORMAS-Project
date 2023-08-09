@@ -244,6 +244,9 @@ public class MergeImportedCasesGrid extends TreeGrid<CaseIndexDto> {
 
 	@SuppressWarnings("unchecked")
 	public void reload() {
+		long startTime = System.currentTimeMillis();
+		System.out.println("Turnaround time1 starting:_____ " + startTime + " milliseconds");
+
 
 		TreeDataProvider<CaseIndexDto> dataProvider = (TreeDataProvider<CaseIndexDto>) getDataProvider();
 		TreeData<CaseIndexDto> data = dataProvider.getTreeData();
@@ -252,8 +255,14 @@ public class MergeImportedCasesGrid extends TreeGrid<CaseIndexDto> {
 		if (hiddenUuidPairs == null) {
 			hiddenUuidPairs = new ArrayList<>();
 		}
-
+		//delay
 		List<CaseIndexDto[]> casePairs = FacadeProvider.getCaseFacade().getCasesForDuplicateMerging(criteria, ignoreRegion);
+
+		long endTime = System.currentTimeMillis();
+		long turnaroundTime = endTime - startTime;
+
+		System.out.println("Turnaround time1: " + turnaroundTime + " milliseconds");
+
 //if(casePairs>0){
 		for (CaseIndexDto[] casePair : casePairs) {
 			boolean uuidPairExists = false;
@@ -274,7 +283,9 @@ public class MergeImportedCasesGrid extends TreeGrid<CaseIndexDto> {
 
 		expandRecursively(data.getRootItems(), 0);
 
+		//no delay
 		dataProvider.refreshAll();
+
 
 	}
 

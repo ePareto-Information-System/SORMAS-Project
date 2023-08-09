@@ -1849,6 +1849,10 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 
 
 	public List<CaseIndexDto[]> getCasesForDuplicateMerging(CaseCriteria criteria, boolean ignoreRegion, double nameSimilarityThreshold) {
+		long startTime2 = System.currentTimeMillis();
+
+		System.out.println("Turnaround time2 starting:_____ " + startTime2 + " milliseconds");
+
 
 		final CriteriaBuilder cb = em.getCriteriaBuilder();
 		final CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
@@ -1961,6 +1965,9 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 		filter = cb.and(filter, creationDateFilter);
 		filter = cb.and(filter, cb.notEqual(root.get(Case.ID), root2.get(Case.ID)));
 
+		System.out.println("echo criteria:--------------"+ criteria);
+
+		System.out.println(criteria);
 
 		if(criteria.getCaseUuids()!=null && criteria.getCaseUuids().size()>0){
 			Predicate casesFilter = cb.or(
@@ -1978,15 +1985,35 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 			filter = cb.and( filter, personsFilter);
 		}
 
+		System.out.println("=====----printing----filter====");
+
+		System.out.println(filter);
+
 		cq.where(filter);
 		cq.multiselect(root.get(Case.ID), root2.get(Case.ID), root.get(Case.CREATION_DATE));
 		cq.orderBy(cb.desc(root.get(Case.CREATION_DATE)));
+
+		System.out.println("=====----printing----query====");
+		System.out.println(cq);
 		//cq.orderBy(cb.desc(root.get(Case.CREATION_DATE)), cb.desc(root.get(Case.ID)), cb.desc(root2.get(Case.ID)));
 
 		List<Object[]> foundIds = em.createQuery(cq).setParameter("date_type", "epoch").getResultList();
+
+		System.out.println("=====----printing----foundIds====");
+		System.out.println(foundIds);
+
+		long endTime2 = System.currentTimeMillis();
+
+		long turnaroundTime2 = endTime2 - startTime2;
+
+		System.out.println("Turnaround time2: " + turnaroundTime2 + " milliseconds");
+
 		List<CaseIndexDto[]> resultList = new ArrayList<>();
 
 		if (!foundIds.isEmpty()) {
+
+			long startTime3 = System.currentTimeMillis();
+
 			CriteriaQuery<CaseIndexDto> indexCasesCq = cb.createQuery(CaseIndexDto.class);
 			Root<Case> indexRoot = indexCasesCq.from(Case.class);
 			selectIndexDtoFields(new CaseQueryContext(cb, indexCasesCq, indexRoot));
@@ -1995,7 +2022,29 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 			Map<Long, CaseIndexDto> indexCases =
 				em.createQuery(indexCasesCq).getResultStream().collect(Collectors.toMap(c -> c.getId(), Function.identity()));
 
+
+			// Unwrap the query to get the Hibernate-specific query
+			//org.hibernate.query.Query hibernateQuery = em.unwrap(org.hibernate.query.Query.class);
+
+			// Get the SQL query as a string
+			//String sqlQuery = hibernateQuery.getQueryString();
+
+			System.out.println("SQL Query: " + em.getTransaction());
+
+
+			long endTime3 = System.currentTimeMillis();
+
+			long turnaroundTime3 = endTime3 - startTime3;
+
+			System.out.println("Turnaround time3: " + turnaroundTime3 + " milliseconds");
+
 			for (Object[] idPair : foundIds) {
+
+				long startTime4 = System.currentTimeMillis();
+
+				System.out.println("Turnaround startTime4: " + startTime4 + " milliseconds");
+
+
 				try {
 					// Cloning is necessary here to allow us to add the same CaseIndexDto to the grid multiple times
 					CaseIndexDto parent = (CaseIndexDto) indexCases.get(idPair[0]).clone();
@@ -2017,7 +2066,15 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 				} catch (CloneNotSupportedException e) {
 					throw new RuntimeException(e);
 				}
+
+				long endTime4 = System.currentTimeMillis();
+
+				long turnaroundTime4 = endTime4 - startTime4;
+
+				System.out.println("Turnaround time4: " + turnaroundTime4 + " milliseconds");
 			}
+
+
 		}
 
 		return resultList;

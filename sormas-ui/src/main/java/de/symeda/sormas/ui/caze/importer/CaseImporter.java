@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -281,8 +282,26 @@ public class CaseImporter extends DataImporter {
         CaseCriteria criteria = new CaseCriteria();
 
         //Date going back in time
-        LocalDate beginningLocalDate = LocalDate.of(1, 1, 1);
-        Date date = Date.from(beginningLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        //LocalDate beginningLocalDate = LocalDate.of(1, 1, 1);
+        //Date date = Date.from(beginningLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+       //LocalDate currentDate = LocalDate.now();
+
+        // Calculate the last day of the previous month
+        //LocalDate lastDayOfPreviousMonth = currentDate.minusMonths(1).withDayOfMonth(currentDate.minusMonths(1).lengthOfMonth());
+
+        // Create a Date object from the LocalDate
+       // Date date = Date.from(lastDayOfPreviousMonth.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+
+        int currentYear = LocalDate.now().getYear();
+
+        // Calculate the last day of the last month of the previous year
+        LocalDate lastDayOfLastMonthOfPreviousYear = LocalDate.of(currentYear - 1, Month.DECEMBER, 1)
+                .withDayOfMonth(Month.DECEMBER.maxLength());
+
+        // Create a Date object from the LocalDate
+        Date date = Date.from(lastDayOfLastMonthOfPreviousYear.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
 
         criteria.creationDateFrom(date)
@@ -291,6 +310,10 @@ public class CaseImporter extends DataImporter {
 
         criteria.setCaseUuids(duplicateSimilarCaseIds);
         criteria.setPersonsUuids(duplicateSimilarPersonIds);
+
+        criteria.caseLike("");
+        criteria.eventLike("");
+        criteria.setReportingUserLike("");
 
         mergeImportedCasesGrid.setCriteria(criteria);
         mergeImportedCasesGrid.reload();
