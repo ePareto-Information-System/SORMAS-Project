@@ -65,6 +65,9 @@ import de.symeda.sormas.api.caze.caseimport.CaseMDDataDtoComparator;
 import de.symeda.sormas.api.caze.caseimport.GenericComparator;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.hql.internal.ast.ASTQueryTranslatorFactory;
+import org.hibernate.hql.spi.QueryTranslator;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -537,7 +540,9 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
         }
 
         cq.select(cb.countDistinct(root));
-        return em.createQuery(cq).getSingleResult();
+
+        Long resultSet = em.createQuery(cq).getSingleResult();
+        return resultSet;
     }
 
     public Page<CaseIndexDetailedDto> getIndexDetailedPage(
@@ -671,9 +676,25 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
         }
 
         if (first != null && max != null) {
+            TypedQuery typedQuery = em.createQuery(cq);
+            String hqlQueryString=typedQuery.unwrap(org.hibernate.query.Query.class).getQueryString();
+            ASTQueryTranslatorFactory queryTranslatorFactory = new ASTQueryTranslatorFactory();
+            SessionImplementor hibernateSession = em.unwrap(SessionImplementor.class);
+            QueryTranslator queryTranslator = queryTranslatorFactory.createQueryTranslator("", hqlQueryString, java.util.Collections.EMPTY_MAP, hibernateSession.getFactory(), null);
+            queryTranslator.compile(java.util.Collections.EMPTY_MAP, false);
+            String sqlQueryString = queryTranslator.getSQLString();
             return em.createQuery(cq).setFirstResult(first).setMaxResults(max).getResultList();
         } else {
-            return em.createQuery(cq).getResultList();
+            TypedQuery typedQuery = em.createQuery(cq);
+            String hqlQueryString=typedQuery.unwrap(org.hibernate.query.Query.class).getQueryString();
+            ASTQueryTranslatorFactory queryTranslatorFactory = new ASTQueryTranslatorFactory();
+            SessionImplementor hibernateSession = em.unwrap(SessionImplementor.class);
+            QueryTranslator queryTranslator = queryTranslatorFactory.createQueryTranslator("", hqlQueryString, java.util.Collections.EMPTY_MAP, hibernateSession.getFactory(), null);
+            queryTranslator.compile(java.util.Collections.EMPTY_MAP, false);
+            String sqlQueryString = queryTranslator.getSQLString();
+
+            List<MapCaseDto> resultSet = em.createQuery(cq).getResultList();
+            return resultSet;
         }
     }
 

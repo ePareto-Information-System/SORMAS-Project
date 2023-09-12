@@ -15,6 +15,7 @@
 package de.symeda.sormas.backend.caze;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -367,7 +368,17 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 		final From<?, Case> root = caseQueryContext.getRoot();
 		final CaseJoins joins = caseQueryContext.getJoins();
 
-		Predicate filter = createActiveCasesFilter(cb, root);
+		//Predicate filter = createActiveCasesFilter(cb, root);
+		Predicate filter = cb.isTrue(cb.literal(true)); // Initializes filter as a true condition
+
+		// Add the condition for case0_.archived IS NOT NULL
+		Predicate archivedNotNull = cb.isNotNull(root.get(Case.ARCHIVED));
+
+		// Add the condition for case0_.deleted = FALSE
+		Predicate notDeleted = cb.equal(root.get(Case.DELETED), false);
+
+		// Combine the conditions using AND
+		filter = CriteriaBuilderHelper.and(cb, filter, archivedNotNull, notDeleted);
 
 		// Userfilter
 		filter =
@@ -377,8 +388,11 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 		if (dateType == null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, createCaseRelevanceFilter(caseQueryContext, from, to));
 		} else {
+			Date frmDate = DateHelper.getStartOfDay(from);
+			Date toDate = DateHelper.getEndOfDay(to);
+
 			filter = CriteriaBuilderHelper
-				.and(cb, filter, createNewCaseFilter(caseQueryContext, DateHelper.getStartOfDay(from), DateHelper.getEndOfDay(to), dateType));
+				.and(cb, filter, createNewCaseFilter(caseQueryContext,frmDate , toDate, dateType));
 		}
 
 		// only show cases which actually have GPS coordinates provided
@@ -395,7 +409,7 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 
 		Predicate latLonProvided = CriteriaBuilderHelper.or(cb, personLatLonNotNull, reportLatLonNotNull, facilityLatLonNotNull, districtLatLonNotNull);
 
-		filter = CriteriaBuilderHelper.or(cb, filter, latLonProvided);
+		filter = CriteriaBuilderHelper.and(cb, filter, latLonProvided);
 
 		if (region != null) {
 			Predicate regionFilter = cb.equal(root.get(Case.RESPONSIBLE_REGION), region);
@@ -1400,7 +1414,7 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 			// } else {
 
 		} else if (dateType == NewCaseDateType.REPORT) {
-			
+
 			newCaseFilter = cb.between(caze.get(Case.REPORT_DATE), fromDate, toDate);
 
 		} else if (dateType == NewCaseDateType.CLASSIFICATION) {
@@ -1411,8 +1425,8 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 			newCaseFilter = cb.between(caze.get(Case.INVESTIGATED_DATE), fromDate, toDate);
 			//} else if (newCaseDateType == NewCaseDateType.LAST_TEST_RESULT) {
 			//	newCaseFilter = cb.between(caze.get(Case.REPORT_DATE), fromDate, toDate);
-		} 
-		
+		}
+
 		else if (dateType == ExternalShareDateType.LAST_EXTERNAL_SURVEILLANCE_TOOL_SHARE) {
 			newCaseFilter = externalShareInfoService.buildLatestSurvToolShareDateFilter(
 				cq,
@@ -1423,7 +1437,7 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 		}
 		else {
 			newCaseFilter = reportDateFilter;
-		} 
+		}
 
 		return newCaseFilter;
 	}
