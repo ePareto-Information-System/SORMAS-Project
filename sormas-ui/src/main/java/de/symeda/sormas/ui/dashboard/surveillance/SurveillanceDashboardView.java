@@ -95,6 +95,7 @@ public class SurveillanceDashboardView extends AbstractDashboardView {
 
 	public void refreshDashboard() {
 		dashboardDataProvider.refreshData();
+
 		// Update disease burden
 		if (surveillanceOverviewLayout != null) {
 			surveillanceOverviewLayout.refresh();

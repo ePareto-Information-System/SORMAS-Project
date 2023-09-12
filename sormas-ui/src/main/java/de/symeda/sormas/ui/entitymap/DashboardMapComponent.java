@@ -1044,9 +1044,11 @@ public class DashboardMapComponent extends VerticalLayout {
 				marker.setIcon(MarkerIcon.CASE_CONFIRMED);
 			} else if (caze.getCaseClassification() == CaseClassification.PROBABLE) {
 				marker.setIcon(MarkerIcon.CASE_PROBABLE);
-			} else if (caze.getCaseClassification() == CaseClassification.SUSPECT) {
+			}
+			else if (caze.getCaseClassification() == CaseClassification.SUSPECT) {
 				marker.setIcon(MarkerIcon.CASE_SUSPECT);
-			} else {
+			}
+			else {
 				marker.setIcon(MarkerIcon.CASE_UNCLASSIFIED);
 			}
 
@@ -1158,7 +1160,9 @@ public class DashboardMapComponent extends VerticalLayout {
 		if (cases != null) {
 			for (MapCaseDto caze : cases) {
 				CaseClassification classification = caze.getCaseClassification();
-				if (classification == null || classification == CaseClassification.NO_CASE)
+				if (classification == null
+						//|| classification == CaseClassification.NO_CASE
+				)
 					continue;
 				boolean hasCaseGps =
 					(caze.getAddressLat() != null && caze.getAddressLon() != null) || (caze.getReportLat() != null || caze.getReportLon() != null);

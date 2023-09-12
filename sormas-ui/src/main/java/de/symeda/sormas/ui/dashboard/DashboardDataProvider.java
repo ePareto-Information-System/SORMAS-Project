@@ -261,7 +261,7 @@ public class DashboardDataProvider {
 				setTestResultCountByResultType(FacadeProvider.getDashboardFacade().getTestResultCountByResultType(dashboardCriteria));
 			}
 
-			dashboardCriteria.dateBetween(fromDate, toDate).includeNotACaseClassification(false);
+			dashboardCriteria.dateBetween(fromDate, toDate).includeNotACaseClassification(true);
 			
 			setCasesCountByClassification(FacadeProvider.getDashboardFacade().getCasesCountByClassification(dashboardCriteria));
 			

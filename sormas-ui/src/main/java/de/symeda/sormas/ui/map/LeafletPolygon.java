@@ -93,6 +93,10 @@ public class LeafletPolygon {
 	}
 
 	public void setHoleLatLons(GeoLatLon[][] geoHoleLatLons) {
+		if (geoHoleLatLons == null) {
+			// Handle the case where geoHoleLatLons is null
+			return;
+		}
 		double[][][] holeLatLons = Arrays.stream(geoHoleLatLons).map(latLons -> {
 			return Arrays.stream(latLons)
 				.map(

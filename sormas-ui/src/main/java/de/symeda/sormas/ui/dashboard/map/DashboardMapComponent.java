@@ -278,6 +278,7 @@ public class DashboardMapComponent extends VerticalLayout {
 		}
 
 		int maxDisplayCount = FacadeProvider.getConfigFacade().getDashboardMapMarkerLimit();
+
 		Long count = 0L;
 		if (!forced && maxDisplayCount >= 0) {
 			count = getMarkerCount(fromDate, toDate, maxDisplayCount);
@@ -641,6 +642,7 @@ public class DashboardMapComponent extends VerticalLayout {
 		cmbPeriodType.setWidth(132, Unit.PIXELS);
 		cmbPeriodType.addValueChangeListener(e -> {
 			reloadPeriodFiltersFlag = PeriodFilterReloadFlag.RELOAD_AND_CLEAR_VALUE;
+
 			updatePeriodFilters();
 		});
 
@@ -1435,16 +1437,20 @@ public class DashboardMapComponent extends VerticalLayout {
 
 		Double districtArea = FacadeProvider.getGeoShapeProvider().getDistrictAreaByLatLng(districtGeoLatLon);
 		//radius  = Circumfrence/2pie, but Area is given so Radius=(SquareRoot of (Area/PI))
-		double radius =  Math.sqrt(districtArea/Math.PI);
+		if(districtArea!=null) {
+			double radius = Math.sqrt(districtArea / Math.PI);
 
-		double R = 6371; // earth radius in km
-		double longMax = districtGeoLatLon.getLon() + Math.toDegrees(radius/R/Math.cos(Math.toRadians(districtGeoLatLon.getLat())));
-		double latMax = districtGeoLatLon.getLat() + Math.toDegrees(radius/R/Math.cos(Math.toRadians(districtGeoLatLon.getLon())));
+			double R = 6371; // earth radius in km
+			double longMax = districtGeoLatLon.getLon() + Math.toDegrees(radius / R / Math.cos(Math.toRadians(districtGeoLatLon.getLat())));
+			double latMax = districtGeoLatLon.getLat() + Math.toDegrees(radius / R / Math.cos(Math.toRadians(districtGeoLatLon.getLon())));
 
-		double x = (Math.random() * (latMax - districtGeoLatLon.getLat())) + districtGeoLatLon.getLat();
-		double y = (Math.random() * (longMax - districtGeoLatLon.getLon())) + districtGeoLatLon.getLon();
+			double x = (Math.random() * (latMax - districtGeoLatLon.getLat())) + districtGeoLatLon.getLat();
+			double y = (Math.random() * (longMax - districtGeoLatLon.getLon())) + districtGeoLatLon.getLon();
+			return new GeoLatLon(x, y);
 
-		return new GeoLatLon(x, y);
+		}
+
+		return new GeoLatLon(0.0, 0.0);
 	}
 
 	private void fillCaseLists(List<MapCaseDto> cases) {

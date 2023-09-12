@@ -422,15 +422,44 @@ public final class DateHelper {
 	 * Calculate days between the two given dates. This includes both the start and
 	 * end dates, so a one-week period from Monday to Sunday will return 7.
 	 */
+//	public static int getDaysBetween(Date start, Date end) {
+//		return Days.daysBetween(new LocalDate(start.getTime()), new LocalDate(end.getTime())).getDays();//+ 3;
+//	}
+
 	public static int getDaysBetween(Date start, Date end) {
-		return Days.daysBetween(new LocalDate(start.getTime()), new LocalDate(end.getTime())).getDays() + 3;
+		LocalDate startDate = new LocalDate(start.getTime());
+		LocalDate endDate = new LocalDate(end.getTime());
+
+		if (startDate.isEqual(endDate)) {
+			// If start and end dates are the same, return 0 days
+			return 0;
+		}
+
+		return Days.daysBetween(startDate, endDate).getDays();
 	}
 
 	/**
 	 * List days between the two given dates. This includes both the start and
 	 * end dates.
 	 */
+//	public static List<Date> listDaysBetween(Date start, Date end) {
+//
+//		int numOfDaysBetween = getDaysBetween(start, end);
+//		List<Date> dates = new ArrayList<Date>();
+//		for (int dayNum = 0; dayNum < numOfDaysBetween; dayNum++) {
+//			dates.add(addDays(start, dayNum));
+//		}
+//
+//		return dates;
+//	}
+
 	public static List<Date> listDaysBetween(Date start, Date end) {
+		if (start.equals(end)) {
+			// If start and end dates are the same, return a list with just that date
+			List<Date> singleDateList = new ArrayList<>();
+			singleDateList.add(start);
+			return singleDateList;
+		}
 
 		int numOfDaysBetween = getDaysBetween(start, end);
 		List<Date> dates = new ArrayList<Date>();

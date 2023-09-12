@@ -479,7 +479,9 @@ public class DashboardService {
 					DateHelper.getEndOfDay(dashboardCriteria.getDateTo()),
 					dashboardCriteria.getNewCaseDateType()));
 		}
-		if (dashboardCriteria.isIncludeNotACaseClassification()==null||dashboardCriteria.isIncludeNotACaseClassification()==false) {
+		//if (!dashboardCriteria.shouldIncludeNotACaseClassification()) {
+
+			if (dashboardCriteria.isIncludeNotACaseClassification()==null||dashboardCriteria.isIncludeNotACaseClassification()==false) {
 			filter = CriteriaBuilderHelper
 				.and(cb, filter, cb.notEqual(caseQueryContext.getRoot().get(Case.CASE_CLASSIFICATION), CaseClassification.NO_CASE));
 		}

@@ -119,11 +119,11 @@ public class DashboardCriteria extends CriteriaWithDateType implements Serializa
 		return this;
 	}
 
-	public Boolean shouldIncludeNotACaseClassification() {
+	public boolean shouldIncludeNotACaseClassification() {
 		return includeNotACaseClassification;
 	}
 
-	public DashboardCriteria includeNotACaseClassification(Boolean includeNotACaseClassification) {
+	public DashboardCriteria includeNotACaseClassification(boolean includeNotACaseClassification) {
 		this.includeNotACaseClassification = includeNotACaseClassification;
 		return this;
 	}
@@ -206,6 +206,10 @@ public class DashboardCriteria extends CriteriaWithDateType implements Serializa
 
 	public void setCaseClassification(CaseClassification caseClassification) {
 		this.caseClassification = caseClassification;
+	}
+
+	public void setIncludeNotACaseClassification(Boolean includeNotACaseClassification) {
+		this.includeNotACaseClassification = includeNotACaseClassification;
 	}
 
 	public void setDateFilterType(NewDateFilterType dateFilterType) {
