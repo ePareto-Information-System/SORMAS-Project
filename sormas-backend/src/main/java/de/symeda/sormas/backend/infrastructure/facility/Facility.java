@@ -20,18 +20,15 @@ package de.symeda.sormas.backend.infrastructure.facility;
 import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_BIG;
 import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.ManyToOne;
-
+import javax.persistence.*;
 import de.symeda.sormas.api.infrastructure.area.AreaType;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.backend.common.InfrastructureAdo;
+import de.symeda.sormas.backend.disease.DiseaseConfiguration;
 import de.symeda.sormas.backend.infrastructure.community.Community;
 import de.symeda.sormas.backend.infrastructure.district.District;
 import de.symeda.sormas.backend.infrastructure.region.Region;
+import java.util.Set;
 
 @Entity
 public class Facility extends InfrastructureAdo {
@@ -59,6 +56,7 @@ public class Facility extends InfrastructureAdo {
 	public static final String TYPE = "type";
 	public static final String PUBLIC_OWNERSHIP = "publicOwnership";
 	public static final String EXTERNAL_ID = "externalID";
+	private static final String FACILITY_DISEASE_CONFIGURATION_TABLE = "facility_diseaseconfiguration";
 
 	private String name;
 	private Region region;
@@ -205,6 +203,7 @@ public class Facility extends InfrastructureAdo {
 		this.contactPersonEmail = contactPersonEmail;
 	}
 
+
 	public Double getLatitude() {
 		return latitude;
 	}
@@ -245,5 +244,14 @@ public class Facility extends InfrastructureAdo {
 
 	public void setExternalID(String externalID) {
 		this.externalID = externalID;
+	}
+
+	private Set<DiseaseConfiguration> diseases;
+	@ManyToMany(cascade = {}, fetch = FetchType.LAZY)
+	@JoinTable(name = FACILITY_DISEASE_CONFIGURATION_TABLE, joinColumns = @JoinColumn(name = "facility_id "),
+			inverseJoinColumns = @JoinColumn(name = "diseaseconfiguration_id"))
+	public Set<DiseaseConfiguration> getDiseases() {return diseases;}
+	public void setDiseases(Set<DiseaseConfiguration> diseases) {
+		this.diseases = diseases;
 	}
 }

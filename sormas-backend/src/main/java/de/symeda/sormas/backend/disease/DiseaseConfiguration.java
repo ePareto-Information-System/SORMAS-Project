@@ -2,17 +2,19 @@ package de.symeda.sormas.backend.disease;
 
 import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_TEXT;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 
 import de.symeda.auditlog.api.Audited;
+import de.symeda.auditlog.api.AuditedIgnore;
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.backend.campaign.form.CampaignFormMeta;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
+import de.symeda.sormas.backend.infrastructure.facility.Facility;
+import de.symeda.sormas.backend.user.UserRole;
 
 @Entity(name = DiseaseConfiguration.TABLE_NAME)
 @Audited
@@ -141,5 +143,19 @@ public class DiseaseConfiguration extends AbstractDomainObject {
 
 	public void setAgeGroups(List<String> ageGroups) {
 		this.ageGroups = ageGroups;
+	}
+
+	private Set<Facility> facilities = new HashSet<>();
+	public static final String TABLE_NAME_FACILITY_DISEASE = "facility_diseaseconfiguration";
+	@AuditedIgnore
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = TABLE_NAME_FACILITY_DISEASE,
+			joinColumns = @JoinColumn(name = "diseaseconfiguration_id"),
+			inverseJoinColumns = @JoinColumn(name = "facility_id"))
+	public Set<Facility> getFacilities() {
+		return facilities;
+	}
+	public void setFacilities(Set<Facility> facilities) {
+		this.facilities = facilities;
 	}
 }

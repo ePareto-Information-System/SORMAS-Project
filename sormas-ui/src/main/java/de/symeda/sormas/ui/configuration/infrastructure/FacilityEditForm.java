@@ -19,12 +19,15 @@ package de.symeda.sormas.ui.configuration.infrastructure;
 
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
 
+import com.vaadin.ui.CheckBoxGroup;
 import com.vaadin.v7.data.util.converter.Converter;
 import com.vaadin.v7.data.validator.EmailValidator;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.TextField;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.disease.DiseaseConfigurationDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Validations;
@@ -42,26 +45,37 @@ import de.symeda.sormas.ui.utils.FieldHelper;
 import de.symeda.sormas.ui.utils.PhoneNumberValidator;
 import de.symeda.sormas.ui.utils.StringToAngularLocationConverter;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 public class FacilityEditForm extends AbstractEditForm<FacilityDto> {
 
 	private static final long serialVersionUID = 1952619382018965255L;
 
 	private static final String TYPE_GROUP_LOC = "typeGroupLoc";
+	private static final String DISEASES_LIST_COL_ONE = "diseaseListColOne";
+	List<Disease> primaryDiseases = new ArrayList<>();
 
 	private static final String HTML_LAYOUT = fluidRowLocs(FacilityDto.NAME)
-		+ fluidRowLocs(TYPE_GROUP_LOC, FacilityDto.TYPE)
-		+ fluidRowLocs(FacilityDto.REGION, FacilityDto.DISTRICT)
-		+ fluidRowLocs(FacilityDto.COMMUNITY)
-		+ fluidRowLocs(FacilityDto.STREET, FacilityDto.HOUSE_NUMBER)
-		+ fluidRowLocs(FacilityDto.ADDITIONAL_INFORMATION, FacilityDto.POSTAL_CODE)
-		+ fluidRowLocs(FacilityDto.AREA_TYPE, FacilityDto.CITY)
-		+ fluidRowLocs(FacilityDto.CONTACT_PERSON_FIRST_NAME, FacilityDto.CONTACT_PERSON_LAST_NAME)
-		+ fluidRowLocs(FacilityDto.CONTACT_PERSON_PHONE, FacilityDto.CONTACT_PERSON_EMAIL)
-		+ fluidRowLocs(FacilityDto.LATITUDE, FacilityDto.LONGITUDE)
-		+ fluidRowLocs(RegionDto.EXTERNAL_ID);
+			+ fluidRowLocs(TYPE_GROUP_LOC, FacilityDto.TYPE)
+			+ fluidRowLocs(FacilityDto.REGION, FacilityDto.DISTRICT)
+			+ fluidRowLocs(FacilityDto.COMMUNITY)
+			+ fluidRowLocs(FacilityDto.STREET, FacilityDto.HOUSE_NUMBER)
+			+ fluidRowLocs(FacilityDto.ADDITIONAL_INFORMATION, FacilityDto.POSTAL_CODE)
+			+ fluidRowLocs(FacilityDto.AREA_TYPE, FacilityDto.CITY)
+			+ fluidRowLocs(FacilityDto.CONTACT_PERSON_FIRST_NAME, FacilityDto.CONTACT_PERSON_LAST_NAME)
+			+ fluidRowLocs(FacilityDto.CONTACT_PERSON_PHONE, FacilityDto.CONTACT_PERSON_EMAIL)
+			+ fluidRowLocs(FacilityDto.LATITUDE, FacilityDto.LONGITUDE)
+			+ fluidRowLocs(RegionDto.EXTERNAL_ID)
+			+ fluidRowLocs(DISEASES_LIST_COL_ONE);
 
 	private boolean create;
 	private ComboBox typeGroup;
+
+	private CheckBoxGroup checkBoxLab;
 
 	public FacilityEditForm(boolean create) {
 		super(FacilityDto.class, FacilityDto.I18N_PREFIX, false);
@@ -101,10 +115,10 @@ public class FacilityEditForm extends AbstractEditForm<FacilityDto> {
 		addField(FacilityDto.CONTACT_PERSON_LAST_NAME, TextField.class);
 		TextField contactPersonPhone = addField(FacilityDto.CONTACT_PERSON_PHONE, TextField.class);
 		contactPersonPhone
-			.addValidator(new PhoneNumberValidator(I18nProperties.getValidationError(Validations.validPhoneNumber, contactPersonPhone.getCaption())));
+				.addValidator(new PhoneNumberValidator(I18nProperties.getValidationError(Validations.validPhoneNumber, contactPersonPhone.getCaption())));
 		TextField contactPersonEmail = addField(FacilityDto.CONTACT_PERSON_EMAIL, TextField.class);
 		contactPersonEmail
-			.addValidator(new EmailValidator(I18nProperties.getValidationError(Validations.validEmailAddress, contactPersonEmail.getCaption())));
+				.addValidator(new EmailValidator(I18nProperties.getValidationError(Validations.validEmailAddress, contactPersonEmail.getCaption())));
 		AccessibleTextField latitude = addField(FacilityDto.LATITUDE, AccessibleTextField.class);
 		latitude.setConverter(new StringToAngularLocationConverter());
 		latitude.setConversionError(I18nProperties.getValidationError(Validations.onlyGeoCoordinatesAllowed, latitude.getCaption()));
@@ -112,7 +126,6 @@ public class FacilityEditForm extends AbstractEditForm<FacilityDto> {
 		longitude.setConverter(new StringToAngularLocationConverter());
 		longitude.setConversionError(I18nProperties.getValidationError(Validations.onlyGeoCoordinatesAllowed, longitude.getCaption()));
 		addField(RegionDto.EXTERNAL_ID, TextField.class);
-
 		setRequired(true, FacilityDto.NAME, TYPE_GROUP_LOC, FacilityDto.TYPE, FacilityDto.REGION, FacilityDto.DISTRICT);
 
 		typeGroup.addValueChangeListener(e -> FieldHelper.updateEnumData(type, FacilityType.getTypes((FacilityTypeGroup) typeGroup.getValue())));
@@ -132,15 +145,15 @@ public class FacilityEditForm extends AbstractEditForm<FacilityDto> {
 		region.addValueChangeListener(e -> {
 			RegionReferenceDto regionDto = (RegionReferenceDto) e.getProperty().getValue();
 			FieldHelper
-				.updateItems(district, regionDto != null ? FacadeProvider.getDistrictFacade().getAllActiveByRegion(regionDto.getUuid()) : null);
+					.updateItems(district, regionDto != null ? FacadeProvider.getDistrictFacade().getAllActiveByRegion(regionDto.getUuid()) : null);
 		});
 
 		district.addValueChangeListener(e -> {
 			FieldHelper.removeItems(community);
 			DistrictReferenceDto districtDto = (DistrictReferenceDto) e.getProperty().getValue();
 			FieldHelper.updateItems(
-				community,
-				districtDto != null ? FacadeProvider.getCommunityFacade().getAllActiveByDistrict(districtDto.getUuid()) : null);
+					community,
+					districtDto != null ? FacadeProvider.getCommunityFacade().getAllActiveByDistrict(districtDto.getUuid()) : null);
 		});
 
 		community.addValueChangeListener(e -> {
@@ -155,7 +168,32 @@ public class FacilityEditForm extends AbstractEditForm<FacilityDto> {
 		if (facilityDto.getType() != null) {
 			typeGroup.setValue(facilityDto.getType().getFacilityTypeGroup());
 		}
+
+		checkBoxLab = new CheckBoxGroup(I18nProperties.getCaption(Captions.Facility_Diseases));
+		checkBoxLab.setWidth(100, Unit.PERCENTAGE);
+		checkBoxLab.setItems(FacadeProvider.getDiseaseConfigurationFacade().getAllPrimaryDiseases().toArray());
+		getContent().addComponent(checkBoxLab, DISEASES_LIST_COL_ONE);
+		checkBoxLab.addValueChangeListener(e -> {
+			Set<DiseaseConfigurationDto> selectedDtos = new HashSet<>();
+
+			for(Disease disease : (Set<Disease>) e.getValue()) {
+				DiseaseConfigurationDto diseaseDto = new DiseaseConfigurationDto();
+				diseaseDto.setDisease(disease);
+				selectedDtos.add(diseaseDto);
+			}
+
+			getValue().setDiseases(selectedDtos);
+		});
+
 		super.setValue(facilityDto);
+
+		if (facilityDto.getDiseases() != null) {
+			Set<Disease> diseases = facilityDto.getDiseases().stream()
+					.filter(d -> d != null)
+					.map(d -> d.getDisease())
+					.collect(Collectors.toSet());
+			checkBoxLab.setValue(diseases);
+		}
 	}
 
 	@Override

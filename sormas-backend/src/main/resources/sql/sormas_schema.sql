@@ -11654,5 +11654,15 @@ INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (471,
 UPDATE users SET password = LPAD(password, 64, '0') WHERE LENGTH(password) < 64;
 INSERT INTO schema_version (version_number, comment) VALUES (472, 'Adjust password hashes with leading zeros #9726');
 
+CREATE TABLE facility_diseaseconfiguration (
+                                               facility_id bigint,
+                                               diseaseconfiguration_id bigint,
+                                               PRIMARY KEY (facility_id, diseaseconfiguration_id),
+                                               FOREIGN KEY (facility_id) REFERENCES facility(id),
+                                               FOREIGN KEY (diseaseconfiguration_id) REFERENCES diseaseconfiguration(id)
+);
+
+INSERT INTO schema_version (version_number, comment) VALUES (473, 'Assigning Diseases to facility functionality #134');
+
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

@@ -17,6 +17,7 @@ package de.symeda.sormas.api.infrastructure.facility;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -24,6 +25,8 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.disease.DiseaseConfigurationDto;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.InfrastructureDto;
@@ -36,9 +39,9 @@ import de.symeda.sormas.api.utils.DependingOnFeatureType;
 import de.symeda.sormas.api.utils.FieldConstraints;
 
 @DependingOnFeatureType(featureType = {
-	FeatureType.CASE_SURVEILANCE,
-	FeatureType.EVENT_SURVEILLANCE,
-	FeatureType.AGGREGATE_REPORTING })
+		FeatureType.CASE_SURVEILANCE,
+		FeatureType.EVENT_SURVEILLANCE,
+		FeatureType.AGGREGATE_REPORTING })
 public class FacilityDto extends InfrastructureDto {
 
 	private static final long serialVersionUID = -7987228795475507196L;
@@ -69,6 +72,9 @@ public class FacilityDto extends InfrastructureDto {
 	public static final String TYPE_GROUP = "typeGroup";
 	public static final String TYPE = "type";
 	public static final String EXTERNAL_ID = "externalID";
+
+	//@Derrick
+	private Set<DiseaseConfigurationDto> diseases;
 
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
 	private String name;
@@ -106,36 +112,45 @@ public class FacilityDto extends InfrastructureDto {
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String externalID;
 
+	public Set<DiseaseConfigurationDto> getDiseases() {
+		return diseases;
+	}
+
+	public void setDiseases(Set<DiseaseConfigurationDto> diseases) {
+		this.diseases = diseases;
+	}
+
 	public FacilityDto(
-		Date creationDate,
-		Date changeDate,
-		String uuid,
-		boolean archived,
-		String name,
-		String regionUuid,
-		String regionName,
-		String regionExternalId,
-		String districtUuid,
-		String districtName,
-		String districtExternalId,
-		String communityUuid,
-		String communityName,
-		String communityExternalId,
-		String city,
-		String postalCode,
-		String street,
-		String houseNumber,
-		String additionalInformation,
-		AreaType areaType,
-		String contactPersonFirstName,
-		String contactPersonLastName,
-		String contactPersonPhone,
-		String contactPersonEmail,
-		Double latitude,
-		Double longitude,
-		FacilityType type,
-		boolean publicOwnership,
-		String externalID) {
+			Date creationDate,
+			Date changeDate,
+			String uuid,
+			boolean archived,
+			String name,
+			String regionUuid,
+			String regionName,
+			String regionExternalId,
+			String districtUuid,
+			String districtName,
+			String districtExternalId,
+			String communityUuid,
+			String communityName,
+			String communityExternalId,
+			String city,
+			String postalCode,
+			String street,
+			String houseNumber,
+			String additionalInformation,
+			AreaType areaType,
+			String contactPersonFirstName,
+			String contactPersonLastName,
+			String contactPersonPhone,
+			String contactPersonEmail,
+			Double latitude,
+			Double longitude,
+			FacilityType type,
+			boolean publicOwnership,
+			String externalID
+	) {
 
 		super(creationDate, changeDate, uuid);
 		this.archived = archived;

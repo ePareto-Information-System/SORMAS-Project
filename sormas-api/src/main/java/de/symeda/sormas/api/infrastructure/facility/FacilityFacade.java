@@ -34,22 +34,24 @@ import de.symeda.sormas.api.utils.SortProperty;
 public interface FacilityFacade extends InfrastructureFacade<FacilityDto, FacilityIndexDto, FacilityReferenceDto, FacilityCriteria> {
 
 	List<FacilityReferenceDto> getActiveFacilitiesByCommunityAndType(
-		CommunityReferenceDto community,
-		FacilityType type,
-		boolean includeOtherFacility,
-		boolean includeNoneFacility);
+			CommunityReferenceDto community,
+			FacilityType type,
+			boolean includeOtherFacility,
+			boolean includeNoneFacility);
 
 	List<FacilityReferenceDto> getActiveFacilitiesByDistrictAndType(
-		DistrictReferenceDto district,
-		FacilityType type,
-		boolean includeOtherFacility,
-		boolean includeNoneFacility);
+			DistrictReferenceDto district,
+			FacilityType type,
+			boolean includeOtherFacility,
+			boolean includeNoneFacility);
 
 	List<FacilityReferenceDto> getActiveHospitalsByCommunity(CommunityReferenceDto community, boolean includeOtherFacility);
 
 	List<FacilityReferenceDto> getActiveHospitalsByDistrict(DistrictReferenceDto district, boolean includeOtherFacility);
 
 	List<FacilityReferenceDto> getAllActiveLaboratories(boolean includeOtherFacility);
+
+	List<FacilityReferenceDto> getAllActiveFacilityByDisease(String diseaseName);
 
 	List<FacilityDto> getAllByRegionAfter(String regionUuid, Date date);
 
@@ -58,11 +60,11 @@ public interface FacilityFacade extends InfrastructureFacade<FacilityDto, Facili
 	FacilityReferenceDto getFacilityReferenceById(long id);
 
 	List<FacilityReferenceDto> getByNameAndType(
-		String name,
-		DistrictReferenceDto districtRef,
-		CommunityReferenceDto communityRef,
-		FacilityType type,
-		boolean includeArchivedEntities);
+			String name,
+			DistrictReferenceDto districtRef,
+			CommunityReferenceDto communityRef,
+			FacilityType type,
+			boolean includeArchivedEntities);
 
 	List<FacilityReferenceDto> getLaboratoriesByName(String name, boolean includeArchivedEntities);
 

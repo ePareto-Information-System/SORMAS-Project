@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.v7.data.Property;
 import com.vaadin.v7.ui.AbstractField;
 import com.vaadin.v7.ui.CheckBox;
@@ -71,52 +72,53 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	protected static final String REQUESTED_ADDITIONAL_TESTS_READ_LOC = "requestedAdditionalTestsReadLoc";
 	protected static final String REPORT_INFO_LABEL_LOC = "reportInfoLabelLoc";
 	protected static final String REFERRED_FROM_BUTTON_LOC = "referredFromButtonLoc";
+	private ComboBox lab;
 
 	//@formatter:off
-    protected static final String SAMPLE_COMMON_HTML_LAYOUT =
-            fluidRowLocs(SampleDto.UUID, REPORT_INFO_LABEL_LOC) +
-                    fluidRowLocs(SampleDto.SAMPLE_PURPOSE) +
-                    fluidRowLocs(SampleDto.SAMPLE_DATE_TIME, SampleDto.SAMPLE_MATERIAL) +
-                    fluidRowLocs("", SampleDto.SAMPLE_MATERIAL_TEXT) +
-                    fluidRowLocs(SampleDto.SAMPLING_REASON, SampleDto.SAMPLING_REASON_DETAILS) +
-                    fluidRowLocs(SampleDto.SAMPLE_SOURCE, "") +
-                    fluidRowLocs(SampleDto.FIELD_SAMPLE_ID, REFERRED_FROM_BUTTON_LOC) +
-                    fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
+	protected static final String SAMPLE_COMMON_HTML_LAYOUT =
+			fluidRowLocs(SampleDto.UUID, REPORT_INFO_LABEL_LOC) +
+					fluidRowLocs(SampleDto.SAMPLE_PURPOSE) +
+					fluidRowLocs(SampleDto.SAMPLE_DATE_TIME, SampleDto.SAMPLE_MATERIAL) +
+					fluidRowLocs("", SampleDto.SAMPLE_MATERIAL_TEXT) +
+					fluidRowLocs(SampleDto.SAMPLING_REASON, SampleDto.SAMPLING_REASON_DETAILS) +
+					fluidRowLocs(SampleDto.SAMPLE_SOURCE, "") +
+					fluidRowLocs(SampleDto.FIELD_SAMPLE_ID, REFERRED_FROM_BUTTON_LOC) +
+					fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
 
-                    locCss(VSPACE_TOP_3, SampleDto.PATHOGEN_TESTING_REQUESTED) +
-                    loc(PATHOGEN_TESTING_READ_HEADLINE_LOC) +
-                    loc(PATHOGEN_TESTING_INFO_LOC) +
-                    loc(SampleDto.REQUESTED_PATHOGEN_TESTS) +
-                    loc(SampleDto.REQUESTED_OTHER_PATHOGEN_TESTS) +
-                    loc(REQUESTED_PATHOGEN_TESTS_READ_LOC) +
+					locCss(VSPACE_TOP_3, SampleDto.PATHOGEN_TESTING_REQUESTED) +
+					loc(PATHOGEN_TESTING_READ_HEADLINE_LOC) +
+					loc(PATHOGEN_TESTING_INFO_LOC) +
+					loc(SampleDto.REQUESTED_PATHOGEN_TESTS) +
+					loc(SampleDto.REQUESTED_OTHER_PATHOGEN_TESTS) +
+					loc(REQUESTED_PATHOGEN_TESTS_READ_LOC) +
 
-                    locCss(VSPACE_TOP_3, SampleDto.ADDITIONAL_TESTING_REQUESTED) +
-                    loc(ADDITIONAL_TESTING_READ_HEADLINE_LOC) +
-                    loc(ADDITIONAL_TESTING_INFO_LOC) +
-                    loc(SampleDto.REQUESTED_ADDITIONAL_TESTS) +
-                    loc(SampleDto.REQUESTED_OTHER_ADDITIONAL_TESTS) +
-                    loc(REQUESTED_ADDITIONAL_TESTS_READ_LOC) +
+					locCss(VSPACE_TOP_3, SampleDto.ADDITIONAL_TESTING_REQUESTED) +
+					loc(ADDITIONAL_TESTING_READ_HEADLINE_LOC) +
+					loc(ADDITIONAL_TESTING_INFO_LOC) +
+					loc(SampleDto.REQUESTED_ADDITIONAL_TESTS) +
+					loc(SampleDto.REQUESTED_OTHER_ADDITIONAL_TESTS) +
+					loc(REQUESTED_ADDITIONAL_TESTS_READ_LOC) +
 
-                    locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
-                    fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
+					locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
+					fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
 
-                    locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
-                    fluidRowLocs(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID) +
+					locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
+					fluidRowLocs(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID) +
 
-                    fluidRowLocs(SampleDto.SPECIMEN_CONDITION, SampleDto.NO_TEST_POSSIBLE_REASON) +
-                    fluidRowLocs(SampleDto.COMMENT) +
-                    fluidRowLocs(SampleDto.PATHOGEN_TEST_RESULT) +
+					fluidRowLocs(SampleDto.SPECIMEN_CONDITION, SampleDto.NO_TEST_POSSIBLE_REASON) +
+					fluidRowLocs(SampleDto.COMMENT) +
+					fluidRowLocs(SampleDto.PATHOGEN_TEST_RESULT) +
 					fluidRowLocs(CaseDataDto.DELETION_REASON) +
 					fluidRowLocs(CaseDataDto.OTHER_DELETION_REASON);
-    //@formatter:on
+	//@formatter:on
 
 	protected AbstractSampleForm(Class<SampleDto> type, String propertyI18nPrefix, Disease disease, UiFieldAccessCheckers fieldAccessCheckers) {
 		super(
-			type,
-			propertyI18nPrefix,
-			true,
-			FieldVisibilityCheckers.withDisease(disease).andWithCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
-			fieldAccessCheckers);
+				type,
+				propertyI18nPrefix,
+				true,
+				FieldVisibilityCheckers.withDisease(disease).andWithCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
+				fieldAccessCheckers);
 	}
 
 	protected void addCommonFields() {
@@ -135,8 +137,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		addDateField(SampleDto.SHIPMENT_DATE, DateField.class, 7);
 		addField(SampleDto.SHIPMENT_DETAILS, TextField.class);
 		addField(SampleDto.RECEIVED_DATE, DateField.class);
-		final ComboBox lab = addInfrastructureField(SampleDto.LAB);
-		lab.addItems(FacadeProvider.getFacilityFacade().getAllActiveLaboratories(true));
+		//final ComboBox lab = addInfrastructureField(SampleDto.LAB);
+		lab = addInfrastructureField(SampleDto.LAB);
+		//lab.addItems(FacadeProvider.getFacilityFacade().getAllActiveLaboratories(true));
 		final TextField labDetails = addField(SampleDto.LAB_DETAILS, TextField.class);
 		labDetails.setVisible(false);
 		lab.addValueChangeListener(event -> updateLabDetailsVisibility(labDetails, event));
@@ -146,8 +149,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		TextArea comment = addField(SampleDto.COMMENT, TextArea.class);
 		comment.setRows(4);
 		comment.setDescription(
-			I18nProperties.getPrefixDescription(SampleDto.I18N_PREFIX, SampleDto.COMMENT, "") + "\n"
-				+ I18nProperties.getDescription(Descriptions.descGdpr));
+				I18nProperties.getPrefixDescription(SampleDto.I18N_PREFIX, SampleDto.COMMENT, "") + "\n"
+						+ I18nProperties.getDescription(Descriptions.descGdpr));
 		addField(SampleDto.SHIPPED, CheckBox.class);
 		addField(SampleDto.RECEIVED, CheckBox.class);
 
@@ -156,11 +159,11 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 		addFields(SampleDto.SAMPLING_REASON, SampleDto.SAMPLING_REASON_DETAILS);
 		FieldHelper.setVisibleWhen(
-			getFieldGroup(),
-			SampleDto.SAMPLING_REASON_DETAILS,
-			SampleDto.SAMPLING_REASON,
-			Collections.singletonList(SamplingReason.OTHER_REASON),
-			true);
+				getFieldGroup(),
+				SampleDto.SAMPLING_REASON_DETAILS,
+				SampleDto.SAMPLING_REASON,
+				Collections.singletonList(SamplingReason.OTHER_REASON),
+				true);
 
 		addField(SampleDto.DELETION_REASON);
 		addField(SampleDto.OTHER_DELETION_REASON, TextArea.class).setRows(3);
@@ -184,46 +187,51 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			final ContactReferenceDto associatedContact = getValue().getAssociatedContact();
 			if (associatedContact != null && UserProvider.getCurrent().hasAllUserRights(UserRight.CONTACT_VIEW)) {
 				disease = FacadeProvider.getContactFacade().getByUuid(associatedContact.getUuid()).getDisease();
+
 			}
 		}
 
 		FieldHelper.setVisibleWhen(
-			getFieldGroup(),
-			Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION),
-			SampleDto.RECEIVED,
-			Arrays.asList(true),
-			true);
+				getFieldGroup(),
+				Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION),
+				SampleDto.RECEIVED,
+				Arrays.asList(true),
+				true);
 		FieldHelper.setEnabledWhen(
-			getFieldGroup(),
-			receivedField,
-			Arrays.asList(true),
-			Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION),
-			true);
+				getFieldGroup(),
+				receivedField,
+				Arrays.asList(true),
+				Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION),
+				true);
 
 		if (disease != Disease.NEW_INFLUENZA) {
 			getField(SampleDto.SAMPLE_SOURCE).setVisible(false);
 		}
 
+		if(disease != null) {
+			lab.addItems(FacadeProvider.getFacilityFacade().getAllActiveFacilityByDisease(disease.getName()));
+		}
+
 		UserReferenceDto reportingUser = getValue().getReportingUser();
 		if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_NOT_OWNED)
-			|| (reportingUser != null && UserProvider.getCurrent().getUuid().equals(reportingUser.getUuid()))) {
+				|| (reportingUser != null && UserProvider.getCurrent().getUuid().equals(reportingUser.getUuid()))) {
 			FieldHelper.setVisibleWhen(
-				getFieldGroup(),
-				Arrays.asList(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS),
-				SampleDto.SHIPPED,
-				Arrays.asList(true),
-				true);
+					getFieldGroup(),
+					Arrays.asList(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS),
+					SampleDto.SHIPPED,
+					Arrays.asList(true),
+					true);
 			FieldHelper.setEnabledWhen(
-				getFieldGroup(),
-				shippedField,
-				Arrays.asList(true),
-				Arrays.asList(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS),
-				true);
+					getFieldGroup(),
+					shippedField,
+					Arrays.asList(true),
+					Arrays.asList(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS),
+					true);
 			FieldHelper.setRequiredWhen(
-				getFieldGroup(),
-				SampleDto.SAMPLE_PURPOSE,
-				Arrays.asList(SampleDto.LAB),
-				Arrays.asList(SamplePurpose.EXTERNAL, null));
+					getFieldGroup(),
+					SampleDto.SAMPLE_PURPOSE,
+					Arrays.asList(SampleDto.LAB),
+					Arrays.asList(SamplePurpose.EXTERNAL, null));
 			setRequired(true, SampleDto.SAMPLE_DATE_TIME, SampleDto.SAMPLE_MATERIAL);
 		} else {
 			getField(SampleDto.SAMPLE_DATE_TIME).setEnabled(false);
@@ -237,8 +245,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		}
 
 		StringBuilder reportInfoText = new StringBuilder().append(I18nProperties.getString(Strings.reportedOn))
-			.append(" ")
-			.append(DateFormatHelper.formatLocalDateTime(getValue().getReportDateTime()));
+				.append(" ")
+				.append(DateFormatHelper.formatLocalDateTime(getValue().getReportDateTime()));
 		if (reportingUser != null) {
 			reportInfoText.append(" ").append(I18nProperties.getString(Strings.by)).append(" ").append(reportingUser.toString());
 		}
@@ -250,7 +258,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 	protected void updateLabDetailsVisibility(TextField labDetails, Property.ValueChangeEvent event) {
 		if (event.getProperty().getValue() != null
-			&& ((FacilityReferenceDto) event.getProperty().getValue()).getUuid().equals(FacilityDto.OTHER_FACILITY_UUID)) {
+				&& ((FacilityReferenceDto) event.getProperty().getValue()).getUuid().equals(FacilityDto.OTHER_FACILITY_UUID)) {
 			labDetails.setVisible(true);
 			labDetails.setRequired(true);
 		} else {
@@ -267,47 +275,47 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		final DateField receivedDate = (DateField) getField(SampleDto.RECEIVED_DATE);
 
 		sampleDateField.addValidator(
-			new DateComparisonValidator(
-				sampleDateField,
-				shipmentDate,
-				true,
-				false,
-				I18nProperties.getValidationError(Validations.beforeDate, sampleDateField.getCaption(), shipmentDate.getCaption())));
+				new DateComparisonValidator(
+						sampleDateField,
+						shipmentDate,
+						true,
+						false,
+						I18nProperties.getValidationError(Validations.beforeDate, sampleDateField.getCaption(), shipmentDate.getCaption())));
 		sampleDateField.addValidator(
-			new DateComparisonValidator(
-				sampleDateField,
-				receivedDate,
-				true,
-				false,
-				I18nProperties.getValidationError(Validations.beforeDate, sampleDateField.getCaption(), receivedDate.getCaption())));
+				new DateComparisonValidator(
+						sampleDateField,
+						receivedDate,
+						true,
+						false,
+						I18nProperties.getValidationError(Validations.beforeDate, sampleDateField.getCaption(), receivedDate.getCaption())));
 		shipmentDate.addValidator(
-			new DateComparisonValidator(
-				shipmentDate,
-				sampleDateField,
-				false,
-				false,
-				I18nProperties.getValidationError(Validations.afterDate, shipmentDate.getCaption(), sampleDateField.getCaption())));
+				new DateComparisonValidator(
+						shipmentDate,
+						sampleDateField,
+						false,
+						false,
+						I18nProperties.getValidationError(Validations.afterDate, shipmentDate.getCaption(), sampleDateField.getCaption())));
 		shipmentDate.addValidator(
-			new DateComparisonValidator(
-				shipmentDate,
-				receivedDate,
-				true,
-				false,
-				I18nProperties.getValidationError(Validations.beforeDate, shipmentDate.getCaption(), receivedDate.getCaption())));
+				new DateComparisonValidator(
+						shipmentDate,
+						receivedDate,
+						true,
+						false,
+						I18nProperties.getValidationError(Validations.beforeDate, shipmentDate.getCaption(), receivedDate.getCaption())));
 		receivedDate.addValidator(
-			new DateComparisonValidator(
-				receivedDate,
-				sampleDateField,
-				false,
-				false,
-				I18nProperties.getValidationError(Validations.afterDate, receivedDate.getCaption(), sampleDateField.getCaption())));
+				new DateComparisonValidator(
+						receivedDate,
+						sampleDateField,
+						false,
+						false,
+						I18nProperties.getValidationError(Validations.afterDate, receivedDate.getCaption(), sampleDateField.getCaption())));
 		receivedDate.addValidator(
-			new DateComparisonValidator(
-				receivedDate,
-				shipmentDate,
-				false,
-				false,
-				I18nProperties.getValidationError(Validations.afterDate, receivedDate.getCaption(), shipmentDate.getCaption())));
+				new DateComparisonValidator(
+						receivedDate,
+						shipmentDate,
+						false,
+						false,
+						I18nProperties.getValidationError(Validations.afterDate, receivedDate.getCaption(), shipmentDate.getCaption())));
 
 		List<AbstractField<Date>> validatedFields = Arrays.asList(sampleDateField, shipmentDate, receivedDate);
 		validatedFields.forEach(field -> field.addValueChangeListener(r -> {
@@ -320,29 +328,29 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	protected void setVisibilities() {
 
 		FieldHelper
-			.setVisibleWhen(getFieldGroup(), SampleDto.SAMPLE_MATERIAL_TEXT, SampleDto.SAMPLE_MATERIAL, Arrays.asList(SampleMaterial.OTHER), true);
+				.setVisibleWhen(getFieldGroup(), SampleDto.SAMPLE_MATERIAL_TEXT, SampleDto.SAMPLE_MATERIAL, Arrays.asList(SampleMaterial.OTHER), true);
 		FieldHelper.setVisibleWhen(
-			getFieldGroup(),
-			SampleDto.NO_TEST_POSSIBLE_REASON,
-			SampleDto.SPECIMEN_CONDITION,
-			Arrays.asList(SpecimenCondition.NOT_ADEQUATE),
-			true);
+				getFieldGroup(),
+				SampleDto.NO_TEST_POSSIBLE_REASON,
+				SampleDto.SPECIMEN_CONDITION,
+				Arrays.asList(SpecimenCondition.NOT_ADEQUATE),
+				true);
 		FieldHelper.setRequiredWhen(
-			getFieldGroup(),
-			SampleDto.SAMPLE_MATERIAL,
-			Arrays.asList(SampleDto.SAMPLE_MATERIAL_TEXT),
-			Arrays.asList(SampleMaterial.OTHER));
+				getFieldGroup(),
+				SampleDto.SAMPLE_MATERIAL,
+				Arrays.asList(SampleDto.SAMPLE_MATERIAL_TEXT),
+				Arrays.asList(SampleMaterial.OTHER));
 		FieldHelper.setRequiredWhen(
-			getFieldGroup(),
-			SampleDto.SPECIMEN_CONDITION,
-			Arrays.asList(SampleDto.NO_TEST_POSSIBLE_REASON),
-			Arrays.asList(SpecimenCondition.NOT_ADEQUATE));
+				getFieldGroup(),
+				SampleDto.SPECIMEN_CONDITION,
+				Arrays.asList(SampleDto.NO_TEST_POSSIBLE_REASON),
+				Arrays.asList(SpecimenCondition.NOT_ADEQUATE));
 		FieldHelper.setVisibleWhen(
-			getFieldGroup(),
-			Arrays.asList(SampleDto.LAB, SampleDto.SHIPPED, SampleDto.RECEIVED),
-			SampleDto.SAMPLE_PURPOSE,
-			Arrays.asList(SamplePurpose.EXTERNAL, null),
-			true);
+				getFieldGroup(),
+				Arrays.asList(SampleDto.LAB, SampleDto.SHIPPED, SampleDto.RECEIVED),
+				SampleDto.SAMPLE_PURPOSE,
+				Arrays.asList(SamplePurpose.EXTERNAL, null),
+				true);
 	}
 
 	protected void initializeRequestedTestFields() {
@@ -400,11 +408,11 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		boolean showRequestFields = getField(SampleDto.SAMPLE_PURPOSE).getValue() != SamplePurpose.INTERNAL;
 		UserReferenceDto reportingUser = getValue() != null ? getValue().getReportingUser() : null;
 		boolean canEditRequest = showRequestFields
-			&& (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_NOT_OWNED)
+				&& (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_NOT_OWNED)
 				|| reportingUser != null && UserProvider.getCurrent().getUuid().equals(reportingUser.getUuid()));
 		boolean canOnlyReadRequests = !canEditRequest && showRequestFields;
 		boolean canUseAdditionalTests = UserProvider.getCurrent().hasUserRight(UserRight.ADDITIONAL_TEST_VIEW)
-			&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.ADDITIONAL_TESTS);
+				&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.ADDITIONAL_TESTS);
 
 		Field<?> pathogenTestingField = getField(SampleDto.PATHOGEN_TESTING_REQUESTED);
 		pathogenTestingField.setVisible(canEditRequest);
