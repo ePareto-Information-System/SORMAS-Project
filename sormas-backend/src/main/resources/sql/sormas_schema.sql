@@ -11656,8 +11656,6 @@ UPDATE users SET password = LPAD(password, 64, '0') WHERE LENGTH(password) < 64;
 INSERT INTO schema_version (version_number, comment) VALUES (472, 'Adjust password hashes with leading zeros #9726');
 
 -- 2022-06-17 Add user roles view to UI #4462
-INSERT INTO userroles_userrights (userrole_id, userright) SELECT userrole_id, 'USER_ROLE_VIEW' FROM userroles_userrights WHERE userright = 'USER_EDIT';
-
 INSERT INTO schema_version (version_number, comment) VALUES (473, 'Add user roles view to UI #4462');
 
 -- 2022-07-15 S2S_deactivate share parameter 'share associated contacts' (for cases) #9146
@@ -12506,3 +12504,14 @@ $$ LANGUAGE plpgsql;
 
 INSERT INTO schema_version (version_number, comment) VALUES (519, 'Add the ''See personal data inside jurisdiction'' user right to the default Environmental Surveillance User #12284');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
+
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT userrole_id, 'USER_ROLE_VIEW' FROM userroles_userrights WHERE userright = 'USER_EDIT';
+CREATE TABLE facility_diseaseconfiguration (
+    facility_id bigint,
+    diseaseconfiguration_id bigint,
+    PRIMARY KEY (facility_id, diseaseconfiguration_id),
+    FOREIGN KEY (facility_id) REFERENCES facility(id),
+    FOREIGN KEY (diseaseconfiguration_id) REFERENCES diseaseconfiguration(id)
+);
+
+INSERT INTO schema_version (version_number, comment) VALUES (520, 'Assigning Diseases to facility functionality #134');
