@@ -1397,6 +1397,7 @@ public interface Captions {
 	String Facility_street = "Facility.street";
 	String Facility_type = "Facility.type";
 	String Facility_typeGroup = "Facility.typeGroup";
+	String Facility_Diseases = "Facility.diseases";
 	String facilityActiveFacilities = "facilityActiveFacilities";
 	String facilityAllFacilities = "facilityAllFacilities";
 	String facilityArchivedFacilities = "facilityArchivedFacilities";

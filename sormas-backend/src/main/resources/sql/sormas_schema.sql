@@ -12026,6 +12026,16 @@ VALUES
     ('SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO', (SELECT id FROM userroles WHERE caption = 'Lab Attendant' LIMIT 1));
 INSERT INTO schema_version (version_number, comment) VALUES (485, 'Create user roles Lab Attendant and Lab Supervisor and Assigning userrights to roles LAB_ATTENDANT and LAB_SUPERVISOR and assigning new right SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO to LAB_ATTEDANT  #37');
 
+CREATE TABLE facility_diseaseconfiguration (
+                                               facility_id bigint,
+                                               diseaseconfiguration_id bigint,
+                                               PRIMARY KEY (facility_id, diseaseconfiguration_id),
+                                               FOREIGN KEY (facility_id) REFERENCES facility(id),
+                                               FOREIGN KEY (diseaseconfiguration_id) REFERENCES diseaseconfiguration(id)
+);
+
+INSERT INTO schema_version (version_number, comment) VALUES (473, 'Assigning Diseases to facility functionality #134');
+
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 
