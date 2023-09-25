@@ -16,6 +16,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -61,6 +62,9 @@ import de.symeda.sormas.backend.user.UserRoleFacadeEjb;
 import de.symeda.sormas.backend.user.UserRoleService;
 import de.symeda.sormas.backend.util.ModelConstants;
 import de.symeda.sormas.backend.util.QueryHelper;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.hql.internal.ast.ASTQueryTranslatorFactory;
+import org.hibernate.hql.spi.QueryTranslator;
 
 @Stateless(name = "ContactStatisticsFacade")
 public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
@@ -111,6 +115,7 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 			buildContactCountQuery(contactCriteria, rowGrouping, rowSubGrouping, columnGrouping, columnSubGrouping);
 
 		Query contactCountQuery = em.createNativeQuery(contactCountQueryAndParams.getKey().toString());
+
 		for (int i = 0; i < contactCountQueryAndParams.getValue().size(); i++) {
 			contactCountQuery.setParameter(i + 1, contactCountQueryAndParams.getValue().get(i));
 		}
@@ -197,6 +202,9 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 				buildPopulationQuery(contactCriteria, rowGrouping, rowSubGrouping, columnGrouping, columnSubGrouping, populationReferenceYear);
 
 			Query populationQuery = em.createNativeQuery(populationQueryAndParams.getKey().toString());
+
+
+
 			for (int i = 0; i < populationQueryAndParams.getValue().size(); i++) {
 				populationQuery.setParameter(i + 1, populationQueryAndParams.getValue().get(i));
 			}
@@ -2288,12 +2296,12 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 	}
 
 	private StringBuilder extendFilterBuilderWithDate(
-		StringBuilder filterBuilder,
-		List<Object> filterBuilderParameters,
-		Date from,
-		Date to,
-		String tableName,
-		String fieldName) {
+			StringBuilder filterBuilder,
+			List<Object> filterBuilderParameters,
+			Date from,
+			Date to,
+			String tableName,
+			String fieldName) {
 
 		if (from != null || to != null) {
 			if (filterBuilder.length() > 0) {
@@ -2301,21 +2309,56 @@ public class ContactStatisticsFacadeEjb implements ContactStatisticsFacade {
 			}
 
 			if (from != null && to != null) {
-				filterBuilder.append(tableName).append(".").append(fieldName).append(" BETWEEN ?").append(filterBuilderParameters.size() + 1);
+				// Extract the date part from the timestamp and compare it
+				filterBuilder.append("DATE(").append(tableName).append(".").append(fieldName).append(")").append(" BETWEEN ?").append(filterBuilderParameters.size() + 1);
 				filterBuilderParameters.add(from);
 				filterBuilder.append(" AND ?").append(filterBuilderParameters.size() + 1).append("");
 				filterBuilderParameters.add(to);
 			} else if (from != null) {
-				filterBuilder.append(tableName).append(".").append(fieldName).append(" >= ?").append(filterBuilderParameters.size() + 1);
+				// Extract the date part from the timestamp and compare it
+				filterBuilder.append("DATE(").append(tableName).append(".").append(fieldName).append(")").append(" >= ?").append(filterBuilderParameters.size() + 1);
 				filterBuilderParameters.add(from);
 			} else {
-				filterBuilder.append(tableName).append(".").append(fieldName).append(" <= ?").append(filterBuilderParameters.size() + 1);
+				// Extract the date part from the timestamp and compare it
+				filterBuilder.append("DATE(").append(tableName).append(".").append(fieldName).append(")").append(" <= ?").append(filterBuilderParameters.size() + 1);
 				filterBuilderParameters.add(to);
 			}
 		}
 
 		return filterBuilder;
 	}
+
+
+
+//	private StringBuilder extendFilterBuilderWithDate(
+//		StringBuilder filterBuilder,
+//		List<Object> filterBuilderParameters,
+//		Date from,
+//		Date to,
+//		String tableName,
+//		String fieldName) {
+//
+//		if (from != null || to != null) {
+//			if (filterBuilder.length() > 0) {
+//				filterBuilder.append(" AND ");
+//			}
+//
+//			if (from != null && to != null) {
+//				filterBuilder.append(tableName).append(".").append(fieldName).append(" BETWEEN ?").append(filterBuilderParameters.size() + 1);
+//				filterBuilderParameters.add(from);
+//				filterBuilder.append(" AND ?").append(filterBuilderParameters.size() + 1).append("");
+//				filterBuilderParameters.add(to);
+//			} else if (from != null) {
+//				filterBuilder.append(tableName).append(".").append(fieldName).append(" >= ?").append(filterBuilderParameters.size() + 1);
+//				filterBuilderParameters.add(from);
+//			} else {
+//				filterBuilder.append(tableName).append(".").append(fieldName).append(" <= ?").append(filterBuilderParameters.size() + 1);
+//				filterBuilderParameters.add(to);
+//			}
+//		}
+//
+//		return filterBuilder;
+//	}
 
 	private <T> StringBuilder extendFilterBuilderWithDateElement(
 		StringBuilder filterBuilder,
