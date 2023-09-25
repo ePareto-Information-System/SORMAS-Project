@@ -12034,7 +12034,7 @@ CREATE TABLE facility_diseaseconfiguration (
                                                FOREIGN KEY (diseaseconfiguration_id) REFERENCES diseaseconfiguration(id)
 );
 
-INSERT INTO schema_version (version_number, comment) VALUES (473, 'Assigning Diseases to facility functionality #134');
+INSERT INTO schema_version (version_number, comment) VALUES (486, 'Assigning Diseases to facility functionality #134');
 
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
