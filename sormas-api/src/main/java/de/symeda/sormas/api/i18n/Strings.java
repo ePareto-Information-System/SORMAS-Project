@@ -862,6 +862,7 @@ public interface Strings {
 	String infoSurveillanceDashboard = "infoSurveillanceDashboard";
 	String infoSyncUsers = "infoSyncUsers";
 	String infoTasksWithMultipleJurisdictionsSelected = "infoTasksWithMultipleJurisdictionsSelected";
+	String infoNoAssignedDiseases = "infoNoAssignedDiseases";
 	String infoUploadDocumentTemplate = "infoUploadDocumentTemplate";
 	String infoUsageOfEditableCampaignGrids = "infoUsageOfEditableCampaignGrids";
 	String infoUserEmail = "infoUserEmail";

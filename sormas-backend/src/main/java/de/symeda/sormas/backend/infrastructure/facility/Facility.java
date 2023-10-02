@@ -32,7 +32,6 @@ import java.util.Set;
 
 @Entity
 public class Facility extends InfrastructureAdo {
-
 	private static final long serialVersionUID = 8572137127616417072L;
 
 	public static final String TABLE_NAME = "facility";

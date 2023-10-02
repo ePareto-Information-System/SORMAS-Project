@@ -332,6 +332,12 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 				filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Facility.ARCHIVED), true));
 			}
 		}
+
+		if (facilityCriteria.getDiseases() != null) {
+			SetJoin<Facility, DiseaseConfiguration> diseases = from.joinSet("diseases");
+			filter = cb.and(filter, diseases.get(DiseaseConfiguration.DISEASE).in(facilityCriteria.getDiseases()));
+		}
+
 		return filter;
 	}
 
