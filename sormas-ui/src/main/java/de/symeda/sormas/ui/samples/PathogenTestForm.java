@@ -73,6 +73,8 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 
 	private static final String PATHOGEN_TEST_HEADING_LOC = "pathogenTestHeadingLoc";
 
+	private List<FacilityReferenceDto> allActiveLabs;
+
 	//@formatter:off
 	private static final String HTML_LAYOUT =
 			loc(PATHOGEN_TEST_HEADING_LOC) +
@@ -171,6 +173,7 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 					DateFormatHelper.formatDate(
 						sample != null ? sample.getSampleDateTime() : (Date) sampleForm.getField(SampleDto.SAMPLE_DATE_TIME).getValue()))));
 		ComboBox lab = addInfrastructureField(PathogenTestDto.LAB);
+		allActiveLabs = FacadeProvider.getFacilityFacade().getAllActiveLaboratories(true);
 		TextField labDetails = addField(PathogenTestDto.LAB_DETAILS, TextField.class);
 		labDetails.setVisible(false);
 		typingIdField = addField(PathogenTestDto.TYPING_ID, TextField.class);
@@ -266,8 +269,11 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			updateDiseaseVariantField.accept(disease);
 			String diseaseName = disease.getName();
 			lab.removeAllItems();
-			lab.addItems(FacadeProvider.getFacilityFacade().getAllActiveFacilityByDisease(diseaseName));
-
+			List<FacilityReferenceDto> facilities = FacadeProvider.getFacilityFacade().getAllActiveFacilityByDisease(diseaseName);
+			if (facilities.isEmpty()) {
+				facilities = allActiveLabs;
+			}
+			lab.addItems(facilities);
 			FieldHelper.updateItems(
 					testTypeField,
 					Arrays.asList(PathogenTestType.values()),

@@ -25,7 +25,6 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.disease.DiseaseConfigurationDto;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Validations;
@@ -72,8 +71,6 @@ public class FacilityDto extends InfrastructureDto {
 	public static final String TYPE_GROUP = "typeGroup";
 	public static final String TYPE = "type";
 	public static final String EXTERNAL_ID = "externalID";
-
-	//@Derrick
 	private Set<DiseaseConfigurationDto> diseases;
 
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
@@ -118,6 +115,7 @@ public class FacilityDto extends InfrastructureDto {
 	public void setDiseases(Set<DiseaseConfigurationDto> diseases) {
 		this.diseases = diseases;
 	}
+
 
 	public FacilityDto(
 			Date creationDate,

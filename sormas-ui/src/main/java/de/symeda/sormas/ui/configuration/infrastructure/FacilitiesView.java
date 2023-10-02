@@ -15,11 +15,13 @@
 
 package de.symeda.sormas.ui.configuration.infrastructure;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.explicatis.ext_token_field.ExtTokenField;
+import com.explicatis.ext_token_field.Tokenizable;
+import com.vaadin.ui.*;
+import de.symeda.sormas.api.Disease;
 import org.vaadin.hene.popupbutton.PopupButton;
 
 import com.vaadin.icons.VaadinIcons;
@@ -34,7 +36,6 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.ui.ComboBox;
-
 import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.feature.FeatureType;
@@ -93,11 +94,14 @@ public class FacilitiesView extends AbstractConfigurationView {
 	private ComboBox communityFilter;
 	private ComboBox relevanceStatusFilter;
 	private Button resetButton;
-	//	private HorizontalLayout headerLayout;
 	private HorizontalLayout filterLayout;
 	private VerticalLayout gridLayout;
 	private MenuBar bulkOperationsDropdown;
 	private RowCount rowCount;
+
+	private ExtTokenField diseaseTokenField;
+
+	private com.vaadin.ui.ComboBox<TokenizableValue> diseasesDropdown;
 
 	public FacilitiesView() {
 
@@ -105,7 +109,7 @@ public class FacilitiesView extends AbstractConfigurationView {
 
 		viewConfiguration = ViewModelProviders.of(getClass()).get(ViewConfiguration.class);
 		criteria = ViewModelProviders.of(getClass())
-			.get(FacilityCriteria.class, new FacilityCriteria().country(FacadeProvider.getCountryFacade().getServerCountry()));
+				.get(FacilityCriteria.class, new FacilityCriteria().country(FacadeProvider.getCountryFacade().getServerCountry()));
 		if (criteria.getRelevanceStatus() == null) {
 			criteria.relevanceStatus(EntityRelevanceStatus.ACTIVE);
 		}
@@ -158,50 +162,50 @@ public class FacilitiesView extends AbstractConfigurationView {
 				.createStreamResourceWithSelectedItems(grid, this::getSelectedRows, ExportEntityName.FACILITIES, FacilitiesGrid.ACTION_BTN_ID);
 
 			addExportButton(
-				basicExportStreamResource,
-				exportPopupButton,
-				exportLayout,
-				VaadinIcons.TABLE,
-				Captions.exportBasic,
-				Strings.infoBasicExport);
+					basicExportStreamResource,
+					exportPopupButton,
+					exportLayout,
+					VaadinIcons.TABLE,
+					Captions.exportBasic,
+					Strings.infoBasicExport);
 
 			// Detailed export
 
 			StreamResource detailedExportStreamResource = DownloadUtil.createCsvExportStreamResource(
-				FacilityExportDto.class,
-				null,
-				(Integer start, Integer max) -> FacadeProvider.getFacilityFacade()
-					.getExportList(
-						grid.getCriteria(),
-						getSelectedRows().stream().map(FacilityIndexDto::getUuid).collect(Collectors.toList()),
-						start,
-						max),
-				(propertyId, type) -> {
-					String caption = I18nProperties.findPrefixCaption(propertyId, FacilityExportDto.I18N_PREFIX, FacilityDto.I18N_PREFIX);
-					if (Date.class.isAssignableFrom(type)) {
-						caption += " (" + DateFormatHelper.getDateFormatPattern() + ")";
-					}
-					return caption;
-				},
-				ExportEntityName.FACILITIES,
-				null);
+					FacilityExportDto.class,
+					null,
+					(Integer start, Integer max) -> FacadeProvider.getFacilityFacade()
+							.getExportList(
+									grid.getCriteria(),
+									getSelectedRows().stream().map(FacilityIndexDto::getUuid).collect(Collectors.toList()),
+									start,
+									max),
+					(propertyId, type) -> {
+						String caption = I18nProperties.findPrefixCaption(propertyId, FacilityExportDto.I18N_PREFIX, FacilityDto.I18N_PREFIX);
+						if (Date.class.isAssignableFrom(type)) {
+							caption += " (" + DateFormatHelper.getDateFormatPattern() + ")";
+						}
+						return caption;
+					},
+					ExportEntityName.FACILITIES,
+					null);
 
 			addExportButton(
-				detailedExportStreamResource,
-				exportPopupButton,
-				exportLayout,
-				VaadinIcons.FILE_TEXT,
-				Captions.exportDetailed,
-				Strings.infoDetailedExport);
+					detailedExportStreamResource,
+					exportPopupButton,
+					exportLayout,
+					VaadinIcons.FILE_TEXT,
+					Captions.exportDetailed,
+					Strings.infoDetailedExport);
 		}
 
 		if (infrastructureDataEditable && UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_CREATE)) {
 			createButton = ButtonHelper.createIconButtonWithCaption(
-				"create",
-				I18nProperties.getCaption(Captions.actionNewEntry),
-				VaadinIcons.PLUS_CIRCLE,
-				e -> ControllerProvider.getInfrastructureController().createFacility(),
-				ValoTheme.BUTTON_PRIMARY);
+					"create",
+					I18nProperties.getCaption(Captions.actionNewEntry),
+					VaadinIcons.PLUS_CIRCLE,
+					e -> ControllerProvider.getInfrastructureController().createFacility(),
+					ValoTheme.BUTTON_PRIMARY);
 			addHeaderComponent(createButton);
 		}
 
@@ -298,8 +302,8 @@ public class FacilitiesView extends AbstractConfigurationView {
 			criteria.country(countryReferenceDto);
 			navigateTo(criteria);
 			FieldHelper.updateItems(
-				regionFilter,
-				countryReferenceDto != null ? FacadeProvider.getRegionFacade().getAllActiveByCountry(countryReferenceDto.getUuid()) : null);
+					regionFilter,
+					countryReferenceDto != null ? FacadeProvider.getRegionFacade().getAllActiveByCountry(countryReferenceDto.getUuid()) : null);
 
 		});
 
@@ -313,7 +317,7 @@ public class FacilitiesView extends AbstractConfigurationView {
 			criteria.region(region);
 			navigateTo(criteria);
 			FieldHelper
-				.updateItems(districtFilter, region != null ? FacadeProvider.getDistrictFacade().getAllActiveByRegion(region.getUuid()) : null);
+					.updateItems(districtFilter, region != null ? FacadeProvider.getDistrictFacade().getAllActiveByRegion(region.getUuid()) : null);
 
 		});
 		filterLayout.addComponent(regionFilter);
@@ -327,8 +331,8 @@ public class FacilitiesView extends AbstractConfigurationView {
 			criteria.district(district);
 			navigateTo(criteria);
 			FieldHelper.updateItems(
-				communityFilter,
-				district != null ? FacadeProvider.getCommunityFacade().getAllActiveByDistrict(district.getUuid()) : null);
+					communityFilter,
+					district != null ? FacadeProvider.getCommunityFacade().getAllActiveByDistrict(district.getUuid()) : null);
 		});
 		filterLayout.addComponent(districtFilter);
 
@@ -342,13 +346,9 @@ public class FacilitiesView extends AbstractConfigurationView {
 		});
 		filterLayout.addComponent(communityFilter);
 
-		resetButton = ButtonHelper.createButton(Captions.actionResetFilters, event -> {
-			ViewModelProviders.of(FacilitiesView.class).remove(FacilityCriteria.class);
-			navigateTo(null);
-		}, CssStyles.FORCE_CAPTION);
-		resetButton.setVisible(false);
+		//
 
-		filterLayout.addComponent(resetButton);
+
 
 		HorizontalLayout actionButtonsLayout = new HorizontalLayout();
 		actionButtonsLayout.setSpacing(true);
@@ -371,6 +371,52 @@ public class FacilitiesView extends AbstractConfigurationView {
 					navigateTo(criteria);
 				});
 				actionButtonsLayout.addComponent(relevanceStatusFilter);
+
+				diseaseTokenField = new ExtTokenField();
+				diseaseTokenField.setId("diseasesTokens");
+				diseaseTokenField.setCaption(I18nProperties.getCaption(Captions.Facility_Diseases));
+				diseaseTokenField.setEnableDefaultDeleteTokenAction(true);
+				diseaseTokenField.setWidth(200, Unit.PIXELS);
+
+				diseasesDropdown = new com.vaadin.ui.ComboBox<TokenizableValue>("", createTokens(FacadeProvider.getDiseaseConfigurationFacade().getAllPrimaryDiseases()));
+				diseasesDropdown.setWidth(200, Unit.PIXELS);
+				diseasesDropdown.setId("diseasesTokens");
+				diseasesDropdown.addStyleName(CssStyles.VSPACE_NONE);
+				diseasesDropdown.setPlaceholder(I18nProperties.getString(Strings.promptTypeToAdd));
+				diseaseTokenField.setInputField(diseasesDropdown);
+				diseasesDropdown.addValueChangeListener(e -> {
+					TokenizableValue token = e.getValue();
+					if (token != null) {
+						List<Tokenizable> selectedTokens = diseaseTokenField.getValue();
+						if (selectedTokens.stream().map(t -> (TokenizableValue)t).map(tokenValue -> (Disease)tokenValue.getValue()).collect(Collectors.toList()).contains(token.getValue())) {
+							return;
+						}
+						diseaseTokenField.addTokenizable(token);
+						diseasesDropdown.setValue(null);
+					}
+					List<Tokenizable> selectedTokens = diseaseTokenField.getValue();
+					criteria.diseases(selectedTokens.stream().map(t -> (TokenizableValue)t).map(tokenValue -> (Disease)tokenValue.getValue()).collect(Collectors.toList()));
+					navigateTo(criteria);
+				});
+				filterLayout.addComponent(diseaseTokenField);
+
+				diseaseTokenField.addValueChangeListener(e -> {
+					List<Tokenizable> selectedTokens = diseaseTokenField.getValue();
+					if (selectedTokens.size() > 0) {
+						criteria.diseases(selectedTokens.stream().map(t -> (TokenizableValue)t).map(tokenValue -> (Disease)tokenValue.getValue()).collect(Collectors.toList()));
+					} else {
+						criteria.diseases(null);
+					}
+					navigateTo(criteria);
+				});
+
+				resetButton = ButtonHelper.createButton(Captions.actionResetFilters, event -> {
+					ViewModelProviders.of(FacilitiesView.class).remove(FacilityCriteria.class);
+					navigateTo(null);
+				}, CssStyles.FORCE_CAPTION);
+				resetButton.setVisible(false);
+
+				filterLayout.addComponent(resetButton);
 
 				// Bulk operation dropdown
 				if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
@@ -445,6 +491,12 @@ public class FacilitiesView extends AbstractConfigurationView {
 		districtFilter.setValue(criteria.getDistrict());
 		communityFilter.setValue(criteria.getCommunity());
 
+
+		if (criteria.getDiseases() != null) {
+			List<TokenizableValue> selectedDiseases = createTokens(criteria.getDiseases());
+			selectedDiseases.forEach(token -> diseaseTokenField.addTokenizable(token));
+		}
+
 		applyingCriteria = false;
 	}
 
@@ -454,6 +506,15 @@ public class FacilitiesView extends AbstractConfigurationView {
 		return viewConfiguration.isInEagerMode()
 			&& (EntityRelevanceStatus.ACTIVE.equals(criteria.getRelevanceStatus())
 				|| (infrastructureDataEditable && EntityRelevanceStatus.ARCHIVED.equals(criteria.getRelevanceStatus())));
+	}
+
+	protected List<TokenizableValue> createTokens(List<Disease> diseases) {
+		List<TokenizableValue> tokens = new ArrayList<>(diseases.size());
+		int index = 0;
+		for (Disease disease : diseases) {
+			tokens.add(new TokenizableValue(disease, index++));
+		}
+		return tokens;
 	}
 
 }

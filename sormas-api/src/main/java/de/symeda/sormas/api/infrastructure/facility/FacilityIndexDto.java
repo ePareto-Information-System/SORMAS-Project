@@ -38,6 +38,7 @@ public class FacilityIndexDto extends AbstractUuidDto {
 	public static final String LONGITUDE = "longitude";
 	public static final String TYPE = "type";
 	public static final String EXTERNAL_ID = "externalID";
+	public static final String DISEASES = "diseases";
 
 	private String name;
 	private FacilityType type;
@@ -52,6 +53,7 @@ public class FacilityIndexDto extends AbstractUuidDto {
 	private Double latitude;
 	private Double longitude;
 	private String externalID;
+	private String diseases;
 
 	public FacilityIndexDto(
 		String uuid,
@@ -92,6 +94,7 @@ public class FacilityIndexDto extends AbstractUuidDto {
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.externalID = externalID;
+
 	}
 
 	public String getName() {
@@ -209,5 +212,12 @@ public class FacilityIndexDto extends AbstractUuidDto {
 
 	public FacilityReferenceDto toReference() {
 		return new FacilityReferenceDto(getUuid(), getCaption(), getExternalID());
+	}
+	public String getDiseases() {
+		return diseases;
+	}
+
+	public void setDiseases(String diseases) {
+		this.diseases = diseases;
 	}
 }

@@ -10,10 +10,6 @@ import javax.persistence.*;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.audit.AuditIgnore;
-import de.symeda.auditlog.api.Audited;
-import de.symeda.auditlog.api.AuditedIgnore;
-import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.backend.campaign.form.CampaignFormMeta;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.infrastructure.facility.Facility;
 import de.symeda.sormas.backend.user.UserRole;
@@ -161,7 +157,7 @@ public class DiseaseConfiguration extends AbstractDomainObject {
 
 	private Set<Facility> facilities = new HashSet<>();
 	public static final String TABLE_NAME_FACILITY_DISEASE = "facility_diseaseconfiguration";
-	@AuditedIgnore
+
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = TABLE_NAME_FACILITY_DISEASE,
 			joinColumns = @JoinColumn(name = "diseaseconfiguration_id"),

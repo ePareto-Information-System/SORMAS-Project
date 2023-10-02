@@ -18,8 +18,11 @@
 package de.symeda.sormas.api.infrastructure.facility;
 
 import java.io.Serializable;
+import java.util.List;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityRelevanceStatus;
+import de.symeda.sormas.api.disease.DiseaseConfigurationDto;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
@@ -39,6 +42,10 @@ public class FacilityCriteria extends BaseCriteria implements Serializable, Clon
 	private FacilityTypeGroup typeGroup;
 	private FacilityType type;
 	private EntityRelevanceStatus relevanceStatus;
+	private Disease disease;
+
+	//diseases for disease
+	private List<Disease> diseases;
 
 	public CountryReferenceDto getCountry() {
 		return country;
@@ -116,4 +123,15 @@ public class FacilityCriteria extends BaseCriteria implements Serializable, Clon
 		this.nameAddressLike = nameAddressLike;
 		return this;
 	}
+
+	@IgnoreForUrl
+	public List<Disease> getDiseases() {
+		return diseases;
+	}
+
+	public FacilityCriteria diseases(List<Disease> diseases) {
+		this.diseases = diseases;
+		return this;
+	}
+
 }

@@ -31,8 +31,11 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.Valid;
+import javax.persistence.criteria.*;
 import javax.validation.constraints.NotNull;
+
 import de.symeda.sormas.api.disease.DiseaseConfigurationDto;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
 import de.symeda.sormas.backend.disease.DiseaseConfiguration;
 import org.apache.commons.collections.CollectionUtils;
@@ -74,7 +77,6 @@ import de.symeda.sormas.backend.util.RightsAllowed;
 public class FacilityFacadeEjb
 	extends AbstractInfrastructureFacadeEjb<Facility, FacilityDto, FacilityIndexDto, FacilityReferenceDto, FacilityService, FacilityCriteria>
 	implements FacilityFacade {
-
 	@EJB
 	private CommunityService communityService;
 	@EJB
@@ -106,7 +108,8 @@ public class FacilityFacadeEjb
 			boolean includeNoneFacility) {
 
 		Community community = communityService.getByUuid(communityRef.getUuid());
-		List<Facility> facilities = service.getActiveFacilitiesByCommunityAndType(community, type, includeOtherFacility, includeNoneFacility);
+		List<Facility> facilities = service.getActiveFacilitiesByCommunityAndType(community, type, includeOtherFacility,
+				includeNoneFacility);
 		return facilities.stream().map(FacilityFacadeEjb::toReferenceDto).collect(Collectors.toList());
 	}
 
@@ -119,7 +122,8 @@ public class FacilityFacadeEjb
 			boolean includeNoneFacility) {
 
 		District district = districtService.getByUuid(districtRef.getUuid());
-		List<Facility> facilities = service.getActiveFacilitiesByDistrictAndType(district, type, includeOtherFacility, includeNoneFacility);
+		List<Facility> facilities = service.getActiveFacilitiesByDistrictAndType(district, type, includeOtherFacility,
+				includeNoneFacility);
 		return facilities.stream().map(FacilityFacadeEjb::toReferenceDto).collect(Collectors.toList());
 	}
 
@@ -127,7 +131,8 @@ public class FacilityFacadeEjb
 	@PermitAll
 	public List<FacilityReferenceDto> getActiveHospitalsByCommunity(CommunityReferenceDto communityRef, boolean includeOtherFacility) {
 		Community community = communityService.getByUuid(communityRef.getUuid());
-		List<Facility> facilities = service.getActiveFacilitiesByCommunityAndType(community, FacilityType.HOSPITAL, includeOtherFacility, false);
+		List<Facility> facilities = service.getActiveFacilitiesByCommunityAndType(community, FacilityType.HOSPITAL,
+				includeOtherFacility, false);
 		return facilities.stream().map(FacilityFacadeEjb::toReferenceDto).collect(Collectors.toList());
 	}
 
@@ -135,7 +140,8 @@ public class FacilityFacadeEjb
 	@PermitAll
 	public List<FacilityReferenceDto> getActiveHospitalsByDistrict(DistrictReferenceDto districtRef, boolean includeOtherFacility) {
 		District district = districtService.getByUuid(districtRef.getUuid());
-		List<Facility> facilities = service.getActiveFacilitiesByDistrictAndType(district, FacilityType.HOSPITAL, includeOtherFacility, false);
+		List<Facility> facilities = service.getActiveFacilitiesByDistrictAndType(district, FacilityType.HOSPITAL,
+				includeOtherFacility, false);
 		return facilities.stream().map(FacilityFacadeEjb::toReferenceDto).collect(Collectors.toList());
 	}
 
@@ -267,11 +273,13 @@ public class FacilityFacadeEjb
 		Root<Facility> root = cq.from(Facility.class);
 		Join<Facility, District> districtJoin = root.join(Facility.DISTRICT, JoinType.LEFT);
 
-		Predicate filter = root.get(Facility.UUID).in(facilities.stream().map(ReferenceDto::getUuid).collect(Collectors.toList()));
+		Predicate filter = root.get(Facility.UUID)
+				.in(facilities.stream().map(ReferenceDto::getUuid).collect(Collectors.toList()));
 		cq.where(filter);
 		cq.multiselect(root.get(Facility.UUID), districtJoin.get(District.UUID));
 
-		return em.createQuery(cq).getResultList().stream().collect(Collectors.toMap(e -> (String) e[0], e -> (String) e[1]));
+		return em.createQuery(cq).getResultList().stream()
+				.collect(Collectors.toMap(e -> (String) e[0], e -> (String) e[1]));
 	}
 
 	@Override
@@ -289,11 +297,13 @@ public class FacilityFacadeEjb
 
 		Predicate filter = cb.and(
 				cb.isNotNull(root.get(Facility.COMMUNITY)),
-				root.get(Facility.UUID).in(facilities.stream().map(ReferenceDto::getUuid).collect(Collectors.toList())));
+				root.get(Facility.UUID)
+						.in(facilities.stream().map(ReferenceDto::getUuid).collect(Collectors.toList())));
 		cq.where(filter);
 		cq.multiselect(root.get(Facility.UUID), communityJoin.get(Community.UUID));
 
-		return em.createQuery(cq).getResultList().stream().collect(Collectors.toMap(e -> (String) e[0], e -> (String) e[1]));
+		return em.createQuery(cq).getResultList().stream()
+				.collect(Collectors.toMap(e -> (String) e[0], e -> (String) e[1]));
 	}
 
 	@Override
@@ -304,8 +314,10 @@ public class FacilityFacadeEjb
 				.map(FacilityFacadeEjb::toReferenceDto)
 				.collect(Collectors.toList());
 	}
+
 	@Override
-	public Page<FacilityIndexDto> getIndexPage(FacilityCriteria criteria, Integer offset, Integer size, List<SortProperty> sortProperties) {
+	public Page<FacilityIndexDto> getIndexPage(FacilityCriteria criteria, Integer offset, Integer size,
+											   List<SortProperty> sortProperties) {
 		List<FacilityIndexDto> facilityIndexList = getIndexList(criteria, offset, size, sortProperties);
 		long totalElementCount = count(criteria);
 		return new Page<>(facilityIndexList, offset, size, totalElementCount);
@@ -436,7 +448,8 @@ public class FacilityFacadeEjb
 	}
 
 	@Override
-	public List<FacilityIndexDto> getIndexList(FacilityCriteria facilityCriteria, Integer first, Integer max, List<SortProperty> sortProperties) {
+	public List<FacilityIndexDto> getIndexList(FacilityCriteria facilityCriteria, Integer first, Integer max,
+											   List<SortProperty> sortProperties) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<FacilityIndexDto> cq = cb.createQuery(FacilityIndexDto.class);
@@ -510,7 +523,28 @@ public class FacilityFacadeEjb
 			facility.get(Facility.LONGITUDE),
 			facility.get(Facility.EXTERNAL_ID));
 
-		return QueryHelper.getResultList(em, cq, first, max);
+		List<FacilityIndexDto> facilityIndexList = QueryHelper.getResultList(em, cq, first, max);
+
+		String diseases = "";
+		for (FacilityIndexDto facilityIndexDto : facilityIndexList) {
+			Facility facilityEntity = service.getByUuid(facilityIndexDto.getUuid());
+			if (facilityEntity.getDiseases() == null) {
+				diseases = "";
+			} else {
+				diseases = facilityEntity.getDiseases().stream()
+						.map(disease -> {
+							return I18nProperties.getEnumCaption(disease.getDisease());
+						})
+						.collect(Collectors.joining(", "));
+			}
+
+			if(diseases.isEmpty()) {
+				diseases = I18nProperties.getString(Strings.infoNoAssignedDiseases);
+			}
+			facilityIndexDto.setDiseases(diseases);
+		}
+
+		return facilityIndexList;
 	}
 
 	@Override
@@ -582,8 +616,9 @@ public class FacilityFacadeEjb
 			cq.where(filter);
 		}
 
-		cq.select(cb.count(root));
-		return em.createQuery(cq).getSingleResult();
+		cq.select(cb.countDistinct(root));
+		long totalCount = em.createQuery(cq).getSingleResult();
+		return totalCount;
 	}
 
 	@Override
@@ -658,9 +693,17 @@ public class FacilityFacadeEjb
 		target.setArchived(source.isArchived());
 		target.setExternalID(source.getExternalID());
 		target.setCentrallyManaged(source.isCentrallyManaged());
-		target.setDiseases(source.getDiseases().stream().map(diseaseDto -> {
-			return mapDtoToEntity(diseaseDto);
-		}).collect(Collectors.toSet()));
+
+		if (FacilityType.LABORATORY.equals(source.getType())) {
+			if (source.getDiseases() == null) {
+				source.setDiseases(new HashSet<>());
+			} else {
+				target.setDiseases(source.getDiseases().stream().map(diseaseDto -> {
+					return mapDtoToEntity(diseaseDto);
+				}).collect(Collectors.toSet()));
+
+			}
+		}
 		return target;
 	}
 

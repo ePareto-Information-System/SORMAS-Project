@@ -19,6 +19,8 @@ package de.symeda.sormas.ui.configuration.infrastructure;
 
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
 
+import com.explicatis.ext_token_field.Tokenizable;
+import com.vaadin.data.HasValue;
 import com.vaadin.ui.CheckBoxGroup;
 import com.vaadin.v7.data.util.converter.Converter;
 import com.vaadin.v7.data.validator.EmailValidator;
@@ -134,6 +136,9 @@ public class FacilityEditForm extends AbstractEditForm<FacilityDto> {
 			boolean notLab = !FacilityType.LABORATORY.equals(type.getValue());
 			region.setRequired(notLab);
 			district.setRequired(notLab);
+
+			//hide the checkbox if the facility is not a lab
+			checkBoxLab.setVisible(!notLab);
 			if (!create) {
 				// Disable editing of region, etc. so case references stay correct
 				region.setEnabled(false);
@@ -172,18 +177,20 @@ public class FacilityEditForm extends AbstractEditForm<FacilityDto> {
 		checkBoxLab = new CheckBoxGroup(I18nProperties.getCaption(Captions.Facility_Diseases));
 		checkBoxLab.setWidth(100, Unit.PERCENTAGE);
 		checkBoxLab.setItems(FacadeProvider.getDiseaseConfigurationFacade().getAllPrimaryDiseases().toArray());
+		//set visible to false, because the checkbox is only needed for labs
+		checkBoxLab.setVisible(false);
 		getContent().addComponent(checkBoxLab, DISEASES_LIST_COL_ONE);
+
 		checkBoxLab.addValueChangeListener(e -> {
 			Set<DiseaseConfigurationDto> selectedDtos = new HashSet<>();
-
 			for(Disease disease : (Set<Disease>) e.getValue()) {
 				DiseaseConfigurationDto diseaseDto = new DiseaseConfigurationDto();
 				diseaseDto.setDisease(disease);
 				selectedDtos.add(diseaseDto);
 			}
-
 			getValue().setDiseases(selectedDtos);
 		});
+
 
 		super.setValue(facilityDto);
 
@@ -195,6 +202,8 @@ public class FacilityEditForm extends AbstractEditForm<FacilityDto> {
 			checkBoxLab.setValue(diseases);
 		}
 	}
+
+
 
 	@Override
 	protected String createHtmlLayout() {
