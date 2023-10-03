@@ -280,6 +280,7 @@ public interface Captions {
 	String caseConfirmCase = "caseConfirmCase";
 	String caseNoCase = "caseNoCase";
 	String caseContacts = "caseContacts";
+	String caseSamples = "caseSamples";
 	String caseCreateCase = "caseCreateCase";
 	String caseCreateNew = "caseCreateNew";
 	String CaseData = "CaseData";

@@ -15,8 +15,12 @@
 
 package de.symeda.sormas.ui.configuration;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.function.Consumer;
 
+import com.explicatis.ext_token_field.Tokenizable;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.ui.Layout;
 import com.vaadin.v7.ui.ComboBox;
@@ -26,7 +30,9 @@ import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
+import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.ui.SubMenu;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.configuration.docgeneration.DocumentTemplatesView;
@@ -34,6 +40,7 @@ import de.symeda.sormas.ui.configuration.infrastructure.*;
 import de.symeda.sormas.ui.configuration.infrastructure.components.CountryCombo;
 import de.symeda.sormas.ui.configuration.linelisting.LineListingConfigurationView;
 import de.symeda.sormas.ui.configuration.outbreak.OutbreaksView;
+import de.symeda.sormas.ui.statistics.StatisticsFilterElement;
 import de.symeda.sormas.ui.utils.AbstractSubNavigationView;
 import de.symeda.sormas.ui.utils.ComboBoxHelper;
 import de.symeda.sormas.ui.utils.DirtyStateComponent;
@@ -106,11 +113,11 @@ public abstract class AbstractConfigurationView extends AbstractSubNavigationVie
 		menu.removeAllViews();
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.OUTBREAK_VIEW)
-			&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.OUTBREAKS)) {
+				&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.OUTBREAKS)) {
 			menu.addView(
-				OutbreaksView.VIEW_NAME,
-				I18nProperties.getPrefixCaption("View", OutbreaksView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
-				params);
+					OutbreaksView.VIEW_NAME,
+					I18nProperties.getPrefixCaption("View", OutbreaksView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
+					params);
 		}
 
 		boolean isCaseSurveillanceEnabled = FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.CASE_SURVEILANCE);
@@ -119,64 +126,64 @@ public abstract class AbstractConfigurationView extends AbstractSubNavigationVie
 		if (UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_VIEW)) {
 			if (FacadeProvider.getFeatureConfigurationFacade().isCountryEnabled()) {
 				menu.addView(
-					ContinentsView.VIEW_NAME,
-					I18nProperties.getPrefixCaption("View", ContinentsView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
-					null,
-					false);
+						ContinentsView.VIEW_NAME,
+						I18nProperties.getPrefixCaption("View", ContinentsView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
+						null,
+						false);
 				menu.addView(
-					SubcontinentsView.VIEW_NAME,
-					I18nProperties.getPrefixCaption("View", SubcontinentsView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
-					null,
-					false);
+						SubcontinentsView.VIEW_NAME,
+						I18nProperties.getPrefixCaption("View", SubcontinentsView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
+						null,
+						false);
 				menu.addView(
-					CountriesView.VIEW_NAME,
-					I18nProperties.getPrefixCaption("View", CountriesView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
-					null,
-					false);
+						CountriesView.VIEW_NAME,
+						I18nProperties.getPrefixCaption("View", CountriesView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
+						null,
+						false);
 			}
 			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.INFRASTRUCTURE_TYPE_AREA)) {
 				menu.addView(
-					AreasView.VIEW_NAME,
-					I18nProperties.getPrefixCaption("View", AreasView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
-					null,
-					false);
+						AreasView.VIEW_NAME,
+						I18nProperties.getPrefixCaption("View", AreasView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
+						null,
+						false);
 			}
 			menu.addView(
-				RegionsView.VIEW_NAME,
-				I18nProperties.getPrefixCaption("View", RegionsView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
-				null,
-				false);
-			menu.addView(
-				DistrictsView.VIEW_NAME,
-				I18nProperties.getPrefixCaption("View", DistrictsView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
-				null,
-				false);
-			menu.addView(
-				CommunitiesView.VIEW_NAME,
-				I18nProperties.getPrefixCaption("View", CommunitiesView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
-				null,
-				false);
-			if (isAnySurveillanceEnabled) {
-				menu.addView(
-					FacilitiesView.VIEW_NAME,
-					I18nProperties.getPrefixCaption("View", FacilitiesView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
+					RegionsView.VIEW_NAME,
+					I18nProperties.getPrefixCaption("View", RegionsView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
 					null,
 					false);
+			menu.addView(
+					DistrictsView.VIEW_NAME,
+					I18nProperties.getPrefixCaption("View", DistrictsView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
+					null,
+					false);
+			menu.addView(
+					CommunitiesView.VIEW_NAME,
+					I18nProperties.getPrefixCaption("View", CommunitiesView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
+					null,
+					false);
+			if (isAnySurveillanceEnabled) {
+				menu.addView(
+						FacilitiesView.VIEW_NAME,
+						I18nProperties.getPrefixCaption("View", FacilitiesView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
+						null,
+						false);
 			}
 			if (isCaseSurveillanceEnabled) {
 				menu.addView(
-					PointsOfEntryView.VIEW_NAME,
-					I18nProperties.getPrefixCaption("View", PointsOfEntryView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
-					null,
-					false);
+						PointsOfEntryView.VIEW_NAME,
+						I18nProperties.getPrefixCaption("View", PointsOfEntryView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
+						null,
+						false);
 			}
 
 			if (UserProvider.getCurrent().hasUserRight(UserRight.POPULATION_MANAGE)) {
 				menu.addView(
-					PopulationDataView.VIEW_NAME,
-					I18nProperties.getPrefixCaption("View", PopulationDataView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
-					null,
-					false);
+						PopulationDataView.VIEW_NAME,
+						I18nProperties.getPrefixCaption("View", PopulationDataView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
+						null,
+						false);
 			}
 
 			menu.addView(
@@ -194,24 +201,24 @@ public abstract class AbstractConfigurationView extends AbstractSubNavigationVie
 		if (isCaseSurveillanceEnabled && UserProvider.getCurrent().hasUserRight(UserRight.LINE_LISTING_CONFIGURE)) {
 			RegionReferenceDto region = UserProvider.getCurrent().getUser().getRegion();
 			menu.addView(
-				LineListingConfigurationView.VIEW_NAME,
-				I18nProperties.getPrefixCaption("View", LineListingConfigurationView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
-				region != null ? region.getUuid() : null,
-				false);
+					LineListingConfigurationView.VIEW_NAME,
+					I18nProperties.getPrefixCaption("View", LineListingConfigurationView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
+					region != null ? region.getUuid() : null,
+					false);
 		}
 		if (isAnySurveillanceEnabled && UserProvider.getCurrent().hasUserRight(UserRight.DOCUMENT_TEMPLATE_MANAGEMENT)) {
 			menu.addView(
-				DocumentTemplatesView.VIEW_NAME,
-				I18nProperties.getPrefixCaption("View", DocumentTemplatesView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
-				null,
-				false);
+					DocumentTemplatesView.VIEW_NAME,
+					I18nProperties.getPrefixCaption("View", DocumentTemplatesView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
+					null,
+					false);
 		}
 		if (FacadeProvider.getConfigFacade().isDevMode() && UserProvider.getCurrent().hasUserRight(UserRight.DEV_MODE)) {
 			menu.addView(
-				DevModeView.VIEW_NAME,
-				I18nProperties.getPrefixCaption("View", DevModeView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
-				null,
-				false);
+					DevModeView.VIEW_NAME,
+					I18nProperties.getPrefixCaption("View", DevModeView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
+					null,
+					false);
 		}
 	}
 
@@ -233,4 +240,47 @@ public abstract class AbstractConfigurationView extends AbstractSubNavigationVie
 		}
 		return countryFilter != null ? countryFilter : ComboBoxHelper.createComboBoxV7();
 	}
+
+	public static class TokenizableValue implements Tokenizable {
+
+		private final Object value;
+		private final String stringRepresentation;
+		private final long id;
+
+		public TokenizableValue(Object value, long id) {
+			this.value = value;
+			stringRepresentation = null;
+			this.id = id;
+		}
+
+		public TokenizableValue(Object value, String stringRepresentation, long id) {
+			this.value = value;
+			this.stringRepresentation = stringRepresentation;
+			this.id = id;
+		}
+
+		public Object getValue() {
+			return value;
+		}
+
+		@Override
+		public String getStringValue() {
+			if (stringRepresentation != null) {
+				return stringRepresentation;
+			} else {
+				return DataHelper.toStringNullable(value);
+			}
+		}
+
+		@Override
+		public long getIdentifier() {
+			return id;
+		}
+
+		@Override
+		public String toString() {
+			return getStringValue();
+		}
+	}
+
 }
