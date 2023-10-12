@@ -44,10 +44,11 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
+import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.vaccination.VaccinationAssociationType;
+import de.symeda.sormas.api.vaccination.VaccinationCriteria;
 import de.symeda.sormas.api.vaccination.VaccinationDto;
-import de.symeda.sormas.api.vaccination.VaccinationListCriteria;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.ButtonHelper;
@@ -80,7 +81,7 @@ public class PhysiciansReportCaseImmunizationsComponent extends CommitDiscardWra
 		immunizationsLabel.addStyleName(H3);
 		getWrappedComponent().addComponent(immunizationsLabel);
 
-		VaccinationListCriteria criteria = new VaccinationListCriteria.Builder(caze.getPerson()).withDisease(caze.getDisease())
+		VaccinationCriteria criteria = new VaccinationCriteria.Builder(caze.getPerson()).withDisease(caze.getDisease())
 			.build()
 			.vaccinationAssociationType(VaccinationAssociationType.CASE)
 			.caseReference(caze.toReference())
@@ -220,7 +221,8 @@ public class PhysiciansReportCaseImmunizationsComponent extends CommitDiscardWra
 						vaccinationsToUpdate.add(v);
 					}
 				},
-				true);
+				true,
+				UserProvider.getCurrent().hasUserRight(UserRight.IMMUNIZATION_DELETE));
 
 		currentVaccinationEditComponent.getDiscardButton().setCaption(I18nProperties.getCaption(Captions.actionCancel));
 		currentVaccinationEditComponent.getButtonsPanel()

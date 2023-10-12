@@ -50,7 +50,7 @@ public class EditContactPage {
   public static final By TYPE_OF_CONTACT_OPTIONS = By.cssSelector("#contactProximity label");
   public static final By CONTACT_CATEGORY_OPTIONS = By.cssSelector("#contactCategory label");
   public static final By CONTACT_CREATED_POPUP = By.cssSelector(".v-Notification-caption");
-  public static final By DELETE_BUTTON = By.id("deleteUndelete");
+  public static final By DELETE_BUTTON = By.id("deleteRestore");
   public static final By DELETE_POPUP_YES_BUTTON = By.cssSelector(".popupContent #actionConfirm");
   public static final By CONTACT_CLASSIFICATION_OPTIONS =
       By.cssSelector("#contactClassification label");
@@ -115,6 +115,8 @@ public class EditContactPage {
   public static final By CHANGE_CASE_BUTTON = By.id("contactChangeCase");
   public static final By CASE_ID_LABEL = By.id("caseIdLabel");
   public static final By CONTACT_CLASSIFICATION_RADIO_BUTTON = By.cssSelector(".v-radiobutton");
+  public static final By CONFIRMED_CONTACT_DE_BUTTON =
+      By.xpath("//label[contains(text(),'Best\u00E4tigter Kontakt')]");
   public static final By CASE_PERSON_LABEL =
       By.xpath(
           "//span[contains(text(), 'Case person')]/ancestor::div[@class='v-caption']/following-sibling::div");
@@ -186,11 +188,23 @@ public class EditContactPage {
     return By.xpath(String.format("//table/tbody/tr[%s]/td[1]/a", index));
   }
 
-  public static final By NOTIFICATION_MESSAGE_POPUP = By.cssSelector(".v-Notification-description");
+  public static final By NOTIFICATION_CAPTION_MESSAGE_POPUP =
+      By.cssSelector(".v-Notification-caption");
+  public static final By NOTIFICATION_DESCRIPTION_MESSAGE_POPUP =
+      By.cssSelector(".v-Notification-description");
+
   public static final By EDIT_VACCINATION_BUTTON =
       By.xpath(
-          "//div[@location='vaccinations']//div[@class='v-button v-widget link v-button-link compact v-button-compact']");
+          "//div[@location='vaccinations']//div[@class='v-button v-widget link v-button-link compact v-button-compact caption-overflow-label v-button-caption-overflow-label']");
 
   public static final By OPEN_CASE_OF_THIS_CONTACT_PERSON_LINK =
       By.cssSelector("[location='toCaseBtnLoc'] div");
+
+  public static final By getHeaderText(String text) {
+    return By.xpath(
+        String.format("//div[contains(@class, 'v-window-header') and text()='%s']", text));
+  }
+
+  public static final By CONTACT_CAN_NOT_BE_SHARED_HEADER_DE =
+      By.xpath("//div[contains(text(), 'Kontakt kann nicht geteilt werden')]");
 }

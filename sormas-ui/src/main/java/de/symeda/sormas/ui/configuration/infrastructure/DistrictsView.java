@@ -51,6 +51,8 @@ import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.configuration.AbstractConfigurationView;
 import de.symeda.sormas.ui.configuration.infrastructure.components.SearchField;
+import de.symeda.sormas.ui.utils.ArchiveHandlers;
+import de.symeda.sormas.ui.utils.ArchiveMessages;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.ComboBoxHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
@@ -80,6 +82,7 @@ public class DistrictsView extends AbstractConfigurationView {
 	private VerticalLayout gridLayout;
 	private DistrictsGrid grid;
 	private MenuBar bulkOperationsDropdown;
+	private RowCount rowCount;
 
 	public DistrictsView() {
 
@@ -95,7 +98,9 @@ public class DistrictsView extends AbstractConfigurationView {
 		grid = new DistrictsGrid(criteria);
 		gridLayout = new VerticalLayout();
 		gridLayout.addComponent(createFilterBar());
-		gridLayout.addComponent(new RowCount(Strings.labelNumberOfDistricts, grid.getItemCount()));
+		rowCount = new RowCount(Strings.labelNumberOfDistricts, grid.getDataSize());
+		grid.addDataSizeChangeListener(e -> rowCount.update(grid.getDataSize()));
+		gridLayout.addComponent(rowCount);
 		gridLayout.addComponent(grid);
 		gridLayout.setMargin(true);
 		gridLayout.setSpacing(false);
@@ -238,10 +243,11 @@ public class DistrictsView extends AbstractConfigurationView {
 				relevanceStatusFilter.setId("relevanceStatus");
 				relevanceStatusFilter.setWidth(220, Unit.PERCENTAGE);
 				relevanceStatusFilter.setNullSelectionAllowed(false);
-				relevanceStatusFilter.addItems((Object[]) EntityRelevanceStatus.values());
+				relevanceStatusFilter.addItems(EntityRelevanceStatus.getAllExceptDeleted());
 				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ACTIVE, I18nProperties.getCaption(Captions.districtActiveDistricts));
 				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ARCHIVED, I18nProperties.getCaption(Captions.districtArchivedDistricts));
-				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ALL, I18nProperties.getCaption(Captions.districtAllDistricts));
+				relevanceStatusFilter
+					.setItemCaption(EntityRelevanceStatus.ACTIVE_AND_ARCHIVED, I18nProperties.getCaption(Captions.districtAllDistricts));
 				relevanceStatusFilter.addValueChangeListener(e -> {
 					criteria.relevanceStatus((EntityRelevanceStatus) e.getProperty().getValue());
 					navigateTo(criteria);
@@ -255,37 +261,27 @@ public class DistrictsView extends AbstractConfigurationView {
 						new MenuBarHelper.MenuBarItem(
 							I18nProperties.getCaption(Captions.actionArchiveInfrastructure),
 							VaadinIcons.ARCHIVE,
-							selectedItem -> {
-								ControllerProvider.getInfrastructureController()
-									.archiveOrDearchiveAllSelectedItems(
-										true,
-										grid.asMultiSelect().getSelectedItems(),
-										InfrastructureType.DISTRICT,
-										new Runnable() {
-
-											public void run() {
-												navigateTo(criteria);
-											}
-										});
-							},
-							EntityRelevanceStatus.ACTIVE.equals(criteria.getRelevanceStatus())),
+							selectedItem -> ControllerProvider.getInfrastructureController()
+								.archiveOrDearchiveAllSelectedItems(
+									true,
+									ArchiveHandlers.forInfrastructure(FacadeProvider.getDistrictFacade(), ArchiveMessages.DISTRICT),
+									grid,
+									grid::reload,
+									() -> navigateTo(criteria)),
+							UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_ARCHIVE)
+								&& EntityRelevanceStatus.ACTIVE.equals(criteria.getRelevanceStatus())),
 						new MenuBarHelper.MenuBarItem(
 							I18nProperties.getCaption(Captions.actionDearchiveInfrastructure),
 							VaadinIcons.ARCHIVE,
-							selectedItem -> {
-								ControllerProvider.getInfrastructureController()
-									.archiveOrDearchiveAllSelectedItems(
-										false,
-										grid.asMultiSelect().getSelectedItems(),
-										InfrastructureType.DISTRICT,
-										new Runnable() {
-
-											public void run() {
-												navigateTo(criteria);
-											}
-										});
-							},
-							EntityRelevanceStatus.ARCHIVED.equals(criteria.getRelevanceStatus())));
+							selectedItem -> ControllerProvider.getInfrastructureController()
+								.archiveOrDearchiveAllSelectedItems(
+									false,
+									ArchiveHandlers.forInfrastructure(FacadeProvider.getDistrictFacade(), ArchiveMessages.DISTRICT),
+									grid,
+									grid::reload,
+									() -> navigateTo(criteria)),
+							UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_ARCHIVE)
+								&& EntityRelevanceStatus.ARCHIVED.equals(criteria.getRelevanceStatus())));
 
 					bulkOperationsDropdown.setVisible(isBulkOperationsDropdownVisible());
 					actionButtonsLayout.addComponent(bulkOperationsDropdown);

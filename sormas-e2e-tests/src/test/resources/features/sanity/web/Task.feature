@@ -31,13 +31,10 @@ Feature: Tasks functionalities
   @env_main
   Scenario: Check all fields from the created Task in the Task Management table
     Given API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given API: I create a new contact
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     And API: I create a new task
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given I log in as a Surveillance Officer
     And I click on the Tasks button from navbar
@@ -48,16 +45,12 @@ Feature: Tasks functionalities
   @tmsLink=SORDEV-6080 @env_main
   Scenario: Bulk deleting tasks in Task Directory
     Given API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given API: I create a new contact
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     And API: I create a new task
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     And API: I create a new task
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given I log in as a Admin User
     And I click on the Tasks button from navbar
@@ -68,22 +61,18 @@ Feature: Tasks functionalities
     And I click on Bulk Actions combobox in Task Directory
     And I click on Delete button from Bulk Actions Combobox in Task Directory
     And I click yes on the CONFIRM REMOVAL popup from Task Directory page
-    And I check if popup message is "All selected tasks have been deleted"
+    And I check if popup message for deleting is "All selected eligible tasks have been deleted"
     And I check that number of displayed tasks results is 0
 
   @tmsLink=SORDEV-6080 @env_main
   Scenario: Bulk archiving tasks in Task Directory
     Given API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given API: I create a new contact
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     And API: I create a new task
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     And API: I create a new task
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given I log in as a Admin User
     And I click on the Tasks button from navbar
@@ -94,22 +83,18 @@ Feature: Tasks functionalities
     And I click on Bulk Actions combobox in Task Directory
     And I click on Archive button from Bulk Actions Combobox in Task Directory
     And I click yes on the CONFIRM REMOVAL popup from Task Directory page
-    And I check if popup message is "All selected tasks have been archived"
+    And I check if popup message for archiving is "All selected entries have been archived"
     And I check that number of displayed tasks results is 0
 
   @tmsLink=SORDEV-6080 @env_main
   Scenario: Bulk editing tasks in Task Directory
     Given API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given API: I create a new contact
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     And API: I create a new task
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     And API: I create a new task
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given I log in as a Admin User
     And I click on the Tasks button from navbar
@@ -123,19 +108,16 @@ Feature: Tasks functionalities
     And I click to bulk change priority for selected tasks
     And I click to bulk change status for selected tasks
     And I click on Save button in New Task form
-    And I check if popup message from Edit Task Form after bulk edit is "All tasks have been edited"
+    And I check if popup message from Edit Task Form after bulk edit is "All entries have been edited"
     And I check that number of displayed tasks results is 0
 
   @tmsLink=SORDEV-9156 @env_main
   Scenario: Check the task observer is added
     Given API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given API: I create a new contact
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     And API: I create a new task
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given I log in as a National User
     And I click on the Tasks button from navbar
@@ -166,8 +148,8 @@ Feature: Tasks functionalities
     And I click on the Tasks button from navbar
     And I click on the NEW TASK button
     When I create a new task with specific data
-    And I click on the Tasks button from navbar
-    And I click on SHOW MORE FILTERS BUTTON on Task directory page
+#    And I click on the Tasks button from navbar
+ #   And I click on SHOW MORE FILTERS BUTTON on Task directory page
     And I filter out last created task from Tasks Directory
     And I click Export button in Task Directory
     When I click on the Detailed Task Export button
@@ -179,8 +161,8 @@ Feature: Tasks functionalities
     And I click on the Tasks button from navbar
     And I click on the NEW TASK button
     When I create a new task with specific data
-    And I click on the Tasks button from navbar
-    And I click on SHOW MORE FILTERS BUTTON on Task directory page
+ #   And I click on the Tasks button from navbar
+ #  And I click on SHOW MORE FILTERS BUTTON on Task directory page
     And I filter out last created task from Tasks Directory
     And I click Export button in Task Directory
     When I click on the Custom Event Export button
@@ -197,7 +179,7 @@ Feature: Tasks functionalities
     And I click on the Tasks button from navbar
     And I click on the NEW TASK button
     When I create a new task with specific data
-    And I click on the Tasks button from navbar
+  #  And I click on the Tasks button from navbar
     And I filter out last created task from Tasks Directory
     And I click Export button in Task Directory
     When I click on the Custom Event Export button
@@ -223,7 +205,7 @@ Feature: Tasks functionalities
     And I save Export Configuration for Custom Task Export
     And I delete last created custom task export config
 
-  @3384 @env_main
+  @#8561 @env_main
   Scenario: Verify that Task assignee cannot be left empty via bulk edit mode
     Given I log in as a Admin User
     And I click on the Tasks button from navbar
@@ -238,13 +220,10 @@ Feature: Tasks functionalities
   @tmsLink=SORDEV-12438 @env_main
   Scenario: Test add task status Progress in task edit page
     Given API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given API: I create a new contact
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     And API: I create a new task
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given I log in as a National User
     And I click on the Tasks button from navbar
@@ -280,4 +259,25 @@ Feature: Tasks functionalities
     When I open last created case
     And I check that I get navigated to the Edit Case page
     And I click on first edit Task
+    Then I check the created task is correctly displayed on Edit task page
+
+  @tmsLink=SORDEV-13927 @env_main
+  Scenario: Test Manual archiving of tasks [2]
+    Given I log in as a National User
+    And I click on the Tasks button from navbar
+    And I click on the NEW TASK button
+    When I create a new task with specific data
+    And I open last created task from Tasks Directory
+    Then I check the created task is correctly displayed on Edit task page
+    Then I click on the Archive task button
+    And I click on No option in popup window
+    Then I click on the Archive task button
+    And I click on yes in archive task popup window
+    And I apply "Archived tasks" to combobox on Task Directory Page
+    And I open last created task from Tasks Directory without click on show more filters
+    Then I check the created task is correctly displayed on Edit task page
+    Then I click on De-Archive task button
+    And I click on yes in de-archive task popup window
+    And I apply "Active tasks" to combobox on Task Directory Page
+    And I open last created task from Tasks Directory without click on show more filters
     Then I check the created task is correctly displayed on Edit task page

@@ -24,10 +24,19 @@ public class LoginPage {
   public static final By USER_NAME_INPUT = By.id("username");
   public static final By USER_PASSWORD_INPUT = By.id("password");
   public static final By LOGIN_BUTTON = By.xpath("//*[@id='kc-login' or @id='Login.doLogIn']");
+  public static final By APPLICATION_DESCRIPTION_TEXT =
+      By.xpath(
+          "//div[@class='v-label v-widget h2 v-label-h2 vspace-top-none v-label-vspace-top-none align-center v-label-align-center v-has-width']");
   public static final By FAILED_LOGIN_ERROR_MESSAGE =
       By.xpath("//div[contains(@class, 'v-Notification-warning')]");
   public static final By PASSWORD_CONFIRM_INPUT = By.id("password-confirm");
   public static final By PASSWORD_NEW_INPUT = By.id("password-new");
   public static final By SUBMIT_BUTTON = By.cssSelector("div #kc-form-buttons input");
   public static final By ERROR_MESSAGE = By.cssSelector("div .alert-error");
+  public static final By GDPR_MESSAGE_DE =
+      By.xpath("//div[contains(@class, 'v-window-header') and text()='DSGVO']");
+  public static final By DO_NOT_SHOW_THIS_AGAIN_GDPR_MESSAGE_CHECKBOX =
+      By.xpath(
+          "//label[contains(text(), 'Ich habe diese Informationen gelesen, bitte dieses Fenster nicht mehr anzeigen')]");
+  public static final By CONFIRM_BUTTON_DE = By.cssSelector("#Best\u00E4tigen");
 }

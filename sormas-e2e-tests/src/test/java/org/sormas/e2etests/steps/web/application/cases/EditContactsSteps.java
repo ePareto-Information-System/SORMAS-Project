@@ -18,9 +18,7 @@
 
 package org.sormas.e2etests.steps.web.application.cases;
 
-import static org.sormas.e2etests.pages.application.cases.EditCasePage.DELETE_BUTTON;
-import static org.sormas.e2etests.pages.application.cases.EditCasePage.DISCARD_BUTTON_POPUP;
-import static org.sormas.e2etests.pages.application.cases.EditCasePage.VACCINATION_STATUS_FOR_THIS_DISEASE_COMBOBOX;
+import static org.sormas.e2etests.pages.application.cases.EditCasePage.*;
 import static org.sormas.e2etests.pages.application.cases.EditContactsPage.CASE_CONTACT_EXPORT;
 import static org.sormas.e2etests.pages.application.cases.EditContactsPage.CLOSE_POPUP_BUTTON;
 import static org.sormas.e2etests.pages.application.cases.EditContactsPage.COMMIT_BUTTON;
@@ -182,7 +180,7 @@ public class EditContactsSteps implements En {
         () -> {
           webDriverHelpers.clickOnWebElementBySelector(DETAILED_EXPORT_CASE_CONTACT_BUTTON);
           webDriverHelpers.waitUntilElementIsVisibleAndClickable(CLOSE_POPUP_BUTTON);
-          TimeUnit.SECONDS.sleep(5); // time for file to be downloaded
+          TimeUnit.SECONDS.sleep(10); // time for file to be downloaded
         });
     When(
         "I close popup after export in Case Contacts directory",
@@ -294,6 +292,19 @@ public class EditContactsSteps implements En {
         "^I create a new basic contact to export from Cases Contacts tab$",
         () -> {
           contact = contactService.buildGeneratedContact();
+          fillFirstName(contact.getFirstName());
+          fillLastName(contact.getLastName());
+          selectSex(contact.getSex());
+          webDriverHelpers.clickOnWebElementBySelector(SAVE_BUTTON);
+          if (webDriverHelpers.isElementVisibleWithTimeout(PICK_OR_CREATE_PERSON_POPUP, 15)) {
+            webDriverHelpers.clickOnWebElementBySelector(CREATE_NEW_PERSON_RADIO_BUTTON);
+            webDriverHelpers.clickOnWebElementBySelector(PICK_OR_CREATE_POPUP_SAVE_BUTTON);
+          }
+        });
+    When(
+        "^I create a new basic contact to from Cases Contacts tab for DE$",
+        () -> {
+          contact = contactService.buildGeneratedContactDE();
           fillFirstName(contact.getFirstName());
           fillLastName(contact.getLastName());
           selectSex(contact.getSex());
@@ -513,6 +524,10 @@ public class EditContactsSteps implements En {
           webDriverHelpers.fillAndSubmitInWebElement(
               LAST_CONTACT_DATE, formatterDE.format(LocalDate.now().minusDays(days)));
         });
+
+    And(
+        "^I open a contact using the collected contact UUID$",
+        () -> openContactFromResultsByUUID(contactUUID));
   }
 
   private void fillFirstName(String firstName) {

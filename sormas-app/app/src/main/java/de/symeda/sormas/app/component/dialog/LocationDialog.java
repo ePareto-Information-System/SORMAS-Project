@@ -19,11 +19,6 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static de.symeda.sormas.app.core.notification.NotificationType.ERROR;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
@@ -32,9 +27,15 @@ import androidx.databinding.ViewDataBinding;
 import androidx.databinding.library.baseAdapters.BR;
 import androidx.fragment.app.FragmentActivity;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Arrays;
+import java.util.List;
+
 import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.area.AreaType;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
@@ -50,12 +51,14 @@ import de.symeda.sormas.app.backend.location.Location;
 import de.symeda.sormas.app.backend.region.Country;
 import de.symeda.sormas.app.component.Item;
 import de.symeda.sormas.app.component.controls.ControlButtonType;
+import de.symeda.sormas.app.component.controls.ControlTextEditField;
 import de.symeda.sormas.app.component.validation.FragmentValidator;
 import de.symeda.sormas.app.component.validation.ValidationHelper;
 import de.symeda.sormas.app.core.notification.NotificationHelper;
 import de.symeda.sormas.app.core.notification.NotificationType;
 import de.symeda.sormas.app.databinding.DialogLocationLayoutBinding;
 import de.symeda.sormas.app.util.DataUtils;
+import de.symeda.sormas.app.util.FieldVisibilityAndAccessHelper;
 import de.symeda.sormas.app.util.InfrastructureDaoHelper;
 import de.symeda.sormas.app.util.InfrastructureFieldsDependencyHandler;
 import de.symeda.sormas.app.util.LocationService;
@@ -170,6 +173,9 @@ public class LocationDialog extends FormDialog {
 			this.contentBinding.locationRegion.setEnabled(false);
 			this.contentBinding.locationDistrict.setEnabled(false);
 		}
+		if (!isFieldAccessible(LocationDto.class, LocationDto.FACILITY)) {
+			FieldVisibilityAndAccessHelper.setFieldInaccessibleValue(contentBinding.facilityTypeGroup);
+		}
 
 		contentBinding.locationAreaType.initializeSpinner(DataUtils.getEnumItems(AreaType.class));
 
@@ -193,6 +199,16 @@ public class LocationDialog extends FormDialog {
 				}
 			});
 			confirmationDialog.show();
+		});
+
+		contentBinding.locationLatitude.setValidationCallback(() -> {
+			Double latitude = ControlTextEditField.getDoubleValue(contentBinding.locationLatitude);
+			return ValidationHelper.validateLatitude(latitude, contentBinding.locationLatitude);
+		});
+
+		contentBinding.locationLongitude.setValidationCallback(() -> {
+			Double longitude = ControlTextEditField.getDoubleValue(contentBinding.locationLongitude);
+			return ValidationHelper.validateLongitude(longitude, contentBinding.locationLongitude);
 		});
 
 		if (data.getId() == null) {

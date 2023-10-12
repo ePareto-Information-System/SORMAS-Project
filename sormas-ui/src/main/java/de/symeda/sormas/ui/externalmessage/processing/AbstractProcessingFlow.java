@@ -15,7 +15,9 @@
 
 package de.symeda.sormas.ui.externalmessage.processing;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -25,9 +27,15 @@ import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseSelectionDto;
 import de.symeda.sormas.api.caze.CaseSimilarityCriteria;
 import de.symeda.sormas.api.externalmessage.ExternalMessageDto;
+import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.user.UserDto;
+import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.externalmessage.ExternalMessageMapper;
 import de.symeda.sormas.ui.externalmessage.labmessage.processing.AbstractLabMessageProcessingFlow;
 import de.symeda.sormas.ui.externalmessage.processing.flow.FlowThen;
@@ -42,13 +50,14 @@ public abstract class AbstractProcessingFlow {
 		this.user = user;
 	}
 
-	protected FlowThen<Void> doInitialChecks(ExternalMessageDto labMessage) {
-		return new FlowThen<Void>().then(ignored -> checkDisease(labMessage)).then(ignored -> checkRelatedForwardedMessages(labMessage));
+	protected FlowThen<Void> doInitialChecks(ExternalMessageDto externalMessageDto) {
+		return new FlowThen<Void>().then(ignored -> checkDisease(externalMessageDto))
+			.then(ignored -> checkRelatedForwardedMessages(externalMessageDto));
 	}
 
-	private CompletionStage<ProcessingResult<Void>> checkDisease(ExternalMessageDto labMessage) {
+	private CompletionStage<ProcessingResult<Void>> checkDisease(ExternalMessageDto externalMessageDto) {
 
-		if (labMessage.getDisease() == null) {
+		if (externalMessageDto.getDisease() == null) {
 			return handleMissingDisease().thenCompose(
 				next -> ProcessingResult
 					.<Void> withStatus(Boolean.TRUE.equals(next) ? ProcessingResultStatus.CONTINUE : ProcessingResultStatus.CANCELED)
@@ -60,9 +69,9 @@ public abstract class AbstractProcessingFlow {
 
 	protected abstract CompletionStage<Boolean> handleMissingDisease();
 
-	private CompletionStage<ProcessingResult<Void>> checkRelatedForwardedMessages(ExternalMessageDto labMessage) {
+	private CompletionStage<ProcessingResult<Void>> checkRelatedForwardedMessages(ExternalMessageDto externalMessageDto) {
 
-		if (FacadeProvider.getExternalMessageFacade().existsForwardedExternalMessageWith(labMessage.getReportId())) {
+		if (FacadeProvider.getExternalMessageFacade().existsForwardedExternalMessageWith(externalMessageDto.getReportId())) {
 			return handleRelatedForwardedMessages().thenCompose(
 				next -> ProcessingResult
 					.<Void> withStatus(Boolean.TRUE.equals(next) ? ProcessingResultStatus.CONTINUE : ProcessingResultStatus.CANCELED)
@@ -74,9 +83,9 @@ public abstract class AbstractProcessingFlow {
 
 	protected abstract CompletionStage<Boolean> handleRelatedForwardedMessages();
 
-	protected CompletionStage<ProcessingResult<PersonDto>> pickOrCreatePerson(ExternalMessageDto labMessage) {
+	protected CompletionStage<ProcessingResult<PersonDto>> pickOrCreatePerson(ExternalMessageDto externalMessageDto) {
 
-		final PersonDto person = buildPerson(ExternalMessageMapper.forLabMessage(labMessage));
+		final PersonDto person = buildPerson(ExternalMessageMapper.forLabMessage(externalMessageDto));
 
 		AbstractLabMessageProcessingFlow.HandlerCallback<PersonDto> callback = new HandlerCallback<>();
 		handlePickOrCreatePerson(person, callback);
@@ -96,11 +105,16 @@ public abstract class AbstractProcessingFlow {
 		return personDto;
 	}
 
-	protected List<CaseSelectionDto> getSimilarCases(PersonReferenceDto selectedPerson, ExternalMessageDto labMessage) {
+	protected List<CaseSelectionDto> getSimilarCases(PersonReferenceDto selectedPerson, ExternalMessageDto externalMessageDto) {
+
+		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureDisabled(FeatureType.CASE_SURVEILANCE)
+			|| !Objects.requireNonNull(UserProvider.getCurrent()).hasAllUserRights(UserRight.CASE_CREATE, UserRight.CASE_EDIT)) {
+			return Collections.emptyList();
+		}
 
 		CaseCriteria caseCriteria = new CaseCriteria();
 		caseCriteria.person(selectedPerson);
-		caseCriteria.disease(labMessage.getDisease());
+		caseCriteria.disease(externalMessageDto.getDisease());
 		CaseSimilarityCriteria caseSimilarityCriteria = new CaseSimilarityCriteria();
 		caseSimilarityCriteria.caseCriteria(caseCriteria);
 		caseSimilarityCriteria.personUuid(selectedPerson.getUuid());
@@ -108,10 +122,31 @@ public abstract class AbstractProcessingFlow {
 		return FacadeProvider.getCaseFacade().getSimilarCases(caseSimilarityCriteria);
 	}
 
-	protected CaseDataDto buildCase(PersonDto person, ExternalMessageDto labMessage) {
+	protected CaseDataDto buildCase(PersonDto person, ExternalMessageDto externalMessageDto) {
 
-		CaseDataDto caseDto = CaseDataDto.build(person.toReference(), labMessage.getDisease());
+		CaseDataDto caseDto = CaseDataDto.build(person.toReference(), externalMessageDto.getDisease());
+		caseDto.setDiseaseVariant(externalMessageDto.getDiseaseVariant());
+		caseDto.setDiseaseVariantDetails(externalMessageDto.getDiseaseVariantDetails());
 		caseDto.setReportingUser(user.toReference());
+		caseDto.setReportDate(
+			externalMessageDto.getCaseReportDate() != null ? externalMessageDto.getCaseReportDate() : externalMessageDto.getMessageDateTime());
+
+		FacilityReferenceDto personFacility = externalMessageDto.getPersonFacility();
+		if (personFacility != null) {
+			FacilityDto facility = FacadeProvider.getFacilityFacade().getByUuid(personFacility.getUuid());
+			FacilityType facilityType = facility.getType();
+
+			caseDto.setResponsibleRegion(facility.getRegion());
+			caseDto.setResponsibleDistrict(facility.getDistrict());
+
+			if (facilityType.isAccommodation()) {
+				caseDto.setFacilityType(facilityType);
+				caseDto.setHealthFacility(personFacility);
+			} else {
+				caseDto.setHealthFacility(FacadeProvider.getFacilityFacade().getReferenceByUuid(FacilityDto.NONE_FACILITY_UUID));
+			}
+		}
+
 		return caseDto;
 	}
 

@@ -32,8 +32,9 @@ public class EditEventPage {
   public static final By EVENT_ACTIONS_TAB = By.cssSelector("#tab-events-eventactions span");
   public static final By UUID_INPUT = By.id("uuid");
   public static final By TITLE_INPUT = By.cssSelector("#eventTitle");
-  public static final By SAVE_BUTTON = By.id("commit");
+  public static final By SAVE_BUTTON = By.cssSelector(".popupContent #commit");
   public static final By SAVE_BUTTON_FOR_POPUP_WINDOWS = By.cssSelector(".popupContent #commit");
+  public static final By EDIT_EVENT_PAGE_SAVE_BUTTON = By.cssSelector("#commit");
   public static final By EVENT_STATUS_OPTIONS =
       By.cssSelector("#eventStatus .v-select-option label");
   public static final By RISK_LEVEL_INPUT = By.cssSelector(" #riskLevel input");
@@ -56,10 +57,10 @@ public class EditEventPage {
   public static final By TYPE_OF_PLACE_COMBOBOX = By.cssSelector(" #typeOfPlace div");
   public static final By NEW_ACTION_BUTTON = By.id("actionNewAction");
   public static final By NEW_TASK_BUTTON = By.cssSelector("[id='New task']");
-  public static final By EDIT_FIRST_TASK = By.cssSelector("#edit-task-0");
+  public static final By EDIT_FIRST_TASK = By.cssSelector("#edit0");
   public static final By DELETE_BUTTON_DISABLED =
       By.xpath("//div[@id='delete' and @aria-disabled='true']");
-  public static final By UNDO_DELETION_BUTTON = By.id("deleteUndelete");
+  public static final By UNDO_DELETION_BUTTON = By.id("deleteRestore");
   public static final By LINK_EVENT_GROUP_BUTTON = By.cssSelector("div#Link\\ event\\ group");
   public static final By NEW_EVENT_GROUP_RADIOBUTTON =
       By.xpath("//*[contains(text(),'New event group')]/..");
@@ -69,7 +70,8 @@ public class EditEventPage {
   public static final By GROUP_EVENT_UUID =
       By.xpath("//*[contains(text(),'Group id')]/../following-sibling::input[1]");
   public static final By NEW_GROUP_EVENT_CREATED_MESSAGE =
-      By.xpath("//*[contains(text(),'New event group created')]");
+      By.xpath(
+          "//*[contains(text(),'The selected event was successfully linked to this event group')]");
   public static final By CREATE_DOCUMENT_BUTTON = By.cssSelector("[id='Create']");
   public static final By EVENT_HANDOUT_COMBOBOX =
       By.cssSelector(".popupContent div[role='combobox'] div");
@@ -96,6 +98,7 @@ public class EditEventPage {
   public static final By FIRST_GROUP_ID = By.xpath("//table/tbody/tr[1]/td[2]");
   public static final By TOTAL_ACTIONS_COUNTER = By.cssSelector(".badge");
   public static final By CREATE_CONTACTS_BULK_EDIT_BUTTON = By.id("bulkActions-3");
+  public static final By DELETE_BULK_EDIT_BUTTON_EVENT_PARTICIPANT = By.id("bulkActions-4");
   public static final By CREATE_QUARANTINE_ORDER_EVENT_PARTICIPANT = By.id("bulkActions-5");
   public static final By EVENT_MANAGEMENT_STATUS_CHECK =
       By.cssSelector("#eventManagementStatus input:checked[type='checkbox'] ~ label");
@@ -183,6 +186,8 @@ public class EditEventPage {
   public static final By VACCINATION_STATUS_COMBOBOX =
       By.xpath("//div[@id='vaccinationStatus']/div");
   public static final By NEW_IMMUNIZATION_BUTTON = By.cssSelector("[id='New immunization']");
+  public static final By NEW_IMMUNIZATION_CARD_WITH_COVID =
+      By.xpath("//div[@location='immunizations']//*[contains(text(),'COVID-19')]");
   public static final By EYE_ICON =
       By.cssSelector("[class*='v-caption-on-top']>[class*='v-popupview']");
   public static final By EVENT_PARTICIPANT_STATUS =
@@ -201,4 +206,9 @@ public class EditEventPage {
   public static final By FIRST_EVENT_PARTICIPANT_FROM_LIST = By.cssSelector("tr td a");
   public static final By CREATE_CASE_IN_EVENT_PARTICIPANT_LIST_BUTTON =
       By.xpath("(//tr//td//a)[3]");
+  public static final By FIRST_PERSON_ID_IN_EVENT_PARTICIPANT_TAB = By.xpath("//td[2]//a");
+  public static final By LINE_LISTING_HEADER = By.xpath("//div[contains(text(), 'Line listing')]");
+  public static final By CREATE_QUARANTINE_ORDER_EVENT_PARTICIPANT_BY_TEXT =
+      By.xpath("//span[contains(text(), 'Create quarantine order documents')]");
+  public static final By EVENT_EXTERNAL_ID_INPUT = By.id("externalId");
 }

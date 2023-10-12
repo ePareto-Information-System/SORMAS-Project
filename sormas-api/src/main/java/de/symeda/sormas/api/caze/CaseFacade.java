@@ -25,6 +25,7 @@ import java.util.Random;
 
 import javax.ejb.Remote;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -34,8 +35,10 @@ import de.symeda.sormas.api.CoreFacade;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EditPermissionType;
 import de.symeda.sormas.api.Language;
+import de.symeda.sormas.api.MergeFacade;
 import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.common.progress.ProcessedEntity;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
 import de.symeda.sormas.api.externaldata.ExternalDataDto;
@@ -48,13 +51,14 @@ import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.messaging.ManualMessageLogDto;
 import de.symeda.sormas.api.messaging.MessageType;
 import de.symeda.sormas.api.person.PersonReferenceDto;
+import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.utils.DataHelper.Pair;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.api.vaccination.VaccinationDto;
 
 @Remote
-public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseReferenceDto, CaseCriteria> {
+public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseReferenceDto, CaseCriteria>, MergeFacade {
 
 	long count(CaseCriteria caseCriteria, boolean ignoreUserFilter);
 
@@ -87,7 +91,7 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 
 	CaseDataDto updateFollowUpComment(@Valid @NotNull CaseDataDto dto) throws ValidationRuntimeException;
 
-	CaseDataDto save(@Valid @NotNull CaseDataDto dto, boolean systemSave) throws ValidationRuntimeException;
+	void updateVaccinationStatus(CaseReferenceDto caseRef, VaccinationStatus status);
 
 	CoreAndPersonDto<CaseDataDto> save(@Valid @NotNull CoreAndPersonDto<CaseDataDto> dto) throws ValidationRuntimeException;
 
@@ -121,19 +125,13 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 
 	List<CaseDataDto> getAllCasesOfPerson(String personUuid);
 
-	List<String> deleteCases(List<String> caseUuids, DeletionDetails deletionDetails);
-
 	void deleteWithContacts(String caseUuid, DeletionDetails deletionDetails);
-
-	void deleteCaseAsDuplicate(String caseUuid, String duplicateOfCaseUuid);
 
 	Date getOldestCaseOnsetDate();
 
 	Date getOldestCaseReportDate();
 
 	Date getOldestCaseOutcomeDate();
-
-	List<String> getArchivedUuidsSince(Date since);
 
 	List<String> getDeletedUuidsSince(Date since);
 
@@ -143,11 +141,9 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 
 	String getGenerateEpidNumber(CaseDataDto caze);
 
-	void mergeCase(String leadUuid, String otherUuid);
-
 	List<CaseSelectionDto> getSimilarCases(CaseSimilarityCriteria criteria);
 
-	List<CaseIndexDto[]> getCasesForDuplicateMerging(CaseCriteria criteria, boolean showDuplicatesWithDifferentRegion);
+	List<CaseMergeIndexDto[]> getCasesForDuplicateMerging(CaseCriteria criteria, @Min(1) Integer limit, boolean showDuplicatesWithDifferentRegion);
 
 	void updateCompleteness(String caseUuid);
 
@@ -181,19 +177,21 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 
 	List<String> getUuidsNotShareableWithExternalReportingTools(List<String> caseUuids);
 
-	Integer saveBulkCase(
+	List<ProcessedEntity> saveBulkCase(
 		List<String> caseUuidList,
 		@Valid CaseBulkEditData updatedCaseBulkEditData,
 		boolean diseaseChange,
+		boolean diseaseVariantChange,
 		boolean classificationChange,
 		boolean investigationStatusChange,
 		boolean outcomeChange,
 		boolean surveillanceOfficerChange);
 
-	void saveBulkEditWithFacilities(
+	List<ProcessedEntity> saveBulkEditWithFacilities(
 		List<String> caseUuidList,
 		@Valid CaseBulkEditData updatedCaseBulkEditData,
 		boolean diseaseChange,
+		boolean diseaseVariantChange,
 		boolean classificationChange,
 		boolean investigationStatusChange,
 		boolean outcomeChange,
@@ -203,6 +201,8 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 	List<CasePersonDto> getDuplicates(@Valid CasePersonDto casePerson, int reportDateThreshold);
 
 	List<CasePersonDto> getDuplicates(@Valid CasePersonDto casePerson);
+
+	List<CaseDataDto> getDuplicatesWithPathogenTest(@Valid PersonReferenceDto personReferenceDto, PathogenTestDto pathogenTestDto);
 
 	List<CaseDataDto> getByPersonUuids(List<String> personUuids);
 
@@ -216,11 +216,13 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 
 	PreviousCaseDto getMostRecentPreviousCase(PersonReferenceDto person, Disease disease, Date startDate);
 
-	void archive(String entityUuid, Date endOfProcessingDate, boolean includeContacts);
+	ProcessedEntity archive(String entityUuid, Date endOfProcessingDate, boolean includeContacts);
 
-	void archive(List<String> entityUuids, boolean includeContacts);
+	List<ProcessedEntity> archive(List<String> entityUuids, boolean includeContacts);
 
-	void dearchive(List<String> entityUuids, String dearchiveReason, boolean includeContacts);
+	ProcessedEntity dearchive(String entityUuid, String dearchiveReason, boolean includeContacts);
+
+	List<ProcessedEntity> dearchive(List<String> entityUuids, String dearchiveReason, boolean includeContacts);
 
 	void setResultingCase(EventParticipantReferenceDto eventParticipantReferenceDto, CaseReferenceDto caseReferenceDto);
 
@@ -228,4 +230,5 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 
 	boolean hasOtherValidVaccination(CaseDataDto caze, String vaccinationUuid);
 
+	Pair<RegionReferenceDto, DistrictReferenceDto> getRegionAndDistrictRefsOf(CaseReferenceDto caze);
 }

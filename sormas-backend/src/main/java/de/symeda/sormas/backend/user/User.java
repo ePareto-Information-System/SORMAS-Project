@@ -46,8 +46,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import de.symeda.auditlog.api.Audited;
-import de.symeda.auditlog.api.AuditedAttribute;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -56,6 +54,7 @@ import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
+import de.symeda.sormas.backend.common.NotExposedToApi;
 import de.symeda.sormas.backend.infrastructure.community.Community;
 import de.symeda.sormas.backend.infrastructure.district.District;
 import de.symeda.sormas.backend.infrastructure.facility.Facility;
@@ -64,7 +63,6 @@ import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.location.Location;
 
 @Entity(name = User.TABLE_NAME)
-@Audited
 @EntityListeners(User.UserListener.class)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -102,7 +100,9 @@ public class User extends AbstractDomainObject {
 	public static final String LIMITED_DISEASE = "limitedDisease";
 
 	private String userName;
+	@NotExposedToApi
 	private String password;
+	@NotExposedToApi
 	private String seed;
 
 	private boolean active = true;
@@ -146,7 +146,6 @@ public class User extends AbstractDomainObject {
 
 	@Size(max = 64)
 	@Column(name = "password", nullable = false, length = 64)
-	@AuditedAttribute(anonymous = true, anonymizingString = "*****")
 	public String getPassword() {
 		return password;
 	}
@@ -156,7 +155,6 @@ public class User extends AbstractDomainObject {
 	}
 
 	@Column(name = "seed", nullable = false, length = 16)
-	@AuditedAttribute(anonymous = true, anonymizingString = "*****")
 	public String getSeed() {
 		return seed;
 	}

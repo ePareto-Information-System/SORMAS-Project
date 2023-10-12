@@ -77,13 +77,14 @@ public class CaseVisitsView extends AbstractCaseView {
 		topLayout.addStyleName(CssStyles.VSPACE_3);
 
 		if (isEditAllowed()) {
-			if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
+			if (UserProvider.getCurrent()
+				.hasAllUserRights(UserRight.PERFORM_BULK_OPERATIONS, UserRight.CASE_EDIT, UserRight.VISIT_EDIT, UserRight.VISIT_DELETE)) {
 				topLayout.setWidth(100, Unit.PERCENTAGE);
 				MenuBar bulkOperationsDropdown = MenuBarHelper.createDropDown(
 					Captions.bulkActions,
 					new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkDelete), VaadinIcons.TRASH, selectedItem -> {
 						ControllerProvider.getVisitController()
-							.deleteAllSelectedItems(grid.asMultiSelect().getSelectedItems(), () -> navigateTo(criteria));
+							.deleteAllSelectedItems(grid.asMultiSelect().getSelectedItems(), grid, () -> navigateTo(criteria));
 					}));
 				topLayout.addComponent(bulkOperationsDropdown);
 				topLayout.setComponentAlignment(bulkOperationsDropdown, Alignment.MIDDLE_RIGHT);
@@ -131,7 +132,7 @@ public class CaseVisitsView extends AbstractCaseView {
 				new FileDownloader(exportStreamResource).extend(exportButton);
 			}
 
-			if (UserProvider.getCurrent().hasUserRight(UserRight.VISIT_CREATE)) {
+			if (UserProvider.getCurrent().hasAllUserRights(UserRight.VISIT_CREATE, UserRight.CASE_EDIT)) {
 				newButton = ButtonHelper.createIconButton(Captions.visitNewVisit, VaadinIcons.PLUS_CIRCLE, e -> {
 					ControllerProvider.getVisitController().createVisit(this.getCaseRef(), r -> navigateTo(criteria));
 				}, ValoTheme.BUTTON_PRIMARY);
@@ -150,7 +151,11 @@ public class CaseVisitsView extends AbstractCaseView {
 		criteria.caze(getCaseRef());
 
 		if (grid == null) {
-			grid = new VisitGrid(criteria, isEditAllowed());
+			grid = new VisitGrid(
+				criteria,
+				UserProvider.getCurrent().hasAllUserRightsWithEditAllowedFlag(isEditAllowed(), UserRight.CASE_EDIT, UserRight.VISIT_EDIT),
+				UserProvider.getCurrent().hasAllUserRightsWithEditAllowedFlag(isEditAllowed(), UserRight.VISIT_DELETE));
+
 			gridLayout = new DetailSubComponentWrapper(() -> null);
 			gridLayout.setSizeFull();
 			gridLayout.setMargin(true);

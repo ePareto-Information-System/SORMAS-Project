@@ -4,10 +4,8 @@ Feature: Vaccination tests
   @tmsLink=SORDEV-9585 @env_de
   Scenario: Test Add reduced vaccination module to document creation for Contact
     When API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Then API: I create a new contact
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given I log in as a Admin User
     And I click on the Configuration button from navbar
@@ -18,8 +16,7 @@ Feature: Vaccination tests
     And I confirm the document template overwrite popup
     Then I check that an upload success notification appears
     And I click to close UPLOAD TEMPLATE popup
-    When I click on the Contacts button from navbar
-    Then I search after last created contact via API by UUID and open
+    Then I open the last created contact via API
     And I click NEW VACCINATION button for DE
     And I fill new vaccination data in new Vaccination form for DE
     And I click SAVE button in new Vaccination form
@@ -33,10 +30,8 @@ Feature: Vaccination tests
   @tmsLink=SORDEV-9585 @env_de
   Scenario: Test Add reduced vaccination module to document creation for Case
     When API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Then API: I create a new case
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given I log in as a Admin User
     And I click on the Configuration button from navbar
@@ -47,7 +42,6 @@ Feature: Vaccination tests
     And I confirm the document template overwrite popup
     Then I check that an upload success notification appears
     And I click to close UPLOAD TEMPLATE popup
-    And I click on the Cases button from navbar
     And I open the last created Case via API
     And I click NEW VACCINATION button for DE
     And I fill new vaccination data in new Vaccination form for DE
@@ -62,7 +56,6 @@ Feature: Vaccination tests
   @tmsLink=SORDEV-9585 @env_de
   Scenario: Test Add reduced vaccination module to document creation for Event
     Given API: I create a new event
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given I log in as a Admin User
     And I click on the Configuration button from navbar
@@ -73,7 +66,6 @@ Feature: Vaccination tests
     And I confirm the document template overwrite popup
     Then I check that an upload success notification appears
     And I click to close UPLOAD TEMPLATE popup
-    And I click on the Events button from navbar
     And I open the last created event via api
     And I navigate to EVENT PARTICIPANT from edit event page
     Then I add only required data for event participant creation for DE
@@ -341,10 +333,8 @@ Feature: Vaccination tests
   @tmsLink=SORDEV-11753 @env_de
   Scenario: Duplicate detection for vaccinations when merging contacts [1]
     Given API: I create a new person
-    And API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given API: I create a new case
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given I log in as a Admin User
     When I click on the Contacts button from navbar
@@ -380,6 +370,7 @@ Feature: Vaccination tests
     And I collect the leading contact UUID displayed on Contact Directory Page
     And I click on the More button on Contact directory page
     Then I click on Merge Duplicates on Contact directory page
+    And I click to CONFIRM FILTERS on Merge Duplicate Contact page
     And I click on Merge button of leading duplicated line listing Contact in Merge Duplicate Contact page
     Then I click to Confirm action in Merge Duplicates Cases popup
     And I click on the Contacts button from navbar
@@ -396,10 +387,8 @@ Feature: Vaccination tests
   @tmsLink=SORDEV-11753 @env_de
   Scenario: Duplicate detection for vaccinations when merging contacts [2]
     Given API: I create a new person
-    And API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given API: I create a new case
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given I log in as a Admin User
     When I click on the Contacts button from navbar
@@ -436,6 +425,7 @@ Feature: Vaccination tests
     And I collect the leading contact UUID displayed on Contact Directory Page
     And I click on the More button on Contact directory page
     Then I click on Merge Duplicates on Contact directory page
+    And I click to CONFIRM FILTERS on Merge Duplicate Contact page
     And I click on Merge button of leading duplicated line listing Contact in Merge Duplicate Contact page
     Then I click to Confirm action in Merge Duplicates Cases popup
     And I click on the Contacts button from navbar
@@ -452,10 +442,8 @@ Feature: Vaccination tests
   @tmsLink=SORDEV-11753 @env_de
   Scenario: Duplicate detection for vaccinations when merging contacts [3]
     Given API: I create a new person
-    And API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given API: I create a new case
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given I log in as a Admin User
     When I click on the Contacts button from navbar
@@ -491,6 +479,7 @@ Feature: Vaccination tests
     And I collect the leading contact UUID displayed on Contact Directory Page
     And I click on the More button on Contact directory page
     Then I click on Merge Duplicates on Contact directory page
+    And I click to CONFIRM FILTERS on Merge Duplicate Contact page
     And I click on Merge button of leading duplicated line listing Contact in Merge Duplicate Contact page
     Then I click to Confirm action in Merge Duplicates Cases popup
     And I click on the Contacts button from navbar
@@ -510,10 +499,8 @@ Feature: Vaccination tests
   @tmsLink=SORDEV-11753 @env_de
   Scenario: Duplicate detection for vaccinations when merging contacts[4]
     Given API: I create a new person
-    And API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given API: I create a new case
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given I log in as a Admin User
     When I click on the Contacts button from navbar
@@ -569,10 +556,8 @@ Feature: Vaccination tests
   @tmsLink=SORDEV-11753 @env_de
   Scenario: Duplicate detection for vaccinations when merging contacts[5]
     Given API: I create a new person
-    And API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given API: I create a new case
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given I log in as a Admin User
     When I click on the Contacts button from navbar
@@ -780,3 +765,92 @@ Feature: Vaccination tests
       | option | result |
       | JA | ""  |
       | NEIN | "Geimpft" |
+
+  @tmsLink=SORQA-238 @env_de
+  Scenario: Test Adjusted vaccination status calculation for Case
+    Given I log in as a Admin User
+    When I click on the Cases button from navbar
+    And I click on the NEW CASE button
+    And I create a new case with specific data and report date set to yesterday for DE version
+    And I click NEW VACCINATION button for DE
+    And I fill new duplicate vaccination data in new Vaccination form for DE without vaccination date and name
+    And I set new vaccination name to "Comirnaty (COVID-19-mRNA Impfstoff)"
+    And I click SAVE button in new Vaccination form
+    Then I check if Vaccination Status is set to "Geimpft" on Edit Case page
+    When I click NEW VACCINATION button for DE
+    And I fill new duplicate vaccination data in new Vaccination form for DE without vaccination date and name
+    And I set new vaccination name to "COVID-19 Impfstoff Moderna (mRNA-Impfstoff)"
+    And I set the vaccination date to 1 days before today
+    And I click SAVE button in new Vaccination form
+    Then I check if Vaccination Status is set to "Geimpft" on Edit Case page
+
+  @tmsLink=SORQA-238 @env_de
+  Scenario: Test Adjusted vaccination status calculation for Contact
+    Given I log in as a Admin User
+    When I click on the Contacts button from navbar
+    And I click on the NEW CONTACT button
+    And I fill a new Contact form with specific data for DE version with date 0 days ago
+    And I set the last contact date for minus 1 days from today for DE version
+    And I click on SAVE new contact button
+    And I click NEW VACCINATION button for DE
+    And I fill new duplicate vaccination data in new Vaccination form for DE without vaccination date and name
+    And I set new vaccination name to "Comirnaty (COVID-19-mRNA Impfstoff)"
+    And I click SAVE button in new Vaccination form
+    Then I check if Vaccination Status is set to "Geimpft" on Edit Case page
+    When I click NEW VACCINATION button for DE
+    And I fill new duplicate vaccination data in new Vaccination form for DE without vaccination date and name
+    And I set new vaccination name to "COVID-19 Impfstoff Moderna (mRNA-Impfstoff)"
+    And I set the vaccination date to 1 days before today
+    And I click SAVE button in new Vaccination form
+    Then I check if Vaccination Status is set to "Geimpft" on Edit Case page
+    And I check if vaccination name for vaccine number 2 in the vaccination card is "greyed out"
+    When I remove tha last contact date on Edit Contact page
+    And I click SAVE button on Edit Contact Page
+    Then I check if Vaccination Status is set to "Geimpft" on Edit Case page
+    And I check if vaccination name for vaccine number 2 in the vaccination card is "enabled"
+    When I click SAVE button on Edit Contact Page
+    And I click NEW VACCINATION button for DE
+    And I fill new duplicate vaccination data in new Vaccination form for DE without vaccination date and name
+    And I set new vaccination name to "COVID-19 Impfstoff Moderna (mRNA-Impfstoff)"
+    And I set the vaccination date to 3 days before today
+    And I click SAVE button in new Vaccination form
+    Then I check if Vaccination Status is set to "Geimpft" on Edit Case page
+
+  @tmsLink=SORQA-238 @env_de
+  Scenario: Test Adjusted vaccination status calculation for Event
+    When I log in as a Admin User
+    And I click on the Events button from navbar
+    And I create a new event with mandatory fields for DE version
+    And I add a participant to the event in DE
+    And I click NEW VACCINATION button for DE
+    And I fill new duplicate vaccination data in new Vaccination form for DE without vaccination date and name
+    And I set new vaccination name to "COVID-19 Impfstoff Moderna (mRNA-Impfstoff)"
+    And I click SAVE button in new Vaccination form
+    Then I check if Vaccination Status is set to "Geimpft" on Edit Case page
+    When I click NEW VACCINATION button for DE
+    And I fill new duplicate vaccination data in new Vaccination form for DE without vaccination date and name
+    And I set new vaccination name to "COVID-19 Impfstoff Moderna (mRNA-Impfstoff)"
+    And I set the vaccination date to 1 days before today
+    And I click SAVE button in new Vaccination form
+    Then I check if Vaccination Status is set to "Geimpft" on Edit Case page
+    And I check if vaccination name for vaccine number 2 in the vaccination card is "greyed out"
+    When I navigate to Event Participants tab in Edit case page
+    And I back to the Event tab
+    And I remove the event date on Edit Event page
+    And I click on Save Button in Edit Event directory
+    And I navigate to EVENT PARTICIPANT from edit event page
+    And I click on the first row from event participant
+    Then I check if Vaccination Status is set to "Geimpft" on Edit Case page
+    And I check if vaccination name for vaccine number 2 in the vaccination card is "enabled"
+    And I navigate to EVENT PARTICIPANT from edit event page
+    And I back to the Event tab
+    And I set event date field to 1 days before today on Event Edit page for DE
+    And I click on Save Button in Edit Event directory
+    And I navigate to EVENT PARTICIPANT from edit event page
+    And I click on the first row from event participant
+    And I click NEW VACCINATION button for DE
+    And I fill new duplicate vaccination data in new Vaccination form for DE without vaccination date and name
+    And I set new vaccination name to "COVID-19 Impfstoff Moderna (mRNA-Impfstoff)"
+    And I set the vaccination date to 3 days before today
+    And I click SAVE button in new Vaccination form
+    Then I check if Vaccination Status is set to "Geimpft" on Edit Case page

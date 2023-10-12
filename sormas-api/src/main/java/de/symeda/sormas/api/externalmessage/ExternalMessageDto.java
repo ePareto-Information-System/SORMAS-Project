@@ -21,13 +21,18 @@ import java.util.List;
 
 import javax.validation.constraints.Size;
 
+import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.audit.AuditIncludeProperty;
 import de.symeda.sormas.api.audit.AuditedClass;
-import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.caze.surveillancereport.SurveillanceReportReferenceDto;
+import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.externalmessage.labmessage.SampleReportDto;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.person.PhoneNumberType;
 import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasShareableDto;
@@ -35,6 +40,7 @@ import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DependingOnFeatureType;
 import de.symeda.sormas.api.utils.FieldConstraints;
+import de.symeda.sormas.api.utils.HideForCountriesExcept;
 
 @AuditedClass
 @DependingOnFeatureType(featureType = FeatureType.EXTERNAL_MESSAGES)
@@ -43,12 +49,17 @@ public class ExternalMessageDto extends SormasToSormasShareableDto {
 	public static final String I18N_PREFIX = "ExternalMessage";
 
 	public static final String TYPE = "type";
+	public static final String DISEASE = "disease";
+	public static final String DISEASE_VARIANT = "diseaseVariant";
+	public static final String DISEASE_VARIANT_DETAILS = "diseaseVariantDetails";
 	public static final String MESSAGE_DATE_TIME = "messageDateTime";
-
+	public static final String CASE_REPORT_DATE = "caseReportDate";
 	public static final String REPORTER_NAME = "reporterName";
 	public static final String REPORTER_EXTERNAL_ID = "reporterExternalId";
 	public static final String REPORTER_POSTAL_CODE = "reporterPostalCode";
 	public static final String REPORTER_CITY = "reporterCity";
+	public static final String PERSON_EXTERNAL_ID = "personExternalId";
+	public static final String PERSON_NATIONAL_HEALTH_ID = "personNationalHealthId";
 	public static final String PERSON_FIRST_NAME = "personFirstName";
 	public static final String PERSON_LAST_NAME = "personLastName";
 	public static final String PERSON_SEX = "personSex";
@@ -58,23 +69,32 @@ public class ExternalMessageDto extends SormasToSormasShareableDto {
 	public static final String PERSON_POSTAL_CODE = "personPostalCode";
 	public static final String PERSON_CITY = "personCity";
 	public static final String PERSON_PHONE = "personPhone";
+	public static final String PERSON_PHONE_NUMBER_TYPE = "personPhoneNumberType";
 	public static final String PERSON_EMAIL = "personEmail";
 	public static final String PERSON_STREET = "personStreet";
 	public static final String PERSON_HOUSE_NUMBER = "personHouseNumber";
+	public static final String PERSON_COUNTRY = "personCountry";
+	public static final String PERSON_FACILITY = "personFacility";
 	public static final String EXTERNAL_MESSAGE_DETAILS = "externalMessageDetails";
 	public static final String PROCESSED = "processed";
 	public static final String REPORT_ID = "reportId";
+	public static final String REPORT_MESSAGE_ID = "reportMessageId";
 	public static final String STATUS = "status";
 	public static final String ASSIGNEE = "assignee";
+	public static final String SURVEILLANCE_REPORT = "surveillanceReport";
+
 	@AuditIncludeProperty
 	private ExternalMessageType type;
 	private Disease disease;
+	private DiseaseVariant diseaseVariant;
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
+	private String diseaseVariantDetails;
 	@AuditIncludeProperty
 	private Date messageDateTime;
+	private Date caseReportDate;
 
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
 	private String reporterName;
-
 	private List<String> reporterExternalIds;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
 	private String reporterPostalCode;
@@ -85,6 +105,12 @@ public class ExternalMessageDto extends SormasToSormasShareableDto {
 	private String personFirstName;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
 	private String personLastName;
+	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_LUXEMBOURG)
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
+	private String personExternalId;
+	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_LUXEMBOURG)
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
+	private String personNationalHealthId;
 	private Sex personSex;
 	private PresentCondition personPresentCondition;
 	private Integer personBirthDateDD;
@@ -98,19 +124,28 @@ public class ExternalMessageDto extends SormasToSormasShareableDto {
 	private String personStreet;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
 	private String personHouseNumber;
+	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_LUXEMBOURG)
+	private CountryReferenceDto personCountry;
+	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_LUXEMBOURG)
+	private FacilityReferenceDto personFacility;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
 	private String personPhone;
+	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_LUXEMBOURG)
+	private PhoneNumberType personPhoneNumberType;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
 	private String personEmail;
 	@AuditIncludeProperty
 	private List<SampleReportDto> sampleReports;
 	@AuditIncludeProperty
-	private CaseReferenceDto caze;
+	private SurveillanceReportReferenceDto surveillanceReport;
 
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
 	private String externalMessageDetails;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String reportId;
+
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
+	private String reportMessageId;
 	@AuditIncludeProperty
 	private ExternalMessageStatus status = ExternalMessageStatus.UNPROCESSED;
 
@@ -119,6 +154,8 @@ public class ExternalMessageDto extends SormasToSormasShareableDto {
 	 * Used in S2S context
 	 */
 	private UserReferenceDto reportingUser;
+
+	private boolean automaticProcessingPossible;
 
 	public ExternalMessageType getType() {
 		return type;
@@ -136,12 +173,36 @@ public class ExternalMessageDto extends SormasToSormasShareableDto {
 		this.disease = disease;
 	}
 
+	public DiseaseVariant getDiseaseVariant() {
+		return diseaseVariant;
+	}
+
+	public void setDiseaseVariant(DiseaseVariant diseaseVariant) {
+		this.diseaseVariant = diseaseVariant;
+	}
+
+	public String getDiseaseVariantDetails() {
+		return diseaseVariantDetails;
+	}
+
+	public void setDiseaseVariantDetails(String diseaseVariantDetails) {
+		this.diseaseVariantDetails = diseaseVariantDetails;
+	}
+
 	public Date getMessageDateTime() {
 		return messageDateTime;
 	}
 
 	public void setMessageDateTime(Date messageDateTime) {
 		this.messageDateTime = messageDateTime;
+	}
+
+	public Date getCaseReportDate() {
+		return caseReportDate;
+	}
+
+	public void setCaseReportDate(Date caseReportDate) {
+		this.caseReportDate = caseReportDate;
 	}
 
 	public String getReporterName() {
@@ -174,6 +235,22 @@ public class ExternalMessageDto extends SormasToSormasShareableDto {
 
 	public void setReporterCity(String reporterCity) {
 		this.reporterCity = reporterCity;
+	}
+
+	public String getPersonExternalId() {
+		return personExternalId;
+	}
+
+	public void setPersonExternalId(String personExternalId) {
+		this.personExternalId = personExternalId;
+	}
+
+	public String getPersonNationalHealthId() {
+		return personNationalHealthId;
+	}
+
+	public void setPersonNationalHealthId(String personNationalHealthId) {
+		this.personNationalHealthId = personNationalHealthId;
 	}
 
 	public String getPersonFirstName() {
@@ -264,12 +341,36 @@ public class ExternalMessageDto extends SormasToSormasShareableDto {
 		this.personHouseNumber = personHouseNumber;
 	}
 
+	public CountryReferenceDto getPersonCountry() {
+		return personCountry;
+	}
+
+	public void setPersonCountry(CountryReferenceDto personCountry) {
+		this.personCountry = personCountry;
+	}
+
+	public FacilityReferenceDto getPersonFacility() {
+		return personFacility;
+	}
+
+	public void setPersonFacility(FacilityReferenceDto personFacility) {
+		this.personFacility = personFacility;
+	}
+
 	public String getPersonPhone() {
 		return personPhone;
 	}
 
 	public void setPersonPhone(String personPhone) {
 		this.personPhone = personPhone;
+	}
+
+	public PhoneNumberType getPersonPhoneNumberType() {
+		return personPhoneNumberType;
+	}
+
+	public void setPersonPhoneNumberType(PhoneNumberType personPhoneNumberType) {
+		this.personPhoneNumberType = personPhoneNumberType;
 	}
 
 	public String getPersonEmail() {
@@ -304,12 +405,28 @@ public class ExternalMessageDto extends SormasToSormasShareableDto {
 		this.reportId = reportId;
 	}
 
+	public String getReportMessageId() {
+		return reportMessageId;
+	}
+
+	public void setReportMessageId(String reportMessageId) {
+		this.reportMessageId = reportMessageId;
+	}
+
 	public UserReferenceDto getAssignee() {
 		return assignee;
 	}
 
 	public void setAssignee(UserReferenceDto assignee) {
 		this.assignee = assignee;
+	}
+
+	public SurveillanceReportReferenceDto getSurveillanceReport() {
+		return surveillanceReport;
+	}
+
+	public void setSurveillanceReport(SurveillanceReportReferenceDto surveillanceReport) {
+		this.surveillanceReport = surveillanceReport;
 	}
 
 	public static ExternalMessageDto build() {
@@ -372,14 +489,6 @@ public class ExternalMessageDto extends SormasToSormasShareableDto {
 
 	}
 
-	public CaseReferenceDto getCaze() {
-		return caze;
-	}
-
-	public void setCaze(CaseReferenceDto caze) {
-		this.caze = caze;
-	}
-
 	@Override
 	public UserReferenceDto getReportingUser() {
 		return reportingUser;
@@ -390,4 +499,11 @@ public class ExternalMessageDto extends SormasToSormasShareableDto {
 		this.reportingUser = reportingUser;
 	}
 
+	public boolean isAutomaticProcessingPossible() {
+		return automaticProcessingPossible;
+	}
+
+	public void setAutomaticProcessingPossible(boolean automaticProcessingPossible) {
+		this.automaticProcessingPossible = automaticProcessingPossible;
+	}
 }

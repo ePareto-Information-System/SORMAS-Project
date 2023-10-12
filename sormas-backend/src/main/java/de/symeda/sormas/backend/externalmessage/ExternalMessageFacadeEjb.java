@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.security.PermitAll;
@@ -18,6 +20,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Tuple;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
@@ -26,6 +29,7 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Selection;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -36,8 +40,13 @@ import org.slf4j.LoggerFactory;
 
 import de.symeda.sormas.api.ReferenceDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.caze.surveillancereport.SurveillanceReportReferenceDto;
 import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.common.progress.ProcessedEntity;
+import de.symeda.sormas.api.common.progress.ProcessedEntityStatus;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.customizableenum.CustomEnumNotFoundException;
+import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
 import de.symeda.sormas.api.externalmessage.ExternalMessageAdapterFacade;
 import de.symeda.sormas.api.externalmessage.ExternalMessageCriteria;
@@ -48,27 +57,41 @@ import de.symeda.sormas.api.externalmessage.ExternalMessageIndexDto;
 import de.symeda.sormas.api.externalmessage.ExternalMessageReferenceDto;
 import de.symeda.sormas.api.externalmessage.ExternalMessageResult;
 import de.symeda.sormas.api.externalmessage.ExternalMessageStatus;
+import de.symeda.sormas.api.externalmessage.ExternalMessageType;
 import de.symeda.sormas.api.externalmessage.NewMessagesState;
 import de.symeda.sormas.api.externalmessage.labmessage.SampleReportDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.SampleReferenceDto;
 import de.symeda.sormas.api.systemevents.SystemEventDto;
 import de.symeda.sormas.api.systemevents.SystemEventType;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.SortProperty;
+import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.backend.caze.CaseService;
+import de.symeda.sormas.backend.caze.surveillancereport.SurveillanceReport;
+import de.symeda.sormas.backend.caze.surveillancereport.SurveillanceReportFacadeEjb;
+import de.symeda.sormas.backend.caze.surveillancereport.SurveillanceReportService;
 import de.symeda.sormas.backend.common.ConfigFacadeEjb;
+import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
+import de.symeda.sormas.backend.customizableenum.CustomizableEnumFacadeEjb;
 import de.symeda.sormas.backend.externalmessage.labmessage.SampleReport;
 import de.symeda.sormas.backend.externalmessage.labmessage.SampleReportFacadeEjb;
+import de.symeda.sormas.backend.externalmessage.labmessage.TestReport;
+import de.symeda.sormas.backend.infrastructure.country.CountryFacadeEjb;
+import de.symeda.sormas.backend.infrastructure.country.CountryService;
+import de.symeda.sormas.backend.infrastructure.facility.FacilityFacadeEjb;
+import de.symeda.sormas.backend.infrastructure.facility.FacilityService;
 import de.symeda.sormas.backend.sample.SampleService;
 import de.symeda.sormas.backend.systemevent.sync.SyncFacadeEjb;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
+import de.symeda.sormas.backend.util.IterableHelper;
 import de.symeda.sormas.backend.util.ModelConstants;
 import de.symeda.sormas.backend.util.QueryHelper;
 import de.symeda.sormas.backend.util.RightsAllowed;
@@ -87,7 +110,8 @@ public class ExternalMessageFacadeEjb implements ExternalMessageFacade {
 		ExternalMessageIndexDto.REPORTER_POSTAL_CODE,
 		ExternalMessageIndexDto.MESSAGE_DATE_TIME,
 		ExternalMessageIndexDto.STATUS,
-		ExternalMessageIndexDto.DISEASE);
+		ExternalMessageIndexDto.DISEASE,
+		ExternalMessageIndexDto.DISEASE_VARIANT);
 
 	@PersistenceContext(unitName = ModelConstants.PERSISTENCE_UNIT_NAME)
 	private EntityManager em;
@@ -104,11 +128,20 @@ public class ExternalMessageFacadeEjb implements ExternalMessageFacade {
 	@EJB
 	private SampleReportFacadeEjb.SampleReportFacadeEjbLocal sampleReportFacade;
 	@EJB
+	private SurveillanceReportService surveillanceReportService;
+	@EJB
 	private SampleService sampleService;
 	@EJB
 	private CaseService caseService;
 	@EJB
 	private UserService userService;
+	@EJB
+	private CountryService countryService;
+	@EJB
+	private FacilityService facilityService;
+
+	@EJB
+	private CustomizableEnumFacadeEjb.CustomizableEnumFacadeEjbLocal customizableEnumFacade;
 
 	ExternalMessage fillOrBuildEntity(@NotNull ExternalMessageDto source, ExternalMessage target, boolean checkChangeDate) {
 
@@ -117,25 +150,34 @@ public class ExternalMessageFacadeEjb implements ExternalMessageFacade {
 		target.setType(source.getType());
 		target.setExternalMessageDetails(source.getExternalMessageDetails());
 		target.setDisease(source.getDisease());
+		target.setDiseaseVariant(source.getDiseaseVariant());
+		target.setDiseaseVariantDetails(source.getDiseaseVariantDetails());
+		target.setCaseReportDate(source.getCaseReportDate());
 		target.setMessageDateTime(source.getMessageDateTime());
 		target.setPersonBirthDateDD(source.getPersonBirthDateDD());
 		target.setPersonBirthDateMM(source.getPersonBirthDateMM());
 		target.setPersonBirthDateYYYY(source.getPersonBirthDateYYYY());
 		target.setPersonCity(source.getPersonCity());
+		target.setPersonExternalId(source.getPersonExternalId());
+		target.setPersonNationalHealthId(source.getPersonNationalHealthId());
 		target.setPersonFirstName(source.getPersonFirstName());
 		target.setPersonHouseNumber(source.getPersonHouseNumber());
 		target.setPersonLastName(source.getPersonLastName());
 		target.setPersonPostalCode(source.getPersonPostalCode());
+		target.setPersonCountry(countryService.getByReferenceDto(source.getPersonCountry()));
+		target.setPersonFacility(facilityService.getByReferenceDto(source.getPersonFacility()));
 		target.setPersonSex(source.getPersonSex());
 		target.setPersonPresentCondition(source.getPersonPresentCondition());
 		target.setPersonStreet(source.getPersonStreet());
 		target.setStatus(source.getStatus());
 		target.setPersonPhone(source.getPersonPhone());
+		target.setPersonPhoneNumberType(source.getPersonPhoneNumberType());
 		target.setPersonEmail(source.getPersonEmail());
 		target.setReporterCity(source.getReporterCity());
 		target.setReporterExternalIds(source.getReporterExternalIds());
 		target.setReporterName(source.getReporterName());
 		target.setReporterPostalCode(source.getReporterPostalCode());
+		target.setReportMessageId(source.getReportMessageId());
 
 		target.setReportId(source.getReportId());
 		if (source.getAssignee() != null) {
@@ -151,9 +193,7 @@ public class ExternalMessageFacadeEjb implements ExternalMessageFacade {
 			}
 			target.setSampleReports(sampleReports);
 		}
-		if (source.getCaze() != null) {
-			target.setCaze(caseService.getByReferenceDto(source.getCaze()));
-		}
+		target.setSurveillanceReport(surveillanceReportService.getByReferenceDto(source.getSurveillanceReport()));
 		return target;
 	}
 
@@ -185,13 +225,68 @@ public class ExternalMessageFacadeEjb implements ExternalMessageFacade {
 	public ExternalMessageDto save(@Valid ExternalMessageDto dto, boolean checkChangeDate, boolean newTransaction) {
 		ExternalMessage externalMessage = externalMessageService.getByUuid(dto.getUuid());
 
+		validate(dto);
+
 		externalMessage = fillOrBuildEntity(dto, externalMessage, checkChangeDate);
+
+		// If it is a LabMessage and it has not set a DiseaseVariant, an attempt is made to determine this from the attached TestReports.
+		if (ExternalMessageType.LAB_MESSAGE.equals(externalMessage.getType())
+			&& externalMessage.getDiseaseVariant() == null
+			&& CollectionUtils.isNotEmpty(externalMessage.getSampleReports())) {
+			Set<TestReport> positiveTestReportsWithDiseaseVariant = externalMessage.getSampleReports()
+				.stream()
+				.flatMap(sampleReport -> sampleReport.getTestReports().stream())
+				.filter(
+					testReportDto -> PathogenTestResultType.POSITIVE.equals(testReportDto.getTestResult())
+						&& testReportDto.getTestedDiseaseVariant() != null)
+				.collect(Collectors.toSet());
+			Set<String> diseaseVariants =
+				positiveTestReportsWithDiseaseVariant.stream().map(TestReport::getTestedDiseaseVariant).collect(Collectors.toSet());
+			// If we can't determine exactly one DiseaseVariant then we don't need to continue because we can only set one "main" DiseaseVariant
+			if (diseaseVariants.size() == 1) {
+				Set<String> diseaseVariantDetails =
+					positiveTestReportsWithDiseaseVariant.stream().map(TestReport::getTestedDiseaseVariantDetails).collect(Collectors.toSet());
+				// If we can't determine exact disease variant details then we don't need to continue because we can only set one "main" disease variant details
+				if (diseaseVariantDetails.size() == 1) {
+					String diseaseVariant = diseaseVariants.stream().findFirst().get();
+					try {
+						externalMessage.setDiseaseVariant(
+							customizableEnumFacade.getEnumValue(CustomizableEnumType.DISEASE_VARIANT, diseaseVariant, externalMessage.getDisease()));
+						if (diseaseVariantDetails.stream().allMatch(Objects::nonNull)) {
+							externalMessage.setDiseaseVariantDetails(diseaseVariantDetails.stream().findFirst().get());
+						}
+					} catch (CustomEnumNotFoundException e) {
+						throw new RuntimeException("Could not find DiseaseVariant " + diseaseVariant, e);
+					}
+				}
+			}
+		}
+
 		if (newTransaction) {
 			externalMessageService.ensurePersistedInNewTransaction(externalMessage);
 		} else {
 			externalMessageService.ensurePersisted(externalMessage);
 		}
 		return toDto(externalMessage);
+	}
+
+	@Override
+	public void validate(ExternalMessageDto externalMessageDto) {
+		if (externalMessageDto.getSurveillanceReport() != null) {
+			SurveillanceReport surveillanceReport = surveillanceReportService.getByReferenceDto(externalMessageDto.getSurveillanceReport());
+			if (externalMessageDto.getSampleReportsNullSafe()
+				.stream()
+				.map(sampleRep -> sampleRep.getSample())
+				.map(sampleRef -> sampleService.getByReferenceDto(sampleRef))
+				.anyMatch(
+					sample -> sample != null
+						&& (sample.getAssociatedContact() != null
+							|| sample.getAssociatedEventParticipant() != null
+							|| (sample.getAssociatedCase() != null
+								&& !sample.getAssociatedCase().getUuid().equals(surveillanceReport.getCaze().getUuid()))))) {
+				throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.externalMessageRefersToMultipleEntities));
+			}
+		}
 	}
 
 	public ExternalMessageDto toDto(ExternalMessage source) {
@@ -205,32 +300,41 @@ public class ExternalMessageFacadeEjb implements ExternalMessageFacade {
 		target.setType(source.getType());
 		target.setExternalMessageDetails(source.getExternalMessageDetails());
 		target.setDisease(source.getDisease());
+		target.setDiseaseVariant(source.getDiseaseVariant());
+		target.setDiseaseVariantDetails(source.getDiseaseVariantDetails());
 		target.setMessageDateTime(source.getMessageDateTime());
+		target.setCaseReportDate(source.getCaseReportDate());
 		target.setPersonBirthDateDD(source.getPersonBirthDateDD());
 		target.setPersonBirthDateMM(source.getPersonBirthDateMM());
 		target.setPersonBirthDateYYYY(source.getPersonBirthDateYYYY());
 		target.setPersonCity(source.getPersonCity());
+		target.setPersonExternalId(source.getPersonExternalId());
+		target.setPersonNationalHealthId(source.getPersonNationalHealthId());
 		target.setPersonFirstName(source.getPersonFirstName());
 		target.setPersonHouseNumber(source.getPersonHouseNumber());
 		target.setPersonLastName(source.getPersonLastName());
 		target.setPersonPostalCode(source.getPersonPostalCode());
+		target.setPersonCountry(CountryFacadeEjb.toReferenceDto(source.getPersonCountry()));
+		target.setPersonFacility(FacilityFacadeEjb.toReferenceDto(source.getPersonFacility()));
 		target.setPersonSex(source.getPersonSex());
 		target.setPersonPresentCondition(source.getPersonPresentCondition());
 		target.setPersonStreet(source.getPersonStreet());
 		target.setPersonPhone(source.getPersonPhone());
+		target.setPersonPhoneNumberType(source.getPersonPhoneNumberType());
 		target.setPersonEmail(source.getPersonEmail());
 		target.setReporterCity(source.getReporterCity());
 		target.setReporterExternalIds(source.getReporterExternalIds());
 		target.setReporterName(source.getReporterName());
 		target.setReporterPostalCode(source.getReporterPostalCode());
 		target.setStatus(source.getStatus());
+		target.setReportMessageId(source.getReportMessageId());
 
 		target.setReportId(source.getReportId());
 		if (source.getSampleReports() != null) {
 			target.setSampleReports(source.getSampleReports().stream().map(sampleReportFacade::toDto).collect(toList()));
 		}
-		if (source.getCaze() != null) {
-			target.setCaze(source.getCaze().toReference());
+		if (source.getSurveillanceReport() != null) {
+			target.setSurveillanceReport(SurveillanceReportFacadeEjb.toReferenceDto(source.getSurveillanceReport()));
 		}
 		if (source.getAssignee() != null) {
 			target.setAssignee(source.getAssignee().toReference());
@@ -246,19 +350,35 @@ public class ExternalMessageFacadeEjb implements ExternalMessageFacade {
 
 	@Override
 	@RightsAllowed(UserRight._EXTERNAL_MESSAGE_DELETE)
-	public void deleteExternalMessage(String uuid) {
+	public void delete(String uuid) {
 		externalMessageService.deletePermanent(externalMessageService.getByUuid(uuid));
 	}
 
 	@Override
 	@RightsAllowed(UserRight._EXTERNAL_MESSAGE_DELETE)
-	public void deleteExternalMessages(List<String> uuids) {
-		List<ExternalMessage> externalMessages = externalMessageService.getByUuids(uuids);
-		for (ExternalMessage externalMessage : externalMessages) {
-			if (externalMessage.getStatus() != ExternalMessageStatus.PROCESSED) {
-				externalMessageService.deletePermanent(externalMessage);
-			}
+	public List<ProcessedEntity> delete(List<String> uuids) {
+		List<ProcessedEntity> processedExternalMessages = new ArrayList<>();
+		List<ExternalMessage> externalMessagesToBeDeleted = externalMessageService.getByUuids(uuids);
+
+		if (externalMessagesToBeDeleted != null) {
+			externalMessagesToBeDeleted.forEach(externalMessageToBeDeleted -> {
+
+				try {
+					if (externalMessageToBeDeleted.getStatus() != ExternalMessageStatus.PROCESSED) {
+						externalMessageService.deletePermanent(externalMessageToBeDeleted);
+						processedExternalMessages.add(new ProcessedEntity(externalMessageToBeDeleted.getUuid(), ProcessedEntityStatus.SUCCESS));
+					} else {
+						processedExternalMessages.add(new ProcessedEntity(externalMessageToBeDeleted.getUuid(), ProcessedEntityStatus.NOT_ELIGIBLE));
+					}
+				} catch (Exception e) {
+					processedExternalMessages.add(new ProcessedEntity(externalMessageToBeDeleted.getUuid(), ProcessedEntityStatus.INTERNAL_FAILURE));
+					logger
+						.error("The external message with uuid {} could not be deleted due to an Exception", externalMessageToBeDeleted.getUuid(), e);
+				}
+			});
 		}
+
+		return processedExternalMessages;
 	}
 
 	@Override
@@ -296,17 +416,17 @@ public class ExternalMessageFacadeEjb implements ExternalMessageFacade {
 	public long count(ExternalMessageCriteria criteria) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-		Root<ExternalMessage> labMessage = cq.from(ExternalMessage.class);
+		Root<ExternalMessage> externalMessage = cq.from(ExternalMessage.class);
 
-		Predicate filter = null;
+		Predicate filter = externalMessageService.createDefaultFilter(cb, externalMessage);
 		if (criteria != null) {
-			filter = externalMessageService.buildCriteriaFilter(cb, labMessage, criteria);
+			filter = CriteriaBuilderHelper.and(cb, filter, externalMessageService.buildCriteriaFilter(cb, externalMessage, criteria));
 		}
 		if (filter != null) {
 			cq.where(filter);
 		}
 
-		cq.select(cb.countDistinct(labMessage));
+		cq.select(cb.countDistinct(externalMessage));
 		return em.createQuery(cq).getSingleResult();
 	}
 
@@ -316,33 +436,63 @@ public class ExternalMessageFacadeEjb implements ExternalMessageFacade {
 		Integer first,
 		Integer max,
 		List<SortProperty> sortProperties) {
+		List<Long> indexListIds = getIndexListIds(criteria, first, max, sortProperties);
+
+		List<ExternalMessageIndexDto> messages = new ArrayList<>();
+
+		IterableHelper.executeBatched(indexListIds, ModelConstants.PARAMETER_LIMIT, batchedIds -> {
+			CriteriaBuilder cb = em.getCriteriaBuilder();
+			CriteriaQuery<ExternalMessageIndexDto> cq = cb.createQuery(ExternalMessageIndexDto.class);
+			Root<ExternalMessage> externalMessage = cq.from(ExternalMessage.class);
+			Join<ExternalMessage, User> userJoin = externalMessage.join(ExternalMessage.ASSIGNEE, JoinType.LEFT);
+
+			cq.multiselect(
+				externalMessage.get(ExternalMessage.UUID),
+				externalMessage.get(ExternalMessage.TYPE),
+				externalMessage.get(ExternalMessage.MESSAGE_DATE_TIME),
+				externalMessage.get(ExternalMessage.REPORTER_NAME),
+				externalMessage.get(ExternalMessage.REPORTER_POSTAL_CODE),
+				externalMessage.get(ExternalMessage.DISEASE),
+				externalMessage.get(ExternalMessage.DISEASE_VARIANT),
+				externalMessage.get(ExternalMessage.PERSON_FIRST_NAME),
+				externalMessage.get(ExternalMessage.PERSON_LAST_NAME),
+				externalMessage.get(ExternalMessage.PERSON_BIRTH_DATE_YYYY),
+				externalMessage.get(ExternalMessage.PERSON_BIRTH_DATE_MM),
+				externalMessage.get(ExternalMessage.PERSON_BIRTH_DATE_DD),
+				externalMessage.get(ExternalMessage.PERSON_POSTAL_CODE),
+				externalMessage.get(ExternalMessage.STATUS),
+				userJoin.get(User.UUID),
+				userJoin.get(User.FIRST_NAME),
+				userJoin.get(User.LAST_NAME));
+
+			cq.where(externalMessage.get(ExternalMessage.ID).in(batchedIds));
+			cq.orderBy(getOrderList(sortProperties, cb, externalMessage));
+			cq.distinct(true);
+
+			messages.addAll(QueryHelper.getResultList(em, cq, null, null));
+		});
+
+		return messages;
+	}
+
+	public List<Long> getIndexListIds(ExternalMessageCriteria criteria, Integer first, Integer max, List<SortProperty> sortProperties) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<ExternalMessageIndexDto> cq = cb.createQuery(ExternalMessageIndexDto.class);
-		Root<ExternalMessage> labMessage = cq.from(ExternalMessage.class);
-		Join<ExternalMessage, User> userJoin = labMessage.join(ExternalMessage.ASSIGNEE, JoinType.LEFT);
+		CriteriaQuery<Tuple> cq = cb.createTupleQuery();
+		Root<ExternalMessage> externalMessage = cq.from(ExternalMessage.class);
 
-		cq.multiselect(
-			labMessage.get(ExternalMessage.UUID),
-			labMessage.get(ExternalMessage.TYPE),
-			labMessage.get(ExternalMessage.MESSAGE_DATE_TIME),
-			labMessage.get(ExternalMessage.REPORTER_NAME),
-			labMessage.get(ExternalMessage.REPORTER_POSTAL_CODE),
-			labMessage.get(ExternalMessage.DISEASE),
-			labMessage.get(ExternalMessage.PERSON_FIRST_NAME),
-			labMessage.get(ExternalMessage.PERSON_LAST_NAME),
-			labMessage.get(ExternalMessage.PERSON_BIRTH_DATE_YYYY),
-			labMessage.get(ExternalMessage.PERSON_BIRTH_DATE_MM),
-			labMessage.get(ExternalMessage.PERSON_BIRTH_DATE_DD),
-			labMessage.get(ExternalMessage.PERSON_POSTAL_CODE),
-			labMessage.get(ExternalMessage.STATUS),
-			userJoin.get(User.UUID),
-			userJoin.get(User.FIRST_NAME),
-			userJoin.get(User.LAST_NAME));
+		List<Selection<?>> selections = new ArrayList<>();
+		selections.add(externalMessage.get(ExternalMessage.ID));
 
-		Predicate filter = null;
+		List<Order> orderList = getOrderList(sortProperties, cb, externalMessage);
+		List<Expression<?>> sortColumns = orderList.stream().map(Order::getExpression).collect(Collectors.toList());
+		selections.addAll(sortColumns);
+
+		cq.multiselect(selections);
+
+		Predicate filter = externalMessageService.createDefaultFilter(cb, externalMessage);
 
 		if (criteria != null) {
-			filter = externalMessageService.buildCriteriaFilter(cb, labMessage, criteria);
+			filter = CriteriaBuilderHelper.and(cb, filter, externalMessageService.buildCriteriaFilter(cb, externalMessage, criteria));
 		}
 
 		if (filter != null) {
@@ -351,29 +501,33 @@ public class ExternalMessageFacadeEjb implements ExternalMessageFacade {
 
 		// Distinct is necessary here to avoid duplicate results due to the user role join in taskService.createAssigneeFilter
 		cq.distinct(true);
+		cq.orderBy(orderList);
 
+		return QueryHelper.getResultList(em, cq, first, max).stream().map(t -> t.get(0, Long.class)).collect(Collectors.toList());
+	}
+
+	private List<Order> getOrderList(List<SortProperty> sortProperties, CriteriaBuilder cb, Root<ExternalMessage> externalMessageRoot) {
 		List<Order> order = new ArrayList<>();
 
 		if (!CollectionUtils.isEmpty(sortProperties)) {
 			for (SortProperty sortProperty : sortProperties) {
 				if (ExternalMessageIndexDto.PERSON_BIRTH_DATE.equals(sortProperty.propertyName)) {
-					Expression<?> birthdateYYYY = labMessage.get(ExternalMessage.PERSON_BIRTH_DATE_YYYY);
+					Expression<?> birthdateYYYY = externalMessageRoot.get(ExternalMessage.PERSON_BIRTH_DATE_YYYY);
 					order.add(sortProperty.ascending ? cb.asc(birthdateYYYY) : cb.desc(birthdateYYYY));
-					Expression<?> birthdateMM = labMessage.get(ExternalMessage.PERSON_BIRTH_DATE_MM);
+					Expression<?> birthdateMM = externalMessageRoot.get(ExternalMessage.PERSON_BIRTH_DATE_MM);
 					order.add(sortProperty.ascending ? cb.asc(birthdateMM) : cb.desc(birthdateMM));
-					Expression<?> birthdateDD = labMessage.get(ExternalMessage.PERSON_BIRTH_DATE_DD);
+					Expression<?> birthdateDD = externalMessageRoot.get(ExternalMessage.PERSON_BIRTH_DATE_DD);
 					order.add(sortProperty.ascending ? cb.asc(birthdateDD) : cb.desc(birthdateDD));
 				} else if (VALID_SORT_PROPERTY_NAMES.contains(sortProperty.propertyName)) {
-					Expression<?> expression = labMessage.get(sortProperty.propertyName);
+					Expression<?> expression = externalMessageRoot.get(sortProperty.propertyName);
 					order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
 				}
 			}
 		}
 
-		order.add(cb.desc(labMessage.get(ExternalMessage.MESSAGE_DATE_TIME)));
-		cq.orderBy(order);
+		order.add(cb.desc(externalMessageRoot.get(ExternalMessage.MESSAGE_DATE_TIME)));
 
-		return QueryHelper.getResultList(em, cq, first, max);
+		return order;
 	}
 
 	public Page<ExternalMessageIndexDto> getIndexPage(
@@ -438,7 +592,7 @@ public class ExternalMessageFacadeEjb implements ExternalMessageFacade {
 
 	private ExternalMessageAdapterFacade getExternalLabResultsFacade() throws NamingException {
 		InitialContext ic = new InitialContext();
-		String jndiName = configFacade.getDemisJndiName();
+		String jndiName = configFacade.getExternalMessageAdapterJndiName();
 
 		if (jndiName == null) {
 			throw new CannotProceedException(I18nProperties.getValidationError(Validations.externalMessageConfigError));
@@ -516,6 +670,11 @@ public class ExternalMessageFacadeEjb implements ExternalMessageFacade {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public ExternalMessageDto getForSurveillanceReport(SurveillanceReportReferenceDto surveillanceReport) {
+		return toDto(externalMessageService.getForSurveillanceReport(surveillanceReport));
 	}
 
 	public static ExternalMessageReferenceDto toReferenceDto(ExternalMessage entity) {

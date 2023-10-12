@@ -15,7 +15,12 @@
 
 package de.symeda.sormas.backend.sormastosormas.entities;
 
+import static de.symeda.sormas.backend.sormastosormas.ValidationHelper.buildValidationGroupName;
+import static de.symeda.sormas.backend.sormastosormas.ValidationHelper.handleValidationError;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -23,26 +28,32 @@ import javax.ejb.Stateless;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import de.symeda.sormas.api.externalmessage.ExternalMessageDto;
+import de.symeda.sormas.api.i18n.Captions;
+import de.symeda.sormas.api.sormastosormas.DuplicateResult;
 import de.symeda.sormas.api.sormastosormas.ShareTreeCriteria;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasDto;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasOriginInfoDto;
-import de.symeda.sormas.api.sormastosormas.entities.DuplicateResult;
 import de.symeda.sormas.api.sormastosormas.entities.caze.SormasToSormasCaseDto;
 import de.symeda.sormas.api.sormastosormas.entities.contact.SormasToSormasContactDto;
 import de.symeda.sormas.api.sormastosormas.entities.event.SormasToSormasEventDto;
 import de.symeda.sormas.api.sormastosormas.entities.event.SormasToSormasEventParticipantDto;
+import de.symeda.sormas.api.sormastosormas.entities.externalmessage.SormasToSormasExternalMessageDto;
 import de.symeda.sormas.api.sormastosormas.entities.immunization.SormasToSormasImmunizationDto;
 import de.symeda.sormas.api.sormastosormas.entities.sample.SormasToSormasSampleDto;
+import de.symeda.sormas.api.sormastosormas.entities.surveillancereport.SormasToSormasSurveillanceReportDto;
 import de.symeda.sormas.api.sormastosormas.validation.SormasToSormasValidationException;
 import de.symeda.sormas.backend.caze.CaseFacadeEjb;
 import de.symeda.sormas.backend.contact.ContactFacadeEjb;
 import de.symeda.sormas.backend.event.EventFacadeEjb;
+import de.symeda.sormas.backend.externalmessage.ExternalMessageFacadeEjb.ExternalMessageFacadeEjbLocal;
 import de.symeda.sormas.backend.sormastosormas.entities.caze.ProcessedCaseDataPersister;
 import de.symeda.sormas.backend.sormastosormas.entities.contact.ProcessedContactDataPersister;
 import de.symeda.sormas.backend.sormastosormas.entities.event.ProcessedEventDataPersister;
 import de.symeda.sormas.backend.sormastosormas.entities.eventparticipant.ProcessedEventParticipantDataPersister;
 import de.symeda.sormas.backend.sormastosormas.entities.immunization.ProcessedImmunizationDataPersister;
 import de.symeda.sormas.backend.sormastosormas.entities.sample.ProcessedSampleDataPersister;
+import de.symeda.sormas.backend.sormastosormas.entities.surveillancereport.ProcessedSurveillanceReportDataPersister;
 
 @Stateless
 @LocalBean
@@ -60,6 +71,8 @@ public class ProcessedEntitiesPersister {
 	private ProcessedEventParticipantDataPersister eventParticipantDataPersister;
 	@EJB
 	private ProcessedImmunizationDataPersister immunizationDataPersister;
+	@EJB
+	private ProcessedSurveillanceReportDataPersister surveillanceReportDataPersister;
 
 	@EJB
 	private CaseFacadeEjb.CaseFacadeEjbLocal caseFacade;
@@ -67,6 +80,8 @@ public class ProcessedEntitiesPersister {
 	private ContactFacadeEjb.ContactFacadeEjbLocal contactFacade;
 	@EJB
 	private EventFacadeEjb.EventFacadeEjbLocal eventFacade;
+	@EJB
+	private ExternalMessageFacadeEjbLocal externalMessageFacade;
 
 	public void persistSharedData(SormasToSormasDto processedData, SormasToSormasOriginInfoDto originInfo, ShareDataExistingEntities existingEntities)
 		throws SormasToSormasValidationException {
@@ -101,9 +116,13 @@ public class ProcessedEntitiesPersister {
 		}
 
 		List<SormasToSormasSampleDto> samples = processedData.getSamples();
+		List<SormasToSormasExternalMessageDto> externalMessages = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(samples)) {
 			for (SormasToSormasSampleDto s : samples) {
 				sampleDataPersister.persistSharedData(s, originInfo, existingEntities.getSamples().get(s.getEntity().getUuid()));
+				if (!CollectionUtils.isEmpty(s.getExternalMessages())) {
+					externalMessages.addAll(s.getExternalMessages());
+				}
 			}
 		}
 
@@ -113,28 +132,55 @@ public class ProcessedEntitiesPersister {
 				immunizationDataPersister.persistSharedData(s, originInfo, existingEntities.getImmunizations().get(s.getEntity().getUuid()));
 			}
 		}
+
+		List<SormasToSormasSurveillanceReportDto> reports = processedData.getSurveillanceReports();
+		if (CollectionUtils.isNotEmpty(reports)) {
+			for (SormasToSormasSurveillanceReportDto r : reports) {
+				surveillanceReportDataPersister
+					.persistSharedData(r, originInfo, existingEntities.getSurveillanceReports().get(r.getEntity().getUuid()));
+
+				if (r.getExternalMessage() != null) {
+					externalMessages.add(r.getExternalMessage());
+				}
+			}
+		}
+
+		if (!externalMessages.isEmpty()) {
+			for (SormasToSormasExternalMessageDto s2sExternalMessage : externalMessages) {
+				ExternalMessageDto externalMessage = s2sExternalMessage.getEntity();
+
+				handleValidationError(
+					() -> externalMessageFacade.save(externalMessage, false, false),
+					Captions.ExternalMessage,
+					buildValidationGroupName(Captions.ExternalMessage, externalMessage),
+					externalMessage);
+			}
+		}
+
 	}
 
 	public DuplicateResult checkForSimilarEntities(SormasToSormasDto processedData, ShareDataExistingEntities existingEntities) {
 		List<SormasToSormasCaseDto> cases = processedData.getCases();
 		if (CollectionUtils.isNotEmpty(cases)) {
-			for (SormasToSormasCaseDto c : cases) {
-				if (!existingEntities.getCases().containsKey(c.getEntity().getUuid())) {
-					return caseDataPersister.checkForSimilarEntities(c);
-				}
+			List<SormasToSormasCaseDto> newCases =
+				cases.stream().filter(c -> !existingEntities.getCases().containsKey(c.getEntity().getUuid())).collect(Collectors.toList());
+
+			for (SormasToSormasCaseDto caze : newCases) {
+				return caseDataPersister.checkForSimilarEntities(caze);
 			}
 		}
 
 		List<SormasToSormasContactDto> contacts = processedData.getContacts();
 		if (CollectionUtils.isNotEmpty(contacts)) {
-			for (SormasToSormasContactDto c : contacts) {
-				if (!existingEntities.getContacts().containsKey(c.getEntity().getUuid())) {
-					return contactDataPersister.checkForSimilarEntities(c);
-				}
+			List<SormasToSormasContactDto> newContacts =
+				contacts.stream().filter(c -> !existingEntities.getContacts().containsKey(c.getEntity().getUuid())).collect(Collectors.toList());
+
+			for (SormasToSormasContactDto c : newContacts) {
+				return contactDataPersister.checkForSimilarEntities(c);
 			}
 		}
 
-		return DuplicateResult.NONE;
+		return DuplicateResult.none();
 	}
 
 	public void persistSyncData(
@@ -183,6 +229,14 @@ public class ProcessedEntitiesPersister {
 		if (CollectionUtils.isNotEmpty(immunizations)) {
 			for (SormasToSormasImmunizationDto i : immunizations) {
 				immunizationDataPersister.persistSyncData(i, originInfoDto, existingEntities.getImmunizations().get(i.getEntity().getUuid()));
+			}
+		}
+
+		List<SormasToSormasSurveillanceReportDto> reports = processedData.getSurveillanceReports();
+		if (CollectionUtils.isNotEmpty(reports)) {
+			for (SormasToSormasSurveillanceReportDto r : reports) {
+				surveillanceReportDataPersister
+					.persistSyncData(r, originInfoDto, existingEntities.getSurveillanceReports().get(r.getEntity().getUuid()));
 			}
 		}
 

@@ -229,14 +229,15 @@ public class ClinicalVisitFacadeEjb implements ClinicalVisitFacade {
 		return saveClinicalVisit(clinicalVisit, caseUuid, true);
 	}
 
-	@RightsAllowed({
-		UserRight._CLINICAL_VISIT_CREATE,
-		UserRight._CLINICAL_VISIT_EDIT })
-	public ClinicalVisitDto saveClinicalVisit(ClinicalVisitDto clinicalVisit, String caseUuid, boolean handleChanges) {
+	@RightsAllowed(UserRight._CASE_CREATE)
+	public ClinicalVisitDto saveClinicalVisitForMergedCases(ClinicalVisitDto clinicalVisit, String caseUuid, boolean handleChanges) {
+		return saveClinicalVisit(clinicalVisit, caseUuid, handleChanges);
+	}
+
+	private ClinicalVisitDto saveClinicalVisit(ClinicalVisitDto clinicalVisit, String caseUuid, boolean handleChanges) {
 		SymptomsHelper.updateIsSymptomatic(clinicalVisit.getSymptoms());
 
 		ClinicalVisit existingClinicalVisit = service.getByUuid(clinicalVisit.getUuid());
-		FacadeHelper.checkCreateAndEditRights(existingClinicalVisit, userService, UserRight.CLINICAL_VISIT_CREATE, UserRight.CLINICAL_VISIT_EDIT);
 
 		restorePseudonymizedDto(clinicalVisit, existingClinicalVisit);
 
@@ -436,7 +437,7 @@ public class ClinicalVisitFacadeEjb implements ClinicalVisitFacade {
 		target = DtoHelper.fillOrBuildEntity(source, target, ClinicalVisit::new, checkChangeDate);
 
 		if (targetWasNull) {
-			target.getSymptoms().setUuid(source.getSymptoms().getUuid());
+			FacadeHelper.setUuidIfDtoExists(target.getSymptoms(), source.getSymptoms());
 		}
 
 		target.setClinicalCourse(clinicalCourseService.getByReferenceDto(source.getClinicalCourse()));

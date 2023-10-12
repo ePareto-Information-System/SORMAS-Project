@@ -40,6 +40,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
 import de.symeda.sormas.api.infrastructure.subcontinent.SubcontinentCriteria;
@@ -58,7 +59,6 @@ import de.symeda.sormas.backend.infrastructure.continent.ContinentFacadeEjb;
 import de.symeda.sormas.backend.infrastructure.continent.ContinentService;
 import de.symeda.sormas.backend.infrastructure.country.Country;
 import de.symeda.sormas.backend.infrastructure.country.CountryService;
-import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.QueryHelper;
 import de.symeda.sormas.backend.util.RightsAllowed;
@@ -79,8 +79,15 @@ public class SubcontinentFacadeEjb
 	}
 
 	@Inject
-	protected SubcontinentFacadeEjb(SubcontinentService service, FeatureConfigurationFacadeEjbLocal featureConfiguration, UserService userService) {
-		super(Subcontinent.class, SubcontinentDto.class, service, featureConfiguration, userService, Validations.importSubcontinentAlreadyExists);
+	protected SubcontinentFacadeEjb(SubcontinentService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
+		super(
+			Subcontinent.class,
+			SubcontinentDto.class,
+			service,
+			featureConfiguration,
+			Validations.importSubcontinentAlreadyExists,
+			Strings.messageSubcontinentArchivingNotPossible,
+			Strings.messageSubcontinentDearchivingNotPossible);
 	}
 
 	public static SubcontinentReferenceDto toReferenceDto(Subcontinent entity) {
@@ -262,8 +269,12 @@ public class SubcontinentFacadeEjb
 	}
 
 	@Override
-	protected Subcontinent fillOrBuildEntity(@NotNull SubcontinentDto source, Subcontinent target, boolean checkChangeDate) {
-		target = DtoHelper.fillOrBuildEntity(source, target, Subcontinent::new, checkChangeDate);
+	protected Subcontinent fillOrBuildEntity(
+		@NotNull SubcontinentDto source,
+		Subcontinent target,
+		boolean checkChangeDate,
+		boolean allowUuidOverwrite) {
+		target = DtoHelper.fillOrBuildEntity(source, target, Subcontinent::new, checkChangeDate, allowUuidOverwrite);
 
 		target.setDefaultName(source.getDefaultName());
 		target.setArchived(source.isArchived());
@@ -281,11 +292,8 @@ public class SubcontinentFacadeEjb
 		}
 
 		@Inject
-		protected SubcontinentFacadeEjbLocal(
-			SubcontinentService service,
-			FeatureConfigurationFacadeEjbLocal featureConfiguration,
-			UserService userService) {
-			super(service, featureConfiguration, userService);
+		protected SubcontinentFacadeEjbLocal(SubcontinentService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
+			super(service, featureConfiguration);
 		}
 	}
 }

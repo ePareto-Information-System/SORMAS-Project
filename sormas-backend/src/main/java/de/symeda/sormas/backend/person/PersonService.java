@@ -17,6 +17,7 @@ package de.symeda.sormas.backend.person;
 import static de.symeda.sormas.backend.ExtendedPostgreSQL94Dialect.SIMILARITY_OPERATOR;
 import static de.symeda.sormas.backend.common.CriteriaBuilderHelper.and;
 import static de.symeda.sormas.backend.common.CriteriaBuilderHelper.andEquals;
+import static de.symeda.sormas.backend.common.CriteriaBuilderHelper.andInValues;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -43,6 +44,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
@@ -412,6 +414,7 @@ public class PersonService extends AdoServiceWithUserFilterAndJurisdiction<Perso
 		filter = andEquals(cb, () -> personJoins.getAddressJoins().getRegion(), filter, personCriteria.getRegion());
 		filter = andEquals(cb, () -> personJoins.getAddressJoins().getDistrict(), filter, personCriteria.getDistrict());
 		filter = andEquals(cb, () -> personJoins.getAddressJoins().getCommunity(), filter, personCriteria.getCommunity());
+		filter = andInValues(personCriteria.getUuids(), filter, cb, personFrom.get(Person.UUID));
 
 		return filter;
 	}
@@ -567,6 +570,7 @@ public class PersonService extends AdoServiceWithUserFilterAndJurisdiction<Perso
 			}
 			filter = and(cb, filter, dateFilter);
 		}
+
 		if (filter != null) {
 			cq.where(filter);
 		}
@@ -636,7 +640,7 @@ public class PersonService extends AdoServiceWithUserFilterAndJurisdiction<Perso
 		return q.getSingleResult() > 0;
 	}
 
-	public List<SimilarPersonDto> getSimilarPersonDtos(PersonSimilarityCriteria criteria, Integer limit) {
+	public List<SimilarPersonDto> getSimilarPersonDtos(Integer limit, PersonSimilarityCriteria criteria) {
 
 		setSimilarityThresholdQuery();
 		final CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -646,6 +650,7 @@ public class PersonService extends AdoServiceWithUserFilterAndJurisdiction<Perso
 
 		// Find similar persons by permitted associations, optionally limited to active entries
 		Predicate personSimilarityFilter = buildSimilarityCriteriaFilter(criteria, cb, personRoot);
+
 		Predicate associationFilter = buildAssociationFilter(queryContext, configFacade.isDuplicateChecksExcludePersonsOfArchivedEntries());
 		personQuery.where(and(cb, personSimilarityFilter, associationFilter));
 		personQuery.distinct(true);
@@ -692,7 +697,7 @@ public class PersonService extends AdoServiceWithUserFilterAndJurisdiction<Perso
 					new EventParticipantQueryContext(cb, personQuery, joins.getEventParticipantJoins());
 				Predicate activeEventParticipantsFilter = activeEntriesOnly
 					? eventParticipantService.createActiveEventParticipantsInActiveEventsFilter(eventParticipantQueryContext)
-					: eventParticipantService.createDefaultInUndeletedEventsFilter(eventParticipantQueryContext);
+					: eventParticipantService.createDefaultInRestoredEventsFilter(eventParticipantQueryContext);
 				Predicate eventParticipantUserFilter = eventParticipantService.createUserFilter(eventParticipantQueryContext);
 				associationPredicates.add(
 					and(
@@ -841,6 +846,24 @@ public class PersonService extends AdoServiceWithUserFilterAndJurisdiction<Perso
 
 		Boolean matchMissingInfo = criteria.getMatchMissingInfo();
 
+		if (!StringUtils.isBlank(criteria.getFirstName()) && !StringUtils.isBlank(criteria.getLastName())) {
+			Expression<String> nameExpr = cb.concat(personFrom.get(Person.FIRST_NAME), " ");
+			nameExpr = cb.concat(nameExpr, personFrom.get(Person.LAST_NAME));
+
+			String name = criteria.getFirstName() + " " + criteria.getLastName();
+
+			filter = and(cb, filter, cb.isTrue(cb.function(SIMILARITY_OPERATOR, boolean.class, nameExpr, cb.literal(name))));
+		} else if (!StringUtils.isBlank(criteria.getFirstName())) {
+			filter = and(
+				cb,
+				filter,
+				cb.isTrue(cb.function(SIMILARITY_OPERATOR, boolean.class, personFrom.get(Person.FIRST_NAME), cb.literal(criteria.getFirstName()))));
+		} else if (!StringUtils.isBlank(criteria.getLastName())) {
+			filter = and(
+				cb,
+				filter,
+				cb.isTrue(cb.function(SIMILARITY_OPERATOR, boolean.class, personFrom.get(Person.LAST_NAME), cb.literal(criteria.getLastName()))));
+		}
 		if (criteria.getSex() != null) {
 			Expression<Sex> sexExpr = cb.literal(criteria.getSex());
 
@@ -851,7 +874,6 @@ public class PersonService extends AdoServiceWithUserFilterAndJurisdiction<Perso
 
 			filter = and(cb, filter, sexFilter);
 		}
-
 		if (criteria.getBirthdateYYYY() != null) {
 			final Predicate yearEquals = cb.equal(personFrom.get(Person.BIRTHDATE_YYYY), criteria.getBirthdateYYYY());
 			filter = and(cb, filter, matchMissingInfo ? yearEquals : cb.or(cb.isNull(personFrom.get(Person.BIRTHDATE_YYYY)), yearEquals));
@@ -882,15 +904,21 @@ public class PersonService extends AdoServiceWithUserFilterAndJurisdiction<Perso
 					continue;
 				}
 
-				Predicate likeFilters = cb.or(
-					CriteriaBuilderHelper.unaccentedIlike(cb, personFrom.get(Person.FIRST_NAME), textFilter),
-					CriteriaBuilderHelper.unaccentedIlike(cb, personFrom.get(Person.LAST_NAME), textFilter),
-					cb.isTrue(cb.function(SIMILARITY_OPERATOR, boolean.class, personFrom.get(Person.FIRST_NAME), cb.literal(textFilter))),
-					cb.isTrue(cb.function(SIMILARITY_OPERATOR, boolean.class, personFrom.get(Person.LAST_NAME), cb.literal(textFilter))),
+				boolean strictNameComparison = criteria.getStrictNameComparison() != null ? criteria.getStrictNameComparison() : false;
+				Predicate likeFilters = CriteriaBuilderHelper.or(
+					cb,
 					CriteriaBuilderHelper.ilike(cb, personFrom.get(Person.UUID), textFilter),
 					CriteriaBuilderHelper.ilike(cb, personFrom.get(Person.INTERNAL_TOKEN), textFilter),
 					CriteriaBuilderHelper.ilike(cb, personFrom.get(Person.EXTERNAL_ID), textFilter),
-					CriteriaBuilderHelper.ilike(cb, personFrom.get(Person.EXTERNAL_TOKEN), textFilter));
+					CriteriaBuilderHelper.ilike(cb, personFrom.get(Person.EXTERNAL_TOKEN), textFilter),
+					!strictNameComparison ? CriteriaBuilderHelper.unaccentedIlike(cb, personFrom.get(Person.FIRST_NAME), textFilter) : null,
+					!strictNameComparison ? CriteriaBuilderHelper.unaccentedIlike(cb, personFrom.get(Person.LAST_NAME), textFilter) : null,
+					!strictNameComparison
+						? cb.isTrue(cb.function(SIMILARITY_OPERATOR, boolean.class, personFrom.get(Person.FIRST_NAME), cb.literal(textFilter)))
+						: null,
+					!strictNameComparison
+						? cb.isTrue(cb.function(SIMILARITY_OPERATOR, boolean.class, personFrom.get(Person.LAST_NAME), cb.literal(textFilter)))
+						: null);
 
 				filter = CriteriaBuilderHelper.and(cb, filter, likeFilters);
 			}
@@ -1039,33 +1067,44 @@ public class PersonService extends AdoServiceWithUserFilterAndJurisdiction<Perso
 		super.deletePermanentByUuids(uuids);
 	}
 
-	public boolean isPersonAssociatedWithNotDeletedEntities(@NotNull String uuid) {
-
-		if (uuid == null) {
+	public boolean isEditAllowed(String personUuid) {
+		if (personUuid == null) {
 			return false;
 		}
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
-		ParameterExpression<String> uuidParam = cb.parameter(String.class, AbstractDomainObject.UUID);
+
 		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
 		Root<Person> from = cq.from(Person.class);
 
-		final PersonQueryContext personQueryContext = new PersonQueryContext(cb, cq, from);
-		final PersonJoins joins = personQueryContext.getJoins();
+		cq.select(from.get(Person.ID));
 
-		cq.select(cb.count(from.get(AbstractDomainObject.ID)));
+		PersonJoins joins = new PersonJoins(from);
 
-		Predicate predicate = cb.or(
-			cb.isFalse(joins.getCaze().get(Case.DELETED)),
-			cb.isFalse(joins.getContact().get(Contact.DELETED)),
-			cb.isFalse(joins.getTravelEntry().get(TravelEntry.DELETED)),
-			cb.isFalse(joins.getImmunization().get(Immunization.DELETED)),
-			cb.isFalse(joins.getEventParticipant().get(EventParticipant.DELETED)));
-		predicate = cb.and(cb.equal(from.get(AbstractDomainObject.UUID), uuidParam), predicate);
+		Subquery<Long> travelEntrySubQuery = cq.subquery(Long.class);
+		Root<TravelEntry> travelEntryFrom = travelEntrySubQuery.from(TravelEntry.class);
+		travelEntrySubQuery.select(travelEntryFrom.get(TravelEntry.PERSON))
+			.where(
+				cb.equal(travelEntryFrom.join(TravelEntry.PERSON, JoinType.LEFT).get(Person.ID), from.get(Person.ID)),
+				cb.isFalse(travelEntryFrom.get(TravelEntry.DELETED)));
 
-		cq.where(predicate);
+		cq.where(
+			cb.equal(from.get(Person.UUID), personUuid),
+			cb.or(
+				cb.and(
+					cb.and(cb.isNotNull(joins.getCaze()), cb.isFalse(joins.getCaze().get(Case.DELETED))),
+					caseService.createOwnershipPredicate(true, joins.getCaze(), cb, cq)),
+				cb.and(
+					cb.and(cb.isNotNull(joins.getContact()), cb.isFalse(joins.getContact().get(Contact.DELETED))),
+					contactService.createOwnershipPredicate(true, joins.getContact(), cb, cq)),
+				cb.and(
+					cb.and(cb.isNotNull(joins.getEventParticipant()), cb.isFalse(joins.getEventParticipant().get(EventParticipant.DELETED))),
+					eventParticipantService.createOwnershipPredicate(true, joins.getEventParticipant(), cb, cq)),
+				cb.and(
+					cb.and(cb.isNotNull(joins.getImmunization()), cb.isFalse(joins.getImmunization().get(Immunization.DELETED))),
+					immunizationService.createOwnershipPredicate(true, joins.getImmunization(), cb, cq)),
+				cb.exists(travelEntrySubQuery)));
 
-		TypedQuery<Long> q = em.createQuery(cq).setParameter(uuidParam, uuid);
-		return q.getSingleResult() > 0;
+		return !em.createQuery(cq).getResultList().isEmpty();
 	}
 }

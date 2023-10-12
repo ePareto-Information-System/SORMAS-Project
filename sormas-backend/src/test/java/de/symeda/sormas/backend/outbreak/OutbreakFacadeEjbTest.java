@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,29 +32,19 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.outbreak.OutbreakCriteria;
 import de.symeda.sormas.api.outbreak.OutbreakDto;
-import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.backend.AbstractBeanTest;
-import de.symeda.sormas.backend.MockProducer;
-import de.symeda.sormas.backend.TestDataCreator.RDCFEntities;
+import de.symeda.sormas.backend.TestDataCreator.RDCF;
 
 public class OutbreakFacadeEjbTest extends AbstractBeanTest {
 
-	private RDCFEntities rdcf;
+	private RDCF rdcf;
 
 	@Override
 	public void init() {
 		super.init();
 
-		rdcf = creator.createRDCFEntities("Region", "District", "Community", "Facility");
-		creator.createUser(
-			rdcf.region.getUuid(),
-			rdcf.district.getUuid(),
-			rdcf.facility.getUuid(),
-			"Surv",
-			"Sup",
-			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
-
-		when(MockProducer.getPrincipal().getName()).thenReturn("SurvSup");
+		rdcf = creator.createRDCF();
+		loginWith(creator.createSurveillanceSupervisor(rdcf));
 	}
 
 	@Test

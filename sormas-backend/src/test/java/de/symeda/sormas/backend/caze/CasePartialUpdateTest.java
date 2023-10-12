@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Date;
 
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -25,7 +26,6 @@ import de.symeda.sormas.api.exposure.ExposureType;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.symptoms.SymptomState;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
-import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.backend.AbstractBeanTest;
 import de.symeda.sormas.backend.TestDataCreator;
@@ -35,14 +35,9 @@ public class CasePartialUpdateTest extends AbstractBeanTest {
 	@Test
 	public void testDiseaseChangePartialUpdates() {
 
-		TestDataCreator.RDCFEntities rdcf = creator.createRDCFEntities("Region", "District", "Community", "Facility");
-		UserDto user = creator.createUser(
-			rdcf.region.getUuid(),
-			rdcf.district.getUuid(),
-			rdcf.facility.getUuid(),
-			"Surv",
-			"Sup",
-			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
+		TestDataCreator.RDCF rdcf = creator.createRDCF();
+		rdcf.pointOfEntry = null;
+		UserDto user = creator.createSurveillanceSupervisor(rdcf);
 		PersonDto cazePerson = creator.createPerson("Case", "Person");
 		CaseDataDto caze = creator.createCase(
 			user.toReference(),
@@ -87,14 +82,9 @@ public class CasePartialUpdateTest extends AbstractBeanTest {
 	@Test
 	public void testPersonReferenceChange() {
 
-		TestDataCreator.RDCFEntities rdcf = creator.createRDCFEntities("Region", "District", "Community", "Facility");
-		UserDto user = creator.createUser(
-			rdcf.region.getUuid(),
-			rdcf.district.getUuid(),
-			rdcf.facility.getUuid(),
-			"Surv",
-			"Sup",
-			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
+		TestDataCreator.RDCF rdcf = creator.createRDCF();
+		rdcf.pointOfEntry = null;
+		UserDto user = creator.createSurveillanceSupervisor(rdcf);
 		PersonDto cazePerson = creator.createPerson("Case", "Person");
 		CaseDataDto caze = creator.createCase(
 			user.toReference(),
@@ -142,14 +132,9 @@ public class CasePartialUpdateTest extends AbstractBeanTest {
 	@Test
 	public void testSetValueWhenNullBefore() throws JsonProcessingException {
 
-		TestDataCreator.RDCFEntities rdcf = creator.createRDCFEntities("Region", "District", "Community", "Facility");
-		UserDto user = creator.createUser(
-			rdcf.region.getUuid(),
-			rdcf.district.getUuid(),
-			rdcf.facility.getUuid(),
-			"Surv",
-			"Sup",
-			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
+		TestDataCreator.RDCF rdcf = creator.createRDCF();
+		rdcf.pointOfEntry = null;
+		UserDto user = creator.createSurveillanceSupervisor(rdcf);
 
 		PersonDto cazePerson = creator.createPerson("Case", "Person");
 		CaseDataDto caze = creator.createCase(
@@ -197,14 +182,9 @@ public class CasePartialUpdateTest extends AbstractBeanTest {
 	@Test
 	public void testResetValue() {
 
-		TestDataCreator.RDCFEntities rdcf = creator.createRDCFEntities("Region", "District", "Community", "Facility");
-		UserDto user = creator.createUser(
-			rdcf.region.getUuid(),
-			rdcf.district.getUuid(),
-			rdcf.facility.getUuid(),
-			"Surv",
-			"Sup",
-			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
+		TestDataCreator.RDCF rdcf = creator.createRDCF();
+		rdcf.pointOfEntry = null;
+		UserDto user = creator.createSurveillanceSupervisor(rdcf);
 		PersonDto cazePerson = creator.createPerson("Case", "Person");
 		CaseDataDto caze = creator.createCase(
 			user.toReference(),
@@ -214,28 +194,28 @@ public class CasePartialUpdateTest extends AbstractBeanTest {
 			InvestigationStatus.PENDING,
 			new Date(),
 			rdcf);
-		caze.setCaseOrigin(CaseOrigin.IN_COUNTRY);
+		caze.setPregnant(YesNoUnknown.NO);
 		caze.setAdditionalDetails("additional details");
 		caze = getCaseFacade().save(caze);
 
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode caseJson = mapper.convertValue(caze, JsonNode.class);
 		//check if the reference person uuid is the same in the converted json
-		CaseOrigin actualCaseOrigin = Enum.valueOf(CaseOrigin.class, caseJson.get("caseOrigin").textValue());
+		YesNoUnknown actualPregnant = Enum.valueOf(YesNoUnknown.class, caseJson.get("pregnant").textValue());
 		String actualAdditionalDetails = caseJson.get("additionalDetails").textValue();
-		assertEquals(CaseOrigin.IN_COUNTRY, actualCaseOrigin);
+		assertEquals(YesNoUnknown.NO, actualPregnant);
 		assertEquals(caze.getAdditionalDetails(), actualAdditionalDetails);
-		((ObjectNode) caseJson).putNull("caseOrigin");
+		((ObjectNode) caseJson).putNull("pregnant");
 		((ObjectNode) caseJson).putNull("additionalDetails");
 
-		assertTrue(caseJson.get("caseOrigin").isNull());
+		assertTrue(caseJson.get("pregnant").isNull());
 		assertTrue(caseJson.get("additionalDetails").isNull());
 
 		//remove from json some nodes 
 
 		((ObjectNode) caseJson).remove("caseClassification");
-		((ObjectNode) caseJson).remove("district");
-		((ObjectNode) caseJson).remove("community");
+		((ObjectNode) caseJson).remove("responsibleRegion");
+		((ObjectNode) caseJson).remove("responsibleDistrict");
 		((ObjectNode) caseJson).remove("healthFacility");
 		((ObjectNode) caseJson).remove("epiData");
 		((ObjectNode) caseJson).remove("surveillanceOfficer");
@@ -247,22 +227,17 @@ public class CasePartialUpdateTest extends AbstractBeanTest {
 		CaseDataDto casePostUpdated = getCaseFacade().postUpdate(caze.getUuid(), caseJson);
 		//check if the fields has been set to null  
 		assertNull(casePostUpdated.getAdditionalDetails());
-		assertNull(casePostUpdated.getCaseOrigin());
+		assertNull(casePostUpdated.getPregnant());
 		//check if the fields that were not in the json file has not be deleted
-		assertEquals(CaseClassification.PROBABLE, caze.getCaseClassification());
+		assertEquals(rdcf.region, caze.getResponsibleRegion());
 	}
 
 	@Test
 	public void testPatchingListElements() throws JsonProcessingException {
 
-		TestDataCreator.RDCFEntities rdcf = creator.createRDCFEntities("Region", "District", "Community", "Facility");
-		UserDto user = creator.createUser(
-			rdcf.region.getUuid(),
-			rdcf.district.getUuid(),
-			rdcf.facility.getUuid(),
-			"Surv",
-			"Sup",
-			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
+		TestDataCreator.RDCF rdcf = creator.createRDCF();
+		rdcf.pointOfEntry = null;
+		UserDto user = creator.createSurveillanceSupervisor(rdcf);
 
 		PersonDto cazePerson = creator.createPerson("Case", "Person");
 		CaseDataDto caze = creator.createCase(

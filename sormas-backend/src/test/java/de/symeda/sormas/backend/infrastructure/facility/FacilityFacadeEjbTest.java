@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,6 +18,7 @@ import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityCriteria;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityFacade;
 import de.symeda.sormas.api.infrastructure.facility.FacilityIndexDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.utils.SortProperty;
@@ -26,10 +28,10 @@ import de.symeda.sormas.backend.infrastructure.community.Community;
 import de.symeda.sormas.backend.infrastructure.district.District;
 import de.symeda.sormas.backend.infrastructure.region.Region;
 
-public class FacilityFacadeEjbTest extends AbstractBeanTest {
+class FacilityFacadeEjbTest extends AbstractBeanTest {
 
 	@Test
-	public void testGetAllByRegionAfter() throws InterruptedException {
+	void testGetAllByRegionAfter() throws InterruptedException {
 
 		RDCF rdcf = creator.createRDCF();
 		getFacilityService().doFlush();
@@ -53,7 +55,7 @@ public class FacilityFacadeEjbTest extends AbstractBeanTest {
 	}
 
 	@Test
-	public void testGetAllWithoutRegionAfter() throws InterruptedException {
+	void testGetAllWithoutRegionAfter() throws InterruptedException {
 
 		FacilityDto facility = FacilityDto.build();
 		facility.setName("facility");
@@ -81,7 +83,7 @@ public class FacilityFacadeEjbTest extends AbstractBeanTest {
 	}
 
 	@Test
-	public void testGetActiveHealthFacilitiesByCommunity() {
+	void testGetActiveHealthFacilitiesByCommunity() {
 
 		Region r = creator.createRegion("r");
 		District d = creator.createDistrict("d", r);
@@ -99,7 +101,7 @@ public class FacilityFacadeEjbTest extends AbstractBeanTest {
 	}
 
 	@Test
-	public void testGetActiveHealthFacilitiesByDistrict() {
+	void testGetActiveHealthFacilitiesByDistrict() {
 
 		Region r = creator.createRegion("r");
 		District d = creator.createDistrict("d", r);
@@ -117,7 +119,7 @@ public class FacilityFacadeEjbTest extends AbstractBeanTest {
 	}
 
 	@Test
-	public void testGetAllActiveLaboratories() {
+	void testGetAllActiveLaboratories() {
 
 		RDCF rdcf = creator.createRDCF("r", "d", "c", "f");
 		FacilityDto f1 = getFacilityFacade().getByUuid(rdcf.facility.getUuid());
@@ -137,13 +139,13 @@ public class FacilityFacadeEjbTest extends AbstractBeanTest {
 	 * If no facilities are present, no parent of them is archived.
 	 */
 	@Test
-	public void testHasArchivedParentInfrastructureNoFacilities() {
+	void testHasArchivedParentInfrastructureNoFacilities() {
 
 		assertFalse(getFacilityFacade().hasArchivedParentInfrastructure(Collections.emptyList()));
 	}
 
 	@Test
-	public void testGetIndexListMappedSorting() {
+	void testGetIndexListMappedSorting() {
 
 		FacilityCriteria facilityCriteria = new FacilityCriteria();
 
@@ -171,5 +173,84 @@ public class FacilityFacadeEjbTest extends AbstractBeanTest {
 		// 2. Sort by all properties at once
 		getFacilityFacade().getIndexList(facilityCriteria, null, null, allSortProperties);
 		assertThat(result, is(empty()));
+	}
+
+	@Test
+	void testCount() {
+
+		getFacilityService().createConstantFacilities();
+		FacilityFacade facilityFacade = getFacilityFacade();
+		assertEquals(0, facilityFacade.count(null));
+		assertEquals(0, facilityFacade.count(new FacilityCriteria()));
+
+		Region region = creator.createRegion("Region1");
+		District district = creator.createDistrict("District1", region);
+		Community community = creator.createCommunity("Community1", district);
+
+		creator.createFacility("lab", FacilityType.LABORATORY, region, district, community);
+		assertEquals(1, facilityFacade.count(null));
+		assertEquals(1, facilityFacade.count(new FacilityCriteria()));
+
+		creator.createFacility("hospital", FacilityType.HOSPITAL, region, district, community);
+		assertEquals(2, facilityFacade.count(null));
+		assertEquals(2, facilityFacade.count(new FacilityCriteria()));
+
+		assertEquals(1, facilityFacade.count(new FacilityCriteria().type(FacilityType.LABORATORY)));
+	}
+
+	@Test
+	void testConstantFacilitiesAreNeverExported() {
+
+		getFacilityService().createConstantFacilities();
+		FacilityFacade facilityFacade = getFacilityFacade();
+		assertEquals(0, facilityFacade.getExportList(null, Collections.emptyList(), 0, 100).size());
+		assertEquals(0, facilityFacade.getExportList(new FacilityCriteria(), Collections.emptyList(), 0, 100).size());
+
+		Region region = creator.createRegion("Region1");
+		District district = creator.createDistrict("District1", region);
+		Community community = creator.createCommunity("Community1", district);
+
+		Facility lab = creator.createFacility("lab", FacilityType.LABORATORY, region, district, community);
+		creator.createFacility("lab", FacilityType.LABORATORY, region, district, community);
+		creator.createFacility("hospital", FacilityType.HOSPITAL, region, district, community);
+
+		assertEquals(3, facilityFacade.getExportList(null, Collections.emptyList(), 0, 100).size());
+		assertEquals(3, facilityFacade.getExportList(new FacilityCriteria(), Collections.emptyList(), 0, 100).size());
+		assertEquals(2, facilityFacade.getExportList(new FacilityCriteria().type(FacilityType.LABORATORY), Collections.emptyList(), 0, 100).size());
+		assertEquals(
+			1,
+			facilityFacade.getExportList(null, Collections.singletonList(getFacilityFacade().getByUuid(lab.getUuid()).getUuid()), 0, 100).size());
+	}
+
+	@Test
+	public void testGetByAddress() {
+
+		RDCF rdcf = creator.createRDCF();
+		FacilityDto fac1 = creator.createFacility("Fac1", rdcf.region, rdcf.district, facility -> {
+			facility.setStreet("Street1");
+			facility.setPostalCode("PostalCode1");
+			facility.setCity("City1");
+		});
+		FacilityDto fac2 = creator.createFacility("Fac2", rdcf.region, rdcf.district, facility -> {
+			facility.setStreet("Street2");
+			facility.setPostalCode("PostalCode2");
+			facility.setCity("City2");
+		});
+		FacilityDto fac3 = creator.createFacility("Fac3", rdcf.region, rdcf.district, facility -> {
+			facility.setStreet("Street3");
+			facility.setPostalCode("PostalCode2");
+			facility.setCity("City2");
+		});
+		FacilityDto fac4 = creator.createFacility("Fac4", rdcf.region, rdcf.district, facility -> {
+			facility.setStreet("Street2");
+			facility.setPostalCode("PostalCode2");
+			facility.setCity("City2");
+		});
+
+		FacilityFacade facade = getFacilityFacade();
+		assertEquals(fac1.getUuid(), facade.getByAddress("Street1", "PostalCode1", "City1").getUuid());
+		assertEquals(fac3.getUuid(), facade.getByAddress("Street3", "PostalCode2", "City2").getUuid());
+		assertNull(facade.getByAddress("Street5", "PostalCode5", "City5"));
+		assertNull(facade.getByAddress("Street2", "PostalCode2", "City2"));
 	}
 }

@@ -38,7 +38,7 @@ import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.person.Person;
 import de.symeda.sormas.backend.user.User;
 
-public class SampleJoins extends QueryJoins<Sample> {
+public class SampleJoins extends QueryJoins<Sample> implements ISampleJoins {
 
 	private Join<Sample, User> reportingUser;
 	private Join<Sample, Sample> referredSample;
@@ -46,6 +46,7 @@ public class SampleJoins extends QueryJoins<Sample> {
 	private Join<Sample, Case> caze;
 	private Join<Sample, EventParticipant> eventParticipant;
 	private Join<Sample, Contact> contact;
+	private Join<Sample, PathogenTest> pathogenTest;
 
 	private CaseJoins caseJoins;
 	private ContactJoins contactJoins;
@@ -151,6 +152,10 @@ public class SampleJoins extends QueryJoins<Sample> {
 		this.contactJoins = contactJoins;
 	}
 
+	public CaseJoins getContactCaseJoins() {
+		return getContactJoins().getCaseJoins();
+	}
+
 	public Join<Sample, EventParticipant> getEventParticipant() {
 		return getOrCreate(eventParticipant, Sample.ASSOCIATED_EVENT_PARTICIPANT, JoinType.LEFT, this::setEventParticipant);
 	}
@@ -163,8 +168,20 @@ public class SampleJoins extends QueryJoins<Sample> {
 		return getOrCreate(eventParticipantJoins, () -> new EventParticipantJoins(getEventParticipant()), this::setEventParticipantJoins);
 	}
 
+	public Join<Person, Location> getEventParticipantAddress() {
+		return getEventParticipantJoins().getAddress();
+	}
+
 	public void setEventParticipantJoins(EventParticipantJoins eventParticipantJoins) {
 		this.eventParticipantJoins = eventParticipantJoins;
+	}
+
+	public Join<Sample, PathogenTest> getPathogenTest() {
+		return getOrCreate(pathogenTest, Sample.PATHOGENTESTS, JoinType.LEFT, this::setPathogenTest);
+	}
+
+	private void setPathogenTest(Join<Sample, PathogenTest> pathogenTest) {
+		this.pathogenTest = pathogenTest;
 	}
 
 	public Join<EventParticipant, Person> getEventParticipantPerson() {

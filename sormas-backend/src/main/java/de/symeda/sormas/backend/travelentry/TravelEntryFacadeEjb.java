@@ -2,6 +2,7 @@ package de.symeda.sormas.backend.travelentry;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -17,14 +18,19 @@ import javax.persistence.criteria.Root;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import de.symeda.sormas.api.common.CoreEntityType;
+import de.symeda.sormas.api.common.DeletableEntityType;
 import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.common.Page;
-import de.symeda.sormas.api.deletionconfiguration.DeletionReference;
+import de.symeda.sormas.api.common.progress.ProcessedEntity;
+import de.symeda.sormas.api.common.progress.ProcessedEntityStatus;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.travelentry.DeaContentEntry;
 import de.symeda.sormas.api.travelentry.TravelEntryCriteria;
@@ -35,6 +41,7 @@ import de.symeda.sormas.api.travelentry.TravelEntryListCriteria;
 import de.symeda.sormas.api.travelentry.TravelEntryListEntryDto;
 import de.symeda.sormas.api.travelentry.TravelEntryReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.AccessDeniedException;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.backend.FacadeHelper;
@@ -54,7 +61,6 @@ import de.symeda.sormas.backend.person.PersonService;
 import de.symeda.sormas.backend.travelentry.services.TravelEntryListService;
 import de.symeda.sormas.backend.travelentry.services.TravelEntryService;
 import de.symeda.sormas.backend.user.User;
-import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.Pseudonymizer;
 import de.symeda.sormas.backend.util.RightsAllowed;
@@ -64,6 +70,8 @@ import de.symeda.sormas.backend.util.RightsAllowed;
 public class TravelEntryFacadeEjb
 	extends AbstractCoreFacadeEjb<TravelEntry, TravelEntryDto, TravelEntryIndexDto, TravelEntryReferenceDto, TravelEntryService, TravelEntryCriteria>
 	implements TravelEntryFacade {
+
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@EJB
 	private TravelEntryListService travelEntryListService;
@@ -100,14 +108,19 @@ public class TravelEntryFacadeEjb
 	}
 
 	@Inject
-	public TravelEntryFacadeEjb(TravelEntryService service, UserService userService) {
-		super(TravelEntry.class, TravelEntryDto.class, service, userService);
+	public TravelEntryFacadeEjb(TravelEntryService service) {
+		super(TravelEntry.class, TravelEntryDto.class, service);
 	}
 
 	@Override
 	@RightsAllowed(UserRight._TRAVEL_ENTRY_DELETE)
 	public void delete(String travelEntryUuid, DeletionDetails deletionDetails) {
 		TravelEntry travelEntry = service.getByUuid(travelEntryUuid);
+
+		if (!service.inJurisdictionOrOwned(travelEntry)) {
+			throw new AccessDeniedException(I18nProperties.getString(Strings.messageTravelEntryOutsideJurisdictionDeletionDenied));
+		}
+
 		service.delete(travelEntry, deletionDetails);
 
 		if (travelEntry.getResultingCase() != null) {
@@ -117,8 +130,59 @@ public class TravelEntryFacadeEjb
 
 	@Override
 	@RightsAllowed(UserRight._TRAVEL_ENTRY_DELETE)
-	public void undelete(String uuid) {
-		super.undelete(uuid);
+	public List<ProcessedEntity> delete(List<String> uuids, DeletionDetails deletionDetails) {
+		List<ProcessedEntity> processedTravelEntries = new ArrayList<>();
+		List<TravelEntry> travelEntriesToBeDeleted = travelEntryService.getByUuids(uuids);
+
+		if (travelEntriesToBeDeleted != null) {
+			travelEntriesToBeDeleted.forEach(travelEntryToBeDeleted -> {
+				if (!travelEntryToBeDeleted.isDeleted()) {
+					try {
+						delete(travelEntryToBeDeleted.getUuid(), deletionDetails);
+						processedTravelEntries.add(new ProcessedEntity(travelEntryToBeDeleted.getUuid(), ProcessedEntityStatus.SUCCESS));
+					} catch (AccessDeniedException e) {
+						processedTravelEntries
+							.add(new ProcessedEntity(travelEntryToBeDeleted.getUuid(), ProcessedEntityStatus.ACCESS_DENIED_FAILURE));
+						logger.error(
+							"The travel entry with uuid {} could not be deleted due to an AccessDeniedException",
+							travelEntryToBeDeleted.getUuid(),
+							e);
+					} catch (Exception e) {
+						processedTravelEntries.add(new ProcessedEntity(travelEntryToBeDeleted.getUuid(), ProcessedEntityStatus.INTERNAL_FAILURE));
+						logger.error("The travel entry with uuid:" + travelEntryToBeDeleted.getUuid() + "could not be deleted");
+					}
+				}
+			});
+		}
+
+		return processedTravelEntries;
+	}
+
+	@Override
+	@RightsAllowed(UserRight._TRAVEL_ENTRY_DELETE)
+	public void restore(String uuid) {
+		super.restore(uuid);
+	}
+
+	@Override
+	@RightsAllowed(UserRight._TRAVEL_ENTRY_DELETE)
+	public List<ProcessedEntity> restore(List<String> uuids) {
+		List<ProcessedEntity> processedTravelEntries = new ArrayList<>();
+		List<TravelEntry> travelEntriesToBeRestored = travelEntryService.getByUuids(uuids);
+
+		if (travelEntriesToBeRestored != null) {
+			travelEntriesToBeRestored.forEach(travelEntryToBeRestored -> {
+				try {
+					restore(travelEntryToBeRestored.getUuid());
+					processedTravelEntries.add(new ProcessedEntity(travelEntryToBeRestored.getUuid(), ProcessedEntityStatus.SUCCESS));
+				} catch (Exception e) {
+					processedTravelEntries.add(new ProcessedEntity(travelEntryToBeRestored.getUuid(), ProcessedEntityStatus.INTERNAL_FAILURE));
+					logger.error("The travel entry with uuid {} could not be restored due to an Exception", travelEntryToBeRestored.getUuid(), e);
+				}
+			});
+		}
+
+		return processedTravelEntries;
 	}
 
 	@Override
@@ -231,8 +295,8 @@ public class TravelEntryFacadeEjb
 	}
 
 	@Override
-	protected CoreEntityType getCoreEntityType() {
-		return CoreEntityType.TRAVEL_ENTRY;
+	protected DeletableEntityType getDeletableEntityType() {
+		return DeletableEntityType.TRAVEL_ENTRY;
 	}
 
 	@Override
@@ -388,29 +452,26 @@ public class TravelEntryFacadeEjb
 	}
 
 	@Override
-	protected String getDeleteReferenceField(DeletionReference deletionReference) {
-		if (deletionReference.equals(DeletionReference.ORIGIN)) {
-			return TravelEntry.DATE_OF_ARRIVAL;
-		}
-		return super.getDeleteReferenceField(deletionReference);
+	@RightsAllowed(UserRight._TRAVEL_ENTRY_ARCHIVE)
+	public ProcessedEntity archive(String entityUuid, Date endOfProcessingDate) {
+		return super.archive(entityUuid, endOfProcessingDate);
 	}
 
 	@Override
 	@RightsAllowed(UserRight._TRAVEL_ENTRY_ARCHIVE)
-	public void archive(String entityUuid, Date endOfProcessingDate) {
-		super.archive(entityUuid, endOfProcessingDate);
+	public List<ProcessedEntity> archive(List<String> entityUuids) {
+		return super.archive(entityUuids);
 	}
 
 	@Override
 	@RightsAllowed(UserRight._TRAVEL_ENTRY_ARCHIVE)
-	public void archive(List<String> entityUuids) {
-		super.archive(entityUuids);
+	public List<ProcessedEntity> dearchive(List<String> entityUuids, String dearchiveReason) {
+		return super.dearchive(entityUuids, dearchiveReason);
 	}
 
 	@Override
-	@RightsAllowed(UserRight._TRAVEL_ENTRY_ARCHIVE)
-	public void dearchive(List<String> entityUuids, String dearchiveReason) {
-		super.dearchive(entityUuids, dearchiveReason);
+	public List<String> getArchivedUuidsSince(Date since) {
+		throw new NotImplementedException();
 	}
 
 	@Override
@@ -431,8 +492,8 @@ public class TravelEntryFacadeEjb
 		}
 
 		@Inject
-		public TravelEntryFacadeEjbLocal(TravelEntryService service, UserService userService) {
-			super(service, userService);
+		public TravelEntryFacadeEjbLocal(TravelEntryService service) {
+			super(service);
 		}
 	}
 }

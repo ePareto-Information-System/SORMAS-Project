@@ -68,6 +68,8 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.EditPermissionType;
+import de.symeda.sormas.api.RequestContextHolder;
 import de.symeda.sormas.api.caze.AgeAndBirthDateDto;
 import de.symeda.sormas.api.caze.BirthDateDto;
 import de.symeda.sormas.api.caze.CaseClassification;
@@ -95,6 +97,7 @@ import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.person.ApproximateAgeType.ApproximateAgeHelper;
 import de.symeda.sormas.api.person.CauseOfDeath;
 import de.symeda.sormas.api.person.JournalPersonDto;
+import de.symeda.sormas.api.person.PersonAddressType;
 import de.symeda.sormas.api.person.PersonAssociation;
 import de.symeda.sormas.api.person.PersonContactDetailDto;
 import de.symeda.sormas.api.person.PersonContactDetailType;
@@ -117,6 +120,8 @@ import de.symeda.sormas.api.utils.AccessDeniedException;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DataHelper.Pair;
 import de.symeda.sormas.api.utils.DateHelper;
+import de.symeda.sormas.api.utils.DtoCopyHelper;
+import de.symeda.sormas.api.utils.LocationHelper;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.api.vaccination.VaccinationDto;
@@ -136,11 +141,13 @@ import de.symeda.sormas.backend.contact.ContactFacadeEjb.ContactFacadeEjbLocal;
 import de.symeda.sormas.backend.contact.ContactJoins;
 import de.symeda.sormas.backend.contact.ContactQueryContext;
 import de.symeda.sormas.backend.contact.ContactService;
+import de.symeda.sormas.backend.event.Event;
 import de.symeda.sormas.backend.event.EventFacadeEjb;
 import de.symeda.sormas.backend.event.EventParticipant;
 import de.symeda.sormas.backend.event.EventParticipantFacadeEjb;
 import de.symeda.sormas.backend.event.EventParticipantFacadeEjb.EventParticipantFacadeEjbLocal;
 import de.symeda.sormas.backend.event.EventParticipantService;
+import de.symeda.sormas.backend.event.EventService;
 import de.symeda.sormas.backend.externaljournal.ExternalJournalService;
 import de.symeda.sormas.backend.feature.FeatureConfigurationFacadeEjb.FeatureConfigurationFacadeEjbLocal;
 import de.symeda.sormas.backend.immunization.ImmunizationFacadeEjb;
@@ -168,13 +175,12 @@ import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.location.LocationFacadeEjb;
 import de.symeda.sormas.backend.location.LocationFacadeEjb.LocationFacadeEjbLocal;
 import de.symeda.sormas.backend.location.LocationService;
-import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfo;
+import de.symeda.sormas.backend.sample.SampleService;
 import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfoService;
 import de.symeda.sormas.backend.travelentry.TravelEntry;
 import de.symeda.sormas.backend.travelentry.services.TravelEntryService;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.user.UserFacadeEjb.UserFacadeEjbLocal;
-import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.IterableHelper;
 import de.symeda.sormas.backend.util.JurisdictionHelper;
@@ -245,13 +251,17 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 	private ImmunizationService immunizationService;
 	@EJB
 	private TravelEntryService travelEntryService;
+	@EJB
+	private EventService eventService;
+	@EJB
+	private SampleService sampleService;
 
 	public PersonFacadeEjb() {
 	}
 
 	@Inject
-	protected PersonFacadeEjb(PersonService service, UserService userService) {
-		super(Person.class, PersonDto.class, service, userService);
+	protected PersonFacadeEjb(PersonService service) {
+		super(Person.class, PersonDto.class, service);
 	}
 
 	@Override
@@ -262,7 +272,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 	@Override
 	public List<SimilarPersonDto> getSimilarPersonDtos(PersonSimilarityCriteria criteria) {
 
-		return service.getSimilarPersonDtos(criteria, null);
+		return service.getSimilarPersonDtos(null, criteria);
 	}
 
 	@Override
@@ -273,7 +283,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 			return false;
 		}
 
-		return !service.getSimilarPersonDtos(criteria, 1).isEmpty();
+		return !service.getSimilarPersonDtos(1, criteria).isEmpty();
 	}
 
 	@Override
@@ -467,6 +477,10 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 			externalJournalService.handleExternalJournalPersonUpdateAsync(source.toReference());
 		}
 
+		if (existingPerson != null) {
+			LocationHelper.resetContinentFieldsIfCountryRemoved(source.getAddress(), existingPerson.getAddress());
+		}
+
 		person = fillOrBuildEntity(source, person, checkChangeDate);
 
 		service.ensurePersisted(person);
@@ -512,6 +526,10 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 			externalJournalService.validateExternalJournalPerson(source);
 		}
 
+		if (existingPersonDto != null) {
+			LocationHelper.resetContinentFieldsIfCountryRemoved(source.getAddress(), existingPersonDto.getAddress());
+		}
+
 		existingPerson = fillOrBuildEntity(source, existingPerson, true);
 
 		service.ensurePersisted(existingPerson);
@@ -549,7 +567,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 	}
 
 	private void validateUserRights(PersonDto person, PersonDto existingPerson) {
-		if (existingPerson != null) {
+		if (existingPerson != null && !RequestContextHolder.isMobileSync()) {
 			if (person.getSymptomJournalStatus() != existingPerson.getSymptomJournalStatus()
 				&& !(userService.hasRight(UserRight.MANAGE_EXTERNAL_SYMPTOM_JOURNAL) || userService.hasRight(UserRight.EXTERNAL_VISITS))) {
 				throw new AccessDeniedException(
@@ -1080,14 +1098,26 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 	}
 
 	@Override
-	public boolean isSharedWithoutOwnership(String uuid) {
-		SormasToSormasOriginInfo originInfo = sormasToSormasOriginInfoService.getByPerson(uuid);
-		return originInfo != null && !originInfo.isOwnershipHandedOver();
-	}
+	public boolean isSharedOrReceived(String uuid) {
+		final CriteriaBuilder cb = em.getCriteriaBuilder();
+		final CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+		final Root<Person> from = cq.from(Person.class);
+		PersonJoins joins = new PersonJoins(from);
 
-	@Override
-	public boolean isShared(String uuid) {
-		return sormasToSormasOriginInfoService.getByPerson(uuid) != null;
+		cq.select(from.get(Person.ID));
+		cq.where(
+			cb.equal(from.get(Person.UUID), uuid),
+			cb.or(
+				cb.isNotNull(joins.getCaseJoins().getSormasToSormasShareInfo()),
+				cb.isNotNull(joins.getCaze().get(Case.SORMAS_TO_SORMAS_ORIGIN_INFO)),
+				cb.isNotNull(joins.getContactJoins().getSormasToSormasShareInfo()),
+				cb.isNotNull(joins.getContact().get(Case.SORMAS_TO_SORMAS_ORIGIN_INFO)),
+				cb.isNotNull(joins.getEventParticipantJoins().getSormasToSormasShareInfo()),
+				cb.isNotNull(joins.getEventParticipant().get(Case.SORMAS_TO_SORMAS_ORIGIN_INFO)),
+				cb.isNotNull(joins.getImmunizationJoins().getSormasToSormasShareInfo()),
+				cb.isNotNull(joins.getImmunization().get(Case.SORMAS_TO_SORMAS_ORIGIN_INFO))));
+
+		return !em.createQuery(cq).getResultList().isEmpty();
 	}
 
 	/**
@@ -1634,7 +1664,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target = DtoHelper.fillOrBuildEntity(source, target, service::createPerson, checkChangeDate);
 
 		if (targetWasNull) {
-			target.getAddress().setUuid(source.getAddress().getUuid());
+			FacadeHelper.setUuidIfDtoExists(target.getAddress(), source.getAddress());
 		}
 
 		target.setFirstName(source.getFirstName());
@@ -1721,7 +1751,10 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setPassportNumber(source.getPassportNumber());
 		target.setNationalHealthId(source.getNationalHealthId());
 		target.setPlaceOfBirthFacilityType(source.getPlaceOfBirthFacilityType());
-		target.setSymptomJournalStatus(source.getSymptomJournalStatus());
+
+		if (!RequestContextHolder.isMobileSync()) {
+			target.setSymptomJournalStatus(source.getSymptomJournalStatus());
+		}
 
 		target.setHasCovidApp(source.isHasCovidApp());
 		target.setCovidCodeDelivered(source.isCovidCodeDelivered());
@@ -1776,19 +1809,26 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 			}
 		}
 
-		DtoHelper.copyDtoValues(leadPerson, otherPerson, false);
+		DtoCopyHelper.copyDtoValues(leadPerson, otherPerson, false, PersonDto.ADDRESS);
+		processPersonAddressMerge(leadPerson, otherPerson);
+
 		save(leadPerson);
 	}
 
 	@Override
 	@RightsAllowed(UserRight._PERSON_EDIT)
-	public void mergePerson(String leadPersonUuid, String otherPersonUuid, boolean mergeProperties) {
+	public void mergePerson(
+		String leadPersonUuid,
+		String otherPersonUuid,
+		boolean mergePersonProperties,
+		List<String> selectedEventParticipantUuids,
+		boolean mergeEventParticipantProperties) {
 
 		if (leadPersonUuid.equals(otherPersonUuid)) {
 			throw new UnsupportedOperationException("Two different persons need to be selected for merge!");
 		}
 
-		if (mergeProperties) {
+		if (mergePersonProperties) {
 			final PersonDto leadPersonDto = getByUuid(leadPersonUuid);
 			final PersonDto otherPersonDto = getByUuid(otherPersonUuid);
 
@@ -1804,15 +1844,16 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 					contactDetailDto.setPrimaryContact(false);
 				}
 			}
-			DtoHelper.copyDtoValues(leadPersonDto, otherPersonDto, false);
 
+			DtoCopyHelper.copyDtoValues(leadPersonDto, otherPersonDto, false, PersonDto.ADDRESS);
+			processPersonAddressMerge(leadPersonDto, otherPersonDto);
 			save(leadPersonDto);
 		}
 
 		final Person leadPerson = service.getByUuid(leadPersonUuid);
 		final Person otherPerson = service.getByUuid(otherPersonUuid);
 
-		final List<Immunization> immunizations = immunizationService.getByPersonUuids(Collections.singletonList(otherPersonUuid));
+		final List<Immunization> immunizations = immunizationService.getByPersonUuids(Collections.singletonList(otherPersonUuid), false);
 		immunizations.forEach(o -> {
 			o.setPerson(leadPerson);
 			immunizationService.ensurePersisted(o);
@@ -1832,12 +1873,9 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 			o.setPerson(leadPerson);
 			contactService.ensurePersisted(o);
 		});
-		final List<EventParticipant> eventParticipants =
-			new ArrayList<>(eventParticipantService.getByPersonUuids(Collections.singletonList(otherPersonUuid)));
-		eventParticipants.forEach(o -> {
-			o.setPerson(leadPerson);
-			eventParticipantService.ensurePersisted(o);
-		});
+
+		mergeEventParticipants(leadPersonUuid, otherPersonUuid, selectedEventParticipantUuids, leadPerson, mergeEventParticipantProperties);
+
 		final List<Visit> visits = new ArrayList<>(visitService.getByPersonUuids(Collections.singletonList(otherPersonUuid)));
 		visits.forEach(o -> {
 			o.setPerson(leadPerson);
@@ -1848,14 +1886,116 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		service.ensurePersisted(leadPerson);
 	}
 
-	@Override
-	public boolean isPersonSimilar(PersonSimilarityCriteria criteria, String personUuid) {
-		return service.isPersonSimilar(criteria, personUuid);
+	private void mergeEventParticipants(
+		String leadPersonUuid,
+		String otherPersonUuid,
+		List<String> selectedEventParticipantUuids,
+		Person leadPerson,
+		boolean mergeEventParticipantProperties) {
+		List<String> personUuids = new ArrayList<>();
+		personUuids.add(leadPersonUuid);
+		personUuids.add(otherPersonUuid);
+
+		final List<EventParticipant> eventParticipants = new ArrayList<>(eventParticipantService.getByPersonUuids(personUuids));
+
+		if (selectedEventParticipantUuids.isEmpty()) {
+			eventParticipants.forEach(o -> {
+				o.setPerson(leadPerson);
+				eventParticipantService.ensurePersisted(o);
+			});
+		} else {
+
+			Set<Event> singleEvents = eventParticipants.stream().map(EventParticipant::getEvent).collect(Collectors.toSet());
+			singleEvents.stream().forEach(event -> {
+
+				List<EventParticipant> participantsToSameEvent =
+					eventParticipants.stream().filter(eventParticipant -> eventParticipant.getEvent().equals(event)).collect(Collectors.toList());
+
+				if (participantsToSameEvent.size() == 1) {
+					if (!participantsToSameEvent.get(0).getPerson().getUuid().equals(leadPerson.getUuid())) {
+						participantsToSameEvent.get(0).setPerson(leadPerson);
+						eventParticipantService.ensurePersisted(participantsToSameEvent.get(0));
+					}
+				} else {
+					EventParticipant leadEventParticipant = participantsToSameEvent.stream()
+						.filter(eventParticipant -> selectedEventParticipantUuids.contains(eventParticipant.getUuid()))
+						.findFirst()
+						.orElse(null);
+
+					if (!leadEventParticipant.getPerson().equals(leadPerson)) {
+						leadEventParticipant.setPerson(leadPerson);
+						eventParticipantService.ensurePersisted(leadEventParticipant);
+					}
+
+					EventParticipant otherEventParticipant = participantsToSameEvent.stream()
+						.filter(
+							eventParticipant -> !selectedEventParticipantUuids.contains(eventParticipant.getUuid()) && !eventParticipant.isDeleted())
+						.findFirst()
+						.orElse(null);
+
+					if (otherEventParticipant != null) {
+						if (mergeEventParticipantProperties) {
+							if (leadEventParticipant.getRegion() == null && otherEventParticipant.getRegion() != null) {
+								leadEventParticipant.setRegion(otherEventParticipant.getRegion());
+							}
+							if (leadEventParticipant.getDistrict() == null && otherEventParticipant.getDistrict() != null) {
+								leadEventParticipant.setDistrict(otherEventParticipant.getDistrict());
+							}
+							if ((leadEventParticipant.getInvolvementDescription() == null
+								|| leadEventParticipant.getInvolvementDescription().isEmpty())
+								&& otherEventParticipant.getInvolvementDescription() != null
+								&& !otherEventParticipant.getInvolvementDescription().isEmpty()) {
+								leadEventParticipant.setInvolvementDescription(otherEventParticipant.getInvolvementDescription());
+							}
+							if (leadEventParticipant.getVaccinationStatus() == null && otherEventParticipant.getVaccinationStatus() != null) {
+								leadEventParticipant.setVaccinationStatus(otherEventParticipant.getVaccinationStatus());
+							}
+
+							otherEventParticipant.getSamples().forEach(sample -> {
+								sample.setAssociatedEventParticipant(leadEventParticipant);
+							});
+							otherEventParticipant.setSamples(null);
+							eventParticipantService.ensurePersisted(otherEventParticipant);
+
+							if (otherEventParticipant.getResultingCase() != null && leadEventParticipant.getResultingCase() == null) {
+								leadEventParticipant.setResultingCase(otherEventParticipant.getResultingCase());
+							}
+						}
+						eventParticipantService.deletePermanent(otherEventParticipant);
+
+						List<EventParticipant> mergedEventParticipants = new ArrayList<>();
+						mergedEventParticipants.add(leadEventParticipant);
+						mergedEventParticipants.add(otherEventParticipant);
+
+						if (participantsToSameEvent.size() > 2) {
+							participantsToSameEvent.stream()
+								.filter(participant -> !mergedEventParticipants.contains(participant))
+								.forEach(softDeletedEventParticipant -> {
+									softDeletedEventParticipant.setPerson(leadPerson);
+									eventParticipantService.ensurePersisted(softDeletedEventParticipant);
+								});
+						}
+					}
+				}
+			});
+		}
+	}
+
+	private void processPersonAddressMerge(PersonDto leadPersonDto, PersonDto otherPersonDto) {
+		if (locationFacade.areDifferentLocation(leadPersonDto.getAddress(), otherPersonDto.getAddress())) {
+			LocationDto newAddress = LocationDto.build();
+			DtoCopyHelper.copyDtoValues(newAddress, otherPersonDto.getAddress(), true);
+			newAddress.setAddressType(PersonAddressType.OTHER_ADDRESS);
+			newAddress.setAddressTypeDetails(I18nProperties.getString(Strings.messagePersonMergedAddressDescription));
+			leadPersonDto.addAddress(newAddress);
+		} else {
+			DtoCopyHelper.copyDtoValues(leadPersonDto.getAddress(), otherPersonDto.getAddress(), false);
+		}
 	}
 
 	@Override
-	public boolean isPersonAssociatedWithNotDeletedEntities(String uuid) {
-		return service.isPersonAssociatedWithNotDeletedEntities(uuid);
+	public boolean isPersonSimilar(PersonSimilarityCriteria criteria, String personUuid) {
+		return service.isPersonSimilar(criteria, personUuid);
 	}
 
 	@Override
@@ -1864,7 +2004,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		LocationDto sourceAddress = getByUuid(source.getUuid()).getAddress();
 		PersonDto targetPerson = getByUuid(target.getUuid());
 		LocationDto targetAddress = targetPerson.getAddress();
-		targetAddress = DtoHelper.copyDtoValues(targetAddress, sourceAddress, true);
+		targetAddress = DtoCopyHelper.copyDtoValues(targetAddress, sourceAddress, true);
 		targetPerson.setAddress(targetAddress);
 		save(targetPerson);
 	}
@@ -1903,6 +2043,16 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		return toPseudonymizedDto(person);
 	}
 
+	@Override
+	public boolean isEditAllowed(String uuid) {
+		return service.isEditAllowed(uuid);
+	}
+
+	@Override
+	public EditPermissionType getEditPermissionType(String uuid) {
+		return isEditAllowed(uuid) ? EditPermissionType.ALLOWED : EditPermissionType.REFUSED;
+	}
+
 	@LocalBean
 	@Stateless
 	public static class PersonFacadeEjbLocal extends PersonFacadeEjb {
@@ -1911,8 +2061,8 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		}
 
 		@Inject
-		protected PersonFacadeEjbLocal(PersonService service, UserService userService) {
-			super(service, userService);
+		protected PersonFacadeEjbLocal(PersonService service) {
+			super(service);
 		}
 	}
 }

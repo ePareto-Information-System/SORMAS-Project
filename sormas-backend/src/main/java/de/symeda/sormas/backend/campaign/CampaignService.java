@@ -12,6 +12,7 @@ import javax.persistence.criteria.Root;
 
 import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.campaign.CampaignCriteria;
+import de.symeda.sormas.api.common.DeletableEntityType;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.backend.common.AbstractCoreAdoService;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
@@ -19,16 +20,21 @@ import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
 
 @Stateless
 @LocalBean
-public class CampaignService extends AbstractCoreAdoService<Campaign> {
+public class CampaignService extends AbstractCoreAdoService<Campaign, CampaignJoins> {
 
 	public CampaignService() {
-		super(Campaign.class);
+		super(Campaign.class, DeletableEntityType.CAMPAIGN);
 	}
 
 	@Override
 	@SuppressWarnings("rawtypes")
 	protected Predicate createUserFilterInternal(CriteriaBuilder cb, CriteriaQuery cq, From<?, Campaign> from) {
 		return createUserFilter(new CampaignQueryContext(cb, cq, from));
+	}
+
+	@Override
+	protected CampaignJoins toJoins(From<?, Campaign> adoPath) {
+		return new CampaignJoins(adoPath);
 	}
 
 	public Predicate createUserFilter(CampaignQueryContext queryContext) {
@@ -42,9 +48,6 @@ public class CampaignService extends AbstractCoreAdoService<Campaign> {
 		From<?, Campaign> from = queryContext.getRoot();
 
 		Predicate filter = null;
-		if (campaignCriteria.getDeleted() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Campaign.DELETED), campaignCriteria.getDeleted()));
-		}
 		if (campaignCriteria.getStartDateAfter() != null || campaignCriteria.getStartDateBefore() != null) {
 			filter = CriteriaBuilderHelper.and(
 				cb,
@@ -74,8 +77,15 @@ public class CampaignService extends AbstractCoreAdoService<Campaign> {
 					.and(cb, filter, cb.or(cb.equal(from.get(Campaign.ARCHIVED), false), cb.isNull(from.get(Campaign.ARCHIVED))));
 			} else if (campaignCriteria.getRelevanceStatus() == EntityRelevanceStatus.ARCHIVED) {
 				filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Campaign.ARCHIVED), true));
+			} else if (campaignCriteria.getRelevanceStatus() == EntityRelevanceStatus.DELETED) {
+				filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Campaign.DELETED), true));
 			}
 		}
+
+		if (campaignCriteria.getRelevanceStatus() != EntityRelevanceStatus.DELETED) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(from.get(Campaign.DELETED)));
+		}
+
 		return filter;
 	}
 
@@ -113,7 +123,7 @@ public class CampaignService extends AbstractCoreAdoService<Campaign> {
 	}
 
 	@Override
-    public Predicate inJurisdictionOrOwned(CriteriaBuilder cb, CriteriaQuery<?> query, From<?, Campaign> from) {
+	public Predicate inJurisdictionOrOwned(CriteriaBuilder cb, CriteriaQuery<?> query, From<?, Campaign> from) {
 
 		// Currently no jurisdiction checks for campaigns
 		return cb.conjunction();

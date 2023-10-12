@@ -3,21 +3,63 @@
 SORMAS releases starting from 1.21.0 contain a script that automatically updates and deploys the server. If you are using an older version and therefore need to do a manual server update, please download the 1.21.0 release files and use the commands specified in the server-update.sh script.
 
 ## Preparations
-Note: At some versions it is mandatory to switch to a new Payara Server. If your version bump does apply to the listing below, please proceed with [Payara migration](SERVER_UPDATE.md#how-to-migrate-to-new-payara-server).
-* Switching from <=v1.66.4 to v1.67.0 or newer
-
-Note: You can skip this step if you've just set up your SORMAS server and have already downloaded the latest release.
-
-* Get the latest release files (deploy.zip) from <https://github.com/hzi-braunschweig/SORMAS-Project/releases/latest>
+* Get the latest release files (deploy.zip) from <https://github.com/sormas-foundation/SORMAS-Project/releases/latest>
 * Unzip the archive and copy/upload its contents to **/root/deploy/sormas/$(date +%F)**
     ```bash
     cd /root/deploy/sormas
     SORMAS_VERSION=1.y.z
-    wget https://github.com/hzi-braunschweig/SORMAS-Project/releases/download/v${SORMAS_VERSION}/sormas_${SORMAS_VERSION}.zip
+    wget https://github.com/sormas-foundation/SORMAS-Project/releases/download/v${SORMAS_VERSION}/sormas_${SORMAS_VERSION}.zip
     unzip sormas_${SORMAS_VERSION}.zip
     mv deploy/ $(date +%F)
     rm sormas_${SORMAS_VERSION}.zip
     ```
+
+## Breaking Updates
+The following is a list of version that have breaking changes in the update. **You only have to consider this if you are coming from an earlier version.** For fresh installs, this is not relevant.
+
+### 1.67.0
+Coming from 1.66.4 or earlier, you have to update the payara server, as explained in the [Payara migration](SERVER_UPDATE.md#how-to-migrate-to-new-payara-server).
+
+### 1.73.0
+Deploying this release **will clear the userrolesconfig and userrole_userrights tables** and overwrite them with the default user role configurations of SORMAS. **If you added entries to these tables in order to customize the user roles on your system**, please run the following queries before deploying this release in order to prevent data loss:
+
+```SQL
+-- Retrieve all customized roles
+SELECT * FROM userrolesconfig;
+ 
+-- Overridden rights for roles
+SELECT c.userrole, ur.userright FROM userroles_userrights ur LEFT JOIN userrolesconfig c (ON c.id = ur.userrole_id);
+```
+
+After deploying the new version, the information retrieved from these queries can be used to alter the new user role configurations accordingly.
+
+### 1.81.0
+The [temporal tables extension is replaced](https://github.com/sormas-foundation/SORMAS-Project/issues/10260) during the deployment of the backend. As a preparation the following SQL **needs to be executed on the SORMAS database using the postgres user.**
+
+```SQL
+-- versioning function will be replaced during server backend startup
+ALTER FUNCTION public.versioning() OWNER TO sormas_user;
+```
+
+**After the successful deployment**, you can run the following SQL to get rid of the no longer used extension:
+
+```SQL
+-- needed because `ALTER FUNCTION ... NO DEPENDS ON EXTENSION` is not possible in Postgres 10 and below
+DELETE FROM pg_depend
+WHERE deptype = 'e'
+  AND refobjid = (SELECT oid FROM pg_extension WHERE extname = 'temporal_tables')
+  and objid = (SELECT oid FROM pg_proc WHERE proname = 'versioning');
+
+DROP EXTENSION IF EXISTS temporal_tables;
+```
+
+### 1.85.0
+Payara is updated from 5.2021.10 to 5.2022.5.
+If you are **not** using [SORMAS-Docker](https://github.com/SORMAS-Foundation/SORMAS-Docker), please follow the [Payara migration guide](SERVER_UPDATE.md#how-to-migrate-to-new-payara-server).
+
+### 1.89.0
+When installing this version on new systems or upgrading postgres version on Ubuntu make sure you have at least Ubuntu LTS 20 with postgres 14 (or 18 with postgres 12 from APT).
+
 ## Automatic Server Update
 * Navigate to the  folder containing the unzipped deploy files:
   ``cd /root/deploy/sormas/$(date +%F)``
@@ -84,16 +126,16 @@ The docker installation is automatically upgraded to the latest version specifie
 
 **Prerequisites:** Make sure the DB is backed up, because once the upgrade is done the new DB won't be usable with the old version of Keycloak.
 
-For more info see the [Keycloak Docker Documentation](https://github.com/hzi-braunschweig/SORMAS-Docker/blob/development/keycloak/README.md).
+For more info see the [Keycloak Docker Documentation](https://github.com/sormas-foundation/SORMAS-Docker/blob/development/keycloak/README.md).
 
 ## How to migrate to new Payara Server
 
-### Step 1: Shutdown existing domain
+### Step 1: Shutdown and backup existing domain
 ```bash
 # Stop domain
 service payara-sormas stop
 
-# Move existing domain
+# Move (backup) existing domain
 DOMAIN_PATH=/opt/domains
 DOMAIN_NAME="sormas"
 DOMAIN_BACKUP_NAME="sormas_backup"
@@ -108,3 +150,12 @@ Transfer your settings from `sormas.properties`, `logback.xml` or changes in the
 
 ### Step 4: Install new SORMAS version
 To install the new SORMAS version in the Payara domain, proceed with the [automatic update](SERVER_UPDATE.md#automatic-server-update) or for developers: Deploy SORMAS via the IDE as usual.
+
+### Alternative for development systems
+For minor updates of the payara version, you will most often be able to keep the existing domain and only replace the payara server.
+
+1. Download the needed version of [Payara server](https://www.payara.fish/downloads/payara-platform-community-edition/).
+2. Undeploy all sormas modules from the payara domain and stop the domain.
+3. Replace your payara server in ``/opt/payara5`` (default path) with the downloaded one. Remove the default domain in ``opt/payara5/glassfish/domains`` as it is not needed.
+4. Replace the application server in your IDE with the new server. See [IDE setup guide](DEVELOPMENT_ENVIRONMENT.md#step-5-install-and-configure-your-ide)
+5. If you are facing any problems, restart your IDE and clean all generated files from the sormas domain.

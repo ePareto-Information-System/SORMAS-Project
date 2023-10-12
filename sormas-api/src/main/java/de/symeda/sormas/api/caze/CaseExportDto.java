@@ -19,11 +19,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
+import java.util.stream.Collectors;
 
 import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.ReferenceDto;
 import de.symeda.sormas.api.clinicalcourse.HealthConditionsDto;
 import de.symeda.sormas.api.contact.FollowUpStatus;
 import de.symeda.sormas.api.contact.QuarantineType;
@@ -147,6 +147,8 @@ public class CaseExportDto extends AbstractUuidDto {
 	@PersonalData
 	@SensitiveData
 	private String community;
+	@PersonalData
+	@SensitiveData
 	private FacilityType facilityType;
 	@PersonalData
 	@SensitiveData
@@ -342,6 +344,8 @@ public class CaseExportDto extends AbstractUuidDto {
 	private String quarantineChangeComment;
 
 	private Boolean isInJurisdiction;
+	private Date dateOfInvestigation;
+	private Date dateOfOutcome;
 
 	//@formatter:off
 	@SuppressWarnings("unchecked")
@@ -388,7 +392,8 @@ public class CaseExportDto extends AbstractUuidDto {
 						 // users
 						 Long reportingUserId, Long followUpStatusChangeUserId,
 						 Date previousQuarantineTo, String quarantineChangeComment,
-						 String associatedWithOutbreak, boolean isInJurisdiction
+						 String associatedWithOutbreak, boolean isInJurisdiction,
+						 Date dateOfInvestigation, Date dateOfOutcome
 	) {
 		//@formatter:on
 		super(uuid);
@@ -526,6 +531,9 @@ public class CaseExportDto extends AbstractUuidDto {
 
 		this.associatedWithOutbreak = associatedWithOutbreak;
 		this.isInJurisdiction = isInJurisdiction;
+
+		this.dateOfInvestigation = dateOfInvestigation;
+		this.dateOfOutcome = dateOfOutcome;
 	}
 
 	public CaseReferenceDto toReference() {
@@ -2328,7 +2336,7 @@ public class CaseExportDto extends AbstractUuidDto {
 	}
 
 	public void setReportingUserRoles(Set<UserRoleReferenceDto> roles) {
-		this.reportingUserRoles = StringUtils.join(roles, ", ");
+		this.reportingUserRoles = roles.stream().map(ReferenceDto::buildCaption).collect(Collectors.joining(", "));
 	}
 
 	@Order(177)
@@ -2355,8 +2363,36 @@ public class CaseExportDto extends AbstractUuidDto {
 		return followUpStatusChangeUserRoles;
 	}
 
+	@Order(179)
+	@ExportTarget(caseExportTypes = {
+		CaseExportType.CASE_SURVEILLANCE,
+		CaseExportType.CASE_MANAGEMENT })
+	@ExportProperty(CaseDataDto.INVESTIGATED_DATE)
+	@ExportGroup(ExportGroupType.ADDITIONAL)
+	public Date getDateOfInvestigation() {
+		return dateOfInvestigation;
+	}
+
+	public void setDateOfInvestigation(Date dateOfInvestigation) {
+		this.dateOfInvestigation = dateOfInvestigation;
+	}
+
+	@Order(180)
+	@ExportTarget(caseExportTypes = {
+		CaseExportType.CASE_SURVEILLANCE,
+		CaseExportType.CASE_MANAGEMENT })
+	@ExportProperty(CaseDataDto.OUTCOME_DATE)
+	@ExportGroup(ExportGroupType.ADDITIONAL)
+	public Date getDateOfOutcome() {
+		return dateOfOutcome;
+	}
+
+	public void setDateOfOutcome(Date dateOfOutcome) {
+		this.dateOfOutcome = dateOfOutcome;
+	}
+
 	public void setFollowUpStatusChangeUserRoles(Set<UserRoleReferenceDto> roles) {
-		this.followUpStatusChangeUserRoles = StringUtils.join(roles, ", ");
+		this.followUpStatusChangeUserRoles = roles.stream().map(ReferenceDto::buildCaption).collect(Collectors.joining(", "));;
 	}
 
 	public void setCountry(String country) {

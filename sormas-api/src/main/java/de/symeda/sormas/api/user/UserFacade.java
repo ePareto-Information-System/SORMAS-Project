@@ -29,7 +29,9 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.InfrastructureDataReferenceDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.common.progress.ProcessedEntity;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.environment.EnvironmentReferenceDto;
 import de.symeda.sormas.api.event.EventReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
@@ -108,7 +110,8 @@ public interface UserFacade {
 		InfrastructureDataReferenceDto infrastructure,
 		JurisdictionLevel jurisdictionLevel,
 		JurisdictionLevel allowedJurisdictionLevel,
-		Disease limitedDisease);
+		Disease limitedDisease,
+		UserRight... userRights);
 
 	List<UserReferenceDto> getAllUserRefs(boolean includeInactive);
 
@@ -130,9 +133,9 @@ public interface UserFacade {
 
 	List<UserDto> getUsersWithDefaultPassword();
 
-	void enableUsers(List<String> userUuids);
+	List<ProcessedEntity> enableUsers(List<String> userUuids);
 
-	void disableUsers(List<String> userUuids);
+	List<ProcessedEntity> disableUsers(List<String> userUuids);
 
 	List<UserReferenceDto> getUsersHavingCaseInJurisdiction(CaseReferenceDto caseReferenceDto);
 
@@ -142,6 +145,8 @@ public interface UserFacade {
 
 	List<UserReferenceDto> getUsersHavingTravelEntryInJurisdiction(TravelEntryReferenceDto travelEntryReferenceDto);
 
+	List<UserReferenceDto> getUsersHavingEnvironmentInJurisdiction(EnvironmentReferenceDto environmentReferenceDto);
+
 	List<UserReferenceWithTaskNumbersDto> getAssignableUsersWithTaskNumbers(@NotNull TaskContextIndexCriteria taskContextIndexCriteria);
 
 	Set<UserRoleDto> getUserRoles(UserDto user);
@@ -149,4 +154,14 @@ public interface UserFacade {
 	long getUserCountHavingRole(UserRoleReferenceDto userRoleRef);
 
 	List<UserReferenceDto> getUsersHavingOnlyRole(UserRoleReferenceDto userRoleRef);
+
+	/**
+	 * Retrieves the user rights of the user specified by the passed UUID, or those of the current user if no UUID is specified.
+	 * Requesting the user rights of another user without the rights to view users and user roles results in an AccessDeniedException.
+	 * 
+	 * @param userUuid
+	 *            The UUID of the user to request the user rights for
+	 * @return A set containing the user rights associated to all user roles assigned to the user
+	 */
+	List<UserRight> getUserRights(String userUuid);
 }

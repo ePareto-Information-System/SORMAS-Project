@@ -19,6 +19,7 @@ import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_BIG;
 import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
 
 import java.text.DecimalFormat;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -353,13 +354,13 @@ public class Location extends PseudonymizableAdo {
 			if (getCity() != null && !getCity().isEmpty()) {
 				sb.append(getCity());
 			} else if (getCommunity() != null) {
-				sb.append(getCommunity());
+				sb.append(getCommunity().buildCaption());
 			}
 			if (getDistrict() != null) {
 				if (sb.length() > 0) {
 					sb.append(", ");
 				}
-				sb.append(getDistrict());
+				sb.append(getDistrict().buildCaption());
 			}
 			if (getAreaType() != null) {
 				if (sb.length() > 0) {
@@ -443,7 +444,7 @@ public class Location extends PseudonymizableAdo {
 	}
 
 	@Override
-	public String toString() {
+	public String buildCaption() {
 		return getCompleteString();
 	}
 
@@ -470,6 +471,17 @@ public class Location extends PseudonymizableAdo {
 			return android.location.Location.convert(latitude, android.location.Location.FORMAT_DEGREES) + ", "
 				+ android.location.Location.convert(longitude, android.location.Location.FORMAT_DEGREES);
 		}
+	}
+
+	public Location asNewLocation() {
+
+		Location location = this;
+		location.setId(null);
+		location.setUuid(DataHelper.createUuid());
+		location.setChangeDate(new Date(0));
+		location.setLocalChangeDate(new Date());
+		location.setCreationDate(new Date());
+		return location;
 	}
 
 	@Override

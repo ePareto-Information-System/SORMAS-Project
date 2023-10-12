@@ -16,20 +16,28 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.externalmessage.ExternalMessageDto;
 import de.symeda.sormas.api.externalmessage.ExternalMessageStatus;
 import de.symeda.sormas.api.externalmessage.ExternalMessageType;
 import de.symeda.sormas.api.externalmessage.labmessage.SampleReportDto;
+import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.person.PhoneNumberType;
 import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.backend.caze.surveillancereport.SurveillanceReportService;
 import de.symeda.sormas.backend.externalmessage.labmessage.SampleReport;
 import de.symeda.sormas.backend.externalmessage.labmessage.SampleReportFacadeEjb;
+import de.symeda.sormas.backend.infrastructure.country.Country;
+import de.symeda.sormas.backend.infrastructure.country.CountryService;
+import de.symeda.sormas.backend.infrastructure.facility.Facility;
+import de.symeda.sormas.backend.infrastructure.facility.FacilityService;
 import de.symeda.sormas.backend.sample.Sample;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.user.UserService;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 public class ExternalMessageFacadeEjbMappingTest {
@@ -38,6 +46,12 @@ public class ExternalMessageFacadeEjbMappingTest {
 	private SampleReportFacadeEjb.SampleReportFacadeEjbLocal sampleReportFacade;
 	@Mock
 	private UserService userservice;
+	@Mock
+	private SurveillanceReportService surveillanceReportService;
+	@Mock
+	private CountryService countryService;
+	@Mock
+	private FacilityService facilityService;
 	@InjectMocks
 	private ExternalMessageFacadeEjb sut;
 
@@ -48,9 +62,15 @@ public class ExternalMessageFacadeEjbMappingTest {
 
 		SampleReport sampleReport = new SampleReport();
 		SampleReportDto sampleReportDto = new SampleReportFacadeEjb.SampleReportFacadeEjbLocal().toDto(sampleReport);
-
 		User assignee = new User();
 		assignee.setUuid("12345");
+
+		Country country = new Country();
+		country.setUuid("23456");
+		country.setIsoCode("ISO");
+
+		Facility facility = new Facility();
+		facility.setUuid("34567");
 
 		when(sampleReportFacade.fromDto(eq(sampleReportDto), any(ExternalMessage.class), eq(false))).thenReturn(sampleReport);
 		when(userservice.getByReferenceDto(assignee.toReference())).thenReturn(assignee);
@@ -81,6 +101,15 @@ public class ExternalMessageFacadeEjbMappingTest {
 		source.setExternalMessageDetails("Lab Message Details");
 		source.setAssignee(assignee.toReference());
 		source.setType(ExternalMessageType.LAB_MESSAGE);
+		source.setPersonPhoneNumberType(PhoneNumberType.MOBILE);
+		source.setPersonExternalId("11111");
+		source.setPersonNationalHealthId("22222");
+		source.setCaseReportDate(new Date());
+		source.setPersonCountry(new CountryReferenceDto(country.getUuid(), country.getIsoCode()));
+		source.setPersonFacility(new FacilityReferenceDto(facility.getUuid()));
+
+		when(countryService.getByReferenceDto(source.getPersonCountry())).thenReturn(country);
+		when(facilityService.getByReferenceDto(source.getPersonFacility())).thenReturn(facility);
 
 		ExternalMessage result = sut.fillOrBuildEntity(source, null, true);
 
@@ -108,6 +137,12 @@ public class ExternalMessageFacadeEjbMappingTest {
 		assertEquals(source.getExternalMessageDetails(), result.getExternalMessageDetails());
 		assertEquals(assignee.getUuid(), result.getAssignee().getUuid());
 		assertEquals(source.getType(), result.getType());
+		assertEquals(source.getPersonPhoneNumberType(), result.getPersonPhoneNumberType());
+		assertEquals(source.getPersonExternalId(), result.getPersonExternalId());
+		assertEquals(source.getPersonNationalHealthId(), result.getPersonNationalHealthId());
+		assertEquals(source.getCaseReportDate(), result.getCaseReportDate());
+		assertEquals(source.getPersonCountry().getUuid(), result.getPersonCountry().getUuid());
+		assertEquals(source.getPersonFacility().getUuid(), result.getPersonFacility().getUuid());
 	}
 
 	@Test
@@ -153,6 +188,10 @@ public class ExternalMessageFacadeEjbMappingTest {
 		source.setStatus(ExternalMessageStatus.PROCESSED);
 		source.setAssignee(assignee);
 		source.setType(ExternalMessageType.LAB_MESSAGE);
+		source.setPersonPhoneNumberType(PhoneNumberType.MOBILE);
+		source.setPersonExternalId("11111");
+		source.setPersonNationalHealthId("22222");
+		source.setCaseReportDate(new Date());
 
 		ExternalMessageDto result = sut.toDto(source);
 
@@ -180,5 +219,9 @@ public class ExternalMessageFacadeEjbMappingTest {
 		assertEquals(source.getExternalMessageDetails(), result.getExternalMessageDetails());
 		assertEquals(assignee.getUuid(), result.getAssignee().getUuid());
 		assertEquals(source.getType(), result.getType());
+		assertEquals(source.getPersonPhoneNumberType(), result.getPersonPhoneNumberType());
+		assertEquals(source.getPersonExternalId(), result.getPersonExternalId());
+		assertEquals(source.getPersonNationalHealthId(), result.getPersonNationalHealthId());
+		assertEquals(source.getCaseReportDate(), result.getCaseReportDate());
 	}
 }

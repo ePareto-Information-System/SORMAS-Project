@@ -46,7 +46,11 @@ import org.apache.commons.lang3.StringUtils;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EditPermissionType;
 import de.symeda.sormas.api.EntityRelevanceStatus;
+import de.symeda.sormas.api.RequestContextHolder;
+import de.symeda.sormas.api.common.DeletableEntityType;
 import de.symeda.sormas.api.common.DeletionDetails;
+import de.symeda.sormas.api.common.progress.ProcessedEntity;
+import de.symeda.sormas.api.deletionconfiguration.DeletionReference;
 import de.symeda.sormas.api.document.DocumentRelatedEntityType;
 import de.symeda.sormas.api.event.EventCriteria;
 import de.symeda.sormas.api.event.EventCriteriaDateType;
@@ -55,6 +59,7 @@ import de.symeda.sormas.api.externaldata.ExternalDataDto;
 import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
 import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolException;
 import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolRuntimeException;
+import de.symeda.sormas.api.share.ExternalShareStatus;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasException;
 import de.symeda.sormas.api.task.TaskCriteria;
 import de.symeda.sormas.api.user.JurisdictionLevel;
@@ -87,6 +92,7 @@ import de.symeda.sormas.backend.sample.Sample;
 import de.symeda.sormas.backend.sample.SampleJoins;
 import de.symeda.sormas.backend.sample.SampleJurisdictionPredicateValidator;
 import de.symeda.sormas.backend.share.ExternalShareInfo;
+import de.symeda.sormas.backend.share.ExternalShareInfoCountAndLatestDate;
 import de.symeda.sormas.backend.share.ExternalShareInfoService;
 import de.symeda.sormas.backend.sormastosormas.SormasToSormasFacadeEjb;
 import de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShareInfo;
@@ -105,7 +111,7 @@ import de.symeda.sormas.backend.util.QueryHelper;
 
 @Stateless
 @LocalBean
-public class EventService extends AbstractCoreAdoService<Event> {
+public class EventService extends AbstractCoreAdoService<Event, EventJoins> {
 
 	@EJB
 	private EventParticipantService eventParticipantService;
@@ -133,7 +139,7 @@ public class EventService extends AbstractCoreAdoService<Event> {
 	private ExternalSurveillanceToolGatewayFacadeEjb.ExternalSurveillanceToolGatewayFacadeEjbLocal externalSurveillanceToolGatewayFacade;
 
 	public EventService() {
-		super(Event.class);
+		super(Event.class, DeletableEntityType.EVENT);
 	}
 
 	@Override
@@ -178,6 +184,13 @@ public class EventService extends AbstractCoreAdoService<Event> {
 
 			Predicate userFilter = createUserFilter(eventQueryContext, eventUserFilterCriteria);
 			filter = CriteriaBuilderHelper.and(cb, filter, userFilter);
+		}
+
+		if (RequestContextHolder.isMobileSync()) {
+			Predicate predicate = createLimitedChangeDateFilter(cb, from);
+			if (predicate != null) {
+				filter = CriteriaBuilderHelper.and(cb, filter, predicate);
+			}
 		}
 
 		cq.where(filter);
@@ -283,39 +296,75 @@ public class EventService extends AbstractCoreAdoService<Event> {
 	}
 
 	@Override
-	public void archive(String entityUuid, Date endOfProcessingDate) {
-		super.archive(entityUuid, endOfProcessingDate);
-		setArchiveInExternalSurveillanceToolForEntity(entityUuid, true);
+	public ProcessedEntity archive(String entityUuid, Date endOfProcessingDate) {
+		return archive(Collections.singletonList(entityUuid)).get(0);
 	}
 
 	@Override
-	public void archive(List<String> entityUuids) {
-		super.archive(entityUuids);
-		setArchiveInExternalSurveillanceToolForEntities(entityUuids, true);
-	}
+	public List<ProcessedEntity> archive(List<String> entityUuids) {
 
-	@Override
-	public void dearchive(List<String> entityUuids, String dearchiveReason) {
-		super.dearchive(entityUuids, dearchiveReason);
-		setArchiveInExternalSurveillanceToolForEntities(entityUuids, false);
-	}
+		List<ProcessedEntity> updatedInExternalSurveillanceTool = updateArchiveFlagInExternalSurveillanceTool(entityUuids, true);
+		List<String> uuidsWithoutFailure = getEntitiesWithoutFailure(entityUuids, updatedInExternalSurveillanceTool).stream()
+			.map(AbstractDomainObject::getUuid)
+			.collect(Collectors.toList());
 
-	public void setArchiveInExternalSurveillanceToolForEntities(List<String> entityUuids, boolean archived) {
-		if (externalSurveillanceToolGatewayFacade.isFeatureEnabled()) {
-			List<String> sharedEventUuids = externalShareInfoService.getSharedEventUuidsWithoutDeletedStatus(entityUuids);
+		List<ProcessedEntity> resultList =
+			updatedInExternalSurveillanceTool.stream().filter(e -> !uuidsWithoutFailure.contains(e.getEntityUuid())).collect(Collectors.toList());
 
-			if (!sharedEventUuids.isEmpty()) {
-				try {
-					externalSurveillanceToolGatewayFacade.sendEvents(sharedEventUuids, archived);
-				} catch (ExternalSurveillanceToolException e) {
-					throw new ExternalSurveillanceToolRuntimeException(e.getMessage(), e.getErrorCode());
-				}
-			}
+		if (uuidsWithoutFailure.size() > 0) {
+			resultList.addAll(super.archive(uuidsWithoutFailure));
 		}
+
+		return resultList;
 	}
 
-	public void setArchiveInExternalSurveillanceToolForEntity(String eventUuid, boolean archived) {
-		setArchiveInExternalSurveillanceToolForEntities(Collections.singletonList(eventUuid), archived);
+	@Override
+	public List<ProcessedEntity> dearchive(List<String> entityUuids, String dearchiveReason) {
+
+		List<ProcessedEntity> updatedInExternalSurveillanceTool = updateArchiveFlagInExternalSurveillanceTool(entityUuids, false);
+		List<String> uuidsWithoutFailure = getEntitiesWithoutFailure(entityUuids, updatedInExternalSurveillanceTool).stream()
+			.map(AbstractDomainObject::getUuid)
+			.collect(Collectors.toList());
+
+		List<ProcessedEntity> resultList =
+			updatedInExternalSurveillanceTool.stream().filter(e -> !uuidsWithoutFailure.contains(e.getEntityUuid())).collect(Collectors.toList());
+
+		if (uuidsWithoutFailure.size() > 0) {
+			resultList.addAll(super.dearchive(uuidsWithoutFailure, dearchiveReason));
+		}
+
+		return resultList;
+	}
+
+	private List<ProcessedEntity> updateArchiveFlagInExternalSurveillanceTool(List<String> entityUuids, boolean archived) {
+		List<ProcessedEntity> processedEntities = new ArrayList<>();
+
+		List<String> sharedEventUuids = getSharedEventUuids(entityUuids);
+		if (!sharedEventUuids.isEmpty()) {
+			processedEntities = externalSurveillanceToolGatewayFacade.sendEventsInternal(sharedEventUuids, archived);
+		}
+
+		return processedEntities;
+	}
+
+	public List<String> getSharedEventUuids(List<String> entityUuids) {
+		List<Long> eventIds = getEventIds(entityUuids);
+		List<String> sharedEventUuids = new ArrayList<>();
+		List<ExternalShareInfoCountAndLatestDate> eventShareInfos =
+			externalShareInfoService.getShareCountAndLatestDate(eventIds, ExternalShareInfo.EVENT);
+		eventShareInfos.forEach(shareInfo -> {
+			if (shareInfo.getLatestStatus() != ExternalShareStatus.DELETED) {
+				sharedEventUuids.add(shareInfo.getAssociatedObjectUuid());
+			}
+		});
+
+		return sharedEventUuids;
+	}
+
+	public List<Long> getEventIds(List<String> entityUuids) {
+		List<Long> eventIds = new ArrayList<>();
+		entityUuids.forEach(uuid -> eventIds.add(this.getByUuid(uuid).getId()));
+		return eventIds;
 	}
 
 	public List<String> getArchivedUuidsSince(Date since) {
@@ -391,6 +440,11 @@ public class EventService extends AbstractCoreAdoService<Event> {
 	@SuppressWarnings("rawtypes")
 	protected Predicate createUserFilterInternal(CriteriaBuilder cb, CriteriaQuery cq, From<?, Event> from) {
 		return createUserFilter(new EventQueryContext(cb, cq, from));
+	}
+
+	@Override
+	protected EventJoins toJoins(From<?, Event> adoPath) {
+		return new EventJoins(adoPath);
 	}
 
 	public Predicate createUserFilter(EventQueryContext queryContext) {
@@ -478,6 +532,13 @@ public class EventService extends AbstractCoreAdoService<Event> {
 				cb.or(cb.equal(eventJoin.get(Event.DISEASE), currentUser.getLimitedDisease()), cb.isNull(eventJoin.get(Event.DISEASE))));
 		}
 
+		if (RequestContextHolder.isMobileSync()) {
+			Predicate limitedChangeDatePredicate = CriteriaBuilderHelper.and(cb, createLimitedChangeDateFilter(cb, eventJoin));
+			if (limitedChangeDatePredicate != null) {
+				filter = CriteriaBuilderHelper.and(cb, filter, limitedChangeDatePredicate);
+			}
+		}
+
 		return filter;
 	}
 
@@ -519,34 +580,28 @@ public class EventService extends AbstractCoreAdoService<Event> {
 
 	@Override
 	public Predicate createChangeDateFilter(CriteriaBuilder cb, From<?, Event> eventPath, Timestamp date) {
-		return addChangeDates(new ChangeDateFilterBuilder(cb, date), eventPath, false).build();
+		return addChangeDates(new ChangeDateFilterBuilder(cb, date), toJoins(eventPath), false).build();
 	}
 
-	private Predicate createChangeDateFilter(CriteriaBuilder cb, From<?, Event> eventPath, Timestamp date, String lastSynchronizedUuid) {
-		ChangeDateFilterBuilder changeDateFilterBuilder = lastSynchronizedUuid == null
-			? new ChangeDateFilterBuilder(cb, date)
-			: new ChangeDateFilterBuilder(cb, date, eventPath, lastSynchronizedUuid);
-
-		return addChangeDates(changeDateFilterBuilder, eventPath, false).build();
-	}
-
-	public Predicate createChangeDateFilter(CriteriaBuilder cb, From<?, Event> eventPath, Expression<? extends Date> dateExpression) {
-		return addChangeDates(new ChangeDateFilterBuilder(cb, dateExpression), eventPath, false).build();
+	public Predicate createChangeDateFilter(CriteriaBuilder cb, EventJoins joins, Expression<? extends Date> dateExpression) {
+		return addChangeDates(new ChangeDateFilterBuilder(cb, dateExpression), joins, false).build();
 	}
 
 	@Override
-	protected <T extends ChangeDateBuilder<T>> T addChangeDates(T builder, From<?, Event> eventFrom, boolean includeExtendedChangeDateFilters) {
-		Join<Event, Action> eventActionJoin = eventFrom.join(Event.ACTIONS, JoinType.LEFT);
-		Join<Event, EventParticipant> eventParticipantJoin = eventFrom.join(Event.EVENT_PERSONS, JoinType.LEFT);
-		Join<EventParticipant, Sample> eventParticipantSampleJoin = eventParticipantJoin.join(EventParticipant.SAMPLES, JoinType.LEFT);
+	protected <T extends ChangeDateBuilder<T>> T addChangeDates(T builder, EventJoins joins, boolean includeExtendedChangeDateFilters) {
 
-		builder = super.addChangeDates(builder, eventFrom, includeExtendedChangeDateFilters).add(eventFrom, Event.EVENT_LOCATION);
+		final From<?, Event> eventFrom = joins.getRoot();
+		final Join<Event, Action> eventActionJoin = joins.getEventActions();
+		final From<?, EventParticipant> eventParticipants = joins.getEventParticipants();
+		final Join<EventParticipant, Sample> eventParticipantSampleJoin = joins.getEventParticipantJoins().getSamples();
+
+		builder = super.addChangeDates(builder, joins, includeExtendedChangeDateFilters).add(eventFrom, Event.EVENT_LOCATION);
 
 		if (includeExtendedChangeDateFilters) {
 			builder.add(eventFrom, Event.SORMAS_TO_SORMAS_ORIGIN_INFO)
 				.add(eventFrom, Event.SORMAS_TO_SORMAS_SHARES)
 				.add(eventActionJoin)
-				.add(eventParticipantJoin)
+				.add(eventParticipants)
 				.add(eventParticipantSampleJoin);
 		}
 
@@ -570,13 +625,13 @@ public class EventService extends AbstractCoreAdoService<Event> {
 	}
 
 	@Override
-	public void undelete(Event event) {
-		// undelete all event participants associated with this event
+	public void restore(Event event) {
+		// restore all event participants associated with this event
 		List<EventParticipant> eventParticipants = eventParticipantService.getAllByEventAfter(null, event);
 		for (EventParticipant eventParticipant : eventParticipants) {
-			eventParticipantService.undelete(eventParticipant);
+			eventParticipantService.restore(eventParticipant);
 		}
-		super.undelete(event);
+		super.restore(event);
 	}
 
 	@Override
@@ -616,7 +671,6 @@ public class EventService extends AbstractCoreAdoService<Event> {
 
 		documentService.getRelatedToEntity(DocumentRelatedEntityType.EVENT, event.getUuid()).forEach(d -> documentService.markAsDeleted(d));
 
-		deleteEventInExternalSurveillanceTool(event);
 		removeFromSubordinateEvents(event);
 
 		super.deletePermanent(event);
@@ -695,11 +749,14 @@ public class EventService extends AbstractCoreAdoService<Event> {
 				filter = CriteriaBuilderHelper.and(cb, filter, cb.or(cb.equal(from.get(Event.ARCHIVED), false), cb.isNull(from.get(Event.ARCHIVED))));
 			} else if (eventCriteria.getRelevanceStatus() == EntityRelevanceStatus.ARCHIVED) {
 				filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Event.ARCHIVED), true));
+			} else if (eventCriteria.getRelevanceStatus() == EntityRelevanceStatus.DELETED) {
+				filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Event.DELETED), true));
 			}
 		}
-		if (eventCriteria.getDeleted() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Event.DELETED), eventCriteria.getDeleted()));
+		if (eventCriteria.getRelevanceStatus() != EntityRelevanceStatus.DELETED) {
+			filter = CriteriaBuilderHelper.and(cb, filter, createDefaultFilter(cb, from));
 		}
+
 		if (eventCriteria.getRegion() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getRegion().get(Region.UUID), eventCriteria.getRegion().getUuid()));
 		}
@@ -839,7 +896,7 @@ public class EventService extends AbstractCoreAdoService<Event> {
 				cb,
 				from,
 				ExternalShareInfo.EVENT,
-				(latestShareDate) -> createChangeDateFilter(cb, from, latestShareDate)));
+				(latestShareDate) -> createChangeDateFilter(cb, joins, latestShareDate)));
 
 		return filter;
 	}
@@ -1003,12 +1060,13 @@ public class EventService extends AbstractCoreAdoService<Event> {
 	@Override
 	public EditPermissionType getEditPermissionType(Event event) {
 
-		if (event.getSormasToSormasOriginInfo() != null && !event.getSormasToSormasOriginInfo().isOwnershipHandedOver()) {
-			return EditPermissionType.REFUSED;
+		if (!inJurisdictionOrOwned(event)) {
+			return EditPermissionType.OUTSIDE_JURISDICTION;
 		}
 
-		if (!inJurisdictionOrOwned(event) || sormasToSormasShareInfoService.isEventOwnershipHandedOver(event)) {
-			return EditPermissionType.REFUSED;
+		if (sormasToSormasShareInfoService.isEventOwnershipHandedOver(event)
+			|| event.getSormasToSormasOriginInfo() != null && !event.getSormasToSormasOriginInfo().isOwnershipHandedOver()) {
+			return EditPermissionType.WITHOUT_OWNERSHIP;
 		}
 
 		return super.getEditPermissionType(event);
@@ -1029,7 +1087,7 @@ public class EventService extends AbstractCoreAdoService<Event> {
 	}
 
 	@Override
-    public Predicate inJurisdictionOrOwned(CriteriaBuilder cb, CriteriaQuery<?> cq, From<?, Event> from) {
+	public Predicate inJurisdictionOrOwned(CriteriaBuilder cb, CriteriaQuery<?> cq, From<?, Event> from) {
 		return inJurisdictionOrOwned(new EventQueryContext(cb, cq, from));
 	}
 
@@ -1106,5 +1164,19 @@ public class EventService extends AbstractCoreAdoService<Event> {
 		cq.select(cb.count(from));
 
 		return em.createQuery(cq).getSingleResult() > 0;
+	}
+
+	@Override
+	protected boolean hasLimitedChangeDateFilterImplementation() {
+		return true;
+	}
+
+	@Override
+	protected String getDeleteReferenceField(DeletionReference deletionReference) {
+		if (deletionReference == DeletionReference.REPORT) {
+			return Event.REPORT_DATE_TIME;
+		}
+
+		return super.getDeleteReferenceField(deletionReference);
 	}
 }

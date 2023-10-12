@@ -12127,11 +12127,7 @@ ALTER TABLE testreport_history
 ALTER TABLE testreport
     ADD CONSTRAINT fk_testreport_samplereport_id FOREIGN KEY (samplereport_id) REFERENCES samplereport (id);
 
-UPDATE testreport
-SET samplereport_id = (SELECT s.id
-                       FROM samplereport s
-                                LEFT JOIN externalmessage ON s.labmessage_id = externalmessage.id
-                       WHERE externalmessage.id = testreport.labmessage_id);
+UPDATE testreport SET samplereport_id = s.id FROM samplereport s WHERE testreport.labmessage_id = s.labmessage_id;
 
 ALTER TABLE testreport
     ALTER COLUMN samplereport_id SET not null;
@@ -12212,5 +12208,528 @@ ALTER  TABLE task ADD COLUMN assignedbyuser_id bigint;
 ALTER  TABLE task_history ADD COLUMN assignedbyuser_id bigint;
 
 INSERT INTO schema_version (version_number, comment) VALUES (500, 'Add the user who assigned the task to task entity #4621');
+
+-- 2022-11-30 Adjust the processing of external messages to create surveillance reports #9680
+ALTER TABLE externalmessage ADD COLUMN surveillancereport_id bigint;
+ALTER TABLE externalmessage ADD CONSTRAINT fk_externalmessage_surveillancereport_id FOREIGN KEY (surveillancereport_id) REFERENCES surveillancereports (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE externalmessage_history ADD COLUMN surveillancereport_id bigint;
+
+DO $$
+    DECLARE rec RECORD;
+        DECLARE sr_id bigint;
+    BEGIN
+        FOR rec IN SELECT DISTINCT ON (em.id) em.id as emid, em.caze_id AS emcaseid, s.associatedcase_id AS scaseid, messagedatetime, em.type FROM externalmessage em JOIN samplereport sr ON sr.labmessage_id = em.id JOIN samples s ON s.id = sr.sample_id WHERE status = 'PROCESSED' AND (s.associatedcase_id IS NOT NULL OR em.caze_id IS NOT NULL)
+            LOOP
+                INSERT INTO surveillancereports (id, uuid, changedate, creationdate, reportdate, caze_id, reportingtype) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), rec.messagedatetime, CASE WHEN rec.emcaseid IS NOT NULL THEN rec.emcaseid ELSE rec.scaseid END, CASE WHEN rec.type = 'LAB_MESSAGE' THEN 'LABORATORY' ELSE 'DOCTOR' END) RETURNING id INTO sr_id;
+                UPDATE externalmessage SET surveillancereport_id = sr_id WHERE externalmessage.id = rec.emid;
+            END LOOP;
+    END;
+$$ LANGUAGE plpgsql;
+
+ALTER TABLE externalmessage DROP COLUMN caze_id;
+ALTER TABLE externalmessage_history DROP COLUMN caze_id;
+
+INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (501, 'Adjust the processing of external messages to create surveillance reports #9680', true);
+
+-- 2022-12-05 Fix upgradeNeeded flag set on schema version 501 #11086
+
+UPDATE schema_version SET upgradeNeeded = false WHERE version_number = 501;
+
+INSERT INTO schema_version (version_number, comment) VALUES (502, 'Fix upgradeNeeded flag set on schema version 501 #11086');
+
+-- 2022-12-05 [DEMIS2SORMAS] Add a Field for the NotificationBundleId to the External Message and map it when processing #10826
+ALTER TABLE externalmessage ADD COLUMN reportmessageid varchar(255);
+ALTER TABLE externalmessage_history ADD COLUMN reportmessageid varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (503, '[DEMIS2SORMAS] Add a Field for the NotificationBundleId to the External Message and map it when processing #10826');
+
+-- 2022-12-08 Add task archive user right #4060
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT id, 'TASK_ARCHIVE' FROM public.userroles WHERE userroles.linkeddefaultuserrole = 'ADMIN';
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT id, 'TASK_ARCHIVE' FROM public.userroles WHERE userroles.linkeddefaultuserrole = 'NATIONAL_USER';
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT id, 'TASK_ARCHIVE' FROM public.userroles WHERE userroles.linkeddefaultuserrole = 'ADMIN_SUPERVISOR';
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT id, 'TASK_ARCHIVE' FROM public.userroles WHERE userroles.linkeddefaultuserrole = 'SURVEILLANCE_SUPERVISOR';
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT id, 'TASK_ARCHIVE' FROM public.userroles WHERE userroles.linkeddefaultuserrole = 'CONTACT_SUPERVISOR';
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT id, 'TASK_ARCHIVE' FROM public.userroles WHERE userroles.linkeddefaultuserrole = 'CASE_SUPERVISOR';
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT id, 'TASK_ARCHIVE' FROM public.userroles WHERE userroles.linkeddefaultuserrole = 'NATIONAL_CLINICIAN';
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT id, 'TASK_ARCHIVE' FROM public.userroles WHERE userroles.linkeddefaultuserrole = 'POE_SUPERVISOR';
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT id, 'TASK_ARCHIVE' FROM public.userroles WHERE userroles.linkeddefaultuserrole = 'POE_NATIONAL_USER';
+
+INSERT INTO schema_version (version_number, comment) VALUES (504, 'Add task archive user right #4060');
+
+-- 2022-12-08 S2S Surveillance Reports should be shareable (along with possibly attached External Messages) #10247
+ALTER TABLE sormastosormasorigininfo ADD COLUMN withsurveillancereports boolean DEFAULT false;
+ALTER TABLE sormastosormasorigininfo_history ADD COLUMN withsurveillancereports boolean DEFAULT false;
+ALTER TABLE sharerequestinfo ADD COLUMN withsurveillancereports boolean DEFAULT false;
+ALTER TABLE sharerequestinfo_history ADD COLUMN withsurveillancereports boolean DEFAULT false;
+ALTER TABLE sormastosormasshareinfo ADD COLUMN surveillancereport_id bigint;
+ALTER TABLE sormastosormasshareinfo ADD CONSTRAINT fk_sormastosormasshareinfo_surveillancereport_id FOREIGN KEY (surveillancereport_id) REFERENCES surveillancereports (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE sormastosormasshareinfo_history ADD COLUMN surveillancereport_id bigint;
+
+ALTER TABLE surveillancereports ADD COLUMN sormastosormasorigininfo_id bigint;
+ALTER TABLE surveillancereports ADD CONSTRAINT fk_surveillancereports_sormastosormasorigininfo_id FOREIGN KEY (sormastosormasorigininfo_id) REFERENCES sormastosormasorigininfo (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE surveillancereports_history ADD COLUMN sormastosormasorigininfo_id bigint;
+
+ALTER TABLE surveillancereports RENAME COLUMN creatinguser_id to reportinguser_id;
+ALTER TABLE surveillancereports_history RENAME COLUMN creatinguser_id to reportinguser_id;
+
+INSERT INTO schema_version (version_number, comment) VALUES (505, 'S2S Surveillance Reports should be shareable (along with possibly attached External Messages) #10247');
+
+-- 2023-01-05 Add max change date period property to limited synchronization feature #7305
+UPDATE featureconfiguration SET properties = properties::jsonb || json_build_object('MAX_CHANGE_DATE_PERIOD',-1)::jsonb WHERE featuretype = 'LIMITED_SYNCHRONIZATION';
+
+INSERT INTO schema_version (version_number, comment) VALUES (506, 'Add max change date period property to limited synchronization feature #7305');
+
+-- 2023-02-07 Improve performance or case duplicate merging lists #9054
+CREATE INDEX IF NOT EXISTS idx_cases_creationdate_desc ON cases USING btree (creationdate DESC);
+
+INSERT INTO schema_version (version_number, comment) VALUES (507, 'Add index to improve performance or case duplicate merging lists #9054');
+
+-- 2023-02-20 Limit lists for duplicate merging of contacts and improve query performance #11469
+CREATE INDEX idx_sharerequestinfo_shareinfo_requestinfo_id ON sharerequestinfo_shareinfo(sharerequestinfo_id);
+CREATE INDEX idx_sharerequestinfo_shareinfo_shareinfo_id ON sharerequestinfo_shareinfo(shareinfo_id);
+CREATE INDEX idx_contact_sormastosormasorigininfo_id ON contact(sormastosormasorigininfo_id);
+CREATE INDEX idx_contact_creation_date_and_deleted ON public.contact USING btree (deleted ASC NULLS FIRST, creationdate DESC NULLS FIRST);
+
+INSERT INTO schema_version (version_number, comment) VALUES (508, 'Limit lists for duplicate merging of contacts and improve query performance #11469');
+
+-- 2023-02-28 Create basic samples dashboard #10721
+DELETE FROM featureconfiguration where featuretype = 'DASHBOARD';
+CREATE INDEX idx_sample_pathogenTestResult ON samples USING btree (pathogenTestResult ASC NULLS LAST);
+INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+SELECT userrole_id, 'DASHBOARD_SAMPLES_VIEW', tstzrange(now(), null)
+FROM userroles_userrights uu
+WHERE uu.userright = 'DASHBOARD_SURVEILLANCE_VIEW'
+  AND exists(SELECT uu2.userrole_id
+             FROM userroles_userrights uu2
+             WHERE uu2.userrole_id = uu.userrole_id
+               AND uu2.userright = 'SAMPLE_VIEW');
+
+INSERT INTO schema_version (version_number, comment) VALUES (509, 'Create basic samples dashboard #10721');
+
+-- 2023-03-06 Add diseaseVariant to ExternalMessages #11449
+ALTER TABLE externalmessage ADD COLUMN diseasevariant varchar(255);
+ALTER TABLE externalmessage ADD COLUMN diseasevariantdetails varchar(512);
+ALTER TABLE externalmessage_history ADD COLUMN diseasevariant varchar(255);
+ALTER TABLE externalmessage_history ADD COLUMN diseasevariantdetails varchar(512);
+
+INSERT INTO schema_version (version_number, comment) VALUES (510, 'Add diseaseVariant to ExternalMessages #11449');
+
+-- 2023-03-15 Add dateOfResult to TestReports #11453
+ALTER TABLE testreport ADD COLUMN dateofresult varchar(255);
+ALTER TABLE testreport_history ADD COLUMN dateofresult varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (511, 'Add dateOfResult to TestReports #11453');
+
+-- 2023-03-27 Limit case duplicate merging comparison based on creation date and archived status #11465
+-- the index idx_cases_disease was remove to improve merge duplicate cases query this will force to use idx_cases_creationdate_desc in the query plan which is a lot more efficient
+DROP INDEX idx_cases_disease;
+
+INSERT INTO schema_version (version_number, comment) VALUES (512, 'Limit case duplicate merging comparison based on creation date and archived status #11465');
+
+-- 2023-03-31 [DEMIS2SORMAS] Introduce a messages content search field #7647
+ALTER TABLE externalmessage ADD COLUMN tsv tsvector;
+ALTER TABLE externalmessage_history ADD COLUMN tsv tsvector;
+UPDATE externalmessage SET tsv = to_tsvector('simple', unaccent(regexp_replace(externalmessagedetails,  E'[<>]', ' ', 'g')));
+CREATE INDEX idx_externalmessage_tsv ON externalmessage USING GIN (tsv);
+CREATE OR REPLACE FUNCTION externalmessage_tsv_update() RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'INSERT' OR  TG_OP = 'UPDATE' THEN
+        new.tsv = to_tsvector('simple', unaccent(regexp_replace(new.externalmessagedetails,  E'[<>]', ' ', 'g')));
+    END IF;
+
+    RETURN new;
+END
+$$ LANGUAGE 'plpgsql';
+CREATE TRIGGER externalmessage_tsv_update BEFORE INSERT OR UPDATE OF externalmessagedetails ON externalmessage
+    FOR EACH ROW EXECUTE PROCEDURE externalmessage_tsv_update();
+
+INSERT INTO schema_version (version_number, comment) VALUES (513, '[DEMIS2SORMAS] Introduce a messages content search field #7647');
+
+-- 2023-06-15 #12008 Add EVENTGROUP_LINK user right dependency for users with EVENTGROUP_CREATE user rights
+
+DO $$
+    DECLARE rec RECORD;
+    BEGIN
+       FOR rec IN SELECT id FROM userroles
+           LOOP
+                IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'EVENTGROUP_CREATE')) = true) THEN
+                    INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+                    SELECT rec.id, rights.r, tstzrange(now(), null)
+                    FROM (VALUES ('EVENTGROUP_LINK')) as rights (r)
+                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+                END IF;
+
+           END LOOP;
+    END;
+$$ LANGUAGE plpgsql;
+
+INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (514, '#12008 Add EVENTGROUP_LINK user right dependency for users with EVENTGROUP_CREATE user rights', false);
+
+-- 2023-05-10 Created a new Environment entity #11796
+CREATE TABLE environments(
+    id bigint not null,
+    uuid varchar(36) not null unique,
+    changedate timestamp not null,
+    creationdate timestamp not null,
+    change_user_id bigint,
+    reportdate timestamp,
+    reportinguser_id bigint,
+    environmentname text,
+    description text,
+    externalid varchar(512),
+    responsibleuser_id bigint,
+    investigationstatus varchar(255),
+    environmentmedia varchar(255),
+    watertype varchar(255),
+    otherwatertype text,
+    infrastructuredetails varchar(255),
+    otherinfrastructuredetails text,
+    wateruse json,
+    otherwateruse text,
+    location_id bigint,
+    deleted boolean DEFAULT false,
+    deletionreason varchar(255),
+    otherdeletionreason text,
+    archived boolean DEFAULT false,
+    archiveundonereason varchar(512),
+    endofprocessingdate timestamp without time zone,
+    sys_period tstzrange not null,
+    primary key(id)
+);
+
+ALTER TABLE environments OWNER TO sormas_user;
+ALTER TABLE environments ADD CONSTRAINT fk_change_user_id FOREIGN KEY (change_user_id) REFERENCES users (id);
+ALTER TABLE environments ADD CONSTRAINT fk_environments_reportinguser_id FOREIGN KEY (reportinguser_id) REFERENCES users(id);
+ALTER TABLE environments ADD CONSTRAINT fk_environments_responsibleuser_id FOREIGN KEY (responsibleuser_id) REFERENCES users(id);
+ALTER TABLE environments ADD CONSTRAINT fk_environments_location_id FOREIGN KEY (location_id) REFERENCES location(id);
+CREATE TABLE environments_history (LIKE environments);
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE ON environments
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'environments_history', true);
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON environments
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('environments_history', 'id');
+ALTER TABLE environments_history OWNER TO sormas_user;
+ALTER TABLE environments ALTER COLUMN wateruse set DATA TYPE jsonb using wateruse::jsonb;
+ALTER TABLE environments_history ALTER COLUMN wateruse set DATA TYPE jsonb using wateruse::jsonb;
+
+INSERT INTO schema_version (version_number, comment) VALUES (515, 'Created a new Environment entity #11796');
+
+-- 2023-06-14 Add environmental user rights and default user #11572
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'ENVIRONMENTAL_SURVEILLANCE_USER', 'ENVIRONMENTAL_SURVEILLANCE_USER');
+
+INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (516, 'Add environmental user rights and default user #11572', true);
+
+-- 2023-07-18 Add ct value fields to pathogen tests and test reports #12314
+ALTER TABLE pathogentest ADD COLUMN ctvaluee real;
+ALTER TABLE pathogentest ADD COLUMN ctvaluen real;
+ALTER TABLE pathogentest ADD COLUMN ctvaluerdrp real;
+ALTER TABLE pathogentest ADD COLUMN ctvalues real;
+ALTER TABLE pathogentest ADD COLUMN ctvalueorf1 real;
+ALTER TABLE pathogentest ADD COLUMN ctvaluerdrps real;
+ALTER TABLE pathogentest_history ADD COLUMN ctvaluee real;
+ALTER TABLE pathogentest_history ADD COLUMN ctvaluen real;
+ALTER TABLE pathogentest_history ADD COLUMN ctvaluerdrp real;
+ALTER TABLE pathogentest_history ADD COLUMN ctvalues real;
+ALTER TABLE pathogentest_history ADD COLUMN ctvalueorf1 real;
+ALTER TABLE pathogentest_history ADD COLUMN ctvaluerdrps real;
+
+ALTER TABLE testreport ADD COLUMN cqvalue real;
+ALTER TABLE testreport ADD COLUMN ctvaluee real;
+ALTER TABLE testreport ADD COLUMN ctvaluen real;
+ALTER TABLE testreport ADD COLUMN ctvaluerdrp real;
+ALTER TABLE testreport ADD COLUMN ctvalues real;
+ALTER TABLE testreport ADD COLUMN ctvalueorf1 real;
+ALTER TABLE testreport ADD COLUMN ctvaluerdrps real;
+ALTER TABLE testreport_history ADD COLUMN cqvalue real;
+ALTER TABLE testreport_history ADD COLUMN ctvaluee real;
+ALTER TABLE testreport_history ADD COLUMN ctvaluen real;
+ALTER TABLE testreport_history ADD COLUMN ctvaluerdrp real;
+ALTER TABLE testreport_history ADD COLUMN ctvalues real;
+ALTER TABLE testreport_history ADD COLUMN ctvalueorf1 real;
+ALTER TABLE testreport_history ADD COLUMN ctvaluerdrps real;
+
+INSERT INTO schema_version (version_number, comment) VALUES (517, 'Add ct value fields to pathogen tests and test reports #12314');
+
+-- 2023-07-19 Add prescriber fields to pathogen tests and test reports #12318
+ALTER TABLE pathogentest ADD COLUMN prescriberphysiciancode text;
+ALTER TABLE pathogentest ADD COLUMN prescriberfirstname text;
+ALTER TABLE pathogentest ADD COLUMN prescriberlastname text;
+ALTER TABLE pathogentest ADD COLUMN prescriberphonenumber text;
+ALTER TABLE pathogentest ADD COLUMN prescriberaddress text;
+ALTER TABLE pathogentest ADD COLUMN prescriberpostalcode text;
+ALTER TABLE pathogentest ADD COLUMN prescribercity text;
+ALTER TABLE pathogentest ADD COLUMN prescribercountry_id bigint;
+ALTER TABLE pathogentest_history ADD COLUMN prescriberphysiciancode text;
+ALTER TABLE pathogentest_history ADD COLUMN prescriberfirstname text;
+ALTER TABLE pathogentest_history ADD COLUMN prescriberlastname text;
+ALTER TABLE pathogentest_history ADD COLUMN prescriberphonenumber text;
+ALTER TABLE pathogentest_history ADD COLUMN prescriberaddress text;
+ALTER TABLE pathogentest_history ADD COLUMN prescriberpostalcode text;
+ALTER TABLE pathogentest_history ADD COLUMN prescribercity text;
+ALTER TABLE pathogentest_history ADD COLUMN prescribercountry_id bigint;
+ALTER TABLE pathogentest ADD CONSTRAINT fk_pathogentest_prescribercountry_id FOREIGN KEY (prescribercountry_id) REFERENCES country (id);
+
+ALTER TABLE testreport ADD COLUMN prescriberphysiciancode text;
+ALTER TABLE testreport ADD COLUMN prescriberfirstname text;
+ALTER TABLE testreport ADD COLUMN prescriberlastname text;
+ALTER TABLE testreport ADD COLUMN prescriberphonenumber text;
+ALTER TABLE testreport ADD COLUMN prescriberaddress text;
+ALTER TABLE testreport ADD COLUMN prescriberpostalcode text;
+ALTER TABLE testreport ADD COLUMN prescribercity text;
+ALTER TABLE testreport ADD COLUMN prescribercountry_id bigint;
+ALTER TABLE testreport_history ADD COLUMN prescriberphysiciancode text;
+ALTER TABLE testreport_history ADD COLUMN prescriberfirstname text;
+ALTER TABLE testreport_history ADD COLUMN prescriberlastname text;
+ALTER TABLE testreport_history ADD COLUMN prescriberphonenumber text;
+ALTER TABLE testreport_history ADD COLUMN prescriberaddress text;
+ALTER TABLE testreport_history ADD COLUMN prescriberpostalcode text;
+ALTER TABLE testreport_history ADD COLUMN prescribercity text;
+ALTER TABLE testreport_history ADD COLUMN prescribercountry_id bigint;
+ALTER TABLE testreport ADD CONSTRAINT fk_testreport_prescribercountry_id FOREIGN KEY (prescribercountry_id) REFERENCES country (id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (518, 'Add prescriber fields to pathogen tests and test reports #12318');
+
+-- 2023-07-26 Add the 'See personal data inside jurisdiction' user right to the default Environmental Surveillance User #12284
+
+DO $$
+    DECLARE ur RECORD;
+    BEGIN
+        FOR ur IN SELECT id FROM userroles WHERE linkeddefaultuserrole = 'ENVIRONMENTAL_SURVEILLANCE_USER'
+            LOOP
+                IF NOT EXISTS (SELECT 1 FROM userroles_userrights WHERE userrole_id = ur.id AND userright = 'SEE_PERSONAL_DATA_IN_JURISDICTION') THEN
+                    INSERT INTO userroles_userrights (userrole_id, userright) VALUES (ur.id, 'SEE_PERSONAL_DATA_IN_JURISDICTION');
+                    UPDATE userroles set changedate = now() WHERE id = ur.id AND linkeddefaultuserrole = 'ENVIRONMENTAL_SURVEILLANCE_USER';
+                END IF;
+            END LOOP;
+    END;
+$$ LANGUAGE plpgsql;
+
+INSERT INTO schema_version (version_number, comment) VALUES (519, 'Add the ''See personal data inside jurisdiction'' user right to the default Environmental Surveillance User #12284');
+
+-- 2023-08-08 Add a new customizable enum called Pathogen #11840
+INSERT INTO customizableenumvalue(id, uuid, changedate, creationdate, datatype, value, caption, defaultvalue, properties)
+VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'PATHOGEN', 'CAMPYLOBACTER_JEJUNI', 'Campylobacter jejuni', true, jsonb_build_object('hasDetails', false)),
+       (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'PATHOGEN', 'ESCHERICHIA_COLI', 'Escherichia coli', true, jsonb_build_object('hasDetails', false)),
+       (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'PATHOGEN', 'SALMONELLA_SPP', 'Salmonella spp.', true, jsonb_build_object('hasDetails', false)),
+       (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'PATHOGEN', 'SHIGELLA_SPP', 'Shigella spp.', true, jsonb_build_object('hasDetails', false)),
+       (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'PATHOGEN', 'VIBRIO_CHOLERAE', 'Vibrio cholerae', true, jsonb_build_object('hasDetails', false)),
+       (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'PATHOGEN', 'YERSINIA_SPP', 'Yersinia spp.', true, jsonb_build_object('hasDetails', false)),
+       (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'PATHOGEN', 'SARS_COV_2', 'SARS-CoV-2', true, jsonb_build_object('hasDetails', false)),
+       (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'PATHOGEN', 'ADENOVIRUS', 'Adenovirus', true, jsonb_build_object('hasDetails', false)),
+       (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'PATHOGEN', 'ASTROVIRUS', 'Astrovirus', true, jsonb_build_object('hasDetails', false)),
+       (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'PATHOGEN', 'COXSACKIE_VIRUS', 'Coxsackie virus', true, jsonb_build_object('hasDetails', false)),
+       (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'PATHOGEN', 'ECHOVIRUS', 'Echovirus', true, jsonb_build_object('hasDetails', false)),
+       (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'PATHOGEN', 'HEPATITIS_A_VIRUS', 'Hepatitis A virus', true, jsonb_build_object('hasDetails', false)),
+       (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'PATHOGEN', 'HEPATITIS_E_VIRUS', 'Hepatitis E virus', true, jsonb_build_object('hasDetails', false)),
+       (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'PATHOGEN', 'HUMAN_CALICIVIRUS', 'Human calicivirus', true, jsonb_build_object('hasDetails', false)),
+       (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'PATHOGEN', 'POLIO_VIRUS', 'Polio virus', true, jsonb_build_object('hasDetails', false)),
+       (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'PATHOGEN', 'REOVIRUS', 'Reovirus', true, jsonb_build_object('hasDetails', false)),
+       (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'PATHOGEN', 'ROTAVIRUS', 'Rotavirus', true, jsonb_build_object('hasDetails', false)),
+       (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'PATHOGEN', 'TT_HEPATITIS', 'TT hepatitis', true, jsonb_build_object('hasDetails', false)),
+       (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'PATHOGEN', 'OTHER', 'Other', true, jsonb_build_object('hasDetails', true));
+
+INSERT INTO schema_version (version_number, comment) VALUES (520, 'Add a new customizable enum called Pathogen #11840');
+
+-- 2023-08-08 Add missing fields to external message entity #12390
+ALTER TABLE externalmessage ADD COLUMN casereportdate timestamp;
+ALTER TABLE externalmessage ADD COLUMN personexternalid text;
+ALTER TABLE externalmessage ADD COLUMN personnationalhealthid text;
+ALTER TABLE externalmessage ADD COLUMN personphonenumbertype varchar(255);
+ALTER TABLE externalmessage ADD COLUMN personcountry_id bigint;
+ALTER TABLE externalmessage_history ADD COLUMN casereportdate timestamp;
+ALTER TABLE externalmessage_history ADD COLUMN personexternalid text;
+ALTER TABLE externalmessage_history ADD COLUMN personnationalhealthid text;
+ALTER TABLE externalmessage_history ADD COLUMN personphonenumbertype varchar(255);
+ALTER TABLE externalmessage_history ADD COLUMN personcountry_id bigint;
+ALTER TABLE externalmessage ADD CONSTRAINT fk_externalmessage_personcountry_id FOREIGN KEY (personcountry_id) REFERENCES country(id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (521, 'Add missing fields to external message entity #12390');
+
+ALTER TABLE task ADD COLUMN environment_id bigint;
+ALTER TABLE task ADD CONSTRAINT fk_task_environment_id FOREIGN KEY (environment_id) REFERENCES environments (id);
+ALTER TABLE task_history ADD COLUMN environment_id bigint;
+
+INSERT INTO schema_version (version_number, comment) VALUES (522, 'Add tasks to environments #11780');
+
+-- 2023-08-09 Create a new Environment Sample entity [web + mobile] #11721
+CREATE TABLE IF NOT EXISTS environmentsamples
+(
+    id                          bigint       not null,
+    uuid                        varchar(36)  not null unique,
+    changedate                  timestamp    not null,
+    creationdate                timestamp    not null,
+    change_user_id              bigint,
+    environment_id              bigint       not null,
+    reportinguser_id            bigint       not null,
+    sampledatetime              timestamp    not null,
+    samplematerial              varchar(255) not null,
+    othersamplematerial         text,
+    samplevolume                float,
+    fieldsampleid               varchar(255),
+    turbidity                   int,
+    phvalue                     int,
+    sampletemperature           int,
+    chlorineresiduals           float,
+    laboratory_id               bigint       not null,
+    laboratorydetails           text,
+    requestedpathogentests      jsonb,
+    otherrequestedpathogentests text,
+    weatherconditions           jsonb,
+    heavyrain                   varchar(255),
+    dispatched                  boolean default false,
+    dispatchdate                timestamp,
+    dispatchdetails             text,
+    received                    boolean default false,
+    receivaldate                timestamp,
+    labsampleid                 text,
+    specimencondition           varchar(255),
+    location_id                 bigint       not null,
+    generalcomment              text,
+    deleted                     boolean default false,
+    deletionreason              varchar(255),
+    otherdeletionreason         text,
+    sys_period                  tstzrange    not null,
+    primary key (id)
+);
+
+ALTER TABLE environmentsamples OWNER TO sormas_user;
+ALTER TABLE environmentsamples ADD CONSTRAINT fk_change_user_id FOREIGN KEY (change_user_id) REFERENCES users (id);
+ALTER TABLE environmentsamples ADD CONSTRAINT fk_environment_id FOREIGN KEY (environment_id) REFERENCES environments (id);
+ALTER TABLE environmentsamples ADD CONSTRAINT fk_reportinguser_id FOREIGN KEY (reportinguser_id) REFERENCES users (id);
+ALTER TABLE environmentsamples ADD CONSTRAINT fk_laboratory_id FOREIGN KEY (laboratory_id) REFERENCES facility (id);
+ALTER TABLE environmentsamples ADD CONSTRAINT fk_location_id FOREIGN KEY (location_id) REFERENCES location (id);
+
+CREATE TABLE environmentsamples_history (LIKE environmentsamples);
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE ON environmentsamples
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'environmentsamples_history', true);
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON environmentsamples
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('environmentsamples_history', 'id');
+ALTER TABLE environmentsamples_history OWNER TO sormas_user;
+ALTER TABLE environmentsamples ALTER COLUMN requestedpathogentests set DATA TYPE jsonb using requestedpathogentests::jsonb;
+ALTER TABLE environmentsamples_history ALTER COLUMN requestedpathogentests set DATA TYPE jsonb using requestedpathogentests::jsonb;
+ALTER TABLE environmentsamples ALTER COLUMN weatherconditions set DATA TYPE jsonb using weatherconditions::jsonb;
+ALTER TABLE environmentsamples_history ALTER COLUMN weatherconditions set DATA TYPE jsonb using weatherconditions::jsonb;
+
+INSERT INTO userroles_userrights (userrole_id, userright)
+SELECT id, 'ENVIRONMENT_SAMPLE_VIEW'
+FROM public.userroles
+WHERE userroles.linkeddefaultuserrole in (
+                                          'ADMIN',
+                                          'LAB_USER',
+                                          'NATIONAL_OBSERVER',
+                                          'NATIONAL_USER',
+                                          'ENVIRONMENTAL_SURVEILLANCE_USER'
+    );
+
+INSERT INTO userroles_userrights (userrole_id, userright)
+SELECT id, 'ENVIRONMENT_SAMPLE_CREATE'
+FROM public.userroles
+WHERE userroles.linkeddefaultuserrole in (
+                                          'ADMIN',
+                                          'NATIONAL_USER',
+                                          'ENVIRONMENTAL_SURVEILLANCE_USER'
+    );
+
+INSERT INTO userroles_userrights (userrole_id, userright)
+SELECT id, 'ENVIRONMENT_SAMPLE_EDIT'
+FROM public.userroles
+WHERE userroles.linkeddefaultuserrole in (
+                                          'ADMIN',
+                                          'LAB_USER',
+                                          'NATIONAL_USER',
+                                          'ENVIRONMENTAL_SURVEILLANCE_USER'
+    );
+
+INSERT INTO userroles_userrights (userrole_id, userright)
+SELECT id, 'ENVIRONMENT_SAMPLE_EDIT_DISPATCH'
+FROM public.userroles
+WHERE userroles.linkeddefaultuserrole in (
+                                          'ADMIN',
+                                          'LAB_USER',
+                                          'NATIONAL_USER',
+                                          'ENVIRONMENTAL_SURVEILLANCE_USER'
+    );
+
+INSERT INTO userroles_userrights (userrole_id, userright)
+SELECT id, 'ENVIRONMENT_SAMPLE_EDIT_RECEIVAL'
+FROM public.userroles
+WHERE userroles.linkeddefaultuserrole in (
+                                          'ADMIN',
+                                          'LAB_USER',
+                                          'NATIONAL_USER',
+                                          'ENVIRONMENTAL_SURVEILLANCE_USER'
+    );
+
+INSERT INTO userroles_userrights (userrole_id, userright)
+SELECT id, 'ENVIRONMENT_SAMPLE_DELETE'
+FROM public.userroles
+WHERE userroles.linkeddefaultuserrole in (
+                                          'ADMIN',
+                                          'NATIONAL_USER',
+                                          'ENVIRONMENTAL_SURVEILLANCE_USER'
+    );
+
+INSERT INTO userroles_userrights (userrole_id, userright)
+SELECT id, 'ENVIRONMENT_SAMPLE_IMPORT'
+FROM public.userroles
+WHERE userroles.linkeddefaultuserrole in (
+                                          'ADMIN',
+                                          'NATIONAL_USER',
+                                          'ENVIRONMENTAL_SURVEILLANCE_USER'
+    );
+
+INSERT INTO userroles_userrights (userrole_id, userright)
+SELECT id, 'ENVIRONMENT_SAMPLE_EXPORT'
+FROM public.userroles
+WHERE userroles.linkeddefaultuserrole in (
+                                          'ADMIN',
+                                          'LAB_USER',
+                                          'NATIONAL_USER',
+                                          'ENVIRONMENTAL_SURVEILLANCE_USER'
+    );
+
+INSERT INTO schema_version (version_number, comment) VALUES (523, 'Create a new Environment Sample entity [web + mobile] #11721');
+
+-- 2023-08-31 Change requested pathogen tests column type #11721
+ALTER TABLE environmentsamples DROP COLUMN requestedpathogentests;
+ALTER TABLE environmentsamples_history DROP COLUMN requestedpathogentests;
+ALTER TABLE environmentsamples ADD COLUMN requestedpathogentests text;
+ALTER TABLE environmentsamples_history ADD COLUMN requestedpathogentests text;
+
+INSERT INTO schema_version (version_number, comment) VALUES (524, 'Change requested pathogen tests column type #11721');
+
+-- 2023-09-05 Add report date to environment samples #12501
+ALTER TABLE environmentsamples ADD COLUMN reportdate timestamp not null DEFAULT now();
+ALTER TABLE environmentsamples_history ADD COLUMN reportdate timestamp;
+-- Fill report date to avoid not null issues
+ALTER TABLE environmentsamples ALTER COLUMN reportdate DROP DEFAULT;
+
+INSERT INTO schema_version (version_number, comment) VALUES (525, 'Add report date to environment samples #12501');
+
+-- 2023-09-01 Add person facility to external messages #12366
+ALTER TABLE externalmessage ADD COLUMN personfacility_id bigint;
+ALTER TABLE externalmessage_history ADD COLUMN personfacility_id bigint;
+ALTER TABLE externalmessage ADD CONSTRAINT fk_externalmessage_personfacility_id FOREIGN KEY (personfacility_id) REFERENCES facility(id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (526, 'Add person facility to external messages #12366');
+
+-- 2023-09-11 Add pathogen tests to environment samples #12467
+ALTER TABLE pathogentest ADD COLUMN environmentsample_id bigint;
+ALTER TABLE pathogentest_history ADD COLUMN environmentsample_id bigint;
+ALTER TABLE pathogentest ADD CONSTRAINT fk_pathogentest_environmentsample_id FOREIGN KEY (environmentsample_id) REFERENCES environmentsamples(id);
+ALTER TABLE pathogentest ALTER sample_id drop not null;
+ALTER TABLE pathogentest_history ALTER sample_id drop not null;
+
+INSERT INTO schema_version (version_number, comment) VALUES (527, 'Add pathogen tests to environment samples #12467');
+
+-- 2023-10-09 Add tested pathogen attribute to pathogen test #11582
+ALTER TABLE pathogentest ADD COLUMN testedpathogen varchar(255);
+ALTER TABLE pathogentest_history ADD COLUMN testedpathogen varchar(255);
+
+UPDATE pathogentest SET testedpathogen = 'OTHER', testeddisease = NULL WHERE environmentsample_id IS NOT NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (528, 'Add tested pathogen attribute to pathogen test #11582');
+
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

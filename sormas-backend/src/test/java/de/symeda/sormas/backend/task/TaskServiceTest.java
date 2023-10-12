@@ -8,19 +8,12 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.person.PersonDto;
@@ -29,33 +22,25 @@ import de.symeda.sormas.api.task.TaskDto;
 import de.symeda.sormas.api.task.TaskStatus;
 import de.symeda.sormas.api.task.TaskType;
 import de.symeda.sormas.api.user.DefaultUserRole;
+import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.user.UserRoleReferenceDto;
 import de.symeda.sormas.backend.AbstractBeanTest;
-import de.symeda.sormas.backend.TestDataCreator;
-import de.symeda.sormas.backend.caze.Case;
+import de.symeda.sormas.backend.TestDataCreator.RDCF;
 import de.symeda.sormas.backend.common.TaskCreationException;
 import de.symeda.sormas.backend.contact.Contact;
-import de.symeda.sormas.backend.infrastructure.district.District;
-import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.person.Person;
 import de.symeda.sormas.backend.user.User;
-import de.symeda.sormas.backend.user.UserService;
 
 public class TaskServiceTest extends AbstractBeanTest {
-
-	@InjectMocks
-	private TaskService taskService;
-
-	@Mock
-	private UserService userService;
 
 	@Test
 	public void testGetAllAfter() {
 
-		TestDataCreator.RDCF rdcf = creator.createRDCF();
-		UserDto user = creator.createUser(rdcf, "U", "Ser", creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
+		RDCF rdcf = creator.createRDCF();
+		UserDto user = creator.createSurveillanceSupervisor(rdcf);
 		loginWith(user);
 
 		List<Task> result;
@@ -84,55 +69,49 @@ public class TaskServiceTest extends AbstractBeanTest {
 		Contact contact = new Contact();
 		contact.setContactOfficer(contactOfficer);
 
-		User actualAssignee = taskService.getTaskAssignee(contact);
+		User actualAssignee = getTaskService().getTaskAssignee(contact);
 		assertEquals(actualAssignee.getId(), contactOfficer.getId());
 	}
 
 	@Test
 	public void testGetTaskAssigneeFromDistrictOfficers() throws TaskCreationException {
-		User contactOfficer = new User();
-		contactOfficer.setId(1L);
-		District district = new District();
-		Contact contact = new Contact();
-		contact.setDistrict(district);
 
-		Mockito.when(userService.getRandomDistrictUser(any(District.class), eq(UserRight.CONTACT_RESPONSIBLE))).thenReturn(contactOfficer);
+		RDCF rdcf = creator.createRDCF();
+		UserDto contactOfficer = creator.createContactOfficer(rdcf);
 
-		User actualAssignee = taskService.getTaskAssignee(contact);
-		assertEquals(actualAssignee.getId(), contactOfficer.getId());
+		ContactDto contact = creator.createContact(rdcf, contactOfficer.toReference(), creator.createPerson().toReference());
+		Contact contactEntity = getContactService().getByUuid(contact.getUuid());
+
+		User actualAssignee = getTaskService().getTaskAssignee(contactEntity);
+		assertEquals(actualAssignee.getUuid(), contactOfficer.getUuid());
 	}
 
 	@Test
 	public void testGetTaskAssigneeFromRegionSupervisors() throws TaskCreationException {
-		User contactSupervisor = new User();
-		contactSupervisor.setId(1L);
-		Contact contact = new Contact();
-		Location location = new Location();
-		Person person = new Person();
-		person.setAddress(location);
-		contact.setPerson(person);
-		Region region = new Region();
-		contact.setRegion(region);
 
-		Mockito.when(userService.getRandomRegionUser(any(Region.class), eq(UserRight.CONTACT_RESPONSIBLE))).thenReturn(contactSupervisor);
+		RDCF rdcf = creator.createRDCF();
+		// There is currently no default user role with CONTACT_RESPONSIBLE on region level
+		UserRoleReferenceDto userRole =
+			creator.createUserRoleWithRequiredRights("RegionContactResponsible", JurisdictionLevel.REGION, UserRight.CONTACT_RESPONSIBLE);
+		UserDto contactSupervisor = creator.createUser(rdcf, userRole);
 
-		User actualAssignee = taskService.getTaskAssignee(contact);
-		assertEquals(actualAssignee.getId(), contactSupervisor.getId());
+		ContactDto contact = creator.createContact(rdcf, contactSupervisor.toReference(), creator.createPerson().toReference());
+		Contact contactEntity = getContactService().getByUuid(contact.getUuid());
+
+		User actualAssignee = getTaskService().getTaskAssignee(contactEntity);
+		assertEquals(actualAssignee.getUuid(), contactSupervisor.getUuid());
 	}
 
 	@Test
-	public void testGetTaskAssigneeException() throws TaskCreationException {
+	public void testGetTaskAssigneeException() {
+
 		Contact contact = new Contact();
 		Location location = new Location();
 		Person person = new Person();
 		person.setAddress(location);
 		contact.setPerson(person);
-		Case caze = new Case();
-		contact.setCaze(caze);
 
-		Mockito.when(userService.getRandomRegionUser(any(Region.class), any())).thenReturn(null);
-
-		assertThrows(TaskCreationException.class, () -> taskService.getTaskAssignee(contact));
+		assertThrows(TaskCreationException.class, () -> getTaskService().getTaskAssignee(contact));
 	}
 
 	@Test
@@ -143,8 +122,8 @@ public class TaskServiceTest extends AbstractBeanTest {
 		 * - task naming pattern includes all related entities
 		 */
 
-		TestDataCreator.RDCF rdcf = creator.createRDCF();
-		UserDto user = creator.createUser(rdcf, "U", "Ser", creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
+		RDCF rdcf = creator.createRDCF();
+		UserDto user = creator.createSurveillanceSupervisor(rdcf);
 		UserDto otherUser = creator.createUser(rdcf, "Other", "User", creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
 		PersonDto person = creator.createPerson();
 		ContactDto contact = creator.createContact(rdcf, otherUser.toReference(), person.toReference());

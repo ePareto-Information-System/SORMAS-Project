@@ -5,6 +5,7 @@ import java.util.Date;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.Page;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
@@ -21,8 +22,10 @@ import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
+import de.symeda.sormas.ui.utils.AbstractMergeGrid;
 import de.symeda.sormas.ui.utils.AbstractView;
 import de.symeda.sormas.ui.utils.ButtonHelper;
+import de.symeda.sormas.ui.utils.QueryDetails;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 
 @SuppressWarnings("serial")
@@ -47,22 +50,26 @@ public class MergeContactsView extends AbstractView {
 				.setRegion(UserProvider.getCurrent().getUser().getRegion());
 		}
 
+		boolean queryDetailsUninitialized = !ViewModelProviders.of(MergeContactsView.class).has(QueryDetails.class);
+		QueryDetails queryDetails = ViewModelProviders.of(MergeContactsView.class).get(QueryDetails.class);
+		if (queryDetailsUninitialized || queryDetails.getResultLimit() == null) {
+			queryDetails.setResultLimit(AbstractMergeGrid.DUPLICATE_MERGING_LIMIT_DEFAULT);
+		}
+
 		grid = new MergeContactsGrid();
 		grid.setCriteria(criteria);
+		grid.setQueryDetails(queryDetails);
 
 		VerticalLayout gridLayout = new VerticalLayout();
-		filterComponent = new MergeContactsFilterComponent(criteria);
+		filterComponent = new MergeContactsFilterComponent(criteria, queryDetails);
 		filterComponent.setFiltersUpdatedCallback(() -> {
 			if (ViewModelProviders.of(MergeContactsView.class).has(ContactCriteria.class)) {
-				grid.reload();
-				filterComponent.updateDuplicateCountLabel(grid.getTreeData().getRootItems().size());
+				navigateTo(criteria, queryDetails);
 			} else {
-				navigateTo(null);
+				navigateTo();
 			}
 		});
-		filterComponent.setIgnoreRegionCallback((ignoreRegion) -> {
-			grid.reload(ignoreRegion);
-		});
+		filterComponent.setIgnoreRegionCallback(this::reloadAndUpdateDuplicateCount);
 		gridLayout.addComponent(filterComponent);
 
 		gridLayout.addComponent(grid);
@@ -115,8 +122,21 @@ public class MergeContactsView extends AbstractView {
 
 	@Override
 	public void enter(ViewChangeEvent event) {
-		grid.reload();
-		filterComponent.updateDuplicateCountLabel(grid.getTreeData().getRootItems().size());
+		if (!ViewModelProviders.of(MergeContactsView.class).get(MergeContactsViewConfiguration.class).isFiltersApplied()) {
+			VaadinUiUtil.showSimplePopupWindow(
+				I18nProperties.getString(Strings.headingCaution),
+				I18nProperties.getString(Strings.infoMergeFiltersHint),
+				ContentMode.HTML,
+				640);
+			ViewModelProviders.of(MergeContactsView.class).get(MergeContactsViewConfiguration.class).setFiltersApplied(true);
+		} else {
+			reloadAndUpdateDuplicateCount(false);
+		}
 	}
 
+	private void reloadAndUpdateDuplicateCount(boolean ignoreRegion) {
+		grid.reload(ignoreRegion);
+		filterComponent.updateDuplicateCountLabel(grid.getTreeData().getRootItems().size());
+
+	}
 }

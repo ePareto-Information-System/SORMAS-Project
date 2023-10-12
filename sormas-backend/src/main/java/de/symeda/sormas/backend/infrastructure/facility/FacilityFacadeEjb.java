@@ -43,6 +43,7 @@ import org.apache.commons.collections.CollectionUtils;
 import de.symeda.sormas.api.ReferenceDto;
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
@@ -69,7 +70,6 @@ import de.symeda.sormas.backend.infrastructure.district.DistrictService;
 import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.infrastructure.region.RegionFacadeEjb;
 import de.symeda.sormas.backend.infrastructure.region.RegionService;
-import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.QueryHelper;
 import de.symeda.sormas.backend.util.RightsAllowed;
@@ -91,8 +91,15 @@ public class FacilityFacadeEjb
 	}
 
 	@Inject
-	protected FacilityFacadeEjb(FacilityService service, FeatureConfigurationFacadeEjbLocal featureConfiguration, UserService userService) {
-		super(Facility.class, FacilityDto.class, service, featureConfiguration, userService, Validations.importFacilityAlreadyExists);
+	protected FacilityFacadeEjb(FacilityService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
+		super(
+			Facility.class,
+			FacilityDto.class,
+			service,
+			featureConfiguration,
+			Validations.importFacilityAlreadyExists,
+			null,
+			Strings.messageFacilityDearchivingNotPossible);
 	}
 
 	@Override
@@ -326,6 +333,12 @@ public class FacilityFacadeEjb
 	}
 
 	@Override
+	public FacilityReferenceDto getByAddress(String street, String postalCode, String city) {
+
+		return toReferenceDto(service.getByAddress(street, postalCode, city));
+	}
+
+	@Override
 	@PermitAll
 	public List<FacilityReferenceDto> getLaboratoriesByName(String name, boolean includeArchivedEntities) {
 		return service.getFacilitiesByNameAndType(name, null, null, FacilityType.LABORATORY, includeArchivedEntities)
@@ -425,14 +438,6 @@ public class FacilityFacadeEjb
 		Join<Facility, Community> community = facility.join(Facility.COMMUNITY, JoinType.LEFT);
 
 		Predicate filter = service.buildCriteriaFilter(facilityCriteria, cb, facility);
-		Predicate excludeFilter = cb.and(
-			cb.notEqual(facility.get(Facility.UUID), FacilityDto.OTHER_FACILITY_UUID),
-			cb.notEqual(facility.get(Facility.UUID), FacilityDto.NONE_FACILITY_UUID));
-		if (filter != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, excludeFilter);
-		} else {
-			filter = excludeFilter;
-		}
 
 		if (filter != null) {
 			cq.where(filter);
@@ -531,14 +536,7 @@ public class FacilityFacadeEjb
 			facility.get(Facility.LONGITUDE),
 			facility.get(Facility.EXTERNAL_ID));
 
-		Predicate filter = cb.and(
-			cb.notEqual(facility.get(Facility.UUID), FacilityDto.OTHER_FACILITY_UUID),
-			cb.notEqual(facility.get(Facility.UUID), FacilityDto.NONE_FACILITY_UUID));
-
-		if (facilityCriteria != null) {
-			Predicate criteriaFilter = service.buildCriteriaFilter(facilityCriteria, cb, facility);
-			filter = CriteriaBuilderHelper.and(cb, filter, criteriaFilter);
-		}
+		Predicate filter = service.buildCriteriaFilter(facilityCriteria, cb, facility);
 
 		filter = CriteriaBuilderHelper.andInValues(selectedRows, filter, cb, facility.get(Facility.UUID));
 
@@ -550,34 +548,6 @@ public class FacilityFacadeEjb
 			cb.asc(facility.get(Facility.NAME)));
 
 		return QueryHelper.getResultList(em, cq, first, max);
-	}
-
-	@Override
-	@RightsAllowed({
-		UserRight._INFRASTRUCTURE_VIEW,
-		UserRight._SYSTEM })
-	public long count(FacilityCriteria criteria) {
-
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-		Root<Facility> root = cq.from(Facility.class);
-
-		Predicate filter = service.buildCriteriaFilter(criteria, cb, root);
-		Predicate excludeFilter = cb.and(
-			cb.notEqual(root.get(Facility.UUID), FacilityDto.OTHER_FACILITY_UUID),
-			cb.notEqual(root.get(Facility.UUID), FacilityDto.NONE_FACILITY_UUID));
-		if (filter != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, excludeFilter);
-		} else {
-			filter = excludeFilter;
-		}
-
-		if (filter != null) {
-			cq.where(filter);
-		}
-
-		cq.select(cb.count(root));
-		return em.createQuery(cq).getSingleResult();
 	}
 
 	@Override
@@ -629,9 +599,9 @@ public class FacilityFacadeEjb
 	}
 
 	@Override
-	protected Facility fillOrBuildEntity(@NotNull FacilityDto source, Facility target, boolean checkChangeDate) {
+	protected Facility fillOrBuildEntity(@NotNull FacilityDto source, Facility target, boolean checkChangeDate, boolean allowUuidOverwrite) {
 
-		target = DtoHelper.fillOrBuildEntity(source, target, Facility::new, checkChangeDate);
+		target = DtoHelper.fillOrBuildEntity(source, target, Facility::new, checkChangeDate, allowUuidOverwrite);
 
 		target.setName(source.getName());
 
@@ -667,8 +637,8 @@ public class FacilityFacadeEjb
 		}
 
 		@Inject
-		protected FacilityFacadeEjbLocal(FacilityService service, FeatureConfigurationFacadeEjbLocal featureConfiguration, UserService userService) {
-			super(service, featureConfiguration, userService);
+		protected FacilityFacadeEjbLocal(FacilityService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
+			super(service, featureConfiguration);
 		}
 	}
 }

@@ -55,7 +55,7 @@ public class ExternalMessageServiceTest extends AbstractBeanTest {
 		ExternalMessageDto labMessage1Deleted = creator.createLabMessageWithTestReport(sampleReference1);
 		labMessage1Deleted.setChangeDate(new Date());
 		getExternalMessageFacade().save(labMessage1Deleted);
-		getExternalMessageFacade().deleteExternalMessage(labMessage1Deleted.getUuid());
+		getExternalMessageFacade().delete(labMessage1Deleted.getUuid());
 
 		SampleDto sample2 = creator.createSample(caze.toReference(), sampleDate, sampleDate, user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
 		SampleReferenceDto sampleReference2 = sample2.toReference();
@@ -94,7 +94,7 @@ public class ExternalMessageServiceTest extends AbstractBeanTest {
 		ExternalMessageService sut = getExternalMessageService();
 
 		TestDataCreator.RDCF rdcf = creator.createRDCF();
-		UserDto user = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.NATIONAL_USER));
+		UserDto user = creator.createNationalUser();
 		PersonDto person = creator.createPerson();
 		CaseDataDto caze = creator.createCase(user.toReference(), person.toReference(), rdcf);
 
@@ -105,27 +105,16 @@ public class ExternalMessageServiceTest extends AbstractBeanTest {
 		SampleDto sample = creator.createSample(caze.toReference(), user.toReference(), rdcf.facility);
 		assertEquals(0L, sut.countForCase(caze.getUuid()));
 
-		creator.createLabMessageWithTestReport(sample.toReference());
+		creator.createLabMessageWithTestReportAndSurveillanceReport(user.toReference(), caze.toReference(), sample.toReference());
 		assertEquals(1L, sut.countForCase(caze.getUuid()));
 
 		// create additional lab message matches
-		creator.createLabMessageWithTestReport(sample.toReference());
+		creator.createLabMessageWithTestReportAndSurveillanceReport(user.toReference(), caze.toReference(), sample.toReference());
 		SampleDto sample2 = creator.createSample(caze.toReference(), user.toReference(), rdcf.facility);
-		creator.createLabMessageWithTestReport(sample2.toReference());
+		creator.createLabMessageWithTestReportAndSurveillanceReport(user.toReference(), caze.toReference(), sample2.toReference());
 		assertEquals(3L, sut.countForCase(caze.getUuid()));
 		assertEquals(0L, sut.countForContact(caze.getUuid()));
 		assertEquals(0L, sut.countForEventParticipant(caze.getUuid()));
-
-		// create physician's report match and noise
-		creator.createPhysiciansReportWithCase(caze.toReference());
-		creator.createPhysiciansReportWithCase(noiseCaze.toReference());
-		creator.createPhysiciansReportWithCase(noiseCaze.toReference());
-		assertEquals(4L, sut.countForCase(caze.getUuid()));
-
-		// create yet another physician's report match
-		creator.createPhysiciansReportWithCase(caze.toReference());
-		assertEquals(5L, sut.countForCase(caze.getUuid()));
-
 	}
 
 	@Test
@@ -134,7 +123,7 @@ public class ExternalMessageServiceTest extends AbstractBeanTest {
 		ExternalMessageService sut = getExternalMessageService();
 
 		TestDataCreator.RDCF rdcf = creator.createRDCF();
-		UserDto user = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.NATIONAL_USER));
+		UserDto user = creator.createNationalUser();
 		PersonDto person = creator.createPerson();
 		ContactDto contact = creator.createContact(user.toReference(), person.toReference());
 
@@ -163,7 +152,7 @@ public class ExternalMessageServiceTest extends AbstractBeanTest {
 		ExternalMessageService sut = getExternalMessageService();
 
 		TestDataCreator.RDCF rdcf = creator.createRDCF();
-		UserDto user = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.NATIONAL_USER));
+		UserDto user = creator.createNationalUser();
 		PersonDto person = creator.createPerson();
 		EventDto event = creator.createEvent(user.toReference());
 		EventParticipantDto eventParticipant = creator.createEventParticipant(event.toReference(), person, user.toReference());
@@ -192,7 +181,7 @@ public class ExternalMessageServiceTest extends AbstractBeanTest {
 
 		ExternalMessageDto labMessage = creator.createLabMessageWithTestReport(null);
 
-		getExternalMessageFacade().deleteExternalMessage(labMessage.getUuid());
+		getExternalMessageFacade().delete(labMessage.getUuid());
 
 		assertEquals(0, getExternalMessageService().count());
 		assertEquals(0, getSampleReportService().count());

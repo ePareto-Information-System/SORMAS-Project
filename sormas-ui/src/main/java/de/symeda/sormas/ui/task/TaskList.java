@@ -26,6 +26,7 @@ import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.ReferenceDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.environment.EnvironmentReferenceDto;
 import de.symeda.sormas.api.event.EventReferenceDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -61,6 +62,9 @@ public class TaskList extends PaginationList<TaskIndexDto> {
 		case TRAVEL_ENTRY:
 			taskCriteria.travelEntry((TravelEntryReferenceDto) entityRef);
 			break;
+		case ENVIRONMENT:
+			taskCriteria.environment((EnvironmentReferenceDto) entityRef);
+			break;
 		default:
 			throw new IndexOutOfBoundsException(context.toString());
 		}
@@ -90,15 +94,20 @@ public class TaskList extends PaginationList<TaskIndexDto> {
 		for (int i = 0, displayedEntriesSize = displayedEntries.size(); i < displayedEntriesSize; i++) {
 			TaskIndexDto task = displayedEntries.get(i);
 			TaskListEntry listEntry = new TaskListEntry(task);
-			if (UserProvider.getCurrent().hasUserRight(UserRight.TASK_EDIT)) {
-				listEntry.addEditListener(
-					i,
-					(ClickListener) event -> ControllerProvider.getTaskController()
-						.edit(listEntry.getTask(), TaskList.this::reload, false, listEntry.getTask().getDisease()));
-			}
+
+			listEntry.addActionButton(
+				String.valueOf(i),
+				(ClickListener) event -> ControllerProvider.getTaskController()
+					.edit(listEntry.getTask(), TaskList.this::reload, false, listEntry.getTask().getDisease()),
+				hasEditOrDeleteRights());
 
 			listEntry.setEnabled(isEditAllowed);
 			listLayout.addComponent(listEntry);
 		}
 	}
+
+	private boolean hasEditOrDeleteRights() {
+		return UserProvider.getCurrent().hasUserRight(UserRight.TASK_EDIT) || UserProvider.getCurrent().hasUserRight(UserRight.TASK_DELETE);
+	}
+
 }

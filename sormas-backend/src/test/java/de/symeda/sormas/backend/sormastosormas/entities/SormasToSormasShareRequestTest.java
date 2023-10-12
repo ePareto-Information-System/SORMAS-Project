@@ -16,6 +16,7 @@
 package de.symeda.sormas.backend.sormastosormas.entities;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -42,12 +43,13 @@ import de.symeda.sormas.api.feature.FeatureConfigurationIndexDto;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.api.sormastosormas.DuplicateResult;
 import de.symeda.sormas.api.sormastosormas.SormasServerDescriptor;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasDto;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasException;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasOptionsDto;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasOriginInfoDto;
-import de.symeda.sormas.api.sormastosormas.entities.DuplicateResult;
+import de.symeda.sormas.api.sormastosormas.entities.DuplicateResultType;
 import de.symeda.sormas.api.sormastosormas.entities.caze.SormasToSormasCaseDto;
 import de.symeda.sormas.api.sormastosormas.entities.contact.SormasToSormasContactDto;
 import de.symeda.sormas.api.sormastosormas.share.incoming.ShareRequestDataType;
@@ -57,7 +59,6 @@ import de.symeda.sormas.api.sormastosormas.share.incoming.SormasToSormasShareReq
 import de.symeda.sormas.api.sormastosormas.share.outgoing.SormasToSormasShareInfoCriteria;
 import de.symeda.sormas.api.sormastosormas.share.outgoing.SormasToSormasShareInfoDto;
 import de.symeda.sormas.api.sormastosormas.validation.SormasToSormasValidationException;
-import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.backend.MockProducer;
@@ -67,6 +68,15 @@ import de.symeda.sormas.backend.sormastosormas.share.ShareRequestData;
 import de.symeda.sormas.backend.sormastosormas.share.outgoing.ShareRequestInfo;
 
 public class SormasToSormasShareRequestTest extends SormasToSormasTest {
+
+	private UserReferenceDto officer;
+
+	@Override
+	public void init() {
+		super.init();
+
+		officer = useSurveillanceOfficerLogin(rdcf).toReference();
+	}
 
 	@AfterEach
 	public void teardown() {
@@ -81,8 +91,6 @@ public class SormasToSormasShareRequestTest extends SormasToSormasTest {
 
 	@Test
 	public void testSendCaseShareRequest() throws SormasToSormasException {
-		UserReferenceDto officer = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER)).toReference();
-		useSurveillanceOfficerLogin(rdcf);
 
 		PersonDto person = creator.createPerson("John", "Doe", Sex.MALE, 1964, 4, 12);
 		CaseDataDto caze = creator.createCase(officer, rdcf, dto -> {
@@ -143,8 +151,6 @@ public class SormasToSormasShareRequestTest extends SormasToSormasTest {
 
 	@Test
 	public void testResendCaseShareRequest() throws SormasToSormasException {
-		UserReferenceDto officer = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER)).toReference();
-		useSurveillanceOfficerLogin(rdcf);
 
 		PersonDto person = creator.createPerson("John", "Doe", Sex.MALE, 1964, 4, 12);
 		CaseDataDto caze = creator.createCase(officer, rdcf, dto -> {
@@ -219,8 +225,6 @@ public class SormasToSormasShareRequestTest extends SormasToSormasTest {
 
 	@Test
 	public void testResendCaseShareRequestWithoutResponodingToFirstOne() throws SormasToSormasException {
-		UserReferenceDto officer = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER)).toReference();
-		useSurveillanceOfficerLogin(rdcf);
 
 		PersonDto person = creator.createPerson("John", "Doe", Sex.MALE, 1964, 4, 12);
 		CaseDataDto caze = creator.createCase(officer, rdcf, dto -> {
@@ -260,8 +264,6 @@ public class SormasToSormasShareRequestTest extends SormasToSormasTest {
 
 	@Test
 	public void testShareWithModifiedOptions() throws SormasToSormasException {
-		UserReferenceDto officer = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER)).toReference();
-		useSurveillanceOfficerLogin(rdcf);
 
 		PersonDto person = creator.createPerson("John", "Doe", Sex.MALE, 1964, 4, 12);
 		CaseDataDto caze = creator.createCase(officer, rdcf, dto -> {
@@ -336,7 +338,6 @@ public class SormasToSormasShareRequestTest extends SormasToSormasTest {
 
 	@Test
 	public void testAcceptShareRequest() throws SormasToSormasException, SormasToSormasValidationException {
-		useSurveillanceOfficerLogin(rdcf);
 
 		PersonDto person = createPersonDto(rdcf);
 		CaseDataDto caze = createCaseDto(rdcf, person);
@@ -360,16 +361,14 @@ public class SormasToSormasShareRequestTest extends SormasToSormasTest {
 
 		DuplicateResult duplicateResult = getSormasToSormasCaseFacade().acceptShareRequest(shareRequest.getUuid(), true);
 
-		assertThat(duplicateResult, is(DuplicateResult.NONE));
+		assertThat(duplicateResult.getType(), is(DuplicateResultType.NONE));
+		assertThat(duplicateResult.getUuids(), hasSize(0));
 		assertThat(getCaseFacade().getByUuid(caze.getUuid()), is(notNullValue()));
 		assertThat(getSormasToSormasShareRequestFacade().getShareRequestByUuid(shareRequest.getUuid()).getStatus(), is(ShareRequestStatus.ACCEPTED));
 	}
 
 	@Test
 	public void testAcceptWithCaseDuplicate() throws SormasToSormasException, SormasToSormasValidationException {
-		UserReferenceDto officer = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER)).toReference();
-
-		useSurveillanceOfficerLogin(rdcf);
 
 		PersonDto person = createPersonDto(rdcf);
 		getPersonFacade().save(person);
@@ -399,22 +398,21 @@ public class SormasToSormasShareRequestTest extends SormasToSormasTest {
 			.thenAnswer(invocation -> encryptShareData(shareData));
 
 		DuplicateResult duplicateResult = getSormasToSormasCaseFacade().acceptShareRequest(shareRequest.getUuid(), true);
-		assertThat(duplicateResult, is(DuplicateResult.CASE));
+		assertThat(duplicateResult.getType(), is(DuplicateResultType.CASE));
+		assertThat(duplicateResult.getUuids(), hasSize(1));
+		assertThat(duplicateResult.getUuids(), contains(caze.getUuid()));
 		assertThat(getCaseFacade().getByUuid(sharedCaze.getUuid()), is(nullValue()));
 		assertThat(getSormasToSormasShareRequestFacade().getShareRequestByUuid(shareRequest.getUuid()).getStatus(), is(ShareRequestStatus.PENDING));
 
 		duplicateResult = getSormasToSormasCaseFacade().acceptShareRequest(shareRequest.getUuid(), false);
 
-		assertThat(duplicateResult, is(DuplicateResult.NONE));
+		assertThat(duplicateResult.getType(), is(DuplicateResultType.NONE));
 		assertThat(getCaseFacade().getByUuid(sharedCaze.getUuid()), is(notNullValue()));
 		assertThat(getSormasToSormasShareRequestFacade().getShareRequestByUuid(shareRequest.getUuid()).getStatus(), is(ShareRequestStatus.ACCEPTED));
 	}
 
 	@Test
 	public void testAcceptWithConvertedCaseDuplicate() throws SormasToSormasException, SormasToSormasValidationException {
-		UserReferenceDto officer = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER)).toReference();
-
-		useSurveillanceOfficerLogin(rdcf);
 
 		PersonDto person = createPersonDto(rdcf);
 		getPersonFacade().save(person);
@@ -448,14 +446,13 @@ public class SormasToSormasShareRequestTest extends SormasToSormasTest {
 			.thenAnswer(invocation -> encryptShareData(shareData));
 
 		DuplicateResult duplicateResult = getSormasToSormasCaseFacade().acceptShareRequest(shareRequest.getUuid(), true);
-		assertThat(duplicateResult, is(DuplicateResult.CASE_CONVERTED));
+		assertThat(duplicateResult.getType(), is(DuplicateResultType.CASE_CONVERTED));
+		assertThat(duplicateResult.getUuids(), hasSize(1));
+		assertThat(duplicateResult.getUuids(), contains(caze.getUuid()));
 	}
 
 	@Test
 	public void testAcceptCaseHavingSimilarContact() throws SormasToSormasException, SormasToSormasValidationException {
-		UserReferenceDto officer = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER)).toReference();
-
-		useSurveillanceOfficerLogin(rdcf);
 
 		PersonDto person = createPersonDto(rdcf);
 		getPersonFacade().save(person);
@@ -485,14 +482,13 @@ public class SormasToSormasShareRequestTest extends SormasToSormasTest {
 			.thenAnswer(invocation -> encryptShareData(shareData));
 
 		DuplicateResult duplicateResult = getSormasToSormasCaseFacade().acceptShareRequest(shareRequest.getUuid(), true);
-		assertThat(duplicateResult, is(DuplicateResult.CONTACT_TO_CASE));
+		assertThat(duplicateResult.getType(), is(DuplicateResultType.CONTACT_TO_CASE));
+		assertThat(duplicateResult.getUuids(), hasSize(1));
+		assertThat(duplicateResult.getUuids(), contains(contact.getUuid()));
 	}
 
 	@Test
 	public void testAcceptWithContactDuplicate() throws SormasToSormasException, SormasToSormasValidationException {
-		UserReferenceDto officer = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER)).toReference();
-
-		useSurveillanceOfficerLogin(rdcf);
 
 		PersonDto person = createPersonDto(rdcf);
 		getPersonFacade().save(person);
@@ -522,22 +518,21 @@ public class SormasToSormasShareRequestTest extends SormasToSormasTest {
 			.thenAnswer(invocation -> encryptShareData(shareData));
 
 		DuplicateResult duplicateResult = getSormasToSormasContactFacade().acceptShareRequest(shareRequest.getUuid(), true);
-		assertThat(duplicateResult, is(DuplicateResult.CONTACT));
+		assertThat(duplicateResult.getType(), is(DuplicateResultType.CONTACT));
+		assertThat(duplicateResult.getUuids(), hasSize(1));
+		assertThat(duplicateResult.getUuids(), contains(contact.getUuid()));
 		assertThat(getContactFacade().getByUuid(sharedContact.getUuid()), is(nullValue()));
 		assertThat(getSormasToSormasShareRequestFacade().getShareRequestByUuid(shareRequest.getUuid()).getStatus(), is(ShareRequestStatus.PENDING));
 
 		duplicateResult = getSormasToSormasCaseFacade().acceptShareRequest(shareRequest.getUuid(), false);
 
-		assertThat(duplicateResult, is(DuplicateResult.NONE));
+		assertThat(duplicateResult.getType(), is(DuplicateResultType.NONE));
 		assertThat(getContactFacade().getByUuid(sharedContact.getUuid()), is(notNullValue()));
 		assertThat(getSormasToSormasShareRequestFacade().getShareRequestByUuid(shareRequest.getUuid()).getStatus(), is(ShareRequestStatus.ACCEPTED));
 	}
 
 	@Test
 	public void testAcceptWithConvertedContactDuplicate() throws SormasToSormasException, SormasToSormasValidationException {
-		UserReferenceDto officer = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER)).toReference();
-
-		useSurveillanceOfficerLogin(rdcf);
 
 		PersonDto person = createPersonDto(rdcf);
 		getPersonFacade().save(person);
@@ -571,19 +566,18 @@ public class SormasToSormasShareRequestTest extends SormasToSormasTest {
 			.thenAnswer(invocation -> encryptShareData(shareData));
 
 		DuplicateResult duplicateResult = getSormasToSormasContactFacade().acceptShareRequest(shareRequest.getUuid(), true);
-		assertThat(duplicateResult, is(DuplicateResult.CONTACT_CONVERTED));
+		assertThat(duplicateResult.getType(), is(DuplicateResultType.CONTACT_CONVERTED));
+		assertThat(duplicateResult.getUuids(), hasSize(1));
+		assertThat(duplicateResult.getUuids(), contains(contact.getUuid()));
 	}
 
 	@Test
 	public void testAcceptWithContactHavingSimilarCase() throws SormasToSormasException, SormasToSormasValidationException {
-		UserReferenceDto officer = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER)).toReference();
-
-		useSurveillanceOfficerLogin(rdcf);
 
 		PersonDto person = createPersonDto(rdcf);
 		getPersonFacade().save(person);
 
-		creator.createCase(officer, person.toReference(), rdcf, c -> {
+		CaseDataDto caze = creator.createCase(officer, person.toReference(), rdcf, c -> {
 			c.setDisease(Disease.CORONAVIRUS);
 		});
 
@@ -609,14 +603,13 @@ public class SormasToSormasShareRequestTest extends SormasToSormasTest {
 			.thenAnswer(invocation -> encryptShareData(shareData));
 
 		DuplicateResult duplicateResult = getSormasToSormasContactFacade().acceptShareRequest(shareRequest.getUuid(), true);
-		assertThat(duplicateResult, is(DuplicateResult.CASE_TO_CONTACT));
+		assertThat(duplicateResult.getType(), is(DuplicateResultType.CASE_TO_CONTACT));
+		assertThat(duplicateResult.getUuids(), hasSize(1));
+		assertThat(duplicateResult.getUuids(), contains(caze.getUuid()));
 	}
 
 	@Test
 	public void testAcceptCaseWithDuplicatePerson() throws SormasToSormasException, SormasToSormasValidationException {
-		UserReferenceDto officer = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER)).toReference();
-
-		useSurveillanceOfficerLogin(rdcf);
 
 		PersonDto person = createPersonDto(rdcf);
 		getPersonFacade().save(person);
@@ -647,14 +640,13 @@ public class SormasToSormasShareRequestTest extends SormasToSormasTest {
 			.thenAnswer(invocation -> encryptShareData(shareData));
 
 		DuplicateResult duplicateResult = getSormasToSormasContactFacade().acceptShareRequest(shareRequest.getUuid(), true);
-		assertThat(duplicateResult, is(DuplicateResult.PERSON_ONLY));
+		assertThat(duplicateResult.getType(), is(DuplicateResultType.PERSON_ONLY));
+		assertThat(duplicateResult.getUuids(), hasSize(1));
+		assertThat(duplicateResult.getUuids(), contains(person.getUuid()));
 	}
 
 	@Test
 	public void testAcceptContactWithDuplicatePerson() throws SormasToSormasException, SormasToSormasValidationException {
-		UserReferenceDto officer = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER)).toReference();
-
-		useSurveillanceOfficerLogin(rdcf);
 
 		PersonDto person = createPersonDto(rdcf);
 		getPersonFacade().save(person);
@@ -685,7 +677,9 @@ public class SormasToSormasShareRequestTest extends SormasToSormasTest {
 			.thenAnswer(invocation -> encryptShareData(shareData));
 
 		DuplicateResult duplicateResult = getSormasToSormasContactFacade().acceptShareRequest(shareRequest.getUuid(), true);
-		assertThat(duplicateResult, is(DuplicateResult.PERSON_ONLY));
+		assertThat(duplicateResult.getType(), is(DuplicateResultType.PERSON_ONLY));
+		assertThat(duplicateResult.getUuids(), hasSize(1));
+		assertThat(duplicateResult.getUuids(), contains(person.getUuid()));
 	}
 
 	private ContactDto createContactDto(TestDataCreator.RDCF rdcf, PersonDto person) {

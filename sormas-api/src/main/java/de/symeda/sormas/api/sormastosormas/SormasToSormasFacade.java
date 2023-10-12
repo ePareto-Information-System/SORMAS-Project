@@ -1,6 +1,6 @@
 /*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2020 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+ * Copyright © 2016-2023 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -20,7 +20,6 @@ import java.util.List;
 import javax.ejb.Remote;
 
 import de.symeda.sormas.api.feature.FeatureType;
-import de.symeda.sormas.api.sormastosormas.entities.DuplicateResult;
 import de.symeda.sormas.api.sormastosormas.share.incoming.ShareRequestDataType;
 import de.symeda.sormas.api.sormastosormas.validation.SormasToSormasValidationException;
 
@@ -51,6 +50,7 @@ public interface SormasToSormasFacade {
 	boolean isShareEnabledForUser();
 
 	boolean isProcessingShareEnabledForUser();
+
 	boolean isFeatureConfigured();
 
 	boolean isAnyFeatureConfigured(FeatureType... sormasToSormasFeatures);

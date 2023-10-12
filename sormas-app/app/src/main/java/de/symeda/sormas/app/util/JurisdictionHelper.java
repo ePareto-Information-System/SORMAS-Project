@@ -9,6 +9,10 @@ import de.symeda.sormas.app.backend.caze.ResponsibleJurisdictionDto;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.contact.Contact;
 import de.symeda.sormas.app.backend.contact.ContactJurisdictionDto;
+import de.symeda.sormas.app.backend.environment.Environment;
+import de.symeda.sormas.app.backend.environment.EnvironmentJurisdictionDto;
+import de.symeda.sormas.app.backend.environment.environmentsample.EnvironmentSample;
+import de.symeda.sormas.app.backend.environment.environmentsample.EnvironmentSampleJurisdictionDto;
 import de.symeda.sormas.app.backend.event.Event;
 import de.symeda.sormas.app.backend.event.EventJurisdictionDto;
 import de.symeda.sormas.app.backend.event.EventParticipant;
@@ -49,6 +53,8 @@ public class JurisdictionHelper {
 		if (user.getPointOfEntry() != null) {
 			jurisdiction.setPointOfEntryUuid(user.getPointOfEntry().getUuid());
 		}
+
+		jurisdiction.setLimitedDisease(user.getLimitedDisease());
 
 		jurisdiction.setJurisdictionLevel(UserRole.getJurisdictionLevel(user.getUserRoles()));
 
@@ -179,7 +185,7 @@ public class JurisdictionHelper {
 			jurisdiction.setReportingUserUuid(eventParticipant.getReportingUser().getUuid());
 		}
 
-		// todo https://github.com/hzi-braunschweig/SORMAS-Project/issues/5903
+		// todo https://github.com/sormas-foundation/SORMAS-Project/issues/5903
 		// if (eventParticipant.getRegion() != null) {
 		// 	jurisdiction.setRegionUuid(eventParticipant.getRegion().getUuid());
 		// }
@@ -194,6 +200,68 @@ public class JurisdictionHelper {
 		}
 
 		return jurisdiction;
+	}
+
+	public static EnvironmentJurisdictionDto createEnvironmentJurisdictionDto(Environment environment) {
+		if (environment == null) {
+			return null;
+		}
+
+		EnvironmentJurisdictionDto environmentJurisdiction = new EnvironmentJurisdictionDto();
+
+		if (environment.getReportingUser() != null) {
+			environmentJurisdiction.setReportingUserUuid(environment.getReportingUser().getUuid());
+		}
+
+		if (environment.getResponsibleUser() != null) {
+			environmentJurisdiction.setResponsibleUserUuid(environment.getResponsibleUser().getUuid());
+		}
+
+		Location environmentLocation = environment.getLocation();
+		if (environmentLocation != null) {
+			if (environmentLocation.getRegion() != null) {
+				environmentJurisdiction.setRegionUuid(environmentLocation.getRegion().getUuid());
+			}
+
+			if (environmentLocation.getDistrict() != null) {
+				environmentJurisdiction.setDistrictUuid(environmentLocation.getDistrict().getUuid());
+			}
+
+			if (environmentLocation.getCommunity() != null) {
+				environmentJurisdiction.setCommunityUuid(environmentLocation.getCommunity().getUuid());
+			}
+		}
+
+		return environmentJurisdiction;
+	}
+
+	public static EnvironmentSampleJurisdictionDto createEnvironmentSampleJurisdictionDto(EnvironmentSample sample) {
+		if (sample == null) {
+			return null;
+		}
+
+		EnvironmentSampleJurisdictionDto environmentSampleJurisdiction = new EnvironmentSampleJurisdictionDto();
+
+		if (sample.getReportingUser() != null) {
+			environmentSampleJurisdiction.setReportingUserUuid(sample.getReportingUser().getUuid());
+		}
+
+		Location environmentLocation = sample.getLocation();
+		if (environmentLocation != null) {
+			if (environmentLocation.getRegion() != null) {
+				environmentSampleJurisdiction.setRegionUuid(environmentLocation.getRegion().getUuid());
+			}
+
+			if (environmentLocation.getDistrict() != null) {
+				environmentSampleJurisdiction.setDistrictUuid(environmentLocation.getDistrict().getUuid());
+			}
+
+			if (environmentLocation.getCommunity() != null) {
+				environmentSampleJurisdiction.setCommunityUuid(environmentLocation.getCommunity().getUuid());
+			}
+		}
+
+		return environmentSampleJurisdiction;
 	}
 
 	public static TaskJurisdictionDto createTaskJurisdictionDto(Task task) {

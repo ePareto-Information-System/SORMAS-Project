@@ -65,7 +65,12 @@ public class UserRoleController {
 			if (!createForm.getFieldGroup().isModified()) {
 				UserRoleDto dto = createForm.getValue();
 				FacadeProvider.getUserRoleFacade().saveUserRole(dto);
-
+				if (dto.getUserRights().size() == 0) {
+					Notification.show(
+						I18nProperties.getString(Strings.messageUserRoleSaved),
+						I18nProperties.getString(Strings.messageUserRoleHasNoRights),
+						Notification.Type.WARNING_MESSAGE);
+				}
 				editData(dto.getUuid());
 			}
 		});
@@ -84,8 +89,7 @@ public class UserRoleController {
 		UserRoleDto userRole = FacadeProvider.getUserRoleFacade().getByUuid(userRoleRef.getUuid());
 		form.setValue(userRole);
 
-		final CommitDiscardWrapperComponent<UserRoleEditForm> editView =
-			new CommitDiscardWrapperComponent<>(form, UserProvider.getCurrent().hasUserRight(UserRight.USER_ROLE_EDIT), form.getFieldGroup());
+		final CommitDiscardWrapperComponent<UserRoleEditForm> editView = new CommitDiscardWrapperComponent<>(form, true, form.getFieldGroup());
 
 		editView.addCommitListener(() -> {
 			if (!form.getFieldGroup().isModified()) {
@@ -117,10 +121,17 @@ public class UserRoleController {
 						return;
 					}
 				}
-
 				FacadeProvider.getUserRoleFacade().saveUserRole(dto);
 
-				Notification.show(I18nProperties.getString(Strings.messageUserRoleSaved), Notification.Type.WARNING_MESSAGE);
+				if (!(dto.getUserRights().contains(UserRight.SORMAS_UI) && dto.getUserRights().contains(UserRight.SORMAS_REST))) {
+					Notification.show(
+						I18nProperties.getString(Strings.messageUserRoleSaved),
+						I18nProperties.getString(Strings.messageUserRoleUnusableForLogin),
+						Notification.Type.WARNING_MESSAGE);
+
+				} else {
+					Notification.show(I18nProperties.getString(Strings.messageUserRoleSaved), Notification.Type.WARNING_MESSAGE);
+				}
 				SormasUI.refreshView();
 			}
 		});
@@ -172,6 +183,8 @@ public class UserRoleController {
 
 		editView.getButtonsPanel().addComponentAsFirst(enableDisableButton);
 		editView.getButtonsPanel().setComponentAlignment(enableDisableButton, Alignment.BOTTOM_LEFT);
+
+		editView.restrictEditableComponentsOnEditView(UserRight.USER_ROLE_EDIT, null, UserRight.USER_ROLE_DELETE, null, true);
 
 		return editView;
 	}

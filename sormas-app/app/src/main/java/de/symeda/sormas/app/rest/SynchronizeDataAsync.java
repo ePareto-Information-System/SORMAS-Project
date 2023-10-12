@@ -38,6 +38,8 @@ import de.symeda.sormas.api.campaign.form.CampaignFormMetaDto;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.clinicalcourse.ClinicalVisitDto;
 import de.symeda.sormas.api.contact.ContactDto;
+import de.symeda.sormas.api.environment.EnvironmentDto;
+import de.symeda.sormas.api.environment.environmentsample.EnvironmentSampleDto;
 import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventParticipantDto;
 import de.symeda.sormas.api.feature.FeatureType;
@@ -60,6 +62,7 @@ import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.campaign.CampaignDtoHelper;
 import de.symeda.sormas.app.backend.campaign.data.CampaignFormDataDtoHelper;
 import de.symeda.sormas.app.backend.campaign.form.CampaignFormMetaDtoHelper;
+import de.symeda.sormas.app.backend.caze.Case;
 import de.symeda.sormas.app.backend.caze.CaseDtoHelper;
 import de.symeda.sormas.app.backend.classification.DiseaseClassificationDtoHelper;
 import de.symeda.sormas.app.backend.clinicalcourse.ClinicalVisitDtoHelper;
@@ -68,13 +71,20 @@ import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.common.DtoFeatureConfigHelper;
 import de.symeda.sormas.app.backend.common.DtoUserRightsHelper;
 import de.symeda.sormas.app.backend.config.ConfigProvider;
+import de.symeda.sormas.app.backend.contact.Contact;
 import de.symeda.sormas.app.backend.contact.ContactDtoHelper;
 import de.symeda.sormas.app.backend.customizableenum.CustomizableEnumValueDtoHelper;
 import de.symeda.sormas.app.backend.disease.DiseaseConfigurationDtoHelper;
+import de.symeda.sormas.app.backend.environment.Environment;
+import de.symeda.sormas.app.backend.environment.EnvironmentDtoHelper;
+import de.symeda.sormas.app.backend.environment.environmentsample.EnvironmentSample;
+import de.symeda.sormas.app.backend.environment.environmentsample.EnvironmentSampleDtoHelper;
+import de.symeda.sormas.app.backend.event.Event;
 import de.symeda.sormas.app.backend.event.EventDtoHelper;
 import de.symeda.sormas.app.backend.event.EventParticipantDtoHelper;
 import de.symeda.sormas.app.backend.facility.FacilityDtoHelper;
 import de.symeda.sormas.app.backend.feature.FeatureConfigurationDtoHelper;
+import de.symeda.sormas.app.backend.immunization.Immunization;
 import de.symeda.sormas.app.backend.immunization.ImmunizationDtoHelper;
 import de.symeda.sormas.app.backend.infrastructure.InfrastructureHelper;
 import de.symeda.sormas.app.backend.infrastructure.PointOfEntryDtoHelper;
@@ -92,6 +102,7 @@ import de.symeda.sormas.app.backend.report.WeeklyReportDtoHelper;
 import de.symeda.sormas.app.backend.sample.AdditionalTestDtoHelper;
 import de.symeda.sormas.app.backend.sample.PathogenTestDtoHelper;
 import de.symeda.sormas.app.backend.sample.SampleDtoHelper;
+import de.symeda.sormas.app.backend.task.Task;
 import de.symeda.sormas.app.backend.task.TaskDtoHelper;
 import de.symeda.sormas.app.backend.therapy.PrescriptionDtoHelper;
 import de.symeda.sormas.app.backend.therapy.TreatmentDtoHelper;
@@ -283,6 +294,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 			|| DatabaseHelper.getPersonDao().isAnyModified()
 			|| DatabaseHelper.getEventDao().isAnyModified()
 			|| DatabaseHelper.getEventParticipantDao().isAnyModified()
+			|| DatabaseHelper.getEnvironmentDao().isAnyModified()
+			|| DatabaseHelper.getEnvironmentSampleDao().isAnyModified()
 			|| DatabaseHelper.getSampleDao().isAnyModified()
 			|| DatabaseHelper.getSampleTestDao().isAnyModified()
 			|| DatabaseHelper.getAdditionalTestDao().isAnyModified()
@@ -304,6 +317,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		new ImmunizationDtoHelper().pushEntities(true, syncCallbacks);
 		new EventDtoHelper().pushEntities(true, syncCallbacks);
 		new EventParticipantDtoHelper().pushEntities(true, syncCallbacks);
+		new EnvironmentDtoHelper().pushEntities(true, syncCallbacks);
+		new EnvironmentSampleDtoHelper().pushEntities(true, syncCallbacks);
 		new SampleDtoHelper().pushEntities(true, syncCallbacks);
 		new PathogenTestDtoHelper().pushEntities(true, syncCallbacks);
 		new AdditionalTestDtoHelper().pushEntities(true, syncCallbacks);
@@ -329,6 +344,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		ImmunizationDtoHelper immunizationDtoHelper = new ImmunizationDtoHelper();
 		EventDtoHelper eventDtoHelper = new EventDtoHelper();
 		EventParticipantDtoHelper eventParticipantDtoHelper = new EventParticipantDtoHelper();
+		EnvironmentDtoHelper environmentDtoHelper = new EnvironmentDtoHelper();
+		EnvironmentSampleDtoHelper environmentSampleDtoHelper = new EnvironmentSampleDtoHelper();
 		SampleDtoHelper sampleDtoHelper = new SampleDtoHelper();
 		PathogenTestDtoHelper pathogenTestDtoHelper = new PathogenTestDtoHelper();
 		AdditionalTestDtoHelper additionalTestDtoHelper = new AdditionalTestDtoHelper();
@@ -352,6 +369,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		boolean immunizationsNeedPull = immunizationDtoHelper.pullAndPushEntities(context, syncCallbacks);
 		boolean eventsNeedPull = eventDtoHelper.pullAndPushEntities(context, syncCallbacks);
 		boolean eventParticipantsNeedPull = eventParticipantDtoHelper.pullAndPushEntities(context, syncCallbacks);
+		boolean environmentsNeedPull = environmentDtoHelper.pullAndPushEntities(context, syncCallbacks);
+		boolean environmentSamplesNeedPull = environmentSampleDtoHelper.pullAndPushEntities(context, syncCallbacks);
 		boolean samplesNeedPull = sampleDtoHelper.pullAndPushEntities(context, syncCallbacks);
 		boolean sampleTestsNeedPull = pathogenTestDtoHelper.pullAndPushEntities(context, syncCallbacks);
 		boolean additionalTestsNeedPull = additionalTestDtoHelper.pullAndPushEntities(context, syncCallbacks);
@@ -364,36 +383,34 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		boolean treatmentsNeedPull = treatmentDtoHelper.pullAndPushEntities(context, syncCallbacks);
 		boolean clinicalVisitsNeedPull = clinicalVisitDtoHelper.pullAndPushEntities(context, syncCallbacks);
 
-		boolean casesVisible = DtoUserRightsHelper.isViewAllowed(CaseDataDto.class)
-			&& DtoFeatureConfigHelper.isFeatureConfigForCaseEnabled();
-		boolean immunizationsVisible = DtoUserRightsHelper.isViewAllowed(ImmunizationDto.class)
-			&& DtoFeatureConfigHelper.isFeatureConfigForImmunizationEnabled();
-		boolean eventsVisible = DtoUserRightsHelper.isViewAllowed(EventDto.class)
-			&& DtoFeatureConfigHelper.isFeatureConfigForEventsEnabled();
-		boolean eventParticipantsVisible = DtoUserRightsHelper.isViewAllowed(EventParticipantDto.class)
-			&& DtoFeatureConfigHelper.isFeatureConfigForEventParticipantsEnabled();
-		boolean samplesVisible = DtoUserRightsHelper.isViewAllowed(SampleDto.class)
-			&& DtoFeatureConfigHelper.isFeatureConfigForSampleEnabled();
-		boolean sampleTestsVisible = DtoUserRightsHelper.isViewAllowed(PathogenTestDto.class)
-			&& DtoFeatureConfigHelper.isFeatureConfigForSampleTestsEnabled();
-		boolean additionalTestsVisible = DtoUserRightsHelper.isViewAllowed(AdditionalTestDto.class)
-			&& DtoFeatureConfigHelper.isFeatureConfigForAdditionalTestsEnabled();
-		boolean contactsVisible = DtoUserRightsHelper.isViewAllowed(ContactDto.class)
-			&& DtoFeatureConfigHelper.isFeatureConfigForContactsEnabled();
-		boolean visitsVisible = DtoUserRightsHelper.isViewAllowed(VisitDto.class)
-			&& DtoFeatureConfigHelper.isFeatureConfigForVisitsEnabled();
-		boolean tasksVisible = DtoUserRightsHelper.isViewAllowed(TaskDto.class)
-			&& DtoFeatureConfigHelper.isFeatureConfigForTasksEnabled();
-		boolean weeklyReportsVisible = DtoUserRightsHelper.isViewAllowed(WeeklyReportDto.class)
-			&& DtoFeatureConfigHelper.isFeatureConfigForWeeklyReportsEnabled();
-		boolean aggregateReportsVisible = DtoUserRightsHelper.isViewAllowed(AggregateReportDto.class)
-			&& DtoFeatureConfigHelper.isFeatureConfigForAggregateReportsEnabled();
-		boolean prescriptionsVisible = DtoUserRightsHelper.isViewAllowed(PrescriptionDto.class)
-			&& DtoFeatureConfigHelper.isFeatureConfigForPrescriptionsEnabled();
-		boolean treatmentsVisible = DtoUserRightsHelper.isViewAllowed(TreatmentDto.class)
-			&& DtoFeatureConfigHelper.isFeatureConfigForTreatmentsEnabled();
-		boolean clinicalVisitsVisible = DtoUserRightsHelper.isViewAllowed(ClinicalVisitDto.class)
-			&& DtoFeatureConfigHelper.isFeatureConfigForClinicalVisitsEnabled();
+		boolean casesVisible = DtoUserRightsHelper.isViewAllowed(CaseDataDto.class) && DtoFeatureConfigHelper.isFeatureConfigForCaseEnabled();
+		boolean immunizationsVisible =
+			DtoUserRightsHelper.isViewAllowed(ImmunizationDto.class) && DtoFeatureConfigHelper.isFeatureConfigForImmunizationEnabled();
+		boolean eventsVisible = DtoUserRightsHelper.isViewAllowed(EventDto.class) && DtoFeatureConfigHelper.isFeatureConfigForEventsEnabled();
+		boolean eventParticipantsVisible =
+			DtoUserRightsHelper.isViewAllowed(EventParticipantDto.class) && DtoFeatureConfigHelper.isFeatureConfigForEventParticipantsEnabled();
+		boolean environmentsVisible =
+			DtoUserRightsHelper.isViewAllowed(EnvironmentDto.class) && DtoFeatureConfigHelper.isFeatureConfigForEnvironmentEnabled();
+		boolean environmentSamplesVisible =
+			DtoUserRightsHelper.isViewAllowed(EnvironmentSampleDto.class) && DtoFeatureConfigHelper.isFeatureConfigForEnvironmentEnabled();
+		boolean samplesVisible = DtoUserRightsHelper.isViewAllowed(SampleDto.class) && DtoFeatureConfigHelper.isFeatureConfigForSampleEnabled();
+		boolean sampleTestsVisible =
+			DtoUserRightsHelper.isViewAllowed(PathogenTestDto.class) && DtoFeatureConfigHelper.isFeatureConfigForSampleTestsEnabled();
+		boolean additionalTestsVisible =
+			DtoUserRightsHelper.isViewAllowed(AdditionalTestDto.class) && DtoFeatureConfigHelper.isFeatureConfigForAdditionalTestsEnabled();
+		boolean contactsVisible = DtoUserRightsHelper.isViewAllowed(ContactDto.class) && DtoFeatureConfigHelper.isFeatureConfigForContactsEnabled();
+		boolean visitsVisible = DtoUserRightsHelper.isViewAllowed(VisitDto.class) && DtoFeatureConfigHelper.isFeatureConfigForVisitsEnabled();
+		boolean tasksVisible = DtoUserRightsHelper.isViewAllowed(TaskDto.class) && DtoFeatureConfigHelper.isFeatureConfigForTasksEnabled();
+		boolean weeklyReportsVisible =
+			DtoUserRightsHelper.isViewAllowed(WeeklyReportDto.class) && DtoFeatureConfigHelper.isFeatureConfigForWeeklyReportsEnabled();
+		boolean aggregateReportsVisible =
+			DtoUserRightsHelper.isViewAllowed(AggregateReportDto.class) && DtoFeatureConfigHelper.isFeatureConfigForAggregateReportsEnabled();
+		boolean prescriptionsVisible =
+			DtoUserRightsHelper.isViewAllowed(PrescriptionDto.class) && DtoFeatureConfigHelper.isFeatureConfigForPrescriptionsEnabled();
+		boolean treatmentsVisible =
+			DtoUserRightsHelper.isViewAllowed(TreatmentDto.class) && DtoFeatureConfigHelper.isFeatureConfigForTreatmentsEnabled();
+		boolean clinicalVisitsVisible =
+			DtoUserRightsHelper.isViewAllowed(ClinicalVisitDto.class) && DtoFeatureConfigHelper.isFeatureConfigForClinicalVisitsEnabled();
 
 		syncCallbacks.ifPresent(c -> c.getUpdateSynchronizationStepCallback().accept(SynchronizationDialog.SynchronizationStep.PULL_MODIFIED));
 
@@ -424,6 +441,18 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 			syncCallbacks.ifPresent(c -> c.getLoadNextCallback().run());
 			if (eventParticipantsNeedPull) {
 				eventParticipantDtoHelper.pullEntities(true, context, syncCallbacks, false);
+			}
+		}
+		if (environmentsVisible) {
+			syncCallbacks.ifPresent(c -> c.getLoadNextCallback().run());
+			if (environmentsNeedPull) {
+				environmentDtoHelper.pullEntities(true, context, syncCallbacks, false);
+			}
+		}
+		if (environmentSamplesVisible) {
+			syncCallbacks.ifPresent(c -> c.getLoadNextCallback().run());
+			if (environmentSamplesNeedPull) {
+				environmentSampleDtoHelper.pullEntities(true, context, syncCallbacks, false);
 			}
 		}
 		if (samplesVisible) {
@@ -522,6 +551,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		ImmunizationDtoHelper immunizationDtoHelper = new ImmunizationDtoHelper();
 		EventDtoHelper eventDtoHelper = new EventDtoHelper();
 		EventParticipantDtoHelper eventParticipantDtoHelper = new EventParticipantDtoHelper();
+		EnvironmentDtoHelper environmentDtoHelper = new EnvironmentDtoHelper();
+		EnvironmentSampleDtoHelper environmentSampleDtoHelper = new EnvironmentSampleDtoHelper();
 		SampleDtoHelper sampleDtoHelper = new SampleDtoHelper();
 		PathogenTestDtoHelper pathogenTestDtoHelper = new PathogenTestDtoHelper();
 		AdditionalTestDtoHelper additionalTestDtoHelper = new AdditionalTestDtoHelper();
@@ -548,6 +579,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		immunizationDtoHelper.repullEntities(context, syncCallbacks);
 		eventDtoHelper.repullEntities(context, syncCallbacks);
 		eventParticipantDtoHelper.repullEntities(context, syncCallbacks);
+		environmentDtoHelper.repullEntities(context, syncCallbacks);
+		environmentSampleDtoHelper.repullEntities(context, syncCallbacks);
 		sampleDtoHelper.repullEntities(context, syncCallbacks);
 		pathogenTestDtoHelper.repullEntities(context, syncCallbacks);
 		additionalTestDtoHelper.repullEntities(context, syncCallbacks);
@@ -646,6 +679,11 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 				for (String caseUuid : caseUuids) {
 					DatabaseHelper.getCaseDao().deleteCaseAndAllDependingEntities(caseUuid);
 				}
+				// Remove obsolete cases based on change date
+				List<Case> obsoleteCases = DatabaseHelper.getCaseDao().queryForObsolete();
+				for (Case obsoleteCase : obsoleteCases) {
+					DatabaseHelper.getCaseDao().deleteCaseAndAllDependingEntities(obsoleteCase.getUuid());
+				}
 			}
 			syncCallbacks.ifPresent(c -> c.getLoadNextCallback().run());
 
@@ -656,6 +694,11 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 				for (String contactUuid : contactUuids) {
 					DatabaseHelper.getContactDao().deleteContactAndAllDependingEntities(contactUuid);
 				}
+				// Remove obsolete contacts based on change date
+				List<Contact> obsoleteContacts = DatabaseHelper.getContactDao().queryForObsolete();
+				for (Contact obsoleteContact : obsoleteContacts) {
+					DatabaseHelper.getContactDao().deleteContactAndAllDependingEntities(obsoleteContact.getUuid());
+				}
 			}
 			syncCallbacks.ifPresent(c -> c.getLoadNextCallback().run());
 
@@ -664,6 +707,11 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 				List<String> eventUuids = executeUuidCall(RetroProvider.getEventFacade().pullObsoleteUuidsSince(since != null ? since.getTime() : 0));
 				for (String eventUuid : eventUuids) {
 					DatabaseHelper.getEventDao().deleteEventAndAllDependingEntities(eventUuid);
+				}
+				// Remove obsolete events based on change date
+				List<Event> obsoleteEvents = DatabaseHelper.getEventDao().queryForObsolete();
+				for (Event obsoleteEvent : obsoleteEvents) {
+					DatabaseHelper.getEventDao().deleteEventAndAllDependingEntities(obsoleteEvent.getUuid());
 				}
 			}
 			syncCallbacks.ifPresent(c -> c.getLoadNextCallback().run());
@@ -685,6 +733,11 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 				for (String immunizationUuid : immunizationUuids) {
 					DatabaseHelper.getImmunizationDao().deleteImmunizationAndAllDependingEntities(immunizationUuid);
 				}
+				// Remove obsolete immunizations based on change date
+				List<Immunization> obsoleteImmunizations = DatabaseHelper.getImmunizationDao().queryForObsolete();
+				for (Immunization obsoleteImmunization : obsoleteImmunizations) {
+					DatabaseHelper.getImmunizationDao().deleteImmunizationAndAllDependingEntities(obsoleteImmunization.getUuid());
+				}
 			}
 			syncCallbacks.ifPresent(c -> c.getLoadNextCallback().run());
 
@@ -698,11 +751,46 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 			}
 			syncCallbacks.ifPresent(c -> c.getLoadNextCallback().run());
 
+			// Environments
+			if (DtoUserRightsHelper.isViewAllowed(EnvironmentDto.class)) {
+				List<String> environmentUuids =
+					executeUuidCall(RetroProvider.getEnvironmentFacade().pullObsoleteUuidsSince(since != null ? since.getTime() : 0));
+				for (String environmentUuid : environmentUuids) {
+					DatabaseHelper.getEnvironmentDao().deleteEnvironmentAndAllDependingEntities(environmentUuid);
+				}
+				// Remove obsolete environments based on change date
+				List<Environment> obsoleteEnvironments = DatabaseHelper.getEnvironmentDao().queryForObsolete();
+				for (Environment obsoleteEnvironment : obsoleteEnvironments) {
+					DatabaseHelper.getEnvironmentDao().deleteEnvironmentAndAllDependingEntities(obsoleteEnvironment.getUuid());
+				}
+			}
+			syncCallbacks.ifPresent(c -> c.getLoadNextCallback().run());
+
+			// Environment samples
+			if (DtoUserRightsHelper.isViewAllowed(EnvironmentSampleDto.class)) {
+				List<String> sampleUuids =
+					executeUuidCall(RetroProvider.getEnvironmentSampleFacade().pullObsoleteUuidsSince(since != null ? since.getTime() : 0));
+				for (String sampleUuid : sampleUuids) {
+					DatabaseHelper.getEnvironmentSampleDao().deleteEnvironmentSampleAndAllDependingEntities(sampleUuid);
+				}
+				// Remove obsolete samples based on change date
+				List<EnvironmentSample> obsoleteSamples = DatabaseHelper.getEnvironmentSampleDao().queryForObsolete();
+				for (EnvironmentSample obsoleteSample : obsoleteSamples) {
+					DatabaseHelper.getEnvironmentSampleDao().deleteEnvironmentSampleAndAllDependingEntities(obsoleteSample.getUuid());
+				}
+			}
+			syncCallbacks.ifPresent(c -> c.getLoadNextCallback().run());
+
 			// Tasks
 			if (DtoUserRightsHelper.isViewAllowed(TaskDto.class)) {
 				List<String> taskUuids = executeUuidCall(RetroProvider.getTaskFacade().pullObsoleteUuidsSince(since != null ? since.getTime() : 0));
 				for (String taskUuid : taskUuids) {
 					DatabaseHelper.getTaskDao().deleteTaskAndAllDependingEntities(taskUuid);
+				}
+				// Remove obsolete tasks based on change date
+				List<Task> obsoleteTasks = DatabaseHelper.getTaskDao().queryForObsolete();
+				for (Task obsoleteTask : obsoleteTasks) {
+					DatabaseHelper.getTaskDao().deleteTaskAndAllDependingEntities(obsoleteTask.getUuid());
 				}
 			}
 			syncCallbacks.ifPresent(c -> c.getLoadNextCallback().run());
@@ -791,6 +879,15 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		viewAllowed = DtoUserRightsHelper.isViewAllowed(SampleDto.class);
 		List<String> sampleUuids = viewAllowed ? executeUuidCall(RetroProvider.getSampleFacade().pullUuids()) : new ArrayList<>();
 		DatabaseHelper.getSampleDao().deleteInvalid(sampleUuids, syncCallbacks);
+		//environments
+		viewAllowed = DtoUserRightsHelper.isViewAllowed(EnvironmentDto.class);
+		List<String> environmentUuids = viewAllowed ? executeUuidCall(RetroProvider.getEnvironmentFacade().pullUuids()) : new ArrayList<>();
+		DatabaseHelper.getEnvironmentDao().deleteInvalid(environmentUuids, syncCallbacks);
+		//environment samples
+		viewAllowed = DtoUserRightsHelper.isViewAllowed(EnvironmentSampleDto.class);
+		List<String> environmentSampleUuids =
+			viewAllowed ? executeUuidCall(RetroProvider.getEnvironmentSampleFacade().pullUuids()) : new ArrayList<>();
+		DatabaseHelper.getEnvironmentSampleDao().deleteInvalid(environmentSampleUuids, syncCallbacks);
 		// event participants
 		viewAllowed = DtoUserRightsHelper.isViewAllowed(EventParticipantDto.class);
 		List<String> eventParticipantUuids = viewAllowed ? executeUuidCall(RetroProvider.getEventParticipantFacade().pullUuids()) : new ArrayList<>();
@@ -842,6 +939,8 @@ public class SynchronizeDataAsync extends AsyncTask<Void, Void, Void> {
 		new ImmunizationDtoHelper().pullMissing(caseUuids, syncCallbacks);
 		new EventDtoHelper().pullMissing(eventUuids, syncCallbacks);
 		new EventParticipantDtoHelper().pullMissing(eventParticipantUuids, syncCallbacks);
+		new EnvironmentDtoHelper().pullMissing(environmentUuids, syncCallbacks);
+		new EnvironmentSampleDtoHelper().pullMissing(environmentSampleUuids, syncCallbacks);
 		new SampleDtoHelper().pullMissing(sampleUuids, syncCallbacks);
 		new PathogenTestDtoHelper().pullMissing(sampleTestUuids, syncCallbacks);
 		new AdditionalTestDtoHelper().pullMissing(additionalTestUuids, syncCallbacks);

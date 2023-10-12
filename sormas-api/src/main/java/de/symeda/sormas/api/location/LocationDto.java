@@ -111,14 +111,14 @@ public class LocationDto extends PseudonymizableDto {
 	@PersonalData
 	@SensitiveData
 	@Pseudonymizer(LatitudePseudonymizer.class)
-	@Min(value = -90, message = Validations.numberTooSmall)
-	@Max(value = 90, message = Validations.numberTooBig)
+	@Min(value = -90, message = Validations.latitudeBetween)
+	@Max(value = 90, message = Validations.latitudeBetween)
 	private Double latitude;
 	@PersonalData
 	@SensitiveData
 	@Pseudonymizer(LongitudePseudonymizer.class)
-	@Min(value = -180, message = Validations.numberTooSmall)
-	@Max(value = 180, message = Validations.numberTooBig)
+	@Min(value = -180, message = Validations.longitudeBetween)
+	@Max(value = 180, message = Validations.longitudeBetween)
 	private Double longitude;
 	private Float latLonAccuracy;
 	@PersonalData()
@@ -142,6 +142,7 @@ public class LocationDto extends PseudonymizableDto {
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
 	private String addressTypeDetails;
 	@PersonalData
+	@SensitiveData
 	private FacilityType facilityType;
 	@PersonalData
 	@SensitiveData
@@ -397,18 +398,6 @@ public class LocationDto extends PseudonymizableDto {
 			additionalInformation);
 	}
 
-	public boolean checkIsEmptyLocation() {
-		return details == null
-			&& city == null
-			&& areaType == null
-			&& region == null
-			&& district == null
-			&& community == null
-			&& street == null
-			&& houseNumber == null
-			&& additionalInformation == null;
-	}
-
 	public static LocationDto build() {
 
 		LocationDto location = new LocationDto();
@@ -416,11 +405,7 @@ public class LocationDto extends PseudonymizableDto {
 		return location;
 	}
 
-	public static String buildStreetAndHouseNumberCaption(String street, String houseNumber) {
-		return DataHelper.toStringNullable(street) + " " + DataHelper.toStringNullable(houseNumber);
-	}
-
-	public String buildAddressCaption() {
+	public static String buildAddressCaption(String street, String houseNumber, String postalCode, String city) {
 		String streetAndNumber = DataHelper.toStringNullable(street) + " " + DataHelper.toStringNullable(houseNumber);
 		String postalAndCity = DataHelper.toStringNullable(postalCode) + " " + DataHelper.toStringNullable(city);
 		if (StringUtils.isNotBlank(streetAndNumber)) {

@@ -16,20 +16,26 @@
 package de.symeda.sormas.api.uuid;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.symeda.sormas.api.audit.AuditIncludeProperty;
 import de.symeda.sormas.api.audit.AuditedClass;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.utils.FieldConstraints;
+import de.symeda.sormas.api.utils.HasCaption;
 
 /**
  * An abstract class for all DTOs that have an UUID.
  */
 @AuditedClass
-public class AbstractUuidDto implements HasUuid, Serializable {
+public class AbstractUuidDto implements HasUuid, HasCaption, Serializable {
 // FIXME(@JonasCir): I would like to make this class the base class for EntityDto, but there is an @Outbreak annotation
 //  which needs special handling. Also, this should be the base class for ReferenceDto, however, the uuid field there is
 //  required. I argue that the uuid field in this class should be required here as well, however, this would be a big 
@@ -53,5 +59,30 @@ public class AbstractUuidDto implements HasUuid, Serializable {
 
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
+	}
+
+	@JsonIgnore
+	public String buildCaption() {
+		return toString();
+	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + StringUtils.SPACE + this.getUuid();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		AbstractUuidDto that = (AbstractUuidDto) o;
+		return uuid.equals(that.uuid);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(uuid);
 	}
 }

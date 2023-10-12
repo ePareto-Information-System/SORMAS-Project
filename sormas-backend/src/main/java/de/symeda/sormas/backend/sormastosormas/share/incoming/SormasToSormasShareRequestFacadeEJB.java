@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -68,7 +69,7 @@ public class SormasToSormasShareRequestFacadeEJB implements SormasToSormasShareR
 	@EJB
 	private SormasToSormasOriginInfoFacadeEjbLocal originInfoFacade;
 
-	@EJB
+	@Inject
 	private SormasToSormasDiscoveryService sormasToSormasDiscoveryService;
 
 	@EJB
@@ -256,14 +257,21 @@ public class SormasToSormasShareRequestFacadeEJB implements SormasToSormasShareR
 		return toDetailsDto(request);
 	}
 
-	private SormasToSormasShareRequest fillOrBuildEntity(@NotNull SormasToSormasShareRequestDto source, SormasToSormasShareRequest target, boolean checkChangeDate) {
+	private SormasToSormasShareRequest fillOrBuildEntity(
+		@NotNull SormasToSormasShareRequestDto source,
+		SormasToSormasShareRequest target,
+		boolean checkChangeDate) {
 		target = DtoHelper.fillOrBuildEntity(source, target, SormasToSormasShareRequest::new, checkChangeDate);
 
 		target.setDataType(source.getDataType());
 		target.setStatus(source.getStatus());
 
 		// #10679: originInfo should be reference type
-		target.setOriginInfo(originInfoFacade.fillOrBuildEntity(source.getOriginInfo(), sormasToSormasOriginInfoService.getByUuid(source.getOriginInfo().getUuid()), checkChangeDate));
+		target.setOriginInfo(
+			originInfoFacade.fillOrBuildEntity(
+				source.getOriginInfo(),
+				sormasToSormasOriginInfoService.getByUuid(source.getOriginInfo().getUuid()),
+				checkChangeDate));
 		target.setCasesList(source.getCases());
 		target.setContactsList(source.getContacts());
 		target.setEventsList(source.getEvents());

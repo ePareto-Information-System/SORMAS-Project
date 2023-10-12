@@ -80,6 +80,7 @@ public final class CssStyles {
 	public static final String INDENT_LEFT_3 = "indent-left-3";
 
 	public static final String VAADIN_LABEL = "v-label";
+	public static final String VAADIN_CAPTION = "v-caption";
 	public static final String FIELD_WRAPPER = "fieldwrapper";
 	public static final String FIELD_EXTRA_INFO = "fieldextrainfo";
 
@@ -128,6 +129,7 @@ public final class CssStyles {
 	public static final String LABEL_WHITE_SPACE_NORMAL = "white-space-normal";
 	public static final String LABEL_TEXT_ALIGN_RIGHT = "text-align-right";
 	public static final String LABEL_CAPTION_TRUNCATED = "caption-truncated";
+	public static final String LABEL_HEADING_TITLE = "heading-title-label";
 
 	// Layout styles
 	public static final String LAYOUT_MINIMAL = "minimal";
@@ -160,6 +162,7 @@ public final class CssStyles {
 	public static final String BUTTON_FILTER_ENABLED = "filter-enabled";
 	public static final String BUTTON_FILTER_DISABLED = "filter-disabled";
 	public static final String BUTTON_FONT_SIZE_LARGE = "font-size-large";
+	public static final String BUTTON_CAPTION_OVERFLOW = "caption-overflow-label";
 	public static final String GEOCODE_BUTTON_HIGHLIGHT = "geocode-button-highlight";
 
 	// Link styles
@@ -271,6 +274,7 @@ public final class CssStyles {
 
 	// MISC
 	public static final String RESIZABLE = "resizable";
+	public static final String ACTIVE_SIDE_COMPONENT_ELEMENT = "active-side-component-element";
 
 	// Grid layout
 	public static final String GRID_LAYOUT_EVEN = "even";

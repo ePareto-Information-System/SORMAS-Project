@@ -19,7 +19,6 @@ package de.symeda.sormas.ui;
 
 import de.symeda.sormas.ui.action.ActionController;
 import de.symeda.sormas.ui.campaign.CampaignController;
-import de.symeda.sormas.ui.caze.CaseArchivingController;
 import de.symeda.sormas.ui.caze.CaseController;
 import de.symeda.sormas.ui.caze.surveillancereport.SurveillanceReportController;
 import de.symeda.sormas.ui.clinicalcourse.ClinicalCourseController;
@@ -29,6 +28,7 @@ import de.symeda.sormas.ui.contact.ContactController;
 import de.symeda.sormas.ui.customexport.CustomExportController;
 import de.symeda.sormas.ui.dashboard.DashboardController;
 import de.symeda.sormas.ui.docgeneration.DocGenerationController;
+import de.symeda.sormas.ui.environment.EnvironmentController;
 import de.symeda.sormas.ui.events.EventController;
 import de.symeda.sormas.ui.events.EventGroupController;
 import de.symeda.sormas.ui.events.EventParticipantsController;
@@ -38,7 +38,8 @@ import de.symeda.sormas.ui.person.PersonController;
 import de.symeda.sormas.ui.reports.aggregate.AggregateReportController;
 import de.symeda.sormas.ui.samples.AdditionalTestController;
 import de.symeda.sormas.ui.samples.PathogenTestController;
-import de.symeda.sormas.ui.samples.SampleController;
+import de.symeda.sormas.ui.samples.environmentsample.EnvironmentSampleController;
+import de.symeda.sormas.ui.samples.humansample.SampleController;
 import de.symeda.sormas.ui.sormastosormas.SormasToSormasController;
 import de.symeda.sormas.ui.statistics.StatisticsController;
 import de.symeda.sormas.ui.task.TaskController;
@@ -48,6 +49,8 @@ import de.symeda.sormas.ui.user.UserController;
 import de.symeda.sormas.ui.user.UserRoleController;
 import de.symeda.sormas.ui.utils.ArchivingController;
 import de.symeda.sormas.ui.utils.BaseControllerProvider;
+import de.symeda.sormas.ui.utils.DeleteRestoreController;
+import de.symeda.sormas.ui.utils.PermanentDeleteController;
 import de.symeda.sormas.ui.vaccination.VaccinationController;
 import de.symeda.sormas.ui.visit.VisitController;
 
@@ -84,7 +87,10 @@ public class ControllerProvider extends BaseControllerProvider {
 	private final ImmunizationController immunizationController;
 	private final VaccinationController vaccinationController;
 	private final ArchivingController archivingController;
-	private final CaseArchivingController caseArchivingController;
+	private final DeleteRestoreController deleteRestoreController;
+	private final EnvironmentController environmentController;
+	private final PermanentDeleteController permanentDeleteController;
+	private final EnvironmentSampleController environmentSampleController;
 
 	public ControllerProvider() {
 		super();
@@ -120,7 +126,10 @@ public class ControllerProvider extends BaseControllerProvider {
 		immunizationController = new ImmunizationController();
 		vaccinationController = new VaccinationController();
 		archivingController = new ArchivingController();
-		caseArchivingController = new CaseArchivingController();
+		deleteRestoreController = new DeleteRestoreController();
+		environmentController = new EnvironmentController();
+		permanentDeleteController = new PermanentDeleteController();
+		environmentSampleController = new EnvironmentSampleController();
 	}
 
 	protected static ControllerProvider get() {
@@ -251,7 +260,19 @@ public class ControllerProvider extends BaseControllerProvider {
 		return get().archivingController;
 	}
 
-	public static CaseArchivingController getCaseArchivingController() {
-		return get().caseArchivingController;
+	public static DeleteRestoreController getDeleteRestoreController() {
+		return get().deleteRestoreController;
+	}
+
+	public static EnvironmentController getEnvironmentController() {
+		return get().environmentController;
+	}
+
+	public static PermanentDeleteController getPermanentDeleteController() {
+		return get().permanentDeleteController;
+	}
+
+	public static EnvironmentSampleController getEnvironmentSampleController() {
+		return get().environmentSampleController;
 	}
 }

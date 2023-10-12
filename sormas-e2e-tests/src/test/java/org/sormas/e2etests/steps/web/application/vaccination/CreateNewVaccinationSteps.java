@@ -28,6 +28,7 @@ import static org.sormas.e2etests.pages.application.vaccinations.CreateNewVaccin
 import static org.sormas.e2etests.pages.application.vaccinations.CreateNewVaccinationPage.SAVE_VACCINATION_FORM_BUTTON;
 import static org.sormas.e2etests.pages.application.vaccinations.CreateNewVaccinationPage.UNII_CODE_INPUT;
 import static org.sormas.e2etests.pages.application.vaccinations.CreateNewVaccinationPage.VACCINATION_DATE_INPUT;
+import static org.sormas.e2etests.pages.application.vaccinations.CreateNewVaccinationPage.VACCINATION_EDIT_BUTTON;
 import static org.sormas.e2etests.pages.application.vaccinations.CreateNewVaccinationPage.VACCINATION_INFO_SOURCE_COMBOBOX;
 import static org.sormas.e2etests.pages.application.vaccinations.CreateNewVaccinationPage.VACCINATION_INFO_SOURCE_INPUT;
 import static org.sormas.e2etests.pages.application.vaccinations.CreateNewVaccinationPage.VACCINATION_MANUFACTURER_COMBOBOX;
@@ -43,7 +44,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import org.sormas.e2etests.entities.pojo.helpers.ComparisonHelper;
 import org.sormas.e2etests.entities.pojo.web.Vaccination;
@@ -58,6 +58,7 @@ public class CreateNewVaccinationSteps implements En {
   public static Vaccination duplicatedVacinationDe;
   public static Vaccination collectedVaccination;
   public static final DateTimeFormatter formatterDE = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+  public static String randomVaccinationName;
 
   @Inject
   public CreateNewVaccinationSteps(
@@ -78,6 +79,22 @@ public class CreateNewVaccinationSteps implements En {
           fillUniiCode(vaccination.getUniiCode());
           fillBatchNumber(vaccination.getBatchNumber());
           fillAtcCode(vaccination.getAtcCode());
+        });
+
+    When(
+        "I fill new vaccination data in new Vaccination form in Survnet for DE",
+        () -> {
+          vaccination = vaccinationService.buildGeneratedVaccinationSurvnetDE();
+          fillVaccinationDate(vaccination.getVaccinationDate(), Locale.GERMAN);
+          selectVaccineName(vaccination.getVaccineName());
+          fillVaccineType(vaccination.getVaccineType());
+          selectVaccinationInfoSource(vaccination.getVaccinationInfoSource());
+          fillVaccineDose(vaccination.getVaccineDose());
+          fillInn(vaccination.getInn());
+          fillUniiCode(vaccination.getUniiCode());
+          fillBatchNumber(vaccination.getBatchNumber());
+          fillAtcCode(vaccination.getAtcCode());
+          randomVaccinationName = vaccination.getVaccineName();
         });
     When(
         "I fill new duplicate vaccination data in new Vaccination form for DE without vaccination date and name",
@@ -198,7 +215,6 @@ public class CreateNewVaccinationSteps implements En {
         "I click SAVE button in new Vaccination form",
         () -> {
           webDriverHelpers.clickOnWebElementBySelector(SAVE_VACCINATION_FORM_BUTTON);
-          TimeUnit.SECONDS.sleep(2); // wait for reaction
           webDriverHelpers.waitForPageLoadingSpinnerToDisappear(20);
         });
 
@@ -273,6 +289,76 @@ public class CreateNewVaccinationSteps implements En {
           webDriverHelpers.scrollToElement(REPORT_DATE_INPUT);
           webDriverHelpers.fillAndSubmitInWebElement(
               REPORT_DATE_INPUT, formatterDE.format(LocalDate.now().minusDays(day)));
+        });
+
+    And(
+        "^I change the vaccination date for minus (\\d+) day from today$",
+        (Integer day) -> {
+          webDriverHelpers.scrollToElement(VACCINATION_DATE_INPUT);
+          webDriverHelpers.fillAndSubmitInWebElement(
+              VACCINATION_DATE_INPUT, formatterDE.format(LocalDate.now().minusDays(day)));
+        });
+
+    And(
+        "I set vaccine manufacturer to {string}",
+        (String option) -> selectVaccineManufacturer(option));
+
+    And(
+        "I click on first vaccination edit button",
+        () -> webDriverHelpers.clickOnWebElementBySelector(VACCINATION_EDIT_BUTTON));
+
+    And(
+        "I check vaccine manufacturer is set to {string}",
+        (String option) -> {
+          softly.assertEquals(
+              webDriverHelpers.getValueFromCombobox(VACCINATION_MANUFACTURER_COMBOBOX), option);
+          softly.assertAll();
+        });
+
+    And(
+        "I check vaccine manufacturer is not set to {string}",
+        (String option) -> {
+          softly.assertNotEquals(
+              webDriverHelpers.getValueFromCombobox(VACCINATION_MANUFACTURER_COMBOBOX), option);
+          softly.assertAll();
+        });
+    When(
+        "I fill new vaccination data in new Vaccination form for DE with {string} as a vaccine name",
+        (String name) -> {
+          vaccination = vaccinationService.buildGeneratedVaccinationDE();
+          fillVaccinationDate(vaccination.getVaccinationDate(), Locale.GERMAN);
+          selectVaccineName(name);
+          fillVaccineType(vaccination.getVaccineType());
+          selectVaccinationInfoSource(vaccination.getVaccinationInfoSource());
+          fillVaccineDose(vaccination.getVaccineDose());
+          fillInn(vaccination.getInn());
+          fillUniiCode(vaccination.getUniiCode());
+          fillBatchNumber(vaccination.getBatchNumber());
+          fillAtcCode(vaccination.getAtcCode());
+        });
+
+    When(
+        "I check if vaccination date is set for (\\d+) day ago from today on Edit Vaccination page for DE version",
+        (Integer days) -> {
+          DateTimeFormatter formattrerDE = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
+          softly.assertEquals(
+              webDriverHelpers.getValueFromWebElement(VACCINATION_DATE_INPUT),
+              formattrerDE.format(LocalDate.now().minusDays(days)),
+              "Date is incorrect");
+          softly.assertAll();
+        });
+
+    And(
+        "^I set new vaccination name to \"([^\"]*)\"$",
+        (String vaccinationName) -> {
+          selectVaccineName(vaccinationName);
+        });
+
+    And(
+        "^I set the vaccination date to (\\d+) days before today$",
+        (Integer days) -> {
+          fillVaccinationDate(LocalDate.now().minusDays(days), Locale.GERMAN);
         });
   }
 

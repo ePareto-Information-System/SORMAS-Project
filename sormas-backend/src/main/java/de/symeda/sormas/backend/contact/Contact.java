@@ -41,8 +41,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import de.symeda.auditlog.api.Audited;
-import de.symeda.auditlog.api.AuditedIgnore;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.VaccinationStatus;
 import de.symeda.sormas.api.contact.ContactCategory;
@@ -77,7 +75,6 @@ import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.visit.Visit;
 
 @Entity(name = "contact")
-@Audited
 public class Contact extends CoreAdo implements SormasToSormasShareable, HasExternalData {
 
 	private static final long serialVersionUID = -7764607075875188799L;
@@ -166,7 +163,7 @@ public class Contact extends CoreAdo implements SormasToSormasShareable, HasExte
 	public static final String TRACING_APP_DETAILS = "tracingAppDetails";
 	public static final String VACCINATION_STATUS = "vaccinationStatus";
 	public static final String VISITS = "visits";
-	public static final String DUPLICATE_OF	= "duplicateOf";
+	public static final String DUPLICATE_OF = "duplicateOf";
 
 	private Date reportDateTime;
 	private User reportingUser;
@@ -282,6 +279,13 @@ public class Contact extends CoreAdo implements SormasToSormasShareable, HasExte
 	private VaccinationStatus vaccinationStatus;
 
 	private Long personId;
+
+	public static Contact build() {
+		Contact contact = new Contact();
+		contact.setContactClassification(ContactClassification.UNCONFIRMED);
+		contact.setContactStatus(ContactStatus.ACTIVE);
+		return contact;
+	}
 
 	@Column(name = "person_id", updatable = false, insertable = false)
 	public Long getPersonId() {
@@ -524,7 +528,6 @@ public class Contact extends CoreAdo implements SormasToSormasShareable, HasExte
 		this.tasks = tasks;
 	}
 
-	@AuditedIgnore
 	@ManyToMany(mappedBy = Visit.CONTACTS, fetch = FetchType.LAZY)
 	public Set<Visit> getVisits() {
 		return visits;
@@ -915,7 +918,6 @@ public class Contact extends CoreAdo implements SormasToSormasShareable, HasExte
 	// one to one relations
 	// produces an error where two non-xa connections are opened
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@AuditedIgnore
 	public EpiData getEpiData() {
 		if (epiData == null) {
 			epiData = new EpiData();
@@ -928,7 +930,6 @@ public class Contact extends CoreAdo implements SormasToSormasShareable, HasExte
 	}
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@AuditedIgnore
 	public HealthConditions getHealthConditions() {
 		return healthConditions;
 	}
@@ -943,7 +944,6 @@ public class Contact extends CoreAdo implements SormasToSormasShareable, HasExte
 		CascadeType.MERGE,
 		CascadeType.DETACH,
 		CascadeType.REFRESH })
-	@AuditedIgnore
 	public SormasToSormasOriginInfo getSormasToSormasOriginInfo() {
 		return sormasToSormasOriginInfo;
 	}
@@ -955,7 +955,6 @@ public class Contact extends CoreAdo implements SormasToSormasShareable, HasExte
 
 	@Override
 	@OneToMany(mappedBy = SormasToSormasShareInfo.CONTACT, fetch = FetchType.LAZY)
-	@AuditedIgnore
 	public List<SormasToSormasShareInfo> getSormasToSormasShares() {
 		return sormasToSormasShares;
 	}
@@ -1046,7 +1045,6 @@ public class Contact extends CoreAdo implements SormasToSormasShareable, HasExte
 	}
 
 	@OneToOne(cascade = {}, fetch = FetchType.LAZY)
-	@AuditedIgnore
 	public Contact getDuplicateOf() {
 		return duplicateOf;
 	}

@@ -33,13 +33,12 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Type;
 
-import de.symeda.auditlog.api.Audited;
-import de.symeda.auditlog.api.AuditedIgnore;
 import de.symeda.sormas.api.campaign.data.CampaignFormDataEntry;
 import de.symeda.sormas.api.campaign.data.CampaignFormDataReferenceDto;
 import de.symeda.sormas.backend.campaign.Campaign;
 import de.symeda.sormas.backend.campaign.form.CampaignFormMeta;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
+import de.symeda.sormas.backend.common.NotExposedToApi;
 import de.symeda.sormas.backend.infrastructure.community.Community;
 import de.symeda.sormas.backend.infrastructure.district.District;
 import de.symeda.sormas.backend.infrastructure.region.Region;
@@ -47,7 +46,6 @@ import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.util.ModelConstants;
 
 @Entity(name = "campaignformdata")
-@Audited
 public class CampaignFormData extends AbstractDomainObject {
 
 	public static final String TABLE_NAME = "campaignformdata";
@@ -60,6 +58,7 @@ public class CampaignFormData extends AbstractDomainObject {
 	public static final String DISTRICT = "district";
 	public static final String COMMUNITY = "community";
 	public static final String ARCHIVED = "archived";
+	public static final String CREATING_USER = "creatingUser";
 
 	private static final long serialVersionUID = -8021065433714419288L;
 
@@ -71,9 +70,9 @@ public class CampaignFormData extends AbstractDomainObject {
 	private District district;
 	private Community community;
 	private User creatingUser;
+	@NotExposedToApi
 	private boolean archived;
 
-	@AuditedIgnore
 	@Type(type = ModelConstants.HIBERNATE_TYPE_JSON)
 	@Column(columnDefinition = ModelConstants.COLUMN_DEFINITION_JSON)
 	public List<CampaignFormDataEntry> getFormValues() {

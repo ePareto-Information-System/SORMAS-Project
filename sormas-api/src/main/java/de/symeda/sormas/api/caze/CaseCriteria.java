@@ -18,6 +18,7 @@
 package de.symeda.sormas.api.caze;
 
 import java.util.Date;
+import java.util.Set;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityRelevanceStatus;
@@ -85,6 +86,7 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	public static final String ONLY_SHOW_CASES_WITH_FULFILLED_REFERENCE_DEFINITION = "onlyShowCasesWithFulfilledReferenceDefinition";
 	public static final String PERSON_LIKE = "personLike";
 	public static final String JURISDICTION_TYPE = "jurisdictionType";
+	public static final String ENTITY_RELEVANCE_STATUS = "relevanceStatus";
 
 	private UserRoleReferenceDto reportingUserRole;
 	private Disease disease;
@@ -115,7 +117,6 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	private Boolean withExtendedQuarantine;
 	private Boolean withReducedQuarantine;
 	private Boolean onlyQuarantineHelpNeeded;
-	private Boolean deleted = Boolean.FALSE;
 	private String caseLike;
 	private String eventLike;
 	private Boolean onlyCasesWithEvents = Boolean.FALSE;
@@ -150,6 +151,10 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	private Boolean onlyShowCasesWithFulfilledReferenceDefinition;
 	private String personLike;
 	private Boolean withOwnership;
+	/**
+	 * Used for filtering merge-able cases to filter both lead and similar cases.
+	 */
+	private Set<String> caseUuidsForMerge;
 
 	public CaseCriteria() {
 		super(NewCaseDateType.class);
@@ -443,23 +448,17 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	}
 
 	public CaseCriteria relevanceStatus(EntityRelevanceStatus relevanceStatus) {
-		this.relevanceStatus = relevanceStatus;
+		setRelevanceStatus(relevanceStatus);
 		return this;
+	}
+
+	public void setRelevanceStatus(EntityRelevanceStatus relevanceStatus) {
+		this.relevanceStatus = relevanceStatus;
 	}
 
 	@IgnoreForUrl
 	public EntityRelevanceStatus getRelevanceStatus() {
 		return relevanceStatus;
-	}
-
-	public CaseCriteria deleted(Boolean deleted) {
-		this.deleted = deleted;
-		return this;
-	}
-
-	@IgnoreForUrl
-	public Boolean getDeleted() {
-		return deleted;
 	}
 
 	/**
@@ -782,5 +781,16 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 
 	public void setWithOwnership(Boolean withOwnership) {
 		this.withOwnership = withOwnership;
+	}
+
+	@IgnoreForUrl
+	public Set<String> getCaseUuidsForMerge() {
+		return caseUuidsForMerge;
+	}
+
+	public CaseCriteria caseUuidsForMerge(Set<String> caseUuidsForMerge) {
+		this.caseUuidsForMerge = caseUuidsForMerge;
+
+		return this;
 	}
 }

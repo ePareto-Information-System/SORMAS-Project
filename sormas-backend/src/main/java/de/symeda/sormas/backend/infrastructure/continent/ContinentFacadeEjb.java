@@ -38,6 +38,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.continent.ContinentCriteria;
 import de.symeda.sormas.api.infrastructure.continent.ContinentDto;
@@ -54,7 +55,6 @@ import de.symeda.sormas.backend.infrastructure.country.Country;
 import de.symeda.sormas.backend.infrastructure.country.CountryService;
 import de.symeda.sormas.backend.infrastructure.subcontinent.Subcontinent;
 import de.symeda.sormas.backend.infrastructure.subcontinent.SubcontinentService;
-import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.QueryHelper;
 import de.symeda.sormas.backend.util.RightsAllowed;
@@ -74,8 +74,15 @@ public class ContinentFacadeEjb
 	}
 
 	@Inject
-	protected ContinentFacadeEjb(ContinentService service, FeatureConfigurationFacadeEjbLocal featureConfiguration, UserService userService) {
-		super(Continent.class, ContinentDto.class, service, featureConfiguration, userService, Validations.importContinentAlreadyExists);
+	protected ContinentFacadeEjb(ContinentService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
+		super(
+			Continent.class,
+			ContinentDto.class,
+			service,
+			featureConfiguration,
+			Validations.importContinentAlreadyExists,
+			Strings.messageContinentArchivingNotPossible,
+			null);
 	}
 
 	public static ContinentReferenceDto toReferenceDto(Continent entity) {
@@ -226,8 +233,8 @@ public class ContinentFacadeEjb
 	}
 
 	@Override
-	protected Continent fillOrBuildEntity(@NotNull ContinentDto source, Continent target, boolean checkChangeDate) {
-		target = DtoHelper.fillOrBuildEntity(source, target, Continent::new, checkChangeDate);
+	protected Continent fillOrBuildEntity(@NotNull ContinentDto source, Continent target, boolean checkChangeDate, boolean allowUuidOverwrite) {
+		target = DtoHelper.fillOrBuildEntity(source, target, Continent::new, checkChangeDate, allowUuidOverwrite);
 
 		target.setDefaultName(source.getDefaultName());
 		target.setArchived(source.isArchived());
@@ -244,11 +251,8 @@ public class ContinentFacadeEjb
 		}
 
 		@Inject
-		protected ContinentFacadeEjbLocal(
-			ContinentService service,
-			FeatureConfigurationFacadeEjbLocal featureConfiguration,
-			UserService userService) {
-			super(service, featureConfiguration, userService);
+		protected ContinentFacadeEjbLocal(ContinentService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
+			super(service, featureConfiguration);
 		}
 	}
 }

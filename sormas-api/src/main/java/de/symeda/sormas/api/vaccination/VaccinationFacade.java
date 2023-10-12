@@ -23,6 +23,7 @@ import javax.validation.Valid;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import de.symeda.sormas.api.BaseFacade;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
@@ -35,16 +36,13 @@ import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.utils.SortProperty;
 
 @Remote
-public interface VaccinationFacade {
-
-	VaccinationDto save(@Valid VaccinationDto dto);
+public interface VaccinationFacade extends BaseFacade<VaccinationDto, VaccinationListEntryDto, VaccinationReferenceDto, VaccinationCriteria> {
 
 	/**
 	 * Creates the passed DTO as an entity and automatically assigns an existing immunization or, if none is found,
 	 * creates a new immunization with the passed region, district, person, and disease, and assigns it to the vaccination.
 	 * Throws an exception when called with a DTO that already has an immunization assigned or has a UUID that already
 	 * exists in the database.
-	 * 
 	 * If the vaccination date is empty, assigns the vaccination to the latest immunization (defined by
 	 * ImmunizationEntityHelper.getDateForComparison).
 	 * If the vaccination date is not empty, assigns an existing immunization according to the following priorities:
@@ -61,27 +59,27 @@ public interface VaccinationFacade {
 
 	List<VaccinationDto> getAllVaccinations(String personUuid, Disease disease);
 
-	List<VaccinationDto> getVaccinationsByCriteria(VaccinationListCriteria criteria, Integer first, Integer max, List<SortProperty> sortProperties);
+	List<VaccinationDto> getVaccinationsByCriteria(VaccinationCriteria criteria, Integer first, Integer max, List<SortProperty> sortProperties);
 
-	List<VaccinationListEntryDto> getEntriesList(VaccinationListCriteria criteria, Integer first, Integer max, List<SortProperty> sortProperties);
+	List<VaccinationListEntryDto> getEntriesList(VaccinationCriteria criteria, Integer first, Integer max, List<SortProperty> sortProperties);
 
 	List<VaccinationDto> getRelevantVaccinationsForCase(CaseDataDto cazeDto);
 
 	List<VaccinationListEntryDto> getEntriesListWithRelevance(
 		CaseReferenceDto caseReferenceDto,
-		VaccinationListCriteria criteria,
+		VaccinationCriteria criteria,
 		Integer first,
 		Integer max);
 
 	List<VaccinationListEntryDto> getEntriesListWithRelevance(
 		ContactReferenceDto contactReferenceDto,
-		VaccinationListCriteria criteria,
+		VaccinationCriteria criteria,
 		Integer first,
 		Integer max);
 
 	List<VaccinationListEntryDto> getEntriesListWithRelevance(
 		EventParticipantReferenceDto eventParticipantReferenceDto,
-		VaccinationListCriteria criteria,
+		VaccinationCriteria criteria,
 		Integer first,
 		Integer max);
 
@@ -95,9 +93,8 @@ public interface VaccinationFacade {
 	 */
 	void deleteWithImmunization(String uuid, DeletionDetails deletionDetails);
 
-	VaccinationDto getByUuid(String uuid);
-
 	VaccinationDto postUpdate(String uuid, JsonNode vaccinationDtoJson);
 
 	boolean isVaccinationRelevant(CaseDataDto caze, VaccinationDto vaccination);
+
 }

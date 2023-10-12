@@ -14,12 +14,12 @@
  */
 package de.symeda.sormas.api.feature;
 
-import static de.symeda.sormas.api.common.CoreEntityType.CASE;
-import static de.symeda.sormas.api.common.CoreEntityType.CONTACT;
-import static de.symeda.sormas.api.common.CoreEntityType.EVENT;
-import static de.symeda.sormas.api.common.CoreEntityType.EVENT_PARTICIPANT;
-import static de.symeda.sormas.api.common.CoreEntityType.IMMUNIZATION;
-import static de.symeda.sormas.api.common.CoreEntityType.TRAVEL_ENTRY;
+import static de.symeda.sormas.api.common.DeletableEntityType.CASE;
+import static de.symeda.sormas.api.common.DeletableEntityType.CONTACT;
+import static de.symeda.sormas.api.common.DeletableEntityType.EVENT;
+import static de.symeda.sormas.api.common.DeletableEntityType.EVENT_PARTICIPANT;
+import static de.symeda.sormas.api.common.DeletableEntityType.IMMUNIZATION;
+import static de.symeda.sormas.api.common.DeletableEntityType.TRAVEL_ENTRY;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +29,7 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
 
-import de.symeda.sormas.api.common.CoreEntityType;
+import de.symeda.sormas.api.common.DeletableEntityType;
 import de.symeda.sormas.api.i18n.I18nProperties;
 
 /**
@@ -71,8 +71,16 @@ public enum FeatureType {
 	IMMUNIZATION_MANAGEMENT(true, true, null, null, ImmutableMap.of(FeatureTypeProperty.REDUCED, Boolean.FALSE)),
 	TRAVEL_ENTRIES(true, false, null, null, null),
 
-	DASHBOARD(true, true, null, null, null),
-	LIMITED_SYNCHRONIZATION(true, false, null, null, ImmutableMap.of(FeatureTypeProperty.EXCLUDE_NO_CASE_CLASSIFIED_CASES, Boolean.FALSE)),
+	DASHBOARD_SURVEILLANCE(true, true, null, null, null),
+	DASHBOARD_CONTACTS(true, true, null, null, null),
+	DASHBOARD_CAMPAIGNS(true, true, null, null, null),
+	DASHBOARD_SAMPLES(true, true, null, null, null),
+	LIMITED_SYNCHRONIZATION(true,
+		false,
+		null,
+		null,
+		ImmutableMap.of(FeatureTypeProperty.EXCLUDE_NO_CASE_CLASSIFIED_CASES, Boolean.FALSE, FeatureTypeProperty.MAX_CHANGE_DATE_PERIOD, -1)),
+	ENVIRONMENT_MANAGEMENT(true, false, null, null, null),
 
 	// FEATURE EXTENSIONS
 	ASSIGN_TASKS_TO_HIGHER_LEVEL(true,
@@ -117,7 +125,7 @@ public enum FeatureType {
 		new FeatureType[] {
 			SAMPLES_LAB },
 		null,
-		null),
+		ImmutableMap.of(FeatureTypeProperty.FETCH_MODE, Boolean.FALSE)),
 	MANUAL_EXTERNAL_MESSAGES(true,
 		true,
 		new FeatureType[] {
@@ -157,6 +165,8 @@ public enum FeatureType {
 			FeatureTypeProperty.SHARE_SAMPLES,
 			Boolean.TRUE,
 			FeatureTypeProperty.SHARE_IMMUNIZATIONS,
+			Boolean.TRUE,
+			FeatureTypeProperty.SHARE_REPORTS,
 			Boolean.TRUE)),
 	SORMAS_TO_SORMAS_SHARE_CONTACTS(true,
 		true,
@@ -335,14 +345,14 @@ public enum FeatureType {
 	private final boolean enabledDefault;
 
 	private final FeatureType[] dependentFeatures;
-	private final List<CoreEntityType> entityTypes;
+	private final List<DeletableEntityType> entityTypes;
 	private final Map<FeatureTypeProperty, Object> supportedPropertyDefaults;
 
 	FeatureType(
 		boolean serverFeature,
 		boolean enabledDefault,
 		FeatureType[] dependentFeatures,
-		List<CoreEntityType> entityTypes,
+		List<DeletableEntityType> entityTypes,
 		Map<FeatureTypeProperty, Object> supportedPropertyDefaults) {
 		this.serverFeature = serverFeature;
 		this.enabledDefault = enabledDefault;
@@ -391,7 +401,7 @@ public enum FeatureType {
 		return supportedPropertyDefaults.keySet();
 	}
 
-	public List<CoreEntityType> getEntityTypes() {
+	public List<DeletableEntityType> getEntityTypes() {
 		return entityTypes;
 	}
 }

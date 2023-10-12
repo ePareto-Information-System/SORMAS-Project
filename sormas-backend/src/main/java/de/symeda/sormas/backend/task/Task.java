@@ -34,21 +34,20 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import de.symeda.auditlog.api.Audited;
-import de.symeda.auditlog.api.AuditedIgnore;
 import de.symeda.sormas.api.task.TaskContext;
 import de.symeda.sormas.api.task.TaskPriority;
 import de.symeda.sormas.api.task.TaskStatus;
 import de.symeda.sormas.api.task.TaskType;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
+import de.symeda.sormas.backend.common.NotExposedToApi;
 import de.symeda.sormas.backend.contact.Contact;
+import de.symeda.sormas.backend.environment.Environment;
 import de.symeda.sormas.backend.event.Event;
 import de.symeda.sormas.backend.travelentry.TravelEntry;
 import de.symeda.sormas.backend.user.User;
 
 @Entity
-@Audited
 public class Task extends AbstractDomainObject {
 
 	private static final long serialVersionUID = -4754578341242164661L;
@@ -75,6 +74,7 @@ public class Task extends AbstractDomainObject {
 	public static final String CLOSED_LON = "closedLon";
 	public static final String ARCHIVED = "archived";
 	public static final String TRAVEL_ENTRY = "travelEntry";
+	public static final String ENVIRONMENT = "environment";
 	public static final String OBSERVER_USER = "observerUsers";
 
 	public static final String TASK_OBSERVER_TABLE = "task_observer";
@@ -86,6 +86,7 @@ public class Task extends AbstractDomainObject {
 	private Contact contact;
 	private Event event;
 	private TravelEntry travelEntry;
+	private Environment environment;
 
 	private TaskType taskType;
 	private TaskPriority priority;
@@ -106,6 +107,7 @@ public class Task extends AbstractDomainObject {
 	private Double closedLon;
 	private Float closedLatLonAccuracy;
 
+	@NotExposedToApi
 	private boolean archived;
 
 	@Enumerated(EnumType.STRING)
@@ -225,7 +227,6 @@ public class Task extends AbstractDomainObject {
 		this.assignedByUser = assignedByUser;
 	}
 
-	@AuditedIgnore
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = TASK_OBSERVER_TABLE,
 		joinColumns = @JoinColumn(name = TASK_OBSERVER_JOIN_COLUMN),
@@ -305,5 +306,14 @@ public class Task extends AbstractDomainObject {
 
 	public void setTravelEntry(TravelEntry travelEntry) {
 		this.travelEntry = travelEntry;
+	}
+
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+	public Environment getEnvironment() {
+		return environment;
+	}
+
+	public void setEnvironment(Environment environment) {
+		this.environment = environment;
 	}
 }

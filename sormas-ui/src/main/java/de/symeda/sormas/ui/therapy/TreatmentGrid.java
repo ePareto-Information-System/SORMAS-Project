@@ -30,15 +30,18 @@ public class TreatmentGrid extends Grid implements V7AbstractGrid<TreatmentCrite
 
 	private TreatmentCriteria treatmentCriteria = new TreatmentCriteria();
 
-	public TreatmentGrid(boolean isPseudonymized, boolean isEditAllowed) {
+	public TreatmentGrid(
+		boolean isPseudonymized,
+		boolean isEditAllowed,
+		boolean isDeleteAllowed,
+		boolean isPrescriptionEditAllowed,
+		boolean isPrescriptionDeleteAllowed) {
 		setSizeFull();
 
-		if (isEditAllowed) {
-			if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
-				setSelectionMode(SelectionMode.MULTI);
-			} else {
-				setSelectionMode(SelectionMode.NONE);
-			}
+		if (isEditAllowed && UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
+			setSelectionMode(SelectionMode.MULTI);
+		} else {
+			setSelectionMode(SelectionMode.NONE);
 		}
 
 		BeanItemContainer<TreatmentIndexDto> container = new BeanItemContainer<>(TreatmentIndexDto.class);
@@ -74,7 +77,14 @@ public class TreatmentGrid extends Grid implements V7AbstractGrid<TreatmentCrite
 			}
 
 			if (ACTION_BTN_ID.equals(e.getPropertyId()) || e.isDoubleClick()) {
-				ControllerProvider.getTherapyController().openTreatmentEditForm((TreatmentIndexDto) e.getItemId(), this::reload, isEditAllowed);
+				ControllerProvider.getTherapyController()
+					.openTreatmentEditForm(
+						(TreatmentIndexDto) e.getItemId(),
+						this::reload,
+						isEditAllowed,
+						isDeleteAllowed,
+						isPrescriptionEditAllowed,
+						isPrescriptionDeleteAllowed);
 			}
 		});
 	}

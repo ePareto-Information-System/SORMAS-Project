@@ -25,6 +25,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 
 import de.symeda.sormas.api.campaign.CampaignCriteria;
@@ -34,8 +35,9 @@ import de.symeda.sormas.api.campaign.CampaignIndexDto;
 import de.symeda.sormas.api.campaign.CampaignReferenceDto;
 import de.symeda.sormas.api.campaign.diagram.CampaignDashboardElement;
 import de.symeda.sormas.api.campaign.form.CampaignFormMetaReferenceDto;
-import de.symeda.sormas.api.common.CoreEntityType;
+import de.symeda.sormas.api.common.DeletableEntityType;
 import de.symeda.sormas.api.common.DeletionDetails;
+import de.symeda.sormas.api.common.progress.ProcessedEntity;
 import de.symeda.sormas.api.deletionconfiguration.DeletionInfoDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -50,7 +52,6 @@ import de.symeda.sormas.backend.common.AbstractCoreFacadeEjb;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
 import de.symeda.sormas.backend.user.UserFacadeEjb;
 import de.symeda.sormas.backend.user.UserRoleFacadeEjb.UserRoleFacadeEjbLocal;
-import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.Pseudonymizer;
 import de.symeda.sormas.backend.util.QueryHelper;
@@ -73,8 +74,8 @@ public class CampaignFacadeEjb
 	}
 
 	@Inject
-	public CampaignFacadeEjb(CampaignService service, UserService userService) {
-		super(Campaign.class, CampaignDto.class, service, userService);
+	public CampaignFacadeEjb(CampaignService service) {
+		super(Campaign.class, CampaignDto.class, service);
 	}
 
 	@Override
@@ -360,8 +361,20 @@ public class CampaignFacadeEjb
 
 	@Override
 	@RightsAllowed(UserRight._CAMPAIGN_DELETE)
-	public void undelete(String uuid) {
-		super.undelete(uuid);
+	public List<ProcessedEntity> delete(List<String> uuids, DeletionDetails deletionDetails) {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	@RightsAllowed(UserRight._CAMPAIGN_DELETE)
+	public void restore(String uuid) {
+		super.restore(uuid);
+	}
+
+	@Override
+	@RightsAllowed(UserRight._CAMPAIGN_DELETE)
+	public List<ProcessedEntity> restore(List<String> uuids) {
+		throw new NotImplementedException();
 	}
 
 	@Override
@@ -391,8 +404,8 @@ public class CampaignFacadeEjb
 	}
 
 	@Override
-	protected CoreEntityType getCoreEntityType() {
-		return CoreEntityType.CAMPAIGN;
+	protected DeletableEntityType getDeletableEntityType() {
+		return DeletableEntityType.CAMPAIGN;
 	}
 
 	@Override
@@ -402,20 +415,25 @@ public class CampaignFacadeEjb
 
 	@Override
 	@RightsAllowed(UserRight._CAMPAIGN_ARCHIVE)
-	public void archive(String entityUuid, Date endOfProcessingDate) {
-		super.archive(entityUuid, endOfProcessingDate);
+	public ProcessedEntity archive(String entityUuid, Date endOfProcessingDate) {
+		return super.archive(entityUuid, endOfProcessingDate);
 	}
 
 	@Override
 	@RightsAllowed(UserRight._CAMPAIGN_ARCHIVE)
-	public void archive(List<String> entityUuids) {
-		super.archive(entityUuids);
+	public List<ProcessedEntity> archive(List<String> entityUuids) {
+		return super.archive(entityUuids);
 	}
 
 	@Override
 	@RightsAllowed(UserRight._CAMPAIGN_ARCHIVE)
-	public void dearchive(List<String> entityUuids, String dearchiveReason) {
-		super.dearchive(entityUuids, dearchiveReason);
+	public List<ProcessedEntity> dearchive(List<String> entityUuids, String dearchiveReason) {
+		return super.dearchive(entityUuids, dearchiveReason);
+	}
+
+	@Override
+	public List<String> getArchivedUuidsSince(Date since) {
+		throw new NotImplementedException();
 	}
 
 	@LocalBean
@@ -426,8 +444,8 @@ public class CampaignFacadeEjb
 		}
 
 		@Inject
-		public CampaignFacadeEjbLocal(CampaignService service, UserService userService) {
-			super(service, userService);
+		public CampaignFacadeEjbLocal(CampaignService service) {
+			super(service);
 		}
 	}
 }

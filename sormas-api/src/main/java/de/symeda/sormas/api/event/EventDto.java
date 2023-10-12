@@ -21,7 +21,7 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -44,7 +44,6 @@ import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DependingOnFeatureType;
 import de.symeda.sormas.api.utils.FieldConstraints;
 import de.symeda.sormas.api.utils.HideForCountriesExcept;
-import de.symeda.sormas.api.utils.Required;
 import de.symeda.sormas.api.utils.SensitiveData;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 
@@ -136,10 +135,9 @@ public class EventDto extends SormasToSormasShareableDto {
 	@S2SIgnoreProperty(configProperty = SormasToSormasConfig.SORMAS2SORMAS_IGNORE_EXTERNAL_TOKEN)
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String externalToken;
-	@NotEmpty(message = Validations.validEventTitle)
+	@NotBlank(message = Validations.validEventTitle)
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String eventTitle;
-	@Required
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_BIG, message = Validations.textTooLong)
 	private String eventDesc;
 	private YesNoUnknown nosocomial;
@@ -147,7 +145,6 @@ public class EventDto extends SormasToSormasShareableDto {
 	private Date endDate;
 	@NotNull(message = Validations.validReportDateTime)
 	private Date reportDateTime;
-
 	private UserReferenceDto reportingUser;
 	private Date evolutionDate;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
@@ -245,12 +242,19 @@ public class EventDto extends SormasToSormasShareableDto {
 		return event;
 	}
 
-	public static EventDto build(CountryReferenceDto country, UserDto user, Disease disease) {
+	public static EventDto build(CountryReferenceDto country, UserDto user) {
 		EventDto event = build();
 
 		event.getEventLocation().setCountry(country);
 		event.getEventLocation().setRegion(user.getRegion());
 		event.setReportingUser(user.toReference());
+
+		return event;
+	}
+
+	public static EventDto build(CountryReferenceDto country, UserDto user, Disease disease) {
+		EventDto event = build(country, user);
+
 		event.setDisease(disease);
 
 		return event;

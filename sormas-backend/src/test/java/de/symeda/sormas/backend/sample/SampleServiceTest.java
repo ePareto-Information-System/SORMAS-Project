@@ -40,7 +40,7 @@ public class SampleServiceTest extends AbstractBeanTest {
 		creator.createAdditionalTest(sample.toReference());
 		ExternalMessageDto labMessage = creator.createLabMessageWithTestReport(sample.toReference());
 
-		getSampleFacade().deleteSample(sample.toReference(), new DeletionDetails(DeletionReason.OTHER_REASON, "test reason"));
+		getSampleFacade().delete(sample.getUuid(), new DeletionDetails(DeletionReason.OTHER_REASON, "test reason"));
 
 		Sample sampleEntity = getSampleService().getByUuid(sample.getUuid());
 		List<PathogenTest> pathogenTests = getPathogenTestService().getAll();
@@ -52,7 +52,8 @@ public class SampleServiceTest extends AbstractBeanTest {
 		assertNotNull(getSampleService().getByUuid(referralSample.getUuid()).getReferredTo());
 		assertNotNull(getSampleReportService().getByUuid(labMessage.getSampleReports().get(0).getUuid()).getSample());
 
-		getSampleService().deletePermanent(getEntityAttached(sampleEntity));
+		sampleEntity = getSampleService().getByUuid(sample.getUuid());
+		getSampleService().deletePermanent(mergeToEntityManager(sampleEntity));
 
 		assertEquals(1, getSampleService().count());
 		assertEquals(0, getPathogenTestService().count());

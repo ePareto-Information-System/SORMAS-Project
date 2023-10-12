@@ -36,23 +36,26 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import de.symeda.sormas.api.EditPermissionType;
+import de.symeda.sormas.api.common.DeletableEntityType;
+import de.symeda.sormas.api.common.progress.ProcessedEntity;
+import de.symeda.sormas.api.common.progress.ProcessedEntityStatus;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.backend.feature.FeatureConfigurationFacadeEjb.FeatureConfigurationFacadeEjbLocal;
 import de.symeda.sormas.backend.util.IterableHelper;
 
-public abstract class AbstractCoreAdoService<ADO extends CoreAdo> extends AbstractDeletableAdoService<ADO> {
+public abstract class AbstractCoreAdoService<ADO extends CoreAdo, J extends QueryJoins<ADO>> extends AbstractDeletableAdoService<ADO> {
 
 	private static final int ARCHIVE_BATCH_SIZE = 1000;
 
 	@EJB
 	protected FeatureConfigurationFacadeEjbLocal featureConfigurationFacade;
 
-	protected AbstractCoreAdoService(Class<ADO> elementClass) {
-		super(elementClass);
+	protected AbstractCoreAdoService(Class<ADO> elementClass, DeletableEntityType entityType) {
+		super(elementClass, entityType);
 	}
 
 	/**
-	 * @deprecated Invocation without a {@link QueryContext} is only allowed interally in the same class. For invocation from other EJBs,
+	 * @deprecated Invocation without a {@link QueryContext} is only allowed internally in the same class. For invocation from other EJBs,
 	 *             use {@code createUserFilter(QueryContext)} instead (to be implemented by each subclass).
 	 */
 	@Deprecated
@@ -82,19 +85,14 @@ public abstract class AbstractCoreAdoService<ADO extends CoreAdo> extends Abstra
 		return count > 0;
 	}
 
-	public boolean isDeleted(String uuid) {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-		Root<ADO> from = cq.from(getElementClass());
+	protected abstract J toJoins(From<?, ADO> adoPath);
 
-		cq.where(cb.and(cb.isTrue(from.get(CoreAdo.DELETED)), cb.equal(from.get(AbstractDomainObject.UUID), uuid)));
-		cq.select(cb.count(from));
-		long count = em.createQuery(cq).getSingleResult();
-		return count > 0;
+	private <T extends ChangeDateBuilder<T>> T addChangeDates(T builder, From<?, ADO> adoPath, boolean includeExtendedChangeDateFilters) {
+		return addChangeDates(builder, toJoins(adoPath), includeExtendedChangeDateFilters);
 	}
 
-	protected <T extends ChangeDateBuilder<T>> T addChangeDates(T builder, From<?, ADO> adoPath, boolean includeExtendedChangeDateFilters) {
-		return builder.add(adoPath);
+	protected <T extends ChangeDateBuilder<T>> T addChangeDates(T builder, J joins, boolean includeExtendedChangeDateFilters) {
+		return builder.add(joins.getRoot());
 	}
 
 	public Map<String, Date> calculateEndOfProcessingDate(List<String> entityuuids) {
@@ -117,7 +115,7 @@ public abstract class AbstractCoreAdoService<ADO extends CoreAdo> extends Abstra
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void archive(String entityUuid, Date endOfProcessingDate) {
+	public ProcessedEntity archive(String entityUuid, Date endOfProcessingDate) {
 
 		if (endOfProcessingDate == null) {
 			endOfProcessingDate = calculateEndOfProcessingDate(Collections.singletonList(entityUuid)).get(entityUuid);
@@ -134,10 +132,12 @@ public abstract class AbstractCoreAdoService<ADO extends CoreAdo> extends Abstra
 		cu.where(cb.equal(root.get(AbstractDomainObject.UUID), entityUuid));
 
 		em.createQuery(cu).executeUpdate();
+
+		return new ProcessedEntity(entityUuid, ProcessedEntityStatus.SUCCESS);
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void archive(List<String> entityUuids) {
+	public List<ProcessedEntity> archive(List<String> entityUuids) {
 
 		IterableHelper.executeBatched(
 			entityUuids,
@@ -155,10 +155,12 @@ public abstract class AbstractCoreAdoService<ADO extends CoreAdo> extends Abstra
 
 				em.createQuery(cu).executeUpdate();
 			}));
+
+		return buildProcessedEntities(entityUuids, ProcessedEntityStatus.SUCCESS);
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void dearchive(List<String> entityUuids, String dearchiveReason) {
+	public List<ProcessedEntity> dearchive(List<String> entityUuids, String dearchiveReason) {
 
 		IterableHelper.executeBatched(entityUuids, ARCHIVE_BATCH_SIZE, batchedUuids -> {
 			CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -174,6 +176,8 @@ public abstract class AbstractCoreAdoService<ADO extends CoreAdo> extends Abstra
 
 			em.createQuery(cu).executeUpdate();
 		});
+
+		return buildProcessedEntities(entityUuids, ProcessedEntityStatus.SUCCESS);
 	}
 
 	public EditPermissionType getEditPermissionType(ADO entity) {
@@ -200,8 +204,22 @@ public abstract class AbstractCoreAdoService<ADO extends CoreAdo> extends Abstra
 		return fulfillsCondition(entity, this::inJurisdictionOrOwned);
 	}
 
+	public List<ADO> getEntitiesWithoutFailure(List<String> entityUuids, List<ProcessedEntity> updatedInExternalSurveillanceTool) {
+
+		List<String> failedUuids = updatedInExternalSurveillanceTool.stream()
+			.filter(
+				entity -> entity.getProcessedEntityStatus().equals(ProcessedEntityStatus.ACCESS_DENIED_FAILURE)
+					|| entity.getProcessedEntityStatus().equals(ProcessedEntityStatus.EXTERNAL_SURVEILLANCE_FAILURE))
+			.map(ProcessedEntity::getEntityUuid)
+			.collect(Collectors.toList());
+
+		List<ADO> entities = getByUuids(entityUuids);
+		return entities.stream().filter(entity -> !failedUuids.contains(entity.getUuid())).collect(Collectors.toList());
+	}
+
 	/**
-	 * Used to fetch {@link AdoServiceWithUserFilterAndJurisdiction#getInJurisdictionIds(List)}/{@link AdoServiceWithUserFilterAndJurisdiction#inJurisdictionOrOwned(AbstractDomainObject)}
+	 * Used to fetch
+	 * {@link AdoServiceWithUserFilterAndJurisdiction#getInJurisdictionIds(List)}/{@link AdoServiceWithUserFilterAndJurisdiction#inJurisdictionOrOwned(AbstractDomainObject)}
 	 * (without {@link QueryContext} because there are no other conditions etc.).
 	 * 
 	 * @return A filter on entities within the users jurisdiction or owned by him.

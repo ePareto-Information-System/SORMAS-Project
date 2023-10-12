@@ -38,6 +38,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.collections.CollectionUtils;
 
 import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionCriteria;
@@ -62,7 +63,6 @@ import de.symeda.sormas.backend.infrastructure.country.CountryService;
 import de.symeda.sormas.backend.infrastructure.district.District;
 import de.symeda.sormas.backend.infrastructure.facility.Facility;
 import de.symeda.sormas.backend.infrastructure.pointofentry.PointOfEntry;
-import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.QueryHelper;
 import de.symeda.sormas.backend.util.RightsAllowed;
@@ -86,8 +86,15 @@ public class RegionFacadeEjb
 	}
 
 	@Inject
-	protected RegionFacadeEjb(RegionService service, FeatureConfigurationFacadeEjbLocal featureConfiguration, UserService userService) {
-		super(Region.class, RegionDto.class, service, featureConfiguration, userService, Validations.importRegionAlreadyExists);
+	protected RegionFacadeEjb(RegionService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
+		super(
+			Region.class,
+			RegionDto.class,
+			service,
+			featureConfiguration,
+			Validations.importRegionAlreadyExists,
+			Strings.messageRegionArchivingNotPossible,
+			null);
 	}
 
 	@Override
@@ -289,8 +296,8 @@ public class RegionFacadeEjb
 	}
 
 	@Override
-	protected Region fillOrBuildEntity(@NotNull RegionDto source, Region target, boolean checkChangeDate) {
-		target = DtoHelper.fillOrBuildEntity(source, target, Region::new, checkChangeDate);
+	protected Region fillOrBuildEntity(@NotNull RegionDto source, Region target, boolean checkChangeDate, boolean allowUuidOverwrite) {
+		target = DtoHelper.fillOrBuildEntity(source, target, Region::new, checkChangeDate, allowUuidOverwrite);
 
 		target.setName(source.getName());
 		target.setEpidCode(source.getEpidCode());
@@ -312,8 +319,8 @@ public class RegionFacadeEjb
 		}
 
 		@Inject
-		protected RegionFacadeEjbLocal(RegionService service, FeatureConfigurationFacadeEjbLocal featureConfiguration, UserService userService) {
-			super(service, featureConfiguration, userService);
+		protected RegionFacadeEjbLocal(RegionService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
+			super(service, featureConfiguration);
 		}
 	}
 }

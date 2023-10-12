@@ -16,7 +16,9 @@
 package de.symeda.sormas.ui.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,6 +34,7 @@ import com.vaadin.v7.ui.AbstractField;
 import com.vaadin.v7.ui.AbstractTextField;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.Field;
+import com.vaadin.v7.ui.TextField;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
@@ -41,6 +44,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
+import de.symeda.sormas.ui.utils.components.NotBlankTextValidator;
 
 public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements FieldGroup.CommitHandler {// implements DtoEditForm<DTO> {
 
@@ -359,6 +363,15 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 		}
 	}
 
+	protected void setVisible(boolean visible, Field<?>... fields) {
+
+		for (Field<?> field : fields) {
+			if (!visible || isVisibleAllowed(field)) {
+				field.setVisible(visible);
+			}
+		}
+	}
+
 	protected void setVisibleClear(boolean visible, String... fieldOrPropertyIds) {
 
 		for (String propertyId : fieldOrPropertyIds) {
@@ -386,6 +399,17 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 				Field<?> field = getField(propertyId);
 				if (!field.isReadOnly()) {
 					field.setRequired(required);
+					if (TextField.class.isAssignableFrom(field.getClass())) {
+						if (required) {
+							field.addValidator(new NotBlankTextValidator(I18nProperties.getRequiredError(field.getCaption())));
+						} else {
+							final Collection<Validator> validators = field.getValidators();
+							final Optional<Validator> first = validators.stream()
+								.filter(validator -> validator.getClass().isAssignableFrom(NotBlankTextValidator.class))
+								.findFirst();
+							first.ifPresent(field::removeValidator);
+						}
+					}
 				}
 			}
 		}
@@ -523,8 +547,7 @@ public abstract class AbstractEditForm<DTO> extends AbstractForm<DTO> implements
 				}
 
 				if (field instanceof ComboBoxWithPlaceholder) {
-					ComboBoxWithPlaceholder combo = (ComboBoxWithPlaceholder) field;
-					combo.setPlaceholder(I18nProperties.getCaption(Captions.inaccessibleValue));
+					FieldHelper.setComboInaccessible((ComboBoxWithPlaceholder) field);
 				}
 			}
 		}

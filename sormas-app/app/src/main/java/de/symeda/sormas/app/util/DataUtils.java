@@ -15,18 +15,19 @@
 
 package de.symeda.sormas.app.util;
 
-import org.apache.commons.collections4.CollectionUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
+
+import org.apache.commons.collections4.CollectionUtils;
 
 import de.symeda.sormas.api.Month;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.app.R;
+import de.symeda.sormas.app.backend.common.AbstractDomainObject;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.component.Item;
 import de.symeda.sormas.app.component.controls.ControlSpinnerField;
@@ -37,20 +38,55 @@ import de.symeda.sormas.app.component.controls.ControlSpinnerField;
 
 public class DataUtils {
 
+	/**
+	 * @deprecated use buildEnumItems instead
+	 */
+	@Deprecated
 	public static <E extends Enum<?>> List<Item> getEnumItems(Class<E> clazz) {
 		return getEnumItems(clazz, true);
 	}
 
+	/**
+	 * @deprecated use buildEnumItems instead
+	 */
+	@Deprecated
 	public static <E extends Enum<?>> List<Item> getEnumItems(Class<E> clazz, boolean withNull) {
 		return getEnumItems(clazz, withNull, null);
 	}
 
+	/**
+	 * @deprecated use buildEnumItems instead
+	 */
+	@Deprecated
 	public static <E extends Enum<?>> List<Item> getEnumItems(Class<E> clazz, boolean withNull, FieldVisibilityCheckers checkers) {
 		E[] enumConstants = clazz.getEnumConstants();
 		if (!clazz.isEnum()) {
 			throw new IllegalArgumentException(clazz.toString() + " is not an enum");
 		}
 		List<Item> list = new ArrayList<>();
+
+		if (withNull) {
+			list.add(new Item<E>("", null));
+		}
+
+		for (E enumConstant : enumConstants) {
+			boolean visible = true;
+			if (checkers != null) {
+				visible = checkers.isVisible(clazz, enumConstant.name());
+			}
+			if (visible) {
+				list.add(new Item<>(enumConstant.toString(), enumConstant));
+			}
+		}
+		return list;
+	}
+
+	public static <E extends Enum<?>> List<Item<E>> buildEnumItems(Class<E> clazz, boolean withNull, FieldVisibilityCheckers checkers) {
+		E[] enumConstants = clazz.getEnumConstants();
+		if (!clazz.isEnum()) {
+			throw new IllegalArgumentException(clazz.toString() + " is not an enum");
+		}
+		List<Item<E>> list = new ArrayList<>();
 
 		if (withNull) {
 			list.add(new Item<E>("", null));
@@ -79,22 +115,12 @@ public class DataUtils {
 		return listIn.isEmpty() || (listIn.size() == 1 && (listIn.get(0) == null || listIn.get(0).getValue() == null));
 	}
 
-
 	public static <E> List<Item> toItems(List<E> listIn) {
 		return toItems(listIn, true);
 	}
 
 	public static <E> Item toItem(E item) {
-		return new Item<E>(item.toString(), item);
-	}
-
-	public static List<Item> getMonthItems() {
-		List<Item> listOut = new ArrayList<>();
-		listOut.add(new Item<Integer>("", null));
-		for (Month month : Month.values()) {
-			listOut.add(new Item<Integer>(I18nProperties.getEnumCaption(month), month.ordinal()));
-		}
-		return listOut;
+		return new Item<>(item instanceof AbstractDomainObject ? ((AbstractDomainObject) item).buildCaption() : item.toString(), item);
 	}
 
 	public static List<Item> getMonthItems(boolean withNull) {
@@ -115,7 +141,12 @@ public class DataUtils {
 		}
 		if (listIn != null) {
 			for (E listInEntry : listIn) {
-				listOut.add(new Item<E>(String.valueOf(listInEntry), listInEntry));
+				listOut.add(
+					new Item<E>(
+						listInEntry instanceof AbstractDomainObject
+							? ((AbstractDomainObject) listInEntry).buildCaption()
+							: String.valueOf(listInEntry),
+						listInEntry));
 			}
 		}
 

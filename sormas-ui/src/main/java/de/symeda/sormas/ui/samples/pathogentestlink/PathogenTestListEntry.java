@@ -18,6 +18,7 @@
 package de.symeda.sormas.ui.samples.pathogentestlink;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Nullable;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.ui.ContentMode;
@@ -40,7 +41,7 @@ public class PathogenTestListEntry extends SideComponentField {
 
 	private final PathogenTestDto pathogenTest;
 
-	public PathogenTestListEntry(PathogenTestDto pathogenTest) {
+	public PathogenTestListEntry(PathogenTestDto pathogenTest, boolean showTestResultText) {
 
 		this.pathogenTest = pathogenTest;
 
@@ -53,7 +54,7 @@ public class PathogenTestListEntry extends SideComponentField {
 		CssStyles.style(labelTopLeft, CssStyles.LABEL_BOLD, CssStyles.LABEL_UPPERCASE);
 		topLabelLayout.addComponent(labelTopLeft);
 
-		if (pathogenTest.getTestResultVerified()) {
+		if (Boolean.TRUE.equals(pathogenTest.getTestResultVerified())) {
 			Label labelTopRight = new Label(VaadinIcons.CHECK_CIRCLE.getHtml(), ContentMode.HTML);
 			labelTopRight.setSizeUndefined();
 			labelTopRight.addStyleName(CssStyles.LABEL_LARGE);
@@ -62,7 +63,7 @@ public class PathogenTestListEntry extends SideComponentField {
 			topLabelLayout.setComponentAlignment(labelTopRight, Alignment.TOP_RIGHT);
 		}
 
-		if (!DataHelper.isNullOrEmpty(pathogenTest.getTestResultText())) {
+		if (showTestResultText && !DataHelper.isNullOrEmpty(pathogenTest.getTestResultText())) {
 			Label resultTextLabel = new Label(StringUtils.abbreviate(pathogenTest.getTestResultText(), 125));
 			resultTextLabel.setDescription(pathogenTest.getTestResultText());
 			resultTextLabel.setWidthFull();
@@ -75,8 +76,7 @@ public class PathogenTestListEntry extends SideComponentField {
 		middleLabelLayout.setWidth(100, Unit.PERCENTAGE);
 		addComponentToField(middleLabelLayout);
 
-		Label labelMiddleLeft =
-			new Label(DataHelper.toStringNullable(DiseaseHelper.toString(pathogenTest.getTestedDisease(), pathogenTest.getTestedDiseaseDetails())));
+		Label labelMiddleLeft = new Label(getDiseaseOrPathogenCaption(pathogenTest));
 		middleLabelLayout.addComponent(labelMiddleLeft);
 
 		Label labelMiddleRight = new Label(DateFormatHelper.formatLocalDateTime(pathogenTest.getTestDateTime()));
@@ -113,6 +113,19 @@ public class PathogenTestListEntry extends SideComponentField {
 			CssStyles.style(labelResult, CssStyles.LABEL_WARNING);
 		}
 		addComponentToField(labelResult);
+	}
+
+	@Nullable
+	private static String getDiseaseOrPathogenCaption(PathogenTestDto pathogenTest) {
+		final String diseaseOrPathogen;
+		if (pathogenTest.getTestedDisease() != null) {
+			diseaseOrPathogen = DiseaseHelper.toString(pathogenTest.getTestedDisease(), pathogenTest.getTestedDiseaseDetails());
+		} else if (pathogenTest.getTestedPathogen() != null) {
+			diseaseOrPathogen = pathogenTest.getTestedPathogen().getCaption();
+		} else {
+			diseaseOrPathogen = null;
+		}
+		return diseaseOrPathogen;
 	}
 
 	public PathogenTestDto getPathogenTest() {

@@ -3,12 +3,12 @@
 	<parent>
 		<groupId>de.symeda.sormas</groupId>
 		<artifactId>sormas-base</artifactId>
-		<version>1.77.0-SNAPSHOT</version>
+		<version>1.90.0-SNAPSHOT</version>
 		<relativePath>../sormas-base</relativePath>
 	</parent>
 
 	<properties>
-		<sormasRest.apiRoot>/sormas-rest</sormasRest.apiRoot>
+		<warName>sormas-rest</warName>
 	</properties>
 
 	<artifactId>sormas-rest</artifactId>
@@ -17,63 +17,21 @@
 
 	<dependencies>
 
+		<!-- *** Payara modules *** -->
+
 		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-web-api</artifactId>
 		</dependency>
-
-		<dependency>
-			<groupId>com.opencsv</groupId>
-			<artifactId>opencsv</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>sormas-api</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.glassfish.jersey.containers</groupId>
-			<artifactId>jersey-container-servlet</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish.jersey.media</groupId>
-			<artifactId>jersey-media-json-jackson</artifactId>
-		</dependency>
-
 	  	<dependency>
 			<groupId>javax.security.enterprise</groupId>
 			<artifactId>javax.security.enterprise-api</artifactId>
 		</dependency>
 
 		<dependency>
-			<groupId>io.swagger.core.v3</groupId>
-			<artifactId>swagger-jaxrs2</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>io.swagger.core.v3</groupId>
-			<artifactId>swagger-jaxrs2-servlet-initializer-v2</artifactId>
-		</dependency>
-
-		<!-- Keycloak -->
-		<dependency>
-			<groupId>org.keycloak</groupId>
-			<artifactId>keycloak-servlet-filter-adapter</artifactId>
-		</dependency>
-
-		<!-- OpenID -->
-		<dependency>
 			<groupId>fish.payara.api</groupId>
 			<artifactId>payara-api</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>fish.payara.security.connectors</groupId>
 			<artifactId>security-connector-oidc-client</artifactId>
@@ -90,12 +48,70 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>31.0.1-jre</version>
-			<scope>test</scope>
+			<groupId>org.glassfish.jersey.containers.glassfish</groupId>
+			<artifactId>jersey-gf-ejb</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-json-jackson</artifactId>
 		</dependency>
 
+		<!-- *** Payara modules END *** -->
+
+		<!-- *** Domain libs *** -->
+
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-jaxrs2</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-jaxrs2-servlet-initializer-v2</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.keycloak</groupId>
+			<artifactId>keycloak-servlet-filter-adapter</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+
+		<!-- *** Domain libs END *** -->
+
+		<!-- *** Test dependencies *** -->
+
+		<!-- *** Test dependencies END *** -->
+
+		<!-- *** Compile dependencies *** -->
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>sormas-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<!-- *** Compile dependencies END *** -->
 
 	</dependencies>
 
@@ -103,21 +119,12 @@
 		<finalName>${project.artifactId}</finalName>
 
 		<plugins>
-			<!-- Provide WebApp context path via value of `sormasRest.apiRoot` property -->
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
+					<warName>${warName}</warName>
 					<filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
 					<webResources>
-						<resource>
-							<directory>src/main/webapp/META-INF</directory>
-							<includes>
-								<include>context.xml</include>
-							</includes>
-							<targetPath>/META-INF</targetPath>
-							<filtering>true</filtering>
-						</resource>
 						<resource>
 							<directory>src/main/webapp</directory>
 							<targetPath>/</targetPath>
@@ -126,87 +133,50 @@
 					</webResources>
 				</configuration>
 			</plugin>
-
-
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>properties-maven-plugin</artifactId>
-				<version>1.0.0</version>
+				<artifactId>templating-maven-plugin</artifactId>
 				<executions>
 					<execution>
-						<phase>initialize</phase>
+						<id>filter-src</id>
 						<goals>
-							<goal>read-project-properties</goal>
+							<goal>filter-sources</goal>
 						</goals>
 						<configuration>
-							<files>
-								<file>src/main/resources/workflow-documentation.properties</file>
-							</files>
+							<sourceDirectory>${basedir}/build/templates/resources</sourceDirectory>
+							<outputDirectory>${basedir}/src/main/resources</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 
-			<!-- Swagger Generation -->
+			<!-- Generate OpenAPI specification -->
 			<plugin>
-				<groupId>io.openapitools.swagger</groupId>
+				<groupId>io.swagger.core.v3</groupId>
 				<artifactId>swagger-maven-plugin</artifactId>
+				<configuration>
+					<outputPath>${basedir}/target/</outputPath>
+					<outputFormat>JSONANDYAML</outputFormat>
+					<prettyPrint>true</prettyPrint>
+					<objectMapperProcessorClass>de.symeda.sormas.rest.swagger.SwaggerConfig</objectMapperProcessorClass>
+					<sortOutput>true</sortOutput>
+				</configuration>
 				<executions>
 					<execution>
-						<id>generate-swagger</id>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>generate-swagger-for-journal</id>
-						<phase>generate-test-resources</phase>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-						<configuration>
-							<outputFilename>external_visits_API</outputFilename>
-							<swaggerConfig>
-								<info>
-									<title>SORMAS external visits journal API</title>
-									<description>
-										${externalVisitsDescription}
-									</description>
-									<version>1.41.1</version>
-								</info>
-							</swaggerConfig>
-							<resourcePackages>
-								<resourcePackage>de.symeda.sormas.rest.externaljournal</resourcePackage>
-							</resourcePackages>
-						</configuration>
+					<id>rest api</id>
+					<goals>
+						<goal>resolve</goal>
+					</goals>
+					<configuration>
+						<contextId>rest api</contextId>
+						<resourcePackages>
+							<resourcePackage>de.symeda.sormas.rest.resources</resourcePackage>
+						</resourcePackages>
+					<outputFileName>swagger</outputFileName>
+					<configurationFilePath>${basedir}/src/main/resources/openApiConfig.yml</configurationFilePath>
+					</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<!-- Swagger Generation Config -->
-					<resourcePackages>
-						<resourcePackage>de.symeda.sormas.rest</resourcePackage>
-						<resourcePackage>de.symeda.sormas.rest.security</resourcePackage>
-						<resourcePackage>de.symeda.sormas.rest.swagger</resourcePackage>
-					</resourcePackages>
-					<outputDirectory>${basedir}/target/</outputDirectory>
-					<outputFilename>swagger</outputFilename>
-					<outputFormats>JSON,YAML</outputFormats>
-					<prettyPrint>true</prettyPrint>
-
-					<!-- Swagger API documentation metadata -->
-					<swaggerConfig>
-						<info>
-							<title>SORMAS REST API</title>
-							<version>${project.version}</version>
-						</info>
-						<servers>
-							<server>
-								<url>${sormasRest.apiRoot}</url>
-							</server>
-						</servers>
-					</swaggerConfig>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

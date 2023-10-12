@@ -51,7 +51,7 @@ public interface Descriptions {
 	String descDashboardConvertedToCase = "descDashboardConvertedToCase";
 	String descDashboardFatalityRateInfo = "descDashboardFatalityRateInfo";
 	String descDashboardFollowUpInfo = "descDashboardFollowUpInfo";
-	String descDashboardNewTestResults = "descDashboardNewTestResults";
+	String descDashboardNewFinalLaboratoryResults = "descDashboardNewFinalLaboratoryResults";
 	String descDetailedExportButton = "descDetailedExportButton";
 	String descDistrictFilter = "descDistrictFilter";
 	String descExportButton = "descExportButton";
@@ -133,7 +133,13 @@ public interface Descriptions {
 	String Person_sex = "Person.sex";
 	String Sample_associatedLabMessages = "Sample.associatedLabMessages";
 	String Sample_sampleDateTime = "Sample.sampleDateTime";
+	String sampleDashboardCountsByShipmentStatus = "sampleDashboardCountsByShipmentStatus";
+	String sampleDashboardCountsBySpecimenCondition = "sampleDashboardCountsBySpecimenCondition";
+	String sampleDashboardDiseaseFilter = "sampleDashboardDiseaseFilter";
+	String sampleDashboardDistrictFilter = "sampleDashboardDistrictFilter";
+	String sampleDashboardRegionFilter = "sampleDashboardRegionFilter";
 	String SormasToSormasOptions_comment = "SormasToSormasOptions.comment";
+	String SurveillanceReport_associatedMessage = "SurveillanceReport.associatedMessage";
 	String Symptoms_alteredConsciousness = "Symptoms.alteredConsciousness";
 	String Symptoms_bloodInStool = "Symptoms.bloodInStool";
 	String Symptoms_confusedDisoriented = "Symptoms.confusedDisoriented";

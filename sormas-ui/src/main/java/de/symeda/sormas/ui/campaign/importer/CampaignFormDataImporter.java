@@ -145,6 +145,12 @@ public class CampaignFormDataImporter extends DataImporter {
 			return ImportLineResult.ERROR;
 		}
 
+		ImportLineResultDto<CampaignFormDataDto> constraintErrors = validateConstraints(campaignFormData);
+		if (constraintErrors.isError()) {
+			writeImportError(values, constraintErrors.getMessage());
+			return ImportLineResult.ERROR;
+		}
+
 		return ImportLineResult.SUCCESS;
 	}
 
@@ -264,11 +270,6 @@ public class CampaignFormDataImporter extends DataImporter {
 				}
 			}
 		}
-
-		ImportLineResultDto<CampaignFormDataDto> constraintErrors = validateConstraints(campaignFormData);
-		if (constraintErrors.isError()) {
-			throw new ImportErrorException(constraintErrors.getMessage());
-		}
 	}
 
 	@Override
@@ -328,8 +329,8 @@ public class CampaignFormDataImporter extends DataImporter {
 				existingData,
 				String.format(
 					I18nProperties.getString(Strings.infoSkipOrOverrideDuplicateCampaignFormDataImport),
-					newData.getCampaign().toString(),
-					newData.getCampaignFormMeta().toString()),
+					newData.getCampaign().buildCaption(),
+					newData.getCampaignFormMeta().buildCaption()),
 				cancelCallback,
 				skipCallback,
 				overwriteCallback);

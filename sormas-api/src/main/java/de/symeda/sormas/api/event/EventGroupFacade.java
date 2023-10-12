@@ -18,12 +18,14 @@
 package de.symeda.sormas.api.event;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Remote;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.common.progress.ProcessedEntity;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.utils.SortProperty;
 
@@ -58,7 +60,7 @@ public interface EventGroupFacade {
 
 	void linkEventsToGroup(List<EventReferenceDto> eventReferences, EventGroupReferenceDto eventGroupReference);
 
-	void linkEventsToGroups(List<EventReferenceDto> eventReferences, List<EventGroupReferenceDto> eventGroupReferences);
+	List<ProcessedEntity> linkEventsToGroups(List<String> eventUuids, List<String> eventGroupReferences, List<String> alreadyLinkedEventUuidsToGroup);
 
 	void unlinkEventGroup(EventReferenceDto eventReference, EventGroupReferenceDto eventGroupReference);
 
@@ -72,5 +74,9 @@ public interface EventGroupFacade {
 
 	void notifyEventAddedToEventGroup(EventGroupReferenceDto eventGroupReference, List<EventReferenceDto> eventReferences);
 
+	void notifyEventAddedToEventGroup(String eventGroupUuid, Set<String> eventUuids);
+
 	void notifyEventRemovedFromEventGroup(EventGroupReferenceDto eventGroupReference, List<EventReferenceDto> eventReferences);
+
+	List<String> getAlreadyLinkedEventUuidsToGroup(List<String> eventUuids, List<String> eventGroupUuids);
 }

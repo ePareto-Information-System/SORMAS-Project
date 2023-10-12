@@ -40,6 +40,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 import de.symeda.sormas.api.ReferenceDto;
 import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.district.DistrictCriteria;
 import de.symeda.sormas.api.infrastructure.district.DistrictDto;
@@ -62,7 +63,6 @@ import de.symeda.sormas.backend.infrastructure.pointofentry.PointOfEntry;
 import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.infrastructure.region.RegionFacadeEjb;
 import de.symeda.sormas.backend.infrastructure.region.RegionService;
-import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.QueryHelper;
 import de.symeda.sormas.backend.util.RightsAllowed;
@@ -84,8 +84,15 @@ public class DistrictFacadeEjb
 	}
 
 	@Inject
-	protected DistrictFacadeEjb(DistrictService service, FeatureConfigurationFacadeEjbLocal featureConfiguration, UserService userService) {
-		super(District.class, DistrictDto.class, service, featureConfiguration, userService, Validations.importDistrictAlreadyExists);
+	protected DistrictFacadeEjb(DistrictService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
+		super(
+			District.class,
+			DistrictDto.class,
+			service,
+			featureConfiguration,
+			Validations.importDistrictAlreadyExists,
+			Strings.messageDistrictArchivingNotPossible,
+			Strings.messageDistrictDearchivingNotPossible);
 	}
 
 	@Override
@@ -308,9 +315,9 @@ public class DistrictFacadeEjb
 	}
 
 	@Override
-	protected District fillOrBuildEntity(@NotNull DistrictDto source, District target, boolean checkChangeDate) {
+	protected District fillOrBuildEntity(@NotNull DistrictDto source, District target, boolean checkChangeDate, boolean allowUuidOverwrite) {
 
-		target = DtoHelper.fillOrBuildEntity(source, target, District::new, checkChangeDate);
+		target = DtoHelper.fillOrBuildEntity(source, target, District::new, checkChangeDate, allowUuidOverwrite);
 
 		target.setName(source.getName());
 		target.setEpidCode(source.getEpidCode());
@@ -342,8 +349,8 @@ public class DistrictFacadeEjb
 		}
 
 		@Inject
-		protected DistrictFacadeEjbLocal(DistrictService service, FeatureConfigurationFacadeEjbLocal featureConfiguration, UserService userService) {
-			super(service, featureConfiguration, userService);
+		protected DistrictFacadeEjbLocal(DistrictService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
+			super(service, featureConfiguration);
 		}
 	}
 }

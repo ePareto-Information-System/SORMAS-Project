@@ -1,5 +1,5 @@
 ---
-name: Epic
+name: 6 - Epic
 about: Document a epic to be done by the development team. It does not change the software directly, but will lead to other tickets.
 title: ''
 labels: epic
@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 <!--
-Please read the Contributing guidelines (https://github.com/hzi-braunschweig/SORMAS-Project/blob/development/docs/CONTRIBUTING.md) before submitting an issue. You don't have to remove this comment or any other comment from this issue as they will automatically be hidden.
+Please read the Contributing guidelines (https://github.com/sormas-foundation/SORMAS-Project/blob/development/docs/CONTRIBUTING.md) before submitting an issue. You don't have to remove this comment or any other comment from this issue as they will automatically be hidden.
 -->
 ### Situation Description & Motivation
 <!-- Why -->

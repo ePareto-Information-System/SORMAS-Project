@@ -124,9 +124,11 @@ public class ConfigFacadeEjb implements ConfigFacade {
 	public static final String INTERFACE_PATIENT_DIARY_ACCEPT_PHONE_CONTACT = "interface.patientdiary.acceptPhoneContact";
 
 	public static final String DOCGENERATION_NULL_REPLACEMENT = "docgeneration.nullReplacement";
-	public static final String INTERFACE_DEMIS_JNDINAME = "interface.demis.jndiName";
+	public static final String INTERFACE_EXTERNAL_MESSAGE_ADAPTER_JNDINAME = "interface.externalMessageAdapter.jndiName";
 
 	public static final String ALLOWED_FILE_EXTENSIONS = "allowed.file.extensions";
+	public static final String DEFAULT_ALLOWED_FILETYPES =
+		".pdf,.txt,.doc,.docx,.odt,.xls,.xlsx,.ods,.ppt,.pptx,.odp,.jpg,.jpeg,.png,.gif,.msg,.html";
 
 	private static final String DAYS_AFTER_SYSTEM_EVENT_GETS_DELETED = "daysAfterSystemEventGetsDeleted";
 
@@ -158,7 +160,7 @@ public class ConfigFacadeEjb implements ConfigFacade {
 
 	private static final String SORMAS2SORMAS_ETCD_KEY_PREFIX = "sormas2sormas.etcd.keyPrefix";
 
-	private static final String SORMAS2SORMAS_DISTRICT_EXTERNAL_ID = "sormas2sormas.districtExternalId";
+	public static final String SORMAS2SORMAS_DISTRICT_EXTERNAL_ID = "sormas2sormas.districtExternalId";
 
 	private static final String EXTERNAL_SURVEILLANCE_TOOL_GATEWAY_URL = "survnet.url";
 	private static final String EXTERNAL_SURVEILLANCE_TOOL_VERSION_ENDPOINT = "survnet.versionEndpoint";
@@ -759,13 +761,13 @@ public class ConfigFacadeEjb implements ConfigFacade {
 	}
 
 	@Override
-	public String getDemisJndiName() {
-		return getProperty(INTERFACE_DEMIS_JNDINAME, null);
+	public String getExternalMessageAdapterJndiName() {
+		return getProperty(INTERFACE_EXTERNAL_MESSAGE_ADAPTER_JNDINAME, null);
 	}
 
 	@Override
 	public String[] getAllowedFileExtensions() {
-		return getProperty(ALLOWED_FILE_EXTENSIONS, "").split(",");
+		return getProperty(ALLOWED_FILE_EXTENSIONS, DEFAULT_ALLOWED_FILETYPES).split(",");
 	}
 
 	@Override

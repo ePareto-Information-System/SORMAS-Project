@@ -80,6 +80,7 @@ import de.symeda.sormas.ui.map.MarkerIcon;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.ComboBoxHelper;
+import de.symeda.sormas.ui.utils.ComboBoxWithPlaceholder;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.FieldHelper;
 import de.symeda.sormas.ui.utils.InfrastructureFieldsHelper;
@@ -117,13 +118,14 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 	private MapPopupView leafletMapPopup;
 	private ComboBox addressType;
-	private ComboBox facilityTypeGroup;
+	private ComboBoxWithPlaceholder facilityTypeGroup;
 	private ComboBox facilityType;
 	private ComboBox facility;
 	private TextField facilityDetails;
 	private ComboBox continent;
 	private ComboBox subcontinent;
 	private ComboBox country;
+	private ComboBox region;
 	private TextField contactPersonFirstName;
 	private TextField contactPersonLastName;
 	private TextField contactPersonPhone;
@@ -133,6 +135,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	private boolean skipCountryValueChange;
 	private boolean skipFacilityTypeUpdate;
 	private boolean disableFacilityAddressCheck;
+	private boolean hasEventParticipantsWithoutJurisdiction;
 
 	public LocationEditForm(FieldVisibilityCheckers fieldVisibilityCheckers, UiFieldAccessCheckers fieldAccessCheckers) {
 		super(LocationDto.class, LocationDto.I18N_PREFIX, true, fieldVisibilityCheckers, fieldAccessCheckers);
@@ -199,7 +202,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		facilityTypeGroup.setWidth(100, Unit.PERCENTAGE);
 		facilityTypeGroup.addItems(FacilityTypeGroup.values());
 		getContent().addComponent(facilityTypeGroup, FACILITY_TYPE_GROUP_LOC);
-		facilityType = addField(LocationDto.FACILITY_TYPE);
+		facilityType = addField(LocationDto.FACILITY_TYPE, ComboBoxWithPlaceholder.class);
 		facility = addInfrastructureField(LocationDto.FACILITY);
 		facility.setImmediate(true);
 		facilityDetails = addField(LocationDto.FACILITY_DETAILS, TextField.class);
@@ -250,7 +253,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		continent = addInfrastructureField(LocationDto.CONTINENT);
 		subcontinent = addInfrastructureField(LocationDto.SUB_CONTINENT);
 		country = addInfrastructureField(LocationDto.COUNTRY);
-		ComboBox region = addInfrastructureField(LocationDto.REGION);
+		region = addInfrastructureField(LocationDto.REGION);
 		ComboBox district = addInfrastructureField(LocationDto.DISTRICT);
 		ComboBox community = addInfrastructureField(LocationDto.COMMUNITY);
 
@@ -265,8 +268,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		}
 		if (!isEditableAllowed(LocationDto.FACILITY)) {
 			setEnabled(false, LocationDto.FACILITY_TYPE, LocationDto.FACILITY_DETAILS);
-			facilityTypeGroup.setEnabled(false);
-
+			FieldHelper.setComboInaccessible(facilityTypeGroup);
 		}
 
 		ValueChangeListener continentValueListener = e -> {
@@ -594,7 +596,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	private void updateRegionCombo(ComboBox region, ComboBox country) {
 		InfrastructureFieldsHelper.updateRegionBasedOnCountry(country, region, (isServerCountry) -> {
 			if (districtRequiredOnDefaultCountry) {
-				setFieldsRequirement(isServerCountry, LocationDto.REGION, LocationDto.DISTRICT);
+				setFieldsRequirement(hasEventParticipantsWithoutJurisdiction || isServerCountry, LocationDto.REGION, LocationDto.DISTRICT);
 			}
 		});
 	}
@@ -709,8 +711,14 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		addressType.setRequired(true);
 	}
 
+	public void setDistrictRequired() {
+		setFieldsRequirement(true, LocationDto.REGION, LocationDto.DISTRICT);
+	}
 	public void setDistrictRequiredOnDefaultCountry(boolean required) {
 		this.districtRequiredOnDefaultCountry = required;
+		if (required) {
+			updateRegionCombo(region, country);
+		}
 	}
 
 	public void setCountryDisabledWithHint(String hint) {
@@ -720,6 +728,10 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		infoLabel.setDescription(hint, ContentMode.HTML);
 		CssStyles.style(infoLabel, CssStyles.LABEL_XLARGE, CssStyles.LABEL_SECONDARY, CssStyles.VSPACE_TOP_3);
 		getContent().addComponent(infoLabel, COUNTRY_HINT_LOC);
+	}
+
+	public void setGpsCoordinatesRequired() {
+		setFieldsRequirement(true, LocationDto.LATITUDE, LocationDto.LONGITUDE);
 	}
 
 	@Override
@@ -801,6 +813,10 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 	public void setDisableFacilityAddressCheck(boolean disableFacilityAddressCheck) {
 		this.disableFacilityAddressCheck = disableFacilityAddressCheck;
+	}
+
+	public void setHasEventParticipantsWithoutJurisdiction(boolean hasEventParticipantsWithoutJurisdiction) {
+		this.hasEventParticipantsWithoutJurisdiction = hasEventParticipantsWithoutJurisdiction;
 	}
 
 	private static class MapPopupView extends PopupView {

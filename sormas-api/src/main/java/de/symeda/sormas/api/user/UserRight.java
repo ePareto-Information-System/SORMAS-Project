@@ -110,6 +110,7 @@ public enum UserRight {
 	TASK_DELETE(UserRightGroup.TASK, UserRight._TASK_VIEW),
 	TASK_EXPORT(UserRightGroup.TASK, UserRight._TASK_VIEW),
 	TASK_ASSIGN(UserRightGroup.TASK, UserRight._TASK_EDIT),
+	TASK_ARCHIVE(UserRightGroup.TASK, UserRight._TASK_VIEW),
 
 	ACTION_CREATE(UserRightGroup.EVENT, UserRight._EVENT_VIEW),
 	ACTION_DELETE(UserRightGroup.EVENT, UserRight._EVENT_VIEW, UserRight._DOCUMENT_DELETE),
@@ -133,7 +134,7 @@ public enum UserRight {
 	EVENTPARTICIPANT_IMPORT(UserRightGroup.EVENT, UserRight._EVENTPARTICIPANT_VIEW),
 	PERFORM_BULK_OPERATIONS_EVENTPARTICIPANT(UserRightGroup.EVENT, UserRight._EVENTPARTICIPANT_EDIT),
 
-	EVENTGROUP_CREATE(UserRightGroup.EVENT, UserRight._EVENT_VIEW),
+	EVENTGROUP_CREATE(UserRightGroup.EVENT, UserRight._EVENT_VIEW, UserRight._EVENTGROUP_LINK),
 	EVENTGROUP_EDIT(UserRightGroup.EVENT, UserRight._EVENT_VIEW),
 	EVENTGROUP_ARCHIVE(UserRightGroup.EVENT, UserRight._EVENT_VIEW),
 	EVENTGROUP_DELETE(UserRightGroup.EVENT, UserRight._EVENT_VIEW),
@@ -162,6 +163,7 @@ public enum UserRight {
 	DASHBOARD_CONTACT_VIEW(UserRightGroup.DASHBOARD, UserRight._CONTACT_VIEW),
 	DASHBOARD_CONTACT_VIEW_TRANSMISSION_CHAINS(UserRightGroup.DASHBOARD, UserRight._DASHBOARD_CONTACT_VIEW),
 	DASHBOARD_CAMPAIGNS_VIEW(UserRightGroup.DASHBOARD, UserRight._CAMPAIGN_VIEW),
+	DASHBOARD_SAMPLES_VIEW(UserRightGroup.DASHBOARD, UserRight._SAMPLE_VIEW),
 
 	CASE_CLINICIAN_VIEW(UserRightGroup.CASE_MANAGEMENT, UserRight._CASE_VIEW),
 
@@ -211,6 +213,23 @@ public enum UserRight {
 	TRAVEL_ENTRY_ARCHIVE(UserRightGroup.TRAVEL_ENTRY, UserRight._TRAVEL_ENTRY_VIEW),
 	TRAVEL_ENTRY_DELETE(UserRightGroup.TRAVEL_ENTRY, UserRight._TRAVEL_ENTRY_VIEW, UserRight._TASK_DELETE, UserRight._DOCUMENT_DELETE, UserRight._PERSON_DELETE),
 
+	ENVIRONMENT_VIEW(UserRightGroup.ENVIRONMENT),
+	ENVIRONMENT_CREATE(UserRightGroup.ENVIRONMENT, UserRight._ENVIRONMENT_VIEW),
+	ENVIRONMENT_EDIT(UserRightGroup.ENVIRONMENT, UserRight._ENVIRONMENT_VIEW),
+	ENVIRONMENT_ARCHIVE(UserRightGroup.ENVIRONMENT, UserRight._ENVIRONMENT_VIEW),
+	ENVIRONMENT_DELETE(UserRightGroup.ENVIRONMENT, UserRight._ENVIRONMENT_VIEW),
+	ENVIRONMENT_IMPORT(UserRightGroup.ENVIRONMENT, UserRight._ENVIRONMENT_CREATE),
+	ENVIRONMENT_EXPORT(UserRightGroup.ENVIRONMENT, UserRight._ENVIRONMENT_VIEW),
+
+	ENVIRONMENT_SAMPLE_VIEW(UserRightGroup.ENVIRONMENT),
+	ENVIRONMENT_SAMPLE_CREATE(UserRightGroup.ENVIRONMENT, UserRight._ENVIRONMENT_SAMPLE_VIEW),
+	ENVIRONMENT_SAMPLE_EDIT(UserRightGroup.ENVIRONMENT, UserRight._ENVIRONMENT_SAMPLE_VIEW),
+	ENVIRONMENT_SAMPLE_EDIT_DISPATCH(UserRightGroup.ENVIRONMENT, UserRight._ENVIRONMENT_SAMPLE_EDIT),
+	ENVIRONMENT_SAMPLE_EDIT_RECEIVAL(UserRightGroup.ENVIRONMENT, UserRight._ENVIRONMENT_SAMPLE_EDIT),
+	ENVIRONMENT_SAMPLE_DELETE(UserRightGroup.ENVIRONMENT, UserRight._ENVIRONMENT_SAMPLE_VIEW),
+	ENVIRONMENT_SAMPLE_IMPORT(UserRightGroup.ENVIRONMENT, UserRight._ENVIRONMENT_SAMPLE_CREATE),
+	ENVIRONMENT_SAMPLE_EXPORT(UserRightGroup.ENVIRONMENT, UserRight._ENVIRONMENT_SAMPLE_VIEW),
+	
 	DOCUMENT_VIEW(UserRightGroup.DOCUMENT),
 	DOCUMENT_UPLOAD(UserRightGroup.DOCUMENT, UserRight._DOCUMENT_VIEW),
 	DOCUMENT_DELETE(UserRightGroup.DOCUMENT, UserRight._DOCUMENT_VIEW),
@@ -233,13 +252,14 @@ public enum UserRight {
 	SORMAS_TO_SORMAS_SHARE(UserRightGroup.EXTERNAL),
 	SORMAS_TO_SORMAS_PROCESS(UserRightGroup.EXTERNAL),
 
+	EXTERNAL_SURVEILLANCE_SHARE(UserRightGroup.EXTERNAL),
+	EXTERNAL_SURVEILLANCE_DELETE(UserRightGroup.EXTERNAL),
+
 	EXTERNAL_MESSAGE_VIEW(UserRightGroup.EXTERNAL),
 	EXTERNAL_MESSAGE_PROCESS(UserRightGroup.EXTERNAL, UserRight._EXTERNAL_MESSAGE_VIEW,
-			UserRight._CASE_CREATE, UserRight._CASE_EDIT,
-			UserRight._CONTACT_CREATE, UserRight._CONTACT_EDIT,
-			UserRight._EVENT_CREATE, UserRight._EVENT_EDIT, UserRight._EVENTPARTICIPANT_CREATE, UserRight._EVENTPARTICIPANT_EDIT,
 			UserRight._SAMPLE_CREATE, UserRight._SAMPLE_EDIT, UserRight._PATHOGEN_TEST_CREATE, UserRight._PATHOGEN_TEST_EDIT, UserRight._PATHOGEN_TEST_DELETE,
 			UserRight._IMMUNIZATION_CREATE, UserRight._IMMUNIZATION_EDIT, UserRight._IMMUNIZATION_DELETE),
+	EXTERNAL_MESSAGE_PUSH(UserRightGroup.EXTERNAL),
 	EXTERNAL_MESSAGE_DELETE(UserRightGroup.EXTERNAL, UserRight._EXTERNAL_MESSAGE_VIEW),
 	PERFORM_BULK_OPERATIONS_EXTERNAL_MESSAGES(UserRightGroup.EXTERNAL, UserRight._EXTERNAL_MESSAGE_VIEW),
 
@@ -281,6 +301,7 @@ public enum UserRight {
 	public static final String _PERSON_EDIT = "PERSON_EDIT";
 	public static final String _PERSON_DELETE = "PERSON_DELETE";
 	public static final String _PERSON_CONTACT_DETAILS_DELETE = "PERSON_CONTACT_DETAILS_DELETE";
+	public static final String _PERSON_MERGE = "PERSON_MERGE";
 	public static final String _PERSON_EXPORT = "PERSON_EXPORT";
 	public static final String _SAMPLE_CREATE = "SAMPLE_CREATE";
 	public static final String _SAMPLE_VIEW = "SAMPLE_VIEW";
@@ -317,6 +338,7 @@ public enum UserRight {
 	public static final String _TASK_ASSIGN = "TASK_ASSIGN";
 	public static final String _TASK_DELETE = "TASK_DELETE";
 	public static final String _TASK_EXPORT = "TASK_EXPORT";
+	public static final String _TASK_ARCHIVE = "TASK_ARCHIVE";
 	public static final String _ACTION_CREATE = "ACTION_CREATE";
 	public static final String _ACTION_DELETE = "ACTION_DELETE";
 	public static final String _ACTION_EDIT = "ACTION_EDIT";
@@ -343,6 +365,8 @@ public enum UserRight {
 	public static final String _USER_CREATE = "USER_CREATE";
 	public static final String _USER_EDIT = "USER_EDIT";
 	public static final String _USER_VIEW = "USER_VIEW";
+	public static final String _USER_ROLE_EDIT = "USER_ROLE_EDIT";
+	public static final String _USER_ROLE_DELETE = "USER_ROLE_DELETE";
 	public static final String _USER_ROLE_VIEW = "USER_ROLE_VIEW";
 	public static final String _SEND_MANUAL_EXTERNAL_MESSAGES = "SEND_MANUAL_EXTERNAL_MESSAGES";
 	public static final String _STATISTICS_ACCESS = "STATISTICS_ACCESS";
@@ -364,6 +388,7 @@ public enum UserRight {
 	public static final String _DASHBOARD_CONTACT_VIEW = "DASHBOARD_CONTACT_VIEW";
 	public static final String _DASHBOARD_CONTACT_VIEW_TRANSMISSION_CHAINS = "DASHBOARD_CONTACT_VIEW_TRANSMISSION_CHAINS";
 	public static final String _DASHBOARD_CAMPAIGNS_VIEW = "DASHBOARD_CAMPAIGNS_VIEW";
+	public static final String _DASHBOARD_SAMPLES_VIEW = "DASHBOARD_SAMPLES_VIEW";
 	public static final String _CASE_CLINICIAN_VIEW = "CASE_CLINICIAN_VIEW";
 	public static final String _THERAPY_VIEW = "THERAPY_VIEW";
 	public static final String _PRESCRIPTION_CREATE = "PRESCRIPTION_CREATE";
@@ -402,8 +427,11 @@ public enum UserRight {
 	public static final String _BAG_EXPORT = "BAG_EXPORT";
 	public static final String _SORMAS_TO_SORMAS_SHARE = "SORMAS_TO_SORMAS_SHARE";
 	public static final String _SORMAS_TO_SORMAS_PROCESS = "SORMAS_TO_SORMAS_PROCESS";
+	public static final String _EXTERNAL_SURVEILLANCE_SHARE = "EXTERNAL_SURVEILLANCE_SHARE";
+	public static final String _EXTERNAL_SURVEILLANCE_DELETE = "EXTERNAL_SURVEILLANCE_DELETE";
 	public static final String _EXTERNAL_MESSAGE_VIEW = "EXTERNAL_MESSAGE_VIEW";
 	public static final String _EXTERNAL_MESSAGE_PROCESS = "EXTERNAL_MESSAGE_PROCESS";
+	public static final String _EXTERNAL_MESSAGE_PUSH = "EXTERNAL_MESSAGE_PUSH";
 	public static final String _EXTERNAL_MESSAGE_DELETE = "EXTERNAL_MESSAGE_DELETE";
 	public static final String _TRAVEL_ENTRY_MANAGEMENT_ACCESS = "TRAVEL_ENTRY_MANAGEMENT_ACCESS";
 	public static final String _TRAVEL_ENTRY_VIEW = "TRAVEL_ENTRY_VIEW";
@@ -411,6 +439,22 @@ public enum UserRight {
 	public static final String _TRAVEL_ENTRY_EDIT = "TRAVEL_ENTRY_EDIT";
 	public static final String _TRAVEL_ENTRY_DELETE = "TRAVEL_ENTRY_DELETE";
 	public static final String _TRAVEL_ENTRY_ARCHIVE = "TRAVEL_ENTRY_ARCHIVE";
+
+	public static final String _ENVIRONMENT_VIEW = "ENVIRONMENT_VIEW";
+	public static final String _ENVIRONMENT_CREATE = "ENVIRONMENT_CREATE";
+	public static final String _ENVIRONMENT_EDIT = "ENVIRONMENT_EDIT";
+	public static final String _ENVIRONMENT_ARCHIVE = "ENVIRONMENT_ARCHIVE";
+	public static final String _ENVIRONMENT_DELETE = "ENVIRONMENT_DELETE";
+	public static final String _ENVIRONMENT_IMPORT = "ENVIRONMENT_IMPORT";
+	public static final String _ENVIRONMENT_EXPORT = "ENVIRONMENT_EXPORT";
+
+	public static final String _ENVIRONMENT_SAMPLE_VIEW = "ENVIRONMENT_SAMPLE_VIEW";
+	public static final String _ENVIRONMENT_SAMPLE_EDIT = "ENVIRONMENT_SAMPLE_EDIT";
+	public static final String _ENVIRONMENT_SAMPLE_CREATE = "ENVIRONMENT_SAMPLE_CREATE";
+	public static final String _ENVIRONMENT_SAMPLE_EDIT_DISPATCH = "ENVIRONMENT_SAMPLE_EDIT_DISPATCH";
+	public static final String _ENVIRONMENT_SAMPLE_EDIT_RECEIVAL = "ENVIRONMENT_SAMPLE_EDIT_RECEIVAL";
+	public static final String _ENVIRONMENT_SAMPLE_DELETE = "ENVIRONMENT_SAMPLE_DELETE";
+
 	public static final String _DOCUMENT_VIEW = "DOCUMENT_VIEW";
 	public static final String _DOCUMENT_UPLOAD = "DOCUMENT_UPLOAD";
 	public static final String _DOCUMENT_DELETE = "DOCUMENT_DELETE";
@@ -475,6 +519,14 @@ public enum UserRight {
 		return userRights.stream().map(UserRight::getRequiredUserRights).flatMap(Collection::stream).collect(Collectors.toSet());
 	}
 
+	/**
+	 * Appends the required user rights. The result also includes the passed user rights.
+	 */
+	public static Set<UserRight> getWithRequiredUserRights(UserRight... userRights) {
+		return Stream.concat(Arrays.stream(userRights), Arrays.stream(userRights).map(UserRight::getRequiredUserRights).flatMap(Collection::stream))
+			.collect(Collectors.toSet());
+	}
+
 	public Set<UserRight> getRequiredUserRights() {
 		return userRightDependencies.get(this);
 	}
@@ -483,6 +535,9 @@ public enum UserRight {
 		return Arrays.stream(values()).filter(userRight -> userRight.getUserRightGroup() == userRightGroup).collect(Collectors.toSet());
 	}
 
+	/**
+	 * Get which required user rights are not already in the passed set.
+	 */
 	public static Set<UserRight> requiredRightFromUserRights(UserRight userRight, Set<UserRight> userRights) {
 
 		Set<UserRight> requiredRights = new HashSet<>();

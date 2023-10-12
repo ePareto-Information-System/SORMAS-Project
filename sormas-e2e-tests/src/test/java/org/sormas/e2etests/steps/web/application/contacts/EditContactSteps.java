@@ -19,10 +19,12 @@
 package org.sormas.e2etests.steps.web.application.contacts;
 
 import static org.sormas.e2etests.constants.api.Endpoints.CONTACTS_PATH;
+import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.ACTION_OKAY;
 import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_APPLY_FILTERS_BUTTON;
 import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CONFIRM_POPUP;
 import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.FIRST_CASE_ID_BUTTON;
 import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.UPLOAD_DOCUMENT_TO_ENTITIES_CHECKBOX;
+import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.WARNING_CASE_NOT_SHARED_SHARE_POPUP_DE;
 import static org.sormas.e2etests.pages.application.cases.CreateNewCasePage.ACTION_CONFIRM_POPUP_BUTTON;
 import static org.sormas.e2etests.pages.application.cases.CreateNewCasePage.CASE_DOCUMENT_EMPTY_TEXT;
 import static org.sormas.e2etests.pages.application.cases.CreateNewCasePage.CASE_UPLOADED_TEST_FILE;
@@ -36,6 +38,7 @@ import static org.sormas.e2etests.pages.application.cases.EditCasePage.CASE_SAVE
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.CREATE_DOCUMENT_TEMPLATES;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.CREATE_DOCUMENT_TEMPLATES_DE;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.CREATE_DOCUMENT_TEMPLATES_POPUP_DE;
+import static org.sormas.e2etests.pages.application.cases.EditCasePage.DISCARD_BUTTON_POPUP;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.DISEASE_COMBOBOX;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.EPID_NUMBER_INPUT;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.EXPECTED_FOLLOWUP_LABEL;
@@ -43,11 +46,9 @@ import static org.sormas.e2etests.pages.application.cases.EditCasePage.EXPECTED_
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.FOLLOW_UP_COMMENT_FIELD;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.GENERATED_DOCUMENT_NAME;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.GENERATED_DOCUMENT_NAME_DE;
-import static org.sormas.e2etests.pages.application.cases.EditCasePage.HAND_THE_OWNERSHIP_CHECKBOX;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.NEW_IMMUNIZATION_BUTTON;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.QUARANTINE_ORDER_COMBOBOX;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.SAVE_POPUP_CONTENT;
-import static org.sormas.e2etests.pages.application.cases.EditCasePage.SHARE_SORMAS_2_SORMAS_BUTTON;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.UPLOAD_DOCUMENT_CHECKBOX;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.USER_INFORMATION;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.UUID_INPUT;
@@ -56,6 +57,7 @@ import static org.sormas.e2etests.pages.application.cases.EditCasePage.VACCINATI
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.VACCINATION_CARD_VACCINATION_NAME;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.VACCINATION_STATUS_FOR_THIS_DISEASE_COMBOBOX;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.VACCINATION_STATUS_INPUT;
+import static org.sormas.e2etests.pages.application.cases.EditCasePage.getVaccinationCardVaccinationNameByIndex;
 import static org.sormas.e2etests.pages.application.cases.EditContactsPage.CASE_OR_EVENT_INFORMATION_CONTACT_TEXT_AREA;
 import static org.sormas.e2etests.pages.application.cases.EditContactsPage.COMMIT_BUTTON;
 import static org.sormas.e2etests.pages.application.cases.EditContactsPage.EXTERNAL_TOKEN_CONTACT_INPUT;
@@ -74,7 +76,6 @@ import static org.sormas.e2etests.pages.application.events.EventParticipantsPage
 import static org.sormas.e2etests.pages.application.immunizations.EditImmunizationPage.DELETE_BUTTON;
 import static org.sormas.e2etests.pages.application.tasks.CreateNewTaskPage.TASK_TYPE_COMBOBOX;
 import static org.sormas.e2etests.pages.application.tasks.TaskManagementPage.GENERAL_SEARCH_INPUT;
-import static org.sormas.e2etests.steps.web.application.shares.EditSharesPage.ACCEPT_BUTTON;
 
 import cucumber.api.java8.En;
 import io.restassured.http.Method;
@@ -139,10 +140,15 @@ public class EditContactSteps implements En {
     this.restAssuredClient = restAssuredClient;
 
     When(
-        "I open the last created contact in Contact directory page",
+        "I search and open  last created contact in Contact directory page",
         () -> {
-          searchAfterContactByMultipleOptions(collectedContact.getUuid());
-          openContactFromResultsByUUID(collectedContact.getUuid());
+          String contactUUID = collectedContact.getUuid();
+          webDriverHelpers.waitUntilElementIsVisibleAndClickable(APPLY_FILTERS_BUTTON);
+          webDriverHelpers.fillInWebElement(MULTIPLE_OPTIONS_SEARCH_INPUT, contactUUID);
+          webDriverHelpers.clickOnWebElementBySelector(APPLY_FILTERS_BUTTON);
+          By uuidLocator = By.cssSelector(String.format(CONTACT_RESULTS_UUID_LOCATOR, contactUUID));
+          webDriverHelpers.clickOnWebElementBySelector((uuidLocator));
+          webDriverHelpers.waitUntilIdentifiedElementIsPresent(EditContactPage.UUID_INPUT);
         });
 
     When(
@@ -505,19 +511,10 @@ public class EditContactSteps implements En {
           TimeUnit.SECONDS.sleep(2);
           webDriverHelpers.waitForPageLoadingSpinnerToDisappear(30);
         });
-    When(
-        "I click to hand over the ownership of the contact in Share popup",
-        () -> webDriverHelpers.clickOnWebElementBySelector(HAND_THE_OWNERSHIP_CHECKBOX));
-    When(
-        "I accept first contact in Shares Page",
-        () -> webDriverHelpers.clickOnWebElementBySelector(ACCEPT_BUTTON));
+
     When(
         "I click to accept potential duplicate in Shares Page",
         () -> webDriverHelpers.clickOnWebElementBySelector(ACTION_CONFIRM));
-
-    When(
-        "I click on share contact button",
-        () -> webDriverHelpers.clickOnWebElementBySelector(SHARE_SORMAS_2_SORMAS_BUTTON));
     When(
         "^I click on ([^\"]*) radio button Contact Person tab$",
         (String buttonName) ->
@@ -782,6 +779,10 @@ public class EditContactSteps implements En {
         () ->
             webDriverHelpers.clickWebElementByText(
                 CONTACT_CLASSIFICATION_RADIO_BUTTON, "BEST\u00C4TIGTER KONTAKT"));
+
+    When(
+        "I select CONFIRMED CONTACT radio button on Contact Data tab for DE version",
+        () -> webDriverHelpers.clickOnWebElementBySelector(CONFIRMED_CONTACT_DE_BUTTON));
 
     When(
         "^I click on CONFIRMED CONTACT radio button Contact Data tab$",
@@ -1144,6 +1145,7 @@ public class EditContactSteps implements En {
         });
 
     When("I back to deleted contact by url", () -> webDriverHelpers.accessWebSite(currentUrl));
+    When("I back to contact by url", () -> webDriverHelpers.accessWebSite(currentUrl));
 
     When(
         "I check if External token input on case edit page is disabled",
@@ -1344,6 +1346,91 @@ public class EditContactSteps implements En {
         "I check if created contact is available in API",
         () -> {
           getContactByUUID(contactUUID);
+        });
+
+    When(
+        "I check if popup with {string} title appears",
+        (String title) -> {
+          softly.assertTrue(webDriverHelpers.isElementVisibleWithTimeout(getHeaderText(title), 5));
+          softly.assertAll();
+        });
+
+    When(
+        "I click on okay button",
+        () -> {
+          webDriverHelpers.clickOnWebElementBySelector(ACTION_OKAY);
+        });
+
+    When(
+        "I check if warning information with related to the associated case not being shared appears in share contact popup",
+        () -> {
+          softly.assertTrue(
+              webDriverHelpers.isElementVisibleWithTimeout(
+                  WARNING_CASE_NOT_SHARED_SHARE_POPUP_DE, 2));
+          softly.assertAll();
+        });
+
+    When(
+        "I click on discard button",
+        () -> webDriverHelpers.clickOnWebElementBySelector(DISCARD_BUTTON_POPUP));
+    When(
+        "I check if popup with {string} header appears",
+        (String text) -> {
+          softly.assertTrue(
+              webDriverHelpers.isElementVisibleWithTimeout(CONTACT_CAN_NOT_BE_SHARED_HEADER_DE, 2));
+          softly.assertAll();
+        });
+
+    And(
+        "^I remove tha last contact date on Edit Contact page$",
+        () -> {
+          webDriverHelpers.clearWebElement(LAST_CONTACT_DATE);
+        });
+
+    When(
+        "I check if Follow up until date is ([^\"]*) days after last contact date of recently created contact",
+        (Integer days) -> {
+          TimeUnit.SECONDS.sleep(3);
+          String date = webDriverHelpers.getValueFromWebElement(FOLLOW_UP_UNTIL_DATE);
+          softly.assertEquals(
+              DateTimeFormatter.ofPattern("dd.MM.yyyy")
+                  .format(EditContactSteps.collectedContact.getDateOfLastContact().plusDays(days)),
+              date);
+          softly.assertAll();
+        });
+
+    When(
+        "I check if Follow up until date is ([^\"]*) days after last created API contact report date",
+        (Integer days) -> {
+          TimeUnit.SECONDS.sleep(3);
+          String date = webDriverHelpers.getValueFromWebElement(FOLLOW_UP_UNTIL_DATE);
+          softly.assertEquals(
+              DateTimeFormatter.ofPattern("dd.MM.yyyy")
+                  .format(
+                      apiState
+                          .getCreatedContact()
+                          .getReportDateTime()
+                          .toInstant()
+                          .atZone(ZoneId.systemDefault())
+                          .toLocalDate()
+                          .plusDays(days)),
+              date);
+          softly.assertAll();
+        });
+
+    And(
+        "I check if vaccination name for vaccine number {int} in the vaccination card is {string}",
+        (Integer vaccineNumber, String elementStatus) -> {
+          switch (elementStatus) {
+            case "greyed out":
+              webDriverHelpers.isElementGreyedOut(
+                  getVaccinationCardVaccinationNameByIndex(vaccineNumber));
+              break;
+            case "enabled":
+              webDriverHelpers.isElementEnabled(
+                  getVaccinationCardVaccinationNameByIndex(vaccineNumber));
+              break;
+          }
         });
   }
 
@@ -1846,18 +1933,6 @@ public class EditContactSteps implements En {
   private Contact collectContactPersonUuid() {
     webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(UUID_INPUT, 40);
     return Contact.builder().uuid(webDriverHelpers.getValueFromWebElement(UUID_INPUT)).build();
-  }
-
-  private void searchAfterContactByMultipleOptions(String idPhoneNameEmail) {
-    webDriverHelpers.waitUntilElementIsVisibleAndClickable(APPLY_FILTERS_BUTTON);
-    webDriverHelpers.fillInWebElement(MULTIPLE_OPTIONS_SEARCH_INPUT, idPhoneNameEmail);
-    webDriverHelpers.clickOnWebElementBySelector(APPLY_FILTERS_BUTTON);
-  }
-
-  private void openContactFromResultsByUUID(String uuid) {
-    By uuidLocator = By.cssSelector(String.format(CONTACT_RESULTS_UUID_LOCATOR, uuid));
-    webDriverHelpers.clickOnWebElementBySelector((uuidLocator));
-    webDriverHelpers.waitUntilIdentifiedElementIsPresent(EditContactPage.UUID_INPUT);
   }
 
   @SneakyThrows

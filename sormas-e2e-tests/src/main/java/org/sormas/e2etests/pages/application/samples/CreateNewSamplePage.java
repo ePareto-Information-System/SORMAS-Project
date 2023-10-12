@@ -74,15 +74,17 @@ public class CreateNewSamplePage {
   public static final By TEST_RESULTS_COMMENT_AREA_INPUT = By.cssSelector("[id='testResultText']");
   public static final By SAVE_SAMPLE_BUTTON =
       By.cssSelector("[class='popupContent'] [id='commit']");
+  public static final By SAVE_SAMPLE_WITH_PATHOGEN_TEST_BUTTON =
+      By.xpath("(//div[@class='popupContent']//div[@id='commit'])[2]");
   public static final By SAVE_EDIT_SAMPLE_BUTTON = By.cssSelector("[id='commit']");
   public static final By PATHOGEN_TEST_RESULT_COMBOBOX =
       By.cssSelector("[id='testResult'] [class='v-filterselect-button']");
   public static final By PATHOGEN_TEST_RESULT_INPUT = By.cssSelector("[id='testResult'] input");
+  public static final By VIA_DEMIS_CHECKBOX = By.cssSelector("#viaLims > input");
   public static final By PATHOGEN_LABORATORY_COMBOBOX =
       By.cssSelector("[class='v-panel v-widget'] [location='lab'] [class='v-filterselect-button']");
   public static final By PATHOGEN_LABORATORY_INPUT =
-      By.cssSelector(
-          "[location='lab'] [class='v-filterselect v-widget v-required v-filterselect-required v-has-width'] input");
+      By.cssSelector("[location='lab'] [class='v-filterselect v-widget v-has-width'] input");
   public static final By REQUEST_PATHOGEN_OPTION_BUTTON =
       By.cssSelector("[id='pathogenTestingRequested'] label");
   public static final By ANTIGEN_DETECTION_TEST_OPTION_BUTTON =

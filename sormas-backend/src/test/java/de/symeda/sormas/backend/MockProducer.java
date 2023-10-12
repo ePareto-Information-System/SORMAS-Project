@@ -45,15 +45,17 @@ import javax.transaction.UserTransaction;
 
 import de.symeda.sormas.api.RequestContextHolder;
 import de.symeda.sormas.api.RequestContextTO;
+import de.symeda.sormas.api.customizableenum.CustomizableEnumFacade;
 import de.symeda.sormas.api.utils.InfoProvider;
 import de.symeda.sormas.backend.central.EtcdCentralClient;
 import de.symeda.sormas.backend.central.EtcdCentralClientProducer;
 import de.symeda.sormas.backend.common.ConfigFacadeEjb;
+import de.symeda.sormas.backend.sormastosormas.SormasToSormasDiscoveryServiceProducer;
+import de.symeda.sormas.backend.sormastosormas.SormasToSormasFacadeEjb;
 import de.symeda.sormas.backend.sormastosormas.access.SormasToSormasDiscoveryService;
 import de.symeda.sormas.backend.sormastosormas.crypto.SormasToSormasEncryptionFacadeEjb.SormasToSormasEncryptionFacadeEjbLocal;
 import de.symeda.sormas.backend.sormastosormas.rest.SormasToSormasRestClient;
 import de.symeda.sormas.backend.sormastosormas.rest.SormasToSormasRestClientProducer;
-import de.symeda.sormas.backend.user.CurrentUserService;
 
 /**
  * Creates mocks for resources needed in bean test / external services.
@@ -62,19 +64,9 @@ import de.symeda.sormas.backend.user.CurrentUserService;
  */
 public class MockProducer implements InitialContextFactory {
 
-	@Override
-	public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
-
-		// this is used to provide the current user to the ADO Listener taking care of updating the last change user
-		CurrentUserService currentUserService = mock(CurrentUserService.class);
-		InitialContext mockCtx = mock(InitialContext.class);
-		when(mockCtx.lookup("java:global/sormas-ear/sormas-backend/CurrentUserService")).thenReturn(currentUserService);
-
-		return mockCtx;
-	}
-
 	private static final String TMP_PATH = "target/tmp";
 
+	private static InitialContext initialContext = mock(InitialContext.class);
 	private static SessionContext sessionContext = mock(SessionContext.class, withSettings().lenient());
 	private static Principal principal = mock(Principal.class, withSettings().lenient());
 	private static Topic topic = mock(Topic.class);
@@ -85,12 +77,16 @@ public class MockProducer implements InitialContextFactory {
 	private static RequestContextTO requestContextTO = new RequestContextTO(false);
 	private static SormasToSormasRestClient s2sRestClient = mock(SormasToSormasRestClient.class);
 	private static final EtcdCentralClient etcdCentralClient = mock(EtcdCentralClient.class);
+	private static CustomizableEnumFacade customizableEnumFacadeForConverter = mock(CustomizableEnumFacade.class);
+
 	private static ManagedScheduledExecutorService managedScheduledExecutorService = mock(ManagedScheduledExecutorService.class);
+
+	private static SormasToSormasDiscoveryService sormasToSormasDiscoveryService = mock(SormasToSormasDiscoveryService.class);
 
 	// Receiving e-mail server is mocked: org. jvnet. mock_javamail. mailbox
 	private static Session mailSession;
 	static {
-		// Make sure that the default session does not use a local mail server (if mock-javamail is removed)
+		// Make sure that the default session does not use a local mail server
 		Properties props = new Properties();
 		props.setProperty("mail.host", "non@existent");
 		mailSession = Session.getInstance(props);
@@ -118,7 +114,16 @@ public class MockProducer implements InitialContextFactory {
 
 	public static void resetMocks() {
 
-		reset(sessionContext, principal, topic, connectionFactory, timerService, userTransaction, s2sRestClient, managedScheduledExecutorService);
+		reset(
+			initialContext,
+			sessionContext,
+			principal,
+			topic,
+			connectionFactory,
+			timerService,
+			userTransaction,
+			s2sRestClient,
+			managedScheduledExecutorService);
 		wireMocks();
 		resetProperties();
 		requestContextTO.setMobileSync(false);
@@ -127,7 +132,6 @@ public class MockProducer implements InitialContextFactory {
 	private static void resetProperties() {
 
 		properties.clear();
-		properties.setProperty(ConfigFacadeEjb.ALLOWED_FILE_EXTENSIONS, ".pdf,.txt,.doc,.docx,.odt,.xls,.xlsx,.ods,.ppt,.pptx,.odp,.jpg,.png,.gif,.msg");
 		properties.setProperty(ConfigFacadeEjb.COUNTRY_NAME, "nigeria");
 		properties.setProperty(ConfigFacadeEjb.CSV_SEPARATOR, ";");
 		properties.setProperty(ConfigFacadeEjb.TEMP_FILES_PATH, TMP_PATH);
@@ -137,6 +141,10 @@ public class MockProducer implements InitialContextFactory {
 
 		when(sessionContext.getCallerPrincipal()).thenReturn(getPrincipal());
 		RequestContextHolder.setRequestContext(requestContextTO);
+	}
+
+	public static CustomizableEnumFacade getCustomizableEnumFacadeForConverter() {
+		return customizableEnumFacadeForConverter;
 	}
 
 	@Produces
@@ -186,7 +194,6 @@ public class MockProducer implements InitialContextFactory {
 	@Specializes
 	public static class MockRestClientBuilderProducer extends SormasToSormasRestClientProducer {
 
-		@Override
 		@Produces
 		public SormasToSormasRestClient sormasToSormasClient(
 			SormasToSormasDiscoveryService sormasToSormasDiscoveryService,
@@ -208,12 +215,34 @@ public class MockProducer implements InitialContextFactory {
 		public EtcdCentralClient etcdCentralClient(ConfigFacadeEjb.ConfigFacadeEjbLocal configFacadeEjb) {
 			return etcdCentralClient;
 		}
+	}
 
+	@Override
+	public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
+		when(initialContext.lookup("java:module/CustomizableEnumFacade")).thenReturn(customizableEnumFacadeForConverter);
+		return initialContext;
 	}
 
 	@Produces
 	public static ManagedScheduledExecutorService getManagedScheduledExecutorService() {
 		return managedScheduledExecutorService;
+	}
+
+	@Specializes
+	public static class MockSormasToSormasDiscoveryServiceProducer extends SormasToSormasDiscoveryServiceProducer {
+
+		@Override
+		@Produces
+		public SormasToSormasDiscoveryService sormasToSormasDiscoveryService(
+			SormasToSormasFacadeEjb.SormasToSormasFacadeEjbLocal sormasToSormasFacadeEjb,
+			ConfigFacadeEjb.ConfigFacadeEjbLocal configFacadeEjb,
+			EtcdCentralClient centralClient) {
+			return sormasToSormasDiscoveryService;
+		}
+	}
+
+	public static SormasToSormasDiscoveryService getSormasToSormasDiscoveryService() {
+		return sormasToSormasDiscoveryService;
 	}
 
 	public static void mockProperty(String property, String value) {

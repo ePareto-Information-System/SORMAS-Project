@@ -30,9 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-
 import org.apache.commons.beanutils.BeanUtils;
 import org.junit.jupiter.api.Test;
 
@@ -60,7 +57,7 @@ import de.symeda.sormas.api.visit.VisitFacade;
 import de.symeda.sormas.api.visit.VisitIndexDto;
 import de.symeda.sormas.api.visit.VisitStatus;
 import de.symeda.sormas.backend.AbstractBeanTest;
-import de.symeda.sormas.backend.TestDataCreator;
+import de.symeda.sormas.backend.TestDataCreator.RDCF;
 import de.symeda.sormas.backend.person.Person;
 import de.symeda.sormas.backend.person.PersonFacadeEjb;
 import de.symeda.sormas.backend.person.PersonService;
@@ -69,23 +66,20 @@ import de.symeda.sormas.backend.person.PersonService;
  * If you need to change these tests to make it pass, you probably changed the behaviour of the ExternalVisitsResource.
  * Please note that other system used alongside with SORMAS are depending on this, so that their developers must be notified of any
  * relevant API changes some time before they go into any test and productive system. Please inform the SORMAS core development team at
- * https://gitter.im/SORMAS-Project!
+ * https://github.com/sormas-foundation/SORMAS-Project/discussions/categories/development-support!
  */
 public class ExternalVisitTest extends AbstractBeanTest {
 
-	TestDataCreator.RDCFEntities rdcfEntities;
 	private UserDto externalVisitsUser;
 	private UserDto nationalUser;
-	private TestDataCreator.RDCF rdcf;
+	private RDCF rdcf;
 
 	public void init() {
 		super.init();
 
-		rdcfEntities = creator.createRDCFEntities("Region", "District", "Community", "Facility");
-		rdcf = creator.createRDCF("Region 1", "District 1", "Community 1", "Facility 1");
-
-		externalVisitsUser = creator.createUser(rdcfEntities, creator.getUserRoleReference(DefaultUserRole.REST_EXTERNAL_VISITS_USER));
-		nationalUser = creator.createUser(rdcfEntities, creator.getUserRoleReference(DefaultUserRole.NATIONAL_USER));
+		rdcf = creator.createRDCF();
+		externalVisitsUser = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.REST_EXTERNAL_VISITS_USER));
+		nationalUser = creator.createNationalUser();
 	}
 
 	@Test
@@ -93,7 +87,7 @@ public class ExternalVisitTest extends AbstractBeanTest {
 	 * If you need to change this test to make it pass, you probably changed the behaviour of the ExternalVisitsResource.
 	 * Please note that other system used alongside with SORMAS are depending on this, so that their developers must be notified of any
 	 * relevant API changes some time before they go into any test and productive system. Please inform the SORMAS core development team at
-	 * https://gitter.im/SORMAS-Project!
+	 * https://github.com/sormas-foundation/SORMAS-Project/discussions/categories/development-support!
 	 */
 	public void testGetPersonForJournal() {
 		String phoneNumber = "+496211218490";
@@ -143,7 +137,7 @@ public class ExternalVisitTest extends AbstractBeanTest {
 	 * If you need to change this test to make it pass, you probably changed the behaviour of the ExternalVisitsResource.
 	 * Please note that other system used alongside with SORMAS are depending on this, so that their developers must be notified of any
 	 * relevant API changes some time before they go into any test and productive system. Please inform the SORMAS core development team at
-	 * https://gitter.im/SORMAS-Project!
+	 * https://github.com/sormas-foundation/SORMAS-Project/discussions/categories/development-support!
 	 */
 	public void testIsValidPersonUuid() {
 		final PersonDto person = creator.createPerson("James", "Smith", Sex.MALE, 1980, 1, 1);
@@ -159,7 +153,7 @@ public class ExternalVisitTest extends AbstractBeanTest {
 	 * If you need to change this test to make it pass, you probably changed the behaviour of the ExternalVisitsResource.
 	 * Please note that other system used alongside with SORMAS are depending on this, so that their developers must be notified of any
 	 * relevant API changes some time before they go into any test and productive system. Please inform the SORMAS core development team at
-	 * https://gitter.im/SORMAS-Project!
+	 * https://github.com/sormas-foundation/SORMAS-Project/discussions/categories/development-support!
 	 */
 	public void testSetSymptomJournalStatus() {
 		PersonDto person = creator.createPerson();
@@ -177,10 +171,9 @@ public class ExternalVisitTest extends AbstractBeanTest {
 	 * If you need to change this test to make it pass, you probably changed the behaviour of the ExternalVisitsResource.
 	 * Please note that other system used alongside with SORMAS are depending on this, so that their developers must be notified of any
 	 * relevant API changes some time before they go into any test and productive system. Please inform the SORMAS core development team at
-	 * https://gitter.im/SORMAS-Project!
+	 * https://github.com/sormas-foundation/SORMAS-Project/discussions/categories/development-support!
 	 */
 	public void givenRelevantChangeShouldNotify() {
-		EntityManager entityManager = getEntityManager();
 		PersonFacadeEjb.PersonFacadeEjbLocal personFacade = getPersonFacade();
 		personFacade.setExternalJournalService(getExternalJournalService());
 		PersonService personService = getPersonService();
@@ -189,11 +182,7 @@ public class ExternalVisitTest extends AbstractBeanTest {
 		setPersonRelevantFields(person);
 
 		// cannot use PersonFacade save since it also calls the method being tested
-		EntityTransaction transaction = entityManager.getTransaction();
-		transaction.begin();
-		entityManager.persist(person);
-		entityManager.flush();
-		transaction.commit();
+		personService.persist(person);
 
 		// need to create a case with the person to avoid pseudonymization related errors
 		creator.createCase(externalVisitsUser.toReference(), new PersonReferenceDto(person.getUuid()), rdcf);
@@ -221,28 +210,28 @@ public class ExternalVisitTest extends AbstractBeanTest {
 		for (String propertyName : relevantChanges.keySet()) {
 			journalPerson = personFacade.getPersonForJournal(person.getUuid());
 			setPersonProperty(person, propertyName, relevantChanges.get(propertyName));
-			person = entityManager.merge(person);
+			person = executeInTransaction((entityManager, personParam) -> entityManager.merge(personParam), person);
 			assertTrue(getExternalJournalService().notifyExternalJournalPersonUpdate(journalPerson).getElement0());
 
 			// Modify the SymptomJournalStatus of the original person
 			journalPerson = personFacade.getPersonForJournal(person.getUuid());
 			person.setSymptomJournalStatus(SymptomJournalStatus.DELETED);
-			person = entityManager.merge(person);
+			person = executeInTransaction((entityManager, personParam) -> entityManager.merge(personParam), person);
 			assertFalse(getExternalJournalService().notifyExternalJournalPersonUpdate(journalPerson).getElement0());
 
 			journalPerson = personFacade.getPersonForJournal(person.getUuid());
 			person.setSymptomJournalStatus(SymptomJournalStatus.REJECTED);
-			person = entityManager.merge(person);
+			person = executeInTransaction((entityManager, personParam) -> entityManager.merge(personParam), person);
 			assertFalse(getExternalJournalService().notifyExternalJournalPersonUpdate(journalPerson).getElement0());
 
 			journalPerson = personFacade.getPersonForJournal(person.getUuid());
 			person.setSymptomJournalStatus(SymptomJournalStatus.UNREGISTERED);
-			person = entityManager.merge(person);
+			person = executeInTransaction((entityManager, personParam) -> entityManager.merge(personParam), person);
 			assertFalse(getExternalJournalService().notifyExternalJournalPersonUpdate(journalPerson).getElement0());
 
 			journalPerson = personFacade.getPersonForJournal(person.getUuid());
 			person.setSymptomJournalStatus(SymptomJournalStatus.ACCEPTED);
-			person = entityManager.merge(person);
+			person = executeInTransaction((entityManager, personParam) -> entityManager.merge(personParam), person);
 			assertFalse(getExternalJournalService().notifyExternalJournalPersonUpdate(journalPerson).getElement0());
 
 			// Apply any other relevant change and make sure notification is still considered necessary
@@ -250,13 +239,13 @@ public class ExternalVisitTest extends AbstractBeanTest {
 				if (!secondPropertyName.equals(propertyName)) {
 					journalPerson = personFacade.getPersonForJournal(person.getUuid());
 					setPersonProperty(person, secondPropertyName, relevantChanges.get(secondPropertyName));
-					person = entityManager.merge(person);
+					person = executeInTransaction((entityManager, personParam) -> entityManager.merge(personParam), person);
 					assertTrue(getExternalJournalService().notifyExternalJournalPersonUpdate(journalPerson).getElement0());
 				}
 			}
 
 			setPersonRelevantFields(person);
-			person = entityManager.merge(person);
+			person = executeInTransaction((entityManager, personParam) -> entityManager.merge(personParam), person);
 		}
 	}
 
@@ -265,7 +254,7 @@ public class ExternalVisitTest extends AbstractBeanTest {
 	 * If you need to change this test to make it pass, you probably changed the behaviour of the ExternalVisitsResource.
 	 * Please note that other system used alongside with SORMAS are depending on this, so that their developers must be notified of any
 	 * relevant API changes some time before they go into any test and productive system. Please inform the SORMAS core development team at
-	 * https://gitter.im/SORMAS-Project!
+	 * https://github.com/sormas-foundation/SORMAS-Project/discussions/categories/development-support!
 	 */
 	public void testCreateExternalVisit() {
 		PersonDto cazePerson = creator.createPerson("Case", "Person");
@@ -339,7 +328,7 @@ public class ExternalVisitTest extends AbstractBeanTest {
 	 * If you need to change this test to make it pass, you probably changed the behaviour of the ExternalVisitsResource.
 	 * Please note that other system used alongside with SORMAS are depending on this, so that their developers must be notified of any
 	 * relevant API changes some time before they go into any test and productive system. Please inform the SORMAS core development team at
-	 * https://gitter.im/SORMAS-Project!
+	 * https://github.com/sormas-foundation/SORMAS-Project/discussions/categories/development-support!
 	 */
 	public void testGetFollowUpEndDatesContactsOnly() {
 		creator.createPerson(); // Person without contact
@@ -385,15 +374,15 @@ public class ExternalVisitTest extends AbstractBeanTest {
 	 * If you need to change this test to make it pass, you probably changed the behaviour of the ExternalVisitsResource.
 	 * Please note that other system used alongside with SORMAS are depending on this, so that their developers must be notified of any
 	 * relevant API changes some time before they go into any test and productive system. Please inform the SORMAS core development team at
-	 * https://gitter.im/SORMAS-Project!
+	 * https://github.com/sormas-foundation/SORMAS-Project/discussions/categories/development-support!
 	 */
 	public void testGetFollowUpEndDatesCasesOnly() {
 		creator.createPerson(); // Person without contact
 		final PersonDto person1 = creator.createPerson();
 		final PersonDto person2 = creator.createPerson();
-		final CaseDataDto case11 = creator.createCase(externalVisitsUser.toReference(), person1.toReference(), rdcfEntities);
-		final CaseDataDto case12 = creator.createCase(externalVisitsUser.toReference(), person1.toReference(), rdcfEntities);
-		final CaseDataDto case2 = creator.createCase(externalVisitsUser.toReference(), person2.toReference(), rdcfEntities);
+		final CaseDataDto case11 = creator.createCase(externalVisitsUser.toReference(), person1.toReference(), rdcf);
+		final CaseDataDto case12 = creator.createCase(externalVisitsUser.toReference(), person1.toReference(), rdcf);
+		final CaseDataDto case2 = creator.createCase(externalVisitsUser.toReference(), person2.toReference(), rdcf);
 
 		Date now = new Date();
 		case11.getSymptoms().setOnsetDate(DateHelper.subtractDays(now, 41));
@@ -431,7 +420,7 @@ public class ExternalVisitTest extends AbstractBeanTest {
 	 * If you need to change this test to make it pass, you probably changed the behaviour of the ExternalVisitsResource.
 	 * Please note that other system used alongside with SORMAS are depending on this, so that their developers must be notified of any
 	 * relevant API changes some time before they go into any test and productive system. Please inform the SORMAS core development team at
-	 * https://gitter.im/SORMAS-Project!
+	 * https://github.com/sormas-foundation/SORMAS-Project/discussions/categories/development-support!
 	 */
 	public void testGetFollowUpEndDatesContactsAndCases() {
 		Date now = new Date();
@@ -444,11 +433,11 @@ public class ExternalVisitTest extends AbstractBeanTest {
 		final ContactDto contact2 = creator.createContact(externalVisitsUser.toReference(), person2.toReference(), DateHelper.subtractDays(now, 22));
 		final ContactDto contact3 = creator.createContact(externalVisitsUser.toReference(), person4.toReference());
 		final ContactDto contact4 = creator.createContact(externalVisitsUser.toReference(), person4.toReference(), DateHelper.subtractDays(now, 21));
-		final CaseDataDto case1 = creator.createCase(externalVisitsUser.toReference(), person1.toReference(), rdcfEntities);
-		final CaseDataDto case2 = creator.createCase(externalVisitsUser.toReference(), person2.toReference(), rdcfEntities);
-		final CaseDataDto case3 = creator.createCase(externalVisitsUser.toReference(), person2.toReference(), rdcfEntities);
-		final CaseDataDto case4 = creator.createCase(externalVisitsUser.toReference(), person3.toReference(), rdcfEntities);
-		final CaseDataDto case5 = creator.createCase(externalVisitsUser.toReference(), person3.toReference(), rdcfEntities);
+		final CaseDataDto case1 = creator.createCase(externalVisitsUser.toReference(), person1.toReference(), rdcf);
+		final CaseDataDto case2 = creator.createCase(externalVisitsUser.toReference(), person2.toReference(), rdcf);
+		final CaseDataDto case3 = creator.createCase(externalVisitsUser.toReference(), person2.toReference(), rdcf);
+		final CaseDataDto case4 = creator.createCase(externalVisitsUser.toReference(), person3.toReference(), rdcf);
+		final CaseDataDto case5 = creator.createCase(externalVisitsUser.toReference(), person3.toReference(), rdcf);
 
 		contact1.setOverwriteFollowUpUntil(true);
 		contact2.setOverwriteFollowUpUntil(true);
@@ -512,7 +501,7 @@ public class ExternalVisitTest extends AbstractBeanTest {
 	 * If you need to change this method to make it pass, you probably changed the behaviour of the ExternalVisitsResource.
 	 * Please note that other system used alongside with SORMAS are depending on this, so that their developers must be notified of any
 	 * relevant API changes some time before they go into any test and productive system. Please inform the SORMAS core development team at
-	 * https://gitter.im/SORMAS-Project!
+	 * https://github.com/sormas-foundation/SORMAS-Project/discussions/categories/development-support!
 	 */
 	protected void setPersonRelevantFields(Person person) {
 		person.setFirstName("Klaus");

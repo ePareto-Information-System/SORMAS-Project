@@ -17,11 +17,12 @@ package de.symeda.sormas.app.task.edit;
 
 import static android.view.View.GONE;
 
-import android.view.View;
-
 import java.util.List;
 
+import android.view.View;
+
 import de.symeda.sormas.api.caze.CaseClassification;
+import de.symeda.sormas.api.task.TaskContext;
 import de.symeda.sormas.api.task.TaskPriority;
 import de.symeda.sormas.api.task.TaskStatus;
 import de.symeda.sormas.api.task.TaskType;
@@ -64,6 +65,10 @@ public class TaskEditFragment extends BaseEditFragment<FragmentTaskEditLayoutBin
 		return newInstance(TaskEditFragment.class, TaskNewActivity.buildBundleWithEvent(eventUuid).get(), activityRootData);
 	}
 
+	public static TaskEditFragment newInstanceFromEnvironment(Task activityRootData, String environmentUuid) {
+		return newInstance(TaskEditFragment.class, TaskNewActivity.buildBundleWithEnvironment(environmentUuid).get(), activityRootData);
+	}
+
 	private void setUpControlListeners(FragmentTaskEditLayoutBinding contentBinding) {
 		contentBinding.setDone.setOnClickListener(new View.OnClickListener() {
 
@@ -98,7 +103,9 @@ public class TaskEditFragment extends BaseEditFragment<FragmentTaskEditLayoutBin
 
 	@Override
 	public boolean isShowSaveAction() {
-		return record != null && ConfigProvider.getUser().equals(record.getCreatorUser());
+		return record != null
+			&& (ConfigProvider.getUser().equals(record.getCreatorUser())
+				|| (ConfigProvider.getUser().equals(record.getAssigneeUser()) && record.getTaskStatus() != TaskStatus.PENDING));
 	}
 
 	@Override
@@ -117,6 +124,7 @@ public class TaskEditFragment extends BaseEditFragment<FragmentTaskEditLayoutBin
 						? record.getContact().getDisease()
 						: record.getEvent() != null ? record.getEvent().getDisease() : null),
 			TaskType.class);
+
 		priorityList = DataUtils.getEnumItems(TaskPriority.class, true);
 		assigneeList = DataUtils.toItems(DatabaseHelper.getUserDao().getAllInJurisdiction(), true);
 	}
@@ -167,11 +175,8 @@ public class TaskEditFragment extends BaseEditFragment<FragmentTaskEditLayoutBin
 		if (!ConfigProvider.getUser().equals(record.getAssigneeUser())) {
 			contentBinding.taskAssigneeReply.setEnabled(false);
 			contentBinding.taskButtonPanel.setVisibility(GONE);
-		} else {
-			if (record.getTaskStatus() != TaskStatus.PENDING) {
-				getBaseEditActivity().getSaveMenu().setVisible(true);
-				contentBinding.taskButtonPanel.setVisibility(GONE);
-			}
+		} else if (record.getTaskStatus() != TaskStatus.PENDING) {
+			contentBinding.taskButtonPanel.setVisibility(GONE);
 		}
 
 		contentBinding.taskAssigneeUser.addValueChangedListener(v -> {

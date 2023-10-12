@@ -18,9 +18,7 @@
 
 package org.sormas.e2etests.steps.web.application;
 
-import static org.sormas.e2etests.pages.application.LoginPage.ERROR_MESSAGE;
-import static org.sormas.e2etests.pages.application.LoginPage.FAILED_LOGIN_ERROR_MESSAGE;
-import static org.sormas.e2etests.pages.application.LoginPage.LOGIN_BUTTON;
+import static org.sormas.e2etests.pages.application.LoginPage.*;
 import static org.sormas.e2etests.pages.application.NavBarPage.*;
 import static org.sormas.e2etests.pages.application.dashboard.Surveillance.SurveillanceDashboardPage.LOGOUT_BUTTON;
 import static org.sormas.e2etests.steps.BaseSteps.locale;
@@ -130,6 +128,22 @@ public class LoginSteps implements En {
           webDriverHelpers.accessWebSite(runningConfiguration.getEnvironmentUrlForMarket(locale));
           TimeUnit.SECONDS.sleep(5);
         });
+
+    When(
+        "I navigate to {string} environment in new driver tab",
+        (String env) -> {
+          locale = env;
+          webDriverHelpers.accessWebSiteWithNewTab(
+              runningConfiguration.getEnvironmentUrlForMarket(locale));
+          TimeUnit.SECONDS.sleep(5);
+        });
+
+    When(
+        "I back to tab number {int}",
+        (Integer tabNo) -> {
+          webDriverHelpers.switchToTheTabNumber(tabNo);
+          TimeUnit.SECONDS.sleep(5);
+        });
     Then(
         "I login with last edited user",
         () -> {
@@ -207,6 +221,25 @@ public class LoginSteps implements En {
                   org.testng.Assert.assertTrue(
                       webDriverHelpers.isElementVisibleWithTimeout(LOGIN_BUTTON, 5),
                       "Login page is not displayed"));
+        });
+
+    Then(
+        "^I check that Login page is correctly displayed in ([^\"]*) language$",
+        (String language) -> {
+          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(LOGIN_BUTTON, 30);
+          LanguageDetectorHelper.checkLanguage(
+              webDriverHelpers.getTextFromWebElement(APPLICATION_DESCRIPTION_TEXT), language);
+        });
+
+    And(
+        "^I check if GDPR message appears and close it if it appears$",
+        () -> {
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(20);
+          if (webDriverHelpers.isElementVisibleWithTimeout(GDPR_MESSAGE_DE, 5)) {
+            webDriverHelpers.clickOnWebElementBySelector(
+                DO_NOT_SHOW_THIS_AGAIN_GDPR_MESSAGE_CHECKBOX);
+            webDriverHelpers.clickOnWebElementBySelector(CONFIRM_BUTTON_DE);
+          }
         });
   }
 }

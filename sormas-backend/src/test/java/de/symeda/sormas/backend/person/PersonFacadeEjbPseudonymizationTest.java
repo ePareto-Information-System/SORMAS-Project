@@ -35,6 +35,8 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.event.EventDto;
+import de.symeda.sormas.api.i18n.Captions;
+import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.infrastructure.area.AreaType;
 import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.person.PersonCriteria;
@@ -42,6 +44,7 @@ import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.PersonExportDto;
 import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.api.travelentry.TravelEntryDto;
 import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.backend.AbstractBeanTest;
@@ -62,7 +65,7 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 	public void init() {
 		super.init();
 
-		rdcf1 = creator.createRDCF("Region 1", "District 1", "Community 1", "Facility 1");
+		rdcf1 = creator.createRDCF("Region 1", "District 1", "Community 1", "Facility 1", "PointOfEntry1");
 		districtUser1 = creator.createUser(
 			rdcf1.region.getUuid(),
 			rdcf1.district.getUuid(),
@@ -71,7 +74,7 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 			"Off1",
 			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER));
 
-		rdcf2 = creator.createRDCF("Region 2", "District 2", "Community 2", "Facility 2");
+		rdcf2 = creator.createRDCF("Region 2", "District 2", "Community 2", "Facility 2", "PointOfEntry2");
 		districtUser2 = creator.createUser(
 			rdcf2.region.getUuid(),
 			rdcf2.district.getUuid(),
@@ -275,6 +278,26 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 	}
 
 	@Test
+	public void testGetTravelEntryPersonOutsideJurisdiction() {
+		loginWith(districtUser1);
+		person = createPerson();
+		TravelEntryDto travelEntry = creator.createTravelEntry(person.toReference(), districtUser1.toReference(), rdcf1, (t) -> {
+			t.setDisease(Disease.EVD);
+		});
+
+		loginWith(districtUser2);
+		assertPseudonymised(getPersonFacade().getByUuid(person.getUuid()));
+
+		loginWith(districtUser1);
+		CaseDataDto caze = creator.createCase(districtUser1.toReference(), person.toReference(), rdcf2);
+		travelEntry.setResultingCase(caze.toReference());
+		getTravelEntryFacade().save(travelEntry);
+
+		loginWith(districtUser2);
+		assertNotPseudonymized(getPersonFacade().getByUuid(person.getUuid()));
+	}
+
+	@Test
 	public void testUpdateContactPersonInJurisdiction() {
 		loginWith(districtUser2);
 
@@ -311,8 +334,7 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 		person = createPerson();
 		EventDto event = creator.createEvent(districtUser1.toReference());
 		creator.createEventParticipant(event.toReference(), person, districtUser1.toReference());
-//		assertPseudonymised(getPersonFacade().getPersonByUuid(person.getUuid()));
-		assertNotPseudonymized(getPersonFacade().getByUuid(person.getUuid()));
+		assertPseudonymised(getPersonFacade().getByUuid(person.getUuid()));
 	}
 
 	@Test
@@ -333,11 +355,8 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 		person = createPerson();
 		EventDto event = creator.createEvent(districtUser1.toReference());
 		creator.createEventParticipant(event.toReference(), person, districtUser1.toReference());
-//		updatePerson(true);
-//		assertPersonNotUpdated();
-		// pseudonymization disabled for now
-		updatePerson(false);
-		assertPersonUpdated();
+		updatePerson(true);
+		assertPersonNotUpdated();
 	}
 
 	@Test
@@ -503,8 +522,8 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 	private void assertPseudonymised(PersonDto person) {
 
 		assertThat(person.isPseudonymized(), is(true));
-		assertThat(person.getFirstName(), isEmptyString());
-		assertThat(person.getLastName(), isEmptyString());
+		assertThat(person.getFirstName(), is(I18nProperties.getCaption(Captions.inaccessibleValue)));
+		assertThat(person.getLastName(), is(I18nProperties.getCaption(Captions.inaccessibleValue)));
 		assertThat(person.getBirthdateDD(), is(nullValue()));
 
 		assertThat(person.getAddress().getRegion().getCaption(), is("Region 1"));

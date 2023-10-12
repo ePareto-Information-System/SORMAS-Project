@@ -50,6 +50,7 @@ import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.sample.AdditionalTestDto;
 import de.symeda.sormas.api.sample.PathogenTestDto;
+import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SampleMaterial;
@@ -103,7 +104,7 @@ public abstract class SormasToSormasTest extends AbstractBeanTest {
 			new FeatureConfigurationIndexDto(DataHelper.createUuid(), null, null, null, null, null, isAcceptRejectFeatureEnabled(), null);
 		getFeatureConfigurationFacade().saveFeatureConfiguration(featureConfiguration, FeatureType.SORMAS_TO_SORMAS_ACCEPT_REJECT);
 		// in S2S we use external IDs
-		rdcf = createRDCF(true).centralRdcf;
+		rdcf = createRDCF("ExtId").centralRdcf;
 
 		s2sClientUser = creator.createUser(
 			rdcf,
@@ -114,6 +115,12 @@ public abstract class SormasToSormasTest extends AbstractBeanTest {
 
 		getFacilityService().createConstantFacilities();
 		getPointOfEntryService().createConstantPointsOfEntry();
+
+		Mockito.when(MockProducer.getSormasToSormasDiscoveryService().getSormasServerDescriptorById(eq(DEFAULT_SERVER_ID)))
+			.thenReturn(new SormasServerDescriptor(DEFAULT_SERVER_ID, "SORMAS A", "https://sormas-a.com"));
+
+		Mockito.when(MockProducer.getSormasToSormasDiscoveryService().getSormasServerDescriptorById(eq(SECOND_SERVER_ID)))
+			.thenReturn(new SormasServerDescriptor(SECOND_SERVER_ID, "SORMAS B", "https://sormas-b.com"));
 	}
 
 	@AfterEach
@@ -141,18 +148,7 @@ public abstract class SormasToSormasTest extends AbstractBeanTest {
 		String serverId,
 		boolean ownershipHandedOver,
 		Consumer<SormasToSormasOriginInfoDto> extraConfig) {
-		SormasToSormasOriginInfoDto originInfo = new SormasToSormasOriginInfoDto();
-		originInfo.setUuid(DataHelper.createUuid());
-		originInfo.setSenderName("Test Name");
-		originInfo.setSenderEmail("test@email.com");
-		originInfo.setOrganizationId(serverId);
-		originInfo.setOwnershipHandedOver(ownershipHandedOver);
-
-		if (extraConfig != null) {
-			extraConfig.accept(originInfo);
-		}
-
-		return getSormasToSormasOriginInfoFacade().saveOriginInfo(originInfo);
+		return creator.createSormasToSormasOriginInfo(serverId, ownershipHandedOver, extraConfig);
 	}
 
 	protected PersonDto createPersonDto(TestDataCreator.RDCF rdcf) {
@@ -201,6 +197,9 @@ public abstract class SormasToSormasTest extends AbstractBeanTest {
 		pathogenTest.setTestDateTime(new Date());
 		pathogenTest.setTestResultVerified(true);
 		pathogenTest.setTestType(PathogenTestType.RAPID_TEST);
+		pathogenTest.setLab(rdcf.facility);
+		pathogenTest.setTestedDisease(Disease.CORONAVIRUS);
+		pathogenTest.setTestResult(PathogenTestResultType.PENDING);
 
 		AdditionalTestDto additionalTest = AdditionalTestDto.build(sample.toReference());
 		additionalTest.setTestDateTime(new Date());
@@ -331,7 +330,7 @@ public abstract class SormasToSormasTest extends AbstractBeanTest {
 
 	}
 
-	protected MappableRdcf createRDCF(boolean withExternalId) {
+	protected MappableRdcf createRDCF(String externalIdSuffix) {
 
 		String regionName = "Region";
 		String districtName = "District";
@@ -345,12 +344,13 @@ public abstract class SormasToSormasTest extends AbstractBeanTest {
 		String facilityExternalId = null;
 		String pointOfEntryExternalId = null;
 
+		boolean withExternalId = externalIdSuffix != null;
 		if (withExternalId) {
-			regionExternalId = "RegionExtId";
-			districtExternalId = "DistrictExtId";
-			communityExternalId = "CommunityExtId";
-			facilityExternalId = "FacilityExtId";
-			pointOfEntryExternalId = "Point of EntryExtId";
+			regionExternalId = "Region" + externalIdSuffix;
+			districtExternalId = "District" + externalIdSuffix;
+			communityExternalId = "Community" + externalIdSuffix;
+			facilityExternalId = "Facility" + externalIdSuffix;
+			pointOfEntryExternalId = "Point of Entry" + externalIdSuffix;
 		}
 
 		MappableRdcf rdcf = new MappableRdcf();

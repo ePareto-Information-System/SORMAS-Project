@@ -46,7 +46,6 @@ import de.symeda.sormas.ui.externalsurveillanceservice.ExternalSurveillanceServi
 import de.symeda.sormas.ui.externalsurveillanceservice.ExternalSurveillanceShareComponent;
 import de.symeda.sormas.ui.sormastosormas.SormasToSormasListComponent;
 import de.symeda.sormas.ui.task.TaskListComponent;
-import de.symeda.sormas.ui.utils.ArchivingController;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
 import de.symeda.sormas.ui.utils.CssStyles;
@@ -108,13 +107,17 @@ public class EventDataView extends AbstractEventView {
 
 		container.addComponent(layout);
 
-		externalSurvToolLayout = ExternalSurveillanceServiceGateway.addComponentToLayout(layout, editComponent, event);
+		final String uuid = event.getUuid();
+		final EditPermissionType eventEditAllowed = FacadeProvider.getEventFacade().getEditPermissionType(uuid);
+		boolean isEditAllowed = isEditAllowed();
+
+		externalSurvToolLayout = ExternalSurveillanceServiceGateway.addComponentToLayout(layout, editComponent, event, isEditAllowed);
 		setExternalSurvToolLayoutVisibility(event.getEventStatus());
 
 		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.TASK_MANAGEMENT)
 			&& UserProvider.getCurrent().hasUserRight(UserRight.TASK_VIEW)) {
 			TaskListComponent taskList =
-				new TaskListComponent(TaskContext.EVENT, getEventRef(), event.getDisease(), this::showUnsavedChangesPopup, isEditAllowed());
+				new TaskListComponent(TaskContext.EVENT, getEventRef(), event.getDisease(), this::showUnsavedChangesPopup, isEditAllowed);
 			taskList.addStyleName(CssStyles.SIDE_COMPONENT);
 			layout.addSidePanelComponent(taskList, TASKS_LOC);
 		}
@@ -126,12 +129,16 @@ public class EventDataView extends AbstractEventView {
 		DocumentListComponent documentList = null;
 		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.DOCUMENTS)
 			&& UserProvider.getCurrent().hasUserRight(UserRight.DOCUMENT_VIEW)) {
+
+			boolean isDocumentDeleteAllowed =
+				EditPermissionType.ALLOWED.equals(eventEditAllowed) || EditPermissionType.WITHOUT_OWNERSHIP.equals(eventEditAllowed);
 			documentList = new DocumentListComponent(
 				DocumentRelatedEntityType.EVENT,
 				getEventRef(),
 				UserRight.EVENT_EDIT,
 				event.isPseudonymized(),
-				isEditAllowed());
+				isEditAllowed,
+				isDocumentDeleteAllowed);
 			layout.addSidePanelComponent(new SideComponentLayout(documentList), DOCUMENTS_LOC);
 		}
 
@@ -145,7 +152,7 @@ public class EventDataView extends AbstractEventView {
 			superordinateEventComponent.addStyleName(CssStyles.SIDE_COMPONENT);
 			layout.addSidePanelComponent(superordinateEventComponent, SUPERORDINATE_EVENT_LOC);
 
-			EventListComponent subordinateEventList = new EventListComponent(event.toReference(), this::showUnsavedChangesPopup, isEditAllowed());
+			EventListComponent subordinateEventList = new EventListComponent(event.toReference(), this::showUnsavedChangesPopup, isEditAllowed);
 			subordinateEventList.addStyleName(CssStyles.SIDE_COMPONENT);
 			layout.addSidePanelComponent(subordinateEventList, SUBORDINATE_EVENTS_LOC);
 		}
@@ -211,21 +218,8 @@ public class EventDataView extends AbstractEventView {
 
 		layout.addSidePanelComponent(shortcutLinksLayout, SHORTCUT_LINKS_LOC);
 
-		if (!UserProvider.getCurrent().hasUserRight(UserRight.EVENT_EDIT)) {
-			layout.setEnabled(false);
-		}
-
-		final String uuid = event.getUuid();
-		final EditPermissionType eventEditAllowed = FacadeProvider.getEventFacade().getEditPermissionType(uuid);
 		final boolean deleted = FacadeProvider.getEventFacade().isDeleted(uuid);
-
-		if (deleted) {
-			layout.disable(CommitDiscardWrapperComponent.DELETE_UNDELETE);
-		} else if (eventEditAllowed == EditPermissionType.ARCHIVING_STATUS_ONLY) {
-			layout.disable(ArchivingController.ARCHIVE_DEARCHIVE_BUTTON_ID);
-		} else if (eventEditAllowed == EditPermissionType.REFUSED) {
-			layout.disable();
-		}
+		layout.disableIfNecessary(deleted, eventEditAllowed);
 	}
 
 	private void setExternalSurvToolLayoutVisibility(EventStatus eventStatus) {

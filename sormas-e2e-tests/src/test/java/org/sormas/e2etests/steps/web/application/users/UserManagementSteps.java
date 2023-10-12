@@ -57,7 +57,12 @@ public class UserManagementSteps implements En {
           TimeUnit.SECONDS.sleep(2); // needed for table to refresh
         });
 
-    When("^I select first user from list$", () -> selectFirstElementFromList());
+    When(
+        "^I select first user from list$",
+        () -> {
+          TimeUnit.SECONDS.sleep(1);
+          selectFirstElementFromList();
+        });
 
     When(
         "^I search for created user$",
@@ -98,13 +103,15 @@ public class UserManagementSteps implements En {
         });
     When(
         "^I check if sync message is correct in German$",
-        () ->
-            assertHelpers.assertWithPoll(
-                () ->
-                    Assert.assertTrue(
-                        webDriverHelpers.isElementVisibleWithTimeout(SYNC_SUCCESS_DE, 5),
-                        "Sync of users failed"),
-                10));
+        () -> {
+          TimeUnit.SECONDS.sleep(45);
+          assertHelpers.assertWithPoll(
+              () ->
+                  Assert.assertTrue(
+                      webDriverHelpers.isElementVisibleWithTimeout(SYNC_SUCCESS_DE, 15),
+                      "Sync of users failed"),
+              10);
+        });
 
     When(
         "^I verify that the Active value is ([^\"]*) in the User Management Page",
@@ -128,21 +135,23 @@ public class UserManagementSteps implements En {
         () -> {
           webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(
               USERS_COUNTER_USER_MANAGEMENT);
+
           Integer numberOfTotalUsers =
               Integer.parseInt(
                   webDriverHelpers.getTextFromWebElement(USERS_COUNTER_USER_MANAGEMENT));
+
           webDriverHelpers.selectFromCombobox(ACTIVE_INACTIVE_COMBOBOX, "Active");
-          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(LOADING_INDICATOR);
-          webDriverHelpers.waitUntilIdentifiedElementDisappear(LOADING_INDICATOR);
+          TimeUnit.SECONDS.sleep(2); // waiting for page loaded
           Integer numberOfActiveUsers =
               Integer.parseInt(
                   webDriverHelpers.getTextFromWebElement(USERS_COUNTER_USER_MANAGEMENT));
+
           webDriverHelpers.selectFromCombobox(ACTIVE_INACTIVE_COMBOBOX, "Inactive");
-          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(LOADING_INDICATOR);
-          webDriverHelpers.waitUntilIdentifiedElementDisappear(LOADING_INDICATOR);
+          TimeUnit.SECONDS.sleep(2); // waiting for page loaded
           Integer numberOfInactiveUsers =
               Integer.parseInt(
                   webDriverHelpers.getTextFromWebElement(USERS_COUNTER_USER_MANAGEMENT));
+
           assertHelpers.assertWithPoll(
               () ->
                   Assert.assertTrue(
@@ -160,8 +169,9 @@ public class UserManagementSteps implements En {
               Integer.parseInt(
                   webDriverHelpers.getTextFromWebElement(USERS_COUNTER_USER_MANAGEMENT));
           webDriverHelpers.selectFromCombobox(USER_ROLES_COMBOBOX, "National User");
-          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(LOADING_INDICATOR);
-          webDriverHelpers.waitUntilIdentifiedElementDisappear(LOADING_INDICATOR);
+          //
+          // webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(LOADING_INDICATOR);
+          //          webDriverHelpers.waitUntilIdentifiedElementDisappear(LOADING_INDICATOR);
           Integer numberOfSpecificUsers =
               Integer.parseInt(
                   webDriverHelpers.getTextFromWebElement(USERS_COUNTER_USER_MANAGEMENT));
@@ -183,8 +193,9 @@ public class UserManagementSteps implements En {
               Integer.parseInt(
                   webDriverHelpers.getTextFromWebElement(USERS_COUNTER_USER_MANAGEMENT));
           webDriverHelpers.selectFromCombobox(REGION_COMBOBOX_USER_MANAGEMENT, "Bayern");
-          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(LOADING_INDICATOR);
-          webDriverHelpers.waitUntilIdentifiedElementDisappear(LOADING_INDICATOR);
+          //
+          // webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(LOADING_INDICATOR);
+          //          webDriverHelpers.waitUntilIdentifiedElementDisappear(LOADING_INDICATOR);
           Integer numberOfSpecificUsers =
               Integer.parseInt(
                   webDriverHelpers.getTextFromWebElement(USERS_COUNTER_USER_MANAGEMENT));
@@ -206,11 +217,26 @@ public class UserManagementSteps implements En {
         });
 
     And(
+        "Validate user can see User roles tab from User Management Page",
+        () -> {
+          webDriverHelpers.waitUntilElementIsVisibleAndClickable(USER_ROLES_TAB);
+        });
+
+    And(
         "^I check that \"([^\"]*)\" is not available in the user role filter$",
         (String userRole) -> {
           softly.assertFalse(
               webDriverHelpers.checkIfElementExistsInCombobox(USER_ROLES_COMBOBOX, userRole),
               "Provided user role is available in the user role template dropdown menu!");
+          softly.assertAll();
+        });
+
+    And(
+        "^I check that \"([^\"]*)\" is available in the user role filter in User management Page$",
+        (String userRole) -> {
+          softly.assertTrue(
+              webDriverHelpers.checkIfElementExistsInCombobox(USER_ROLES_COMBOBOX, userRole),
+              "Provided user role is not available in the user role template dropdown menu!");
           softly.assertAll();
         });
 

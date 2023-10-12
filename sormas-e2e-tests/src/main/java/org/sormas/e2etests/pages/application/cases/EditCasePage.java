@@ -18,6 +18,7 @@
 
 package org.sormas.e2etests.pages.application.cases;
 
+import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
 
 public class EditCasePage {
@@ -43,13 +44,17 @@ public class EditCasePage {
   public static final By CASE_TAB = By.cssSelector("div#tab-cases-data");
   public static final By CASE_PERSON_TAB = By.cssSelector("div#tab-cases-person");
   public static final By NEW_TASK_BUTTON = By.cssSelector("[id='New task']");
-  public static final By EDIT_TASK_BUTTON = By.cssSelector("div[id*='edit-task']");
+  public static final By EDIT_TASK_BUTTON = By.cssSelector("div[id*='edit0']");
+  public static final By EDIT_FIRST_TASK_BUTTON = By.cssSelector("[location='events'] #edit0");
   public static final By NEW_SAMPLE_BUTTON = By.cssSelector("[id='New sample']");
   public static final By NEW_SAMPLE_BUTTON_DE = By.cssSelector("[id='Neue Probe']");
-  public static final By EDIT_SAMPLE_BUTTON =
-      By.cssSelector(
-          "[location='samples'] [class='v-button v-widget link v-button-link compact v-button-compact']");
+
+  public static final By SHOW_SAMPLE_BUTTON =
+      By.xpath(
+          "//div[@location='samples']//div[@class='v-button v-widget link v-button-link compact v-button-compact caption-overflow-label v-button-caption-overflow-label']");
   public static final By REPORT_DATE_INPUT = By.cssSelector("#reportDate input");
+  public static final By PREVIOUS_INFECTION_DATE_INPUT =
+      By.cssSelector("#previousInfectionDate input");
   public static final By CASE_CLASSIFICATION_COMBOBOX = By.cssSelector("#caseClassification div");
   public static final By CASE_CLASSIFICATION_SPAN =
       By.cssSelector("#caseClassification span input:checked+label");
@@ -158,12 +163,12 @@ public class EditCasePage {
   public static final By GENERAL_COMMENT_TEXTAREA = By.cssSelector("textarea#additionalDetails");
   public static final By SAVE_BUTTON = By.id("commit");
   public static final By ACTION_CANCEL = By.cssSelector(".popupContent #actionCancel");
-  public static final By DELETE_BUTTON = By.id("deleteUndelete");
+  public static final By ACTION_CLOSE = By.cssSelector(".popupContent #actionClose");
+  public static final By DELETE_BUTTON = By.id("deleteRestore");
   public static final By DELETE_POPUP_YES_BUTTON = By.cssSelector(".popupContent #actionConfirm");
   public static final By CASE_SAVED_POPUP = By.cssSelector(".v-Notification-caption");
   public static final By EXTRA_COMMENT_INPUT =
       By.cssSelector(".popupContent [class='v-textfield v-widget v-has-width']");
-  public static final By EXTRA_COMMENT_INPUT_SHARE_POPUP = By.cssSelector(".popupContent #comment");
   public static final By CREATE_DOCUMENT_BUTTON = By.cssSelector("[id='Create']");
   public static final By CREATE_DOCUMENT_BUTTON_DE = By.cssSelector("[id='Erstellen']");
 
@@ -239,6 +244,8 @@ public class EditCasePage {
   public static final By UPLOAD_DOCUMENT_CHECKBOX =
       By.xpath("//label[text()='Also upload the generated document to this entity']");
   public static final By POPUPS_INPUTS = By.cssSelector(".popupContent input");
+  public static final By QUARANTINE_ORDER_POPUP_SAMPLE_FIELD =
+      By.xpath("//span[text()='Sample']//following::input[1]");
   public static final By VACCINATION_STATUS_INPUT = By.cssSelector("#vaccinationStatus input");
   public static final By GENERATED_DOCUMENT_NAME =
       By.xpath(
@@ -292,6 +299,13 @@ public class EditCasePage {
       By.cssSelector(".popupContent #region div[role='button'");
   public static final By REFER_CASE_FROM_POINT_OF_ENTRY_DISTRICT =
       By.cssSelector(".popupContent #district div[role='button'");
+  public static final By REFER_CASE_FROM_POINT_OF_ENTRY_FACILITY_CATEGORY =
+      By.cssSelector(".popupContent #typeGroup div[role='button'");
+  public static final By REFER_CASE_FROM_POINT_OF_ENTRY_FACILITY_TYPE =
+      By.cssSelector(".popupContent #type div[role='button'");
+  public static final By REFER_CASE_FROM_POINT_OF_ENTRY_HEALTH_FACILITY =
+      By.cssSelector(".popupContent #healthFacility div[role='button'");
+
   public static final By REFER_CASE_FROM_POINT_OF_ENTRY_SAVE_BUTTON =
       By.cssSelector(".popupContent #commit");
   public static final By CASE_ORIGIN = By.cssSelector("#caseOrigin input");
@@ -342,32 +356,47 @@ public class EditCasePage {
           "//div[@location='vaccinations']//div[@class='v-slot v-slot-bold v-slot-uppercase v-align-right v-align-middle']/div");
   public static final By EDIT_VACCINATION_BUTTON =
       By.xpath(
-          "//div[@location='vaccinations']//div[@class='v-button v-widget link v-button-link compact v-button-compact']");
+          "//div[@location='vaccinations']//div[@class='v-button v-widget link v-button-link compact v-button-compact caption-overflow-label v-button-caption-overflow-label']");
   public static final By VACCINATION_CARD_INFO_ICON =
       By.xpath(
           "//div[@location = 'vaccinations']//span[contains(@class, 'v-icon v-icon-info_circle')]");
   public static final By VACCINATION_CARD_INFO_POPUP_TEXT =
       By.xpath("//div[@class='v-tooltip-text']");
   public static final By LINK_EVENT_BUTTON_DE = By.id("Ereignis verkn\u00FCpfen");
+  public static final By LINK_EVENT_BUTTON = By.xpath("//div[@id='Link event']");
+  public static final By LINKED_EVENT_TITLE =
+      By.xpath(
+          "//div[@location='events']//div[@class='v-label v-widget bold v-label-bold uppercase v-label-uppercase v-has-width']");
   public static final By ADD_A_PARTICIPANT_HEADER_DE =
       By.xpath("//*[contains(text(),'Neuen Ereignisteilnehmer hinzuf\u00FCgen')]");
   public static final By CHANGE_DISEASE_CONFIRMATION_POPUP =
       By.xpath("//div[@class='v-window-outerheader']");
   public static final By PLACE_OF_STAY_REGION_INPUT = By.cssSelector("#region input");
   public static final By PLACE_OF_STAY_DISTRICT_INPUT = By.cssSelector("#district input");
-
-  public static final By SHARE_SORMAS_2_SORMAS_BUTTON = By.cssSelector("#sormasToSormasShare");
-  public static final By SHARE_ORGANIZATION_POPUP_COMBOBOX =
-      By.cssSelector(".popupContent #organization div");
-  public static final By HAND_THE_OWNERSHIP_CHECKBOX =
-      By.cssSelector(".popupContent #handOverOwnership label");
-  public static final By SHARE_SORMAS_2_SORMAS_POPUP_BUTTON =
-      By.cssSelector(".popupContent #commit");
-  public static final By LINKED_SHARED_ORGANIZATION_SELECTED_VALUE =
-      By.xpath(
-          "//div[@location='sormasToSormas']//div[@class='v-slot v-slot-s-list-entry v-slot-s-list-entry-no-border']");
+  public static final By SAHRE_SAMPLES_CHECKBOX =
+      By.cssSelector(".popupContent #withSamples label");
+  public static final By SHARE_IMMUNIZATION_CHECKBOX =
+      By.cssSelector(".popupContent #withImmunizations label");
+  public static final By SHARE_REPORTS_CHECKBOX =
+      By.cssSelector(".popupContent #withSurveillanceReports label");
   public static final By CLINICAL_ASSESSMENTS_LABEL_DE =
       By.xpath("//div[contains(text(), 'Klinische Bewertungen')]");
+  public static final By REJECT_SHARED_CASE_BUTTON = By.cssSelector("#sormasToSormasRevokeShare");
+  public static final By REVOKE_CASE_POPUP_HEADER =
+      By.xpath("//*[contains(text(),'Anfrage widerrufen')]");
+  public static final By ERROR_IN_HANDOVER_HEADER_DE =
+      By.xpath("//*[contains(text(),'Fehler bei \u00DCbergabe')]");
+  public static final By ERROR_DESCRIPTION_REQUEST_PROCESSED =
+      By.xpath(
+          "//*[contains(text(),'Die Anfrage wurde bereits bearbeitet. Bitte laden Sie die Seite neu, um die neuesten \u00C4nderungen zu sehen.')]");
+  public static final By ERROR_REVOKE_IN_HANDOVER_HEADER_DE =
+      By.xpath("//*[contains(text(),'Freigabeanfrage nicht gefunden')]");
+  public static final By ERROR_REVOKE_DESCRIPTION_REQUEST_PROCESSED =
+      By.xpath(
+          "//*[contains(text(),'Die Freigabeanfrage konnte nicht gefunden werden. Sie wurde entweder vom Quellsystem zur\u00FCckgezogen oder von jemand anderem abgelehnt. Bitte laden Sie die Seite neu, um die neuesten \u00C4nderungen zu sehen.')]");
+  public static final By REPORTING_TOOLS_FOR_SURVNET_USER =
+      By.xpath(
+          "//div[contains(@location,'externalSurvToolGateway')]//div[contains(text(), 'Surv NETAUTO')]");
 
   public static By getPreExistingConditionCombobox_DE(String id) {
     return By.xpath(
@@ -383,8 +412,17 @@ public class EditCasePage {
             id, value));
   }
 
+  public static By getPreExistingConditionComboboxToSelectValue_DE(String disease) {
+    return By.cssSelector(String.format("#%s [class='v-checkbox v-select-option']", disease));
+  }
+
   public static By getEditTaskButtonByNumber(Integer number) {
-    return By.cssSelector(String.format("#edit-task-%x", number));
+    return By.cssSelector(String.format("#edit%x", number));
+  }
+
+  @NotNull
+  public static By getVaccinationCardVaccinationNameByIndex(Integer idx) {
+    return By.xpath(String.format("(//div[contains(text(),'Impfstoffname:')])[%x]", idx));
   }
 
   public static final By DELETE_VACCINATION_REASON_POPUP_DE_VERSION =
@@ -394,8 +432,28 @@ public class EditCasePage {
       By.cssSelector(".popupContent textarea");
   public static final By VACCINATION_STATUS_UPDATE_POPUP_HEADER =
       By.xpath("//div[@class='popupContent']//*[text()='Impfstatus Aktualisierung']");
+  public static final By EDIT_REPORT_BUTTON =
+      By.xpath("//div[@location='surveillanceReports']//div[contains(@id, 'edit')]");
+  public static final By REPORTER_FACILITY_INPUT = By.cssSelector(".popupContent #facility input");
+  public static final By REPORTER_FACILITY_DETAILS_INPUT =
+      By.cssSelector(".popupContent #facilityDetails");
 
   public static By checkIfTextExists(String text) {
     return By.xpath(String.format("//div[contains(text(),'%s')]", text));
   }
+
+  public static By SHARE_PENDING_WARNING_DE =
+      By.xpath(
+          "//div[@class='popupContent']//div[contains(text(),'Es gibt bereits eine ausstehende Anfrage an das gleiche Gesundheitsamt. Bitte widerrufen Sie die Anfrage, bevor Sie eine Neue senden.')]");
+  public static final By SEND_TO_REPORTING_TOOL_BUTTON =
+      By.id("ExternalSurveillanceToolGateway.send");
+  public static final By REPORTING_TOOL_MESSAGE =
+      By.xpath("//div[@class='v-Notification humanized v-Notification-humanized']");
+  public static final By LAB_MESSAGE_WINDOW_HEADER_DE =
+      By.xpath(
+          "//div[contains(@class, 'popupContent')]//div[contains(@class, 'v-window-outerheader')]//div[contains(text(), 'Meldung')]");
+  public static final By WINDOW_CLOSE_BUTTON =
+      By.xpath("//div[contains(@class, 'v-window-closebox')]");
+  public static final By NOSOCOMIAL_OUTBRAKE_LABEL = By.cssSelector("#nosocomialOutbreak label");
+  public static final By INFECTION_SETTINGS_INPUT = By.cssSelector("#infectionSetting input");
 }

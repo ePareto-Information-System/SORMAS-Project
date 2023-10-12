@@ -19,15 +19,14 @@ import java.io.ByteArrayInputStream;
 import java.util.Collections;
 import java.util.Date;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
-import com.vaadin.data.provider.DataProvider;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import com.vaadin.data.provider.DataProviderListener;
-import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.FileDownloader;
 import com.vaadin.server.StreamResource;
-import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -38,6 +37,7 @@ import com.vaadin.ui.renderers.DateRenderer;
 import com.vaadin.ui.renderers.HtmlRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 
+import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.externalmessage.ExternalMessageCriteria;
 import de.symeda.sormas.api.externalmessage.ExternalMessageDto;
@@ -49,7 +49,6 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DateHelper;
-import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
@@ -96,18 +95,22 @@ public class ExternalMessageGrid extends FilteredGrid<ExternalMessageIndexDto, E
 			.setCaption(I18nProperties.getPrefixCaption(ExternalMessageDto.I18N_PREFIX, ExternalMessageDto.ASSIGNEE))
 			.setSortable(false);
 
-		addComponentColumn(this::buildProcessComponent).setId(COLUMN_PROCESS);
+		addComponentColumn(this::buildProcessComponent).setId(COLUMN_PROCESS).setSortable(false);
+		addComponentColumn(this::buildDownloadButton).setId(COLUMN_DOWNLOAD).setSortable(false);
 
-		addComponentColumn(this::buildDownloadButton).setId(COLUMN_DOWNLOAD);
-
-		setColumns(
+		String[] columns = new String[] {
 			SHOW_MESSAGE,
-			ExternalMessageIndexDto.UUID,
-			ExternalMessageIndexDto.TYPE,
+			ExternalMessageIndexDto.UUID };
+		if (!FacadeProvider.getConfigFacade().isConfiguredCountry(CountryHelper.COUNTRY_CODE_LUXEMBOURG)) {
+			columns = ArrayUtils.add(columns, ExternalMessageIndexDto.TYPE);
+		}
+		columns = ArrayUtils.addAll(
+			columns,
 			ExternalMessageIndexDto.MESSAGE_DATE_TIME,
 			ExternalMessageIndexDto.REPORTER_NAME,
 			ExternalMessageIndexDto.REPORTER_POSTAL_CODE,
 			ExternalMessageIndexDto.DISEASE,
+			ExternalMessageIndexDto.DISEASE_VARIANT,
 			ExternalMessageIndexDto.PERSON_FIRST_NAME,
 			ExternalMessageIndexDto.PERSON_LAST_NAME,
 			ExternalMessageIndexDto.PERSON_BIRTH_DATE,
@@ -116,6 +119,7 @@ public class ExternalMessageGrid extends FilteredGrid<ExternalMessageIndexDto, E
 			EDIT_ASSIGNEE,
 			COLUMN_PROCESS,
 			COLUMN_DOWNLOAD);
+		setColumns(columns);
 
 		((Column<ExternalMessageIndexDto, String>) getColumn(ExternalMessageIndexDto.UUID)).setRenderer(new UuidRenderer());
 		((Column<ExternalMessageIndexDto, Date>) getColumn(ExternalMessageIndexDto.MESSAGE_DATE_TIME))
@@ -123,11 +127,11 @@ public class ExternalMessageGrid extends FilteredGrid<ExternalMessageIndexDto, E
 		((Column<ExternalMessageIndexDto, Date>) getColumn(ExternalMessageIndexDto.PERSON_BIRTH_DATE))
 			.setRenderer(new DateRenderer(DateHelper.getLocalDateFormat(I18nProperties.getUserLanguage())));
 
-		getColumn(COLUMN_PROCESS).setSortable(false);
-		getColumn(COLUMN_DOWNLOAD).setSortable(false);
-
 		for (Grid.Column<?, ?> column : getColumns()) {
 			column.setCaption(I18nProperties.getPrefixCaption(ExternalMessageIndexDto.I18N_PREFIX, column.getId(), column.getCaption()));
+			if (StringUtils.isBlank(column.getCaption())) {
+				column.setCaption("\uFEFF");
+			}
 		}
 	}
 
@@ -142,38 +146,11 @@ public class ExternalMessageGrid extends FilteredGrid<ExternalMessageIndexDto, E
 	}
 
 	public void setEagerDataProvider() {
-
-		ListDataProvider<ExternalMessageIndexDto> dataProvider =
-			DataProvider.fromStream(FacadeProvider.getExternalMessageFacade().getIndexList(getCriteria(), null, null, null).stream());
-		setDataProvider(dataProvider);
-
-		setSelectionMode(SelectionMode.MULTI);
-
-		if (dataProviderListener != null) {
-			dataProvider.addDataProviderListener(dataProviderListener);
-		}
+		setEagerDataProvider(FacadeProvider.getExternalMessageFacade()::getIndexList);
 	}
 
 	public void setLazyDataProvider() {
-		DataProvider<ExternalMessageIndexDto, ExternalMessageCriteria> dataProvider = DataProvider.fromFilteringCallbacks(
-			query -> FacadeProvider.getExternalMessageFacade()
-				.getIndexList(
-					query.getFilter().orElse(null),
-					query.getOffset(),
-					query.getLimit(),
-					query.getSortOrders()
-						.stream()
-						.map(sortOrder -> new SortProperty(sortOrder.getSorted(), sortOrder.getDirection() == SortDirection.ASCENDING))
-						.collect(Collectors.toList()))
-				.stream(),
-			query -> (int) FacadeProvider.getExternalMessageFacade().count(query.getFilter().orElse(null)));
-
-		setDataProvider(dataProvider);
-		setSelectionMode(SelectionMode.NONE);
-
-		if (dataProviderListener != null) {
-			dataProvider.addDataProviderListener(dataProviderListener);
-		}
+		setLazyDataProvider(FacadeProvider.getExternalMessageFacade()::getIndexList, FacadeProvider.getExternalMessageFacade()::count);
 	}
 
 	public void reload() {
@@ -249,9 +226,5 @@ public class ExternalMessageGrid extends FilteredGrid<ExternalMessageIndexDto, E
 		fileDownloader.setFileDownloadResource(streamResource);
 
 		return downloadButton;
-	}
-
-	public void setDataProviderListener(DataProviderListener<ExternalMessageIndexDto> dataProviderListener) {
-		this.dataProviderListener = dataProviderListener;
 	}
 }

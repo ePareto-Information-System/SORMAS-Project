@@ -18,10 +18,12 @@
 
 package org.sormas.e2etests.entities.services;
 
+import static org.sormas.e2etests.entities.pojo.helpers.ShortUUIDGenerator.generateShortUUID;
+
 import com.github.javafaker.Faker;
 import com.google.inject.Inject;
 import java.time.LocalDate;
-import java.util.UUID;
+import lombok.SneakyThrows;
 import org.sormas.e2etests.entities.pojo.web.Case;
 import org.sormas.e2etests.enums.CommunityValues;
 import org.sormas.e2etests.enums.DiseasesValues;
@@ -53,6 +55,7 @@ public class CaseService {
         .build();
   }
 
+  @SneakyThrows
   public Case buildGeneratedCaseForOnePerson(
       String firstName, String lastName, LocalDate dateOfBirth) {
     return Case.builder()
@@ -60,7 +63,7 @@ public class CaseService {
         .lastName(lastName)
         .caseOrigin("IN-COUNTRY")
         .dateOfReport(LocalDate.now().minusDays(1))
-        .externalId(UUID.randomUUID().toString())
+        .externalId(generateShortUUID())
         .disease(DiseasesValues.getRandomDiseaseCaption())
         .responsibleRegion(RegionsValues.VoreingestellteBundeslander.getName())
         .responsibleDistrict(DistrictsValues.VoreingestellterLandkreis.getName())
@@ -77,6 +80,23 @@ public class CaseService {
         .build();
   }
 
+  public Case buildGeneratedCaseForOnePersonDE(
+      String firstName, String lastName, LocalDate dateOfBirth) {
+    return Case.builder()
+        .firstName(firstName)
+        .lastName(lastName)
+        .caseOrigin("IM LAND")
+        .dateOfReport(LocalDate.now().minusDays(1))
+        .disease("COVID-19")
+        .responsibleRegion("Baden-W\u00FCrttemberg")
+        .responsibleDistrict("LK Alb-Donau-Kreis")
+        .placeOfStay("ZUHAUSE")
+        .dateOfBirth(dateOfBirth)
+        .sex(GenderValues.getRandomGenderDE())
+        .build();
+  }
+
+  @SneakyThrows
   public Case buildGeneratedCase() {
     firstName = faker.name().firstName();
     lastName = faker.name().lastName();
@@ -86,8 +106,8 @@ public class CaseService {
         .lastName(lastName)
         .caseOrigin("IN-COUNTRY")
         .dateOfReport(LocalDate.now().minusDays(1))
-        .externalId(UUID.randomUUID().toString())
-        .epidNumber(UUID.randomUUID().toString())
+        .externalId(generateShortUUID())
+        .epidNumber(generateShortUUID())
         .disease("COVID-19")
         .responsibleRegion(RegionsValues.VoreingestellteBundeslander.getName())
         .responsibleDistrict(DistrictsValues.VoreingestellterLandkreis.getName())
@@ -108,6 +128,7 @@ public class CaseService {
         .build();
   }
 
+  @SneakyThrows
   public Case buildGeneratedCaseWithCovidVariant(String covidVariant) {
 
     firstName = faker.name().firstName();
@@ -118,8 +139,8 @@ public class CaseService {
         .lastName(lastName)
         .caseOrigin("IN-COUNTRY")
         .dateOfReport(LocalDate.now().minusDays(1))
-        .externalId(UUID.randomUUID().toString())
-        .epidNumber(UUID.randomUUID().toString())
+        .externalId(generateShortUUID())
+        .epidNumber(generateShortUUID())
         .disease("COVID-19")
         .diseaseVariant(covidVariant)
         .responsibleRegion(RegionsValues.VoreingestellteBundeslander.getName())
@@ -141,6 +162,7 @@ public class CaseService {
         .build();
   }
 
+  @SneakyThrows
   public Case buildGeneratedCaseWithFacility() {
     firstName = faker.name().firstName();
     lastName = faker.name().lastName();
@@ -150,8 +172,8 @@ public class CaseService {
         .lastName(lastName)
         .caseOrigin("IN-COUNTRY")
         .dateOfReport(LocalDate.now().minusDays(1))
-        .externalId(UUID.randomUUID().toString())
-        .epidNumber(UUID.randomUUID().toString())
+        .externalId(generateShortUUID())
+        .epidNumber(generateShortUUID())
         .disease("COVID-19")
         .responsibleRegion(RegionsValues.VoreingestellteBundeslander.getName())
         .responsibleDistrict(DistrictsValues.VoreingestellterLandkreis.getName())
@@ -173,6 +195,7 @@ public class CaseService {
         .build();
   }
 
+  @SneakyThrows
   public Case buildGeneratedCaseWithCreatedFacilityDE(
       String facilityCategory, String facilityType, String facility) {
     firstName = faker.name().firstName();
@@ -183,8 +206,8 @@ public class CaseService {
         .lastName(lastName)
         .caseOrigin("IN-COUNTRY")
         .dateOfReport(LocalDate.now().minusDays(1))
-        .externalId(UUID.randomUUID().toString())
-        .epidNumber(UUID.randomUUID().toString())
+        .externalId(generateShortUUID())
+        .epidNumber(generateShortUUID())
         .disease("COVID-19")
         .responsibleRegion(RegionsValues.VoreingestellteBundeslander.getName())
         .responsibleDistrict(DistrictsValues.VoreingestellterLandkreis.getName())
@@ -207,6 +230,7 @@ public class CaseService {
         .build();
   }
 
+  @SneakyThrows
   public Case buildCaseWithFacilityAndDifferentPlaceOfStay() {
     firstName = faker.name().firstName();
     lastName = faker.name().lastName();
@@ -216,7 +240,7 @@ public class CaseService {
         .lastName(lastName)
         .caseOrigin("IN-COUNTRY")
         .dateOfReport(LocalDate.now().minusDays(1))
-        .externalId(UUID.randomUUID().toString())
+        .externalId(generateShortUUID())
         .disease("COVID-19")
         .responsibleRegion("Region1")
         .responsibleDistrict("District11")
@@ -244,7 +268,7 @@ public class CaseService {
         .lastName(lastName)
         .caseOrigin("IN-COUNTRY")
         .dateOfReport(LocalDate.now().minusDays(1))
-        //  .externalId(UUID.randomUUID().toString())
+        //  .externalId(generateShortUUID())
         .disease(DiseasesValues.getCaptionFor(diseaseValue))
         .responsibleRegion(RegionsValues.VoreingestellteBundeslander.getName())
         .responsibleDistrict(DistrictsValues.VoreingestellterLandkreis.getName())
@@ -290,6 +314,7 @@ public class CaseService {
         .build();
   }
 
+  @SneakyThrows
   public Case buildGeneratedCaseWithDifferentPlaceOfStay() {
     firstName = faker.name().firstName();
     lastName = faker.name().lastName();
@@ -299,7 +324,7 @@ public class CaseService {
         .lastName(lastName)
         .caseOrigin("IN-COUNTRY")
         .dateOfReport(LocalDate.now().minusDays(1))
-        .externalId(UUID.randomUUID().toString())
+        .externalId(generateShortUUID())
         .disease("COVID-19")
         .responsibleRegion(RegionsValues.VoreingestellteBundeslander.getName())
         .responsibleDistrict(DistrictsValues.VoreingestellterLandkreis.getName())
@@ -322,6 +347,7 @@ public class CaseService {
         .build();
   }
 
+  @SneakyThrows
   public Case buildCaseWithPointOfEntryAndDifferentPlaceOfStay() {
     firstName = faker.name().firstName();
     lastName = faker.name().lastName();
@@ -331,7 +357,7 @@ public class CaseService {
         .lastName(lastName)
         .caseOrigin("POINT OF ENTRY")
         .dateOfReport(LocalDate.now().minusDays(1))
-        .externalId(UUID.randomUUID().toString())
+        .externalId(generateShortUUID())
         .disease("COVID-19")
         .responsibleRegion("Berlin")
         .responsibleDistrict("SK Berlin Mitte")
@@ -347,6 +373,7 @@ public class CaseService {
         .build();
   }
 
+  @SneakyThrows
   public Case buildGeneratedCaseDE() {
     firstName = faker.name().firstName();
     lastName = faker.name().lastName();
@@ -356,7 +383,7 @@ public class CaseService {
         .lastName(lastName)
         .caseOrigin("IM LAND")
         .dateOfReport(LocalDate.now().minusDays(1))
-        .externalId(UUID.randomUUID().toString())
+        .externalId(generateShortUUID())
         .disease("COVID-19")
         .diseaseVariant("B.1.617.1")
         .responsibleRegion(RegionsValues.VoreingestellteBundeslander.getName())
@@ -379,6 +406,7 @@ public class CaseService {
         .build();
   }
 
+  @SneakyThrows
   public Case buildGeneratedCaseDEDaysAgo(int daysAgo) {
     firstName = faker.name().firstName();
     lastName = faker.name().lastName();
@@ -388,7 +416,7 @@ public class CaseService {
         .lastName(lastName)
         .caseOrigin("IM LAND")
         .dateOfReport(LocalDate.now().minusDays(daysAgo))
-        .externalId(UUID.randomUUID().toString())
+        .externalId(generateShortUUID())
         .disease("COVID-19")
         .diseaseVariant("B.1.617.1")
         .responsibleRegion(RegionsValues.VoreingestellteBundeslander.getName())
@@ -411,6 +439,7 @@ public class CaseService {
         .build();
   }
 
+  @SneakyThrows
   public Case buildGeneratedCaseDEForOnePerson(
       String firstName,
       String lastName,
@@ -422,7 +451,7 @@ public class CaseService {
         .lastName(lastName)
         .caseOrigin("IM LAND")
         .dateOfReport(reportDate)
-        .externalId(UUID.randomUUID().toString())
+        .externalId(generateShortUUID())
         .disease("COVID-19")
         .diseaseVariant("B.1.617.1")
         .responsibleRegion(RegionsValues.VoreingestellteBundeslander.getName())
@@ -441,6 +470,7 @@ public class CaseService {
         .build();
   }
 
+  @SneakyThrows
   public Case buildEditGeneratedCase() {
     return Case.builder()
         .dateOfReport(LocalDate.now().minusDays(3))
@@ -450,8 +480,8 @@ public class CaseService {
         .laboratoryDiagnosticConfirmation("Yes")
         .investigationStatus("INVESTIGATION DONE")
         .caseOrigin("IN-COUNTRY")
-        .externalId(UUID.randomUUID().toString())
-        .externalToken(UUID.randomUUID().toString())
+        .externalId(generateShortUUID())
+        .externalToken(generateShortUUID())
         .disease("COVID-19")
         .reinfection("NO")
         .outcomeOfCase("RECOVERED")
@@ -549,6 +579,94 @@ public class CaseService {
         .postalCode(faker.address().zipCode())
         .city(faker.address().cityName())
         .areaType("Urban")
+        .build();
+  }
+
+  @SneakyThrows
+  public Case buildCaseForSurvnetFeature() {
+    firstName = faker.name().firstName();
+    lastName = faker.name().lastName();
+
+    return Case.builder()
+        .dateOfReport(LocalDate.now())
+        .responsibleRegion("Berlin")
+        .responsibleDistrict("SK Berlin Mitte")
+        .placeOfStay("ZUHAUSE")
+        .firstName(firstName)
+        .lastName(lastName)
+        .sex(GenderValues.getRandomGenderDE())
+        .build();
+  }
+
+  public Case buildCaseWithFacilitiesForSurvnetFeature() {
+    firstName = faker.name().firstName();
+    lastName = faker.name().lastName();
+
+    return Case.builder()
+        .dateOfReport(LocalDate.now())
+        .responsibleRegion("Berlin")
+        .responsibleDistrict("SK Berlin Mitte")
+        .placeOfStay("EINRICHTUNG")
+        .facilityCategory("Medizinische Einrichtung")
+        .facilityType("Krankenhaus")
+        .facility("Andere Einrichtung")
+        .firstName(firstName)
+        .lastName(lastName)
+        .sex(GenderValues.getRandomGenderDE())
+        .build();
+  }
+
+  @SneakyThrows
+  public Case buildCaseForSurvnetFeatureWithReinfection() {
+    firstName = faker.name().firstName();
+    lastName = faker.name().lastName();
+
+    return Case.builder()
+        .dateOfReport(LocalDate.now())
+        .responsibleRegion("Berlin")
+        .responsibleDistrict("SK Berlin Mitte")
+        .placeOfStay("ZUHAUSE")
+        .reinfection("JA")
+        .firstName(firstName)
+        .lastName(lastName)
+        .sex(GenderValues.getRandomGenderDE())
+        .build();
+  }
+
+  @SneakyThrows
+  public Case buildCaseForSurvnetFeatureWithDateOfBirth() {
+    firstName = faker.name().firstName();
+    lastName = faker.name().lastName();
+
+    return Case.builder()
+        .dateOfReport(LocalDate.now())
+        .responsibleRegion("Berlin")
+        .responsibleDistrict("SK Berlin Mitte")
+        .placeOfStay("ZUHAUSE")
+        .firstName(firstName)
+        .lastName(lastName)
+        .sex(GenderValues.getRandomGenderDE())
+        .dateOfBirth(
+            LocalDate.of(
+                faker.number().numberBetween(1900, 2002),
+                faker.number().numberBetween(1, 12),
+                faker.number().numberBetween(1, 27)))
+        .build();
+  }
+
+  @SneakyThrows
+  public Case buildCaseForSurvnetFeatureXMLCheck() {
+    firstName = faker.name().firstName();
+    lastName = faker.name().lastName();
+
+    return Case.builder()
+        .dateOfReport(LocalDate.now())
+        .responsibleRegion("Berlin")
+        .responsibleDistrict("SK Berlin Mitte")
+        .placeOfStay("ZUHAUSE")
+        .firstName(firstName)
+        .lastName(lastName)
+        .sex(GenderValues.MALE.getGenderDE())
         .build();
   }
 }

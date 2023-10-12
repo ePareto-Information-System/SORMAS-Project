@@ -87,18 +87,15 @@ public class ContactVisitsView extends AbstractContactView {
 		topLayout.addStyleName(CssStyles.VSPACE_3);
 
 		if (isEditAllowed()) {
-			if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
+			if (UserProvider.getCurrent()
+				.hasAllUserRights(UserRight.PERFORM_BULK_OPERATIONS, UserRight.CONTACT_EDIT, UserRight.VISIT_EDIT, UserRight.VISIT_DELETE)) {
 				topLayout.setWidth(100, Unit.PERCENTAGE);
 
 				MenuBar bulkOperationsDropdown = MenuBarHelper.createDropDown(
 					Captions.bulkActions,
 					new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkDelete), VaadinIcons.TRASH, selectedItem -> {
-						ControllerProvider.getVisitController().deleteAllSelectedItems(grid.asMultiSelect().getSelectedItems(), new Runnable() {
-
-							public void run() {
-								navigateTo(criteria);
-							}
-						});
+						ControllerProvider.getVisitController()
+							.deleteAllSelectedItems(grid.asMultiSelect().getSelectedItems(), grid, () -> navigateTo(criteria));
 					}));
 
 				topLayout.addComponent(bulkOperationsDropdown);
@@ -147,7 +144,7 @@ public class ContactVisitsView extends AbstractContactView {
 				new FileDownloader(exportStreamResource).extend(exportButton);
 			}
 
-			if (UserProvider.getCurrent().hasUserRight(UserRight.VISIT_CREATE)) {
+			if (UserProvider.getCurrent().hasAllUserRights(UserRight.VISIT_CREATE, UserRight.CONTACT_EDIT)) {
 				newButton = ButtonHelper.createIconButton(
 					Captions.visitNewVisit,
 					VaadinIcons.PLUS_CIRCLE,
@@ -160,6 +157,9 @@ public class ContactVisitsView extends AbstractContactView {
 				final ContactDto contactDto = FacadeProvider.getContactFacade().getByUuid(this.getContactRef().getUuid());
 				if (contactDto.getResultingCase() != null) {
 					newButton.setEnabled(false);
+					if (topLayout.getComponentCount() == 1) {
+						topLayout.setExpandRatio(newButton, 1);
+					}
 					final Label label = new Label(VaadinIcons.INFO_CIRCLE.getHtml(), ContentMode.HTML);
 					label.setDescription(I18nProperties.getString(Strings.infoContactAlreadyConvertedToCase));
 					topLayout.addComponent(label);
@@ -170,22 +170,6 @@ public class ContactVisitsView extends AbstractContactView {
 
 		return topLayout;
 	}
-
-//	private void updateActiveStatusButtonCaption() {
-//		if (activeStatusButton != null) {
-//			activeStatusButton.setCaption(statusButtons.get(activeStatusButton) + LayoutUtil.spanCss(CssStyles.BADGE, String.valueOf(grid.getContainer().size())));
-//		}
-//	}
-
-//	private void processStatusChangeVisuals(Button button) {
-//		statusButtons.keySet().forEach(b -> {
-//			CssStyles.style(b, CssStyles.BUTTON_FILTER_LIGHT);
-//			b.setCaption(statusButtons.get(b));
-//		});
-//		CssStyles.removeStyles(button, CssStyles.BUTTON_FILTER_LIGHT);
-//		activeStatusButton = button;
-//		updateActiveStatusButtonCaption();
-//	}
 
 	@Override
 	protected void initView(String params) {
@@ -199,7 +183,11 @@ public class ContactVisitsView extends AbstractContactView {
 		criteria.contact(getContactRef());
 
 		if (grid == null) {
-			grid = new VisitGrid(criteria, isEditAllowed());
+			grid = new VisitGrid(
+				criteria,
+				UserProvider.getCurrent().hasAllUserRightsWithEditAllowedFlag(isEditAllowed(), UserRight.CONTACT_EDIT, UserRight.VISIT_EDIT),
+				UserProvider.getCurrent().hasAllUserRightsWithEditAllowedFlag(isEditAllowed(), UserRight.VISIT_DELETE));
+
 			gridLayout = new DetailSubComponentWrapper(() -> null);
 			gridLayout.setSizeFull();
 			gridLayout.setMargin(true);
@@ -211,6 +199,5 @@ public class ContactVisitsView extends AbstractContactView {
 		}
 
 		grid.reload();
-//		updateActiveStatusButtonCaption();
 	}
 }

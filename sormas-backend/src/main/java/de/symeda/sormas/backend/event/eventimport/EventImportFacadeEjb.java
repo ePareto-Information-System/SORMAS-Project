@@ -236,7 +236,9 @@ public class EventImportFacadeEjb implements EventImportFacade {
 						}
 
 					} else if (DataHelper.equal(cellData.getEntityClass(), DataHelper.getHumanClassName(EventGroupReferenceDto.class))) {
-						eventGroupReferences.add(new EventGroupReferenceDto(cellData.getValue()));
+						if (!StringUtils.isEmpty(cellData.getValue())) {
+							eventGroupReferences.add(new EventGroupReferenceDto(cellData.getValue()));
+						}
 					} else if (!StringUtils.isEmpty(cellData.getValue())) {
 						// If the cell entry is not empty, try to insert it into the current event
 						insertColumnEntryIntoData(event, cellData.getValue(), cellData.getEntityPropertyPath());
@@ -333,7 +335,10 @@ public class EventImportFacadeEjb implements EventImportFacade {
 						}
 					} else if (propertyType.isAssignableFrom(DistrictReferenceDto.class)) {
 						List<DistrictReferenceDto> district =
-							districtFacade.getByName(entry, ImportHelper.getRegionBasedOnDistrict(pd.getName(), event, currentElement), false);
+							districtFacade.getByName(
+								entry,
+								ImportHelper.getRegionBasedOnDistrict(pd.getName(), event.getEventLocation(), currentElement),
+								false);
 						if (district.isEmpty()) {
 							throw new ImportErrorException(
 								I18nProperties.getValidationError(
@@ -351,7 +356,10 @@ public class EventImportFacadeEjb implements EventImportFacade {
 						}
 					} else if (propertyType.isAssignableFrom(CommunityReferenceDto.class)) {
 						List<CommunityReferenceDto> community =
-							communityFacade.getByName(entry, ImportHelper.getDistrictBasedOnCommunity(pd.getName(), event, currentElement), false);
+							communityFacade.getByName(
+								entry,
+								ImportHelper.getDistrictBasedOnCommunity(pd.getName(), event.getEventLocation(), currentElement),
+								false);
 						if (community.isEmpty()) {
 							throw new ImportErrorException(
 								I18nProperties.getValidationError(
@@ -369,7 +377,7 @@ public class EventImportFacadeEjb implements EventImportFacade {
 						}
 					} else if (propertyType.isAssignableFrom(FacilityReferenceDto.class)) {
 						DataHelper.Pair<DistrictReferenceDto, CommunityReferenceDto> infrastructureData =
-							ImportHelper.getDistrictAndCommunityBasedOnFacility(pd.getName(), event, currentElement);
+							ImportHelper.getDistrictAndCommunityBasedOnFacility(pd.getName(), event.getEventLocation(), currentElement);
 						List<FacilityReferenceDto> facilities = facilityFacade.getByNameAndType(
 							entry,
 							infrastructureData.getElement0(),

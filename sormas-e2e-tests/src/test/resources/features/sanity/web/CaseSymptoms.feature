@@ -4,13 +4,12 @@ Feature: Case symptoms tab e2e test cases
   @tmsLink=SORDEV-5521 @env_main
   Scenario: Fill the symptoms tab
     When API: I create a new person
-    Then API: I check that POST call body is "OK"
+
     And API: I check that POST call status code is 200
     Then API: I create a new case
-    Then API: I check that POST call body is "OK"
+
     And API: I check that POST call status code is 200
     And I log in as a National User
-    And I click on the Cases button from navbar
     And I open the last created Case via API
     Then I navigate to symptoms tab
     And I fill specific data of symptoms with Set cleared to No option to all Clinical Signs and Symptoms
@@ -37,13 +36,12 @@ Feature: Case symptoms tab e2e test cases
   @tmsLink=SORDEV-8350 @env_main
   Scenario: Extend fever validation
     When API: I create a new person
-    Then API: I check that POST call body is "OK"
+
     And API: I check that POST call status code is 200
     Then API: I create a new case
-    Then API: I check that POST call body is "OK"
+
     And API: I check that POST call status code is 200
     And I log in as a National User
-    And I click on the Cases button from navbar
     And I open the last created Case via API
     Then I navigate to symptoms tab
     And I set Maximum body temperature as a 38.1

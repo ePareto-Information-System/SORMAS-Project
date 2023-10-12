@@ -18,10 +18,34 @@
 
 package org.sormas.e2etests.steps.web.application.events;
 
-import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.*;
 import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.DISEASE_COMBOBOX;
+import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.DISEASE_VARIANT_COMBOBOX;
+import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.END_DATA_EVENT;
+import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.END_DATA_INPUT;
+import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.END_DATA_TIME;
+import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.EVENT_COMMUNITY;
+import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.EVENT_DISTRICT;
+import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.EVENT_IDENTIFICATION_SOURCE_COMBOBOX;
+import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.EVENT_INVESTIGATION_STATUS_OPTIONS;
+import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.EVENT_MANAGEMENT_STATUS_OPTIONS;
+import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.EVENT_REGION;
+import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.EVENT_STATUS_OPTIONS;
+import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.MEANS_OF_TRANSPORT_COMBOBOX;
+import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.MULTI_DAY_EVENT_CHECKBOX;
+import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.NEW_EVENT_CREATED_DE_MESSAGE;
+import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.NEW_EVENT_CREATED_MESSAGE;
+import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.REPORT_DATE_INPUT;
+import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.RISK_LEVEL_COMBOBOX;
 import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.SAVE_BUTTON;
+import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.SOURCE_INSTITUTIONAL_PARTNER_COMBOBOX;
+import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.SOURCE_TYPE_COMBOBOX;
+import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.START_DATA_EVENT;
+import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.START_DATA_INPUT;
+import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.START_DATA_TIME;
+import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.TITLE_INPUT;
+import static org.sormas.e2etests.pages.application.events.CreateNewEventPage.TYPE_OF_PLACE_COMBOBOX;
 import static org.sormas.e2etests.pages.application.events.EditEventPage.UUID_INPUT;
+import static org.sormas.e2etests.pages.application.events.EventDirectoryPage.NEW_EVENT_BUTTON;
 
 import com.github.javafaker.Faker;
 import com.opencsv.CSVParser;
@@ -324,12 +348,44 @@ public class CreateNewEventSteps implements En {
         });
 
     And(
-        "^I set event Date filed on Create New Event form to current date for DE$",
+        "^I set event Date field on Create New Event form to current date for DE$",
         () -> {
           webDriverHelpers.scrollToElement(START_DATA_EVENT);
           webDriverHelpers.waitUntilElementIsVisibleAndClickable(START_DATA_EVENT);
           webDriverHelpers.fillInWebElement(
               START_DATA_EVENT, DATE_FORMATTER.format(LocalDate.now()));
+        });
+
+    And(
+        "^I create a new event with mandatory fields for DE version$",
+        () -> {
+          webDriverHelpers.waitUntilIdentifiedElementIsPresent(NEW_EVENT_BUTTON);
+          webDriverHelpers.clickOnWebElementBySelector(NEW_EVENT_BUTTON);
+          newEvent = eventService.buildGeneratedEventDE();
+          fillDateOfReport(LocalDate.now(), Locale.GERMAN);
+          selectEventStatus(newEvent.getEventStatus());
+          fillTitle(newEvent.getTitle());
+          selectResponsibleRegion(newEvent.getRegion());
+          selectResponsibleDistrict(newEvent.getDistrict());
+          selectDisease(newEvent.getDisease());
+          fillStartData(LocalDate.now().minusDays(1), Locale.GERMAN);
+          webDriverHelpers.clickOnWebElementBySelector(SAVE_BUTTON);
+          webDriverHelpers.clickOnWebElementBySelector(NEW_EVENT_CREATED_DE_MESSAGE);
+        });
+
+    And(
+        "^I create a new cluster event for DE version$",
+        () -> {
+          webDriverHelpers.waitUntilIdentifiedElementIsPresent(NEW_EVENT_BUTTON);
+          webDriverHelpers.clickOnWebElementBySelector(NEW_EVENT_BUTTON);
+          newEvent = eventService.buildClusterWithMandatoryFields();
+          fillDateOfReport(newEvent.getReportDate(), Locale.GERMAN);
+          selectEventStatus(newEvent.getEventStatus());
+          fillTitle(newEvent.getTitle());
+          selectResponsibleRegion(newEvent.getRegion());
+          selectResponsibleDistrict(newEvent.getDistrict());
+          webDriverHelpers.clickOnWebElementBySelector(SAVE_BUTTON);
+          webDriverHelpers.clickOnWebElementBySelector(NEW_EVENT_CREATED_DE_MESSAGE);
         });
   }
 

@@ -17,10 +17,15 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.events;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vaadin.server.Page;
 import com.vaadin.server.Sizeable;
@@ -51,6 +56,8 @@ import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.events.groups.EventGroupSelectionField;
+import de.symeda.sormas.ui.utils.ArchivingController;
+import de.symeda.sormas.ui.utils.BulkOperationHandler;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
@@ -58,19 +65,46 @@ import de.symeda.sormas.ui.utils.components.page.title.TitleLayout;
 
 public class EventGroupController {
 
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+	private void linkEventsToGroup(
+		List<EventReferenceDto> eventReferences,
+		EventGroupReferenceDto eventGroupReference,
+		Consumer<List<EventReferenceDto>> callback) {
+
+		List<String> eventUuids = eventReferences.stream().map(EventReferenceDto::getUuid).collect(Collectors.toList());
+		List<String> eventGroupUuids = Collections.singletonList(eventGroupReference.getUuid());
+
+		List<String> alreadyLinkedEventUuidsToGroup =
+			FacadeProvider.getEventGroupFacade().getAlreadyLinkedEventUuidsToGroup(eventUuids, eventGroupUuids);
+
+		String messageEventsLinkedToGroup = eventReferences.size() > 1 ? Strings.messageEventsLinkedToGroup : Strings.messageEventLinkedToGroup;
+		new BulkOperationHandler<EventReferenceDto>(
+			messageEventsLinkedToGroup,
+			null,
+			Strings.headingSomeEventsNotLinked,
+			Strings.headingEventsNotLinked,
+			Strings.messageCountEventsNotLinked,
+			null,
+			null,
+			Strings.messageCountEventsNotLinkedAccessDeniedReason,
+			Strings.messageAllEventsAlreadyLinkedToGroup,
+			Strings.infoBulkProcessFinishedWithSkipsOutsideJurisdictionOrNotEligible,
+			Strings.infoBulkProcessFinishedWithoutSuccess)
+				.doBulkOperation(
+					batch -> FacadeProvider.getEventGroupFacade()
+						.linkEventsToGroups(
+							batch.stream().map(EventReferenceDto::getUuid).collect(Collectors.toList()),
+							eventGroupUuids,
+							alreadyLinkedEventUuidsToGroup),
+					new ArrayList<>(eventReferences),
+					callback);
+	}
+
 	public void create(EventReferenceDto eventReference) {
 
 		EventDto eventByUuid = FacadeProvider.getEventFacade().getEventByUuid(eventReference.getUuid(), false);
 		UserProvider user = UserProvider.getCurrent();
-		if ((!user.hasNationJurisdictionLevel() && !user.hasRegion(eventByUuid.getEventLocation().getRegion()))
-				&& !user.isAdmin()) {
-			new Notification(
-				I18nProperties.getString(Strings.headingEventGroupLinkEventIssue),
-				I18nProperties.getString(Strings.errorEventFromAnotherJurisdiction),
-				Type.ERROR_MESSAGE,
-				false).show(Page.getCurrent());
-			return;
-		}
 
 		EventGroupCriteria eventGroupCriteria = new EventGroupCriteria();
 		Set<String> eventGroupUuids = FacadeProvider.getEventGroupFacade()
@@ -84,10 +118,8 @@ public class EventGroupController {
 			if (events > 0) {
 				ControllerProvider.getEventGroupController().selectOrCreate(eventReference);
 			} else {
-				ControllerProvider.getEventGroupController().create(Collections.singletonList(eventReference), null);
+				ControllerProvider.getEventGroupController().create(Collections.singletonList(eventReference), (r) -> SormasUI.refreshView());
 			}
-		} else if (user.hasUserRight(UserRight.EVENTGROUP_CREATE)) {
-			ControllerProvider.getEventGroupController().create(Collections.singletonList(eventReference), null);
 		} else {
 			long events = FacadeProvider.getEventGroupFacade().count(eventGroupCriteria);
 			if (events > 0) {
@@ -102,7 +134,7 @@ public class EventGroupController {
 		}
 	}
 
-	public EventGroupDto create(List<EventReferenceDto> events, Runnable callback) {
+	public EventGroupDto create(List<EventReferenceDto> events, Consumer<List<EventReferenceDto>> callback) {
 		CommitDiscardWrapperComponent<EventGroupDataForm> eventCreateComponent = getEventGroupCreateComponent(events, callback);
 		EventGroupDto eventGroupDto = eventCreateComponent.getWrappedComponent().getValue();
 		VaadinUiUtil.showModalPopupWindow(eventCreateComponent, I18nProperties.getString(Strings.headingCreateNewEventGroup));
@@ -110,10 +142,10 @@ public class EventGroupController {
 	}
 
 	public void select(EventReferenceDto eventReference) {
-		select(Collections.singletonList(eventReference), null);
+		select(Collections.singletonList(eventReference), (r) -> SormasUI.refreshView());
 	}
 
-	public void select(List<EventReferenceDto> eventReferences, Runnable callback) {
+	public void select(List<EventReferenceDto> eventReferences, Consumer<List<EventReferenceDto>> callback) {
 		Set<String> excludedEventGroupUuids = FacadeProvider.getEventGroupFacade()
 			.getCommonEventGroupsByEvents(eventReferences)
 			.stream()
@@ -126,28 +158,19 @@ public class EventGroupController {
 		component.addCommitListener(() -> {
 			EventGroupIndexDto selectedEventGroup = selectionField.getValue();
 			if (selectedEventGroup != null) {
-				FacadeProvider.getEventGroupFacade().linkEventsToGroup(eventReferences, selectedEventGroup.toReference());
-				FacadeProvider.getEventGroupFacade().notifyEventAddedToEventGroup(selectedEventGroup.toReference(), eventReferences);
-
-				Notification.show(I18nProperties.getString(Strings.messageEventLinkedToGroup), Type.TRAY_NOTIFICATION);
-
-				if (callback != null) {
-					callback.run();
-				} else {
-					SormasUI.refreshView();
-				}
+				linkEventsToGroup(eventReferences, selectedEventGroup.toReference(), callback);
 			}
 		});
 
 		selectionField.setSelectionChangeCallback((commitAllowed) -> component.getCommitButton().setEnabled(commitAllowed));
-		VaadinUiUtil.showModalPopupWindow(component, I18nProperties.getString(Strings.headingPickOrCreateEventGroup));
+		VaadinUiUtil.showModalPopupWindow(component, I18nProperties.getString(Strings.headingPickEventGroup));
 	}
 
 	public void selectOrCreate(EventReferenceDto eventReference) {
-		selectOrCreate(Collections.singletonList(eventReference), null);
+		selectOrCreate(Collections.singletonList(eventReference), (r) -> SormasUI.refreshView());
 	}
 
-	public void selectOrCreate(List<EventReferenceDto> eventReferences, Runnable callback) {
+	public void selectOrCreate(List<EventReferenceDto> eventReferences, Consumer<List<EventReferenceDto>> callback) {
 		Set<String> excludedEventGroupUuids = FacadeProvider.getEventGroupFacade()
 			.getCommonEventGroupsByEvents(eventReferences)
 			.stream()
@@ -160,16 +183,7 @@ public class EventGroupController {
 		component.addCommitListener(() -> {
 			EventGroupIndexDto selectedEventGroup = selectionField.getValue();
 			if (selectedEventGroup != null) {
-				FacadeProvider.getEventGroupFacade().linkEventsToGroup(eventReferences, selectedEventGroup.toReference());
-				FacadeProvider.getEventGroupFacade().notifyEventAddedToEventGroup(selectedEventGroup.toReference(), eventReferences);
-
-				Notification.show(I18nProperties.getString(Strings.messageEventLinkedToGroup), Type.TRAY_NOTIFICATION);
-
-				if (callback != null) {
-					callback.run();
-				} else {
-					SormasUI.refreshView();
-				}
+				linkEventsToGroup(eventReferences, selectedEventGroup.toReference(), callback);
 			} else {
 				create(eventReferences, callback);
 			}
@@ -185,7 +199,7 @@ public class EventGroupController {
 
 	public CommitDiscardWrapperComponent<EventGroupDataForm> getEventGroupCreateComponent(
 		List<EventReferenceDto> eventReferences,
-		Runnable callback) {
+		Consumer<List<EventReferenceDto>> callback) {
 		EventGroupDataForm createForm = new EventGroupDataForm(true);
 		createForm.setValue(createNewEventGroup());
 
@@ -199,15 +213,9 @@ public class EventGroupController {
 				EventGroupDto dto = createForm.getValue();
 				EventGroupFacade eventGroupFacade = FacadeProvider.getEventGroupFacade();
 				dto = eventGroupFacade.saveEventGroup(dto);
-				eventGroupFacade.linkEventsToGroup(eventReferences, dto.toReference());
-				eventGroupFacade.notifyEventEventGroupCreated(dto.toReference());
 				Notification.show(I18nProperties.getString(Strings.messageEventGroupCreated), Type.WARNING_MESSAGE);
 
-				if (callback != null) {
-					callback.run();
-				} else {
-					SormasUI.refreshView();
-				}
+				linkEventsToGroup(eventReferences, dto.toReference(), callback);
 			}
 		});
 
@@ -228,7 +236,7 @@ public class EventGroupController {
 		eventGroupEditForm.setValue(eventGroup);
 		UserProvider user = UserProvider.getCurrent();
 		final CommitDiscardWrapperComponent<EventGroupDataForm> editView =
-			new CommitDiscardWrapperComponent<>(eventGroupEditForm, user.hasUserRight(UserRight.EVENTGROUP_EDIT), eventGroupEditForm.getFieldGroup());
+			new CommitDiscardWrapperComponent<>(eventGroupEditForm, true, eventGroupEditForm.getFieldGroup());
 
 		List<RegionReferenceDto> regions = FacadeProvider.getEventGroupFacade().getEventGroupRelatedRegions(uuid);
 		boolean hasRegion = user.hasNationJurisdictionLevel() || regions.stream().allMatch(user::hasRegion);
@@ -255,16 +263,25 @@ public class EventGroupController {
 		// Initialize 'Archive' button
 		if (user.hasUserRight(UserRight.EVENTGROUP_ARCHIVE) && hasRegion) {
 			boolean archived = FacadeProvider.getEventGroupFacade().isArchived(uuid);
-			Button archiveEventButton =
-				ButtonHelper.createButton(archived ? Captions.actionDearchiveInfrastructure : Captions.actionArchiveInfrastructure, e -> {
-					archiveOrDearchiveEventGroup(uuid, !archived);
-				}, ValoTheme.BUTTON_LINK);
+			Button archiveEventButton = ButtonHelper.createButton(
+				ArchivingController.ARCHIVE_DEARCHIVE_BUTTON_ID,
+				I18nProperties.getCaption(archived ? Captions.actionDearchiveCoreEntity : Captions.actionArchiveCoreEntity),
+				e -> archiveOrDearchiveEventGroup(uuid, !archived),
+				ValoTheme.BUTTON_LINK);
 
 			editView.getButtonsPanel().addComponentAsFirst(archiveEventButton);
 			editView.getButtonsPanel().setComponentAlignment(archiveEventButton, Alignment.BOTTOM_LEFT);
 		}
 
 		editView.addDiscardListener(SormasUI::refreshView);
+
+		editView.restrictEditableComponentsOnEditView(
+			UserRight.EVENTGROUP_EDIT,
+			null,
+			UserRight.EVENTGROUP_DELETE,
+			UserRight.EVENTGROUP_ARCHIVE,
+			null,
+			true);
 
 		return editView;
 
@@ -342,7 +359,7 @@ public class EventGroupController {
 		}
 	}
 
-	public void linkAllToGroup(Set<EventIndexDto> selectedItems, Runnable callback) {
+	public void linkAllToGroup(Set<EventIndexDto> selectedItems, Consumer<List<EventIndexDto>> callback) {
 		if (selectedItems.size() == 0) {
 			new Notification(
 				I18nProperties.getString(Strings.headingNoEventsSelected),
@@ -353,25 +370,17 @@ public class EventGroupController {
 		}
 
 		UserProvider user = UserProvider.getCurrent();
-		if (!user.hasUserRight(UserRight.EVENTGROUP_CREATE) && !user.hasUserRight(UserRight.EVENTGROUP_LINK)) {
-			new Notification(
-				I18nProperties.getString(Strings.headingEventGroupLinkEventIssue),
-				I18nProperties.getString(Strings.errorNotRequiredRights),
-				Type.ERROR_MESSAGE,
-				false).show(Page.getCurrent());
-		}
 
 		List<EventReferenceDto> eventReferences = selectedItems.stream().map(EventIndexDto::toReference).collect(Collectors.toList());
 		List<String> eventUuids = eventReferences.stream().map(EventReferenceDto::getUuid).collect(Collectors.toList());
 
 		if (!user.hasNationJurisdictionLevel()) {
-			Set<RegionReferenceDto> regions = FacadeProvider.getEventFacade().getAllRegionsRelatedToEventUuids(eventUuids);
-			for (RegionReferenceDto region : regions) {
-				if (!user.hasRegion(region)) {
+			for (String eventUuid : eventUuids) {
+				if (!FacadeProvider.getEventFacade().isInJurisdictionOrOwned(eventUuid)) {
 					new Notification(
 						I18nProperties.getString(Strings.headingEventGroupLinkEventIssue),
-						I18nProperties.getString(Strings.errorEventFromAnotherJurisdiction),
-						Type.ERROR_MESSAGE,
+						I18nProperties.getString(Strings.errorEventsFromAnotherJurisdiction),
+						Type.WARNING_MESSAGE,
 						false).show(Page.getCurrent());
 					return;
 				}
@@ -385,19 +394,24 @@ public class EventGroupController {
 			.map(EventGroupReferenceDto::getUuid)
 			.collect(Collectors.toSet());
 		eventGroupCriteria.setExcludedUuids(eventGroupUuids);
+		Consumer<List<EventReferenceDto>> callbackWrapper = remainingReferences -> callback.accept(
+			selectedItems.stream()
+				.filter(e -> remainingReferences.stream().anyMatch(r -> r.getUuid().equals(e.getUuid())))
+				.collect(Collectors.toList()));
+
 		if (user.hasUserRight(UserRight.EVENTGROUP_CREATE) && user.hasUserRight(UserRight.EVENTGROUP_LINK)) {
 			long eventCount = FacadeProvider.getEventGroupFacade().count(eventGroupCriteria);
 			if (eventCount > 0) {
-				selectOrCreate(eventReferences, null);
+				selectOrCreate(eventReferences, callbackWrapper);
 			} else {
-				create(eventReferences, null);
+				create(eventReferences, callbackWrapper);
 			}
 		} else if (user.hasUserRight(UserRight.EVENTGROUP_CREATE)) {
-			create(eventReferences, null);
+			create(eventReferences, callbackWrapper);
 		} else {
 			long eventCount = FacadeProvider.getEventGroupFacade().count(eventGroupCriteria);
 			if (eventCount > 0) {
-				select(eventReferences, null);
+				select(eventReferences, callbackWrapper);
 			} else {
 				new Notification(
 					I18nProperties.getString(Strings.headingEventGroupLinkEventIssue),

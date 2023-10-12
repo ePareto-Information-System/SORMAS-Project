@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -42,11 +43,15 @@ import com.j256.ormlite.support.ConnectionSource;
 import android.util.Log;
 
 import de.symeda.sormas.api.ReferenceDto;
+import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.feature.FeatureTypeProperty;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.caze.Case;
+import de.symeda.sormas.app.backend.environment.Environment;
+import de.symeda.sormas.app.backend.environment.environmentsample.EnvironmentSample;
 import de.symeda.sormas.app.backend.feature.FeatureConfiguration;
 import de.symeda.sormas.app.component.dialog.SynchronizationDialog;
 import de.symeda.sormas.app.util.MetaProperty;
@@ -282,6 +287,30 @@ public abstract class AbstractAdoDao<ADO extends AbstractDomainObject> {
 	 */
 	public List<ADO> queryForModified() {
 		return queryForEq(ADO.MODIFIED, true);
+	}
+
+	public List<ADO> queryForObsolete() {
+
+		if (DatabaseHelper.getFeatureConfigurationDao().isFeatureEnabled(FeatureType.LIMITED_SYNCHRONIZATION)) {
+			Integer maxChangeDatePeriod = DatabaseHelper.getFeatureConfigurationDao()
+				.getIntegerPropertyValue(FeatureType.LIMITED_SYNCHRONIZATION, FeatureTypeProperty.MAX_CHANGE_DATE_PERIOD);
+			if (maxChangeDatePeriod != null && maxChangeDatePeriod >= 0) {
+				Date maxChangeDate = DateHelper.getStartOfDay(DateHelper.subtractDays(new Date(), maxChangeDatePeriod));
+				try {
+					QueryBuilder<ADO, Long> builder = queryBuilder();
+					Where<ADO, Long> where = builder.where();
+					where.and(
+						where.isNotNull(AbstractDomainObject.CHANGE_DATE),
+						where.eq(ADO.MODIFIED, false),
+						where.lt(AbstractDomainObject.CHANGE_DATE, maxChangeDate));
+					return builder.query();
+				} catch (SQLException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}
+
+		return Collections.emptyList();
 	}
 
 	public ADO getByReferenceDto(ReferenceDto dto) {
@@ -598,7 +627,7 @@ public abstract class AbstractAdoDao<ADO extends AbstractDomainObject> {
 
 		ADO current = queryUuid(source.getUuid());
 		ADO snapshot = querySnapshotByUuid(source.getUuid());
-		String sourceEntityString = source.toString();
+		String sourceEntityString = source.buildCaption();
 		if (StringUtils.isEmpty(sourceEntityString)) {
 			sourceEntityString = source.getEntityName();
 		}
@@ -649,7 +678,10 @@ public abstract class AbstractAdoDao<ADO extends AbstractDomainObject> {
 					|| parentProperty.equals(property.getName())
 					|| property.getReadMethod().isAnnotationPresent(JoinTableReference.class)
 					|| Case.COMPLETENESS.equals(property.getName())
-					|| FeatureConfiguration.PROPERTIES_MAP.equals(property.getName()))
+					|| FeatureConfiguration.PROPERTIES_MAP.equals(property.getName())
+					|| Environment.WATER_USE.equals(property.getName())
+					|| EnvironmentSample.REQUESTED_PATHOGEN_TESTS.equals(property.getName())
+					|| EnvironmentSample.WEATHER_CONDITIONS.equals(property.getName()))
 					continue;
 
 				// we now have to write the value from source into target and base
@@ -904,20 +936,24 @@ public abstract class AbstractAdoDao<ADO extends AbstractDomainObject> {
 					continue;
 				}
 
-				// accept all collection elements
-				Collection<AbstractDomainObject> sourceCollection = (Collection<AbstractDomainObject>) property.getReadMethod().invoke(ado);
-				for (AbstractDomainObject sourceElement : sourceCollection) {
-					DatabaseHelper.getAdoDao(sourceElement.getClass()).acceptWithCast(sourceElement);
-				}
-
-				if (snapshot != null) {
-					// delete remaining snapshots
-					Collection<AbstractDomainObject> snapshotCollection =
-						(Collection<AbstractDomainObject>) property.getReadMethod().invoke(snapshot);
-					snapshotCollection.removeAll(sourceCollection);
-					for (AbstractDomainObject snapshotElement : snapshotCollection) {
-						DatabaseHelper.getAdoDao(snapshotElement.getClass()).deleteCascadeWithCast(snapshotElement);
+				try {
+					// accept all collection elements
+					Collection<AbstractDomainObject> sourceCollection = (Collection<AbstractDomainObject>) property.getReadMethod().invoke(ado);
+					for (AbstractDomainObject sourceElement : sourceCollection) {
+						DatabaseHelper.getAdoDao(sourceElement.getClass()).acceptWithCast(sourceElement);
 					}
+
+					if (snapshot != null) {
+						// delete remaining snapshots
+						Collection<AbstractDomainObject> snapshotCollection =
+							(Collection<AbstractDomainObject>) property.getReadMethod().invoke(snapshot);
+						snapshotCollection.removeAll(sourceCollection);
+						for (AbstractDomainObject snapshotElement : snapshotCollection) {
+							DatabaseHelper.getAdoDao(snapshotElement.getClass()).deleteCascadeWithCast(snapshotElement);
+						}
+					}
+				} catch (ClassCastException e) {
+					// Collection does not contain ADOs and doesn't have to be handled
 				}
 			}
 

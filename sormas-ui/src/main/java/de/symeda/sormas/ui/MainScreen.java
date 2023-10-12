@@ -17,12 +17,12 @@
  *******************************************************************************/
 package de.symeda.sormas.ui;
 
-import static de.symeda.sormas.ui.UiUtil.enabled;
 import static de.symeda.sormas.ui.UiUtil.permitted;
 import static java.util.Objects.nonNull;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -71,9 +71,10 @@ import de.symeda.sormas.ui.contact.ContactsView;
 import de.symeda.sormas.ui.dashboard.AbstractDashboardView;
 import de.symeda.sormas.ui.dashboard.campaigns.CampaignDashboardView;
 import de.symeda.sormas.ui.dashboard.contacts.ContactsDashboardView;
+import de.symeda.sormas.ui.dashboard.sample.SampleDashboardView;
 import de.symeda.sormas.ui.dashboard.surveillance.SurveillanceDashboardView;
+import de.symeda.sormas.ui.environment.EnvironmentsView;
 import de.symeda.sormas.ui.events.EventGroupDataView;
-import de.symeda.sormas.ui.events.EventParticipantDataView;
 import de.symeda.sormas.ui.events.EventsView;
 import de.symeda.sormas.ui.externalmessage.ExternalMessagesView;
 import de.symeda.sormas.ui.immunization.ImmunizationsView;
@@ -103,6 +104,71 @@ public class MainScreen extends HorizontalLayout {
 	private static final Set<String> KNOWN_VIEWS = initKnownViews();
 
 	private final Menu menu;
+
+	// notify the view menu about view changes so that it can display which view
+	// is currently active
+	ViewChangeListener viewChangeListener = new ViewChangeListener() {
+
+		@Override
+		public boolean beforeViewChange(ViewChangeEvent event) {
+
+			if (event.getViewName().isEmpty()) {
+				// redirect to default view
+				String defaultView;
+				if (surveillanceDashboardPermitted()) {
+					defaultView = SurveillanceDashboardView.VIEW_NAME;
+				} else if (contactDashboardPermitted()) {
+					defaultView = ContactsDashboardView.VIEW_NAME;
+				} else if (campaignDashboardPermitted()) {
+					defaultView = CampaignDashboardView.VIEW_NAME;
+				} else if (sampleDashboardPermitted()) {
+					defaultView = SampleDashboardView.VIEW_NAME;
+				} else if (nonNull(UserProvider.getCurrent()) && UserProvider.getCurrent().hasExternalLaboratoryJurisdictionLevel()) {
+					defaultView = SamplesView.VIEW_NAME;
+				} else if (permitted(FeatureType.ENVIRONMENT_MANAGEMENT, UserRight.ENVIRONMENT_VIEW)) {
+					defaultView = EnvironmentsView.VIEW_NAME;
+				} else if (permitted(FeatureType.TASK_MANAGEMENT, UserRight.TASK_VIEW)) {
+					defaultView = TasksView.VIEW_NAME;
+				} else {
+					defaultView = AboutView.VIEW_NAME;
+				}
+
+				SormasUI.get().getNavigator().navigateTo(defaultView);
+				return false;
+			}
+			return true;
+		}
+
+		@Override
+		public void afterViewChange(ViewChangeEvent event) {
+			menu.setActiveView(event.getViewName());
+
+			if (!event.getParameters().contains("?")) {
+				StringBuilder urlParams = new StringBuilder();
+				Collection<Object> viewModels = ViewModelProviders.of(event.getNewView().getClass()).getAll();
+				for (Object viewModel : viewModels) {
+					if (viewModel instanceof BaseCriteria) {
+						if (urlParams.length() > 0) {
+							urlParams.append('&');
+						}
+						urlParams.append(((BaseCriteria) viewModel).toUrlParams());
+						if (urlParams.length() > 0 && urlParams.charAt(urlParams.length() - 1) == '&') {
+							urlParams.deleteCharAt(urlParams.length() - 1);
+						}
+					}
+				}
+				if (urlParams.length() > 0) {
+					String url = event.getViewName() + "/";
+					if (!DataHelper.isNullOrEmpty(event.getParameters())) {
+						url += event.getParameters();
+					}
+					url += "?" + urlParams;
+
+					SormasUI.get().getPage().setUriFragment("!" + url, false);
+				}
+			}
+		}
+	};
 
 	public MainScreen(SormasUI ui) {
 
@@ -135,27 +201,33 @@ public class MainScreen extends HorizontalLayout {
 		});
 
 		menu = new Menu(navigator);
-		if (enabled(FeatureType.DASHBOARD)) {
-			ControllerProvider.getDashboardController().registerViews(navigator);
-			if (permitted(FeatureType.CASE_SURVEILANCE, UserRight.DASHBOARD_SURVEILLANCE_VIEW)) {
-				menu.addView(
-					SurveillanceDashboardView.class,
-					AbstractDashboardView.ROOT_VIEW_NAME,
-					I18nProperties.getCaption(Captions.mainMenuDashboard),
-					VaadinIcons.DASHBOARD);
-			} else if (permitted(FeatureType.CONTACT_TRACING, UserRight.DASHBOARD_CONTACT_VIEW)) {
-				menu.addView(
-					ContactsDashboardView.class,
-					AbstractDashboardView.ROOT_VIEW_NAME,
-					I18nProperties.getCaption(Captions.mainMenuDashboard),
-					VaadinIcons.DASHBOARD);
-			} else if (permitted(FeatureType.CAMPAIGNS, UserRight.DASHBOARD_CAMPAIGNS_VIEW)) {
-				menu.addView(
-					CampaignDashboardView.class,
-					AbstractDashboardView.ROOT_VIEW_NAME,
-					I18nProperties.getCaption(Captions.mainMenuDashboard),
-					VaadinIcons.DASHBOARD);
-			}
+
+		// Dashboard
+		ControllerProvider.getDashboardController().registerViews(navigator);
+		if (surveillanceDashboardPermitted()) {
+			menu.addView(
+				SurveillanceDashboardView.class,
+				AbstractDashboardView.ROOT_VIEW_NAME,
+				I18nProperties.getCaption(Captions.mainMenuDashboard),
+				VaadinIcons.DASHBOARD);
+		} else if (contactDashboardPermitted()) {
+			menu.addView(
+				ContactsDashboardView.class,
+				AbstractDashboardView.ROOT_VIEW_NAME,
+				I18nProperties.getCaption(Captions.mainMenuDashboard),
+				VaadinIcons.DASHBOARD);
+		} else if (campaignDashboardPermitted()) {
+			menu.addView(
+				CampaignDashboardView.class,
+				AbstractDashboardView.ROOT_VIEW_NAME,
+				I18nProperties.getCaption(Captions.mainMenuDashboard),
+				VaadinIcons.DASHBOARD);
+		} else if (sampleDashboardPermitted()) {
+			menu.addView(
+				SampleDashboardView.class,
+				AbstractDashboardView.ROOT_VIEW_NAME,
+				I18nProperties.getCaption(Captions.mainMenuDashboard),
+				VaadinIcons.DASHBOARD);
 		}
 
 		if (permitted(FeatureType.TASK_MANAGEMENT, UserRight.TASK_VIEW)) {
@@ -193,14 +265,24 @@ public class MainScreen extends HorizontalLayout {
 		}
 		if (permitted(FeatureType.EVENT_SURVEILLANCE, UserRight.EVENT_VIEW)) {
 			ControllerProvider.getEventController().registerViews(navigator);
-			navigator.addView(EventParticipantDataView.VIEW_NAME, EventParticipantDataView.class);
+			ControllerProvider.getEventParticipantController().registerViews(navigator);
 			navigator.addView(EventGroupDataView.VIEW_NAME, EventGroupDataView.class);
 			menu.addView(EventsView.class, EventsView.VIEW_NAME, I18nProperties.getCaption(Captions.mainMenuEvents), VaadinIcons.PHONE);
 		}
 
-		if (permitted(FeatureType.SAMPLES_LAB, UserRight.SAMPLE_VIEW)) {
+		if (permitted(FeatureType.SAMPLES_LAB, UserRight.SAMPLE_VIEW)
+			|| permitted(FeatureType.ENVIRONMENT_MANAGEMENT, UserRight.ENVIRONMENT_SAMPLE_VIEW)) {
 			ControllerProvider.getSampleController().registerViews(navigator);
 			menu.addView(SamplesView.class, SamplesView.VIEW_NAME, I18nProperties.getCaption(Captions.mainMenuSamples), VaadinIcons.DATABASE);
+		}
+
+		if (permitted(FeatureType.ENVIRONMENT_MANAGEMENT, UserRight.ENVIRONMENT_VIEW)) {
+			ControllerProvider.getEnvironmentController().registerViews(navigator);
+			menu.addView(
+				EnvironmentsView.class,
+				EnvironmentsView.VIEW_NAME,
+				I18nProperties.getCaption(Captions.mainMenuEnvironments),
+				VaadinIcons.GLOBE);
 		}
 
 		if (permitted(FeatureType.IMMUNIZATION_MANAGEMENT, UserRight.IMMUNIZATION_VIEW)
@@ -329,6 +411,22 @@ public class MainScreen extends HorizontalLayout {
 		setSizeFull();
 	}
 
+	private static boolean surveillanceDashboardPermitted() {
+		return permitted(EnumSet.of(FeatureType.DASHBOARD_SURVEILLANCE, FeatureType.CASE_SURVEILANCE), UserRight.DASHBOARD_SURVEILLANCE_VIEW);
+	}
+
+	private static boolean contactDashboardPermitted() {
+		return permitted(EnumSet.of(FeatureType.DASHBOARD_CONTACTS, FeatureType.CONTACT_TRACING), UserRight.DASHBOARD_CONTACT_VIEW);
+	}
+
+	private static boolean campaignDashboardPermitted() {
+		return permitted(EnumSet.of(FeatureType.DASHBOARD_CAMPAIGNS, FeatureType.CAMPAIGNS), UserRight.DASHBOARD_CAMPAIGNS_VIEW);
+	}
+
+	private static boolean sampleDashboardPermitted() {
+		return permitted(EnumSet.of(FeatureType.DASHBOARD_SAMPLES, FeatureType.SAMPLES_LAB), UserRight.DASHBOARD_SAMPLES_VIEW);
+	}
+
 	private static Set<String> initKnownViews() {
 		final Set<String> views = new HashSet<>(
 			Arrays.asList(
@@ -338,6 +436,7 @@ public class MainScreen extends HorizontalLayout {
 				EventsView.VIEW_NAME,
 				EventGroupDataView.VIEW_NAME,
 				SamplesView.VIEW_NAME,
+				EnvironmentsView.VIEW_NAME,
 				CampaignsView.VIEW_NAME,
 				CampaignDataView.VIEW_NAME,
 				CampaignStatisticsView.VIEW_NAME,
@@ -359,82 +458,21 @@ public class MainScreen extends HorizontalLayout {
 				TravelEntriesView.VIEW_NAME,
 				ImmunizationsView.VIEW_NAME));
 
-		if (enabled(FeatureType.DASHBOARD)) {
-			if (permitted(FeatureType.CASE_SURVEILANCE, UserRight.DASHBOARD_SURVEILLANCE_VIEW)) {
-				views.add(SurveillanceDashboardView.VIEW_NAME);
-			}
-			if (permitted(FeatureType.CONTACT_TRACING, UserRight.DASHBOARD_CONTACT_VIEW)) {
-				views.add(ContactsDashboardView.VIEW_NAME);
-			}
-			if (permitted(FeatureType.CAMPAIGNS, UserRight.DASHBOARD_CAMPAIGNS_VIEW)) {
-				views.add(CampaignDashboardView.VIEW_NAME);
-			}
+		if (surveillanceDashboardPermitted()) {
+			views.add(SurveillanceDashboardView.VIEW_NAME);
+		}
+		if (contactDashboardPermitted()) {
+			views.add(ContactsDashboardView.VIEW_NAME);
+		}
+		if (campaignDashboardPermitted()) {
+			views.add(CampaignDashboardView.VIEW_NAME);
+		}
+
+		if (sampleDashboardPermitted()) {
+			views.add(SampleDashboardView.VIEW_NAME);
 		}
 
 		return views;
 	}
-
-	// notify the view menu about view changes so that it can display which view
-	// is currently active
-	ViewChangeListener viewChangeListener = new ViewChangeListener() {
-
-		@Override
-		public boolean beforeViewChange(ViewChangeEvent event) {
-
-			// Would be better to do this check BEFORE the view is created, but the Navigator can't be extended that way
-
-			if (!event.getParameters().contains("?")) {
-				StringBuilder urlParams = new StringBuilder();
-				Collection<Object> viewModels = ViewModelProviders.of(event.getNewView().getClass()).getAll();
-				for (Object viewModel : viewModels) {
-					if (viewModel instanceof BaseCriteria) {
-						if (urlParams.length() > 0) {
-							urlParams.append('&');
-						}
-						urlParams.append(((BaseCriteria) viewModel).toUrlParams());
-						if (urlParams.length() > 0 && urlParams.charAt(urlParams.length() - 1) == '&') {
-							urlParams.deleteCharAt(urlParams.length() - 1);
-						}
-					}
-				}
-				if (urlParams.length() > 0) {
-					String url = event.getViewName() + "/";
-					if (!DataHelper.isNullOrEmpty(event.getParameters())) {
-						url += event.getParameters();
-					}
-					url += "?" + urlParams;
-					SormasUI.get().getNavigator().navigateTo(url);
-					return false;
-				}
-			}
-
-			if (event.getViewName().isEmpty()) {
-				// redirect to default view
-				String defaultView;
-				if (enabled(FeatureType.DASHBOARD) && permitted(FeatureType.CASE_SURVEILANCE, UserRight.DASHBOARD_SURVEILLANCE_VIEW)) {
-					defaultView = SurveillanceDashboardView.VIEW_NAME;
-				} else if (enabled(FeatureType.DASHBOARD) && permitted(FeatureType.CONTACT_TRACING, UserRight.DASHBOARD_CONTACT_VIEW)) {
-					defaultView = ContactsDashboardView.VIEW_NAME;
-				} else if (enabled(FeatureType.DASHBOARD) && permitted(FeatureType.CAMPAIGNS, UserRight.DASHBOARD_CAMPAIGNS_VIEW)) {
-					defaultView = CampaignDashboardView.VIEW_NAME;
-				} else if (nonNull(UserProvider.getCurrent()) && UserProvider.getCurrent().hasExternalLaboratoryJurisdictionLevel()) {
-					defaultView = SamplesView.VIEW_NAME;
-				} else if (permitted(FeatureType.TASK_MANAGEMENT, UserRight.TASK_VIEW)) {
-					defaultView = TasksView.VIEW_NAME;
-				} else {
-					defaultView = AboutView.VIEW_NAME;
-				}
-
-				SormasUI.get().getNavigator().navigateTo(defaultView);
-				return false;
-			}
-			return true;
-		}
-
-		@Override
-		public void afterViewChange(ViewChangeEvent event) {
-			menu.setActiveView(event.getViewName());
-		}
-	};
 
 }

@@ -2,6 +2,7 @@ package de.symeda.sormas.backend.importexport;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Arrays;
@@ -11,17 +12,20 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.JoinTable;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.commons.util.StringUtils;
 
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
+import com.tngtech.archunit.core.domain.JavaMethod;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 
 import de.symeda.sormas.api.importexport.DatabaseTable;
-import de.symeda.sormas.backend.auditlog.AuditLogEntry;
 import de.symeda.sormas.backend.common.messaging.ManualMessageLog;
+import de.symeda.sormas.backend.environment.Environment;
+import de.symeda.sormas.backend.environment.environmentsample.EnvironmentSample;
 import de.symeda.sormas.backend.immunization.entity.DirectoryImmunization;
 import de.symeda.sormas.backend.systemevent.SystemEvent;
 import de.symeda.sormas.backend.user.UserReference;
@@ -57,13 +61,16 @@ public class DatabaseExportServiceTest {
 		LastVaccineType.class,
 		SystemEvent.class,
 		FirstVaccinationDate.class,
-		AuditLogEntry.class);
+		Environment.class,
+		EnvironmentSample.class);
 
 	@Test
 	public void test_all_entities_have_export_configuration() {
 		Collection<String> exportableTables = DatabaseExportService.EXPORT_CONFIGS.values();
+
 		Set<String> missingEntities = new HashSet<>();
-		Set<String> exportedButNotWanted = new HashSet<>();
+		Set<String> missingJoinTables = new HashSet<>();
+		Set<String> exportedButNotWantedEntity = new HashSet<>();
 
 		JavaClasses classes = new ClassFileImporter().importPackages("de.symeda.sormas.backend");
 
@@ -78,7 +85,19 @@ public class DatabaseExportServiceTest {
 				if (!exportableTables.contains(tableName)) {
 					missingEntities.add(clazz.getSimpleName());
 				} else if (NOT_EXPORTED_ENTITIES.contains(clazz.reflect())) {
-					exportedButNotWanted.add(clazz.getSimpleName());
+					exportedButNotWantedEntity.add(clazz.getSimpleName());
+				}
+
+				for (JavaMethod method : clazz.getMethods()) {
+					if (method.isAnnotatedWith(JoinTable.class)) {
+						JoinTable joinTableAnnotation = method.getAnnotationOfType(JoinTable.class);
+						String joinTableName = joinTableAnnotation.name();
+						assertFalse(StringUtils.isBlank(joinTableName));
+
+						if (!exportableTables.contains(joinTableName)) {
+							missingJoinTables.add(joinTableName);
+						}
+					}
 				}
 			}
 		}
@@ -88,8 +107,9 @@ public class DatabaseExportServiceTest {
 
 		assertThat("Missing export configuration for entities [" + String.join(", ", missingEntities) + "]", missingEntities, hasSize(0));
 		assertThat(
-			"Export configuration not wanted for entities [" + String.join(", ", exportedButNotWanted) + "]",
-			exportedButNotWanted,
+			"Export configuration not wanted for entities [" + String.join(", ", exportedButNotWantedEntity) + "]",
+			exportedButNotWantedEntity,
 			hasSize(0));
+		assertThat("Missing export configuration for join tables [" + String.join(", ", missingJoinTables) + "]", missingJoinTables, hasSize(0));
 	}
 }

@@ -7,23 +7,23 @@ import javax.ejb.Remote;
 import javax.naming.NamingException;
 import javax.validation.Valid;
 
+import de.symeda.sormas.api.PermanentlyDeletableFacade;
 import de.symeda.sormas.api.ReferenceDto;
+import de.symeda.sormas.api.caze.surveillancereport.SurveillanceReportReferenceDto;
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.sample.SampleReferenceDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.SortProperty;
 
 @Remote
-public interface ExternalMessageFacade {
+public interface ExternalMessageFacade extends PermanentlyDeletableFacade {
 
 	ExternalMessageDto save(@Valid ExternalMessageDto dto);
 
+	void validate(ExternalMessageDto dto);
+
 	// Also returns deleted lab messages
 	ExternalMessageDto getByUuid(String uuid);
-
-	void deleteExternalMessage(String uuid);
-
-	void deleteExternalMessages(List<String> uuids);
 
 	void bulkAssignExternalMessages(List<String> uuids, UserReferenceDto userRef);
 
@@ -67,4 +67,5 @@ public interface ExternalMessageFacade {
 	// Also considers deleted lab messages
 	boolean existsForwardedExternalMessageWith(String reportId);
 
+	ExternalMessageDto getForSurveillanceReport(SurveillanceReportReferenceDto surveillanceReport);
 }

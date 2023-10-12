@@ -9,26 +9,32 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.security.PermitAll;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import de.symeda.sormas.api.InfrastructureDataReferenceDto;
 import de.symeda.sormas.api.audit.AuditIgnore;
+import de.symeda.sormas.api.common.progress.ProcessedEntity;
+import de.symeda.sormas.api.common.progress.ProcessedEntityStatus;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.InfrastructureDto;
 import de.symeda.sormas.api.infrastructure.InfrastructureFacade;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.AccessDeniedException;
+import de.symeda.sormas.api.utils.DtoCopyHelper;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.api.utils.criteria.BaseCriteria;
 import de.symeda.sormas.backend.common.AbstractBaseEjb;
+import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.AbstractInfrastructureAdoService;
 import de.symeda.sormas.backend.common.InfrastructureAdo;
 import de.symeda.sormas.backend.feature.FeatureConfigurationFacadeEjb;
 import de.symeda.sormas.backend.user.User;
-import de.symeda.sormas.backend.user.UserService;
-import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.Pseudonymizer;
 import de.symeda.sormas.backend.util.RightsAllowed;
 
@@ -39,6 +45,8 @@ public abstract class AbstractInfrastructureFacadeEjb<ADO extends Infrastructure
 
 	protected FeatureConfigurationFacadeEjb featureConfiguration;
 	private String duplicateErrorMessageProperty;
+	private String archivingNotPossibleMessageProperty;
+	private String dearchivingNotPossibleMessageProperty;
 
 	protected AbstractInfrastructureFacadeEjb() {
 		super();
@@ -49,11 +57,14 @@ public abstract class AbstractInfrastructureFacadeEjb<ADO extends Infrastructure
 		Class<DTO> dtoClass,
 		SRV service,
 		FeatureConfigurationFacadeEjb featureConfiguration,
-		UserService userService,
-		String duplicateErrorMessageProperty) {
-		super(adoClass, dtoClass, service, userService);
+		String duplicateErrorMessageProperty,
+		String archivingNotPossibleMessageProperty,
+		String dearchivingNotPossibleMessageProperty) {
+		super(adoClass, dtoClass, service);
 		this.featureConfiguration = featureConfiguration;
 		this.duplicateErrorMessageProperty = duplicateErrorMessageProperty;
+		this.archivingNotPossibleMessageProperty = archivingNotPossibleMessageProperty;
+		this.dearchivingNotPossibleMessageProperty = dearchivingNotPossibleMessageProperty;
 	}
 
 	@Override
@@ -106,17 +117,17 @@ public abstract class AbstractInfrastructureFacadeEjb<ADO extends Infrastructure
 	public DTO save(DTO dto, boolean allowMerge) {
 		checkInfraDataLocked();
 		// default behaviour is to include archived data and check for the change date
-		return doSave(dto, allowMerge, true, true, duplicateErrorMessageProperty);
+		return doSave(dto, allowMerge, true, true, false);
 	}
 
 	@RightsAllowed(UserRight._SYSTEM)
 	public DTO saveFromCentral(DTO dtoToSave) {
 		// merge, but do not include archived data (we consider archive data to be completely broken)
 		// also ignore change date as merging will always cause the date to be newer to what is present in central
-		return doSave(dtoToSave, true, false, false, duplicateErrorMessageProperty);
+		return doSave(dtoToSave, true, false, false, true);
 	}
 
-	protected DTO doSave(DTO dtoToSave, boolean allowMerge, boolean includeArchived, boolean checkChangeDate, String duplicateErrorMessageProperty) {
+	protected DTO doSave(DTO dtoToSave, boolean allowMerge, boolean includeArchived, boolean checkChangeDate, boolean allowUuidOverwrite) {
 		if (dtoToSave == null) {
 			return null;
 		}
@@ -142,72 +153,113 @@ public abstract class AbstractInfrastructureFacadeEjb<ADO extends Infrastructure
 			List<ADO> duplicates = findDuplicates(dtoToSave, includeArchived);
 			if (!duplicates.isEmpty()) {
 				if (allowMerge) {
-					return mergeAndPersist(dtoToSave, duplicates, checkChangeDate);
+					return mergeAndPersist(dtoToSave, duplicates, checkChangeDate, allowUuidOverwrite);
 				} else {
 					throw new ValidationRuntimeException(I18nProperties.getValidationError(duplicateErrorMessageProperty));
 				}
 			}
 		}
-		return persistEntity(dtoToSave, existingEntity, checkChangeDate);
+		return persistEntity(dtoToSave, existingEntity, checkChangeDate, false);
 	}
 
-	protected DTO persistEntity(DTO dto, ADO entityToPersist, boolean checkChangeDate) {
-		entityToPersist = fillOrBuildEntity(dto, entityToPersist, checkChangeDate);
+	protected DTO persistEntity(DTO dto, ADO entityToPersist, boolean checkChangeDate, boolean allowUuidOverwrite) {
+		entityToPersist = fillOrBuildEntity(dto, entityToPersist, checkChangeDate, allowUuidOverwrite);
 		service.ensurePersisted(entityToPersist);
 		return toDto(entityToPersist);
 	}
 
-	protected DTO mergeAndPersist(DTO dtoToSave, List<ADO> duplicates, boolean checkChangeDate) {
+	protected DTO mergeAndPersist(DTO dtoToSave, List<ADO> duplicates, boolean checkChangeDate, boolean allowUuidOverwrite) {
 		ADO existingEntity = duplicates.get(0);
 		DTO existingDto = toDto(existingEntity);
-		DtoHelper.copyDtoValues(existingDto, dtoToSave, true);
-		return persistEntity(dtoToSave, existingEntity, checkChangeDate);
+		DtoCopyHelper.copyDtoValues(existingDto, dtoToSave, true);
+
+		return persistEntity(dtoToSave, existingEntity, checkChangeDate, allowUuidOverwrite);
+	}
+
+	protected abstract ADO fillOrBuildEntity(@NotNull DTO source, ADO target, boolean checkChangeDate, boolean allowUuidOverwrite);
+
+	@Override
+	protected ADO fillOrBuildEntity(DTO source, ADO target, boolean checkChangeDate) {
+		return fillOrBuildEntity(source, target, checkChangeDate, false);
 	}
 
 	@Override
 	@RightsAllowed(UserRight._INFRASTRUCTURE_ARCHIVE)
-	public void archive(String uuid) {
+	public ProcessedEntity archive(String uuid) {
+		ProcessedEntity processedEntity;
+
 		// todo this should be really in the parent but right now there the setter for archived is not available there
 		checkInfraDataLocked();
+		if (isUsedInOtherInfrastructureData(Collections.singletonList(uuid))) {
+			processedEntity = new ProcessedEntity(uuid, ProcessedEntityStatus.ACCESS_DENIED_FAILURE);
+		} else {
+			processedEntity = new ProcessedEntity(uuid, ProcessedEntityStatus.SUCCESS);
+		}
+
 		ADO ado = service.getByUuid(uuid);
 		if (ado != null) {
 			ado.setArchived(true);
 			service.ensurePersisted(ado);
 		}
+
+		return processedEntity;
 	}
 
 	@RightsAllowed(UserRight._INFRASTRUCTURE_ARCHIVE)
-	public void dearchive(String uuid) {
+	public ProcessedEntity dearchive(String uuid) {
 		checkInfraDataLocked();
+		if (hasArchivedParentInfrastructure(Collections.singletonList(uuid))) {
+			throw new AccessDeniedException(I18nProperties.getString(dearchivingNotPossibleMessageProperty));
+		}
 		ADO ado = service.getByUuid(uuid);
 		if (ado != null) {
 			ado.setArchived(false);
 			service.ensurePersisted(ado);
 		}
+		return new ProcessedEntity(uuid, ProcessedEntityStatus.SUCCESS);
 	}
 
 	@RightsAllowed(UserRight._INFRASTRUCTURE_ARCHIVE)
-	public List<String> archive(List<String> entityUuids) {
-		List<String> archivedEntityUuids = new ArrayList<>();
+	public List<ProcessedEntity> archive(List<String> entityUuids) {
+		List<ProcessedEntity> processedEntities = new ArrayList<>();
 		entityUuids.forEach(entityUuid -> {
 			if (!isUsedInOtherInfrastructureData(Collections.singletonList(entityUuid))) {
 				archive(entityUuid);
-				archivedEntityUuids.add(entityUuid);
+				processedEntities.add(new ProcessedEntity(entityUuid, ProcessedEntityStatus.SUCCESS));
+			} else {
+				processedEntities.add(new ProcessedEntity(entityUuid, ProcessedEntityStatus.ACCESS_DENIED_FAILURE));
 			}
 		});
-		return archivedEntityUuids;
+		return processedEntities;
 	}
 
 	@RightsAllowed(UserRight._INFRASTRUCTURE_ARCHIVE)
-	public List<String> dearchive(List<String> entityUuids) {
-		List<String> dearchivedEntityUuids = new ArrayList<>();
+	public List<ProcessedEntity> dearchive(List<String> entityUuids) {
+		List<ProcessedEntity> processedEntities = new ArrayList<>();
+
 		entityUuids.forEach(entityUuid -> {
 			if (!hasArchivedParentInfrastructure(Arrays.asList(entityUuid))) {
-				dearchive(entityUuid);
-				dearchivedEntityUuids.add(entityUuid);
+				processedEntities.add(dearchive(entityUuid));
+			} else {
+				processedEntities.add(new ProcessedEntity(entityUuid, ProcessedEntityStatus.ACCESS_DENIED_FAILURE));
 			}
 		});
-		return dearchivedEntityUuids;
+		return processedEntities;
+	}
+
+	@Override
+	@RightsAllowed(UserRight._INFRASTRUCTURE_VIEW)
+	public boolean isArchived(String uuid) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+		Root<ADO> from = cq.from(adoClass);
+
+		cq.where(cb.and(cb.equal(from.get(InfrastructureAdo.ARCHIVED), true), cb.equal(from.get(AbstractDomainObject.UUID), uuid)));
+		cq.select(cb.count(from));
+
+		long count = em.createQuery(cq).getSingleResult();
+
+		return count > 0;
 	}
 
 	protected void checkInfraDataLocked() {

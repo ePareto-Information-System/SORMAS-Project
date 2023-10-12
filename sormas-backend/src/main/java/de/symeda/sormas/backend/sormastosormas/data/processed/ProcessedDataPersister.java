@@ -17,9 +17,9 @@ package de.symeda.sormas.backend.sormastosormas.data.processed;
 
 import javax.transaction.Transactional;
 
+import de.symeda.sormas.api.sormastosormas.DuplicateResult;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasOriginInfoDto;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasShareableDto;
-import de.symeda.sormas.api.sormastosormas.entities.DuplicateResult;
 import de.symeda.sormas.api.sormastosormas.entities.SormasToSormasEntityDto;
 import de.symeda.sormas.api.sormastosormas.validation.SormasToSormasValidationException;
 import de.symeda.sormas.backend.sormastosormas.entities.SormasToSormasShareable;
@@ -50,14 +50,14 @@ public abstract class ProcessedDataPersister<T extends SormasToSormasShareableDt
 			});
 		}
 
-		persistSharedData(processedData, existingEntity);
+		persistSharedData(processedData, existingEntity, false);
 	}
 
 	public DuplicateResult checkForSimilarEntities(S processedData) {
-		return DuplicateResult.NONE;
+		return DuplicateResult.none();
 	}
 
-	protected abstract void persistSharedData(S processedData, E existingEntity) throws SormasToSormasValidationException;
+	protected abstract void persistSharedData(S processedData, E existingEntity, boolean isSync) throws SormasToSormasValidationException;
 
 	@Transactional(rollbackOn = {
 		Exception.class })
@@ -76,7 +76,7 @@ public abstract class ProcessedDataPersister<T extends SormasToSormasShareableDt
 			}
 		}
 
-		persistSharedData(processedData, existingEntity);
+		persistSharedData(processedData, existingEntity, true);
 	}
 
 	protected abstract SormasToSormasShareInfo getShareInfoByEntityAndOrganization(T entity, String organizationId);

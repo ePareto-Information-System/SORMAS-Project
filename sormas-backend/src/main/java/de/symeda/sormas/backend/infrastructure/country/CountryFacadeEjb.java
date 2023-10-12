@@ -43,6 +43,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.country.CountryCriteria;
 import de.symeda.sormas.api.infrastructure.country.CountryDto;
@@ -63,7 +64,6 @@ import de.symeda.sormas.backend.infrastructure.continent.ContinentService;
 import de.symeda.sormas.backend.infrastructure.subcontinent.Subcontinent;
 import de.symeda.sormas.backend.infrastructure.subcontinent.SubcontinentFacadeEjb;
 import de.symeda.sormas.backend.infrastructure.subcontinent.SubcontinentService;
-import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.QueryHelper;
 import de.symeda.sormas.backend.util.RightsAllowed;
@@ -86,8 +86,15 @@ public class CountryFacadeEjb
 	}
 
 	@Inject
-	protected CountryFacadeEjb(CountryService service, FeatureConfigurationFacadeEjbLocal featureConfiguration, UserService userService) {
-		super(Country.class, CountryDto.class, service, featureConfiguration, userService, Validations.importCountryAlreadyExists);
+	protected CountryFacadeEjb(CountryService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
+		super(
+			Country.class,
+			CountryDto.class,
+			service,
+			featureConfiguration,
+			Validations.importCountryAlreadyExists,
+			null,
+			Strings.messageCountryDearchivingNotPossible);
 	}
 
 	@Override
@@ -96,11 +103,11 @@ public class CountryFacadeEjb
 		boolean allowMerge,
 		boolean includeArchived,
 		boolean checkChangeDate,
-		String duplicateErrorMessageProperty) {
+		boolean allowUuidOverwrite) {
 		if (StringUtils.isBlank(dtoToSave.getIsoCode())) {
 			throw new EmptyValueException(I18nProperties.getValidationError(Validations.importCountryEmptyIso));
 		}
-		return super.doSave(dtoToSave, allowMerge, includeArchived, checkChangeDate, duplicateErrorMessageProperty);
+		return super.doSave(dtoToSave, allowMerge, includeArchived, checkChangeDate, allowUuidOverwrite);
 	}
 
 	@Override
@@ -267,8 +274,8 @@ public class CountryFacadeEjb
 	}
 
 	@Override
-	protected Country fillOrBuildEntity(@NotNull CountryDto source, Country target, boolean checkChangeDate) {
-		target = DtoHelper.fillOrBuildEntity(source, target, Country::new, checkChangeDate);
+	protected Country fillOrBuildEntity(@NotNull CountryDto source, Country target, boolean checkChangeDate, boolean allowUuidOverwrite) {
+		target = DtoHelper.fillOrBuildEntity(source, target, Country::new, checkChangeDate, allowUuidOverwrite);
 
 		target.setDefaultName(source.getDefaultName());
 		target.setArchived(source.isArchived());
@@ -302,6 +309,12 @@ public class CountryFacadeEjb
 	}
 
 	@Override
+	public CountryReferenceDto getCountryByIsoCode(String isoCode) {
+		Country country = service.getByIsoCode(isoCode, false).orElse(null);
+		return country != null ? new CountryReferenceDto(country.getUuid(), isoCode) : null;
+	}
+
+	@Override
 	public boolean hasArchivedParentInfrastructure(Collection<String> countryUuids) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -324,8 +337,8 @@ public class CountryFacadeEjb
 		}
 
 		@Inject
-		protected CountryFacadeEjbLocal(CountryService service, FeatureConfigurationFacadeEjbLocal featureConfiguration, UserService userService) {
-			super(service, featureConfiguration, userService);
+		protected CountryFacadeEjbLocal(CountryService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
+			super(service, featureConfiguration);
 		}
 	}
 }

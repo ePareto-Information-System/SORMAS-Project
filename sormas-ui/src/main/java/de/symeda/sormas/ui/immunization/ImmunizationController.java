@@ -29,8 +29,8 @@ import de.symeda.sormas.ui.immunization.components.fields.pickorcreate.Immunizat
 import de.symeda.sormas.ui.immunization.components.fields.popup.SimilarImmunizationPopup;
 import de.symeda.sormas.ui.immunization.components.form.ImmunizationCreationForm;
 import de.symeda.sormas.ui.immunization.components.form.ImmunizationDataForm;
+import de.symeda.sormas.ui.utils.ArchiveHandlers;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
-import de.symeda.sormas.ui.utils.CoreEntityArchiveMessages;
 import de.symeda.sormas.ui.utils.NotificationHelper;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 import de.symeda.sormas.ui.utils.components.automaticdeletion.DeletionLabel;
@@ -146,17 +146,15 @@ public class ImmunizationController {
 		immunizationDataForm.setValue(immunizationDto);
 
 		UserProvider currentUserProvider = UserProvider.getCurrent();
-		CommitDiscardWrapperComponent<ImmunizationDataForm> editComponent = new CommitDiscardWrapperComponent<ImmunizationDataForm>(
-			immunizationDataForm,
-			currentUserProvider != null && currentUserProvider.hasUserRight(UserRight.IMMUNIZATION_EDIT),
-			immunizationDataForm.getFieldGroup()) {
+		CommitDiscardWrapperComponent<ImmunizationDataForm> editComponent =
+			new CommitDiscardWrapperComponent<ImmunizationDataForm>(immunizationDataForm, true, immunizationDataForm.getFieldGroup()) {
 
-			@Override
-			public void discard() {
-				immunizationDataForm.discard();
-				super.discard();
-			}
-		};
+				@Override
+				public void discard() {
+					immunizationDataForm.discard();
+					super.discard();
+				}
+			};
 
 		DeletionInfoDto automaticDeletionInfoDto = FacadeProvider.getImmunizationFacade().getAutomaticDeletionInfo(immunizationDto.getUuid());
 		DeletionInfoDto manuallyDeletionInfoDto = FacadeProvider.getImmunizationFacade().getManuallyDeletionInfo(immunizationDto.getUuid());
@@ -195,7 +193,7 @@ public class ImmunizationController {
 
 		// Initialize 'Delete' button
 		if (UserProvider.getCurrent().hasUserRight(UserRight.IMMUNIZATION_DELETE)) {
-			editComponent.addDeleteWithReasonOrUndeleteListener(
+			editComponent.addDeleteWithReasonOrRestoreListener(
 				ImmunizationsView.VIEW_NAME,
 				null,
 				I18nProperties.getString(Strings.entityImmunization),
@@ -208,11 +206,18 @@ public class ImmunizationController {
 			ControllerProvider.getArchiveController()
 				.addArchivingButton(
 					immunizationDto,
-					FacadeProvider.getImmunizationFacade(),
-					CoreEntityArchiveMessages.IMMUNIZATION,
+					ArchiveHandlers.forImmunization(),
 					editComponent,
 					() -> navigateToImmunization(immunizationDto.getUuid()));
 		}
+
+		editComponent.restrictEditableComponentsOnEditView(
+			UserRight.IMMUNIZATION_EDIT,
+			null,
+			UserRight.IMMUNIZATION_DELETE,
+			UserRight.IMMUNIZATION_ARCHIVE,
+			FacadeProvider.getImmunizationFacade().getEditPermissionType(immunizationDto.getUuid()),
+			immunizationDto.isInJurisdiction());
 
 		return editComponent;
 	}

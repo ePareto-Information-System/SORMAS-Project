@@ -79,6 +79,7 @@ public class SormasErrorHandler implements ErrorHandler {
 		ErrorMessage errorMessage = getErrorMessageForException(t);
 
 		if (t != null) {
+			t.printStackTrace();
 			// log the error or warning
 			if (errorMessage instanceof SystemError) {
 				logger.error(getMessage(t), t);
@@ -174,6 +175,9 @@ public class SormasErrorHandler implements ErrorHandler {
 			} else if (rootCause instanceof NO_PERMISSION) {
 				return new LocalUserError(I18nProperties.getString(Strings.errorForbidden), ContentMode.TEXT, ErrorLevel.ERROR);
 			} else {
+				LoggerFactory.getLogger(SormasErrorHandler.class)
+					.info("SocketException in CommunicationManager." + " Most likely client (browser) closed socket.");
+
 				String message = t.getMessage();
 				if (message == null) {
 					message = I18nProperties.getString(Strings.errorOccurred);

@@ -5,13 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import javax.persistence.Query;
+
 import org.apache.commons.lang3.time.DateUtils;
-import org.hibernate.internal.SessionImpl;
-import org.hibernate.query.spi.QueryImplementor;
 import org.junit.jupiter.api.Test;
 
 import de.symeda.sormas.api.caze.CaseDataDto;
-import de.symeda.sormas.api.common.CoreEntityType;
+import de.symeda.sormas.api.common.DeletableEntityType;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.symptoms.SymptomState;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
@@ -29,7 +29,7 @@ public class SymptomsServiceTest extends AbstractBeanTest {
 	public void testCaseVisitAutomaticDeletion() {
 
 		createDeletionConfigurations();
-		DeletionConfiguration coreEntityTypeConfig = getDeletionConfigurationService().getCoreEntityTypeConfig(CoreEntityType.CASE);
+		DeletionConfiguration coreEntityTypeConfig = getDeletionConfigurationService().getEntityTypeConfig(DeletableEntityType.CASE);
 
 		TestDataCreator.RDCF rdcf = creator.createRDCF();
 		UserDto user = creator
@@ -49,7 +49,7 @@ public class SymptomsServiceTest extends AbstractBeanTest {
 
 		VisitDto visit1 = creator.createVisit(caze1.getDisease(), caze1.getPerson(), caze1.getReportDate());
 		visit1.getSymptoms().setAnorexiaAppetiteLoss(SymptomState.YES);
-		getVisitFacade().saveVisit(visit1);
+		getVisitFacade().save(visit1);
 
 		PersonDto person2 = creator.createPerson();
 		CaseDataDto caze2 = creator.createCase(user.toReference(), person2.toReference(), rdcf);
@@ -66,16 +66,17 @@ public class SymptomsServiceTest extends AbstractBeanTest {
 
 		VisitDto visit2 = creator.createVisit(caze2.getDisease(), caze2.getPerson(), caze2.getReportDate());
 		visit2.getSymptoms().setAnorexiaAppetiteLoss(SymptomState.YES);
-		getVisitFacade().saveVisit(visit2);
+		getVisitFacade().save(visit2);
 
 		final Date tenYearsPlusAgo = DateUtils.addDays(new Date(), (-1) * coreEntityTypeConfig.getDeletionPeriod() - 1);
-		SessionImpl em = (SessionImpl) getEntityManager();
-		QueryImplementor query = em.createQuery("select c from cases c where c.uuid=:uuid");
-		query.setParameter("uuid", caze1.getUuid());
-		Case singleResult = (Case) query.getSingleResult();
-		singleResult.setCreationDate(new Timestamp(tenYearsPlusAgo.getTime()));
-		singleResult.setChangeDate(new Timestamp(tenYearsPlusAgo.getTime()));
-		em.save(singleResult);
+		executeInTransaction(em -> {
+			Query query = em.createQuery("select c from cases c where c.uuid=:uuid");
+			query.setParameter("uuid", caze1.getUuid());
+			Case singleResult = (Case) query.getSingleResult();
+			singleResult.setCreationDate(new Timestamp(tenYearsPlusAgo.getTime()));
+			singleResult.setChangeDate(new Timestamp(tenYearsPlusAgo.getTime()));
+			em.persist(singleResult);
+		});
 
 		assertEquals(2, getCaseService().count());
 		assertEquals(2, getVisitService().count());

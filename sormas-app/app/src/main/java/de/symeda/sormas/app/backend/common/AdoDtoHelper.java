@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 
-import org.springframework.util.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
@@ -34,7 +34,7 @@ import android.content.Context;
 import android.util.Log;
 
 import de.symeda.sormas.api.EntityDto;
-import de.symeda.sormas.api.PushResult;
+import de.symeda.sormas.api.PostResponse;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.app.component.dialog.SynchronizationDialog;
 import de.symeda.sormas.app.rest.NoConnectionException;
@@ -65,7 +65,7 @@ public abstract class AdoDtoHelper<ADO extends AbstractDomainObject, DTO extends
 	 */
 	protected abstract Call<List<DTO>> pullByUuids(List<String> uuids) throws NoConnectionException;
 
-	protected abstract Call<List<PushResult>> pushAll(List<DTO> dtos) throws NoConnectionException;
+	protected abstract Call<List<PostResponse>> pushAll(List<DTO> dtos) throws NoConnectionException;
 
 	protected abstract void fillInnerFromDto(ADO ado, DTO dto);
 
@@ -75,6 +75,12 @@ public abstract class AdoDtoHelper<ADO extends AbstractDomainObject, DTO extends
 		throws NoConnectionException, ServerCommunicationException, ServerConnectionException, DaoException {
 	}
 
+	/**
+	 * Provides avg size of the entity DTO serialized to JSON.
+	 * To define it, create a new instance of the DTO filled with some best guess values for the use case
+	 * and check the length of the resulting JSON, multiplied by 8.
+	 * Needed to decide how much entities to synchronize at once, given the current bandwidth.
+	 */
 	protected abstract long getApproximateJsonSizeInBytes();
 
 	/**
@@ -252,6 +258,7 @@ public abstract class AdoDtoHelper<ADO extends AbstractDomainObject, DTO extends
 					lastSyncedEntityDate = dto.getChangeDate();
 				}
 			}
+			executeHandlePulledListAddition(result.size());
 			return null;
 		});
 
@@ -324,8 +331,8 @@ public abstract class AdoDtoHelper<ADO extends AbstractDomainObject, DTO extends
 
 		syncCallbacks.ifPresent(c -> c.getUpdatePushTotalCallback().accept(modifiedDtos.size()));
 
-		Call<List<PushResult>> call = pushAll(modifiedDtos);
-		Response<List<PushResult>> response;
+		Call<List<PostResponse>> call = pushAll(modifiedDtos);
+		Response<List<PostResponse>> response;
 		try {
 			response = call.execute();
 		} catch (IOException e) {
@@ -336,10 +343,10 @@ public abstract class AdoDtoHelper<ADO extends AbstractDomainObject, DTO extends
 			RetroProvider.throwException(response);
 		}
 
-		final List<PushResult> pushResults = response.body();
-		if (pushResults.size() != modifiedDtos.size()) {
+		final List<PostResponse> pushResponses = response.body();
+		if (pushResponses.size() != modifiedDtos.size()) {
 			throw new ServerCommunicationException(
-				"Server responded with wrong count of received entities: " + pushResults.size() + " - expected: " + modifiedDtos.size());
+				"Server responded with wrong count of received entities: " + pushResponses.size() + " - expected: " + modifiedDtos.size());
 		}
 
 		pushedTooOldCount = 0;
@@ -350,21 +357,30 @@ public abstract class AdoDtoHelper<ADO extends AbstractDomainObject, DTO extends
 
 				for (int i = 0; i < modifiedAdos.size(); i++) {
 					ADO ado = modifiedAdos.get(i);
-					PushResult pushResult = pushResults.get(i);
-					switch (pushResult) {
-					case OK:
+					PostResponse pushResponse = pushResponses.get(i);
+					switch (pushResponse.getStatusCode()) {
+					case 200:
+					case 201:
+					case 202:
+					case 203:
+					case 204:
+					case 205:
+					case 206:
+					case 207:
+					case 208:
 						// data has been pushed, we no longer need the old unmodified version
 						dao.accept(ado);
 						syncCallbacks.ifPresent(c -> c.getUpdatePushesCallback().accept(1));
 						break;
-					case TOO_OLD:
+					case 409: // outdated entity
 						pushedTooOldCount++;
 						break;
-					case ERROR:
+					case 400: // invalid entity
+					case 403: // forbidden
+					case 422: // could not be processed -> any unhandled exception
+					default:
 						pushedErrorCount++;
 						break;
-					default:
-						throw new IllegalArgumentException(pushResult.toString());
 					}
 				}
 				return null;
@@ -394,6 +410,10 @@ public abstract class AdoDtoHelper<ADO extends AbstractDomainObject, DTO extends
 
 	public void pullMissing(List<String> uuids, Optional<SynchronizationDialog.SynchronizationCallbacks> syncCallbacks)
 		throws ServerCommunicationException, ServerConnectionException, DaoException, NoConnectionException {
+
+		if (!isViewAllowed()) {
+			return;
+		}
 
 		final AbstractAdoDao<ADO> dao = DatabaseHelper.getAdoDao(getAdoClass());
 		uuids = dao.filterMissing(uuids);
@@ -477,5 +497,9 @@ public abstract class AdoDtoHelper<ADO extends AbstractDomainObject, DTO extends
 		} catch (UnsupportedOperationException e) {
 			return true;
 		}
+	}
+
+	protected void executeHandlePulledListAddition(int resultSize) {
+		// Not implemented by default
 	}
 }

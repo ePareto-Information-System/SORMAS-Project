@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="de.symeda.sormas.app">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.INTERNET" />
@@ -423,6 +422,67 @@
             android:screenOrientation="portrait"
             android:launchMode="singleTop">
         </activity>
+
+        <activity
+            android:name=".environment.list.EnvironmentListActivity"
+            android:theme="@style/ActivityWithOverflowMenuTheme"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
+        </activity>
+
+        <activity android:name=".environment.read.EnvironmentReadActivity"
+            android:theme="@style/ActivityWithOverflowMenuTheme"
+            android:parentActivityName=".environment.list.EnvironmentListActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
+        </activity>
+
+        <activity android:name=".environment.edit.EnvironmentEditActivity"
+            android:theme="@style/ActivityWithOverflowMenuTheme"
+            android:parentActivityName=".environment.read.EnvironmentReadActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
+        </activity>
+
+        <activity
+            android:name=".environment.edit.EnvironmentNewActivity"
+            android:theme="@style/ActivityWithOverflowMenuTheme"
+            android:parentActivityName=".environment.list.EnvironmentListActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
+        </activity>
+
+        <activity
+            android:name=".environmentsample.list.EnvironmentSampleListActivity"
+            android:theme="@style/ActivityWithOverflowMenuTheme"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
+        </activity>
+
+        <activity
+            android:name=".environmentsample.read.EnvironmentSampleReadActivity"
+            android:theme="@style/ActivityWithOverflowMenuTheme"
+            android:parentActivityName=".environmentsample.list.EnvironmentSampleListActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
+        </activity>
+
+        <activity
+            android:name=".environmentsample.edit.EnvironmentSampleEditActivity"
+            android:theme="@style/ActivityWithOverflowMenuTheme"
+            android:parentActivityName=".environmentsample.read.EnvironmentSampleReadActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
+        </activity>
+
+        <activity
+            android:name=".environmentsample.edit.EnvironmentSampleNewActivity"
+            android:theme="@style/ActivityWithOverflowMenuTheme"
+            android:parentActivityName=".environment.edit.EnvironmentEditActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
+        </activity>
+
         <!-- Only needed for androidTest - found no other way to manifest this -->
         <activity
             android:name=".TestBackendActivity" />

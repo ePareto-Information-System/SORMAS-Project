@@ -43,6 +43,7 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.WindowType;
 import org.openqa.selenium.interactions.Actions;
 import org.sormas.e2etests.common.TimerLite;
 import org.sormas.e2etests.steps.BaseSteps;
@@ -70,6 +71,8 @@ public class WebDriverHelpers {
     this.baseSteps = baseSteps;
     this.assertHelpers = assertHelpers;
   }
+
+  ArrayList<String> tabs;
 
   public void waitForPageLoaded() {
     assertHelpers.assertWithPoll20Second(
@@ -270,10 +273,12 @@ public class WebDriverHelpers {
             + "') or starts-with(text(), '\" + text + \"') ]";
     waitUntilIdentifiedElementIsVisibleAndClickable(comboboxInput);
     comboboxInput.sendKeys(text);
-    waitUntilElementIsVisibleAndClickable(By.className("v-filterselect-suggestmenu"));
-    waitUntilANumberOfElementsAreVisibleAndClickable(By.xpath("//td[@role='listitem']/span"), 1);
+    //    waitUntilElementIsVisibleAndClickable(By.className("v-filterselect-suggestmenu"));
+    //    waitUntilANumberOfElementsAreVisibleAndClickable(By.xpath("//td[@role='listitem']/span"),
+    // 1);
     By dropDownValueXpath = By.xpath(comboBoxItemWithText);
-    TimeUnit.MILLISECONDS.sleep(700);
+    waitUntilANumberOfElementsAreVisibleAndClickable(dropDownValueXpath, 1);
+    TimeUnit.SECONDS.sleep(1);
     clickOnWebElementBySelector(dropDownValueXpath);
     await()
         .pollInterval(ONE_HUNDRED_MILLISECONDS)
@@ -442,6 +447,17 @@ public class WebDriverHelpers {
     waitForPageLoaded();
   }
 
+  public void accessWebSiteWithNewTab(String url) {
+    log.info(PID + "Navigating to: {} ", url);
+    baseSteps.getDriver().switchTo().newWindow(WindowType.TAB);
+    baseSteps.getDriver().get(url);
+  }
+
+  public void switchToTheTabNumber(int no) {
+    ArrayList<String> tab = new ArrayList<>(baseSteps.getDriver().getWindowHandles());
+    baseSteps.getDriver().switchTo().window(tab.get(no - 1));
+  }
+
   public boolean isElementVisibleWithTimeout(By selector, int seconds) {
     try {
       assertHelpers.assertWithPoll(
@@ -493,7 +509,26 @@ public class WebDriverHelpers {
     Boolean isPresent = baseSteps.getDriver().findElements(elementLocator).size() > 0;
     return isPresent;
   }
-  ;
+
+  public void verifyListContainsText(final By selector, String value) {
+    assertHelpers.assertWithPoll(
+        () -> {
+          List<String> webElementsTexts =
+              baseSteps.getDriver().findElements(selector).stream()
+                  .map(
+                      webElement -> {
+                        scrollToElement(webElement);
+                        return webElement.getText();
+                      })
+                  .collect(Collectors.toList());
+          Assert.assertTrue(
+              webElementsTexts.contains(value),
+              String.format(
+                  "The element: %s values %s doesn't contain text: %s",
+                  selector, webElementsTexts, value));
+        },
+        FLUENT_WAIT_TIMEOUT_SECONDS);
+  }
 
   public void clickOnWebElementWhichMayNotBePresent(final By byObject, final int index) {
     try {

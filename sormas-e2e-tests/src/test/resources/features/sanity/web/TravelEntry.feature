@@ -276,8 +276,8 @@ Feature: Create travel entries
     When I create a new case with Point Of Entry for DE version
     And I click on save button in the case popup
     And I check that Point Of Entry information is displayed as read-only on Edit case page
-    And I refer case from Point Of Entry
-    And I check that Point Of Entry and Place Of Stay information is correctly display on Edit case page
+    And I refer case from Point Of Entry with Place of Stay ZUHAUSE
+    And I check that Point Of Entry and Place Of Stay ZUHAUSE information is correctly display on Edit case page
     Then I click on the Entries button from navbar
     And I click on the New Travel Entry button from Travel Entries directory
     And I check if Different Point Of Entry Jurisdiction checkbox appears in New Travel Entry popup
@@ -346,10 +346,9 @@ Feature: Create travel entries
       And I click on the Entries button from navbar
       When I click on the Import button from Travel Entries directory
       Then I check if import Travel Entry popup has not import option in DE version
-      And I select the specific German travel entry CSV file in the file picker with "travelEntries_testImport.csv" file name
+      And I select the specific German travel entry CSV file in the file picker with "DEA_TestImport.csv" file name
       And I click on the START DATA IMPORT button from the Import Travel Entries popup
       Then I check Pick an existing case in Pick or create person popup in travel entry
-      And I select to create new person from the Import Travel Entries popup DE and Save popup if needed
       And I select to create new person from the Import Travel Entries popup DE and Save popup if needed
       Then I check if csv file for travel entry is imported successfully
       And I close Data import popup for Travel Entries
@@ -465,3 +464,42 @@ Feature: Create travel entries
     And I navigate to person tab in Edit travel entry page
     Then I check that Citizenship is not visible in Contact Information section for DE version
     And I check that Country of birth is not visible in Contact Information section for DE version
+
+    @tmsLink=SORQA-669 @env_de @oldfake
+    Scenario: Check automatic deletion of TRAVEL_ENTRY origin 16 days ago
+      Given API: I create a new person
+
+      And API: I check that POST call status code is 200
+      Then API: I create a new travel entry with creation date 16 days ago
+
+      And API: I check that POST call status code is 200
+      Then I log in as a Admin User
+      And I open the last created travel entry via api
+      And I click on the Configuration button from navbar
+      Then I navigate to Developer tab in Configuration
+      Then I click on Execute Automatic Deletion button
+      And I wait 30 seconds for system reaction
+      Then I check if created travel entry is available in API
+      And API: I check that GET call status code is 204
+      Then I click on the Entries button from navbar
+      And I filter by last created travel entry via API
+      And I check that number of displayed Travel Entry results is 0
+
+  @tmsLink=SORQA-678 @env_de @oldfake
+  Scenario: Check automatic deletion NOT of TRAVEL_ENTRY origin 13 days ago
+    Given API: I create a new person
+    And API: I check that POST call status code is 200
+    Then API: I create a new travel entry with creation date 13 days ago
+
+    And API: I check that POST call status code is 200
+    Then I log in as a Admin User
+    And I open the last created travel entry via api
+    And I click on the Configuration button from navbar
+    Then I navigate to Developer tab in Configuration
+    Then I click on Execute Automatic Deletion button
+    And I wait 30 seconds for system reaction
+    Then I check if created travel entry is available in API
+    And API: I check that GET call status code is 200
+    Then I click on the Entries button from navbar
+    And I filter by last created travel entry via API
+    And I check that number of displayed Travel Entry results is 1

@@ -19,13 +19,18 @@
 package org.sormas.e2etests.steps.web.application.events;
 
 import static org.sormas.e2etests.pages.application.actions.CreateNewActionPage.NEW_ACTION_POPUP;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.*;
+import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.ALL_RESULTS_CHECKBOX;
+import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CONFIRM_POPUP;
+import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CREATE_NEW_PERSON_CHECKBOX;
+import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.UPLOAD_DOCUMENT_TO_ENTITIES_CHECKBOX;
 import static org.sormas.e2etests.pages.application.cases.CreateNewCasePage.ACTION_CONFIRM_POPUP_BUTTON;
+import static org.sormas.e2etests.pages.application.cases.CreateNewCasePage.LINE_LISTING_DISCARD_BUTTON;
 import static org.sormas.e2etests.pages.application.cases.CreateNewCasePage.PERSON_SEARCH_LOCATOR_BUTTON;
-import static org.sormas.e2etests.pages.application.cases.EditCasePage.ACTION_CANCEL;
+import static org.sormas.e2etests.pages.application.cases.EditCasePage.ACTION_CLOSE;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.BUTTONS_IN_VACCINATIONS_LOCATION;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.DELETE_BUTTON;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.DELETE_POPUP_YES_BUTTON;
+import static org.sormas.e2etests.pages.application.cases.EditCasePage.EDIT_FIRST_TASK_BUTTON;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.GENERATED_DOCUMENT_NAME_DE;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.NEW_SAMPLE_BUTTON;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.QUARANTINE_ORDER_COMBOBOX;
@@ -35,6 +40,7 @@ import static org.sormas.e2etests.pages.application.cases.EditContactsPage.COMMI
 import static org.sormas.e2etests.pages.application.contacts.EditContactPage.ACTION_CANCEL_POPUP;
 import static org.sormas.e2etests.pages.application.contacts.EditContactPage.ARCHIVE_POPUP_WINDOW_HEADER;
 import static org.sormas.e2etests.pages.application.contacts.EditContactPage.END_OF_PROCESSING_DATE_POPUP_INPUT;
+import static org.sormas.e2etests.pages.application.contacts.EditContactPage.POPUP_YES_BUTTON;
 import static org.sormas.e2etests.pages.application.contacts.EditContactPage.REPORT_DATE;
 import static org.sormas.e2etests.pages.application.entries.TravelEntryPage.CLOSE_IMPORT_TRAVEL_ENTRY_BUTTON;
 import static org.sormas.e2etests.pages.application.entries.TravelEntryPage.CLOSE_IMPORT_TRAVEL_ENTRY_POPUP;
@@ -55,11 +61,14 @@ import static org.sormas.e2etests.pages.application.events.EditEventPage.COUNTRY
 import static org.sormas.e2etests.pages.application.events.EditEventPage.CREATE_CASE_IN_EVENT_PARTICIPANT_LIST_BUTTON;
 import static org.sormas.e2etests.pages.application.events.EditEventPage.CREATE_CONTACTS_BULK_EDIT_BUTTON;
 import static org.sormas.e2etests.pages.application.events.EditEventPage.CREATE_QUARANTINE_ORDER_EVENT_PARTICIPANT;
+import static org.sormas.e2etests.pages.application.events.EditEventPage.CREATE_QUARANTINE_ORDER_EVENT_PARTICIPANT_BY_TEXT;
 import static org.sormas.e2etests.pages.application.events.EditEventPage.DEFAULT_COMBOBOX_VALUE;
+import static org.sormas.e2etests.pages.application.events.EditEventPage.DELETE_BULK_EDIT_BUTTON_EVENT_PARTICIPANT;
 import static org.sormas.e2etests.pages.application.events.EditEventPage.DESCRIPTIVE_ANALYSIS_OF_ASCETAINED_DATA_EPIDEMIOLOGICAL_EVIDENCE_BUTTON_DE;
 import static org.sormas.e2etests.pages.application.events.EditEventPage.DISEASE_COMBOBOX;
 import static org.sormas.e2etests.pages.application.events.EditEventPage.DISEASE_INPUT;
 import static org.sormas.e2etests.pages.application.events.EditEventPage.EDIT_EVENT_GROUP_BUTTON;
+import static org.sormas.e2etests.pages.application.events.EditEventPage.EDIT_EVENT_PAGE_SAVE_BUTTON;
 import static org.sormas.e2etests.pages.application.events.EditEventPage.EDIT_FIRST_TASK;
 import static org.sormas.e2etests.pages.application.events.EditEventPage.EPIDEMIOLOGICAL_EVIDENCE_OPTIONS;
 import static org.sormas.e2etests.pages.application.events.EditEventPage.EVENT_ACTIONS_TAB;
@@ -70,6 +79,7 @@ import static org.sormas.e2etests.pages.application.events.EditEventPage.EVENT_D
 import static org.sormas.e2etests.pages.application.events.EditEventPage.EVENT_ERROR_POPUP_FIRST_MESSAGE;
 import static org.sormas.e2etests.pages.application.events.EditEventPage.EVENT_ERROR_POPUP_MESSAGE_WITH_INPUT_DATA_TITLE;
 import static org.sormas.e2etests.pages.application.events.EditEventPage.EVENT_ERROR_POPUP_SECOND_MESSAGE;
+import static org.sormas.e2etests.pages.application.events.EditEventPage.EVENT_EXTERNAL_ID_INPUT;
 import static org.sormas.e2etests.pages.application.events.EditEventPage.EVENT_HANDOUT_COMBOBOX;
 import static org.sormas.e2etests.pages.application.events.EditEventPage.EVENT_INVESTIGATION_STATUS_OPTIONS;
 import static org.sormas.e2etests.pages.application.events.EditEventPage.EVENT_MANAGEMENT_STATUS_OPTIONS;
@@ -89,6 +99,7 @@ import static org.sormas.e2etests.pages.application.events.EditEventPage.GROUP_E
 import static org.sormas.e2etests.pages.application.events.EditEventPage.GROUP_EVENT_UUID;
 import static org.sormas.e2etests.pages.application.events.EditEventPage.IMPRESSION_TEST_LABORATORY_DIAGNOSTIC_EVIDENCE_BUTTON_DE;
 import static org.sormas.e2etests.pages.application.events.EditEventPage.LABORATORY_DIAGNOSTIC_EVIDENCE_OPTIONS;
+import static org.sormas.e2etests.pages.application.events.EditEventPage.LINE_LISTING_HEADER;
 import static org.sormas.e2etests.pages.application.events.EditEventPage.LINK_EVENT_GROUP_BUTTON;
 import static org.sormas.e2etests.pages.application.events.EditEventPage.MAP_CONTAINER;
 import static org.sormas.e2etests.pages.application.events.EditEventPage.NAVIGATE_TO_EVENT_DATA_BUTTON;
@@ -100,6 +111,7 @@ import static org.sormas.e2etests.pages.application.events.EditEventPage.NEW_ACT
 import static org.sormas.e2etests.pages.application.events.EditEventPage.NEW_EVENT_GROUP_RADIOBUTTON;
 import static org.sormas.e2etests.pages.application.events.EditEventPage.NEW_GROUP_EVENT_CREATED_MESSAGE;
 import static org.sormas.e2etests.pages.application.events.EditEventPage.NEW_IMMUNIZATION_BUTTON;
+import static org.sormas.e2etests.pages.application.events.EditEventPage.NEW_IMMUNIZATION_CARD_WITH_COVID;
 import static org.sormas.e2etests.pages.application.events.EditEventPage.NEW_TASK_BUTTON;
 import static org.sormas.e2etests.pages.application.events.EditEventPage.OTHER_LABORATORY_DIAGNOSTIC_EVIDENCE_BUTTON_DE;
 import static org.sormas.e2etests.pages.application.events.EditEventPage.PATHOGEN_FINE_TYPING_COMPLIANT_WITH_THE_ONE_OF_CASES_LABORATORY_DIAGNOSTIC_EVIDENCE_BUTTON_DE;
@@ -138,6 +150,7 @@ import static org.sormas.e2etests.pages.application.events.EditEventPage.getGrou
 import static org.sormas.e2etests.pages.application.events.EventActionsPage.CREATE_BUTTON;
 import static org.sormas.e2etests.pages.application.events.EventDirectoryPage.BULK_ACTIONS_EVENT_DIRECTORY;
 import static org.sormas.e2etests.pages.application.events.EventDirectoryPage.EVENT_GROUP_ID_NAME_INPUT;
+import static org.sormas.e2etests.pages.application.events.EventDirectoryPage.SEARCH_EVENT_BY_FREE_TEXT_INPUT;
 import static org.sormas.e2etests.pages.application.events.EventDirectoryPage.TOTAL_EVENTS_COUNTER;
 import static org.sormas.e2etests.pages.application.events.EventDirectoryPage.getByEventUuid;
 import static org.sormas.e2etests.pages.application.events.EventDirectoryPage.getCheckboxByIndex;
@@ -147,15 +160,17 @@ import static org.sormas.e2etests.pages.application.events.EventParticipantsPage
 import static org.sormas.e2etests.pages.application.events.EventParticipantsPage.CONFIRM_ACTION;
 import static org.sormas.e2etests.pages.application.events.EventParticipantsPage.CONFIRM_BUTTON_FOR_SELECT_PERSON_FROM_ADD_PARTICIPANTS_WINDOW;
 import static org.sormas.e2etests.pages.application.events.EventParticipantsPage.CONFIRM_DEARCHIVE_BUTTON;
-import static org.sormas.e2etests.pages.application.events.EventParticipantsPage.CONFIRM_DELETION_OF_EVENT_PARTICIPANT;
 import static org.sormas.e2etests.pages.application.events.EventParticipantsPage.CONFIRM_NAVIGATION_POPUP;
 import static org.sormas.e2etests.pages.application.events.EventParticipantsPage.CREATE_NEW_PERSON_RADIO_BUTTON;
 import static org.sormas.e2etests.pages.application.events.EventParticipantsPage.DEARCHIVE_REASON_TEXT_AREA;
 import static org.sormas.e2etests.pages.application.events.EventParticipantsPage.DELETE_EVENT_PARTICIPANT_BUTTTON;
 import static org.sormas.e2etests.pages.application.events.EventParticipantsPage.DISCARD_BUTTON;
 import static org.sormas.e2etests.pages.application.events.EventParticipantsPage.ERROR_MESSAGE_TEXT;
+import static org.sormas.e2etests.pages.application.events.EventParticipantsPage.EVENT_PARTICIPANTS_GRID;
 import static org.sormas.e2etests.pages.application.events.EventParticipantsPage.EVENT_PARTICIPANTS_TAB;
+import static org.sormas.e2etests.pages.application.events.EventParticipantsPage.EVENT_PARTICIPANT_DATA_TAB;
 import static org.sormas.e2etests.pages.application.events.EventParticipantsPage.EVENT_PARTICIPANT_DISPLAY_FILTER_COMBOBOX;
+import static org.sormas.e2etests.pages.application.events.EventParticipantsPage.EVENT_PARTICIPANT_PERSON_TAB;
 import static org.sormas.e2etests.pages.application.events.EventParticipantsPage.EVENT_PARTICIPANT_UUID;
 import static org.sormas.e2etests.pages.application.events.EventParticipantsPage.EVENT_TAB;
 import static org.sormas.e2etests.pages.application.events.EventParticipantsPage.GENERAL_COMMENT_TEXT_AREA;
@@ -174,11 +189,14 @@ import static org.sormas.e2etests.pages.application.events.EventParticipantsPage
 import static org.sormas.e2etests.pages.application.events.EventParticipantsPage.SELECT_PERSON_SEARCH_BUTTON_AT_ADD_PARTICIPANT;
 import static org.sormas.e2etests.pages.application.events.EventParticipantsPage.SEX_COMBOBOX;
 import static org.sormas.e2etests.pages.application.events.EventParticipantsPage.SEX_COMBOBOX_REQUIRED;
+import static org.sormas.e2etests.pages.application.events.EventParticipantsPage.UNSAVED_CHANGES_HEADER;
+import static org.sormas.e2etests.pages.application.events.EventParticipantsPage.UNSAVED_CHANGES_HEADER_DE;
 import static org.sormas.e2etests.pages.application.events.EventParticipantsPage.getEventParticipantByPersonUuid;
 import static org.sormas.e2etests.pages.application.immunizations.EditImmunizationPage.getVaccinationByIndex;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.DATE_OF_BIRTH_DAY_COMBOBOX;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.DATE_OF_BIRTH_MONTH_COMBOBOX;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.DATE_OF_BIRTH_YEAR_COMBOBOX;
+import static org.sormas.e2etests.pages.application.persons.EditPersonPage.DISTRICT_COMBOBOX;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.DISTRICT_INPUT;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.PERSON_DATA_ADDED_AS_A_PARTICIPANT_MESSAGE;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.PERSON_DATA_SAVED;
@@ -186,9 +204,8 @@ import static org.sormas.e2etests.pages.application.persons.EditPersonPage.POPUP
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.POPUP_RESPONSIBLE_DISTRICT_COMBOBOX;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.POPUP_RESPONSIBLE_REGION_COMBOBOX;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.POPUP_SAVE;
+import static org.sormas.e2etests.pages.application.persons.EditPersonPage.REGION_COMBOBOX;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.REGION_INPUT;
-import static org.sormas.e2etests.pages.application.persons.EditPersonPage.SECOND_DISTRICT_COMBOBOX;
-import static org.sormas.e2etests.pages.application.persons.EditPersonPage.SECOND_REGION_COMBOBOX;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.SEE_EVENTS_FOR_PERSON;
 import static org.sormas.e2etests.pages.application.samples.EditSamplePage.DELETE_SAMPLE_REASON_POPUP;
 import static org.sormas.e2etests.steps.BaseSteps.locale;
@@ -217,6 +234,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.openqa.selenium.By;
 import org.sormas.e2etests.entities.pojo.helpers.ComparisonHelper;
 import org.sormas.e2etests.entities.pojo.web.Event;
 import org.sormas.e2etests.entities.pojo.web.EventGroup;
@@ -260,6 +278,8 @@ public class EditEventSteps implements En {
   public static final String userDirPath = System.getProperty("user.dir");
   private static String currentUrl;
   private static String eventParticipantUUID;
+  private static String eventUUID;
+  public static List<String> externalEventUUID = new ArrayList<>();
   LocalDate dateOfBirth;
   List<Person> eventParticipantList = new ArrayList<>();
 
@@ -286,8 +306,8 @@ public class EditEventSteps implements En {
         "^I change the event status to ([^\"]*)",
         (String eventStatus) -> {
           selectEventStatus(eventStatus);
-          webDriverHelpers.scrollToElement(SAVE_BUTTON);
-          webDriverHelpers.clickOnWebElementBySelector(SAVE_BUTTON);
+          webDriverHelpers.scrollToElement(EDIT_EVENT_PAGE_SAVE_BUTTON);
+          webDriverHelpers.clickOnWebElementBySelector(EDIT_EVENT_PAGE_SAVE_BUTTON);
           webDriverHelpers.waitUntilElementIsVisibleAndClickable(EVENT_DATA_SAVED_MESSAGE);
         });
 
@@ -634,8 +654,8 @@ public class EditEventSteps implements En {
           fillTitle(collectedEvent.getTitle());
           selectSourceType(collectedEvent.getSourceType());
           selectTypeOfPlace(collectedEvent.getEventLocation());
-          webDriverHelpers.scrollToElement(SAVE_BUTTON);
-          webDriverHelpers.clickOnWebElementBySelector(SAVE_BUTTON);
+          webDriverHelpers.scrollToElement(EDIT_EVENT_PAGE_SAVE_BUTTON);
+          webDriverHelpers.clickOnWebElementBySelector(EDIT_EVENT_PAGE_SAVE_BUTTON);
           webDriverHelpers.waitUntilElementIsVisibleAndClickable(EVENT_DATA_SAVED_MESSAGE);
         });
 
@@ -680,6 +700,12 @@ public class EditEventSteps implements En {
         () ->
             webDriverHelpers.clickOnWebElementBySelector(
                 CREATE_QUARANTINE_ORDER_EVENT_PARTICIPANT));
+    And(
+        "I click on Create Quarantine Order from Bulk Actions combobox on Event Participant Directory Page by button text",
+        () -> {
+          webDriverHelpers.clickOnWebElementBySelector(
+              CREATE_QUARANTINE_ORDER_EVENT_PARTICIPANT_BY_TEXT);
+        });
     And(
         "I click on checkbox to upload generated document to entities in Create Quarantine Order form in Event Participant directory for DE",
         () -> webDriverHelpers.clickOnWebElementBySelector(UPLOAD_DOCUMENT_TO_ENTITIES_CHECKBOX));
@@ -742,13 +768,20 @@ public class EditEventSteps implements En {
     When(
         "I click on save button in Add Participant form",
         () -> {
-          webDriverHelpers.clickOnWebElementBySelector(SAVE_BUTTON);
-          TimeUnit.SECONDS.sleep(1); // wait for reaction
-          webDriverHelpers.waitForPageLoaded();
+          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(
+              EDIT_EVENT_PAGE_SAVE_BUTTON);
+          TimeUnit.SECONDS.sleep(2); // needed for button to be available
+          int attempts = 0;
+          do {
+            webDriverHelpers.clickOnWebElementBySelector(EDIT_EVENT_PAGE_SAVE_BUTTON);
+            attempts++;
+          } while (attempts < 5
+              && webDriverHelpers.isElementPresent(By.cssSelector(".v-window-wrap")));
         });
     When(
         "I add a participant to the event",
         () -> {
+          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(EVENT_PARTICIPANTS_TAB);
           webDriverHelpers.clickOnWebElementBySelector(EVENT_PARTICIPANTS_TAB);
           webDriverHelpers.clickOnWebElementBySelector(ADD_PARTICIPANT_BUTTON);
           webDriverHelpers.fillInWebElement(PARTICIPANT_FIRST_NAME_INPUT, faker.name().firstName());
@@ -765,6 +798,7 @@ public class EditEventSteps implements En {
           }
           webDriverHelpers.waitUntilIdentifiedElementIsPresent(
               PERSON_DATA_ADDED_AS_A_PARTICIPANT_MESSAGE);
+
           person = collectPersonUuid();
           eventParticipantList.add(person);
           selectResponsibleRegion("Region1");
@@ -775,6 +809,11 @@ public class EditEventSteps implements En {
                   faker.number().numberBetween(1, 12),
                   faker.number().numberBetween(1, 27));
 
+          webDriverHelpers.clickOnWebElementBySelector(EVENT_PARTICIPANT_PERSON_TAB);
+
+          if (webDriverHelpers.isElementVisibleWithTimeout(UNSAVED_CHANGES_HEADER, 10))
+            webDriverHelpers.clickOnWebElementBySelector(CONFIRM_POPUP);
+
           webDriverHelpers.selectFromCombobox(
               DATE_OF_BIRTH_YEAR_COMBOBOX, String.valueOf(dateOfBirth.getYear()));
           webDriverHelpers.selectFromCombobox(
@@ -784,6 +823,22 @@ public class EditEventSteps implements En {
               DATE_OF_BIRTH_DAY_COMBOBOX, String.valueOf(dateOfBirth.getDayOfMonth()));
           webDriverHelpers.clickOnWebElementBySelector(POPUP_SAVE);
           webDriverHelpers.waitUntilElementIsVisibleAndClickable(PERSON_DATA_SAVED);
+        });
+
+    When(
+        "I click on Event Participant Person tab",
+        () -> {
+          webDriverHelpers.clickOnWebElementBySelector(EVENT_PARTICIPANT_PERSON_TAB);
+          if (webDriverHelpers.isElementVisibleWithTimeout(UNSAVED_CHANGES_HEADER, 2))
+            webDriverHelpers.clickOnWebElementBySelector(CONFIRM_POPUP);
+          if (webDriverHelpers.isElementVisibleWithTimeout(UNSAVED_CHANGES_HEADER_DE, 2))
+            webDriverHelpers.clickOnWebElementBySelector(CONFIRM_POPUP);
+        });
+
+    When(
+        "I click on Event Participant Data tab",
+        () -> {
+          webDriverHelpers.clickOnWebElementBySelector(EVENT_PARTICIPANT_DATA_TAB);
         });
 
     When(
@@ -811,7 +866,7 @@ public class EditEventSteps implements En {
         "I set participant vaccination status to ([^\"]*)",
         (String vaccinationStatus) -> {
           webDriverHelpers.selectFromCombobox(VACCINATION_STATUS_COMBOBOX, vaccinationStatus);
-          webDriverHelpers.clickOnWebElementBySelector(SAVE_BUTTON);
+          webDriverHelpers.clickOnWebElementBySelector(EDIT_EVENT_PAGE_SAVE_BUTTON);
           webDriverHelpers.clickOnWebElementBySelector(EVENT_PARTICIPANTS_TAB);
         });
 
@@ -932,6 +987,19 @@ public class EditEventSteps implements En {
         () -> {
           webDriverHelpers.clickOnWebElementBySelector(CREATE_CONTACTS_BULK_EDIT_BUTTON);
         });
+
+    When(
+        "I click on Delete button from bulk actions menu in Event Participant Tab",
+        () -> {
+          webDriverHelpers.clickOnWebElementBySelector(DELETE_BULK_EDIT_BUTTON_EVENT_PARTICIPANT);
+        });
+
+    When(
+        "I click on Create quarantine order documents from bulk actions menu in Event Participant Tab",
+        () -> {
+          webDriverHelpers.clickOnWebElementBySelector(CREATE_QUARANTINE_ORDER_EVENT_PARTICIPANT);
+        });
+
     When(
         "I click checkbox to choose all Event Participants results in Event Participant Tab",
         () -> {
@@ -968,6 +1036,8 @@ public class EditEventSteps implements En {
         () -> {
           webDriverHelpers.clickOnWebElementBySelector(FIRST_GROUP_ID);
           webDriverHelpers.clickOnWebElementBySelector(SAVE_BUTTON_FOR_POPUP_WINDOWS);
+          webDriverHelpers.waitUntilElementIsVisibleAndClickable(EVENT_DATA_SAVED_MESSAGE);
+          webDriverHelpers.clickOnWebElementBySelector(EVENT_DATA_SAVED_MESSAGE);
         });
 
     When(
@@ -990,6 +1060,12 @@ public class EditEventSteps implements En {
         "I click on Edit event button for the first event in Events section",
         () -> {
           webDriverHelpers.clickOnWebElementBySelector(EDIT_EVENT_GROUP_BUTTON);
+        });
+
+    When(
+        "I click on first Edit event button for in Events section",
+        () -> {
+          webDriverHelpers.clickOnWebElementBySelector(EDIT_FIRST_TASK_BUTTON);
         });
 
     When(
@@ -1069,7 +1145,7 @@ public class EditEventSteps implements En {
         "I check that an import success notification appears in the Import Event Participant popup for DE",
         () -> {
           webDriverHelpers.waitUntilIdentifiedElementIsPresent(IMPORT_SUCCESS_DE);
-          webDriverHelpers.clickOnWebElementBySelector(ACTION_CANCEL);
+          webDriverHelpers.clickOnWebElementBySelector(ACTION_CLOSE);
         });
     When(
         "I click Delete button on Edit Event page",
@@ -1082,7 +1158,10 @@ public class EditEventSteps implements En {
         () -> webDriverHelpers.clickOnWebElementBySelector(ACTION_CANCEL_POPUP));
     When(
         "I click on Yes option in Confirm deletion on Edit Event Page",
-        () -> webDriverHelpers.clickOnWebElementBySelector(ACTION_CONFIRM_POPUP_BUTTON));
+        () -> {
+          webDriverHelpers.clickOnWebElementBySelector(ACTION_CONFIRM_POPUP_BUTTON);
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(30);
+        });
     When(
         "I check that error message is equal to {string} in Reason for Deletion in popup",
         (String expected) -> {
@@ -1243,6 +1322,7 @@ public class EditEventSteps implements En {
           fillGroupEventName(groupEvent.getName());
           webDriverHelpers.clickOnWebElementBySelector(SAVE_BUTTON_FOR_POPUP_WINDOWS);
           webDriverHelpers.waitUntilElementIsVisibleAndClickable(NEW_GROUP_EVENT_CREATED_MESSAGE);
+          webDriverHelpers.clickOnWebElementBySelector(NEW_GROUP_EVENT_CREATED_MESSAGE);
         });
 
     When(
@@ -1262,6 +1342,8 @@ public class EditEventSteps implements En {
                   + "/sormas-webdriver/#!events/data/"
                   + apiState.getCreatedEvent().getUuid();
           webDriverHelpers.accessWebSite(LAST_CREATED_EVENT_URL);
+          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(
+              EditEventPage.UUID_INPUT);
         });
 
     When(
@@ -1375,8 +1457,8 @@ public class EditEventSteps implements En {
     When(
         "I click on Save Button in Edit Event directory",
         () -> {
-          webDriverHelpers.scrollToElement(SAVE_BUTTON);
-          webDriverHelpers.clickOnWebElementBySelector(SAVE_BUTTON);
+          webDriverHelpers.scrollToElement(EDIT_EVENT_PAGE_SAVE_BUTTON);
+          webDriverHelpers.clickOnWebElementBySelector(EDIT_EVENT_PAGE_SAVE_BUTTON);
           TimeUnit.SECONDS.sleep(1); // wait for reaction
           webDriverHelpers.waitForPageLoadingSpinnerToDisappear(40);
           webDriverHelpers.waitUntilElementIsVisibleAndClickable(EVENT_DATA_SAVED_MESSAGE);
@@ -1418,7 +1500,8 @@ public class EditEventSteps implements En {
           webDriverHelpers.selectFromCombobox(
               DELETE_SAMPLE_REASON_POPUP, "Entity created without legal reason");
           webDriverHelpers.clickOnWebElementBySelector(DELETE_POPUP_YES_BUTTON);
-          webDriverHelpers.clickOnWebElementBySelector(CONFIRM_DELETION_OF_EVENT_PARTICIPANT);
+          //
+          // webDriverHelpers.clickOnWebElementBySelector(CONFIRM_DELETION_OF_EVENT_PARTICIPANT);
           //          if (webDriverHelpers.isElementVisibleWithTimeout(POPUP_DISCARD_CHANGES_BUTTON,
           // 30)) {
           //            webDriverHelpers.clickOnWebElementBySelector(POPUP_DISCARD_CHANGES_BUTTON);
@@ -1499,6 +1582,10 @@ public class EditEventSteps implements En {
         () -> {
           webDriverHelpers.scrollToElement(EVENT_PARTICIPANTS_TAB);
           webDriverHelpers.clickOnWebElementBySelector(EVENT_PARTICIPANTS_TAB);
+          if (webDriverHelpers.isElementVisibleWithTimeout(POPUP_YES_BUTTON, 5)) {
+            webDriverHelpers.clickOnWebElementBySelector(POPUP_YES_BUTTON);
+          }
+          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(EVENT_PARTICIPANTS_GRID);
         });
 
     When(
@@ -1546,8 +1633,8 @@ public class EditEventSteps implements En {
     When(
         "I set Region to {string} and District to {string} in Event Participant edit page",
         (String aRegion, String aDistrict) -> {
-          webDriverHelpers.selectFromCombobox(SECOND_REGION_COMBOBOX, aRegion);
-          webDriverHelpers.selectFromCombobox(SECOND_DISTRICT_COMBOBOX, aDistrict);
+          webDriverHelpers.selectFromCombobox(REGION_COMBOBOX, aRegion);
+          webDriverHelpers.selectFromCombobox(DISTRICT_COMBOBOX, aDistrict);
         });
 
     When(
@@ -1657,7 +1744,7 @@ public class EditEventSteps implements En {
               true,
               "Event status options is not editable state but it should be since archived entities default value is true!");
           softly.assertEquals(
-              webDriverHelpers.isElementEnabled(SAVE_BUTTON),
+              webDriverHelpers.isElementEnabled(EDIT_EVENT_PAGE_SAVE_BUTTON),
               true,
               "Save button is not editable state but it should be since archived entities default value is true!");
           softly.assertEquals(
@@ -1749,7 +1836,7 @@ public class EditEventSteps implements En {
         "^I check that New immunization card is not available$",
         () -> {
           softly.assertFalse(
-              webDriverHelpers.isElementVisibleWithTimeout(NEW_IMMUNIZATION_BUTTON, 2),
+              webDriverHelpers.isElementVisibleWithTimeout(NEW_IMMUNIZATION_CARD_WITH_COVID, 2),
               "Contacts With Source Case box is visible!");
           softly.assertAll();
         });
@@ -1898,8 +1985,8 @@ public class EditEventSteps implements En {
               "Default option is not 'All event participants'");
           Assert.assertTrue(
               webDriverHelpers.checkIfElementExistsInCombobox(
-                  EVENT_PARTICIPANT_STATUS, "All event participants"),
-              "There is no 'All event participants' option in drop list.");
+                  EVENT_PARTICIPANT_STATUS, "Active and archived event participants"),
+              "There is no 'Active and archived event participants' option in drop list.");
           Assert.assertTrue(
               webDriverHelpers.checkIfElementExistsInCombobox(
                   EVENT_PARTICIPANT_STATUS, "Active event participants"),
@@ -1908,6 +1995,10 @@ public class EditEventSteps implements En {
               webDriverHelpers.checkIfElementExistsInCombobox(
                   EVENT_PARTICIPANT_STATUS, "Archived event participants"),
               "There is no 'Archived event participants' option in drop list.");
+          Assert.assertTrue(
+              webDriverHelpers.checkIfElementExistsInCombobox(
+                  EVENT_PARTICIPANT_STATUS, "Deleted event participants"),
+              "There is no 'Deleted event participants' option in drop list.");
         });
 
     And(
@@ -1915,12 +2006,12 @@ public class EditEventSteps implements En {
         () -> {
           Assert.assertEquals(
               webDriverHelpers.getValueFromCombobox(EVENT_PARTICIPANT_STATUS),
-              "All event participants",
-              "Default option is not 'All event participants'");
+              "Active and archived event participants",
+              "Default option is not 'Active and archived event participants'");
           Assert.assertTrue(
               webDriverHelpers.checkIfElementExistsInCombobox(
-                  EVENT_PARTICIPANT_STATUS, "All event participants"),
-              "There is no 'All event participants' option in drop list.");
+                  EVENT_PARTICIPANT_STATUS, "Active and archived event participants"),
+              "There is no 'Active and archived event participants' option in drop list.");
           Assert.assertTrue(
               webDriverHelpers.checkIfElementExistsInCombobox(
                   EVENT_PARTICIPANT_STATUS, "Active event participants"),
@@ -1929,6 +2020,61 @@ public class EditEventSteps implements En {
               webDriverHelpers.checkIfElementExistsInCombobox(
                   EVENT_PARTICIPANT_STATUS, "Archived event participants"),
               "There is no 'Archived event participants' option in drop list.");
+          Assert.assertTrue(
+              webDriverHelpers.checkIfElementExistsInCombobox(
+                  EVENT_PARTICIPANT_STATUS, "Deleted event participants"),
+              "There is no 'Deleted event participants' option in drop list.");
+        });
+
+    When(
+        "I copy uuid of current event",
+        () -> {
+          webDriverHelpers.scrollToElement(EditEventPage.UUID_INPUT);
+          eventUUID = webDriverHelpers.getValueFromWebElement(EditEventPage.UUID_INPUT);
+        });
+
+    When(
+        "I filter by last created event via api",
+        () -> {
+          webDriverHelpers.fillAndSubmitInWebElement(SEARCH_EVENT_BY_FREE_TEXT_INPUT, eventUUID);
+        });
+
+    And(
+        "^I save Add participant form$",
+        () -> {
+          webDriverHelpers.clickOnWebElementBySelector(SAVE_BUTTON_FOR_POPUP_WINDOWS);
+        });
+
+    When(
+        "I check if Create Contacts Line listing window appears",
+        () -> {
+          softly.assertTrue(webDriverHelpers.isElementVisibleWithTimeout(LINE_LISTING_HEADER, 2));
+          softly.assertAll();
+        });
+
+    When(
+        "I click on discard button in line listing",
+        () -> webDriverHelpers.clickOnWebElementBySelector(LINE_LISTING_DISCARD_BUTTON));
+
+    And(
+        "^I remove the event date on Edit Event page$",
+        () -> {
+          webDriverHelpers.clearWebElement(START_DATA_INPUT);
+        });
+
+    And(
+        "^I set event date field to (\\d+) days before today on Event Edit page for DE$",
+        (Integer days) -> {
+          webDriverHelpers.scrollToElement(START_DATA_INPUT);
+          webDriverHelpers.fillAndSubmitInWebElement(
+              START_DATA_INPUT, DATE_FORMATTER.format(LocalDate.now().minusDays(days)));
+        });
+
+    And(
+        "^I collect event external UUID from Edit Event page$",
+        () -> {
+          webDriverHelpers.waitUntilIdentifiedElementIsPresent(EVENT_EXTERNAL_ID_INPUT);
+          externalEventUUID.add(webDriverHelpers.getValueFromWebElement(EVENT_EXTERNAL_ID_INPUT));
         });
   }
 

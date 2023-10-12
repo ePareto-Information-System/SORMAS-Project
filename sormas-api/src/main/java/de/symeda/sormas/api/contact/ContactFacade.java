@@ -24,15 +24,17 @@ import java.util.Map;
 
 import javax.ejb.Remote;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import de.symeda.sormas.api.CoreFacade;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.Language;
+import de.symeda.sormas.api.MergeFacade;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.caze.CoreAndPersonDto;
-import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.common.progress.ProcessedEntity;
 import de.symeda.sormas.api.dashboard.DashboardContactDto;
 import de.symeda.sormas.api.externaldata.ExternalDataDto;
 import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
@@ -45,7 +47,7 @@ import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.api.visit.VisitSummaryExportDto;
 
 @Remote
-public interface ContactFacade extends CoreFacade<ContactDto, ContactIndexDto, ContactReferenceDto, ContactCriteria> {
+public interface ContactFacade extends CoreFacade<ContactDto, ContactIndexDto, ContactReferenceDto, ContactCriteria>, MergeFacade {
 
 	ContactDto save(@Valid ContactDto dto, boolean handleChanges, boolean handleCaseChanges);
 
@@ -58,8 +60,6 @@ public interface ContactFacade extends CoreFacade<ContactDto, ContactIndexDto, C
 	Long countContactsForMap(RegionReferenceDto regionRef, DistrictReferenceDto districtRef, Disease disease, Date from, Date to);
 
 	List<MapContactDto> getContactsForMap(RegionReferenceDto regionRef, DistrictReferenceDto districtRef, Disease disease, Date from, Date to);
-
-	List<String> deleteContacts(List<String> contactUuids, DeletionDetails deletionDetails);
 
 	FollowUpPeriodDto getCalculatedFollowUpUntilDate(ContactDto contactDto, boolean ignoreOverwrite);
 
@@ -111,8 +111,6 @@ public interface ContactFacade extends CoreFacade<ContactDto, ContactIndexDto, C
 
 	int getFollowUpUntilCount(ContactCriteria contactCriteria);
 
-	List<String> getArchivedUuidsSince(Date since);
-
 	void archiveAllArchivableContacts(int daysAfterContactsGetsArchived);
 
 	List<String> getDeletedUuidsSince(Date since);
@@ -140,17 +138,16 @@ public interface ContactFacade extends CoreFacade<ContactDto, ContactIndexDto, C
 
 	List<ContactDto> getByPersonUuids(List<String> personUuids);
 
-	void mergeContact(String leadUuid, String otherUuid);
-
-	void deleteContactAsDuplicate(String uuid, String duplicateOfUuid);
-
-	List<MergeContactIndexDto[]> getContactsForDuplicateMerging(ContactCriteria criteria, boolean showDuplicatesWithDifferentRegion);
+	List<MergeContactIndexDto[]> getContactsForDuplicateMerging(
+		ContactCriteria criteria,
+		@Min(1) Integer limit,
+		boolean showDuplicatesWithDifferentRegion);
 
 	void updateCompleteness(String uuid);
 
 	void updateExternalData(@Valid List<ExternalDataDto> externalData) throws ExternalDataUpdateException;
 
-	int saveBulkContacts(
+	List<ProcessedEntity> saveBulkContacts(
 		List<String> contactUuidlist,
 		@Valid ContactBulkEditData updatedContacBulkEditData,
 		boolean classificationChange,

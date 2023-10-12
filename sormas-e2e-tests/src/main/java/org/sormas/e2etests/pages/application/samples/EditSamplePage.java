@@ -22,6 +22,7 @@ import org.openqa.selenium.By;
 
 public class EditSamplePage {
 
+  public static final By UUID_FIELD = By.id("uuid");
   public static final By PATHOGEN_NEW_TEST_RESULT_BUTTON = By.cssSelector("[id='New test result']");
   public static final By ADDIITONAL_NEW_TEST_RESULT_BUTTON =
       By.cssSelector("[location='additionalTests'] [id='New test result']");
@@ -64,17 +65,26 @@ public class EditSamplePage {
   public static final By SPECIFY_TEST_DETAILS_INPUT =
       By.cssSelector("[class='popupContent'] [id='testTypeText']");
   public static final By TYPING_ID_INPUT = By.cssSelector("[class='popupContent'] [id='typingId']");
-  public static final By DELETE_SAMPLE_BUTTON = By.cssSelector("#deleteUndelete");
+  public static final By DELETE_SAMPLE_BUTTON = By.cssSelector("#deleteRestore");
   public static final By DELETE_PATHOGEN_TEST_RESULT =
-      By.cssSelector("[class='popupContent'] [id='deleteUndelete']");
-  public static final By SAMPLE_DELETION_POPUP = By.cssSelector(".v-window .popupContent");
+      By.cssSelector("[class='popupContent'] [id='deleteRestore']");
   public static final By SAMPLE_DELETION_POPUP_YES_BUTTON = By.id("actionConfirm");
   public static final By SAVE_SAMPLE_BUTTON = By.id("commit");
   public static final By DELETE_SAMPLE_REASON_POPUP =
       By.xpath(
           "//div[@class='popupContent']//*[text()='Reason for deletion']/../following-sibling::div//div");
+  public static final By DELETE_SAMPLE_REASON_POPUP_FOR_DE =
+      By.xpath(
+          "//div[@class='popupContent']//*[text()='Grund des L\u00F6schens']/../following-sibling::div//div");
   public static final By EDIT_PATHOGEN_TEST =
       By.cssSelector(".v-align-right.v-slot.v-slot-compact.v-slot-link > div[role='button']");
   public static final By TESTED_DISEASE_VARIANT =
       By.cssSelector(".popupContent [id='testedDiseaseVariant'] div");
+  public static final By PCR_TEST_SPECIFICATION_INPUT =
+      By.cssSelector("[class='popupContent'] [id='pcrTestSpecification'] input");
+  public static final By SEE_SAMPLES_FOR_THIS_PERSON_BUTTON_DE =
+      By.id("Proben f\u00FCr diese Person ansehen");
+  public static final By BACK_TO_CASE_DE_BUTTON =
+      By.xpath(
+          "//div[@class='v-link v-widget v-caption v-link-v-caption']//span[contains(text(), 'Fall')]");
 }

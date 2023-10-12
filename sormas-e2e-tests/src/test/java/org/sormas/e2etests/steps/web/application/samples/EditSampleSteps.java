@@ -19,9 +19,44 @@
 package org.sormas.e2etests.steps.web.application.samples;
 
 import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.SAVE_EDIT_SAMPLE_BUTTON;
-import static org.sormas.e2etests.pages.application.samples.EditSamplePage.*;
-import static org.sormas.e2etests.pages.application.samples.SamplesDirectoryPage.*;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.ADDIITONAL_NEW_TEST_RESULT_BUTTON;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.BACK_TO_CASE_DE_BUTTON;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.COLLECTED_DATE_TIME_COMBOBOX;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.COLLECTED_DATE_TIME_INPUT;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.COMMENT_AREA_INPUT;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.CQ_CT_VALUE_INPUT;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.DATE_SAMPLE_COLLECTED;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.DATE_SAMPLE_RECEIVED;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.DELETE_PATHOGEN_TEST_RESULT;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.DELETE_SAMPLE_BUTTON;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.DELETE_SAMPLE_REASON_POPUP;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.FIELD_SAMPLE_ID_INPUT;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.FOUR_FOLD_INCREASE_ANTIBODY_TITER;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.LABORATORY_COMBOBOX;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.LABORATORY_INPUT;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.LABORATORY_NAME_INPUT;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.LAB_SAMPLE_ID_INPUT;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.NEW_TEST_RESULT_DE;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.PATHOGEN_NEW_TEST_RESULT_BUTTON;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.PCR_TEST_SPECIFICATION_COMBOBOX;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.REASON_FOR_SAMPLING_TESTING_COMBOBOX;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.REASON_FOR_SAMPLING_TESTING_INPUT;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.RECEIVED_OPTION_BUTTON;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.SAMPLE_DELETION_POPUP_YES_BUTTON;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.SAMPLE_TYPE_COMBOBOX;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.SAMPLE_TYPE_INPUT;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.SAVE_SAMPLE_BUTTON;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.SEE_SAMPLES_FOR_THIS_PERSON_BUTTON_DE;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.SPECIFY_TEST_DETAILS_INPUT;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.SPECIMEN_CONDITION_COMBOBOX;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.SPECIMEN_CONDITION_INPUT;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.SPECIMEN_CONDITION_NOT_MANDATORY_COMBOBOX;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.TYPING_ID_INPUT;
+import static org.sormas.e2etests.pages.application.samples.EditSamplePage.UUID_FIELD;
+import static org.sormas.e2etests.pages.application.samples.SamplesDirectoryPage.SAMPLE_EDIT_PURPOSE_OPTIONS;
+import static org.sormas.e2etests.pages.application.samples.SamplesDirectoryPage.SAMPLE_SEARCH_INPUT;
 import static org.sormas.e2etests.steps.BaseSteps.locale;
+import static org.sormas.e2etests.steps.web.application.messages.MessagesDirectorySteps.convertStringToChosenFormatDate;
 
 import cucumber.api.java8.En;
 import java.time.LocalDate;
@@ -32,12 +67,18 @@ import org.openqa.selenium.By;
 import org.sormas.e2etests.entities.pojo.helpers.ComparisonHelper;
 import org.sormas.e2etests.entities.pojo.web.Sample;
 import org.sormas.e2etests.entities.services.SampleService;
+import org.sormas.e2etests.entities.services.api.demis.DemisApiService;
 import org.sormas.e2etests.envconfig.manager.RunningConfiguration;
 import org.sormas.e2etests.helpers.WebDriverHelpers;
 import org.sormas.e2etests.state.ApiState;
+import org.testng.asserts.SoftAssert;
 
 public class EditSampleSteps implements En {
   public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("M/d/yyyy");
+  public static final DateTimeFormatter DATE_FORMATTER_DE =
+      DateTimeFormatter.ofPattern("dd.MM.yyyy");
+  public static LocalDate dateOfSampleCollected;
+
   public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
   public static Sample editedSample;
 
@@ -48,7 +89,8 @@ public class EditSampleSteps implements En {
       WebDriverHelpers webDriverHelpers,
       RunningConfiguration runningConfiguration,
       SampleService sampleService,
-      ApiState apiState) {
+      ApiState apiState,
+      SoftAssert softly) {
     this.webDriverHelpers = webDriverHelpers;
 
     When(
@@ -59,6 +101,7 @@ public class EditSampleSteps implements En {
                   + "/sormas-webdriver/#!samples/data/"
                   + apiState.getCreatedSample().getUuid();
           webDriverHelpers.accessWebSite(LAST_CREATED_SAMPLE_URL);
+          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(UUID_FIELD);
         });
 
     When(
@@ -205,6 +248,109 @@ public class EditSampleSteps implements En {
     When(
         "I click on Save Button in Sample Edit page",
         () -> webDriverHelpers.clickOnWebElementBySelector(SAVE_EDIT_SAMPLE_BUTTON));
+
+    When(
+        "I check if sample material has a option {string}",
+        (String option) -> webDriverHelpers.selectFromCombobox(SAMPLE_TYPE_COMBOBOX, option));
+
+    When(
+        "I set type of sample to {string}",
+        (String sampleType) ->
+            webDriverHelpers.selectFromCombobox(SAMPLE_TYPE_COMBOBOX, sampleType));
+
+    And(
+        "I check if type of sample is set to {string}",
+        (String option) -> {
+          softly.assertEquals(webDriverHelpers.getValueFromCombobox(SAMPLE_TYPE_COMBOBOX), option);
+          softly.assertAll();
+        });
+
+    And(
+        "I check if type of sample is not set to {string}",
+        (String option) -> {
+          softly.assertNotEquals(
+              webDriverHelpers.getValueFromCombobox(SAMPLE_TYPE_COMBOBOX), option);
+          softly.assertAll();
+        });
+
+    When(
+        "I click on See samples for this person button",
+        () -> webDriverHelpers.clickOnWebElementBySelector(SEE_SAMPLES_FOR_THIS_PERSON_BUTTON_DE));
+
+    When(
+        "I set date sample was collected minus (\\d+) days ago on Sample Edit page",
+        (Integer days) -> {
+          webDriverHelpers.clearAndFillInWebElement(
+              DATE_SAMPLE_COLLECTED, DATE_FORMATTER_DE.format(LocalDate.now().minusDays(days)));
+        });
+
+    When(
+        "I check if date of sample is set for (\\d+) day ago from today on Edit Sample page for DE version",
+        (Integer days) -> {
+          softly.assertEquals(
+              webDriverHelpers.getValueFromWebElement(DATE_SAMPLE_COLLECTED),
+              DATE_FORMATTER_DE.format(LocalDate.now().minusDays(days)),
+              "Date is inncorect");
+          softly.assertAll();
+        });
+
+    When(
+        "I collect date of sample from on Edit Sample page for DE version",
+        () -> {
+          String localDateOfSampleCollected =
+              webDriverHelpers.getValueFromWebElement(DATE_SAMPLE_COLLECTED);
+          dateOfSampleCollected =
+              convertStringToChosenFormatDate(
+                  "dd.MM.yyyy", "yyyy-MM-dd", localDateOfSampleCollected);
+        });
+
+    Then(
+        "^I check that laboratory is set to \"([^\"]*)\" on Edit Sample page$",
+        (String labor) -> {
+          softly.assertEquals(
+              webDriverHelpers.getValueFromWebElement(LABORATORY_INPUT),
+              labor,
+              "Laboratory is incorrect");
+          softly.assertAll();
+        });
+
+    And(
+        "^I check that laboratory details is set to \"([^\"]*)\" on edit Sample page$",
+        (String laborDetails) -> {
+          softly.assertEquals(
+              webDriverHelpers.getValueFromWebElement(LABORATORY_NAME_INPUT),
+              laborDetails,
+              "Laboratory details are incorrect");
+          softly.assertAll();
+        });
+
+    Then(
+        "I check that lab sample id match {string} specimen id from Demis message on Edit Sample page",
+        (String specimen) -> {
+          switch (specimen) {
+            case "first":
+              softly.assertEquals(
+                  webDriverHelpers.getValueFromWebElement(LAB_SAMPLE_ID_INPUT),
+                  DemisApiService.specimenUUID,
+                  "Sample id is incorrect");
+              softly.assertAll();
+              break;
+            case "second":
+              softly.assertEquals(
+                  webDriverHelpers.getValueFromWebElement(LAB_SAMPLE_ID_INPUT),
+                  DemisApiService.secondSpecimenUUID,
+                  "Sample id is incorrect");
+              softly.assertAll();
+              break;
+          }
+        });
+
+    And(
+        "^I back to the case from Edit Sample page DE$",
+        () -> {
+          webDriverHelpers.scrollToElement(BACK_TO_CASE_DE_BUTTON);
+          webDriverHelpers.clickOnWebElementBySelector(BACK_TO_CASE_DE_BUTTON);
+        });
   }
 
   private void selectPurposeOfSample(String samplePurpose, By element) {

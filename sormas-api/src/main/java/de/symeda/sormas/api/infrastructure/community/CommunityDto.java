@@ -20,6 +20,7 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import de.symeda.sormas.api.MappingException;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.InfrastructureDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
@@ -44,9 +45,9 @@ public class CommunityDto extends InfrastructureDto {
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
 	private String name;
 	private Float growthRate;
+	@MappingException(reason = MappingException.FILLED_FROM_OTHER_ENTITY)
 	private RegionReferenceDto region;
 	private DistrictReferenceDto district;
-	private boolean archived;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String externalID;
 
@@ -65,8 +66,7 @@ public class CommunityDto extends InfrastructureDto {
 		String districtExternalId,
 		String externalID) {
 
-		super(creationDate, changeDate, uuid);
-		this.archived = archived;
+		super(creationDate, changeDate, uuid, archived);
 		this.name = name;
 		this.growthRate = growthRate;
 		this.region = new RegionReferenceDto(regionUuid, regionName, regionExternalId);
@@ -108,14 +108,6 @@ public class CommunityDto extends InfrastructureDto {
 
 	public void setDistrict(DistrictReferenceDto district) {
 		this.district = district;
-	}
-
-	public boolean isArchived() {
-		return archived;
-	}
-
-	public void setArchived(boolean archived) {
-		this.archived = archived;
 	}
 
 	public String getExternalID() {

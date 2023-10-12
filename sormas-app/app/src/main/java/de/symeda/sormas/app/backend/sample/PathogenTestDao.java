@@ -26,10 +26,12 @@ import com.j256.ormlite.stmt.Where;
 import android.util.Log;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.SamplePurpose;
 import de.symeda.sormas.app.backend.common.AbstractAdoDao;
 import de.symeda.sormas.app.backend.common.AbstractDomainObject;
 import de.symeda.sormas.app.backend.config.ConfigProvider;
+import de.symeda.sormas.app.backend.environment.environmentsample.EnvironmentSample;
 import de.symeda.sormas.app.util.DiseaseConfigurationCache;
 
 public class PathogenTestDao extends AbstractAdoDao<PathogenTest> {
@@ -62,6 +64,15 @@ public class PathogenTestDao extends AbstractAdoDao<PathogenTest> {
 		if (defaultDisease != null) {
 			pathogenTest.setTestedDisease(defaultDisease);
 		}
+		return pathogenTest;
+	}
+
+	public PathogenTest build(EnvironmentSample environmentSample) {
+		PathogenTest pathogenTest = super.build();
+		pathogenTest.setEnvironmentSample(environmentSample);
+		pathogenTest.setTestDateTime(new Date());
+		pathogenTest.setLabUser(ConfigProvider.getUser());
+
 		return pathogenTest;
 	}
 
@@ -109,6 +120,21 @@ public class PathogenTestDao extends AbstractAdoDao<PathogenTest> {
 			throw new RuntimeException(e);
 		}
 	}
+	public List<PathogenTest> queryAllPositiveByEnvironmentSamples(List<EnvironmentSample> samples) {
+		try {
+			return queryBuilder().orderBy(PathogenTest.TEST_DATE_TIME, true)
+				.where()
+				.eq(PathogenTest.TEST_RESULT, PathogenTestResultType.POSITIVE)
+				.and()
+				.in(PathogenTest.ENVIRONMENT_SAMPLE + "_id", samples)
+				.and()
+				.eq(AbstractDomainObject.SNAPSHOT, false)
+				.query();
+		} catch (SQLException e) {
+			android.util.Log.e(getTableName(), "Could not perform queryAllPositiveByEnvironmentSamples on PathogenTest");
+			throw new RuntimeException(e);
+		}
+	}
 
 	@Override
 	public String getTableName() {
@@ -139,6 +165,10 @@ public class PathogenTestDao extends AbstractAdoDao<PathogenTest> {
 
 		if (criteria.getSample() != null) {
 			where.and().eq(PathogenTest.SAMPLE + "_id", criteria.getSample().getId());
+		}
+
+		if (criteria.getEnvironmentSample() != null) {
+			where.and().eq(PathogenTest.ENVIRONMENT_SAMPLE + "_id", criteria.getEnvironmentSample().getId());
 		}
 
 		queryBuilder.setWhere(where);

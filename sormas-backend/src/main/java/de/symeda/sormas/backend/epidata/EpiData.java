@@ -27,14 +27,13 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
 
-import de.symeda.auditlog.api.Audited;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.backend.activityascase.ActivityAsCase;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
+import de.symeda.sormas.backend.common.NotExposedToApi;
 import de.symeda.sormas.backend.exposure.Exposure;
 
 @Entity
-@Audited
 public class EpiData extends AbstractDomainObject {
 
 	private static final long serialVersionUID = -8294812479501735785L;
@@ -54,6 +53,7 @@ public class EpiData extends AbstractDomainObject {
 
 	private List<Exposure> exposures = new ArrayList<>();
 	private List<ActivityAsCase> activitiesAsCase = new ArrayList<>();
+	@NotExposedToApi
 	private Date changeDateOfEmbeddedLists;
 
 	@Enumerated(EnumType.STRING)

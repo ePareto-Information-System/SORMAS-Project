@@ -21,14 +21,9 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.security.DenyAll;
-import javax.ejb.EJB;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -36,36 +31,35 @@ import de.symeda.sormas.api.CoreFacade;
 import de.symeda.sormas.api.EditPermissionType;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.ReferenceDto;
-import de.symeda.sormas.api.common.CoreEntityType;
+import de.symeda.sormas.api.common.DeletableEntityType;
 import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.common.DeletionReason;
+import de.symeda.sormas.api.common.progress.ProcessedEntity;
 import de.symeda.sormas.api.deletionconfiguration.DeletionInfoDto;
 import de.symeda.sormas.api.deletionconfiguration.DeletionReference;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.utils.AccessDeniedException;
-import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.criteria.BaseCriteria;
 import de.symeda.sormas.backend.deletionconfiguration.DeletionConfiguration;
 import de.symeda.sormas.backend.deletionconfiguration.DeletionConfigurationService;
 import de.symeda.sormas.backend.feature.FeatureConfigurationFacadeEjb;
-import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.Pseudonymizer;
 
-public abstract class AbstractCoreFacadeEjb<ADO extends CoreAdo, DTO extends EntityDto, INDEX_DTO extends Serializable, REF_DTO extends ReferenceDto, SRV extends AbstractCoreAdoService<ADO>, CRITERIA extends BaseCriteria>
+public abstract class AbstractCoreFacadeEjb<ADO extends CoreAdo, DTO extends EntityDto, INDEX_DTO extends Serializable, REF_DTO extends ReferenceDto, SRV extends AbstractCoreAdoService<ADO, ? extends QueryJoins<ADO>>, CRITERIA extends BaseCriteria>
 	extends AbstractBaseEjb<ADO, DTO, INDEX_DTO, REF_DTO, SRV, CRITERIA>
 	implements CoreFacade<DTO, INDEX_DTO, REF_DTO, CRITERIA> {
 
 	@Inject
 	private DeletionConfigurationService deletionConfigurationService;
-	@EJB
+	@Inject
 	private FeatureConfigurationFacadeEjb.FeatureConfigurationFacadeEjbLocal featureConfigurationFacade;
 
 	protected AbstractCoreFacadeEjb() {
 	}
 
-	protected AbstractCoreFacadeEjb(Class<ADO> adoClass, Class<DTO> dtoClass, SRV service, UserService userService) {
-		super(adoClass, dtoClass, service, userService);
+	protected AbstractCoreFacadeEjb(Class<ADO> adoClass, Class<DTO> dtoClass, SRV service) {
+		super(adoClass, dtoClass, service);
 	}
 
 	@DenyAll
@@ -100,12 +94,12 @@ public abstract class AbstractCoreFacadeEjb<ADO extends CoreAdo, DTO extends Ent
 	}
 
 	@DenyAll
-	public void undelete(String uuid) {
+	public void restore(String uuid) {
 		ADO ado = service.getByUuid(uuid);
 		if (ado == null) {
-			throw new IllegalArgumentException("Cannot undelete non existing entity: [" + getCoreEntityType() + "] - " + uuid);
+			throw new IllegalArgumentException("Cannot restore non existing entity: [" + getDeletableEntityType() + "] - " + uuid);
 		}
-		service.undelete(ado);
+		service.restore(ado);
 	}
 
 	public boolean isArchived(String uuid) {
@@ -117,24 +111,7 @@ public abstract class AbstractCoreFacadeEjb<ADO extends CoreAdo, DTO extends Ent
 	}
 
 	public List<String> getUuidsForAutomaticDeletion(DeletionConfiguration entityConfig) {
-
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<String> cq = cb.createQuery(String.class);
-		Root<ADO> from = cq.from(adoClass);
-
-		Date referenceDeletionDate = DateHelper.subtractDays(new Date(), entityConfig.getDeletionPeriod());
-
-		Predicate filter = cb.lessThanOrEqualTo(from.get(getDeleteReferenceField(entityConfig.getDeletionReference())), referenceDeletionDate);
-		if (entityConfig.getDeletionReference() == DeletionReference.MANUAL_DELETION) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.isTrue(from.get(DeletableAdo.DELETED)));
-		}
-		cq.where(filter);
-
-		cq.select(from.get(DeletableAdo.UUID));
-		cq.distinct(true);
-
-		List<String> toDeleteUuids = em.createQuery(cq).getResultList();
-		return toDeleteUuids;
+		return service.getUuidsForAutomaticDeletion(entityConfig);
 	}
 
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -152,36 +129,12 @@ public abstract class AbstractCoreFacadeEjb<ADO extends CoreAdo, DTO extends Ent
 
 	@Override
 	public DeletionInfoDto getAutomaticDeletionInfo(String uuid) {
-
-		DeletionConfiguration deletionConfiguration = deletionConfigurationService.getCoreEntityTypeConfig(getCoreEntityType());
-
-		if (deletionConfiguration == null
-			|| deletionConfiguration.getDeletionPeriod() == null
-			|| deletionConfiguration.getDeletionReference() == null) {
-			return null;
-		}
-
-		Date referenceDate = getDeletionReferenceDate(uuid, deletionConfiguration);
-		Date deletiondate = DateHelper.addDays(referenceDate, deletionConfiguration.getDeletionPeriod());
-		String deletionReferenceField = getDeleteReferenceField(deletionConfiguration.getDeletionReference());
-		return new DeletionInfoDto(deletiondate, referenceDate, deletionConfiguration.getDeletionPeriod(), deletionReferenceField);
+		return service.getAutomaticDeletionInfo(uuid);
 	}
 
 	@Override
 	public DeletionInfoDto getManuallyDeletionInfo(String uuid) {
-
-		DeletionConfiguration deletionConfiguration = deletionConfigurationService.getCoreEntityTypeManualDeletionConfig(getCoreEntityType());
-
-		if (deletionConfiguration == null
-			|| deletionConfiguration.getDeletionPeriod() == null
-			|| deletionConfiguration.getDeletionReference() == null) {
-			return null;
-		}
-
-		Date referenceDate = getDeletionReferenceDate(uuid, deletionConfiguration);
-		Date deletiondate = DateHelper.addDays(referenceDate, deletionConfiguration.getDeletionPeriod());
-		String deletionReferenceField = getDeleteReferenceField(deletionConfiguration.getDeletionReference());
-		return new DeletionInfoDto(deletiondate, referenceDate, deletionConfiguration.getDeletionPeriod(), deletionReferenceField);
+		return service.getManuallyDeletionInfo(uuid);
 	}
 
 	protected String getDeleteReferenceField(DeletionReference deletionReference) {
@@ -198,38 +151,21 @@ public abstract class AbstractCoreFacadeEjb<ADO extends CoreAdo, DTO extends Ent
 		}
 	}
 
-	private Date getDeletionReferenceDate(String uuid, DeletionConfiguration entityConfig) {
-
-		if (entityConfig.getDeletionReference() == null) {
-			return null;
-		}
-
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
-		Root<ADO> from = cq.from(adoClass);
-
-		cq.select(from.get(getDeleteReferenceField(entityConfig.getDeletionReference())));
-		cq.where(cb.equal(from.get(AbstractDomainObject.UUID), uuid));
-
-		Object result = em.createQuery(cq).getSingleResult();
-		return (Date) result;
-	}
-
-	protected abstract CoreEntityType getCoreEntityType();
+	protected abstract DeletableEntityType getDeletableEntityType();
 
 	@DenyAll
-	public void archive(String entityUuid, Date endOfProcessingDate) {
-		service.archive(entityUuid, endOfProcessingDate);
+	public ProcessedEntity archive(String entityUuid, Date endOfProcessingDate) {
+		return service.archive(entityUuid, endOfProcessingDate);
 	}
 
 	@DenyAll
-	public void archive(List<String> entityUuids) {
-		service.archive(entityUuids);
+	public List<ProcessedEntity> archive(List<String> entityUuids) {
+		return service.archive(entityUuids);
 	}
 
 	@DenyAll
-	public void dearchive(List<String> entityUuids, String dearchiveReason) {
-		service.dearchive(entityUuids, dearchiveReason);
+	public List<ProcessedEntity> dearchive(List<String> entityUuids, String dearchiveReason) {
+		return service.dearchive(entityUuids, dearchiveReason);
 	}
 
 	public Date calculateEndOfProcessingDate(String entityUuid) {
@@ -245,4 +181,5 @@ public abstract class AbstractCoreFacadeEjb<ADO extends CoreAdo, DTO extends Ent
 	public boolean isEditAllowed(String uuid) {
 		return service.isEditAllowed(service.getByUuid(uuid));
 	}
+
 }

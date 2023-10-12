@@ -3,8 +3,10 @@ package de.symeda.sormas.api.externalmessage;
 import java.io.Serializable;
 import java.util.Date;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.audit.AuditIncludeProperty;
-import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.caze.surveillancereport.SurveillanceReportReferenceDto;
+import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.sample.SampleReferenceDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.criteria.BaseCriteria;
@@ -14,24 +16,31 @@ public class ExternalMessageCriteria extends BaseCriteria implements Serializabl
 	public static final String I18N_PREFIX = "ExternalMessageCriteria";
 
 	public static final String SEARCH_FIELD_LIKE = "searchFieldLike";
+	public static final String MESSAGE_CONTENT_LIKE = "messageContentLike";
 	public static final String MESSAGE_DATE_FROM = "messageDateFrom";
 	public static final String MESSAGE_DATE_TO = "messageDateTo";
 	public static final String BIRTH_DATE_FROM = "birthDateFrom";
 	public static final String BIRTH_DATE_TO = "birthDateTo";
 	public static final String ASSIGNEE = "assignee";
 	public static final String TYPE = "type";
+	public static final String DISEASE = "disease";
+	public static final String DISEASE_VARIANT = "diseaseVariant";
+
 	@AuditIncludeProperty
 	private String uuid;
 	private ExternalMessageType type;
 	private ExternalMessageStatus externalMessageStatus;
 	private SampleReferenceDto sample;
-	private CaseReferenceDto caze;
+	private SurveillanceReportReferenceDto surveillanceReport;
 	private String searchFieldLike;
+	private String messageContentLike;
 	private Date messageDateFrom;
 	private Date messageDateTo;
 	private Date birthDateFrom;
 	private Date birthDateTo;
 	private UserReferenceDto assignee;
+	private Disease disease;
+	private DiseaseVariant diseaseVariant;
 
 	public String getUuid() {
 		return uuid;
@@ -66,12 +75,12 @@ public class ExternalMessageCriteria extends BaseCriteria implements Serializabl
 		this.sample = sample;
 	}
 
-	public CaseReferenceDto getCaze() {
-		return caze;
+	public SurveillanceReportReferenceDto getSurveillanceReport() {
+		return surveillanceReport;
 	}
 
-	public void setCaze(CaseReferenceDto caze) {
-		this.caze = caze;
+	public void setSurveillanceReport(SurveillanceReportReferenceDto surveillanceReport) {
+		this.surveillanceReport = surveillanceReport;
 	}
 
 	public String getSearchFieldLike() {
@@ -80,6 +89,14 @@ public class ExternalMessageCriteria extends BaseCriteria implements Serializabl
 
 	public void setSearchFieldLike(String searchFieldLike) {
 		this.searchFieldLike = searchFieldLike;
+	}
+
+	public String getMessageContentLike() {
+		return messageContentLike;
+	}
+
+	public void setMessageContentLike(String messageContentLike) {
+		this.messageContentLike = messageContentLike;
 	}
 
 	public Date getMessageDateFrom() {
@@ -120,5 +137,21 @@ public class ExternalMessageCriteria extends BaseCriteria implements Serializabl
 
 	public void setAssignee(UserReferenceDto assignee) {
 		this.assignee = assignee;
+	}
+
+	public Disease getDisease() {
+		return disease;
+	}
+
+	public void setDisease(Disease disease) {
+		this.disease = disease;
+	}
+
+	public DiseaseVariant getDiseaseVariant() {
+		return diseaseVariant;
+	}
+
+	public void setDiseaseVariant(DiseaseVariant diseaseVariant) {
+		this.diseaseVariant = diseaseVariant;
 	}
 }

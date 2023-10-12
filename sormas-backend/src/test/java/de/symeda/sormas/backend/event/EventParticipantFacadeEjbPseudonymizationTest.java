@@ -18,8 +18,6 @@ package de.symeda.sormas.backend.event;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyString;
-import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,12 +28,14 @@ import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventInvestigationStatus;
 import de.symeda.sormas.api.event.EventParticipantDto;
 import de.symeda.sormas.api.event.EventStatus;
+import de.symeda.sormas.api.i18n.Captions;
+import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
+import de.symeda.sormas.api.utils.AccessDeniedException;
 import de.symeda.sormas.backend.AbstractBeanTest;
-import de.symeda.sormas.backend.MockProducer;
 import de.symeda.sormas.backend.TestDataCreator;
 
 public class EventParticipantFacadeEjbPseudonymizationTest extends AbstractBeanTest {
@@ -68,7 +68,7 @@ public class EventParticipantFacadeEjbPseudonymizationTest extends AbstractBeanT
 			"Off2",
 			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER));
 
-		when(MockProducer.getPrincipal().getName()).thenReturn("SurvOff2");
+		loginWith(user2);
 	}
 
 	@Test
@@ -82,9 +82,7 @@ public class EventParticipantFacadeEjbPseudonymizationTest extends AbstractBeanT
 	public void testEventOutsideJurisdiction() {
 		EventParticipantDto eventParticipant = createEventParticipant(user1, rdcf1);
 
-//		assertPseudonymized(getEventParticipantFacade().getEventParticipantByUuid(eventParticipant.getUuid()));
-		// pseudonymization disabled for now
-		assertNotPseudonymized(getEventParticipantFacade().getEventParticipantByUuid(eventParticipant.getUuid()));
+		assertPseudonymized(getEventParticipantFacade().getEventParticipantByUuid(eventParticipant.getUuid()));
 	}
 
 	@Test
@@ -96,9 +94,7 @@ public class EventParticipantFacadeEjbPseudonymizationTest extends AbstractBeanT
 			getEventParticipantFacade().getByUuids(Arrays.asList(eventParticipant1.getUuid(), eventParticipant2.getUuid()));
 
 		assertNotPseudonymized(participants.stream().filter(p -> p.getUuid().equals(eventParticipant1.getUuid())).findFirst().get());
-//		assertPseudonymized(participants.stream().filter(p -> p.getUuid().equals(eventParticipant2.getUuid())).findFirst().get());
-		// pseudonymization disabled for now
-		assertNotPseudonymized(participants.stream().filter(p -> p.getUuid().equals(eventParticipant2.getUuid())).findFirst().get());
+		assertPseudonymized(participants.stream().filter(p -> p.getUuid().equals(eventParticipant2.getUuid())).findFirst().get());
 	}
 
 	@Test
@@ -116,35 +112,29 @@ public class EventParticipantFacadeEjbPseudonymizationTest extends AbstractBeanT
 		// saving event participant should be done in 2 steps: person and participant
 
 		getPersonFacade().save(participant.getPerson());
+
+		// personal and sensitive data should not be updated
+		loginWith(user1);
 		PersonDto savedPerson = getPersonFacade().getByUuid(participant.getPerson().getUuid());
 
-//		assertThat(savedPerson.getFirstName(), is("John"));
-//		assertThat(savedPerson.getLastName(), is("Smith"));
-//		assertThat(savedPerson.getAddress().getStreet(), is("Test Street"));
-//		assertThat(savedPerson.getAddress().getHouseNumber(), is("Test Number"));
-//		assertThat(savedPerson.getAddress().getAdditionalInformation(), is("Test Information"));
-//		assertThat(savedPerson.getAddress().getCity(), is("Test City"));
+		assertThat(savedPerson.getFirstName(), is("John"));
+		assertThat(savedPerson.getLastName(), is("Smith"));
+		assertThat(savedPerson.getAddress().getStreet(), is("Test Street"));
+		assertThat(savedPerson.getAddress().getHouseNumber(), is("Test Number"));
+		assertThat(savedPerson.getAddress().getAdditionalInformation(), is("Test Information"));
+		assertThat(savedPerson.getAddress().getCity(), is("Test City"));
 
-		// pseudonymization disabled for now
-		assertThat(savedPerson.getFirstName(), is("James"));
-		assertThat(savedPerson.getLastName(), is("Doe"));
-		assertThat(savedPerson.getAddress().getStreet(), is(nullValue()));
-		assertThat(savedPerson.getAddress().getHouseNumber(), is(nullValue()));
-		assertThat(savedPerson.getAddress().getAdditionalInformation(), is(nullValue()));
-		assertThat(savedPerson.getAddress().getCity(), is(nullValue()));
-
-		getEventParticipantFacade().save(participant);
-		EventParticipant savedParticipant = getEventParticipantService().getByUuid(participant.getUuid());
-
-//		assertThat(savedParticipant.getInvolvementDescription(), is("Test involvement descr"));
-
-		// pseudonymization disabled for now
-		assertThat(savedParticipant.getInvolvementDescription(), is(""));
+		loginWith(user2);
+		// saving of invent participant should not be possible
+		assertThrowsWithMessage(
+			AccessDeniedException.class,
+			"This event participant is not editable any more",
+			() -> getEventParticipantFacade().save(participant));
 	}
 
 	@Test
 	public void testUpdateWithPseudonymizedDto() {
-		EventParticipantDto participant = createEventParticipant(user1, rdcf1);
+		EventParticipantDto participant = createEventParticipant(user2, rdcf2);
 
 		participant.setPseudonymized(true);
 		participant.setInvolvementDescription(null);
@@ -182,7 +172,7 @@ public class EventParticipantFacadeEjbPseudonymizationTest extends AbstractBeanT
 			p.getAddress().setCity("Test City");
 		});
 
-		return creator.createEventParticipant(event.toReference(), person, "Test involvement descr", user.toReference());
+		return creator.createEventParticipant(event.toReference(), person, "Test involvement descr", user.toReference(), rdcf);
 	}
 
 	private void assertNotPseudonymized(EventParticipantDto eventParticipant) {
@@ -197,8 +187,8 @@ public class EventParticipantFacadeEjbPseudonymizationTest extends AbstractBeanT
 
 	private void assertPseudonymized(EventParticipantDto eventParticipant) {
 		assertThat(eventParticipant.getInvolvementDescription(), isEmptyString());
-		assertThat(eventParticipant.getPerson().getFirstName(), isEmptyString());
-		assertThat(eventParticipant.getPerson().getLastName(), isEmptyString());
+		assertThat(eventParticipant.getPerson().getFirstName(), is(I18nProperties.getCaption(Captions.inaccessibleValue)));
+		assertThat(eventParticipant.getPerson().getLastName(), is(I18nProperties.getCaption(Captions.inaccessibleValue)));
 		assertThat(eventParticipant.getPerson().getAddress().getStreet(), isEmptyString());
 		assertThat(eventParticipant.getPerson().getAddress().getHouseNumber(), isEmptyString());
 		assertThat(eventParticipant.getPerson().getAddress().getAdditionalInformation(), isEmptyString());

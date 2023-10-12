@@ -89,8 +89,7 @@ public class EventServiceTest extends AbstractBeanTest {
 
 	@Test
 	public void testGetEventSummaryDetailsByContactsEventArchivingAndDeletion() {
-		TestDataCreator.RDCFEntities rdcfEntities = creator.createRDCFEntities("Region", "District", "Community", "Facility");
-		TestDataCreator.RDCF rdcf = new TestDataCreator.RDCF(rdcfEntities);
+		TestDataCreator.RDCF rdcf = creator.createRDCF();
 		UserDto user = useSurveillanceOfficerLogin(rdcf);
 		PersonDto contactPerson = creator.createPerson("Contact", "Person");
 
@@ -125,8 +124,7 @@ public class EventServiceTest extends AbstractBeanTest {
 
 	@Test
 	public void testGetEventSummaryDetailsByCasesEventArchivingAndDeletion() {
-		TestDataCreator.RDCFEntities rdcfEntities = creator.createRDCFEntities("Region", "District", "Community", "Facility");
-		TestDataCreator.RDCF rdcf = new TestDataCreator.RDCF(rdcfEntities);
+		TestDataCreator.RDCF rdcf = creator.createRDCF();
 		UserDto user = useSurveillanceOfficerLogin(rdcf);
 		PersonDto contactPerson = creator.createPerson("Case", "Person");
 
@@ -135,9 +133,13 @@ public class EventServiceTest extends AbstractBeanTest {
 		EventDto eventDto = creator.createEvent(user.toReference(), caze.getDisease());
 		Event event = getEventService().getByUuid(eventDto.getUuid());
 		getExternalShareInfoService().createAndPersistShareInfo(event, ExternalShareStatus.SHARED);
-		EventParticipantDto participant = creator.createEventParticipant(eventDto.toReference(), contactPerson, user.toReference());
-		participant.setResultingCase(caze.toReference());
-		getEventParticipantFacade().save(participant);
+		EventParticipantDto participant = creator.createEventParticipant(
+			eventDto.toReference(),
+			contactPerson,
+			"Involved",
+			user.toReference(),
+			ep -> ep.setResultingCase(caze.toReference()),
+			null);
 
 		EventService sut = getEventService();
 

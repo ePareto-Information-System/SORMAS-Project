@@ -36,6 +36,10 @@ window.de_symeda_sormas_ui_map_LeafletMap = function () {
 		"contact ok",
 		"event outbreak",
 		"event rumor",	
+		"sample case",
+		"sample contact",
+		"sample event-participant",
+		"sample environment",
 		];
 	
 	var connector = this;

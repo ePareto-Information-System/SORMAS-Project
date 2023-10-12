@@ -49,9 +49,11 @@ import de.symeda.sormas.api.caze.CaseCriteria;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
-import de.symeda.sormas.api.common.CoreEntityType;
+import de.symeda.sormas.api.common.DeletableEntityType;
 import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.common.progress.ProcessedEntity;
+import de.symeda.sormas.api.common.progress.ProcessedEntityStatus;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -111,7 +113,6 @@ import de.symeda.sormas.backend.sormastosormas.share.outgoing.ShareInfoHelper;
 import de.symeda.sormas.backend.sormastosormas.share.outgoing.ShareRequestInfo;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.user.UserFacadeEjb;
-import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.Pseudonymizer;
 import de.symeda.sormas.backend.util.RightsAllowed;
@@ -171,8 +172,8 @@ public class ImmunizationFacadeEjb
 	}
 
 	@Inject
-	public ImmunizationFacadeEjb(ImmunizationService service, UserService userService) {
-		super(Immunization.class, ImmunizationDto.class, service, userService);
+	public ImmunizationFacadeEjb(ImmunizationService service) {
+		super(Immunization.class, ImmunizationDto.class, service);
 	}
 
 	public static ImmunizationReferenceDto toReferenceDto(Immunization entity) {
@@ -245,8 +246,8 @@ public class ImmunizationFacadeEjb
 	}
 
 	@Override
-	protected CoreEntityType getCoreEntityType() {
-		return CoreEntityType.IMMUNIZATION;
+	protected DeletableEntityType getDeletableEntityType() {
+		return DeletableEntityType.IMMUNIZATION;
 	}
 
 	@Override
@@ -299,13 +300,64 @@ public class ImmunizationFacadeEjb
 	@RightsAllowed(UserRight._IMMUNIZATION_DELETE)
 	public void delete(String uuid, DeletionDetails deletionDetails) {
 		Immunization immunization = service.getByUuid(uuid);
+
+		if (!service.inJurisdictionOrOwned(immunization)) {
+			throw new AccessDeniedException(I18nProperties.getString(Strings.messageImmunizationOutsideJurisdictionDeletionDenied));
+		}
+
 		service.delete(immunization, deletionDetails);
 	}
 
 	@Override
 	@RightsAllowed(UserRight._IMMUNIZATION_DELETE)
-	public void undelete(String uuid) {
-		super.undelete(uuid);
+	public List<ProcessedEntity> delete(List<String> uuids, DeletionDetails deletionDetails) {
+		List<ProcessedEntity> processedImmunizations = new ArrayList<>();
+		List<Immunization> immunizationsToBeDeleted = service.getByUuids(uuids);
+
+		if (immunizationsToBeDeleted != null) {
+			immunizationsToBeDeleted.forEach(immunizationToBeDeleted -> {
+				try {
+					delete(immunizationToBeDeleted.getUuid(), deletionDetails);
+					processedImmunizations.add(new ProcessedEntity(immunizationToBeDeleted.getUuid(), ProcessedEntityStatus.SUCCESS));
+				} catch (AccessDeniedException e) {
+					processedImmunizations.add(new ProcessedEntity(immunizationToBeDeleted.getUuid(), ProcessedEntityStatus.ACCESS_DENIED_FAILURE));
+					logger.error(
+						"The immunization with uuid {} could not be deleted due to a AccessDeniedException",
+						immunizationToBeDeleted.getUuid(),
+						e);
+				} catch (Exception e) {
+					processedImmunizations.add(new ProcessedEntity(immunizationToBeDeleted.getUuid(), ProcessedEntityStatus.INTERNAL_FAILURE));
+					logger.error("The immunization with uuid {} could not be deleted due to an Exception", immunizationToBeDeleted.getUuid(), e);
+				}
+			});
+		}
+		return processedImmunizations;
+	}
+
+	@Override
+	@RightsAllowed(UserRight._IMMUNIZATION_DELETE)
+	public void restore(String uuid) {
+		super.restore(uuid);
+	}
+
+	@Override
+	@RightsAllowed(UserRight._IMMUNIZATION_DELETE)
+	public List<ProcessedEntity> restore(List<String> uuids) {
+		List<ProcessedEntity> processedImmunizationUuids = new ArrayList<>();
+		List<Immunization> immunizationsToBeRestored = service.getByUuids(uuids);
+
+		if (immunizationsToBeRestored != null) {
+			immunizationsToBeRestored.forEach(immunizationToBeRestored -> {
+				try {
+					service.restore(immunizationToBeRestored);
+					processedImmunizationUuids.add(new ProcessedEntity(immunizationToBeRestored.getUuid(), ProcessedEntityStatus.SUCCESS));
+				} catch (Exception e) {
+					processedImmunizationUuids.add(new ProcessedEntity(immunizationToBeRestored.getUuid(), ProcessedEntityStatus.INTERNAL_FAILURE));
+					logger.error("The immunization with uuid {} could not be restored due to an Exception", immunizationToBeRestored.getUuid(), e);
+				}
+			});
+		}
+		return processedImmunizationUuids;
 	}
 
 	@Override
@@ -453,19 +505,6 @@ public class ImmunizationFacadeEjb
 		return new Page<>(immunizationIndexList, offset, size, totalElementCount);
 	}
 
-	@RightsAllowed(UserRight._IMMUNIZATION_DELETE)
-	public List<String> deleteImmunizations(List<String> immunizationUuids, DeletionDetails deletionDetails) {
-		List<String> deletedImmunizationUuids = new ArrayList<>();
-		List<Immunization> immunizationsToBeDeleted = service.getByUuids(immunizationUuids);
-		if (immunizationsToBeDeleted != null) {
-			immunizationsToBeDeleted.forEach(immunizationToBeDeleted -> {
-				service.delete(immunizationToBeDeleted, deletionDetails);
-				deletedImmunizationUuids.add(immunizationToBeDeleted.getUuid());
-			});
-		}
-		return deletedImmunizationUuids;
-	}
-
 	@Override
 	protected ImmunizationReferenceDto toRefDto(Immunization immunization) {
 		return toReferenceDto(immunization);
@@ -482,7 +521,7 @@ public class ImmunizationFacadeEjb
 		boolean checkChangeDate,
 		boolean includeVaccinations) {
 
-		target = DtoHelper.fillOrBuildEntity(source, target, Immunization::new, checkChangeDate);
+		target = DtoHelper.fillOrBuildEntity(source, target, Immunization::build, checkChangeDate);
 
 		target.setDisease(source.getDisease());
 		target.setDiseaseDetails(source.getDiseaseDetails());
@@ -490,10 +529,14 @@ public class ImmunizationFacadeEjb
 		target.setReportDate(source.getReportDate());
 		target.setReportingUser(userService.getByReferenceDto(source.getReportingUser()));
 		target.setArchived(source.isArchived());
-		target.setImmunizationStatus(source.getImmunizationStatus());
+		if (source.getImmunizationStatus() != null) {
+			target.setImmunizationStatus(source.getImmunizationStatus());
+		}
 		target.setMeansOfImmunization(source.getMeansOfImmunization());
 		target.setMeansOfImmunizationDetails(source.getMeansOfImmunizationDetails());
-		target.setImmunizationManagementStatus(source.getImmunizationManagementStatus());
+		if (source.getImmunizationManagementStatus() != null) {
+			target.setImmunizationManagementStatus(source.getImmunizationManagementStatus());
+		}
 		target.setExternalId(source.getExternalId());
 		target.setResponsibleRegion(regionService.getByReferenceDto(source.getResponsibleRegion()));
 		target.setResponsibleDistrict(districtService.getByReferenceDto(source.getResponsibleDistrict()));
@@ -596,7 +639,7 @@ public class ImmunizationFacadeEjb
 
 	@Override
 	public List<ImmunizationDto> getByPersonUuids(List<String> uuids) {
-		return toDtos(service.getByPersonUuids(uuids).stream());
+		return toDtos(service.getByPersonUuids(uuids, true).stream());
 	}
 
 	@RightsAllowed({
@@ -710,14 +753,14 @@ public class ImmunizationFacadeEjb
 
 	@Override
 	@RightsAllowed(UserRight._IMMUNIZATION_ARCHIVE)
-	public void archive(String entityUuid, Date endOfProcessingDate) {
-		super.archive(entityUuid, endOfProcessingDate);
+	public ProcessedEntity archive(String entityUuid, Date endOfProcessingDate) {
+		return super.archive(entityUuid, endOfProcessingDate);
 	}
 
 	@Override
 	@RightsAllowed(UserRight._IMMUNIZATION_ARCHIVE)
-	public void dearchive(List<String> entityUuids, String dearchiveReason) {
-		super.dearchive(entityUuids, dearchiveReason);
+	public List<ProcessedEntity> dearchive(List<String> entityUuids, String dearchiveReason) {
+		return super.dearchive(entityUuids, dearchiveReason);
 	}
 
 	@LocalBean
@@ -729,8 +772,8 @@ public class ImmunizationFacadeEjb
 		}
 
 		@Inject
-		public ImmunizationFacadeEjbLocal(ImmunizationService service, UserService userService) {
-			super(service, userService);
+		public ImmunizationFacadeEjbLocal(ImmunizationService service) {
+			super(service);
 		}
 	}
 }

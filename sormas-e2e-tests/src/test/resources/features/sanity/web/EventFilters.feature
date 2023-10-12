@@ -4,7 +4,7 @@ Feature: Event Directory filters check
   @tmsLink=SORDEV-5915 @env_main
   Scenario: Check all filters are working properly in Event directory
     Given API: I create a new event
-    Then API: I check that POST call body is "OK"
+
     And API: I check that POST call status code is 200
     When I log in as a National User
     And I click on the Events button from navbar
@@ -46,7 +46,7 @@ Feature: Event Directory filters check
   @tmsLink=SORDEV-5917 @env_de
   Scenario: Check all filters are working properly in Event directory for DE version
     Given API: I create a new event
-    Then API: I check that POST call body is "OK"
+
     And API: I check that POST call status code is 200
     When I log in as a National User
     And I click on the Events button from navbar
@@ -85,13 +85,12 @@ Feature: Event Directory filters check
   @tmsLink=SORQA-77 @env_main
   Scenario: Filters for Region, District, Community, Reporting user and Event statuses on Event Directory Page
     Given API: I create a new person
-    Then API: I check that POST call body is "OK"
+
     And API: I check that POST call status code is 200
     When API: I create a new event
-    Then API: I check that POST call body is "OK"
+
     And API: I check that POST call status code is 200
     When I log in as a National User
-    And I click on the Events button from navbar
     And I open the last created event via api
     And I add a participant to the event
     And I open the last created event via api
@@ -136,7 +135,7 @@ Feature: Event Directory filters check
   @tmsLink=SORQA-77 @env_main
   Scenario: Date filters and aggregation buttons in Event Directory
     Given API: I create a new event
-    Then API: I check that POST call body is "OK"
+
     And API: I check that POST call status code is 200
     When I log in as a National User
     And I click on the Events button from navbar
@@ -166,6 +165,16 @@ Feature: Event Directory filters check
     And I check the number of displayed Event results from All button is 1
     And I apply "Archived events" to combobox on Event Directory Page
     And I check the number of displayed Event results from All button is 0
+
+  @tmsLink=SORDEV-9426 @env_main
+  Scenario: Filter for the report date of events
+    Given I log in as a National User
+    And I click on the Events button from navbar
+    Then I click on Show more filters in Events
+    And I select Report Date among Event Reference Date options
+    And I fill in a date range in Date of Event From Epi Week and ...To fields
+    And I apply on the APPLY FILTERS button from Event
+    And I check that the dates of displayed Event results are correct
 
   @tmsLink=SORQA-5969 @env_de
   Scenario Outline: Test vaccination status filter <status> and columns to event

@@ -23,10 +23,13 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
+import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.share.ExternalShareInfoCriteria;
+import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.DirtyStateComponent;
@@ -56,18 +59,32 @@ public class ExternalSurveillanceShareComponent extends VerticalLayout {
 		setSpacing(false);
 		addStyleNames(CssStyles.SIDE_COMPONENT);
 
-		addComponent(createHeader(entityString, sendHandler, deleteHandler, editComponent));
+		if (shareInfoCriteria.getCaze() != null) {
+			String caseUuid = shareInfoCriteria.getCaze().getUuid();
+			addComponent(createHeader(entityString, sendHandler, deleteHandler, editComponent, caseUuid, null));
+		}
+
+		if (shareInfoCriteria.getEvent() != null) {
+			String eventUuid = shareInfoCriteria.getEvent().getUuid();
+			addComponent(createHeader(entityString, sendHandler, deleteHandler, editComponent, null, eventUuid));
+		}
 		addComponent(createShareInfoList(shareInfoCriteria));
 	}
 
-	private HorizontalLayout createHeader(String entityName, Runnable sendHandler, Runnable deleteHandler, DirtyStateComponent editComponent) {
+	private HorizontalLayout createHeader(
+		String entityName,
+		Runnable sendHandler,
+		Runnable deleteHandler,
+		DirtyStateComponent editComponent,
+		String caseUuid,
+		String eventUuid) {
 		Label header = new Label(I18nProperties.getCaption(Captions.ExternalSurveillanceToolGateway_title));
 		header.addStyleName(CssStyles.H3);
 
 		HorizontalLayout headerLayout = new HorizontalLayout(header);
 		headerLayout.setComponentAlignment(header, Alignment.MIDDLE_LEFT);
 
-		if (sendHandler != null) {
+		if (sendHandler != null && UserProvider.getCurrent().hasUserRight(UserRight.EXTERNAL_SURVEILLANCE_SHARE)) {
 			Button sendButton = ButtonHelper.createIconButton(
 				Captions.ExternalSurveillanceToolGateway_send,
 				VaadinIcons.OUTBOX,
@@ -79,12 +96,36 @@ public class ExternalSurveillanceShareComponent extends VerticalLayout {
 			headerLayout.setComponentAlignment(sendButton, Alignment.MIDDLE_RIGHT);
 		}
 
+		if (UserProvider.getCurrent().hasUserRight(UserRight.EXTERNAL_SURVEILLANCE_DELETE)) {
+			if (caseUuid != null) {
+				if (deleteHandler != null && isVisibleDeleteButtonForCase(caseUuid)) {
+					addDeleteButtonToLayout(deleteHandler, headerLayout);
+				}
+			}
+
+			if (eventUuid != null) {
+				if (deleteHandler != null && isVisibleDeleteButtonForEvent(eventUuid)) {
+					addDeleteButtonToLayout(deleteHandler, headerLayout);
+				}
+			}
+		}
+
+		return headerLayout;
+	}
+
+	private void addDeleteButtonToLayout(Runnable deleteHandler, HorizontalLayout headerLayout) {
 		Button deleteButton = ButtonHelper.createIconButton("", VaadinIcons.TRASH, e -> deleteHandler.run(), ValoTheme.BUTTON_ICON_ONLY);
 		headerLayout.addComponent(deleteButton);
 		headerLayout.setComponentAlignment(deleteButton, Alignment.MIDDLE_RIGHT);
 		headerLayout.setWidth(100, Unit.PERCENTAGE);
+	}
 
-		return headerLayout;
+	private boolean isVisibleDeleteButtonForCase(String caseUuid) {
+		return FacadeProvider.getExternalShareInfoFacade().isSharedCase(caseUuid);
+	}
+
+	private boolean isVisibleDeleteButtonForEvent(String eventUuid) {
+		return FacadeProvider.getExternalShareInfoFacade().isSharedEvent(eventUuid);
 	}
 
 	private ExternalShareInfoList createShareInfoList(ExternalShareInfoCriteria criteria) {

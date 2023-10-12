@@ -34,9 +34,11 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Tuple;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
@@ -48,10 +50,14 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.symeda.sormas.api.EditPermissionType;
 import de.symeda.sormas.api.caze.BirthDateDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.common.progress.ProcessedEntity;
+import de.symeda.sormas.api.common.progress.ProcessedEntityStatus;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.environment.EnvironmentReferenceDto;
 import de.symeda.sormas.api.event.EventReferenceDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -69,6 +75,7 @@ import de.symeda.sormas.api.travelentry.TravelEntryReferenceDto;
 import de.symeda.sormas.api.user.NotificationType;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.AccessDeniedException;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
@@ -91,6 +98,9 @@ import de.symeda.sormas.backend.contact.Contact;
 import de.symeda.sormas.backend.contact.ContactFacadeEjb;
 import de.symeda.sormas.backend.contact.ContactQueryContext;
 import de.symeda.sormas.backend.contact.ContactService;
+import de.symeda.sormas.backend.environment.Environment;
+import de.symeda.sormas.backend.environment.EnvironmentFacadeEjb;
+import de.symeda.sormas.backend.environment.EnvironmentService;
 import de.symeda.sormas.backend.event.Event;
 import de.symeda.sormas.backend.event.EventFacadeEjb;
 import de.symeda.sormas.backend.event.EventService;
@@ -147,6 +157,8 @@ public class TaskFacadeEjb implements TaskFacade {
 	@EJB
 	private TravelEntryFacadeEjb.TravelEntryFacadeEjbLocal travelEntryFacade;
 	@EJB
+	private EnvironmentService environmentService;
+	@EJB
 	private NotificationService notificationService;
 
 	public Task fillOrBuildEntity(TaskDto source, Task target, boolean checkChangeDate) {
@@ -190,30 +202,42 @@ public class TaskFacadeEjb implements TaskFacade {
 				target.setContact(null);
 				target.setEvent(null);
 				target.setTravelEntry(null);
+				target.setEnvironment(null);
 				break;
 			case CONTACT:
 				target.setCaze(null);
 				target.setContact(contactService.getByReferenceDto(source.getContact()));
 				target.setEvent(null);
 				target.setTravelEntry(null);
+				target.setEnvironment(null);
 				break;
 			case EVENT:
 				target.setCaze(null);
 				target.setContact(null);
 				target.setEvent(eventService.getByReferenceDto(source.getEvent()));
 				target.setTravelEntry(null);
+				target.setEnvironment(null);
 				break;
 			case TRAVEL_ENTRY:
 				target.setCaze(null);
 				target.setContact(null);
 				target.setEvent(null);
 				target.setTravelEntry(travelEntryService.getByReferenceDto(source.getTravelEntry()));
+				target.setEnvironment(null);
+				break;
+			case ENVIRONMENT:
+				target.setCaze(null);
+				target.setContact(null);
+				target.setEvent(null);
+				target.setTravelEntry(null);
+				target.setEnvironment(environmentService.getByReferenceDto(source.getEnvironment()));
 				break;
 			case GENERAL:
 				target.setCaze(null);
 				target.setContact(null);
 				target.setEvent(null);
 				target.setTravelEntry(null);
+				target.setEnvironment(null);
 				break;
 			default:
 				throw new UnsupportedOperationException(source.getTaskContext() + " is not implemented");
@@ -266,6 +290,7 @@ public class TaskFacadeEjb implements TaskFacade {
 		} else {
 			target.setTravelEntry(null);
 		}
+		target.setEnvironment(EnvironmentFacadeEjb.toReferenceDto(source.getEnvironment()));
 
 		target.setClosedLat(source.getClosedLat());
 		target.setClosedLon(source.getClosedLon());
@@ -354,6 +379,45 @@ public class TaskFacadeEjb implements TaskFacade {
 		}
 
 		return toDto(ado, createPseudonymizer());
+	}
+
+	@Override
+	@RightsAllowed(UserRight._TASK_EDIT)
+	public List<ProcessedEntity> saveBulkTasks(
+		List<String> taskUuidList,
+		TaskDto updatedTempTask,
+		boolean priorityChange,
+		boolean assigneeChange,
+		boolean taskStatusChange) {
+
+		List<ProcessedEntity> processedTasks = new ArrayList<>();
+		UserReferenceDto currentUser = userService.getCurrentUser().toReference();
+
+		for (String taskUuid : taskUuidList) {
+
+			try {
+				Task task = taskService.getByUuid(taskUuid);
+				TaskDto taskDto = toDto(task, createPseudonymizer());
+
+				if (priorityChange) {
+					taskDto.setPriority(updatedTempTask.getPriority());
+				}
+				if (assigneeChange) {
+					taskDto.setAssigneeUser(updatedTempTask.getAssigneeUser());
+					taskDto.setAssignedByUser(currentUser);
+				}
+				if (taskStatusChange) {
+					taskDto.setTaskStatus(updatedTempTask.getTaskStatus());
+				}
+
+				saveTask(taskDto);
+				processedTasks.add(new ProcessedEntity(taskUuid, ProcessedEntityStatus.SUCCESS));
+			} catch (Exception e) {
+				processedTasks.add(new ProcessedEntity(taskUuid, ProcessedEntityStatus.INTERNAL_FAILURE));
+				logger.error("The task with uuid {} could not be saved due to an Exception", taskUuid, e);
+			}
+		}
+		return processedTasks;
 	}
 
 	private void notifyAboutNewAssignee(Task task, User newAssignee, User oldAssignee) {
@@ -460,195 +524,92 @@ public class TaskFacadeEjb implements TaskFacade {
 	@Override
 	public List<TaskIndexDto> getIndexList(TaskCriteria taskCriteria, Integer first, Integer max, List<SortProperty> sortProperties) {
 
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<TaskIndexDto> cq = cb.createQuery(TaskIndexDto.class);
-		Root<Task> task = cq.from(Task.class);
+		List<Long> indexListIds = getIndexListIds(taskCriteria, first, max, sortProperties);
 
-		TaskQueryContext taskQueryContext = new TaskQueryContext(cb, cq, task);
-		TaskJoins joins = taskQueryContext.getJoins();
+		List<TaskIndexDto> tasks = new ArrayList<>();
 
-		// Filter select based on case/contact/event region/district/community and case facility/point of entry
-		Expression<Object> regionUuid = getIndexJurisdictionExpression(
-			cb,
-			joins.getCaseResponsibleRegion(),
-			joins.getCaseRegion(),
-			joins.getContactRegion(),
-			joins.getEventRegion(),
-			joins.getTravelEntryResponsibleRegion(),
-			Region.UUID);
-		Expression<Object> regionName = getIndexJurisdictionExpression(
-			cb,
-			joins.getCaseResponsibleRegion(),
-			joins.getCaseRegion(),
-			joins.getContactRegion(),
-			joins.getEventRegion(),
-			joins.getTravelEntryResponsibleRegion(),
-			Region.NAME);
-		Expression<Object> districtUuid = getIndexJurisdictionExpression(
-			cb,
-			joins.getCaseResponsibleDistrict(),
-			joins.getCaseDistrict(),
-			joins.getContactDistrict(),
-			joins.getEventDistrict(),
-			joins.getTravelEntryResponsibleDistrict(),
-			District.UUID);
-		Expression<Object> districtName = getIndexJurisdictionExpression(
-			cb,
-			joins.getCaseResponsibleDistrict(),
-			joins.getCaseDistrict(),
-			joins.getContactDistrict(),
-			joins.getEventDistrict(),
-			joins.getTravelEntryResponsibleDistrict(),
-			District.NAME);
-		Expression<Object> communityUuid = getIndexJurisdictionExpression(
-			cb,
-			joins.getCaseResponsibleCommunity(),
-			joins.getCaseCommunity(),
-			joins.getContactCommunity(),
-			joins.getEventCommunity(),
-			joins.getTravelEntryResponsibleCommunity(),
-			Community.UUID);
-		Expression<Object> communityName = getIndexJurisdictionExpression(
-			cb,
-			joins.getCaseResponsibleCommunity(),
-			joins.getCaseCommunity(),
-			joins.getContactCommunity(),
-			joins.getEventCommunity(),
-			joins.getTravelEntryResponsibleCommunity(),
-			Community.NAME);
+		IterableHelper.executeBatched(indexListIds, ModelConstants.PARAMETER_LIMIT, batchedIds -> {
+			CriteriaBuilder cb = em.getCriteriaBuilder();
+			CriteriaQuery<TaskIndexDto> cq = cb.createQuery(TaskIndexDto.class);
+			Root<Task> task = cq.from(Task.class);
 
-		List<Selection<?>> selections = new ArrayList<>(
-			Arrays.asList(
-				task.get(Task.UUID),
-				task.get(Task.TASK_CONTEXT),
-				joins.getCaze().get(Case.UUID),
-				joins.getCasePerson().get(Person.FIRST_NAME),
-				joins.getCasePerson().get(Person.LAST_NAME),
-				joins.getEvent().get(Event.UUID),
-				joins.getEvent().get(Event.EVENT_TITLE),
-				joins.getEvent().get(Event.DISEASE),
-				joins.getEvent().get(Event.DISEASE_DETAILS),
-				joins.getEvent().get(Event.EVENT_STATUS),
-				joins.getEvent().get(Event.EVENT_INVESTIGATION_STATUS),
-				joins.getEvent().get(Event.START_DATE),
-				joins.getContact().get(Contact.UUID),
-				joins.getContactPerson().get(Person.FIRST_NAME),
-				joins.getContactPerson().get(Person.LAST_NAME),
-				joins.getContactCasePerson().get(Person.FIRST_NAME),
-				joins.getContactCasePerson().get(Person.LAST_NAME),
-				joins.getTravelEntry().get(TravelEntry.UUID),
-				joins.getTravelEntry().get(TravelEntry.EXTERNAL_ID),
-				joins.getTravelEntryPerson().get(Person.FIRST_NAME),
-				joins.getTravelEntryPerson().get(Person.LAST_NAME),
-				task.get(Task.TASK_TYPE),
-				task.get(Task.PRIORITY),
-				task.get(Task.DUE_DATE),
-				task.get(Task.SUGGESTED_START),
-				task.get(Task.TASK_STATUS),
-				cb.selectCase()
-					.when(cb.isNotNull(joins.getCaze()), joins.getCaze().get(Case.DISEASE))
-					.when(cb.isNotNull(joins.getContact()), joins.getContact().get(Contact.DISEASE))
-					.when(cb.isNotNull(joins.getEvent()), joins.getEvent().get(Event.DISEASE))
-					.otherwise(joins.getTravelEntry().get(TravelEntry.DISEASE)),
-				joins.getCreator().get(User.UUID),
-				joins.getCreator().get(User.FIRST_NAME),
-				joins.getCreator().get(User.LAST_NAME),
-				task.get(Task.CREATOR_COMMENT),
-				joins.getAssignee().get(User.UUID),
-				joins.getAssignee().get(User.FIRST_NAME),
-				joins.getAssignee().get(User.LAST_NAME),
-				task.get(Task.ASSIGNEE_REPLY),
-				joins.getAssignedBy().get(User.UUID),
-				joins.getAssignedBy().get(User.FIRST_NAME),
-				joins.getAssignedBy().get(User.LAST_NAME),
-				regionUuid,
-				regionName,
-				districtUuid,
-				districtName,
-				communityUuid,
-				communityName,
-				joins.getCaseFacility().get(Facility.UUID),
-				joins.getCaseFacility().get(Facility.NAME),
-				joins.getCasePointOfEntry().get(PointOfEntry.UUID),
-				joins.getCasePointOfEntry().get(PointOfEntry.NAME)));
+			TaskQueryContext taskQueryContext = new TaskQueryContext(cb, cq, task);
+			TaskJoins joins = taskQueryContext.getJoins();
 
-		selections.addAll(taskService.getJurisdictionSelections(taskQueryContext));
-		cq.multiselect(selections);
+			// Filter select based on case/contact/event region/district/community and case facility/point of entry
+			Expression<String> regionUuid = taskQueryContext.getRegionExpressionForIndex(Region.UUID);
+			Expression<String> regionName = taskQueryContext.getRegionNameForIndex();
+			Expression<String> districtUuid = taskQueryContext.getDistrictExpressionForIndex(District.UUID);
+			Expression<String> districtName = taskQueryContext.getDistrictNameForIndex();
+			Expression<String> communityUuid = taskQueryContext.getCommunityExpressionForIndex(Community.UUID);
+			Expression<String> communityName = taskQueryContext.getCommunityExpressionForIndex(Community.NAME);
 
-		Predicate filter = taskService.createUserFilter(taskQueryContext, taskCriteria);
+			List<Selection<?>> selections = new ArrayList<>(
+				Arrays.asList(
+					task.get(Task.UUID),
+					task.get(Task.TASK_CONTEXT),
+					joins.getCaze().get(Case.UUID),
+					joins.getCasePerson().get(Person.FIRST_NAME),
+					joins.getCasePerson().get(Person.LAST_NAME),
+					joins.getEvent().get(Event.UUID),
+					joins.getEvent().get(Event.EVENT_TITLE),
+					joins.getEvent().get(Event.DISEASE),
+					joins.getEvent().get(Event.DISEASE_DETAILS),
+					joins.getEvent().get(Event.EVENT_STATUS),
+					joins.getEvent().get(Event.EVENT_INVESTIGATION_STATUS),
+					joins.getEvent().get(Event.START_DATE),
+					joins.getContact().get(Contact.UUID),
+					joins.getContactPerson().get(Person.FIRST_NAME),
+					joins.getContactPerson().get(Person.LAST_NAME),
+					joins.getContactCasePerson().get(Person.FIRST_NAME),
+					joins.getContactCasePerson().get(Person.LAST_NAME),
+					joins.getTravelEntry().get(TravelEntry.UUID),
+					joins.getTravelEntry().get(TravelEntry.EXTERNAL_ID),
+					joins.getTravelEntryPerson().get(Person.FIRST_NAME),
+					joins.getTravelEntryPerson().get(Person.LAST_NAME),
+					joins.getEnvironment().get(Environment.UUID),
+					joins.getEnvironment().get(Environment.ENVIRONMENT_NAME),
+					task.get(Task.TASK_TYPE),
+					task.get(Task.PRIORITY),
+					task.get(Task.DUE_DATE),
+					task.get(Task.SUGGESTED_START),
+					task.get(Task.TASK_STATUS),
+					cb.selectCase()
+						.when(cb.isNotNull(joins.getCaze()), joins.getCaze().get(Case.DISEASE))
+						.when(cb.isNotNull(joins.getContact()), joins.getContact().get(Contact.DISEASE))
+						.when(cb.isNotNull(joins.getEvent()), joins.getEvent().get(Event.DISEASE))
+						.otherwise(joins.getTravelEntry().get(TravelEntry.DISEASE)),
+					joins.getCreator().get(User.UUID),
+					joins.getCreator().get(User.FIRST_NAME),
+					joins.getCreator().get(User.LAST_NAME),
+					task.get(Task.CREATOR_COMMENT),
+					joins.getAssignee().get(User.UUID),
+					joins.getAssignee().get(User.FIRST_NAME),
+					joins.getAssignee().get(User.LAST_NAME),
+					task.get(Task.ASSIGNEE_REPLY),
+					joins.getAssignedBy().get(User.UUID),
+					joins.getAssignedBy().get(User.FIRST_NAME),
+					joins.getAssignedBy().get(User.LAST_NAME),
+					regionUuid,
+					regionName,
+					districtUuid,
+					districtName,
+					communityUuid,
+					communityName,
+					joins.getCaseFacility().get(Facility.UUID),
+					joins.getCaseFacility().get(Facility.NAME),
+					joins.getCasePointOfEntry().get(PointOfEntry.UUID),
+					joins.getCasePointOfEntry().get(PointOfEntry.NAME)));
 
-		if (taskCriteria != null) {
-			Predicate criteriaFilter = taskService.buildCriteriaFilter(taskCriteria, taskQueryContext);
-			filter = CriteriaBuilderHelper.and(cb, filter, criteriaFilter);
-		}
+			selections.addAll(taskService.getJurisdictionSelections(taskQueryContext));
+			cq.multiselect(selections);
 
-		if (filter != null) {
-			cq.where(filter);
-		}
+			cq.where(task.get(Task.ID).in(batchedIds));
+			cq.orderBy(getOrderList(sortProperties, taskQueryContext));
+			cq.distinct(true);
 
-		// Distinct is necessary here to avoid duplicate results due to the user role join in taskService.createAssigneeFilter
-		cq.distinct(true);
-
-		List<Order> order = new ArrayList<>();
-		if (sortProperties != null && sortProperties.size() > 0) {
-			for (SortProperty sortProperty : sortProperties) {
-				Expression<?> expression;
-				switch (sortProperty.propertyName) {
-				case TaskIndexDto.UUID:
-				case TaskIndexDto.ASSIGNEE_REPLY:
-				case TaskIndexDto.CREATOR_COMMENT:
-				case TaskIndexDto.PRIORITY:
-				case TaskIndexDto.DUE_DATE:
-				case TaskIndexDto.SUGGESTED_START:
-				case TaskIndexDto.TASK_CONTEXT:
-				case TaskIndexDto.TASK_STATUS:
-				case TaskIndexDto.TASK_TYPE:
-					expression = task.get(sortProperty.propertyName);
-					break;
-				case TaskIndexDto.ASSIGNEE_USER:
-					expression = joins.getAssignee().get(User.LAST_NAME);
-					order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
-					expression = joins.getAssignee().get(User.FIRST_NAME);
-					break;
-				case TaskIndexDto.CREATOR_USER:
-					expression = joins.getCreator().get(User.LAST_NAME);
-					order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
-					expression = joins.getCreator().get(User.FIRST_NAME);
-					break;
-				case TaskIndexDto.ASSIGNED_BY_USER:
-					expression = joins.getAssignedBy().get(User.LAST_NAME);
-					order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
-					expression = joins.getAssignedBy().get(User.FIRST_NAME);
-					break;
-				case TaskIndexDto.CAZE:
-					expression = joins.getCasePerson().get(Person.LAST_NAME);
-					order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
-					expression = joins.getCasePerson().get(Person.FIRST_NAME);
-					break;
-				case TaskIndexDto.CONTACT:
-					expression = joins.getContactPerson().get(Person.LAST_NAME);
-					order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
-					expression = joins.getContactPerson().get(Person.FIRST_NAME);
-					break;
-				case TaskIndexDto.EVENT:
-					expression = joins.getEvent().get(Event.START_DATE);
-					break;
-				case TaskIndexDto.DISTRICT:
-					expression = districtName;
-					break;
-				case TaskIndexDto.REGION:
-					expression = regionName;
-					break;
-				default:
-					throw new IllegalArgumentException(sortProperty.propertyName);
-				}
-				order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
-			}
-		}
-		order.add(cb.desc(task.get(Task.DUE_DATE)));
-		cq.orderBy(order);
-
-		List<TaskIndexDto> tasks = QueryHelper.getResultList(em, cq, first, max);
+			tasks.addAll(QueryHelper.getResultList(em, cq, null, null));
+		});
 
 		if (!tasks.isEmpty()) {
 			List<String> assigneeUserUuids = tasks.stream().map(t -> t.getAssigneeUser().getUuid()).collect(Collectors.toList());
@@ -692,33 +653,120 @@ public class TaskFacadeEjb implements TaskFacade {
 							taskJurisdictionFlagsDto.getTravelEntryInJurisdiction(),
 							null);
 					}
+
+					if (t.getEnvironment() != null) {
+						emptyValuePseudonymizer.pseudonymizeDto(
+							EnvironmentReferenceDto.class,
+							t.getEnvironment(),
+							taskJurisdictionFlagsDto.getEventInJurisdiction(),
+							null);
+					}
 				}, true);
 		}
 
 		return tasks;
 	}
 
-	private Expression<Object> getIndexJurisdictionExpression(
-		CriteriaBuilder cb,
-		Join<?, ?> caseResponsibleJurisdictionJoin,
-		Join<?, ?> caseJurisdictionJoin,
-		Join<?, ?> contactJurisdictionJoin,
-		Join<?, ?> eventJurisdictionJoin,
-		Join<?, ?> travelEntryResponsibleJurisdictionJoin,
-		String propertyName) {
+	private List<Long> getIndexListIds(TaskCriteria taskCriteria, Integer first, Integer max, List<SortProperty> sortProperties) {
 
-		return cb.selectCase()
-			.when(cb.isNotNull(caseResponsibleJurisdictionJoin), caseResponsibleJurisdictionJoin.get(propertyName))
-			.otherwise(
-				cb.selectCase()
-					.when(cb.isNotNull(caseJurisdictionJoin), caseJurisdictionJoin.get(propertyName))
-					.otherwise(
-						cb.selectCase()
-							.when(cb.isNotNull(contactJurisdictionJoin), contactJurisdictionJoin.get(propertyName))
-							.otherwise(
-								cb.selectCase()
-									.when(cb.isNotNull(eventJurisdictionJoin), eventJurisdictionJoin.get(propertyName))
-									.otherwise(travelEntryResponsibleJurisdictionJoin.get(propertyName)))));
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Tuple> cq = cb.createTupleQuery();
+		Root<Task> task = cq.from(Task.class);
+
+		TaskQueryContext taskQueryContext = new TaskQueryContext(cb, cq, task);
+
+		List<Selection<?>> selections = new ArrayList<>();
+		selections.add(task.get(Task.ID));
+
+		List<Order> orderList = getOrderList(sortProperties, taskQueryContext);
+		List<Expression<?>> sortColumns = orderList.stream().map(Order::getExpression).collect(Collectors.toList());
+		selections.addAll(sortColumns);
+
+		cq.multiselect(selections);
+
+		Predicate filter = taskService.createUserFilter(taskQueryContext, taskCriteria);
+
+		if (taskCriteria != null) {
+			Predicate criteriaFilter = taskService.buildCriteriaFilter(taskCriteria, taskQueryContext);
+			filter = CriteriaBuilderHelper.and(cb, filter, criteriaFilter);
+		}
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		cq.distinct(true);
+		cq.orderBy(orderList);
+
+		return QueryHelper.getResultList(em, cq, first, max).stream().map(t -> t.get(0, Long.class)).collect(Collectors.toList());
+	}
+
+	private List<Order> getOrderList(List<SortProperty> sortProperties, TaskQueryContext taskQueryContext) {
+		CriteriaBuilder cb = taskQueryContext.getCriteriaBuilder();
+		From<?, Task> taskRoot = taskQueryContext.getRoot();
+		TaskJoins joins = taskQueryContext.getJoins();
+
+		List<Order> orderList = new ArrayList<>();
+		if (sortProperties != null && sortProperties.size() > 0) {
+			for (SortProperty sortProperty : sortProperties) {
+				Expression<?> expression;
+				switch (sortProperty.propertyName) {
+				case TaskIndexDto.UUID:
+				case TaskIndexDto.ASSIGNEE_REPLY:
+				case TaskIndexDto.CREATOR_COMMENT:
+				case TaskIndexDto.PRIORITY:
+				case TaskIndexDto.DUE_DATE:
+				case TaskIndexDto.SUGGESTED_START:
+				case TaskIndexDto.TASK_CONTEXT:
+				case TaskIndexDto.TASK_STATUS:
+				case TaskIndexDto.TASK_TYPE:
+					expression = taskRoot.get(sortProperty.propertyName);
+					break;
+				case TaskIndexDto.ASSIGNEE_USER:
+					expression = joins.getAssignee().get(User.LAST_NAME);
+					orderList.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
+					expression = joins.getAssignee().get(User.FIRST_NAME);
+					break;
+				case TaskIndexDto.CREATOR_USER:
+					expression = joins.getCreator().get(User.LAST_NAME);
+					orderList.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
+					expression = joins.getCreator().get(User.FIRST_NAME);
+					break;
+				case TaskIndexDto.ASSIGNED_BY_USER:
+					expression = joins.getAssignedBy().get(User.LAST_NAME);
+					orderList.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
+					expression = joins.getAssignedBy().get(User.FIRST_NAME);
+					break;
+				case TaskIndexDto.CAZE:
+					expression = joins.getCasePerson().get(Person.LAST_NAME);
+					orderList.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
+					expression = joins.getCasePerson().get(Person.FIRST_NAME);
+					break;
+				case TaskIndexDto.CONTACT:
+					expression = joins.getContactPerson().get(Person.LAST_NAME);
+					orderList.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
+					expression = joins.getContactPerson().get(Person.FIRST_NAME);
+					break;
+				case TaskIndexDto.EVENT:
+					expression = joins.getEvent().get(Event.START_DATE);
+					break;
+				case TaskIndexDto.DISTRICT:
+					expression = taskQueryContext.getDistrictNameForIndex();
+					break;
+				case TaskIndexDto.REGION:
+					expression = taskQueryContext.getRegionNameForIndex();
+					break;
+				default:
+					throw new IllegalArgumentException(sortProperty.propertyName);
+				}
+
+				orderList.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
+			}
+		}
+
+		orderList.add(cb.desc(taskRoot.get(Task.DUE_DATE)));
+
+		return orderList;
 	}
 
 	@Override
@@ -904,22 +952,36 @@ public class TaskFacadeEjb implements TaskFacade {
 
 	@Override
 	@RightsAllowed(UserRight._TASK_DELETE)
-	public void deleteTask(TaskDto taskDto) {
-		Task task = taskService.getByUuid(taskDto.getUuid());
+	public void delete(String uuid) {
+		if (!userService.hasRight(UserRight.TASK_DELETE)) {
+			throw new AccessDeniedException(String.format("User %s is not allowed to delete tasks.", userService.getCurrentUser().getUuid()));
+		}
+
+		Task task = taskService.getByUuid(uuid);
 		taskService.deletePermanent(task);
 	}
 
+	@Override
 	@RightsAllowed(UserRight._TASK_DELETE)
-	public List<String> deleteTasks(List<String> tasksUuids) {
-		List<String> deletedTaskUuids = new ArrayList<>();
-		List<Task> tasksToBeDeleted = taskService.getByUuids(tasksUuids);
+	public List<ProcessedEntity> delete(List<String> uuids) {
+		List<ProcessedEntity> processedTasks = new ArrayList<>();
+		List<Task> tasksToBeDeleted = taskService.getByUuids(uuids);
+
 		if (tasksToBeDeleted != null) {
 			tasksToBeDeleted.forEach(taskToBeDeleted -> {
-				taskService.deletePermanent(taskToBeDeleted);
-				deletedTaskUuids.add(taskToBeDeleted.getUuid());
+				try {
+					delete(taskToBeDeleted.getUuid());
+					processedTasks.add(new ProcessedEntity(taskToBeDeleted.getUuid(), ProcessedEntityStatus.SUCCESS));
+				} catch (AccessDeniedException e) {
+					processedTasks.add(new ProcessedEntity(taskToBeDeleted.getUuid(), ProcessedEntityStatus.ACCESS_DENIED_FAILURE));
+					logger.error("The task with uuid {} could not be deleted due to an AccessDeniedException", taskToBeDeleted.getUuid(), e);
+				} catch (Exception e) {
+					processedTasks.add(new ProcessedEntity(taskToBeDeleted.getUuid(), ProcessedEntityStatus.INTERNAL_FAILURE));
+					logger.error("The task with uuid {} could not be deleted due to an Exception", taskToBeDeleted.getUuid(), e);
+				}
 			});
 		}
-		return deletedTaskUuids;
+		return processedTasks;
 	}
 
 	@Override
@@ -997,9 +1059,38 @@ public class TaskFacadeEjb implements TaskFacade {
 	}
 
 	@Override
-	@RightsAllowed(UserRight._TASK_EDIT)
-	public void updateArchived(List<String> taskUuids, boolean archived) {
-		IterableHelper.executeBatched(taskUuids, ARCHIVE_BATCH_SIZE, e -> taskService.updateArchived(e, archived));
+	@RightsAllowed(UserRight._TASK_ARCHIVE)
+	public ProcessedEntity archive(String uuid) {
+		return archive(Collections.singletonList(uuid)).get(0);
+	}
+
+	@Override
+	@RightsAllowed(UserRight._TASK_ARCHIVE)
+	public ProcessedEntity dearchive(String uuid) {
+		return dearchive(Collections.singletonList(uuid)).get(0);
+	}
+
+	@Override
+	@RightsAllowed(UserRight._TASK_ARCHIVE)
+	public List<ProcessedEntity> archive(List<String> taskUuids) {
+		List<ProcessedEntity> processedTasks = new ArrayList<>();
+		IterableHelper.executeBatched(taskUuids, ARCHIVE_BATCH_SIZE, e -> processedTasks.addAll(taskService.updateArchived(e, true)));
+
+		return processedTasks;
+	}
+
+	@Override
+	@RightsAllowed(UserRight._TASK_ARCHIVE)
+	public List<ProcessedEntity> dearchive(List<String> taskUuids) {
+		List<ProcessedEntity> processedTasks = new ArrayList<>();
+		IterableHelper.executeBatched(taskUuids, ARCHIVE_BATCH_SIZE, e -> processedTasks.addAll(taskService.updateArchived(e, false)));
+
+		return processedTasks;
+	}
+
+	@Override
+	public boolean isArchived(String taskUuid) {
+		return taskService.isArchived(taskUuid);
 	}
 
 	@Override
@@ -1071,6 +1162,11 @@ public class TaskFacadeEjb implements TaskFacade {
 			uiUrlBuilder.append("/");
 		}
 		return uiUrlBuilder.append("#!").append(taskContext.getUrlPattern()).append("/data/").append(uuid).toString();
+	}
+
+	@Override
+	public EditPermissionType getEditPermissionType(String uuid) {
+		return taskService.getEditPermissionType(taskService.getByUuid(uuid));
 	}
 
 	@LocalBean

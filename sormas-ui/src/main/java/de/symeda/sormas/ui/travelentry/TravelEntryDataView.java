@@ -19,7 +19,6 @@ import de.symeda.sormas.ui.caze.CaseInfoLayout;
 import de.symeda.sormas.ui.docgeneration.QuarantineOrderDocumentsComponent;
 import de.symeda.sormas.ui.document.DocumentListComponent;
 import de.symeda.sormas.ui.task.TaskListComponent;
-import de.symeda.sormas.ui.utils.ArchivingController;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
 import de.symeda.sormas.ui.utils.CssStyles;
@@ -65,19 +64,26 @@ public class TravelEntryDataView extends AbstractTravelEntryView {
 
 		container.addComponent(layout);
 
+		UserProvider currentUser = UserProvider.getCurrent();
+		boolean caseButtonVisible = currentUser != null && currentUser.hasUserRight(UserRight.CASE_CREATE);
+
 		CaseReferenceDto resultingCase = travelEntryDto.getResultingCase();
-		if (resultingCase == null) {
-			Button createCaseButton = ButtonHelper.createButton(
-				Captions.travelEntryCreateCase,
-				e -> showUnsavedChangesPopup(() -> ControllerProvider.getCaseController().createFromTravelEntry(travelEntryDto)),
-				ValoTheme.BUTTON_PRIMARY,
-				CssStyles.VSPACE_2);
+		if (resultingCase == null && caseButtonVisible) {
+			Button createCaseButton = ButtonHelper.createButton(Captions.travelEntryCreateCase, e -> showUnsavedChangesPopup(() -> {
+				// Re-retrieve the travel entry from the database in case there were unsaved changes
+				TravelEntryDto updatedTravelEntry = FacadeProvider.getTravelEntryFacade().getByUuid(travelEntryDto.getUuid());
+				ControllerProvider.getCaseController().createFromTravelEntry(updatedTravelEntry);
+			}), ValoTheme.BUTTON_PRIMARY, CssStyles.VSPACE_2);
 			layout.addSidePanelComponent(createCaseButton, CASE_LOC);
-		} else {
+		} else if (resultingCase != null) {
 			layout.addSidePanelComponent(createCaseInfoLayout(resultingCase.getUuid()), CASE_LOC);
 		}
 
+		final String uuid = travelEntryDto.getUuid();
+		final EditPermissionType travelEntryEditAllowed = FacadeProvider.getTravelEntryFacade().getEditPermissionType(uuid);
+		boolean editAllowed = isEditAllowed();
 		DocumentListComponent documentList = null;
+
 		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.DOCUMENTS)
 			&& UserProvider.getCurrent().hasUserRight(UserRight.DOCUMENT_VIEW)) {
 			documentList = new DocumentListComponent(
@@ -85,7 +91,8 @@ public class TravelEntryDataView extends AbstractTravelEntryView {
 				getReference(),
 				UserRight.TRAVEL_ENTRY_EDIT,
 				travelEntryDto.isPseudonymized(),
-				isEditAllowed());
+				editAllowed,
+				EditPermissionType.WITHOUT_OWNERSHIP.equals(travelEntryEditAllowed));
 			layout.addSidePanelComponent(new SideComponentLayout(documentList), DOCUMENTS_LOC);
 		}
 
@@ -98,22 +105,13 @@ public class TravelEntryDataView extends AbstractTravelEntryView {
 				getTravelEntryRef(),
 				travelEntryDto.getDisease(),
 				this::showUnsavedChangesPopup,
-				isEditAllowed());
+				editAllowed);
 			taskList.addStyleName(CssStyles.SIDE_COMPONENT);
 			layout.addSidePanelComponent(taskList, TASKS_LOC);
 		}
 
-		final String uuid = travelEntryDto.getUuid();
-		final EditPermissionType travelEntryEditAllowed = FacadeProvider.getTravelEntryFacade().getEditPermissionType(uuid);
 		final boolean deleted = FacadeProvider.getTravelEntryFacade().isDeleted(uuid);
-
-		if (deleted) {
-			layout.disable(CommitDiscardWrapperComponent.DELETE_UNDELETE);
-		} else if (travelEntryEditAllowed.equals(EditPermissionType.ARCHIVING_STATUS_ONLY)) {
-			layout.disable(ArchivingController.ARCHIVE_DEARCHIVE_BUTTON_ID);
-		} else if (travelEntryEditAllowed.equals(EditPermissionType.REFUSED)) {
-			layout.disable();
-		}
+		layout.disableIfNecessary(deleted, travelEntryEditAllowed);
 	}
 
 	private CaseInfoLayout createCaseInfoLayout(String caseUuid) {

@@ -28,6 +28,8 @@ import de.symeda.sormas.app.caze.edit.CaseNewActivity;
 import de.symeda.sormas.app.caze.list.CaseListActivity;
 import de.symeda.sormas.app.contact.list.ContactListActivity;
 import de.symeda.sormas.app.dashboard.DashboardActivity;
+import de.symeda.sormas.app.environment.list.EnvironmentListActivity;
+import de.symeda.sormas.app.environmentsample.list.EnvironmentSampleListActivity;
 import de.symeda.sormas.app.event.list.EventListActivity;
 import de.symeda.sormas.app.immunization.list.ImmunizationListActivity;
 import de.symeda.sormas.app.report.ReportActivity;
@@ -71,6 +73,14 @@ public class NavigationHelper {
 
 	public static void goToSamples(Context context) {
 		SampleListActivity.startActivity(context, null);
+	}
+
+	public static void goToEnvironments(Context context) {
+		EnvironmentListActivity.startActivity(context);
+	}
+
+	public static void goToEnvironmentSamples(Context context) {
+		EnvironmentSampleListActivity.startActivity(context, null);
 	}
 
 	public static void goToImmunizations(Context context) {

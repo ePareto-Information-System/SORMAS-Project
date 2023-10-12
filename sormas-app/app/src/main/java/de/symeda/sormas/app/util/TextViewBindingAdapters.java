@@ -40,6 +40,7 @@ import androidx.databinding.ObservableList;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.InvestigationStatus;
+import de.symeda.sormas.api.environment.environmentsample.Pathogen;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.infrastructure.facility.FacilityHelper;
 import de.symeda.sormas.api.person.ApproximateAgeType;
@@ -59,6 +60,7 @@ import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.caze.Case;
 import de.symeda.sormas.app.backend.common.AbstractDomainObject;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
+import de.symeda.sormas.app.backend.environment.Environment;
 import de.symeda.sormas.app.backend.event.Event;
 import de.symeda.sormas.app.backend.facility.Facility;
 import de.symeda.sormas.app.backend.infrastructure.PointOfEntry;
@@ -254,7 +256,7 @@ public class TextViewBindingAdapters {
 		String defaultValue) {
 		String val = defaultValue;
 
-		if (location == null || location.toString().isEmpty()) {
+		if (location == null || location.buildCaption().isEmpty()) {
 			textField.setText(prependValue + ": " + val);
 		} else {
 			val = location.getCompleteString();
@@ -265,7 +267,7 @@ public class TextViewBindingAdapters {
 				textField.setText(prependValue + ": " + val);
 			}
 
-			textField.setText(location.toString());
+			textField.setText(location.buildCaption());
 		}
 	}
 
@@ -658,7 +660,7 @@ public class TextViewBindingAdapters {
 			if (valueFormat != null && valueFormat.trim() != "") {
 				textField.setText(String.format(valueFormat, user.getFirstName(), user.getLastName().toUpperCase()));
 			} else {
-				textField.setText(user.toString());
+				textField.setText(user.buildCaption());
 			}
 		}
 	}
@@ -680,7 +682,7 @@ public class TextViewBindingAdapters {
 				if (valueFormat != null && !valueFormat.trim().equals("")) {
 					textField.setText(String.format(valueFormat, person.getFirstName(), person.getLastName()));
 				} else {
-					textField.setText(person.toString());
+					textField.setText(person.buildCaption());
 				}
 			}
 		}
@@ -721,6 +723,22 @@ public class TextViewBindingAdapters {
 				textField.setText(String.format(valueFormat, val));
 			} else {
 				textField.setText(val);
+			}
+		}
+	}
+
+	@BindingAdapter(value = {
+		"environmentValue",
+		"defaultValue" }, requireAll = false)
+	public static void setEnvironmentValue(TextView textField, Environment environment, String defaultValue) {
+		if (environment == null) {
+			textField.setText(defaultValue);
+		} else {
+			if (environment.isPseudonymized()) {
+				ViewHelper.formatInaccessibleTextView(textField);
+			} else {
+				ViewHelper.removeInaccessibleTextViewFormat(textField);
+				textField.setText(environment.getEnvironmentName());
 			}
 		}
 	}
@@ -943,10 +961,10 @@ public class TextViewBindingAdapters {
 		"shortLocationValue",
 		"defaultValue" }, requireAll = false)
 	public static void setShortLocationValue(TextView textField, Location location, String defaultValue) {
-		if (location == null || location.toString().isEmpty()) {
+		if (location == null || location.buildCaption().isEmpty()) {
 			textField.setText(defaultValue);
 		} else {
-			textField.setText(location.getRegion() + ", " + location.getDistrict());
+			textField.setText(location.getRegion().buildCaption() + ", " + location.getDistrict().buildCaption());
 		}
 	}
 
@@ -954,10 +972,10 @@ public class TextViewBindingAdapters {
 		"locationValue",
 		"defaultValue" }, requireAll = false)
 	public static void setLocationValue(TextView textField, Location location, String defaultValue) {
-		if (location == null || location.toString().isEmpty()) {
+		if (location == null || location.buildCaption().isEmpty()) {
 			textField.setText(defaultValue);
 		} else {
-			textField.setText(location.toString());
+			textField.setText(location.buildCaption());
 		}
 	}
 
@@ -1000,7 +1018,7 @@ public class TextViewBindingAdapters {
 		if (facility == null) {
 			textField.setText(defaultValue);
 		} else {
-			textField.setText(facility.toString());
+			textField.setText(facility.buildCaption());
 		}
 	}
 
@@ -1042,7 +1060,7 @@ public class TextViewBindingAdapters {
 		if (pointOfEntry == null) {
 			textField.setText(defaultValue);
 		} else {
-			textField.setText(pointOfEntry.toString());
+			textField.setText(pointOfEntry.buildCaption());
 		}
 	}
 
@@ -1050,10 +1068,10 @@ public class TextViewBindingAdapters {
 		"adoValue",
 		"defaultValue" }, requireAll = false)
 	public static void setAdoValue(TextView textField, AbstractDomainObject ado, String defaultValue) {
-		if (ado == null || StringUtils.isEmpty(ado.toString())) {
+		if (ado == null || StringUtils.isEmpty(ado.buildCaption())) {
 			textField.setText(defaultValue);
 		} else {
-			textField.setText(ado.toString());
+			textField.setText(ado.buildCaption());
 		}
 	}
 
@@ -1161,7 +1179,7 @@ public class TextViewBindingAdapters {
 		if (person == null)
 			return result;
 
-		return person.toString();
+		return person.buildCaption();
 	}
 
 	private static String getPersonInfo(Task record) {
@@ -1209,6 +1227,16 @@ public class TextViewBindingAdapters {
 			visibilityDependencies = null;
 
 		setVisibilityDependencies(field, visibilityDependencies, true);
+	}
+
+	@BindingAdapter(value = {
+			"value"})
+	public static void setPathogenValue(TextView textField, Pathogen pathogen) {
+		if (pathogen == null) {
+			textField.setText("");
+		} else {
+			textField.setText(pathogen.getCaption());
+		}
 	}
 
 	public static void setVisibilityDependencies(

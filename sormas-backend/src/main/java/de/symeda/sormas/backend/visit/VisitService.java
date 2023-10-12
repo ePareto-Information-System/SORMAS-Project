@@ -1,24 +1,23 @@
-/*******************************************************************************
+/*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
- *
+ * Copyright © 2016-2022 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *******************************************************************************/
+ */
+
 package de.symeda.sormas.backend.visit;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -41,9 +40,11 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.RequestContextHolder;
 import de.symeda.sormas.api.caze.CaseLogic;
 import de.symeda.sormas.api.contact.ContactLogic;
 import de.symeda.sormas.api.followup.FollowUpLogic;
+import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.visit.VisitCriteria;
 import de.symeda.sormas.backend.caze.Case;
@@ -103,6 +104,11 @@ public class VisitService extends AdoServiceWithUserFilterAndJurisdiction<Visit>
 	}
 
 	public List<String> getAllActiveUuids(User user) {
+
+		if (RequestContextHolder.isMobileSync() && !user.hasUserRight(UserRight.CONTACT_VIEW)) {
+			return Collections.emptyList();
+		}
+
 		Set<String> resultSet = new HashSet<>();
 		resultSet.addAll(getAllActiveInContactsUuids());
 		resultSet.addAll(getAllActiveInCasesUuids());
@@ -169,13 +175,15 @@ public class VisitService extends AdoServiceWithUserFilterAndJurisdiction<Visit>
 	 */
 	public List<Visit> getAllAfter(Date since, Integer batchSize, String lastSynchronizedUuid) {
 
-		return getList((cb, cq, from) -> {
+		if (!getCurrentUser().hasUserRight(UserRight.CONTACT_VIEW)) {
+			return Collections.emptyList();
+		}
 
+		return getList((cb, cq, from) -> {
 			Predicate filter = createRelevantDataFilter(cb, cq, from);
 			if (since != null) {
 				filter = CriteriaBuilderHelper.and(cb, filter, createChangeDateFilter(cb, from, since, lastSynchronizedUuid));
 			}
-
 			return filter;
 		}, batchSize);
 	}

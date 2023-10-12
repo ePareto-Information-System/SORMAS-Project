@@ -55,6 +55,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,7 +123,7 @@ import de.symeda.sormas.backend.util.ModelConstants;
 public class StartupShutdownService {
 
 	static final String SORMAS_SCHEMA = "sql/sormas_schema.sql";
-	static final String AUDIT_SCHEMA = "sql/sormas_audit_schema.sql";
+	static final String VERSIONING_FUNCTION = "sql/temporal_tables/versioning_function.sql";
 	private static final Pattern SQL_COMMENT_PATTERN = Pattern.compile("^\\s*(--.*)?");
 	//@formatter:off
     private static final Pattern SCHEMA_VERSION_SQL_PATTERN = Pattern.compile(
@@ -135,9 +136,6 @@ public class StartupShutdownService {
 
 	@PersistenceContext(unitName = ModelConstants.PERSISTENCE_UNIT_NAME)
 	private EntityManager em;
-	@PersistenceContext(unitName = ModelConstants.PERSISTENCE_UNIT_NAME_AUDITLOG)
-	private EntityManager emAudit;
-
 	@EJB
 	private ConfigFacadeEjbLocal configFacade;
 	@EJB
@@ -209,13 +207,13 @@ public class StartupShutdownService {
 	@PostConstruct
 	public void startup() {
 		auditLogger.logApplicationStart();
+
 		checkDatabaseConfig(em);
 
-		logger.info("Initiating automatic database update of main database...");
-		updateDatabase(UpdateQueryTransactionWrapper.TargetDb.SORMAS, em, SORMAS_SCHEMA);
+		createVersioningFunction();
 
-		logger.info("Initiating automatic database update of audit database...");
-		updateDatabase(UpdateQueryTransactionWrapper.TargetDb.AUDIT, emAudit, AUDIT_SCHEMA);
+		logger.info("Initiating automatic database update of main database...");
+		updateDatabase(em, SORMAS_SCHEMA);
 
 		I18nProperties.setDefaultLanguage(Language.fromLocaleString(configFacade.getCountryLocale()));
 
@@ -660,7 +658,7 @@ public class StartupShutdownService {
 		}
 
 		// Check that required extensions are installed
-		Stream.of("temporal_tables", "pg_trgm").filter(t -> {
+		Stream.of("pg_trgm").filter(t -> {
 			String q = "select count(*) from pg_extension where extname = '" + t + "'";
 			int count = ((Number) entityManager.createNativeQuery(q).getSingleResult()).intValue();
 			return count == 0;
@@ -680,11 +678,11 @@ public class StartupShutdownService {
 	static boolean isSupportedDatabaseVersion(String versionString) {
 
 		String versionBegin = versionString.split(" ")[0];
-		String versionRegexp = Stream.of("9\\.5", "9\\.5\\.\\d+", "9\\.6", "9\\.6\\.\\d+", "10\\.\\d+").collect(Collectors.joining(")|(", "(", ")"));
+		String versionRegexp = Stream.of("14\\.\\d+", "15\\.\\d+").collect(Collectors.joining(")|(", "(", ")"));
 		return versionBegin.matches(versionRegexp);
 	}
 
-	private void updateDatabase(UpdateQueryTransactionWrapper.TargetDb db, EntityManager entityManager, String schemaFileName) {
+	private void updateDatabase(EntityManager entityManager, String schemaFileName) {
 
 		logger.info("Starting automatic database update...");
 
@@ -727,7 +725,7 @@ public class StartupShutdownService {
 				// Perform the current update when the INSERT INTO schema_version statement is reached
 				if (schemaLineVersion != null) {
 					logger.info("Updating database to version {}...", schemaLineVersion);
-					updateQueryTransactionWrapper.executeUpdate(db, nextUpdateBuilder.toString());
+					updateQueryTransactionWrapper.executeUpdate(nextUpdateBuilder.toString());
 					nextUpdateBuilder.setLength(0);
 				}
 			}
@@ -736,6 +734,25 @@ public class StartupShutdownService {
 			throw new UncheckedIOException(e);
 		} finally {
 			logger.info("Database update completed.");
+		}
+	}
+
+	private void createVersioningFunction() {
+
+		logger.info("Starting create versioning function...");
+
+		final InputStream versioningFunctionStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(VERSIONING_FUNCTION);
+		try {
+			String versioningFunction = IOUtils.toString(versioningFunctionStream, StandardCharsets.UTF_8);
+			// escape for hibernate
+			// note: This will also escape ':' in pure strings, where a replacement may cause problems
+			versioningFunction = versioningFunction.replaceAll(":", "\\\\:");
+			updateQueryTransactionWrapper.executeUpdate(versioningFunction);
+		} catch (IOException e) {
+			logger.error("Could not load {} file. Create versioning function not performed.", VERSIONING_FUNCTION);
+			throw new UncheckedIOException(e);
+		} finally {
+			logger.info("Creating versioning function completed.");
 		}
 	}
 
@@ -853,7 +870,9 @@ public class StartupShutdownService {
 					}
 				});
 				break;
-
+			case 516:
+				fillDefaultUserRole(DefaultUserRole.ENVIRONMENTAL_SURVEILLANCE_USER);
+				break;
 			default:
 				throw new NoSuchElementException(DataHelper.toStringNullable(versionNeedingUpgrade));
 			}
@@ -871,20 +890,22 @@ public class StartupShutdownService {
 	 * UserRoles are created via SQL to support migration for existing users.
 	 */
 	private void fillDefaultUserRoles() {
-		Arrays.stream(DefaultUserRole.values()).forEach(role -> {
-			UserRole userRole = userRoleService.getByLinkedDefaultUserRole(role);
-			userRole.setCaption(I18nProperties.getEnumCaption(role));
-			userRole.setLinkedDefaultUserRole(role);
-			userRole.setPortHealthUser(role.isPortHealthUser());
-			userRole.setHasAssociatedDistrictUser(role.hasAssociatedDistrictUser());
-			userRole.setHasOptionalHealthFacility(DefaultUserRole.hasOptionalHealthFacility(Collections.singleton(role)));
-			userRole.setEnabled(true);
-			userRole.setJurisdictionLevel(role.getJurisdictionLevel());
-			userRole.setSmsNotificationTypes(role.getSmsNotificationTypes());
-			userRole.setEmailNotificationTypes(role.getEmailNotificationTypes());
-			userRole.setUserRights(role.getDefaultUserRights());
-			userRoleService.persist(userRole);
-		});
+		Arrays.stream(DefaultUserRole.values()).forEach(this::fillDefaultUserRole);
+	}
+
+	private void fillDefaultUserRole(DefaultUserRole role) {
+		UserRole userRole = userRoleService.getByLinkedDefaultUserRole(role);
+		userRole.setCaption(I18nProperties.getEnumCaption(role));
+		userRole.setLinkedDefaultUserRole(role);
+		userRole.setPortHealthUser(role.isPortHealthUser());
+		userRole.setHasAssociatedDistrictUser(role.hasAssociatedDistrictUser());
+		userRole.setHasOptionalHealthFacility(DefaultUserRole.hasOptionalHealthFacility(Collections.singleton(role)));
+		userRole.setEnabled(true);
+		userRole.setJurisdictionLevel(role.getJurisdictionLevel());
+		userRole.setSmsNotificationTypes(role.getSmsNotificationTypes());
+		userRole.setEmailNotificationTypes(role.getEmailNotificationTypes());
+		userRole.setUserRights(role.getDefaultUserRights());
+		userRoleService.persist(userRole);
 	}
 
 	private void createImportTemplateFiles(List<FeatureConfigurationDto> featureConfigurations) {
@@ -980,6 +1001,12 @@ public class StartupShutdownService {
 		} catch (IOException e) {
 			logger.error("Could not create event participant import template .csv file.");
 		}
+
+		try {
+			importFacade.generateEnvironmentImportTemplateFile(featureConfigurations);
+		} catch (IOException e) {
+			logger.error("Could not create environment import template .csv file.");
+		}
 	}
 
 	private void createMissingDiseaseConfigurations() {
@@ -1000,29 +1027,15 @@ public class StartupShutdownService {
 	@Stateless
 	public static class UpdateQueryTransactionWrapper {
 
-		enum TargetDb {
-			SORMAS,
-			AUDIT
-		}
-
 		@PersistenceContext(unitName = ModelConstants.PERSISTENCE_UNIT_NAME)
 		private EntityManager em;
-		@PersistenceContext(unitName = ModelConstants.PERSISTENCE_UNIT_NAME_AUDITLOG)
-		private EntityManager emAudit;
 
 		/**
 		 * Executes the passed SQL update in a new JTA transaction.
 		 */
 		@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-		public int executeUpdate(TargetDb db, String sqlStatement) {
-			switch (db) {
-			case SORMAS:
-				return em.createNativeQuery(sqlStatement).executeUpdate();
-			case AUDIT:
-				return emAudit.createNativeQuery(sqlStatement).executeUpdate();
-			default:
-				throw new IllegalStateException("Unexpected value: " + db);
-			}
+		public int executeUpdate(String sqlStatement) {
+			return em.createNativeQuery(sqlStatement).executeUpdate();
 		}
 	}
 }

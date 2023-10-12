@@ -48,6 +48,8 @@ import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.configuration.AbstractConfigurationView;
 import de.symeda.sormas.ui.configuration.infrastructure.components.SearchField;
+import de.symeda.sormas.ui.utils.ArchiveHandlers;
+import de.symeda.sormas.ui.utils.ArchiveMessages;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.ComboBoxHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
@@ -79,6 +81,7 @@ public class RegionsView extends AbstractConfigurationView {
 	protected Button createButton;
 	protected Button importButton;
 	private MenuBar bulkOperationsDropdown;
+	private RowCount rowCount;
 
 	public RegionsView() {
 
@@ -93,7 +96,9 @@ public class RegionsView extends AbstractConfigurationView {
 		grid = new RegionsGrid(criteria);
 		gridLayout = new VerticalLayout();
 		gridLayout.addComponent(createFilterBar());
-		gridLayout.addComponent(new RowCount(Strings.labelNumberOfRegions, grid.getItemCount()));
+		rowCount = new RowCount(Strings.labelNumberOfRegions, grid.getDataSize());
+		grid.addDataSizeChangeListener(e -> rowCount.update(grid.getDataSize()));
+		gridLayout.addComponent(rowCount);
 		gridLayout.addComponent(grid);
 		gridLayout.setMargin(true);
 		gridLayout.setSpacing(false);
@@ -215,10 +220,10 @@ public class RegionsView extends AbstractConfigurationView {
 				relevanceStatusFilter.setId("relevanceStatus");
 				relevanceStatusFilter.setWidth(220, Unit.PERCENTAGE);
 				relevanceStatusFilter.setNullSelectionAllowed(false);
-				relevanceStatusFilter.addItems((Object[]) EntityRelevanceStatus.values());
+				relevanceStatusFilter.addItems(EntityRelevanceStatus.getAllExceptDeleted());
 				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ACTIVE, I18nProperties.getCaption(Captions.regionActiveRegions));
 				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ARCHIVED, I18nProperties.getCaption(Captions.regionArchivedRegions));
-				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ALL, I18nProperties.getCaption(Captions.regionAllRegions));
+				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ACTIVE_AND_ARCHIVED, I18nProperties.getCaption(Captions.regionAllRegions));
 				relevanceStatusFilter.addValueChangeListener(e -> {
 					criteria.relevanceStatus((EntityRelevanceStatus) e.getProperty().getValue());
 					navigateTo(criteria);
@@ -232,27 +237,27 @@ public class RegionsView extends AbstractConfigurationView {
 						new MenuBarHelper.MenuBarItem(
 							I18nProperties.getCaption(Captions.actionArchiveInfrastructure),
 							VaadinIcons.ARCHIVE,
-							selectedItem -> {
-								ControllerProvider.getInfrastructureController()
-									.archiveOrDearchiveAllSelectedItems(
-										true,
-										grid.asMultiSelect().getSelectedItems(),
-										InfrastructureType.REGION,
-										() -> navigateTo(criteria));
-							},
-							EntityRelevanceStatus.ACTIVE.equals(criteria.getRelevanceStatus())),
+							selectedItem -> ControllerProvider.getInfrastructureController()
+								.archiveOrDearchiveAllSelectedItems(
+									true,
+									ArchiveHandlers.forInfrastructure(FacadeProvider.getRegionFacade(), ArchiveMessages.REGION),
+									grid,
+									grid::reload,
+									() -> navigateTo(criteria)),
+							UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_ARCHIVE)
+								&& EntityRelevanceStatus.ACTIVE.equals(criteria.getRelevanceStatus())),
 						new MenuBarHelper.MenuBarItem(
 							I18nProperties.getCaption(Captions.actionDearchiveInfrastructure),
 							VaadinIcons.ARCHIVE,
-							selectedItem -> {
-								ControllerProvider.getInfrastructureController()
-									.archiveOrDearchiveAllSelectedItems(
-										false,
-										grid.asMultiSelect().getSelectedItems(),
-										InfrastructureType.REGION,
-										() -> navigateTo(criteria));
-							},
-							EntityRelevanceStatus.ARCHIVED.equals(criteria.getRelevanceStatus())));
+							selectedItem -> ControllerProvider.getInfrastructureController()
+								.archiveOrDearchiveAllSelectedItems(
+									false,
+									ArchiveHandlers.forInfrastructure(FacadeProvider.getRegionFacade(), ArchiveMessages.REGION),
+									grid,
+									grid::reload,
+									() -> navigateTo(criteria)),
+							UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_ARCHIVE)
+								&& EntityRelevanceStatus.ARCHIVED.equals(criteria.getRelevanceStatus())));
 
 					bulkOperationsDropdown.setVisible(isBulkOperationsDropdownVisible());
 					actionButtonsLayout.addComponent(bulkOperationsDropdown);

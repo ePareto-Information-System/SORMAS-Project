@@ -31,16 +31,14 @@ public class ClinicalVisitGrid extends Grid implements V7AbstractGrid<ClinicalVi
 
 	private ClinicalVisitCriteria clinicalVisitCriteria = new ClinicalVisitCriteria();
 
-	public ClinicalVisitGrid(CaseReferenceDto caseRef, boolean isPseudonymized, boolean isEditAllowed) {
+	public ClinicalVisitGrid(CaseReferenceDto caseRef, boolean isPseudonymized, boolean isEditAllowed, boolean isDeleteAllowed) {
 
 		setSizeFull();
 
-		if (isEditAllowed) {
-			if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
-				setSelectionMode(SelectionMode.MULTI);
-			} else {
-				setSelectionMode(SelectionMode.NONE);
-			}
+		if (isEditAllowed && UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
+			setSelectionMode(SelectionMode.MULTI);
+		} else {
+			setSelectionMode(SelectionMode.NONE);
 		}
 
 		BeanItemContainer<ClinicalVisitIndexDto> container = new BeanItemContainer<>(ClinicalVisitIndexDto.class);
@@ -74,7 +72,12 @@ public class ClinicalVisitGrid extends Grid implements V7AbstractGrid<ClinicalVi
 		addItemClickListener(e -> {
 			if (ACTION_BTN_ID.equals(e.getPropertyId()) || e.isDoubleClick()) {
 				ControllerProvider.getClinicalCourseController()
-					.openClinicalVisitEditForm((ClinicalVisitIndexDto) e.getItemId(), caseRef.getUuid(), this::reload, isEditAllowed);
+					.openClinicalVisitEditForm(
+						(ClinicalVisitIndexDto) e.getItemId(),
+						caseRef.getUuid(),
+						this::reload,
+						isEditAllowed,
+						isDeleteAllowed);
 			}
 		});
 	}
@@ -94,6 +97,7 @@ public class ClinicalVisitGrid extends Grid implements V7AbstractGrid<ClinicalVi
 
 		getContainer().removeAllItems();
 		getContainer().addAll(entries);
+		setHeightByRows(Math.max(1, Math.min(getContainer().size(), 10)));
 	}
 
 	@Override

@@ -18,12 +18,11 @@ package de.symeda.sormas.app.pathogentest.edit;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-import android.view.View;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import android.view.View;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
@@ -62,6 +61,7 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 	private List<Item> pcrTestSpecificationList;
 	private List<Item> diseaseList;
 	private List<Item> diseaseVariantList;
+	private List<Item> pathogenList;
 	private List<Item> testResultList;
 
 	// Instance methods
@@ -101,10 +101,17 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		}
 
 		List<DiseaseVariant> diseaseVariants =
-				DatabaseHelper.getCustomizableEnumValueDao().getEnumValues(CustomizableEnumType.DISEASE_VARIANT, record.getTestedDisease());
+			DatabaseHelper.getCustomizableEnumValueDao().getEnumValues(CustomizableEnumType.DISEASE_VARIANT, record.getTestedDisease());
 		diseaseVariantList = DataUtils.toItems(diseaseVariants);
 		if (record.getTestedDiseaseVariant() != null && !diseaseVariants.contains(record.getTestedDiseaseVariant())) {
 			diseaseVariantList.add(DataUtils.toItem(record.getTestedDiseaseVariant()));
+		}
+
+		List<DiseaseVariant> pathogens =
+				DatabaseHelper.getCustomizableEnumValueDao().getEnumValues(CustomizableEnumType.PATHOGEN, null);
+		pathogenList = DataUtils.toItems(pathogens);
+		if (record.getTestedPathogen() != null && !diseaseVariants.contains(record.getTestedPathogen())) {
+			pathogenList.add(DataUtils.toItem(record.getTestedPathogen()));
 		}
 
 		testResultList = DataUtils.toItems(
@@ -170,6 +177,20 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		});
 		contentBinding.pathogenTestTestedDiseaseVariant.initializeSpinner(diseaseVariantList);
 
+		contentBinding.pathogenTestTestedPathogen.initializeSpinner(pathogenList);
+
+		if(sample != null){
+			contentBinding.pathogenTestTestedDiseaseLayout.setVisibility(VISIBLE);
+			contentBinding.pathogenTestTestedDisease.setRequired(true);
+			contentBinding.pathogenTestTestedPathogen.setVisibility(GONE);
+			contentBinding.pathogenTestTestedPathogen.setRequired(false);
+		} else {
+			contentBinding.pathogenTestTestedDiseaseLayout.setVisibility(GONE);
+			contentBinding.pathogenTestTestedDisease.setRequired(false);
+			contentBinding.pathogenTestTestedPathogen.setVisibility(VISIBLE);
+			contentBinding.pathogenTestTestedPathogen.setRequired(true);
+		}
+
 		contentBinding.pathogenTestTestResult.initializeSpinner(testResultList, new ValueChangeListener() {
 
 			@Override
@@ -202,7 +223,7 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		contentBinding.pathogenTestReportDate.initializeDateField(getFragmentManager());
 		contentBinding.pathogenTestTestDateTime.initializeDateTimeField(getFragmentManager());
 
-		if (sample.getSamplePurpose() == SamplePurpose.INTERNAL) {
+		if (sample != null && sample.getSamplePurpose() == SamplePurpose.INTERNAL) {
 			contentBinding.pathogenTestLab.setRequired(false);
 		}
 	}
@@ -210,7 +231,7 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 	private void updateDiseaseVariantsField(FragmentPathogenTestEditLayoutBinding contentBinding) {
 		DiseaseVariant selectedVariant = (DiseaseVariant) contentBinding.pathogenTestTestedDiseaseVariant.getValue();
 		List<DiseaseVariant> diseaseVariants =
-				DatabaseHelper.getCustomizableEnumValueDao().getEnumValues(CustomizableEnumType.DISEASE_VARIANT, record.getTestedDisease());
+			DatabaseHelper.getCustomizableEnumValueDao().getEnumValues(CustomizableEnumType.DISEASE_VARIANT, record.getTestedDisease());
 		diseaseVariantList.clear();
 		diseaseVariantList.addAll(DataUtils.toItems(diseaseVariants));
 		contentBinding.pathogenTestTestedDiseaseVariant.setSpinnerData(diseaseVariantList);

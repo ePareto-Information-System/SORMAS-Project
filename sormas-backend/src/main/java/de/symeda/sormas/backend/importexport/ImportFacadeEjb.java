@@ -94,6 +94,7 @@ import de.symeda.sormas.api.caze.DengueFeverType;
 import de.symeda.sormas.api.caze.PlagueType;
 import de.symeda.sormas.api.caze.RabiesType;
 import de.symeda.sormas.api.contact.ContactDto;
+import de.symeda.sormas.api.environment.EnvironmentDto;
 import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventGroupReferenceDto;
 import de.symeda.sormas.api.event.EventParticipantDto;
@@ -135,7 +136,7 @@ import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.CSVCommentLineValidator;
 import de.symeda.sormas.api.utils.CSVUtils;
-import de.symeda.sormas.api.utils.ConstrainValidationHelper;
+import de.symeda.sormas.api.utils.ConstraintValidationHelper;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.checkers.FeatureTypeFieldVisibilityChecker;
@@ -224,6 +225,7 @@ public class ImportFacadeEjb implements ImportFacade {
 	private static final String CONTACT_IMPORT_TEMPLATE_FILE_NAME = "import_contact_template.csv";
 	private static final String CAMPAIGN_FORM_IMPORT_TEMPLATE_FILE_NAME = "import_campaign_form_data_template.csv";
 	private static final String TRAVEL_ENTRY_IMPORT_TEMPLATE_FILE_NAME = "import_travel_entry_template.csv";
+	private static final String ENVIRONMENT_IMPORT_TEMPLATE_FILE_NAME = "import_environment_template.csv";
 
 	private static final String ALL_COUNTRIES_IMPORT_FILE_NAME = "sormas_import_all_countries.csv";
 	private static final String ALL_SUBCONTINENTS_IMPORT_FILE_NAME = "sormas_import_all_subcontinents.csv";
@@ -501,7 +503,8 @@ public class ImportFacadeEjb implements ImportFacade {
 		generateImportTemplateFile(FacilityDto.class, Paths.get(getFacilityImportTemplateFilePath()), featureConfigurations);
 	}
 
-	private <T extends EntityDto> void generateImportTemplateFile(Class<T> clazz, Path filePath, List<FeatureConfigurationDto> featureConfigurations) throws IOException {
+	private <T extends EntityDto> void generateImportTemplateFile(Class<T> clazz, Path filePath, List<FeatureConfigurationDto> featureConfigurations)
+		throws IOException {
 
 		createExportDirectoryIfNecessary();
 
@@ -511,6 +514,19 @@ public class ImportFacadeEjb implements ImportFacade {
 		appendListOfFields(importColumns, clazz, "", separator, featureConfigurations);
 
 		writeTemplate(filePath, importColumns, false);
+	}
+
+	@Override
+	public void generateEnvironmentImportTemplateFile(List<FeatureConfigurationDto> featureConfigurations) throws IOException {
+
+		createExportDirectoryIfNecessary();
+
+		char separator = configFacade.getCsvSeparator();
+
+		List<ImportColumn> importColumns = new ArrayList<>();
+		appendListOfFields(importColumns, EnvironmentDto.class, "", separator, featureConfigurations);
+
+		writeTemplate(Paths.get(getEnvironmentImportTemplateFilePath()), importColumns, true);
 	}
 
 	@Override
@@ -724,10 +740,15 @@ public class ImportFacadeEjb implements ImportFacade {
 	 * fields in the order of declaration (which is what we need here), but that could change
 	 * in the future.
 	 */
-	private void appendListOfFields(List<ImportColumn> importColumns, Class<?> clazz, String prefix, char separator, List<FeatureConfigurationDto> featureConfigurations) {
+	private void appendListOfFields(
+		List<ImportColumn> importColumns,
+		Class<?> clazz,
+		String prefix,
+		char separator,
+		List<FeatureConfigurationDto> featureConfigurations) {
 
-		FieldVisibilityCheckers visibilityChecker = FieldVisibilityCheckers.withCountry(configFacade.getCountryCode())
-				.add(new FeatureTypeFieldVisibilityChecker(featureConfigurations));
+		FieldVisibilityCheckers visibilityChecker =
+			FieldVisibilityCheckers.withCountry(configFacade.getCountryCode()).add(new FeatureTypeFieldVisibilityChecker(featureConfigurations));
 
 		for (Field field : clazz.getDeclaredFields()) {
 			if (Modifier.isStatic(field.getModifiers())) {
@@ -771,13 +792,15 @@ public class ImportFacadeEjb implements ImportFacade {
 					importColumns,
 					field.getType(),
 					StringUtils.isEmpty(prefix) ? field.getName() + "." : prefix + field.getName() + ".",
-					separator, featureConfigurations);
+					separator,
+					featureConfigurations);
 			} else if (PersonReferenceDto.class.isAssignableFrom(field.getType()) && !isInfrastructureClass(field.getType())) {
 				appendListOfFields(
 					importColumns,
 					PersonDto.class,
 					StringUtils.isEmpty(prefix) ? field.getName() + "." : prefix + field.getName() + ".",
-					separator, featureConfigurations);
+					separator,
+					featureConfigurations);
 				addPrimaryPhoneAndEmail(separator, importColumns);
 			} else {
 				importColumns.add(ImportColumn.from(clazz, prefix + field.getName(), field.getType(), separator));
@@ -847,6 +870,16 @@ public class ImportFacadeEjb implements ImportFacade {
 		Charset charset = StandardCharsets.UTF_8;
 		String content = new String(Files.readAllBytes(Paths.get(templateFilePath)), charset);
 		return resolvePlaceholders(content);
+	}
+
+	@Override
+	public String getEnvironmentImportTemplateFilePath() {
+		return getImportTemplateFilePath(ENVIRONMENT_IMPORT_TEMPLATE_FILE_NAME);
+	}
+
+	@Override
+	public String getEnvironmentImportTemplateFileName() {
+		return getImportTemplateFileName(ENVIRONMENT_IMPORT_TEMPLATE_FILE_NAME);
 	}
 
 	/**
@@ -919,12 +952,8 @@ public class ImportFacadeEjb implements ImportFacade {
 
 		Set<ConstraintViolation<T>> constraintViolations = validator.validate(entities);
 		if (constraintViolations.size() > 0) {
-			return ImportLineResultDto.errorResult(
-				ConstrainValidationHelper.getPropertyErrors(constraintViolations)
-					.entrySet()
-					.stream()
-					.map(e -> String.join(".", e.getKey().get(e.getKey().size() - 1)) + ": " + e.getValue())
-					.collect(Collectors.joining(";")));
+			return ImportLineResultDto
+				.errorResult(ConstraintValidationHelper.formatPropertyErrors(ConstraintValidationHelper.getPropertyErrors(constraintViolations)));
 		}
 
 		return ImportLineResultDto.successResult();

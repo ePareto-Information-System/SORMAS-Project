@@ -19,7 +19,7 @@ import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_BIG;
 
 import java.io.Serializable;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import de.symeda.sormas.api.audit.AuditExcludeProperty;
@@ -43,6 +43,8 @@ public class SormasToSormasOptionsDto implements Serializable {
 	public static final String WITH_EVENT_PARTICIPANTS = "withEventParticipants";
 	public static final String WITH_IMMUNIZATIONS = "withImmunizations";
 
+	public static final String WITH_SURVEILLANCE_REPORTS = "withSurveillanceReports";
+
 	// Fixme this should be renamed but it has strange side effects with the UI
 	private SormasServerDescriptor organization;
 
@@ -50,7 +52,7 @@ public class SormasToSormasOptionsDto implements Serializable {
 
 	private boolean pseudonymizeData;
 	@AuditExcludeProperty
-	@NotEmpty(message = Validations.requiredField)
+	@NotBlank(message = Validations.requiredField)
 	@Size(max = CHARACTER_LIMIT_BIG, message = Validations.textTooLong)
 	private String comment;
 
@@ -61,6 +63,8 @@ public class SormasToSormasOptionsDto implements Serializable {
 	private boolean withEventParticipants;
 
 	private boolean withImmunizations;
+
+	private boolean withSurveillanceReports;
 
 	// FIXME(#6101): This should be renamed as it is the target of the operation
 	public SormasServerDescriptor getOrganization() {
@@ -125,5 +129,13 @@ public class SormasToSormasOptionsDto implements Serializable {
 
 	public void setWithImmunizations(boolean withImmunizations) {
 		this.withImmunizations = withImmunizations;
+	}
+
+	public boolean isWithSurveillanceReports() {
+		return withSurveillanceReports;
+	}
+
+	public void setWithSurveillanceReports(boolean withSurveillanceReports) {
+		this.withSurveillanceReports = withSurveillanceReports;
 	}
 }

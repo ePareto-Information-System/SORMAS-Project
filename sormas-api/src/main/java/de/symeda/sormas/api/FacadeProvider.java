@@ -31,18 +31,23 @@ import de.symeda.sormas.api.caze.CaseStatisticsFacade;
 import de.symeda.sormas.api.caze.caseimport.CaseImportFacade;
 import de.symeda.sormas.api.caze.classification.CaseClassificationFacade;
 import de.symeda.sormas.api.caze.maternalhistory.MaternalHistoryFacade;
+import de.symeda.sormas.api.caze.porthealthinfo.PortHealthInfoFacade;
 import de.symeda.sormas.api.caze.surveillancereport.SurveillanceReportFacade;
 import de.symeda.sormas.api.clinicalcourse.ClinicalCourseFacade;
 import de.symeda.sormas.api.clinicalcourse.ClinicalVisitFacade;
 import de.symeda.sormas.api.contact.ContactFacade;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumFacade;
 import de.symeda.sormas.api.dashboard.DashboardFacade;
+import de.symeda.sormas.api.dashboard.sample.SampleDashboardFacade;
 import de.symeda.sormas.api.deletionconfiguration.DeletionConfigurationFacade;
 import de.symeda.sormas.api.disease.DiseaseConfigurationFacade;
 import de.symeda.sormas.api.docgeneneration.DocumentTemplateFacade;
 import de.symeda.sormas.api.docgeneneration.EventDocumentFacade;
 import de.symeda.sormas.api.docgeneneration.QuarantineOrderFacade;
 import de.symeda.sormas.api.document.DocumentFacade;
+import de.symeda.sormas.api.environment.EnvironmentFacade;
+import de.symeda.sormas.api.environment.EnvironmentImportFacade;
+import de.symeda.sormas.api.environment.environmentsample.EnvironmentSampleFacade;
 import de.symeda.sormas.api.epidata.EpiDataFacade;
 import de.symeda.sormas.api.event.EventFacade;
 import de.symeda.sormas.api.event.EventGroupFacade;
@@ -306,6 +311,10 @@ public class FacadeProvider {
 		return get().lookupEjbRemote(DashboardFacade.class);
 	}
 
+	public static SampleDashboardFacade getSampleDashboardFacade() {
+		return get().lookupEjbRemote(SampleDashboardFacade.class);
+	}
+
 	public static DiseaseConfigurationFacade getDiseaseConfigurationFacade() {
 		return get().lookupEjbRemote(DiseaseConfigurationFacade.class);
 	}
@@ -316,6 +325,10 @@ public class FacadeProvider {
 
 	public static PointOfEntryFacade getPointOfEntryFacade() {
 		return get().lookupEjbRemote(PointOfEntryFacade.class);
+	}
+
+	public static PortHealthInfoFacade getPortHealthInfoFacade() {
+		return get().lookupEjbRemote(PortHealthInfoFacade.class);
 	}
 
 	public static PopulationDataFacade getPopulationDataFacade() {
@@ -433,7 +446,7 @@ public class FacadeProvider {
 
 	public static ExternalMessageAdapterFacade getExternalLabResultsFacade() throws NamingException {
 
-		String jndiName = FacadeProvider.getConfigFacade().getDemisJndiName();
+		String jndiName = FacadeProvider.getConfigFacade().getExternalMessageAdapterJndiName();
 		if (jndiName == null) {
 			throw new ConfigurationException("No LabResultAdapter JNDI name is configured in the sormas.properties");
 		} else {
@@ -487,6 +500,18 @@ public class FacadeProvider {
 
 	public static DeletionConfigurationFacade getDeletionConfigurationFacade() {
 		return get().lookupEjbRemote(DeletionConfigurationFacade.class);
+	}
+
+	public static EnvironmentFacade getEnvironmentFacade() {
+		return get().lookupEjbRemote(EnvironmentFacade.class);
+	}
+
+	public static EnvironmentSampleFacade getEnvironmentSampleFacade() {
+		return get().lookupEjbRemote(EnvironmentSampleFacade.class);
+	}
+
+	public static EnvironmentImportFacade getEnvironmentImportFacade() {
+		return get().lookupEjbRemote(EnvironmentImportFacade.class);
 	}
 
 	@SuppressWarnings("unchecked")

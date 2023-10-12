@@ -41,8 +41,12 @@ import de.symeda.sormas.backend.clinicalcourse.ClinicalVisitFacadeEjb;
 import de.symeda.sormas.backend.common.AbstractBaseEjb;
 import de.symeda.sormas.backend.contact.ContactFacadeEjb;
 import de.symeda.sormas.backend.dashboard.DashboardFacadeEjb;
+import de.symeda.sormas.backend.dashboard.sample.SampleDashboardFacadeEjb;
 import de.symeda.sormas.backend.docgeneration.DocumentTemplateFacadeEjb;
 import de.symeda.sormas.backend.document.DocumentFacadeEjb;
+import de.symeda.sormas.backend.environment.EnvironmentFacadeEjb;
+import de.symeda.sormas.backend.environment.EnvironmentImportFacadeEjb;
+import de.symeda.sormas.backend.environment.environmentsample.EnvironmentSampleFacadeEjb;
 import de.symeda.sormas.backend.event.EventFacadeEjb;
 import de.symeda.sormas.backend.event.EventGroupFacadeEjb;
 import de.symeda.sormas.backend.event.EventParticipantFacadeEjb;
@@ -50,6 +54,7 @@ import de.symeda.sormas.backend.event.eventimport.EventImportFacadeEjb;
 import de.symeda.sormas.backend.externaljournal.ExternalJournalFacadeEjb;
 import de.symeda.sormas.backend.externalmessage.ExternalMessageFacadeEjb;
 import de.symeda.sormas.backend.externalmessage.labmessage.TestReportFacadeEjb;
+import de.symeda.sormas.backend.externalsurveillancetool.ExternalSurveillanceToolGatewayFacadeEjb;
 import de.symeda.sormas.backend.immunization.ImmunizationFacadeEjb;
 import de.symeda.sormas.backend.info.InfoFacadeEjb;
 import de.symeda.sormas.backend.infrastructure.AbstractInfrastructureFacadeEjb;
@@ -113,7 +118,7 @@ public class ArchitectureTest {
 		new DescribedPredicate<JavaClass>("are used as data dictionary entity") {
 
 			@Override
-			public boolean apply(JavaClass javaClass) {
+			public boolean test(JavaClass javaClass) {
 				return InfoFacadeEjb.DATA_DICTIONARY_ENTITIES.stream().anyMatch(e -> javaClass.isEquivalentTo(e.getEntityClass()));
 			}
 		};
@@ -135,7 +140,7 @@ public class ArchitectureTest {
 			.haveRawType(new DescribedPredicate<JavaClass>("*Dto") {
 
 				@Override
-				public boolean apply(JavaClass javaClass) {
+				public boolean test(JavaClass javaClass) {
 					return javaClass.getSimpleName().toLowerCase().endsWith("dto");
 				}
 			})
@@ -273,8 +278,7 @@ public class ArchitectureTest {
 				"getExternalMessagesAdapterVersion",
 				"fetchAndSaveExternalMessages",
 				"bulkAssignExternalMessages",
-				"deleteExternalMessage",
-				"deleteExternalMessages"),
+				"delete"),
 			classes);
 	}
 
@@ -433,6 +437,31 @@ public class ArchitectureTest {
 		assertFacadeEjbAnnotated(AbstractBaseEjb.class, AuthMode.NONE, classes);
 	}
 
+	@ArchTest
+	public void testExternalSurveillanceToolGatewayFacadeEjbAuthorization(JavaClasses classes) {
+		assertFacadeEjbAnnotated(ExternalSurveillanceToolGatewayFacadeEjb.class, AuthMode.METHODS_ONLY, classes);
+	}
+
+	@ArchTest
+	public void testSampleDashboardFacadeEjbAuthorization(JavaClasses classes) {
+		assertFacadeEjbAnnotated(SampleDashboardFacadeEjb.class, AuthMode.CLASS_ONLY, classes);
+	}
+
+	@ArchTest
+	public void testEnvironmentFacadeEjbAuthorization(JavaClasses classes) {
+		assertFacadeEjbAnnotated(EnvironmentFacadeEjb.class, classes);
+	}
+
+	@ArchTest
+	public void testEnvironmentSampleFacadeEjbAuthorization(JavaClasses classes) {
+		assertFacadeEjbAnnotated(EnvironmentSampleFacadeEjb.class, classes);
+	}
+
+	@ArchTest
+	public void testEnvironmentImportFacadeEjbAuthorization(JavaClasses classes) {
+		assertFacadeEjbAnnotated(EnvironmentImportFacadeEjb.class, AuthMode.CLASS_ONLY, classes);
+	}
+
 	private void assertFacadeEjbAnnotated(Class<?> facadeEjbClass, JavaClasses classes) {
 		assertFacadeEjbAnnotated(facadeEjbClass, AuthMode.CLASS_AND_METHODS, Collections.emptyList(), classes);
 	}
@@ -467,7 +496,7 @@ public class ArchitectureTest {
 
 		if (authMode == AuthMode.CLASS_ONLY || authMode == AuthMode.NONE) {
 			notAnnotatedRule.apply(methods.and().haveNameNotMatching(exceptedMethodsMatcher)).check(classes);
-			annotatedRule.apply(methods.and().haveNameMatching(exceptedMethodsMatcher)).check(classes);
+			annotatedRule.apply(methods.and().haveNameMatching(exceptedMethodsMatcher)).allowEmptyShould(exceptedMethods.isEmpty()).check(classes);
 		} else {
 			// TODO - add exceptedMethods handling when needed
 			MethodsShouldConjunction methodChecks = annotatedRule.apply(methods);

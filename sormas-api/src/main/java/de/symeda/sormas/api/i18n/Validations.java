@@ -47,6 +47,9 @@ public interface Validations {
 	String duplicateEpidNumber = "duplicateEpidNumber";
 	String duplicateExternalToken = "duplicateExternalToken";
 	String emptyOverwrittenFollowUpUntilDate = "emptyOverwrittenFollowUpUntilDate";
+	String environmentMedia = "environmentMedia";
+	String environmentName = "environmentName";
+	String environmentWaterFieldsSetWithNotWaterMedia = "environmentWaterFieldsSetWithNotWaterMedia";
 	String errorsInForm = "errorsInForm";
 	String eventSubordinateEventFromDateFilterValidation = "eventSubordinateEventFromDateFilterValidation";
 	String eventSuperordinateEventToDateFilterValidation = "eventSuperordinateEventToDateFilterValidation";
@@ -73,11 +76,13 @@ public interface Validations {
 	String externalMessageFetchError = "externalMessageFetchError";
 	String externalMessageInitError = "externalMessageInitError";
 	String externalMessagePdfConversionError = "externalMessagePdfConversionError";
+	String externalMessageRefersToMultipleEntities = "externalMessageRefersToMultipleEntities";
 	String feverTemperatureAboveThreshold = "feverTemperatureAboveThreshold";
 	String feverTemperatureBelowThreshold = "feverTemperatureBelowThreshold";
 	String fileTooBig = "fileTooBig";
 	String futureDate = "futureDate";
 	String futureDateStrict = "futureDateStrict";
+	String gpsCoordinatesRequired = "gpsCoordinatesRequired";
 	String importAreaAlreadyExists = "importAreaAlreadyExists";
 	String importAreaNotUnique = "importAreaNotUnique";
 	String importCasesPropertyTypeNotAllowed = "importCasesPropertyTypeNotAllowed";
@@ -100,6 +105,8 @@ public interface Validations {
 	String importEntryDoesNotExistDbOrDistrict = "importEntryDoesNotExistDbOrDistrict";
 	String importEntryDoesNotExistDbOrRegion = "importEntryDoesNotExistDbOrRegion";
 	String importEntryRegionNotInUsersJurisdiction = "importEntryRegionNotInUsersJurisdiction";
+	String importEnvironmentPropertyTypeNotAllowed = "importEnvironmentPropertyTypeNotAllowed";
+	String importEnvironmentUnexpectedError = "importEnvironmentUnexpectedError";
 	String importErrorCustomizableEnumValue = "importErrorCustomizableEnumValue";
 	String importErrorInColumn = "importErrorInColumn";
 	String importEventParticipantsPropertyTypeNotAllowed = "importEventParticipantsPropertyTypeNotAllowed";
@@ -109,6 +116,7 @@ public interface Validations {
 	String importFacilityNotUniqueInDistrict = "importFacilityNotUniqueInDistrict";
 	String importIncompleteContent = "importIncompleteContent";
 	String importInvalidDate = "importInvalidDate";
+	String importInvalidWaterUseValue = "importInvalidWaterUseValue";
 	String importLabNotUnique = "importLabNotUnique";
 	String importLaboratoryAlreadyExists = "importLaboratoryAlreadyExists";
 	String importLineTooLong = "importLineTooLong";
@@ -127,6 +135,8 @@ public interface Validations {
 	String infrastructureDataLocked = "infrastructureDataLocked";
 	String investigationStatusUnclassifiedCase = "investigationStatusUnclassifiedCase";
 	String jurisdictionChangeUserAssignment = "jurisdictionChangeUserAssignment";
+	String latitudeBetween = "latitudeBetween";
+	String longitudeBetween = "longitudeBetween";
 	String missingRequiredUserRightsBaseText = "missingRequiredUserRightsBaseText";
 	String missingRequiredUserRightsLargeDependency = "missingRequiredUserRightsLargeDependency";
 	String missingRequiredUserRightsNoDependency = "missingRequiredUserRightsNoDependency";
@@ -165,6 +175,9 @@ public interface Validations {
 	String patchNoSuchFieldException = "patchNoSuchFieldException";
 	String patchUnsupportedCollectionFieldType = "patchUnsupportedCollectionFieldType";
 	String patchWrongUuid = "patchWrongUuid";
+	String pathogenTestValidDisease = "pathogenTestValidDisease";
+	String pathogenTestValidPathogen = "pathogenTestValidPathogen";
+	String pathogenTestValidSampleOrEnvironment = "pathogenTestValidSampleOrEnvironment";
 	String patternNotMatching = "patternNotMatching";
 	String personMultiplePrimaryEmailAddresses = "personMultiplePrimaryEmailAddresses";
 	String personMultiplePrimaryPhoneNumbers = "personMultiplePrimaryPhoneNumbers";
@@ -181,12 +194,14 @@ public interface Validations {
 	String sormasToSormasAcceptContactHasNoCase = "sormasToSormasAcceptContactHasNoCase";
 	String sormasToSormasAcceptContactWithoutCaseShared = "sormasToSormasAcceptContactWithoutCaseShared";
 	String sormasToSormasCaseExists = "sormasToSormasCaseExists";
+	String sormasToSormasCaseSampleHasAssociatedContact = "sormasToSormasCaseSampleHasAssociatedContact";
 	String sormasToSormasCommentMissing = "sormasToSormasCommentMissing";
 	String sormasToSormasCommunity = "sormasToSormasCommunity";
 	String sormasToSormasContactCaseNotExists = "sormasToSormasContactCaseNotExists";
 	String sormasToSormasContactCaseNotShared = "sormasToSormasContactCaseNotShared";
 	String sormasToSormasContactExists = "sormasToSormasContactExists";
 	String sormasToSormasContactHasNoCase = "sormasToSormasContactHasNoCase";
+	String sormasToSormasContactSampleHasAssociatedCase = "sormasToSormasContactSampleHasAssociatedCase";
 	String sormasToSormasContinent = "sormasToSormasContinent";
 	String sormasToSormasCountry = "sormasToSormasCountry";
 	String sormasToSormasDistrict = "sormasToSormasDistrict";
@@ -212,6 +227,7 @@ public interface Validations {
 	String sormasToSormasSenderNameMissing = "sormasToSormasSenderNameMissing";
 	String sormasToSormasShareInfoMissing = "sormasToSormasShareInfoMissing";
 	String sormasToSormasSubcontinent = "sormasToSormasSubcontinent";
+	String sormasToSormasSurveillanceReportExists = "sormasToSormasSurveillanceReportExists";
 	String specifyCaption = "specifyCaption";
 	String specifyEpiWeek = "specifyEpiWeek";
 	String specifyFirstName = "specifyFirstName";
@@ -241,6 +257,7 @@ public interface Validations {
 	String validFacilityType = "validFacilityType";
 	String validHealthConditions = "validHealthConditions";
 	String validImmunization = "validImmunization";
+	String validLaboratory = "validLaboratory";
 	String validLocation = "validLocation";
 	String validPerson = "validPerson";
 	String validPhoneNumber = "validPhoneNumber";
@@ -250,7 +267,6 @@ public interface Validations {
 	String validReportingUser = "validReportingUser";
 	String validResponsibleDistrict = "validResponsibleDistrict";
 	String validResponsibleRegion = "validResponsibleRegion";
-	String validSample = "validSample";
 	String visitAfterFollowUp = "visitAfterFollowUp";
 	String visitBeforeCaseReport = "visitBeforeCaseReport";
 	String visitBeforeContactReport = "visitBeforeContactReport";

@@ -17,18 +17,22 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.task;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import com.vaadin.server.Page;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.EditPermissionType;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.ReferenceDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -36,12 +40,18 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.task.TaskContext;
 import de.symeda.sormas.api.task.TaskDto;
+import de.symeda.sormas.api.task.TaskFacade;
 import de.symeda.sormas.api.task.TaskIndexDto;
 import de.symeda.sormas.api.task.TaskType;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.uuid.HasUuid;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
+import de.symeda.sormas.ui.utils.ArchiveHandlers;
+import de.symeda.sormas.ui.utils.ArchivingController;
+import de.symeda.sormas.ui.utils.BulkOperationHandler;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
+import de.symeda.sormas.ui.utils.DeleteRestoreHandlers;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 
 public class TaskController {
@@ -93,28 +103,35 @@ public class TaskController {
 		VaadinUiUtil.showModalPopupWindow(createView, I18nProperties.getString(Strings.headingCreateNewTask));
 	}
 
-	public void edit(TaskIndexDto dto, Runnable callback, boolean editedFromTaskGrid, Disease disease) {
+	public void edit(TaskIndexDto taskIndex, Runnable callback, boolean editedFromTaskGrid, Disease disease) {
 
 		// get fresh data
-		TaskDto newDto = FacadeProvider.getTaskFacade().getByUuid(dto.getUuid());
+		TaskDto task = FacadeProvider.getTaskFacade().getByUuid(taskIndex.getUuid());
 
 		TaskEditForm form = new TaskEditForm(false, editedFromTaskGrid, disease);
-		form.setValue(newDto);
-		final CommitDiscardWrapperComponent<TaskEditForm> editView =
-			new CommitDiscardWrapperComponent<TaskEditForm>(form, UserProvider.getCurrent().hasUserRight(UserRight.TASK_EDIT), form.getFieldGroup());
+		form.setValue(task);
 
-		Window popupWindow = VaadinUiUtil.showModalPopupWindow(editView, I18nProperties.getString(Strings.headingEditTask));
+		EditPermissionType editPermissionType = FacadeProvider.getTaskFacade().getEditPermissionType(task.getUuid());
+		boolean isEditingAllowed = UserProvider.getCurrent().hasUserRight(UserRight.TASK_EDIT) && editPermissionType == EditPermissionType.ALLOWED;
+		boolean isEditingOrDeletingAllowed = isEditingAllowed || UserProvider.getCurrent().hasUserRight(UserRight.TASK_DELETE);
+
+		final CommitDiscardWrapperComponent<TaskEditForm> editView =
+			new CommitDiscardWrapperComponent<TaskEditForm>(form, true, form.getFieldGroup());
+
+		Window popupWindow = VaadinUiUtil.showModalPopupWindow(
+			editView,
+			isEditingAllowed ? I18nProperties.getString(Strings.headingEditTask) : I18nProperties.getString(Strings.headingViewTask));
 
 		editView.addCommitListener(() -> {
 			if (!form.getFieldGroup().isModified()) {
-				TaskDto dto1 = form.getValue();
-				if (!dto1.getAssigneeUser().getUuid().equals(dto.getAssigneeUser().getUuid())) {
-					dto1.setAssignedByUser(UserProvider.getCurrent().getUserReference());
+				TaskDto formValue = form.getValue();
+				if (!formValue.getAssigneeUser().getUuid().equals(taskIndex.getAssigneeUser().getUuid())) {
+					formValue.setAssignedByUser(UserProvider.getCurrent().getUserReference());
 				}
-				FacadeProvider.getTaskFacade().saveTask(dto1);
+				FacadeProvider.getTaskFacade().saveTask(formValue);
 
-				if (!editedFromTaskGrid && dto1.getCaze() != null) {
-					ControllerProvider.getCaseController().navigateToCase(dto1.getCaze().getUuid());
+				if (!editedFromTaskGrid && formValue.getCaze() != null) {
+					ControllerProvider.getCaseController().navigateToCase(formValue.getCaze().getUuid());
 				}
 
 				popupWindow.close();
@@ -126,11 +143,24 @@ public class TaskController {
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.TASK_DELETE)) {
 			editView.addDeleteListener(() -> {
-				FacadeProvider.getTaskFacade().deleteTask(newDto);
+				FacadeProvider.getTaskFacade().delete(task.getUuid());
 				UI.getCurrent().removeWindow(popupWindow);
 				callback.run();
 			}, I18nProperties.getString(Strings.entityTask));
 		}
+
+		// Initialize 'Archive' button
+		if (UserProvider.getCurrent().hasUserRight(UserRight.TASK_ARCHIVE)) {
+			ControllerProvider.getArchiveController().addArchivingButtonWithDirtyCheck(task, ArchiveHandlers.forTask(), editView, () -> {
+				popupWindow.close();
+				callback.run();
+			});
+		}
+
+		editView.addToActiveButtonsList(ArchivingController.ARCHIVE_DEARCHIVE_BUTTON_ID);
+
+		editView
+			.restrictEditableComponentsOnEditView(UserRight.TASK_EDIT, null, UserRight.TASK_DELETE, UserRight.TASK_ARCHIVE, editPermissionType, true);
 	}
 
 	private TaskDto createNewTask(TaskContext context, ReferenceDto entityRef) {
@@ -140,32 +170,20 @@ public class TaskController {
 		return task;
 	}
 
-	public void deleteAllSelectedItems(Collection<TaskIndexDto> selectedRows, Runnable callback) {
+	public void deleteAllSelectedItems(Collection<TaskIndexDto> selectedRows, TaskGrid taskGrid, Runnable noEntriesRemainingCallback) {
 
-		if (selectedRows.size() == 0) {
-			new Notification(
-				I18nProperties.getString(Strings.headingNoTasksSelected),
-				I18nProperties.getString(Strings.messageNoTasksSelected),
-				Type.WARNING_MESSAGE,
-				false).show(Page.getCurrent());
-		} else {
-			VaadinUiUtil
-				.showDeleteConfirmationWindow(String.format(I18nProperties.getString(Strings.confirmationDeleteTasks), selectedRows.size()), () -> {
-					for (TaskIndexDto selectedRow : selectedRows) {
-						FacadeProvider.getTaskFacade().deleteTask(FacadeProvider.getTaskFacade().getByUuid(selectedRow.getUuid()));
-					}
-					callback.run();
-					new Notification(
-						I18nProperties.getString(Strings.headingTasksDeleted),
-						I18nProperties.getString(Strings.messageTasksDeleted),
-						Type.HUMANIZED_MESSAGE,
-						false).show(Page.getCurrent());
-				});
-		}
+		ControllerProvider.getPermanentDeleteController()
+			.deleteAllSelectedItems(
+				selectedRows,
+				DeleteRestoreHandlers.forTask(),
+				true,
+				bulkOperationCallback(taskGrid, noEntriesRemainingCallback, null));
+
 	}
 
-	public void showBulkTaskDataEditComponent(Collection<? extends TaskIndexDto> selectedTasks, Runnable callback) {
-		if (selectedTasks.size() == 0) {
+	public void showBulkTaskDataEditComponent(Collection<TaskIndexDto> selectedTasks, TaskGrid taskGrid, Runnable noEntriesRemainingCallback) {
+
+		if (selectedTasks.isEmpty()) {
 			new Notification(
 				I18nProperties.getString(Strings.headingNoTasksSelected),
 				I18nProperties.getString(Strings.messageNoTasksSelected),
@@ -175,94 +193,55 @@ public class TaskController {
 		}
 
 		// Create a temporary task in order to use the CommitDiscardWrapperComponent
-		TaskBulkEditData bulkEditData = new TaskBulkEditData();
+		TaskDto tempTask = new TaskDto();
 		BulkTaskDataForm form = new BulkTaskDataForm(selectedTasks);
-		form.setValue(bulkEditData);
+		form.setValue(tempTask);
 		final CommitDiscardWrapperComponent<BulkTaskDataForm> editView = new CommitDiscardWrapperComponent<>(form, form.getFieldGroup());
 
 		Window popupWindow = VaadinUiUtil.showModalPopupWindow(editView, I18nProperties.getString(Strings.headingEditTask));
 
 		editView.addCommitListener(() -> {
-			TaskBulkEditData updatedBulkEditData = form.getValue();
-			for (TaskIndexDto indexDto : selectedTasks) {
-				TaskDto dto = FacadeProvider.getTaskFacade().getByUuid(indexDto.getUuid());
-				if (form.getPriorityCheckbox().getValue()) {
-					dto.setPriority(updatedBulkEditData.getTaskPriority());
-				}
-				if (form.getAssigneeCheckbox().getValue()) {
-					dto.setAssigneeUser(updatedBulkEditData.getTaskAssignee());
-				}
-				if (form.getTaskStatusCheckbox().getValue()) {
-					dto.setTaskStatus(updatedBulkEditData.getTaskStatus());
-				}
+			TaskDto updatedTempTask = form.getValue();
+			TaskFacade taskFacade = FacadeProvider.getTaskFacade();
 
-				FacadeProvider.getTaskFacade().saveTask(dto);
-			}
-			popupWindow.close();
-			Notification.show(I18nProperties.getString(Strings.messageTasksEdited), Type.HUMANIZED_MESSAGE);
-			callback.run();
+			List<TaskIndexDto> selectedTasksCpy = new ArrayList<>(selectedTasks);
+			BulkOperationHandler.<TaskIndexDto> forBulkEdit()
+				.doBulkOperation(
+					selectedEntries -> taskFacade.saveBulkTasks(
+						selectedEntries.stream().map(HasUuid::getUuid).collect(Collectors.toList()),
+						updatedTempTask,
+						form.getPriorityCheckbox().getValue(),
+						form.getAssigneeCheckbox().getValue(),
+						form.getTaskStatusCheckbox().getValue()),
+					selectedTasksCpy,
+					bulkOperationCallback(taskGrid, noEntriesRemainingCallback, popupWindow));
 		});
 
 		editView.addDiscardListener(popupWindow::close);
 	}
 
-	public void archiveAllSelectedItems(Collection<? extends TaskIndexDto> selectedRows, Runnable callback) {
+	private Consumer<List<TaskIndexDto>> bulkOperationCallback(TaskGrid taskGrid, Runnable noEntriesRemainingCallback, Window popupWindow) {
+		return remainingTasks -> {
+			if (popupWindow != null) {
+				popupWindow.close();
+			}
 
-		if (selectedRows.size() == 0) {
-			new Notification(
-				I18nProperties.getString(Strings.headingNoTasksSelected),
-				I18nProperties.getString(Strings.messageNoTasksSelected),
-				Type.WARNING_MESSAGE,
-				false).show(Page.getCurrent());
-		} else {
-			VaadinUiUtil.showConfirmationPopup(
-				I18nProperties.getString(Strings.headingConfirmArchiving),
-				new Label(String.format(I18nProperties.getString(Strings.confirmationArchiveTasks), selectedRows.size())),
-				I18nProperties.getString(Strings.yes),
-				I18nProperties.getString(Strings.no),
-				null,
-				e -> {
-					if (e.booleanValue()) {
-						List<String> caseUuids = selectedRows.stream().map(TaskIndexDto::getUuid).collect(Collectors.toList());
-						FacadeProvider.getTaskFacade().updateArchived(caseUuids, true);
-						callback.run();
-						new Notification(
-							I18nProperties.getString(Strings.headingTasksArchived),
-							I18nProperties.getString(Strings.messageTasksArchived),
-							Type.HUMANIZED_MESSAGE,
-							false).show(Page.getCurrent());
-					}
-				});
-		}
+			taskGrid.reload();
+			if (CollectionUtils.isNotEmpty(remainingTasks)) {
+				taskGrid.asMultiSelect().selectItems(remainingTasks.toArray(new TaskIndexDto[0]));
+			} else {
+				noEntriesRemainingCallback.run();
+			}
+		};
 	}
 
-	public void dearchiveAllSelectedItems(Collection<? extends TaskIndexDto> selectedRows, Runnable callback) {
+	public void archiveAllSelectedItems(Collection<TaskIndexDto> selectedRows, TaskGrid taskGrid, Runnable noEntriesRemainingCallback) {
+		ControllerProvider.getArchiveController()
+			.archiveSelectedItems(selectedRows, ArchiveHandlers.forTask(), bulkOperationCallback(taskGrid, noEntriesRemainingCallback, null));
+	}
 
-		if (selectedRows.size() == 0) {
-			new Notification(
-				I18nProperties.getString(Strings.headingNoTasksSelected),
-				I18nProperties.getString(Strings.messageNoTasksSelected),
-				Type.WARNING_MESSAGE,
-				false).show(Page.getCurrent());
-		} else {
-			VaadinUiUtil.showConfirmationPopup(
-				I18nProperties.getString(Strings.headingConfirmDearchiving),
-				new Label(String.format(I18nProperties.getString(Strings.confirmationDearchiveTasks), selectedRows.size())),
-				I18nProperties.getString(Strings.yes),
-				I18nProperties.getString(Strings.no),
-				null,
-				e -> {
-					if (e.booleanValue() == true) {
-						List<String> caseUuids = selectedRows.stream().map(TaskIndexDto::getUuid).collect(Collectors.toList());
-						FacadeProvider.getTaskFacade().updateArchived(caseUuids, false);
-						callback.run();
-						new Notification(
-							I18nProperties.getString(Strings.headingTasksDearchived),
-							I18nProperties.getString(Strings.messageTasksDearchived),
-							Type.HUMANIZED_MESSAGE,
-							false).show(Page.getCurrent());
-					}
-				});
-		}
+	public void dearchiveAllSelectedItems(Collection<TaskIndexDto> selectedRows, TaskGrid taskGrid, Runnable noEntriesRemainingCallback) {
+		ControllerProvider.getArchiveController()
+			.dearchiveSelectedItems(selectedRows, ArchiveHandlers.forTask(), bulkOperationCallback(taskGrid, noEntriesRemainingCallback, null));
 	}
 }
