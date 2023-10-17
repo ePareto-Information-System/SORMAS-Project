@@ -16,6 +16,8 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.validation.constraints.NotNull;
 
+import de.symeda.sormas.backend.infrastructure.facility.FacilityFacadeEjb;
+import de.symeda.sormas.backend.infrastructure.facility.FacilityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +37,9 @@ public class DiseaseConfigurationFacadeEjb implements DiseaseConfigurationFacade
 	private DiseaseConfigurationService service;
 	@EJB
 	private UserService userService;
+
+	@EJB
+	private FacilityService facilityService;
 
 	private List<Disease> activeDiseases = new ArrayList<>();
 	private List<Disease> inactiveDiseases = new ArrayList<>();
@@ -195,7 +200,9 @@ public class DiseaseConfigurationFacadeEjb implements DiseaseConfigurationFacade
 		target.setExtendedClassification(source.getExtendedClassification());
 		target.setExtendedClassificationMulti(source.getExtendedClassificationMulti());
 		target.setAgeGroups(source.getAgeGroups());
-
+		if (source.getFacilities() != null) {
+			target.setFacilities(source.getFacilities().stream().map(FacilityFacadeEjb::toReferenceDto).collect(Collectors.toList()));
+		}
 		return target;
 	}
 

@@ -93,6 +93,7 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		sample = record.getSample();
 		testTypeList = DataUtils.getEnumItems(PathogenTestType.class, true, getFieldVisibilityCheckers());
 		pcrTestSpecificationList = DataUtils.getEnumItems(PCRTestSpecification.class, true);
+		labList = DatabaseHelper.getFacilityDao().getActiveLaboratories(true);
 
 		List<Disease> diseases = DiseaseConfigurationCache.getInstance().getAllDiseases(true, true, true);
 		diseaseList = DataUtils.toItems(diseases);
@@ -110,7 +111,6 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 		testResultList = DataUtils.toItems(
 			Arrays.stream(PathogenTestResultType.values()).filter(type -> type != PathogenTestResultType.NOT_DONE).collect(Collectors.toList()),
 			true);
-		labList = DatabaseHelper.getFacilityDao().getActiveLaboratories(true);
 	}
 
 	@Override
@@ -141,6 +141,11 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 				} else {
 					getContentBinding().pathogenTestPcrTestSpecification.hideField(false);
 				}
+
+				if (contentBinding.pathogenTestTestedDisease.getValue() != null) {
+					labList = DatabaseHelper.getFacilityDao().getActiveLaboratoriesByDisease((Disease) contentBinding.pathogenTestTestedDisease.getValue(), true);
+					contentBinding.pathogenTestLab.setSpinnerData(DataUtils.toItems(labList));
+				}
 			}
 		});
 
@@ -159,6 +164,11 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 					getContentBinding().pathogenTestPcrTestSpecification.setVisibility(View.VISIBLE);
 				} else {
 					getContentBinding().pathogenTestPcrTestSpecification.hideField(false);
+				}
+
+				if (contentBinding.pathogenTestTestedDisease.getValue() != null) {
+					labList = DatabaseHelper.getFacilityDao().getActiveLaboratoriesByDisease((Disease) contentBinding.pathogenTestTestedDisease.getValue(), true);
+					contentBinding.pathogenTestLab.setSpinnerData(DataUtils.toItems(labList));
 				}
 
 				if (this.currentDisease == null || contentBinding.pathogenTestTestedDisease.getValue() != currentDisease) {
