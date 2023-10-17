@@ -12045,7 +12045,7 @@ CREATE TRIGGER versioning_trigger
     FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'facility_diseaseconfiguration_history', true);
 ALTER TABLE facility_diseaseconfiguration_history OWNER TO sormas_user;
 
-INSERT INTO schema_version (version_number, comment) VALUES (474, 'Assigning Diseases to facility functionality on mobile app #134');
+INSERT INTO schema_version (version_number, comment) VALUES (487, 'Assigning Diseases to facility functionality on mobile app #134');
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 
