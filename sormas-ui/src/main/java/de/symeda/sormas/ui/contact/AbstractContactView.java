@@ -91,6 +91,10 @@ public abstract class AbstractContactView extends AbstractDetailView<ContactRefe
 			menu.addView(ContactVisitsView.VIEW_NAME, I18nProperties.getPrefixCaption(ContactDto.I18N_PREFIX, ContactDto.VISITS), params);
 		}
 
+		if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW)) {
+			menu.addView(ContactSamplesView.VIEW_NAME, I18nProperties.getCaption(Captions.Contact_samples), params);
+		}
+
 		setMainHeaderComponent(ControllerProvider.getContactController().getContactViewTitleLayout(contact));
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.MANAGE_EXTERNAL_SYMPTOM_JOURNAL)) {
