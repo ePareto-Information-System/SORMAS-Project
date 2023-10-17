@@ -93,6 +93,7 @@ import de.symeda.sormas.app.backend.customizableenum.CustomizableEnumValue;
 import de.symeda.sormas.app.backend.customizableenum.CustomizableEnumValueDao;
 import de.symeda.sormas.app.backend.disease.DiseaseConfiguration;
 import de.symeda.sormas.app.backend.disease.DiseaseConfigurationDao;
+import de.symeda.sormas.app.backend.disease.DiseaseFacility;
 import de.symeda.sormas.app.backend.epidata.EpiData;
 import de.symeda.sormas.app.backend.epidata.EpiDataDao;
 import de.symeda.sormas.app.backend.event.Event;
@@ -282,7 +283,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				TableUtils.clearTable(connectionSource, Area.class);
 				TableUtils.clearTable(connectionSource, Campaign.class);
 				TableUtils.clearTable(connectionSource, CampaignFormMeta.class);
-
+				TableUtils.clearTable(connectionSource, DiseaseFacility.class);
 				ConfigProvider.init(instance.context);
 			}
 
@@ -367,6 +368,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.createTable(connectionSource, Campaign.class);
 			TableUtils.createTable(connectionSource, CampaignFormData.class);
 			TableUtils.createTable(connectionSource, CampaignFormMeta.class);
+			TableUtils.createTable(connectionSource, DiseaseFacility.class);
 			TableUtils.createTable(connectionSource, LbdsSync.class);
 		} catch (SQLException e) {
 			Log.e(DatabaseHelper.class.getName(), "Can't build database", e);
@@ -2985,14 +2987,15 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 						+ "localChangeDate timestamp, modified integer, snapshot integer, userRights text, enabled boolean, caption varchar(512), description varchar(4096), "
 						+ "hasOptionalHealthFacility boolean, hasAssociatedDistrictUser boolean, portHealthUser boolean, jurisdictionLevel varchar(255));");
 				getDao(UserRole.class).executeRaw("CREATE TABLE users_userRoles(user_id integer, userRole_id integer);");
-
 			case 336:
 				currentVersion = 336;
 				getDao(AggregateReport.class).executeRaw("ALTER TABLE aggregateReport ADD COLUMN ageGroup varchar(255);");
 				getDao(AggregateReport.class).executeRaw("UPDATE aggregateReport SET changeDate = 0;");
 				getDao(DiseaseConfiguration.class).executeRaw("ALTER TABLE diseaseConfiguration ADD COLUMN ageGroupsString text;");
 				getDao(DiseaseConfiguration.class).executeRaw("UPDATE diseaseConfiguration SET changeDate = 0;");
-
+			case 337:
+				currentVersion = 337;
+				getDao(DiseaseConfiguration.class).executeRaw("CREATE TABLE facility_diseaseconfiguration(diseaseconfiguration_id integer, facility_id integer);");
 				// ATTENTION: break should only be done after last version
 				break;
 
@@ -3863,7 +3866,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				} else if (type.equals(UserRole.class)) {
 					dao = (AbstractAdoDao<ADO>) new UserRoleDao((Dao<UserRole, Long>) innerDao);
 				} else if (type.equals(DiseaseConfiguration.class)) {
-					dao = (AbstractAdoDao<ADO>) new DiseaseConfigurationDao((Dao<DiseaseConfiguration, Long>) innerDao);
+					dao = (AbstractAdoDao<ADO>) new DiseaseConfigurationDao((Dao<DiseaseConfiguration, Long>) innerDao, super.getDao(DiseaseFacility.class));
 				} else if (type.equals(CustomizableEnumValue.class)) {
 					dao = (AbstractAdoDao<ADO>) new CustomizableEnumValueDao((Dao<CustomizableEnumValue, Long>) innerDao);
 				} else if (type.equals(FeatureConfiguration.class)) {
