@@ -112,6 +112,7 @@ public class ContactController {
 		navigator.addView(ContactPersonView.VIEW_NAME, ContactPersonView.class);
 		navigator.addView(ContactVisitsView.VIEW_NAME, ContactVisitsView.class);
 		navigator.addView(ContactEpiDataView.VIEW_NAME, ContactEpiDataView.class);
+		navigator.addView(ContactSamplesView.VIEW_NAME, ContactSamplesView.class);
 	}
 
 	public void openLineListingWindow() {
