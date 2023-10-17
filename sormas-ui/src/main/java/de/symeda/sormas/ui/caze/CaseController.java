@@ -179,13 +179,6 @@ public class CaseController {
 			navigator.addView(CaseVisitsView.VIEW_NAME, CaseVisitsView.class);
 		}
 
-		if(FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.SAMPLES_LAB)
-				&& userProvider.hasUserRight(UserRight.SAMPLE_VIEW)
-				&& userProvider.hasUserRight(UserRight.SAMPLE_EDIT)
-		) {
-			navigator.addView(CaseSampleView.VIEW_NAME, CaseSampleView.class);
-		}
-
 		navigator.addView(CaseExternalDataView.VIEW_NAME, CaseExternalDataView.class);
 	}
 

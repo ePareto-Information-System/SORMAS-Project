@@ -113,6 +113,7 @@ public class ContactDataView extends AbstractContactView {
 			CASE_BUTTONS_LOC,
 			EVENTS_LOC,
 			TASKS_LOC,
+			SAMPLES_LOC,
 			IMMUNIZATION_LOC,
 			VACCINATIONS_LOC,
 			SORMAS_TO_SORMAS_LOC,
@@ -209,6 +210,15 @@ public class ContactDataView extends AbstractContactView {
 			TaskListComponent taskList = new TaskListComponent(TaskContext.CONTACT, getContactRef(), contactDto.getDisease());
 			taskList.addStyleName(CssStyles.SIDE_COMPONENT);
 			layout.addSidePanelComponent(taskList, TASKS_LOC);
+		}
+
+		if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW)) {
+			SampleListComponent sampleList = new SampleListComponent(
+				new SampleCriteria().contact(getContactRef()).disease(contactDto.getDisease()).sampleAssociationType(SampleAssociationType.CONTACT),
+				this::showUnsavedChangesPopup);
+			SampleListComponentLayout sampleListComponentLayout =
+				new SampleListComponentLayout(sampleList, I18nProperties.getString(Strings.infoCreateNewSampleDiscardsChangesContact));
+			layout.addSidePanelComponent(sampleListComponentLayout, SAMPLES_LOC);
 		}
 
 		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.EVENT_SURVEILLANCE)
