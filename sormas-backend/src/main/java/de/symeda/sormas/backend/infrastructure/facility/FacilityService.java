@@ -349,12 +349,11 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 		}
 
 		if (facilityCriteria.getDiseases() != null) {
-			SetJoin<Facility, DiseaseConfiguration> diseases = from.joinSet("diseases");
+			SetJoin<Facility, DiseaseConfiguration> diseases = root.joinSet("diseases");
 			filter = cb.and(filter, diseases.get(DiseaseConfiguration.DISEASE).in(facilityCriteria.getDiseases()));
 		}
 
 		return CriteriaBuilderHelper.and(cb, filter, excludeConstantFacilities);
-
 	}
 
 	public void createConstantFacilities() {

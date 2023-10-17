@@ -4,6 +4,10 @@ import java.util.List;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+
+import java.util.List;
+import java.util.Set;
 
 public class DiseaseConfigurationDto extends EntityDto {
 
@@ -21,6 +25,8 @@ public class DiseaseConfigurationDto extends EntityDto {
 	private Boolean extendedClassification;
 	private Boolean extendedClassificationMulti;
 	private List<String> ageGroups;
+
+	private List<FacilityReferenceDto> facilities;
 
 	public Disease getDisease() {
 		return disease;
@@ -116,5 +122,12 @@ public class DiseaseConfigurationDto extends EntityDto {
 
 	public void setAgeGroups(List<String> ageGroups) {
 		this.ageGroups = ageGroups;
+	}
+
+	public List<FacilityReferenceDto> getFacilities() {
+		return facilities;
+	}
+	public void setFacilities(List<FacilityReferenceDto> diseaseFacilities) {
+		this.facilities = diseaseFacilities;
 	}
 }
