@@ -117,7 +117,7 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
 	private final TravelEntryDto convertedTravelEntry;
 
 	//@formatter:off
-    private static final String HTML_LAYOUT = fluidRowLocs(CaseDataDto.CASE_ORIGIN, "")
+    private static final String HTML_LAYOUT = fluidRowLocs(4, CaseDataDto.CASE_ORIGIN, 8, CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION)
         + fluidRowLocs(CaseDataDto.REPORT_DATE, CaseDataDto.EPID_NUMBER, CaseDataDto.EXTERNAL_ID)
         + fluidRow(
         fluidColumnLoc(6, 0, CaseDataDto.DISEASE),
@@ -389,6 +389,10 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
 		}
 
 		if (!UserProvider.getCurrent().isPortHealthUser()) {
+		OptionGroup caseTransmissionClassification = addField(CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION, OptionGroup.class);
+		caseTransmissionClassification.setRequired(true);
+
+		if (!UserRole.isPortHealthUser(UserProvider.getCurrent().getUserRoles())) {
 			ogCaseOrigin.addValueChangeListener(ev -> {
 				if (ev.getProperty().getValue() == CaseOrigin.IN_COUNTRY) {
 					setVisible(false, CaseDataDto.POINT_OF_ENTRY, CaseDataDto.POINT_OF_ENTRY_DETAILS);

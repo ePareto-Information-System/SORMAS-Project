@@ -1370,7 +1370,19 @@ public class CaseService extends AbstractCoreAdoService<Case> {
 			newCaseFilter = cb.or(onsetDateFilter, cb.and(cb.isNull(symptoms.get(Symptoms.ONSET_DATE)), reportDateFilter));
 		} else if (dateType == NewCaseDateType.ONSET) {
 			newCaseFilter = onsetDateFilter;
+<<<<<<< HEAD
 		} else if (dateType == NewCaseDateType.REPORT) {
+=======
+		} else if (newCaseDateType == NewCaseDateType.CLASSIFICATION) {
+			newCaseFilter = cb.between(caze.get(Case.CLASSIFICATION_DATE), fromDate, toDate);
+		} else if (newCaseDateType == NewCaseDateType.CREATION) {
+			newCaseFilter = cb.between(caze.get(Case.CREATION_DATE), fromDate, toDate);
+		} else if (newCaseDateType == NewCaseDateType.INVESTIGATION) {
+			newCaseFilter = cb.between(caze.get(Case.INVESTIGATED_DATE), fromDate, toDate);
+		//} else if (newCaseDateType == NewCaseDateType.LAST_TEST_RESULT) {
+		//	newCaseFilter = cb.between(caze.get(Case.REPORT_DATE), fromDate, toDate);
+		} else {
+>>>>>>> origin/case_contact_transmission_classification
 			newCaseFilter = reportDateFilter;
 		} else if (dateType == ExternalShareDateType.LAST_EXTERNAL_SURVEILLANCE_TOOL_SHARE) {
 			newCaseFilter = externalShareInfoService.buildLatestSurvToolShareDateFilter(

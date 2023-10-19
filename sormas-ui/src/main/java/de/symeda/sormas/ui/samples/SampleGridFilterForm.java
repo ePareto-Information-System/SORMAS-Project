@@ -19,8 +19,14 @@ import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
+<<<<<<< HEAD
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
+=======
+import de.symeda.sormas.api.region.DistrictReferenceDto;
+import de.symeda.sormas.api.region.RegionReferenceDto;
+>>>>>>> origin/case_contact_transmission_classification
 import de.symeda.sormas.api.sample.PathogenTestDto;
+import de.symeda.sormas.api.sample.SampleDateType;
 import de.symeda.sormas.api.sample.SampleCriteria;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SampleIndexDto;
@@ -54,6 +60,7 @@ public class SampleGridFilterForm extends AbstractFilterForm<SampleCriteria> {
 			SampleCriteria.DISEASE,
 			SampleCriteria.REGION,
 			SampleCriteria.DISTRICT,
+			SampleCriteria.COMMUNITY,
 			SampleCriteria.LAB,
 			SampleCriteria.CASE_CODE_ID_LIKE };
 	}
@@ -103,6 +110,12 @@ public class SampleGridFilterForm extends AbstractFilterForm<SampleCriteria> {
 				I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.DISTRICT),
 				140));
 
+		addField(
+			FieldConfiguration.withCaptionAndPixelSized(
+				SampleCriteria.COMMUNITY,
+				I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.COMMUNITY),
+				140));
+
 		ComboBox labField = addField(
 			FieldConfiguration
 				.withCaptionAndPixelSized(SampleCriteria.LAB, I18nProperties.getPrefixCaption(SampleIndexDto.I18N_PREFIX, SampleIndexDto.LAB), 140));
@@ -114,31 +127,89 @@ public class SampleGridFilterForm extends AbstractFilterForm<SampleCriteria> {
 		searchField.setDescription(I18nProperties.getString(Strings.promptSamplesSearchField), ContentMode.HTML);
 		searchField.addStyleNames(CssStyles.VSPACE_TOP_4, CssStyles.HSPACE_RIGHT_4);
 		searchField.setNullRepresentation("");
-
 	}
 
 	@Override
 	public void addMoreFilters(CustomLayout moreFiltersContainer) {
-
 		moreFiltersContainer.addComponent(buildWeekAndDateFilter(), WEEK_AND_DATE_FILTER);
 	}
 
 	private HorizontalLayout buildWeekAndDateFilter() {
+<<<<<<< HEAD
 
 		EpiWeekAndDateFilterComponent<DateFilterOption> weekAndDateFilter = new EpiWeekAndDateFilterComponent<>(false, false, null, this);
+=======
+		Button applyButton = ButtonHelper.createButton(Captions.actionApplyDateFilter, null);
+
+		EpiWeekAndDateFilterComponent<SampleDateType> weekAndDateFilter = new EpiWeekAndDateFilterComponent<>(
+				applyButton,
+				false,
+				false,
+				null,
+				SampleDateType.class,
+				I18nProperties.getString(Strings.promptSampleDateType),
+				SampleDateType.COLLECTION);
+>>>>>>> origin/case_contact_transmission_classification
 
 		weekAndDateFilter.getWeekFromFilter().setInputPrompt(I18nProperties.getString(Strings.promptSampleEpiWeekFrom));
 		weekAndDateFilter.getWeekToFilter().setInputPrompt(I18nProperties.getString(Strings.promptSampleEpiWeekTo));
 		weekAndDateFilter.getDateFromFilter().setInputPrompt(I18nProperties.getString(Strings.promptSampleDateFrom));
 		weekAndDateFilter.getDateToFilter().setInputPrompt(I18nProperties.getString(Strings.promptSampleDateTo));
 
+<<<<<<< HEAD
 		addApplyHandler(e -> onApplyClick(weekAndDateFilter));
+=======
+		applyButton.addClickListener(e -> {
+			SampleCriteria criteria = getValue();
+
+			DateFilterOption dateFilterOption = (DateFilterOption) weekAndDateFilter.getDateFilterOptionFilter().getValue();
+			Date fromDate, toDate;
+			if (dateFilterOption == DateFilterOption.DATE) {
+				fromDate = DateHelper.getStartOfDay(weekAndDateFilter.getDateFromFilter().getValue());
+				toDate = DateHelper.getEndOfDay(weekAndDateFilter.getDateToFilter().getValue());
+			} else {
+				fromDate = DateHelper.getEpiWeekStart((EpiWeek) weekAndDateFilter.getWeekFromFilter().getValue());
+				toDate = DateHelper.getEpiWeekEnd((EpiWeek) weekAndDateFilter.getWeekToFilter().getValue());
+			}
+
+			if ((fromDate != null && toDate != null) || (fromDate == null && toDate == null)) {
+				applyButton.removeStyleName(ValoTheme.BUTTON_PRIMARY);
+				
+				SampleDateType sampleDateType = (SampleDateType) weekAndDateFilter.getDateTypeSelector().getValue();
+				sampleDateType = sampleDateType != null ? sampleDateType : SampleDateType.COLLECTION;
+						
+				criteria.reportDateBetween(fromDate, toDate, sampleDateType, dateFilterOption);
+
+				fireValueChange(true);
+			} else {
+				if (dateFilterOption == DateFilterOption.DATE) {
+					Notification notification = new Notification(
+						I18nProperties.getString(Strings.headingMissingDateFilter),
+						I18nProperties.getString(Strings.messageMissingDateFilter),
+						Notification.Type.WARNING_MESSAGE,
+						false);
+					notification.setDelayMsec(-1);
+					notification.show(Page.getCurrent());
+				} else {
+					Notification notification = new Notification(
+						I18nProperties.getString(Strings.headingMissingEpiWeekFilter),
+						I18nProperties.getString(Strings.messageMissingEpiWeekFilter),
+						Notification.Type.WARNING_MESSAGE,
+						false);
+					notification.setDelayMsec(-1);
+					notification.show(Page.getCurrent());
+				}
+			}
+		});
+>>>>>>> origin/case_contact_transmission_classification
 
 		HorizontalLayout dateFilterRowLayout = new HorizontalLayout();
 		dateFilterRowLayout.setSpacing(true);
 		dateFilterRowLayout.setSizeUndefined();
 
 		dateFilterRowLayout.addComponent(weekAndDateFilter);
+
+		dateFilterRowLayout.addStyleName("wrap");
 
 		return dateFilterRowLayout;
 	}
@@ -179,6 +250,10 @@ public class SampleGridFilterForm extends AbstractFilterForm<SampleCriteria> {
 
 			break;
 		}
+		case SampleCriteria.DISTRICT: {
+			getField(SampleCriteria.COMMUNITY).setValue(null);
+			break;
+		}
 		}
 	}
 
@@ -201,13 +276,28 @@ public class SampleGridFilterForm extends AbstractFilterForm<SampleCriteria> {
 			}
 		}
 
+		ComboBox communityField = (ComboBox) getField(SampleCriteria.COMMUNITY);
+		if (user.getDistrict() != null) {
+			communityField.addItems(FacadeProvider.getCommunityFacade().getAllActiveByDistrict(user.getDistrict().getUuid()));
+			communityField.setEnabled(true);
+		} else {
+			DistrictReferenceDto district = criteria.getDistrict();
+			if (district != null) {
+				communityField.addItems(FacadeProvider.getCommunityFacade().getAllActiveByDistrict(district.getUuid()));
+				communityField.setEnabled(true);
+			} else {
+				communityField.setEnabled(false);
+			}
+		}
+
 		HorizontalLayout dateFilterLayout = (HorizontalLayout) getMoreFiltersContainer().getComponent(WEEK_AND_DATE_FILTER);
 		EpiWeekAndDateFilterComponent<DateFilterOption> weekAndDateFilter;
 		weekAndDateFilter = (EpiWeekAndDateFilterComponent<DateFilterOption>) dateFilterLayout.getComponent(0);
 
+		weekAndDateFilter.getDateTypeSelector().setValue(criteria.getSampleDateType());	
 		weekAndDateFilter.getDateFilterOptionFilter().setValue(criteria.getDateFilterOption());
-		Date sampleDateFrom = criteria.getSampleReportDateFrom();
-		Date sampleDateTo = criteria.getSampleReportDateTo();
+		Date sampleDateFrom = criteria.getSampleDateFrom();
+		Date sampleDateTo = criteria.getSampleDateTo();
 
 		if (DateFilterOption.EPI_WEEK.equals(criteria.getDateFilterOption())) {
 			weekAndDateFilter.getWeekFromFilter().setValue(sampleDateFrom == null ? null : DateHelper.getEpiWeek(sampleDateFrom));

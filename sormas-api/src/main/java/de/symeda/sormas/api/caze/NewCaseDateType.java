@@ -30,7 +30,11 @@ public enum NewCaseDateType
 
 	MOST_RELEVANT,
 	ONSET,
-	REPORT;
+	REPORT,
+	CLASSIFICATION,
+	CREATION,
+	INVESTIGATION;
+	//LAST_TEST_RESULT;
 
 	@Override
 	public String toString() {

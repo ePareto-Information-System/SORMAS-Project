@@ -24,6 +24,7 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
+<<<<<<< HEAD
 import de.symeda.sormas.api.infrastructure.facility.FacilityHelper;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.person.PersonDto;
@@ -34,6 +35,12 @@ import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableIndexDto;
 import de.symeda.sormas.api.utils.pseudonymization.Pseudonymizer;
 import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.EmptyValuePseudonymizer;
 import org.apache.commons.lang3.StringUtils;
+=======
+import de.symeda.sormas.api.facility.FacilityHelper;
+import de.symeda.sormas.api.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.region.CommunityReferenceDto;
+import de.symeda.sormas.api.region.DistrictReferenceDto;
+>>>>>>> origin/case_contact_transmission_classification
 
 public class SampleIndexDto extends PseudonymizableIndexDto implements Serializable {
 
@@ -49,7 +56,9 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 	public static final String DISEASE_DETAILS = "diseaseDetails";
 	public static final String EPID_NUMBER = "epidNumber";
 	public static final String LAB_SAMPLE_ID = "labSampleID";
+	public static final String FIELD_SAMPLE_ID = "fieldSampleID";
 	public static final String DISTRICT = "district";
+	public static final String COMMUNITY = "community";
 	public static final String SAMPLE_DATE_TIME = "sampleDateTime";
 	public static final String SHIPMENT_DATE = "shipmentDate";
 	public static final String RECEIVED_DATE = "receivedDate";
@@ -77,9 +86,15 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 	private EventParticipantReferenceDto associatedEventParticipant;
 	private String epidNumber;
 	private String labSampleID;
+	private String fieldSampleID;
 	private Disease disease;
 	private String diseaseDetails;
+<<<<<<< HEAD
 	private String district;
+=======
+	private DistrictReferenceDto district;
+	private CommunityReferenceDto community;
+>>>>>>> origin/case_contact_transmission_classification
 	private boolean shipped;
 	private boolean received;
 	private boolean referred;
@@ -101,7 +116,7 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 	private SampleJurisdictionFlagsDto sampleJurisdictionFlagsDto;
 
 	//@formatter:off
-	public SampleIndexDto(String uuid, String epidNumber, String labSampleId, Date sampleDateTime,
+	public SampleIndexDto(String uuid, String epidNumber, String labSampleId, String fieldSampleId, Date sampleDateTime,
 						  boolean shipped, Date shipmentDate, boolean received, Date receivedDate,
 						  SampleMaterial sampleMaterial, SamplePurpose samplePurpose, SpecimenCondition specimenCondition,
 						  String labName, String referredSampleUuid,
@@ -110,8 +125,17 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 						  String associatedContactUuid, String associatedContactFirstName, String associatedContactLastName,
 						  String associatedEventParticipantUuid, String associatedEventParticipantFirstName, String associatedEventParticipantLastName,
 						  Disease disease, String diseaseDetails, PathogenTestResultType pathogenTestResult, Boolean additionalTestingRequested, Boolean additionalTestPerformed,
+<<<<<<< HEAD
 						  String districtName, String labUuid, Long pathogenTestCount,
 						  boolean isInJurisdiction, boolean isCaseInJurisdiction, boolean isContactInJurisdiction,  boolean isContactCaseInJurisdiction, boolean isEventParticipantInJurisdiction) {
+=======
+						  String caseDistrictName, String contactDistrictName, String contactCaseDistrictName,
+						  String caseCommunityName, String contactCommunityName, String contactCaseCommunityName,
+						  String caseReportingUserUuid, String caseRegionUuid, String caseDistrictUuid, String caseCommunityUuid, String caseHealthFacilityUuid, String casePointOfEntryUuid,
+						  String contactReportingUserUuid, String contactRegionUuid, String contactDistrictUuid,
+						  String contactCaseReportingUserUuid, String contactCaseRegionUuid, String contactCaseDistrictUuid, 
+						  String contactCaseCommunityUuid, String contactCaseHealthFacilityUuid, String contactCasePointOfEntryUuid, String districtUuid, String districtName) {
+>>>>>>> origin/case_contact_transmission_classification
 	//@formatter:on
 
 		super(uuid);
@@ -130,9 +154,28 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 		}
 		this.epidNumber = epidNumber;
 		this.labSampleID = labSampleId;
+		this.fieldSampleID = fieldSampleId;
 		this.disease = disease;
 		this.diseaseDetails = diseaseDetails;
+<<<<<<< HEAD
 		this.district = districtName;
+=======
+		this.district = createDistrictReference(
+			caseDistrictName,
+			contactDistrictName,
+			contactCaseDistrictName,
+			districtName,
+			caseDistrictUuid,
+			contactDistrictUuid,
+			contactCaseDistrictUuid,
+			districtUuid);
+		this.community = createCommunityReference(
+			caseCommunityName, 
+			contactCommunityName, 
+			contactCaseCommunityName, 
+			caseCommunityUuid,
+			contactCaseCommunityUuid);
+>>>>>>> origin/case_contact_transmission_classification
 		this.shipped = shipped;
 		this.received = received;
 		this.referred = referredSampleUuid != null;
@@ -151,9 +194,38 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 		this.samplingReasonDetails = samplingReasonDetails;
 		this.pathogenTestCount = pathogenTestCount;
 
+<<<<<<< HEAD
 		// These attributes will be set later
 		this.typeOfLastTest = null;
 		this.lastTestCqValue = null;
+=======
+	private CommunityReferenceDto createCommunityReference(
+		String caseCommunityName,
+		String contactCommunityName,
+		String contactCaseCommunityName,
+		String caseCommunityUuid,
+		String contactCaseCommunityUuid) {
+
+		CommunityReferenceDto ref = null;
+		if (caseCommunityUuid != null) {
+			ref = new CommunityReferenceDto(caseCommunityUuid, caseCommunityName);
+		} else if (contactCaseCommunityUuid != null) {
+			ref = new CommunityReferenceDto(contactCaseCommunityUuid, contactCaseCommunityName);
+		}
+
+		return ref;
+	}
+
+	private DistrictReferenceDto createDistrictReference(
+		String caseDistrictName,
+		String contactDistrictName,
+		String contactCaseDistrictName,
+		String eventDistrictName,
+		String caseDistrictUuid,
+		String contactDistrictUuid,
+		String contactCaseDistrictUuid,
+		String eventDistrictUuid) {
+>>>>>>> origin/case_contact_transmission_classification
 
 		this.sampleJurisdictionFlagsDto = new SampleJurisdictionFlagsDto(
 			isInJurisdiction,
@@ -218,6 +290,14 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 	public void setLabSampleID(String labSampleID) {
 		this.labSampleID = labSampleID;
 	}
+	
+	public String getFieldSampleID() {
+		return fieldSampleID;
+	}
+	
+	public void setFieldSampleID(String fieldSampleID) {
+		this.fieldSampleID = fieldSampleID;
+	}
 
 	public String getDistrict() {
 		return district;
@@ -225,6 +305,14 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 
 	public void setDistrict(String district) {
 		this.district = district;
+	}
+
+	public CommunityReferenceDto getCommunity() {
+		return community;
+	}
+
+	public void setCommunity(CommunityReferenceDto community) {
+		this.community = community;
 	}
 
 	public Date getShipmentDate() {

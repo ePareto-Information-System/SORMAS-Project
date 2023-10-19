@@ -28,6 +28,12 @@ import android.view.ViewGroup;
 import androidx.databinding.ObservableArrayList;
 
 import de.symeda.sormas.api.activityascase.ActivityAsCaseDto;
+import com.googlecode.openbeans.Introspector;
+import com.googlecode.openbeans.PropertyDescriptor;
+
+import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.caze.Vaccination;
+import de.symeda.sormas.api.epidata.AnimalCondition;
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.exposure.ExposureDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -219,6 +225,8 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 	public void onLayoutBinding(final FragmentEditEpidLayoutBinding contentBinding) {
 		setUpControlListeners(contentBinding);
 
+		setDefaultValues(record);
+
 		contentBinding.setData(record);
 		contentBinding.setExposureList(getExposureList());
 		contentBinding.setExposureItemClickCallback(onExposureItemClickListener);
@@ -231,6 +239,100 @@ public class EpidemiologicalDataEditFragment extends BaseEditFragment<FragmentEd
 		contentBinding.setActivityAsCaseListBindCallback(
 			v -> FieldVisibilityAndAccessHelper
 				.setFieldVisibilitiesAndAccesses(ActivityAsCaseDto.class, (ViewGroup) v, new FieldVisibilityCheckers(), getFieldAccessCheckers()));
+		contentBinding.epiDataBurialAttended.addValueChangedListener(new ValueChangeListener() {
+
+			@Override
+			public void onChange(ControlPropertyField field) {
+				YesNoUnknown value = (YesNoUnknown) field.getValue();
+				contentBinding.burialsLayout.setVisibility(value == YesNoUnknown.YES ? View.VISIBLE : View.GONE);
+				if (value != YesNoUnknown.YES) {
+					clearBurials();
+				}
+
+				verifyBurialStatus();
+			}
+		});
+
+		contentBinding.epiDataGatheringAttended.addValueChangedListener(new ValueChangeListener() {
+
+			@Override
+			public void onChange(ControlPropertyField field) {
+				YesNoUnknown value = (YesNoUnknown) field.getValue();
+				contentBinding.gatheringsLayout.setVisibility(value == YesNoUnknown.YES ? View.VISIBLE : View.GONE);
+				if (value != YesNoUnknown.YES) {
+					clearGatherings();
+				}
+
+				verifyGatheringStatus();
+			}
+		});
+
+		contentBinding.epiDataTraveled.addValueChangedListener(field -> {
+			YesNoUnknown value = (YesNoUnknown) field.getValue();
+			contentBinding.travelsLayout.setVisibility(value == YesNoUnknown.YES ? View.VISIBLE : View.GONE);
+			if (value != YesNoUnknown.YES) {
+				clearTravels();
+			}
+
+			verifyTravelStatus();
+		});
+
+		// iterate through all epi data animal fields and add listener
+		ValueChangeListener updateHadAnimalExposureListener = field -> updateHadAnimalExposure();
+		List<String> animalExposureProperties = Arrays.asList(EpiDataDto.ANIMAL_EXPOSURE_PROPERTIES);
+		FieldHelper.iteratePropertyFields((ViewGroup) contentBinding.getRoot(), field -> {
+			if (animalExposureProperties.contains(field.getSubPropertyId())) {
+				field.addValueChangedListener(updateHadAnimalExposureListener);
+			}
+			return true;
+		});
+
+		List<String> environmentalExposureProperties = Arrays.asList(EpiData.ENVIRONMENTAL_EXPOSURE_PROPERTIES);
+		int environmentalExposureHeadingVisibiliy = View.GONE;
+		for (String property : environmentalExposureProperties) {
+			if (Diseases.DiseasesConfiguration.isDefinedOrMissing(EpiDataDto.class, property, disease)) {
+				environmentalExposureHeadingVisibiliy = View.VISIBLE;
+				break;
+			}
+		}
+		contentBinding.headingEnvironmentalExposure.setVisibility(environmentalExposureHeadingVisibiliy);
+	}
+
+	public void setDefaultValues(EpiData epiDataDto) {
+		if (epiDataDto == null) {
+			return;
+		}
+		try {
+			for (PropertyDescriptor pd : Introspector.getBeanInfo(EpiData.class, AbstractDomainObject.class).getPropertyDescriptors()) {
+				if (pd.getWriteMethod() != null && (pd.getReadMethod().getReturnType().equals(YesNoUnknown.class))) {
+					try {
+						if (pd.getReadMethod().invoke(epiDataDto) == null)
+							pd.getWriteMethod().invoke(epiDataDto, YesNoUnknown.NO);
+					} catch (Exception e) {
+						throw new RuntimeException(e);
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private void updateHadAnimalExposure() {
+		// iterate through all epi data animal fields to get value
+		List<String> animalExposureProperties = Arrays.asList(EpiDataDto.ANIMAL_EXPOSURE_PROPERTIES);
+		boolean iterationCancelled = !FieldHelper.iteratePropertyFields((ViewGroup) getContentBinding().getRoot(), field -> {
+			if (animalExposureProperties.contains(field.getSubPropertyId())) {
+				YesNoUnknown value = (YesNoUnknown) field.getValue();
+				if (YesNoUnknown.YES.equals(value)) {
+					return false;
+				}
+			}
+			return true;
+		});
+		boolean hadAnimalExposure = iterationCancelled;
+		getContentBinding().setAnimalExposureDependentVisibility(hadAnimalExposure ? View.VISIBLE : View.GONE);
 	}
 
 	@Override

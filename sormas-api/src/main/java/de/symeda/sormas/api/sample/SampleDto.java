@@ -35,7 +35,11 @@ import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.FieldConstraints;
 import de.symeda.sormas.api.utils.Required;
+<<<<<<< HEAD
 import de.symeda.sormas.api.utils.SensitiveData;
+=======
+import de.symeda.sormas.api.utils.YesNoUnknown;
+>>>>>>> origin/case_contact_transmission_classification
 
 @DependingOnFeatureType(featureType = FeatureType.SAMPLES_LAB)
 public class SampleDto extends SormasToSormasShareableDto {
@@ -49,6 +53,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public static final String ASSOCIATED_CASE = "associatedCase";
 	public static final String LAB_SAMPLE_ID = "labSampleID";
 	public static final String FIELD_SAMPLE_ID = "fieldSampleID";
+	public static final String FOR_RETEST = "forRetest";
 	public static final String SAMPLE_DATE_TIME = "sampleDateTime";
 	public static final String REPORT_DATE_TIME = "reportDateTime";
 	public static final String REPORTING_USER = "reportingUser";
@@ -86,6 +91,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private String labSampleID;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String fieldSampleID;
+	private YesNoUnknown forRetest;
 	@Required
 	private Date sampleDateTime;
 
@@ -194,6 +200,14 @@ public class SampleDto extends SormasToSormasShareableDto {
 
 	public void setFieldSampleID(String fieldSampleID) {
 		this.fieldSampleID = fieldSampleID;
+	}
+	
+	public YesNoUnknown getForRetest() {
+		return forRetest;
+	}
+	
+	public void setForRetest(YesNoUnknown forRetest) {
+		this.forRetest = forRetest;
 	}
 
 	public Date getSampleDateTime() {

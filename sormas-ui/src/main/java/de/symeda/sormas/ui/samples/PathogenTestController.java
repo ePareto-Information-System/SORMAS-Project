@@ -23,6 +23,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
@@ -50,8 +54,10 @@ import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.PathogenTestFacade;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.SampleDto;
+import de.symeda.sormas.api.sample.SampleIndexDto;
 import de.symeda.sormas.api.sample.SampleReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.user.UserRole;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.SormasUI;
@@ -102,6 +108,97 @@ public class PathogenTestController {
 	public void edit(String pathogenTestUuid, Runnable doneCallback, BiConsumer<PathogenTestDto, Runnable> onSavedPathogenTest) {
 		final CommitDiscardWrapperComponent<PathogenTestForm> editView =
 			getPathogenTestEditComponent(pathogenTestUuid, doneCallback, onSavedPathogenTest);
+	public void showBulkTestResultComponent(Collection<? extends SampleIndexDto> selectedSamples, Disease disease) {
+
+		if (selectedSamples.size() == 0) {
+			new Notification(
+				I18nProperties.getString(Strings.headingNoSamplesSelected),
+				I18nProperties.getString(Strings.messageNoSamplesSelected),
+				Type.WARNING_MESSAGE,
+				false).show(Page.getCurrent());
+			return;
+		}
+
+		SampleIndexDto firstSelectedSample = selectedSamples.stream().findFirst().orElse(null);
+		SampleDto sampleDto = FacadeProvider.getSampleFacade().getSampleByUuid(firstSelectedSample.getUuid());
+		
+		// Create a temporary pathogenTest in order to use the CommitDiscardWrapperComponent
+		PathogenTestDto bulkResultData = PathogenTestDto.build(sampleDto, UserProvider.getCurrent().getUser());
+		
+		//set defaults
+		bulkResultData.setTestDateTime(new java.util.Date());
+		bulkResultData.setTestedDisease(disease);
+		bulkResultData.setTestResultVerified(true);
+
+		PathogenTestForm form = new PathogenTestForm(sampleDto, true, 1);
+		form.setValue(bulkResultData);
+		final CommitDiscardWrapperComponent<PathogenTestForm> editView = new CommitDiscardWrapperComponent<PathogenTestForm>(
+			form,
+			UserProvider.getCurrent().hasUserRight(UserRight.PATHOGEN_TEST_CREATE),
+			form.getFieldGroup());
+
+		Window popupWindow = VaadinUiUtil.showModalPopupWindow(editView, I18nProperties.getString(Strings.headingCreateBulkTests));
+
+		editView.addCommitListener(() -> {
+
+				PathogenTestDto updatedBulkResultData = form.getValue();
+				bulkCreate(selectedSamples, updatedBulkResultData);
+				
+				popupWindow.close();
+				Notification.show(I18nProperties.getString(Strings.messageTestsCreated), Type.HUMANIZED_MESSAGE);
+		});
+	}
+	
+	private void bulkCreate(
+		Collection<? extends SampleIndexDto> selectedSamples,
+		PathogenTestDto updatedBulkResultData) {
+		
+		Collection<CaseDataDto> casesToClassify = new ArrayList<CaseDataDto>();
+		Collection<CaseDataDto> casesToClone = new ArrayList<CaseDataDto>();
+		Collection<SampleIndexDto> samplesToUpdate = new ArrayList<SampleIndexDto>();
+
+		for (SampleIndexDto sample : selectedSamples) {
+			
+			updatedBulkResultData.setUuid(DataHelper.createUuid());
+			updatedBulkResultData.setSample(sample.toReference());
+			
+			savePathogenTest(updatedBulkResultData, null, (action, caze) -> {
+				switch (action) {
+					case CONFIRM_CASE_CLASSIFICATION:
+						casesToClassify.add(caze);
+						break;
+					case CLONE_CASE_WITH_NEW_DISEASE:
+						casesToClone.add(caze);
+						break;
+				}
+			});
+			
+			if (isSampleResultDifferentFromPathogenTest(sample, updatedBulkResultData)) {
+				samplesToUpdate.add(sample);
+			}
+		}
+		
+		showConfirmCaseDialog(casesToClassify);
+		showCaseCloningWithNewDiseaseDialog(casesToClone, updatedBulkResultData.getTestedDisease());
+		ControllerProvider.getSampleController().showChangePathogenTestResultWindow(
+			null, 
+			samplesToUpdate.stream().map(sample -> sample.getUuid()).collect(Collectors.toList()), 
+			updatedBulkResultData.getTestResult(), 
+			null
+		);
+	}
+	
+	private boolean isSampleResultDifferentFromPathogenTest (SampleIndexDto sample, PathogenTestDto test) {
+		return test != null
+			&& test.getTestResult() != null
+			&& Boolean.TRUE.equals(test.getTestResultVerified())
+			&& test.getTestedDisease() == sample.getDisease()
+			&& test.getTestResult() != sample.getPathogenTestResult();
+	}
+	
+	public void edit(PathogenTestDto dto, int caseSampleCount, Runnable doneCallback, BiConsumer<PathogenTestDto, Runnable> onSavedPathogenTest) {
+		// get fresh data
+		PathogenTestDto newDto = facade.getByUuid(dto.getUuid());
 
 		Window popupWindow = VaadinUiUtil.createPopupWindow();
 
@@ -150,6 +247,11 @@ public class PathogenTestController {
 		}
 
 		return editView;
+	}
+	
+	private enum SavePathogenTest_NeededAction {
+		CONFIRM_CASE_CLASSIFICATION,
+		CLONE_CASE_WITH_NEW_DISEASE,
 	}
 
 	public static void showCaseUpdateWithNewDiseaseVariantDialog(
@@ -481,8 +583,8 @@ public class PathogenTestController {
 		String diseaseVariantDetails) {
 
 		VaadinUiUtil.showConfirmationPopup(
-			I18nProperties.getCaption(Captions.caseCloneCaseWithNewDisease) + " " + I18nProperties.getEnumCaption(disease) + "?",
-			new Label(I18nProperties.getString(Strings.messageCloneCaseWithNewDisease)),
+			I18nProperties.getCaption(caption) + " " + I18nProperties.getEnumCaption(disease) + "?",
+			new Label(labelText),
 			I18nProperties.getString(Strings.yes),
 			I18nProperties.getString(Strings.no),
 			800,
@@ -501,6 +603,10 @@ public class PathogenTestController {
 				}
 			});
 	}
+	
+	private void showCaseCloningWithNewDiseaseDialog(CaseDataDto existingCaseDto, Disease disease) {
+		showCaseCloningWithNewDiseaseDialog(Arrays.asList(existingCaseDto), disease);
+	}
 
 	public void showConfirmCaseDialog(CaseDataDto caze) {
 
@@ -514,7 +620,7 @@ public class PathogenTestController {
 
 		VaadinUiUtil.showConfirmationPopup(
 			I18nProperties.getCaption(Captions.caseConfirmCase),
-			new Label(I18nProperties.getString(Strings.messageConfirmCaseAfterPathogenTest)),
+			new Label(labelText),
 			I18nProperties.getString(Strings.yes),
 			I18nProperties.getString(Strings.no),
 			800,
@@ -526,6 +632,10 @@ public class PathogenTestController {
 					ControllerProvider.getCaseController().navigateToCase(caseDataByUuid.getUuid());
 				}
 			});
+	}
+	
+	private void showConfirmCaseDialog(CaseDataDto caze) {
+		showConfirmCaseDialog(Arrays.asList(caze));
 	}
 
 }

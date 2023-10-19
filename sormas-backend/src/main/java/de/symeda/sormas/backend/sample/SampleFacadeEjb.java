@@ -393,6 +393,218 @@ public class SampleFacadeEjb implements SampleFacade {
 	@Override
 	public List<SampleIndexDto> getIndexList(SampleCriteria sampleCriteria, Integer first, Integer max, List<SortProperty> sortProperties) {
 		return sampleService.getIndexList(sampleCriteria, first, max, sortProperties);
+
+		final CriteriaBuilder cb = em.getCriteriaBuilder();
+		final CriteriaQuery<SampleIndexDto> cq = cb.createQuery(SampleIndexDto.class);
+		final Root<Sample> sample = cq.from(Sample.class);
+
+		@SuppressWarnings({
+			"unchecked",
+			"rawtypes" })
+		final QueryContext qc = new QueryContext(cb, cq, sample);
+
+		SampleJoins joins = new SampleJoins(sample);
+
+		final Join<Sample, Case> caze = joins.getCaze();
+		final Join<Case, District> caseDistrict = joins.getCaseDistrict();
+		final Join<Case, Community> caseCommunity = joins.getCaseCommunity();
+
+		final Join<Sample, Contact> contact = joins.getContact();
+		final Join<Contact, District> contactDistrict = joins.getContactDistrict();
+		final Join<Contact, Community> contactCommunity = joins.getContactCommunity();
+
+		final Join<Case, District> contactCaseDistrict = joins.getContactCaseDistrict();
+		final Join<Case, Community> contactCaseCommunity = joins.getContactCaseCommunity();
+
+		final Join<EventParticipant, Event> event = joins.getEvent();
+		final Join<Location, District> eventDistrict = joins.getEventDistrict();
+
+		Expression<Object> diseaseSelect = cb.selectCase()
+			.when(cb.isNotNull(caze), caze.get(Case.DISEASE))
+			.otherwise(cb.selectCase().when(cb.isNotNull(contact), contact.get(Contact.DISEASE)).otherwise(event.get(Event.DISEASE)));
+		Expression<Object> diseaseDetailsSelect = cb.selectCase()
+			.when(cb.isNotNull(caze), caze.get(Case.DISEASE_DETAILS))
+			.otherwise(cb.selectCase().when(cb.isNotNull(contact), contact.get(Contact.DISEASE_DETAILS)).otherwise(event.get(Event.DISEASE_DETAILS)));
+
+		Expression<Object> districtSelect = cb.selectCase()
+			.when(cb.isNotNull(caseDistrict), caseDistrict.get(District.UUID))
+			.otherwise(
+				cb.selectCase()
+					.when(cb.isNotNull(contactDistrict), contactDistrict.get(District.UUID))
+					.otherwise(
+						cb.selectCase()
+							.when(cb.isNotNull(contactCaseDistrict), contactCaseDistrict.get(District.UUID))
+							.otherwise(eventDistrict.get(District.UUID))));
+
+		Expression<Object> communitySelect = cb.selectCase()
+			.when(cb.isNotNull(caseCommunity), caseCommunity.get(Community.UUID))
+			.otherwise(
+				cb.selectCase()
+					.when(cb.isNotNull(contactCommunity), contactCommunity.get(Community.UUID))
+					.otherwise(contactCaseCommunity.get(Community.UUID)));
+
+		List<Selection<?>> selections = new ArrayList<>(
+			Arrays.asList(
+				sample.get(Sample.UUID),
+				caze.get(Case.EPID_NUMBER),
+				sample.get(Sample.LAB_SAMPLE_ID),
+				sample.get(Sample.FIELD_SAMPLE_ID),
+				sample.get(Sample.SAMPLE_DATE_TIME),
+				sample.get(Sample.SHIPPED),
+				sample.get(Sample.SHIPMENT_DATE),
+				sample.get(Sample.RECEIVED),
+				sample.get(Sample.RECEIVED_DATE),
+				sample.get(Sample.SAMPLE_MATERIAL),
+				sample.get(Sample.SAMPLE_PURPOSE),
+				sample.get(Sample.SPECIMEN_CONDITION),
+				joins.getLab().get(Facility.UUID),
+				joins.getLab().get(Facility.NAME),
+				joins.getReferredSample().get(Sample.UUID),
+				caze.get(Case.UUID),
+				joins.getCasePerson().get(Person.FIRST_NAME),
+				joins.getCasePerson().get(Person.LAST_NAME),
+				joins.getContact().get(Contact.UUID),
+				joins.getContactPerson().get(Person.FIRST_NAME),
+				joins.getContactPerson().get(Person.LAST_NAME),
+				joins.getEventParticipant().get(EventParticipant.UUID),
+				joins.getEventParticipantPerson().get(Person.FIRST_NAME),
+				joins.getEventParticipantPerson().get(Person.LAST_NAME),
+				diseaseSelect,
+				diseaseDetailsSelect,
+				sample.get(Sample.PATHOGEN_TEST_RESULT),
+				sample.get(Sample.ADDITIONAL_TESTING_REQUESTED),
+				cb.isNotEmpty(sample.get(Sample.ADDITIONAL_TESTS)),
+				joins.getCaseDistrict().get(District.NAME),
+				joins.getContactDistrict().get(District.NAME),
+				joins.getContactCaseDistrict().get(District.NAME),
+				joins.getCaseCommunity().get(Community.NAME),
+				joins.getContactCommunity().get(Community.NAME),
+				joins.getContactCaseCommunity().get(Community.NAME)));
+		selections.addAll(getCaseJurisdictionSelections(joins));
+		selections.addAll(getContactJurisdictionSelections(joins));
+		selections.add(districtSelect);
+		selections.add(joins.getEventDistrict().get(District.NAME));
+
+		cq.multiselect(selections);
+
+		Predicate filter = sampleService.createUserFilter(cq, cb, joins);
+
+		if (sampleCriteria != null) {
+			Predicate criteriaFilter = sampleService.buildCriteriaFilter(sampleCriteria, cb, joins);
+			filter = AbstractAdoService.and(cb, filter, criteriaFilter);
+		}
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		if (sortProperties != null && sortProperties.size() > 0) {
+			List<Order> order = new ArrayList<>(sortProperties.size());
+			for (SortProperty sortProperty : sortProperties) {
+				Expression<?> expression;
+				switch (sortProperty.propertyName) {
+				case SampleIndexDto.UUID:
+				case SampleIndexDto.LAB_SAMPLE_ID:
+				case SampleIndexDto.FIELD_SAMPLE_ID:
+				case SampleIndexDto.SHIPPED:
+				case SampleIndexDto.RECEIVED:
+				case SampleIndexDto.REFERRED:
+				case SampleIndexDto.SAMPLE_DATE_TIME:
+				case SampleIndexDto.SHIPMENT_DATE:
+				case SampleIndexDto.RECEIVED_DATE:
+				case SampleIndexDto.SAMPLE_MATERIAL:
+				case SampleIndexDto.SAMPLE_PURPOSE:
+				case SampleIndexDto.PATHOGEN_TEST_RESULT:
+				case SampleIndexDto.ADDITIONAL_TESTING_STATUS:
+					expression = sample.get(sortProperty.propertyName);
+					break;
+				case SampleIndexDto.DISEASE:
+					expression = diseaseSelect;
+					break;
+				case SampleIndexDto.EPID_NUMBER:
+					expression = caze.get(Case.EPID_NUMBER);
+					break;
+				case SampleIndexDto.ASSOCIATED_CASE:
+					expression = joins.getCasePerson().get(Person.LAST_NAME);
+					order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
+					expression = joins.getCasePerson().get(Person.FIRST_NAME);
+					break;
+				case SampleIndexDto.ASSOCIATED_CONTACT:
+					expression = joins.getContactPerson().get(Person.LAST_NAME);
+					order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
+					expression = joins.getContactPerson().get(Person.FIRST_NAME);
+					break;
+				case SampleIndexDto.ASSOCIATED_EVENT_PARTICIPANT:
+					expression = joins.getEventParticipantPerson().get(Person.LAST_NAME);
+					order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
+					expression = joins.getEventParticipantPerson().get(Person.FIRST_NAME);
+					break;
+				case SampleIndexDto.DISTRICT:
+					expression = districtSelect;
+					break;
+				case SampleIndexDto.COMMUNITY:
+					expression = communitySelect;
+					break;
+				case SampleIndexDto.LAB:
+					expression = joins.getLab().get(Facility.NAME);
+					break;
+				default:
+					throw new IllegalArgumentException(sortProperty.propertyName);
+				}
+				order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
+			}
+			cq.orderBy(order);
+		} else {
+			cq.orderBy(cb.desc(sample.get(Sample.SAMPLE_DATE_TIME)));
+		}
+
+		List<SampleIndexDto> samples;
+		if (first != null && max != null) {
+			samples = em.createQuery(cq).setFirstResult(first).setMaxResults(max).getResultList();
+		} else {
+			samples = em.createQuery(cq).getResultList();
+		}
+
+//		pseudonymizationService.pseudonymizeDtoCollection(SampleIndexDto.class, samples, s -> {
+//			CaseReferenceDto associatedCase = s.getAssociatedCase();
+//			ContactReferenceDto associatedContact = s.getAssociatedContact();
+//			return isInJurisdiction(
+//				associatedCase != null ? s.getAssociatedCaseJurisdiction() : null,
+//				associatedContact != null ? s.getAssociatedContactJurisdiction() : null);
+//		}, (s, isInJurisdiction) -> {
+//			pseudonymizeEmbeddedObjects(
+//				s.getAssociatedCase(),
+//				s.getAssociatedCaseJurisdiction(),
+//				s.getAssociatedContact(),
+//				s.getAssociatedContactJurisdiction());
+//		});
+
+		return samples;
+	}
+
+	private Collection<Selection<?>> getCaseJurisdictionSelections(SampleJoins joins) {
+
+		return Arrays.asList(
+			joins.getCaseReportingUser().get(User.UUID),
+			joins.getCaseRegion().get(Region.UUID),
+			joins.getCaseDistrict().get(District.UUID),
+			joins.getCaseCommunity().get(Community.UUID),
+			joins.getCaseFacility().get(Facility.UUID),
+			joins.getCasePointOfEntry().get(PointOfEntry.UUID));
+	}
+
+	private Collection<Selection<?>> getContactJurisdictionSelections(SampleJoins joins) {
+
+		return Arrays.asList(
+			joins.getContactReportingUser().get(User.UUID),
+			joins.getContactRegion().get(Region.UUID),
+			joins.getContactDistrict().get(District.UUID),
+			joins.getContactCaseReportingUser().get(User.UUID),
+			joins.getContactCaseRegion().get(Region.UUID),
+			joins.getContactCaseDistrict().get(District.UUID),
+			joins.getContactCaseCommunity().get(Community.UUID),
+			joins.getContactCaseHealthFacility().get(Facility.UUID),
+			joins.getContactCasePointOfEntry().get(PointOfEntry.UUID));
 	}
 
 	@Override
@@ -772,6 +984,7 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setAssociatedEventParticipant(eventParticipantService.getByReferenceDto(source.getAssociatedEventParticipant()));
 		target.setLabSampleID(source.getLabSampleID());
 		target.setFieldSampleID(source.getFieldSampleID());
+		target.setForRetest(source.getForRetest());
 		target.setSampleDateTime(source.getSampleDateTime());
 		target.setReportDateTime(source.getReportDateTime());
 		target.setReportingUser(userService.getByReferenceDto(source.getReportingUser()));
@@ -902,6 +1115,7 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setAssociatedEventParticipant(EventParticipantFacadeEjb.toReferenceDto(source.getAssociatedEventParticipant()));
 		target.setLabSampleID(source.getLabSampleID());
 		target.setFieldSampleID(source.getFieldSampleID());
+		target.setForRetest(source.getForRetest());
 		target.setSampleDateTime(source.getSampleDateTime());
 		target.setReportDateTime(source.getReportDateTime());
 		target.setReportingUser(UserFacadeEjb.toReferenceDto(source.getReportingUser()));

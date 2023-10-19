@@ -75,6 +75,7 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 
 		target.setLabSampleID(source.getLabSampleID());
 		target.setFieldSampleID(source.getFieldSampleID());
+		target.setForRetest(source.getForRetest());
 		target.setSampleDateTime(source.getSampleDateTime());
 		target.setSampleMaterial(source.getSampleMaterial());
 		target.setSampleMaterialText(source.getSampleMaterialText());
@@ -147,6 +148,7 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 		target.setLabDetails(source.getLabDetails());
 		target.setLabSampleID(source.getLabSampleID());
 		target.setFieldSampleID(source.getFieldSampleID());
+		target.setForRetest(source.getForRetest());
 		target.setSampleDateTime(source.getSampleDateTime());
 		target.setReportDateTime(source.getReportDateTime());
 		target.setSampleMaterial(source.getSampleMaterial());

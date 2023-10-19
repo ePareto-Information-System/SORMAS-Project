@@ -194,6 +194,7 @@ public class CaseReadFragment extends BaseReadFragment<FragmentCaseReadLayoutBin
 		} else if (record.getLaboratoryDiagnosticConfirmation() == YesNoUnknown.YES) {
 			contentBinding.setSingleClassification(CaseConfirmationBasis.LABORATORY_DIAGNOSTIC_CONFIRMATION);
 		}
+		contentBinding.setCaseTransmissionClassificationClass(record.getCaseTransmissionClassification());
 	}
 
 	@Override

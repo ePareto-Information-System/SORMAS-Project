@@ -41,7 +41,11 @@
         <import type="de.symeda.sormas.api.disease.DiseaseVariant" />
 
         <variable name="data" type="de.symeda.sormas.app.backend.caze.Case" />
+<<<<<<< HEAD
         <variable name="singleClassification" type="de.symeda.sormas.api.caze.CaseConfirmationBasis" />
+=======
+        <variable name="caseTransmissionClassificationClass" type="de.symeda.sormas.api.caze.TransmissionClassification" />
+>>>>>>> origin/case_contact_transmission_classification
     </data>
 
     <ScrollView
@@ -344,11 +348,18 @@
                     app:value="@{data.caseOrigin}"
                     style="@style/ControlSingleColumnStyle" />
 
+<<<<<<< HEAD
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@{I18nProperties.getString(Strings.headingCaseResponsibleJurisidction)}"
                     style="@style/SubHeadingStyle" />
+=======
+                <de.symeda.sormas.app.component.controls.ControlTextReadField
+                    android:id="@+id/caseData_caseTransmissionClassification"
+                    app:value="@{data.caseTransmissionClassification}"
+                    style="@style/ControlSingleColumnStyle" />
+>>>>>>> origin/case_contact_transmission_classification
 
                 <LinearLayout
                     android:layout_width="match_parent"

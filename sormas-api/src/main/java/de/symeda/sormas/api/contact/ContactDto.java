@@ -28,10 +28,14 @@ import javax.validation.constraints.Size;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
+<<<<<<< HEAD
 import de.symeda.sormas.api.caze.VaccinationStatus;
 import de.symeda.sormas.api.clinicalcourse.HealthConditionsDto;
 import de.symeda.sormas.api.common.DeletionReason;
 import de.symeda.sormas.api.disease.DiseaseVariant;
+=======
+import de.symeda.sormas.api.caze.TransmissionClassification;
+>>>>>>> origin/case_contact_transmission_classification
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.event.EventParticipantDto;
 import de.symeda.sormas.api.feature.FeatureType;
@@ -117,6 +121,7 @@ public class ContactDto extends SormasToSormasShareableDto {
 	public static final String QUARANTINE_HOME_POSSIBLE_COMMENT = "quarantineHomePossibleComment";
 	public static final String QUARANTINE_HOME_SUPPLY_ENSURED = "quarantineHomeSupplyEnsured";
 	public static final String QUARANTINE_HOME_SUPPLY_ENSURED_COMMENT = "quarantineHomeSupplyEnsuredComment";
+<<<<<<< HEAD
 	public static final String QUARANTINE_OFFICIAL_ORDER_SENT = "quarantineOfficialOrderSent";
 	public static final String QUARANTINE_OFFICIAL_ORDER_SENT_DATE = "quarantineOfficialOrderSentDate";
 	public static final String QUARANTINE_ORDERED_OFFICIAL_DOCUMENT = "quarantineOrderedOfficialDocument";
@@ -146,6 +151,11 @@ public class ContactDto extends SormasToSormasShareableDto {
 	public static final String QUARANTINE_CHANGE_COMMENT = "quarantineChangeComment";
 	public static final String DELETION_REASON = "deletionReason";
 	public static final String OTHER_DELETION_REASON = "otherDeletionReason";
+=======
+	public static final String ADDITIONAL_DETAILS = "additionalDetails";
+	public static final String EPI_DATA = "epiData";
+	public static final String CONTACT_TRANSMISSION_CLASSIFICATION = "contactTransmissionClassification";
+>>>>>>> origin/case_contact_transmission_classification
 
 	private CaseReferenceDto caze;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
@@ -302,6 +312,7 @@ public class ContactDto extends SormasToSormasShareableDto {
 	private String additionalDetails;
 	@Required
 	private EpiDataDto epiData;
+<<<<<<< HEAD
 	@Valid
 	@Required
 	private HealthConditionsDto healthConditions;
@@ -352,6 +363,9 @@ public class ContactDto extends SormasToSormasShareableDto {
 	private DeletionReason deletionReason;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
 	private String otherDeletionReason;
+=======
+	private TransmissionClassification contactTransmissionClassification;
+>>>>>>> origin/case_contact_transmission_classification
 
 	public static ContactDto build() {
 		final ContactDto contact = new ContactDto();
@@ -906,6 +920,7 @@ public class ContactDto extends SormasToSormasShareableDto {
 		this.epiData = epiData;
 	}
 
+<<<<<<< HEAD
 	public HealthConditionsDto getHealthConditions() {
 		return healthConditions;
 	}
@@ -1042,3 +1057,13 @@ public class ContactDto extends SormasToSormasShareableDto {
 		this.otherDeletionReason = otherDeletionReason;
 	}
 }
+=======
+	public TransmissionClassification getContactTransmissionClassification() {
+		return contactTransmissionClassification;
+	}
+
+	public void setContactTransmissionClassification(TransmissionClassification contactTransmissionClassification) {
+		this.contactTransmissionClassification = contactTransmissionClassification;
+	}
+}
+>>>>>>> origin/case_contact_transmission_classification

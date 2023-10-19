@@ -150,6 +150,7 @@ public class ContactDtoHelper extends PersonDependentDtoHelper<Contact, ContactD
 		target.setAdditionalDetails(source.getAdditionalDetails());
 
 		target.setEpiData(epiDataDtoHelper.fillOrCreateFromDto(target.getEpiData(), source.getEpiData()));
+<<<<<<< HEAD
 
 		target.setHealthConditions(healthConditionsDtoHelper.fillOrCreateFromDto(target.getHealthConditions(), source.getHealthConditions()));
 
@@ -171,6 +172,9 @@ public class ContactDtoHelper extends PersonDependentDtoHelper<Contact, ContactD
 		target.setFollowUpStatusChangeDate(source.getFollowUpStatusChangeDate());
 		target.setFollowUpStatusChangeUser(DatabaseHelper.getUserDao().getByReferenceDto(source.getFollowUpStatusChangeUser()));
 		target.setVaccinationStatus(source.getVaccinationStatus());
+=======
+		target.setContactTransmissionClassification(source.getContactTransmissionClassification());
+>>>>>>> origin/case_contact_transmission_classification
 	}
 
 	@Override
@@ -289,6 +293,7 @@ public class ContactDtoHelper extends PersonDependentDtoHelper<Contact, ContactD
 		} else {
 			target.setEpiData(null);
 		}
+<<<<<<< HEAD
 
 		if (source.getHealthConditions() != null) {
 			HealthConditions healthConditions = DatabaseHelper.getHealthConditionsDao().queryForId(source.getHealthConditions().getId());
@@ -325,6 +330,9 @@ public class ContactDtoHelper extends PersonDependentDtoHelper<Contact, ContactD
 	@Override
 	protected long getApproximateJsonSizeInBytes() {
 		return ContactDto.APPROXIMATE_JSON_SIZE_IN_BYTES;
+=======
+		target.setContactTransmissionClassification(source.getContactTransmissionClassification());
+>>>>>>> origin/case_contact_transmission_classification
 	}
 
 	public static ContactReferenceDto toReferenceDto(Contact ado) {

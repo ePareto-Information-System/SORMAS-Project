@@ -25,6 +25,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -53,6 +55,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.DiseaseHelper;
+import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseBulkEditData;
 import de.symeda.sormas.api.caze.CaseCriteria;
@@ -74,6 +77,7 @@ import de.symeda.sormas.api.contact.ContactSimilarityCriteria;
 import de.symeda.sormas.api.contact.ContactStatus;
 import de.symeda.sormas.api.contact.SimilarContactDto;
 import de.symeda.sormas.api.deletionconfiguration.DeletionInfoDto;
+import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventParticipantCriteria;
 import de.symeda.sormas.api.event.EventParticipantDto;
@@ -1380,6 +1384,29 @@ public class CaseController {
 	}
 
 	public CommitDiscardWrapperComponent<ClinicalCourseForm> getClinicalCourseComponent(String caseUuid) {
+	public void setDefaultValues(EpiDataDto epiDataDto) {
+		if (epiDataDto == null) {
+			return;
+		}
+
+		try {
+			for (PropertyDescriptor pd : Introspector.getBeanInfo(EpiDataDto.class, EntityDto.class).getPropertyDescriptors()) {
+				if (pd.getWriteMethod() != null && (pd.getReadMethod().getReturnType().equals(YesNoUnknown.class))) {
+					try {
+						if (pd.getReadMethod().invoke(epiDataDto) == null)
+							pd.getWriteMethod().invoke(epiDataDto, YesNoUnknown.NO);
+					} catch (Exception e) {
+						throw new RuntimeException(e);
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public CommitDiscardWrapperComponent<ClinicalCourseForm> getClinicalCourseComponent(String caseUuid, ViewMode viewMode) {
 
 		CaseDataDto caze = FacadeProvider.getCaseFacade().getCaseDataByUuid(caseUuid);
 		ClinicalCourseForm form = new ClinicalCourseForm(caze.isPseudonymized());

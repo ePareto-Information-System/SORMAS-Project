@@ -97,6 +97,9 @@ import de.symeda.sormas.backend.sample.transformers.SampleListEntryDtoResultTran
 import de.symeda.sormas.backend.sormastosormas.share.shareinfo.SormasToSormasShareInfo;
 import de.symeda.sormas.backend.sormastosormas.share.shareinfo.SormasToSormasShareInfoFacadeEjb.SormasToSormasShareInfoFacadeEjbLocal;
 import de.symeda.sormas.backend.sormastosormas.share.shareinfo.SormasToSormasShareInfoService;
+import de.symeda.sormas.backend.region.Community;
+import de.symeda.sormas.backend.region.District;
+import de.symeda.sormas.backend.region.Region;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.IterableHelper;
@@ -761,6 +764,15 @@ public class SampleService extends AbstractDeletableAdoService<Sample> {
 					cb.equal(joins.getEventDistrict().get(District.UUID), districtUuid),
 					cb.equal(joins.getEventParticipantJoins().getEventParticipantResponsibleDistrict().get(District.UUID), districtUuid)));
 		}
+		if (criteria.getCommunity() != null) {
+			Expression<Object> communityExpression = cb.selectCase()
+				.when(cb.isNotNull(joins.getCaseCommunity()), joins.getCaseCommunity().get(Community.UUID))
+				.otherwise(
+					cb.selectCase()
+						.when(cb.isNotNull(joins.getContactCommunity()), joins.getContactCommunity().get(Community.UUID))
+						.otherwise(joins.getContactCaseCommunity().get(Community.UUID)));
+			filter = and(cb, filter, cb.equal(communityExpression, criteria.getCommunity().getUuid()));
+		}
 		if (criteria.getLaboratory() != null) {
 			filter =
 				CriteriaBuilderHelper.and(cb, filter, cb.equal(joins.getLab().get(AbstractDomainObject.UUID), criteria.getLaboratory().getUuid()));
@@ -815,6 +827,9 @@ public class SampleService extends AbstractDeletableAdoService<Sample> {
 			filter =
 				CriteriaBuilderHelper.and(cb, filter, cb.lessThanOrEqualTo(sample.get(Sample.SAMPLE_DATE_TIME), criteria.getSampleReportDateTo()));
 		}
+		
+		filter = createSampleDateFilter(cb, filter, sample, criteria);
+		
 		if (criteria.getSpecimenCondition() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(sample.get(Sample.SPECIMEN_CONDITION), criteria.getSpecimenCondition()));
 		}
@@ -898,6 +913,33 @@ public class SampleService extends AbstractDeletableAdoService<Sample> {
 				.and(cb, filter, cb.equal(joins.getEventParticipant().get(EventParticipant.UUID), criteria.getEventParticipant().getUuid()));
 		}
 
+		return filter;
+	}
+	
+	private Predicate createSampleDateFilter(CriteriaBuilder cb, Predicate filter, From<?, ?> sample, SampleCriteria criteria) {
+		
+		String dateProperty = Sample.SAMPLE_DATE_TIME;
+		if (criteria.getSampleDateType() != null) {
+			switch (criteria.getSampleDateType()) {
+				case REPORT: dateProperty = Sample.REPORT_DATE_TIME; break;
+				case SHIPPED: dateProperty = Sample.SHIPMENT_DATE; break;
+				case RECEIVED: dateProperty = Sample.RECEIVED_DATE; break;
+				case RESULT: dateProperty = Sample.PATHOGEN_TEST_RESULT_CHANGE_DATE; break;
+				default: dateProperty = Sample.SAMPLE_DATE_TIME; break;
+			}
+		}
+		
+		if (criteria.getSampleDateFrom() != null && criteria.getSampleDateTo() != null) {
+			filter = and(
+				cb,
+				filter,
+				cb.between(sample.get(dateProperty), criteria.getSampleDateFrom(), criteria.getSampleDateTo()));
+		} else if (criteria.getSampleDateFrom() != null) {
+			filter = and(cb, filter, cb.greaterThanOrEqualTo(sample.get(dateProperty), criteria.getSampleDateFrom()));
+		} else if (criteria.getSampleDateTo() != null) {
+			filter = and(cb, filter, cb.lessThanOrEqualTo(sample.get(dateProperty), criteria.getSampleDateTo()));
+		}
+		
 		return filter;
 	}
 

@@ -37,8 +37,13 @@
 
         <variable name="data" type="de.symeda.sormas.app.backend.contact.Contact"/>
         <variable name="caze" type="de.symeda.sormas.app.backend.caze.Case"/>
+<<<<<<< HEAD
         <variable name="yesNoUnknownClass" type="Class" />
         <variable name="vaccinationStatusClass" type="Class" />
+=======
+        <variable name="contactTransmissionClassificationClass" type="de.symeda.sormas.api.caze.TransmissionClassification" />
+
+>>>>>>> origin/case_contact_transmission_classification
     </data>
 
     <ScrollView
@@ -76,6 +81,7 @@
 
                 </LinearLayout>
 
+<<<<<<< HEAD
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -91,6 +97,13 @@
                         app:value="@={data.externalToken}"
                         style="@style/ControlSecondOfTwoColumnsStyle"/>
                 </LinearLayout>
+=======
+                <de.symeda.sormas.app.component.controls.ControlSpinnerField
+                    android:id="@+id/contact_contactTransmissionClassification"
+                    style="@style/ControlSingleColumnStyle"
+                    app:required="true"
+                    app:value="@={data.contactTransmissionClassification}" />
+>>>>>>> origin/case_contact_transmission_classification
 
                 <de.symeda.sormas.app.component.controls.ControlTextEditField
                     android:id="@+id/contact_internalToken"

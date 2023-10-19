@@ -118,6 +118,7 @@
 
                 </LinearLayout>
 
+<<<<<<< HEAD
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/sample_samplingReason"
                     style="@style/ControlSingleColumnStyle"
@@ -129,6 +130,24 @@
                     android:id="@+id/sample_fieldSampleID"
                     app:value="@{data.fieldSampleID}"
                     style="@style/ControlSingleColumnStyle" />
+=======
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/sample_fieldSampleID"
+                        app:value="@{data.fieldSampleID}"
+                        style="@style/ControlFirstOfTwoColumnsStyle" />
+
+                    <de.symeda.sormas.app.component.controls.ControlTextReadField
+                        android:id="@+id/sample_forRetest"
+                        app:value="@{data.forRetest}"
+                        style="@style/ControlSecondOfTwoColumnsStyle" />
+
+                </LinearLayout>
+>>>>>>> origin/case_contact_transmission_classification
 
                 <de.symeda.sormas.app.component.controls.ControlTextReadField
                     android:id="@+id/sample_lab"

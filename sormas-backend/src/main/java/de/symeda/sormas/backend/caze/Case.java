@@ -65,6 +65,8 @@ import de.symeda.sormas.api.caze.RabiesType;
 import de.symeda.sormas.api.caze.ReinfectionDetail;
 import de.symeda.sormas.api.caze.ReinfectionStatus;
 import de.symeda.sormas.api.caze.ScreeningType;
+import de.symeda.sormas.api.caze.ReportingType;
+import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.caze.Trimester;
 import de.symeda.sormas.api.caze.VaccinationStatus;
 import de.symeda.sormas.api.contact.FollowUpStatus;
@@ -119,6 +121,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public static final String EPIDEMIOLOGICAL_CONFIRMATION = "epidemiologicalConfirmation";
 	public static final String LABORATORY_DIAGNOSTIC_CONFIRMATION = "laboratoryDiagnosticConfirmation";
 	public static final String SYSTEM_CASE_CLASSIFICATION = "systemCaseClassification";
+	public static final String CLASSIFICATION_DATE = "classificationDate";
 	public static final String INVESTIGATION_STATUS = "investigationStatus";
 	public static final String PERSON = "person";
 	public static final String PERSON_ID = "personId";
@@ -243,6 +246,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public static final String QUARANTINE_CHANGE_COMMENT = "quarantineChangeComment";
 	public static final String DUPLICATE_OF = "duplicateOf";
 	public static final String CREATION_VERSION = "creationVersion";
+	public static final String CASE_TRANSMISSION_CLASSIFICATION = "caseTransmissionClassification";
 
 	private Person person;
 	private String description;
@@ -429,6 +433,8 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public void setPersonId(Long personId) {
 		this.personId = personId;
 	}
+
+	private TransmissionClassification caseTransmissionClassification;
 
 	@ManyToOne(cascade = {})
 	@JoinColumn(nullable = false)
@@ -1743,5 +1749,12 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setExternalData(Map<String, String> externalData) {
 		this.externalData = externalData;
+	@Enumerated(EnumType.STRING)
+	public TransmissionClassification getCaseTransmissionClassification() {
+		return caseTransmissionClassification;
+	}
+
+	public void setCaseTransmissionClassification(TransmissionClassification caseTransmissionClassification) {
+		this.caseTransmissionClassification = caseTransmissionClassification;
 	}
 }

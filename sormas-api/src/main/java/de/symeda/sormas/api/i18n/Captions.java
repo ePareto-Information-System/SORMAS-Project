@@ -204,10 +204,7 @@ public interface Captions {
 	String bulkDelete = "bulkDelete";
 	String bulkDisease = "bulkDisease";
 	String bulkEdit = "bulkEdit";
-	String bulkEditAssignee = "bulkEditAssignee";
-	String bulkEventInvestigationStatus = "bulkEventInvestigationStatus";
-	String bulkEventManagementStatus = "bulkEventManagementStatus";
-	String bulkEventParticipantsToContacts = "bulkEventParticipantsToContacts";
+	String bulkEnterTestResult = "bulkEnterTestResult";
 	String bulkEventStatus = "bulkEventStatus";
 	String bulkEventType = "bulkEventType";
 	String bulkFacility = "bulkFacility";
@@ -267,6 +264,7 @@ public interface Captions {
 	String caseCancelDeletion = "caseCancelDeletion";
 	String caseCasesList = "caseCasesList";
 	String caseClassificationCalculationButton = "caseClassificationCalculationButton";
+	String caseCloneCasesWithNewDisease = "caseCloneCasesWithNewDisease";
 	String caseCloneCaseWithNewDisease = "caseCloneCaseWithNewDisease";
 	String caseConfirmCase = "caseConfirmCase";
 	String caseContacts = "caseContacts";

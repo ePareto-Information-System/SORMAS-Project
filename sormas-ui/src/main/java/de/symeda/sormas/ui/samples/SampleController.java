@@ -19,11 +19,12 @@ package de.symeda.sormas.ui.samples;
 
 import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_NONE;
 import static java.util.Objects.isNull;
-
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
 
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.Page;
@@ -530,8 +531,12 @@ public class SampleController {
 		layout.setMargin(true);
 
 		ConfirmationComponent confirmationComponent = VaadinUiUtil.buildYesNoConfirmationComponent();
+		
+		String descriptionText = samplesUuids.size() > 1 ?
+			String.format(I18nProperties.getString(Strings.messageChangePathogenTestsResults), samplesUuids.size(), newResult.toString())
+			: String.format(I18nProperties.getString(Strings.messageChangePathogenTestResult), newResult.toString());
 
-		Label description = new Label(String.format(I18nProperties.getString(Strings.messageChangePathogenTestResult), newResult.toString()));
+		Label description = new Label(descriptionText);
 		description.setWidth(100, Unit.PERCENTAGE);
 		layout.addComponent(description);
 		layout.addComponent(confirmationComponent);
@@ -573,6 +578,15 @@ public class SampleController {
 				}
 			}
 		});
+	}
+	
+	public void showChangePathogenTestResultWindow(
+		CommitDiscardWrapperComponent<SampleEditForm> editComponent,
+		String sampleUuid,
+		PathogenTestResultType newResult,
+		Runnable callback) {
+
+		showChangePathogenTestResultWindow(editComponent, Arrays.asList(sampleUuid), newResult, callback);
 	}
 
 	public void deleteAllSelectedItems(Collection<SampleIndexDto> selectedRows, Runnable callback) {

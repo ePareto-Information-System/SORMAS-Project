@@ -44,6 +44,37 @@ public class SampleJoins extends QueryJoins<Sample> {
 	private Join<Sample, Sample> referredSample;
 	private Join<Sample, Facility> lab;
 	private Join<Sample, Case> caze;
+<<<<<<< HEAD
+=======
+	private Join<Case, Person> casePerson;
+	private Join<Case, User> caseReportingUser;
+	private Join<Case, Region> caseRegion;
+	private Join<Case, District> caseDistrict;
+	private Join<Case, Community> caseCommunity;
+	private Join<Case, Facility> caseFacility;
+	private Join<Case, PointOfEntry> casePointOfEntry;
+	private Join<Sample, Contact> contact;
+	private Join<Contact, Person> contactPerson;
+	private Join<Contact, User> contactReportingUser;
+	private Join<Contact, Region> contactRegion;
+	private Join<Contact, District> contactDistrict;
+	private Join<Contact, Community> contactCommunity;
+	private Join<Contact, Case> contactCase;
+	private Join<Case, User> contactCaseReportingUser;
+	private Join<Case, Region> contactCaseRegion;
+	private Join<Case, District> contactCaseDistrict;
+	private Join<Case, Community> contactCaseCommunity;
+	private Join<Case, Facility> contactCaseHealthFacility;
+	private Join<Case, PointOfEntry> contactCasePointOfEntry;
+	private Join<Person, Location> casePersonAddress;
+	private Join<Location, Region> casePersonAddressRegion;
+	private Join<Location, District> casePersonAddressDistrict;
+	private Join<Location, Community> casePersonAddressCommunity;
+	private Join<Person, Location> contactPersonAddress;
+	private Join<Location, Region> contactPersonAddressRegion;
+	private Join<Location, District> contactPersonAddressDistrict;
+	private Join<Location, Community> contactPersonAddressCommunity;
+>>>>>>> origin/case_contact_transmission_classification
 	private Join<Sample, EventParticipant> eventParticipant;
 	private Join<Sample, Contact> contact;
 
@@ -217,6 +248,14 @@ public class SampleJoins extends QueryJoins<Sample> {
 
 	public Join<Contact, Community> getContactCommunity() {
 		return getContactJoins().getCommunity();
+	}
+
+	public Join<Contact, Community> getContactCommunity() {
+		return getOrCreate(contactCommunity, Contact.DISTRICT, JoinType.LEFT, getContact(), this::setContactCommunity);
+	}
+
+	private void setContactCommunity(Join<Contact, Community> contactCommunity) {
+		this.contactCommunity = contactCommunity;
 	}
 
 	public Join<Contact, Case> getContactCase() {

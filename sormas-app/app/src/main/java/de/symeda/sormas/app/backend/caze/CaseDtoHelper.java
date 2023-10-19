@@ -199,6 +199,7 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 
 		target.setPostpartum(source.getPostpartum());
 		target.setTrimester(source.getTrimester());
+<<<<<<< HEAD
 
 		target.setPseudonymized(source.isPseudonymized());
 		target.setFacilityType(source.getFacilityType());
@@ -234,6 +235,9 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 		target.setNotACaseReasonDetails(source.getNotACaseReasonDetails());
 		target.setFollowUpStatusChangeDate(source.getFollowUpStatusChangeDate());
 		target.setFollowUpStatusChangeUser(DatabaseHelper.getUserDao().getByReferenceDto(source.getFollowUpStatusChangeUser()));
+=======
+		target.setCaseTransmissionClassification(source.getCaseTransmissionClassification());
+>>>>>>> origin/case_contact_transmission_classification
 	}
 
 	@Override
@@ -446,6 +450,7 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 
 		target.setPostpartum(source.getPostpartum());
 		target.setTrimester(source.getTrimester());
+<<<<<<< HEAD
 
 		target.setPseudonymized(source.isPseudonymized());
 		target.setFacilityType(source.getFacilityType());
@@ -495,6 +500,9 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 	@Override
 	protected long getApproximateJsonSizeInBytes() {
 		return CaseDataDto.APPROXIMATE_JSON_SIZE_IN_BYTES;
+=======
+		target.setCaseTransmissionClassification(source.getCaseTransmissionClassification());
+>>>>>>> origin/case_contact_transmission_classification
 	}
 
 	public static CaseReferenceDto toReferenceDto(Case ado) {
