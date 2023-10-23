@@ -150,8 +150,6 @@ public class ContactDto extends SormasToSormasShareableDto {
 	public static final String QUARANTINE_CHANGE_COMMENT = "quarantineChangeComment";
 	public static final String DELETION_REASON = "deletionReason";
 	public static final String OTHER_DELETION_REASON = "otherDeletionReason";
-	public static final String ADDITIONAL_DETAILS = "additionalDetails";
-	public static final String EPI_DATA = "epiData";
 	public static final String CONTACT_TRANSMISSION_CLASSIFICATION = "contactTransmissionClassification";
 
 	private CaseReferenceDto caze;
@@ -1069,7 +1067,7 @@ public class ContactDto extends SormasToSormasShareableDto {
 	public void setOtherDeletionReason(String otherDeletionReason) {
 		this.otherDeletionReason = otherDeletionReason;
 	}
-}
+
 	public TransmissionClassification getContactTransmissionClassification() {
 		return contactTransmissionClassification;
 	}

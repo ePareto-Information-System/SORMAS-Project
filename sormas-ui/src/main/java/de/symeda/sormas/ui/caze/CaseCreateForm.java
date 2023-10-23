@@ -41,6 +41,7 @@ import com.vaadin.v7.ui.AbstractSelect.ItemCaptionMode;
 import com.vaadin.v7.ui.CheckBox;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.DateField;
+import com.vaadin.v7.ui.OptionGroup;
 import com.vaadin.v7.ui.TextField;
 
 import de.symeda.sormas.api.Disease;
@@ -115,7 +116,10 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 	private final TravelEntryDto convertedTravelEntry;
 
 	//@formatter:off
-	private static final String HTML_LAYOUT = fluidRow(
+	private static final String HTML_LAYOUT = fluidRowLocs(4, CaseDataDto.CASE_ORIGIN, 8, CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION)
+			// private static final String HTML_LAYOUT = fluidRowLocs(CaseDataDto.CASE_ORIGIN, "")
+			+ fluidRowLocs(CaseDataDto.REPORT_DATE, CaseDataDto.EPID_NUMBER, CaseDataDto.EXTERNAL_ID)
+			+ fluidRow(
 			fluidColumnLoc(6, 0, CaseDataDto.DISEASE),
 			fluidColumn(6, 0,
 					locs(CaseDataDto.DISEASE_DETAILS, CaseDataDto.PLAGUE_TYPE, CaseDataDto.DENGUE_FEVER_TYPE,
@@ -152,11 +156,11 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 
 	public CaseCreateForm(Boolean showHomeAddressForm, Boolean showPersonSearchButton, TravelEntryDto convertedTravelEntry) {
 		super(
-			CaseDataDto.class,
-			CaseDataDto.I18N_PREFIX,
-			false,
-			FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
-			UiFieldAccessCheckers.getNoop());
+				CaseDataDto.class,
+				CaseDataDto.I18N_PREFIX,
+				false,
+				FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
+				UiFieldAccessCheckers.getNoop());
 		this.convertedTravelEntry = convertedTravelEntry;
 		this.showHomeAddressForm = showHomeAddressForm;
 		this.showPersonSearchButton = showPersonSearchButton;
@@ -238,29 +242,29 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		pointOfEntryDistrictCombo.addValueChangeListener(e -> updatePOEs());
 
 		FieldHelper.setVisibleWhen(
-			differentPlaceOfStayJurisdiction,
-			Arrays.asList(region, districtCombo, communityCombo),
-			Collections.singletonList(Boolean.TRUE),
-			true);
+				differentPlaceOfStayJurisdiction,
+				Arrays.asList(region, districtCombo, communityCombo),
+				Collections.singletonList(Boolean.TRUE),
+				true);
 
 		FieldHelper.setVisibleWhen(
-			differentPointOfEntryJurisdiction,
-			Arrays.asList(pointOfEntryRegionCombo, pointOfEntryDistrictCombo),
-			Collections.singletonList(Boolean.TRUE),
-			true);
+				differentPointOfEntryJurisdiction,
+				Arrays.asList(pointOfEntryRegionCombo, pointOfEntryDistrictCombo),
+				Collections.singletonList(Boolean.TRUE),
+				true);
 
 		FieldHelper.setRequiredWhen(
-			differentPlaceOfStayJurisdiction,
-			Arrays.asList(region, districtCombo),
-			Collections.singletonList(Boolean.TRUE),
-			false,
-			null);
+				differentPlaceOfStayJurisdiction,
+				Arrays.asList(region, districtCombo),
+				Collections.singletonList(Boolean.TRUE),
+				false,
+				null);
 
 		ogCaseOrigin.addValueChangeListener(e -> {
 			CaseOrigin caseOrigin = (CaseOrigin) e.getProperty().getValue();
 
 			boolean pointOfEntryRegionDistrictVisible =
-				CaseOrigin.POINT_OF_ENTRY.equals(ogCaseOrigin.getValue()) && Boolean.TRUE.equals(differentPointOfEntryJurisdiction.getValue());
+					CaseOrigin.POINT_OF_ENTRY.equals(ogCaseOrigin.getValue()) && Boolean.TRUE.equals(differentPointOfEntryJurisdiction.getValue());
 			pointOfEntryRegionCombo.setVisible(pointOfEntryRegionDistrictVisible);
 			pointOfEntryDistrictCombo.setVisible(pointOfEntryRegionDistrictVisible);
 
@@ -273,7 +277,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
         });
 
 		facilityOrHome =
-			addCustomField(FACILITY_OR_HOME_LOC, TypeOfPlace.class, NullableOptionGroup.class, I18nProperties.getCaption(Captions.casePlaceOfStay));
+				addCustomField(FACILITY_OR_HOME_LOC, TypeOfPlace.class, NullableOptionGroup.class, I18nProperties.getCaption(Captions.casePlaceOfStay));
 		facilityOrHome.removeAllItems();
 		for (TypeOfPlace place : TypeOfPlace.FOR_CASES) {
 			facilityOrHome.addItem(place);
@@ -307,12 +311,12 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		if (convertedTravelEntry != null) {
 			differentPointOfEntryJurisdiction.setValue(true);
 			RegionReferenceDto regionReferenceDto = convertedTravelEntry.getPointOfEntryRegion() != null
-				? convertedTravelEntry.getPointOfEntryRegion()
-				: convertedTravelEntry.getResponsibleRegion();
+					? convertedTravelEntry.getPointOfEntryRegion()
+					: convertedTravelEntry.getResponsibleRegion();
 			pointOfEntryRegionCombo.setValue(regionReferenceDto);
 			DistrictReferenceDto districtReferenceDto = convertedTravelEntry.getPointOfEntryDistrict() != null
-				? convertedTravelEntry.getPointOfEntryDistrict()
-				: convertedTravelEntry.getResponsibleDistrict();
+					? convertedTravelEntry.getPointOfEntryDistrict()
+					: convertedTravelEntry.getResponsibleDistrict();
 			pointOfEntryDistrictCombo.setValue(districtReferenceDto);
 
 			differentPointOfEntryJurisdiction.setReadOnly(true);
@@ -327,14 +331,14 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		region.addValueChangeListener(e -> {
 			RegionReferenceDto regionDto = (RegionReferenceDto) e.getProperty().getValue();
 			FieldHelper
-				.updateItems(districtCombo, regionDto != null ? FacadeProvider.getDistrictFacade().getAllActiveByRegion(regionDto.getUuid()) : null);
+					.updateItems(districtCombo, regionDto != null ? FacadeProvider.getDistrictFacade().getAllActiveByRegion(regionDto.getUuid()) : null);
 		});
 		districtCombo.addValueChangeListener(e -> {
 			FieldHelper.removeItems(communityCombo);
 			DistrictReferenceDto districtDto = (DistrictReferenceDto) e.getProperty().getValue();
 			FieldHelper.updateItems(
-				communityCombo,
-				districtDto != null ? FacadeProvider.getCommunityFacade().getAllActiveByDistrict(districtDto.getUuid()) : null);
+					communityCombo,
+					districtDto != null ? FacadeProvider.getCommunityFacade().getAllActiveByDistrict(districtDto.getUuid()) : null);
 
 			updateFacility();
 			if (!Boolean.TRUE.equals(differentPointOfEntryJurisdiction.getValue())) {
@@ -359,6 +363,27 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 				facilityType.setValue(facilityUserType);
 				String facilityName = facilityDto.getName();
 				facilityCombo.setValue(facilityName);
+			FieldHelper.removeItems(facilityCombo);
+			if (TypeOfPlace.FACILITY.equals(facilityOrHome.getValue())
+					|| ((facilityOrHome.getValue() instanceof java.util.Set) && TypeOfPlace.FACILITY.equals(facilityOrHome.getNullableValue()))) {
+				if (facilityTypeGroup.getValue() == null) {
+					facilityTypeGroup.setValue(FacilityTypeGroup.MEDICAL_FACILITY);
+				}
+				if (facilityType.getValue() == null && FacilityTypeGroup.MEDICAL_FACILITY.equals(facilityTypeGroup.getValue())) {
+					facilityType.setValue(FacilityType.HOSPITAL);
+				}
+
+				if (facilityType.getValue() != null) {
+					updateFacility();
+				}
+
+				if (CaseOrigin.IN_COUNTRY.equals(ogCaseOrigin.getValue())) {
+					facilityCombo.setRequired(true);
+				}
+				updateFacilityFields(facilityCombo, facilityDetails);
+			} else if (TypeOfPlace.HOME.equals(facilityOrHome.getValue())
+					|| ((facilityOrHome.getValue() instanceof java.util.Set) && TypeOfPlace.HOME.equals(facilityOrHome.getNullableValue()))) {
+				setNoneFacility();
 			} else {
 				FieldHelper.removeItems(facilityCombo);
 				if (TypeOfPlace.FACILITY.equals(facilityOrHome.getValue())
@@ -396,8 +421,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		region.addItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
 
 		OptionGroup caseTransmissionClassification = addField(CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION, OptionGroup.class);
-		caseTransmissionClassification.setRequired(false);
-		caseTransmissionClassification.setVisible(true);
+		caseTransmissionClassification.setRequired(true);
 //		if (userJurisdictionLevel == JurisdictionLevel.COMMUNITY) {
 //			region.setReadOnly(true);
 //			district.setReadOnly(true);
@@ -426,10 +450,6 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		}
 
 		if (!UserProvider.getCurrent().isPortHealthUser()) {
-		OptionGroup caseTransmissionClassification = addField(CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION, OptionGroup.class);
-		caseTransmissionClassification.setRequired(true);
-
-		if (!UserRole.isPortHealthUser(UserProvider.getCurrent().getUserRoles())) {
 			ogCaseOrigin.addValueChangeListener(ev -> {
 				if (ev.getProperty().getValue() == CaseOrigin.IN_COUNTRY) {
 					setVisible(false, CaseDataDto.POINT_OF_ENTRY, CaseDataDto.POINT_OF_ENTRY_DETAILS);
@@ -483,33 +503,33 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		FieldHelper.addSoftRequiredStyle(plagueType, communityCombo, facilityDetails);
 
 		FieldHelper
-			.setVisibleWhen(getFieldGroup(), Arrays.asList(CaseDataDto.DISEASE_DETAILS), CaseDataDto.DISEASE, Arrays.asList(Disease.OTHER), true);
+				.setVisibleWhen(getFieldGroup(), Arrays.asList(CaseDataDto.DISEASE_DETAILS), CaseDataDto.DISEASE, Arrays.asList(Disease.OTHER), true);
 		FieldHelper.setRequiredWhen(getFieldGroup(), CaseDataDto.DISEASE, Arrays.asList(CaseDataDto.DISEASE_DETAILS), Arrays.asList(Disease.OTHER));
 		FieldHelper.setRequiredWhen(
-			getFieldGroup(),
-			CaseDataDto.CASE_ORIGIN,
-			Arrays.asList(CaseDataDto.HEALTH_FACILITY),
-			Arrays.asList(CaseOrigin.IN_COUNTRY));
+				getFieldGroup(),
+				CaseDataDto.CASE_ORIGIN,
+				Arrays.asList(CaseDataDto.HEALTH_FACILITY),
+				Arrays.asList(CaseOrigin.IN_COUNTRY));
 		FieldHelper.setRequiredWhen(
-			getFieldGroup(),
-			CaseDataDto.CASE_ORIGIN,
-			Arrays.asList(CaseDataDto.POINT_OF_ENTRY),
-			Arrays.asList(CaseOrigin.POINT_OF_ENTRY));
+				getFieldGroup(),
+				CaseDataDto.CASE_ORIGIN,
+				Arrays.asList(CaseDataDto.POINT_OF_ENTRY),
+				Arrays.asList(CaseOrigin.POINT_OF_ENTRY));
 		FieldHelper.setVisibleWhen(getFieldGroup(), Arrays.asList(CaseDataDto.PLAGUE_TYPE), CaseDataDto.DISEASE, Arrays.asList(Disease.PLAGUE), true);
 		FieldHelper
-			.setVisibleWhen(getFieldGroup(), Arrays.asList(CaseDataDto.DENGUE_FEVER_TYPE), CaseDataDto.DISEASE, Arrays.asList(Disease.DENGUE), true);
+				.setVisibleWhen(getFieldGroup(), Arrays.asList(CaseDataDto.DENGUE_FEVER_TYPE), CaseDataDto.DISEASE, Arrays.asList(Disease.DENGUE), true);
 		FieldHelper.setVisibleWhen(getFieldGroup(), Arrays.asList(CaseDataDto.RABIES_TYPE), CaseDataDto.DISEASE, Arrays.asList(Disease.RABIES), true);
 		FieldHelper.setVisibleWhen(
-			facilityOrHome,
-			Arrays.asList(facilityTypeGroup, facilityType, facilityCombo),
-			Collections.singletonList(TypeOfPlace.FACILITY),
-			false);
+				facilityOrHome,
+				Arrays.asList(facilityTypeGroup, facilityType, facilityCombo),
+				Collections.singletonList(TypeOfPlace.FACILITY),
+				false);
 		FieldHelper.setRequiredWhen(
-			facilityOrHome,
-			Arrays.asList(facilityTypeGroup, facilityType, facilityCombo),
-			Collections.singletonList(TypeOfPlace.FACILITY),
-			false,
-			null);
+				facilityOrHome,
+				Arrays.asList(facilityTypeGroup, facilityType, facilityCombo),
+				Collections.singletonList(TypeOfPlace.FACILITY),
+				false,
+				null);
 
 		facilityCombo.addValueChangeListener(e -> {
 			updateFacilityFields(facilityCombo, facilityDetails);
@@ -562,10 +582,10 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 
 	private void updateDiseaseVariant(Disease disease) {
 		List<DiseaseVariant> diseaseVariants =
-			FacadeProvider.getCustomizableEnumFacade().getEnumValues(CustomizableEnumType.DISEASE_VARIANT, disease);
+				FacadeProvider.getCustomizableEnumFacade().getEnumValues(CustomizableEnumType.DISEASE_VARIANT, disease);
 		FieldHelper.updateItems(diseaseVariantField, diseaseVariants);
 		diseaseVariantField
-			.setVisible(disease != null && isVisibleAllowed(CaseDataDto.DISEASE_VARIANT) && CollectionUtils.isNotEmpty(diseaseVariants));
+				.setVisible(disease != null && isVisibleAllowed(CaseDataDto.DISEASE_VARIANT) && CollectionUtils.isNotEmpty(diseaseVariants));
 	}
 
 	private void setNoneFacility() {
@@ -602,14 +622,14 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		if (facilityType.getValue() != null && district != null) {
 			if (community != null) {
 				FieldHelper.updateItems(
-					facilityCombo,
-					FacadeProvider.getFacilityFacade()
-						.getActiveFacilitiesByCommunityAndType(community, (FacilityType) facilityType.getValue(), true, false));
+						facilityCombo,
+						FacadeProvider.getFacilityFacade()
+								.getActiveFacilitiesByCommunityAndType(community, (FacilityType) facilityType.getValue(), true, false));
 			} else {
 				FieldHelper.updateItems(
-					facilityCombo,
-					FacadeProvider.getFacilityFacade()
-						.getActiveFacilitiesByDistrictAndType(district, (FacilityType) facilityType.getValue(), true, false));
+						facilityCombo,
+						FacadeProvider.getFacilityFacade()
+								.getActiveFacilitiesByDistrictAndType(district, (FacilityType) facilityType.getValue(), true, false));
 			}
 		}
 	}
@@ -629,8 +649,8 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			}
 
 			List<PointOfEntryReferenceDto> POEs = districtDto == null
-				? Collections.emptyList()
-				: FacadeProvider.getPointOfEntryFacade().getAllActiveByDistrict(districtDto.getUuid(), true);
+					? Collections.emptyList()
+					: FacadeProvider.getPointOfEntryFacade().getAllActiveByDistrict(districtDto.getUuid(), true);
 			FieldHelper.updateItems(comboBoxPOE, POEs);
 		}
 	}
@@ -654,8 +674,8 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 				tfFacilityDetails.clear();
 			}
 		} else if (((facilityOrHome.getValue() instanceof java.util.Set)
-			&& (facilityOrHome.getNullableValue() == null || TypeOfPlace.FACILITY.equals(facilityOrHome.getNullableValue())))
-			|| TypeOfPlace.FACILITY.equals(facilityOrHome.getValue())) {
+				&& (facilityOrHome.getNullableValue() == null || TypeOfPlace.FACILITY.equals(facilityOrHome.getNullableValue())))
+				|| TypeOfPlace.FACILITY.equals(facilityOrHome.getValue())) {
 			tfFacilityDetails.setVisible(false);
 			tfFacilityDetails.setRequired(false);
 			tfFacilityDetails.clear();

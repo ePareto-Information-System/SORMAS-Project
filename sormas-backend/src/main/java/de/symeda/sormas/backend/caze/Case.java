@@ -65,7 +65,6 @@ import de.symeda.sormas.api.caze.RabiesType;
 import de.symeda.sormas.api.caze.ReinfectionDetail;
 import de.symeda.sormas.api.caze.ReinfectionStatus;
 import de.symeda.sormas.api.caze.ScreeningType;
-import de.symeda.sormas.api.caze.ReportingType;
 import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.caze.Trimester;
 import de.symeda.sormas.api.caze.VaccinationStatus;
@@ -73,6 +72,8 @@ import de.symeda.sormas.api.contact.FollowUpStatus;
 import de.symeda.sormas.api.contact.QuarantineType;
 import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.externaldata.HasExternalData;
+import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.utils.PersonalData;
 import de.symeda.sormas.api.utils.YesNoUnknown;
@@ -106,7 +107,8 @@ import de.symeda.sormas.backend.util.ModelConstants;
 import de.symeda.sormas.backend.visit.Visit;
 
 @Entity(name = "cases")
-public class Case extends CoreAdo implements SormasToSormasShareable, HasExternalData {
+@Audited
+public class Case extends CoreAdo implements SormasToSormasShareable, HasExternalData, Comparable<Case>  {
 
 	private static final long serialVersionUID = -2697795184663562129L;
 
@@ -227,6 +229,8 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public static final String QUARANTINE_REASON_BEFORE_ISOLATION_DETAILS = "quarantineReasonBeforeIsolationDetails";
 	public static final String END_OF_ISOLATION_REASON = "endOfIsolationReason";
 	public static final String END_OF_ISOLATION_REASON_DETAILS = "endOfIsolationReasonDetails";
+	public static final String CASE_TRANSMISSION_CLASSIFICATION = "caseTransmissionClassification";
+	public static final String OTHERCASEOUTCOMEDETAILS = "specifyOtherOutcome";
 
 	public static final String RE_INFECTION = "reInfection";
 	public static final String REINFECTION_STATUS = "reinfectionStatus";
@@ -247,7 +251,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public static final String QUARANTINE_CHANGE_COMMENT = "quarantineChangeComment";
 	public static final String DUPLICATE_OF = "duplicateOf";
 	public static final String CREATION_VERSION = "creationVersion";
-	public static final String CASE_TRANSMISSION_CLASSIFICATION = "caseTransmissionClassification";
 
 	private Person person;
 	private String description;
@@ -422,6 +425,8 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private List<SormasToSormasShareInfo> sormasToSormasShares = new ArrayList<>(0);
 	private List<ExternalShareInfo> externalShares = new ArrayList<>(0);
 
+	private TransmissionClassification caseTransmissionClassification;
+	private String specifyOtherOutcome;
 	private CaseReferenceDefinition caseReferenceDefinition;
 	private Date previousQuarantineTo;
 	private String quarantineChangeComment;
@@ -1236,7 +1241,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	/**
 	 * Extra setter for externalID needed to comply with the HasExternalData interface
-	 * 
+	 *
 	 * @param externalId
 	 *            the value to be set for externalID
 	 */
@@ -1500,6 +1505,14 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		return caseIdIsm;
 	}
 
+	public String getSpecifyOtherOutcome() {
+		return specifyOtherOutcome;
+	}
+
+	public void setSpecifyOtherOutcome(String specifyOtherOutcome) {
+		this.specifyOtherOutcome = specifyOtherOutcome;
+	}
+
 	public void setCaseIdIsm(Integer caseIdIsm) {
 		this.caseIdIsm = caseIdIsm;
 	}
@@ -1705,10 +1718,11 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	@Override
 	@ManyToOne(cascade = {
-		CascadeType.PERSIST,
-		CascadeType.MERGE,
-		CascadeType.DETACH,
-		CascadeType.REFRESH }, fetch = FetchType.LAZY)
+			CascadeType.PERSIST,
+			CascadeType.MERGE,
+			CascadeType.DETACH,
+			CascadeType.REFRESH })
+	@AuditedIgnore
 	public SormasToSormasOriginInfo getSormasToSormasOriginInfo() {
 		return sormasToSormasOriginInfo;
 	}
@@ -1725,6 +1739,15 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setSormasToSormasShares(List<SormasToSormasShareInfo> sormasToSormasShares) {
 		this.sormasToSormasShares = sormasToSormasShares;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public TransmissionClassification getCaseTransmissionClassification() {
+		return caseTransmissionClassification;
+	}
+
+	public void setCaseTransmissionClassification(TransmissionClassification caseTransmissionClassification) {
+		this.caseTransmissionClassification = caseTransmissionClassification;
 	}
 
 	@OneToMany(mappedBy = ExternalShareInfo.CAZE, fetch = FetchType.LAZY)
@@ -1752,6 +1775,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setFollowUpStatusChangeUser(User followUpStatusChangeUser) {
 		this.followUpStatusChangeUser = followUpStatusChangeUser;
+
 	}
 
 	public boolean isDontShareWithReportingTool() {
@@ -1797,12 +1821,37 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setExternalData(Map<String, String> externalData) {
 		this.externalData = externalData;
-	@Enumerated(EnumType.STRING)
-	public TransmissionClassification getCaseTransmissionClassification() {
-		return caseTransmissionClassification;
 	}
 
-	public void setCaseTransmissionClassification(TransmissionClassification caseTransmissionClassification) {
-		this.caseTransmissionClassification = caseTransmissionClassification;
+	public String buildCaseGpsCoordinationCaption() {
+		if (reportLat == null || reportLon == null) {
+			return I18nProperties.getString(Strings.messageIncompleteGpsCoordinates);
+		} else if (reportLatLonAccuracy == null) {
+			return reportLat + ", " + reportLon;
+		} else {
+			return reportLat + ", " + reportLon + " +-" + Math.round(reportLatLonAccuracy) + "m";
+		}
+	}
+
+	public Double buildCaseLatitudeCoordination() {
+		return reportLat;
+	}
+
+	public Double buildCaseLongitudeCoordination() {
+		return reportLon;
+	}
+
+	public Float buildCaseLatLonCoordination() {
+
+		return reportLatLonAccuracy;
+	}
+
+
+	@Override
+	public int compareTo(Case otherCase) {
+		// Implement comparison logic based on your requirements
+		// Return a negative value if this case is smaller, positive if larger, or 0 if equal
+		// For example, if you have a caseId field, you can compare based on that:
+		return this.getUuid().compareTo(otherCase.getUuid());
 	}
 }

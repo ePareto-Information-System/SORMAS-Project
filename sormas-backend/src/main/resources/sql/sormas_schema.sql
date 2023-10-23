@@ -5922,6 +5922,9 @@ UPDATE epidata SET contactwithsourcecaseknown = 'YES' FROM cases WHERE cases.epi
 
 INSERT INTO schema_version (version_number, comment) VALUES (281, 'Set contact with source case known for all existing cases #2946');
 
+ALTER TABLE cases ADD COLUMN casetransmissionclassification varchar(255);
+ALTER TABLE contact ADD COLUMN contacttransmissionclassification varchar(225);
+
 -- 2020-11-18 Add date of first contact #3408
 ALTER TABLE contact ADD column multidaycontact boolean default false;
 ALTER TABLE contact ADD column firstcontactdate timestamp;
@@ -12554,5 +12557,8 @@ INSERT INTO schema_version (version_number, comment) VALUES (482, 'Added a colum
 
 ALTER TABLE samples ALTER COLUMN samplepurpose DROP NOT NULL;
 INSERT INTO schema_version (version_number, comment) VALUES (483, 'altered column samplepurpose in samples to not null');
+ALTER TABLE cases ADD COLUMN specifyotheroutcome varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (473, 'Added a column name specifyotheroutcome to the cases');
+
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
