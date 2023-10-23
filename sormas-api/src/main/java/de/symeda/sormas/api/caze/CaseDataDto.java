@@ -623,7 +623,7 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param contact
 	 *            leads to the returned case
 	 * @return dto that contains the contacts information. If the contact has one exposure, this marked as the probable infection
@@ -1734,7 +1734,8 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	@Override
 	public String toString() {
 		return super.toString() + (StringUtils.isNotBlank(this.getExternalID()) ? " - " + this.getExternalID() : StringUtils.EMPTY);
-	public TransmissionClassification getCaseTransmissionClassification() {
+	}
+		public TransmissionClassification getCaseTransmissionClassification() {
 		return caseTransmissionClassification;
 	}
 

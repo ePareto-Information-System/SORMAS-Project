@@ -65,7 +65,6 @@ import de.symeda.sormas.api.caze.RabiesType;
 import de.symeda.sormas.api.caze.ReinfectionDetail;
 import de.symeda.sormas.api.caze.ReinfectionStatus;
 import de.symeda.sormas.api.caze.ScreeningType;
-import de.symeda.sormas.api.caze.ReportingType;
 import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.caze.Trimester;
 import de.symeda.sormas.api.caze.VaccinationStatus;
@@ -73,6 +72,8 @@ import de.symeda.sormas.api.contact.FollowUpStatus;
 import de.symeda.sormas.api.contact.QuarantineType;
 import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.externaldata.HasExternalData;
+import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.utils.PersonalData;
 import de.symeda.sormas.api.utils.YesNoUnknown;
@@ -107,7 +108,7 @@ import de.symeda.sormas.backend.visit.Visit;
 
 @Entity(name = "cases")
 @Audited
-public class Case extends CoreAdo implements SormasToSormasShareable, HasExternalData {
+public class Case extends CoreAdo implements SormasToSormasShareable, HasExternalData, Comparable<Case>  {
 
 	private static final long serialVersionUID = -2697795184663562129L;
 
@@ -204,7 +205,49 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public static final String POSTPARTUM = "postpartum";
 	public static final String TRIMESTER = "trimester";
 	public static final String SAMPLES = "samples";
+	public static final String FOLLOW_UP_STATUS = "followUpStatus";
+	public static final String FOLLOW_UP_COMMENT = "followUpComment";
+	public static final String FOLLOW_UP_UNTIL = "followUpUntil";
+	public static final String OVERWRITE_FOLLOW_UP_UNTIL = "overwriteFollowUpUntil";
+	public static final String VISITS = "visits";
+	public static final String SURVEILLANCE_REPORTS = "surveillanceReports";
+	public static final String FACILITY_TYPE = "facilityType";
+	public static final String CONTACTS = "contacts";
+	public static final String CONVERTED_FROM_CONTACT = "convertedContact";
+	public static final String EVENT_PARTICIPANTS = "eventParticipants";
+	public static final String SORMAS_TO_SORMAS_ORIGIN_INFO = "sormasToSormasOriginInfo";
+	public static final String SORMAS_TO_SORMAS_SHARES = "sormasToSormasShares";
+	public static final String EXTERNAL_SHARES = "externalShares";
+
+	public static final String CASE_ID_ISM = "caseIdIsm";
+	public static final String CONTACT_TRACING_FIRST_CONTACT_DATE = "contactTracingFirstContactDate";
+	public static final String WAS_IN_QUARANTINE_BEFORE_ISOLATION = "wasInQuarantineBeforeIsolation";
+	public static final String QUARANTINE_REASON_BEFORE_ISOLATION = "quarantineReasonBeforeIsolation";
+	public static final String QUARANTINE_REASON_BEFORE_ISOLATION_DETAILS = "quarantineReasonBeforeIsolationDetails";
+	public static final String END_OF_ISOLATION_REASON = "endOfIsolationReason";
+	public static final String END_OF_ISOLATION_REASON_DETAILS = "endOfIsolationReasonDetails";
 	public static final String CASE_TRANSMISSION_CLASSIFICATION = "caseTransmissionClassification";
+	public static final String OTHERCASEOUTCOMEDETAILS = "specifyOtherOutcome";
+
+	public static final String RE_INFECTION = "reInfection";
+	public static final String REINFECTION_STATUS = "reinfectionStatus";
+	public static final String REINFECTION_DETAILS = "reinfectionDetails";
+	public static final String PREVIOUS_INFECTION_DATE = "previousInfectionDate";
+
+	public static final String BLOOD_ORGAN_OR_TISSUE_DONATED = "bloodOrganOrTissueDonated";
+	public static final String NOT_A_CASE_REASON_NEGATIVE_TEST = "notACaseReasonNegativeTest";
+	public static final String NOT_A_CASE_REASON_PHYSICIAN_INFORMATION = "notACaseReasonPhysicianInformation";
+	public static final String NOT_A_CASE_REASON_DIFFERENT_PATHOGEN = "notACaseReasonDifferentPathogen";
+	public static final String NOT_A_CASE_REASON_OTHER = "notACaseReasonOther";
+	public static final String NOT_A_CASE_REASON_DETAILS = "notACaseReasonDetails";
+	public static final String FOLLOW_UP_STATUS_CHANGE_DATE = "followUpStatusChangeDate";
+	public static final String FOLLOW_UP_STATUS_CHANGE_USER = "followUpStatusChangeUser";
+	public static final String DONT_SHARE_WITH_REPORTING_TOOL = "dontShareWithReportingTool";
+	public static final String CASE_REFERENCE_DEFINITION = "caseReferenceDefinition";
+	public static final String PREVIOUS_QUARANTINE_TO = "previousQuarantineTo";
+	public static final String QUARANTINE_CHANGE_COMMENT = "quarantineChangeComment";
+	public static final String DUPLICATE_OF = "duplicateOf";
+	public static final String CREATION_VERSION = "creationVersion";
 
 	private Person person;
 	private String description;
@@ -375,6 +418,8 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private List<SormasToSormasShareInfo> sormasToSormasShares = new ArrayList<>(0);
 	private List<ExternalShareInfo> externalShares = new ArrayList<>(0);
 
+	private TransmissionClassification caseTransmissionClassification;
+	private String specifyOtherOutcome;
 	private CaseReferenceDefinition caseReferenceDefinition;
 	private Date previousQuarantineTo;
 	private String quarantineChangeComment;
@@ -391,8 +436,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public void setPersonId(Long personId) {
 		this.personId = personId;
 	}
-
-	private TransmissionClassification caseTransmissionClassification;
 
 	@ManyToOne(cascade = {})
 	@JoinColumn(nullable = false)
@@ -1152,7 +1195,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	/**
 	 * Extra setter for externalID needed to comply with the HasExternalData interface
-	 * 
+	 *
 	 * @param externalId
 	 *            the value to be set for externalID
 	 */
@@ -1408,6 +1451,14 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		return caseIdIsm;
 	}
 
+	public String getSpecifyOtherOutcome() {
+		return specifyOtherOutcome;
+	}
+
+	public void setSpecifyOtherOutcome(String specifyOtherOutcome) {
+		this.specifyOtherOutcome = specifyOtherOutcome;
+	}
+
 	public void setCaseIdIsm(Integer caseIdIsm) {
 		this.caseIdIsm = caseIdIsm;
 	}
@@ -1613,10 +1664,10 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	@Override
 	@ManyToOne(cascade = {
-		CascadeType.PERSIST,
-		CascadeType.MERGE,
-		CascadeType.DETACH,
-		CascadeType.REFRESH })
+			CascadeType.PERSIST,
+			CascadeType.MERGE,
+			CascadeType.DETACH,
+			CascadeType.REFRESH })
 	@AuditedIgnore
 	public SormasToSormasOriginInfo getSormasToSormasOriginInfo() {
 		return sormasToSormasOriginInfo;
@@ -1635,6 +1686,15 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setSormasToSormasShares(List<SormasToSormasShareInfo> sormasToSormasShares) {
 		this.sormasToSormasShares = sormasToSormasShares;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public TransmissionClassification getCaseTransmissionClassification() {
+		return caseTransmissionClassification;
+	}
+
+	public void setCaseTransmissionClassification(TransmissionClassification caseTransmissionClassification) {
+		this.caseTransmissionClassification = caseTransmissionClassification;
 	}
 
 	@OneToMany(mappedBy = ExternalShareInfo.CAZE, fetch = FetchType.LAZY)
@@ -1662,6 +1722,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setFollowUpStatusChangeUser(User followUpStatusChangeUser) {
 		this.followUpStatusChangeUser = followUpStatusChangeUser;
+
 	}
 
 	public boolean isDontShareWithReportingTool() {
@@ -1707,12 +1768,37 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setExternalData(Map<String, String> externalData) {
 		this.externalData = externalData;
-	@Enumerated(EnumType.STRING)
-	public TransmissionClassification getCaseTransmissionClassification() {
-		return caseTransmissionClassification;
 	}
 
-	public void setCaseTransmissionClassification(TransmissionClassification caseTransmissionClassification) {
-		this.caseTransmissionClassification = caseTransmissionClassification;
+	public String buildCaseGpsCoordinationCaption() {
+		if (reportLat == null || reportLon == null) {
+			return I18nProperties.getString(Strings.messageIncompleteGpsCoordinates);
+		} else if (reportLatLonAccuracy == null) {
+			return reportLat + ", " + reportLon;
+		} else {
+			return reportLat + ", " + reportLon + " +-" + Math.round(reportLatLonAccuracy) + "m";
+		}
+	}
+
+	public Double buildCaseLatitudeCoordination() {
+		return reportLat;
+	}
+
+	public Double buildCaseLongitudeCoordination() {
+		return reportLon;
+	}
+
+	public Float buildCaseLatLonCoordination() {
+
+		return reportLatLonAccuracy;
+	}
+
+
+	@Override
+	public int compareTo(Case otherCase) {
+		// Implement comparison logic based on your requirements
+		// Return a negative value if this case is smaller, positive if larger, or 0 if equal
+		// For example, if you have a caseId field, you can compare based on that:
+		return this.getUuid().compareTo(otherCase.getUuid());
 	}
 }
