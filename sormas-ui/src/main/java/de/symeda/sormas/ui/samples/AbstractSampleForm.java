@@ -35,7 +35,11 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.event.EventDto;
+import de.symeda.sormas.api.event.EventParticipantReferenceDto;
+import de.symeda.sormas.api.event.EventReferenceDto;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.Descriptions;
@@ -191,13 +195,17 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 		Disease disease = null;
 		final CaseReferenceDto associatedCase = getValue().getAssociatedCase();
-		if (associatedCase != null && UserProvider.getCurrent().hasAllUserRights(UserRight.CASE_VIEW)) {
-			disease = FacadeProvider.getCaseFacade().getCaseDataByUuid(associatedCase.getUuid()).getDisease();
-		} else {
-			final ContactReferenceDto associatedContact = getValue().getAssociatedContact();
-			if (associatedContact != null && UserProvider.getCurrent().hasAllUserRights(UserRight.CONTACT_VIEW)) {
-				disease = FacadeProvider.getContactFacade().getByUuid(associatedContact.getUuid()).getDisease();
+		final ContactReferenceDto associatedContact = getValue().getAssociatedContact();
+		final EventParticipantReferenceDto associatedEventParticipant = getValue().getAssociatedEventParticipant();
 
+		if (associatedCase != null && UserProvider.getCurrent().hasAllUserRights(UserRight.CASE_VIEW)) {
+			disease = getDiseaseFromCase(associatedCase.getUuid());
+		} else if (associatedContact != null && UserProvider.getCurrent().hasAllUserRights(UserRight.CONTACT_VIEW)) {
+			disease = getDiseaseFromContact(associatedContact.getUuid());
+		} else if (associatedEventParticipant != null && UserProvider.getCurrent().hasAllUserRights(UserRight.EVENT_VIEW)) {
+			EventReferenceDto eventReferenceDto = FacadeProvider.getEventParticipantFacade().getEventParticipantByUuid(associatedEventParticipant.getUuid()).getEvent();
+			if (eventReferenceDto != null) {
+				disease = getDiseaseFromEvent(eventReferenceDto.getUuid());
 			}
 		}
 
@@ -513,5 +521,29 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			if (!ControllerProvider.getSampleController().isFieldSampleIdUnique(getValue().getUuid(), (String) value))
 				throw new InvalidValueException(I18nProperties.getString(Strings.messageFieldSampleIdExist));
 		}
+	}
+	
+	private Disease getDiseaseFromCase(String caseUuid) {
+		CaseDataDto caseDataDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(caseUuid);
+		if (caseDataDto != null) {
+			return caseDataDto.getDisease();
+		}
+		return null;
+	}
+
+	private Disease getDiseaseFromContact(String contactUuid) {
+		ContactDto contactDto = FacadeProvider.getContactFacade().getByUuid(contactUuid);
+		if (contactDto != null) {
+			return contactDto.getDisease();
+		}
+		return null;
+	}
+
+	private Disease getDiseaseFromEvent(String eventUuid) {
+		EventDto eventDto = FacadeProvider.getEventFacade().getByUuid(eventUuid);
+		if (eventDto != null) {
+			return eventDto.getDisease();
+		}
+		return null;
 	}
 }

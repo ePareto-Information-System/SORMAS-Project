@@ -259,7 +259,7 @@ public class EventSamplesView extends AbstractDetailView<EventParticipantReferen
                 Captions.sampleNewSample,
                 I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, Captions.sampleNewSample),
                 VaadinIcons.PLUS_CIRCLE,
-                e -> ControllerProvider.getSampleController().create(criteria.getContact(), criteria.getDisease(), SormasUI::refreshView),
+                e -> ControllerProvider.getSampleController().create(criteria.getEventParticipant(), criteria.getDisease(), SormasUI::refreshView),
                 ValoTheme.BUTTON_PRIMARY);
 
         actionButtonsLayout.addComponent(newButton);
