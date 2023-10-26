@@ -180,13 +180,21 @@ public class FacilityDao extends AbstractInfrastructureAdoDao<Facility> {
 		}
 	}
 
-	public List<Facility> getActiveLaboratoriesByDisease(Disease disease, boolean includeOtherFacility) {
+	public List<Facility> getActiveLaboratoriesByDisease(Disease disease, boolean includeOtherFacility, Facility facility) {
 		DiseaseConfiguration diseaseConfiguration = DatabaseHelper.getDiseaseConfigurationDao().getDiseaseConfiguration(disease);
 		List<Facility> facilities = DatabaseHelper.getDiseaseConfigurationDao().getDiseaseFacilities(diseaseConfiguration);
 
 		if (facilities.size() < 1) {
 			facilities = getActiveLaboratories(includeOtherFacility);
 		}
+
+		if (facility != null) {
+			//check if facility is not in list and add
+			if (!facilities.contains(facility)) {
+				facilities.add(facility);
+			}
+		}
+
 		return facilities;
 	}
 

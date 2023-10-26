@@ -3084,12 +3084,11 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			case 346:
 				currentVersion = 346;
 				getDao(FeatureConfiguration.class).executeRaw("DELETE FROM featureConfiguration WHERE featureType = 'DASHBOARD';");
-			case 347:
-			currentVersion = 337;
-			getDao(DiseaseConfiguration.class).executeRaw("CREATE TABLE facility_diseaseconfiguration(diseaseconfiguration_id integer, facility_id integer);");
-				// ATTENTION: break should only be done after last version
+//			case 347:
+//				currentVersion = 347;
+//				getDao(DiseaseConfiguration.class).executeRaw("CREATE TABLE facility_diseaseconfiguration(diseaseconfiguration_id integer, facility_id integer);");
+//					// ATTENTION: break should only be done after last version
 				break;
-
 			default:
 				throw new IllegalStateException("onUpgrade() with unknown oldVersion " + oldVersion);
 			}

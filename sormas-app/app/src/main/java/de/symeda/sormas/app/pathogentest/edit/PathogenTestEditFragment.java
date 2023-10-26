@@ -143,7 +143,7 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 				}
 
 				if (contentBinding.pathogenTestTestedDisease.getValue() != null) {
-					labList = DatabaseHelper.getFacilityDao().getActiveLaboratoriesByDisease((Disease) contentBinding.pathogenTestTestedDisease.getValue(), true);
+					labList = DatabaseHelper.getFacilityDao().getActiveLaboratoriesByDisease((Disease) contentBinding.pathogenTestTestedDisease.getValue(), true, null);
 					contentBinding.pathogenTestLab.setSpinnerData(DataUtils.toItems(labList));
 				}
 			}
@@ -166,7 +166,7 @@ public class PathogenTestEditFragment extends BaseEditFragment<FragmentPathogenT
 				updateDiseaseVariantsField(contentBinding);
 				
 				if (contentBinding.pathogenTestTestedDisease.getValue() != null) {
-					labList = DatabaseHelper.getFacilityDao().getActiveLaboratoriesByDisease((Disease) contentBinding.pathogenTestTestedDisease.getValue(), true);
+					labList = DatabaseHelper.getFacilityDao().getActiveLaboratoriesByDisease((Disease) contentBinding.pathogenTestTestedDisease.getValue(), true, contentBinding.getData().getLab());
 					contentBinding.pathogenTestLab.setSpinnerData(DataUtils.toItems(labList));
 				}
 

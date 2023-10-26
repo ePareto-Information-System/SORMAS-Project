@@ -170,7 +170,7 @@ public class SampleEditFragment extends BaseEditFragment<FragmentSampleEditLayou
 
 		sampleMaterialList = DataUtils.getEnumItems(SampleMaterial.class, true, getFieldVisibilityCheckers());
 		sampleSourceList = DataUtils.getEnumItems(SampleSource.class, true);
-		labList = DatabaseHelper.getFacilityDao().getActiveLaboratoriesByDisease(getDiseaseOfAssociatedEntity(record), true);
+		labList = DatabaseHelper.getFacilityDao().getActiveLaboratoriesByDisease(getDiseaseOfAssociatedEntity(record), true, record.getLab());
 		samplePurposeList = DataUtils.getEnumItems(SamplePurpose.class, true);
 		samplingReasonList = DataUtils.getEnumItems(SamplingReason.class, true, getFieldVisibilityCheckers());
 

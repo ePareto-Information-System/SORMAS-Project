@@ -423,22 +423,25 @@ public class FacilityFacadeEjb
 		dto.setArchived(entity.isArchived());
 		dto.setExternalID(entity.getExternalID());
 		dto.setCentrallyManaged(entity.isCentrallyManaged());
-		dto.setDiseases(entity.getDiseases().stream()
-				.map(disease -> {
-					DiseaseConfigurationDto diseaseDto = new DiseaseConfigurationDto();
-					diseaseDto.setDisease(disease.getDisease());
-					diseaseDto.setActive(disease.getActive());
-					diseaseDto.setPrimaryDisease(disease.getPrimaryDisease());
-					//diseaseDto.setCaseBased(disease.getCaseBased());
-					diseaseDto.setFollowUpEnabled(disease.getFollowUpEnabled());
-					diseaseDto.setFollowUpDuration(disease.getFollowUpDuration());
-					diseaseDto.setCaseFollowUpDuration(disease.getCaseFollowUpDuration());
-					diseaseDto.setEventParticipantFollowUpDuration(disease.getEventParticipantFollowUpDuration());
-					diseaseDto.setExtendedClassification(disease.getExtendedClassification());
-					diseaseDto.setExtendedClassificationMulti(disease.getExtendedClassificationMulti());
-					return diseaseDto;
-				})
-				.collect(Collectors.toSet()));
+		if(entity.getDiseases() != null) {
+			dto.setDiseases(entity.getDiseases().stream()
+					.map(disease -> {
+						DiseaseConfigurationDto diseaseDto = new DiseaseConfigurationDto();
+						diseaseDto.setDisease(disease.getDisease());
+						diseaseDto.setActive(disease.getActive());
+						diseaseDto.setPrimaryDisease(disease.getPrimaryDisease());
+						//diseaseDto.setCaseBased(disease.getCaseBased());
+						diseaseDto.setFollowUpEnabled(disease.getFollowUpEnabled());
+						diseaseDto.setFollowUpDuration(disease.getFollowUpDuration());
+						diseaseDto.setCaseFollowUpDuration(disease.getCaseFollowUpDuration());
+						diseaseDto.setEventParticipantFollowUpDuration(disease.getEventParticipantFollowUpDuration());
+						diseaseDto.setExtendedClassification(disease.getExtendedClassification());
+						diseaseDto.setExtendedClassificationMulti(disease.getExtendedClassificationMulti());
+						return diseaseDto;
+					})
+					.collect(Collectors.toSet()));
+		}
+
 		return dto;
 	}
 
