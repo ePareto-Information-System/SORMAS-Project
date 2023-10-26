@@ -130,8 +130,6 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 		return getAllActiveLaboratories(includeOtherFacility, null);
 	}
 
-
-
 	private List<Facility> getAllActiveLaboratories(
 			boolean includeOtherFacility,
 			BiFunction<CriteriaBuilder, Root<Facility>, Predicate> createExtraFilters) {
@@ -176,6 +174,11 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 				.filter(facility -> FacilityType.LABORATORY.equals(facility.getType()))
 				.sorted(Comparator.comparing(Facility::getName))
 				.collect(Collectors.toList());
+
+		if (facilities.size() < 1) {
+			facilities = getAllActiveLaboratories(true);
+		}
+		
 		return facilities;
 	}
 
@@ -209,7 +212,6 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 		return false;
 	}
 
-
 	public List<Facility> getFacilitiesByNameAndType(
 			String name,
 			District district,
@@ -228,7 +230,8 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 			filter = cb.and(filter, createBasicFilter(cb, from));
 		}
 
-		// Don't check for district and community equality or type equality when searching for constant facilities
+		// Don't check for district and community equality or type equality when
+		// searching for constant facilities
 		if (!FacilityDto.OTHER_FACILITY.equals(name.trim()) && !FacilityDto.NO_FACILITY.equals(name.trim())) {
 			if (community != null) {
 				filter = cb.and(filter, cb.equal(from.get(Facility.COMMUNITY), community));
@@ -246,7 +249,8 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 		return em.createQuery(cq).getResultList();
 	}
 
-	public List<Facility> getFacilitiesByExternalIdAndType(@NotNull String externalId, FacilityType type, boolean includeArchivedEntities) {
+	public List<Facility> getFacilitiesByExternalIdAndType(@NotNull String externalId, FacilityType type,
+			boolean includeArchivedEntities) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Facility> cq = cb.createQuery(getElementClass());
@@ -282,11 +286,13 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 		if (country != null) {
 			CountryReferenceDto serverCountry = countryFacade.getServerCountry();
 
-			Path<Object> countryUuid = from.join(Facility.REGION, JoinType.LEFT).join(Region.COUNTRY, JoinType.LEFT).get(Country.UUID);
+			Path<Object> countryUuid = from.join(Facility.REGION, JoinType.LEFT).join(Region.COUNTRY, JoinType.LEFT)
+					.get(Country.UUID);
 			Predicate countryFilter = cb.equal(countryUuid, country.getUuid());
 
 			if (country.equals(serverCountry)) {
-				filter = CriteriaBuilderHelper.and(cb, filter, CriteriaBuilderHelper.or(cb, countryFilter, countryUuid.isNull()));
+				filter = CriteriaBuilderHelper.and(cb, filter,
+						CriteriaBuilderHelper.or(cb, countryFilter, countryUuid.isNull()));
 			} else {
 				filter = CriteriaBuilderHelper.and(cb, filter, countryFilter);
 			}
@@ -294,17 +300,20 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 
 		if (facilityCriteria.getRegion() != null) {
 			filter = CriteriaBuilderHelper
-					.and(cb, filter, cb.equal(from.join(Facility.REGION, JoinType.LEFT).get(Region.UUID), facilityCriteria.getRegion().getUuid()));
+					.and(cb, filter, cb.equal(from.join(Facility.REGION, JoinType.LEFT).get(Region.UUID),
+							facilityCriteria.getRegion().getUuid()));
 		}
 		if (facilityCriteria.getDistrict() != null) {
 			filter = CriteriaBuilderHelper
-					.and(cb, filter, cb.equal(from.join(Facility.DISTRICT, JoinType.LEFT).get(District.UUID), facilityCriteria.getDistrict().getUuid()));
+					.and(cb, filter, cb.equal(from.join(Facility.DISTRICT, JoinType.LEFT).get(District.UUID),
+							facilityCriteria.getDistrict().getUuid()));
 		}
 		if (facilityCriteria.getCommunity() != null) {
 			filter = CriteriaBuilderHelper.and(
 					cb,
 					filter,
-					cb.equal(from.join(Facility.COMMUNITY, JoinType.LEFT).get(District.UUID), facilityCriteria.getCommunity().getUuid()));
+					cb.equal(from.join(Facility.COMMUNITY, JoinType.LEFT).get(District.UUID),
+							facilityCriteria.getCommunity().getUuid()));
 		}
 		if (facilityCriteria.getNameCityLike() != null) {
 			String[] textFilters = facilityCriteria.getNameCityLike().split("\\s+");
@@ -320,14 +329,16 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 			}
 		}
 		if (facilityCriteria.getType() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Facility.TYPE), facilityCriteria.getType()));
+			filter = CriteriaBuilderHelper.and(cb, filter,
+					cb.equal(from.get(Facility.TYPE), facilityCriteria.getType()));
 		} else {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.isNotNull(from.get(Facility.TYPE)));
 		}
 		if (facilityCriteria.getRelevanceStatus() != null) {
 			if (facilityCriteria.getRelevanceStatus() == EntityRelevanceStatus.ACTIVE) {
 				filter = CriteriaBuilderHelper
-						.and(cb, filter, cb.or(cb.equal(from.get(Facility.ARCHIVED), false), cb.isNull(from.get(Facility.ARCHIVED))));
+						.and(cb, filter, cb.or(cb.equal(from.get(Facility.ARCHIVED), false),
+								cb.isNull(from.get(Facility.ARCHIVED))));
 			} else if (facilityCriteria.getRelevanceStatus() == EntityRelevanceStatus.ARCHIVED) {
 				filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Facility.ARCHIVED), true));
 			}
