@@ -32,6 +32,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.HasUuid;
+import de.symeda.sormas.api.infrastructure.disease.DiseaseDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityIndexDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
@@ -51,6 +52,7 @@ import de.symeda.sormas.api.infrastructure.region.RegionDto;
 import de.symeda.sormas.api.infrastructure.region.RegionIndexDto;
 import de.symeda.sormas.api.infrastructure.subcontinent.SubcontinentDto;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.Diseases;
 import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.ButtonHelper;
@@ -73,6 +75,13 @@ public class InfrastructureController {
 		FacilityDto facility = FacadeProvider.getFacilityFacade().getByUuid(uuid);
 		CommitDiscardWrapperComponent<FacilityEditForm> editComponent = getFacilityEditComponent(facility);
 		String caption = I18nProperties.getString(Strings.edit) + " " + facility.getName();
+		VaadinUiUtil.showModalPopupWindow(editComponent, caption);
+	}
+
+	public void editDisease(String uuid) {
+		DiseaseDto diseaseDto = FacadeProvider.getDiseaseFacade().getByUuid(uuid);
+		CommitDiscardWrapperComponent<DiseaseEditForm> editComponent = getEditDiseaseComponent(diseaseDto);
+		String caption = I18nProperties.getString(Strings.edit) + " " + I18nProperties.getCaption(diseaseDto.getDisease().toShortString());
 		VaadinUiUtil.showModalPopupWindow(editComponent, caption);
 	}
 
@@ -915,5 +924,42 @@ public class InfrastructureController {
 					Notification.show(notificationMessage, Type.ASSISTIVE_NOTIFICATION);
 				}
 			});
+	}
+
+	private CommitDiscardWrapperComponent<DiseaseEditForm> getEditDiseaseComponent(DiseaseDto disease) {
+
+		boolean isNew = disease == null;
+		DiseaseEditForm editForm = new DiseaseEditForm(isNew);
+		if (isNew) {
+			disease = DiseaseDto.build();
+		}
+
+		editForm.setValue(disease);
+
+		final CommitDiscardWrapperComponent<DiseaseEditForm> editView = new CommitDiscardWrapperComponent<DiseaseEditForm>(
+				editForm,
+				UserProvider.getCurrent().hasUserRight(isNew ? UserRight.INFRASTRUCTURE_CREATE : UserRight.INFRASTRUCTURE_EDIT),
+				editForm.getFieldGroup());
+
+		editView.addCommitListener(new CommitListener() {
+
+			@Override
+			public void onCommit() {
+				FacadeProvider.getDiseaseFacade().save(editForm.getValue());
+				Notification.show(I18nProperties.getString(Strings.messageEntryCreated), Type.ASSISTIVE_NOTIFICATION);
+				SormasUI.get().getNavigator().navigateTo(DiseasesView.VIEW_NAME);
+			}
+		});
+
+//		if (!isNew) {
+//			extendEditComponentWithArchiveButton(
+//					editView,
+//					disease.isArchived(),
+//					facility.getUuid(),
+//					InfrastructureType.FACILITY,
+//					facility.getType());
+//		}
+
+		return editView;
 	}
 }

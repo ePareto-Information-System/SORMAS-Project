@@ -464,6 +464,9 @@ public class FacilityFacadeEjb extends
 					case Facility.TYPE:
 						expression = facility.get(sortProperty.propertyName);
 						break;
+					case FacilityIndexDto.DISEASES:
+						expression = facility.get(Facility.UUID);
+						break;
 					case Facility.REGION:
 						expression = region.get(Region.NAME);
 						break;

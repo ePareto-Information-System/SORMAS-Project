@@ -11675,4 +11675,8 @@ ALTER TABLE facility_diseaseconfiguration_history OWNER TO sormas_user;
 
 INSERT INTO schema_version (version_number, comment) VALUES (474, 'Assigning Diseases to facility functionality on mobile app #134');
 
+ALTER TABLE diseaseconfiguration ADD COLUMN archived boolean DEFAULT false;
+ALTER TABLE diseaseconfiguration ADD COLUMN centrally_managed boolean DEFAULT false;
+INSERT INTO schema_version (version_number, comment) VALUES (475, 'Adding archived Column to diseaseconfiguration table  #134');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
