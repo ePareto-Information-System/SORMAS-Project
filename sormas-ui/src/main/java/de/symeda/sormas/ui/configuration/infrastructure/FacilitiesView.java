@@ -388,10 +388,21 @@ public class FacilitiesView extends AbstractConfigurationView {
 					TokenizableValue token = e.getValue();
 					if (token != null) {
 						List<Tokenizable> selectedTokens = diseaseTokenField.getValue();
+
+						//if token is already selected, remove from selected tokens
 						if (selectedTokens.stream().map(t -> (TokenizableValue)t).map(tokenValue -> (Disease)tokenValue.getValue()).collect(Collectors.toList()).contains(token.getValue())) {
+							selectedTokens.remove(token);
+							diseaseTokenField.setValue(selectedTokens);
 							return;
+						} else  {
+							diseaseTokenField.addTokenizable(token);
+
 						}
-						diseaseTokenField.addTokenizable(token);
+
+
+//						if (selectedTokens.stream().map(t -> (TokenizableValue)t).map(tokenValue -> (Disease)tokenValue.getValue()).collect(Collectors.toList()).contains(token.getValue())) {
+//							return;
+//						}
 						diseasesDropdown.setValue(null);
 					}
 					List<Tokenizable> selectedTokens = diseaseTokenField.getValue();

@@ -11967,17 +11967,6 @@ $$ LANGUAGE plpgsql;
 
 INSERT INTO schema_version (version_number, comment) VALUES (490, '#8543 Add backend checks to access documents');
 
-ALTER TABLE facility_diseaseconfiguration ADD COLUMN sys_period tstzrange;
-UPDATE facility_diseaseconfiguration SET sys_period=tstzrange((SELECT diseaseconfiguration.creationdate FROM diseaseconfiguration WHERE diseaseconfiguration.id = facility_diseaseconfiguration.diseaseconfiguration_id), null);
-ALTER TABLE facility_diseaseconfiguration ALTER COLUMN sys_period SET NOT NULL;
-CREATE TABLE facility_diseaseconfiguration_history (LIKE facility_diseaseconfiguration);
-CREATE TRIGGER versioning_trigger
-    BEFORE INSERT OR UPDATE OR DELETE ON facility_diseaseconfiguration
-    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'facility_diseaseconfiguration_history', true);
-ALTER TABLE facility_diseaseconfiguration_history OWNER TO sormas_user;
-
-INSERT INTO schema_version (version_number, comment) VALUES (474, 'Assigning Diseases to facility functionality on mobile app #134');
-
 -- 2022-09-07 Add hash indices to improve getAllAfter fetch #9320
 -- Hint: You can use CREATE INDEX CONCURRENTLY IF NOT EXISTS ... if indices are created before update on running instance to not block other transactions.
 -- DeletableAdo
@@ -12526,4 +12515,16 @@ CREATE TABLE facility_diseaseconfiguration (
 );
 
 INSERT INTO schema_version (version_number, comment) VALUES (520, 'Assigning Diseases to facility functionality #134');
+
+ALTER TABLE facility_diseaseconfiguration ADD COLUMN sys_period tstzrange;
+UPDATE facility_diseaseconfiguration SET sys_period=tstzrange((SELECT diseaseconfiguration.creationdate FROM diseaseconfiguration WHERE diseaseconfiguration.id = facility_diseaseconfiguration.diseaseconfiguration_id), null);
+ALTER TABLE facility_diseaseconfiguration ALTER COLUMN sys_period SET NOT NULL;
+CREATE TABLE facility_diseaseconfiguration_history (LIKE facility_diseaseconfiguration);
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE OR DELETE ON facility_diseaseconfiguration
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'facility_diseaseconfiguration_history', true);
+ALTER TABLE facility_diseaseconfiguration_history OWNER TO sormas_user;
+
+INSERT INTO schema_version (version_number, comment) VALUES (521, 'Assigning Diseases to facility functionality on mobile app #134');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

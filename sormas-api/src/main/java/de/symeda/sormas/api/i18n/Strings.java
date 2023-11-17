@@ -984,6 +984,7 @@ public interface Strings {
 	String labelNumberOfCountries = "labelNumberOfCountries";
 	String labelNumberOfDistricts = "labelNumberOfDistricts";
 	String labelNumberOfFacilities = "labelNumberOfFacilities";
+	String labelNumberOfDiseases = "labelNumberOfDiseases";
 	String labelNumberOfPointofEntry = "labelNumberOfPointofEntry";
 	String labelNumberOfRegions = "labelNumberOfRegions";
 	String labelNumberOfSubcontinents = "labelNumberOfSubcontinents";
