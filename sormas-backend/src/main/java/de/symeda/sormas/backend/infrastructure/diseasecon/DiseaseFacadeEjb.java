@@ -1,4 +1,4 @@
-package de.symeda.sormas.backend.infrastructure.disease;
+package de.symeda.sormas.backend.infrastructure.diseasecon;
 
 
 import de.symeda.sormas.api.common.Page;
