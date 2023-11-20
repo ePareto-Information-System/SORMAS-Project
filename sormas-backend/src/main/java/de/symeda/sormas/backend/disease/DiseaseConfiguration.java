@@ -11,12 +11,8 @@ import javax.persistence.*;
 import de.symeda.auditlog.api.Audited;
 import de.symeda.auditlog.api.AuditedIgnore;
 import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.infrastructure.disease.DiseaseCriteria;
-import de.symeda.sormas.backend.campaign.form.CampaignFormMeta;
-import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.InfrastructureAdo;
 import de.symeda.sormas.backend.infrastructure.facility.Facility;
-import de.symeda.sormas.backend.user.UserRole;
 
 @Entity(name = DiseaseConfiguration.TABLE_NAME)
 @Audited

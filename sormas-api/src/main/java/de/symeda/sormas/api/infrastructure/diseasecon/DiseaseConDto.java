@@ -1,4 +1,4 @@
-package de.symeda.sormas.api.infrastructure.disease;
+package de.symeda.sormas.api.infrastructure.diseasecon;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.feature.FeatureType;
@@ -13,7 +13,7 @@ import java.util.List;
 		FeatureType.CASE_SURVEILANCE,
 		FeatureType.EVENT_SURVEILLANCE,
 		FeatureType.AGGREGATE_REPORTING })
-public class DiseaseDto extends InfrastructureDto {
+public class DiseaseConDto extends InfrastructureDto {
 
 	private static final long serialVersionUID = -7653585175036656526L;
 
@@ -31,17 +31,17 @@ public class DiseaseDto extends InfrastructureDto {
 	private Boolean extendedClassificationMulti;
 	private List<String> ageGroups;
 
-	public DiseaseDto(){}
+	public DiseaseConDto(){}
 
-	public DiseaseDto(Disease disease,
-					  Boolean active,
-					  Boolean caseBased,
-					  Boolean followUpEnabled,
-					  Integer followUpDuration,
-					  Integer eventParticipantFollowUpDuration,
-					  Boolean extendedClassification,
-					  Boolean extendedClassificationMulti,
-					  List<String> ageGroups) {
+	public DiseaseConDto(Disease disease,
+						 Boolean active,
+						 Boolean caseBased,
+						 Boolean followUpEnabled,
+						 Integer followUpDuration,
+						 Integer eventParticipantFollowUpDuration,
+						 Boolean extendedClassification,
+						 Boolean extendedClassificationMulti,
+						 List<String> ageGroups) {
 		this.disease = disease;
 		this.active = active;
 		this.caseBased = caseBased;
@@ -150,8 +150,8 @@ public class DiseaseDto extends InfrastructureDto {
 		this.facilities = diseaseFacilities;
 	}
 
-	public static DiseaseDto build() {
-		DiseaseDto dto = new DiseaseDto();
+	public static DiseaseConDto build() {
+		DiseaseConDto dto = new DiseaseConDto();
 		dto.setUuid(DataHelper.createUuid());
 		return dto;
 	}

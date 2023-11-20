@@ -32,7 +32,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.HasUuid;
-import de.symeda.sormas.api.infrastructure.disease.DiseaseDto;
+import de.symeda.sormas.api.infrastructure.diseasecon.DiseaseConDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityIndexDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
@@ -52,7 +52,6 @@ import de.symeda.sormas.api.infrastructure.region.RegionDto;
 import de.symeda.sormas.api.infrastructure.region.RegionIndexDto;
 import de.symeda.sormas.api.infrastructure.subcontinent.SubcontinentDto;
 import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.api.utils.Diseases;
 import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.ButtonHelper;
@@ -79,9 +78,9 @@ public class InfrastructureController {
 	}
 
 	public void editDisease(String uuid) {
-		DiseaseDto diseaseDto = FacadeProvider.getDiseaseFacade().getByUuid(uuid);
-		CommitDiscardWrapperComponent<DiseaseEditForm> editComponent = getEditDiseaseComponent(diseaseDto);
-		String caption = I18nProperties.getString(Strings.edit) + " " + I18nProperties.getCaption(diseaseDto.getDisease().toShortString());
+		DiseaseConDto diseaseConDto = FacadeProvider.getDiseaseFacade().getByUuid(uuid);
+		CommitDiscardWrapperComponent<DiseaseEditForm> editComponent = getEditDiseaseComponent(diseaseConDto);
+		String caption = I18nProperties.getString(Strings.edit) + " " + I18nProperties.getCaption(diseaseConDto.getDisease().toShortString());
 		VaadinUiUtil.showModalPopupWindow(editComponent, caption);
 	}
 
@@ -926,12 +925,12 @@ public class InfrastructureController {
 			});
 	}
 
-	private CommitDiscardWrapperComponent<DiseaseEditForm> getEditDiseaseComponent(DiseaseDto disease) {
+	private CommitDiscardWrapperComponent<DiseaseEditForm> getEditDiseaseComponent(DiseaseConDto disease) {
 
 		boolean isNew = disease == null;
 		DiseaseEditForm editForm = new DiseaseEditForm(isNew);
 		if (isNew) {
-			disease = DiseaseDto.build();
+			disease = DiseaseConDto.build();
 		}
 
 		editForm.setValue(disease);

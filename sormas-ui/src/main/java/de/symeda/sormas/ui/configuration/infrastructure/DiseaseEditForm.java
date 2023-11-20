@@ -11,7 +11,7 @@ import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
-import de.symeda.sormas.api.infrastructure.disease.DiseaseDto;
+import de.symeda.sormas.api.infrastructure.diseasecon.DiseaseConDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.*;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
 
-public class DiseaseEditForm extends AbstractEditForm<DiseaseDto> {
+public class DiseaseEditForm extends AbstractEditForm<DiseaseConDto> {
 
     private static final String LEFT_FILTER_LAYOUT = "leftFilterLayout";
     private static final String RIGHT_FILTER_LAYOUT = "rightFilterLayout";
@@ -48,7 +48,7 @@ public class DiseaseEditForm extends AbstractEditForm<DiseaseDto> {
     private static final String HTML_LAYOUT = fluidRowLocs(LEFT_FILTER_LAYOUT, RIGHT_FILTER_LAYOUT) + fluidRowLocs(FACILITIES_SELECTION_LOCATION);
 
     public DiseaseEditForm(boolean create) {
-        super(DiseaseDto.class, DiseaseDto.I18N_PREFIX, false);
+        super(DiseaseConDto.class, DiseaseConDto.I18N_PREFIX, false);
         this.create = create;
 
         viewConfiguration = ViewModelProviders.of(DiseasesView.class).get(ViewConfiguration.class);
@@ -149,7 +149,7 @@ public class DiseaseEditForm extends AbstractEditForm<DiseaseDto> {
 
 
     @Override
-    public void setValue(DiseaseDto newFieldValue) throws ReadOnlyException, Converter.ConversionException {
+    public void setValue(DiseaseConDto newFieldValue) throws ReadOnlyException, Converter.ConversionException {
         super.setValue(newFieldValue);
 
         criteria.type(FacilityType.LABORATORY);

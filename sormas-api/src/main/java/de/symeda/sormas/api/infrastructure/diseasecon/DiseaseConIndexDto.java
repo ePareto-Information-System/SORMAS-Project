@@ -1,4 +1,4 @@
-package de.symeda.sormas.api.infrastructure.disease;
+package de.symeda.sormas.api.infrastructure.diseasecon;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.HasUuid;
@@ -8,7 +8,7 @@ import de.symeda.sormas.api.i18n.Strings;
 import java.io.Serializable;
 import java.util.List;
 
-public class DiseaseIndexDto implements Serializable, HasUuid {
+public class DiseaseConIndexDto implements Serializable, HasUuid {
 
     public static final String I18N_PREFIX = "Disease";
 
@@ -36,7 +36,7 @@ public class DiseaseIndexDto implements Serializable, HasUuid {
 	private List<String> ageGroups;
     private String diseaseName;
 
-    public DiseaseIndexDto(String uuid, Disease in_disease) {
+    public DiseaseConIndexDto(String uuid, Disease in_disease) {
 
             Disease disease = Disease.valueOf(in_disease.getName());
             this.uuid = uuid;
