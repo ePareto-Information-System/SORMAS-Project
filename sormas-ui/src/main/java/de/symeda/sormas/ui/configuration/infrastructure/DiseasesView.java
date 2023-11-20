@@ -1,6 +1,5 @@
 package de.symeda.sormas.ui.configuration.infrastructure;
 
-import com.vaadin.server.Resource;
 import com.vaadin.ui.*;
 
 import de.symeda.sormas.api.Disease;
@@ -8,7 +7,7 @@ import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
-import de.symeda.sormas.api.infrastructure.disease.DiseaseCriteria;
+import de.symeda.sormas.api.infrastructure.diseasecon.DiseaseConCriteria;
 import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.configuration.AbstractConfigurationView;
 import de.symeda.sormas.ui.utils.ButtonHelper;
@@ -22,7 +21,7 @@ public class DiseasesView extends AbstractConfigurationView {
 
     public static final String VIEW_NAME = ROOT_VIEW_NAME + "/diseases";
     private DiseasesGrid grid;
-    private DiseaseCriteria criteria;
+    private DiseaseConCriteria criteria;
     private ViewConfiguration viewConfiguration;
 
     private VerticalLayout gridLayout;
@@ -37,7 +36,7 @@ public class DiseasesView extends AbstractConfigurationView {
         super(VIEW_NAME);
 
         viewConfiguration = ViewModelProviders.of(getClass()).get(ViewConfiguration.class);
-        criteria = ViewModelProviders.of(DiseasesView.class).get(DiseaseCriteria.class);
+        criteria = ViewModelProviders.of(DiseasesView.class).get(DiseaseConCriteria.class);
         if (criteria.ageGroup() == null) {
             criteria.ageGroup();
         }
@@ -85,7 +84,7 @@ public class DiseasesView extends AbstractConfigurationView {
         filterLayout.addComponent(disseaFilter);
 
         resetButton = ButtonHelper.createButton(Captions.actionResetFilters, event -> {
-            ViewModelProviders.of(DiseasesView.class).remove(DiseaseCriteria.class);
+            ViewModelProviders.of(DiseasesView.class).remove(DiseaseConCriteria.class);
             navigateTo(null);
         }, CssStyles.FORCE_CAPTION);
         resetButton.setVisible(false);

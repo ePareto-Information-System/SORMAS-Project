@@ -28,7 +28,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 
 import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.infrastructure.disease.DiseaseDto;
+import de.symeda.sormas.api.infrastructure.diseasecon.DiseaseConDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -74,9 +74,9 @@ public class InfrastructureController {
 	}
 
 	public void editDisease(String uuid) {
-		DiseaseDto diseaseDto = FacadeProvider.getDiseaseFacade().getByUuid(uuid);
-		CommitDiscardWrapperComponent<DiseaseEditForm> editComponent = getEditDiseaseComponent(diseaseDto);
-		String caption = I18nProperties.getString(Strings.edit) + " " + I18nProperties.getCaption(diseaseDto.getDisease().toShortString());
+		DiseaseConDto diseaseConDto = FacadeProvider.getDiseaseFacade().getByUuid(uuid);
+		CommitDiscardWrapperComponent<DiseaseEditForm> editComponent = getEditDiseaseComponent(diseaseConDto);
+		String caption = I18nProperties.getString(Strings.edit) + " " + I18nProperties.getCaption(diseaseConDto.getDisease().toShortString());
 		VaadinUiUtil.showModalPopupWindow(editComponent, caption);
 	}
 
@@ -513,12 +513,12 @@ public class InfrastructureController {
 		};
 	}
 
-	private CommitDiscardWrapperComponent<DiseaseEditForm> getEditDiseaseComponent(DiseaseDto disease) {
+	private CommitDiscardWrapperComponent<DiseaseEditForm> getEditDiseaseComponent(DiseaseConDto disease) {
 
 		boolean isNew = disease == null;
 		DiseaseEditForm editForm = new DiseaseEditForm(isNew);
 		if (isNew) {
-			disease = DiseaseDto.build();
+			disease = DiseaseConDto.build();
 		}
 
 		editForm.setValue(disease);

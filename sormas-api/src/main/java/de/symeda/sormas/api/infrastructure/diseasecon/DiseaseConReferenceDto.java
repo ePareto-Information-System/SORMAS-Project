@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *******************************************************************************/
-package de.symeda.sormas.api.infrastructure.disease;
+package de.symeda.sormas.api.infrastructure.diseasecon;
 
 import de.symeda.sormas.api.InfrastructureDataReferenceDto;
 import de.symeda.sormas.api.feature.FeatureType;
@@ -26,18 +26,18 @@ import de.symeda.sormas.api.utils.DependingOnFeatureType;
 	FeatureType.CASE_SURVEILANCE,
 	FeatureType.EVENT_SURVEILLANCE,
 	FeatureType.AGGREGATE_REPORTING })
-public class DiseaseReferenceDto extends InfrastructureDataReferenceDto implements StatisticsGroupingKey {
+public class DiseaseConReferenceDto extends InfrastructureDataReferenceDto implements StatisticsGroupingKey {
 
 	private static final long serialVersionUID = -7987228795475507196L;
 
-	public DiseaseReferenceDto() {
+	public DiseaseConReferenceDto() {
 	}
 
-	public DiseaseReferenceDto(String uuid) {
+	public DiseaseConReferenceDto(String uuid) {
 		super(uuid);
 	}
 
-	public DiseaseReferenceDto(String uuid, String caption, String externalId) {
+	public DiseaseConReferenceDto(String uuid, String caption, String externalId) {
 		super(uuid, caption, externalId);
 	}
 
@@ -50,11 +50,11 @@ public class DiseaseReferenceDto extends InfrastructureDataReferenceDto implemen
 		if (this.equals(o)) {
 			return 0;
 		}
-		int captionComparison = this.getCaption().compareTo(((DiseaseReferenceDto) o).getCaption());
+		int captionComparison = this.getCaption().compareTo(((DiseaseConReferenceDto) o).getCaption());
 		if (captionComparison != 0) {
 			return captionComparison;
 		} else {
-			return this.getUuid().compareTo(((DiseaseReferenceDto) o).getUuid());
+			return this.getUuid().compareTo(((DiseaseConReferenceDto) o).getUuid());
 		}
 	}
 }

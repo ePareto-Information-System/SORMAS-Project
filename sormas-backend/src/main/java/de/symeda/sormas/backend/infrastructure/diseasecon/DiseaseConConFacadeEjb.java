@@ -2,7 +2,8 @@ package de.symeda.sormas.backend.infrastructure.diseasecon;
 
 
 import de.symeda.sormas.api.common.Page;
-import de.symeda.sormas.api.infrastructure.disease.*;
+import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.api.infrastructure.diseasecon.*;
 import de.symeda.sormas.api.infrastructure.facility.FacilityHelper;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.SortProperty;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
 @RightsAllowed(UserRight._INFRASTRUCTURE_VIEW)
 public class DiseaseFacadeEjb extends AbstractInfrastructureFacadeEjb<DiseaseConfiguration, DiseaseDto, DiseaseIndexDto, DiseaseReferenceDto, DiseaseService, DiseaseCriteria> implements DiseaseFacade {
 
-    public DiseaseFacadeEjb(){}
+    public DiseaseConConFacadeEjb(){}
 
     @Inject
     protected DiseaseFacadeEjb(DiseaseService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
@@ -44,14 +45,14 @@ public class DiseaseFacadeEjb extends AbstractInfrastructureFacadeEjb<DiseaseCon
     }
 
     @Override
-    public List<DiseaseIndexDto> getIndexList(DiseaseCriteria diseaseCriteria, Integer first, Integer max, List<SortProperty> sortProperties) {
+    public List<DiseaseConIndexDto> getIndexList(DiseaseConCriteria diseaseConCriteria, Integer first, Integer max, List<SortProperty> sortProperties) {
 
             CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<DiseaseIndexDto> cq = cb.createQuery(DiseaseIndexDto.class);
+        CriteriaQuery<DiseaseConIndexDto> cq = cb.createQuery(DiseaseConIndexDto.class);
         Root<DiseaseConfiguration> disease = cq.from(DiseaseConfiguration.class);
 
-        if (diseaseCriteria != null) {
-            Predicate filter = service.buildCriteriaFilter(diseaseCriteria, cb, disease);
+        if (diseaseConCriteria != null) {
+            Predicate filter = service.buildCriteriaFilter(diseaseConCriteria, cb, disease);
             if (filter != null) {
                 filter = CriteriaBuilderHelper.and(cb, filter);
                 cq.where(filter);
@@ -90,8 +91,8 @@ public class DiseaseFacadeEjb extends AbstractInfrastructureFacadeEjb<DiseaseCon
                 disease.get(DiseaseConfiguration.DISEASE)
         );
 
-        List<DiseaseIndexDto> diseaseIndexDtoList = QueryHelper.getResultList(em, cq, first, max);
-        return diseaseIndexDtoList;
+        List<DiseaseConIndexDto> diseaseConIndexDtoList = QueryHelper.getResultList(em, cq, first, max);
+        return diseaseConIndexDtoList;
     }
 
     @Override
@@ -117,7 +118,7 @@ public class DiseaseFacadeEjb extends AbstractInfrastructureFacadeEjb<DiseaseCon
     }
 
     @Override
-    public DiseaseDto save(DiseaseDto dto, boolean allowMerge) {
+    public DiseaseConDto save(DiseaseConDto dto, boolean allowMerge) {
         return super.save(dto, allowMerge);
     }
 
@@ -143,15 +144,15 @@ public class DiseaseFacadeEjb extends AbstractInfrastructureFacadeEjb<DiseaseCon
     }
 
     @Override
-    public Page<DiseaseIndexDto> getIndexPage(DiseaseCriteria criteria, Integer offset, Integer size, List<SortProperty> sortProperties) {
-        List<DiseaseIndexDto> diseaseIndexDtoList = getIndexList(criteria, offset, size, sortProperties);
+    public Page<DiseaseConIndexDto> getIndexPage(DiseaseConCriteria criteria, Integer offset, Integer size, List<SortProperty> sortProperties) {
+        List<DiseaseConIndexDto> diseaseConIndexDtoList = getIndexList(criteria, offset, size, sortProperties);
         long totalElementCount = count(criteria);
-        return new Page<>(diseaseIndexDtoList, offset, size, totalElementCount);
+        return new Page<>(diseaseConIndexDtoList, offset, size, totalElementCount);
     }
 
     @Override
-    public List<DiseaseReferenceDto> getAllActiveAsReference() {
-        return service.getAllActive().stream().map(DiseaseFacadeEjb::toReferenceDto).collect(Collectors.toList());
+    public List<DiseaseConReferenceDto> getAllActiveAsReference() {
+        return service.getAllActive().stream().map(DiseaseConConFacadeEjb::toReferenceDto).collect(Collectors.toList());
     }
 
     @Override
@@ -176,13 +177,13 @@ public class DiseaseFacadeEjb extends AbstractInfrastructureFacadeEjb<DiseaseCon
     }
 
     @Override
-    public DiseaseDto toDto(DiseaseConfiguration source) {
+    public DiseaseConDto toDto(DiseaseConfiguration source) {
 
         if (source == null) {
             return null;
         }
 
-        DiseaseDto target = new DiseaseDto();
+        DiseaseConDto target = new DiseaseConDto();
         DtoHelper.fillDto(target, source);
 
         target.setDisease(source.getDisease());
@@ -202,30 +203,30 @@ public class DiseaseFacadeEjb extends AbstractInfrastructureFacadeEjb<DiseaseCon
         return target;
     }
 
-    public static DiseaseReferenceDto toReferenceDto(DiseaseConfiguration entity) {
+    public static DiseaseConReferenceDto toReferenceDto(DiseaseConfiguration entity) {
 
         if (entity == null) {
             return null;
         }
 
-        return new DiseaseReferenceDto(
+        return new DiseaseConReferenceDto(
                 entity.getUuid(),
                 FacilityHelper.buildFacilityString(entity.getUuid(), entity.getDisease().getName()),
                 null);
     }
 
     @Override
-    public DiseaseReferenceDto toRefDto(DiseaseConfiguration disease) {
+    public DiseaseConReferenceDto toRefDto(DiseaseConfiguration disease) {
         return null;
     }
 
     @Override
-    protected List<DiseaseConfiguration> findDuplicates(DiseaseDto dto, boolean includeArchived) {
+    protected List<DiseaseConfiguration> findDuplicates(DiseaseConDto dto, boolean includeArchived) {
         return null;
     }
 
     @Override
-    public DiseaseDto getByUuid(String uuid) {
+    public DiseaseConDto getByUuid(String uuid) {
         DiseaseConfiguration diseaseDto = service.getByUuid(uuid);
         return toDto(diseaseDto);
     }

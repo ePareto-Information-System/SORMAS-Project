@@ -5,8 +5,8 @@ import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.shared.data.sort.SortDirection;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.infrastructure.disease.DiseaseCriteria;
-import de.symeda.sormas.api.infrastructure.disease.DiseaseIndexDto;
+import de.symeda.sormas.api.infrastructure.diseasecon.DiseaseConCriteria;
+import de.symeda.sormas.api.infrastructure.diseasecon.DiseaseConIndexDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.ui.ControllerProvider;
@@ -17,12 +17,12 @@ import de.symeda.sormas.ui.utils.ViewConfiguration;
 
 import java.util.stream.Collectors;
 
-public class DiseasesGrid extends FilteredGrid<DiseaseIndexDto, DiseaseCriteria> {
+public class DiseasesGrid extends FilteredGrid<DiseaseConIndexDto, DiseaseConCriteria> {
     private static final long serialVersionUID = 4488941182432777837L;
 
 
-    public DiseasesGrid(DiseaseCriteria criteria) {
-        super(DiseaseIndexDto.class);
+    public DiseasesGrid(DiseaseConCriteria criteria) {
+        super(DiseaseConIndexDto.class);
         setSizeFull();
 
         ViewConfiguration viewConfiguration = ViewModelProviders.of(DiseasesView.class).get(ViewConfiguration.class);
@@ -55,12 +55,12 @@ public class DiseasesGrid extends FilteredGrid<DiseaseIndexDto, DiseaseCriteria>
 		}
 
 		for (Column<?, ?> column : getColumns()) {
-			column.setCaption(I18nProperties.getPrefixCaption(DiseaseIndexDto.I18N_PREFIX, column.getId(), column.getCaption()));
+			column.setCaption(I18nProperties.getPrefixCaption(DiseaseConIndexDto.I18N_PREFIX, column.getId(), column.getCaption()));
 		}
     }
 
     public void setLazyDataProvider() {
-        DataProvider<DiseaseIndexDto, DiseaseCriteria> dataProvider = DataProvider.fromFilteringCallbacks(
+        DataProvider<DiseaseConIndexDto, DiseaseConCriteria> dataProvider = DataProvider.fromFilteringCallbacks(
                 query -> FacadeProvider.getDiseaseFacade()
                         .getIndexList(
                                 query.getFilter().orElse(null),
@@ -78,7 +78,7 @@ public class DiseasesGrid extends FilteredGrid<DiseaseIndexDto, DiseaseCriteria>
 
     public void setEagerDataProvider() {
 
-        ListDataProvider<DiseaseIndexDto> dataProvider =
+        ListDataProvider<DiseaseConIndexDto> dataProvider =
                 DataProvider.fromStream(FacadeProvider.getDiseaseFacade().getIndexList(getCriteria(), null, null, null).stream());
         setDataProvider(dataProvider);
     }

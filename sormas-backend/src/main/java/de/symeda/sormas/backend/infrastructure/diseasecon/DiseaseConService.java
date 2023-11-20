@@ -1,6 +1,6 @@
 package de.symeda.sormas.backend.infrastructure.diseasecon;
 
-import de.symeda.sormas.api.infrastructure.disease.DiseaseCriteria;
+import de.symeda.sormas.api.infrastructure.diseasecon.DiseaseConCriteria;
 import de.symeda.sormas.backend.common.AbstractInfrastructureAdoService;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
 import de.symeda.sormas.backend.disease.DiseaseConfiguration;
@@ -16,9 +16,9 @@ import java.util.List;
 
 @Stateless
 @LocalBean
-public class DiseaseService extends AbstractInfrastructureAdoService<DiseaseConfiguration, DiseaseCriteria> {
+public class DiseaseConService extends AbstractInfrastructureAdoService<DiseaseConfiguration, DiseaseConCriteria> {
 
-    public DiseaseService() {super(DiseaseConfiguration.class);}
+    public DiseaseConService() {super(DiseaseConfiguration.class);}
 
     @Override
     public List<DiseaseConfiguration> getByExternalId(String externalId, boolean includeArchived) {
@@ -26,7 +26,7 @@ public class DiseaseService extends AbstractInfrastructureAdoService<DiseaseConf
     }
 
     @Override
-    public Predicate buildCriteriaFilter(DiseaseCriteria criteria, CriteriaBuilder cb, Root<DiseaseConfiguration> from) {
+    public Predicate buildCriteriaFilter(DiseaseConCriteria criteria, CriteriaBuilder cb, Root<DiseaseConfiguration> from) {
         Predicate filter = null;
 
         if(criteria.getDisease() != null) {
