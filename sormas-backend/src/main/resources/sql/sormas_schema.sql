@@ -12049,7 +12049,7 @@ INSERT INTO schema_version (version_number, comment) VALUES (487, 'Assigning Dis
 
 ALTER TABLE diseaseconfiguration ADD COLUMN archived boolean DEFAULT false;
 ALTER TABLE diseaseconfiguration ADD COLUMN centrally_managed boolean DEFAULT false;
-INSERT INTO schema_version (version_number, comment) VALUES (475, 'Adding archived Column to diseaseconfiguration table  #134');
+INSERT INTO schema_version (version_number, comment) VALUES (488, 'Adding archived, centrally_managed Column to diseaseconfiguration table  #134');
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 
