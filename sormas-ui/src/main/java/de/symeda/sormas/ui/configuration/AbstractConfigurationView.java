@@ -84,6 +84,8 @@ public abstract class AbstractConfigurationView extends AbstractSubNavigationVie
 				navigator.addView(PointsOfEntryView.VIEW_NAME, PointsOfEntryView.class);
 			}
 
+			navigator.addView(DiseasesView.VIEW_NAME, DiseasesView.class);
+
 			if (UserProvider.getCurrent().hasUserRight(UserRight.POPULATION_MANAGE)) {
 				navigator.addView(PopulationDataView.VIEW_NAME, PopulationDataView.class);
 			}
@@ -197,6 +199,12 @@ public abstract class AbstractConfigurationView extends AbstractSubNavigationVie
 		//			menu.addView(UserRightsView.VIEW_NAME, I18nProperties.getPrefixFragment("View",
 		//					UserRightsView.VIEW_NAME.replaceAll("/", ".") + ".short", ""), params);
 		//		}
+
+		menu.addView(
+				DiseasesView.VIEW_NAME,
+				I18nProperties.getPrefixCaption("View", DiseasesView.VIEW_NAME.replaceAll("/", ".") + ".short", ""),
+				null,
+				false);
 
 		if (isCaseSurveillanceEnabled && UserProvider.getCurrent().hasUserRight(UserRight.LINE_LISTING_CONFIGURE)) {
 			RegionReferenceDto region = UserProvider.getCurrent().getUser().getRegion();

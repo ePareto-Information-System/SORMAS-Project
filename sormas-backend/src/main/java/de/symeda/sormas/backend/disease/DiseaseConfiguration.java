@@ -11,20 +11,32 @@ import javax.persistence.*;
 import de.symeda.auditlog.api.Audited;
 import de.symeda.auditlog.api.AuditedIgnore;
 import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.backend.campaign.form.CampaignFormMeta;
-import de.symeda.sormas.backend.common.AbstractDomainObject;
+import de.symeda.sormas.backend.common.InfrastructureAdo;
 import de.symeda.sormas.backend.infrastructure.facility.Facility;
-import de.symeda.sormas.backend.user.UserRole;
 
 @Entity(name = DiseaseConfiguration.TABLE_NAME)
 @Audited
-public class DiseaseConfiguration extends AbstractDomainObject {
+public class DiseaseConfiguration extends InfrastructureAdo {
 
 	private static final long serialVersionUID = -7653585175036656526L;
 
 	public static final String TABLE_NAME = "diseaseconfiguration";
 
+	//public static final String DISEASE = "disease";
+
+	public static final String UUID = "uuid";
 	public static final String DISEASE = "disease";
+	public static final String ACTIVE = "active";
+	public static final String PRIMARY_DISEASE = "primaryDisease";
+	public static final String CASE_BASED = "caseBased";
+	public static final String FOLLOW_UP_ENABLED = "followUpEnabled";
+	public static final String FOLLOW_UP_DURATION = "followUpDuration";
+	public static final String CASE_FOLLOW_UP_DURATION = "caseFollowUpDuration";
+	public static final String EVENT_PARTICIPANT_FOLLOW_UP_DURATION = "eventParticipantFollowUpDuration";
+	public static final String EXTENDED_CLASSIFICATION = "extendedClassification";
+	public static final String EXTENDED_CLASSIFICATION_MULTI = "extendedClassificationMulti";
+	public static final String AGE_GROUPS = "ageGroups";
+	public static final String DISEASE_NAME = "diseaseName";
 
 	private Disease disease;
 	private Boolean active;
@@ -42,6 +54,16 @@ public class DiseaseConfiguration extends AbstractDomainObject {
 		DiseaseConfiguration configuration = new DiseaseConfiguration();
 		configuration.setDisease(disease);
 		return configuration;
+	}
+
+	@Override
+	public String getUuid() {
+		return super.getUuid();
+	}
+
+	@Override
+	public void setUuid(String uuid) {
+		super.setUuid(uuid);
 	}
 
 	@Enumerated(EnumType.STRING)
