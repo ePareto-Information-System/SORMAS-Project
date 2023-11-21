@@ -15,6 +15,7 @@ import de.symeda.sormas.api.infrastructure.diseasecon.DiseaseConDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.*;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
+import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.configuration.infrastructure.components.SearchField;
 import de.symeda.sormas.ui.utils.*;
@@ -181,9 +182,6 @@ public class DiseaseEditForm extends AbstractEditForm<DiseaseConDto> {
                 return facilityIndexDto.getName() + " (" + district + ", " + community + ")";
             }
         });
-
-
-
     }
 
 
@@ -226,6 +224,13 @@ public class DiseaseEditForm extends AbstractEditForm<DiseaseConDto> {
                 selectedFacilityIndexDtos
         ));
         selectDiseaseFacilities.setRightColumnCaption(I18nProperties.getCaption(Captions.facilitiesSelected) + " (" + selectedFacilityIndexDtos.size() + ")");
+    }
+
+    //reset filters
+    public void resetFilters() {
+        searchField.setValue("");
+        regionFilter.setValue(null);
+        districtFilter.setValue(null);
     }
 
 }
