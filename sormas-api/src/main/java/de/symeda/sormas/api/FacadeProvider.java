@@ -318,7 +318,7 @@ public class FacadeProvider {
 		return get().lookupEjbRemote(DiseaseConfigurationFacade.class);
 	}
 
-	public static DiseaseConFacade getDiseaseFacade() {
+	public static DiseaseConFacade getDiseaseConFacade() {
 		return get().lookupEjbRemote(DiseaseConFacade.class);
 	}
 
