@@ -1004,6 +1004,7 @@ public class InfrastructureController {
 			@Override
 			public void onCommit() {
 				FacadeProvider.getDiseaseConFacade().save(editForm.getValue());
+				editForm.resetFilters();
 				Notification.show(I18nProperties.getString(Strings.messageEntryCreated), Type.ASSISTIVE_NOTIFICATION);
 				SormasUI.get().getNavigator().navigateTo(DiseasesView.VIEW_NAME);
 			}
