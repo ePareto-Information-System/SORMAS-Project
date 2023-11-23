@@ -86,6 +86,16 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 		ExportConfigurationDto exportConfiguration,
 		Language userLanguage);
 
+
+	List<CaseExportDetailedSampleDto> getExportListDetailed(
+			CaseCriteria caseCriteria,
+			Collection<String> selectedRows,
+			CaseExportType exportType,
+			int first,
+			int max,
+			ExportConfigurationDto exportConfiguration,
+			Language userLanguage);
+
 	CaseDataDto getCaseDataByUuid(String uuid);
 
 	CaseDataDto updateFollowUpComment(@Valid @NotNull CaseDataDto dto) throws ValidationRuntimeException;

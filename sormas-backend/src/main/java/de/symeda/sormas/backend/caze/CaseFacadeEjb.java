@@ -72,6 +72,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import de.symeda.sormas.api.caze.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -86,39 +87,6 @@ import de.symeda.sormas.api.DiseaseHelper;
 import de.symeda.sormas.api.EditPermissionType;
 import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.VisitOrigin;
-import de.symeda.sormas.api.caze.AgeAndBirthDateDto;
-import de.symeda.sormas.api.caze.BirthDateDto;
-import de.symeda.sormas.api.caze.BurialInfoDto;
-import de.symeda.sormas.api.caze.CaseBulkEditData;
-import de.symeda.sormas.api.caze.CaseClassification;
-import de.symeda.sormas.api.caze.CaseCriteria;
-import de.symeda.sormas.api.caze.CaseDataDto;
-import de.symeda.sormas.api.caze.CaseExportDto;
-import de.symeda.sormas.api.caze.CaseExportType;
-import de.symeda.sormas.api.caze.CaseFacade;
-import de.symeda.sormas.api.caze.CaseFollowUpCriteria;
-import de.symeda.sormas.api.caze.CaseFollowUpDto;
-import de.symeda.sormas.api.caze.CaseIndexDetailedDto;
-import de.symeda.sormas.api.caze.CaseIndexDto;
-import de.symeda.sormas.api.caze.CaseListEntryDto;
-import de.symeda.sormas.api.caze.CaseLogic;
-import de.symeda.sormas.api.caze.CaseMergeIndexDto;
-import de.symeda.sormas.api.caze.CaseOrigin;
-import de.symeda.sormas.api.caze.CaseOutcome;
-import de.symeda.sormas.api.caze.CasePersonDto;
-import de.symeda.sormas.api.caze.CaseReferenceDefinition;
-import de.symeda.sormas.api.caze.CaseReferenceDto;
-import de.symeda.sormas.api.caze.CaseSelectionDto;
-import de.symeda.sormas.api.caze.CaseSimilarityCriteria;
-import de.symeda.sormas.api.caze.CoreAndPersonDto;
-import de.symeda.sormas.api.caze.EmbeddedSampleExportDto;
-import de.symeda.sormas.api.caze.InvestigationStatus;
-import de.symeda.sormas.api.caze.MapCaseDto;
-import de.symeda.sormas.api.caze.NewCaseDateType;
-import de.symeda.sormas.api.caze.PlagueType;
-import de.symeda.sormas.api.caze.PreviousCaseDto;
-import de.symeda.sormas.api.caze.ReinfectionDetail;
-import de.symeda.sormas.api.caze.VaccinationStatus;
 import de.symeda.sormas.api.caze.maternalhistory.MaternalHistoryDto;
 import de.symeda.sormas.api.caze.porthealthinfo.PortHealthInfoDto;
 import de.symeda.sormas.api.caze.surveillancereport.SurveillanceReportDto;
@@ -1267,6 +1235,708 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		return resultList;
 	}
 
+	@Override
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+	@RightsAllowed(UserRight._CASE_EXPORT)
+	public List<CaseExportDetailedSampleDto> getExportListDetailed(
+			CaseCriteria caseCriteria,
+			Collection<String> selectedRows,
+			CaseExportType exportType,
+			int first,
+			int max,
+			ExportConfigurationDto exportConfiguration,
+			Language userLanguage) {
+
+		List<CaseSampleExportDto> allSamples = null;
+
+		Boolean previousCaseManagementDataCriteria = caseCriteria.getMustHaveCaseManagementData();
+		if (CaseExportType.CASE_MANAGEMENT == exportType) {
+			caseCriteria.setMustHaveCaseManagementData(Boolean.TRUE);
+		}
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<CaseExportDetailedSampleDto> cq = cb.createQuery(CaseExportDetailedSampleDto.class);
+		Root<Case> caseRoot = cq.from(Case.class);
+
+		final CaseQueryContext caseQueryContext = new CaseQueryContext(cb, cq, caseRoot);
+		final CaseJoins joins = caseQueryContext.getJoins();
+
+		// Events count subquery
+		Subquery<Long> eventCountSq = cq.subquery(Long.class);
+		Root<EventParticipant> eventCountRoot = eventCountSq.from(EventParticipant.class);
+		Join<EventParticipant, Event> event = eventCountRoot.join(EventParticipant.EVENT, JoinType.INNER);
+		Join<EventParticipant, Case> resultingCase = eventCountRoot.join(EventParticipant.RESULTING_CASE, JoinType.INNER);
+		eventCountSq.where(
+				cb.and(
+						cb.equal(resultingCase.get(Case.ID), caseRoot.get(Case.ID)),
+						cb.isFalse(event.get(Event.DELETED)),
+						cb.isFalse(eventCountRoot.get(EventParticipant.DELETED))));
+		eventCountSq.select(cb.countDistinct(event.get(Event.ID)));
+
+		Subquery<Long> prescriptionCountSq = cq.subquery(Long.class);
+		Root<Prescription> prescriptionCountRoot = prescriptionCountSq.from(Prescription.class);
+		Join<Prescription, Therapy> prescriptionTherapyJoin = prescriptionCountRoot.join(Prescription.THERAPY, JoinType.LEFT);
+		prescriptionCountSq.where(cb.and(cb.equal(prescriptionTherapyJoin.get(Therapy.ID), caseRoot.get(Case.THERAPY).get(Therapy.ID))));
+		prescriptionCountSq.select(cb.countDistinct(prescriptionCountRoot.get(Prescription.ID)));
+
+		Subquery<Long> treatmentCountSq = cq.subquery(Long.class);
+		Root<Treatment> treatmentCountRoot = treatmentCountSq.from(Treatment.class);
+		Join<Treatment, Therapy> treatmentTherapyJoin = treatmentCountRoot.join(Treatment.THERAPY, JoinType.LEFT);
+		treatmentCountSq.where(cb.and(cb.equal(treatmentTherapyJoin.get(Therapy.ID), caseRoot.get(Case.THERAPY).get(Therapy.ID))));
+		treatmentCountSq.select(cb.countDistinct(treatmentCountRoot.get(Treatment.ID)));
+
+		boolean exportGpsCoordinates = ExportHelper.shouldExportFields(exportConfiguration, PersonDto.ADDRESS, CaseExportDetailedSampleDto.ADDRESS_GPS_COORDINATES);
+		boolean exportPrescriptionNumber = (exportType == null || exportType == CaseExportType.CASE_MANAGEMENT)
+				&& ExportHelper.shouldExportFields(exportConfiguration, CaseExportDetailedSampleDto.NUMBER_OF_PRESCRIPTIONS);
+		boolean exportTreatmentNumber = (exportType == null || exportType == CaseExportType.CASE_MANAGEMENT)
+				&& ExportHelper.shouldExportFields(exportConfiguration, CaseExportDetailedSampleDto.NUMBER_OF_TREATMENTS);
+		boolean exportClinicalVisitNumber = (exportType == null || exportType == CaseExportType.CASE_MANAGEMENT)
+				&& ExportHelper.shouldExportFields(exportConfiguration, CaseExportDetailedSampleDto.NUMBER_OF_CLINICAL_VISITS);
+		boolean exportOutbreakInfo = ExportHelper.shouldExportFields(exportConfiguration, CaseExportDetailedSampleDto.ASSOCIATED_WITH_OUTBREAK);
+
+		//@formatter:off
+		cq.multiselect(caseRoot.get(Case.ID), joins.getPerson().get(Person.ID),
+				exportGpsCoordinates ? joins.getPersonAddress().get(Location.LATITUDE) : cb.nullLiteral(Double.class),
+				exportGpsCoordinates ? joins.getPersonAddress().get(Location.LONGITUDE) : cb.nullLiteral(Double.class),
+				exportGpsCoordinates ? joins.getPersonAddress().get(Location.LATLONACCURACY) : cb.nullLiteral(Float.class),
+				joins.getEpiData().get(EpiData.ID),
+				joins.getRoot().get(Case.SYMPTOMS).get(Symptoms.ID),
+				joins.getHospitalization().get(Hospitalization.ID),
+				joins.getRoot().get(Case.HEALTH_CONDITIONS).get(HealthConditions.ID),
+				caseRoot.get(Case.UUID),
+				caseRoot.get(Case.EPID_NUMBER), caseRoot.get(Case.DISEASE), caseRoot.get(Case.DISEASE_VARIANT), caseRoot.get(Case.DISEASE_DETAILS),
+				caseRoot.get(Case.DISEASE_VARIANT_DETAILS), joins.getPerson().get(Person.UUID), joins.getPerson().get(Person.FIRST_NAME), joins.getPerson().get(Person.LAST_NAME),
+				joins.getPerson().get(Person.SALUTATION), joins.getPerson().get(Person.OTHER_SALUTATION), joins.getPerson().get(Person.SEX),
+				caseRoot.get(Case.PREGNANT), joins.getPerson().get(Person.APPROXIMATE_AGE),
+				joins.getPerson().get(Person.APPROXIMATE_AGE_TYPE), joins.getPerson().get(Person.BIRTHDATE_DD),
+				joins.getPerson().get(Person.BIRTHDATE_MM), joins.getPerson().get(Person.BIRTHDATE_YYYY),
+				caseRoot.get(Case.REPORT_DATE), joins.getRegion().get(Region.NAME),
+				joins.getDistrict().get(District.NAME), joins.getCommunity().get(Community.NAME),
+				caseRoot.get(Case.FACILITY_TYPE),
+				joins.getFacility().get(Facility.NAME), joins.getFacility().get(Facility.UUID), caseRoot.get(Case.HEALTH_FACILITY_DETAILS),
+				joins.getPointOfEntry().get(PointOfEntry.NAME), joins.getPointOfEntry().get(PointOfEntry.UUID), caseRoot.get(Case.POINT_OF_ENTRY_DETAILS),
+				caseRoot.get(Case.CASE_CLASSIFICATION),
+				caseRoot.get(Case.CLINICAL_CONFIRMATION), caseRoot.get(Case.EPIDEMIOLOGICAL_CONFIRMATION), caseRoot.get(Case.LABORATORY_DIAGNOSTIC_CONFIRMATION),
+				caseRoot.get(Case.NOT_A_CASE_REASON_NEGATIVE_TEST),
+				caseRoot.get(Case.NOT_A_CASE_REASON_PHYSICIAN_INFORMATION), caseRoot.get(Case.NOT_A_CASE_REASON_DIFFERENT_PATHOGEN),
+				caseRoot.get(Case.NOT_A_CASE_REASON_OTHER), caseRoot.get(Case.NOT_A_CASE_REASON_DETAILS),
+				caseRoot.get(Case.INVESTIGATION_STATUS), caseRoot.get(Case.INVESTIGATED_DATE),
+				caseRoot.get(Case.OUTCOME), caseRoot.get(Case.OUTCOME_DATE),
+				caseRoot.get(Case.SEQUELAE), caseRoot.get(Case.SEQUELAE_DETAILS),
+				caseRoot.get(Case.BLOOD_ORGAN_OR_TISSUE_DONATED),
+				caseRoot.get(Case.FOLLOW_UP_STATUS), caseRoot.get(Case.FOLLOW_UP_UNTIL),
+				caseRoot.get(Case.NOSOCOMIAL_OUTBREAK), caseRoot.get(Case.INFECTION_SETTING),
+				caseRoot.get(Case.PROHIBITION_TO_WORK), caseRoot.get(Case.PROHIBITION_TO_WORK_FROM), caseRoot.get(Case.PROHIBITION_TO_WORK_UNTIL),
+				caseRoot.get(Case.RE_INFECTION), caseRoot.get(Case.PREVIOUS_INFECTION_DATE), caseRoot.get(Case.REINFECTION_STATUS), caseRoot.get(Case.REINFECTION_DETAILS),
+				// quarantine
+				caseRoot.get(Case.QUARANTINE), caseRoot.get(Case.QUARANTINE_TYPE_DETAILS), caseRoot.get(Case.QUARANTINE_FROM), caseRoot.get(Case.QUARANTINE_TO),
+				caseRoot.get(Case.QUARANTINE_HELP_NEEDED),
+				caseRoot.get(Case.QUARANTINE_ORDERED_VERBALLY),
+				caseRoot.get(Case.QUARANTINE_ORDERED_OFFICIAL_DOCUMENT),
+				caseRoot.get(Case.QUARANTINE_ORDERED_VERBALLY_DATE),
+				caseRoot.get(Case.QUARANTINE_ORDERED_OFFICIAL_DOCUMENT_DATE),
+				caseRoot.get(Case.QUARANTINE_EXTENDED),
+				caseRoot.get(Case.QUARANTINE_REDUCED),
+				caseRoot.get(Case.QUARANTINE_OFFICIAL_ORDER_SENT),
+				caseRoot.get(Case.QUARANTINE_OFFICIAL_ORDER_SENT_DATE),
+
+				joins.getHospitalization().get(Hospitalization.ADMITTED_TO_HEALTH_FACILITY), joins.getHospitalization().get(Hospitalization.ADMISSION_DATE),
+				joins.getHospitalization().get(Hospitalization.DISCHARGE_DATE), joins.getHospitalization().get(Hospitalization.LEFT_AGAINST_ADVICE),
+				joins.getPerson().get(Person.PRESENT_CONDITION), joins.getPerson().get(Person.DEATH_DATE), joins.getPerson().get(Person.BURIAL_DATE),
+				joins.getPerson().get(Person.BURIAL_CONDUCTOR), joins.getPerson().get(Person.BURIAL_PLACE_DESCRIPTION),
+				// address
+				joins.getPersonAddressRegion().get(Region.NAME), joins.getPersonAddressDistrict().get(District.NAME), joins.getPersonAddressCommunity().get(Community.NAME),
+				joins.getPersonAddress().get(Location.CITY), joins.getPersonAddress().get(Location.STREET), joins.getPersonAddress().get(Location.HOUSE_NUMBER),
+				joins.getPersonAddress().get(Location.ADDITIONAL_INFORMATION), joins.getPersonAddress().get(Location.POSTAL_CODE),
+				joins.getPersonAddressFacility().get(Facility.NAME), joins.getPersonAddressFacility().get(Facility.UUID), joins.getPersonAddress().get(Location.FACILITY_DETAILS),
+				// phone
+				caseQueryContext.getSubqueryExpression(CaseQueryContext.PERSON_PHONE_SUBQUERY),
+				caseQueryContext.getSubqueryExpression(CaseQueryContext.PERSON_PHONE_OWNER_SUBQUERY),
+				caseQueryContext.getSubqueryExpression(CaseQueryContext.PERSON_EMAIL_SUBQUERY),
+				caseQueryContext.getSubqueryExpression(CaseQueryContext.PERSON_OTHER_CONTACT_DETAILS_SUBQUERY),
+				joins.getPerson().get(Person.EDUCATION_TYPE),
+				joins.getPerson().get(Person.EDUCATION_DETAILS), joins.getPerson().get(Person.OCCUPATION_TYPE),
+				joins.getPerson().get(Person.OCCUPATION_DETAILS), joins.getPerson().get(Person.ARMED_FORCES_RELATION_TYPE), joins.getEpiData().get(EpiData.CONTACT_WITH_SOURCE_CASE_KNOWN),
+				caseRoot.get(Case.VACCINATION_STATUS), caseRoot.get(Case.POSTPARTUM), caseRoot.get(Case.TRIMESTER),
+				eventCountSq,
+				exportPrescriptionNumber ? prescriptionCountSq : cb.nullLiteral(Long.class),
+				exportTreatmentNumber ? treatmentCountSq : cb.nullLiteral(Long.class),
+				exportClinicalVisitNumber ? clinicalVisitSq(cb, cq, caseRoot) : cb.nullLiteral(Long.class),
+				caseRoot.get(Case.EXTERNAL_ID),
+				caseRoot.get(Case.EXTERNAL_TOKEN),
+				caseRoot.get(Case.INTERNAL_TOKEN),
+				joins.getPerson().get(Person.BIRTH_NAME),
+				joins.getPersonBirthCountry().get(Country.ISO_CODE),
+				joins.getPersonBirthCountry().get(Country.DEFAULT_NAME),
+				joins.getPersonCitizenship().get(Country.ISO_CODE),
+				joins.getPersonCitizenship().get(Country.DEFAULT_NAME),
+				caseRoot.get(Case.CASE_IDENTIFICATION_SOURCE),
+				caseRoot.get(Case.SCREENING_TYPE),
+				// responsible jurisdiction
+				joins.getResponsibleRegion().get(Region.NAME),
+				joins.getResponsibleDistrict().get(District.NAME),
+				joins.getResponsibleCommunity().get(Community.NAME),
+				caseRoot.get(Case.CLINICIAN_NAME),
+				caseRoot.get(Case.CLINICIAN_PHONE),
+				caseRoot.get(Case.CLINICIAN_EMAIL),
+				caseRoot.get(Case.REPORTING_USER).get(User.ID),
+				caseRoot.get(Case.FOLLOW_UP_STATUS_CHANGE_USER).get(User.ID),
+				caseRoot.get(Case.PREVIOUS_QUARANTINE_TO),
+				caseRoot.get(Case.QUARANTINE_CHANGE_COMMENT),
+				exportOutbreakInfo ? cb.selectCase().when(cb.exists(outbreakSq(caseQueryContext)), cb.literal(I18nProperties.getString(Strings.yes)))
+						.otherwise(cb.literal(I18nProperties.getString(Strings.no))) : cb.nullLiteral(String.class),
+				JurisdictionHelper.booleanSelector(cb, service.inJurisdictionOrOwned(caseQueryContext)));
+		//@formatter:on
+
+		cq.distinct(true);
+
+		Predicate filter = service.createUserFilter(caseQueryContext);
+
+		if (caseCriteria != null) {
+			Predicate criteriaFilter = service.createCriteriaFilter(caseCriteria, caseQueryContext);
+			filter = CriteriaBuilderHelper.and(cb, filter, criteriaFilter);
+		}
+		filter = CriteriaBuilderHelper.andInValues(selectedRows, filter, cb, caseRoot.get(Case.UUID));
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		/*
+		 * Sort by report date DESC, but also by id for stable Sorting in case of equal report dates.
+		 * Since this method supports paging, values might jump between pages when sorting is unstable.
+		 */
+		cq.orderBy(cb.desc(caseRoot.get(Case.REPORT_DATE)), cb.desc(caseRoot.get(Case.ID)));
+
+		List<CaseExportDetailedSampleDto> resultList = QueryHelper.getResultList(em, cq, first, max);
+
+		List<Long> resultCaseIds = resultList.stream().map(CaseExportDetailedSampleDto::getId).collect(Collectors.toList());
+		if (!resultList.isEmpty()) {
+			List<Symptoms> symptomsList = null;
+			CriteriaQuery<Symptoms> symptomsCq = cb.createQuery(Symptoms.class);
+			Root<Symptoms> symptomsRoot = symptomsCq.from(Symptoms.class);
+			Expression<String> symptomsIdsExpr = symptomsRoot.get(Symptoms.ID);
+			symptomsCq.where(symptomsIdsExpr.in(resultList.stream().map(CaseExportDetailedSampleDto::getSymptomsId).collect(Collectors.toList())));
+			symptomsList = em.createQuery(symptomsCq).setHint(ModelConstants.READ_ONLY, true).getResultList();
+			Map<Long, Symptoms> symptoms = symptomsList.stream().collect(Collectors.toMap(Symptoms::getId, Function.identity()));
+
+			Map<Long, HealthConditions> healthConditions = null;
+			if (exportType == null || exportType == CaseExportType.CASE_MANAGEMENT) {
+				if (ExportHelper.shouldExportFields(exportConfiguration, CaseDataDto.HEALTH_CONDITIONS)) {
+					List<HealthConditions> healthConditionsList = null;
+					CriteriaQuery<HealthConditions> healthConditionsCq = cb.createQuery(HealthConditions.class);
+					Root<HealthConditions> healthConditionsRoot = healthConditionsCq.from(HealthConditions.class);
+					Expression<String> healthConditionsIdsExpr = healthConditionsRoot.get(HealthConditions.ID);
+					healthConditionsCq.where(
+							healthConditionsIdsExpr.in(resultList.stream().map(CaseExportDetailedSampleDto::getHealthConditionsId).collect(Collectors.toList())));
+					healthConditionsList = em.createQuery(healthConditionsCq).setHint(ModelConstants.READ_ONLY, true).getResultList();
+					healthConditions = healthConditionsList.stream().collect(Collectors.toMap(HealthConditions::getId, Function.identity()));
+				}
+			}
+
+			Map<Long, PreviousHospitalization> firstPreviousHospitalizations = null;
+			if (ExportHelper.shouldExportFields(exportConfiguration, CaseExportDetailedSampleDto.INITIAL_DETECTION_PLACE)) {
+				List<PreviousHospitalization> prevHospsList = null;
+				CriteriaQuery<PreviousHospitalization> prevHospsCq = cb.createQuery(PreviousHospitalization.class);
+				Root<PreviousHospitalization> prevHospsRoot = prevHospsCq.from(PreviousHospitalization.class);
+				Join<PreviousHospitalization, Hospitalization> prevHospsHospitalizationJoin =
+						prevHospsRoot.join(PreviousHospitalization.HOSPITALIZATION, JoinType.LEFT);
+				Expression<String> hospitalizationIdsExpr = prevHospsHospitalizationJoin.get(Hospitalization.ID);
+				prevHospsCq
+						.where(hospitalizationIdsExpr.in(resultList.stream().map(CaseExportDetailedSampleDto::getHospitalizationId).collect(Collectors.toList())));
+				prevHospsCq.orderBy(cb.asc(prevHospsRoot.get(PreviousHospitalization.ADMISSION_DATE)));
+				prevHospsList = em.createQuery(prevHospsCq).setHint(ModelConstants.READ_ONLY, true).getResultList();
+				firstPreviousHospitalizations =
+						prevHospsList.stream().collect(Collectors.toMap(p -> p.getHospitalization().getId(), Function.identity(), (id1, id2) -> id1));
+			}
+
+			Map<Long, CaseClassification> sourceCaseClassifications = null;
+			if (ExportHelper.shouldExportFields(exportConfiguration, CaseExportDetailedSampleDto.MAX_SOURCE_CASE_CLASSIFICATION)) {
+				sourceCaseClassifications = contactService.getSourceCaseClassifications(resultCaseIds)
+						.stream()
+						.collect(
+								Collectors
+										.toMap(e -> (Long) e[0], e -> (CaseClassification) e[1], (c1, c2) -> c1.getSeverity() >= c2.getSeverity() ? c1 : c2));
+			}
+
+			Map<Long, List<Exposure>> exposures = null;
+			if ((exportType == null || exportType == CaseExportType.CASE_SURVEILLANCE)
+					&& ExportHelper
+					.shouldExportFields(exportConfiguration, CaseExportDetailedSampleDto.TRAVELED, CaseExportDetailedSampleDto.TRAVEL_HISTORY, CaseExportDetailedSampleDto.BURIAL_ATTENDED)) {
+				CriteriaQuery<Exposure> exposuresCq = cb.createQuery(Exposure.class);
+				Root<Exposure> exposuresRoot = exposuresCq.from(Exposure.class);
+				Join<Exposure, EpiData> exposuresEpiDataJoin = exposuresRoot.join(Exposure.EPI_DATA, JoinType.LEFT);
+				Expression<String> epiDataIdsExpr = exposuresEpiDataJoin.get(EpiData.ID);
+				Predicate exposuresPredicate = cb.and(
+						epiDataIdsExpr.in(resultList.stream().map(CaseExportDetailedSampleDto::getEpiDataId).collect(Collectors.toList())),
+						cb.or(
+								cb.equal(exposuresRoot.get(Exposure.EXPOSURE_TYPE), ExposureType.TRAVEL),
+								cb.equal(exposuresRoot.get(Exposure.EXPOSURE_TYPE), ExposureType.BURIAL)));
+				exposuresCq.where(exposuresPredicate);
+				exposuresCq.orderBy(cb.asc(exposuresEpiDataJoin.get(EpiData.ID)));
+				List<Exposure> exposureList = em.createQuery(exposuresCq).setHint(ModelConstants.READ_ONLY, true).getResultList();
+				exposures = exposureList.stream().collect(Collectors.groupingBy(e -> e.getEpiData().getId()));
+			}
+
+			Map<Long, List<CaseSampleExportDto>> samples = null;
+			if ((exportType == null || exportType == CaseExportType.CASE_SURVEILLANCE)
+					&& ExportHelper.shouldExportFields(exportConfiguration, CaseExportDetailedSampleDto.SAMPLE_INFORMATION)) {
+				List<CaseSampleExportDto> samplesList = null;
+				CriteriaQuery<CaseSampleExportDto> samplesCq = cb.createQuery(CaseSampleExportDto.class);
+				Root<Sample> samplesRoot = samplesCq.from(Sample.class);
+				Join<Sample, Case> samplesCaseJoin = samplesRoot.join(Sample.ASSOCIATED_CASE, JoinType.LEFT);
+				Expression<String> caseIdsExpr = samplesCaseJoin.get(Case.ID);
+				samplesCq.multiselect(
+						samplesRoot.get(Sample.UUID),
+						samplesRoot.get(Sample.LAB_SAMPLE_ID),
+						samplesRoot.get(Sample.SAMPLE_DATE_TIME),
+						samplesRoot.get(Sample.REPORT_DATE_TIME),
+						samplesRoot.get(Sample.SAMPLE_MATERIAL),
+						samplesRoot.get(Sample.SAMPLE_MATERIAL_TEXT),
+						samplesRoot.get(Sample.SAMPLE_PURPOSE),
+						samplesRoot.get(Sample.SAMPLE_SOURCE),
+						samplesRoot.get(Sample.SAMPLING_REASON),
+						samplesRoot.get(Sample.SAMPLING_REASON_DETAILS),
+						samplesRoot.get(Sample.LAB).get(Facility.NAME),
+						samplesRoot.get(Sample.LAB_DETAILS),
+						samplesRoot.get(Sample.PATHOGEN_TEST_RESULT),
+						samplesRoot.get(Sample.PATHOGEN_TESTING_REQUESTED),
+						samplesRoot.get(Sample.REQUESTED_PATHOGEN_TESTS_STRING),
+						samplesRoot.get(Sample.REQUESTED_OTHER_PATHOGEN_TESTS),
+						samplesRoot.get(Sample.ADDITIONAL_TESTING_REQUESTED),
+						samplesRoot.get(Sample.REQUESTED_ADDITIONAL_TESTS_STRING),
+						samplesRoot.get(Sample.REQUESTED_OTHER_ADDITIONAL_TESTS),
+						samplesRoot.get(Sample.SHIPPED),
+						samplesRoot.get(Sample.SHIPMENT_DATE),
+						samplesRoot.get(Sample.SHIPMENT_DETAILS),
+						samplesRoot.get(Sample.RECEIVED),
+						samplesRoot.get(Sample.RECEIVED_DATE),
+						samplesRoot.get(Sample.SPECIMEN_CONDITION),
+						samplesRoot.get(Sample.NO_TEST_POSSIBLE_REASON),
+						samplesRoot.get(Sample.COMMENT),
+						samplesRoot.get(Sample.LAB).get(Facility.UUID),
+						caseIdsExpr);
+
+				Predicate eliminateDeletedSamplesFilter = cb.equal(samplesRoot.get(Sample.DELETED), false);
+				samplesCq.where(caseIdsExpr.in(resultCaseIds), eliminateDeletedSamplesFilter);
+				samplesList = em.createQuery(samplesCq).setHint(ModelConstants.READ_ONLY, true).getResultList();
+				samples = samplesList.stream().collect(Collectors.groupingBy(s -> s.getCaseId()));
+				if (samplesList != null) {
+					allSamples = samplesList.stream()
+							.sorted(Comparator.comparing(s -> s.getCaseId()))
+							.collect(Collectors.toList());
+				}
+			}
+
+			List<VisitSummaryExportDetails> visitSummaries = null;
+			if (featureConfigurationFacade.isFeatureEnabled(FeatureType.CASE_FOLLOWUP)
+					&& ExportHelper.shouldExportFields(
+					exportConfiguration,
+					CaseExportDetailedSampleDto.NUMBER_OF_VISITS,
+					CaseExportDetailedSampleDto.LAST_COOPERATIVE_VISIT_DATE,
+					CaseExportDetailedSampleDto.LAST_COOPERATIVE_VISIT_SYMPTOMATIC,
+					CaseExportDetailedSampleDto.LAST_COOPERATIVE_VISIT_SYMPTOMS)) {
+				CriteriaQuery<VisitSummaryExportDetails> visitsCq = cb.createQuery(VisitSummaryExportDetails.class);
+				Root<Case> visitsCqRoot = visitsCq.from(Case.class);
+				Join<Case, Visit> visitsJoin = visitsCqRoot.join(Case.VISITS, JoinType.LEFT);
+				Join<Visit, Symptoms> visitSymptomsJoin = visitsJoin.join(Visit.SYMPTOMS, JoinType.LEFT);
+
+				visitsCq.where(
+						CriteriaBuilderHelper
+								.and(cb, visitsCqRoot.get(AbstractDomainObject.ID).in(resultCaseIds), cb.isNotEmpty(visitsCqRoot.get(Case.VISITS))));
+				visitsCq.multiselect(
+						visitsCqRoot.get(AbstractDomainObject.ID),
+						visitsJoin.get(Visit.VISIT_DATE_TIME),
+						visitsJoin.get(Visit.VISIT_STATUS),
+						visitSymptomsJoin);
+
+				visitSummaries = em.createQuery(visitsCq).getResultList();
+			}
+
+			Map<Long, List<Immunization>> immunizations = null;
+			if ((exportType == null || exportType == CaseExportType.CASE_SURVEILLANCE)
+					&& (exportConfiguration == null
+					|| exportConfiguration.getProperties()
+					.stream()
+					.anyMatch(p -> StringUtils.equalsAny(p, ExportHelper.getVaccinationExportProperties())))) {
+				List<Immunization> immunizationList;
+				CriteriaQuery<Immunization> immunizationsCq = cb.createQuery(Immunization.class);
+				Root<Immunization> immunizationsCqRoot = immunizationsCq.from(Immunization.class);
+				Join<Immunization, Person> personJoin = immunizationsCqRoot.join(Immunization.PERSON, JoinType.LEFT);
+				Expression<String> personIdsExpr = personJoin.get(Person.ID);
+				immunizationsCq.where(
+						CriteriaBuilderHelper.and(
+								cb,
+								cb.or(
+										cb.equal(immunizationsCqRoot.get(Immunization.MEANS_OF_IMMUNIZATION), MeansOfImmunization.VACCINATION),
+										cb.equal(immunizationsCqRoot.get(Immunization.MEANS_OF_IMMUNIZATION), MeansOfImmunization.VACCINATION_RECOVERY)),
+								personIdsExpr.in(resultList.stream().map(CaseExportDetailedSampleDto::getPersonId).collect(Collectors.toList()))));
+				immunizationsCq.select(immunizationsCqRoot);
+				immunizationList = em.createQuery(immunizationsCq).setHint(ModelConstants.READ_ONLY, true).getResultList();
+				immunizations = immunizationList.stream().collect(Collectors.groupingBy(i -> i.getPerson().getId()));
+			}
+
+			// Load latest events info
+			// Adding a second query here is not perfect, but selecting the last event with a criteria query
+			// doesn't seem to be possible and using a native query is not an option because of user filters
+			List<EventSummaryDetails> eventSummaries = null;
+			if (ExportHelper.shouldExportFields(
+					exportConfiguration,
+					CaseExportDetailedSampleDto.LATEST_EVENT_ID,
+					CaseExportDetailedSampleDto.LATEST_EVENT_STATUS,
+					CaseExportDetailedSampleDto.LATEST_EVENT_TITLE)) {
+
+				eventSummaries = eventService.getEventSummaryDetailsByCases(resultCaseIds);
+			}
+
+			Map<Long, UserReference> caseUsers = getCaseUsersForDetailedExport(resultList, exportConfiguration);
+
+			Pseudonymizer pseudonymizer = getPseudonymizerForDtoWithClinician(I18nProperties.getCaption(Captions.inaccessibleValue));
+
+			for (CaseExportDetailedSampleDto exportDto : resultList) {
+				final boolean inJurisdiction = exportDto.getInJurisdiction();
+
+				if (exportConfiguration == null || exportConfiguration.getProperties().contains(CaseExportDetailedSampleDto.COUNTRY)) {
+					exportDto.setCountry(configFacade.getEpidPrefix());
+				}
+				if (ExportHelper.shouldExportFields(exportConfiguration, CaseDataDto.SYMPTOMS)) {
+					Optional.ofNullable(symptoms.get(exportDto.getSymptomsId()))
+							.ifPresent(symptom -> exportDto.setSymptoms(SymptomsFacadeEjb.toSymptomsDto(symptom)));
+				}
+				if (healthConditions != null) {
+					Optional.ofNullable(healthConditions.get(exportDto.getHealthConditionsId()))
+							.ifPresent(healthCondition -> exportDto.setHealthConditions(HealthConditionsMapper.toDto(healthCondition)));
+				}
+				if (firstPreviousHospitalizations != null) {
+					Optional.ofNullable(firstPreviousHospitalizations.get(exportDto.getHospitalizationId()))
+							.ifPresent(firstPreviousHospitalization -> {
+								if (firstPreviousHospitalization.getHealthFacility() != null) {
+									exportDto.setInitialDetectionPlace(
+											FacilityHelper.buildFacilityString(
+													firstPreviousHospitalization.getHealthFacility().getUuid(),
+													firstPreviousHospitalization.getHealthFacility().getName(),
+													firstPreviousHospitalization.getHealthFacilityDetails()));
+								} else {
+									exportDto.setInitialDetectionPlace(I18nProperties.getCaption(Captions.unknown));
+								}
+							});
+					if (StringUtils.isEmpty(exportDto.getInitialDetectionPlace())) {
+						if (!StringUtils.isEmpty(exportDto.getHealthFacility())) {
+							exportDto.setInitialDetectionPlace(exportDto.getHealthFacility());
+						} else {
+							exportDto.setInitialDetectionPlace(exportDto.getPointOfEntry());
+						}
+					}
+				}
+				if (sourceCaseClassifications != null) {
+					Optional.ofNullable(sourceCaseClassifications.get(exportDto.getId()))
+							.ifPresent(sourceCaseClassification -> exportDto.setMaxSourceCaseClassification(sourceCaseClassification));
+				}
+				if (exposures != null) {
+					Optional.ofNullable(exposures.get(exportDto.getEpiDataId())).ifPresent(caseExposures -> {
+						StringBuilder travelHistoryBuilder = new StringBuilder();
+						if (caseExposures.stream().anyMatch(e -> ExposureType.BURIAL.equals(e.getExposureType()))) {
+							exportDto.setBurialAttended(true);
+						}
+						caseExposures.stream().filter(e -> ExposureType.TRAVEL.equals(e.getExposureType())).forEach(exposure -> {
+							Location location = exposure.getLocation();
+							travelHistoryBuilder.append(
+											EpiDataHelper.buildDetailedTravelString(
+													LocationReferenceDto.buildCaption(
+															location.getRegion() != null ? location.getRegion().getName() : null,
+															location.getDistrict() != null ? location.getDistrict().getName() : null,
+															location.getCommunity() != null ? location.getCommunity().getName() : null,
+															location.getCity(),
+															location.getStreet(),
+															location.getHouseNumber(),
+															location.getAdditionalInformation()),
+													exposure.getDescription(),
+													exposure.getStartDate(),
+													exposure.getEndDate(),
+													userLanguage))
+									.append(", ");
+						});
+						if (travelHistoryBuilder.length() > 0) {
+							exportDto.setTraveled(true);
+							travelHistoryBuilder.delete(travelHistoryBuilder.lastIndexOf(", "), travelHistoryBuilder.length() - 1);
+						}
+						exportDto.setTravelHistory(travelHistoryBuilder.toString());
+					});
+				}
+
+				if (immunizations != null) {
+					Optional.ofNullable(immunizations.get(exportDto.getPersonId())).ifPresent(caseImmunizations -> {
+						List<Immunization> filteredImmunizations =
+								caseImmunizations.stream().filter(i -> i.getDisease() == exportDto.getDisease()).collect(Collectors.toList());
+						if (!filteredImmunizations.isEmpty()) {
+							filteredImmunizations.sort(Comparator.comparing(i -> ImmunizationEntityHelper.getDateForComparison(i, false)));
+							Immunization mostRecentImmunization = filteredImmunizations.get(filteredImmunizations.size() - 1);
+							Integer numberOfDoses = mostRecentImmunization.getNumberOfDoses();
+							Date onsetDate = Optional.ofNullable(symptoms.get(exportDto.getSymptomsId())).map(Symptoms::getOnsetDate).orElse(null);
+
+							List<Vaccination> relevantSortedVaccinations = vaccinationService.getRelevantSortedVaccinations(
+									filteredImmunizations.stream().flatMap(i -> i.getVaccinations().stream()).collect(Collectors.toList()),
+									onsetDate,
+									exportDto.getReportDate());
+							Vaccination firstVaccination = null;
+							Vaccination lastVaccination = null;
+
+							if (CollectionUtils.isNotEmpty(relevantSortedVaccinations)) {
+								firstVaccination = relevantSortedVaccinations.get(0);
+								lastVaccination = relevantSortedVaccinations.get(relevantSortedVaccinations.size() - 1);
+								exportDto.setFirstVaccinationDate(firstVaccination.getVaccinationDate());
+								exportDto.setLastVaccinationDate(lastVaccination.getVaccinationDate());
+								exportDto.setVaccineName(lastVaccination.getVaccineName());
+								exportDto.setOtherVaccineName(lastVaccination.getOtherVaccineName());
+								exportDto.setVaccineManufacturer(lastVaccination.getVaccineManufacturer());
+								exportDto.setOtherVaccineManufacturer(lastVaccination.getOtherVaccineManufacturer());
+								exportDto.setVaccinationInfoSource(lastVaccination.getVaccinationInfoSource());
+								exportDto.setVaccineAtcCode(lastVaccination.getVaccineAtcCode());
+								exportDto.setVaccineBatchNumber(lastVaccination.getVaccineBatchNumber());
+								exportDto.setVaccineUniiCode(lastVaccination.getVaccineUniiCode());
+								exportDto.setVaccineInn(lastVaccination.getVaccineInn());
+							}
+
+							exportDto.setNumberOfDoses(
+									numberOfDoses != null ? String.valueOf(numberOfDoses) : getNumberOfDosesFromVaccinations(lastVaccination));
+						}
+					});
+				}
+				if (visitSummaries != null) {
+					List<VisitSummaryExportDetails> visits =
+							visitSummaries.stream().filter(v -> v.getContactId() == exportDto.getId()).collect(Collectors.toList());
+
+					VisitSummaryExportDetails lastCooperativeVisit = visits.stream()
+							.filter(v -> v.getVisitStatus() == VisitStatus.COOPERATIVE)
+							.max(Comparator.comparing(VisitSummaryExportDetails::getVisitDateTime))
+							.orElse(null);
+
+					exportDto.setNumberOfVisits(visits.size());
+					if (lastCooperativeVisit != null) {
+						exportDto.setLastCooperativeVisitDate(lastCooperativeVisit.getVisitDateTime());
+
+						SymptomsDto visitSymptoms = SymptomsFacadeEjb.toSymptomsDto(lastCooperativeVisit.getSymptoms());
+						pseudonymizer.pseudonymizeDto(SymptomsDto.class, visitSymptoms, inJurisdiction, null);
+
+						exportDto.setLastCooperativeVisitSymptoms(SymptomsHelper.buildSymptomsHumanString(visitSymptoms, true, userLanguage));
+						exportDto.setLastCooperativeVisitSymptomatic(
+								visitSymptoms.getSymptomatic() == null
+										? YesNoUnknown.UNKNOWN
+										: (visitSymptoms.getSymptomatic() ? YesNoUnknown.YES : YesNoUnknown.NO));
+					}
+				}
+
+				if (eventSummaries != null && exportDto.getEventCount() != 0) {
+					eventSummaries.stream()
+							.filter(v -> v.getCaseId() == exportDto.getId())
+							.max(Comparator.comparing(EventSummaryDetails::getEventDate))
+							.ifPresent(eventSummary -> {
+								exportDto.setLatestEventId(eventSummary.getEventUuid());
+								exportDto.setLatestEventStatus(eventSummary.getEventStatus());
+								exportDto.setLatestEventTitle(eventSummary.getEventTitle());
+							});
+				}
+
+				if (!caseUsers.isEmpty()) {
+					if (exportDto.getReportingUserId() != null) {
+						UserReference user = caseUsers.get(exportDto.getReportingUserId());
+
+						exportDto.setReportingUserName(user.getName());
+						exportDto.setReportingUserRoles(
+								user.getUserRoles().stream().map(userRole -> UserRoleFacadeEjb.toReferenceDto(userRole)).collect(Collectors.toSet()));
+					}
+
+					if (exportDto.getFollowUpStatusChangeUserId() != null) {
+						UserReference user = caseUsers.get(exportDto.getFollowUpStatusChangeUserId());
+
+						exportDto.setFollowUpStatusChangeUserName(user.getName());
+						exportDto.setFollowUpStatusChangeUserRoles(
+								user.getUserRoles().stream().map(userRole -> UserRoleFacadeEjb.toReferenceDto(userRole)).collect(Collectors.toSet()));
+					}
+				}
+			}
+
+
+		}
+
+
+		if (allSamples != null) {
+			List<CaseExportDetailedSampleDto> newResult = new ArrayList<>();
+			for (CaseExportDetailedSampleDto exportDto : resultList) {
+				//loop all samples
+				for(CaseSampleExportDto embeddedDetailedSampleExportDto : allSamples) {
+					if (exportDto.getId() == embeddedDetailedSampleExportDto.getCaseId()) {
+
+						CaseExportDetailedSampleDto caseExportDetailedDtoNew = new CaseExportDetailedSampleDto();
+						caseExportDetailedDtoNew.setId(exportDto.getId());
+						caseExportDetailedDtoNew.setPersonId(exportDto.getPersonId());
+						caseExportDetailedDtoNew.setAddressGpsCoordinates(exportDto.getAddressGpsCoordinates());
+						caseExportDetailedDtoNew.setEpiDataId(exportDto.getEpiDataId());
+						caseExportDetailedDtoNew.setSymptomsId(exportDto.getSymptomsId());
+						caseExportDetailedDtoNew.setHospitalizationId(exportDto.getHospitalizationId());
+						caseExportDetailedDtoNew.setHealthConditionsId(exportDto.getHealthConditionsId());
+						caseExportDetailedDtoNew.setUuid(exportDto.getUuid());
+						caseExportDetailedDtoNew.setEpidNumber(exportDto.getEpidNumber());
+						caseExportDetailedDtoNew.setArmedForcesRelationType(exportDto.getArmedForcesRelationType());
+						caseExportDetailedDtoNew.setDisease(exportDto.getDisease());
+						caseExportDetailedDtoNew.setDiseaseDetails(exportDto.getDiseaseDetails());
+						caseExportDetailedDtoNew.setDiseaseVariant(exportDto.getDiseaseVariant());
+						caseExportDetailedDtoNew.setDiseaseVariantDetails(exportDto.getDiseaseVariantDetails());
+						caseExportDetailedDtoNew.setPersonUuid(exportDto.getPersonUuid());
+						caseExportDetailedDtoNew.setPersonUuid(exportDto.getPersonUuid());
+						caseExportDetailedDtoNew.setFirstName(exportDto.getFirstName());
+						caseExportDetailedDtoNew.setLastName(exportDto.getLastName());
+						caseExportDetailedDtoNew.setSalutation(exportDto.getSalutation());
+						caseExportDetailedDtoNew.setOtherSalutation(exportDto.getOtherSalutation());
+						caseExportDetailedDtoNew.setSex(exportDto.getSex());
+						caseExportDetailedDtoNew.setPregnant(exportDto.getPregnant());
+						caseExportDetailedDtoNew.setApproximateAge(exportDto.getApproximateAge());
+						caseExportDetailedDtoNew.setAgeGroup(exportDto.getAgeGroup());
+						caseExportDetailedDtoNew.setBirthdate(exportDto.getBirthdate());
+						caseExportDetailedDtoNew.setReportDate(exportDto.getReportDate());
+						caseExportDetailedDtoNew.setRegion(exportDto.getRegion());
+						caseExportDetailedDtoNew.setDistrict(exportDto.getDistrict());
+						caseExportDetailedDtoNew.setCommunity(exportDto.getCommunity());
+						caseExportDetailedDtoNew.setCaseClassification(exportDto.getCaseClassification());
+						caseExportDetailedDtoNew.setClinicalConfirmation(exportDto.getClinicalConfirmation());
+						caseExportDetailedDtoNew.setEpidemiologicalConfirmation(exportDto.getEpidemiologicalConfirmation());
+						caseExportDetailedDtoNew.setLaboratoryDiagnosticConfirmation(exportDto.getLaboratoryDiagnosticConfirmation());
+						caseExportDetailedDtoNew.setNotACaseReasonNegativeTest(exportDto.getNotACaseReasonNegativeTest());
+						caseExportDetailedDtoNew.setNotACaseReasonPhysicianInformation(exportDto.getNotACaseReasonPhysicianInformation());
+						caseExportDetailedDtoNew.setNotACaseReasonDifferentPathogen(exportDto.getNotACaseReasonDifferentPathogen());
+						caseExportDetailedDtoNew.setNotACaseReasonOther(exportDto.getNotACaseReasonOther());
+						caseExportDetailedDtoNew.setNotACaseReasonDetails(exportDto.getNotACaseReasonDetails());
+						caseExportDetailedDtoNew.setInvestigationStatus(exportDto.getInvestigationStatus());
+						caseExportDetailedDtoNew.setInvestigatedDate(exportDto.getInvestigatedDate());
+						caseExportDetailedDtoNew.setOutcome(exportDto.getOutcome());
+						caseExportDetailedDtoNew.setOutcomeDate(exportDto.getOutcomeDate());
+						caseExportDetailedDtoNew.setSequelae(exportDto.getSequelae());
+						caseExportDetailedDtoNew.setSequelaeDetails(exportDto.getSequelaeDetails());
+						caseExportDetailedDtoNew.setBloodOrganOrTissueDonated(exportDto.getBloodOrganOrTissueDonated());
+						caseExportDetailedDtoNew.setNosocomialOutbreak(exportDto.getNosocomialOutbreak());
+						caseExportDetailedDtoNew.setInfectionSetting(exportDto.getInfectionSetting());
+						caseExportDetailedDtoNew.setProhibitionToWork(exportDto.getProhibitionToWork());
+						caseExportDetailedDtoNew.setProhibitionToWorkFrom(exportDto.getProhibitionToWorkFrom());
+						caseExportDetailedDtoNew.setProhibitionToWorkUntil(exportDto.getProhibitionToWorkUntil());
+						caseExportDetailedDtoNew.setReInfection(exportDto.getReInfection());
+						caseExportDetailedDtoNew.setPreviousInfectionDate(exportDto.getPreviousInfectionDate());
+						caseExportDetailedDtoNew.setReinfectionStatus(exportDto.getReinfectionStatus());
+						caseExportDetailedDtoNew.setReinfectionDetails(exportDto.getReinfectionDetails());
+						caseExportDetailedDtoNew.setQuarantine(exportDto.getQuarantine());
+						caseExportDetailedDtoNew.setQuarantineTypeDetails(exportDto.getQuarantineTypeDetails());
+						caseExportDetailedDtoNew.setQuarantineFrom(exportDto.getQuarantineFrom());
+						caseExportDetailedDtoNew.setQuarantineTo(exportDto.getQuarantineTo());
+						caseExportDetailedDtoNew.setQuarantineHelpNeeded(exportDto.getQuarantineHelpNeeded());
+						caseExportDetailedDtoNew.setQuarantineOrderedVerbally(exportDto.isQuarantineOrderedVerbally());
+						caseExportDetailedDtoNew.setQuarantineOrderedOfficialDocument(exportDto.isQuarantineOrderedOfficialDocument());
+						caseExportDetailedDtoNew.setQuarantineOrderedVerballyDate(exportDto.getQuarantineOrderedVerballyDate());
+						caseExportDetailedDtoNew.setQuarantineOrderedOfficialDocumentDate(exportDto.getQuarantineOrderedOfficialDocumentDate());
+						caseExportDetailedDtoNew.setQuarantineExtended(exportDto.isQuarantineExtended());
+						caseExportDetailedDtoNew.setQuarantineReduced(exportDto.isQuarantineReduced());
+						caseExportDetailedDtoNew.setQuarantineOfficialOrderSent(exportDto.isQuarantineOfficialOrderSent());
+						caseExportDetailedDtoNew.setQuarantineOfficialOrderSentDate(exportDto.getQuarantineOfficialOrderSentDate());
+						caseExportDetailedDtoNew.setFacilityType(exportDto.getFacilityType());
+						caseExportDetailedDtoNew.setHealthFacility(exportDto.getHealthFacility());
+						caseExportDetailedDtoNew.setHealthFacilityDetails(exportDto.getHealthFacilityDetails());
+						caseExportDetailedDtoNew.setPointOfEntry(exportDto.getPointOfEntry());
+						caseExportDetailedDtoNew.setPointOfEntryDetails(exportDto.getPointOfEntryDetails());
+						caseExportDetailedDtoNew.setAdmittedToHealthFacility(exportDto.getAdmittedToHealthFacility());
+						caseExportDetailedDtoNew.setAdmissionDate(exportDto.getAdmissionDate());
+						caseExportDetailedDtoNew.setDischargeDate(exportDto.getDischargeDate());
+						caseExportDetailedDtoNew.setLeftAgainstAdvice(exportDto.getLeftAgainstAdvice());
+						caseExportDetailedDtoNew.setPresentCondition(exportDto.getPresentCondition());
+						caseExportDetailedDtoNew.setDeathDate(exportDto.getDeathDate());
+						caseExportDetailedDtoNew.setBurialInfo(exportDto.getBurialInfo());
+						caseExportDetailedDtoNew.setAddressRegion(exportDto.getAddressRegion());
+						caseExportDetailedDtoNew.setAddressDistrict(exportDto.getAddressDistrict());
+						caseExportDetailedDtoNew.setAddressCommunity(exportDto.getAddressCommunity());
+						caseExportDetailedDtoNew.setCity(exportDto.getCity());
+						caseExportDetailedDtoNew.setStreet(exportDto.getStreet());
+						caseExportDetailedDtoNew.setHouseNumber(exportDto.getHouseNumber());
+						caseExportDetailedDtoNew.setAdditionalInformation(exportDto.getAdditionalInformation());
+						caseExportDetailedDtoNew.setPostalCode(exportDto.getPostalCode());
+						caseExportDetailedDtoNew.setFacility(exportDto.getFacility());
+						caseExportDetailedDtoNew.setFacilityDetails(exportDto.getFacilityDetails());
+						caseExportDetailedDtoNew.setPhone(exportDto.getPhone());
+						caseExportDetailedDtoNew.setPhoneOwner(exportDto.getPhoneOwner());
+						caseExportDetailedDtoNew.setEmailAddress(exportDto.getEmailAddress());
+						caseExportDetailedDtoNew.setOtherContactDetails(exportDto.getOtherContactDetails());
+						caseExportDetailedDtoNew.setEducationType(exportDto.getEducationType());
+						caseExportDetailedDtoNew.setEducationDetails(exportDto.getEducationDetails());
+						caseExportDetailedDtoNew.setOccupationType(exportDto.getOccupationType());
+						caseExportDetailedDtoNew.setOccupationDetails(exportDto.getOccupationDetails());
+						caseExportDetailedDtoNew.setContactWithSourceCaseKnown(exportDto.getContactWithSourceCaseKnown());
+						caseExportDetailedDtoNew.setVaccinationStatus(exportDto.getVaccinationStatus());
+						caseExportDetailedDtoNew.setPostpartum(exportDto.getPostpartum());
+						caseExportDetailedDtoNew.setTrimester(exportDto.getTrimester());
+						caseExportDetailedDtoNew.setFollowUpStatus(exportDto.getFollowUpStatus());
+						caseExportDetailedDtoNew.setFollowUpUntil(exportDto.getFollowUpUntil());
+						caseExportDetailedDtoNew.setEventCount(exportDto.getEventCount());
+						caseExportDetailedDtoNew.setNumberOfPrescriptions(exportDto.getNumberOfPrescriptions());
+						caseExportDetailedDtoNew.setNumberOfTreatments(exportDto.getNumberOfTreatments());
+						caseExportDetailedDtoNew.setNumberOfClinicalVisits(exportDto.getNumberOfClinicalVisits());
+						caseExportDetailedDtoNew.setExternalID(exportDto.getExternalID());
+						caseExportDetailedDtoNew.setExternalToken(exportDto.getExternalToken());
+						caseExportDetailedDtoNew.setInternalToken(exportDto.getInternalToken());
+						caseExportDetailedDtoNew.setBirthName(exportDto.getBirthName());
+						caseExportDetailedDtoNew.setBirthCountry(exportDto.getBirthCountry());
+						caseExportDetailedDtoNew.setCitizenship(exportDto.getCitizenship());
+						caseExportDetailedDtoNew.setCaseIdentificationSource(exportDto.getCaseIdentificationSource());
+						caseExportDetailedDtoNew.setScreeningType(exportDto.getScreeningType());
+						caseExportDetailedDtoNew.setResponsibleRegion(exportDto.getResponsibleRegion());
+						caseExportDetailedDtoNew.setResponsibleDistrict(exportDto.getResponsibleDistrict());
+						caseExportDetailedDtoNew.setResponsibleCommunity(exportDto.getResponsibleCommunity());
+						caseExportDetailedDtoNew.setClinicianName(exportDto.getClinicianName());
+						caseExportDetailedDtoNew.setClinicianPhone(exportDto.getClinicianPhone());
+						caseExportDetailedDtoNew.setClinicianEmail(exportDto.getClinicianEmail());
+						caseExportDetailedDtoNew.setReportingUserId(exportDto.getReportingUserId());
+						caseExportDetailedDtoNew.setFollowUpStatusChangeUserId(exportDto.getFollowUpStatusChangeUserId());
+						caseExportDetailedDtoNew.setPreviousQuarantineTo(exportDto.getPreviousQuarantineTo());
+						caseExportDetailedDtoNew.setQuarantineChangeComment(exportDto.getQuarantineChangeComment());
+						caseExportDetailedDtoNew.setAssociatedWithOutbreak(exportDto.getAssociatedWithOutbreak());
+						caseExportDetailedDtoNew.setInJurisdiction(exportDto.getInJurisdiction());
+
+						//adding sample data
+						caseExportDetailedDtoNew.setSampleUuid(embeddedDetailedSampleExportDto.getUuid());
+						caseExportDetailedDtoNew.setLabSampleId(embeddedDetailedSampleExportDto.getLabSampleID());
+						caseExportDetailedDtoNew.setSampleReportDate(embeddedDetailedSampleExportDto.getSampleReportDate());
+						caseExportDetailedDtoNew.setSampleDateTime(embeddedDetailedSampleExportDto.getSampleDateTime());
+						caseExportDetailedDtoNew.setSampleSource(embeddedDetailedSampleExportDto.getSampleSource());
+						caseExportDetailedDtoNew.setSampleMaterialString(embeddedDetailedSampleExportDto.getSampleMaterialString());
+						caseExportDetailedDtoNew.setSamplePurpose(embeddedDetailedSampleExportDto.getSamplePurpose());
+						caseExportDetailedDtoNew.setSampleSource(embeddedDetailedSampleExportDto.getSampleSource());
+						caseExportDetailedDtoNew.setSamplingReason(embeddedDetailedSampleExportDto.getSamplingReason());
+						caseExportDetailedDtoNew.setSamplingReasonDetails(embeddedDetailedSampleExportDto.getSamplingReasonDetails());
+						caseExportDetailedDtoNew.setLaboratory(embeddedDetailedSampleExportDto.getLab());
+						caseExportDetailedDtoNew.setPathogenTestResult(embeddedDetailedSampleExportDto.getPathogenTestResult());
+						caseExportDetailedDtoNew.setPathogenTestingRequested(embeddedDetailedSampleExportDto.getPathogenTestingRequested());
+						caseExportDetailedDtoNew.setRequestedPathogenTests(embeddedDetailedSampleExportDto.getRequestedPathogenTests());
+						caseExportDetailedDtoNew.setRequestedOtherPathogenTests(embeddedDetailedSampleExportDto.getRequestedOtherPathogenTests());
+						caseExportDetailedDtoNew.setRequestedOtherAdditionalTests(embeddedDetailedSampleExportDto.getRequestedOtherAdditionalTests());
+						caseExportDetailedDtoNew.setAdditionalTestingRequested(embeddedDetailedSampleExportDto.getAdditionalTestingRequested());
+						caseExportDetailedDtoNew.setRequestedAdditionalTests(embeddedDetailedSampleExportDto.getRequestedAdditionalTests());
+						caseExportDetailedDtoNew.setRequestedOtherAdditionalTests(embeddedDetailedSampleExportDto.getRequestedOtherAdditionalTests());
+						caseExportDetailedDtoNew.setShipped(embeddedDetailedSampleExportDto.isShipped());
+						caseExportDetailedDtoNew.setShipmentDate(embeddedDetailedSampleExportDto.getShipmentDate());
+						caseExportDetailedDtoNew.setShipmentDetails(embeddedDetailedSampleExportDto.getShipmentDetails());
+						caseExportDetailedDtoNew.setReceived(embeddedDetailedSampleExportDto.isReceived());
+						caseExportDetailedDtoNew.setReceivedDate(embeddedDetailedSampleExportDto.getReceivedDate());
+						caseExportDetailedDtoNew.setSpecimenCondition(embeddedDetailedSampleExportDto.getSpecimenCondition());
+						caseExportDetailedDtoNew.setNoTestPossibleReason(embeddedDetailedSampleExportDto.getNoTestPossibleReason());
+						caseExportDetailedDtoNew.setComment(embeddedDetailedSampleExportDto.getComment());
+						newResult.add(caseExportDetailedDtoNew);
+					}
+				}
+			}
+
+			return newResult;
+		}
+
+
+
+		return resultList;
+	}
+
 	private Subquery<Boolean> outbreakSq(CaseQueryContext caseQueryContext) {
 
 		final CriteriaBuilder cb = caseQueryContext.getCriteriaBuilder();
@@ -1289,7 +1959,23 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		return outbreakSubquery;
 	}
 
-	private Subquery<Long> clinicalVisitSq(CriteriaBuilder cb, CriteriaQuery<CaseExportDto> cq, Root<Case> caseRoot) {
+	private Map<Long, UserReference> getCaseUsersForDetailedExport(List<CaseExportDetailedSampleDto> resultList, ExportConfigurationDto exportConfiguration) {
+		Map<Long, UserReference> caseUsers = Collections.emptyMap();
+		if (exportConfiguration == null
+				|| exportConfiguration.getProperties().contains(CaseDataDto.REPORTING_USER)
+				|| exportConfiguration.getProperties().contains(CaseDataDto.FOLLOW_UP_STATUS_CHANGE_USER)) {
+			Set<Long> userIds = resultList.stream()
+					.map((c -> Arrays.asList(c.getReportingUserId(), c.getFollowUpStatusChangeUserId())))
+					.flatMap(Collection::stream)
+					.filter(Objects::nonNull)
+					.collect(Collectors.toSet());
+			caseUsers = userService.getUserReferencesByIds(userIds).stream().collect(Collectors.toMap(UserReference::getId, Function.identity()));
+		}
+
+		return caseUsers;
+	}
+
+	private <T> Subquery<Long> clinicalVisitSq(CriteriaBuilder cb, CriteriaQuery<T> cq, Root<Case> caseRoot) {
 		Subquery<Long> clinicalVisitCountSq = cq.subquery(Long.class);
 		Root<ClinicalVisit> clinicalVisitRoot = clinicalVisitCountSq.from(ClinicalVisit.class);
 		Join<ClinicalVisit, ClinicalCourse> clinicalVisitClinicalCourseJoin = clinicalVisitRoot.join(ClinicalVisit.CLINICAL_COURSE, JoinType.LEFT);

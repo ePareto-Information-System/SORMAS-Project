@@ -22,10 +22,7 @@ import java.util.function.Supplier;
 import com.vaadin.server.StreamResource;
 
 import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.caze.CaseCriteria;
-import de.symeda.sormas.api.caze.CaseDataDto;
-import de.symeda.sormas.api.caze.CaseExportDto;
-import de.symeda.sormas.api.caze.CaseExportType;
+import de.symeda.sormas.api.caze.*;
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -52,6 +49,22 @@ public class CaseDownloadUtil {
 			CaseDownloadUtil::captionProvider,
 			ExportEntityName.CASES,
 			exportConfiguration);
+	}
+
+	public static StreamResource createCaseSamplesExportResource(
+			CaseCriteria criteria,
+			Supplier<Collection<String>> selectedRows,
+			CaseExportType exportType,
+			ExportConfigurationDto exportConfiguration) {
+
+		return DownloadUtil.createCsvExportStreamResource(
+				CaseExportDetailedSampleDto.class,
+				exportType,
+				(Integer start, Integer max) -> FacadeProvider.getCaseFacade()
+						.getExportListDetailed(criteria, selectedRows.get(), exportType, start, max, exportConfiguration, I18nProperties.getUserLanguage()),
+				CaseDownloadUtil::captionProvider,
+				ExportEntityName.CASES,
+				exportConfiguration);
 	}
 
 	public static String getPropertyCaption(String propertyId, String prefixId) {
