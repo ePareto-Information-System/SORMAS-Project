@@ -58,9 +58,9 @@ public class DiseaseEditForm extends AbstractEditForm<DiseaseConDto> {
         if (criteria.getRelevanceStatus() == null) {
             criteria.relevanceStatus(EntityRelevanceStatus.ACTIVE);
         }
-
-        CountryReferenceDto countryReferenceDto = FacadeProvider.getCountryFacade().getServerCountry();
-        criteria.country(countryReferenceDto);
+        criteria.nameCityLike(null);
+        criteria.region(null);
+        criteria.district(null);
 
         setWidth(900, Unit.PIXELS);
 
@@ -68,7 +68,6 @@ public class DiseaseEditForm extends AbstractEditForm<DiseaseConDto> {
             hideValidationUntilNextCommit();
         }
         addFields();
-
     }
     @Override
     protected String createHtmlLayout() {
@@ -79,8 +78,6 @@ public class DiseaseEditForm extends AbstractEditForm<DiseaseConDto> {
     protected void addFields() {
 
         getContent().addComponent(createFilterBar(), LEFT_FILTER_LAYOUT);
-
-        //create a TwinSelect component can add data using data provider
 
         selectDiseaseFacilities.setLeftColumnCaption(I18nProperties.getCaption(Captions.facilitiesAvailable));
         selectDiseaseFacilities.setRightColumnCaption(I18nProperties.getCaption(Captions.facilitiesSelected) + " (" + selectedFacilityCount + ")");
@@ -103,6 +100,8 @@ public class DiseaseEditForm extends AbstractEditForm<DiseaseConDto> {
         });
         
         getContent().addComponent(selectDiseaseFacilities, FACILITIES_SELECTION_LOCATION);
+
+
     }
 
     private HorizontalLayout createFilterBar() {
@@ -130,7 +129,6 @@ public class DiseaseEditForm extends AbstractEditForm<DiseaseConDto> {
             FieldHelper
                     .updateItems(districtFilter, region != null ? FacadeProvider.getDistrictFacade().getAllActiveByRegion(region.getUuid()) : null);
             updateDataProvider();
-
         });
         filterLayout.addComponent(regionFilter);
 
@@ -225,12 +223,4 @@ public class DiseaseEditForm extends AbstractEditForm<DiseaseConDto> {
         ));
         selectDiseaseFacilities.setRightColumnCaption(I18nProperties.getCaption(Captions.facilitiesSelected) + " (" + selectedFacilityIndexDtos.size() + ")");
     }
-
-    //reset filters
-    public void resetFilters() {
-        searchField.setValue("");
-        regionFilter.setValue(null);
-        districtFilter.setValue(null);
-    }
-
 }
