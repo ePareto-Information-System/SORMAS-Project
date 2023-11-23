@@ -1000,24 +1000,14 @@ public class InfrastructureController {
 				editForm.getFieldGroup());
 
 		editView.addCommitListener(new CommitListener() {
-
 			@Override
 			public void onCommit() {
 				FacadeProvider.getDiseaseConFacade().save(editForm.getValue());
-				editForm.resetFilters();
+				//editForm.resetFilters();
 				Notification.show(I18nProperties.getString(Strings.messageEntryCreated), Type.ASSISTIVE_NOTIFICATION);
 				SormasUI.get().getNavigator().navigateTo(DiseasesView.VIEW_NAME);
 			}
 		});
-
-//		if (!isNew) {
-//			extendEditComponentWithArchiveButton(
-//					editView,
-//					disease.isArchived(),
-//					facility.getUuid(),
-//					InfrastructureType.FACILITY,
-//					facility.getType());
-//		}
 
 		return editView;
 	}
