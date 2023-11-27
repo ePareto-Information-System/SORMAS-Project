@@ -35,7 +35,6 @@ import de.symeda.sormas.api.caze.*;
 import de.symeda.sormas.api.clinicalcourse.HealthConditionsDto;
 import de.symeda.sormas.api.common.DeletionReason;
 import de.symeda.sormas.api.disease.DiseaseVariant;
-import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.event.EventParticipantDto;
 import de.symeda.sormas.api.feature.FeatureType;

@@ -220,6 +220,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		this.disease = disease;
 		this.diseaseDetails = diseaseDetails;
 		this.isPseudonymized = isPseudonymized;
+		this.caseOrigin = caseOrigin;
 
 		CssStyles.style(CssStyles.H3, occupationHeader, addressHeader, addressesHeader, contactInformationHeader);
 		getContent().addComponent(occupationHeader, OCCUPATION_HEADER);

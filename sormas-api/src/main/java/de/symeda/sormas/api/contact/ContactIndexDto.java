@@ -94,7 +94,6 @@ public class ContactIndexDto extends PseudonymizableIndexDto implements Serializ
 	private String districtName;
 	private String caseRegionName;
 	private String caseDistrictName;
-
 	private DeletionReason deletionReason;
 	private String otherDeletionReason;
 

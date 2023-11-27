@@ -78,4 +78,9 @@ public class CasePersonView extends AbstractCaseView implements PersonSideCompon
 		CaseDataDto caseData = FacadeProvider.getCaseFacade().getCaseDataByUuid(getCaseRef().getUuid());
 		return caseData.getDisease();
 	}
+
+	public Disease getDiseaseFromCaseData() {
+		CaseDataDto caseData = FacadeProvider.getCaseFacade().getCaseDataByUuid(getCaseRef().getUuid());
+		return caseData.getDisease();
+	}
 }

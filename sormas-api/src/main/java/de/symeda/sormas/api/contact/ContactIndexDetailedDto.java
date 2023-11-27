@@ -83,7 +83,7 @@ public class ContactIndexDetailedDto extends ContactIndexDto {
 		super(uuid, personUuid, personFirstName, personLastName, personOtherName, cazeUuid, disease, diseaseDetails, caseFirstName, caseLastName, caseOtherName,
 				regionName, districtName, lastContactDate, contactCategory, contactProximity, contactClassification, contactStatus,
 				completeness, followUpStatus, followUpUntil, symptomJournalStatus, vaccinationStatus, contactOfficerUuid, reportingUserUuid, reportDateTime, caseClassification,
-			caseRegionName, caseDistrictName, changeDate, externalID, externalToken, internalToken, deletionReason, otherDeleteReason,isInJurisdiction, isCaseInJurisdiction , visitCount, latestChangedDate);
+				caseRegionName, caseDistrictName, changeDate, externalID, externalToken, internalToken, isInJurisdiction, isCaseInJurisdiction , visitCount, latestChangedDate);
 
 		//@formatter:on
 

@@ -116,10 +116,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 	private final TravelEntryDto convertedTravelEntry;
 
 	//@formatter:off
-	private static final String HTML_LAYOUT = fluidRowLocs(4, CaseDataDto.CASE_ORIGIN, 8, CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION)
-			// private static final String HTML_LAYOUT = fluidRowLocs(CaseDataDto.CASE_ORIGIN, "")
-			+ fluidRowLocs(CaseDataDto.REPORT_DATE, CaseDataDto.EPID_NUMBER, CaseDataDto.EXTERNAL_ID)
-			+ fluidRow(
+	private static final String HTML_LAYOUT = fluidRow(
 			fluidColumnLoc(6, 0, CaseDataDto.DISEASE),
 			fluidColumn(6, 0,
 					locs(CaseDataDto.DISEASE_DETAILS, CaseDataDto.PLAGUE_TYPE, CaseDataDto.DENGUE_FEVER_TYPE,
@@ -421,7 +418,8 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		region.addItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
 
 		OptionGroup caseTransmissionClassification = addField(CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION, OptionGroup.class);
-		caseTransmissionClassification.setRequired(true);
+		caseTransmissionClassification.setRequired(false);
+		caseTransmissionClassification.setVisible(true);
 //		if (userJurisdictionLevel == JurisdictionLevel.COMMUNITY) {
 //			region.setReadOnly(true);
 //			district.setReadOnly(true);
