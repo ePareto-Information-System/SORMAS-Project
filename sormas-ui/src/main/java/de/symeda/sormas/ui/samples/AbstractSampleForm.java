@@ -209,6 +209,12 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 		if(disease != null) {
 			lab.addItems(FacadeProvider.getFacilityFacade().getAllActiveFacilityByDisease(disease.getName()));
+			FacilityReferenceDto labValue = (FacilityReferenceDto) lab.getValue();
+			if(labValue != null) {
+				lab.removeItem(labValue);
+				lab.addItem(labValue);
+				lab.setValue(labValue);
+			}
 		}
 
 		UserReferenceDto reportingUser = getValue().getReportingUser();
