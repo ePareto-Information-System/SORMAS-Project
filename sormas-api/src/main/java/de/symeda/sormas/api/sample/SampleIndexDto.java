@@ -106,9 +106,9 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 						  SampleMaterial sampleMaterial, SamplePurpose samplePurpose, SpecimenCondition specimenCondition,
 						  String labName, String referredSampleUuid,
 						  SamplingReason samplingReason, String samplingReasonDetails,
-						  String associatedCaseUuid, String associatedCaseFirstName, String associatedCaseLastName,
-						  String associatedContactUuid, String associatedContactFirstName, String associatedContactLastName,
-						  String associatedEventParticipantUuid, String associatedEventParticipantFirstName, String associatedEventParticipantLastName,
+						  String associatedCaseUuid, String associatedCaseFirstName, String associatedCaseLastName, String associatedCaseOtherName,
+						  String associatedContactUuid, String associatedContactFirstName, String associatedContactLastName, String associatedContactOtherName,
+						  String associatedEventParticipantUuid, String associatedEventParticipantFirstName, String associatedEventParticipantLastName, String associatedEventParticipantOtherName,
 						  Disease disease, String diseaseDetails, PathogenTestResultType pathogenTestResult, Boolean additionalTestingRequested, Boolean additionalTestPerformed,
 						  String districtName, String labUuid, Long pathogenTestCount,
 						  boolean isInJurisdiction, boolean isCaseInJurisdiction, boolean isContactInJurisdiction,  boolean isContactCaseInJurisdiction, boolean isEventParticipantInJurisdiction) {
@@ -116,17 +116,18 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 
 		super(uuid);
 		if (associatedCaseUuid != null) {
-			this.associatedCase = new CaseReferenceDto(associatedCaseUuid, associatedCaseFirstName, associatedCaseLastName);
+			this.associatedCase = new CaseReferenceDto(associatedCaseUuid, associatedCaseFirstName, associatedCaseLastName, associatedCaseOtherName);
 		}
 		if (associatedContactUuid != null) {
 			this.associatedContact =
-				new ContactReferenceDto(associatedContactUuid, associatedContactFirstName, associatedContactLastName, null, null);
+				new ContactReferenceDto(associatedContactUuid, associatedContactFirstName, associatedContactLastName, associatedContactOtherName, null, null, null);
 		}
 		if (associatedEventParticipantUuid != null) {
 			this.associatedEventParticipant = new EventParticipantReferenceDto(
 				associatedEventParticipantUuid,
 				associatedEventParticipantFirstName,
-				associatedEventParticipantLastName);
+				associatedEventParticipantLastName,
+				associatedEventParticipantOtherName);
 		}
 		this.epidNumber = epidNumber;
 		this.labSampleID = labSampleId;

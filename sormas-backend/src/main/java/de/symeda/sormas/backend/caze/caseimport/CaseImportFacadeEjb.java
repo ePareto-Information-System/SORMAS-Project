@@ -31,6 +31,7 @@ import javax.ejb.Stateless;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
+import de.symeda.sormas.api.utils.AFPFacilityOptions;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -608,6 +609,18 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
 		}
 		PropertyDescriptor pd = new PropertyDescriptor(typeProperty, currentElement.getClass());
 		return (FacilityType) pd.getReadMethod().invoke(currentElement);
+	}
+
+	protected AFPFacilityOptions getTypeOfFacilityForAFP(String propertyName, Object currentElement)
+			throws IntrospectionException, InvocationTargetException, IllegalAccessException {
+		String typeProperty;
+		if (CaseDataDto.class.equals(currentElement.getClass()) && CaseDataDto.HEALTH_FACILITY.equals(propertyName)) {
+			typeProperty = CaseDataDto.AFP_FACILITY_OPTIONS;
+		} else {
+			typeProperty = propertyName + "Type";
+		}
+		PropertyDescriptor pd = new PropertyDescriptor(typeProperty, currentElement.getClass());
+		return (AFPFacilityOptions) pd.getReadMethod().invoke(currentElement);
 	}
 
 	protected String buildEntityProperty(String[] entityPropertyPath) {

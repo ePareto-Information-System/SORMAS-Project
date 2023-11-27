@@ -230,6 +230,8 @@ public abstract class AbstractCaseGrid<IndexDto extends CaseIndexDto> extends Fi
 				Stream.of(CaseIndexDto.QUARANTINE_TO, CaseIndexDto.CREATION_DATE),
 				getFollowUpColumns(),
 				Stream.of(CaseIndexDto.VACCINATION_STATUS),
+				Stream.of(CaseIndexDto.VACCINATION_TYPE),
+				Stream.of(CaseIndexDto.VACCINATION_DATE),
 				Stream.of(COLUMN_COMPLETENESS))
 			.flatMap(Function.identity());
 	}

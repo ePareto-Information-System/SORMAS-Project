@@ -27,6 +27,7 @@ public class TravelEntryPersonView extends AbstractTravelEntryView {
 				dto.getPerson().getUuid(),
 				dto.getDisease(),
 				dto.getDiseaseDetails(),
+				dto.getCaseOrigin(),
 				UserRight.TRAVEL_ENTRY_EDIT,
 				null);
 		setSubComponent(travelEntryPersonComponent);

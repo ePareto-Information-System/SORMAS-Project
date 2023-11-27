@@ -18,6 +18,8 @@ public class JournalPersonDto implements Serializable {
 	private String firstName;
 	@PersonalData
 	private String lastName;
+	@PersonalData
+	private String otherName;
 	@SensitiveData
 	private String emailAddress;
 	@SensitiveData
@@ -63,6 +65,14 @@ public class JournalPersonDto implements Serializable {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+
+	public String getOtherName() {
+		return otherName;
+	}
+
+	public void setOtherName(String otherName) {
+		this.otherName = otherName;
 	}
 
 	public String getEmailAddress() {
@@ -131,7 +141,7 @@ public class JournalPersonDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return uuid + ' ' + firstName + ' ' + lastName;
+		return uuid + ' ' + firstName + ' ' + lastName + ' ' + otherName;
 	}
 
 	@Override
@@ -145,6 +155,7 @@ public class JournalPersonDto implements Serializable {
 			&& Objects.equals(uuid, that.uuid)
 			&& Objects.equals(firstName, that.firstName)
 			&& Objects.equals(lastName, that.lastName)
+			&& Objects.equals(otherName, that.otherName)
 			&& Objects.equals(emailAddress, that.emailAddress)
 			&& Objects.equals(phone, that.phone)
 			&& Objects.equals(birthdateDD, that.birthdateDD)
@@ -162,6 +173,7 @@ public class JournalPersonDto implements Serializable {
 			pseudonymized,
 			firstName,
 			lastName,
+			otherName,
 			emailAddress,
 			phone,
 			birthdateDD,

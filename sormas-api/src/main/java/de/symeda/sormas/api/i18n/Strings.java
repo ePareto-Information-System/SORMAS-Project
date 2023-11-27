@@ -575,6 +575,7 @@ public interface Strings {
 	String headingLoginFailed = "headingLoginFailed";
 	String headingMaternalHistory = "headingMaternalHistory";
 	String headingMedicalInformation = "headingMedicalInformation";
+	String clinicalOutCome = "clinicalOutcome";
 	String headingMergeGuide = "headingMergeGuide";
 	String headingMissingDateFilter = "headingMissingDateFilter";
 	String headingMissingEpiWeekFilter = "headingMissingEpiWeekFilter";
@@ -838,6 +839,7 @@ public interface Strings {
 	String infoSampleAdditionalTesting = "infoSampleAdditionalTesting";
 	String infoSampleExport = "infoSampleExport";
 	String infoSamplePathogenTesting = "infoSamplePathogenTesting";
+	String infoSampleMaterialSelection = "infoSampleMaterialSelection";
 	String infoSaveOfTask = "infoSaveOfTask";
 	String infoSearchCaseForContact = "infoSearchCaseForContact";
 	String infoSearchPerson = "infoSearchPerson";

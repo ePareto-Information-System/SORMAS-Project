@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
+import de.symeda.sormas.api.Disease;
 import org.joda.time.DateTimeComparator;
 
 import com.vaadin.server.ErrorMessage;
@@ -150,6 +151,11 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		CssStyles.style(hospitalizedPreviouslyField, CssStyles.ERROR_COLOR_PRIMARY);
 		PreviousHospitalizationsField previousHospitalizationsField =
 			addField(HospitalizationDto.PREVIOUS_HOSPITALIZATIONS, PreviousHospitalizationsField.class);
+
+		if(caze.getDisease() == Disease.AFP){
+			admittedToHealthFacilityField.removeItem(YesNoUnknown.UNKNOWN);
+			setVisible(false, HospitalizationDto.LEFT_AGAINST_ADVICE, HospitalizationDto.INTENSIVE_CARE_UNIT, HospitalizationDto.ISOLATED);
+		}
 
 		FieldHelper.setEnabledWhen(
 			admittedToHealthFacilityField,

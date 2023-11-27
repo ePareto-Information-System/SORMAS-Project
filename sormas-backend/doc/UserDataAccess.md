@@ -92,7 +92,7 @@ In general data access & synchronisation is based on the following rules:
 ### Case changed notification
 * Types: email, sms
 * To: all responsible supervisors within the case region
-* When: case classification changed or disease of unspecified VHF changed
+* When: case classification changed or disease of AHF changed
 
 ### Case investigation status done notification
 * Types: email, sms

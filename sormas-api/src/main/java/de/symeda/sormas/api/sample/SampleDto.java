@@ -68,8 +68,10 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public static final String SHIPPED = "shipped";
 	public static final String RECEIVED = "received";
 	public static final String PATHOGEN_TESTING_REQUESTED = "pathogenTestingRequested";
+	public static final String SAMPLE_MATERIAL_REQUESTED = "sampleMaterialRequested";
 	public static final String ADDITIONAL_TESTING_REQUESTED = "additionalTestingRequested";
 	public static final String REQUESTED_PATHOGEN_TESTS = "requestedPathogenTests";
+	public static final String REQUESTED_SAMPLE_MATERIALS = "requestedSampleMaterials";
 	public static final String REQUESTED_ADDITIONAL_TESTS = "requestedAdditionalTests";
 	public static final String PATHOGEN_TEST_RESULT = "pathogenTestResult";
 	public static final String REQUESTED_OTHER_PATHOGEN_TESTS = "requestedOtherPathogenTests";
@@ -135,8 +137,10 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private PathogenTestResultType pathogenTestResult;
 
 	private Boolean pathogenTestingRequested;
+	private Boolean sampleMaterialRequested;
 	private Boolean additionalTestingRequested;
 	private Set<PathogenTestType> requestedPathogenTests;
+	private Set<SampleMaterial> requestedSampleMaterials;
 	private Set<AdditionalTestType> requestedAdditionalTests;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String requestedOtherPathogenTests;
@@ -361,6 +365,15 @@ public class SampleDto extends SormasToSormasShareableDto {
 	}
 
 	@ImportIgnore
+	public Boolean getSampleMaterialRequested() {
+		return sampleMaterialRequested;
+	}
+
+	public void setSampleMaterialRequested(Boolean sampleMaterialRequested) {
+		this.sampleMaterialRequested = sampleMaterialRequested;
+	}
+
+	@ImportIgnore
 	public Boolean getAdditionalTestingRequested() {
 		return additionalTestingRequested;
 	}
@@ -376,6 +389,14 @@ public class SampleDto extends SormasToSormasShareableDto {
 
 	public void setRequestedPathogenTests(Set<PathogenTestType> requestedPathogenTests) {
 		this.requestedPathogenTests = requestedPathogenTests;
+	}
+
+	public Set<SampleMaterial> getRequestedSampleMaterials() {
+		return requestedSampleMaterials;
+	}
+
+	public void setRequestedSampleMaterials(Set<SampleMaterial> requestedSampleMaterials) {
+		this.requestedSampleMaterials = requestedSampleMaterials;
 	}
 
 	@ImportIgnore
@@ -489,8 +510,10 @@ public class SampleDto extends SormasToSormasShareableDto {
 		target.setSampleMaterialText(source.getSampleMaterialText());
 		target.setSampleSource(source.getSampleSource());
 		target.setPathogenTestingRequested(source.getPathogenTestingRequested());
+		target.setSampleMaterialRequested(source.getSampleMaterialRequested());
 		target.setAdditionalTestingRequested(source.getAdditionalTestingRequested());
 		target.setRequestedPathogenTests(source.getRequestedPathogenTests());
+		target.setRequestedSampleMaterials(source.getRequestedSampleMaterials());
 		target.setRequestedAdditionalTests(source.getRequestedAdditionalTests());
 		target.setFieldSampleID(source.getFieldSampleID());
 		target.setSamplingReason(source.getSamplingReason());

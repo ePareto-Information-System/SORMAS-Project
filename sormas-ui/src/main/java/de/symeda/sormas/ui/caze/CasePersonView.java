@@ -17,6 +17,7 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.caze;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.person.PersonContext;
@@ -30,6 +31,8 @@ public class CasePersonView extends AbstractCaseView {
 
 	public static final String VIEW_NAME = ROOT_VIEW_NAME + "/person";
 
+	private Disease disease;
+
 	public CasePersonView() {
 		super(VIEW_NAME, true);
 	}
@@ -38,16 +41,23 @@ public class CasePersonView extends AbstractCaseView {
 	protected void initView(String params) {
 
 		CaseDataDto caseData = FacadeProvider.getCaseFacade().getCaseDataByUuid(getCaseRef().getUuid());
+		disease = caseData.getDisease();
 		CommitDiscardWrapperComponent<PersonEditForm> personEditComponent = ControllerProvider.getPersonController()
 			.getPersonEditComponent(
 				PersonContext.CASE,
 				caseData.getPerson().getUuid(),
 				caseData.getDisease(),
 				caseData.getDiseaseDetails(),
+				caseData.getCaseOrigin(),
 				UserRight.CASE_EDIT,
 				getViewMode());
 
 		setSubComponent(personEditComponent);
 		setCaseEditPermission(personEditComponent);
+	}
+
+	public Disease getDiseaseFromCaseData() {
+		CaseDataDto caseData = FacadeProvider.getCaseFacade().getCaseDataByUuid(getCaseRef().getUuid());
+		return caseData.getDisease();
 	}
 }

@@ -99,6 +99,8 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 
 	protected UiFieldAccessCheckers fieldAccessCheckers;
 
+	protected CaseDataForm caseDataForm;
+
 	public AbstractTableField(UiFieldAccessCheckers fieldAccessCheckers) {
 		this.fieldAccessCheckers = fieldAccessCheckers;
 

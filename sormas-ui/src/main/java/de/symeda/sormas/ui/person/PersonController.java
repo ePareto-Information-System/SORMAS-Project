@@ -22,6 +22,7 @@ import com.vaadin.ui.Window;
 import java.util.Date;
 import java.util.function.Consumer;
 
+import de.symeda.sormas.api.caze.CaseOrigin;
 import org.apache.commons.lang3.StringUtils;
 
 import com.vaadin.navigator.Navigator;
@@ -185,11 +186,12 @@ public class PersonController {
 		String personUuid,
 		Disease disease,
 		String diseaseDetails,
+		CaseOrigin caseOrigin,
 		UserRight editUserRight,
 		final ViewMode viewMode) {
 		PersonDto personDto = personFacade.getPersonByUuid(personUuid);
 
-		PersonEditForm editForm = new PersonEditForm(personContext, disease, diseaseDetails, viewMode, personDto.isPseudonymized());
+		PersonEditForm editForm = new PersonEditForm(personContext, disease, diseaseDetails, viewMode, personDto.isPseudonymized(), caseOrigin);
 		editForm.setValue(personDto);
 
 		final CommitDiscardWrapperComponent<PersonEditForm> editView =

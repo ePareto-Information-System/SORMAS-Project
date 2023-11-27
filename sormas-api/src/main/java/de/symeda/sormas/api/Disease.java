@@ -40,7 +40,7 @@ public enum Disease
 	NEW_INFLUENZA(true, true, true, true, 17, true, false, false),
 	PLAGUE(true, true, true, true, 7, true, false, false),
 	POLIO(true, true, true, false, 0, true, false, false),
-	UNSPECIFIED_VHF(true, true, true, true, 21, true, false, false),
+	//AHF(true, true, true, true, 21, true, false, false),
 	WEST_NILE_FEVER(true, false, true, false, 0, true, false, false),
 	YELLOW_FEVER(true, true, true, false, 6, true, false, false),
 	RABIES(true, true, true, true, 6, true, false, false),
@@ -86,6 +86,7 @@ public enum Disease
 	POST_IMMUNIZATION_ADVERSE_EVENTS_MILD(true, false, false, false, 0, true, false, false),
 	POST_IMMUNIZATION_ADVERSE_EVENTS_SEVERE(true, false, false, false, 0, true, false, false),
 	FHA(true, false, false, false, 0, true, false, false),
+	AHF(true, true, true, true, 21, true, false, false),
 	OTHER(true, true, true, true, 21, false, false, false),
 	UNDEFINED(true, true, true, true, 0, false, false, false);
 
@@ -163,7 +164,7 @@ public enum Disease
 	}
 
 	public boolean isDiseaseGroup() {
-		return this == UNSPECIFIED_VHF;
+		return this == AHF;
 	}
 
 	public boolean isVariantAllowed() {

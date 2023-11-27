@@ -353,11 +353,13 @@ public interface Captions {
 	String CaseData_numberOfVisits = "CaseData.numberOfVisits";
 	String CaseData_otherDeletionReason = "CaseData.otherDeletionReason";
 	String CaseData_outcome = "CaseData.outcome";
+	String CaseData_clinialOutcome = "CaseData.clinicalOutcome";
 	String CaseData_outcomeDate = "CaseData.outcomeDate";
 	String CaseData_overwriteFollowUpUntil = "CaseData.overwriteFollowUpUntil";
 	String CaseData_person = "CaseData.person";
 	String CaseData_personFirstName = "CaseData.personFirstName";
 	String CaseData_personLastName = "CaseData.personLastName";
+	String CaseData_personOtherName = "CaseData.personOtherName";
 	String CaseData_personUuid = "CaseData.personUuid";
 	String CaseData_plagueType = "CaseData.plagueType";
 	String CaseData_pointOfEntry = "CaseData.pointOfEntry";
@@ -368,6 +370,8 @@ public interface Captions {
 	String CaseData_portHealthInfo = "CaseData.portHealthInfo";
 	String CaseData_postpartum = "CaseData.postpartum";
 	String CaseData_pregnant = "CaseData.pregnant";
+	String CaseData_ipSampleSent = "CaseData.ipSampleSent";
+	String CaseData_ipSampleResults = "CaseData.ipSampleResults";
 	String CaseData_previousInfectionDate = "CaseData.previousInfectionDate";
 	String CaseData_previousQuarantineTo = "CaseData.previousQuarantineTo";
 	String CaseData_prohibitionToWork = "CaseData.prohibitionToWork";
@@ -426,6 +430,8 @@ public interface Captions {
 	String CaseData_trimester = "CaseData.trimester";
 	String CaseData_uuid = "CaseData.uuid";
 	String CaseData_vaccinationStatus = "CaseData.vaccinationStatus";
+	String CaseData_vaccinationType = "CaseData.vaccinationType";
+	String CaseData_vaccinationDate = "CaseData.vaccinationDate";
 	String CaseData_visits = "CaseData.visits";
 	String CaseData_wasInQuarantineBeforeIsolation = "CaseData.wasInQuarantineBeforeIsolation";
 	String caseDataEnterHomeAddressNow = "caseDataEnterHomeAddressNow";
@@ -458,6 +464,7 @@ public interface Captions {
 	String CaseExport_lastCooperativeVisitSymptomatic = "CaseExport.lastCooperativeVisitSymptomatic";
 	String CaseExport_lastCooperativeVisitSymptoms = "CaseExport.lastCooperativeVisitSymptoms";
 	String CaseExport_lastName = "CaseExport.lastName";
+	String CaseExport_otherName = "CaseExport.otherName";
 	String CaseExport_maxSourceCaseClassification = "CaseExport.maxSourceCaseClassification";
 	String CaseExport_numberOfClinicalVisits = "CaseExport.numberOfClinicalVisits";
 	String CaseExport_numberOfPrescriptions = "CaseExport.numberOfPrescriptions";
@@ -962,6 +969,7 @@ public interface Captions {
 	String devModeSampleLaboratory = "devModeSampleLaboratory";
 	String devModeSampleMaterial = "devModeSampleMaterial";
 	String devModeSamplePathogenTestsToBePerformed = "devModeSamplePathogenTestsToBePerformed";
+	String devModeSampleMaterialsToBeAdded = "devModeSampleMaterialsToBeAdded";
 	String devModeSampleReceived = "devModeSampleReceived";
 	String devModeSampleRegion = "devModeSampleRegion";
 	String devModeSampleSendDispatch = "devModeSampleSendDispatch";
@@ -1205,6 +1213,7 @@ public interface Captions {
 	String EventParticipantExport_eventTitle = "EventParticipantExport.eventTitle";
 	String EventParticipantExport_eventTypeOfPlace = "EventParticipantExport.eventTypeOfPlace";
 	String EventParticipantExport_personNationalHealthId = "EventParticipantExport.personNationalHealthId";
+	String EventParticipantExport_personGhanaCard = "EventParticipantExport.personGhanaCard";
 	String EventParticipantExport_sampleInformation = "EventParticipantExport.sampleInformation";
 	String eventParticipantSelect = "eventParticipantSelect";
 	String eventSearchEvent = "eventSearchEvent";
@@ -1370,6 +1379,7 @@ public interface Captions {
 	String facilityAllFacilities = "facilityAllFacilities";
 	String facilityArchivedFacilities = "facilityArchivedFacilities";
 	String facilityType = "facilityType";
+	String afpFacilityOptions = "afpFacilityOptions";
 	String facilityTypeGroup = "facilityTypeGroup";
 	String FeatureConfiguration_districtName = "FeatureConfiguration.districtName";
 	String FeatureConfiguration_enabled = "FeatureConfiguration.enabled";
@@ -1521,6 +1531,7 @@ public interface Captions {
 	String Location_postalCode = "Location.postalCode";
 	String Location_region = "Location.region";
 	String Location_street = "Location.street";
+	String Location_landmark = "Location.landmark";
 	String Location_subcontinent = "Location.subcontinent";
 	String Login_doLogIn = "Login.doLogIn";
 	String Login_login = "Login.login";
@@ -1589,6 +1600,7 @@ public interface Captions {
 	String moreActions = "moreActions";
 	String name = "name";
 	String nationalHealthId = "nationalHealthId";
+	String ghanaCard = "ghanaCard";
 	String notAvailableShort = "notAvailableShort";
 	String notSpecified = "notSpecified";
 	String notTestedYet = "notTestedYet";
@@ -1686,6 +1698,7 @@ public interface Captions {
 	String Person_mothersName = "Person.mothersName";
 	String Person_namesOfGuardians = "Person.namesOfGuardians";
 	String Person_nationalHealthId = "Person.nationalHealthId";
+	String Person_ghanaCard = "Person.ghanaCard";
 	String Person_nickname = "Person.nickname";
 	String Person_occupationCommunity = "Person.occupationCommunity";
 	String Person_occupationDetails = "Person.occupationDetails";

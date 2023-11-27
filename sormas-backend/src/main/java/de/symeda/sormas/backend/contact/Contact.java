@@ -278,7 +278,7 @@ public class Contact extends CoreAdo implements SormasToSormasShareable, HasExte
 		Disease.YELLOW_FEVER,
 		Disease.CSM,
 		Disease.RABIES,
-		Disease.UNSPECIFIED_VHF,
+		Disease.AHF,
 		Disease.ANTHRAX,
 		Disease.CORONAVIRUS,
 		Disease.OTHER })
@@ -518,8 +518,10 @@ public class Contact extends CoreAdo implements SormasToSormasShareable, HasExte
 			getUuid(),
 			contactPerson.getFirstName(),
 			contactPerson.getLastName(),
+			contactPerson.getOtherName(),
 			getCaze() != null ? getCaze().getPerson().getFirstName() : null,
-			getCaze() != null ? getCaze().getPerson().getLastName() : null);
+			getCaze() != null ? getCaze().getPerson().getLastName() : null,
+			getCaze() != null ? getCaze().getPerson().getOtherName() : null);
 	}
 
 	@OneToMany(cascade = {}, mappedBy = Task.CONTACT)

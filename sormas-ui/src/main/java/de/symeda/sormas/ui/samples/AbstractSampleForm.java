@@ -8,10 +8,7 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
 import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 import static de.symeda.sormas.ui.utils.LayoutUtil.locCss;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.vaadin.ui.CssLayout;
@@ -64,13 +61,20 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private static final long serialVersionUID = -2323128076462668517L;
 
 	protected static final String PATHOGEN_TESTING_INFO_LOC = "pathogenTestingInfoLoc";
+	protected static final String SAMPLE_MATERIAL_INFO_LOC = "sampleMaterialInfoLoc";
 	protected static final String ADDITIONAL_TESTING_INFO_LOC = "additionalTestingInfoLoc";
 	protected static final String PATHOGEN_TESTING_READ_HEADLINE_LOC = "pathogenTestingReadHeadlineLoc";
+	protected static final String SAMPLE_MATERIAL_READ_HEADLINE_LOC = "sampleMaterialReadHeadlineLoc";
 	protected static final String ADDITIONAL_TESTING_READ_HEADLINE_LOC = "additionalTestingReadHeadlineLoc";
 	protected static final String REQUESTED_PATHOGEN_TESTS_READ_LOC = "requestedPathogenTestsReadLoc";
 	protected static final String REQUESTED_ADDITIONAL_TESTS_READ_LOC = "requestedAdditionalTestsReadLoc";
 	protected static final String REPORT_INFO_LABEL_LOC = "reportInfoLabelLoc";
 	protected static final String REFERRED_FROM_BUTTON_LOC = "referredFromButtonLoc";
+	private Disease disease;
+	public ComboBox sampleMaterialComboBox;
+	private ComboBox lab;
+
+	private TextField labDetails;
 
 	//@formatter:off
     protected static final String SAMPLE_COMMON_HTML_LAYOUT =
@@ -82,6 +86,11 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                     fluidRowLocs(SampleDto.SAMPLE_SOURCE, "") +
                     fluidRowLocs(SampleDto.FIELD_SAMPLE_ID, REFERRED_FROM_BUTTON_LOC) +
                     fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
+
+					locCss(VSPACE_TOP_3, SampleDto.SAMPLE_MATERIAL_REQUESTED) +
+					loc(SAMPLE_MATERIAL_READ_HEADLINE_LOC) +
+					loc(SampleDto.REQUESTED_SAMPLE_MATERIALS) +
+
 
                     locCss(VSPACE_TOP_3, SampleDto.PATHOGEN_TESTING_REQUESTED) +
                     loc(PATHOGEN_TESTING_READ_HEADLINE_LOC) +
@@ -99,10 +108,10 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
                     locCss(VSPACE_TOP_3, SampleDto.SHIPPED) +
                     fluidRowLocs(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS) +
-
+//
                     locCss(VSPACE_TOP_3, SampleDto.RECEIVED) +
                     fluidRowLocs(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID) +
-
+//
                     fluidRowLocs(SampleDto.SPECIMEN_CONDITION, SampleDto.NO_TEST_POSSIBLE_REASON) +
                     fluidRowLocs(SampleDto.COMMENT) +
                     fluidRowLocs(SampleDto.PATHOGEN_TEST_RESULT) +
@@ -128,16 +137,18 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		addField(SampleDto.LAB_SAMPLE_ID, TextField.class);
 		final DateTimeField sampleDateField = addField(SampleDto.SAMPLE_DATE_TIME, DateTimeField.class);
 		sampleDateField.setInvalidCommitted(false);
-		addField(SampleDto.SAMPLE_MATERIAL, ComboBox.class);
+		//sampleMaterialComboBox = addField(SampleDto.SAMPLE_MATERIAL);
+
 		addField(SampleDto.SAMPLE_MATERIAL_TEXT, TextField.class);
 		addField(SampleDto.SAMPLE_SOURCE, ComboBox.class);
 		addField(SampleDto.FIELD_SAMPLE_ID, TextField.class);
 		addDateField(SampleDto.SHIPMENT_DATE, DateField.class, 7);
 		addField(SampleDto.SHIPMENT_DETAILS, TextField.class);
 		addField(SampleDto.RECEIVED_DATE, DateField.class);
-		final ComboBox lab = addInfrastructureField(SampleDto.LAB);
+
+		lab = addInfrastructureField(SampleDto.LAB);
 		lab.addItems(FacadeProvider.getFacilityFacade().getAllActiveLaboratories(true));
-		final TextField labDetails = addField(SampleDto.LAB_DETAILS, TextField.class);
+		labDetails = addField(SampleDto.LAB_DETAILS, TextField.class);
 		labDetails.setVisible(false);
 		lab.addValueChangeListener(event -> updateLabDetailsVisibility(labDetails, event));
 
@@ -153,6 +164,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 		ComboBox testResultField = addField(SampleDto.PATHOGEN_TEST_RESULT, ComboBox.class);
 		testResultField.removeItem(PathogenTestResultType.NOT_DONE);
+		testResultField.removeItem(PathogenTestResultType.INDETERMINATE);
 
 		addFields(SampleDto.SAMPLING_REASON, SampleDto.SAMPLING_REASON_DETAILS);
 		FieldHelper.setVisibleWhen(
@@ -170,83 +182,105 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 	protected void defaultValueChangeListener() {
 
-		final NullableOptionGroup samplePurposeField = (NullableOptionGroup) getField(SampleDto.SAMPLE_PURPOSE);
-		final Field<?> receivedField = getField(SampleDto.RECEIVED);
-		final Field<?> shippedField = getField(SampleDto.SHIPPED);
+        final NullableOptionGroup samplePurposeField = (NullableOptionGroup) getField(SampleDto.SAMPLE_PURPOSE);
+        final Field<?> receivedField = getField(SampleDto.RECEIVED);
+        final Field<?> shippedField = getField(SampleDto.SHIPPED);
 
-		samplePurposeField.setRequired(true);
+        samplePurposeField.setRequired(true);
 
-		Disease disease = null;
-		final CaseReferenceDto associatedCase = getValue().getAssociatedCase();
-		if (associatedCase != null && UserProvider.getCurrent().hasAllUserRights(UserRight.CASE_VIEW)) {
-			disease = FacadeProvider.getCaseFacade().getCaseDataByUuid(associatedCase.getUuid()).getDisease();
-		} else {
-			final ContactReferenceDto associatedContact = getValue().getAssociatedContact();
-			if (associatedContact != null && UserProvider.getCurrent().hasAllUserRights(UserRight.CONTACT_VIEW)) {
-				disease = FacadeProvider.getContactFacade().getByUuid(associatedContact.getUuid()).getDisease();
+        final CaseReferenceDto associatedCase = getValue().getAssociatedCase();
+        if (associatedCase != null && UserProvider.getCurrent().hasAllUserRights(UserRight.CASE_VIEW)) {
+            disease = FacadeProvider.getCaseFacade().getCaseDataByUuid(associatedCase.getUuid()).getDisease();
+        } else {
+            final ContactReferenceDto associatedContact = getValue().getAssociatedContact();
+            if (associatedContact != null && UserProvider.getCurrent().hasAllUserRights(UserRight.CONTACT_VIEW)) {
+                disease = FacadeProvider.getContactFacade().getByUuid(associatedContact.getUuid()).getDisease();
+            }
+        }
+		getDisease();
+
+        FieldHelper.setVisibleWhen(
+                getFieldGroup(),
+                Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION),
+                SampleDto.RECEIVED,
+                Arrays.asList(true),
+                true);
+        FieldHelper.setEnabledWhen(
+                getFieldGroup(),
+                receivedField,
+                Arrays.asList(true),
+                Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION),
+                true);
+
+        sampleMaterialComboBox = addField(SampleDto.SAMPLE_MATERIAL);
+
+        UserReferenceDto reportingUser = getValue().getReportingUser();
+        if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_NOT_OWNED)
+                || (reportingUser != null && UserProvider.getCurrent().getUuid().equals(reportingUser.getUuid()))) {
+            FieldHelper.setVisibleWhen(
+                    getFieldGroup(),
+                    Arrays.asList(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS),
+                    SampleDto.SHIPPED,
+                    Arrays.asList(true),
+                    true);
+            FieldHelper.setEnabledWhen(
+                    getFieldGroup(),
+                    shippedField,
+                    Arrays.asList(true),
+                    Arrays.asList(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS),
+                    true);
+            FieldHelper.setRequiredWhen(
+                    getFieldGroup(),
+                    SampleDto.SAMPLE_PURPOSE,
+                    Arrays.asList(SampleDto.LAB),
+                    Arrays.asList(SamplePurpose.EXTERNAL, null));
+
+
+			Disease disease = getDisease();
+
+			switch (disease) {
+				case CSM:
+					handleCSM();
+					break;
+				case AFP:
+					handleAFP();
+					break;
+				case NEW_INFLUENZA:
+					handleNewInfluenza();
+					break;
+				case YELLOW_FEVER:
+					handleYellowFever();
+
+				default:
+					// Handle default case, maybe log an error or set default visibility
+					break;
 			}
-		}
 
-		FieldHelper.setVisibleWhen(
-			getFieldGroup(),
-			Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION),
-			SampleDto.RECEIVED,
-			Arrays.asList(true),
-			true);
-		FieldHelper.setEnabledWhen(
-			getFieldGroup(),
-			receivedField,
-			Arrays.asList(true),
-			Arrays.asList(SampleDto.RECEIVED_DATE, SampleDto.LAB_SAMPLE_ID, SampleDto.SPECIMEN_CONDITION),
-			true);
 
-		if (disease != Disease.NEW_INFLUENZA) {
-			getField(SampleDto.SAMPLE_SOURCE).setVisible(false);
-		}
+        } else {
+            getField(SampleDto.SAMPLE_DATE_TIME).setEnabled(false);
+            getField(SampleDto.SAMPLE_MATERIAL).setEnabled(false);
+            getField(SampleDto.SAMPLE_MATERIAL_TEXT).setEnabled(false);
+            getField(SampleDto.LAB).setEnabled(false);
+            shippedField.setEnabled(false);
+            getField(SampleDto.SHIPMENT_DATE).setEnabled(false);
+            getField(SampleDto.SHIPMENT_DETAILS).setEnabled(false);
+            getField(SampleDto.SAMPLE_SOURCE).setEnabled(false);
+        }
 
-		UserReferenceDto reportingUser = getValue().getReportingUser();
-		if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_NOT_OWNED)
-			|| (reportingUser != null && UserProvider.getCurrent().getUuid().equals(reportingUser.getUuid()))) {
-			FieldHelper.setVisibleWhen(
-				getFieldGroup(),
-				Arrays.asList(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS),
-				SampleDto.SHIPPED,
-				Arrays.asList(true),
-				true);
-			FieldHelper.setEnabledWhen(
-				getFieldGroup(),
-				shippedField,
-				Arrays.asList(true),
-				Arrays.asList(SampleDto.SHIPMENT_DATE, SampleDto.SHIPMENT_DETAILS),
-				true);
-			FieldHelper.setRequiredWhen(
-				getFieldGroup(),
-				SampleDto.SAMPLE_PURPOSE,
-				Arrays.asList(SampleDto.LAB),
-				Arrays.asList(SamplePurpose.EXTERNAL, null));
-			setRequired(true, SampleDto.SAMPLE_DATE_TIME, SampleDto.SAMPLE_MATERIAL);
-		} else {
-			getField(SampleDto.SAMPLE_DATE_TIME).setEnabled(false);
-			getField(SampleDto.SAMPLE_MATERIAL).setEnabled(false);
-			getField(SampleDto.SAMPLE_MATERIAL_TEXT).setEnabled(false);
-			getField(SampleDto.LAB).setEnabled(false);
-			shippedField.setEnabled(false);
-			getField(SampleDto.SHIPMENT_DATE).setEnabled(false);
-			getField(SampleDto.SHIPMENT_DETAILS).setEnabled(false);
-			getField(SampleDto.SAMPLE_SOURCE).setEnabled(false);
-		}
+        StringBuilder reportInfoText = new StringBuilder().append(I18nProperties.getString(Strings.reportedOn))
+                .append(" ")
+                .append(DateFormatHelper.formatLocalDateTime(getValue().getReportDateTime()));
+        if (reportingUser != null) {
+            reportInfoText.append(" ").append(I18nProperties.getString(Strings.by)).append(" ").append(reportingUser.toString());
+        }
+        Label reportInfoLabel = new Label(reportInfoText.toString());
+        reportInfoLabel.setEnabled(false);
+        getContent().addComponent(reportInfoLabel, REPORT_INFO_LABEL_LOC);
 
-		StringBuilder reportInfoText = new StringBuilder().append(I18nProperties.getString(Strings.reportedOn))
-			.append(" ")
-			.append(DateFormatHelper.formatLocalDateTime(getValue().getReportDateTime()));
-		if (reportingUser != null) {
-			reportInfoText.append(" ").append(I18nProperties.getString(Strings.by)).append(" ").append(reportingUser.toString());
-		}
-		Label reportInfoLabel = new Label(reportInfoText.toString());
-		reportInfoLabel.setEnabled(false);
-		getContent().addComponent(reportInfoLabel, REPORT_INFO_LABEL_LOC);
+    }
 
-	}
+	protected abstract Disease getDisease();
 
 	protected void updateLabDetailsVisibility(TextField labDetails, Property.ValueChangeEvent event) {
 		if (event.getProperty().getValue() != null
@@ -386,13 +420,66 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		// header for read view
 		Label pathogenTestsHeading = new Label(I18nProperties.getString(Strings.headingRequestedPathogenTests));
 		CssStyles.style(pathogenTestsHeading, CssStyles.LABEL_BOLD, CssStyles.LABEL_SECONDARY, VSPACE_4);
-		getContent().addComponent(pathogenTestsHeading, PATHOGEN_TESTING_READ_HEADLINE_LOC);
+		getContent().addComponent(pathogenTestsHeading,  PATHOGEN_TESTING_READ_HEADLINE_LOC);
 
 		Label additionalTestsHeading = new Label(I18nProperties.getString(Strings.headingRequestedAdditionalTests));
 		CssStyles.style(additionalTestsHeading, CssStyles.LABEL_BOLD, CssStyles.LABEL_SECONDARY, VSPACE_4);
 		getContent().addComponent(additionalTestsHeading, ADDITIONAL_TESTING_READ_HEADLINE_LOC);
 
 		updateRequestedTestFields();
+	}
+
+	protected void initializeMaterialsMultiSelect( ){
+
+			Label materialMultiSelectInfoLabel = new Label(I18nProperties.getString(Strings.infoSampleMaterialSelection));
+			getContent().addComponent(materialMultiSelectInfoLabel, SAMPLE_MATERIAL_INFO_LOC);
+
+			// Yes/No fields for sample materials
+			CheckBox sampleMaterialRequestedField = addField(SampleDto.SAMPLE_MATERIAL_REQUESTED, CheckBox.class);
+			sampleMaterialRequestedField.setWidthUndefined();
+			sampleMaterialRequestedField.addValueChangeListener(e -> updateSampleMaterialFields());
+
+			// CheckBox groups to select sample Materials
+			OptionGroup requestedSampleMaterialsField = addField(SampleDto.REQUESTED_SAMPLE_MATERIALS, OptionGroup.class);
+			CssStyles.style(requestedSampleMaterialsField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
+			requestedSampleMaterialsField.setMultiSelect(true);
+			requestedSampleMaterialsField.addItems(
+					Arrays.stream(SampleMaterial.values())
+							.filter( c -> fieldVisibilityCheckers.isVisible(SampleMaterial.class, c.name()))
+							.collect(Collectors.toList()));
+			requestedSampleMaterialsField.removeItem(SampleMaterial.OTHER);
+			requestedSampleMaterialsField.setCaption(null);
+
+			updateSampleMaterialFields();
+
+	}
+
+	private void updateSampleMaterialFields() {
+
+		Field<?> sampleMaterialTestingField = getField(SampleDto.SAMPLE_MATERIAL_REQUESTED);
+
+		boolean sampleMaterialsRequested = Boolean.TRUE.equals(sampleMaterialTestingField.getValue());
+		setVisible(sampleMaterialsRequested, SampleDto.REQUESTED_SAMPLE_MATERIALS);
+
+		getContent().getComponent(SAMPLE_MATERIAL_INFO_LOC).setVisible(sampleMaterialsRequested);
+
+
+
+		if (getValue() != null ) {
+			CssLayout requestedSampleMaterialsLayout = new CssLayout();
+			CssStyles.style(requestedSampleMaterialsLayout, VSPACE_3);
+			for (SampleMaterial sampleType : SampleMaterial.values()) {
+				Label testLabel = new Label(sampleType.toString());
+				testLabel.setWidthUndefined();
+				CssStyles.style(testLabel, CssStyles.LABEL_ROUNDED_CORNERS, CssStyles.LABEL_BACKGROUND_FOCUS_LIGHT, VSPACE_4, HSPACE_RIGHT_4);
+				requestedSampleMaterialsLayout.addComponent(testLabel);
+			}
+			getContent().addComponent(requestedSampleMaterialsLayout, SAMPLE_MATERIAL_INFO_LOC);
+		}
+//		else {
+//			getContent().removeComponent(REQUESTED_PATHOGEN_TESTS_READ_LOC);
+//		}
+
 	}
 
 	private void updateRequestedTestFields() {
@@ -420,6 +507,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 		boolean pathogenTestsRequested = Boolean.TRUE.equals(pathogenTestingField.getValue());
 		setVisible(pathogenTestsRequested, SampleDto.REQUESTED_PATHOGEN_TESTS, SampleDto.REQUESTED_OTHER_PATHOGEN_TESTS);
+
 		getContent().getComponent(PATHOGEN_TESTING_INFO_LOC).setVisible(pathogenTestsRequested);
 
 		boolean additionalTestsRequested = Boolean.TRUE.equals(additionalTestingField.getValue());
@@ -428,6 +516,10 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 		getContent().getComponent(PATHOGEN_TESTING_READ_HEADLINE_LOC).setVisible(canOnlyReadRequests);
 		getContent().getComponent(ADDITIONAL_TESTING_READ_HEADLINE_LOC).setVisible(canOnlyReadRequests && canUseAdditionalTests);
+
+		handleDisease(Disease.YELLOW_FEVER, "National Public Health Reference Laboratory");
+		handleDisease(Disease.AHF, "Noguchi Memorial Institute for Medical Research");
+		handleDisease(Disease.AFP, "Noguchi Memorial Institute for Medical Research");
 
 		if (getValue() != null && canOnlyReadRequests) {
 			CssLayout requestedPathogenTestsLayout = new CssLayout();
@@ -455,6 +547,66 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			getContent().addComponent(requestedAdditionalTestsLayout, REQUESTED_ADDITIONAL_TESTS_READ_LOC);
 		} else {
 			getContent().removeComponent(REQUESTED_ADDITIONAL_TESTS_READ_LOC);
+		}
+	}
+
+	private void handleDisease(Disease targetDisease, String labName) {
+		if (disease == targetDisease) {
+			setVisibleAndCheckLab(labName, SampleDto.SAMPLING_REASON, SampleDto.PATHOGEN_TESTING_REQUESTED);
+		}
+	}
+
+	private void handleCSM() {
+		setVisible(false, SampleDto.SAMPLE_PURPOSE,
+				SampleDto.SAMPLING_REASON,
+				SampleDto.REQUESTED_PATHOGEN_TESTS,
+				SampleDto.REQUESTED_OTHER_PATHOGEN_TESTS);
+
+		sampleMaterialComboBox.setValue(SampleMaterial.CEREBROSPINAL_FLUID);
+	}
+
+	private void handleAFP() {
+		setVisible(false, SampleDto.SAMPLE_PURPOSE);
+		setRequired(false, SampleDto.SAMPLE_PURPOSE);
+	}
+
+	private void handleNewInfluenza(){
+		setVisible(false,SampleDto.SAMPLE_SOURCE );
+	}
+
+	private void handleYellowFever(){
+		setRequired(false, SampleDto.SAMPLE_DATE_TIME, SampleDto.SAMPLE_MATERIAL);
+		sampleMaterialComboBox.setVisible(false);
+
+		initializeMaterialsMultiSelect();
+	}
+
+	private FacilityReferenceDto findLabByName(List<FacilityReferenceDto> labs, String labName) {
+		for (FacilityReferenceDto labItem : labs) {
+			if (labName.equals(labItem.getCaption())) {
+				return labItem;
+			}
+		}
+		return null;
+	}
+
+	private void setVisibleAndCheckLab(String labName, String...fieldsToHide) {
+		setVisible(false, fieldsToHide);
+
+		if (lab != null) {
+			List<FacilityReferenceDto> allActiveLaboratories = FacadeProvider.getFacilityFacade().getAllActiveLaboratories(false);
+			FacilityReferenceDto facilityLab = findLabByName(allActiveLaboratories, labName);
+
+			if (facilityLab != null) {
+				lab.addItems(allActiveLaboratories);
+				lab.setValue(facilityLab);
+				labDetails.setVisible(false);
+				labDetails.setRequired(false);
+			} else {
+				System.out.println("Please add " + labName + " to Facility Configuration");
+			}
+		} else {
+			System.out.println("Lab dropdown is null. Please check your code.");
 		}
 	}
 }

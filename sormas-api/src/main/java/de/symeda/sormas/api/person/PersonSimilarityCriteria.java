@@ -18,6 +18,7 @@ public class PersonSimilarityCriteria extends BaseCriteria implements Cloneable 
 	private Integer birthdateDD;
 	private String passportNumber;
 	private String nationalHealthId;
+	private String ghanaCard;
 	private String uuidExternalIdExternalTokenLike;
 
 	@IgnoreForUrl
@@ -108,6 +109,15 @@ public class PersonSimilarityCriteria extends BaseCriteria implements Cloneable 
 		return this;
 	}
 
+	@IgnoreForUrl
+	public String getGhanaCard() {
+		return ghanaCard;
+	}
+
+	public PersonSimilarityCriteria ghanaCard(String ghanaCard) {
+		this.ghanaCard = ghanaCard;
+		return this;
+	}
 	public String getUuidExternalIdExternalTokenLike() {
 		return uuidExternalIdExternalTokenLike;
 	}

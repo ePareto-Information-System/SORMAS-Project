@@ -143,12 +143,15 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private Date pathogenTestResultChangeDate;
 
 	private Boolean pathogenTestingRequested;
+	private Boolean sampleMaterialRequested;
 	private Boolean additionalTestingRequested;
 	private Set<PathogenTestType> requestedPathogenTests;
+	private Set<SampleMaterial> requestedSampleMaterials;
 	private Set<AdditionalTestType> requestedAdditionalTests;
 	private String requestedOtherPathogenTests;
 	private String requestedOtherAdditionalTests;
 	private String requestedPathogenTestsString;
+	private String requestedSampleMaterialsString;
 	private String requestedAdditionalTestsString;
 	private SamplingReason samplingReason;
 	private String samplingReasonDetails;
@@ -422,6 +425,15 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	}
 
 	@Column
+	public Boolean getSampleMaterialRequested() {
+		return sampleMaterialRequested;
+	}
+
+	public void setSampleMaterialRequested(Boolean sampleMaterialRequested) {
+		this.sampleMaterialRequested = sampleMaterialRequested;
+	}
+
+	@Column
 	public Boolean getAdditionalTestingRequested() {
 		return additionalTestingRequested;
 	}
@@ -459,6 +471,37 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 			sb.substring(0, sb.lastIndexOf(","));
 		}
 		requestedPathogenTestsString = sb.toString();
+	}
+
+	@Transient
+	public Set<SampleMaterial> getRequestedSampleMaterials() {
+		if (requestedSampleMaterials == null) {
+			if (StringUtils.isEmpty(requestedSampleMaterialsString)) {
+				requestedSampleMaterials = new HashSet<>();
+			} else {
+				requestedSampleMaterials =
+						Arrays.stream(requestedSampleMaterialsString.split(",")).map(SampleMaterial::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return requestedSampleMaterials;
+	}
+
+	public void setRequestedSampleMaterials(Set<SampleMaterial> requestedSampleMaterials) {
+		this.requestedSampleMaterials = requestedSampleMaterials;
+
+		if (this.requestedSampleMaterials == null) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		requestedSampleMaterials.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		requestedSampleMaterialsString = sb.toString();
 	}
 
 	@Transient

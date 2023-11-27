@@ -31,6 +31,7 @@ public class CaseSelectionDtoResultTransformer implements ResultTransformer {
 			(Disease) objects[3],
 			(String) objects[4],
 			(String) objects[5],
+			(String) objects[6],
 			new AgeAndBirthDateDto(age, approximateAgeType, birthdateDD, birthdateMM, birthdateYYYY),
 			(String) objects[11],
 			healthFacilityName,

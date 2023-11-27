@@ -37,6 +37,8 @@ import de.symeda.sormas.api.person.SymptomJournalStatus;
 import de.symeda.sormas.api.share.ExternalShareCriteria;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRoleReferenceDto;
+import de.symeda.sormas.api.utils.AFPFacilityOptions;
+import de.symeda.sormas.api.utils.CardOrHistory;
 import de.symeda.sormas.api.utils.DateFilterOption;
 import de.symeda.sormas.api.utils.IgnoreForUrl;
 import de.symeda.sormas.api.utils.criteria.CriteriaDateType;
@@ -74,6 +76,7 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	public static final String REINFECTION_STATUS = "reinfectionStatus";
 	public static final String FACILITY_TYPE_GROUP = "facilityTypeGroup";
 	public static final String FACILITY_TYPE = "facilityType";
+	public static final String AFP_FACILITY_OPTIONS = "afpFacilityOptions";
 	public static final String INCLUDE_CASES_FROM_OTHER_JURISDICTIONS = "includeCasesFromOtherJurisdictions";
 	public static final String ONLY_CONTACTS_FROM_OTHER_INSTANCES = "onlyContactsFromOtherInstances";
 	public static final String ONLY_CASES_WITH_REINFECTION = "onlyCasesWithReinfection";
@@ -134,10 +137,13 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	private Integer followUpVisitsInterval;
 	private SymptomJournalStatus symptomJournalStatus;
 	private VaccinationStatus vaccinationStatus;
+	private CardOrHistory vaccinationType;
+	private Date vaccinationDate;
 	private ReinfectionStatus reinfectionStatus;
 	private Date reportDateTo;
 	private FacilityTypeGroup facilityTypeGroup;
 	private FacilityType facilityType;
+	private AFPFacilityOptions afpFacilityOptions;
 	private Boolean includeCasesFromOtherJurisdictions = Boolean.FALSE;
 	private Boolean onlyContactsFromOtherInstances;
 	private Boolean onlyCasesWithReinfection;
@@ -621,10 +627,18 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	public VaccinationStatus getVaccinationStatus() {
 		return vaccinationStatus;
 	}
+	public CardOrHistory getVaccinationType() {
+		return vaccinationType;
+	}
+	public Date getVaccinationDate() {
+		return vaccinationDate;
+	}
 
 	public void setVaccinationStatus(VaccinationStatus vaccinationStatus) {
 		this.vaccinationStatus = vaccinationStatus;
 	}
+	public void setVaccinationType(CardOrHistory vaccinationType) {this.vaccinationType = vaccinationType;}
+	public void setVaccinationDate(Date vaccinationDate) {this.vaccinationDate = vaccinationDate;}
 
 	public ReinfectionStatus getReinfectionStatus() {
 		return reinfectionStatus;
@@ -657,6 +671,12 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	public void setFacilityType(FacilityType type) {
 		this.facilityType = type;
 	}
+
+	public AFPFacilityOptions getAfpFacilityOptions() {
+		return afpFacilityOptions;
+	}
+
+	public void setAfpFacilityOptions(AFPFacilityOptions afpFacilityOptions) {this.afpFacilityOptions = afpFacilityOptions;}
 
 	public Boolean getIncludeCasesFromOtherJurisdictions() {
 		return includeCasesFromOtherJurisdictions;

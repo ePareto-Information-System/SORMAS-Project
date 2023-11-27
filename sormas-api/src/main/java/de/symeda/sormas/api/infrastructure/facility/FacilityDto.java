@@ -31,6 +31,7 @@ import de.symeda.sormas.api.infrastructure.area.AreaType;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
+import de.symeda.sormas.api.utils.AFPFacilityOptions;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DependingOnFeatureType;
 import de.symeda.sormas.api.utils.FieldConstraints;
@@ -68,6 +69,7 @@ public class FacilityDto extends InfrastructureDto {
 	public static final String LONGITUDE = "longitude";
 	public static final String TYPE_GROUP = "typeGroup";
 	public static final String TYPE = "type";
+	public static final String AFP_TYPE = "afp_type";
 	public static final String EXTERNAL_ID = "externalID";
 
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
@@ -101,6 +103,7 @@ public class FacilityDto extends InfrastructureDto {
 	@Max(value = 180, message = Validations.numberTooBig)
 	private Double longitude;
 	private FacilityType type;
+	private AFPFacilityOptions afp_type;
 	private boolean publicOwnership;
 	private boolean archived;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
@@ -134,6 +137,7 @@ public class FacilityDto extends InfrastructureDto {
 		Double latitude,
 		Double longitude,
 		FacilityType type,
+		AFPFacilityOptions afp_type,
 		boolean publicOwnership,
 		String externalID) {
 
@@ -162,6 +166,7 @@ public class FacilityDto extends InfrastructureDto {
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.type = type;
+		this.afp_type = afp_type;
 		this.publicOwnership = publicOwnership;
 		this.externalID = externalID;
 	}

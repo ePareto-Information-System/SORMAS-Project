@@ -69,7 +69,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			loc(EpiDataDto.EXPOSURES) +
 			loc(LOC_ACTIVITY_AS_CASE_INVESTIGATION_HEADING) + 
 			loc(EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN)+
-			loc(EpiDataDto.ACTIVITIES_AS_CASE) + 
+			loc(EpiDataDto.ACTIVITIES_AS_CASE) +
 			locCss(VSPACE_TOP_3, LOC_EPI_DATA_FIELDS_HINT) +
 			loc(EpiDataDto.HIGH_TRANSMISSION_RISK_AREA) +
 			loc(EpiDataDto.LARGE_OUTBREAKS_AREA) + 
@@ -105,11 +105,10 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 	@Override
 	protected void addFields() {
-		if (disease == null) {
-			return;
-		}
 
-		addHeadingsAndInfoTexts();
+		if (disease != null && !diseaseCheck()) {
+			addHeadingsAndInfoTexts();
+		}
 
 		NullableOptionGroup ogExposureDetailsKnown = addField(EpiDataDto.EXPOSURE_DETAILS_KNOWN, NullableOptionGroup.class);
 		ExposuresField exposuresField = addField(EpiDataDto.EXPOSURES, ExposuresField.class);
@@ -146,6 +145,10 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		exposuresField.addValueChangeListener(e -> {
 			ogExposureDetailsKnown.setEnabled(CollectionUtils.isEmpty(exposuresField.getValue()));
 		});
+
+		if (diseaseCheck()) {
+			setVisible(false, EpiDataDto.EXPOSURES, EpiDataDto.EXPOSURE_DETAILS_KNOWN, EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN);
+		}
 	}
 
 	private void addActivityAsCaseFields() {
@@ -208,5 +211,9 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 	@Override
 	protected String createHtmlLayout() {
 		return parentClass == CaseDataDto.class ? MAIN_HTML_LAYOUT + SOURCE_CONTACTS_HTML_LAYOUT : MAIN_HTML_LAYOUT;
+	}
+
+	private boolean diseaseCheck(){
+		return disease == Disease.YELLOW_FEVER;
 	}
 }

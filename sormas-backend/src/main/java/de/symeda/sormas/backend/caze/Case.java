@@ -42,6 +42,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import de.symeda.sormas.api.utils.AFPFacilityOptions;
+import de.symeda.sormas.api.utils.CardOrHistory;
 import org.hibernate.annotations.Type;
 
 import de.symeda.auditlog.api.Audited;
@@ -160,6 +162,8 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public static final String PREGNANT = "pregnant";
 	public static final String VACCINATION_STATUS = "vaccinationStatus";
+	public static final String VACCINATION_TYPE = "vaccinationType";
+	public static final String VACCINATION_DATE = "vaccinationDate";
 	public static final String EPID_NUMBER = "epidNumber";
 	public static final String REPORT_LAT = "reportLat";
 	public static final String REPORT_LON = "reportLon";
@@ -212,6 +216,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public static final String VISITS = "visits";
 	public static final String SURVEILLANCE_REPORTS = "surveillanceReports";
 	public static final String FACILITY_TYPE = "facilityType";
+	public static final String AFP_FACILITY_OPTIONS = "afpFacilityOptions";
 	public static final String CONTACTS = "contacts";
 	public static final String CONVERTED_FROM_CONTACT = "convertedContact";
 	public static final String EVENT_PARTICIPANTS = "eventParticipants";
@@ -287,6 +292,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private District district;
 	private Community community;
 	private FacilityType facilityType;
+	private AFPFacilityOptions afpFacilityOptions;
 	private Facility healthFacility;
 	private String healthFacilityDetails;
 
@@ -315,8 +321,11 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private HealthConditions healthConditions;
 
 	private YesNoUnknown pregnant;
-
+	private YesNoUnknown ipSampleSent;
+	private Disease ipSampleResults;
 	private VaccinationStatus vaccinationStatus;
+	private CardOrHistory vaccinationType;
+	private Date vaccinationDate;
 	private YesNoUnknown smallpoxVaccinationScar;
 	private YesNoUnknown smallpoxVaccinationReceived;
 	private Date smallpoxLastVaccinationDate;
@@ -910,12 +919,48 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	}
 
 	@Enumerated(EnumType.STRING)
+	public YesNoUnknown getIpSampleSent() {
+		return ipSampleSent;
+	}
+
+	public void setIpSampleSent(YesNoUnknown ipSampleSent) {
+		this.ipSampleSent = ipSampleSent;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public Disease getIpSampleResults(){
+		return ipSampleResults;
+	}
+
+	public void setIpSampleResults(Disease ipSampleResults) {
+		this.ipSampleResults = ipSampleResults;
+	}
+
+	@Enumerated(EnumType.STRING)
 	public VaccinationStatus getVaccinationStatus() {
 		return vaccinationStatus;
 	}
 
 	public void setVaccinationStatus(VaccinationStatus vaccination) {
 		this.vaccinationStatus = vaccination;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public CardOrHistory getVaccinationType() {
+		return vaccinationType;
+	}
+
+	public void setVaccinationType(CardOrHistory vaccinationType) {
+		this.vaccinationType = vaccinationType;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getVaccinationDate() {
+		return vaccinationDate;
+	}
+
+	public void setVaccinationDate(Date vaccinationDate) {
+		this.vaccinationDate = vaccinationDate;
 	}
 
 	@Enumerated(EnumType.STRING)
@@ -955,7 +1000,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	}
 
 	public CaseReferenceDto toReference() {
-		return new CaseReferenceDto(getUuid(), person.getFirstName(), person.getLastName());
+		return new CaseReferenceDto(getUuid(), person.getFirstName(), person.getLastName(), person.getOtherName());
 	}
 
 	@OneToMany(cascade = {}, mappedBy = Task.CAZE, fetch = FetchType.LAZY)
@@ -1444,6 +1489,14 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setFacilityType(FacilityType facilityType) {
 		this.facilityType = facilityType;
+	}
+	@Enumerated(EnumType.STRING)
+	public AFPFacilityOptions getAfpFacilityOptions() {
+		return afpFacilityOptions;
+	}
+
+	public void setAfpFacilityOptions(AFPFacilityOptions afpFacilityOptions) {
+		this.afpFacilityOptions = afpFacilityOptions;
 	}
 
 	@Column

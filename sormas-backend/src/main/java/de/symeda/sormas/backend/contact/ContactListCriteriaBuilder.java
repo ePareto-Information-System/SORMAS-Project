@@ -101,6 +101,8 @@ public class ContactListCriteriaBuilder {
 			joins.getCaseRegion().get(Region.NAME),
 			joins.getCaseDistrict().get(District.NAME),
 			contact.get(Contact.CHANGE_DATE),
+			joins.getPerson().get(Person.OTHER_NAME),
+			joins.getCasePerson().get(Person.OTHER_NAME),
 			contact.get(Contact.EXTERNAL_ID),
 			contact.get(Contact.EXTERNAL_TOKEN),
 			contact.get(Contact.INTERNAL_TOKEN),
@@ -169,6 +171,7 @@ public class ContactListCriteriaBuilder {
 			break;
 		case ContactIndexDto.PERSON_FIRST_NAME:
 		case ContactIndexDto.PERSON_LAST_NAME:
+		case ContactIndexDto.PERSON_OTHER_NAME:
 		case ContactIndexDto.SYMPTOM_JOURNAL_STATUS:
 			expressions.add(joins.getPerson().get(sortProperty.propertyName));
 			break;

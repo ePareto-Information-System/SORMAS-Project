@@ -82,6 +82,7 @@ public class ExternalMessageFacadeEjb implements ExternalMessageFacade {
 		ExternalMessageIndexDto.TYPE,
 		ExternalMessageIndexDto.PERSON_FIRST_NAME,
 		ExternalMessageIndexDto.PERSON_LAST_NAME,
+		ExternalMessageIndexDto.PERSON_OTHER_NAME,
 		ExternalMessageIndexDto.PERSON_POSTAL_CODE,
 		ExternalMessageIndexDto.REPORTER_NAME,
 		ExternalMessageIndexDto.REPORTER_POSTAL_CODE,
@@ -126,6 +127,7 @@ public class ExternalMessageFacadeEjb implements ExternalMessageFacade {
 		target.setPersonFirstName(source.getPersonFirstName());
 		target.setPersonHouseNumber(source.getPersonHouseNumber());
 		target.setPersonLastName(source.getPersonLastName());
+		target.setPersonOtherName(source.getPersonOtherName());
 		target.setPersonPostalCode(source.getPersonPostalCode());
 		target.setPersonSex(source.getPersonSex());
 		target.setPersonPresentCondition(source.getPersonPresentCondition());
@@ -225,6 +227,7 @@ public class ExternalMessageFacadeEjb implements ExternalMessageFacade {
 		target.setPersonFirstName(source.getPersonFirstName());
 		target.setPersonHouseNumber(source.getPersonHouseNumber());
 		target.setPersonLastName(source.getPersonLastName());
+		target.setPersonOtherName(source.getPersonOtherName());
 		target.setPersonPostalCode(source.getPersonPostalCode());
 		target.setPersonSex(source.getPersonSex());
 		target.setPersonPresentCondition(source.getPersonPresentCondition());
@@ -355,6 +358,7 @@ public class ExternalMessageFacadeEjb implements ExternalMessageFacade {
 			labMessage.get(ExternalMessage.SAMPLE_OVERALL_TEST_RESULT),
 			labMessage.get(ExternalMessage.PERSON_FIRST_NAME),
 			labMessage.get(ExternalMessage.PERSON_LAST_NAME),
+			labMessage.get(ExternalMessage.PERSON_OTHER_NAME),
 			labMessage.get(ExternalMessage.PERSON_BIRTH_DATE_YYYY),
 			labMessage.get(ExternalMessage.PERSON_BIRTH_DATE_MM),
 			labMessage.get(ExternalMessage.PERSON_BIRTH_DATE_DD),

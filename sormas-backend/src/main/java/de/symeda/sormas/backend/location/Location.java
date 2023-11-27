@@ -97,6 +97,7 @@ public class Location extends AbstractDomainObject {
 
 	private String postalCode;
 	private String street;
+	private String landMark;
 	private String houseNumber;
 	private String additionalInformation;
 	private PersonAddressType addressType;
@@ -233,6 +234,15 @@ public class Location extends AbstractDomainObject {
 
 	public void setStreet(String street) {
 		this.street = street;
+	}
+
+	@Column(length = CHARACTER_LIMIT_BIG)
+	public String getLandMark() {
+		return landMark;
+	}
+
+	public void setLandMark(String landMark) {
+		this.landMark = landMark;
 	}
 
 	@Column(length = CHARACTER_LIMIT_DEFAULT)

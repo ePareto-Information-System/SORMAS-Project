@@ -86,8 +86,10 @@ public class SourceContactList extends PaginationList<ContactIndexDto> {
 					c.getUuid(),
 					c.getFirstName(),
 					c.getLastName(),
+					c.getOtherName(),
 					c.getCaze() != null ? c.getCaze().getFirstName() : null,
-					c.getCaze() != null ? c.getCaze().getLastName() : null))
+					c.getCaze() != null ? c.getCaze().getLastName() : null,
+					c.getCaze() != null ? c.getCaze().getOtherName() : null))
 			.collect(Collectors.toList());
 	}
 }

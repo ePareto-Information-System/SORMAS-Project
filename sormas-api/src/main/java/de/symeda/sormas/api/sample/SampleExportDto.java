@@ -116,7 +116,7 @@ public class SampleExportDto implements Serializable {
 	private SampleJurisdictionFlagsDto sampleJurisdictionFlagsDto;
 
 	//@formatter:off
-	public SampleExportDto(long id, String uuid, String labSampleId, Date sampleReportDate,String epidNumber, String casePersonFirstName, String casePersonLastName, String contactPersonFirstName, String contactPersonLastName,String eventParticipantFirstName, String eventParticipantLastName,
+	public SampleExportDto(long id, String uuid, String labSampleId, Date sampleReportDate,String epidNumber, String casePersonFirstName, String casePersonLastName, String casePersonOtherName, String contactPersonFirstName, String contactPersonLastName, String contactPersonOtherName,String eventParticipantFirstName, String eventParticipantLastName, String eventParticipantOtherName,
 						   Disease caseDisease, String caseDiseaseDetails, Disease contactDisease, String contactDiseaseDetails, Disease eventDisease, String eventDiseaseDetails,
 						   Date sampleDateTime, SampleMaterial sampleMaterial, String sampleMaterialDetails, SamplePurpose samplePurpose,
 						   SamplingReason samplingReason, String samplingReasonDetails,
@@ -148,6 +148,7 @@ public class SampleExportDto implements Serializable {
 				caseUuid,
 				casePersonFirstName,
 				casePersonLastName,
+				casePersonOtherName,
 				caseRegion,
 				caseDistrict,
 				caseCommunity,
@@ -156,14 +157,14 @@ public class SampleExportDto implements Serializable {
 				caseFacilityDetails);
 		}
 		if (contactUuid != null) {
-			this.associatedContact = new ContactReferenceDto(contactUuid, contactPersonFirstName, contactPersonLastName, null, null);
+			this.associatedContact = new ContactReferenceDto(contactUuid, contactPersonFirstName, contactPersonLastName, contactPersonOtherName, null, null, null);
 			this.contactRegion = contactRegion;
 			this.contactDistrict = contactDistrict;
 			this.contactCommunity = contactCommunity;
 		}
 		if (eventParticipantUuid != null) {
 			this.associatedEventParticipant =
-				new EventParticipantReferenceDto(eventParticipantUuid, eventParticipantFirstName, eventParticipantLastName);
+				new EventParticipantReferenceDto(eventParticipantUuid, eventParticipantFirstName, eventParticipantLastName, eventParticipantOtherName);
 		}
 
 		this.disease = caseUuid != null
@@ -851,13 +852,14 @@ public class SampleExportDto implements Serializable {
 			String uuid,
 			String firstName,
 			String lastName,
+			String otherName,
 			String region,
 			String district,
 			String community,
 			String facilityUuid,
 			String facility,
 			String facilityDetails) {
-			super(uuid, firstName, lastName);
+			super(uuid, firstName, lastName, otherName);
 
 			this.region = region;
 			this.district = district;

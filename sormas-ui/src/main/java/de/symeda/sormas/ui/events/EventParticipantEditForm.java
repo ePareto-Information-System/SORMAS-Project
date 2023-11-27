@@ -96,7 +96,7 @@ public class EventParticipantEditForm extends PersonDependentEditForm<EventParti
 			getContent().addComponent(searchPersonButton, PERSON_SEARCH_LOC);
 		}
 
-		pef = new PersonEditForm(PersonContext.EVENT_PARTICIPANT, event.getDisease(), event.getDiseaseDetails(), null, isPersonPseudonymized);
+		pef = new PersonEditForm(PersonContext.EVENT_PARTICIPANT, event.getDisease(), event.getDiseaseDetails(), null, isPersonPseudonymized, event.getCaseOrigin());
 		pef.setWidth(100, Unit.PERCENTAGE);
 		pef.setImmediate(true);
 		getFieldGroup().bind(pef, EventParticipantDto.PERSON);
@@ -169,7 +169,7 @@ public class EventParticipantEditForm extends PersonDependentEditForm<EventParti
 			event.getDisease(),
 			event.getDiseaseDetails(),
 			null,
-			person != null ? person.isPseudonymized() : isPersonPseudonymized);
+			person != null ? person.isPseudonymized() : isPersonPseudonymized, event.getCaseOrigin());
 		pef.setWidth(100, Unit.PERCENTAGE);
 		pef.setImmediate(true);
 		getFieldGroup().bind(pef, EventParticipantDto.PERSON);

@@ -16,6 +16,7 @@ package de.symeda.sormas.ui.caze;
 
 import com.vaadin.ui.VerticalLayout;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EditPermissionType;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
@@ -44,12 +45,7 @@ import de.symeda.sormas.ui.samples.sampleLink.SampleListComponent;
 import de.symeda.sormas.ui.samples.sampleLink.SampleListComponentLayout;
 import de.symeda.sormas.ui.sormastosormas.SormasToSormasListComponent;
 import de.symeda.sormas.ui.task.TaskListComponent;
-import de.symeda.sormas.ui.utils.ArchivingController;
-import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
-import de.symeda.sormas.ui.utils.CssStyles;
-import de.symeda.sormas.ui.utils.DetailSubComponentWrapper;
-import de.symeda.sormas.ui.utils.LayoutWithSidePanel;
-import de.symeda.sormas.ui.utils.ViewMode;
+import de.symeda.sormas.ui.utils.*;
 import de.symeda.sormas.ui.utils.components.sidecomponent.SideComponentLayout;
 import de.symeda.sormas.ui.vaccination.list.VaccinationListComponent;
 
@@ -74,6 +70,7 @@ public class CaseDataView extends AbstractCaseView {
 	private static final long serialVersionUID = -1L;
 	private CommitDiscardWrapperComponent<CaseDataForm> editComponent;
 
+	private Disease disease;
 	public CaseDataView() {
 		super(VIEW_NAME, false);
 	}
@@ -84,6 +81,7 @@ public class CaseDataView extends AbstractCaseView {
 		setHeightUndefined();
 
 		CaseDataDto caze = FacadeProvider.getCaseFacade().getCaseDataByUuid(getCaseRef().getUuid());
+		disease = caze.getDisease();
 
 		DetailSubComponentWrapper container = new DetailSubComponentWrapper(() -> editComponent);
 		container.setWidth(100, Unit.PERCENTAGE);
@@ -145,25 +143,27 @@ public class CaseDataView extends AbstractCaseView {
 			layout.addSidePanelComponent(eventLayout, EVENTS_LOC);
 		}
 
-		if (UserProvider.getCurrent().hasUserRight(UserRight.IMMUNIZATION_VIEW)
-			&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.IMMUNIZATION_MANAGEMENT)) {
-			if (!FacadeProvider.getFeatureConfigurationFacade()
-				.isPropertyValueTrue(FeatureType.IMMUNIZATION_MANAGEMENT, FeatureTypeProperty.REDUCED)) {
-				final ImmunizationListCriteria immunizationListCriteria =
-					new ImmunizationListCriteria.Builder(caze.getPerson()).wihDisease(caze.getDisease()).build();
-				layout.addSidePanelComponent(
-					new SideComponentLayout(new ImmunizationListComponent(immunizationListCriteria, this::showUnsavedChangesPopup)),
-					IMMUNIZATION_LOC);
-			} else {
-				VaccinationListCriteria criteria = new VaccinationListCriteria.Builder(caze.getPerson()).withDisease(caze.getDisease())
-					.build()
-					.vaccinationAssociationType(VaccinationAssociationType.CASE)
-					.caseReference(getCaseRef())
-					.region(caze.getResponsibleRegion())
-					.district(caze.getResponsibleDistrict());
-				layout.addSidePanelComponent(
-					new SideComponentLayout(new VaccinationListComponent(criteria, this::showUnsavedChangesPopup)),
-					VACCINATIONS_LOC);
+		if (disease != Disease.CSM) {
+			if (UserProvider.getCurrent().hasUserRight(UserRight.IMMUNIZATION_VIEW)
+					&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.IMMUNIZATION_MANAGEMENT)) {
+				if (!FacadeProvider.getFeatureConfigurationFacade()
+						.isPropertyValueTrue(FeatureType.IMMUNIZATION_MANAGEMENT, FeatureTypeProperty.REDUCED)) {
+					final ImmunizationListCriteria immunizationListCriteria =
+							new ImmunizationListCriteria.Builder(caze.getPerson()).wihDisease(caze.getDisease()).build();
+					layout.addSidePanelComponent(
+							new SideComponentLayout(new ImmunizationListComponent(immunizationListCriteria, this::showUnsavedChangesPopup)),
+							IMMUNIZATION_LOC);
+				} else {
+					VaccinationListCriteria criteria = new VaccinationListCriteria.Builder(caze.getPerson()).withDisease(caze.getDisease())
+							.build()
+							.vaccinationAssociationType(VaccinationAssociationType.CASE)
+							.caseReference(getCaseRef())
+							.region(caze.getResponsibleRegion())
+							.district(caze.getResponsibleDistrict());
+					layout.addSidePanelComponent(
+							new SideComponentLayout(new VaccinationListComponent(criteria, this::showUnsavedChangesPopup)),
+							VACCINATIONS_LOC);
+				}
 			}
 		}
 

@@ -214,7 +214,9 @@ public class TravelEntryService extends BaseTravelEntryService {
 					travelEntry.getUuid(),
 					travelEntry.getExternalId(),
 					travelEntry.getPerson().getFirstName(),
-					travelEntry.getPerson().getLastName())),
+					travelEntry.getPerson().getLastName(),
+					travelEntry.getPerson().getOtherName()
+				)),
 			true);
 		for (Task task : tasks) {
 			taskService.deletePermanent(task);

@@ -8,9 +8,11 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;
 public class SampleCreateForm extends AbstractSampleForm {
 
 	private static final long serialVersionUID = 1L;
+	private Disease disease;
 
 	public SampleCreateForm(Disease disease) {
 		super(SampleDto.class, SampleDto.I18N_PREFIX, disease, null);
+		this.disease = disease;
 	}
 
 	@SuppressWarnings("deprecation")
@@ -28,8 +30,14 @@ public class SampleCreateForm extends AbstractSampleForm {
 		});
 	}
 
+
 	@Override
 	protected String createHtmlLayout() {
 		return SAMPLE_COMMON_HTML_LAYOUT;
 	}
+
+    @Override
+    protected Disease getDisease() {
+        return this.disease;
+    }
 }

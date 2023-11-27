@@ -12,7 +12,7 @@ public class TitleLayoutHelper {
 
 	public static StringBuilder buildPersonString(PersonDto person) {
 		StringBuilder personString = new StringBuilder();
-		String personFullName = PersonDto.buildCaption(person.getFirstName(), person.getLastName());
+		String personFullName = PersonDto.buildCaption(person.getFirstName(), person.getLastName(), person.getOtherName() );
 		if (StringUtils.isNotBlank(personFullName)) {
 			personString.append(personFullName);
 

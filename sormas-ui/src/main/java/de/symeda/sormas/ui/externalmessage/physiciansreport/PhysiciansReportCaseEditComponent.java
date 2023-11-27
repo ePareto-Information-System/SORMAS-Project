@@ -173,6 +173,7 @@ public class PhysiciansReportCaseEditComponent extends CommitDiscardWrapperCompo
 						caze.getPerson().getUuid(),
 						caze.getDisease(),
 						caze.getDiseaseDetails(),
+						caze.getCaseOrigin(),
 						UserRight.CASE_EDIT,
 						viewMode)));
 		configs.add(

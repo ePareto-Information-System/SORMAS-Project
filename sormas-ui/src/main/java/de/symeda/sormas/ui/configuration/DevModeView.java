@@ -640,6 +640,13 @@ public class DevModeView extends AbstractConfigurationView {
 			SampleGenerationConfig::setRequestPathogenTestsToBePerformed);
 		sampleOptionsThirdLineLayout.addComponent(requestPathogenTestsToBePerformed);
 
+		CheckBox requestSampleMaterialsToBeAdded = new CheckBox(I18nProperties.getCaption(Captions.devModeSampleMaterialsToBeAdded));
+		sampleGeneratorConfigBinder.bind(
+				requestSampleMaterialsToBeAdded,
+				SampleGenerationConfig::isRequestSampleMaterialsToAdded,
+				SampleGenerationConfig::setRequestSampleMaterialsToBeAdded);
+		sampleOptionsThirdLineLayout.addComponent(requestSampleMaterialsToBeAdded);
+
 		CheckBox requestAdditionalTestsToBePerformed = new CheckBox(I18nProperties.getCaption(Captions.devModeSampleAdditionalTestsToBePerformed));
 		sampleGeneratorConfigBinder.bind(
 			requestAdditionalTestsToBePerformed,
@@ -1053,6 +1060,15 @@ public class DevModeView extends AbstractConfigurationView {
 					}
 					sample.setAdditionalTestingRequested(true);
 					sample.setRequestedAdditionalTests(additionalTestTypes);
+				}
+				if (config.isRequestSampleMaterialsToAdded()) {
+					Set sampleMaterialTypes = new HashSet<SampleMaterial>();
+					int until = randomInt(1, SampleMaterial.values().length);
+					for (int j = 0; j < until; j++) {
+						sampleMaterialTypes.add(SampleMaterial.values()[j]);
+					}
+					sample.setSampleMaterialRequested(true);
+					sample.setRequestedSampleMaterials(sampleMaterialTypes);
 				}
 
 				if (config.isSendDispatch()) {
@@ -1787,6 +1803,7 @@ public class DevModeView extends AbstractConfigurationView {
 
 		private boolean externalLabOrInternalInHouseTesting = false;
 		private boolean requestPathogenTestsToBePerformed = false;
+		private boolean requestSampleMaterialsToBeSelected = false;
 		private boolean requestAdditionalTestsToBePerformed = false;
 		private boolean sendDispatch = false;
 		private boolean received = false;
@@ -1888,6 +1905,14 @@ public class DevModeView extends AbstractConfigurationView {
 
 		public void setRequestPathogenTestsToBePerformed(boolean requestPathogenTestsToBePerformed) {
 			this.requestPathogenTestsToBePerformed = requestPathogenTestsToBePerformed;
+		}
+
+		public boolean isRequestSampleMaterialsToAdded(){
+			return requestSampleMaterialsToBeSelected;
+		}
+
+		public void setRequestSampleMaterialsToBeAdded(boolean requestSampleMaterialsToBeAdded){
+			this.requestSampleMaterialsToBeSelected = requestSampleMaterialsToBeAdded;
 		}
 
 		public boolean isExternalLabOrInternalInHouseTesting() {

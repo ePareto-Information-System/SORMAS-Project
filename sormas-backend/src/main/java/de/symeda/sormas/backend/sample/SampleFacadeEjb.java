@@ -35,6 +35,7 @@ import javax.persistence.criteria.Selection;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import de.symeda.sormas.api.Disease;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -375,6 +376,9 @@ public class SampleFacadeEjb implements SampleFacade {
 		if (sample.getAdditionalTestingRequested() == null) {
 			sample.setAdditionalTestingRequested(false);
 		}
+		if (sample.getSampleMaterialRequested() == null) {
+			sample.setSampleMaterialRequested(false);
+		}
 
 		sampleService.ensurePersisted(sample);
 
@@ -449,16 +453,16 @@ public class SampleFacadeEjb implements SampleFacade {
 				I18nProperties
 					.getValidationError(Validations.required, I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, SampleDto.REPORT_DATE_TIME)));
 		}
-		if (sample.getSampleMaterial() == null) {
+		/*if (sample.getRequestedSampleMaterials() == null) {
 			throw new ValidationRuntimeException(
 				I18nProperties
-					.getValidationError(Validations.required, I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, SampleDto.SAMPLE_MATERIAL)));
-		}
-		if (sample.getSamplePurpose() == null) {
+					.getValidationError(Validations.required, I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, SampleDto.REQUESTED_SAMPLE_MATERIALS)));
+		}*/
+		/*if (sample.getSamplePurpose() == null && (!DISEASE.equals(Disease.YELLOW_FEVER.toString()))) {
 			throw new ValidationRuntimeException(
 				I18nProperties
 					.getValidationError(Validations.required, I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, SampleDto.SAMPLE_PURPOSE)));
-		}
+		}*/
 		if (sample.getSamplePurpose() == SamplePurpose.EXTERNAL && sample.getLab() == null) {
 			throw new ValidationRuntimeException(
 				I18nProperties.getValidationError(Validations.required, I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, SampleDto.LAB)));
@@ -791,8 +795,10 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setShipped(source.isShipped());
 		target.setReceived(source.isReceived());
 		target.setPathogenTestingRequested(source.getPathogenTestingRequested());
+		target.setSampleMaterialRequested(source.getSampleMaterialRequested());
 		target.setAdditionalTestingRequested(source.getAdditionalTestingRequested());
 		target.setRequestedPathogenTests(source.getRequestedPathogenTests());
+		target.setRequestedSampleMaterials(source.getRequestedSampleMaterials());
 		target.setRequestedAdditionalTests(source.getRequestedAdditionalTests());
 		target.setPathogenTestResult(source.getPathogenTestResult());
 		target.setRequestedOtherPathogenTests(source.getRequestedOtherPathogenTests());
@@ -921,8 +927,10 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setShipped(source.isShipped());
 		target.setReceived(source.isReceived());
 		target.setPathogenTestingRequested(source.getPathogenTestingRequested());
+		target.setSampleMaterialRequested(source.getSampleMaterialRequested());
 		target.setAdditionalTestingRequested(source.getAdditionalTestingRequested());
 		target.setRequestedPathogenTests(source.getRequestedPathogenTests());
+		target.setRequestedSampleMaterials(source.getRequestedSampleMaterials());
 		target.setRequestedAdditionalTests(source.getRequestedAdditionalTests());
 		target.setPathogenTestResult(source.getPathogenTestResult());
 		target.setRequestedOtherPathogenTests(source.getRequestedOtherPathogenTests());

@@ -350,6 +350,7 @@ public class PersonFacadeEjb implements PersonFacade {
 			exportPerson.setPseudonymized(detailedPerson.isPseudonymized());
 			exportPerson.setFirstName(detailedPerson.getFirstName());
 			exportPerson.setLastName(detailedPerson.getLastName());
+			exportPerson.setOtherName(detailedPerson.getOtherName());
 			exportPerson.setBirthdateYYYY(detailedPerson.getBirthdateYYYY());
 			exportPerson.setBirthdateMM(detailedPerson.getBirthdateMM());
 			exportPerson.setBirthdateDD(detailedPerson.getBirthdateDD());
@@ -896,6 +897,7 @@ public class PersonFacadeEjb implements PersonFacade {
 
 		target.setFirstName(source.getFirstName());
 		target.setLastName(source.getLastName());
+		target.setOtherName(source.getOtherName());
 		target.setSalutation(source.getSalutation());
 		target.setOtherSalutation(source.getOtherSalutation());
 		target.setSex(source.getSex());
@@ -982,6 +984,7 @@ public class PersonFacadeEjb implements PersonFacade {
 
 		target.setPassportNumber(source.getPassportNumber());
 		target.setNationalHealthId(source.getNationalHealthId());
+		target.setGhanaCard(source.getGhanaCard());
 		target.setPlaceOfBirthFacilityType(source.getPlaceOfBirthFacilityType());
 		target.setSymptomJournalStatus(source.getSymptomJournalStatus());
 
@@ -1322,6 +1325,7 @@ public class PersonFacadeEjb implements PersonFacade {
 			person.get(Person.UUID),
 			person.get(Person.FIRST_NAME),
 			person.get(Person.LAST_NAME),
+			person.get(Person.OTHER_NAME),
 			person.get(Person.APPROXIMATE_AGE),
 			person.get(Person.APPROXIMATE_AGE_TYPE),
 			person.get(Person.BIRTHDATE_DD),
@@ -1352,6 +1356,7 @@ public class PersonFacadeEjb implements PersonFacade {
 				case PersonIndexDto.UUID:
 				case PersonIndexDto.FIRST_NAME:
 				case PersonIndexDto.LAST_NAME:
+				case PersonIndexDto.OTHER_NAME:
 				case PersonIndexDto.SEX:
 					expression = person.get(sortProperty.propertyName);
 					break;
@@ -1416,6 +1421,7 @@ public class PersonFacadeEjb implements PersonFacade {
 			person.get(Person.UUID),
 			person.get(Person.FIRST_NAME),
 			person.get(Person.LAST_NAME),
+			person.get(Person.OTHER_NAME),
 			person.get(Person.SALUTATION),
 			person.get(Person.OTHER_SALUTATION),
 			person.get(Person.SEX),
@@ -1462,6 +1468,7 @@ public class PersonFacadeEjb implements PersonFacade {
 
 			person.get(Person.PASSPORT_NUMBER),
 			person.get(Person.NATIONAL_HEALTH_ID),
+			person.get(Person.GHANA_CARD),
 
 			person.get(Person.HAS_COVID_APP),
 			person.get(Person.COVID_CODE_DELIVERED),
@@ -1576,7 +1583,7 @@ public class PersonFacadeEjb implements PersonFacade {
 		if (entity == null) {
 			return null;
 		}
-		return new PersonReferenceDto(entity.getUuid(), entity.getFirstName(), entity.getLastName());
+		return new PersonReferenceDto(entity.getUuid(), entity.getFirstName(), entity.getLastName(), entity.getOtherName());
 	}
 
 	public Person fillOrBuildEntity(@NotNull PersonDto source, Person target, boolean checkChangeDate) {
@@ -1585,6 +1592,7 @@ public class PersonFacadeEjb implements PersonFacade {
 
 		target.setFirstName(source.getFirstName());
 		target.setLastName(source.getLastName());
+		target.setOtherName(source.getOtherName());
 		target.setSalutation(source.getSalutation());
 		target.setOtherSalutation(source.getOtherSalutation());
 		target.setSex(source.getSex());
@@ -1664,6 +1672,7 @@ public class PersonFacadeEjb implements PersonFacade {
 
 		target.setPassportNumber(source.getPassportNumber());
 		target.setNationalHealthId(source.getNationalHealthId());
+		target.setGhanaCard(source.getGhanaCard());
 		target.setPlaceOfBirthFacilityType(source.getPlaceOfBirthFacilityType());
 		target.setSymptomJournalStatus(source.getSymptomJournalStatus());
 
@@ -1694,7 +1703,8 @@ public class PersonFacadeEjb implements PersonFacade {
 			.birthdateMM(referencePerson.getBirthdateMM())
 			.birthdateYYYY(referencePerson.getBirthdateYYYY())
 			.passportNumber(referencePerson.getPassportNumber())
-			.nationalHealthId(referencePerson.getNationalHealthId());
+			.nationalHealthId(referencePerson.getNationalHealthId())
+			.ghanaCard(referencePerson.getGhanaCard());
 
 		return checkMatchingNameInDatabase(userFacade.getCurrentUser().toReference(), criteria);
 	}

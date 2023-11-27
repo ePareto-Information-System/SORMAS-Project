@@ -80,7 +80,7 @@ public class EventParticipantDto extends SormasToSormasShareableDto {
 		Disease.YELLOW_FEVER,
 		Disease.CSM,
 		Disease.RABIES,
-		Disease.UNSPECIFIED_VHF,
+		Disease.AHF,
 		Disease.ANTHRAX,
 		Disease.CORONAVIRUS,
 		Disease.OTHER })

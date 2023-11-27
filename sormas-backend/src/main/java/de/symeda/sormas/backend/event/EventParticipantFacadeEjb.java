@@ -190,7 +190,7 @@ public class EventParticipantFacadeEjb
 
 		Person person = entity.getPerson();
 
-		return new EventParticipantReferenceDto(entity.getUuid(), person.getFirstName(), person.getFirstName());
+		return new EventParticipantReferenceDto(entity.getUuid(), person.getFirstName(), person.getFirstName(), person.getOtherName());
 	}
 
 	@Override
@@ -486,6 +486,7 @@ public class EventParticipantFacadeEjb
 			event.get(Event.UUID),
 			person.get(Person.FIRST_NAME),
 			person.get(Person.LAST_NAME),
+			person.get(Person.OTHER_NAME),
 			person.get(Person.SEX),
 			person.get(Person.APPROXIMATE_AGE),
 			person.get(Person.APPROXIMATE_AGE_TYPE),
@@ -506,6 +507,7 @@ public class EventParticipantFacadeEjb
 			event.get(Event.UUID),
 			person.get(Person.FIRST_NAME),
 			person.get(Person.LAST_NAME),
+			person.get(Person.OTHER_NAME),
 			person.get(Person.SEX),
 			person.get(Person.APPROXIMATE_AGE),
 			person.get(Person.APPROXIMATE_AGE_TYPE),
@@ -544,6 +546,7 @@ public class EventParticipantFacadeEjb
 				case EventParticipantIndexDto.SEX:
 				case EventParticipantIndexDto.LAST_NAME:
 				case EventParticipantIndexDto.FIRST_NAME:
+				case EventParticipantIndexDto.OTHER_NAME:
 					expression = person.get(sortProperty.propertyName);
 					break;
 				case EventParticipantIndexDto.CASE_UUID:
@@ -667,6 +670,7 @@ public class EventParticipantFacadeEjb
 
 			person.get(Person.FIRST_NAME),
 			person.get(Person.LAST_NAME),
+			person.get(Person.OTHER_NAME),
 			person.get(Person.SALUTATION),
 			person.get(Person.OTHER_SALUTATION),
 			person.get(Person.SEX),

@@ -33,6 +33,7 @@ public class SimilarPersonDto implements Serializable {
 	private String uuid;
 	private String firstName;
 	private String lastName;
+	private String otherName;
 	@HideForCountries
 	private String nickname;
 	private String ageAndBirthDate;
@@ -49,6 +50,9 @@ public class SimilarPersonDto implements Serializable {
 	private String nationalHealthId;
 	@HideForCountries(countries = {CountryHelper.COUNTRY_CODE_GERMANY, CountryHelper.COUNTRY_CODE_FRANCE})
 	private String passportNumber;
+
+	@HideForCountries
+	private String ghanaCard;
 
 	public String getUuid() {
 		return uuid;
@@ -72,6 +76,14 @@ public class SimilarPersonDto implements Serializable {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+
+	public String getOtherName() {
+		return otherName;
+	}
+
+	public void setOtherName(String otherName) {
+		this.otherName = otherName;
 	}
 
 	public String getNickname() {
@@ -178,13 +190,21 @@ public class SimilarPersonDto implements Serializable {
 		this.passportNumber = passportNumber;
 	}
 
+	public String getGhanaCard() {
+		return ghanaCard;
+	}
+
+	public void setGhanaCard(String ghanaCard) {
+		this.ghanaCard = ghanaCard;
+	}
+
 	public PersonReferenceDto toReference() {
-		return new PersonReferenceDto(getUuid(), firstName, lastName);
+		return new PersonReferenceDto(getUuid(), firstName, lastName, otherName);
 	}
 
 	@Override
 	public String toString() {
-		return PersonDto.buildCaption(firstName, lastName);
+		return PersonDto.buildCaption(firstName, lastName, otherName);
 	}
 
 	public static String getI18nPrefix(String propertyId) {
