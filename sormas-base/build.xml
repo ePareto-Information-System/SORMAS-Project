@@ -11,14 +11,14 @@
 	<property environment="env" />
 
 	<target name="clean" unless="clean.skip" description="Clean application">
-		<artifact:mvn fork="true" mavenhome="${env.M2_HOME}" failonerror="true">
+		<artifact:mvn fork="true" mavenhome="/opt/maven" failonerror="true">
 			<sysproperty key="maven.multiModuleProjectDirectory" value="${basedir}" />
 			<arg value="clean" />
 		</artifact:mvn>
 	</target>
 
 	<target name="install" description="Compile main source tree java files and install" unless="shared.installed">
-		<artifact:mvn dir="${basedir}" fork="true" mavenhome="${env.M2_HOME}" failonerror="true">
+		<artifact:mvn dir="${basedir}" fork="true" mavenhome="/opt/maven" failonerror="true">
 			<sysproperty key="maven.multiModuleProjectDirectory" value="${basedir}" />
 			<arg value="install" />
 			<arg value="-Dmaven.test.skip=true" />
@@ -27,7 +27,7 @@
 	</target>
 
 	<target name="install-with-app" description="Compile main source tree java files and install, include android app" unless="shared.installed">
-		<artifact:mvn dir="${basedir}" fork="true" mavenhome="${env.M2_HOME}" failonerror="true">
+		<artifact:mvn dir="${basedir}" fork="true" mavenhome="/opt/maven" failonerror="true">
 			<sysproperty key="maven.multiModuleProjectDirectory" value="${basedir}" />
 			<arg value="install" />
 			<arg value="-Pwith-app" />
@@ -37,7 +37,7 @@
 	</target>
 
 	<target name="generate-api-doc" description="Call the generators">
-		<artifact:mvn pom="../sormas-api/pom.xml" fork="true" mavenhome="${env.M2_HOME}" failonerror="true">
+		<artifact:mvn pom="../sormas-api/pom.xml" fork="true" mavenhome="/opt/maven" failonerror="true">
 			<sysproperty key="maven.multiModuleProjectDirectory" value="../sormas-api" />
 			<arg value="test" />
 			<arg value="-Dtest=*Generator" />
