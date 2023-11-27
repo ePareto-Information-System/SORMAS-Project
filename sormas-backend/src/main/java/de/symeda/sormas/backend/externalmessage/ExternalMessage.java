@@ -55,6 +55,7 @@ public class ExternalMessage extends AbstractDomainObject {
 	public static final String REPORTER_CITY = "reporterCity";
 	public static final String PERSON_FIRST_NAME = "personFirstName";
 	public static final String PERSON_LAST_NAME = "personLastName";
+	public static final String PERSON_OTHER_NAME = "personOtherName";
 	public static final String PERSON_SEX = "personSex";
 	public static final String PERSON_BIRTH_DATE_DD = "personBirthDateDD";
 	public static final String PERSON_BIRTH_DATE_MM = "personBirthDateMM";
@@ -86,6 +87,7 @@ public class ExternalMessage extends AbstractDomainObject {
 
 	private String personFirstName;
 	private String personLastName;
+	private String personOtherName;
 	private Sex personSex;
 	private PresentCondition personPresentCondition;
 	private Integer personBirthDateDD;
@@ -208,6 +210,15 @@ public class ExternalMessage extends AbstractDomainObject {
 
 	public void setPersonLastName(String personLastName) {
 		this.personLastName = personLastName;
+	}
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public String getPersonOtherName() {
+		return personOtherName;
+	}
+
+	public void setPersonOtherName(String personOtherName) {
+		this.personOtherName = personOtherName;
 	}
 
 	@Enumerated(EnumType.STRING)

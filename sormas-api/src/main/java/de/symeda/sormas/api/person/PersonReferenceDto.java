@@ -36,6 +36,9 @@ public class PersonReferenceDto extends ReferenceDto {
 	@PersonalData
 	private String lastName;
 
+	@PersonalData
+	private String otherName;
+
 	public PersonReferenceDto() {
 
 	}
@@ -44,17 +47,18 @@ public class PersonReferenceDto extends ReferenceDto {
 		setUuid(uuid);
 	}
 
-	public PersonReferenceDto(String uuid, String firstName, String lastName) {
+	public PersonReferenceDto(String uuid, String firstName, String lastName, String otherName) {
 
 		setUuid(uuid);
 
 		this.firstName = firstName;
 		this.lastName = lastName;
+		this.otherName = otherName;
 	}
 
 	@Override
 	public String getCaption() {
-		return PersonDto.buildCaption(firstName, lastName);
+		return PersonDto.buildCaption(firstName, lastName, otherName);
 	}
 
 	public String getFirstName() {
@@ -64,12 +68,13 @@ public class PersonReferenceDto extends ReferenceDto {
 	public String getLastName() {
 		return lastName;
 	}
+	public String getOtherName() {return otherName;}
 
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
-
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
+	public void setOtherName(String otherName) {this.otherName = otherName;}
 }

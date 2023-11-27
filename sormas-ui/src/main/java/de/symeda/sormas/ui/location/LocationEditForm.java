@@ -28,6 +28,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.InfrastructureDataReferenceDto;
+import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.infrastructure.area.AreaType;
+import de.symeda.sormas.ui.caze.CaseDataForm;
+import de.symeda.sormas.ui.caze.CasePersonView;
+import de.symeda.sormas.ui.person.PersonEditForm;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -96,17 +103,19 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	private static final String GEO_BUTTONS_LOC = "geoButtons";
 	private static final String COUNTRY_HINT_LOC = "countryHintLoc";
 
+	private Disease newDisease;
 	private static final String HTML_LAYOUT =
 		//XXX #1620 are the divs needed?
 		divs(
+			fluidRowLocs(LocationDto.COUNTRY, COUNTRY_HINT_LOC, ""),
 			fluidRowLocs(LocationDto.ADDRESS_TYPE, LocationDto.ADDRESS_TYPE_DETAILS, ""),
 			fluidRowLocs(LocationDto.CONTINENT, LocationDto.SUB_CONTINENT, ""),
-			fluidRowLocs(LocationDto.COUNTRY, COUNTRY_HINT_LOC, ""),
 			fluidRowLocs(LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY),
 			fluidRowLocs(FACILITY_TYPE_GROUP_LOC, LocationDto.FACILITY_TYPE),
 			fluidRowLocs(LocationDto.FACILITY, LocationDto.FACILITY_DETAILS),
 			fluidRowLocs(LocationDto.STREET, LocationDto.HOUSE_NUMBER, LocationDto.ADDITIONAL_INFORMATION),
 			fluidRowLocs(LocationDto.POSTAL_CODE, LocationDto.CITY, LocationDto.AREA_TYPE),
+//			fluidRowLocs(LocationDto.LAND_MARK),
 			fluidRowLocs(LocationDto.CONTACT_PERSON_FIRST_NAME, LocationDto.CONTACT_PERSON_LAST_NAME),
 			fluidRowLocs(LocationDto.CONTACT_PERSON_PHONE, LocationDto.CONTACT_PERSON_EMAIL),
 			fluidRow(
@@ -126,11 +135,12 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	private ComboBox subcontinent;
 	private ComboBox country;
 	private ComboBox region;
+	private ComboBox areaType;
 	private TextField contactPersonFirstName;
 	private TextField contactPersonLastName;
 	private TextField contactPersonPhone;
 	private TextField contactPersonEmail;
-
+	private TextField additionalInformationField;
 	private boolean districtRequiredOnDefaultCountry;
 	private boolean skipCountryValueChange;
 	private boolean skipFacilityTypeUpdate;
@@ -226,11 +236,12 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 		TextField streetField = addField(LocationDto.STREET, TextField.class);
 		TextField houseNumberField = addField(LocationDto.HOUSE_NUMBER, TextField.class);
-		TextField additionalInformationField = addField(LocationDto.ADDITIONAL_INFORMATION, TextField.class);
+		additionalInformationField = addField(LocationDto.ADDITIONAL_INFORMATION, TextField.class);
 		addField(LocationDto.DETAILS, TextField.class);
 		TextField cityField = addField(LocationDto.CITY, TextField.class);
 		TextField postalCodeField = addField(LocationDto.POSTAL_CODE, TextField.class);
-		ComboBox areaType = addField(LocationDto.AREA_TYPE, ComboBox.class);
+
+		areaType = addField(LocationDto.AREA_TYPE, ComboBox.class);
 		areaType.setDescription(I18nProperties.getDescription(getPropertyI18nPrefix() + "." + LocationDto.AREA_TYPE));
 
 		contactPersonFirstName = addField(LocationDto.CONTACT_PERSON_FIRST_NAME, TextField.class);
@@ -323,6 +334,10 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 				if (countryDto != null) {
 					final ContinentReferenceDto countryContinent = FacadeProvider.getContinentFacade().getByCountry(countryDto);
 					final SubcontinentReferenceDto countrySubcontinent = FacadeProvider.getSubcontinentFacade().getByCountry(countryDto);
+
+                    setVisible("Ghana".equals(countryDto.getCaption()), LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY, LocationDto.STREET, LocationDto.HOUSE_NUMBER, LocationDto.ADDITIONAL_INFORMATION,
+                            LocationDto.POSTAL_CODE, LocationDto.CITY, LocationDto.AREA_TYPE, LocationDto.DETAILS);
+
 					if (countryContinent != null) {
 						continent.removeValueChangeListener(continentValueListener);
 						if (continent.isVisible()) {
@@ -861,6 +876,18 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 
 		public void setCoordinates(GeoLatLon coordinates) {
 			this.coordinates = coordinates;
+		}
+	}
+
+	public void setOnlyUnknownForCSM(Disease incomingDisease) {
+		newDisease = incomingDisease;
+		if (newDisease != null && newDisease.equals(Disease.CSM)) {
+			additionalInformationField.setCaption("Landmark");
+			for (AreaType areatype : AreaType.values()) {
+				if (areatype != AreaType.UNKNOWN) {
+					areaType.removeItem(areatype);
+				}
+			}
 		}
 	}
 

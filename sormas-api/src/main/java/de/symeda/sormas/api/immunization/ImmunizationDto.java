@@ -15,6 +15,10 @@
 
 package de.symeda.sormas.api.immunization;
 
+import de.symeda.sormas.api.caze.CaseOrigin;
+import de.symeda.sormas.api.common.DeletionReason;
+import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.utils.DependingOnFeatureType;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -95,6 +99,8 @@ public class ImmunizationDto extends SormasToSormasShareableDto {
 	@Outbreaks
 	@NotNull(message = Validations.validDisease)
 	private Disease disease;
+	@Required
+	private CaseOrigin caseOrigin;
 	@Outbreaks
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String diseaseDetails;
@@ -180,7 +186,12 @@ public class ImmunizationDto extends SormasToSormasShareableDto {
 	public ImmunizationReferenceDto toReference() {
 		return new ImmunizationReferenceDto(getUuid(), getPerson().getCaption(), getExternalId());
 	}
-
+	public CaseOrigin getCaseOrigin() {
+		return caseOrigin;
+	}
+	public void setCaseOrigin(CaseOrigin caseOrigin) {
+		this.caseOrigin = caseOrigin;
+	}
 	public Disease getDisease() {
 		return disease;
 	}

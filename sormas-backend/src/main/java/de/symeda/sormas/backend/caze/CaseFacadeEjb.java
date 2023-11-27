@@ -857,6 +857,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				joins.getPerson().get(Person.EDUCATION_DETAILS), joins.getPerson().get(Person.OCCUPATION_TYPE),
 				joins.getPerson().get(Person.OCCUPATION_DETAILS), joins.getPerson().get(Person.ARMED_FORCES_RELATION_TYPE), joins.getEpiData().get(EpiData.CONTACT_WITH_SOURCE_CASE_KNOWN),
 				caseRoot.get(Case.VACCINATION_STATUS), caseRoot.get(Case.POSTPARTUM), caseRoot.get(Case.TRIMESTER),
+				caseRoot.get(Case.VACCINATION_TYPE), caseRoot.get(Case.VACCINATION_DATE),
 				eventCountSq,
 				exportPrescriptionNumber ? prescriptionCountSq : cb.nullLiteral(Long.class),
 				exportTreatmentNumber ? treatmentCountSq : cb.nullLiteral(Long.class),
@@ -1881,7 +1882,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			&& !communityFacade.getByUuid(caze.getResponsibleCommunity().getUuid()).getDistrict().equals(caze.getResponsibleDistrict())) {
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.noResponsibleCommunityInResponsibleDistrict));
 		}
-		if ((caze.getCaseOrigin() == null || caze.getCaseOrigin() == CaseOrigin.IN_COUNTRY) && caze.getHealthFacility() == null) {
+		if ((caze.getCaseOrigin() == null || caze.getCaseOrigin() == CaseOrigin.IN_COUNTRY) && caze.getHealthFacility() == null && caze.getAfpFacilityOptions() == null) {
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.validFacility));
 		}
 		if (CaseOrigin.POINT_OF_ENTRY.equals(caze.getCaseOrigin()) && caze.getPointOfEntry() == null) {
@@ -2274,8 +2275,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		}
 
 		// Send an email to all responsible supervisors when the disease of an
-		// Unspecified VHF case has changed
-		if (existingCase != null && existingCase.getDisease() == Disease.UNSPECIFIED_VHF && existingCase.getDisease() != newCase.getDisease()) {
+		// AHF case has changed
+		if (existingCase != null && existingCase.getDisease() == Disease.AHF && existingCase.getDisease() != newCase.getDisease()) {
 
 			try {
 				String message = String.format(
@@ -3032,7 +3033,11 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setSymptoms(SymptomsFacadeEjb.toSymptomsDto(source.getSymptoms()));
 
 		target.setPregnant(source.getPregnant());
+		target.setIpSampleSent(source.getIpSampleSent());
+		target.setIpSampleResults(source.getIpSampleResults());
 		target.setVaccinationStatus(source.getVaccinationStatus());
+		target.setVaccinationType(source.getVaccinationType());
+		target.setVaccinationDate(source.getVaccinationDate());
 		target.setSmallpoxVaccinationScar(source.getSmallpoxVaccinationScar());
 		target.setSmallpoxVaccinationReceived(source.getSmallpoxVaccinationReceived());
 		target.setSmallpoxLastVaccinationDate(source.getSmallpoxLastVaccinationDate());
@@ -3083,6 +3088,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setFollowUpUntil(source.getFollowUpUntil());
 		target.setOverwriteFollowUpUntil(source.isOverwriteFollowUpUntil());
 		target.setFacilityType(source.getFacilityType());
+		target.setAfpFacilityOptions(source.getAfpFacilityOptions());
 
 		target.setCaseIdIsm(source.getCaseIdIsm());
 		target.setContactTracingFirstContactType(source.getContactTracingFirstContactType());
@@ -3227,7 +3233,11 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setSymptoms(symptomsFacade.fillOrBuildEntity(source.getSymptoms(), target.getSymptoms(), checkChangeDate));
 
 		target.setPregnant(source.getPregnant());
+		target.setIpSampleSent(source.getIpSampleSent());
+		target.setIpSampleResults(source.getIpSampleResults());
 		target.setVaccinationStatus(source.getVaccinationStatus());
+		target.setVaccinationType(source.getVaccinationType());
+		target.setVaccinationDate(source.getVaccinationDate());
 		target.setSmallpoxVaccinationScar(source.getSmallpoxVaccinationScar());
 		target.setSmallpoxVaccinationReceived(source.getSmallpoxVaccinationReceived());
 		target.setSmallpoxLastVaccinationDate(source.getSmallpoxLastVaccinationDate());
@@ -3278,6 +3288,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setPostpartum(source.getPostpartum());
 		target.setTrimester(source.getTrimester());
 		target.setFacilityType(source.getFacilityType());
+		target.setAfpFacilityOptions(source.getAfpFacilityOptions());
 		if (source.getSormasToSormasOriginInfo() != null) {
 			target.setSormasToSormasOriginInfo(originInfoService.getByUuid(source.getSormasToSormasOriginInfo().getUuid()));
 		}

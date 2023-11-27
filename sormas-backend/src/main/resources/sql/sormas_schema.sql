@@ -12517,5 +12517,42 @@ INSERT INTO schema_version (version_number, comment) VALUES (484, 'Added a colum
 ALTER TABLE samples ADD COLUMN ipsamplesent varchar(255);
 ALTER TABLE samples ADD COLUMN ipsampleresults varchar(512);
 INSERT INTO schema_version (version_number, comment) VALUES (484, 'Added a column name ipsampleresults to samples');
+ALTER TABLE person ADD COLUMN othername varchar(512) NULL;
+ALTER TABLE location ADD COLUMN contactPersonOtherName text;
+ALTER TABLE person_history ADD COLUMN othername varchar(512);
+
+INSERT INTO schema_version (version_number, comment) VALUES (474, 'Added a column name othername to person');
+
+ALTER TABLE person ADD COLUMN ghanacard varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (475, 'Added a column name ghanacard to person');
+
+ALTER TABLE location ADD COLUMN landmark varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (477, 'Added a column name landmark to location');
+
+ALTER TABLE externalmessage ADD COLUMN personothername varchar(255) NULL;
+ALTER TABLE externalmessage_history ADD COLUMN personothername varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (478, 'Added a column name landmark to location');
+
+ALTER TABLE cases ADD COLUMN ipsamplesent varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (479, 'Added a column name ipsamplesent to cases');
+
+ALTER TABLE cases ADD COLUMN ipsampleresults varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (480, 'Added a column name ipsampleresults to cases');
+
+ALTER TABLE cases ADD COLUMN vaccinationtype varchar(255);
+ALTER TABLE cases ADD COLUMN vaccinationdate timestamp;
+INSERT INTO schema_version (version_number, comment) VALUES (481, 'Added columns vaccinationtype and vaccinationdate to cases');
+
+ALTER TABLE samples ADD COLUMN samplematerialrequested boolean;
+ALTER TABLE samples_history ADD COLUMN samplematerialrequested boolean;
+ALTER TABLE samples ALTER COLUMN samplematerial DROP NOT NULL;
+ALTER TABLE cases ADD COLUMN afpfacilityoptions varchar(255) NULL;
+ALTER TABLE location ADD COLUMN afpfacilityoptions varchar(255) NULL;
+ALTER TABLE facility ADD COLUMN landmark varchar(255) NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (482, 'Added a column name samplematerialrequested to samples and samples_history, altered column samplematerial in samples to not null, Added columns afpfacilityoptions to cases and location, Added a column name landmark to facility');
+
+ALTER TABLE samples ALTER COLUMN samplepurpose DROP NOT NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (483, 'altered column samplepurpose in samples to not null');
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

@@ -32,6 +32,8 @@ public class JournalPersonDto extends AbstractUuidDto {
 	private String firstName;
 	@PersonalData
 	private String lastName;
+	@PersonalData
+	private String otherName;
 	@SensitiveData
 	private String emailAddress;
 	@SensitiveData
@@ -73,6 +75,14 @@ public class JournalPersonDto extends AbstractUuidDto {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+
+	public String getOtherName() {
+		return otherName;
+	}
+
+	public void setOtherName(String otherName) {
+		this.otherName = otherName;
 	}
 
 	public String getEmailAddress() {
@@ -140,8 +150,8 @@ public class JournalPersonDto extends AbstractUuidDto {
 	}
 
 	@Override
-	public String buildCaption() {
-		return getUuid() + ' ' + firstName + ' ' + lastName;
+	public String toString() {
+		return uuid + ' ' + firstName + ' ' + lastName + ' ' + otherName;
 	}
 
 	@Override
@@ -155,6 +165,7 @@ public class JournalPersonDto extends AbstractUuidDto {
 			&& Objects.equals(getUuid(), that.getUuid())
 			&& Objects.equals(firstName, that.firstName)
 			&& Objects.equals(lastName, that.lastName)
+			&& Objects.equals(otherName, that.otherName)
 			&& Objects.equals(emailAddress, that.emailAddress)
 			&& Objects.equals(phone, that.phone)
 			&& Objects.equals(birthdateDD, that.birthdateDD)
@@ -172,6 +183,7 @@ public class JournalPersonDto extends AbstractUuidDto {
 			pseudonymized,
 			firstName,
 			lastName,
+			otherName,
 			emailAddress,
 			phone,
 			birthdateDD,

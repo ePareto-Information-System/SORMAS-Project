@@ -55,6 +55,8 @@ public class SampleEditForm extends AbstractSampleForm {
 	private List<PathogenTestReferenceDto> testsToBeRemovedOnCommit;
 
 	private Label laboratorySampleHeadingLabel;
+	//private Disease disease;
+
 
 	public SampleEditForm(boolean isPseudonymized, boolean inJurisdiction, Disease disease) {
 		super(
@@ -136,5 +138,10 @@ public class SampleEditForm extends AbstractSampleForm {
 	@Override
 	public void setHeading(String heading) {
 		laboratorySampleHeadingLabel.setValue(heading);
+	}
+
+	@Override
+	protected Disease getDisease() {
+		return null;
 	}
 }

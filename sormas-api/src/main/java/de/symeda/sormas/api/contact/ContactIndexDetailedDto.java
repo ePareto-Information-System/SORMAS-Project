@@ -60,9 +60,9 @@ public class ContactIndexDetailedDto extends ContactIndexDto {
 	private ContactRelation relationToCase;
 
 	//@formatter:off
-	public ContactIndexDetailedDto(String uuid, String personUuid, String personFirstName, String personLastName,
+	public ContactIndexDetailedDto(String uuid, String personUuid, String personFirstName, String personLastName, String personOtherName,
 								   String cazeUuid,
-								   Disease disease, String diseaseDetails, String caseFirstName, String caseLastName, String regionName,
+								   Disease disease, String diseaseDetails, String caseFirstName, String caseLastName, String caseOtherName,String regionName,
 								   String districtName, Date lastContactDate, ContactCategory contactCategory,
 								   ContactProximity contactProximity, ContactClassification contactClassification, ContactStatus contactStatus, Float completeness,
 								   FollowUpStatus followUpStatus, Date followUpUntil, SymptomJournalStatus symptomJournalStatus, VaccinationStatus vaccinationStatus, String contactOfficerUuid, String reportingUserUuid, Date reportDateTime,
@@ -74,13 +74,14 @@ public class ContactIndexDetailedDto extends ContactIndexDto {
 								   Sex sex, Integer approximateAge, ApproximateAgeType approximateAgeType,
 								   String city, String street, String houseNumber, String additionalInformation, String postalCode, String phone,
 								   String reportingUserFirstName, String reportingUserLastName, ContactRelation relationToCase, int visitCount,
-								   Date latestChangedDate // unused, only here for TypedQuery mapping
-	) {
-	//@formatter:on
+								   Date latestChangedDate // unused, only here for TypedQuery mapping,
+	)
 
+	{
+	//@formatter:on
 		//@formatter:off
-		super(uuid, personUuid, personFirstName, personLastName, cazeUuid, disease, diseaseDetails, caseFirstName, caseLastName,
-			regionName, districtName, lastContactDate, contactCategory, contactProximity, contactClassification, contactStatus,
+		super(uuid, personUuid, personFirstName, personLastName, personOtherName, cazeUuid, disease, diseaseDetails, caseFirstName, caseLastName, caseOtherName,
+				regionName, districtName, lastContactDate, contactCategory, contactProximity, contactClassification, contactStatus,
 				completeness, followUpStatus, followUpUntil, symptomJournalStatus, vaccinationStatus, contactOfficerUuid, reportingUserUuid, reportDateTime, caseClassification,
 			caseRegionName, caseDistrictName, changeDate, externalID, externalToken, internalToken, deletionReason, otherDeleteReason,isInJurisdiction, isCaseInJurisdiction , visitCount, latestChangedDate);
 

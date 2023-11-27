@@ -14,6 +14,7 @@
  */
 package de.symeda.sormas.ui.caze;
 
+import static de.symeda.sormas.api.clinicalcourse.HealthConditionsDto.OTHER_CONDITIONS;
 import static de.symeda.sormas.ui.utils.CssStyles.ERROR_COLOR_PRIMARY;
 import static de.symeda.sormas.ui.utils.CssStyles.FORCE_CAPTION;
 import static de.symeda.sormas.ui.utils.CssStyles.H3;
@@ -33,14 +34,14 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 import static de.symeda.sormas.ui.utils.LayoutUtil.locCss;
 import static de.symeda.sormas.ui.utils.LayoutUtil.locs;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import de.symeda.sormas.api.caze.*;
+import de.symeda.sormas.api.hospitalization.HospitalizationDto;
+import de.symeda.sormas.api.person.PresentCondition;
+import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.api.utils.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -75,21 +76,6 @@ import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.caze.CaseClassification;
-import de.symeda.sormas.api.caze.CaseConfirmationBasis;
-import de.symeda.sormas.api.caze.CaseDataDto;
-import de.symeda.sormas.api.caze.CaseIdentificationSource;
-import de.symeda.sormas.api.caze.CaseLogic;
-import de.symeda.sormas.api.caze.CaseOrigin;
-import de.symeda.sormas.api.caze.CaseOutcome;
-import de.symeda.sormas.api.caze.CaseReferenceDto;
-import de.symeda.sormas.api.caze.EndOfIsolationReason;
-import de.symeda.sormas.api.caze.HospitalWardType;
-import de.symeda.sormas.api.caze.InvestigationStatus;
-import de.symeda.sormas.api.caze.PreviousCaseDto;
-import de.symeda.sormas.api.caze.QuarantineReason;
-import de.symeda.sormas.api.caze.ReinfectionDetail;
-import de.symeda.sormas.api.caze.ReinfectionDetailGroup;
 import de.symeda.sormas.api.caze.classification.DiseaseClassificationCriteriaDto;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.FollowUpStatus;
@@ -118,10 +104,6 @@ import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.DateHelper;
-import de.symeda.sormas.api.utils.ExtendedReduced;
-import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.checkers.CountryFieldVisibilityChecker;
@@ -255,7 +237,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					loc(MEDICAL_INFORMATION_LOC) +
 					fluidRowLocs(CaseDataDto.BLOOD_ORGAN_OR_TISSUE_DONATED) +
 					fluidRowLocs(CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM) + fluidRowLocs(CaseDataDto.TRIMESTER, "") +
-					fluidRowLocs(CaseDataDto.VACCINATION_STATUS, "") +
+					fluidRowLocs(CaseDataDto.IPSAMPLESENT) + fluidRowLocs(CaseDataDto.IPSAMPLERESULTS, "") +
+					fluidRowLocs(CaseDataDto.VACCINATION_STATUS, CaseDataDto.VACCINATION_TYPE, CaseDataDto.VACCINATION_DATE) +
 					fluidRowLocs(CaseDataDto.SMALLPOX_VACCINATION_RECEIVED, CaseDataDto.SMALLPOX_VACCINATION_SCAR) +
 					fluidRowLocs(CaseDataDto.SMALLPOX_LAST_VACCINATION_DATE, "") +
 					fluidRowLocs(SMALLPOX_VACCINATION_SCAR_IMG) +
@@ -299,6 +282,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 	private CheckBox quarantineOrderedOfficialDocument;
 	private CheckBox differentPlaceOfStayJurisdiction;
 	private ComboBox responsibleDistrict;
+	private NullableOptionGroup vaccinationStatus;
 	private ComboBox responsibleCommunity;
 	private ComboBox districtCombo;
 	private ComboBox communityCombo;
@@ -342,6 +326,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		addFields();
 	}
 
+	public Disease getDisease() {
+		return disease;
+	}
 	public static void updateFacilityDetails(ComboBox cbFacility, TextField tfFacilityDetails) {
 		if (cbFacility.getValue() != null) {
 			boolean otherHealthFacility = ((FacilityReferenceDto) cbFacility.getValue()).getUuid().equals(FacilityDto.OTHER_FACILITY_UUID);
@@ -390,9 +377,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		addFields(
 			CaseDataDto.UUID,
 			CaseDataDto.REPORTING_USER,
-			CaseDataDto.DISTRICT_LEVEL_DATE,
-			CaseDataDto.REGION_LEVEL_DATE,
-			CaseDataDto.NATIONAL_LEVEL_DATE,
 			CaseDataDto.CLASSIFICATION_DATE,
 			CaseDataDto.CLASSIFICATION_USER,
 			CaseDataDto.CLASSIFICATION_COMMENT,
@@ -401,6 +385,16 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			CaseDataDto.CLINICIAN_NAME,
 			CaseDataDto.CLINICIAN_PHONE,
 			CaseDataDto.CLINICIAN_EMAIL);
+
+		DateField districtLevelDate = addField(CaseDataDto.DISTRICT_LEVEL_DATE, DateField.class);
+		DateField regionLevelDate = addField(CaseDataDto.REGION_LEVEL_DATE, DateField.class);
+		DateField nationalLevelDate = addField(CaseDataDto.NATIONAL_LEVEL_DATE, DateField.class);
+
+		if(disease == Disease.YELLOW_FEVER || disease == Disease.AHF || disease == Disease.CSM){
+			districtLevelDate.setVisible(false);
+			regionLevelDate.setVisible(false);
+			nationalLevelDate.setVisible(false);
+		}
 
 		TextField epidField = addField(CaseDataDto.EPID_NUMBER, TextField.class);
 		epidField.setInvalidCommitted(true);
@@ -431,14 +425,28 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		}
 
 		TextField externalTokenField = addField(CaseDataDto.EXTERNAL_TOKEN, TextField.class);
+		externalTokenField.setVisible(true);
 		Label externalTokenWarningLabel = new Label(I18nProperties.getString(Strings.messageCaseExternalTokenWarning));
 		externalTokenWarningLabel.addStyleNames(VSPACE_3, LABEL_WHITE_SPACE_NORMAL);
 		getContent().addComponent(externalTokenWarningLabel, EXTERNAL_TOKEN_WARNING_LOC);
 
-		addField(CaseDataDto.INTERNAL_TOKEN, TextField.class);
+		TextField internaltoken =  addField(CaseDataDto.INTERNAL_TOKEN, TextField.class);
+		internaltoken.setVisible(true);
 
-		addField(CaseDataDto.INVESTIGATION_STATUS, NullableOptionGroup.class);
-		addField(CaseDataDto.OUTCOME, NullableOptionGroup.class);
+		NullableOptionGroup investigationstatus = addField(CaseDataDto.INVESTIGATION_STATUS, NullableOptionGroup.class);
+		investigationstatus.setVisible(true);
+
+		NullableOptionGroup outcome = new NullableOptionGroup("Outcome");
+
+		if(disease == Disease.YELLOW_FEVER || disease == Disease.AHF){
+
+			for(CaseOutcome caseOutcome : CaseOutcome.values()){
+				if(caseOutcome == CaseOutcome.DECEASED || caseOutcome == CaseOutcome.ALIVE){
+					outcome.addItem(caseOutcome);
+				}
+			}
+		}
+		addField(CaseDataDto.OUTCOME, outcome);
 		addField(CaseDataDto.BLOOD_ORGAN_OR_TISSUE_DONATED, NullableOptionGroup.class);
 		addField(CaseDataDto.SEQUELAE, NullableOptionGroup.class);
 
@@ -463,8 +471,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		addField(CaseDataDto.PLAGUE_TYPE, NullableOptionGroup.class);
 		addField(CaseDataDto.DENGUE_FEVER_TYPE, NullableOptionGroup.class);
 		addField(CaseDataDto.RABIES_TYPE, NullableOptionGroup.class);
-
 		addField(CaseDataDto.CASE_ORIGIN, TextField.class);
+		OptionGroup caseTransmissionClassification = addField(CaseDataDto.CASE_TRANSMISSION_CLASSIFICATION, OptionGroup.class);
+		caseTransmissionClassification.setVisible(true);
 
 		quarantine = addField(CaseDataDto.QUARANTINE);
 		quarantine.addValueChangeListener(e -> onValueChange());
@@ -491,50 +500,54 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		setReadOnly(true, CaseDataDto.PREVIOUS_QUARANTINE_TO);
 		setVisible(false, CaseDataDto.QUARANTINE_CHANGE_COMMENT, CaseDataDto.PREVIOUS_QUARANTINE_TO);
 
-		if (isConfiguredServer(CountryHelper.COUNTRY_CODE_GERMANY)) {
-			final ComboBox cbCaseClassification = addField(CaseDataDto.CASE_CLASSIFICATION, ComboBox.class);
-			cbCaseClassification.addValidator(
-				new GermanCaseClassificationValidator(caseUuid, I18nProperties.getValidationError(Validations.caseClassificationInvalid)));
+		if(disease != Disease.CSM && disease != Disease.YELLOW_FEVER){
+			if (isConfiguredServer(CountryHelper.COUNTRY_CODE_GERMANY)) {
 
-			ComboBox caseReferenceDefinition = addField(CaseDataDto.CASE_REFERENCE_DEFINITION, ComboBox.class);
-			caseReferenceDefinition.setReadOnly(true);
+				final ComboBox cbCaseClassification = addField(CaseDataDto.CASE_CLASSIFICATION, ComboBox.class);
+				cbCaseClassification.addValidator(
+						new GermanCaseClassificationValidator(caseUuid, I18nProperties.getValidationError(Validations.caseClassificationInvalid)));
 
-			if (diseaseClassificationExists()) {
-				Button caseClassificationCalculationButton = ButtonHelper.createButton(Captions.caseClassificationCalculationButton, e -> {
-					CaseClassification classification = FacadeProvider.getCaseClassificationFacade().getClassification(getValue());
-					((Field<CaseClassification>) getField(CaseDataDto.CASE_CLASSIFICATION)).setValue(classification);
-				}, ValoTheme.BUTTON_PRIMARY, FORCE_CAPTION);
+				ComboBox caseReferenceDefinition = addField(CaseDataDto.CASE_REFERENCE_DEFINITION, ComboBox.class);
+				caseReferenceDefinition.setReadOnly(true);
 
-				getContent().addComponent(caseClassificationCalculationButton, CASE_CLASSIFICATION_CALCULATE_BTN_LOC);
+				if (diseaseClassificationExists()) {
+					Button caseClassificationCalculationButton = ButtonHelper.createButton(Captions.caseClassificationCalculationButton, e -> {
+						CaseClassification classification = FacadeProvider.getCaseClassificationFacade().getClassification(getValue());
+						((Field<CaseClassification>) getField(CaseDataDto.CASE_CLASSIFICATION)).setValue(classification);
+					}, ValoTheme.BUTTON_PRIMARY, FORCE_CAPTION);
 
-				if (!UserProvider.getCurrent().hasUserRight(UserRight.CASE_CLASSIFY)) {
-					caseClassificationCalculationButton.setEnabled(false);
+					getContent().addComponent(caseClassificationCalculationButton, CASE_CLASSIFICATION_CALCULATE_BTN_LOC);
+
+					if (!UserProvider.getCurrent().hasUserRight(UserRight.CASE_CLASSIFY)) {
+						caseClassificationCalculationButton.setEnabled(false);
+					}
+
 				}
+
+				//if(cbCaseClassification.getCaption())
+				addField(CaseDataDto.NOT_A_CASE_REASON_NEGATIVE_TEST, CheckBox.class);
+				addField(CaseDataDto.NOT_A_CASE_REASON_PHYSICIAN_INFORMATION, CheckBox.class);
+				addField(CaseDataDto.NOT_A_CASE_REASON_DIFFERENT_PATHOGEN, CheckBox.class);
+				addField(CaseDataDto.NOT_A_CASE_REASON_OTHER, CheckBox.class);
+				addField(CaseDataDto.NOT_A_CASE_REASON_DETAILS, TextField.class);
+
+				FieldHelper.setVisibleWhen(
+						getFieldGroup(),
+						Arrays.asList(
+								CaseDataDto.NOT_A_CASE_REASON_NEGATIVE_TEST,
+								CaseDataDto.NOT_A_CASE_REASON_PHYSICIAN_INFORMATION,
+								CaseDataDto.NOT_A_CASE_REASON_DIFFERENT_PATHOGEN,
+								CaseDataDto.NOT_A_CASE_REASON_OTHER),
+						CaseDataDto.CASE_CLASSIFICATION,
+						CaseClassification.NO_CASE,
+						true);
+
+				FieldHelper.setVisibleWhen(getFieldGroup(), CaseDataDto.NOT_A_CASE_REASON_DETAILS, CaseDataDto.NOT_A_CASE_REASON_OTHER, true, true);
+			} else {
+				final NullableOptionGroup caseClassificationGroup = addField(CaseDataDto.CASE_CLASSIFICATION, NullableOptionGroup.class);
+				caseClassificationGroup.removeItem(CaseClassification.CONFIRMED_NO_SYMPTOMS);
+				caseClassificationGroup.removeItem(CaseClassification.CONFIRMED_UNKNOWN_SYMPTOMS);
 			}
-
-			//if(cbCaseClassification.getCaption())
-			addField(CaseDataDto.NOT_A_CASE_REASON_NEGATIVE_TEST, CheckBox.class);
-			addField(CaseDataDto.NOT_A_CASE_REASON_PHYSICIAN_INFORMATION, CheckBox.class);
-			addField(CaseDataDto.NOT_A_CASE_REASON_DIFFERENT_PATHOGEN, CheckBox.class);
-			addField(CaseDataDto.NOT_A_CASE_REASON_OTHER, CheckBox.class);
-			addField(CaseDataDto.NOT_A_CASE_REASON_DETAILS, TextField.class);
-
-			FieldHelper.setVisibleWhen(
-				getFieldGroup(),
-				Arrays.asList(
-					CaseDataDto.NOT_A_CASE_REASON_NEGATIVE_TEST,
-					CaseDataDto.NOT_A_CASE_REASON_PHYSICIAN_INFORMATION,
-					CaseDataDto.NOT_A_CASE_REASON_DIFFERENT_PATHOGEN,
-					CaseDataDto.NOT_A_CASE_REASON_OTHER),
-				CaseDataDto.CASE_CLASSIFICATION,
-				CaseClassification.NO_CASE,
-				true);
-
-			FieldHelper.setVisibleWhen(getFieldGroup(), CaseDataDto.NOT_A_CASE_REASON_DETAILS, CaseDataDto.NOT_A_CASE_REASON_OTHER, true, true);
-		} else {
-			final NullableOptionGroup caseClassificationGroup = addField(CaseDataDto.CASE_CLASSIFICATION, NullableOptionGroup.class);
-			caseClassificationGroup.removeItem(CaseClassification.CONFIRMED_NO_SYMPTOMS);
-			caseClassificationGroup.removeItem(CaseClassification.CONFIRMED_UNKNOWN_SYMPTOMS);
 		}
 
 		boolean extendedClassification = FacadeProvider.getDiseaseConfigurationFacade().usesExtendedClassification(disease);
@@ -624,8 +637,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		FieldHelper.setVisibleWhen(getFieldGroup(), CaseDataDto.INFECTION_SETTING, CaseDataDto.NOSOCOMIAL_OUTBREAK, true, true);
 
 		// Reinfection
-		{
+//		{
 			NullableOptionGroup ogReinfection = addField(CaseDataDto.RE_INFECTION, NullableOptionGroup.class);
+		ogReinfection.setVisible(true);
 
 			addField(CaseDataDto.PREVIOUS_INFECTION_DATE);
 			ComboBox tfReinfectionStatus = addField(CaseDataDto.REINFECTION_STATUS, ComboBox.class);
@@ -710,7 +724,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					reinfectionDetailsRightLayout.setVisible(false);
 				}
 			});
-		}
+//		}
 
 		addField(CaseDataDto.QUARANTINE_HOME_POSSIBLE, NullableOptionGroup.class);
 		addField(CaseDataDto.QUARANTINE_HOME_POSSIBLE_COMMENT, TextField.class);
@@ -977,7 +991,27 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		addField(CaseDataDto.POSTPARTUM, NullableOptionGroup.class);
 		addField(CaseDataDto.TRIMESTER, NullableOptionGroup.class);
 
-		addField(CaseDataDto.VACCINATION_STATUS);
+		addField(CaseDataDto.IPSAMPLESENT, NullableOptionGroup.class);
+		addField(CaseDataDto.IPSAMPLERESULTS);
+
+		vaccinationStatus = addField(CaseDataDto.VACCINATION_STATUS, NullableOptionGroup.class);
+
+		NullableOptionGroup vaccinatedByCardOrHistory = addField(CaseDataDto.VACCINATION_TYPE, NullableOptionGroup.class);
+
+		FieldHelper.setEnabledWhen(vaccinationStatus, Arrays.asList(VaccinationStatus.VACCINATED, VaccinationStatus.UNVACCINATED, VaccinationStatus.UNKNOWN), Collections.singletonList(
+				vaccinatedByCardOrHistory
+		), false);
+
+		DateField cardDateField = addField(CaseDataDto.VACCINATION_DATE, DateField.class);
+
+		FieldHelper.setEnabledWhen(
+				vaccinatedByCardOrHistory,
+				Arrays.asList(CardOrHistory.CARD, CardOrHistory.HISTORY),
+                Collections.singletonList(
+                        cardDateField
+                ),
+				false);
+
 		addFields(CaseDataDto.SMALLPOX_VACCINATION_SCAR, CaseDataDto.SMALLPOX_VACCINATION_RECEIVED);
 		addDateField(CaseDataDto.SMALLPOX_LAST_VACCINATION_DATE, DateField.class, 0);
 
@@ -1114,10 +1148,19 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			differentPlaceOfStayJurisdiction.setVisible(false);
 		}
 
-		FieldHelper.setVisibleWhen(getFieldGroup(), CaseDataDto.TRIMESTER, CaseDataDto.PREGNANT, Arrays.asList(YesNoUnknown.YES), true);
+		//FieldHelper.setVisibleWhen(getFieldGroup(), CaseDataDto.TRIMESTER, CaseDataDto.PREGNANT, Arrays.asList(YesNoUnknown.YES), true);
+		FieldHelper.setVisibleWhen(getFieldGroup(), CaseDataDto.TRIMESTER, CaseDataDto.PREGNANT, Collections.singletonList(YesNoUnknown.YES), true);
+		FieldHelper.setVisibleWhen(getFieldGroup(), CaseDataDto.IPSAMPLERESULTS, CaseDataDto.IPSAMPLESENT, Collections.singletonList(YesNoUnknown.YES), true);
 
 		diseaseField.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
 			Disease disease = (Disease) valueChangeEvent.getProperty().getValue();
+
+			caseTransmissionClassification.setVisible(disease != Disease.YELLOW_FEVER && disease != Disease.CSM && disease != Disease.AHF);
+			investigationstatus.setVisible(disease != Disease.YELLOW_FEVER && disease != Disease.CSM);
+			investigationstatus.setVisible(disease != Disease.YELLOW_FEVER && disease != Disease.CSM);
+			ogReinfection.setVisible(disease != Disease.YELLOW_FEVER && disease != Disease.CSM && disease != Disease.AHF);
+			generalCommentLabel.setVisible(false);
+
 			List<DiseaseVariant> diseaseVariants =
 				FacadeProvider.getCustomizableEnumFacade().getEnumValues(CustomizableEnumType.DISEASE_VARIANT, disease);
 			FieldHelper.updateItems(diseaseVariantField, diseaseVariants);
@@ -1236,9 +1279,28 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		}
 
 		List<String> medicalInformationFields =
-			Arrays.asList(CaseDataDto.PREGNANT, CaseDataDto.VACCINATION_STATUS, CaseDataDto.SMALLPOX_VACCINATION_RECEIVED);
+				Arrays.asList(CaseDataDto.PREGNANT, CaseDataDto.VACCINATION_STATUS, CaseDataDto.SMALLPOX_VACCINATION_RECEIVED);
 
-		addField(CaseDataDto.HEALTH_CONDITIONS, HealthConditionsForm.class).setCaption(null);
+		HealthConditionsForm healthConditionsField = addField(CaseDataDto.HEALTH_CONDITIONS, HealthConditionsForm.class);
+
+		if(disease == Disease.YELLOW_FEVER || disease == Disease.CSM){
+			externalTokenField.setVisible(false);
+			internaltoken.setVisible(false);
+			quarantine.setVisible(false);
+			additionalDetails.setVisible(false);
+			healthConditionsField.setVisible(false);
+			getFieldGroup().getField(CaseDataDto.PREGNANT).setVisible(false);
+			getFieldGroup().getField(CaseDataDto.POSTPARTUM).setVisible(false);
+
+		}
+
+		if(disease == Disease.CSM){
+			setVisible(false, CaseDataDto.REPORT_LAT, CaseDataDto.REPORT_LON, CaseDataDto.REPORT_LAT_LON_ACCURACY);
+		}
+
+		if(disease == Disease.AHF){
+			setVisible(false, CaseDataDto.VACCINATION_STATUS, CaseDataDto.VACCINATION_TYPE, CaseDataDto.VACCINATION_DATE);
+		}
 
 		for (String medicalInformationField : medicalInformationFields) {
 			if (getFieldGroup().getField(medicalInformationField).isVisible()) {
@@ -1252,7 +1314,13 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		if (!shouldHidePaperFormDates()) {
 			Label paperFormDatesLabel = new Label(I18nProperties.getString(Strings.headingPaperFormDates));
 			paperFormDatesLabel.addStyleName(H3);
-			getContent().addComponent(paperFormDatesLabel, PAPER_FORM_DATES_LOC);
+
+			Set<Disease> excludedDiseases = new HashSet<>(Arrays.asList(Disease.YELLOW_FEVER, Disease.AHF, Disease.CSM));
+
+			if (!excludedDiseases.contains(disease)) {
+				getContent().addComponent(paperFormDatesLabel, PAPER_FORM_DATES_LOC);
+			}
+
 		}
 
 		// Automatic case classification rules button - invisible for other diseases

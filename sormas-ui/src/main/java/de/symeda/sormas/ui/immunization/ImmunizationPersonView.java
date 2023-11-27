@@ -47,5 +47,10 @@ public class ImmunizationPersonView extends AbstractImmunizationView implements 
 	@Override
 	protected boolean isEditAllowed() {
 		return FacadeProvider.getPersonFacade().isEditAllowed(person.getUuid());
+		CommitDiscardWrapperComponent<PersonEditForm> immunizationPersonComponent = ControllerProvider.getPersonController()
+			.getPersonEditComponent(PersonContext.IMMUNIZATION, dto.getPerson().getUuid(), dto.getDisease(),  null, dto.getCaseOrigin(), UserRight.IMMUNIZATION_EDIT, null);
+		setSubComponent(immunizationPersonComponent);
+
+		setImmunizationEditPermission(immunizationPersonComponent);
 	}
 }

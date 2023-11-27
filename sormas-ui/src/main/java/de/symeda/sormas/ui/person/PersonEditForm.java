@@ -27,14 +27,13 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.oneOfFourCol;
 import static de.symeda.sormas.ui.utils.LayoutUtil.oneOfTwoCol;
 
 import java.time.Month;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import de.symeda.sormas.api.caze.CaseOrigin;
+import de.symeda.sormas.api.location.LocationDto;
+import de.symeda.sormas.api.person.*;
+import de.symeda.sormas.ui.utils.*;
 import org.apache.commons.lang3.StringUtils;
 
 import com.vaadin.ui.CustomLayout;
@@ -65,15 +64,7 @@ import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
-import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.person.ApproximateAgeType.ApproximateAgeHelper;
-import de.symeda.sormas.api.person.CauseOfDeath;
-import de.symeda.sormas.api.person.EducationType;
-import de.symeda.sormas.api.person.OccupationType;
-import de.symeda.sormas.api.person.PersonContext;
-import de.symeda.sormas.api.person.PersonDto;
-import de.symeda.sormas.api.person.PresentCondition;
-import de.symeda.sormas.api.person.Salutation;
 import de.symeda.sormas.api.utils.DataHelper.Pair;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
@@ -82,16 +73,6 @@ import de.symeda.sormas.api.utils.fieldvisibility.checkers.CountryFieldVisibilit
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.location.LocationEditForm;
-import de.symeda.sormas.ui.utils.AbstractEditForm;
-import de.symeda.sormas.ui.utils.ApproximateAgeValidator;
-import de.symeda.sormas.ui.utils.CssStyles;
-import de.symeda.sormas.ui.utils.DateComparisonValidator;
-import de.symeda.sormas.ui.utils.FieldHelper;
-import de.symeda.sormas.ui.utils.OutbreakFieldVisibilityChecker;
-import de.symeda.sormas.ui.utils.ResizableTextAreaWrapper;
-import de.symeda.sormas.ui.utils.SormasFieldGroupFieldFactory;
-import de.symeda.sormas.ui.utils.ValidationUtils;
-import de.symeda.sormas.ui.utils.ViewMode;
 
 public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
@@ -108,7 +89,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
     private static final String HTML_LAYOUT =
             loc(PERSON_INFORMATION_HEADING_LOC) +
 					fluidRowLocs(PersonDto.UUID, "")+
-                    fluidRowLocs(PersonDto.FIRST_NAME, PersonDto.LAST_NAME) +
+                    fluidRowLocs(PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.OTHER_NAME) +
 					fluidRowLocs(PersonDto.SALUTATION, PersonDto.OTHER_SALUTATION) +
                     fluidRow(
                             fluidRowLocs(PersonDto.BIRTH_DATE_YYYY, PersonDto.BIRTH_DATE_MM, PersonDto.BIRTH_DATE_DD),
@@ -133,7 +114,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
                             oneOfFourCol(PersonDto.BURIAL_CONDUCTOR),
                             oneOfTwoCol(PersonDto.BURIAL_PLACE_DESCRIPTION)
                     ) +
-                    fluidRowLocs(PersonDto.PASSPORT_NUMBER, PersonDto.NATIONAL_HEALTH_ID) +
+                    fluidRowLocs(PersonDto.PASSPORT_NUMBER, PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD) +
 					fluidRowLocs(PersonDto.EXTERNAL_ID, PersonDto.EXTERNAL_TOKEN) +
 					fluidRowLocs(PersonDto.INTERNAL_TOKEN, EXTERNAL_TOKEN_WARNING_LOC) +
 
@@ -169,7 +150,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	private Label personInformationHeadingLabel;
 	private TextField firstNameField;
 	private TextField lastNameField;
+	private TextField otherNameField;
 	private Disease disease;
+	private CaseOrigin caseOrigin;
 	private String diseaseDetails;
 	private ComboBox causeOfDeathField;
 	private ComboBox causeOfDeathDiseaseField;
@@ -180,6 +163,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	private boolean isPseudonymized;
 	private LocationEditForm addressForm;
 	private PresentConditionChangeListener presentConditionChangeListener;
+
 	//@formatter:on
 
 	public PersonEditForm(
@@ -190,6 +174,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		boolean isPseudonymized,
 		boolean inJurisdiction,
 		boolean isEditAllowed) {
+	public PersonEditForm(PersonContext personContext, Disease disease, String diseaseDetails, ViewMode viewMode, boolean isPseudonymized, CaseOrigin caseOrigin) {
 		super(
 			PersonDto.class,
 			PersonDto.I18N_PREFIX,
@@ -204,6 +189,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		this.disease = disease;
 		this.diseaseDetails = diseaseDetails;
 		this.isPseudonymized = isPseudonymized;
+		this.caseOrigin = caseOrigin;
 
 		CssStyles.style(CssStyles.H3, occupationHeader, addressHeader, addressesHeader, contactInformationHeader);
 		getContent().addComponent(occupationHeader, OCCUPATION_HEADER);
@@ -273,11 +259,19 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		addField(PersonDto.UUID).setReadOnly(true);
 		firstNameField = addField(PersonDto.FIRST_NAME, TextField.class);
 		lastNameField = addField(PersonDto.LAST_NAME, TextField.class);
+		otherNameField = addField(PersonDto.OTHER_NAME, TextField.class);
 
 		addFields(PersonDto.SALUTATION, PersonDto.OTHER_SALUTATION);
 		FieldHelper.setVisibleWhen(getFieldGroup(), PersonDto.OTHER_SALUTATION, PersonDto.SALUTATION, Salutation.OTHER, true);
 
-		ComboBox sex = addField(PersonDto.SEX, ComboBox.class);
+		ComboBox sexComboBox = new ComboBox("Sex");
+
+		for (Sex sex : Sex.values()) {
+			if (sex == Sex.MALE || sex == Sex.FEMALE) {
+				sexComboBox.addItem(sex);
+			}
+		}
+		addField(PersonDto.SEX, sexComboBox);
 		addField(PersonDto.BIRTH_NAME, TextField.class);
 		addField(PersonDto.NICKNAME, TextField.class);
 		addField(PersonDto.MOTHERS_MAIDEN_NAME, TextField.class);
@@ -341,7 +335,10 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		DateField burialDate = addField(PersonDto.BURIAL_DATE, DateField.class);
 		TextField burialPlaceDesc = addField(PersonDto.BURIAL_PLACE_DESCRIPTION, TextField.class);
 		ComboBox burialConductor = addField(PersonDto.BURIAL_CONDUCTOR, ComboBox.class);
+
 		addressForm = addField(PersonDto.ADDRESS, LocationEditForm.class);
+		addressForm.setOnlyUnknownForCSM(disease);
+
 		addressForm.setCaption(null);
 		addField(PersonDto.ADDRESSES, LocationsField.class).setCaption(null);
 
@@ -361,12 +358,24 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		});
 
 		addFields(PersonDto.ARMED_FORCES_RELATION_TYPE, PersonDto.EDUCATION_TYPE, PersonDto.EDUCATION_DETAILS);
+		addFields(
+			PersonDto.OCCUPATION_TYPE,
+			PersonDto.OCCUPATION_DETAILS,
+			PersonDto.ARMED_FORCES_RELATION_TYPE,
+									PersonDto.EDUCATION_TYPE,
+			PersonDto.EDUCATION_DETAILS);
 
 		List<CountryReferenceDto> countries = FacadeProvider.getCountryFacade().getAllActiveAsReference();
 		addInfrastructureField(PersonDto.BIRTH_COUNTRY).addItems(countries);
 		addInfrastructureField(PersonDto.CITIZENSHIP).addItems(countries);
 
-		addFields(PersonDto.PASSPORT_NUMBER, PersonDto.NATIONAL_HEALTH_ID);
+		addField(PersonDto.PASSPORT_NUMBER);
+
+		if (caseOrigin == CaseOrigin.IN_COUNTRY) {
+			setVisible(false, PersonDto.PASSPORT_NUMBER);
+		}
+
+		addFields(PersonDto.NATIONAL_HEALTH_ID, PersonDto.GHANA_CARD);
 		Field externalId = addField(PersonDto.EXTERNAL_ID);
 		if (FacadeProvider.getExternalSurveillanceToolFacade().isFeatureEnabled()) {
 			externalId.setEnabled(false);
@@ -419,7 +428,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 		FieldHelper.addSoftRequiredStyle(
 			presentCondition,
-			sex,
+			sexComboBox,
 			deathDate,
 			deathPlaceDesc,
 			deathPlaceType,
@@ -587,6 +596,16 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			I18nProperties.getPrefixDescription(PersonDto.I18N_PREFIX, PersonDto.ADDITIONAL_DETAILS, "") + "\n"
 				+ I18nProperties.getDescription(Descriptions.descGdpr));
 		CssStyles.style(additionalDetails, CssStyles.CAPTION_HIDDEN);
+
+		if (disease == Disease.CSM) {
+			generalCommentLabel.setVisible(false);
+			setVisible(false, PersonDto.NICKNAME, PersonDto.MOTHERS_MAIDEN_NAME, PersonDto.ADDITIONAL_DETAILS);
+		}
+
+		if(disease == Disease.AFP){
+			setVisible(false, PersonDto.OCCUPATION_TYPE,PersonDto.EDUCATION_TYPE, PersonDto.NICKNAME, PersonDto.MOTHERS_MAIDEN_NAME, PersonDto.ADDITIONAL_DETAILS, PersonDto.MOTHERS_NAME, PersonDto.FATHERS_NAME );
+		}
+
 	}
 
 	@Override
@@ -690,22 +709,32 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 
 		if (this.disease != null || FacadeProvider.getDiseaseConfigurationFacade().getDefaultDisease() != null) {
 			Disease disease = this.disease != null ? this.disease : FacadeProvider.getDiseaseConfigurationFacade().getDefaultDisease();
-			FieldVisibilityCheckers fieldVisibilityCheckers = FieldVisibilityCheckers.withDisease(disease);
-			List<PresentCondition> validValues = Arrays.stream(PresentCondition.values())
-				.filter(c -> fieldVisibilityCheckers.isVisible(PresentCondition.class, c.name()))
-				.collect(Collectors.toList());
-			PresentCondition currentValue = (PresentCondition) presentConditionField.getValue();
-			if (currentValue != null && !validValues.contains(currentValue)) {
-				validValues.add(currentValue);
+
+			if (disease == Disease.AHF) {
+				// If the disease is AHF, restrict valid values to ALIVE and UNKNOWN
+				List<PresentCondition> validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.UNKNOWN);
+				FieldHelper.updateEnumData(presentConditionField, validValues);
+			} else if (disease == Disease.AFP) {
+				List<PresentCondition> validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.DEAD, PresentCondition.BURIED);
+				FieldHelper.updateEnumData(presentConditionField, validValues);
+			} else {
+				FieldVisibilityCheckers fieldVisibilityCheckers = FieldVisibilityCheckers.withDisease(disease);
+				List<PresentCondition> validValues = Arrays.stream(PresentCondition.values())
+						.filter(c -> fieldVisibilityCheckers.isVisible(PresentCondition.class, c.name()))
+						.collect(Collectors.toList());
+				PresentCondition currentValue = (PresentCondition) presentConditionField.getValue();
+				if (currentValue != null && !validValues.contains(currentValue)) {
+					validValues.add(currentValue);
+				}
+				presentConditionField.removeValueChangeListener(presentConditionChangeListener);
+				FieldHelper.updateEnumData(presentConditionField, validValues);
+				presentConditionField.addValueChangeListener(presentConditionChangeListener);
 			}
-			presentConditionField.removeValueChangeListener(presentConditionChangeListener);
-			FieldHelper.updateEnumData(presentConditionField, validValues);
-			presentConditionField.addValueChangeListener(presentConditionChangeListener);
 		}
 
 		/*
-		 * It may happen that the person currently has a present condition that usually shall not be shows for the form's disease.
-		 * In that case, the present condition is added as selectable item here.
+		 * It may happen that the person currently has a present condition that usually shall not be shown for the form's disease.
+		 * In that case, the present condition is added as a selectable item here.
 		 */
 		if (presentCondition != null && presentConditionField.getItem(presentCondition) == null) {
 			Item currentItem = presentConditionField.addItem(presentCondition);
@@ -874,9 +903,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		return firstNameField;
 	}
 
-	public Field getLastNameField() {
-		return lastNameField;
-	}
+	public Field getLastNameField() {return lastNameField;}
+
+	public Field getOtherNameField() {return otherNameField;}
 
 	@Override
 	protected <F extends Field> F addFieldToLayout(CustomLayout layout, String propertyId, F field) {

@@ -161,7 +161,7 @@ public class ExposureDto extends PseudonymizableDto {
 		Disease.GUINEA_WORM,
 		Disease.POLIO,
 		Disease.CORONAVIRUS,
-		Disease.UNSPECIFIED_VHF,
+		Disease.AHF,
 		Disease.UNDEFINED,
 		Disease.OTHER })
 	private YesNoUnknown percutaneous;
@@ -171,7 +171,7 @@ public class ExposureDto extends PseudonymizableDto {
 		Disease.GUINEA_WORM,
 		Disease.POLIO,
 		Disease.CORONAVIRUS,
-		Disease.UNSPECIFIED_VHF,
+		Disease.AHF,
 		Disease.UNDEFINED,
 		Disease.OTHER })
 	private YesNoUnknown contactToBodyFluids;
@@ -203,7 +203,7 @@ public class ExposureDto extends PseudonymizableDto {
 		Disease.PLAGUE,
 		Disease.ANTHRAX,
 		Disease.POLIO,
-		Disease.UNSPECIFIED_VHF,
+		Disease.AHF,
 		Disease.UNDEFINED,
 		Disease.OTHER })
 	private YesNoUnknown handlingAnimals;

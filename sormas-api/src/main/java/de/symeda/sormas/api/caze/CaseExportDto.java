@@ -21,6 +21,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import de.symeda.sormas.api.utils.*;
+import org.apache.commons.lang3.StringUtils;
+
 import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.ReferenceDto;
@@ -56,15 +59,6 @@ import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.user.UserRoleReferenceDto;
-import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.DependingOnUserRight;
-import de.symeda.sormas.api.utils.HideForCountries;
-import de.symeda.sormas.api.utils.HideForCountriesExcept;
-import de.symeda.sormas.api.utils.LocationHelper;
-import de.symeda.sormas.api.utils.Order;
-import de.symeda.sormas.api.utils.PersonalData;
-import de.symeda.sormas.api.utils.SensitiveData;
-import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.pseudonymization.Pseudonymizer;
 import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.PostalCodePseudonymizer;
 import de.symeda.sormas.api.uuid.AbstractUuidDto;
@@ -133,6 +127,9 @@ public class CaseExportDto extends AbstractUuidDto {
 	@PersonalData
 	@SensitiveData
 	private String lastName;
+	@PersonalData
+	@SensitiveData
+	private String otherName;
 	private Salutation salutation;
 	@SensitiveData
 	private String otherSalutation;
@@ -150,6 +147,7 @@ public class CaseExportDto extends AbstractUuidDto {
 	@PersonalData
 	@SensitiveData
 	private FacilityType facilityType;
+	private AFPFacilityOptions afpFacilityOptions;
 	@PersonalData
 	@SensitiveData
 	private String healthFacility;
@@ -352,10 +350,10 @@ public class CaseExportDto extends AbstractUuidDto {
 	public CaseExportDto(long id, long personId, Double personAddressLatitude, Double personAddressLongitude, Float personAddressLatLonAcc, long epiDataId, long symptomsId,
 						 long hospitalizationId, long healthConditionsId, String uuid, String epidNumber,
 						 Disease disease, DiseaseVariant diseaseVariant, String diseaseDetails, String diseaseVariantDetails,
-						 String personUuid, String firstName, String lastName, Salutation salutation, String otherSalutation, Sex sex, YesNoUnknown pregnant,
+						 String personUuid, String firstName, String lastName, String otherName, Salutation salutation, String otherSalutation, Sex sex, YesNoUnknown pregnant,
 						 Integer approximateAge, ApproximateAgeType approximateAgeType, Integer birthdateDD, Integer birthdateMM,
 						 Integer birthdateYYYY, Date reportDate, String region, String district, String community,
-						 FacilityType facilityType, String healthFacility, String healthFacilityUuid, String healthFacilityDetails, String pointOfEntry,
+						 FacilityType facilityType, AFPFacilityOptions afpFacilityOptions, String healthFacility, String healthFacilityUuid, String healthFacilityDetails, String pointOfEntry,
 						 String pointOfEntryUuid, String pointOfEntryDetails, CaseClassification caseClassification,
 						 YesNoUnknown clinicalConfirmation, YesNoUnknown epidemiologicalConfirmation, YesNoUnknown laboratoryDiagnosticConfirmation,
 						 Boolean notACaseReasonNegativeTest, Boolean notACaseReasonPhysicianInformation, Boolean notACaseReasonDifferentPathogen, Boolean notACaseReasonOther,
@@ -413,6 +411,7 @@ public class CaseExportDto extends AbstractUuidDto {
 		this.personUuid = personUuid;
 		this.firstName = firstName;
 		this.lastName = lastName;
+		this.otherName = otherName;
 		this.salutation = salutation;
 		this.otherSalutation = otherSalutation;
 		this.sex = sex;
@@ -463,6 +462,7 @@ public class CaseExportDto extends AbstractUuidDto {
 		this.quarantineOfficialOrderSent = quarantineOfficialOrderSent;
 		this.quarantineOfficialOrderSentDate = quarantineOfficialOrderSentDate;
 		this.facilityType = facilityType;
+		this.afpFacilityOptions = afpFacilityOptions;
 		this.healthFacility = FacilityHelper.buildFacilityString(healthFacilityUuid, healthFacility);
 		this.healthFacilityDetails = healthFacilityDetails;
 		this.pointOfEntry = InfrastructureHelper.buildPointOfEntryString(pointOfEntryUuid, pointOfEntry);
@@ -537,8 +537,7 @@ public class CaseExportDto extends AbstractUuidDto {
 	}
 
 	public CaseReferenceDto toReference() {
-		return new CaseReferenceDto(getUuid(), firstName, lastName);
-	}
+		return new CaseReferenceDto(uuid, firstName, lastName, otherName);}
 
 	public Boolean getInJurisdiction() {
 		return isInJurisdiction;
@@ -2365,30 +2364,25 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(179)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
-	@ExportProperty(CaseDataDto.INVESTIGATED_DATE)
-	@ExportGroup(ExportGroupType.ADDITIONAL)
-	public Date getDateOfInvestigation() {
-		return dateOfInvestigation;
-	}
-
-	public void setDateOfInvestigation(Date dateOfInvestigation) {
-		this.dateOfInvestigation = dateOfInvestigation;
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
+	@ExportEntity(PersonDto.class)
+	@ExportProperty({
+			CaseDataDto.PERSON,
+			PersonDto.OTHER_NAME })
+	@ExportGroup(ExportGroupType.SENSITIVE)
+	public String getOtherName() {
+		return otherName;
 	}
 
 	@Order(180)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
-	@ExportProperty(CaseDataDto.OUTCOME_DATE)
-	@ExportGroup(ExportGroupType.ADDITIONAL)
-	public Date getDateOfOutcome() {
-		return dateOfOutcome;
-	}
-
-	public void setDateOfOutcome(Date dateOfOutcome) {
-		this.dateOfOutcome = dateOfOutcome;
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
+	@ExportProperty(CaseDataDto.AFP_FACILITY_OPTIONS)
+	@ExportGroup(ExportGroupType.CORE)
+	public AFPFacilityOptions getAfpFacilityOptions() {
+		return afpFacilityOptions;
 	}
 
 	public void setFollowUpStatusChangeUserRoles(Set<UserRoleReferenceDto> roles) {
@@ -2455,6 +2449,8 @@ public class CaseExportDto extends AbstractUuidDto {
 		this.lastName = lastName;
 	}
 
+	public void setOtherName(String otherName) {this.otherName = otherName;}
+
 	public void setSalutation(Salutation salutation) {
 		this.salutation = salutation;
 	}
@@ -2467,13 +2463,11 @@ public class CaseExportDto extends AbstractUuidDto {
 		this.birthdate = birthdate;
 	}
 
-	public void setFacilityType(FacilityType facilityType) {
-		this.facilityType = facilityType;
-	}
+	public void setFacilityType(FacilityType facilityType) {this.facilityType = facilityType;}
 
-	public void setHealthFacilityDetails(String healthFacilityDetails) {
-		this.healthFacilityDetails = healthFacilityDetails;
-	}
+	public void setAfpFacilityOptions(AFPFacilityOptions afpFacilityOptions) {this.afpFacilityOptions = afpFacilityOptions;}
+
+	public void setHealthFacilityDetails(String healthFacilityDetails) {this.healthFacilityDetails = healthFacilityDetails;}
 
 	public void setPointOfEntryDetails(String pointOfEntryDetails) {
 		this.pointOfEntryDetails = pointOfEntryDetails;

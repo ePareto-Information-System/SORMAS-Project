@@ -994,7 +994,7 @@ public class ContactController {
 				mainRowText.append(" ")
 					.append(I18nProperties.getString(Strings.toCase))
 					.append(" ")
-					.append(PersonDto.buildCaption(contact.getCaze().getFirstName(), contact.getCaze().getLastName()));
+					.append(PersonDto.buildCaption(contact.getCaze().getFirstName(), contact.getCaze().getLastName(), contact.getCaze().getOtherName()));
 			}
 		}
 		mainRowText.append(mainRowText.length() > 0 ? " (" + shortUuid + ")" : shortUuid);

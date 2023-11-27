@@ -99,6 +99,7 @@ public class ExternalMessageFacadeEjb implements ExternalMessageFacade {
 		ExternalMessageIndexDto.TYPE,
 		ExternalMessageIndexDto.PERSON_FIRST_NAME,
 		ExternalMessageIndexDto.PERSON_LAST_NAME,
+		ExternalMessageIndexDto.PERSON_OTHER_NAME,
 		ExternalMessageIndexDto.PERSON_POSTAL_CODE,
 		ExternalMessageIndexDto.REPORTER_NAME,
 		ExternalMessageIndexDto.REPORTER_POSTAL_CODE,
@@ -150,6 +151,7 @@ public class ExternalMessageFacadeEjb implements ExternalMessageFacade {
 		target.setPersonFirstName(source.getPersonFirstName());
 		target.setPersonHouseNumber(source.getPersonHouseNumber());
 		target.setPersonLastName(source.getPersonLastName());
+		target.setPersonOtherName(source.getPersonOtherName());
 		target.setPersonPostalCode(source.getPersonPostalCode());
 		target.setPersonSex(source.getPersonSex());
 		target.setPersonPresentCondition(source.getPersonPresentCondition());
@@ -294,6 +296,7 @@ public class ExternalMessageFacadeEjb implements ExternalMessageFacade {
 		target.setPersonFirstName(source.getPersonFirstName());
 		target.setPersonHouseNumber(source.getPersonHouseNumber());
 		target.setPersonLastName(source.getPersonLastName());
+		target.setPersonOtherName(source.getPersonOtherName());
 		target.setPersonPostalCode(source.getPersonPostalCode());
 		target.setPersonSex(source.getPersonSex());
 		target.setPersonPresentCondition(source.getPersonPresentCondition());
@@ -451,8 +454,25 @@ public class ExternalMessageFacadeEjb implements ExternalMessageFacade {
 		CriteriaQuery<Tuple> cq = cb.createTupleQuery();
 		Root<ExternalMessage> externalMessage = cq.from(ExternalMessage.class);
 
-		List<Selection<?>> selections = new ArrayList<>();
-		selections.add(externalMessage.get(ExternalMessage.ID));
+		cq.multiselect(
+			labMessage.get(ExternalMessage.UUID),
+			labMessage.get(ExternalMessage.TYPE),
+			labMessage.get(ExternalMessage.MESSAGE_DATE_TIME),
+			labMessage.get(ExternalMessage.REPORTER_NAME),
+			labMessage.get(ExternalMessage.REPORTER_POSTAL_CODE),
+			labMessage.get(ExternalMessage.TESTED_DISEASE),
+			labMessage.get(ExternalMessage.SAMPLE_OVERALL_TEST_RESULT),
+			labMessage.get(ExternalMessage.PERSON_FIRST_NAME),
+			labMessage.get(ExternalMessage.PERSON_LAST_NAME),
+			labMessage.get(ExternalMessage.PERSON_OTHER_NAME),
+			labMessage.get(ExternalMessage.PERSON_BIRTH_DATE_YYYY),
+			labMessage.get(ExternalMessage.PERSON_BIRTH_DATE_MM),
+			labMessage.get(ExternalMessage.PERSON_BIRTH_DATE_DD),
+			labMessage.get(ExternalMessage.PERSON_POSTAL_CODE),
+			labMessage.get(ExternalMessage.STATUS),
+			userJoin.get(User.UUID),
+			userJoin.get(User.FIRST_NAME),
+			userJoin.get(User.LAST_NAME));
 
 		List<Order> orderList = getOrderList(sortProperties, cb, externalMessage);
 		List<Expression<?>> sortColumns = orderList.stream().map(Order::getExpression).collect(Collectors.toList());

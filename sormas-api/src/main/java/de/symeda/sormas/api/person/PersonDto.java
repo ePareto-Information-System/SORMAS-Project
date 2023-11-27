@@ -24,6 +24,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import de.symeda.sormas.api.caze.CaseOrigin;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -70,9 +71,11 @@ public class PersonDto extends PseudonymizableDto {
 	public static final String SEX = "sex";
 	public static final String FIRST_NAME = "firstName";
 	public static final String LAST_NAME = "lastName";
+	public static final String OTHER_NAME = "otherName";
 	public static final String SALUTATION = "salutation";
 	public static final String OTHER_SALUTATION = "otherSalutation";
 	public static final String PRESENT_CONDITION = "presentCondition";
+	public static final String CASE_ORIGIN = "caseOrigin";
 	public static final String BIRTH_DATE = "birthdate";
 	public static final String BIRTH_DATE_DD = "birthdateDD";
 	public static final String BIRTH_DATE_MM = "birthdateMM";
@@ -114,6 +117,7 @@ public class PersonDto extends PseudonymizableDto {
 	public static final String BIRTH_WEIGHT = "birthWeight";
 	public static final String PASSPORT_NUMBER = "passportNumber";
 	public static final String NATIONAL_HEALTH_ID = "nationalHealthId";
+	public static final String GHANA_CARD = "ghanaCard";
 	public static final String EMAIL_ADDRESS = "emailAddress";
 	public static final String OTHER_CONTACT_DETAILS = "otherContactDetails";
 	public static final String PLACE_OF_BIRTH_FACILITY_TYPE = "placeOfBirthFacilityType";
@@ -143,6 +147,11 @@ public class PersonDto extends PseudonymizableDto {
 	@SensitiveData(mandatoryField = true)
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String lastName;
+	@Outbreaks
+	@PersonalData(mandatoryField = false)
+	@SensitiveData(mandatoryField = false)
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
+	private String otherName;
 	@HideForCountriesExcept
 	@PersonalData
 	@SensitiveData
@@ -243,6 +252,9 @@ public class PersonDto extends PseudonymizableDto {
 
 	@Outbreaks
 	private PresentCondition presentCondition;
+
+	@Outbreaks
+	private CaseOrigin caseOrigin;
 	private Date deathDate;
 	private CauseOfDeath causeOfDeath;
 	private Disease causeOfDeathDisease;
@@ -254,7 +266,7 @@ public class PersonDto extends PseudonymizableDto {
 		Disease.EVD,
 		Disease.GUINEA_WORM,
 		Disease.POLIO,
-		Disease.UNSPECIFIED_VHF,
+		Disease.AHF,
 		Disease.CORONAVIRUS,
 		Disease.UNDEFINED,
 		Disease.OTHER })
@@ -264,7 +276,7 @@ public class PersonDto extends PseudonymizableDto {
 		Disease.EVD,
 		Disease.GUINEA_WORM,
 		Disease.POLIO,
-		Disease.UNSPECIFIED_VHF,
+		Disease.AHF,
 		Disease.CORONAVIRUS,
 		Disease.UNDEFINED,
 		Disease.OTHER })
@@ -277,7 +289,7 @@ public class PersonDto extends PseudonymizableDto {
 		Disease.GUINEA_WORM,
 		Disease.LASSA,
 		Disease.POLIO,
-		Disease.UNSPECIFIED_VHF,
+		Disease.AHF,
 		Disease.UNDEFINED,
 		Disease.OTHER })
 	@HideForCountries
@@ -288,7 +300,7 @@ public class PersonDto extends PseudonymizableDto {
 		Disease.GUINEA_WORM,
 		Disease.LASSA,
 		Disease.POLIO,
-		Disease.UNSPECIFIED_VHF,
+		Disease.AHF,
 		Disease.UNDEFINED,
 		Disease.OTHER })
 	@SensitiveData
@@ -301,7 +313,7 @@ public class PersonDto extends PseudonymizableDto {
 		Disease.GUINEA_WORM,
 		Disease.LASSA,
 		Disease.POLIO,
-		Disease.UNSPECIFIED_VHF,
+		Disease.AHF,
 		Disease.UNDEFINED,
 		Disease.OTHER })
 	@HideForCountries
@@ -339,6 +351,11 @@ public class PersonDto extends PseudonymizableDto {
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
 	@HideForCountries
 	private String nationalHealthId;
+
+	@SensitiveData
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
+	@HideForCountries
+	private String ghanaCard;
 	@Valid
 	private List<LocationDto> addresses = new ArrayList<>();
 	@Valid
@@ -376,6 +393,10 @@ public class PersonDto extends PseudonymizableDto {
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
 	private String additionalDetails;
 
+	@Outbreaks
+	@Required
+	private Disease disease;
+
 	@SuppressWarnings("serial")
 	public static class SeveralNonPrimaryContactDetailsException extends RuntimeException {
 
@@ -384,8 +405,8 @@ public class PersonDto extends PseudonymizableDto {
 		}
 	}
 
-	public static String buildCaption(String firstName, String lastName) {
-		return DataHelper.toStringNullable(firstName) + " " + DataHelper.toStringNullable(replaceGermanChars(lastName)).toUpperCase();
+	public static String buildCaption(String firstName, String lastName, String otherName) {
+		return DataHelper.toStringNullable(firstName) + " " + DataHelper.toStringNullable(replaceGermanChars(lastName)).toUpperCase() + " " + DataHelper.toStringNullable(otherName);
 	}
 
 	/*
@@ -415,6 +436,7 @@ public class PersonDto extends PseudonymizableDto {
 		person.setSex(Sex.UNKNOWN);
 		return person;
 	}
+
 
 	public Integer getBirthdateDD() {
 		return birthdateDD;
@@ -519,6 +541,9 @@ public class PersonDto extends PseudonymizableDto {
 	public void setPresentCondition(PresentCondition presentCondition) {
 		this.presentCondition = presentCondition;
 	}
+
+	public CaseOrigin getCaseOrigin() {return caseOrigin;}
+	public void setCaseOrigin(CaseOrigin caseOrigin) {this.caseOrigin = caseOrigin;}
 
 	public CauseOfDeath getCauseOfDeath() {
 		return causeOfDeath;
@@ -751,6 +776,12 @@ public class PersonDto extends PseudonymizableDto {
 		this.lastName = lastName;
 	}
 
+	public String getOtherName() {
+		return otherName;
+	}
+	public void setOtherName(String otherName) {
+		this.otherName = otherName;
+	}
 	public Salutation getSalutation() {
 		return salutation;
 	}
@@ -903,6 +934,14 @@ public class PersonDto extends PseudonymizableDto {
 		this.nationalHealthId = nationalHealthId;
 	}
 
+	public String getGhanaCard() {
+		return ghanaCard;
+	}
+
+	public void setGhanaCard(String ghanaCard) {
+		this.ghanaCard = ghanaCard;
+	}
+
 	public FacilityType getPlaceOfBirthFacilityType() {
 		return placeOfBirthFacilityType;
 	}
@@ -1010,9 +1049,17 @@ public class PersonDto extends PseudonymizableDto {
 		this.additionalDetails = additionalDetails;
 	}
 
+	public Disease getDisease() {
+		return disease;
+	}
+
+	public void setDisease(Disease disease) {
+		this.disease = disease;
+	}
+
 	@Override
 	public String buildCaption() {
-		return buildCaption(firstName, lastName);
+		return buildCaption(firstName, lastName, otherName);
 	}
 
 	@JsonIgnore
@@ -1021,7 +1068,7 @@ public class PersonDto extends PseudonymizableDto {
 	}
 
 	public PersonReferenceDto toReference() {
-		return new PersonReferenceDto(getUuid(), firstName, lastName);
+		return new PersonReferenceDto(getUuid(), firstName, lastName, otherName);
 	}
 
 	@Override

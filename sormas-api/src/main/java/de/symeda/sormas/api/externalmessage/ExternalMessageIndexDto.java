@@ -35,6 +35,7 @@ public class ExternalMessageIndexDto extends AbstractUuidDto {
 	public static final String DISEASE_VARIANT = "diseaseVariant";
 	public static final String PERSON_FIRST_NAME = "personFirstName";
 	public static final String PERSON_LAST_NAME = "personLastName";
+	public static final String PERSON_OTHER_NAME = "personOtherName";
 	public static final String PERSON_BIRTH_DATE = "personBirthDate";
 	public static final String PERSON_POSTAL_CODE = "personPostalCode";
 	public static final String STATUS = "status";

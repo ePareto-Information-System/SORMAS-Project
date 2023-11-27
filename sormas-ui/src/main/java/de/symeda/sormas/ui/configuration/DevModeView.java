@@ -664,6 +664,13 @@ public class DevModeView extends AbstractConfigurationView {
 			SampleGenerationConfig::setRequestPathogenTestsToBePerformed);
 		sampleOptionsThirdLineLayout.addComponent(requestPathogenTestsToBePerformed);
 
+		CheckBox requestSampleMaterialsToBeAdded = new CheckBox(I18nProperties.getCaption(Captions.devModeSampleMaterialsToBeAdded));
+		sampleGeneratorConfigBinder.bind(
+				requestSampleMaterialsToBeAdded,
+				SampleGenerationConfig::isRequestSampleMaterialsToAdded,
+				SampleGenerationConfig::setRequestSampleMaterialsToBeAdded);
+		sampleOptionsThirdLineLayout.addComponent(requestSampleMaterialsToBeAdded);
+
 		CheckBox requestAdditionalTestsToBePerformed = new CheckBox(I18nProperties.getCaption(Captions.devModeSampleAdditionalTestsToBePerformed));
 		sampleGeneratorConfigBinder.bind(
 			requestAdditionalTestsToBePerformed,
@@ -1144,6 +1151,15 @@ public class DevModeView extends AbstractConfigurationView {
 					sample.setAdditionalTestingRequested(true);
 					sample.setRequestedAdditionalTests(additionalTestTypes);
 				}
+				if (config.isRequestSampleMaterialsToAdded()) {
+					Set sampleMaterialTypes = new HashSet<SampleMaterial>();
+					int until = randomInt(1, SampleMaterial.values().length);
+					for (int j = 0; j < until; j++) {
+						sampleMaterialTypes.add(SampleMaterial.values()[j]);
+					}
+					sample.setSampleMaterialRequested(true);
+					sample.setRequestedSampleMaterials(sampleMaterialTypes);
+				}
 
 				if (sampleGenerationConfig.isSendDispatch()) {
 					sample.setShipped(true);
@@ -1614,5 +1630,529 @@ public class DevModeView extends AbstractConfigurationView {
 	@Override
 	public void enter(ViewChangeEvent event) {
 		super.enter(event);
+	}
+
+	private static class CaseGenerationConfig {
+
+		private int caseCount;
+		private LocalDate startDate;
+		private LocalDate endDate;
+		private Disease disease;
+		private RegionReferenceDto region;
+		private DistrictReferenceDto district;
+
+		CaseGenerationConfig() {
+			loadDefaultConfig();
+		}
+
+		public void loadDefaultConfig() {
+			caseCount = 10;
+			startDate = LocalDate.now().minusDays(90);
+			endDate = LocalDate.now();
+			disease = null;
+			region = null;
+			district = null;
+		}
+
+		public void loadPerformanceTestConfig() {
+			caseCount = 50;
+			startDate = LocalDate.now().minusDays(90);
+			endDate = LocalDate.now();
+			disease = Disease.CORONAVIRUS;
+			region = null;
+			district = null;
+		}
+
+		public int getCaseCount() {
+			return caseCount;
+		}
+
+		public void setCaseCount(int caseCount) {
+			this.caseCount = caseCount;
+		}
+
+		public LocalDate getStartDate() {
+			return startDate;
+		}
+
+		public void setStartDate(LocalDate startDate) {
+			this.startDate = startDate;
+		}
+
+		public LocalDate getEndDate() {
+			return endDate;
+		}
+
+		public void setEndDate(LocalDate endDate) {
+			this.endDate = endDate;
+		}
+
+		public Disease getDisease() {
+			return disease;
+		}
+
+		public void setDisease(Disease disease) {
+			this.disease = disease;
+		}
+
+		public RegionReferenceDto getRegion() {
+			return region;
+		}
+
+		public void setRegion(RegionReferenceDto region) {
+			this.region = region;
+		}
+
+		public DistrictReferenceDto getDistrict() {
+			return district;
+		}
+
+		public void setDistrict(DistrictReferenceDto district) {
+			this.district = district;
+		}
+	}
+
+	private static class ContactGenerationConfig {
+
+		private int contactCount;
+		private LocalDate startDate;
+		private LocalDate endDate;
+		private Disease disease;
+		private RegionReferenceDto region;
+		private DistrictReferenceDto district;
+		private boolean createWithoutSourceCases;
+		private boolean createMultipleContactsPerPerson;
+		private boolean createWithVisits;
+
+		ContactGenerationConfig() {
+			loadDefaultConfig();
+		}
+
+		public void loadDefaultConfig() {
+			contactCount = 10;
+			startDate = LocalDate.now().minusDays(90);
+			endDate = LocalDate.now();
+			disease = null;
+			region = null;
+			district = null;
+			createWithoutSourceCases = false;
+			createMultipleContactsPerPerson = false;
+			createWithVisits = false;
+		}
+
+		public void loadPerformanceTestConfig() {
+			contactCount = 50;
+			startDate = LocalDate.now().minusDays(90);
+			endDate = LocalDate.now();
+			disease = Disease.CORONAVIRUS;
+			region = null;
+			district = null;
+			createWithoutSourceCases = false;
+			createMultipleContactsPerPerson = false;
+			createWithVisits = false;
+		}
+
+		public int getContactCount() {
+			return contactCount;
+		}
+
+		public void setContactCount(int contactCount) {
+			this.contactCount = contactCount;
+		}
+
+		public LocalDate getStartDate() {
+			return startDate;
+		}
+
+		public void setStartDate(LocalDate startDate) {
+			this.startDate = startDate;
+		}
+
+		public LocalDate getEndDate() {
+			return endDate;
+		}
+
+		public void setEndDate(LocalDate endDate) {
+			this.endDate = endDate;
+		}
+
+		public Disease getDisease() {
+			return disease;
+		}
+
+		public void setDisease(Disease disease) {
+			this.disease = disease;
+		}
+
+		public RegionReferenceDto getRegion() {
+			return region;
+		}
+
+		public void setRegion(RegionReferenceDto region) {
+			this.region = region;
+		}
+
+		public DistrictReferenceDto getDistrict() {
+			return district;
+		}
+
+		public void setDistrict(DistrictReferenceDto district) {
+			this.district = district;
+		}
+
+		public boolean isCreateWithoutSourceCases() {
+			return createWithoutSourceCases;
+		}
+
+		public void setCreateWithoutSourceCases(boolean createWithoutSourceCases) {
+			this.createWithoutSourceCases = createWithoutSourceCases;
+		}
+
+		public boolean isCreateMultipleContactsPerPerson() {
+			return createMultipleContactsPerPerson;
+		}
+
+		public void setCreateMultipleContactsPerPerson(boolean createMultipleContactsPerPerson) {
+			this.createMultipleContactsPerPerson = createMultipleContactsPerPerson;
+		}
+
+		public boolean isCreateWithVisits() {
+			return createWithVisits;
+		}
+
+		public void setCreateWithVisits(boolean createWithVisits) {
+			this.createWithVisits = createWithVisits;
+		}
+	}
+
+	private static class EventGenerationConfig {
+
+		private int eventCount;
+		private LocalDate startDate;
+		private LocalDate endDate;
+		private Disease disease;
+		private RegionReferenceDto region;
+		private DistrictReferenceDto district;
+		private int minParticipantsPerEvent;
+		private int maxParticipantsPerEvent;
+		private int minContactsPerParticipant;
+		private int maxContactsPerParticipant;
+		private int percentageOfCases;
+
+		EventGenerationConfig() {
+			loadDefaultConfig();
+		}
+
+		public void loadDefaultConfig() {
+			eventCount = 10;
+			startDate = LocalDate.now().minusDays(90);
+			endDate = LocalDate.now();
+			disease = null;
+			region = null;
+			district = null;
+			minParticipantsPerEvent = 3;
+			maxParticipantsPerEvent = 10;
+			minContactsPerParticipant = 0;
+			maxContactsPerParticipant = 3;
+			percentageOfCases = 20;
+		}
+
+		public void loadPerformanceTestConfig() {
+			eventCount = 30;
+			startDate = LocalDate.now().minusDays(90);
+			endDate = LocalDate.now();
+			disease = Disease.CORONAVIRUS;
+			// region?
+			// district?
+			minParticipantsPerEvent = 3;
+			maxParticipantsPerEvent = 8;
+			minContactsPerParticipant = 0;
+			maxContactsPerParticipant = 2;
+			percentageOfCases = 15;
+		}
+
+		public int getEventCount() {
+			return eventCount;
+		}
+
+		public void setEventCount(int eventCount) {
+			this.eventCount = eventCount;
+		}
+
+		public LocalDate getStartDate() {
+			return startDate;
+		}
+
+		public void setStartDate(LocalDate startDate) {
+			this.startDate = startDate;
+		}
+
+		public LocalDate getEndDate() {
+			return endDate;
+		}
+
+		public void setEndDate(LocalDate endDate) {
+			this.endDate = endDate;
+		}
+
+		public Disease getDisease() {
+			return disease;
+		}
+
+		public void setDisease(Disease disease) {
+			this.disease = disease;
+		}
+
+		public RegionReferenceDto getRegion() {
+			return region;
+		}
+
+		public void setRegion(RegionReferenceDto region) {
+			this.region = region;
+		}
+
+		public DistrictReferenceDto getDistrict() {
+			return district;
+		}
+
+		public void setDistrict(DistrictReferenceDto district) {
+			this.district = district;
+		}
+
+		public int getMinParticipantsPerEvent() {
+			return minParticipantsPerEvent;
+		}
+
+		public void setMinParticipantsPerEvent(int minParticipantsPerEvent) {
+			this.minParticipantsPerEvent = minParticipantsPerEvent;
+		}
+
+		public int getMaxParticipantsPerEvent() {
+			return maxParticipantsPerEvent;
+		}
+
+		public void setMaxParticipantsPerEvent(int maxParticipantsPerEvent) {
+			this.maxParticipantsPerEvent = maxParticipantsPerEvent;
+		}
+
+		public int getMinContactsPerParticipant() {
+			return minContactsPerParticipant;
+		}
+
+		public void setMinContactsPerParticipant(int minContactsPerParticipant) {
+			this.minContactsPerParticipant = minContactsPerParticipant;
+		}
+
+		public int getMaxContactsPerParticipant() {
+			return maxContactsPerParticipant;
+		}
+
+		public void setMaxContactsPerParticipant(int maxContactsPerParticipant) {
+			this.maxContactsPerParticipant = maxContactsPerParticipant;
+		}
+
+		public int getPercentageOfCases() {
+			return percentageOfCases;
+		}
+
+		public void setPercentageOfCases(int percentageOfCases) {
+			this.percentageOfCases = percentageOfCases;
+			if (this.percentageOfCases >= 100) {
+				this.percentageOfCases = 100;
+			} else if (this.percentageOfCases <= 0) {
+				this.percentageOfCases = 0;
+			}
+		}
+
+	}
+
+	private static class SampleGenerationConfig {
+
+		private int sampleCount;
+		private SamplePurpose samplePurpose;
+		private LocalDate startDate;
+		private LocalDate endDate;
+		private SampleMaterial sampleMaterial;
+		private String sampleMaterialText;
+		private FacilityReferenceDto laboratory;
+
+		private boolean externalLabOrInternalInHouseTesting = false;
+		private boolean requestPathogenTestsToBePerformed = false;
+		private boolean requestSampleMaterialsToBeSelected = false;
+		private boolean requestAdditionalTestsToBePerformed = false;
+		private boolean sendDispatch = false;
+		private boolean received = false;
+		private String comment;
+
+		private Disease disease;
+		private RegionReferenceDto region;
+		private DistrictReferenceDto district;
+
+		private SampleGenerationConfig() {
+		}
+
+		public static SampleGenerationConfig getDefaultConfig() {
+			SampleGenerationConfig sampleGenerationConfig = new SampleGenerationConfig();
+			sampleGenerationConfig.sampleCount = 10;
+			sampleGenerationConfig.startDate = LocalDate.now().minusDays(90);
+			sampleGenerationConfig.endDate = LocalDate.now();
+			sampleGenerationConfig.disease = null;
+			sampleGenerationConfig.region = null;
+			sampleGenerationConfig.district = null;
+			sampleGenerationConfig.samplePurpose = SamplePurpose.INTERNAL;
+			sampleGenerationConfig.sampleMaterial = SampleMaterial.BLOOD;
+			return sampleGenerationConfig;
+		}
+
+		public static SampleGenerationConfig getPerformanceTestConfig() {
+			SampleGenerationConfig sampleGenerationConfig = new SampleGenerationConfig();
+			sampleGenerationConfig.sampleCount = 50;
+			sampleGenerationConfig.startDate = LocalDate.now().minusDays(90);
+			sampleGenerationConfig.endDate = LocalDate.now();
+			sampleGenerationConfig.disease = Disease.CORONAVIRUS;
+			sampleGenerationConfig.region = null;
+			sampleGenerationConfig.district = null;
+			sampleGenerationConfig.samplePurpose = SamplePurpose.EXTERNAL;
+			sampleGenerationConfig.sampleMaterial = SampleMaterial.BLOOD;
+			sampleGenerationConfig.laboratory = FacadeProvider.getFacilityFacade().getAllActiveLaboratories(false).get(0);
+			return sampleGenerationConfig;
+		}
+
+		public SamplePurpose getSamplePurpose() {
+			return samplePurpose;
+		}
+
+		public void setSamplePurpose(SamplePurpose samplePurpose) {
+			this.samplePurpose = samplePurpose;
+		}
+
+		public SampleMaterial getSampleMaterial() {
+			return sampleMaterial;
+		}
+
+		public void setSampleMaterial(SampleMaterial sampleMaterial) {
+			this.sampleMaterial = sampleMaterial;
+		}
+
+		public String getSampleMaterialText() {
+			return sampleMaterialText;
+		}
+
+		public void setSampleMaterialText(String sampleMaterialText) {
+			this.sampleMaterialText = sampleMaterialText;
+		}
+
+		public FacilityReferenceDto getLaboratory() {
+			return laboratory;
+		}
+
+		public void setLaboratory(FacilityReferenceDto laboratory) {
+			this.laboratory = laboratory;
+		}
+
+		public int getSampleCount() {
+			return sampleCount;
+		}
+
+		public void setSampleCount(int contactCount) {
+			this.sampleCount = contactCount;
+		}
+
+		public LocalDate getStartDate() {
+			return startDate;
+		}
+
+		public void setStartDate(LocalDate startDate) {
+			this.startDate = startDate;
+		}
+
+		public LocalDate getEndDate() {
+			return endDate;
+		}
+
+		public void setEndDate(LocalDate endDate) {
+			this.endDate = endDate;
+		}
+
+		public boolean isRequestPathogenTestsToBePerformed() {
+			return requestPathogenTestsToBePerformed;
+		}
+
+		public void setRequestPathogenTestsToBePerformed(boolean requestPathogenTestsToBePerformed) {
+			this.requestPathogenTestsToBePerformed = requestPathogenTestsToBePerformed;
+		}
+
+		public boolean isRequestSampleMaterialsToAdded(){
+			return requestSampleMaterialsToBeSelected;
+		}
+
+		public void setRequestSampleMaterialsToBeAdded(boolean requestSampleMaterialsToBeAdded){
+			this.requestSampleMaterialsToBeSelected = requestSampleMaterialsToBeAdded;
+		}
+
+		public boolean isExternalLabOrInternalInHouseTesting() {
+			return externalLabOrInternalInHouseTesting;
+		}
+
+		public boolean isRequestAdditionalTestsToBePerformed() {
+			return requestAdditionalTestsToBePerformed;
+		}
+
+		public void setRequestAdditionalTestsToBePerformed(boolean requestAdditionalTestsToBePerformed) {
+			this.requestAdditionalTestsToBePerformed = requestAdditionalTestsToBePerformed;
+		}
+
+		public void setExternalLabOrInternalInHouseTesting(boolean externalLabOrInternalInHouseTesting) {
+			this.externalLabOrInternalInHouseTesting = externalLabOrInternalInHouseTesting;
+		}
+
+		public boolean isSendDispatch() {
+			return sendDispatch;
+		}
+
+		public void setSendDispatch(boolean sendDispatch) {
+			this.sendDispatch = sendDispatch;
+		}
+
+		public boolean isReceived() {
+			return received;
+		}
+
+		public void setReceived(boolean received) {
+			this.received = received;
+		}
+
+		public String getComment() {
+			return comment;
+		}
+
+		public void setComment(String comment) {
+			this.comment = comment;
+		}
+
+		public Disease getDisease() {
+			return disease;
+		}
+
+		public void setDisease(Disease disease) {
+			this.disease = disease;
+		}
+
+		public RegionReferenceDto getRegion() {
+			return region;
+		}
+
+		public void setRegion(RegionReferenceDto region) {
+			this.region = region;
+		}
+
+		public DistrictReferenceDto getDistrict() {
+			return district;
+		}
+
+		public void setDistrict(DistrictReferenceDto district) {
+			this.district = district;
+		}
+
 	}
 }

@@ -33,9 +33,12 @@ public class TravelEntryPersonView extends AbstractTravelEntryView implements Pe
 			.getPersonEditComponent(
 				PersonContext.TRAVEL_ENTRY,
 				person,
-				travelEntry.getDisease(),
-				travelEntry.getDiseaseDetails(),
 				UserRight.PERSON_EDIT,
+				dto.getPerson().getUuid(),
+				dto.getDisease(),
+				dto.getDiseaseDetails(),
+				dto.getCaseOrigin(),
+				UserRight.TRAVEL_ENTRY_EDIT,
 				null);
 		DetailSubComponentWrapper componentWrapper = addComponentWrapper(editComponent);
 		CustomLayout layout = addPageLayout(componentWrapper, editComponent);

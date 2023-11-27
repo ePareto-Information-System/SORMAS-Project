@@ -507,6 +507,61 @@ public class TaskFacadeEjb implements TaskFacade {
 
 			TaskQueryContext taskQueryContext = new TaskQueryContext(cb, cq, task);
 			TaskJoins joins = taskQueryContext.getJoins();
+		List<Selection<?>> selections = new ArrayList<>(
+			Arrays.asList(
+				task.get(Task.UUID),
+				task.get(Task.TASK_CONTEXT),
+				joins.getCaze().get(Case.UUID),
+				joins.getCasePerson().get(Person.FIRST_NAME),
+				joins.getCasePerson().get(Person.LAST_NAME),
+				joins.getCasePerson().get(Person.OTHER_NAME),
+				joins.getEvent().get(Event.UUID),
+				joins.getEvent().get(Event.EVENT_TITLE),
+				joins.getEvent().get(Event.DISEASE),
+				joins.getEvent().get(Event.DISEASE_DETAILS),
+				joins.getEvent().get(Event.EVENT_STATUS),
+				joins.getEvent().get(Event.EVENT_INVESTIGATION_STATUS),
+				joins.getEvent().get(Event.START_DATE),
+				joins.getContact().get(Contact.UUID),
+				joins.getContactPerson().get(Person.FIRST_NAME),
+				joins.getContactPerson().get(Person.LAST_NAME),
+				joins.getContactPerson().get(Person.OTHER_NAME),
+				joins.getContactCasePerson().get(Person.FIRST_NAME),
+				joins.getContactCasePerson().get(Person.LAST_NAME),
+				joins.getContactCasePerson().get(Person.OTHER_NAME),
+				joins.getTravelEntry().get(TravelEntry.UUID),
+				joins.getTravelEntry().get(TravelEntry.EXTERNAL_ID),
+				joins.getTravelEntryPerson().get(Person.FIRST_NAME),
+				joins.getTravelEntryPerson().get(Person.LAST_NAME),
+				joins.getTravelEntryPerson().get(Person.OTHER_NAME),
+				task.get(Task.TASK_TYPE),
+				task.get(Task.PRIORITY),
+				task.get(Task.DUE_DATE),
+				task.get(Task.SUGGESTED_START),
+				task.get(Task.TASK_STATUS),
+				cb.selectCase()
+					.when(cb.isNotNull(joins.getCaze()), joins.getCaze().get(Case.DISEASE))
+					.when(cb.isNotNull(joins.getContact()), joins.getContact().get(Contact.DISEASE))
+					.when(cb.isNotNull(joins.getEvent()), joins.getEvent().get(Event.DISEASE))
+					.otherwise(joins.getTravelEntry().get(TravelEntry.DISEASE)),
+				joins.getCreator().get(User.UUID),
+				joins.getCreator().get(User.FIRST_NAME),
+				joins.getCreator().get(User.LAST_NAME),
+				task.get(Task.CREATOR_COMMENT),
+				joins.getAssignee().get(User.UUID),
+				joins.getAssignee().get(User.FIRST_NAME),
+				joins.getAssignee().get(User.LAST_NAME),
+				task.get(Task.ASSIGNEE_REPLY),
+				regionUuid,
+				regionName,
+				districtUuid,
+				districtName,
+				communityUuid,
+				communityName,
+				joins.getCaseFacility().get(Facility.UUID),
+				joins.getCaseFacility().get(Facility.NAME),
+				joins.getCasePointOfEntry().get(PointOfEntry.UUID),
+				joins.getCasePointOfEntry().get(PointOfEntry.NAME)));
 
 			// Filter select based on case/contact/event region/district/community and case facility/point of entry
 			Expression<String> regionUuid = taskQueryContext.getRegionExpressionForIndex(Region.UUID);

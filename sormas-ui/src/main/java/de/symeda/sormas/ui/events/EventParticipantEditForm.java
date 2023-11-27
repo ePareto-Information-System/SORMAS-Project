@@ -73,6 +73,18 @@ public class EventParticipantEditForm extends AbstractEditForm<EventParticipantD
 			return;
 		}
 
+		if (searchPerson) {
+			searchPersonButton = createPersonSearchButton(PERSON_SEARCH_LOC);
+			searchPersonButton.setCaption(I18nProperties.getString(Strings.infoSearchPersonOnDependentForm));
+			getContent().addComponent(searchPersonButton, PERSON_SEARCH_LOC);
+		}
+
+		pef = new PersonEditForm(PersonContext.EVENT_PARTICIPANT, event.getDisease(), event.getDiseaseDetails(), null, isPersonPseudonymized, event.getCaseOrigin());
+		pef.setWidth(100, Unit.PERCENTAGE);
+		pef.setImmediate(true);
+		getFieldGroup().bind(pef, EventParticipantDto.PERSON);
+		getContent().addComponent(pef, EventParticipantDto.PERSON);
+
 		addField(EventParticipantDto.INVOLVEMENT_DESCRIPTION, TextField.class);
 		ComboBox region = addInfrastructureField(EventParticipantDto.REGION);
 		region.setDescription(I18nProperties.getPrefixDescription(EventParticipantDto.I18N_PREFIX, EventParticipantDto.REGION));
@@ -116,4 +128,28 @@ public class EventParticipantEditForm extends AbstractEditForm<EventParticipantD
 		super.setValue(newFieldValue);
 	}
 
+	@Override
+	public void setPerson(PersonDto person) {
+		if (person != null) {
+			this.getValue().setPerson(person);
+		} else {
+			this.getValue().setPerson(originalPerson);
+		}
+		getFieldGroup().unbind(pef);
+		pef = new PersonEditForm(
+			PersonContext.EVENT_PARTICIPANT,
+			event.getDisease(),
+			event.getDiseaseDetails(),
+			null,
+			person != null ? person.isPseudonymized() : isPersonPseudonymized, event.getCaseOrigin());
+		pef.setWidth(100, Unit.PERCENTAGE);
+		pef.setImmediate(true);
+		getFieldGroup().bind(pef, EventParticipantDto.PERSON);
+		getContent().addComponent(pef, EventParticipantDto.PERSON);
+	}
+
+	@Override
+	protected void enablePersonFields(Boolean enable) {
+		pef.getFieldGroup().setEnabled(enable);
+	}
 }

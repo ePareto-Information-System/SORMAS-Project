@@ -670,6 +670,7 @@ public class ContactFacadeEjb
 			joins.getPerson().get(Person.UUID),
 			joins.getPerson().get(Person.FIRST_NAME),
 			joins.getPerson().get(Person.LAST_NAME),
+			joins.getPerson().get(Person.OTHER_NAME),
 			joins.getPerson().get(Person.SALUTATION),
 			joins.getPerson().get(Person.OTHER_SALUTATION),
 			joins.getPerson().get(Person.SEX),
@@ -1005,6 +1006,7 @@ public class ContactFacadeEjb
 			contactRoot.get(Contact.ID),
 			contactPerson.get(Person.FIRST_NAME),
 			contactPerson.get(Person.LAST_NAME),
+			contactPerson.get(Person.OTHER_NAME),
 			cb.<Date> selectCase()
 				.when(cb.isNotNull(contactRoot.get(Contact.LAST_CONTACT_DATE)), contactRoot.get(Contact.LAST_CONTACT_DATE))
 				.otherwise(contactRoot.get(Contact.REPORT_DATE_TIME)),
@@ -1135,6 +1137,7 @@ public class ContactFacadeEjb
 			contact.get(Contact.CHANGE_DATE),
 			joins.getPerson().get(Person.FIRST_NAME),
 			joins.getPerson().get(Person.LAST_NAME),
+			joins.getPerson().get(Person.OTHER_NAME),
 			joins.getContactOfficer().get(User.UUID),
 			joins.getContactOfficer().get(User.FIRST_NAME),
 			joins.getContactOfficer().get(User.LAST_NAME),
@@ -1285,6 +1288,63 @@ public class ContactFacadeEjb
 			}
 		});
 
+//		CriteriaQuery<ContactIndexDto> query = listCriteriaBuilder.buildIndexCriteria(contactCriteria, sortProperties);
+//		List<ContactIndexDto> dtos = QueryHelper.getResultList(em, query, first, max);
+//
+//		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight, I18nProperties.getCaption(Captions.inaccessibleValue));
+//		pseudonymizer.pseudonymizeDtoCollection(ContactIndexDto.class, dtos, ContactIndexDto::getInJurisdiction, (c, isInJurisdiction) -> {
+//			if (c.getCaze() != null) {
+//				pseudonymizer.pseudonymizeDto(CaseReferenceDto.class, c.getCaze(), c.getCaseInJurisdiction(), null);
+//			}
+//		});
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<ContactIndexDto> cq = cb.createQuery(ContactIndexDto.class);
+		Root<Contact> contact = cq.from(Contact.class);
+
+		final ContactQueryContext contactQueryContext = new ContactQueryContext(cb, cq, contact);
+		final ContactJoins joins = contactQueryContext.getJoins();
+
+		cq.multiselect(
+				contact.get(Contact.UUID),
+				joins.getPerson().get(Person.UUID),
+				joins.getPerson().get(Person.FIRST_NAME),
+				joins.getPerson().get(Person.LAST_NAME),
+				joins.getPerson().get(Person.OTHER_NAME),
+				joins.getCaze().get(Case.UUID),
+				contact.get(Contact.DISEASE),
+				contact.get(Contact.DISEASE_DETAILS),
+				joins.getCasePerson().get(Person.FIRST_NAME),
+				joins.getCasePerson().get(Person.LAST_NAME),
+				joins.getCasePerson().get(Person.OTHER_NAME),
+				joins.getAddressRegion().get(Region.NAME),
+				joins.getAddressDistrict().get(District.NAME),
+				contact.get(Contact.LAST_CONTACT_DATE),
+				contact.get(Contact.CONTACT_CATEGORY),
+				contact.get(Contact.CONTACT_PROXIMITY),
+				contact.get(Contact.CONTACT_CLASSIFICATION),
+				contact.get(Contact.CONTACT_STATUS),
+				contact.get(Contact.COMPLETENESS),
+				contact.get(Contact.FOLLOW_UP_STATUS),
+				contact.get(Contact.FOLLOW_UP_UNTIL),
+				joins.getPerson().get(Person.SYMPTOM_JOURNAL_STATUS),
+				contact.get(Contact.VACCINATION_STATUS),
+				contact.get(Contact.REPORT_DATE_TIME),
+				contact.get(Contact.EXTERNAL_ID),
+				contact.get(Contact.EXTERNAL_TOKEN),
+				contact.get(Contact.INTERNAL_TOKEN),
+				joins.getCaze().get(Case.CASE_CLASSIFICATION),
+				joins.getRegion().get(Region.NAME),
+				joins.getDistrict().get(District.NAME));
+
+		List<ContactIndexDto> dtos = QueryHelper.getResultList(em, cq, first, max);
+
+		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight, I18nProperties.getCaption(Captions.inaccessibleValue));
+//		pseudonymizer.pseudonymizeDtoCollection(ContactIndexDto.class, dtos, ContactIndexDto::getInJurisdiction, (c, isInJurisdiction) -> {
+//			if (c.getCaze() != null) {
+//				pseudonymizer.pseudonymizeDto(CaseReferenceDto.class, c.getCaze(), c.getCaseInJurisdiction(), null);
+//			}
+//		});
 		return dtos;
 	}
 

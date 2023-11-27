@@ -30,6 +30,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import de.symeda.sormas.api.utils.*;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -68,18 +69,6 @@ import de.symeda.sormas.api.therapy.TherapyDto;
 import de.symeda.sormas.api.travelentry.TravelEntryDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.DependingOnFeatureType;
-import de.symeda.sormas.api.utils.DependingOnUserRight;
-import de.symeda.sormas.api.utils.Diseases;
-import de.symeda.sormas.api.utils.EmbeddedPersonalData;
-import de.symeda.sormas.api.utils.FieldConstraints;
-import de.symeda.sormas.api.utils.HideForCountries;
-import de.symeda.sormas.api.utils.HideForCountriesExcept;
-import de.symeda.sormas.api.utils.Outbreaks;
-import de.symeda.sormas.api.utils.PersonalData;
-import de.symeda.sormas.api.utils.SensitiveData;
-import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.pseudonymization.Pseudonymizer;
 import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.LatitudePseudonymizer;
 import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.LongitudePseudonymizer;
@@ -137,7 +126,11 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	public static final String PORT_HEALTH_INFO = "portHealthInfo";
 	public static final String HEALTH_CONDITIONS = "healthConditions";
 	public static final String PREGNANT = "pregnant";
+	public static final String IPSAMPLESENT = "ipSampleSent";
+	public static final String IPSAMPLERESULTS = "ipSampleResults";
 	public static final String VACCINATION_STATUS = "vaccinationStatus";
+	public static final String VACCINATION_TYPE = "vaccinationType";
+	public static final String VACCINATION_DATE = "vaccinationDate";
 	public static final String SMALLPOX_VACCINATION_SCAR = "smallpoxVaccinationScar";
 	public static final String SMALLPOX_VACCINATION_RECEIVED = "smallpoxVaccinationReceived";
 	public static final String SMALLPOX_LAST_VACCINATION_DATE = "smallpoxLastVaccinationDate";
@@ -189,7 +182,7 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	public static final String FOLLOW_UP_UNTIL = "followUpUntil";
 	public static final String VISITS = "visits";
 	public static final String FACILITY_TYPE = "facilityType";
-
+	public static final String AFP_FACILITY_OPTIONS = "afpFacilityOptions";
 	public static final String CASE_ID_ISM = "caseIdIsm";
 	public static final String CONTACT_TRACING_FIRST_CONTACT_TYPE = "contactTracingFirstContactType";
 	public static final String CONTACT_TRACING_FIRST_CONTACT_DATE = "contactTracingFirstContactDate";
@@ -331,6 +324,8 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	@PersonalData(mandatoryField = true)
 	@SensitiveData(mandatoryField = true)
 	private FacilityType facilityType;
+	private AFPFacilityOptions afpFacilityOptions;
+
 	@Outbreaks
 	@PersonalData(mandatoryField = true)
 	@SensitiveData(mandatoryField = true)
@@ -345,6 +340,8 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	private HealthConditionsDto healthConditions;
 
 	private YesNoUnknown pregnant;
+	private YesNoUnknown ipSampleSent;
+	private Disease ipSampleResults;
 	@Diseases({
 		Disease.AFP,
 		Disease.GUINEA_WORM,
@@ -353,7 +350,7 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 		Disease.YELLOW_FEVER,
 		Disease.CSM,
 		Disease.RABIES,
-		Disease.UNSPECIFIED_VHF,
+		Disease.AHF,
 		Disease.ANTHRAX,
 		Disease.CORONAVIRUS,
 		Disease.OTHER })
@@ -591,6 +588,10 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
 	private String otherDeletionReason;
 
+	@Outbreaks
+	private CardOrHistory vaccinationType;
+	private Date vaccinationDate;
+
 	public static CaseDataDto build(PersonReferenceDto person, Disease disease) {
 		return build(person, disease, HealthConditionsDto.build());
 	}
@@ -709,7 +710,7 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	}
 
 	public CaseReferenceDto toReference() {
-		return new CaseReferenceDto(getUuid(), getPerson().getFirstName(), getPerson().getLastName());
+		return new CaseReferenceDto(getUuid(), getPerson().getFirstName(), getPerson().getLastName(), getPerson().getOtherName());
 	}
 
 	/**
@@ -1084,12 +1085,44 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 		this.pregnant = pregnant;
 	}
 
+	public YesNoUnknown getIpSampleSent() {
+		return ipSampleSent;
+	}
+
+	public void setIpSampleSent(YesNoUnknown ipSampleSent) {
+		this.ipSampleSent = ipSampleSent;
+	}
+
+	public Disease getIpSampleResults(){
+		return ipSampleResults;
+	}
+
+	public void setIpSampleResults(Disease ipSampleResults) {
+		this.ipSampleResults = ipSampleResults;
+	}
+
 	public VaccinationStatus getVaccinationStatus() {
 		return vaccinationStatus;
 	}
 
 	public void setVaccinationStatus(VaccinationStatus vaccinationStatus) {
 		this.vaccinationStatus = vaccinationStatus;
+	}
+
+	public CardOrHistory getVaccinationType() {
+		return vaccinationType;
+	}
+
+	public void setVaccinationType(CardOrHistory vaccinationType) {
+		this.vaccinationType = vaccinationType;
+	}
+
+	public Date getVaccinationDate() {
+		return vaccinationDate;
+	}
+
+	public void setVaccinationDate(Date vaccinationDate) {
+		this.vaccinationDate = vaccinationDate;
 	}
 
 	public YesNoUnknown getSmallpoxVaccinationScar() {
@@ -1476,6 +1509,9 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 	public void setFacilityType(FacilityType facilityType) {
 		this.facilityType = facilityType;
 	}
+
+	public AFPFacilityOptions getAfpFacilityOptions(){return afpFacilityOptions;}
+	public void setAfpFacilityOptions(AFPFacilityOptions afpFacilityOptions){this.afpFacilityOptions = afpFacilityOptions;}
 
 	public Integer getCaseIdIsm() {
 		return caseIdIsm;

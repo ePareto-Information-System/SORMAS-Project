@@ -19,13 +19,8 @@ public class PersonSimilarityCriteria extends BaseCriteria implements Cloneable 
 	private Integer birthdateDD;
 	private String passportNumber;
 	private String nationalHealthId;
-	private String nameUuidExternalIdExternalTokenLike;
-	private Boolean matchMissingInfo = Boolean.FALSE;
-	/**
-	 * If true, compare the name of the person only to the first and last name fields of the database; if false, compare the
-	 * name of the person to other fields like UUID and external ID as well.
-	 */
-	private Boolean strictNameComparison = Boolean.FALSE;
+	private String ghanaCard;
+	private String uuidExternalIdExternalTokenLike;
 
 	@IgnoreForUrl
 	public String getFirstName() {
@@ -107,8 +102,17 @@ public class PersonSimilarityCriteria extends BaseCriteria implements Cloneable 
 		return this;
 	}
 
-	public String getNameUuidExternalIdExternalTokenLike() {
-		return nameUuidExternalIdExternalTokenLike;
+	@IgnoreForUrl
+	public String getGhanaCard() {
+		return ghanaCard;
+	}
+
+	public PersonSimilarityCriteria ghanaCard(String ghanaCard) {
+		this.ghanaCard = ghanaCard;
+		return this;
+	}
+	public String getUuidExternalIdExternalTokenLike() {
+		return uuidExternalIdExternalTokenLike;
 	}
 
 	public void setNameUuidExternalIdExternalTokenLike(String nameUuidExternalIdExternalTokenLike) {

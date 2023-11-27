@@ -82,6 +82,7 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 
 	public static final String FIRST_NAME = "firstName";
 	public static final String LAST_NAME = "lastName";
+	public static final String OTHER_NAME = "otherName";
 	public static final String SALUTATION = "salutation";
 	public static final String OTHER_SALUTATION = "otherSalutation";
 	public static final String NICKNAME = "nickname";
@@ -122,6 +123,7 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	public static final String BIRTH_WEIGHT = "birthWeight";
 	public static final String PASSPORT_NUMBER = "passportNumber";
 	public static final String NATIONAL_HEALTH_ID = "nationalHealthId";
+	public static final String GHANA_CARD = "ghanacard";
 	public static final String PLACE_OF_BIRTH_FACILITY_TYPE = "placeOfBirthFacilityType";
 	public static final String ADDRESSES = "addresses";
 	public static final String PERSON_CONTACT_DETAILS = "personContactDetails";
@@ -144,6 +146,7 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 
 	private String firstName;
 	private String lastName;
+	private String otherName;
 	private Salutation salutation;
 	private String otherSalutation;
 	private String birthName;
@@ -192,6 +195,7 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	private ArmedForcesRelationType armedForcesRelationType;
 	private String passportNumber;
 	private String nationalHealthId;
+	private String ghanaCard;
 	private FacilityType placeOfBirthFacilityType;
 	private Set<Location> addresses = new HashSet<>();
 	private Set<PersonContactDetail> personContactDetails = new HashSet<>();
@@ -231,6 +235,15 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+
+	@Column(nullable = true, length = CHARACTER_LIMIT_DEFAULT)
+	public String getOtherName() {
+		return otherName;
+	}
+
+	public void setOtherName(String otherName) {
+		this.otherName = otherName;
 	}
 
 	@Enumerated(EnumType.STRING)
@@ -587,6 +600,14 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 		this.nationalHealthId = nationalHealthId;
 	}
 
+	@Column
+	public String getGhanaCard() {
+		return ghanaCard;
+	}
+
+	public void setGhanaCard(String ghanaCard) {
+		this.ghanaCard = ghanaCard;
+	}
 	@Enumerated(EnumType.STRING)
 	public FacilityType getPlaceOfBirthFacilityType() {
 		return placeOfBirthFacilityType;
@@ -801,7 +822,7 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	}
 
 	public PersonReferenceDto toReference() {
-		return new PersonReferenceDto(getUuid(), getFirstName(), getLastName());
+		return new PersonReferenceDto(getUuid(), getFirstName(), getLastName(), getOtherName());
 	}
 
 	@Transient

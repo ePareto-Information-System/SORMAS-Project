@@ -103,7 +103,9 @@ public class TravelEntryFacadeEjb
 			entity.getUuid(),
 			entity.getExternalId(),
 			entity.getPerson().getFirstName(),
-			entity.getPerson().getLastName());
+			entity.getPerson().getLastName(),
+			entity.getPerson().getOtherName()
+		);
 	}
 
 	@Inject
@@ -386,7 +388,8 @@ public class TravelEntryFacadeEjb
 			entity.getUuid(),
 			entity.getExternalId(),
 			entity.getPerson().getFirstName(),
-			entity.getPerson().getLastName());
+			entity.getPerson().getLastName(),
+			entity.getPerson().getOtherName());
 	}
 
 	@Override

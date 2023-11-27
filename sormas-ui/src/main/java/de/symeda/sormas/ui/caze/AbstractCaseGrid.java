@@ -235,6 +235,8 @@ public abstract class AbstractCaseGrid<IndexDto extends CaseIndexDto> extends Fi
 				Stream.of(CaseIndexDto.VACCINATION_STATUS),
 				Stream.of(COLUMN_COMPLETENESS),
 				Stream.of(DELETE_REASON_COLUMN))
+				Stream.of(CaseIndexDto.VACCINATION_TYPE),
+				Stream.of(CaseIndexDto.VACCINATION_DATE),
 			.flatMap(Function.identity());
 	}
 

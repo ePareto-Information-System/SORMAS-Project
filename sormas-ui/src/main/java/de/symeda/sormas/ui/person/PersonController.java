@@ -27,6 +27,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import de.symeda.sormas.api.caze.CaseOrigin;
 import org.apache.commons.lang3.StringUtils;
 
 import com.vaadin.navigator.Navigator;
@@ -433,12 +434,12 @@ public class PersonController {
 		PersonDto person,
 		Disease disease,
 		String diseaseDetails,
+		CaseOrigin caseOrigin,
 		UserRight editUserRight,
 		final ViewMode viewMode) {
 
-		PersonEditForm editForm =
-			new PersonEditForm(personContext, disease, diseaseDetails, viewMode, person.isPseudonymized(), person.isInJurisdiction());
-		editForm.setValue(person);
+		PersonEditForm editForm = new PersonEditForm(personContext, disease, diseaseDetails, viewMode, personDto.isPseudonymized(), caseOrigin);
+		editForm.setValue(personDto);
 
 		final CommitDiscardWrapperComponent<PersonEditForm> editView =
 			new CommitDiscardWrapperComponent<>(editForm, UserProvider.getCurrent().hasUserRight(editUserRight), editForm.getFieldGroup());

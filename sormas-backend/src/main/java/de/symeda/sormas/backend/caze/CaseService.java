@@ -371,6 +371,7 @@ public class CaseService extends AbstractCoreAdoService<Case, CaseJoins> {
 				joins.getPerson().get(Person.UUID),
 				joins.getPerson().get(Person.FIRST_NAME),
 				joins.getPerson().get(Person.LAST_NAME),
+				joins.getPerson().get(Person.OTHER_NAME),
 				joins.getFacility().get(Facility.UUID),
 				joins.getFacility().get(Facility.LATITUDE),
 				joins.getFacility().get(Facility.LONGITUDE),
@@ -724,6 +725,12 @@ public class CaseService extends AbstractCoreAdoService<Case, CaseJoins> {
 		if (caseCriteria.getVaccinationStatus() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Case.VACCINATION_STATUS), caseCriteria.getVaccinationStatus()));
 		}
+		if (caseCriteria.getVaccinationType() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Case.VACCINATION_TYPE), caseCriteria.getVaccinationType()));
+		}
+		if (caseCriteria.getVaccinationDate() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Case.VACCINATION_DATE), caseCriteria.getVaccinationDate()));
+		}
 		if (caseCriteria.getReinfectionStatus() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Case.REINFECTION_STATUS), caseCriteria.getReinfectionStatus()));
 		}
@@ -743,6 +750,9 @@ public class CaseService extends AbstractCoreAdoService<Case, CaseJoins> {
 		}
 		if (caseCriteria.getFacilityType() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Case.FACILITY_TYPE), caseCriteria.getFacilityType()));
+		}
+		if (caseCriteria.getAfpFacilityOptions() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Case.AFP_FACILITY_OPTIONS), caseCriteria.getAfpFacilityOptions()));
 		}
 		if (caseCriteria.getPointOfEntry() != null) {
 			filter = CriteriaBuilderHelper
@@ -1998,7 +2008,7 @@ public class CaseService extends AbstractCoreAdoService<Case, CaseJoins> {
 		// Sex filter: only when sex is filled in for both cases
 		Predicate sexFilter = cb.or(
 			cb.or(cb.isNull(person.get(Person.SEX)), cb.isNull(person2.get(Person.SEX))),
-			cb.or(cb.equal(person.get(Person.SEX), Sex.UNKNOWN), cb.equal(person2.get(Person.SEX), Sex.UNKNOWN)),
+			//cb.or(cb.equal(person.get(Person.SEX), Sex.UNKNOWN), cb.equal(person2.get(Person.SEX), Sex.UNKNOWN)),
 			cb.equal(person.get(Person.SEX), person2.get(Person.SEX)));
 		// Birth date filter: only when birth date is filled in for both cases
 		Predicate birthDateFilter = cb.or(
