@@ -806,6 +806,9 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setSamplingReason(source.getSamplingReason());
 		target.setSamplingReasonDetails(source.getSamplingReasonDetails());
 
+		target.setIpSampleSent(source.getIpSampleSent());
+		target.setIpSampleResults(source.getIpSampleResults());
+
 		target.setReportLat(source.getReportLat());
 		target.setReportLon(source.getReportLon());
 		target.setReportLatLonAccuracy(source.getReportLatLonAccuracy());
@@ -948,6 +951,9 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setDeleted(source.isDeleted());
 		target.setDeletionReason(source.getDeletionReason());
 		target.setOtherDeletionReason(source.getOtherDeletionReason());
+
+		target.setIpSampleSent(source.getIpSampleSent());
+		target.setIpSampleResults(source.getIpSampleResults());
 
 		return target;
 	}

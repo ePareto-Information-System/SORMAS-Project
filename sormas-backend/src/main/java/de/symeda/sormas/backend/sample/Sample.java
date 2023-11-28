@@ -42,6 +42,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import org.apache.commons.lang3.StringUtils;
 
 import de.symeda.auditlog.api.Audited;
@@ -161,6 +163,8 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	private SormasToSormasOriginInfo sormasToSormasOriginInfo;
 	private List<SormasToSormasShareInfo> sormasToSormasShares = new ArrayList<>(0);
+	private YesNoUnknown ipSampleSent;
+	private Disease ipSampleResults;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
@@ -587,6 +591,22 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	public void setSamplingReasonDetails(String samplingReasonDetails) {
 		this.samplingReasonDetails = samplingReasonDetails;
+	}
+	public void setIpSampleSent(YesNoUnknown ipSampleSent) {
+		this.ipSampleSent = ipSampleSent;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public YesNoUnknown getIpSampleSent() {
+		return ipSampleSent;
+	}
+
+	public void setIpSampleResults(Disease ipSampleResults) {
+		this.ipSampleResults = ipSampleResults;
+	}
+	@Enumerated(EnumType.STRING)
+	public Disease getIpSampleResults(){
+		return ipSampleResults;
 	}
 
 	public SampleReferenceDto toReference() {

@@ -11698,4 +11698,8 @@ INSERT INTO schema_version (version_number, comment) VALUES (482, 'Added a colum
 ALTER TABLE samples ALTER COLUMN samplepurpose DROP NOT NULL;
 INSERT INTO schema_version (version_number, comment) VALUES (483, 'altered column samplepurpose in samples to not null');
 
+ALTER TABLE samples ADD COLUMN ipsamplesent varchar(255);
+ALTER TABLE samples ADD COLUMN ipsampleresults varchar(512);
+INSERT INTO schema_version (version_number, comment) VALUES (484, 'Added a column name ipsampleresults to samples');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
