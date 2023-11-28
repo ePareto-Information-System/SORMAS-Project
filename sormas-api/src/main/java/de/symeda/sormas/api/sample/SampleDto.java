@@ -14,6 +14,10 @@
  */
 package de.symeda.sormas.api.sample;
 
+import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.utils.*;
+
 import java.util.Date;
 import java.util.Set;
 
@@ -78,6 +82,8 @@ public class SampleDto extends SormasToSormasShareableDto {
 	public static final String SAMPLING_REASON_DETAILS = "samplingReasonDetails";
 	public static final String DELETION_REASON = "deletionReason";
 	public static final String OTHER_DELETION_REASON = "otherDeletionReason";
+	public static final String IPSAMPLESENT = "ipSampleSent";
+	public static final String IPSAMPLERESULTS = "ipSampleResults";
 
 	private CaseReferenceDto associatedCase;
 	private ContactReferenceDto associatedContact;
@@ -151,6 +157,25 @@ public class SampleDto extends SormasToSormasShareableDto {
 	private DeletionReason deletionReason;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
 	private String otherDeletionReason;
+
+	private YesNoUnknown ipSampleSent;
+	private Disease ipSampleResults;
+
+	public YesNoUnknown getIpSampleSent() {
+		return ipSampleSent;
+	}
+
+	public void setIpSampleSent(YesNoUnknown ipSampleSent) {
+		this.ipSampleSent = ipSampleSent;
+	}
+
+	public Disease getIpSampleResults(){
+		return ipSampleResults;
+	}
+
+	public void setIpSampleResults(Disease ipSampleResults) {
+		this.ipSampleResults = ipSampleResults;
+	}
 
 	@ImportIgnore
 	public CaseReferenceDto getAssociatedCase() {

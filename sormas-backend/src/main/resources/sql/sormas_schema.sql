@@ -12506,3 +12506,8 @@ $$ LANGUAGE plpgsql;
 
 INSERT INTO schema_version (version_number, comment) VALUES (519, 'Add the ''See personal data inside jurisdiction'' user right to the default Environmental Surveillance User #12284');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
+ALTER TABLE samples ADD COLUMN ipsamplesent varchar(255);
+ALTER TABLE samples ADD COLUMN ipsampleresults varchar(512);
+INSERT INTO schema_version (version_number, comment) VALUES (484, 'Added a column name ipsampleresults to samples');
+
+-- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

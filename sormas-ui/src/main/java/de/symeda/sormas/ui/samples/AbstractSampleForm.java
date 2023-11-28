@@ -48,6 +48,7 @@ import de.symeda.sormas.api.sample.SamplingReason;
 import de.symeda.sormas.api.sample.SpecimenCondition;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.UserProvider;
@@ -82,6 +83,12 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                     fluidRowLocs(SampleDto.SAMPLE_SOURCE, "") +
                     fluidRowLocs(SampleDto.FIELD_SAMPLE_ID, REFERRED_FROM_BUTTON_LOC) +
                     fluidRowLocs(SampleDto.LAB, SampleDto.LAB_DETAILS) +
+
+					fluidRowLocs(SampleDto.IPSAMPLESENT) + fluidRowLocs(SampleDto.IPSAMPLERESULTS, "") +
+					locCss(VSPACE_TOP_3, SampleDto.SAMPLE_MATERIAL_REQUESTED) +
+					loc(SAMPLE_MATERIAL_READ_HEADLINE_LOC) +
+					loc(SampleDto.REQUESTED_SAMPLE_MATERIALS) +
+
 
                     locCss(VSPACE_TOP_3, SampleDto.PATHOGEN_TESTING_REQUESTED) +
                     loc(PATHOGEN_TESTING_READ_HEADLINE_LOC) +
@@ -151,6 +158,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		addField(SampleDto.SHIPPED, CheckBox.class);
 		addField(SampleDto.RECEIVED, CheckBox.class);
 
+		addField(SampleDto.IPSAMPLESENT, NullableOptionGroup.class);
+		addField(SampleDto.IPSAMPLERESULTS);
+
 		ComboBox testResultField = addField(SampleDto.PATHOGEN_TEST_RESULT, ComboBox.class);
 		testResultField.removeItem(PathogenTestResultType.NOT_DONE);
 
@@ -161,6 +171,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			SampleDto.SAMPLING_REASON,
 			Collections.singletonList(SamplingReason.OTHER_REASON),
 			true);
+
+		FieldHelper.setVisibleWhen(getFieldGroup(), SampleDto.IPSAMPLERESULTS, SampleDto.IPSAMPLESENT, Collections.singletonList(YesNoUnknown.YES), true);
 
 		addField(SampleDto.DELETION_REASON);
 		addField(SampleDto.OTHER_DELETION_REASON, TextArea.class).setRows(3);
