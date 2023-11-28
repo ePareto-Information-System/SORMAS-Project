@@ -12510,4 +12510,8 @@ ALTER TABLE samples ADD COLUMN ipsamplesent varchar(255);
 ALTER TABLE samples ADD COLUMN ipsampleresults varchar(512);
 INSERT INTO schema_version (version_number, comment) VALUES (484, 'Added a column name ipsampleresults to samples');
 
+ALTER TABLE samples ADD COLUMN ipsamplesent varchar(255);
+ALTER TABLE samples ADD COLUMN ipsampleresults varchar(512);
+INSERT INTO schema_version (version_number, comment) VALUES (484, 'Added a column name ipsampleresults to samples');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

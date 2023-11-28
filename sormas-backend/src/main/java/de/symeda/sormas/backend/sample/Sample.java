@@ -161,8 +161,6 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private YesNoUnknown ipSampleSent;
 	private Disease ipSampleResults;
 
-	private List<SampleReport> sampleReports = new ArrayList<>(0);
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
 	public Case getAssociatedCase() {
