@@ -1,14 +1,13 @@
 package de.symeda.sormas.api.infrastructure.disease;
 
 import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.HasUuid;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 
 import java.io.Serializable;
 import java.util.List;
 
-public class DiseaseIndexDto implements Serializable, HasUuid {
+public class DiseaseIndexDto implements Serializable {
 
     public static final String I18N_PREFIX = "Disease";
 
@@ -16,7 +15,6 @@ public class DiseaseIndexDto implements Serializable, HasUuid {
     public static final String DISEASE = "disease";
     public static final String ACTIVE = "active";
     public static final String PRIMARY_DISEASE = "primaryDisease";
-    public static final String CASE_BASED = "caseBased";
     public static final String FOLLOW_UP_ENABLED = "followUpEnabled";
     public static final String FOLLOW_UP_DURATION = "followUpDuration";
     public static final String EXTENDED_CLASSIFICATION = "extendedClassification";
@@ -28,7 +26,6 @@ public class DiseaseIndexDto implements Serializable, HasUuid {
     private Disease disease;
 	private String active;
 	private String primaryDisease;
-	private String caseBased;
 	private String followUpEnabled;
 	private Integer followUpDuration;
 	private String extendedClassification;
@@ -43,14 +40,13 @@ public class DiseaseIndexDto implements Serializable, HasUuid {
             this.disease = disease;
             this.active = disease.isDefaultActive() ? I18nProperties.getString(Strings.active) : I18nProperties.getString(Strings.inactive);
             this.primaryDisease = disease.isDefaultPrimary() ? I18nProperties.getString(Strings.yes) : I18nProperties.getString(Strings.no);
-            this.caseBased = disease.isDefaultCaseBased() ? I18nProperties.getString(Strings.yes) : I18nProperties.getString(Strings.no);
             this.followUpEnabled = disease.isDefaultFollowUpEnabled() ? I18nProperties.getString(Strings.yes) : I18nProperties.getString(Strings.no);
             this.followUpDuration = disease.getDefaultFollowUpDuration();
             this.extendedClassification = disease.isDefaultExtendedClassification() ? I18nProperties.getString(Strings.yes) : I18nProperties.getString(Strings.no);
     }
     
 
-    @Override
+
     public String getUuid() {
         return uuid;
     }
@@ -66,10 +62,6 @@ public class DiseaseIndexDto implements Serializable, HasUuid {
 
     public String getPrimaryDisease() {
         return primaryDisease;
-    }
-
-    public String getCaseBased() {
-        return caseBased;
     }
 
     public String getFollowUpEnabled() {
@@ -112,10 +104,6 @@ public class DiseaseIndexDto implements Serializable, HasUuid {
 
     public void setPrimaryDisease(String primaryDisease) {
         this.primaryDisease = primaryDisease;
-    }
-
-    public void setCaseBased(String caseBased) {
-        this.caseBased = caseBased;
     }
 
     public void setFollowUpEnabled(String followUpEnabled) {

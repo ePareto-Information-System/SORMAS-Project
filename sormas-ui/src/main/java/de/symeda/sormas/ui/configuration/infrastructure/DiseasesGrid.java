@@ -42,7 +42,6 @@ public class DiseasesGrid extends FilteredGrid<DiseaseIndexDto, DiseaseCriteria>
                 DiseaseIndexDto.DISEASE,
                 DiseaseIndexDto.ACTIVE,
                 DiseaseIndexDto.PRIMARY_DISEASE,
-                DiseaseIndexDto.CASE_BASED,
                 DiseaseIndexDto.FOLLOW_UP_ENABLED,
                 DiseaseIndexDto.FOLLOW_UP_DURATION,
                 DiseaseIndexDto.EXTENDED_CLASSIFICATION

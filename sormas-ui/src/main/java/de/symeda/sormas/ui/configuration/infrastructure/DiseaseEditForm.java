@@ -112,7 +112,7 @@ public class DiseaseEditForm extends AbstractEditForm<DiseaseDto> {
 
         searchField = new SearchField();
         searchField.addTextChangeListener(e -> {
-            criteria.nameCityLike(e.getText());
+            criteria.nameAddressLike(e.getText());
             updateDataProvider();
         });
         filterLayout.addComponent(searchField);

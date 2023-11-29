@@ -14,10 +14,13 @@ import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.InfrastructureAdo;
 import de.symeda.sormas.backend.infrastructure.facility.Facility;
 import de.symeda.sormas.backend.user.UserRole;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity(name = DiseaseConfiguration.TABLE_NAME)
 @AuditIgnore(retainWrites = true)
-public class DiseaseConfiguration extends AbstractDomainObject {
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+public class DiseaseConfiguration extends InfrastructureAdo {
 
 	private static final long serialVersionUID = -7653585175036656526L;
 

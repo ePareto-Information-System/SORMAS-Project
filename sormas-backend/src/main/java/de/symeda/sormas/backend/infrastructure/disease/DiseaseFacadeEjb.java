@@ -2,21 +2,22 @@ package de.symeda.sormas.backend.infrastructure.disease;
 
 
 import de.symeda.sormas.api.common.Page;
-import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.disease.*;
 import de.symeda.sormas.api.infrastructure.facility.FacilityHelper;
+import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
 import de.symeda.sormas.backend.disease.DiseaseConfiguration;
-import de.symeda.sormas.backend.feature.FeatureConfigurationFacadeEjb;
+import de.symeda.sormas.backend.feature.FeatureConfigurationFacadeEjb.FeatureConfigurationFacadeEjbLocal;
 import de.symeda.sormas.backend.infrastructure.AbstractInfrastructureFacadeEjb;
 import de.symeda.sormas.backend.infrastructure.facility.Facility;
 import de.symeda.sormas.backend.infrastructure.facility.FacilityFacadeEjb;
-import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.QueryHelper;
+import de.symeda.sormas.backend.util.RightsAllowed;
 import org.apache.commons.collections.CollectionUtils;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.criteria.*;
@@ -25,15 +26,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Stateless(name = "DiseaseFacade")
+@RightsAllowed(UserRight._INFRASTRUCTURE_VIEW)
 public class DiseaseFacadeEjb extends AbstractInfrastructureFacadeEjb<DiseaseConfiguration, DiseaseDto, DiseaseIndexDto, DiseaseReferenceDto, DiseaseService, DiseaseCriteria> implements DiseaseFacade {
 
     public DiseaseFacadeEjb(){}
 
     @Inject
-    protected DiseaseFacadeEjb(DiseaseService service, FeatureConfigurationFacadeEjb.FeatureConfigurationFacadeEjbLocal featureConfiguration,
-                                UserService userService) {
-        super(DiseaseConfiguration.class, DiseaseDto.class, service, featureConfiguration, userService,
-                Validations.importFacilityAlreadyExists);
+    protected DiseaseFacadeEjb(DiseaseService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
+        super(
+                DiseaseConfiguration.class,
+                DiseaseDto.class,
+                service,
+                featureConfiguration,
+                "",
+                null,
+                "");
     }
 
     @Override
@@ -88,6 +95,9 @@ public class DiseaseFacadeEjb extends AbstractInfrastructureFacadeEjb<DiseaseCon
     }
 
     @Override
+    @RightsAllowed({
+            UserRight._INFRASTRUCTURE_CREATE,
+            UserRight._INFRASTRUCTURE_EDIT })
     public long count(DiseaseCriteria criteria) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
@@ -112,6 +122,22 @@ public class DiseaseFacadeEjb extends AbstractInfrastructureFacadeEjb<DiseaseCon
     }
 
     @Override
+    protected DiseaseConfiguration fillOrBuildEntity(DiseaseDto source, DiseaseConfiguration target, boolean checkChangeDate, boolean allowUuidOverwrite) {
+        target = DtoHelper.fillOrBuildEntity(source, target, DiseaseConfiguration::new, checkChangeDate);
+
+        target.setDisease(source.getDisease());
+        if (source.getFacilities() == null) {
+            source.setFacilities(new ArrayList<>());
+        } else {
+            target.setFacilities(source.getFacilities().stream().map(facilityReferenceDto -> {
+                return mapDtoToEntity(facilityReferenceDto.getUuid());
+            }).collect(Collectors.toSet()));
+        }
+
+        return target;
+    }
+
+    @Override
     public List<DiseaseReferenceDto> getReferencesByExternalId(String externalId, boolean includeArchivedEntities) {
         return null;
     }
@@ -126,11 +152,6 @@ public class DiseaseFacadeEjb extends AbstractInfrastructureFacadeEjb<DiseaseCon
     @Override
     public List<DiseaseReferenceDto> getAllActiveAsReference() {
         return service.getAllActive().stream().map(DiseaseFacadeEjb::toReferenceDto).collect(Collectors.toList());
-    }
-
-    @Override
-    protected void selectDtoFields(CriteriaQuery<DiseaseDto> cq, Root<DiseaseConfiguration> root) {
-
     }
 
     @Override
@@ -167,7 +188,6 @@ public class DiseaseFacadeEjb extends AbstractInfrastructureFacadeEjb<DiseaseCon
         target.setDisease(source.getDisease());
         target.setActive(source.getActive());
         target.setPrimaryDisease(source.getPrimaryDisease());
-        target.setCaseBased(source.getCaseBased());
         target.setFollowUpEnabled(source.getFollowUpEnabled());
         target.setFollowUpDuration(source.getFollowUpDuration());
         target.setCaseFollowUpDuration(source.getCaseFollowUpDuration());
@@ -208,6 +228,19 @@ public class DiseaseFacadeEjb extends AbstractInfrastructureFacadeEjb<DiseaseCon
     public DiseaseDto getByUuid(String uuid) {
         DiseaseConfiguration diseaseDto = service.getByUuid(uuid);
         return toDto(diseaseDto);
+    }
+
+    @LocalBean
+    @Stateless
+    public static class DiseaseFacadeEjbLocal extends DiseaseFacadeEjb {
+
+        public DiseaseFacadeEjbLocal() {
+        }
+
+        @Inject
+        protected DiseaseFacadeEjbLocal(DiseaseService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
+            super(service, featureConfiguration);
+        }
     }
 
 }
