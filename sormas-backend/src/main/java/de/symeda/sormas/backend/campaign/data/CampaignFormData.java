@@ -25,6 +25,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
@@ -32,13 +33,12 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Type;
 
-import de.symeda.auditlog.api.Audited;
-import de.symeda.auditlog.api.AuditedIgnore;
 import de.symeda.sormas.api.campaign.data.CampaignFormDataEntry;
 import de.symeda.sormas.api.campaign.data.CampaignFormDataReferenceDto;
 import de.symeda.sormas.backend.campaign.Campaign;
 import de.symeda.sormas.backend.campaign.form.CampaignFormMeta;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
+import de.symeda.sormas.backend.common.NotExposedToApi;
 import de.symeda.sormas.backend.infrastructure.community.Community;
 import de.symeda.sormas.backend.infrastructure.district.District;
 import de.symeda.sormas.backend.infrastructure.region.Region;
@@ -46,7 +46,6 @@ import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.util.ModelConstants;
 
 @Entity(name = "campaignformdata")
-@Audited
 public class CampaignFormData extends AbstractDomainObject {
 
 	public static final String TABLE_NAME = "campaignformdata";
@@ -59,6 +58,7 @@ public class CampaignFormData extends AbstractDomainObject {
 	public static final String DISTRICT = "district";
 	public static final String COMMUNITY = "community";
 	public static final String ARCHIVED = "archived";
+	public static final String CREATING_USER = "creatingUser";
 
 	private static final long serialVersionUID = -8021065433714419288L;
 
@@ -70,9 +70,9 @@ public class CampaignFormData extends AbstractDomainObject {
 	private District district;
 	private Community community;
 	private User creatingUser;
+	@NotExposedToApi
 	private boolean archived;
 
-	@AuditedIgnore
 	@Type(type = ModelConstants.HIBERNATE_TYPE_JSON)
 	@Column(columnDefinition = ModelConstants.COLUMN_DEFINITION_JSON)
 	public List<CampaignFormDataEntry> getFormValues() {
@@ -112,7 +112,7 @@ public class CampaignFormData extends AbstractDomainObject {
 		this.formDate = formDate;
 	}
 
-	@ManyToOne()
+	@ManyToOne(fetch = FetchType.LAZY)
 	public Region getRegion() {
 		return region;
 	}
@@ -121,7 +121,7 @@ public class CampaignFormData extends AbstractDomainObject {
 		this.region = region;
 	}
 
-	@ManyToOne()
+	@ManyToOne(fetch = FetchType.LAZY)
 	public District getDistrict() {
 		return district;
 	}
@@ -130,7 +130,7 @@ public class CampaignFormData extends AbstractDomainObject {
 		this.district = district;
 	}
 
-	@ManyToOne()
+	@ManyToOne(fetch = FetchType.LAZY)
 	public Community getCommunity() {
 		return community;
 	}
@@ -139,7 +139,7 @@ public class CampaignFormData extends AbstractDomainObject {
 		this.community = community;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
 	public User getCreatingUser() {
 		return creatingUser;

@@ -18,7 +18,6 @@
 package de.symeda.sormas.ui.dashboard.surveillance;
 
 import com.vaadin.navigator.ViewChangeListener;
-
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.NewCaseDateType;
 import de.symeda.sormas.ui.dashboard.AbstractDashboardView;

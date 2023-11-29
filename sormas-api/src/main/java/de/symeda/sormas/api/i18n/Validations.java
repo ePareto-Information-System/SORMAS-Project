@@ -37,6 +37,8 @@ public interface Validations {
 	String campaignFormUnsupportedDependingOnValue = "campaignFormUnsupportedDependingOnValue";
 	String campaignFormUnsupportedStyle = "campaignFormUnsupportedStyle";
 	String campaignFormUnsupportedType = "campaignFormUnsupportedType";
+	String cantRemoveLastRole = "cantRemoveLastRole";
+	String captionNotUnique = "captionNotUnique";
 	String caseClassificationInvalid = "caseClassificationInvalid";
 	String caseMultipleInfectionEnvironments = "caseMultipleInfectionEnvironments";
 	String contactFollowUpUntilDate = "contactFollowUpUntilDate";
@@ -71,6 +73,7 @@ public interface Validations {
 	String externalMessageFetchError = "externalMessageFetchError";
 	String externalMessageInitError = "externalMessageInitError";
 	String externalMessagePdfConversionError = "externalMessagePdfConversionError";
+	String externalMessageRefersToMultipleEntities = "externalMessageRefersToMultipleEntities";
 	String feverTemperatureAboveThreshold = "feverTemperatureAboveThreshold";
 	String feverTemperatureBelowThreshold = "feverTemperatureBelowThreshold";
 	String fileTooBig = "fileTooBig";
@@ -125,6 +128,11 @@ public interface Validations {
 	String importWrongDataTypeError = "importWrongDataTypeError";
 	String infrastructureDataLocked = "infrastructureDataLocked";
 	String investigationStatusUnclassifiedCase = "investigationStatusUnclassifiedCase";
+	String jurisdictionChangeUserAssignment = "jurisdictionChangeUserAssignment";
+	String missingRequiredUserRightsBaseText = "missingRequiredUserRightsBaseText";
+	String missingRequiredUserRightsLargeDependency = "missingRequiredUserRightsLargeDependency";
+	String missingRequiredUserRightsNoDependency = "missingRequiredUserRightsNoDependency";
+	String missingRequiredUserRightsSmallDependency = "missingRequiredUserRightsSmallDependency";
 	String nameOrAnyOtherFieldShouldBeFilled = "nameOrAnyOtherFieldShouldBeFilled";
 	String noAddressCommunityInAddressDistrict = "noAddressCommunityInAddressDistrict";
 	String noAddressDistrictInAddressRegion = "noAddressDistrictInAddressRegion";
@@ -164,6 +172,10 @@ public interface Validations {
 	String personMultiplePrimaryPhoneNumbers = "personMultiplePrimaryPhoneNumbers";
 	String phoneNumberValidation = "phoneNumberValidation";
 	String emailAddressValidation = "emailAddressValidation";
+	String removeRolesWithEditRightFromOwnUser = "removeRolesWithEditRightFromOwnUser";
+	String removeRolesWithEditUserFromOwnUser = "removeRolesWithEditUserFromOwnUser";
+	String removeUserEditRightFromOwnUser = "removeUserEditRightFromOwnUser";
+	String removeUserRightEditRightFromOwnUser = "removeUserRightEditRightFromOwnUser";
 	String required = "required";
 	String requiredField = "requiredField";
 	String softAddEntryToList = "softAddEntryToList";
@@ -172,11 +184,14 @@ public interface Validations {
 	String sormasToSormasAcceptContactHasNoCase = "sormasToSormasAcceptContactHasNoCase";
 	String sormasToSormasAcceptContactWithoutCaseShared = "sormasToSormasAcceptContactWithoutCaseShared";
 	String sormasToSormasCaseExists = "sormasToSormasCaseExists";
+	String sormasToSormasCaseSampleHasAssociatedContact = "sormasToSormasCaseSampleHasAssociatedContact";
+	String sormasToSormasCommentMissing = "sormasToSormasCommentMissing";
 	String sormasToSormasCommunity = "sormasToSormasCommunity";
 	String sormasToSormasContactCaseNotExists = "sormasToSormasContactCaseNotExists";
 	String sormasToSormasContactCaseNotShared = "sormasToSormasContactCaseNotShared";
 	String sormasToSormasContactExists = "sormasToSormasContactExists";
 	String sormasToSormasContactHasNoCase = "sormasToSormasContactHasNoCase";
+	String sormasToSormasContactSampleHasAssociatedCase = "sormasToSormasContactSampleHasAssociatedCase";
 	String sormasToSormasContinent = "sormasToSormasContinent";
 	String sormasToSormasCountry = "sormasToSormasCountry";
 	String sormasToSormasDistrict = "sormasToSormasDistrict";
@@ -202,8 +217,11 @@ public interface Validations {
 	String sormasToSormasSenderNameMissing = "sormasToSormasSenderNameMissing";
 	String sormasToSormasShareInfoMissing = "sormasToSormasShareInfoMissing";
 	String sormasToSormasSubcontinent = "sormasToSormasSubcontinent";
+	String sormasToSormasSurveillanceReportExists = "sormasToSormasSurveillanceReportExists";
+	String specifyCaption = "specifyCaption";
 	String specifyEpiWeek = "specifyEpiWeek";
 	String specifyFirstName = "specifyFirstName";
+	String specifyJurisdictionLevel = "specifyJurisdictionLevel";
 	String specifyLastName = "specifyLastName";
 	String specifySex = "specifySex";
 	String specifyYear = "specifyYear";
@@ -224,7 +242,6 @@ public interface Validations {
 	String validDisease = "validDisease";
 	String validDistrict = "validDistrict";
 	String validEmailAddress = "validEmailAddress";
-	String validEventInvestigationStatus = "validEventInvestigationStatus";
 	String validEventStatus = "validEventStatus";
 	String validEventTitle = "validEventTitle";
 	String validFacility = "validFacility";

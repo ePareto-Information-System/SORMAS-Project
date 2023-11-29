@@ -31,8 +31,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import de.symeda.auditlog.api.Audited;
-import de.symeda.auditlog.api.AuditedIgnore;
 import de.symeda.sormas.api.caze.VaccinationStatus;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.common.CoreAdo;
@@ -42,11 +40,10 @@ import de.symeda.sormas.backend.person.Person;
 import de.symeda.sormas.backend.sample.Sample;
 import de.symeda.sormas.backend.sormastosormas.entities.SormasToSormasShareable;
 import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfo;
-import de.symeda.sormas.backend.sormastosormas.share.shareinfo.SormasToSormasShareInfo;
+import de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShareInfo;
 import de.symeda.sormas.backend.user.User;
 
 @Entity
-@Audited
 public class EventParticipant extends CoreAdo implements SormasToSormasShareable {
 
 	private static final long serialVersionUID = -9006001699517297107L;
@@ -77,7 +74,7 @@ public class EventParticipant extends CoreAdo implements SormasToSormasShareable
 	private List<SormasToSormasShareInfo> sormasToSormasShares = new ArrayList<>(0);
 	private VaccinationStatus vaccinationStatus;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(nullable = false)
 	public User getReportingUser() {
 		return reportingUser;
@@ -134,7 +131,7 @@ public class EventParticipant extends CoreAdo implements SormasToSormasShareable
 		this.samples = samples;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	public Region getRegion() {
 		return region;
 	}
@@ -143,7 +140,7 @@ public class EventParticipant extends CoreAdo implements SormasToSormasShareable
 		this.region = region;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	public District getDistrict() {
 		return district;
 	}
@@ -158,7 +155,6 @@ public class EventParticipant extends CoreAdo implements SormasToSormasShareable
 			CascadeType.MERGE,
 			CascadeType.DETACH,
 			CascadeType.REFRESH })
-	@AuditedIgnore
 	public SormasToSormasOriginInfo getSormasToSormasOriginInfo() {
 		return sormasToSormasOriginInfo;
 	}
@@ -169,7 +165,6 @@ public class EventParticipant extends CoreAdo implements SormasToSormasShareable
 	}
 
 	@OneToMany(mappedBy = SormasToSormasShareInfo.EVENT_PARTICIPANT, fetch = FetchType.LAZY)
-	@AuditedIgnore
 	public List<SormasToSormasShareInfo> getSormasToSormasShares() {
 		return sormasToSormasShares;
 	}

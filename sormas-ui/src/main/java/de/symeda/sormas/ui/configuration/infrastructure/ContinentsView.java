@@ -48,6 +48,8 @@ import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.configuration.AbstractConfigurationView;
 import de.symeda.sormas.ui.configuration.infrastructure.components.SearchField;
+import de.symeda.sormas.ui.utils.ArchiveHandlers;
+import de.symeda.sormas.ui.utils.ArchiveMessages;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.ComboBoxHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
@@ -87,7 +89,8 @@ public class ContinentsView extends AbstractConfigurationView {
 		grid = new ContinentsGrid(criteria);
 		gridLayout = new VerticalLayout();
 		gridLayout.addComponent(createFilterBar());
-		rowCount = new RowCount(Strings.labelNumberOfContinents, grid.getItemCount());
+		rowCount = new RowCount(Strings.labelNumberOfContinents, grid.getDataSize());
+		grid.addDataSizeChangeListener(e -> rowCount.update(grid.getDataSize()));
 		gridLayout.addComponent(rowCount);
 		gridLayout.addComponent(grid);
 		gridLayout.setMargin(true);
@@ -102,14 +105,14 @@ public class ContinentsView extends AbstractConfigurationView {
 			importButton = ButtonHelper.createIconButton(Captions.actionImport, VaadinIcons.UPLOAD, e -> {
 				Window window = VaadinUiUtil.showPopupWindow(new InfrastructureImportLayout(InfrastructureType.CONTINENT));
 				window.setCaption(I18nProperties.getString(Strings.headingImportContinents));
-				window.addCloseListener(c -> grid.reload(true));
+				window.addCloseListener(c -> grid.reload());
 			}, ValoTheme.BUTTON_PRIMARY);
 			addHeaderComponent(importButton);
 
 			importDefaultContinentsButton = ButtonHelper.createIconButton(Captions.actionImportAllContinents, VaadinIcons.UPLOAD, e -> {
 				Window window = VaadinUiUtil.showPopupWindow(new ImportDefaultContinentsLayout());
 				window.setCaption(I18nProperties.getString(Strings.headingImportAllContinents));
-				window.addCloseListener(c -> grid.reload(true));
+				window.addCloseListener(c -> grid.reload());
 			}, ValoTheme.BUTTON_PRIMARY);
 			addHeaderComponent(importDefaultContinentsButton);
 		} else if (!infrastructureDataEditable) {
@@ -129,7 +132,7 @@ public class ContinentsView extends AbstractConfigurationView {
 				grid,
 				this::getSelectedRows,
 				ExportEntityName.CONTINENTS,
-				Collections.singletonList(ContinentsGrid.EDIT_BTN_ID),
+				Collections.singletonList(ContinentsGrid.ACTION_BTN_ID),
 				Collections.singletonList(ContinentIndexDto.DEFAULT_NAME));
 			FileDownloader fileDownloader = new FileDownloader(streamResource);
 			fileDownloader.extend(exportButton);
@@ -212,10 +215,11 @@ public class ContinentsView extends AbstractConfigurationView {
 				relevanceStatusFilter.setId("relevanceStatus");
 				relevanceStatusFilter.setWidth(220, Unit.PERCENTAGE);
 				relevanceStatusFilter.setNullSelectionAllowed(false);
-				relevanceStatusFilter.addItems((Object[]) EntityRelevanceStatus.values());
+				relevanceStatusFilter.addItems(EntityRelevanceStatus.getAllExceptDeleted());
 				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ACTIVE, I18nProperties.getCaption(Captions.continentActiveContinents));
 				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ARCHIVED, I18nProperties.getCaption(Captions.continentArchivedContinents));
-				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ALL, I18nProperties.getCaption(Captions.continentAllContinents));
+				relevanceStatusFilter
+					.setItemCaption(EntityRelevanceStatus.ACTIVE_AND_ARCHIVED, I18nProperties.getCaption(Captions.continentAllContinents));
 				relevanceStatusFilter.addValueChangeListener(e -> {
 					criteria.relevanceStatus((EntityRelevanceStatus) e.getProperty().getValue());
 					navigateTo(criteria);
@@ -233,22 +237,22 @@ public class ContinentsView extends AbstractConfigurationView {
 								ControllerProvider.getInfrastructureController()
 									.archiveOrDearchiveAllSelectedItems(
 										true,
-										grid.asMultiSelect().getSelectedItems(),
-										InfrastructureType.CONTINENT,
+										ArchiveHandlers.forInfrastructure(FacadeProvider.getContinentFacade(), ArchiveMessages.CONTINENT),
+										grid,
+										grid::reload,
 										() -> navigateTo(criteria));
 							},
 							EntityRelevanceStatus.ACTIVE.equals(criteria.getRelevanceStatus())),
 						new MenuBarHelper.MenuBarItem(
 							I18nProperties.getCaption(Captions.actionDearchiveInfrastructure),
 							VaadinIcons.ARCHIVE,
-							selectedItem -> {
-								ControllerProvider.getInfrastructureController()
-									.archiveOrDearchiveAllSelectedItems(
-										false,
-										grid.asMultiSelect().getSelectedItems(),
-										InfrastructureType.CONTINENT,
-										() -> navigateTo(criteria));
-							},
+							selectedItem -> ControllerProvider.getInfrastructureController()
+								.archiveOrDearchiveAllSelectedItems(
+									false,
+									ArchiveHandlers.forInfrastructure(FacadeProvider.getContinentFacade(), ArchiveMessages.CONTINENT),
+									grid,
+									grid::reload,
+									() -> navigateTo(criteria)),
 							EntityRelevanceStatus.ARCHIVED.equals(criteria.getRelevanceStatus())));
 
 					bulkOperationsDropdown.setVisible(isBulkOperationsDropdownVisible());
@@ -274,7 +278,6 @@ public class ContinentsView extends AbstractConfigurationView {
 		}
 		updateFilterComponents();
 		grid.reload();
-		rowCount.update(grid.getItemCount());
 	}
 
 	public void updateFilterComponents() {

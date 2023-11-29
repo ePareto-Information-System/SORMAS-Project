@@ -19,6 +19,7 @@ package de.symeda.sormas.backend.contact;
 
 import static de.symeda.sormas.backend.visit.VisitLogic.getVisitResult;
 import static java.time.temporal.ChronoUnit.DAYS;
+import static java.util.Objects.isNull;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
@@ -30,6 +31,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -51,6 +53,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.inject.Inject;
 import javax.persistence.Query;
+import javax.persistence.Tuple;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
@@ -62,8 +65,10 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolException;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +78,7 @@ import de.symeda.sormas.api.EditPermissionType;
 import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.VisitOrigin;
 import de.symeda.sormas.api.caze.CaseClassification;
+import de.symeda.sormas.api.caze.AgeAndBirthDateDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.caze.CoreAndPersonDto;
 import de.symeda.sormas.api.common.CoreEntityType;
@@ -88,6 +94,7 @@ import de.symeda.sormas.api.contact.ContactFacade;
 import de.symeda.sormas.api.contact.ContactFollowUpDto;
 import de.symeda.sormas.api.contact.ContactIndexDetailedDto;
 import de.symeda.sormas.api.contact.ContactIndexDto;
+import de.symeda.sormas.api.contact.ContactJurisdictionFlagsDto;
 import de.symeda.sormas.api.contact.ContactListEntryDto;
 import de.symeda.sormas.api.contact.ContactLogic;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
@@ -98,6 +105,7 @@ import de.symeda.sormas.api.contact.MapContactDto;
 import de.symeda.sormas.api.contact.MergeContactIndexDto;
 import de.symeda.sormas.api.contact.SimilarContactDto;
 import de.symeda.sormas.api.dashboard.DashboardContactDto;
+import de.symeda.sormas.api.deletionconfiguration.DeletionReference;
 import de.symeda.sormas.api.document.DocumentRelatedEntityType;
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.epidata.EpiDataHelper;
@@ -108,6 +116,7 @@ import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.feature.FeatureTypeProperty;
 import de.symeda.sormas.api.followup.FollowUpDto;
+import de.symeda.sormas.api.followup.FollowUpLogic;
 import de.symeda.sormas.api.followup.FollowUpPeriodDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -122,6 +131,8 @@ import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.sample.SampleCriteria;
 import de.symeda.sormas.api.sormastosormas.ShareTreeCriteria;
+import de.symeda.sormas.api.sormastosormas.SormasToSormasException;
+import de.symeda.sormas.api.sormastosormas.SormasToSormasRuntimeException;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.symptoms.SymptomsHelper;
 import de.symeda.sormas.api.task.TaskContext;
@@ -134,6 +145,7 @@ import de.symeda.sormas.api.utils.AccessDeniedException;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.SortProperty;
+import de.symeda.sormas.api.utils.UtilDate;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.visit.VisitDto;
@@ -141,6 +153,7 @@ import de.symeda.sormas.api.visit.VisitResultDto;
 import de.symeda.sormas.api.visit.VisitStatus;
 import de.symeda.sormas.api.visit.VisitSummaryExportDetailsDto;
 import de.symeda.sormas.api.visit.VisitSummaryExportDto;
+import de.symeda.sormas.backend.FacadeHelper;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.caze.CaseFacadeEjb;
 import de.symeda.sormas.backend.caze.CaseFacadeEjb.CaseFacadeEjbLocal;
@@ -148,7 +161,6 @@ import de.symeda.sormas.backend.caze.CaseService;
 import de.symeda.sormas.backend.clinicalcourse.HealthConditionsMapper;
 import de.symeda.sormas.backend.common.AbstractCoreFacadeEjb;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
-import de.symeda.sormas.backend.common.ConfigFacadeEjb.ConfigFacadeEjbLocal;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
 import de.symeda.sormas.backend.common.TaskCreationException;
 import de.symeda.sormas.backend.disease.DiseaseConfigurationFacadeEjb.DiseaseConfigurationFacadeEjbLocal;
@@ -187,8 +199,8 @@ import de.symeda.sormas.backend.sormastosormas.SormasToSormasFacadeEjb.SormasToS
 import de.symeda.sormas.backend.sormastosormas.entities.contact.SormasToSormasContactFacadeEjb.SormasToSormasContactFacadeEjbLocal;
 import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfoFacadeEjb;
 import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfoFacadeEjb.SormasToSormasOriginInfoFacadeEjbLocal;
-import de.symeda.sormas.backend.sormastosormas.share.shareinfo.ShareInfoHelper;
-import de.symeda.sormas.backend.sormastosormas.share.shareinfo.SormasToSormasShareInfo;
+import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfoService;
+import de.symeda.sormas.backend.sormastosormas.share.outgoing.ShareInfoHelper;
 import de.symeda.sormas.backend.symptoms.Symptoms;
 import de.symeda.sormas.backend.symptoms.SymptomsFacadeEjb;
 import de.symeda.sormas.backend.task.Task;
@@ -197,8 +209,6 @@ import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.user.UserFacadeEjb;
 import de.symeda.sormas.backend.user.UserReference;
 import de.symeda.sormas.backend.user.UserRoleFacadeEjb;
-import de.symeda.sormas.backend.user.UserService;
-import de.symeda.sormas.backend.util.DateHelper8;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.IterableHelper;
 import de.symeda.sormas.backend.util.JurisdictionHelper;
@@ -220,12 +230,8 @@ public class ContactFacadeEjb
 	extends AbstractCoreFacadeEjb<Contact, ContactDto, ContactIndexDto, ContactReferenceDto, ContactService, ContactCriteria>
 	implements ContactFacade {
 
-	private static final long SECONDS_30_DAYS = TimeUnit.DAYS.toSeconds(30L);
-
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-	@EJB
-	private ConfigFacadeEjbLocal configFacade;
 	@EJB
 	private ContactListCriteriaBuilder listCriteriaBuilder;
 	@EJB
@@ -251,7 +257,7 @@ public class ContactFacadeEjb
 	@EJB
 	private EpiDataFacadeEjbLocal epiDataFacade;
 	@EJB
-	private SormasToSormasOriginInfoFacadeEjbLocal originInfoFacade;
+	private SormasToSormasOriginInfoService originInfoService;
 	@EJB
 	private FeatureConfigurationFacadeEjbLocal featureConfigurationFacade;
 	@EJB
@@ -281,20 +287,15 @@ public class ContactFacadeEjb
 	@EJB
 	private UserRoleFacadeEjb.UserRoleFacadeEjbLocal userRoleFacadeEjb;
 
-	@Resource
-	private ManagedScheduledExecutorService executorService;
+//	@Resource
+//	private ManagedScheduledExecutorService executorService;
 
 	public ContactFacadeEjb() {
 	}
 
 	@Inject
-	public ContactFacadeEjb(ContactService service, UserService userService) {
-		super(Contact.class, ContactDto.class, service, userService);
-	}
-
-	@Override
-	protected void selectDtoFields(CriteriaQuery<ContactDto> cq, Root<Contact> root) {
-
+	public ContactFacadeEjb(ContactService service) {
+		super(Contact.class, ContactDto.class, service);
 	}
 
 	@Override
@@ -353,7 +354,7 @@ public class ContactFacadeEjb
 		ContactDto contactDto = coreAndPersonDto.getCoreData();
 		CoreAndPersonDto savedCoreAndPersonDto = new CoreAndPersonDto();
 		if (coreAndPersonDto.getPerson() != null) {
-			PersonDto newlyCreatedPersonDto = personFacade.savePerson(coreAndPersonDto.getPerson());
+			PersonDto newlyCreatedPersonDto = personFacade.save(coreAndPersonDto.getPerson());
 			contactDto.setPerson(newlyCreatedPersonDto.toReference());
 			savedCoreAndPersonDto.setPerson(newlyCreatedPersonDto);
 		}
@@ -366,18 +367,30 @@ public class ContactFacadeEjb
 		UserRight._CONTACT_CREATE,
 		UserRight._CONTACT_EDIT })
 	public ContactDto save(ContactDto dto, boolean handleChanges, boolean handleCaseChanges, boolean checkChangeDate, boolean internal) {
-		final Contact existingContact = dto.getUuid() != null ? service.getByUuid(dto.getUuid()) : null;
+		final Contact existingContact = dto.getUuid() != null ? service.getByUuid(dto.getUuid(), true) : null;
+		FacadeHelper.checkCreateAndEditRights(existingContact, userService, UserRight.CONTACT_CREATE, UserRight.CONTACT_EDIT);
 
-		if (internal && existingContact != null && !service.isEditAllowed(existingContact).equals(EditPermissionType.ALLOWED)) {
+		if (internal && existingContact != null && !service.isEditAllowed(existingContact)) {
 			throw new AccessDeniedException(I18nProperties.getString(Strings.errorContactNotEditable));
+		}
+
+		if (existingContact != null && internal) {
+			EditPermissionType editPermission = service.getEditPermissionType(existingContact);
+			if (editPermission == EditPermissionType.OUTSIDE_JURISDICTION) {
+				throw new AccessDeniedException(I18nProperties.getString(Strings.errorContactNotEditableOutsideJurisdiction));
+			} else if (editPermission != EditPermissionType.ALLOWED) {
+				throw new AccessDeniedException(I18nProperties.getString(Strings.errorContactNotEditable));
+			}
 		}
 
 		final ContactDto existingContactDto = toDto(existingContact);
 
-		restorePseudonymizedDto(dto, existingContactDto, existingContact, Pseudonymizer.getDefault(userService::hasRight));
+		restorePseudonymizedDto(dto, existingContactDto, existingContact);
 
 		validateUserRights(dto, existingContactDto);
 		validate(dto);
+		dto.setReportDateTime(DataHelper.removeTime(dto.getReportDateTime()));
+		dto.setLastContactDate(DataHelper.removeTime(dto.getLastContactDate()));
 
 		externalJournalService.handleExternalJournalPersonUpdateAsync(dto.getPerson());
 
@@ -431,7 +444,7 @@ public class ContactFacadeEjb
 	@PermitAll
 	public void onContactChanged(ContactDto contact, boolean syncShares) {
 		if (syncShares && sormasToSormasFacade.isFeatureConfigured()) {
-			syncSharesAsync(new ShareTreeCriteria(contact.getUuid()));
+			//syncSharesAsync(new ShareTreeCriteria(contact.getUuid()));
 		}
 	}
 
@@ -452,16 +465,16 @@ public class ContactFacadeEjb
 		}
 	}
 
-	@RightsAllowed(UserRight._CONTACT_EDIT)
-	public void syncSharesAsync(ShareTreeCriteria criteria) {
-		executorService.schedule(() -> {
-			sormasToSormasContactFacade.syncShares(criteria);
-		}, 5, TimeUnit.SECONDS);
-	}
+//	@RightsAllowed(UserRight._CONTACT_EDIT)
+//	public void syncSharesAsync(ShareTreeCriteria criteria) {
+//		executorService.schedule(() -> {
+//			sormasToSormasContactFacade.syncShares(criteria);
+//		}, 5, TimeUnit.SECONDS);
+//	}
 
 	private void createInvestigationTask(Contact entity) {
 		LocalDate now = LocalDate.now();
-		LocalDate reportDate = DateHelper8.toLocalDate(entity.getReportDateTime());
+		LocalDate reportDate = UtilDate.toLocalDate(entity.getReportDateTime());
 		if (DAYS.between(reportDate, now) <= 30) {
 			try {
 				User assignee = taskService.getTaskAssignee(entity);
@@ -503,6 +516,8 @@ public class ContactFacadeEjb
 	}
 
 	@Override
+	@RightsAllowed({
+		UserRight._DASHBOARD_CONTACT_VIEW })
 	public Long countContactsForMap(RegionReferenceDto regionRef, DistrictReferenceDto districtRef, Disease disease, Date from, Date to) {
 		Region region = regionService.getByReferenceDto(regionRef);
 		District district = districtService.getByReferenceDto(districtRef);
@@ -511,6 +526,8 @@ public class ContactFacadeEjb
 	}
 
 	@Override
+	@RightsAllowed({
+		UserRight._DASHBOARD_CONTACT_VIEW })
 	public List<MapContactDto> getContactsForMap(
 		RegionReferenceDto regionRef,
 		DistrictReferenceDto districtRef,
@@ -548,28 +565,73 @@ public class ContactFacadeEjb
 		deleteContact(contact, deletionDetails);
 	}
 
-	private void deleteContact(Contact contact, DeletionDetails deletionDetails) {
-		externalJournalService.handleExternalJournalPersonUpdateAsync(contact.getPerson().toReference());
-		service.delete(contact, deletionDetails);
-		if (contact.getCaze() != null) {
-			caseFacade.onCaseChanged(caseFacade.toDto(contact.getCaze()), contact.getCaze());
-		}
-	}
-
+	@Override
 	@RightsAllowed(UserRight._CONTACT_DELETE)
-	public List<String> deleteContacts(List<String> contactUuids, DeletionDetails deletionDetails) {
+	public List<String> delete(List<String> uuids, DeletionDetails deletionDetails) {
 		List<String> deletedContactUuids = new ArrayList<>();
-		List<Contact> contactsToBeDeleted = service.getByUuids(contactUuids);
+		List<Contact> contactsToBeDeleted = service.getByUuids(uuids);
 		if (contactsToBeDeleted != null) {
 			contactsToBeDeleted.forEach(contactToBeDeleted -> {
 				if (!contactToBeDeleted.isDeleted()) {
-					deleteContact(contactToBeDeleted, deletionDetails);
-					deletedContactUuids.add(contactToBeDeleted.getUuid());
+					try {
+						deleteContact(contactToBeDeleted, deletionDetails);
+						deletedContactUuids.add(contactToBeDeleted.getUuid());
+					} catch (AccessDeniedException e) {
+						logger.error("The contact with uuid {} could not be deleted", contactToBeDeleted.getUuid(), e);
+					}
 				}
 			});
 		}
 		return deletedContactUuids;
+	}
 
+	@Override
+	@RightsAllowed(UserRight._CONTACT_DELETE)
+	public void restore(String uuid) {
+		super.restore(uuid);
+	}
+
+	@Override
+	protected void pseudonymizeDto(Contact source, ContactDto dto, Pseudonymizer pseudonymizer) {
+
+	}
+
+	@Override
+	@RightsAllowed(UserRight._CONTACT_DELETE)
+	public List<String> restore(List<String> uuids) {
+		List<String> restoredContactUuids = new ArrayList<>();
+		List<Contact> contactsToBeRestored = contactService.getByUuids(uuids);
+
+		if (contactsToBeRestored != null) {
+			contactsToBeRestored.forEach(contactToBeRestored -> {
+				try {
+					restore(contactToBeRestored.getUuid());
+					restoredContactUuids.add(contactToBeRestored.getUuid());
+				} catch (Exception e) {
+					logger.error("The contact with uuid:" + contactToBeRestored.getUuid() + "could not be restored");
+				}
+			});
+		}
+
+		return restoredContactUuids;
+	}
+
+	private void deleteContact(Contact contact, DeletionDetails deletionDetails) {
+
+		if (!contactService.inJurisdictionOrOwned(contact)) {
+			throw new AccessDeniedException(I18nProperties.getString(Strings.messageContactOutsideJurisdictionDeletionDenied));
+		}
+		externalJournalService.handleExternalJournalPersonUpdateAsync(contact.getPerson().toReference());
+		try {
+			sormasToSormasFacade.revokePendingShareRequests(contact.getSormasToSormasShares(), true);
+		} catch (SormasToSormasException e) {
+			throw new SormasToSormasRuntimeException(e);
+		}
+
+		service.delete(contact, deletionDetails);
+		if (contact.getCaze() != null) {
+			caseFacade.onCaseChanged(caseFacade.toDto(contact.getCaze()), contact.getCaze());
+		}
 	}
 
 	@Override
@@ -758,7 +820,7 @@ public class ContactFacadeEjb
 						cb.equal(exposuresRoot.get(Exposure.EXPOSURE_TYPE), ExposureType.BURIAL)));
 				exposuresCq.where(exposuresPredicate);
 				exposuresCq.orderBy(cb.asc(exposuresEpiDataJoin.get(EpiData.ID)));
-				List<Exposure> exposureList = em.createQuery(exposuresCq).setHint(ModelConstants.HINT_HIBERNATE_READ_ONLY, true).getResultList();
+				List<Exposure> exposureList = em.createQuery(exposuresCq).setHint(ModelConstants.READ_ONLY, true).getResultList();
 				exposures = exposureList.stream().collect(Collectors.groupingBy(e -> e.getEpiData().getId()));
 			}
 
@@ -776,7 +838,7 @@ public class ContactFacadeEjb
 							cb.equal(immunizationsCqRoot.get(Immunization.MEANS_OF_IMMUNIZATION), MeansOfImmunization.VACCINATION),
 							cb.equal(immunizationsCqRoot.get(Immunization.MEANS_OF_IMMUNIZATION), MeansOfImmunization.VACCINATION_RECOVERY)),
 						personIdsExpr.in(exportContacts.stream().map(ContactExportDto::getPersonId).collect(Collectors.toList()))));
-				immunizationList = em.createQuery(immunizationsCq).setHint(ModelConstants.HINT_HIBERNATE_READ_ONLY, true).getResultList();
+				immunizationList = em.createQuery(immunizationsCq).setHint(ModelConstants.READ_ONLY, true).getResultList();
 				immunizations = immunizationList.stream().collect(Collectors.groupingBy(i -> i.getPerson().getId()));
 			}
 
@@ -812,7 +874,7 @@ public class ContactFacadeEjb
 					exportContact.setNumberOfVisits(visits.size());
 
 					if (lastCooperativeVisit != null) {
-						SymptomsDto symptoms = SymptomsFacadeEjb.toDto(lastCooperativeVisit.getSymptoms());
+						SymptomsDto symptoms = SymptomsFacadeEjb.toSymptomsDto(lastCooperativeVisit.getSymptoms());
 						pseudonymizer.pseudonymizeDto(SymptomsDto.class, symptoms, inJurisdiction, null);
 
 						exportContact.setLastCooperativeVisitDate(lastCooperativeVisit.getVisitDateTime());
@@ -996,7 +1058,7 @@ public class ContactFacadeEjb
 
 			Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight, I18nProperties.getCaption(Captions.inaccessibleValue));
 			visitSummaryDetails.forEach(v -> {
-				SymptomsDto symptoms = SymptomsFacadeEjb.toDto(v.getSymptoms());
+				SymptomsDto symptoms = SymptomsFacadeEjb.toSymptomsDto(v.getSymptoms());
 				pseudonymizer.pseudonymizeDto(SymptomsDto.class, symptoms, v.getInJurisdiction(), null);
 
 				visitSummaryMap.get(v.getContactId())
@@ -1211,13 +1273,30 @@ public class ContactFacadeEjb
 	@Override
 	public List<ContactIndexDto> getIndexList(ContactCriteria contactCriteria, Integer first, Integer max, List<SortProperty> sortProperties) {
 
-		CriteriaQuery<ContactIndexDto> query = listCriteriaBuilder.buildIndexCriteria(contactCriteria, sortProperties);
-		List<ContactIndexDto> dtos = QueryHelper.getResultList(em, query, first, max);
+		CriteriaQuery<Tuple> cqIds = listCriteriaBuilder.buildIndexCriteriaPrefetchIds(contactCriteria, sortProperties);
+		List<Long> indexListIds =
+			QueryHelper.getResultList(em, cqIds, first, max).stream().map(t -> t.get(0, Long.class)).collect(Collectors.toList());
+
+		List<ContactIndexDto> dtos = new ArrayList<>();
+		IterableHelper.executeBatched(indexListIds, ModelConstants.PARAMETER_LIMIT, batchedIds -> {
+			CriteriaQuery<ContactIndexDto> query = listCriteriaBuilder.buildIndexCriteria(contactCriteria, sortProperties, batchedIds);
+			dtos.addAll(QueryHelper.getResultList(em, query, null, null));
+		});
 
 		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight, I18nProperties.getCaption(Captions.inaccessibleValue));
 		pseudonymizer.pseudonymizeDtoCollection(ContactIndexDto.class, dtos, ContactIndexDto::getInJurisdiction, (c, isInJurisdiction) -> {
 			if (c.getCaze() != null) {
 				pseudonymizer.pseudonymizeDto(CaseReferenceDto.class, c.getCaze(), c.getCaseInJurisdiction(), null);
+			}
+		});
+		dtos.forEach(contact -> {
+			if (diseaseConfigurationFacade.hasFollowUp(contact.getDisease())) {
+				int numberOfMissedVisits =
+					FollowUpLogic.getNumberOfRequiredVisitsSoFar(contact.getReportDateTime(), contact.getFollowUpUntil()) - contact.getVisitCount();
+				if (numberOfMissedVisits < 0) {
+					numberOfMissedVisits = 0;
+				}
+				contact.setMissedVisitsCount(numberOfMissedVisits);
 			}
 		});
 
@@ -1243,23 +1322,33 @@ public class ContactFacadeEjb
 		Integer max,
 		List<SortProperty> sortProperties) {
 
-		CriteriaQuery<ContactIndexDetailedDto> query = listCriteriaBuilder.buildIndexDetailedCriteria(contactCriteria, sortProperties);
-		List<ContactIndexDetailedDto> dtos = QueryHelper.getResultList(em, query, first, max);
+		CriteriaQuery<Tuple> cqIds = listCriteriaBuilder.buildIndexDetailedCriteriaPrefetchIds(contactCriteria, sortProperties);
+		List<Long> indexListIds =
+			QueryHelper.getResultList(em, cqIds, first, max).stream().map(t -> t.get(0, Long.class)).collect(Collectors.toList());
 
-		// Load event count and latest events info per contact
-		Map<String, List<ContactEventSummaryDetails>> eventSummaries =
-			eventService.getEventSummaryDetailsByContacts(dtos.stream().map(ContactIndexDetailedDto::getUuid).collect(Collectors.toList()))
-				.stream()
-				.collect(Collectors.groupingBy(ContactEventSummaryDetails::getContactUuid, Collectors.toList()));
-		for (ContactIndexDetailedDto contact : dtos) {
+		List<ContactIndexDetailedDto> dtos = new ArrayList<>();
+		IterableHelper.executeBatched(indexListIds, ModelConstants.PARAMETER_LIMIT, batchedIds -> {
+			CriteriaQuery<ContactIndexDetailedDto> query =
+				listCriteriaBuilder.buildIndexDetailedCriteria(contactCriteria, sortProperties, batchedIds);
+			dtos.addAll(QueryHelper.getResultList(em, query, null, null));
+		});
 
-			List<ContactEventSummaryDetails> contactEvents = eventSummaries.getOrDefault(contact.getUuid(), Collections.emptyList());
-			contact.setEventCount((long) contactEvents.size());
+		if (userService.hasRight(UserRight.EVENT_VIEW)) {
+			// Load event count and latest events info per contact
+			Map<String, List<ContactEventSummaryDetails>> eventSummaries =
+				eventService.getEventSummaryDetailsByContacts(dtos.stream().map(ContactIndexDetailedDto::getUuid).collect(Collectors.toList()))
+					.stream()
+					.collect(Collectors.groupingBy(ContactEventSummaryDetails::getContactUuid, Collectors.toList()));
+			for (ContactIndexDetailedDto contact : dtos) {
 
-			contactEvents.stream().max(Comparator.comparing(ContactEventSummaryDetails::getEventDate)).ifPresent(eventSummary -> {
-				contact.setLatestEventId(eventSummary.getEventUuid());
-				contact.setLatestEventTitle(eventSummary.getEventTitle());
-			});
+				List<ContactEventSummaryDetails> contactEvents = eventSummaries.getOrDefault(contact.getUuid(), Collections.emptyList());
+				contact.setEventCount((long) contactEvents.size());
+
+				contactEvents.stream().max(Comparator.comparing(ContactEventSummaryDetails::getEventDate)).ifPresent(eventSummary -> {
+					contact.setLatestEventId(eventSummary.getEventUuid());
+					contact.setLatestEventTitle(eventSummary.getEventTitle());
+				});
+			}
 		}
 
 		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight, I18nProperties.getCaption(Captions.inaccessibleValue));
@@ -1271,11 +1360,49 @@ public class ContactFacadeEjb
 			}
 		});
 
+		dtos.forEach(contact -> {
+			if (diseaseConfigurationFacade.hasFollowUp(contact.getDisease())) {
+				int numberOfMissedVisits =
+					FollowUpLogic.getNumberOfRequiredVisitsSoFar(contact.getReportDateTime(), contact.getFollowUpUntil()) - contact.getVisitCount();
+				if (numberOfMissedVisits < 0) {
+					numberOfMissedVisits = 0;
+				}
+				contact.setMissedVisitsCount(numberOfMissedVisits);
+			}
+		});
+
 		return dtos;
 	}
 
 	@Override
 	public int[] getContactCountsByCasesForDashboard(List<Long> contactIds) {
+
+		Set<Long> caseIds = new LinkedHashSet<>();
+		IterableHelper.executeBatched(
+			contactIds,
+			ModelConstants.PARAMETER_LIMIT,
+			batchedContactIds -> caseIds.addAll(getCaseIdsFromContacts(batchedContactIds)));
+
+		if (caseIds.isEmpty()) {
+			return new int[3];
+		} else {
+			int[] counts = new int[3];
+
+			List<Long> caseContactCounts = new ArrayList<>();
+			IterableHelper.executeBatched(
+				new ArrayList<>(caseIds),
+				ModelConstants.PARAMETER_LIMIT,
+				batchedCaseIds -> caseContactCounts.addAll(countContactsAssignToCases(batchedCaseIds)));
+
+			counts[0] = caseContactCounts.stream().min((l1, l2) -> l1.compareTo(l2)).orElse(0L).intValue();
+			counts[1] = caseContactCounts.stream().max((l1, l2) -> l1.compareTo(l2)).orElse(0L).intValue();
+			counts[2] = caseContactCounts.stream().reduce(0L, (a, b) -> a + b).intValue() / caseIds.size();
+
+			return counts;
+		}
+	}
+
+	private List<Long> getCaseIdsFromContacts(List<Long> contactIds) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
@@ -1286,31 +1413,26 @@ public class ContactFacadeEjb
 		cq.select(caseJoin.get(Case.ID));
 		cq.distinct(true);
 
-		List<Long> caseIds = em.createQuery(cq).getResultList();
+		return em.createQuery(cq).getResultList();
+	}
 
-		if (caseIds.isEmpty()) {
-			return new int[3];
-		} else {
-			int[] counts = new int[3];
-			CriteriaQuery<Long> cq2 = cb.createQuery(Long.class);
-			Root<Contact> contact2 = cq2.from(Contact.class);
-			cq2.groupBy(contact2.get(Contact.CAZE));
+	private List<Long> countContactsAssignToCases(List<Long> caseIds) {
 
-			cq2.where(contact2.get(Contact.CAZE).in(caseIds));
-			cq2.select(cb.count(contact2.get(Contact.ID)));
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+		Root<Contact> contact = cq.from(Contact.class);
+		cq.groupBy(contact.get(Contact.CAZE));
 
-			List<Long> caseContactCounts = em.createQuery(cq2).getResultList();
+		cq.where(contact.get(Contact.CAZE).get(Case.ID).in(caseIds));
+		cq.select(cb.count(contact.get(Contact.ID)));
 
-			counts[0] = caseContactCounts.stream().min((l1, l2) -> l1.compareTo(l2)).orElse(0L).intValue();
-			counts[1] = caseContactCounts.stream().max((l1, l2) -> l1.compareTo(l2)).orElse(0L).intValue();
-			counts[2] = caseContactCounts.stream().reduce(0L, (a, b) -> a + b).intValue() / caseIds.size();
-
-			return counts;
-		}
+		return em.createQuery(cq).getResultList();
 	}
 
 	@SuppressWarnings("JpaQueryApiInspection")
 	@Override
+	@RightsAllowed({
+		UserRight._DASHBOARD_CONTACT_VIEW })
 	public int getNonSourceCaseCountForDashboard(List<String> caseUuids) {
 
 		AtomicInteger totalCount = new AtomicInteger();
@@ -1327,8 +1449,17 @@ public class ContactFacadeEjb
 	}
 
 	public Contact fillOrBuildEntity(@NotNull ContactDto source, Contact target, boolean checkChangeDate) {
+		if (source == null) {
+			return null;
+		}
 
-		target = DtoHelper.fillOrBuildEntity(source, target, Contact::new, checkChangeDate);
+		boolean targetWasNull = isNull(target);
+
+		target = DtoHelper.fillOrBuildEntity(source, target, Contact::build, checkChangeDate);
+
+		if (targetWasNull) {
+			FacadeHelper.setUuidIfDtoExists(target.getEpiData(), source.getEpiData());
+		}
 
 		target.setCaze(caseService.getByReferenceDto(source.getCaze()));
 		target.setPerson(personService.getByReferenceDto(source.getPerson()));
@@ -1345,22 +1476,25 @@ public class ContactFacadeEjb
 		// use only date, not time
 		target.setMultiDayContact(source.isMultiDayContact());
 		if (source.isMultiDayContact()) {
-			target.setFirstContactDate(
-				source.getFirstContactDate() != null ? DateHelper8.toDate(DateHelper8.toLocalDate(source.getFirstContactDate())) : null);
+			target
+				.setFirstContactDate(source.getFirstContactDate() != null ? UtilDate.from(UtilDate.toLocalDate(source.getFirstContactDate())) : null);
 		} else {
 			target.setFirstContactDate(null);
 		}
 
-		target.setLastContactDate(
-			source.getLastContactDate() != null ? DateHelper8.toDate(DateHelper8.toLocalDate(source.getLastContactDate())) : null);
+		target.setLastContactDate(source.getLastContactDate() != null ? UtilDate.from(UtilDate.toLocalDate(source.getLastContactDate())) : null);
 
 		target.setContactIdentificationSource(source.getContactIdentificationSource());
 		target.setContactIdentificationSourceDetails(source.getContactIdentificationSourceDetails());
 		target.setTracingApp(source.getTracingApp());
 		target.setTracingAppDetails(source.getTracingAppDetails());
 		target.setContactProximity(source.getContactProximity());
-		target.setContactClassification(source.getContactClassification());
-		target.setContactStatus(source.getContactStatus());
+		if (source.getContactClassification() != null) {
+			target.setContactClassification(source.getContactClassification());
+		}
+		if (source.getContactStatus() != null) {
+			target.setContactStatus(source.getContactStatus());
+		}
 		target.setFollowUpStatus(source.getFollowUpStatus());
 		target.setFollowUpComment(source.getFollowUpComment());
 		target.setFollowUpUntil(source.getFollowUpUntil());
@@ -1413,8 +1547,9 @@ public class ContactFacadeEjb
 		target.setQuarantineOfficialOrderSentDate(source.getQuarantineOfficialOrderSentDate());
 		target.setAdditionalDetails(source.getAdditionalDetails());
 
-		target.setEpiData(epiDataFacade.fromDto(source.getEpiData(), checkChangeDate));
-		target.setHealthConditions(healthConditionsMapper.fromDto(source.getHealthConditions(), checkChangeDate));
+		target.setEpiData(epiDataFacade.fillOrBuildEntity(source.getEpiData(), target.getEpiData(), checkChangeDate));
+		target.setHealthConditions(
+			healthConditionsMapper.fillOrBuildEntity(source.getHealthConditions(), target.getHealthConditions(), checkChangeDate));
 		target.setReturningTraveler(source.getReturningTraveler());
 		target.setEndOfQuarantineReason(source.getEndOfQuarantineReason());
 		target.setEndOfQuarantineReasonDetails(source.getEndOfQuarantineReasonDetails());
@@ -1427,7 +1562,7 @@ public class ContactFacadeEjb
 		target.setVaccinationStatus(source.getVaccinationStatus());
 
 		if (source.getSormasToSormasOriginInfo() != null) {
-			target.setSormasToSormasOriginInfo(originInfoFacade.fromDto(source.getSormasToSormasOriginInfo(), checkChangeDate));
+			target.setSormasToSormasOriginInfo(originInfoService.getByUuid(source.getSormasToSormasOriginInfo().getUuid()));
 		}
 		target.setPreviousQuarantineTo(source.getPreviousQuarantineTo());
 		target.setQuarantineChangeComment(source.getQuarantineChangeComment());
@@ -1441,25 +1576,22 @@ public class ContactFacadeEjb
 	}
 
 	@Override
-	public boolean isDeleted(String contactUuid) {
-
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-		Root<Contact> from = cq.from(Contact.class);
-
-		cq.where(cb.and(cb.isTrue(from.get(Contact.DELETED)), cb.equal(from.get(AbstractDomainObject.UUID), contactUuid)));
-		cq.select(cb.count(from));
-		long count = em.createQuery(cq).getSingleResult();
-		return count > 0;
-	}
-
-	@Override
 	public List<String> getArchivedUuidsSince(Date since) {
 		if (userService.getCurrentUser() == null) {
 			return Collections.emptyList();
 		}
 
 		return service.getArchivedUuidsSince(since);
+	}
+
+	@Override
+	public void setArchiveInExternalSurveillanceToolForEntity(String uuid, boolean archived) throws ExternalSurveillanceToolException {
+		super.setArchiveInExternalSurveillanceToolForEntity(uuid, archived);
+	}
+
+	@Override
+	public void setArchiveInExternalSurveillanceToolForEntities(List<String> uuid, boolean archived) throws ExternalSurveillanceToolException {
+		super.setArchiveInExternalSurveillanceToolForEntities(uuid, archived);
 	}
 
 	@Override
@@ -1490,6 +1622,8 @@ public class ContactFacadeEjb
 	}
 
 	@Override
+	@RightsAllowed({
+		UserRight._DASHBOARD_CONTACT_VIEW })
 	public List<DashboardContactDto> getContactsForDashboard(
 		RegionReferenceDto regionRef,
 		DistrictReferenceDto districtRef,
@@ -1520,10 +1654,12 @@ public class ContactFacadeEjb
 
 	@Override
 	public List<ContactDto> getByPersonUuids(List<String> personUuids) {
-		return service.getByPersonUuids(personUuids).stream().map(c -> toDto(c)).collect(Collectors.toList());
+		return toDtos(service.getByPersonUuids(personUuids).stream());
 	}
 
 	@Override
+	@RightsAllowed({
+		UserRight._DASHBOARD_CONTACT_VIEW })
 	public Map<ContactStatus, Long> getNewContactCountPerStatus(ContactCriteria contactCriteria) {
 
 		User user = userService.getCurrentUser();
@@ -1531,14 +1667,16 @@ public class ContactFacadeEjb
 	}
 
 	@Override
+	@RightsAllowed({
+		UserRight._DASHBOARD_CONTACT_VIEW })
 	public Map<ContactClassification, Long> getNewContactCountPerClassification(ContactCriteria contactCriteria) {
-
 		return service.getNewContactCountPerClassification(contactCriteria);
 	}
 
 	@Override
+	@RightsAllowed({
+		UserRight._DASHBOARD_CONTACT_VIEW })
 	public Map<FollowUpStatus, Long> getNewContactCountPerFollowUpStatus(ContactCriteria contactCriteria) {
-
 		return service.getNewContactCountPerFollowUpStatus(contactCriteria);
 	}
 
@@ -1549,25 +1687,65 @@ public class ContactFacadeEjb
 		return service.getFollowUpUntilCount(contactCriteria, user);
 	}
 
-	public void pseudonymizeDto(Contact source, ContactDto dto, Pseudonymizer pseudonymizer) {
+	@Override
+	protected List<ContactDto> toPseudonymizedDtos(List<Contact> adoList) {
+
+		Map<Long, ContactJurisdictionFlagsDto> jurisdictionsFlags = service.getJurisdictionsFlags(adoList);
+		Pseudonymizer pseudonymizer = createPseudonymizer();
+		return adoList.stream().map(p -> toPseudonymizedDto(p, pseudonymizer, jurisdictionsFlags.get(p.getId()))).collect(Collectors.toList());
+	}
+
+	@Override
+	public ContactDto toPseudonymizedDto(Contact source, Pseudonymizer pseudonymizer) {
+
+		if (source == null) {
+			return null;
+		}
+
+		ContactJurisdictionFlagsDto jurisdictionFlags = service.getJurisdictionFlags(source);
+		return toPseudonymizedDto(source, pseudonymizer, jurisdictionFlags);
+	}
+
+	@Deprecated
+	@Override
+	public ContactDto toPseudonymizedDto(Contact source, Pseudonymizer pseudonymizer, boolean inJurisdiction) {
+
+		throw new UnsupportedOperationException("Use variant with jurisdictionFlags parameter");
+	}
+
+	protected ContactDto toPseudonymizedDto(Contact source, Pseudonymizer pseudonymizer, ContactJurisdictionFlagsDto jurisdictionFlags) {
+
+		ContactDto dto = toDto(source);
+		pseudonymizeDto(source, dto, pseudonymizer, jurisdictionFlags);
+		return dto;
+	}
+
+	@Deprecated
+	@Override
+	protected void pseudonymizeDto(Contact source, ContactDto dto, Pseudonymizer pseudonymizer, boolean inJurisdiction) {
+
+		throw new UnsupportedOperationException("Use variant with jurisdictionFlags parameter");
+	}
+
+	protected void pseudonymizeDto(Contact source, ContactDto dto, Pseudonymizer pseudonymizer, ContactJurisdictionFlagsDto jurisdictionFlags) {
+
+		boolean inJurisdiction = jurisdictionFlags.getInJurisdiction();
 		if (dto != null) {
-			final ContactJurisdictionFlagsDto contactJurisdictionFlagsDto = service.inJurisdictionOrOwned(source);
-			boolean isInJurisdiction = contactJurisdictionFlagsDto.getInJurisdiction();
 			User currentUser = userService.getCurrentUser();
 
-			pseudonymizer.pseudonymizeDto(ContactDto.class, dto, isInJurisdiction, (c) -> {
+			pseudonymizer.pseudonymizeDto(ContactDto.class, dto, inJurisdiction, (c) -> {
 				pseudonymizer.pseudonymizeUser(source.getReportingUser(), currentUser, dto::setReportingUser);
 
 				if (c.getCaze() != null) {
-					pseudonymizer.pseudonymizeDto(CaseReferenceDto.class, c.getCaze(), contactJurisdictionFlagsDto.getCaseInJurisdiction(), null);
+					pseudonymizer.pseudonymizeDto(CaseReferenceDto.class, c.getCaze(), jurisdictionFlags.getCaseInJurisdiction(), null);
 				}
 
 				pseudonymizer.pseudonymizeDto(
 					EpiDataDto.class,
 					dto.getEpiData(),
-					isInJurisdiction,
+					inJurisdiction,
 					e -> pseudonymizer
-						.pseudonymizeDtoCollection(ExposureDto.class, e.getExposures(), exp -> isInJurisdiction, (exp, expInJurisdiction) -> {
+						.pseudonymizeDtoCollection(ExposureDto.class, e.getExposures(), exp -> inJurisdiction, (exp, expInJurisdiction) -> {
 							pseudonymizer.pseudonymizeDto(LocationDto.class, exp.getLocation(), expInJurisdiction, null);
 						}));
 			});
@@ -1576,9 +1754,9 @@ public class ContactFacadeEjb
 
 	@Override
 	protected void restorePseudonymizedDto(ContactDto dto, ContactDto existingContactDto, Contact existingContact, Pseudonymizer pseudonymizer) {
+
 		if (existingContactDto != null) {
-			final ContactJurisdictionFlagsDto contactJurisdictionFlagsDto = service.inJurisdictionOrOwned(existingContact);
-			boolean isInJurisdiction = contactJurisdictionFlagsDto.getInJurisdiction();
+			boolean isInJurisdiction = service.inJurisdictionOrOwned(existingContact);
 			User currentUser = userService.getCurrentUser();
 
 			String followUpComment = null;
@@ -1605,13 +1783,12 @@ public class ContactFacadeEjb
 	private ContactReferenceDto convertToReferenceDto(Contact source) {
 
 		ContactReferenceDto dto = toReferenceDto(source);
-
 		if (source != null && dto != null) {
-			final ContactJurisdictionFlagsDto contactJurisdictionFlagsDto = service.inJurisdictionOrOwned(source);
-			boolean isInJurisdiction = contactJurisdictionFlagsDto.getInJurisdiction();
+			final ContactJurisdictionFlagsDto contactJurisdictionFlagsDto = service.getJurisdictionFlags(source);
+			boolean inJurisdiction = contactJurisdictionFlagsDto.getInJurisdiction();
 			Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
 
-			pseudonymizer.pseudonymizeDto(ContactReferenceDto.class, dto, isInJurisdiction, (c) -> {
+			pseudonymizer.pseudonymizeDto(ContactReferenceDto.class, dto, inJurisdiction, (c) -> {
 				if (source.getCaze() != null) {
 					pseudonymizer.pseudonymizeDto(
 						ContactReferenceDto.PersonName.class,
@@ -1620,7 +1797,7 @@ public class ContactFacadeEjb
 						null);
 				}
 
-				pseudonymizer.pseudonymizeDto(ContactReferenceDto.PersonName.class, c.getContactName(), isInJurisdiction, null);
+				pseudonymizer.pseudonymizeDto(ContactReferenceDto.PersonName.class, c.getContactName(), inJurisdiction, null);
 			});
 		}
 
@@ -1636,12 +1813,12 @@ public class ContactFacadeEjb
 		return source.toReference();
 	}
 
-	@RightsAllowed({
-		UserRight._CONTACT_VIEW,
-		UserRight._EXTERNAL_VISITS })
-	public ContactDto toDto(Contact source) {
-		return toContactDto(source);
-	}
+//	@RightsAllowed({
+//		UserRight._CONTACT_VIEW,
+//		UserRight._EXTERNAL_VISITS })
+//	public static ContactDto toDto(Contact source) {
+//		return toContactDto(source);
+//	}
 
 	public static ContactDto toContactDto(Contact source) {
 
@@ -1737,7 +1914,7 @@ public class ContactFacadeEjb
 		target.setReportingDistrict(DistrictFacadeEjb.toReferenceDto(source.getReportingDistrict()));
 
 		target.setSormasToSormasOriginInfo(SormasToSormasOriginInfoFacadeEjb.toDto(source.getSormasToSormasOriginInfo()));
-		target.setOwnershipHandedOver(source.getSormasToSormasShares().stream().anyMatch(SormasToSormasShareInfo::isOwnershipHandedOver));
+		//target.setOwnershipHandedOver(source.getSormasToSormasShares().stream().anyMatch(SormasToSormasShareInfo::isOwnershipHandedOver));
 		target.setContactTransmissionClassification(source.getContactTransmissionClassification());
 		target.setOwnershipHandedOver(source.getSormasToSormasShares().stream().anyMatch(ShareInfoHelper::isOwnerShipHandedOver));
 
@@ -1757,7 +1934,7 @@ public class ContactFacadeEjb
 	}
 
 	@Override
-	public ContactReferenceDto toRefDto(Contact contact) {
+	protected ContactReferenceDto toRefDto(Contact contact) {
 		return convertToReferenceDto(contact);
 	}
 
@@ -1768,7 +1945,7 @@ public class ContactFacadeEjb
 		// get all contacts that are followed up
 		LocalDateTime fromDateTime = LocalDate.now().atStartOfDay();
 		LocalDateTime toDateTime = fromDateTime.plusDays(1);
-		List<Contact> contacts = service.getFollowUpBetween(DateHelper8.toDate(fromDateTime), DateHelper8.toDate(toDateTime));
+		List<Contact> contacts = service.getFollowUpBetween(UtilDate.from(fromDateTime), UtilDate.from(toDateTime));
 
 		for (Contact contact : contacts) {
 			// Only generate tasks for contacts that are under follow-up
@@ -1785,11 +1962,12 @@ public class ContactFacadeEjb
 			}
 
 			// find already existing tasks
-			TaskCriteria pendingUserTaskCriteria = new TaskCriteria().contact(contact.toReference())
-				.taskType(TaskType.CONTACT_FOLLOW_UP)
-				.assigneeUser(assignee.toReference())
-				.taskStatus(TaskStatus.PENDING);
-			List<Task> pendingUserTasks = taskService.findBy(pendingUserTaskCriteria, true);
+			List<Task> pendingUserTasks = taskService.findByAssigneeContactTypeAndStatuses(
+				assignee.toReference(),
+				contact.toReference(),
+				TaskType.CONTACT_FOLLOW_UP,
+				TaskStatus.IN_PROGRESS,
+				TaskStatus.PENDING);
 
 			if (!pendingUserTasks.isEmpty()) {
 				// the user still has a pending task for this contact
@@ -1798,7 +1976,7 @@ public class ContactFacadeEjb
 
 			TaskCriteria dayTaskCriteria = new TaskCriteria().contact(contact.toReference())
 				.taskType(TaskType.CONTACT_FOLLOW_UP)
-				.dueDateBetween(DateHelper8.toDate(fromDateTime), DateHelper8.toDate(toDateTime));
+				.dueDateBetween(UtilDate.from(fromDateTime), UtilDate.from(toDateTime));
 			List<Task> dayTasks = taskService.findBy(dayTaskCriteria, true);
 
 			if (!dayTasks.isEmpty()) {
@@ -1813,12 +1991,13 @@ public class ContactFacadeEjb
 	}
 
 	private Task createContactTask(TaskType taskType, LocalDateTime fromDateTime, LocalDateTime toDateTime, Contact contact, User assignee) {
+
 		Task task = taskService.buildTask(null);
 		task.setTaskContext(TaskContext.CONTACT);
 		task.setContact(contact);
 		task.setTaskType(taskType);
-		task.setSuggestedStart(DateHelper8.toDate(fromDateTime));
-		task.setDueDate(DateHelper8.toDate(toDateTime.minusMinutes(1)));
+		task.setSuggestedStart(UtilDate.from(fromDateTime));
+		task.setDueDate(UtilDate.from(toDateTime.minusMinutes(1)));
 		task.setAssigneeUser(assignee);
 
 		if (contact.isHighPriority()) {
@@ -1841,14 +2020,15 @@ public class ContactFacadeEjb
 	}
 
 	@Override
-	public void validate(ContactDto contact) throws ValidationRuntimeException {
+	public void validate(@Valid ContactDto contact) throws ValidationRuntimeException {
 
 		// Check whether any required field that does not have a not null constraint in the database is empty
+		if (contact.getReportingUser() == null && !contact.isPseudonymized()) {
+			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.validReportingUser));
+		}
+
 		if (contact.getReportDateTime() == null) {
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.validReportDateTime));
-		}
-		if (contact.getReportingUser() == null) {
-			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.validReportingUser));
 		}
 		if (contact.getDisease() == null) {
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.validDisease));
@@ -1893,17 +2073,57 @@ public class ContactFacadeEjb
 		selections.addAll(service.getJurisdictionSelections(contactQueryContext));
 		cq.multiselect(selections);
 
+		cq.where(getSimilarityFilters(criteria, cb, contactRoot, contactQueryContext));
+
+		List<SimilarContactDto> contacts = em.createQuery(cq).getResultList();
+
+		Pseudonymizer pseudonymizer = createPseudonymizer();
+		pseudonymizer.pseudonymizeDtoCollection(SimilarContactDto.class, contacts, SimilarContactDto::getInJurisdiction, (c, isInJurisdiction) -> {
+			CaseReferenceDto contactCase = c.getCaze();
+			if (contactCase != null) {
+				pseudonymizer.pseudonymizeDto(CaseReferenceDto.class, contactCase, c.getCaseInJurisdiction(), null);
+			}
+		});
+
+		if (Boolean.TRUE.equals(criteria.getExcludePseudonymized())) {
+			contacts = contacts.stream().filter(c -> !c.isPseudonymized()).collect(Collectors.toList());
+		}
+
+		return contacts;
+	}
+
+	public boolean hasSimilarContacts(ContactSimilarityCriteria criteria) {
+		return service.exists((cb, root, cq) -> getSimilarityFilters(criteria, cb, root, new ContactQueryContext(cb, cq, root)));
+	}
+
+	private Predicate getSimilarityFilters(
+		ContactSimilarityCriteria criteria,
+		CriteriaBuilder cb,
+		Root<Contact> contactRoot,
+		ContactQueryContext contactQueryContext) {
+		ContactJoins joins = contactQueryContext.getJoins();
+
 		final Predicate defaultFilter = service.createDefaultFilter(cb, contactRoot);
 		final Predicate userFilter = service.createUserFilter(contactQueryContext);
 
 		final PersonReferenceDto person = criteria.getPerson();
-		final Predicate samePersonFilter = person != null ? cb.equal(joins.getPerson().get(Person.UUID), person.getUuid()) : null;
+		Predicate samePersonFilter = person != null ? cb.equal(joins.getPerson().get(Person.UUID), person.getUuid()) : null;
+		if (criteria.getPersons() != null) {
+			samePersonFilter =
+				joins.getPerson().get(Person.UUID).in(criteria.getPersons().stream().map(PersonReferenceDto::getUuid).collect(Collectors.toList()));
+		}
 
 		final Disease disease = criteria.getDisease();
 		final Predicate diseaseFilter = disease != null ? cb.equal(contactRoot.get(Contact.DISEASE), disease) : null;
 
 		final CaseReferenceDto caze = criteria.getCaze();
-		final Predicate cazeFilter = caze != null ? cb.equal(joins.getCaze().get(Case.UUID), caze.getUuid()) : null;
+		Predicate cazeFilter = caze != null ? cb.equal(joins.getCaze().get(Case.UUID), caze.getUuid()) : null;
+
+		if (criteria.getResultingCases() != null) {
+			cazeFilter = joins.getResultingCase()
+				.get(Case.UUID)
+				.in(criteria.getResultingCases().stream().map(CaseReferenceDto::getUuid).collect(Collectors.toList()));
+		}
 
 		final ContactClassification contactClassification = criteria.getContactClassification();
 		final Predicate contactClassificationFilter =
@@ -1925,34 +2145,17 @@ public class ContactFacadeEjb
 			service.recentDateFilter(cb, relevantDate, contactRoot.get(Contact.REPORT_DATE_TIME), 30),
 			service.recentDateFilter(cb, relevantDate, contactRoot.get(Contact.LAST_CONTACT_DATE), 30));
 
-		cq.where(
-			CriteriaBuilderHelper.and(
-				cb,
-				defaultFilter,
-				userFilter,
-				samePersonFilter,
-				diseaseFilter,
-				cazeFilter,
-				contactClassificationFilter,
-				noResulingCaseFilter,
-				recentContactsFilter,
-				relevantDateFilter));
-
-		List<SimilarContactDto> contacts = em.createQuery(cq).getResultList();
-
-		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
-		pseudonymizer.pseudonymizeDtoCollection(SimilarContactDto.class, contacts, c -> c.getInJurisdiction(), (c, isInJurisdiction) -> {
-			CaseReferenceDto contactCase = c.getCaze();
-			if (contactCase != null) {
-				pseudonymizer.pseudonymizeDto(CaseReferenceDto.class, contactCase, c.getCaseInJurisdiction(), null);
-			}
-		});
-
-		if (Boolean.TRUE.equals(criteria.getExcludePseudonymized())) {
-			contacts = contacts.stream().filter(c -> !c.isPseudonymized()).collect(Collectors.toList());
-		}
-
-		return contacts;
+		return CriteriaBuilderHelper.and(
+			cb,
+			defaultFilter,
+			userFilter,
+			samePersonFilter,
+			diseaseFilter,
+			cazeFilter,
+			contactClassificationFilter,
+			noResulingCaseFilter,
+			recentContactsFilter,
+			relevantDateFilter);
 	}
 
 	@Override
@@ -2062,8 +2265,13 @@ public class ContactFacadeEjb
 	}
 
 	@Override
+	public void merge(String leadUuid, String otherUuid) {
+
+	}
+
+	@Override
 	@RightsAllowed(UserRight._CONTACT_MERGE)
-	public void deleteContactAsDuplicate(String uuid, String duplicateOfUuid) {
+	public void deleteAsDuplicate(String uuid, String duplicateOfUuid) {
 		Contact contact = service.getByUuid(uuid);
 		Contact duplicateOfContact = service.getByUuid(duplicateOfUuid);
 		contact.setDuplicateOf(duplicateOfContact);
@@ -2073,147 +2281,28 @@ public class ContactFacadeEjb
 	}
 
 	@Override
-	public List<MergeContactIndexDto[]> getContactsForDuplicateMerging(ContactCriteria criteria, boolean ignoreRegion) {
+	public List<MergeContactIndexDto[]> getContactsForDuplicateMerging(ContactCriteria criteria, @Min(1) Integer limit, boolean ignoreRegion) {
+		List<MergeContactIndexDto[]> contacts = service.getContactsForDuplicateMerging(criteria, limit, ignoreRegion);
 
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
-		Root<Contact> root = cq.from(Contact.class);
-		final ContactQueryContext contactQueryContext = new ContactQueryContext(cb, cq, root);
-		ContactJoins joins = contactQueryContext.getJoins();
-		Root<Contact> root2 = cq.from(Contact.class);
-		Join<Contact, Person> person = joins.getPerson();
-		Join<Contact, Person> person2 = root2.join(Contact.PERSON, JoinType.LEFT);
-		Join<Contact, Region> region = joins.getRegion();
-		Join<Contact, Region> region2 = root2.join(Contact.REGION, JoinType.LEFT);
-		Join<Contact, Case> sourceCase = joins.getCaze();
-		Join<Contact, Case> sourceCase2 = root2.join(Contact.CAZE, JoinType.LEFT);
-
-		cq.distinct(true);
-
-		// similarity:
-		// * first & last name concatenated with whitespace. Similarity function with default threshold of 0.65D
-		// uses postgres pg_trgm: https://www.postgresql.org/docs/9.6/pgtrgm.html
-		// * same source case
-		// * same disease
-		// * same region (optional)
-		// * report date within 30 days of each other
-		// * same sex or same birth date (when defined)
-		// * same birth date (when fully defined)
-
-		Predicate sourceCaseFilter = cb.equal(sourceCase, sourceCase2);
-		Predicate userFilter = service.createUserFilter(contactQueryContext);
-		Predicate criteriaFilter = criteria != null ? service.buildCriteriaFilter(criteria, contactQueryContext) : null;
-		Expression<String> nameSimilarityExpr = cb.concat(person.get(Person.FIRST_NAME), " ");
-		nameSimilarityExpr = cb.concat(nameSimilarityExpr, person.get(Person.LAST_NAME));
-		Expression<String> nameSimilarityExpr2 = cb.concat(person2.get(Person.FIRST_NAME), " ");
-		nameSimilarityExpr2 = cb.concat(nameSimilarityExpr2, person2.get(Person.LAST_NAME));
-		Predicate nameSimilarityFilter =
-			cb.gt(cb.function("similarity", double.class, nameSimilarityExpr, nameSimilarityExpr2), configFacade.getNameSimilarityThreshold());
-		Predicate diseaseFilter = cb.equal(root.get(Contact.DISEASE), root2.get(Contact.DISEASE));
-		Predicate regionFilter = cb
-			.or(cb.or(cb.isNull(region.get(Region.ID)), cb.isNull(region2.get(Region.ID))), cb.equal(region.get(Region.ID), region2.get(Region.ID)));
-		Predicate reportDateFilter = cb.lessThanOrEqualTo(
-			cb.abs(
-				cb.diff(
-					cb.function("date_part", Long.class, cb.parameter(String.class, "date_type"), root.get(Contact.REPORT_DATE_TIME)),
-					cb.function("date_part", Long.class, cb.parameter(String.class, "date_type"), root2.get(Contact.REPORT_DATE_TIME)))),
-			SECONDS_30_DAYS);
-		// Sex filter: only when sex is filled in for both cases
-		Predicate sexFilter = cb.or(
-			cb.or(cb.isNull(person.get(Person.SEX)), cb.isNull(person2.get(Person.SEX))),
-			cb.equal(person.get(Person.SEX), person2.get(Person.SEX)));
-		// Birth date filter: only when birth date is filled in for both cases
-		Predicate birthDateFilter = cb.or(
-			cb.or(
-				cb.isNull(person.get(Person.BIRTHDATE_DD)),
-				cb.isNull(person.get(Person.BIRTHDATE_MM)),
-				cb.isNull(person.get(Person.BIRTHDATE_YYYY)),
-				cb.isNull(person2.get(Person.BIRTHDATE_DD)),
-				cb.isNull(person2.get(Person.BIRTHDATE_MM)),
-				cb.isNull(person2.get(Person.BIRTHDATE_YYYY))),
-			cb.and(
-				cb.equal(person.get(Person.BIRTHDATE_DD), person2.get(Person.BIRTHDATE_DD)),
-				cb.equal(person.get(Person.BIRTHDATE_MM), person2.get(Person.BIRTHDATE_MM)),
-				cb.equal(person.get(Person.BIRTHDATE_YYYY), person2.get(Person.BIRTHDATE_YYYY))));
-
-		Predicate creationDateFilter = cb.or(
-			cb.lessThan(root.get(Contact.CREATION_DATE), root2.get(Contact.CREATION_DATE)),
-			cb.or(
-				cb.lessThanOrEqualTo(root2.get(Contact.CREATION_DATE), DateHelper.getStartOfDay(criteria.getCreationDateFrom())),
-				cb.greaterThanOrEqualTo(root2.get(Contact.CREATION_DATE), DateHelper.getEndOfDay(criteria.getCreationDateTo()))));
-
-		Predicate filter = cb.and(service.createDefaultFilter(cb, root), service.createDefaultFilter(cb, root2), sourceCaseFilter);
-		if (userFilter != null) {
-			filter = cb.and(filter, userFilter);
-		}
-		if (filter != null) {
-			filter = cb.and(filter, criteriaFilter);
-		} else {
-			filter = criteriaFilter;
-		}
-		if (filter != null) {
-			filter = cb.and(filter, nameSimilarityFilter);
-		} else {
-			filter = nameSimilarityFilter;
-		}
-		filter = cb.and(filter, diseaseFilter);
-
-		if (!ignoreRegion) {
-			filter = cb.and(filter, regionFilter);
+		for (MergeContactIndexDto[] contact : contacts) {
+			pseudonymizeContactPairs(contact);
 		}
 
-		filter = cb.and(filter, reportDateFilter);
-		filter = cb.and(filter, cb.and(sexFilter, birthDateFilter));
-		filter = cb.and(filter, creationDateFilter);
-		filter = cb.and(filter, cb.notEqual(root.get(Contact.ID), root2.get(Contact.ID)));
-
-		cq.where(filter);
-		cq.multiselect(root.get(Contact.ID), root2.get(Contact.ID), root.get(Contact.CREATION_DATE));
-		cq.orderBy(cb.desc(root.get(Contact.CREATION_DATE)));
-
-		List<Object[]> foundIds = em.createQuery(cq).setParameter("date_type", "epoch").getResultList();
-		List<MergeContactIndexDto[]> resultList = new ArrayList<>();
-
-		if (!foundIds.isEmpty()) {
-			CriteriaQuery<MergeContactIndexDto> indexContactsCq = cb.createQuery(MergeContactIndexDto.class);
-			Root<Contact> indexRoot = indexContactsCq.from(Contact.class);
-			selectMergeIndexDtoFields(cb, indexContactsCq, indexRoot);
-			indexContactsCq.where(
-				indexRoot.get(Contact.ID).in(foundIds.stream().map(a -> Arrays.copyOf(a, 2)).flatMap(Arrays::stream).collect(Collectors.toSet())));
-			Map<Long, MergeContactIndexDto> indexContacts =
-				em.createQuery(indexContactsCq).getResultStream().collect(Collectors.toMap(c -> c.getId(), Function.identity()));
-
-			for (Object[] idPair : foundIds) {
-				try {
-					// Cloning is necessary here to allow us to add the same CaseIndexDto to the grid multiple times
-					MergeContactIndexDto parent = (MergeContactIndexDto) indexContacts.get(idPair[0]).clone();
-					MergeContactIndexDto child = (MergeContactIndexDto) indexContacts.get(idPair[1]).clone();
-
-					if (parent.getCompleteness() == null && child.getCompleteness() == null
-						|| parent.getCompleteness() != null
-							&& (child.getCompleteness() == null || (parent.getCompleteness() >= child.getCompleteness()))) {
-						resultList.add(
-							new MergeContactIndexDto[] {
-								parent,
-								child });
-					} else {
-						resultList.add(
-							new MergeContactIndexDto[] {
-								child,
-								parent });
-					}
-				} catch (CloneNotSupportedException e) {
-					throw new RuntimeException(e);
-				}
-			}
-		}
-
-		return resultList;
+		return contacts;
 	}
 
-	private void selectMergeIndexDtoFields(CriteriaBuilder cb, CriteriaQuery<MergeContactIndexDto> cq, Root<Contact> root) {
-		final ContactQueryContext contactQueryContext = new ContactQueryContext(cb, cq, root);
-		cq.multiselect(listCriteriaBuilder.getMergeContactIndexSelections(root, contactQueryContext));
+	public void pseudonymizeContactPairs(MergeContactIndexDto[] contactPair) {
+		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight, I18nProperties.getCaption(Captions.inaccessibleValue));
+
+		Arrays.stream(contactPair).forEach(contact -> {
+			Boolean isInJurisdiction = contact.getInJurisdiction();
+			pseudonymizer.pseudonymizeDto(MergeContactIndexDto.class, contact, isInJurisdiction, c -> {
+				pseudonymizer.pseudonymizeDto(AgeAndBirthDateDto.class, contact.getAgeAndBirthDate(), isInJurisdiction, null);
+				if (contact.getCaze() != null) {
+					pseudonymizer.pseudonymizeDto(CaseReferenceDto.class, contact.getCaze(), contact.getCaseInJurisdiction(), null);
+				}
+			});
+		});
 	}
 
 	@Override
@@ -2232,18 +2321,18 @@ public class ContactFacadeEjb
 
 	@Override
 	@RightsAllowed(UserRight._CONTACT_EDIT)
-	public int saveBulkContacts(
-		List<String> contactUuidlist,
+	public Integer saveBulkContacts(
+		List<String> contactUuidList,
 		ContactBulkEditData updatedContactBulkEditData,
 		boolean classificationChange,
 		boolean contactOfficerChange)
 		throws ValidationRuntimeException {
 
 		int changedContacts = 0;
-		for (String contactUuid : contactUuidlist) {
+		for (String contactUuid : contactUuidList) {
 			Contact contact = service.getByUuid(contactUuid);
 
-			if (service.isEditAllowed(contact).equals(EditPermissionType.ALLOWED)) {
+			if (service.isEditAllowed(contact)) {
 				ContactDto existingContactDto = toDto(contact);
 				if (classificationChange) {
 					existingContactDto.setContactClassification(updatedContactBulkEditData.getContactClassification());
@@ -2320,6 +2409,27 @@ public class ContactFacadeEjb
 		return userService.getRandomRegionUser(region, UserRight.CONTACT_RESPONSIBLE);
 	}
 
+	@Override
+	protected String getDeleteReferenceField(DeletionReference deletionReference) {
+		if (deletionReference == DeletionReference.REPORT) {
+			return Contact.REPORT_DATE_TIME;
+		}
+
+		return super.getDeleteReferenceField(deletionReference);
+	}
+
+	@Override
+	public boolean isEditAllowed(String uuid) {
+		return false;
+	}
+
+	@RightsAllowed({
+			UserRight._CONTACT_VIEW,
+			UserRight._EXTERNAL_VISITS })
+	public ContactDto toDto(Contact source) {
+		return toContactDto(source);
+	}
+
 	@LocalBean
 	@Stateless
 	public static class ContactFacadeEjbLocal extends ContactFacadeEjb {
@@ -2328,9 +2438,14 @@ public class ContactFacadeEjb
 		}
 
 		@Inject
-		public ContactFacadeEjbLocal(ContactService service, UserService userService) {
-			super(service, userService);
+		public ContactFacadeEjbLocal(ContactService service) {
+			super(service);
 		}
+
+		public void syncSharesAsync(ShareTreeCriteria shareTreeCriteria) {
+		}
+
+		
 	}
 
 	@Override

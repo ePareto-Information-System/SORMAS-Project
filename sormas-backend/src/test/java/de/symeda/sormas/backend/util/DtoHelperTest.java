@@ -1,23 +1,24 @@
 package de.symeda.sormas.backend.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.ReinfectionDetail;
 import de.symeda.sormas.api.clinicalcourse.HealthConditionsDto;
 import de.symeda.sormas.api.exposure.ExposureDto;
 import de.symeda.sormas.api.exposure.ExposureType;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.sample.PathogenTestType;
@@ -28,17 +29,15 @@ import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.backend.AbstractBeanTest;
-import de.symeda.sormas.backend.TestDataCreator;
-import de.symeda.sormas.backend.TestDataCreator.RDCFEntities;
+import de.symeda.sormas.backend.TestDataCreator.RDCF;
 
 public class DtoHelperTest extends AbstractBeanTest {
 
 	@Test
 	public void testFillDto() {
 
-		RDCFEntities rdcf = creator.createRDCFEntities();
-		RDCFEntities rdcf2 = creator.createRDCFEntities();
-		rdcf2.facility.setType(FacilityType.LABORATORY);
+		RDCF rdcf = creator.createRDCF();
+		RDCF rdcf2 = creator.createRDCF("Region 2", "District 2", "Community 2", "Lab", "Point of Entry 2");
 
 		UserDto user = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.ADMIN));
 
@@ -193,7 +192,7 @@ public class DtoHelperTest extends AbstractBeanTest {
 
 		// test map
 		{
-			TestDataCreator.RDCF caseRdcf = creator.createRDCF();
+			RDCF caseRdcf = creator.createRDCF();
 
 			Map<ReinfectionDetail, Boolean> map1 = new EnumMap<>(ReinfectionDetail.class);
 			map1.put(ReinfectionDetail.GENOME_SEQUENCE_CURRENT_INFECTION_KNOWN, true);

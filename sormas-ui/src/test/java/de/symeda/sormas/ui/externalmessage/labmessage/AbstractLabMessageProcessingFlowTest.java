@@ -19,25 +19,25 @@ import static de.symeda.sormas.ui.externalmessage.processing.flow.ProcessingResu
 import static de.symeda.sormas.ui.externalmessage.processing.flow.ProcessingResultStatus.CANCELED_WITH_CORRECTIONS;
 import static de.symeda.sormas.ui.externalmessage.processing.flow.ProcessingResultStatus.DONE;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import de.symeda.sormas.ui.externalmessage.processing.AbstractProcessingFlow.HandlerCallback;
-import de.symeda.sormas.ui.externalmessage.processing.flow.ProcessingResult;
-import de.symeda.sormas.ui.externalmessage.processing.flow.ProcessingResultStatus;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -45,7 +45,7 @@ import java.util.function.Supplier;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -65,6 +65,7 @@ import de.symeda.sormas.api.event.EventParticipantDto;
 import de.symeda.sormas.api.event.SimilarEventParticipantDto;
 import de.symeda.sormas.api.externalmessage.ExternalMessageDto;
 import de.symeda.sormas.api.externalmessage.ExternalMessageStatus;
+import de.symeda.sormas.api.externalmessage.labmessage.SampleReportDto;
 import de.symeda.sormas.api.externalmessage.labmessage.TestReportDto;
 import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
 import de.symeda.sormas.api.person.PersonDto;
@@ -79,33 +80,61 @@ import de.symeda.sormas.api.sample.SpecimenCondition;
 import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.ui.AbstractBeanTest;
-import de.symeda.sormas.ui.TestDataCreator;
+import de.symeda.sormas.backend.TestDataCreator;
+import de.symeda.sormas.ui.AbstractUiBeanTest;
 import de.symeda.sormas.ui.externalmessage.labmessage.processing.AbstractLabMessageProcessingFlow;
 import de.symeda.sormas.ui.externalmessage.labmessage.processing.AbstractRelatedLabMessageHandler;
 import de.symeda.sormas.ui.externalmessage.labmessage.processing.AbstractRelatedLabMessageHandler.HandlerResult;
 import de.symeda.sormas.ui.externalmessage.labmessage.processing.AbstractRelatedLabMessageHandler.HandlerResultStatus;
-import de.symeda.sormas.ui.externalmessage.processing.PickOrCreateEntryResult;
 import de.symeda.sormas.ui.externalmessage.labmessage.processing.PickOrCreateEventResult;
 import de.symeda.sormas.ui.externalmessage.labmessage.processing.PickOrCreateSampleResult;
+import de.symeda.sormas.ui.externalmessage.labmessage.processing.RelatedSamplesReportsAndPathogenTests;
 import de.symeda.sormas.ui.externalmessage.labmessage.processing.SampleAndPathogenTests;
+import de.symeda.sormas.ui.externalmessage.processing.AbstractProcessingFlow.HandlerCallback;
+import de.symeda.sormas.ui.externalmessage.processing.PickOrCreateEntryResult;
+import de.symeda.sormas.ui.externalmessage.processing.flow.ProcessingResult;
+import de.symeda.sormas.ui.externalmessage.processing.flow.ProcessingResultStatus;
 
-public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
+public class AbstractLabMessageProcessingFlowTest extends AbstractUiBeanTest {
 
 	private AbstractLabMessageProcessingFlow flow;
 
 	private Supplier<CompletionStage<Boolean>> missingDiseaseHandler;
-	private Supplier<CompletionStage<Boolean>> relatedForwardedMessagesHandler;
+
+	/**
+	 * Needed, because cdi-test InvocationTargetManager.onMockCreated doesn't allow multiple mocks for the same (generic) class
+	 */
+	private interface RelatedForwardedMessageHandler extends Supplier<CompletionStage<Boolean>> {
+	}
+
+	private RelatedForwardedMessageHandler relatedForwardedMessagesHandler;
 	private AbstractRelatedLabMessageHandler relatedLabMessageHandler;
 	private BiFunction<PersonDto, HandlerCallback<PersonDto>, Void> handlePickOrCreatePerson;
 	private PickOrCreateEntryHandler handlePickOrCreateEntry;
-	private EntityCreationHandler<CaseDataDto> handleCreateCase;
+	private CreateCaseHandler handleCreateCase;
 	private CreateSampleAndPathogenTestHandler handleCreateSampleAndPathogenTests;
-	private EntityCreationHandler<ContactDto> handleCreateContact;
+	private CreateContactHandler handleCreateContact;
 	private Consumer<HandlerCallback<PickOrCreateEventResult>> handlePickOrCreateEvent;
-	private BiConsumer<EventDto, HandlerCallback<EventDto>> handleCreateEvent;
-	private BiConsumer<EventParticipantDto, HandlerCallback<EventParticipantDto>> handleCreateEventParticipant;
-	private Supplier<CompletionStage<Boolean>> confirmPickExistingEventParticipant;
+
+	private interface CreateEventHandler extends BiConsumer<EventDto, HandlerCallback<EventDto>> {
+	}
+
+	private CreateEventHandler handleCreateEvent;
+
+	private interface CreateEventParticipantHandler extends BiConsumer<EventParticipantDto, HandlerCallback<EventParticipantDto>> {
+	}
+
+	private CreateEventParticipantHandler handleCreateEventParticipant;
+
+	private interface ConfirmPickExistingEventParticipantHandler extends Supplier<CompletionStage<Boolean>> {
+	}
+
+	private ConfirmPickExistingEventParticipantHandler confirmPickExistingEventParticipantHandler;
+
+	private interface MultipleSamplesConfirmationHandler extends Supplier<CompletionStage<Boolean>> {
+	}
+
+	private MultipleSamplesConfirmationHandler multipleSamplesConfirmationHandler;
 	private PickOrCreateSampleHandler handlePickOrCreateSample;
 	private EditSampleHandler handleEditSample;
 	private TestDataCreator.RDCF rdcf;
@@ -120,7 +149,7 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		missingDiseaseHandler = Mockito.mock(Supplier.class);
 		when(missingDiseaseHandler.get()).thenReturn(CompletableFuture.completedFuture(true));
 
-		relatedForwardedMessagesHandler = Mockito.mock(Supplier.class);
+		relatedForwardedMessagesHandler = Mockito.mock(RelatedForwardedMessageHandler.class);
 		when(relatedForwardedMessagesHandler.get()).thenReturn(CompletableFuture.completedFuture(true));
 
 		relatedLabMessageHandler = Mockito.mock(AbstractRelatedLabMessageHandler.class);
@@ -135,7 +164,7 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		pickOrCreateEntryResult.setNewCase(true);
 		doAnswer(answerPickOrCreateEntry(pickOrCreateEntryResult)).when(handlePickOrCreateEntry).handle(any(), any(), any(), any());
 
-		handleCreateCase = Mockito.mock(EntityCreationHandler.class);
+		handleCreateCase = Mockito.mock(CreateCaseHandler.class);
 		doAnswer((invocation) -> {
 			getCallbackParam(invocation).done(invocation.getArgument(0));
 			return null;
@@ -145,9 +174,9 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		doAnswer((invocation) -> {
 			getCallbackParam(invocation).done(new SampleAndPathogenTests(invocation.getArgument(0), invocation.getArgument(1)));
 			return null;
-		}).when(handleCreateSampleAndPathogenTests).handle(any(), any(), any(), any());
+		}).when(handleCreateSampleAndPathogenTests).handle(any(), any(), any(), any(), any());
 
-		handleCreateContact = Mockito.mock(EntityCreationHandler.class);
+		handleCreateContact = Mockito.mock(CreateContactHandler.class);
 		doAnswer((invocation) -> {
 			getCallbackParam(invocation).done(invocation.getArgument(0));
 			return null;
@@ -161,20 +190,17 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			return null;
 		}).when(handlePickOrCreateEvent).accept(any());
 
-		handleCreateEvent = Mockito.mock(BiConsumer.class);
+		handleCreateEvent = Mockito.mock(CreateEventHandler.class);
 		doAnswer((invocation) -> {
 			getCallbackParam(invocation).done(invocation.getArgument(0));
 			return null;
 		}).when(handleCreateEvent).accept(any(), any());
 
-		handleCreateEventParticipant = Mockito.mock(BiConsumer.class);
+		handleCreateEventParticipant = Mockito.mock(CreateEventParticipantHandler.class);
 		doAnswer((invocation) -> {
 			getCallbackParam(invocation).done(invocation.getArgument(0));
 			return null;
 		}).when(handleCreateEventParticipant).accept(any(), any());
-
-		confirmPickExistingEventParticipant = Mockito.mock(Supplier.class);
-		when(confirmPickExistingEventParticipant.get()).thenReturn(CompletableFuture.completedFuture(true));
 
 		handlePickOrCreateSample = Mockito.mock(PickOrCreateSampleHandler.class);
 		PickOrCreateSampleResult pickOrCreateSampleResult = new PickOrCreateSampleResult();
@@ -184,11 +210,16 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			return null;
 		}).when(handlePickOrCreateSample).handle(any(), any(), any());
 
+		confirmPickExistingEventParticipantHandler = Mockito.mock(ConfirmPickExistingEventParticipantHandler.class);
+		when(confirmPickExistingEventParticipantHandler.get()).thenReturn(CompletableFuture.completedFuture(true));
+		multipleSamplesConfirmationHandler = Mockito.mock(MultipleSamplesConfirmationHandler.class);
+		when(multipleSamplesConfirmationHandler.get()).thenReturn(CompletableFuture.completedFuture(true));
+
 		handleEditSample = Mockito.mock(EditSampleHandler.class);
 		doAnswer((invocation) -> {
 			getCallbackParam(invocation).done(new SampleAndPathogenTests(invocation.getArgument(0), invocation.getArgument(1)));
 			return null;
-		}).when(handleEditSample).handle(any(), any(), any());
+		}).when(handleEditSample).handle(any(), any(), any(), any());
 
 		rdcf = creator.createRDCF();
 		user = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.NATIONAL_USER));
@@ -230,14 +261,20 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			}
 
 			@Override
+			public CompletionStage<Boolean> handleMultipleSampleConfirmation() {
+				return multipleSamplesConfirmationHandler.get();
+			}
+
+			@Override
 			protected void handleCreateSampleAndPathogenTests(
 				SampleDto sample,
 				List<PathogenTestDto> pathogenTests,
 				Disease disease,
 				ExternalMessageDto labMessage,
 				boolean entityCreated,
+				boolean lastSample,
 				HandlerCallback<SampleAndPathogenTests> callback) {
-				handleCreateSampleAndPathogenTests.handle(sample, pathogenTests, entityCreated, callback);
+				handleCreateSampleAndPathogenTests.handle(sample, pathogenTests, entityCreated, lastSample, callback);
 			}
 
 			@Override
@@ -270,7 +307,7 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 
 			@Override
 			protected CompletionStage<Boolean> confirmPickExistingEventParticipant() {
-				return confirmPickExistingEventParticipant.get();
+				return confirmPickExistingEventParticipantHandler.get();
 			}
 
 			@Override
@@ -278,6 +315,7 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 				List<SampleDto> similarSamples,
 				List<SampleDto> otherSamples,
 				ExternalMessageDto externalMessageDto,
+				int sampleReportIndex,
 				HandlerCallback<PickOrCreateSampleResult> callback) {
 				handlePickOrCreateSample.handle(similarSamples, otherSamples, callback);
 			}
@@ -287,8 +325,9 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 				SampleDto sample,
 				List<PathogenTestDto> newPathogenTests,
 				ExternalMessageDto labMessage,
+				boolean lastSample,
 				HandlerCallback<SampleAndPathogenTests> callback) {
-				handleEditSample.handle(sample, newPathogenTests, callback);
+				handleEditSample.handle(sample, newPathogenTests, lastSample, callback);
 			}
 		};
 	}
@@ -296,14 +335,14 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 	@Test
 	public void testCreateLabMessage() throws ExecutionException, InterruptedException {
 
-		ProcessingResult<SampleAndPathogenTests> result = runFlow(createLabMessage(null, "", ExternalMessageStatus.UNPROCESSED));
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(createLabMessage(null, "", ExternalMessageStatus.UNPROCESSED));
 		assertThat(result.getStatus(), is(DONE));
 	}
 
 	@Test
 	public void testHandleMissingDisease() throws ExecutionException, InterruptedException {
 
-		ProcessingResult<SampleAndPathogenTests> result = runFlow(createLabMessage(null, "", ExternalMessageStatus.UNPROCESSED));
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(createLabMessage(null, "", ExternalMessageStatus.UNPROCESSED));
 		assertThat(result.getStatus(), is(DONE));
 		Mockito.verify(missingDiseaseHandler, Mockito.times(1)).get();
 	}
@@ -320,7 +359,7 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 
 		when(missingDiseaseHandler.get()).thenReturn(CompletableFuture.completedFuture(false));
 
-		ProcessingResult<SampleAndPathogenTests> result = runFlow(createLabMessage(null, "", ExternalMessageStatus.UNPROCESSED));
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(createLabMessage(null, "", ExternalMessageStatus.UNPROCESSED));
 
 		assertThat(result.getStatus(), is(CANCELED));
 		verify(relatedForwardedMessagesHandler, times(0)).get();
@@ -334,7 +373,7 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 
 		when(relatedForwardedMessagesHandler.get()).thenReturn(CompletableFuture.completedFuture(true));
 
-		ProcessingResult<SampleAndPathogenTests> result =
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result =
 			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
 
 		assertThat(result.getStatus(), is(DONE));
@@ -346,7 +385,7 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 
 		when(relatedForwardedMessagesHandler.get()).thenReturn(CompletableFuture.completedFuture(true));
 
-		ProcessingResult<SampleAndPathogenTests> result =
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result =
 			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
 
 		assertThat(result.getStatus(), is(DONE));
@@ -360,7 +399,7 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 
 		when(relatedForwardedMessagesHandler.get()).thenReturn(CompletableFuture.completedFuture(false));
 
-		ProcessingResult<SampleAndPathogenTests> result =
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result =
 			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
 
 		assertThat(result.getStatus(), is(CANCELED));
@@ -387,11 +426,11 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		when(relatedLabMessageHandler.handle(any()))
 			.thenReturn(CompletableFuture.completedFuture(new HandlerResult(HandlerResultStatus.HANDLED, sample)));
 
-		ProcessingResult<SampleAndPathogenTests> result =
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result =
 			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
 
 		assertThat(result.getStatus(), is(DONE));
-		assertThat(result.getData().getSample(), is(sample));
+		assertThat(result.getData().getRelatedSampleReportsWithSamples().values(), hasItem(sample));
 		verify(relatedLabMessageHandler, times(1)).handle(any());
 		verify(handlePickOrCreatePerson, times(0)).apply(any(), any());
 	}
@@ -402,7 +441,7 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		when(relatedLabMessageHandler.handle(any()))
 			.thenReturn(CompletableFuture.completedFuture(new HandlerResult(HandlerResultStatus.CANCELED, null)));
 
-		ProcessingResult<SampleAndPathogenTests> result =
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result =
 			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
 
 		assertThat(result.getStatus(), is(CANCELED));
@@ -415,7 +454,7 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		when(relatedLabMessageHandler.handle(any()))
 			.thenReturn(CompletableFuture.completedFuture(new HandlerResult(HandlerResultStatus.CANCELED_WITH_UPDATES, null)));
 
-		ProcessingResult<SampleAndPathogenTests> result =
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result =
 			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
 
 		assertThat(result.getStatus(), is(CANCELED_WITH_CORRECTIONS));
@@ -428,7 +467,7 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		when(relatedLabMessageHandler.handle(any()))
 			.thenReturn(CompletableFuture.completedFuture(new HandlerResult(HandlerResultStatus.CONTINUE, null)));
 
-		ProcessingResult<SampleAndPathogenTests> result =
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result =
 			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
 
 		assertThat(result.getStatus(), is(DONE));
@@ -452,7 +491,7 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		labMessage.setPersonLastName("Ltest");
 		labMessage.setPersonSex(Sex.UNKNOWN);
 		labMessage.setPersonStreet("Test st.");
-		ProcessingResult<SampleAndPathogenTests> result = runFlow(labMessage);
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(labMessage);
 
 		assertThat(result.getStatus(), is(DONE));
 		assertThat(personCaptor.getValue().getFirstName(), is(labMessage.getPersonFirstName()));
@@ -481,7 +520,7 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			return null;
 		}).when(handleCreateCase).handle(caseCaptor.capture(), any(), any());
 
-		ProcessingResult<SampleAndPathogenTests> result =
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result =
 			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
 
 		assertThat(result.getStatus(), is(DONE));
@@ -498,7 +537,7 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			return null;
 		}).when(handlePickOrCreatePerson).apply(any(), any());
 
-		ProcessingResult<SampleAndPathogenTests> result =
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result =
 			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
 
 		assertThat(result.getStatus(), is(CANCELED));
@@ -515,7 +554,7 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			return null;
 		}).when(handlePickOrCreateEntry).handle(any(), any(), any(), any());
 
-		ProcessingResult<SampleAndPathogenTests> result =
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result =
 			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
 
 		assertThat(result.getStatus(), is(CANCELED));
@@ -539,7 +578,7 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			return null;
 		}).when(handleCreateCase).handle(any(), any(), any());
 
-		ProcessingResult<SampleAndPathogenTests> result =
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result =
 			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
 
 		assertThat(result.getStatus(), is(DONE));
@@ -563,12 +602,12 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			return null;
 		}).when(handleCreateCase).handle(any(), any(), any());
 
-		ProcessingResult<SampleAndPathogenTests> result =
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result =
 			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
 
 		assertThat(result.getStatus(), is(CANCELED));
 		verify(handleCreateContact, times(0)).handle(any(), any(), any());
-		verify(handleCreateSampleAndPathogenTests, times(0)).handle(any(), any(), any(), any());
+		verify(handleCreateSampleAndPathogenTests, times(0)).handle(any(), any(), any(), any(), any());
 	}
 
 	@Test
@@ -593,27 +632,29 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 
 			getCallbackParam(invocation).done(new SampleAndPathogenTests(sample, pathogenTests));
 			return null;
-		}).when(handleCreateSampleAndPathogenTests).handle(any(), any(), any(), any());
+		}).when(handleCreateSampleAndPathogenTests).handle(any(), any(), any(), eq(true), any());
 
+		SampleReportDto sampleReport = SampleReportDto.build();
 		ExternalMessageDto labMessage = createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED);
-		labMessage.setSampleDateTime(new Date());
-		labMessage.setSampleMaterial(SampleMaterial.BLOOD);
+		labMessage.addSampleReport(sampleReport);
+		sampleReport.setSampleDateTime(new Date());
+		sampleReport.setSampleMaterial(SampleMaterial.BLOOD);
 
 		TestReportDto testReport1 = TestReportDto.build();
 		testReport1.setTestType(PathogenTestType.CULTURE);
 		testReport1.setTestResult(PathogenTestResultType.NEGATIVE);
-		labMessage.getTestReports().add(testReport1);
+		sampleReport.addTestReport(testReport1);
 
 		TestReportDto testReport2 = TestReportDto.build();
 		testReport2.setTestResult(PathogenTestResultType.PENDING);
-		labMessage.getTestReports().add(testReport2);
+		sampleReport.addTestReport(testReport2);
 
-		ProcessingResult<SampleAndPathogenTests> result = runFlow(labMessage);
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(labMessage);
 
 		assertThat(result.getStatus(), is(DONE));
 		verify(handleCreateSampleAndPathogenTests).handle(argThat(sample -> {
 			assertThat(sample.getAssociatedCase(), is(caseCaptor.getValue().toReference()));
-			assertThat(sample.getSampleDateTime(), is(labMessage.getSampleDateTime()));
+			assertThat(sample.getSampleDateTime(), is(labMessage.getSampleReports().get(0).getSampleDateTime()));
 			assertThat(sample.getSampleMaterial(), is(SampleMaterial.BLOOD));
 			assertThat(sample.getReportingUser(), is(user.toReference()));
 
@@ -631,11 +672,73 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			assertThat(entityCreated, is(true));
 
 			return true;
+		}), argThat(lastSample -> {
+			assertThat(lastSample, is(Boolean.TRUE));
+
+			return true;
 		}), any());
 
 		// test that changes in handler are kept
-		assertThat(result.getData().getSample().getSamplingReason(), is(SamplingReason.PROFESSIONAL_REASON));
+		assertThat(
+			result.getData().getRelatedSampleReportsWithSamples().get(sampleReport).getSamplingReason(),
+			is(SamplingReason.PROFESSIONAL_REASON));
 		assertThat(result.getData().getPathogenTests().get(0).getTestResultText(), is("Dummy test result text"));
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void testCreateCaseAndCreateTwoSamples() throws ExecutionException, InterruptedException {
+
+		PickOrCreateEntryResult pickOrCreateEntryResult = new PickOrCreateEntryResult();
+		pickOrCreateEntryResult.setNewCase(true);
+		doAnswer(answerPickOrCreateEntry(pickOrCreateEntryResult)).when(handlePickOrCreateEntry).handle(any(), any(), any(), any());
+
+		ArgumentCaptor<CaseDataDto> caseCaptor = ArgumentCaptor.forClass(CaseDataDto.class);
+		doAnswer((invocation) -> {
+			getCallbackParam(invocation).done(invocation.getArgument(0));
+			return null;
+		}).when(handleCreateCase).handle(caseCaptor.capture(), any(), any());
+
+		ArgumentCaptor<SampleDto> createdSampleArgs = ArgumentCaptor.forClass(SampleDto.class);
+		ArgumentCaptor<List<PathogenTestDto>> createdPathogenTestsArgs = ArgumentCaptor.forClass(List.class);
+		ArgumentCaptor<Boolean> entityCreatedArgs = ArgumentCaptor.forClass(Boolean.class);
+		ArgumentCaptor<Boolean> lastSampleArgs = ArgumentCaptor.forClass(Boolean.class);
+
+		doAnswer((invocation) -> {
+			SampleDto sample = invocation.getArgument(0);
+			sample.setSamplingReason(SamplingReason.PROFESSIONAL_REASON);
+
+			List<PathogenTestDto> pathogenTests = invocation.getArgument(1);
+			pathogenTests.get(0).setTestResultText("Dummy test result text");
+
+			getCallbackParam(invocation).done(new SampleAndPathogenTests(sample, pathogenTests));
+			return null;
+		}).when(handleCreateSampleAndPathogenTests)
+			.handle(createdSampleArgs.capture(), createdPathogenTestsArgs.capture(), entityCreatedArgs.capture(), lastSampleArgs.capture(), any());
+
+		ExternalMessageDto labMessage = createStandardLabMessageWithTwoSampleReports();
+
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(labMessage);
+
+		assertThat(result.getStatus(), is(DONE));
+
+		verify(handleCreateSampleAndPathogenTests, times(2)).handle(any(), any(), any(), any(), any());
+
+		verifyStandardCreationOfTwoSamples(labMessage, createdSampleArgs, createdPathogenTestsArgs, entityCreatedArgs, lastSampleArgs, true);
+
+		for (SampleDto argSample : createdSampleArgs.getAllValues()) {
+			assertThat(argSample.getAssociatedCase(), is(caseCaptor.getValue().toReference()));
+		}
+
+		// test that changes in handler are kept
+		assertThat(
+			result.getData().getRelatedSampleReportsWithSamples().get(labMessage.getSampleReports().get(0)).getSamplingReason(),
+			is(SamplingReason.PROFESSIONAL_REASON));
+		assertThat(result.getData().getPathogenTests().get(0).getTestResultText(), is("Dummy test result text"));
+		assertThat(
+			result.getData().getRelatedSampleReportsWithSamples().get(labMessage.getSampleReports().get(1)).getSamplingReason(),
+			is(SamplingReason.PROFESSIONAL_REASON));
+		assertThat(result.getData().getPathogenTests().get(2).getTestResultText(), is("Dummy test result text"));
 	}
 
 	@Test
@@ -652,13 +755,15 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		doAnswer((invocation) -> {
 			getCallbackParam(invocation).cancel();
 			return null;
-		}).when(handleCreateSampleAndPathogenTests).handle(any(), any(), any(), any());
+		}).when(handleCreateSampleAndPathogenTests).handle(any(), any(), any(), any(), any());
 
 		ExternalMessageDto labMessage = createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED);
-		labMessage.setSampleDateTime(new Date());
-		labMessage.setSampleMaterial(SampleMaterial.BLOOD);
+		SampleReportDto sampleReport = SampleReportDto.build();
+		sampleReport.setSampleDateTime(new Date());
+		sampleReport.setSampleMaterial(SampleMaterial.BLOOD);
+		labMessage.addSampleReport(sampleReport);
 
-		ProcessingResult<SampleAndPathogenTests> result = runFlow(labMessage);
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(labMessage);
 
 		assertThat(result.getStatus(), is(CANCELED));
 		assertThat(result.getData(), is(nullValue()));
@@ -679,7 +784,7 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			return null;
 		}).when(handleCreateContact).handle(any(), any(), any());
 
-		ProcessingResult<SampleAndPathogenTests> result =
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result =
 			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
 
 		assertThat(result.getStatus(), is(DONE));
@@ -707,12 +812,12 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			return null;
 		}).when(handleCreateContact).handle(any(), any(), any());
 
-		ProcessingResult<SampleAndPathogenTests> result =
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result =
 			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
 
 		assertThat(result.getStatus(), is(CANCELED));
 		verify(handleCreateCase, times(0)).handle(any(), any(), any());
-		verify(handleCreateSampleAndPathogenTests, times(0)).handle(any(), any(), any(), any());
+		verify(handleCreateSampleAndPathogenTests, times(0)).handle(any(), any(), any(), any(), any());
 	}
 
 	@Test
@@ -737,23 +842,25 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 
 			getCallbackParam(invocation).done(new SampleAndPathogenTests(sample, pathogenTests));
 			return null;
-		}).when(handleCreateSampleAndPathogenTests).handle(any(), any(), any(), any());
+		}).when(handleCreateSampleAndPathogenTests).handle(any(), any(), any(), eq(true), any());
 
 		ExternalMessageDto labMessage = createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED);
-		labMessage.setSampleDateTime(new Date());
-		labMessage.setSampleMaterial(SampleMaterial.BLOOD);
+		SampleReportDto sampleReport = SampleReportDto.build();
+		sampleReport.setSampleDateTime(new Date());
+		sampleReport.setSampleMaterial(SampleMaterial.BLOOD);
+		labMessage.addSampleReport(sampleReport);
 
 		TestReportDto testReport = TestReportDto.build();
 		testReport.setTestType(PathogenTestType.CULTURE);
 		testReport.setTestResult(PathogenTestResultType.NEGATIVE);
-		labMessage.getTestReports().add(testReport);
+		labMessage.getSampleReports().get(0).addTestReport(testReport);
 
-		ProcessingResult<SampleAndPathogenTests> result = runFlow(labMessage);
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(labMessage);
 
 		assertThat(result.getStatus(), is(DONE));
 		verify(handleCreateSampleAndPathogenTests).handle(argThat(sample -> {
 			assertThat(sample.getAssociatedContact(), is(contactCaptor.getValue().toReference()));
-			assertThat(sample.getSampleDateTime(), is(labMessage.getSampleDateTime()));
+			assertThat(sample.getSampleDateTime(), is(labMessage.getSampleReports().get(0).getSampleDateTime()));
 			assertThat(sample.getSampleMaterial(), is(SampleMaterial.BLOOD));
 			assertThat(sample.getReportingUser(), is(user.toReference()));
 
@@ -769,11 +876,71 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			assertThat(entityCreated, is(true));
 
 			return true;
+		}), argThat(lastSample -> {
+			assertThat(lastSample, is(true));
+
+			return true;
 		}), any());
 
 		// test that changes in handler are kept
-		assertThat(result.getData().getSample().getSamplingReason(), is(SamplingReason.PROFESSIONAL_REASON));
+		assertThat(
+			result.getData().getRelatedSampleReportsWithSamples().get(sampleReport).getSamplingReason(),
+			is(SamplingReason.PROFESSIONAL_REASON));
 		assertThat(result.getData().getPathogenTests().get(0).getTestResultText(), is("Dummy test result text"));
+	}
+
+	@Test
+	public void testCreateContactAndCreateTwoSamples() throws ExecutionException, InterruptedException {
+
+		PickOrCreateEntryResult pickOrCreateEntryResult = new PickOrCreateEntryResult();
+		pickOrCreateEntryResult.setNewContact(true);
+		doAnswer(answerPickOrCreateEntry(pickOrCreateEntryResult)).when(handlePickOrCreateEntry).handle(any(), any(), any(), any());
+
+		ArgumentCaptor<ContactDto> contactCaptor = ArgumentCaptor.forClass(ContactDto.class);
+		doAnswer((invocation) -> {
+			getCallbackParam(invocation).done(invocation.getArgument(0));
+			return null;
+		}).when(handleCreateContact).handle(contactCaptor.capture(), any(), any());
+
+		ArgumentCaptor<SampleDto> createdSampleArgs = ArgumentCaptor.forClass(SampleDto.class);
+		ArgumentCaptor<List<PathogenTestDto>> createdPathogenTestsArgs = ArgumentCaptor.forClass(List.class);
+		ArgumentCaptor<Boolean> entityCreatedArgs = ArgumentCaptor.forClass(Boolean.class);
+		ArgumentCaptor<Boolean> lastSampleArgs = ArgumentCaptor.forClass(Boolean.class);
+
+		doAnswer((invocation) -> {
+			SampleDto sample = invocation.getArgument(0);
+			sample.setSamplingReason(SamplingReason.PROFESSIONAL_REASON);
+
+			List<PathogenTestDto> pathogenTests = invocation.getArgument(1);
+			pathogenTests.get(0).setTestResultText("Dummy test result text");
+
+			getCallbackParam(invocation).done(new SampleAndPathogenTests(sample, pathogenTests));
+			return null;
+		}).when(handleCreateSampleAndPathogenTests)
+			.handle(createdSampleArgs.capture(), createdPathogenTestsArgs.capture(), entityCreatedArgs.capture(), lastSampleArgs.capture(), any());
+
+		ExternalMessageDto labMessage = createStandardLabMessageWithTwoSampleReports();
+
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(labMessage);
+
+		assertThat(result.getStatus(), is(DONE));
+
+		verifyStandardCreationOfTwoSamples(labMessage, createdSampleArgs, createdPathogenTestsArgs, entityCreatedArgs, lastSampleArgs, true);
+
+		for (SampleDto argSample : createdSampleArgs.getAllValues()) {
+			assertThat(argSample.getAssociatedContact(), is(contactCaptor.getValue().toReference()));
+		}
+
+		// test that changes in handler are kept
+		assertThat(
+			result.getData().getRelatedSampleReportsWithSamples().get(labMessage.getSampleReports().get(0)).getSamplingReason(),
+			is(SamplingReason.PROFESSIONAL_REASON));
+		assertThat(result.getData().getPathogenTests().get(0).getTestResultText(), is("Dummy test result text"));
+		assertThat(
+			result.getData().getRelatedSampleReportsWithSamples().get(labMessage.getSampleReports().get(1)).getSamplingReason(),
+			is(SamplingReason.PROFESSIONAL_REASON));
+		assertThat(result.getData().getPathogenTests().get(2).getTestResultText(), is("Dummy test result text"));
+
 	}
 
 	@Test
@@ -799,7 +966,7 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			return null;
 		}).when(handleCreateEvent).accept(eventCaptor.capture(), any());
 
-		ProcessingResult<SampleAndPathogenTests> result =
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result =
 			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
 
 		assertThat(result.getStatus(), is(DONE));
@@ -835,12 +1002,12 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			return null;
 		}).when(handleCreateEvent).accept(any(), any());
 
-		ProcessingResult<SampleAndPathogenTests> result =
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result =
 			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
 
 		assertThat(result.getStatus(), is(CANCELED));
 		verify(handleCreateEventParticipant, times(0)).accept(any(), any());
-		verify(handleCreateSampleAndPathogenTests, times(0)).handle(any(), any(), any(), any());
+		verify(handleCreateSampleAndPathogenTests, times(0)).handle(any(), any(), any(), any(), any());
 	}
 
 	@Test
@@ -854,13 +1021,13 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			return null;
 		}).when(handlePickOrCreateEvent).accept(any());
 
-		ProcessingResult<SampleAndPathogenTests> result =
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result =
 			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
 
 		assertThat(result.getStatus(), is(CANCELED));
 		verify(handleCreateEvent, times(0)).accept(any(), any());
 		verify(handleCreateEventParticipant, times(0)).accept(any(), any());
-		verify(handleCreateSampleAndPathogenTests, times(0)).handle(any(), any(), any(), any());
+		verify(handleCreateSampleAndPathogenTests, times(0)).handle(any(), any(), any(), any(), any());
 	}
 
 	@Test
@@ -892,7 +1059,7 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			return null;
 		}).when(handleCreateEventParticipant).accept(eventParticipantCaptor.capture(), any());
 
-		ProcessingResult<SampleAndPathogenTests> result =
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result =
 			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
 
 		assertThat(result.getStatus(), is(DONE));
@@ -913,11 +1080,11 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			return null;
 		}).when(handleCreateEventParticipant).accept(any(), any());
 
-		ProcessingResult<SampleAndPathogenTests> result =
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result =
 			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
 
 		assertThat(result.getStatus(), is(CANCELED));
-		verify(handleCreateSampleAndPathogenTests, times(0)).handle(any(), any(), any(), any());
+		verify(handleCreateSampleAndPathogenTests, times(0)).handle(any(), any(), any(), any(), any());
 	}
 
 	@Test
@@ -949,23 +1116,25 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 
 			getCallbackParam(invocation).done(new SampleAndPathogenTests(sample, pathogenTests));
 			return null;
-		}).when(handleCreateSampleAndPathogenTests).handle(any(), any(), any(), any());
+		}).when(handleCreateSampleAndPathogenTests).handle(any(), any(), any(), eq(true), any());
 
 		ExternalMessageDto labMessage = createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED);
-		labMessage.setSampleDateTime(new Date());
-		labMessage.setSampleMaterial(SampleMaterial.BLOOD);
+		SampleReportDto sampleReport = SampleReportDto.build();
+		sampleReport.setSampleDateTime(new Date());
+		sampleReport.setSampleMaterial(SampleMaterial.BLOOD);
+		labMessage.addSampleReport(sampleReport);
 
 		TestReportDto testReport = TestReportDto.build();
 		testReport.setTestType(PathogenTestType.CULTURE);
 		testReport.setTestResult(PathogenTestResultType.NEGATIVE);
-		labMessage.getTestReports().add(testReport);
+		sampleReport.addTestReport(testReport);
 
-		ProcessingResult<SampleAndPathogenTests> result = runFlow(labMessage);
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(labMessage);
 
 		assertThat(result.getStatus(), is(DONE));
 		verify(handleCreateSampleAndPathogenTests).handle(argThat(sample -> {
 			assertThat(sample.getAssociatedEventParticipant(), is(eventParticipantCaptor.getValue().toReference()));
-			assertThat(sample.getSampleDateTime(), is(labMessage.getSampleDateTime()));
+			assertThat(sample.getSampleDateTime(), is(labMessage.getSampleReports().get(0).getSampleDateTime()));
 			assertThat(sample.getSampleMaterial(), is(SampleMaterial.BLOOD));
 			assertThat(sample.getReportingUser(), is(user.toReference()));
 
@@ -981,27 +1150,28 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			assertThat(entityCreated, is(true));
 
 			return true;
+		}), argThat(lastSample -> {
+			assertThat(lastSample, is(true));
+
+			return true;
 		}), any());
 
 		// test that changes in handler are kept
-		assertThat(result.getData().getSample().getSamplingReason(), is(SamplingReason.PROFESSIONAL_REASON));
+		assertThat(
+			result.getData().getRelatedSampleReportsWithSamples().get(sampleReport).getSamplingReason(),
+			is(SamplingReason.PROFESSIONAL_REASON));
 		assertThat(result.getData().getPathogenTests().get(0).getTestResultText(), is("Dummy test result text"));
 	}
 
 	@Test
-	public void testPickExistingEventAndCreateEventParticipant() throws ExecutionException, InterruptedException {
-
-		doAnswer(answerPickOrCreatePerson(null)).when(handlePickOrCreatePerson).apply(any(), any());
+	public void testCreateEventAndCreateEventParticipantAndCreateTwoSamples() throws ExecutionException, InterruptedException {
 
 		PickOrCreateEntryResult pickOrCreateEntryResult = new PickOrCreateEntryResult();
 		pickOrCreateEntryResult.setNewEventParticipant(true);
 		doAnswer(answerPickOrCreateEntry(pickOrCreateEntryResult)).when(handlePickOrCreateEntry).handle(any(), any(), any(), any());
 
-		EventDto event = creator.createEvent(user.toReference(), Disease.CORONAVIRUS);
 		PickOrCreateEventResult pickOrCreateEventResult = new PickOrCreateEventResult();
-		EventIndexDto selectedEvent = new EventIndexDto();
-		selectedEvent.setUuid(event.getUuid());
-		pickOrCreateEventResult.setEvent(selectedEvent);
+		pickOrCreateEventResult.setNewEvent(true);
 		doAnswer((invocation) -> {
 			getCallbackParam(invocation).done(pickOrCreateEventResult);
 			return null;
@@ -1013,19 +1183,87 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			return null;
 		}).when(handleCreateEventParticipant).accept(eventParticipantCaptor.capture(), any());
 
-		ProcessingResult<SampleAndPathogenTests> result =
+		ArgumentCaptor<SampleDto> createdSampleArgs = ArgumentCaptor.forClass(SampleDto.class);
+		ArgumentCaptor<List<PathogenTestDto>> createdPathogenTestsArgs = ArgumentCaptor.forClass(List.class);
+		ArgumentCaptor<Boolean> entityCreatedArgs = ArgumentCaptor.forClass(Boolean.class);
+		ArgumentCaptor<Boolean> lastSampleArgs = ArgumentCaptor.forClass(Boolean.class);
+
+		doAnswer(invocation -> {
+			SampleDto sample = invocation.getArgument(0);
+			sample.setSamplingReason(SamplingReason.PROFESSIONAL_REASON);
+
+			List<PathogenTestDto> pathogenTests = invocation.getArgument(1);
+			pathogenTests.get(0).setTestResultText("Dummy test result text");
+
+			getCallbackParam(invocation).done(new SampleAndPathogenTests(sample, pathogenTests));
+			return null;
+		}).when(handleCreateSampleAndPathogenTests)
+			.handle(createdSampleArgs.capture(), createdPathogenTestsArgs.capture(), entityCreatedArgs.capture(), lastSampleArgs.capture(), any());
+
+		ExternalMessageDto labMessage = createStandardLabMessageWithTwoSampleReports();
+
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(labMessage);
+
+		assertThat(result.getStatus(), is(DONE));
+
+		verifyStandardCreationOfTwoSamples(labMessage, createdSampleArgs, createdPathogenTestsArgs, entityCreatedArgs, lastSampleArgs, true);
+
+		for (SampleDto argSample : createdSampleArgs.getAllValues()) {
+			assertThat(argSample.getAssociatedEventParticipant(), is(eventParticipantCaptor.getValue().toReference()));
+		}
+		// test that changes in handler are kept
+		assertThat(
+			result.getData().getRelatedSampleReportsWithSamples().get(labMessage.getSampleReports().get(0)).getSamplingReason(),
+			is(SamplingReason.PROFESSIONAL_REASON));
+		assertThat(result.getData().getPathogenTests().get(0).getTestResultText(), is("Dummy test result text"));
+		assertThat(
+			result.getData().getRelatedSampleReportsWithSamples().get(labMessage.getSampleReports().get(1)).getSamplingReason(),
+			is(SamplingReason.PROFESSIONAL_REASON));
+		assertThat(result.getData().getPathogenTests().get(2).getTestResultText(), is("Dummy test result text"));
+	}
+
+	@Test
+	public void testPickExistingEventAndCreateEventParticipant() throws ExecutionException, InterruptedException {
+
+		doAnswer(answerPickOrCreatePerson(null)).when(handlePickOrCreatePerson).apply(any(), any());
+
+		PickOrCreateEntryResult pickOrCreateEntryResult = new PickOrCreateEntryResult();
+		pickOrCreateEntryResult.setNewEventParticipant(true);
+		doAnswer(answerPickOrCreateEntry(pickOrCreateEntryResult)).when(handlePickOrCreateEntry).handle(any(), any(), any(), any());
+
+		EventDto event = creator.createEvent(user.toReference(), Disease.CORONAVIRUS, rdcf);
+		PickOrCreateEventResult pickOrCreateEventResult = new PickOrCreateEventResult();
+		EventIndexDto selectedEvent = new EventIndexDto(event.getUuid());
+		pickOrCreateEventResult.setEvent(selectedEvent);
+		pickOrCreateEventResult.setNewEvent(false);
+		doAnswer((invocation) -> {
+			getCallbackParam(invocation).done(pickOrCreateEventResult);
+			return null;
+		}).when(handlePickOrCreateEvent).accept(any());
+
+		ArgumentCaptor<EventParticipantDto> eventParticipantCaptor = ArgumentCaptor.forClass(EventParticipantDto.class);
+		doAnswer((invocation) -> {
+			getCallbackParam(invocation).done(invocation.getArgument(0));
+			return null;
+		}).when(handleCreateEventParticipant).accept(eventParticipantCaptor.capture(), any());
+
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result =
 			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
 
 		assertThat(result.getStatus(), is(DONE));
 
 		assertThat(eventParticipantCaptor.getValue().getEvent(), is(event.toReference()));
-		verify(handleCreateSampleAndPathogenTests, times(1)).handle(any(), any(), any(), any());
+		verify(handleCreateSampleAndPathogenTests, times(1)).handle(any(), any(), any(), any(), any());
 		verify(handleCreateSampleAndPathogenTests).handle(argThat(s -> {
 			assertThat(s.getAssociatedEventParticipant(), is(eventParticipantCaptor.getValue().toReference()));
 
 			return true;
 		}), any(), argThat(entityCreated -> {
 			assertThat(entityCreated, is(true));
+
+			return true;
+		}), argThat(lastSample -> {
+			assertThat(lastSample, is(true));
 
 			return true;
 		}), any());
@@ -1041,10 +1279,9 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		pickOrCreateEntryResult.setNewEventParticipant(true);
 		doAnswer(answerPickOrCreateEntry(pickOrCreateEntryResult)).when(handlePickOrCreateEntry).handle(any(), any(), any(), any());
 
-		EventDto event = creator.createEvent(user.toReference(), Disease.CORONAVIRUS);
+		EventDto event = creator.createEvent(user.toReference(), Disease.CORONAVIRUS, rdcf);
 		PickOrCreateEventResult pickOrCreateEventResult = new PickOrCreateEventResult();
-		EventIndexDto selectedEvent = new EventIndexDto();
-		selectedEvent.setUuid(event.getUuid());
+		EventIndexDto selectedEvent = new EventIndexDto(event.getUuid());
 		pickOrCreateEventResult.setEvent(selectedEvent);
 		doAnswer((invocation) -> {
 			getCallbackParam(invocation).done(pickOrCreateEventResult);
@@ -1052,10 +1289,12 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		}).when(handlePickOrCreateEvent).accept(any());
 
 		EventParticipantDto eventParticipant = creator.createEventParticipant(event.toReference(), person, user.toReference());
-		when(confirmPickExistingEventParticipant.get()).thenReturn(CompletableFuture.completedFuture(true));
+		when(confirmPickExistingEventParticipantHandler.get()).thenReturn(CompletableFuture.completedFuture(true));
 
-		ProcessingResult<SampleAndPathogenTests> result =
-			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
+		ExternalMessageDto labMessage = createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED);
+		SampleReportDto sampleReport = SampleReportDto.build();
+		labMessage.addSampleReport(sampleReport);
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(labMessage);
 
 		assertThat(result.getStatus(), is(DONE));
 
@@ -1063,8 +1302,14 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			assertThat(entityCreated, is(false));
 
 			return true;
+		}), argThat(lastSample -> {
+			assertThat(lastSample, is(true));
+
+			return true;
 		}), any());
-		assertThat(result.getData().getSample().getAssociatedEventParticipant(), is(eventParticipant.toReference()));
+		assertThat(
+			result.getData().getRelatedSampleReportsWithSamples().get(sampleReport).getAssociatedEventParticipant(),
+			is(eventParticipant.toReference()));
 	}
 
 	@Test
@@ -1077,12 +1322,11 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		pickOrCreateEntryResult.setNewEventParticipant(true);
 		doAnswer(answerPickOrCreateEntry(pickOrCreateEntryResult)).when(handlePickOrCreateEntry).handle(any(), any(), any(), any());
 
-		EventDto event = creator.createEvent(user.toReference(), Disease.CORONAVIRUS);
+		EventDto event = creator.createEvent(user.toReference(), Disease.CORONAVIRUS, rdcf);
 		doAnswer((invocation) -> {
 			// pick event
 			PickOrCreateEventResult pickOrCreateEventResult = new PickOrCreateEventResult();
-			EventIndexDto selectedEvent = new EventIndexDto();
-			selectedEvent.setUuid(event.getUuid());
+			EventIndexDto selectedEvent = new EventIndexDto(event.getUuid());
 			pickOrCreateEventResult.setEvent(selectedEvent);
 
 			getCallbackParam(invocation).done(pickOrCreateEventResult);
@@ -1090,21 +1334,25 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		}).when(handlePickOrCreateEvent).accept(any());
 
 		EventParticipantDto eventParticipant = creator.createEventParticipant(event.toReference(), person, user.toReference());
-		when(confirmPickExistingEventParticipant.get())
+		when(confirmPickExistingEventParticipantHandler.get())
 			// don't pick event participant
 			.thenReturn(CompletableFuture.completedFuture(false))
 			// pick event participant for the second time
 			.thenReturn(CompletableFuture.completedFuture(true));
 
-		ProcessingResult<SampleAndPathogenTests> result =
-			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
+		ExternalMessageDto labMessage = createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED);
+		SampleReportDto sampleReport = SampleReportDto.build();
+		labMessage.addSampleReport(sampleReport);
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(labMessage);
 
 		assertThat(result.getStatus(), is(DONE));
 
 		// cancel on using event participant should return to event selection
 		verify(handlePickOrCreateEvent, times(2)).accept(any());
-		verify(handleCreateSampleAndPathogenTests, times(1)).handle(any(), any(), any(), any());
-		assertThat(result.getData().getSample().getAssociatedEventParticipant(), is(eventParticipant.toReference()));
+		verify(handleCreateSampleAndPathogenTests, times(1)).handle(any(), any(), any(), any(), any());
+		assertThat(
+			result.getData().getRelatedSampleReportsWithSamples().get(sampleReport).getAssociatedEventParticipant(),
+			is(eventParticipant.toReference()));
 	}
 
 	@Test
@@ -1117,12 +1365,11 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		pickOrCreateEntryResult.setNewEventParticipant(true);
 		doAnswer(answerPickOrCreateEntry(pickOrCreateEntryResult)).when(handlePickOrCreateEntry).handle(any(), any(), any(), any());
 
-		EventDto event = creator.createEvent(user.toReference(), Disease.CORONAVIRUS);
+		EventDto event = creator.createEvent(user.toReference(), Disease.CORONAVIRUS, rdcf);
 		doAnswer((invocation) -> {
 			// pick event for the  first time
 			PickOrCreateEventResult pickOrCreateEventResult = new PickOrCreateEventResult();
-			EventIndexDto selectedEvent = new EventIndexDto();
-			selectedEvent.setUuid(event.getUuid());
+			EventIndexDto selectedEvent = new EventIndexDto(event.getUuid());
 			pickOrCreateEventResult.setEvent(selectedEvent);
 
 			getCallbackParam(invocation).done(pickOrCreateEventResult);
@@ -1137,12 +1384,14 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		}).when(handlePickOrCreateEvent).accept(any());
 
 		EventParticipantDto eventParticipant = creator.createEventParticipant(event.toReference(), person, user.toReference());
-		when(confirmPickExistingEventParticipant.get())
+		when(confirmPickExistingEventParticipantHandler.get())
 			// don't pick event participant
 			.thenReturn(CompletableFuture.completedFuture(false));
 
-		ProcessingResult<SampleAndPathogenTests> result =
-			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
+		ExternalMessageDto labMessage = createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED);
+		SampleReportDto sampleReport = SampleReportDto.build();
+		labMessage.addSampleReport(sampleReport);
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(labMessage);
 
 		assertThat(result.getStatus(), is(DONE));
 
@@ -1150,8 +1399,10 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		verify(handlePickOrCreateEvent, times(2)).accept(any());
 		// create event is picked at the end
 		verify(handleCreateEvent, times(1)).accept(any(), any());
-		verify(handleCreateSampleAndPathogenTests, times(1)).handle(any(), any(), any(), any());
-		assertThat(result.getData().getSample().getAssociatedEventParticipant(), is(not(eventParticipant.toReference())));
+		verify(handleCreateSampleAndPathogenTests, times(1)).handle(any(), any(), any(), any(), any());
+		assertThat(
+			result.getData().getRelatedSampleReportsWithSamples().get(sampleReport).getAssociatedEventParticipant(),
+			is(not(eventParticipant.toReference())));
 	}
 
 	@Test
@@ -1164,10 +1415,9 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		pickOrCreateEntryResult.setNewEventParticipant(true);
 		doAnswer(answerPickOrCreateEntry(pickOrCreateEntryResult)).when(handlePickOrCreateEntry).handle(any(), any(), any(), any());
 
-		EventDto event = creator.createEvent(user.toReference(), Disease.CORONAVIRUS);
+		EventDto event = creator.createEvent(user.toReference(), Disease.CORONAVIRUS, rdcf);
 		PickOrCreateEventResult pickOrCreateEventResult = new PickOrCreateEventResult();
-		EventIndexDto selectedEvent = new EventIndexDto();
-		selectedEvent.setUuid(event.getUuid());
+		EventIndexDto selectedEvent = new EventIndexDto(event.getUuid());
 		pickOrCreateEventResult.setEvent(selectedEvent);
 		doAnswer((invocation) -> {
 			getCallbackParam(invocation).done(pickOrCreateEventResult);
@@ -1175,16 +1425,10 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		}).when(handlePickOrCreateEvent).accept(any());
 
 		EventParticipantDto eventParticipant = creator.createEventParticipant(event.toReference(), person, user.toReference());
-		when(confirmPickExistingEventParticipant.get()).thenReturn(CompletableFuture.completedFuture(true));
+		when(confirmPickExistingEventParticipantHandler.get()).thenReturn(CompletableFuture.completedFuture(true));
 
-		SampleDto sample = creator.createSample(
-			eventParticipant.toReference(),
-			new Date(),
-			new Date(),
-			user.toReference(),
-			SampleMaterial.CRUST,
-			rdcf.facility.toReference(),
-			s -> {
+		SampleDto sample = creator
+			.createSample(eventParticipant.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.CRUST, rdcf.facility, s -> {
 				s.setLabSampleID("test-lab-sample-id");
 				s.setSpecimenCondition(SpecimenCondition.ADEQUATE);
 			});
@@ -1209,29 +1453,32 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 
 			getCallbackParam(invocation).done(new SampleAndPathogenTests(editedSample, editedTests));
 			return null;
-		}).when(handleEditSample).handle(editedSampleCaptor.capture(), editedTestsCaptor.capture(), any());
+		}).when(handleEditSample).handle(editedSampleCaptor.capture(), editedTestsCaptor.capture(), any(), any());
+
+		SampleReportDto sampleReport = SampleReportDto.build();
+		sampleReport.setLabSampleId(sample.getLabSampleID());
+		sampleReport.setSampleMaterial(SampleMaterial.RECTAL_SWAB);
+		sampleReport.setSpecimenCondition(SpecimenCondition.NOT_ADEQUATE);
 
 		ExternalMessageDto labMessage = createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED, l -> {
-			l.setLabSampleId(sample.getLabSampleID());
-			l.setSampleMaterial(SampleMaterial.RECTAL_SWAB);
-			l.setSpecimenCondition(SpecimenCondition.NOT_ADEQUATE);
+			l.addSampleReport(sampleReport);
 		});
 
 		TestReportDto testReport1 = TestReportDto.build();
 		testReport1.setTestType(PathogenTestType.CULTURE);
 		testReport1.setTestResult(PathogenTestResultType.NEGATIVE);
-		labMessage.getTestReports().add(testReport1);
+		sampleReport.addTestReport(testReport1);
 
 		TestReportDto testReport2 = TestReportDto.build();
 		testReport2.setTestResult(PathogenTestResultType.PENDING);
-		labMessage.getTestReports().add(testReport2);
+		sampleReport.addTestReport(testReport2);
 
-		ProcessingResult<SampleAndPathogenTests> result = runFlow(labMessage);
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(labMessage);
 
 		assertThat(result.getStatus(), is(DONE));
 
-		verify(handleEditSample, times(1)).handle(any(), any(), any());
-		assertThat(result.getData().getSample(), is(sample));
+		verify(handleEditSample, times(1)).handle(any(), any(), eq(true), any());
+		assertThat(result.getData().getRelatedSampleReportsWithSamples().get(sampleReport), is(sample));
 		// sample not changed when calling edit handler
 		assertThat(editedSampleCaptor.getValue().getSampleMaterial(), is(SampleMaterial.CRUST));
 		assertThat(editedSampleCaptor.getValue().getSpecimenCondition(), is(SpecimenCondition.ADEQUATE));
@@ -1243,8 +1490,120 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		assertThat(editedTestsCaptor.getValue().get(1).getTestResult(), is(testReport2.getTestResult()));
 
 		// test that changes in handler are kept
-		assertThat(result.getData().getSample().getSamplingReason(), is(SamplingReason.PROFESSIONAL_REASON));
+		assertThat(
+			result.getData().getRelatedSampleReportsWithSamples().get(sampleReport).getSamplingReason(),
+			is(SamplingReason.PROFESSIONAL_REASON));
 		assertThat(result.getData().getPathogenTests().get(0).getTestResultText(), is("Dummy test result text"));
+	}
+
+	@Test
+	public void testPickExistingEventAndPickExistingEventParticipantPickExistingSampleAndCreateSample()
+		throws ExecutionException, InterruptedException {
+
+		PersonDto person = creator.createPerson();
+		doAnswer(answerPickOrCreatePerson(person)).when(handlePickOrCreatePerson).apply(any(), any());
+
+		PickOrCreateEntryResult pickOrCreateEntryResult = new PickOrCreateEntryResult();
+		pickOrCreateEntryResult.setNewEventParticipant(true);
+		doAnswer(answerPickOrCreateEntry(pickOrCreateEntryResult)).when(handlePickOrCreateEntry).handle(any(), any(), any(), any());
+
+		EventDto event = creator.createEvent(user.toReference(), Disease.CORONAVIRUS, rdcf);
+		PickOrCreateEventResult pickOrCreateEventResult = new PickOrCreateEventResult();
+		EventIndexDto selectedEvent = new EventIndexDto(event.getUuid());
+		selectedEvent.setUuid(event.getUuid());
+		pickOrCreateEventResult.setEvent(selectedEvent);
+		doAnswer((invocation) -> {
+			getCallbackParam(invocation).done(pickOrCreateEventResult);
+			return null;
+		}).when(handlePickOrCreateEvent).accept(any());
+
+		EventParticipantDto eventParticipant = creator.createEventParticipant(event.toReference(), person, user.toReference());
+		when(confirmPickExistingEventParticipantHandler.get()).thenReturn(CompletableFuture.completedFuture(true));
+
+		SampleDto sample = creator.createSample(eventParticipant.toReference(), user.toReference(), rdcf.facility, s -> {
+			s.setSampleMaterial(SampleMaterial.CRUST);
+			s.setLabSampleID("test-lab-sample-id");
+			s.setSpecimenCondition(SpecimenCondition.ADEQUATE);
+		});
+
+		AtomicBoolean firstInvocation = new AtomicBoolean(true);
+		doAnswer((invocation) -> {
+			PickOrCreateSampleResult result;
+			if (firstInvocation.get()) {
+				firstInvocation.set(false);
+				List<SampleDto> samples = invocation.getArgument(0);
+				result = new PickOrCreateSampleResult();
+				result.setSample(samples.get(0));
+			} else {
+				result = new PickOrCreateSampleResult();
+				result.setNewSample(true);
+			}
+			getCallbackParam(invocation).done(result);
+			return null;
+		}).when(handlePickOrCreateSample).handle(any(), any(), any());
+
+		ArgumentCaptor<SampleDto> editedSampleCaptor = ArgumentCaptor.forClass(SampleDto.class);
+		@SuppressWarnings("unchecked")
+		ArgumentCaptor<List<PathogenTestDto>> editedTestsCaptor = ArgumentCaptor.forClass(List.class);
+		ArgumentCaptor<Boolean> lastSampleArgsEdit = ArgumentCaptor.forClass(Boolean.class);
+
+		doAnswer((invocation) -> {
+			SampleDto editedSample = invocation.getArgument(0);
+			editedSample.setSamplingReason(SamplingReason.PROFESSIONAL_REASON);
+
+			List<PathogenTestDto> editedTests = invocation.getArgument(1);
+			editedTests.get(0).setTestResultText("Dummy test result text");
+
+			getCallbackParam(invocation).done(new SampleAndPathogenTests(editedSample, editedTests));
+			return null;
+		}).when(handleEditSample).handle(editedSampleCaptor.capture(), editedTestsCaptor.capture(), lastSampleArgsEdit.capture(), any());
+
+		ArgumentCaptor<SampleDto> createdSampleArgs = ArgumentCaptor.forClass(SampleDto.class);
+		ArgumentCaptor<List<PathogenTestDto>> createdPathogenTestsArgs = ArgumentCaptor.forClass(List.class);
+		ArgumentCaptor<Boolean> entityCreatedArgs = ArgumentCaptor.forClass(Boolean.class);
+		ArgumentCaptor<Boolean> lastSampleArgsCreate = ArgumentCaptor.forClass(Boolean.class);
+
+		doAnswer((invocation) -> {
+			SampleDto newSample = invocation.getArgument(0);
+			newSample.setSamplingReason(SamplingReason.PROFESSIONAL_REASON);
+
+			List<PathogenTestDto> pathogenTests = invocation.getArgument(1);
+			pathogenTests.get(0).setTestResultText("Dummy test result text");
+
+			getCallbackParam(invocation).done(new SampleAndPathogenTests(newSample, pathogenTests));
+			return null;
+		}).when(handleCreateSampleAndPathogenTests)
+			.handle(
+				createdSampleArgs.capture(),
+				createdPathogenTestsArgs.capture(),
+				entityCreatedArgs.capture(),
+				lastSampleArgsCreate.capture(),
+				any());
+
+		ExternalMessageDto standardLabMessage = createStandardLabMessageWithTwoSampleReports();
+
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(standardLabMessage);
+
+		verifyStandardEditingAndCreationOfSample(
+			standardLabMessage,
+			editedSampleCaptor,
+			editedTestsCaptor,
+			lastSampleArgsEdit,
+			createdSampleArgs,
+			createdPathogenTestsArgs,
+			entityCreatedArgs,
+			lastSampleArgsCreate);
+
+		assertThat(result.getStatus(), is(DONE));
+		// test that changes in handler are kept
+		assertThat(
+			result.getData().getRelatedSampleReportsWithSamples().get(standardLabMessage.getSampleReports().get(0)).getSamplingReason(),
+			is(SamplingReason.PROFESSIONAL_REASON));
+		assertThat(result.getData().getPathogenTests().get(0).getTestResultText(), is("Dummy test result text"));
+		assertThat(
+			result.getData().getRelatedSampleReportsWithSamples().get(standardLabMessage.getSampleReports().get(1)).getSamplingReason(),
+			is(SamplingReason.PROFESSIONAL_REASON));
+		assertThat(result.getData().getPathogenTests().get(2).getTestResultText(), is("Dummy test result text"));
 	}
 
 	@Test
@@ -1281,8 +1640,10 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			return null;
 		}).when(handlePickOrCreateSample).handle(any(), any(), any());
 
-		ProcessingResult<SampleAndPathogenTests> result =
-			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
+		ExternalMessageDto labMessage = createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED);
+		SampleReportDto sampleReport = SampleReportDto.build();
+		labMessage.addSampleReport(sampleReport);
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(labMessage);
 
 		assertThat(result.getStatus(), is(DONE));
 
@@ -1290,8 +1651,137 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			assertThat(entityCreated, is(false));
 
 			return true;
+		}), argThat(lastSample -> {
+			assertThat(lastSample, is(true));
+
+			return true;
 		}), any());
-		assertThat(result.getData().getSample().getAssociatedCase(), is(caze.toReference()));
+		assertThat(result.getData().getRelatedSampleReportsWithSamples().get(sampleReport).getAssociatedCase(), is(caze.toReference()));
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void testPickExistingCasePickExistingSimilarSampleAndCreateSample() throws ExecutionException, InterruptedException {
+
+		PersonDto person = creator.createPerson();
+		doAnswer(answerPickOrCreatePerson(person)).when(handlePickOrCreatePerson).apply(any(), any());
+
+		CaseDataDto caze = creator.createCase(
+			user.toReference(),
+			person.toReference(),
+			Disease.CORONAVIRUS,
+			CaseClassification.SUSPECT,
+			InvestigationStatus.PENDING,
+			new Date(),
+			rdcf);
+
+		doAnswer(invocation -> {
+			List<CaseSelectionDto> cases = invocation.getArgument(0);
+
+			PickOrCreateEntryResult pickOrCreateEntryResult = new PickOrCreateEntryResult();
+			pickOrCreateEntryResult.setCaze(cases.get(0));
+
+			//noinspection unchecked
+			((HandlerCallback<PickOrCreateEntryResult>) invocation.getArgument(3)).done(pickOrCreateEntryResult);
+
+			return null;
+		}).when(handlePickOrCreateEntry).handle(any(), any(), any(), any());
+
+		SampleDto sample = creator.createSample(caze.toReference(), user.toReference(), rdcf.facility, s -> {
+			s.setSampleMaterial(SampleMaterial.CRUST);
+			s.setLabSampleID("test-lab-sample-id");
+			s.setSpecimenCondition(SpecimenCondition.ADEQUATE);
+		});
+
+		AtomicBoolean firstInvocation = new AtomicBoolean(true);
+		doAnswer((invocation) -> {
+			PickOrCreateSampleResult result;
+			if (firstInvocation.get()) {
+				firstInvocation.set(false);
+				List<SampleDto> samples = invocation.getArgument(0);
+				result = new PickOrCreateSampleResult();
+				result.setSample(samples.get(0));
+			} else {
+				result = new PickOrCreateSampleResult();
+				result.setNewSample(true);
+			}
+			getCallbackParam(invocation).done(result);
+			return null;
+		}).when(handlePickOrCreateSample).handle(any(), any(), any());
+
+		ArgumentCaptor<SampleDto> editedSampleCaptor = ArgumentCaptor.forClass(SampleDto.class);
+		ArgumentCaptor<List<PathogenTestDto>> editedTestsCaptor = ArgumentCaptor.forClass(List.class);
+		ArgumentCaptor<Boolean> lastSampleArgsEdit = ArgumentCaptor.forClass(Boolean.class);
+
+		doAnswer((invocation) -> {
+			SampleDto editedSample = invocation.getArgument(0);
+			editedSample.setSamplingReason(SamplingReason.PROFESSIONAL_REASON);
+
+			List<PathogenTestDto> editedTests = invocation.getArgument(1);
+			editedTests.get(0).setTestResultText("Dummy test result text");
+
+			getCallbackParam(invocation).done(new SampleAndPathogenTests(editedSample, editedTests));
+			return null;
+		}).when(handleEditSample).handle(editedSampleCaptor.capture(), editedTestsCaptor.capture(), lastSampleArgsEdit.capture(), any());
+
+		ArgumentCaptor<SampleDto> createdSampleArgs = ArgumentCaptor.forClass(SampleDto.class);
+		ArgumentCaptor<List<PathogenTestDto>> createdPathogenTestsArgs = ArgumentCaptor.forClass(List.class);
+		ArgumentCaptor<Boolean> entityCreatedArgs = ArgumentCaptor.forClass(Boolean.class);
+		ArgumentCaptor<Boolean> lastSampleArgsCreate = ArgumentCaptor.forClass(Boolean.class);
+
+		doAnswer((invocation) -> {
+			SampleDto createdSample = invocation.getArgument(0);
+			createdSample.setSamplingReason(SamplingReason.PROFESSIONAL_REASON);
+
+			List<PathogenTestDto> pathogenTests = invocation.getArgument(1);
+			pathogenTests.get(0).setTestResultText("Dummy test result text");
+
+			getCallbackParam(invocation).done(new SampleAndPathogenTests(sample, pathogenTests));
+			return null;
+		}).when(handleCreateSampleAndPathogenTests)
+			.handle(
+				createdSampleArgs.capture(),
+				createdPathogenTestsArgs.capture(),
+				entityCreatedArgs.capture(),
+				lastSampleArgsCreate.capture(),
+				any());
+
+		ExternalMessageDto standardLabMessage = createStandardLabMessageWithTwoSampleReports();
+
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(standardLabMessage);
+
+		assertThat(result.getData().getRelatedSampleReportsWithSamples().get(standardLabMessage.getSampleReports().get(0)), is(sample));
+		verifyStandardEditingAndCreationOfSample(
+			standardLabMessage,
+			editedSampleCaptor,
+			editedTestsCaptor,
+			lastSampleArgsEdit,
+			createdSampleArgs,
+			createdPathogenTestsArgs,
+			entityCreatedArgs,
+			lastSampleArgsCreate);
+
+		assertThat(result.getStatus(), is(DONE));
+		assertThat(result.getData().getRelatedSampleReportsWithSamples().get(standardLabMessage.getSampleReports().get(0)), is(sample));
+
+		// test that changes in handler are kept
+		assertThat(
+			result.getData().getRelatedSampleReportsWithSamples().get(standardLabMessage.getSampleReports().get(0)).getSamplingReason(),
+			is(SamplingReason.PROFESSIONAL_REASON));
+		assertThat(result.getData().getPathogenTests().get(0).getTestResultText(), is("Dummy test result text"));
+		assertThat(
+			result.getData().getRelatedSampleReportsWithSamples().get(standardLabMessage.getSampleReports().get(1)).getSampleMaterial(),
+			is(SampleMaterial.CRUST));
+
+		verify(multipleSamplesConfirmationHandler, times(1)).get();
+
+		assertThat(
+			result.getData().getRelatedSampleReportsWithSamples().get(standardLabMessage.getSampleReports().get(0)).getAssociatedCase(),
+			is(caze.toReference()));
+		assertThat(
+			result.getData().getRelatedSampleReportsWithSamples().get(standardLabMessage.getSampleReports().get(1)).getAssociatedCase(),
+			is(caze.toReference()));
+
 	}
 
 	@Test
@@ -1339,6 +1829,7 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 
 		ArgumentCaptor<SampleDto> editedSampleCaptor = ArgumentCaptor.forClass(SampleDto.class);
 		ArgumentCaptor<List<PathogenTestDto>> editedTestsCaptor = ArgumentCaptor.forClass(List.class);
+
 		doAnswer((invocation) -> {
 			SampleDto editedSample = invocation.getArgument(0);
 			editedSample.setSamplingReason(SamplingReason.PROFESSIONAL_REASON);
@@ -1348,29 +1839,32 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 
 			getCallbackParam(invocation).done(new SampleAndPathogenTests(editedSample, editedTests));
 			return null;
-		}).when(handleEditSample).handle(editedSampleCaptor.capture(), editedTestsCaptor.capture(), any());
+		}).when(handleEditSample).handle(editedSampleCaptor.capture(), editedTestsCaptor.capture(), any(), any());
 
+		SampleReportDto sampleReport = SampleReportDto.build();
+		sampleReport.setLabSampleId(sample.getLabSampleID());
+		sampleReport.setSampleMaterial(SampleMaterial.RECTAL_SWAB);
+		sampleReport.setSpecimenCondition(SpecimenCondition.NOT_ADEQUATE);
 		ExternalMessageDto labMessage = createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED, l -> {
-			l.setLabSampleId(sample.getLabSampleID());
-			l.setSampleMaterial(SampleMaterial.RECTAL_SWAB);
-			l.setSpecimenCondition(SpecimenCondition.NOT_ADEQUATE);
+			l.addSampleReport(sampleReport);
+
 		});
 
 		TestReportDto testReport1 = TestReportDto.build();
 		testReport1.setTestType(PathogenTestType.CULTURE);
 		testReport1.setTestResult(PathogenTestResultType.NEGATIVE);
-		labMessage.getTestReports().add(testReport1);
+		sampleReport.addTestReport(testReport1);
 
 		TestReportDto testReport2 = TestReportDto.build();
 		testReport2.setTestResult(PathogenTestResultType.PENDING);
-		labMessage.getTestReports().add(testReport2);
+		sampleReport.addTestReport(testReport2);
 
-		ProcessingResult<SampleAndPathogenTests> result = runFlow(labMessage);
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(labMessage);
 
 		assertThat(result.getStatus(), is(DONE));
 
-		verify(handleEditSample, times(1)).handle(any(), any(), any());
-		assertThat(result.getData().getSample(), is(sample));
+		verify(handleEditSample, times(1)).handle(any(), any(), eq(true), any());
+		assertThat(result.getData().getRelatedSampleReportsWithSamples().get(sampleReport), is(sample));
 		// sample not changed when calling edit handler
 		assertThat(editedSampleCaptor.getValue().getSampleMaterial(), is(SampleMaterial.CRUST));
 		assertThat(editedSampleCaptor.getValue().getSpecimenCondition(), is(SpecimenCondition.ADEQUATE));
@@ -1382,7 +1876,9 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		assertThat(editedTestsCaptor.getValue().get(1).getTestResult(), is(testReport2.getTestResult()));
 
 		// test that changes in handler are kept
-		assertThat(result.getData().getSample().getSamplingReason(), is(SamplingReason.PROFESSIONAL_REASON));
+		assertThat(
+			result.getData().getRelatedSampleReportsWithSamples().get(sampleReport).getSamplingReason(),
+			is(SamplingReason.PROFESSIONAL_REASON));
 		assertThat(result.getData().getPathogenTests().get(0).getTestResultText(), is("Dummy test result text"));
 	}
 
@@ -1439,18 +1935,20 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 
 			getCallbackParam(invocation).done(new SampleAndPathogenTests(editedSample, editedTests));
 			return null;
-		}).when(handleEditSample).handle(any(), any(), any());
+		}).when(handleEditSample).handle(any(), any(), any(), any());
 
+		SampleReportDto sampleReport = SampleReportDto.build();
+		sampleReport.setLabSampleId(similarSample.getLabSampleID());
 		ExternalMessageDto externalMessage = createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED, m -> {
-			m.setLabSampleId(similarSample.getLabSampleID());
+			m.addSampleReport(sampleReport);
 		});
 
-		ProcessingResult<SampleAndPathogenTests> result = runFlow(externalMessage);
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(externalMessage);
 
 		assertThat(result.getStatus(), is(DONE));
 
-		verify(handleEditSample, times(1)).handle(any(), any(), any());
-		assertThat(result.getData().getSample(), is(otherSample));
+		verify(handleEditSample, times(1)).handle(any(), any(), eq(true), any());
+		assertThat(result.getData().getRelatedSampleReportsWithSamples().get(sampleReport), is(otherSample));
 	}
 
 	@Test
@@ -1480,8 +1978,10 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			return null;
 		}).when(handlePickOrCreateSample).handle(any(), any(), any());
 
-		ProcessingResult<SampleAndPathogenTests> result =
-			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
+		ExternalMessageDto labMessage = createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED);
+		SampleReportDto sampleReport = SampleReportDto.build();
+		labMessage.addSampleReport(sampleReport);
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(labMessage);
 
 		assertThat(result.getStatus(), is(DONE));
 
@@ -1489,8 +1989,12 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			assertThat(entityCreated, is(false));
 
 			return true;
+		}), argThat(lastSample -> {
+			assertThat(lastSample, is(true));
+
+			return true;
 		}), any());
-		assertThat(result.getData().getSample().getAssociatedContact(), is(contact.toReference()));
+		assertThat(result.getData().getRelatedSampleReportsWithSamples().get(sampleReport).getAssociatedContact(), is(contact.toReference()));
 	}
 
 	@Test
@@ -1513,7 +2017,7 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			return null;
 		}).when(handlePickOrCreateEntry).handle(any(), any(), any(), any());
 
-		SampleDto sample = creator.createSample(contact.toReference(), user.toReference(), rdcf.facility.toReference(), null);
+		SampleDto sample = creator.createSample(contact.toReference(), user.toReference(), rdcf.facility, null);
 
 		doAnswer((invocation) -> {
 			List<SampleDto> samples = invocation.getArgument(0);
@@ -1527,15 +2031,129 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		doAnswer((invocation) -> {
 			getCallbackParam(invocation).done(new SampleAndPathogenTests(invocation.getArgument(0), invocation.getArgument(1)));
 			return null;
-		}).when(handleEditSample).handle(any(), any(), any());
+		}).when(handleEditSample).handle(any(), any(), any(), any());
 
-		ProcessingResult<SampleAndPathogenTests> result =
-			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
+		ExternalMessageDto labMessage = createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED);
+		SampleReportDto sampleReport = SampleReportDto.build();
+		labMessage.addSampleReport(sampleReport);
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(labMessage);
 
 		assertThat(result.getStatus(), is(DONE));
 
-		verify(handleEditSample, times(1)).handle(any(), any(), any());
-		assertThat(result.getData().getSample(), is(sample));
+		verify(handleEditSample, times(1)).handle(any(), any(), eq(true), any());
+		assertThat(result.getData().getRelatedSampleReportsWithSamples().get(sampleReport), is(sample));
+	}
+
+	@Test
+	@SuppressWarnings("unchecked")
+	public void testPickExistingContactAndPickExistingSampleAndCreateSample() throws ExecutionException, InterruptedException {
+
+		PersonDto person = creator.createPerson();
+		doAnswer(answerPickOrCreatePerson(person)).when(handlePickOrCreatePerson).apply(any(), any());
+
+		ContactDto contact = creator.createContact(user.toReference(), person.toReference(), Disease.CORONAVIRUS, rdcf);
+		doAnswer(invocation -> {
+			List<SimilarContactDto> contacts = invocation.getArgument(1);
+
+			PickOrCreateEntryResult pickOrCreateEntryResult = new PickOrCreateEntryResult();
+			pickOrCreateEntryResult.setContact(contacts.get(0));
+
+			//noinspection unchecked
+			((HandlerCallback<PickOrCreateEntryResult>) invocation.getArgument(3)).done(pickOrCreateEntryResult);
+
+			return null;
+		}).when(handlePickOrCreateEntry).handle(any(), any(), any(), any());
+
+		SampleDto sample = creator.createSample(contact.toReference(), user.toReference(), rdcf.facility, s -> {
+			s.setLabSampleID("test-lab-sample-id");
+			s.setSampleMaterial(SampleMaterial.CRUST);
+			s.setSpecimenCondition(SpecimenCondition.ADEQUATE);
+		});
+
+		AtomicBoolean firstInvocation = new AtomicBoolean(true);
+		doAnswer((invocation) -> {
+			PickOrCreateSampleResult result;
+			if (firstInvocation.get()) {
+				firstInvocation.set(false);
+				List<SampleDto> samples = invocation.getArgument(0);
+				result = new PickOrCreateSampleResult();
+				result.setSample(samples.get(0));
+			} else {
+				result = new PickOrCreateSampleResult();
+				result.setNewSample(true);
+			}
+			getCallbackParam(invocation).done(result);
+			return null;
+		}).when(handlePickOrCreateSample).handle(any(), any(), any());
+
+		ArgumentCaptor<SampleDto> editedSampleCaptor = ArgumentCaptor.forClass(SampleDto.class);
+		ArgumentCaptor<List<PathogenTestDto>> editedTestsCaptor = ArgumentCaptor.forClass(List.class);
+		ArgumentCaptor<Boolean> lastSampleArgsEdit = ArgumentCaptor.forClass(Boolean.class);
+
+		doAnswer((invocation) -> {
+			SampleDto editedSample = invocation.getArgument(0);
+			editedSample.setSamplingReason(SamplingReason.PROFESSIONAL_REASON);
+
+			List<PathogenTestDto> editedTests = invocation.getArgument(1);
+			editedTests.get(0).setTestResultText("Dummy test result text");
+
+			getCallbackParam(invocation).done(new SampleAndPathogenTests(editedSample, editedTests));
+			return null;
+		}).when(handleEditSample).handle(editedSampleCaptor.capture(), editedTestsCaptor.capture(), lastSampleArgsEdit.capture(), any());
+
+		ArgumentCaptor<SampleDto> createdSampleArgs = ArgumentCaptor.forClass(SampleDto.class);
+		ArgumentCaptor<List<PathogenTestDto>> createdPathogenTestsArgs = ArgumentCaptor.forClass(List.class);
+		ArgumentCaptor<Boolean> entityCreatedArgs = ArgumentCaptor.forClass(Boolean.class);
+		ArgumentCaptor<Boolean> lastSampleArgsCreate = ArgumentCaptor.forClass(Boolean.class);
+
+		doAnswer((invocation) -> {
+			SampleDto createdSample = invocation.getArgument(0);
+			createdSample.setSamplingReason(SamplingReason.PROFESSIONAL_REASON);
+
+			List<PathogenTestDto> pathogenTests = invocation.getArgument(1);
+			pathogenTests.get(0).setTestResultText("Dummy test result text");
+
+			getCallbackParam(invocation).done(new SampleAndPathogenTests(sample, pathogenTests));
+			return null;
+		}).when(handleCreateSampleAndPathogenTests)
+			.handle(
+				createdSampleArgs.capture(),
+				createdPathogenTestsArgs.capture(),
+				entityCreatedArgs.capture(),
+				lastSampleArgsCreate.capture(),
+				any());
+
+		ExternalMessageDto standardLabMessage = createStandardLabMessageWithTwoSampleReports();
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(standardLabMessage);
+
+		verifyStandardEditingAndCreationOfSample(
+			standardLabMessage,
+			editedSampleCaptor,
+			editedTestsCaptor,
+			lastSampleArgsEdit,
+			createdSampleArgs,
+			createdPathogenTestsArgs,
+			entityCreatedArgs,
+			lastSampleArgsCreate);
+
+		assertThat(result.getStatus(), is(DONE));
+		assertThat(result.getData().getRelatedSampleReportsWithSamples().get(standardLabMessage.getSampleReports().get(0)), is(sample));
+
+		// test that changes in handler are kept
+		assertThat(
+			result.getData().getRelatedSampleReportsWithSamples().get(standardLabMessage.getSampleReports().get(0)).getSamplingReason(),
+			is(SamplingReason.PROFESSIONAL_REASON));
+		assertThat(result.getData().getPathogenTests().get(0).getTestResultText(), is("Dummy test result text"));
+		assertThat(
+			result.getData().getRelatedSampleReportsWithSamples().get(standardLabMessage.getSampleReports().get(1)).getSampleMaterial(),
+			is(SampleMaterial.CRUST));
+
+		assertThat(
+			result.getData().getRelatedSampleReportsWithSamples().get(standardLabMessage.getSampleReports().get(0)).getAssociatedContact(),
+			is(contact.toReference()));
+		assertThat(
+			result.getData().getRelatedSampleReportsWithSamples().get(standardLabMessage.getSampleReports().get(1)).getAssociatedContact(),
+			is(contact.toReference()));
 	}
 
 	@Test
@@ -1545,7 +2163,7 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		PersonDto person = creator.createPerson();
 		doAnswer(answerPickOrCreatePerson(person)).when(handlePickOrCreatePerson).apply(any(), any());
 
-		EventDto event = creator.createEvent(user.toReference(), Disease.CORONAVIRUS);
+		EventDto event = creator.createEvent(user.toReference(), Disease.CORONAVIRUS, rdcf);
 		EventParticipantDto eventParticipant = creator.createEventParticipant(event.toReference(), person, user.toReference());
 		doAnswer(invocation -> {
 			List<SimilarEventParticipantDto> eventParticipants = invocation.getArgument(2);
@@ -1566,8 +2184,10 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			return null;
 		}).when(handlePickOrCreateSample).handle(any(), any(), any());
 
-		ProcessingResult<SampleAndPathogenTests> result =
-			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
+		ExternalMessageDto labMessage = createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED);
+		SampleReportDto sampleReport = SampleReportDto.build();
+		labMessage.addSampleReport(sampleReport);
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(labMessage);
 
 		assertThat(result.getStatus(), is(DONE));
 
@@ -1575,8 +2195,14 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			assertThat(entityCreated, is(false));
 
 			return true;
+		}), argThat(lastSample -> {
+			assertThat(lastSample, is(true));
+
+			return true;
 		}), any());
-		assertThat(result.getData().getSample().getAssociatedEventParticipant(), is(eventParticipant.toReference()));
+		assertThat(
+			result.getData().getRelatedSampleReportsWithSamples().get(sampleReport).getAssociatedEventParticipant(),
+			is(eventParticipant.toReference()));
 	}
 
 	@Test
@@ -1586,7 +2212,7 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		PersonDto person = creator.createPerson();
 		doAnswer(answerPickOrCreatePerson(person)).when(handlePickOrCreatePerson).apply(any(), any());
 
-		EventDto event = creator.createEvent(user.toReference(), Disease.CORONAVIRUS);
+		EventDto event = creator.createEvent(user.toReference(), Disease.CORONAVIRUS, rdcf);
 		EventParticipantDto eventParticipant = creator.createEventParticipant(event.toReference(), person, user.toReference());
 		doAnswer(invocation -> {
 			List<SimilarEventParticipantDto> eventParticipants = invocation.getArgument(2);
@@ -1600,14 +2226,8 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			return null;
 		}).when(handlePickOrCreateEntry).handle(any(), any(), any(), any());
 
-		SampleDto sample = creator.createSample(
-			eventParticipant.toReference(),
-			new Date(),
-			new Date(),
-			user.toReference(),
-			SampleMaterial.CRUST,
-			rdcf.facility.toReference(),
-			null);
+		SampleDto sample = creator
+			.createSample(eventParticipant.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.CRUST, rdcf.facility, null);
 		doAnswer((invocation) -> {
 			List<SampleDto> samples = invocation.getArgument(0);
 			PickOrCreateSampleResult result = new PickOrCreateSampleResult();
@@ -1620,15 +2240,17 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		doAnswer((invocation) -> {
 			getCallbackParam(invocation).done(new SampleAndPathogenTests(invocation.getArgument(0), invocation.getArgument(1)));
 			return null;
-		}).when(handleEditSample).handle(any(), any(), any());
+		}).when(handleEditSample).handle(any(), any(), any(), any());
 
-		ProcessingResult<SampleAndPathogenTests> result =
-			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
+		ExternalMessageDto labMessage = createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED);
+		SampleReportDto sampleReport = SampleReportDto.build();
+		labMessage.addSampleReport(sampleReport);
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(labMessage);
 
 		assertThat(result.getStatus(), is(DONE));
 
-		verify(handleEditSample, times(1)).handle(any(), any(), any());
-		assertThat(result.getData().getSample(), is(sample));
+		verify(handleEditSample, times(1)).handle(any(), any(), eq(true), any());
+		assertThat(result.getData().getRelatedSampleReportsWithSamples().get(sampleReport), is(sample));
 	}
 
 	@Test
@@ -1665,7 +2287,7 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			return null;
 		}).when(handlePickOrCreateSample).handle(any(), any(), any());
 
-		ProcessingResult<SampleAndPathogenTests> result =
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result =
 			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
 
 		assertThat(result.getStatus(), is(CANCELED));
@@ -1710,15 +2332,85 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		doAnswer((invocation) -> {
 			getCallbackParam(invocation).cancel();
 			return null;
-		}).when(handleEditSample).handle(any(), any(), any());
+		}).when(handleEditSample).handle(any(), any(), any(), any());
 
-		ProcessingResult<SampleAndPathogenTests> result =
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result =
 			runFlow(createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED));
 
 		assertThat(result.getStatus(), is(ProcessingResultStatus.CANCELED));
 	}
 
-	private ProcessingResult<SampleAndPathogenTests> runFlow(ExternalMessageDto labMessage) throws ExecutionException, InterruptedException {
+	@Test
+	@SuppressWarnings("unchecked")
+	public void testEditSampleAndCreateSampleCancel() throws ExecutionException, InterruptedException {
+
+		PersonDto person = creator.createPerson();
+		doAnswer(answerPickOrCreatePerson(person)).when(handlePickOrCreatePerson).apply(any(), any());
+
+		CaseDataDto caze = creator.createCase(
+			user.toReference(),
+			person.toReference(),
+			Disease.CORONAVIRUS,
+			CaseClassification.SUSPECT,
+			InvestigationStatus.PENDING,
+			new Date(),
+			rdcf);
+		doAnswer(invocation -> {
+			List<CaseSelectionDto> cases = invocation.getArgument(0);
+
+			PickOrCreateEntryResult pickOrCreateEntryResult = new PickOrCreateEntryResult();
+			pickOrCreateEntryResult.setCaze(cases.get(0));
+
+			//noinspection unchecked
+			((HandlerCallback<PickOrCreateEntryResult>) invocation.getArgument(3)).done(pickOrCreateEntryResult);
+
+			return null;
+		}).when(handlePickOrCreateEntry).handle(any(), any(), any(), any());
+
+		SampleDto sample = creator.createSample(caze.toReference(), user.toReference(), rdcf.facility, s -> s.setLabSampleID("test-lab-sample-id"));
+
+		PickOrCreateSampleResult pickOrCreateSampleResult = new PickOrCreateSampleResult();
+		pickOrCreateSampleResult.setSample(sample);
+
+		AtomicBoolean firstInvocation = new AtomicBoolean(true);
+		doAnswer((invocation) -> {
+			PickOrCreateSampleResult result;
+			if (firstInvocation.get()) {
+				firstInvocation.set(false);
+				List<SampleDto> samples = invocation.getArgument(0);
+				result = new PickOrCreateSampleResult();
+				result.setSample(samples.get(0));
+			} else {
+				result = new PickOrCreateSampleResult();
+				result.setNewSample(true);
+			}
+			getCallbackParam(invocation).done(result);
+			return null;
+		}).when(handlePickOrCreateSample).handle(any(), any(), any());
+
+		doAnswer((invocation) -> {
+			SampleDto editedSample = invocation.getArgument(0);
+			editedSample.setSamplingReason(SamplingReason.PROFESSIONAL_REASON);
+
+			List<PathogenTestDto> editedTests = invocation.getArgument(1);
+			editedTests.get(0).setTestResultText("Dummy test result text");
+
+			getCallbackParam(invocation).done(new SampleAndPathogenTests(editedSample, editedTests));
+			return null;
+		}).when(handleEditSample).handle(any(), any(), any(), any());
+
+		doAnswer((invocation) -> {
+			getCallbackParam(invocation).cancel();
+			return null;
+		}).when(handleCreateSampleAndPathogenTests).handle(any(), any(), any(), any(), any());
+
+		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(createStandardLabMessageWithTwoSampleReports());
+
+		assertThat(result.getStatus(), is(ProcessingResultStatus.CANCELED));
+	}
+
+	private ProcessingResult<RelatedSamplesReportsAndPathogenTests> runFlow(ExternalMessageDto labMessage)
+		throws ExecutionException, InterruptedException {
 
 		return flow.run(labMessage, relatedLabMessageHandler).toCompletableFuture().get();
 	}
@@ -1761,7 +2453,7 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		Consumer<ExternalMessageDto> customConfig) {
 		ExternalMessageDto labMessage = ExternalMessageDto.build();
 
-		labMessage.setTestedDisease(disease);
+		labMessage.setDisease(disease);
 		labMessage.setReportId(reportId);
 		labMessage.setStatus(status);
 
@@ -1770,6 +2462,132 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 		}
 
 		return labMessage;
+	}
+
+	private ExternalMessageDto createStandardLabMessageWithTwoSampleReports() {
+
+		SampleReportDto sampleReport1 = SampleReportDto.build();
+		sampleReport1.setSampleDateTime(new Date(100000000L));
+		sampleReport1.setSampleMaterial(SampleMaterial.BLOOD);
+		sampleReport1.setLabSampleId("test-lab-sample-id");
+
+		SampleReportDto sampleReport2 = SampleReportDto.build();
+		sampleReport2.setSampleDateTime(new Date(200000000L));
+		sampleReport2.setSampleMaterial(SampleMaterial.CRUST);
+
+		TestReportDto testReport1a = TestReportDto.build();
+		testReport1a.setTestType(PathogenTestType.CULTURE);
+		testReport1a.setTestResult(PathogenTestResultType.NEGATIVE);
+		sampleReport1.addTestReport(testReport1a);
+
+		TestReportDto testReport1b = TestReportDto.build();
+		testReport1b.setTestType(PathogenTestType.PCR_RT_PCR);
+		testReport1b.setTestResult(PathogenTestResultType.PENDING);
+		sampleReport1.addTestReport(testReport1b);
+
+		TestReportDto testReport2 = TestReportDto.build();
+		testReport1a.setTestType(PathogenTestType.SEQUENCING);
+		testReport2.setTestResult(PathogenTestResultType.POSITIVE);
+		sampleReport2.addTestReport(testReport2);
+
+		return createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED, l -> {
+			l.addSampleReport(sampleReport1);
+			l.addSampleReport(sampleReport2);
+		});
+	}
+
+	private void verifyStandardCreationOfTwoSamples(
+		ExternalMessageDto standardLabMessage,
+		ArgumentCaptor<SampleDto> sampleArgs,
+		ArgumentCaptor<List<PathogenTestDto>> pathogenTestsArgs,
+		ArgumentCaptor<Boolean> entityCreatedArgs,
+		ArgumentCaptor<Boolean> lastSampleArgs,
+		boolean entitiyCreated) {
+
+		// verify first call to handleCreateSampleAndPathogenTests
+		SampleDto argSample = sampleArgs.getAllValues().get(0);
+		assertThat(argSample.getSampleDateTime(), is(standardLabMessage.getSampleReports().get(0).getSampleDateTime()));
+		assertThat(argSample.getSampleMaterial(), is(SampleMaterial.BLOOD));
+		assertThat(argSample.getReportingUser(), is(user.toReference()));
+
+		List<PathogenTestDto> argPathogenTests = pathogenTestsArgs.getAllValues().get(0);
+		assertThat(argPathogenTests, hasSize(2));
+		assertThat(argPathogenTests.get(0).getTestType(), is(standardLabMessage.getSampleReports().get(0).getTestReports().get(0).getTestType()));
+		assertThat(argPathogenTests.get(0).getTestResult(), is(standardLabMessage.getSampleReports().get(0).getTestReports().get(0).getTestResult()));
+		assertThat(argPathogenTests.get(1).getTestType(), is(standardLabMessage.getSampleReports().get(0).getTestReports().get(1).getTestType()));
+		assertThat(argPathogenTests.get(1).getTestResult(), is(standardLabMessage.getSampleReports().get(0).getTestReports().get(1).getTestResult()));
+
+		assertThat(entityCreatedArgs.getAllValues().get(0), is(entitiyCreated));
+
+		assertThat(lastSampleArgs.getAllValues().get(0), is(false));
+
+		// verify second call to handleCreateSampleAndPathogenTests
+		argSample = sampleArgs.getValue();
+		assertThat(argSample.getSampleDateTime(), is(standardLabMessage.getSampleReports().get(1).getSampleDateTime()));
+		assertThat(argSample.getSampleMaterial(), is(SampleMaterial.CRUST));
+		assertThat(argSample.getReportingUser(), is(user.toReference()));
+
+		argPathogenTests = pathogenTestsArgs.getValue();
+		assertThat(argPathogenTests, hasSize(1));
+		assertThat(argPathogenTests.get(0).getTestType(), is(standardLabMessage.getSampleReports().get(1).getTestReports().get(0).getTestType()));
+		assertThat(argPathogenTests.get(0).getTestResult(), is(standardLabMessage.getSampleReports().get(1).getTestReports().get(0).getTestResult()));
+
+		assertThat(entityCreatedArgs.getAllValues().get(1), is(entitiyCreated));
+
+		assertThat(lastSampleArgs.getAllValues().get(1), is(true));
+	}
+
+	private void verifyStandardEditingAndCreationOfSample(
+		ExternalMessageDto standardLabMessage,
+		ArgumentCaptor<SampleDto> editedSampleCaptor,
+		ArgumentCaptor<List<PathogenTestDto>> editedTestsCaptor,
+		ArgumentCaptor<Boolean> lastSampleArgsEdit,
+		ArgumentCaptor<SampleDto> createdSampleArgs,
+		ArgumentCaptor<List<PathogenTestDto>> createdPathogenTestsArgs,
+		ArgumentCaptor<Boolean> entityCreatedArgs,
+		ArgumentCaptor<Boolean> lastSampleArgsCreate) {
+
+		verify(multipleSamplesConfirmationHandler, times(1)).get();
+		verify(handleEditSample, times(1)).handle(any(), any(), any(), any());
+		verify(handleCreateSampleAndPathogenTests, times(1)).handle(any(), any(), any(), any(), any());
+
+		//// verify sample edit
+		// sample not changed when calling edit handler
+		assertThat(editedSampleCaptor.getValue().getSampleMaterial(), is(SampleMaterial.CRUST));
+		assertThat(editedSampleCaptor.getValue().getSpecimenCondition(), is(SpecimenCondition.ADEQUATE));
+
+		// test reports converted to pathogen test
+		assertThat(editedTestsCaptor.getValue(), hasSize(2));
+		assertThat(
+			editedTestsCaptor.getValue().get(0).getTestType(),
+			is(standardLabMessage.getSampleReports().get(0).getTestReports().get(0).getTestType()));
+		assertThat(
+			editedTestsCaptor.getValue().get(0).getTestResult(),
+			is(standardLabMessage.getSampleReports().get(0).getTestReports().get(0).getTestResult()));
+		assertThat(
+			editedTestsCaptor.getValue().get(1).getTestType(),
+			is(standardLabMessage.getSampleReports().get(0).getTestReports().get(1).getTestType()));
+		assertThat(
+			editedTestsCaptor.getValue().get(1).getTestResult(),
+			is(standardLabMessage.getSampleReports().get(0).getTestReports().get(1).getTestResult()));
+
+		assertThat(lastSampleArgsEdit.getValue(), is(false));
+
+		//// verify sample creation
+		SampleDto argSample = createdSampleArgs.getValue();
+		assertThat(argSample.getSampleDateTime(), is(standardLabMessage.getSampleReports().get(1).getSampleDateTime()));
+		assertThat(argSample.getSampleMaterial(), is(SampleMaterial.CRUST));
+		assertThat(argSample.getReportingUser(), is(user.toReference()));
+
+		List<PathogenTestDto> argPathogenTests = createdPathogenTestsArgs.getValue();
+		assertThat(argPathogenTests, hasSize(1));
+		assertThat(argPathogenTests.get(0).getTestType(), is(standardLabMessage.getSampleReports().get(1).getTestReports().get(0).getTestType()));
+		assertThat(argPathogenTests.get(0).getTestResult(), is(standardLabMessage.getSampleReports().get(1).getTestReports().get(0).getTestResult()));
+
+		assertThat(entityCreatedArgs.getValue(), is(false));
+
+		assertThat(lastSampleArgsCreate.getValue(), is(true));
+
 	}
 
 	private interface PickOrCreateEntryHandler {
@@ -1783,7 +2601,7 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 
 	private interface EditSampleHandler {
 
-		void handle(SampleDto sample, List<PathogenTestDto> pathogenTests, HandlerCallback<SampleAndPathogenTests> callback);
+		void handle(SampleDto sample, List<PathogenTestDto> pathogenTests, Boolean lastSample, HandlerCallback<SampleAndPathogenTests> callback);
 	}
 
 	private interface PickOrCreateSampleHandler {
@@ -1797,11 +2615,17 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractBeanTest {
 			SampleDto sample,
 			List<PathogenTestDto> pathogenTests,
 			Boolean entityCreated,
+			Boolean lastSample,
 			HandlerCallback<SampleAndPathogenTests> callback);
 	}
 
-	private interface EntityCreationHandler<T> {
+	private interface CreateCaseHandler {
 
-		Object handle(T entity, PersonDto person, HandlerCallback<?> callback);
+		Object handle(CaseDataDto caze, PersonDto person, HandlerCallback<?> callback);
+	}
+
+	private interface CreateContactHandler {
+
+		Object handle(ContactDto contact, PersonDto person, HandlerCallback<?> callback);
 	}
 }

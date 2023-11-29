@@ -23,8 +23,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyString;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Calendar;
 import java.util.Collections;
@@ -32,9 +31,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseDataDto;
@@ -51,11 +48,9 @@ import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.backend.AbstractBeanTest;
-import de.symeda.sormas.backend.MockProducer;
 import de.symeda.sormas.backend.TestDataCreator;
 import de.symeda.sormas.backend.infrastructure.facility.Facility;
 
-@RunWith(MockitoJUnitRunner.class)
 public class SampleFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 
 	private TestDataCreator.RDCF rdcf1;
@@ -63,7 +58,7 @@ public class SampleFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 	private UserDto user1;
 	private UserDto user2;
 	private UserDto labUser;
-	private UserDto observerUser;
+	private UserDto nationalClinician;
 
 	@Override
 	public void init() {
@@ -88,12 +83,12 @@ public class SampleFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER));
 		labUser = creator.createUser(null, null, null, "Lab", "Off", creator.getUserRoleReference(DefaultUserRole.LAB_USER));
 		labUser.setLaboratory(rdcf1.facility);
-		getUserFacade().saveUser(labUser);
+		getUserFacade().saveUser(labUser, false);
 
-		observerUser = creator
-			.createUser(null, null, null, null, "National", "Observer", creator.getUserRoleReference(DefaultUserRole.NATIONAL_OBSERVER));
+		nationalClinician =
+			creator.createUser(null, null, null, null, "National", "Observer", creator.getUserRoleReference(DefaultUserRole.NATIONAL_CLINICIAN));
 
-		when(MockProducer.getPrincipal().getName()).thenReturn("SurvOff2");
+		loginWith(user2);
 	}
 
 	@Test
@@ -368,7 +363,7 @@ public class SampleFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 		CaseDataDto caze = creator.createCase(user1.toReference(), creator.createPerson("John", "Smith").toReference(), rdcf1);
 		SampleDto sample = createCaseSample(caze, user1);
 
-		loginWith(observerUser);
+		loginWith(nationalClinician);
 
 		sample.setReportLat(null);
 		sample.setReportLon(null);
@@ -465,7 +460,7 @@ public class SampleFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 		assertThat(sample.getReportLon(), is(nullValue()));
 		assertThat(sample.getReportLatLonAccuracy(), is(10F));
 		assertThat(sample.getLab().getCaption(), is(labName));
-		assertThat(sample.getLabDetails(), is("Test lab details"));
+		assertThat(sample.getLabDetails(), isEmptyString());
 		assertThat(sample.getShipmentDetails(), isEmptyString());
 		assertThat(sample.getComment(), isEmptyString());
 	}

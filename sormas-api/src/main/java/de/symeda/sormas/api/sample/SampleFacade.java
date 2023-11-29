@@ -32,11 +32,16 @@ import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.person.PersonNameDto;
+import de.symeda.sormas.api.DeletableFacade;
+import de.symeda.sormas.api.caze.CaseCriteria;
+import de.symeda.sormas.api.common.DeletionDetails;
+import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
 
 @Remote
-public interface SampleFacade {
+public interface SampleFacade extends DeletableFacade {
 
 	List<SampleDto> getAllActiveSamplesAfter(Date date);
 
@@ -78,19 +83,17 @@ public interface SampleFacade {
 
 	List<String> deleteSamples(List<String> sampleUuids, DeletionDetails deletionDetails);
 
-	void validate(SampleDto sample, boolean checkAssociatedEntities) throws ValidationRuntimeException;
+	void validate(@Valid SampleDto sample, boolean checkAssociatedEntities) throws ValidationRuntimeException;
 
 	List<String> getDeletedUuidsSince(Date since);
 
 	Map<SampleCountType, Long> getSampleCounts(RegionReferenceDto regionRef, DistrictReferenceDto districtRef, Disease disease, Date from, Date to);
 
-	boolean isDeleted(String sampleUuid);
-
 	List<SampleDto> getByCaseUuids(List<String> caseUuids);
 	
 	//Map<SampleCountType, Long> getSampleCount(RegionReferenceDto regionRef, DistrictReferenceDto districtRef, Disease disease, Date from, Date to);
 
-	Boolean isSampleEditAllowed(String sampleUuid);
+	Boolean isEditAllowed(String uuid);
 
 	List<SampleDto> getByContactUuids(List<String> contactUuids);
 
@@ -110,4 +113,7 @@ public interface SampleFacade {
 	Map<PathogenTestResultType, Long> getNewTestResultCountByResultType(List<Long> caseIds);
 
 	List<String> getObsoleteUuidsSince(Date since);
+	Date getEarliestPositiveSampleDate(String contactUuid);
+
+	List<DiseaseVariant> getAssociatedDiseaseVariants(String sampleUuid);
 }

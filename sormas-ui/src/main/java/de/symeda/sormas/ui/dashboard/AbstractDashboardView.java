@@ -38,6 +38,7 @@ import de.symeda.sormas.ui.dashboard.components.DashboardFilterLayout;
 import de.symeda.sormas.ui.dashboard.contacts.ContactsDashboardView;
 import de.symeda.sormas.ui.dashboard.samples.SamplesDashboardView;
 import de.symeda.sormas.ui.dashboard.diseasedetails.DiseaseDetailsView;
+import de.symeda.sormas.ui.dashboard.sample.SampleDashboardView;
 import de.symeda.sormas.ui.dashboard.surveillance.SurveillanceDashboardView;
 import de.symeda.sormas.ui.utils.AbstractView;
 import de.symeda.sormas.ui.utils.CssStyles;
@@ -84,6 +85,12 @@ public abstract class AbstractDashboardView extends AbstractView {
 			dashboardSwitcher.addItem(DashboardType.CONTACTS);
 			dashboardSwitcher.setItemCaption(DashboardType.CONTACTS, I18nProperties.getEnumCaption(DashboardType.CONTACTS));
 		}
+
+		if (permitted(FeatureType.SAMPLES_LAB, UserRight.DASHBOARD_SAMPLES_VIEW)) {
+			dashboardSwitcher.addItem(DashboardType.SAMPLES);
+			dashboardSwitcher.setItemCaption(DashboardType.SAMPLES, I18nProperties.getEnumCaption(DashboardType.SAMPLES));
+		}
+
 		if (permitted(FeatureType.CAMPAIGNS, UserRight.DASHBOARD_CAMPAIGNS_VIEW)) {
 			dashboardSwitcher.addItem(DashboardType.CAMPAIGNS);
 			dashboardSwitcher.setItemCaption(DashboardType.CAMPAIGNS, I18nProperties.getEnumCaption(DashboardType.CAMPAIGNS));
@@ -117,10 +124,10 @@ public abstract class AbstractDashboardView extends AbstractView {
 		// 	}
 		// });
 		
-		if (permitted(FeatureType.SAMPLES_LAB, UserRight.DASHBOARD_SAMPLE_ACCESS)) {
-			dashboardSwitcher.addItem(DashboardType.SAMPLES);
-			dashboardSwitcher.setItemCaption(DashboardType.SAMPLES, I18nProperties.getEnumCaption(DashboardType.SAMPLES));
-		}
+//		if (permitted(FeatureType.SAMPLES_LAB, UserRight.DASHBOARD_SAMPLE_ACCESS)) {
+//			dashboardSwitcher.addItem(DashboardType.SAMPLES);
+//			dashboardSwitcher.setItemCaption(DashboardType.SAMPLES, I18nProperties.getEnumCaption(DashboardType.SAMPLES));
+//		}
 		dashboardSwitcher.setValue(dashboardType);
 		dashboardSwitcher.addValueChangeListener(e -> {
 			dashboardDataProvider.setDashboardType((DashboardType) e.getProperty().getValue());
@@ -180,30 +187,30 @@ public abstract class AbstractDashboardView extends AbstractView {
 			dashboardSwitcher.addItem(DashboardType.CAMPAIGNS);
 			dashboardSwitcher.setItemCaption(DashboardType.CAMPAIGNS, I18nProperties.getEnumCaption(DashboardType.CAMPAIGNS));
 		}
-		
-		if (permitted(FeatureType.DISEASE_DETAILS,UserRight.DASHBOARD_DISEASE_DETAILS_ACCESS)) {
+
+		if (permitted(FeatureType.DISEASE_DETAILS, UserRight.DASHBOARD_DISEASE_DETAILS_ACCESS)) {
 			dashboardSwitcher.addItem(DashboardType.DISEASE);
-		
-			dashboardSwitcher.setItemCaption(DashboardType.DISEASE, I18nProperties.getEnumCaption(DashboardType.DISEASE));		
+
+			dashboardSwitcher.setItemCaption(DashboardType.DISEASE, I18nProperties.getEnumCaption(DashboardType.DISEASE));
 		}
-		
-		addHeaderComponent(dashboardSwitcher);
-
-		// Hide the dashboard switcher if only one dashboard is accessible to the user
-		if (dashboardSwitcher.size() <= 1) {
-			dashboardSwitcher.setVisible(false);
-		}
-
-		// Dashboard layout
-		dashboardLayout = new VerticalLayout();
-		dashboardLayout.setMargin(false);
-		dashboardLayout.setSpacing(false);
-		dashboardLayout.setSizeFull();
-		dashboardLayout.setStyleName("crud-main-layout");
-
-		addComponent(dashboardLayout);
-		setExpandRatio(dashboardLayout, 1);
 	}
+	// 	addHeaderComponent(dashboardSwitcher);1.87.0
+
+	// 	// Hide the dashboard switcher if only one dashboard is accessible to the user
+	// 	if (dashboardSwitcher.size() <= 1) {
+	// 		dashboardSwitcher.setVisible(false);
+	// 	}
+
+	// 	// Dashboard layout
+	// 	dashboardLayout = new VerticalLayout();
+	// 	dashboardLayout.setMargin(false);
+	// 	dashboardLayout.setSpacing(false);
+	// 	dashboardLayout.setSizeFull();
+	// 	dashboardLayout.setStyleName("crud-main-layout");
+
+	// 	addComponent(dashboardLayout);
+	// 	setExpandRatio(dashboardLayout, 1);
+	// }
 
 	protected void navigateToDashboardView(Property.ValueChangeEvent e) {
 		if (DashboardType.SURVEILLANCE.equals(e.getProperty().getValue())) {
@@ -254,4 +261,10 @@ public abstract class AbstractDashboardView extends AbstractView {
 	public Disease getDiseases() {
 		return disease;
 	}
+	// @Override
+	// public void enter(ViewChangeEvent event) {
+	// 	refreshDashboard();
+	// }
+
+	//public abstract void refreshDashboard();
 }

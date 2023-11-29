@@ -3,7 +3,7 @@ Feature: Contacts end to end tests
 
   @env_main
   Scenario: Create simple contact
-    Given I log in with National User
+    Given I log in as a National User
     And I click on the Contacts button from navbar
     And I click on the NEW CONTACT button
     And I fill a new contact form
@@ -15,12 +15,10 @@ Feature: Contacts end to end tests
   @env_main
   Scenario: Delete created contact
     When API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Then API: I create a new contact
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
-    Given I log in with National User
+    Given I log in as a National User
     When I click on the Contacts button from navbar
     Then I search after last created contact via API by name and uuid then open
     Then I delete the contact
@@ -29,27 +27,22 @@ Feature: Contacts end to end tests
   @env_main
   Scenario: Edit a created contact
     When API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     And API: I create a new contact
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
-    Given I log in with National User
-    When I click on the Contacts button from navbar
-    Then I search after last created contact via API by UUID and open
+    Given I log in as a National User
+    Then I open the last created contact via API
     And I change all contact fields and save
-    And I navigate to the last created contact via the url
+    And I open the last created contact via API
     Then I check the edited data is correctly displayed on Edit Contact page after editing
 
-  @issue=SORDEV-5476 @env_main
+  @tmsLink=SORDEV-5476 @env_main
     Scenario: Add a task from contact and verify the fields
     Given API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Then API: I create a new case
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
-    Then I log in with National User
+    Then I log in as a National User
     And I click on the Contacts button from navbar
     And I click on the NEW CONTACT button
     And I fill a new contact form
@@ -67,19 +60,15 @@ Feature: Contacts end to end tests
   @env_main
   Scenario: Source case selected for contact
     Given API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given API: I create a new case
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     When API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     And API: I create a new contact
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
-    Given I log in with National User
-    And I navigate to the last created contact via the url
+    Given I log in as a National User
+    And I open the last created contact via API
     And I click on the CHOOSE SOURCE CASE button from CONTACT page
     And I click yes on the DISCARD UNSAVED CHANGES popup from CONTACT page
     And I search for the last case uuid in the CHOOSE SOURCE window
@@ -91,19 +80,15 @@ Feature: Contacts end to end tests
   @env_main
   Scenario: Change the source case contact and then delete
     Given API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given API: I create a new case
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     When API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     And API: I create a new contact
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
-    Given I log in with National User
-    And I navigate to the last created contact via the url
+    Given I log in as a National User
+    And I open the last created contact via API
     And I click on the CHOOSE SOURCE CASE button from CONTACT page
     And I click yes on the DISCARD UNSAVED CHANGES popup from CONTACT page
     And I search for the last case uuid in the CHOOSE SOURCE window
@@ -112,12 +97,10 @@ Feature: Contacts end to end tests
     When I open the Case Contacts tab of the created case via api
     Then I check the linked contact information is correctly displayed
     Given API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given API: I create a new case
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
-    When I navigate to the last created contact via the url
+    When I open the last created contact via API
     And I click on the CHANGE CASE button
     And I click yes on the DISCARD UNSAVED CHANGES popup from CONTACT page
     And I search for the last case uuid in the CHOOSE SOURCE window
@@ -130,12 +113,10 @@ Feature: Contacts end to end tests
   @env_main
     Scenario: Create Contact and check details in Detailed view table
       Given API: I create a new person
-      Then API: I check that POST call body is "OK"
       And API: I check that POST call status code is 200
       Then API: I create a new contact
-      Then API: I check that POST call body is "OK"
       And API: I check that POST call status code is 200
-      When I log in with National User
+      When I log in as a National User
       Then I click on the Contacts button from navbar
       And I click on the DETAILED radiobutton from Contact directory
       And I filter by Contact uuid
@@ -144,12 +125,10 @@ Feature: Contacts end to end tests
   @env_main
   Scenario: Edit all fields from Follow-up visits tab
     When API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     When API: I create a new contact
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
-    Given I log in with National User
+    Given I log in as a Admin User
     When I am accessing the Follow-up visits tab using of created contact via api
     Then I click on New visit button from Follow-up visits tab
     And I create a new Follow-up visit
@@ -163,9 +142,9 @@ Feature: Contacts end to end tests
     And I open Follow up Visits tab from contact directory
     Then I am validating the From and To dates displayed
 
-  @issue=SORDEV-5490 @env_main
+  @tmsLink=SORDEV-5490 @env_main
   Scenario: Create a contact and create a case for contact person
-    Given I log in with National User
+    Given I log in as a National User
     When I click on the Contacts button from navbar
     And I click on the NEW CONTACT button
     And I fill a new contact form
@@ -176,24 +155,22 @@ Feature: Contacts end to end tests
     And I create a new case for contact with specific data
     And I check case created from created contact is correctly displayed on Edit Case page
 
-  @issue=SORDEV-5496 @env_main
+  @tmsLink=SORDEV-5496 @env_main
   Scenario: Generate and download Contact document
-    Given I log in with National User
+    Given I log in as a National User
     And I click on the Contacts button from navbar
     And I open the first contact from contacts list
     And I click on the Create button from Contact Document Templates
     When I create and download a contact document from template
     Then I verify that the contact document is downloaded and correctly named
 
-    @issue=SORDEV-5470 @env_main
+    @tmsLink=SORDEV-5470 @env_main
   Scenario: Create complex contact
     Given API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given API: I create a new case
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
-    Given I log in with National User
+    Given I log in as a National User
     And I click on the Contacts button from navbar
     And I click on the NEW CONTACT button
     And I fill a new contact form
@@ -206,17 +183,14 @@ Feature: Contacts end to end tests
     Then I open Contact Person tab
     And I check the created data is correctly displayed on Edit Contact Person page
 
-  @issue=SORDEV-5641 @env_main
+  @tmsLink=SORDEV-5641 @env_main
   Scenario: Fill the epidemiological data tab in Contacts
     When API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Then API: I create a new contact
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
-    Given I log in with National User
-    When I click on the Contacts button from navbar
-    Then I search after last created contact via API by UUID and open
+    Given I log in as a National User
+    Then I open the last created contact via API
     And I click on the Epidemiological Data button tab in Contact form
     And I click on Exposure details known with UNKNOWN option
     And I click on Exposure details known with NO option
@@ -231,15 +205,13 @@ Feature: Contacts end to end tests
     Then I am checking all Exposure data is saved and displayed in Contacts
     And I am checking if options in checkbox for Contact are displayed correctly
 
-  @issue=SORDEV-5670 @env_main
+  @tmsLink=SORDEV-5670 @env_main
   Scenario: Fill the follow-up tab
     Given API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Then API: I create a new contact
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
-    And I log in with National User
+    And I log in as a National User
     And I am accessing the Follow-up visits tab using of created contact via api
     And I click on new Visit button
     Then I set Person available and cooperative to UNAVAILABLE
@@ -258,13 +230,11 @@ Feature: Contacts end to end tests
     And I fill the specific data of visit with Set cleared to Unknown option to all symptoms
     Then I save the Visit data
 
-  @issue=SORDEV-7452 @env_main
+  @tmsLink=SORDEV-7452 @env_main
   Scenario: Bulk mode for linking/adding contacts to new Event
     When API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     When API: I create a new contact
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given I log in as a Admin User
     And I click on the Contacts button from navbar
@@ -281,16 +251,13 @@ Feature: Contacts end to end tests
     And I navigate to the last created Event page via URL
     And I check that number of displayed Event Participants is 1
 
-  @issue=SORDEV-7452 @env_main
+  @tmsLink=SORDEV-7452 @env_main
   Scenario: Bulk mode for linking/adding contacts to existing Event
     Given API: I create a new event
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     When API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     When API: I create a new contact
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given I log in as a Admin User
     And I click on the Contacts button from navbar
@@ -307,17 +274,14 @@ Feature: Contacts end to end tests
     And I navigate to the last created through API Event page via URL
     And I check that number of displayed Event Participants is 1
 
-  @issue=SORDEV-7425 @env_main
+  @tmsLink=SORDEV-7425 @env_main
   Scenario: Adopt the source case in the associated exposure after case conversion
     Given API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Then API: I create a new contact
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
-    Given I log in with National User
-    When I click on the Contacts button from navbar
-    Then I open the last created contact
+    Given I log in as a National User
+    Then I open the last created contact via API
     Then I click on the Epidemiological Data button tab in Contact form
     And I fill all the data in Exposure for Epidemiological data tab in Contacts
     And I click on save button from Epidemiological Data
@@ -329,17 +293,14 @@ Feature: Contacts end to end tests
     Then I click on the Epidemiological data button tab in Case form
     And I am checking all Exposure data created by UI is saved and displayed in Cases
 
-  @issue=SORDEV-5640 @env_main
+  @tmsLink=SORDEV-5640 @env_main
   Scenario: Enter an exposure data in Contacts to testing all available options
     Given API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Then API: I create a new contact
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
-    Then I log in with National User
-    When I click on the Contacts button from navbar
-    Then I open the last created contact
+    Then I log in as a National User
+    Then I open the last created contact via API
     And I click on the Epidemiological Data navbar field
     And I click on Exposure details known with NO option
     And I click on Exposure details known with UNKNOWN option
@@ -370,12 +331,10 @@ Feature: Contacts end to end tests
   @env_main @#7768
   Scenario: Create new contact using line listing and select source case
     Given API: I create a new person
-    And API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given API: I create a new case
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
-    Then I log in with National User
+    Then I log in as a National User
     When I click on the Contacts button from navbar
     Then I click on Line Listing button
     Then I click Choose Case button from Contact Directory Line Listing popup window
@@ -388,12 +347,10 @@ Feature: Contacts end to end tests
   @env_main @#7769
   Scenario: Create a new Contact via Line Listing and validate that the selected Source Case data is correctly displayed
     Given API: I create a new person
-    And API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given API: I create a new case
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
-    Then I log in with National User
+    Then I log in as a National User
     When I click on the Contacts button from navbar
     Then I click on Line Listing button
     Then I click Choose Case button from Contact Directory Line Listing popup window
@@ -402,33 +359,28 @@ Feature: Contacts end to end tests
     Then I check the name and uuid of selected case information is correctly displayed in new Contact Line Listing popup window
     Then I check disease dropdown is automatically filled with disease of selected Case in new Contact Line Listing popup window
 
-  @issue=SORDEV-9124 @env_main
+  @tmsLink=SORDEV-9124 @env_main
   Scenario: Document Templates create quarantine order in Contacts
     Given API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Then API: I create a new contact
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given I log in as a Admin User
-    When I click on the Contacts button from navbar
-    Then I navigate to the last created contact via the url
+    Then I open the last created contact via API
     Then I click on Create button in Document Templates box in Edit Contact directory
     And I click on checkbox to upload generated document to entity in Create Quarantine Order form in Edit Contact directory
     And I select "ExampleDocumentTemplateContacts.docx" Quarantine Order in Create Quarantine Order form in Edit Contact directory
     And I click on Create button in Create Quarantine Order form
-    Then I navigate to the last created contact via the url
+    Then I open the last created contact via API
     And I check if downloaded file is correct for "ExampleDocumentTemplateContacts.docx" Quarantine Order in Edit Contact directory
     And I check if generated document based on "ExampleDocumentTemplateContacts.docx" appeared in Documents tab in Edit Contact directory
     And I delete downloaded file created from "ExampleDocumentTemplateContacts.docx" Document Template for Contact
 
-  @issue=SORDEV-9124 @env_main
+  @tmsLink=SORDEV-9124 @env_main
   Scenario: Document Templates create quarantine order for Contact bulk
     Given API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Then API: I create a new contact
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given I log in as a Admin User
     And I click on the Contacts button from navbar
@@ -452,13 +404,12 @@ Feature: Contacts end to end tests
     Then I click Leave Bulk Edit Mode on Contact directory page
     Then I navigate to the last created UI contact via the url
     And I check if generated document based on "ExampleDocumentTemplateContacts.docx" appeared in Documents tab for UI created contact in Edit Contact directory
-    And I navigate to the last created contact via the url
+    And I open the last created contact via API
     And I check if generated document based on "ExampleDocumentTemplateContacts.docx" appeared in Documents tab in Edit Contact directory
-    And I delete downloaded file created from Quarantine order
 
-  @issue=SORDEV-8048 @env_de
+  @tmsLink=SORDEV-8048 @env_de
   Scenario: Test Default value for disease if only one is used by the server for Contacts
-    Given I log in with National User
+    Given I log in as a National User
     When I click on the Contacts button from navbar
     Then I click on the NEW CONTACT button
     And I check if default disease value is set for COVID-19
@@ -466,15 +417,13 @@ Feature: Contacts end to end tests
     Then I click on Line Listing button
     And I check if default disease value for contacts in the Line listing is set for COVID-19
 
-  @issue=SORDEV-9477 @env_main
+  @tmsLink=SORDEV-9477 @env_main
   Scenario: Add a person search option on creation forms
     Then API: I create a new person
-    And API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Then API: I create a new case
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
-    And I log in with National User
+    And I log in as a National User
     Then I click on the Contacts button from navbar
     And  I click on the NEW CONTACT button
     And I fill a new contact form with chosen data without personal data on Contact directory page
@@ -487,16 +436,14 @@ Feature: Contacts end to end tests
     And I open the first found result in the popup of Select Person window
     And I click on SAVE new contact button
     Then I check the created data for existing person is correctly displayed on Edit Contact page
-    When I click on the Persons button from navbar
     And I open the last created Person via API
     And I check that SEE CONTACTS FOR THIS PERSON button appears on Edit Person page
 
-  @issue=SORDEV-6140 @env_main
+  @tmsLink=SORDEV-6140 @env_main
   Scenario: Ask user to automatically convert some additional contacts and event participants to case
     Given API: I create a new event
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
-    Given I log in with National User
+    Given I log in as a National User
     When I click on the Contacts button from navbar
     Then I click on the NEW CONTACT button
     And I fill a new contact form with specific person data
@@ -523,12 +470,11 @@ Feature: Contacts end to end tests
     And I click on checkbox to select all available options
     And I check if there are entities assigned to new created case from contact
 
-  @issue=SORDEV-6140 @env_main
+  @tmsLink=SORDEV-6140 @env_main
   Scenario: Ask user to automatically convert all additional contacts and event participants to case
     Given API: I create a new event
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
-    Given I log in with National User
+    Given I log in as a National User
     When I click on the Contacts button from navbar
     Then I click on the NEW CONTACT button
     And I fill a new contact form with specific person data
@@ -554,12 +500,11 @@ Feature: Contacts end to end tests
     And I click Yes, for all in conversion to case form
     And I check if there are entities assigned to new created case from contact
 
-  @issue=SORDEV-6140 @env_main
+  @tmsLink=SORDEV-6140 @env_main
   Scenario: Ask user to automatically convert no additional contacts and event participants to case
     Given API: I create a new event
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
-    Given I log in with National User
+    Given I log in as a National User
     When I click on the Contacts button from navbar
     Then I click on the NEW CONTACT button
     And I fill a new contact form with specific person data
@@ -585,17 +530,14 @@ Feature: Contacts end to end tests
     And I click No in conversion to case form
     And I check if there are no entities assigned to new created case from contact
 
-    @issue=SORDEV-10265 @env_main
+    @tmsLink=SORDEV-10265 @env_main
     Scenario: Manual archiving for contacts
       When API: I create a new person
-      Then API: I check that POST call body is "OK"
       And API: I check that POST call status code is 200
       Then API: I create a new contact
-      Then API: I check that POST call body is "OK"
       And API: I check that POST call status code is 200
       Given I log in as a Admin User
-      When I click on the Contacts button from navbar
-      Then I search after last created contact via API by UUID and open
+      Then I open the last created contact via API
       Then I click on the Archive contact button
       And I check if Archive contact popup is displayed correctly
       Then I check the end of processing date in the archive popup
@@ -605,28 +547,23 @@ Feature: Contacts end to end tests
       Then I open the first contact from contacts list
       And I check if Archive button changed name to De-Archive
 
-  @issue=SORDEV-9786 @env_main
+  @tmsLink=SORDEV-9786 @env_main
   Scenario: Test The "urine p.m." enum value should be hidden when Covid19 is selected as disease
     When API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Then API: I create a new contact
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given I log in as a Admin User
-    When I click on the Contacts button from navbar
-    Then I search after last created contact via API by UUID and open
+    Then I open the last created contact via API
     And I check that the value selected from Disease combobox is "COVID-19" on Edit Contact page
     Then I click on New Sample
     And I check if value "Urine p.m" is unavailable in Type of Sample combobox on Create new Sample page
 
-  @env_main @issue=SORDEV-9155
+  @env_main @tmsLink=SORDEV-9155
   Scenario: Test Vaccinations get lost when merging contacts with duplicate persons
     Then API: I create a new person
-    And API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Then API: I create a new case
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given I log in as a Admin User
     And I click on the Contacts button from navbar
@@ -653,6 +590,7 @@ Feature: Contacts end to end tests
     And I click on the Contacts button from navbar
     And I click on the More button on Contact directory page
     Then I click on Merge Duplicates on Contact directory page
+    And I click to CONFIRM FILTERS on Merge Duplicate Contact page
     And I click on Merge button of leading case in Merge Duplicate Contact page
     Then I click to Confirm action in Merge Duplicates Cases popup
     And I click on the Contacts button from navbar
@@ -660,17 +598,14 @@ Feature: Contacts end to end tests
     Then I open the first contact from contacts list
     And I check if Vaccination Status is set to "Vaccinated" on Edit Contact page
 
-  @issue=SORDEV-7460 @env_main
+  @tmsLink=SORDEV-7460 @env_main
   Scenario: Test Extend the exposure and event startDate and endDate to include a startTime and endTime
     Given API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Then API: I create a new contact
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
-    Given I log in with National User
-    When I click on the Contacts button from navbar
-    Then I open the last created contact
+    Given I log in as a National User
+    Then I open the last created contact via API
     Then I click on the Epidemiological Data button tab in Contact form
     And I click on Exposure details known with YES option
     Then I click on New Entry in Exposure Details Known
@@ -680,15 +615,13 @@ Feature: Contacts end to end tests
     And I collect the Date of Start and End Exposure from Exposure page
     Then I check that Date field displays start date and end date in table Exposure on Epidemiological data tab
 
-  @issue=SORDEV-5613 @env_main
+  @tmsLink=SORDEV-5613 @env_main
   Scenario: Option to attach document like pdf, word, jpeg to contacts
     When API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Then API: I create a new contact
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
-    Given I log in with National User
+    Given I log in as a National User
     When I click on the Contacts button from navbar
     Then I search after last created contact via API by name and uuid then open
     Then I click on START DATA IMPORT button from New document in contact tab
@@ -713,19 +646,16 @@ Feature: Contacts end to end tests
     Then I delete last uploaded document file from contact tab
     And I check if last uploaded file was deleted from document files in contact tab
 
-  @issue=SORDEV-10254 @env_main
+  @tmsLink=SORDEV-10254 @env_main
     Scenario: Manual archive Cases and Contacts
     When API: I create a new person
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Then API: I create a new case
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given I log in as a Admin User
     When I open the Case Contacts tab of the created case via api
     Then I click on new contact button from Case Contacts tab
     Then I create a new contact from Cases Contacts tab
-    And I click on the Cases button from navbar
     And I open the last created Case via API
     Then I click on the Archive case button
     Then I check the end of processing date in the archive popup and not select Archive contacts checkbox
@@ -736,17 +666,17 @@ Feature: Contacts end to end tests
     Then I open the first contact from contacts list
     And I check if Archive button changed name to Archive
 
-  @issue=SORDEV-9788 @env_de
+  @tmsLink=SORDEV-9788 @env_de
   Scenario: Test Hide country specific fields in the 'Person search option' pop-up in Contact directory
-    Given I log in with National User
+    Given I log in as a National User
     And I click on the Contacts button from navbar
     When I click on the NEW CONTACT button
     And I click on the person search button in create new contact form
     Then I check that National Health ID is not visible in Person search popup
     And I check that Passport Number is not visible in Person search popup
     And I check that Nickname is not visible in Person search popup
-    
-  @issue=SORDEV-9946 @env_de
+
+  @tmsLink=SORDEV-9946 @env_de
   Scenario: Test Hide country specific fields in the 'Pick or create person' form of the duplicate detection pop-up, in German and French systems
     Given I log in as a Admin User
     Then I click on the Contacts button from navbar
@@ -757,11 +687,11 @@ Feature: Contacts end to end tests
     And I click on the NEW CONTACT button
     And I fill a new contact form with same person data for DE version
     And I click on SAVE new contact case button
-    And I check if National Health Id, Nickname and Passport number appear in Pick or create person popup
+    And I check if National Health Id, Nickname and Passport number do not appear in Pick or create person popup
 
-  @issue=SORDEV-6434 @env_main
+  @tmsLink=SORDEV-6434 @env_main
   Scenario: Check if username shows up in visit origin
-    Given I log in with National User
+    Given I log in as a National User
     And I click on the Contacts button from navbar
     And I click on the NEW CONTACT button
     And I fill a new contact form
@@ -771,7 +701,7 @@ Feature: Contacts end to end tests
     And I create a new Visit with specific data
     Then I check that username is displayed in the Visit Origin column
 
-  @issue=SORDEV-5563 @env_de
+  @tmsLink=SORDEV-5563 @env_de
   Scenario: Add contact person details to facilities contacts
     Given I log in as a Admin User
     Then I click on the Configuration button from navbar
@@ -800,23 +730,20 @@ Feature: Contacts end to end tests
   @env_main @#8565
   Scenario: Check an archived contact if its read only
     Given API: I create a new person
-    And API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given API: I create a new case
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given API: I create a new contact
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Then I log in as a Admin User
     Then I open last edited contact by API via URL navigation
     Then I click on the Archive contact button and confirm popup
     Then I click on logout button from navbar
-    Then I log in with National User
+    Then I log in as a National User
     Then I open last edited contact by API via URL navigation
     Then I check if editable fields are read only for an archived contact
 
-  @env_main @issue=SORDEV-7453
+  @env_main @tmsLink=SORDEV-7453
   Scenario: Check contacts order after contact edit
     Given I log in as a National User
     And I click on the Contacts button from navbar
@@ -835,12 +762,12 @@ Feature: Contacts end to end tests
     And I click on the Contacts button from navbar
     Then I compare previous first contact ID on the list with actually second contact ID on list
 
-  @issue=SORDEV-6461 @env_main
+  @tmsLink=SORDEV-6461 @env_main
   Scenario: Test the task type in the contact's new task form
     Given I log in as a National User
     Then I click on the Contacts button from navbar
     And I open the first contact from contacts list
-    And I click on the NEW TASK button
+    And I click on the NEW TASK button from Edit Contact page
     And I check if New task form is displayed correctly
     And I check that required fields are marked as mandatory
     And I clear Due Date field in the New task form
@@ -851,7 +778,7 @@ Feature: Contacts end to end tests
     And I choose Other task as described in comments option from task type combobox in the New task form
     Then I check that Comments on task field is mandatory in the New task form
 
-  @issue=SORDEV-6609 @env_main
+  @tmsLink=SORDEV-6609 @env_main
   Scenario: Test for contact internal token
     Given I log in as a National User
     And I click on the Contacts button from navbar
@@ -865,13 +792,11 @@ Feature: Contacts end to end tests
     And I filter for SAMPLE TOKEN in Contacts Directory
     Then I check that at least one SAMPLE TOKEN is displayed in table
 
-  @issue=SORDEV-6102 @env_main
+  @tmsLink=SORDEV-6102 @env_main
   Scenario: Merge duplicate contacts
     Then API: I create a new person
-    And API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Then API: I create a new case
-    Then API: I check that POST call body is "OK"
     And API: I check that POST call status code is 200
     Given I log in as a Admin User
     And I click on the Contacts button from navbar
@@ -897,13 +822,14 @@ Feature: Contacts end to end tests
     And I click on the Contacts button from navbar
     And I click on the More button on Contact directory page
     Then I click on Merge Duplicates on Contact directory page
+    And I click to CONFIRM FILTERS on Merge Duplicate Contact page
     And I click on Merge button of leading case in Merge Duplicate Contact page
     Then I click to Confirm action in Merge Duplicates Cases popup
     And I click on the Contacts button from navbar
     And I apply filter by duplicated contact Person data on Contact Directory Page
     And I check that number of displayed contact results is 1
 
-  @issue=SORDEV-11451 @env_main
+  @tmsLink=SORDEV-11451 @env_main
   Scenario: Add reason for deletion to confirmation dialogue
     Given I log in as a Admin User
     When I click on the Contacts button from navbar
@@ -935,7 +861,7 @@ Feature: Contacts end to end tests
     And I check if External token input on case edit page is disabled
     And I check if Case or event information text area on case edit page is disabled
 
-  @issue=SORDEV-11451 @env_de
+  @tmsLink=SORDEV-11451 @env_de
   Scenario: Add reason for deletion to confirmation dialogue for DE version
     Given I log in as a Admin User
     When I click on the Contacts button from navbar
@@ -966,3 +892,274 @@ Feature: Contacts end to end tests
     Then I check if reason of deletion is set to "Löschen auf Anforderung der betroffenen Person nach DSGVO"
     And I check if External token input on case edit page is disabled
     And I check if Case or event information text area on case edit page is disabled
+
+  @tmsLink=SORDEV-10361 @env_main
+  Scenario: Test Hide "buried" within Person present condition for Covid-19 for Contacts
+    Given API: I create a new person
+    And API: I check that POST call status code is 200
+    Given API: I create a new case
+    And API: I check that POST call status code is 200
+    Given I log in as a National User
+    And I click on the Contacts button from navbar
+    And I click on the NEW CONTACT button
+    And I fill a new contact form
+    And I click CHOOSE CASE button
+    And I search for the last case uuid in the CHOOSE SOURCE Contact window
+    And I open the first found result in the CHOOSE SOURCE Contact window
+    And I click on SAVE new contact button
+    Then I check the linked case information is correctly displayed
+    And I check the created data for complex contact is correctly displayed on Edit Contact page
+    Then I open Contact Person tab
+    And I check the created data is correctly displayed on Edit Contact Person page
+    Then I copy uuid of current person
+    Then I check if Present condition of person combobox has value "Alive"
+    And I check if Present condition of person combobox has value "Dead"
+    And I check if Present condition of person combobox has value "Unknown"
+    Then I check if Present condition of person combobox has no value "Buried"
+    Then I open the Case Contacts tab
+    And I navigate to case tab
+    And I change disease to "Ebola Virus Disease" in the case tab
+    Then I click on Save button in Case form
+    Then I open the Case Contacts tab
+    And I click on the first Contact ID from Contacts Directory in Contacts in Case
+    Then I open Contact Person tab
+    Then I check if Present condition of person combobox has value "Alive"
+    And I check if Present condition of person combobox has value "Dead"
+    And I check if Present condition of person combobox has value "Unknown"
+    Then I check if Present condition of person combobox has value "Buried"
+    Then I set Present condition of person to "Buried"
+    And I check if "Date of burial" field is present in case person
+    And I check if "Burial conductor" field is present in case person
+    And I check if "Burial place description" field is present in case person
+    Then I click on Save button in Case form
+    Then I open the Case Contacts tab
+    And I navigate to case tab
+    And I change disease to "COVID-19" in the case tab
+    Then I click on Save button in Case form
+    Then I click on the Persons button from navbar
+    And I search by copied uuid of the person in Person Directory
+    Then I check if Present condition of person combobox has value "Alive"
+    And I check if Present condition of person combobox has value "Dead"
+    And I check if Present condition of person combobox has value "Unknown"
+    Then I check if Present condition of person combobox has value "Buried"
+    Then I click on first person in person directory
+    Then I check if Present condition of person combobox has value "Alive"
+    And I check if Present condition of person combobox has value "Dead"
+    And I check if Present condition of person combobox has value "Unknown"
+    Then I check if Present condition of person combobox has value "Buried"
+    Then I set Present condition of person to "Buried"
+    And I check if "Date of burial" field is present in case person
+    And I check if "Burial conductor" field is present in case person
+    And I check if "Burial place description" field is present in case person
+
+  @tmsLink=SORDEV-10361 @env_main
+  Scenario: Test Hide "buried" within Person present condition for Covid-19 for Import Contacts
+    Given I log in as a Admin User
+    And I click on the Contacts button from navbar
+    And I prepare detailed contact CSV with "COVID-19" as a disease and "Buried" as a present condition
+    Then I click on the More button on Contact directory page
+    And I click on the Import button from Contact directory
+    Then I select created CSV file with detailed contact
+    And I click on the "START DATA IMPORT" button from the Import Detailed Contact popup
+    And I check if csv file for detailed contact is imported successfully
+    Then I search for created detailed contact by first and last name of the person
+    Then I click on the first Contact ID from Contacts Directory
+    Then I check if disease is set for "COVID-19" in Contact Edit Directory
+    And I open Contact Person tab
+    Then I check if Present condition of person combobox has value "Buried"
+    And I delete created csv file for detailed contact import
+
+  @tmsLink=SORDEV-9792 @env_de
+  Scenario: Test CoreAdo: Introduce "end of processing date" for contacts
+    Given I log in as a Admin User
+    When I click on the Contacts button from navbar
+    And I click on the NEW CONTACT button
+    And I fill a new contact form for DE version without multicontact
+    And I click on SAVE new contact button
+    Then I copy uuid of current contact
+    Then I click on the Archive contact button
+    Then I check the end of processing date in the archive popup and select Archive contacts checkbox for DE version
+    And I click on De-Archive contact button
+    And I fill De-Archive contact popup with test automation reason
+    Then I change the last contact date and report date time for today for DE version
+    And I click on save Contact button
+    Then I click on the Archive contact button
+    Then I check the end of processing date in the archive popup and select Archive contacts checkbox for DE version
+    And I click on the Contacts button from navbar
+    And I apply "Abgeschlossene Kontakte" to combobox on Contact Directory Page
+    Then I filter with last created contact using contact UUID
+    And I click APPLY BUTTON in Contact Directory Page
+    And I check that number of displayed contact results is 1
+    Then I click on the first Contact ID from Contacts Directory
+    And I click on De-Archive contact button
+    Then I click on confirm button in de-archive contact popup
+    And I check if exclamation mark with message "Bitte geben Sie einen Grund für die Wiedereröffnung an" appears while trying to de-archive without reason
+    And I click on discard button in de-archive contact popup
+    And I click on De-Archive contact button
+    And I fill De-Archive contact popup with test automation reason
+    And I click on the Contacts button from navbar
+    And I apply "Aktive Kontakte" to combobox on Contact Directory Page
+    Then I filter with last created contact using contact UUID
+    And I check that number of displayed contact results is 1
+
+  @tmsLink=SORDEV-6185 @env_de
+  Scenario: Test Add information to followup warning message for Contacts
+    Given API: I create a new person
+    And API: I check that POST call status code is 200
+    Then API: I create a new contact
+    And API: I check that POST call status code is 200
+    Given I log in as a National User
+    Then I open the last created contact via API
+    And I check that text appearing in hover over Expected Follow-up is based on Report date on Edit Contact Page
+    Then I change the date of last contact to 5 days ago for DE version
+    And I click SAVE button on Edit Contact Page
+    And I check that text appearing in hover over Expected Follow-up is based on Last Contact date on Edit Contact Page
+
+  @tmsLink=SORDEV-5086  @env_main
+  Scenario: Test copying the Follow-up status comment when converting a contact into case
+    Given I log in as a Admin User
+    And I click on the Contacts button from navbar
+    And I click on new contact button from Case Contacts tab
+    And I fill a new contact form
+    And I click on SAVE new contact button
+    And I check the created data is correctly displayed on Edit Contact page
+    Then I copy uuid of current contact
+    And I click on CONFIRMED CONTACT radio button Contact Data tab
+    And I fill follow-up status comment from Edit contact page
+    And I click SAVE button on Edit Contact Page
+    And I click Create Case from Contact button
+    And I fill only mandatory fields for a new case form
+    And I save the new case
+    And I click on the Contacts button from navbar
+    And I filter with last created contact using contact UUID
+    And I click on the first Contact ID from Contacts Directory
+    And I check that follow-up status comment is correctly displayed on Edit contact page
+    And I click on Open case of this contact person on Edit contact page
+    And I check that follow-up status comment is correctly displayed on Edit case page
+
+  @issue=SORDEV-10227 @env_de
+  Scenario: Test Permanent deletion for Person for Contact
+    Given I log in as a National User
+    And I click on the Contacts button from navbar
+    And I click on the NEW CONTACT button
+    When I fill a new contact form for DE version
+    And I click on SAVE new contact button
+    And I check the created data is correctly displayed on Edit Contact page for DE version
+    And I click on the Persons button from navbar
+    Then I filter the last created person linked with Contact
+    And I click on Contact aggregation button in Person Directory for DE specific
+    And I check that number of displayed Person results is 1
+    And I click on All aggregation button in Person Directory for DE specific
+    And I check that number of displayed Person results is 1
+    And I navigate to the last created UI contact via the url
+    Then I click on Delete button from contact
+    And I set Reason for deletion as "Löschen auf Anforderung der betroffenen Person nach DSGVO"
+    And I click on Yes option in Confirm deletion popup
+    And I click on the Persons button from navbar
+    Then I filter the last created person linked with Contact
+    And I check that number of displayed Person results is 0
+
+  @tmsLink=SORDEV-5565 @env_de
+  Scenario: Document Templates create quarantine order for Contact bulk DE
+    Given API: I create a new person
+    And API: I check that POST call status code is 200
+    Then API: I create a new contact
+    And API: I check that POST call status code is 200
+    Given I log in as a Admin User
+    And I click on the Contacts button from navbar
+    And I click on the NEW CONTACT button
+    When I fill a new contact form for DE version
+    And I click on SAVE new contact button
+    Then I check the created data is correctly displayed on Edit Contact page for DE version
+    And I click on the Contacts button from navbar
+    And I click on the More button on Contact directory page
+    And I click Enter Bulk Edit Mode on Contact directory page
+    And I select last created UI result in grid in Contact Directory for Bulk Action
+    And I select last created API result in grid in Contact Directory for Bulk Action
+    And I click on Bulk Actions combobox on Contact Directory Page
+    And I click on Create Quarantine Order from Bulk Actions combobox on Contact Directory Page
+    And I click on checkbox to upload generated document to entities in Create Quarantine Order form in Contact directory
+    And I select "ExampleDocumentTemplateContacts.docx" Quarantine Order in Create Quarantine Order form in Edit Contact directory
+    And I click on Create button in Create Quarantine Order form DE
+    And I click on close button in Create Quarantine Order form
+    And I check if downloaded zip file for Quarantine Order is correct for DE version
+    And I click on the More button on Contact directory page
+    Then I click Leave Bulk Edit Mode on Contact directory page
+    Then I navigate to the last created UI contact via the url
+    And I check if generated document based on "ExampleDocumentTemplateContacts.docx" appeared in Documents tab for UI created contact in Edit Contact directory for DE
+    And I open the last created contact via API
+    And I check if generated document based on "ExampleDocumentTemplateContacts.docx" appeared in Documents tab in Edit Contact directory for DE
+
+  @tmsLink=SORDEV-12133 @env_de @LanguageRisk
+  Scenario: Test spelling correction on new contact creation form
+    Given I log in as a Admin User
+    When I click on the User Settings button from navbar
+    And I select "English" language from Combobox in User settings
+    And I click on the Contacts button from navbar
+    And I click on the NEW CONTACT button
+    And I choose "COVID-19" as a disease
+    Then I check the wording of the last two entries for type of contact
+    When I click on Discard button in Create New Contact form
+    And I click on the User Settings button from navbar
+    And I select "Deutsch" language from Combobox in User settings
+
+  @tmsLink=SORDEV-12441 @env_de
+  Scenario: Hide citizenship and country of birth on Edit Contact Person
+    Given API: I create a new person
+    And API: I check that POST call status code is 200
+    Then API: I create a new contact
+    And API: I check that POST call status code is 200
+    Given I log in as a National User
+    And I open the last created contact via API
+    Then I open Contact Person tab
+    Then I check that Citizenship is not visible in Contact Information section for DE version
+    And I check that Country of birth is not visible in Contact Information section for DE version
+
+  @tmsLink=SORDEV-12446 @env_s2s_1
+  Scenario: Hide share action in bulk mode for contacts
+    Given I log in as a Admin User
+    Then I click on the Contacts button from navbar
+    And I click on the More button on Contact directory page
+    And I click Enter Bulk Edit Mode on Contact directory page
+    And I click on Bulk Actions combobox on Contact Directory Page
+    Then I check that Share option is not visible in Bulk Actions dropdown in Contact Directory for DE specific
+
+    @tmsLink=SORQA-665 @env_de @oldfake
+    Scenario: Check automatic deletion of CONTACT created 1826 days ago
+      Given API: I create a new person
+      And API: I check that POST call status code is 200
+      Then API: I create a new contact with creation date 1826 days ago
+      And API: I check that POST call status code is 200
+      Then I log in as a Admin User
+      When I click on the Contacts button from navbar
+      Then I search after last created contact via API by name and uuid then open
+      Then I copy uuid of current contact
+      And I click on the Configuration button from navbar
+      Then I navigate to Developer tab in Configuration
+      Then I click on Execute Automatic Deletion button
+      And I wait 30 seconds for system reaction
+      Then I check if created contact is available in API
+      And API: I check that GET call status code is 204
+      And I click on the Contacts button from navbar
+      And I filter with last created contact using contact UUID
+      And I check that number of displayed contact results is 0
+
+      @tmsLink=SORQA-681 @env_de @oldfake
+        Scenario: Check automatic deletion NOT of CONTACT created 1820 days ago
+        Given API: I create a new person
+        And API: I check that POST call status code is 200
+        Then API: I create a new contact with creation date 1820 days ago
+        And API: I check that POST call status code is 200
+        Then I log in as a Admin User
+        When I click on the Contacts button from navbar
+        Then I search after last created contact via API by name and uuid then open
+        Then I copy uuid of current contact
+        And I click on the Configuration button from navbar
+        Then I navigate to Developer tab in Configuration
+        Then I click on Execute Automatic Deletion button
+        And I wait 30 seconds for system reaction
+        Then I check if created contact is available in API
+        And API: I check that GET call status code is 200
+        And I click on the Contacts button from navbar
+        And I filter with last created contact using contact UUID
+        And I check that number of displayed contact results is 1

@@ -5,19 +5,18 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import de.symeda.auditlog.api.Audited;
 import de.symeda.sormas.api.messaging.MessageType;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.person.Person;
 import de.symeda.sormas.backend.user.User;
 
 @Entity
-@Audited
 public class ManualMessageLog extends AbstractDomainObject {
 
 	public static final String TABLE_NAME = "manualmessagelog";
@@ -50,7 +49,7 @@ public class ManualMessageLog extends AbstractDomainObject {
 		this.sentDate = sentDate;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	@JoinColumn(nullable = false)
 	public User getSendingUser() {
 		return sendingUser;

@@ -25,11 +25,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import de.symeda.auditlog.api.Audited;
 import de.symeda.sormas.api.action.ActionContext;
 import de.symeda.sormas.api.action.ActionMeasure;
 import de.symeda.sormas.api.action.ActionPriority;
@@ -39,7 +39,6 @@ import de.symeda.sormas.backend.event.Event;
 import de.symeda.sormas.backend.user.User;
 
 @Entity
-@Audited
 public class Action extends AbstractDomainObject {
 
 	private static final long serialVersionUID = -4754578341242164661L;
@@ -118,7 +117,7 @@ public class Action extends AbstractDomainObject {
 		this.statusChangeDate = statusChangeDate;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	public User getCreatorUser() {
 		return creatorUser;
 	}
@@ -163,7 +162,7 @@ public class Action extends AbstractDomainObject {
 		this.reply = reply;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	public User getLastModifiedBy() {
 		return lastModifiedBy;
 	}

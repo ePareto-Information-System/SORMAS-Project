@@ -45,6 +45,10 @@ public class CreateNewSamplePage {
       By.cssSelector(".popupContent [id='labDetails']");
   public static final By RECEIVED_OPTION_BUTTON = By.cssSelector("[id='received'] label");
   public static final By DATE_SAMPLE_RECEIVED = By.cssSelector("[id='receivedDate'] input");
+  public static final By DATE_SAMPLE_SEND_INPUT_FIELD =
+      By.xpath("//div[@id='shipmentDate' and not(contains(@class, 'v-required'))]");
+  public static final By DATE_SAMPLE_RECEIVED_INPUT_FIELD =
+      By.xpath("//div[@id='receivedDate' and not(contains(@class, 'v-required'))]");
   public static final By SPECIMEN_CONDITION_COMBOBOX =
       By.cssSelector("[id='specimenCondition'] [class='v-filterselect-button']");
   public static final By SPECIMEN_CONDITION_INPUT =
@@ -70,14 +74,16 @@ public class CreateNewSamplePage {
   public static final By TEST_RESULTS_COMMENT_AREA_INPUT = By.cssSelector("[id='testResultText']");
   public static final By SAVE_SAMPLE_BUTTON =
       By.cssSelector("[class='popupContent'] [id='commit']");
+  public static final By SAVE_SAMPLE_WITH_PATHOGEN_TEST_BUTTON =
+      By.xpath("(//div[@class='popupContent']//div[@id='commit'])[2]");
+  public static final By SAVE_EDIT_SAMPLE_BUTTON = By.cssSelector("[id='commit']");
   public static final By PATHOGEN_TEST_RESULT_COMBOBOX =
       By.cssSelector("[id='testResult'] [class='v-filterselect-button']");
   public static final By PATHOGEN_TEST_RESULT_INPUT = By.cssSelector("[id='testResult'] input");
   public static final By PATHOGEN_LABORATORY_COMBOBOX =
       By.cssSelector("[class='v-panel v-widget'] [location='lab'] [class='v-filterselect-button']");
   public static final By PATHOGEN_LABORATORY_INPUT =
-      By.cssSelector(
-          "[location='lab'] [class='v-filterselect v-widget v-required v-filterselect-required v-has-width'] input");
+      By.cssSelector("[location='lab'] [class='v-filterselect v-widget v-has-width'] input");
   public static final By REQUEST_PATHOGEN_OPTION_BUTTON =
       By.cssSelector("[id='pathogenTestingRequested'] label");
   public static final By ANTIGEN_DETECTION_TEST_OPTION_BUTTON =
@@ -87,8 +93,9 @@ public class CreateNewSamplePage {
       By.xpath("//label[text()='PCR / RT-PCR']");
   public static final By FINAL_LABORATORY_RESULT_COMBOBOX =
       By.cssSelector("[id='pathogenTestResult'] [class='v-filterselect-button']");
-  public static final By ADD_PATHOGEN_TEST_BUTTON_DE =
-      By.xpath("/html/body/div[2]/div[3]/div/div/div[3]/div/div/div[2]/div/div/div[1]/div");
+  public static final By ADD_PATHOGEN_TEST_BUTTON =
+      By.xpath(
+          "(//div[@class='v-window-contents']//div[@class='v-expand']//div[@tabindex='0'])[1]");
   public static final By HAEMOGLOBIN_IN_URINE_COMBOBOX =
       By.cssSelector("[id='haemoglobinuria'] [class='v-filterselect-button']");
   public static final By HAEMOGLOBIN_IN_URINE_INPUT =
@@ -139,4 +146,8 @@ public class CreateNewSamplePage {
       By.xpath("//div[contains(text(),'Date and time of result:')]");
   public static final By UPDATE_CASE_DISEASE_VARIANT =
       By.xpath("//*[text()='Update case disease variant']");
+  public static final By DATE_AND_TIME_OF_RESULTS_INPUT_FIELD =
+      By.xpath("//*[@id='testDateTime_date' and not(contains(@class, 'v-required'))]");
+  public static final By GENERIC_ERROR_POPUP =
+      By.xpath("//div[@class='v-Notification error v-Notification-error']");
 }

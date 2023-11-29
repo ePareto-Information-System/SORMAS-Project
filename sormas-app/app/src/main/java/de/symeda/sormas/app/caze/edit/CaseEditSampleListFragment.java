@@ -24,14 +24,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.app.BaseActivity;
 import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.caze.Case;
+import de.symeda.sormas.app.backend.config.ConfigProvider;
 import de.symeda.sormas.app.backend.sample.Sample;
 import de.symeda.sormas.app.core.adapter.databinding.OnListItemClickListener;
 import de.symeda.sormas.app.databinding.FragmentFormListLayoutBinding;
@@ -54,7 +56,7 @@ public class CaseEditSampleListFragment extends BaseEditFragment<FragmentFormLis
 
 		((BaseActivity) getActivity()).showPreloader();
 		adapter = new SampleListAdapter();
-		SampleListViewModel model = ViewModelProviders.of(this).get(SampleListViewModel.class);
+		SampleListViewModel model = new ViewModelProvider(this).get(SampleListViewModel.class);
 		model.initializeViewModel(getActivityRootData());
 		model.getSamples().observe(this, samples -> {
 			((CaseEditActivity) getActivity()).hidePreloader();
@@ -116,6 +118,6 @@ public class CaseEditSampleListFragment extends BaseEditFragment<FragmentFormLis
 
 	@Override
 	public boolean isShowNewAction() {
-		return true;
+		return ConfigProvider.hasUserRight(UserRight.SAMPLE_EDIT);
 	}
 }

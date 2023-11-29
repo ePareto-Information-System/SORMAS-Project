@@ -29,7 +29,7 @@ import android.view.View;
 import android.widget.AdapterView;
 
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import de.symeda.sormas.api.caze.CaseClassification;
@@ -92,7 +92,7 @@ public class CaseListActivity extends PagedBaseListActivity {
 				}
 			}
 		});
-		model = ViewModelProviders.of(this).get(CaseListViewModel.class);
+		model = new ViewModelProvider(this).get(CaseListViewModel.class);
 		model.getCases().observe(this, cases -> {
 			adapter.submitList(cases);
 			hidePreloader();
@@ -136,13 +136,6 @@ public class CaseListActivity extends PagedBaseListActivity {
 			showPreloader();
 			model.getCases().getValue().getDataSource().invalidate();
 		};
-	}
-
-	@Override
-	public int onNotificationCountChangingAsync(AdapterView parent, PageMenuItem menuItem, int position) {
-		//TODO: Call database and retrieve notification count
-		return new Random().nextInt(100);
-		//return (int)(new Random(DateTime.now().getMillis() * 1000).nextInt()/10000000);
 	}
 
 	@Override

@@ -48,6 +48,7 @@ import javax.persistence.criteria.Root;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import de.symeda.sormas.backend.FacadeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,8 +109,8 @@ import de.symeda.sormas.backend.util.RightsAllowed;
 
 @Stateless(name = "VisitFacade")
 @RightsAllowed({
-	UserRight._CONTACT_VIEW,
-	UserRight._CASE_VIEW })
+		UserRight._CONTACT_VIEW,
+		UserRight._CASE_VIEW })
 public class VisitFacadeEjb implements VisitFacade {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -134,6 +135,7 @@ public class VisitFacadeEjb implements VisitFacade {
 	@EJB
 	private NotificationService notificationService;
 
+
 	@Override
 	public List<String> getAllActiveUuids() {
 		User user = userService.getCurrentUser();
@@ -157,9 +159,9 @@ public class VisitFacadeEjb implements VisitFacade {
 	public List<VisitDto> getAllActiveVisitsAfter(Date date, Integer batchSize, String lastSynchronizedUuid) {
 		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
 		return visitService.getAllActiveVisitsAfter(date, batchSize, lastSynchronizedUuid)
-			.stream()
-			.map(c -> convertToDto(c, pseudonymizer))
-			.collect(Collectors.toList());
+				.stream()
+				.map(c -> convertToDto(c, pseudonymizer))
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -188,10 +190,10 @@ public class VisitFacadeEjb implements VisitFacade {
 		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
 
 		return contact.getVisits()
-			.stream()
-			.filter(visit -> visit.getVisitDateTime().after(begin) && visit.getVisitDateTime().before(end))
-			.map(visit -> convertToDto(visit, pseudonymizer))
-			.collect(Collectors.toList());
+				.stream()
+				.filter(visit -> visit.getVisitDateTime().after(begin) && visit.getVisitDateTime().before(end))
+				.map(visit -> convertToDto(visit, pseudonymizer))
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -199,6 +201,48 @@ public class VisitFacadeEjb implements VisitFacade {
 		Case caze = caseService.getByReferenceDto(caseRef);
 		return toDto(caze.getVisits().stream().max(Comparator.comparing(Visit::getVisitDateTime)).orElse(null));
 	}
+
+	@Override
+	public VisitDto save(VisitDto visit) {
+		return null;
+	}
+
+	@Override
+	public VisitDto getByUuid(String uuid) {
+		return null;
+	}
+
+	@Override
+	public void delete(String uuid) {
+
+	}
+
+	@Override
+	public VisitDto saveVisit(VisitDto dto, Date allowedStartDate, Date allowedEndDate) {
+		return null;
+	}
+
+//	@Override
+//	@RightsAllowed({
+//			UserRight._VISIT_CREATE,
+//			UserRight._VISIT_EDIT })
+//	public VisitDto save(@Valid @NotNull VisitDto dto) {
+//		return saveVisit(dto, null, null);
+//	}
+//
+//		@RightsAllowed({
+//			UserRight._VISIT_CREATE,
+//			UserRight._VISIT_EDIT })
+//	public VisitDto saveVisit(@Valid VisitDto dto, Date allowedStartDate, Date allowedEndDate) {
+//		final String visitUuid = dto.getUuid();
+//		final Visit existingVisit = visitUuid != null ? service.getByUuid(visitUuid) : null;
+//
+//		FacadeHelper.checkCreateAndEditRights(existingVisit, userService, UserRight.VISIT_CREATE, UserRight.VISIT_EDIT);
+//		return doSaveVisit(dto, existingVisit, allowedStartDate, allowedEndDate);
+//	}
+
+
+
 
 	@Override
 	public List<VisitDto> getVisitsByCase(CaseReferenceDto caseRef) {
@@ -213,8 +257,8 @@ public class VisitFacadeEjb implements VisitFacade {
 
 	@Override
 	@RightsAllowed({
-		UserRight._VISIT_CREATE,
-		UserRight._VISIT_EDIT })
+			UserRight._VISIT_CREATE,
+			UserRight._VISIT_EDIT })
 	public VisitDto saveVisit(@Valid VisitDto dto) {
 		final String visitUuid = dto.getUuid();
 		final Visit existingVisit = visitUuid != null ? visitService.getByUuid(visitUuid) : null;
@@ -246,30 +290,30 @@ public class VisitFacadeEjb implements VisitFacade {
 		final UserReferenceDto currentUser = new UserReferenceDto(userService.getCurrentUser().getUuid());
 
 		final VisitDto visitDto = VisitDto.build(
-			new PersonReferenceDto(personUuid),
-			dto.getDisease(),
-			dto.getVisitDateTime(),
-			currentUser,
-			dto.getVisitStatus(),
-			dto.getVisitRemarks(),
-			dto.getSymptoms(),
-			dto.getReportLat(),
-			dto.getReportLon(),
-			dto.getReportLatLonAccuracy(),
-			VisitOrigin.EXTERNAL_JOURNAL);
+				new PersonReferenceDto(personUuid),
+				dto.getDisease(),
+				dto.getVisitDateTime(),
+				currentUser,
+				dto.getVisitStatus(),
+				dto.getVisitRemarks(),
+				dto.getSymptoms(),
+				dto.getReportLat(),
+				dto.getReportLon(),
+				dto.getReportLatLonAccuracy(),
+				VisitOrigin.EXTERNAL_JOURNAL);
 
 		saveVisit(visitDto);
 
 		return ExternalVisitDto.build(
-			personUuid,
-			visitDto.getDisease(),
-			visitDto.getVisitDateTime(),
-			visitDto.getVisitStatus(),
-			visitDto.getVisitRemarks(),
-			visitDto.getSymptoms(),
-			visitDto.getReportLat(),
-			visitDto.getReportLon(),
-			visitDto.getReportLatLonAccuracy());
+				personUuid,
+				visitDto.getDisease(),
+				visitDto.getVisitDateTime(),
+				visitDto.getVisitStatus(),
+				visitDto.getVisitRemarks(),
+				visitDto.getSymptoms(),
+				visitDto.getReportLat(),
+				visitDto.getReportLon(),
+				visitDto.getReportLatLonAccuracy());
 	}
 
 	@Override
@@ -321,20 +365,20 @@ public class VisitFacadeEjb implements VisitFacade {
 		Join<Visit, User> visitUser = visitJoins.getUser();
 
 		cq.multiselect(
-			visit.get(Visit.ID),
-			visit.get(Visit.UUID),
-			visit.get(Visit.VISIT_DATE_TIME),
-			visit.get(Visit.VISIT_STATUS),
-			visit.get(Visit.VISIT_REMARKS),
-			visit.get(Visit.DISEASE),
-			symptoms.get(Symptoms.SYMPTOMATIC),
-			symptoms.get(Symptoms.TEMPERATURE),
-			symptoms.get(Symptoms.TEMPERATURE_SOURCE),
-			visit.get(Visit.ORIGIN),
-			visitUser.get(User.UUID),
-			visitUser.get(User.FIRST_NAME),
-			visitUser.get(User.LAST_NAME),
-			jurisdictionSelector(cq, cb, visitJoins));
+				visit.get(Visit.ID),
+				visit.get(Visit.UUID),
+				visit.get(Visit.VISIT_DATE_TIME),
+				visit.get(Visit.VISIT_STATUS),
+				visit.get(Visit.VISIT_REMARKS),
+				visit.get(Visit.DISEASE),
+				symptoms.get(Symptoms.SYMPTOMATIC),
+				symptoms.get(Symptoms.TEMPERATURE),
+				symptoms.get(Symptoms.TEMPERATURE_SOURCE),
+				visit.get(Visit.ORIGIN),
+				visitUser.get(User.UUID),
+				visitUser.get(User.FIRST_NAME),
+				visitUser.get(User.LAST_NAME),
+				jurisdictionSelector(cq, cb, visitJoins));
 
 		cq.distinct(true);
 		cq.where(visitService.buildCriteriaFilter(visitCriteria, cb, visit));
@@ -344,19 +388,19 @@ public class VisitFacadeEjb implements VisitFacade {
 			for (SortProperty sortProperty : sortProperties) {
 				Expression<?> expression;
 				switch (sortProperty.propertyName) {
-				case VisitIndexDto.VISIT_DATE_TIME:
-				case VisitIndexDto.VISIT_STATUS:
-				case VisitIndexDto.VISIT_REMARKS:
-				case VisitIndexDto.DISEASE:
-				case VisitIndexDto.ORIGIN:
-					expression = visit.get(sortProperty.propertyName);
-					break;
-				case VisitIndexDto.SYMPTOMATIC:
-				case VisitIndexDto.TEMPERATURE:
-					expression = symptoms.get(sortProperty.propertyName);
-					break;
-				default:
-					throw new IllegalArgumentException(sortProperty.propertyName);
+					case VisitIndexDto.VISIT_DATE_TIME:
+					case VisitIndexDto.VISIT_STATUS:
+					case VisitIndexDto.VISIT_REMARKS:
+					case VisitIndexDto.DISEASE:
+					case VisitIndexDto.ORIGIN:
+						expression = visit.get(sortProperty.propertyName);
+						break;
+					case VisitIndexDto.SYMPTOMATIC:
+					case VisitIndexDto.TEMPERATURE:
+						expression = symptoms.get(sortProperty.propertyName);
+						break;
+					default:
+						throw new IllegalArgumentException(sortProperty.propertyName);
 				}
 				order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
 			}
@@ -399,12 +443,12 @@ public class VisitFacadeEjb implements VisitFacade {
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public List<VisitExportDto> getVisitsExportList(
-		VisitCriteria visitCriteria,
-		Collection<String> selectedRows,
-		VisitExportType exportType,
-		int first,
-		int max,
-		ExportConfigurationDto exportConfiguration) {
+			VisitCriteria visitCriteria,
+			Collection<String> selectedRows,
+			VisitExportType exportType,
+			int first,
+			int max,
+			ExportConfigurationDto exportConfiguration) {
 
 		final CriteriaBuilder cb = em.getCriteriaBuilder();
 		final CriteriaQuery<VisitExportDto> cq = cb.createQuery(VisitExportDto.class);
@@ -416,22 +460,22 @@ public class VisitFacadeEjb implements VisitFacade {
 		final Join<Visit, Person> personJoin = visitJoins.getPerson();
 
 		cq.multiselect(
-			visitRoot.get(Visit.ID),
-			visitRoot.get(Visit.UUID),
-			personJoin.get(Person.ID),
-			personJoin.get(Person.FIRST_NAME),
-			personJoin.get(Person.LAST_NAME),
-			symptomsJoin.get(Symptoms.ID),
-			userJoin.get(User.ID),
-			visitRoot.get(Visit.DISEASE),
-			visitRoot.get(Visit.VISIT_DATE_TIME),
-			visitRoot.get(Visit.VISIT_STATUS),
-			visitRoot.get(Visit.VISIT_REMARKS),
-			visitRoot.get(Visit.REPORT_LAT),
-			visitRoot.get(Visit.REPORT_LON),
-			visitRoot.get(Visit.ORIGIN),
-			personJoin.get(Person.UUID),
-			jurisdictionSelector(cq, cb, visitJoins));
+				visitRoot.get(Visit.ID),
+				visitRoot.get(Visit.UUID),
+				personJoin.get(Person.ID),
+				personJoin.get(Person.FIRST_NAME),
+				personJoin.get(Person.LAST_NAME),
+				symptomsJoin.get(Symptoms.ID),
+				userJoin.get(User.ID),
+				visitRoot.get(Visit.DISEASE),
+				visitRoot.get(Visit.VISIT_DATE_TIME),
+				visitRoot.get(Visit.VISIT_STATUS),
+				visitRoot.get(Visit.VISIT_REMARKS),
+				visitRoot.get(Visit.REPORT_LAT),
+				visitRoot.get(Visit.REPORT_LON),
+				visitRoot.get(Visit.ORIGIN),
+				personJoin.get(Person.UUID),
+				jurisdictionSelector(cq, cb, visitJoins));
 
 		Predicate filter = visitService.buildCriteriaFilter(visitCriteria, cb, visitRoot);
 		filter = CriteriaBuilderHelper.andInValues(selectedRows, filter, cb, visitRoot.get(Visit.UUID));
@@ -469,7 +513,7 @@ public class VisitFacadeEjb implements VisitFacade {
 
 					if (symptoms != null) {
 						Optional.ofNullable(symptoms.get(exportDto.getSymptomsId()))
-							.ifPresent(symptom -> exportDto.setSymptoms(SymptomsFacadeEjb.toDto(symptom)));
+								.ifPresent(symptom -> exportDto.setSymptoms(SymptomsFacadeEjb.toDto(symptom)));
 					}
 				}
 			}
@@ -480,10 +524,10 @@ public class VisitFacadeEjb implements VisitFacade {
 
 	private Expression<Object> jurisdictionSelector(CriteriaQuery cq, CriteriaBuilder cb, VisitJoins visitJoins) {
 		return JurisdictionHelper.booleanSelector(
-			cb,
-			cb.or(
-				caseService.inJurisdictionOrOwned(new CaseQueryContext(cb, cq, visitJoins.getCaseJoins())),
-				contactService.inJurisdictionOrOwned(new ContactQueryContext(cb, cq, visitJoins.getContactJoins()))));
+				cb,
+				cb.or(
+						caseService.inJurisdictionOrOwned(new CaseQueryContext(cb, cq, visitJoins.getCaseJoins())),
+						contactService.inJurisdictionOrOwned(new ContactQueryContext(cb, cq, visitJoins.getContactJoins()))));
 	}
 
 	public Visit fromDto(@NotNull VisitDto source, boolean checkChangeDate) {
@@ -583,11 +627,11 @@ public class VisitFacadeEjb implements VisitFacade {
 			for (Contact contact : newVisit.getContacts()) {
 				// Skip if there is already a symptomatic visit for this contact
 				if (contact.getVisits()
-					.stream()
-					.filter(v -> !v.equals(newVisit))
-					.filter(v -> Boolean.TRUE.equals(v.getSymptoms().getSymptomatic()))
-					.count()
-					> 0) {
+						.stream()
+						.filter(v -> !v.equals(newVisit))
+						.filter(v -> Boolean.TRUE.equals(v.getSymptoms().getSymptomatic()))
+						.count()
+						> 0) {
 					continue;
 				}
 
@@ -596,21 +640,21 @@ public class VisitFacadeEjb implements VisitFacade {
 					String messageContent;
 					if (contactCase != null) {
 						messageContent = String.format(
-							I18nProperties.getString(MessageContents.CONTENT_CONTACT_SYMPTOMATIC),
-							DataHelper.getShortUuid(contact.getUuid()),
-							DataHelper.getShortUuid(contactCase.getUuid()));
+								I18nProperties.getString(MessageContents.CONTENT_CONTACT_SYMPTOMATIC),
+								DataHelper.getShortUuid(contact.getUuid()),
+								DataHelper.getShortUuid(contactCase.getUuid()));
 					} else {
 						messageContent = String.format(
-							I18nProperties.getString(MessageContents.CONTENT_CONTACT_WITHOUT_CASE_SYMPTOMATIC),
-							DataHelper.getShortUuid(contact.getUuid()));
+								I18nProperties.getString(MessageContents.CONTENT_CONTACT_WITHOUT_CASE_SYMPTOMATIC),
+								DataHelper.getShortUuid(contact.getUuid()));
 					}
 
 					notificationService.sendNotifications(
-						NotificationType.CONTACT_SYMPTOMATIC,
-						JurisdictionHelper.getContactRegions(contact),
-						null,
-						MessageSubject.CONTACT_SYMPTOMATIC,
-						messageContent);
+							NotificationType.CONTACT_SYMPTOMATIC,
+							JurisdictionHelper.getContactRegions(contact),
+							null,
+							MessageSubject.CONTACT_SYMPTOMATIC,
+							messageContent);
 				} catch (NotificationDeliveryFailedException e) {
 					logger.error("EmailDeliveryFailedException when trying to notify supervisors about a contact that has become symptomatic.");
 				}
@@ -646,8 +690,8 @@ public class VisitFacadeEjb implements VisitFacade {
 	private void updateCaseVisitAssociations(VisitDto existingVisit, Visit visit) {
 
 		if (existingVisit != null
-			&& Objects.equals(existingVisit.getVisitDateTime(), visit.getVisitDateTime())
-			&& existingVisit.getPerson().equals(visit.getPerson())) {
+				&& Objects.equals(existingVisit.getVisitDateTime(), visit.getVisitDateTime())
+				&& existingVisit.getPerson().equals(visit.getPerson())) {
 			// No need to update the associations
 			return;
 		}
@@ -659,6 +703,28 @@ public class VisitFacadeEjb implements VisitFacade {
 		}
 	}
 
+	public static VisitDto toVisitDto(Visit source) {
+		if (source == null) {
+			return null;
+		}
+
+		VisitDto target = new VisitDto();
+		DtoHelper.fillDto(target, source);
+
+		target.setDisease(source.getDisease());
+		target.setPerson(PersonFacadeEjb.toReferenceDto(source.getPerson()));
+		target.setSymptoms(SymptomsFacadeEjb.toSymptomsDto(source.getSymptoms()));
+		target.setVisitDateTime(source.getVisitDateTime());
+		target.setVisitRemarks(source.getVisitRemarks());
+		target.setVisitStatus(source.getVisitStatus());
+		target.setVisitUser(UserFacadeEjb.toReferenceDto(source.getVisitUser()));
+
+		target.setReportLat(source.getReportLat());
+		target.setReportLon(source.getReportLon());
+		target.setReportLatLonAccuracy(source.getReportLatLonAccuracy());
+		target.setOrigin(source.getOrigin());
+		return target;
+	}
 	@LocalBean
 	@Stateless
 	public static class VisitFacadeEjbLocal extends VisitFacadeEjb {

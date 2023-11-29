@@ -19,7 +19,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import de.symeda.auditlog.api.AuditedIgnore;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.immunization.ImmunizationManagementStatus;
 import de.symeda.sormas.api.immunization.ImmunizationStatus;
@@ -36,7 +35,7 @@ import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.person.Person;
 import de.symeda.sormas.backend.sormastosormas.entities.SormasToSormasShareable;
 import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfo;
-import de.symeda.sormas.backend.sormastosormas.share.shareinfo.SormasToSormasShareInfo;
+import de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShareInfo;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.vaccination.Vaccination;
 
@@ -135,7 +134,7 @@ public class BaseImmunization extends CoreAdo implements SormasToSormasShareable
 		this.reportDate = reportDate;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(nullable = false)
 	public User getReportingUser() {
 		return reportingUser;
@@ -163,7 +162,7 @@ public class BaseImmunization extends CoreAdo implements SormasToSormasShareable
 		this.externalId = externalId;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	public Region getResponsibleRegion() {
 		return responsibleRegion;
 	}
@@ -172,7 +171,7 @@ public class BaseImmunization extends CoreAdo implements SormasToSormasShareable
 		this.responsibleRegion = responsibleRegion;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	public District getResponsibleDistrict() {
 		return responsibleDistrict;
 	}
@@ -181,7 +180,7 @@ public class BaseImmunization extends CoreAdo implements SormasToSormasShareable
 		this.responsibleDistrict = responsibleDistrict;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	public Community getResponsibleCommunity() {
 		return responsibleCommunity;
 	}
@@ -199,7 +198,7 @@ public class BaseImmunization extends CoreAdo implements SormasToSormasShareable
 		this.facilityType = facilityType;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	public Facility getHealthFacility() {
 		return healthFacility;
 	}
@@ -352,7 +351,7 @@ public class BaseImmunization extends CoreAdo implements SormasToSormasShareable
 		this.meansOfImmunizationDetails = meansOfImmunizationDetails;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	public Country getCountry() {
 		return country;
 	}
@@ -376,7 +375,6 @@ public class BaseImmunization extends CoreAdo implements SormasToSormasShareable
 			CascadeType.MERGE,
 			CascadeType.DETACH,
 			CascadeType.REFRESH })
-	@AuditedIgnore
 	public SormasToSormasOriginInfo getSormasToSormasOriginInfo() {
 		return sormasToSormasOriginInfo;
 	}
@@ -387,7 +385,6 @@ public class BaseImmunization extends CoreAdo implements SormasToSormasShareable
 	}
 
 	@OneToMany(mappedBy = SormasToSormasShareInfo.IMMUNIZATION, fetch = FetchType.LAZY)
-	@AuditedIgnore
 	public List<SormasToSormasShareInfo> getSormasToSormasShares() {
 		return sormasToSormasShares;
 	}

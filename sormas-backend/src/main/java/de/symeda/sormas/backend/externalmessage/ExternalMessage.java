@@ -2,12 +2,12 @@ package de.symeda.sormas.backend.externalmessage;
 
 import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
 
-import de.symeda.sormas.backend.caze.Case;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -15,44 +15,41 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import de.symeda.sormas.backend.sample.Sample;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
 
-import de.symeda.auditlog.api.Audited;
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.externalmessage.ExternalMessageStatus;
 import de.symeda.sormas.api.externalmessage.ExternalMessageType;
 import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.person.Sex;
-import de.symeda.sormas.api.sample.PathogenTestResultType;
-import de.symeda.sormas.api.sample.SampleMaterial;
-import de.symeda.sormas.api.sample.SpecimenCondition;
+import de.symeda.sormas.backend.caze.surveillancereport.SurveillanceReport;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
-import de.symeda.sormas.backend.externalmessage.labmessage.TestReport;
-import de.symeda.sormas.backend.sample.Sample;
+import de.symeda.sormas.backend.disease.DiseaseVariantConverter;
+import de.symeda.sormas.backend.externalmessage.labmessage.SampleReport;
 import de.symeda.sormas.backend.user.User;
 
 @Entity(name = ExternalMessage.TABLE_NAME)
-@Audited
 @TypeDef(name = "list-array", typeClass = ListArrayType.class)
 public class ExternalMessage extends AbstractDomainObject {
 
 	public static final String TABLE_NAME = "externalmessage";
 
+	public static final String SAMPLE_REPORTS = "sampleReports";
+
 	public static final String TYPE = "type";
-	public static final String TESTED_DISEASE = "testedDisease";
+	public static final String DISEASE = "disease";
+	public static final String DISEASE_VARIANT = "diseaseVariant";
+	public static final String DISEASE_VARIANT_DETAILS = "diseaseVariantDetails";
 	public static final String MESSAGE_DATE_TIME = "messageDateTime";
-	public static final String SAMPLE_DATE_TIME = "sampleDateTime";
-	public static final String SAMPLE_RECEIVED_DATE = "sampleReceivedDate";
-	public static final String LAB_SAMPLE_ID = "labSampleId";
-	public static final String SAMPLE_MATERIAL = "sampleMaterial";
-	public static final String SAMPLE_MATERIAL_TEXT = "sampleMaterialText";
-	public static final String SPECIMEN_CONDITION = "specimenCondition";
 	public static final String REPORTER_NAME = "reporterName";
 	public static final String REPORTER_EXTERNAL_IDS = "reporterExternalIds";
 	public static final String REPORTER_POSTAL_CODE = "reporterPostalCode";
@@ -69,22 +66,19 @@ public class ExternalMessage extends AbstractDomainObject {
 	public static final String PERSON_HOUSE_NUMBER = "personHouseNumber";
 	public static final String PERSON_PHONE = "personPhone";
 	public static final String PERSON_EMAIL = "personEmail";
-	public static final String REPORTER_MESSAGE_DETAILS = "externalMessageDetails";
+	public static final String EXTERNAL_MESSAGE_DETAILS = "externalMessageDetails";
 	public static final String STATUS = "status";
 	public static final String REPORT_ID = "reportId";
-	public static final String SAMPLE_OVERALL_TEST_RESULT = "sampleOverallTestResult";
-	public static final String SAMPLE = "sample";
+	public static final String REPORT_MESSAGE_ID = "reportMessageId";
 	public static final String ASSIGNEE = "assignee";
+	public static final String SURVEILLANCE_REPORT = "surveillanceReport";
+	public static final String TSV = "tsv";
 
 	private ExternalMessageType type;
-	private Disease testedDisease;
+	private Disease disease;
+	private DiseaseVariant diseaseVariant;
+	private String diseaseVariantDetails;
 	private Date messageDateTime;
-	private Date sampleDateTime;
-	private Date sampleReceivedDate;
-	private String labSampleId;
-	private SampleMaterial sampleMaterial;
-	private String sampleMaterialText;
-	private SpecimenCondition specimenCondition;
 
 	private String reporterName;
 	private List<String> reporterExternalIds;
@@ -104,16 +98,21 @@ public class ExternalMessage extends AbstractDomainObject {
 	private String personHouseNumber;
 	private String personPhone;
 	private String personEmail;
-	private List<TestReport> testReports;
 	private String externalMessageDetails;
 	//External messages related to each other should have the same reportId
 	private String reportId;
-	private PathogenTestResultType sampleOverallTestResult;
-	private Sample sample;
-	private Case caze;
+	private String reportMessageId;
 
 	private ExternalMessageStatus status = ExternalMessageStatus.UNPROCESSED;
 	private User assignee;
+
+	private List<SampleReport> sampleReports;
+	private SurveillanceReport surveillanceReport;
+	private String tsv;
+
+	private Date sampleDateTime;
+	private Sample sample;
+
 
 	@Enumerated(EnumType.STRING)
 	public ExternalMessageType getType() {
@@ -125,12 +124,31 @@ public class ExternalMessage extends AbstractDomainObject {
 	}
 
 	@Enumerated(EnumType.STRING)
-	public Disease getTestedDisease() {
-		return testedDisease;
+	public Disease getDisease() {
+		return disease;
 	}
 
-	public void setTestedDisease(Disease testedDisease) {
-		this.testedDisease = testedDisease;
+	public void setDisease(Disease disease) {
+		this.disease = disease;
+	}
+
+	@Column
+	@Convert(converter = DiseaseVariantConverter.class)
+	public DiseaseVariant getDiseaseVariant() {
+		return diseaseVariant;
+	}
+
+	public void setDiseaseVariant(DiseaseVariant diseaseVariant) {
+		this.diseaseVariant = diseaseVariant;
+	}
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public String getDiseaseVariantDetails() {
+		return diseaseVariantDetails;
+	}
+
+	public void setDiseaseVariantDetails(String diseaseVariantDetails) {
+		this.diseaseVariantDetails = diseaseVariantDetails;
 	}
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -140,60 +158,6 @@ public class ExternalMessage extends AbstractDomainObject {
 
 	public void setMessageDateTime(Date messageDateTime) {
 		this.messageDateTime = messageDateTime;
-	}
-
-	@Temporal(TemporalType.TIMESTAMP)
-	public Date getSampleDateTime() {
-		return sampleDateTime;
-	}
-
-	public void setSampleDateTime(Date sampleDateTime) {
-		this.sampleDateTime = sampleDateTime;
-	}
-
-	@Temporal(TemporalType.TIMESTAMP)
-	public Date getSampleReceivedDate() {
-		return sampleReceivedDate;
-	}
-
-	public void setSampleReceivedDate(Date sampleReceivedDate) {
-		this.sampleReceivedDate = sampleReceivedDate;
-	}
-
-	@Column(length = CHARACTER_LIMIT_DEFAULT)
-	public String getLabSampleId() {
-		return labSampleId;
-	}
-
-	public void setLabSampleId(String labSampleId) {
-		this.labSampleId = labSampleId;
-	}
-
-	@Enumerated(EnumType.STRING)
-	public SampleMaterial getSampleMaterial() {
-		return sampleMaterial;
-	}
-
-	public void setSampleMaterial(SampleMaterial sampleMaterial) {
-		this.sampleMaterial = sampleMaterial;
-	}
-
-	@Column(length = CHARACTER_LIMIT_DEFAULT)
-	public String getSampleMaterialText() {
-		return sampleMaterialText;
-	}
-
-	public void setSampleMaterialText(String sampleMaterialText) {
-		this.sampleMaterialText = sampleMaterialText;
-	}
-
-	@Enumerated(EnumType.STRING)
-	public SpecimenCondition getSpecimenCondition() {
-		return specimenCondition;
-	}
-
-	public void setSpecimenCondition(SpecimenCondition specimenCondition) {
-		this.specimenCondition = specimenCondition;
 	}
 
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
@@ -206,10 +170,7 @@ public class ExternalMessage extends AbstractDomainObject {
 	}
 
 	@Type(type = "list-array")
-	@Column(
-			name = "reporterexternalids",
-			columnDefinition = "VARCHAR(255) ARRAY"
-	)
+	@Column(name = "reporterexternalids", columnDefinition = "VARCHAR(255) ARRAY")
 	public List<String> getReporterExternalIds() {
 		return reporterExternalIds;
 	}
@@ -371,15 +332,6 @@ public class ExternalMessage extends AbstractDomainObject {
 		this.status = status;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = TestReport.LAB_MESSAGE, fetch = FetchType.LAZY)
-	public List<TestReport> getTestReports() {
-		return testReports;
-	}
-
-	public void setTestReports(List<TestReport> testReports) {
-		this.testReports = testReports;
-	}
-
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getReportId() {
 		return reportId;
@@ -389,16 +341,16 @@ public class ExternalMessage extends AbstractDomainObject {
 		this.reportId = reportId;
 	}
 
-	@Enumerated(EnumType.STRING)
-	public PathogenTestResultType getSampleOverallTestResult() {
-		return sampleOverallTestResult;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public String getReportMessageId() {
+		return reportMessageId;
 	}
 
-	public void setSampleOverallTestResult(PathogenTestResultType sampleOverallTestResult) {
-		this.sampleOverallTestResult = sampleOverallTestResult;
+	public void setReportMessageId(String reportMessageId) {
+		this.reportMessageId = reportMessageId;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
 	public User getAssignee() {
 		return assignee;
@@ -408,6 +360,43 @@ public class ExternalMessage extends AbstractDomainObject {
 		this.assignee = assignee;
 	}
 
+	@OneToOne(fetch = FetchType.LAZY)
+	public SurveillanceReport getSurveillanceReport() {
+		return surveillanceReport;
+	}
+
+	public void setSurveillanceReport(SurveillanceReport surveillanceReport) {
+		this.surveillanceReport = surveillanceReport;
+	}
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = SampleReport.LAB_MESSAGE, fetch = FetchType.LAZY)
+	public List<SampleReport> getSampleReports() {
+		return sampleReports;
+	}
+
+	public void setSampleReports(List<SampleReport> sampleReports) {
+		this.sampleReports = sampleReports;
+	}
+
+	@Column(insertable = false, updatable = false)
+	public String getTsv() {
+		return tsv;
+	}
+
+	public void setTsv(String tsv) {
+		this.tsv = tsv;
+	}
+
+
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getSampleDateTime() {
+		return sampleDateTime;
+	}
+
+	public void setSampleDateTime(Date sampleDateTime) {
+		this.sampleDateTime = sampleDateTime;
+	}
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	public Sample getSample() {
 		return sample;
@@ -415,14 +404,5 @@ public class ExternalMessage extends AbstractDomainObject {
 
 	public void setSample(Sample sample) {
 		this.sample = sample;
-	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	public Case getCaze() {
-		return caze;
-	}
-
-	public void setCaze(Case caze) {
-		this.caze = caze;
 	}
 }

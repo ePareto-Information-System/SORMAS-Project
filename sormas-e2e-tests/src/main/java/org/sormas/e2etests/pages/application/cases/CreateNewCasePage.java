@@ -40,7 +40,9 @@ public class CreateNewCasePage {
       By.xpath("//div[@location='facilityOrHomeLoc']//label[contains(text(), 'Home')]");
   public static final By FIRST_NAME_INPUT =
       By.cssSelector(".v-window [location='firstName'] input");
+  public static final By FIRST_NAME_NO_POPUP_INPUT = By.cssSelector("#firstName");
   public static final By LAST_NAME_INPUT = By.cssSelector(".v-window [location='lastName'] input");
+  public static final By LAST_NAME_NO_POPUP_INPUT = By.cssSelector("#lastName");
   public static final By SEX_COMBOBOX =
       By.cssSelector(".v-window [location='sex'] div[role='combobox'] div");
   public static final By SAVE_BUTTON = By.id("commit");
@@ -51,6 +53,8 @@ public class CreateNewCasePage {
   public static final By EPID_NUMBER_INPUT = By.cssSelector(".popupContent #epidNumber");
   public static final By PLACE_OF_STAY =
       By.cssSelector(".popupContent div[location='facilityOrHomeLoc'] span.v-select-option label");
+  public static final By REINFECTION_SPAN =
+      By.cssSelector(".popupContent div[location='reInfection'] span.v-select-option label");
   public static final By PLACE_DESCRIPTION_INPUT =
       By.cssSelector(".popupContent #healthFacilityDetails");
   public static final By DATE_OF_BIRTH_YEAR_COMBOBOX =
@@ -72,24 +76,25 @@ public class CreateNewCasePage {
       By.cssSelector(".v-window #diseaseVariant div");
   public static final By PERSON_SEARCH_LOCATOR_BUTTON = By.id("personSearchLoc");
   public static final By UUID_EXTERNAL_ID_EXTERNAL_TOKEN_LIKE_INPUT =
-      By.id("uuidExternalIdExternalTokenLike");
+      By.id("nameUuidExternalIdExternalTokenLike");
   public static final By FIRST_NAME_LIKE_INPUT =
       By.xpath("//div[@class= 'filters-container']//div[contains(@location, 'firstName')]//input");
   public static final By LAST_NAME_LIKE_INPUT =
       By.xpath("//div[@class= 'filters-container']//div[contains(@location, 'lastName')]//input");
+
+  public static final By NAME_UUID_EXTERNAL_ID_TOKEN_LIKE =
+      By.id("nameUuidExternalIdExternalTokenLike");
   public static final By PERSON_CASE_WINDOW_SEARCH_CASE_BUTTON = By.id("actionSearch");
   public static final By CREATE_A_NEW_CASE_CONFIRMATION_BUTTON =
-      By.xpath("//*[text()='Create a new case']");
+      By.xpath("//div[@class='v-select-optiongroup v-widget']/span");
   public static final By PICK_AN_EXISTING_CASE_CONFIRMATION_BUTTON =
       By.xpath("//*[text()='Pick an existing case']");
   public static final By CREATE_A_NEW_PERSON_CONFIRMATION_BUTTON =
       By.xpath("//*[text()='Create a new person']");
+  public static final By CREATE_A_NEW_PERSON_CONFIRMATION_BUTTON_DE =
+      By.xpath("//*[text()='Eine neue Person anlegen']");
   public static final By SELECT_PERSON_WINDOW_CONFIRM_BUTTON =
-      By.xpath(
-          "//div[contains(@class, 'popupContent')]//span[contains(text(), 'Confirm')]//ancestor::div[@id='commit']");
-  public static final By SELECT_PERSON_WINDOW_CONFIRM_BUTTON_DE =
-      By.xpath(
-          "//div[contains(@class, 'popupContent')]//span[contains(text(), 'Best\u00E4tigen')]//ancestor::div[@id='commit']");
+      By.xpath("(//div[@class='popupContent']//div[@id='commit'])[2]");
   public static final By PERSON_CASE_WINDOW_SEARCH_FIRST_RESULT_OPTION =
       By.xpath(
           "//div[@class='v-grid v-widget v-has-width']//div[@class='v-grid-tablewrapper']/table/tbody[@class='v-grid-body']/tr[@class='v-grid-row v-grid-row-has-data']");
@@ -99,20 +104,13 @@ public class CreateNewCasePage {
   public static final By CASE_DOCUMENT_EMPTY_TEXT =
       By.xpath("//div[@location='documents']//div[@class='v-label v-widget v-label-undef-w']");
   public static final By DOWNLOAD_LAST_UPDATED_CASE_DOCUMENT =
-      By.xpath("//div[@location='documents']//div[@class='v-button v-widget']");
+      By.xpath(
+          "//div[@location='documents']//div[@class='v-button v-widget caption-overflow-label v-button-caption-overflow-label']");
   public static final By DELETE_LAST_UPDATED_CASE_DOCUMENT =
-      By.xpath("(//div[@location='documents']//div[@class='v-button v-widget'])[2]");
+      By.xpath(
+          "(//div[@location='documents']//div[@class='v-button v-widget caption-overflow-label v-button-caption-overflow-label'])[2]");
   public static final By ACTION_CONFIRM_POPUP_BUTTON =
       By.cssSelector(".popupContent #actionConfirm");
-  public static final By NATIONAL_HEALTH_ID_POPUP_TABLE_HEADER =
-      By.xpath(
-          "//div[@class='popupContent']//div[contains(@class,'v-grid-column-header-content') and text()=\"Krankenversicherungsnummer\"]");
-  public static final By NICKNAME_POPUP_TABLE_HEADER =
-      By.xpath(
-          "//div[@class='popupContent']//div[contains(@class,'v-grid-column-header-content') and text()=\"Spitzname\"]");
-  public static final By PASSPORT_NUMBER_POPUP_TABLE_HEADER =
-      By.xpath(
-          "//div[@class='popupContent']//div[contains(@class,'v-grid-column-header-content') and text()=\"Reisepassnummer\"]");
   public static final By NICKNAME_ATTRIBUTE =
       By.xpath("//span[@class=\"v-captiontext\" and text()=\"Spitzname\"]");
   public static final By PASSPORT_NUMBER_ATTRIBUTE =
@@ -129,4 +127,21 @@ public class CreateNewCasePage {
       By.cssSelector(".popupContent #pointOfEntry div[role='button'");
   public static final By POINT_OF_ENTRY_DETAILS =
       By.cssSelector(".popupContent #pointOfEntryDetails");
+  public static final By DATE_OF_REPORT_NO_POPUP_INPUT = By.cssSelector("#reportDate input");
+  public static final By RESPONSIBLE_JURISDICTION_LABEL =
+      By.cssSelector("[location='responsibleJurisdictionHeadingLoc'] div");
+  public static final By PLACE_OF_STAY_LABEL =
+      By.cssSelector("[location='placeOfStayHeadingLoc'] div");
+  public static final By DIFFERENT_PLACE_OF_STAY_CHECKBOX_LABEL =
+      By.xpath("//*[@id='differentPlaceOfStayJurisdiction']/label");
+  public static final By PLACE_OF_STAY_REGION_COMBOBOX = By.cssSelector(".v-window #region div");
+  public static final By PLACE_OF_STAY_DISTRICT_COMBOBOX =
+      By.cssSelector(".v-window #district div");
+  public static final By CREATE_NEW_CASE_CONFIRMATION_BUTTON_DE =
+      By.xpath("//*[text()='Neuen Fall erstellen']");
+  public static final By SELECT_MATCHING_PERSON_CHECKBOX_DE =
+      By.xpath("//label[text()='W\u00E4hlen Sie eine passende Person']");
+  public static final By SELECT_EXISTING_CASE_DE =
+      By.xpath("//label[text()='Einen vorhandenen Fall w\u00E4hlen']");
+  public static final By CATEGORY_SAVED_POPUP = By.cssSelector(".v-Notification-caption");
 }

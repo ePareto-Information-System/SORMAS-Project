@@ -40,6 +40,7 @@ public class SideComponent extends VerticalLayout {
 		Label headingLabel = new Label(heading);
 		headingLabel.addStyleName(CssStyles.H3);
 		componentHeader.addComponent(headingLabel);
+		componentHeader.setExpandRatio(headingLabel, 1);
 
 		this.actionCallback = actionCallback;
 	}
@@ -47,14 +48,15 @@ public class SideComponent extends VerticalLayout {
 	protected void addCreateButton(Button button) {
 		componentHeader.addComponent(button);
 		componentHeader.setComponentAlignment(button, Alignment.MIDDLE_RIGHT);
+		componentHeader.setExpandRatio(button, 0);
 	}
 
 	protected void addCreateButton(String caption, Runnable callback, UserRight... userRights) {
-		if (userHasRight(userRights)) {
+		if (userRights.length == 0 || userHasRight(userRights)) {
 			Button createButton = ButtonHelper.createButton(caption);
-			if(UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO) ) {
-				createButton.setEnabled(false);
-			}
+			//if(UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO) ) {
+				createButton.setEnabled(true);
+			//}
 			createButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
 			createButton.setIcon(VaadinIcons.PLUS_CIRCLE);
 			createButton.addClickListener(e -> actionCallback.accept(callback));

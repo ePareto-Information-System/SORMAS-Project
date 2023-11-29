@@ -94,16 +94,15 @@ public class TravelEntriesView extends AbstractView {
 			addHeaderComponent(createButton);
 		}
 
-
 		if (UserProvider.getCurrent().hasUserRight(UserRight.TRAVEL_ENTRY_DELETE)
-				&& UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
+			&& UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
 
 			Button btnEnterBulkEditMode = ButtonHelper.createIconButton(Captions.actionEnterBulkEditMode, VaadinIcons.CHECK_SQUARE_O, null);
 			btnEnterBulkEditMode.setVisible(!viewConfiguration.isInEagerMode());
 			addHeaderComponent(btnEnterBulkEditMode);
 
 			Button btnLeaveBulkEditMode =
-					ButtonHelper.createIconButton(Captions.actionLeaveBulkEditMode, VaadinIcons.CLOSE, null, ValoTheme.BUTTON_PRIMARY);
+				ButtonHelper.createIconButton(Captions.actionLeaveBulkEditMode, VaadinIcons.CLOSE, null, ValoTheme.BUTTON_PRIMARY);
 			btnLeaveBulkEditMode.setVisible(viewConfiguration.isInEagerMode());
 			addHeaderComponent(btnLeaveBulkEditMode);
 
@@ -193,16 +192,12 @@ public class TravelEntriesView extends AbstractView {
 			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.AUTOMATIC_ARCHIVING, CoreEntityType.TRAVEL_ENTRY)) {
 
 				int daysAfterTravelEntryGetsArchived = FacadeProvider.getFeatureConfigurationFacade()
-						.getProperty(
-								FeatureType.AUTOMATIC_ARCHIVING,
-								CoreEntityType.TRAVEL_ENTRY,
-								FeatureTypeProperty.THRESHOLD_IN_DAYS,
-								Integer.class);
+					.getProperty(FeatureType.AUTOMATIC_ARCHIVING, CoreEntityType.TRAVEL_ENTRY, FeatureTypeProperty.THRESHOLD_IN_DAYS, Integer.class);
 				if (daysAfterTravelEntryGetsArchived > 0) {
 					relevanceStatusInfoLabel = new Label(
-							VaadinIcons.INFO_CIRCLE.getHtml() + " "
-									+ String.format(I18nProperties.getString(Strings.infoArchivedTravelEntries), daysAfterTravelEntryGetsArchived),
-							ContentMode.HTML);
+						VaadinIcons.INFO_CIRCLE.getHtml() + " "
+							+ String.format(I18nProperties.getString(Strings.infoArchivedTravelEntries), daysAfterTravelEntryGetsArchived),
+						ContentMode.HTML);
 					relevanceStatusInfoLabel.setVisible(false);
 					relevanceStatusInfoLabel.addStyleName(CssStyles.LABEL_VERTICAL_ALIGN_SUPER);
 					actionButtonsLayout.addComponent(relevanceStatusInfoLabel);
@@ -211,15 +206,25 @@ public class TravelEntriesView extends AbstractView {
 			}
 			relevanceStatusFilter = ComboBoxHelper.createComboBoxV7();
 			relevanceStatusFilter.setId("relevanceStatus");
-			relevanceStatusFilter.setWidth(140, Unit.PIXELS);
+			relevanceStatusFilter.setWidth(250, Unit.PIXELS);
 			relevanceStatusFilter.setNullSelectionAllowed(false);
 			relevanceStatusFilter.setTextInputAllowed(false);
 			relevanceStatusFilter.addItems((Object[]) EntityRelevanceStatus.values());
 			relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ACTIVE, I18nProperties.getCaption(Captions.travelEntryActiveTravelEntries));
 			relevanceStatusFilter
 				.setItemCaption(EntityRelevanceStatus.ARCHIVED, I18nProperties.getCaption(Captions.travelEntryArchivedTravelEntries));
-			relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ALL, I18nProperties.getCaption(Captions.travelEntryAllTravelEntries));
+			relevanceStatusFilter.setItemCaption(
+				EntityRelevanceStatus.ACTIVE_AND_ARCHIVED,
+				I18nProperties.getCaption(Captions.travelEntryAllActiveAndArchivedTravelEntries));
 			relevanceStatusFilter.setCaption("");
+
+			if (UserProvider.getCurrent().hasUserRight(UserRight.TRAVEL_ENTRY_DELETE)) {
+				relevanceStatusFilter
+					.setItemCaption(EntityRelevanceStatus.DELETED, I18nProperties.getCaption(Captions.TravelEntry_deletedTravelEntries));
+			} else {
+				relevanceStatusFilter.removeItem(EntityRelevanceStatus.DELETED);
+			}
+
 			relevanceStatusFilter.addValueChangeListener(e -> {
 				if (relevanceStatusInfoLabel != null) {
 					relevanceStatusInfoLabel.setVisible(EntityRelevanceStatus.ARCHIVED.equals(e.getProperty().getValue()));
@@ -229,27 +234,42 @@ public class TravelEntriesView extends AbstractView {
 			});
 			actionButtonsLayout.addComponent(relevanceStatusFilter);
 		}
-		statusFilterLayout.addComponent(actionButtonsLayout);
-		statusFilterLayout.setComponentAlignment(actionButtonsLayout, Alignment.TOP_RIGHT);
-		statusFilterLayout.setExpandRatio(actionButtonsLayout, 1);
 
 		// Bulk operation dropdown
 		if (UserProvider.getCurrent().hasUserRight(UserRight.TRAVEL_ENTRY_DELETE)
 			&& UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
 			List<MenuBarHelper.MenuBarItem> bulkActions = new ArrayList<>();
-			bulkActions.add(
-				new MenuBarHelper.MenuBarItem(
-					I18nProperties.getCaption(Captions.bulkDelete),
-					VaadinIcons.TRASH,
-					mi -> grid.bulkActionHandler(
-						items -> ControllerProvider.getTravelEntryController().deleteAllSelectedItems(items, () -> navigateTo(criteria)),
-						true)));
+			if (criteria.getRelevanceStatus() != EntityRelevanceStatus.DELETED) {
+				bulkActions.add(
+					new MenuBarHelper.MenuBarItem(
+						I18nProperties.getCaption(Captions.bulkDelete),
+						VaadinIcons.TRASH,
+						mi -> grid.bulkActionHandler(
+							items -> ControllerProvider.getTravelEntryController()
+								.deleteAllSelectedItems(items, (TravelEntryGrid) grid, () -> navigateTo(criteria)),
+							true)));
+			} else {
+				bulkActions.add(
+					new MenuBarHelper.MenuBarItem(
+						I18nProperties.getCaption(Captions.bulkRestore),
+						VaadinIcons.ARROW_BACKWARD,
+						mi -> grid.bulkActionHandler(
+							items -> ControllerProvider.getTravelEntryController()
+								.restoreSelectedTravelEntries(items, (TravelEntryGrid) grid, () -> navigateTo(criteria)),
+							true)));
+			}
 
 			bulkOperationsDropdown = MenuBarHelper.createDropDown(Captions.bulkActions, bulkActions);
 
 			bulkOperationsDropdown.setVisible(viewConfiguration.isInEagerMode());
 			bulkOperationsDropdown.setCaption("");
 			actionButtonsLayout.addComponent(bulkOperationsDropdown);
+		}
+
+		if (actionButtonsLayout.getComponentCount() > 0) {
+			statusFilterLayout.addComponent(actionButtonsLayout);
+			statusFilterLayout.setComponentAlignment(actionButtonsLayout, Alignment.TOP_RIGHT);
+			statusFilterLayout.setExpandRatio(actionButtonsLayout, 1);
 		}
 
 		return statusFilterLayout;

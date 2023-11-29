@@ -27,11 +27,21 @@ import static org.sormas.e2etests.pages.application.configuration.CommunitiesTab
 import static org.sormas.e2etests.pages.application.configuration.ConfigurationTabsPage.CONFIGURATION_DISTRICTS_TAB;
 import static org.sormas.e2etests.pages.application.configuration.DistrictsTabPage.ARCHIVE_DISTRICT_BUTTON;
 import static org.sormas.e2etests.pages.application.configuration.DistrictsTabPage.CONFIRM_ARCHIVING_DISTRICT_TEXT;
+import static org.sormas.e2etests.pages.application.configuration.DistrictsTabPage.COUNTRY_DISTRICT_FILTER_COMBOBOX;
 import static org.sormas.e2etests.pages.application.configuration.DistrictsTabPage.CREATE_NEW_ENTRY_DISTRICTS_EPID_CODE_INPUT;
 import static org.sormas.e2etests.pages.application.configuration.DistrictsTabPage.CREATE_NEW_ENTRY_DISTRICTS_NAME_INPUT;
 import static org.sormas.e2etests.pages.application.configuration.DistrictsTabPage.CREATE_NEW_ENTRY_DISTRICTS_REGION_COMBOBOX;
+import static org.sormas.e2etests.pages.application.configuration.DistrictsTabPage.DISTRICTS_COLUMN_HEADERS;
+import static org.sormas.e2etests.pages.application.configuration.DistrictsTabPage.DISTRICTS_NAME_TABLE_ROW;
 import static org.sormas.e2etests.pages.application.configuration.DistrictsTabPage.DISTRICTS_NEW_ENTRY_BUTTON;
+import static org.sormas.e2etests.pages.application.configuration.DistrictsTabPage.DISTRICTS_TABLE_DATA;
+import static org.sormas.e2etests.pages.application.configuration.DistrictsTabPage.DISTRICTS_TABLE_ROW;
 import static org.sormas.e2etests.pages.application.configuration.DistrictsTabPage.EDIT_DISTRICT_BUTTON;
+import static org.sormas.e2etests.pages.application.configuration.DistrictsTabPage.ENTER_BULK_EDIT_MODE_BUTTON_DISTRICTS_CONFIGURATION;
+import static org.sormas.e2etests.pages.application.configuration.DistrictsTabPage.EXPORT_BUTTON_DISTRICTS_CONFIGURATION;
+import static org.sormas.e2etests.pages.application.configuration.DistrictsTabPage.IMPORT_BUTTON_DISTRICTS_CONFIGURATION;
+import static org.sormas.e2etests.pages.application.configuration.DistrictsTabPage.REGION_DISTRICT_FILTER_COMBOBOX;
+import static org.sormas.e2etests.pages.application.configuration.DistrictsTabPage.RELEVANCE_STATUS_COMBO_BOX_DISTRICTS_CONFIGURATION;
 import static org.sormas.e2etests.pages.application.configuration.DistrictsTabPage.RESET_FILTERS_DISTRICTS_BUTTON;
 import static org.sormas.e2etests.pages.application.configuration.DistrictsTabPage.SAVE_NEW_ENTRY_DISTRICTS;
 import static org.sormas.e2etests.pages.application.configuration.DistrictsTabPage.SEARCH_DISTRICT_INPUT;
@@ -51,9 +61,15 @@ import com.google.inject.Inject;
 import cucumber.api.java8.En;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import org.openqa.selenium.WebElement;
 import org.sormas.e2etests.entities.pojo.helpers.ComparisonHelper;
 import org.sormas.e2etests.entities.pojo.web.Case;
 import org.sormas.e2etests.entities.pojo.web.Districts;
@@ -63,6 +79,7 @@ import org.sormas.e2etests.entities.services.TravelEntryService;
 import org.sormas.e2etests.helpers.WebDriverHelpers;
 import org.sormas.e2etests.pages.application.entries.CreateNewTravelEntryPage;
 import org.sormas.e2etests.pages.application.entries.EditTravelEntryPage;
+import org.sormas.e2etests.steps.BaseSteps;
 import org.testng.asserts.SoftAssert;
 
 public class DistrictsSteps implements En {
@@ -70,6 +87,7 @@ public class DistrictsSteps implements En {
   private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
   private final DateTimeFormatter DATE_FORMATTER_DE = DateTimeFormatter.ofPattern("d.M.yyyy");
   private final WebDriverHelpers webDriverHelpers;
+  private final BaseSteps baseSteps;
   protected Districts districts;
   public static TravelEntry travelEntry;
   public static TravelEntry aTravelEntry;
@@ -86,8 +104,10 @@ public class DistrictsSteps implements En {
       WebDriverHelpers webDriverHelpers,
       DistrictsService districtsService,
       TravelEntryService travelEntryService,
-      SoftAssert softly) {
+      SoftAssert softly,
+      BaseSteps baseSteps) {
     this.webDriverHelpers = webDriverHelpers;
+    this.baseSteps = baseSteps;
 
     When(
         "I click on Districts button in Configuration tab",
@@ -105,6 +125,7 @@ public class DistrictsSteps implements En {
           fillEpidCode(districts.getEpidCode());
           selectCommunityRegion(districts.getRegion());
           webDriverHelpers.clickOnWebElementBySelector(SAVE_NEW_ENTRY_DISTRICTS);
+          TimeUnit.SECONDS.sleep(2); // wait for reaction
         });
 
     When(
@@ -225,6 +246,125 @@ public class DistrictsSteps implements En {
                   DISTRICT_COMBOBOX, districts.getDistrictName()));
           softly.assertAll();
         });
+
+    When(
+        "I check that Voreingestellter Landkreis is correctly displayed",
+        () -> {
+          webDriverHelpers.fillAndSubmitInWebElement(
+              SEARCH_DISTRICT_INPUT, "Voreingestellter Landkreis");
+          TimeUnit.SECONDS.sleep(2); // wait for filter
+          List<Map<String, String>> tableRowsData = getTableRowsData();
+          softly.assertTrue(
+              tableRowsData
+                  .toString()
+                  .contains("EPID CODE=DIS, EXTERNAL ID=, NAME=Voreingestellter Landkreis"),
+              "Voreingestellter Landkreis is not correctly displayed!");
+          softly.assertAll();
+        });
+
+    When(
+        "I check that Voreingestellter Landkreis is correctly displayed in German",
+        () -> {
+          webDriverHelpers.fillAndSubmitInWebElement(
+              SEARCH_DISTRICT_INPUT, "Voreingestellter Landkreis");
+          TimeUnit.SECONDS.sleep(2); // wait for filter
+          List<Map<String, String>> tableRowsData = getTableRowsData();
+          softly.assertTrue(
+              tableRowsData
+                  .toString()
+                  .contains(
+                      "EPID-NUMMER=DIS, BUNDESLAND=Voreingestellte Bundesl\u00e4nder, EXTERNE ID=, BEV\u00d6LKERUNG=, WACHSTUMSRATE=, NAME=Voreingestellter Landkreis"),
+              "Voreingestellter Landkreis is not correctly displayed!");
+          softly.assertAll();
+        });
+
+    Then(
+        "I Verify the page elements are present in Districts Configuration Page",
+        () -> {
+          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(
+              IMPORT_BUTTON_DISTRICTS_CONFIGURATION);
+          softly.assertTrue(
+              webDriverHelpers.isElementPresent(IMPORT_BUTTON_DISTRICTS_CONFIGURATION),
+              "Import Button is Not present in Districts Configuration");
+          softly.assertTrue(
+              webDriverHelpers.isElementPresent(EXPORT_BUTTON_DISTRICTS_CONFIGURATION),
+              "Export Button is Not present in Districts Configuration");
+          softly.assertTrue(
+              webDriverHelpers.isElementPresent(DISTRICTS_NEW_ENTRY_BUTTON),
+              "New Entry Button is Not present in Districts Configuration");
+          softly.assertTrue(
+              webDriverHelpers.isElementPresent(
+                  ENTER_BULK_EDIT_MODE_BUTTON_DISTRICTS_CONFIGURATION),
+              "Enter Bulk Edit Mode Button is Not present in Districts Configuration");
+          softly.assertTrue(
+              webDriverHelpers.isElementPresent(SEARCH_DISTRICT_INPUT),
+              "Search Input is Not present in Districts Configuration");
+          softly.assertTrue(
+              webDriverHelpers.isElementPresent(COUNTRY_DISTRICT_FILTER_COMBOBOX),
+              "Country Combo box is Not present in Regions Configuration");
+          softly.assertTrue(
+              webDriverHelpers.isElementPresent(REGION_DISTRICT_FILTER_COMBOBOX),
+              "Region Combo box is Not present in Regions Configuration");
+          softly.assertTrue(
+              webDriverHelpers.isElementPresent(RESET_FILTERS_DISTRICTS_BUTTON),
+              "Reset Filters Button is Not present in Districts Configuration");
+          softly.assertTrue(
+              webDriverHelpers.isElementPresent(RELEVANCE_STATUS_COMBO_BOX_DISTRICTS_CONFIGURATION),
+              "Relevance status Combo box is Not present in Districts Configuration");
+          softly.assertAll();
+        });
+
+    Then(
+        "I verify the Search and Reset filter functionality in Districts Configuration page",
+        () -> {
+          webDriverHelpers.waitForPageLoaded();
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(50);
+          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(
+              ENTER_BULK_EDIT_MODE_BUTTON_DISTRICTS_CONFIGURATION);
+          Integer defaultDistrictCount =
+              webDriverHelpers.getNumberOfElements(DISTRICTS_NAME_TABLE_ROW);
+          String districtName = webDriverHelpers.getTextFromWebElement(DISTRICTS_NAME_TABLE_ROW);
+          webDriverHelpers.fillAndSubmitInWebElement(SEARCH_DISTRICT_INPUT, districtName);
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(50);
+          webDriverHelpers.waitUntilNumberOfElementsIsExactly(DISTRICTS_NAME_TABLE_ROW, 1);
+          webDriverHelpers.waitUntilAListOfElementsHasText(DISTRICTS_NAME_TABLE_ROW, districtName);
+          webDriverHelpers.clickOnWebElementBySelector(RESET_FILTERS_DISTRICTS_BUTTON);
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(50);
+          webDriverHelpers.waitUntilNumberOfElementsIsExactly(
+              DISTRICTS_NAME_TABLE_ROW, defaultDistrictCount);
+        });
+
+    Then(
+        "I verify the Country dropdown functionality in Districts Configuration page",
+        () -> {
+          webDriverHelpers.waitForPageLoaded();
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(50);
+          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(
+              ENTER_BULK_EDIT_MODE_BUTTON_DISTRICTS_CONFIGURATION);
+          Integer defaultDistrictCount =
+              webDriverHelpers.getNumberOfElements(DISTRICTS_NAME_TABLE_ROW);
+          String districtName = webDriverHelpers.getTextFromWebElement(DISTRICTS_NAME_TABLE_ROW);
+          webDriverHelpers.selectFromCombobox(COUNTRY_DISTRICT_FILTER_COMBOBOX, "Germany");
+          webDriverHelpers.fillAndSubmitInWebElement(SEARCH_DISTRICT_INPUT, districtName);
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(50);
+          webDriverHelpers.waitUntilNumberOfElementsIsExactly(DISTRICTS_NAME_TABLE_ROW, 1);
+          webDriverHelpers.waitUntilAListOfElementsHasText(DISTRICTS_NAME_TABLE_ROW, districtName);
+          webDriverHelpers.clickOnWebElementBySelector(RESET_FILTERS_DISTRICTS_BUTTON);
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(50);
+          webDriverHelpers.waitUntilNumberOfElementsIsExactly(
+              DISTRICTS_NAME_TABLE_ROW, defaultDistrictCount);
+        });
+
+    Then(
+        "I verify the Region dropdown functionality in Districts Configuration page",
+        () -> {
+          webDriverHelpers.waitForPageLoaded();
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(50);
+          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(
+              ENTER_BULK_EDIT_MODE_BUTTON_DISTRICTS_CONFIGURATION);
+          webDriverHelpers.selectFromCombobox(REGION_DISTRICT_FILTER_COMBOBOX, "Bayern");
+          webDriverHelpers.waitUntilAListOfElementsHasText(DISTRICTS_NAME_TABLE_ROW, "Bayern");
+        });
   }
 
   public void fillDistrictName(String communityName) {
@@ -338,5 +478,55 @@ public class DistrictsSteps implements En {
         .sex(webDriverHelpers.getValueFromCombobox(EditTravelEntryPage.SEX_COMBOBOX))
         .uuid(webDriverHelpers.getValueFromWebElement(UUID_INPUT))
         .build();
+  }
+
+  private List<Map<String, String>> getTableRowsData() {
+    Map<String, Integer> headers = extractColumnHeadersHashMap();
+    headers.remove("EDIT");
+    headers.remove("BEARBEITEN");
+    List<WebElement> tableRows = getTableRows();
+    List<HashMap<Integer, String>> tableDataList = new ArrayList<>();
+    tableRows.forEach(
+        table -> {
+          HashMap<Integer, String> indexWithData = new HashMap<>();
+          AtomicInteger atomicInt = new AtomicInteger();
+          List<WebElement> tableData = table.findElements(DISTRICTS_TABLE_DATA);
+          tableData.forEach(
+              dataText -> {
+                webDriverHelpers.scrollToElementUntilIsVisible(dataText);
+                indexWithData.put(atomicInt.getAndIncrement(), dataText.getText());
+              });
+          tableDataList.add(indexWithData);
+        });
+    List<Map<String, String>> tableObjects = new ArrayList<>();
+    tableDataList.forEach(
+        row -> {
+          ConcurrentHashMap<String, String> objects = new ConcurrentHashMap<>();
+          headers.forEach((headerText, index) -> objects.put(headerText, row.get(index)));
+          tableObjects.add(objects);
+        });
+    return tableObjects;
+  }
+
+  private List<WebElement> getTableRows() {
+    webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(DISTRICTS_COLUMN_HEADERS);
+    return baseSteps.getDriver().findElements(DISTRICTS_TABLE_ROW);
+  }
+
+  private Map<String, Integer> extractColumnHeadersHashMap() {
+    AtomicInteger atomicInt = new AtomicInteger();
+    HashMap<String, Integer> headerHashmap = new HashMap<>();
+    webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(DISTRICTS_COLUMN_HEADERS);
+    webDriverHelpers.waitUntilAListOfWebElementsAreNotEmpty(DISTRICTS_COLUMN_HEADERS);
+    webDriverHelpers.scrollToElementUntilIsVisible(DISTRICTS_COLUMN_HEADERS);
+    baseSteps
+        .getDriver()
+        .findElements(DISTRICTS_COLUMN_HEADERS)
+        .forEach(
+            webElement -> {
+              webDriverHelpers.scrollToElementUntilIsVisible(webElement);
+              headerHashmap.put(webElement.getText(), atomicInt.getAndIncrement());
+            });
+    return headerHashmap;
   }
 }

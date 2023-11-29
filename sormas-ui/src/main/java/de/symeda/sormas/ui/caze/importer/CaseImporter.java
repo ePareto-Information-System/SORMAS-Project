@@ -160,6 +160,12 @@ public class CaseImporter extends DataImporter {
                 currentUI.access(() -> {
                     window.setClosable(true);
                     progressLayout.makeClosable(window::close);
+					// if (similarCases.size() > 0) { 1.87.0
+					// 	// Call the logic that allows the user to handle the similarity; once this has been done, the LOCK should be notified
+					// 	// to allow the importer to resume
+					// 	if (selectedPersonUuid != null) {
+					// 		importPerson = personFacade.getByUuid(selectedPersonUuid);
+					// 	}
 
                     if (importResult == ImportResultStatus.COMPLETED) {
                         progressLayout.displaySuccessIcon();

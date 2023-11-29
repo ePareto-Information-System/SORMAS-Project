@@ -15,22 +15,26 @@
 
 package de.symeda.sormas.backend.externalsurveillancetool;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import javax.annotation.security.PermitAll;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.symeda.sormas.api.audit.AuditIgnore;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolException;
@@ -39,10 +43,14 @@ import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolRes
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.share.ExternalShareStatus;
+import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.AccessDeniedException;
 import de.symeda.sormas.backend.caze.CaseService;
 import de.symeda.sormas.backend.common.ConfigFacadeEjb.ConfigFacadeEjbLocal;
 import de.symeda.sormas.backend.event.EventService;
 import de.symeda.sormas.backend.share.ExternalShareInfoService;
+import de.symeda.sormas.backend.user.UserService;
+import de.symeda.sormas.backend.util.RightsAllowed;
 
 @Stateless(name = "ExternalSurveillanceToolFacade")
 public class ExternalSurveillanceToolGatewayFacadeEjb implements ExternalSurveillanceToolFacade {
@@ -58,14 +66,32 @@ public class ExternalSurveillanceToolGatewayFacadeEjb implements ExternalSurveil
 	private EventService eventService;
 	@EJB
 	private ExternalShareInfoService shareInfoService;
+	@EJB
+	private UserService userService;
 
 	@Override
+	@AuditIgnore
+	@PermitAll
 	public boolean isFeatureEnabled() {
 		return configFacade.isExternalSurveillanceToolGatewayConfigured();
 	}
 
 	@Override
-	public void sendCases(List<String> caseUuids, boolean archived) throws ExternalSurveillanceToolException {
+	@RightsAllowed(UserRight._EXTERNAL_SURVEILLANCE_SHARE)
+	public void sendCases(List<String> caseUuids) throws ExternalSurveillanceToolException {
+		doSendCases(caseUuids, false);
+	}
+
+	@RightsAllowed(UserRight._CASE_ARCHIVE)
+	public void sendCasesInternal(List<String> caseUuids, boolean archived) throws ExternalSurveillanceToolException {
+		doSendCases(caseUuids, archived);
+	}
+
+	private void doSendCases(List<String> caseUuids, boolean archived) throws ExternalSurveillanceToolException {
+		if (!userService.hasRight(UserRight.CASE_EDIT)) {
+			throw new AccessDeniedException(I18nProperties.getString(Strings.errorForbidden));
+		}
+
 		ExportParameters params = new ExportParameters();
 		params.setCaseUuids(caseUuids);
 		params.setArchived(archived);
@@ -74,7 +100,21 @@ public class ExternalSurveillanceToolGatewayFacadeEjb implements ExternalSurveil
 	}
 
 	@Override
-	public void sendEvents(List<String> eventUuids, boolean archived) throws ExternalSurveillanceToolException {
+	@RightsAllowed(UserRight._EXTERNAL_SURVEILLANCE_SHARE)
+	public void sendEvents(List<String> eventUuids) throws ExternalSurveillanceToolException {
+		doSendEvents(eventUuids, false);
+	}
+
+	@RightsAllowed(UserRight._EVENT_ARCHIVE)
+	public void sendEventsInternal(List<String> eventUuids, boolean archived) throws ExternalSurveillanceToolException {
+		doSendEvents(eventUuids, archived);
+	}
+
+	private void doSendEvents(List<String> eventUuids, boolean archived) throws ExternalSurveillanceToolException {
+		if (!userService.hasRight(UserRight.EVENT_EDIT)) {
+			throw new AccessDeniedException(I18nProperties.getString(Strings.errorForbidden));
+		}
+
 		ExportParameters params = new ExportParameters();
 		params.setEventUuids(eventUuids);
 		params.setArchived(archived);
@@ -125,17 +165,45 @@ public class ExternalSurveillanceToolGatewayFacadeEjb implements ExternalSurveil
 	}
 
 	@Override
+	@RightsAllowed(UserRight._EXTERNAL_SURVEILLANCE_SHARE)
 	public void createCaseShareInfo(List<String> caseUuids) {
+		if (!userService.hasAnyRight(EnumSet.of(UserRight.CASE_CREATE, UserRight.CASE_EDIT))) {
+			throw new AccessDeniedException(I18nProperties.getString(Strings.errorForbidden));
+		}
+
 		caseService.getByUuids(caseUuids).forEach(caze -> shareInfoService.createAndPersistShareInfo(caze, ExternalShareStatus.SHARED));
 	}
 
 	@Override
+	@RightsAllowed(UserRight._EXTERNAL_SURVEILLANCE_SHARE)
 	public void createEventShareInfo(List<String> eventUuids) {
+		if (!userService.hasAnyRight(EnumSet.of(UserRight.EVENT_CREATE, UserRight.EVENT_EDIT))) {
+			throw new AccessDeniedException(I18nProperties.getString(Strings.errorForbidden));
+		}
+
 		eventService.getByUuids(eventUuids).forEach(event -> shareInfoService.createAndPersistShareInfo(event, ExternalShareStatus.SHARED));
 	}
 
 	@Override
+	@RightsAllowed(UserRight._EXTERNAL_SURVEILLANCE_DELETE)
 	public void deleteCases(List<CaseDataDto> cases) throws ExternalSurveillanceToolException {
+		if (!userService.hasRight(UserRight.CASE_EDIT)) {
+			throw new AccessDeniedException(I18nProperties.getString(Strings.errorForbidden));
+		}
+
+		doDeleteCases(cases);
+	}
+
+	@RightsAllowed({
+		UserRight._SORMAS_TO_SORMAS_SHARE,
+		UserRight._SORMAS_TO_SORMAS_CLIENT,
+		UserRight._CASE_DELETE,
+		UserRight._SYSTEM })
+	public void deleteCasesInternal(List<CaseDataDto> cases) throws ExternalSurveillanceToolException {
+		doDeleteCases(cases);
+	}
+
+	private void doDeleteCases(List<CaseDataDto> cases) throws ExternalSurveillanceToolException {
 		DeleteParameters params = new DeleteParameters();
 		params.setCases(cases);
 
@@ -147,7 +215,25 @@ public class ExternalSurveillanceToolGatewayFacadeEjb implements ExternalSurveil
 	}
 
 	@Override
+	@RightsAllowed(UserRight._EXTERNAL_SURVEILLANCE_DELETE)
 	public void deleteEvents(List<EventDto> events) throws ExternalSurveillanceToolException {
+		if (!userService.hasRight(UserRight.EVENT_EDIT)) {
+			throw new AccessDeniedException(I18nProperties.getString(Strings.errorForbidden));
+		}
+
+		doDeleteEvents(events);
+	}
+
+	@RightsAllowed({
+		UserRight._SORMAS_TO_SORMAS_SHARE,
+		UserRight._SORMAS_TO_SORMAS_CLIENT,
+		UserRight._EVENT_DELETE,
+		UserRight._SYSTEM })
+	public void deleteEventsInternal(List<EventDto> events) throws ExternalSurveillanceToolException {
+		doDeleteEvents(events);
+	}
+
+	private void doDeleteEvents(List<EventDto> events) throws ExternalSurveillanceToolException {
 		DeleteParameters params = new DeleteParameters();
 		params.setEvents(events);
 
@@ -160,13 +246,17 @@ public class ExternalSurveillanceToolGatewayFacadeEjb implements ExternalSurveil
 
 	private void sendDeleteRequest(DeleteParameters params) throws ExternalSurveillanceToolException {
 		String serviceUrl = configFacade.getExternalSurveillanceToolGatewayUrl().trim();
-		Response response = ClientBuilder.newBuilder()
-			.connectTimeout(30, TimeUnit.SECONDS)
-			.build()
-			.target(serviceUrl)
-			.path("delete")
-			.request()
-			.post(Entity.json(params));
+
+		Invocation.Builder request =
+			ClientBuilder.newBuilder().connectTimeout(30, TimeUnit.SECONDS).build().target(serviceUrl).path("delete").request();
+
+		Response response;
+		try {
+			response = request.post(Entity.json(params));
+		} catch (Exception e) {
+			logger.error("Failed to send delete request to external surveillance tool", e);
+			throw new ExternalSurveillanceToolException(I18nProperties.getString(Strings.ExternalSurveillanceToolGateway_notificationErrorDeleting));
+		}
 
 		int statusCode = response.getStatus();
 
@@ -183,6 +273,7 @@ public class ExternalSurveillanceToolGatewayFacadeEjb implements ExternalSurveil
 	}
 
 	@Override
+	@PermitAll
 	public String getVersion() throws ExternalSurveillanceToolException {
 		String serviceUrl = configFacade.getExternalSurveillanceToolGatewayUrl().trim();
 		String versionEndpoint = configFacade.getExternalSurveillanceToolVersionEndpoint().trim();

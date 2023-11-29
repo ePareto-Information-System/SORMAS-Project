@@ -1,6 +1,6 @@
 package de.symeda.sormas.ui.importer;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,9 +11,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
 
 import com.opencsv.exceptions.CsvValidationException;
 
@@ -23,19 +21,15 @@ import de.symeda.sormas.api.infrastructure.country.CountryCriteria;
 import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
 import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
-import de.symeda.sormas.ui.AbstractBeanTest;
-import de.symeda.sormas.ui.TestDataCreator;
+import de.symeda.sormas.ui.AbstractUiBeanTest;
 import de.symeda.sormas.ui.caze.importer.CountryImporter;
 
-// Using Silent Runner to ignore unnecessary stubbing exception
-// which is a side effect of extending AbstractBeanTest
-@RunWith(MockitoJUnitRunner.Silent.class)
-public class CountryImporterTest extends AbstractBeanTest {
+public class CountryImporterTest extends AbstractUiBeanTest {
 
 	@Test
 	public void testUmlautsInCountryImport()
 		throws IOException, InvalidColumnException, InterruptedException, CsvValidationException, URISyntaxException {
-		TestDataCreator.RDCF rdcf = new TestDataCreator().createRDCF("Default Region", "Default District", "Default Community", "Default Facility");
+		var rdcf = creator.createRDCF("Default Region", "Default District", "Default Community", "Default Facility");
 		UserDto user = creator.createUser(
 			rdcf.region.getUuid(),
 			rdcf.district.getUuid(),
@@ -54,7 +48,7 @@ public class CountryImporterTest extends AbstractBeanTest {
 	@Test
 	public void testDontImportDuplicateCountry()
 		throws IOException, InvalidColumnException, InterruptedException, CsvValidationException, URISyntaxException {
-		TestDataCreator.RDCF rdcf = new TestDataCreator().createRDCF("Default Region", "Default District", "Default Community", "Default Facility");
+		var rdcf = creator.createRDCF("Default Region", "Default District", "Default Community", "Default Facility");
 		UserDto user = creator.createUser(
 			rdcf.region.getUuid(),
 			rdcf.district.getUuid(),

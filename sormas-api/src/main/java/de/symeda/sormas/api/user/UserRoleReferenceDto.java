@@ -7,7 +7,9 @@ import java.util.Objects;
 
 public class UserRoleReferenceDto extends ReferenceDto implements StatisticsGroupingKey {
 
-	public UserRoleReferenceDto() { super(); }
+	public UserRoleReferenceDto() {
+		super();
+	}
 
 	public UserRoleReferenceDto(String uuid, String caption) {
 		super(uuid, caption);

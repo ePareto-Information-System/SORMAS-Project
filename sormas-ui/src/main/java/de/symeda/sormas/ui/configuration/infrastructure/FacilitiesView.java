@@ -27,10 +27,18 @@ import org.vaadin.hene.popupbutton.PopupButton;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.StreamResource;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.ui.ComboBox;
 import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -51,6 +59,8 @@ import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.configuration.AbstractConfigurationView;
 import de.symeda.sormas.ui.configuration.infrastructure.components.SearchField;
+import de.symeda.sormas.ui.utils.ArchiveHandlers;
+import de.symeda.sormas.ui.utils.ArchiveMessages;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.ComboBoxHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
@@ -106,9 +116,9 @@ public class FacilitiesView extends AbstractConfigurationView {
 
 		grid = new FacilitiesGrid(criteria);
 		gridLayout = new VerticalLayout();
-		//		gridLayout.addComponent(createHeaderBar());
 		gridLayout.addComponent(createFilterBar());
-		rowCount = new RowCount(Strings.labelNumberOfFacilities, grid.getItemCount());
+		rowCount = new RowCount(Strings.labelNumberOfFacilities, grid.getDataSize());
+		grid.addDataSizeChangeListener(e -> rowCount.update(grid.getDataSize()));
 		gridLayout.addComponent(rowCount);
 		gridLayout.addComponent(grid);
 		gridLayout.setMargin(true);
@@ -117,17 +127,25 @@ public class FacilitiesView extends AbstractConfigurationView {
 		gridLayout.setSizeFull();
 		gridLayout.setStyleName("crud-main-layout");
 
-		if (UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_IMPORT)) {
+		boolean infrastructureDataEditable = FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.EDIT_INFRASTRUCTURE_DATA);
+
+		if (infrastructureDataEditable && UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_IMPORT)) {
 			importButton = ButtonHelper.createIconButton(Captions.actionImport, VaadinIcons.UPLOAD, e -> {
 				Window window = VaadinUiUtil.showPopupWindow(new InfrastructureImportLayout(InfrastructureType.FACILITY));
 				window.setCaption(I18nProperties.getString(Strings.headingImportFacilities));
 				window.addCloseListener(c -> {
 					grid.reload();
-					rowCount.update(grid.getItemCount());
+					rowCount.update(grid.getDataSize());
 				});
 			}, ValoTheme.BUTTON_PRIMARY);
 
 			addHeaderComponent(importButton);
+		} else if (!infrastructureDataEditable) {
+			Label infrastructureDataLocked = new Label();
+			infrastructureDataLocked.setCaption(I18nProperties.getString(Strings.headingInfrastructureLocked));
+			infrastructureDataLocked.setValue(I18nProperties.getString(Strings.messageInfrastructureLocked));
+			infrastructureDataLocked.setIcon(VaadinIcons.WARNING);
+			addHeaderComponent(infrastructureDataLocked);
 		}
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_EXPORT)) {
@@ -181,7 +199,7 @@ public class FacilitiesView extends AbstractConfigurationView {
 					Strings.infoDetailedExport);
 		}
 
-		if (UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_CREATE)) {
+		if (infrastructureDataEditable && UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_CREATE)) {
 			createButton = ButtonHelper.createIconButtonWithCaption(
 					"create",
 					I18nProperties.getCaption(Captions.actionNewEntry),
@@ -202,18 +220,18 @@ public class FacilitiesView extends AbstractConfigurationView {
 			addHeaderComponent(btnLeaveBulkEditMode);
 
 			btnEnterBulkEditMode.addClickListener(e -> {
-				bulkOperationsDropdown.setVisible(true);
 				viewConfiguration.setInEagerMode(true);
+				bulkOperationsDropdown.setVisible(isBulkOperationsDropdownVisible());
 				btnEnterBulkEditMode.setVisible(false);
 				btnLeaveBulkEditMode.setVisible(true);
 				searchField.setEnabled(false);
 				grid.setEagerDataProvider();
 				grid.reload();
-				rowCount.update(grid.getItemCount());
+				rowCount.update(grid.getDataSize());
 			});
 			btnLeaveBulkEditMode.addClickListener(e -> {
-				bulkOperationsDropdown.setVisible(false);
 				viewConfiguration.setInEagerMode(false);
+				bulkOperationsDropdown.setVisible(false);
 				btnLeaveBulkEditMode.setVisible(false);
 				btnEnterBulkEditMode.setVisible(true);
 				searchField.setEnabled(true);
@@ -247,9 +265,9 @@ public class FacilitiesView extends AbstractConfigurationView {
 
 		searchField = new SearchField();
 		searchField.addTextChangeListener(e -> {
-			criteria.nameCityLike(e.getText());
+			criteria.nameAddressLike(e.getText());
 			grid.reload();
-			rowCount.update(grid.getItemCount());
+			rowCount.update(grid.getDataSize());
 		});
 		filterLayout.addComponent(searchField);
 
@@ -277,7 +295,7 @@ public class FacilitiesView extends AbstractConfigurationView {
 		countryFilter = addCountryFilter(filterLayout, country -> {
 			criteria.country(country);
 			grid.reload();
-			rowCount.update(grid.getItemCount());
+			rowCount.update(grid.getDataSize());
 		}, regionFilter);
 		countryFilter.addValueChangeListener(country -> {
 			CountryReferenceDto countryReferenceDto = (CountryReferenceDto) country.getProperty().getValue();
@@ -342,11 +360,12 @@ public class FacilitiesView extends AbstractConfigurationView {
 				relevanceStatusFilter.setWidth(220, Unit.PERCENTAGE);
 				relevanceStatusFilter.setNullSelectionAllowed(false);
 
-				relevanceStatusFilter.addItems((Object[]) EntityRelevanceStatus.values());
+				relevanceStatusFilter.addItems(EntityRelevanceStatus.getAllExceptDeleted());
 				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ACTIVE, I18nProperties.getCaption(Captions.facilityActiveFacilities));
 				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ARCHIVED, I18nProperties.getCaption(Captions.facilityArchivedFacilities));
 
-				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ALL, I18nProperties.getCaption(Captions.facilityAllFacilities));
+				relevanceStatusFilter
+					.setItemCaption(EntityRelevanceStatus.ACTIVE_AND_ARCHIVED, I18nProperties.getCaption(Captions.facilityAllFacilities));
 				relevanceStatusFilter.addValueChangeListener(e -> {
 					criteria.relevanceStatus((EntityRelevanceStatus) e.getProperty().getValue());
 					navigateTo(criteria);
@@ -440,6 +459,35 @@ public class FacilitiesView extends AbstractConfigurationView {
 
 					bulkOperationsDropdown
 							.setVisible(viewConfiguration.isInEagerMode() && !EntityRelevanceStatus.ALL.equals(criteria.getRelevanceStatus()));
+					// 	Captions.bulkActions, 1.87.0
+					// 	new MenuBarHelper.MenuBarItem(
+					// 		I18nProperties.getCaption(Captions.actionArchiveInfrastructure),
+					// 		VaadinIcons.ARCHIVE,
+					// 		selectedItem -> {
+					// 			ControllerProvider.getInfrastructureController()
+					// 				.archiveOrDearchiveAllSelectedItems(
+					// 					true,
+					// 					ArchiveHandlers.forInfrastructure(FacadeProvider.getFacilityFacade(), ArchiveMessages.FACILITY),
+					// 					grid,
+					// 					grid::reload,
+					// 					() -> navigateTo(criteria));
+					// 		},
+					// 		EntityRelevanceStatus.ACTIVE.equals(criteria.getRelevanceStatus())),
+					// 	new MenuBarHelper.MenuBarItem(
+					// 		I18nProperties.getCaption(Captions.actionDearchiveInfrastructure),
+					// 		VaadinIcons.ARCHIVE,
+					// 		selectedItem -> {
+					// 			ControllerProvider.getInfrastructureController()
+					// 				.archiveOrDearchiveAllSelectedItems(
+					// 					false,
+					// 					ArchiveHandlers.forInfrastructure(FacadeProvider.getFacilityFacade(), ArchiveMessages.FACILITY),
+					// 					grid,
+					// 					grid::reload,
+					// 					() -> navigateTo(criteria));
+					// 		},
+					// 		EntityRelevanceStatus.ARCHIVED.equals(criteria.getRelevanceStatus())));
+
+					// bulkOperationsDropdown.setVisible(isBulkOperationsDropdownVisible());
 					actionButtonsLayout.addComponent(bulkOperationsDropdown);
 				}
 			}
@@ -461,7 +509,7 @@ public class FacilitiesView extends AbstractConfigurationView {
 		}
 		updateFilterComponents();
 		grid.reload();
-		rowCount.update(grid.getItemCount());
+		rowCount.update(grid.getDataSize());
 	}
 
 	public void updateFilterComponents() {
@@ -473,7 +521,7 @@ public class FacilitiesView extends AbstractConfigurationView {
 		if (relevanceStatusFilter != null) {
 			relevanceStatusFilter.setValue(criteria.getRelevanceStatus());
 		}
-		searchField.setValue(criteria.getNameCityLike());
+		searchField.setValue(criteria.getNameAddressLike());
 		typeGroupFilter.setValue(criteria.getTypeGroup());
 		typeFilter.setValue(criteria.getType());
 		countryFilter.setValue(criteria.getCountry());
@@ -497,6 +545,15 @@ public class FacilitiesView extends AbstractConfigurationView {
 			tokens.add(new TokenizableValue(disease, index++));
 		}
 		return tokens;
+	}
+
+
+	private boolean isBulkOperationsDropdownVisible() {
+		boolean infrastructureDataEditable = FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.EDIT_INFRASTRUCTURE_DATA);
+
+		return viewConfiguration.isInEagerMode()
+			&& (EntityRelevanceStatus.ACTIVE.equals(criteria.getRelevanceStatus())
+				|| (infrastructureDataEditable && EntityRelevanceStatus.ARCHIVED.equals(criteria.getRelevanceStatus())));
 	}
 
 }

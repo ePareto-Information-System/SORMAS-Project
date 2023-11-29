@@ -50,6 +50,8 @@ public class JurisdictionHelper {
 			jurisdiction.setPointOfEntryUuid(user.getPointOfEntry().getUuid());
 		}
 
+		jurisdiction.setLimitedDisease(user.getLimitedDisease());
+
 		jurisdiction.setJurisdictionLevel(UserRole.getJurisdictionLevel(user.getUserRoles()));
 
 		return jurisdiction;
@@ -129,7 +131,8 @@ public class JurisdictionHelper {
 		ResponsibleJurisdictionDto responsibleJurisdiction = createResponsibleJurisdiction(
 			immunization.getResponsibleRegion(),
 			immunization.getResponsibleDistrict(),
-			immunization.getResponsibleCommunity());
+			immunization.getResponsibleCommunity(),
+			immunization.getHealthFacility());
 		immunizationJurisdictionDto.setResponsibleJurisdiction(responsibleJurisdiction);
 
 		return immunizationJurisdictionDto;
@@ -178,7 +181,7 @@ public class JurisdictionHelper {
 			jurisdiction.setReportingUserUuid(eventParticipant.getReportingUser().getUuid());
 		}
 
-		// todo https://github.com/hzi-braunschweig/SORMAS-Project/issues/5903
+		// todo https://github.com/sormas-foundation/SORMAS-Project/issues/5903
 		// if (eventParticipant.getRegion() != null) {
 		// 	jurisdiction.setRegionUuid(eventParticipant.getRegion().getUuid());
 		// }
@@ -271,7 +274,17 @@ public class JurisdictionHelper {
 		Region responsibleRegion,
 		District responsibleDistrict,
 		Community responsibleCommunity) {
-		if (responsibleRegion == null && responsibleDistrict == null && responsibleCommunity == null) {
+
+		return createResponsibleJurisdiction(responsibleRegion, responsibleDistrict, responsibleCommunity, null);
+	}
+
+	private static ResponsibleJurisdictionDto createResponsibleJurisdiction(
+		Region responsibleRegion,
+		District responsibleDistrict,
+		Community responsibleCommunity,
+		Facility responsibleFacility) {
+
+		if (responsibleRegion == null && responsibleDistrict == null && responsibleCommunity == null && responsibleFacility == null) {
 			return null;
 		}
 
@@ -284,6 +297,9 @@ public class JurisdictionHelper {
 		}
 		if (responsibleCommunity != null) {
 			jurisdiction.setCommunityUuid(responsibleCommunity.getUuid());
+		}
+		if (responsibleFacility != null) {
+			jurisdiction.setFacilityUuid(responsibleFacility.getUuid());
 		}
 
 		return jurisdiction;

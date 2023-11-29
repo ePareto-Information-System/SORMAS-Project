@@ -44,8 +44,6 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 
-import de.symeda.auditlog.api.Audited;
-import de.symeda.auditlog.api.AuditedIgnore;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseIdentificationSource;
@@ -98,7 +96,7 @@ import de.symeda.sormas.backend.sample.Sample;
 import de.symeda.sormas.backend.share.ExternalShareInfo;
 import de.symeda.sormas.backend.sormastosormas.entities.SormasToSormasShareable;
 import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfo;
-import de.symeda.sormas.backend.sormastosormas.share.shareinfo.SormasToSormasShareInfo;
+import de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShareInfo;
 import de.symeda.sormas.backend.symptoms.Symptoms;
 import de.symeda.sormas.backend.task.Task;
 import de.symeda.sormas.backend.therapy.Therapy;
@@ -107,8 +105,9 @@ import de.symeda.sormas.backend.util.ModelConstants;
 import de.symeda.sormas.backend.visit.Visit;
 
 @Entity(name = "cases")
-@Audited
-public class Case extends CoreAdo implements SormasToSormasShareable, HasExternalData, Comparable<Case>  {
+//@Audited
+//public class Case extends CoreAdo implements SormasToSormasShareable, HasExternalData, Comparable<Case>  {
+public class Case extends CoreAdo implements SormasToSormasShareable, HasExternalData {
 
 	private static final long serialVersionUID = -2697795184663562129L;
 
@@ -428,6 +427,17 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	private Map<String, String> externalData;
 
+	public static Case build() {
+		Case caze = new Case();
+		caze.setSystemCaseClassification(CaseClassification.NOT_CLASSIFIED);
+		caze.setInvestigationStatus(InvestigationStatus.PENDING);
+		caze.setCaseClassification(CaseClassification.NOT_CLASSIFIED);
+		caze.setOutcome(CaseOutcome.NO_OUTCOME);
+		caze.setCaseOrigin(CaseOrigin.IN_COUNTRY);
+		caze.setFollowUpStatus(FollowUpStatus.NO_FOLLOW_UP);
+		return caze;
+	}
+
 	@Column(name = "person_id", updatable = false, insertable = false)
 	public Long getPersonId() {
 		return personId;
@@ -437,7 +447,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		this.personId = personId;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	@JoinColumn(nullable = false)
 	public Person getPerson() {
 		return person;
@@ -548,7 +558,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		this.screeningType = screeningType;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	@JoinColumn(nullable = true)
 	public User getClassificationUser() {
 		return classificationUser;
@@ -603,7 +613,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		this.laboratoryDiagnosticConfirmation = laboratoryDiagnosticConfirmation;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	@JoinColumn(nullable = false)
 	public User getReportingUser() {
 		return reportingUser;
@@ -659,7 +669,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		this.districtLevelDate = districtLevelDate;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public Facility getHealthFacility() {
 		return healthFacility;
 	}
@@ -677,7 +687,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		this.healthFacilityDetails = healthFacilityDetails;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public User getSurveillanceOfficer() {
 		return surveillanceOfficer;
 	}
@@ -713,7 +723,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		this.clinicianEmail = clinicianEmail;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public User getCaseOfficer() {
 		return caseOfficer;
 	}
@@ -723,7 +733,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	}
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@AuditedIgnore
 	public Symptoms getSymptoms() {
 		if (symptoms == null) {
 			symptoms = new Symptoms();
@@ -735,7 +744,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		this.symptoms = symptoms;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public Region getResponsibleRegion() {
 		return responsibleRegion;
 	}
@@ -744,7 +753,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		this.responsibleRegion = responsibleRegion;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public District getResponsibleDistrict() {
 		return responsibleDistrict;
 	}
@@ -753,7 +762,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		this.responsibleDistrict = responsibleDistrict;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public Community getResponsibleCommunity() {
 		return responsibleCommunity;
 	}
@@ -762,7 +771,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		this.responsibleCommunity = responsibleCommunity;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public Region getRegion() {
 		return region;
 	}
@@ -771,7 +780,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		this.region = region;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public District getDistrict() {
 		return district;
 	}
@@ -780,7 +789,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		this.district = district;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public Community getCommunity() {
 		return community;
 	}
@@ -793,7 +802,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	// one to one relations
 	// produces an error where two non-xa connections are opened
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@AuditedIgnore
 	public Hospitalization getHospitalization() {
 		if (hospitalization == null) {
 			hospitalization = new Hospitalization();
@@ -809,7 +817,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	// one to one relations
 	// produces an error where two non-xa connections are opened
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@AuditedIgnore
 	public EpiData getEpiData() {
 		if (epiData == null) {
 			epiData = new EpiData();
@@ -825,7 +832,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	// one to one relations
 	// produces an error where two non-xa connections are opened
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@AuditedIgnore
 	public Therapy getTherapy() {
 		return therapy;
 	}
@@ -838,7 +844,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	// one to one relations
 	// produces an error where two non-xa connections are opened
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@AuditedIgnore
 	public ClinicalCourse getClinicalCourse() {
 		return clinicalCourse;
 	}
@@ -851,7 +856,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	// one to one relations
 	// produces an error where two non-xa connections are opened
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@AuditedIgnore
 	public MaternalHistory getMaternalHistory() {
 		return maternalHistory;
 	}
@@ -863,7 +867,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	// It's necessary to do a lazy fetch here because having three eager fetching
 	// one to one relations produces an error where two non-xa connections are opened
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@AuditedIgnore
 	public PortHealthInfo getPortHealthInfo() {
 		return portHealthInfo;
 	}
@@ -891,7 +894,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	}
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@AuditedIgnore
 	public HealthConditions getHealthConditions() {
 		return healthConditions;
 	}
@@ -967,7 +969,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		this.tasks = tasks;
 	}
 
-	@AuditedIgnore
 	@OneToMany(mappedBy = Visit.CAZE, fetch = FetchType.LAZY)
 	public Set<Visit> getVisits() {
 		return visits;
@@ -977,7 +978,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		this.visits = visits;
 	}
 
-	@AuditedIgnore
 	@OneToMany(mappedBy = SurveillanceReport.CAZE, fetch = FetchType.LAZY)
 	public Set<SurveillanceReport> getSurveillanceReports() {
 		return surveillanceReports;
@@ -1111,7 +1111,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	}
 
 	@OneToOne(cascade = {}, fetch = FetchType.LAZY)
-	@AuditedIgnore
 	public Case getDuplicateOf() {
 		return duplicateOf;
 	}
@@ -1139,7 +1138,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		this.caseOrigin = caseOrigin;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public PointOfEntry getPointOfEntry() {
 		return pointOfEntry;
 	}
@@ -1667,8 +1666,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		CascadeType.PERSIST,
 		CascadeType.MERGE,
 		CascadeType.DETACH,
-		CascadeType.REFRESH })
-	@AuditedIgnore
+		CascadeType.REFRESH }, fetch = FetchType.LAZY)
 	public SormasToSormasOriginInfo getSormasToSormasOriginInfo() {
 		return sormasToSormasOriginInfo;
 	}
@@ -1679,7 +1677,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	}
 
 	@OneToMany(mappedBy = SormasToSormasShareInfo.CAZE, fetch = FetchType.LAZY)
-	@AuditedIgnore
 	public List<SormasToSormasShareInfo> getSormasToSormasShares() {
 		return sormasToSormasShares;
 	}
@@ -1715,7 +1712,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		this.followUpStatusChangeDate = followUpStatusChangeDate;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public User getFollowUpStatusChangeUser() {
 		return followUpStatusChangeUser;
 	}
@@ -1794,7 +1791,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	}
 
 
-	@Override
+	//@Override
 	public int compareTo(Case otherCase) {
 		// Implement comparison logic based on your requirements
 		// Return a negative value if this case is smaller, positive if larger, or 0 if equal

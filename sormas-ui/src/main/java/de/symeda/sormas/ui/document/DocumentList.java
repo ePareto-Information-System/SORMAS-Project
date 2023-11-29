@@ -33,19 +33,32 @@ import de.symeda.sormas.ui.utils.VaadinUiUtil;
 
 public class DocumentList extends VerticalLayout {
 
-	private final DocumentRelatedEntityType relatedEntityType;
-	private final ReferenceDto entityRef;
-	private final UserRight editRight;
-	private final boolean pseudonymized;
+	private  DocumentRelatedEntityType relatedEntityType;
+	private  ReferenceDto entityRef;
+	private  UserRight editRight;
+	private  boolean pseudonymized;
+	private  boolean isEditAllowed;
+	private  boolean isDeleteAllowed;
 
-	public DocumentList(DocumentRelatedEntityType relatedEntityType, ReferenceDto entityRef, UserRight editRight, boolean pseudonymized) {
+	public DocumentList(
+		DocumentRelatedEntityType relatedEntityType,
+		ReferenceDto entityRef,
+		UserRight editRight,
+		boolean pseudonymized,
+		boolean isEditAllowed,
+		boolean isDeleteAllowed) {
 		this.relatedEntityType = relatedEntityType;
 		this.entityRef = entityRef;
 		this.editRight = editRight;
 		this.pseudonymized = pseudonymized;
+		this.isEditAllowed = isEditAllowed;
+		this.isDeleteAllowed = isDeleteAllowed;
 
 		setSpacing(true);
 		setMargin(false);
+	}
+
+	public DocumentList(DocumentRelatedEntityType relatedEntityType, ReferenceDto entityRef, UserRight editRight, boolean pseudonymized) {
 	}
 
 	public void reload() {
@@ -81,10 +94,12 @@ public class DocumentList extends VerticalLayout {
 		res.setExpandRatio(downloadButton, 0);
 
 		UserProvider currentUser = UserProvider.getCurrent();
-		if (currentUser != null && currentUser.hasUserRight(editRight)) {
+		if (currentUser != null && currentUser.hasAllUserRights(editRight, UserRight.DOCUMENT_DELETE) && isDeleteAllowed) {
 			Button deleteButton = buildDeleteButton(document);
 			res.addComponent(deleteButton);
 			res.setExpandRatio(deleteButton, 0);
+		} else {
+			nameLabel.setEnabled(false);
 		}
 
 		return res;
@@ -96,7 +111,7 @@ public class DocumentList extends VerticalLayout {
 		StreamResource streamResource = new StreamResource((StreamResource.StreamSource) () -> {
 			DocumentFacade documentFacade = FacadeProvider.getDocumentFacade();
 			try {
-				return new ByteArrayInputStream(documentFacade.read(document.getUuid()));
+				return new ByteArrayInputStream(documentFacade.getContent(document.getUuid()));
 			} catch (IOException | IllegalArgumentException e) {
 				new Notification(
 					String.format(I18nProperties.getString(Strings.errorReadingDocument), document),

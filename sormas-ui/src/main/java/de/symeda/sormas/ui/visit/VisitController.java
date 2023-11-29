@@ -18,12 +18,13 @@
 package de.symeda.sormas.ui.visit;
 
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 import java.util.function.Consumer;
 
-import com.vaadin.server.Page;
+import org.apache.commons.collections.CollectionUtils;
+
 import com.vaadin.server.Sizeable.Unit;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 
@@ -31,8 +32,10 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.VisitOrigin;
 import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.caze.CaseLogic;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.contact.ContactDto;
+import de.symeda.sormas.api.contact.ContactLogic;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -42,9 +45,12 @@ import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.visit.VisitDto;
 import de.symeda.sormas.api.visit.VisitIndexDto;
+import de.symeda.sormas.api.visit.VisitLogic;
 import de.symeda.sormas.api.visit.VisitReferenceDto;
+import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
+import de.symeda.sormas.ui.utils.DeleteRestoreHandlers;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 
 public class VisitController {
@@ -53,72 +59,119 @@ public class VisitController {
 
 	}
 
-	public void editVisit(String visitUuid, ContactReferenceDto contactRef, CaseReferenceDto caseRef, Consumer<VisitReferenceDto> doneConsumer) {
-		VisitDto visit = FacadeProvider.getVisitFacade().getVisitByUuid(visitUuid);
+	public void editVisit(
+		String visitUuid,
+		ContactReferenceDto contactRef,
+		CaseReferenceDto caseRef,
+		Consumer<VisitReferenceDto> doneConsumer,
+		boolean isEditAllowed,
+		boolean isDeleteAllowed) {
+
+		VisitDto visit = FacadeProvider.getVisitFacade().getByUuid(visitUuid);
 		VisitEditForm editForm;
+		Date startDate = null;
+		Date endDate = null;
+		boolean inJurisdiction = false;
+		boolean isContactRef = false;
+
 		if (contactRef != null) {
 			ContactDto contact = FacadeProvider.getContactFacade().getByUuid(contactRef.getUuid());
-			PersonDto visitPerson = FacadeProvider.getPersonFacade().getPersonByUuid(visit.getPerson().getUuid());
-			editForm = new VisitEditForm(visit.getDisease(), contact, visitPerson, false, !contact.isPseudonymized());
+			PersonDto visitPerson = FacadeProvider.getPersonFacade().getByUuid(visit.getPerson().getUuid());
+			editForm = new VisitEditForm(visit.getDisease(), contact, visitPerson, false, contact.isInJurisdiction());
+			startDate = ContactLogic.getStartDate(contact);
+			endDate = ContactLogic.getEndDate(contact);
+			inJurisdiction = contact.isInJurisdiction();
+			isContactRef = true;
 		} else if (caseRef != null) {
 			CaseDataDto caze = FacadeProvider.getCaseFacade().getCaseDataByUuid(caseRef.getUuid());
-			PersonDto visitPerson = FacadeProvider.getPersonFacade().getPersonByUuid(visit.getPerson().getUuid());
-			editForm = new VisitEditForm(visit.getDisease(), caze, visitPerson, false, !caze.isPseudonymized());
+			PersonDto visitPerson = FacadeProvider.getPersonFacade().getByUuid(visit.getPerson().getUuid());
+			editForm = new VisitEditForm(visit.getDisease(), caze, visitPerson, false, caze.isInJurisdiction());
+			startDate = CaseLogic.getStartDate(caze);
+			endDate = CaseLogic.getEndDate(caze);
+			inJurisdiction = caze.isInJurisdiction();
 		} else {
 			throw new IllegalArgumentException("Cannot edit a visit without contact nor case");
 		}
 		editForm.setValue(visit);
-		boolean canEdit = VisitOrigin.USER.equals(visit.getOrigin());
-		editVisit(editForm, visit.toReference(), doneConsumer, canEdit);
+		boolean canEdit = VisitOrigin.USER.equals(visit.getOrigin()) && isEditAllowed;
+		boolean canDelete = VisitOrigin.USER.equals(visit.getOrigin()) && isDeleteAllowed;
+		editVisit(
+			editForm,
+			visit.toReference(),
+			doneConsumer,
+			canEdit,
+			canDelete,
+			isContactRef,
+			inJurisdiction,
+			VisitLogic.getAllowedStartDate(startDate),
+			VisitLogic.getAllowedEndDate(endDate));
 	}
 
-	private void editVisit(VisitEditForm editForm, VisitReferenceDto visitRef, Consumer<VisitReferenceDto> doneConsumer, boolean canEdit) {
+	private void editVisit(
+		VisitEditForm editForm,
+		VisitReferenceDto visitRef,
+		Consumer<VisitReferenceDto> doneConsumer,
+		boolean canEdit,
+		boolean canDelete,
+		boolean isContactRef,
+		boolean inJurisdiction,
+		Date allowedStartDate,
+		Date allowedEndDate) {
 
-		final CommitDiscardWrapperComponent<VisitEditForm> editView = new CommitDiscardWrapperComponent<>(
-			editForm,
-			UserProvider.getCurrent().hasUserRight(UserRight.VISIT_EDIT),
-			editForm.getFieldGroup());
+		boolean isEditOrDeleteAllowed = canEdit || canDelete;
+		final CommitDiscardWrapperComponent<VisitEditForm> editView =
+			new CommitDiscardWrapperComponent<>(editForm, isEditOrDeleteAllowed, editForm.getFieldGroup());
 		editView.setWidth(100, Unit.PERCENTAGE);
 
-		if (!canEdit) {
-			editView.setEnabled(false);
-		}
-
-		Window window = VaadinUiUtil.showModalPopupWindow(editView, I18nProperties.getString(Strings.headingEditVisit));
-		// visit form is too big for typical screens
+		Window window =
+			VaadinUiUtil.showModalPopupWindow(editView, I18nProperties.getString(!canEdit ? Strings.headingViewVisit : Strings.headingEditVisit));
 		window.setWidth(editForm.getWidth() + 90, Unit.PIXELS);
 		window.setHeight(80, Unit.PERCENTAGE);
 
-		editView.addCommitListener(() -> {
-			if (!editForm.getFieldGroup().isModified()) {
-				FacadeProvider.getVisitFacade().saveVisit(editForm.getValue());
-				if (doneConsumer != null) {
-					doneConsumer.accept(visitRef);
+		if (isEditOrDeleteAllowed) {
+			editView.addCommitListener(() -> {
+				if (!editForm.getFieldGroup().isModified()) {
+					FacadeProvider.getVisitFacade().saveVisit(editForm.getValue(), allowedStartDate, allowedEndDate);
+					if (doneConsumer != null) {
+						doneConsumer.accept(visitRef);
+					}
 				}
-			}
-		});
+			});
 
-		if (UserProvider.getCurrent().hasUserRight(UserRight.VISIT_DELETE)) {
-			editView.addDeleteListener(() -> {
-				FacadeProvider.getVisitFacade().deleteVisit(visitRef.getUuid());
-				UI.getCurrent().removeWindow(window);
-				if (doneConsumer != null) {
-					doneConsumer.accept(visitRef);
-				}
-			}, I18nProperties.getCaption(VisitDto.I18N_PREFIX));
+			if (canDelete) {
+				editView.addDeleteListener(() -> {
+					FacadeProvider.getVisitFacade().delete(visitRef.getUuid());
+					UI.getCurrent().removeWindow(window);
+					if (doneConsumer != null) {
+						doneConsumer.accept(visitRef);
+					}
+				}, I18nProperties.getCaption(VisitDto.I18N_PREFIX));
+			}
+
+			editView.restrictEditableComponentsOnEditView(
+				getParentEditRight(isContactRef),
+				UserRight.VISIT_EDIT,
+				UserRight.VISIT_DELETE,
+				null,
+				inJurisdiction);
 		}
+		editView.getButtonsPanel().setVisible(isEditOrDeleteAllowed);
 	}
 
-	private void createVisit(VisitEditForm createForm, Consumer<VisitReferenceDto> doneConsumer) {
-		final CommitDiscardWrapperComponent<VisitEditForm> editView = new CommitDiscardWrapperComponent<VisitEditForm>(
-				createForm,
-				UserProvider.getCurrent().hasUserRight(UserRight.VISIT_CREATE),
-				createForm.getFieldGroup());
+	private UserRight getParentEditRight(boolean isContactRef) {
+		return isContactRef ? UserRight.CONTACT_EDIT : UserRight.CASE_EDIT;
+	}
+
+	private void createVisit(VisitEditForm createForm, Consumer<VisitReferenceDto> doneConsumer, Date allowedStartDate, Date allowedEndDate) {
+		final CommitDiscardWrapperComponent<VisitEditForm> editView = new CommitDiscardWrapperComponent<>(
+			createForm,
+			UserProvider.getCurrent().hasUserRight(UserRight.VISIT_CREATE),
+			createForm.getFieldGroup());
 
 		editView.addCommitListener(() -> {
 			if (!createForm.getFieldGroup().isModified()) {
 				VisitDto dto = createForm.getValue();
-				dto = FacadeProvider.getVisitFacade().saveVisit(dto);
+				dto = FacadeProvider.getVisitFacade().saveVisit(dto, allowedStartDate, allowedEndDate);
 				if (doneConsumer != null) {
 					doneConsumer.accept(dto.toReference());
 				}
@@ -130,25 +183,33 @@ public class VisitController {
 		window.setWidth(createForm.getWidth() + 64 + 24, Unit.PIXELS);
 		window.setHeight(80, Unit.PERCENTAGE);
 	}
-	
+
 	public void createVisit(ContactReferenceDto contactRef, Consumer<VisitReferenceDto> doneConsumer) {
 		VisitDto visit = createNewVisit(contactRef);
 		ContactDto contact = FacadeProvider.getContactFacade().getByUuid(contactRef.getUuid());
-		PersonDto contactPerson = FacadeProvider.getPersonFacade().getPersonByUuid(contact.getPerson().getUuid());
-		VisitEditForm createForm = new VisitEditForm(visit.getDisease(), contact, contactPerson, true, true);
+		PersonDto contactPerson = FacadeProvider.getPersonFacade().getByUuid(contact.getPerson().getUuid());
+		VisitEditForm createForm = new VisitEditForm(visit.getDisease(), contact, contactPerson, true, true); // Valid because jurisdiction doesn't matter for entities that are about to be created
 		createForm.setValue(visit);
 
-		createVisit(createForm, doneConsumer);
+		createVisit(
+			createForm,
+			doneConsumer,
+			VisitLogic.getAllowedStartDate(ContactLogic.getStartDate(contact)),
+			VisitLogic.getAllowedEndDate(ContactLogic.getEndDate(contact)));
 	}
 
 	public void createVisit(CaseReferenceDto caseRef, Consumer<VisitReferenceDto> doneConsumer) {
 		VisitDto visit = createNewVisit(caseRef);
 		CaseDataDto caze = FacadeProvider.getCaseFacade().getCaseDataByUuid(caseRef.getUuid());
-		PersonDto person = FacadeProvider.getPersonFacade().getPersonByUuid(caze.getPerson().getUuid());
-		VisitEditForm createForm = new VisitEditForm(visit.getDisease(), caze, person, true, true);
+		PersonDto person = FacadeProvider.getPersonFacade().getByUuid(caze.getPerson().getUuid());
+		VisitEditForm createForm = new VisitEditForm(visit.getDisease(), caze, person, true, true); // Valid because jurisdiction doesn't matter for entities that are about to be created
 		createForm.setValue(visit);
 
-		createVisit(createForm, doneConsumer);
+		createVisit(
+			createForm,
+			doneConsumer,
+			VisitLogic.getAllowedStartDate(CaseLogic.getStartDate(caze)),
+			VisitLogic.getAllowedEndDate(CaseLogic.getEndDate(caze)));
 	}
 
 	private VisitDto createNewVisit(PersonReferenceDto personRef, Disease disease) {
@@ -168,26 +229,29 @@ public class VisitController {
 		return createNewVisit(caze.getPerson(), caze.getDisease());
 	}
 
-	public void deleteAllSelectedItems(Collection<VisitIndexDto> selectedRows, Runnable callback) {
-		if (selectedRows.size() == 0) {
-			new Notification(
-				I18nProperties.getString(Strings.headingNoVisitsSelected),
-				I18nProperties.getString(Strings.messageNoVisitsSelected),
-				Type.WARNING_MESSAGE,
-				false).show(Page.getCurrent());
-		} else {
-			VaadinUiUtil
-				.showDeleteConfirmationWindow(String.format(I18nProperties.getString(Strings.confirmationDeleteVisits), selectedRows.size()), () -> {
-					for (Object selectedRow : selectedRows) {
-						FacadeProvider.getVisitFacade().deleteVisit(((VisitIndexDto) selectedRow).getUuid());
-					}
-					callback.run();
-					new Notification(
-						I18nProperties.getString(Strings.headingVisitsDeleted),
-						I18nProperties.getString(Strings.messageVisitsDeleted),
-						Type.HUMANIZED_MESSAGE,
-						false).show(Page.getCurrent());
-				});
-		}
+	public void deleteAllSelectedItems(Collection<VisitIndexDto> selectedRows, VisitGrid visitGrid, Runnable noEntriesRemainingCallback) {
+
+		ControllerProvider.getPermanentDeleteController()
+			.deleteAllSelectedItems(
+				selectedRows,
+				DeleteRestoreHandlers.forVisit(),
+				true,
+				bulkOperationCallback(visitGrid, noEntriesRemainingCallback, null));
+
+	}
+
+	private Consumer<List<VisitIndexDto>> bulkOperationCallback(VisitGrid visitGrid, Runnable noEntriesRemainingCallback, Window popupWindow) {
+		return remainingVisits -> {
+			if (popupWindow != null) {
+				popupWindow.close();
+			}
+
+			visitGrid.reload();
+			if (CollectionUtils.isNotEmpty(remainingVisits)) {
+				visitGrid.asMultiSelect().selectItems(remainingVisits.toArray(new VisitIndexDto[0]));
+			} else {
+				noEntriesRemainingCallback.run();
+			}
+		};
 	}
 }

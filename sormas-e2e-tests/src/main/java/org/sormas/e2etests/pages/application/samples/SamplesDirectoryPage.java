@@ -54,13 +54,17 @@ public class SamplesDirectoryPage {
   public static final By SAMPLE_NOT_SHIPPED = By.id("sampleNotShipped");
   public static final By SAMPLE_SHIPPED = By.id("sampleShipped");
   public static final By SAMPLE_RECEIVED = By.id("sampleReceived");
+  public static final By SAMPLE_SHIPPED_CHECKBOX = By.xpath("//span[@id='shipped']/label");
+  public static final By SAMPLE_RECEIVED_CHECKBOX = By.xpath("//span[@id='received']/label");
   public static final By SAMPLE_REFFERED_TO_OTHER_LAB = By.id("sampleReferred");
   public static final By CREATE_CASE_POSITIVE_TEST_RESULT_LABEL =
       By.cssSelector(".popupContent [class='v-window-header']");
   public static final By CONFIRM_BUTTON = By.cssSelector(".popupContent [id='actionConfirm']");
   public static final By EDIT_PATHOGEN_TEST_BUTTON =
-      By.xpath("//div[@class='v-button v-widget link v-button-link compact v-button-compact']");
+      By.xpath(
+          "//div[@class='v-button v-widget link v-button-link compact v-button-compact caption-overflow-label v-button-caption-overflow-label']");
   public static final By EXPORT_SAMPLE_BUTTON = By.id("export");
   public static final By BASIC_EXPORT_SAMPLE_BUTTON = By.id("exportBasic");
   public static final By DETAILED_EXPORT_SAMPLE_BUTTON = By.id("exportDetailed");
+  public static final By COMMIT_BUTTON = By.cssSelector("#commit");
 }

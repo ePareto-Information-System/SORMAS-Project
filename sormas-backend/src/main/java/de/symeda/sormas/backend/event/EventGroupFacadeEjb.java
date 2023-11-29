@@ -31,14 +31,17 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Tuple;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Selection;
 import javax.persistence.criteria.Subquery;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -66,14 +69,17 @@ import de.symeda.sormas.api.user.NotificationType;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.SortProperty;
+import de.symeda.sormas.backend.FacadeHelper;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
 import de.symeda.sormas.backend.common.NotificationService;
 import de.symeda.sormas.backend.common.messaging.MessageContents;
 import de.symeda.sormas.backend.common.messaging.MessageSubject;
 import de.symeda.sormas.backend.common.messaging.NotificationDeliveryFailedException;
+import de.symeda.sormas.backend.event.EventFacadeEjb.EventFacadeEjbLocal;
 import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.location.Location;
+import de.symeda.sormas.backend.sample.Sample;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
@@ -98,6 +104,8 @@ public class EventGroupFacadeEjb implements EventGroupFacade {
 	private UserService userService;
 	@EJB
 	private NotificationService notificationService;
+	@EJB
+	private EventFacadeEjbLocal eventFacade;
 
 	@Override
 	public EventGroupReferenceDto getReferenceByUuid(String uuid) {
@@ -163,25 +171,57 @@ public class EventGroupFacadeEjb implements EventGroupFacade {
 		Integer max,
 		List<SortProperty> sortProperties) {
 
+		List<Long> indexListIds = getIndexListIds(eventGroupCriteria, first, max, sortProperties);
+
+		List<EventGroupIndexDto> eventGroups = new ArrayList<>();
+		IterableHelper.executeBatched(indexListIds, ModelConstants.PARAMETER_LIMIT, batchedIds -> {
+			CriteriaBuilder cb = em.getCriteriaBuilder();
+			CriteriaQuery<EventGroupIndexDto> cq = cb.createQuery(EventGroupIndexDto.class);
+			Root<EventGroup> eventGroup = cq.from(EventGroup.class);
+			EventGroupQueryContext queryContext = new EventGroupQueryContext(cb, cq, eventGroup);
+
+			Subquery<Long> eventCountSubquery = cq.subquery(Long.class);
+			Root<EventGroup> eventGroupSubQuery = eventCountSubquery.from(EventGroup.class);
+			Join<EventGroup, Event> eventSubQueryJoin = eventGroupSubQuery.join(EventGroup.EVENTS, JoinType.LEFT);
+			eventCountSubquery.select(cb.countDistinct(eventSubQueryJoin.get(Event.ID)));
+			eventCountSubquery.where(
+				cb.and(
+					cb.equal(eventGroupSubQuery.get(EventGroup.ID), eventGroup.get(EventGroup.ID)),
+					eventService.createDefaultFilter(cb, eventSubQueryJoin)));
+			eventCountSubquery.groupBy(eventGroupSubQuery.get(EventGroup.ID));
+
+			cq.multiselect(
+				eventGroup.get(EventGroup.UUID),
+				eventGroup.get(EventGroup.NAME),
+				eventGroup.get(EventGroup.CHANGE_DATE),
+				eventCountSubquery.getSelection());
+
+			cq.where(eventGroup.get(EventGroup.ID).in(batchedIds));
+			cq.orderBy(getOrderList(sortProperties, queryContext));
+			cq.distinct(true);
+
+			eventGroups.addAll(QueryHelper.getResultList(em, cq, first, max));
+		});
+
+		return eventGroups;
+	}
+
+	private List<Long> getIndexListIds(EventGroupCriteria eventGroupCriteria, Integer first, Integer max, List<SortProperty> sortProperties) {
+
 		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<EventGroupIndexDto> cq = cb.createQuery(EventGroupIndexDto.class);
+		CriteriaQuery<Tuple> cq = cb.createTupleQuery();
 		Root<EventGroup> eventGroup = cq.from(EventGroup.class);
 
-		Subquery<Long> eventCountSubquery = cq.subquery(Long.class);
-		Root<EventGroup> eventGroupSubQuery = eventCountSubquery.from(EventGroup.class);
-		Join<EventGroup, Event> eventSubQueryJoin = eventGroupSubQuery.join(EventGroup.EVENTS, JoinType.LEFT);
-		eventCountSubquery.select(cb.countDistinct(eventSubQueryJoin.get(Event.ID)));
-		eventCountSubquery.where(
-			cb.and(
-				cb.equal(eventGroupSubQuery.get(EventGroup.ID), eventGroup.get(EventGroup.ID)),
-				eventService.createDefaultFilter(cb, eventSubQueryJoin)));
-		eventCountSubquery.groupBy(eventGroupSubQuery.get(EventGroup.ID));
+		EventGroupQueryContext queryContext = new EventGroupQueryContext(cb, cq, eventGroup);
 
-		cq.multiselect(
-			eventGroup.get(EventGroup.UUID),
-			eventGroup.get(EventGroup.NAME),
-			eventGroup.get(EventGroup.CHANGE_DATE),
-			eventCountSubquery.getSelection());
+		List<Selection<?>> selections = new ArrayList<>();
+		selections.add(eventGroup.get(Sample.ID));
+
+		List<Order> orderList = getOrderList(sortProperties, queryContext);
+		List<Expression<?>> sortColumns = orderList.stream().map(Order::getExpression).collect(Collectors.toList());
+		selections.addAll(sortColumns);
+
+		cq.multiselect(selections);
 
 		Predicate filter = null;
 
@@ -198,28 +238,37 @@ public class EventGroupFacadeEjb implements EventGroupFacade {
 			cq.where(filter);
 		}
 
+		cq.distinct(true);
+		cq.orderBy(orderList);
+
+		return QueryHelper.getResultList(em, cq, first, max).stream().map(t -> t.get(0, Long.class)).collect(Collectors.toList());
+	}
+
+	private List<Order> getOrderList(List<SortProperty> sortProperties, EventGroupQueryContext queryContext) {
+		List<Order> orderList = new ArrayList<>();
+
+		CriteriaBuilder cb = queryContext.getCriteriaBuilder();
+		From<?, EventGroup> eventGroupRoot = queryContext.getRoot();
+
 		if (sortProperties != null && sortProperties.size() > 0) {
-			List<Order> order = new ArrayList<>(sortProperties.size());
 			for (SortProperty sortProperty : sortProperties) {
 				Expression<?> expression;
 				switch (sortProperty.propertyName) {
 				case EventGroupIndexDto.UUID:
 				case EventGroupIndexDto.NAME:
-					expression = eventGroup.get(sortProperty.propertyName);
+					expression = eventGroupRoot.get(sortProperty.propertyName);
 					break;
 				default:
 					throw new IllegalArgumentException(sortProperty.propertyName);
 				}
-				order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
+
+				orderList.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
 			}
-			cq.orderBy(order);
 		} else {
-			cq.orderBy(cb.desc(eventGroup.get(EventGroup.CHANGE_DATE)));
+			orderList.add(cb.desc(eventGroupRoot.get(EventGroup.CHANGE_DATE)));
 		}
 
-		cq.distinct(true);
-
-		return QueryHelper.getResultList(em, cq, first, max);
+		return orderList;
 	}
 
 	@Override
@@ -272,7 +321,10 @@ public class EventGroupFacadeEjb implements EventGroupFacade {
 	public EventGroupDto saveEventGroup(@Valid @NotNull EventGroupDto dto, boolean checkChangeDate) {
 		User currentUser = userService.getCurrentUser();
 
-		EventGroup eventGroup = fromDto(dto, checkChangeDate);
+		EventGroup existingEventGroup = eventGroupService.getByUuid(dto.getUuid());
+		FacadeHelper.checkCreateAndEditRights(existingEventGroup, userService, UserRight.EVENTGROUP_CREATE, UserRight.EVENTGROUP_EDIT);
+
+		EventGroup eventGroup = fillOrBuildEntity(dto, existingEventGroup, checkChangeDate);
 
 		final JurisdictionLevel jurisdictionLevel = currentUser.getJurisdictionLevel();
 		if (jurisdictionLevel != JurisdictionLevel.NATION) {
@@ -299,38 +351,36 @@ public class EventGroupFacadeEjb implements EventGroupFacade {
 	@Override
 	@RightsAllowed(UserRight._EVENTGROUP_LINK)
 	public void linkEventsToGroup(List<EventReferenceDto> eventReferences, EventGroupReferenceDto eventGroupReference) {
-		linkEventsToGroups(eventReferences, Collections.singletonList(eventGroupReference));
+		linkEventsToGroups(
+			eventReferences.stream().map(EventReferenceDto::getUuid).collect(Collectors.toList()),
+			Collections.singletonList(eventGroupReference.getUuid()));
 	}
 
 	@Override
 	@RightsAllowed(UserRight._EVENTGROUP_LINK)
 	public void linkEventToGroups(EventReferenceDto eventReference, List<EventGroupReferenceDto> eventGroupReferences) {
-		linkEventsToGroups(Collections.singletonList(eventReference), eventGroupReferences);
+		linkEventsToGroups(
+			Collections.singletonList(eventReference.getUuid()),
+			eventGroupReferences.stream().map(EventGroupReferenceDto::getUuid).collect(Collectors.toList()));
 	}
 
 	@Override
 	@RightsAllowed(UserRight._EVENTGROUP_LINK)
-	public void linkEventsToGroups(List<EventReferenceDto> eventReferences, List<EventGroupReferenceDto> eventGroupReferences) {
-		User currentUser = userService.getCurrentUser();
-
-		if (CollectionUtils.isEmpty(eventReferences)) {
+	public void linkEventsToGroups(List<String> eventUuids, List<String> eventGroupUuids) {
+		if (CollectionUtils.isEmpty(eventGroupUuids) || CollectionUtils.isEmpty(eventUuids)) {
 			return;
 		}
 
-		List<String> eventUuids = eventReferences.stream().map(EventReferenceDto::getUuid).collect(Collectors.toList());
 		List<Event> events = eventService.getByUuids(eventUuids);
-
-		List<String> eventGroupUuids = eventGroupReferences.stream().map(EventGroupReferenceDto::getUuid).collect(Collectors.toList());
 		List<EventGroup> eventGroups = eventGroupService.getByUuids(eventGroupUuids);
+
+		User currentUser = userService.getCurrentUser();
 
 		for (Event event : events) {
 			final JurisdictionLevel jurisdictionLevel = currentUser.getJurisdictionLevel();
-			if ((jurisdictionLevel != JurisdictionLevel.NATION) && !currentUser.isAdmin()) {
-				Region region = event.getEventLocation().getRegion();
-				if (!userService.hasRegion(new RegionReferenceDto(region.getUuid()))) {
-					throw new UnsupportedOperationException(
-						"User " + currentUser.getUuid() + " is not allowed to link events from another region to an event group.");
-				}
+			if (!eventFacade.isInJurisdictionOrOwned(event.getUuid()) && (jurisdictionLevel != JurisdictionLevel.NATION) && !currentUser.isAdmin()) {
+				throw new UnsupportedOperationException(
+					"User " + currentUser.getUuid() + " is not allowed to link events from another region to an event group.");
 			}
 
 			// Check that the event group is not already related to this event
@@ -369,12 +419,9 @@ public class EventGroupFacadeEjb implements EventGroupFacade {
 		Event event = eventService.getByUuid(eventReference.getUuid());
 
 		final JurisdictionLevel jurisdictionLevel = currentUser.getJurisdictionLevel();
-		if ((jurisdictionLevel != JurisdictionLevel.NATION) && !currentUser.isAdmin()) {
-			Region region = event.getEventLocation().getRegion();
-			if (!userService.hasRegion(new RegionReferenceDto(region.getUuid()))) {
-				throw new UnsupportedOperationException(
-					"User " + currentUser.getUuid() + " is not allowed to unlink events from another region to an event group.");
-			}
+		if (!eventFacade.isInJurisdictionOrOwned(event.getUuid()) && (jurisdictionLevel != JurisdictionLevel.NATION) && !currentUser.isAdmin()) {
+			throw new UnsupportedOperationException(
+				"User " + currentUser.getUuid() + " is not allowed to unlink events from another region to an event group.");
 		}
 
 		// Check that the event group is not already unlinked to this event
@@ -462,8 +509,8 @@ public class EventGroupFacadeEjb implements EventGroupFacade {
 	@RightsAllowed(UserRight._EVENTGROUP_CREATE)
 	public void notifyEventEventGroupCreated(EventGroupReferenceDto eventGroupReference) {
 		notifyModificationOfEventGroup(
-			eventGroupReference,
-			Collections.emptyList(),
+			eventGroupReference.getUuid(),
+			Collections.emptySet(),
 			NotificationType.EVENT_GROUP_CREATED,
 			MessageSubject.EVENT_GROUP_CREATED,
 			MessageContents.CONTENT_EVENT_GROUP_CREATED);
@@ -473,8 +520,19 @@ public class EventGroupFacadeEjb implements EventGroupFacade {
 	@RightsAllowed(UserRight._EVENTGROUP_LINK)
 	public void notifyEventAddedToEventGroup(EventGroupReferenceDto eventGroupReference, List<EventReferenceDto> eventReferences) {
 		notifyModificationOfEventGroup(
-			eventGroupReference,
-			eventReferences,
+			eventGroupReference.getUuid(),
+			eventReferences.stream().map(EventReferenceDto::getUuid).collect(Collectors.toSet()),
+			NotificationType.EVENT_ADDED_TO_EVENT_GROUP,
+			MessageSubject.EVENT_ADDED_TO_EVENT_GROUP,
+			MessageContents.CONTENT_EVENT_ADDED_TO_EVENT_GROUP);
+	}
+
+	@Override
+	@RightsAllowed(UserRight._EVENTGROUP_LINK)
+	public void notifyEventAddedToEventGroup(String eventGroupUuid, Set<String> eventUuids) {
+		notifyModificationOfEventGroup(
+			eventGroupUuid,
+			eventUuids,
 			NotificationType.EVENT_ADDED_TO_EVENT_GROUP,
 			MessageSubject.EVENT_ADDED_TO_EVENT_GROUP,
 			MessageContents.CONTENT_EVENT_ADDED_TO_EVENT_GROUP);
@@ -484,20 +542,20 @@ public class EventGroupFacadeEjb implements EventGroupFacade {
 	@RightsAllowed(UserRight._EVENTGROUP_LINK)
 	public void notifyEventRemovedFromEventGroup(EventGroupReferenceDto eventGroupReference, List<EventReferenceDto> eventReferences) {
 		notifyModificationOfEventGroup(
-			eventGroupReference,
-			eventReferences,
+			eventGroupReference.getUuid(),
+			eventReferences.stream().map(EventReferenceDto::getUuid).collect(Collectors.toSet()),
 			NotificationType.EVENT_REMOVED_FROM_EVENT_GROUP,
 			MessageSubject.EVENT_REMOVED_FROM_EVENT_GROUP,
 			MessageContents.CONTENT_EVENT_REMOVED_FROM_EVENT_GROUP);
 	}
 
 	private void notifyModificationOfEventGroup(
-		EventGroupReferenceDto eventGroupReference,
-		List<EventReferenceDto> impactedEventReferences,
+		String eventGroupUuid,
+		Set<String> impactedEventUuids,
 		NotificationType notificationType,
 		MessageSubject subject,
 		String contentTemplate) {
-		EventGroup eventGroup = eventGroupService.getByUuid(eventGroupReference.getUuid());
+		EventGroup eventGroup = eventGroupService.getByUuid(eventGroupUuid);
 		if (eventGroup == null) {
 			return;
 		}
@@ -507,10 +565,8 @@ public class EventGroupFacadeEjb implements EventGroupFacade {
 		try {
 			notificationService.sendNotifications(notificationType, subject, () -> {
 
-				final Set<String> allRemainingEventUuids = getEventReferencesByEventGroupUuid(eventGroupReference.getUuid()).stream()
-					.map(EventReferenceDto::getUuid)
-					.collect(Collectors.toSet());
-				final Set<String> impactedEventUuids = impactedEventReferences.stream().map(EventReferenceDto::getUuid).collect(Collectors.toSet());
+				final Set<String> allRemainingEventUuids =
+					getEventReferencesByEventGroupUuid(eventGroupUuid).stream().map(EventReferenceDto::getUuid).collect(Collectors.toSet());
 				final Map<String, User> responsibleUserByEventUuid =
 					userService.getResponsibleUsersByEventUuids(new ArrayList<>(Sets.union(allRemainingEventUuids, impactedEventUuids)));
 
@@ -520,7 +576,7 @@ public class EventGroupFacadeEjb implements EventGroupFacade {
 					Maps.filterKeys(responsibleUserByEventUuid, impactedEventUuids::contains);
 				final String message;
 
-				if (impactedEventReferences.isEmpty()) {
+				if (impactedEventUuids.isEmpty()) {
 					message = String.format(
 						I18nProperties.getString(contentTemplate),
 						eventGroup.getName(),
@@ -609,8 +665,8 @@ public class EventGroupFacadeEjb implements EventGroupFacade {
 		return target;
 	}
 
-	public EventGroup fromDto(@NotNull EventGroupDto source, boolean checkChangeDate) {
-		EventGroup target = DtoHelper.fillOrBuildEntity(source, eventGroupService.getByUuid(source.getUuid()), EventGroup::new, checkChangeDate);
+	public EventGroup fillOrBuildEntity(@NotNull EventGroupDto source, EventGroup target, boolean checkChangeDate) {
+		target = DtoHelper.fillOrBuildEntity(source, target, EventGroup::new, checkChangeDate);
 
 		target.setName(source.getName());
 

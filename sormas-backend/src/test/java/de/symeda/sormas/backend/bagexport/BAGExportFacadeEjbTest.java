@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.bagexport.BAGExportCaseDto;
@@ -39,8 +39,8 @@ import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.EndOfQuarantineReason;
 import de.symeda.sormas.api.contact.FollowUpStatus;
 import de.symeda.sormas.api.contact.QuarantineType;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.location.LocationDto;
-import de.symeda.sormas.api.person.OccupationType;
 import de.symeda.sormas.api.person.PersonAddressType;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.Sex;
@@ -50,7 +50,6 @@ import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SampleMaterial;
 import de.symeda.sormas.api.sample.SamplingReason;
 import de.symeda.sormas.api.symptoms.SymptomState;
-import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.YesNoUnknown;
@@ -58,14 +57,14 @@ import de.symeda.sormas.backend.AbstractBeanTest;
 import de.symeda.sormas.backend.TestDataCreator;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.contact.Contact;
-import de.symeda.sormas.backend.infrastructure.facility.Facility;
 
 public class BAGExportFacadeEjbTest extends AbstractBeanTest {
 
 	@Test
 	public void testCaseExport() {
+
 		final TestDataCreator.RDCF rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
-		final UserDto user = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
+		final UserDto user = creator.createSurveillanceSupervisor(rdcf);
 
 		PersonDto personDto = creator.createPerson("James", "Smith", p -> {
 			LocationDto homeAddress = p.getAddress();
@@ -81,8 +80,6 @@ public class BAGExportFacadeEjbTest extends AbstractBeanTest {
 			p.setBirthdateYYYY(1978);
 			p.setBirthdateMM(10);
 			p.setBirthdateDD(22);
-
-			p.setOccupationType(OccupationType.ACCOMMODATION_AND_FOOD_SERVICES);
 
 			LocationDto workPlaceAddress = LocationDto.build();
 			workPlaceAddress.setAddressType(PersonAddressType.PLACE_OF_WORK);
@@ -162,7 +159,7 @@ public class BAGExportFacadeEjbTest extends AbstractBeanTest {
 			PathogenTestType.RAPID_TEST,
 			Disease.CORONAVIRUS,
 			testDate,
-			new Facility(),
+			FacilityDto.build().toReference(),
 			user.toReference(),
 			PathogenTestResultType.POSITIVE,
 			"",
@@ -191,8 +188,6 @@ public class BAGExportFacadeEjbTest extends AbstractBeanTest {
 		assertThat(firstCase.getBirthDate().getDateOfBirthYYYY(), is(1978));
 		assertThat(firstCase.getBirthDate().getDateOfBirthMM(), is(10));
 		assertThat(firstCase.getBirthDate().getDateOfBirthDD(), is(22));
-
-		assertThat(firstCase.getOccupationType(), is(OccupationType.ACCOMMODATION_AND_FOOD_SERVICES));
 
 		assertThat(firstCase.getWorkPlaceName(), isEmptyOrNullString());
 		assertThat(firstCase.getWorkPlaceStreet(), is("Work street"));
@@ -250,8 +245,9 @@ public class BAGExportFacadeEjbTest extends AbstractBeanTest {
 
 	@Test
 	public void testContactExport() {
+
 		final TestDataCreator.RDCF rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
-		final UserDto user = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
+		final UserDto user = creator.createSurveillanceSupervisor(rdcf);
 
 		PersonDto personDto = creator.createPerson("James", "Smith", p -> {
 			LocationDto homeAddress = p.getAddress();
@@ -268,8 +264,6 @@ public class BAGExportFacadeEjbTest extends AbstractBeanTest {
 			p.setBirthdateYYYY(1978);
 			p.setBirthdateMM(10);
 			p.setBirthdateDD(22);
-
-			p.setOccupationType(OccupationType.ACCOMMODATION_AND_FOOD_SERVICES);
 
 			LocationDto workPlaceAddress = LocationDto.build();
 			workPlaceAddress.setAddressType(PersonAddressType.PLACE_OF_WORK);
@@ -336,7 +330,7 @@ public class BAGExportFacadeEjbTest extends AbstractBeanTest {
 			PathogenTestType.RAPID_TEST,
 			Disease.CORONAVIRUS,
 			testDate,
-			new Facility(),
+			FacilityDto.build().toReference(),
 			user.toReference(),
 			PathogenTestResultType.POSITIVE,
 			"",
@@ -365,8 +359,6 @@ public class BAGExportFacadeEjbTest extends AbstractBeanTest {
 		assertThat(firstContact.getBirthDate().getDateOfBirthYYYY(), is(1978));
 		assertThat(firstContact.getBirthDate().getDateOfBirthMM(), is(10));
 		assertThat(firstContact.getBirthDate().getDateOfBirthDD(), is(22));
-
-		assertThat(firstContact.getOccupationType(), is(OccupationType.ACCOMMODATION_AND_FOOD_SERVICES));
 
 		assertThat(firstContact.getWorkPlaceName(), isEmptyOrNullString());
 		assertThat(firstContact.getWorkPlacePostalCode(), is("54321"));

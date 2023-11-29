@@ -127,6 +127,7 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
             locs(CaseDataDto.DISEASE_DETAILS, CaseDataDto.PLAGUE_TYPE, CaseDataDto.DENGUE_FEVER_TYPE,
                 CaseDataDto.RABIES_TYPE)))
         + fluidRowLocs(CaseDataDto.DISEASE_VARIANT, CaseDataDto.DISEASE_VARIANT_DETAILS)
+		+ fluidRowLocs(CaseDataDto.RE_INFECTION)
         + fluidRowLocs(RESPONSIBLE_JURISDICTION_HEADING_LOC)
         + fluidRowLocs(CaseDataDto.RESPONSIBLE_REGION, CaseDataDto.RESPONSIBLE_DISTRICT, CaseDataDto.RESPONSIBLE_COMMUNITY)
         + fluidRowLocs(CaseDataDto.DONT_SHARE_WITH_REPORTING_TOOL)
@@ -195,6 +196,8 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
 		NullableOptionGroup plagueType = addField(CaseDataDto.PLAGUE_TYPE, NullableOptionGroup.class);
 		addField(CaseDataDto.DENGUE_FEVER_TYPE, NullableOptionGroup.class);
 		addField(CaseDataDto.RABIES_TYPE, NullableOptionGroup.class);
+
+		addField(CaseDataDto.RE_INFECTION, NullableOptionGroup.class);
 
 		personCreateForm = new PersonCreateForm(showHomeAddressForm, true, true, showPersonSearchButton);
 		personCreateForm.setWidth(100, Unit.PERCENTAGE);
@@ -334,31 +337,46 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
 			updateFacility();
 		});
 		facilityOrHome.addValueChangeListener(e -> {
-			FieldHelper.removeItems(facilityCombo);
-			if (TypeOfPlace.FACILITY.equals(facilityOrHome.getValue())
-				|| ((facilityOrHome.getValue() instanceof java.util.Set) && TypeOfPlace.FACILITY.equals(facilityOrHome.getNullableValue()))) {
-				if (facilityTypeGroup.getValue() == null) {
-					facilityTypeGroup.setValue(FacilityTypeGroup.MEDICAL_FACILITY);
-				}
-				if (facilityType.getValue() == null && FacilityTypeGroup.MEDICAL_FACILITY.equals(facilityTypeGroup.getValue())) {
-					facilityType.setValue(FacilityType.HOSPITAL);
-				}
-
-				if (facilityType.getValue() != null) {
-					updateFacility();
-				}
-
-				if (CaseOrigin.IN_COUNTRY.equals(ogCaseOrigin.getValue())) {
-					facilityCombo.setRequired(true);
-				}
-				updateFacilityFields(facilityCombo, facilityDetails);
-			} else if (TypeOfPlace.HOME.equals(facilityOrHome.getValue())
-				|| ((facilityOrHome.getValue() instanceof java.util.Set) && TypeOfPlace.HOME.equals(facilityOrHome.getNullableValue()))) {
-				setNoneFacility();
+			FacilityReferenceDto healthFacility = UserProvider.getCurrent().getUser().getHealthFacility();
+			boolean hasOptionalHealthFacility = UserProvider.getCurrent().hasOptionalHealthFacility();
+			if (hasOptionalHealthFacility && healthFacility != null) {
+				String facilityId = healthFacility.getUuid();
+				FacilityDto facilityDto = FacadeProvider.getFacilityFacade().getByUuid(facilityId);
+				FacilityType facilityUserType = facilityDto.getType();
+				FacilityTypeGroup facilityUserTypeGroup = facilityDto.getType().getFacilityTypeGroup();
+				facilityTypeGroup.addItems(facilityUserTypeGroup);
+				facilityTypeGroup.setValue(facilityUserTypeGroup);
+				facilityType.addItems(facilityUserType);
+				facilityType.setValue(facilityUserType);
+				String facilityName = facilityDto.getName();
+				facilityCombo.setValue(facilityName);
 			} else {
-				facilityCombo.removeAllItems();
-				facilityCombo.setValue(null);
-				updateFacilityFields(facilityCombo, facilityDetails);
+				FieldHelper.removeItems(facilityCombo);
+				if (TypeOfPlace.FACILITY.equals(facilityOrHome.getValue())
+					|| ((facilityOrHome.getValue() instanceof java.util.Set) && TypeOfPlace.FACILITY.equals(facilityOrHome.getNullableValue()))) {
+					if (facilityTypeGroup.getValue() == null) {
+						facilityTypeGroup.setValue(FacilityTypeGroup.MEDICAL_FACILITY);
+					}
+					if (facilityType.getValue() == null && FacilityTypeGroup.MEDICAL_FACILITY.equals(facilityTypeGroup.getValue())) {
+						facilityType.setValue(FacilityType.HOSPITAL);
+					}
+
+					if (facilityType.getValue() != null) {
+						updateFacility();
+					}
+
+					if (CaseOrigin.IN_COUNTRY.equals(ogCaseOrigin.getValue())) {
+						facilityCombo.setRequired(true);
+					}
+					updateFacilityFields(facilityCombo, facilityDetails);
+				} else if (TypeOfPlace.HOME.equals(facilityOrHome.getValue())
+					|| ((facilityOrHome.getValue() instanceof java.util.Set) && TypeOfPlace.HOME.equals(facilityOrHome.getNullableValue()))) {
+					setNoneFacility();
+				} else {
+					facilityCombo.removeAllItems();
+					facilityCombo.setValue(null);
+					updateFacilityFields(facilityCombo, facilityDetails);
+				}
 			}
 		});
 		facilityTypeGroup.addValueChangeListener(e -> {
@@ -594,7 +612,6 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
 			boolean visibleAndRequired = otherHealthFacility || noneHealthFacility;
 
 			tfFacilityDetails.setVisible(visibleAndRequired);
-			tfFacilityDetails.setRequired(otherHealthFacility);
 
 			if (otherHealthFacility) {
 				tfFacilityDetails.setCaption(I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.HEALTH_FACILITY_DETAILS));
@@ -676,7 +693,7 @@ public class CaseCreateForm extends AbstractEditForm<CaseDataDto> {
 
 		PersonReferenceDto casePersonReference = caseDataDto.getPerson();
 		String personUuid = casePersonReference == null ? null : casePersonReference.getUuid();
-		PersonDto personByUuid = personUuid == null ? null : FacadeProvider.getPersonFacade().getPersonByUuid(personUuid);
+		PersonDto personByUuid = personUuid == null ? null : FacadeProvider.getPersonFacade().getByUuid(personUuid);
 		personCreateForm.setPerson(personByUuid);
 	}
 

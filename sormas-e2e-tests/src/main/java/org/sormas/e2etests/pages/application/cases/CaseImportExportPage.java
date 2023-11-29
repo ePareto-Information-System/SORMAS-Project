@@ -24,6 +24,7 @@ public class CaseImportExportPage {
 
   public static final By CASE_EXPORT_BUTTON = By.id("export");
   public static final By CUSTOM_CASE_EXPORT_BUTTON = By.id("exportCaseCustom");
+  public static final By DETAILED_CASE_EXPORT_BUTTON = By.id("exportDetailed");
   public static final By BASIC_CASE_EXPORT_BUTTON = By.id("exportBasic");
   public static final By NEW_EXPORT_CONFIGURATION_BUTTON = By.id("exportNewExportConfiguration");
   public static final By CONFIGURATION_NAME_INPUT =
@@ -40,8 +41,14 @@ public class CaseImportExportPage {
       By.xpath("//label[text()='District']");
   public static final By NEW_EXPORT_CONFIGURATION_SAVE_BUTTON = By.id("actionSave");
   public static final By CUSTOM_CASE_EXPORT_DOWNLOAD_BUTTON =
-      By.xpath("//div[@class='popupContent']//div[@class='v-slot v-slot-primary']");
+      By.xpath(
+          "//div[@class='popupContent']//div[@class='v-slot v-slot-primary v-slot-caption-overflow-label']");
   public static final By CUSTOM_CASE_DELETE_BUTTON =
       By.xpath(
           "//div[@class='popupContent']//div[@class='v-horizontallayout v-layout v-horizontal v-widget']//div[5]");
+
+  public static By getCustomExportCheckboxByText(String text) {
+    return By.xpath(
+        String.format("//span[@class='v-checkbox v-widget']/label[contains(text(), '%s')]", text));
+  }
 }

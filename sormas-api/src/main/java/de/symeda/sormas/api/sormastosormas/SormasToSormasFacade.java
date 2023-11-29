@@ -1,6 +1,6 @@
 /*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2020 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+ * Copyright © 2016-2023 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -15,13 +15,12 @@
 
 package de.symeda.sormas.api.sormastosormas;
 
-import de.symeda.sormas.api.caze.CaseReferenceDto;
-import de.symeda.sormas.api.sormastosormas.shareinfo.SormasToSormasShareInfoDto;
 import java.util.List;
 
 import javax.ejb.Remote;
 
-import de.symeda.sormas.api.sormastosormas.sharerequest.ShareRequestDataType;
+import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.sormastosormas.share.incoming.ShareRequestDataType;
 import de.symeda.sormas.api.sormastosormas.validation.SormasToSormasValidationException;
 
 @Remote
@@ -37,19 +36,28 @@ public interface SormasToSormasFacade {
 
 	void requestRejected(SormasToSormasEncryptedDataDto encryptedRejectData) throws SormasToSormasException;
 
-	void acceptShareRequest(ShareRequestDataType dataType, String uuid) throws SormasToSormasException, SormasToSormasValidationException;
+	DuplicateResult acceptShareRequest(ShareRequestDataType dataType, String uuid, boolean checkDuplicates)
+		throws SormasToSormasException, SormasToSormasValidationException;
 
 	void revokeShare(String shareInfoUuid) throws SormasToSormasException;
+
+	void revokeShareRequest(String requestUuid) throws SormasToSormasException;
 
 	void requestsRevoked(SormasToSormasEncryptedDataDto encryptedRequestUuid) throws SormasToSormasException;
 
 	void requestAccepted(SormasToSormasEncryptedDataDto encryptedAcceptData) throws SormasToSormasException;
 
-	boolean isFeatureEnabledForUser();
+	boolean isShareEnabledForUser();
+
+	boolean isProcessingShareEnabledForUser();
 
 	boolean isFeatureConfigured();
 
-	boolean isSharingCasesContactsAndSamplesEnabledForUser();
+	boolean isAnyFeatureConfigured(FeatureType... sormasToSormasFeatures);
+
+	boolean isSharingCasesEnabledForUser();
+
+	boolean isSharingContactsEnabledForUser();
 
 	boolean isSharingEventsEnabledForUser();
 

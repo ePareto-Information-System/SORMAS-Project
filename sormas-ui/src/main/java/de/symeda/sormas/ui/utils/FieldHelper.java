@@ -44,6 +44,8 @@ import com.vaadin.v7.ui.Field;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.i18n.Captions;
+import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.user.UserRight;
@@ -504,6 +506,20 @@ public final class FieldHelper {
 		setEnabledWhen(sourceField, sourceValues, targetFields, clearOnDisabled);
 	}
 
+	public static void setDisabledWhen(
+		FieldGroup fieldGroup,
+		String sourceFieldId,
+		Object sourceValue,
+		String targetPropertyId,
+		boolean clearOnDisabled) {
+
+		final Field<?> sourceField = fieldGroup.getField(sourceFieldId);
+		final List<Object> sourceValues = Collections.singletonList(sourceValue);
+		final List<Field<?>> targetFields = Collections.singletonList(fieldGroup.getField(targetPropertyId));
+
+		setDisabledWhen(sourceField, sourceValues, targetFields, clearOnDisabled);
+	}
+
 	/**
 	 * Sets the target fields to enabled when the source field has a value that's
 	 * contained in the sourceValues list.
@@ -541,6 +557,34 @@ public final class FieldHelper {
 			for (Field<?> targetField : targetFields) {
 				targetField.setEnabled(enabled);
 				if (!enabled && clearOnDisabled) {
+					targetField.clear();
+				}
+			}
+		});
+	}
+
+	public static void setDisabledWhen(Field<?> sourceField, final List<?> sourceValues, List<Field<?>> targetFields, boolean clearOnDisabled) {
+
+		if (sourceField instanceof AbstractField<?>) {
+			((AbstractField<?>) sourceField).setImmediate(true);
+		}
+
+		// initialize
+		{
+			boolean disabled = sourceValues.contains(getNullableSourceFieldValue(sourceField));
+			for (Field<?> targetField : targetFields) {
+				targetField.setEnabled(!disabled);
+				if (disabled && clearOnDisabled) {
+					targetField.clear();
+				}
+			}
+		}
+
+		sourceField.addValueChangeListener(event -> {
+			boolean disabled = sourceValues.contains(getNullableSourceFieldValue(((Field) event.getProperty())));
+			for (Field<?> targetField : targetFields) {
+				targetField.setEnabled(!disabled);
+				if (disabled && clearOnDisabled) {
 					targetField.clear();
 				}
 			}
@@ -783,6 +827,12 @@ public final class FieldHelper {
 		FieldHelper.updateItems(
 			officerField,
 			officerDistricts.size() > 0 ? FacadeProvider.getUserFacade().getUserRefsByDistricts(officerDistricts, caze.getDisease(), right) : null);
+
+	}
+
+	public static void setComboInaccessible(ComboBoxWithPlaceholder combo) {
+		combo.setEnabled(false);
+		combo.setPlaceholder(I18nProperties.getCaption(Captions.inaccessibleValue));
 
 	}
 }

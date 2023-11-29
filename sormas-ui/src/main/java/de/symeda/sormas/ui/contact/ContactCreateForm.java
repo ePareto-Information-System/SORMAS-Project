@@ -52,6 +52,7 @@ import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.person.PersonCreateForm;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
@@ -70,6 +71,7 @@ public class ContactCreateForm extends AbstractEditForm<ContactDto> {
 	private static final String CASE_INFO_LOC = "caseInfoLoc";
 	private static final String CHOOSE_CASE_LOC = "chooseCaseLoc";
 	private static final String REMOVE_CASE_LOC = "removeCaseLoc";
+	private static final String ADOPT_ADDRESS_LOC = "adoptAddressLoc";
 
 	//@formatter:off
 	private static final String HTML_LAYOUT =
@@ -98,6 +100,7 @@ public class ContactCreateForm extends AbstractEditForm<ContactDto> {
 					fluidRowLocs(ContactDto.CONTACT_PROXIMITY_DETAILS) +
 					fluidRowLocs(ContactDto.CONTACT_CATEGORY) +
 					LayoutUtil.fluidRowLocs(ContactDto.RELATION_TO_CASE) +
+					LayoutUtil.fluidRowLocs(ADOPT_ADDRESS_LOC) +
 					LayoutUtil.fluidRowLocs(ContactDto.RELATION_DESCRIPTION) +
 					LayoutUtil.fluidRowLocs(ContactDto.DESCRIPTION);
 	//@formatter:on
@@ -115,6 +118,8 @@ public class ContactCreateForm extends AbstractEditForm<ContactDto> {
 	CheckBox multiDayContact;
 	DateField firstContactDate;
 	DateField lastContactDate;
+	ComboBox relationToCase;
+	AdoptAddressLayout adoptAddressLayout;
 
 	private final boolean showPersonSearchButton;
 
@@ -122,7 +127,10 @@ public class ContactCreateForm extends AbstractEditForm<ContactDto> {
 	 * TODO use disease and case relation information given in ContactDto
 	 */
 	public ContactCreateForm(Disease disease, boolean hasCaseRelation, boolean asSourceContact, boolean showPersonSearchButton) {
-		super(ContactDto.class, ContactDto.I18N_PREFIX);
+		super(
+			ContactDto.class,
+			ContactDto.I18N_PREFIX,
+			FieldVisibilityCheckers.withDisease(disease).andWithCountry(FacadeProvider.getConfigFacade().getCountryLocale()));
 
 		this.disease = disease;
 		this.hasCaseRelation = hasCaseRelation;
@@ -182,8 +190,14 @@ public class ContactCreateForm extends AbstractEditForm<ContactDto> {
 			contactCategory = addField(ContactDto.CONTACT_CATEGORY, NullableOptionGroup.class);
 		}
 		addField(ContactDto.DESCRIPTION, TextArea.class).setRows(4);
-		ComboBox relationToCase = addField(ContactDto.RELATION_TO_CASE, ComboBox.class);
+		relationToCase = addField(ContactDto.RELATION_TO_CASE, ComboBox.class);
 		addField(ContactDto.RELATION_DESCRIPTION, TextField.class);
+
+
+		adoptAddressLayout = new AdoptAddressLayout();
+		adoptAddressLayout.setVisible(false);
+		getContent().addComponent(adoptAddressLayout, ADOPT_ADDRESS_LOC);
+
 		addField(ContactDto.CASE_ID_EXTERNAL_SYSTEM, TextField.class);
 		addField(ContactDto.CASE_OR_EVENT_INFORMATION, TextArea.class).setRows(4);
 
@@ -215,9 +229,8 @@ public class ContactCreateForm extends AbstractEditForm<ContactDto> {
 		cbDisease.addValueChangeListener(e -> {
 			disease = (Disease) e.getProperty().getValue();
 			setVisible(disease != null, ContactDto.CONTACT_PROXIMITY);
-			if (isConfiguredServer("de")) {
-				contactCategory.setVisible(disease != null);
-				contactProximityDetails.setVisible(disease != null);
+			if (isConfiguredServer(CountryHelper.COUNTRY_CODE_GERMANY)) {
+				setVisible(disease == Disease.CORONAVIRUS, ContactDto.CONTACT_CATEGORY, ContactDto.CONTACT_PROXIMITY_DETAILS);
 			}
 			updateContactProximity();
 		});
@@ -326,6 +339,23 @@ public class ContactCreateForm extends AbstractEditForm<ContactDto> {
 	private void updateFieldVisibilitiesByCase(boolean caseSelected) {
 		setVisible(!caseSelected, ContactDto.DISEASE, ContactDto.CASE_ID_EXTERNAL_SYSTEM, ContactDto.CASE_OR_EVENT_INFORMATION);
 		setRequired(!caseSelected, ContactDto.DISEASE, ContactDto.REGION, ContactDto.DISTRICT);
+		ValueChangeListener valueChangeListener = e -> {
+			boolean sameHousehold = ContactRelation.SAME_HOUSEHOLD.equals(relationToCase.getValue());
+			adoptAddressLayout.setVisible(sameHousehold);
+			adoptAddressLayout.setAdoptAddress(sameHousehold);
+		};
+		if (caseSelected) {
+			relationToCase.addValueChangeListener(valueChangeListener);
+			if (ContactRelation.SAME_HOUSEHOLD.equals(relationToCase.getValue())) {
+				boolean sameHousehold = ContactRelation.SAME_HOUSEHOLD.equals(relationToCase.getValue());
+				adoptAddressLayout.setVisible(sameHousehold);
+				adoptAddressLayout.setAdoptAddress(sameHousehold);
+			}
+		} else {
+			relationToCase.removeValueChangeListener(valueChangeListener);
+			adoptAddressLayout.setVisible(false);
+			adoptAddressLayout.setAdoptAddress(false);
+		}
 	}
 
 	private void updateContactProximity() {
@@ -366,6 +396,7 @@ public class ContactCreateForm extends AbstractEditForm<ContactDto> {
 	public void setValue(ContactDto newFieldValue) {
 		super.setValue(newFieldValue);
 		updateDateComparison();
+		adoptAddressLayout.setContact(newFieldValue);
 	}
 
 	private void updateDateComparison() {

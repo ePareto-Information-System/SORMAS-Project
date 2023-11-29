@@ -78,4 +78,12 @@ public class CreateNewContactPage {
   public static final By SOURCE_CASE_CONTACT_WINDOW_CONFIRM_BUTTON_DE =
       By.xpath(
           "//div[contains(@class, 'popupContent')]//span[contains(text(), 'Best\u00E4tigen')]//ancestor::div[@id='commit']");
+  public static final By TYPE_OF_CONTACT_MEDICAL_PERSONEL_SAME_ROOM_CHECKBOX =
+      By.xpath("(//div[@id='contactProximity']/span)[9]");
+  public static final By TYPE_OF_CONTACT_MEDICAL_PERSONEL_WITHOUT_DIRECT_CONTACT_CHECKBOX =
+      By.xpath("(//div[@id='contactProximity']/span)[10]");
+  public static final By SELECT_EXISTING_CONTACT_DE =
+      By.xpath("//label[text()='Kontakt ausw\u00E4hlen']");
+  public static final By CREATE_NEW_CONTACT_CONFIRMATION_BUTTON_DE =
+      By.xpath("//*[text()='Neuen Kontakt erstellen']");
 }

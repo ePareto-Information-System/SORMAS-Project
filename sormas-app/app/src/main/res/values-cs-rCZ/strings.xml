@@ -132,7 +132,7 @@
     <string name="caption_case_hospitalization">Info o Hospitalizaci</string>
     <string name="caption_case_information">Informace o případu</string>
     <string name="caption_case_maternal_history">Historie matky</string>
-    <string name="caption_case_port_health_info">Port Health Info</string>
+    <string name="caption_case_port_health_info">Informace vstupní hygienické kontroly</string>
     <string name="caption_case_prescriptions">Předpisy</string>
     <string name="caption_case_samples">Vzorky případu</string>
     <string name="caption_case_tasks">Úkoly případu</string>
@@ -257,6 +257,17 @@
     <string name="caption_aggregate_deaths_abbr">D</string>
     <string name="caption_start_date_existing">Stávající počáteční datum</string>
     <string name="caption_end_date_existing">Stávající datum ukončení</string>
+    <string name="caption_sync_send_new">%1$s. Odesílání nových dat…</string>
+    <string name="caption_sync_pull_infrastructure">%1$s. Stahování dat infrastruktury…</string>
+    <string name="caption_sync_clear_up_infrastructure">%1$s. Vymazání dat infrastruktury…</string>
+    <string name="caption_sync_delete_obsolete">%1$s. Mazání zastaralých dat…</string>
+    <string name="caption_sync_clear_up">%1$s. Mazání dat…</string>
+    <string name="caption_sync_synchronize">%1$s- Synchronizace dat…</string>
+    <string name="caption_sync_pull_modified">%1$s. Stahování upravených dat…</string>
+    <string name="caption_sync_repull">%1$s. Opakování všech dat…</string>
+    <string name="caption_sync_pulled">%1$s taženo</string>
+    <string name="caption_sync_pushed">%1$s/%2$s nahráno</string>
+    <string name="caption_sync_deleted">%1$s smazáno</string>
     <string name="confirmation_action">Opravdu to chcete udělat?</string>
     <string name="confirmation_delete">Opravdu chcete vymazat tento záznam?</string>
     <string name="confirmation_pick_gps">Jste právě na tomto místě?</string>
@@ -370,6 +381,7 @@
     <string name="heading_sample_read">Číst vzorek</string>
     <string name="heading_sample_summary">Shrnutí vzorku</string>
     <string name="heading_samples_list">Seznam vzorků</string>
+    <string name="heading_environments_list">Environment Listing</string>
     <string name="heading_immunization_edit">Upravit imunizaci</string>
     <string name="heading_immunization_new">Nová imunizace</string>
     <string name="heading_immunization_read">Číst imunizaci</string>
@@ -386,7 +398,7 @@
     <string name="heading_surveillance_outbreak">Dohled nad ohniskem nákazy</string>
     <string name="heading_symptoms">Znaky a příznaky</string>
     <string name="heading_sync_conflicts">Konflikty synchronizace</string>
-    <string name="heading_synchronization">Synchronizace</string>
+    <string name="heading_synchronization">Synchronizuji se serverem…</string>
     <string name="heading_task_edit">Úkol</string>
     <string name="heading_task_notification">Zkontrolovat úkol sormas</string>
     <string name="heading_task_read">Číst úkol</string>
@@ -490,11 +502,14 @@
     <string name="main_menu_events">Události</string>
     <string name="main_menu_reports">Zprávy</string>
     <string name="main_menu_samples">Vzorky</string>
+    <string name="main_menu_environments">Environments</string>
     <string name="main_menu_immunizations">Imunizace</string>
     <string name="main_menu_settings">Nastavení</string>
     <string name="main_menu_tasks">Úkoly</string>
     <string name="main_menu_aggregate_reports">mSERS</string>
     <string name="message_already_saving">Již se ukládá..</string>
+    <string name="message_aggregate_report_found">Upozornění: Pro výše uvedená kritéria byly nalezeny duplicitní zprávy. Nemoci označené červenou již mají hlášení.</string>
+    <string name="message_aggregate_report_expired_age_groups">Věkové skupiny označené jako \"Vypršelo\" jsou založeny na existujících datech pro věkovou skupinu, která se již nepoužívá.</string>
     <string name="message_case_infrastructure_data_changed">Změnili jste údaje o infrastruktuře tohoto případu. Chcete tento případ přenést do nového zdravotnického zařízení (údaje o hospitalizaci budou aktualizovány) nebo chcete pouze upravit údaje pro nápravu chyby?</string>
     <string name="message_download_app_failed">Stahování nové verze SORMAS selhalo. Ujistěte se prosím, že máte nejlepší možné připojení k internetu a zkuste to znovu nebo informujte kontrolora, pokud se i přes dobré připojení k Internetu stále dostáváte tuto chybu.</string>
     <string name="message_empty_password">Zadejte prosím heslo.</string>
@@ -572,6 +587,7 @@
     <string name="time_future_x_years">do %1$s let</string>
     <string name="time_now">právě teď</string>
     <string name="time_past_almost_two_years">téměř před dvěma lety</string>
+    <string name="time_past_today">dnes</string>
     <string name="time_past_one_day">včera</string>
     <string name="time_past_one_hour">asi před hodinou</string>
     <string name="time_past_one_minute">před minutou</string>
@@ -638,6 +654,7 @@
     <string name="value_treatment_date_time_unknown">Datum léčby N/A</string>
     <string name="value_type_unknown">Typ N/A</string>
     <string name="value_uuid_unknown">ID N/A</string>
+    <string name="value_external_id_unknown">ExternalID N/A</string>
     <string name="value_visit_date_unknown">Datum návštěvy N/A</string>
     <string name="value_visit_remarks_unknown">Poznámky N/A</string>
     <string name="value_visit_time_unknown">Čas návštěvy N/A</string>

@@ -15,16 +15,25 @@
 
 package de.symeda.sormas.ui.externalmessage;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+
+import com.vaadin.v7.data.Property;
 import com.vaadin.v7.data.Validator;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.DateField;
 import com.vaadin.v7.ui.Field;
 import com.vaadin.v7.ui.TextField;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.ReferenceDto;
+import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
+import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.externalmessage.ExternalMessageCriteria;
 import de.symeda.sormas.api.externalmessage.ExternalMessageDto;
 import de.symeda.sormas.api.externalmessage.ExternalMessageIndexDto;
@@ -39,6 +48,7 @@ import de.symeda.sormas.ui.utils.ComboBoxWithPlaceholder;
 import de.symeda.sormas.ui.utils.DateComparisonValidator;
 import de.symeda.sormas.ui.utils.DateTimeField;
 import de.symeda.sormas.ui.utils.FieldConfiguration;
+import de.symeda.sormas.ui.utils.FieldHelper;
 import de.symeda.sormas.ui.utils.FutureDateValidator;
 
 public class ExternalMessageGridFilterForm extends AbstractFilterForm<ExternalMessageCriteria> {
@@ -53,8 +63,11 @@ public class ExternalMessageGridFilterForm extends AbstractFilterForm<ExternalMe
 	protected String[] getMainFilterLocators() {
 		return new String[] {
 			ExternalMessageCriteria.SEARCH_FIELD_LIKE,
+			ExternalMessageCriteria.MESSAGE_CONTENT_LIKE,
 			ExternalMessageCriteria.ASSIGNEE,
 			ExternalMessageCriteria.TYPE,
+			ExternalMessageCriteria.DISEASE,
+			ExternalMessageCriteria.DISEASE_VARIANT,
 			ExternalMessageCriteria.MESSAGE_DATE_FROM,
 			ExternalMessageCriteria.MESSAGE_DATE_TO,
 			ExternalMessageCriteria.BIRTH_DATE_FROM,
@@ -72,12 +85,22 @@ public class ExternalMessageGridFilterForm extends AbstractFilterForm<ExternalMe
 				200));
 		searchField.setNullRepresentation("");
 
+		TextField contentSearchField = addField(
+			FieldConfiguration.withCaptionAndPixelSized(
+				ExternalMessageCriteria.MESSAGE_CONTENT_LIKE,
+				I18nProperties.getString(Strings.promptExternalMessagesContentSearchField),
+				200));
+		contentSearchField.setNullRepresentation("");
+
 		ComboBoxWithPlaceholder assignee = addField(ExternalMessageCriteria.ASSIGNEE, ComboBoxWithPlaceholder.class);
 		assignee.addItem(new UserReferenceDto(ReferenceDto.NO_REFERENCE_UUID, "", "", I18nProperties.getCaption(Captions.unassigned)));
 		assignee.addItems(FacadeProvider.getUserFacade().getUsersByRegionAndRights(user.getRegion(), null, UserRight.EXTERNAL_MESSAGE_PROCESS));
 		assignee.setNullSelectionAllowed(true);
 
 		addField(ExternalMessageDto.TYPE, ComboBox.class);
+
+		addField(FieldConfiguration.pixelSized(ExternalMessageCriteria.DISEASE, 140));
+		addField(FieldConfiguration.pixelSized(CaseDataDto.DISEASE_VARIANT, 140), ComboBox.class);
 
 		DateTimeField messageDateFrom = addField(ExternalMessageCriteria.MESSAGE_DATE_FROM, DateTimeField.class);
 		messageDateFrom.setCaption(I18nProperties.getPrefixCaption(ExternalMessageCriteria.I18N_PREFIX, ExternalMessageCriteria.MESSAGE_DATE_FROM));
@@ -114,6 +137,42 @@ public class ExternalMessageGridFilterForm extends AbstractFilterForm<ExternalMe
 					((FutureDateValidator) validator).resetWithCaption();
 				}
 			}
+		}
+	}
+
+	@Override
+	protected void applyDependenciesOnFieldChange(String propertyId, Property.ValueChangeEvent event) {
+		super.applyDependenciesOnFieldChange(propertyId, event);
+
+		if (ExternalMessageDto.DISEASE.equals(propertyId)) {
+			ComboBox diseaseVariantField = getField(CaseDataDto.DISEASE_VARIANT);
+			Disease disease = (Disease) event.getProperty().getValue();
+			if (disease == null) {
+				FieldHelper.updateItems(diseaseVariantField, Collections.emptyList());
+				FieldHelper.setEnabled(false, diseaseVariantField);
+			} else {
+				List<DiseaseVariant> diseaseVariants =
+					FacadeProvider.getCustomizableEnumFacade().getEnumValues(CustomizableEnumType.DISEASE_VARIANT, disease);
+				FieldHelper.updateItems(diseaseVariantField, diseaseVariants);
+				FieldHelper.setEnabled(CollectionUtils.isNotEmpty(diseaseVariants), diseaseVariantField);
+			}
+		}
+	}
+
+	@Override
+	protected void applyDependenciesOnNewValue(ExternalMessageCriteria criteria) {
+
+		ComboBox diseaseField = getField(ExternalMessageDto.DISEASE);
+		ComboBox diseaseVariantField = getField(ExternalMessageDto.DISEASE_VARIANT);
+		Disease disease = (Disease) diseaseField.getValue();
+		if (disease == null) {
+			FieldHelper.updateItems(diseaseVariantField, Collections.emptyList());
+			FieldHelper.setEnabled(false, diseaseVariantField);
+		} else {
+			List<DiseaseVariant> diseaseVariants =
+				FacadeProvider.getCustomizableEnumFacade().getEnumValues(CustomizableEnumType.DISEASE_VARIANT, disease);
+			FieldHelper.updateItems(diseaseVariantField, diseaseVariants);
+			FieldHelper.setEnabled(CollectionUtils.isNotEmpty(diseaseVariants), diseaseVariantField);
 		}
 	}
 }

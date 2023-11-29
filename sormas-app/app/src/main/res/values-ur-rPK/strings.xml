@@ -257,6 +257,17 @@
     <string name="caption_aggregate_deaths_abbr">D</string>
     <string name="caption_start_date_existing">موجودہ آغاز کی تاریخ</string>
     <string name="caption_end_date_existing">موجودہ اختتامی تاریخ</string>
+    <string name="caption_sync_send_new">%1$s۔ نیا ڈیٹا بھیج رہا ہے…</string>
+    <string name="caption_sync_pull_infrastructure">%1$s۔ انفراسٹرکچر ڈیٹا کھینچا جا رہا ہے…</string>
+    <string name="caption_sync_clear_up_infrastructure">%1$s۔ انفراسٹرکچر ڈیٹا کو صاف کیا جا رہا ہے…</string>
+    <string name="caption_sync_delete_obsolete">%1$s۔ متروک ڈیٹا کو حذف کیا جا رہا ہے…</string>
+    <string name="caption_sync_clear_up">%1$s۔ ڈیٹا صاف کیا جا رہا ہے…</string>
+    <string name="caption_sync_synchronize">%1$s۔ ڈیٹا کی مطابقت پذیری…</string>
+    <string name="caption_sync_pull_modified">%1$s۔ ترمیم شدہ ڈیٹا کھینچا جا رہا ہے…</string>
+    <string name="caption_sync_repull">%1$s۔ تمام ڈیٹا کو کھینچا جا رہا ہے…</string>
+    <string name="caption_sync_pulled">%1$s کھینچا گیا</string>
+    <string name="caption_sync_pushed">%1$s/%2$s کو آگے بڑھایا گیا</string>
+    <string name="caption_sync_deleted">%1$s کو مٹا دیا گیا</string>
     <string name="confirmation_action">کیا آپ واقعی یہ کرنا چاہتے ہیں؟</string>
     <string name="confirmation_delete">کیا آپ واقعی اس ریکارڈ کو مٹا دین اچاہتے ہیں؟</string>
     <string name="confirmation_pick_gps">کیا آپ ابھی اس جگہ پر ہیں؟</string>
@@ -370,6 +381,7 @@
     <string name="heading_sample_read">نمونہ پڑھیں</string>
     <string name="heading_sample_summary">نمونہ کا خلاصہ</string>
     <string name="heading_samples_list">نمونہ کی فہرست</string>
+    <string name="heading_environments_list">ماحولیات کی فہرست</string>
     <string name="heading_immunization_edit">امیونائزیشن میں ترمیم کریں</string>
     <string name="heading_immunization_new">نئی امیونائزیشن</string>
     <string name="heading_immunization_read">امیونائزیشن پڑھیں</string>
@@ -386,7 +398,7 @@
     <string name="heading_surveillance_outbreak"> پھیلاوکی نگرانی</string>
     <string name="heading_symptoms">نشانات و علامات</string>
     <string name="heading_sync_conflicts">مطابقت پذیری کے تنازعات</string>
-    <string name="heading_synchronization">مطابقت پذیری</string>
+    <string name="heading_synchronization">سرور کے ساتھ مطابقت پذیری ہو رہی ہے…</string>
     <string name="heading_task_edit">کام</string>
     <string name="heading_task_notification">سورماس والےکام چیک کریں</string>
     <string name="heading_task_read">کام کر پڑھیں</string>
@@ -490,11 +502,14 @@
     <string name="main_menu_events">تقریبات</string>
     <string name="main_menu_reports">رپورٹس</string>
     <string name="main_menu_samples">نمونے</string>
+    <string name="main_menu_environments">ماحولیات</string>
     <string name="main_menu_immunizations">امیونائزیشنز</string>
     <string name="main_menu_settings">ترتیبات</string>
     <string name="main_menu_tasks">کام</string>
     <string name="main_menu_aggregate_reports">mSERS</string>
     <string name="message_already_saving">پہلے ہی محفوظ کر رہا ہے..</string>
+    <string name="message_aggregate_report_found">دھیان دیں: مندرجہ بالا معیار کے لیے ڈپلیکیٹ رپورٹس مل گئی ہیں۔ سرخ نشان زدہ بیماریوں کی رپورٹس پہلے سے موجود ہیں۔</string>
+    <string name="message_aggregate_report_expired_age_groups">عمر کے گروپوں کو \"میعاد ختم\" کے طور پر نشان زد کیا گیا ہے جو عمر کے ایسے گروپ کے موجودہ ڈیٹا پر مبنی ہیں جو اب استعمال نہیں کیا جاتا ہے۔</string>
     <string name="message_case_infrastructure_data_changed">آپ نے اس کیس کا انفراسٹرکچر ڈیٹا تبدیل کر دیا ہے۔ کیا آپ کیس کو صحت کی نئی سہولت گاہ میں منتقل کرنا چاہتے ہیں (اسپتال میں داخے کا ڈیٹا اپ ڈیٹ کیا جائے گا) یا آپ صرف غلطی کو درست کرنے کے لیے ڈیٹا میں ترمیم کرنا چاہتے ہیں؟</string>
     <string name="message_download_app_failed">نئے سورماس ورژن کا ڈاؤن لوڈ ناکام ہو گیا۔ براہ مہربانی یقینی بنائیں کہ آپ کے پاس ممکنہ طور پر بہترین انٹرنیٹ کنکشن ہے اور دوبارہ کوشش کریں یا کسی سپروائزر کو مطلع کریں اگر آپ اچھے انٹرنیٹ کنکشن کے باوجود یہ خرابی ملتی رہتی ہے۔</string>
     <string name="message_empty_password">براہ مہربانی پاس ورڈ درج کریں۔</string>
@@ -572,6 +587,7 @@
     <string name="time_future_x_years">%1$s سال کے اندر</string>
     <string name="time_now">ابھی ابھی</string>
     <string name="time_past_almost_two_years">تقریبا دو سال پہلے</string>
+    <string name="time_past_today">آج</string>
     <string name="time_past_one_day">گزشتہ روز</string>
     <string name="time_past_one_hour">تقریبا ایک گھنٹے پہلے</string>
     <string name="time_past_one_minute">ایک منٹ پہلے</string>
@@ -638,6 +654,7 @@
     <string name="value_treatment_date_time_unknown">علاج کی تاریخ دستیاب نہیں ہے</string>
     <string name="value_type_unknown">قسم دستیاب نہیں ہے</string>
     <string name="value_uuid_unknown">شناخت دستیاب نہیں ہے</string>
+    <string name="value_external_id_unknown">بیرونی ID دستیاب نہیں ہے</string>
     <string name="value_visit_date_unknown">دورہ کی تاریخ دستیاب نہیں ہے</string>
     <string name="value_visit_remarks_unknown">ریمارکس دستیاب نہیں ہیں۔</string>
     <string name="value_visit_time_unknown">وزٹ کا وقت دستیاب نہیں ہے</string>

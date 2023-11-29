@@ -110,6 +110,11 @@ public class EditPersonPage {
       By.cssSelector(".v-errorindicator.v-errorindicator-info");
   public static final By SEE_CASES_FOR_PERSON_BUTTON = By.id("See cases for this person");
   public static final By SEE_CONTACTS_FOR_PERSON_BUTTON = By.id("See contacts for this person");
+  public static final By EYE_ICON_EDIT_PERSON =
+      By.cssSelector("[class*='v-caption-on-top']>[class*='v-popupview']");
+  public static final By GPS_LATITUDE_INPUT_EDIT_PERSON = By.id("latitude");
+  public static final By GPS_LONGITUDE_INPUT_EDIT_PERSON = By.id("longitude");
+  public static final By MAP_CONTAINER_EDIT_PERSON = By.cssSelector("[class*='leaflet-container']");
   public static final By EDIT_CASES_BUTTON = By.id("edit-case-0");
   public static final By EDIT_CONTACTS_BUTTON = By.id("edit-contact-0");
   public static final By CONFIRM_NAVIGATION_BUTTON = By.cssSelector(".popupContent #actionConfirm");
@@ -153,16 +158,19 @@ public class EditPersonPage {
       By.xpath("(//div[@location='travelEntries']//div[contains(@class, 'v-label')])[3]");
   public static final By DESCRIPTION_IN_TRAVEL_ENTRY_TAB =
       By.xpath("(//div[@location='travelEntries']//div[contains(@class, 'v-label')])[5]");
+  public static final By GENERAL_COMMENT_FIELD =
+      By.xpath(
+          "(//textarea[@class='v-textarea v-widget resizable v-textarea-resizable caption-hidden v-textarea-caption-hidden v-has-width' and @id='additionalDetails'])");
 
   public static By getByPersonUuid(String personUuid) {
     return By.cssSelector("a[title='" + personUuid + "']");
   }
 
   public static By getByImmunizationUuid(String immunizationUuid) {
-    return By.id("edit-immunization-" + immunizationUuid);
+    return By.id("edit" + immunizationUuid);
   }
 
   public static By getByTravelEntryPersonUuid(String personUuid) {
-    return By.id(String.format("edit-travelEntry-%s", personUuid));
+    return By.id(String.format("edit%s", personUuid));
   }
 }

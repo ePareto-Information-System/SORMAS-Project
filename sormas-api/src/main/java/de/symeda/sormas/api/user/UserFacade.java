@@ -33,7 +33,7 @@ import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.event.EventReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
-import de.symeda.sormas.api.task.TaskContextIndex;
+import de.symeda.sormas.api.task.TaskContextIndexCriteria;
 import de.symeda.sormas.api.travelentry.TravelEntryReferenceDto;
 import de.symeda.sormas.api.utils.SortProperty;
 
@@ -42,7 +42,7 @@ public interface UserFacade {
 
 	UserDto getByUuid(String uuid);
 
-	UserDto saveUser(@Valid UserDto dto);
+	UserDto saveUser(@Valid UserDto dto, boolean isCurrentUser);
 
 	boolean isLoginUnique(String uuid, String userName);
 
@@ -151,7 +151,21 @@ public interface UserFacade {
 
 	List<UserReferenceDto> getUsersHavingTravelEntryInJurisdiction(TravelEntryReferenceDto travelEntryReferenceDto);
 
-	List<UserReferenceWithTaskNumbersDto> getAssignableUsersWithTaskNumbers(@NotNull TaskContextIndex taskContextIndex);
+	List<UserReferenceWithTaskNumbersDto> getAssignableUsersWithTaskNumbers(@NotNull TaskContextIndexCriteria taskContextIndexCriteria);
 
 	Set<UserRoleDto> getUserRoles(UserDto user);
+
+	long getUserCountHavingRole(UserRoleReferenceDto userRoleRef);
+
+	List<UserReferenceDto> getUsersHavingOnlyRole(UserRoleReferenceDto userRoleRef);
+
+	/**
+	 * Retrieves the user rights of the user specified by the passed UUID, or those of the current user if no UUID is specified.
+	 * Requesting the user rights of another user without the rights to view users and user roles results in an AccessDeniedException.
+	 * 
+	 * @param userUuid
+	 *            The UUID of the user to request the user rights for
+	 * @return A set containing the user rights associated to all user roles assigned to the user
+	 */
+	List<UserRight> getUserRights(String userUuid);
 }

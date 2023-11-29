@@ -30,7 +30,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 
-import de.symeda.auditlog.api.Audited;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.area.AreaType;
@@ -49,7 +48,6 @@ import de.symeda.sormas.backend.infrastructure.subcontinent.Subcontinent;
 import de.symeda.sormas.backend.person.Person;
 
 @Entity
-@Audited
 public class Location extends AbstractDomainObject {
 
 	private static final long serialVersionUID = 392776645668778670L;
@@ -142,7 +140,7 @@ public class Location extends AbstractDomainObject {
 		this.areaType = areaType;
 	}
 
-	@ManyToOne()
+	@ManyToOne(fetch = FetchType.LAZY)
 	public Country getCountry() {
 		return country;
 	}
@@ -151,7 +149,7 @@ public class Location extends AbstractDomainObject {
 		this.country = country;
 	}
 
-	@ManyToOne()
+	@ManyToOne(fetch = FetchType.LAZY)
 	public Continent getContinent() {
 		return continent;
 	}
@@ -160,7 +158,7 @@ public class Location extends AbstractDomainObject {
 		this.continent = continent;
 	}
 
-	@ManyToOne()
+	@ManyToOne(fetch = FetchType.LAZY)
 	public Subcontinent getSubcontinent() {
 		return subcontinent;
 	}
@@ -169,7 +167,7 @@ public class Location extends AbstractDomainObject {
 		this.subcontinent = subcontinent;
 	}
 
-	@ManyToOne()
+	@ManyToOne(fetch = FetchType.LAZY)
 	public Region getRegion() {
 		return region;
 	}
@@ -178,7 +176,7 @@ public class Location extends AbstractDomainObject {
 		this.region = region;
 	}
 
-	@ManyToOne()
+	@ManyToOne(fetch = FetchType.LAZY)
 	public District getDistrict() {
 		return district;
 	}
@@ -187,7 +185,7 @@ public class Location extends AbstractDomainObject {
 		this.district = district;
 	}
 
-	@ManyToOne()
+	@ManyToOne(fetch = FetchType.LAZY)
 	public Community getCommunity() {
 		return community;
 	}
@@ -283,7 +281,7 @@ public class Location extends AbstractDomainObject {
 		this.facilityType = facilityType;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public Facility getFacility() {
 		return facility;
 	}

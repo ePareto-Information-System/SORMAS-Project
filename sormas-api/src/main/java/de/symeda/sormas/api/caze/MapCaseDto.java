@@ -1,23 +1,19 @@
-/*******************************************************************************
+/*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
- *
+ * Copyright © 2016-2022 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *******************************************************************************/
+ */
 package de.symeda.sormas.api.caze;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import de.symeda.sormas.api.Disease;
@@ -30,14 +26,14 @@ import de.symeda.sormas.api.utils.SensitiveData;
 import de.symeda.sormas.api.utils.pseudonymization.Pseudonymizer;
 import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.LatitudePseudonymizer;
 import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.LongitudePseudonymizer;
+import de.symeda.sormas.api.uuid.AbstractUuidDto;
 
-public class MapCaseDto implements Serializable {
+public class MapCaseDto extends AbstractUuidDto {
 
 	private static final long serialVersionUID = -3021332968056368431L;
 
 	public static final String I18N_PREFIX = "CaseData";
 
-	private String uuid;
 	private Date reportDate;
 	private CaseClassification caseClassification;
 	private Disease disease;
@@ -72,6 +68,7 @@ public class MapCaseDto implements Serializable {
 	private String districtUuid;
 	private Double districtLatitude;
 	private Double districtLongitude;
+	private String uuid;
 
 	public MapCaseDto(
 		String uuid,
@@ -91,9 +88,9 @@ public class MapCaseDto implements Serializable {
 		boolean isInJurisdiction,
 		String districtUuid,
 		Double districtLatitude,
-		Double districtLongitude)
-	
-	{
+		Double districtLongitude
+	) {
+		super(uuid);
 		this.uuid = uuid;
 		this.reportDate = reportDate;
 		this.caseClassification = caseClassification;
@@ -128,8 +125,8 @@ public class MapCaseDto implements Serializable {
 			Double addressLat,
 			Double addressLon,
 			boolean isInJurisdiction
-
 			) {
+		super(uuid);
 		this.uuid = uuid;
 		this.reportDate = reportDate;
 		this.caseClassification = caseClassification;
@@ -144,14 +141,6 @@ public class MapCaseDto implements Serializable {
 		this.healthFacilityUuid = healthFacilityUuid;
 		this.isInJurisdiction = isInJurisdiction;
 
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
 	}
 
 	public Date getReportDate() {
@@ -223,8 +212,8 @@ public class MapCaseDto implements Serializable {
 	}
 
 	@Override
-	public String toString() {
-		return person.toString() + " (" + DataHelper.getShortUuid(uuid) + ")";
+	public String buildCaption() {
+		return person.buildCaption() + " (" + DataHelper.getShortUuid(getUuid()) + ")";
 	}
 
 	public Double getHealthFacilityLat() {

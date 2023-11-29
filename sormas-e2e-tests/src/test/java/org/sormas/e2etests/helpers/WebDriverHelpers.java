@@ -20,6 +20,8 @@ import static java.time.Duration.ofSeconds;
 import static org.awaitility.Awaitility.await;
 import static org.awaitility.Durations.ONE_HUNDRED_MILLISECONDS;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -41,6 +43,7 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.WindowType;
 import org.openqa.selenium.interactions.Actions;
 import org.sormas.e2etests.common.TimerLite;
 import org.sormas.e2etests.steps.BaseSteps;
@@ -69,6 +72,8 @@ public class WebDriverHelpers {
     this.assertHelpers = assertHelpers;
   }
 
+  ArrayList<String> tabs;
+
   public void waitForPageLoaded() {
     assertHelpers.assertWithPoll20Second(
         () ->
@@ -91,7 +96,6 @@ public class WebDriverHelpers {
   }
 
   public void waitUntilIdentifiedElementIsVisibleAndClickable(final Object selector, int seconds) {
-    log.info(PID + "Waiting for element [{}] to be visible and clickable", selector);
     if (selector instanceof By) {
       assertHelpers.assertWithPoll(
           () -> {
@@ -125,7 +129,6 @@ public class WebDriverHelpers {
   }
 
   public void waitUntilIdentifiedElementDisappear(final Object selector, int seconds) {
-    log.info(PID + "Waiting for element [{}] to disappear", selector);
     if (selector instanceof By) {
       assertHelpers.assertWithPoll(
           () -> {
@@ -270,10 +273,12 @@ public class WebDriverHelpers {
             + "') or starts-with(text(), '\" + text + \"') ]";
     waitUntilIdentifiedElementIsVisibleAndClickable(comboboxInput);
     comboboxInput.sendKeys(text);
-    waitUntilElementIsVisibleAndClickable(By.className("v-filterselect-suggestmenu"));
-    waitUntilANumberOfElementsAreVisibleAndClickable(By.xpath("//td[@role='listitem']/span"), 1);
+    //    waitUntilElementIsVisibleAndClickable(By.className("v-filterselect-suggestmenu"));
+    //    waitUntilANumberOfElementsAreVisibleAndClickable(By.xpath("//td[@role='listitem']/span"),
+    // 1);
     By dropDownValueXpath = By.xpath(comboBoxItemWithText);
-    TimeUnit.MILLISECONDS.sleep(700);
+    waitUntilANumberOfElementsAreVisibleAndClickable(dropDownValueXpath, 1);
+    TimeUnit.SECONDS.sleep(1);
     clickOnWebElementBySelector(dropDownValueXpath);
     await()
         .pollInterval(ONE_HUNDRED_MILLISECONDS)
@@ -442,6 +447,17 @@ public class WebDriverHelpers {
     waitForPageLoaded();
   }
 
+  public void accessWebSiteWithNewTab(String url) {
+    log.info(PID + "Navigating to: {} ", url);
+    baseSteps.getDriver().switchTo().newWindow(WindowType.TAB);
+    baseSteps.getDriver().get(url);
+  }
+
+  public void switchToTheTabNumber(int no) {
+    ArrayList<String> tab = new ArrayList<>(baseSteps.getDriver().getWindowHandles());
+    baseSteps.getDriver().switchTo().window(tab.get(no - 1));
+  }
+
   public boolean isElementVisibleWithTimeout(By selector, int seconds) {
     try {
       assertHelpers.assertWithPoll(
@@ -459,6 +475,57 @@ public class WebDriverHelpers {
   public boolean isElementEnabled(By selector) {
     scrollToElement(selector);
     return baseSteps.getDriver().findElement(selector).isEnabled();
+  }
+
+  public boolean isElementEnabledAtAttributeLevel(By elementLocator) {
+    scrollToElement(elementLocator);
+    boolean isDisabled = getAttributeFromWebElement(elementLocator, "class").contains("disabled");
+    if (isDisabled) {
+      return false;
+    }
+    return true;
+  }
+
+  public boolean isElementChecked(By elementLocator) {
+    scrollToElement(elementLocator);
+    boolean isChecked = elementContainsAttribute(elementLocator, "checked");
+    if (isChecked) {
+      return true;
+    }
+    return false;
+  }
+
+  public boolean elementContainsAttribute(By elementLocator, String attribute) {
+    scrollToElement(elementLocator);
+    boolean result = false;
+    String value = baseSteps.getDriver().findElement(elementLocator).getAttribute(attribute);
+    if (value != null) {
+      result = true;
+    }
+    return result;
+  }
+
+  public boolean isElementPresent(By elementLocator) {
+    Boolean isPresent = baseSteps.getDriver().findElements(elementLocator).size() > 0;
+    return isPresent;
+  }
+
+  public void verifyListContainsText(final By selector, String value) {
+    assertHelpers.assertWithPoll(
+        () -> {
+          List<String> webElementsTexts =
+              baseSteps.getDriver().findElements(selector).stream()
+                  .map(
+                      webElement -> {
+                        scrollToElement(webElement);
+                        return webElement.getText();
+                      })
+                  .collect(Collectors.toList());
+          Assert.assertTrue(
+              webElementsTexts.contains(value),
+              String.format("The element: %s did not contain text: %s", selector, value));
+        },
+        FLUENT_WAIT_TIMEOUT_SECONDS);
   }
 
   public void clickOnWebElementWhichMayNotBePresent(final By byObject, final int index) {
@@ -487,10 +554,8 @@ public class WebDriverHelpers {
     JavascriptExecutor javascriptExecutor = baseSteps.getDriver();
     try {
       if (selector instanceof WebElement) {
-        log.info(PID + "Scrolling to element [{}]", selector);
         javascriptExecutor.executeScript(SCROLL_TO_WEB_ELEMENT_SCRIPT, selector);
       } else {
-        log.info(PID + "Scrolling to element [{}]", selector);
         javascriptExecutor.executeScript(
             SCROLL_TO_WEB_ELEMENT_SCRIPT, baseSteps.getDriver().findElement((By) selector));
       }
@@ -558,22 +623,35 @@ public class WebDriverHelpers {
     waitForPageLoaded();
   }
 
-  private WebElement getWebElementByText(By selector, Predicate<WebElement> webElementPredicate) {
-    waitForPageLoaded();
-    assertHelpers.assertWithPoll20Second(
-        () -> {
-          waitUntilIdentifiedElementIsVisibleAndClickable(selector);
-          assertWithMessage("Unable to find element based on: %s ", webElementPredicate)
-              .that(
-                  baseSteps.getDriver().findElements(selector).stream()
-                      .anyMatch(webElementPredicate))
-              .isTrue();
-        });
+  private WebElement getWebElementByText(
+      By selector, Predicate<WebElement> webElementPredicate, String text) {
+    waitUntilIdentifiedElementIsVisibleAndClickable(selector);
     return baseSteps.getDriver().findElements(selector).stream()
         .filter(webElementPredicate)
         .findFirst()
         .orElseThrow(
-            () -> new NotFoundException("The selector containing text has not been found"));
+            () ->
+                new NotFoundException(
+                    "Cannot select by visible text: ["
+                        + text
+                        + "] from locator -> "
+                        + selector.toString()));
+    // LET THIS CODE COMMENTED until we check a regression and make sure this change doesn't have
+    // any impact over execution
+    //    assertHelpers.assertWithPoll20Second(
+    //        () -> {
+    //          waitUntilIdentifiedElementIsVisibleAndClickable(selector);
+    //          assertWithMessage("Unable to find element based on: %s ", webElementPredicate)
+    //              .that(
+    //                  baseSteps.getDriver().findElements(selector).stream()
+    //                      .anyMatch(webElementPredicate))
+    //              .isTrue();
+    //        });
+    //    return baseSteps.getDriver().findElements(selector).stream()
+    //        .filter(webElementPredicate)
+    //        .findFirst()
+    //        .orElseThrow(
+    //            () -> new NotFoundException("The selector containing text has not been found"));
   }
 
   public void waitUntilAListOfElementsHasText(By selector, String text) {
@@ -624,7 +702,8 @@ public class WebDriverHelpers {
   }
 
   public WebElement getWebElementBySelectorAndText(final By selector, final String text) {
-    return getWebElementByText(selector, webElement -> webElement.getText().contentEquals(text));
+    return getWebElementByText(
+        selector, webElement -> webElement.getText().contentEquals(text), text);
   }
 
   @SneakyThrows
@@ -950,6 +1029,25 @@ public class WebDriverHelpers {
                 String.format("Row element: %s wasn't selected within 20s", rowLocator)));
   }
 
+  public void refreshCurrentPage() throws InterruptedException {
+    baseSteps.refreshCurrentPage();
+    TimeUnit.SECONDS.sleep(3);
+    waitForPageLoadingSpinnerToDisappear(10);
+  }
+
+  public void isElementGreyedOut(By elementLocator) {
+    try {
+      assertHelpers.assertWithPoll20Second(
+          () ->
+              Assert.assertTrue(
+                  getAttributeFromWebElement(elementLocator, "class").contains("disabled")));
+    } catch (Throwable ignored) {
+      if (!getAttributeFromWebElement(elementLocator, "class").contains("disabled"))
+        throw new TimeoutException(
+            String.format("The element: %s is not greyed out", elementLocator));
+    }
+  }
+
   @SneakyThrows
   public void sendFile(By selector, String filePath) {
     try {
@@ -1020,6 +1118,32 @@ public class WebDriverHelpers {
     } else {
       throw new NotFoundException(
           "Cannot close active window and switch to parent window because only one is available!");
+    }
+  }
+
+  public boolean isFileExists(Path file_path) {
+    return Files.exists(file_path);
+  }
+
+  public void waitForFileExists(Path file_path, int seconds) {
+    assertHelpers.assertWithPoll(
+        () ->
+            Assert.assertTrue(
+                Files.exists(file_path),
+                String.format("File %s not exists after %s", file_path, seconds)),
+        seconds);
+  }
+
+  public void checkIsPopupContainsList(By popup, List popupElements) {
+    String popupElementXPath;
+    String popupXPath = popup.toString();
+    By lookingElement;
+    for (Object popupMessage : popupElements) {
+      popupElementXPath = popupXPath + "//li[contains(text(),'" + popupMessage + "')]";
+      lookingElement = By.xpath(popupElementXPath.replace("By.xpath:", ""));
+      Assert.assertTrue(
+          isElementVisibleWithTimeout(lookingElement, 10),
+          "Popup do not contains expected list of items!");
     }
   }
 }

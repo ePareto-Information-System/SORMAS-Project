@@ -19,6 +19,7 @@ package de.symeda.sormas.api.statistics;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.temporal.IsoFields;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -55,6 +56,7 @@ import de.symeda.sormas.api.user.UserRoleFacade;
 import de.symeda.sormas.api.user.UserRoleReferenceDto;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.EpiWeek;
+import de.symeda.sormas.api.utils.UtilDate;
 
 public final class StatisticsHelper {
 
@@ -220,14 +222,6 @@ public final class StatisticsHelper {
 		return ageIntervalList;
 	}
 
-	/**
-	 *
-	 * @param attribute
-	 * @param subAttribute
-	 * @param caseFacade
-	 *            Needed for StatisticsCaseAttribute.ONSET_TIME, REPORT_TIME, OUTCOME_TIME
-	 * @return
-	 */
 	public static List<StatisticsGroupingKey> getTimeGroupingKeys(
 		StatisticsCaseAttribute attribute,
 		StatisticsSubAttribute subAttribute,
@@ -249,12 +243,34 @@ public final class StatisticsHelper {
 		}
 		if(oldestCaseDate!=null) {
 		LocalDate earliest = oldestCaseDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-		LocalDate now = LocalDate.now();
+		LocalDate latest = LocalDate.now();
+
+	// 	return getTimeGroupingKeys(subAttribute, oldestCaseDate, new Date());
+	// }
+
+	// /**
+	//  *
+	//  * @param subAttribute
+	//  *            Needed for StatisticsCaseAttribute.ONSET_TIME, REPORT_TIME, OUTCOME_TIME
+	//  * @return
+	//  */
+	// public static List<StatisticsGroupingKey> getTimeGroupingKeys(StatisticsCaseSubAttribute subAttribute, Date dateFrom, Date dateTo) {
+
+	// 	if (dateFrom == null && dateTo == null) {
+	// 		return new ArrayList<>();
+	// 	}
+
+	// 	LocalDate earliest = dateFrom == null
+	// 		? new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+	// 		: dateFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+	// 	LocalDate latest = dateTo == null
+	// 		? new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+	// 		: dateTo.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
 		switch (subAttribute) {
 		case YEAR:
 			List<StatisticsGroupingKey> years = new ArrayList<>();
-			for (int i = earliest.getYear(); i <= now.getYear(); i++) {
+			for (int i = earliest.getYear(); i <= latest.getYear(); i++) {
 				years.add(new Year(i));
 			}
 			return years;
@@ -274,25 +290,35 @@ public final class StatisticsHelper {
 			return epiWeeks;
 		case QUARTER_OF_YEAR:
 			List<StatisticsGroupingKey> quarterOfYearList = new ArrayList<>();
-			QuarterOfYear earliestQuarter = new QuarterOfYear(new Quarter(1), new Year(earliest.getYear()));
-			QuarterOfYear latestQuarter = new QuarterOfYear(new Quarter(4), new Year(now.getYear()));
-			while (earliestQuarter.getYear().getValue() <= latestQuarter.getYear().getValue()) {
-				quarterOfYearList.add(new QuarterOfYear(earliestQuarter.getQuarter(), earliestQuarter.getYear()));
-				earliestQuarter.increaseQuarter();
+			QuarterOfYear earliestQuarter = new QuarterOfYear(new Quarter(earliest.get(IsoFields.QUARTER_OF_YEAR)), new Year(earliest.getYear()));
+			QuarterOfYear latestQuarter = new QuarterOfYear(new Quarter(latest.get(IsoFields.QUARTER_OF_YEAR)), new Year(latest.getYear()));
+			while (earliestQuarter.compareTo(latestQuarter) <= 0) {
+				quarterOfYearList.add(earliestQuarter);
+				earliestQuarter = earliestQuarter.createNextQuarter();
 			}
 			return quarterOfYearList;
 		case MONTH_OF_YEAR:
 			List<StatisticsGroupingKey> monthOfYearList = new ArrayList<>();
-			for (int year = earliest.getYear(); year <= now.getYear(); year++) {
+			for (int year = earliest.getYear(); year <= latest.getYear(); year++) {
 				for (Month month : Month.values()) {
-					monthOfYearList.add(new MonthOfYear(month, year));
+					if ((earliest.getYear() == year
+						&& earliest.getMonth().getValue() <= month.getMonthNumber()
+						&& (latest.getYear() == year ? latest.getMonth().getValue() >= month.getMonthNumber() : true))
+						|| (latest.getYear() == year
+							&& latest.getMonth().getValue() >= month.getMonthNumber()
+							&& (earliest.getYear() == year ? earliest.getMonth().getValue() <= month.getMonthNumber() : true))
+						|| (year > earliest.getYear() && year < latest.getYear())) {
+						monthOfYearList.add(new MonthOfYear(month, year));
+					}
 				}
 			}
 			return monthOfYearList;
 		case EPI_WEEK_OF_YEAR:
 			List<StatisticsGroupingKey> epiWeekOfYearList = new ArrayList<>();
-			for (int year = earliest.getYear(); year <= now.getYear(); year++) {
-				epiWeekOfYearList.addAll(DateHelper.createEpiWeekList(year));
+			for (int year = earliest.getYear(); year <= latest.getYear(); year++) {
+				epiWeekOfYearList.addAll(
+					DateHelper
+						.createEpiWeekListFromInterval(DateHelper.getEpiWeek(UtilDate.from(earliest)), DateHelper.getEpiWeek(UtilDate.from(latest))));
 			}
 			return epiWeekOfYearList;
 		default:
@@ -606,55 +632,55 @@ public final class StatisticsHelper {
 	 */
 	@SuppressWarnings("unchecked")
 	public static List<StatisticsGroupingKey> getAttributeGroupingKeys(
-		StatisticsCaseAttribute attribute,
-		StatisticsSubAttribute subAttribute,
-		DiseaseConfigurationFacade diseaseConfigurationFacade,
-		CaseFacade caseFacade,
-		RegionFacade regionFacade,
-		DistrictFacade districtFacade,
-		UserRoleFacade userRoleFacade) {
+			StatisticsCaseAttribute attribute,
+			StatisticsSubAttribute subAttribute,
+			DiseaseConfigurationFacade diseaseConfigurationFacade,
+			CaseFacade caseFacade,
+			RegionFacade regionFacade,
+			DistrictFacade districtFacade,
+			UserRoleFacade userRoleFacade) {
 
 		if (subAttribute != null) {
 			switch (subAttribute) {
-			case YEAR:
-			case QUARTER:
-			case MONTH:
-			case EPI_WEEK:
-			case QUARTER_OF_YEAR:
-			case MONTH_OF_YEAR:
-			case EPI_WEEK_OF_YEAR:
-				return StatisticsHelper.getTimeGroupingKeys(attribute, subAttribute, caseFacade);
-			case REGION:
-				return (List<StatisticsGroupingKey>) (List<? extends StatisticsGroupingKey>) regionFacade.getAllActiveByServerCountry();
-			case DISTRICT:
-				return (List<StatisticsGroupingKey>) (List<? extends StatisticsGroupingKey>) districtFacade.getAllActiveAsReference();
-			case COMMUNITY:
-			case FACILITY:
-				return new ArrayList<>();
-			default:
-				throw new IllegalArgumentException(subAttribute.toString());
+				case YEAR:
+				case QUARTER:
+				case MONTH:
+				case EPI_WEEK:
+				case QUARTER_OF_YEAR:
+				case MONTH_OF_YEAR:
+				case EPI_WEEK_OF_YEAR:
+					return StatisticsHelper.getTimeGroupingKeys(attribute, subAttribute, caseFacade);
+				case REGION:
+					return (List<StatisticsGroupingKey>) (List<? extends StatisticsGroupingKey>) regionFacade.getAllActiveByServerCountry();
+				case DISTRICT:
+					return (List<StatisticsGroupingKey>) (List<? extends StatisticsGroupingKey>) districtFacade.getAllActiveAsReference();
+				case COMMUNITY:
+				case FACILITY:
+					return new ArrayList<>();
+				default:
+					throw new IllegalArgumentException(subAttribute.toString());
 			}
 		} else {
 			switch (attribute) {
-			case SEX:
-				return toGroupingKeys(Sex.values());
-			case DISEASE:
-				return toGroupingKeys(diseaseConfigurationFacade.getAllDiseases(true, true, true));
-			case CLASSIFICATION:
-				return toGroupingKeys(CaseClassification.values());
-			case OUTCOME:
-				return toGroupingKeys(CaseOutcome.values());
-			case AGE_INTERVAL_1_YEAR:
-			case AGE_INTERVAL_5_YEARS:
-			case AGE_INTERVAL_CHILDREN_COARSE:
-			case AGE_INTERVAL_CHILDREN_FINE:
-			case AGE_INTERVAL_CHILDREN_MEDIUM:
-			case AGE_INTERVAL_BASIC:
-				return StatisticsHelper.getAgeIntervalGroupingKeys(attribute);
-			case REPORTING_USER_ROLE:
-				return (List<StatisticsGroupingKey>) (List<? extends StatisticsGroupingKey>) userRoleFacade.getAllAsReference();
-			default:
-				throw new IllegalArgumentException(attribute.toString());
+				case SEX:
+					return toGroupingKeys(Sex.values());
+				case DISEASE:
+					return toGroupingKeys(diseaseConfigurationFacade.getAllDiseases(true, true, true));
+				case CLASSIFICATION:
+					return toGroupingKeys(CaseClassification.values());
+				case OUTCOME:
+					return toGroupingKeys(CaseOutcome.values());
+				case AGE_INTERVAL_1_YEAR:
+				case AGE_INTERVAL_5_YEARS:
+				case AGE_INTERVAL_CHILDREN_COARSE:
+				case AGE_INTERVAL_CHILDREN_FINE:
+				case AGE_INTERVAL_CHILDREN_MEDIUM:
+				case AGE_INTERVAL_BASIC:
+					return StatisticsHelper.getAgeIntervalGroupingKeys(attribute);
+				case REPORTING_USER_ROLE:
+					return (List<StatisticsGroupingKey>) (List<? extends StatisticsGroupingKey>) userRoleFacade.getAllAsReference();
+				default:
+					throw new IllegalArgumentException(attribute.toString());
 			}
 		}
 	}

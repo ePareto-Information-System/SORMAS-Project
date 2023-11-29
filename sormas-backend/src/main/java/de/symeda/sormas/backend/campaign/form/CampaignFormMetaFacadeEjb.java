@@ -20,7 +20,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.safety.Whitelist;
+import org.jsoup.safety.Safelist;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -50,8 +50,12 @@ public class CampaignFormMetaFacadeEjb implements CampaignFormMetaFacade {
 	@EJB
 	private UserService userService;
 
-	public CampaignFormMeta fromDto(@NotNull CampaignFormMetaDto source, boolean checkChangeDate) {
-		CampaignFormMeta target = DtoHelper.fillOrBuildEntity(source, service.getByUuid(source.getUuid()), CampaignFormMeta::new, checkChangeDate);
+	public CampaignFormMeta fillOrBuildEntity(@NotNull CampaignFormMetaDto source, CampaignFormMeta target, boolean checkChangeDate) {
+		if(source == null) {
+			return null;
+		}
+
+		target = DtoHelper.fillOrBuildEntity(source, source.getUuid() != null ? target : null, CampaignFormMeta::new, checkChangeDate);
 
 		target.setFormId(source.getFormId());
 		target.setFormName(source.getFormName());
@@ -83,7 +87,8 @@ public class CampaignFormMetaFacadeEjb implements CampaignFormMetaFacade {
 	public CampaignFormMetaDto saveCampaignFormMeta(@Valid CampaignFormMetaDto campaignFormMetaDto) throws ValidationRuntimeException {
 		validateAndClean(campaignFormMetaDto);
 
-		CampaignFormMeta campaignFormMeta = fromDto(campaignFormMetaDto, true);
+		CampaignFormMeta existingCampaignFormMeta = service.getByUuid(campaignFormMetaDto.getUuid());
+		CampaignFormMeta campaignFormMeta = fillOrBuildEntity(campaignFormMetaDto, existingCampaignFormMeta, true);
 		service.ensurePersisted(campaignFormMeta);
 		return toDto(campaignFormMeta);
 	}
@@ -110,7 +115,7 @@ public class CampaignFormMetaFacadeEjb implements CampaignFormMetaFacade {
 		return service.getAll()
 			.stream()
 			.map(CampaignFormMetaFacadeEjb::toReferenceDto)
-			.sorted(Comparator.comparing(ReferenceDto::toString))
+			.sorted(Comparator.comparing(ReferenceDto::buildCaption))
 			.collect(Collectors.toList());
 	}
 
@@ -121,7 +126,7 @@ public class CampaignFormMetaFacadeEjb implements CampaignFormMetaFacade {
 
 	@Override
 	public List<CampaignFormMetaDto> getAllAfter(Date date) {
-		final List<CampaignFormMeta> allAfter = service.getAllAfter(date, userService.getCurrentUser());
+		final List<CampaignFormMeta> allAfter = service.getAllAfter(date);
 		return allAfter.stream().map(campaignFormMeta -> toDto(campaignFormMeta)).collect(Collectors.toList());
 	}
 
@@ -214,7 +219,7 @@ public class CampaignFormMetaFacadeEjb implements CampaignFormMetaFacade {
 		for (CampaignFormElement element : campaignFormMetaDto.getCampaignFormElements()) {
 			// Clean the element caption from all HTML tags that are not explicitly allowed
 			if (StringUtils.isNotBlank(element.getCaption())) {
-				Whitelist whitelist = Whitelist.none();
+				Safelist whitelist = Safelist.none();
 				whitelist.addTags(CampaignFormElement.ALLOWED_HTML_TAGS);
 				element.setCaption(HtmlHelper.cleanHtml(element.getCaption(), whitelist));
 			}
@@ -240,7 +245,7 @@ public class CampaignFormMetaFacadeEjb implements CampaignFormMetaFacade {
 					}
 
 					if (StringUtils.isNotBlank(e.getCaption())) {
-						Whitelist whitelist = Whitelist.none();
+						Safelist whitelist = Safelist.none();
 						whitelist.addTags(CampaignFormElement.ALLOWED_HTML_TAGS);
 						e.setCaption(HtmlHelper.cleanHtml(e.getCaption(), whitelist));
 					}

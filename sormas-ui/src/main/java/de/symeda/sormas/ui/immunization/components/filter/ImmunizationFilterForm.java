@@ -9,7 +9,6 @@ import java.util.stream.Stream;
 import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.v7.data.Property;
-import com.vaadin.v7.ui.AbstractSelect;
 import com.vaadin.v7.ui.CheckBox;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.Field;
@@ -28,7 +27,6 @@ import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
-import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.utils.DataHelper;
@@ -90,18 +88,7 @@ public class ImmunizationFilterForm extends AbstractFilterForm<ImmunizationCrite
 				200));
 		searchField.setNullRepresentation("");
 
-		final ComboBox birthDateYYYY = addField(getContent(), ImmunizationCriteria.BIRTHDATE_YYYY, ComboBox.class);
-		birthDateYYYY.setInputPrompt(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.BIRTH_DATE_YYYY));
-		birthDateYYYY.setWidth(140, Unit.PIXELS);
-		birthDateYYYY.addItems(DateHelper.getYearsToNow());
-		birthDateYYYY.setItemCaptionMode(AbstractSelect.ItemCaptionMode.ID_TOSTRING);
-		final ComboBox birthDateMM = addField(getContent(), ImmunizationCriteria.BIRTHDATE_MM, ComboBox.class);
-		birthDateMM.setInputPrompt(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.BIRTH_DATE_MM));
-		birthDateMM.setWidth(140, Unit.PIXELS);
-		birthDateMM.addItems(DateHelper.getMonthsInYear());
-		final ComboBox birthDateDD = addField(getContent(), ImmunizationCriteria.BIRTHDATE_DD, ComboBox.class);
-		birthDateDD.setInputPrompt(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.BIRTH_DATE_DD));
-		birthDateDD.setWidth(140, Unit.PIXELS);
+		addBirthDateFields(getContent(), ImmunizationCriteria.BIRTHDATE_YYYY, ImmunizationCriteria.BIRTHDATE_MM, ImmunizationCriteria.BIRTHDATE_DD);
 
 		addFields(
 			FieldConfiguration.pixelSized(ImmunizationCriteria.MEANS_OF_IMMUNIZATION, 140),
@@ -111,11 +98,17 @@ public class ImmunizationFilterForm extends AbstractFilterForm<ImmunizationCrite
 
 	@Override
 	public void addMoreFilters(CustomLayout moreFiltersContainer) {
-		final ComboBox regionFilter = addField(moreFiltersContainer, FieldConfiguration.pixelSized(ImmunizationCriteria.REGION, 140));
-		regionFilter.addItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
+
+		if (currentUserDto().getRegion() == null) {
+			final ComboBox regionFilter = addField(moreFiltersContainer, FieldConfiguration.pixelSized(ImmunizationCriteria.REGION, 140));
+			regionFilter.addItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
+		}
 
 		final ComboBox districtFilter = addField(moreFiltersContainer, FieldConfiguration.pixelSized(ImmunizationCriteria.DISTRICT, 140));
 		districtFilter.setDescription(I18nProperties.getDescription(Descriptions.descDistrictFilter));
+		if (currentUserDto().getDistrict() != null) {
+			districtFilter.setVisible(false);
+		}
 
 		addField(moreFiltersContainer, FieldConfiguration.pixelSized(ImmunizationCriteria.COMMUNITY, 140));
 

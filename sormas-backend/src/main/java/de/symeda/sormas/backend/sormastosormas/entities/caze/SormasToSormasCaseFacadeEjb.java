@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -31,28 +32,35 @@ import java.util.stream.Stream;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.transaction.Transactional;
+import javax.validation.Valid;
 
-import de.symeda.sormas.api.EditPermissionType;
+import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.contact.ContactCriteria;
 import de.symeda.sormas.api.i18n.Captions;
+import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.sample.SampleCriteria;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasApiConstants;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasException;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasOptionsDto;
-import de.symeda.sormas.api.sormastosormas.caze.SormasToSormasCaseDto;
-import de.symeda.sormas.api.sormastosormas.caze.SormasToSormasCaseFacade;
-import de.symeda.sormas.api.sormastosormas.sharerequest.ShareRequestDataType;
-import de.symeda.sormas.api.sormastosormas.sharerequest.SormasToSormasShareRequestDto;
+import de.symeda.sormas.api.sormastosormas.entities.caze.SormasToSormasCaseDto;
+import de.symeda.sormas.api.sormastosormas.entities.caze.SormasToSormasCaseFacade;
+import de.symeda.sormas.api.sormastosormas.share.incoming.ShareRequestDataType;
+import de.symeda.sormas.api.sormastosormas.share.incoming.SormasToSormasShareRequestDto;
 import de.symeda.sormas.api.sormastosormas.validation.ValidationErrorGroup;
 import de.symeda.sormas.api.sormastosormas.validation.ValidationErrorMessage;
 import de.symeda.sormas.api.sormastosormas.validation.ValidationErrors;
+import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.AccessDeniedException;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.backend.caze.Case;
+import de.symeda.sormas.backend.caze.CaseJoins;
 import de.symeda.sormas.backend.caze.CaseService;
-import de.symeda.sormas.backend.common.BaseAdoService;
+import de.symeda.sormas.backend.common.AbstractCoreAdoService;
 import de.symeda.sormas.backend.contact.Contact;
 import de.symeda.sormas.backend.contact.ContactService;
 import de.symeda.sormas.backend.immunization.ImmunizationService;
@@ -60,10 +68,12 @@ import de.symeda.sormas.backend.immunization.entity.Immunization;
 import de.symeda.sormas.backend.sample.Sample;
 import de.symeda.sormas.backend.sample.SampleService;
 import de.symeda.sormas.backend.sormastosormas.AbstractSormasToSormasInterface;
-import de.symeda.sormas.backend.sormastosormas.share.shareinfo.ShareInfoHelper;
-import de.symeda.sormas.backend.sormastosormas.share.shareinfo.SormasToSormasShareInfo;
-import de.symeda.sormas.backend.sormastosormas.share.shareinfo.SormasToSormasShareInfoService;
+import de.symeda.sormas.backend.sormastosormas.share.outgoing.ShareInfoHelper;
+import de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShareInfo;
+import de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShareInfoService;
 import de.symeda.sormas.backend.user.User;
+import de.symeda.sormas.backend.user.UserService;
+import de.symeda.sormas.backend.util.RightsAllowed;
 
 @Stateless(name = "SormasToSormasCaseFacade")
 public class SormasToSormasCaseFacadeEjb extends AbstractSormasToSormasInterface<Case, CaseDataDto, SormasToSormasCaseDto>
@@ -85,6 +95,8 @@ public class SormasToSormasCaseFacadeEjb extends AbstractSormasToSormasInterface
 	private ImmunizationService immunizationService;
 	@EJB
 	private SormasToSormasShareInfoService shareInfoService;
+	@EJB
+	private UserService userService;
 
 	public SormasToSormasCaseFacadeEjb() {
 		super(
@@ -98,7 +110,25 @@ public class SormasToSormasCaseFacadeEjb extends AbstractSormasToSormasInterface
 	}
 
 	@Override
-	protected BaseAdoService<Case> getEntityService() {
+	@Transactional(value = Transactional.TxType.REQUIRES_NEW,
+		rollbackOn = {
+			Exception.class })
+	@RightsAllowed(UserRight._SORMAS_TO_SORMAS_SHARE)
+	public void share(List<String> entityUuids, @Valid SormasToSormasOptionsDto options) throws SormasToSormasException {
+		if (!userService.hasRight(UserRight.CASE_EDIT)
+			|| (options.isWithAssociatedContacts() && !userService.hasRight(UserRight.CONTACT_EDIT))
+			|| (options.isWithSamples() && !userService.hasRight(UserRight.SAMPLE_EDIT))
+			|| (options.isWithImmunizations() && !userService.hasRight(UserRight.IMMUNIZATION_EDIT))) {
+			throw new AccessDeniedException(I18nProperties.getString(Strings.errorForbidden));
+		}
+
+
+
+		super.share(entityUuids, options);
+	}
+
+	@Override
+	protected AbstractCoreAdoService<Case, CaseJoins> getEntityService() {
 		return caseService;
 	}
 
@@ -111,6 +141,7 @@ public class SormasToSormasCaseFacadeEjb extends AbstractSormasToSormasInterface
 	protected void validateEntitiesBeforeShareInner(
 		Case caze,
 		boolean handOverOwnership,
+		boolean isWithSamples,
 		String targetOrganizationId,
 		List<ValidationErrors> validationErrors) {
 		if (handOverOwnership && caze.getPerson().isEnrolledInExternalJournal()) {
@@ -119,6 +150,17 @@ public class SormasToSormasCaseFacadeEjb extends AbstractSormasToSormasInterface
 					buildCaseValidationGroupName(caze),
 					ValidationErrors
 						.create(new ValidationErrorGroup(Captions.CaseData), new ValidationErrorMessage(Validations.sormasToSormasPersonEnrolled))));
+		}
+
+		if (isWithSamples) {
+			Set<Sample> samples = caze.getSamples();
+			if (samples != null && samples.stream().anyMatch(s -> s.getAssociatedContact() != null)) {
+				validationErrors.add(
+						new ValidationErrors(
+								buildCaseValidationGroupName(caze),
+								ValidationErrors
+										.create(new ValidationErrorGroup(Captions.CaseData), new ValidationErrorMessage(Validations.sormasToSormasCaseSampleHasAssociatedContact))));
+			}
 		}
 
 	}
@@ -134,12 +176,7 @@ public class SormasToSormasCaseFacadeEjb extends AbstractSormasToSormasInterface
 	}
 
 	@Override
-	protected EditPermissionType isEntityEditAllowed(Case ado) {
-		return caseService.isEditAllowed(ado);
-	}
-
-	@Override
-	public Case extractFromShareInfo(SormasToSormasShareInfo shareInfo) {
+	protected Case extractFromShareInfo(SormasToSormasShareInfo shareInfo) {
 		return shareInfo.getCaze();
 	}
 
@@ -198,7 +235,20 @@ public class SormasToSormasCaseFacadeEjb extends AbstractSormasToSormasInterface
 						.orElseGet(() -> ShareInfoHelper.createShareInfo(organizationId, i, SormasToSormasShareInfo::setImmunization, options)));
 		}
 
-		return Stream.of(Stream.of(cazeShareInfo), contactShareInfos, sampleShareInfos, immunizationShareInfos)
+		Stream<SormasToSormasShareInfo> reportShareInfos = Stream.empty();
+		if (options.isWithSurveillanceReports()) {
+			reportShareInfos = caze.getSurveillanceReports()
+				.stream()
+				.map(
+					r -> r.getSormasToSormasShares()
+						.stream()
+						.filter(share -> share.getOrganizationId().equals(organizationId))
+						.findFirst()
+						.orElseGet(
+							() -> ShareInfoHelper.createShareInfo(organizationId, r, SormasToSormasShareInfo::setSurveillanceReport, options)));
+		}
+
+		return Stream.of(Stream.of(cazeShareInfo), contactShareInfos, sampleShareInfos, immunizationShareInfos, reportShareInfos)
 			.flatMap(Function.identity())
 			.collect(Collectors.toList());
 	}
@@ -206,6 +256,11 @@ public class SormasToSormasCaseFacadeEjb extends AbstractSormasToSormasInterface
 	@Override
 	protected List<String> getUuidsWithPendingOwnershipHandedOver(List<Case> entities) {
 		return shareInfoService.getCaseUuidsWithPendingOwnershipHandOver(entities);
+	}
+
+	@Override
+	protected String getShareInfoAssociatedObjectField() {
+		return SormasToSormasShareInfo.CAZE;
 	}
 
 	private List<Sample> getAssociatedSamples(CaseReferenceDto caseReferenceDto, List<Contact> associatedContacts, User user) {

@@ -60,12 +60,12 @@ public interface VisitFacade {
 	Page<VisitIndexDto> getIndexPage(VisitCriteria visitCriteria, Integer first, Integer max, List<SortProperty> sortProperties);
 
 	List<VisitExportDto> getVisitsExportList(
-		VisitCriteria visitCriteria,
-		Collection<String> selectedRows,
-		VisitExportType exportType,
-		int first,
-		int max,
-		ExportConfigurationDto exportConfiguration);
+			VisitCriteria visitCriteria,
+			Collection<String> selectedRows,
+			VisitExportType exportType,
+			int first,
+			int max,
+			ExportConfigurationDto exportConfiguration);
 
 	VisitDto getLastVisitByContact(ContactReferenceDto contactRef);
 
@@ -74,4 +74,12 @@ public interface VisitFacade {
 	List<VisitDto> getVisitsByContactAndPeriod(ContactReferenceDto contactRef, Date begin, Date end);
 
 	VisitDto getLastVisitByCase(CaseReferenceDto caseRef);
+
+	VisitDto save(VisitDto visit);
+
+	VisitDto getByUuid(String uuid);
+
+	void delete(String uuid);
+
+	VisitDto saveVisit(VisitDto dto, Date allowedStartDate, Date allowedEndDate);
 }

@@ -19,18 +19,16 @@
 package org.sormas.e2etests.steps.web.application.samples;
 
 import static org.sormas.e2etests.pages.application.cases.CreateNewCasePage.ACTION_CONFIRM_POPUP_BUTTON;
-import static org.sormas.e2etests.pages.application.cases.EditCasePage.EDIT_SAMPLE_BUTTON;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.SAMPLES_CARD_DATE_AND_TIME_OF_RESULT;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.SAMPLES_CARD_DATE_OF_COLLECTED_SAMPLE;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.SAMPLES_CARD_LABORATORY;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.SAMPLES_CARD_NUMBER_OF_TESTS;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.SAMPLES_CARD_TEST_TYPE;
-import static org.sormas.e2etests.pages.application.contacts.EditContactPage.NUMBER_OF_TESTS_IN_SAMPLES;
 import static org.sormas.e2etests.pages.application.events.EventDirectoryPage.EVENT_ACTIONS_COLUMN_HEADERS;
 import static org.sormas.e2etests.pages.application.events.EventDirectoryPage.EVENT_ACTIONS_TABLE_DATA;
 import static org.sormas.e2etests.pages.application.events.EventDirectoryPage.EVENT_ACTIONS_TABLE_ROW;
 import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.ADD_PATHOGEN_TEST;
-import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.ADD_PATHOGEN_TEST_BUTTON_DE;
+import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.ADD_PATHOGEN_TEST_BUTTON;
 import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.ANTIGEN_DETECTION_TEST_OPTION_BUTTON;
 import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.CELLS_IN_URINE_COMBOBOX;
 import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.CELLS_IN_URINE_INPUT;
@@ -40,12 +38,16 @@ import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.
 import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.CONJ_BILIRUBIN_INPUT;
 import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.CREATININE_INPUT;
 import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.DATE_AND_TIME_OF_RESULTS;
+import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.DATE_AND_TIME_OF_RESULTS_INPUT_FIELD;
 import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.DATE_OF_RESULT;
 import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.DATE_SAMPLE_COLLECTED;
 import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.DATE_SAMPLE_RECEIVED;
+import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.DATE_SAMPLE_RECEIVED_INPUT_FIELD;
+import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.DATE_SAMPLE_SEND_INPUT_FIELD;
 import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.DATE_TEST_REPORT;
 import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.FIELD_SAMPLE_ID_INPUT;
 import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.FINAL_LABORATORY_RESULT_COMBOBOX;
+import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.GENERIC_ERROR_POPUP;
 import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.HAEMOGLOBIN_INPUT;
 import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.HAEMOGLOBIN_IN_URINE_COMBOBOX;
 import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.HAEMOGLOBIN_IN_URINE_INPUT;
@@ -88,6 +90,7 @@ import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.
 import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.SAMPLE_TYPE_INPUT;
 import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.SAMPLE_UUID;
 import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.SAVE_SAMPLE_BUTTON;
+import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.SAVE_SAMPLE_WITH_PATHOGEN_TEST_BUTTON;
 import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.SGOT_INPUT;
 import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.SGPT_INPUT;
 import static org.sormas.e2etests.pages.application.samples.CreateNewSamplePage.SPECIMEN_CONDITION_COMBOBOX;
@@ -113,6 +116,8 @@ import static org.sormas.e2etests.pages.application.samples.SamplesDirectoryPage
 import static org.sormas.e2etests.pages.application.samples.SamplesDirectoryPage.EDIT_TEST_RESULTS_BUTTON;
 import static org.sormas.e2etests.pages.application.samples.SamplesDirectoryPage.RESULT_VERIFIED_BY_LAB_SUPERVISOR_EDIT_OPTIONS;
 import static org.sormas.e2etests.pages.application.samples.SamplesDirectoryPage.SAMPLE_EDIT_PURPOSE_OPTIONS;
+import static org.sormas.e2etests.pages.application.samples.SamplesDirectoryPage.SAMPLE_RECEIVED_CHECKBOX;
+import static org.sormas.e2etests.pages.application.samples.SamplesDirectoryPage.SAMPLE_SHIPPED_CHECKBOX;
 
 import com.github.javafaker.Faker;
 import cucumber.api.java8.En;
@@ -152,6 +157,7 @@ public class CreateNewSampleSteps implements En {
   private final WebDriverHelpers webDriverHelpers;
   private final Faker faker;
   private final BaseSteps baseSteps;
+  public static LocalDate sampleCollectionDateForFollowUpDate;
 
   @Inject
   public CreateNewSampleSteps(
@@ -207,12 +213,26 @@ public class CreateNewSampleSteps implements En {
           selectPurposeOfSample(sample.getPurposeOfTheSample(), SAMPLE_PURPOSE_OPTIONS);
           fillDateOfCollectionDE(sample.getDateOfCollection());
           selectSampleType(sample.getSampleType());
-          webDriverHelpers.clickOnWebElementBySelector(ADD_PATHOGEN_TEST_BUTTON_DE);
+          webDriverHelpers.clickOnWebElementBySelector(ADD_PATHOGEN_TEST_BUTTON);
           selectTestedDisease(sample.getTestedDisease());
           selectTestResult(sample.getSampleTestResults());
           selectLaboratory(sample.getLaboratory());
           selectResultVerifiedByLabSupervisor(
               sample.getResultVerifiedByLabSupervisor(), RESULT_VERIFIED_BY_LAB_SUPERVISOR_OPTIONS);
+        });
+    When(
+        "^I create a new Sample with only required fields for DE version$",
+        () -> {
+          sample = sampleService.buildOnlyRequiredSampleFieldsDE();
+          fillDateOfCollectionDE(sample.getDateOfCollection());
+          selectSampleType(sample.getSampleType());
+          selectLaboratory(sample.getLaboratory());
+        });
+    And(
+        "I set date of sample collection to {int} day ago in Sample form",
+        (Integer days) -> {
+          sampleCollectionDateForFollowUpDate = LocalDate.now().minusDays(days);
+          fillDateOfCollectionDE(LocalDate.now().minusDays(days));
         });
 
     When(
@@ -222,6 +242,12 @@ public class CreateNewSampleSteps implements En {
               webDriverHelpers.checkIfElementExistsInCombobox(
                   SAMPLE_TYPE_COMBOBOX, sampleMaterial));
           softly.assertAll();
+        });
+
+    When(
+        "I set Final Laboratory Result to {string} on Create new Sample page",
+        (String value) -> {
+          webDriverHelpers.selectFromCombobox(FINAL_LABORATORY_RESULT_COMBOBOX, value);
         });
 
     When(
@@ -245,8 +271,8 @@ public class CreateNewSampleSteps implements En {
           selectResultVerifiedByLabSupervisor(
               sample.getResultVerifiedByLabSupervisor(), RESULT_VERIFIED_BY_LAB_SUPERVISOR_OPTIONS);
           selectTestResult(sample.getTestResults());
-          webDriverHelpers.clickOnWebElementBySelector(SAVE_SAMPLE_BUTTON);
-          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(40);
+          webDriverHelpers.clickOnWebElementBySelector(SAVE_SAMPLE_WITH_PATHOGEN_TEST_BUTTON);
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(30);
         });
 
     When(
@@ -331,25 +357,13 @@ public class CreateNewSampleSteps implements En {
         });
 
     When(
-        "^I validate only one sample is created with two pathogen tests",
-        () -> {
-          softly.assertEquals(
-              webDriverHelpers.getNumberOfElements(EDIT_SAMPLE_BUTTON),
-              1,
-              "Number of samples is not correct");
-          softly.assertEquals(
-              webDriverHelpers.getTextFromWebElement(NUMBER_OF_TESTS_IN_SAMPLES),
-              "Number of tests: 2",
-              "Number of tests is correct!");
-          softly.assertAll();
-        });
-
-    When(
-        "^I validate the existence of two pathogen tests",
-        () -> {
+        "I validate the existence of {string} pathogen tests",
+        (String number) -> {
+          int numberInt = Integer.parseInt(number);
+          TimeUnit.SECONDS.sleep(2);
           softly.assertEquals(
               webDriverHelpers.getNumberOfElements(EDIT_PATHOGEN_TEST),
-              2,
+              numberInt,
               "Number of pathogen tests is not correct");
           softly.assertAll();
         });
@@ -418,9 +432,31 @@ public class CreateNewSampleSteps implements En {
         });
 
     When(
+        "I create a new Sample with positive test result for DE version with {string} as a labor",
+        (String option) -> {
+          sample = sampleService.buildGeneratedPositiveSampleDE();
+          selectPurposeOfSample(sample.getPurposeOfTheSample(), SAMPLE_PURPOSE_OPTIONS);
+          fillDateOfCollectionDE(sample.getDateOfCollection());
+          selectSampleType(sample.getSampleType());
+          webDriverHelpers.clickOnWebElementBySelector(ADD_PATHOGEN_TEST_BUTTON);
+          selectTestedDisease(sample.getTestedDisease());
+          selectTestResult(sample.getSampleTestResults());
+          selectTypeOfTest("Kultur");
+          selectLaboratory(option);
+          selectResultVerifiedByLabSupervisor(
+              sample.getResultVerifiedByLabSupervisor(), RESULT_VERIFIED_BY_LAB_SUPERVISOR_OPTIONS);
+        });
+
+    When(
         "^I save the created sample",
         () -> {
           webDriverHelpers.clickOnWebElementBySelector(SAVE_SAMPLE_BUTTON);
+        });
+
+    When(
+        "^I save the created sample with pathogen test",
+        () -> {
+          webDriverHelpers.clickOnWebElementBySelector(SAVE_SAMPLE_WITH_PATHOGEN_TEST_BUTTON);
         });
 
     When(
@@ -680,11 +716,19 @@ public class CreateNewSampleSteps implements En {
         });
 
     When(
+        "I confirm to create case for selected disease",
+        () -> {
+          webDriverHelpers.waitUntilElementIsVisibleAndClickable(CONFIRM_BUTTON);
+          webDriverHelpers.clickOnWebElementBySelector(CONFIRM_BUTTON);
+        });
+
+    When(
         "I confirm case with positive test result",
         () -> {
           webDriverHelpers.waitUntilElementIsVisibleAndClickable(CONFIRM_BUTTON);
           webDriverHelpers.clickOnWebElementBySelector(CONFIRM_BUTTON);
         });
+
     When(
         "I confirm the Create case from event participant with positive test result",
         () -> {
@@ -722,6 +766,63 @@ public class CreateNewSampleSteps implements En {
           softly.assertAll();
         });
 
+    And(
+        "I select Sent dispatched checkbox in new sample page",
+        () -> {
+          webDriverHelpers.waitUntilElementIsVisibleAndClickable(SAMPLE_SHIPPED_CHECKBOX);
+          webDriverHelpers.clickOnWebElementBySelector(SAMPLE_SHIPPED_CHECKBOX);
+        });
+
+    And(
+        "I select Received checkbox in new sample page",
+        () -> {
+          webDriverHelpers.waitUntilElementIsVisibleAndClickable(SAMPLE_RECEIVED_CHECKBOX);
+          webDriverHelpers.clickOnWebElementBySelector(SAMPLE_RECEIVED_CHECKBOX);
+        });
+
+    Then(
+        "I check is Sent dispatched Date and Received Date fields required",
+        () -> {
+          webDriverHelpers.waitUntilIdentifiedElementIsPresent(DATE_SAMPLE_SEND_INPUT_FIELD);
+          webDriverHelpers.waitUntilIdentifiedElementIsPresent(DATE_SAMPLE_RECEIVED_INPUT_FIELD);
+        });
+
+    And(
+        "I click Add Pathogen test in Sample creation page",
+        () -> webDriverHelpers.clickOnWebElementBySelector(ADD_PATHOGEN_TEST_BUTTON));
+
+    And(
+        "I check DATE AND TIME OF RESULT field",
+        () -> {
+          TimeUnit.SECONDS.sleep(10);
+          webDriverHelpers.getWebElement(DATE_AND_TIME_OF_RESULTS_INPUT_FIELD);
+        });
+
+    And(
+        "I click on save sample button",
+        () -> {
+          webDriverHelpers.clickOnWebElementBySelector(SAVE_SAMPLE_BUTTON);
+        });
+
+    Then(
+        "I check error popup message in German",
+        () -> {
+          webDriverHelpers.waitUntilIdentifiedElementIsPresent(GENERIC_ERROR_POPUP);
+          List<String> popupExpected =
+              List.of(
+                  "Bitte überprüfen Sie die Eingabedaten",
+                  "Labor",
+                  "Art des Tests",
+                  "Ergebnis verifiziert von Laborleitung");
+          webDriverHelpers.checkIsPopupContainsList(GENERIC_ERROR_POPUP, popupExpected);
+        });
+
+    When(
+        "I check if error popup contains {string}",
+        (String str) -> {
+          webDriverHelpers.checkWebElementContainsText(GENERIC_ERROR_POPUP, str);
+        });
+
     When(
         "I confirm update case result",
         () -> webDriverHelpers.clickOnWebElementBySelector(ACTION_CONFIRM_POPUP_BUTTON));
@@ -729,6 +830,29 @@ public class CreateNewSampleSteps implements En {
     When(
         "I check if Update case disease variant popup is available",
         () -> webDriverHelpers.isElementVisibleWithTimeout(UPDATE_CASE_DISEASE_VARIANT, 10));
+
+    When(
+        "I create sample with {string} as a Laboratory",
+        (String labor) -> {
+          sample = sampleService.buildSampleWithParametrizedLaboratory(labor);
+          selectPurposeOfSample(sample.getPurposeOfTheSample(), SAMPLE_PURPOSE_OPTIONS);
+          fillDateOfCollection(sample.getDateOfCollection());
+          fillTimeOfCollection(sample.getTimeOfCollection());
+          selectSampleType(sample.getSampleType());
+          selectLaboratory(sample.getLaboratory());
+        });
+
+    When(
+        "I click on edit pathogen button",
+        () -> webDriverHelpers.clickOnWebElementBySelector(EDIT_PATHOGEN_TEST_BUTTON));
+
+    And(
+        "^I click on yes in Confirm case popup window$",
+        () -> {
+          TimeUnit.SECONDS.sleep(2); // wait for popup to load
+          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(CONFIRM_BUTTON);
+          webDriverHelpers.clickOnWebElementBySelector(CONFIRM_BUTTON);
+        });
   }
 
   private void selectPurposeOfSample(String samplePurpose, By element) {

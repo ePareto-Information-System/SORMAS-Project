@@ -52,6 +52,25 @@ public class EventService {
         .build();
   }
 
+  public Event buildGeneratedEventWithCorrectRegionAndDisctrictDE() {
+    String timestamp = String.valueOf(System.currentTimeMillis());
+    return Event.builder()
+        .eventStatus("EREIGNIS")
+        .investigationStatus("UNTERSUCHUNG AUSSTEHEND")
+        .eventManagementStatus("FORTLAUFEND")
+        .disease(DiseasesValues.CORONAVIRUS.getDiseaseCaption())
+        .title("EVENT_AUTOMATION_" + timestamp + faker.address().city())
+        .eventDate(LocalDate.now().minusDays(2))
+        .reportDate(LocalDate.now().minusDays(1))
+        .eventLocation("Zuhause")
+        .riskLevel("Geringes Risiko")
+        .sourceType("Nicht erhoben")
+        .region("Bremen")
+        .district("SK Bremen")
+        .community(CommunityValues.VoreingestellteGemeinde.getName())
+        .build();
+  }
+
   public Event buildGeneratedEventWithCreatedFacilityDE(
       String facilityCategory, String facilityType, String facilityName) {
     String timestamp = String.valueOf(System.currentTimeMillis());
@@ -127,6 +146,17 @@ public class EventService {
         .eventLocation("Public place")
         .riskLevel("High risk")
         .sourceType("Mathematical model")
+        .build();
+  }
+
+  public Event buildClusterWithMandatoryFields() {
+    String timestamp = String.valueOf(System.currentTimeMillis());
+    return Event.builder()
+        .eventStatus("CLUSTER")
+        .reportDate(LocalDate.now())
+        .title("EVENT_AUTOMATION_" + timestamp + faker.address().city())
+        .region("Berlin")
+        .district("SK Berlin Mitte")
         .build();
   }
 

@@ -123,7 +123,7 @@ public class DashboardFacadeEjb implements DashboardFacade {
 	@RightsAllowed({
 		UserRight._DASHBOARD_SURVEILLANCE_VIEW,
 		UserRight._DASHBOARD_CONTACT_VIEW })
-	public Map<PathogenTestResultType, Long> getTestResultCountByResultType(DashboardCriteria dashboardCriteria) {
+	public Map<PathogenTestResultType, Long> getNewCasesFinalLabResultCountByResultType(DashboardCriteria dashboardCriteria) {
 		return dashboardService.getNewTestResultCountByResultType(dashboardCriteria);
 	}
 
@@ -747,7 +747,8 @@ public class DashboardFacadeEjb implements DashboardFacade {
 		List<Disease> diseases = diseaseConfigurationFacade.getAllDiseases(true, true, true);
 
 		//new cases
-		DashboardCriteria dashboardCriteria = new DashboardCriteria().region(region)
+		DashboardCriteria dashboardCriteria = new DashboardCriteria()
+				.region(region)
 			.district(district)
 			.newCaseDateType(newCaseDateType)
 			.dateBetween(fromDate, toDate)

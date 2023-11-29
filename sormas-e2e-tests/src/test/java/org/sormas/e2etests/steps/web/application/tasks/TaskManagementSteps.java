@@ -18,17 +18,37 @@
 
 package org.sormas.e2etests.steps.web.application.tasks;
 
+import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.LEAVE_BULK_EDIT_MODE;
 import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.TOTAL_CASES_COUNTER;
+import static org.sormas.e2etests.pages.application.cases.EditCasePage.ARCHIVE_CASE_BUTTON;
+import static org.sormas.e2etests.pages.application.configuration.CommunitiesTabPage.CONFIRM_ARCHIVING_COMMUNITY_TEXT;
+import static org.sormas.e2etests.pages.application.configuration.CommunitiesTabPage.CONFIRM_ARCHIVING_YES_BUTTON;
+import static org.sormas.e2etests.pages.application.configuration.CommunitiesTabPage.CONFIRM_DEARCHIVING_COMMUNITY_TEXT;
+import static org.sormas.e2etests.pages.application.contacts.EditContactPage.NOTIFICATION_CAPTION_MESSAGE_POPUP;
+import static org.sormas.e2etests.pages.application.contacts.EditContactPage.NOTIFICATION_DESCRIPTION_MESSAGE_POPUP;
 import static org.sormas.e2etests.pages.application.contacts.EditContactPage.POPUP_YES_BUTTON;
-import static org.sormas.e2etests.pages.application.entries.TravelEntryPage.TRAVEL_ENTRY_DIRECTORY_PAGE_SHOW_MORE_FILTERS_BUTTON;
 import static org.sormas.e2etests.pages.application.events.EventDirectoryPage.APPLY_FILTER;
 import static org.sormas.e2etests.pages.application.events.EventDirectoryPage.BULK_ACTIONS_EVENT_DIRECTORY;
+import static org.sormas.e2etests.pages.application.events.EventDirectoryPage.EVENT_STATUS_FILTER_COMBOBOX;
 import static org.sormas.e2etests.pages.application.events.EventDirectoryPage.RESET_FILTER;
 import static org.sormas.e2etests.pages.application.events.EventDirectoryPage.getByEventUuid;
+import static org.sormas.e2etests.pages.application.immunizations.EditImmunizationPage.ACTION_CANCEL_BUTTON;
+import static org.sormas.e2etests.pages.application.samples.SamplesDirectoryPage.CONFIRM_BUTTON;
 import static org.sormas.e2etests.pages.application.tasks.CreateNewTaskPage.*;
 import static org.sormas.e2etests.pages.application.tasks.TaskManagementPage.*;
 
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.exceptions.CsvException;
 import cucumber.api.java8.En;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -45,6 +65,7 @@ import org.openqa.selenium.WebElement;
 import org.sormas.e2etests.entities.pojo.web.Task;
 import org.sormas.e2etests.helpers.AssertHelpers;
 import org.sormas.e2etests.helpers.WebDriverHelpers;
+import org.sormas.e2etests.pages.application.tasks.TaskManagementPage;
 import org.sormas.e2etests.state.ApiState;
 import org.sormas.e2etests.steps.BaseSteps;
 import org.sormas.e2etests.steps.web.application.cases.EditCaseSteps;
@@ -57,6 +78,7 @@ public class TaskManagementSteps implements En {
   private final WebDriverHelpers webDriverHelpers;
   private final BaseSteps baseSteps;
   private List<Task> taskTableRows;
+  private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
   @Inject
   public TaskManagementSteps(
@@ -76,13 +98,29 @@ public class TaskManagementSteps implements En {
     And(
         "I click on SHOW MORE FILTERS BUTTON on Task directory page",
         () -> {
-          webDriverHelpers.clickOnWebElementBySelector(
-              TRAVEL_ENTRY_DIRECTORY_PAGE_SHOW_MORE_FILTERS_BUTTON);
-          TimeUnit.SECONDS.sleep(3);
+          TimeUnit.SECONDS.sleep(2); // weak performance
+          webDriverHelpers.waitUntilElementIsVisibleAndClickable(SHOW_MORE_FILTERS);
+          webDriverHelpers.clickOnWebElementBySelector(SHOW_MORE_FILTERS);
+          TimeUnit.SECONDS.sleep(4);
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(40);
         });
 
     When(
         "^I open last created task from Tasks Directory$",
+        () -> {
+          webDriverHelpers.clickOnWebElementBySelector(SHOW_MORE_FILTERS);
+          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(
+              ASSIGNED_USER_FILTER_INPUT);
+          String assignedUser = CreateNewTaskSteps.task.getAssignedTo();
+          webDriverHelpers.fillInWebElement(ASSIGNED_USER_FILTER_INPUT, assignedUser);
+          webDriverHelpers.clickOnWebElementBySelector(APPLY_FILTER);
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(60);
+          webDriverHelpers.clickOnWebElementBySelector(
+              getLastCreatedEditTaskButton(CreateNewTaskSteps.task.getCommentsOnExecution()));
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(60);
+        });
+    When(
+        "^I filter out last created task from Tasks Directory$",
         () -> {
           By lastTaskEditButton =
               By.xpath(
@@ -94,9 +132,6 @@ public class TaskManagementSteps implements En {
           String assignedUser = CreateNewTaskSteps.task.getAssignedTo();
           webDriverHelpers.fillInWebElement(ASSIGNED_USER_FILTER_INPUT, assignedUser);
           webDriverHelpers.clickOnWebElementBySelector(APPLY_FILTER);
-          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(lastTaskEditButton, 40);
-          webDriverHelpers.clickElementSeveralTimesUntilNextElementIsDisplayed(
-              lastTaskEditButton, TASK_STATUS_OPTIONS, 6);
         });
 
     When(
@@ -117,6 +152,16 @@ public class TaskManagementSteps implements En {
           webDriverHelpers.clickOnWebElementBySelector(lastTaskEditButton);
           webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(
               COMMENTS_ON_EXECUTION_TEXTAREA);
+        });
+
+    When(
+        "^I search task by last Case created via API UUID$",
+        () -> {
+          String lastCreatedCaseUUID = apiState.getCreatedCase().getUuid();
+          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(
+              GENERAL_SEARCH_INPUT, 50);
+          webDriverHelpers.fillAndSubmitInWebElement(GENERAL_SEARCH_INPUT, lastCreatedCaseUUID);
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(50);
         });
 
     When(
@@ -142,6 +187,18 @@ public class TaskManagementSteps implements En {
         });
 
     When(
+        "I check if popup message is {string}",
+        (String expectedText) -> {
+          webDriverHelpers.waitUntilIdentifiedElementIsPresent(
+              NOTIFICATION_DESCRIPTION_MESSAGE_POPUP);
+          softly.assertEquals(
+              webDriverHelpers.getTextFromPresentWebElement(NOTIFICATION_DESCRIPTION_MESSAGE_POPUP),
+              expectedText,
+              "Bulk action went wrong");
+          softly.assertAll();
+        });
+
+    When(
         "^I check displayed task's context is ([^\"]*)$",
         (String taskContext) -> {
           taskTableRows.forEach(
@@ -151,6 +208,24 @@ public class TaskManagementSteps implements En {
               });
           softly.assertAll();
         });
+
+    When(
+        "^I check displayed tasks District and Region are taken from API created Case$",
+        () -> {
+          taskTableRows.forEach(
+              data -> {
+                softly.assertEquals(
+                    data.getRegion(),
+                    apiState.getCreatedCase().getRegion().getCaption(),
+                    "Task region is not the same with Case region");
+                softly.assertEquals(
+                    data.getDistrict(),
+                    apiState.getCreatedCase().getDistrict().getCaption(),
+                    "Task district is not the same with Case district");
+              });
+          softly.assertAll();
+        });
+
     When(
         "^I check displayed task's context of first result is ([^\"]*)$",
         (String taskContext) -> {
@@ -228,8 +303,12 @@ public class TaskManagementSteps implements En {
     When(
         "^I select first (\\d+) results in grid in Task Directory$",
         (Integer number) -> {
-          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(40);
+          webDriverHelpers.waitForPageLoaded();
+          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(
+              LEAVE_BULK_EDIT_MODE, 50);
           for (int i = 2; i <= number + 1; i++) {
+            webDriverHelpers.waitUntilElementIsVisibleAndClickable(
+                getCheckboxByIndex(String.valueOf(i)));
             webDriverHelpers.scrollToElement(getCheckboxByIndex(String.valueOf(i)));
             webDriverHelpers.clickOnWebElementBySelector(getCheckboxByIndex(String.valueOf(i)));
           }
@@ -242,21 +321,32 @@ public class TaskManagementSteps implements En {
           webDriverHelpers.waitForPageLoadingSpinnerToDisappear(40);
         });
     When(
-        "I check if popup message is {string}",
+        "I check if popup message for archiving is {string}",
         (String expectedText) -> {
+          webDriverHelpers.waitUntilIdentifiedElementIsPresent(NOTIFICATION_CAPTION_MESSAGE_POPUP);
           softly.assertEquals(
-              webDriverHelpers.getTextFromPresentWebElement(
-                  By.cssSelector(".v-Notification-description")),
+              webDriverHelpers.getTextFromPresentWebElement(NOTIFICATION_CAPTION_MESSAGE_POPUP),
               expectedText,
               "Bulk action went wrong");
           softly.assertAll();
         });
+
     When(
-        "I check if popup message after bulk edit is {string}",
+        "I check if popup message for deleting is {string}",
         (String expectedText) -> {
+          webDriverHelpers.waitUntilIdentifiedElementIsPresent(NOTIFICATION_CAPTION_MESSAGE_POPUP);
           softly.assertEquals(
-              webDriverHelpers.getTextFromPresentWebElement(
-                  By.cssSelector(".v-Notification-caption")),
+              webDriverHelpers.getTextFromPresentWebElement(NOTIFICATION_CAPTION_MESSAGE_POPUP),
+              expectedText,
+              "Bulk action went wrong");
+          softly.assertAll();
+        });
+    And(
+        "I check if popup message from Edit Task Form after bulk edit is {string}",
+        (String expectedText) -> {
+          webDriverHelpers.waitUntilElementIsVisibleAndClickable(NOTIFICATION_POPUP);
+          softly.assertEquals(
+              webDriverHelpers.getTextFromPresentWebElement(NOTIFICATION_POPUP),
               expectedText,
               "Bulk edit went wrong");
           softly.assertAll();
@@ -279,6 +369,12 @@ public class TaskManagementSteps implements En {
         () -> {
           webDriverHelpers.clickOnWebElementBySelector(CHANGE_ASSIGNEE_CHECKBOX);
           webDriverHelpers.selectFromCombobox(TASK_ASSIGNEE_COMBOBOX, "Surveillance SUPERVISOR");
+        });
+    And(
+        "I click the Change assignee Checkbox in the Edit Task Form",
+        () -> {
+          webDriverHelpers.waitUntilElementIsVisibleAndClickable(CHANGE_ASSIGNEE_CHECKBOX);
+          webDriverHelpers.clickOnWebElementBySelector(CHANGE_ASSIGNEE_CHECKBOX);
         });
     When(
         "I click to bulk change priority for selected tasks",
@@ -399,6 +495,295 @@ public class TaskManagementSteps implements En {
                           .createdBy(tableRow.get(ColumnHeaders.CREATED_BY.toString()))
                           .build()));
         });
+
+    And(
+        "I click Export button in Task Directory",
+        () -> {
+          TimeUnit.SECONDS.sleep(2);
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(40);
+          webDriverHelpers.waitUntilElementIsVisibleAndClickable(TASK_EXPORT_BUTTON);
+          webDriverHelpers.doubleClickOnWebElementBySelector(TASK_EXPORT_BUTTON);
+        });
+
+    When(
+        "I click on the Detailed Task Export button",
+        () -> {
+          webDriverHelpers.waitUntilElementIsVisibleAndClickable(DETAILED_EXPORT_BUTTON);
+          String file = "./downloads/sormas_tasks_" + LocalDate.now().format(formatter) + "_.csv";
+
+          Path file_path = Paths.get(file);
+          if (webDriverHelpers.isFileExists(file_path)) {
+            Files.delete(file_path);
+          }
+          TimeUnit.SECONDS.sleep(8); // wait for basic download if in parallel
+          webDriverHelpers.clickOnWebElementBySelector(DETAILED_EXPORT_BUTTON);
+          TimeUnit.SECONDS.sleep(8); // wait for download start
+          webDriverHelpers.waitForFileExists(file_path, 120);
+        });
+
+    When(
+        "I click on the Custom Event Export button",
+        () -> {
+          TimeUnit.SECONDS.sleep(8); // wait for basic download if in parallel
+          webDriverHelpers.clickOnWebElementBySelector(CUSTOM_EXPORT_BUTTON);
+          TimeUnit.SECONDS.sleep(2); // wait for load
+        });
+
+    When(
+        "I click on the New Export Configuration button in Custom Task Export popup",
+        () -> webDriverHelpers.clickOnWebElementBySelector(NEW_CUSTOM_EXPORT_BUTTON));
+
+    Then(
+        "I fill Configuration Name field in Custom Task Export popup with ([^\"]*) name",
+        (String customExportName) -> {
+          String configurationName;
+          if (customExportName.equals("generated")) {
+            configurationName = String.format("generated_%s", LocalDate.now().toString());
+          } else {
+            configurationName = customExportName;
+          }
+          webDriverHelpers.fillInWebElement(
+              CUSTOM_EXPORT_CONFIGURATION_NAME_INPUT, configurationName);
+        });
+
+    And(
+        "I open last created Custom Export Configuration in Custom Export page",
+        () -> webDriverHelpers.clickOnWebElementBySelector(CUSTOM_TASK_EXPORT_EDIT_BUTTON));
+
+    And(
+        "I add {string} data to export in existing Export Configuration for Custom Task Export",
+        (String customExportConfigurationCheckbox) -> {
+          System.out.println(getCustomExportCheckboxByText(customExportConfigurationCheckbox));
+          webDriverHelpers.clickOnWebElementBySelector(
+              getCustomExportCheckboxByText(customExportConfigurationCheckbox));
+        });
+    And(
+        "I save Export Configuration for Custom Task Export",
+        () -> webDriverHelpers.clickOnWebElementBySelector(SAVE_CUSTOM_EXPORT_BUTTON));
+
+    When(
+        "I download last created custom task export file",
+        () -> {
+          String file = "./downloads/sormas_tasks_" + LocalDate.now().format(formatter) + "_.csv";
+          Path file_path = Paths.get(file);
+          if (webDriverHelpers.isFileExists(file_path)) {
+            Files.delete(file_path);
+          }
+          webDriverHelpers.clickOnWebElementBySelector(CUSTOM_TASK_EXPORT_DOWNLOAD_BUTTON);
+          webDriverHelpers.waitForFileExists(file_path, 120);
+          Assert.assertTrue(webDriverHelpers.isFileExists(file_path));
+        });
+
+    When(
+        "I check if downloaded data generated by detailed task export option is correct",
+        () -> {
+          String file = "./downloads/sormas_tasks_" + LocalDate.now().format(formatter) + "_.csv";
+          Task reader = parseDetailedTaskExport(file);
+          Path path = Paths.get(file);
+          Files.delete(path);
+
+          softly.assertEquals(
+              reader.getTaskContext().toLowerCase(),
+              String.format("taskContext").toLowerCase(),
+              "Task Contexts are not equal");
+          softly.assertEquals(
+              reader.getTaskType().toLowerCase(),
+              String.format("taskType").toLowerCase(),
+              "Task types are not equal");
+          softly.assertEquals(
+              reader.getPriority().toLowerCase(),
+              String.format("priority").toLowerCase(),
+              "Priority are not equal");
+          softly.assertEquals(
+              reader.getTaskStatus().toLowerCase(),
+              String.format("taskStatus").toLowerCase(),
+              "Taks statuses are not equal");
+
+          softly.assertAll();
+        });
+
+    When(
+        "I check if downloaded data generated by new custom task export option is correct",
+        () -> {
+          String file = "./downloads/sormas_tasks_" + LocalDate.now().format(formatter) + "_.csv";
+          Task reader = parseNewCustomTaskExport(file);
+          Path path = Paths.get(file);
+          Files.delete(path);
+          softly.assertEquals(
+              reader.getTaskContext().toLowerCase(),
+              String.format("taskContext").toLowerCase(),
+              "Task Contexts field missed with expected");
+          softly.assertAll();
+        });
+
+    When(
+        "I check if downloaded data generated by edited custom task export option is correct",
+        () -> {
+          String file = "./downloads/sormas_tasks_" + LocalDate.now().format(formatter) + "_.csv";
+          Task reader = parseEditCustomTaskExport(file);
+          Path path = Paths.get(file);
+          Files.delete(path);
+          softly.assertEquals(
+              reader.getTaskContext().toLowerCase(),
+              String.format("taskContext").toLowerCase(),
+              "Task Contexts field missed with expected");
+          softly.assertEquals(
+              reader.getTaskType().toLowerCase(),
+              String.format("taskType").toLowerCase(),
+              "Task Contexts field missed with expected");
+          softly.assertAll();
+        });
+
+    And(
+        "I delete last created custom task export config",
+        () -> {
+          String export_id =
+              webDriverHelpers.getAttributeFromWebElement(CUSTOM_TASK_EXPORT_DELETE_BUTTON, "id");
+          webDriverHelpers.clickOnWebElementBySelector(CUSTOM_TASK_EXPORT_DELETE_BUTTON);
+          Assert.assertFalse(
+              webDriverHelpers.isElementVisibleWithTimeout(getCustomExportByID(export_id), 1));
+        });
+
+    And(
+        "I click on edit task icon of the {int} displayed task on Task Directory page",
+        (Integer taskNumber) -> {
+          webDriverHelpers.clickOnWebElementBySelector(
+              TaskManagementPage.getEditTaskButtonByNumber(taskNumber));
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(30);
+        });
+
+    When(
+        "I click on the Archive task button",
+        () -> {
+          webDriverHelpers.scrollToElement(ARCHIVE_CASE_BUTTON);
+          webDriverHelpers.clickOnWebElementBySelector(ARCHIVE_CASE_BUTTON);
+        });
+
+    When(
+        "I click on No option in popup window",
+        () -> webDriverHelpers.clickOnWebElementBySelector(ACTION_CANCEL_BUTTON));
+
+    And(
+        "^I click on yes in archive task popup window$",
+        () -> {
+          TimeUnit.SECONDS.sleep(2); // wait for popup to load
+          webDriverHelpers.isElementVisibleWithTimeout(CONFIRM_ARCHIVING_COMMUNITY_TEXT, 10);
+          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(CONFIRM_BUTTON);
+          webDriverHelpers.clickOnWebElementBySelector(CONFIRM_BUTTON);
+          TimeUnit.SECONDS.sleep(2); // wait for reaction
+        });
+
+    And(
+        "I apply {string} to combobox on Task Directory Page",
+        (String taskParameter) -> {
+          webDriverHelpers.selectFromCombobox(EVENT_STATUS_FILTER_COMBOBOX, taskParameter);
+          TimeUnit.SECONDS.sleep(2);
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(40);
+        });
+
+    When(
+        "^I open last created task from Tasks Directory without click on show more filters$",
+        () -> {
+          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(
+              ASSIGNED_USER_FILTER_INPUT);
+          String assignedUser = CreateNewTaskSteps.task.getAssignedTo();
+          webDriverHelpers.fillInWebElement(ASSIGNED_USER_FILTER_INPUT, assignedUser);
+          webDriverHelpers.clickOnWebElementBySelector(APPLY_FILTER);
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(60);
+          webDriverHelpers.clickOnWebElementBySelector(
+              getLastCreatedEditTaskButton(CreateNewTaskSteps.task.getCommentsOnExecution()));
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(60);
+        });
+
+    When(
+        "I click on De-Archive task button",
+        () -> {
+          webDriverHelpers.scrollToElement(ARCHIVE_CASE_BUTTON);
+          webDriverHelpers.clickOnWebElementBySelector(ARCHIVE_CASE_BUTTON);
+        });
+
+    When(
+        "I click on yes in de-archive task popup window",
+        () -> {
+          webDriverHelpers.waitUntilElementIsVisibleAndClickable(
+              CONFIRM_DEARCHIVING_COMMUNITY_TEXT);
+          webDriverHelpers.clickOnWebElementBySelector(CONFIRM_ARCHIVING_YES_BUTTON);
+        });
+  }
+
+  public Task parseDetailedTaskExport(String fileName) {
+    List<String[]> r = null;
+    String[] values = new String[] {};
+    Task builder = null;
+    CSVParser csvParser = new CSVParserBuilder().withSeparator(',').build();
+    try (CSVReader reader =
+        new CSVReaderBuilder(new FileReader(fileName))
+            .withCSVParser(csvParser)
+            .withSkipLines(0) // parse only data
+            .build()) {
+      r = reader.readAll();
+    } catch (IOException e) {
+      log.error("IOException parseDetailedTaskExport: {}", e.getCause());
+    } catch (CsvException e) {
+      log.error("CsvException parseDetailedTaskExport: {}", e.getCause());
+    }
+    try {
+      values = r.get(0);
+      builder =
+          Task.builder()
+              .taskContext(values[1])
+              .taskType(values[5])
+              .priority(values[6])
+              .taskStatus(values[9])
+              .build();
+    } catch (NullPointerException e) {
+      log.error("Null pointer exception parseCustomTaskExport: {}", e.getCause());
+    }
+    return builder;
+  }
+
+  public Task parseNewCustomTaskExport(String fileName) {
+    List<String[]> r = null;
+    String[] values = new String[] {};
+    Task builder = null;
+    CSVParser csvParser = new CSVParserBuilder().withSeparator(',').build();
+    try (CSVReader reader =
+        new CSVReaderBuilder(new FileReader(fileName)).withCSVParser(csvParser).build()) {
+      r = reader.readAll();
+    } catch (IOException e) {
+      log.error("IOException parseDetailedTaskExport: {}", e.getCause());
+    } catch (CsvException e) {
+      log.error("CsvException parseDetailedTaskExport: {}", e.getCause());
+    }
+    try {
+      values = r.get(0);
+      builder = Task.builder().taskContext(values[0]).build();
+    } catch (NullPointerException e) {
+      log.error("Null pointer exception parseCustomTaskExport: {}", e.getCause());
+    }
+    return builder;
+  }
+
+  public Task parseEditCustomTaskExport(String fileName) {
+    List<String[]> r = null;
+    String[] values = new String[] {};
+    Task builder = null;
+    CSVParser csvParser = new CSVParserBuilder().withSeparator(',').build();
+    try (CSVReader reader =
+        new CSVReaderBuilder(new FileReader(fileName)).withCSVParser(csvParser).build()) {
+      r = reader.readAll();
+    } catch (IOException e) {
+      log.error("IOException parseDetailedTaskExport: {}", e.getCause());
+    } catch (CsvException e) {
+      log.error("CsvException parseDetailedTaskExport: {}", e.getCause());
+    }
+    try {
+      values = r.get(0);
+      builder = Task.builder().taskContext(values[0]).taskType(values[1]).build();
+    } catch (NullPointerException e) {
+      log.error("Null pointer exception parseCustomTaskExport: {}", e.getCause());
+    }
+    return builder;
   }
 
   private List<Map<String, String>> getTableRowsData() {

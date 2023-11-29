@@ -81,12 +81,10 @@ public class EventDirectoryPage {
   public static final By LINKED_EVENT_GROUP_ID =
       By.xpath("//div[@location = 'event-groups']//div[contains(@class, 'v-slot')]//a");
   public static final By SAVE_BUTTON_IN_LINK_FORM = By.cssSelector(".popupContent #commit");
+  public static final By CHOOSE_OR_CREATE_EVENT_HEADER_DE =
+      By.cssSelector("//*[text()='Ereignisse ausw\u00E4hlen oder erstellen']");
   public static final By FILTERED_EVENT_LINK_EVENT_FORM = By.xpath("//tr[@role='row']");
   public static final By FIRST_EVENT_GROUP = By.xpath("//tr[@role='row']");
-  /*public static By getByEventUuid(String eventUuid) {
-    return By.cssSelector("a[title=" + eventUuid + "]");
-  }*/
-
   public static final By EVENT_GROUP_ID_IN_GRID = By.xpath("//tr[@role='row']//td[15]/a");
   public static final By FIRST_EVENT_ID_BUTTON = By.cssSelector(".v-grid-row-has-data a[title]");
   public static final By CREATE_CASE_BUTTON =
@@ -114,7 +112,7 @@ public class EventDirectoryPage {
   public static final By IMPORT_BUTTON = By.cssSelector("div#actionImport");
   public static final By IMPORT_POPUP_BUTTON = By.cssSelector("[class='v-button']");
   public static final By IMPORT_SUCCESS = By.xpath("//*[text()='Import successful!']");
-  public static final By IMPORT_POPUP_CLOSE_BUTTON = By.cssSelector(".popupContent #actionCancel");
+  public static final By IMPORT_POPUP_CLOSE_BUTTON = By.cssSelector(".popupContent #actionClose");
   public static final By IMPORT_WINDOW_CLOSE_BUTTON = By.cssSelector("[class='v-window-closebox']");
   public static final By EVENT_REGION_COMBOBOX_INPUT = By.cssSelector("#region div");
   public static final By EVENT_DISTRICT_COMBOBOX_INPUT = By.cssSelector("#district div");
@@ -142,6 +140,9 @@ public class EventDirectoryPage {
       By.cssSelector(".popupContent [class='v-filterselect v-widget'] input");
   public static final By VALUE_SEPARATOR_COMBOBOX =
       By.cssSelector(".popupContent [class='v-filterselect-button']");
+  public static final By EVENT_PARTICIPANT_VACCINATION_STATUS_FILTER_COMBOBOX =
+      By.cssSelector("[id='vaccinationStatus'] [class='v-filterselect-button']");
+  public static final By EVENT_ARCHIVED_POPUP = By.cssSelector(".v-Notification-caption");
 
   public static By VALUE_SEPARATOR_COMBOBOX_LIST(String option) {
     return By.xpath("//div[@id='VAADIN_COMBOBOX_OPTIONLIST']//*[text()='" + option + "']");
@@ -164,5 +165,9 @@ public class EventDirectoryPage {
 
   public static By getByShortEventUuid(String eventUuid) {
     return By.xpath(String.format("//*[contains(text(), '%s')]", eventUuid));
+  }
+
+  public static By getVaccinationStatusEventParticipantByText(String status) {
+    return By.xpath(String.format("//td[contains(text(), '%s')]", status));
   }
 }

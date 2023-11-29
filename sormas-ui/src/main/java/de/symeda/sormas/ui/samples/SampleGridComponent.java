@@ -19,6 +19,7 @@ package de.symeda.sormas.ui.samples;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -37,7 +38,6 @@ import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.v7.ui.ComboBox;
-import com.vaadin.v7.ui.TextField;
 
 import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.i18n.Captions;
@@ -101,8 +101,7 @@ public class SampleGridComponent extends VerticalLayout {
 		gridLayout.addComponent(createFilterBar());
 		gridLayout.addComponent(createShipmentFilterBar());
 		gridLayout.addComponent(grid);
-		grid.setDataProviderListener(e -> updateStatusButtons());
-		grid.getDataProvider().addDataProviderListener(e -> updateStatusButtons());
+		grid.addDataSizeChangeListener(e -> updateStatusButtons());
 
 		styleGridLayout(gridLayout);
 		gridLayout.setMargin(true);
@@ -180,12 +179,20 @@ public class SampleGridComponent extends VerticalLayout {
 			if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW)) {
 				relevanceStatusFilter = ComboBoxHelper.createComboBoxV7();
 				relevanceStatusFilter.setId("relevanceStatusFilter");
-				relevanceStatusFilter.setWidth(140, Unit.PERCENTAGE);
+				relevanceStatusFilter.setWidth(220, Unit.PIXELS);
 				relevanceStatusFilter.setNullSelectionAllowed(false);
 				relevanceStatusFilter.addItems((Object[]) EntityRelevanceStatus.values());
 				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ACTIVE, I18nProperties.getCaption(Captions.sampleActiveSamples));
 				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ARCHIVED, I18nProperties.getCaption(Captions.sampleArchivedSamples));
-				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ALL, I18nProperties.getCaption(Captions.sampleAllSamples));
+				relevanceStatusFilter
+					.setItemCaption(EntityRelevanceStatus.ACTIVE_AND_ARCHIVED, I18nProperties.getCaption(Captions.sampleAllActiveAndArchivedSamples));
+
+				if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_DELETE)) {
+					relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.DELETED, I18nProperties.getCaption(Captions.sampleDeletedSamples));
+				} else {
+					relevanceStatusFilter.removeItem(EntityRelevanceStatus.DELETED);
+				}
+
 				relevanceStatusFilter.addValueChangeListener(e -> {
 					criteria.relevanceStatus((EntityRelevanceStatus) e.getProperty().getValue());
 					samplesView.navigateTo(criteria);
@@ -197,18 +204,48 @@ public class SampleGridComponent extends VerticalLayout {
 //			if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS_CASE_SAMPLES)) {
 			if (addBulkOperationsDropdown(actionButtonsLayout)) {
 				shipmentFilterLayout.setWidth(100, Unit.PERCENTAGE);
+
+				if (criteria.getRelevanceStatus() != EntityRelevanceStatus.DELETED) {
+					bulkOperationsDropdown = MenuBarHelper.createDropDown(
+						Captions.bulkActions,
+						new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkDelete), VaadinIcons.TRASH, selectedItem -> {
+							ControllerProvider.getSampleController()
+								.deleteAllSelectedItems(grid.asMultiSelect().getSelectedItems(), grid, () -> samplesView.navigateTo(criteria));
+						}));
+				} else {
+					bulkOperationsDropdown = MenuBarHelper.createDropDown(
+						Captions.bulkActions,
+						new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkRestore), VaadinIcons.ARROW_BACKWARD, selectedItem -> {
+							ControllerProvider.getSampleController()
+								.restoreSelectedSamples(grid.asMultiSelect().getSelectedItems(), grid, () -> samplesView.navigateTo(criteria));
+						}));
+				}
+
+				bulkOperationsDropdown.setVisible(samplesView.getViewConfiguration().isInEagerMode());
+
+				actionButtonsLayout.addComponent(bulkOperationsDropdown);
 			}
 
 			sampleTypeFilter = ComboBoxHelper.createComboBoxV7();
 			sampleTypeFilter.setWidth(140, Unit.PERCENTAGE);
 			sampleTypeFilter.setId("sampleTypeFilter");
 			sampleTypeFilter.setNullSelectionAllowed(false);
-			sampleTypeFilter.addItems((Object[]) SampleAssociationType.values());
+			Object[] sampleAssociationTypes = SampleAssociationType.values();
+			boolean fromPersons = SampleAssociationType.PERSON.equals(criteria.getSampleAssociationType());
+			if (!fromPersons) {
+				sampleAssociationTypes = Arrays.stream(sampleAssociationTypes)
+					.filter(sampleAssociationType -> sampleAssociationType != SampleAssociationType.PERSON)
+					.toArray();
+			}
+			sampleTypeFilter.addItems((Object[]) sampleAssociationTypes);
 			sampleTypeFilter.setItemCaption(SampleAssociationType.ALL, I18nProperties.getEnumCaption(SampleAssociationType.ALL));
 			sampleTypeFilter.setItemCaption(SampleAssociationType.CASE, I18nProperties.getEnumCaption(SampleAssociationType.CASE));
 			sampleTypeFilter.setItemCaption(SampleAssociationType.CONTACT, I18nProperties.getEnumCaption(SampleAssociationType.CONTACT));
 			sampleTypeFilter
 				.setItemCaption(SampleAssociationType.EVENT_PARTICIPANT, I18nProperties.getEnumCaption(SampleAssociationType.EVENT_PARTICIPANT));
+			if (fromPersons) {
+				sampleTypeFilter.setItemCaption(SampleAssociationType.PERSON, I18nProperties.getEnumCaption(SampleAssociationType.PERSON));
+			}
 			sampleTypeFilter.addValueChangeListener(e -> {
 				criteria.sampleAssociationType(((SampleAssociationType) e.getProperty().getValue()));
 				samplesView.navigateTo(criteria);
@@ -288,30 +325,30 @@ public class SampleGridComponent extends VerticalLayout {
 
 		samplesView.navigateTo(criteria);
 	}
-	
+
 	private boolean addBulkOperationsDropdown (AbstractOrderedLayout actionButtonsLayout) {
 		List<MenuBarHelper.MenuBarItem> menuItems = new ArrayList<MenuBarHelper.MenuBarItem>();
-		
+
 //		UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS_CASE_SAMPLES
 		if (UserProvider.getCurrent().hasUserRight(UserRight.PATHOGEN_TEST_CREATE)) {
 			menuItems.add(
-				new MenuBarHelper.MenuBarItem(
-					I18nProperties.getCaption(Captions.bulkEnterTestResult),
-					VaadinIcons.ELLIPSIS_H,
-					selectedItem -> createBulkTestResult())
-			);				
+					new MenuBarHelper.MenuBarItem(
+							I18nProperties.getCaption(Captions.bulkEnterTestResult),
+							VaadinIcons.ELLIPSIS_H,
+							selectedItem -> createBulkTestResult())
+			);
 		}
-		
+
 		if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
-		//if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_TRANSFER)) {
+			//if (UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_TRANSFER)) {
 			menuItems.add(
-				new MenuBarHelper.MenuBarItem(
-					I18nProperties.getCaption(Captions.bulkReferSamples),
-					VaadinIcons.ARROW_FORWARD,
-					selectedItem -> createBulkTransfer())
-			);				
+					new MenuBarHelper.MenuBarItem(
+							I18nProperties.getCaption(Captions.bulkReferSamples),
+							VaadinIcons.ARROW_FORWARD,
+							selectedItem -> createBulkTransfer())
+			);
 		}
-		
+
 		if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS)) {
 			//				bulkOperationsDropdown = MenuBarHelper.createDropDown(
 //					Captions.bulkActions,
@@ -327,26 +364,26 @@ public class SampleGridComponent extends VerticalLayout {
 //				bulkOperationsDropdown.setVisible(samplesView.getViewConfiguration().isInEagerMode());
 //
 //				actionButtonsLayout.addComponent(bulkOperationsDropdown);
-			menuItems.add(
-				new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkDelete), VaadinIcons.TRASH, selectedItem -> {
-					ControllerProvider.getSampleController().deleteAllSelectedItems(grid.asMultiSelect().getSelectedItems(), new Runnable() {
-
-						public void run() {
-							samplesView.navigateTo(criteria);
-						}
-					});
-				})
-			);
+//			menuItems.add(
+//					new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkDelete), VaadinIcons.TRASH, selectedItem -> {
+//						ControllerProvider.getSampleController().deleteAllSelectedItems(grid.asMultiSelect().getSelectedItems(), new Runnable() {
+//
+//							public void run() {
+//								samplesView.navigateTo(criteria);
+//							}
+//						});
+//					})
+//			);
 		}
-		
+
 		if (menuItems.size() > 0) {
 			bulkOperationsDropdown = MenuBarHelper.createDropDown(Captions.bulkActions, menuItems.toArray(new MenuBarHelper.MenuBarItem[0]));
-			
+
 			bulkOperationsDropdown.setVisible(samplesView.getViewConfiguration().isInEagerMode());
 
 			actionButtonsLayout.addComponent(bulkOperationsDropdown);
 		}
-		
+
 		return menuItems.size() > 0;
 	}
 
@@ -380,12 +417,8 @@ public class SampleGridComponent extends VerticalLayout {
 		CssStyles.removeStyles(activeStatusButton, CssStyles.BUTTON_FILTER_LIGHT);
 		if (activeStatusButton != null) {
 			activeStatusButton
-				.setCaption(statusButtons.get(activeStatusButton) + LayoutUtil.spanCss(CssStyles.BADGE, String.valueOf(grid.getItemCount())));
+				.setCaption(statusButtons.get(activeStatusButton) + LayoutUtil.spanCss(CssStyles.BADGE, String.valueOf(grid.getDataSize())));
 		}
-	}
-
-	public TextField getSearchField() {
-		return filterForm.getSearchField();
 	}
 
 	public MenuBar getBulkOperationsDropdown() {

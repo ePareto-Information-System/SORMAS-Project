@@ -24,8 +24,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
-import org.joda.time.DateTimeComparator;
-
 import com.vaadin.server.ErrorMessage;
 import com.vaadin.server.UserError;
 import com.vaadin.shared.ui.ErrorLevel;
@@ -52,6 +50,7 @@ import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.DateComparator;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
@@ -89,6 +88,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 	private NullableOptionGroup sequelae;
 	private TextField sequelaeDetails;
 
+	private static final String HOSPITAL_NAME_DETAIL = " ( %s )";
 	//@formatter:off
 	private static final String HTML_LAYOUT =
 			loc(HOSPITALIZATION_HEADING_LOC) +
@@ -110,7 +110,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			fluidRowLocs(HospitalizationDto.PREVIOUS_HOSPITALIZATIONS);
 	//@formatter:on
 
-	public HospitalizationForm(CaseDataDto caze, ViewMode viewMode, boolean isPseudonymized) {
+	public HospitalizationForm(CaseDataDto caze, ViewMode viewMode, boolean isPseudonymized, boolean inJurisdiction, boolean isEditAllowed) {
 
 		super(
 			HospitalizationDto.class,
@@ -118,7 +118,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 			false,
 			FieldVisibilityCheckers.withCountry(FacadeProvider.getConfigFacade().getCountryLocale())
 				.add(new OutbreakFieldVisibilityChecker(viewMode)),
-			UiFieldAccessCheckers.forSensitiveData(isPseudonymized));
+			UiFieldAccessCheckers.forDataAccessLevel(UserProvider.getCurrent().getPseudonymizableDataAccessLevel(inJurisdiction), isPseudonymized), isEditAllowed);
 		this.caze = caze;
 		this.viewMode = viewMode;
 		addFields();
@@ -154,8 +154,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 		TextField facilityField = addCustomField(HEALTH_FACILITY, FacilityReferenceDto.class, TextField.class);
 		FacilityReferenceDto healthFacility = caze.getHealthFacility();
-		final boolean noneFacility = healthFacility == null || healthFacility.getUuid().equalsIgnoreCase(FacilityDto.NONE_FACILITY_UUID);
-		facilityField.setValue(noneFacility || !FacilityType.HOSPITAL.equals(caze.getFacilityType()) ? null : healthFacility.toString());
+		facilityField.setValue(getHospitalName(healthFacility, caze));
 		facilityField.setReadOnly(true);
 
 		TextField facilityRecord = addField(HospitalizationDto.HEALTH_FACILITY_RECORD_NUMBER, TextField.class);
@@ -241,7 +240,7 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 		// Add a visual-only validator to check if symptomonsetdate<admissiondate, as saving should be possible either way
 		admissionDateField.addValueChangeListener(event -> {
 			if (caze.getSymptoms().getOnsetDate() != null
-				&& DateTimeComparator.getDateOnlyInstance().compare(admissionDateField.getValue(), caze.getSymptoms().getOnsetDate()) < 0) {
+				&& DateComparator.getDateInstance().compare(admissionDateField.getValue(), caze.getSymptoms().getOnsetDate()) < 0) {
 				admissionDateField.setComponentError(new ErrorMessage() {
 
 					@Override
@@ -426,5 +425,17 @@ public class HospitalizationForm extends AbstractEditForm<HospitalizationDto> {
 
 	public void setSequelae(NullableOptionGroup sequelae) {
 		this.sequelae = sequelae;
+	}
+	private String getHospitalName(FacilityReferenceDto healthFacility, CaseDataDto caze) {
+		final boolean noneFacility = healthFacility == null || healthFacility.getUuid().equalsIgnoreCase(FacilityDto.NONE_FACILITY_UUID);
+		if (noneFacility || !FacilityType.HOSPITAL.equals(caze.getFacilityType())) {
+			return null;
+		}
+		StringBuilder hospitalName = new StringBuilder();
+		hospitalName.append(healthFacility.buildCaption());
+		if (caze.getHealthFacilityDetails() != null && caze.getHealthFacilityDetails().trim().length() > 0) {
+			hospitalName.append(String.format(HOSPITAL_NAME_DETAIL, caze.getHealthFacilityDetails()));
+		}
+		return hospitalName.toString();
 	}
 }

@@ -16,7 +16,7 @@
 package de.symeda.sormas.backend.vaccination;
 
 import static de.symeda.sormas.backend.ExtendedPostgreSQL94Dialect.AT_END_OF_DAY;
-import static de.symeda.sormas.backend.ExtendedPostgreSQL94Dialect.TIMESTAMP_SUBTRACT_DAYS;
+import static de.symeda.sormas.backend.ExtendedPostgreSQL94Dialect.TIMESTAMP_SUBTRACT_14_DAYS;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -48,15 +49,20 @@ import de.symeda.sormas.api.person.PersonNameDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.SortProperty;
+import de.symeda.sormas.api.vaccination.VaccinationCriteria;
 import de.symeda.sormas.api.vaccination.VaccinationDto;
-import de.symeda.sormas.api.vaccination.VaccinationListCriteria;
 import de.symeda.sormas.backend.caze.Case;
+import de.symeda.sormas.backend.caze.CaseJoins;
+import de.symeda.sormas.backend.caze.CaseQueryContext;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
-import de.symeda.sormas.backend.common.BaseAdoService;
+import de.symeda.sormas.backend.common.AdoServiceWithUserFilterAndJurisdiction;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
 import de.symeda.sormas.backend.contact.Contact;
 import de.symeda.sormas.backend.event.Event;
 import de.symeda.sormas.backend.immunization.ImmunizationEntityHelper;
+import de.symeda.sormas.backend.immunization.ImmunizationJoins;
+import de.symeda.sormas.backend.immunization.ImmunizationQueryContext;
+import de.symeda.sormas.backend.immunization.ImmunizationService;
 import de.symeda.sormas.backend.immunization.entity.Immunization;
 import de.symeda.sormas.backend.person.Person;
 import de.symeda.sormas.backend.sample.PathogenTest;
@@ -65,9 +71,12 @@ import org.hibernate.Session;
 
 @Stateless
 @LocalBean
-public class VaccinationService extends BaseAdoService<Vaccination> {
+public class VaccinationService extends AdoServiceWithUserFilterAndJurisdiction<Vaccination> {
 
 	public static final int REPORT_DATE_RELEVANT_DAYS = 14;
+
+	@EJB
+	private ImmunizationService immunizationService;
 
 	public VaccinationService() {
 		super(Vaccination.class);
@@ -82,40 +91,22 @@ public class VaccinationService extends BaseAdoService<Vaccination> {
 		return result;
 	}
 
-	public List<Vaccination> getVaccinationsByCriteria(
-		VaccinationListCriteria criteria,
-		Integer first,
-		Integer max,
-		List<SortProperty> sortProperties) {
+	public List<Vaccination> getVaccinationsByCriteria(VaccinationCriteria criteria, Integer first, Integer max, List<SortProperty> sortProperties) {
 		final CriteriaBuilder cb = em.getCriteriaBuilder();
 		final CriteriaQuery<Vaccination> cq = cb.createQuery(Vaccination.class);
 		final Root<Vaccination> root = cq.from(Vaccination.class);
-		final Join<Vaccination, Immunization> immunizationJoin = root.join(Vaccination.IMMUNIZATION, JoinType.LEFT);
-		final Join<Immunization, Person> personJoin = immunizationJoin.join(Immunization.PERSON, JoinType.LEFT);
 
-		Predicate filter = null;
+		Predicate filter = buildCriteriaFilter(criteria, cb, root);
 
-		if (criteria.getPerson() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(personJoin.get(AbstractDomainObject.UUID), criteria.getPerson().getUuid()));
-		} else {
-			List<String> personUuids = criteria.getPersons().stream().map(PersonReferenceDto::getUuid).collect(Collectors.toList());
-			filter = CriteriaBuilderHelper.and(cb, filter, personJoin.get(AbstractDomainObject.UUID).in(personUuids));
-		}
-
-		if (criteria.getDisease() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(immunizationJoin.get(Immunization.DISEASE), criteria.getDisease()));
-		}
 		cq.where(filter);
 
-		if (sortProperties != null && sortProperties.size() > 0) {
+		if (sortProperties != null && !sortProperties.isEmpty()) {
 			List<Order> order = new ArrayList<>(sortProperties.size());
 			for (SortProperty sortProperty : sortProperties) {
 				Expression<?> expression;
-				switch (sortProperty.propertyName) {
-				case Vaccination.VACCINATION_DATE:
+				if (Vaccination.VACCINATION_DATE.equals(sortProperty.propertyName)) {
 					expression = root.get(sortProperty.propertyName);
-					break;
-				default:
+				} else {
 					throw new IllegalArgumentException(sortProperty.propertyName);
 				}
 				order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
@@ -132,6 +123,25 @@ public class VaccinationService extends BaseAdoService<Vaccination> {
 		} else {
 			return em.createQuery(cq).getResultList();
 		}
+	}
+
+	protected Predicate buildCriteriaFilter(VaccinationCriteria criteria, CriteriaBuilder cb, Root<Vaccination> root) {
+		final Join<Vaccination, Immunization> immunizationJoin = root.join(Vaccination.IMMUNIZATION, JoinType.LEFT);
+		final Join<Immunization, Person> personJoin = immunizationJoin.join(Immunization.PERSON, JoinType.LEFT);
+
+		Predicate filter = null;
+
+		if (criteria.getPerson() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(personJoin.get(AbstractDomainObject.UUID), criteria.getPerson().getUuid()));
+		} else {
+			List<String> personUuids = criteria.getPersons().stream().map(PersonReferenceDto::getUuid).collect(Collectors.toList());
+			filter = CriteriaBuilderHelper.and(cb, filter, personJoin.get(AbstractDomainObject.UUID).in(personUuids));
+		}
+
+		if (criteria.getDisease() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(immunizationJoin.get(Immunization.DISEASE), criteria.getDisease()));
+		}
+		return filter;
 	}
 
 	/**
@@ -247,6 +257,25 @@ public class VaccinationService extends BaseAdoService<Vaccination> {
 		return false;
 	}
 
+	public List<Vaccination> getRelevantVaccinationsForCase(Case caze) {
+		final CriteriaBuilder cb = em.getCriteriaBuilder();
+		final CriteriaQuery<Vaccination> cq = cb.createQuery(Vaccination.class);
+		final Root<Case> root = cq.from(Case.class);
+		final CaseQueryContext caseQueryContext = new CaseQueryContext(cb, cq, root);
+		final CaseJoins joins = caseQueryContext.getJoins();
+
+		Join<Case, Person> person = joins.getPerson();
+		Join<Person, Immunization> immunization = person.join(Person.IMMUNIZATIONS, JoinType.LEFT);
+		Join<Immunization, Vaccination> vaccination = immunization.join(Immunization.VACCINATIONS, JoinType.LEFT);
+
+		Predicate predicate = cb.in(root).value(caze);
+		cq.where(cb.and(predicate, cb.isNotNull(vaccination)));
+		cq.select(vaccination);
+
+		List<Vaccination> vaccinations = em.createQuery(cq).getResultList();
+		return vaccinations.stream().filter(v -> isVaccinationRelevant(caze, v)).collect(Collectors.toList());
+	}
+
 	public List<Vaccination> getRelevantSortedVaccinations(List<Vaccination> vaccinations, Date... relevanceFilterDates) {
 
 		return vaccinations.stream()
@@ -263,9 +292,7 @@ public class VaccinationService extends BaseAdoService<Vaccination> {
 
 		Path<Date> vaccinationDate = vaccinationPath.get(Vaccination.VACCINATION_DATE);
 		Expression<Date> vaccinationDateExpr = cb.<Date> selectCase()
-			.when(
-				cb.isNull(vaccinationDate),
-				cb.function(TIMESTAMP_SUBTRACT_DAYS, Date.class, vaccinationPath.get(Vaccination.REPORT_DATE), cb.literal(REPORT_DATE_RELEVANT_DAYS)))
+			.when(cb.isNull(vaccinationDate), cb.function(TIMESTAMP_SUBTRACT_14_DAYS, Date.class, vaccinationPath.get(Vaccination.REPORT_DATE)))
 			.otherwise(vaccinationDate);
 
 		return getRelevantVaccinationPredicate(cb, vaccinationDateExpr, primaryDatePath, fallbackDatePath);
@@ -355,4 +382,25 @@ public class VaccinationService extends BaseAdoService<Vaccination> {
 	public Predicate createDefaultFilter(CriteriaBuilder cb, Root<Vaccination> root) {
 		return cb.isFalse(root.get(PathogenTest.DELETED));
 	}
+	@Override
+	public Predicate createUserFilter(CriteriaBuilder cb, CriteriaQuery cq, From<?, Vaccination> from) {
+		return null;
+	}
+
+	@Override
+	public boolean inJurisdictionOrOwned(Vaccination entity) {
+		return fulfillsCondition(entity, this::inJurisdictionOrOwned);
+	}
+
+	@Override
+	public List<Long> getInJurisdictionIds(List<Vaccination> entities) {
+		return getIdList(entities, this::inJurisdictionOrOwned);
+	}
+
+	private Predicate inJurisdictionOrOwned(CriteriaBuilder cb, CriteriaQuery<?> query, From<?, Vaccination> from) {
+
+		return immunizationService
+			.inJurisdictionOrOwned(new ImmunizationQueryContext(cb, query, new ImmunizationJoins(from.join(Vaccination.IMMUNIZATION))));
+	}
+
 }

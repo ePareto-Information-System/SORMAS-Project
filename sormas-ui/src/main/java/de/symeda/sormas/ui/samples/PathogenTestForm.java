@@ -93,7 +93,8 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 					fluidRowLocs(PathogenTestDto.OTHER_DELETION_REASON);
 	//@formatter:on
 
-	private final SampleDto sample;
+	private SampleDto sample;
+	private AbstractSampleForm sampleForm;
 	private final int caseSampleCount;
 	private final boolean create;
 
@@ -118,10 +119,45 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		this.create = create;
 		setWidth(900, Unit.PIXELS);
 
+
 		addFields();
 		if (create) {
 			hideValidationUntilNextCommit();
 		}
+	}
+
+	public PathogenTestForm(AbstractSampleForm sampleForm, boolean create, int caseSampleCount, boolean isPseudonymized, boolean inJurisdiction) {
+		this(create, caseSampleCount, isPseudonymized, inJurisdiction);
+		this.sampleForm = sampleForm;
+		addFields();
+		if (create) {
+			hideValidationUntilNextCommit();
+		}
+	}
+
+	public PathogenTestForm(SampleDto sample, boolean create, int caseSampleCount, boolean isPseudonymized, boolean inJurisdiction) {
+
+		this(create, caseSampleCount, isPseudonymized, inJurisdiction);
+		this.sample = sample;
+		addFields();
+		if (create) {
+			hideValidationUntilNextCommit();
+		}
+	}
+
+	public PathogenTestForm(boolean create, int caseSampleCount, boolean isPseudonymized, boolean inJurisdiction) {
+		super(
+			PathogenTestDto.class,
+			PathogenTestDto.I18N_PREFIX,
+			false,
+			FieldVisibilityCheckers.withDisease(null).andWithCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
+			UiFieldAccessCheckers.forDataAccessLevel(
+				UserProvider.getCurrent().getPseudonymizableDataAccessLevel(create || inJurisdiction), // Jurisdiction doesn't matter for creation forms
+				!create && isPseudonymized)); // Pseudonymization doesn't matter for creation forms
+
+		this.caseSampleCount = caseSampleCount;
+		this.create = create;
+		setWidth(900, Unit.PIXELS);
 	}
 
 	@Override
@@ -129,6 +165,7 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		if (sample == null) {
 			return;
 		}
+
 		pathogenTestHeadingLabel = new Label();
 		pathogenTestHeadingLabel.addStyleName(H3);
 		getContent().addComponent(pathogenTestHeadingLabel, PATHOGEN_TEST_HEADING_LOC);
@@ -155,6 +192,17 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 								sampleTestDateField.getCaption(),
 								I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, SampleDto.SAMPLE_DATE_TIME),
 								DateFormatHelper.formatDate(sample.getSampleDateTime()))));
+			// new DateComparisonValidator(1.87.0
+			// 	sampleTestDateField,
+			// 	this::getSampleDate,
+			// 	false,
+			// 	false,
+			// 	I18nProperties.getValidationError(
+			// 		Validations.afterDateWithDate,
+			// 		sampleTestDateField.getCaption(),
+			// 		I18nProperties.getPrefixCaption(SampleDto.I18N_PREFIX, SampleDto.SAMPLE_DATE_TIME),
+			// 		DateFormatHelper.formatDate(
+			// 			sample != null ? sample.getSampleDateTime() : (Date) sampleForm.getField(SampleDto.SAMPLE_DATE_TIME).getValue()))));
 		ComboBox lab = addInfrastructureField(PathogenTestDto.LAB);
 		allActiveLabs = FacadeProvider.getFacilityFacade().getAllActiveLaboratories(true);
 		TextField labDetails = addField(PathogenTestDto.LAB_DETAILS, TextField.class);
@@ -296,6 +344,18 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 			}
 		});
 
+		lab.addValueChangeListener(event -> {
+			if (event.getProperty().getValue() != null
+				&& ((FacilityReferenceDto) event.getProperty().getValue()).getUuid().equals(FacilityDto.OTHER_FACILITY_UUID)) {
+				labDetails.setVisible(true);
+				labDetails.setRequired(isEditableAllowed(labDetails));
+			} else {
+				labDetails.setVisible(false);
+				labDetails.setRequired(false);
+				labDetails.clear();
+			}
+		});
+
 		testTypeField.addValueChangeListener(e -> {
 			PathogenTestType testType = (PathogenTestType) e.getProperty().getValue();
 			if ((testType == PathogenTestType.PCR_RT_PCR && testResultField.getValue() == PathogenTestResultType.POSITIVE)
@@ -344,6 +404,14 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		// setRequired(true, PathogenTestDto.TEST_TYPE, PathogenTestDto.TESTED_DISEASE, PathogenTestDto.TEST_RESULT);
 		
 		setRequired(true, PathogenTestDto.TEST_TYPE, PathogenTestDto.TESTED_DISEASE, PathogenTestDto.TEST_DATE_TIME, PathogenTestDto.TEST_RESULT);
+	}
+
+	private Date getSampleDate() {
+		return sample != null ? sample.getSampleDateTime() : (Date) sampleForm.getField(SampleDto.SAMPLE_DATE_TIME).getValue();
+	}
+
+	private SamplePurpose getSamplePurpose() {
+		return sample != null ? sample.getSamplePurpose() : (SamplePurpose) sampleForm.getField(SampleDto.SAMPLE_PURPOSE).getValue();
 	}
 
 	@Override

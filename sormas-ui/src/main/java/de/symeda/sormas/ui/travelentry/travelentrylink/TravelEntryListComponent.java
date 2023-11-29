@@ -29,17 +29,22 @@ import de.symeda.sormas.ui.utils.components.sidecomponent.SideComponent;
 
 public class TravelEntryListComponent extends SideComponent {
 
-	public TravelEntryListComponent(TravelEntryListCriteria travelEntryListCriteria, Consumer<Runnable> actionCallback) {
+	public TravelEntryListComponent(
+		TravelEntryListCriteria travelEntryListCriteria,
+		String activeUuid,
+		Consumer<Runnable> actionCallback,
+		boolean isEditAllowed) {
 		super(I18nProperties.getString(Strings.entityTravelEntries), actionCallback);
 
-		if (FacadeProvider.getTravelEntryFacade().count(new TravelEntryCriteria(), true) > 0) {
+		if (activeUuid == null && FacadeProvider.getTravelEntryFacade().count(new TravelEntryCriteria(), true) > 0 && isEditAllowed) {
 			addCreateButton(
 				I18nProperties.getCaption(Captions.travelEntryNewTravelEntry),
 				() -> ControllerProvider.getTravelEntryController().create(travelEntryListCriteria),
 				UserRight.TRAVEL_ENTRY_CREATE);
 		}
 
-		TravelEntryList travelEntryList = new TravelEntryList(travelEntryListCriteria);
+		TravelEntryList travelEntryList = new TravelEntryList(travelEntryListCriteria, isEditAllowed);
+		travelEntryList.setActiveUuid(activeUuid);
 		addComponent(travelEntryList);
 		travelEntryList.reload();
 	}

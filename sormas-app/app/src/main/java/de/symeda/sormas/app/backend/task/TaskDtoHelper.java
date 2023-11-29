@@ -17,7 +17,7 @@ package de.symeda.sormas.app.backend.task;
 
 import java.util.List;
 
-import de.symeda.sormas.api.PushResult;
+import de.symeda.sormas.api.PostResponse;
 import de.symeda.sormas.api.task.TaskDto;
 import de.symeda.sormas.app.backend.caze.Case;
 import de.symeda.sormas.app.backend.caze.CaseDtoHelper;
@@ -59,7 +59,7 @@ public class TaskDtoHelper extends AdoDtoHelper<Task, TaskDto> {
 	}
 
 	@Override
-	protected Call<List<PushResult>> pushAll(List<TaskDto> taskDtos) throws NoConnectionException {
+	protected Call<List<PostResponse>> pushAll(List<TaskDto> taskDtos) throws NoConnectionException {
 		return RetroProvider.getTaskFacade().pushAll(taskDtos);
 	}
 
@@ -83,6 +83,7 @@ public class TaskDtoHelper extends AdoDtoHelper<Task, TaskDto> {
 		target.setCreatorComment(source.getCreatorComment());
 		target.setAssigneeUser(DatabaseHelper.getUserDao().getByReferenceDto(source.getAssigneeUser()));
 		target.setAssigneeReply(source.getAssigneeReply());
+		target.setAssignedByUser(DatabaseHelper.getUserDao().getByReferenceDto(source.getAssignedByUser()));
 
 		target.setClosedLat(source.getClosedLat());
 		target.setClosedLon(source.getClosedLon());
@@ -133,6 +134,13 @@ public class TaskDtoHelper extends AdoDtoHelper<Task, TaskDto> {
 			target.setAssigneeUser(null);
 		}
 		target.setAssigneeReply(source.getAssigneeReply());
+
+		if (source.getAssignedByUser() != null) {
+			User user = DatabaseHelper.getUserDao().queryForId(source.getAssignedByUser().getId());
+			target.setAssignedByUser(UserDtoHelper.toReferenceDto(user));
+		} else {
+			target.setAssignedByUser(null);
+		}
 
 		target.setClosedLat(source.getClosedLat());
 		target.setClosedLon(source.getClosedLon());

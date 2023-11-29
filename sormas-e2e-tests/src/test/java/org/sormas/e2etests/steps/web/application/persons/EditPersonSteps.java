@@ -20,11 +20,11 @@ package org.sormas.e2etests.steps.web.application.persons;
 
 import static org.sormas.e2etests.pages.application.cases.EpidemiologicalDataCasePage.ACTIVITY_AS_CASE_NEW_ENTRY_BUTTON_DE;
 import static org.sormas.e2etests.pages.application.cases.EpidemiologicalDataCasePage.EDIT_TRAVEL_ENTRY_BUTTON;
-import static org.sormas.e2etests.pages.application.cases.EpidemiologicalDataCasePage.NEW_ENTRY_POPUP;
 import static org.sormas.e2etests.pages.application.contacts.CreateNewContactPage.SAVE_BUTTON;
 import static org.sormas.e2etests.pages.application.contacts.EditContactPersonPage.CONTACT_PERSON_FIRST_NAME_INPUT;
 import static org.sormas.e2etests.pages.application.contacts.EditContactPersonPage.CONTACT_PERSON_LAST_NAME_INPUT;
 import static org.sormas.e2etests.pages.application.contacts.EditContactPersonPage.SEX_COMBOBOX;
+import static org.sormas.e2etests.pages.application.entries.CreateNewTravelEntryPage.ARRIVAL_DATE;
 import static org.sormas.e2etests.pages.application.events.EventDirectoryPage.getByEventUuid;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.ADDITIONAL_INFORMATION_INPUT;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.AREA_TYPE_COMBOBOX;
@@ -46,6 +46,7 @@ import static org.sormas.e2etests.pages.application.persons.EditPersonPage.EMAIL
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.ERROR_INDICATOR;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.EXTERNAL_ID_INPUT;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.EXTERNAL_TOKEN_INPUT;
+import static org.sormas.e2etests.pages.application.persons.EditPersonPage.EYE_ICON_EDIT_PERSON;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.FACILITY_CATEGORY_COMBOBOX;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.FACILITY_CATEGORY_INPUT;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.FACILITY_COMBOBOX;
@@ -54,6 +55,9 @@ import static org.sormas.e2etests.pages.application.persons.EditPersonPage.FACIL
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.FACILITY_TYPE_COMBOBOX;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.FACILITY_TYPE_INPUT;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.FIRST_NAME_INPUT;
+import static org.sormas.e2etests.pages.application.persons.EditPersonPage.GENERAL_COMMENT_FIELD;
+import static org.sormas.e2etests.pages.application.persons.EditPersonPage.GPS_LATITUDE_INPUT_EDIT_PERSON;
+import static org.sormas.e2etests.pages.application.persons.EditPersonPage.GPS_LONGITUDE_INPUT_EDIT_PERSON;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.HOUSE_NUMBER_INPUT;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.IMMUNIZATION_DISEASE_LABEL;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.IMMUNIZATION_ID_LABEL;
@@ -62,6 +66,7 @@ import static org.sormas.e2etests.pages.application.persons.EditPersonPage.IMMUN
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.INVALID_DATA_ERROR;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.LAST_NAME_INPUT;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.MANAGEMENT_STATUS_LABEL;
+import static org.sormas.e2etests.pages.application.persons.EditPersonPage.MAP_CONTAINER_EDIT_PERSON;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.MEANS_OF_IMMUNIZATION_LABEL;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.NAMES_OF_GUARDIANS_INPUT;
 import static org.sormas.e2etests.pages.application.persons.EditPersonPage.NO_TRAVEL_ENTRY_LABEL_DE;
@@ -89,10 +94,12 @@ import static org.sormas.e2etests.pages.application.persons.EditPersonPage.getBy
 import static org.sormas.e2etests.steps.BaseSteps.locale;
 import static org.sormas.e2etests.steps.web.application.entries.CreateNewTravelEntrySteps.aTravelEntry;
 
+import com.github.javafaker.Faker;
 import cucumber.api.java8.En;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -104,8 +111,12 @@ import org.sormas.e2etests.entities.services.PersonService;
 import org.sormas.e2etests.envconfig.manager.RunningConfiguration;
 import org.sormas.e2etests.helpers.AssertHelpers;
 import org.sormas.e2etests.helpers.WebDriverHelpers;
+import org.sormas.e2etests.pages.application.contacts.EditContactPersonPage;
+import org.sormas.e2etests.pages.application.persons.EditPersonPage;
 import org.sormas.e2etests.state.ApiState;
 import org.sormas.e2etests.steps.BaseSteps;
+import org.sormas.e2etests.steps.web.application.cases.CreateNewCaseSteps;
+import org.sormas.e2etests.steps.web.application.contacts.CreateNewContactSteps;
 import org.sormas.e2etests.steps.web.application.contacts.EditContactPersonSteps;
 import org.sormas.e2etests.steps.web.application.events.EditEventSteps;
 import org.sormas.e2etests.steps.web.application.immunizations.EditImmunizationSteps;
@@ -118,11 +129,15 @@ public class EditPersonSteps implements En {
   protected Person previousCreatedPerson = null;
   protected Person collectedPerson;
   public static Person newGeneratedPerson;
+  private static String personFirstName;
+  public static List<String> externalPersonUUID = new ArrayList<>();
+  public static List<String> personSex = new ArrayList<>();
 
   @Inject
   public EditPersonSteps(
       WebDriverHelpers webDriverHelpers,
       PersonService personService,
+      Faker faker,
       BaseSteps baseSteps,
       AssertHelpers assertHelpers,
       ApiState apiState,
@@ -157,6 +172,34 @@ public class EditPersonSteps implements En {
           webDriverHelpers.waitForPageLoadingSpinnerToDisappear(40);
           webDriverHelpers.waitUntilIdentifiedElementIsPresent(PRESENT_CONDITION_INPUT);
           collectedPerson = collectPersonData();
+          ComparisonHelper.compareDifferentFieldsOfEntities(
+              previousCreatedPerson,
+              collectedPerson,
+              List.of(
+                  "firstName",
+                  "lastName",
+                  "dateOfBirth",
+                  "sex",
+                  "street",
+                  "houseNumber",
+                  "city",
+                  "postalCode",
+                  "contactPersonFirstName",
+                  "contactPersonLastName",
+                  "emailAddress",
+                  "phoneNumber",
+                  "facilityNameAndDescription",
+                  "additionalInformation"));
+        });
+
+    When(
+        "I check that new edited person is correctly displayed in Edit Person page",
+        () -> {
+          TimeUnit.SECONDS.sleep(2); // wait for reaction
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(40);
+          webDriverHelpers.waitUntilIdentifiedElementIsPresent(PRESENT_CONDITION_INPUT);
+          collectedPerson = collectPersonData();
+          TimeUnit.SECONDS.sleep(2); // wait for reaction
           ComparisonHelper.compareDifferentFieldsOfEntities(
               previousCreatedPerson,
               collectedPerson,
@@ -309,6 +352,27 @@ public class EditPersonSteps implements En {
         });
 
     Then(
+        "^I Verify The Eye Icon opening the Map is ([^\"]*) in the Edit Person Page",
+        (String elementStatus) -> {
+          switch (elementStatus) {
+            case "disabled":
+              webDriverHelpers.waitUntilElementIsVisibleAndClickable(EYE_ICON_EDIT_PERSON);
+              softly.assertFalse(
+                  webDriverHelpers.isElementEnabledAtAttributeLevel(EYE_ICON_EDIT_PERSON),
+                  "Eye Icon is not disabled in the Edit Event Page");
+              softly.assertAll();
+              break;
+            case "enabled":
+              webDriverHelpers.waitUntilElementIsVisibleAndClickable(EYE_ICON_EDIT_PERSON);
+              softly.assertTrue(
+                  webDriverHelpers.isElementEnabledAtAttributeLevel(EYE_ICON_EDIT_PERSON),
+                  "Eye Icon is not Enabled in the Edit Event Page");
+              softly.assertAll();
+              break;
+          }
+        });
+
+    Then(
         "I click on See CONTACTS for this Person button from Edit Person page",
         () -> {
           webDriverHelpers.clickOnWebElementBySelector(SEE_CONTACTS_FOR_PERSON_BUTTON);
@@ -381,6 +445,45 @@ public class EditPersonSteps implements En {
           webDriverHelpers.selectFromCombobox(SEX_COMBOBOX, "");
         });
 
+    And(
+        "I clear the GPS Latitude and Longitude Fields from the Edit Person Page",
+        () -> {
+          webDriverHelpers.clearWebElement(GPS_LATITUDE_INPUT_EDIT_PERSON);
+          webDriverHelpers.clearWebElement(GPS_LONGITUDE_INPUT_EDIT_PERSON);
+          webDriverHelpers.submitInWebElement(GPS_LONGITUDE_INPUT_EDIT_PERSON);
+        });
+
+    And(
+        "I Add the GPS Latitude and Longitude Values in the Edit Person Page",
+        () -> {
+          webDriverHelpers.waitUntilElementIsVisibleAndClickable(GPS_LATITUDE_INPUT_EDIT_PERSON);
+          webDriverHelpers.waitUntilElementIsVisibleAndClickable(GPS_LONGITUDE_INPUT_EDIT_PERSON);
+          webDriverHelpers.fillInWebElement(
+              GPS_LATITUDE_INPUT_EDIT_PERSON,
+              String.valueOf(faker.number().randomDouble(7, 10, 89)));
+          webDriverHelpers.fillInWebElement(
+              GPS_LONGITUDE_INPUT_EDIT_PERSON,
+              String.valueOf(faker.number().randomDouble(7, 10, 89)));
+          webDriverHelpers.submitInWebElement(GPS_LONGITUDE_INPUT_EDIT_PERSON);
+        });
+
+    And(
+        "^I click on the The Eye Icon located in the Edit Person Page",
+        () -> {
+          webDriverHelpers.waitUntilElementIsVisibleAndClickable(EYE_ICON_EDIT_PERSON);
+          webDriverHelpers.clickOnWebElementBySelector(EYE_ICON_EDIT_PERSON);
+        });
+
+    Then(
+        "^I verify that the Map Container is now Visible in the Edit Person Page",
+        () -> {
+          webDriverHelpers.waitUntilElementIsVisibleAndClickable(MAP_CONTAINER_EDIT_PERSON);
+          softly.assertTrue(
+              webDriverHelpers.isElementEnabled(MAP_CONTAINER_EDIT_PERSON),
+              "Map Container is not displayed/enabled in edit Person Page");
+          softly.assertAll();
+        });
+
     When(
         "I clear Region and District fields from Person",
         () -> {
@@ -426,7 +529,7 @@ public class EditPersonSteps implements En {
         "I click on new entry button on Edit Person Page for DE",
         () -> {
           webDriverHelpers.clickOnWebElementBySelector(ACTIVITY_AS_CASE_NEW_ENTRY_BUTTON_DE);
-          webDriverHelpers.waitUntilIdentifiedElementIsPresent(NEW_ENTRY_POPUP);
+          webDriverHelpers.waitUntilElementIsVisibleAndClickable(ARRIVAL_DATE);
         });
     When(
         "I check if added travel Entry appeared on Edit Person Page",
@@ -440,6 +543,85 @@ public class EditPersonSteps implements En {
           }
           softly.assertTrue(elementVisible, "Travel Entry isn't visible");
           softly.assertAll();
+        });
+    And(
+        "I check General comment field is enabled on Edit Person page",
+        () -> {
+          Assert.assertTrue(
+              webDriverHelpers.isElementEnabled(GENERAL_COMMENT_FIELD),
+              "There is no resizable General comment field on page");
+        });
+
+    And(
+        "^I change first name of person from Edit person page$",
+        () -> {
+          personFirstName = faker.name().firstName();
+          fillFirstName(personFirstName);
+          webDriverHelpers.clickOnWebElementBySelector(SAVE_BUTTON);
+        });
+
+    And(
+        "^I check if first name of person has been changed$",
+        () -> {
+          softly.assertEquals(
+              webDriverHelpers.getValueFromWebElement(EditContactPersonPage.FIRST_NAME_INPUT),
+              personFirstName,
+              "Name is incorrect!");
+          softly.assertAll();
+        });
+
+    Then(
+        "^I check if editable fields are read only for person$",
+        () -> {
+          webDriverHelpers.waitUntilIdentifiedElementIsPresent(UUID_INPUT);
+          webDriverHelpers.isElementGreyedOut(UUID_INPUT);
+          webDriverHelpers.isElementGreyedOut(FIRST_NAME_INPUT);
+          webDriverHelpers.isElementGreyedOut(LAST_NAME_INPUT);
+          webDriverHelpers.isElementGreyedOut(EditPersonPage.SAVE_BUTTON);
+        });
+
+    And(
+        "^I check if first name of person from contact has not been changed$",
+        () -> {
+          softly.assertNotEquals(
+              webDriverHelpers.getValueFromWebElement(FIRST_NAME_INPUT),
+              personFirstName,
+              "Names are equal!!");
+          softly.assertAll();
+          softly.assertEquals(
+              webDriverHelpers.getValueFromWebElement(FIRST_NAME_INPUT),
+              CreateNewContactSteps.samePersonDataContact.getFirstName(),
+              "Names are not equal!!");
+          softly.assertAll();
+        });
+
+    And(
+        "^I check if first name of person from case has not been changed$",
+        () -> {
+          softly.assertNotEquals(
+              webDriverHelpers.getValueFromWebElement(FIRST_NAME_INPUT),
+              personFirstName,
+              "Names are equal!!");
+          softly.assertAll();
+          softly.assertEquals(
+              webDriverHelpers.getValueFromWebElement(FIRST_NAME_INPUT),
+              CreateNewCaseSteps.oneCaseDe.getFirstName(),
+              "Names are not equal!!");
+          softly.assertAll();
+        });
+
+    And(
+        "^I collect person external UUID from Edit Case page$",
+        () -> {
+          webDriverHelpers.waitUntilIdentifiedElementIsPresent(EXTERNAL_ID_INPUT);
+          externalPersonUUID.add(webDriverHelpers.getValueFromWebElement(EXTERNAL_ID_INPUT));
+        });
+
+    And(
+        "^I collect sex of the person from Edit Person page$",
+        () -> {
+          webDriverHelpers.waitUntilIdentifiedElementIsPresent(SEX_INPUT);
+          personSex.add(webDriverHelpers.getValueFromWebElement(SEX_INPUT));
         });
   }
 

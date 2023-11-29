@@ -59,6 +59,19 @@ public class RunningConfiguration {
   }
 
   @SneakyThrows
+  public String getEnvironmentLanguageForMarket(String identifier) {
+    try {
+      return environments.getEnvironments().stream()
+          .filter(env -> env.getIdentifier().equalsIgnoreCase(identifier))
+          .findFirst()
+          .get()
+          .getDefaultLanguage();
+    } catch (NullPointerException e) {
+      throw new Exception(String.format("Unable to get Language for market: %s", identifier));
+    }
+  }
+
+  @SneakyThrows
   public DemisData getDemisData(String identifier) {
     try {
       return environments.getEnvironments().stream()
@@ -69,6 +82,21 @@ public class RunningConfiguration {
     } catch (NullPointerException e) {
       throw new Exception(
           String.format("Unable to get DemisData of Environment for market: %s", identifier));
+    }
+  }
+
+  @SneakyThrows
+  public String getSurvnetResponsible(String identifier) {
+    try {
+      return environments.getEnvironments().stream()
+          .filter(env -> env.getIdentifier().equalsIgnoreCase(identifier))
+          .findFirst()
+          .get()
+          .getSurvnetResponsible();
+    } catch (NullPointerException e) {
+      throw new Exception(
+          String.format(
+              "Unable to get Survnet Responsible of Environment for market: %s", identifier));
     }
   }
 

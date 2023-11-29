@@ -19,12 +19,14 @@ package de.symeda.sormas.backend.task;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.Timestamp;
 import java.util.Arrays;
@@ -33,14 +35,14 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.EditPermissionType;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.caze.CaseClassification;
@@ -52,22 +54,28 @@ import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventInvestigationStatus;
 import de.symeda.sormas.api.event.EventStatus;
 import de.symeda.sormas.api.event.TypeOfPlace;
+import de.symeda.sormas.api.feature.FeatureConfigurationIndexDto;
+import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.infrastructure.community.CommunityDto;
 import de.symeda.sormas.api.person.PersonDto;
+import de.symeda.sormas.api.sormastosormas.share.incoming.ShareRequestDataType;
+import de.symeda.sormas.api.sormastosormas.share.incoming.ShareRequestStatus;
 import de.symeda.sormas.api.task.TaskContext;
 import de.symeda.sormas.api.task.TaskCriteria;
 import de.symeda.sormas.api.task.TaskDto;
 import de.symeda.sormas.api.task.TaskIndexDto;
 import de.symeda.sormas.api.task.TaskStatus;
 import de.symeda.sormas.api.task.TaskType;
+import de.symeda.sormas.api.travelentry.TravelEntryDto;
 import de.symeda.sormas.api.user.DefaultUserRole;
+import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserDto;
+import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.backend.AbstractBeanTest;
 import de.symeda.sormas.backend.TestDataCreator.RDCF;
 
-@RunWith(MockitoJUnitRunner.class)
 public class TaskFacadeEjbTest extends AbstractBeanTest {
 
 	@Test
@@ -102,21 +110,16 @@ public class TaskFacadeEjbTest extends AbstractBeanTest {
 
 		getCaseFacade().delete(caze.getUuid(), new DeletionDetails());
 
-		List<TaskIndexDto> tasks = getTaskFacade().getIndexList(new TaskCriteria().relevanceStatus(EntityRelevanceStatus.ALL), 0, 100, null);
-		Assert.assertEquals(0, tasks.size());
+		List<TaskIndexDto> tasks =
+			getTaskFacade().getIndexList(new TaskCriteria().relevanceStatus(EntityRelevanceStatus.ACTIVE_AND_ARCHIVED), 0, 100, null);
+		assertEquals(0, tasks.size());
 	}
 
 	@Test
 	public void testSampleDeletion() {
 
-		RDCF rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
-		UserDto user = creator.createUser(
-			rdcf.region.getUuid(),
-			rdcf.district.getUuid(),
-			rdcf.facility.getUuid(),
-			"Surv",
-			"Sup",
-			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
+		RDCF rdcf = creator.createRDCF();
+		UserDto user = creator.createSurveillanceSupervisor(rdcf);
 		UserDto admin = getUserFacade().getByUserName("admin");
 		String adminUuid = admin.getUuid();
 		TaskDto task = creator.createTask(
@@ -131,7 +134,7 @@ public class TaskFacadeEjbTest extends AbstractBeanTest {
 		// Database should contain the created task
 		assertNotNull(getTaskFacade().getByUuid(task.getUuid()));
 
-		getTaskFacade().deleteTask(task);
+		getTaskFacade().delete(task.getUuid());
 
 		// Database should not contain the created task
 		assertNull(getTaskFacade().getByUuid(task.getUuid()));
@@ -140,14 +143,8 @@ public class TaskFacadeEjbTest extends AbstractBeanTest {
 	@Test
 	public void testGetIndexList() {
 
-		RDCF rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
-		UserDto user = creator.createUser(
-			rdcf.region.getUuid(),
-			rdcf.district.getUuid(),
-			rdcf.facility.getUuid(),
-			"Surv",
-			"Sup",
-			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
+		RDCF rdcf = creator.createRDCF();
+		UserDto user = creator.createSurveillanceSupervisor(rdcf);
 		// Database should contain the created task
 		assertNotNull(getTaskFacade().getIndexList(null, 0, 100, null));
 	}
@@ -155,14 +152,8 @@ public class TaskFacadeEjbTest extends AbstractBeanTest {
 	@Test
 	public void testArchivedTaskNotGettingTransfered() {
 
-		RDCF rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
-		UserDto user = creator.createUser(
-			rdcf.region.getUuid(),
-			rdcf.district.getUuid(),
-			rdcf.facility.getUuid(),
-			"Surv",
-			"Sup",
-			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
+		RDCF rdcf = creator.createRDCF();
+		UserDto user = creator.createSurveillanceSupervisor(rdcf);
 		PersonDto cazePerson = creator.createPerson("Case", "Person");
 		CaseDataDto caze = creator.createCase(
 			user.toReference(),
@@ -189,7 +180,7 @@ public class TaskFacadeEjbTest extends AbstractBeanTest {
 			user.toReference(),
 			user.toReference(),
 			Disease.EVD,
-			rdcf.district);
+			rdcf);
 
 		creator.createTask(
 			TaskContext.GENERAL,
@@ -234,12 +225,19 @@ public class TaskFacadeEjbTest extends AbstractBeanTest {
 		getCaseFacade().archive(caze.getUuid(), null);
 		getEventFacade().archive(event.getUuid(), null);
 
+		// getAllActiveTasks and getAllUuids should return length 3
+		assertEquals(3, getTaskFacade().getAllActiveTasksAfter(null).size());
+		assertEquals(3, getTaskFacade().getAllActiveUuids().size());
+
+		getContactFacade().archive(contact.getUuid(), null);
+
 		// getAllActiveTasks and getAllUuids should return length 1
 		assertEquals(1, getTaskFacade().getAllActiveTasksAfter(null).size());
 		assertEquals(1, getTaskFacade().getAllActiveUuids().size());
 
 		getCaseFacade().dearchive(Collections.singletonList(caze.getUuid()), null);
 		getEventFacade().dearchive(Collections.singletonList(event.getUuid()), null);
+		getContactFacade().dearchive(Collections.singletonList(contact.getUuid()), null);
 
 		// getAllActiveTasks and getAllUuids should return length 5 + 1 (contact investigation)
 		assertEquals(6, getTaskFacade().getAllActiveTasksAfter(null).size());
@@ -248,14 +246,8 @@ public class TaskFacadeEjbTest extends AbstractBeanTest {
 
 	@Test
 	public void testGetAllActiveTasksBatched() {
-		RDCF rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
-		UserDto user = creator.createUser(
-			rdcf.region.getUuid(),
-			rdcf.district.getUuid(),
-			rdcf.facility.getUuid(),
-			"Surv",
-			"Sup",
-			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
+		RDCF rdcf = creator.createRDCF();
+		UserDto user = creator.createSurveillanceSupervisor(rdcf);
 		PersonDto cazePerson = creator.createPerson("Case", "Person");
 		CaseDataDto caze = creator.createCase(
 			user.toReference(),
@@ -282,7 +274,7 @@ public class TaskFacadeEjbTest extends AbstractBeanTest {
 			user.toReference(),
 			user.toReference(),
 			Disease.EVD,
-			rdcf.district);
+			rdcf);
 
 		creator.createTask(
 			TaskContext.GENERAL,
@@ -382,13 +374,9 @@ public class TaskFacadeEjbTest extends AbstractBeanTest {
 		RDCF rdcf1 = creator.createRDCF("Region 1", "District 1", "Community 1", "Facility 1", "Point of entry 1");
 		CommunityDto c2 = creator.createCommunity("Community 2", rdcf1.district);
 
-		// 1. Region level user without a task
+		// Create users
 		UserDto survSup = creator
 			.createUser(rdcf1.region.getUuid(), null, null, "Surv", "Sup", creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
-		loginWith(survSup);
-		assertThat(getTaskFacade().getIndexList(null, 0, 100, null), is(empty()));
-
-		// 2a. District level user with task
 		UserDto survOff = creator.createUser(
 			rdcf1.region.getUuid(),
 			rdcf1.district.getUuid(),
@@ -396,6 +384,20 @@ public class TaskFacadeEjbTest extends AbstractBeanTest {
 			"Surv",
 			"Off",
 			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER));
+		UserDto commInf = creator.createUser(
+			rdcf1.region.getUuid(),
+			rdcf1.district.getUuid(),
+			c2.getUuid(),
+			null,
+			"Comm",
+			"Inf",
+			creator.getUserRoleReference(DefaultUserRole.COMMUNITY_INFORMANT));
+
+		// 1. Region level user without a task
+		loginWith(survSup);
+		assertThat(getTaskFacade().getIndexList(null, 0, 100, null), is(empty()));
+
+		// 2a. District level user with task
 		loginWith(survOff);
 		assertThat(getTaskFacade().getIndexList(null, 0, 100, null), is(empty()));
 
@@ -416,16 +418,7 @@ public class TaskFacadeEjbTest extends AbstractBeanTest {
 		assertThat(getTaskFacade().getIndexList(null, 0, 100, null), is(not(empty())));
 
 		// 3. Community level user does not see task of district level user
-		UserDto commInf = creator.createUser(
-			rdcf1.region.getUuid(),
-			rdcf1.district.getUuid(),
-			c2.getUuid(),
-			null,
-			"Comm",
-			"Inf",
-			creator.getUserRoleReference(DefaultUserRole.COMMUNITY_INFORMANT));
 		loginWith(commInf);
-
 		assertThat(getTaskFacade().getIndexList(null, 0, 100, null), is(empty()));
 
 		Calendar calendar = Calendar.getInstance();
@@ -445,7 +438,7 @@ public class TaskFacadeEjbTest extends AbstractBeanTest {
 		user.setDistrict(null);
 		user.setCommunity(null);
 		user.setHealthFacility(null);
-		getUserFacade().saveUser(user);
+		getUserFacade().saveUser(user, false);
 		UserDto userCaseOfficer = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.CASE_OFFICER));
 		loginWith(user);
 
@@ -488,7 +481,7 @@ public class TaskFacadeEjbTest extends AbstractBeanTest {
 
 		// 1. one user with tasks, one without
 		RDCF rdcf = new RDCF(creator.createRDCFEntities());
-		UserDto user1 = creator.createUser(rdcf, "First", "User", creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
+		UserDto user1 = creator.createSurveillanceSupervisor(rdcf);
 		UserDto user2 = creator.createUser(rdcf, "Second", "User", creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
 
 		creator.createTask(user1.toReference());
@@ -533,4 +526,411 @@ public class TaskFacadeEjbTest extends AbstractBeanTest {
 		assertEquals(rdcf2.district, taskIndexDtos.get(0).getDistrict());
 		assertEquals(rdcf2.community, taskIndexDtos.get(0).getCommunity());
 	}
+
+	@Test
+	public void testGetTaskListForUserWithoutEventViewRight() {
+		RDCF rdcf = creator.createRDCF();
+		UserDto user = creator.createNationalUser();
+		PersonDto personDto = creator.createPerson();
+		CaseDataDto caze = creator.createCase(user.toReference(), personDto.toReference(), rdcf);
+
+		creator.createTask(
+			TaskContext.GENERAL,
+			TaskType.OTHER,
+			TaskStatus.PENDING,
+			null,
+			null,
+			null,
+			DateHelper.addDays(new Date(), 1),
+			user.toReference());
+
+		creator.createTask(
+			TaskContext.CASE,
+			TaskType.OTHER,
+			TaskStatus.PENDING,
+			caze.toReference(),
+			null,
+			null,
+			DateHelper.addDays(new Date(), 1),
+			user.toReference());
+
+		ContactDto contactDto = creator.createContact(rdcf, user.toReference(), personDto.toReference());
+		creator.createTask(
+			TaskContext.CONTACT,
+			TaskType.OTHER,
+			TaskStatus.PENDING,
+			null,
+			contactDto.toReference(),
+			null,
+			DateHelper.addDays(new Date(), 1),
+			user.toReference());
+
+		EventDto eventDto = creator.createEvent(user.toReference());
+		creator.createTask(
+			TaskContext.EVENT,
+			TaskType.OTHER,
+			TaskStatus.PENDING,
+			null,
+			null,
+			eventDto.toReference(),
+			DateHelper.addDays(new Date(), 1),
+			user.toReference());
+
+		TravelEntryDto travelEntryDto = creator
+			.createTravelEntry(personDto.toReference(), user.toReference(), Disease.CORONAVIRUS, rdcf.region, rdcf.district, rdcf.pointOfEntry);
+		creator.createTask(TaskContext.TRAVEL_ENTRY, travelEntryDto.toReference(), t -> {
+			t.setTaskStatus(TaskStatus.PENDING);
+			t.setAssigneeUser(user.toReference());
+		});
+
+		TaskCriteria taskCriteria = new TaskCriteria();
+		taskCriteria.relevanceStatus(EntityRelevanceStatus.ACTIVE);
+
+		List<TaskIndexDto> taskIndexDtos = getTaskFacade().getIndexList(taskCriteria, 0, 100, null);
+		Set<TaskContext> taskContexts = taskIndexDtos.stream().map(t -> t.getTaskContext()).collect(Collectors.toSet());
+		assertEquals(5, taskContexts.size());
+		assertTrue(
+			taskContexts
+				.containsAll(Arrays.asList(TaskContext.GENERAL, TaskContext.CASE, TaskContext.CONTACT, TaskContext.EVENT, TaskContext.TRAVEL_ENTRY)));
+
+		UserDto noEventNoCaseViewUser = creator.createUser(
+			"",
+			"",
+			"",
+			"NoEve",
+			"NoCase",
+			creator.createUserRole(
+				"NoEventNoCaseView",
+				JurisdictionLevel.NATION,
+				UserRight.CASE_VIEW,
+				UserRight.TRAVEL_ENTRY_MANAGEMENT_ACCESS,
+				UserRight.TRAVEL_ENTRY_VIEW,
+				UserRight.PERSON_VIEW));
+		loginWith(noEventNoCaseViewUser);
+		assertFalse(getUserService().hasRight(UserRight.EVENT_VIEW));
+		assertFalse(getUserService().hasRight(UserRight.CONTACT_VIEW));
+		assertTrue(getUserService().hasRight(UserRight.CASE_VIEW));
+		assertTrue(getUserService().hasRight(UserRight.TRAVEL_ENTRY_VIEW));
+
+		taskIndexDtos = getTaskFacade().getIndexList(taskCriteria, 0, 100, null);
+		assertNotNull(taskIndexDtos);
+		taskContexts = taskIndexDtos.stream().map(t -> t.getTaskContext()).collect(Collectors.toSet());
+		assertEquals(3, taskContexts.size());
+		assertTrue(taskContexts.containsAll(Arrays.asList(TaskContext.GENERAL, TaskContext.CASE, TaskContext.TRAVEL_ENTRY)));
+		assertFalse(taskContexts.contains(TaskContext.CONTACT));
+		assertFalse(taskContexts.contains(TaskContext.EVENT));
+	}
+
+	@Test
+	public void testUserWithoutEventViewRightSeeHisAssignTask() {
+		RDCF rdcf = creator.createRDCF();
+		UserDto user = creator.createNationalUser();
+		UserDto noEventNoCaseViewUser = creator.createUser(
+			rdcf,
+			creator.createUserRole(
+				"NoEventNoCaseView",
+				JurisdictionLevel.NATION,
+				UserRight.CASE_VIEW,
+				UserRight.TRAVEL_ENTRY_MANAGEMENT_ACCESS,
+				UserRight.TRAVEL_ENTRY_VIEW,
+				UserRight.PERSON_VIEW));
+
+		EventDto eventDto = creator.createEvent(user.toReference());
+		TaskDto taskEvent1 = creator.createTask(
+			TaskContext.EVENT,
+			TaskType.OTHER,
+			TaskStatus.PENDING,
+			null,
+			null,
+			eventDto.toReference(),
+			DateHelper.addDays(new Date(), 1),
+			user.toReference());
+		TaskDto taskEvent2 = creator.createTask(
+			TaskContext.EVENT,
+			TaskType.OTHER,
+			TaskStatus.PENDING,
+			null,
+			null,
+			eventDto.toReference(),
+			DateHelper.addDays(new Date(), 1),
+			noEventNoCaseViewUser.toReference());
+
+		TaskCriteria taskCriteria = new TaskCriteria();
+		taskCriteria.relevanceStatus(EntityRelevanceStatus.ACTIVE);
+
+		List<TaskIndexDto> taskIndexDtos = getTaskFacade().getIndexList(taskCriteria, 0, 100, null);
+		assertEquals(2, taskIndexDtos.size());
+		List<String> tasksIds = taskIndexDtos.stream().map(t -> t.getUuid()).collect(Collectors.toList());
+		assertTrue(tasksIds.contains(taskEvent1.getUuid()));
+		assertTrue(tasksIds.contains(taskEvent2.getUuid()));
+
+		loginWith(noEventNoCaseViewUser);
+		assertFalse(getUserService().hasRight(UserRight.EVENT_VIEW));
+		assertFalse(getUserService().hasRight(UserRight.CONTACT_VIEW));
+		assertTrue(getUserService().hasRight(UserRight.CASE_VIEW));
+		assertTrue(getUserService().hasRight(UserRight.TRAVEL_ENTRY_VIEW));
+
+		taskIndexDtos = getTaskFacade().getIndexList(taskCriteria, 0, 100, null);
+		assertNotNull(taskIndexDtos);
+		tasksIds = taskIndexDtos.stream().map(t -> t.getUuid()).collect(Collectors.toList());
+		assertFalse(tasksIds.contains(taskEvent1.getUuid()));
+		assertTrue(tasksIds.contains(taskEvent2.getUuid()));
+	}
+
+	@Test
+	public void testUserWithoutEventViewRightSeeHisObservedTask() {
+		RDCF rdcf = creator.createRDCF();
+		UserDto user = creator.createNationalUser();
+		UserDto noEventNoCaseViewUser = creator.createUser(
+			rdcf,
+			creator.createUserRole(
+				"NoEventNoCaseView",
+				JurisdictionLevel.NATION,
+				UserRight.CASE_VIEW,
+				UserRight.TRAVEL_ENTRY_MANAGEMENT_ACCESS,
+				UserRight.TRAVEL_ENTRY_VIEW,
+				UserRight.PERSON_VIEW));
+
+		EventDto eventDto = creator.createEvent(user.toReference());
+
+		TaskDto taskEvent1 = creator.createTask(TaskContext.EVENT, eventDto.toReference(), t -> {
+			t.setObserverUsers(Stream.of(user.toReference()).collect(Collectors.toSet()));
+		});
+		TaskDto taskEvent2 = creator.createTask(TaskContext.EVENT, eventDto.toReference(), t -> {
+			t.setObserverUsers(Stream.of(noEventNoCaseViewUser.toReference()).collect(Collectors.toSet()));
+		});
+
+		TaskCriteria taskCriteria = new TaskCriteria();
+		taskCriteria.relevanceStatus(EntityRelevanceStatus.ACTIVE);
+
+		List<TaskIndexDto> taskIndexDtos = getTaskFacade().getIndexList(taskCriteria, 0, 100, null);
+		assertEquals(2, taskIndexDtos.size());
+		List<String> tasksIds = taskIndexDtos.stream().map(t -> t.getUuid()).collect(Collectors.toList());
+		assertTrue(tasksIds.contains(taskEvent1.getUuid()));
+		assertTrue(tasksIds.contains(taskEvent2.getUuid()));
+
+		loginWith(noEventNoCaseViewUser);
+		assertFalse(getUserService().hasRight(UserRight.EVENT_VIEW));
+		assertFalse(getUserService().hasRight(UserRight.CONTACT_VIEW));
+		assertTrue(getUserService().hasRight(UserRight.CASE_VIEW));
+		assertTrue(getUserService().hasRight(UserRight.TRAVEL_ENTRY_VIEW));
+
+		taskIndexDtos = getTaskFacade().getIndexList(taskCriteria, 0, 100, null);
+		assertNotNull(taskIndexDtos);
+		tasksIds = taskIndexDtos.stream().map(t -> t.getUuid()).collect(Collectors.toList());
+		assertFalse(tasksIds.contains(taskEvent1.getUuid()));
+		assertTrue(tasksIds.contains(taskEvent2.getUuid()));
+	}
+
+	@Test
+	public void testGetIndexListArchived() {
+		RDCF rdcf = creator.createRDCF();
+		UserDto user = creator.createSurveillanceOfficer(rdcf);
+
+		TaskDto task =
+			creator.createTask(TaskContext.GENERAL, TaskType.ANIMAL_TESTING, TaskStatus.PENDING, null, null, null, new Date(), user.toReference());
+		getTaskFacade().archive(Collections.singletonList(task.getUuid()));
+
+		List<TaskIndexDto> archivedTasks =
+			getTaskFacade().getIndexList(new TaskCriteria().relevanceStatus(EntityRelevanceStatus.ARCHIVED), null, null, null);
+
+		assertThat(archivedTasks, hasSize(1));
+		assertThat(archivedTasks.stream().filter(t -> t.getUuid().equals(task.getUuid())).count(), is(1L));
+
+		CaseDataDto caze = creator.createCase(user.toReference(), rdcf, null);
+		TaskDto caseTask = creator.createTask(TaskContext.CASE, caze.toReference(), null);
+		getCaseFacade().archive(caze.getUuid(), new Date());
+
+		archivedTasks = getTaskFacade().getIndexList(new TaskCriteria().relevanceStatus(EntityRelevanceStatus.ARCHIVED), null, null, null);
+		assertThat(archivedTasks.stream().filter(t -> t.getUuid().equals(caseTask.getUuid())).count(), is(1L));
+
+		ContactDto contact = creator.createContact(rdcf, user.toReference(), creator.createPerson().toReference());
+		TaskDto contactTask = creator.createTask(TaskContext.CONTACT, contact.toReference(), null);
+		getContactFacade().archive(contact.getUuid(), new Date());
+
+		archivedTasks = getTaskFacade().getIndexList(new TaskCriteria().relevanceStatus(EntityRelevanceStatus.ARCHIVED), null, null, null);
+		assertThat(archivedTasks.stream().filter(t -> t.getUuid().equals(contactTask.getUuid())).count(), is(1L));
+
+		EventDto event = creator.createEvent(user.toReference());
+		TaskDto eventTask = creator.createTask(TaskContext.EVENT, event.toReference(), null);
+		getEventFacade().archive(event.getUuid(), new Date());
+
+		archivedTasks = getTaskFacade().getIndexList(new TaskCriteria().relevanceStatus(EntityRelevanceStatus.ARCHIVED), null, null, null);
+		assertThat(archivedTasks.stream().filter(t -> t.getUuid().equals(eventTask.getUuid())).count(), is(1L));
+
+		TravelEntryDto travelEntry = creator.createTravelEntry(creator.createPerson().toReference(), user.toReference(), rdcf, null);
+		TaskDto travelEntryTask = creator.createTask(TaskContext.TRAVEL_ENTRY, travelEntry.toReference(), null);
+		getTravelEntryFacade().archive(travelEntry.getUuid(), new Date());
+
+		archivedTasks = getTaskFacade().getIndexList(new TaskCriteria().relevanceStatus(EntityRelevanceStatus.ARCHIVED), null, null, null);
+		assertThat(archivedTasks.stream().filter(t -> t.getUuid().equals(travelEntryTask.getUuid())).count(), is(1L));
+	}
+
+	@Test
+	public void testGetEditPermissionTypeOnGenericTask() {
+		RDCF rdcf = creator.createRDCF();
+		UserDto user = creator.createSurveillanceOfficer(rdcf);
+
+		TaskDto task =
+			creator.createTask(TaskContext.GENERAL, TaskType.ANIMAL_TESTING, TaskStatus.PENDING, null, null, null, new Date(), user.toReference());
+		assertThat(getTaskFacade().getEditPermissionType(task.getUuid()), is(EditPermissionType.ALLOWED));
+
+		getTaskFacade().archive(Collections.singletonList(task.getUuid()));
+		setEditArchiveFeature(true);
+		assertThat(getTaskFacade().getEditPermissionType(task.getUuid()), is(EditPermissionType.ALLOWED));
+		setEditArchiveFeature(false);
+		assertThat(getTaskFacade().getEditPermissionType(task.getUuid()), is(EditPermissionType.ARCHIVING_STATUS_ONLY));
+	}
+
+	@Test
+	public void testGetEditPermissionTypeOnCaseTask() {
+		RDCF rdcf = creator.createRDCF();
+		UserDto user = creator.createSurveillanceOfficer(rdcf);
+
+		CaseDataDto caseToArchive = creator.createCase(user.toReference(), rdcf, null);
+		TaskDto task = creator.createTask(TaskContext.CASE, caseToArchive.toReference(), null);
+		assertThat(getTaskFacade().getEditPermissionType(task.getUuid()), is(EditPermissionType.ALLOWED));
+
+		getCaseFacade().archive(caseToArchive.getUuid(), new Date());
+
+		setEditArchiveFeature(true);
+		assertThat(getTaskFacade().getEditPermissionType(task.getUuid()), is(EditPermissionType.ALLOWED));
+
+		setEditArchiveFeature(false);
+		assertThat(getTaskFacade().getEditPermissionType(task.getUuid()), is(EditPermissionType.ARCHIVING_STATUS_ONLY));
+
+		// shared case
+		CaseDataDto caseToShare = creator.createCase(user.toReference(), rdcf, null);
+		task = creator.createTask(TaskContext.CASE, caseToShare.toReference(), null);
+
+		creator.createShareRequestInfo(
+			ShareRequestDataType.CASE,
+			getUserService().getByUuid(user.getUuid()),
+			"test-server",
+			true,
+			ShareRequestStatus.PENDING,
+			(s) -> s.setCaze(getCaseService().getByUuid(caseToShare.getUuid())));
+
+		assertThat(getTaskFacade().getEditPermissionType(task.getUuid()), is(EditPermissionType.ALLOWED));
+
+		creator.createShareRequestInfo(
+			ShareRequestDataType.CASE,
+			getUserService().getByUuid(user.getUuid()),
+			"test-server",
+			true,
+			ShareRequestStatus.ACCEPTED,
+			(s) -> s.setCaze(getCaseService().getByUuid(caseToShare.getUuid())));
+
+		assertThat(getTaskFacade().getEditPermissionType(task.getUuid()), is(EditPermissionType.ALLOWED));
+	}
+
+	@Test
+	public void testGetEditPermissionTypeOnContactTask() {
+		RDCF rdcf = creator.createRDCF();
+		UserDto user = creator.createSurveillanceOfficer(rdcf);
+
+		ContactDto contactToArchive = creator.createContact(rdcf, user.toReference(), creator.createPerson().toReference());
+		TaskDto task = creator.createTask(TaskContext.CONTACT, contactToArchive.toReference(), null);
+		assertThat(getTaskFacade().getEditPermissionType(task.getUuid()), is(EditPermissionType.ALLOWED));
+
+		getContactFacade().archive(contactToArchive.getUuid(), new Date());
+
+		setEditArchiveFeature(true);
+		assertThat(getTaskFacade().getEditPermissionType(task.getUuid()), is(EditPermissionType.ALLOWED));
+
+		setEditArchiveFeature(false);
+		assertThat(getTaskFacade().getEditPermissionType(task.getUuid()), is(EditPermissionType.ARCHIVING_STATUS_ONLY));
+
+		// shared contact
+		ContactDto contactToShare = creator.createContact(rdcf, user.toReference(), creator.createPerson().toReference());
+		task = creator.createTask(TaskContext.CONTACT, contactToShare.toReference(), null);
+
+		creator.createShareRequestInfo(
+			ShareRequestDataType.CONTACT,
+			getUserService().getByUuid(user.getUuid()),
+			"test-server",
+			true,
+			ShareRequestStatus.PENDING,
+			(s) -> s.setContact(getContactService().getByUuid(contactToShare.getUuid())));
+
+		assertThat(getTaskFacade().getEditPermissionType(task.getUuid()), is(EditPermissionType.ALLOWED));
+
+		creator.createShareRequestInfo(
+			ShareRequestDataType.CONTACT,
+			getUserService().getByUuid(user.getUuid()),
+			"test-server",
+			true,
+			ShareRequestStatus.ACCEPTED,
+			(s) -> s.setContact(getContactService().getByUuid(contactToShare.getUuid())));
+
+		assertThat(getTaskFacade().getEditPermissionType(task.getUuid()), is(EditPermissionType.ALLOWED));
+	}
+
+	@Test
+	public void testGetEditPermissionTypeOnEventTask() {
+		RDCF rdcf = creator.createRDCF();
+		UserDto user = creator.createSurveillanceOfficer(rdcf);
+
+		EventDto eventToArchive = creator.createEvent(user.toReference());
+		TaskDto task = creator.createTask(TaskContext.EVENT, eventToArchive.toReference(), null);
+		assertThat(getTaskFacade().getEditPermissionType(task.getUuid()), is(EditPermissionType.ALLOWED));
+
+		getEventFacade().archive(eventToArchive.getUuid(), new Date());
+
+		setEditArchiveFeature(true);
+		assertThat(getTaskFacade().getEditPermissionType(task.getUuid()), is(EditPermissionType.ALLOWED));
+
+		setEditArchiveFeature(false);
+		assertThat(getTaskFacade().getEditPermissionType(task.getUuid()), is(EditPermissionType.ARCHIVING_STATUS_ONLY));
+
+		// shared event
+		EventDto eventToShare = creator.createEvent(user.toReference());
+		task = creator.createTask(TaskContext.EVENT, eventToShare.toReference(), null);
+
+		creator.createShareRequestInfo(
+			ShareRequestDataType.EVENT,
+			getUserService().getByUuid(user.getUuid()),
+			"test-server",
+			true,
+			ShareRequestStatus.PENDING,
+			(s) -> s.setEvent(getEventService().getByUuid(eventToShare.getUuid())));
+
+		assertThat(getTaskFacade().getEditPermissionType(task.getUuid()), is(EditPermissionType.ALLOWED));
+
+		creator.createShareRequestInfo(
+			ShareRequestDataType.EVENT,
+			getUserService().getByUuid(user.getUuid()),
+			"test-server",
+			true,
+			ShareRequestStatus.ACCEPTED,
+			(s) -> s.setEvent(getEventService().getByUuid(eventToShare.getUuid())));
+
+		assertThat(getTaskFacade().getEditPermissionType(task.getUuid()), is(EditPermissionType.ALLOWED));
+	}
+
+	@Test
+	public void testGetEditPermissionTypeOnTravelEntryTask() {
+		RDCF rdcf = creator.createRDCF();
+		UserDto user = creator.createSurveillanceOfficer(rdcf);
+
+		TravelEntryDto travelEntryToArchive = creator.createTravelEntry(creator.createPerson().toReference(), user.toReference(), rdcf, null);
+		TaskDto task = creator.createTask(TaskContext.TRAVEL_ENTRY, travelEntryToArchive.toReference(), null);
+		assertThat(getTaskFacade().getEditPermissionType(task.getUuid()), is(EditPermissionType.ALLOWED));
+
+		getTravelEntryFacade().archive(travelEntryToArchive.getUuid(), new Date());
+
+		setEditArchiveFeature(true);
+		assertThat(getTaskFacade().getEditPermissionType(task.getUuid()), is(EditPermissionType.ALLOWED));
+
+		setEditArchiveFeature(false);
+		assertThat(getTaskFacade().getEditPermissionType(task.getUuid()), is(EditPermissionType.ARCHIVING_STATUS_ONLY));
+	}
+
+	private void setEditArchiveFeature(boolean enabled) {
+		FeatureConfigurationIndexDto featureConfiguration =
+			new FeatureConfigurationIndexDto(DataHelper.createUuid(), null, null, null, null, null, enabled, null);
+		getFeatureConfigurationFacade().saveFeatureConfiguration(featureConfiguration, FeatureType.EDIT_ARCHIVED_ENTITIES);
+
+	}
+
 }

@@ -24,13 +24,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import de.symeda.auditlog.api.Audited;
 import de.symeda.sormas.api.epidata.AnimalCondition;
 import de.symeda.sormas.api.epidata.WaterSource;
 import de.symeda.sormas.api.event.MeansOfTransport;
@@ -50,7 +50,6 @@ import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.user.User;
 
 @Entity(name = "exposures")
-@Audited
 public class Exposure extends AbstractDomainObject {
 
 	private static final long serialVersionUID = -5570515874416024604L;
@@ -138,7 +137,7 @@ public class Exposure extends AbstractDomainObject {
 		this.epiData = epiData;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
 	public User getReportingUser() {
 		return reportingUser;
@@ -414,7 +413,7 @@ public class Exposure extends AbstractDomainObject {
 		this.waterSourceDetails = waterSourceDetails;
 	}
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	@JoinColumn
 	public Contact getContactToCase() {
 		return contactToCase;

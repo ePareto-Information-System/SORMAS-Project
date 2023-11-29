@@ -147,12 +147,12 @@ public class EventImportFacadeEjb implements EventImportFacade {
 			event = eventFacade.save(event);
 
 			for (EventParticipantDto eventParticipant : eventParticipants) {
-				PersonDto existingPerson = personFacade.getPersonByUuid(eventParticipant.getPerson().getUuid());
+				PersonDto existingPerson = personFacade.getByUuid(eventParticipant.getPerson().getUuid());
 				// Check if the person already exists
 				// In that case it would means that the person related to the event participant were deduped by the user
 				// So no need to persist an already existing person
 				if (existingPerson == null) {
-					personFacade.savePerson(eventParticipant.getPerson());
+					personFacade.save(eventParticipant.getPerson());
 				}
 				eventParticipantFacade.save(eventParticipant);
 			}
@@ -236,7 +236,9 @@ public class EventImportFacadeEjb implements EventImportFacade {
 						}
 
 					} else if (DataHelper.equal(cellData.getEntityClass(), DataHelper.getHumanClassName(EventGroupReferenceDto.class))) {
-						eventGroupReferences.add(new EventGroupReferenceDto(cellData.getValue()));
+						if (!StringUtils.isEmpty(cellData.getValue())) {
+							eventGroupReferences.add(new EventGroupReferenceDto(cellData.getValue()));
+						}
 					} else if (!StringUtils.isEmpty(cellData.getValue())) {
 						// If the cell entry is not empty, try to insert it into the current event
 						insertColumnEntryIntoData(event, cellData.getValue(), cellData.getEntityPropertyPath());

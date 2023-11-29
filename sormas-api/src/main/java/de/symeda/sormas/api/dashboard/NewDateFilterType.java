@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
  * Copyright © 2016-2018 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
  *
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
+<<<<<<<< HEAD:sormas-api/src/main/java/de/symeda/sormas/api/dashboard/NewDateFilterType.java
  *******************************************************************************/
 
 package de.symeda.sormas.api.dashboard;
@@ -25,6 +26,18 @@ public enum NewDateFilterType {
 	LAST_WEEK,
 	THIS_YEAR,
 	CUSTOM;
-	
-	
+
+
 }
+
+//public interface HasUuid {
+//
+//	String UUID_REGEX = "^[0-9a-zA-Z-]*$";
+//
+//	/**
+//	 * Returns an identification possibility for this entity type so that objects of this type can be uniquely differentiated from each
+//	 * other.
+//	 */
+//	String getUuid();
+//>>>>>>>> origin/1.87.0:sormas-api/src/main/java/de/symeda/sormas/api/uuid/HasUuid.java
+//}

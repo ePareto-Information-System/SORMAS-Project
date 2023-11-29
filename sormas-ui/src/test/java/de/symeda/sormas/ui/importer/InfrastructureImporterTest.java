@@ -2,7 +2,7 @@ package de.symeda.sormas.ui.importer;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,9 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
 
 import com.opencsv.exceptions.CsvValidationException;
 
@@ -33,20 +31,15 @@ import de.symeda.sormas.api.infrastructure.region.RegionCriteria;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
-import de.symeda.sormas.ui.AbstractBeanTest;
-import de.symeda.sormas.ui.TestDataCreator;
-import de.symeda.sormas.ui.TestDataCreator.RDCF;
+import de.symeda.sormas.ui.AbstractUiBeanTest;
 
-// Using Silent Runner to ignore unnecessary stubbing exception
-// which is a side effect of extending AbstractBeanTest
-@RunWith(MockitoJUnitRunner.Silent.class)
-public class InfrastructureImporterTest extends AbstractBeanTest {
+public class InfrastructureImporterTest extends AbstractUiBeanTest {
 
 	@Test
 	public void testUmlautsInInfrastructureImport()
 		throws IOException, InvalidColumnException, InterruptedException, CsvValidationException, URISyntaxException {
 
-		RDCF rdcf = new TestDataCreator().createRDCF("Default Region", "Default District", "Default Community", "Default Facility");
+		var rdcf = creator.createRDCF("Default Region", "Default District", "Default Community", "Default Facility");
 		UserDto user = creator.createUser(
 			rdcf.region.getUuid(),
 			rdcf.district.getUuid(),
@@ -95,7 +88,7 @@ public class InfrastructureImporterTest extends AbstractBeanTest {
 	@Test
 	public void testUmlautsInInfrastructureImportIso8859()
 		throws IOException, InvalidColumnException, InterruptedException, CsvValidationException, URISyntaxException {
-		RDCF rdcf = new TestDataCreator().createRDCF("Default Region", "Default District", "Default Community", "Default Facility");
+		var rdcf = creator.createRDCF("Default Region", "Default District", "Default Community", "Default Facility");
 		UserDto user = creator.createUser(
 			rdcf.region.getUuid(),
 			rdcf.district.getUuid(),
@@ -117,7 +110,7 @@ public class InfrastructureImporterTest extends AbstractBeanTest {
 	@Test
 	public void testUmlautsInInfrastructureWindows1252()
 		throws IOException, InvalidColumnException, InterruptedException, CsvValidationException, URISyntaxException {
-		RDCF rdcf = new TestDataCreator().createRDCF("Default Region", "Default District", "Default Community", "Default Facility");
+		var rdcf = creator.createRDCF("Default Region", "Default District", "Default Community", "Default Facility");
 		UserDto user = creator.createUser(
 			rdcf.region.getUuid(),
 			rdcf.district.getUuid(),
@@ -138,7 +131,7 @@ public class InfrastructureImporterTest extends AbstractBeanTest {
 
 	@Test
 	public void testLargeFileUtf8() throws IOException, InvalidColumnException, InterruptedException, CsvValidationException, URISyntaxException {
-		RDCF rdcf = new TestDataCreator().createRDCF("Default Region", "Default District", "Default Community", "Default Facility");
+		var rdcf = creator.createRDCF("Default Region", "Default District", "Default Community", "Default Facility");
 		UserDto user = creator.createUser(
 			rdcf.region.getUuid(),
 			rdcf.district.getUuid(),
@@ -159,7 +152,7 @@ public class InfrastructureImporterTest extends AbstractBeanTest {
 	@Test
 	public void testLargeFileUtf8WithBOM()
 		throws IOException, InvalidColumnException, InterruptedException, CsvValidationException, URISyntaxException {
-		RDCF rdcf = new TestDataCreator().createRDCF("Default Region", "Default District", "Default Community", "Default Facility");
+		var rdcf = creator.createRDCF("Default Region", "Default District", "Default Community", "Default Facility");
 		UserDto user = creator.createUser(
 			rdcf.region.getUuid(),
 			rdcf.district.getUuid(),
@@ -180,7 +173,7 @@ public class InfrastructureImporterTest extends AbstractBeanTest {
 	@Test
 	public void testLargeFileISO8859_1()
 		throws IOException, InvalidColumnException, InterruptedException, CsvValidationException, URISyntaxException {
-		RDCF rdcf = new TestDataCreator().createRDCF("Default Region", "Default District", "Default Community", "Default Facility");
+		var rdcf = creator.createRDCF("Default Region", "Default District", "Default Community", "Default Facility");
 		UserDto user = creator.createUser(
 			rdcf.region.getUuid(),
 			rdcf.district.getUuid(),
@@ -202,7 +195,7 @@ public class InfrastructureImporterTest extends AbstractBeanTest {
 	@Test
 	public void testDontImportDuplicateInfrastructure()
 		throws IOException, InvalidColumnException, InterruptedException, CsvValidationException, URISyntaxException {
-		RDCF rdcf = new TestDataCreator().createRDCF("Default Region", "Default District", "Default Community", "Default Facility");
+		var rdcf = creator.createRDCF("Default Region", "Default District", "Default Community", "Default Facility");
 		UserDto user = creator.createUser(
 			rdcf.region.getUuid(),
 			rdcf.district.getUuid(),
@@ -245,7 +238,7 @@ public class InfrastructureImporterTest extends AbstractBeanTest {
 	@Test
 	public void testImportFromFileWithBom()
 		throws InterruptedException, InvalidColumnException, CsvValidationException, IOException, URISyntaxException {
-		RDCF rdcf = new TestDataCreator().createRDCF("Default Region", "Default District", "Default Community", "Default Facility");
+		var rdcf = creator.createRDCF("Default Region", "Default District", "Default Community", "Default Facility");
 		UserDto user = creator.createUser(
 			rdcf.region.getUuid(),
 			rdcf.district.getUuid(),

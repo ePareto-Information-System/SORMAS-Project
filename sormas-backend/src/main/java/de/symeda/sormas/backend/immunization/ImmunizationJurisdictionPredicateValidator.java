@@ -25,6 +25,7 @@ import javax.persistence.criteria.Predicate;
 import de.symeda.sormas.backend.immunization.entity.Immunization;
 import de.symeda.sormas.backend.infrastructure.community.Community;
 import de.symeda.sormas.backend.infrastructure.district.District;
+import de.symeda.sormas.backend.infrastructure.facility.Facility;
 import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.util.PredicateJurisdictionValidator;
@@ -49,15 +50,15 @@ public class ImmunizationJurisdictionPredicateValidator extends PredicateJurisdi
 	}
 
 	@Override
-	protected Predicate isInJurisdiction() {
+	public Predicate isRootInJurisdiction() {
 		return isInJurisdictionByJurisdictionLevel(user.getJurisdictionLevel());
 	}
 
 	@Override
-	protected Predicate isInJurisdictionOrOwned() {
+	public Predicate isRootInJurisdictionOrOwned() {
 		final Path<Object> reportingUserPath = joins.getRoot().get(Immunization.REPORTING_USER);
 		final Predicate reportedByCurrentUser = cb.and(cb.isNotNull(reportingUserPath), cb.equal(reportingUserPath.get(User.ID), user.getId()));
-		return cb.or(reportedByCurrentUser, isInJurisdiction());
+		return cb.or(reportedByCurrentUser, this.isRootInJurisdiction());
 	}
 
 	@Override
@@ -87,7 +88,7 @@ public class ImmunizationJurisdictionPredicateValidator extends PredicateJurisdi
 
 	@Override
 	protected Predicate whenFacilityLevel() {
-		return cb.disjunction();
+		return cb.equal(joins.getRoot().get(Immunization.HEALTH_FACILITY).get(Facility.ID), user.getHealthFacility().getId());
 	}
 
 	@Override

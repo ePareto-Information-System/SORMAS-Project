@@ -14,6 +14,7 @@
  */
 package de.symeda.sormas.backend.user;
 
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -22,12 +23,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.FlushModeType;
+import javax.inject.Inject;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -38,6 +41,7 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -50,11 +54,13 @@ import de.symeda.sormas.api.user.NotificationProtocol;
 import de.symeda.sormas.api.user.NotificationType;
 import de.symeda.sormas.api.user.UserCriteria;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.user.UserRoleDto;
+import de.symeda.sormas.api.user.UserRoleReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DefaultEntityHelper;
 import de.symeda.sormas.api.utils.PasswordHelper;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
-import de.symeda.sormas.backend.common.AdoServiceWithUserFilter;
+import de.symeda.sormas.backend.common.AdoServiceWithUserFilterAndJurisdiction;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
 import de.symeda.sormas.backend.common.InfrastructureAdo;
 import de.symeda.sormas.backend.event.Event;
@@ -68,13 +74,14 @@ import de.symeda.sormas.backend.infrastructure.pointofentry.PointOfEntry;
 import de.symeda.sormas.backend.infrastructure.pointofentry.PointOfEntryService;
 import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.infrastructure.region.RegionService;
+import de.symeda.sormas.backend.user.event.UserUpdateEvent;
 import de.symeda.sormas.backend.util.IterableHelper;
 import de.symeda.sormas.backend.util.JurisdictionHelper;
 import de.symeda.sormas.backend.util.ModelConstants;
 
 @Stateless
 @LocalBean
-public class UserService extends AdoServiceWithUserFilter<User> {
+public class UserService extends AdoServiceWithUserFilterAndJurisdiction<User> {
 
 	@EJB
 	private UserRoleFacadeEjb.UserRoleFacadeEjbLocal userRoleFacade;
@@ -88,6 +95,8 @@ public class UserService extends AdoServiceWithUserFilter<User> {
 	private FacilityService facilityService;
 	@EJB
 	private PointOfEntryService pointOfEntryService;
+	@Inject
+	private javax.enterprise.event.Event<UserUpdateEvent> userUpdateEvent;
 
 	public UserService() {
 		super(User.class);
@@ -322,7 +331,7 @@ public class UserService extends AdoServiceWithUserFilter<User> {
 		cq.distinct(true);
 		cq.orderBy(cb.asc(root.get(AbstractDomainObject.ID)));
 
-		return em.createQuery(cq).setHint(ModelConstants.HINT_HIBERNATE_READ_ONLY, true).getResultList();
+		return em.createQuery(cq).setHint(ModelConstants.READ_ONLY, true).getResultList();
 	}
 
 	public List<UserReference> getUserRefsByInfrastructure(
@@ -404,7 +413,7 @@ public class UserService extends AdoServiceWithUserFilter<User> {
 		cq.distinct(true);
 		cq.orderBy(cb.asc(root.get(AbstractDomainObject.ID)));
 
-		return em.createQuery(cq).setHint(ModelConstants.HINT_HIBERNATE_READ_ONLY, true).getResultList();
+		return em.createQuery(cq).setHint(ModelConstants.READ_ONLY, true).getResultList();
 	}
 
 	private Predicate createUserRefsByInfrastructurePredicate(
@@ -508,7 +517,7 @@ public class UserService extends AdoServiceWithUserFilter<User> {
 		cq.distinct(true);
 		cq.orderBy(cb.asc(root.get(AbstractDomainObject.ID)));
 
-		return em.createQuery(cq).setHint(ModelConstants.HINT_HIBERNATE_READ_ONLY, true).getResultList();
+		return em.createQuery(cq).setHint(ModelConstants.READ_ONLY, true).getResultList();
 	}
 
 	public List<UserReference> getUserReferencesByIds(Collection<Long> userIds) {
@@ -518,7 +527,7 @@ public class UserService extends AdoServiceWithUserFilter<User> {
 
 		cq.where(root.get(UserReference.ID).in(userIds));
 
-		return em.createQuery(cq).setHint(ModelConstants.HINT_HIBERNATE_READ_ONLY, true).getResultList();
+		return em.createQuery(cq).setHint(ModelConstants.READ_ONLY, true).getResultList();
 	}
 
 	public User getRandomDistrictUser(District district, UserRight... userRights) {
@@ -633,9 +642,9 @@ public class UserService extends AdoServiceWithUserFilter<User> {
 		return responsibleUserByEventUuid;
 	}
 
-	public boolean isLoginUnique(String uuid, String userName) {
+	public boolean isLoginUnique(String excludedUuid, String userName) {
 		User user = getByUserName(userName);
-		return user == null || user.getUuid().equals(uuid);
+		return user == null || user.getUuid().equals(excludedUuid);
 	}
 
 	public String resetPassword(String userUuid) {
@@ -908,5 +917,64 @@ public class UserService extends AdoServiceWithUserFilter<User> {
 		cq.where(cb.equal(from.join(User.HEALTH_FACILITY, JoinType.LEFT).get(Facility.TYPE), facilityType));
 
 		return em.createQuery(cq).getResultList();
+	}
+
+	public long countWithRole(UserRoleReferenceDto userRoleRef) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+		Root<User> from = cq.from(getElementClass());
+
+		cq.select(cb.count(from));
+		cq.where(cb.equal(from.join(User.USER_ROLES, JoinType.LEFT).get(UserRole.UUID), userRoleRef.getUuid()));
+
+		return em.createQuery(cq).getSingleResult();
+
+	}
+
+	public List<User> getAllWithRole(UserRole userRoleRef) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<User> cq = cb.createQuery(User.class);
+		Root<User> from = cq.from(getElementClass());
+
+		cq.where(cb.equal(from.join(User.USER_ROLES, JoinType.LEFT).get(UserRole.UUID), userRoleRef.getUuid()));
+
+		return em.createQuery(cq).getResultList();
+	}
+
+	public List<User> getAllWithOnlyRole(UserRoleReferenceDto userRoleRef) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<User> cq = cb.createQuery(User.class);
+		Root<User> from = cq.from(getElementClass());
+		Join<Object, Object> rolesJoin = from.join(User.USER_ROLES, JoinType.LEFT);
+
+		Subquery<Long> roleCount = cq.subquery(Long.class);
+		Root<User> roleCountFrom = roleCount.from(User.class);
+
+		roleCount.select(cb.count(roleCountFrom.join(User.USER_ROLES, JoinType.LEFT).get(UserRole.ID)));
+		roleCount.where(cb.equal(from.get(User.ID), roleCountFrom.get(User.ID)));
+
+		cq.where(cb.equal(rolesJoin.get(UserRole.UUID), userRoleRef.getUuid()), cb.equal(roleCount, 1));
+
+		return em.createQuery(cq).getResultList();
+	}
+
+	/**
+	 * Triggers the user sync asynchronously to not block the deployment step
+	 */
+	public void syncUserAsync(User user) {
+		try {
+			UserUpdateEvent event = new UserUpdateEvent(user);
+			event.setExceptionCallback(exceptionMessage -> logger.error("Could not synchronize user {} due to {}", user.getUuid(), exceptionMessage));
+
+			this.userUpdateEvent.fireAsync(event);
+		} catch (Throwable e) {
+			logger.error(MessageFormat.format("Unexpected exception when synchronizing user {0}", user.getUuid()), e);
+		}
+	}
+
+	public boolean isPortHealthUser() {
+		User user = getCurrentUser();
+		Set<UserRoleDto> userRoleDtos = user.getUserRoles().stream().map(UserRoleFacadeEjb::toDto).collect(Collectors.toSet());
+		return userRoleFacade.isPortHealthUser(userRoleDtos);
 	}
 }

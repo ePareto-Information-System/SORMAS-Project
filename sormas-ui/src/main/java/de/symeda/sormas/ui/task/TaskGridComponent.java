@@ -90,8 +90,7 @@ public class TaskGridComponent extends VerticalLayout {
 		gridLayout.addComponent(createFilterBar());
 		gridLayout.addComponent(createAssigneeFilterBar());
 		gridLayout.addComponent(grid);
-		grid.getDataProvider().addDataProviderListener(e -> updateAssigneeFilterButtons());
-		grid.setDataProviderListener(e -> updateAssigneeFilterButtons());
+		grid.addDataSizeChangeListener(e -> updateAssigneeFilterButtons());
 
 		gridLayout.setMargin(true);
 		styleGridLayout(gridLayout);
@@ -160,10 +159,10 @@ public class TaskGridComponent extends VerticalLayout {
 				relevanceStatusFilter.setId("relevanceStatusFilter");
 				relevanceStatusFilter.setWidth(140, Unit.PERCENTAGE);
 				relevanceStatusFilter.setNullSelectionAllowed(false);
-				relevanceStatusFilter.addItems((Object[]) EntityRelevanceStatus.values());
+				relevanceStatusFilter.addItems(EntityRelevanceStatus.getAllExceptDeleted());
 				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ACTIVE, I18nProperties.getCaption(Captions.taskActiveTasks));
 				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ARCHIVED, I18nProperties.getCaption(Captions.taskArchivedTasks));
-				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ALL, I18nProperties.getCaption(Captions.taskAllTasks));
+				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ACTIVE_AND_ARCHIVED, I18nProperties.getCaption(Captions.taskAllTasks));
 				relevanceStatusFilter.addValueChangeListener(e -> {
 					criteria.relevanceStatus((EntityRelevanceStatus) e.getProperty().getValue());
 					tasksView.navigateTo(criteria);
@@ -183,28 +182,28 @@ public class TaskGridComponent extends VerticalLayout {
 						I18nProperties.getCaption(Captions.bulkEdit),
 						VaadinIcons.ELLIPSIS_H,
 						mi -> ControllerProvider.getTaskController()
-							.showBulkTaskDataEditComponent(this.grid.asMultiSelect().getSelectedItems(), () -> tasksView.navigateTo(criteria)),
+							.showBulkTaskDataEditComponent(this.grid.asMultiSelect().getSelectedItems(), grid, () -> tasksView.navigateTo(criteria)),
 						hasBulkOperationsRight));
 				menuBarItems.add(
 					new MenuBarHelper.MenuBarItem(
 						I18nProperties.getCaption(Captions.bulkDelete),
 						VaadinIcons.TRASH,
 						selectedItem -> ControllerProvider.getTaskController()
-							.deleteAllSelectedItems(this.grid.asMultiSelect().getSelectedItems(), () -> tasksView.navigateTo(criteria)),
+							.deleteAllSelectedItems(this.grid.asMultiSelect().getSelectedItems(), grid, () -> tasksView.navigateTo(criteria)),
 						hasBulkOperationsRight));
 				menuBarItems.add(
 					new MenuBarHelper.MenuBarItem(
 						I18nProperties.getCaption(Captions.actionArchiveCoreEntity),
 						VaadinIcons.ARCHIVE,
 						mi -> ControllerProvider.getTaskController()
-							.archiveAllSelectedItems(this.grid.asMultiSelect().getSelectedItems(), () -> tasksView.navigateTo(criteria)),
+							.archiveAllSelectedItems(this.grid.asMultiSelect().getSelectedItems(), grid, () -> tasksView.navigateTo(criteria)),
 						hasBulkOperationsRight && EntityRelevanceStatus.ACTIVE.equals(criteria.getRelevanceStatus())));
 				menuBarItems.add(
 					new MenuBarHelper.MenuBarItem(
 						I18nProperties.getCaption(Captions.actionDearchiveCoreEntity),
 						VaadinIcons.ARCHIVE,
 						mi -> ControllerProvider.getTaskController()
-							.dearchiveAllSelectedItems(this.grid.asMultiSelect().getSelectedItems(), () -> tasksView.navigateTo(criteria)),
+							.dearchiveAllSelectedItems(this.grid.asMultiSelect().getSelectedItems(), grid, () -> tasksView.navigateTo(criteria)),
 						hasBulkOperationsRight && EntityRelevanceStatus.ARCHIVED.equals(criteria.getRelevanceStatus())));
 
 				bulkOperationsDropdown = MenuBarHelper.createDropDown(Captions.bulkActions, menuBarItems);
@@ -281,7 +280,7 @@ public class TaskGridComponent extends VerticalLayout {
 		if (activeStatusButton != null) {
 			CssStyles.removeStyles(activeStatusButton, CssStyles.BUTTON_FILTER_LIGHT);
 			activeStatusButton
-				.setCaption(statusButtons.get(activeStatusButton) + LayoutUtil.spanCss(CssStyles.BADGE, String.valueOf(grid.getItemCount())));
+				.setCaption(statusButtons.get(activeStatusButton) + LayoutUtil.spanCss(CssStyles.BADGE, String.valueOf(grid.getDataSize())));
 		}
 	}
 

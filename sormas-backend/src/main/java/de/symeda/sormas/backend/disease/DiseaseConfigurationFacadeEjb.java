@@ -1,3 +1,18 @@
+/*
+ * SORMAS® - Surveillance Outbreak Response Management & Analysis System
+ * Copyright © 2016-2022 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package de.symeda.sormas.backend.disease;
 
 import java.util.ArrayList;
@@ -11,6 +26,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.security.PermitAll;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -20,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.audit.AuditIgnore;
 import de.symeda.sormas.api.disease.DiseaseConfigurationDto;
 import de.symeda.sormas.api.disease.DiseaseConfigurationFacade;
 import de.symeda.sormas.backend.user.User;
@@ -40,8 +57,8 @@ public class DiseaseConfigurationFacadeEjb implements DiseaseConfigurationFacade
 	private List<Disease> inactiveDiseases = new ArrayList<>();
 	private List<Disease> primaryDiseases = new ArrayList<>();
 	private List<Disease> nonPrimaryDiseases = new ArrayList<>();
-	private List<Disease> caseBasedDiseases = new ArrayList<>();
-	private List<Disease> aggregateDiseases = new ArrayList<>();
+	private List<Disease> caseSurveillanceDiseases = new ArrayList<>();
+	private List<Disease> aggregateReportingDiseases = new ArrayList<>();
 	private List<Disease> followUpEnabledDiseases = new ArrayList<>();
 
 	private Map<Disease, Boolean> extendedClassificationDiseases = new EnumMap<>(Disease.class);
@@ -52,6 +69,7 @@ public class DiseaseConfigurationFacadeEjb implements DiseaseConfigurationFacade
 	private Map<Disease, Integer> eventParticipantFollowUpDurations = new EnumMap<>(Disease.class);
 
 	@Override
+	@PermitAll
 	public List<DiseaseConfigurationDto> getAllAfter(Date date) {
 		return service.getAllAfter(date).stream().map(d -> toDto(d)).collect(Collectors.toList());
 	}
@@ -72,24 +90,24 @@ public class DiseaseConfigurationFacadeEjb implements DiseaseConfigurationFacade
 	}
 
 	@Override
-	public List<Disease> getAllDiseases(Boolean active, Boolean primary, boolean caseBased) {
+	@AuditIgnore
+	public List<Disease> getAllDiseases(Boolean active, Boolean primary, boolean caseSurveillance) {
+		return getAllDiseases(active, primary, caseSurveillance, false);
+	}
 
-		// not an ideal solution, but will be changed with #9629 anyway
-		if (!caseBased && primary != null) {
-			primary = null;
-			logger.warn("primary should not be used for non-case-based diseases");
-		}
+	@Override
+	public List<Disease> getAllDiseases(Boolean active, Boolean primary, boolean caseSurveillance, boolean aggregateReporting) {
 
 		User currentUser = userService.getCurrentUser();
 
 		Set<Disease> diseases = EnumSet.noneOf(Disease.class);
 
-		if (caseBased) {
+		if (caseSurveillance) {
 			if (currentUser.getLimitedDisease() != null) {
 				Disease limitedDisease = currentUser.getLimitedDisease();
 				diseases.add(limitedDisease);
 			} else {
-				diseases.addAll(caseBasedDiseases);
+				diseases.addAll(caseSurveillanceDiseases);
 			}
 
 			if (isTrue(primary)) {
@@ -97,8 +115,10 @@ public class DiseaseConfigurationFacadeEjb implements DiseaseConfigurationFacade
 			} else if (isFalse(primary)) {
 				diseases.retainAll(nonPrimaryDiseases);
 			}
-		} else {
-			diseases.addAll(aggregateDiseases);
+		}
+
+		if (aggregateReporting) {
+			diseases.addAll(aggregateReportingDiseases);
 		}
 
 		if (isTrue(active)) {
@@ -187,7 +207,8 @@ public class DiseaseConfigurationFacadeEjb implements DiseaseConfigurationFacade
 		target.setDisease(source.getDisease());
 		target.setActive(source.getActive());
 		target.setPrimaryDisease(source.getPrimaryDisease());
-		target.setCaseBased(source.getCaseBased());
+		target.setCaseSurveillanceEnabled(source.getCaseSurveillanceEnabled());
+		target.setAggregateReportingEnabled(source.getAggregateReportingEnabled());
 		target.setFollowUpEnabled(source.getFollowUpEnabled());
 		target.setFollowUpDuration(source.getFollowUpDuration());
 		target.setCaseFollowUpDuration(source.getCaseFollowUpDuration());
@@ -211,7 +232,8 @@ public class DiseaseConfigurationFacadeEjb implements DiseaseConfigurationFacade
 
 	@Override
 	public void saveDiseaseConfiguration(DiseaseConfigurationDto configuration) {
-		service.ensurePersisted(fromDto(configuration, true));
+		DiseaseConfiguration existingDiseaseConfiguration = service.getByUuid(configuration.getUuid());
+		service.ensurePersisted(fillOrBuildEntity(configuration, existingDiseaseConfiguration, true));
 	}
 
 	@Override
@@ -237,15 +259,18 @@ public class DiseaseConfigurationFacadeEjb implements DiseaseConfigurationFacade
 		return getAgeGroups(disease) != null ? getAgeGroups(disease).get(0) : null;
 	}
 
-	public DiseaseConfiguration fromDto(@NotNull DiseaseConfigurationDto source, boolean checkChangeDate) {
+	public DiseaseConfiguration fillOrBuildEntity(@NotNull DiseaseConfigurationDto source, DiseaseConfiguration target, boolean checkChangeDate) {
+		if (source == null) {
+			return null;
+		}
 
-		DiseaseConfiguration target =
-			DtoHelper.fillOrBuildEntity(source, service.getByUuid(source.getUuid()), DiseaseConfiguration::new, checkChangeDate);
+		target = DtoHelper.fillOrBuildEntity(source, target, DiseaseConfiguration::new, checkChangeDate);
 
 		target.setDisease(source.getDisease());
 		target.setActive(source.getActive());
 		target.setPrimaryDisease(source.getPrimaryDisease());
-		target.setCaseBased(source.getCaseBased());
+		target.setCaseSurveillanceEnabled(source.getCaseSurveillanceEnabled());
+		target.setAggregateReportingEnabled(source.getAggregateReportingEnabled());
 		target.setFollowUpEnabled(source.getFollowUpEnabled());
 		target.setFollowUpDuration(source.getFollowUpDuration());
 		target.setCaseFollowUpDuration(source.getCaseFollowUpDuration());
@@ -263,8 +288,8 @@ public class DiseaseConfigurationFacadeEjb implements DiseaseConfigurationFacade
 		inactiveDiseases.clear();
 		primaryDiseases.clear();
 		nonPrimaryDiseases.clear();
-		caseBasedDiseases.clear();
-		aggregateDiseases.clear();
+		caseSurveillanceDiseases.clear();
+		aggregateReportingDiseases.clear();
 		followUpEnabledDiseases.clear();
 		followUpDurations.clear();
 		extendedClassificationDiseases.clear();
@@ -285,10 +310,11 @@ public class DiseaseConfigurationFacadeEjb implements DiseaseConfigurationFacade
 			} else {
 				nonPrimaryDiseases.add(disease);
 			}
-			if (enabled(configuration.getCaseBased(), disease.isDefaultCaseBased())) {
-				caseBasedDiseases.add(disease);
-			} else {
-				aggregateDiseases.add(disease);
+			if (enabled(configuration.getCaseSurveillanceEnabled(), disease.isDefaultCaseSurveillanceEnabled())) {
+				caseSurveillanceDiseases.add(disease);
+			}
+			if (enabled(configuration.getAggregateReportingEnabled(), disease.isDefaultAggregateReportingEnabled())) {
+				aggregateReportingDiseases.add(disease);
 			}
 			if (Boolean.TRUE.equals(configuration.getFollowUpEnabled())
 				|| (configuration.getFollowUpEnabled() == null && disease.isDefaultFollowUpEnabled())) {

@@ -9,6 +9,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -16,15 +18,11 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import org.joda.time.LocalDateTime;
-import org.joda.time.format.ISODateTimeFormat;
-
 import de.symeda.sormas.ui.utils.AbstractEditForm;
 
 /**
  * Writes the html templates of all forms to files.
  * Diffs between snapshots can be used to spot side effects of refactorings.
- *
  */
 public class EditFormLayoutCharting {
 
@@ -81,7 +79,7 @@ public class EditFormLayoutCharting {
 			throw new RuntimeException("Forms without HTML_LAYOUT constant:\n" + irregularForms);
 		}
 
-		Path destdir = Paths.get("form_layout_snapshots", ISODateTimeFormat.basicDateTimeNoMillis().print(LocalDateTime.now()));
+		Path destdir = Paths.get("form_layout_snapshots", DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm").format(LocalDateTime.now()));
 
 		Files.createDirectories(destdir);
 

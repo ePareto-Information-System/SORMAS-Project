@@ -11,7 +11,7 @@ import de.symeda.sormas.ui.dashboard.components.DashboardFilterLayout;
 import de.symeda.sormas.ui.dashboard.surveillance.SurveillanceDashboardView;
 import de.symeda.sormas.ui.utils.components.datetypeselector.DateTypeSelectorComponent;
 
-public class SurveillanceFilterLayout extends DashboardFilterLayout {
+public class SurveillanceFilterLayout extends DashboardFilterLayout<DashboardDataProvider> {
 
 	public static final String DATE_TYPE_SELECTOR_FILTER = "dateTypeSelectorFilter";
 

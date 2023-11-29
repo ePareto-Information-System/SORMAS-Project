@@ -58,8 +58,12 @@ public class SampleEditForm extends AbstractSampleForm {
 
 	private Label laboratorySampleHeadingLabel;
 
-	public SampleEditForm(boolean isPseudonymized, Disease disease) {
-		super(SampleDto.class, SampleDto.I18N_PREFIX, disease, UiFieldAccessCheckers.forSensitiveData(isPseudonymized));
+	public SampleEditForm(boolean isPseudonymized, boolean inJurisdiction, Disease disease) {
+		super(
+			SampleDto.class,
+			SampleDto.I18N_PREFIX,
+			disease,
+			UiFieldAccessCheckers.forDataAccessLevel(UserProvider.getCurrent().getPseudonymizableDataAccessLevel(inJurisdiction), isPseudonymized));
 		testsToBeRemovedOnCommit = new ArrayList();
 	}
 
@@ -92,7 +96,7 @@ public class SampleEditForm extends AbstractSampleForm {
 
 				fillPathogenTestResult();
 
-			if(UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO) ){
+			//if(UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO) ){
 
 				getField(SampleDto.REQUESTED_OTHER_PATHOGEN_TESTS).setEnabled(false);
 				getField(SampleDto.REQUESTED_PATHOGEN_TESTS).setEnabled(false);
@@ -107,16 +111,16 @@ public class SampleEditForm extends AbstractSampleForm {
 				//getField("referredFrom").setEnabled(false);
 
 
-			}
+			//}
 
 			UserReferenceDto reportingUser = getValue().getReportingUser();
-			if (!(UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_NOT_OWNED)
-				|| (reportingUser != null && UserProvider.getCurrent().getUuid().equals(reportingUser.getUuid())))) {
+//			if (!(UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_NOT_OWNED)
+//				|| (reportingUser != null && UserProvider.getCurrent().getUuid().equals(reportingUser.getUuid())))) {
 				getField(SampleDto.SAMPLE_PURPOSE).setEnabled(false);
 				getField(SampleDto.SAMPLING_REASON).setEnabled(false);
 				getField(SampleDto.SAMPLING_REASON_DETAILS).setEnabled(false);
 				getField(SampleDto.FIELD_SAMPLE_ID).setEnabled(false);
-			}
+			//}
 
 		});
 	}

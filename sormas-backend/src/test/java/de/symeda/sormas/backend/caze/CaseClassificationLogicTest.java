@@ -17,7 +17,7 @@
  *******************************************************************************/
 package de.symeda.sormas.backend.caze;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -25,8 +25,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.jboss.weld.exceptions.UnsupportedOperationException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseClassification;
@@ -61,7 +61,7 @@ import de.symeda.sormas.backend.common.ConfigFacadeEjb;
 
 public class CaseClassificationLogicTest extends AbstractBeanTest {
 
-	@Before
+	@BeforeEach
 	public void enableAutomaticCaseClassification() {
 		MockProducer.getProperties().setProperty(ConfigFacadeEjb.FEATURE_AUTOMATIC_CASE_CLASSIFICATION, "true");
 	}
@@ -467,14 +467,14 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 		PathogenTestDto sampleTest =
 			creator.createPathogenTest(caze, Disease.YELLOW_FEVER, PathogenTestType.IGM_SERUM_ANTIBODY, PathogenTestResultType.POSITIVE);
 		sampleTest.setFourFoldIncreaseAntibodyTiter(true);
-		getSampleTestFacade().savePathogenTest(sampleTest);
+		getPathogenTestFacade().savePathogenTest(sampleTest);
 		caze = getCaseFacade().getCaseDataByUuid(caze.getUuid());
 		assertEquals(CaseClassification.CONFIRMED, caze.getCaseClassification());
 
 		caze = getCaseFacade().save(buildConfirmedCaseBasis(Disease.YELLOW_FEVER));
 		sampleTest = creator.createPathogenTest(caze, Disease.YELLOW_FEVER, PathogenTestType.IGG_SERUM_ANTIBODY, PathogenTestResultType.POSITIVE);
 		sampleTest.setFourFoldIncreaseAntibodyTiter(true);
-		getSampleTestFacade().savePathogenTest(sampleTest);
+		getPathogenTestFacade().savePathogenTest(sampleTest);
 		caze = getCaseFacade().getCaseDataByUuid(caze.getUuid());
 		assertEquals(CaseClassification.CONFIRMED, caze.getCaseClassification());
 	}
@@ -599,7 +599,7 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 		PathogenTestDto sampleTest =
 			creator.createPathogenTest(caze, Disease.DENGUE, PathogenTestType.IGG_SERUM_ANTIBODY, PathogenTestResultType.POSITIVE);
 		sampleTest.setFourFoldIncreaseAntibodyTiter(true);
-		getSampleTestFacade().savePathogenTest(sampleTest);
+		getPathogenTestFacade().savePathogenTest(sampleTest);
 		caze = getCaseFacade().getCaseDataByUuid(caze.getUuid());
 		assertEquals(CaseClassification.CONFIRMED, caze.getCaseClassification());
 	}
@@ -706,7 +706,7 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 		PathogenTestDto sampleTest =
 			creator.createPathogenTest(caze, Disease.NEW_INFLUENZA, PathogenTestType.IGG_SERUM_ANTIBODY, PathogenTestResultType.POSITIVE);
 		sampleTest.setFourFoldIncreaseAntibodyTiter(true);
-		getSampleTestFacade().savePathogenTest(sampleTest);
+		getPathogenTestFacade().savePathogenTest(sampleTest);
 		caze = getCaseFacade().getCaseDataByUuid(caze.getUuid());
 		assertEquals(CaseClassification.CONFIRMED, caze.getCaseClassification());
 	}
@@ -868,14 +868,14 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 		ExposureDto exposure = ExposureDto.build(ExposureType.TRAVEL);
 		exposure.setRiskArea(YesNoUnknown.NO);
 		caze.getEpiData().getExposures().add(exposure);
-		PersonDto casePerson = getPersonFacade().getPersonByUuid(caze.getPerson().getUuid());
+		PersonDto casePerson = getPersonFacade().getByUuid(caze.getPerson().getUuid());
 		casePerson.setApproximateAge(5);
 		casePerson.setApproximateAgeType(ApproximateAgeType.YEARS);
-		getPersonFacade().savePerson(casePerson);
+		getPersonFacade().save(casePerson);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.NOT_CLASSIFIED, caze.getCaseClassification());
 		casePerson.setApproximateAge(0);
-		getPersonFacade().savePerson(casePerson);
+		getPersonFacade().save(casePerson);
 		caze.setOutcome(CaseOutcome.DECEASED);
 		caze.getEpiData().getExposures().get(0).setRiskArea(YesNoUnknown.YES);
 		caze = getCaseFacade().save(caze);
@@ -1209,10 +1209,10 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 			caze.getSymptoms().setSkinRash(SymptomState.YES);
 			break;
 		case CHOLERA:
-			PersonDto casePerson = getPersonFacade().getPersonByUuid(caze.getPerson().getUuid());
+			PersonDto casePerson = getPersonFacade().getByUuid(caze.getPerson().getUuid());
 			casePerson.setApproximateAge(5);
 			casePerson.setApproximateAgeType(ApproximateAgeType.YEARS);
-			getPersonFacade().savePerson(casePerson);
+			getPersonFacade().save(casePerson);
 			caze = getCaseFacade().getCaseDataByUuid(caze.getUuid());
 			break;
 		case PLAGUE:

@@ -49,7 +49,6 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvException;
 import cucumber.api.java8.En;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -62,16 +61,13 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.sormas.e2etests.entities.pojo.web.Sample;
-import org.sormas.e2etests.enums.CaseClassification;
-import org.sormas.e2etests.enums.DiseasesValues;
-import org.sormas.e2etests.enums.LaboratoryValues;
-import org.sormas.e2etests.enums.PathogenTestResults;
-import org.sormas.e2etests.enums.SpecimenConditions;
+import org.sormas.e2etests.enums.*;
 import org.sormas.e2etests.envconfig.manager.RunningConfiguration;
 import org.sormas.e2etests.helpers.AssertHelpers;
 import org.sormas.e2etests.helpers.RestAssuredClient;
 import org.sormas.e2etests.helpers.WebDriverHelpers;
 import org.sormas.e2etests.helpers.environmentdata.manager.EnvironmentManager;
+import org.sormas.e2etests.helpers.files.FilesHelper;
 import org.sormas.e2etests.state.ApiState;
 import org.sormas.e2etests.steps.web.application.cases.EditCaseSteps;
 import org.testng.Assert;
@@ -299,8 +295,12 @@ public class SamplesDirectorySteps implements En {
     When(
         "^I search for Sample using Sample UUID from the created Sample",
         () -> {
+          webDriverHelpers.clickOnWebElementBySelector(RESET_FILTER_BUTTON);
+          TimeUnit.SECONDS.sleep(2); // wait for reaction
           webDriverHelpers.fillAndSubmitInWebElement(
               SAMPLE_SEARCH_INPUT, CreateNewSampleSteps.sampleId);
+          TimeUnit.SECONDS.sleep(2); // wait for reaction
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(40);
           webDriverHelpers.waitUntilWebElementHasAttributeWithValue(
               SEARCH_RESULT_SAMPLE, "title", CreateNewSampleSteps.sampleId);
         });
@@ -433,33 +433,31 @@ public class SamplesDirectorySteps implements En {
                     }));
 
     Then(
-        "^I check the displayed Laboratory filter dropdown",
-        () ->
-            Arrays.stream(LaboratoryValues.values())
-                .forEach(
-                    caption -> {
-                      webDriverHelpers.selectFromCombobox(
-                          LABORATORY_SEARCH_COMBOBOX, caption.getCaptionEnglish());
-                      webDriverHelpers.clickOnWebElementBySelector(APPLY_FILTER_BUTTON);
-                      webDriverHelpers.waitUntilAListOfElementsHasText(
-                          FINAL_LABORATORY_RESULT, caption.getCaptionEnglish());
-                      assertHelpers.assertWithPoll20Second(
-                          () ->
-                              Truth.assertWithMessage(
-                                      "Total number of sample results is not correct")
-                                  .that(
-                                      apiState.getCreatedSamples().stream()
-                                          .filter(
-                                              sample ->
-                                                  sample
-                                                      .getLab()
-                                                      .getUuid()
-                                                      .contentEquals(caption.getUuidValue()))
-                                          .count())
-                                  .isEqualTo(
-                                      webDriverHelpers.getNumberOfElements(
-                                          SAMPLE_GRID_RESULTS_ROWS)));
-                    }));
+        "^I validate that number of displayed samples is correct for applied Voreingestelltes Labor filter",
+        () -> {
+          EnvironmentManager environmentManager = new EnvironmentManager(restAssuredClient);
+          String labName = LaboratoryValues.VOREINGESTELLTES_LABOR.getCaptionEnglish();
+          webDriverHelpers.selectFromCombobox(LABORATORY_SEARCH_COMBOBOX, labName);
+          webDriverHelpers.clickOnWebElementBySelector(APPLY_FILTER_BUTTON);
+          webDriverHelpers.waitUntilAListOfElementsHasText(FINAL_LABORATORY_RESULT, labName);
+          assertHelpers.assertWithPoll20Second(
+              () ->
+                  Truth.assertWithMessage("Total number of sample results is not correct")
+                      .that(
+                          apiState.getCreatedSamples().stream()
+                              .filter(
+                                  sample ->
+                                      sample
+                                          .getLab()
+                                          .getUuid()
+                                          .contentEquals(
+                                              environmentManager.getLaboratoryUUID(
+                                                  RegionsValues.VoreingestellteBundeslander
+                                                      .getName(),
+                                                  labName)))
+                              .count())
+                      .isEqualTo(webDriverHelpers.getNumberOfElements(SAMPLE_GRID_RESULTS_ROWS)));
+        });
 
     Then(
         "I search after the last created Sample via API",
@@ -529,9 +527,8 @@ public class SamplesDirectorySteps implements En {
     When(
         "I delete exported file from Sample Directory",
         () -> {
-          File toDelete =
-              new File(userDirPath + "/downloads/sormas_samples_" + LocalDate.now() + "_.csv");
-          toDelete.deleteOnExit();
+          String filePath = "sormas_samples_" + LocalDate.now() + "_.csv";
+          FilesHelper.deleteFile(filePath);
         });
   }
 

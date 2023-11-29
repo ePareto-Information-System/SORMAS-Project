@@ -15,15 +15,16 @@
 
 package de.symeda.sormas.api.user;
 
-import de.symeda.sormas.api.campaign.CampaignDto;
-import de.symeda.sormas.api.campaign.data.CampaignFormDataDto;
-import de.symeda.sormas.api.campaign.form.CampaignFormMetaDto;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.symeda.sormas.api.campaign.CampaignDto;
+import de.symeda.sormas.api.campaign.data.CampaignFormDataDto;
+import de.symeda.sormas.api.campaign.form.CampaignFormMetaDto;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.clinicalcourse.ClinicalVisitDto;
 import de.symeda.sormas.api.contact.ContactDto;
+import de.symeda.sormas.api.environment.EnvironmentDto;
 import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventParticipantDto;
 import de.symeda.sormas.api.immunization.ImmunizationDto;
@@ -59,6 +60,9 @@ public class DtoViewAndEditRights {
 
 		viewRights.put(ContactDto.class.getSimpleName(), UserRight.CONTACT_VIEW);
 		editRights.put(ContactDto.class.getSimpleName(), UserRight.CONTACT_EDIT);
+
+		viewRights.put(EnvironmentDto.class.getSimpleName(), UserRight.ENVIRONMENT_VIEW);
+		editRights.put(EnvironmentDto.class.getSimpleName(), UserRight.ENVIRONMENT_EDIT);
 
 		viewRights.put(EventDto.class.getSimpleName(), UserRight.EVENT_VIEW);
 		editRights.put(EventDto.class.getSimpleName(), UserRight.EVENT_EDIT);
@@ -104,8 +108,8 @@ public class DtoViewAndEditRights {
 		viewRights.put(CampaignDto.class.getSimpleName(), UserRight.CAMPAIGN_VIEW);
 		editRights.put(CampaignDto.class.getSimpleName(), UserRight.CAMPAIGN_EDIT);
 
-		viewRights.put(CampaignFormDataDto.class.getSimpleName(), UserRight.CAMPAIGN_VIEW);
-		editRights.put(CampaignFormDataDto.class.getSimpleName(), UserRight.CAMPAIGN_EDIT);
+		viewRights.put(CampaignFormDataDto.class.getSimpleName(), UserRight.CAMPAIGN_FORM_DATA_VIEW);
+		editRights.put(CampaignFormDataDto.class.getSimpleName(), UserRight.CAMPAIGN_FORM_DATA_EDIT);
 	}
 
 	public static UserRight getUserRightView(Class clazz) {

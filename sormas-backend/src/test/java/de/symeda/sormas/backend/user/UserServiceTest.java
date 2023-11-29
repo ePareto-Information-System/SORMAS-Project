@@ -7,10 +7,10 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -20,9 +20,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -40,7 +40,7 @@ public class UserServiceTest extends AbstractBeanTest {
 
 	private static MockedStatic<AuthProvider> mockAuthProvider;
 
-	@BeforeClass
+	@BeforeAll
 	public static void beforeClass() {
 		AuthProvider authProvider = mock(AuthProvider.class);
 		mockAuthProvider = mockStatic(AuthProvider.class);
@@ -48,8 +48,8 @@ public class UserServiceTest extends AbstractBeanTest {
 		Mockito.when(AuthProvider.getProvider(any())).thenReturn(authProvider);
 	}
 
-	@AfterClass
-	public static void afterClass() {
+	@AfterAll
+	public static void AfterAll() {
 		assertNotNull(mockAuthProvider);
 		//Important: release static mock.
 		mockAuthProvider.closeOnDemand();
@@ -118,12 +118,14 @@ public class UserServiceTest extends AbstractBeanTest {
 
 	@Test
 	public void testGetAllDefaultUsers() {
-		User user = getUserService().getByUserName("admin");
-		assertNotNull(user);
 
-		user.setSeed(PasswordHelper.createPass(16));
-		user.setPassword(PasswordHelper.encodePassword("sadmin", user.getSeed()));
-		getEntityManager().merge(user);
+		executeInTransaction(em -> {
+			User user = getUserService().getByUserName("admin");
+			assertNotNull(user);
+			user.setSeed(PasswordHelper.createPass(16));
+			user.setPassword(PasswordHelper.encodePassword("sadmin", user.getSeed()));
+			getUserService().persist(user);
+		});
 
 		List<User> result = getUserService().getAllDefaultUsers();
 		assertNotNull(result);
@@ -140,7 +142,7 @@ public class UserServiceTest extends AbstractBeanTest {
 		testUsers.addAll(randomUsers);
 
 		for (User u : testUsers) {
-			getEntityManager().persist(u);
+			getUserService().persist(u);
 		}
 
 		List<User> result = getUserService().getAllDefaultUsers();
@@ -195,7 +197,7 @@ public class UserServiceTest extends AbstractBeanTest {
 			"1",
 			creator.getUserRoleReference(DefaultUserRole.COMMUNITY_OFFICER));
 		commOff1.setCommunity(rdcf1.community);
-		getUserFacade().saveUser(commOff1);
+		getUserFacade().saveUser(commOff1, false);
 		UserDto poeSup1 = creator.createUser(
 			rdcf1.region.getUuid(),
 			rdcf1.district.getUuid(),
@@ -204,7 +206,7 @@ public class UserServiceTest extends AbstractBeanTest {
 			"1",
 			creator.getUserRoleReference(DefaultUserRole.POE_SUPERVISOR));
 		poeSup1.setPointOfEntry(rdcf1.pointOfEntry);
-		getUserFacade().saveUser(poeSup1);
+		getUserFacade().saveUser(poeSup1, false);
 
 		assertThat(
 			getUserService().getUserRefsByInfrastructure(rdcf1.district.getUuid(), JurisdictionLevel.DISTRICT, JurisdictionLevel.DISTRICT, null),
@@ -235,9 +237,9 @@ public class UserServiceTest extends AbstractBeanTest {
 			hasSize(2));
 
 		commOff1.setLimitedDisease(Disease.EVD);
-		getUserFacade().saveUser(commOff1);
+		getUserFacade().saveUser(commOff1, false);
 		survOff11.setLimitedDisease(Disease.CHOLERA);
-		getUserFacade().saveUser(survOff11);
+		getUserFacade().saveUser(survOff11, false);
 		assertThat(
 			getUserService()
 				.getUserRefsByInfrastructure(rdcf1.community.getUuid(), JurisdictionLevel.COMMUNITY, JurisdictionLevel.REGION, Disease.CHOLERA),

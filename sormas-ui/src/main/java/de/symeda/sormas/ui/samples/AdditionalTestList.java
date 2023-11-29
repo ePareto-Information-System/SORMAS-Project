@@ -2,6 +2,7 @@ package de.symeda.sormas.ui.samples;
 
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.function.Consumer;
 
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
@@ -26,7 +27,15 @@ public class AdditionalTestList extends PaginationList<AdditionalTestDto> {
 		super(3);
 		this.sampleUuid = sampleUuid;
 		this.createOrEditAllowedCallback = createOrEditAllowedCallback;
+	}
+	private Consumer<Runnable> actionCallback;
+	private boolean isEditable;
 
+	public AdditionalTestList(String sampleUuid, Consumer<Runnable> actionCallback, boolean isEditable) {
+		super(3);
+		this.sampleUuid = sampleUuid;
+		this.isEditable = isEditable;
+		this.actionCallback = actionCallback;
 	}
 
 	@Override
@@ -61,6 +70,19 @@ public class AdditionalTestList extends PaginationList<AdditionalTestDto> {
 					}
 				});
 			}
+//start 1.87.0
+			boolean isEditableAndHasEditRight =
+				UserProvider.getCurrent().hasAllUserRightsWithEditAllowedFlag(isEditable, UserRight.ADDITIONAL_TEST_EDIT);
+			boolean isEditableAndHasDeleteRight =
+				UserProvider.getCurrent().hasAllUserRightsWithEditAllowedFlag(isEditable, UserRight.ADDITIONAL_TEST_DELETE);
+
+			listEntry.addActionButton(
+				additionalTest.getUuid(),
+				e -> actionCallback.accept(
+					() -> ControllerProvider.getAdditionalTestController()
+						.openEditComponent(additionalTest, AdditionalTestList.this::reload, isEditableAndHasEditRight, isEditableAndHasDeleteRight)),
+				isEditableAndHasEditRight);
+			listEntry.setEnabled(isEditable); //end 1.87.0
 			listLayout.addComponent(listEntry);
 		}
 	}

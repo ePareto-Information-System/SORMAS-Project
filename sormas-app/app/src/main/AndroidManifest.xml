@@ -410,6 +410,21 @@
         </activity> <!-- Only needed for androidTest - found no other way to manifest this -->
         <activity android:name=".TestBackendActivity" />
         <activity android:name=".barcode.BarcodeActivity" />
+        
+
+        <activity
+            android:name=".environment.list.EnvironmentListActivity"
+            android:theme="@style/ActivityWithOverflowMenuTheme"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
+        </activity>
+
+        <!-- Only needed for androidTest - found no other way to manifest this -->
+        <activity
+            android:name=".TestBackendActivity" />
+
+        <activity
+            android:name=".barcode.BarcodeActivity" />
 
         <receiver
             android:name=".SormasBootstrap"

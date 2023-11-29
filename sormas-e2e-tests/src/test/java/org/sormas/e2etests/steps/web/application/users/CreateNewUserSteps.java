@@ -18,6 +18,7 @@
 
 package org.sormas.e2etests.steps.web.application.users;
 
+import static org.sormas.e2etests.pages.application.NavBarPage.ACTION_CONFIRM_GDPR_POPUP_DE;
 import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.ALL_RESULTS_CHECKBOX;
 import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.BULK_ACTIONS;
 import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_DETAILED_COLUMN_HEADERS;
@@ -26,7 +27,9 @@ import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE
 import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.ENTER_BULK_EDIT_MODE;
 import static org.sormas.e2etests.pages.application.dashboard.Surveillance.SurveillanceDashboardPage.LOGOUT_BUTTON;
 import static org.sormas.e2etests.pages.application.users.CreateNewUserPage.*;
+import static org.sormas.e2etests.pages.application.users.UserManagementPage.FIRST_EDIT_BUTTON_FROM_LIST;
 import static org.sormas.e2etests.pages.application.users.UserManagementPage.NEW_USER_BUTTON;
+import static org.sormas.e2etests.pages.application.users.UserManagementPage.getUserRoleLabelByCaption;
 
 import cucumber.api.java8.En;
 import java.util.*;
@@ -35,8 +38,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.inject.Inject;
 import org.openqa.selenium.WebElement;
-import org.sormas.e2etests.entities.pojo.User;
+import org.sormas.e2etests.entities.pojo.common.User;
 import org.sormas.e2etests.entities.services.UserService;
+import org.sormas.e2etests.helpers.AssertHelpers;
 import org.sormas.e2etests.helpers.WebDriverHelpers;
 import org.sormas.e2etests.pages.application.LoginPage;
 import org.sormas.e2etests.pages.application.users.CreateNewUserPage;
@@ -52,12 +56,14 @@ public class CreateNewUserSteps implements En {
   public static String userPass;
   private final BaseSteps baseSteps;
   private static int amountOfRecords;
+  public static HashMap<String, String> userWithRegion = new HashMap<String, String>();
 
   @Inject
   public CreateNewUserSteps(
       WebDriverHelpers webDriverHelpers,
       UserService userService,
       BaseSteps baseSteps,
+      AssertHelpers assertHelpers,
       SoftAssert softly) {
     this.webDriverHelpers = webDriverHelpers;
     this.baseSteps = baseSteps;
@@ -74,15 +80,11 @@ public class CreateNewUserSteps implements En {
 
     When(
         "I click Enter Bulk Edit Mode on Users directory page",
-        () -> {
-          webDriverHelpers.clickOnWebElementBySelector(ENTER_BULK_EDIT_MODE);
-        });
+        () -> webDriverHelpers.clickOnWebElementBySelector(ENTER_BULK_EDIT_MODE));
 
     When(
         "I click checkbox to choose all User results",
-        () -> {
-          webDriverHelpers.clickOnWebElementBySelector(ALL_RESULTS_CHECKBOX);
-        });
+        () -> webDriverHelpers.clickOnWebElementBySelector(ALL_RESULTS_CHECKBOX));
 
     When(
         "I pick {string} value for Active filter in User Directory",
@@ -229,7 +231,6 @@ public class CreateNewUserSteps implements En {
     When(
         "I create {int} new users with National User via UI",
         (Integer users) -> {
-          List<User> userList = new ArrayList<>();
           for (int i = 0; i < users; i++) {
             webDriverHelpers.clickWhileOtherButtonIsDisplayed(
                 NEW_USER_BUTTON, FIRST_NAME_OF_USER_INPUT);
@@ -265,6 +266,43 @@ public class CreateNewUserSteps implements En {
             webDriverHelpers.waitForPageLoadingSpinnerToDisappear(20);
             closeNewPasswordPopUp();
           }
+        });
+
+    When(
+        "I create a new disabled National User in the Create New User page",
+        () -> {
+          webDriverHelpers.clickWhileOtherButtonIsDisplayed(
+              NEW_USER_BUTTON, FIRST_NAME_OF_USER_INPUT);
+          user = userService.buildGeneratedUserWithRole("National User");
+          fillFirstName(user.getFirstName());
+          fillLastName(user.getLastName());
+          fillEmailAddress(user.getEmailAddress());
+          fillPhoneNumber(user.getPhoneNumber());
+          selectLanguage(user.getLanguage());
+          selectCountry(user.getCountry());
+          selectRegion(user.getRegion());
+          selectDistrict(user.getDistrict());
+          selectCommunity(user.getCommunity());
+          selectFacilityCategory(user.getFacilityCategory());
+          selectFacilityType(user.getFacilityType());
+          selectFacility(user.getFacility());
+          fillFacilityNameAndDescription(user.getFacilityNameAndDescription());
+          fillStreet(user.getStreet());
+          fillHouseNr(user.getHouseNumber());
+          fillAdditionalInformation(user.getAdditionalInformation());
+          fillPostalCode(user.getPostalCode());
+          fillCity(user.getCity());
+          selectAreaType(user.getAreaType());
+          fillGpsLatitude(user.getGpsLatitude());
+          fillGpsLongitude(user.getGpsLongitude());
+          fillGpsAccuracy(user.getGpsAccuracy());
+          fillUserName(user.getUserName());
+          selectUserRole("National User");
+          selectLimitedDisease(user.getLimitedDisease());
+          webDriverHelpers.scrollToElement(SAVE_BUTTON);
+          webDriverHelpers.clickOnWebElementBySelector(SAVE_BUTTON);
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(20);
+          closeNewPasswordPopUp();
         });
 
     And(
@@ -339,6 +377,23 @@ public class CreateNewUserSteps implements En {
         });
 
     When(
+        "^I create new ([^\"]*) user for test on DE specific$",
+        (String role) -> {
+          user = userService.buildGeneratedUserWithRole(role);
+          fillFirstName(user.getFirstName());
+          fillLastName(user.getLastName());
+          selectActive(user.getActive());
+          fillUserName(user.getUserName());
+          selectUserRole(role);
+          userName = user.getUserName();
+          webDriverHelpers.scrollToElement(SAVE_BUTTON);
+          webDriverHelpers.clickOnWebElementBySelector(SAVE_BUTTON);
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(20);
+          userPass = webDriverHelpers.getTextFromWebElement(PASSWORD_FIELD);
+          closeNewPasswordPopUp();
+        });
+
+    When(
         "As a new created user I log in",
         () -> {
           webDriverHelpers.waitUntilIdentifiedElementIsPresent(LoginPage.USER_NAME_INPUT);
@@ -347,6 +402,186 @@ public class CreateNewUserSteps implements En {
           webDriverHelpers.clickOnWebElementBySelector(LoginPage.LOGIN_BUTTON);
           webDriverHelpers.waitForPageLoaded();
           webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(LOGOUT_BUTTON, 30);
+        });
+    When(
+        "I login first time as a new created user from keycloak instance",
+        () -> {
+          webDriverHelpers.waitUntilIdentifiedElementIsPresent(LoginPage.USER_NAME_INPUT);
+          webDriverHelpers.fillInWebElement(LoginPage.USER_NAME_INPUT, userName);
+          webDriverHelpers.fillInWebElement(LoginPage.USER_PASSWORD_INPUT, userPass);
+          webDriverHelpers.clickOnWebElementBySelector(LoginPage.LOGIN_BUTTON);
+          userPass = userPass + "3!";
+          webDriverHelpers.waitForPageLoaded();
+          webDriverHelpers.fillInWebElement(LoginPage.PASSWORD_NEW_INPUT, userPass);
+          webDriverHelpers.fillInWebElement(LoginPage.PASSWORD_CONFIRM_INPUT, userPass);
+          webDriverHelpers.clickOnWebElementBySelector(LoginPage.SUBMIT_BUTTON);
+          webDriverHelpers.waitForPageLoaded();
+          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(LOGOUT_BUTTON, 30);
+          webDriverHelpers.clickOnWebElementBySelector(ACTION_CONFIRM_GDPR_POPUP_DE);
+        });
+    When(
+        "I login first time as a last edited user from keycloak instance",
+        () -> {
+          webDriverHelpers.waitUntilIdentifiedElementIsPresent(LoginPage.USER_NAME_INPUT);
+          webDriverHelpers.fillInWebElement(
+              LoginPage.USER_NAME_INPUT, EditUserSteps.collectedUser.getUserName());
+          webDriverHelpers.fillInWebElement(
+              LoginPage.USER_PASSWORD_INPUT, EditUserSteps.collectedUser.getPassword());
+          webDriverHelpers.clickOnWebElementBySelector(LoginPage.LOGIN_BUTTON);
+          String newPassword = EditUserSteps.collectedUser.getPassword() + "3!";
+          EditUserSteps.collectedUser =
+              EditUserSteps.collectedUser.toBuilder().password(newPassword).build();
+          webDriverHelpers.waitForPageLoaded();
+          webDriverHelpers.fillInWebElement(
+              LoginPage.PASSWORD_NEW_INPUT, EditUserSteps.collectedUser.getPassword());
+          webDriverHelpers.fillInWebElement(
+              LoginPage.PASSWORD_CONFIRM_INPUT, EditUserSteps.collectedUser.getPassword());
+          webDriverHelpers.clickOnWebElementBySelector(LoginPage.SUBMIT_BUTTON);
+          webDriverHelpers.waitForPageLoaded();
+          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(LOGOUT_BUTTON, 30);
+        });
+
+    When(
+        "As a new created user on Keycloak enabled instance I log in",
+        () -> {
+          webDriverHelpers.waitUntilIdentifiedElementIsPresent(LoginPage.USER_NAME_INPUT);
+          webDriverHelpers.fillInWebElement(LoginPage.USER_NAME_INPUT, userName);
+          webDriverHelpers.fillInWebElement(LoginPage.USER_PASSWORD_INPUT, userPass);
+          webDriverHelpers.clickOnWebElementBySelector(LoginPage.LOGIN_BUTTON);
+        });
+
+    And(
+        "I create new user for test with {string} jurisdiction and {string} roles",
+        (String jurisdiction, String role) -> {
+          user = userService.buildGeneratedUserWithRole("Clinician");
+          fillFirstName(user.getFirstName());
+          fillLastName(user.getLastName());
+          fillEmailAddress(user.getEmailAddress());
+          fillPhoneNumber(user.getPhoneNumber());
+          selectLanguage(user.getLanguage());
+          switch (jurisdiction) {
+            case "Bayern":
+              selectCountry("Germany");
+              selectRegion("Bayern");
+              selectDistrict("LK Ansbach");
+              selectCommunity("Aurach");
+              break;
+            case "Saarland":
+              selectCountry("Germany");
+              selectRegion("Saarland");
+              selectDistrict("LK Saarlouis");
+              selectCommunity("Lebach");
+              break;
+          }
+          selectFacilityCategory(user.getFacilityCategory());
+          selectFacilityType(user.getFacilityType());
+          selectFacility(user.getFacility());
+          fillFacilityNameAndDescription(user.getFacilityNameAndDescription());
+          fillStreet(user.getStreet());
+          fillHouseNr(user.getHouseNumber());
+          fillAdditionalInformation(user.getAdditionalInformation());
+          fillPostalCode(user.getPostalCode());
+          fillCity(user.getCity());
+          selectAreaType(user.getAreaType());
+          fillGpsLatitude(user.getGpsLatitude());
+          fillGpsLongitude(user.getGpsLongitude());
+          fillGpsAccuracy(user.getGpsAccuracy());
+          selectActive(user.getActive());
+          fillUserName(user.getUserName());
+
+          List<String> roles = Arrays.asList(role.split(","));
+          for (String temp : roles) {
+            selectUserRole(temp);
+            if (temp.equals("Clinician")) {
+              selectSecondRegion(jurisdiction);
+            }
+          }
+
+          userName = user.getUserName();
+          webDriverHelpers.scrollToElement(SAVE_BUTTON);
+          webDriverHelpers.clickOnWebElementBySelector(SAVE_BUTTON);
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(20);
+          userWithRegion.put(
+              String.format(user.getFirstName() + " " + user.getLastName().toUpperCase()),
+              jurisdiction);
+          closeNewPasswordPopUp();
+        });
+
+    When(
+        "I set user role to {string}",
+        (String userRole) -> webDriverHelpers.selectFromCombobox(USER_ROLE_COMBOBOX, userRole));
+
+    When(
+        "I set region filter to {string}",
+        (String region) -> webDriverHelpers.selectFromCombobox(REGION_FILTER_COMBOBOX, region));
+
+    When(
+        "I search user {string}",
+        (String uName) -> {
+          webDriverHelpers.fillAndSubmitInWebElement(USER_INPUT_SEARCH, uName);
+          TimeUnit.SECONDS.sleep(2); // wait for system reaction
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(40);
+        });
+
+    When(
+        "I filter last created user",
+        () -> {
+          webDriverHelpers.fillAndSubmitInWebElement(USER_INPUT_SEARCH, userName);
+          TimeUnit.SECONDS.sleep(2); // wait for system reaction
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(40);
+        });
+    When(
+        "I open first user from the list",
+        () -> {
+          selectFirstElementFromList();
+          webDriverHelpers.waitUntilElementIsVisibleAndClickable(SAVE_BUTTON);
+        });
+    When(
+        "I set last created user to inactive",
+        () -> {
+          webDriverHelpers.scrollToElement(ACTIVE_CHECKBOX);
+          webDriverHelpers.clickOnWebElementBySelector(ACTIVE_CHECKBOX);
+          webDriverHelpers.scrollToElement(SAVE_BUTTON);
+          webDriverHelpers.clickOnWebElementBySelector(SAVE_BUTTON);
+        });
+
+    When(
+        "I check if displayed user name is equal with searched {string}",
+        (String uname) -> {
+          softly.assertEquals(
+              webDriverHelpers.getTextFromWebElement(TABLE_USER_NAME),
+              uname,
+              "Users name are not equal");
+          softly.assertAll();
+        });
+
+    And(
+        "^I check that \"([^\"]*)\" user role checkbox is not available in Create New User form$",
+        (String userRole) -> {
+          softly.assertFalse(
+              webDriverHelpers.isElementVisibleWithTimeout(
+                  getUserRoleLabelByCaption("TestNatUser"), 3),
+              userRole + " user role is available!");
+          softly.assertAll();
+        });
+
+    And(
+        "^I create new \"([^\"]*)\" with english language for test$",
+        (String role) -> {
+          user = userService.buildGeneratedUserWithRole(role);
+          fillFirstName(user.getFirstName());
+          fillLastName(user.getLastName());
+          fillEmailAddress(user.getEmailAddress());
+          fillPhoneNumber(user.getPhoneNumber());
+          selectActive(user.getActive());
+          fillUserName(user.getUserName());
+          selectUserRole(role);
+          userName = user.getUserName();
+          webDriverHelpers.scrollToElement(SAVE_BUTTON);
+          webDriverHelpers.clickOnWebElementBySelector(SAVE_BUTTON);
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(20);
+          userPass = webDriverHelpers.getTextFromWebElement(PASSWORD_FIELD);
+          closeNewPasswordPopUp();
         });
   }
 
@@ -376,6 +611,10 @@ public class CreateNewUserSteps implements En {
 
   private void selectRegion(String region) {
     webDriverHelpers.selectFromCombobox(REGION_COMBOBOX, region);
+  }
+
+  private void selectSecondRegion(String region) {
+    webDriverHelpers.selectFromCombobox(SECOND_REGION_COMBOBOX, region);
   }
 
   private void selectSurveillanceRegion(String surveillanceRegion) {
@@ -428,6 +667,7 @@ public class CreateNewUserSteps implements En {
   }
 
   private void fillPostalCode(String postalCode) {
+    webDriverHelpers.scrollToElement(POSTAL_CODE_INPUT);
     webDriverHelpers.fillInWebElement(POSTAL_CODE_INPUT, postalCode);
   }
 
@@ -530,5 +770,10 @@ public class CreateNewUserSteps implements En {
               headerHashmap.put(webElement.getText(), atomicInt.getAndIncrement());
             });
     return headerHashmap;
+  }
+
+  private void selectFirstElementFromList() {
+    webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(FIRST_EDIT_BUTTON_FROM_LIST);
+    webDriverHelpers.clickOnWebElementBySelector(FIRST_EDIT_BUTTON_FROM_LIST);
   }
 }

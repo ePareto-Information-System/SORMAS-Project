@@ -27,7 +27,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import de.symeda.sormas.api.CoreFacade;
-import de.symeda.sormas.api.common.DeletionDetails;
+import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.externaldata.ExternalDataDto;
 import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
@@ -43,15 +43,11 @@ public interface EventFacade extends CoreFacade<EventDto, EventIndexDto, EventRe
 
 	List<String> getAllActiveUuids();
 
-	List<String> deleteEvents(List<String> eventUuids, DeletionDetails deletionDetails);
+	List<EventDto> getAllByCase(CaseDataDto caseDataDto);
 
 	Page<EventIndexDto> getIndexPage(@NotNull EventCriteria eventCriteria, Integer offset, Integer size, List<SortProperty> sortProperties);
 
 	List<EventExportDto> getExportList(EventCriteria eventCriteria, Collection<String> selectedRows, Integer first, Integer max);
-
-	boolean isDeleted(String eventUuid);
-
-	List<String> getArchivedUuidsSince(Date since);
 
 	List<String> getDeletedUuidsSince(Date since);
 
@@ -79,10 +75,12 @@ public interface EventFacade extends CoreFacade<EventDto, EventIndexDto, EventRe
 
 	boolean hasAnyEventParticipantWithoutJurisdiction(String eventUuid);
 
-	int saveBulkEvents(
+	Integer saveBulkEvents(
 		List<String> eventUuidList,
 		EventDto updatedTempEvent,
 		boolean eventStatusChange,
 		boolean eventInvestigationStatusChange,
 		boolean eventManagementStatusChange);
+
+	boolean isInJurisdictionOrOwned(String uuid);
 }

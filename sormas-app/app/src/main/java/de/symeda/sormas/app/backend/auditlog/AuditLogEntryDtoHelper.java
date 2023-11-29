@@ -17,21 +17,16 @@ package de.symeda.sormas.app.backend.auditlog;
 
 import androidx.fragment.app.FragmentActivity;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
-import de.symeda.sormas.api.HasUuid;
-import de.symeda.sormas.api.PushResult;
+import de.symeda.sormas.api.PostResponse;
 import de.symeda.sormas.api.auditlog.AuditLogEntryDto;
 //import de.symeda.sormas.api.auditlog.AuditLogEntryReferenceDto;
 import de.symeda.sormas.api.auditlog.ChangeType;
+import de.symeda.sormas.api.uuid.HasUuid;
 import de.symeda.sormas.app.backend.common.AdoDtoHelper;
 import de.symeda.sormas.app.backend.common.DatabaseHelper;
-import de.symeda.sormas.app.backend.auditlog.AuditLogEntry;
 import de.symeda.sormas.app.backend.sormastosormas.SormasToSormasOriginInfoDtoHelper;
-import de.symeda.sormas.app.backend.user.User;
-import de.symeda.sormas.app.backend.user.UserDtoHelper;
-import de.symeda.sormas.app.rest.AuditLogEntryFacadeRetro;
 import de.symeda.sormas.app.rest.NoConnectionException;
 import de.symeda.sormas.app.rest.RetroProvider;
 import retrofit2.Call;
@@ -68,7 +63,8 @@ public class AuditLogEntryDtoHelper extends AdoDtoHelper<AuditLogEntry, AuditLog
 	}
 
 	@Override
-	protected Call<List<PushResult>> pushAll(List<AuditLogEntryDto> sampleDtos) throws NoConnectionException {
+	//protected Call<List<PushResult>> pushAll(List<AuditLogEntryDto> sampleDtos) throws NoConnectionException {
+	protected Call<List<PostResponse>> pushAll(List<AuditLogEntryDto> sampleDtos) throws NoConnectionException {
 		return null; //RetroProvider.getAuditLogEntryFacade().pushAll(sampleDtos);
 	}
 

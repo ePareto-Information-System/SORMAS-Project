@@ -27,6 +27,9 @@ import java.util.List;
 import javax.inject.Inject;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.Range;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.sormas.e2etests.entities.pojo.api.Request;
 import org.sormas.e2etests.helpers.RestAssuredClient;
 import org.sormas.e2etests.helpers.environmentdata.dto.*;
@@ -48,13 +51,21 @@ public class EnvironmentManager {
     response =
         restAssuredClient.sendRequestAndGetResponse(
             Request.builder().method(Method.GET).path(COUNTRIES_PATH + ALL_FROM_0).build());
+    checkResponse(response);
     objectMapper = getNewObjMapper();
     List<Country> countries =
         List.of(objectMapper.readValue(response.getBody().asInputStream(), Country[].class));
     return countries.stream()
         .filter(country -> country.getDefaultName().equalsIgnoreCase(countryName))
         .findFirst()
-        .get()
+        .orElseThrow(
+            () ->
+                new Exception(
+                    "Unable to find country: "
+                        + countryName
+                        + "\n"
+                        + "Available countries: "
+                        + countries))
         .getUuid();
   }
 
@@ -63,13 +74,21 @@ public class EnvironmentManager {
     response =
         restAssuredClient.sendRequestAndGetResponse(
             Request.builder().method(Method.GET).path(REGIONS_PATH + ALL_FROM_0).build());
+    checkResponse(response);
     objectMapper = getNewObjMapper();
     List<Region> regions =
         List.of(objectMapper.readValue(response.getBody().asInputStream(), Region[].class));
     return regions.stream()
         .filter(region -> region.getName().equalsIgnoreCase(regionName))
         .findFirst()
-        .get()
+        .orElseThrow(
+            () ->
+                new Exception(
+                    "Unable to find region: "
+                        + regionName
+                        + "\n"
+                        + "Available regions: "
+                        + regions))
         .getUuid();
   }
 
@@ -78,13 +97,14 @@ public class EnvironmentManager {
     response =
         restAssuredClient.sendRequestAndGetResponse(
             Request.builder().method(Method.GET).path(REGIONS_PATH + ALL_FROM_0).build());
+    checkResponse(response);
     objectMapper = getNewObjMapper();
     List<Region> regions =
         List.of(objectMapper.readValue(response.getBody().asInputStream(), Region[].class));
     return regions.stream()
         .filter(region -> region.getUuid().equalsIgnoreCase(regionUuid))
         .findFirst()
-        .get()
+        .orElseThrow(() -> new Exception("Unable to find region name for uuid: " + regionUuid))
         .getName();
   }
 
@@ -93,13 +113,21 @@ public class EnvironmentManager {
     response =
         restAssuredClient.sendRequestAndGetResponse(
             Request.builder().method(Method.GET).path(DISTRICTS_PATH + ALL_FROM_0).build());
+    checkResponse(response);
     objectMapper = getNewObjMapper();
     List<District> districts =
         List.of(objectMapper.readValue(response.getBody().asInputStream(), District[].class));
     return districts.stream()
         .filter(district -> district.getName().equalsIgnoreCase(districtName))
         .findFirst()
-        .get()
+        .orElseThrow(
+            () ->
+                new Exception(
+                    "Unable to find district: "
+                        + districtName
+                        + "\n"
+                        + "Available districts: "
+                        + districts))
         .getUuid();
   }
 
@@ -108,13 +136,30 @@ public class EnvironmentManager {
     response =
         restAssuredClient.sendRequestAndGetResponse(
             Request.builder().method(Method.GET).path(DISTRICTS_PATH + ALL_FROM_0).build());
+    checkResponse(response);
     objectMapper = getNewObjMapper();
     List<District> districts =
         List.of(objectMapper.readValue(response.getBody().asInputStream(), District[].class));
     return districts.stream()
         .filter(district -> district.getUuid().equalsIgnoreCase(districtUUID))
         .findFirst()
-        .get()
+        .orElseThrow(() -> new Exception("Unable to find district name for uuid: " + districtUUID))
+        .getName();
+  }
+
+  @SneakyThrows
+  public String getCommunityName(String communityUUID) {
+    response =
+        restAssuredClient.sendRequestAndGetResponse(
+            Request.builder().method(Method.GET).path(COMMUNITIES_PATH + ALL_FROM_0).build());
+    checkResponse(response);
+    objectMapper = getNewObjMapper();
+    List<Community> districts =
+        List.of(objectMapper.readValue(response.getBody().asInputStream(), Community[].class));
+    return districts.stream()
+        .filter(district -> district.getUuid().equalsIgnoreCase(communityUUID))
+        .findFirst()
+        .orElseThrow(() -> new Exception("Unable to find district name for uuid: " + communityUUID))
         .getName();
   }
 
@@ -123,13 +168,21 @@ public class EnvironmentManager {
     response =
         restAssuredClient.sendRequestAndGetResponse(
             Request.builder().method(Method.GET).path(CONTINENTS_PATH + ALL_FROM_0).build());
+    checkResponse(response);
     objectMapper = getNewObjMapper();
     List<Continent> continents =
         List.of(objectMapper.readValue(response.getBody().asInputStream(), Continent[].class));
     return continents.stream()
         .filter(continent -> continent.getDefaultName().equalsIgnoreCase(continentName))
         .findFirst()
-        .get()
+        .orElseThrow(
+            () ->
+                new Exception(
+                    "Unable to find continent: "
+                        + continentName
+                        + "\n"
+                        + "Available continents: "
+                        + continents))
         .getUuid();
   }
 
@@ -138,13 +191,14 @@ public class EnvironmentManager {
     response =
         restAssuredClient.sendRequestAndGetResponse(
             Request.builder().method(Method.GET).path(SUBCONTINENTS_PATH + ALL_FROM_0).build());
+    checkResponse(response);
     objectMapper = getNewObjMapper();
     List<Subcontinent> subcontinents =
         List.of(objectMapper.readValue(response.getBody().asInputStream(), Subcontinent[].class));
     return subcontinents.stream()
         .filter(subcontinent -> subcontinent.getDefaultName().equalsIgnoreCase(subcontinentName))
         .findFirst()
-        .get()
+        .orElseThrow(() -> new Exception("Unable to find subcontinent: " + subcontinentName))
         .getUuid();
   }
 
@@ -153,13 +207,21 @@ public class EnvironmentManager {
     response =
         restAssuredClient.sendRequestAndGetResponse(
             Request.builder().method(Method.GET).path(COMMUNITIES_PATH + ALL_FROM_0).build());
+    checkResponse(response);
     objectMapper = getNewObjMapper();
     List<Community> communities =
         List.of(objectMapper.readValue(response.getBody().asInputStream(), Community[].class));
     return communities.stream()
         .filter(community -> community.getName().equalsIgnoreCase(communityName))
         .findFirst()
-        .get()
+        .orElseThrow(
+            () ->
+                new Exception(
+                    "Unable to find community: "
+                        + communityName
+                        + "\n"
+                        + "Available communities: "
+                        + communities))
         .getUuid();
   }
 
@@ -169,13 +231,14 @@ public class EnvironmentManager {
     response =
         restAssuredClient.sendRequestAndGetResponse(
             Request.builder().method(Method.GET).path(path).build());
+    checkResponse(response);
     objectMapper = getNewObjMapper();
     List<HealthFacility> healthFacilities =
         List.of(objectMapper.readValue(response.getBody().asInputStream(), HealthFacility[].class));
     return healthFacilities.stream()
         .filter(healthFacility -> healthFacility.getName().equalsIgnoreCase(healthFacilityName))
         .findFirst()
-        .get()
+        .orElseThrow(() -> new Exception("Unable to find health facility: " + healthFacilityName))
         .getUuid();
   }
 
@@ -185,13 +248,14 @@ public class EnvironmentManager {
     response =
         restAssuredClient.sendRequestAndGetResponse(
             Request.builder().method(Method.GET).path(path).build());
+    checkResponse(response);
     objectMapper = getNewObjMapper();
     List<HealthFacility> healthFacilities =
         List.of(objectMapper.readValue(response.getBody().asInputStream(), HealthFacility[].class));
     return healthFacilities.stream()
         .filter(laboratory -> laboratory.getName().equalsIgnoreCase(laboratoryName))
         .findFirst()
-        .get()
+        .orElseThrow(() -> new Exception("Unable to find health laboratory: " + laboratoryName))
         .getUuid();
   }
 
@@ -200,13 +264,14 @@ public class EnvironmentManager {
     response =
         restAssuredClient.sendRequestAndGetResponse(
             Request.builder().method(Method.GET).path(USERS_PATH + ALL_FROM_0).build());
+    checkResponse(response);
     objectMapper = getNewObjMapper();
     List<User> users =
         List.of(objectMapper.readValue(response.getBody().asInputStream(), User[].class));
     return users.stream()
         .filter(user -> (user.getFirstName() + " " + user.getLastName()).equalsIgnoreCase(fullName))
         .findFirst()
-        .get()
+        .orElseThrow(() -> new Exception("Unable to find user: " + fullName))
         .getUuid();
   }
 
@@ -214,5 +279,30 @@ public class EnvironmentManager {
     ObjectMapper objMapper = new ObjectMapper();
     objMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     return objMapper;
+  }
+
+  @SneakyThrows
+  private void checkResponse(Response response) {
+    Document doc;
+    Range<Integer> clientFailRange = Range.between(400, 499);
+    Range<Integer> serverFailRange = Range.between(500, 600);
+    int responseStatus = response.getStatusCode();
+    if (clientFailRange.contains(responseStatus)) {
+      doc = Jsoup.parse(response.getBody().asString());
+      throw new Exception(
+          String.format(
+              "Status code: [ %s ] : Unable to perform API request due to: [ %s ]",
+              responseStatus, doc.body().text()));
+    } else if (serverFailRange.contains(responseStatus)) {
+      log.warn("Response returned status code [ {} ]", responseStatus);
+      doc = Jsoup.parse(response.getBody().asString());
+      throw new Exception(
+          String.format(
+              "Status code: [ %s ] : Unable to perform API request due to: [ %s ]",
+              responseStatus, doc.body().text()));
+    }
+    if (response.getBody().asString().isEmpty()) {
+      throw new Exception("Response is empty.");
+    }
   }
 }

@@ -24,13 +24,14 @@ import javax.ejb.Stateless;
 
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.immunization.ImmunizationDto;
-import de.symeda.sormas.api.sormastosormas.immunization.SormasToSormasImmunizationDto;
+import de.symeda.sormas.api.sormastosormas.entities.immunization.SormasToSormasImmunizationDto;
 import de.symeda.sormas.api.sormastosormas.validation.SormasToSormasValidationException;
 import de.symeda.sormas.backend.immunization.ImmunizationFacadeEjb.ImmunizationFacadeEjbLocal;
 import de.symeda.sormas.backend.immunization.entity.Immunization;
 import de.symeda.sormas.backend.sormastosormas.data.processed.ProcessedDataPersister;
-import de.symeda.sormas.backend.sormastosormas.share.shareinfo.SormasToSormasShareInfo;
-import de.symeda.sormas.backend.sormastosormas.share.shareinfo.SormasToSormasShareInfoService;
+import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfoFacadeEjb;
+import de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShareInfo;
+import de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShareInfoService;
 
 @Stateless
 @LocalBean
@@ -40,6 +41,8 @@ public class ProcessedImmunizationDataPersister extends ProcessedDataPersister<I
 	private SormasToSormasShareInfoService shareInfoService;
 	@EJB
 	private ImmunizationFacadeEjbLocal immunizationFacade;
+	@EJB
+	private SormasToSormasOriginInfoFacadeEjb.SormasToSormasOriginInfoFacadeEjbLocal originInfoFacade;
 
 	@Override
 	protected SormasToSormasShareInfoService getShareInfoService() {
@@ -47,7 +50,12 @@ public class ProcessedImmunizationDataPersister extends ProcessedDataPersister<I
 	}
 
 	@Override
-	protected void persistSharedData(SormasToSormasImmunizationDto processedData, Immunization existingEntity)
+	protected SormasToSormasOriginInfoFacadeEjb getOriginInfoFacade() {
+		return originInfoFacade;
+	}
+
+	@Override
+	protected void persistSharedData(SormasToSormasImmunizationDto processedData, Immunization existingEntity, boolean isSync)
 		throws SormasToSormasValidationException {
 		ImmunizationDto immunuzation = processedData.getEntity();
 

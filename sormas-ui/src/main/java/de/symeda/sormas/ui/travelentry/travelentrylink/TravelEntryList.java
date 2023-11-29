@@ -37,10 +37,12 @@ public class TravelEntryList extends PaginationList<TravelEntryListEntryDto> {
 	private static final int MAX_DISPLAYED_ENTRIES = 5;
 
 	private final TravelEntryListCriteria travelEntryListCriteria;
+	private final boolean isEditAllowed;
 
-	public TravelEntryList(TravelEntryListCriteria travelEntryListCriteria) {
+	public TravelEntryList(TravelEntryListCriteria travelEntryListCriteria, boolean isEditAllowed) {
 		super(MAX_DISPLAYED_ENTRIES);
 		this.travelEntryListCriteria = travelEntryListCriteria;
+		this.isEditAllowed = isEditAllowed;
 	}
 
 	@Override
@@ -63,18 +65,22 @@ public class TravelEntryList extends PaginationList<TravelEntryListEntryDto> {
 	protected void drawDisplayedEntries() {
 		for (TravelEntryListEntryDto travelEntry : getDisplayedEntries()) {
 			TravelEntryListEntry listEntry = new TravelEntryListEntry(travelEntry);
-
-			addEditButton(listEntry);
+			boolean isActiveTravelEntry = travelEntry.getUuid().equals(getActiveUuid());
+			if (isActiveTravelEntry) {
+				listEntry.setActive();
+			}
+			if (!isActiveTravelEntry) {
+				addActionButton(listEntry);
+			}
 			listLayout.addComponent(listEntry);
 		}
 	}
 
-	private void addEditButton(TravelEntryListEntry listEntry) {
-		if (UserProvider.getCurrent().hasUserRight(UserRight.TRAVEL_ENTRY_EDIT)) {
-			listEntry.addEditButton(
-				"edit-travelEntry-" + listEntry.getTravelEntry().getUuid(),
-				(Button.ClickListener) event -> ControllerProvider.getTravelEntryController()
-					.navigateToTravelEntry(listEntry.getTravelEntry().getUuid()));
-		}
+	private void addActionButton(TravelEntryListEntry listEntry) {
+		listEntry.addActionButton(
+			listEntry.getTravelEntry().getUuid(),
+			(Button.ClickListener) event -> ControllerProvider.getTravelEntryController().navigateToTravelEntry(listEntry.getTravelEntry().getUuid()),
+			isEditAllowed && UserProvider.getCurrent().hasUserRight(UserRight.TRAVEL_ENTRY_EDIT));
+		listEntry.setEnabled(isEditAllowed);
 	}
 }

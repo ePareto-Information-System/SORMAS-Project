@@ -1,13 +1,15 @@
 package de.symeda.sormas.ui.travelentry;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.function.Consumer;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.vaadin.navigator.Navigator;
-import com.vaadin.server.Page;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.UI;
+import com.vaadin.ui.Window;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
@@ -27,9 +29,9 @@ import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.travelentry.components.TravelEntryCreateForm;
+import de.symeda.sormas.ui.utils.ArchiveHandlers;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
-import de.symeda.sormas.ui.utils.CoreEntityArchiveMessages;
-import de.symeda.sormas.ui.utils.DeletableUtils;
+import de.symeda.sormas.ui.utils.DeleteRestoreHandlers;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 import de.symeda.sormas.ui.utils.components.automaticdeletion.DeletionLabel;
 import de.symeda.sormas.ui.utils.components.page.title.TitleLayout;
@@ -69,11 +71,11 @@ public class TravelEntryController {
 			travelEntry.setPerson(casePersonReferenceDto);
 			travelEntry.setDisease(caseDataDto.getDisease());
 			createForm = new TravelEntryCreateForm(casePersonReferenceDto);
-			createForm.setPerson(FacadeProvider.getPersonFacade().getPersonByUuid(casePersonReferenceDto.getUuid()));
+			createForm.setPerson(FacadeProvider.getPersonFacade().getByUuid(casePersonReferenceDto.getUuid()));
 		} else if (personReferenceDto != null) {
 			travelEntry.setPerson(personReferenceDto);
 			createForm = new TravelEntryCreateForm(personReferenceDto);
-			createForm.setPerson(FacadeProvider.getPersonFacade().getPersonByUuid(personReferenceDto.getUuid()));
+			createForm.setPerson(FacadeProvider.getPersonFacade().getByUuid(personReferenceDto.getUuid()));
 		} else {
 			createForm = new TravelEntryCreateForm();
 		}
@@ -131,13 +133,12 @@ public class TravelEntryController {
 		DeletionInfoDto automaticDeletionInfoDto = FacadeProvider.getTravelEntryFacade().getAutomaticDeletionInfo(travelEntryUuid);
 		DeletionInfoDto manuallyDeletionInfoDto = FacadeProvider.getTravelEntryFacade().getManuallyDeletionInfo(travelEntryUuid);
 
-		TravelEntryDataForm travelEntryEditForm = new TravelEntryDataForm(travelEntryUuid, travelEntry.isPseudonymized());
+		TravelEntryDataForm travelEntryEditForm =
+			new TravelEntryDataForm(travelEntryUuid, travelEntry.isPseudonymized(), travelEntry.isInJurisdiction());
 		travelEntryEditForm.setValue(travelEntry);
 
-		CommitDiscardWrapperComponent<TravelEntryDataForm> editComponent = new CommitDiscardWrapperComponent<>(
-			travelEntryEditForm,
-			UserProvider.getCurrent().hasUserRight(UserRight.TRAVEL_ENTRY_EDIT),
-			travelEntryEditForm.getFieldGroup());
+		CommitDiscardWrapperComponent<TravelEntryDataForm> editComponent =
+			new CommitDiscardWrapperComponent<>(travelEntryEditForm, true, travelEntryEditForm.getFieldGroup());
 
 		editComponent.getButtonsPanel()
 			.addComponentAsFirst(
@@ -159,26 +160,29 @@ public class TravelEntryController {
 			}
 		});
 
-		editComponent.addDiscardListener(() -> travelEntryEditForm.onDiscard());
-
 		// Initialize 'Delete' button
 		if (UserProvider.getCurrent().hasUserRight(UserRight.TRAVEL_ENTRY_DELETE)) {
-			editComponent.addDeleteWithReasonListener((deleteDetails) -> {
-				FacadeProvider.getTravelEntryFacade().delete(travelEntry.getUuid(), deleteDetails);
-				UI.getCurrent().getNavigator().navigateTo(TravelEntriesView.VIEW_NAME);
-			}, I18nProperties.getString(Strings.entityTravelEntry));
+			editComponent.addDeleteWithReasonOrRestoreListener(
+				TravelEntriesView.VIEW_NAME,
+				null,
+				I18nProperties.getString(Strings.entityTravelEntry),
+				travelEntry.getUuid(),
+				FacadeProvider.getTravelEntryFacade());
 		}
 
 		// Initialize 'Archive' button
 		if (UserProvider.getCurrent().hasUserRight(UserRight.TRAVEL_ENTRY_ARCHIVE)) {
 			ControllerProvider.getArchiveController()
-				.addArchivingButton(
-					travelEntry,
-					FacadeProvider.getTravelEntryFacade(),
-					CoreEntityArchiveMessages.TRAVEL_ENTRY,
-					editComponent,
-					() -> navigateToTravelEntry(travelEntry.getUuid()));
+				.addArchivingButton(travelEntry, ArchiveHandlers.forTravelEntry(), editComponent, () -> navigateToTravelEntry(travelEntry.getUuid()));
 		}
+
+		editComponent.restrictEditableComponentsOnEditView(
+			UserRight.TRAVEL_ENTRY_EDIT,
+			null,
+			UserRight.TRAVEL_ENTRY_DELETE,
+			UserRight.TRAVEL_ENTRY_ARCHIVE,
+			FacadeProvider.getTravelEntryFacade().getEditPermissionType(travelEntryUuid),
+			travelEntry.isInJurisdiction());
 
 		return editComponent;
 	}
@@ -199,7 +203,7 @@ public class TravelEntryController {
 		titleLayout.addRow(travelEntryPointOfEntry);
 
 		String shortUuid = DataHelper.getShortUuid(travelEntry.getUuid());
-		PersonDto person = FacadeProvider.getPersonFacade().getPersonByUuid(travelEntry.getPerson().getUuid());
+		PersonDto person = FacadeProvider.getPersonFacade().getByUuid(travelEntry.getPerson().getUuid());
 		StringBuilder mainRowText = TitleLayoutHelper.buildPersonString(person);
 		mainRowText.append(mainRowText.length() > 0 ? " (" + shortUuid + ")" : shortUuid);
 		titleLayout.addMainRow(mainRowText.toString());
@@ -207,27 +211,48 @@ public class TravelEntryController {
 		return titleLayout;
 	}
 
-	public void deleteAllSelectedItems(Collection<TravelEntryIndexDto> selectedRows, Runnable callback) {
-		if (selectedRows.size() == 0) {
-			new Notification(
-				I18nProperties.getString(Strings.headingNoTravelEntriesSelected),
-				I18nProperties.getString(Strings.messageNoTravelEntriesSelected),
-				Notification.Type.WARNING_MESSAGE,
-				false).show(Page.getCurrent());
-		} else {
-			DeletableUtils.showDeleteWithReasonPopup(
-				String.format(I18nProperties.getString(Strings.confirmationDeleteTravelEntries), selectedRows.size()),
-				(deleteDetails) -> {
-					for (TravelEntryIndexDto selectedRow : selectedRows) {
-						FacadeProvider.getTravelEntryFacade().delete(selectedRow.getUuid(), deleteDetails);
-					}
-					callback.run();
-					new Notification(
-						I18nProperties.getString(Strings.headingTravelEntriesDeleted),
-						I18nProperties.getString(Strings.messageTravelEntriesDeleted),
-						Notification.Type.HUMANIZED_MESSAGE,
-						false).show(Page.getCurrent());
-				});
-		}
+	public void deleteAllSelectedItems(
+		Collection<TravelEntryIndexDto> selectedRows,
+		TravelEntryGrid travelEntryGrid,
+		Runnable noEntriesRemainingCallback) {
+
+		ControllerProvider.getDeleteRestoreController()
+			.deleteAllSelectedItems(
+				selectedRows,
+				null,
+				null,
+				DeleteRestoreHandlers.forTravelEntry(),
+				bulkOperationCallback(travelEntryGrid, noEntriesRemainingCallback, null));
+
 	}
+
+	public void restoreSelectedTravelEntries(
+		Collection<TravelEntryIndexDto> selectedRows,
+		TravelEntryGrid travelEntryGrid,
+		Runnable noEntriesRemainingCallback) {
+		ControllerProvider.getDeleteRestoreController()
+			.restoreSelectedItems(
+				selectedRows,
+				DeleteRestoreHandlers.forTravelEntry(),
+				bulkOperationCallback(travelEntryGrid, noEntriesRemainingCallback, null));
+	}
+
+	private Consumer<List<TravelEntryIndexDto>> bulkOperationCallback(
+		TravelEntryGrid travelEntryGrid,
+		Runnable noEntriesRemainingCallback,
+		Window popupWindow) {
+		return remainingTravelEntries -> {
+			if (popupWindow != null) {
+				popupWindow.close();
+			}
+
+			travelEntryGrid.reload();
+			if (CollectionUtils.isNotEmpty(remainingTravelEntries)) {
+				travelEntryGrid.asMultiSelect().selectItems(remainingTravelEntries.toArray(new TravelEntryIndexDto[0]));
+			} else {
+				noEntriesRemainingCallback.run();
+			}
+		};
+	}
+
 }

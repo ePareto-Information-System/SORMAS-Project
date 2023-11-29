@@ -1,5 +1,7 @@
 package de.symeda.sormas.backend.user;
 
+import java.util.Set;
+
 import javax.annotation.Resource;
 import javax.ejb.LocalBean;
 import javax.ejb.SessionContext;
@@ -10,16 +12,23 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Fetch;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
+import org.hibernate.Hibernate;
+import org.hibernate.proxy.HibernateProxy;
+
+import de.symeda.sormas.api.audit.AuditIgnore;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.backend.util.ModelConstants;
 
 @Stateless
 @LocalBean
+@AuditIgnore
 public class CurrentUserService {
 
 	@Resource
@@ -36,11 +45,16 @@ public class CurrentUserService {
 
 	/**
 	 * Returns the User entity corresponding to the current user.
+	 *
+	 * @TransactionScoped would be better for performance, but is not supported by the CDI based testing framework
 	 */
 	@RequestScoped
-// FIXME @TransactionScoped would be better for performance, but is not support by novatec.bean-test (see their github #4)
 	public User getCurrentUser() {
 		final String currentUsername = context.getCallerPrincipal().getName();
+
+		if (currentUsername == null) {
+			return null;
+		}
 
 		User cachedUser = userCache.get(currentUsername);
 		if (cachedUser != null) {
@@ -66,7 +80,22 @@ public class CurrentUserService {
 		// this only works for user rights that are used in RolesAllowed or DeclareRoles annotations.
 		// return context.isCallerInRole(userRight.name());
 		// We don't want to have to do this for all the user rights, so we check against the user rights of the current user instead
-		return getCurrentUser().getUserRoles().stream().anyMatch(userRole -> userRole.getUserRights().contains(userRight)); // TODO cache?
+		if (getCurrentUser() == null || getCurrentUser().getUserRoles() == null) {
+			return false;
+		}
+
+		return getCurrentUser().hasUserRight(userRight); // todo cache this?
+	}
+
+	public boolean hasAnyUserRight(Set<UserRight> userRights) {
+		// this only works for user rights that are used in RolesAllowed or DeclareRoles annotations.
+		// return context.isCallerInRole(userRight.name());
+		// We don't want to have to do this for all the user rights, so we check against the user rights of the current user instead
+		if (getCurrentUser() == null || getCurrentUser().getUserRoles() == null) {
+			return false;
+		}
+
+		return getCurrentUser().hasAnyUserRight(userRights);
 	}
 
 	// We need a clean transaction as we do not want call potential entity listeners which would lead to recursion
@@ -80,7 +109,9 @@ public class CurrentUserService {
 		// do eager loading in this case
 		final Root<User> user = cq.from(User.class);
 		user.fetch(User.ADDRESS);
-		user.fetch(User.USER_ROLES);
+		Fetch<Object, Object> fetch = user.fetch(User.USER_ROLES);
+		fetch.fetch(UserRole.EMAIL_NOTIFICATIONS, JoinType.LEFT);
+		fetch.fetch(UserRole.SMS_NOTIFICATIONS, JoinType.LEFT);
 
 		final Predicate equal = cb.equal(cb.lower(user.get(User.USER_NAME)), userNameParam);
 		cq.select(user).distinct(true);
@@ -88,6 +119,28 @@ public class CurrentUserService {
 
 		final TypedQuery<User> q = em.createQuery(cq).setParameter(userNameParam, userName.toLowerCase());
 
-		return q.getResultList().stream().findFirst().orElse(null);
+		User currentUser = q.getResultList().stream().findFirst().orElse(null);
+		if (currentUser != null) {
+			unproxy(currentUser.getRegion());
+			unproxy(currentUser.getDistrict());
+			unproxy(currentUser.getCommunity());
+			unproxy(currentUser.getHealthFacility());
+			unproxy(currentUser.getPointOfEntry());
+			unproxy(currentUser.getLaboratory());
+			unproxy(currentUser.getAssociatedOfficer());
+		}
+
+		return currentUser;
+	}
+
+	public static <T> T unproxy(T proxied) {
+		if (proxied instanceof HibernateProxy) {
+			Hibernate.initialize(proxied);
+			@SuppressWarnings("unchecked")
+			T obj = (T) ((HibernateProxy) proxied).getHibernateLazyInitializer().getImplementation();
+			return obj;
+		} else {
+			return proxied;
+		}
 	}
 }

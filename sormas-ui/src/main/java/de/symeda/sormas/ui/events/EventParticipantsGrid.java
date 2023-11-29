@@ -17,8 +17,6 @@ package de.symeda.sormas.ui.events;
 
 import java.util.Date;
 
-import com.vaadin.data.provider.DataProvider;
-import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.ui.renderers.DateRenderer;
 
 import de.symeda.sormas.api.FacadeProvider;
@@ -35,12 +33,14 @@ import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
+import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.utils.CaseUuidRenderer;
 import de.symeda.sormas.ui.utils.FieldAccessColumnStyleGenerator;
 import de.symeda.sormas.ui.utils.FilteredGrid;
 import de.symeda.sormas.ui.utils.PathogenTestResultTypeRenderer;
 import de.symeda.sormas.ui.utils.ShowDetailsListener;
 import de.symeda.sormas.ui.utils.UuidRenderer;
+import de.symeda.sormas.ui.utils.ViewConfiguration;
 
 @SuppressWarnings("serial")
 public class EventParticipantsGrid extends FilteredGrid<EventParticipantIndexDto, EventParticipantCriteria> {
@@ -53,14 +53,15 @@ public class EventParticipantsGrid extends FilteredGrid<EventParticipantIndexDto
 		super(EventParticipantIndexDto.class);
 		setSizeFull();
 
-		setInEagerMode(true);
-		setCriteria(criteria);
-		setEagerDataProvider();
+		ViewConfiguration viewConfiguration = ViewModelProviders.of(EventParticipantsView.class).get(EventParticipantsViewConfiguration.class);
+		setInEagerMode(viewConfiguration.isInEagerMode());
 
-		if (UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS_EVENTPARTICIPANT)) {
-			setSelectionMode(SelectionMode.MULTI);
+		if (isInEagerMode() && UserProvider.getCurrent().hasUserRight(UserRight.PERFORM_BULK_OPERATIONS_EVENTPARTICIPANT)) {
+			setCriteria(criteria);
+			setEagerDataProvider();
 		} else {
-			setSelectionMode(SelectionMode.NONE);
+			setLazyDataProvider();
+			setCriteria(criteria);
 		}
 
 		Column<EventParticipantIndexDto, String> caseIdColumn = addColumn(entry -> {
@@ -77,12 +78,21 @@ public class EventParticipantsGrid extends FilteredGrid<EventParticipantIndexDto
 		});
 		caseIdColumn.setId(CASE_ID);
 		caseIdColumn.setSortProperty(EventParticipantIndexDto.CASE_UUID);
-		caseIdColumn.setRenderer(
-			new CaseUuidRenderer(
-				uuid -> {
-					// '!=' check is ok because the converter returns the constant when no case creation is allowed
-					return NO_CASE_CREATE != uuid;
-				}));
+		caseIdColumn.setRenderer(new CaseUuidRenderer(uuid -> {
+			// '!=' check is ok because the converter returns the constant when no case creation is allowed
+			return NO_CASE_CREATE != uuid;
+		}));
+
+		Column<EventParticipantIndexDto, String> deleteColumn = addColumn(entry -> {
+			if (entry.getDeletionReason() != null) {
+				return entry.getDeletionReason() + (entry.getOtherDeletionReason() != null ? ": " + entry.getOtherDeletionReason() : "");
+			} else {
+				return "-";
+			}
+		});
+		deleteColumn.setId(DELETE_REASON_COLUMN);
+		deleteColumn.setSortable(false);
+		deleteColumn.setCaption(I18nProperties.getCaption(Captions.deletionReason));
 
 		Language userLanguage = I18nProperties.getUserLanguage();
 		setColumns(
@@ -97,7 +107,8 @@ public class EventParticipantsGrid extends FilteredGrid<EventParticipantIndexDto
 			EventParticipantIndexDto.CONTACT_COUNT,
 			SampleIndexDto.PATHOGEN_TEST_RESULT,
 			SampleIndexDto.SAMPLE_DATE_TIME,
-			EventParticipantIndexDto.VACCINATION_STATUS);
+			EventParticipantIndexDto.VACCINATION_STATUS,
+			DELETE_REASON_COLUMN);
 		((Column<EventParticipantIndexDto, Date>) getColumn(SampleIndexDto.SAMPLE_DATE_TIME))
 			.setRenderer(new DateRenderer(DateHelper.getLocalDateTimeFormat(userLanguage)));
 		((Column<EventParticipantIndexDto, String>) getColumn(EventParticipantIndexDto.UUID)).setRenderer(new UuidRenderer());
@@ -112,8 +123,12 @@ public class EventParticipantsGrid extends FilteredGrid<EventParticipantIndexDto
 		}
 		getColumn(SampleIndexDto.PATHOGEN_TEST_RESULT)
 			.setCaption(I18nProperties.getPrefixCaption(SampleIndexDto.I18N_PREFIX, SampleIndexDto.PATHOGEN_TEST_RESULT));
+		getColumn(SampleIndexDto.PATHOGEN_TEST_RESULT).setSortable(false);
 		getColumn(SampleIndexDto.SAMPLE_DATE_TIME)
 			.setCaption(I18nProperties.getPrefixCaption(SampleIndexDto.I18N_PREFIX, SampleIndexDto.SAMPLE_DATE_TIME));
+		getColumn(SampleIndexDto.SAMPLE_DATE_TIME).setSortable(false);
+
+		getColumn(EventParticipantIndexDto.CONTACT_COUNT).setSortable(false);
 
 		addItemClickListener(new ShowDetailsListener<>(CASE_ID, false, e -> {
 			if (e.getCaseUuid() != null) {
@@ -136,10 +151,14 @@ public class EventParticipantsGrid extends FilteredGrid<EventParticipantIndexDto
 				e -> ControllerProvider.getEventParticipantController().navigateToData(e.getUuid())));
 	}
 
+	public void setLazyDataProvider() {
+
+		setLazyDataProvider(FacadeProvider.getEventParticipantFacade()::getIndexList, FacadeProvider.getEventParticipantFacade()::count);
+	}
+
 	public void setEagerDataProvider() {
-		ListDataProvider<EventParticipantIndexDto> dataProvider =
-			DataProvider.fromStream(FacadeProvider.getEventParticipantFacade().getIndexList(getCriteria(), null, null, null).stream());
-		setDataProvider(dataProvider);
+
+		setEagerDataProvider(FacadeProvider.getEventParticipantFacade()::getIndexList);
 	}
 
 	public void reload() {
@@ -148,7 +167,10 @@ public class EventParticipantsGrid extends FilteredGrid<EventParticipantIndexDto
 			deselectAll();
 		}
 
+		if (ViewModelProviders.of(EventParticipantsView.class).get(EventParticipantsViewConfiguration.class).isInEagerMode()) {
+			setEagerDataProvider();
+		}
+
 		getDataProvider().refreshAll();
-		setEagerDataProvider();
 	}
 }

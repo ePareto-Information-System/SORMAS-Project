@@ -1,6 +1,6 @@
 /*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2021 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+ * Copyright © 2016-2022 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -17,6 +17,7 @@ package de.symeda.sormas.backend.customizableenum;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -29,9 +30,11 @@ import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
+import javax.ejb.Stateless;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -107,7 +110,7 @@ public class CustomizableEnumFacadeEjb implements CustomizableEnumFacade {
 	@SuppressWarnings("unchecked")
 	public <T extends CustomizableEnum> T getEnumValue(CustomizableEnumType type, String value) {
 		if (!enumValues.get(type).contains(value)) {
-			throw new IllegalArgumentException("Invalid enum value " + value + " for customizable enum type " + type.toString());
+			throw new IllegalArgumentException(String.format("Invalid enum value %s for customizable enum type %s", value, type.toString()));
 		}
 
 		Language language = I18nProperties.getUserLanguage();
@@ -129,7 +132,13 @@ public class CustomizableEnumFacadeEjb implements CustomizableEnumFacade {
 			.findFirst()
 			.orElseThrow(
 				() -> new CustomEnumNotFoundException(
-					"Invalid enum value " + value + " for customizable enum type " + type.toString() + "and disease " + disease.toString()));
+					"Invalid enum value " + value + " for customizable enum type " + type + " and disease " + disease));
+	}
+
+	@Lock(LockType.READ)
+	@Override
+	public boolean existsEnumValue(CustomizableEnumType type, String value, Disease disease) {
+		return getEnumValues(type, disease).stream().anyMatch(e -> e.getValue().equals(value));
 	}
 
 	/**
@@ -161,7 +170,9 @@ public class CustomizableEnumFacadeEjb implements CustomizableEnumFacade {
 			diseaseValuesStream = enumValuesByDisease.get(enumClass).get(Optional.empty()).stream();
 		}
 
-		return diseaseValuesStream.map(value -> buildCustomizableEnum(type, value, language, enumClass)).collect(Collectors.toList());
+		return diseaseValuesStream.map(value -> buildCustomizableEnum(type, value, language, enumClass))
+			.sorted(Comparator.comparing(CustomizableEnum::getCaption))
+			.collect(Collectors.toList());
 	}
 
 	@Lock(LockType.READ)
@@ -195,7 +206,14 @@ public class CustomizableEnumFacadeEjb implements CustomizableEnumFacade {
 		for (CustomizableEnumValue customizableEnumValue : enumValueEntities.get(type)) {
 			// define caption
 			String caption;
-			if (isCountryLanguage || CollectionUtils.isEmpty(customizableEnumValue.getTranslations())) {
+			if (customizableEnumValue.isDefaultValue()) {
+				// Default values use translations provided in the properties files
+				caption = I18nProperties.getEnumCaption(language, customizableEnumValue.getDataType().toString(), customizableEnumValue.getValue());
+
+				if (StringUtils.isBlank(caption)) {
+					caption = customizableEnumValue.getCaption();
+				}
+			} else if (isCountryLanguage || CollectionUtils.isEmpty(customizableEnumValue.getTranslations())) {
 				// If the enum value does not have any translations or the user uses the server language,
 				// add the server language to the cache and use the default caption of the enum value
 				caption = customizableEnumValue.getCaption();
@@ -227,13 +245,13 @@ public class CustomizableEnumFacadeEjb implements CustomizableEnumFacade {
 			return;
 		}
 
-		List<String> diseaseEnumValues = enumValueEntities.get(type).stream().filter(e -> {
-			if (!disease.isPresent()) {
-				return CollectionUtils.isEmpty(e.getDiseases());
-			} else {
-				return e.getDiseases() != null && e.getDiseases().contains(disease.get());
-			}
-		}).map(CustomizableEnumValue::getValue).collect(Collectors.toList());
+		List<String> diseaseEnumValues = enumValueEntities.get(type)
+			.stream()
+			.filter(
+				e -> disease.map(value -> e.getDiseases() != null && e.getDiseases().contains(value))
+					.orElseGet(() -> CollectionUtils.isEmpty(e.getDiseases())))
+			.map(CustomizableEnumValue::getValue)
+			.collect(Collectors.toList());
 		enumValuesByDisease.get(enumClass).put(disease, diseaseEnumValues);
 	}
 
@@ -293,7 +311,13 @@ public class CustomizableEnumFacadeEjb implements CustomizableEnumFacade {
 		target.setDescription(source.getDescription());
 		target.setDescriptionTranslations(source.getDescriptionTranslations());
 		target.setProperties(source.getProperties());
+		target.setDefaultValue(source.isDefaultValue());
 
 		return target;
+	}
+
+	@LocalBean
+	@Stateless
+	public static class CustomizableEnumFacadeEjbLocal extends CustomizableEnumFacadeEjb {
 	}
 }

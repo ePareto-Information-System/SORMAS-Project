@@ -29,6 +29,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 
+import de.symeda.sormas.api.EditPermissionType;
 import de.symeda.sormas.api.action.ActionCriteria;
 import de.symeda.sormas.api.action.ActionDto;
 import de.symeda.sormas.api.action.ActionFacade;
@@ -37,8 +38,12 @@ import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.event.EventActionExportDto;
 import de.symeda.sormas.api.event.EventActionIndexDto;
 import de.symeda.sormas.api.event.EventCriteria;
+import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.AccessDeniedException;
 import de.symeda.sormas.api.utils.SortProperty;
+import de.symeda.sormas.backend.FacadeHelper;
 import de.symeda.sormas.backend.event.EventFacadeEjb;
 import de.symeda.sormas.backend.event.EventService;
 import de.symeda.sormas.backend.user.User;
@@ -62,13 +67,12 @@ public class ActionFacadeEjb implements ActionFacade {
 	@EJB
 	private EventService eventService;
 
-	public Action fromDto(ActionDto source, boolean checkChangeDate) {
-
+	public Action fillOrBuildEntity(ActionDto source, Action target, boolean checkChangeDate) {
 		if (source == null) {
 			return null;
 		}
 
-		Action target = DtoHelper.fillOrBuildEntity(source, actionService.getByUuid(source.getUuid()), Action::new, checkChangeDate);
+		target = DtoHelper.fillOrBuildEntity(source, target, Action::new, checkChangeDate);
 
 		target.setLastModifiedBy(userService.getByReferenceDto(source.getLastModifiedBy()));
 		target.setReply(source.getReply());
@@ -131,7 +135,9 @@ public class ActionFacadeEjb implements ActionFacade {
 		UserRight._ACTION_EDIT })
 	public ActionDto saveAction(@Valid ActionDto dto) {
 
-		Action ado = fromDto(dto, true);
+		Action existingAction = actionService.getByUuid(dto.getUuid());
+		FacadeHelper.checkCreateAndEditRights(existingAction, userService, UserRight.ACTION_CREATE, UserRight.ACTION_EDIT);
+		Action ado = fillOrBuildEntity(dto, existingAction, true);
 		actionService.ensurePersisted(ado);
 		return toDto(ado);
 	}
@@ -145,29 +151,29 @@ public class ActionFacadeEjb implements ActionFacade {
 	@RightsAllowed(UserRight._ACTION_DELETE)
 	public void deleteAction(ActionDto actionDto) {
 		Action action = actionService.getByUuid(actionDto.getUuid());
+
+		if (!actionService.inJurisdictionOrOwned(action)) {
+			throw new AccessDeniedException(I18nProperties.getString(Strings.messageActionOutsideJurisdictionDeletionDenied));
+		}
+
 		actionService.deletePermanent(action);
 	}
 
 	@Override
-	public List<String> getAllUuids() {
+	public List<String> getAllActiveUuids() {
 
 		User user = userService.getCurrentUser();
 		if (user == null) {
 			return Collections.emptyList();
 		}
 
-		return actionService.getAllUuids();
+		return actionService.getAllActiveUuids();
 	}
 
 	@Override
-	public List<ActionDto> getAllActionsAfter(Date date) {
+	public List<ActionDto> getAllActiveActionsAfter(Date date) {
 
-		User user = userService.getCurrentUser();
-		if (user == null) {
-			return Collections.emptyList();
-		}
-
-		return actionService.getAllActionsAfter(date, user).stream().map(this::toDto).collect(Collectors.toList());
+		return actionService.getAllAfter(date, null, null).stream().map(this::toDto).collect(Collectors.toList());
 	}
 
 	@Override
@@ -226,6 +232,20 @@ public class ActionFacadeEjb implements ActionFacade {
 	@Override
 	public long countActions(ActionCriteria criteria) {
 		return actionService.countActions(criteria);
+	}
+
+	@Override
+	public boolean isInJurisdiction(String uuid) {
+		return actionService.inJurisdictionOrOwned(actionService.getByUuid(uuid));
+	}
+
+	@Override
+	public EditPermissionType getEditPermissionType(String uuid) {
+		if (!isInJurisdiction(uuid)) {
+			return EditPermissionType.OUTSIDE_JURISDICTION;
+		}
+
+		return EditPermissionType.ALLOWED;
 	}
 
 	@LocalBean

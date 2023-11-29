@@ -21,6 +21,7 @@ package org.sormas.e2etests.steps.web.application.cases;
 import static org.sormas.e2etests.enums.YesNoUnknownOptions.NO;
 import static org.sormas.e2etests.enums.YesNoUnknownOptions.UNKNOWN;
 import static org.sormas.e2etests.enums.YesNoUnknownOptions.YES;
+import static org.sormas.e2etests.pages.application.cases.CreateNewCasePage.CATEGORY_SAVED_POPUP;
 import static org.sormas.e2etests.pages.application.cases.CreateNewCasePage.SAVE_BUTTON;
 import static org.sormas.e2etests.pages.application.cases.EditCasePage.UUID_INPUT;
 import static org.sormas.e2etests.pages.application.cases.FollowUpTabPage.ABDOMINAL_PAIN_OPTIONS;
@@ -30,6 +31,7 @@ import static org.sormas.e2etests.pages.application.cases.FollowUpTabPage.CONFUS
 import static org.sormas.e2etests.pages.application.cases.FollowUpTabPage.COUGH_WITH_HEAMOPTYSIS_OPTIONS;
 import static org.sormas.e2etests.pages.application.cases.FollowUpTabPage.COUGH_WITH_SPUTUM_OPTIONS;
 import static org.sormas.e2etests.pages.application.cases.FollowUpTabPage.FATIGUE_WEAKNESS_OPTIONS;
+import static org.sormas.e2etests.pages.application.cases.FollowUpTabPage.FEVER_OPTIONS;
 import static org.sormas.e2etests.pages.application.cases.FollowUpTabPage.FLUID_IN_LUNG_CAVITY_AUSCULTATION_OPTIONS;
 import static org.sormas.e2etests.pages.application.cases.FollowUpTabPage.FLUID_IN_LUNG_CAVITY_XRAY_OPTIONS;
 import static org.sormas.e2etests.pages.application.cases.FollowUpTabPage.INABILITY_TO_WALK_OPTIONS;
@@ -48,6 +50,7 @@ import static org.sormas.e2etests.steps.BaseSteps.locale;
 import cucumber.api.java8.En;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import javax.inject.Inject;
 import org.sormas.e2etests.entities.pojo.helpers.ComparisonHelper;
 import org.sormas.e2etests.entities.pojo.web.Symptoms;
@@ -56,18 +59,23 @@ import org.sormas.e2etests.envconfig.manager.RunningConfiguration;
 import org.sormas.e2etests.helpers.WebDriverHelpers;
 import org.sormas.e2etests.pages.application.NavBarPage;
 import org.sormas.e2etests.state.ApiState;
+import org.testng.asserts.SoftAssert;
 
 public class SymptomsTabSteps implements En {
 
   private final WebDriverHelpers webDriverHelpers;
   public static Symptoms symptoms;
   public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("M/d/yyyy");
+  public static final DateTimeFormatter DATE_FORMATTER_DE =
+      DateTimeFormatter.ofPattern("dd.MM.yyyy");
+  public static LocalDate dateOfSymptomsForFollowUpDate;
 
   @Inject
   public SymptomsTabSteps(
       WebDriverHelpers webDriverHelpers,
       SymptomService symptomService,
       ApiState apiState,
+      SoftAssert softly,
       RunningConfiguration runningConfiguration) {
     this.webDriverHelpers = webDriverHelpers;
     String firstSymptom = "Sore throat/pharyngitis";
@@ -101,7 +109,7 @@ public class SymptomsTabSteps implements En {
     When(
         "I change Other symptoms to {string} option",
         (String option) -> {
-          selectOtherNonHemorrhagicSymptoms(option);
+          selectOtherClinicalSymptoms(option);
         });
 
     When(
@@ -131,8 +139,8 @@ public class SymptomsTabSteps implements En {
           selectNausea(symptoms.getNausea());
           selectLossOfSmell(symptoms.getLossOfSmell());
           selectLossOfTaste(symptoms.getLossOfTaste());
-          selectOtherNonHemorrhagicSymptoms(symptoms.getOtherNonHemorrhagicSymptoms());
-          fillOtherNonHemorrhagicSymptoms(symptoms.getSymptomsComments());
+          selectOtherClinicalSymptoms(symptoms.getOtherNonHemorrhagicSymptoms());
+          fillOtherSymptoms(symptoms.getSymptomsComments());
           fillSymptomsComments(symptoms.getSymptomsComments());
           selectFistSymptom(symptoms.getFirstSymptom());
           selectAbnormalLungXrayFindings(symptoms.getAbnormalLungXrayFindings());
@@ -164,15 +172,15 @@ public class SymptomsTabSteps implements En {
             case "NO":
               symptoms = symptomService.buildEditGeneratedSymptomsWithNoOptions();
               FillSymptomsDataForNoUnknown(symptoms);
-              selectOtherNonHemorrhagicSymptoms(NO.toString());
+              selectOtherClinicalSymptoms(NO.toString());
               fillSymptomsComments(symptoms.getSymptomsComments());
               webDriverHelpers.clickOnWebElementBySelector(SAVE_BUTTON);
               break;
             case "NO_AND_OTHER_SYMPTOMS_TO_YES":
               symptoms = symptomService.buildEditGeneratedSymptomsWithNoOptions();
               FillSymptomsDataForNoUnknown(symptoms);
-              selectOtherNonHemorrhagicSymptoms(YES.toString());
-              fillOtherNonHemorrhagicSymptoms(symptoms.getSymptomsComments());
+              selectOtherClinicalSymptoms(YES.toString());
+              fillOtherSymptoms(symptoms.getSymptomsComments());
               fillSymptomsComments(symptoms.getSymptomsComments());
               selectFistSymptom("Other clinical symptoms");
               fillDateOfSymptom(LocalDate.now().minusDays(2));
@@ -181,18 +189,47 @@ public class SymptomsTabSteps implements En {
             case "UNKNOWN":
               symptoms = symptomService.buildEditGeneratedSymptomsWithUnknownOptions();
               FillSymptomsDataForNoUnknown(symptoms);
-              selectOtherNonHemorrhagicSymptoms(UNKNOWN.toString());
+              selectOtherClinicalSymptoms(UNKNOWN.toString());
               fillSymptomsComments(symptoms.getSymptomsComments());
               webDriverHelpers.clickOnWebElementBySelector(SAVE_BUTTON);
               break;
             case "YES":
               symptoms = symptomService.buildEditGeneratedSymptoms();
               FillSymptomsData(symptoms);
-              fillOtherNonHemorrhagicSymptoms(symptoms.getSymptomsComments());
+              fillOtherSymptoms(symptoms.getSymptomsComments());
               fillSymptomsComments(symptoms.getSymptomsComments());
               selectFistSymptom(symptoms.getFirstSymptom());
               fillDateOfSymptom(symptoms.getDateOfSymptom());
               webDriverHelpers.clickOnWebElementBySelector(SAVE_BUTTON);
+              break;
+          }
+        });
+
+    When(
+        "I change all symptoms fields to {string} option field and save for Survnet DE",
+        (String option) -> {
+          switch (option) {
+            case "NO":
+              symptoms = symptomService.buildEditGeneratedSymptomsSurvnetWithNoOptionsDE();
+              FillSymptomsDataSurvnet(symptoms);
+              webDriverHelpers.clickOnWebElementBySelector(SAVE_BUTTON);
+              break;
+            case "UNKNOWN":
+              symptoms = symptomService.buildEditGeneratedSymptomsSurvnetWithUnknownOptionsDE();
+              FillSymptomsDataSurvnet(symptoms);
+              webDriverHelpers.clickOnWebElementBySelector(SAVE_BUTTON);
+              break;
+            case "YES":
+              symptoms = symptomService.buildEditGeneratedSymptomsSurvnetDE();
+              FillSymptomsDataSurvnet(symptoms);
+              fillOtherSymptoms(symptoms.getSymptomsComments());
+              selectFistSymptom(symptoms.getFirstSymptom());
+              fillOtherSymptoms(symptoms.getSymptomsComments());
+              fillSymptomsComments(symptoms.getSymptomsComments());
+              fillDateOfSymptomDE(symptoms.getDateOfSymptom(), Locale.GERMAN);
+              webDriverHelpers.clickOnWebElementBySelector(SAVE_BUTTON);
+              webDriverHelpers.waitUntilElementIsVisibleAndClickable(CATEGORY_SAVED_POPUP);
+              webDriverHelpers.clickOnWebElementBySelector(CATEGORY_SAVED_POPUP);
               break;
           }
         });
@@ -222,6 +259,65 @@ public class SymptomsTabSteps implements En {
         () -> {
           webDriverHelpers.clickOnWebElementBySelector(CLEAR_ALL_BUTTON);
         });
+    And(
+        "I set date of symptoms to {int} day ago from Symptoms tab",
+        (Integer days) -> {
+          dateOfSymptomsForFollowUpDate = LocalDate.now().minusDays(days);
+          fillDateOfSymptomDE(LocalDate.now().minusDays(days), Locale.GERMAN);
+        });
+    And(
+        "I clear date of symptoms from Symptoms tab",
+        () -> {
+          webDriverHelpers.clearWebElement(DATE_OF_SYMPTOM_INPUT);
+        });
+
+    And(
+        "^I set Fever Symptoms to \"([^\"]*)\" on the Symptoms tab$",
+        (String option) -> {
+          selectFever(option);
+        });
+
+    And(
+        "^I set Date of symptom onset to (\\d+) days before the vaccination date on the Symptoms tab for DE$",
+        (Integer numberOfDays) -> {
+          webDriverHelpers.scrollToElement(DATE_OF_SYMPTOM_INPUT);
+          LocalDate dateOfSymptom = LocalDate.now().minusDays(7 + numberOfDays);
+          fillDateOfSymptomDE(dateOfSymptom, Locale.GERMAN);
+        });
+
+    And(
+        "^I set Date of symptom onset to (\\d+) days into the future",
+        (Integer numberOfDays) -> {
+          webDriverHelpers.scrollToElement(DATE_OF_SYMPTOM_INPUT);
+          LocalDate dateOfSymptom = LocalDate.now().plusDays(numberOfDays);
+          fillDateOfSymptom(dateOfSymptom);
+        });
+
+    Then(
+        "I Verify popup message from Symptoms Tab Contains {string}",
+        (String expectedText) -> {
+          webDriverHelpers.waitUntilElementIsVisibleAndClickable(NOTIFICATION_POPUP_DESCRIPTION);
+          softly.assertEquals(
+              webDriverHelpers.getTextFromPresentWebElement(NOTIFICATION_POPUP_DESCRIPTION),
+              expectedText,
+              "Assert on notification popup went wrong");
+          softly.assertAll();
+        });
+
+    And(
+        "^I set Date of symptom onset to (\\d+) days before today$",
+        (Integer numberOfDays) -> {
+          webDriverHelpers.scrollToElement(DATE_OF_SYMPTOM_INPUT);
+          webDriverHelpers.fillAndSubmitInWebElement(
+              DATE_OF_SYMPTOM_INPUT,
+              DATE_FORMATTER_DE.format(LocalDate.now().minusDays(numberOfDays)));
+        });
+
+    And(
+        "^I change symptom onset report date to one day before the report date on Symptoms tab$",
+        () -> {
+          fillDateOfSymptomDE(LocalDate.now().minusDays(2), Locale.GERMAN);
+        });
   }
 
   private void FillSymptomsData(Symptoms symptoms) {
@@ -242,7 +338,7 @@ public class SymptomsTabSteps implements En {
     selectNausea(symptoms.getNausea());
     selectLossOfSmell(symptoms.getLossOfSmell());
     selectLossOfTaste(symptoms.getLossOfTaste());
-    selectOtherNonHemorrhagicSymptoms(symptoms.getOtherNonHemorrhagicSymptoms());
+    selectOtherClinicalSymptoms(symptoms.getOtherNonHemorrhagicSymptoms());
     selectAbnormalLungXrayFindings(symptoms.getAbnormalLungXrayFindings());
     selectFatigueWeakness(symptoms.getFatigueWeakness());
     selectJointPain(symptoms.getJointPain());
@@ -303,6 +399,32 @@ public class SymptomsTabSteps implements En {
     selectOtherComplications(symptoms.getOtherComplications());
   }
 
+  private void FillSymptomsDataSurvnet(Symptoms symptoms) {
+    selectMaximumBodyTemperatureInCCombobox(symptoms.getMaximumBodyTemperatureInC());
+    selectSourceOfBodyTemperature(symptoms.getSourceOfBodyTemperature());
+    selectFever(symptoms.getFever());
+    selectShivering(symptoms.getShivering());
+    selectHeadache(symptoms.getHeadache());
+    selectMusclePain(symptoms.getMusclePain());
+    selectFeelingIll(symptoms.getFeelingIll());
+    selectChillsOrSweats(symptoms.getChillsOrSweats());
+    selectAcuteRespiratoryDistressSyndrome(symptoms.getAcuteRespiratoryDistressSyndrome());
+    selectSoreThroat(symptoms.getSoreThroat());
+    selectCough(symptoms.getCough());
+    selectRunnyNose(symptoms.getRunnyNose());
+    selectPneumoniaClinicalOrRadiologic(symptoms.getPneumoniaClinicalOrRadiologic());
+    selectRespiratoryDiseaseVentilation(symptoms.getRespiratoryDiseaseVentilation());
+    selectOxygenSaturationLower94(symptoms.getOxygenSaturationLower94());
+    selectRapidBreathing(symptoms.getRapidBreathing());
+    selectDifficultyBreathing(symptoms.getDifficultyBreathing());
+    selectFastHeartRate(symptoms.getFastHeartRate());
+    selectDiarrhea(symptoms.getDiarrhea());
+    selectNausea(symptoms.getNausea());
+    selectLossOfSmell(symptoms.getLossOfSmell());
+    selectLossOfTaste(symptoms.getLossOfTaste());
+    selectOtherClinicalSymptoms(symptoms.getOtherNonHemorrhagicSymptoms());
+  }
+
   private Symptoms collectSymptomsData() {
 
     return Symptoms.builder()
@@ -339,10 +461,9 @@ public class SymptomsTabSteps implements En {
             webDriverHelpers.getCheckedOptionFromHorizontalOptionGroup(LOSS_OF_TASTE_OPTIONS))
         .otherNonHemorrhagicSymptoms(
             webDriverHelpers.getCheckedOptionFromHorizontalOptionGroup(
-                OTHER_NON_HEMORRHAGIC_SYMPTOMS_OPTIONS))
+                OTHER_CLINICAL_SYMPTOMS_OPTIONS))
         .firstSymptom(webDriverHelpers.getValueFromCombobox(FIRST_SYMPTOM_COMBOBOX))
-        .symptomsComments(
-            webDriverHelpers.getValueFromWebElement(OTHER_NON_HEMORRHAGIC_SYMPTOMS_INPUT))
+        .symptomsComments(webDriverHelpers.getValueFromWebElement(SPECIFY_OTHER_SYMPTOMS_INPUT))
         .abnormalLungXrayFindings(
             (webDriverHelpers.getCheckedOptionFromHorizontalOptionGroup(
                 ABNORMAL_LUNG_XRAY_FINDINGS_OPTIONS)))
@@ -560,14 +681,12 @@ public class SymptomsTabSteps implements En {
     webDriverHelpers.clickWebElementByText(LOSS_OF_TASTE_OPTIONS, lossOfTaste);
   }
 
-  private void selectOtherNonHemorrhagicSymptoms(String otherNonHemorrhagicSymptoms) {
-    webDriverHelpers.clickWebElementByText(
-        OTHER_NON_HEMORRHAGIC_SYMPTOMS_OPTIONS, otherNonHemorrhagicSymptoms);
+  private void selectOtherClinicalSymptoms(String otherClinicalSymptoms) {
+    webDriverHelpers.clickWebElementByText(OTHER_CLINICAL_SYMPTOMS_OPTIONS, otherClinicalSymptoms);
   }
 
-  private void fillOtherNonHemorrhagicSymptoms(String otherNonHemorrhagicSymptoms) {
-    webDriverHelpers.fillInWebElement(
-        OTHER_NON_HEMORRHAGIC_SYMPTOMS_INPUT, otherNonHemorrhagicSymptoms);
+  private void fillOtherSymptoms(String otherSymptoms) {
+    webDriverHelpers.fillInWebElement(SPECIFY_OTHER_SYMPTOMS_INPUT, otherSymptoms);
   }
 
   private void fillSymptomsComments(String symptomsComments) {
@@ -580,6 +699,13 @@ public class SymptomsTabSteps implements En {
 
   private void fillDateOfSymptom(LocalDate dateOfSymptom) {
     webDriverHelpers.fillInWebElement(DATE_OF_SYMPTOM_INPUT, DATE_FORMATTER.format(dateOfSymptom));
+  }
+
+  private void fillDateOfSymptomDE(LocalDate date, Locale locale) {
+    DateTimeFormatter formatter;
+    if (locale.equals(Locale.GERMAN)) formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    else formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
+    webDriverHelpers.fillInWebElement(DATE_OF_SYMPTOM_INPUT, formatter.format(date));
   }
 
   private void selectAbnormalLungXrayFindings(String abnormalLungXrayFindings) {

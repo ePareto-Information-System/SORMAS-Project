@@ -2,6 +2,7 @@ package de.symeda.sormas.ui.utils;
 
 import java.util.function.Function;
 
+import com.vaadin.event.MouseEvents;
 import org.vaadin.hene.popupbutton.PopupButton;
 
 import com.vaadin.server.Resource;
@@ -263,6 +264,8 @@ public class ButtonHelper {
 		if (!enableDoubleClick) {
 			preventDoubleClick(button);
 		}
+		CssStyles.style(button, CssStyles.BUTTON_CAPTION_OVERFLOW);
+		button.setDescription(I18nProperties.getCaption(caption));
 		return button;
 	}
 
@@ -294,4 +297,10 @@ public class ButtonHelper {
 		button.removeClickListener(ENABLE_LISTENER);
 		return button;
 	}
+
+	public static Button createButton(String captionKey, Button.ClickListener clickListener, String styles) {
+		return createButton(captionKey, false, clickListener, styles);
+	}
+
+
 }

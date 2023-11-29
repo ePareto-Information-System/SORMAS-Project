@@ -1,7 +1,7 @@
 package de.symeda.sormas.ui.event.importer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,9 +15,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.apache.commons.io.output.StringBuilderWriter;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
 
 import com.opencsv.exceptions.CsvValidationException;
 
@@ -32,22 +30,18 @@ import de.symeda.sormas.api.person.PersonSimilarityCriteria;
 import de.symeda.sormas.api.person.SimilarPersonDto;
 import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
-import de.symeda.sormas.ui.AbstractBeanTest;
-import de.symeda.sormas.ui.TestDataCreator;
+import de.symeda.sormas.ui.AbstractUiBeanTest;
 import de.symeda.sormas.ui.events.importer.EventImporter;
 import de.symeda.sormas.ui.importer.ImportResultStatus;
 import de.symeda.sormas.ui.importer.ImportSimilarityResultOption;
 import de.symeda.sormas.ui.importer.PersonImportSimilarityResult;
 
-@RunWith(MockitoJUnitRunner.class)
-public class EventImporterTest extends AbstractBeanTest {
+public class EventImporterTest extends AbstractUiBeanTest {
 
 	@Test
 	public void testImportAllEvents() throws IOException, InvalidColumnException, InterruptedException, CsvValidationException, URISyntaxException {
 
-		TestDataCreator creator = new TestDataCreator();
-
-		TestDataCreator.RDCF rdcf = creator.createRDCF("Bourgogne-Franche-Comté", "Côte d'Or", "Dijon", "CHU Dijon Bourgogne");
+		var rdcf = creator.createRDCF("Bourgogne-Franche-Comté", "Côte d'Or", "Dijon", "CHU Dijon Bourgogne");
 		UserDto user = creator.createUser(
 			rdcf.region.getUuid(),
 			rdcf.district.getUuid(),
@@ -61,7 +55,7 @@ public class EventImporterTest extends AbstractBeanTest {
 		EventImporterExtension eventImporter = new EventImporterExtension(csvFile, true, user);
 		ImportResultStatus importResult = eventImporter.runImport();
 
-		assertEquals(eventImporter.errors.toString(), ImportResultStatus.COMPLETED, importResult);
+		assertEquals(ImportResultStatus.COMPLETED, importResult, eventImporter.errors.toString());
 		assertEquals(4, getEventFacade().count(null));
 		assertEquals(3, getPersonFacade().count(null));
 
@@ -147,7 +141,7 @@ public class EventImporterTest extends AbstractBeanTest {
 		eventImporter = new EventImporterExtension(csvFile, true, user);
 		importResult = eventImporter.runImport();
 
-		assertEquals(eventImporter.errors.toString(), ImportResultStatus.COMPLETED, importResult);
+		assertEquals(ImportResultStatus.COMPLETED, importResult, eventImporter.errors.toString());
 		assertEquals(10, getEventFacade().count(null));
 	}
 

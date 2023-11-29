@@ -64,7 +64,6 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	private CaseReferenceDto caze;
 	private ContactReferenceDto contact;
 	private EventParticipantReferenceDto eventParticipant;
-	private Boolean deleted = Boolean.FALSE;
 	private String caseCodeIdLike;
 	private EntityRelevanceStatus relevanceStatus;
 	private SampleAssociationType sampleAssociationType;
@@ -81,6 +80,7 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	private List<String> caseUuids;
 	private List<String> contactUuids;
 	private List<String> eventParticipantUuids;
+	private Boolean deleted = Boolean.FALSE;
 
 	public RegionReferenceDto getRegion() {
 		return region;
@@ -331,16 +331,6 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 		return relevanceStatus;
 	}
 
-	public SampleCriteria deleted(Boolean deleted) {
-		this.deleted = deleted;
-		return this;
-	}
-
-	@IgnoreForUrl
-	public Boolean getDeleted() {
-		return deleted;
-	}
-
 	/**
 	 * returns all entries that match ALL of the passed words
 	 */
@@ -354,6 +344,7 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	}
 
 
+	@IgnoreForUrl
 	public List<String> getCaseUuids() {
 		return caseUuids;
 	}
@@ -364,6 +355,7 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 		return this;
 	}
 
+	@IgnoreForUrl
 	public List<String> getContactUuids() {
 		return contactUuids;
 	}
@@ -374,6 +366,7 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 		return this;
 	}
 
+	@IgnoreForUrl
 	public List<String> getEventParticipantUuids() {
 		return eventParticipantUuids;
 	}
@@ -406,4 +399,17 @@ public class SampleCriteria extends BaseCriteria implements Serializable {
 	public void setPathogenTestType(PathogenTestType pathogenTestType) {
 		this.pathogenTestType = pathogenTestType;
 	}
+
+
+	@IgnoreForUrl
+	public Boolean getDeleted() {
+		return deleted;
+	}
+
+
+	public SampleCriteria deleted(Boolean deleted) {
+		this.deleted = deleted;
+		return this;
+	}
+
 }

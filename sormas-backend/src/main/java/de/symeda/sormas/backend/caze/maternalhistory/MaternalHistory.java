@@ -8,11 +8,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import de.symeda.auditlog.api.Audited;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.infrastructure.community.Community;
@@ -20,7 +20,6 @@ import de.symeda.sormas.backend.infrastructure.district.District;
 import de.symeda.sormas.backend.infrastructure.region.Region;
 
 @Entity
-@Audited
 public class MaternalHistory extends AbstractDomainObject {
 
 	private static final long serialVersionUID = -5534360436146186436L;
@@ -253,7 +252,7 @@ public class MaternalHistory extends AbstractDomainObject {
 		this.rashExposureMonth = rashExposureMonth;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public Region getRashExposureRegion() {
 		return rashExposureRegion;
 	}
@@ -262,7 +261,7 @@ public class MaternalHistory extends AbstractDomainObject {
 		this.rashExposureRegion = rashExposureRegion;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public District getRashExposureDistrict() {
 		return rashExposureDistrict;
 	}
@@ -271,7 +270,7 @@ public class MaternalHistory extends AbstractDomainObject {
 		this.rashExposureDistrict = rashExposureDistrict;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public Community getRashExposureCommunity() {
 		return rashExposureCommunity;
 	}

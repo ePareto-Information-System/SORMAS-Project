@@ -19,11 +19,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyString;
 import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.Mockito.when;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
 
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.epidata.AnimalCondition;
@@ -38,10 +35,8 @@ import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.backend.AbstractBeanTest;
-import de.symeda.sormas.backend.MockProducer;
 import de.symeda.sormas.backend.TestDataCreator;
 
-@RunWith(MockitoJUnitRunner.class)
 public class EpiDataPseudonymizationTest extends AbstractBeanTest {
 
 	private TestDataCreator.RDCF rdcf1;
@@ -70,8 +65,7 @@ public class EpiDataPseudonymizationTest extends AbstractBeanTest {
 			"Surv",
 			"Off2",
 			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER));
-
-		when(MockProducer.getPrincipal().getName()).thenReturn("SurvOff2");
+		loginWith(user2);
 	}
 
 	@Test
@@ -164,7 +158,7 @@ public class EpiDataPseudonymizationTest extends AbstractBeanTest {
 			ExposureDto burial = ExposureDto.build(ExposureType.BURIAL);
 			burial.setDeceasedPersonName("John Smith");
 			burial.setDeceasedPersonRelation("Test burial relation");
-			LocationDto address = new LocationDto();
+			LocationDto address = LocationDto.build();
 			address.setRegion(rdcf.region);
 			address.setDistrict(rdcf.district);
 			address.setCommunity(rdcf.community);
@@ -177,7 +171,12 @@ public class EpiDataPseudonymizationTest extends AbstractBeanTest {
 			epiData.getExposures().add(travel);
 
 			ExposureDto gathering = ExposureDto.build(ExposureType.GATHERING);
-			gathering.setLocation(address);
+			LocationDto address2 = LocationDto.build();
+			address2.setRegion(rdcf.region);
+			address2.setDistrict(rdcf.district);
+			address2.setCommunity(rdcf.community);
+			address2.setCity("Test City");
+			gathering.setLocation(address2);
 			gathering.setDescription("Test gathering description");
 			epiData.getExposures().add(gathering);
 		});

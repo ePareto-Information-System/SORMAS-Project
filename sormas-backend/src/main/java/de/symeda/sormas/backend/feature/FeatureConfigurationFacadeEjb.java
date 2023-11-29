@@ -23,7 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import javax.annotation.security.PermitAll;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -47,6 +49,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.collections.CollectionUtils;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.audit.AuditIgnore;
 import de.symeda.sormas.api.common.CoreEntityType;
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.feature.FeatureConfigurationCriteria;
@@ -79,6 +82,7 @@ import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.ModelConstants;
 import de.symeda.sormas.backend.util.QueryHelper;
 
+@AuditIgnore(retainWrites = true)
 @Stateless(name = "FeatureConfigurationFacade")
 public class FeatureConfigurationFacadeEjb implements FeatureConfigurationFacade {
 
@@ -101,6 +105,7 @@ public class FeatureConfigurationFacadeEjb implements FeatureConfigurationFacade
 	private DistrictFacadeEjb.DistrictFacadeEjbLocal districtFacadeEjb;
 
 	@Override
+	@PermitAll
 	public List<FeatureConfigurationDto> getAllAfter(Date date) {
 		return service.getAllAfter(date).stream().map(FeatureConfigurationFacadeEjb::toDto).collect(Collectors.toList());
 	}
@@ -116,6 +121,7 @@ public class FeatureConfigurationFacadeEjb implements FeatureConfigurationFacade
 	}
 
 	@Override
+	@PermitAll
 	public List<String> getDeletedUuids(Date since) {
 
 		User user = userService.getCurrentUser();
@@ -335,7 +341,7 @@ public class FeatureConfigurationFacadeEjb implements FeatureConfigurationFacade
 			configurationDto.setEndDate(DateHelper.getEndOfDay(configuration.getEndDate()));
 		}
 
-		FeatureConfiguration entity = fromDto(configurationDto, true);
+		FeatureConfiguration entity = fillOrBuildEntity(configurationDto, service.getByUuid(configuration.getUuid()), true);
 		service.ensurePersisted(entity);
 	}
 
@@ -486,10 +492,18 @@ public class FeatureConfigurationFacadeEjb implements FeatureConfigurationFacade
 	}
 
 	@Override
+	public boolean isAnyFeatureEnabled(FeatureType... featureType) {
+		return Stream.of(featureType).anyMatch(this::isFeatureEnabled);
+	}
+
+	@Override
+	public boolean areAllFeatureEnabled(FeatureType... featureType) {
+		return Stream.of(featureType).allMatch(this::isFeatureEnabled);
+	}
+
+	@Override
 	public boolean isAnySurveillanceEnabled() {
-		return isFeatureEnabled(FeatureType.CASE_SURVEILANCE)
-			|| isFeatureEnabled(FeatureType.EVENT_SURVEILLANCE)
-			|| isFeatureEnabled(FeatureType.AGGREGATE_REPORTING);
+		return isAnyFeatureEnabled(FeatureType.CASE_SURVEILANCE, FeatureType.EVENT_SURVEILLANCE, FeatureType.AGGREGATE_REPORTING);
 	}
 
 	@Override
@@ -564,10 +578,8 @@ public class FeatureConfigurationFacadeEjb implements FeatureConfigurationFacade
 		return target;
 	}
 
-	public FeatureConfiguration fromDto(@NotNull FeatureConfigurationDto source, boolean checkChangeDate) {
-
-		FeatureConfiguration target =
-			DtoHelper.fillOrBuildEntity(source, service.getByUuid(source.getUuid()), FeatureConfiguration::new, checkChangeDate);
+	public FeatureConfiguration fillOrBuildEntity(@NotNull FeatureConfigurationDto source, FeatureConfiguration target, boolean checkChangeDate) {
+		target = DtoHelper.fillOrBuildEntity(source, target, FeatureConfiguration::new, checkChangeDate);
 
 		target.setFeatureType(source.getFeatureType());
 		target.setRegion(regionService.getByReferenceDto(source.getRegion()));

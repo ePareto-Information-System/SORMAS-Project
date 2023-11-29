@@ -25,12 +25,10 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 
-import de.symeda.auditlog.api.Audited;
-import de.symeda.auditlog.api.AuditedIgnore;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
+import de.symeda.sormas.backend.common.NotExposedToApi;
 
 @Entity(name = "eventgroups")
-@Audited
 public class EventGroup extends AbstractDomainObject {
 
     private static final long serialVersionUID = -6609939162115335854L;
@@ -44,6 +42,7 @@ public class EventGroup extends AbstractDomainObject {
     private String name;
     private List<Event> events;
 
+    @NotExposedToApi
     private boolean archived;
 
     @Column(columnDefinition = "text", nullable = false)
@@ -55,7 +54,6 @@ public class EventGroup extends AbstractDomainObject {
         this.name = name;
     }
 
-    @AuditedIgnore
     @ManyToMany(mappedBy = Event.EVENT_GROUPS, fetch = FetchType.LAZY)
     public List<Event> getEvents() {
         return events;

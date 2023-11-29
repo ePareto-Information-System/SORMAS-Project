@@ -201,6 +201,10 @@ public class SampleJoins extends QueryJoins<Sample> {
 		this.contactJoins = contactJoins;
 	}
 
+	public CaseJoins getContactCaseJoins() {
+		return getContactJoins().getCaseJoins();
+	}
+
 	public Join<Sample, EventParticipant> getEventParticipant() {
 		return getOrCreate(eventParticipant, Sample.ASSOCIATED_EVENT_PARTICIPANT, JoinType.LEFT, this::setEventParticipant);
 	}
@@ -213,8 +217,20 @@ public class SampleJoins extends QueryJoins<Sample> {
 		return getOrCreate(eventParticipantJoins, () -> new EventParticipantJoins(getEventParticipant()), this::setEventParticipantJoins);
 	}
 
+	public Join<Person, Location> getEventParticipantAddress() {
+		return getEventParticipantJoins().getAddress();
+	}
+
 	public void setEventParticipantJoins(EventParticipantJoins eventParticipantJoins) {
 		this.eventParticipantJoins = eventParticipantJoins;
+	}
+
+	public Join<Sample, PathogenTest> getPathogenTest() {
+		return getOrCreate(pathogenTests, Sample.PATHOGENTESTS, JoinType.LEFT, this::setPathogenTest);
+	}
+
+	private void setPathogenTest(Join<Sample, PathogenTest> pathogenTest) {
+		this.pathogenTests = pathogenTest;
 	}
 
 	public Join<EventParticipant, Person> getEventParticipantPerson() {

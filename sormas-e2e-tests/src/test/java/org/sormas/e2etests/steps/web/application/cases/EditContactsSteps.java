@@ -18,9 +18,7 @@
 
 package org.sormas.e2etests.steps.web.application.cases;
 
-import static org.sormas.e2etests.pages.application.cases.EditCasePage.DELETE_BUTTON;
-import static org.sormas.e2etests.pages.application.cases.EditCasePage.DISCARD_BUTTON_POPUP;
-import static org.sormas.e2etests.pages.application.cases.EditCasePage.VACCINATION_STATUS_FOR_THIS_DISEASE_COMBOBOX;
+import static org.sormas.e2etests.pages.application.cases.EditCasePage.*;
 import static org.sormas.e2etests.pages.application.cases.EditContactsPage.CASE_CONTACT_EXPORT;
 import static org.sormas.e2etests.pages.application.cases.EditContactsPage.CLOSE_POPUP_BUTTON;
 import static org.sormas.e2etests.pages.application.cases.EditContactsPage.COMMIT_BUTTON;
@@ -84,7 +82,6 @@ import static org.sormas.e2etests.pages.application.tasks.CreateNewTaskPage.TASK
 import static org.sormas.e2etests.steps.BaseSteps.locale;
 
 import cucumber.api.java8.En;
-import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
@@ -101,6 +98,7 @@ import org.sormas.e2etests.entities.pojo.web.Contact;
 import org.sormas.e2etests.entities.services.ContactService;
 import org.sormas.e2etests.envconfig.manager.RunningConfiguration;
 import org.sormas.e2etests.helpers.WebDriverHelpers;
+import org.sormas.e2etests.helpers.files.FilesHelper;
 import org.sormas.e2etests.pages.application.contacts.EditContactPage;
 import org.sormas.e2etests.state.ApiState;
 import org.testng.asserts.SoftAssert;
@@ -182,7 +180,7 @@ public class EditContactsSteps implements En {
         () -> {
           webDriverHelpers.clickOnWebElementBySelector(DETAILED_EXPORT_CASE_CONTACT_BUTTON);
           webDriverHelpers.waitUntilElementIsVisibleAndClickable(CLOSE_POPUP_BUTTON);
-          TimeUnit.SECONDS.sleep(5); // time for file to be downloaded
+          TimeUnit.SECONDS.sleep(10); // time for file to be downloaded
         });
     When(
         "I close popup after export in Case Contacts directory",
@@ -253,9 +251,8 @@ public class EditContactsSteps implements En {
     When(
         "I delete exported file from Case Contact Directory",
         () -> {
-          File toDelete =
-              new File(userDirPath + "/downloads/sormas_contacts_" + LocalDate.now() + "_.csv");
-          toDelete.deleteOnExit();
+          String filePath = "sormas_contacts_" + LocalDate.now() + "_.csv";
+          FilesHelper.deleteFile(filePath);
         });
 
     When(
@@ -303,6 +300,25 @@ public class EditContactsSteps implements En {
             webDriverHelpers.clickOnWebElementBySelector(CREATE_NEW_PERSON_RADIO_BUTTON);
             webDriverHelpers.clickOnWebElementBySelector(PICK_OR_CREATE_POPUP_SAVE_BUTTON);
           }
+        });
+    When(
+        "^I create a new basic contact to from Cases Contacts tab for DE$",
+        () -> {
+          contact = contactService.buildGeneratedContactDE();
+          fillFirstName(contact.getFirstName());
+          fillLastName(contact.getLastName());
+          selectSex(contact.getSex());
+          webDriverHelpers.clickOnWebElementBySelector(SAVE_BUTTON);
+          if (webDriverHelpers.isElementVisibleWithTimeout(PICK_OR_CREATE_PERSON_POPUP, 15)) {
+            webDriverHelpers.clickOnWebElementBySelector(CREATE_NEW_PERSON_RADIO_BUTTON);
+            webDriverHelpers.clickOnWebElementBySelector(PICK_OR_CREATE_POPUP_SAVE_BUTTON);
+          }
+        });
+    When(
+        "^I collect contact UUID displayed on Edit Contact Page$",
+        () -> {
+          contactUUID = webDriverHelpers.getValueFromWebElement(UUID_INPUT);
+          contactsUUIDList.add(contactUUID);
         });
 
     Then(
@@ -408,6 +424,27 @@ public class EditContactsSteps implements En {
           webDriverHelpers.scrollToElement(POPUP_YES_BUTTON);
           webDriverHelpers.clickOnWebElementBySelector(POPUP_YES_BUTTON);
         });
+
+    When(
+        "I check if editable fields are read only for shared contact",
+        () -> {
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(30);
+          TimeUnit.SECONDS.sleep(3);
+          webDriverHelpers.waitUntilElementIsVisibleAndClickable(CONTACTS_LIST);
+          softly.assertEquals(
+              webDriverHelpers.isElementEnabled(REPORT_DATE),
+              false,
+              "Report date is not editable state but it should be since archived entities default value is true!");
+          softly.assertEquals(
+              webDriverHelpers.isElementEnabled(RESPONSIBLE_DISTRICT_INPUT),
+              false,
+              "Responsible district input is not editable state but it should be since archived entities default value is true!");
+          softly.assertEquals(
+              webDriverHelpers.isElementEnabled(RESPONSIBLE_REGION_INPUT),
+              false,
+              "Responsible region input is not editable state but it should be since archived entities default value is true!");
+          softly.assertAll();
+        });
     When(
         "I check if editable fields are read only for an archived contact",
         () -> {
@@ -479,6 +516,18 @@ public class EditContactsSteps implements En {
     When(
         "I click on the contacts list button",
         () -> webDriverHelpers.clickOnWebElementBySelector(CONTACTS_LIST));
+
+    And(
+        "^I set the last contact date for minus (\\d+) days from today for DE version$",
+        (Integer days) -> {
+          webDriverHelpers.scrollToElement(LAST_CONTACT_DATE);
+          webDriverHelpers.fillAndSubmitInWebElement(
+              LAST_CONTACT_DATE, formatterDE.format(LocalDate.now().minusDays(days)));
+        });
+
+    And(
+        "^I open a contact using the collected contact UUID$",
+        () -> openContactFromResultsByUUID(contactUUID));
   }
 
   private void fillFirstName(String firstName) {

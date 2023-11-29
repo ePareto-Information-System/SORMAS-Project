@@ -1,7 +1,7 @@
 @UI @Sanity @TravelEntries @Filters
 Feature: Travel entry filters
 
-@issue=SORDEV-8267 @env_de
+@tmsLink=SORDEV-8267 @env_de
 Scenario: Check Travel Entry filters
   Given I log in as a National User
   And I click on the Entries button from navbar
@@ -33,7 +33,7 @@ Scenario: Check Travel Entry filters
   And I click "Nur in Fälle konvertierte Einreisen" checkbox on Travel Entry directory page
   And I apply "Abgeschlossene Einreisen" to aggregation combobox on Travel Entry directory page
   And I check that number of displayed Travel Entry results is 0
-  And I apply "Alle Einreisen" to aggregation combobox on Travel Entry directory page
+  And I apply "Alle aktiven und archivierten Einreisemeldungen" to aggregation combobox on Travel Entry directory page
   And I check that number of displayed Travel Entry results is 1
   And I apply "Aktive Einreisen" to aggregation combobox on Travel Entry directory page
   And I check that number of displayed Travel Entry results is 1
@@ -46,7 +46,7 @@ Scenario: Check Travel Entry filters
   And I click APPLY BUTTON in Travel Entry Directory Page
   And I check that number of displayed Travel Entry results is 0
 
-  @issue=SORDEV-9787 @env_de
+  @tmsLink=SORDEV-9787 @env_de
   Scenario: Check that Add reporting period filter for Travel Entry work properly
     Given I log in as a National User
     And I click on the Entries button from navbar
@@ -80,7 +80,7 @@ Scenario: Check Travel Entry filters
     And I click APPLY BUTTON in Travel Entry Directory Page
     And I check that number of displayed Travel Entry results is 0
 
-  @issue=SORDEV-7162 @env_de
+  @tmsLink=SORDEV-7162 @env_de
   Scenario: Check Travel Entry filter visibility
     Given I log in as a National User
     When I click on the Entries button from navbar

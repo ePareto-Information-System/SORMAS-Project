@@ -51,7 +51,7 @@ public class ContactInfoLayout extends AbstractInfoLayout<ContactDto> {
 
 		this.removeAllComponents();
 
-		final PersonDto personDto = FacadeProvider.getPersonFacade().getPersonByUuid(contactDto.getPerson().getUuid());
+		final PersonDto personDto = FacadeProvider.getPersonFacade().getByUuid(contactDto.getPerson().getUuid());
 
 		final VerticalLayout firstColumn = new VerticalLayout();
 		firstColumn.setMargin(false);
@@ -67,7 +67,7 @@ public class ContactInfoLayout extends AbstractInfoLayout<ContactDto> {
 			addDescLabel(
 				firstColumn,
 				ContactDto.PERSON,
-				contactDto.getPerson(),
+				contactDto.getPerson().buildCaption(),
 				I18nProperties.getPrefixCaption(ContactDto.I18N_PREFIX, ContactDto.PERSON));
 
 			if (UserProvider.getCurrent().hasUserRight(UserRight.CONTACT_VIEW)) {

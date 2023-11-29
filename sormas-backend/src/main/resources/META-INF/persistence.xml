@@ -6,8 +6,6 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 		<jta-data-source>jdbc/sormasDataPool</jta-data-source>
         
-		<mapping-file>META-INF/listener.xml</mapping-file>
-
 		<class>de.symeda.sormas.backend.action.Action</class>
 		<class>de.symeda.sormas.backend.caze.Case</class>
 		<class>de.symeda.sormas.backend.common.AbstractDomainObject</class>
@@ -15,6 +13,7 @@
 		<class>de.symeda.sormas.backend.common.CoreAdo</class>
 		<class>de.symeda.sormas.backend.contact.Contact</class>
 		<class>de.symeda.sormas.backend.epidata.EpiData</class>
+		<class>de.symeda.sormas.backend.environment.Environment</class>
 		<class>de.symeda.sormas.backend.event.Event</class>
 		<class>de.symeda.sormas.backend.event.EventParticipant</class>
 		<class>de.symeda.sormas.backend.event.EventGroup</class>
@@ -59,8 +58,8 @@
 		<class>de.symeda.sormas.backend.campaign.data.CampaignFormData</class>
 		<class>de.symeda.sormas.backend.campaign.diagram.CampaignDiagramDefinition</class>
 		<class>de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfo</class>
-		<class>de.symeda.sormas.backend.sormastosormas.share.shareinfo.SormasToSormasShareInfo</class>
-		<class>de.symeda.sormas.backend.sormastosormas.share.shareinfo.ShareRequestInfo</class>
+		<class>de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShareInfo</class>
+		<class>de.symeda.sormas.backend.sormastosormas.share.outgoing.ShareRequestInfo</class>
 		<class>de.symeda.sormas.backend.document.Document</class>
 		<class>de.symeda.sormas.backend.exposure.Exposure</class>
 		<class>de.symeda.sormas.backend.common.messaging.ManualMessageLog</class>
@@ -72,7 +71,7 @@
 		<class>de.symeda.sormas.backend.person.PersonContactDetail</class>
 		<class>de.symeda.sormas.backend.infrastructure.continent.Continent</class>
 		<class>de.symeda.sormas.backend.infrastructure.subcontinent.Subcontinent</class>
-		<class>de.symeda.sormas.backend.sormastosormas.share.sharerequest.SormasToSormasShareRequest</class>
+		<class>de.symeda.sormas.backend.sormastosormas.share.incoming.SormasToSormasShareRequest</class>
 		<class>de.symeda.sormas.backend.customizableenum.CustomizableEnumValue</class>
 		<class>de.symeda.sormas.backend.immunization.entity.BaseImmunization</class>
 		<class>de.symeda.sormas.backend.immunization.entity.Immunization</class>
@@ -85,46 +84,28 @@
 		<class>de.symeda.sormas.backend.externalmessage.labmessage.TestReport</class>
 		<class>de.symeda.sormas.backend.deletionconfiguration.DeletionConfiguration</class>
 		<class>de.symeda.sormas.backend.cadre.Cadre</class>
+		<class>de.symeda.sormas.backend.externalmessage.labmessage.SampleReport</class>
 
 
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 
 		<shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
 		<validation-mode>CALLBACK</validation-mode>
-		
-		 <properties>
-         	<property name="hibernate.dialect" value="de.symeda.sormas.backend.ExtendedPostgreSQL94Dialect"/>
-         	<property name="hibernate.transaction.jta.platform" value="org.hibernate.service.jta.platform.internal.SunOneJtaPlatform"/>
-			<property name="hibernate.show_sql" value="false" />
-			<property name="hibernate.format_sql" value="false" />
-         	<!-- don't validate on release, otherwise the automatic db update won't work
-         	<property name="hibernate.hbm2ddl.auto" value="validate"/>
-         	 -->
-      	</properties>
 
-	</persistence-unit>
-	
-	<persistence-unit name="auditlogPU">
-        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-		<jta-data-source>jdbc/AuditlogPool</jta-data-source>
+		<properties>
+			<property name="hibernate.dialect" value="de.symeda.sormas.backend.ExtendedPostgreSQL94Dialect"/>
+			<property name="hibernate.criteria.literal_handling_mode" value="bind"/>
+			<property name="hibernate.transaction.jta.platform"
+					  value="org.hibernate.service.jta.platform.internal.SunOneJtaPlatform"/>
+			<property name="hibernate.show_sql" value="false"/>
+			<property name="hibernate.format_sql" value="false"/>
 
-		<class>de.symeda.sormas.backend.auditlog.AuditLogEntry</class>
+			<property name="hibernate.cache.use_second_level_cache" value="true"/>
+			<property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.internal.SingletonEhcacheRegionFactory"/>
+			<!-- don't validate on release, otherwise the automatic db update won't work
+            <property name="hibernate.hbm2ddl.auto" value="validate"/>
+             -->
+		</properties>
 
-		<exclude-unlisted-classes>true</exclude-unlisted-classes>
-
-		<shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
-		<validation-mode>CALLBACK</validation-mode>
-		
-		 <properties>
-         	<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL94Dialect"/>
-         	<property name="hibernate.transaction.jta.platform" value="org.hibernate.service.jta.platform.internal.SunOneJtaPlatform"/>
-         	<!-- don't validate on release, otherwise the automatic db update won't work
-         	<property name="hibernate.hbm2ddl.auto" value="validate"/>
-         	 -->
-			<property name="hibernate.jdbc.batch_size" value="100" />
-			<property name="hibernate.order_inserts" value="true" />
-			<property name="hibernate.order_updates" value="true" />
-      	</properties>
-		
 	</persistence-unit>
 </persistence>

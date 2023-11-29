@@ -155,6 +155,11 @@
     </security-role-mapping>
 
     <security-role-mapping>
+        <role-name>PERSON_MERGE</role-name>
+        <group-name>PERSON_MERGE</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
         <role-name>SAMPLE_CREATE</role-name>
         <group-name>SAMPLE_CREATE</group-name>
     </security-role-mapping>
@@ -245,11 +250,6 @@
     </security-role-mapping>
 
     <security-role-mapping>
-        <role-name>CONTACT_ASSIGN</role-name>
-        <group-name>CONTACT_ASSIGN</group-name>
-    </security-role-mapping>
-
-    <security-role-mapping>
         <role-name>CONTACT_EDIT</role-name>
         <group-name>CONTACT_EDIT</group-name>
     </security-role-mapping>
@@ -257,11 +257,6 @@
     <security-role-mapping>
         <role-name>CONTACT_DELETE</role-name>
         <group-name>CONTACT_DELETE</group-name>
-    </security-role-mapping>
-
-    <security-role-mapping>
-        <role-name>CONTACT_CLASSIFY</role-name>
-        <group-name>CONTACT_CLASSIFY</group-name>
     </security-role-mapping>
 
     <security-role-mapping>
@@ -337,6 +332,11 @@
     <security-role-mapping>
         <role-name>TASK_EXPORT</role-name>
         <group-name>TASK_EXPORT</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
+        <role-name>TASK_ARCHIVE</role-name>
+        <group-name>TASK_ARCHIVE</group-name>
     </security-role-mapping>
 
     <security-role-mapping>
@@ -470,6 +470,21 @@
     </security-role-mapping>
 
     <security-role-mapping>
+        <role-name>USER_ROLE_EDIT</role-name>
+        <group-name>USER_ROLE_EDIT</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
+        <role-name>USER_ROLE_DELETE</role-name>
+        <group-name>USER_ROLE_DELETE</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
+        <role-name>USER_ROLE_VIEW</role-name>
+        <group-name>USER_ROLE_VIEW</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
         <role-name>SEND_MANUAL_EXTERNAL_MESSAGES</role-name>
         <group-name>SEND_MANUAL_EXTERNAL_MESSAGES</group-name>
     </security-role-mapping>
@@ -579,6 +594,11 @@
     <security-role-mapping>
         <role-name>DASHBOARD_CAMPAIGNS_VIEW</role-name>
         <group-name>DASHBOARD_CAMPAIGNS_VIEW</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
+        <role-name>DASHBOARD_SAMPLES_VIEW</role-name>
+        <group-name>DASHBOARD_SAMPLES_VIEW</group-name>
     </security-role-mapping>
 
     <security-role-mapping>
@@ -767,6 +787,21 @@
     </security-role-mapping>
 
     <security-role-mapping>
+        <role-name>SORMAS_TO_SORMAS_PROCESS</role-name>
+        <group-name>SORMAS_TO_SORMAS_PROCESS</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
+        <role-name>EXTERNAL_SURVEILLANCE_SHARE</role-name>
+        <group-name>EXTERNAL_SURVEILLANCE_SHARE</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
+        <role-name>EXTERNAL_SURVEILLANCE_DELETE</role-name>
+        <group-name>EXTERNAL_SURVEILLANCE_DELETE</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
         <role-name>EXTERNAL_MESSAGE_VIEW</role-name>
         <group-name>EXTERNAL_MESSAGE_VIEW</group-name>
     </security-role-mapping>
@@ -774,6 +809,11 @@
     <security-role-mapping>
         <role-name>EXTERNAL_MESSAGE_PROCESS</role-name>
         <group-name>EXTERNAL_MESSAGE_PROCESS</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
+        <role-name>EXTERNAL_MESSAGE_PUSH</role-name>
+        <group-name>EXTERNAL_MESSAGE_PUSH</group-name>
     </security-role-mapping>
 
     <security-role-mapping>
@@ -809,6 +849,56 @@
     <security-role-mapping>
         <role-name>TRAVEL_ENTRY_ARCHIVE</role-name>
         <group-name>TRAVEL_ENTRY_ARCHIVE</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
+        <role-name>ENVIRONMENT_VIEW</role-name>
+        <group-name>ENVIRONMENT_VIEW</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
+        <role-name>ENVIRONMENT_CREATE</role-name>
+        <group-name>ENVIRONMENT_CREATE</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
+        <role-name>ENVIRONMENT_EDIT</role-name>
+        <group-name>ENVIRONMENT_EDIT</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
+        <role-name>ENVIRONMENT_ARCHIVE</role-name>
+        <group-name>ENVIRONMENT_ARCHIVE</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
+        <role-name>ENVIRONMENT_DELETE</role-name>
+        <group-name>ENVIRONMENT_DELETE</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
+        <role-name>ENVIRONMENT_IMPORT</role-name>
+        <group-name>ENVIRONMENT_IMPORT</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
+        <role-name>ENVIRONMENT_EXPORT</role-name>
+        <group-name>ENVIRONMENT_EXPORT</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
+        <role-name>DOCUMENT_VIEW</role-name>
+        <group-name>DOCUMENT_VIEW</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
+        <role-name>DOCUMENT_UPLOAD</role-name>
+        <group-name>DOCUMENT_UPLOAD</group-name>
+    </security-role-mapping>
+
+    <security-role-mapping>
+        <role-name>DOCUMENT_DELETE</role-name>
+        <group-name>DOCUMENT_DELETE</group-name>
     </security-role-mapping>
 
     <security-role-mapping>

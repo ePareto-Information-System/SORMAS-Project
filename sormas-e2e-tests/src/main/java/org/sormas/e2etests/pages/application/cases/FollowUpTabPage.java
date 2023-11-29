@@ -44,7 +44,8 @@ public class FollowUpTabPage {
   public static final By ACTION_CONFIRM = By.cssSelector("[id='actionConfirm']");
   public static final By SET_CLEARED_TO_NO_BUTTON = By.cssSelector("[id='symptomsSetClearedToNo']");
   public static final By OPTION_FOR_SET_BUTTONS =
-      By.cssSelector("[class='v-button v-widget link v-button-link']");
+      By.cssSelector(
+          "[class='v-button v-widget link v-button-link caption-overflow-label v-button-caption-overflow-label']");
   public static final By CHILLS_SWEATS_OPTIONS =
       By.cssSelector("[id='chillsSweats'] [class='v-checkbox v-select-option']");
   public static final By CHILLS_SWEATS_YES_BUTTON =
@@ -142,4 +143,5 @@ public class FollowUpTabPage {
       By.cssSelector("[id='otherNonHemorrhagicSymptomsText']");
   public static final By CONTACT_PERSONS_PHONE_NUMBER =
       By.xpath("//div[@class='v-link v-widget v-has-width']//span");
+  public static final By EXPORT_FOLLOW_UP_BUTTON = By.id("export");
 }

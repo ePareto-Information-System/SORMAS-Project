@@ -22,9 +22,10 @@ import org.openqa.selenium.By;
 
 public class EditSamplePage {
 
+  public static final By UUID_FIELD = By.id("uuid");
   public static final By PATHOGEN_NEW_TEST_RESULT_BUTTON = By.cssSelector("[id='New test result']");
   public static final By ADDIITONAL_NEW_TEST_RESULT_BUTTON =
-      By.cssSelector("[id='additionalTestNewTest']");
+      By.cssSelector("[location='additionalTests'] [id='New test result']");
   public static final By NEW_TEST_RESULT_DE = By.cssSelector("[id='Neues Testresultat']");
   public static final By COLLECTED_DATE_TIME_COMBOBOX =
       By.cssSelector("[id='sampleDateTime_time'] [class='v-filterselect-button']");
@@ -42,6 +43,8 @@ public class EditSamplePage {
   public static final By SAMPLE_TYPE_INPUT = By.cssSelector("[id='sampleMaterial'] input");
   public static final By SPECIMEN_CONDITION_INPUT =
       By.cssSelector("[id='specimenCondition'] input");
+  public static final By SPECIMEN_CONDITION_NOT_MANDATORY_COMBOBOX =
+      By.xpath("//div[@id='specimenCondition' and not(contains(@class, 'v-required'))]");
   public static final By LABORATORY_NAME_INPUT = By.cssSelector("[id='labDetails']");
   public static final By RECEIVED_OPTION_BUTTON = By.cssSelector("[id='received'] label");
   public static final By LAB_SAMPLE_ID_INPUT = By.cssSelector("[id='labSampleID']");
@@ -62,17 +65,26 @@ public class EditSamplePage {
   public static final By SPECIFY_TEST_DETAILS_INPUT =
       By.cssSelector("[class='popupContent'] [id='testTypeText']");
   public static final By TYPING_ID_INPUT = By.cssSelector("[class='popupContent'] [id='typingId']");
-  public static final By DELETE_SAMPLE_BUTTON = By.cssSelector("#delete");
+  public static final By DELETE_SAMPLE_BUTTON = By.cssSelector("#deleteRestore");
   public static final By DELETE_PATHOGEN_TEST_RESULT =
-      By.cssSelector("[class='popupContent'] [id='delete']");
-  public static final By SAMPLE_DELETION_POPUP = By.cssSelector(".v-window .popupContent");
+      By.cssSelector("[class='popupContent'] [id='deleteRestore']");
   public static final By SAMPLE_DELETION_POPUP_YES_BUTTON = By.id("actionConfirm");
   public static final By SAVE_SAMPLE_BUTTON = By.id("commit");
   public static final By DELETE_SAMPLE_REASON_POPUP =
       By.xpath(
           "//div[@class='popupContent']//*[text()='Reason for deletion']/../following-sibling::div//div");
+  public static final By DELETE_SAMPLE_REASON_POPUP_FOR_DE =
+      By.xpath(
+          "//div[@class='popupContent']//*[text()='Grund des L\u00F6schens']/../following-sibling::div//div");
   public static final By EDIT_PATHOGEN_TEST =
       By.cssSelector(".v-align-right.v-slot.v-slot-compact.v-slot-link > div[role='button']");
   public static final By TESTED_DISEASE_VARIANT =
       By.cssSelector(".popupContent [id='testedDiseaseVariant'] div");
+  public static final By PCR_TEST_SPECIFICATION_INPUT =
+      By.cssSelector("[class='popupContent'] [id='pcrTestSpecification'] input");
+  public static final By SEE_SAMPLES_FOR_THIS_PERSON_BUTTON_DE =
+      By.id("Proben f\u00FCr diese Person ansehen");
+  public static final By BACK_TO_CASE_DE_BUTTON =
+      By.xpath(
+          "//div[@class='v-link v-widget v-caption v-link-v-caption']//span[contains(text(), 'Fall')]");
 }

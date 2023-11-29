@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.annotation.security.PermitAll;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -37,6 +38,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.continent.ContinentCriteria;
 import de.symeda.sormas.api.infrastructure.continent.ContinentDto;
@@ -45,6 +47,7 @@ import de.symeda.sormas.api.infrastructure.continent.ContinentIndexDto;
 import de.symeda.sormas.api.infrastructure.continent.ContinentReferenceDto;
 import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
 import de.symeda.sormas.api.infrastructure.subcontinent.SubcontinentReferenceDto;
+import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.backend.feature.FeatureConfigurationFacadeEjb.FeatureConfigurationFacadeEjbLocal;
 import de.symeda.sormas.backend.infrastructure.AbstractInfrastructureFacadeEjb;
@@ -52,11 +55,12 @@ import de.symeda.sormas.backend.infrastructure.country.Country;
 import de.symeda.sormas.backend.infrastructure.country.CountryService;
 import de.symeda.sormas.backend.infrastructure.subcontinent.Subcontinent;
 import de.symeda.sormas.backend.infrastructure.subcontinent.SubcontinentService;
-import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.QueryHelper;
+import de.symeda.sormas.backend.util.RightsAllowed;
 
 @Stateless(name = "ContinentFacade")
+@RightsAllowed(UserRight._INFRASTRUCTURE_VIEW)
 public class ContinentFacadeEjb
 	extends AbstractInfrastructureFacadeEjb<Continent, ContinentDto, ContinentIndexDto, ContinentReferenceDto, ContinentService, ContinentCriteria>
 	implements ContinentFacade {
@@ -70,8 +74,15 @@ public class ContinentFacadeEjb
 	}
 
 	@Inject
-	protected ContinentFacadeEjb(ContinentService service, FeatureConfigurationFacadeEjbLocal featureConfiguration, UserService userService) {
-		super(Continent.class, ContinentDto.class, service, featureConfiguration, userService, Validations.importContinentAlreadyExists);
+	protected ContinentFacadeEjb(ContinentService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
+		super(
+			Continent.class,
+			ContinentDto.class,
+			service,
+			featureConfiguration,
+			Validations.importContinentAlreadyExists,
+			Strings.messageContinentArchivingNotPossible,
+			null);
 	}
 
 	public static ContinentReferenceDto toReferenceDto(Continent entity) {
@@ -89,6 +100,7 @@ public class ContinentFacadeEjb
 	}
 
 	@Override
+	@PermitAll
 	public List<ContinentReferenceDto> getByDefaultName(String name, boolean includeArchivedEntities) {
 		return service.getByDefaultName(name, includeArchivedEntities).stream().map(ContinentFacadeEjb::toReferenceDto).collect(Collectors.toList());
 	}
@@ -99,11 +111,13 @@ public class ContinentFacadeEjb
 	}
 
 	@Override
+	@PermitAll
 	public ContinentReferenceDto getBySubcontinent(SubcontinentReferenceDto subcontinentReferenceDto) {
 		return toReferenceDto(subcontinentService.getByUuid(subcontinentReferenceDto.getUuid()).getContinent());
 	}
 
 	@Override
+	@PermitAll
 	public ContinentReferenceDto getByCountry(CountryReferenceDto countryReferenceDto) {
 		final Country country = countryService.getByUuid(countryReferenceDto.getUuid());
 		final Subcontinent subcontinent = country.getSubcontinent();
@@ -156,17 +170,13 @@ public class ContinentFacadeEjb
 	}
 
 	@Override
+	@PermitAll
 	public List<ContinentReferenceDto> getAllActiveAsReference() {
 		return service.getAllActive(Continent.DEFAULT_NAME, true)
 			.stream()
 			.map(ContinentFacadeEjb::toReferenceDto)
 			.sorted(Comparator.comparing(ContinentReferenceDto::getCaption))
 			.collect(Collectors.toList());
-	}
-
-	@Override
-	protected void selectDtoFields(CriteriaQuery<ContinentDto> cq, Root<Continent> root) {
-		// we do not select DTO fields in getAllAfter query
 	}
 
 	@Override
@@ -192,7 +202,7 @@ public class ContinentFacadeEjb
 	}
 
 	@Override
-	public ContinentReferenceDto toRefDto(Continent continent) {
+	protected ContinentReferenceDto toRefDto(Continent continent) {
 		return toReferenceDto(continent);
 	}
 
@@ -223,8 +233,8 @@ public class ContinentFacadeEjb
 	}
 
 	@Override
-	protected Continent fillOrBuildEntity(@NotNull ContinentDto source, Continent target, boolean checkChangeDate) {
-		target = DtoHelper.fillOrBuildEntity(source, target, Continent::new, checkChangeDate);
+	protected Continent fillOrBuildEntity(@NotNull ContinentDto source, Continent target, boolean checkChangeDate, boolean allowUuidOverwrite) {
+		target = DtoHelper.fillOrBuildEntity(source, target, Continent::new, checkChangeDate, allowUuidOverwrite);
 
 		target.setDefaultName(source.getDefaultName());
 		target.setArchived(source.isArchived());
@@ -241,11 +251,8 @@ public class ContinentFacadeEjb
 		}
 
 		@Inject
-		protected ContinentFacadeEjbLocal(
-			ContinentService service,
-			FeatureConfigurationFacadeEjbLocal featureConfiguration,
-			UserService userService) {
-			super(service, featureConfiguration, userService);
+		protected ContinentFacadeEjbLocal(ContinentService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
+			super(service, featureConfiguration);
 		}
 	}
 }

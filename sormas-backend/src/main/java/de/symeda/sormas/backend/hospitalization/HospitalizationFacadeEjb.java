@@ -44,12 +44,6 @@ import de.symeda.sormas.backend.util.DtoHelper;
 public class HospitalizationFacadeEjb implements HospitalizationFacade {
 
 	@EJB
-	private HospitalizationService service;
-	@EJB
-	private PreviousHospitalizationService prevHospService;
-	@EJB
-	private CaseService caseService;
-	@EJB
 	private RegionService regionService;
 	@EJB
 	private DistrictService districtService;
@@ -57,14 +51,23 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 	private CommunityService communityService;
 	@EJB
 	private FacilityService facilityService;
+	@EJB
+	private PreviousHospitalizationService previousHospitalizationService;
 
-	public Hospitalization fromDto(HospitalizationDto source, boolean checkChangeDate) {
+	@EJB
+	private HospitalizationService service;
+	@EJB
+	private PreviousHospitalizationService prevHospService;
+	@EJB
+	private CaseService caseService;
 
+
+	public Hospitalization fillOrBuildEntity(HospitalizationDto source, Hospitalization target, boolean checkChangeDate) {
 		if (source == null) {
 			return null;
 		}
 
-		Hospitalization target = DtoHelper.fillOrBuildEntity(source, service.getByUuid(source.getUuid()), Hospitalization::new, checkChangeDate);
+		target = DtoHelper.fillOrBuildEntity(source, target, Hospitalization::new, checkChangeDate);
 
 		target.setAdmittedToHealthFacility(source.getAdmittedToHealthFacility());
 		target.setAdmissionDate(source.getAdmissionDate());
@@ -79,11 +82,14 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 
 		List<PreviousHospitalization> previousHospitalizations = new ArrayList<>();
 		for (PreviousHospitalizationDto prevDto : source.getPreviousHospitalizations()) {
-			PreviousHospitalization prevHosp = fromDto(prevDto, checkChangeDate);
+			//prevHospitalization will be present in 1st level cache based on #10214
+			PreviousHospitalization prevHosp = previousHospitalizationService.getByUuid(prevDto.getUuid());
+			prevHosp = fillOrBuildEntity(prevDto, prevHosp, checkChangeDate);
 			prevHosp.setHospitalization(target);
 			previousHospitalizations.add(prevHosp);
 		}
-		if (!DataHelper.equal(target.getPreviousHospitalizations(), previousHospitalizations)) {
+		if (!DataHelper.equalContains(target.getPreviousHospitalizations(), previousHospitalizations)) {
+			// note: DataHelper.equal does not work here, because target.getAddresses may be a PersistentBag when using lazy loading
 			target.setChangeDateOfEmbeddedLists(new Date());
 		}
 		target.getPreviousHospitalizations().clear();
@@ -98,19 +104,23 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		return target;
 	}
 
-	public PreviousHospitalization fromDto(PreviousHospitalizationDto source, boolean checkChangeDate) {
-
+	public PreviousHospitalization fillOrBuildEntity(PreviousHospitalizationDto source, PreviousHospitalization target, boolean checkChangeDate) {
 		if (source == null) {
 			return null;
 		}
 
-		PreviousHospitalization target =
-			DtoHelper.fillOrBuildEntity(source, prevHospService.getByUuid(source.getUuid()), PreviousHospitalization::new, checkChangeDate);
+		target = DtoHelper.fillOrBuildEntity(source, target, PreviousHospitalization::new, checkChangeDate);
+
+		if (!DataHelper.isSame(target.getRegion(), source.getRegion())) {
+			target.setRegion(regionService.getByReferenceDto(source.getRegion()));
+		}
 
 		target.setAdmittedToHealthFacility(source.getAdmittedToHealthFacility());
 		target.setAdmissionDate(source.getAdmissionDate());
 		target.setDischargeDate(source.getDischargeDate());
+
 		target.setRegion(regionService.getByReferenceDto(source.getRegion()));
+
 		target.setDistrict(districtService.getByReferenceDto(source.getDistrict()));
 		target.setCommunity(communityService.getByReferenceDto(source.getCommunity()));
 		target.setHealthFacility(facilityService.getByReferenceDto(source.getHealthFacility()));
@@ -195,7 +205,75 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		return target;
 	}
 
-	@LocalBean
+	public Hospitalization fromDto(HospitalizationDto source, boolean checkChangeDate) {
+
+		if (source == null) {
+			return null;
+		}
+
+		Hospitalization target = DtoHelper.fillOrBuildEntity(source, service.getByUuid(source.getUuid()), Hospitalization::new, checkChangeDate);
+
+		target.setAdmittedToHealthFacility(source.getAdmittedToHealthFacility());
+		target.setAdmissionDate(source.getAdmissionDate());
+		target.setDischargeDate(source.getDischargeDate());
+		target.setHospitalizedPreviously(source.getHospitalizedPreviously());
+		target.setIsolated(source.getIsolated());
+		target.setIsolationDate(source.getIsolationDate());
+		target.setLeftAgainstAdvice(source.getLeftAgainstAdvice());
+		target.setHospitalizationReason(source.getHospitalizationReason());
+		target.setOtherHospitalizationReason(source.getOtherHospitalizationReason());
+		target.setHealthFacilityRecordNumber(source.getHealthFacilityRecordNumber());
+
+		List<PreviousHospitalization> previousHospitalizations = new ArrayList<>();
+		for (PreviousHospitalizationDto prevDto : source.getPreviousHospitalizations()) {
+			PreviousHospitalization prevHosp = fromDto(prevDto, checkChangeDate);
+			prevHosp.setHospitalization(target);
+			previousHospitalizations.add(prevHosp);
+		}
+		if (!DataHelper.equal(target.getPreviousHospitalizations(), previousHospitalizations)) {
+			target.setChangeDateOfEmbeddedLists(new Date());
+		}
+		target.getPreviousHospitalizations().clear();
+		target.getPreviousHospitalizations().addAll(previousHospitalizations);
+		target.setIntensiveCareUnit(source.getIntensiveCareUnit());
+		target.setIntensiveCareUnitStart(source.getIntensiveCareUnitStart());
+		target.setIntensiveCareUnitEnd(source.getIntensiveCareUnitEnd());
+		target.setPatientConditionOnAdmission(source.getPatientConditionOnAdmission());
+		target.setDescription(source.getDescription());
+		target.setHealthFacilityRecordNumber(source.getHealthFacilityRecordNumber());
+
+		return target;
+	}
+
+	public PreviousHospitalization fromDto(PreviousHospitalizationDto source, boolean checkChangeDate) {
+
+		if (source == null) {
+			return null;
+		}
+
+		PreviousHospitalization target =
+				DtoHelper.fillOrBuildEntity(source, prevHospService.getByUuid(source.getUuid()), PreviousHospitalization::new, checkChangeDate);
+
+		target.setAdmittedToHealthFacility(source.getAdmittedToHealthFacility());
+		target.setAdmissionDate(source.getAdmissionDate());
+		target.setDischargeDate(source.getDischargeDate());
+		target.setRegion(regionService.getByReferenceDto(source.getRegion()));
+		target.setDistrict(districtService.getByReferenceDto(source.getDistrict()));
+		target.setCommunity(communityService.getByReferenceDto(source.getCommunity()));
+		target.setHealthFacility(facilityService.getByReferenceDto(source.getHealthFacility()));
+		target.setHealthFacilityDetails(source.getHealthFacilityDetails());
+		target.setIsolated(source.getIsolated());
+		target.setIsolationDate(source.getIsolationDate());
+		target.setDescription(source.getDescription());
+		target.setHospitalizationReason(source.getHospitalizationReason());
+		target.setOtherHospitalizationReason(source.getOtherHospitalizationReason());
+		target.setIntensiveCareUnit(source.getIntensiveCareUnit());
+		target.setIntensiveCareUnitStart(source.getIntensiveCareUnitStart());
+		target.setIntensiveCareUnitEnd(source.getIntensiveCareUnitEnd());
+
+		return target;
+	}
+    @LocalBean
 	@Stateless
 	public static class HospitalizationFacadeEjbLocal extends HospitalizationFacadeEjb {
 

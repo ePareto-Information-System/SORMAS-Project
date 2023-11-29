@@ -16,6 +16,7 @@ package de.symeda.sormas.ui.document;
 
 import static java.util.Objects.nonNull;
 
+import de.symeda.sormas.api.contact.ContactReferenceDto;
 import org.vaadin.hene.popupbutton.PopupButton;
 
 import com.vaadin.icons.VaadinIcons;
@@ -43,6 +44,27 @@ import de.symeda.sormas.ui.utils.components.sidecomponent.SideComponent;
 public class DocumentListComponent extends SideComponent {
 
 	private final DocumentList documentList;
+	private PopupButton mainButton;
+
+	public DocumentListComponent(
+		DocumentRelatedEntityType relatedEntityType,
+		ReferenceDto entityRef,
+		UserRight editRight,
+		boolean pseudonymized,
+		boolean isEditAllowed,
+		boolean isDeleteAllowed) {
+		super(I18nProperties.getString(Strings.entityDocuments));
+
+		documentList = new DocumentList(relatedEntityType, entityRef, editRight, pseudonymized, isEditAllowed, isDeleteAllowed);
+		addComponent(documentList);
+		documentList.reload();
+
+		UserProvider currentUser = UserProvider.getCurrent();
+		if (currentUser != null && currentUser.hasAllUserRights(editRight, UserRight.DOCUMENT_UPLOAD) && isEditAllowed) {
+			Button uploadButton = buildUploadButton(relatedEntityType, entityRef);
+			addCreateButton(uploadButton);
+		}
+	}
 
 	public DocumentListComponent(DocumentRelatedEntityType relatedEntityType, ReferenceDto entityRef, UserRight editRight, boolean pseudonymized) {
 		super(I18nProperties.getString(Strings.entityDocuments));
@@ -64,7 +86,7 @@ public class DocumentListComponent extends SideComponent {
 		uploadLayout.setMargin(true);
 		uploadLayout.addStyleName(CssStyles.LAYOUT_MINIMAL);
 
-		PopupButton mainButton =
+		mainButton =
 			ButtonHelper.createIconPopupButton(Captions.documentUploadDocument, VaadinIcons.PLUS_CIRCLE, uploadLayout, ValoTheme.BUTTON_PRIMARY);
 
 		boolean multipleUpload = FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.DOCUMENTS_MULTI_UPLOAD);
@@ -91,5 +113,9 @@ public class DocumentListComponent extends SideComponent {
 		if (nonNull(documentList)) {
 			documentList.reload();
 		}
+	}
+
+	public PopupButton getMainButton() {
+		return mainButton;
 	}
 }

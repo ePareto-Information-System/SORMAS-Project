@@ -20,8 +20,13 @@ package de.symeda.sormas.backend.util;
 public interface ModelConstants {
 
 	String PERSISTENCE_UNIT_NAME = "SormasPU";
-	String PERSISTENCE_UNIT_NAME_AUDITLOG = "auditlogPU";
-	String HINT_HIBERNATE_READ_ONLY = "org.hibernate.readOnly";
+
+	/**
+	 * A query hint to make JPA entities loaded as read-only to avoid caching and dirty checks. Usage:<br />
+	 * {@code List<JpaEntity> resultList = em.createQuery(cq).setHint(ModelConstants.READ_ONLY, true).getResultList();}<br />
+	 * Note: This does not have any effect on Multiselect-Queries directly into DTOs.
+	 */
+	String READ_ONLY = "org.hibernate.readOnly";
 
 	/**
 	 * Hard limit how much parameter can be allowed in a query.<br />
@@ -38,4 +43,4 @@ public interface ModelConstants {
 	 * Hibernate takes care of transforming the given Java model to and from JSON content in the database.
 	 */
 	String HIBERNATE_TYPE_JSON = "json";
-}
+	String HINT_HIBERNATE_READ_ONLY = "org.hibernate.readOnly";}

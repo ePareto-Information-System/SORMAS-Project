@@ -22,23 +22,23 @@ import java.sql.Timestamp;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
-import de.symeda.auditlog.api.Audited;
-
 /**
  * An extension of the {@link AbstractDomainObject} that defines core data that is essential to the system.
  * The integral definition of core data is that it is the working representation of a real-world event that is archived once the work is
  * complete.
  */
 @MappedSuperclass
-@Audited
 public class CoreAdo extends DeletableAdo {
 
     public static final String ARCHIVED = "archived";
 	public static final String END_OF_PROCESSING_DATE = "endOfProcessingDate";
 	public static final String ARCHIVE_UNDONE_REASON = "archiveUndoneReason";
 
+	@NotExposedToApi
 	private boolean archived;
+	@NotExposedToApi
 	private Timestamp endOfProcessingDate;
+	@NotExposedToApi
 	private String archiveUndoneReason;
 
 	@Column(nullable = false)

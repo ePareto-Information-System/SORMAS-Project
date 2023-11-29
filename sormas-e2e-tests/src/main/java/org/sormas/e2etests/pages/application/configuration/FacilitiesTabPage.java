@@ -33,10 +33,26 @@ public class FacilitiesTabPage {
       By.xpath("//div[@class='v-window-closebox']");
   public static final By IMPORT_SUCCESSFUL_FACILITY_IMPORT_CSV =
       By.xpath("//*[text()='Import successful!']");
-  public static final By CLOSE_POPUP_FACILITIES_BUTTON = By.id("actionCancel");
+  public static final By CLOSE_POPUP_FACILITIES_BUTTON = By.id("actionClose");
   public static final By CLOSE_FACILITIES_IMPORT_BUTTON =
       By.xpath("//div[@class='v-window-closebox']");
   public static final By FACILITIES_NEW_ENTRY_BUTTON = By.id("create");
+  public static final By ENTER_BULK_EDIT_MODE_BUTTON_FACILITIES_CONFIGURATION =
+      By.id("actionEnterBulkEditMode");
+  public static final By FACILITY_CATEGORY_COMBOBOX_FACILITIES_CONFIGURATION =
+      By.cssSelector("[id='typeGroup'] [class='v-filterselect-button']");
+  public static final By FACILITY_TYPE_COMBOBOX_FACILITIES_CONFIGURATION =
+      By.cssSelector("[id='type'] [class='v-filterselect-button']");
+  public static final By COUNTRY_COMBOBOX_FACILITIES_CONFIGURATION =
+      By.cssSelector("[id='country'] [class='v-filterselect-button']");
+  public static final By REGION_COMBOBOX_FACILITIES_CONFIGURATION =
+      By.cssSelector("[id='region'] [class='v-filterselect-button']");
+  public static final By DISTRICT_COMBOBOX_FACILITIES_CONFIGURATION =
+      By.cssSelector("[id='district'] [class='v-filterselect-button']");
+  public static final By COMMUNITY_COMBOBOX_FACILITIES_CONFIGURATION =
+      By.cssSelector("[id='community'] [class='v-filterselect-button']");
+  public static final By RESET_FILTERS_BUTTON_FACILITIES_CONFIGURATION =
+      By.id("actionResetFilters");
   public static final By FACILITY_NAME_INPUT = By.cssSelector("#name");
   public static final By REGION_COMBOBOX =
       By.cssSelector(".v-window [location='region'] [role='combobox'] div");
@@ -56,7 +72,9 @@ public class FacilitiesTabPage {
       By.cssSelector(".v-window #contactPersonEmail");
   public static final By EDIT_FIRST_FACILITY_BUTTON =
       By.xpath("(//span[@class='v-icon v-icon-edit'])[1]");
-  public static final By ARCHIVE_FACILITY_BUTTON =
-      By.cssSelector(".v-window #actionArchiveInfrastructure");
+  public static final By ARCHIVE_FACILITY_BUTTON = By.cssSelector(".v-window #archiveDearchive");
   public static final By ACTION_CONFIRM_BUTTON = By.id("actionConfirm");
+  public static final By RELEVANCE_STATUS_COMBOBOX_FACILITIES_CONFIGURATION =
+      By.cssSelector("#relevanceStatus > div");
+  public static final By FACILITY_GRID_RESULTS_ROWS = By.xpath("//tbody[@role='rowgroup']//tr");
 }

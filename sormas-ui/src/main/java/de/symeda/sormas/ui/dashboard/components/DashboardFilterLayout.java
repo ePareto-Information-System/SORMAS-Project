@@ -69,6 +69,8 @@ import de.symeda.sormas.ui.dashboard.AbstractDashboardView;
 import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
 import de.symeda.sormas.ui.dashboard.DashboardType;
 import de.symeda.sormas.ui.dashboard.surveillance.SurveillanceDashboardView;
+import de.symeda.sormas.ui.dashboard.AbstractDashboardDataProvider;
+import de.symeda.sormas.ui.dashboard.AbstractDashboardView;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.ComboBoxHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
@@ -76,7 +78,8 @@ import de.symeda.sormas.ui.utils.DateFormatHelper;
 import de.symeda.sormas.ui.utils.EpiWeekAndDateFilterComponent;
 
 @SuppressWarnings("serial")
-public  class DashboardFilterLayout extends HorizontalLayout {
+//public  class DashboardFilterLayout extends HorizontalLayout {1.74.3
+public abstract class DashboardFilterLayout<P extends AbstractDashboardDataProvider> extends HorizontalLayout {
 
 	public static final String DATE_FILTER = "dateFilter";
 	public static final String REGION_FILTER = "regionFilter";
@@ -117,7 +120,7 @@ public  class DashboardFilterLayout extends HorizontalLayout {
 	private Button activeComparisonButton;
 	private Button resetButton;
 	private Button applyButton;
-	private ComboBox diseaseFilter;
+	protected ComboBox diseaseFilter;
 	private Consumer<Boolean> diseaseFilterChangeCallback;
 
 
@@ -196,7 +199,11 @@ public  class DashboardFilterLayout extends HorizontalLayout {
 			createDiseaseFilter();
 		}
 	}
-	
+
+	public DashboardFilterLayout() {
+
+	}
+
 	private void createDiseaseFilter() {
 		diseaseFilter.setWidth(200, Unit.PIXELS);
 		diseaseFilter.setInputPrompt(I18nProperties.getString(Strings.promptDisease));
@@ -237,11 +244,16 @@ public  class DashboardFilterLayout extends HorizontalLayout {
 		dashboardDataProvider.setCaseClassification((CaseClassification) caseClassificationFilter.getValue());
 	}
 
-	public void createRegionAndDistrictFilter() {
-		// Region filter
+	protected void createRegionAndDistrictFilter() {
+		createRegionFilter(null);
+		createDistrictFilter(null);
+	}
+
+	protected void createRegionFilter(String description) {
 		if (UserProvider.getCurrent().getUser().getRegion() == null) {
 			regionFilter.setWidth(200, Unit.PIXELS);
 			regionFilter.setInputPrompt(I18nProperties.getString(Strings.promptRegion));
+			regionFilter.setDescription(description);
 			regionFilter.addItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
 			regionFilter.addValueChangeListener(e -> {
 				dashboardDataProvider.setRegion((RegionReferenceDto) regionFilter.getValue());
@@ -251,16 +263,16 @@ public  class DashboardFilterLayout extends HorizontalLayout {
 			addCustomComponent(regionFilter, REGION_FILTER);
 			dashboardDataProvider.setRegion((RegionReferenceDto) regionFilter.getValue());
 		}
+	}
 
-		// District filter
+	protected void createDistrictFilter(String description) {
 		if (UserProvider.getCurrent().getUser().getRegion() != null && UserProvider.getCurrent().getUser().getDistrict() == null) {
 			districtFilter.setWidth(200, Unit.PIXELS);
 			districtFilter.setInputPrompt(I18nProperties.getString(Strings.promptDistrict));
+			districtFilter.setDescription(description);
 			districtFilter
 				.addItems(FacadeProvider.getDistrictFacade().getAllActiveByRegion(UserProvider.getCurrent().getUser().getRegion().getUuid()));
-			districtFilter.addValueChangeListener(e -> {
-				dashboardDataProvider.setDistrict((DistrictReferenceDto) districtFilter.getValue());
-			});
+			districtFilter.addValueChangeListener(e -> dashboardDataProvider.setDistrict((DistrictReferenceDto) districtFilter.getValue()));
 			// save height
 			//districtFilter.setCaption(I18nProperties.getString(Strings.entityDistrict));
 			addCustomComponent(districtFilter, DISTRICT_FILTER);

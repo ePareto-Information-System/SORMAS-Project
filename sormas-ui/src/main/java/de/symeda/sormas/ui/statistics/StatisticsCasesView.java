@@ -83,10 +83,14 @@ import de.symeda.sormas.api.statistics.StatisticsSubAttribute;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 import de.symeda.sormas.api.statistics.StatisticsHelper;
 import de.symeda.sormas.api.statistics.StatisticsHelper.StatisticsKeyComparator;
+import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.user.UserRoleReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.EpiWeek;
+import de.symeda.sormas.api.utils.HasCaption;
 import de.symeda.sormas.api.utils.HtmlHelper;
+import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.dashboard.map.DashboardMapComponent;
 import de.symeda.sormas.ui.highcharts.HighChart;
 import de.symeda.sormas.ui.map.LeafletMap;
@@ -414,11 +418,13 @@ public class StatisticsCasesView extends AbstractStatisticsView {
 			CssStyles.style(caseIncidenceNotPossibleLabel, CssStyles.VSPACE_TOP_4);
 		}
 
-		exportButton = ButtonHelper.createIconButton(Captions.export, VaadinIcons.TABLE, null, ValoTheme.BUTTON_PRIMARY);
-		exportButton.setDescription(I18nProperties.getDescription(Descriptions.descExportButton));
+		if (UserProvider.getCurrent().hasUserRight(UserRight.STATISTICS_EXPORT)) {
+			exportButton = ButtonHelper.createIconButton(Captions.export, VaadinIcons.TABLE, null, ValoTheme.BUTTON_PRIMARY);
+			exportButton.setDescription(I18nProperties.getDescription(Descriptions.descExportButton));
 
-		resultsLayout.addComponent(exportButton);
-		resultsLayout.setComponentAlignment(exportButton, Alignment.TOP_RIGHT);
+			resultsLayout.addComponent(exportButton);
+			resultsLayout.setComponentAlignment(exportButton, Alignment.TOP_RIGHT);
+		}
 
 		statisticsCaseGrid = new StatisticsCaseGrid(
 			visualizationComponent.getRowsAttribute(),
@@ -436,12 +442,14 @@ public class StatisticsCasesView extends AbstractStatisticsView {
 			resultsLayout.addComponent(caseIncidenceNotPossibleLabel);
 		}
 
-		StreamResource streamResource = DownloadUtil.createGridExportStreamResource(
-			statisticsCaseGrid.getContainerDataSource(),
-			statisticsCaseGrid.getColumns(),
-			ExportEntityName.STATISTICS);
-		FileDownloader fileDownloader = new FileDownloader(streamResource);
-		fileDownloader.extend(exportButton);
+		if (exportButton != null) {
+			StreamResource streamResource = DownloadUtil.createGridExportStreamResource(
+				statisticsCaseGrid.getContainerDataSource(),
+				statisticsCaseGrid.getColumns(),
+				ExportEntityName.STATISTICS);
+			FileDownloader fileDownloader = new FileDownloader(streamResource);
+			fileDownloader.extend(exportButton);
+		}
 	}
 
 	public void generateChart() {
@@ -530,14 +538,22 @@ public class StatisticsCasesView extends AbstractStatisticsView {
 
 				if (xAxisAttribute != null) {
 					if (!StatisticsHelper.isNullOrUnknown(row.getColumnKey())) {
-						xAxisCaptions.putIfAbsent((StatisticsGroupingKey) row.getColumnKey(), row.getColumnKey().toString());
+						StatisticsGroupingKey columnKey = row.getColumnKey();
+						String columnCaption =
+							HasCaption.class.isAssignableFrom(columnKey.getClass()) ? ((HasCaption) columnKey).buildCaption() : columnKey.toString();
+
+						xAxisCaptions.putIfAbsent(columnKey, columnCaption);
 					} else {
 						appendUnknownXAxisCaption = true;
 					}
 				}
 				if (seriesAttribute != null) {
 					if (!StatisticsHelper.isNullOrUnknown(row.getRowKey())) {
-						seriesCaptions.putIfAbsent((StatisticsGroupingKey) row.getRowKey(), row.getRowKey().toString());
+						StatisticsGroupingKey rowKey = row.getRowKey();
+						String rowCaption =
+							HasCaption.class.isAssignableFrom(rowKey.getClass()) ? ((HasCaption) rowKey).buildCaption() : rowKey.toString();
+
+						seriesCaptions.putIfAbsent(rowKey, rowCaption);
 					}
 				}
 			}
@@ -1415,10 +1431,9 @@ public class StatisticsCasesView extends AbstractStatisticsView {
 					}
 					break;
 				case DATE_RANGE:
-					caseCriteria.dateRange(
-						(Date) filterElement.getSelectedValues().get(0).getValue(),
-						(Date) filterElement.getSelectedValues().get(1).getValue(),
-						filterComponent.getSelectedAttribute());
+					Date begginingOfRange = DateHelper.getStartOfDay((Date) filterElement.getSelectedValues().get(0).getValue());
+					Date endOfRange = DateHelper.getEndOfDay((Date) filterElement.getSelectedValues().get(1).getValue());
+					caseCriteria.dateRange(begginingOfRange, endOfRange, filterComponent.getSelectedAttribute());
 					break;
 				default:
 					throw new IllegalArgumentException(filterComponent.getSelectedSubAttribute().toString());

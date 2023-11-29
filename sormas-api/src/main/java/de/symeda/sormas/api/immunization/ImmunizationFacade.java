@@ -21,20 +21,15 @@ import java.util.List;
 import javax.ejb.Remote;
 
 import de.symeda.sormas.api.CoreFacade;
-import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.utils.SortProperty;
 
 @Remote
 public interface ImmunizationFacade extends CoreFacade<ImmunizationDto, ImmunizationIndexDto, ImmunizationReferenceDto, ImmunizationCriteria> {
 
-	List<String> getArchivedUuidsSince(Date since);
-
 	void archiveAllArchivableImmunizations(int daysAfterImmunizationsGetsArchived);
 
 	List<String> getDeletedUuidsSince(Date since);
-
-	List<String> deleteImmunizations(List<String> immunizationUuids, DeletionDetails deletionDetails);
 
 	List<ImmunizationDto> getSimilarImmunizations(ImmunizationSimilarityCriteria criteria);
 

@@ -17,6 +17,8 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.utils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import com.google.common.base.CharMatcher;
@@ -57,7 +59,6 @@ public class ResizableTextAreaWrapper<T extends AbstractTextField> implements Fi
 
 	@Override
 	public ComponentContainer wrap(T textField, String caption, boolean withMargin) {
-
 		this.textField = textField;
 		this.caption = caption;
 
@@ -74,7 +75,10 @@ public class ResizableTextAreaWrapper<T extends AbstractTextField> implements Fi
 		textField.setNullRepresentation("");
 		textField.setTextChangeTimeout(200);
 
-		Stream<Validator> maxLengthValidatorStream = textField.getValidators().stream().filter(v -> v instanceof MaxLengthValidator);
+		// Create a copy of the validators list to avoid concurrent modifications
+		List<Validator> validatorsCopy = new ArrayList<>(textField.getValidators());
+
+		Stream<Validator> maxLengthValidatorStream = validatorsCopy.stream().filter(v -> v instanceof MaxLengthValidator);
 
 		if (withMaxLength) {
 			maxLengthValidatorStream.findFirst().map(v -> ((MaxLengthValidator) v).getMaxLength()).ifPresent(textField::setMaxLength);
@@ -85,7 +89,7 @@ public class ResizableTextAreaWrapper<T extends AbstractTextField> implements Fi
 			labelField.addStyleNames(CssStyles.ALIGN_RIGHT, CssStyles.FIELD_EXTRA_INFO, CssStyles.LABEL_ITALIC);
 			layout.addComponents(labelField);
 		} else {
-			maxLengthValidatorStream.iterator().forEachRemaining(v -> textField.removeValidator(v));
+			maxLengthValidatorStream.forEach(v -> textField.removeValidator(v));
 		}
 
 		textField.addTextChangeListener(e -> {
@@ -101,6 +105,53 @@ public class ResizableTextAreaWrapper<T extends AbstractTextField> implements Fi
 		}
 		return layout;
 	}
+
+	//@Override
+//	public ComponentContainer wrap(T textField, String caption, boolean withMargin) {
+//
+//		this.textField = textField;
+//		this.caption = caption;
+//
+//		VerticalLayout layout = new VerticalLayout();
+//		layout.setSpacing(false);
+//		layout.setMargin(false);
+//		layout.setWidth(100, Sizeable.Unit.PERCENTAGE);
+//		if (withMargin) {
+//			layout.addStyleName(CssStyles.FIELD_WRAPPER);
+//		}
+//
+//		textField.setWidth(100, Sizeable.Unit.PERCENTAGE);
+//		textField.addStyleName(CssStyles.RESIZABLE);
+//		textField.setNullRepresentation("");
+//		textField.setTextChangeTimeout(200);
+//
+//		Stream<Validator> maxLengthValidatorStream = textField.getValidators().stream().filter(v -> v instanceof MaxLengthValidator);
+//
+//		if (withMaxLength) {
+//			maxLengthValidatorStream.findFirst().map(v -> ((MaxLengthValidator) v).getMaxLength()).ifPresent(textField::setMaxLength);
+//
+//			labelField = new Label(buildLabelMessage(textField.getValue(), textField, caption));
+//			labelField.setId(textField.getId() + "_label");
+//			labelField.setWidth(100, Sizeable.Unit.PERCENTAGE);
+//			labelField.addStyleNames(CssStyles.ALIGN_RIGHT, CssStyles.FIELD_EXTRA_INFO, CssStyles.LABEL_ITALIC);
+//			layout.addComponents(labelField);
+//		} else {
+//			maxLengthValidatorStream.iterator().forEachRemaining(v -> textField.removeValidator(v));
+//		}
+//
+//		textField.addTextChangeListener(e -> {
+//			updateTextfieldAppearance();
+//		});
+//		textField.addValueChangeListener(e -> {
+//			updateTextfieldAppearance();
+//		});
+//
+//		layout.addComponents(textField);
+//		if (withMaxLength) {
+//			layout.addComponents(labelField);
+//		}
+//		return layout;
+//	}
 
 	private void updateTextfieldAppearance() {
 		if (withMaxLength) {

@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -34,15 +35,25 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.NotificationProtocol;
 import de.symeda.sormas.api.user.NotificationType;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.user.UserRoleCriteria;
+import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
-import de.symeda.sormas.backend.common.AdoServiceWithUserFilter;
+import de.symeda.sormas.backend.common.AdoServiceWithUserFilterAndJurisdiction;
+import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
 
 @Stateless
 @LocalBean
-public class UserRoleService extends AdoServiceWithUserFilter<UserRole> {
+public class UserRoleService extends AdoServiceWithUserFilterAndJurisdiction<UserRole> {
+
+	@EJB
+	private UserService userService;
 
 	public UserRoleService() {
 		super(UserRole.class);
@@ -61,6 +72,19 @@ public class UserRoleService extends AdoServiceWithUserFilter<UserRole> {
 		CriteriaQuery<UserRole> cq = cb.createQuery(UserRole.class);
 		Root<UserRole> from = cq.from(UserRole.class);
 		cq.where(cb.equal(from.get(UserRole.CAPTION), caption));
+
+		UserRole entity = em.createQuery(cq).getResultList().stream().findFirst().orElse(null);
+
+		return entity;
+	}
+
+	public UserRole getByLinkedDefaultUserRole(DefaultUserRole linkedDefaultUserRole) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<UserRole> cq = cb.createQuery(UserRole.class);
+		Root<UserRole> from = cq.from(UserRole.class);
+		cq.where(cb.equal(from.get(UserRole.LINKED_DEFAULT_USER_ROLE), linkedDefaultUserRole));
+		cq.orderBy(cb.asc(from.get(UserRole.CREATION_DATE)));
 
 		UserRole entity = em.createQuery(cq).getResultList().stream().findFirst().orElse(null);
 
@@ -118,5 +142,53 @@ public class UserRoleService extends AdoServiceWithUserFilter<UserRole> {
 			}
 		}
 		return false;
+	}
+
+	public Predicate buildCriteriaFilter(
+		UserRoleCriteria userRoleCriteria,
+		CriteriaBuilder cb,
+		Root<UserRole> from,
+		Join<UserRole, UserRight> userRightsJoin) {
+
+		Predicate filter = null;
+
+		if (userRoleCriteria.getEnabled() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(UserRole.ENABLED), userRoleCriteria.getEnabled()));
+		}
+
+		if (userRoleCriteria.getUserRight() != null) {
+			Predicate userRightsFilter = userRightsJoin.in(userRoleCriteria.getUserRight());
+			filter = CriteriaBuilderHelper.and(cb, filter, userRightsFilter);
+		}
+
+		if (userRoleCriteria.getJurisdictionLevel() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(UserRole.JURISDICTION_LEVEL), userRoleCriteria.getJurisdictionLevel()));
+		}
+
+		return filter;
+	}
+
+	public boolean isCaptionUnique(String excludedUuid, String caption) {
+		UserRole userRole = getByCaption(caption.trim());
+		return userRole == null || userRole.getUuid().equals(excludedUuid);
+	}
+
+	@Override
+	public void deletePermanent(UserRole userRole) {
+
+		List<User> usersWithRole = userService.getAllWithRole(userRole);
+		for (User u : usersWithRole) {
+			if (u.getUserRoles().size() > 1) {
+				u.getUserRoles().remove(userRole);
+			} else if (u.getUserRoles().stream().noneMatch(r -> DataHelper.isSame(r, userRole))) {
+				u.getUserRoles().remove(userRole);
+			} else {
+				throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.cantRemoveLastRole));
+			}
+
+			userService.ensurePersisted(u);
+		}
+
+		super.deletePermanent(userRole);
 	}
 }

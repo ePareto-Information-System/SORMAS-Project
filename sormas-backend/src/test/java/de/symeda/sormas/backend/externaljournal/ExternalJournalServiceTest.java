@@ -22,35 +22,27 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
-import org.junit.After;
-import org.junit.Rule;
-import org.junit.Test;
-import org.mockito.MockitoAnnotations;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 
 import de.symeda.sormas.api.externaljournal.ExternalJournalValidation;
 import de.symeda.sormas.api.externaljournal.patientdiary.PatientDiaryIdatId;
@@ -59,42 +51,21 @@ import de.symeda.sormas.api.externaljournal.patientdiary.PatientDiaryPersonDto;
 import de.symeda.sormas.api.externaljournal.patientdiary.PatientDiaryQueryResponse;
 import de.symeda.sormas.api.externaljournal.patientdiary.PatientDiaryValidationError;
 import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.person.JournalPersonDto;
 import de.symeda.sormas.api.person.PersonContactDetailDto;
 import de.symeda.sormas.api.person.PersonContactDetailType;
 import de.symeda.sormas.api.person.PersonDto;
-import de.symeda.sormas.api.person.PersonReferenceDto;
-import de.symeda.sormas.api.person.Sex;
-import de.symeda.sormas.api.person.SymptomJournalStatus;
-import de.symeda.sormas.api.user.DefaultUserRole;
-import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.backend.AbstractBeanTest;
 import de.symeda.sormas.backend.MockProducer;
-import de.symeda.sormas.backend.TestDataCreator;
 import de.symeda.sormas.backend.common.ConfigFacadeEjb;
-import de.symeda.sormas.backend.person.Person;
-import de.symeda.sormas.backend.person.PersonFacadeEjb;
-import de.symeda.sormas.backend.person.PersonService;
 
+@WireMockTest(httpPort = 7777)
 public class ExternalJournalServiceTest extends AbstractBeanTest {
 
-	private static final int WIREMOCK_TESTING_PORT = 7777;
-	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(options().port(WIREMOCK_TESTING_PORT), false);
+	@BeforeEach
+	public void setup(WireMockRuntimeInfo wireMockRuntime) {
 
-	private UserDto natUser;
-	private TestDataCreator.RDCF rdcf;
-
-	public void init() {
-		super.init();
-		natUser = creator.createUser("", "", "", "Nat", "Usr", creator.getUserRoleReference(DefaultUserRole.NATIONAL_USER));
-		rdcf = creator.createRDCF("Region 1", "District 1", "Community 1", "Facility 1");
-		when(MockProducer.getPrincipal().getName()).thenReturn("NatUsr");
-
-		MockitoAnnotations.initMocks(this);
-
-		String wireMockUrl = "http://localhost:" + WIREMOCK_TESTING_PORT;
+		String wireMockUrl = "http://localhost:" + wireMockRuntime.getHttpPort();
 		MockProducer.getProperties().setProperty(ConfigFacadeEjb.INTERFACE_PATIENT_DIARY_AUTH_URL, wireMockUrl + "/auth");
 		MockProducer.getProperties().setProperty(ConfigFacadeEjb.INTERFACE_PATIENT_DIARY_EMAIL, "test@patientdiary.de");
 		MockProducer.getProperties().setProperty(ConfigFacadeEjb.INTERFACE_PATIENT_DIARY_PASSWORD, "testpass");
@@ -143,10 +114,14 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e.getMessage());
 		}
-
 	}
 
-	@After
+	public void init() {
+		super.init();
+		useNationalUserLogin();
+	}
+
+	@AfterEach
 	public void teardown() {
 		MockProducer.getProperties().remove(ConfigFacadeEjb.INTERFACE_PATIENT_DIARY_AUTH_URL);
 		MockProducer.getProperties().remove(ConfigFacadeEjb.INTERFACE_PATIENT_DIARY_EMAIL);
@@ -160,7 +135,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 	 * If you need to change this test to make it pass, you probably changed the behaviour of the ExternalVisitsResource.
 	 * Please note that other system used alongside with SORMAS are depending on this, so that their developers must be notified of any
 	 * relevant API changes some time before they go into any test and productive system. Please inform the SORMAS core development team at
-	 * https://gitter.im/SORMAS-Project!
+	 * https://github.com/sormas-foundation/SORMAS-Project/discussions/categories/development-support!
 	 */
 	public void givenValidEmailWithPhoneOnlyAccepted() {
 
@@ -210,7 +185,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 		assertEquals(result.getMessage(), I18nProperties.getValidationError(PatientDiaryValidationError.INVALID_PHONE.getErrorLanguageKey()));
 
 		// phone taken
-		// this number is pretended to be already in use (see @Before)
+		// this number is pretended to be already in use (see @BeforeEach)
 		person.setPhone("+49 621 121 849-3");
 
 		result = getExternalJournalService().validatePatientDiaryPerson(person);
@@ -223,7 +198,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 	 * If you need to change this test to make it pass, you probably changed the behaviour of the ExternalVisitsResource.
 	 * Please note that other system used alongside with SORMAS are depending on this, so that their developers must be notified of any
 	 * relevant API changes some time before they go into any test and productive system. Please inform the SORMAS core development team at
-	 * https://gitter.im/SORMAS-Project!
+	 * https://github.com/sormas-foundation/SORMAS-Project/discussions/categories/development-support!
 	 */
 	public void givenValidEmailWithPhoneOnlyNotAccepted() {
 
@@ -275,7 +250,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 		assertTrue(result.getMessage().isEmpty());
 
 		// phone taken
-		// this number is pretended to be already in use (see @Before)
+		// this number is pretended to be already in use (see @BeforeEach)
 		person.setPhone("+49 621 121 849-3");
 
 		result = getExternalJournalService().validatePatientDiaryPerson(person);
@@ -288,7 +263,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 	 * If you need to change this test to make it pass, you probably changed the behaviour of the ExternalVisitsResource.
 	 * Please note that other system used alongside with SORMAS are depending on this, so that their developers must be notified of any
 	 * relevant API changes some time before they go into any test and productive system. Please inform the SORMAS core development team at
-	 * https://gitter.im/SORMAS-Project!
+	 * https://github.com/sormas-foundation/SORMAS-Project/discussions/categories/development-support!
 	 */
 	public void givenNoEmailWithPhoneOnlyAccepted() {
 
@@ -339,7 +314,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 		assertEquals(result.getMessage(), I18nProperties.getValidationError(PatientDiaryValidationError.INVALID_PHONE.getErrorLanguageKey()));
 
 		// phone taken
-		// this number is pretended to be already in use (see @Before)
+		// this number is pretended to be already in use (see @BeforeEach)
 		person.setPhone("+49 621 121 849-3");
 
 		result = getExternalJournalService().validatePatientDiaryPerson(person);
@@ -352,7 +327,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 	 * If you need to change this test to make it pass, you probably changed the behaviour of the ExternalVisitsResource.
 	 * Please note that other system used alongside with SORMAS are depending on this, so that their developers must be notified of any
 	 * relevant API changes some time before they go into any test and productive system. Please inform the SORMAS core development team at
-	 * https://gitter.im/SORMAS-Project!
+	 * https://github.com/sormas-foundation/SORMAS-Project/discussions/categories/development-support!
 	 */
 	public void givenNoEmailWithPhoneOnlyNotAccepted() {
 
@@ -403,7 +378,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 		assertEquals(result.getMessage(), I18nProperties.getValidationError(PatientDiaryValidationError.NO_EMAIL.getErrorLanguageKey()));
 
 		// phone taken
-		// this number is pretended to be already in use (see @Before)
+		// this number is pretended to be already in use (see @BeforeEach)
 		person.setPhone("+49 621 121 849-3");
 
 		result = getExternalJournalService().validatePatientDiaryPerson(person);
@@ -416,7 +391,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 	 * If you need to change this test to make it pass, you probably changed the behaviour of the ExternalVisitsResource.
 	 * Please note that other system used alongside with SORMAS are depending on this, so that their developers must be notified of any
 	 * relevant API changes some time before they go into any test and productive system. Please inform the SORMAS core development team at
-	 * https://gitter.im/SORMAS-Project!
+	 * https://github.com/sormas-foundation/SORMAS-Project/discussions/categories/development-support!
 	 */
 	public void givenMultipleNonPrimaryEmailsWithPhoneOnlyAccepted() {
 
@@ -477,7 +452,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 		assertEquals(result.getMessage(), I18nProperties.getValidationError(PatientDiaryValidationError.INVALID_PHONE.getErrorLanguageKey()));
 
 		// phone taken
-		// this number is pretended to be already in use (see @Before)
+		// this number is pretended to be already in use (see @BeforeEach)
 		person.setPhone("+49 621 121 849-3");
 
 		result = getExternalJournalService().validatePatientDiaryPerson(person);
@@ -490,7 +465,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 	 * If you need to change this test to make it pass, you probably changed the behaviour of the ExternalVisitsResource.
 	 * Please note that other system used alongside with SORMAS are depending on this, so that their developers must be notified of any
 	 * relevant API changes some time before they go into any test and productive system. Please inform the SORMAS core development team at
-	 * https://gitter.im/SORMAS-Project!
+	 * https://github.com/sormas-foundation/SORMAS-Project/discussions/categories/development-support!
 	 */
 	public void givenMultipleNonPrimaryEmailsWithPhoneOnlyNotAccepted() {
 
@@ -549,7 +524,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 		assertEquals(result.getMessage(), I18nProperties.getValidationError(PatientDiaryValidationError.SEVERAL_EMAILS.getErrorLanguageKey()));
 
 		// phone taken
-		// this number is pretended to be already in use (see @Before)
+		// this number is pretended to be already in use (see @BeforeEach)
 		person.setPhone("+49 621 121 849-3");
 
 		result = getExternalJournalService().validatePatientDiaryPerson(person);
@@ -562,7 +537,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 	 * If you need to change this test to make it pass, you probably changed the behaviour of the ExternalVisitsResource.
 	 * Please note that other system used alongside with SORMAS are depending on this, so that their developers must be notified of any
 	 * relevant API changes some time before they go into any test and productive system. Please inform the SORMAS core development team at
-	 * https://gitter.im/SORMAS-Project!
+	 * https://github.com/sormas-foundation/SORMAS-Project/discussions/categories/development-support!
 	 */
 	public void givenInvalidPrimaryEmailWithPhoneOnlyAccepted() {
 
@@ -618,7 +593,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 				+ I18nProperties.getValidationError(PatientDiaryValidationError.INVALID_PHONE.getErrorLanguageKey()));
 
 		// phone taken
-		// this number is pretended to be already in use (see @Before)
+		// this number is pretended to be already in use (see @BeforeEach)
 		person.setPhone("+49 621 121 849-3");
 
 		result = getExternalJournalService().validatePatientDiaryPerson(person);
@@ -634,7 +609,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 	 * If you need to change this test to make it pass, you probably changed the behaviour of the ExternalVisitsResource.
 	 * Please note that other system used alongside with SORMAS are depending on this, so that their developers must be notified of any
 	 * relevant API changes some time before they go into any test and productive system. Please inform the SORMAS core development team at
-	 * https://gitter.im/SORMAS-Project!
+	 * https://github.com/sormas-foundation/SORMAS-Project/discussions/categories/development-support!
 	 */
 	public void givenInvalidPrimaryEmailWithPhoneOnlyNotAccepted() {
 
@@ -686,7 +661,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 		assertEquals(result.getMessage(), I18nProperties.getValidationError(PatientDiaryValidationError.INVALID_EMAIL.getErrorLanguageKey()));
 
 		// phone taken
-		// this number is pretended to be already in use (see @Before)
+		// this number is pretended to be already in use (see @BeforeEach)
 		person.setPhone("+49 621 121 849-3");
 
 		result = getExternalJournalService().validatePatientDiaryPerson(person);
@@ -700,7 +675,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 	 * If you need to change this test to make it pass, you probably changed the behaviour of the ExternalVisitsResource.
 	 * Please note that other system used alongside with SORMAS are depending on this, so that their developers must be notified of any
 	 * relevant API changes some time before they go into any test and productive system. Please inform the SORMAS core development team at
-	 * https://gitter.im/SORMAS-Project!
+	 * https://github.com/sormas-foundation/SORMAS-Project/discussions/categories/development-support!
 	 */
 	public void givenInvalidNonPrimaryEmailWithPhoneOnlyAccepted() {
 
@@ -758,7 +733,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 				+ I18nProperties.getValidationError(PatientDiaryValidationError.INVALID_PHONE.getErrorLanguageKey()));
 
 		// phone taken
-		// this number is pretended to be already in use (see @Before)
+		// this number is pretended to be already in use (see @BeforeEach)
 		person.setPhone("+49 621 121 849-3");
 
 		result = getExternalJournalService().validatePatientDiaryPerson(person);
@@ -774,7 +749,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 	 * If you need to change this test to make it pass, you probably changed the behaviour of the ExternalVisitsResource.
 	 * Please note that other system used alongside with SORMAS are depending on this, so that their developers must be notified of any
 	 * relevant API changes some time before they go into any test and productive system. Please inform the SORMAS core development team at
-	 * https://gitter.im/SORMAS-Project!
+	 * https://github.com/sormas-foundation/SORMAS-Project/discussions/categories/development-support!
 	 */
 	public void givenInvalidNonprimaryEmailWithPhoneOnlyNotAccepted() {
 
@@ -828,7 +803,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 		assertEquals(result.getMessage(), I18nProperties.getValidationError(PatientDiaryValidationError.INVALID_EMAIL.getErrorLanguageKey()));
 
 		// phone taken
-		// this number is pretended to be already in use (see @Before)
+		// this number is pretended to be already in use (see @BeforeEach)
 		person.setPhone("+49 621 121 849-3");
 
 		result = getExternalJournalService().validatePatientDiaryPerson(person);
@@ -841,7 +816,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 	 * If you need to change this test to make it pass, you probably changed the behaviour of the ExternalVisitsResource.
 	 * Please note that other system used alongside with SORMAS are depending on this, so that their developers must be notified of any
 	 * relevant API changes some time before they go into any test and productive system. Please inform the SORMAS core development team at
-	 * https://gitter.im/SORMAS-Project!
+	 * https://github.com/sormas-foundation/SORMAS-Project/discussions/categories/development-support!
 	 */
 	public void givenTakenEmailWithPhoneOnlyAccepted() {
 
@@ -849,7 +824,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 		response.setCount(0);
 		PersonDto person = PersonDto.build();
 		person.setFirstName("James");
-		// this address is pretended to be already in use (see @Before)
+		// this address is pretended to be already in use (see @BeforeEach)
 		person.setEmailAddress("taken@test.de");
 
 		ExternalJournalValidation result;
@@ -898,7 +873,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 				+ I18nProperties.getValidationError(PatientDiaryValidationError.EMAIL_TAKEN.getErrorLanguageKey()));
 
 		// phone taken
-		// this number is pretended to be already in use (see @Before)
+		// this number is pretended to be already in use (see @BeforeEach)
 		person.setPhone("+49 621 121 849-3");
 
 		result = getExternalJournalService().validatePatientDiaryPerson(person);
@@ -914,7 +889,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 	 * If you need to change this test to make it pass, you probably changed the behaviour of the ExternalVisitsResource.
 	 * Please note that other system used alongside with SORMAS are depending on this, so that their developers must be notified of any
 	 * relevant API changes some time before they go into any test and productive system. Please inform the SORMAS core development team at
-	 * https://gitter.im/SORMAS-Project!
+	 * https://github.com/sormas-foundation/SORMAS-Project/discussions/categories/development-support!
 	 */
 	public void givenTakenEmailWithPhoneOnlyNotAccepted() {
 
@@ -924,7 +899,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 		response.setCount(0);
 		PersonDto person = PersonDto.build();
 		person.setFirstName("James");
-		// this address is pretended to be already in use (see @Before)
+		// this address is pretended to be already in use (see @BeforeEach)
 		person.setEmailAddress("taken@test.de");
 
 		ExternalJournalValidation result;
@@ -967,7 +942,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 		assertEquals(result.getMessage(), I18nProperties.getValidationError(PatientDiaryValidationError.EMAIL_TAKEN.getErrorLanguageKey()));
 
 		// phone taken
-		// this number is pretended to be already in use (see @Before)
+		// this number is pretended to be already in use (see @BeforeEach)
 		person.setPhone("+49 621 121 849-3");
 
 		result = getExternalJournalService().validatePatientDiaryPerson(person);
@@ -980,7 +955,7 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 	 * If you need to change this test to make it pass, you probably changed the behaviour of the ExternalVisitsResource.
 	 * Please note that other system used alongside with SORMAS are depending on this, so that their developers must be notified of any
 	 * relevant API changes some time before they go into any test and productive system. Please inform the SORMAS core development team at
-	 * https://gitter.im/SORMAS-Project!
+	 * https://github.com/sormas-foundation/SORMAS-Project/discussions/categories/development-support!
 	 */
 	public void givenIncompleteBirthdateIsNotExportable() {
 		PersonDto person = new PersonDto();
@@ -1012,121 +987,6 @@ public class ExternalJournalServiceTest extends AbstractBeanTest {
 		person.setBirthdateYYYY(2000);
 		validationResult = getExternalJournalService().validatePatientDiaryPerson(person);
 		assertTrue(validationResult.isValid());
-	}
-
-	@Test
-	/*
-	 * If you need to change this test to make it pass, you probably changed the behaviour of the ExternalVisitsResource.
-	 * Please note that other system used alongside with SORMAS are depending on this, so that their developers must be notified of any
-	 * relevant API changes some time before they go into any test and productive system. Please inform the SORMAS core development team at
-	 * https://gitter.im/SORMAS-Project!
-	 */
-	public void givenRelevantChangeShouldNotify() {
-		EntityManager entityManager = getEntityManager();
-		PersonFacadeEjb.PersonFacadeEjbLocal personFacade = (PersonFacadeEjb.PersonFacadeEjbLocal) getPersonFacade();
-		personFacade.setExternalJournalService(getExternalJournalService());
-		PersonService personService = getPersonService();
-
-		Person person = personService.createPerson();
-		setPersonRelevantFields(person);
-
-		// cannot use PersonFacade save since it also calls the method being tested
-		EntityTransaction transaction = entityManager.getTransaction();
-		transaction.begin();
-		entityManager.persist(person);
-		entityManager.flush();
-		transaction.commit();
-
-		// need to create a case with the person to avoid pseudonymization related errors
-		creator.createCase(natUser.toReference(), new PersonReferenceDto(person.getUuid()), rdcf);
-		JournalPersonDto journalPerson = personFacade.getPersonForJournal(person.getUuid());
-
-		assertFalse(getExternalJournalService().notifyExternalJournalPersonUpdate(journalPerson).getElement0());
-
-		// Define relevant changes
-		HashMap<String, Object> relevantChanges = new HashMap<String, Object>() {
-
-			{
-				put(Person.FIRST_NAME, "Heinz");
-				put(Person.LAST_NAME, "Müller");
-				put(Person.SEX, Sex.FEMALE);
-				put(Person.BIRTHDATE_YYYY, 2001);
-				put(Person.BIRTHDATE_MM, 7);
-				put(Person.BIRTHDATE_DD, 2);
-			}
-		};
-
-		person.setPhone("+496211218491");
-		person.setEmailAddress("heinz@test.de");
-
-		// Apply each change and make sure it makes notification considered necessary
-		for (String propertyName : relevantChanges.keySet()) {
-			journalPerson = personFacade.getPersonForJournal(person.getUuid());
-			setPersonProperty(person, propertyName, relevantChanges.get(propertyName));
-			person = entityManager.merge(person);
-			assertTrue(getExternalJournalService().notifyExternalJournalPersonUpdate(journalPerson).getElement0());
-
-			// Modify the SymptomJournalStatus of the original person
-			journalPerson = personFacade.getPersonForJournal(person.getUuid());
-			person.setSymptomJournalStatus(SymptomJournalStatus.DELETED);
-			person = entityManager.merge(person);
-			assertFalse(getExternalJournalService().notifyExternalJournalPersonUpdate(journalPerson).getElement0());
-
-			journalPerson = personFacade.getPersonForJournal(person.getUuid());
-			person.setSymptomJournalStatus(SymptomJournalStatus.REJECTED);
-			person = entityManager.merge(person);
-			assertFalse(getExternalJournalService().notifyExternalJournalPersonUpdate(journalPerson).getElement0());
-
-			journalPerson = personFacade.getPersonForJournal(person.getUuid());
-			person.setSymptomJournalStatus(SymptomJournalStatus.UNREGISTERED);
-			person = entityManager.merge(person);
-			assertFalse(getExternalJournalService().notifyExternalJournalPersonUpdate(journalPerson).getElement0());
-
-			journalPerson = personFacade.getPersonForJournal(person.getUuid());
-			person.setSymptomJournalStatus(SymptomJournalStatus.ACCEPTED);
-			person = entityManager.merge(person);
-			assertFalse(getExternalJournalService().notifyExternalJournalPersonUpdate(journalPerson).getElement0());
-
-			// Apply any other relevant change and make sure notification is still considered necessary
-			for (String secondPropertyName : relevantChanges.keySet()) {
-				if (!secondPropertyName.equals(propertyName)) {
-					journalPerson = personFacade.getPersonForJournal(person.getUuid());
-					setPersonProperty(person, secondPropertyName, relevantChanges.get(secondPropertyName));
-					person = entityManager.merge(person);
-					assertTrue(getExternalJournalService().notifyExternalJournalPersonUpdate(journalPerson).getElement0());
-				}
-			}
-
-			setPersonRelevantFields(person);
-			person = entityManager.merge(person);
-		}
-	}
-
-	protected void setPersonRelevantFields(Person person) {
-		person.setFirstName("Klaus");
-		person.setLastName("Draufle");
-		person.setSex(Sex.MALE);
-		person.setEmailAddress("test@test.de");
-		person.setPhone("+496211218490");
-		person.setBirthdateYYYY(2000);
-		person.setBirthdateMM(6);
-		person.setBirthdateDD(1);
-		person.setSymptomJournalStatus(SymptomJournalStatus.REGISTERED);
-	}
-
-	/*
-	 * If you need to change this method to make it pass, you probably changed the behaviour of the ExternalVisitsResource.
-	 * Please note that other system used alongside with SORMAS are depending on this, so that their developers must be notified of any
-	 * relevant API changes some time before they go into any test and productive system. Please inform the SORMAS core development team at
-	 * https://gitter.im/SORMAS-Project!
-	 */
-	private void setPersonProperty(Person person, String propertyName, Object propertyValue) {
-		try {
-			BeanUtils.setProperty(person, propertyName, propertyValue);
-		} catch (IllegalAccessException | InvocationTargetException e) {
-			fail();
-			e.printStackTrace();
-		}
 	}
 
 	private void removePhoneContactDetails(PersonDto person) {

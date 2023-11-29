@@ -31,6 +31,8 @@ import org.sormas.e2etests.entities.pojo.helpers.ComparisonHelper;
 import org.sormas.e2etests.entities.pojo.web.Task;
 import org.sormas.e2etests.entities.services.TaskService;
 import org.sormas.e2etests.helpers.WebDriverHelpers;
+import org.sormas.e2etests.steps.web.application.users.CreateNewUserSteps;
+import org.testng.Assert;
 import org.testng.asserts.SoftAssert;
 
 public class CreateNewTaskSteps implements En {
@@ -162,6 +164,40 @@ public class CreateNewTaskSteps implements En {
           softly.assertTrue(elementVisible, option + " is visible!");
           softly.assertAll();
         });
+    And(
+        "I check that there is only user with ([^\"]*) region for task",
+        (String expectedRegion) -> {
+          CreateNewUserSteps.userWithRegion.forEach(
+              (userName, userRegion) -> {
+                userName = String.format(userName + " (0)");
+                if (userRegion.equals(expectedRegion)) {
+                  Assert.assertTrue(
+                      webDriverHelpers.checkIfElementExistsInCombobox(
+                          ASSIGNED_TO_COMBOBOX, userName),
+                      "There is no expected user name in list");
+
+                } else {
+                  Assert.assertFalse(
+                      webDriverHelpers.checkIfElementExistsInCombobox(
+                          ASSIGNED_TO_COMBOBOX, userName),
+                      "There is user from another region");
+                }
+              });
+        });
+    And(
+        "I check that Pending button exist on task edit page",
+        () -> {
+          webDriverHelpers.waitUntilElementIsVisibleAndClickable(PENDING_TASK_STATUS_OPTION);
+          Assert.assertTrue(webDriverHelpers.isElementEnabled(PENDING_TASK_STATUS_OPTION));
+        });
+    And(
+        "I create a new task with {string} as a assigned user",
+        (String user) -> {
+          task = taskService.buildGeneratedTaskWithSpecificUserAssigned(user);
+          fillAllFieldsWithoutComments(task);
+          webDriverHelpers.clickOnWebElementBySelector(SAVE_BUTTON);
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(40);
+        });
   }
 
   private void fillAllFields(Task task) {
@@ -174,6 +210,16 @@ public class CreateNewTaskSteps implements En {
     selectPriority(task.getPriority());
     fillCommentsOnTask(task.getCommentsOnTask());
     fillCommentsOnExecution(task.getCommentsOnExecution());
+  }
+
+  private void fillAllFieldsWithoutComments(Task task) {
+    selectTaskType(task.getTaskType());
+    fillSuggestedStartDate(task.getSuggestedStartDate());
+    fillSuggestedStartTime(task.getSuggestedStartTime());
+    fillDueDateDate(task.getDueDateDate());
+    fillDueDateTime(task.getDueDateTime());
+    selectAssignedTo(task.getAssignedTo());
+    selectPriority(task.getPriority());
   }
 
   private void fillAllFieldsDE(Task task) {

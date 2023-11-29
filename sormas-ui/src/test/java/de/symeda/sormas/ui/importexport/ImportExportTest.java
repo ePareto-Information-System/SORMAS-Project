@@ -19,7 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.opencsv.exceptions.CsvException;
 import com.vaadin.server.StreamResource;
@@ -59,21 +59,21 @@ import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.symptoms.SymptomState;
 import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
+import de.symeda.sormas.api.utils.CSVUtils;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.YesNoUnknown;
-import de.symeda.sormas.ui.AbstractBeanTest;
-import de.symeda.sormas.ui.TestDataCreator;
+import de.symeda.sormas.ui.AbstractUiBeanTest;
 import de.symeda.sormas.ui.caze.importer.CaseImporterTest.CaseImporterExtension;
 import de.symeda.sormas.ui.contact.importer.ContactImporterTest.ContactImporterExtension;
 import de.symeda.sormas.ui.utils.CaseDownloadUtil;
 import de.symeda.sormas.ui.utils.ContactDownloadUtil;
 
-public class ImportExportTest extends AbstractBeanTest {
+public class ImportExportTest extends AbstractUiBeanTest {
 
 	@Test
 	public void testImportExportedCase() throws IOException, CsvException, InvalidColumnException, InterruptedException {
-		TestDataCreator.RDCF rdcf = creator.createRDCF("Region", "District", "Community", "Health facility");
+		var rdcf = creator.createRDCF("Region", "District", "Community", "Health facility");
 		UserDto user = creator.createUser(null, null, null, "james", "Smith", creator.getUserRoleReference(DefaultUserRole.NATIONAL_USER));
 		PersonDto person = creator.createPerson("John", "Doe");
 
@@ -113,9 +113,9 @@ public class ImportExportTest extends AbstractBeanTest {
 		person.setBirthdateMM(12);
 		person.setBirthdateYYYY(1962);
 		person.setPresentCondition(PresentCondition.ALIVE);
-		person.getAddress().setRegion(rdcf.region.toReference());
-		person.getAddress().setDistrict(rdcf.district.toReference());
-		person.getAddress().setCommunity(rdcf.community.toReference());
+		person.getAddress().setRegion(rdcf.region);
+		person.getAddress().setDistrict(rdcf.district);
+		person.getAddress().setCommunity(rdcf.community);
 		person.getAddress().setCity("test city");
 		person.getAddress().setStreet("test street");
 		person.getAddress().setHouseNumber("test house number");
@@ -123,12 +123,12 @@ public class ImportExportTest extends AbstractBeanTest {
 		person.getAddress().setPostalCode("test postal code");
 		person.getAddress().setPostalCode("test postal code");
 
-		getPersonFacade().savePerson(person);
+		getPersonFacade().save(person);
 
 		StreamResource exportStreamResource =
 			CaseDownloadUtil.createCaseExportResource(new CaseCriteria(), Collections::emptySet, CaseExportType.CASE_SURVEILLANCE, null);
 
-		List<String[]> rows = getCsvReader(exportStreamResource.getStreamSource().getStream()).readAll();
+		List<String[]> rows = CSVUtils.createBomCsvReader(exportStreamResource.getStreamSource().getStream()).readAll();
 
 		assertThat(rows, hasSize(4));
 
@@ -141,6 +141,8 @@ public class ImportExportTest extends AbstractBeanTest {
 
 			if (CaseDataDto.UUID.equals(column)) {
 				values[i] = importUuid;
+			} else if (CaseDataDto.EPID_NUMBER.equals(column)) {
+				values[i] = "";
 			}
 			// update name avoid duplicate checking
 			else if (String.join(".", CaseDataDto.PERSON, PersonDto.FIRST_NAME).equals(column)) {
@@ -166,7 +168,7 @@ public class ImportExportTest extends AbstractBeanTest {
 		caseImporter.runImport();
 
 		InputStream errorStream = new ByteArrayInputStream(caseImporter.stringBuilder.toString().getBytes(StandardCharsets.UTF_8));
-		List<String[]> errorRows = getCsvReader(errorStream).readAll();
+		List<String[]> errorRows = CSVUtils.createBomCsvReader(errorStream).readAll();
 		if (errorRows.size() > 1) {
 			assertThat("Error during import: " + StringUtils.join(errorRows.get(1), ", "), errorRows, hasSize(0));
 		}
@@ -209,7 +211,7 @@ public class ImportExportTest extends AbstractBeanTest {
 		assertThat(importedCase.getSymptoms().getTremor(), is(SymptomState.YES));
 		assertThat(importedCase.getSymptoms().getVomiting(), is(SymptomState.YES));
 
-		PersonDto importedPerson = getPersonFacade().getPersonByUuid(importedCase.getPerson().getUuid());
+		PersonDto importedPerson = getPersonFacade().getByUuid(importedCase.getPerson().getUuid());
 
 		assertThat(importedPerson.getFirstName(), is("Import John"));
 		assertThat(importedPerson.getLastName(), is("Import Doe"));
@@ -229,7 +231,7 @@ public class ImportExportTest extends AbstractBeanTest {
 
 	@Test
 	public void testImportExportedContact() throws IOException, CsvException, InvalidColumnException, InterruptedException {
-		TestDataCreator.RDCF rdcf = creator.createRDCF("Region", "District", "Community", "Health facility");
+		var rdcf = creator.createRDCF("Region", "District", "Community", "Health facility");
 		UserDto user = creator.createUser(null, null, null, "james", "Smith", creator.getUserRoleReference(DefaultUserRole.NATIONAL_USER));
 		PersonDto person = creator.createPerson("John", "Doe");
 
@@ -247,13 +249,14 @@ public class ImportExportTest extends AbstractBeanTest {
 				dateNow,
 				rdcf),
 			dateNow,
-			dateNow);
+			dateNow,
+			Disease.CORONAVIRUS);
 		contact.setExternalID("text-ext-id");
 		contact.setExternalToken("text-ext-token");
 		contact.setDiseaseDetails("Corona");
-		contact.setRegion(rdcf.region.toReference());
-		contact.setDistrict(rdcf.district.toReference());
-		contact.setCommunity(rdcf.community.toReference());
+		contact.setRegion(rdcf.region);
+		contact.setDistrict(rdcf.district);
+		contact.setCommunity(rdcf.community);
 		contact.setQuarantine(QuarantineType.INSTITUTIONELL);
 		contact.setQuarantineFrom(dateNow);
 		contact.setQuarantineTo(dateNow);
@@ -268,9 +271,9 @@ public class ImportExportTest extends AbstractBeanTest {
 		person.setBirthdateMM(12);
 		person.setBirthdateYYYY(1962);
 		person.setPresentCondition(PresentCondition.ALIVE);
-		person.getAddress().setRegion(rdcf.region.toReference());
-		person.getAddress().setDistrict(rdcf.district.toReference());
-		person.getAddress().setCommunity(rdcf.community.toReference());
+		person.getAddress().setRegion(rdcf.region);
+		person.getAddress().setDistrict(rdcf.district);
+		person.getAddress().setCommunity(rdcf.community);
 		person.getAddress().setCity("test city");
 		person.getAddress().setStreet("test street");
 		person.getAddress().setHouseNumber("test house number");
@@ -278,11 +281,11 @@ public class ImportExportTest extends AbstractBeanTest {
 		person.getAddress().setPostalCode("test postal code");
 		person.getAddress().setPostalCode("test postal code");
 
-		getPersonFacade().savePerson(person);
+		getPersonFacade().save(person);
 
 		StreamResource exportStreamResource = ContactDownloadUtil.createContactExportResource(new ContactCriteria(), Collections::emptySet, null);
 
-		List<String[]> rows = getCsvReader(exportStreamResource.getStreamSource().getStream()).readAll();
+		List<String[]> rows = CSVUtils.createBomCsvReader(exportStreamResource.getStreamSource().getStream()).readAll();
 
 		assertThat(rows, hasSize(4));
 
@@ -320,7 +323,7 @@ public class ImportExportTest extends AbstractBeanTest {
 		contactImporter.runImport();
 
 		InputStream errorStream = new ByteArrayInputStream(contactImporter.stringBuilder.toString().getBytes(StandardCharsets.UTF_8));
-		List<String[]> errorRows = getCsvReader(errorStream).readAll();
+		List<String[]> errorRows = CSVUtils.createBomCsvReader(errorStream).readAll();
 		if (errorRows.size() > 1) {
 			assertThat("Error during import: " + StringUtils.join(errorRows.get(1), ", "), errorRows, hasSize(0));
 		}
@@ -350,7 +353,7 @@ public class ImportExportTest extends AbstractBeanTest {
 		assertThat(importedContact.isQuarantineExtended(), is(true));
 		assertThat(importedContact.getFollowUpStatus(), is(FollowUpStatus.FOLLOW_UP));
 
-		PersonDto importedPerson = getPersonFacade().getPersonByUuid(importedContact.getPerson().getUuid());
+		PersonDto importedPerson = getPersonFacade().getByUuid(importedContact.getPerson().getUuid());
 
 		assertThat(importedPerson.getFirstName(), is("Import John"));
 		assertThat(importedPerson.getLastName(), is("Import Doe"));

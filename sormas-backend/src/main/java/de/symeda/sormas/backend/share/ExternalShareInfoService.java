@@ -45,14 +45,14 @@ import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.backend.ExtendedPostgreSQL94Dialect;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
-import de.symeda.sormas.backend.common.AdoServiceWithUserFilter;
+import de.symeda.sormas.backend.common.AdoServiceWithUserFilterAndJurisdiction;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
 import de.symeda.sormas.backend.event.Event;
 import de.symeda.sormas.backend.user.UserService;
 
 @Stateless
 @LocalBean
-public class ExternalShareInfoService extends AdoServiceWithUserFilter<ExternalShareInfo> {
+public class ExternalShareInfoService extends AdoServiceWithUserFilterAndJurisdiction<ExternalShareInfo> {
 
 	@EJB
 	private UserService userService;
@@ -140,14 +140,6 @@ public class ExternalShareInfoService extends AdoServiceWithUserFilter<ExternalS
 		return getShareCountAndLatestDate(eventIds, ExternalShareInfo.EVENT);
 	}
 
-	public List<String> getSharedCaseUuidsWithoutDeletedStatus(List<String> caseUuids) {
-		return getSharedEntityUuidsWithoutDeletedStatus(caseUuids, ExternalShareInfo.CAZE);
-	}
-
-	public List<String> getSharedEventUuidsWithoutDeletedStatus(List<String> eventUuids) {
-		return getSharedEntityUuidsWithoutDeletedStatus(eventUuids, ExternalShareInfo.EVENT);
-	}
-
 	public List<ExternalShareInfoCountAndLatestDate> getShareCountAndLatestDate(List<Long> ids, String associatedObjectName) {
 		if (ids.size() == 0) {
 			return Collections.emptyList();
@@ -188,29 +180,6 @@ public class ExternalShareInfoService extends AdoServiceWithUserFilter<ExternalS
 		return em.createQuery(cq).getResultList();
 	}
 
-	public List<String> getSharedEntityUuidsWithoutDeletedStatus(List<String> entityUuids, String associatedObjectName) {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<String> cq = cb.createQuery(String.class);
-		Root<ExternalShareInfo> externalShareInfo = cq.from(ExternalShareInfo.class);
-
-		Join<?, ExternalShareInfo> associatedObjectJoin = externalShareInfo.join(associatedObjectName);
-
-		Subquery<Integer> survToolShareSubQuery = cq.subquery(Integer.class);
-		Root<ExternalShareInfo> survToolShareRoot = survToolShareSubQuery.from(ExternalShareInfo.class);
-		survToolShareSubQuery.select(survToolShareRoot.get(associatedObjectName));
-		Predicate deletedFilter = cb.equal(survToolShareRoot.get(ExternalShareInfo.STATUS), ExternalShareStatus.DELETED);
-		survToolShareSubQuery.where(deletedFilter);
-
-		Predicate entityUuidsFilter = associatedObjectJoin.get(AbstractDomainObject.UUID).in(entityUuids);
-
-		Predicate filter =
-			CriteriaBuilderHelper.and(cb, entityUuidsFilter, cb.not(associatedObjectJoin.get(AbstractDomainObject.ID).in(survToolShareSubQuery)));
-		cq.where(filter);
-
-		cq.select(externalShareInfo.join(associatedObjectName).get(AbstractDomainObject.UUID)).distinct(true);
-		return em.createQuery(cq).getResultList();
-	}
-
 	public Predicate buildShareCriteriaFilter(
 		ExternalShareCriteria criteria,
 		CriteriaQuery<?> cq,
@@ -244,11 +213,10 @@ public class ExternalShareInfoService extends AdoServiceWithUserFilter<ExternalS
 				buildLatestSurvToolShareDateFilter(cq, cb, from, associatedObjectName, changeDatePredicateBuilder);
 
 			filter = CriteriaBuilderHelper.and(cb, filter, changedSinceLastShareFilter);
-		}
-
-		// Exclude all entities which are not supposed to be shared with the reportingtool
-		if (filter != null && from.getJavaType().isAssignableFrom(Case.class)) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(from.get(Case.DONT_SHARE_WITH_REPORTING_TOOL)));
+			// Exclude all entities which are not supposed to be shared with the reportingtool
+			if (from.getJavaType().isAssignableFrom(Case.class)) {
+				filter = CriteriaBuilderHelper.and(cb, filter, cb.isFalse(from.get(Case.DONT_SHARE_WITH_REPORTING_TOOL)));
+			}
 		}
 
 		return filter;
@@ -261,7 +229,7 @@ public class ExternalShareInfoService extends AdoServiceWithUserFilter<ExternalS
 		String associatedObjectName,
 		Function<Expression<Date>, Predicate> shareDatePredicateBuilder) {
 
-		Subquery<Timestamp> survToolShareSubQuery = cq.subquery(Timestamp.class);
+		Subquery<Object> survToolShareSubQuery = cq.subquery(Object.class);
 		Root<ExternalShareInfo> survToolShareRoot = survToolShareSubQuery.from(ExternalShareInfo.class);
 		Join<ExternalShareInfo, ?> associatedObject = survToolShareRoot.join(associatedObjectName, JoinType.LEFT);
 		@SuppressWarnings({
@@ -271,7 +239,7 @@ public class ExternalShareInfoService extends AdoServiceWithUserFilter<ExternalS
 			// double conversion because hibernate doesn't know the `max` function for timestamps
 			(Expression<Date>) ((Expression) cb.max(survToolShareRoot.get(ExternalShareInfo.CREATION_DATE)));
 
-		Path<Timestamp> associatedObjectId = associatedObject.get(AbstractDomainObject.ID);
+		Path<Object> associatedObjectId = associatedObject.get(AbstractDomainObject.ID);
 
 		survToolShareSubQuery.select(associatedObjectId);
 		survToolShareSubQuery.where(cb.equal(associatedObject, from.get(AbstractDomainObject.ID)));

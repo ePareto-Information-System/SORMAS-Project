@@ -56,6 +56,7 @@ import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
+import de.symeda.sormas.ui.contact.AbstractContactGrid;
 import de.symeda.sormas.ui.contact.ContactGrid;
 import de.symeda.sormas.ui.contact.importer.CaseContactsImportLayout;
 import de.symeda.sormas.ui.utils.ButtonHelper;
@@ -250,19 +251,19 @@ public class CaseContactsView extends AbstractCaseView {
 				Captions.bulkActions,
 				new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkEdit), VaadinIcons.ELLIPSIS_H, selectedItem -> {
 					ControllerProvider.getContactController()
-						.showBulkContactDataEditComponent(grid.asMultiSelect().getSelectedItems(), getCaseRef().getUuid());
+						.showBulkContactDataEditComponent(grid.asMultiSelect().getSelectedItems(), getCaseRef().getUuid(), grid);
 				}),
 				new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkCancelFollowUp), VaadinIcons.CLOSE, selectedItem -> {
 					ControllerProvider.getContactController()
-						.cancelFollowUpOfAllSelectedItems(grid.asMultiSelect().getSelectedItems(), () -> navigateTo(criteria));
+						.cancelFollowUpOfAllSelectedItems(grid.asMultiSelect().getSelectedItems(), getCaseRef().getUuid(), grid);
 				}),
 				new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkLostToFollowUp), VaadinIcons.UNLINK, selectedItem -> {
 					ControllerProvider.getContactController()
-						.setAllSelectedItemsToLostToFollowUp(grid.asMultiSelect().getSelectedItems(), () -> navigateTo(criteria));
+						.setAllSelectedItemsToLostToFollowUp(grid.asMultiSelect().getSelectedItems(), getCaseRef().getUuid(), grid);
 				}),
 				new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkDelete), VaadinIcons.TRASH, selectedItem -> {
 					ControllerProvider.getContactController()
-						.deleteAllSelectedItems(grid.asMultiSelect().getSelectedItems(), () -> navigateTo(criteria));
+						.deleteAllSelectedItems(grid.asMultiSelect().getSelectedItems(), (AbstractContactGrid<?>) grid);
 				}));
 
 			statusFilterLayout.addComponent(bulkOperationsDropdown);
@@ -382,7 +383,7 @@ public class CaseContactsView extends AbstractCaseView {
 				grid.setEagerDataProvider();
 			}
 
-			grid.getDataProvider().addDataProviderListener(e -> updateStatusButtons());
+			grid.addDataSizeChangeListener(e -> updateStatusButtons());
 
 			setSubComponent(gridLayout);
 		}
@@ -394,10 +395,11 @@ public class CaseContactsView extends AbstractCaseView {
 		updateFilterComponents();
 
 		grid.reload();
-		setCaseEditPermission(gridLayout);
+		setEditPermission(gridLayout);
 	}
 
-	protected boolean isCaseEditAllowed() {
+	@Override
+	protected boolean isEditAllowed() {
 		return FacadeProvider.getCaseFacade().isEditContactAllowed(getReference().getUuid()).equals(EditPermissionType.ALLOWED);
 	}
 
@@ -433,7 +435,7 @@ public class CaseContactsView extends AbstractCaseView {
 		CssStyles.removeStyles(activeStatusButton, CssStyles.BUTTON_FILTER_LIGHT);
 		if (activeStatusButton != null) {
 			activeStatusButton
-				.setCaption(statusButtons.get(activeStatusButton) + LayoutUtil.spanCss(CssStyles.BADGE, String.valueOf(grid.getItemCount())));
+				.setCaption(statusButtons.get(activeStatusButton) + LayoutUtil.spanCss(CssStyles.BADGE, String.valueOf(grid.getDataSize())));
 		}
 	}
 

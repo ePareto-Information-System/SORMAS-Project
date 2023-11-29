@@ -202,6 +202,12 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
             result = saveImportedEntities(entities, false);
         }
 //		ImportLineResultDto<CaseImportEntities> result = saveImportedEntities(entities);
+		// final PersonDto person;1.87.0
+		// if (personUuid != null) {
+		// 	person = personFacade.getByUuid(personUuid);
+		// } else {
+		// 	person = PersonDto.buildImportEntity();
+		// }
 
         return result;
     }
@@ -356,6 +362,18 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
             for (PathogenTestDto pathogenTest : pathogenTests) {
                 pathogenTestFacade.savePathogenTest(pathogenTest);
             }
+			// final PersonDto savedPerson = personFacade.save(person, skipPersonValidation);
+			// caze.setPerson(savedPerson.toReference());
+			// // Workaround: Reset the change date to avoid OutdatedEntityExceptions
+			// // Should be changed when doing #2265
+			// caze.setChangeDate(new Date());
+			// caseFacade.save(caze);
+			// for (SampleDto sample : samples) {
+			// 	sampleFacade.saveSample(sample);
+			// }
+			// for (PathogenTestDto pathogenTest : pathogenTests) {
+			// 	pathogenTestFacade.savePathogenTest(pathogenTest);
+			// }
 
             for (VaccinationDto vaccination : vaccinations) {
                 vaccinationFacade.createWithImmunization(
@@ -498,6 +516,29 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
             String[][] entityPropertyPaths,
             boolean ignoreEmptyEntries,
             Function<ImportCellData, Exception> insertCallback) {
+		// Language language = I18nProperties.getUserLanguage();1.87.0
+
+		// Object currentElement = caze;
+		// for (int i = 0; i < entryHeaderPath.length; i++) {
+		// 	String headerPathElementName = entryHeaderPath[i];
+
+		// 	try {
+		// 		if (i != entryHeaderPath.length - 1) {
+		// 			currentElement = new PropertyDescriptor(headerPathElementName, currentElement.getClass()).getReadMethod().invoke(currentElement);
+		// 			// Set the current element to the created person
+		// 			if (currentElement instanceof PersonReferenceDto) {
+		// 				currentElement = person;
+		// 			}
+		// 		} else if (CaseExportDto.BIRTH_DATE.equals(headerPathElementName)) {
+		// 			BirthDateDto birthDateDto = PersonHelper.parseBirthdate(entry, language);
+		// 			if (birthDateDto != null) {
+		// 				person.setBirthdateDD(birthDateDto.getDateOfBirthDD());
+		// 				person.setBirthdateMM(birthDateDto.getDateOfBirthMM());
+		// 				person.setBirthdateYYYY(birthDateDto.getDateOfBirthYYYY());
+		// 			}
+		// 		} else {
+		// 			PropertyDescriptor pd = new PropertyDescriptor(headerPathElementName, currentElement.getClass());
+		// 			Class<?> propertyType = pd.getPropertyType();
 
         String importError = null;
         List<String> invalidColumns = new ArrayList<>();

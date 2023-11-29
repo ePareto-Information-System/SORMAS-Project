@@ -7,7 +7,6 @@ import java.util.function.Consumer;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.Sizeable;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.UI;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
@@ -30,8 +29,8 @@ import de.symeda.sormas.ui.immunization.components.fields.pickorcreate.Immunizat
 import de.symeda.sormas.ui.immunization.components.fields.popup.SimilarImmunizationPopup;
 import de.symeda.sormas.ui.immunization.components.form.ImmunizationCreationForm;
 import de.symeda.sormas.ui.immunization.components.form.ImmunizationDataForm;
+import de.symeda.sormas.ui.utils.ArchiveHandlers;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
-import de.symeda.sormas.ui.utils.CoreEntityArchiveMessages;
 import de.symeda.sormas.ui.utils.NotificationHelper;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 import de.symeda.sormas.ui.utils.components.automaticdeletion.DeletionLabel;
@@ -139,22 +138,23 @@ public class ImmunizationController {
 		ImmunizationDto immunizationDto,
 		Consumer<Runnable> actionCallback) {
 
-		ImmunizationDataForm immunizationDataForm =
-			new ImmunizationDataForm(immunizationDto.isPseudonymized(), immunizationDto.getRelatedCase(), actionCallback);
+		ImmunizationDataForm immunizationDataForm = new ImmunizationDataForm(
+			immunizationDto.isPseudonymized(),
+			immunizationDto.isInJurisdiction(),
+			immunizationDto.getRelatedCase(),
+			actionCallback);
 		immunizationDataForm.setValue(immunizationDto);
 
 		UserProvider currentUserProvider = UserProvider.getCurrent();
-		CommitDiscardWrapperComponent<ImmunizationDataForm> editComponent = new CommitDiscardWrapperComponent<ImmunizationDataForm>(
-			immunizationDataForm,
-			currentUserProvider != null && currentUserProvider.hasUserRight(UserRight.IMMUNIZATION_EDIT),
-			immunizationDataForm.getFieldGroup()) {
+		CommitDiscardWrapperComponent<ImmunizationDataForm> editComponent =
+			new CommitDiscardWrapperComponent<ImmunizationDataForm>(immunizationDataForm, true, immunizationDataForm.getFieldGroup()) {
 
-			@Override
-			public void discard() {
-				immunizationDataForm.discard();
-				super.discard();
-			}
-		};
+				@Override
+				public void discard() {
+					immunizationDataForm.discard();
+					super.discard();
+				}
+			};
 
 		DeletionInfoDto automaticDeletionInfoDto = FacadeProvider.getImmunizationFacade().getAutomaticDeletionInfo(immunizationDto.getUuid());
 		DeletionInfoDto manuallyDeletionInfoDto = FacadeProvider.getImmunizationFacade().getManuallyDeletionInfo(immunizationDto.getUuid());
@@ -193,10 +193,12 @@ public class ImmunizationController {
 
 		// Initialize 'Delete' button
 		if (UserProvider.getCurrent().hasUserRight(UserRight.IMMUNIZATION_DELETE)) {
-			editComponent.addDeleteWithReasonListener((deleteDetails) -> {
-				FacadeProvider.getImmunizationFacade().delete(immunizationDto.getUuid(), deleteDetails);
-				UI.getCurrent().getNavigator().navigateTo(ImmunizationsView.VIEW_NAME);
-			}, I18nProperties.getString(Strings.entityImmunization));
+			editComponent.addDeleteWithReasonOrRestoreListener(
+				ImmunizationsView.VIEW_NAME,
+				null,
+				I18nProperties.getString(Strings.entityImmunization),
+				immunizationDto.getUuid(),
+				FacadeProvider.getImmunizationFacade());
 		}
 
 		// Initialize 'Archive' button
@@ -204,11 +206,18 @@ public class ImmunizationController {
 			ControllerProvider.getArchiveController()
 				.addArchivingButton(
 					immunizationDto,
-					FacadeProvider.getImmunizationFacade(),
-					CoreEntityArchiveMessages.IMMUNIZATION,
+					ArchiveHandlers.forImmunization(),
 					editComponent,
 					() -> navigateToImmunization(immunizationDto.getUuid()));
 		}
+
+		editComponent.restrictEditableComponentsOnEditView(
+			UserRight.IMMUNIZATION_EDIT,
+			null,
+			UserRight.IMMUNIZATION_DELETE,
+			UserRight.IMMUNIZATION_ARCHIVE,
+			null,
+			immunizationDto.isInJurisdiction());
 
 		return editComponent;
 	}
@@ -225,7 +234,7 @@ public class ImmunizationController {
 		TitleLayout titleLayout = new TitleLayout();
 
 		String shortUuid = DataHelper.getShortUuid(immunizationDto.getUuid());
-		PersonDto person = FacadeProvider.getPersonFacade().getPersonByUuid(immunizationDto.getPerson().getUuid());
+		PersonDto person = FacadeProvider.getPersonFacade().getByUuid(immunizationDto.getPerson().getUuid());
 		StringBuilder mainRowText = TitleLayoutHelper.buildPersonString(person);
 		mainRowText.append(mainRowText.length() > 0 ? " (" + shortUuid + ")" : shortUuid);
 		titleLayout.addMainRow(mainRowText.toString());

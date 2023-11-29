@@ -27,14 +27,15 @@ import de.symeda.sormas.api.EditPermissionType;
 import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.infrastructure.cadre.CadreCriteria;
 import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.common.AbstractCoreAdoService;
-import de.symeda.sormas.backend.common.AbstractInfrastructureAdoService;
+import de.symeda.sormas.backend.common.AbstractCoreAdoServiceOld;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
+import de.symeda.sormas.backend.common.QueryJoins;
 
 @Stateless
 @LocalBean
-public class CadreService extends AbstractCoreAdoService<Cadre> {
+
+public class CadreService extends AbstractCoreAdoServiceOld<Cadre> {
 
 	public CadreService() {
 		super(Cadre.class);
@@ -69,12 +70,7 @@ public class CadreService extends AbstractCoreAdoService<Cadre> {
 		return em.createQuery(cq).getResultList();
 	}
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	public Predicate createUserFilter(CriteriaBuilder cb, CriteriaQuery cq, From<?, Cadre> from) {
-		// no filter by user needed
-		return null;
-	}
+
 
 //	@Override
 	public Predicate buildCriteriaFilter(CadreCriteria criteria, CriteriaBuilder cb, Root<Cadre> from) {
@@ -106,9 +102,9 @@ public class CadreService extends AbstractCoreAdoService<Cadre> {
 		ensurePersisted(dearchive);
 	}
 
+
 	@Override
 	protected Predicate createUserFilterInternal(CriteriaBuilder cb, CriteriaQuery cq, From<?, Cadre> from) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -117,4 +113,6 @@ public class CadreService extends AbstractCoreAdoService<Cadre> {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
 }

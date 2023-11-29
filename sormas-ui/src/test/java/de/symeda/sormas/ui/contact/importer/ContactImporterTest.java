@@ -2,11 +2,10 @@ package de.symeda.sormas.ui.contact.importer;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import de.symeda.sormas.api.person.PersonReferenceDto;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -25,8 +24,8 @@ import java.util.function.Consumer;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.output.StringBuilderWriter;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.opencsv.exceptions.CsvException;
 import com.opencsv.exceptions.CsvValidationException;
@@ -44,22 +43,24 @@ import de.symeda.sormas.api.importexport.InvalidColumnException;
 import de.symeda.sormas.api.importexport.ValueSeparator;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.PersonHelper;
+import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.person.PersonSimilarityCriteria;
 import de.symeda.sormas.api.person.SimilarPersonDto;
 import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
+import de.symeda.sormas.api.utils.CSVUtils;
+import de.symeda.sormas.api.utils.LocationHelper;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.vaccination.VaccinationDto;
 import de.symeda.sormas.backend.contact.ContactFacadeEjb;
 import de.symeda.sormas.backend.contact.ContactFacadeEjb.ContactFacadeEjbLocal;
-import de.symeda.sormas.ui.AbstractBeanTest;
-import de.symeda.sormas.ui.TestDataCreator.RDCF;
+import de.symeda.sormas.ui.AbstractUiBeanTest;
 import de.symeda.sormas.ui.importer.ContactImportSimilarityResult;
 import de.symeda.sormas.ui.importer.ImportResultStatus;
 import de.symeda.sormas.ui.importer.ImportSimilarityResultOption;
 import de.symeda.sormas.ui.importer.PersonImportSimilarityResult;
 
-public class ContactImporterTest extends AbstractBeanTest {
+public class ContactImporterTest extends AbstractUiBeanTest {
 
 	@Test
 	public void testImportCaseContacts()
@@ -67,7 +68,7 @@ public class ContactImporterTest extends AbstractBeanTest {
 
 		ContactFacadeEjb contactFacade = getBean(ContactFacadeEjbLocal.class);
 
-		RDCF rdcf = creator.createRDCF("Abia", "Umuahia North", "Urban Ward 2", "Anelechi Hospital");
+		var rdcf = creator.createRDCF("Abia", "Umuahia North", "Urban Ward 2", "Anelechi Hospital");
 		UserDto user = creator.createUser(
 			rdcf.region.getUuid(),
 			rdcf.district.getUuid(),
@@ -166,7 +167,7 @@ public class ContactImporterTest extends AbstractBeanTest {
 
 		ContactFacadeEjb contactFacade = getBean(ContactFacadeEjbLocal.class);
 
-		RDCF rdcf = creator.createRDCF("Abia", "Umuahia North", "Urban Ward 2", "Anelechi Hospital");
+		var rdcf = creator.createRDCF("Abia", "Umuahia North", "Urban Ward 2", "Anelechi Hospital");
 		UserDto user = creator.createUser(
 			rdcf.region.getUuid(),
 			rdcf.district.getUuid(),
@@ -194,7 +195,7 @@ public class ContactImporterTest extends AbstractBeanTest {
 			InvestigationStatus.PENDING,
 			new Date(),
 			rdcf,
-			"ABCDEF-GHIJKL-MNOPQR");
+			createdCase -> createdCase.setUuid("ABCDEF-GHIJKL-MNOPQR"));
 
 		csvFile = new File(getClass().getClassLoader().getResource("sormas_contact_import_test.csv").toURI());
 		contactImporter = new ContactImporterExtension(csvFile, user, null);
@@ -221,7 +222,7 @@ public class ContactImporterTest extends AbstractBeanTest {
 
 		InputStream errorStream =
 			new ByteArrayInputStream(((ContactImporterExtension) contactImporter).stringBuilder.toString().getBytes(StandardCharsets.UTF_8));
-		List<String[]> errorRows = getCsvReader(errorStream).readAll();
+		List<String[]> errorRows = CSVUtils.createBomCsvReader(errorStream).readAll();
 		if (errorRows.size() > 1) {
 			assertThat("Error during import: " + StringUtils.join(errorRows.get(1), ", "), errorRows, hasSize(0));
 		}
@@ -236,7 +237,7 @@ public class ContactImporterTest extends AbstractBeanTest {
 
 		ContactFacadeEjb contactFacade = getBean(ContactFacadeEjbLocal.class);
 
-		RDCF rdcf = creator.createRDCF("Abia", "Umuahia North", "Urban Ward 2", "Anelechi Hospital");
+		var rdcf = creator.createRDCF("Abia", "Umuahia North", "Urban Ward 2", "Anelechi Hospital");
 		UserDto user = creator.createUser(
 			rdcf.region.getUuid(),
 			rdcf.district.getUuid(),
@@ -268,7 +269,7 @@ public class ContactImporterTest extends AbstractBeanTest {
 		boolean foundOona = false;
 
 		for (ContactDto contact : contacts) {
-			PersonDto person = getPersonFacade().getPersonByUuid(contact.getPerson().getUuid());
+			PersonDto person = getPersonFacade().getByUuid(contact.getPerson().getUuid());
 			if ("Otto".equals(person.getFirstName())) {
 				foundOtto = true;
 				assertTrue(CollectionUtils.isEmpty(person.getAddresses()));
@@ -281,20 +282,19 @@ public class ContactImporterTest extends AbstractBeanTest {
 			}
 			if ("Oona".equals(person.getFirstName())) {
 				foundOona = true;
-				assertTrue(person.getAddress().checkIsEmptyLocation());
+				assertTrue(LocationHelper.checkIsEmptyLocation(person.getAddress()));
 				assertEquals(1, person.getAddresses().size());
 				assertEquals("133", person.getAddresses().get(0).getHouseNumber());
 			}
 		}
-
-		assertTrue("Not all contacts found.", foundOtto && foundOskar && foundOona);
+		assertTrue(foundOtto && foundOskar && foundOona, "Not all contacts found.");
 	}
 
 	@Test
-	@Ignore("Remove ignore once we have replaced H2, and feature properties can be changed by code")
+	@Disabled("Remove ignore once we have replaced H2, and feature properties can be changed by code")
 	public void testImportContactsWithVaccinations()
 		throws IOException, InterruptedException, CsvValidationException, InvalidColumnException, URISyntaxException {
-		RDCF rdcf = creator.createRDCF("Abia", "Umuahia North", "Urban Ward 2", "Anelechi Hospital");
+		var rdcf = creator.createRDCF("Abia", "Umuahia North", "Urban Ward 2", "Anelechi Hospital");
 		UserDto user = creator.createUser(
 			rdcf.region.getUuid(),
 			rdcf.district.getUuid(),
@@ -307,7 +307,7 @@ public class ContactImporterTest extends AbstractBeanTest {
 		ContactImporterExtension contactImporter = new ContactImporterExtension(csvFile, user, null);
 		ImportResultStatus importResult = contactImporter.runImport();
 
-		assertEquals(contactImporter.stringBuilder.toString(), ImportResultStatus.COMPLETED, importResult);
+		assertEquals(ImportResultStatus.COMPLETED, importResult, contactImporter.stringBuilder.toString());
 
 		List<ContactDto> contacts = getContactFacade().getAllAfter(null);
 		assertEquals(3, contacts.size());

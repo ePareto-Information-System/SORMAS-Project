@@ -1,5 +1,6 @@
 package de.symeda.sormas.ui.importer;
 
+import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.caze.CaseMDDataDto;
 import de.symeda.sormas.api.caze.caseimport.CaseDMImportEntities;
 import de.symeda.sormas.api.caze.caseimport.CaseImportFacade;
@@ -35,6 +36,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
+import de.symeda.sormas.api.utils.*;
 import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -69,12 +71,6 @@ import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.SimilarPersonDto;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
-import de.symeda.sormas.api.utils.CSVCommentLineValidator;
-import de.symeda.sormas.api.utils.CSVUtils;
-import de.symeda.sormas.api.utils.CharsetHelper;
-import de.symeda.sormas.api.utils.ConstrainValidationHelper;
-import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.ui.person.PersonSelectionField;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
 import de.symeda.sormas.ui.utils.DownloadUtil;
@@ -443,7 +439,7 @@ public abstract class DataImporter {
 //        }
 
 
-         entityImportResultDto =
+        entityImportResultDto =
                 caseImportFacade.importCaseDataPopulateModal(values, entityClasses, entityProperties, entityPropertyPaths, !firstLine,entities);
         if (Objects.nonNull(entityImportResultDto)) {
             ImportLineResultDto<CaseDMImportEntities> importResult = entityImportResultDto.getImportEntitiesImportLineResultDto();
@@ -453,7 +449,7 @@ public abstract class DataImporter {
                 return ImportLineResult.ERROR;
             } else {
                 //return ImportLineResult.valueOf(entityImportResultDto.getImportEntitiesImportLine().name());
-                 //entities = entityImportResultDto.getCaseDMImportEntities();
+                //entities = entityImportResultDto.getCaseDMImportEntities();
                 //CaseMDDataDto caseMDDataDto = importedEntities.getCaseMDDataDto();
             }
         }
@@ -463,7 +459,7 @@ public abstract class DataImporter {
 
             if (Objects.nonNull(incomingCaseMDDataDto)) {
 
-                    addItem(entities,incomingCaseMDDataDto);
+                addItem(entities,incomingCaseMDDataDto);
 
             }
         }
@@ -638,7 +634,7 @@ public abstract class DataImporter {
         if (propertyType.isAssignableFrom(Date.class)) {
             String dateFormat = I18nProperties.getUserLanguage().getDateFormat();
             try {
-                pd.getWriteMethod().invoke(element, DateHelper.parseDateWithException(entry, dateFormat));
+                pd.getWriteMethod().invoke(element, DateHelper.parseDateWithException(entry, Language.valueOf(dateFormat)));
                 return true;
             } catch (ParseException e) {
                 throw new ImportErrorException(

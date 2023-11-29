@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +38,9 @@ public class AgeGroupUtils {
 
 	public static void validateAgeGroup(String ageGroup) {
 
-		if (!(Pattern.matches(AGE_GROUP_RANGE_REGEX, ageGroup) || Pattern.matches(AGE_GROUP_START_AT_REGEX, ageGroup))) {
+		if (!(Pattern.matches(AGE_GROUP_RANGE_REGEX, ageGroup)
+			|| Pattern.matches(AGE_GROUP_START_AT_REGEX, ageGroup)
+			|| (ageGroup != null && ageGroup.equals(I18nProperties.getCaption(Captions.aggregateReportNoAgeGroup))))) {
 			throw new IllegalArgumentException("Invalid ageGroup definition: " + ageGroup);
 		}
 	}
@@ -49,6 +51,11 @@ public class AgeGroupUtils {
 			return StringUtils.EMPTY;
 		}
 		validateAgeGroup(ageGroup);
+
+		if (ageGroup.equals(I18nProperties.getCaption(Captions.aggregateReportNoAgeGroup))) {
+			return I18nProperties.getCaption(Captions.aggregateReportNoAgeGroup);
+		}
+
 		if (ageGroup.contains("_")) {
 			final String[] ageGroupSplit = ageGroup.split("_");
 			final String firstGroup = ageGroupSplit[0];

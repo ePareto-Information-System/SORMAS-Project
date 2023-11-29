@@ -20,7 +20,6 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.sql.Timestamp;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -56,6 +55,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +63,7 @@ import org.slf4j.LoggerFactory;
 import de.symeda.sormas.api.AuthProvider;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.Language;
+import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
 import de.symeda.sormas.api.externaljournal.PatientDiaryConfig;
 import de.symeda.sormas.api.externaljournal.SymptomJournalConfig;
 import de.symeda.sormas.api.externaljournal.UserConfig;
@@ -71,6 +72,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityCriteria;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
+import de.symeda.sormas.api.person.OccupationType;
 import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DataHelper;
@@ -80,6 +82,9 @@ import de.symeda.sormas.backend.audit.AuditLoggerEjb;
 import de.symeda.sormas.backend.common.ConfigFacadeEjb.ConfigFacadeEjbLocal;
 import de.symeda.sormas.backend.contact.Contact;
 import de.symeda.sormas.backend.contact.ContactService;
+import de.symeda.sormas.backend.customizableenum.CustomizableEnumFacadeEjb;
+import de.symeda.sormas.backend.customizableenum.CustomizableEnumValue;
+import de.symeda.sormas.backend.customizableenum.CustomizableEnumValueService;
 import de.symeda.sormas.backend.deletionconfiguration.DeletionConfigurationService;
 import de.symeda.sormas.backend.disease.DiseaseConfiguration;
 import de.symeda.sormas.backend.disease.DiseaseConfigurationService;
@@ -118,7 +123,7 @@ import de.symeda.sormas.backend.util.ModelConstants;
 public class StartupShutdownService {
 
 	static final String SORMAS_SCHEMA = "sql/sormas_schema.sql";
-	static final String AUDIT_SCHEMA = "sql/sormas_audit_schema.sql";
+	static final String VERSIONING_FUNCTION = "sql/temporal_tables/versioning_function.sql";
 	private static final Pattern SQL_COMMENT_PATTERN = Pattern.compile("^\\s*(--.*)?");
 	//@formatter:off
     private static final Pattern SCHEMA_VERSION_SQL_PATTERN = Pattern.compile(
@@ -131,9 +136,6 @@ public class StartupShutdownService {
 
 	@PersistenceContext(unitName = ModelConstants.PERSISTENCE_UNIT_NAME)
 	private EntityManager em;
-	@PersistenceContext(unitName = ModelConstants.PERSISTENCE_UNIT_NAME_AUDITLOG)
-	private EntityManager emAudit;
-
 	@EJB
 	private ConfigFacadeEjbLocal configFacade;
 	@EJB
@@ -180,6 +182,10 @@ public class StartupShutdownService {
 	AuditLoggerEjb.AuditLoggerEjbLocal auditLogger;
 	@EJB
 	private UserRoleService userRoleService;
+	@EJB
+	private CustomizableEnumFacadeEjb.CustomizableEnumFacadeEjbLocal customizableEnumFacade;
+	@EJB
+	private CustomizableEnumValueService customizableEnumValueService;
 
 	@Inject
 	private Event<PasswordResetEvent> passwordResetEvent;
@@ -201,13 +207,13 @@ public class StartupShutdownService {
 	@PostConstruct
 	public void startup() {
 		auditLogger.logApplicationStart();
+
 		checkDatabaseConfig(em);
 
-		logger.info("Initiating automatic database update of main database...");
-		updateDatabase(UpdateQueryTransactionWrapper.TargetDb.SORMAS, em, SORMAS_SCHEMA);
+		createVersioningFunction();
 
-		logger.info("Initiating automatic database update of audit database...");
-		updateDatabase(UpdateQueryTransactionWrapper.TargetDb.AUDIT, emAudit, AUDIT_SCHEMA);
+		logger.info("Initiating automatic database update of main database...");
+		updateDatabase(em, SORMAS_SCHEMA);
 
 		I18nProperties.setDefaultLanguage(Language.fromLocaleString(configFacade.getCountryLocale()));
 
@@ -335,7 +341,7 @@ public class StartupShutdownService {
 
 			// Create Admin
 			createAndPersistDefaultUser(
-				userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.ADMIN)),
+				userRoleService.getByLinkedDefaultUserRole(DefaultUserRole.ADMIN),
 				"ad",
 				"min",
 				DefaultEntityHelper.ADMIN_USERNAME_AND_PASSWORD,
@@ -361,7 +367,7 @@ public class StartupShutdownService {
 
 			// Create Surveillance Supervisor
 			createAndPersistDefaultUser(
-				userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.SURVEILLANCE_SUPERVISOR)),
+				userRoleService.getByLinkedDefaultUserRole(DefaultUserRole.SURVEILLANCE_SUPERVISOR),
 				"Surveillance",
 				"Supervisor",
 				DefaultEntityHelper.SURV_SUP_USERNAME_AND_PASSWORD,
@@ -369,7 +375,7 @@ public class StartupShutdownService {
 
 			// Create Case Supervisor
 			createAndPersistDefaultUser(
-				userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.CASE_SUPERVISOR)),
+				userRoleService.getByLinkedDefaultUserRole(DefaultUserRole.CASE_SUPERVISOR),
 				"Case",
 				"Supervisor",
 				DefaultEntityHelper.CASE_SUP_USERNAME_AND_PASSWORD,
@@ -377,7 +383,7 @@ public class StartupShutdownService {
 
 			// Create Contact Supervisor
 			createAndPersistDefaultUser(
-				userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.CONTACT_SUPERVISOR)),
+				userRoleService.getByLinkedDefaultUserRole(DefaultUserRole.CONTACT_SUPERVISOR),
 				"Contact",
 				"Supervisor",
 				DefaultEntityHelper.CONT_SUP_USERNAME_AND_PASSWORD,
@@ -385,7 +391,7 @@ public class StartupShutdownService {
 
 			// Create Point of Entry Supervisor
 			createAndPersistDefaultUser(
-				userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.POE_SUPERVISOR)),
+				userRoleService.getByLinkedDefaultUserRole(DefaultUserRole.POE_SUPERVISOR),
 				"Point of Entry",
 				"Supervisor",
 				DefaultEntityHelper.POE_SUP_USERNAME_AND_PASSWORD,
@@ -402,7 +408,7 @@ public class StartupShutdownService {
 
 			// Create Laboratory Officer
 			createAndPersistDefaultUser(
-				userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.LAB_USER)),
+				userRoleService.getByLinkedDefaultUserRole(DefaultUserRole.LAB_USER),
 				"Laboratory",
 				"Officer",
 				DefaultEntityHelper.LAB_OFF_USERNAME_AND_PASSWORD,
@@ -410,7 +416,7 @@ public class StartupShutdownService {
 
 			// Create Event Officer
 			createAndPersistDefaultUser(
-				userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.EVENT_OFFICER)),
+				userRoleService.getByLinkedDefaultUserRole(DefaultUserRole.EVENT_OFFICER),
 				"Event",
 				"Officer",
 				DefaultEntityHelper.EVE_OFF_USERNAME_AND_PASSWORD,
@@ -418,7 +424,7 @@ public class StartupShutdownService {
 
 			// Create National User
 			createAndPersistDefaultUser(
-				userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.NATIONAL_USER)),
+				userRoleService.getByLinkedDefaultUserRole(DefaultUserRole.NATIONAL_USER),
 				"National",
 				"User",
 				DefaultEntityHelper.NAT_USER_USERNAME_AND_PASSWORD,
@@ -427,7 +433,7 @@ public class StartupShutdownService {
 
 			// Create National Clinician
 			createAndPersistDefaultUser(
-				userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.NATIONAL_CLINICIAN)),
+				userRoleService.getByLinkedDefaultUserRole(DefaultUserRole.NATIONAL_CLINICIAN),
 				"National",
 				"Clinician",
 				DefaultEntityHelper.NAT_CLIN_USERNAME_AND_PASSWORD,
@@ -436,7 +442,7 @@ public class StartupShutdownService {
 
 			// Create Surveillance Officer
 			User surveillanceOfficer = createAndPersistDefaultUser(
-				userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.SURVEILLANCE_OFFICER)),
+				userRoleService.getByLinkedDefaultUserRole(DefaultUserRole.SURVEILLANCE_OFFICER),
 				"Surveillance",
 				"Officer",
 				DefaultEntityHelper.SURV_OFF_USERNAME_AND_PASSWORD,
@@ -447,7 +453,7 @@ public class StartupShutdownService {
 
 			// Create Hospital Informant
 			createAndPersistDefaultUser(
-				userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.HOSPITAL_INFORMANT)),
+				userRoleService.getByLinkedDefaultUserRole(DefaultUserRole.HOSPITAL_INFORMANT),
 				"Hospital",
 				"Informant",
 				DefaultEntityHelper.HOSP_INF_USERNAME_AND_PASSWORD,
@@ -495,7 +501,7 @@ public class StartupShutdownService {
 			//@formatter:on
 			// Create Community Officer
 			createAndPersistDefaultUser(
-				userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.COMMUNITY_OFFICER)),
+				userRoleService.getByLinkedDefaultUserRole(DefaultUserRole.COMMUNITY_OFFICER),
 				"Community",
 				"Officer",
 				DefaultEntityHelper.COMM_OFF_USERNAME_AND_PASSWORD,
@@ -507,7 +513,7 @@ public class StartupShutdownService {
 
 			// Create Poe Informant
 			createAndPersistDefaultUser(
-				userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.POE_INFORMANT)),
+				userRoleService.getByLinkedDefaultUserRole(DefaultUserRole.POE_INFORMANT),
 				"Poe",
 				"Informant",
 				DefaultEntityHelper.POE_INF_USERNAME_AND_PASSWORD,
@@ -553,8 +559,8 @@ public class StartupShutdownService {
 			HashSet<UserRole> userRoles = new HashSet<>();
 			userRoles.addAll(
 				Arrays.asList(
-					userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.SORMAS_TO_SORMAS_CLIENT)),
-					userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.NATIONAL_USER))));
+					userRoleService.getByLinkedDefaultUserRole(DefaultUserRole.SORMAS_TO_SORMAS_CLIENT),
+					userRoleService.getByLinkedDefaultUserRole(DefaultUserRole.NATIONAL_USER)));
 
 			createOrUpdateDefaultUser(userRoles, DefaultEntityHelper.SORMAS_TO_SORMAS_USER_NAME, new String(pwd), "Sormas to Sormas", "Client");
 		}
@@ -569,7 +575,7 @@ public class StartupShutdownService {
 		}
 
 		createOrUpdateDefaultUser(
-			new HashSet<>(Arrays.asList(userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.REST_EXTERNAL_VISITS_USER)))),
+			new HashSet<>(Arrays.asList(userRoleService.getByLinkedDefaultUserRole(DefaultUserRole.REST_EXTERNAL_VISITS_USER))),
 			userConfig.getUsername(),
 			userConfig.getPassword(),
 			"Symptom",
@@ -585,7 +591,7 @@ public class StartupShutdownService {
 		}
 
 		createOrUpdateDefaultUser(
-			new HashSet<>(Arrays.asList(userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.REST_EXTERNAL_VISITS_USER)))),
+			new HashSet<>(Arrays.asList(userRoleService.getByLinkedDefaultUserRole(DefaultUserRole.REST_EXTERNAL_VISITS_USER))),
 			userConfig.getUsername(),
 			userConfig.getPassword(),
 			"Patient",
@@ -666,26 +672,9 @@ public class StartupShutdownService {
 
 		List<User> users = userService.getAllActive();
 		for (User user : users) {
-			syncUser(user);
+			userService.syncUserAsync(user);
 		}
 		logger.info("User synchronization finalized");
-	}
-
-	/**
-	 * Triggers the user sync asynchronously to not block the deployment step
-	 */
-	private void syncUser(User user) {
-		String shortUuid = DataHelper.getShortUuid(user.getUuid());
-		logger.debug("Synchronizing user {}", shortUuid);
-		try {
-
-			UserUpdateEvent event = new UserUpdateEvent(user);
-			event.setExceptionCallback(exceptionMessage -> logger.error("Could not synchronize user {} due to {}", shortUuid, exceptionMessage));
-
-			this.userUpdateEvent.fireAsync(event);
-		} catch (Throwable e) {
-			logger.error(MessageFormat.format("Unexpected exception when synchronizing user {0}", shortUuid), e);
-		}
 	}
 
 	/**
@@ -713,7 +702,7 @@ public class StartupShutdownService {
 		}
 
 		// Check that required extensions are installed
-		Stream.of("temporal_tables", "pg_trgm").filter(t -> {
+		Stream.of("pg_trgm").filter(t -> {
 			String q = "select count(*) from pg_extension where extname = '" + t + "'";
 			int count = ((Number) entityManager.createNativeQuery(q).getSingleResult()).intValue();
 			return count == 0;
@@ -737,7 +726,7 @@ public class StartupShutdownService {
 		return versionBegin.matches(versionRegexp);
 	}
 
-	private void updateDatabase(UpdateQueryTransactionWrapper.TargetDb db, EntityManager entityManager, String schemaFileName) {
+	private void updateDatabase(EntityManager entityManager, String schemaFileName) {
 
 		logger.info("Starting automatic database update...");
 
@@ -780,7 +769,7 @@ public class StartupShutdownService {
 				// Perform the current update when the INSERT INTO schema_version statement is reached
 				if (schemaLineVersion != null) {
 					logger.info("Updating database to version {}...", schemaLineVersion);
-					updateQueryTransactionWrapper.executeUpdate(db, nextUpdateBuilder.toString());
+					updateQueryTransactionWrapper.executeUpdate(nextUpdateBuilder.toString());
 					nextUpdateBuilder.setLength(0);
 				}
 			}
@@ -789,6 +778,25 @@ public class StartupShutdownService {
 			throw new UncheckedIOException(e);
 		} finally {
 			logger.info("Database update completed.");
+		}
+	}
+
+	private void createVersioningFunction() {
+
+		logger.info("Starting create versioning function...");
+
+		final InputStream versioningFunctionStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(VERSIONING_FUNCTION);
+		try {
+			String versioningFunction = IOUtils.toString(versioningFunctionStream, StandardCharsets.UTF_8);
+			// escape for hibernate
+			// note: This will also escape ':' in pure strings, where a replacement may cause problems
+			versioningFunction = versioningFunction.replaceAll(":", "\\\\:");
+			updateQueryTransactionWrapper.executeUpdate(versioningFunction);
+		} catch (IOException e) {
+			logger.error("Could not load {} file. Create versioning function not performed.", VERSIONING_FUNCTION);
+			throw new UncheckedIOException(e);
+		} finally {
+			logger.info("Creating versioning function completed.");
 		}
 	}
 
@@ -831,7 +839,7 @@ public class StartupShutdownService {
 				List<User> usersWithoutUserRoles =
 					userService.getAll().stream().filter(user -> user.getUserRoles().isEmpty()).collect(Collectors.toList());
 				if (!usersWithoutUserRoles.isEmpty()) {
-					UserRole importuserUserRole = userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.IMPORT_USER));
+					UserRole importuserUserRole = userRoleService.getByLinkedDefaultUserRole(DefaultUserRole.IMPORT_USER);
 					if (importuserUserRole == null) {
 						throw new IllegalArgumentException(
 							"Could not find default IMPORT_USER role in the database; Please ensure that the database contains no user without a user role and redeploy the server.");
@@ -843,8 +851,10 @@ public class StartupShutdownService {
 					}
 				}
 				break;
+			// case 473:1.74.3
+			// 	UserRole userRole = userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.COMMUNITY_INFORMANT));
 			case 473:
-				UserRole userRole = userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.COMMUNITY_INFORMANT));
+				UserRole userRole = userRoleService.getByLinkedDefaultUserRole(DefaultUserRole.COMMUNITY_INFORMANT);
 				if (userRole != null) {
 					userRole.getUserRights().removeIf(userRight -> userRight == UserRight.DASHBOARD_CAMPAIGNS_VIEW);
 					userRoleService.ensurePersisted(userRole);
@@ -853,15 +863,68 @@ public class StartupShutdownService {
 			case 475:
 				// Hacky solution because it's possible that the user role has been re-configured in the meantime; #9645 will make sure that
 				// default user roles are not changed.
-				userRole = userRoleService.getByCaption(I18nProperties.getEnumCaption(DefaultUserRole.EXTERNAL_LAB_USER));
+				userRole = userRoleService.getByLinkedDefaultUserRole(DefaultUserRole.EXTERNAL_LAB_USER);
 				if (userRole != null) {
 					userRole.getUserRights().add(UserRight.SEE_SENSITIVE_DATA_IN_JURISDICTION);
 					userRoleService.ensurePersisted(userRole);
 				}
 				break;
+			case 496:
+				// Add proper captions and translations to occupation types
+				List<OccupationType> occupationTypes = customizableEnumFacade.getEnumValues(CustomizableEnumType.OCCUPATION_TYPE, null);
+				occupationTypes.forEach(o -> {
+					String value = o.getValue();
+					String caption = I18nProperties.getEnumCaption(null, OccupationType.I18N_PREFIX, value);
+					List<String> translations = new ArrayList<>();
+					Arrays.stream(Language.values()).forEach(l -> {
+						translations.add(
+							String.format(
+								"{\"languageCode\":\"%s\",\"value\":\"%s\"}",
+								l.getLocale(),
+								I18nProperties.getEnumCaption(l, OccupationType.I18N_PREFIX, o.getValue())));
+					});
+					String translationsString = "[" + String.join(",", translations) + "]";
+					String propertiesString = "{\"hasDetails\":true}";
+					boolean hasDetails = value.equals("BUSINESSMAN_WOMAN") || value.equals("TRANSPORTER");
+					em.createQuery(
+						"UPDATE CustomizableEnumValue c SET c.caption = :enum_caption, c.translations = :enum_translations, c.properties = :enum_properties WHERE c.value = :enum_value")
+						.setParameter("enum_caption", caption)
+						.setParameter("enum_translations", translationsString)
+						.setParameter("enum_properties", hasDetails ? propertiesString : null)
+						.setParameter("enum_value", value)
+						.executeUpdate();
+				});
 
 
 
+				// Add default occupation types
+				OccupationType.getDefaultValues().forEach((k, v) -> {
+					CustomizableEnumValue entry = new CustomizableEnumValue();
+					entry.setDataType(CustomizableEnumType.OCCUPATION_TYPE);
+					entry.setValue(k);
+					entry.setCaption(k);
+					entry.setProperties(v);
+					entry.setDefaultValue(true);
+					customizableEnumValueService.ensurePersisted(entry);
+				});
+				break;
+			case 502:
+				userRoleService.getAll().forEach(ur -> {
+					if (ur.getLinkedDefaultUserRole() == null) {
+						final String caption = ur.getCaption();
+						final DefaultUserRole defaultUserRole = DefaultUserRole.getByCaption(caption);
+						if (defaultUserRole != null) {
+							ur.setLinkedDefaultUserRole(defaultUserRole);
+							userRoleService.ensurePersisted(ur);
+						} else {
+							logger.warn("Could not find DefaultUserRole with caption: " + caption);
+						}
+					}
+				});
+				break;
+			case 530:
+				fillDefaultUserRole(DefaultUserRole.ENVIRONMENTAL_SURVEILLANCE_USER);
+				break;
 			default:
 				throw new NoSuchElementException(DataHelper.toStringNullable(versionNeedingUpgrade));
 			}
@@ -917,6 +980,24 @@ public class StartupShutdownService {
 			userRole.setUserRights(role.getDefaultUserRights());
 			userRoleService.persist(userRole);
 		});
+	 	Arrays.stream(DefaultUserRole.values()).forEach(this::fillDefaultUserRole);
+	 }
+
+	 private void fillDefaultUserRole(DefaultUserRole role) {
+	 	UserRole userRole = userRoleService.getByLinkedDefaultUserRole(role);
+		 if(Objects.nonNull(userRole)) {
+			 userRole.setCaption(I18nProperties.getEnumCaption(role));
+			 userRole.setLinkedDefaultUserRole(role);
+			 userRole.setPortHealthUser(role.isPortHealthUser());
+			 userRole.setHasAssociatedDistrictUser(role.hasAssociatedDistrictUser());
+			 userRole.setHasOptionalHealthFacility(DefaultUserRole.hasOptionalHealthFacility(Collections.singleton(role)));
+			 userRole.setEnabled(true);
+			 userRole.setJurisdictionLevel(role.getJurisdictionLevel());
+			 userRole.setSmsNotificationTypes(role.getSmsNotificationTypes());
+			 userRole.setEmailNotificationTypes(role.getEmailNotificationTypes());
+			 userRole.setUserRights(role.getDefaultUserRights());
+			 userRoleService.persist(userRole);
+		 }
 	}
 
 	private void createImportTemplateFiles(List<FeatureConfigurationDto> featureConfigurations) {
@@ -1032,29 +1113,15 @@ public class StartupShutdownService {
 	@Stateless
 	public static class UpdateQueryTransactionWrapper {
 
-		enum TargetDb {
-			SORMAS,
-			AUDIT
-		}
-
 		@PersistenceContext(unitName = ModelConstants.PERSISTENCE_UNIT_NAME)
 		private EntityManager em;
-		@PersistenceContext(unitName = ModelConstants.PERSISTENCE_UNIT_NAME_AUDITLOG)
-		private EntityManager emAudit;
 
 		/**
 		 * Executes the passed SQL update in a new JTA transaction.
 		 */
 		@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-		public int executeUpdate(TargetDb db, String sqlStatement) {
-			switch (db) {
-			case SORMAS:
-				return em.createNativeQuery(sqlStatement).executeUpdate();
-			case AUDIT:
-				return emAudit.createNativeQuery(sqlStatement).executeUpdate();
-			default:
-				throw new IllegalStateException("Unexpected value: " + db);
-			}
+		public int executeUpdate(String sqlStatement) {
+			return em.createNativeQuery(sqlStatement).executeUpdate();
 		}
 	}
 }

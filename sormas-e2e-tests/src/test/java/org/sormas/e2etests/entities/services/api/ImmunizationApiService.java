@@ -18,12 +18,15 @@
 
 package org.sormas.e2etests.entities.services.api;
 
+import static org.sormas.e2etests.entities.pojo.helpers.ShortUUIDGenerator.generateShortUUID;
 import static org.sormas.e2etests.steps.BaseSteps.locale;
 
 import com.github.javafaker.Faker;
 import com.google.inject.Inject;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
-import java.util.UUID;
+import lombok.SneakyThrows;
 import org.sormas.e2etests.entities.pojo.api.Immunization;
 import org.sormas.e2etests.entities.pojo.api.Person;
 import org.sormas.e2etests.enums.CommunityValues;
@@ -55,10 +58,47 @@ public class ImmunizationApiService {
     this.runningConfiguration = runningConfiguration;
   }
 
+  @SneakyThrows
   public Immunization buildGeneratedImmunizationForPerson(Person person) {
     EnvironmentManager environmentManager = new EnvironmentManager(restAssuredClient);
     return Immunization.builder()
-        .uuid(UUID.randomUUID().toString())
+        .uuid(generateShortUUID())
+        .pseudonymized(false)
+        .person(person)
+        .reportDate(Calendar.getInstance().getTimeInMillis())
+        .positiveTestResultDate(Calendar.getInstance().getTimeInMillis())
+        .recoveryDate(Calendar.getInstance().getTimeInMillis())
+        .startDate(Calendar.getInstance().getTimeInMillis())
+        .endDate(Calendar.getInstance().getTimeInMillis())
+        .externalId(faker.number().digits(9))
+        .reportingUser(
+            runningConfiguration.getUserByRole(locale, UserRoles.NationalUser.getRole()).getUuid())
+        .archived(false)
+        .disease(DiseasesValues.getRandomDiseaseName())
+        .immunizationStatus(StatusValues.getRandomImmunizationStatus())
+        .meansOfImmunization(MeansOfImmunizationValues.getRandomMeansOfImmunization())
+        .immunizationManagementStatus(
+            ImmunizationManagementStatusValues.getRandomImmunizationManagementStatus())
+        .responsibleRegion(
+            environmentManager.getRegionUUID(RegionsValues.VoreingestellteBundeslander.getName()))
+        .responsibleDistrict(
+            environmentManager.getDistrictUUID(DistrictsValues.VoreingestellterLandkreis.getName()))
+        .responsibleCommunity(
+            environmentManager.getCommunityUUID(CommunityValues.VoreingestellteGemeinde.getName()))
+        .build();
+  }
+
+  @SneakyThrows
+  public Immunization buildGeneratedImmunizationForPersonWithCreationDate(
+      Person person, Integer days) {
+    EnvironmentManager environmentManager = new EnvironmentManager(restAssuredClient);
+    return Immunization.builder()
+        .creationDate(
+            LocalDateTime.parse(LocalDateTime.now().minusDays(days).toString())
+                .atZone(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli())
+        .uuid(generateShortUUID())
         .pseudonymized(false)
         .person(person)
         .reportDate(Calendar.getInstance().getTimeInMillis())

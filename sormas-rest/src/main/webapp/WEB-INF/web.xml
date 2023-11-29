@@ -120,6 +120,10 @@
 	</security-role>
 
 	<security-role>
+		<role-name>PERSON_MERGE</role-name>
+	</security-role>
+
+	<security-role>
 		<role-name>SAMPLE_CREATE</role-name>
 	</security-role>
 
@@ -192,19 +196,11 @@
 	</security-role>
 
 	<security-role>
-		<role-name>CONTACT_ASSIGN</role-name>
-	</security-role>
-
-	<security-role>
 		<role-name>CONTACT_EDIT</role-name>
 	</security-role>
 
 	<security-role>
 		<role-name>CONTACT_DELETE</role-name>
-	</security-role>
-
-	<security-role>
-		<role-name>CONTACT_CLASSIFY</role-name>
 	</security-role>
 
 	<security-role>
@@ -265,6 +261,10 @@
 
 	<security-role>
 		<role-name>TASK_EXPORT</role-name>
+	</security-role>
+
+	<security-role>
+		<role-name>TASK_ARCHIVE</role-name>
 	</security-role>
 
 	<security-role>
@@ -372,6 +372,18 @@
 	</security-role>
 
 	<security-role>
+		<role-name>USER_ROLE_EDIT</role-name>
+	</security-role>
+
+	<security-role>
+		<role-name>USER_ROLE_DELETE</role-name>
+	</security-role>
+
+    <security-role>
+        <role-name>USER_ROLE_VIEW</role-name>
+    </security-role>
+
+    <security-role>
 		<role-name>SEND_MANUAL_EXTERNAL_MESSAGES</role-name>
 	</security-role>
 
@@ -457,6 +469,10 @@
 
 	<security-role>
 		<role-name>DASHBOARD_CAMPAIGNS_VIEW</role-name>
+	</security-role>
+
+	<security-role>
+		<role-name>DASHBOARD_SAMPLES_VIEW</role-name>
 	</security-role>
 
 	<security-role>
@@ -608,11 +624,27 @@
 	</security-role>
 
 	<security-role>
+		<role-name>SORMAS_TO_SORMAS_PROCESS</role-name>
+	</security-role>
+
+	<security-role>
+		<role-name>EXTERNAL_SURVEILLANCE_SHARE</role-name>
+	</security-role>
+
+	<security-role>
+		<role-name>EXTERNAL_SURVEILLANCE_DELETE</role-name>
+	</security-role>
+
+	<security-role>
 		<role-name>EXTERNAL_MESSAGE_VIEW</role-name>
 	</security-role>
 
 	<security-role>
 		<role-name>EXTERNAL_MESSAGE_PROCESS</role-name>
+	</security-role>
+
+	<security-role>
+		<role-name>EXTERNAL_MESSAGE_PUSH</role-name>
 	</security-role>
 
 	<security-role>
@@ -637,6 +669,46 @@
 
 	<security-role>
 		<role-name>TRAVEL_ENTRY_DELETE</role-name>
+	</security-role>
+
+	<security-role>
+		<role-name>ENVIRONMENT_VIEW</role-name>
+	</security-role>
+
+	<security-role>
+		<role-name>ENVIRONMENT_CREATE</role-name>
+	</security-role>
+
+	<security-role>
+		<role-name>ENVIRONMENT_EDIT</role-name>
+	</security-role>
+
+	<security-role>
+		<role-name>ENVIRONMENT_ARCHIVE</role-name>
+	</security-role>
+
+	<security-role>
+		<role-name>ENVIRONMENT_DELETE</role-name>
+	</security-role>
+
+	<security-role>
+		<role-name>ENVIRONMENT_IMPORT</role-name>
+	</security-role>
+
+	<security-role>
+		<role-name>ENVIRONMENT_EXPORT</role-name>
+	</security-role>
+
+	<security-role>
+		<role-name>DOCUMENT_VIEW</role-name>
+	</security-role>
+
+	<security-role>
+		<role-name>DOCUMENT_UPLOAD</role-name>
+	</security-role>
+
+	<security-role>
+		<role-name>DOCUMENT_DELETE</role-name>
 	</security-role>
 
 	<security-role>

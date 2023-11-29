@@ -39,6 +39,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.HtmlHelper;
+import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.document.DocumentListComponent;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
@@ -49,6 +50,7 @@ import de.symeda.sormas.ui.utils.components.sidecomponent.SideComponentLayout;
 public class ActionListEntry extends HorizontalLayout {
 
 	private final ActionDto action;
+	HorizontalLayout titleLayout;
 	private Button editButton;
 
 	public ActionListEntry(ActionDto action) {
@@ -66,9 +68,13 @@ public class ActionListEntry extends HorizontalLayout {
 		addComponent(withContentLayout);
 		setExpandRatio(withContentLayout, 3);
 
+		titleLayout = new HorizontalLayout();
+		titleLayout.setMargin(false);
+		titleLayout.setSpacing(false);
 		Label title = new Label(MoreObjects.firstNonNull(Strings.emptyToNull(action.getTitle()), "-"));
-		title.addStyleName(CssStyles.H3);
-		withContentLayout.addComponent(title);
+		title.addStyleNames(CssStyles.H3, CssStyles.HSPACE_LEFT_3);
+		titleLayout.addComponent(title);
+		withContentLayout.addComponent(titleLayout);
 
 		HorizontalLayout topLayout = new HorizontalLayout();
 		topLayout.setMargin(false);
@@ -173,7 +179,8 @@ public class ActionListEntry extends HorizontalLayout {
 			priorityLabel.addStyleName(statusStyle);
 		}
 
-		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.DOCUMENTS)) {
+		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.DOCUMENTS)
+			&& UserProvider.getCurrent().hasUserRight(UserRight.DOCUMENT_VIEW)) {
 			VerticalLayout documentLayout = new VerticalLayout();
 			documentLayout.setMargin(false);
 			documentLayout.setSpacing(false);
@@ -181,9 +188,8 @@ public class ActionListEntry extends HorizontalLayout {
 			setExpandRatio(documentLayout, 1);
 			documentLayout.setMargin(new MarginInfo(true, true, false, false));
 
-			// TODO: user rights?
 			DocumentListComponent documentList =
-				new DocumentListComponent(DocumentRelatedEntityType.ACTION, action.toReference(), UserRight.EVENT_EDIT, false);
+				new DocumentListComponent(DocumentRelatedEntityType.ACTION, action.toReference(), UserRight.EVENT_EDIT, false, true, true);
 			documentLayout.addComponent(new SideComponentLayout(documentList));
 		}
 	}
@@ -199,9 +205,10 @@ public class ActionListEntry extends HorizontalLayout {
 				CssStyles.BUTTON_COMPACT,
 				CssStyles.LABEL_VERTICAL_ALIGN_TOP);
 
-			addComponent(editButton);
-			setComponentAlignment(editButton, Alignment.MIDDLE_RIGHT);
-			setExpandRatio(editButton, 0);
+			titleLayout.addComponent(editButton, 0);
+			editButton.addStyleNames(CssStyles.LABEL_HEADING_TITLE, CssStyles.HSPACE_LEFT_4);
+			titleLayout.setComponentAlignment(editButton, Alignment.TOP_RIGHT);
+			titleLayout.setExpandRatio(editButton, 0);
 		}
 
 		editButton.addClickListener(editClickListener);

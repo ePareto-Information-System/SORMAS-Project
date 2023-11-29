@@ -26,12 +26,15 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.function.Consumer;
 
+import org.junit.jupiter.api.AfterEach;
 import org.mockito.Mockito;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.feature.FeatureConfigurationIndexDto;
@@ -56,9 +59,11 @@ import de.symeda.sormas.api.sormastosormas.SormasServerDescriptor;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasEncryptedDataDto;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasException;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasOriginInfoDto;
-import de.symeda.sormas.api.sormastosormas.sample.SormasToSormasSampleDto;
-import de.symeda.sormas.api.sormastosormas.shareinfo.SormasToSormasShareInfoDto;
-import de.symeda.sormas.api.sormastosormas.sharerequest.ShareRequestStatus;
+import de.symeda.sormas.api.sormastosormas.entities.sample.SormasToSormasSampleDto;
+import de.symeda.sormas.api.sormastosormas.share.incoming.ShareRequestDataType;
+import de.symeda.sormas.api.sormastosormas.share.incoming.ShareRequestStatus;
+import de.symeda.sormas.api.sormastosormas.share.outgoing.SormasToSormasShareInfoDto;
+import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
@@ -71,8 +76,8 @@ import de.symeda.sormas.backend.infrastructure.district.District;
 import de.symeda.sormas.backend.infrastructure.facility.Facility;
 import de.symeda.sormas.backend.infrastructure.pointofentry.PointOfEntry;
 import de.symeda.sormas.backend.infrastructure.region.Region;
-import de.symeda.sormas.backend.sormastosormas.share.shareinfo.ShareRequestInfo;
-import de.symeda.sormas.backend.sormastosormas.share.shareinfo.SormasToSormasShareInfo;
+import de.symeda.sormas.backend.sormastosormas.share.outgoing.ShareRequestInfo;
+import de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShareInfo;
 import de.symeda.sormas.backend.user.User;
 
 public abstract class SormasToSormasTest extends AbstractBeanTest {
@@ -82,6 +87,7 @@ public abstract class SormasToSormasTest extends AbstractBeanTest {
 	public static final String SECOND_SERVER_ID = "2.sormas.id.sormas_b";
 	private ObjectMapper objectMapper;
 	protected TestDataCreator.RDCF rdcf;
+	protected UserDto s2sClientUser;
 
 	@Override
 	public void init() {
@@ -97,23 +103,51 @@ public abstract class SormasToSormasTest extends AbstractBeanTest {
 			new FeatureConfigurationIndexDto(DataHelper.createUuid(), null, null, null, null, null, isAcceptRejectFeatureEnabled(), null);
 		getFeatureConfigurationFacade().saveFeatureConfiguration(featureConfiguration, FeatureType.SORMAS_TO_SORMAS_ACCEPT_REJECT);
 		// in S2S we use external IDs
-		rdcf = createRDCF(true).centralRdcf;
+		rdcf = createRDCF("ExtId").centralRdcf;
+
+		s2sClientUser = creator.createUser(
+			rdcf,
+			"S2S",
+			"Client",
+			creator.getUserRoleReference(DefaultUserRole.NATIONAL_USER),
+			creator.getUserRoleReference(DefaultUserRole.SORMAS_TO_SORMAS_CLIENT));
 
 		getFacilityService().createConstantFacilities();
 		getPointOfEntryService().createConstantPointsOfEntry();
+
+		Mockito.when(MockProducer.getSormasToSormasDiscoveryService().getSormasServerDescriptorById(eq(DEFAULT_SERVER_ID)))
+			.thenReturn(new SormasServerDescriptor(DEFAULT_SERVER_ID, "SORMAS A", "https://sormas-a.com"));
+
+		Mockito.when(MockProducer.getSormasToSormasDiscoveryService().getSormasServerDescriptorById(eq(SECOND_SERVER_ID)))
+			.thenReturn(new SormasServerDescriptor(SECOND_SERVER_ID, "SORMAS B", "https://sormas-b.com"));
+	}
+
+	@AfterEach
+	public void teardown() {
+		FeatureConfigurationIndexDto featureConfiguration =
+			new FeatureConfigurationIndexDto(DataHelper.createUuid(), null, null, null, null, null, false, null);
+		getFeatureConfigurationFacade().saveFeatureConfiguration(featureConfiguration, FeatureType.SORMAS_TO_SORMAS_ACCEPT_REJECT);
 	}
 
 	protected boolean isAcceptRejectFeatureEnabled() {
 		return false;
 	}
 
-	protected SormasToSormasOriginInfoDto createSormasToSormasOriginInfo(String serverId, boolean ownershipHandedOver) {
+	protected SormasToSormasOriginInfoDto createSormasToSormasOriginInfoDto(String serverId, boolean ownershipHandedOver) {
 		SormasToSormasOriginInfoDto source = new SormasToSormasOriginInfoDto();
 		source.setOrganizationId(serverId);
 		source.setSenderName("John doe");
 		source.setOwnershipHandedOver(ownershipHandedOver);
+		source.setComment("Test comment");
 
 		return source;
+	}
+
+	protected SormasToSormasOriginInfoDto createAndSaveSormasToSormasOriginInfo(
+		String serverId,
+		boolean ownershipHandedOver,
+		Consumer<SormasToSormasOriginInfoDto> extraConfig) {
+		return creator.createSormasToSormasOriginInfo(serverId, ownershipHandedOver, extraConfig);
 	}
 
 	protected PersonDto createPersonDto(TestDataCreator.RDCF rdcf) {
@@ -127,6 +161,16 @@ public abstract class SormasToSormasTest extends AbstractBeanTest {
 		person.getAddress().setCommunity(rdcf.community);
 
 		return person;
+	}
+
+	protected CaseDataDto createCaseDto(TestDataCreator.RDCF remoteRdcf, PersonDto person) {
+		CaseDataDto caze = CaseDataDto.build(person.toReference(), Disease.CORONAVIRUS);
+		caze.setResponsibleRegion(remoteRdcf.region);
+		caze.setResponsibleDistrict(remoteRdcf.district);
+		caze.setResponsibleCommunity(remoteRdcf.community);
+		caze.setHealthFacility(remoteRdcf.facility);
+		caze.setFacilityType(FacilityType.HOSPITAL);
+		return caze;
 	}
 
 	protected SormasToSormasSampleDto createRemoteSampleDtoWithTests(
@@ -156,7 +200,11 @@ public abstract class SormasToSormasTest extends AbstractBeanTest {
 		AdditionalTestDto additionalTest = AdditionalTestDto.build(sample.toReference());
 		additionalTest.setTestDateTime(new Date());
 
-		return new SormasToSormasSampleDto(sample, Collections.singletonList(pathogenTest), Collections.singletonList(additionalTest));
+		return new SormasToSormasSampleDto(
+			sample,
+			Collections.singletonList(pathogenTest),
+			Collections.singletonList(additionalTest),
+			Collections.emptyList());
 	}
 
 	protected SormasToSormasShareInfo createShareInfo(String serverId, boolean ownershipHandedOver, Consumer<SormasToSormasShareInfo> setTarget) {
@@ -172,29 +220,27 @@ public abstract class SormasToSormasTest extends AbstractBeanTest {
 	}
 
 	protected ShareRequestInfo createShareRequestInfo(
+		ShareRequestDataType dataType,
 		User sender,
 		String serverId,
 		boolean ownershipHandedOver,
 		Consumer<SormasToSormasShareInfo> setTarget) {
-		return createShareRequestInfo(sender, serverId, ownershipHandedOver, ShareRequestStatus.PENDING, setTarget);
+		return createShareRequestInfo(dataType, sender, serverId, ownershipHandedOver, ShareRequestStatus.PENDING, setTarget);
 	}
 
 	protected ShareRequestInfo createShareRequestInfo(
+		ShareRequestDataType dataType,
 		User sender,
 		String serverId,
 		boolean ownershipHandedOver,
 		ShareRequestStatus status,
 		Consumer<SormasToSormasShareInfo> setTarget) {
 
-		SormasToSormasShareInfo shareInfo = new SormasToSormasShareInfo();
-
-		shareInfo.setOwnershipHandedOver(ownershipHandedOver);
-		shareInfo.setOrganizationId(serverId);
-
-		setTarget.accept(shareInfo);
+		SormasToSormasShareInfo shareInfo = createShareInfo(serverId, ownershipHandedOver, setTarget);
 
 		ShareRequestInfo requestInfo = new ShareRequestInfo();
 		requestInfo.setUuid(DataHelper.createUuid());
+		requestInfo.setDataType(dataType);
 		requestInfo.setSender(sender);
 		requestInfo.setRequestStatus(status);
 		requestInfo.setShares(new ArrayList<>());
@@ -277,9 +323,10 @@ public abstract class SormasToSormasTest extends AbstractBeanTest {
 		MockProducer.getProperties().setProperty(ConfigFacadeEjb.SORMAS2SORMAS_TRUSTSTORE_NAME, "sormas2sormas.truststore.p12");
 		MockProducer.getProperties().setProperty(ConfigFacadeEjb.SORMAS2SORMAS_TRUSTSTORE_PASS, "password");
 		MockProducer.getProperties().setProperty(ConfigFacadeEjb.SORMAS2SORMAS_ROOT_CA_ALIAS, "S2SCA");
+
 	}
 
-	protected MappableRdcf createRDCF(boolean withExternalId) {
+	protected MappableRdcf createRDCF(String externalIdSuffix) {
 
 		String regionName = "Region";
 		String districtName = "District";
@@ -293,12 +340,13 @@ public abstract class SormasToSormasTest extends AbstractBeanTest {
 		String facilityExternalId = null;
 		String pointOfEntryExternalId = null;
 
+		boolean withExternalId = externalIdSuffix != null;
 		if (withExternalId) {
-			regionExternalId = "RegionExtId";
-			districtExternalId = "DistrictExtId";
-			communityExternalId = "CommunityExtId";
-			facilityExternalId = "FacilityExtId";
-			pointOfEntryExternalId = "Point of EntryExtId";
+			regionExternalId = "Region" + externalIdSuffix;
+			districtExternalId = "District" + externalIdSuffix;
+			communityExternalId = "Community" + externalIdSuffix;
+			facilityExternalId = "Facility" + externalIdSuffix;
+			pointOfEntryExternalId = "Point of Entry" + externalIdSuffix;
 		}
 
 		MappableRdcf rdcf = new MappableRdcf();

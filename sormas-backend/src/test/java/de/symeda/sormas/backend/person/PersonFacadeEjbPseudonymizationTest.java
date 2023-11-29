@@ -20,9 +20,8 @@ package de.symeda.sormas.backend.person;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyString;
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.Matchers.startsWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -30,15 +29,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.event.EventDto;
+import de.symeda.sormas.api.i18n.Captions;
+import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.infrastructure.area.AreaType;
 import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.person.PersonCriteria;
@@ -46,12 +44,12 @@ import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.PersonExportDto;
 import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.api.travelentry.TravelEntryDto;
 import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.backend.AbstractBeanTest;
 import de.symeda.sormas.backend.TestDataCreator;
 
-@RunWith(MockitoJUnitRunner.class)
 public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 
 	private TestDataCreator.RDCF rdcf1;
@@ -67,7 +65,7 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 	public void init() {
 		super.init();
 
-		rdcf1 = creator.createRDCF("Region 1", "District 1", "Community 1", "Facility 1");
+		rdcf1 = creator.createRDCF("Region 1", "District 1", "Community 1", "Facility 1", "PointOfEntry1");
 		districtUser1 = creator.createUser(
 			rdcf1.region.getUuid(),
 			rdcf1.district.getUuid(),
@@ -76,7 +74,7 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 			"Off1",
 			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER));
 
-		rdcf2 = creator.createRDCF("Region 2", "District 2", "Community 2", "Facility 2");
+		rdcf2 = creator.createRDCF("Region 2", "District 2", "Community 2", "Facility 2", "PointOfEntry2");
 		districtUser2 = creator.createUser(
 			rdcf2.region.getUuid(),
 			rdcf2.district.getUuid(),
@@ -118,7 +116,7 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 		person = createPerson();
 
 		creator.createCase(districtUser1.toReference(), person.toReference(), rdcf2);
-		assertNotPseudonymized(getPersonFacade().getPersonByUuid(person.getUuid()));
+		assertNotPseudonymized(getPersonFacade().getByUuid(person.getUuid()));
 	}
 
 	@Test
@@ -128,7 +126,7 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 		person = createPerson();
 		creator.createCase(districtUser1.toReference(), person.toReference(), rdcf1);
 
-		assertPseudonymised(getPersonFacade().getPersonByUuid(person.getUuid()));
+		assertPseudonymised(getPersonFacade().getByUuid(person.getUuid()));
 	}
 
 	@Test
@@ -143,7 +141,7 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 			c.setHealthFacility(rdcf2.facility);
 		});
 
-		assertNotPseudonymized(getPersonFacade().getPersonByUuid(person.getUuid()));
+		assertNotPseudonymized(getPersonFacade().getByUuid(person.getUuid()));
 	}
 
 	@Test
@@ -157,7 +155,7 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 			c.setResponsibleCommunity(rdcf1.community);
 		});
 
-		assertPseudonymised(getPersonFacade().getPersonByUuid(person.getUuid()));
+		assertPseudonymised(getPersonFacade().getByUuid(person.getUuid()));
 	}
 
 	@Test
@@ -172,7 +170,7 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 			c.setHealthFacility(rdcf2.facility);
 		});
 
-		assertNotPseudonymized(getPersonFacade().getPersonByUuid(person.getUuid()));
+		assertNotPseudonymized(getPersonFacade().getByUuid(person.getUuid()));
 	}
 
 	@Test
@@ -187,7 +185,7 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 			c.setHealthFacility(rdcf2.facility);
 		});
 
-		assertNotPseudonymized(getPersonFacade().getPersonByUuid(person.getUuid()));
+		assertNotPseudonymized(getPersonFacade().getByUuid(person.getUuid()));
 	}
 
 	@Test
@@ -202,7 +200,7 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 			c.setHealthFacility(rdcf2.facility);
 		});
 
-		assertNotPseudonymized(getPersonFacade().getPersonByUuid(person.getUuid()));
+		assertNotPseudonymized(getPersonFacade().getByUuid(person.getUuid()));
 	}
 
 	@Test
@@ -241,7 +239,7 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 
 		person = createPerson();
 		creator.createContact(districtUser1.toReference(), null, person.toReference(), null, new Date(), null, Disease.CORONAVIRUS, rdcf2);
-		assertNotPseudonymized(getPersonFacade().getPersonByUuid(person.getUuid()));
+		assertNotPseudonymized(getPersonFacade().getByUuid(person.getUuid()));
 	}
 
 	@Test
@@ -252,7 +250,7 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 			creator.createContact(districtUser1.toReference(), null, person.toReference(), null, new Date(), null, Disease.CORONAVIRUS, rdcf1);
 
 		loginWith(districtUser2);
-		assertPseudonymised(getPersonFacade().getPersonByUuid(person.getUuid()));
+		assertPseudonymised(getPersonFacade().getByUuid(person.getUuid()));
 
 		loginWith(districtUser1);
 		CaseDataDto caze = creator.createCase(districtUser1.toReference(), creator.createPerson().toReference(), rdcf2);
@@ -260,7 +258,7 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 		contact = getContactFacade().save(contact);
 
 		loginWith(districtUser2);
-		assertNotPseudonymized(getPersonFacade().getPersonByUuid(person.getUuid()));
+		assertNotPseudonymized(getPersonFacade().getByUuid(person.getUuid()));
 
 		loginWith(districtUser1);
 		contact.setRegion(rdcf2.region);
@@ -268,7 +266,7 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 		contact = getContactFacade().save(contact);
 
 		loginWith(districtUser2);
-		assertNotPseudonymized(getPersonFacade().getPersonByUuid(person.getUuid()));
+		assertNotPseudonymized(getPersonFacade().getByUuid(person.getUuid()));
 
 		loginWith(districtUser1);
 		contact.setRegion(null);
@@ -276,7 +274,27 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 		contact = getContactFacade().save(contact);
 
 		loginWith(districtUser2);
-		assertNotPseudonymized(getPersonFacade().getPersonByUuid(person.getUuid()));
+		assertNotPseudonymized(getPersonFacade().getByUuid(person.getUuid()));
+	}
+
+	@Test
+	public void testGetTravelEntryPersonOutsideJurisdiction() {
+		loginWith(districtUser1);
+		person = createPerson();
+		TravelEntryDto travelEntry = creator.createTravelEntry(person.toReference(), districtUser1.toReference(), rdcf1, (t) -> {
+			t.setDisease(Disease.EVD);
+		});
+
+		loginWith(districtUser2);
+		assertPseudonymised(getPersonFacade().getByUuid(person.getUuid()));
+
+		loginWith(districtUser1);
+		CaseDataDto caze = creator.createCase(districtUser1.toReference(), person.toReference(), rdcf2);
+		travelEntry.setResultingCase(caze.toReference());
+		getTravelEntryFacade().save(travelEntry);
+
+		loginWith(districtUser2);
+		assertNotPseudonymized(getPersonFacade().getByUuid(person.getUuid()));
 	}
 
 	@Test
@@ -306,7 +324,7 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 		person = createPerson();
 		EventDto event = creator.createEvent(districtUser2.toReference());
 		creator.createEventParticipant(event.toReference(), person, districtUser2.toReference());
-		assertNotPseudonymized(getPersonFacade().getPersonByUuid(person.getUuid()));
+		assertNotPseudonymized(getPersonFacade().getByUuid(person.getUuid()));
 	}
 
 	@Test
@@ -316,8 +334,7 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 		person = createPerson();
 		EventDto event = creator.createEvent(districtUser1.toReference());
 		creator.createEventParticipant(event.toReference(), person, districtUser1.toReference());
-//		assertPseudonymised(getPersonFacade().getPersonByUuid(person.getUuid()));
-		assertNotPseudonymized(getPersonFacade().getPersonByUuid(person.getUuid()));
+		assertPseudonymised(getPersonFacade().getByUuid(person.getUuid()));
 	}
 
 	@Test
@@ -338,11 +355,8 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 		person = createPerson();
 		EventDto event = creator.createEvent(districtUser1.toReference());
 		creator.createEventParticipant(event.toReference(), person, districtUser1.toReference());
-//		updatePerson(true);
-//		assertPersonNotUpdated();
-		// pseudonymization disabled for now
-		updatePerson(false);
-		assertPersonUpdated();
+		updatePerson(true);
+		assertPersonNotUpdated();
 	}
 
 	@Test
@@ -372,7 +386,7 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.YEAR, 2019);
-		List<PersonDto> persons = getPersonFacade().getPersonsAfter(calendar.getTime());
+		List<PersonDto> persons = getPersonFacade().getAllAfter(calendar.getTime());
 
 		assertNotPseudonymized(persons.stream().filter(p -> p.getUuid().equals(person.getUuid())).findFirst().get());
 		assertPseudonymised(persons.stream().filter(p -> p.getUuid().equals(person2.getUuid())).findFirst().get());
@@ -398,12 +412,12 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 		assertThat(exportedPerson.getLastName(), is("Smith"));
 		assertThat(exportedPerson.getBirthdate().getDateOfBirthDD(), is(1));
 
-		Assert.assertEquals(Optional.empty(), exportList.stream().filter(p -> p.getUuid().equals(person2.getUuid())).findFirst());
+		assertEquals(Optional.empty(), exportList.stream().filter(p -> p.getUuid().equals(person2.getUuid())).findFirst());
 	}
 
 	private PersonDto createPerson() {
 
-		LocationDto address = new LocationDto();
+		LocationDto address = LocationDto.build();
 		address.setRegion(rdcf1.region);
 		address.setDistrict(rdcf1.district);
 		address.setCommunity(rdcf1.community);
@@ -414,9 +428,6 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 		address.setPostalCode("12345");
 		address.setAreaType(AreaType.URBAN);
 		address.setDetails("Test address details");
-		address.setLongitude(46.432);
-		address.setLatitude(23.234);
-		address.setLatLonAccuracy(10F);
 
 		return creator.createPerson("James", "Smith", Sex.MALE, 1980, 1, 1, p -> {
 			p.setAddress(address);
@@ -435,7 +446,10 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 		person.setLastName("Newlastname");
 		person.setBirthdateDD(23);
 
-		LocationDto newAddress = new LocationDto();
+		LocationDto newAddress = LocationDto.build();
+		newAddress.setUuid(person.getAddress().getUuid());
+		newAddress.setChangeDate(person.getAddress().getChangeDate());
+
 		person.setPseudonymized(pseudonymized);
 		newAddress.setRegion(rdcf1.region);
 		newAddress.setDistrict(rdcf1.district);
@@ -447,13 +461,10 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 		newAddress.setPostalCode("938");
 		newAddress.setAreaType(AreaType.RURAL);
 		newAddress.setDetails("New address details");
-		newAddress.setLongitude(36.233);
-		newAddress.setLatitude(36.533);
-		newAddress.setLatLonAccuracy(8F);
 
 		person.setAddress(newAddress);
 
-		getPersonFacade().savePerson(person);
+		getPersonFacade().save(person);
 	}
 
 	private void updatePersonPseudonymizedDto() {
@@ -463,7 +474,10 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 		person.setLastName("");
 		person.setBirthdateDD(null);
 
-		LocationDto newAddress = new LocationDto();
+		LocationDto newAddress = LocationDto.build();
+		newAddress.setUuid(person.getAddress().getUuid());
+		newAddress.setChangeDate(person.getAddress().getChangeDate());
+
 		newAddress.setPseudonymized(true);
 		newAddress.setRegion(rdcf1.region);
 		newAddress.setDistrict(rdcf1.district);
@@ -472,16 +486,13 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 		newAddress.setStreet("");
 		newAddress.setHouseNumber("");
 		newAddress.setAdditionalInformation("");
-		newAddress.setPostalCode("");
+		newAddress.setPostalCode("123");
 		newAddress.setAreaType(null);
 		newAddress.setDetails("");
-		newAddress.setLongitude(null);
-		newAddress.setLatitude(null);
-		newAddress.setLatLonAccuracy(8F);
 
 		person.setAddress(newAddress);
 
-		getPersonFacade().savePerson(person);
+		getPersonFacade().save(person);
 	}
 
 	private void assertNotPseudonymized(PersonDto person) {
@@ -501,9 +512,6 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 		assertThat(person.getAddress().getPostalCode(), is("12345"));
 		assertThat(person.getAddress().getAreaType(), is(AreaType.URBAN));
 		assertThat(person.getAddress().getDetails(), is("Test address details"));
-		assertThat(person.getAddress().getLongitude(), is(46.432));
-		assertThat(person.getAddress().getLatitude(), is(23.234));
-		assertThat(person.getAddress().getLatLonAccuracy(), is(10F));
 
 		// sensitive data
 		assertThat(person.getPhone(), is("1234567"));
@@ -514,8 +522,8 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 	private void assertPseudonymised(PersonDto person) {
 
 		assertThat(person.isPseudonymized(), is(true));
-		assertThat(person.getFirstName(), is("James"));
-		assertThat(person.getLastName(), is("Smith"));
+		assertThat(person.getFirstName(), is(I18nProperties.getCaption(Captions.inaccessibleValue)));
+		assertThat(person.getLastName(), is(I18nProperties.getCaption(Captions.inaccessibleValue)));
 		assertThat(person.getBirthdateDD(), is(nullValue()));
 
 		assertThat(person.getAddress().getRegion().getCaption(), is("Region 1"));
@@ -528,13 +536,6 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 		assertThat(person.getAddress().getPostalCode(), is("123"));
 		assertThat(person.getAddress().getAreaType(), is(nullValue()));
 		assertThat(person.getAddress().getDetails(), isEmptyString());
-
-		assertThat(person.getAddress().getLatitude(), is(not(23.234)));
-		assertThat(person.getAddress().getLatitude().toString(), startsWith("23."));
-		assertThat(person.getAddress().getLongitude(), is(not(46.432)));
-		assertThat(person.getAddress().getLongitude().toString(), startsWith("46."));
-
-		assertThat(person.getAddress().getLatLonAccuracy(), is(10F));
 
 		// sensitive data
 		assertThat(person.getPhone(), isEmptyString());
@@ -559,9 +560,6 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 		assertThat(savedPerson.getAddress().getPostalCode(), is("938"));
 		assertThat(savedPerson.getAddress().getAreaType(), is(AreaType.RURAL));
 		assertThat(savedPerson.getAddress().getDetails(), is("New address details"));
-		assertThat(savedPerson.getAddress().getLongitude(), is(36.233));
-		assertThat(savedPerson.getAddress().getLatitude(), is(36.533));
-		assertThat(savedPerson.getAddress().getLatLonAccuracy(), is(8F));
 	}
 
 	private void assertPersonNotUpdated() {
@@ -582,8 +580,5 @@ public class PersonFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 		assertThat(savedPerson.getAddress().getPostalCode(), is("12345"));
 		assertThat(savedPerson.getAddress().getAreaType(), is(AreaType.URBAN));
 		assertThat(savedPerson.getAddress().getDetails(), is("Test address details"));
-		assertThat(savedPerson.getAddress().getLongitude(), is(46.432));
-		assertThat(savedPerson.getAddress().getLatitude(), is(23.234));
-		assertThat(savedPerson.getAddress().getLatLonAccuracy(), is(8F));
 	}
 }

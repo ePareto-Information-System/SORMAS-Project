@@ -23,7 +23,6 @@ import static org.hamcrest.Matchers.isEmptyString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
-import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -31,9 +30,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.Language;
@@ -51,19 +48,19 @@ import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.user.DefaultUserRole;
+import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserDto;
+import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.backend.AbstractBeanTest;
-import de.symeda.sormas.backend.MockProducer;
 import de.symeda.sormas.backend.TestDataCreator;
 
-@RunWith(MockitoJUnitRunner.class)
 public class ContactFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 
 	private TestDataCreator.RDCF rdcf1;
 	private TestDataCreator.RDCF rdcf2;
 	private UserDto user1;
 	private UserDto user2;
-	private UserDto observerUser;
+	private UserDto nationalContactUser;
 
 	@Override
 	public void init() {
@@ -88,10 +85,20 @@ public class ContactFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 			"Off2",
 			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER));
 
-		observerUser = creator
-			.createUser(null, null, null, null, "National", "Observer", creator.getUserRoleReference(DefaultUserRole.NATIONAL_OBSERVER));
-
-		when(MockProducer.getPrincipal().getName()).thenReturn("SurvOff2");
+		nationalContactUser = creator.createUser(
+			null,
+			null,
+			null,
+			"National",
+			"Contact User",
+			"National Contact User",
+			JurisdictionLevel.NATION,
+			UserRight.CONTACT_VIEW,
+			UserRight.CONTACT_EDIT,
+			UserRight.CASE_VIEW,
+			UserRight.PERSON_VIEW,
+			UserRight.PERSON_EDIT);
+		loginWith(user2);
 	}
 
 	@Test
@@ -298,7 +305,7 @@ public class ContactFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 		CaseDataDto caze = createCase(user2, rdcf2);
 		ContactDto contact = createContact(user2, caze, rdcf2);
 
-		loginWith(observerUser);
+		loginWith(nationalContactUser);
 
 		contact.setReportingUser(null);
 		contact.setContactOfficer(null);
@@ -330,8 +337,6 @@ public class ContactFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 		contact.setReportingUser(null);
 		contact.setContactOfficer(null);
 		contact.setResultingCaseUser(null);
-		contact.setReportLat(null);
-		contact.setReportLon(null);
 		contact.setReportLatLonAccuracy(20F);
 
 		getContactFacade().save(contact);
@@ -411,7 +416,7 @@ public class ContactFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 
 	private PersonDto createPerson() {
 
-		LocationDto address = new LocationDto();
+		LocationDto address = LocationDto.build();
 		address.setRegion(rdcf1.region);
 		address.setDistrict(rdcf1.district);
 		address.setCommunity(rdcf1.community);

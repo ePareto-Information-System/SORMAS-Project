@@ -24,9 +24,14 @@ import static de.symeda.sormas.ui.utils.CssStyles.LABEL_WARNING;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.vaadin.icons.VaadinIcons;
@@ -51,11 +56,15 @@ import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
+import de.symeda.sormas.api.user.UserRoleDto;
+import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.UserProvider;
+import de.symeda.sormas.ui.utils.BulkOperationHandler;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent.CommitListener;
@@ -108,9 +117,10 @@ public class UserController {
 		UserEditForm userEditForm = new UserEditForm(false);
 		UserDto userDto = FacadeProvider.getUserFacade().getByUuid(userUuid);
 		userEditForm.setValue(userDto);
+		UserProvider userProvider = UserProvider.getCurrent();
 		final CommitDiscardWrapperComponent<UserEditForm> editView = new CommitDiscardWrapperComponent<UserEditForm>(
 			userEditForm,
-			UserProvider.getCurrent().hasUserRight(UserRight.USER_EDIT),
+			userProvider.hasUserRight(UserRight.USER_EDIT),
 			userEditForm.getFieldGroup());
 
 		// Add reset password button
@@ -127,11 +137,33 @@ public class UserController {
 				if (existingUser.getDistrict() != null && user.getDistrict() == null) {
 					openRemoveUserAsOfficerPrompt(result -> {
 						if (result) {
-							saveUser(user);
 							FacadeProvider.getUserFacade().removeUserAsSurveillanceAndContactOfficer(user.getUuid());
 							closeWindowCallback.run();
 						}
 					});
+				}
+				if (DataHelper.isSame(user, userProvider.getUser())) {
+
+					Set<UserRight> oldUserRights =
+						UserRoleDto.getUserRights(FacadeProvider.getUserRoleFacade().getByReferences(existingUser.getUserRoles()));
+					Set<UserRight> newUserRights = UserRoleDto.getUserRights(FacadeProvider.getUserRoleFacade().getByReferences(user.getUserRoles()));
+
+					if (oldUserRights.contains(UserRight.USER_ROLE_EDIT) && !newUserRights.contains(UserRight.USER_ROLE_EDIT)) {
+						new Notification(
+							I18nProperties.getString(Strings.messageCheckInputData),
+							I18nProperties.getValidationError(Validations.removeRolesWithEditRightFromOwnUser),
+							Notification.Type.ERROR_MESSAGE,
+							true).show(Page.getCurrent());
+					} else if (!newUserRights.contains(UserRight.USER_EDIT)) {
+						new Notification(
+							I18nProperties.getString(Strings.messageCheckInputData),
+							I18nProperties.getValidationError(Validations.removeRolesWithEditUserFromOwnUser),
+							Notification.Type.ERROR_MESSAGE,
+							true).show(Page.getCurrent());
+					} else {
+						saveUser(user);
+						closeWindowCallback.run();
+					}
 				} else {
 					saveUser(user);
 					closeWindowCallback.run();
@@ -153,7 +185,7 @@ public class UserController {
 	}
 
 	private void saveUser(UserDto user) {
-		FacadeProvider.getUserFacade().saveUser(user);
+		FacadeProvider.getUserFacade().saveUser(user, false);
 		refreshView();
 	}
 
@@ -172,7 +204,7 @@ public class UserController {
 			public void onCommit() {
 				if (!createForm.getFieldGroup().isModified()) {
 					UserDto dto = createForm.getValue();
-					dto = FacadeProvider.getUserFacade().saveUser(dto);
+					dto = FacadeProvider.getUserFacade().saveUser(dto, false);
 					refreshView();
 					makeInitialPassword(dto.getUuid(), dto.getUserEmail());
 				}
@@ -340,7 +372,7 @@ public class UserController {
 		component.addCommitListener(() -> {
 			if (!form.getFieldGroup().isModified()) {
 				UserDto changedUser = form.getValue();
-				FacadeProvider.getUserFacade().saveUser(changedUser);
+				FacadeProvider.getUserFacade().saveUser(changedUser, true);
 				I18nProperties.setUserLanguage(changedUser.getLanguage());
 				FacadeProvider.getI18nFacade().setUserLanguage(changedUser.getLanguage());
 				Page.getCurrent().reload();
@@ -419,9 +451,9 @@ public class UserController {
 		window.setCaption(I18nProperties.getCaption(Captions.syncUsers));
 	}
 
-	public void enableAllSelectedItems(Collection<UserDto> selectedRows, Runnable callback) {
+	public void enableAllSelectedItems(Collection<UserDto> selectedRows, UserGrid userGrid) {
 
-		if (selectedRows.size() == 0) {
+		if (selectedRows.isEmpty()) {
 			new Notification(
 				I18nProperties.getString(Strings.headingNoUsersSelected),
 				I18nProperties.getString(Strings.messageNoUsersSelected),
@@ -435,25 +467,31 @@ public class UserController {
 				I18nProperties.getString(Strings.no),
 				null,
 				confirmed -> {
-					if (!confirmed) {
+					if (Boolean.FALSE.equals(confirmed)) {
 						return;
 					}
 
-					List<String> uuids = selectedRows.stream().map(UserDto::getUuid).collect(Collectors.toList());
-					FacadeProvider.getUserFacade().enableUsers(uuids);
-					callback.run();
-					new Notification(
-						I18nProperties.getString(Strings.headingUsersEnabled),
-						I18nProperties.getString(Strings.messageUsersEnabled),
-						Notification.Type.HUMANIZED_MESSAGE,
-						false).show(Page.getCurrent());
+					new BulkOperationHandler<UserDto>(Strings.messageUsersEnabled, null, null, null, Strings.messageSomeUsersEnabled, null, null)
+						.doBulkOperation(batch -> {
+							List<String> uuids = batch.stream().map(UserDto::getUuid).collect(Collectors.toList());
+							FacadeProvider.getUserFacade().enableUsers(uuids);
+
+							return batch.size();
+						}, new ArrayList<>(selectedRows), null, null, remaining -> {
+							userGrid.reload();
+							if (CollectionUtils.isNotEmpty(remaining)) {
+								userGrid.asMultiSelect().selectItems(remaining.toArray(new UserDto[0]));
+							} else {
+								overview();
+							}
+						});
 				});
 		}
 	}
 
-	public void disableAllSelectedItems(Collection<UserDto> selectedRows, Runnable callback) {
+	public void disableAllSelectedItems(Collection<UserDto> selectedRows, UserGrid userGrid) {
 
-		if (selectedRows.size() == 0) {
+		if (selectedRows.isEmpty()) {
 			new Notification(
 				I18nProperties.getString(Strings.headingNoUsersSelected),
 				I18nProperties.getString(Strings.messageNoUsersSelected),
@@ -467,18 +505,24 @@ public class UserController {
 				I18nProperties.getString(Strings.no),
 				null,
 				confirmed -> {
-					if (!confirmed) {
+					if (Boolean.FALSE.equals(confirmed)) {
 						return;
 					}
 
-					List<String> uuids = selectedRows.stream().map(UserDto::getUuid).collect(Collectors.toList());
-					FacadeProvider.getUserFacade().disableUsers(uuids);
-					callback.run();
-					new Notification(
-						I18nProperties.getString(Strings.headingUsersDisabled),
-						I18nProperties.getString(Strings.messageUsersDisabled),
-						Notification.Type.HUMANIZED_MESSAGE,
-						false).show(Page.getCurrent());
+					new BulkOperationHandler<UserDto>(Strings.messageUsersDisabled, null, null, null, Strings.messageSomeUsersDisabled, null, null)
+						.doBulkOperation(batch -> {
+							List<String> uuids = batch.stream().map(UserDto::getUuid).collect(Collectors.toList());
+							FacadeProvider.getUserFacade().disableUsers(uuids);
+
+							return batch.size();
+						}, new ArrayList<>(selectedRows), null, null, remaining -> {
+							userGrid.reload();
+							if (CollectionUtils.isNotEmpty(remaining)) {
+								userGrid.asMultiSelect().selectItems(remaining.toArray(new UserDto[0]));
+							} else {
+								overview();
+							}
+						});
 				});
 		}
 	}

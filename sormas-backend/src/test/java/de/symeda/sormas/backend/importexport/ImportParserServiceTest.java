@@ -21,10 +21,12 @@ import static org.hamcrest.Matchers.is;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.time.Month;
 
 import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseDataDto;
@@ -35,9 +37,8 @@ import de.symeda.sormas.api.importexport.ImportErrorException;
 import de.symeda.sormas.api.infrastructure.area.AreaDto;
 import de.symeda.sormas.api.infrastructure.region.RegionDto;
 import de.symeda.sormas.api.person.PersonDto;
-import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
-import de.symeda.sormas.api.utils.DateHelper;
+import de.symeda.sormas.api.utils.UtilDate;
 import de.symeda.sormas.backend.AbstractBeanTest;
 import de.symeda.sormas.backend.TestDataCreator;
 import de.symeda.sormas.backend.infrastructure.country.Country;
@@ -46,7 +47,7 @@ public class ImportParserServiceTest extends AbstractBeanTest {
 
 	private static TestDataCreator.RDCF rdcf;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		rdcf = creator.createRDCF();
 	}
@@ -82,7 +83,7 @@ public class ImportParserServiceTest extends AbstractBeanTest {
 			new String[] {
 				CaseDataDto.DISTRICT_LEVEL_DATE });
 
-		assertThat(parsed, is(DateHelper.parseDateWithException("30/07/2021", "dd/MM/yyyy")));
+		assertThat(parsed, is(UtilDate.of(2021, Month.JULY, 30)));
 	}
 
 	@Test
@@ -93,7 +94,7 @@ public class ImportParserServiceTest extends AbstractBeanTest {
 			new String[] {
 				EventDto.START_DATE });
 
-		assertThat(parsed, is(DateHelper.parseDateTimeWithException("30.07.2021 15:30", "dd.MM.yyyy H:mm")));
+		assertThat(parsed, is(UtilDate.from(LocalDateTime.of(2021, Month.JULY, 30, 15, 30))));
 	}
 
 	@Test
@@ -191,7 +192,7 @@ public class ImportParserServiceTest extends AbstractBeanTest {
 
 	@Test
 	public void testParseUserFieldValue() throws IntrospectionException, ImportErrorException {
-		UserDto user = creator.createUser(rdcf, creator.getUserRoleReference(DefaultUserRole.NATIONAL_USER));
+		UserDto user = creator.createNationalUser();
 
 		Object parsed = getImportParserService().parseValue(
 			new PropertyDescriptor(EventDto.REPORTING_USER, EventDto.class),

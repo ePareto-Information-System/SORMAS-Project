@@ -18,105 +18,14 @@
 
 package org.sormas.e2etests.steps.web.application.cases;
 
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.ACTION_OKAY;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.ACTION_RESET_POPUP;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.ACTION_SEARCH_POPUP;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.ALLBUTTON;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.ALL_RESULTS_CHECKBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.BULK_ACTIONS;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.BULK_ACTIONS_ARCHIVE;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.BULK_ACTIONS_VALUES;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.BULK_CREATE_QUARANTINE_ORDER;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASES_FROM_OTHER_INSTANCES_CHECKBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASES_FROM_OTHER_JURISDICTIONS_CHECKBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASES_HELP_NEEDED_IN_QUARANTINE_CHECKBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASES_WITHOUT_FACILITY_CHECKBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASES_WITHOUT_GEO_COORDINATES_CHECKBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASES_WITHOUT_RESPONSIBLE_OFFICER_CHECKBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASES_WITH_EVENTS_CHECKBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASES_WITH_EXTENDED_QUARANTINE_CHECKBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASES_WITH_FULFILLED_REFERENCE_DEFINITION_CHECKBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASES_WITH_REDUCED_QUARANTINE_CHECKBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASES_WITH_REINFECTION_CHECKBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_APPLY_FILTERS_BUTTON;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_CLASSIFICATION_FILTER_COMBOBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_COMMUNITY_FILTER_COMBOBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_DATA_TYPE_FILTER_COMBOBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_DAY_FILTER;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_DIRECTORY_DETAILED_PAGE_APPLY_FILTER_BUTTON;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_DIRECTORY_DETAILED_PAGE_FILTER_INPUT;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_DIRECTORY_DETAILED_RADIOBUTTON;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_DISEASE_FILTER_COMBOBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_DISEASE_VARIANT_FILTER_COMBOBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_DISPLAY_FILTER_COMBOBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_DISTRICT_FILTER_COMBOBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_EPIDEMIOLOGICAL_DATA_TAB;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_FACILITY_CATEGORY_FILTER_COMBOBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_FACILITY_FILTER_COMBOBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_FACILITY_TYPE_FILTER_COMBOBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_FOLLOWUP_FILTER_COMBOBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_GRID_RESULTS_ROWS;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_MONTH_FILTER;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_ORIGIN_FILTER_COMBOBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_OUTCOME_FILTER_COMBOBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_PRESENT_CONDITION_COMBOBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_QUARANTINE_FILTER_COMBOBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_REGION_FILTER_COMBOBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_REINFECTION_FILTER_COMBOBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_REPORTING_USER_FILTER;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_RESET_FILTERS_BUTTON;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_SURVOFF_FILTER_COMBOBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_VACCINATION_STATUS_FILTER_COMBOBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CASE_YEAR_FILTER;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CLOSE_FORM_BUTTON;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CONFIRM_POPUP;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CREATE_NEW_PERSON_CHECKBOX_DE;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.DATE_FROM_COMBOBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.DATE_TO_COMBOBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.DATE_TYPE_FILTER_COMBOBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.DETAILED_IMPORT_BUTTON;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.DOWNLOAD_DATA_DICTIONARY_BUTTON;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.DOWNLOAD_IMPORT_GUIDE_BUTTON;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.ENTER_BULK_EDIT_MODE;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.EPI_DATA_TAB;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.EXCLAMATION_MARK_MESSAGE_PICK_OR_CREATE_PERSON_POPUP;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.EXCLAMATION_MARK_PICK_OR_CREATE_PERSON_POPUP;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.FIRST_CASE_ID_BUTTON;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.FIRST_RESULT_IN_GRID;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.GRID_HEADERS;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.IMPORT_BUTTON;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.INVESTIGATION_DISCARDED_BUTTON;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.INVESTIGATION_DONE_BUTTON;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.INVESTIGATION_PENDING_BUTTON;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.LEAVE_BULK_EDIT_MODE;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.LINE_LISTING_BUTTON;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.MERGE_DUPLICATES_BUTTON;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.MERGE_DUPLICATES_WARNING_DE;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.MORE_BUTTON;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.NAME_UUID_EPID_NUMBER_LIKE_INPUT;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.NEW_CASE_BUTTON;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.NEW_CASE_DATE_FROM_COMBOBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.NEW_EVENT_CHECKBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.PERSON_ID_NAME_CONTACT_INFORMATION_LIKE_INPUT;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.RESULTS_GRID_HEADER;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.SEARCH_BUTTON;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.SHOW_MORE_LESS_FILTERS;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.TOTAL_CASES_COUNTER;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.UPLOAD_DOCUMENT_TO_ENTITIES_CHECKBOX;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.getCaseResultsUuidLocator;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.getCheckboxByIndex;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.getMergeDuplicatesButtonById;
-import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.getResultByIndex;
+import static org.sormas.e2etests.entities.pojo.helpers.ShortUUIDGenerator.generateShortUUID;
+import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.*;
+import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.CREATE_NEW_PERSON_CHECKBOX;
+import static org.sormas.e2etests.pages.application.cases.CaseDirectoryPage.SEND_TO_REPORTING_TOOL_BUTTON;
 import static org.sormas.e2etests.pages.application.cases.CreateNewCasePage.DATE_OF_REPORT_INPUT;
-import static org.sormas.e2etests.pages.application.cases.CreateNewCasePage.FIRST_NAME_INPUT;
-import static org.sormas.e2etests.pages.application.cases.CreateNewCasePage.LAST_NAME_INPUT;
 import static org.sormas.e2etests.pages.application.cases.CreateNewCasePage.SAVE_BUTTON;
 import static org.sormas.e2etests.pages.application.cases.CreateNewCasePage.UUID_EXTERNAL_ID_EXTERNAL_TOKEN_LIKE_INPUT;
-import static org.sormas.e2etests.pages.application.cases.EditCasePage.ACTION_CANCEL;
-import static org.sormas.e2etests.pages.application.cases.EditCasePage.ARCHIVE_RELATED_CONTACTS_CHECKBOX;
-import static org.sormas.e2etests.pages.application.cases.EditCasePage.BACK_TO_CASES_BUTTON;
-import static org.sormas.e2etests.pages.application.cases.EditCasePage.REFERENCE_DEFINITION_TEXT;
-import static org.sormas.e2etests.pages.application.cases.EditCasePage.getCaseIDPathByIndex;
+import static org.sormas.e2etests.pages.application.cases.EditCasePage.*;
 import static org.sormas.e2etests.pages.application.cases.EditContactsPage.COMMIT_BUTTON;
 import static org.sormas.e2etests.pages.application.cases.EditContactsPage.FIRST_RESULT_IN_GRID_IMPORT_POPUP;
 import static org.sormas.e2etests.pages.application.cases.EditContactsPage.IMPORT_CASE_CONTACTS_BUTTON;
@@ -124,31 +33,59 @@ import static org.sormas.e2etests.pages.application.cases.EditContactsPage.IMPOR
 import static org.sormas.e2etests.pages.application.cases.EpidemiologicalDataCasePage.ACTIVITY_AS_CASE_NEW_ENTRY_BUTTON;
 import static org.sormas.e2etests.pages.application.cases.EpidemiologicalDataCasePage.ACTIVITY_AS_CASE_NEW_ENTRY_BUTTON_DE;
 import static org.sormas.e2etests.pages.application.cases.EpidemiologicalDataCasePage.ACTIVITY_AS_CASE_OPTIONS;
-import static org.sormas.e2etests.pages.application.cases.EpidemiologicalDataCasePage.NEW_ENTRY_POPUP;
 import static org.sormas.e2etests.pages.application.configuration.DocumentTemplatesPage.FILE_PICKER;
+import static org.sormas.e2etests.pages.application.configuration.FacilitiesTabPage.CLOSE_DETAILED_EXPORT_POPUP;
+import static org.sormas.e2etests.pages.application.configuration.FacilitiesTabPage.IMPORT_SUCCESSFUL_FACILITY_IMPORT_CSV;
+import static org.sormas.e2etests.pages.application.contacts.ContactDirectoryPage.APPLY_FILTERS_BUTTON;
+import static org.sormas.e2etests.pages.application.contacts.ContactDirectoryPage.PERSON_LIKE_SEARCH_INPUT;
 import static org.sormas.e2etests.pages.application.contacts.ContactDirectoryPage.getCheckboxByUUID;
 import static org.sormas.e2etests.pages.application.contacts.EditContactPage.SOURCE_CASE_WINDOW_CASE_INPUT;
 import static org.sormas.e2etests.pages.application.contacts.EditContactPage.SOURCE_CASE_WINDOW_SEARCH_CASE_BUTTON;
 import static org.sormas.e2etests.pages.application.contacts.EditContactPage.UUID_INPUT;
+import static org.sormas.e2etests.pages.application.entries.CreateNewTravelEntryPage.ARRIVAL_DATE;
+import static org.sormas.e2etests.pages.application.entries.CreateNewTravelEntryPage.UUID_LABEL;
 import static org.sormas.e2etests.pages.application.entries.TravelEntryPage.CLOSE_IMPORT_TRAVEL_ENTRY_BUTTON;
 import static org.sormas.e2etests.pages.application.entries.TravelEntryPage.IMPORT_SUCCESS_DE;
 import static org.sormas.e2etests.pages.application.entries.TravelEntryPage.SELECT_ANOTHER_PERSON_DE;
+import static org.sormas.e2etests.pages.application.tasks.TaskManagementPage.BULK_DELETE_BUTTON;
 import static org.sormas.e2etests.steps.BaseSteps.locale;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import com.google.common.truth.Truth;
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.CSVWriter;
+import com.opencsv.exceptions.CsvException;
 import cucumber.api.java8.En;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DateFormatSymbols;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.sormas.e2etests.common.DataOperations;
+import org.sormas.e2etests.entities.pojo.csv.DetailedCaseCSV;
+import org.sormas.e2etests.entities.pojo.csv.DetailedCaseCSVSymptoms;
 import org.sormas.e2etests.enums.CaseOutcome;
 import org.sormas.e2etests.enums.DiseasesValues;
 import org.sormas.e2etests.enums.DistrictsValues;
@@ -158,14 +95,18 @@ import org.sormas.e2etests.enums.PresentCondition;
 import org.sormas.e2etests.envconfig.manager.RunningConfiguration;
 import org.sormas.e2etests.helpers.AssertHelpers;
 import org.sormas.e2etests.helpers.WebDriverHelpers;
+import org.sormas.e2etests.helpers.files.FilesHelper;
+import org.sormas.e2etests.pages.application.cases.EditCasePage;
 import org.sormas.e2etests.pages.application.contacts.EditContactPage;
 import org.sormas.e2etests.state.ApiState;
 import org.sormas.e2etests.steps.BaseSteps;
 import org.testng.Assert;
 import org.testng.asserts.SoftAssert;
 
+@Slf4j
 public class CaseDirectorySteps implements En {
-  Faker faker = new Faker();
+
+  public static Faker faker;
   private final WebDriverHelpers webDriverHelpers;
   private final BaseSteps baseSteps;
   public static final String userDirPath = System.getProperty("user.dir");
@@ -174,6 +115,15 @@ public class CaseDirectorySteps implements En {
 
   public static String caseID1;
   public static String caseID2;
+  public static String leadingCaseUUID;
+  public static String[] detailedCaseHeader1, detailedCaseHeader2, detailedCaseHeader3;
+  public static String caseCSVName;
+  private static String detailedCaseCSVFile;
+  public static String uploadFileDirectoryAndName;
+  public static String caseUUIDFromCSV;
+  private static String firstName;
+  private static String lastName;
+  private static String receivedCaseUUID;
 
   @Inject
   public CaseDirectorySteps(
@@ -187,6 +137,7 @@ public class CaseDirectorySteps implements En {
       RunningConfiguration runningConfiguration) {
     this.webDriverHelpers = webDriverHelpers;
     this.baseSteps = baseSteps;
+    this.faker = faker;
 
     When(
         "^I click on the NEW CASE button$",
@@ -210,27 +161,22 @@ public class CaseDirectorySteps implements En {
           webDriverHelpers.waitForPageLoadingSpinnerToDisappear(40);
           webDriverHelpers.waitUntilElementIsVisibleAndClickable(FIRST_CASE_ID_BUTTON);
           webDriverHelpers.clickOnWebElementBySelector(FIRST_CASE_ID_BUTTON);
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(40);
         });
 
     When(
         "I check if downloaded zip file for Quarantine Order is correct",
         () -> {
-          Path path =
-              Paths.get(userDirPath + "/downloads/sormas_documents_" + LocalDate.now() + "_.zip");
-          assertHelpers.assertWithPoll(
-              () ->
-                  Assert.assertTrue(
-                      Files.exists(path),
-                      "Quarantine order document was not downloaded. Path used for check: "
-                          + path.toAbsolutePath()),
-              120);
+          String fileName = "sormas_documents_" + LocalDate.now() + "_.zip";
+          FilesHelper.waitForFileToDownload(fileName, 120);
+          FilesHelper.deleteFile(fileName);
         });
     When(
-        "I delete downloaded file created from Quarantine order",
+        "I check if downloaded zip file for Quarantine Order is correct for DE version",
         () -> {
-          File toDelete =
-              new File(userDirPath + "/downloads/sormas_documents_" + LocalDate.now() + "_.zip");
-          toDelete.deleteOnExit();
+          String fileName = "sormas_dokumente_" + LocalDate.now() + "_.zip";
+          FilesHelper.waitForFileToDownload(fileName, 120);
+          FilesHelper.deleteFile(fileName);
         });
     When(
         "I search for the last case uuid created via Api in the CHOOSE SOURCE Contact window",
@@ -274,7 +220,7 @@ public class CaseDirectorySteps implements En {
         "I check that an import success notification appears in the Import Case popup",
         () -> {
           webDriverHelpers.waitUntilIdentifiedElementIsPresent(IMPORT_SUCCESS_DE);
-          webDriverHelpers.clickOnWebElementBySelector(ACTION_CANCEL);
+          webDriverHelpers.clickOnWebElementBySelector(ACTION_CLOSE);
         });
     When(
         "I close Import Cases form",
@@ -292,7 +238,7 @@ public class CaseDirectorySteps implements En {
         "I click to create new person from the Case Import popup",
         () -> {
           if (webDriverHelpers.isElementVisibleWithTimeout(COMMIT_BUTTON, 20)) {
-            webDriverHelpers.clickOnWebElementBySelector(CREATE_NEW_PERSON_CHECKBOX_DE);
+            webDriverHelpers.clickOnWebElementBySelector(CREATE_NEW_PERSON_CHECKBOX);
             webDriverHelpers.clickOnWebElementBySelector(COMMIT_BUTTON);
           }
         });
@@ -316,12 +262,23 @@ public class CaseDirectorySteps implements En {
     When(
         "I check if message about long loading times appear for DE",
         () -> {
-          webDriverHelpers.waitUntilElementIsVisibleAndClickable(MERGE_DUPLICATES_WARNING_DE);
+          String mergeDuplicatesWarning =
+              "Die Berechnung und Anzeige m\u00F6glicher Duplikat-F\u00E4lle ist eine sehr komplexe Aufgabe und kann viel Zeit in Anspruch nehmen.";
+          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(
+              MERGE_DUPLICATES_WARNING_POPUP);
+          Assert.assertTrue(
+              webDriverHelpers
+                  .getTextFromPresentWebElement(MERGE_DUPLICATES_WARNING_POPUP)
+                  .contains(mergeDuplicatesWarning),
+              "Merge duplicates warning is not correctly displayed");
         });
     When(
         "I click Enter Bulk Edit Mode on Case directory page",
         () -> {
           webDriverHelpers.clickOnWebElementBySelector(ENTER_BULK_EDIT_MODE);
+          if (webDriverHelpers.isElementVisibleWithTimeout(BULK_EDIT_INFORMATION, 10)) {
+            webDriverHelpers.clickOnWebElementBySelector(CONFIRM_POPUP);
+          }
           webDriverHelpers.waitForPageLoadingSpinnerToDisappear(100);
         });
     When(
@@ -350,6 +307,14 @@ public class CaseDirectorySteps implements En {
           }
           webDriverHelpers.waitForPageLoadingSpinnerToDisappear(40);
         });
+    And(
+        "I filter by Person's full name of last created duplicated line listing case on Case Directory Page",
+        () ->
+            webDriverHelpers.fillAndSubmitInWebElement(
+                PERSON_ID_NAME_CONTACT_INFORMATION_LIKE_INPUT,
+                CaseLineListingSteps.duplicateCaseLineListingDe.getFirstName()
+                    + " "
+                    + CaseLineListingSteps.duplicateCaseLineListingDe.getLastName()));
     When(
         "^I select last created UI result in grid in Case Directory for Bulk Action$",
         () -> {
@@ -417,6 +382,9 @@ public class CaseDirectorySteps implements En {
         "I click first result in grid on Link to Event form",
         () -> webDriverHelpers.clickOnWebElementBySelector(FIRST_RESULT_IN_GRID));
 
+    And(
+        "I click on Delete button from Bulk Actions Combobox in Case Directory",
+        () -> webDriverHelpers.clickOnWebElementBySelector(BULK_DELETE_BUTTON));
     When(
         "I filter by CaseID on Case directory page",
         () -> {
@@ -437,14 +405,38 @@ public class CaseDirectorySteps implements En {
     When(
         "^I open the last created Case via API",
         () -> {
+          String LAST_CREATED_CASE_URL =
+              runningConfiguration.getEnvironmentUrlForMarket(locale)
+                  + "/sormas-webdriver/#!cases/data/"
+                  + apiState.getCreatedCase().getUuid();
+          webDriverHelpers.accessWebSite(LAST_CREATED_CASE_URL);
+          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(EditCasePage.UUID_INPUT);
+        });
+
+    When(
+        "I open last created Case via API on {string} instance",
+        (String instance) -> {
+          String LAST_CREATED_CASE_URL =
+              runningConfiguration.getEnvironmentUrlForMarket(instance)
+                  + "/sormas-webdriver/#!cases/data/"
+                  + apiState.getCreatedCase().getUuid();
+          webDriverHelpers.accessWebSite(LAST_CREATED_CASE_URL);
+          webDriverHelpers.waitUntilIdentifiedElementIsPresent(EditCasePage.UUID_INPUT);
+        });
+
+    Then(
+        "I check that created Case is visible with ([^\"]*) status",
+        (String vaccinationStatus) -> {
           String caseUUID = apiState.getCreatedCase().getUuid();
-          webDriverHelpers.fillAndSubmitInWebElement(NAME_UUID_EPID_NUMBER_LIKE_INPUT, caseUUID);
-          TimeUnit.SECONDS.sleep(2); // wait for system reaction
-          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(
-              getCaseResultsUuidLocator(caseUUID));
-          TimeUnit.SECONDS.sleep(1); // wait for system reaction
-          webDriverHelpers.doubleClickOnWebElementBySelector(getCaseResultsUuidLocator(caseUUID));
-          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(60);
+          Assert.assertTrue(
+              webDriverHelpers.isElementVisibleWithTimeout(getCaseResultsUuidLocator(caseUUID), 5),
+              "There is no case with expected status");
+          webDriverHelpers.waitUntilElementIsVisibleAndClickable(
+              getVaccinationStatusCasesByText(vaccinationStatus));
+          Assert.assertTrue(
+              webDriverHelpers.isElementVisibleWithTimeout(
+                  getVaccinationStatusCasesByText(vaccinationStatus), 5),
+              "There is no case with expected status");
         });
 
     When(
@@ -455,7 +447,18 @@ public class CaseDirectorySteps implements En {
                   + "/sormas-webdriver/#!cases/data/"
                   + apiState.getCreatedCase().getUuid();
           webDriverHelpers.accessWebSite(LAST_CREATED_CASE_URL);
-          webDriverHelpers.waitUntilIdentifiedElementIsVisibleAndClickable(UUID_INPUT);
+          webDriverHelpers.waitUntilIdentifiedElementIsPresent(UUID_INPUT);
+        });
+
+    When(
+        "^I navigate to the last created case via the url without check if uuid is enabled$",
+        () -> {
+          String LAST_CREATED_CASE_URL =
+              runningConfiguration.getEnvironmentUrlForMarket(locale)
+                  + "/sormas-webdriver/#!cases/data/"
+                  + apiState.getCreatedCase().getUuid();
+          webDriverHelpers.accessWebSite(LAST_CREATED_CASE_URL);
+          webDriverHelpers.isElementVisibleWithTimeout(UUID_INPUT, 2);
         });
 
     Then(
@@ -521,14 +524,14 @@ public class CaseDirectorySteps implements En {
         "I click on new entry button from Epidemiological Data tab",
         () -> {
           webDriverHelpers.clickOnWebElementBySelector(ACTIVITY_AS_CASE_NEW_ENTRY_BUTTON);
-          webDriverHelpers.waitUntilIdentifiedElementIsPresent(NEW_ENTRY_POPUP);
+          webDriverHelpers.waitUntilIdentifiedElementIsPresent(UUID_LABEL);
         });
 
     Then(
         "I click on new entry button from Epidemiological Data tab for DE",
         () -> {
           webDriverHelpers.clickOnWebElementBySelector(ACTIVITY_AS_CASE_NEW_ENTRY_BUTTON_DE);
-          webDriverHelpers.waitUntilIdentifiedElementIsPresent(NEW_ENTRY_POPUP);
+          webDriverHelpers.waitUntilElementIsVisibleAndClickable(ARRIVAL_DATE);
         });
 
     And(
@@ -595,13 +598,11 @@ public class CaseDirectorySteps implements En {
         "I check if name and name prefilled in Pick or create person are equal to one used in case creation",
         () -> {
           softly.assertEquals(
-              CaseReinfectionSteps.caze.getFirstName(),
-              webDriverHelpers.getValueFromWebElement(FIRST_NAME_INPUT),
-              "Prefilled first name is not equal");
-          softly.assertEquals(
-              CaseReinfectionSteps.caze.getLastName(),
-              webDriverHelpers.getValueFromWebElement(LAST_NAME_INPUT),
-              "Prefilled last name is not equal");
+              CaseReinfectionSteps.caze.getFirstName()
+                  + " "
+                  + CaseReinfectionSteps.caze.getLastName(),
+              webDriverHelpers.getValueFromWebElement(UUID_EXTERNAL_ID_EXTERNAL_TOKEN_LIKE_INPUT),
+              "Prefilled date name is not equal");
           softly.assertAll();
         });
     And(
@@ -748,6 +749,25 @@ public class CaseDirectorySteps implements En {
         () -> {
           webDriverHelpers.clickOnWebElementBySelector(
               getMergeDuplicatesButtonById(EditCaseSteps.aCase.getUuid()));
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(200);
+        });
+    When(
+        "I check that Share option is not visible in Bulk Actions dropdown in Case Directory for DE specific",
+        () -> {
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(10);
+          softly.assertFalse(
+              webDriverHelpers.isElementVisibleWithTimeout(SHARE_OPTION_BULK_ACTION_COMBOBOX, 3),
+              "Share is visible!");
+          softly.assertAll();
+        });
+    When(
+        "I collect the leading case UUID displayed on Case Directory Page",
+        () -> leadingCaseUUID = getCaseIDByIndex(1));
+    And(
+        "I click on Merge button of leading case created through line listing in Merge Duplicate Cases page",
+        () -> {
+          webDriverHelpers.clickOnWebElementBySelector(
+              getMergeDuplicatesButtonById(leadingCaseUUID));
           webDriverHelpers.waitForPageLoadingSpinnerToDisappear(200);
         });
     And(
@@ -936,7 +956,9 @@ public class CaseDirectorySteps implements En {
     And(
         "I apply Month filter of Person attached to last created UI Case on Case directory page",
         () -> {
-          String month = Integer.toString(CreateNewCaseSteps.caze.getDateOfBirth().getMonthValue());
+          DateFormatSymbols dFs = new DateFormatSymbols(Locale.GERMAN);
+          String month =
+              dFs.getMonths()[CreateNewCaseSteps.caze.getDateOfBirth().getMonthValue() - 1];
           webDriverHelpers.selectFromCombobox(CASE_MONTH_FILTER, month);
         });
     And(
@@ -957,11 +979,10 @@ public class CaseDirectorySteps implements En {
     And(
         "I apply Month filter other than Person attached has to last created UI Case on Case directory page",
         () -> {
-          webDriverHelpers.selectFromCombobox(
-              CASE_MONTH_FILTER,
-              getRandomNumberForBirthDateDifferentThanCreated(
-                      CreateNewCaseSteps.caze.getDateOfBirth().getMonthValue(), 1, 12)
-                  .toString());
+          DateFormatSymbols dFs = new DateFormatSymbols(Locale.GERMAN);
+          String month =
+              dFs.getMonths()[CreateNewCaseSteps.caze.getDateOfBirth().getMonthValue() - 2];
+          webDriverHelpers.selectFromCombobox(CASE_MONTH_FILTER, month);
         });
     And(
         "I apply Day filter other than Person attached has to last created UI Case on Case directory page",
@@ -974,22 +995,49 @@ public class CaseDirectorySteps implements En {
         });
     And(
         "I apply {string} to combobox on Case Directory Page",
-        (String caseParameter) ->
-            webDriverHelpers.selectFromCombobox(CASE_DISPLAY_FILTER_COMBOBOX, caseParameter));
+        (String caseParameter) -> {
+          webDriverHelpers.checkIfElementExistsInCombobox(
+              CASE_DISPLAY_FILTER_COMBOBOX, caseParameter);
+          webDriverHelpers.selectFromCombobox(CASE_DISPLAY_FILTER_COMBOBOX, caseParameter);
+          webDriverHelpers.waitUntilElementIsVisibleAndClickable(FIRST_CASE_ID);
+        });
+
+    When(
+        "I validate the existence of {string} Reporting Tools entries in Survnet box",
+        (String number) -> {
+          int numberInt = Integer.parseInt(number);
+          webDriverHelpers.waitUntilElementIsVisibleAndClickable(
+              EditCasePage.SEND_TO_REPORTING_TOOL_BUTTON);
+          softly.assertEquals(
+              webDriverHelpers.getNumberOfElements(REPORTING_TOOLS_FOR_SURVNET_USER),
+              numberInt,
+              "Number of sent entries to Survnet is not correct");
+          softly.assertAll();
+        });
+
+    And(
+        "I apply {string} to ownership combobox on Case Directory Page",
+        (String caseParameter) -> {
+          webDriverHelpers.checkIfElementExistsInCombobox(
+              CASE_OWNERSHIP_FILTER_COMBOBOX, caseParameter);
+          webDriverHelpers.selectFromCombobox(CASE_OWNERSHIP_FILTER_COMBOBOX, caseParameter);
+          TimeUnit.SECONDS.sleep(2);
+        });
 
     And(
         "I apply Month filter different than Person has on Case directory page",
-        () ->
-            webDriverHelpers.selectFromCombobox(
-                CASE_MONTH_FILTER,
-                getRandomNumberForBirthDateDifferentThanCreated(
-                        apiState.getLastCreatedPerson().getBirthdateMM(), 1, 12)
-                    .toString()));
+        () -> {
+          DateFormatSymbols dFs = new DateFormatSymbols();
+          String month = dFs.getMonths()[apiState.getLastCreatedPerson().getBirthdateMM() - 2];
+          webDriverHelpers.selectFromCombobox(CASE_MONTH_FILTER, month);
+        });
     And(
         "I apply Month filter of last api created Person on Case directory page",
-        () ->
-            webDriverHelpers.selectFromCombobox(
-                CASE_MONTH_FILTER, apiState.getLastCreatedPerson().getBirthdateMM().toString()));
+        () -> {
+          DateFormatSymbols dFs = new DateFormatSymbols();
+          String month = dFs.getMonths()[apiState.getLastCreatedPerson().getBirthdateMM() - 1];
+          webDriverHelpers.selectFromCombobox(CASE_MONTH_FILTER, month);
+        });
     And(
         "I apply Day filter different than Person has on Case directory page",
         () ->
@@ -1074,16 +1122,8 @@ public class CaseDirectorySteps implements En {
         "I check if Import Guide for cases was downloaded correctly",
         () -> {
           String fileName = "SORMAS_Import_Guide.pdf";
-          Path path = Paths.get(userDirPath + "/downloads/" + fileName);
-
-          assertHelpers.assertWithPoll(
-              () ->
-                  Assert.assertTrue(
-                      Files.exists(path),
-                      String.format(
-                          "SORMAS_Import_Guide was not downloaded. Searching path was: %s",
-                          path.toAbsolutePath())),
-              20);
+          FilesHelper.waitForFileToDownload(fileName, 30);
+          FilesHelper.deleteFile(fileName);
         });
 
     When(
@@ -1093,16 +1133,22 @@ public class CaseDirectorySteps implements En {
               "sormas_data_dictionary_"
                   + LocalDate.now().format(formatterDataDictionary)
                   + "_.xlsx";
-          Path path = Paths.get(userDirPath + "/downloads/" + fileName);
-
-          assertHelpers.assertWithPoll(
-              () ->
-                  Assert.assertTrue(
-                      Files.exists(path),
-                      String.format(
-                          "SORMAS_Import_Guide was not downloaded. Searching path was: %s",
-                          path.toAbsolutePath())),
-              20);
+          FilesHelper.waitForFileToDownload(fileName, 20);
+          FilesHelper.deleteFile(fileName);
+        });
+    When(
+        "I check if citizenship and country of birth is not present in Detailed Case export file",
+        () -> {
+          String fileName = "sormas_f\u00E4lle_" + LocalDate.now() + "_.csv";
+          String[] headers = parseDetailedCaseExportHeaders(userDirPath + "/downloads/" + fileName);
+          FilesHelper.deleteFile(fileName);
+          softly.assertFalse(
+              Arrays.stream(headers).anyMatch("citizenship"::equals),
+              "Citizenship is present in file");
+          softly.assertFalse(
+              Arrays.stream(headers).anyMatch("countryOfBirth"::equals),
+              "Country of birth is present in file");
+          softly.assertAll();
         });
     When(
         "I check that ([^\"]*) is visible in Pick or Create Person popup for De",
@@ -1155,9 +1201,10 @@ public class CaseDirectorySteps implements En {
         "I fill first and last name with last created peron data in Pick or Create person in popup",
         () -> {
           webDriverHelpers.fillInWebElement(
-              FIRST_NAME_INPUT, apiState.getLastCreatedPerson().getFirstName());
-          webDriverHelpers.fillInWebElement(
-              LAST_NAME_INPUT, apiState.getLastCreatedPerson().getLastName());
+              UUID_EXTERNAL_ID_EXTERNAL_TOKEN_LIKE_INPUT,
+              apiState.getLastCreatedPerson().getFirstName()
+                  + " "
+                  + apiState.getLastCreatedPerson().getLastName());
         });
     When(
         "I click on first result in Pick or create Person popup",
@@ -1178,6 +1225,7 @@ public class CaseDirectorySteps implements En {
           webDriverHelpers.clickOnWebElementBySelector(EditContactPage.DELETE_POPUP_YES_BUTTON);
           TimeUnit.SECONDS.sleep(3); // wait for response after confirm
           webDriverHelpers.waitForPageLoadingSpinnerToDisappear(40);
+          webDriverHelpers.clickOnWebElementBySelector(CASE_ARCHIVED_POPUP);
         });
 
     Then(
@@ -1202,6 +1250,155 @@ public class CaseDirectorySteps implements En {
               getCaseIDByIndex(2),
               "Edited case do not move previous first case to second place on list.");
         });
+
+    When(
+        "I prepare detailed case CSV with {string} as a disease and {string} as a present condition",
+        (String disease, String pCondition) -> {
+          long timestamp = System.currentTimeMillis();
+          detailedCaseCSVFile = "./uploads/sormas_cases_sordev_10361.csv";
+          Map<String, Object> reader;
+          reader = parseCSVintoPOJODetailedCaseCSV(detailedCaseCSVFile);
+          caseCSVName = "detailedCaseCSVTestFile" + timestamp + ".csv";
+          writeCSVFromMapDetailedCase(reader, caseCSVName, disease, pCondition);
+        });
+
+    When(
+        "I select created CSV file with detailed case",
+        () -> {
+          webDriverHelpers.waitUntilElementIsVisibleAndClickable(FILE_PICKER);
+          webDriverHelpers.sendFile(FILE_PICKER, userDirPath + "/uploads/" + caseCSVName);
+        });
+
+    When(
+        "I check if csv file for detailed case is imported successfully",
+        () -> {
+          webDriverHelpers.isElementVisibleWithTimeout(IMPORT_SUCCESSFUL_FACILITY_IMPORT_CSV, 10);
+          webDriverHelpers.clickOnWebElementBySelector(ACTION_CLOSE);
+          webDriverHelpers.clickOnWebElementBySelector(CLOSE_DETAILED_EXPORT_POPUP);
+        });
+
+    When(
+        "I click on the {string} button from the Import Detailed Case popup",
+        (String buttonName) -> {
+          webDriverHelpers.clickWebElementByText(IMPORT_POPUP_BUTTON, buttonName);
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(40);
+          if (webDriverHelpers.isElementVisibleWithTimeout(PICK_OR_CREATE_CASE_POPUP_HEADER, 2)) {
+            webDriverHelpers.clickOnWebElementBySelector(CREATE_NEW_CASE_CHECKBOX);
+            webDriverHelpers.clickOnWebElementBySelector(SAVE_POPUP_CONTENT);
+          }
+          if (webDriverHelpers.isElementVisibleWithTimeout(PICK_OR_CREATE_PERSON_POPUP_HEADER, 2)) {
+            webDriverHelpers.clickOnWebElementBySelector(CREATE_NEW_PERSON_CHECKBOX);
+            webDriverHelpers.clickOnWebElementBySelector(SAVE_POPUP_CONTENT);
+          }
+        });
+
+    When(
+        "I search for created detailed case by first and last name of the person",
+        () -> {
+          webDriverHelpers.fillAndSubmitInWebElement(
+              PERSON_LIKE_SEARCH_INPUT, firstName + " " + lastName);
+          TimeUnit.SECONDS.sleep(2); // wait for reaction
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(40);
+        });
+
+    When(
+        "I delete created csv file for detailed case import",
+        () -> {
+          Path path = Paths.get(userDirPath + "/uploads/" + caseCSVName);
+          Files.delete(path);
+        });
+
+    Then(
+        "I set case vaccination status filter to ([^\"]*)",
+        (String vaccinationStatus) -> {
+          webDriverHelpers.selectFromCombobox(
+              CASE_VACCINATION_STATUS_FILTER_COMBOBOX, vaccinationStatus);
+        });
+
+    And(
+        "I apply case filters",
+        () -> {
+          webDriverHelpers.clickOnWebElementBySelector(APPLY_FILTERS_BUTTON);
+        });
+
+    When(
+        "I search case by user by name {string}",
+        (String firstAndLastName) -> {
+          webDriverHelpers.fillAndSubmitInWebElement(PERSON_LIKE_SEARCH_INPUT, firstAndLastName);
+          TimeUnit.SECONDS.sleep(2); // wait for reaction
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(40);
+        });
+
+    When(
+        "I click on Okay button in Potential duplicate popup",
+        () -> {
+          webDriverHelpers.isElementVisibleWithTimeout(POTENTIAL_DUPLICATE_POPUP_DE, 5);
+          webDriverHelpers.clickOnWebElementBySelector(ACTION_CONFIRM);
+        });
+
+    When(
+        "I fill comment field in Reject share request popup and click confirm",
+        () -> {
+          webDriverHelpers.waitUntilIdentifiedElementIsPresent(REJECT_SHARED_CASE_HEADER_DE);
+          webDriverHelpers.clickOnWebElementBySelector(REJECT_SHARED_CASE_POPUP_TEXT_AREA);
+          webDriverHelpers.fillInWebElement(
+              REJECT_SHARED_CASE_POPUP_TEXT_AREA, faker.book().title());
+          webDriverHelpers.clickOnWebElementBySelector(CONFIRM_POPUP);
+          TimeUnit.SECONDS.sleep(2); // wait for reaction
+        });
+
+    And(
+        "^I filter Cases by collected case uuid$",
+        () -> {
+          webDriverHelpers.fillAndSubmitInWebElement(
+              CASE_DIRECTORY_DETAILED_PAGE_FILTER_INPUT, CreateNewCaseSteps.casesUUID.get(0));
+          TimeUnit.SECONDS.sleep(2); // wait for reaction
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(40);
+        });
+
+    And(
+        "^I open the last created case via API and check if Edit case page is read only$",
+        () -> {
+          String LAST_CREATED_CASE_URL =
+              runningConfiguration.getEnvironmentUrlForMarket(locale)
+                  + "/sormas-webdriver/#!cases/data/"
+                  + apiState.getCreatedCase().getUuid();
+          webDriverHelpers.accessWebSite(LAST_CREATED_CASE_URL);
+          webDriverHelpers.isElementGreyedOut(EditCasePage.UUID_INPUT);
+          webDriverHelpers.isElementGreyedOut(EditCasePage.SAVE_BUTTON);
+        });
+
+    And(
+        "I open the last created case with collected UUID by url on {string} instance",
+        (String instance) -> {
+          String LAST_CREATED_CASE_URL =
+              runningConfiguration.getEnvironmentUrlForMarket(instance)
+                  + "/sormas-ui/#!cases/data/"
+                  + CreateNewCaseSteps.casesUUID.get(0);
+          System.out.println("To jest web path: " + LAST_CREATED_CASE_URL);
+          webDriverHelpers.accessWebSite(LAST_CREATED_CASE_URL);
+        });
+
+    When(
+        "^I select (\\d+) last created UI result in grid in Case Directory for Bulk Action$",
+        (Integer number) -> {
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(40);
+          for (int i = 0; i < number; i++) {
+            webDriverHelpers.scrollToElement(
+                getCheckboxByUUID(CreateNewCaseSteps.casesUUID.get(i)));
+            webDriverHelpers.clickOnWebElementBySelector(
+                getCheckboxByUUID(CreateNewCaseSteps.casesUUID.get(i)));
+          }
+        });
+
+    And(
+        "^I click Send to reporting tool button on Case Directory page$",
+        () -> {
+          webDriverHelpers.waitUntilIdentifiedElementIsPresent(SEND_TO_REPORTING_TOOL_BUTTON);
+          webDriverHelpers.clickOnWebElementBySelector(SEND_TO_REPORTING_TOOL_BUTTON);
+          webDriverHelpers.clickOnWebElementBySelector(CONFIRM_ACTION);
+          webDriverHelpers.waitUntilIdentifiedElementIsPresent(REPORTING_TOOL_MESSAGE);
+        });
   }
 
   private Number getRandomNumberForBirthDateDifferentThanCreated(Number created, int min, int max) {
@@ -1214,5 +1411,136 @@ public class CaseDirectorySteps implements En {
 
   private String getCaseIDByIndex(int index) {
     return webDriverHelpers.getTextFromWebElement(getCaseIDPathByIndex(index));
+  }
+
+  public Map<String, Object> parseCSVintoPOJODetailedCaseCSV(String fileName) {
+
+    List<String[]> r = null;
+    String[] values = new String[] {};
+    ObjectMapper mapper = new ObjectMapper();
+    DetailedCaseCSV detailedCaseCSV = new DetailedCaseCSV();
+    DetailedCaseCSVSymptoms detailedCaseCSVSymptoms = new DetailedCaseCSVSymptoms();
+    try {
+
+      CSVReader headerReader = new CSVReader(new FileReader(fileName));
+      String[] nextLine;
+      nextLine = headerReader.readNext();
+      detailedCaseHeader1 = nextLine;
+      nextLine = headerReader.readNext();
+      detailedCaseHeader2 = nextLine;
+      nextLine = headerReader.readNext();
+      detailedCaseHeader3 = nextLine;
+    } catch (IOException e) {
+      log.error("IOException csvReader: ", e);
+    } catch (CsvException e) {
+      log.error("CsvException header reader: ", e);
+    }
+    CSVParser csvParser = new CSVParserBuilder().withSeparator(',').build(); // custom separator
+    // Convert POJOs to Maps
+    Map<String, Object> detailedCasePojo =
+        mapper.convertValue(detailedCaseCSV, new TypeReference<Map<String, Object>>() {});
+    Map<String, Object> detailedCaseSymptompsPojo =
+        mapper.convertValue(detailedCaseCSVSymptoms, new TypeReference<Map<String, Object>>() {});
+    //
+    try (CSVReader reader =
+        new CSVReaderBuilder(new FileReader(fileName))
+            .withCSVParser(csvParser) // custom CSV parser
+            .withSkipLines(3) // skip the first three lines, headers info
+            .build()) {
+      r = reader.readAll();
+    } catch (IOException e) {
+      log.error("IOException csvReader: ", e);
+    } catch (CsvException e) {
+      log.error("CsvException csvReader: ", e);
+    }
+    for (int i = 0; i < r.size(); i++) {
+      values = r.get(i);
+    }
+
+    String[] keys1 = detailedCasePojo.keySet().toArray(new String[0]);
+    String[] keys2 = detailedCaseSymptompsPojo.keySet().toArray(new String[0]);
+
+    try {
+      for (int i = 0; i < keys1.length; i++) {
+        detailedCasePojo.put(keys1[i], values[i]);
+      }
+
+      for (int i = 0; i < keys2.length; i++) {
+        detailedCaseSymptompsPojo.put(keys2[i], values[i + keys1.length]);
+      }
+
+      detailedCasePojo.putAll(detailedCaseSymptompsPojo);
+
+    } catch (NullPointerException e) {
+      log.error("Null pointer exception csvReader: ", e);
+    }
+    return detailedCasePojo;
+  }
+
+  @SneakyThrows
+  public static void writeCSVFromMapDetailedCase(
+      Map<String, Object> detailedCase, String createdFileName, String disease, String pCondition) {
+    uploadFileDirectoryAndName = userDirPath + "/uploads/" + createdFileName;
+
+    File file = new File(uploadFileDirectoryAndName);
+    try {
+      FileWriter outputfile = new FileWriter(file);
+      CSVWriter writer =
+          new CSVWriter(
+              outputfile,
+              ',',
+              CSVWriter.NO_QUOTE_CHARACTER,
+              CSVWriter.NO_ESCAPE_CHARACTER,
+              CSVWriter.DEFAULT_LINE_END);
+      List<String[]> data = new ArrayList<String[]>();
+      firstName = faker.name().firstName();
+      lastName = faker.name().lastName();
+      caseUUIDFromCSV = generateShortUUID();
+      String personUUID = generateShortUUID();
+      String epidNumber = generateShortUUID();
+      int lRandom = ThreadLocalRandom.current().nextInt(8999999, 9999999 + 1);
+      detailedCase.computeIfPresent("id", (k, v) -> v = String.valueOf(lRandom));
+      detailedCase.computeIfPresent("uuid", (k, v) -> v = caseUUIDFromCSV);
+      detailedCase.computeIfPresent("epidNumber", (k, v) -> v = epidNumber);
+      detailedCase.computeIfPresent("personUuid", (k, v) -> v = personUUID);
+      detailedCase.computeIfPresent("personFirstName", (k, v) -> v = firstName);
+      detailedCase.computeIfPresent("personLastName", (k, v) -> v = lastName);
+      detailedCase.computeIfPresent("disease", (k, v) -> v = disease);
+      detailedCase.computeIfPresent("personPresentCondition", (k, v) -> v = pCondition);
+      String[] rowdata = detailedCase.values().toArray(new String[0]);
+      ArrayList<String> sArray = new ArrayList<String>();
+      for (String s : rowdata) {
+        sArray.add("\"" + s + "\"");
+      }
+      detailedCaseHeader1[0] = "\"" + detailedCaseHeader1[0] + "\"";
+      data.add(detailedCaseHeader1);
+      data.add(detailedCaseHeader2);
+      data.add(detailedCaseHeader3);
+      data.add(sArray.toArray(new String[0]));
+      writer.writeAll(data);
+      writer.close();
+    } catch (IOException e) {
+      log.error("IOException csvWriter: ", e);
+    }
+  }
+
+  public String[] parseDetailedCaseExportHeaders(String fileName) {
+    List<String[]> r = null;
+    String[] values = new String[] {};
+    CSVParser csvParser = new CSVParserBuilder().withSeparator(',').build();
+    try (CSVReader reader =
+        new CSVReaderBuilder(new FileReader(fileName)).withCSVParser(csvParser).build()) {
+      r = reader.readAll();
+    } catch (IOException e) {
+      log.error("IOException parseDetailedCaseExportHeaders: {}", e.getCause());
+    } catch (CsvException e) {
+      log.error("CsvException parseDetailedCaseExportHeaders: {}", e.getCause());
+    }
+    try {
+      values = r.get(1);
+    } catch (NullPointerException e) {
+      log.error("Null pointer exception parseDetailedCaseExportHeaders: {}", e.getCause());
+    }
+    return values;
   }
 }

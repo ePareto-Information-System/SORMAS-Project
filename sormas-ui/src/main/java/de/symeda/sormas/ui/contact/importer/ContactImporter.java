@@ -14,8 +14,6 @@
  */
 package de.symeda.sormas.ui.contact.importer;
 
-import de.symeda.sormas.api.feature.FeatureType;
-import de.symeda.sormas.api.feature.FeatureTypeProperty;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.io.File;
@@ -35,11 +33,14 @@ import com.vaadin.server.StreamResource;
 import com.vaadin.ui.UI;
 
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.caze.BirthDateDto;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.ContactExportDto;
 import de.symeda.sormas.api.contact.SimilarContactDto;
+import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.feature.FeatureTypeProperty;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
@@ -50,6 +51,7 @@ import de.symeda.sormas.api.importexport.InvalidColumnException;
 import de.symeda.sormas.api.importexport.ValueSeparator;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.location.LocationDto;
 import de.symeda.sormas.api.person.PersonDto;
@@ -129,11 +131,11 @@ public class ContactImporter extends DataImporter {
 		ImportRelatedObjectsMapper.Builder relatedObjectsMapperBuilder = new ImportRelatedObjectsMapper.Builder();
 
 		if (FacadeProvider.getFeatureConfigurationFacade().isPropertyValueTrue(FeatureType.IMMUNIZATION_MANAGEMENT, FeatureTypeProperty.REDUCED)) {
-		relatedObjectsMapperBuilder.addMapper(
-			VaccinationDto.class,
-			vaccinations,
-			() -> VaccinationDto.build(currentUser.toReference()),
-			this::insertColumnEntryIntoRelatedObject);
+			relatedObjectsMapperBuilder.addMapper(
+				VaccinationDto.class,
+				vaccinations,
+				() -> VaccinationDto.build(currentUser.toReference()),
+				this::insertColumnEntryIntoRelatedObject);
 		}
 
 		ImportRelatedObjectsMapper relatedMapper = relatedObjectsMapperBuilder.build();
@@ -158,6 +160,20 @@ public class ContactImporter extends DataImporter {
 			} catch (ValidationRuntimeException e) {
 				contactHasImportError = true;
 				writeImportError(values, e.getMessage());
+			}
+		}
+
+		if (!contactHasImportError) {
+			ImportLineResultDto<ContactDto> contactErrors = validateConstraints(newContactTemp);
+			if (contactErrors.isError()) {
+				contactHasImportError = true;
+				writeImportError(values, contactErrors.getMessage());
+			}
+
+			ImportLineResultDto<PersonDto> personErrors = validateConstraints(newPersonTemp);
+			if (personErrors.isError()) {
+				contactHasImportError = true;
+				writeImportError(values, personErrors.getMessage());
 			}
 		}
 
@@ -218,7 +234,7 @@ public class ContactImporter extends DataImporter {
 					synchronized (contactSelectLock) {
 
 						if (selectedPersonUuid != null) {
-							importPerson = FacadeProvider.getPersonFacade().getPersonByUuid(selectedPersonUuid);
+							importPerson = FacadeProvider.getPersonFacade().getByUuid(selectedPersonUuid);
 						}
 
 						handleContactSimilarity(
@@ -250,7 +266,7 @@ public class ContactImporter extends DataImporter {
 						insertRowDataIntoContactAndPerson(values, entityClasses, entityPropertyPaths, importPerson, newContactTemp, relatedMapper);
 					}
 
-					personReferenceDto = FacadeProvider.getPersonFacade().savePerson(importPerson, skipPersonValidation).toReference();
+					personReferenceDto = FacadeProvider.getPersonFacade().save(importPerson, skipPersonValidation).toReference();
 
 					// Workaround: Reset the change date to avoid OutdatedEntityExceptions
 					newContact.setChangeDate(new Date());
@@ -258,7 +274,13 @@ public class ContactImporter extends DataImporter {
 					FacadeProvider.getContactFacade().save(newContact, true, false);
 
 					for (VaccinationDto vaccination : vaccinations) {
-						FacadeProvider.getVaccinationFacade().createWithImmunization(vaccination, newContact.getRegion(), newContact.getDistrict(), newContact.getPerson(), newContact.getDisease());
+						FacadeProvider.getVaccinationFacade()
+							.createWithImmunization(
+								vaccination,
+								newContact.getRegion(),
+								newContact.getDistrict(),
+								newContact.getPerson(),
+								newContact.getDisease());
 					}
 
 					consumer.result = null;
@@ -339,6 +361,8 @@ public class ContactImporter extends DataImporter {
 	private void insertColumnEntryIntoData(ContactDto contact, PersonDto person, String entry, String[] entryHeaderPath)
 		throws InvalidColumnException, ImportErrorException {
 
+		Language language = I18nProperties.getUserLanguage();
+
 		Object currentElement = contact;
 		for (int i = 0; i < entryHeaderPath.length; i++) {
 			String headerPathElementName = entryHeaderPath[i];
@@ -351,7 +375,7 @@ public class ContactImporter extends DataImporter {
 						currentElement = person;
 					}
 				} else if (ContactExportDto.BIRTH_DATE.equals(headerPathElementName)) {
-					BirthDateDto birthDateDto = PersonHelper.parseBirthdate(entry, currentUser.getLanguage());
+					BirthDateDto birthDateDto = PersonHelper.parseBirthdate(entry, language);
 					if (birthDateDto != null) {
 						person.setBirthdateDD(birthDateDto.getDateOfBirthDD());
 						person.setBirthdateMM(birthDateDto.getDateOfBirthMM());
@@ -401,6 +425,11 @@ public class ContactImporter extends DataImporter {
 					} else if (propertyType.isAssignableFrom(FacilityReferenceDto.class)) {
 						Pair<DistrictReferenceDto, CommunityReferenceDto> infrastructureData =
 							ImporterPersonHelper.getPersonDistrictAndCommunity(pd.getName(), person);
+
+						if (I18nProperties.getPrefixCaption(FacilityDto.I18N_PREFIX, FacilityDto.OTHER_FACILITY).equals(entry)) {
+							entry = FacilityDto.OTHER_FACILITY;
+						}
+
 						List<FacilityReferenceDto> facility = FacadeProvider.getFacilityFacade()
 							.getByNameAndType(
 								entry,
@@ -451,16 +480,6 @@ public class ContactImporter extends DataImporter {
 				logger.error("Unexpected error when trying to import a contact: " + e.getMessage());
 				throw new ImportErrorException(I18nProperties.getValidationError(Validations.importUnexpectedError));
 			}
-		}
-
-		ImportLineResultDto<ContactDto> contactErrors = validateConstraints(contact);
-		if (contactErrors.isError()) {
-			throw new ImportErrorException(contactErrors.getMessage());
-		}
-
-		ImportLineResultDto<PersonDto> personErrors = validateConstraints(person);
-		if (personErrors.isError()) {
-			throw new ImportErrorException(personErrors.getMessage());
 		}
 	}
 

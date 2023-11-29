@@ -19,7 +19,6 @@ package de.symeda.sormas.ui;
 
 import de.symeda.sormas.ui.action.ActionController;
 import de.symeda.sormas.ui.campaign.CampaignController;
-import de.symeda.sormas.ui.caze.CaseArchivingController;
 import de.symeda.sormas.ui.caze.CaseController;
 import de.symeda.sormas.ui.caze.surveillancereport.SurveillanceReportController;
 import de.symeda.sormas.ui.clinicalcourse.ClinicalCourseController;
@@ -29,6 +28,7 @@ import de.symeda.sormas.ui.contact.ContactController;
 import de.symeda.sormas.ui.customexport.CustomExportController;
 import de.symeda.sormas.ui.dashboard.DashboardController;
 import de.symeda.sormas.ui.docgeneration.DocGenerationController;
+import de.symeda.sormas.ui.environment.EnvironmentController;
 import de.symeda.sormas.ui.events.EventController;
 import de.symeda.sormas.ui.events.EventGroupController;
 import de.symeda.sormas.ui.events.EventParticipantsController;
@@ -45,8 +45,11 @@ import de.symeda.sormas.ui.task.TaskController;
 import de.symeda.sormas.ui.therapy.TherapyController;
 import de.symeda.sormas.ui.travelentry.TravelEntryController;
 import de.symeda.sormas.ui.user.UserController;
+import de.symeda.sormas.ui.user.UserRoleController;
 import de.symeda.sormas.ui.utils.ArchivingController;
 import de.symeda.sormas.ui.utils.BaseControllerProvider;
+import de.symeda.sormas.ui.utils.DeleteRestoreController;
+import de.symeda.sormas.ui.utils.PermanentDeleteController;
 import de.symeda.sormas.ui.vaccination.VaccinationController;
 import de.symeda.sormas.ui.visit.VisitController;
 
@@ -61,6 +64,7 @@ public class ControllerProvider extends BaseControllerProvider {
 	private final VisitController visitController;
 	private final PersonController personController;
 	private final UserController userController;
+	private final UserRoleController userRoleController;
 	private final TaskController taskController;
 	private final ActionController actionController;
 	private final SampleController sampleController;
@@ -82,7 +86,9 @@ public class ControllerProvider extends BaseControllerProvider {
 	private final ImmunizationController immunizationController;
 	private final VaccinationController vaccinationController;
 	private final ArchivingController archivingController;
-	private final CaseArchivingController caseArchivingController;
+	private final DeleteRestoreController deleteRestoreController;
+	private final EnvironmentController environmentController;
+	private final PermanentDeleteController permanentDeleteController;
 
 	public ControllerProvider() {
 		super();
@@ -96,6 +102,7 @@ public class ControllerProvider extends BaseControllerProvider {
 		visitController = new VisitController();
 		personController = new PersonController();
 		userController = new UserController();
+		userRoleController = new UserRoleController();
 		taskController = new TaskController();
 		actionController = new ActionController();
 		sampleController = new SampleController();
@@ -117,7 +124,9 @@ public class ControllerProvider extends BaseControllerProvider {
 		immunizationController = new ImmunizationController();
 		vaccinationController = new VaccinationController();
 		archivingController = new ArchivingController();
-		caseArchivingController = new CaseArchivingController();
+		deleteRestoreController = new DeleteRestoreController();
+		environmentController = new EnvironmentController();
+		permanentDeleteController = new PermanentDeleteController();
 	}
 
 	protected static ControllerProvider get() {
@@ -158,6 +167,10 @@ public class ControllerProvider extends BaseControllerProvider {
 
 	public static UserController getUserController() {
 		return get().userController;
+	}
+
+	public static UserRoleController getUserRoleController() {
+		return get().userRoleController;
 	}
 
 	public static TaskController getTaskController() {
@@ -244,7 +257,14 @@ public class ControllerProvider extends BaseControllerProvider {
 		return get().archivingController;
 	}
 
-	public static CaseArchivingController getCaseArchivingController() {
-		return get().caseArchivingController;
+	public static DeleteRestoreController getDeleteRestoreController() {
+		return get().deleteRestoreController;
+	}
+
+	public static EnvironmentController getEnvironmentController() {
+		return get().environmentController;
+	}
+	public static PermanentDeleteController getPermanentDeleteController() {
+		return get().permanentDeleteController;
 	}
 }

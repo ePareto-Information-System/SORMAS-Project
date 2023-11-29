@@ -27,6 +27,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import de.symeda.sormas.api.action.ActionContext;
 import de.symeda.sormas.api.action.ActionCriteria;
 import de.symeda.sormas.api.event.EventDto;
+import de.symeda.sormas.api.event.EventReferenceDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.user.UserRight;
@@ -105,7 +106,8 @@ public class EventActionsView extends AbstractEventView {
 		if (params.contains("?")) {
 			criteria.fromUrlParams(params.substring(params.indexOf("?") + 1));
 		}
-		criteria.event(getEventRef());
+		EventReferenceDto eventRef = getEventRef();
+		criteria.event(eventRef);
 
 		if (list == null) {
 			list = new ActionList(ActionContext.EVENT, criteria, 20);
@@ -113,12 +115,24 @@ public class EventActionsView extends AbstractEventView {
 			listLayout.setSizeFull();
 			listLayout.setMargin(true);
 			listLayout.setSpacing(false);
-			listLayout.addComponent(createTopBar());
-			listLayout.addComponent(createFilterBar());
+
+			HorizontalLayout topBar = createTopBar();
+			listLayout.addComponent(topBar);
+
+			HorizontalLayout filterBar = createFilterBar();
+			listLayout.addComponent(filterBar);
+
 			listLayout.addComponent(list);
 			listLayout.setExpandRatio(list, 1);
 			setSubComponent(listLayout);
-			listLayout.setEnabled(isEventEditAllowed());
+
+			boolean hasEventEditRight = UserProvider.getCurrent().hasUserRight(UserRight.EVENT_EDIT);
+			if (hasEventEditRight) {
+				listLayout.setEnabled(isEditAllowed() && !isEventDeleted());
+			} else {
+				topBar.setEnabled(false);
+				filterBar.setEnabled(false);
+			}
 		}
 
 		updateFilterComponents();

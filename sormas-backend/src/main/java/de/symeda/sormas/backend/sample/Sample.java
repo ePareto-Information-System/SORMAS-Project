@@ -44,8 +44,6 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang3.StringUtils;
 
-import de.symeda.auditlog.api.Audited;
-import de.symeda.auditlog.api.AuditedIgnore;
 import de.symeda.sormas.api.sample.AdditionalTestType;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
@@ -60,17 +58,17 @@ import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.common.DeletableAdo;
 import de.symeda.sormas.backend.contact.Contact;
 import de.symeda.sormas.backend.event.EventParticipant;
+import de.symeda.sormas.backend.externalmessage.labmessage.SampleReport;
 import de.symeda.sormas.backend.infrastructure.facility.Facility;
 import de.symeda.sormas.backend.sormastosormas.entities.SormasToSormasShareable;
 import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfo;
-import de.symeda.sormas.backend.sormastosormas.share.shareinfo.SormasToSormasShareInfo;
+import de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShareInfo;
 import de.symeda.sormas.backend.user.User;
 
 @Entity(name = "samples")
-@Audited
 public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
-    private static final long serialVersionUID = -7196712070188634978L;
+	private static final long serialVersionUID = -7196712070188634978L;
 
 	public static final String TABLE_NAME = "samples";
 
@@ -161,6 +159,8 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private SormasToSormasOriginInfo sormasToSormasOriginInfo;
 	private List<SormasToSormasShareInfo> sormasToSormasShares = new ArrayList<>(0);
 
+	private List<SampleReport> sampleReports = new ArrayList<>(0);
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
 	public Case getAssociatedCase() {
@@ -238,7 +238,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 		this.reportDateTime = reportDateTime;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	@JoinColumn(nullable = false)
 	public User getReportingUser() {
 		return reportingUser;
@@ -277,7 +277,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 		this.samplePurpose = samplePurpose;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	@JoinColumn
 	public Facility getLab() {
 		return lab;
@@ -592,11 +592,10 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	@Override
 	@ManyToOne(cascade = {
-			CascadeType.PERSIST,
-			CascadeType.MERGE,
-			CascadeType.DETACH,
-			CascadeType.REFRESH })
-	@AuditedIgnore
+		CascadeType.PERSIST,
+		CascadeType.MERGE,
+		CascadeType.DETACH,
+		CascadeType.REFRESH })
 	public SormasToSormasOriginInfo getSormasToSormasOriginInfo() {
 		return sormasToSormasOriginInfo;
 	}
@@ -607,12 +606,20 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	}
 
 	@OneToMany(mappedBy = SormasToSormasShareInfo.SAMPLE, fetch = FetchType.LAZY)
-	@AuditedIgnore
 	public List<SormasToSormasShareInfo> getSormasToSormasShares() {
 		return sormasToSormasShares;
 	}
 
 	public void setSormasToSormasShares(List<SormasToSormasShareInfo> sormasToSormasShares) {
 		this.sormasToSormasShares = sormasToSormasShares;
+	}
+
+	@OneToMany(mappedBy = SampleReport.SAMPLE, fetch = FetchType.LAZY)
+	public List<SampleReport> getSampleReports() {
+		return sampleReports;
+	}
+
+	public void setSampleReports(List<SampleReport> externalMessages) {
+		this.sampleReports = externalMessages;
 	}
 }

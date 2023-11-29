@@ -21,6 +21,7 @@ import de.symeda.sormas.api.infrastructure.cadre.*;
 import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.backend.caze.CaseUserFilterCriteria;
+import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.deletionconfiguration.AbstractCoreEntityFacade;
 import de.symeda.sormas.backend.infrastructure.country.Country;
 import de.symeda.sormas.backend.infrastructure.country.CountryFacadeEjb;
@@ -63,6 +64,7 @@ public class CadreFacadeEjb extends AbstractCoreEntityFacade<Cadre>	implements C
 				.collect(Collectors.toList());
 	}
 
+
 	@Override
 	public List<CadreDto> getByUuids(List<String> uuids) {
 		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
@@ -73,6 +75,8 @@ public class CadreFacadeEjb extends AbstractCoreEntityFacade<Cadre>	implements C
 		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
 		return toDataDto(cadreService.getByUuid(uuid));
 	}
+
+
 
 	@Override
 	public long count(CadreCriteria cadreCriteria) {

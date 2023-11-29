@@ -14,7 +14,11 @@
  */
 package de.symeda.sormas.backend.document;
 
+import static java.util.Arrays.asList;
+
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,13 +31,23 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 
+import org.apache.tika.config.TikaConfig;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.mime.MediaType;
+import org.apache.tika.mime.MimeType;
+import org.apache.tika.mime.MimeTypeException;
+
 import de.symeda.sormas.api.document.DocumentCriteria;
 import de.symeda.sormas.api.document.DocumentDto;
 import de.symeda.sormas.api.document.DocumentFacade;
 import de.symeda.sormas.api.document.DocumentRelatedEntityType;
+import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.FileContentsDoNotMatchExtensionException;
+import de.symeda.sormas.api.utils.FileExtensionNotAllowedException;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.caze.CaseService;
+import de.symeda.sormas.backend.common.ConfigFacadeEjb;
 import de.symeda.sormas.backend.contact.Contact;
 import de.symeda.sormas.backend.contact.ContactService;
 import de.symeda.sormas.backend.event.Event;
@@ -43,6 +57,7 @@ import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.ModelConstants;
 import de.symeda.sormas.backend.util.Pseudonymizer;
+import de.symeda.sormas.backend.util.RightsAllowed;
 
 /**
  * Manages documents and their storage.
@@ -58,9 +73,8 @@ import de.symeda.sormas.backend.util.Pseudonymizer;
  * @see Document#isDeleted()
  */
 @Stateless(name = "DocumentFacade")
+@RightsAllowed(UserRight._DOCUMENT_VIEW)
 public class DocumentFacadeEjb implements DocumentFacade {
-
-	private static final String MIME_TYPE_DEFAULT = "application/octet-stream";
 
 	@PersistenceContext(unitName = ModelConstants.PERSISTENCE_UNIT_NAME)
 	private EntityManager em;
@@ -77,6 +91,8 @@ public class DocumentFacadeEjb implements DocumentFacade {
 	private ContactService contactService;
 	@EJB
 	private EventService eventService;
+	@EJB
+	private ConfigFacadeEjb.ConfigFacadeEjbLocal configFacade;
 
 	@Override
 	public DocumentDto getDocumentByUuid(String uuid) {
@@ -84,18 +100,18 @@ public class DocumentFacadeEjb implements DocumentFacade {
 	}
 
 	@Override
+	@RightsAllowed(UserRight._DOCUMENT_UPLOAD)
 	public DocumentDto saveDocument(@Valid DocumentDto dto, byte[] content) throws IOException {
 		Document existingDocument = dto.getUuid() == null ? null : documentService.getByUuid(dto.getUuid());
 		if (existingDocument != null) {
 			throw new EntityExistsException("Tried to save a document that already exists: " + dto.getUuid());
 		}
 
-		if (dto.getMimeType() == null) {
-			dto.setMimeType(MIME_TYPE_DEFAULT);
-		}
+		String fileExtension = getFileExtension(dto.getName());
+		checkFileExtension(fileExtension);
+		checkFileContents(dto.getName(), content, fileExtension);
 
-		Document document = fromDto(dto, true);
-
+		Document document = fillOrBuildEntity(dto, existingDocument, true);
 		String storageReference = documentStorageService.save(document, content);
 		try {
 			document.setStorageReference(storageReference);
@@ -114,7 +130,48 @@ public class DocumentFacadeEjb implements DocumentFacade {
 		}
 	}
 
+	private String getFileExtension(String fileName) {
+		int index = fileName.lastIndexOf('.');
+		if (index > 0) {
+			return fileName.substring(index);
+		} else {
+			throw new FileExtensionNotAllowedException(String.format("File name (%s) is not properly formatted", fileName));
+		}
+	}
+
+	private void checkFileExtension(String fileExtension) {
+		String[] allowedFileExtensions = configFacade.getAllowedFileExtensions();
+		boolean fileTypeAllowed = asList(allowedFileExtensions).contains(fileExtension);
+
+		if (!fileTypeAllowed) {
+			throw new FileExtensionNotAllowedException(String.format("File extension %s not allowed", fileExtension));
+		}
+	}
+
+	private void checkFileContents(String fileName, byte[] content, String fileExtension) throws IOException {
+		try {
+			getMimeTypeFromFileContents(fileName, content).getExtensions()
+				.stream()
+				.filter(fileExtension::equals)
+				.findAny()
+				.orElseThrow(() -> new FileContentsDoNotMatchExtensionException("File extension and file contents are not the same"));
+		} catch (MimeTypeException e) {
+			throw new FileExtensionNotAllowedException("Could not read file extension within file");
+		}
+	}
+
+	private static MimeType getMimeTypeFromFileContents(String fileName, byte[] content) throws IOException, MimeTypeException {
+		InputStream stream = new ByteArrayInputStream(content);
+		TikaConfig tikaConfig = TikaConfig.getDefaultConfig();
+		Metadata metaData = new Metadata();
+		metaData.set("resourceName", fileName);
+		MediaType detect = tikaConfig.getDetector().detect(stream, metaData);
+
+		return tikaConfig.getMimeRepository().forName(detect.toString());
+	}
+
 	@Override
+	@RightsAllowed(UserRight._DOCUMENT_DELETE)
 	public void deleteDocument(String uuid) {
 		// Only mark as delete here; actual deletion will be done in document storage cleanup via cron job
 		documentService.markAsDeleted(documentService.getByUuid(uuid));
@@ -140,12 +197,13 @@ public class DocumentFacadeEjb implements DocumentFacade {
 	}
 
 	@Override
-	public byte[] read(String uuid) throws IOException {
+	public byte[] getContent(String uuid) throws IOException {
 		Document document = documentService.getByUuid(uuid);
 		return documentStorageService.read(document.getStorageReference());
 	}
 
 	@Override
+	@RightsAllowed(UserRight._SYSTEM)
 	public void cleanupDeletedDocuments() {
 		List<Document> deleted = documentService.getDocumentsMarkedForDeletion();
 		for (Document document : deleted) {
@@ -154,8 +212,12 @@ public class DocumentFacadeEjb implements DocumentFacade {
 		}
 	}
 
-	public Document fromDto(DocumentDto source, boolean checkChangeDate) {
-		Document target = DtoHelper.fillOrBuildEntity(source, documentService.getByUuid(source.getUuid()), Document::new, checkChangeDate);
+	public Document fillOrBuildEntity(DocumentDto source, Document target, boolean checkChangeDate) {
+		if (source == null) {
+			return null;
+		}
+
+		target = DtoHelper.fillOrBuildEntity(source, target, Document::new, checkChangeDate);
 
 		target.setUploadingUser(userService.getByReferenceDto(source.getUploadingUser()));
 		target.setName(source.getName());
@@ -193,7 +255,7 @@ public class DocumentFacadeEjb implements DocumentFacade {
 			return caseService.inJurisdictionOrOwned(caze);
 		case CONTACT:
 			Contact contact = contactService.getByUuid(dto.getRelatedEntityUuid());
-			return contactService.inJurisdictionOrOwned(contact).getInJurisdiction();
+			return contactService.inJurisdictionOrOwned(contact);
 		case EVENT:
 			Event event = eventService.getByUuid(dto.getRelatedEntityUuid());
 			return eventService.inJurisdictionOrOwned(event);

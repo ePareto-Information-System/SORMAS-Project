@@ -52,6 +52,7 @@ import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventParticipantCriteria;
 import de.symeda.sormas.api.event.EventParticipantIndexDto;
 import de.symeda.sormas.api.event.EventParticipantReferenceDto;
+import de.symeda.sormas.api.event.EventReferenceDto;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.feature.FeatureTypeProperty;
 import de.symeda.sormas.api.i18n.Captions;
@@ -61,6 +62,7 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.importexport.ExportType;
 import de.symeda.sormas.api.importexport.ImportExportUtils;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
@@ -84,10 +86,13 @@ public class EventParticipantsView extends AbstractEventView {
 	public static final String EVENTPARTICIPANTS = "eventparticipants";
 	public static final String VIEW_NAME = ROOT_VIEW_NAME + "/" + EVENTPARTICIPANTS;
 
-	private final EventParticipantCriteria criteria;
+	private EventParticipantCriteria criteria;
+	private EventParticipantsViewConfiguration viewConfiguration;
 
 	private EventParticipantsGrid grid;
 	private Button addButton;
+	private Button btnEnterBulkEditMode;
+	private MenuBar bulkOperationsDropdown;
 	private DetailSubComponentWrapper gridLayout;
 	private Button activeStatusButton;
 	private EventParticipantsFilterForm filterForm;
@@ -101,11 +106,7 @@ public class EventParticipantsView extends AbstractEventView {
 		setSizeFull();
 		addStyleName("crud-view");
 
-		criteria = ViewModelProviders.of(EventParticipantsView.class).get(EventParticipantCriteria.class);
-
-		if (criteria.getRelevanceStatus() == null) {
-			criteria.relevanceStatus(EntityRelevanceStatus.ACTIVE);
-		}
+		viewConfiguration = ViewModelProviders.of(getClass()).get(EventParticipantsViewConfiguration.class);
 	}
 
 	public HorizontalLayout createTopBar() {
@@ -129,12 +130,18 @@ public class EventParticipantsView extends AbstractEventView {
 				popupWindow.setCaption(I18nProperties.getString(Strings.headingImportEventParticipant));
 				popupWindow.addCloseListener(c -> this.grid.reload());
 			}, ValoTheme.BUTTON_PRIMARY);
+			if (shouldDisableButton()) {
+				importButton.setEnabled(false);
+			}
 
 			addHeaderComponent(importButton);
 		}
 
 		// export
 		PopupButton exportPopupButton = ButtonHelper.createIconPopupButton(Captions.export, VaadinIcons.DOWNLOAD, exportLayout);
+		if (shouldDisableButton()) {
+			exportPopupButton.setEnabled(false);
+		}
 		addHeaderComponent(exportPopupButton);
 
 		{
@@ -196,7 +203,7 @@ public class EventParticipantsView extends AbstractEventView {
 			ViewModelProviders.of(EventParticipantsView.class).remove(EventParticipantCriteria.class);
 			navigateTo(null);
 		});
-		filterForm.addApplyHandler(e -> navigateTo(criteria));
+		filterForm.addApplyHandler(e -> grid.reload());
 
 		topLayout.addComponent(filterForm);
 
@@ -213,13 +220,20 @@ public class EventParticipantsView extends AbstractEventView {
 					}, true);
 				}));
 			if (UserProvider.getCurrent().hasUserRight(UserRight.EVENTPARTICIPANT_DELETE)) {
-				bulkActions.add(new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkDelete), VaadinIcons.TRASH, mi -> {
-					grid.bulkActionHandler(items -> {
-						ControllerProvider.getEventParticipantController().deleteAllSelectedItems(items, () -> navigateTo(criteria));
-					}, true);
-				}));
+				if (criteria.getRelevanceStatus() != EntityRelevanceStatus.DELETED) {
+					bulkActions.add(new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkDelete), VaadinIcons.TRASH, mi -> {
+						grid.bulkActionHandler(items -> {
+							ControllerProvider.getEventParticipantController().deleteAllSelectedItems(items, grid, () -> grid.reload());
+						}, true);
+					}));
+				} else {
+					bulkActions.add(new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkRestore), VaadinIcons.ARROW_BACKWARD, mi -> {
+						grid.bulkActionHandler(items -> {
+							ControllerProvider.getEventParticipantController().restoreSelectedEventParticipants(items, grid, () -> grid.reload());
+						}, true);
+					}));
+				}
 			}
-
 			if (isDocGenerationAllowed()) {
 				bulkActions
 					.add(new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkActionCreatDocuments), VaadinIcons.FILE_TEXT, mi -> {
@@ -247,14 +261,51 @@ public class EventParticipantsView extends AbstractEventView {
 					}));
 			}
 
-			MenuBar bulkOperationsDropdown = MenuBarHelper.createDropDown(Captions.bulkActions, bulkActions);
+			bulkOperationsDropdown = MenuBarHelper.createDropDown(Captions.bulkActions, bulkActions);
+			bulkOperationsDropdown.setVisible(viewConfiguration.isInEagerMode());
 
 			topLayout.addComponent(bulkOperationsDropdown);
 			topLayout.setComponentAlignment(bulkOperationsDropdown, Alignment.TOP_RIGHT);
+
+			btnEnterBulkEditMode = ButtonHelper.createIconButton(Captions.actionEnterBulkEditMode, VaadinIcons.CHECK_SQUARE_O, null);
+			btnEnterBulkEditMode.setVisible(!viewConfiguration.isInEagerMode());
+			addHeaderComponent(btnEnterBulkEditMode);
+
+			Button btnLeaveBulkEditMode =
+				ButtonHelper.createIconButton(Captions.actionLeaveBulkEditMode, VaadinIcons.CLOSE, null, ValoTheme.BUTTON_PRIMARY);
+			btnLeaveBulkEditMode.setVisible(viewConfiguration.isInEagerMode());
+
+			if (shouldDisableButton()) {
+				btnEnterBulkEditMode.setEnabled(false);
+				btnLeaveBulkEditMode.setEnabled(false);
+				bulkOperationsDropdown.setEnabled(false);
+			}
+			addHeaderComponent(btnLeaveBulkEditMode);
+
+			btnEnterBulkEditMode.addClickListener(e -> {
+				bulkOperationsDropdown.setVisible(true);
+				ViewModelProviders.of(EventParticipantsView.class).get(EventParticipantsViewConfiguration.class).setInEagerMode(true);
+				btnEnterBulkEditMode.setVisible(false);
+				btnLeaveBulkEditMode.setVisible(true);
+				grid.reload();
+			});
+			btnLeaveBulkEditMode.addClickListener(e -> {
+				bulkOperationsDropdown.setVisible(false);
+				ViewModelProviders.of(EventParticipantsView.class).get(EventParticipantsViewConfiguration.class).setInEagerMode(false);
+				btnLeaveBulkEditMode.setVisible(false);
+				btnEnterBulkEditMode.setVisible(true);
+				navigateTo(criteria);
+			});
+
 		}
 
 		topLayout.addStyleName(CssStyles.VSPACE_3);
 		return topLayout;
+	}
+
+	private boolean shouldDisableButton() {
+		return FacadeProvider.getFeatureConfigurationFacade().isFeatureDisabled(FeatureType.EDIT_ARCHIVED_ENTITIES)
+			&& FacadeProvider.getEventFacade().isArchived(getEventRef().getUuid());
 	}
 
 	private Set<String> getSelectedRows() {
@@ -265,8 +316,15 @@ public class EventParticipantsView extends AbstractEventView {
 
 	@Override
 	protected void initView(String params) {
+		EventReferenceDto eventRef = getEventRef();
 
-		criteria.withEvent(getEventRef());
+		criteria = ViewModelProviders.of(EventParticipantsView.class).get(EventParticipantCriteria.class);
+		boolean isEventArchived = FacadeProvider.getEventFacade().isArchived(eventRef.getUuid());
+
+		if (!DataHelper.isSame(eventRef, criteria.getEvent()) || !viewConfiguration.isRelevanceStatusChanged(eventRef)) {
+			criteria.relevanceStatus(isEventArchived ? EntityRelevanceStatus.ACTIVE_AND_ARCHIVED : EntityRelevanceStatus.ACTIVE);
+		}
+		criteria.withEvent(eventRef);
 
 		if (grid == null) {
 			grid = new EventParticipantsGrid(criteria);
@@ -279,9 +337,9 @@ public class EventParticipantsView extends AbstractEventView {
 			gridLayout.addComponent(grid);
 			gridLayout.setExpandRatio(grid, 1);
 			gridLayout.setStyleName("crud-main-layout");
-			grid.getDataProvider().addDataProviderListener(e -> updateStatusButtons());
+			grid.addDataSizeChangeListener(e -> updateStatusButtons());
 			setSubComponent(gridLayout);
-			gridLayout.setEnabled(isEventEditAllowed() || UserProvider.getCurrent().hasUserRight(UserRight.EVENTPARTICIPANT_EDIT));
+			gridLayout.setEnabled(!isEventDeleted() && isEditAllowed() && UserProvider.getCurrent().hasUserRight(UserRight.EVENTPARTICIPANT_EDIT));
 		}
 
 		if (params.startsWith("?")) {
@@ -289,8 +347,6 @@ public class EventParticipantsView extends AbstractEventView {
 			criteria.fromUrlParams(params);
 		}
 		updateFilterComponents();
-
-		grid.reload();
 	}
 
 	public HorizontalLayout createStatusFilterBar() {
@@ -337,9 +393,10 @@ public class EventParticipantsView extends AbstractEventView {
 			eventParticipantRelevanceStatusFilter = buildRelevanceStatusFilter(
 				Captions.eventParticipantActiveEventParticipants,
 				Captions.eventParticipantArchivedEventParticipants,
-				Captions.eventParticipantAllEventParticipants);
+				Captions.eventParticipantActiveAndArchivedEventParticipants);
 
 			eventParticipantRelevanceStatusFilter.addValueChangeListener(e -> {
+				viewConfiguration.setRelevanceStatusChangedEvent(getEventRef().getUuid());
 				if (relevanceStatusInfoLabel != null) {
 					relevanceStatusInfoLabel.setVisible(EntityRelevanceStatus.ARCHIVED.equals(e.getProperty().getValue()));
 				}
@@ -376,7 +433,15 @@ public class EventParticipantsView extends AbstractEventView {
 		relevanceStatusFilter.addItems((Object[]) EntityRelevanceStatus.values());
 		relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ACTIVE, I18nProperties.getCaption(eventParticipantActiveCaption));
 		relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ARCHIVED, I18nProperties.getCaption(eventParticipantArchivedCaption));
-		relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ALL, I18nProperties.getCaption(eventParticipantAllCaption));
+		relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ACTIVE_AND_ARCHIVED, I18nProperties.getCaption(eventParticipantAllCaption));
+
+		if (UserProvider.getCurrent().hasUserRight(UserRight.EVENTPARTICIPANT_DELETE)) {
+			relevanceStatusFilter
+				.setItemCaption(EntityRelevanceStatus.DELETED, I18nProperties.getCaption(Captions.eventParticipantDeletedEventParticipants));
+		} else {
+			relevanceStatusFilter.removeItem(EntityRelevanceStatus.DELETED);
+		}
+
 		return relevanceStatusFilter;
 	}
 
@@ -400,7 +465,7 @@ public class EventParticipantsView extends AbstractEventView {
 
 		if (activeStatusButton != null) {
 			activeStatusButton
-				.setCaption(I18nProperties.getCaption(Captions.all) + LayoutUtil.spanCss(CssStyles.BADGE, String.valueOf(grid.getItemCount())));
+				.setCaption(I18nProperties.getCaption(Captions.all) + LayoutUtil.spanCss(CssStyles.BADGE, String.valueOf(grid.getDataSize())));
 		}
 	}
 }

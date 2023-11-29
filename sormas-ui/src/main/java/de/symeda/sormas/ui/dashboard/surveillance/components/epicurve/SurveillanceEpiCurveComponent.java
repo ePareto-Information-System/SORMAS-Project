@@ -27,7 +27,7 @@ import de.symeda.sormas.ui.dashboard.surveillance.components.epicurve.builders.S
 import de.symeda.sormas.ui.dashboard.surveillance.components.epicurve.builders.SurveillanceEpiCurveBuilders;
 import de.symeda.sormas.ui.utils.CssStyles;
 
-public class SurveillanceEpiCurveComponent extends AbstractEpiCurveComponent {
+public class SurveillanceEpiCurveComponent extends AbstractEpiCurveComponent<DashboardDataProvider> {
 
 	private static final long serialVersionUID = 6582975657305031105L;
 
@@ -64,6 +64,7 @@ public class SurveillanceEpiCurveComponent extends AbstractEpiCurveComponent {
 			.district(dashboardDataProvider.getDistrict())
 			.newCaseDateType(dashboardDataProvider.getNewCaseDateType())
 			.caseClassification(dashboardDataProvider.getCaseClassification());
-		epiCurveChart.setHcjs(surveillanceEpiCurveBuilder.buildFrom(buildListOfFilteredDates(), dashboardCriteria));
+		//epiCurveChart.setHcjs(surveillanceEpiCurveBuilder.buildFrom(buildListOfFilteredDates(), dashboardCriteria));
+		epiCurveChart.setHcjs(surveillanceEpiCurveBuilder.buildFrom(buildListOfFilteredDates(), dashboardDataProvider)); //1.87.0
 	}
 }

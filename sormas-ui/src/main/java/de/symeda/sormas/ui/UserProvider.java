@@ -29,19 +29,16 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.JurisdictionLevel;
+import de.symeda.sormas.api.user.PseudonymizableDataAccessLevel;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.user.UserRightGroup;
 import de.symeda.sormas.api.user.UserRoleDto;
 
 public class UserProvider {
 
-	private static final List configurationUserRoles = Arrays.asList(
-		UserRight.DOCUMENT_TEMPLATE_MANAGEMENT,
-		UserRight.INFRASTRUCTURE_VIEW,
-		UserRight.LINE_LISTING_CONFIGURE,
-		UserRight.OUTBREAK_VIEW,
-		UserRight.POPULATION_MANAGE);
+	private static final List userUserRoles = Arrays.asList(UserRight.USER_VIEW, UserRight.USER_ROLE_VIEW);
 
 	private UserDto user;
 	private UserReferenceDto userReference;
@@ -88,15 +85,29 @@ public class UserProvider {
 
 	public boolean hasConfigurationAccess() {
 		Set<UserRight> currentUserRights = getUserRights();
-		return configurationUserRoles.stream().anyMatch(currentUserRights::contains);
+		return UserRight.getUserRightsOfGroup(UserRightGroup.CONFIGURATION).stream().anyMatch(currentUserRights::contains)
+			|| UserRight.getUserRightsOfGroup(UserRightGroup.INFRASTRUCTURE).stream().anyMatch(currentUserRights::contains);
+	}
+
+	public boolean hasUserAccess() {
+		Set<UserRight> currentUserRights = getUserRights();
+		return userUserRoles.stream().anyMatch(currentUserRights::contains);
 	}
 
 	public boolean hasUserRight(UserRight userRight) {
 		return getUserRights().contains(userRight);
 	}
 
+	public boolean hasAnyRight(Set<UserRight> userRight) {
+		return getUserRights().stream().anyMatch(userRight::contains);
+	}
+
 	public boolean hasAllUserRights(UserRight... userRights) {
 		return getUserRights().containsAll(Arrays.asList(userRights));
+	}
+
+	public boolean hasAllUserRightsWithEditAllowedFlag(boolean isEditAllowed, UserRight... userRights) {
+		return isEditAllowed && getUserRights().containsAll(Arrays.asList(userRights));
 	}
 
 	public boolean hasNationJurisdictionLevel() {
@@ -127,6 +138,21 @@ public class UserProvider {
 	public boolean hasRegion(RegionReferenceDto regionReference) {
 		RegionReferenceDto userRegionReference = getCurrent().getUser().getRegion();
 		return Objects.equals(userRegionReference, regionReference);
+	}
+
+	public PseudonymizableDataAccessLevel getPseudonymizableDataAccessLevel(boolean inJurisdiction) {
+
+		boolean sensitiveData = inJurisdiction
+			? getUserRights().contains(UserRight.SEE_SENSITIVE_DATA_IN_JURISDICTION)
+			: getUserRights().contains(UserRight.SEE_SENSITIVE_DATA_OUTSIDE_JURISDICTION);
+		boolean personalData = inJurisdiction
+			? getUserRights().contains(UserRight.SEE_PERSONAL_DATA_IN_JURISDICTION)
+			: getUserRights().contains(UserRight.SEE_PERSONAL_DATA_OUTSIDE_JURISDICTION);
+		return sensitiveData && personalData
+			? PseudonymizableDataAccessLevel.ALL
+			: personalData
+				? PseudonymizableDataAccessLevel.PERSONAL
+				: sensitiveData ? PseudonymizableDataAccessLevel.SENSITIVE : PseudonymizableDataAccessLevel.NONE;
 	}
 
 	public UserReferenceDto getUserReference() {

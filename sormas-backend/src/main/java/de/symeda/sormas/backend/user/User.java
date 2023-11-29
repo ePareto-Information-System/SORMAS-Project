@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,22 +35,26 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.PostPersist;
+import javax.persistence.PostUpdate;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import de.symeda.auditlog.api.Audited;
-import de.symeda.auditlog.api.AuditedAttribute;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.Language;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserReferenceDto;
+import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
+import de.symeda.sormas.backend.common.NotExposedToApi;
 import de.symeda.sormas.backend.infrastructure.community.Community;
 import de.symeda.sormas.backend.infrastructure.district.District;
 import de.symeda.sormas.backend.infrastructure.facility.Facility;
@@ -58,8 +63,9 @@ import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.location.Location;
 
 @Entity(name = User.TABLE_NAME)
-@Audited
 @EntityListeners(User.UserListener.class)
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class User extends AbstractDomainObject {
 
 	private static final long serialVersionUID = -629432920970152112L;
@@ -94,7 +100,9 @@ public class User extends AbstractDomainObject {
 	public static final String LIMITED_DISEASE = "limitedDisease";
 
 	private String userName;
+	@NotExposedToApi
 	private String password;
+	@NotExposedToApi
 	private String seed;
 
 	private boolean active = true;
@@ -138,7 +146,6 @@ public class User extends AbstractDomainObject {
 
 	@Size(max = 64)
 	@Column(name = "password", nullable = false, length = 64)
-	@AuditedAttribute(anonymous = true, anonymizingString = "*****")
 	public String getPassword() {
 		return password;
 	}
@@ -148,7 +155,6 @@ public class User extends AbstractDomainObject {
 	}
 
 	@Column(name = "seed", nullable = false, length = 16)
-	@AuditedAttribute(anonymous = true, anonymizingString = "*****")
 	public String getSeed() {
 		return seed;
 	}
@@ -212,7 +218,7 @@ public class User extends AbstractDomainObject {
 		this.address = address;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public Region getRegion() {
 		return region;
 	}
@@ -221,6 +227,7 @@ public class User extends AbstractDomainObject {
 		this.region = region;
 	}
 
+	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 	@ManyToMany(cascade = {}, fetch = FetchType.LAZY)
 	@JoinTable(name = TABLE_NAME_USERS_USERROLES, joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "userrole_id"))
 	public Set<UserRole> getUserRoles() {
@@ -256,7 +263,7 @@ public class User extends AbstractDomainObject {
 		jurisdictionLevel = UserRole.getJurisdictionLevel(this.getUserRoles());
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public User getAssociatedOfficer() {
 		return associatedOfficer;
 	}
@@ -269,7 +276,7 @@ public class User extends AbstractDomainObject {
 		return new UserReferenceDto(getUuid(), getFirstName(), getLastName());
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public District getDistrict() {
 		return district;
 	}
@@ -278,7 +285,7 @@ public class User extends AbstractDomainObject {
 		this.district = district;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public Community getCommunity() {
 		return community;
 	}
@@ -287,7 +294,7 @@ public class User extends AbstractDomainObject {
 		this.community = community;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public Facility getHealthFacility() {
 		return healthFacility;
 	}
@@ -296,7 +303,7 @@ public class User extends AbstractDomainObject {
 		this.healthFacility = healthFacility;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public Facility getLaboratory() {
 		return laboratory;
 	}
@@ -305,7 +312,7 @@ public class User extends AbstractDomainObject {
 		this.laboratory = laboratory;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public PointOfEntry getPointOfEntry() {
 		return pointOfEntry;
 	}
@@ -355,6 +362,21 @@ public class User extends AbstractDomainObject {
 		return userRoles.stream().anyMatch(getUserRoles()::contains);
 	}
 
+	/**
+	 * Checks if the User possesses the given access right.
+	 *
+	 * @param userRight
+	 *            the access right in question
+	 * @return true if the user has the access right, false otherwise
+	 */
+	public boolean hasUserRight(UserRight userRight) {
+		return this.getUserRoles().stream().anyMatch(userRole -> userRole.getUserRights().contains(userRight));
+	}
+
+	public boolean hasAnyUserRight(Set<UserRight> userRights) {
+		return this.getUserRoles().stream().anyMatch(userRole -> userRole.getUserRights().stream().anyMatch(userRights::contains));
+	}
+
 	public static String buildCaptionForNotification(User user) {
 		if (user == null) {
 			return "-";
@@ -369,9 +391,9 @@ public class User extends AbstractDomainObject {
 
 	static class UserListener {
 
-		@PrePersist
-		@PreUpdate
-		private void beforeAnyUpdate(User user) {
+		@PostPersist
+		@PostUpdate
+		private void afterAnyUpdate(User user) {
 			UserCache.getInstance().remove(user.getUserName());
 		}
 	}

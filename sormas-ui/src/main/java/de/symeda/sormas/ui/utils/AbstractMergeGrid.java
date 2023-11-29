@@ -15,6 +15,7 @@
 
 package de.symeda.sormas.ui.utils;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,15 +24,19 @@ import com.vaadin.data.TreeData;
 import com.vaadin.data.provider.TreeDataProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.ExternalResource;
+import com.vaadin.server.Page;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.StyleGenerator;
 import com.vaadin.ui.TreeGrid;
 import com.vaadin.ui.themes.ValoTheme;
 
+import de.symeda.sormas.api.MergeFacade;
 import de.symeda.sormas.api.MergeableIndexDto;
+import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolRuntimeException;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -41,6 +46,9 @@ import de.symeda.sormas.ui.SormasUI;
 
 public abstract class AbstractMergeGrid<T1 extends MergeableIndexDto, T2 extends BaseCriteria> extends TreeGrid<T1> {
 
+	public static final int DUPLICATE_MERGING_LIMIT_DEFAULT = 100;
+	public static final int DUPLICATE_MERGING_LIMIT_MAX = 1000;
+
 	public static final String COLUMN_ACTIONS = "actions";
 	public static final String COLUMN_COMPLETENESS = "completenessValue";
 	public static final String COLUMN_UUID = "uuidLink";
@@ -49,22 +57,22 @@ public abstract class AbstractMergeGrid<T1 extends MergeableIndexDto, T2 extends
 	private static final String COMPLETENESS = "completeness";
 
 	protected T2 criteria;
+
+	protected QueryDetails queryDetails;
+
 	protected boolean ignoreRegion;
 
 	protected List<String[]> hiddenUuidPairs;
 
-	private String viewName;
-	private String i18nPrefix;
-	private String confirmMessage;
-	private String pickMessage;
+	private final MergeFacade mergeFacade;
 
-	public AbstractMergeGrid(Class<T1> beanType, String viewName, String i18nPrefix, String confirmMessage, String pickMessage) {
+	private final Messages messages;
+
+	protected AbstractMergeGrid(Class<T1> beanType, MergeFacade mergeFacade, String viewName, String i18nPrefix, Messages messages) {
 		super(beanType);
 
-		this.viewName = viewName;
-		this.i18nPrefix = i18nPrefix;
-		this.confirmMessage = confirmMessage;
-		this.pickMessage = pickMessage;
+		this.mergeFacade = mergeFacade;
+		this.messages = messages;
 
 		setSizeFull();
 		setSelectionMode(SelectionMode.NONE);
@@ -100,7 +108,9 @@ public abstract class AbstractMergeGrid<T1 extends MergeableIndexDto, T2 extends
 
 		for (Column<?, ?> column : getColumns()) {
 			column.setCaption(I18nProperties.getPrefixCaption(i18nPrefix, column.getId(), column.getCaption()));
-			column.setMaximumWidth(300);
+			if (!column.getId().equals(COLUMN_ACTIONS)) {
+				column.setMaximumWidth(300);
+			}
 		}
 		getColumn(COLUMN_ACTIONS).setCaption("");
 		getColumn(COLUMN_UUID).setCaption(I18nProperties.getPrefixCaption(i18nPrefix, UUID));
@@ -131,7 +141,7 @@ public abstract class AbstractMergeGrid<T1 extends MergeableIndexDto, T2 extends
 		Button btnMerge = ButtonHelper.createIconButton(Captions.actionMerge, VaadinIcons.COMPRESS_SQUARE, e -> {
 			VaadinUiUtil.showConfirmationPopup(
 				I18nProperties.getString(Strings.headingConfirmChoice),
-				new Label(I18nProperties.getString(confirmMessage)),
+				new Label(messages.confirm),
 				I18nProperties.getCaption(Captions.actionConfirm),
 				I18nProperties.getCaption(Captions.actionCancel),
 				640,
@@ -145,7 +155,7 @@ public abstract class AbstractMergeGrid<T1 extends MergeableIndexDto, T2 extends
 		Button btnPick = ButtonHelper.createIconButton(Captions.actionPick, VaadinIcons.CHECK, e -> {
 			VaadinUiUtil.showConfirmationPopup(
 				I18nProperties.getString(Strings.headingConfirmChoice),
-				new Label(I18nProperties.getString(pickMessage)),
+				new Label(messages.pick),
 				I18nProperties.getCaption(Captions.actionConfirm),
 				I18nProperties.getCaption(Captions.actionCancel),
 				640,
@@ -201,7 +211,12 @@ public abstract class AbstractMergeGrid<T1 extends MergeableIndexDto, T2 extends
 			hiddenUuidPairs = new ArrayList<>();
 		}
 
-		List<T1[]> itemPairs = getItemForDuplicateMerging();
+		int limit = DUPLICATE_MERGING_LIMIT_DEFAULT;
+		if (queryDetails != null && queryDetails.getResultLimit() != null) {
+			limit = Math.max(1, Math.min(queryDetails.getResultLimit(), DUPLICATE_MERGING_LIMIT_MAX));
+		}
+
+		List<T1[]> itemPairs = getItemsForDuplicateMerging(limit);
 		for (T1[] itemPair : itemPairs) {
 			boolean uuidPairExists = false;
 			for (String[] hiddenUuidPair : hiddenUuidPairs) {
@@ -220,6 +235,7 @@ public abstract class AbstractMergeGrid<T1 extends MergeableIndexDto, T2 extends
 
 		expandRecursively(data.getRootItems(), 0);
 		dataProvider.refreshAll();
+		this.recalculateColumnWidths();
 	}
 
 	public void reload(boolean ignoreRegion) {
@@ -227,15 +243,85 @@ public abstract class AbstractMergeGrid<T1 extends MergeableIndexDto, T2 extends
 		reload();
 	}
 
-	protected abstract List<T1[]> getItemForDuplicateMerging();
+	protected abstract List<T1[]> getItemsForDuplicateMerging(int limit);
 
-	protected abstract void merge(T1 targetedItem, T1 itemToMergeAndDelete);
+	private void merge(T1 targetedItem, T1 itemToMergeAndDelete) {
+		mergeFacade.merge(targetedItem.getUuid(), itemToMergeAndDelete.getUuid());
+		boolean deletePerformed = deleteAsDuplicate(targetedItem, itemToMergeAndDelete);
 
-	protected abstract void pick(T1 targetedItem, T1 itemToDelete);
+		if (deletePerformed && mergeFacade.isDeleted(itemToMergeAndDelete.getUuid())) {
+			reload();
+			new Notification(messages.merged, Notification.Type.TRAY_NOTIFICATION).show(Page.getCurrent());
+		} else {
+			new Notification(messages.errorMerging, Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
+		}
+	}
+
+	protected boolean deleteAsDuplicate(T1 targetedItem, T1 itemToMergeAndDelete) {
+		try {
+			mergeFacade.deleteAsDuplicate(itemToMergeAndDelete.getUuid(), targetedItem.getUuid());
+		} catch (ExternalSurveillanceToolRuntimeException e) {
+			return false;
+		}
+
+		return true;
+
+	}
+
+	private void pick(T1 targetedContact, T1 contactToDelete) {
+		boolean deletePerformed = deleteAsDuplicate(targetedContact, contactToDelete);
+
+		if (deletePerformed && mergeFacade.isDeleted(contactToDelete.getUuid())) {
+			reload();
+			new Notification(messages.duplicateDeleted, Notification.Type.TRAY_NOTIFICATION).show(Page.getCurrent());
+		} else {
+			new Notification(messages.errorDuplicateDeletion, Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
+		}
+	}
 
 	public abstract void calculateCompletenessValues();
 
 	public void setCriteria(T2 criteria) {
 		this.criteria = criteria;
+	}
+
+	public void setQueryDetails(QueryDetails queryDetails) {
+		this.queryDetails = queryDetails;
+	}
+
+	protected static final class Messages implements Serializable {
+
+		private static final long serialVersionUID = 7198605009861099956L;
+		private final String confirm;
+		private final String pick;
+		private final String merged;
+		private final String errorMerging;
+		private final String duplicateDeleted;
+		private final String errorDuplicateDeletion;
+
+		private Messages(String confirm, String pick, String merged, String errorMerging, String duplicateDeleted, String errorDuplicateDeletion) {
+			this.confirm = confirm;
+			this.pick = pick;
+			this.merged = merged;
+			this.errorMerging = errorMerging;
+			this.duplicateDeleted = duplicateDeleted;
+			this.errorDuplicateDeletion = errorDuplicateDeletion;
+		}
+
+		public static Messages of(
+			String confirm,
+			String pick,
+			String merged,
+			String errorMerging,
+			String duplicateDeleted,
+			String errorDuplicateDeletion) {
+			return new Messages(
+				I18nProperties.getString(confirm),
+				I18nProperties.getString(pick),
+				I18nProperties.getString(merged),
+				I18nProperties.getString(errorMerging),
+				duplicateDeleted,
+				errorDuplicateDeletion);
+		}
 	}
 }

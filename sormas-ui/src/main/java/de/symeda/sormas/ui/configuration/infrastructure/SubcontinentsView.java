@@ -50,6 +50,8 @@ import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.ViewModelProviders;
 import de.symeda.sormas.ui.configuration.AbstractConfigurationView;
 import de.symeda.sormas.ui.configuration.infrastructure.components.SearchField;
+import de.symeda.sormas.ui.utils.ArchiveHandlers;
+import de.symeda.sormas.ui.utils.ArchiveMessages;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.ComboBoxHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
@@ -90,7 +92,8 @@ public class SubcontinentsView extends AbstractConfigurationView {
 		grid = new SubcontinentsGrid(criteria);
 		gridLayout = new VerticalLayout();
 		gridLayout.addComponent(createFilterBar());
-		rowCount = new RowCount(Strings.labelNumberOfSubcontinents, grid.getItemCount());
+		rowCount = new RowCount(Strings.labelNumberOfSubcontinents, grid.getDataSize());
+		grid.addDataSizeChangeListener(e -> rowCount.update(grid.getDataSize()));
 		gridLayout.addComponent(rowCount);
 		gridLayout.addComponent(grid);
 		gridLayout.setMargin(true);
@@ -105,14 +108,14 @@ public class SubcontinentsView extends AbstractConfigurationView {
 			importButton = ButtonHelper.createIconButton(Captions.actionImport, VaadinIcons.UPLOAD, e -> {
 				Window window = VaadinUiUtil.showPopupWindow(new InfrastructureImportLayout(InfrastructureType.SUBCONTINENT));
 				window.setCaption(I18nProperties.getString(Strings.headingImportSubcontinents));
-				window.addCloseListener(c -> grid.reload(true));
+				window.addCloseListener(c -> grid.reload());
 			}, ValoTheme.BUTTON_PRIMARY);
 			addHeaderComponent(importButton);
 
 			importDefaultSubcontinentsButton = ButtonHelper.createIconButton(Captions.actionImportAllSubcontinents, VaadinIcons.UPLOAD, e -> {
 				Window window = VaadinUiUtil.showPopupWindow(new ImportDefaultSubcontinentsLayout());
 				window.setCaption(I18nProperties.getString(Strings.headingImportAllSubcontinents));
-				window.addCloseListener(c -> grid.reload(true));
+				window.addCloseListener(c -> grid.reload());
 			}, ValoTheme.BUTTON_PRIMARY);
 			addHeaderComponent(importDefaultSubcontinentsButton);
 		} else if (!infrastructureDataEditable) {
@@ -132,7 +135,7 @@ public class SubcontinentsView extends AbstractConfigurationView {
 				grid,
 				this::getSelectedRows,
 				ExportEntityName.SUBCONTINENTS,
-				Collections.singletonList(SubcontinentsGrid.EDIT_BTN_ID),
+				Collections.singletonList(SubcontinentsGrid.ACTION_BTN_ID),
 				Collections.singletonList(SubcontinentIndexDto.DEFAULT_NAME));
 			FileDownloader fileDownloader = new FileDownloader(streamResource);
 			fileDownloader.extend(exportButton);
@@ -205,7 +208,7 @@ public class SubcontinentsView extends AbstractConfigurationView {
 		continentFilter.addItems(FacadeProvider.getContinentFacade().getAllActiveAsReference());
 		continentFilter.addValueChangeListener(e -> {
 			criteria.continent((ContinentReferenceDto) e.getProperty().getValue());
-			navigateTo(criteria);
+			grid.reload();
 		});
 		filterLayout.addComponent(continentFilter);
 
@@ -226,12 +229,13 @@ public class SubcontinentsView extends AbstractConfigurationView {
 				relevanceStatusFilter.setId("relevanceStatus");
 				relevanceStatusFilter.setWidth(220, Unit.PERCENTAGE);
 				relevanceStatusFilter.setNullSelectionAllowed(false);
-				relevanceStatusFilter.addItems((Object[]) EntityRelevanceStatus.values());
+				relevanceStatusFilter.addItems(EntityRelevanceStatus.getAllExceptDeleted());
 				relevanceStatusFilter
 					.setItemCaption(EntityRelevanceStatus.ACTIVE, I18nProperties.getCaption(Captions.subcontinentActiveSubcontinents));
 				relevanceStatusFilter
 					.setItemCaption(EntityRelevanceStatus.ARCHIVED, I18nProperties.getCaption(Captions.subcontinentArchivedSubcontinents));
-				relevanceStatusFilter.setItemCaption(EntityRelevanceStatus.ALL, I18nProperties.getCaption(Captions.subcontinentAllSubcontinents));
+				relevanceStatusFilter
+					.setItemCaption(EntityRelevanceStatus.ACTIVE_AND_ARCHIVED, I18nProperties.getCaption(Captions.subcontinentAllSubcontinents));
 				relevanceStatusFilter.addValueChangeListener(e -> {
 					criteria.relevanceStatus((EntityRelevanceStatus) e.getProperty().getValue());
 					navigateTo(criteria);
@@ -245,26 +249,24 @@ public class SubcontinentsView extends AbstractConfigurationView {
 						new MenuBarHelper.MenuBarItem(
 							I18nProperties.getCaption(Captions.actionArchiveInfrastructure),
 							VaadinIcons.ARCHIVE,
-							selectedItem -> {
-								ControllerProvider.getInfrastructureController()
-									.archiveOrDearchiveAllSelectedItems(
-										true,
-										grid.asMultiSelect().getSelectedItems(),
-										InfrastructureType.SUBCONTINENT,
-										() -> navigateTo(criteria));
-							},
+							selectedItem -> ControllerProvider.getInfrastructureController()
+								.archiveOrDearchiveAllSelectedItems(
+									true,
+									ArchiveHandlers.forInfrastructure(FacadeProvider.getSubcontinentFacade(), ArchiveMessages.SUBCONTINENT),
+									grid,
+									grid::reload,
+									() -> navigateTo(criteria)),
 							EntityRelevanceStatus.ACTIVE.equals(criteria.getRelevanceStatus())),
 						new MenuBarHelper.MenuBarItem(
 							I18nProperties.getCaption(Captions.actionDearchiveInfrastructure),
 							VaadinIcons.ARCHIVE,
-							selectedItem -> {
-								ControllerProvider.getInfrastructureController()
-									.archiveOrDearchiveAllSelectedItems(
-										false,
-										grid.asMultiSelect().getSelectedItems(),
-										InfrastructureType.SUBCONTINENT,
-										() -> navigateTo(criteria));
-							},
+							selectedItem -> ControllerProvider.getInfrastructureController()
+								.archiveOrDearchiveAllSelectedItems(
+									false,
+									ArchiveHandlers.forInfrastructure(FacadeProvider.getSubcontinentFacade(), ArchiveMessages.SUBCONTINENT),
+									grid,
+									grid::reload,
+									() -> navigateTo(criteria)),
 							EntityRelevanceStatus.ARCHIVED.equals(criteria.getRelevanceStatus())));
 
 					bulkOperationsDropdown.setVisible(isBulkOperationsDropdownVisible());
@@ -290,7 +292,6 @@ public class SubcontinentsView extends AbstractConfigurationView {
 		}
 		updateFilterComponents();
 		grid.reload();
-		rowCount.update(grid.getItemCount());
 	}
 
 	public void updateFilterComponents() {

@@ -1,7 +1,5 @@
 package de.symeda.sormas.api.audit;
 
-import org.apache.commons.collections.set.UnmodifiableSet;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -17,6 +15,7 @@ public class Constants {
 				"count",
 				"get",
 				"is",
+				"are",
 				"has",
 				"does",
 				"validate",
@@ -44,7 +43,8 @@ public class Constants {
 				"bulkAssign",
 				"write",
 				"cleanup",
-				"mark")));
+				"mark",
+				"restore")));
 	public static final Set<String> deletePrefix = Collections.unmodifiableSet(new HashSet<>(Arrays.asList("delete", "merge", "remove")));
 	public static final Set<String> executePrefix = Collections.unmodifiableSet(
 		new HashSet<>(
@@ -68,6 +68,7 @@ public class Constants {
 				"reset",
 				"enable",
 				"disable",
-				"log")));
+				"log",
+				"copy")));
 
 }

@@ -15,17 +15,17 @@
 
 package de.symeda.sormas.app.backend.customizableenum;
 
+import com.j256.ormlite.dao.Dao;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import com.j256.ormlite.dao.Dao;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.Language;
@@ -96,7 +96,8 @@ public class CustomizableEnumValueDao extends AbstractAdoDao<CustomizableEnumVal
 
 	@SuppressWarnings("unchecked")
 	public <T extends CustomizableEnum> List<T> getEnumValues(CustomizableEnumType type, Disease disease) {
-		if (customizableEnumsByType.isEmpty()) {
+
+		if (customizableEnumsByType.isEmpty() || (long) customizableEnumsByType.values().stream().mapToInt(i -> i.size()).sum() != countOf()) {
 			loadData();
 		}
 
@@ -152,7 +153,17 @@ public class CustomizableEnumValueDao extends AbstractAdoDao<CustomizableEnumVal
 		if (!enumValuesByLanguage.get(enumClass).containsKey(language)) {
 			enumValuesByLanguage.get(enumClass).put(language, new HashMap<>());
 			for (CustomizableEnumValue customizableEnumValue : customizableEnumsByType.get(type)) {
-				if (StringUtils.equals(ConfigProvider.getServerLocale(), language.getLocale().toString())
+				if (customizableEnumValue.isDefaultValue()) {
+					// Default values use translations provided in the properties files
+					String caption =
+						I18nProperties.getEnumCaption(language, customizableEnumValue.getDataType().toString(), customizableEnumValue.getValue());
+
+					if (StringUtils.isBlank(caption)) {
+						caption = customizableEnumValue.getCaption();
+					}
+
+					enumValuesByLanguage.get(enumClass).get(language).putIfAbsent(customizableEnumValue.getValue(), caption);
+				} else if (StringUtils.equals(ConfigProvider.getServerLocale(), language.getLocale().toString())
 					|| CollectionUtils.isEmpty(customizableEnumValue.getTranslations())) {
 					// If the enum value does not have any translations or the user uses the server language,
 					// add the server language to the cache and use the default caption of the enum value

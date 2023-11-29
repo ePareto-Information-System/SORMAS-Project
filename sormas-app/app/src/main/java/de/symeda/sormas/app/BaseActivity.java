@@ -15,7 +15,17 @@
 
 package de.symeda.sormas.app;
 
-import android.app.ProgressDialog;
+import static de.symeda.sormas.app.core.notification.NotificationType.ERROR;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import com.google.android.material.navigation.NavigationView;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
@@ -40,15 +50,6 @@ import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.android.material.navigation.NavigationView;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
-
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.feature.FeatureTypeProperty;
 import de.symeda.sormas.api.user.UserRight;
@@ -60,6 +61,7 @@ import de.symeda.sormas.app.backend.user.User;
 import de.symeda.sormas.app.component.controls.ControlPropertyField;
 import de.symeda.sormas.app.component.dialog.ConfirmationDialog;
 import de.symeda.sormas.app.component.dialog.InfoDialog;
+import de.symeda.sormas.app.component.dialog.SynchronizationDialog;
 import de.symeda.sormas.app.component.menu.PageMenuControl;
 import de.symeda.sormas.app.component.menu.PageMenuItem;
 import de.symeda.sormas.app.component.validation.FragmentValidator;
@@ -77,8 +79,6 @@ import de.symeda.sormas.app.util.Bundler;
 import de.symeda.sormas.app.util.Callback;
 import de.symeda.sormas.app.util.LocationService;
 import de.symeda.sormas.app.util.NavigationHelper;
-
-import static de.symeda.sormas.app.core.notification.NotificationType.ERROR;
 
 public abstract class BaseActivity extends BaseLocalizedActivity implements NotificationContext {
 
@@ -108,7 +108,7 @@ public abstract class BaseActivity extends BaseLocalizedActivity implements Noti
 	private TextView eventNotificationCounter;
 	private TextView sampleNotificationCounter;
 
-	private ProgressDialog progressDialog = null;
+	private SynchronizationDialog synchronizationDialog = null;
 
 	public boolean isEditing() {
 		return false;
@@ -275,8 +275,8 @@ public abstract class BaseActivity extends BaseLocalizedActivity implements Noti
 
 	@Override
 	protected void onDestroy() {
-		if (progressDialog != null && progressDialog.isShowing()) {
-			progressDialog.dismiss();
+		if (synchronizationDialog != null && synchronizationDialog.isShowing()) {
+			synchronizationDialog.dismiss();
 		}
 
 		super.onDestroy();
@@ -307,6 +307,8 @@ public abstract class BaseActivity extends BaseLocalizedActivity implements Noti
 					NavigationHelper.goToEvents(getContext());
 				} else if (id == R.id.menu_item_samples) {
 					NavigationHelper.goToSamples(getContext());
+				} else if (id == R.id.menu_item_environments) {
+					NavigationHelper.goToEnvironments(getContext());
 				} else if (id == R.id.menu_item_immunizations) {
 					NavigationHelper.goToImmunizations(getContext());
 				} else if (id == R.id.menu_item_campaigns) {
@@ -411,6 +413,7 @@ public abstract class BaseActivity extends BaseLocalizedActivity implements Noti
 			MenuItem contactMenu = menuNav.findItem(R.id.menu_item_contacts);
 			MenuItem eventMenu = menuNav.findItem(R.id.menu_item_events);
 			MenuItem sampleMenu = menuNav.findItem(R.id.menu_item_samples);
+			MenuItem environmentMenu = menuNav.findItem(R.id.menu_item_environments);
 			MenuItem immunizationMenu = menuNav.findItem(R.id.menu_item_immunizations);
 			MenuItem reportMenu = menuNav.findItem(R.id.menu_item_reports);
 			MenuItem campaignMenu = menuNav.findItem(R.id.menu_item_campaigns);
@@ -438,6 +441,12 @@ public abstract class BaseActivity extends BaseLocalizedActivity implements Noti
 				sampleMenu.setVisible(
 					ConfigProvider.hasUserRight(UserRight.SAMPLE_VIEW)
 						&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.SAMPLES_LAB));
+
+			if (environmentMenu != null) {
+				environmentMenu.setVisible(
+					ConfigProvider.hasUserRight(UserRight.ENVIRONMENT_VIEW)
+						&& !DatabaseHelper.getFeatureConfigurationDao().isFeatureDisabled(FeatureType.ENVIRONMENT_MANAGEMENT));
+			}
 
 			if (immunizationMenu != null)
 				immunizationMenu.setVisible(
@@ -640,25 +649,21 @@ public abstract class BaseActivity extends BaseLocalizedActivity implements Noti
 			if (swipeRefreshLayout != null) {
 				swipeRefreshLayout.setRefreshing(false);
 			}
-			if (progressDialog != null && progressDialog.isShowing()) {
-				progressDialog.dismiss();
-				progressDialog = null;
+			if (synchronizationDialog != null && synchronizationDialog.isShowing()) {
+				synchronizationDialog.dismiss();
+				synchronizationDialog = null;
 			}
 
 			return;
 		}
 
 		if (showProgressDialog) {
-			if (progressDialog == null || !progressDialog.isShowing()) {
-				boolean isInitialSync = DatabaseHelper.getFacilityDao().isEmpty();
-				progressDialog = ProgressDialog.show(
-					this,
-					getString(R.string.heading_synchronization),
-					getString(isInitialSync ? R.string.info_initial_synchronization : R.string.info_synchronizing),
-					true);
+			if (synchronizationDialog == null || !synchronizationDialog.isShowing()) {
+				synchronizationDialog = new SynchronizationDialog(this);
+				synchronizationDialog.create();
 			}
 		} else {
-			progressDialog = null;
+			synchronizationDialog = null;
 			if (swipeRefreshLayout != null) {
 				swipeRefreshLayout.setRefreshing(true);
 			}
@@ -674,46 +679,48 @@ public abstract class BaseActivity extends BaseLocalizedActivity implements Noti
 				if (beforeSyncCallback != null)
 					beforeSyncCallback.call();
 
-				SynchronizeDataAsync.call(syncMode, getApplicationContext(), (syncFailed, syncFailedMessage) -> {
+				SynchronizeDataAsync
+					.call(syncMode, getApplicationContext(), synchronizationDialog.getSyncCallbacks(), (syncFailed, syncFailedMessage) -> {
 
-					if (swipeRefreshLayout != null) {
-						swipeRefreshLayout.setRefreshing(false);
-					}
-					if (progressDialog != null && progressDialog.isShowing()) {
-						progressDialog.dismiss();
-						progressDialog = null;
-					}
-
-					BaseActivity.this.onResume();
-
-					long syncLogCountAfter = syncLogDao.countOf();
-
-					if (!syncFailed) {
-						if (syncLogCountAfter > syncLogCountBefore) {
-							showConflictSnackbar();
-						} else if (SynchronizeDataAsync.hasAnyUnsynchronizedData()) {
-							NotificationHelper.showNotification(BaseActivity.this, NotificationType.WARNING, R.string.message_sync_not_synchronized);
-						} else {
-							NotificationHelper.showNotification(BaseActivity.this, NotificationType.SUCCESS, R.string.message_sync_success);
+						if (swipeRefreshLayout != null) {
+							swipeRefreshLayout.setRefreshing(false);
 						}
-					} else {
-						NotificationHelper.showNotification(BaseActivity.this, NotificationType.ERROR, syncFailedMessage);
-						checkActiveUser();
-					}
+						if (synchronizationDialog != null && synchronizationDialog.isShowing()) {
+							synchronizationDialog.dismiss();
+							synchronizationDialog = null;
+						}
 
-					RetroProvider.disconnect();
+						BaseActivity.this.onResume();
 
-					if (resultCallback != null)
-						resultCallback.call();
-				});
+						long syncLogCountAfter = syncLogDao.countOf();
+
+						if (!syncFailed) {
+							if (syncLogCountAfter > syncLogCountBefore) {
+								showConflictSnackbar();
+							} else if (SynchronizeDataAsync.hasAnyUnsynchronizedData()) {
+								NotificationHelper
+									.showNotification(BaseActivity.this, NotificationType.WARNING, R.string.message_sync_not_synchronized);
+							} else {
+								NotificationHelper.showNotification(BaseActivity.this, NotificationType.SUCCESS, R.string.message_sync_success);
+							}
+						} else {
+							NotificationHelper.showNotification(BaseActivity.this, NotificationType.ERROR, syncFailedMessage);
+							checkActiveUser();
+						}
+
+						RetroProvider.disconnect();
+
+						if (resultCallback != null)
+							resultCallback.call();
+					});
 
 			} else {
 				if (swipeRefreshLayout != null) {
 					swipeRefreshLayout.setRefreshing(false);
 				}
-				if (progressDialog != null && progressDialog.isShowing()) {
-					progressDialog.dismiss();
-					progressDialog = null;
+				if (synchronizationDialog != null && synchronizationDialog.isShowing()) {
+					synchronizationDialog.dismiss();
+					synchronizationDialog = null;
 				}
 			}
 		});

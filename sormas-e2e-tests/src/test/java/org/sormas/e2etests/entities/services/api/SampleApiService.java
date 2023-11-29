@@ -18,16 +18,18 @@
 
 package org.sormas.e2etests.entities.services.api;
 
+import static org.sormas.e2etests.entities.pojo.helpers.ShortUUIDGenerator.generateShortUUID;
 import static org.sormas.e2etests.steps.BaseSteps.locale;
 
 import com.google.inject.Inject;
 import java.util.Date;
-import java.util.UUID;
+import lombok.SneakyThrows;
 import org.sormas.e2etests.entities.pojo.api.AssociatedCase;
 import org.sormas.e2etests.entities.pojo.api.Case;
 import org.sormas.e2etests.entities.pojo.api.Lab;
 import org.sormas.e2etests.entities.pojo.api.ReportingUser;
 import org.sormas.e2etests.entities.pojo.api.Sample;
+import org.sormas.e2etests.enums.LaboratoryValues;
 import org.sormas.e2etests.enums.RegionsValues;
 import org.sormas.e2etests.enums.UserRoles;
 import org.sormas.e2etests.envconfig.manager.RunningConfiguration;
@@ -46,10 +48,11 @@ public class SampleApiService {
     this.runningConfiguration = runningConfiguration;
   }
 
+  @SneakyThrows
   public Sample buildGeneratedSample(Case caze) {
     EnvironmentManager environmentManager = new EnvironmentManager(restAssuredClient);
     return Sample.builder()
-        .uuid(UUID.randomUUID().toString())
+        .uuid(generateShortUUID())
         .reportingUser(
             ReportingUser.builder()
                 .uuid(
@@ -66,11 +69,11 @@ public class SampleApiService {
         .pathogenTestResult("PENDING")
         .lab(
             Lab.builder()
-                .caption("Voreingestelltes Labor")
+                .caption(LaboratoryValues.VOREINGESTELLTES_LABOR.getCaptionEnglish())
                 .uuid(
                     environmentManager.getLaboratoryUUID(
                         RegionsValues.VoreingestellteBundeslander.getName(),
-                        "Voreingestelltes Labor"))
+                        LaboratoryValues.VOREINGESTELLTES_LABOR.getCaptionEnglish()))
                 .build())
         .labDetails("Dexter's laboratory")
         .build();

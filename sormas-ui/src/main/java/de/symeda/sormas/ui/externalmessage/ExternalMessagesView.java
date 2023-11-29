@@ -103,8 +103,7 @@ public class ExternalMessagesView extends AbstractView {
 		gridLayout.addComponent(createStatusFilterBar());
 
 		grid = new ExternalMessageGrid(criteria);
-		grid.setDataProviderListener(e -> updateStatusButtons());
-		grid.getDataProvider().addDataProviderListener(e -> updateStatusButtons());
+		grid.addDataSizeChangeListener(e -> updateStatusButtons());
 
 		gridLayout.addComponent(grid);
 
@@ -184,7 +183,7 @@ public class ExternalMessagesView extends AbstractView {
 		if (UserProvider.getCurrent().hasUserRight(UserRight.EXTERNAL_MESSAGE_DELETE)) {
 			menuBarItems.add(new MenuBarHelper.MenuBarItem(I18nProperties.getCaption(Captions.bulkDelete), VaadinIcons.TRASH, mi -> {
 				ControllerProvider.getExternalMessageController()
-					.deleteAllSelectedItems(grid.asMultiSelect().getSelectedItems(), () -> navigateTo(criteria));
+					.deleteAllSelectedItems(grid.asMultiSelect().getSelectedItems(), grid, () -> navigateTo(criteria));
 			}, true));
 		}
 		menuBarItems.add(
@@ -227,7 +226,7 @@ public class ExternalMessagesView extends AbstractView {
 		if (activeStatusButton != null) {
 			CssStyles.removeStyles(activeStatusButton, CssStyles.BUTTON_FILTER_LIGHT);
 			activeStatusButton
-				.setCaption(statusButtons.get(activeStatusButton) + LayoutUtil.spanCss(CssStyles.BADGE, String.valueOf(grid.getItemCount())));
+				.setCaption(statusButtons.get(activeStatusButton) + LayoutUtil.spanCss(CssStyles.BADGE, String.valueOf(grid.getDataSize())));
 			activeStatus = (ExternalMessageStatus) activeStatusButton.getData();
 		}
 

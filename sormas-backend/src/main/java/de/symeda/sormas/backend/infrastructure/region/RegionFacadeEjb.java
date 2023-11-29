@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
+import javax.annotation.security.PermitAll;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -35,9 +35,11 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 
+import de.symeda.sormas.backend.common.InfrastructureAdo;
 import org.apache.commons.collections.CollectionUtils;
 
 import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionCriteria;
@@ -45,10 +47,10 @@ import de.symeda.sormas.api.infrastructure.region.RegionDto;
 import de.symeda.sormas.api.infrastructure.region.RegionFacade;
 import de.symeda.sormas.api.infrastructure.region.RegionIndexDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
+import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
-import de.symeda.sormas.backend.common.InfrastructureAdo;
 import de.symeda.sormas.backend.feature.FeatureConfigurationFacadeEjb.FeatureConfigurationFacadeEjbLocal;
 import de.symeda.sormas.backend.infrastructure.AbstractInfrastructureFacadeEjb;
 import de.symeda.sormas.backend.infrastructure.PopulationDataFacadeEjb.PopulationDataFacadeEjbLocal;
@@ -62,12 +64,14 @@ import de.symeda.sormas.backend.infrastructure.country.CountryService;
 import de.symeda.sormas.backend.infrastructure.district.District;
 import de.symeda.sormas.backend.infrastructure.facility.Facility;
 import de.symeda.sormas.backend.infrastructure.pointofentry.PointOfEntry;
-import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.QueryHelper;
+import de.symeda.sormas.backend.util.RightsAllowed;
 
 @Stateless(name = "RegionFacade")
-public class RegionFacadeEjb extends AbstractInfrastructureFacadeEjb<Region, RegionDto, RegionIndexDto, RegionReferenceDto, RegionService, RegionCriteria>
+@RightsAllowed(UserRight._INFRASTRUCTURE_VIEW)
+public class RegionFacadeEjb
+	extends AbstractInfrastructureFacadeEjb<Region, RegionDto, RegionIndexDto, RegionReferenceDto, RegionService, RegionCriteria>
 	implements RegionFacade {
 
 	@EJB
@@ -86,11 +90,19 @@ public class RegionFacadeEjb extends AbstractInfrastructureFacadeEjb<Region, Reg
 	}
 
 	@Inject
-	protected RegionFacadeEjb(RegionService service, FeatureConfigurationFacadeEjbLocal featureConfiguration, UserService userService) {
-		super(Region.class, RegionDto.class, service, featureConfiguration, userService, Validations.importRegionAlreadyExists);
+	protected RegionFacadeEjb(RegionService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
+		super(
+			Region.class,
+			RegionDto.class,
+			service,
+			featureConfiguration,
+			Validations.importRegionAlreadyExists,
+			Strings.messageRegionArchivingNotPossible,
+			null);
 	}
 
 	@Override
+	@PermitAll
 	public List<RegionReferenceDto> getAllActiveByServerCountry() {
 		CountryReferenceDto serverCountry = countryFacade.getServerCountry();
 
@@ -105,21 +117,26 @@ public class RegionFacadeEjb extends AbstractInfrastructureFacadeEjb<Region, Reg
 	}
 
 	@Override
+	@PermitAll
 	public List<RegionReferenceDto> getAllActiveByCountry(String countryUuid) {
 		return getAllActiveByPredicate((cb, root) -> cb.equal(root.get(Region.COUNTRY).get(AbstractDomainObject.UUID), countryUuid));
 	}
 
 	@Override
+	@PermitAll
 	public List<RegionReferenceDto> getAllActiveByArea(String areaUuid) {
 		return getAllActiveByPredicate((cb, root) -> cb.equal(root.get(Region.AREA).get(AbstractDomainObject.UUID), areaUuid));
 	}
 
 	@Override
+	@PermitAll
 	public List<RegionReferenceDto> getAllActiveAsReference() {
-		return service.getAllActive(Region.NAME, true).stream().map(RegionFacadeEjb::toReferenceDto).collect(Collectors.toList());
+				return toRefDtos(service.getAllActive(Region.NAME, true).stream());
 	}
+	// 	return service.getAllActive(Region.NAME, true).stream().map(RegionFacadeEjb::toReferenceDto).collect(Collectors.toList());
+	// }
 
-	@Override
+
 	protected void selectDtoFields(CriteriaQuery<RegionDto> cq, Root<Region> root) {
 
 		Join<Region, Country> country = root.join(Region.COUNTRY, JoinType.LEFT);
@@ -197,11 +214,13 @@ public class RegionFacadeEjb extends AbstractInfrastructureFacadeEjb<Region, Reg
 	}
 
 	@Override
+	@RightsAllowed(UserRight._STATISTICS_ACCESS)
 	public RegionReferenceDto getRegionReferenceById(int id) {
 		return toReferenceDto(service.getById(id));
 	}
 
 	@Override
+	@RightsAllowed(UserRight._STATISTICS_ACCESS)
 	public List<String> getNamesByIds(List<Long> regionIds) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<String> cq = cb.createQuery(String.class);
@@ -247,7 +266,7 @@ public class RegionFacadeEjb extends AbstractInfrastructureFacadeEjb<Region, Reg
 	}
 
 	@Override
-	public RegionReferenceDto toRefDto(Region region) {
+	protected RegionReferenceDto toRefDto(Region region) {
 		return toReferenceDto(region);
 	}
 
@@ -275,20 +294,20 @@ public class RegionFacadeEjb extends AbstractInfrastructureFacadeEjb<Region, Reg
 	}
 
 	@Override
+	@PermitAll
 	public List<RegionReferenceDto> getReferencesByName(String name, boolean includeArchivedEntities) {
-		return service.getByName(name, includeArchivedEntities).stream().map(RegionFacadeEjb::toReferenceDto).collect(Collectors.toList());
+		return toRefDtos(service.getByName(name, includeArchivedEntities).stream());
 	}
 
+	@PermitAll
 	public List<RegionDto> getByName(String name, boolean includeArchivedEntities) {
-		return service.getByName(name, includeArchivedEntities).stream().map(this::toDto).collect(Collectors.toList());
+		return toDtos(service.getByName(name, includeArchivedEntities).stream());
 	}
 
 	@Override
+	@PermitAll
 	public List<RegionReferenceDto> getReferencesByExternalId(String externalId, boolean includeArchivedEntities) {
-		return service.getByExternalId(externalId, includeArchivedEntities)
-			.stream()
-			.map(RegionFacadeEjb::toReferenceDto)
-			.collect(Collectors.toList());
+		return toRefDtos(service.getByExternalId(externalId, includeArchivedEntities).stream());
 	}
 
 	private List<RegionReferenceDto> getAllActiveByPredicate(BiFunction<CriteriaBuilder, Root<Region>, Predicate> buildPredicate) {
@@ -301,12 +320,12 @@ public class RegionFacadeEjb extends AbstractInfrastructureFacadeEjb<Region, Reg
 
 		cq.orderBy(cb.asc(root.get(Region.NAME)));
 
-		return em.createQuery(cq).getResultList().stream().map(RegionFacadeEjb::toReferenceDto).collect(Collectors.toList());
+		return toRefDtos(em.createQuery(cq).getResultList().stream());
 	}
 
 	@Override
-	protected Region fillOrBuildEntity(@NotNull RegionDto source, Region target, boolean checkChangeDate) {
-		target = DtoHelper.fillOrBuildEntity(source, target, Region::new, checkChangeDate);
+	protected Region fillOrBuildEntity(@NotNull RegionDto source, Region target, boolean checkChangeDate, boolean allowUuidOverwrite) {
+		target = DtoHelper.fillOrBuildEntity(source, target, Region::new, checkChangeDate, allowUuidOverwrite);
 
 		target.setName(source.getName());
 		target.setEpidCode(source.getEpidCode());
@@ -328,8 +347,8 @@ public class RegionFacadeEjb extends AbstractInfrastructureFacadeEjb<Region, Reg
 		}
 
 		@Inject
-		protected RegionFacadeEjbLocal(RegionService service, FeatureConfigurationFacadeEjbLocal featureConfiguration, UserService userService) {
-			super(service, featureConfiguration, userService);
+		protected RegionFacadeEjbLocal(RegionService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
+			super(service, featureConfiguration);
 		}
 	}
 

@@ -19,7 +19,7 @@
 package org.sormas.e2etests.steps;
 
 import com.google.inject.Inject;
-import cucumber.api.Scenario;
+import cucumber.api.*;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import customreport.chartbuilder.ReportChartBuilder;
@@ -42,6 +42,7 @@ import org.junit.Assert;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.sormas.e2etests.steps.nonBDDactions.BackupSteps;
 import org.sormas.e2etests.webdriver.DriverManager;
 import recorders.StepsLogger;
 
@@ -90,11 +91,20 @@ public class BaseSteps implements StepLifecycleListener {
   @SneakyThrows
   @After(value = "@UI")
   public void afterScenario(Scenario scenario) {
+    if (isLanguageRiskScenario(scenario) && scenario.isFailed()) {
+      // TODO replace it with API call when implemented
+      log.info("Refreshing page to close any popups");
+      driver.navigate().refresh();
+      BackupSteps.setAppLanguageToDefault(locale);
+    }
     if (isNonApiScenario(scenario)) {
       if (scenario.isFailed()) {
         takeScreenshot();
       }
       driverManager.releaseRemoteWebDriver(scenario.getName());
+    }
+    if (scenario.getStatus().toString().equalsIgnoreCase("UNDEFINED")) {
+      Assert.fail("Test has invalid/missing steps");
     }
     log.info("Finished test: {}", scenario.getName());
   }
@@ -123,6 +133,10 @@ public class BaseSteps implements StepLifecycleListener {
     return !scenario.getSourceTagNames().contains("@API");
   }
 
+  private static boolean isLanguageRiskScenario(Scenario scenario) {
+    return scenario.getSourceTagNames().contains("@LanguageRisk");
+  }
+
   private void setLocale(Scenario scenario) {
     Collection<String> tags = scenario.getSourceTagNames();
     checkDeclaredEnvironment(tags);
@@ -145,6 +159,7 @@ public class BaseSteps implements StepLifecycleListener {
             });
   }
 
+  @SneakyThrows
   @Attachment(value = "After failed test screenshot", type = imageType)
   private void takeScreenshot() {
     byte[] screenShot = driver.getScreenshotAs(OutputType.BYTES);
@@ -155,5 +170,9 @@ public class BaseSteps implements StepLifecycleListener {
             imageType,
             pngValue,
             screenShot);
+  }
+
+  public void refreshCurrentPage() {
+    driver.navigate().refresh();
   }
 }

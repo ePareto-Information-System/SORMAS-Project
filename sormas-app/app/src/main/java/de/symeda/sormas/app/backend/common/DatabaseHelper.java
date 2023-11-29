@@ -15,21 +15,6 @@
 
 package de.symeda.sormas.app.backend.common;
 
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.text.TextUtils;
-import android.util.Log;
-
-import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.GenericRawResults;
-import com.j256.ormlite.field.DataType;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.table.TableUtils;
-
-import org.apache.commons.lang3.StringUtils;
-
 import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.sql.SQLException;
@@ -46,6 +31,22 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.GenericRawResults;
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.TableUtils;
+
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
+import android.util.Log;
+
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.VaccinationStatus;
 import de.symeda.sormas.api.disease.DiseaseVariant;
 
@@ -97,6 +98,8 @@ import de.symeda.sormas.app.backend.customizableenum.CustomizableEnumValue;
 import de.symeda.sormas.app.backend.customizableenum.CustomizableEnumValueDao;
 import de.symeda.sormas.app.backend.disease.DiseaseConfiguration;
 import de.symeda.sormas.app.backend.disease.DiseaseConfigurationDao;
+import de.symeda.sormas.app.backend.environment.Environment;
+import de.symeda.sormas.app.backend.environment.EnvironmentDao;
 import de.symeda.sormas.app.backend.epidata.EpiData;
 import de.symeda.sormas.app.backend.epidata.EpiDataDao;
 import de.symeda.sormas.app.backend.event.Event;
@@ -191,7 +194,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	// any time you make changes to your database objects, you may have to increase the database version
 
 	// public static final int DATABASE_VERSION = 307;
-	public static final int DATABASE_VERSION = 343;
+	//public static final int DATABASE_VERSION = 343;
+	public static final int DATABASE_VERSION = 347;
 
 	private static DatabaseHelper instance = null;
 
@@ -268,6 +272,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.clearTable(connectionSource, DiseaseClassificationCriteria.class);
 			TableUtils.clearTable(connectionSource, CampaignFormData.class);
 			TableUtils.clearTable(connectionSource, LbdsSync.class);
+			TableUtils.clearTable(connectionSource, Environment.class);
 
 			if (clearInfrastructure) {
 				TableUtils.clearTable(connectionSource, UserUserRole.class);
@@ -373,6 +378,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.createTable(connectionSource, CampaignFormData.class);
 			TableUtils.createTable(connectionSource, CampaignFormMeta.class);
 			TableUtils.createTable(connectionSource, LbdsSync.class);
+			TableUtils.createTable(connectionSource, Environment.class);
 		} catch (SQLException e) {
 			Log.e(DatabaseHelper.class.getName(), "Can't build database", e);
 			throw new RuntimeException(e);
@@ -3054,8 +3060,99 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(DiseaseConfiguration.class).executeRaw("ALTER TABLE diseaseConfiguration ADD COLUMN ageGroupsString text;");
 				getDao(DiseaseConfiguration.class).executeRaw("UPDATE diseaseConfiguration SET changeDate = 0;");
 
+
+
+			case 343:
+				currentVersion = 343;
+				getDao(Task.class).executeRaw("ALTER TABLE tasks ADD COLUMN assignedByUser_id BIGINT REFERENCES users(id);");
+
+			case 344:
+				currentVersion = 344;
+				getDao(Environment.class).executeRaw(
+					"CREATE TABLE environments(id integer primary key autoincrement, uuid VARCHAR(36) NOT NULL, "
+						+ "changeDate TIMESTAMP NOT NULL, creationDate TIMESTAMP NOT NULL, lastOpenedDate TIMESTAMP, localChangeDate TIMESTAMP NOT NULL, modified INTEGER, "
+						+ "snapshot INTEGER, reportDate TIMESTAMP, reportingUser_id BIGINT REFERENCES users(id), environmentName text, description text, "
+						+ "externalId varchar(255), responsibleUser_id BIGINT REFERENCES users(id), investigationStatus varchar(255), environmentMedia varchar(255), "
+						+ "waterType varchar(255), otherWaterType text, infrastructureDetails varchar(255), otherInfrastructureDetails text, waterUse text, "
+						+ "otherWaterUse text, location_id BIGINT, UNIQUE(snapshot, uuid));");
+
+			case 345:
+				currentVersion = 345;
+				getDao(Environment.class).executeRaw("ALTER TABLE environments RENAME TO tmp_environments;");
+				getDao(Environment.class).executeRaw(
+					"CREATE TABLE environments(id integer primary key autoincrement, uuid VARCHAR(36) NOT NULL UNIQUE, "
+						+ "changeDate TIMESTAMP NOT NULL, creationDate TIMESTAMP NOT NULL, lastOpenedDate TIMESTAMP, localChangeDate TIMESTAMP NOT NULL, modified INTEGER, "
+						+ "snapshot INTEGER, reportDate TIMESTAMP NOT NULL, reportingUser_id BIGINT REFERENCES users(id), environmentName text, description text, "
+						+ "externalId varchar(255), responsibleUser_id BIGINT REFERENCES users(id), investigationStatus varchar(255), environmentMedia varchar(255), "
+						+ "waterType varchar(255), otherWaterType text, infrastructureDetails varchar(255), otherInfrastructureDetails text, waterUse text, "
+						+ "otherWaterUse text, location_id BIGINT, UNIQUE(snapshot, uuid));");
+				getDao(Environment.class).executeRaw(
+					"INSERT INTO environments (uuid, changeDate, creationDate, lastOpenedDate, localChangeDate, modified, "
+						+ "snapshot, reportDate, reportingUser_id, environmentName, description, externalId, responsibleUser_id, investigationStatus, environmentMedia, "
+						+ "waterType, otherWaterType, infrastructureDetails, otherInfrastructureDetails, waterUse, otherWaterUse, location_id, id) "
+						+ "SELECT uuid, changeDate, creationDate, lastOpenedDate, localChangeDate, modified, "
+						+ "snapshot, reportDate, reportingUser_id, environmentName, description, externalId, responsibleUser_id, investigationStatus, environmentMedia, "
+						+ "waterType, otherWaterType, infrastructureDetails, otherInfrastructureDetails, waterUse, otherWaterUse, location_id, id FROM tmp_environments");
+				getDao(Environment.class).executeRaw("DROP TABLE tmp_environments");
+
+			case 346:
+				currentVersion = 346;
+				getDao(FeatureConfiguration.class).executeRaw("DELETE FROM featureConfiguration WHERE featureType = 'DASHBOARD';");
+
 				// ATTENTION: break should only be done after last version
 				break;
+
+			// update
+			case 347:
+				currentVersion = 347;
+				getDao(DiseaseConfiguration.class).executeRaw("ALTER TABLE diseaseConfiguration RENAME TO tmp_diseaseConfiguration");
+				getDao(DiseaseConfiguration.class).executeRaw(
+						"CREATE TABLE diseaseConfiguration(id integer primary key autoincrement, uuid VARCHAR(36) NOT NULL, "
+								+ "changeDate TIMESTAMP NOT NULL, creationDate TIMESTAMP NOT NULL, lastOpenedDate TIMESTAMP, localChangeDate TIMESTAMP NOT NULL, modified INTEGER, "
+								+ "snapshot INTEGER, disease VARCHAR(255), active boolean, primaryDisease boolean, followUpEnabled boolean, followUpDuration INTEGER, "
+								+ "caseSurveillanceEnabled boolean, caseFollowUpDuration INTEGER, eventParticipantFollowUpDuration INTEGER, "
+								+ "extendedClassification boolean, extendedClassificationMulti boolean, ageGroupsString text, UNIQUE(snapshot, uuid));");
+				getDao(DiseaseConfiguration.class).executeRaw("ALTER TABLE diseaseconfiguration ADD COLUMN aggregateReportingEnabled boolean;");
+				getDao(DiseaseConfiguration.class).executeRaw(
+						"INSERT INTO diseaseConfiguration (id, uuid, changeDate, creationDate, lastOpenedDate, "
+								+ "localChangeDate, modified, snapshot, disease, active, primaryDisease, followUpEnabled, followUpDuration, "
+								+ "caseSurveillanceEnabled, caseFollowUpDuration, eventParticipantFollowUpDuration, extendedClassification, extendedClassificationMulti, "
+								+ "ageGroupsString, aggregateReportingEnabled) "
+								+ "SELECT id, uuid, changeDate, creationDate, lastOpenedDate, localChangeDate, modified, snapshot, disease, active, primaryDisease, "
+								+ "followUpEnabled, followUpDuration, caseBased, caseFollowUpDuration, eventParticipantFollowUpDuration, extendedClassification, "
+								+ "extendedClassificationMulti, ageGroupsString, NOT caseBased " + "FROM tmp_diseaseConfiguration;");
+				getDao(DiseaseConfiguration.class).executeRaw("DROP TABLE tmp_diseaseConfiguration");
+
+			case 348:
+				currentVersion = 348;
+				getDao(UserRole.class).executeRaw(
+						"UPDATE userRoles set userRights = replace(replace(replace(userRights, '\"CONTACT_CLASSIFY\"', ''), '\"CONTACT_ASSIGN\"', ''), ',,', ',')");
+
+			case 349:
+				currentVersion = 349;
+				getDao(FeatureConfiguration.class).executeRaw(
+						"UPDATE featureConfiguration set featuretype = 'SORMAS_TO_SORMAS_SHARE_CASES' where featuretype = 'SORMAS_TO_SORMAS_SHARE_CASES_WITH_CONTACTS_AND_SAMPLES'");
+
+			case 350:
+				currentVersion = 350;
+				getDao(CustomizableEnumValue.class).executeRaw("ALTER TABLE customizableEnumValue ADD COLUMN defaultValue boolean;");
+
+			case 351:
+				currentVersion = 351;
+				getDao(UserRole.class).executeRaw("ALTER TABLE userRoles ADD COLUMN linkedDefaultUserRole varchar(255);");
+
+			case 352:
+				currentVersion = 352;
+
+				if (columnDoesNotExist("vaccination", "lastOpenedDate")) {
+					getDao(Vaccination.class).executeRaw("ALTER TABLE vaccination ADD COLUMN lastOpenedDate timestamp;");
+				}
+				if (columnDoesNotExist("vaccination", "localChangeDate")) {
+					getDao(Vaccination.class).executeRaw("ALTER TABLE vaccination ADD COLUMN localChangeDate timestamp;");
+				}
+				if (columnDoesNotExist("vaccination", "modified")) {
+					getDao(Vaccination.class).executeRaw("ALTER TABLE vaccination ADD COLUMN modified SMALLINT DEFAULT 0;");
+				}
 
 			default:
 				throw new IllegalStateException("onUpgrade() with unknown oldVersion " + oldVersion);
@@ -3860,6 +3957,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.dropTable(connectionSource, CampaignFormMeta.class, true);
 			TableUtils.dropTable(connectionSource, CampaignFormData.class, true);
 			TableUtils.dropTable(connectionSource, LbdsSync.class, true);
+			TableUtils.dropTable(connectionSource, Environment.class, true);
 
 			if (oldVersion < 30) {
 				TableUtils.dropTable(connectionSource, Config.class, true);
@@ -3992,7 +4090,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 // //				else if (type.equals(VaccinationInfo.class)) {
 // //					dao = (AbstractAdoDao<ADO>) new VaccinationInfoDao((Dao<VaccinationInfo, Long>) innerDao);
 				}
-				else {
+				else if (type.equals(Environment.class)) {
+					dao = (AbstractAdoDao<ADO>) new EnvironmentDao((Dao<Environment, Long>) innerDao);
+				} else {
 					throw new UnsupportedOperationException(type.toString());
 				}
 
@@ -4273,6 +4373,9 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 //	public static VaccinationInfoDao getVaccinationInfoDao() {
 //		return (VaccinationInfoDao) getAdoDao(VaccinationInfo.class);
 //	}
+	public static EnvironmentDao getEnvironmentDao() {
+		return (EnvironmentDao) getAdoDao(Environment.class);
+	}
 
 	/**
 	 * Close the database connections and clear any cached DAOs.

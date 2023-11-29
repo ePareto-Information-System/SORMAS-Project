@@ -27,6 +27,9 @@ import javax.ws.rs.core.MediaType;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.auditlog.ChangeType;
+import de.symeda.sormas.rest.resources.base.EntityDtoResource;
+
+import java.util.function.UnaryOperator;
 
 @Path("/auditlogentry")
 @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -46,5 +49,10 @@ public class AuditLogEntryResource extends EntityDtoResource {
 		ChangeType changeType = ChangeType.valueOf(activityType);
 		
 		FacadeProvider.getAuditLogEntryFacade().logActivity(changeType, clazz, uuid);
+	}
+
+	@Override
+	public UnaryOperator getSave() {
+		return null;
 	}
 }

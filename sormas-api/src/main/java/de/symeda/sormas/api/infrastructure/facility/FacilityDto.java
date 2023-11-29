@@ -106,7 +106,6 @@ public class FacilityDto extends InfrastructureDto {
 	private Double longitude;
 	private FacilityType type;
 	private boolean publicOwnership;
-	private boolean archived;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String externalID;
 
@@ -151,8 +150,7 @@ public class FacilityDto extends InfrastructureDto {
 			String externalID
 	) {
 
-		super(creationDate, changeDate, uuid);
-		this.archived = archived;
+		super(creationDate, changeDate, uuid, archived);
 		this.name = name;
 		if (regionUuid != null) {
 			this.region = new RegionReferenceDto(regionUuid, regionName, regionExternalId);
@@ -326,14 +324,6 @@ public class FacilityDto extends InfrastructureDto {
 
 	public void setPublicOwnership(boolean publicOwnership) {
 		this.publicOwnership = publicOwnership;
-	}
-
-	public boolean isArchived() {
-		return archived;
-	}
-
-	public void setArchived(boolean archived) {
-		this.archived = archived;
 	}
 
 	public FacilityReferenceDto toReference() {

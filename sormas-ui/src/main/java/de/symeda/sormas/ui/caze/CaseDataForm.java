@@ -137,6 +137,7 @@ import de.symeda.sormas.ui.utils.AbstractEditForm;
 import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CheckBoxTree;
 import de.symeda.sormas.ui.utils.ComboBoxHelper;
+import de.symeda.sormas.ui.utils.ComboBoxWithPlaceholder;
 import de.symeda.sormas.ui.utils.ConfirmationComponent;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.DateComparisonValidator;
@@ -321,8 +322,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 	private ComboBox districtCombo;
 	private ComboBox communityCombo;
 	private OptionGroup facilityOrHome;
-	private ComboBox facilityTypeGroup;
-	private ComboBox facilityTypeCombo;
+	private ComboBoxWithPlaceholder facilityTypeGroup;
+	private ComboBoxWithPlaceholder facilityTypeCombo;
 	private ComboBox facilityCombo;
 	private TextField facilityDetails;
 	private boolean quarantineChangedByFollowUpUntilChange = false;
@@ -334,7 +335,14 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 	private final Map<ReinfectionDetailGroup, CaseReinfectionCheckBoxTree> reinfectionTrees = new EnumMap<>(ReinfectionDetailGroup.class);
 
-	public CaseDataForm(String caseUuid, PersonDto person, Disease disease, SymptomsDto symptoms, ViewMode viewMode, boolean isPseudonymized) {
+	public CaseDataForm(
+		String caseUuid,
+		PersonDto person,
+		Disease disease,
+		SymptomsDto symptoms,
+		ViewMode viewMode,
+		boolean isPseudonymized,
+		boolean inJurisdiction) {
 
 		super(
 			CaseDataDto.class,
@@ -344,7 +352,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				.add(new OutbreakFieldVisibilityChecker(viewMode))
 				.add(new CountryFieldVisibilityChecker(FacadeProvider.getConfigFacade().getCountryLocale()))
 				.add(new UserRightFieldVisibilityChecker(UserProvider.getCurrent()::hasUserRight)),
-			UiFieldAccessCheckers.getDefault(isPseudonymized));
+			UiFieldAccessCheckers.forDataAccessLevel(UserProvider.getCurrent().getPseudonymizableDataAccessLevel(inJurisdiction), isPseudonymized));
 
 		this.caseUuid = caseUuid;
 		this.person = person;
@@ -438,6 +446,10 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		if (FacadeProvider.getExternalSurveillanceToolFacade().isFeatureEnabled()) {
 			CheckBox dontShareCheckbox = addField(CaseDataDto.DONT_SHARE_WITH_REPORTING_TOOL, CheckBox.class);
 			CaseFormHelper.addDontShareWithReportingTool(getContent(), () -> dontShareCheckbox, DONT_SHARE_WARNING_LOC);
+			if (FacadeProvider.getExternalShareInfoFacade().isSharedCase(this.caseUuid)) {
+				dontShareCheckbox.setEnabled(false);
+				dontShareCheckbox.setDescription(I18nProperties.getString(Strings.infoDontShareCheckboxAlreadyShared));
+			}
 		}
 
 		TextField externalTokenField = addField(CaseDataDto.EXTERNAL_TOKEN, TextField.class);
@@ -598,6 +610,12 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				epidemiologicalConfirmationCombo.setVisible(false);
 				laboratoryConfirmationCombo.setVisible(false);
 			}
+
+			setReadOnly(
+				!UserProvider.getCurrent().hasUserRight(UserRight.CASE_CLASSIFY),
+				CaseDataDto.CLINICAL_CONFIRMATION,
+				CaseDataDto.EPIDEMIOLOGICAL_CONFIRMATION,
+				CaseDataDto.LABORATORY_DIAGNOSTIC_CONFIRMATION);
 		}
 
 		quarantineOrderedVerbally = addField(CaseDataDto.QUARANTINE_ORDERED_VERBALLY, CheckBox.class);
@@ -643,7 +661,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			addField(CaseDataDto.PREVIOUS_INFECTION_DATE);
 			ComboBox tfReinfectionStatus = addField(CaseDataDto.REINFECTION_STATUS, ComboBox.class);
 			tfReinfectionStatus.setReadOnly(true);
-			FieldHelper.setVisibleWhen(getFieldGroup(), CaseDataDto.PREVIOUS_INFECTION_DATE, CaseDataDto.RE_INFECTION, YesNoUnknown.YES, true);
+			FieldHelper.setVisibleWhen(getFieldGroup(), CaseDataDto.PREVIOUS_INFECTION_DATE, CaseDataDto.RE_INFECTION, YesNoUnknown.YES, false);
 			FieldHelper.setVisibleWhen(getFieldGroup(), CaseDataDto.REINFECTION_STATUS, CaseDataDto.RE_INFECTION, YesNoUnknown.YES, false);
 
 			final Label reinfectionInfoLabel = new Label(VaadinIcons.EYE.getHtml(), ContentMode.HTML);
@@ -719,11 +737,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				} else {
 					reinfectionInfoLabel.setDescription(null);
 					reinfectionInfoLabel.setVisible(false);
-
-					for (CaseReinfectionCheckBoxTree reinfectionTree : reinfectionTrees.values()) {
-						reinfectionTree.clearCheckBoxTree();
-					}
-
 					reinfectionDetailsLeftLayout.setVisible(false);
 					reinfectionDetailsRightLayout.setVisible(false);
 				}
@@ -794,11 +807,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		differentPlaceOfStayJurisdiction = addCustomField(DIFFERENT_PLACE_OF_STAY_JURISDICTION, Boolean.class, CheckBox.class);
 		differentPlaceOfStayJurisdiction.addStyleName(VSPACE_3);
 
-		if (UserProvider.getCurrent().getJurisdictionLevel() == JurisdictionLevel.HEALTH_FACILITY) {
-			differentPlaceOfStayJurisdiction.setEnabled(false);
-			differentPlaceOfStayJurisdiction.setVisible(false);
-		}
-
 		ComboBox regionCombo = addInfrastructureField(CaseDataDto.REGION);
 		districtCombo = addInfrastructureField(CaseDataDto.DISTRICT);
 		communityCombo = addInfrastructureField(CaseDataDto.COMMUNITY);
@@ -835,7 +843,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 		facilityTypeGroup.addItems(FacilityTypeGroup.getAccomodationGroups());
 		facilityTypeGroup.setVisible(false);
 		getContent().addComponent(facilityTypeGroup, TYPE_GROUP_LOC);
-		facilityTypeCombo = addField(CaseDataDto.FACILITY_TYPE);
+		facilityTypeCombo = addField(CaseDataDto.FACILITY_TYPE, ComboBoxWithPlaceholder.class);
 		facilityCombo = addInfrastructureField(CaseDataDto.HEALTH_FACILITY);
 		facilityCombo.setImmediate(true);
 		facilityDetails = addField(CaseDataDto.HEALTH_FACILITY_DETAILS, TextField.class);
@@ -1132,6 +1140,11 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			setEnabled(false, CaseDataDto.RESPONSIBLE_REGION, CaseDataDto.RESPONSIBLE_DISTRICT);
 		}
 
+		if (UserProvider.getCurrent().getJurisdictionLevel() == JurisdictionLevel.HEALTH_FACILITY || !isEditableAllowed(CaseDataDto.COMMUNITY)) {
+			differentPlaceOfStayJurisdiction.setEnabled(false);
+			differentPlaceOfStayJurisdiction.setVisible(false);
+		}
+
 		FieldHelper.setVisibleWhen(getFieldGroup(), CaseDataDto.TRIMESTER, CaseDataDto.PREGNANT, Arrays.asList(YesNoUnknown.YES), true);
 
 		diseaseField.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
@@ -1341,6 +1354,9 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					setVisible(getValue().getPointOfEntry().isOtherPointOfEntry(), CaseDataDto.POINT_OF_ENTRY_DETAILS);
 					btnReferFromPointOfEntry
 						.setVisible(UserProvider.getCurrent().hasUserRight(UserRight.CASE_REFER_FROM_POE) && getValue().getHealthFacility() == null);
+				} else if (!isEditableAllowed(CaseDataDto.POINT_OF_ENTRY)) {
+					setVisible(false, CaseDataDto.POINT_OF_ENTRY_DETAILS);
+					btnReferFromPointOfEntry.setVisible(false);
 				}
 
 				if (getValue().getHealthFacility() == null) {
@@ -1360,10 +1376,6 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				setVisible(false, CaseDataDto.POINT_OF_ENTRY, CaseDataDto.POINT_OF_ENTRY_DETAILS);
 				btnReferFromPointOfEntry.setVisible(false);
 			}
-
-			// take over the value that has been set based on access rights
-			facilityTypeGroup.setReadOnly(facilityTypeCombo.isReadOnly());
-			facilityOrHome.setReadOnly(facilityTypeCombo.isReadOnly());
 
 			// Hide case origin from port health users
 			if (UserProvider.getCurrent().isPortHealthUser()) {
@@ -1469,6 +1481,15 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 			facilityOrHome.setReadOnly(facilityOrHomeReadOnly);
 			facilityTypeGroup.setReadOnly(facilityTypeGroupReadOnly);
+		} else if (getValue().isPseudonymized()) {
+			facilityOrHome.setValue(null);
+			facilityOrHome.setReadOnly(true);
+
+			facilityTypeGroup.setVisible(true);
+			FieldHelper.setComboInaccessible(facilityTypeGroup);
+
+			setVisible(true, facilityTypeCombo, facilityCombo);
+			FieldHelper.setComboInaccessible(facilityTypeCombo);
 		} else {
 			facilityOrHome.setVisible(false);
 		}

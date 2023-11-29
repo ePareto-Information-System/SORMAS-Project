@@ -34,26 +34,45 @@ import de.symeda.sormas.ui.utils.components.sidecomponent.SideComponent;
 @SuppressWarnings("serial")
 public class PathogenTestListComponent extends SideComponent {
 
-	public PathogenTestListComponent(SampleReferenceDto sampleRef, Consumer<Runnable> actionCallback, Supplier<String> createOrEditAllowedCallback) {
+//	public PathogenTestListComponent(SampleReferenceDto sampleRef, Consumer<Runnable> actionCallback, Supplier<String> createOrEditAllowedCallback) {
+//
+//		super(I18nProperties.getString(Strings.headingTests), actionCallback);
+//
+//		addCreateButton(I18nProperties.getCaption(Captions.pathogenTestNewTest), () -> {
+//			if (createOrEditAllowedCallback.get() == null) {
+//				ControllerProvider.getPathogenTestController().create(sampleRef, 0, (pathogenTest, callback) -> {
+//                    return callback.run();
+//                });
+//			} else {
+//				Notification.show(null, I18nProperties.getString(createOrEditAllowedCallback.get()), Notification.Type.ERROR_MESSAGE);
+//			}
+//		}, UserRight.PATHOGEN_TEST_CREATE);
+//
+//		PathogenTestList pathogenTestList = new PathogenTestList(sampleRef, actionCallback);
+//
+//		if(UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO) ) {
+//			pathogenTestList.setEnabled(false);
+//		}
+//
+//		addComponent(pathogenTestList);
+//		pathogenTestList.reload();
+//	}
+
+	public PathogenTestListComponent(SampleReferenceDto sampleRef, Consumer<Runnable> actionCallback, boolean isEditAllowed) {
 
 		super(I18nProperties.getString(Strings.headingTests), actionCallback);
 
-		addCreateButton(I18nProperties.getCaption(Captions.pathogenTestNewTest), () -> {
-			if (createOrEditAllowedCallback.get() == null) {
-				ControllerProvider.getPathogenTestController().create(sampleRef, 0, (pathogenTest, callback) -> callback.run());
-			} else {
-				Notification.show(null, I18nProperties.getString(createOrEditAllowedCallback.get()), Notification.Type.ERROR_MESSAGE);
-			}
-		}, UserRight.PATHOGEN_TEST_CREATE);
-
-		PathogenTestList pathogenTestList = new PathogenTestList(sampleRef, actionCallback);
-
-		if(UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_PATHOGEN_TEST_REFRERRED_TO) ) {
-			pathogenTestList.setEnabled(false);
+		if (isEditAllowed) {
+			addCreateButton(
+				I18nProperties.getCaption(Captions.pathogenTestNewTest),
+				() -> ControllerProvider.getPathogenTestController().create(sampleRef, 0),
+				UserRight.PATHOGEN_TEST_CREATE);
 		}
 
+		PathogenTestList pathogenTestList = new PathogenTestList(sampleRef, actionCallback, isEditAllowed);
 		addComponent(pathogenTestList);
 		pathogenTestList.reload();
 	}
+
 
 }

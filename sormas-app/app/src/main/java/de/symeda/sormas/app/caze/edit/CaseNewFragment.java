@@ -328,6 +328,8 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 			contentBinding.personBirthdateDD.setEnabled(false);
 			contentBinding.caseDataDisease.setEnabled(false);
 			contentBinding.caseDataDiseaseDetails.setEnabled(false);
+			contentBinding.caseDataDiseaseVariant.setEnabled(false);
+			contentBinding.caseDataDiseaseVariantDetails.setEnabled(false);
 			contentBinding.caseDataPlagueType.setEnabled(false);
 			contentBinding.caseDataDengueFeverType.setEnabled(false);
 			contentBinding.caseDataHumanRabiesType.setEnabled(false);
@@ -337,6 +339,9 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 		if (UserRole.isPortHealthUser(ConfigProvider.getUser().getUserRoles())) {
 			contentBinding.caseDataCaseOrigin.setVisibility(GONE);
 			contentBinding.caseDataDisease.setVisibility(GONE);
+			contentBinding.caseDataDiseaseDetails.setVisibility(GONE);
+			contentBinding.caseDataDiseaseVariant.setVisibility(GONE);
+			contentBinding.caseDataDiseaseVariantDetails.setVisibility(GONE);
 			contentBinding.facilityOrHome.setVisibility(GONE);
 			contentBinding.caseDataCommunity.setVisibility(GONE);
 			contentBinding.facilityTypeFieldsLayout.setVisibility(GONE);
@@ -344,7 +349,6 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 			contentBinding.facilityTypeGroup.setRequired(false);
 			contentBinding.caseDataFacilityType.setRequired(false);
 			contentBinding.caseDataHealthFacility.setRequired(false);
-			contentBinding.caseDataHealthFacilityDetails.setRequired(false);
 		} else if (DatabaseHelper.getPointOfEntryDao().hasActiveEntriesInDistrict()) {
 			if (record.getCaseOrigin() == CaseOrigin.IN_COUNTRY) {
 				contentBinding.caseDataPointOfEntry.setRequired(false);
@@ -358,10 +362,13 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 					contentBinding.caseDataPointOfEntry.setRequired(false);
 					contentBinding.caseDataPointOfEntry.setValue(null);
 					contentBinding.caseDataHealthFacility.setRequired(true);
+					contentBinding.facilityOrHome.setRequired(true);
 				} else {
 					contentBinding.caseDataPointOfEntry.setVisibility(VISIBLE);
 					contentBinding.caseDataHealthFacility.setRequired(false);
 					contentBinding.caseDataPointOfEntry.setRequired(true);
+					contentBinding.facilityOrHome.setRequired(false);
+					contentBinding.facilityOrHome.setValue(null);
 				}
 			});
 		} else {
@@ -377,7 +384,7 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 		diseaseVariantList.addAll(DataUtils.toItems(diseaseVariants));
 		contentBinding.caseDataDiseaseVariant.setSpinnerData(diseaseVariantList);
 		contentBinding.caseDataDiseaseVariant.setValue(null);
-		contentBinding.caseDataDiseaseVariant.setVisibility(diseaseVariants.isEmpty() ? GONE : VISIBLE);
+		contentBinding.caseDataDiseaseVariant.setVisibility(DataUtils.emptyOrWithOneNullItem(diseaseVariantList) ? GONE : VISIBLE);
 	}
 
 	private void updatePresentConditionField(FragmentCaseNewLayoutBinding contentBinding) {

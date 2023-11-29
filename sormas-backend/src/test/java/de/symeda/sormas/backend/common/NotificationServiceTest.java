@@ -18,25 +18,19 @@ package de.symeda.sormas.backend.common;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
+import javax.inject.Inject;
+
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.user.DefaultUserRole;
-import de.symeda.sormas.api.user.NotificationProtocol;
 import de.symeda.sormas.api.user.NotificationType;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.backend.AbstractBeanTest;
@@ -44,28 +38,19 @@ import de.symeda.sormas.backend.TestDataCreator;
 import de.symeda.sormas.backend.common.messaging.MessageSubject;
 import de.symeda.sormas.backend.common.messaging.MessagingService;
 import de.symeda.sormas.backend.common.messaging.NotificationDeliveryFailedException;
-import de.symeda.sormas.backend.feature.FeatureConfigurationFacadeEjb.FeatureConfigurationFacadeEjbLocal;
+import de.symeda.sormas.backend.feature.FeatureConfigurationFacadeEjb;
 import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.user.User;
-import de.symeda.sormas.backend.user.UserRoleService;
-import de.symeda.sormas.backend.user.UserService;
 
-@RunWith(MockitoJUnitRunner.class)
 public class NotificationServiceTest extends AbstractBeanTest {
 
 	@Mock
-	private FeatureConfigurationFacadeEjbLocal configurationFacade;
+	private FeatureConfigurationFacadeEjb configurationFacade;
 
 	@Mock
 	private MessagingService messagingService;
 
-	@Mock
-	private UserService userService;
-
-	@Mock
-	private UserRoleService userRoleService;
-
-	@InjectMocks
+	@Inject
 	private NotificationService notificationService;
 
 	@SuppressWarnings("unchecked")
@@ -73,10 +58,6 @@ public class NotificationServiceTest extends AbstractBeanTest {
 		super.init();
 
 		Mockito.when(configurationFacade.isFeatureEnabled(any())).thenReturn(true);
-		Mockito.when(userRoleService.getActiveByNotificationTypes(any(), any())).then(invocation -> {
-			return getUserRoleService()
-				.getActiveByNotificationTypes((NotificationProtocol) invocation.getArgument(0), (Set<NotificationType>) invocation.getArgument(1));
-		});
 	}
 
 	@Test
@@ -99,15 +80,8 @@ public class NotificationServiceTest extends AbstractBeanTest {
 		UserDto survSup = creator.createUser(rdcf, "Surv", "Sup", creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
 		UserDto caseSup = creator.createUser(rdcf, "Case", "Sup", creator.getUserRoleReference(DefaultUserRole.CASE_SUPERVISOR));
 
-		Mockito.when(userService.getAllByRegionsAndNotificationTypes(any(), any(), any(), anyBoolean())).then(invocation -> {
-			return getUserService().getAllByRegionsAndNotificationTypes(
-				(List<Region>) invocation.getArgument(0),
-				(NotificationProtocol) invocation.getArgument(1),
-				(Collection<NotificationType>) invocation.getArgument(2),
-				(boolean) invocation.getArgument(3));
-		});
 		Mockito.doAnswer(invocation -> {
-			Map<User, String> userMessages = (Map<User, String>) invocation.getArgument(0);
+			Map<User, String> userMessages = invocation.getArgument(0);
 
 			assertThat(userMessages.size(), is(2));
 			assertThat(userMessages.get(getUserService().getByReferenceDto(survSup.toReference())), is("Test message"));
@@ -158,7 +132,7 @@ public class NotificationServiceTest extends AbstractBeanTest {
 
 		// VISIT_COMPLETED would normally only be sent to the SURVEILLANCE_SUPERVISOR
 		notificationService.sendNotifications(
-			NotificationType.VISIT_COMPLETED,
+			NotificationType.CONTACT_VISIT_COMPLETED,
 			Collections.singletonList(region),
 			Collections.singletonList(survOffUser),
 			MessageSubject.VISIT_COMPLETED,
@@ -210,16 +184,14 @@ public class NotificationServiceTest extends AbstractBeanTest {
 
 		TestDataCreator.RDCF rdcf = creator.createRDCF();
 
-		UserDto survSup = creator.createUser(rdcf, "Surv", "Sup", creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
-
-		User survSupUser = getUserService().getByReferenceDto(survSup.toReference());
+		UserDto survSup = creator.createSurveillanceSupervisor(rdcf);
+		User survSupUser = getEagerUser(survSup.getUuid());
 
 		Mockito.when(configurationFacade.isFeatureEnabled(FeatureType.TASK_NOTIFICATIONS)).thenReturn(false);
 
 		notificationService.sendNotifications(NotificationType.TASK_START, MessageSubject.TASK_START, () -> {
 			Map<User, String> userMessages = new HashMap<>();
 			userMessages.put(survSupUser, "Test message");
-
 			return userMessages;
 		});
 

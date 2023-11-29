@@ -1,15 +1,13 @@
 package de.symeda.sormas.backend.common;
 
 import java.sql.Timestamp;
+import java.util.List;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.*;
 
 import de.symeda.sormas.api.common.DeletionDetails;
 
-public abstract class AbstractDeletableAdoService<ADO extends DeletableAdo> extends AdoServiceWithUserFilter<ADO> {
+public abstract class AbstractDeletableAdoService<ADO extends DeletableAdo> extends AdoServiceWithUserFilterAndJurisdiction<ADO> {
 
 	protected AbstractDeletableAdoService(Class<ADO> elementClass) {
 		super(elementClass);
@@ -31,7 +29,24 @@ public abstract class AbstractDeletableAdoService<ADO extends DeletableAdo> exte
 		em.persist(deleteme);
 		em.flush();
 	}
-	
+
+	public List<ADO> getBatchedQueryResults(CriteriaBuilder cb, CriteriaQuery<ADO> cq, From<?, ADO> from, Integer batchSize) {
+
+		// Ordering by UUID is relevant if a batch includes some, but not all objects with the same timestamp.
+		// the next batch can then resume with the same timestamp and the next UUID in lexicographical order.y
+		cq.orderBy(cb.asc(from.get(AbstractDomainObject.CHANGE_DATE)), cb.asc(from.get(AbstractDomainObject.UUID)));
+
+		return createQuery(cq, 0, batchSize).getResultList();
+	}
+
+	public void restore(ADO ado) {
+
+		ado.setDeletionReason(null);
+		ado.setOtherDeletionReason(null);
+		ado.setDeleted(false);
+		em.persist(ado);
+		em.flush();
+	}
 
 	protected <C> Predicate changeDateFilter(CriteriaBuilder cb, Timestamp date, From<?, C> path, String... joinFields) {
 		From<?, ?> parent = path;

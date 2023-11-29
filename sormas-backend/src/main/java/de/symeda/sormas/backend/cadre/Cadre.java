@@ -21,12 +21,12 @@ import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAUL
 
 import javax.persistence.*;
 
-import de.symeda.auditlog.api.Audited;
+//import de.symeda.auditlog.api.Audited;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.CoreAdo;
 
 @Entity(name = "cadre")
-@Audited
+//@Audited
 public class Cadre extends CoreAdo {
 	public static final String TABLE_NAME = "cadre";
 	public static final String EXTERNAL_ID = "externalId";

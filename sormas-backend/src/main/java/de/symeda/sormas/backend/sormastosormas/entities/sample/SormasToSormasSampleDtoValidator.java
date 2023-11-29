@@ -2,22 +2,27 @@ package de.symeda.sormas.backend.sormastosormas.entities.sample;
 
 import static de.symeda.sormas.backend.sormastosormas.ValidationHelper.buildSampleValidationGroupName;
 
+import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.sample.SampleDto;
-import de.symeda.sormas.api.sormastosormas.sample.SormasToSormasSampleDto;
-import de.symeda.sormas.api.sormastosormas.sharerequest.PreviewNotImplementedDto;
+import de.symeda.sormas.api.sormastosormas.entities.sample.SormasToSormasSampleDto;
+import de.symeda.sormas.api.sormastosormas.share.incoming.PreviewNotImplementedDto;
 import de.symeda.sormas.api.sormastosormas.validation.ValidationErrors;
 import de.symeda.sormas.backend.sormastosormas.data.infra.InfrastructureValidator;
 import de.symeda.sormas.backend.sormastosormas.data.validation.SormasToSormasDtoValidator;
 import de.symeda.sormas.backend.sormastosormas.data.validation.ValidationDirection;
+import de.symeda.sormas.backend.sormastosormas.entities.externalmessage.SormasToSormasExternalMessageDtoValidator;
 
 @Stateless
 @LocalBean
 public class SormasToSormasSampleDtoValidator extends SormasToSormasDtoValidator<SampleDto, SormasToSormasSampleDto, PreviewNotImplementedDto> {
+
+	@EJB
+	private SormasToSormasExternalMessageDtoValidator externalMessageDtoValidator;
 
 	public SormasToSormasSampleDtoValidator() {
 	}
@@ -39,6 +44,10 @@ public class SormasToSormasSampleDtoValidator extends SormasToSormasDtoValidator
 		});
 
 		sharedData.getPathogenTests().forEach(pathogenTest -> validatePathogenTest(validationErrors, pathogenTest));
+		sharedData.getExternalMessages().forEach(externalMessage -> {
+			validationErrors.addAll(externalMessageDtoValidator.validate(externalMessage, direction));
+		});
+
 		return validationErrors;
 	}
 

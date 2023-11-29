@@ -16,7 +16,7 @@ import de.symeda.sormas.ui.dashboard.contacts.ContactsDashboardView;
 import de.symeda.sormas.ui.utils.ComboBoxHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 
-public class ContactsFilterLayout extends DashboardFilterLayout {
+public class ContactsFilterLayout extends DashboardFilterLayout<DashboardDataProvider> {
 
 	public static final String INFO_LABEL = "infoLabel";
 	public static final String DISEASE_FILTER = "diseaseFilter";
@@ -59,6 +59,7 @@ public class ContactsFilterLayout extends DashboardFilterLayout {
 		diseaseFilter.setValue(dashboardDataProvider.getDisease());
 		diseaseFilter.addValueChangeListener(e -> {
 			dashboardDataProvider.setDisease((Disease) diseaseFilter.getValue());
+			dashboardDataProvider.refreshDataForSelectedDisease();
 		});
 		addCustomComponent(diseaseFilter, DISEASE_FILTER);
 	}

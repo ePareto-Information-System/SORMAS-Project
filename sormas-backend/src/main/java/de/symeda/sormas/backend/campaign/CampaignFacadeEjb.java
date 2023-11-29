@@ -25,9 +25,9 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 
-import de.symeda.sormas.api.EditPermissionType;
 import de.symeda.sormas.api.campaign.CampaignCriteria;
 import de.symeda.sormas.api.campaign.CampaignDto;
 import de.symeda.sormas.api.campaign.CampaignFacade;
@@ -51,7 +51,6 @@ import de.symeda.sormas.backend.common.AbstractCoreFacadeEjb;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
 import de.symeda.sormas.backend.user.UserFacadeEjb;
 import de.symeda.sormas.backend.user.UserRoleFacadeEjb.UserRoleFacadeEjbLocal;
-import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.Pseudonymizer;
 import de.symeda.sormas.backend.util.QueryHelper;
@@ -74,8 +73,8 @@ public class CampaignFacadeEjb
 	}
 
 	@Inject
-	public CampaignFacadeEjb(CampaignService service, UserService userService) {
-		super(Campaign.class, CampaignDto.class, service, userService);
+	public CampaignFacadeEjb(CampaignService service) {
+		super(Campaign.class, CampaignDto.class, service);
 	}
 
 	@Override
@@ -97,8 +96,8 @@ public class CampaignFacadeEjb
 
 		cq.where(filter);
 
-		if (sortProperties != null && sortProperties.size() > 0) {
-			List<Order> order = new ArrayList<Order>(sortProperties.size());
+		if (sortProperties != null && !sortProperties.isEmpty()) {
+			List<Order> order = new ArrayList<>(sortProperties.size());
 			for (SortProperty sortProperty : sortProperties) {
 				Expression<?> expression;
 				switch (sortProperty.propertyName) {
@@ -170,13 +169,41 @@ public class CampaignFacadeEjb
 	@RightsAllowed(UserRight._CAMPAIGN_EDIT)
 	public CampaignDto save(@Valid @NotNull CampaignDto dto) {
 		validate(dto);
-		Campaign campaign = fillOrBuildEntity(dto, service.getByUuid(dto.getUuid()), true);
-		if (!service.getEditPermissionType(campaign).equals(EditPermissionType.ALLOWED)) {
+		Campaign existingCampaign = service.getByUuid(dto.getUuid());
+		Campaign campaign = fillOrBuildEntity(dto, existingCampaign, true);
+		if (!service.isEditAllowed(campaign)) {
 			throw new AccessDeniedException(I18nProperties.getString(Strings.errorEntityNotEditable));
 		}
 		service.ensurePersisted(campaign);
 		return toDto(campaign);
 	}
+
+	public CampaignDto toDto(Campaign source) {
+
+		if (source == null) {
+			return null;
+		}
+
+		CampaignDto target = new CampaignDto();
+		DtoHelper.fillDto(target, source);
+
+		target.setCreatingUser(UserFacadeEjb.toReferenceDto(source.getCreatingUser()));
+		target.setDescription(source.getDescription());
+		target.setEndDate(source.getEndDate());
+		target.setName(source.getName());
+		target.setStartDate(source.getStartDate());
+		target.setCampaignFormMetas(
+				source.getCampaignFormMetas().stream().map(campaignFormMeta -> campaignFormMeta.toReference()).collect(Collectors.toSet()));
+
+		target.setCampaignDashboardElements(source.getDashboardElements());
+
+		target.setDeleted(source.isDeleted());
+		target.setDeletionReason(source.getDeletionReason());
+		target.setOtherDeletionReason(source.getOtherDeletionReason());
+
+		return target;
+	}
+
 
 	public Campaign fillOrBuildEntity(@NotNull CampaignDto source, Campaign target, boolean checkChangeDate) {
 
@@ -207,7 +234,7 @@ public class CampaignFacadeEjb
 		validate(getByUuid(campaignReferenceDto.getUuid()));
 	}
 
-	public void validate(CampaignDto campaignDto) {
+	public void validate(@Valid CampaignDto campaignDto) {
 		final List<CampaignDashboardElement> campaignDashboardElements = campaignDto.getCampaignDashboardElements();
 		if (campaignDashboardElements != null) {
 
@@ -283,40 +310,10 @@ public class CampaignFacadeEjb
 		}
 	}
 
-	public CampaignDto toDto(Campaign source) {
-
-		if (source == null) {
-			return null;
-		}
-
-		CampaignDto target = new CampaignDto();
-		DtoHelper.fillDto(target, source);
-
-		target.setCreatingUser(UserFacadeEjb.toReferenceDto(source.getCreatingUser()));
-		target.setDescription(source.getDescription());
-		target.setEndDate(source.getEndDate());
-		target.setName(source.getName());
-		target.setStartDate(source.getStartDate());
-		target.setCampaignFormMetas(
-			source.getCampaignFormMetas().stream().map(campaignFormMeta -> campaignFormMeta.toReference()).collect(Collectors.toSet()));
-
-		target.setCampaignDashboardElements(source.getDashboardElements());
-
-		target.setDeleted(source.isDeleted());
-		target.setDeletionReason(source.getDeletionReason());
-		target.setOtherDeletionReason(source.getOtherDeletionReason());
-
-		return target;
-	}
 
 	@Override
-	public CampaignReferenceDto toRefDto(Campaign campaign) {
+	protected CampaignReferenceDto toRefDto(Campaign campaign) {
 		return toReferenceDto(campaign);
-	}
-
-	@Override
-	public CampaignDto getByUuid(String uuid) {
-		return toDto(service.getByUuid(uuid));
 	}
 
 	@Override
@@ -364,28 +361,36 @@ public class CampaignFacadeEjb
 	}
 
 	@Override
+	@RightsAllowed(UserRight._CAMPAIGN_DELETE)
+	public List<String> delete(List<String> uuids, DeletionDetails deletionDetails) {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	@RightsAllowed(UserRight._CAMPAIGN_DELETE)
+	public void restore(String uuid) {
+		super.restore(uuid);
+	}
+
+	@Override
 	protected void pseudonymizeDto(Campaign source, CampaignDto dto, Pseudonymizer pseudonymizer) {
 
 	}
 
 	@Override
+	@RightsAllowed(UserRight._CAMPAIGN_DELETE)
+	public List<String> restore(List<String> uuids) {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	protected void pseudonymizeDto(Campaign source, CampaignDto dto, Pseudonymizer pseudonymizer, boolean inJurisdiction) {
+		// No pseudonymization for Campaign entities
+	}
+
+	@Override
 	protected void restorePseudonymizedDto(CampaignDto dto, CampaignDto existingDto, Campaign entity, Pseudonymizer pseudonymizer) {
-
-	}
-
-	@Override
-	public List<CampaignDto> getAllAfter(Date date) {
-		return service.getAllAfter(date).stream().map(campaignFormMeta -> toDto(campaignFormMeta)).collect(Collectors.toList());
-	}
-
-	@Override
-	protected void selectDtoFields(CriteriaQuery<CampaignDto> cq, Root<Campaign> root) {
-
-	}
-
-	@Override
-	public List<CampaignDto> getByUuids(List<String> uuids) {
-		return service.getByUuids(uuids).stream().map(c -> toDto(c)).collect(Collectors.toList());
+		// No pseudonymization for Campaign entities
 	}
 
 	@Override
@@ -401,8 +406,7 @@ public class CampaignFacadeEjb
 		if (entity == null) {
 			return null;
 		}
-		CampaignReferenceDto dto = new CampaignReferenceDto(entity.getUuid(), entity.getName());
-		return dto;
+		return new CampaignReferenceDto(entity.getUuid(), entity.getName());
 	}
 
 	@Override
@@ -413,12 +417,6 @@ public class CampaignFacadeEjb
 	@Override
 	public DeletionInfoDto getAutomaticDeletionInfo(String uuid) {
 		return null; // campaigns do not support automatic deletion yet
-	}
-
-	@Override
-	public EditPermissionType isCampaignEditAllowed(String caseUuid) {
-		Campaign campaign = service.getByUuid(caseUuid);
-		return service.getEditPermissionType(campaign);
 	}
 
 	@Override
@@ -439,6 +437,16 @@ public class CampaignFacadeEjb
 		super.dearchive(entityUuids, dearchiveReason);
 	}
 
+	@Override
+	public List<String> getArchivedUuidsSince(Date since) {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	public boolean isEditAllowed(String uuid) {
+		return false;
+	}
+
 	@LocalBean
 	@Stateless
 	public static class CampaignFacadeEjbLocal extends CampaignFacadeEjb {
@@ -447,8 +455,8 @@ public class CampaignFacadeEjb
 		}
 
 		@Inject
-		public CampaignFacadeEjbLocal(CampaignService service, UserService userService) {
-			super(service, userService);
+		public CampaignFacadeEjbLocal(CampaignService service) {
+			super(service);
 		}
 	}
 }

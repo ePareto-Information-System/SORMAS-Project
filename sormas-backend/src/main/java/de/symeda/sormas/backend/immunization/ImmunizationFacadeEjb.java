@@ -17,13 +17,7 @@ package de.symeda.sormas.backend.immunization;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -37,14 +31,24 @@ import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.inject.Inject;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import de.symeda.sormas.api.EditPermissionType;
+import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.feature.FeatureTypeProperty;
+import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
+import de.symeda.sormas.backend.person.PersonJoins;
+import de.symeda.sormas.backend.person.PersonJurisdictionPredicateValidator;
+import de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShareInfoFacadeEjb;
+import de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShareInfoService;
+import de.symeda.sormas.backend.user.UserService;
+import de.symeda.sormas.backend.util.JurisdictionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.symeda.sormas.api.EditPermissionType;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.caze.CaseCriteria;
 import de.symeda.sormas.api.caze.CaseDataDto;
@@ -53,6 +57,7 @@ import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.common.CoreEntityType;
 import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.deletionconfiguration.DeletionReference;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -73,7 +78,7 @@ import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sormastosormas.ShareTreeCriteria;
-import de.symeda.sormas.api.sormastosormas.sharerequest.ShareRequestDataType;
+import de.symeda.sormas.api.sormastosormas.share.incoming.ShareRequestDataType;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.AccessDeniedException;
 import de.symeda.sormas.api.utils.DataHelper;
@@ -81,9 +86,11 @@ import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.api.vaccination.VaccinationDto;
+import de.symeda.sormas.backend.FacadeHelper;
 import de.symeda.sormas.backend.caze.CaseFacadeEjb;
 import de.symeda.sormas.backend.caze.CaseService;
 import de.symeda.sormas.backend.common.AbstractCoreFacadeEjb;
+import de.symeda.sormas.backend.event.EventParticipant;
 import de.symeda.sormas.backend.immunization.entity.Immunization;
 import de.symeda.sormas.backend.infrastructure.community.CommunityFacadeEjb;
 import de.symeda.sormas.backend.infrastructure.community.CommunityService;
@@ -103,12 +110,13 @@ import de.symeda.sormas.backend.sormastosormas.SormasToSormasFacadeEjb;
 import de.symeda.sormas.backend.sormastosormas.entities.caze.SormasToSormasCaseFacadeEjb;
 import de.symeda.sormas.backend.sormastosormas.entities.contact.SormasToSormasContactFacadeEjb;
 import de.symeda.sormas.backend.sormastosormas.entities.event.SormasToSormasEventFacadeEjb;
+import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfo;
 import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfoFacadeEjb;
-import de.symeda.sormas.backend.sormastosormas.share.shareinfo.ShareInfoHelper;
-import de.symeda.sormas.backend.sormastosormas.share.shareinfo.ShareRequestInfo;
+import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfoService;
+import de.symeda.sormas.backend.sormastosormas.share.outgoing.ShareInfoHelper;
+import de.symeda.sormas.backend.sormastosormas.share.outgoing.ShareRequestInfo;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.user.UserFacadeEjb;
-import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.Pseudonymizer;
 import de.symeda.sormas.backend.util.RightsAllowed;
@@ -150,11 +158,11 @@ public class ImmunizationFacadeEjb
 	@EJB
 	private PathogenTestFacadeEjb.PathogenTestFacadeEjbLocal pathogenTestFacade;
 	@EJB
-	private SormasToSormasOriginInfoFacadeEjb.SormasToSormasOriginInfoFacadeEjbLocal originInfoFacade;
+	private SormasToSormasOriginInfoService originInfoService;
 	@EJB
 	private SormasToSormasFacadeEjb.SormasToSormasFacadeEjbLocal sormasToSormasFacade;
-	@Resource
-	private ManagedScheduledExecutorService executorService;
+//	@Resource
+//	private ManagedScheduledExecutorService executorService;
 	@EJB
 	private SormasToSormasCaseFacadeEjb.SormasToSormasCaseFacadeEjbLocal sormasToSormasCaseFacade;
 	@EJB
@@ -164,12 +172,20 @@ public class ImmunizationFacadeEjb
 	@EJB
 	private VaccinationService vaccinationService;
 
+	@EJB
+	private UserService userService;
+	@EJB
+	private SormasToSormasShareInfoFacadeEjb.SormasToSormasShareInfoFacadeEjbLocal sormasToSormasShareInfoFacade;
+	@EJB
+	private SormasToSormasShareInfoService sormasToSormasShareInfoService;
+
+
 	public ImmunizationFacadeEjb() {
 	}
 
 	@Inject
-	public ImmunizationFacadeEjb(ImmunizationService service, UserService userService) {
-		super(Immunization.class, ImmunizationDto.class, service, userService);
+	public ImmunizationFacadeEjb(ImmunizationService service) {
+		super(Immunization.class, ImmunizationDto.class, service);
 	}
 
 	public static ImmunizationReferenceDto toReferenceDto(Immunization entity) {
@@ -247,10 +263,6 @@ public class ImmunizationFacadeEjb
 	}
 
 	@Override
-	protected void selectDtoFields(CriteriaQuery<ImmunizationDto> cq, Root<Immunization> root) {
-	}
-
-	@Override
 	public List<String> getArchivedUuidsSince(Date since) {
 
 		if (userService.getCurrentUser() == null) {
@@ -300,7 +312,56 @@ public class ImmunizationFacadeEjb
 	@RightsAllowed(UserRight._IMMUNIZATION_DELETE)
 	public void delete(String uuid, DeletionDetails deletionDetails) {
 		Immunization immunization = service.getByUuid(uuid);
+
+		if (!service.inJurisdictionOrOwned(immunization)) {
+			throw new AccessDeniedException(I18nProperties.getString(Strings.messageImmunizationOutsideJurisdictionDeletionDenied));
+		}
+
 		service.delete(immunization, deletionDetails);
+	}
+
+	@Override
+	@RightsAllowed(UserRight._IMMUNIZATION_DELETE)
+	public List<String> delete(List<String> uuids, DeletionDetails deletionDetails) {
+		List<String> deletedImmunizationUuids = new ArrayList<>();
+		List<Immunization> immunizationsToBeDeleted = service.getByUuids(uuids);
+		if (immunizationsToBeDeleted != null) {
+			immunizationsToBeDeleted.forEach(immunizationToBeDeleted -> {
+				service.delete(immunizationToBeDeleted, deletionDetails);
+				deletedImmunizationUuids.add(immunizationToBeDeleted.getUuid());
+			});
+		}
+		return deletedImmunizationUuids;
+	}
+
+	@Override
+	@RightsAllowed(UserRight._IMMUNIZATION_DELETE)
+	public void restore(String uuid) {
+		super.restore(uuid);
+	}
+
+	@Override
+	protected void pseudonymizeDto(Immunization source, ImmunizationDto dto, Pseudonymizer pseudonymizer) {
+
+	}
+
+	@Override
+	@RightsAllowed(UserRight._IMMUNIZATION_DELETE)
+	public List<String> restore(List<String> uuids) {
+		List<String> restoredImmunizationUuids = new ArrayList<>();
+		List<Immunization> immunizationsToBeRestored = service.getByUuids(uuids);
+
+		if (immunizationsToBeRestored != null) {
+			immunizationsToBeRestored.forEach(immunizationToBeRestored -> {
+				try {
+					service.restore(immunizationToBeRestored);
+					restoredImmunizationUuids.add(immunizationToBeRestored.getUuid());
+				} catch (Exception e) {
+					logger.error("The immunization with uuid:" + immunizationToBeRestored.getUuid() + "could not be restored");
+				}
+			});
+		}
+		return restoredImmunizationUuids;
 	}
 
 	@Override
@@ -331,14 +392,15 @@ public class ImmunizationFacadeEjb
 		UserRight._IMMUNIZATION_EDIT })
 	public ImmunizationDto save(@Valid @NotNull ImmunizationDto dto, boolean checkChangeDate, boolean internal) {
 		Immunization existingImmunization = service.getByUuid(dto.getUuid());
+		FacadeHelper.checkCreateAndEditRights(existingImmunization, userService, UserRight.IMMUNIZATION_CREATE, UserRight.IMMUNIZATION_EDIT);
 
-		if (internal && existingImmunization != null && !service.isEditAllowed(existingImmunization).equals(EditPermissionType.ALLOWED)) {
+		if (internal && existingImmunization != null && !service.isEditAllowed(existingImmunization)) {
 			throw new AccessDeniedException(I18nProperties.getString(Strings.errorImmunizationNotEditable));
 		}
 
 		ImmunizationDto existingDto = toDto(existingImmunization);
 
-		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
+		Pseudonymizer pseudonymizer = createPseudonymizer();
 		restorePseudonymizedDto(dto, existingDto, existingImmunization, pseudonymizer);
 
 		validate(dto);
@@ -363,16 +425,15 @@ public class ImmunizationFacadeEjb
 
 		service.ensurePersisted(immunization);
 
-		if (existingImmunization != null && internal && sormasToSormasFacade.isFeatureConfigured()) {
-			syncSharesAsync(existingImmunization);
-		}
+		onImmunizationChanged(immunization, internal);
 
-		return convertToDto(immunization, pseudonymizer);
+		return toPseudonymizedDto(immunization, pseudonymizer);
 	}
 
-	protected void pseudonymizeDto(Immunization source, ImmunizationDto dto, Pseudonymizer pseudonymizer) {
+	@Override
+	protected void pseudonymizeDto(Immunization source, ImmunizationDto dto, Pseudonymizer pseudonymizer, boolean inJurisdiction) {
+
 		if (dto != null) {
-			boolean inJurisdiction = service.inJurisdictionOrOwned(source);
 			pseudonymizer.pseudonymizeDto(ImmunizationDto.class, dto, inJurisdiction, c -> {
 				User currentUser = userService.getCurrentUser();
 				pseudonymizer.pseudonymizeUser(source.getReportingUser(), currentUser, dto::setReportingUser);
@@ -391,7 +452,7 @@ public class ImmunizationFacadeEjb
 	}
 
 	@Override
-	public void validate(ImmunizationDto immunizationDto) throws ValidationRuntimeException {
+	public void validate(@Valid ImmunizationDto immunizationDto) throws ValidationRuntimeException {
 		if (DateHelper.isStartDateBeforeEndDate(immunizationDto.getStartDate(), immunizationDto.getEndDate())) {
 			String validationError = String.format(
 				I18nProperties.getValidationError(Validations.afterDate),
@@ -411,6 +472,10 @@ public class ImmunizationFacadeEjb
 		// Check whether any required field that does not have a not null constraint in the database is empty
 		if (immunizationDto.getPerson() == null) {
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.validPerson));
+		}
+
+		if (immunizationDto.getReportingUser() == null && !immunizationDto.isPseudonymized()) {
+			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.validReportingUser));
 		}
 	}
 
@@ -444,21 +509,8 @@ public class ImmunizationFacadeEjb
 		return new Page<>(immunizationIndexList, offset, size, totalElementCount);
 	}
 
-	@RightsAllowed(UserRight._IMMUNIZATION_DELETE)
-	public List<String> deleteImmunizations(List<String> immunizationUuids, DeletionDetails deletionDetails) {
-		List<String> deletedImmunizationUuids = new ArrayList<>();
-		List<Immunization> immunizationsToBeDeleted = service.getByUuids(immunizationUuids);
-		if (immunizationsToBeDeleted != null) {
-			immunizationsToBeDeleted.forEach(immunizationToBeDeleted -> {
-				service.delete(immunizationToBeDeleted, deletionDetails);
-				deletedImmunizationUuids.add(immunizationToBeDeleted.getUuid());
-			});
-		}
-		return deletedImmunizationUuids;
-	}
-
 	@Override
-	public ImmunizationReferenceDto toRefDto(Immunization immunization) {
+	protected ImmunizationReferenceDto toRefDto(Immunization immunization) {
 		return toReferenceDto(immunization);
 	}
 
@@ -473,7 +525,7 @@ public class ImmunizationFacadeEjb
 		boolean checkChangeDate,
 		boolean includeVaccinations) {
 
-		target = DtoHelper.fillOrBuildEntity(source, target, Immunization::new, checkChangeDate);
+		target = DtoHelper.fillOrBuildEntity(source, target, Immunization::build, checkChangeDate);
 
 		target.setDisease(source.getDisease());
 		target.setDiseaseDetails(source.getDiseaseDetails());
@@ -481,10 +533,14 @@ public class ImmunizationFacadeEjb
 		target.setReportDate(source.getReportDate());
 		target.setReportingUser(userService.getByReferenceDto(source.getReportingUser()));
 		target.setArchived(source.isArchived());
-		target.setImmunizationStatus(source.getImmunizationStatus());
+		if (source.getImmunizationStatus() != null) {
+			target.setImmunizationStatus(source.getImmunizationStatus());
+		}
 		target.setMeansOfImmunization(source.getMeansOfImmunization());
 		target.setMeansOfImmunizationDetails(source.getMeansOfImmunizationDetails());
-		target.setImmunizationManagementStatus(source.getImmunizationManagementStatus());
+		if (source.getImmunizationManagementStatus() != null) {
+			target.setImmunizationManagementStatus(source.getImmunizationManagementStatus());
+		}
 		target.setExternalId(source.getExternalId());
 		target.setResponsibleRegion(regionService.getByReferenceDto(source.getResponsibleRegion()));
 		target.setResponsibleDistrict(districtService.getByReferenceDto(source.getResponsibleDistrict()));
@@ -509,7 +565,8 @@ public class ImmunizationFacadeEjb
 		if (includeVaccinations) {
 			List<Vaccination> vaccinationEntities = new ArrayList<>();
 			for (VaccinationDto vaccinationDto : source.getVaccinations()) {
-				Vaccination vaccination = vaccinationFacade.fromDto(vaccinationDto, checkChangeDate);
+				Vaccination vaccination = vaccinationService.getByUuid(vaccinationDto.getUuid());
+				vaccination = vaccinationFacade.fillOrBuildEntity(vaccinationDto, vaccination, checkChangeDate);
 				vaccination.setImmunization(target);
 				vaccinationEntities.add(vaccination);
 			}
@@ -518,7 +575,7 @@ public class ImmunizationFacadeEjb
 		}
 
 		if (source.getSormasToSormasOriginInfo() != null) {
-			target.setSormasToSormasOriginInfo(originInfoFacade.fromDto(source.getSormasToSormasOriginInfo(), checkChangeDate));
+			target.setSormasToSormasOriginInfo(originInfoService.getByUuid(source.getSormasToSormasOriginInfo().getUuid()));
 		}
 
 		target.setDeleted(source.isDeleted());
@@ -586,73 +643,116 @@ public class ImmunizationFacadeEjb
 
 	@Override
 	public List<ImmunizationDto> getByPersonUuids(List<String> uuids) {
-		return service.getByPersonUuids(uuids).stream().map(i -> toDto(i)).collect(Collectors.toList());
+		return toDtos(service.getByPersonUuids(uuids, true).stream());
 	}
 
-	@RightsAllowed(UserRight._IMMUNIZATION_EDIT)
-	public void syncSharesAsync(Immunization immunization) {
+	@RightsAllowed({
+		UserRight._IMMUNIZATION_CREATE,
+		UserRight._IMMUNIZATION_EDIT })
+	public void onImmunizationChanged(Immunization immunization, boolean syncShares) {
+		if (syncShares && sormasToSormasFacade.isFeatureConfigured()) {
+			syncSharesAsync(immunization);
+		}
+	}
+
+	private void syncSharesAsync(Immunization immunization) {
 		//sync case/contact/event this immunization was shared with
-		List<DataHelper.Pair<ShareRequestDataType, ShareTreeCriteria>> syncParams = immunization.getSormasToSormasShares()
-			.stream()
-			.map(immunizationShare -> ShareInfoHelper.getLatestAcceptedRequest(immunizationShare.getRequests().stream()).orElse(null))
-			.filter(Objects::nonNull)
-			.map(ShareRequestInfo::getShares)
-			.flatMap(Collection::stream)
-			.map(s -> {
-				if (s.getCaze() != null) {
-					return new DataHelper.Pair<>(ShareRequestDataType.CASE, new ShareTreeCriteria(s.getCaze().getUuid()));
-				}
 
-				if (s.getContact() != null) {
-					return new DataHelper.Pair<>(ShareRequestDataType.CONTACT, new ShareTreeCriteria(s.getContact().getUuid()));
-				}
-
-				if (s.getEvent() != null) {
-					return new DataHelper.Pair<>(ShareRequestDataType.EVENT, new ShareTreeCriteria(s.getContact().getUuid()));
-				}
-
-				return null;
-			})
-			.filter(Objects::nonNull)
-			.collect(Collectors.toList());
-
-		executorService.schedule(() -> {
-			try {
-				syncParams.forEach((p -> {
-					if (p.getElement0() == ShareRequestDataType.CASE) {
-						sormasToSormasCaseFacade.syncShares(p.getElement1());
-					}
-
-					if (p.getElement0() == ShareRequestDataType.CONTACT) {
-						sormasToSormasContactFacade.syncShares(p.getElement1());
-					}
-
-					if (p.getElement0() == ShareRequestDataType.EVENT) {
-						sormasToSormasEventFacadeEjbLocal.syncShares(p.getElement1());
-					}
-				}));
-			} catch (Exception e) {
-				logger.error("Failed to sync shares of immunization", e);
+		SormasToSormasOriginInfo sormasToSormasOriginInfo = immunization.getSormasToSormasOriginInfo();
+		List<DataHelper.Pair<ShareRequestDataType, ShareTreeCriteria>> syncParams = new ArrayList<>();
+		if (sormasToSormasOriginInfo != null) {
+			if (!sormasToSormasOriginInfo.getCases().isEmpty()) {
+				syncParams.addAll(
+					immunization.getPerson()
+						.getCases()
+						.stream()
+						.filter(c -> DataHelper.isSame(c.getSormasToSormasOriginInfo(), sormasToSormasOriginInfo))
+						.map(c -> new DataHelper.Pair<>(ShareRequestDataType.CASE, new ShareTreeCriteria(c.getUuid())))
+						.collect(Collectors.toList()));
 			}
-		}, 5, TimeUnit.SECONDS);
+
+			if (!sormasToSormasOriginInfo.getContacts().isEmpty()) {
+				syncParams.addAll(
+					immunization.getPerson()
+						.getContacts()
+						.stream()
+						.filter(c -> DataHelper.isSame(c.getSormasToSormasOriginInfo(), sormasToSormasOriginInfo))
+						.map(c -> new DataHelper.Pair<>(ShareRequestDataType.CONTACT, new ShareTreeCriteria(c.getUuid())))
+						.collect(Collectors.toList()));
+			}
+
+			if (!sormasToSormasOriginInfo.getEvents().isEmpty()) {
+				syncParams.addAll(
+					immunization.getPerson()
+						.getEventParticipants()
+						.stream()
+						.map(EventParticipant::getEvent)
+						.distinct()
+						.filter(c -> DataHelper.isSame(c.getSormasToSormasOriginInfo(), sormasToSormasOriginInfo))
+						.map(e -> new DataHelper.Pair<>(ShareRequestDataType.EVENT, new ShareTreeCriteria(e.getUuid())))
+						.collect(Collectors.toList()));
+			}
+		}
+
+		syncParams.addAll(
+			immunization.getSormasToSormasShares()
+				.stream()
+				.map(immunizationShare -> ShareInfoHelper.getLatestAcceptedRequest(immunizationShare.getRequests().stream()).orElse(null))
+				.filter(Objects::nonNull)
+				.map(ShareRequestInfo::getShares)
+				.flatMap(Collection::stream)
+				.map(s -> {
+					if (s.getCaze() != null) {
+						return new DataHelper.Pair<>(ShareRequestDataType.CASE, new ShareTreeCriteria(s.getCaze().getUuid()));
+					}
+
+					if (s.getContact() != null) {
+						return new DataHelper.Pair<>(ShareRequestDataType.CONTACT, new ShareTreeCriteria(s.getContact().getUuid()));
+					}
+
+					if (s.getEvent() != null) {
+						return new DataHelper.Pair<>(ShareRequestDataType.EVENT, new ShareTreeCriteria(s.getEvent().getUuid()));
+					}
+
+					return null;
+				})
+				.filter(Objects::nonNull)
+				.collect(Collectors.toList()));
+
+//		executorService.schedule(() -> {
+//			try {
+//				syncParams.forEach((p -> {
+//					if (p.getElement0() == ShareRequestDataType.CASE) {
+//						sormasToSormasCaseFacade.syncShares(p.getElement1());
+//					}
+//
+//					if (p.getElement0() == ShareRequestDataType.CONTACT) {
+//						sormasToSormasContactFacade.syncShares(p.getElement1());
+//					}
+//
+//					if (p.getElement0() == ShareRequestDataType.EVENT) {
+//						sormasToSormasEventFacadeEjbLocal.syncShares(p.getElement1());
+//					}
+//				}));
+//			} catch (Exception e) {
+//				logger.error("Failed to sync shares of immunization", e);
+//			}
+//		}, 5, TimeUnit.SECONDS);
 	}
 
 	@RightsAllowed({
 		UserRight._IMMUNIZATION_CREATE,
 		UserRight._PERSON_EDIT })
 	public void copyImmunizationToLeadPerson(ImmunizationDto immunizationDto, PersonDto leadPerson, List<VaccinationDto> leadPersonVaccinations) {
+		Immunization immunization = fillOrBuildEntity(immunizationDto, null, false, false);
+		immunization.setUuid(DataHelper.createUuid());
 
-		Immunization newImmunization = new Immunization();
-		newImmunization.setUuid(DataHelper.createUuid());
+		immunization.setPerson(personService.getByReferenceDto(leadPerson.toReference()));
+		service.persist(immunization);
 
-		newImmunization = fillOrBuildEntity(immunizationDto, newImmunization, false, false);
+		vaccinationFacade.copyOrMergeVaccinations(immunizationDto, immunization, leadPersonVaccinations);
 
-		newImmunization.setPerson(personService.getByReferenceDto(leadPerson.toReference()));
-		service.persist(newImmunization);
-
-		vaccinationFacade.copyOrMergeVaccinations(immunizationDto, newImmunization, leadPersonVaccinations);
-
-		service.ensurePersisted(newImmunization);
+		service.ensurePersisted(immunization);
 	}
 
 	@Override
@@ -667,6 +767,69 @@ public class ImmunizationFacadeEjb
 		super.dearchive(entityUuids, dearchiveReason);
 	}
 
+	@Override
+	protected String getDeleteReferenceField(DeletionReference deletionReference) {
+		if (deletionReference == DeletionReference.REPORT) {
+			return Immunization.REPORT_DATE;
+		}
+
+		return super.getDeleteReferenceField(deletionReference);
+	}
+
+
+
+	private Predicate isInJurisdictionOrOwned(ImmunizationQueryContext qc) {
+		final User currentUser = userService.getCurrentUser();
+		CriteriaBuilder cb = qc.getCriteriaBuilder();
+		Predicate filter;
+		if (!featureConfigurationFacade.isPropertyValueTrue(FeatureType.IMMUNIZATION_MANAGEMENT, FeatureTypeProperty.REDUCED)) {
+			filter = ImmunizationJurisdictionPredicateValidator.of(qc, currentUser).inJurisdictionOrOwned();
+		} else {
+			filter = CriteriaBuilderHelper.or(
+					cb,
+					cb.equal(qc.getRoot().get(Immunization.REPORTING_USER), currentUser),
+					PersonJurisdictionPredicateValidator.of(qc.getQuery(), cb, new PersonJoins(qc.getJoins().getPerson()), currentUser, new HashSet<>())
+							.inJurisdictionOrOwned());
+		}
+		return filter;
+	}
+
+	public boolean inJurisdictionOrOwned(Immunization immunization) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Boolean> cq = cb.createQuery(Boolean.class);
+		Root<Immunization> root = cq.from(Immunization.class);
+		//cq.multiselect(JurisdictionHelper.booleanSelector(cb, createUserFilter(new ImmunizationQueryContext(cb, cq, root))));
+		cq.where(cb.equal(root.get(Immunization.UUID), immunization.getUuid()));
+		return em.createQuery(cq).getResultStream().anyMatch(isInJurisdiction -> isInJurisdiction);
+	}
+
+
+
+	public EditPermissionType isEditAllowed(Immunization immunization) {
+
+		if (!userService.hasRight(UserRight.IMMUNIZATION_EDIT)) {
+			return EditPermissionType.REFUSED;
+		}
+
+		if (immunization.getSormasToSormasOriginInfo() != null && !immunization.getSormasToSormasOriginInfo().isOwnershipHandedOver()) {
+			return EditPermissionType.REFUSED;
+		}
+
+		if (!inJurisdictionOrOwned(immunization) || sormasToSormasShareInfoService.isImmunizationsOwnershipHandedOver(immunization)) {
+			return EditPermissionType.REFUSED;
+		}
+
+		return super.getEditPermissionType(immunization.getUuid());
+	}
+
+	@Override
+	public boolean isEditAllowed(String uuid) {
+		return false;
+	}
+
+
+
 	@LocalBean
 	@Stateless
 	public static class ImmunizationFacadeEjbLocal extends ImmunizationFacadeEjb {
@@ -676,8 +839,8 @@ public class ImmunizationFacadeEjb
 		}
 
 		@Inject
-		public ImmunizationFacadeEjbLocal(ImmunizationService service, UserService userService) {
-			super(service, userService);
+		public ImmunizationFacadeEjbLocal(ImmunizationService service) {
+			super(service);
 		}
 	}
 }

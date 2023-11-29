@@ -142,6 +142,7 @@ public class LocationDto extends PseudonymizableDto {
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
 	private String addressTypeDetails;
 	@PersonalData
+	@SensitiveData
 	private FacilityType facilityType;
 	@PersonalData
 	@SensitiveData
@@ -397,27 +398,11 @@ public class LocationDto extends PseudonymizableDto {
 			additionalInformation);
 	}
 
-	public boolean checkIsEmptyLocation() {
-		return details == null
-			&& city == null
-			&& areaType == null
-			&& region == null
-			&& district == null
-			&& community == null
-			&& street == null
-			&& houseNumber == null
-			&& additionalInformation == null;
-	}
-
 	public static LocationDto build() {
 
 		LocationDto location = new LocationDto();
 		location.setUuid(DataHelper.createUuid());
 		return location;
-	}
-
-	public static String buildStreetAndHouseNumberCaption(String street, String houseNumber) {
-		return DataHelper.toStringNullable(street) + " " + DataHelper.toStringNullable(houseNumber);
 	}
 
 	public String buildAddressCaption() {

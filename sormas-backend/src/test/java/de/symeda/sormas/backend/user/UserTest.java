@@ -5,18 +5,16 @@ import java.util.Set;
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.backend.AbstractBeanTest;
-import de.symeda.sormas.backend.TestDataCreator;
 
 public class UserTest extends AbstractBeanTest {
 
 	@Test
 	public void testHasAnyUserRole() {
 
-		final TestDataCreator creator = new TestDataCreator(this);
 		User u = new User();
 		Set<UserRole> userRoles = new HashSet<>();
 		u.setUserRoles(userRoles);
@@ -35,9 +33,7 @@ public class UserTest extends AbstractBeanTest {
 			u.hasAnyUserRole(creator.getUserRole(DefaultUserRole.ADMIN), creator.getUserRole(DefaultUserRole.CASE_OFFICER)),
 			Matchers.is(true));
 		MatcherAssert.assertThat(
-			u.hasAnyUserRole(
-				creator.getUserRole(DefaultUserRole.CASE_OFFICER),
-				creator.getUserRole(DefaultUserRole.CASE_SUPERVISOR)),
+			u.hasAnyUserRole(creator.getUserRole(DefaultUserRole.CASE_OFFICER), creator.getUserRole(DefaultUserRole.CASE_SUPERVISOR)),
 			Matchers.is(true));
 	}
 }

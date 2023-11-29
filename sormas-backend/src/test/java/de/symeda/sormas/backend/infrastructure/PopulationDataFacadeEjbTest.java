@@ -1,10 +1,10 @@
 package de.symeda.sormas.backend.infrastructure;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Date;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import de.symeda.sormas.api.infrastructure.district.DistrictDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
@@ -12,14 +12,14 @@ import de.symeda.sormas.api.infrastructure.region.RegionDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.backend.AbstractBeanTest;
-import de.symeda.sormas.backend.TestDataCreator.RDCFEntities;
+import de.symeda.sormas.backend.TestDataCreator.RDCF;
 
 public class PopulationDataFacadeEjbTest extends AbstractBeanTest {
 
 	@Test
 	public void testGetProjectedRegionPopulation() {
 
-		RDCFEntities rdcf = creator.createRDCFEntities("Region", "District", "Community", "Facility");
+		RDCF rdcf = creator.createRDCF();
 		RegionDto region = getRegionFacade().getByUuid(rdcf.region.getUuid());
 		region.setGrowthRate(2.7f);
 		getRegionFacade().save(region);
@@ -32,7 +32,7 @@ public class PopulationDataFacadeEjbTest extends AbstractBeanTest {
 	@Test
 	public void testGetProjectedDistrictPopulation() {
 
-		RDCFEntities rdcf = creator.createRDCFEntities("Region", "District", "Community", "Facility");
+		RDCF rdcf = creator.createRDCF();
 		DistrictDto district = getDistrictFacade().getByUuid(rdcf.district.getUuid());
 		district.setGrowthRate(2.7f);
 		getDistrictFacade().save(district);

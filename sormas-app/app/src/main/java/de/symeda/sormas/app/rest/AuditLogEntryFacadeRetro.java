@@ -17,7 +17,7 @@ package de.symeda.sormas.app.rest;
 
 import java.util.List;
 
-import de.symeda.sormas.api.PushResult;
+//import de.symeda.sormas.api.PushResult;
 import de.symeda.sormas.api.sample.SampleDto;
 import retrofit2.Call;
 import retrofit2.http.Body;

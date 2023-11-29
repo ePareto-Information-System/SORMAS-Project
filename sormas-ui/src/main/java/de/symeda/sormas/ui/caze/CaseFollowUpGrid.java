@@ -23,11 +23,8 @@ import static de.symeda.sormas.ui.utils.FollowUpUtils.getVisitResultDescription;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import com.vaadin.data.provider.DataProvider;
 import com.vaadin.navigator.View;
-import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.ui.DescriptionGenerator;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.StyleGenerator;
@@ -35,11 +32,11 @@ import com.vaadin.ui.renderers.DateRenderer;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseCriteria;
+import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseFollowUpDto;
 import de.symeda.sormas.api.followup.FollowUpDto;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.utils.DateHelper;
-import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.visit.VisitResultDto;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.utils.DateFormatHelper;
@@ -72,7 +69,8 @@ public class CaseFollowUpGrid extends FilteredGrid<CaseFollowUpDto, CaseCriteria
 		((Column<CaseFollowUpDto, Date>) getColumn(CaseFollowUpDto.FOLLOW_UP_UNTIL)).setRenderer(new DateRenderer(DateFormatHelper.getDateFormat()));
 
 		for (Column<?, ?> column : getColumns()) {
-			column.setCaption(I18nProperties.getPrefixCaption(FollowUpDto.I18N_PREFIX, column.getId(), column.getCaption()));
+			column.setCaption(
+				I18nProperties.findPrefixCaptionWithDefault(column.getId(), column.getCaption(), CaseDataDto.I18N_PREFIX, FollowUpDto.I18N_PREFIX));
 		}
 
 		addItemClickListener(e -> {
@@ -115,22 +113,10 @@ public class CaseFollowUpGrid extends FilteredGrid<CaseFollowUpDto, CaseCriteria
 
 	public void setDataProvider(Date referenceDate, int interval) {
 
-		DataProvider<CaseFollowUpDto, CaseCriteria> dataProvider = DataProvider.fromFilteringCallbacks(
-			query -> FacadeProvider.getCaseFacade()
-				.getCaseFollowUpList(
-					query.getFilter().orElse(null),
-					referenceDate,
-					interval,
-					query.getOffset(),
-					query.getLimit(),
-					query.getSortOrders()
-						.stream()
-						.map(sortOrder -> new SortProperty(sortOrder.getSorted(), sortOrder.getDirection() == SortDirection.ASCENDING))
-						.collect(Collectors.toList()))
-				.stream(),
-			query -> (int) FacadeProvider.getCaseFacade().count(query.getFilter().orElse(null)));
-		setDataProvider(dataProvider);
-		setSelectionMode(SelectionMode.NONE);
+		setLazyDataProvider(
+			(criteria, first, max, sortProperties) -> FacadeProvider.getCaseFacade()
+				.getCaseFollowUpList(criteria, referenceDate, interval, first, max, sortProperties),
+			FacadeProvider.getCaseFacade()::count);
 	}
 
 	private void setDates(Date referenceDate, int interval) {

@@ -18,8 +18,6 @@ package de.symeda.sormas.app.task.list;
 import java.util.List;
 import java.util.Random;
 
-import org.joda.time.DateTime;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
@@ -27,7 +25,7 @@ import android.view.View;
 import android.widget.AdapterView;
 
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import de.symeda.sormas.api.task.TaskAssignee;
@@ -77,7 +75,7 @@ public class TaskListActivity extends PagedBaseListActivity {
 				}
 			}
 		});
-		model = ViewModelProviders.of(this).get(TaskListViewModel.class);
+		model = new ViewModelProvider(this).get(TaskListViewModel.class);
 		model.initializeViewModel();
 		model.getTasks().observe(this, tasks -> {
 			adapter.submitList(tasks);
@@ -117,12 +115,6 @@ public class TaskListActivity extends PagedBaseListActivity {
 			showPreloader();
 			model.getTasks().getValue().getDataSource().invalidate();
 		};
-	}
-
-	@Override
-	public int onNotificationCountChangingAsync(AdapterView parent, PageMenuItem menuItem, int position) {
-		//TODO: Call database and retrieve notification count
-		return (int) (new Random(DateTime.now().getMillis() * 1000).nextInt() / 10000000);
 	}
 
 	@Override

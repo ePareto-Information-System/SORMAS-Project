@@ -26,11 +26,9 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.fluidRowLocs;
 import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 import static de.symeda.sormas.ui.utils.LayoutUtil.locCss;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 import com.google.common.collect.Sets;
 import com.vaadin.server.ErrorMessage;
@@ -43,7 +41,6 @@ import com.vaadin.v7.data.Property;
 import com.vaadin.v7.data.util.converter.Converter;
 import com.vaadin.v7.data.validator.DateRangeValidator;
 import com.vaadin.v7.shared.ui.datefield.Resolution;
-import com.vaadin.v7.ui.AbstractField;
 import com.vaadin.v7.ui.CheckBox;
 import com.vaadin.v7.ui.ComboBox;
 import com.vaadin.v7.ui.DateField;
@@ -173,6 +170,8 @@ public class ContactDataForm extends AbstractEditForm<ContactDto> {
 	private final ViewMode viewMode;
 	private final Disease disease;
 	private NullableOptionGroup contactProximity;
+	private ComboBox district;
+	private ComboBox contactOfficerField;
 	private Field<?> quarantine;
 	private DateField quarantineFrom;
 	private DateField dfQuarantineTo;
@@ -195,13 +194,13 @@ public class ContactDataForm extends AbstractEditForm<ContactDto> {
 	private DateField reportDate;
 	private Button toCaseButton;
 
-	public ContactDataForm(Disease disease, ViewMode viewMode, boolean isPseudonymized) {
+	public ContactDataForm(Disease disease, ViewMode viewMode, boolean isPseudonymized, boolean inJurisdiction) {
 		super(
 			ContactDto.class,
 			ContactDto.I18N_PREFIX,
 			false,
 			FieldVisibilityCheckers.withDisease(disease).andWithCountry(FacadeProvider.getConfigFacade().getCountryLocale()),
-			UiFieldAccessCheckers.forSensitiveData(isPseudonymized));
+			UiFieldAccessCheckers.forDataAccessLevel(UserProvider.getCurrent().getPseudonymizableDataAccessLevel(inJurisdiction), isPseudonymized));
 
 		this.viewMode = viewMode;
 		this.disease = disease;
@@ -246,12 +245,7 @@ public class ContactDataForm extends AbstractEditForm<ContactDto> {
 		lastContactDate = addField(ContactDto.LAST_CONTACT_DATE, DateField.class);
 		reportDate = addField(ContactDto.REPORT_DATE_TIME, DateField.class);
 
-		List<AbstractField<Date>> validatedFields = Arrays.asList(firstContactDate, lastContactDate, reportDate);
-		validatedFields.forEach(field -> field.addValueChangeListener(r -> {
-			validatedFields.forEach(otherField -> {
-				otherField.setValidationVisible(!otherField.isValid());
-			});
-		}));
+		DateComparisonValidator.dateFieldDependencyValidationVisibility(firstContactDate, lastContactDate, reportDate);
 
 		FieldHelper
 			.setVisibleWhen(getFieldGroup(), ContactDto.FIRST_CONTACT_DATE, ContactDto.MULTI_DAY_CONTACT, Collections.singletonList(true), true);
@@ -286,10 +280,10 @@ public class ContactDataForm extends AbstractEditForm<ContactDto> {
 		contactProximity = addField(ContactDto.CONTACT_PROXIMITY, NullableOptionGroup.class);
 		contactProximity.setCaption(I18nProperties.getCaption(Captions.Contact_contactProximityLongForm));
 		contactProximity.removeStyleName(ValoTheme.OPTIONGROUP_HORIZONTAL);
-		if (isConfiguredServer(CountryHelper.COUNTRY_CODE_GERMANY)) {
-			addField(ContactDto.CONTACT_PROXIMITY_DETAILS, TextField.class);
-			contactCategory = addField(ContactDto.CONTACT_CATEGORY, NullableOptionGroup.class);
+		addField(ContactDto.CONTACT_PROXIMITY_DETAILS, TextField.class);
+		contactCategory = addField(ContactDto.CONTACT_CATEGORY, NullableOptionGroup.class);
 
+		if (isConfiguredServer(CountryHelper.COUNTRY_CODE_GERMANY)) {
 			contactProximity.addValueChangeListener(e -> {
 				if (getInternalValue().getContactProximity() != e.getProperty().getValue() || contactCategory.isModified()) {
 					updateContactCategory((ContactProximity) contactProximity.getNullableValue());
@@ -469,12 +463,12 @@ public class ContactDataForm extends AbstractEditForm<ContactDto> {
 			onQuarantineValueChange();
 		});
 
-		ComboBox contactOfficerField = addField(ContactDto.CONTACT_OFFICER, ComboBox.class);
+		contactOfficerField = addField(ContactDto.CONTACT_OFFICER, ComboBox.class);
 		contactOfficerField.setNullSelectionAllowed(true);
 
 		ComboBox region = addInfrastructureField(ContactDto.REGION);
 		region.setDescription(I18nProperties.getPrefixDescription(ContactDto.I18N_PREFIX, ContactDto.REGION));
-		ComboBox district = addInfrastructureField(ContactDto.DISTRICT);
+		district = addInfrastructureField(ContactDto.DISTRICT);
 		district.setDescription(I18nProperties.getPrefixDescription(ContactDto.I18N_PREFIX, ContactDto.DISTRICT));
 		ComboBox community = addInfrastructureField(ContactDto.COMMUNITY);
 		community.setDescription(I18nProperties.getPrefixDescription(ContactDto.I18N_PREFIX, ContactDto.COMMUNITY));
@@ -489,20 +483,7 @@ public class ContactDataForm extends AbstractEditForm<ContactDto> {
 				community,
 				districtDto != null ? FacadeProvider.getCommunityFacade().getAllActiveByDistrict(districtDto.getUuid()) : null);
 
-			List<DistrictReferenceDto> officerDistricts = new ArrayList<>();
-			officerDistricts.add(districtDto);
-
-			if (districtDto == null && getValue().getCaze() != null) {
-				CaseDataDto caseDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(getValue().getCaze().getUuid());
-
-				FieldHelper.updateOfficersField(contactOfficerField, caseDto, UserRight.CONTACT_RESPONSIBLE);
-			} else {
-				FieldHelper.updateItems(
-					contactOfficerField,
-					districtDto != null
-						? FacadeProvider.getUserFacade().getUserRefsByDistrict(districtDto, getSelectedDisease(), UserRight.CONTACT_RESPONSIBLE)
-						: null);
-			}
+			updateContactOfficers();
 		});
 		region.addItems(FacadeProvider.getRegionFacade().getAllActiveByServerCountry());
 
@@ -652,7 +633,7 @@ public class ContactDataForm extends AbstractEditForm<ContactDto> {
 				FollowUpPeriodDto followUpPeriod = ContactLogic.getFollowUpStartDate(
 					lastContactDate.getValue(),
 					reportDate.getValue(),
-					FacadeProvider.getSampleFacade().getByContactUuids(Collections.singletonList(getValue().getUuid())));
+					FacadeProvider.getSampleFacade().getEarliestPositiveSampleDate(getValue().getUuid()));
 				Date minimumFollowUpUntilDate = FollowUpLogic
 					.calculateFollowUpUntilDate(
 						followUpPeriod,
@@ -709,6 +690,21 @@ public class ContactDataForm extends AbstractEditForm<ContactDto> {
 
 		setRequired(true, ContactDto.CONTACT_CLASSIFICATION, ContactDto.CONTACT_STATUS, ContactDto.REPORT_DATE_TIME);
 		FieldHelper.addSoftRequiredStyle(firstContactDate, lastContactDate, contactProximity, relationToCase);
+	}
+
+	private void updateContactOfficers() {
+		DistrictReferenceDto districtDto = (DistrictReferenceDto) district.getValue();
+		if (districtDto == null && getValue().getCaze() != null) {
+			CaseDataDto caseDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(getValue().getCaze().getUuid());
+
+			FieldHelper.updateOfficersField(contactOfficerField, caseDto, UserRight.CONTACT_RESPONSIBLE);
+		} else {
+			FieldHelper.updateItems(
+				contactOfficerField,
+				districtDto != null
+					? FacadeProvider.getUserFacade().getUserRefsByDistrict(districtDto, getSelectedDisease(), UserRight.CONTACT_RESPONSIBLE)
+					: null);
+		}
 	}
 
 	private void updateOverwriteFollowUpUntil() {
@@ -814,7 +810,11 @@ public class ContactDataForm extends AbstractEditForm<ContactDto> {
 	private void updateDiseaseConfiguration(Disease disease) {
 		for (Object propertyId : getFieldGroup().getBoundPropertyIds()) {
 			boolean visible = DiseasesConfiguration.isDefinedOrMissing(ContactDto.class, (String) propertyId, disease);
-			getFieldGroup().getField(propertyId).setVisible(visible && getFieldGroup().getField(propertyId).isVisible());
+			getFieldGroup().getField(propertyId)
+				.setVisible(
+					visible
+						&& (getFieldGroup().getField(propertyId).isVisible()
+							|| (propertyId.equals(ContactDto.CONTACT_CATEGORY) && isVisibleAllowed((String) propertyId))));
 		}
 
 		FieldHelper.updateEnumData(
@@ -893,7 +893,6 @@ public class ContactDataForm extends AbstractEditForm<ContactDto> {
 			Date newQuarantineEnd = dfQuarantineTo.getValue();
 			ContactDto originalContact = getInternalValue();
 			Date oldQuarantineEnd = originalContact.getQuarantineTo();
-			Date oldPreviousQuarantineTo = originalContact.getPreviousQuarantineTo();
 
 			ExtendedReduced changeType = null;
 			if (oldQuarantineEnd != null && newQuarantineEnd != null) {
@@ -1051,6 +1050,7 @@ public class ContactDataForm extends AbstractEditForm<ContactDto> {
 				I18nProperties.getString(Strings.infoExpectedFollowUpUntilDateContact),
 				expectedFollowUpPeriodDto.getFollowUpStartDateType(),
 				DateHelper.formatLocalDate(expectedFollowUpPeriodDto.getFollowUpStartDate(), I18nProperties.getUserLanguage())));
+		updateContactOfficers();
 		updateOverwriteFollowUpUntil();
 		updateFollowUpStatusComponents();
 

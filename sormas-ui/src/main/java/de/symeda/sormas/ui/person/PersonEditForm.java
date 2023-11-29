@@ -52,6 +52,7 @@ import com.vaadin.v7.ui.TextField;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.Descriptions;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -79,6 +80,7 @@ import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.checkers.CountryFieldVisibilityChecker;
 import de.symeda.sormas.ui.ControllerProvider;
+import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.location.LocationEditForm;
 import de.symeda.sormas.ui.utils.AbstractEditForm;
 import de.symeda.sormas.ui.utils.ApproximateAgeValidator;
@@ -184,7 +186,14 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 	private PresentConditionChangeListener presentConditionChangeListener;
 	//@formatter:on
 
-	public PersonEditForm(PersonContext personContext, Disease disease, String diseaseDetails, ViewMode viewMode, boolean isPseudonymized) {
+	public PersonEditForm(
+		PersonContext personContext,
+		Disease disease,
+		String diseaseDetails,
+		ViewMode viewMode,
+		boolean isPseudonymized,
+		boolean inJurisdiction,
+		boolean isEditAllowed) {
 		super(
 			PersonDto.class,
 			PersonDto.I18N_PREFIX,
@@ -192,7 +201,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			FieldVisibilityCheckers.withDisease(disease)
 				.add(new OutbreakFieldVisibilityChecker(viewMode))
 				.add(new CountryFieldVisibilityChecker(FacadeProvider.getConfigFacade().getCountryLocale())),
-			UiFieldAccessCheckers.getDefault(isPseudonymized));
+			UiFieldAccessCheckers.forDataAccessLevel(UserProvider.getCurrent().getPseudonymizableDataAccessLevel(inJurisdiction), isPseudonymized),
+			isEditAllowed);
 
 		this.personContext = personContext;
 		this.disease = disease;
@@ -208,14 +218,45 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		addFields();
 	}
 
-	public PersonEditForm(boolean isPseudonymized) {
+	public PersonEditForm(
+		PersonContext personContext,
+		Disease disease,
+		String diseaseDetails,
+		ViewMode viewMode,
+		boolean isPseudonymized,
+		boolean inJurisdiction) {
+		super(
+			PersonDto.class,
+			PersonDto.I18N_PREFIX,
+			false,
+			FieldVisibilityCheckers.withDisease(disease)
+				.add(new OutbreakFieldVisibilityChecker(viewMode))
+				.add(new CountryFieldVisibilityChecker(FacadeProvider.getConfigFacade().getCountryLocale())),
+			UiFieldAccessCheckers.forDataAccessLevel(UserProvider.getCurrent().getPseudonymizableDataAccessLevel(inJurisdiction), isPseudonymized));
+
+		this.personContext = personContext;
+		this.disease = disease;
+		this.diseaseDetails = diseaseDetails;
+		this.isPseudonymized = isPseudonymized;
+
+		CssStyles.style(CssStyles.H3, occupationHeader, addressHeader, addressesHeader, contactInformationHeader);
+		getContent().addComponent(occupationHeader, OCCUPATION_HEADER);
+		getContent().addComponent(addressHeader, ADDRESS_HEADER);
+		getContent().addComponent(addressesHeader, ADDRESSES_HEADER);
+		getContent().addComponent(contactInformationHeader, CONTACT_INFORMATION_HEADER);
+
+		addFields();
+	}
+
+	public PersonEditForm(boolean isEditAllowed, boolean isPseudonymized, boolean inJurisdiction) {
 		super(
 			PersonDto.class,
 			PersonDto.I18N_PREFIX,
 			false,
 			new FieldVisibilityCheckers().add(new OutbreakFieldVisibilityChecker(ViewMode.NORMAL))
 				.add(new CountryFieldVisibilityChecker(FacadeProvider.getConfigFacade().getCountryLocale())),
-			UiFieldAccessCheckers.getDefault(isPseudonymized));
+			UiFieldAccessCheckers.forDataAccessLevel(UserProvider.getCurrent().getPseudonymizableDataAccessLevel(inJurisdiction), isPseudonymized),
+			isEditAllowed);
 
 		CssStyles.style(CssStyles.H3, occupationHeader, addressHeader, addressesHeader, contactInformationHeader);
 		getContent().addComponent(occupationHeader, OCCUPATION_HEADER);
@@ -262,6 +303,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		birthDateMonth.setPageLength(12);
 		birthDateMonth.setInputPrompt(I18nProperties.getString(Strings.month));
 		birthDateMonth.setCaption("");
+		DateHelper.getMonthsInYear()
+			.forEach(month -> birthDateMonth.setItemCaption(month, de.symeda.sormas.api.Month.values()[month - 1].toString()));
 		setItemCaptionsForMonths(birthDateMonth);
 		ComboBox birthDateYear = addField(PersonDto.BIRTH_DATE_YYYY, ComboBox.class);
 		birthDateYear.setCaption(I18nProperties.getPrefixCaption(PersonDto.I18N_PREFIX, PersonDto.BIRTH_DATE));
@@ -314,12 +357,17 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		personContactDetailsField.setCaption(null);
 		personContactDetailsField.setPseudonymized(isPseudonymized);
 
-		addFields(
-			PersonDto.OCCUPATION_TYPE,
-			PersonDto.OCCUPATION_DETAILS,
-			PersonDto.ARMED_FORCES_RELATION_TYPE,
-			PersonDto.EDUCATION_TYPE,
-			PersonDto.EDUCATION_DETAILS);
+		ComboBox occupationTypeField = addField(PersonDto.OCCUPATION_TYPE, ComboBox.class);
+		TextField occupationTypeDetailsField = addField(PersonDto.OCCUPATION_DETAILS, TextField.class);
+		occupationTypeDetailsField.setVisible(false);
+		FieldHelper
+			.updateItems(occupationTypeField, FacadeProvider.getCustomizableEnumFacade().getEnumValues(CustomizableEnumType.OCCUPATION_TYPE, null));
+		occupationTypeField.addValueChangeListener(e -> {
+			OccupationType occupationType = (OccupationType) e.getProperty().getValue();
+			occupationTypeDetailsField.setVisible(occupationType != null && occupationType.matchPropertyValue(OccupationType.HAS_DETAILS, true));
+		});
+
+		addFields(PersonDto.ARMED_FORCES_RELATION_TYPE, PersonDto.EDUCATION_TYPE, PersonDto.EDUCATION_DETAILS);
 
 		List<CountryReferenceDto> countries = FacadeProvider.getCountryFacade().getAllActiveAsReference();
 		addInfrastructureField(PersonDto.BIRTH_COUNTRY).addItems(countries);
@@ -363,7 +411,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		setRequired(true, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, PersonDto.SEX);
 		setVisible(
 			false,
-			PersonDto.OCCUPATION_DETAILS,
 			PersonDto.DEATH_DATE,
 			PersonDto.DEATH_PLACE_TYPE,
 			PersonDto.DEATH_PLACE_DESCRIPTION,
@@ -436,10 +483,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		});
 
 		addFieldListeners(PersonDto.DEATH_DATE, e -> updateApproximateAge());
-		addFieldListeners(PersonDto.OCCUPATION_TYPE, e -> {
-			updateOccupationFieldCaptions();
-			toggleOccupationMetaFields();
-		});
 
 		addListenersToInfrastructureFields(
 			cbPlaceOfBirthRegion,
@@ -544,12 +587,17 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		generalCommentLabel.addStyleName(H3);
 		getContent().addComponent(generalCommentLabel, GENERAL_COMMENT_LOC);
 
-		TextArea additionalDetails = addField(PersonDto.ADDITIONAL_DETAILS, TextArea.class, new ResizableTextAreaWrapper<>(false));
-		additionalDetails.setRows(6);
-		additionalDetails.setDescription(
-			I18nProperties.getPrefixDescription(PersonDto.I18N_PREFIX, PersonDto.ADDITIONAL_DETAILS, "") + "\n"
-				+ I18nProperties.getDescription(Descriptions.descGdpr));
-		CssStyles.style(additionalDetails, CssStyles.CAPTION_HIDDEN);
+		try {
+
+			TextArea additionalDetails = addField(PersonDto.ADDITIONAL_DETAILS, TextArea.class, new ResizableTextAreaWrapper<>(false));
+			additionalDetails.setRows(6);
+			additionalDetails.setDescription(
+					I18nProperties.getPrefixDescription(PersonDto.I18N_PREFIX, PersonDto.ADDITIONAL_DETAILS, "") + "\n"
+							+ I18nProperties.getDescription(Descriptions.descGdpr));
+			CssStyles.style(additionalDetails, CssStyles.CAPTION_HIDDEN);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -732,27 +780,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		approximateAgeTypeSelect.setReadOnly(true);
 	}
 
-	private void toggleOccupationMetaFields() {
-		OccupationType type = (OccupationType) ((AbstractSelect) getFieldGroup().getField(PersonDto.OCCUPATION_TYPE)).getValue();
-		if (type != null) {
-			switch (type) {
-			case BUSINESSMAN_WOMAN:
-			case TRANSPORTER:
-			case OTHER:
-				setVisible(true, PersonDto.OCCUPATION_DETAILS);
-				break;
-			case HEALTHCARE_WORKER:
-				setVisible(true, PersonDto.OCCUPATION_DETAILS);
-				break;
-			default:
-				setVisible(false, PersonDto.OCCUPATION_DETAILS);
-				break;
-			}
-		} else {
-			setVisible(false, PersonDto.OCCUPATION_DETAILS);
-		}
-	}
-
 	private void updateFacilityDetailsVisibility(TextField detailsField, FacilityReferenceDto facility) {
 		if (facility == null) {
 			detailsField.setVisible(false);
@@ -822,30 +849,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 				if (isVisibleAllowed(causeOfDeathDetailsField)) {
 					causeOfDeathDetailsField.setVisible(true);
 				}
-			}
-		}
-	}
-
-	private void updateOccupationFieldCaptions() {
-		OccupationType type = (OccupationType) ((AbstractSelect) getFieldGroup().getField(PersonDto.OCCUPATION_TYPE)).getValue();
-		if (type != null) {
-			Field<?> od = getFieldGroup().getField(PersonDto.OCCUPATION_DETAILS);
-			switch (type) {
-			case BUSINESSMAN_WOMAN:
-				od.setCaption(I18nProperties.getCaption(getPropertyI18nPrefix() + ".business." + PersonDto.OCCUPATION_DETAILS));
-				break;
-			case TRANSPORTER:
-				od.setCaption(I18nProperties.getCaption(getPropertyI18nPrefix() + ".transporter." + PersonDto.OCCUPATION_DETAILS));
-				break;
-			case OTHER:
-				od.setCaption(I18nProperties.getCaption(getPropertyI18nPrefix() + ".other." + PersonDto.OCCUPATION_DETAILS));
-				break;
-			case HEALTHCARE_WORKER:
-				od.setCaption(I18nProperties.getCaption(getPropertyI18nPrefix() + ".healthcare." + PersonDto.OCCUPATION_DETAILS));
-				break;
-			default:
-				od.setCaption(I18nProperties.getCaption(getPropertyI18nPrefix() + "." + PersonDto.OCCUPATION_DETAILS));
-				break;
 			}
 		}
 	}

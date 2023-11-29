@@ -43,8 +43,9 @@ public class TaskList extends PaginationList<TaskIndexDto> {
 
 	private final TaskCriteria taskCriteria = new TaskCriteria();
 	private final Label noTasksLabel;
+	private final boolean isEditAllowed;
 
-	public TaskList(TaskContext context, ReferenceDto entityRef) {
+	public TaskList(TaskContext context, ReferenceDto entityRef, boolean isEditAllowed) {
 
 		super(5);
 		switch (context) {
@@ -64,6 +65,7 @@ public class TaskList extends PaginationList<TaskIndexDto> {
 			throw new IndexOutOfBoundsException(context.toString());
 		}
 		noTasksLabel = new Label(String.format(I18nProperties.getCaption(Captions.taskNoTasks), context.toString().toLowerCase()));
+		this.isEditAllowed = isEditAllowed;
 	}
 
 	@Override
@@ -88,13 +90,20 @@ public class TaskList extends PaginationList<TaskIndexDto> {
 		for (int i = 0, displayedEntriesSize = displayedEntries.size(); i < displayedEntriesSize; i++) {
 			TaskIndexDto task = displayedEntries.get(i);
 			TaskListEntry listEntry = new TaskListEntry(task);
-			if (UserProvider.getCurrent().hasUserRight(UserRight.TASK_EDIT)) {
-				listEntry.addEditListener(
-					i,
-					(ClickListener) event -> ControllerProvider.getTaskController()
-						.edit(listEntry.getTask(), TaskList.this::reload, false, listEntry.getTask().getDisease()));
-			}
+
+			listEntry.addActionButton(
+				String.valueOf(i),
+				(ClickListener) event -> ControllerProvider.getTaskController()
+					.edit(listEntry.getTask(), TaskList.this::reload, false, listEntry.getTask().getDisease()),
+				hasEditOrDeleteRights());
+
+			listEntry.setEnabled(isEditAllowed);
 			listLayout.addComponent(listEntry);
 		}
 	}
+
+	private boolean hasEditOrDeleteRights() {
+		return UserProvider.getCurrent().hasUserRight(UserRight.TASK_EDIT) || UserProvider.getCurrent().hasUserRight(UserRight.TASK_DELETE);
+	}
+
 }

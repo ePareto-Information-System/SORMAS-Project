@@ -1,27 +1,35 @@
 package de.symeda.sormas.ui.externalsurveillanceservice;
 
-import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vaadin.server.Page;
-import com.vaadin.ui.CustomLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.caze.CaseIndexDto;
 import de.symeda.sormas.api.event.EventDto;
+import de.symeda.sormas.api.event.EventIndexDto;
+import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolException;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.share.ExternalShareInfoCriteria;
 import de.symeda.sormas.ui.SormasUI;
+import de.symeda.sormas.ui.utils.BulkOperationHandler;
 import de.symeda.sormas.ui.utils.DirtyStateComponent;
+import de.symeda.sormas.ui.utils.LayoutWithSidePanel;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
 
 /**
@@ -38,51 +46,53 @@ public class ExternalSurveillanceServiceGateway {
 	}
 
 	public static ExternalSurveillanceShareComponent addComponentToLayout(
-		CustomLayout targetLayout,
+		LayoutWithSidePanel targetLayout,
 		DirtyStateComponent editComponent,
-		CaseDataDto caze) {
+		CaseDataDto caze,
+		boolean isEditAllowed) {
 		return addComponentToLayout(
 			targetLayout,
 			editComponent,
 			I18nProperties.getString(Strings.entityCase),
 			I18nProperties.getString(Strings.ExternalSurveillanceToolGateway_confirmSendCase),
 			I18nProperties.getString(Strings.ExternalSurveillanceToolGateway_confirmDeleteCase),
-			caze.isDontShareWithReportingTool() ? null : () -> {
-				FacadeProvider.getExternalSurveillanceToolFacade().sendCases(Collections.singletonList(caze.getUuid()), false);
+			caze.isDontShareWithReportingTool() || !isEditAllowed ? null : () -> {
+				FacadeProvider.getExternalSurveillanceToolFacade().sendCases(Collections.singletonList(caze.getUuid()));
 			},
-			() -> {
+			isEditAllowed ? () -> {
 				FacadeProvider.getExternalSurveillanceToolFacade().deleteCases(Collections.singletonList(caze));
-			},
+			} : null,
 			new ExternalShareInfoCriteria().caze(caze.toReference()));
 	}
 
 	public static ExternalSurveillanceShareComponent addComponentToLayout(
-		CustomLayout targetLayout,
+		LayoutWithSidePanel targetLayout,
 		DirtyStateComponent editComponent,
-		EventDto event) {
+		EventDto event,
+		boolean isEditAllowed) {
 		return addComponentToLayout(
 			targetLayout,
 			editComponent,
 			I18nProperties.getString(Strings.entityEvent),
 			I18nProperties.getString(Strings.ExternalSurveillanceToolGateway_confirmSendEvent),
 			I18nProperties.getString(Strings.ExternalSurveillanceToolGateway_confirmDeleteEvent),
-			() -> {
-				FacadeProvider.getExternalSurveillanceToolFacade().sendEvents(Collections.singletonList(event.getUuid()), false);
-			},
-			() -> {
+			isEditAllowed ? () -> {
+				FacadeProvider.getExternalSurveillanceToolFacade().sendEvents(Collections.singletonList(event.getUuid()));
+			} : null,
+			isEditAllowed ? () -> {
 				FacadeProvider.getExternalSurveillanceToolFacade().deleteEvents(Collections.singletonList(event));
-			},
+			} : null,
 			new ExternalShareInfoCriteria().event(event.toReference()));
 	}
 
 	private static ExternalSurveillanceShareComponent addComponentToLayout(
-		CustomLayout targetLayout,
+		LayoutWithSidePanel targetLayout,
 		DirtyStateComponent editComponent,
 		String entityName,
 		String confirmationText,
 		String deletionText,
-		GatewayCall gatewaySendCall,
-		GatewayCall gatewayDeleteCall,
+		@Nullable GatewayCall gatewaySendCall,
+		@Nullable GatewayCall gatewayDeleteCall,
 		ExternalShareInfoCriteria shareInfoCriteria) {
 		if (!FacadeProvider.getExternalSurveillanceToolFacade().isFeatureEnabled()) {
 			return null;
@@ -93,49 +103,80 @@ public class ExternalSurveillanceServiceGateway {
 				confirmationText,
 				gatewaySendCall,
 				I18nProperties.getString(Strings.ExternalSurveillanceToolGateway_notificationEntrySent),
-				SormasUI::refreshView,
-				true);
-		} : null, () -> {
+				true,
+				SormasUI::refreshView);
+		} : null, gatewayDeleteCall != null ? () -> {
 			deleteInExternalSurveillanceTool(deletionText, gatewayDeleteCall, SormasUI::refreshView);
-		}, shareInfoCriteria, editComponent);
-		targetLayout.addComponent(shareComponent, EXTERANEL_SURVEILLANCE_TOOL_GATEWAY_LOC);
+		} : null, shareInfoCriteria, editComponent);
+		targetLayout.addSidePanelComponent(shareComponent, EXTERANEL_SURVEILLANCE_TOOL_GATEWAY_LOC);
 
 		return shareComponent;
 	}
 
-	public static void sendCasesToExternalSurveillanceTool(List<String> uuids, Runnable callback, boolean shouldConfirm) {
+	public static <T extends CaseIndexDto> void sendCasesToExternalSurveillanceTool(
+		Collection<T> selectedCases,
+		boolean shouldConfirm,
+		Consumer<List<T>> callback) {
 		sendToExternalSurveillanceTool(I18nProperties.getString(Strings.ExternalSurveillanceToolGateway_confirmSendCases), () -> {
-			FacadeProvider.getExternalSurveillanceToolFacade().sendCases(uuids, false);
-			new Notification(
-				I18nProperties.getString(Strings.headingCasesSentToExternalSurveillanceTool),
-				I18nProperties.getString(Strings.messageCasesSentToExternalSurveillanceTool),
-				Notification.Type.HUMANIZED_MESSAGE,
-				false).show(Page.getCurrent());
+			ArrayList<T> selectedCasesCpy = new ArrayList<>(selectedCases);
+			new BulkOperationHandler<T>(
+				Strings.ExternalSurveillanceToolGateway_notificationEntriesSent,
+				null,
+				null,
+				null,
+				Strings.ExternalSurveillanceToolGateway_notificationSomeEntriesSent,
+				null,
+				null).doBulkOperation(batch -> {
+					try {
+						FacadeProvider.getExternalSurveillanceToolFacade()
+							.sendCases(batch.stream().map(CaseIndexDto::getUuid).collect(Collectors.toList()));
+					} catch (ExternalSurveillanceToolException e) {
+						throw new RuntimeException(e);
+					}
 
-		}, I18nProperties.getString(Strings.ExternalSurveillanceToolGateway_notificationEntriesSent), callback, shouldConfirm);
+					return batch.size();
+				}, selectedCasesCpy, null, null, callback);
+
+		}, null, shouldConfirm, null);
 	}
 
-	public static void sendEventsToExternalSurveillanceTool(List<String> uuids, Runnable callback, boolean shouldConfirm) {
+	public static void sendEventsToExternalSurveillanceTool(
+		Collection<EventIndexDto> selectedEvents,
+		boolean shouldConfirm,
+		Consumer<List<EventIndexDto>> callback) {
 		sendToExternalSurveillanceTool(I18nProperties.getString(Strings.ExternalSurveillanceToolGateway_confirmSendEvents), () -> {
-			FacadeProvider.getExternalSurveillanceToolFacade().sendEvents(uuids, false);
-			new Notification(
-				I18nProperties.getString(Strings.headingEventsSentToExternalSurveillanceTool),
-				I18nProperties.getString(Strings.messageEventsSentToExternalSurveillanceTool),
-				Notification.Type.HUMANIZED_MESSAGE,
-				false).show(Page.getCurrent());
+			ArrayList<EventIndexDto> selectedEventsCpy = new ArrayList<>(selectedEvents);
+			new BulkOperationHandler<EventIndexDto>(
+				Strings.ExternalSurveillanceToolGateway_notificationEntriesSent,
+				null,
+				null,
+				null,
+				Strings.ExternalSurveillanceToolGateway_notificationSomeEntriesSent,
+				null,
+				null).doBulkOperation(batch -> {
+					try {
+						FacadeProvider.getExternalSurveillanceToolFacade()
+							.sendEvents(batch.stream().map(EventIndexDto::getUuid).collect(Collectors.toList()));
+					} catch (ExternalSurveillanceToolException e) {
+						return 0;
+					}
 
-		}, I18nProperties.getString(Strings.ExternalSurveillanceToolGateway_notificationEntriesSent), callback, shouldConfirm);
+					return batch.size();
+				}, selectedEventsCpy, null, null, callback);
+		}, null, shouldConfirm, null);
 	}
 
 	private static void sendToExternalSurveillanceTool(
 		String confirmationText,
 		GatewayCall gatewayCall,
 		String successMessage,
-		Runnable callback,
-		boolean shouldConfirm) {
+		boolean shouldConfirm,
+		Runnable callback) {
 		Runnable doSend = () -> {
 			handleGatewayCall(gatewayCall, successMessage);
-			callback.run();
+			if (callback != null) {
+				callback.run();
+			}
 		};
 		if (shouldConfirm) {
 			VaadinUiUtil.showConfirmationPopup(
@@ -154,7 +195,7 @@ public class ExternalSurveillanceServiceGateway {
 		}
 	}
 
-	private static void handleGatewayCall(GatewayCall gatewayCall, String successMessage) {
+	private static void handleGatewayCall(GatewayCall gatewayCall, @Nullable String successMessage) {
 
 		Notification.Type notificationType;
 		String notificationMessage;
@@ -162,8 +203,12 @@ public class ExternalSurveillanceServiceGateway {
 		try {
 			gatewayCall.call();
 
-			notificationType = Notification.Type.HUMANIZED_MESSAGE;
-			notificationMessage = successMessage;
+			if (successMessage != null) {
+				Notification.show(
+					I18nProperties.getCaption(Captions.ExternalSurveillanceToolGateway_title),
+					successMessage,
+					Notification.Type.HUMANIZED_MESSAGE);
+			}
 		} catch (ExternalSurveillanceToolException e) {
 			if (StringUtils.isNotBlank(e.getErrorCode()) && "timeout_anticipated".equals(e.getErrorCode())) {
 				notificationType = Notification.Type.WARNING_MESSAGE;
@@ -171,9 +216,9 @@ public class ExternalSurveillanceServiceGateway {
 				notificationType = Notification.Type.ERROR_MESSAGE;
 			}
 			notificationMessage = e.getMessage();
-		}
 
-		Notification.show(I18nProperties.getCaption(Captions.ExternalSurveillanceToolGateway_title), notificationMessage, notificationType);
+			Notification.show(I18nProperties.getCaption(Captions.ExternalSurveillanceToolGateway_title), notificationMessage, notificationType);
+		}
 	}
 
 	public static void deleteInExternalSurveillanceTool(String deletionText, GatewayCall gatewayCall, Runnable callback) {

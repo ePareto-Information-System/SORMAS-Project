@@ -19,6 +19,7 @@ import de.symeda.sormas.api.sample.AdditionalTestDto;
 import de.symeda.sormas.api.sample.AdditionalTestFacade;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.SortProperty;
+import de.symeda.sormas.backend.FacadeHelper;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
@@ -60,12 +61,7 @@ public class AdditionalTestFacadeEjb implements AdditionalTestFacade {
 		Integer max,
 		List<SortProperty> sortProperties) {
 
-		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
-
-		return service.getIndexList(additionalTestCriteria, first, max, sortProperties)
-			.stream()
-			.map(p -> convertToDto(p, pseudonymizer))
-			.collect(Collectors.toList());
+		return toPseudonymizedDtos(service.getIndexList(additionalTestCriteria, first, max, sortProperties));
 	}
 
 	public Page<AdditionalTestDto> getIndexPage(
@@ -86,8 +82,9 @@ public class AdditionalTestFacadeEjb implements AdditionalTestFacade {
 	}
 
 	public AdditionalTestDto saveAdditionalTest(@Valid AdditionalTestDto additionalTest, boolean checkChangeDate) {
-
-		AdditionalTest entity = fromDto(additionalTest, checkChangeDate);
+		AdditionalTest existingAdditionalTest = service.getByUuid(additionalTest.getUuid());
+		FacadeHelper.checkCreateAndEditRights(existingAdditionalTest, userService, UserRight.ADDITIONAL_TEST_CREATE, UserRight.ADDITIONAL_TEST_EDIT);
+		AdditionalTest entity = fillOrBuildEntity(additionalTest, existingAdditionalTest, checkChangeDate);
 		service.ensurePersisted(entity);
 		return toDto(entity);
 	}
@@ -115,7 +112,16 @@ public class AdditionalTestFacadeEjb implements AdditionalTestFacade {
 			return Collections.emptyList();
 		}
 
-		return service.getAllActiveAdditionalTestsAfter(date, user, batchSize, lastSynchronizedUuid).stream().map(e -> toDto(e)).collect(Collectors.toList());
+		return service.getAllAfter(date, batchSize, lastSynchronizedUuid).stream().map(e -> toDto(e)).collect(Collectors.toList());
+	}
+
+	private List<AdditionalTestDto> toPseudonymizedDtos(List<AdditionalTest> entities) {
+
+		List<Long> inJurisdictionIds = service.getInJurisdictionIds(entities);
+		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
+		List<AdditionalTestDto> dtos =
+			entities.stream().map(p -> convertToDto(p, pseudonymizer, inJurisdictionIds.contains(p.getId()))).collect(Collectors.toList());
+		return dtos;
 	}
 
 	@Override
@@ -135,17 +141,23 @@ public class AdditionalTestFacadeEjb implements AdditionalTestFacade {
 	}
 
 	public AdditionalTestDto convertToDto(AdditionalTest source, Pseudonymizer pseudonymizer) {
+
+		if (source == null) {
+			return null;
+		}
+
+		return convertToDto(source, pseudonymizer, service.inJurisdictionOrOwned(source));
+	}
+
+	private AdditionalTestDto convertToDto(AdditionalTest source, Pseudonymizer pseudonymizer, boolean inJurisdiction) {
+
 		AdditionalTestDto dto = toDto(source);
-
-		pseudonymizer
-			.pseudonymizeDto(AdditionalTestDto.class, dto, sampleService.inJurisdictionOrOwned(source.getSample()).getInJurisdiction(), null);
-
+		pseudonymizer.pseudonymizeDto(AdditionalTestDto.class, dto, inJurisdiction, null);
 		return dto;
 	}
 
-	public AdditionalTest fromDto(@NotNull AdditionalTestDto source, boolean checkChangeDate) {
-
-		AdditionalTest target = DtoHelper.fillOrBuildEntity(source, service.getByUuid(source.getUuid()), AdditionalTest::new, checkChangeDate);
+	public AdditionalTest fillOrBuildEntity(@NotNull AdditionalTestDto source, AdditionalTest target, boolean checkChangeDate) {
+		target = DtoHelper.fillOrBuildEntity(source, target, AdditionalTest::new, checkChangeDate);
 
 		target.setSample(sampleService.getByReferenceDto(source.getSample()));
 		target.setTestDateTime(source.getTestDateTime());

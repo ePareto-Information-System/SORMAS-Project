@@ -11,10 +11,10 @@ For this reason, there are a number of ways in which such a SORMAS instance can 
 
 Beyond that, the Wiki contains even more customization options:
 
-* [Adding Disease Variants to a SORMAS Server](https://github.com/hzi-braunschweig/SORMAS-Project/wiki/Adding-Disease-Variants-to-a-SORMAS-Server)
-* [Customizing the Login and About Pages](https://github.com/hzi-braunschweig/SORMAS-Project/wiki/Customizing-the-Login-and-About-Pages)
-* [Customizing the Name and Icon of the Android App](https://github.com/hzi-braunschweig/SORMAS-Project/wiki/Customizing-the-Name-and-Icon-of-the-Android-App)
-* [Creating a SORMAS2SORMAS Certificate](https://github.com/hzi-braunschweig/SORMAS-Project/wiki/Creating-a-SORMAS2SORMAS-Certificate)
+* [Adding Disease Variants to a SORMAS Server](https://github.com/sormas-foundation/SORMAS-Project/wiki/Adding-Disease-Variants-to-a-SORMAS-Server)
+* [Customizing the Login and About Pages](https://github.com/sormas-foundation/SORMAS-Project/wiki/Customizing-the-Login-and-About-Pages)
+* [Customizing the Name and Icon of the Android App](https://github.com/sormas-foundation/SORMAS-Project/wiki/Customizing-the-Name-and-Icon-of-the-Android-App)
+* [Creating a SORMAS2SORMAS Certificate](https://github.com/sormas-foundation/SORMAS-Project/wiki/Creating-a-SORMAS2SORMAS-Certificate)
 
 ## Server Configuration
 The general SORMAS configuration is stored in the **sormas.properties** file that you can find in your payara domain folder. When you set up a new SORMAS server, please make sure to go over all entries in that file and adjust their values if necessary.
@@ -27,7 +27,7 @@ This especially applies to the **country.locale** and **country.name** propertie
 **Important: The sormas.properties file contains all properties that existed in the SORMAS version that you initially installed on your server. New properties added in more recent SORMAS versions are not automatically added!** If you're operating a SORMAS server, we strongly suggest to read the release notes of new versions.
 If properties have been added to this file, they will be communicated in these notes so that you can add them to your properties file.
 
-[This Wiki page](https://github.com/hzi-braunschweig/SORMAS-Project/wiki/Server-Configuration-Options) contains a list and explanation of all currently configurable properties.
+[This Wiki page](https://github.com/sormas-foundation/SORMAS-Project/wiki/Server-Configuration-Options) contains a list and explanation of all currently configurable properties.
 
 ## Feature Configuration
 Some of the features of SORMAS can be enabled or disabled to further customize the system. Right now, this is only possible directly in the `featureconfiguration` table in the database. This table contains one entry for every configurable feature and is automatically populated during server startup. Setting the `enabled` to `true` or `false` will enable or disable the feature, respectively.
@@ -37,7 +37,7 @@ The columns `region`, `district`, `disease` and `enddate` are currently only app
 
 **Important: If you're using the mobile app, you also need to update the `changedate` to the current date and time whenever you enable or disable a feature!** Otherwise the mobile applications will not be notified about the change.
 
-[This Wiki page](https://github.com/hzi-braunschweig/SORMAS-Project/wiki/Feature-Configuration-Options) contains a list and explanation of all currently configurable features.
+[This Wiki page](https://github.com/sormas-foundation/SORMAS-Project/wiki/Feature-Configuration-Options) contains a list and explanation of all currently configurable features.
 
 ## Disease Configuration
 SORMAS supports a wide range of diseases, and not all of those might be relevant to every SORMAS instance or might be used in a different context. As with features, configuring diseases is currently only possible directly in the database via the `diseaseconfiguration` table. All diseases have a default value for each of their properties that is applied when the respective database entry is empty.
@@ -45,10 +45,13 @@ Changing these entries overrides that default value. Unlike with features, disea
 
 **Important: If you're using the mobile app, you also need to update the `changedate` to the current date and time whenever you change a disease configuration!** Otherwise the mobile applications will not be notified about the change.
 
-[This Wiki page](https://github.com/hzi-braunschweig/SORMAS-Project/wiki/Disease-Configuration-Options) contains a list and explanation of all currently configurable disease properties.
+[This Wiki page](https://github.com/sormas-foundation/SORMAS-Project/wiki/Disease-Configuration-Options) contains a list and explanation of all currently configurable disease properties.
 
 ## Deletion Configuration
-SORMAS can be set up to automatically delete entities after a specific time period. There are seven core entities for which automatic deletion can be enabled and configured: *Case, Contact, Event, Event Participant, Immunization, Travel Entry, and Campaign.* This configuration is currently only possible directly in the database via the `deleteconfiguration` table, which already contains rows for each of these entities. The table consists of the following columns:
+SORMAS can be set up to automatically delete entities after a specific time period.
+There are seven core entities for which automatic deletion can be enabled and configured: *Case, Contact, Event, Event Participant, Immunization, Travel Entry, and Campaign.*
+This configuration is currently only possible directly in the database via the `deleteconfiguration` table, which already contains rows for each of these entities.
+The table consists of the following columns:
 
 * **`entityType`:** The name of the entity that supports automatic deletion.
 * **`deletionReference`:** The reference date for the calculation of the date on which deletion takes place (see below).
@@ -57,11 +60,13 @@ SORMAS can be set up to automatically delete entities after a specific time peri
 Both `deletionReference` and `deletionPeriod` need to be filled in order for the automatic deletion to take place. Entities for which at least one of these fields is left empty will not be automatically deleted. Deletion is executed via a nightly cron job and might therefore not happen immediately when the deletion date has been reached.
 
 ### Deletion Reference
-The `deletionReference` field has four possible values which define the date that is used to calculate whether an entity needs to be deleted (i.e., when the date calculated by subtracting the deletion period from the current date is before the deletion reference date, the entity is deleted). A `MANUAL_DELETION` entry can exist in parallel to one of the other entries, and if both entries are configured, deletion is executed as soon as the threshold of one of these entries is met.
+The `deletionReference` field has four possible values which define the date that is used to calculate whether an entity needs to be deleted (i.e., when the date calculated by subtracting the deletion period from the current date is before the deletion reference date, the entity is deleted).
+A `MANUAL_DELETION` entry can exist in parallel to one of the other entries, and if both entries are configured, deletion is executed as soon as the threshold of one of these entries is met.
 
 * **`CREATION`**: The creation date of the entity will be used.
 * **`END`**: The latest change date of the entity itself and any of its depending entities will be used. E.g. for cases, this includes but is not limited to its epi data, symptoms, or hospitalization.
-* **`ORIGIN`**: This is currently only implemented for travel entries and means that the report date of the entity will be used. If this is specified for any other entity, the deletion job will be stopped and throw an error.
+* **`ORIGIN`**: This is currently only implemented for travel entries and means that the arrival date of the entity will be used. If this is specified for any other entity, the deletion job will be stopped and throw an error.
+* **`REPORT`**: The report date of the entity will be used. This is currently not implemented for event participants and campaigns.
 * **`MANUAL_DELETION`**: The date on which the entity was manually deleted by a user.
 
 ## Infrastructure Data
@@ -84,24 +89,23 @@ For *Countries*, *Subcontinents* and *Continents*, SORMAS provides a default imp
 
 A **user** is the user account for employees who have access to SORMAS. Similarly, there are technical users that allow external systems to access data.
 Users have one or sometimes more **user roles**. The roles of a user can be chosen by an admin when creating a new user or editing an existing one.
-Each user role is defined by a set of **user rights** and a **jurisdiction** that represents the area of responsibility. For example, the jurisdiction of a surveillance officer is the district, which is defined on the user. User roles that have different areas of responsibility are therefore not combinable.
+Each user role is defined by a set of **user rights**, a **jurisdiction** that represents the area of responsibility and a set of **notifications**. For example, the jurisdiction of a surveillance officer is the district, which is defined on the user. User roles that have different areas of responsibility are therefore not combinable.
 
 ![grafik](https://user-images.githubusercontent.com/23217632/173802276-edeafa20-3f8c-4b21-bc0e-21b7b54f46b4.png)
 
 SORMAS comes with an extensive list of user rights that are used to check which data and functionality can be access by the user in the backend and the user interface.
 To cover the typical use cases, SORMAS defines a set of default user roles that are automatically created when setting up a SORMAS instance.
-
 Most user rights define an action related to an entity type, e.g. the user right *CASE_EDIT* allows users to edit case data.
-The following automatically generated document **lists and describes all user rights and the default user roles**:
-https://github.com/hzi-braunschweig/SORMAS-Project/blob/development/sormas-api/src/main/resources/doc/SORMAS_User_Rights.xlsx
+Notifications define when the user with the given role should get an *SMS* and/or *Email* notification.
 
-User roles are fully configurable, allowing admins to create new user roles and edit existing ones, to customize the instance to the given needs and to make sure data protection requirements are fulfilled. 
+The following automatically generated documents list and describe **all user rights, notifications and the default user roles**:
+* [https://github.com/sormas-foundation/SORMAS-Project/blob/development/sormas-api/src/main/resources/doc/SORMAS_User_Roles.xlsx](https://github.com/sormas-foundation/SORMAS-Project/blob/development/sormas-api/src/main/resources/doc/SORMAS_User_Roles.xlsx)
 
-At this point the configuration has to be done in the database, a user interface to configure user roles will be implemented starting sprint 117 (see #4462 and #4463).
+User roles are fully configurable, allowing admins to create new user roles and edit existing ones, to customize the instance to the given needs and to make sure data protection requirements are fulfilled.
 
 ### Related topics
 
 * Epic that introduced configurable user roles: #898
-* Data access based on user rights and user's jurisdiction: https://github.com/hzi-braunschweig/SORMAS-Project/blob/development/sormas-backend/doc/UserDataAccess.md
-* Using keycloak as authentication provider: https://github.com/hzi-braunschweig/SORMAS-Project/blob/development/docs/SERVER_SETUP.md#keycloak-server
-* The available jurisdiction levels (nation, region, district, health facility, etc.) are defined in Java code (https://github.com/hzi-braunschweig/SORMAS-Project/blob/development/sormas-api/src/main/java/de/symeda/sormas/api/user/JurisdictionLevel.java)
+* Data access based on user rights and user's jurisdiction: [https://github.com/sormas-foundation/SORMAS-Project/blob/development/sormas-backend/doc/UserDataAccess.md](https://github.com/sormas-foundation/SORMAS-Project/blob/development/sormas-backend/doc/UserDataAccess.md)
+* Using keycloak as authentication provider: [https://github.com/sormas-foundation/SORMAS-Project/blob/development/docs/SERVER_SETUP.md#keycloak-server](https://github.com/sormas-foundation/SORMAS-Project/blob/development/docs/SERVER_SETUP.md#keycloak-server)
+* The available jurisdiction levels (nation, region, district, health facility, etc.) are defined in Java code [https://github.com/sormas-foundation/SORMAS-Project/blob/development/sormas-api/src/main/java/de/symeda/sormas/api/user/JurisdictionLevel.java](https://github.com/sormas-foundation/SORMAS-Project/blob/development/sormas-api/src/main/java/de/symeda/sormas/api/user/JurisdictionLevel.java)

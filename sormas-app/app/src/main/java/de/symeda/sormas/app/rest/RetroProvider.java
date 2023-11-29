@@ -128,6 +128,7 @@ public final class RetroProvider {
 	private FeatureConfigurationFacadeRetro featureConfigurationFacadeRetro;
 	private AggregateReportFacadeRetro aggregateReportFacadeRetro;
 	private AuditLogEntryFacadeRetro auditLogEntryFacadeRetro;
+	private EnvironmentFacadeRetro environmentFacadeRetro;
 
 	private RetroProvider(Context context) throws ServerConnectionException, ServerCommunicationException, ApiVersionException {
 
@@ -989,6 +990,18 @@ public final class RetroProvider {
 			}
 		}
 		return instance.auditLogEntryFacadeRetro;
+	}
+	public static EnvironmentFacadeRetro getEnvironmentFacade() throws NoConnectionException {
+		if (instance == null)
+			throw new NoConnectionException();
+		if (instance.environmentFacadeRetro == null) {
+			synchronized ((RetroProvider.class)) {
+				if (instance.environmentFacadeRetro == null) {
+					instance.environmentFacadeRetro = instance.retrofit.create(EnvironmentFacadeRetro.class);
+				}
+			}
+		}
+		return instance.environmentFacadeRetro;
 	}
 
 	public static void throwException(Response<?> response) throws ServerConnectionException, ServerCommunicationException {

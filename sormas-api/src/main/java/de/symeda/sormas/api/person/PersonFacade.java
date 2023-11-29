@@ -17,15 +17,18 @@ package de.symeda.sormas.api.person;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ejb.Remote;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
+import de.symeda.sormas.api.BaseFacade;
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.EditPermissionFacade;
 import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseCriteria;
 import de.symeda.sormas.api.common.Page;
-import de.symeda.sormas.api.contact.FollowUpStatus;
 import de.symeda.sormas.api.externaldata.ExternalDataDto;
 import de.symeda.sormas.api.externaldata.ExternalDataUpdateException;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
@@ -34,31 +37,17 @@ import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.SortProperty;
 
 @Remote
-public interface PersonFacade {
+public interface PersonFacade extends BaseFacade<PersonDto, PersonIndexDto, PersonReferenceDto, PersonCriteria>, EditPermissionFacade {
 
-	List<PersonDto> getPersonsAfter(Date date);
+	Set<PersonAssociation> getPermittedAssociations();
 
 	List<PersonDto> getDeathsBetween(Date fromDate, Date toDate, DistrictReferenceDto districtRef, Disease disease);
 
-	PersonReferenceDto getReferenceByUuid(String uuid);
-
 	JournalPersonDto getPersonForJournal(String uuid);
 
-	PersonDto savePerson(@Valid PersonDto dto);
-
-	PersonDto savePerson(@Valid PersonDto source, boolean skipValidation);
+	PersonDto save(@Valid @NotNull PersonDto source, boolean skipValidation);
 
 	DataHelper.Pair<CaseClassification, PersonDto> savePersonWithoutNotifyingExternalJournal(@Valid PersonDto source);
-
-	void validate(PersonDto dto);
-
-	List<String> getAllUuids();
-
-	PersonDto getPersonByUuid(String uuid);
-
-	List<PersonDto> getPersonsAfter(Date date, Integer batchSize, String lastSynchronizedUuid);
-
-	List<PersonDto> getByUuids(List<String> uuids);
 
 	/**
 	 * Returns a list with the names of all persons that the user has access to and that match the criteria.
@@ -80,13 +69,9 @@ public interface PersonFacade {
 
 	boolean setSymptomJournalStatus(String personUuid, SymptomJournalStatus status);
 
-	List<PersonIndexDto> getIndexList(PersonCriteria criteria, Integer offset, Integer limit, List<SortProperty> sortProperties);
-
 	List<PersonExportDto> getExportList(PersonCriteria criteria, int first, int max);
 
 	Page<PersonIndexDto> getIndexPage(PersonCriteria personCriteria, Integer offset, Integer size, List<SortProperty> sortProperties);
-
-	long count(PersonCriteria criteria);
 
 	boolean exists(String uuid);
 
@@ -94,7 +79,7 @@ public interface PersonFacade {
 
 	long setMissingGeoCoordinates(boolean overwriteExistingCoordinates);
 
-	boolean isSharedWithoutOwnership(String uuid);
+	boolean isSharedOrReceived(String uuid);
 
 	List<PersonDto> getByExternalIds(List<String> externalIds);
 
@@ -102,10 +87,28 @@ public interface PersonFacade {
 
 	void mergePerson(PersonDto leadPerson, PersonDto otherPerson);
 
+	void mergePerson(
+		String leadPersonUuid,
+		String otherPersonUuid,
+		boolean mergeProperties,
+		List<String> selectedEventParticipantUuids,
+		boolean mergeEventparticipantProperties);
+
+	boolean isPersonSimilar(PersonSimilarityCriteria criteria, String personUuid);
+
 	PersonDto getByContext(PersonContext context, String contextUuid);
 
     boolean isEnrolledInExternalJournal(String uuid);
 
 	Map<Disease, Long> getDeathCountByDisease(CaseCriteria caseCriteria, boolean excludeSharedCases,
 			boolean excludeCasesFromContacts);
+
+	void copyHomeAddress(PersonReferenceDto source, PersonReferenceDto target);
+
+	PersonDto savePerson(@Valid PersonDto dto);
+
+	PersonDto savePerson(@Valid PersonDto source, boolean skipValidation);
+
+
+	PersonDto getPersonByUuid(String uuid);
 }

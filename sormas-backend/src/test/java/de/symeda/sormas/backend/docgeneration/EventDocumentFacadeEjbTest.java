@@ -1,8 +1,8 @@
 package de.symeda.sormas.backend.docgeneration;
 
 import static de.symeda.sormas.backend.docgeneration.TemplateTestUtil.cleanLineSeparators;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,8 +13,8 @@ import java.util.Properties;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.action.ActionContext;
@@ -28,7 +28,6 @@ import de.symeda.sormas.api.event.EventStatus;
 import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.Sex;
-import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.backend.TestDataCreator;
 
@@ -38,19 +37,13 @@ public class EventDocumentFacadeEjbTest extends AbstractDocGenerationTest {
 
 	private EventDto eventDto;
 
-	@Before
+	@BeforeEach
 	public void setup() throws ParseException, URISyntaxException {
 		eventDocumentFacade = getEventDocumentFacade();
 		reset();
 
-		TestDataCreator.RDCF rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
-		UserDto user = creator.createUser(
-			rdcf.region.getUuid(),
-			rdcf.district.getUuid(),
-			rdcf.facility.getUuid(),
-			"Surv",
-			"Sup",
-			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
+		TestDataCreator.RDCF rdcf = creator.createRDCF();
+		UserDto user = creator.createSurveillanceSupervisor(rdcf);
 
 		loginWith(user);
 
@@ -68,7 +61,7 @@ public class EventDocumentFacadeEjbTest extends AbstractDocGenerationTest {
 			user.toReference(),
 			user.toReference(),
 			Disease.CORONAVIRUS,
-			rdcf.district);
+			rdcf);
 
 		PersonDto personDto1 = PersonDto.build();
 		personDto1.setFirstName("Isidore");
@@ -76,7 +69,7 @@ public class EventDocumentFacadeEjbTest extends AbstractDocGenerationTest {
 		personDto1.setSex(Sex.UNKNOWN);
 		personDto1.setPhone("+49 681 1234");
 
-		getPersonFacade().savePerson(personDto1);
+		getPersonFacade().save(personDto1);
 
 		EventParticipantDto eventParticipantDto1 = EventParticipantDto.build(eventDto.toReference(), user.toReference());
 		eventParticipantDto1.setPerson(personDto1);
@@ -89,7 +82,7 @@ public class EventDocumentFacadeEjbTest extends AbstractDocGenerationTest {
 		personDto2.setSex(Sex.UNKNOWN);
 		personDto2.setPhone("+49 681 4567");
 
-		getPersonFacade().savePerson(personDto2);
+		getPersonFacade().save(personDto2);
 
 		EventParticipantDto eventParticipantDto2 = EventParticipantDto.build(eventDto.toReference(), user.toReference());
 		eventParticipantDto2.setPerson(personDto2);
@@ -102,7 +95,7 @@ public class EventDocumentFacadeEjbTest extends AbstractDocGenerationTest {
 		personDto3.setSex(Sex.UNKNOWN);
 		personDto3.setPhone("+49 681 8901");
 
-		getPersonFacade().savePerson(personDto3);
+		getPersonFacade().save(personDto3);
 
 		EventParticipantDto eventParticipantDto3 = EventParticipantDto.build(eventDto.toReference(), user.toReference());
 		eventParticipantDto3.setPerson(personDto3);

@@ -1,31 +1,30 @@
 package de.symeda.sormas.backend.externalmessage.labmessage;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.mockito.Mockito.when;
 
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Date;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import de.symeda.sormas.api.externalmessage.ExternalMessageReferenceDto;
+import de.symeda.sormas.api.externalmessage.labmessage.SampleReportReferenceDto;
 import de.symeda.sormas.api.externalmessage.labmessage.TestReportDto;
 import de.symeda.sormas.api.sample.PCRTestSpecification;
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.backend.externalmessage.ExternalMessage;
-import de.symeda.sormas.backend.externalmessage.ExternalMessageFacadeEjb;
 import de.symeda.sormas.backend.externalmessage.ExternalMessageService;
-import de.symeda.sormas.backend.sample.PathogenTestService;
-import junit.framework.TestCase;
+import de.symeda.sormas.backend.infrastructure.country.CountryService;
 
-@RunWith(MockitoJUnitRunner.class)
-public class TestReportFacadeEjbMappingTest extends TestCase {
+@ExtendWith(MockitoExtension.class)
+public class TestReportFacadeEjbMappingTest {
 
 	@InjectMocks
 	private TestReportFacadeEjb sut;
@@ -34,18 +33,21 @@ public class TestReportFacadeEjbMappingTest extends TestCase {
 	private ExternalMessageService externalMessageService;
 
 	@Mock
-	private PathogenTestService pathogenTestService;
+	private SampleReportService sampleReportService;
 
 	@Mock
 	private TestReportService testReportService;
 
+	@Mock
+	private CountryService countryService;
+
 	@Test
 	public void testFromDto() {
 
-		ExternalMessage externalMessage = new ExternalMessage();
-		externalMessage.setUuid(DataHelper.createUuid());
-		ExternalMessageReferenceDto labMessageReference = ExternalMessageFacadeEjb.toReferenceDto(externalMessage);
-		when(externalMessageService.getByReferenceDto(labMessageReference)).thenReturn(externalMessage);
+		SampleReport sampleReport = new SampleReport();
+		sampleReport.setUuid(DataHelper.createUuid());
+		SampleReportReferenceDto sampleReportReference = SampleReportFacadeEjb.toReferenceDto(sampleReport);
+		when(sampleReportService.getByReferenceDto(sampleReportReference)).thenReturn(sampleReport);
 
 		when(testReportService.getByUuid("UUID")).thenReturn(null);
 
@@ -54,7 +56,7 @@ public class TestReportFacadeEjbMappingTest extends TestCase {
 		source.setCreationDate(new Date(9999999L));
 		source.setChangeDate(new Date(9999999L));
 		source.setUuid("UUID");
-		source.setLabMessage(labMessageReference);
+		source.setSampleReport(sampleReportReference);
 		source.setTestLabName("Test Lab Name");
 		source.setTestLabExternalIds(Arrays.asList("Test Lab External Id 1", "Test Lab External Id 2"));
 		source.setTestLabPostalCode("38100");
@@ -71,7 +73,7 @@ public class TestReportFacadeEjbMappingTest extends TestCase {
 		assertNotSame(source.getCreationDate().getTime(), result.getCreationDate().getTime());
 		assertNotSame(source.getChangeDate(), result.getChangeDate());
 		assertEquals(source.getUuid(), result.getUuid());
-		assertEquals(source.getLabMessage(), ExternalMessageFacadeEjb.toReferenceDto(result.getLabMessage()));
+		assertEquals(source.getSampleReport(), SampleReportFacadeEjb.toReferenceDto(result.getSampleReport()));
 		assertEquals(source.getTestLabName(), result.getTestLabName());
 		assertEquals(source.getTestLabExternalIds(), result.getTestLabExternalIds());
 		assertEquals(source.getTestLabPostalCode(), result.getTestLabPostalCode());
@@ -88,15 +90,15 @@ public class TestReportFacadeEjbMappingTest extends TestCase {
 	@Test
 	public void testToDto() {
 
-		ExternalMessage externalMessage = new ExternalMessage();
-		externalMessage.setUuid(DataHelper.createUuid());
+		SampleReport sampleReport = new SampleReport();
+		sampleReport.setUuid(DataHelper.createUuid());
 
 		TestReport source = new TestReport();
 
 		source.setCreationDate(new Timestamp(new Date(9999999L).getTime()));
 		source.setChangeDate(new Timestamp(new Date(9999999L).getTime()));
 		source.setUuid("UUID");
-		source.setLabMessage(externalMessage);
+		source.setSampleReport(sampleReport);
 		source.setTestLabName("Test Lab Name");
 		source.setTestLabExternalIds(Arrays.asList("Test Lab External Id 1", "Test Lab External Id 2"));
 		source.setTestLabPostalCode("38100");
@@ -113,7 +115,7 @@ public class TestReportFacadeEjbMappingTest extends TestCase {
 		assertNotSame(source.getCreationDate().getTime(), result.getCreationDate().getTime());
 		assertEquals(source.getChangeDate(), result.getChangeDate());
 		assertEquals(source.getUuid(), result.getUuid());
-		assertEquals(ExternalMessageFacadeEjb.toReferenceDto(source.getLabMessage()), result.getLabMessage());
+		assertEquals(SampleReportFacadeEjb.toReferenceDto(source.getSampleReport()), result.getSampleReport());
 		assertEquals(source.getTestLabName(), result.getTestLabName());
 		assertEquals(source.getTestLabExternalIds(), result.getTestLabExternalIds());
 		assertEquals(source.getTestLabPostalCode(), result.getTestLabPostalCode());

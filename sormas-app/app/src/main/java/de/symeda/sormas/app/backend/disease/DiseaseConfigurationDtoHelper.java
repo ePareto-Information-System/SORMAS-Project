@@ -17,7 +17,7 @@ package de.symeda.sormas.app.backend.disease;
 
 import java.util.List;
 
-import de.symeda.sormas.api.PushResult;
+import de.symeda.sormas.api.PostResponse;
 import de.symeda.sormas.api.disease.DiseaseConfigurationDto;
 import de.symeda.sormas.app.backend.common.AdoDtoHelper;
 import de.symeda.sormas.app.rest.NoConnectionException;
@@ -47,7 +47,7 @@ public class DiseaseConfigurationDtoHelper extends AdoDtoHelper<DiseaseConfigura
 	}
 
 	@Override
-	protected Call<List<PushResult>> pushAll(List<DiseaseConfigurationDto> dtos) throws NoConnectionException {
+	protected Call<List<PostResponse>> pushAll(List<DiseaseConfigurationDto> dtos) throws NoConnectionException {
 		throw new UnsupportedOperationException("Entity is read-only");
 	}
 
@@ -56,7 +56,8 @@ public class DiseaseConfigurationDtoHelper extends AdoDtoHelper<DiseaseConfigura
 		target.setDisease(source.getDisease());
 		target.setActive(source.getActive());
 		target.setPrimaryDisease(source.getPrimaryDisease());
-		target.setCaseBased(source.getCaseBased());
+		target.setCaseSurveillanceEnabled(source.getCaseSurveillanceEnabled());
+		target.setAggregateReportingEnabled(source.getAggregateReportingEnabled());
 		target.setFollowUpEnabled(source.getFollowUpEnabled());
 		target.setFollowUpDuration(source.getFollowUpDuration());
 		target.setCaseFollowUpDuration(source.getCaseFollowUpDuration());
@@ -71,7 +72,8 @@ public class DiseaseConfigurationDtoHelper extends AdoDtoHelper<DiseaseConfigura
 		target.setDisease(source.getDisease());
 		target.setActive(source.getActive());
 		target.setPrimaryDisease(source.getPrimaryDisease());
-		target.setCaseBased(source.getCaseBased());
+		target.setCaseSurveillanceEnabled(source.getCaseSurveillanceEnabled());
+		target.setAggregateReportingEnabled(source.getAggregateReportingEnabled());
 		target.setFollowUpEnabled(source.getFollowUpEnabled());
 		target.setFollowUpDuration(source.getFollowUpDuration());
 		target.setCaseFollowUpDuration(source.getCaseFollowUpDuration());

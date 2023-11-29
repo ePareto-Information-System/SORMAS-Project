@@ -19,6 +19,7 @@ package de.symeda.sormas.api.contact;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityRelevanceStatus;
@@ -107,7 +108,6 @@ public class ContactCriteria extends BaseCriteria implements Serializable {
 	private ContactRelation relationToCase;
 	private Date lastContactDateFrom;
 	private Date lastContactDateTo;
-	private Boolean deleted = Boolean.FALSE;
 	private String contactOrCaseLike;
 	private EntityRelevanceStatus relevanceStatus;
 	private Boolean onlyHighPriorityContacts;
@@ -139,6 +139,13 @@ public class ContactCriteria extends BaseCriteria implements Serializable {
 	private String reportingUserLike;
 	private String personLike;
 	private boolean excludeLimitedSyncRestrictions;
+	private Boolean withOwnership = true;
+
+	private Set<String> uuids;
+	/**
+	 * Used for filtering merge-able cases to filter both lead and similar cases.
+	 */
+	private Set<String> contactUuidsForMerge;
 
 	private String viewMode;
 
@@ -390,16 +397,6 @@ public class ContactCriteria extends BaseCriteria implements Serializable {
 	@IgnoreForUrl
 	public EntityRelevanceStatus getRelevanceStatus() {
 		return relevanceStatus;
-	}
-
-	public ContactCriteria deleted(Boolean deleted) {
-		this.deleted = deleted;
-		return this;
-	}
-
-	@IgnoreForUrl
-	public Boolean getDeleted() {
-		return deleted;
 	}
 
 	/**
@@ -734,39 +731,34 @@ public class ContactCriteria extends BaseCriteria implements Serializable {
 		return this;
 	}
 
-	@Override
-	public String toString() {
-		return "ContactCriteria [reportingUserRole=" + reportingUserRole + ", disease=" + disease + ", diseaseVariant="
-				+ diseaseVariant + ", caze=" + caze + ", resultingCase=" + resultingCase + ", region=" + region
-				+ ", district=" + district + ", community=" + community + ", contactOfficer=" + contactOfficer
-				+ ", contactClassification=" + contactClassification + ", contactStatus=" + contactStatus
-				+ ", followUpStatus=" + followUpStatus + ", reportDateFrom=" + reportDateFrom + ", reportDateTo="
-				+ reportDateTo + ", dateFilterOption=" + dateFilterOption + ", followUpUntilFrom=" + followUpUntilFrom
-				+ ", followUpUntilTo=" + followUpUntilTo + ", followUpVisitsFrom=" + followUpVisitsFrom
-				+ ", followUpVisitsTo=" + followUpVisitsTo + ", followUpVisitsInterval=" + followUpVisitsInterval
-				+ ", followUpUntilToPrecise=" + followUpUntilToPrecise + ", symptomJournalStatus="
-				+ symptomJournalStatus + ", vaccinationStatus=" + vaccinationStatus + ", relationToCase="
-				+ relationToCase + ", lastContactDateFrom=" + lastContactDateFrom + ", lastContactDateTo="
-				+ lastContactDateTo + ", deleted=" + deleted + ", contactOrCaseLike=" + contactOrCaseLike
-				+ ", relevanceStatus=" + relevanceStatus + ", onlyHighPriorityContacts=" + onlyHighPriorityContacts
-				+ ", contactCategory=" + contactCategory + ", caseClassification=" + caseClassification
-				+ ", quarantineType=" + quarantineType + ", quarantineFrom=" + quarantineFrom + ", quarantineTo="
-				+ quarantineTo + ", onlyQuarantineHelpNeeded=" + onlyQuarantineHelpNeeded
-				+ ", quarantineOrderedVerbally=" + quarantineOrderedVerbally + ", quarantineOrderedOfficialDocument="
-				+ quarantineOrderedOfficialDocument + ", quarantineNotOrdered=" + quarantineNotOrdered
-				+ ", withExtendedQuarantine=" + withExtendedQuarantine + ", withReducedQuarantine="
-				+ withReducedQuarantine + ", person=" + person + ", birthdateYYYY=" + birthdateYYYY + ", birthdateMM="
-				+ birthdateMM + ", birthdateDD=" + birthdateDD + ", returningTraveler=" + returningTraveler
-				+ ", eventLike=" + eventLike + ", eventUuid=" + eventUuid + ", includeContactsFromOtherJurisdictions="
-				+ includeContactsFromOtherJurisdictions + ", onlyContactsSharingEventWithSourceCase="
-				+ onlyContactsSharingEventWithSourceCase + ", eventParticipant=" + eventParticipant
-				+ ", onlyContactsWithSourceCaseInGivenEvent=" + onlyContactsWithSourceCaseInGivenEvent
-				+ ", onlyContactsFromOtherInstances=" + onlyContactsFromOtherInstances + ", creationDateFrom="
-				+ creationDateFrom + ", creationDateTo=" + creationDateTo + ", reportingUserLike=" + reportingUserLike
-				+ ", personLike=" + personLike + ", excludeLimitedSyncRestrictions=" + excludeLimitedSyncRestrictions
-				+ ", viewMode=" + viewMode + "]";
+	@IgnoreForUrl
+	public Boolean getWithOwnership() {
+		return withOwnership;
 	}
-	
-	
-	
+
+	public void setWithOwnership(Boolean withOwnership) {
+		this.withOwnership = withOwnership;
+	}
+
+	@IgnoreForUrl
+	public Set<String> getUuids() {
+		return uuids;
+	}
+
+	public ContactCriteria uuids(Set<String> uuids) {
+		this.uuids = uuids;
+
+		return this;
+	}
+
+	@IgnoreForUrl
+	public Set<String> getContactUuidsForMerge() {
+		return contactUuidsForMerge;
+	}
+
+	public ContactCriteria contactUuidsForMerge(Set<String> contactUuidsForMerge) {
+		this.contactUuidsForMerge = contactUuidsForMerge;
+
+		return this;
+	}
 }

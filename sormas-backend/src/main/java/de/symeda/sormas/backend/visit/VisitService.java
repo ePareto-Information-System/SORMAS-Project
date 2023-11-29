@@ -18,12 +18,7 @@
 package de.symeda.sormas.backend.visit;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
@@ -60,7 +55,9 @@ import de.symeda.sormas.backend.contact.ContactService;
 import de.symeda.sormas.backend.person.Person;
 import de.symeda.sormas.backend.symptoms.Symptoms;
 import de.symeda.sormas.backend.user.User;
+import de.symeda.sormas.backend.util.IterableHelper;
 import de.symeda.sormas.backend.util.JurisdictionHelper;
+import de.symeda.sormas.backend.util.ModelConstants;
 
 @Stateless
 @LocalBean
@@ -82,7 +79,7 @@ public class VisitService extends BaseAdoService<Visit> {
 		Root<Visit> root = cq.from(Visit.class);
 		VisitJoins visitJoins = new VisitJoins(root, JoinType.LEFT);
 		Expression<Object> objectExpression = JurisdictionHelper
-			.booleanSelector(cb, cb.and(cb.equal(root.get(AbstractDomainObject.ID), visit.getId()), inJurisdiction(cq, cb, visitJoins)));
+				.booleanSelector(cb, cb.and(cb.equal(root.get(AbstractDomainObject.ID), visit.getId()), inJurisdiction(cq, cb, visitJoins)));
 		cq.multiselect(objectExpression);
 		cq.where(cb.equal(root.get(Visit.UUID), visit.getUuid()));
 		return em.createQuery(cq).getResultList().stream().findFirst().orElse(null);
@@ -90,8 +87,8 @@ public class VisitService extends BaseAdoService<Visit> {
 
 	private Predicate inJurisdiction(CriteriaQuery cq, CriteriaBuilder cb, VisitJoins visitJoins) {
 		return cb.or(
-			caseService.inJurisdictionOrOwned(new CaseQueryContext(cb, cq, visitJoins.getCaseJoins())),
-			contactService.inJurisdictionOrOwned(new ContactQueryContext(cb, cq, visitJoins.getContactJoins())));
+				caseService.inJurisdictionOrOwned(new CaseQueryContext(cb, cq, visitJoins.getCaseJoins())),
+				contactService.inJurisdictionOrOwned(new ContactQueryContext(cb, cq, visitJoins.getContactJoins())));
 	}
 
 	public List<String> getAllActiveUuids(User user) {
@@ -109,11 +106,11 @@ public class VisitService extends BaseAdoService<Visit> {
 		Join<Contact, Visit> visitJoin = contactRoot.join(Contact.VISITS, JoinType.LEFT);
 
 		visitsQuery.where(
-			CriteriaBuilderHelper.and(
-				cb,
-				contactService.createUserFilter(new ContactQueryContext(cb, visitsQuery, new ContactJoins(contactRoot))),
-				contactService.createActiveContactsFilter(cb, contactRoot),
-				cb.isNotEmpty(contactRoot.get(Contact.VISITS))));
+				CriteriaBuilderHelper.and(
+						cb,
+						contactService.createUserFilter(new ContactQueryContext(cb, visitsQuery, new ContactJoins(contactRoot))),
+						contactService.createActiveContactsFilter(cb, contactRoot),
+						cb.isNotEmpty(contactRoot.get(Contact.VISITS))));
 		visitsQuery.select(visitJoin.get(Visit.UUID));
 		visitsQuery.distinct(true);
 
@@ -128,11 +125,11 @@ public class VisitService extends BaseAdoService<Visit> {
 		Join<Case, Visit> visitJoin = caseRoot.join(Case.VISITS, JoinType.INNER);
 
 		visitsQuery.where(
-			CriteriaBuilderHelper.and(
-				cb,
-				caseService.createUserFilter(new CaseQueryContext(cb, visitsQuery, new CaseJoins(caseRoot))),
-				caseService.createActiveCasesFilter(cb, caseRoot),
-				cb.isNotEmpty(caseRoot.get(Case.VISITS))));
+				CriteriaBuilderHelper.and(
+						cb,
+						caseService.createUserFilter(new CaseQueryContext(cb, visitsQuery, new CaseJoins(caseRoot))),
+						caseService.createActiveCasesFilter(cb, caseRoot),
+						cb.isNotEmpty(caseRoot.get(Case.VISITS))));
 		visitsQuery.select(visitJoin.get(Visit.UUID));
 		visitsQuery.distinct(true);
 
@@ -162,13 +159,13 @@ public class VisitService extends BaseAdoService<Visit> {
 		personFetch.fetch(Person.ADDRESS);
 
 		Predicate filter = CriteriaBuilderHelper.and(
-			cb,
-			contactService.createUserFilter(new ContactQueryContext(cb, visitsQuery, new ContactJoins(contactRoot))),
-			contactService.createActiveContactsFilter(cb, contactRoot));
+				cb,
+				contactService.createUserFilter(new ContactQueryContext(cb, visitsQuery, new ContactJoins(contactRoot))),
+				contactService.createActiveContactsFilter(cb, contactRoot));
 
 		if (date != null) {
 			filter =
-				CriteriaBuilderHelper.and(cb, filter, createChangeDateFilter(cb, visitJoin, DateHelper.toTimestampUpper(date), lastSynchronizedUuid));
+					CriteriaBuilderHelper.and(cb, filter, createChangeDateFilter(cb, visitJoin, DateHelper.toTimestampUpper(date), lastSynchronizedUuid));
 		}
 
 		visitsQuery.select(visitJoin);
@@ -189,9 +186,9 @@ public class VisitService extends BaseAdoService<Visit> {
 		personFetch.fetch(Person.ADDRESS);
 
 		Predicate filter = CriteriaBuilderHelper.and(
-			cb,
-			caseService.createUserFilter(new CaseQueryContext(cb, visitsQuery, new CaseJoins(caseRoot))),
-			caseService.createActiveCasesFilter(cb, caseRoot));
+				cb,
+				caseService.createUserFilter(new CaseQueryContext(cb, visitsQuery, new CaseJoins(caseRoot))),
+				caseService.createActiveCasesFilter(cb, caseRoot));
 
 		if (date != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, createChangeDateFilter(cb, visitJoin, DateHelper.toTimestampUpper(date)));
@@ -257,10 +254,10 @@ public class VisitService extends BaseAdoService<Visit> {
 		Predicate filter = cb.and(cb.equal(from.get(Visit.PERSON), person), cb.equal(from.get(Visit.DISEASE), disease));
 
 		filter = CriteriaBuilderHelper.and(
-			cb,
-			filter,
-			cb.greaterThanOrEqualTo(from.get(Visit.VISIT_DATE_TIME), DateHelper.subtractDays(startDate, FollowUpLogic.ALLOWED_DATE_OFFSET)),
-			cb.lessThanOrEqualTo(from.get(Visit.VISIT_DATE_TIME), DateHelper.addDays(endDate, FollowUpLogic.ALLOWED_DATE_OFFSET)));
+				cb,
+				filter,
+				cb.greaterThanOrEqualTo(from.get(Visit.VISIT_DATE_TIME), DateHelper.subtractDays(startDate, FollowUpLogic.ALLOWED_DATE_OFFSET)),
+				cb.lessThanOrEqualTo(from.get(Visit.VISIT_DATE_TIME), DateHelper.addDays(endDate, FollowUpLogic.ALLOWED_DATE_OFFSET)));
 
 		return filter;
 	}
@@ -271,28 +268,28 @@ public class VisitService extends BaseAdoService<Visit> {
 		if (criteria.getContact() != null) {
 			Contact contact = contactService.getByUuid(criteria.getContact().getUuid());
 			filter = CriteriaBuilderHelper.and(
-				cb,
-				filter,
-				buildRelevantVisitsFilter(
-					contact.getPerson(),
-					contact.getDisease(),
-					ContactLogic.getStartDate(contact.getLastContactDate(), contact.getReportDateTime()),
-					ContactLogic.getEndDate(contact.getLastContactDate(), contact.getReportDateTime(), contact.getFollowUpUntil()),
 					cb,
-					from));
+					filter,
+					buildRelevantVisitsFilter(
+							contact.getPerson(),
+							contact.getDisease(),
+							ContactLogic.getStartDate(contact.getLastContactDate(), contact.getReportDateTime()),
+							ContactLogic.getEndDate(contact.getLastContactDate(), contact.getReportDateTime(), contact.getFollowUpUntil()),
+							cb,
+							from));
 		}
 		if (criteria.getCaze() != null) {
 			Case caze = caseService.getByUuid(criteria.getCaze().getUuid());
 			filter = CriteriaBuilderHelper.and(
-				cb,
-				filter,
-				buildRelevantVisitsFilter(
-					caze.getPerson(),
-					caze.getDisease(),
-					CaseLogic.getStartDate(caze.getSymptoms().getOnsetDate(), caze.getReportDate()),
-					CaseLogic.getEndDate(caze.getSymptoms().getOnsetDate(), caze.getReportDate(), caze.getFollowUpUntil()),
 					cb,
-					from));
+					filter,
+					buildRelevantVisitsFilter(
+							caze.getPerson(),
+							caze.getDisease(),
+							CaseLogic.getStartDate(caze.getSymptoms().getOnsetDate(), caze.getReportDate()),
+							CaseLogic.getEndDate(caze.getSymptoms().getOnsetDate(), caze.getReportDate(), caze.getFollowUpUntil()),
+							cb,
+							from));
 		}
 
 		return filter;
@@ -308,8 +305,25 @@ public class VisitService extends BaseAdoService<Visit> {
 		Join<Visit, Symptoms> symptoms = visitPath.join(Visit.SYMPTOMS, JoinType.LEFT);
 
 		ChangeDateFilterBuilder changeDateFilterBuilder = lastSynchronizedUuid == null
-			? new ChangeDateFilterBuilder(cb, date)
-			: new ChangeDateFilterBuilder(cb, date, visitPath, lastSynchronizedUuid);
+				? new ChangeDateFilterBuilder(cb, date)
+				: new ChangeDateFilterBuilder(cb, date, visitPath, lastSynchronizedUuid);
 		return changeDateFilterBuilder.add(visitPath).add(symptoms).build();
+	}
+
+	public List<Visit> getByPersonUuids(List<String> personUuids) {
+
+		List<Visit> visits = new LinkedList<>();
+		IterableHelper.executeBatched(personUuids, ModelConstants.PARAMETER_LIMIT, batchedPersonUuids -> {
+
+			CriteriaBuilder cb = em.getCriteriaBuilder();
+			CriteriaQuery<Visit> cq = cb.createQuery(Visit.class);
+			Root<Visit> root = cq.from(Visit.class);
+			Join<Visit, Person> personJoin = root.join(Visit.PERSON, JoinType.INNER);
+
+			cq.where(cb.and(personJoin.get(AbstractDomainObject.UUID).in(batchedPersonUuids)));
+
+			visits.addAll(em.createQuery(cq).getResultList());
+		});
+		return visits;
 	}
 }

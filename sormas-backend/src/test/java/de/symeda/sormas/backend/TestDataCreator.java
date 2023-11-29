@@ -17,6 +17,7 @@ package de.symeda.sormas.backend;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -56,9 +58,13 @@ import de.symeda.sormas.api.clinicalcourse.ClinicalVisitDto;
 import de.symeda.sormas.api.clinicalcourse.HealthConditionsDto;
 import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
 import de.symeda.sormas.api.disease.DiseaseConfigurationDto;
+import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.document.DocumentDto;
 import de.symeda.sormas.api.document.DocumentRelatedEntityType;
+import de.symeda.sormas.api.environment.EnvironmentDto;
+import de.symeda.sormas.api.environment.EnvironmentMedia;
 import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventInvestigationStatus;
@@ -71,7 +77,9 @@ import de.symeda.sormas.api.exposure.ExposureDto;
 import de.symeda.sormas.api.exposure.ExposureType;
 import de.symeda.sormas.api.exposure.TypeOfAnimal;
 import de.symeda.sormas.api.externalmessage.ExternalMessageDto;
-import de.symeda.sormas.api.externalmessage.ExternalMessageReferenceDto;
+import de.symeda.sormas.api.externalmessage.ExternalMessageStatus;
+import de.symeda.sormas.api.externalmessage.ExternalMessageType;
+import de.symeda.sormas.api.externalmessage.labmessage.SampleReportDto;
 import de.symeda.sormas.api.externalmessage.labmessage.TestReportDto;
 import de.symeda.sormas.api.immunization.ImmunizationDto;
 import de.symeda.sormas.api.immunization.ImmunizationManagementStatus;
@@ -106,6 +114,9 @@ import de.symeda.sormas.api.sample.SampleMaterial;
 import de.symeda.sormas.api.sample.SamplePurpose;
 import de.symeda.sormas.api.sample.SampleReferenceDto;
 import de.symeda.sormas.api.share.ExternalShareStatus;
+import de.symeda.sormas.api.sormastosormas.SormasToSormasOriginInfoDto;
+import de.symeda.sormas.api.sormastosormas.share.incoming.ShareRequestDataType;
+import de.symeda.sormas.api.sormastosormas.share.incoming.ShareRequestStatus;
 import de.symeda.sormas.api.systemevents.SystemEventDto;
 import de.symeda.sormas.api.systemevents.SystemEventStatus;
 import de.symeda.sormas.api.systemevents.SystemEventType;
@@ -118,6 +129,7 @@ import de.symeda.sormas.api.therapy.TreatmentDto;
 import de.symeda.sormas.api.therapy.TreatmentType;
 import de.symeda.sormas.api.travelentry.TravelEntryDto;
 import de.symeda.sormas.api.user.DefaultUserRole;
+import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
@@ -127,6 +139,7 @@ import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.vaccination.VaccinationDto;
 import de.symeda.sormas.api.visit.VisitDto;
 import de.symeda.sormas.api.visit.VisitStatus;
+import de.symeda.sormas.backend.customizableenum.CustomizableEnumValue;
 import de.symeda.sormas.backend.disease.DiseaseConfigurationFacadeEjb.DiseaseConfigurationFacadeEjbLocal;
 import de.symeda.sormas.backend.infrastructure.community.Community;
 import de.symeda.sormas.backend.infrastructure.continent.Continent;
@@ -136,6 +149,9 @@ import de.symeda.sormas.backend.infrastructure.facility.Facility;
 import de.symeda.sormas.backend.infrastructure.pointofentry.PointOfEntry;
 import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.share.ExternalShareInfo;
+import de.symeda.sormas.backend.sormastosormas.share.outgoing.ShareRequestInfo;
+import de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShareInfo;
+import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.user.UserRole;
 
 public class TestDataCreator {
@@ -155,6 +171,7 @@ public class TestDataCreator {
 			userRoleDto.setCaption(defaultUserRole.toString());
 			userRoleDto.setEnabled(true);
 			userRoleDto.setPortHealthUser(defaultUserRole.isPortHealthUser());
+			userRoleDto.setLinkedDefaultUserRole(defaultUserRole);
 			userRoleDto.setHasAssociatedDistrictUser(defaultUserRole.hasAssociatedDistrictUser());
 			userRoleDto.setHasOptionalHealthFacility(defaultUserRole.hasOptionalHealthFacility());
 			userRoleDto.setEmailNotificationTypes(defaultUserRole.getEmailNotificationTypes());
@@ -181,12 +198,52 @@ public class TestDataCreator {
 		return userRoleMap.get(userRole);
 	}
 
+	public UserDto createNationalUser() {
+		return createUser("", "", "", "Nat", "Usr", getUserRoleReference(DefaultUserRole.NATIONAL_USER));
+	}
+
+	public UserDto createSurveillanceSupervisor(RDCF rdcf) {
+		if (rdcf == null) {
+			rdcf = createRDCF("Region", "District", "Community", "Facility");
+		}
+
+		return createUser(rdcf.region.getUuid(), null, null, "Surv", "Sup", getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
+	}
+
+	public UserDto createSurveillanceOfficer(RDCF rdcf) {
+		if (rdcf == null) {
+			rdcf = createRDCF("Region", "District", "Community", "Facility");
+		}
+
+		return createUser(
+			rdcf.region.getUuid(),
+			rdcf.district.getUuid(),
+			rdcf.facility.getUuid(),
+			"Surv",
+			"Off",
+			getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER));
+	}
+
+	public UserDto createContactOfficer(RDCF rdcf) {
+		if (rdcf == null) {
+			rdcf = createRDCF("Region", "District", "Community", "Facility");
+		}
+
+		return createUser(
+			rdcf.region.getUuid(),
+			rdcf.district.getUuid(),
+			rdcf.facility.getUuid(),
+			"Cont",
+			"Off",
+			getUserRoleReference(DefaultUserRole.CONTACT_OFFICER));
+	}
+
 	public UserDto createUser(RDCF rdcf, UserRoleReferenceDto userRole, Consumer<UserDto> customConfig) {
 
 		UserDto user = UserDto.build();
 		user.setFirstName("User");
 		user.setLastName(userRole.getCaption());
-		user.setUserName(userRole.toString());
+		user.setUserName(userRole.buildCaption());
 		user.setUserRoles(new HashSet(Arrays.asList(userRole)));
 		user.setRegion(rdcf.region);
 		user.setDistrict(rdcf.district);
@@ -197,17 +254,7 @@ public class TestDataCreator {
 			customConfig.accept(user);
 		}
 
-		return beanTest.getUserFacade().saveUser(user);
-	}
-
-	public UserDto createUser(RDCFEntities rdcf, UserRoleReferenceDto... roles) {
-		return createUser(
-			rdcf.region.getUuid(),
-			rdcf.district.getUuid(),
-			rdcf.facility.getUuid(),
-			roles.length > 0 ? roles[0].getCaption() : "First",
-			"User",
-			roles);
+		return beanTest.getUserFacade().saveUser(user, false);
 	}
 
 	public UserDto createUser(RDCF rdcf, UserRoleReferenceDto... roles) {
@@ -249,6 +296,19 @@ public class TestDataCreator {
 		return createUser(rdcf.region.getUuid(), rdcf.district.getUuid(), null, rdcf.facility.getUuid(), firstName, lastName, limitedDisease, roles);
 	}
 
+	public UserDto createUser(
+		String regionUuid,
+		String districtUuid,
+		String facilityUuid,
+		String firstName,
+		String lastName,
+		String caption,
+		JurisdictionLevel jurisdictionLevel,
+		UserRight... userRights) {
+		UserRoleReferenceDto userRole = createUserRole(caption, jurisdictionLevel, userRights);
+		return createUser(regionUuid, districtUuid, facilityUuid, firstName, lastName, userRole);
+	}
+
 	private UserDto createUser(
 		String regionUuid,
 		String districtUuid,
@@ -269,18 +329,30 @@ public class TestDataCreator {
 		user.setDistrict(beanTest.getDistrictFacade().getReferenceByUuid(districtUuid));
 		user.setCommunity(beanTest.getCommunityFacade().getReferenceByUuid(communityUuid));
 		user.setHealthFacility(beanTest.getFacilityFacade().getReferenceByUuid(facilityUuid));
-		return beanTest.getUserFacade().saveUser(user);
+		return beanTest.getUserFacade().saveUser(user, false);
 	}
 
-	public UserReferenceDto createUserRef(
-		String regionUuid,
-		String districtUuid,
-		String communityUuid,
-		String facilityUuid,
-		String firstName,
-		String lastName,
-		UserRoleReferenceDto... roles) {
-		return createUser(regionUuid, districtUuid, communityUuid, facilityUuid, firstName, lastName, roles).toReference();
+	public UserDto createPointOfEntryUser(RDP rdp) {
+		return createUser(
+			new RDCF(rdp.region, rdp.district, null, null),
+			userRoleDtoMap.get(DefaultUserRole.POE_INFORMANT),
+			user -> user.setPointOfEntry(rdp.pointOfEntry));
+	}
+
+	public UserRoleReferenceDto createUserRole(String caption, JurisdictionLevel jurisdictionLevel, UserRight... userRights) {
+		UserRoleDto userRole = new UserRoleDto();
+		userRole.setCaption(caption);
+		userRole.setJurisdictionLevel(jurisdictionLevel);
+		userRole.setUserRights(Arrays.stream(userRights).collect(Collectors.toSet()));
+		return beanTest.getUserRoleFacade().saveUserRole(userRole).toReference();
+	}
+
+	public UserRoleReferenceDto createUserRoleWithRequiredRights(String caption, JurisdictionLevel jurisdictionLevel, UserRight... userRights) {
+		UserRoleDto userRole = new UserRoleDto();
+		userRole.setCaption(caption);
+		userRole.setJurisdictionLevel(jurisdictionLevel);
+		userRole.setUserRights(UserRight.getWithRequiredUserRights(userRights));
+		return beanTest.getUserRoleFacade().saveUserRole(userRole).toReference();
 	}
 
 	public PersonDto createPerson() {
@@ -306,7 +378,7 @@ public class TestDataCreator {
 			customConfig.accept(person);
 		}
 
-		person = beanTest.getPersonFacade().savePerson(person);
+		person = beanTest.getPersonFacade().save(person);
 
 		return person;
 	}
@@ -322,7 +394,7 @@ public class TestDataCreator {
 			customConfig.accept(person);
 		}
 
-		person = beanTest.getPersonFacade().savePerson(person);
+		person = beanTest.getPersonFacade().save(person);
 
 		return person;
 	}
@@ -368,7 +440,7 @@ public class TestDataCreator {
 			person.setAddress(address);
 		}
 
-		person = beanTest.getPersonFacade().savePerson(person);
+		person = beanTest.getPersonFacade().save(person);
 
 		return person;
 	}
@@ -394,7 +466,7 @@ public class TestDataCreator {
 			customConfig.accept(person);
 		}
 
-		person = beanTest.getPersonFacade().savePerson(person);
+		person = beanTest.getPersonFacade().save(person);
 
 		return person;
 	}
@@ -411,16 +483,10 @@ public class TestDataCreator {
 
 	public CaseDataDto createUnclassifiedCase(Disease disease) {
 
-		RDCFEntities rdcf = createRDCFEntities("Region", "District", "Community", "Facility");
+		RDCF rdcf = createRDCF("Region", "District", "Community", "Facility");
 		UserDto user = beanTest.getUserFacade().getByUserName("SurvSup");
 		if (user == null) {
-			user = createUser(
-				rdcf.region.getUuid(),
-				rdcf.district.getUuid(),
-				rdcf.facility.getUuid(),
-				"Surv",
-				"Sup",
-				getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
+			user = createSurveillanceSupervisor(rdcf);
 		}
 
 		PersonDto cazePerson = createPerson("Case", "Person", Sex.UNKNOWN);
@@ -432,10 +498,6 @@ public class TestDataCreator {
 			InvestigationStatus.PENDING,
 			new Date(),
 			rdcf);
-	}
-
-	public CaseDataDto createCase(UserReferenceDto user, PersonReferenceDto person, RDCFEntities rdcf) {
-		return createCase(user, person, Disease.EVD, CaseClassification.SUSPECT, InvestigationStatus.PENDING, new Date(), rdcf);
 	}
 
 	public CaseDataDto createCase(UserReferenceDto user, RDCF rdcf, Consumer<CaseDataDto> setCustomFields) {
@@ -456,33 +518,6 @@ public class TestDataCreator {
 
 	public CaseDataDto createCase(UserReferenceDto user, PersonReferenceDto person, RDCF rdcf, Consumer<CaseDataDto> setCustomFields) {
 		return createCase(user, person, Disease.EVD, CaseClassification.SUSPECT, InvestigationStatus.PENDING, new Date(), rdcf, setCustomFields);
-	}
-
-	public CaseDataDto createCase(
-		UserReferenceDto user,
-		PersonReferenceDto cazePerson,
-		Disease disease,
-		CaseClassification caseClassification,
-		InvestigationStatus investigationStatus,
-		Date reportAndOnsetDate,
-		RDCFEntities rdcf) {
-
-		return createCase(user, cazePerson, disease, caseClassification, investigationStatus, reportAndOnsetDate, new RDCF(rdcf));
-	}
-
-	public CaseDataDto createCase(
-		UserReferenceDto user,
-		PersonReferenceDto cazePerson,
-		Disease disease,
-		CaseClassification caseClassification,
-		InvestigationStatus investigationStatus,
-		Date reportAndOnsetDate,
-		RDCFEntities rdcf,
-		String healthFacilityDetails) {
-
-		final CaseDataDto aCase = createCase(user, cazePerson, disease, caseClassification, investigationStatus, reportAndOnsetDate, new RDCF(rdcf));
-		aCase.setHealthFacilityDetails(healthFacilityDetails);
-		return beanTest.getCaseFacade().save(aCase);
 	}
 
 	public CaseDataDto createCase(
@@ -793,6 +828,10 @@ public class TestDataCreator {
 		return createContact(reportingUser, null, contactPerson, null, new Date(), null, disease, null);
 	}
 
+	public ContactDto createContact(UserReferenceDto reportingUser, PersonReferenceDto contactPerson, Disease disease, RDCF rdcf) {
+		return createContact(reportingUser, null, contactPerson, null, new Date(), null, disease, null);
+	}
+
 	public ContactDto createContact(
 		UserReferenceDto reportingUser,
 		PersonReferenceDto contactPerson,
@@ -807,6 +846,10 @@ public class TestDataCreator {
 
 	public ContactDto createContact(UserReferenceDto reportingUser, PersonReferenceDto contactPerson, CaseDataDto caze) {
 		return createContact(reportingUser, null, contactPerson, caze, new Date(), null, null, null);
+	}
+
+	public ContactDto createContact(UserReferenceDto reportingUser, PersonReferenceDto contactPerson, CaseDataDto caze, RDCF rdcf) {
+		return createContact(reportingUser, null, contactPerson, caze, new Date(), null, null, rdcf);
 	}
 
 	public ContactDto createContact(
@@ -950,6 +993,7 @@ public class TestDataCreator {
 		VisitStatus visitStatus,
 		VisitOrigin visitOrigin,
 		Consumer<VisitDto> customConfig) {
+
 		VisitDto visit = VisitDto.build(person, disease, visitOrigin);
 		visit.setVisitDateTime(visitDateTime);
 		visit.setVisitStatus(visitStatus);
@@ -958,7 +1002,7 @@ public class TestDataCreator {
 			customConfig.accept(visit);
 		}
 
-		visit = beanTest.getVisitFacade().saveVisit(visit);
+		visit = beanTest.getVisitFacade().save(visit);
 
 		return visit;
 	}
@@ -970,7 +1014,7 @@ public class TestDataCreator {
 
 	public EventDto createEvent(UserReferenceDto reportingUser, EventStatus status) {
 
-		return createEvent(status, EventInvestigationStatus.PENDING, "eventTitle", "description", reportingUser, null);
+		return createEvent(status, EventInvestigationStatus.PENDING, "eventTitle", "description", reportingUser, null, null);
 	}
 
 	public EventDto createEvent(UserReferenceDto reportingUser, Disease disease) {
@@ -991,12 +1035,22 @@ public class TestDataCreator {
 			null);
 	}
 
-	public EventDto createEvent(UserReferenceDto reportingUser, Disease disease, Consumer<EventDto> customConfig) {
+	public EventDto createEvent(UserReferenceDto reportingUser, Disease disease, RDCF rdcf) {
 
-		return createEvent(EventStatus.SIGNAL, EventInvestigationStatus.PENDING, "title", "description", reportingUser, (event) -> {
+		return createEvent(EventStatus.SIGNAL, EventInvestigationStatus.PENDING, "title", "description", reportingUser, rdcf, (event) -> {
 			event.setReportDateTime(new Date());
 			event.setReportingUser(reportingUser);
 			event.setDisease(disease);
+		});
+	}
+
+	public EventDto createEvent(UserReferenceDto reportingUser, Disease disease, Consumer<EventDto> customConfig) {
+
+		return createEvent(EventStatus.SIGNAL, EventInvestigationStatus.PENDING, "title", "description", reportingUser, null, (event) -> {
+			event.setReportDateTime(new Date());
+			event.setReportingUser(reportingUser);
+			event.setDisease(disease);
+
 			customConfig.accept(event);
 		});
 	}
@@ -1034,9 +1088,9 @@ public class TestDataCreator {
 		UserReferenceDto reportingUser,
 		UserReferenceDto responsibleUser,
 		Disease disease,
-		DistrictReferenceDto district) {
+		RDCF rdcf) {
 
-		return createEvent(eventStatus, eventInvestigationStatus, eventTitle, eventDesc, reportingUser, (event) -> {
+		return createEvent(eventStatus, eventInvestigationStatus, eventTitle, eventDesc, reportingUser, rdcf, (event) -> {
 			event.setSrcFirstName(srcFirstName);
 			event.setSrcLastName(srcLastName);
 			event.setSrcTelNo(srcTelNo);
@@ -1046,7 +1100,7 @@ public class TestDataCreator {
 			event.setReportingUser(reportingUser);
 			event.setResponsibleUser(responsibleUser);
 			event.setDisease(disease);
-			event.getEventLocation().setDistrict(district);
+
 		});
 	}
 
@@ -1056,6 +1110,7 @@ public class TestDataCreator {
 		String eventTitle,
 		String eventDesc,
 		UserReferenceDto reportingUser,
+		RDCF rdcf,
 		Consumer<EventDto> customSettings) {
 
 		EventDto event = EventDto.build();
@@ -1064,6 +1119,13 @@ public class TestDataCreator {
 		event.setEventTitle(eventTitle);
 		event.setEventDesc(eventDesc);
 		event.setReportingUser(reportingUser);
+
+		if (rdcf == null) {
+			rdcf = createRDCF();
+		}
+
+		event.getEventLocation().setRegion(rdcf.region);
+		event.getEventLocation().setDistrict(rdcf.district);
 
 		if (customSettings != null) {
 			customSettings.accept(event);
@@ -1127,11 +1189,23 @@ public class TestDataCreator {
 		UserReferenceDto reportingUser,
 		ReportingType reportingType,
 		CaseReferenceDto caseReference) {
+		return createSurveillanceReport(reportingUser, reportingType, caseReference, null);
+	}
+
+	public SurveillanceReportDto createSurveillanceReport(
+		UserReferenceDto reportingUser,
+		ReportingType reportingType,
+		CaseReferenceDto caseReference,
+		Consumer<SurveillanceReportDto> extraConfig) {
 		SurveillanceReportDto surveillanceReport = SurveillanceReportDto.build(caseReference, reportingUser);
 		surveillanceReport.setReportingType(reportingType);
 		surveillanceReport.setReportDate(new Date());
 
-		surveillanceReport = beanTest.getSurveillanceReportFacade().saveSurveillanceReport(surveillanceReport);
+		if (extraConfig != null) {
+			extraConfig.accept(surveillanceReport);
+		}
+
+		surveillanceReport = beanTest.getSurveillanceReportFacade().save(surveillanceReport);
 
 		return surveillanceReport;
 	}
@@ -1298,6 +1372,14 @@ public class TestDataCreator {
 
 	public SampleDto createSample(
 		EventParticipantReferenceDto associatedEventParticipant,
+		UserReferenceDto reportingUser,
+		FacilityReferenceDto lab,
+		Consumer<SampleDto> customConfig) {
+		return createSample(associatedEventParticipant, new Date(), new Date(), reportingUser, SampleMaterial.BLOOD, lab, customConfig);
+	}
+
+	public SampleDto createSample(
+		EventParticipantReferenceDto associatedEventParticipant,
 		Date sampleDateTime,
 		Date reportDateTime,
 		UserReferenceDto reportingUser,
@@ -1315,17 +1397,55 @@ public class TestDataCreator {
 		return sample;
 	}
 
+	public SampleDto createSample(
+		EventParticipantReferenceDto associatedEventParticipant,
+		Date sampleDateTime,
+		Date reportDateTime,
+		UserReferenceDto reportingUser,
+		SampleMaterial sampleMaterial,
+		FacilityReferenceDto lab,
+		Consumer<SampleDto> customConfig) {
+
+		SampleDto sample = SampleDto.build(reportingUser, associatedEventParticipant);
+		sample.setSampleDateTime(sampleDateTime);
+		sample.setReportDateTime(reportDateTime);
+		sample.setSampleMaterial(sampleMaterial);
+		sample.setSamplePurpose(SamplePurpose.EXTERNAL);
+		sample.setLab(lab);
+
+		if (customConfig != null) {
+			customConfig.accept(sample);
+		}
+
+		sample = beanTest.getSampleFacade().saveSample(sample);
+		return sample;
+	}
+
 	public PathogenTestDto createPathogenTest(
 		SampleReferenceDto sample,
 		PathogenTestType testType,
 		Disease testedDisease,
 		Date testDateTime,
-		Facility lab,
+		FacilityReferenceDto lab,
 		UserReferenceDto labUser,
 		PathogenTestResultType testResult,
 		String testResultText,
 		boolean verified) {
 		return createPathogenTest(sample, testType, testedDisease, testDateTime, lab, labUser, testResult, testResultText, verified, null);
+	}
+
+	public PathogenTestDto createPathogenTest(SampleReferenceDto sample, UserReferenceDto labUser, Consumer<PathogenTestDto> extraConfig) {
+		return createPathogenTest(
+			sample,
+			PathogenTestType.ANTIGEN_DETECTION,
+			null,
+			new Date(),
+			(FacilityReferenceDto) null,
+			labUser,
+			PathogenTestResultType.PENDING,
+			null,
+			true,
+			extraConfig);
 	}
 
 	public PathogenTestDto createPathogenTest(
@@ -1353,7 +1473,7 @@ public class TestDataCreator {
 			extraConfig.accept(sampleTest);
 		}
 
-		sampleTest = beanTest.getSampleTestFacade().savePathogenTest(sampleTest);
+		sampleTest = beanTest.getPathogenTestFacade().savePathogenTest(sampleTest);
 		return sampleTest;
 	}
 
@@ -1382,7 +1502,7 @@ public class TestDataCreator {
 			extraConfig.accept(sampleTest);
 		}
 
-		sampleTest = beanTest.getSampleTestFacade().savePathogenTest(sampleTest);
+		sampleTest = beanTest.getPathogenTestFacade().savePathogenTest(sampleTest);
 		return sampleTest;
 	}
 
@@ -1391,7 +1511,7 @@ public class TestDataCreator {
 	}
 
 	public PathogenTestDto createPathogenTest(SampleReferenceDto sample, CaseDataDto associatedCase) {
-		RDCFEntities rdcf = createRDCFEntities("LabRegion", "LabDistrict", "LabCommunity", "LabFacilty");
+		RDCF rdcf = createRDCF("LabRegion", "LabDistrict", "LabCommunity", "LabFacilty");
 
 		return createPathogenTest(
 			sample,
@@ -1411,7 +1531,7 @@ public class TestDataCreator {
 		PathogenTestType testType,
 		PathogenTestResultType resultType) {
 
-		RDCFEntities rdcf = createRDCFEntities("Region", "District", "Community", "Facility");
+		RDCF rdcf = createRDCF("Region", "District", "Community", "Facility");
 		SampleDto sample = createSample(
 			new CaseReferenceDto(associatedCase.getUuid()),
 			new Date(),
@@ -1431,7 +1551,7 @@ public class TestDataCreator {
 			true);
 	}
 
-	public PathogenTestDto buildPathogenTestDto(RDCFEntities rdcf, UserDto user, SampleDto sample, Disease disease, Date testDateTime) {
+	public PathogenTestDto buildPathogenTestDto(RDCF rdcf, UserDto user, SampleDto sample, Disease disease, Date testDateTime) {
 
 		final PathogenTestDto newPathogenTest = new PathogenTestDto();
 
@@ -1596,6 +1716,22 @@ public class TestDataCreator {
 		Facility facility = createFacility(facilityName, region, district, community);
 
 		return new RDCFEntities(region, district, community, facility);
+	}
+
+	public RDP createRDP() {
+
+		var region = createRegion("Region");
+		var district = createDistrict("District", region);
+		var pointOfEntry = createPointOfEntry("POE", region, district);
+
+		return new RDP(
+			new RegionReferenceDto(region.getUuid(), region.getName(), region.getExternalID()),
+			new DistrictReferenceDto(district.getUuid(), district.getName(), district.getExternalID()),
+			new PointOfEntryReferenceDto(
+				pointOfEntry.getUuid(),
+				pointOfEntry.getName(),
+				pointOfEntry.getPointOfEntryType(),
+				pointOfEntry.getExternalID()));
 	}
 
 	public Continent createContinent(String name) {
@@ -1796,12 +1932,20 @@ public class TestDataCreator {
 		return populationData;
 	}
 
-	public void updateDiseaseConfiguration(Disease disease, Boolean active, Boolean primary, Boolean caseBased) {
+	public void updateDiseaseConfiguration(
+		Disease disease,
+		Boolean active,
+		Boolean primary,
+		Boolean caseSurveillance,
+		Boolean aggregateReporting,
+		List<String> ageGroups) {
 		DiseaseConfigurationDto config =
 			DiseaseConfigurationFacadeEjbLocal.toDto(beanTest.getDiseaseConfigurationService().getDiseaseConfiguration(disease));
 		config.setActive(active);
 		config.setPrimaryDisease(primary);
-		config.setCaseBased(caseBased);
+		config.setCaseSurveillanceEnabled(caseSurveillance);
+		config.setAggregateReportingEnabled(aggregateReporting);
+		config.setAgeGroups(ageGroups);
 		beanTest.getDiseaseConfigurationFacade().saveDiseaseConfiguration(config);
 	}
 
@@ -1860,38 +2004,94 @@ public class TestDataCreator {
 		return systemEvent;
 	}
 
-	public ExternalMessageDto createLabMessage(Consumer<ExternalMessageDto> customSettings) {
-		ExternalMessageDto labMessage = ExternalMessageDto.build();
+	public ExternalMessageDto createExternalMessage(Consumer<ExternalMessageDto> customSettings) {
+		ExternalMessageDto message = ExternalMessageDto.build();
 
 		if (customSettings != null) {
-			customSettings.accept(labMessage);
+			customSettings.accept(message);
 		}
 
-		beanTest.getLabMessageFacade().save(labMessage);
+		beanTest.getExternalMessageFacade().save(message);
 
-		return labMessage;
+		return message;
 	}
 
-	public TestReportDto createTestReport(ExternalMessageReferenceDto labMessage) {
+	public ExternalMessageDto createLabMessageWithTestReportAndSurveillanceReport(
+		UserReferenceDto user,
+		CaseReferenceDto caze,
+		SampleReferenceDto sample) {
+		SurveillanceReportDto surveillanceReportDto = createSurveillanceReport(user, ReportingType.LABORATORY, caze);
+		ExternalMessageDto labMessage = createExternalMessage(lm -> {
+			lm.setType(ExternalMessageType.LAB_MESSAGE);
+			lm.setSurveillanceReport(surveillanceReportDto.toReference());
+			lm.setStatus(ExternalMessageStatus.PROCESSED);
+		});
+		SampleReportDto sampleReport = createSampleReport(labMessage, sample);
+		createTestReport(sampleReport);
+		return labMessage;
+
+	}
+
+	public ExternalMessageDto createLabMessageWithSurveillanceReport(UserReferenceDto user, CaseReferenceDto caze) {
+		SurveillanceReportDto surveillanceReportDto = createSurveillanceReport(user, ReportingType.LABORATORY, caze);
+		ExternalMessageDto labMessage = createExternalMessage(lm -> {
+			lm.setType(ExternalMessageType.LAB_MESSAGE);
+			lm.setSurveillanceReport(surveillanceReportDto.toReference());
+			lm.setStatus(ExternalMessageStatus.PROCESSED);
+		});
+
+		return labMessage;
+
+	}
+
+	public ExternalMessageDto createLabMessageWithTestReport(SampleReferenceDto sample) {
+		ExternalMessageDto labMessage = createExternalMessage(lm -> lm.setType(ExternalMessageType.LAB_MESSAGE));
+		SampleReportDto sampleReport = createSampleReport(labMessage, sample);
+		createTestReport(sampleReport);
+		return labMessage;
+
+	}
+
+	public SampleReportDto createSampleReport(ExternalMessageDto labMessage, SampleReferenceDto sample) {
+		SampleReportDto sampleReport = createSampleReport(labMessage);
+		sampleReport.setSample(sample);
+		sampleReport.setChangeDate(new Date());
+		beanTest.getSampleReportFacade().saveSampleReport(sampleReport);
+		return sampleReport;
+	}
+
+	public SampleReportDto createSampleReport(ExternalMessageDto labMessage) {
+		SampleReportDto sampleReport = SampleReportDto.build();
+		labMessage.addSampleReport(sampleReport);
+		beanTest.getSampleReportFacade().saveSampleReport(sampleReport);
+		labMessage.setChangeDate(new Date());
+		beanTest.getExternalMessageFacade().save(labMessage);
+		return sampleReport;
+	}
+
+	public TestReportDto createTestReport(SampleReportDto sampleReport) {
 		TestReportDto testReport = TestReportDto.build();
-		testReport.setLabMessage(labMessage);
+		sampleReport.addTestReport(testReport);
 
 		beanTest.getTestReportFacade().saveTestReport(testReport);
+		sampleReport.setChangeDate(new Date());
+		beanTest.getSampleReportFacade().saveSampleReport(sampleReport);
 
 		return testReport;
 	}
 
-//	public DiseaseVariant createDiseaseVariant(String name, Disease disease) {
-//
-//		DiseaseVariant diseaseVariant = new DiseaseVariant();
-//		diseaseVariant.setUuid(DataHelper.createUuid());
-//		diseaseVariant.setName(name);
-//		diseaseVariant.setDisease(disease);
-//
-//		beanTest.getDiseaseVariantService().persist(diseaseVariant);
-//
-//		return diseaseVariant;
-//	}
+	public DiseaseVariant createDiseaseVariant(String name, Disease disease) {
+
+		CustomizableEnumValue diseaseVariant = new CustomizableEnumValue();
+		diseaseVariant.setDataType(CustomizableEnumType.DISEASE_VARIANT);
+		diseaseVariant.setValue("BF.1.2");
+		diseaseVariant.setDiseases(Collections.singletonList(disease));
+		diseaseVariant.setCaption(name + " variant");
+
+		beanTest.getCustomizableEnumValueService().ensurePersisted(diseaseVariant);
+
+		return beanTest.getCustomizableEnumFacade().getEnumValue(CustomizableEnumType.DISEASE_VARIANT, name);
+	}
 
 	public ExternalShareInfo createExternalShareInfo(
 		CaseReferenceDto caze,
@@ -1936,6 +2136,123 @@ public class TestDataCreator {
 			values.add(valueSupplier.apply(i));
 		}
 		return values;
+	}
+
+	public SormasToSormasOriginInfoDto createSormasToSormasOriginInfo(
+		String serverId,
+		boolean ownershipHandedOver,
+		Consumer<SormasToSormasOriginInfoDto> extraConfig) {
+		SormasToSormasOriginInfoDto originInfo = new SormasToSormasOriginInfoDto();
+		originInfo.setUuid(DataHelper.createUuid());
+		originInfo.setSenderName("Test Name");
+		originInfo.setSenderEmail("test@email.com");
+		originInfo.setOrganizationId(serverId);
+		originInfo.setOwnershipHandedOver(ownershipHandedOver);
+
+		if (extraConfig != null) {
+			extraConfig.accept(originInfo);
+		}
+
+		return beanTest.getSormasToSormasOriginInfoFacade().saveOriginInfo(originInfo);
+	}
+
+	public CaseDataDto createReceivedCase(UserReferenceDto user, PersonReferenceDto person, RDCF rdcf, boolean ownershipHandedOver) {
+		return createCase(
+			user,
+			person,
+			rdcf,
+			(c) -> c.setSormasToSormasOriginInfo(createSormasToSormasOriginInfo("source_id", ownershipHandedOver, null)));
+	}
+
+	public CaseDataDto createSharedCase(UserReferenceDto user, PersonReferenceDto person, RDCF rdcf, boolean ownershipHandedOver) {
+		CaseDataDto caze = createCase(user, person, rdcf, null);
+
+		createShareRequestInfo(
+			ShareRequestDataType.CASE,
+			beanTest.getUserService().getByReferenceDto(user),
+			"target_id",
+			ownershipHandedOver,
+			ShareRequestStatus.ACCEPTED,
+			(s) -> s.setCaze(beanTest.getCaseService().getByReferenceDto(caze.toReference())));
+
+		return caze;
+	}
+
+	public ContactDto createReceivedContact(UserReferenceDto reportingUser, PersonReferenceDto contactPerson, boolean ownershipHandedOver) {
+		return createContact(
+			reportingUser,
+			contactPerson,
+			Disease.CORONAVIRUS,
+			(c) -> c.setSormasToSormasOriginInfo(createSormasToSormasOriginInfo("source_id", ownershipHandedOver, null)));
+	}
+
+	public ContactDto createSharedContact(UserReferenceDto reportingUser, PersonReferenceDto contactPerson, boolean ownershipHandedOver) {
+		ContactDto contact = createContact(reportingUser, contactPerson, Disease.CORONAVIRUS);
+		createShareRequestInfo(
+			ShareRequestDataType.CONTACT,
+			beanTest.getUserService().getByReferenceDto(reportingUser),
+			"target_id",
+			ownershipHandedOver,
+			ShareRequestStatus.ACCEPTED,
+			(s) -> s.setContact(beanTest.getContactService().getByReferenceDto(contact.toReference())));
+
+		return contact;
+	}
+
+	public EventParticipantDto createReceivedEventParticipant(PersonDto eventPerson, UserReferenceDto reportingUser, RDCF rdcf) {
+		return createEventParticipant(createEvent(reportingUser).toReference(), eventPerson, "Test involvment", reportingUser, e -> {
+			e.setSormasToSormasOriginInfo(createSormasToSormasOriginInfo("source_id", true, null));
+		}, rdcf);
+	}
+
+	public ImmunizationDto createReceivedImmunization(PersonReferenceDto person, UserReferenceDto reportingUser, RDCF rdcf) {
+		return createImmunization(Disease.CORONAVIRUS, person, reportingUser, rdcf, i -> {
+			i.setSormasToSormasOriginInfo(createSormasToSormasOriginInfo("source_id", true, null));
+		});
+	}
+
+	public ShareRequestInfo createShareRequestInfo(
+		ShareRequestDataType dataType,
+		User sender,
+		String serverId,
+		boolean ownershipHandedOver,
+		ShareRequestStatus status,
+		Consumer<SormasToSormasShareInfo> setTarget) {
+
+		SormasToSormasShareInfo shareInfo = new SormasToSormasShareInfo();
+		shareInfo.setOwnershipHandedOver(ownershipHandedOver);
+		shareInfo.setOrganizationId(serverId);
+		setTarget.accept(shareInfo);
+
+		ShareRequestInfo requestInfo = new ShareRequestInfo();
+		requestInfo.setUuid(DataHelper.createUuid());
+		requestInfo.setDataType(dataType);
+		requestInfo.setSender(sender);
+		requestInfo.setRequestStatus(status);
+		requestInfo.setShares(new ArrayList<>());
+		requestInfo.getShares().add(shareInfo);
+
+		beanTest.getShareRequestInfoService().persist(requestInfo);
+
+		return requestInfo;
+	}
+
+	public EnvironmentDto createEnvironment(String name, EnvironmentMedia environmentMedia, UserReferenceDto reportingUser, RDCF rdcf) {
+
+		EnvironmentDto environment = EnvironmentDto.build();
+		environment.setEnvironmentName(name);
+		environment.setEnvironmentMedia(environmentMedia);
+		environment.setReportDate(new Date());
+		environment.setReportingUser(reportingUser);
+		LocationDto location = LocationDto.build();
+		location.setRegion(rdcf.region);
+		location.setDistrict(rdcf.district);
+		location.setCommunity(rdcf.community);
+		environment.setLocation(location);
+
+		environment = beanTest.getEnvironmentFacade().save(environment);
+
+		return environment;
 	}
 
 	/**
@@ -1991,6 +2308,19 @@ public class TestDataCreator {
 				new CommunityReferenceDto(rdcfEntities.community.getUuid(), rdcfEntities.community.getName(), rdcfEntities.community.getExternalID());
 			this.facility =
 				new FacilityReferenceDto(rdcfEntities.facility.getUuid(), rdcfEntities.facility.getName(), rdcfEntities.facility.getExternalID());
+		}
+	}
+
+	public static class RDP {
+
+		public RegionReferenceDto region;
+		public DistrictReferenceDto district;
+		public PointOfEntryReferenceDto pointOfEntry;
+
+		public RDP(RegionReferenceDto region, DistrictReferenceDto district, PointOfEntryReferenceDto pointOfEntry) {
+			this.region = region;
+			this.district = district;
+			this.pointOfEntry = pointOfEntry;
 		}
 	}
 }

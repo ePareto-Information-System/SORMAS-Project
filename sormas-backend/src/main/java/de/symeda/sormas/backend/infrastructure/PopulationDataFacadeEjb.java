@@ -35,6 +35,7 @@ import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.statistics.StatisticsCaseCriteria;
 import de.symeda.sormas.api.statistics.StatisticsContactCriteria;
+import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.backend.infrastructure.area.Area;
 import de.symeda.sormas.backend.infrastructure.community.Community;
@@ -49,6 +50,7 @@ import de.symeda.sormas.backend.infrastructure.region.RegionService;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.ModelConstants;
 import de.symeda.sormas.backend.util.QueryHelper;
+import de.symeda.sormas.backend.util.RightsAllowed;
 
 @Stateless(name = "PopulationDataFacade")
 public class PopulationDataFacadeEjb implements PopulationDataFacade {
@@ -66,6 +68,7 @@ public class PopulationDataFacadeEjb implements PopulationDataFacade {
 	private CommunityService communityService;
 
 	@Override
+	@RightsAllowed(UserRight._INFRASTRUCTURE_VIEW)
 	public Integer getRegionPopulation(String regionUuid) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -85,6 +88,7 @@ public class PopulationDataFacadeEjb implements PopulationDataFacade {
 	}
 
 	@Override
+	@RightsAllowed(UserRight._INFRASTRUCTURE_VIEW)
 	public Integer getProjectedRegionPopulation(String regionUuid) {
 
 		Float growthRate = regionService.getByUuid(regionUuid).getGrowthRate();
@@ -114,6 +118,9 @@ public class PopulationDataFacadeEjb implements PopulationDataFacade {
 	}
 
 	@Override
+	@RightsAllowed({
+		UserRight._INFRASTRUCTURE_VIEW,
+		UserRight._DASHBOARD_SURVEILLANCE_VIEW })
 	public Integer getDistrictPopulation(String districtUuid) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -132,6 +139,7 @@ public class PopulationDataFacadeEjb implements PopulationDataFacade {
 	}
 
 	@Override
+	@RightsAllowed(UserRight._DASHBOARD_SURVEILLANCE_VIEW)
 	public Integer getProjectedDistrictPopulation(String districtUuid) {
 
 		Float growthRate = districtService.getByUuid(districtUuid).getGrowthRate();
@@ -158,16 +166,21 @@ public class PopulationDataFacadeEjb implements PopulationDataFacade {
 	}
 
 	@Override
+	@RightsAllowed(UserRight._POPULATION_MANAGE)
 	public void savePopulationData(@Valid List<PopulationDataDto> populationDataList) throws ValidationRuntimeException {
 
 		for (PopulationDataDto populationData : populationDataList) {
 			validate(populationData);
-			PopulationData entity = fromDto(populationData, true);
+			PopulationData existingPopulationData = service.getByUuid(populationData.getUuid());
+			PopulationData entity = fillOrBuildEntity(populationData, existingPopulationData, true);
 			service.ensurePersisted(entity);
 		}
 	}
 
 	@Override
+	@RightsAllowed({
+		UserRight._POPULATION_MANAGE,
+		UserRight._DASHBOARD_CAMPAIGNS_VIEW })
 	public List<PopulationDataDto> getPopulationData(PopulationDataCriteria criteria) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -182,6 +195,7 @@ public class PopulationDataFacadeEjb implements PopulationDataFacade {
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@RightsAllowed(UserRight._POPULATION_MANAGE)
 	public List<Object[]> getPopulationDataForExport() {
 
 		//@formatter:off
@@ -202,6 +216,7 @@ public class PopulationDataFacadeEjb implements PopulationDataFacade {
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@RightsAllowed(UserRight._STATISTICS_ACCESS)
 	public List<Long> getMissingPopulationDataForStatistics(
 		StatisticsCaseCriteria criteria,
 		boolean groupByRegion,
@@ -276,6 +291,7 @@ public class PopulationDataFacadeEjb implements PopulationDataFacade {
 		return query.getResultList();
 	}
 
+	@RightsAllowed(UserRight._DASHBOARD_CAMPAIGNS_VIEW)
 	public Integer getAreaPopulation(String areaUuid, AgeGroup ageGroup) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Integer> cq = cb.createQuery(Integer.class);
@@ -309,9 +325,9 @@ public class PopulationDataFacadeEjb implements PopulationDataFacade {
 		}
 	}
 
-	public PopulationData fromDto(@NotNull PopulationDataDto source, boolean checkChangeDate) {
-
-		PopulationData target = DtoHelper.fillOrBuildEntity(source, service.getByUuid(source.getUuid()), PopulationData::new, checkChangeDate);
+	@RightsAllowed(UserRight._POPULATION_MANAGE)
+	public PopulationData fillOrBuildEntity(@NotNull PopulationDataDto source, PopulationData target, boolean checkChangeDate) {
+		target = DtoHelper.fillOrBuildEntity(source, target, PopulationData::new, checkChangeDate);
 
 		target.setRegion(regionService.getByReferenceDto(source.getRegion()));
 		target.setDistrict(districtService.getByReferenceDto(source.getDistrict()));

@@ -22,14 +22,23 @@ import io.qameta.allure.Allure;
 import io.qameta.allure.Attachment;
 import io.qameta.allure.listener.StepLifecycleListener;
 import io.qameta.allure.model.StepResult;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import javax.imageio.ImageIO;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import ru.yandex.qatools.ashot.AShot;
+import ru.yandex.qatools.ashot.Screenshot;
 
 @Slf4j
 public class StepsLogger implements StepLifecycleListener {
@@ -39,6 +48,8 @@ public class StepsLogger implements StepLifecycleListener {
   private static RemoteWebDriver driver;
   private static boolean isScreenshotEnabled = true;
   private static boolean takeScreenshotAfterStep = false;
+  private final String jpgExtension = "jpg";
+  private final String imageType = "image/jpg";
 
   public static void setRemoteWebDriver(RemoteWebDriver remoteWebDriver) {
     driver = remoteWebDriver;
@@ -54,17 +65,28 @@ public class StepsLogger implements StepLifecycleListener {
   }
 
   @Override
-  public void afterStepUpdate(final StepResult result) {
+  public void afterStepUpdate(final StepResult stepResult) {
     if (takeScreenshotAfterStep) {
       takeScreenshot();
     }
-    if (isScreenshotEnabled && driver != null) {
-      if (!result.getStatus().value().contains("pass")) {
-        attachConsoleLog();
+    List<InputStream> uiWarnings = collectWarningElements();
+    if (!uiWarnings.isEmpty()) {
+      for (InputStream input : collectWarningElements()) {
+        Allure.getLifecycle().addAttachment("Warning element", imageType, jpgExtension, input);
       }
     }
+    boolean logData = false;
+    try {
+      logData = Boolean.parseBoolean(System.getProperty("generateLogs"));
+    } catch (Exception any) {
+    }
+    boolean isDriverNotNull = driver != null;
+    boolean isStepFailed = !stepResult.getStatus().value().contains("pass");
+    if (isScreenshotEnabled && logData && isDriverNotNull && isStepFailed) {
+      attachConsoleLog();
+    }
     isScreenshotEnabled = true;
-    log.info("{} -> Finished step -> {}", PROCESS_ID_STRING, result.getName());
+    log.info("{} -> Finished step -> {}", PROCESS_ID_STRING, stepResult.getName());
   }
 
   @SneakyThrows
@@ -79,15 +101,29 @@ public class StepsLogger implements StepLifecycleListener {
     }
   }
 
-  @Attachment(value = "After step screenshot", type = "image/png")
+  @Attachment(value = "After step screenshot", type = "image/jpg")
   public void takeScreenshot() {
     byte[] screenShot = driver.getScreenshotAs(OutputType.BYTES);
     Allure.getLifecycle()
         .addAttachment(
             "Screenshot at :"
                 + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MMM-yy hh:mm:ss")),
-            "image/png",
-            "png",
+            "image/jpg",
+            "jpg",
             screenShot);
+  }
+
+  @SneakyThrows
+  private List<InputStream> collectWarningElements() {
+    List<WebElement> warningsList = driver.findElements(By.xpath("//*[contains(@class,'error')]"));
+    List<InputStream> attachments = new ArrayList<>();
+    String fileName = "warning_element%s.jpg";
+    for (int i = 0; i < warningsList.size(); i++) {
+      String file = String.format(fileName, i) + "." + jpgExtension;
+      Screenshot screenshot = new AShot().takeScreenshot(driver, warningsList.get(i));
+      ImageIO.write(screenshot.getImage(), jpgExtension.toUpperCase(), new File("build\\" + file));
+      attachments.add(new FileInputStream("build\\" + file));
+    }
+    return attachments;
   }
 }

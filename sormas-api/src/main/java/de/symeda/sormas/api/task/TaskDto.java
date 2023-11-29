@@ -17,13 +17,12 @@
  *******************************************************************************/
 package de.symeda.sormas.api.task;
 
-import de.symeda.sormas.api.feature.FeatureType;
-import de.symeda.sormas.api.utils.DependingOnFeatureType;
 import java.util.Date;
 import java.util.Set;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import de.symeda.sormas.api.EntityDto;
@@ -31,14 +30,15 @@ import de.symeda.sormas.api.ReferenceDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
 import de.symeda.sormas.api.event.EventReferenceDto;
+import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.travelentry.TravelEntryReferenceDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.DependingOnFeatureType;
 import de.symeda.sormas.api.utils.EmbeddedPersonalData;
 import de.symeda.sormas.api.utils.EmbeddedSensitiveData;
 import de.symeda.sormas.api.utils.FieldConstraints;
-import de.symeda.sormas.api.utils.Required;
 
 @DependingOnFeatureType(featureType = FeatureType.TASK_MANAGEMENT)
 public class TaskDto extends EntityDto {
@@ -51,6 +51,7 @@ public class TaskDto extends EntityDto {
 
 	public static final String ASSIGNEE_REPLY = "assigneeReply";
 	public static final String ASSIGNEE_USER = "assigneeUser";
+	public static final String ASSIGNED_BY_USER = "assignedByUser";
 	public static final String CAZE = "caze";
 	public static final String CONTACT = "contact";
 	public static final String CREATOR_COMMENT = "creatorComment";
@@ -70,7 +71,7 @@ public class TaskDto extends EntityDto {
 	public static final String TRAVEL_ENTRY = "travelEntry";
 	public static final String OBSERVER_USERS = "observerUsers";
 
-	@Required
+	@NotNull(message = Validations.requiredField)
 	private TaskContext taskContext;
 	@EmbeddedPersonalData
 	@EmbeddedSensitiveData
@@ -86,10 +87,10 @@ public class TaskDto extends EntityDto {
 	@EmbeddedSensitiveData
 	private TravelEntryReferenceDto travelEntry;
 
-	@Required
+	@NotNull(message = Validations.requiredField)
 	private TaskType taskType;
 	private TaskPriority priority;
-	@Required
+	@NotNull(message = Validations.requiredField)
 	private Date dueDate;
 	private Date suggestedStart;
 	private TaskStatus taskStatus;
@@ -99,8 +100,9 @@ public class TaskDto extends EntityDto {
 	private UserReferenceDto creatorUser;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_BIG, message = Validations.textTooLong)
 	private String creatorComment;
-	@Required
+	@NotNull(message = Validations.requiredField)
 	private UserReferenceDto assigneeUser;
+	private UserReferenceDto assignedByUser;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_BIG, message = Validations.textTooLong)
 	private String assigneeReply;
 	private Set<UserReferenceDto> observerUsers;
@@ -243,6 +245,14 @@ public class TaskDto extends EntityDto {
 
 	public void setAssigneeUser(UserReferenceDto assigneeUser) {
 		this.assigneeUser = assigneeUser;
+	}
+
+	public UserReferenceDto getAssignedByUser() {
+		return assignedByUser;
+	}
+
+	public void setAssignedByUser(UserReferenceDto assignedByUser) {
+		this.assignedByUser = assignedByUser;
 	}
 
 	public String getAssigneeReply() {

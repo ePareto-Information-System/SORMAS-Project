@@ -44,6 +44,7 @@ import de.symeda.sormas.ui.dashboard.campaigns.CampaignDashboardView;
 import de.symeda.sormas.ui.dashboard.contacts.ContactsDashboardView;
 import de.symeda.sormas.ui.dashboard.samples.SamplesDashboardView;
 import de.symeda.sormas.ui.dashboard.diseasedetails.DiseaseDetailsView;
+import de.symeda.sormas.ui.dashboard.sample.SampleDashboardView;
 import de.symeda.sormas.ui.dashboard.surveillance.SurveillanceDashboardView;
 
 public class DashboardController {
@@ -64,14 +65,18 @@ public class DashboardController {
 		if (permitted(FeatureType.CAMPAIGNS, UserRight.DASHBOARD_CAMPAIGNS_VIEW)) {
 			navigator.addView(CampaignDashboardView.VIEW_NAME, CampaignDashboardView.class);
 		}
-		//if (UserProvider.getCurrent().hasUserRight(UserRight.DASHBOARD_SAMPLE_ACCESS)) {
-		if (permitted(FeatureType.SAMPLES_LAB, UserRight.DASHBOARD_SAMPLE_ACCESS)) {
-			navigator.addView(SamplesDashboardView.VIEW_NAME, SamplesDashboardView.class);
-		}
+//		//if (UserProvider.getCurrent().hasUserRight(UserRight.DASHBOARD_SAMPLE_ACCESS)) {
+//		if (permitted(FeatureType.SAMPLES_LAB, UserRight.DASHBOARD_SAMPLE_ACCESS)) {
+//			navigator.addView(SamplesDashboardView.VIEW_NAME, SamplesDashboardView.class);
+//		}
 		//if (UserProvider.getCurrent().hasUserRight(UserRight.DASHBOARD_DISEASE_DETAILS_ACCESS)) {
 		if (permitted(FeatureType.DISEASE_DETAILS,UserRight.DASHBOARD_DISEASE_DETAILS_ACCESS)) {
 			navigator.addView(DiseaseDetailsView.VIEW_NAME, DiseaseDetailsView.class);
+		}
 
+		if (permitted(FeatureType.SAMPLES_LAB, UserRight.DASHBOARD_SAMPLES_VIEW)) {  //1.87.0
+			navigator.addView(SampleDashboardView.VIEW_NAME, SampleDashboardView.class);
+		
 		}
 	}
 
@@ -122,6 +127,6 @@ public class DashboardController {
 		return FacadeProvider.getCaseFacade().getCaseDataByUuid(uuid);
 	}
 	
-  
+
 
 }

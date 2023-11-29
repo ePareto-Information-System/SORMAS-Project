@@ -28,6 +28,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -41,7 +42,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import de.symeda.auditlog.api.Audited;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.externaldata.HasExternalData;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
@@ -77,7 +77,6 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 @Entity
-@Audited
 public class Person extends AbstractDomainObject implements HasExternalData {
 
 	private static final long serialVersionUID = -1735038738114840087L;
@@ -462,7 +461,8 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 		this.educationDetails = educationDetails;
 	}
 
-	@Enumerated(EnumType.STRING)
+	@Column
+	@Convert(converter = OccupationTypeConverter.class)
 	public OccupationType getOccupationType() {
 		return occupationType;
 	}
@@ -515,7 +515,7 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 		this.namesOfGuardians = namesOfGuardians;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public Region getPlaceOfBirthRegion() {
 		return placeOfBirthRegion;
 	}
@@ -524,7 +524,7 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 		this.placeOfBirthRegion = placeOfBirthRegion;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public District getPlaceOfBirthDistrict() {
 		return placeOfBirthDistrict;
 	}
@@ -533,7 +533,7 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 		this.placeOfBirthDistrict = placeOfBirthDistrict;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public Community getPlaceOfBirthCommunity() {
 		return placeOfBirthCommunity;
 	}
@@ -542,7 +542,7 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 		this.placeOfBirthCommunity = placeOfBirthCommunity;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public Facility getPlaceOfBirthFacility() {
 		return placeOfBirthFacility;
 	}
@@ -691,7 +691,7 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 		this.internalToken = internalToken;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	public Country getBirthCountry() {
 		return birthCountry;
 	}
@@ -700,7 +700,7 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 		this.birthCountry = placeOfBirthCountry;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	public Country getCitizenship() {
 		return citizenship;
 	}

@@ -34,21 +34,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import de.symeda.auditlog.api.Audited;
-import de.symeda.auditlog.api.AuditedIgnore;
 import de.symeda.sormas.api.task.TaskContext;
 import de.symeda.sormas.api.task.TaskPriority;
 import de.symeda.sormas.api.task.TaskStatus;
 import de.symeda.sormas.api.task.TaskType;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
+import de.symeda.sormas.backend.common.NotExposedToApi;
 import de.symeda.sormas.backend.contact.Contact;
 import de.symeda.sormas.backend.event.Event;
 import de.symeda.sormas.backend.travelentry.TravelEntry;
 import de.symeda.sormas.backend.user.User;
 
 @Entity
-@Audited
 public class Task extends AbstractDomainObject {
 
 	private static final long serialVersionUID = -4754578341242164661L;
@@ -57,6 +55,7 @@ public class Task extends AbstractDomainObject {
 
 	public static final String ASSIGNEE_REPLY = "assigneeReply";
 	public static final String ASSIGNEE_USER = "assigneeUser";
+	public static final String ASSIGNED_BY_USER = "assignedByUser";
 	public static final String CAZE = "caze";
 	public static final String CONTACT = "contact";
 	public static final String CREATOR_COMMENT = "creatorComment";
@@ -97,6 +96,7 @@ public class Task extends AbstractDomainObject {
 	private User creatorUser;
 	private String creatorComment;
 	private User assigneeUser;
+	private User assignedByUser;
 	private String assigneeReply;
 	private List<User> observerUsers;
 
@@ -104,6 +104,7 @@ public class Task extends AbstractDomainObject {
 	private Double closedLon;
 	private Float closedLatLonAccuracy;
 
+	@NotExposedToApi
 	private boolean archived;
 
 	@Enumerated(EnumType.STRING)
@@ -187,7 +188,7 @@ public class Task extends AbstractDomainObject {
 		this.perceivedStart = perceivedStart;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public User getCreatorUser() {
 		return creatorUser;
 	}
@@ -205,7 +206,7 @@ public class Task extends AbstractDomainObject {
 		this.creatorComment = creatorComment;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public User getAssigneeUser() {
 		return assigneeUser;
 	}
@@ -214,7 +215,15 @@ public class Task extends AbstractDomainObject {
 		this.assigneeUser = assigneeUser;
 	}
 
-	@AuditedIgnore
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+	public User getAssignedByUser() {
+		return assignedByUser;
+	}
+
+	public void setAssignedByUser(User assignedByUser) {
+		this.assignedByUser = assignedByUser;
+	}
+
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = TASK_OBSERVER_TABLE,
 		joinColumns = @JoinColumn(name = TASK_OBSERVER_JOIN_COLUMN),

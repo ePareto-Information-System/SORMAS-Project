@@ -28,6 +28,7 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import de.symeda.sormas.api.utils.*;
@@ -37,6 +38,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.ImportIgnore;
+import de.symeda.sormas.api.activityascase.ActivityAsCaseDto;
 import de.symeda.sormas.api.caze.maternalhistory.MaternalHistoryDto;
 import de.symeda.sormas.api.caze.porthealthinfo.PortHealthInfoDto;
 import de.symeda.sormas.api.clinicalcourse.ClinicalCourseDto;
@@ -68,6 +70,18 @@ import de.symeda.sormas.api.therapy.TherapyDto;
 import de.symeda.sormas.api.travelentry.TravelEntryDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.DependingOnFeatureType;
+import de.symeda.sormas.api.utils.DependingOnUserRight;
+import de.symeda.sormas.api.utils.Diseases;
+import de.symeda.sormas.api.utils.EmbeddedPersonalData;
+import de.symeda.sormas.api.utils.FieldConstraints;
+import de.symeda.sormas.api.utils.HideForCountries;
+import de.symeda.sormas.api.utils.HideForCountriesExcept;
+import de.symeda.sormas.api.utils.Outbreaks;
+import de.symeda.sormas.api.utils.PersonalData;
+import de.symeda.sormas.api.utils.SensitiveData;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.pseudonymization.Pseudonymizer;
 import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.LatitudePseudonymizer;
 import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.LongitudePseudonymizer;
@@ -221,7 +235,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	// Fields are declared in the order they should appear in the import template
 
 	@Outbreaks
-	@Required
+	@NotNull(message = Validations.validDisease)
 	private Disease disease;
 	private DiseaseVariant diseaseVariant;
 	@Outbreaks
@@ -242,7 +256,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		Disease.RABIES })
 	@Outbreaks
 	private RabiesType rabiesType;
-	@Required
+	@NotNull(message = Validations.validPerson)
 	@EmbeddedPersonalData
 	private PersonReferenceDto person;
 	@Outbreaks
@@ -252,10 +266,9 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String epidNumber;
 	@Outbreaks
-	@Required
+	@NotNull(message = Validations.validReportDateTime)
 	private Date reportDate;
 	@Outbreaks
-	@Required
 	private UserReferenceDto reportingUser;
 	@HideForCountries(countries = {
 		COUNTRY_CODE_FRANCE,
@@ -274,7 +287,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		COUNTRY_CODE_SWITZERLAND })
 	private Date districtLevelDate;
 	@Outbreaks
-	@Required
 	private CaseClassification caseClassification;
 	@HideForCountriesExcept
 	private CaseIdentificationSource caseIdentificationSource;
@@ -294,7 +306,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	private YesNoUnknown laboratoryDiagnosticConfirmation;
 
 	@Outbreaks
-	@Required
 	private InvestigationStatus investigationStatus;
 	@Outbreaks
 	private Date investigatedDate;
@@ -306,10 +317,9 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	@SensitiveData
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String sequelaeDetails;
-
-	@Required
+	@NotNull(message = Validations.validResponsibleRegion)
 	private RegionReferenceDto responsibleRegion;
-	@Required
+	@NotNull(message = Validations.validResponsibleDistrict)
 	private DistrictReferenceDto responsibleDistrict;
 	@Outbreaks
 	@PersonalData
@@ -317,10 +327,8 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	private CommunityReferenceDto responsibleCommunity;
 
 	@Outbreaks
-	@Required
 	private RegionReferenceDto region;
 	@Outbreaks
-	@Required
 	private DistrictReferenceDto district;
 	@Outbreaks
 	@PersonalData
@@ -330,7 +338,6 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	@SensitiveData(mandatoryField = true)
 	private FacilityType facilityType;
 	@Outbreaks
-	@Required
 	@PersonalData(mandatoryField = true)
 	@SensitiveData(mandatoryField = true)
 	private FacilityReferenceDto healthFacility;
@@ -500,6 +507,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	private YesNoUnknown postpartum;
 	private Trimester trimester;
 	private FollowUpStatus followUpStatus;
+	@SensitiveData
 	@Size(max = CHARACTER_LIMIT_BIG, message = Validations.textTooLong)
 	private String followUpComment;
 	private Date followUpUntil;
@@ -560,6 +568,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	private boolean notACaseReasonOther;
 
 	@HideForCountriesExcept
+	@SensitiveData
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
 	private String notACaseReasonDetails;
 	private Date followUpStatusChangeDate;
@@ -578,6 +587,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	private Map<String, String> externalData;
 	private boolean deleted;
 	private DeletionReason deletionReason;
+	@SensitiveData
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
 	private String otherDeletionReason;
 
@@ -620,8 +630,15 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	 */
 	public static CaseDataDto buildFromContact(ContactDto contact) {
 
-		CaseDataDto cazeData = CaseDataDto.build(contact.getPerson(), contact.getDisease(), contact.getHealthConditions());
-		migratesAttributes(contact, cazeData);
+		HealthConditionsDto healthConditionsClone = null;
+		try {
+			healthConditionsClone = (HealthConditionsDto) contact.getHealthConditions().clone();
+			healthConditionsClone.setUuid(DataHelper.createUuid());
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException(e);
+		}
+		CaseDataDto cazeData = CaseDataDto.build(contact.getPerson(), contact.getDisease(), healthConditionsClone);
+		copyEpiData(contact, cazeData);
 		List<ExposureDto> exposures = cazeData.getEpiData().getExposures();
 		if (exposures.size() == 1) {
 			exposures.get(0).setProbableInfectionEnvironment(true);
@@ -633,12 +650,26 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 	public static CaseDataDto buildFromUnrelatedContact(ContactDto contact, Disease disease) {
 
 		CaseDataDto cazeData = CaseDataDto.build(contact.getPerson(), disease);
-		migratesAttributes(contact, cazeData);
+		copyEpiData(contact, cazeData);
 		return cazeData;
 	}
 
-	private static void migratesAttributes(ContactDto contact, CaseDataDto cazeData) {
-		cazeData.setEpiData(contact.getEpiData());
+	private static void copyEpiData(ContactDto contact, CaseDataDto cazeData) {
+		try {
+			EpiDataDto epiDataClone = contact.getEpiData().clone();
+			epiDataClone.setUuid(cazeData.getEpiData().getUuid());
+			for (ActivityAsCaseDto activityAsCase : epiDataClone.getActivitiesAsCase()) {
+				activityAsCase.setUuid(DataHelper.createUuid());
+				activityAsCase.getLocation().setUuid(DataHelper.createUuid());
+			}
+			for (ExposureDto exposure : epiDataClone.getExposures()) {
+				exposure.setUuid(DataHelper.createUuid());
+				exposure.getLocation().setUuid(DataHelper.createUuid());
+			}
+			cazeData.setEpiData(epiDataClone);
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException(e);
+		}
 		cazeData.setFollowUpComment(contact.getFollowUpComment());
 	}
 
@@ -646,14 +677,7 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 
 		CaseDataDto caseData = CaseDataDto.build(eventParticipant.getPerson().toReference(), eventDisease);
 
-		if (person.getPresentCondition() != null
-			&& person.getPresentCondition().isDeceased()
-			&& eventDisease == person.getCauseOfDeathDisease()
-			&& person.getDeathDate() != null
-			&& Math.abs(person.getDeathDate().getTime() - eventParticipant.getCreationDate().getTime()) <= MILLISECONDS_30_DAYS) {
-			caseData.setOutcome(CaseOutcome.DECEASED);
-			caseData.setOutcomeDate(person.getDeathDate());
-		}
+		updateCaseOutcome(caseData, person, eventDisease, eventParticipant.getCreationDate());
 
 		return caseData;
 	}
@@ -672,16 +696,20 @@ public class CaseDataDto extends SormasToSormasShareableDto implements Serializa
 		caseData.setPointOfEntryDetails(travelEntry.getPointOfEntryDetails());
 		caseData.setReportDate(travelEntry.getReportDate());
 
+		updateCaseOutcome(caseData, person, travelEntry.getDisease(), travelEntry.getReportDate());
+
+		return caseData;
+	}
+
+	private static void updateCaseOutcome(CaseDataDto caseData, PersonDto person, Disease disease, Date creationDate) {
 		if (person.getPresentCondition() != null
 			&& person.getPresentCondition().isDeceased()
-			&& travelEntry.getDisease() == person.getCauseOfDeathDisease()
+			&& disease == person.getCauseOfDeathDisease()
 			&& person.getDeathDate() != null
-			&& Math.abs(person.getDeathDate().getTime() - travelEntry.getReportDate().getTime()) <= MILLISECONDS_30_DAYS) {
+			&& Math.abs(person.getDeathDate().getTime() - creationDate.getTime()) <= MILLISECONDS_30_DAYS) {
 			caseData.setOutcome(CaseOutcome.DECEASED);
 			caseData.setOutcomeDate(person.getDeathDate());
 		}
-
-		return caseData;
 	}
 
 	public CaseReferenceDto toReference() {

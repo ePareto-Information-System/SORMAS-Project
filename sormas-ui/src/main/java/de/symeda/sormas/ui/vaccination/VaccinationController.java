@@ -15,12 +15,18 @@
 
 package de.symeda.sormas.ui.vaccination;
 
-import java.util.function.Consumer;
+import static de.symeda.sormas.api.FacadeProvider.getCaseFacade;
 
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Window;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -31,6 +37,7 @@ import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.vaccination.VaccinationDto;
+import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
@@ -116,26 +123,68 @@ public class VaccinationController {
 		UiFieldAccessCheckers fieldAccessCheckers,
 		boolean doSave,
 		Consumer<VaccinationDto> commitCallback,
-		Runnable deleteCallback) {
+		Runnable deleteCallback,
+		boolean isEditAllowed,
+		boolean isDeleteAllowed) {
 
 		VaccinationEditForm form = new VaccinationEditForm(true, disease, fieldAccessCheckers);
 		form.setValue(vaccination);
 
-		final CommitDiscardWrapperComponent<VaccinationEditForm> createComponent =
-			getVaccinationEditComponent(vaccination, disease, fieldAccessCheckers, doSave, commitCallback);
-		Window popupWindow = VaadinUiUtil.showModalPopupWindow(createComponent, I18nProperties.getCaption(VaccinationDto.I18N_PREFIX));
+		boolean isEditOrDeleteAllowed = isEditAllowed || isDeleteAllowed;
+		final CommitDiscardWrapperComponent<VaccinationEditForm> editComponent =
+			getVaccinationEditComponent(vaccination, disease, fieldAccessCheckers, doSave, commitCallback, isEditAllowed, isDeleteAllowed);
 
-		if (UserProvider.getCurrent().hasUserRight(UserRight.IMMUNIZATION_DELETE)) {
-			createComponent.addDeleteWithReasonListener((deleteDetails) -> {
-				popupWindow.close();
-				if (doSave) {
-					FacadeProvider.getVaccinationFacade().deleteWithImmunization(vaccination.getUuid(), deleteDetails);
-				}
-				if (deleteCallback != null) {
-					deleteCallback.run();
-				}
-			}, I18nProperties.getCaption(VaccinationDto.I18N_PREFIX));
+		Window popupWindow = VaadinUiUtil.showModalPopupWindow(
+			editComponent,
+			I18nProperties.getString(!isEditAllowed ? Strings.headingViewVaccination : Strings.headingEditVaccination));
+
+		if (isEditOrDeleteAllowed) {
+			if (isDeleteAllowed) {
+				editComponent.addDeleteWithReasonOrRestoreListener((deleteDetails) -> {
+					popupWindow.close();
+					if (doSave) {
+						List<CaseDataDto> cases = getCaseFacade().getRelevantCasesForVaccination(vaccination)
+							.stream()
+							.filter(c -> !getCaseFacade().hasOtherValidVaccination(c, vaccination.getUuid()))
+							.collect(Collectors.toList());
+						if (!cases.isEmpty()) {
+							showUpdateStatusConfirmationPopup(cases);
+						}
+						FacadeProvider.getVaccinationFacade().deleteWithImmunization(vaccination.getUuid(), deleteDetails);
+					}
+					if (deleteCallback != null) {
+						deleteCallback.run();
+					}
+				}, I18nProperties.getCaption(VaccinationDto.I18N_PREFIX));
+			}
+
+			editComponent.restrictEditableComponentsOnEditView(
+				UserRight.IMMUNIZATION_EDIT,
+				null,
+				UserRight.IMMUNIZATION_DELETE,
+				null,
+				vaccination.isInJurisdiction());
 		}
+		editComponent.getButtonsPanel().setVisible(isEditAllowed || isDeleteAllowed);
+	}
+
+	public static void showUpdateStatusConfirmationPopup(List<CaseDataDto> cases) {
+		VaadinUiUtil.showConfirmationPopup(
+			I18nProperties.getCaption(Captions.CaseData_vaccinationStatusUpdate),
+			new Label(I18nProperties.getString(Strings.confirmationVaccinationStatusUpdate)),
+			I18nProperties.getString(Strings.yes),
+			I18nProperties.getString(Strings.no),
+			600,
+			confirmedVaccinationStatusUpdate -> {
+				if (confirmedVaccinationStatusUpdate) {
+					cases.forEach(VaccinationController::updateVaccinationStatus);
+					SormasUI.refreshView();
+				} ;
+			});
+	}
+
+	public static void updateVaccinationStatus(CaseDataDto caseDataDto) {
+		getCaseFacade().updateVaccinationStatus(caseDataDto.toReference(), null);
 	}
 
 	public CommitDiscardWrapperComponent<VaccinationEditForm> getVaccinationEditComponent(
@@ -143,27 +192,30 @@ public class VaccinationController {
 		Disease disease,
 		UiFieldAccessCheckers fieldAccessCheckers,
 		boolean doSave,
-		Consumer<VaccinationDto> commitCallback) {
+		Consumer<VaccinationDto> commitCallback,
+		boolean isEditAllowed,
+		boolean isDeleteAllowed) {
 
+		boolean isEditOrDeleteAllowed = isEditAllowed || isDeleteAllowed;
 		VaccinationEditForm form = new VaccinationEditForm(true, disease, fieldAccessCheckers);
 		form.setValue(vaccination);
 
 		final CommitDiscardWrapperComponent<VaccinationEditForm> editComponent =
-			new CommitDiscardWrapperComponent<>(form, UserProvider.getCurrent().hasUserRight(UserRight.IMMUNIZATION_EDIT), form.getFieldGroup());
+			new CommitDiscardWrapperComponent<>(form, isEditOrDeleteAllowed, form.getFieldGroup());
 		editComponent.getCommitButton().setCaption(doSave ? I18nProperties.getCaption(Captions.actionSave) : I18nProperties.getString(Strings.done));
 
-		editComponent.addCommitListener(() -> {
-			if (!form.getFieldGroup().isModified()) {
-				if (doSave) {
-					FacadeProvider.getVaccinationFacade().save(form.getValue());
+		if (isEditAllowed) {
+			editComponent.addCommitListener(() -> {
+				if (!form.getFieldGroup().isModified()) {
+					if (doSave) {
+						FacadeProvider.getVaccinationFacade().save(form.getValue());
+					}
+					if (commitCallback != null) {
+						commitCallback.accept(form.getValue());
+					}
 				}
-				if (commitCallback != null) {
-					commitCallback.accept(form.getValue());
-				}
-			}
-		});
-
+			});
+		}
 		return editComponent;
 	}
-
 }

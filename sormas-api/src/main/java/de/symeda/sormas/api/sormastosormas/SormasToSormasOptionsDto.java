@@ -1,6 +1,6 @@
 /*
  * SORMAS® - Surveillance Outbreak Response Management & Analysis System
- * Copyright © 2016-2020 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
+ * Copyright © 2016-2022 Helmholtz-Zentrum für Infektionsforschung GmbH (HZI)
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -19,10 +19,14 @@ import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_BIG;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import de.symeda.sormas.api.audit.AuditExcludeProperty;
+import de.symeda.sormas.api.audit.AuditedClass;
 import de.symeda.sormas.api.i18n.Validations;
 
+@AuditedClass(includeAllFields = true)
 public class SormasToSormasOptionsDto implements Serializable {
 
 	public static final String I18N_PREFIX = "SormasToSormasOptions";
@@ -30,8 +34,8 @@ public class SormasToSormasOptionsDto implements Serializable {
 	// Fixme this should be renamed
 	public static final String ORGANIZATION = "organization";
 	public static final String HAND_OVER_OWNERSHIP = "handOverOwnership";
-	public static final String PSEUDONYMIZE_PERSONAL_DATA = "pseudonymizePersonalData";
-	public static final String PSEUDONYMIZE_SENSITIVE_DATA = "pseudonymizeSensitiveData";
+	public static final String PSEUDONYMIZE_DATA = "pseudonymizeData";
+
 	public static final String COMMENT = "comment";
 
 	public static final String WITH_ASSOCIATED_CONTACTS = "withAssociatedContacts";
@@ -39,15 +43,16 @@ public class SormasToSormasOptionsDto implements Serializable {
 	public static final String WITH_EVENT_PARTICIPANTS = "withEventParticipants";
 	public static final String WITH_IMMUNIZATIONS = "withImmunizations";
 
+	public static final String WITH_SURVEILLANCE_REPORTS = "withSurveillanceReports";
+
 	// Fixme this should be renamed but it has strange side effects with the UI
 	private SormasServerDescriptor organization;
 
 	private boolean handOverOwnership;
 
-	private boolean pseudonymizePersonalData;
-
-	private boolean pseudonymizeSensitiveData;
-
+	private boolean pseudonymizeData;
+	@AuditExcludeProperty
+	@NotBlank(message = Validations.requiredField)
 	@Size(max = CHARACTER_LIMIT_BIG, message = Validations.textTooLong)
 	private String comment;
 
@@ -58,6 +63,8 @@ public class SormasToSormasOptionsDto implements Serializable {
 	private boolean withEventParticipants;
 
 	private boolean withImmunizations;
+
+	private boolean withSurveillanceReports;
 
 	// FIXME(#6101): This should be renamed as it is the target of the operation
 	public SormasServerDescriptor getOrganization() {
@@ -76,20 +83,12 @@ public class SormasToSormasOptionsDto implements Serializable {
 		this.handOverOwnership = handOverOwnership;
 	}
 
-	public boolean isPseudonymizePersonalData() {
-		return pseudonymizePersonalData;
+	public boolean isPseudonymizeData() {
+		return pseudonymizeData;
 	}
 
-	public void setPseudonymizePersonalData(boolean pseudonymizePersonalData) {
-		this.pseudonymizePersonalData = pseudonymizePersonalData;
-	}
-
-	public boolean isPseudonymizeSensitiveData() {
-		return pseudonymizeSensitiveData;
-	}
-
-	public void setPseudonymizeSensitiveData(boolean pseudonymizeSensitiveData) {
-		this.pseudonymizeSensitiveData = pseudonymizeSensitiveData;
+	public void setPseudonymizeData(boolean pseudonymizeData) {
+		this.pseudonymizeData = pseudonymizeData;
 	}
 
 	public String getComment() {
@@ -130,5 +129,13 @@ public class SormasToSormasOptionsDto implements Serializable {
 
 	public void setWithImmunizations(boolean withImmunizations) {
 		this.withImmunizations = withImmunizations;
+	}
+
+	public boolean isWithSurveillanceReports() {
+		return withSurveillanceReports;
+	}
+
+	public void setWithSurveillanceReports(boolean withSurveillanceReports) {
+		this.withSurveillanceReports = withSurveillanceReports;
 	}
 }

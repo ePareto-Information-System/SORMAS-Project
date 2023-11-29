@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.annotation.security.PermitAll;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -42,6 +43,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.country.CountryCriteria;
 import de.symeda.sormas.api.infrastructure.country.CountryDto;
@@ -49,6 +51,7 @@ import de.symeda.sormas.api.infrastructure.country.CountryFacade;
 import de.symeda.sormas.api.infrastructure.country.CountryIndexDto;
 import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
 import de.symeda.sormas.api.infrastructure.subcontinent.SubcontinentReferenceDto;
+import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.EmptyValueException;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
@@ -61,11 +64,12 @@ import de.symeda.sormas.backend.infrastructure.continent.ContinentService;
 import de.symeda.sormas.backend.infrastructure.subcontinent.Subcontinent;
 import de.symeda.sormas.backend.infrastructure.subcontinent.SubcontinentFacadeEjb;
 import de.symeda.sormas.backend.infrastructure.subcontinent.SubcontinentService;
-import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.QueryHelper;
+import de.symeda.sormas.backend.util.RightsAllowed;
 
 @Stateless(name = "CountryFacade")
+@RightsAllowed(UserRight._INFRASTRUCTURE_VIEW)
 public class CountryFacadeEjb
 	extends AbstractInfrastructureFacadeEjb<Country, CountryDto, CountryIndexDto, CountryReferenceDto, CountryService, CountryCriteria>
 	implements CountryFacade {
@@ -82,8 +86,15 @@ public class CountryFacadeEjb
 	}
 
 	@Inject
-	protected CountryFacadeEjb(CountryService service, FeatureConfigurationFacadeEjbLocal featureConfiguration, UserService userService) {
-		super(Country.class, CountryDto.class, service, featureConfiguration, userService, Validations.importCountryAlreadyExists);
+	protected CountryFacadeEjb(CountryService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
+		super(
+			Country.class,
+			CountryDto.class,
+			service,
+			featureConfiguration,
+			Validations.importCountryAlreadyExists,
+			null,
+			Strings.messageCountryDearchivingNotPossible);
 	}
 
 	@Override
@@ -92,30 +103,28 @@ public class CountryFacadeEjb
 		boolean allowMerge,
 		boolean includeArchived,
 		boolean checkChangeDate,
-		String duplicateErrorMessageProperty) {
+		boolean allowUuidOverwrite) {
 		if (StringUtils.isBlank(dtoToSave.getIsoCode())) {
 			throw new EmptyValueException(I18nProperties.getValidationError(Validations.importCountryEmptyIso));
 		}
-		return super.doSave(dtoToSave, allowMerge, includeArchived, checkChangeDate, duplicateErrorMessageProperty);
+		return super.doSave(dtoToSave, allowMerge, includeArchived, checkChangeDate, allowUuidOverwrite);
 	}
 
 	@Override
+	@PermitAll
 	public List<CountryReferenceDto> getByDefaultName(String name, boolean includeArchivedEntities) {
 		return service.getByDefaultName(name, includeArchivedEntities).stream().map(CountryFacadeEjb::toReferenceDto).collect(Collectors.toList());
 	}
 
 	@Override
-	public CountryDto getByIsoCode(String isoCode, boolean includeArchivedEntities) {
-		return service.getByIsoCode(isoCode, includeArchivedEntities).map(this::toDto).orElse(null);
-	}
-
-	@Override
+	@PermitAll
 	public List<CountryReferenceDto> getAllActiveBySubcontinent(String uuid) {
 		Subcontinent subcontinent = subcontinentService.getByUuid(uuid);
 		return subcontinent.getCountries().stream().filter(d -> !d.isArchived()).map(CountryFacadeEjb::toReferenceDto).collect(Collectors.toList());
 	}
 
 	@Override
+	@PermitAll
 	public List<CountryReferenceDto> getAllActiveByContinent(String uuid) {
 		Continent continent = continentService.getByUuid(uuid);
 		return continent.getSubcontinents()
@@ -227,7 +236,7 @@ public class CountryFacadeEjb
 	}
 
 	@Override
-	public CountryReferenceDto toRefDto(Country country) {
+	protected CountryReferenceDto toRefDto(Country country) {
 		return toReferenceDto(country);
 	}
 
@@ -253,18 +262,20 @@ public class CountryFacadeEjb
 	}
 
 	@Override
+	@PermitAll
 	public List<CountryReferenceDto> getReferencesByExternalId(String externalId, boolean includeArchived) {
 		return service.getByExternalId(externalId, includeArchived).stream().map(CountryFacadeEjb::toReferenceDto).collect(Collectors.toList());
 	}
 
 	@Override
+	@PermitAll
 	public List<CountryReferenceDto> getReferencesByName(String caption, boolean includeArchived) {
 		return service.getByDefaultName(caption, includeArchived).stream().map(CountryFacadeEjb::toReferenceDto).collect(Collectors.toList());
 	}
 
 	@Override
-	protected Country fillOrBuildEntity(@NotNull CountryDto source, Country target, boolean checkChangeDate) {
-		target = DtoHelper.fillOrBuildEntity(source, target, Country::new, checkChangeDate);
+	protected Country fillOrBuildEntity(@NotNull CountryDto source, Country target, boolean checkChangeDate, boolean allowUuidOverwrite) {
+		target = DtoHelper.fillOrBuildEntity(source, target, Country::new, checkChangeDate, allowUuidOverwrite);
 
 		target.setDefaultName(source.getDefaultName());
 		target.setArchived(source.isArchived());
@@ -280,6 +291,7 @@ public class CountryFacadeEjb
 	}
 
 	@Override
+	@PermitAll
 	public List<CountryReferenceDto> getAllActiveAsReference() {
 		return service.getAllActive(Country.ISO_CODE, true)
 			.stream()
@@ -289,10 +301,17 @@ public class CountryFacadeEjb
 	}
 
 	@Override
+	@PermitAll
 	public CountryReferenceDto getServerCountry() {
 		String countryName = configFacadeEjb.getCountryName();
 		List<CountryReferenceDto> countryReferenceDtos = getByDefaultName(countryName, false);
 		return countryReferenceDtos.isEmpty() ? null : countryReferenceDtos.get(0);
+	}
+
+	@Override
+	public CountryReferenceDto getCountryByIsoCode(String isoCode) {
+		Country country = service.getByIsoCode(isoCode, false).orElse(null);
+		return country != null ? new CountryReferenceDto(country.getUuid(), isoCode) : null;
 	}
 
 	@Override
@@ -310,24 +329,6 @@ public class CountryFacadeEjb
 		return QueryHelper.getFirstResult(em, cq) != null;
 	}
 
-	@Override
-	protected void selectDtoFields(CriteriaQuery<CountryDto> cq, Root<Country> root) {
-		Join<Country, Subcontinent> subcontinent = root.join(Country.SUBCONTINENT, JoinType.LEFT);
-		// Need to be in the same order as in the constructor
-		cq.multiselect(
-			root.get(AbstractDomainObject.CREATION_DATE),
-			root.get(Country.CHANGE_DATE),
-			root.get(AbstractDomainObject.UUID),
-			root.get(InfrastructureAdo.ARCHIVED),
-			root.get(Country.DEFAULT_NAME),
-			root.get(Country.EXTERNAL_ID),
-			root.get(Country.ISO_CODE),
-			root.get(Country.UNO_CODE),
-			subcontinent.get(AbstractDomainObject.UUID),
-			subcontinent.get(Subcontinent.DEFAULT_NAME),
-			subcontinent.get(Subcontinent.EXTERNAL_ID));
-	}
-
 	@LocalBean
 	@Stateless
 	public static class CountryFacadeEjbLocal extends CountryFacadeEjb {
@@ -336,8 +337,8 @@ public class CountryFacadeEjb
 		}
 
 		@Inject
-		protected CountryFacadeEjbLocal(CountryService service, FeatureConfigurationFacadeEjbLocal featureConfiguration, UserService userService) {
-			super(service, featureConfiguration, userService);
+		protected CountryFacadeEjbLocal(CountryService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
+			super(service, featureConfiguration);
 		}
 	}
 }

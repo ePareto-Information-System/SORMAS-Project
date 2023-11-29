@@ -17,17 +17,19 @@ package de.symeda.sormas.app.util;
 
 import static android.view.View.GONE;
 
-import java.util.List;
-
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 import androidx.databinding.BindingAdapter;
+
+import java.util.List;
 
 import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.symptoms.SymptomState;
@@ -70,9 +72,9 @@ public class FormBindingAdapters {
 		} else {
 			String location = "";
 			if (caze.getPerson() != null && caze.getPerson().getAddress() != null) {
-				location = "\n" + caze.getPerson().getAddress().toString();
+				location = "\n" + caze.getPerson().getAddress().buildCaption();
 			}
-			val = caze.toString() + location;
+			val = caze.buildCaption() + location;
 
 			if (valueFormat != null && valueFormat.trim() != "") {
 				control.setValue(String.format(valueFormat, val));
@@ -94,9 +96,9 @@ public class FormBindingAdapters {
 		} else {
 			String location = "";
 			if (contact.getPerson() != null && contact.getPerson().getAddress() != null) {
-				location = "\n" + contact.getPerson().getAddress().toString();
+				location = "\n" + contact.getPerson().getAddress().buildCaption();
 			}
-			val = contact.toString() + location;
+			val = contact.buildCaption() + location;
 
 			if (valueFormat != null && valueFormat.trim() != "") {
 				control.setValue(String.format(valueFormat, val));
@@ -118,9 +120,9 @@ public class FormBindingAdapters {
 		} else {
 			String location = "";
 			if (event.getEventLocation() != null) {
-				location = "\n" + event.getEventLocation().toString();
+				location = "\n" + event.getEventLocation().buildCaption();
 			}
-			val = event.toString() + location;
+			val = event.buildCaption() + location;
 
 			if (valueFormat != null && valueFormat.trim() != "") {
 				control.setValue(String.format(valueFormat, val));
@@ -211,7 +213,7 @@ public class FormBindingAdapters {
 		if (location == null) {
 			textField.setValue(val);
 		} else {
-			val = location.toString();
+			val = location.buildCaption();
 
 			if (valueFormat != null && valueFormat.trim() != "") {
 				textField.setValue(String.format(valueFormat, val));
@@ -233,5 +235,10 @@ public class FormBindingAdapters {
 		}
 
 		return false;
+	}
+
+	@BindingAdapter("android:textSize")
+	public static void bindTextSize(TextView textView, int size) {
+		textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, size);
 	}
 }

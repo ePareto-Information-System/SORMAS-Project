@@ -15,13 +15,12 @@
 
 package de.symeda.sormas.ui.event.eventparticipantimporter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import de.symeda.sormas.api.person.PresentCondition;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
@@ -37,8 +36,8 @@ import java.util.function.Consumer;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.output.StringBuilderWriter;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import com.opencsv.exceptions.CsvValidationException;
 import com.vaadin.ui.UI;
@@ -49,6 +48,7 @@ import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.InvestigationStatus;
 import de.symeda.sormas.api.caze.Vaccine;
 import de.symeda.sormas.api.event.EventDto;
+import de.symeda.sormas.api.event.EventInvestigationStatus;
 import de.symeda.sormas.api.event.EventParticipantCriteria;
 import de.symeda.sormas.api.event.EventParticipantDto;
 import de.symeda.sormas.api.event.EventParticipantIndexDto;
@@ -60,21 +60,22 @@ import de.symeda.sormas.api.importexport.ValueSeparator;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.PersonHelper;
 import de.symeda.sormas.api.person.PersonSimilarityCriteria;
+import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.person.SimilarPersonDto;
 import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.utils.DateHelper;
+import de.symeda.sormas.api.utils.LocationHelper;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.vaccination.VaccinationDto;
 import de.symeda.sormas.backend.event.EventParticipantFacadeEjb.EventParticipantFacadeEjbLocal;
-import de.symeda.sormas.ui.AbstractBeanTest;
-import de.symeda.sormas.ui.TestDataCreator.RDCF;
+import de.symeda.sormas.ui.AbstractUiBeanTest;
 import de.symeda.sormas.ui.events.eventparticipantimporter.EventParticipantImporter;
 import de.symeda.sormas.ui.importer.ImportResultStatus;
 import de.symeda.sormas.ui.importer.ImportSimilarityResultOption;
 import de.symeda.sormas.ui.importer.PersonImportSimilarityResult;
 
-public class EventParticipantImporterTest extends AbstractBeanTest {
+public class EventParticipantImporterTest extends AbstractUiBeanTest {
 
 	@Test
 	public void testImportEventParticipant()
@@ -82,7 +83,7 @@ public class EventParticipantImporterTest extends AbstractBeanTest {
 
 		EventParticipantFacadeEjbLocal eventParticipantFacade = getBean(EventParticipantFacadeEjbLocal.class);
 
-		RDCF rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
+		var rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
 		UserDto user = creator.createUser(
 			rdcf.region.getUuid(),
 			rdcf.district.getUuid(),
@@ -92,6 +93,7 @@ public class EventParticipantImporterTest extends AbstractBeanTest {
 			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
 		EventDto event = creator.createEvent(
 			EventStatus.SIGNAL,
+			EventInvestigationStatus.PENDING,
 			"Title",
 			"Description",
 			"First",
@@ -102,7 +104,8 @@ public class EventParticipantImporterTest extends AbstractBeanTest {
 			new Date(),
 			user.toReference(),
 			user.toReference(),
-			Disease.EVD);
+			Disease.EVD,
+			rdcf);
 		EventReferenceDto eventRef = event.toReference();
 
 		// Successful import of 5 event participant
@@ -126,7 +129,7 @@ public class EventParticipantImporterTest extends AbstractBeanTest {
 		throws IOException, InvalidColumnException, InterruptedException, CsvValidationException, URISyntaxException {
 		EventParticipantFacadeEjbLocal eventParticipantFacade = getBean(EventParticipantFacadeEjbLocal.class);
 
-		RDCF rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
+		var rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
 		UserDto user = creator.createUser(
 			rdcf.region.getUuid(),
 			rdcf.district.getUuid(),
@@ -136,6 +139,7 @@ public class EventParticipantImporterTest extends AbstractBeanTest {
 			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
 		EventDto event = creator.createEvent(
 			EventStatus.SIGNAL,
+			EventInvestigationStatus.PENDING,
 			"Title",
 			"Description",
 			"First",
@@ -146,12 +150,13 @@ public class EventParticipantImporterTest extends AbstractBeanTest {
 			new Date(),
 			user.toReference(),
 			user.toReference(),
-			Disease.EVD);
+			Disease.EVD,
+			rdcf);
 		EventReferenceDto eventRef = event.toReference();
 		final String EXISTING_PERSON_LAST_NAME = "Heinz";
 		PersonDto person = creator.createPerson("Günther", EXISTING_PERSON_LAST_NAME);
 		person.setPresentCondition(PresentCondition.UNKNOWN);
-		getPersonFacade().savePerson(person);
+		getPersonFacade().save(person);
 
 		creator.createCase(
 			user.toReference(),
@@ -190,7 +195,7 @@ public class EventParticipantImporterTest extends AbstractBeanTest {
 
 		EventParticipantIndexDto importedEventParticipant =
 			eventParticipantFacade.getIndexList(new EventParticipantCriteria().withEvent(eventRef), null, null, null).get(0);
-		PersonDto importedPerson = getPersonFacade().getPersonByUuid(importedEventParticipant.getPersonUuid());
+		PersonDto importedPerson = getPersonFacade().getByUuid(importedEventParticipant.getPersonUuid());
 
 		assertEquals(ImportResultStatus.COMPLETED, importResult);
 		assertEquals(1, eventParticipantFacade.count(new EventParticipantCriteria().withEvent(eventRef)));
@@ -208,7 +213,7 @@ public class EventParticipantImporterTest extends AbstractBeanTest {
 		throws IOException, InvalidColumnException, InterruptedException, CsvValidationException, URISyntaxException {
 		EventParticipantFacadeEjbLocal eventParticipantFacade = getBean(EventParticipantFacadeEjbLocal.class);
 
-		RDCF rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
+		var rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
 		UserDto user = creator.createUser(
 			rdcf.region.getUuid(),
 			rdcf.district.getUuid(),
@@ -218,6 +223,7 @@ public class EventParticipantImporterTest extends AbstractBeanTest {
 			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
 		EventDto event = creator.createEvent(
 			EventStatus.SIGNAL,
+			EventInvestigationStatus.PENDING,
 			"Title",
 			"Description",
 			"First",
@@ -228,7 +234,8 @@ public class EventParticipantImporterTest extends AbstractBeanTest {
 			new Date(),
 			user.toReference(),
 			user.toReference(),
-			Disease.EVD);
+			Disease.EVD,
+			rdcf);
 		EventReferenceDto eventRef = event.toReference();
 		PersonDto person = creator.createPerson("Günther", "Heinz");
 		EventParticipantDto eventParticipant = creator.createEventParticipant(eventRef, person, "old desc", user.toReference());
@@ -275,7 +282,7 @@ public class EventParticipantImporterTest extends AbstractBeanTest {
 		throws IOException, InvalidColumnException, InterruptedException, CsvValidationException, URISyntaxException {
 		EventParticipantFacadeEjbLocal eventParticipantFacade = getBean(EventParticipantFacadeEjbLocal.class);
 
-		RDCF rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
+		var rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
 		UserDto user = creator.createUser(
 			rdcf.region.getUuid(),
 			rdcf.district.getUuid(),
@@ -285,6 +292,7 @@ public class EventParticipantImporterTest extends AbstractBeanTest {
 			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
 		EventDto event = creator.createEvent(
 			EventStatus.SIGNAL,
+			EventInvestigationStatus.PENDING,
 			"Title",
 			"Description",
 			"First",
@@ -295,7 +303,8 @@ public class EventParticipantImporterTest extends AbstractBeanTest {
 			new Date(),
 			user.toReference(),
 			user.toReference(),
-			Disease.EVD);
+			Disease.EVD,
+			rdcf);
 		EventReferenceDto eventRef = event.toReference();
 		PersonDto person = creator.createPerson("Günther", "Heinze");
 		creator.createCase(
@@ -327,7 +336,7 @@ public class EventParticipantImporterTest extends AbstractBeanTest {
 		throws IOException, InvalidColumnException, InterruptedException, CsvValidationException, URISyntaxException {
 		EventParticipantFacadeEjbLocal eventParticipantFacade = getBean(EventParticipantFacadeEjbLocal.class);
 
-		RDCF rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
+		var rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
 		UserDto user = creator.createUser(
 			rdcf.region.getUuid(),
 			rdcf.district.getUuid(),
@@ -337,6 +346,7 @@ public class EventParticipantImporterTest extends AbstractBeanTest {
 			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
 		EventDto event = creator.createEvent(
 			EventStatus.SIGNAL,
+			EventInvestigationStatus.PENDING,
 			"Title",
 			"Description",
 			"First",
@@ -347,7 +357,8 @@ public class EventParticipantImporterTest extends AbstractBeanTest {
 			new Date(),
 			user.toReference(),
 			user.toReference(),
-			Disease.EVD);
+			Disease.EVD,
+			rdcf);
 		EventReferenceDto eventRef = event.toReference();
 
 		// Person Similarity: create
@@ -377,7 +388,7 @@ public class EventParticipantImporterTest extends AbstractBeanTest {
 		throws IOException, InvalidColumnException, InterruptedException, CsvValidationException, URISyntaxException {
 		EventParticipantFacadeEjbLocal eventParticipantFacade = getBean(EventParticipantFacadeEjbLocal.class);
 
-		RDCF rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
+		var rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
 		UserDto user = creator.createUser(
 			rdcf.region.getUuid(),
 			rdcf.district.getUuid(),
@@ -387,6 +398,7 @@ public class EventParticipantImporterTest extends AbstractBeanTest {
 			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
 		EventDto event = creator.createEvent(
 			EventStatus.SIGNAL,
+			EventInvestigationStatus.PENDING,
 			"Title",
 			"Description",
 			"First",
@@ -397,7 +409,8 @@ public class EventParticipantImporterTest extends AbstractBeanTest {
 			new Date(),
 			user.toReference(),
 			user.toReference(),
-			Disease.EVD);
+			Disease.EVD,
+			rdcf);
 		EventReferenceDto eventRef = event.toReference();
 
 		// Successful import of 5 event participant
@@ -415,7 +428,7 @@ public class EventParticipantImporterTest extends AbstractBeanTest {
 
 		EventParticipantFacadeEjbLocal eventParticipantFacade = getBean(EventParticipantFacadeEjbLocal.class);
 
-		RDCF rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
+		var rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
 		UserDto user = creator.createUser(
 			rdcf.region.getUuid(),
 			rdcf.district.getUuid(),
@@ -425,6 +438,7 @@ public class EventParticipantImporterTest extends AbstractBeanTest {
 			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
 		EventDto event = creator.createEvent(
 			EventStatus.SIGNAL,
+			EventInvestigationStatus.PENDING,
 			"Title",
 			"Description",
 			"First",
@@ -435,7 +449,8 @@ public class EventParticipantImporterTest extends AbstractBeanTest {
 			new Date(),
 			user.toReference(),
 			user.toReference(),
-			Disease.EVD);
+			Disease.EVD,
+			rdcf);
 		EventReferenceDto eventRef = event.toReference();
 
 		// import of 3 event participants with different address types
@@ -465,20 +480,20 @@ public class EventParticipantImporterTest extends AbstractBeanTest {
 			}
 			if ("Oona".equals(person.getFirstName())) {
 				foundOona = true;
-				assertTrue(person.getAddress().checkIsEmptyLocation());
+				assertTrue(LocationHelper.checkIsEmptyLocation(person.getAddress()));
 				assertEquals(1, person.getAddresses().size());
 				assertEquals("133", person.getAddresses().get(0).getHouseNumber());
 			}
 		}
 
-		assertTrue("Not all eventparticipants found.", foundOtto && foundOskar && foundOona);
+		assertTrue(foundOtto && foundOskar && foundOona, "Not all eventparticipants found.");
 	}
 
 	@Test
-	@Ignore("Remove ignore once we have replaced H2, and feature properties can be changed by code")
+	@Disabled("Remove ignore once we have replaced H2, and feature properties can be changed by code")
 	public void testImportWithVaccinations()
 		throws URISyntaxException, IOException, InterruptedException, CsvValidationException, InvalidColumnException {
-		RDCF rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
+		var rdcf = creator.createRDCF("Region", "District", "Community", "Facility");
 		UserDto user = creator.createUser(
 			rdcf.region.getUuid(),
 			rdcf.district.getUuid(),
@@ -488,6 +503,7 @@ public class EventParticipantImporterTest extends AbstractBeanTest {
 			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_SUPERVISOR));
 		EventDto event = creator.createEvent(
 			EventStatus.SIGNAL,
+			EventInvestigationStatus.PENDING,
 			"Title",
 			"Description",
 			"First",
@@ -498,14 +514,15 @@ public class EventParticipantImporterTest extends AbstractBeanTest {
 			new Date(),
 			user.toReference(),
 			user.toReference(),
-			Disease.CORONAVIRUS);
+			Disease.CORONAVIRUS,
+			null);
 
 		// Successful import of 5 event participant
 		File csvFile = new File(getClass().getClassLoader().getResource("sormas_eventparticipant_import_test_vaccinations.csv").toURI());
 		EventParticipantImporterExtension eventParticipantImporter = new EventParticipantImporterExtension(csvFile, user, event);
 		ImportResultStatus importResult = eventParticipantImporter.runImport();
 
-		assertEquals(eventParticipantImporter.stringBuilder.toString(), ImportResultStatus.COMPLETED, importResult);
+		assertEquals(ImportResultStatus.COMPLETED, importResult, eventParticipantImporter.stringBuilder.toString());
 		assertEquals(ImportResultStatus.COMPLETED, importResult);
 
 		List<EventParticipantDto> eventParticipants = getEventParticipantFacade().getByEventUuids(Collections.singletonList(event.getUuid()));

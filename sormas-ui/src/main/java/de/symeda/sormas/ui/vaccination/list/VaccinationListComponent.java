@@ -18,6 +18,7 @@ package de.symeda.sormas.ui.vaccination.list;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.Captions;
@@ -25,7 +26,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
-import de.symeda.sormas.api.vaccination.VaccinationListCriteria;
+import de.symeda.sormas.api.vaccination.VaccinationCriteria;
 import de.symeda.sormas.api.vaccination.VaccinationListEntryDto;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.SormasUI;
@@ -33,33 +34,39 @@ import de.symeda.sormas.ui.utils.components.sidecomponent.SideComponent;
 
 public class VaccinationListComponent extends SideComponent {
 
-	public VaccinationListComponent(VaccinationListCriteria criteria) {
-		this(criteria, null);
+	public VaccinationListComponent(
+		Supplier<VaccinationCriteria> criteriaSupplier,
+		String activeUuid,
+		Consumer<Runnable> actionCallback,
+		boolean isEditAllowed) {
+		this(criteriaSupplier, activeUuid, actionCallback, true, isEditAllowed);
 	}
 
-	public VaccinationListComponent(VaccinationListCriteria criteria, Consumer<Runnable> actionCallback) {
-		this(criteria, actionCallback, true);
-	}
-
-	public VaccinationListComponent(VaccinationListCriteria criteria, Consumer<Runnable> actionCallback, boolean allowNewVaccine) {
-
+	public VaccinationListComponent(
+		Supplier<VaccinationCriteria> criteriaSupplier,
+		String activeUuid,
+		Consumer<Runnable> actionCallback,
+		boolean allowNewVaccine,
+		boolean isEditAllowed) {
 		super(I18nProperties.getString(Strings.entityVaccinations), actionCallback);
 
-		if (allowNewVaccine) {
-			addCreateButton(
-				I18nProperties.getCaption(Captions.vaccinationNewVaccination),
-				() -> ControllerProvider.getVaccinationController()
+		if (allowNewVaccine && isEditAllowed) {
+			addCreateButton(I18nProperties.getCaption(Captions.vaccinationNewVaccination), () -> {
+				VaccinationCriteria criteria = criteriaSupplier.get();
+				ControllerProvider.getVaccinationController()
 					.create(
 						criteria.getRegion(),
 						criteria.getDistrict(),
 						criteria.getPerson(),
 						criteria.getDisease(),
 						UiFieldAccessCheckers.getNoop(),
-						v -> SormasUI.refreshView()),
-				UserRight.IMMUNIZATION_CREATE);
+						v -> SormasUI.refreshView());
+			}, UserRight.IMMUNIZATION_CREATE);
 		}
 
 		Function<Integer, List<VaccinationListEntryDto>> entriesListSupplier;
+
+		VaccinationCriteria criteria = criteriaSupplier.get();
 
 		if (criteria.getVaccinationAssociationType() != null) {
 			switch (criteria.getVaccinationAssociationType()) {
@@ -82,7 +89,8 @@ public class VaccinationListComponent extends SideComponent {
 			entriesListSupplier = maxDisplayedEntries -> FacadeProvider.getVaccinationFacade().getEntriesList(criteria, 0, maxDisplayedEntries, null);
 		}
 
-		VaccinationList vaccinationList = new VaccinationList(criteria.getDisease(), entriesListSupplier, actionCallback);
+		VaccinationList vaccinationList = new VaccinationList(criteria.getDisease(), entriesListSupplier, actionCallback, isEditAllowed);
+		vaccinationList.setActiveUuid(activeUuid);
 		addComponent(vaccinationList);
 		vaccinationList.reload();
 	}

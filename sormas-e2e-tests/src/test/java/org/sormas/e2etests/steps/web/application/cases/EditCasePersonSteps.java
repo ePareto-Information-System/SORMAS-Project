@@ -32,6 +32,7 @@ import org.sormas.e2etests.entities.pojo.web.Case;
 import org.sormas.e2etests.entities.services.CaseService;
 import org.sormas.e2etests.enums.CaseClassification;
 import org.sormas.e2etests.helpers.WebDriverHelpers;
+import org.sormas.e2etests.steps.api.demisSteps.DemisSteps;
 import org.testng.Assert;
 import org.testng.asserts.SoftAssert;
 
@@ -179,7 +180,10 @@ public class EditCasePersonSteps implements En {
 
     When(
         "I click on Geocode button to get GPS coordinates in Case Person Tab",
-        () -> webDriverHelpers.clickOnWebElementBySelector(GEOCODE_BUTTON));
+        () -> {
+          webDriverHelpers.clickOnWebElementBySelector(GEOCODE_BUTTON);
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(40);
+        });
 
     When(
         "I click on save button to Save Person data in Case Person Tab",
@@ -288,6 +292,98 @@ public class EditCasePersonSteps implements En {
           }
           softly.assertFalse(elementVisible, option + " is visible!");
           softly.assertAll();
+        });
+
+    When(
+        "I check if Present condition of person combobox has value {string}",
+        (String option) -> {
+          softly.assertTrue(
+              webDriverHelpers.checkIfElementExistsInCombobox(PRESENT_CONDITION_COMBOBOX, option));
+          softly.assertAll();
+        });
+
+    When(
+        "I check if Present condition of person combobox has no value {string}",
+        (String option) -> {
+          softly.assertFalse(
+              webDriverHelpers.checkIfElementExistsInCombobox(PRESENT_CONDITION_COMBOBOX, option));
+          softly.assertAll();
+        });
+
+    When(
+        "I check if {string} field is present in case person",
+        (String option) -> {
+          By selector = null;
+          switch (option) {
+            case "Date of burial":
+              selector = DATE_OF_BURIAL_INPUT;
+              break;
+            case "Cause of death":
+              selector = CASE_OF_DEATH_COMBOBOX;
+              break;
+            case "Burial conductor":
+              selector = BURIAL_CONDUCTOR_INPUT;
+              break;
+            case "Burial place description":
+              selector = BURIAL_PLACE_DESCRIPTION;
+              break;
+          }
+          webDriverHelpers.waitUntilIdentifiedElementIsPresent(selector);
+        });
+    When(
+        "I check that ([^\"]*) is not visible in Contact Information section for DE version",
+        (String option) -> {
+          webDriverHelpers.waitForPageLoadingSpinnerToDisappear(10);
+          By selector = null;
+          switch (option) {
+            case "Citizenship":
+              selector = CITIZENSHIP_LABEL_DE;
+              break;
+            case "Country of birth":
+              selector = COUNTRY_OF_BIRTH_LABEL_DE;
+              break;
+          }
+          softly.assertFalse(
+              webDriverHelpers.isElementVisibleWithTimeout(selector, 3), option + " is visible!");
+          softly.assertAll();
+        });
+    When(
+        "I set Present condition of person to {string}",
+        (String option) -> webDriverHelpers.selectFromCombobox(PRESENT_CONDITION_COMBOBOX, option));
+
+    And(
+        "^I check if person last name for case person tab is \"([^\"]*)\"$",
+        (String lastName) -> {
+          softly.assertEquals(
+              webDriverHelpers.getValueFromWebElement(LAST_NAME_INPUT),
+              lastName,
+              "Last names is incorrect!");
+          softly.assertAll();
+        });
+
+    And(
+        "I check that first and last name are equal to data form {int} result in laboratory notification",
+        (Integer resultNumber) -> {
+          softly.assertEquals(
+              DemisSteps.firstNames.get(resultNumber - 1),
+              webDriverHelpers.getValueFromWebElement(FIRST_NAME_INPUT),
+              "First name is incorrect!");
+          softly.assertAll();
+          softly.assertEquals(
+              DemisSteps.lastNames.get(resultNumber - 1),
+              webDriverHelpers.getValueFromWebElement(LAST_NAME_INPUT),
+              "Last name is incorrect!");
+          softly.assertAll();
+        });
+
+    And(
+        "^I check if editable fields are read only for person case/contact tab$",
+        () -> {
+          webDriverHelpers.waitUntilIdentifiedElementIsPresent(UUID_INPUT);
+          webDriverHelpers.isElementGreyedOut(UUID_INPUT);
+          webDriverHelpers.isElementGreyedOut(FIRST_NAME_INPUT);
+          webDriverHelpers.isElementGreyedOut(LAST_NAME_INPUT);
+          webDriverHelpers.isElementGreyedOut(SAVE_BUTTON);
         });
   }
 

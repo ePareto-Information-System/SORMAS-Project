@@ -11708,33 +11708,35 @@ ALTER TABLE userroles ADD COLUMN porthealthuser boolean default false;
 ALTER TABLE userroles_history ADD COLUMN porthealthuser boolean default false;
 ALTER TABLE userroles ADD COLUMN jurisdictionlevel varchar(255);
 ALTER TABLE userroles_history ADD COLUMN jurisdictionlevel varchar(255);
+ALTER TABLE userroles ADD COLUMN linkeddefaultuserrole varchar(255);
+ALTER TABLE userroles_history ADD COLUMN linkeddefaultuserrole varchar(255);
 
-INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'ADMIN');
-INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'NATIONAL_USER');
-INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'SURVEILLANCE_SUPERVISOR');
-INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'ADMIN_SUPERVISOR');
-INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'SURVEILLANCE_OFFICER');
-INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'HOSPITAL_INFORMANT');
-INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'COMMUNITY_OFFICER');
-INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'COMMUNITY_INFORMANT');
-INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'CASE_SUPERVISOR');
-INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'CASE_OFFICER');
-INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'CONTACT_SUPERVISOR');
-INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'CONTACT_OFFICER');
-INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'EVENT_OFFICER');
-INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'LAB_USER');
-INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'EXTERNAL_LAB_USER');
-INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'NATIONAL_OBSERVER');
-INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'STATE_OBSERVER');
-INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'DISTRICT_OBSERVER');
-INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'NATIONAL_CLINICIAN');
-INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'POE_INFORMANT');
-INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'POE_SUPERVISOR');
-INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'POE_NATIONAL_USER');
-INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'IMPORT_USER');
-INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'REST_EXTERNAL_VISITS_USER');
-INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'SORMAS_TO_SORMAS_CLIENT');
-INSERT INTO userroles (id, uuid, creationdate, changedate, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'BAG_USER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'ADMIN', 'ADMIN');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole ) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'NATIONAL_USER', 'NATIONAL_USER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole ) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'SURVEILLANCE_SUPERVISOR', 'SURVEILLANCE_SUPERVISOR');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole ) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'ADMIN_SUPERVISOR', 'ADMIN_SUPERVISOR');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole ) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'SURVEILLANCE_OFFICER', 'SURVEILLANCE_OFFICER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole ) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'HOSPITAL_INFORMANT', 'HOSPITAL_INFORMANT');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole ) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'COMMUNITY_OFFICER', 'COMMUNITY_OFFICER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole ) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'COMMUNITY_INFORMANT', 'COMMUNITY_INFORMANT');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole ) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'CASE_SUPERVISOR', 'CASE_SUPERVISOR');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole ) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'CASE_OFFICER', 'CASE_OFFICER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole ) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'CONTACT_SUPERVISOR', 'CONTACT_SUPERVISOR');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole ) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'CONTACT_OFFICER', 'CONTACT_OFFICER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole ) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'EVENT_OFFICER', 'EVENT_OFFICER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole ) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'LAB_USER', 'LAB_USER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole ) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'EXTERNAL_LAB_USER', 'EXTERNAL_LAB_USER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole ) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'NATIONAL_OBSERVER', 'NATIONAL_OBSERVER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole ) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'STATE_OBSERVER', 'STATE_OBSERVER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole ) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'DISTRICT_OBSERVER', 'DISTRICT_OBSERVER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole ) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'NATIONAL_CLINICIAN', 'NATIONAL_CLINICIAN');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole ) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'POE_INFORMANT', 'POE_INFORMANT');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole ) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'POE_SUPERVISOR', 'POE_SUPERVISOR');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole ) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'POE_NATIONAL_USER', 'POE_NATIONAL_USER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole ) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'IMPORT_USER', 'IMPORT_USER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole ) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'REST_EXTERNAL_VISITS_USER', 'REST_EXTERNAL_VISITS_USER');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole ) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'SORMAS_TO_SORMAS_CLIENT', 'SORMAS_TO_SORMAS_CLIENT');
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole ) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'BAG_USER', 'BAG_USER');
 
 ALTER TABLE users_userroles ADD COLUMN userrole_id bigint;
 ALTER TABLE ONLY users_userroles RENAME CONSTRAINT fk_userroles_user_id TO fk_users_userroles_user_id;
@@ -11911,7 +11913,6 @@ INSERT INTO schema_version (version_number, comment) VALUES (474, 'Allow surveil
 -- 2022-06-27 Allow external lab users to edit samples #8892
 INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (475, 'Allow external lab users to edit samples #8892', true);
 
-
 -- 2022-07-05 Adjust password hashes with leading zeros #9726
 UPDATE users SET password = LPAD(password, 64, '0') WHERE LENGTH(password) < 64;
 INSERT INTO schema_version (version_number, comment) VALUES (476, 'Adjust password hashes with leading zeros #9726');
@@ -12036,7 +12037,856 @@ CREATE TABLE facility_diseaseconfiguration (
 
 INSERT INTO schema_version (version_number, comment) VALUES (486, 'Assigning Diseases to facility functionality #134');
 
+-- 2022-06-17 Add user roles view to UI #4462
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT userrole_id, 'USER_ROLE_VIEW' FROM userroles_userrights WHERE userright = 'USER_EDIT';
 
+
+
+INSERT INTO schema_version (version_number, comment) VALUES (487, 'Add user roles view to UI #4462');
+
+-- 2022-07-15 S2S_deactivate share parameter 'share associated contacts' (for cases) #9146
+UPDATE featureconfiguration set featuretype = 'SORMAS_TO_SORMAS_SHARE_CASES', properties = json_build_object('SHARE_ASSOCIATED_CONTACTS',false,'SHARE_SAMPLES',true,'SHARE_IMMUNIZATIONS',true) where featuretype = 'SORMAS_TO_SORMAS_SHARE_CASES_WITH_CONTACTS_AND_SAMPLES';
+UPDATE featureconfiguration set properties = json_build_object('SHARE_SAMPLES',true,'SHARE_IMMUNIZATIONS',true) where featuretype = 'SORMAS_TO_SORMAS_SHARE_EVENTS';
+INSERT INTO featureconfiguration (id, uuid, creationdate, changedate, enabled, featuretype, properties)
+    VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), (SELECT CASE WHEN EXISTS(SELECT id FROM featureconfiguration WHERE featuretype = 'SORMAS_TO_SORMAS_SHARE_CASES') THEN (SELECT enabled FROM featureconfiguration WHERE featuretype = 'SORMAS_TO_SORMAS_SHARE_CASES') ELSE true END), 'SORMAS_TO_SORMAS_SHARE_CONTACTS', json_build_object('SHARE_SAMPLES',true,'SHARE_IMMUNIZATIONS',true));
+
+ALTER TABLE sormastosormassharerequest ADD COLUMN shareassociatedcontactsdisabled boolean DEFAULT false;
+ALTER TABLE sormastosormassharerequest_history ADD COLUMN shareassociatedcontactsdisabled boolean DEFAULT false;
+
+INSERT INTO schema_version (version_number, comment) VALUES (488, 'S2S_deactivate share parameter ''share associated contacts'' (for cases) #9146');
+
+-- 2022-07-25 Make region and district required for aggregate reports
+DELETE FROM aggregatereport
+WHERE region_id IS NULL OR district_id IS NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (489, 'Make region and district required for aggregate reports #9847');
+
+-- 2022-07-26 Minimum deletion period 7 days #9471
+UPDATE deletionconfiguration SET deletionPeriod = 7 WHERE deletionPeriod IS NOT NULL AND deletionPeriod < 7;
+ALTER TABLE deletionconfiguration ADD CONSTRAINT chk_min_deletion_period CHECK (deletionPeriod IS NULL OR deletionPeriod >= 7);
+
+INSERT INTO schema_version (version_number, comment) VALUES (490, 'Minimum deletion period 7 days #9471');
+
+-- 2022-07-25 S2S_added sample after sharing a case/contact does not get shared #9771
+ALTER TABLE sharerequestinfo ADD COLUMN datatype varchar(255);
+ALTER TABLE sharerequestinfo_history ADD COLUMN datatype varchar(255);
+
+UPDATE sharerequestinfo sr SET datatype = (
+    SELECT CASE
+       WHEN (EXISTS(SELECT caze_id FROM sormastosormasshareinfo s JOIN sharerequestinfo_shareinfo ss ON ss.sharerequestinfo_id = r.id WHERE s.id = ss.shareinfo_id AND caze_id IS NOT NULL)) THEN 'CASE'
+       WHEN (EXISTS(SELECT contact_id FROM sormastosormasshareinfo s JOIN sharerequestinfo_shareinfo ss ON ss.sharerequestinfo_id = r.id WHERE s.id = ss.shareinfo_id  AND contact_id IS NOT NULL)) THEN 'CONTACT'
+       WHEN (EXISTS(SELECT event_id FROM sormastosormasshareinfo s JOIN sharerequestinfo_shareinfo ss ON ss.sharerequestinfo_id = r.id WHERE s.id = ss.shareinfo_id  AND event_id IS NOT NULL)) THEN 'EVENT'
+       ELSE 'CASE' -- hardcode CASE for share request with no shared object due to permanent deletions
+    END
+    FROM sharerequestinfo r where r.id = sr.id
+);
+
+ALTER TABLE sharerequestinfo ALTER COLUMN datatype SET NOT NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (491, 'S2S_added sample after sharing a case/contact does not get shared #9771');
+
+-- 2022-07-25 Allow diseases to be used case-based and aggregated at the same time
+ALTER TABLE  diseaseconfiguration RENAME COLUMN casebased TO casesurveillanceenabled;
+ALTER TABLE  diseaseconfiguration_history RENAME COLUMN casebased TO casesurveillanceenabled;
+ALTER TABLE diseaseconfiguration ADD COLUMN aggregatereportingenabled boolean;
+ALTER TABLE diseaseconfiguration_history ADD COLUMN aggregatereportingenabled boolean;
+
+UPDATE diseaseconfiguration SET aggregatereportingenabled = NOT casesurveillanceenabled;
+
+INSERT INTO schema_version (version_number, comment) VALUES (492, 'Allow diseases to be used case-based and aggregated at the same time #9629');
+
+-- 2022-07-1 Edit and create user roles #4463
+DO $$
+    DECLARE rec RECORD;
+    BEGIN
+        FOR rec IN (select ur.userrole_id from userroles_userrights ur
+                    where ur.userright = 'USER_EDIT')
+            LOOP
+                INSERT INTO userroles_userrights(userrole_id, userright) VALUES (rec.userrole_id, 'USER_ROLE_EDIT');
+                INSERT INTO userroles_userrights(userrole_id, userright) VALUES (rec.userrole_id, 'USER_ROLE_DELETE');
+            END LOOP;
+    END;
+$$ LANGUAGE plpgsql;
+
+update userroles_smsnotificationtypes set notificationtype = 'CASE_DISEASE_CHANGED' where notificationtype = 'DISEASE_CHANGED';
+update userroles_emailnotificationtypes set notificationtype = 'CASE_DISEASE_CHANGED' where notificationtype = 'DISEASE_CHANGED';
+update userroles_smsnotificationtypes set notificationtype = 'CONTACT_VISIT_COMPLETED' where notificationtype = 'VISIT_COMPLETED';
+update userroles_emailnotificationtypes set notificationtype = 'CONTACT_VISIT_COMPLETED' where notificationtype = 'VISIT_COMPLETED';
+
+INSERT INTO schema_version (version_number, comment) VALUES (493, 'Edit and create user roles #4463');
+
+-- 2022-07-05 Implement user right dependencies #5058
+delete from userroles_userrights where userright in ('CONTACT_CLASSIFY', 'CONTACT_ASSIGN');
+
+INSERT INTO schema_version (version_number, comment) VALUES (494, 'Implement user right dependencies #5058');
+
+-- 2022-08-01 llow surveillance officer to export aggregate reports #9747 #9052
+INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+SELECT userrole_id, 'AGGREGATE_REPORT_EXPORT', tstzrange(now(), null)
+FROM userroles_userrights uu
+WHERE uu.userright = 'AGGREGATE_REPORT_VIEW'
+  AND exists(SELECT uu2.userrole_id
+             FROM userroles_userrights uu2
+             WHERE uu2.userrole_id = uu.userrole_id
+               AND uu2.userright = 'CASE_EDIT')
+  AND NOT exists(SELECT uu2.userrole_id
+                 FROM userroles_userrights uu2
+                 WHERE uu2.userrole_id = uu.userrole_id
+                   AND uu2.userright = 'AGGREGATE_REPORT_EXPORT');
+
+INSERT INTO schema_version (version_number, comment) VALUES (495, 'Allow surveillance officer to export aggregate reports #9747 #9052');
+
+-- 2022-07-26 Turn OccupationType into a customizable enum #5015
+ALTER TABLE customizableenumvalue ADD COLUMN defaultvalue boolean DEFAULT false;
+ALTER TABLE customizableenumvalue_history ADD COLUMN defaultvalue boolean DEFAULT false;
+
+DO $$
+    DECLARE rec RECORD;
+BEGIN
+FOR rec IN SELECT DISTINCT occupationtype FROM person WHERE occupationtype != 'HEALTHCARE_WORKER' AND occupationtype != 'LABORATORY_STAFF' AND occupationtype != 'OTHER'
+LOOP
+    INSERT INTO customizableenumvalue(id, uuid, changedate, creationdate, datatype, value, caption) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'OCCUPATION_TYPE', rec.occupationtype, rec.occupationtype);
+END LOOP;
+END;
+$$ LANGUAGE plpgsql;
+
+INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (496, 'Turn OccupationType into a customizable enum #5015', true);
+
+-- 2022-08-04 #5058 Implement user right dependencies - add missing required rights for default roles
+
+DO $$
+    DECLARE rec RECORD;
+    BEGIN
+        FOR rec IN SELECT id FROM userroles
+            LOOP
+                IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'CASE_DELETE')) = true) THEN
+                    INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+                    SELECT rec.id, rights.r, tstzrange(now(), null)
+                    FROM (VALUES ('TASK_DELETE'), ('SAMPLE_DELETE'), ('VISIT_DELETE'), ('PERSON_DELETE'), ('TREATMENT_DELETE'), ('PRESCRIPTION_DELETE'), ('CLINICAL_VISIT_DELETE'), ('IMMUNIZATION_DELETE')) as rights (r)
+                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+                END IF;
+
+                IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'CONTACT_DELETE')) = true) THEN
+                    INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+                    SELECT rec.id, rights.r, tstzrange(now(), null)
+                    FROM (VALUES ('TASK_DELETE'), ('SAMPLE_DELETE'), ('VISIT_DELETE'), ('PERSON_DELETE')) as rights (r)
+                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+                END IF;
+
+                IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'EVENT_DELETE')) = true) THEN
+                    INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+                    SELECT rec.id, rights.r, tstzrange(now(), null)
+                    FROM (VALUES ('EVENTPARTICIPANT_DELETE'), ('TASK_DELETE'), ('ACTION_DELETE')) as rights (r)
+                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+                END IF;
+
+                IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'SAMPLE_DELETE')) = true) THEN
+                    INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+                    SELECT rec.id, rights.r, tstzrange(now(), null)
+                    FROM (VALUES ('PATHOGEN_TEST_DELETE'), ('ADDITIONAL_TEST_DELETE'), ('ADDITIONAL_TEST_VIEW')) as rights (r)
+                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+                END IF;
+
+                IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'CASE_IMPORT')) = true) THEN
+                    INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+                    SELECT rec.id, rights.r, tstzrange(now(), null)
+                    FROM (VALUES ('CASE_VIEW')) as rights (r)
+                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+                END IF;
+
+                IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'EVENT_EXPORT')) = true) THEN
+                    INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+                    SELECT rec.id, rights.r, tstzrange(now(), null)
+                    FROM (VALUES ('EVENT_VIEW')) as rights (r)
+                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+                END IF;
+
+                IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'EXTERNAL_MESSAGE_PROCESS')) = true) THEN
+                    INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+                    SELECT rec.id, rights.r, tstzrange(now(), null)
+                    FROM (VALUES ('CASE_CREATE'), ('CASE_EDIT'), ('CONTACT_CREATE'), ('CONTACT_EDIT'), ('EVENT_CREATE'), ('EVENT_EDIT'), ('EVENTPARTICIPANT_CREATE'),
+                                 ('EVENTPARTICIPANT_EDIT'), ('SAMPLE_CREATE'), ('SAMPLE_EDIT'), ('PATHOGEN_TEST_CREATE'), ('PATHOGEN_TEST_EDIT'), ('PATHOGEN_TEST_DELETE'),
+                                 ('IMMUNIZATION_CREATE'), ('IMMUNIZATION_EDIT'), ('IMMUNIZATION_DELETE')) as rights (r)
+                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+                END IF;
+
+            END LOOP;
+    END;
+$$ LANGUAGE plpgsql;
+
+INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (497, '#5058 Implement user right dependencies - add missing required rights for default roles', false);
+
+-- 2022-08-04 #5058 Implement user right dependencies - add more missing required rights for default roles
+
+DO $$
+    DECLARE rec RECORD;
+    BEGIN
+        FOR rec IN SELECT id FROM userroles
+            LOOP
+                IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'CASE_DELETE')) = true) THEN
+                    INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+                    SELECT rec.id, rights.r, tstzrange(now(), null)
+                    FROM (VALUES ('THERAPY_VIEW'), ('CLINICAL_COURSE_VIEW')) as rights (r)
+                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+                END IF;
+
+                IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'PERFORM_BULK_OPERATIONS_EVENTPARTICIPANT')) = true) THEN
+                    INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+                    SELECT rec.id, rights.r, tstzrange(now(), null)
+                    FROM (VALUES ('EVENTPARTICIPANT_EDIT')) as rights (r)
+                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+                END IF;
+
+                IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'CASE_IMPORT')) = true) THEN
+                    INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+                    SELECT rec.id, rights.r, tstzrange(now(), null)
+                    FROM (VALUES ('CASE_VIEW')) as rights (r)
+                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+                END IF;
+
+                IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'CONTACT_IMPORT')) = true) THEN
+                    INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+                    SELECT rec.id, rights.r, tstzrange(now(), null)
+                    FROM (VALUES ('CONTACT_VIEW')) as rights (r)
+                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+                END IF;
+
+                IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'EVENT_IMPORT')) = true) THEN
+                    INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+                    SELECT rec.id, rights.r, tstzrange(now(), null)
+                    FROM (VALUES ('EVENT_VIEW')) as rights (r)
+                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+                END IF;
+
+                IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'EVENTPARTICIPANT_IMPORT')) = true) THEN
+                    INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+                    SELECT rec.id, rights.r, tstzrange(now(), null)
+                    FROM (VALUES ('EVENTPARTICIPANT_VIEW')) as rights (r)
+                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+                END IF;
+
+            END LOOP;
+    END;
+$$ LANGUAGE plpgsql;
+
+INSERT INTO schema_version (version_number, comment) VALUES (498, '#5058 Implement user right dependencies - add more missing required rights for default roles');
+
+-- 2022-08-10 S2S_deactivate share parameter 'share associated contacts' (for cases) #9146 - remove disabled feature messages
+ALTER TABLE sormastosormassharerequest DROP COLUMN shareassociatedcontactsdisabled;
+ALTER TABLE sormastosormassharerequest_history DROP COLUMN shareassociatedcontactsdisabled;
+
+INSERT INTO schema_version (version_number, comment) VALUES (499, 'S2S_deactivate share parameter ''share associated contacts'' (for cases) #9146 - remove disabled feature messages');
+
+-- 2022-08-09 Hide citizenship and country of birth #9598
+
+UPDATE person SET citizenship_id = NULL WHERE citizenship_id IS NOT NULL;
+UPDATE person SET birthcountry_id = NULL WHERE birthcountry_id IS NOT NULL;
+UPDATE person_history SET citizenship_id = NULL WHERE citizenship_id IS NOT NULL;
+UPDATE person_history SET birthcountry_id = NULL WHERE birthcountry_id IS NOT NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (500, 'Hide citizenship and country of birth #9598');
+
+-- 2022-08-08 Automatic deletion for S2S share info, origin and requests #8010
+ALTER TABLE immunization_history DROP CONSTRAINT fk_immunization_history_sormastosormasorigininfo_id;
+INSERT INTO schema_version (version_number, comment) VALUES (501, 'Automatic deletion for S2S share info, origin and requests #8010');
+
+-- 2022-08-11 User roles should have optional link to default user role #9645
+
+CREATE OR REPLACE FUNCTION add_column_if_not_exists(in_table TEXT, in_column TEXT, column_type TEXT, in_schema TEXT DEFAULT 'public') RETURNS BOOLEAN AS $_$
+BEGIN
+    PERFORM * FROM information_schema.columns WHERE table_name = in_table AND column_name = in_column AND table_schema = in_schema;
+    IF FOUND THEN
+        RETURN FALSE;
+    ELSE
+        EXECUTE format('ALTER TABLE %s ADD COLUMN %s %s', in_table, in_column, column_type);
+        RETURN TRUE;
+    END IF;
+END
+$_$ LANGUAGE plpgsql VOLATILE;
+
+DO $$ BEGIN
+   PERFORM add_column_if_not_exists( 'userroles', 'linkeddefaultuserrole', 'varchar(255)');
+   PERFORM add_column_if_not_exists( 'userroles_history', 'linkeddefaultuserrole', 'varchar(255)');
+END $$;
+
+INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (502, 'User roles should have optional link to default user role #9645', true);
+
+-- 2022-08-11 S2S_New Right_ S2S_Process #10084
+
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT userrole_id, 'SORMAS_TO_SORMAS_PROCESS' FROM userroles_userrights WHERE userright = 'SORMAS_TO_SORMAS_SHARE';
+
+INSERT INTO schema_version (version_number, comment) VALUES (503, 'S2S_New Right_ S2S_Process #10084');
+
+-- 2022-09-05 #8543 Add backend checks to access documents
+
+DO $$
+    DECLARE rec RECORD;
+    BEGIN
+        FOR rec IN SELECT id FROM userroles
+            LOOP
+                IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright in ('CASE_VIEW', 'CONTACT_VIEW', 'EVENT_VIEW', 'ACTION_EDIT', 'TRAVEL_ENTRY_VIEW'))) = true) THEN
+                    INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+                    SELECT rec.id, rights.r, tstzrange(now(), null)
+                    FROM (VALUES ('DOCUMENT_VIEW')) as rights (r)
+                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+                END IF;
+
+                IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright in ('CASE_EDIT', 'CONTACT_EDIT', 'EVENT_EDIT', 'ACTION_EDIT', 'TRAVEL_ENTRY_EDIT'))) = true) THEN
+                    INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+                    SELECT rec.id, rights.r, tstzrange(now(), null)
+                    FROM (VALUES ('DOCUMENT_UPLOAD')) as rights (r)
+                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+                END IF;
+
+                IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright in ('CASE_DELETE', 'CONTACT_DELETE', 'EVENT_DELETE', 'ACTION_DELETE', 'TRAVEL_ENTRY_DELETE'))) = true) THEN
+                    INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+                    SELECT rec.id, rights.r, tstzrange(now(), null)
+                    FROM (VALUES ('DOCUMENT_DELETE')) as rights (r)
+                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+                END IF;
+
+            END LOOP;
+    END;
+$$ LANGUAGE plpgsql;
+
+INSERT INTO schema_version (version_number, comment) VALUES (504, '#8543 Add backend checks to access documents');
+
+
+-- 2022-09-07 Add hash indices to improve getAllAfter fetch #9320
+-- Hint: You can use CREATE INDEX CONCURRENTLY IF NOT EXISTS ... if indices are created before update on running instance to not block other transactions.
+-- DeletableAdo
+CREATE INDEX IF NOT EXISTS idx_campaigns_changedate_uuid_id ON campaigns USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_cases_changedate_uuid_id ON cases USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_contact_changedate_uuid_id ON contact USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_eventparticipant_changedate_uuid_id ON eventparticipant USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_events_changedate_uuid_id ON events USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_immunization_changedate_uuid_id ON immunization USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_travelentry_changedate_uuid_id ON travelentry USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_pathogentest_changedate_uuid_id ON pathogentest USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_samples_changedate_uuid_id ON samples USING btree (changedate ASC, uuid ASC, id ASC);
+-- InfrastructureAdo
+CREATE INDEX IF NOT EXISTS idx_areas_changedate_uuid_id ON areas USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_community_changedate_uuid_id ON community USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_continent_changedate_uuid_id ON continent USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_country_changedate_uuid_id ON country USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_district_changedate_uuid_id ON district USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_facility_changedate_uuid_id ON facility USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_pointofentry_changedate_uuid_id ON pointofentry USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_region_changedate_uuid_id ON region USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_subcontinent_changedate_uuid_id ON subcontinent USING btree (changedate ASC, uuid ASC, id ASC);
+-- BaseAdo
+CREATE INDEX IF NOT EXISTS idx_action_changedate_uuid_id ON action USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_additionaltest_changedate_uuid_id ON additionaltest USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_aggregatereport_changedate_uuid_id ON aggregatereport USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_campaigndiagramdefinition_changedate_uuid_id ON campaigndiagramdefinition USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_campaignformdata_changedate_uuid_id ON campaignformdata USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_campaignformmeta_changedate_uuid_id ON campaignformmeta USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_clinicalvisit_changedate_uuid_id ON clinicalvisit USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_customizableenumvalue_changedate_uuid_id ON customizableenumvalue USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_diseaseconfiguration_changedate_uuid_id ON diseaseconfiguration USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_documents_changedate_uuid_id ON documents USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_eventgroups_changedate_uuid_id ON eventgroups USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_externalmessage_changedate_uuid_id ON externalmessage USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_externalshareinfo_changedate_uuid_id ON externalshareinfo USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_featureconfiguration_changedate_uuid_id ON featureconfiguration USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_outbreak_changedate_uuid_id ON outbreak USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_person_changedate_uuid_id ON person USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_populationdata_changedate_uuid_id ON populationdata USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_prescription_changedate_uuid_id ON prescription USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_sharerequestinfo_changedate_uuid_id ON sharerequestinfo USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_sormastosormasorigininfo_changedate_uuid_id ON sormastosormasorigininfo USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_sormastosormasshareinfo_changedate_uuid_id ON sormastosormasshareinfo USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_sormastosormassharerequest_changedate_uuid_id ON sormastosormassharerequest USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_task_changedate_uuid_id ON task USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_treatment_changedate_uuid_id ON treatment USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_userroles_changedate_uuid_id ON userroles USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_users_changedate_uuid_id ON users USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_weeklyreportentry_changedate_uuid_id ON weeklyreportentry USING btree (changedate ASC, uuid ASC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_weeklyreport_changedate_uuid_id ON weeklyreport USING btree (changedate ASC, uuid ASC, id ASC);
+
+INSERT INTO schema_version (version_number, comment) VALUES (505, 'Add hash indices to improve getAllAfter fetch #9320');
+
+
+-- 2022-09-27 S2S_New Right_ S2S_Process #10084 - revoke S2S rights
+
+DELETE FROM userroles_userrights where userright = 'SORMAS_TO_SORMAS_SHARE' or userright = 'SORMAS_TO_SORMAS_PROCESS';
+
+INSERT INTO schema_version (version_number, comment) VALUES (506, 'S2S_New Right_ S2S_Process #10084 - revoke S2S rights');
+
+
+-- 2022-08-11 Introduce sample reports #9109
+CREATE TABLE samplereport
+(
+    id                      bigint      not null,
+    uuid                    varchar(36) not null unique,
+    changedate              timestamp   not null,
+    creationdate            timestamp   not null,
+    sys_period              tstzrange   not null,
+    change_user_id          BIGINT,
+    sampledatetime          timestamp,
+    samplereceiveddate      timestamp,
+    labsampleid             text,
+    samplematerial          varchar(255),
+    samplematerialtext      varchar(255),
+    specimencondition       varchar(255),
+    sampleoveralltestresult varchar(255),
+    sample_id               bigint,
+    labmessage_id           bigint      not null,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE samplereport_history (LIKE samplereport);
+
+ALTER TABLE samplereport ADD CONSTRAINT fk_change_user_id FOREIGN KEY (change_user_id) REFERENCES users (id);
+
+CREATE TRIGGER versioning_trigger
+    BEFORE INSERT OR UPDATE ON samplereport
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'samplereport_history', true);
+
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON samplereport
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('samplereport_history', 'id');
+
+ALTER TABLE samplereport
+    OWNER TO sormas_user;
+ALTER TABLE samplereport_history
+    OWNER TO sormas_user;
+
+
+ALTER TABLE samplereport
+    ADD CONSTRAINT fk_samplereport_labmessage_id FOREIGN KEY (labmessage_id) REFERENCES externalmessage (id);
+ALTER TABLE samplereport
+    ADD CONSTRAINT fk_samplereport_sample_id FOREIGN KEY (sample_id) REFERENCES samples (id);
+
+DO $$
+    DECLARE
+        rec RECORD;
+    BEGIN
+        FOR rec IN SELECT id,
+                          uuid,
+                          sampledatetime,
+                          samplereceiveddate,
+                          labsampleid,
+                          samplematerial,
+                          samplematerialtext,
+                          specimencondition,
+                          sampleoveralltestresult
+                   FROM externalmessage
+            LOOP
+                INSERT INTO samplereport(id, uuid, changedate, creationdate, sampledatetime, samplereceiveddate,
+                                         labsampleid, samplematerial, samplematerialtext, specimencondition,
+                                         sampleoveralltestresult, labmessage_id)
+                VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), rec.sampledatetime,
+                        rec.samplereceiveddate, rec.labsampleid, rec.samplematerial, rec.samplematerialtext,
+                        rec.specimencondition, rec.sampleoveralltestresult, rec.id);
+            END LOOP;
+    END;
+    $$ LANGUAGE plpgsql;
+
+ALTER TABLE externalmessage
+    DROP COLUMN sampledatetime,
+    DROP COLUMN samplereceiveddate,
+    DROP COLUMN labsampleid,
+    DROP COLUMN samplematerial,
+    DROP COLUMN samplematerialtext,
+    DROP COLUMN specimencondition,
+    DROP COLUMN sampleoveralltestresult,
+    DROP COLUMN sample_id;
+
+ALTER TABLE externalmessage_history
+    DROP COLUMN sampledatetime,
+    DROP COLUMN samplereceiveddate,
+    DROP COLUMN labsampleid,
+    DROP COLUMN samplematerial,
+    DROP COLUMN samplematerialtext,
+    DROP COLUMN specimencondition,
+    DROP COLUMN sampleoveralltestresult,
+    DROP COLUMN sample_id;
+
+ALTER TABLE testreport
+    ADD COLUMN samplereport_id bigint;
+ALTER TABLE testreport_history
+    ADD COLUMN samplereport_id bigint;
+
+ALTER TABLE testreport
+    ADD CONSTRAINT fk_testreport_samplereport_id FOREIGN KEY (samplereport_id) REFERENCES samplereport (id);
+
+UPDATE testreport SET samplereport_id = s.id FROM samplereport s WHERE testreport.labmessage_id = s.labmessage_id;
+
+ALTER TABLE testreport
+    ALTER COLUMN samplereport_id SET not null;
+
+ALTER TABLE testreport
+    DROP COLUMN labmessage_id;
+ALTER TABLE testreport_history
+    DROP COLUMN labmessage_id;
+
+INSERT INTO schema_version (version_number, comment) VALUES (507, 'Introduce sample reports #9109');
+
+-- 2022-10-12 [S2S] Add a duplicate detection warning when sharing a case with another instance #9527
+
+ALTER TABLE sormastosormasorigininfo ADD COLUMN pseudonymizeddata BOOLEAN DEFAULT false;
+ALTER TABLE sormastosormasorigininfo_history ADD COLUMN pseudonymizeddata BOOLEAN DEFAULT false;
+
+INSERT INTO schema_version (version_number, comment) VALUES (508, '[S2S] Add a duplicate detection warning when sharing a case with another instance #9527');
+
+-- 2022-10-13 S2S_case editable on two systems, behavior of jurisdiction level wrong if share is without ownership #10553
+
+ALTER TABLE sharerequestinfo ADD COLUMN ownershiphandedover BOOLEAN DEFAULT false;
+ALTER TABLE sharerequestinfo_history ADD COLUMN ownershiphandedover BOOLEAN DEFAULT false;
+
+-- set ownershiphandedover to true on latest requests where the share info has ownershiphandedover = true
+DO $$
+    DECLARE rec RECORD;
+    BEGIN
+        FOR rec IN SELECT si.id FROM sharerequestinfo si
+                                         JOIN sharerequestinfo_shareinfo ss ON si.id = ss.sharerequestinfo_id
+                                         JOIN sormastosormasshareinfo s ON s.id = ss.shareinfo_id
+                   WHERE
+                           s.ownershiphandedover = true AND
+                           si.creationdate = (SELECT max(creationdate) FROM sharerequestinfo sri
+                                                JOIN sharerequestinfo_shareinfo srisi ON sri.id = srisi.sharerequestinfo_id
+                                              WHERE srisi.shareinfo_id = s.id
+                                              GROUP BY srisi.shareinfo_id)
+            LOOP
+                UPDATE sharerequestinfo SET ownershiphandedover = true WHERE id = rec.id;
+            END LOOP;
+    END;
+$$ LANGUAGE plpgsql;
+
+INSERT INTO schema_version (version_number, comment) VALUES (509, 'S2S_case editable on two systems, behavior of jurisdiction level wrong if share is without ownership #10553');
+
+-- 2022-10-10 [DEMIS2SORMAS] Adjust the mapping for the disease in external messages #9733
+
+ALTER TABLE externalmessage RENAME COLUMN testeddisease to disease;
+ALTER TABLE externalmessage_history RENAME COLUMN testeddisease to disease;
+
+INSERT INTO schema_version (version_number, comment) VALUES (510, '[DEMIS2SORMAS] Adjust the mapping for the disease in external messages #9733');
+
+ALTER TABLE surveillancereports ADD COLUMN externalid varchar(255);
+ALTER TABLE surveillancereports_history ADD COLUMN externalid varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (511, 'Add externalId to surveillance reports #6621');
+
+-- 2022-11-02 Automatic deletion based on end of process date #8996
+
+UPDATE campaigns SET endofprocessingdate = changedate WHERE endofprocessingdate IS NULL AND archived = true;
+UPDATE cases SET endofprocessingdate = changedate WHERE endofprocessingdate IS NULL AND archived = true;
+UPDATE contact SET endofprocessingdate = changedate WHERE endofprocessingdate IS NULL AND archived = true;
+UPDATE events SET endofprocessingdate = changedate WHERE endofprocessingdate IS NULL AND archived = true;
+UPDATE eventparticipant SET endofprocessingdate = changedate WHERE endofprocessingdate IS NULL AND archived = true;
+UPDATE immunization SET endofprocessingdate = changedate WHERE endofprocessingdate IS NULL AND archived = true;
+UPDATE travelentry SET endofprocessingdate = changedate WHERE endofprocessingdate IS NULL AND archived = true;
+
+INSERT INTO schema_version (version_number, comment) VALUES (512, 'Automatic deletion based on end of process date #8996');
+
+-- 2022-10-25 [Merging] Merge persons via bulk actions [5] #5606
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT id, 'PERSON_MERGE' FROM public.userroles WHERE userroles.linkeddefaultuserrole = 'ADMIN';
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT id, 'PERSON_MERGE' FROM public.userroles WHERE userroles.linkeddefaultuserrole = 'NATIONAL_USER';
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT id, 'PERSON_MERGE' FROM public.userroles WHERE userroles.linkeddefaultuserrole = 'ADMIN_SUPERVISOR';
+
+INSERT INTO schema_version (version_number, comment) VALUES (513, '[Merging] Merge persons via bulk actions [5] #5606');
+
+-- 2022-11-7 Add the user who assigned the task to task entity #4621
+ALTER  TABLE task ADD COLUMN assignedbyuser_id bigint;
+ALTER  TABLE task_history ADD COLUMN assignedbyuser_id bigint;
+
+INSERT INTO schema_version (version_number, comment) VALUES (514, 'Add the user who assigned the task to task entity #4621');
+
+-- 2022-11-30 Adjust the processing of external messages to create surveillance reports #9680
+ALTER TABLE externalmessage ADD COLUMN surveillancereport_id bigint;
+ALTER TABLE externalmessage ADD CONSTRAINT fk_externalmessage_surveillancereport_id FOREIGN KEY (surveillancereport_id) REFERENCES surveillancereports (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE externalmessage_history ADD COLUMN surveillancereport_id bigint;
+
+DO $$
+    DECLARE rec RECORD;
+        DECLARE sr_id bigint;
+    BEGIN
+        FOR rec IN SELECT DISTINCT ON (em.id) em.id as emid, em.caze_id AS emcaseid, s.associatedcase_id AS scaseid, messagedatetime, em.type FROM externalmessage em JOIN samplereport sr ON sr.labmessage_id = em.id JOIN samples s ON s.id = sr.sample_id WHERE status = 'PROCESSED' AND (s.associatedcase_id IS NOT NULL OR em.caze_id IS NOT NULL)
+            LOOP
+                INSERT INTO surveillancereports (id, uuid, changedate, creationdate, reportdate, caze_id, reportingtype) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), rec.messagedatetime, CASE WHEN rec.emcaseid IS NOT NULL THEN rec.emcaseid ELSE rec.scaseid END, CASE WHEN rec.type = 'LAB_MESSAGE' THEN 'LABORATORY' ELSE 'DOCTOR' END) RETURNING id INTO sr_id;
+                UPDATE externalmessage SET surveillancereport_id = sr_id WHERE externalmessage.id = rec.emid;
+            END LOOP;
+    END;
+$$ LANGUAGE plpgsql;
+
+ALTER TABLE externalmessage DROP COLUMN caze_id;
+ALTER TABLE externalmessage_history DROP COLUMN caze_id;
+
+INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (515, 'Adjust the processing of external messages to create surveillance reports #9680', true);
+
+-- 2022-12-05 Fix upgradeNeeded flag set on schema version 501 #11086
+
+UPDATE schema_version SET upgradeNeeded = false WHERE version_number = 515;
+
+INSERT INTO schema_version (version_number, comment) VALUES (516, 'Fix upgradeNeeded flag set on schema version 501 #11086');
+
+-- 2022-12-05 [DEMIS2SORMAS] Add a Field for the NotificationBundleId to the External Message and map it when processing #10826
+ALTER TABLE externalmessage ADD COLUMN reportmessageid varchar(255);
+ALTER TABLE externalmessage_history ADD COLUMN reportmessageid varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (517, '[DEMIS2SORMAS] Add a Field for the NotificationBundleId to the External Message and map it when processing #10826');
+
+-- 2022-12-08 Add task archive user right #4060
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT id, 'TASK_ARCHIVE' FROM public.userroles WHERE userroles.linkeddefaultuserrole = 'ADMIN';
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT id, 'TASK_ARCHIVE' FROM public.userroles WHERE userroles.linkeddefaultuserrole = 'NATIONAL_USER';
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT id, 'TASK_ARCHIVE' FROM public.userroles WHERE userroles.linkeddefaultuserrole = 'ADMIN_SUPERVISOR';
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT id, 'TASK_ARCHIVE' FROM public.userroles WHERE userroles.linkeddefaultuserrole = 'SURVEILLANCE_SUPERVISOR';
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT id, 'TASK_ARCHIVE' FROM public.userroles WHERE userroles.linkeddefaultuserrole = 'CONTACT_SUPERVISOR';
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT id, 'TASK_ARCHIVE' FROM public.userroles WHERE userroles.linkeddefaultuserrole = 'CASE_SUPERVISOR';
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT id, 'TASK_ARCHIVE' FROM public.userroles WHERE userroles.linkeddefaultuserrole = 'NATIONAL_CLINICIAN';
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT id, 'TASK_ARCHIVE' FROM public.userroles WHERE userroles.linkeddefaultuserrole = 'POE_SUPERVISOR';
+INSERT INTO userroles_userrights (userrole_id, userright) SELECT id, 'TASK_ARCHIVE' FROM public.userroles WHERE userroles.linkeddefaultuserrole = 'POE_NATIONAL_USER';
+
+INSERT INTO schema_version (version_number, comment) VALUES (518, 'Add task archive user right #4060');
+
+-- 2022-12-08 S2S Surveillance Reports should be shareable (along with possibly attached External Messages) #10247
+ALTER TABLE sormastosormasorigininfo ADD COLUMN withsurveillancereports boolean DEFAULT false;
+ALTER TABLE sormastosormasorigininfo_history ADD COLUMN withsurveillancereports boolean DEFAULT false;
+ALTER TABLE sharerequestinfo ADD COLUMN withsurveillancereports boolean DEFAULT false;
+ALTER TABLE sharerequestinfo_history ADD COLUMN withsurveillancereports boolean DEFAULT false;
+ALTER TABLE sormastosormasshareinfo ADD COLUMN surveillancereport_id bigint;
+ALTER TABLE sormastosormasshareinfo ADD CONSTRAINT fk_sormastosormasshareinfo_surveillancereport_id FOREIGN KEY (surveillancereport_id) REFERENCES surveillancereports (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE sormastosormasshareinfo_history ADD COLUMN surveillancereport_id bigint;
+
+ALTER TABLE surveillancereports ADD COLUMN sormastosormasorigininfo_id bigint;
+ALTER TABLE surveillancereports ADD CONSTRAINT fk_surveillancereports_sormastosormasorigininfo_id FOREIGN KEY (sormastosormasorigininfo_id) REFERENCES sormastosormasorigininfo (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE surveillancereports_history ADD COLUMN sormastosormasorigininfo_id bigint;
+
+ALTER TABLE surveillancereports RENAME COLUMN creatinguser_id to reportinguser_id;
+ALTER TABLE surveillancereports_history RENAME COLUMN creatinguser_id to reportinguser_id;
+
+INSERT INTO schema_version (version_number, comment) VALUES (519, 'S2S Surveillance Reports should be shareable (along with possibly attached External Messages) #10247');
+
+-- 2023-01-05 Add max change date period property to limited synchronization feature #7305
+UPDATE featureconfiguration SET properties = properties::jsonb || json_build_object('MAX_CHANGE_DATE_PERIOD',-1)::jsonb WHERE featuretype = 'LIMITED_SYNCHRONIZATION';
+
+INSERT INTO schema_version (version_number, comment) VALUES (520, 'Add max change date period property to limited synchronization feature #7305');
+
+-- 2023-02-07 Improve performance or case duplicate merging lists #9054
+CREATE INDEX IF NOT EXISTS idx_cases_creationdate_desc ON cases USING btree (creationdate DESC);
+
+INSERT INTO schema_version (version_number, comment) VALUES (521, 'Add index to improve performance or case duplicate merging lists #9054');
+
+-- 2023-02-20 Limit lists for duplicate merging of contacts and improve query performance #11469
+CREATE INDEX idx_sharerequestinfo_shareinfo_requestinfo_id ON sharerequestinfo_shareinfo(sharerequestinfo_id);
+CREATE INDEX idx_sharerequestinfo_shareinfo_shareinfo_id ON sharerequestinfo_shareinfo(shareinfo_id);
+CREATE INDEX idx_contact_sormastosormasorigininfo_id ON contact(sormastosormasorigininfo_id);
+CREATE INDEX idx_contact_creation_date_and_deleted ON public.contact USING btree (deleted ASC NULLS FIRST, creationdate DESC NULLS FIRST);
+
+INSERT INTO schema_version (version_number, comment) VALUES (522, 'Limit lists for duplicate merging of contacts and improve query performance #11469');
+
+-- 2023-02-28 Create basic samples dashboard #10721
+DELETE FROM featureconfiguration where featuretype = 'DASHBOARD';
+CREATE INDEX idx_sample_pathogenTestResult ON samples USING btree (pathogenTestResult ASC NULLS LAST);
+INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+SELECT userrole_id, 'DASHBOARD_SAMPLES_VIEW', tstzrange(now(), null)
+FROM userroles_userrights uu
+WHERE uu.userright = 'DASHBOARD_SURVEILLANCE_VIEW'
+  AND exists(SELECT uu2.userrole_id
+             FROM userroles_userrights uu2
+             WHERE uu2.userrole_id = uu.userrole_id
+               AND uu2.userright = 'SAMPLE_VIEW');
+
+INSERT INTO schema_version (version_number, comment) VALUES (523, 'Create basic samples dashboard #10721');
+
+-- 2023-03-06 Add diseaseVariant to ExternalMessages #11449
+ALTER TABLE externalmessage ADD COLUMN diseasevariant varchar(255);
+ALTER TABLE externalmessage ADD COLUMN diseasevariantdetails varchar(512);
+ALTER TABLE externalmessage_history ADD COLUMN diseasevariant varchar(255);
+ALTER TABLE externalmessage_history ADD COLUMN diseasevariantdetails varchar(512);
+
+INSERT INTO schema_version (version_number, comment) VALUES (524, 'Add diseaseVariant to ExternalMessages #11449');
+
+-- 2023-03-15 Add dateOfResult to TestReports #11453
+ALTER TABLE testreport ADD COLUMN dateofresult varchar(255);
+ALTER TABLE testreport_history ADD COLUMN dateofresult varchar(255);
+
+INSERT INTO schema_version (version_number, comment) VALUES (525, 'Add dateOfResult to TestReports #11453');
+
+-- 2023-03-27 Limit case duplicate merging comparison based on creation date and archived status #11465
+-- the index idx_cases_disease was remove to improve merge duplicate cases query this will force to use idx_cases_creationdate_desc in the query plan which is a lot more efficient
+DROP INDEX idx_cases_disease;
+
+INSERT INTO schema_version (version_number, comment) VALUES (526, 'Limit case duplicate merging comparison based on creation date and archived status #11465');
+
+-- 2023-03-31 [DEMIS2SORMAS] Introduce a messages content search field #7647
+ALTER TABLE externalmessage ADD COLUMN tsv tsvector;
+ALTER TABLE externalmessage_history ADD COLUMN tsv tsvector;
+UPDATE externalmessage SET tsv = to_tsvector('simple', unaccent(regexp_replace(externalmessagedetails,  E'[<>]', ' ', 'g')));
+CREATE INDEX idx_externalmessage_tsv ON externalmessage USING GIN (tsv);
+CREATE OR REPLACE FUNCTION externalmessage_tsv_update() RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'INSERT' OR  TG_OP = 'UPDATE' THEN
+        new.tsv = to_tsvector('simple', unaccent(regexp_replace(new.externalmessagedetails,  E'[<>]', ' ', 'g')));
+    END IF;
+
+    RETURN new;
+END
+$$ LANGUAGE 'plpgsql';
+CREATE TRIGGER externalmessage_tsv_update BEFORE INSERT OR UPDATE OF externalmessagedetails ON externalmessage
+    FOR EACH ROW EXECUTE PROCEDURE externalmessage_tsv_update();
+
+INSERT INTO schema_version (version_number, comment) VALUES (527, '[DEMIS2SORMAS] Introduce a messages content search field #7647');
+
+-- 2023-06-15 #12008 Add EVENTGROUP_LINK user right dependency for users with EVENTGROUP_CREATE user rights
+
+DO $$
+    DECLARE rec RECORD;
+    BEGIN
+       FOR rec IN SELECT id FROM userroles
+           LOOP
+                IF ((SELECT exists(SELECT userrole_id FROM userroles_userrights where userrole_id = rec.id and userright = 'EVENTGROUP_CREATE')) = true) THEN
+                    INSERT INTO userroles_userrights (userrole_id, userright, sys_period)
+                    SELECT rec.id, rights.r, tstzrange(now(), null)
+                    FROM (VALUES ('EVENTGROUP_LINK')) as rights (r)
+                    WHERE NOT EXISTS(SELECT uur.userrole_id FROM userroles_userrights uur where uur.userrole_id = rec.id and uur.userright = rights.r);
+                END IF;
+
+           END LOOP;
+    END;
+$$ LANGUAGE plpgsql;
+
+INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (528, '#12008 Add EVENTGROUP_LINK user right dependency for users with EVENTGROUP_CREATE user rights', false);
+
+-- 2023-05-10 Created a new Environment entity #11796
+CREATE TABLE environments(
+    id bigint not null,
+    uuid varchar(36) not null unique,
+    changedate timestamp not null,
+    creationdate timestamp not null,
+    change_user_id bigint,
+    reportdate timestamp,
+    reportinguser_id bigint,
+    environmentname text,
+    description text,
+    externalid varchar(512),
+    responsibleuser_id bigint,
+    investigationstatus varchar(255),
+    environmentmedia varchar(255),
+    watertype varchar(255),
+    otherwatertype text,
+    infrastructuredetails varchar(255),
+    otherinfrastructuredetails text,
+    wateruse json,
+    otherwateruse text,
+    location_id bigint,
+    deleted boolean DEFAULT false,
+    deletionreason varchar(255),
+    otherdeletionreason text,
+    archived boolean DEFAULT false,
+    archiveundonereason varchar(512),
+    endofprocessingdate timestamp without time zone,
+    sys_period tstzrange not null,
+    primary key(id)
+);
+
+ALTER TABLE environments OWNER TO sormas_user;
+ALTER TABLE environments ADD CONSTRAINT fk_change_user_id FOREIGN KEY (change_user_id) REFERENCES users (id);
+ALTER TABLE environments ADD CONSTRAINT fk_environments_reportinguser_id FOREIGN KEY (reportinguser_id) REFERENCES users(id);
+ALTER TABLE environments ADD CONSTRAINT fk_environments_responsibleuser_id FOREIGN KEY (responsibleuser_id) REFERENCES users(id);
+ALTER TABLE environments ADD CONSTRAINT fk_environments_location_id FOREIGN KEY (location_id) REFERENCES location(id);
+CREATE TABLE environments_history (LIKE environments);
+CREATE TRIGGER versioning_trigger BEFORE INSERT OR UPDATE ON environments
+    FOR EACH ROW EXECUTE PROCEDURE versioning('sys_period', 'environments_history', true);
+CREATE TRIGGER delete_history_trigger
+    AFTER DELETE ON environments
+    FOR EACH ROW EXECUTE PROCEDURE delete_history_trigger('environments_history', 'id');
+ALTER TABLE environments_history OWNER TO sormas_user;
+ALTER TABLE environments ALTER COLUMN wateruse set DATA TYPE jsonb using wateruse::jsonb;
+ALTER TABLE environments_history ALTER COLUMN wateruse set DATA TYPE jsonb using wateruse::jsonb;
+
+INSERT INTO schema_version (version_number, comment) VALUES (529, 'Created a new Environment entity #11796');
+
+-- 2023-06-14 Add environmental user rights and default user #11572
+INSERT INTO userroles (id, uuid, creationdate, changedate, caption, linkeddefaultuserrole) VALUES (nextval('entity_seq'), generate_base32_uuid(), now(), now(), 'ENVIRONMENTAL_SURVEILLANCE_USER', 'ENVIRONMENTAL_SURVEILLANCE_USER');
+
+INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (530, 'Add environmental user rights and default user #11572', true);
+
+-- 2023-07-18 Add ct value fields to pathogen tests and test reports #12314
+ALTER TABLE pathogentest ADD COLUMN ctvaluee real;
+ALTER TABLE pathogentest ADD COLUMN ctvaluen real;
+ALTER TABLE pathogentest ADD COLUMN ctvaluerdrp real;
+ALTER TABLE pathogentest ADD COLUMN ctvalues real;
+ALTER TABLE pathogentest ADD COLUMN ctvalueorf1 real;
+ALTER TABLE pathogentest ADD COLUMN ctvaluerdrps real;
+ALTER TABLE pathogentest_history ADD COLUMN ctvaluee real;
+ALTER TABLE pathogentest_history ADD COLUMN ctvaluen real;
+ALTER TABLE pathogentest_history ADD COLUMN ctvaluerdrp real;
+ALTER TABLE pathogentest_history ADD COLUMN ctvalues real;
+ALTER TABLE pathogentest_history ADD COLUMN ctvalueorf1 real;
+ALTER TABLE pathogentest_history ADD COLUMN ctvaluerdrps real;
+
+ALTER TABLE testreport ADD COLUMN cqvalue real;
+ALTER TABLE testreport ADD COLUMN ctvaluee real;
+ALTER TABLE testreport ADD COLUMN ctvaluen real;
+ALTER TABLE testreport ADD COLUMN ctvaluerdrp real;
+ALTER TABLE testreport ADD COLUMN ctvalues real;
+ALTER TABLE testreport ADD COLUMN ctvalueorf1 real;
+ALTER TABLE testreport ADD COLUMN ctvaluerdrps real;
+ALTER TABLE testreport_history ADD COLUMN cqvalue real;
+ALTER TABLE testreport_history ADD COLUMN ctvaluee real;
+ALTER TABLE testreport_history ADD COLUMN ctvaluen real;
+ALTER TABLE testreport_history ADD COLUMN ctvaluerdrp real;
+ALTER TABLE testreport_history ADD COLUMN ctvalues real;
+ALTER TABLE testreport_history ADD COLUMN ctvalueorf1 real;
+ALTER TABLE testreport_history ADD COLUMN ctvaluerdrps real;
+
+INSERT INTO schema_version (version_number, comment) VALUES (531, 'Add ct value fields to pathogen tests and test reports #12314');
+
+-- 2023-07-19 Add prescriber fields to pathogen tests and test reports #12318
+ALTER TABLE pathogentest ADD COLUMN prescriberphysiciancode text;
+ALTER TABLE pathogentest ADD COLUMN prescriberfirstname text;
+ALTER TABLE pathogentest ADD COLUMN prescriberlastname text;
+ALTER TABLE pathogentest ADD COLUMN prescriberphonenumber text;
+ALTER TABLE pathogentest ADD COLUMN prescriberaddress text;
+ALTER TABLE pathogentest ADD COLUMN prescriberpostalcode text;
+ALTER TABLE pathogentest ADD COLUMN prescribercity text;
+ALTER TABLE pathogentest ADD COLUMN prescribercountry_id bigint;
+ALTER TABLE pathogentest_history ADD COLUMN prescriberphysiciancode text;
+ALTER TABLE pathogentest_history ADD COLUMN prescriberfirstname text;
+ALTER TABLE pathogentest_history ADD COLUMN prescriberlastname text;
+ALTER TABLE pathogentest_history ADD COLUMN prescriberphonenumber text;
+ALTER TABLE pathogentest_history ADD COLUMN prescriberaddress text;
+ALTER TABLE pathogentest_history ADD COLUMN prescriberpostalcode text;
+ALTER TABLE pathogentest_history ADD COLUMN prescribercity text;
+ALTER TABLE pathogentest_history ADD COLUMN prescribercountry_id bigint;
+ALTER TABLE pathogentest ADD CONSTRAINT fk_pathogentest_prescribercountry_id FOREIGN KEY (prescribercountry_id) REFERENCES country (id);
+
+ALTER TABLE testreport ADD COLUMN prescriberphysiciancode text;
+ALTER TABLE testreport ADD COLUMN prescriberfirstname text;
+ALTER TABLE testreport ADD COLUMN prescriberlastname text;
+ALTER TABLE testreport ADD COLUMN prescriberphonenumber text;
+ALTER TABLE testreport ADD COLUMN prescriberaddress text;
+ALTER TABLE testreport ADD COLUMN prescriberpostalcode text;
+ALTER TABLE testreport ADD COLUMN prescribercity text;
+ALTER TABLE testreport ADD COLUMN prescribercountry_id bigint;
+ALTER TABLE testreport_history ADD COLUMN prescriberphysiciancode text;
+ALTER TABLE testreport_history ADD COLUMN prescriberfirstname text;
+ALTER TABLE testreport_history ADD COLUMN prescriberlastname text;
+ALTER TABLE testreport_history ADD COLUMN prescriberphonenumber text;
+ALTER TABLE testreport_history ADD COLUMN prescriberaddress text;
+ALTER TABLE testreport_history ADD COLUMN prescriberpostalcode text;
+ALTER TABLE testreport_history ADD COLUMN prescribercity text;
+ALTER TABLE testreport_history ADD COLUMN prescribercountry_id bigint;
+ALTER TABLE testreport ADD CONSTRAINT fk_testreport_prescribercountry_id FOREIGN KEY (prescribercountry_id) REFERENCES country (id);
+
+INSERT INTO schema_version (version_number, comment) VALUES (532, 'Add prescriber fields to pathogen tests and test reports #12318');
+
+-- 2023-07-26 Add the 'See personal data inside jurisdiction' user right to the default Environmental Surveillance User #12284
+
+DO $$
+    DECLARE ur RECORD;
+    BEGIN
+        FOR ur IN SELECT id FROM userroles WHERE linkeddefaultuserrole = 'ENVIRONMENTAL_SURVEILLANCE_USER'
+            LOOP
+                IF NOT EXISTS (SELECT 1 FROM userroles_userrights WHERE userrole_id = ur.id AND userright = 'SEE_PERSONAL_DATA_IN_JURISDICTION') THEN
+                    INSERT INTO userroles_userrights (userrole_id, userright) VALUES (ur.id, 'SEE_PERSONAL_DATA_IN_JURISDICTION');
+                    UPDATE userroles set changedate = now() WHERE id = ur.id AND linkeddefaultuserrole = 'ENVIRONMENTAL_SURVEILLANCE_USER';
+                END IF;
+            END LOOP;
+    END;
+$$ LANGUAGE plpgsql;
+
+INSERT INTO schema_version (version_number, comment) VALUES (533, 'Add the ''See personal data inside jurisdiction'' user right to the default Environmental Surveillance User #12284');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
-
-

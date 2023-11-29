@@ -7,8 +7,9 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import de.symeda.sormas.api.externalmessage.ExternalMessageDto;
-import de.symeda.sormas.api.sormastosormas.externalmessage.SormasToSormasExternalMessageDto;
-import de.symeda.sormas.api.sormastosormas.sharerequest.PreviewNotImplementedDto;
+import de.symeda.sormas.api.i18n.Captions;
+import de.symeda.sormas.api.sormastosormas.entities.externalmessage.SormasToSormasExternalMessageDto;
+import de.symeda.sormas.api.sormastosormas.share.incoming.PreviewNotImplementedDto;
 import de.symeda.sormas.api.sormastosormas.validation.ValidationErrors;
 import de.symeda.sormas.backend.sormastosormas.data.infra.InfrastructureValidator;
 import de.symeda.sormas.backend.sormastosormas.data.validation.SormasToSormasDtoValidator;
@@ -30,7 +31,23 @@ public class SormasToSormasExternalMessageDtoValidator
 	@Override
 	public ValidationErrors validate(SormasToSormasExternalMessageDto sharedData, ValidationDirection direction) {
 		ExternalMessageDto externalMessage = sharedData.getEntity();
-		return new ValidationErrors(buildExternalMessageValidationGroupName(externalMessage));
+		ValidationErrors validationErrors = new ValidationErrors(buildExternalMessageValidationGroupName(externalMessage));
+
+		final String groupNameTag = Captions.ExternalMessage;
+		infraValidator
+			.validateCountry(externalMessage.getPersonCountry(), groupNameTag, validationErrors, externalMessage::setPersonCountry, direction);
+		if (externalMessage.getSampleReports() != null) {
+			externalMessage.getSampleReports().forEach(s -> {
+				if (s.getTestReports() != null) {
+					s.getTestReports()
+						.forEach(
+							t -> infraValidator
+								.validateCountry(t.getPrescriberCountry(), groupNameTag, validationErrors, t::setPrescriberCountry, direction));
+				}
+			});
+		}
+
+		return validationErrors;
 	}
 
 	@Override

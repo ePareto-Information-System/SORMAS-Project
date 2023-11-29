@@ -1,5 +1,7 @@
 package de.symeda.sormas.backend.clinicalcourse;
 
+import static java.util.Objects.isNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -39,6 +41,7 @@ import de.symeda.sormas.api.symptoms.SymptomsDto;
 import de.symeda.sormas.api.symptoms.SymptomsHelper;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.SortProperty;
+import de.symeda.sormas.backend.FacadeHelper;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.caze.CaseFacadeEjb.CaseFacadeEjbLocal;
 import de.symeda.sormas.backend.caze.CaseQueryContext;
@@ -226,9 +229,11 @@ public class ClinicalVisitFacadeEjb implements ClinicalVisitFacade {
 		return saveClinicalVisit(clinicalVisit, caseUuid, true);
 	}
 
-	@RightsAllowed({
-		UserRight._CLINICAL_VISIT_CREATE,
-		UserRight._CLINICAL_VISIT_EDIT })
+	@RightsAllowed(UserRight._CASE_CREATE)
+	public ClinicalVisitDto saveClinicalVisitForMergedCases(ClinicalVisitDto clinicalVisit, String caseUuid, boolean handleChanges) {
+		return saveClinicalVisit(clinicalVisit, caseUuid, handleChanges);
+	}
+
 	public ClinicalVisitDto saveClinicalVisit(ClinicalVisitDto clinicalVisit, String caseUuid, boolean handleChanges) {
 		SymptomsHelper.updateIsSymptomatic(clinicalVisit.getSymptoms());
 
@@ -249,6 +254,19 @@ public class ClinicalVisitFacadeEjb implements ClinicalVisitFacade {
 		}
 
 		return convertToDto(entity, Pseudonymizer.getDefault(userService::hasRight));
+	}
+
+	public ClinicalVisit fromDto(@NotNull ClinicalVisitDto source, ClinicalVisit target, boolean checkChangeDate) {
+		target = DtoHelper.fillOrBuildEntity(source, target, ClinicalVisit::new, checkChangeDate);
+
+		target.setClinicalCourse(clinicalCourseService.getByReferenceDto(source.getClinicalCourse()));
+		target.setSymptoms(symptomsFacade.fromDto(source.getSymptoms(), checkChangeDate));
+		target.setDisease(source.getDisease());
+		target.setVisitDateTime(source.getVisitDateTime());
+		target.setVisitRemarks(source.getVisitRemarks());
+		target.setVisitingPerson(source.getVisitingPerson());
+
+		return target;
 	}
 
 	/**
@@ -284,11 +302,16 @@ public class ClinicalVisitFacadeEjb implements ClinicalVisitFacade {
 			return Collections.emptyList();
 		}
 
+		return toPseudonymizedDtos(service.getAllAfter(date, batchSize, lastSynchronizedUuid));
+	}
+
+	private List<ClinicalVisitDto> toPseudonymizedDtos(List<ClinicalVisit> entities) {
+
+		List<Long> inJurisdictionIds = service.getInJurisdictionIds(entities);
 		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
-		return service.getAllActiveClinicalVisitsAfter(date, batchSize, lastSynchronizedUuid)
-			.stream()
-			.map(t -> convertToDto(t, pseudonymizer))
-			.collect(Collectors.toList());
+		List<ClinicalVisitDto> dtos =
+			entities.stream().map(p -> convertToDto(p, pseudonymizer, inJurisdictionIds.contains(p.getId()))).collect(Collectors.toList());
+		return dtos;
 	}
 
 	@Override
@@ -341,7 +364,7 @@ public class ClinicalVisitFacadeEjb implements ClinicalVisitFacade {
 
 		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight, I18nProperties.getCaption(Captions.inaccessibleValue));
 		for (ClinicalVisitExportDto exportDto : resultList) {
-			exportDto.setSymptoms(SymptomsFacadeEjb.toDto(symptomsService.getById(exportDto.getSymptomsId())));
+			exportDto.setSymptoms(SymptomsFacadeEjb.toSymptomsDto(symptomsService.getById(exportDto.getSymptomsId())));
 
 			Boolean inJurisdiction = exportDto.getInJurisdiction();
 			pseudonymizer.pseudonymizeDto(ClinicalVisitExportDto.class, exportDto, inJurisdiction, (v) -> {
@@ -366,16 +389,25 @@ public class ClinicalVisitFacadeEjb implements ClinicalVisitFacade {
 	}
 
 	public ClinicalVisitDto convertToDto(ClinicalVisit source, Pseudonymizer pseudonymizer) {
+
+		if (source == null) {
+			return null;
+		}
+
+		boolean inJurisdiction = service.inJurisdictionOrOwned(source);
+		return convertToDto(source, pseudonymizer, inJurisdiction);
+	}
+
+	private ClinicalVisitDto convertToDto(ClinicalVisit source, Pseudonymizer pseudonymizer, boolean inJurisdiction) {
+
 		ClinicalVisitDto dto = toDto(source);
-
-		pseudonymizeDto(source, dto, pseudonymizer);
-
+		pseudonymizeDto(source, dto, pseudonymizer, inJurisdiction);
 		return dto;
 	}
 
-	private void pseudonymizeDto(ClinicalVisit source, ClinicalVisitDto dto, Pseudonymizer pseudonymizer) {
+	private void pseudonymizeDto(ClinicalVisit source, ClinicalVisitDto dto, Pseudonymizer pseudonymizer, boolean inJurisdiction) {
+
 		if (source != null && dto != null) {
-			Boolean inJurisdiction = caseService.inJurisdictionOrOwned(source.getClinicalCourse().getCaze());
 			pseudonymizer.pseudonymizeDto(ClinicalVisitDto.class, dto, inJurisdiction, v -> {
 				pseudonymizer.pseudonymizeDto(SymptomsDto.class, dto.getSymptoms(), inJurisdiction, null);
 			});
@@ -403,7 +435,7 @@ public class ClinicalVisitFacadeEjb implements ClinicalVisitFacade {
 		DtoHelper.fillDto(target, source);
 
 		target.setClinicalCourse(ClinicalCourseFacadeEjb.toReferenceDto(source.getClinicalCourse()));
-		target.setSymptoms(SymptomsFacadeEjb.toDto(source.getSymptoms()));
+		target.setSymptoms(SymptomsFacadeEjb.toSymptomsDto(source.getSymptoms()));
 		target.setDisease(source.getDisease());
 		target.setVisitDateTime(source.getVisitDateTime());
 		target.setVisitRemarks(source.getVisitRemarks());
@@ -412,18 +444,7 @@ public class ClinicalVisitFacadeEjb implements ClinicalVisitFacade {
 		return target;
 	}
 
-	public ClinicalVisit fromDto(@NotNull ClinicalVisitDto source, ClinicalVisit target, boolean checkChangeDate) {
-		target = DtoHelper.fillOrBuildEntity(source, target, ClinicalVisit::new, checkChangeDate);
 
-		target.setClinicalCourse(clinicalCourseService.getByReferenceDto(source.getClinicalCourse()));
-		target.setSymptoms(symptomsFacade.fromDto(source.getSymptoms(), checkChangeDate));
-		target.setDisease(source.getDisease());
-		target.setVisitDateTime(source.getVisitDateTime());
-		target.setVisitRemarks(source.getVisitRemarks());
-		target.setVisitingPerson(source.getVisitingPerson());
-
-		return target;
-	}
 
 	@LocalBean
 	@Stateless

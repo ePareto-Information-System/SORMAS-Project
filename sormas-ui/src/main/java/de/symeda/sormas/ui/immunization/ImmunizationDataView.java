@@ -4,11 +4,11 @@ import com.vaadin.ui.VerticalLayout;
 
 import de.symeda.sormas.api.EditPermissionType;
 import de.symeda.sormas.api.FacadeProvider;
+import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.immunization.ImmunizationDto;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.immunization.components.form.ImmunizationDataForm;
 import de.symeda.sormas.ui.sormastosormas.SormasToSormasListComponent;
-import de.symeda.sormas.ui.utils.ArchivingController;
 import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.DetailSubComponentWrapper;
@@ -43,13 +43,18 @@ public class ImmunizationDataView extends AbstractImmunizationView {
 		container.setWidth(100, Unit.PERCENTAGE);
 		container.setMargin(true);
 		setSubComponent(container);
+		container.setEnabled(true);
 
 		LayoutWithSidePanel layout = new LayoutWithSidePanel(editComponent, SORMAS_TO_SORMAS_LOC);
 
 		container.addComponent(layout);
 
-		boolean sormasToSormasEnabled = FacadeProvider.getSormasToSormasFacade().isFeatureEnabledForUser();
-		if (sormasToSormasEnabled || immunization.getSormasToSormasOriginInfo() != null) {
+		boolean sormasToSormasEnabled = FacadeProvider.getSormasToSormasFacade()
+			.isAnyFeatureConfigured(
+				FeatureType.SORMAS_TO_SORMAS_SHARE_CASES,
+				FeatureType.SORMAS_TO_SORMAS_SHARE_CONTACTS,
+				FeatureType.SORMAS_TO_SORMAS_SHARE_EVENTS);
+		if (sormasToSormasEnabled || immunization.getSormasToSormasOriginInfo() != null || immunization.isOwnershipHandedOver()) {
 			VerticalLayout sormasToSormasLocLayout = new VerticalLayout();
 			sormasToSormasLocLayout.setMargin(false);
 			sormasToSormasLocLayout.setSpacing(false);
@@ -58,15 +63,12 @@ public class ImmunizationDataView extends AbstractImmunizationView {
 			sormasToSormasListComponent.addStyleNames(CssStyles.SIDE_COMPONENT);
 			sormasToSormasLocLayout.addComponent(sormasToSormasListComponent);
 
-			layout.addComponent(sormasToSormasLocLayout, SORMAS_TO_SORMAS_LOC);
+			layout.addSidePanelComponent(sormasToSormasLocLayout, SORMAS_TO_SORMAS_LOC);
 		}
 
-		EditPermissionType immunizationEditAllowed = FacadeProvider.getImmunizationFacade().isEditAllowed(immunization.getUuid());
-
-		if (immunizationEditAllowed.equals(EditPermissionType.ARCHIVING_STATUS_ONLY)) {
-			layout.disable(ArchivingController.ARCHIVE_DEARCHIVE_BUTTON_ID);
-		} else if (immunizationEditAllowed.equals(EditPermissionType.REFUSED)) {
-			layout.disable();
-		}
+		final String uuid = immunization.getUuid();
+		final EditPermissionType immunizationEditAllowed = FacadeProvider.getImmunizationFacade().getEditPermissionType(uuid);
+		final boolean deleted = FacadeProvider.getImmunizationFacade().isDeleted(uuid);
+		layout.disableIfNecessary(deleted, immunizationEditAllowed);
 	}
 }

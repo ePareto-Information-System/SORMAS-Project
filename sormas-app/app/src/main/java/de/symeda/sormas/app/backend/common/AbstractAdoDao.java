@@ -15,19 +15,7 @@
 
 package de.symeda.sormas.app.backend.common;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.Callable;
-
-import javax.persistence.NonUniqueResultException;
-
-import org.apache.commons.lang3.StringUtils;
+import android.util.Log;
 
 import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.googlecode.openbeans.PropertyDescriptor;
@@ -38,15 +26,33 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 
-import android.util.Log;
+import org.apache.commons.lang3.StringUtils;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.Callable;
+
+import javax.persistence.NonUniqueResultException;
 
 import de.symeda.sormas.api.ReferenceDto;
+import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.feature.FeatureTypeProperty;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DateHelper;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.caze.Case;
+import de.symeda.sormas.app.backend.environment.Environment;
 import de.symeda.sormas.app.backend.feature.FeatureConfiguration;
+import de.symeda.sormas.app.component.dialog.SynchronizationDialog;
 import de.symeda.sormas.app.util.MetaProperty;
 
 /**
@@ -280,6 +286,30 @@ public abstract class AbstractAdoDao<ADO extends AbstractDomainObject> {
 	 */
 	public List<ADO> queryForModified() {
 		return queryForEq(ADO.MODIFIED, true);
+	}
+
+	public List<ADO> queryForObsolete() {
+
+		if (DatabaseHelper.getFeatureConfigurationDao().isFeatureEnabled(FeatureType.LIMITED_SYNCHRONIZATION)) {
+			Integer maxChangeDatePeriod = DatabaseHelper.getFeatureConfigurationDao()
+				.getIntegerPropertyValue(FeatureType.LIMITED_SYNCHRONIZATION, FeatureTypeProperty.MAX_CHANGE_DATE_PERIOD);
+			if (maxChangeDatePeriod != null && maxChangeDatePeriod >= 0) {
+				Date maxChangeDate = DateHelper.getStartOfDay(DateHelper.subtractDays(new Date(), maxChangeDatePeriod));
+				try {
+					QueryBuilder<ADO, Long> builder = queryBuilder();
+					Where<ADO, Long> where = builder.where();
+					where.and(
+						where.isNotNull(AbstractDomainObject.CHANGE_DATE),
+						where.eq(ADO.MODIFIED, false),
+						where.lt(AbstractDomainObject.CHANGE_DATE, maxChangeDate));
+					return builder.query();
+				} catch (SQLException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}
+
+		return Collections.emptyList();
 	}
 
 	public ADO getByReferenceDto(ReferenceDto dto) {
@@ -596,7 +626,7 @@ public abstract class AbstractAdoDao<ADO extends AbstractDomainObject> {
 
 		ADO current = queryUuid(source.getUuid());
 		ADO snapshot = querySnapshotByUuid(source.getUuid());
-		String sourceEntityString = source.toString();
+		String sourceEntityString = source.buildCaption();
 		if (StringUtils.isEmpty(sourceEntityString)) {
 			sourceEntityString = source.getEntityName();
 		}
@@ -647,7 +677,8 @@ public abstract class AbstractAdoDao<ADO extends AbstractDomainObject> {
 					|| parentProperty.equals(property.getName())
 					|| property.getReadMethod().isAnnotationPresent(JoinTableReference.class)
 					|| Case.COMPLETENESS.equals(property.getName())
-					|| FeatureConfiguration.PROPERTIES_MAP.equals(property.getName()))
+					|| FeatureConfiguration.PROPERTIES_MAP.equals(property.getName())
+					|| Environment.WATER_USE.equals(property.getName()))
 					continue;
 
 				// we now have to write the value from source into target and base
@@ -1007,31 +1038,33 @@ public abstract class AbstractAdoDao<ADO extends AbstractDomainObject> {
 	 *
 	 * @param validUuids
 	 */
-	public void deleteInvalid(final List<String> validUuids) throws DaoException {
-		callBatchTasks(new Callable<Void>() {
+	public void deleteInvalid(final List<String> validUuids, Optional<SynchronizationDialog.SynchronizationCallbacks> callbacks) throws DaoException {
 
-			public Void call() throws Exception {
-				QueryBuilder<ADO, Long> builder = queryBuilder();
-				builder.where().notIn(AbstractDomainObject.UUID, validUuids);
-				List<ADO> invalidEntities = builder.query();
-				int deletionCounter = 0;
-				for (ADO invalidEntity : invalidEntities) {
+		callBatchTasks((Callable<Void>) () -> {
+			QueryBuilder<ADO, Long> builder = queryBuilder();
+			builder.where().notIn(AbstractDomainObject.UUID, validUuids);
+			List<ADO> invalidEntities = builder.query();
+			int deletionCounter = 0;
+			for (ADO invalidEntity : invalidEntities) {
 
-					if (invalidEntity.isNew()) {
-						// don't delete new entities
-						continue;
-					} else {
-						// delete with all embedded entities
-						deleteCascade(invalidEntity);
-						deletionCounter++;
-					}
+				if (invalidEntity.isNew()) {
+					// don't delete new entities
+					continue;
+				} else {
+					// delete with all embedded entities
+					deleteCascade(invalidEntity);
+					deletionCounter++;
+					callbacks.ifPresent(c -> c.getUpdateDeletionsCallback().accept(1));
 				}
-
-				if (invalidEntities.size() > 0) {
-					Log.d(getTableName(), "Deleted invalid entities: " + deletionCounter + " of " + invalidEntities.size());
-				}
-				return null;
 			}
+
+			if (invalidEntities.size() > 0) {
+				Log.d(getTableName(), "Deleted invalid entities: " + deletionCounter + " of " + invalidEntities.size());
+			}
+
+			callbacks.ifPresent(c -> c.getLoadNextCallback().run());
+
+			return null;
 		});
 	}
 

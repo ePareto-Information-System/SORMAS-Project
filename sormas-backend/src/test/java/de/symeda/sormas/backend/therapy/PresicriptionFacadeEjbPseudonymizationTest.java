@@ -18,15 +18,12 @@ package de.symeda.sormas.backend.therapy;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyString;
-import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
-import org.joda.time.DateTime;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
 
 import de.symeda.sormas.api.caze.CaseCriteria;
 import de.symeda.sormas.api.caze.CaseDataDto;
@@ -36,11 +33,10 @@ import de.symeda.sormas.api.therapy.PrescriptionIndexDto;
 import de.symeda.sormas.api.therapy.TreatmentRoute;
 import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
+import de.symeda.sormas.api.utils.UtilDate;
 import de.symeda.sormas.backend.AbstractBeanTest;
-import de.symeda.sormas.backend.MockProducer;
 import de.symeda.sormas.backend.TestDataCreator;
 
-@RunWith(MockitoJUnitRunner.class)
 public class PresicriptionFacadeEjbPseudonymizationTest extends AbstractBeanTest {
 
 	private TestDataCreator.RDCF rdcf1;
@@ -59,6 +55,7 @@ public class PresicriptionFacadeEjbPseudonymizationTest extends AbstractBeanTest
 			rdcf1.facility.getUuid(),
 			"Surv",
 			"Off1",
+			creator.getUserRoleReference(DefaultUserRole.CASE_OFFICER),
 			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER));
 
 		rdcf2 = creator.createRDCF("Region 2", "District 2", "Community 2", "Facility 2", "Point of entry 2");
@@ -68,9 +65,10 @@ public class PresicriptionFacadeEjbPseudonymizationTest extends AbstractBeanTest
 			rdcf2.facility.getUuid(),
 			"Surv",
 			"Off2",
+			creator.getUserRoleReference(DefaultUserRole.CASE_OFFICER),
 			creator.getUserRoleReference(DefaultUserRole.SURVEILLANCE_OFFICER));
 
-		when(MockProducer.getPrincipal().getName()).thenReturn("SurvOff2");
+		loginWith(user2);
 	}
 
 	@Test
@@ -94,7 +92,7 @@ public class PresicriptionFacadeEjbPseudonymizationTest extends AbstractBeanTest
 		creator.createContact(user2.toReference(), creator.createPerson().toReference(), case2);
 		PrescriptionDto prescription2 = createPrescription(case2);
 
-		List<PrescriptionDto> prescriptions = getPrescriptionFacade().getAllActivePrescriptionsAfter(DateTime.now().minusYears(1).toDate());
+		List<PrescriptionDto> prescriptions = getPrescriptionFacade().getAllActivePrescriptionsAfter(UtilDate.from(LocalDate.now().minusYears(1)));
 
 		assertNotPseudonymized(prescriptions.stream().filter(p -> p.getUuid().equals(prescription1.getUuid())).findFirst().get());
 		assertPseudonymized(prescriptions.stream().filter(p -> p.getUuid().equals(prescription2.getUuid())).findFirst().get());

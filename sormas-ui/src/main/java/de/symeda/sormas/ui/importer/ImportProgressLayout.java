@@ -19,17 +19,9 @@ package de.symeda.sormas.ui.importer;
 
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
+import com.vaadin.ui.*;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.v7.ui.ProgressBar;
-
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
@@ -81,8 +73,6 @@ public class ImportProgressLayout extends VerticalLayout {
 
 	public ImportProgressLayout(int totalCount, UI currentUI, Runnable cancelCallback, boolean duplicatesPossible) {
 		this(totalCount, currentUI, cancelCallback, duplicatesPossible, true);
-
-
 	}
 
 	public ImportProgressLayout(int totalCount, UI currentUI, Runnable cancelCallback, boolean duplicatesPossible, boolean skipPossible) {
@@ -161,7 +151,7 @@ public class ImportProgressLayout extends VerticalLayout {
 	}
 
 
-	public ImportProgressLayout(int totalCount, UI currentUI, Runnable cancelCallback, boolean duplicatesPossible, boolean skipPossible,boolean exportExcel) {
+	public ImportProgressLayout(int totalCount, UI currentUI, Runnable cancelCallback, boolean duplicatesPossible, boolean skipPossible, boolean exportExcel) {
 		this.totalCount = totalCount;
 		this.currentUI = currentUI;
 

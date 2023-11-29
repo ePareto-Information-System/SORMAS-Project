@@ -13,9 +13,11 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Tuple;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -28,16 +30,19 @@ import de.symeda.sormas.api.contact.ContactCriteria;
 import de.symeda.sormas.api.contact.ContactIndexDetailedDto;
 import de.symeda.sormas.api.contact.ContactIndexDto;
 import de.symeda.sormas.api.contact.MapContactDto;
+import de.symeda.sormas.api.person.PersonContactDetailType;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.backend.ExtendedPostgreSQL94Dialect;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.caze.CaseQueryContext;
 import de.symeda.sormas.backend.caze.CaseService;
+import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
 import de.symeda.sormas.backend.infrastructure.district.District;
 import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.person.Person;
+import de.symeda.sormas.backend.person.PersonContactDetail;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.util.JurisdictionHelper;
 import de.symeda.sormas.backend.util.ModelConstants;
@@ -55,22 +60,96 @@ public class ContactListCriteriaBuilder {
 	@EJB
 	private ContactService contactService;
 
-	public CriteriaQuery<ContactIndexDto> buildIndexCriteria(ContactCriteria contactCriteria, List<SortProperty> sortProperties) {
-		return buildIndexCriteria(ContactIndexDto.class, this::getContactIndexSelections, contactCriteria, this::getIndexOrders, sortProperties);
+	public CriteriaQuery<ContactIndexDto> buildIndexCriteria(ContactCriteria contactCriteria, List<SortProperty> sortProperties, List<Long> ids) {
+		return buildIndexCriteria(ContactIndexDto.class, this::getContactIndexSelections, contactCriteria, this::getIndexOrders, sortProperties, ids);
 	}
 
 	public CriteriaQuery<MapContactDto> buildIndexCriteriaForMap(ContactCriteria contactCriteria, List<SortProperty> sortProperties) {
 		return buildIndexCriteria(MapContactDto.class, this::getContactIndexSelectionsForMap, contactCriteria, this::getIndexOrders, sortProperties);
 	}
 
-	public CriteriaQuery<ContactIndexDetailedDto> buildIndexDetailedCriteria(ContactCriteria contactCriteria, List<SortProperty> sortProperties) {
+
+	public CriteriaQuery<ContactIndexDto> buildIndexCriteria(ContactCriteria contactCriteria, List<SortProperty> sortProperties) {
+		return buildIndexCriteria(ContactIndexDto.class, this::getContactIndexSelections, contactCriteria, this::getIndexOrders, sortProperties);
+	}
+
+
+
+
+	private <T> CriteriaQuery<T> buildIndexCriteria(
+			Class<T> type,
+			BiFunction<Root<Contact>, ContactQueryContext, List<Selection<?>>> selectionProvider,
+			ContactCriteria contactCriteria,
+			OrderExpressionProvider orderExpressionProvider,
+			List<SortProperty> sortProperties) {
+
+		final CriteriaBuilder cb = em.getCriteriaBuilder();
+		final CriteriaQuery<T> cq = cb.createQuery(type);
+		final Root<Contact> contact = cq.from(Contact.class);
+		final ContactQueryContext contactQueryContext = new ContactQueryContext(cb, cq, contact);
+		final ContactJoins joins = contactQueryContext.getJoins();
+
+		List<Selection<?>> selections = new ArrayList<>(selectionProvider.apply(contact, contactQueryContext));
+		selections.add(cb.size(contact.get(Contact.VISITS)));
+		// This is needed in selection because of the combination of distinct and orderBy clauses - every operator in the orderBy has to be part of the select IF distinct is used
+		Expression<Date> latestChangedDateFunction = cb
+				.function(ExtendedPostgreSQL94Dialect.GREATEST, Date.class, contact.get(Contact.CHANGE_DATE), joins.getPerson().get(Person.CHANGE_DATE));
+		selections.add(latestChangedDateFunction);
+
+		Predicate filter = buildContactFilter(contactCriteria, contactQueryContext);
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		cq.multiselect(selections);
+		cq.distinct(true);
+
+		if (CollectionUtils.isEmpty(sortProperties)) {
+			cq.orderBy(cb.desc(latestChangedDateFunction));
+		} else {
+			List<Order> order = new ArrayList<>(sortProperties.size());
+			for (SortProperty sortProperty : sortProperties) {
+				order.addAll(
+						orderExpressionProvider.forProperty(sortProperty, contact, joins, cb)
+								.stream()
+								.map(e -> sortProperty.ascending ? cb.asc(e) : cb.desc(e))
+								.collect(Collectors.toList()));
+			}
+			cq.orderBy(order);
+		}
+
+		return cq;
+	}
+
+	//public CriteriaQuery<ContactIndexDetailedDto> buildIndexDetailedCriteria(ContactCriteria contactCriteria, List<SortProperty> sortProperties) {
+	 public CriteriaQuery<ContactIndexDetailedDto> buildIndexDetailedCriteria(
+	 	ContactCriteria contactCriteria,
+	 	List<SortProperty> sortProperties,
+	 	List<Long> ids) {
 
 		return buildIndexCriteria(
 			ContactIndexDetailedDto.class,
 			this::getContactIndexDetailedSelections,
 			contactCriteria,
 			this::getIndexDetailOrders,
-			sortProperties);
+			sortProperties,
+			ids);
+	}
+
+	public CriteriaQuery<Tuple> buildIndexCriteriaPrefetchIds(ContactCriteria contactCriteria, List<SortProperty> sortProperties) {
+		return buildIndexCriteria(Tuple.class, this::getContactIndexSelections, contactCriteria, this::getIndexOrders, sortProperties, null);
+	}
+
+	public CriteriaQuery<Tuple> buildIndexDetailedCriteriaPrefetchIds(ContactCriteria contactCriteria, List<SortProperty> sortProperties) {
+
+		return buildIndexCriteria(
+			Tuple.class,
+			this::getContactIndexDetailedSelections,
+			contactCriteria,
+			this::getIndexDetailOrders,
+			sortProperties,
+			null);
 	}
 
 	public List<Selection<?>> getContactIndexSelections(Root<Contact> contact, ContactQueryContext contactQueryContext) {
@@ -110,6 +189,8 @@ public class ContactListCriteriaBuilder {
 			contact.get(Contact.EXTERNAL_ID),
 			contact.get(Contact.EXTERNAL_TOKEN),
 			contact.get(Contact.INTERNAL_TOKEN),
+			contact.get(Contact.DELETION_REASON),
+			contact.get(Contact.OTHER_DELETION_REASON),
 			JurisdictionHelper.booleanSelector(cb, contactService.inJurisdictionOrOwned(contactQueryContext)),
 			JurisdictionHelper.booleanSelector(
 				cb,
@@ -156,6 +237,7 @@ public class ContactListCriteriaBuilder {
 	public List<Selection<?>> getMergeContactIndexSelections(Root<Contact> contact, ContactQueryContext contactQueryContext) {
 
 		ContactJoins joins = (ContactJoins) contactQueryContext.getJoins();
+		CriteriaBuilder cb = contactQueryContext.getCriteriaBuilder();
 
 		return Arrays.asList(
 			contact.get(Contact.ID),
@@ -179,7 +261,15 @@ public class ContactListCriteriaBuilder {
 			contact.get(Contact.CREATION_DATE),
 			contact.get(Contact.CONTACT_CLASSIFICATION),
 			contact.get(Contact.COMPLETENESS),
-			contact.get(Contact.REPORT_DATE_TIME));
+			contact.get(Contact.REPORT_DATE_TIME),
+			JurisdictionHelper.booleanSelector(cb, contactService.inJurisdictionOrOwned(contactQueryContext)),
+			JurisdictionHelper.booleanSelector(
+				cb,
+				caseService.inJurisdictionOrOwned(
+					new CaseQueryContext(
+						contactQueryContext.getCriteriaBuilder(),
+						contactQueryContext.getQuery(),
+						contactQueryContext.getJoins().getCaseJoins()))));
 	}
 
 	private List<Expression<?>> getIndexOrders(SortProperty sortProperty, Root<Contact> contact, ContactJoins joins, CriteriaBuilder cb) {
@@ -231,6 +321,14 @@ public class ContactListCriteriaBuilder {
 	private List<Selection<?>> getContactIndexDetailedSelections(Root<Contact> contact, ContactQueryContext contactQueryContext) {
 
 		final ContactJoins joins = (ContactJoins) contactQueryContext.getJoins();
+
+		Join<Person, PersonContactDetail> phone = joins.getPersonJoins().getPhone();
+		CriteriaBuilder cb = contactQueryContext.getCriteriaBuilder();
+		phone.on(
+			cb.and(
+				cb.isTrue(phone.get(PersonContactDetail.PRIMARY_CONTACT)),
+				cb.equal(phone.get(PersonContactDetail.PERSON_CONTACT_DETAIL_TYPE), PersonContactDetailType.PHONE)));
+
 		final List<Selection<?>> indexSelection = new ArrayList<>(getContactIndexSelections(contact, contactQueryContext));
 		List<Selection<?>> selections = Arrays.asList(
 			joins.getPerson().get(Person.SEX),
@@ -241,8 +339,7 @@ public class ContactListCriteriaBuilder {
 			joins.getAddress().get(Location.HOUSE_NUMBER),
 			joins.getAddress().get(Location.ADDITIONAL_INFORMATION),
 			joins.getAddress().get(Location.POSTAL_CODE),
-			contactQueryContext.getSubqueryExpression(
-				CaseQueryContext.PERSON_PHONE_SUBQUERY),
+			phone.get(PersonContactDetail.CONTACT_INFORMATION),
 			joins.getReportingUser().get(User.FIRST_NAME),
 			joins.getReportingUser().get(User.LAST_NAME),
 			contact.get(Contact.RELATION_TO_CASE));
@@ -251,18 +348,14 @@ public class ContactListCriteriaBuilder {
 		return indexSelection;
 	}
 
-	private List<Expression<?>> getIndexDetailOrders(
-		SortProperty sortProperty,
-		Root<Contact> contact,
-		ContactJoins joins,
-		CriteriaBuilder cb) {
+	private List<Expression<?>> getIndexDetailOrders(SortProperty sortProperty, Root<Contact> contact, ContactJoins joins, CriteriaBuilder cb) {
 
 		switch (sortProperty.propertyName) {
 		case ContactIndexDetailedDto.SEX:
 		case ContactIndexDetailedDto.APPROXIMATE_AGE:
 			return Collections.singletonList(joins.getPerson().get(sortProperty.propertyName));
 		case ContactIndexDetailedDto.PHONE:
-			return Collections.singletonList(cb.literal(44));
+			return Collections.singletonList(joins.getPersonJoins().getPhone().get(PersonContactDetail.CONTACT_INFORMATION));
 		case ContactIndexDetailedDto.DISTRICT_NAME:
 			return Collections.singletonList(joins.getDistrict().get(District.NAME));
 		case ContactIndexDetailedDto.CITY:
@@ -285,7 +378,10 @@ public class ContactListCriteriaBuilder {
 		BiFunction<Root<Contact>, ContactQueryContext, List<Selection<?>>> selectionProvider,
 		ContactCriteria contactCriteria,
 		OrderExpressionProvider orderExpressionProvider,
-		List<SortProperty> sortProperties) {
+		List<SortProperty> sortProperties,
+		List<Long> ids) {
+
+		boolean prefetchIds = ids == null;
 
 		final CriteriaBuilder cb = em.getCriteriaBuilder();
 		final CriteriaQuery<T> cq = cb.createQuery(type);
@@ -293,14 +389,40 @@ public class ContactListCriteriaBuilder {
 		final ContactQueryContext contactQueryContext = new ContactQueryContext(cb, cq, contact);
 		final ContactJoins joins = contactQueryContext.getJoins();
 
-		List<Selection<?>> selections = new ArrayList<>(selectionProvider.apply(contact, contactQueryContext));
-		selections.add(cb.size(contact.get(Contact.VISITS)));
-		// This is needed in selection because of the combination of distinct and orderBy clauses - every operator in the orderBy has to be part of the select IF distinct is used
+		List<Selection<?>> selections = new ArrayList<>();
+
 		Expression<Date> latestChangedDateFunction = cb
 			.function(ExtendedPostgreSQL94Dialect.GREATEST, Date.class, contact.get(Contact.CHANGE_DATE), joins.getPerson().get(Person.CHANGE_DATE));
-		selections.add(latestChangedDateFunction);
+
+		List<Selection<?>> selectionListPrefetchIds = new ArrayList<>();
+		if (CollectionUtils.isEmpty(sortProperties)) {
+			selectionListPrefetchIds.add(latestChangedDateFunction);
+			cq.orderBy(cb.desc(latestChangedDateFunction));
+		} else {
+			List<Order> order = new ArrayList<>(sortProperties.size());
+			for (SortProperty sortProperty : sortProperties) {
+				List<Expression<?>> expressions = orderExpressionProvider.forProperty(sortProperty, contact, joins, cb);
+				selectionListPrefetchIds.addAll(expressions);
+				order.addAll(expressions.stream().map(e -> sortProperty.ascending ? cb.asc(e) : cb.desc(e)).collect(Collectors.toList()));
+			}
+			cq.orderBy(order);
+		}
+
+		if (prefetchIds) {
+			selections.add(contact.get(AbstractDomainObject.ID));
+			selections.addAll(selectionListPrefetchIds);
+		} else {
+			selections.addAll(selectionProvider.apply(contact, contactQueryContext));
+			selections.add(cb.size(contact.get(Contact.VISITS)));
+			// This is needed in selection because of the combination of distinct and orderBy clauses - every operator in the orderBy has to be part of the select IF distinct is used
+			selections.add(latestChangedDateFunction);
+		}
 
 		Predicate filter = buildContactFilter(contactCriteria, contactQueryContext);
+
+		if (!prefetchIds) {
+			filter = CriteriaBuilderHelper.and(cb, filter, contact.get(AbstractDomainObject.ID).in(ids));
+		}
 
 		if (filter != null) {
 			cq.where(filter);
@@ -308,20 +430,6 @@ public class ContactListCriteriaBuilder {
 
 		cq.multiselect(selections);
 		cq.distinct(true);
-
-		if (CollectionUtils.isEmpty(sortProperties)) {
-			cq.orderBy(cb.desc(latestChangedDateFunction));
-		} else {
-			List<Order> order = new ArrayList<>(sortProperties.size());
-			for (SortProperty sortProperty : sortProperties) {
-				order.addAll(
-					orderExpressionProvider.forProperty(sortProperty, contact, joins, cb)
-						.stream()
-						.map(e -> sortProperty.ascending ? cb.asc(e) : cb.desc(e))
-						.collect(Collectors.toList()));
-			}
-			cq.orderBy(order);
-		}
 
 		return cq;
 	}

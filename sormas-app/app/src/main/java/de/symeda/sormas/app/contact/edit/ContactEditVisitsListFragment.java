@@ -15,16 +15,16 @@
 
 package de.symeda.sormas.app.contact.edit;
 
-import java.util.List;
-
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.Nullable;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
 
 import de.symeda.sormas.api.VisitOrigin;
 import de.symeda.sormas.api.contact.ContactStatus;
@@ -59,7 +59,7 @@ public class ContactEditVisitsListFragment extends BaseEditFragment<FragmentForm
 
 		((ContactEditActivity) getActivity()).showPreloader();
 		adapter = new VisitListAdapter(R.layout.row_read_followup_list_item_layout, this, null);
-		model = ViewModelProviders.of(this).get(VisitListViewModel.class);
+		model = new ViewModelProvider(this).get(VisitListViewModel.class);
 		model.getVisits(getActivityRootData()).observe(this, visits -> {
 			adapter.replaceAll(visits);
 			adapter.notifyDataSetChanged();
@@ -114,7 +114,7 @@ public class ContactEditVisitsListFragment extends BaseEditFragment<FragmentForm
 	@Override
 	public void onListItemClick(View view, int position, Object item) {
 		Visit visit = (Visit) item;
-		if (VisitOrigin.USER.equals(visit.getOrigin())) {
+		if (VisitOrigin.USER.equals(visit.getOrigin()) && ConfigProvider.hasUserRight(UserRight.VISIT_EDIT)) {
 			VisitEditActivity.startActivity(getContext(), visit.getUuid(), getActivityRootData().getUuid(), VisitSection.VISIT_INFO);
 		} else {
 			VisitReadActivity.startActivity(getContext(), visit.getUuid(), getActivityRootData().getUuid(), VisitSection.VISIT_INFO);

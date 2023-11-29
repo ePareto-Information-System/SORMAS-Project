@@ -21,7 +21,9 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import javax.ejb.Remote;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -31,6 +33,7 @@ import de.symeda.sormas.api.CoreFacade;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EditPermissionType;
 import de.symeda.sormas.api.Language;
+import de.symeda.sormas.api.MergeFacade;
 import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
@@ -46,18 +49,15 @@ import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.messaging.ManualMessageLogDto;
 import de.symeda.sormas.api.messaging.MessageType;
 import de.symeda.sormas.api.person.PersonReferenceDto;
+import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.utils.DataHelper.Pair;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
+import de.symeda.sormas.api.vaccination.VaccinationDto;
 
 @Remote
-public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseReferenceDto, CaseCriteria> {
+public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseReferenceDto, CaseCriteria>, MergeFacade {
 
-	List<CaseDataDto> getAllActiveCasesAfter(Date date);
-
-	/**
-	 * Additional change dates filters for: sample, pathogenTests, patient and location.
-	 */
 	List<CaseDataDto> getAllActiveCasesAfter(Date date, boolean includeExtendedChangeDateFilters);
 
 	long count(CaseCriteria caseCriteria, boolean ignoreUserFilter);
@@ -108,7 +108,7 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 
 	CaseDataDto updateFollowUpComment(@Valid @NotNull CaseDataDto dto) throws ValidationRuntimeException;
 
-	CaseDataDto save(@Valid @NotNull CaseDataDto dto, boolean systemSave) throws ValidationRuntimeException;
+	void updateVaccinationStatus(CaseReferenceDto caseRef, VaccinationStatus status);
 
 	CoreAndPersonDto<CaseDataDto> save(@Valid @NotNull CoreAndPersonDto<CaseDataDto> dto) throws ValidationRuntimeException;
 
@@ -119,8 +119,6 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 	void setSampleAssociationsUnrelatedDisease(EventParticipantReferenceDto sourceEventParticipant, CaseReferenceDto cazeRef);
 
 	List<String> getAllActiveUuids();
-
-	List<CaseDataDto> getAllActiveCasesAfter(Date date, Integer batchSize, String lastSynchronizedUuid);
 
 	String getUuidByUuidEpidNumberOrExternalId(String searchTerm, CaseCriteria caseCriteria);
 
@@ -144,23 +142,13 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 
 	List<CaseDataDto> getAllCasesOfPerson(String personUuid);
 
-	List<String> deleteCases(List<String> caseUuids, DeletionDetails deletionDetails);
-
 	void deleteWithContacts(String caseUuid, DeletionDetails deletionDetails);
-
-	void deleteCaseAsDuplicate(String caseUuid, String duplicateOfCaseUuid);
 
 	Date getOldestCaseOnsetDate();
 
 	Date getOldestCaseReportDate();
 
 	Date getOldestCaseOutcomeDate();
-
-	boolean isDeleted(String caseUuid);
-
-	boolean isArchived(String caseUuid);
-
-	List<String> getArchivedUuidsSince(Date since);
 
 	List<String> getDeletedUuidsSince(Date since);
 
@@ -170,11 +158,9 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 
 	String getGenerateEpidNumber(CaseDataDto caze);
 
-	void mergeCase(String leadUuid, String otherUuid);
-
 	List<CaseSelectionDto> getSimilarCases(CaseSimilarityCriteria criteria);
 
-	List<CaseIndexDto[]> getCasesForDuplicateMerging(CaseCriteria criteria, boolean showDuplicatesWithDifferentRegion);
+	List<CaseMergeIndexDto[]> getCasesForDuplicateMerging(CaseCriteria criteria, @Min(1) Integer limit, boolean showDuplicatesWithDifferentRegion);
 
 	void updateCompleteness(String caseUuid);
 
@@ -212,15 +198,17 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 		List<String> caseUuidList,
 		@Valid CaseBulkEditData updatedCaseBulkEditData,
 		boolean diseaseChange,
+		boolean diseaseVariantChange,
 		boolean classificationChange,
 		boolean investigationStatusChange,
 		boolean outcomeChange,
 		boolean surveillanceOfficerChange);
 
-	void saveBulkEditWithFacilities(
+	Integer saveBulkEditWithFacilities(
 		List<String> caseUuidList,
 		@Valid CaseBulkEditData updatedCaseBulkEditData,
 		boolean diseaseChange,
+		boolean diseaseVariantChange,
 		boolean classificationChange,
 		boolean investigationStatusChange,
 		boolean outcomeChange,
@@ -231,9 +219,13 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 
 	List<CasePersonDto> getDuplicates(@Valid CasePersonDto casePerson);
 
+	List<CaseDataDto> getDuplicatesWithPathogenTest(@Valid PersonReferenceDto personReferenceDto, PathogenTestDto pathogenTestDto);
+
 	List<CaseDataDto> getByPersonUuids(List<String> personUuids);
 
 	List<CaseDataDto> getByExternalId(String externalId);
+
+	List<CaseDataDto> getRelevantCasesForVaccination(VaccinationDto vaccination);
 
 	void updateExternalData(@Valid List<ExternalDataDto> externalData) throws ExternalDataUpdateException;
 
@@ -248,6 +240,7 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 	void dearchive(List<String> entityUuids, String dearchiveReason, boolean includeContacts);
 
 	void setResultingCase(EventParticipantReferenceDto eventParticipantReferenceDto, CaseReferenceDto caseReferenceDto);
+
 	EditPermissionType isEditContactAllowed(String uuid);
 	boolean hasPositiveLabResult(String caseUuid);
 
@@ -263,4 +256,13 @@ public interface CaseFacade extends CoreFacade<CaseDataDto, CaseIndexDto, CaseRe
 //	Map<Disease, Long> getCaseCountByDisease(CaseCriteria caseCriteria, boolean excludeSharedCases,
 //			boolean excludeCasesFromContacts);
 
+	boolean hasOtherValidVaccination(CaseDataDto caze, String vaccinationUuid);
+
+	Pair<RegionReferenceDto, DistrictReferenceDto> getRegionAndDistrictRefsOf(CaseReferenceDto caze);
+
+	public void mergeCase(String leadUuid, String otherUuid);
+
+    void deleteCaseAsDuplicate(String uuid, String uuid1);
+
+	List<CaseIndexDto[]> getCasesForDuplicateMerging(CaseCriteria criteria, boolean ignoreRegion);
 }

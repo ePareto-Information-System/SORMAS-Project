@@ -23,6 +23,8 @@ import java.math.RoundingMode;
 import java.nio.ByteBuffer;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -40,16 +42,19 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.common.base.CharMatcher;
 
 import de.symeda.sormas.api.AgeGroup;
-import de.symeda.sormas.api.HasUuid;
 import de.symeda.sormas.api.Language;
+import de.symeda.sormas.api.audit.AuditedClass;
 import de.symeda.sormas.api.caze.AgeAndBirthDateDto;
 import de.symeda.sormas.api.caze.BirthDateDto;
 import de.symeda.sormas.api.caze.BurialInfoDto;
 import de.symeda.sormas.api.disease.DiseaseVariant;
+import de.symeda.sormas.api.event.SpecificRisk;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.api.person.OccupationType;
 import de.symeda.sormas.api.person.PersonHelper;
 import de.symeda.sormas.api.person.Sex;
+import de.symeda.sormas.api.uuid.HasUuid;
 
 public final class DataHelper {
 
@@ -108,6 +113,19 @@ public final class DataHelper {
 	}
 
 	/**
+	 * Compare content of collections, ignoring the order
+	 */
+	public static boolean equalContains(Collection a, Collection b) {
+		if (equal(a, b)) {
+			return true;
+		}
+		if (a == null || b == null) {
+			return false;
+		}
+		return a.size() == b.size() && a.containsAll(b);
+	}
+
+	/**
 	 * @return a equals b, where a and/or b are allowed to be null
 	 */
 	@SuppressWarnings("unchecked")
@@ -134,6 +152,11 @@ public final class DataHelper {
 		if (nullable == null) {
 			return "";
 		}
+
+		if (HasCaption.class.isAssignableFrom(nullable.getClass())) {
+			return ((HasCaption) nullable).buildCaption();
+		}
+
 		return nullable.toString();
 	}
 
@@ -165,7 +188,9 @@ public final class DataHelper {
 			|| type == Boolean.class
 			|| type == String.class
 			|| type == Date.class
-			|| type.isAssignableFrom(DiseaseVariant.class);
+			|| type.isAssignableFrom(DiseaseVariant.class)
+			|| type.isAssignableFrom(OccupationType.class)
+			|| type.isAssignableFrom(SpecificRisk.class);
 	}
 
 	public static byte[] longToBytes(long x, long y) {
@@ -187,6 +212,7 @@ public final class DataHelper {
 		return uuid.substring(0, 6).toUpperCase();
 	}
 
+	@AuditedClass(includeAllFields = true)
 	public static class Pair<K, V> implements Serializable {
 
 		private static final long serialVersionUID = 7135988167451005820L;
@@ -401,6 +427,8 @@ public final class DataHelper {
 		} else if (value instanceof BirthDateDto) {
 			BirthDateDto birthDate = (BirthDateDto) value;
 			return DateFormatHelper.formatDate(birthDate.getDateOfBirthDD(), birthDate.getDateOfBirthMM(), birthDate.getDateOfBirthYYYY());
+		} else if (value instanceof HasCaption) {
+			return ((HasCaption) value).buildCaption();
 		} else {
 			return value.toString();
 		}
@@ -450,5 +478,23 @@ public final class DataHelper {
 		} else {
 			return "";
 		}
+	}
+
+	/**
+	 * This method will remove the time from a date and set it to midnight. For example date 22.09.2022 15:32:54.123 will become
+	 * 22.09.2022 0:00:0 .
+	 */
+	public static Date removeTime(Date date) {
+		Date shortDate = date;
+		if (date != null) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(date);
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			shortDate = calendar.getTime();
+		}
+		return shortDate;
 	}
 }

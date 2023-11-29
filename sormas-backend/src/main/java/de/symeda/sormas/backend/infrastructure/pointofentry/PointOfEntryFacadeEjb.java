@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.annotation.security.PermitAll;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -17,6 +18,7 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -24,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.InfrastructureHelper;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
@@ -31,9 +34,9 @@ import de.symeda.sormas.api.infrastructure.pointofentry.PointOfEntryCriteria;
 import de.symeda.sormas.api.infrastructure.pointofentry.PointOfEntryDto;
 import de.symeda.sormas.api.infrastructure.pointofentry.PointOfEntryFacade;
 import de.symeda.sormas.api.infrastructure.pointofentry.PointOfEntryReferenceDto;
+import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.SortProperty;
 import de.symeda.sormas.api.utils.ValidationRuntimeException;
-import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
 import de.symeda.sormas.backend.feature.FeatureConfigurationFacadeEjb.FeatureConfigurationFacadeEjbLocal;
 import de.symeda.sormas.backend.infrastructure.AbstractInfrastructureFacadeEjb;
 import de.symeda.sormas.backend.infrastructure.district.District;
@@ -44,14 +47,15 @@ import de.symeda.sormas.backend.infrastructure.facility.Facility;
 import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.infrastructure.region.RegionFacadeEjb;
 import de.symeda.sormas.backend.infrastructure.region.RegionService;
-import de.symeda.sormas.backend.user.UserService;
 import de.symeda.sormas.backend.util.DtoHelper;
 import de.symeda.sormas.backend.util.QueryHelper;
+import de.symeda.sormas.backend.util.RightsAllowed;
 
 @Stateless(name = "PointOfEntryFacade")
+@RightsAllowed(UserRight._INFRASTRUCTURE_VIEW)
 public class PointOfEntryFacadeEjb
 	extends
-        AbstractInfrastructureFacadeEjb<PointOfEntry, PointOfEntryDto, PointOfEntryDto, PointOfEntryReferenceDto, PointOfEntryService, PointOfEntryCriteria>
+	AbstractInfrastructureFacadeEjb<PointOfEntry, PointOfEntryDto, PointOfEntryDto, PointOfEntryReferenceDto, PointOfEntryService, PointOfEntryCriteria>
 	implements PointOfEntryFacade {
 
 	@EJB
@@ -65,8 +69,15 @@ public class PointOfEntryFacadeEjb
 	}
 
 	@Inject
-	protected PointOfEntryFacadeEjb(PointOfEntryService service, FeatureConfigurationFacadeEjbLocal featureConfiguration, UserService userService) {
-		super(PointOfEntry.class, PointOfEntryDto.class, service, featureConfiguration, userService, Validations.importPointOfEntryAlreadyExists);
+	protected PointOfEntryFacadeEjb(PointOfEntryService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
+		super(
+			PointOfEntry.class,
+			PointOfEntryDto.class,
+			service,
+			featureConfiguration,
+			Validations.importPointOfEntryAlreadyExists,
+			null,
+			Strings.messagePointOfEntryDearchivingNotPossible);
 	}
 
 	public static PointOfEntryReferenceDto toReferenceDto(PointOfEntry entity) {
@@ -82,6 +93,7 @@ public class PointOfEntryFacadeEjb
 	}
 
 	@Override
+	@PermitAll
 	public List<PointOfEntryReferenceDto> getAllActiveByDistrict(String districtUuid, boolean includeOthers) {
 
 		District district = districtService.getByUuid(districtUuid);
@@ -93,31 +105,7 @@ public class PointOfEntryFacadeEjb
 	}
 
 	@Override
-	protected void selectDtoFields(CriteriaQuery<PointOfEntryDto> cq, Root<PointOfEntry> root) {
-
-		Join<PointOfEntry, District> district = root.join(Facility.DISTRICT, JoinType.LEFT);
-		Join<PointOfEntry, Region> region = root.join(Facility.REGION, JoinType.LEFT);
-		// Needs to be in the same order as in the constructor
-		cq.multiselect(
-			root.get(PointOfEntry.CREATION_DATE),
-			root.get(PointOfEntry.CHANGE_DATE),
-			root.get(PointOfEntry.UUID),
-			root.get(PointOfEntry.ARCHIVED),
-			root.get(PointOfEntry.POINT_OF_ENTRY_TYPE),
-			root.get(PointOfEntry.NAME),
-			region.get(Region.UUID),
-			region.get(Region.NAME),
-			region.get(Region.EXTERNAL_ID),
-			district.get(District.UUID),
-			district.get(District.NAME),
-			district.get(District.EXTERNAL_ID),
-			root.get(PointOfEntry.LATITUDE),
-			root.get(PointOfEntry.LONGITUDE),
-			root.get(PointOfEntry.ACTIVE),
-			root.get(PointOfEntry.EXTERNAL_ID));
-	}
-
-	@Override
+	@PermitAll
 	public List<PointOfEntryReferenceDto> getByName(String name, DistrictReferenceDto district, boolean includeArchivedEntities) {
 		return service.getByName(name, districtService.getByReferenceDto(district), includeArchivedEntities)
 			.stream()
@@ -133,6 +121,7 @@ public class PointOfEntryFacadeEjb
 	}
 
 	@Override
+	@PermitAll
 	public List<PointOfEntryReferenceDto> getReferencesByExternalId(String name, boolean includeArchivedEntities) {
 		return service.getByExternalId(name, includeArchivedEntities)
 			.stream()
@@ -141,12 +130,16 @@ public class PointOfEntryFacadeEjb
 	}
 
 	@Override
+	@RightsAllowed({
+		UserRight._INFRASTRUCTURE_CREATE,
+		UserRight._INFRASTRUCTURE_EDIT })
 	public PointOfEntryDto save(PointOfEntryDto dto, boolean allowMerge) {
 		validate(dto);
 		return super.save(dto, allowMerge);
 	}
 
 	@Override
+	@RightsAllowed(UserRight._SYSTEM)
 	public PointOfEntryDto saveFromCentral(PointOfEntryDto dto) {
 		return save(dto);
 	}
@@ -162,7 +155,7 @@ public class PointOfEntryFacadeEjb
 	}
 
 	@Override
-	public void validate(PointOfEntryDto pointOfEntry) throws ValidationRuntimeException {
+	public void validate(@Valid PointOfEntryDto pointOfEntry) throws ValidationRuntimeException {
 
 		if (StringUtils.isEmpty(pointOfEntry.getName())) {
 			throw new ValidationRuntimeException(
@@ -191,22 +184,11 @@ public class PointOfEntryFacadeEjb
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<PointOfEntry> cq = cb.createQuery(PointOfEntry.class);
-		Root<PointOfEntry> pointOfEntry = cq.from(PointOfEntry.class);
-		Join<PointOfEntry, Region> region = pointOfEntry.join(PointOfEntry.REGION, JoinType.LEFT);
-		Join<PointOfEntry, District> district = pointOfEntry.join(PointOfEntry.DISTRICT, JoinType.LEFT);
+		Root<PointOfEntry> root = cq.from(PointOfEntry.class);
+		Join<PointOfEntry, Region> region = root.join(PointOfEntry.REGION, JoinType.LEFT);
+		Join<PointOfEntry, District> district = root.join(PointOfEntry.DISTRICT, JoinType.LEFT);
 
-		Predicate filter = service.buildCriteriaFilter(criteria, cb, pointOfEntry);
-		Predicate excludeFilter = cb.and(
-			cb.notEqual(pointOfEntry.get(PointOfEntry.UUID), PointOfEntryDto.OTHER_AIRPORT_UUID),
-			cb.notEqual(pointOfEntry.get(PointOfEntry.UUID), PointOfEntryDto.OTHER_SEAPORT_UUID),
-			cb.notEqual(pointOfEntry.get(PointOfEntry.UUID), PointOfEntryDto.OTHER_GROUND_CROSSING_UUID),
-			cb.notEqual(pointOfEntry.get(PointOfEntry.UUID), PointOfEntryDto.OTHER_POE_UUID));
-
-		if (filter != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, excludeFilter);
-		} else {
-			filter = excludeFilter;
-		}
+		Predicate filter = service.buildCriteriaFilter(criteria, cb, root);
 
 		if (filter != null) {
 			cq.where(filter);
@@ -223,7 +205,7 @@ public class PointOfEntryFacadeEjb
 				case PointOfEntry.LONGITUDE:
 				case PointOfEntry.ACTIVE:
 				case PointOfEntry.EXTERNAL_ID:
-					expression = pointOfEntry.get(sortProperty.propertyName);
+					expression = root.get(sortProperty.propertyName);
 					break;
 				case Facility.REGION:
 					expression = region.get(Region.NAME);
@@ -238,40 +220,24 @@ public class PointOfEntryFacadeEjb
 			}
 			cq.orderBy(order);
 		} else {
-			cq.orderBy(cb.asc(region.get(Region.NAME)), cb.asc(district.get(District.NAME)), cb.asc(pointOfEntry.get(PointOfEntry.NAME)));
+			cq.orderBy(cb.asc(region.get(Region.NAME)), cb.asc(district.get(District.NAME)), cb.asc(root.get(PointOfEntry.NAME)));
 		}
 
-		cq.select(pointOfEntry);
+		cq.select(root);
 
 		return QueryHelper.getResultList(em, cq, first, max, this::toDto);
 	}
 
 	@Override
-	public long count(PointOfEntryCriteria criteria) {
+	public PointOfEntryDto getByCaseUuid(String caseUuid) {
 
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-		Root<PointOfEntry> root = cq.from(PointOfEntry.class);
+		return toPseudonymizedDto(service.getByCaseUuid(caseUuid));
+	}
 
-		Predicate filter = service.buildCriteriaFilter(criteria, cb, root);
-		Predicate excludeFilter = cb.and(
-			cb.notEqual(root.get(PointOfEntry.UUID), PointOfEntryDto.OTHER_AIRPORT_UUID),
-			cb.notEqual(root.get(PointOfEntry.UUID), PointOfEntryDto.OTHER_SEAPORT_UUID),
-			cb.notEqual(root.get(PointOfEntry.UUID), PointOfEntryDto.OTHER_GROUND_CROSSING_UUID),
-			cb.notEqual(root.get(PointOfEntry.UUID), PointOfEntryDto.OTHER_POE_UUID));
+	@Override
+	public boolean existsForCase(String caseUuid) {
 
-		if (filter != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, excludeFilter);
-		} else {
-			filter = excludeFilter;
-		}
-
-		if (filter != null) {
-			cq.where(filter);
-		}
-
-		cq.select(cb.count(root));
-		return em.createQuery(cq).getSingleResult();
+		return service.existsForCase(caseUuid);
 	}
 
 	@Override
@@ -294,9 +260,13 @@ public class PointOfEntryFacadeEjb
 	}
 
 	@Override
-	protected PointOfEntry fillOrBuildEntity(@NotNull PointOfEntryDto source, PointOfEntry target, boolean checkChangeDate) {
+	protected PointOfEntry fillOrBuildEntity(
+		@NotNull PointOfEntryDto source,
+		PointOfEntry target,
+		boolean checkChangeDate,
+		boolean allowUuidOverwrite) {
 
-		target = DtoHelper.fillOrBuildEntity(source, target, PointOfEntry::new, checkChangeDate);
+		target = DtoHelper.fillOrBuildEntity(source, target, PointOfEntry::new, checkChangeDate, allowUuidOverwrite);
 
 		target.setName(source.getName());
 		target.setPointOfEntryType(source.getPointOfEntryType());
@@ -335,7 +305,7 @@ public class PointOfEntryFacadeEjb
 	}
 
 	@Override
-	public PointOfEntryReferenceDto toRefDto(PointOfEntry pointOfEntry) {
+	protected PointOfEntryReferenceDto toRefDto(PointOfEntry pointOfEntry) {
 		return toReferenceDto(pointOfEntry);
 	}
 
@@ -347,11 +317,8 @@ public class PointOfEntryFacadeEjb
 		}
 
 		@Inject
-		protected PointOfEntryFacadeEjbLocal(
-			PointOfEntryService service,
-			FeatureConfigurationFacadeEjbLocal featureConfiguration,
-			UserService userService) {
-			super(service, featureConfiguration, userService);
+		protected PointOfEntryFacadeEjbLocal(PointOfEntryService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
+			super(service, featureConfiguration);
 		}
 	}
 }

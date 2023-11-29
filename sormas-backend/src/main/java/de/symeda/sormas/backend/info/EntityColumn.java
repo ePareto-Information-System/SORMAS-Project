@@ -23,6 +23,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
 
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang3.reflect.TypeUtils;
 
 import de.symeda.sormas.api.Disease;
@@ -37,7 +39,6 @@ import de.symeda.sormas.api.utils.HideForCountries;
 import de.symeda.sormas.api.utils.HideForCountriesExcept;
 import de.symeda.sormas.api.utils.Outbreaks;
 import de.symeda.sormas.api.utils.PersonalData;
-import de.symeda.sormas.api.utils.Required;
 import de.symeda.sormas.api.utils.SensitiveData;
 
 public enum EntityColumn {
@@ -49,7 +50,7 @@ public enum EntityColumn {
 	DATA_PROTECTION(256 * 30, EntityColumn::getDataProtection, false, true, false),
 	CAPTION(256 * 30, EntityColumn::getCaption, false, true, false),
 	DESCRIPTION(256 * 60, EntityColumn::getDescription, true, true, false),
-	REQUIRED(256 * 10, EntityColumn::getRequired, false, true, false),
+	REQUIRED(256 * 10, EntityColumn::getNotNull, false, true, false),
 	NEW_DISEASE(256 * 8, EntityColumn::getNewDisease, false, true, false),
 	DISEASES(256 * 45, EntityColumn::getDiseases, true, true, false),
 	OUTBREAKS(256 * 10, EntityColumn::getOutbreaks, false, true, false),
@@ -173,8 +174,8 @@ public enum EntityColumn {
 		return I18nProperties.getPrefixDescription(fieldData.getI18NPrefix(), fieldData.getField().getName(), "");
 	}
 
-	private static String getRequired(FieldData fieldData) {
-		if (fieldData.getField().getAnnotation(Required.class) == null) {
+	private static String getNotNull(FieldData fieldData) {
+		if (fieldData.getField().getAnnotation(NotNull.class) == null) {
 			return null;
 		}
 

@@ -107,6 +107,8 @@ public class CaseDirectoryPage {
       By.cssSelector("[id='newCaseDateType'] [class='v-filterselect-button']");
   public static final By CASE_DISPLAY_FILTER_COMBOBOX =
       By.cssSelector("[id='relevanceStatus'] [class='v-filterselect-button']");
+  public static final By CASE_OWNERSHIP_FILTER_COMBOBOX =
+      By.cssSelector("[id='ownershipStatus'] [class='v-filterselect-button']");
   public static final By BULK_ACTIONS = By.id("bulkActions-2");
   public static final By BULK_ACTIONS_VALUES = By.id("bulkActions-10");
   public static final By BULK_ACTIONS_ARCHIVE = By.id("bulkActions-5");
@@ -148,10 +150,14 @@ public class CaseDirectoryPage {
   public static final By ACTION_OKAY = By.id("actionOkay");
   public static final By MERGE_DUPLICATES_BUTTON = By.id("caseMergeDuplicates");
   public static final By ENTER_BULK_EDIT_MODE = By.id("actionEnterBulkEditMode");
+
+  public static final By BULK_EDIT_INFORMATION =
+      By.xpath("//div[@class='v-window-header' and text()='Massenbearbeitung aktivieren']");
   public static final By LEAVE_BULK_EDIT_MODE = By.id("actionLeaveBulkEditMode");
   public static final By ALL_RESULTS_CHECKBOX =
       By.xpath("//th[@role='columnheader']//input[@type='checkbox']/../..");
-  public static final By NEW_EVENT_CHECKBOX = By.xpath("//*[contains(text(),'New event')]/..");
+  public static final By NEW_EVENT_CHECKBOX =
+      By.xpath("//div[@class='v-select-optiongroup v-widget']/span");
   public static final By FIRST_RESULT_IN_GRID =
       By.xpath("//div[contains(@class, 'popupContent')]//tr[@role='row']");
   public static final By SEARCH_BUTTON = By.id("search");
@@ -166,23 +172,47 @@ public class CaseDirectoryPage {
   public static final By DOWNLOAD_DATA_DICTIONARY_BUTTON = By.id("importDownloadDataDictionary");
   public static final By FACILITY_ACTIVITY_AS_CASE_COMBOBOX =
       By.cssSelector(".v-window #typeOfPlace div");
-  public static final By MERGE_DUPLICATES_WARNING_DE =
-      By.xpath(
-          "  //div[contains(text(), \"Die Berechnung und Anzeige m\u00F6glicher Duplikat-F\u00E4lle ist eine sehr komplexe Aufgabe und kann viel Zeit in Anspruch nehmen.\")]");
+  public static final By MERGE_DUPLICATES_WARNING_POPUP =
+      By.xpath("//div[@class='v-window-wrap']//div[@class='v-slot']/div");
   public static final By CASE_MEANS_OF_TRANSPORT =
       By.cssSelector(".v-window #meansOfTransport div");
   public static final By CASE_MEANS_OF_TRANSPORT_DETAILS = By.id("meansOfTransportDetails");
   public static final By CASE_CONNECTION_NUMBER = By.id("connectionNumber");
   public static final By CASE_SEAT_NUMBER = By.id("seatNumber");
-  public static final By CASE_ACTION_CONFIRM = By.id("actionConfirm");
-  public static final By CASE_ACTION_CANCEL = By.id("actionCancel");
   public static final By UPLOAD_DOCUMENT_TO_ENTITIES_CHECKBOX =
-      By.xpath("//label[text()='Also upload the generated documents to the selected entities']");
+      By.xpath("//div[@class='v-slot v-slot-force-caption-checkbox']/span/label");
   public static final By CLOSE_FORM_BUTTON = By.xpath("//div[@class='v-window-closebox']");
   public static final By REINFECTION_STATUS_COMBOBOX =
       By.cssSelector("[id='reinfectionStatus'] [class='v-filterselect-button']");
-  public static final By CREATE_NEW_PERSON_CHECKBOX_DE =
-      By.xpath("//label[text()='Eine neue Person anlegen']");
+  public static final By CREATE_NEW_PERSON_CHECKBOX =
+      By.xpath("//div[@class='v-select-optiongroup v-widget']/span/label");
+  public static final By POPUP_WINDOW_HEADER = By.xpath("//div[@class='v-window-closebox']");
+  public static final By ACTION_REJECT_BUTTON = By.cssSelector("#actionReject");
+  public static final By POTENTIAL_DUPLICATE_POPUP_DE =
+      By.xpath("//*[contains(text(), 'Potentielle Duplikate erkannt')]");
+  public static final By CASE_ARCHIVED_POPUP = By.cssSelector(".v-Notification-caption");
+
+  public static By getActionAcceptButtonByCaseDescription(String description) {
+    return By.xpath(
+        String.format(
+            "//td[contains(text(), 'Fall')]/../*[contains(text(), '%s')]/..//div[@id='actionAccept']",
+            description));
+  }
+
+  public static By getActionAcceptButtonByContactDescription(String description) {
+    return By.xpath(
+        String.format(
+            "//td[contains(text(), 'Kontakt')]/../*[contains(text(), '%s')]/..//div[@id='actionAccept']",
+            description));
+  }
+
+  public static final By REJECT_SHARED_CASE_POPUP_TEXT_AREA =
+      By.cssSelector(".popupContent .v-widget textarea");
+  public static final By RECEIVED_CASE_POPUP_UUID = By.xpath("//div[@class='popupContent']//td[1]");
+
+  public static By getVaccinationStatusCasesByText(String status) {
+    return By.xpath(String.format("//td[contains(text(), '%s')]", status));
+  }
 
   public static By getCheckboxByIndex(String idx) {
     return By.xpath(String.format("(//input[@type=\"checkbox\"])[%s]", idx));
@@ -199,9 +229,48 @@ public class CaseDirectoryPage {
   public static By getMergeDuplicatesButtonById(String uuid) {
     return By.xpath(
         String.format(
-            "//td//a//span[text()='%s']/../../../../../../preceding-sibling::tr//div[@id=\"actionMerge\"]",
+            "//td//a//span[text()='%s']/../../../../../..//div[@id=\"actionMerge\"]",
             uuid.substring(0, 6).toUpperCase()));
   }
 
   public static By CONFIRM_POPUP = By.cssSelector(".popupContent #actionConfirm");
+  public static By SHARE_OPTION_BULK_ACTION_COMBOBOX =
+      By.xpath("//span[text()=\"\u00DCbergeben\"]");
+  public static By REJECT_SHARED_CASE_HEADER_DE =
+      By.xpath("//div[@class='popupContent']//*[contains(text(), 'Anfrage ablehnen')]");
+
+  public static By getMergeButtonForCaseForTargetSystem(String firstName, String lastName) {
+    return By.xpath(
+        String.format(
+            "(//td[contains(text(), '"
+                + firstName
+                + "')]/../td[contains(text(), '"
+                + lastName
+                + "')]/..//div[@id='actionMerge'])[1]"));
+  }
+
+  public static By getMergeButtonForCaseForSourceSystem(String firstName, String lastName) {
+    return By.xpath(
+        String.format(
+            "(//td[contains(text(), '"
+                + firstName
+                + "')]/../td[contains(text(), '"
+                + lastName
+                + "')]/..//div[@id='actionMerge'])[2]"));
+  }
+
+  public static By CONFIRM_YOUR_CHOICE_HEADER_DE =
+      By.xpath("//div[@class='popupContent']//div[contains(text(), 'Ihre Wahl best\u00E4tigen')]");
+  public static By MERGE_DUPLICATED_CASES_WARNING_POPUP_DE =
+      By.xpath("//p[contains(text(), 'Dieser Fall kann nicht mehr bearbeitet werden')]");
+  public static By ERROR_MESSAGE_HEADER_DE =
+      By.xpath("//div[@class='popupContent']//h1[contains(text(), 'Ein Fehler ist aufgetreten')]");
+
+  public static By MERGE_MESSAGE_HEADER_DE =
+      By.xpath(
+          "//*[contains(text(), 'F\u00E4lle wurden zusammengef\u00FChrt und der doppelte Fall gel\u00F6scht')]");
+  public static By WARNING_CASE_NOT_SHARED_SHARE_POPUP_DE =
+      By.xpath(
+          "//div[contains(text(), 'Wenn Sie diesen Kontakt teilen m\u00F6chten, m\u00FCssen Sie den zugeh\u00F6rigen Fall zuerst an das gleiche Zielsystem senden.')]");
+  public static By SEND_TO_REPORTING_TOOL_BUTTON = By.xpath("//span[contains(text(), 'Senden')]");
 }

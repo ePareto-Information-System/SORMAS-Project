@@ -15,17 +15,12 @@
 
 package de.symeda.sormas.api.utils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import de.symeda.sormas.api.i18n.I18nProperties;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ElementKind;
 import javax.validation.Path;
-
-import de.symeda.sormas.api.i18n.I18nProperties;
+import java.util.*;
 
 public class ConstrainValidationHelper {
 
