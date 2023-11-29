@@ -7,7 +7,7 @@ import de.symeda.sormas.api.i18n.Strings;
 import java.io.Serializable;
 import java.util.List;
 
-public class DiseaseIndexDto implements Serializable {
+public class DiseaseConIndexDto implements Serializable {
 
     public static final String I18N_PREFIX = "Disease";
 

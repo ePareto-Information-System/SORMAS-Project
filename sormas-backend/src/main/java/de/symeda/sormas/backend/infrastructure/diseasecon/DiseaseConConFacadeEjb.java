@@ -2,7 +2,6 @@ package de.symeda.sormas.backend.infrastructure.diseasecon;
 
 
 import de.symeda.sormas.api.common.Page;
-import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.diseasecon.*;
 import de.symeda.sormas.api.infrastructure.facility.FacilityHelper;
 import de.symeda.sormas.api.user.UserRight;
@@ -28,15 +27,15 @@ import java.util.stream.Collectors;
 
 @Stateless(name = "DiseaseFacade")
 @RightsAllowed(UserRight._INFRASTRUCTURE_VIEW)
-public class DiseaseFacadeEjb extends AbstractInfrastructureFacadeEjb<DiseaseConfiguration, DiseaseDto, DiseaseIndexDto, DiseaseReferenceDto, DiseaseService, DiseaseCriteria> implements DiseaseFacade {
 
+public class DiseaseConConFacadeEjb extends AbstractInfrastructureFacadeEjb<DiseaseConfiguration, DiseaseConDto, DiseaseConIndexDto, DiseaseConReferenceDto, DiseaseConService, DiseaseConCriteria> implements DiseaseConFacade {
     public DiseaseConConFacadeEjb(){}
 
     @Inject
-    protected DiseaseFacadeEjb(DiseaseService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
+    protected DiseaseConConFacadeEjb(DiseaseConService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
         super(
                 DiseaseConfiguration.class,
-                DiseaseDto.class,
+                DiseaseConDto.class,
                 service,
                 featureConfiguration,
                 "",
@@ -99,7 +98,7 @@ public class DiseaseFacadeEjb extends AbstractInfrastructureFacadeEjb<DiseaseCon
     @RightsAllowed({
             UserRight._INFRASTRUCTURE_CREATE,
             UserRight._INFRASTRUCTURE_EDIT })
-    public long count(DiseaseCriteria criteria) {
+    public long count(DiseaseConCriteria criteria) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
         Root<DiseaseConfiguration> root = cq.from(DiseaseConfiguration.class);
@@ -123,7 +122,7 @@ public class DiseaseFacadeEjb extends AbstractInfrastructureFacadeEjb<DiseaseCon
     }
 
     @Override
-    protected DiseaseConfiguration fillOrBuildEntity(DiseaseDto source, DiseaseConfiguration target, boolean checkChangeDate, boolean allowUuidOverwrite) {
+    protected DiseaseConfiguration fillOrBuildEntity(DiseaseConDto source, DiseaseConfiguration target, boolean checkChangeDate, boolean allowUuidOverwrite) {
         target = DtoHelper.fillOrBuildEntity(source, target, DiseaseConfiguration::new, checkChangeDate);
 
         target.setDisease(source.getDisease());
@@ -139,7 +138,7 @@ public class DiseaseFacadeEjb extends AbstractInfrastructureFacadeEjb<DiseaseCon
     }
 
     @Override
-    public List<DiseaseReferenceDto> getReferencesByExternalId(String externalId, boolean includeArchivedEntities) {
+    public List<DiseaseConReferenceDto> getReferencesByExternalId(String externalId, boolean includeArchivedEntities) {
         return null;
     }
 
@@ -156,7 +155,7 @@ public class DiseaseFacadeEjb extends AbstractInfrastructureFacadeEjb<DiseaseCon
     }
 
     @Override
-    protected DiseaseConfiguration fillOrBuildEntity(DiseaseDto source, DiseaseConfiguration target, boolean checkChangeDate) {
+    protected DiseaseConfiguration fillOrBuildEntity(DiseaseConDto source, DiseaseConfiguration target, boolean checkChangeDate) {
         target = DtoHelper.fillOrBuildEntity(source, target, DiseaseConfiguration::new, checkChangeDate);
 
         target.setDisease(source.getDisease());
@@ -233,13 +232,13 @@ public class DiseaseFacadeEjb extends AbstractInfrastructureFacadeEjb<DiseaseCon
 
     @LocalBean
     @Stateless
-    public static class DiseaseFacadeEjbLocal extends DiseaseFacadeEjb {
+    public static class DiseaseConConFacadeEjbLocal extends DiseaseConConFacadeEjb {
 
-        public DiseaseFacadeEjbLocal() {
+        public DiseaseConConFacadeEjbLocal() {
         }
 
         @Inject
-        protected DiseaseFacadeEjbLocal(DiseaseService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
+        protected DiseaseConConFacadeEjbLocal(DiseaseConService service, FeatureConfigurationFacadeEjbLocal featureConfiguration) {
             super(service, featureConfiguration);
         }
     }

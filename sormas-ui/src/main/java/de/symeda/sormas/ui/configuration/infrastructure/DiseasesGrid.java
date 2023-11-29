@@ -38,13 +38,13 @@ public class DiseasesGrid extends FilteredGrid<DiseaseConIndexDto, DiseaseConCri
 
 
         setColumns(
-                DiseaseIndexDto.UUID,
-                DiseaseIndexDto.DISEASE,
-                DiseaseIndexDto.ACTIVE,
-                DiseaseIndexDto.PRIMARY_DISEASE,
-                DiseaseIndexDto.FOLLOW_UP_ENABLED,
-                DiseaseIndexDto.FOLLOW_UP_DURATION,
-                DiseaseIndexDto.EXTENDED_CLASSIFICATION
+                DiseaseConIndexDto.UUID,
+                DiseaseConIndexDto.DISEASE,
+                DiseaseConIndexDto.ACTIVE,
+                DiseaseConIndexDto.PRIMARY_DISEASE,
+                DiseaseConIndexDto.FOLLOW_UP_ENABLED,
+                DiseaseConIndexDto.FOLLOW_UP_DURATION,
+                DiseaseConIndexDto.EXTENDED_CLASSIFICATION
         );
 
         if (UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_EDIT)) {
