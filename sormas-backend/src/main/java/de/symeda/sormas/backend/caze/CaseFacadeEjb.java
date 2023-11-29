@@ -4584,18 +4584,26 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
     }
 
     @Override
+    @RightsAllowed(UserRight._CASE_MERGE)
     public void merge(String leadUuid, String otherUuid) {
-
+        mergeCase(getCaseDataWithoutPseudonyimization(leadUuid), getCaseDataWithoutPseudonyimization(otherUuid), false);
     }
 
     @Override
-    public void deleteAsDuplicate(String uuid, String duplicateOfUuid) {
+    @RightsAllowed(UserRight._CASE_MERGE)
+    public void deleteAsDuplicate(String caseUuid, String duplicateOfCaseUuid) {
 
+        Case caze = service.getByUuid(caseUuid);
+        Case duplicateOfCase = service.getByUuid(duplicateOfCaseUuid);
+        caze.setDuplicateOf(duplicateOfCase);
+        service.ensurePersisted(caze);
+
+        delete(caseUuid, new DeletionDetails(DeletionReason.DUPLICATE_ENTRIES, null));
     }
 
-    @Override
+
     public boolean isEditAllowed(String uuid) {
-        return false;
+        return service.isEditAllowed(service.getByUuid(uuid));
     }
 
     @Override
