@@ -12889,4 +12889,12 @@ DO $$
 $$ LANGUAGE plpgsql;
 
 INSERT INTO schema_version (version_number, comment) VALUES (533, 'Add the ''See personal data inside jurisdiction'' user right to the default Environmental Surveillance User #12284');
+
+ALTER TABLE externalmessage ADD COLUMN sample_id bigint;
+ALTER TABLE externalmessage ADD CONSTRAINT fk_externalmessage_sample_id FOREIGN KEY (sample_id) REFERENCES samples (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+CREATE INDEX IF NOT EXISTS idx_externalmessage_sample_id ON externalmessage (sample_id);
+ALTER TABLE externalmessage ADD COLUMN sampledatetime timestamp not null;
+
+INSERT INTO schema_version (version_number, comment) VALUES (534, 'Update exeternalmessage table with required columns');
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
