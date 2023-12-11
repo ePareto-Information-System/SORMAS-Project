@@ -1201,6 +1201,7 @@ public interface Strings {
 	String messageFacilityChanged = "messageFacilityChanged";
 	String messageFacilityDearchived = "messageFacilityDearchived";
 	String messageFacilityDearchivingNotPossible = "messageFacilityDearchivingNotPossible";
+	String messageDiseaseDeachivingOrAchivingNotPossible = "messageDiseaseDeachivingOrAchivingNotPossible";
 	String messageFacilityMulitChanged = "messageFacilityMulitChanged";
 	String messageFollowUpCanceled = "messageFollowUpCanceled";
 	String messageFollowUpCanceledForSome = "messageFollowUpCanceledForSome";

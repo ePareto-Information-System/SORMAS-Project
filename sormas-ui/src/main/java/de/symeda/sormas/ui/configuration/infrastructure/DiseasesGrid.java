@@ -61,7 +61,7 @@ public class DiseasesGrid extends FilteredGrid<DiseaseConIndexDto, DiseaseConCri
 
     public void setLazyDataProvider() {
         DataProvider<DiseaseConIndexDto, DiseaseConCriteria> dataProvider = DataProvider.fromFilteringCallbacks(
-                query -> FacadeProvider.getDiseaseConFacade()
+                query -> FacadeProvider.getDiseaseFacade()
                         .getIndexList(
                                 query.getFilter().orElse(null),
                                 query.getOffset(),
@@ -71,7 +71,7 @@ public class DiseasesGrid extends FilteredGrid<DiseaseConIndexDto, DiseaseConCri
                                         .map(sortOrder -> new SortProperty(sortOrder.getSorted(), sortOrder.getDirection() == SortDirection.ASCENDING))
                                         .collect(Collectors.toList()))
                         .stream(),
-                query -> (int) FacadeProvider.getDiseaseConFacade().count(query.getFilter().orElse(null)));
+                query -> (int) FacadeProvider.getDiseaseFacade().count(query.getFilter().orElse(null)));
         setDataProvider(dataProvider);
         setSelectionMode(SelectionMode.NONE);
     }
@@ -79,7 +79,7 @@ public class DiseasesGrid extends FilteredGrid<DiseaseConIndexDto, DiseaseConCri
     public void setEagerDataProvider() {
 
         ListDataProvider<DiseaseConIndexDto> dataProvider =
-                DataProvider.fromStream(FacadeProvider.getDiseaseConFacade().getIndexList(getCriteria(), null, null, null).stream());
+                DataProvider.fromStream(FacadeProvider.getDiseaseFacade().getIndexList(getCriteria(), null, null, null).stream());
         setDataProvider(dataProvider);
     }
 

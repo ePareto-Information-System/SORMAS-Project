@@ -6,10 +6,10 @@ import de.symeda.sormas.api.utils.SortProperty;
 
 import javax.ejb.Remote;
 import java.util.List;
+
 @Remote
-public interface DiseaseConFacade extends InfrastructureFacade<DiseaseConDto, DiseaseConIndexDto, DiseaseConReferenceDto, DiseaseConCriteria> {
+public interface DiseaseFacade extends InfrastructureFacade<DiseaseConDto, DiseaseConIndexDto, DiseaseConReferenceDto, DiseaseConCriteria> {
     Page<DiseaseConIndexDto> getIndexPage(DiseaseConCriteria criteria, Integer offset, Integer size, List<SortProperty> sortProperties);
 
     List<DiseaseConReferenceDto> getAllActiveAsReference();
-
 }

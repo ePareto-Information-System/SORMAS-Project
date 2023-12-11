@@ -494,7 +494,7 @@ public class CaseDtoHelper extends PersonDependentDtoHelper<Case, CaseDataDto> {
 
 	@Override
 	protected long getApproximateJsonSizeInBytes() {
-		return CaseDataDto.APPROXIMATE_JSON_SIZE_IN_BYTES;
+		return CaseDataDto.APPROXIMATE_JSON_SIZE_IN_BYTES5
 	}
 
 	public static CaseReferenceDto toReferenceDto(Case ado) {

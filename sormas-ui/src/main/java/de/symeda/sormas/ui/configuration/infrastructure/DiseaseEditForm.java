@@ -58,7 +58,7 @@ public class DiseaseEditForm extends AbstractEditForm<DiseaseConDto> {
         if (criteria.getRelevanceStatus() == null) {
             criteria.relevanceStatus(EntityRelevanceStatus.ACTIVE);
         }
-        criteria.nameCityLike(null);
+        criteria.nameAddressLike(null);
         criteria.region(null);
         criteria.district(null);
 

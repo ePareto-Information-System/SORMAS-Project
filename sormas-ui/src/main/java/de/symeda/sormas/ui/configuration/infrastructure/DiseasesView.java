@@ -45,6 +45,7 @@ public class DiseasesView extends AbstractConfigurationView {
         gridLayout = new VerticalLayout();
         gridLayout.addComponent(createFilterBar());
         rowCount = new RowCount(Strings.labelNumberOfDiseases, grid.getDataSize());
+        grid.addDataSizeChangeListener(e -> rowCount.update(grid.getDataSize()));
         gridLayout.addComponent(rowCount);
         gridLayout.addComponent(grid);
 		gridLayout.setMargin(true);
@@ -78,6 +79,7 @@ public class DiseasesView extends AbstractConfigurationView {
         disseaFilter.addValueChangeListener(event -> {
             criteria.disease((Disease) event.getValue());
             grid.reload();
+            rowCount.update(grid.getDataSize());
             updateFilterComponents();
         });
 
@@ -108,13 +110,10 @@ public class DiseasesView extends AbstractConfigurationView {
     }
 
     private void updateFilterComponents() {
-
         applyingCriteria = true;
         disseaFilter.setValue(criteria.getDisease());
         resetButton.setVisible(criteria.hasAnyFilterActive());
         rowCount.update(grid.getDataSize());
         applyingCriteria = false;
-
     }
-
 }

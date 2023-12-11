@@ -31,7 +31,6 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.Valid;
-import javax.persistence.criteria.*;
 import javax.validation.constraints.NotNull;
 
 import de.symeda.sormas.api.disease.DiseaseConfigurationDto;
@@ -42,7 +41,6 @@ import org.apache.commons.collections.CollectionUtils;
 import de.symeda.sormas.api.ReferenceDto;
 import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;

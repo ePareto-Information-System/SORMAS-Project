@@ -74,7 +74,7 @@ public class InfrastructureController {
 	}
 
 	public void editDisease(String uuid) {
-		DiseaseConDto diseaseConDto = FacadeProvider.getDiseaseConFacade().getByUuid(uuid);
+		DiseaseConDto diseaseConDto = FacadeProvider.getDiseaseFacade().getByUuid(uuid);
 		CommitDiscardWrapperComponent<DiseaseEditForm> editComponent = getEditDiseaseComponent(diseaseConDto);
 		String caption = I18nProperties.getString(Strings.edit) + " " + I18nProperties.getCaption(diseaseConDto.getDisease().toShortString());
 		VaadinUiUtil.showModalPopupWindow(editComponent, caption);
@@ -531,7 +531,7 @@ public class InfrastructureController {
 		editView.addCommitListener(new CommitListener() {
 			@Override
 			public void onCommit() {
-				FacadeProvider.getDiseaseConFacade().save(editForm.getValue());
+				FacadeProvider.getDiseaseFacade().save(editForm.getValue());
 				//editForm.resetFilters();
 				Notification.show(I18nProperties.getString(Strings.messageEntryCreated), Type.ASSISTIVE_NOTIFICATION);
 				SormasUI.get().getNavigator().navigateTo(DiseasesView.VIEW_NAME);
