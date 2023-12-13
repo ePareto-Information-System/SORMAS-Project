@@ -73,6 +73,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import de.symeda.sormas.api.caze.*;
+import de.symeda.sormas.api.sample.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -143,12 +144,6 @@ import de.symeda.sormas.api.person.CauseOfDeath;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.person.PresentCondition;
-import de.symeda.sormas.api.sample.AdditionalTestDto;
-import de.symeda.sormas.api.sample.PathogenTestDto;
-import de.symeda.sormas.api.sample.PathogenTestResultType;
-import de.symeda.sormas.api.sample.PathogenTestType;
-import de.symeda.sormas.api.sample.SampleCriteria;
-import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sormastosormas.ShareTreeCriteria;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasException;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasRuntimeException;
@@ -1763,177 +1758,235 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		if (allSamples != null) {
 			List<CaseExportDetailedSampleDto> newResult = new ArrayList<>();
 			for (CaseExportDetailedSampleDto exportDto : resultList) {
-				//loop all samples
 				for(CaseSampleExportDto embeddedDetailedSampleExportDto : allSamples) {
+					Sample sampleFromExportDto = sampleService.getByUuid(embeddedDetailedSampleExportDto.getUuid());
+					List<PathogenTest> pathogenTests = sampleFromExportDto.getPathogenTests();
+					int count = 0;
+					for (PathogenTest pathogenTest : pathogenTests) {
+						String lab = pathogenTest.getLab() != null
+								? FacilityHelper
+								.buildFacilityString(pathogenTest.getLab().getUuid(), pathogenTest.getLab().getName(), pathogenTest.getLabDetails())
+								: null;
+						CaseSampleExportDto.SampleExportPathogenTest sampleExportPathogenTest = new CaseSampleExportDto.SampleExportPathogenTest(
+								pathogenTest.getTestType(),
+								pathogenTest.getTestTypeText(),
+								DiseaseHelper.toString(pathogenTest.getTestedDisease(), pathogenTest.getTestedDiseaseDetails()),
+								pathogenTest.getTestDateTime(),
+								lab,
+								pathogenTest.getTestResult(),
+								pathogenTest.getTestResultVerified());
+
+						switch (++count) {
+							case 1:
+								embeddedDetailedSampleExportDto.setPathogenTest1(sampleExportPathogenTest);
+								break;
+							case 2:
+								embeddedDetailedSampleExportDto.setPathogenTest2(sampleExportPathogenTest);
+								break;
+							case 3:
+								embeddedDetailedSampleExportDto.setPathogenTest3(sampleExportPathogenTest);
+								break;
+							default:
+								embeddedDetailedSampleExportDto.addOtherPathogenTest(sampleExportPathogenTest);
+								break;
+						}
+					}
+
 					if (exportDto.getId() == embeddedDetailedSampleExportDto.getCaseId()) {
 
-						CaseExportDetailedSampleDto caseExportDetailedDtoNew = new CaseExportDetailedSampleDto();
-						caseExportDetailedDtoNew.setId(exportDto.getId());
-						caseExportDetailedDtoNew.setPersonId(exportDto.getPersonId());
-						caseExportDetailedDtoNew.setAddressGpsCoordinates(exportDto.getAddressGpsCoordinates());
-						caseExportDetailedDtoNew.setEpiDataId(exportDto.getEpiDataId());
-						caseExportDetailedDtoNew.setSymptomsId(exportDto.getSymptomsId());
-						caseExportDetailedDtoNew.setHospitalizationId(exportDto.getHospitalizationId());
-						caseExportDetailedDtoNew.setHealthConditionsId(exportDto.getHealthConditionsId());
-						caseExportDetailedDtoNew.setUuid(exportDto.getUuid());
-						caseExportDetailedDtoNew.setEpidNumber(exportDto.getEpidNumber());
-						caseExportDetailedDtoNew.setArmedForcesRelationType(exportDto.getArmedForcesRelationType());
-						caseExportDetailedDtoNew.setDisease(exportDto.getDisease());
-						caseExportDetailedDtoNew.setDiseaseDetails(exportDto.getDiseaseDetails());
-						caseExportDetailedDtoNew.setDiseaseVariant(exportDto.getDiseaseVariant());
-						caseExportDetailedDtoNew.setDiseaseVariantDetails(exportDto.getDiseaseVariantDetails());
-						caseExportDetailedDtoNew.setPersonUuid(exportDto.getPersonUuid());
-						caseExportDetailedDtoNew.setPersonUuid(exportDto.getPersonUuid());
-						caseExportDetailedDtoNew.setFirstName(exportDto.getFirstName());
-						caseExportDetailedDtoNew.setLastName(exportDto.getLastName());
-						caseExportDetailedDtoNew.setSalutation(exportDto.getSalutation());
-						caseExportDetailedDtoNew.setOtherSalutation(exportDto.getOtherSalutation());
-						caseExportDetailedDtoNew.setSex(exportDto.getSex());
-						caseExportDetailedDtoNew.setPregnant(exportDto.getPregnant());
-						caseExportDetailedDtoNew.setApproximateAge(exportDto.getApproximateAge());
-						caseExportDetailedDtoNew.setAgeGroup(exportDto.getAgeGroup());
-						caseExportDetailedDtoNew.setBirthdate(exportDto.getBirthdate());
-						caseExportDetailedDtoNew.setReportDate(exportDto.getReportDate());
-						caseExportDetailedDtoNew.setRegion(exportDto.getRegion());
-						caseExportDetailedDtoNew.setDistrict(exportDto.getDistrict());
-						caseExportDetailedDtoNew.setCommunity(exportDto.getCommunity());
-						caseExportDetailedDtoNew.setCaseClassification(exportDto.getCaseClassification());
-						caseExportDetailedDtoNew.setClinicalConfirmation(exportDto.getClinicalConfirmation());
-						caseExportDetailedDtoNew.setEpidemiologicalConfirmation(exportDto.getEpidemiologicalConfirmation());
-						caseExportDetailedDtoNew.setLaboratoryDiagnosticConfirmation(exportDto.getLaboratoryDiagnosticConfirmation());
-						caseExportDetailedDtoNew.setNotACaseReasonNegativeTest(exportDto.getNotACaseReasonNegativeTest());
-						caseExportDetailedDtoNew.setNotACaseReasonPhysicianInformation(exportDto.getNotACaseReasonPhysicianInformation());
-						caseExportDetailedDtoNew.setNotACaseReasonDifferentPathogen(exportDto.getNotACaseReasonDifferentPathogen());
-						caseExportDetailedDtoNew.setNotACaseReasonOther(exportDto.getNotACaseReasonOther());
-						caseExportDetailedDtoNew.setNotACaseReasonDetails(exportDto.getNotACaseReasonDetails());
-						caseExportDetailedDtoNew.setInvestigationStatus(exportDto.getInvestigationStatus());
-						caseExportDetailedDtoNew.setInvestigatedDate(exportDto.getInvestigatedDate());
-						caseExportDetailedDtoNew.setOutcome(exportDto.getOutcome());
-						caseExportDetailedDtoNew.setOutcomeDate(exportDto.getOutcomeDate());
-						caseExportDetailedDtoNew.setSequelae(exportDto.getSequelae());
-						caseExportDetailedDtoNew.setSequelaeDetails(exportDto.getSequelaeDetails());
-						caseExportDetailedDtoNew.setBloodOrganOrTissueDonated(exportDto.getBloodOrganOrTissueDonated());
-						caseExportDetailedDtoNew.setNosocomialOutbreak(exportDto.getNosocomialOutbreak());
-						caseExportDetailedDtoNew.setInfectionSetting(exportDto.getInfectionSetting());
-						caseExportDetailedDtoNew.setProhibitionToWork(exportDto.getProhibitionToWork());
-						caseExportDetailedDtoNew.setProhibitionToWorkFrom(exportDto.getProhibitionToWorkFrom());
-						caseExportDetailedDtoNew.setProhibitionToWorkUntil(exportDto.getProhibitionToWorkUntil());
-						caseExportDetailedDtoNew.setReInfection(exportDto.getReInfection());
-						caseExportDetailedDtoNew.setPreviousInfectionDate(exportDto.getPreviousInfectionDate());
-						caseExportDetailedDtoNew.setReinfectionStatus(exportDto.getReinfectionStatus());
-						caseExportDetailedDtoNew.setReinfectionDetails(exportDto.getReinfectionDetails());
-						caseExportDetailedDtoNew.setQuarantine(exportDto.getQuarantine());
-						caseExportDetailedDtoNew.setQuarantineTypeDetails(exportDto.getQuarantineTypeDetails());
-						caseExportDetailedDtoNew.setQuarantineFrom(exportDto.getQuarantineFrom());
-						caseExportDetailedDtoNew.setQuarantineTo(exportDto.getQuarantineTo());
-						caseExportDetailedDtoNew.setQuarantineHelpNeeded(exportDto.getQuarantineHelpNeeded());
-						caseExportDetailedDtoNew.setQuarantineOrderedVerbally(exportDto.isQuarantineOrderedVerbally());
-						caseExportDetailedDtoNew.setQuarantineOrderedOfficialDocument(exportDto.isQuarantineOrderedOfficialDocument());
-						caseExportDetailedDtoNew.setQuarantineOrderedVerballyDate(exportDto.getQuarantineOrderedVerballyDate());
-						caseExportDetailedDtoNew.setQuarantineOrderedOfficialDocumentDate(exportDto.getQuarantineOrderedOfficialDocumentDate());
-						caseExportDetailedDtoNew.setQuarantineExtended(exportDto.isQuarantineExtended());
-						caseExportDetailedDtoNew.setQuarantineReduced(exportDto.isQuarantineReduced());
-						caseExportDetailedDtoNew.setQuarantineOfficialOrderSent(exportDto.isQuarantineOfficialOrderSent());
-						caseExportDetailedDtoNew.setQuarantineOfficialOrderSentDate(exportDto.getQuarantineOfficialOrderSentDate());
-						caseExportDetailedDtoNew.setFacilityType(exportDto.getFacilityType());
-						caseExportDetailedDtoNew.setHealthFacility(exportDto.getHealthFacility());
-						caseExportDetailedDtoNew.setHealthFacilityDetails(exportDto.getHealthFacilityDetails());
-						caseExportDetailedDtoNew.setPointOfEntry(exportDto.getPointOfEntry());
-						caseExportDetailedDtoNew.setPointOfEntryDetails(exportDto.getPointOfEntryDetails());
-						caseExportDetailedDtoNew.setAdmittedToHealthFacility(exportDto.getAdmittedToHealthFacility());
-						caseExportDetailedDtoNew.setAdmissionDate(exportDto.getAdmissionDate());
-						caseExportDetailedDtoNew.setDischargeDate(exportDto.getDischargeDate());
-						caseExportDetailedDtoNew.setLeftAgainstAdvice(exportDto.getLeftAgainstAdvice());
-						caseExportDetailedDtoNew.setPresentCondition(exportDto.getPresentCondition());
-						caseExportDetailedDtoNew.setDeathDate(exportDto.getDeathDate());
-						caseExportDetailedDtoNew.setBurialInfo(exportDto.getBurialInfo());
-						caseExportDetailedDtoNew.setAddressRegion(exportDto.getAddressRegion());
-						caseExportDetailedDtoNew.setAddressDistrict(exportDto.getAddressDistrict());
-						caseExportDetailedDtoNew.setAddressCommunity(exportDto.getAddressCommunity());
-						caseExportDetailedDtoNew.setCity(exportDto.getCity());
-						caseExportDetailedDtoNew.setStreet(exportDto.getStreet());
-						caseExportDetailedDtoNew.setHouseNumber(exportDto.getHouseNumber());
-						caseExportDetailedDtoNew.setAdditionalInformation(exportDto.getAdditionalInformation());
-						caseExportDetailedDtoNew.setPostalCode(exportDto.getPostalCode());
-						caseExportDetailedDtoNew.setFacility(exportDto.getFacility());
-						caseExportDetailedDtoNew.setFacilityDetails(exportDto.getFacilityDetails());
-						caseExportDetailedDtoNew.setPhone(exportDto.getPhone());
-						caseExportDetailedDtoNew.setPhoneOwner(exportDto.getPhoneOwner());
-						caseExportDetailedDtoNew.setEmailAddress(exportDto.getEmailAddress());
-						caseExportDetailedDtoNew.setOtherContactDetails(exportDto.getOtherContactDetails());
-						caseExportDetailedDtoNew.setEducationType(exportDto.getEducationType());
-						caseExportDetailedDtoNew.setEducationDetails(exportDto.getEducationDetails());
-						caseExportDetailedDtoNew.setOccupationType(exportDto.getOccupationType());
-						caseExportDetailedDtoNew.setOccupationDetails(exportDto.getOccupationDetails());
-						caseExportDetailedDtoNew.setContactWithSourceCaseKnown(exportDto.getContactWithSourceCaseKnown());
-						caseExportDetailedDtoNew.setVaccinationStatus(exportDto.getVaccinationStatus());
-						caseExportDetailedDtoNew.setPostpartum(exportDto.getPostpartum());
-						caseExportDetailedDtoNew.setTrimester(exportDto.getTrimester());
-						caseExportDetailedDtoNew.setFollowUpStatus(exportDto.getFollowUpStatus());
-						caseExportDetailedDtoNew.setFollowUpUntil(exportDto.getFollowUpUntil());
-						caseExportDetailedDtoNew.setEventCount(exportDto.getEventCount());
-						caseExportDetailedDtoNew.setNumberOfPrescriptions(exportDto.getNumberOfPrescriptions());
-						caseExportDetailedDtoNew.setNumberOfTreatments(exportDto.getNumberOfTreatments());
-						caseExportDetailedDtoNew.setNumberOfClinicalVisits(exportDto.getNumberOfClinicalVisits());
-						caseExportDetailedDtoNew.setExternalID(exportDto.getExternalID());
-						caseExportDetailedDtoNew.setExternalToken(exportDto.getExternalToken());
-						caseExportDetailedDtoNew.setInternalToken(exportDto.getInternalToken());
-						caseExportDetailedDtoNew.setBirthName(exportDto.getBirthName());
-						caseExportDetailedDtoNew.setBirthCountry(exportDto.getBirthCountry());
-						caseExportDetailedDtoNew.setCitizenship(exportDto.getCitizenship());
-						caseExportDetailedDtoNew.setCaseIdentificationSource(exportDto.getCaseIdentificationSource());
-						caseExportDetailedDtoNew.setScreeningType(exportDto.getScreeningType());
-						caseExportDetailedDtoNew.setResponsibleRegion(exportDto.getResponsibleRegion());
-						caseExportDetailedDtoNew.setResponsibleDistrict(exportDto.getResponsibleDistrict());
-						caseExportDetailedDtoNew.setResponsibleCommunity(exportDto.getResponsibleCommunity());
-						caseExportDetailedDtoNew.setClinicianName(exportDto.getClinicianName());
-						caseExportDetailedDtoNew.setClinicianPhone(exportDto.getClinicianPhone());
-						caseExportDetailedDtoNew.setClinicianEmail(exportDto.getClinicianEmail());
-						caseExportDetailedDtoNew.setReportingUserId(exportDto.getReportingUserId());
-						caseExportDetailedDtoNew.setFollowUpStatusChangeUserId(exportDto.getFollowUpStatusChangeUserId());
-						caseExportDetailedDtoNew.setPreviousQuarantineTo(exportDto.getPreviousQuarantineTo());
-						caseExportDetailedDtoNew.setQuarantineChangeComment(exportDto.getQuarantineChangeComment());
-						caseExportDetailedDtoNew.setAssociatedWithOutbreak(exportDto.getAssociatedWithOutbreak());
-						caseExportDetailedDtoNew.setInJurisdiction(exportDto.getInJurisdiction());
+						CaseExportDetailedSampleDto caseExportDetailedDto = new CaseExportDetailedSampleDto();
+						caseExportDetailedDto.setId(exportDto.getId());
+						caseExportDetailedDto.setPersonId(exportDto.getPersonId());
+						caseExportDetailedDto.setAddressGpsCoordinates(exportDto.getAddressGpsCoordinates());
+						caseExportDetailedDto.setEpiDataId(exportDto.getEpiDataId());
+						caseExportDetailedDto.setSymptomsId(exportDto.getSymptomsId());
+						caseExportDetailedDto.setHospitalizationId(exportDto.getHospitalizationId());
+						caseExportDetailedDto.setHealthConditionsId(exportDto.getHealthConditionsId());
+						caseExportDetailedDto.setUuid(exportDto.getUuid());
+						caseExportDetailedDto.setEpidNumber(exportDto.getEpidNumber());
+						caseExportDetailedDto.setArmedForcesRelationType(exportDto.getArmedForcesRelationType());
+						caseExportDetailedDto.setDisease(exportDto.getDisease());
+						caseExportDetailedDto.setDiseaseDetails(exportDto.getDiseaseDetails());
+						caseExportDetailedDto.setDiseaseVariant(exportDto.getDiseaseVariant());
+						caseExportDetailedDto.setDiseaseVariantDetails(exportDto.getDiseaseVariantDetails());
+						caseExportDetailedDto.setPersonUuid(exportDto.getPersonUuid());
+						caseExportDetailedDto.setPersonUuid(exportDto.getPersonUuid());
+						caseExportDetailedDto.setFirstName(exportDto.getFirstName());
+						caseExportDetailedDto.setLastName(exportDto.getLastName());
+						caseExportDetailedDto.setSalutation(exportDto.getSalutation());
+						caseExportDetailedDto.setOtherSalutation(exportDto.getOtherSalutation());
+						caseExportDetailedDto.setSex(exportDto.getSex());
+						caseExportDetailedDto.setPregnant(exportDto.getPregnant());
+						caseExportDetailedDto.setApproximateAge(exportDto.getApproximateAge());
+						caseExportDetailedDto.setAgeGroup(exportDto.getAgeGroup());
+						caseExportDetailedDto.setBirthdate(exportDto.getBirthdate());
+						caseExportDetailedDto.setReportDate(exportDto.getReportDate());
+						caseExportDetailedDto.setRegion(exportDto.getRegion());
+						caseExportDetailedDto.setDistrict(exportDto.getDistrict());
+						caseExportDetailedDto.setCommunity(exportDto.getCommunity());
+						caseExportDetailedDto.setCaseClassification(exportDto.getCaseClassification());
+						caseExportDetailedDto.setClinicalConfirmation(exportDto.getClinicalConfirmation());
+						caseExportDetailedDto.setEpidemiologicalConfirmation(exportDto.getEpidemiologicalConfirmation());
+						caseExportDetailedDto.setLaboratoryDiagnosticConfirmation(exportDto.getLaboratoryDiagnosticConfirmation());
+						caseExportDetailedDto.setNotACaseReasonNegativeTest(exportDto.getNotACaseReasonNegativeTest());
+						caseExportDetailedDto.setNotACaseReasonPhysicianInformation(exportDto.getNotACaseReasonPhysicianInformation());
+						caseExportDetailedDto.setNotACaseReasonDifferentPathogen(exportDto.getNotACaseReasonDifferentPathogen());
+						caseExportDetailedDto.setNotACaseReasonOther(exportDto.getNotACaseReasonOther());
+						caseExportDetailedDto.setNotACaseReasonDetails(exportDto.getNotACaseReasonDetails());
+						caseExportDetailedDto.setInvestigationStatus(exportDto.getInvestigationStatus());
+						caseExportDetailedDto.setInvestigatedDate(exportDto.getInvestigatedDate());
+						caseExportDetailedDto.setOutcome(exportDto.getOutcome());
+						caseExportDetailedDto.setOutcomeDate(exportDto.getOutcomeDate());
+						caseExportDetailedDto.setSequelae(exportDto.getSequelae());
+						caseExportDetailedDto.setSequelaeDetails(exportDto.getSequelaeDetails());
+						caseExportDetailedDto.setBloodOrganOrTissueDonated(exportDto.getBloodOrganOrTissueDonated());
+						caseExportDetailedDto.setNosocomialOutbreak(exportDto.getNosocomialOutbreak());
+						caseExportDetailedDto.setInfectionSetting(exportDto.getInfectionSetting());
+						caseExportDetailedDto.setProhibitionToWork(exportDto.getProhibitionToWork());
+						caseExportDetailedDto.setProhibitionToWorkFrom(exportDto.getProhibitionToWorkFrom());
+						caseExportDetailedDto.setProhibitionToWorkUntil(exportDto.getProhibitionToWorkUntil());
+						caseExportDetailedDto.setReInfection(exportDto.getReInfection());
+						caseExportDetailedDto.setPreviousInfectionDate(exportDto.getPreviousInfectionDate());
+						caseExportDetailedDto.setReinfectionStatus(exportDto.getReinfectionStatus());
+						caseExportDetailedDto.setReinfectionDetails(exportDto.getReinfectionDetails());
+						caseExportDetailedDto.setQuarantine(exportDto.getQuarantine());
+						caseExportDetailedDto.setQuarantineTypeDetails(exportDto.getQuarantineTypeDetails());
+						caseExportDetailedDto.setQuarantineFrom(exportDto.getQuarantineFrom());
+						caseExportDetailedDto.setQuarantineTo(exportDto.getQuarantineTo());
+						caseExportDetailedDto.setQuarantineHelpNeeded(exportDto.getQuarantineHelpNeeded());
+						caseExportDetailedDto.setQuarantineOrderedVerbally(exportDto.isQuarantineOrderedVerbally());
+						caseExportDetailedDto.setQuarantineOrderedOfficialDocument(exportDto.isQuarantineOrderedOfficialDocument());
+						caseExportDetailedDto.setQuarantineOrderedVerballyDate(exportDto.getQuarantineOrderedVerballyDate());
+						caseExportDetailedDto.setQuarantineOrderedOfficialDocumentDate(exportDto.getQuarantineOrderedOfficialDocumentDate());
+						caseExportDetailedDto.setQuarantineExtended(exportDto.isQuarantineExtended());
+						caseExportDetailedDto.setQuarantineReduced(exportDto.isQuarantineReduced());
+						caseExportDetailedDto.setQuarantineOfficialOrderSent(exportDto.isQuarantineOfficialOrderSent());
+						caseExportDetailedDto.setQuarantineOfficialOrderSentDate(exportDto.getQuarantineOfficialOrderSentDate());
+						caseExportDetailedDto.setFacilityType(exportDto.getFacilityType());
+						caseExportDetailedDto.setHealthFacility(exportDto.getHealthFacility());
+						caseExportDetailedDto.setHealthFacilityDetails(exportDto.getHealthFacilityDetails());
+						caseExportDetailedDto.setPointOfEntry(exportDto.getPointOfEntry());
+						caseExportDetailedDto.setPointOfEntryDetails(exportDto.getPointOfEntryDetails());
+						caseExportDetailedDto.setAdmittedToHealthFacility(exportDto.getAdmittedToHealthFacility());
+						caseExportDetailedDto.setAdmissionDate(exportDto.getAdmissionDate());
+						caseExportDetailedDto.setDischargeDate(exportDto.getDischargeDate());
+						caseExportDetailedDto.setLeftAgainstAdvice(exportDto.getLeftAgainstAdvice());
+						caseExportDetailedDto.setPresentCondition(exportDto.getPresentCondition());
+						caseExportDetailedDto.setDeathDate(exportDto.getDeathDate());
+						caseExportDetailedDto.setBurialInfo(exportDto.getBurialInfo());
+						caseExportDetailedDto.setAddressRegion(exportDto.getAddressRegion());
+						caseExportDetailedDto.setAddressDistrict(exportDto.getAddressDistrict());
+						caseExportDetailedDto.setAddressCommunity(exportDto.getAddressCommunity());
+						caseExportDetailedDto.setCity(exportDto.getCity());
+						caseExportDetailedDto.setStreet(exportDto.getStreet());
+						caseExportDetailedDto.setHouseNumber(exportDto.getHouseNumber());
+						caseExportDetailedDto.setAdditionalInformation(exportDto.getAdditionalInformation());
+						caseExportDetailedDto.setPostalCode(exportDto.getPostalCode());
+						caseExportDetailedDto.setFacility(exportDto.getFacility());
+						caseExportDetailedDto.setFacilityDetails(exportDto.getFacilityDetails());
+						caseExportDetailedDto.setPhone(exportDto.getPhone());
+						caseExportDetailedDto.setPhoneOwner(exportDto.getPhoneOwner());
+						caseExportDetailedDto.setEmailAddress(exportDto.getEmailAddress());
+						caseExportDetailedDto.setOtherContactDetails(exportDto.getOtherContactDetails());
+						caseExportDetailedDto.setEducationType(exportDto.getEducationType());
+						caseExportDetailedDto.setEducationDetails(exportDto.getEducationDetails());
+						caseExportDetailedDto.setOccupationType(exportDto.getOccupationType());
+						caseExportDetailedDto.setOccupationDetails(exportDto.getOccupationDetails());
+						caseExportDetailedDto.setContactWithSourceCaseKnown(exportDto.getContactWithSourceCaseKnown());
+						caseExportDetailedDto.setVaccinationStatus(exportDto.getVaccinationStatus());
+						caseExportDetailedDto.setPostpartum(exportDto.getPostpartum());
+						caseExportDetailedDto.setTrimester(exportDto.getTrimester());
+						caseExportDetailedDto.setFollowUpStatus(exportDto.getFollowUpStatus());
+						caseExportDetailedDto.setFollowUpUntil(exportDto.getFollowUpUntil());
+						caseExportDetailedDto.setEventCount(exportDto.getEventCount());
+						caseExportDetailedDto.setNumberOfPrescriptions(exportDto.getNumberOfPrescriptions());
+						caseExportDetailedDto.setNumberOfTreatments(exportDto.getNumberOfTreatments());
+						caseExportDetailedDto.setNumberOfClinicalVisits(exportDto.getNumberOfClinicalVisits());
+						caseExportDetailedDto.setExternalID(exportDto.getExternalID());
+						caseExportDetailedDto.setExternalToken(exportDto.getExternalToken());
+						caseExportDetailedDto.setInternalToken(exportDto.getInternalToken());
+						caseExportDetailedDto.setBirthName(exportDto.getBirthName());
+						caseExportDetailedDto.setBirthCountry(exportDto.getBirthCountry());
+						caseExportDetailedDto.setCitizenship(exportDto.getCitizenship());
+						caseExportDetailedDto.setCaseIdentificationSource(exportDto.getCaseIdentificationSource());
+						caseExportDetailedDto.setScreeningType(exportDto.getScreeningType());
+						caseExportDetailedDto.setResponsibleRegion(exportDto.getResponsibleRegion());
+						caseExportDetailedDto.setResponsibleDistrict(exportDto.getResponsibleDistrict());
+						caseExportDetailedDto.setResponsibleCommunity(exportDto.getResponsibleCommunity());
+						caseExportDetailedDto.setClinicianName(exportDto.getClinicianName());
+						caseExportDetailedDto.setClinicianPhone(exportDto.getClinicianPhone());
+						caseExportDetailedDto.setClinicianEmail(exportDto.getClinicianEmail());
+						caseExportDetailedDto.setReportingUserId(exportDto.getReportingUserId());
+						caseExportDetailedDto.setFollowUpStatusChangeUserId(exportDto.getFollowUpStatusChangeUserId());
+						caseExportDetailedDto.setPreviousQuarantineTo(exportDto.getPreviousQuarantineTo());
+						caseExportDetailedDto.setQuarantineChangeComment(exportDto.getQuarantineChangeComment());
+						caseExportDetailedDto.setAssociatedWithOutbreak(exportDto.getAssociatedWithOutbreak());
+						caseExportDetailedDto.setInJurisdiction(exportDto.getInJurisdiction());
 
 						//adding sample data
-						caseExportDetailedDtoNew.setSampleUuid(embeddedDetailedSampleExportDto.getUuid());
-						caseExportDetailedDtoNew.setLabSampleId(embeddedDetailedSampleExportDto.getLabSampleID());
-						caseExportDetailedDtoNew.setSampleReportDate(embeddedDetailedSampleExportDto.getSampleReportDate());
-						caseExportDetailedDtoNew.setSampleDateTime(embeddedDetailedSampleExportDto.getSampleDateTime());
-						caseExportDetailedDtoNew.setSampleSource(embeddedDetailedSampleExportDto.getSampleSource());
-						caseExportDetailedDtoNew.setSampleMaterialString(embeddedDetailedSampleExportDto.getSampleMaterialString());
-						caseExportDetailedDtoNew.setSamplePurpose(embeddedDetailedSampleExportDto.getSamplePurpose());
-						caseExportDetailedDtoNew.setSampleSource(embeddedDetailedSampleExportDto.getSampleSource());
-						caseExportDetailedDtoNew.setSamplingReason(embeddedDetailedSampleExportDto.getSamplingReason());
-						caseExportDetailedDtoNew.setSamplingReasonDetails(embeddedDetailedSampleExportDto.getSamplingReasonDetails());
-						caseExportDetailedDtoNew.setLaboratory(embeddedDetailedSampleExportDto.getLab());
-						caseExportDetailedDtoNew.setPathogenTestResult(embeddedDetailedSampleExportDto.getPathogenTestResult());
-						caseExportDetailedDtoNew.setPathogenTestingRequested(embeddedDetailedSampleExportDto.getPathogenTestingRequested());
-						caseExportDetailedDtoNew.setRequestedPathogenTests(embeddedDetailedSampleExportDto.getRequestedPathogenTests());
-						caseExportDetailedDtoNew.setRequestedOtherPathogenTests(embeddedDetailedSampleExportDto.getRequestedOtherPathogenTests());
-						caseExportDetailedDtoNew.setRequestedOtherAdditionalTests(embeddedDetailedSampleExportDto.getRequestedOtherAdditionalTests());
-						caseExportDetailedDtoNew.setAdditionalTestingRequested(embeddedDetailedSampleExportDto.getAdditionalTestingRequested());
-						caseExportDetailedDtoNew.setRequestedAdditionalTests(embeddedDetailedSampleExportDto.getRequestedAdditionalTests());
-						caseExportDetailedDtoNew.setRequestedOtherAdditionalTests(embeddedDetailedSampleExportDto.getRequestedOtherAdditionalTests());
-						caseExportDetailedDtoNew.setShipped(embeddedDetailedSampleExportDto.isShipped());
-						caseExportDetailedDtoNew.setShipmentDate(embeddedDetailedSampleExportDto.getShipmentDate());
-						caseExportDetailedDtoNew.setShipmentDetails(embeddedDetailedSampleExportDto.getShipmentDetails());
-						caseExportDetailedDtoNew.setReceived(embeddedDetailedSampleExportDto.isReceived());
-						caseExportDetailedDtoNew.setReceivedDate(embeddedDetailedSampleExportDto.getReceivedDate());
-						caseExportDetailedDtoNew.setSpecimenCondition(embeddedDetailedSampleExportDto.getSpecimenCondition());
-						caseExportDetailedDtoNew.setNoTestPossibleReason(embeddedDetailedSampleExportDto.getNoTestPossibleReason());
-						caseExportDetailedDtoNew.setComment(embeddedDetailedSampleExportDto.getComment());
-						newResult.add(caseExportDetailedDtoNew);
+						caseExportDetailedDto.setSampleUuid(embeddedDetailedSampleExportDto.getUuid());
+						caseExportDetailedDto.setLabSampleId(embeddedDetailedSampleExportDto.getLabSampleID());
+						caseExportDetailedDto.setSampleReportDate(embeddedDetailedSampleExportDto.getSampleReportDate());
+						caseExportDetailedDto.setSampleDateTime(embeddedDetailedSampleExportDto.getSampleDateTime());
+						caseExportDetailedDto.setSampleSource(embeddedDetailedSampleExportDto.getSampleSource());
+						caseExportDetailedDto.setSampleMaterialString(embeddedDetailedSampleExportDto.getSampleMaterialString());
+						caseExportDetailedDto.setSamplePurpose(embeddedDetailedSampleExportDto.getSamplePurpose());
+						caseExportDetailedDto.setSampleSource(embeddedDetailedSampleExportDto.getSampleSource());
+						caseExportDetailedDto.setSamplingReason(embeddedDetailedSampleExportDto.getSamplingReason());
+						caseExportDetailedDto.setSamplingReasonDetails(embeddedDetailedSampleExportDto.getSamplingReasonDetails());
+						caseExportDetailedDto.setLaboratory(embeddedDetailedSampleExportDto.getLab());
+						caseExportDetailedDto.setPathogenTestResult(embeddedDetailedSampleExportDto.getPathogenTestResult());
+						caseExportDetailedDto.setPathogenTestingRequested(embeddedDetailedSampleExportDto.getPathogenTestingRequested());
+						caseExportDetailedDto.setRequestedPathogenTests(embeddedDetailedSampleExportDto.getRequestedPathogenTests());
+						caseExportDetailedDto.setRequestedOtherPathogenTests(embeddedDetailedSampleExportDto.getRequestedOtherPathogenTests());
+						caseExportDetailedDto.setRequestedOtherAdditionalTests(embeddedDetailedSampleExportDto.getRequestedOtherAdditionalTests());
+						caseExportDetailedDto.setAdditionalTestingRequested(embeddedDetailedSampleExportDto.getAdditionalTestingRequested());
+						caseExportDetailedDto.setRequestedAdditionalTests(embeddedDetailedSampleExportDto.getRequestedAdditionalTests());
+						caseExportDetailedDto.setRequestedOtherAdditionalTests(embeddedDetailedSampleExportDto.getRequestedOtherAdditionalTests());
+						caseExportDetailedDto.setShipped(embeddedDetailedSampleExportDto.isShipped());
+						caseExportDetailedDto.setShipmentDate(embeddedDetailedSampleExportDto.getShipmentDate());
+						caseExportDetailedDto.setShipmentDetails(embeddedDetailedSampleExportDto.getShipmentDetails());
+						caseExportDetailedDto.setReceived(embeddedDetailedSampleExportDto.isReceived());
+						caseExportDetailedDto.setReceivedDate(embeddedDetailedSampleExportDto.getReceivedDate());
+						caseExportDetailedDto.setSpecimenCondition(embeddedDetailedSampleExportDto.getSpecimenCondition());
+						caseExportDetailedDto.setNoTestPossibleReason(embeddedDetailedSampleExportDto.getNoTestPossibleReason());
+						caseExportDetailedDto.setComment(embeddedDetailedSampleExportDto.getComment());
+
+						caseExportDetailedDto.setPathogenTest1(new CaseExportDetailedSampleDto.SampleExportPathogenTest(
+							embeddedDetailedSampleExportDto.getPathogenTestType1(),
+							embeddedDetailedSampleExportDto.getPathogenTestDisease1(),
+							embeddedDetailedSampleExportDto.getPathogenTestDateTime1(),
+							embeddedDetailedSampleExportDto.getPathogenTestLab1(),
+							embeddedDetailedSampleExportDto.getPathogenTestResult1(),
+							embeddedDetailedSampleExportDto.getPathogenTestVerified1())
+						);
+
+						caseExportDetailedDto.setPathogenTest2(new CaseExportDetailedSampleDto.SampleExportPathogenTest(
+								embeddedDetailedSampleExportDto.getPathogenTestType2(),
+								embeddedDetailedSampleExportDto.getPathogenTestDisease2(),
+								embeddedDetailedSampleExportDto.getPathogenTestDateTime2(),
+								embeddedDetailedSampleExportDto.getPathogenTestLab2(),
+								embeddedDetailedSampleExportDto.getPathogenTestResult2(),
+								embeddedDetailedSampleExportDto.getPathogenTestVerified2())
+						);
+
+						caseExportDetailedDto.setPathogenTest3(new CaseExportDetailedSampleDto.SampleExportPathogenTest(
+								embeddedDetailedSampleExportDto.getPathogenTestType3(),
+								embeddedDetailedSampleExportDto.getPathogenTestDisease3(),
+								embeddedDetailedSampleExportDto.getPathogenTestDateTime3(),
+								embeddedDetailedSampleExportDto.getPathogenTestLab3(),
+								embeddedDetailedSampleExportDto.getPathogenTestResult3(),
+								embeddedDetailedSampleExportDto.getPathogenTestVerified3())
+						);
+
+						caseExportDetailedDto.setOtherPathogenTests(embeddedDetailedSampleExportDto.getOtherPathogenTestsDetails());
+
+						newResult.add(caseExportDetailedDto);
 					}
 				}
 			}
-
 			return newResult;
 		}
-
-
-
 		return resultList;
 	}
 

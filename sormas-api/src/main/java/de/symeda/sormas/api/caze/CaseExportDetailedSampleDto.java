@@ -334,6 +334,16 @@ public class CaseExportDetailedSampleDto implements Serializable {
     private SpecimenCondition specimenCondition;
     private String noTestPossibleReason;
     private String comment;
+    @EmbeddedPersonalData
+    @EmbeddedSensitiveData
+    private SampleExportPathogenTest pathogenTest1 = new SampleExportPathogenTest();
+    @EmbeddedPersonalData
+    @EmbeddedSensitiveData
+    private SampleExportPathogenTest pathogenTest2 = new SampleExportPathogenTest();
+    @EmbeddedPersonalData
+    @EmbeddedSensitiveData
+    private SampleExportPathogenTest pathogenTest3 = new SampleExportPathogenTest();
+    private String otherPathogenTests;
 
 
     public CaseExportDetailedSampleDto() {}
@@ -1901,7 +1911,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return symptoms;
     }
 
-    //write getters for sampleUuid, sampleId, sampleReportDate, sampleDateTime, sampleMaterial, sampleMaterialDetails, samplePurpose, sampleSource, samplingReason, samplingReasonDetails, laboratory, laboratoryDetails, pathogenTestResult, pathogenTestingRequested, requestedPathogenTests, additionalTestingRequested, requestedAdditionalTests, requestedOtherAdditionalTests, shipped, shipmentDate, shipmentDetails, received, receivedDate, specimenCondition, noTestPossibleReason, comment, labUuid
+    //sample data starts form here
     @Order(122)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE })
@@ -2149,8 +2159,179 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return comment;
     }
 
+    @Order(149)
+    @ExportTarget(caseExportTypes = {
+            CaseExportType.CASE_SURVEILLANCE })
+    @ExportProperty(value = SAMPLE_INFORMATION, combined = true)
+    @ExportGroup(ExportGroupType.ADDITIONAL)
+    public String getPathogenTestType1() {
+        return pathogenTest1.testTypeText;
+    }
 
     @Order(150)
+    @ExportTarget(caseExportTypes = {
+            CaseExportType.CASE_SURVEILLANCE })
+    @ExportProperty(value = SAMPLE_INFORMATION, combined = true)
+    @ExportGroup(ExportGroupType.ADDITIONAL)
+    public String getPathogenTestDisease1() {
+        return pathogenTest1.disease;
+    }
+
+    @Order(151)
+    @ExportTarget(caseExportTypes = {
+            CaseExportType.CASE_SURVEILLANCE })
+    @ExportProperty(value = SAMPLE_INFORMATION, combined = true)
+    @ExportGroup(ExportGroupType.ADDITIONAL)
+    public Date getPathogenTestDateTime1() {
+        return pathogenTest1.dateTime;
+    }
+
+    @Order(152)
+    @ExportTarget(caseExportTypes = {
+            CaseExportType.CASE_SURVEILLANCE })
+    @ExportProperty(value = SAMPLE_INFORMATION, combined = true)
+    @ExportGroup(ExportGroupType.ADDITIONAL)
+    public String getPathogenTestLab1() {
+        return pathogenTest1.lab;
+    }
+
+    @Order(153)
+    @ExportTarget(caseExportTypes = {
+            CaseExportType.CASE_SURVEILLANCE })
+    @ExportProperty(value = SAMPLE_INFORMATION, combined = true)
+    @ExportGroup(ExportGroupType.ADDITIONAL)
+    public PathogenTestResultType getPathogenTestResult1() {
+        return pathogenTest1.testResult;
+    }
+
+    @Order(154)
+    @ExportTarget(caseExportTypes = {
+            CaseExportType.CASE_SURVEILLANCE })
+    @ExportProperty(value = SAMPLE_INFORMATION, combined = true)
+    @ExportGroup(ExportGroupType.ADDITIONAL)
+    public Boolean getPathogenTestVerified1() {
+        return pathogenTest1.verified;
+    }
+
+    @Order(155)
+    @ExportTarget(caseExportTypes = {
+            CaseExportType.CASE_SURVEILLANCE })
+    @ExportProperty(value = SAMPLE_INFORMATION, combined = true)
+    @ExportGroup(ExportGroupType.ADDITIONAL)
+    public String getPathogenTestType2() {
+        return pathogenTest2.testTypeText;
+    }
+
+    @Order(156)
+    @ExportTarget(caseExportTypes = {
+            CaseExportType.CASE_SURVEILLANCE })
+    @ExportProperty(value = SAMPLE_INFORMATION, combined = true)
+    @ExportGroup(ExportGroupType.ADDITIONAL)
+    public String getPathogenTestDisease2() {
+        return pathogenTest2.disease;
+    }
+
+    @Order(157)
+    @ExportTarget(caseExportTypes = {
+            CaseExportType.CASE_SURVEILLANCE })
+    @ExportProperty(value = SAMPLE_INFORMATION, combined = true)
+    @ExportGroup(ExportGroupType.ADDITIONAL)
+    public Date getPathogenTestDateTime2() {
+        return pathogenTest2.dateTime;
+    }
+
+    @Order(158)
+    @ExportTarget(caseExportTypes = {
+            CaseExportType.CASE_SURVEILLANCE })
+    @ExportProperty(value = SAMPLE_INFORMATION, combined = true)
+    @ExportGroup(ExportGroupType.ADDITIONAL)
+    public String getPathogenTestLab2() {
+        return pathogenTest2.lab;
+    }
+
+    @Order(159)
+    @ExportTarget(caseExportTypes = {
+            CaseExportType.CASE_SURVEILLANCE })
+    @ExportProperty(value = SAMPLE_INFORMATION, combined = true)
+    @ExportGroup(ExportGroupType.ADDITIONAL)
+    public PathogenTestResultType getPathogenTestResult2() {
+        return pathogenTest2.testResult;
+    }
+
+    @Order(160)
+    @ExportTarget(caseExportTypes = {
+            CaseExportType.CASE_SURVEILLANCE })
+    @ExportProperty(value = SAMPLE_INFORMATION, combined = true)
+    @ExportGroup(ExportGroupType.ADDITIONAL)
+    public Boolean getPathogenTestVerified2() {
+        return pathogenTest2.verified;
+    }
+
+    @Order(161)
+    @ExportTarget(caseExportTypes = {
+            CaseExportType.CASE_SURVEILLANCE })
+    @ExportProperty(value = SAMPLE_INFORMATION, combined = true)
+    @ExportGroup(ExportGroupType.ADDITIONAL)
+    public String getPathogenTestType3() {
+        return pathogenTest3.testTypeText;
+    }
+
+    @Order(162)
+    @ExportTarget(caseExportTypes = {
+            CaseExportType.CASE_SURVEILLANCE })
+    @ExportProperty(value = SAMPLE_INFORMATION, combined = true)
+    @ExportGroup(ExportGroupType.ADDITIONAL)
+    public String getPathogenTestDisease3() {
+        return pathogenTest3.disease;
+    }
+
+    @Order(163)
+    @ExportTarget(caseExportTypes = {
+            CaseExportType.CASE_SURVEILLANCE })
+    @ExportProperty(value = SAMPLE_INFORMATION, combined = true)
+    @ExportGroup(ExportGroupType.ADDITIONAL)
+    public Date getPathogenTestDateTime3() {
+        return pathogenTest3.dateTime;
+    }
+
+    @Order(164)
+    @ExportTarget(caseExportTypes = {
+            CaseExportType.CASE_SURVEILLANCE })
+    @ExportProperty(value = SAMPLE_INFORMATION, combined = true)
+    @ExportGroup(ExportGroupType.ADDITIONAL)
+    public String getPathogenTestLab3() {
+        return pathogenTest3.lab;
+    }
+
+    @Order(165)
+    @ExportTarget(caseExportTypes = {
+            CaseExportType.CASE_SURVEILLANCE })
+    @ExportProperty(value = SAMPLE_INFORMATION, combined = true)
+    @ExportGroup(ExportGroupType.ADDITIONAL)
+    public PathogenTestResultType getPathogenTestResult3() {
+        return pathogenTest3.testResult;
+    }
+
+    @Order(166)
+    @ExportTarget(caseExportTypes = {
+            CaseExportType.CASE_SURVEILLANCE })
+    @ExportProperty(value = SAMPLE_INFORMATION, combined = true)
+    @ExportGroup(ExportGroupType.ADDITIONAL)
+    public Boolean getPathogenTestVerified3() {
+        return pathogenTest3.verified;
+    }
+
+    @Order(167)
+    @ExportTarget(caseExportTypes = {
+            CaseExportType.CASE_SURVEILLANCE })
+    @ExportProperty(value = SAMPLE_INFORMATION, combined = true)
+    @ExportGroup(ExportGroupType.ADDITIONAL)
+    public String getOtherPathogenTestsDetails() {
+        return otherPathogenTests;
+    }
+
+
+    @Order(168)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_MANAGEMENT })
     @ExportProperty(CaseDataDto.HEALTH_CONDITIONS)
@@ -2159,7 +2340,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return healthConditions;
     }
 
-    @Order(151)
+    @Order(169)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_MANAGEMENT })
     @ExportProperty(NUMBER_OF_PRESCRIPTIONS)
@@ -2168,7 +2349,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return numberOfPrescriptions;
     }
 
-    @Order(152)
+    @Order(170)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_MANAGEMENT })
     @ExportProperty(NUMBER_OF_TREATMENTS)
@@ -2177,7 +2358,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return numberOfTreatments;
     }
 
-    @Order(153)
+    @Order(171)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_MANAGEMENT })
     @ExportProperty(NUMBER_OF_CLINICAL_VISITS)
@@ -2186,7 +2367,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return numberOfClinicalVisits;
     }
 
-    @Order(156)
+    @Order(172)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE })
     @ExportProperty(CaseDataDto.FOLLOW_UP_STATUS)
@@ -2195,7 +2376,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return followUpStatus;
     }
 
-    @Order(157)
+    @Order(173)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE })
     @ExportProperty(CaseDataDto.FOLLOW_UP_UNTIL)
@@ -2204,7 +2385,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return followUpUntil;
     }
 
-    @Order(158)
+    @Order(174)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE })
     @ExportProperty(CaseExportDetailedSampleDto.NUMBER_OF_VISITS)
@@ -2213,7 +2394,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return numberOfVisits;
     }
 
-    @Order(159)
+    @Order(175)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE })
     @ExportProperty(CaseExportDetailedSampleDto.LAST_COOPERATIVE_VISIT_SYMPTOMATIC)
@@ -2222,7 +2403,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return lastCooperativeVisitSymptomatic;
     }
 
-    @Order(160)
+    @Order(176)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE })
     @ExportProperty(CaseExportDetailedSampleDto.LAST_COOPERATIVE_VISIT_DATE)
@@ -2231,7 +2412,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return lastCooperativeVisitDate;
     }
 
-    @Order(161)
+    @Order(177)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE })
     @ExportProperty(CaseExportDetailedSampleDto.LAST_COOPERATIVE_VISIT_SYMPTOMS)
@@ -2240,7 +2421,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return lastCooperativeVisitSymptoms;
     }
 
-    @Order(167)
+    @Order(178)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE })
     @ExportProperty(CaseExportDetailedSampleDto.EVENT_COUNT)
@@ -2249,7 +2430,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return eventCount;
     }
 
-    @Order(168)
+    @Order(179)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE })
     @ExportProperty(CaseExportDetailedSampleDto.LATEST_EVENT_ID)
@@ -2258,7 +2439,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return latestEventId;
     }
 
-    @Order(169)
+    @Order(180)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE })
     @ExportProperty(CaseExportDetailedSampleDto.LATEST_EVENT_STATUS)
@@ -2267,7 +2448,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return latestEventStatus;
     }
 
-    @Order(170)
+    @Order(181)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE })
     @ExportProperty(CaseExportDetailedSampleDto.LATEST_EVENT_TITLE)
@@ -2276,7 +2457,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return latestEventTitle;
     }
 
-    @Order(170)
+    @Order(182)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE,
             CaseExportType.CASE_MANAGEMENT })
@@ -2290,7 +2471,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return birthName;
     }
 
-    @Order(171)
+    @Order(183)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE,
             CaseExportType.CASE_MANAGEMENT })
@@ -2304,7 +2485,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return birthCountry;
     }
 
-    @Order(178)
+    @Order(184)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE,
             CaseExportType.CASE_MANAGEMENT })
@@ -2318,7 +2499,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return citizenship;
     }
 
-    @Order(179)
+    @Order(185)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE })
     @ExportProperty(CaseDataDto.NOT_A_CASE_REASON_NEGATIVE_TEST)
@@ -2327,7 +2508,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return notACaseReasonNegativeTest;
     }
 
-    @Order(180)
+    @Order(186)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE })
     @ExportProperty(CaseDataDto.NOT_A_CASE_REASON_PHYSICIAN_INFORMATION)
@@ -2336,7 +2517,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return notACaseReasonPhysicianInformation;
     }
 
-    @Order(181)
+    @Order(187)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE })
     @ExportProperty(CaseDataDto.NOT_A_CASE_REASON_DIFFERENT_PATHOGEN)
@@ -2345,7 +2526,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return notACaseReasonDifferentPathogen;
     }
 
-    @Order(182)
+    @Order(188)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE })
     @ExportProperty(CaseDataDto.NOT_A_CASE_REASON_OTHER)
@@ -2354,7 +2535,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return notACaseReasonOther;
     }
 
-    @Order(183)
+    @Order(189)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE })
     @ExportProperty(CaseDataDto.NOT_A_CASE_REASON_DETAILS)
@@ -2363,7 +2544,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return notACaseReasonDetails;
     }
 
-    @Order(184)
+    @Order(190)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE,
             CaseExportType.CASE_MANAGEMENT })
@@ -2374,7 +2555,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return caseIdentificationSource;
     }
 
-    @Order(185)
+    @Order(191)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE,
             CaseExportType.CASE_MANAGEMENT })
@@ -2385,7 +2566,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return screeningType;
     }
 
-    @Order(187)
+    @Order(192)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE,
             CaseExportType.CASE_MANAGEMENT })
@@ -2395,7 +2576,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return clinicianName;
     }
 
-    @Order(189)
+    @Order(193)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE,
             CaseExportType.CASE_MANAGEMENT })
@@ -2405,7 +2586,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return clinicianPhone;
     }
 
-    @Order(190)
+    @Order(194)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE,
             CaseExportType.CASE_MANAGEMENT })
@@ -2423,7 +2604,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         return followUpStatusChangeUserId;
     }
 
-    @Order(191)
+    @Order(195)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE,
             CaseExportType.CASE_MANAGEMENT })
@@ -2437,7 +2618,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         this.reportingUserName = reportingUserName;
     }
 
-    @Order(192)
+    @Order(196)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE,
             CaseExportType.CASE_MANAGEMENT })
@@ -2451,7 +2632,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         this.reportingUserRoles = StringUtils.join(roles, ", ");
     }
 
-    @Order(193)
+    @Order(197)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE,
             CaseExportType.CASE_MANAGEMENT })
@@ -2465,7 +2646,7 @@ public class CaseExportDetailedSampleDto implements Serializable {
         this.followUpStatusChangeUserName = followUpStatusChangeUserName;
     }
 
-    @Order(194)
+    @Order(198)
     @ExportTarget(caseExportTypes = {
             CaseExportType.CASE_SURVEILLANCE,
             CaseExportType.CASE_MANAGEMENT })
@@ -3077,11 +3258,41 @@ public class CaseExportDetailedSampleDto implements Serializable {
         this.quarantineChangeComment = quarantineChangeComment;
     }
 
+    //setOtherPathogenTests
+    public void setOtherPathogenTests(String otherPathogenTests) {
+        this.otherPathogenTests = otherPathogenTests;
+    }
+
     public void setSampleUuid(String sampleUuid) {this.sampleUuid = sampleUuid;}
 
     public void setLabSampleId(String labSampleId) {this.labSampleId = labSampleId;}
 
     public void setSampleReportDate(Date sampleReportDate) {this.sampleReportDate = sampleReportDate;}
+
+    public SampleExportPathogenTest getPathogenTest1() {
+        return pathogenTest1;
+    }
+
+    public void setPathogenTest1(SampleExportPathogenTest pathogenTest1) {
+        this.pathogenTest1 = pathogenTest1;
+    }
+
+    public SampleExportPathogenTest getPathogenTest2() {
+        return pathogenTest2;
+    }
+
+    public void setPathogenTest2(SampleExportPathogenTest pathogenTest2) {
+        this.pathogenTest2 = pathogenTest2;
+    }
+
+    public SampleExportPathogenTest getPathogenTest3() {
+        return pathogenTest3;
+    }
+
+    public void setPathogenTest3(SampleExportPathogenTest pathogenTest3) {
+        this.pathogenTest3 = pathogenTest3;
+    }
+
 
     public void setSampleDateTime(Date sampleDateTime) {this.sampleDateTime = sampleDateTime;}
 
@@ -3146,5 +3357,51 @@ public class CaseExportDetailedSampleDto implements Serializable {
     }
 
 
+    public static class SampleExportPathogenTest implements Serializable {
 
+        private PathogenTestType testType;
+        @SensitiveData
+        private String testTypeText;
+        private String disease;
+        private Date dateTime;
+        private String lab;
+        private PathogenTestResultType testResult;
+        private Boolean verified;
+
+        public SampleExportPathogenTest() {
+        }
+
+        public SampleExportPathogenTest(
+                String testTypeText,
+                String disease,
+                Date dateTime,
+                String lab,
+                PathogenTestResultType testResult,
+                Boolean verified) {
+                this.testType = testType;
+            this.testTypeText = testTypeText;
+            this.disease = disease;
+            this.dateTime = dateTime;
+            this.lab = lab;
+            this.testResult = testResult;
+            this.verified = verified;
+        }
+
+        public String formatType() {
+            return PathogenTestType.toString(testType, testTypeText);
+        }
+
+        public String formatString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(DateHelper.formatDateForExport(dateTime)).append(" (");
+            String type = formatType();
+            if (type.length() > 0) {
+                sb.append(type).append(", ");
+            }
+
+            sb.append(disease).append(", ").append(testResult).append(")");
+
+            return sb.toString();
+        }
+    }
 }
