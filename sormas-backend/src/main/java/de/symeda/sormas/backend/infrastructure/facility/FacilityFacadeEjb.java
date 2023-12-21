@@ -464,9 +464,9 @@ public class FacilityFacadeEjb extends
 					case Facility.TYPE:
 						expression = facility.get(sortProperty.propertyName);
 						break;
-					case FacilityIndexDto.DISEASES:
-						expression = facility.get(Facility.UUID);
-						break;
+//					case FacilityIndexDto.DISEASES:
+//						expression = facility.get(Facility.UUID);
+//						break;
 					case Facility.REGION:
 						expression = region.get(Region.NAME);
 						break;
@@ -507,24 +507,24 @@ public class FacilityFacadeEjb extends
 
 		List<FacilityIndexDto> facilityIndexList = QueryHelper.getResultList(em, cq, first, max);
 
-		String diseases = "";
-		for (FacilityIndexDto facilityIndexDto : facilityIndexList) {
-			Facility facilityEntity = service.getByUuid(facilityIndexDto.getUuid());
-			if (facilityEntity.getDiseases() == null) {
-				diseases = "";
-			} else {
-				diseases = facilityEntity.getDiseases().stream()
-						.map(disease -> {
-							return I18nProperties.getEnumCaption(disease.getDisease());
-						})
-						.collect(Collectors.joining(", "));
-			}
-
-			if(diseases.isEmpty()) {
-				diseases = I18nProperties.getString(Strings.infoNoAssignedDiseases);
-			}
-			facilityIndexDto.setDiseases(diseases);
-		}
+//		String diseases = "";
+//		for (FacilityIndexDto facilityIndexDto : facilityIndexList) {
+//			Facility facilityEntity = service.getByUuid(facilityIndexDto.getUuid());
+//			if (facilityEntity.getDiseases() == null) {
+//				diseases = "";
+//			} else {
+//				diseases = facilityEntity.getDiseases().stream()
+//						.map(disease -> {
+//							return I18nProperties.getEnumCaption(disease.getDisease());
+//						})
+//						.collect(Collectors.joining(", "));
+//			}
+//
+//			if(diseases.isEmpty()) {
+//				diseases = I18nProperties.getString(Strings.infoNoAssignedDiseases);
+//			}
+//			facilityIndexDto.setDiseases(diseases);
+//		}
 
 		return facilityIndexList;
 	}

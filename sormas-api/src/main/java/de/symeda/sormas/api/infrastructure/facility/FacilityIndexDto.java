@@ -44,7 +44,7 @@ public class FacilityIndexDto implements Serializable, HasUuid {
 	public static final String LONGITUDE = "longitude";
 	public static final String TYPE = "type";
 	public static final String EXTERNAL_ID = "externalID";
-	public static final String DISEASES = "diseases";
+	//public static final String DISEASES = "diseases";
 
 	private String uuid;
 	private String name;
@@ -186,13 +186,13 @@ public class FacilityIndexDto implements Serializable, HasUuid {
 	public FacilityReferenceDto toReference() {
 		return new FacilityReferenceDto(getUuid(), getCaption(), getExternalID());
 	}
-	public String getDiseases() {
-		return diseases;
-	}
+//	public String getDiseases() {
+//		return diseases;
+//	}
 
-	public void setDiseases(String diseases) {
-		this.diseases = diseases;
-	}
+//	public void setDiseases(String diseases) {
+//		this.diseases = diseases;
+//	}
 
 
 

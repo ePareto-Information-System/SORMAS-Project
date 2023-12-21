@@ -64,8 +64,8 @@ public class FacilitiesGrid extends FilteredGrid<FacilityIndexDto, FacilityCrite
 			FacilityIndexDto.CITY,
 			FacilityIndexDto.LATITUDE,
 			FacilityIndexDto.LONGITUDE,
-			FacilityIndexDto.EXTERNAL_ID,
-				FacilityIndexDto.DISEASES);
+			FacilityIndexDto.EXTERNAL_ID);
+				//FacilityIndexDto.DISEASES);
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.INFRASTRUCTURE_EDIT)) {
 			addEditColumn(e -> ControllerProvider.getInfrastructureController().editFacility(e.getUuid()));
