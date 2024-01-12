@@ -149,7 +149,7 @@ public class Menu extends CssLayout {
 		CommitDiscardWrapperComponent<UserSettingsForm> component =
 			ControllerProvider.getUserController().getUserSettingsComponent(() -> window.close());
 		Button resetPasswordButton = ControllerProvider.getUserController().createUpdatePasswordButton();
-		component.getButtonsPanel().addComponent(resetPasswordButton, 0);
+		//component.getButtonsPanel().addComponent(resetPasswordButton, 0);
 		window.setContent(component);
 		UI.getCurrent().addWindow(window);
 	}
