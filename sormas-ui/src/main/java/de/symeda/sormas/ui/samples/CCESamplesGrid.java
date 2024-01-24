@@ -117,12 +117,13 @@ public class CCESamplesGrid extends FilteredGrid<SampleIndexDto, SampleCriteria>
                 SampleIndexDto.SAMPLE_MATERIAL,
                 PATHOGEN_TEST_RESULT,
                 SampleIndexDto.RECEIVED,
+                SampleIndexDto.SHIPMENT_DATE,
                 SampleIndexDto.RECEIVED_DATE,
                 SampleIndexDto.LAB,
                 SampleIndexDto.SAMPLE_PURPOSE,
                 SampleIndexDto.PATHOGEN_TEST_COUNT);
 
-        //((Column<SampleIndexDto, Date>) getColumn(SampleIndexDto.SHIPMENT_DATE)).setRenderer(new DateRenderer(DateFormatHelper.getDateFormat()));
+        ((Column<SampleIndexDto, Date>) getColumn(SampleIndexDto.SHIPMENT_DATE)).setRenderer(new DateRenderer(DateFormatHelper.getDateFormat()));
         ((Column<SampleIndexDto, Date>) getColumn(SampleIndexDto.RECEIVED_DATE)).setRenderer(new DateRenderer(DateFormatHelper.getDateFormat()));
         //((Column<SampleIndexDto, Boolean>) getColumn(SampleIndexDto.SHIPPED)).setRenderer(new BooleanRenderer());
         ((Column<SampleIndexDto, String>) getColumn(SampleIndexDto.RECEIVED)).setRenderer(new BooleanRenderer());
