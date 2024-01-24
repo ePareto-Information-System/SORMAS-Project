@@ -11654,5 +11654,63 @@ INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (471,
 UPDATE users SET password = LPAD(password, 64, '0') WHERE LENGTH(password) < 64;
 INSERT INTO schema_version (version_number, comment) VALUES (472, 'Adjust password hashes with leading zeros #9726');
 
+-- 2024-01-24 Custom Form functionality
+CREATE TABLE customforms (
+    id bigint NOT NULL,
+    uuid character varying(255) NOT NULL,
+    changedate timestamp without time zone NOT NULL,
+    creationdate timestamp without time zone NOT NULL,
+    name character varying(255) NOT NULL,
+    description character varying(255),
+    entitytype character varying(255) NOT NULL,
+    disease character varying(255) NOT NULL,
+    locationtype character varying(255) NOT NULL,
+    sys_period tstzrange NOT NULL
+);
+
+-- form fields --
+CREATE TABLE customformfields (
+    id bigint NOT NULL,
+    uuid character varying(255) NOT NULL,
+    changedate timestamp without time zone NOT NULL,
+    creationdate timestamp without time zone NOT NULL,
+    customform_id bigint NOT NULL,
+    fieldname character varying(255) NOT NULL,
+    fieldtype character varying(255) NOT NULL,
+    fieldlabel character varying(255) NOT NULL,
+    fieldplaceholder character varying(255),
+    fieldrequired boolean NOT NULL,
+    fieldoptions text,
+    fieldorder integer NOT NULL,
+    sys_period tstzrange NOT NULL
+);
+
+-- field options --
+CREATE TABLE customformfieldoptions (
+    id bigint NOT NULL,
+    uuid character varying(255) NOT NULL,
+    changedate timestamp without time zone NOT NULL,
+    creationdate timestamp without time zone NOT NULL,
+    customformfield_id bigint NOT NULL,
+    optionlabel character varying(255) NOT NULL,
+    optionvalue character varying(255) NOT NULL,
+    sys_period tstzrange NOT NULL
+);
+
+-- from values --
+CREATE TABLE customformfieldvalues (
+    id bigint NOT NULL,
+    uuid character varying(255) NOT NULL,
+    changedate timestamp without time zone NOT NULL,
+    creationdate timestamp without time zone NOT NULL,
+    customform_id bigint NOT NULL,
+    person_id bigint NOT NULL,
+    fieldname character varying(255) NOT NULL,
+    fieldvalue text,
+    sys_period tstzrange NOT NULL
+);
+
+INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (473, 'Custom Form functionality ', true);
+
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
