@@ -26,7 +26,15 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 import java.util.*;
 import java.util.function.Consumer;
 
+import de.symeda.sormas.api.caze.CaseDataDto;
+import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.contact.ContactDto;
+import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.event.EventDto;
+import de.symeda.sormas.api.event.EventParticipantReferenceDto;
+import de.symeda.sormas.api.event.EventReferenceDto;
 import de.symeda.sormas.api.user.DefaultUserRole;
+import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.user.UserRoleReferenceDto;
 import org.apache.commons.collections.CollectionUtils;
 
@@ -70,6 +78,8 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 	private static final String PATHOGEN_TEST_HEADING_LOC = "pathogenTestHeadingLoc";
 
 	private List<FacilityReferenceDto> allActiveLabs;
+
+	private Disease associatedDisease;
 
 	//@formatter:off
 	private static final String HTML_LAYOUT =
@@ -162,6 +172,7 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		typingIdField = addField(PathogenTestDto.TYPING_ID, TextField.class);
 		typingIdField.setVisible(false);
 		ComboBox diseaseField = addDiseaseField(PathogenTestDto.TESTED_DISEASE, true, create);
+		diseaseField.setValue(Disease.INFLUENZA_A);
 		ComboBox diseaseVariantField = addField(PathogenTestDto.TESTED_DISEASE_VARIANT, ComboBox.class);
 		diseaseVariantField.setNullSelectionAllowed(true);
 		addField(PathogenTestDto.TESTED_DISEASE_DETAILS, TextField.class);
@@ -178,9 +189,10 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		Set<UserRoleReferenceDto> userRoles =UserProvider.getCurrent().getUser().getUserRoles();
 
 		String valLabUser=I18nProperties.getEnumCaption(DefaultUserRole.LAB_USER);
+		String valLabSupervisor =I18nProperties.getEnumCaption(DefaultUserRole.LAB_SUPERVISOR);
 		UserRoleReferenceDto userRoleToFind = new UserRoleReferenceDto(null, valLabUser);
 
-		if (userRoles.contains(userRoleToFind)) {
+		if (userRoles.contains(userRoleToFind) && !userRoles.contains(new UserRoleReferenceDto(null, valLabSupervisor))) {
 			testResultVerifiedField.setRequired(false);
 			testResultVerifiedField.setEnabled(false);
 
@@ -207,6 +219,7 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		initializeVisibilitiesAndAllowedVisibilities();
 
 		pcrTestSpecification.setVisible(false);
+
 
 		Map<Object, List<Object>> pcrTestSpecificationVisibilityDependencies = new HashMap<Object, List<Object>>() {
 
@@ -263,21 +276,67 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		// trigger the update, as the disease may already be set
 		updateDiseaseVariantField.accept((Disease) diseaseField.getValue());
 
+
+
+		final CaseReferenceDto associatedCase = sample.getAssociatedCase();
+		final ContactReferenceDto associatedContact = sample.getAssociatedContact();
+		final EventParticipantReferenceDto associatedEventParticipant = sample.getAssociatedEventParticipant();
+
+		if (associatedCase != null && UserProvider.getCurrent().hasAllUserRights(UserRight.CASE_VIEW)) {
+			associatedDisease = getDiseaseFromCase(associatedCase.getUuid());
+		} else if (associatedContact != null && UserProvider.getCurrent().hasAllUserRights(UserRight.CONTACT_VIEW)) {
+			associatedDisease = getDiseaseFromContact(associatedContact.getUuid());
+		} else if (associatedEventParticipant != null && UserProvider.getCurrent().hasAllUserRights(UserRight.EVENT_VIEW)) {
+			EventReferenceDto eventReferenceDto = FacadeProvider.getEventParticipantFacade().getEventParticipantByUuid(associatedEventParticipant.getUuid()).getEvent();
+			if (eventReferenceDto != null) {
+				associatedDisease = getDiseaseFromEvent(eventReferenceDto.getUuid());
+			}
+		} else {
+			associatedDisease = null;
+		}
+
+//		lab.addItems(FacadeProvider.getFacilityFacade().getAllActiveLaboratories(true));
+		//diseaseField.setValue(associatedDisease);
+
+
+
+
 		diseaseField.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
 			Disease disease = (Disease) valueChangeEvent.getProperty().getValue();
-			updateDiseaseVariantField.accept(disease);
-			String diseaseName = disease.getName();
-			lab.removeAllItems();
-			List<FacilityReferenceDto> facilities = FacadeProvider.getFacilityFacade().getAllActiveFacilityByDisease(diseaseName);
-			if (facilities.isEmpty()) {
-				facilities = allActiveLabs;
+
+			if (disease == null && associatedDisease != null && create) {
+				disease = associatedDisease;
+				diseaseField.setValue(associatedDisease);
 			}
-			lab.addItems(facilities);
-			FieldHelper.updateItems(
-					testTypeField,
-					Arrays.asList(PathogenTestType.values()),
-					FieldVisibilityCheckers.withDisease(disease),
-					PathogenTestType.class);
+
+			if (disease != null) {
+				updateDiseaseVariantField.accept(disease);
+				String diseaseName = disease.getName();
+				FacilityReferenceDto selectedLab = (FacilityReferenceDto) lab.getValue();
+				lab.removeAllItems();
+
+				List<FacilityReferenceDto> facilities = FacadeProvider.getFacilityFacade().getAllActiveFacilityByDisease(diseaseName);
+				if (facilities.isEmpty()) {
+					facilities = allActiveLabs;
+				}
+				lab.addItems(facilities);
+				if (selectedLab != null && facilities.contains(selectedLab)) {
+					lab.setValue(selectedLab);
+				} else {
+					lab.setValue(facilities.size() > 0 ? facilities.get(0) : null);
+				}
+
+				if (disease.equals(associatedDisease) && create) {
+					lab.setValue(sample.getLab());
+				}
+
+
+				FieldHelper.updateItems(
+						testTypeField,
+						Arrays.asList(PathogenTestType.values()),
+						FieldVisibilityCheckers.withDisease(disease),
+						PathogenTestType.class);
+			}
 		});
 
 		diseaseVariantField.addValueChangeListener(e -> {
@@ -317,6 +376,7 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 				cqValueField.clear();
 			}
 		});
+
 
 		if (sample.getSamplePurpose() != SamplePurpose.INTERNAL) {
 //			ComboBox lab = addField(PathogenTestDto.LAB, ComboBox.class);
@@ -362,5 +422,30 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 		pcrTestSpecification.setValue(newFieldValue.getPcrTestSpecification());
 		testTypeTextField.setValue(newFieldValue.getTestTypeText());
 		typingIdField.setValue(newFieldValue.getTypingId());
+	}
+
+
+	private Disease getDiseaseFromCase(String caseUuid) {
+		CaseDataDto caseDataDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(caseUuid);
+		if (caseDataDto != null) {
+			return caseDataDto.getDisease();
+		}
+		return null;
+	}
+
+	private Disease getDiseaseFromContact(String contactUuid) {
+		ContactDto contactDto = FacadeProvider.getContactFacade().getByUuid(contactUuid);
+		if (contactDto != null) {
+			return contactDto.getDisease();
+		}
+		return null;
+	}
+
+	private Disease getDiseaseFromEvent(String eventUuid) {
+		EventDto eventDto = FacadeProvider.getEventFacade().getByUuid(eventUuid);
+		if (eventDto != null) {
+			return eventDto.getDisease();
+		}
+		return null;
 	}
 }
