@@ -445,6 +445,7 @@ public interface Strings {
 	String headingCreateNewPrescription = "headingCreateNewPrescription";
 	String headingCreateNewSample = "headingCreateNewSample";
 	String headingCreateNewTask = "headingCreateNewTask";
+	String headingCreateNewForm = "headingCreateNewForm";
 	String headingCreateNewTaskQuestion = "headingCreateNewTaskQuestion";
 	String headingCreateNewTravelEntry = "headingCreateNewTravelEntry";
 	String headingCreateNewTreatment = "headingCreateNewTreatment";

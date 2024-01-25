@@ -11662,7 +11662,6 @@ CREATE TABLE customforms (
     creationdate timestamp without time zone NOT NULL,
     name character varying(255) NOT NULL,
     description character varying(255),
-    entitytype character varying(255) NOT NULL,
     disease character varying(255) NOT NULL,
     locationtype character varying(255) NOT NULL,
     sys_period tstzrange NOT NULL
@@ -11707,10 +11706,11 @@ CREATE TABLE customformfieldvalues (
     person_id bigint NOT NULL,
     fieldname character varying(255) NOT NULL,
     fieldvalue text,
+    entitytype character varying(255) NOT NULL,
     sys_period tstzrange NOT NULL
 );
 
-INSERT INTO schema_version (version_number, comment, upgradeNeeded) VALUES (473, 'Custom Form functionality ', true);
+INSERT INTO schema_version (version_number, comment) VALUES (473, 'Custom Form functionality ');
 
 
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

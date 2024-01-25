@@ -76,12 +76,12 @@ import de.symeda.sormas.ui.events.EventGroupDataView;
 import de.symeda.sormas.ui.events.EventParticipantDataView;
 import de.symeda.sormas.ui.events.EventsView;
 import de.symeda.sormas.ui.externalmessage.ExternalMessagesView;
+import de.symeda.sormas.ui.formbuilder.FormBuildersView;
 import de.symeda.sormas.ui.immunization.ImmunizationsView;
 import de.symeda.sormas.ui.person.PersonsView;
 import de.symeda.sormas.ui.reports.ReportsView;
 import de.symeda.sormas.ui.reports.aggregate.AbstractAggregateReportsView;
 import de.symeda.sormas.ui.reports.aggregate.AggregateReportsView;
-import de.symeda.sormas.ui.reports.aggregate.ReportDataView;
 import de.symeda.sormas.ui.samples.SamplesView;
 import de.symeda.sormas.ui.sormastosormas.ShareRequestsView;
 import de.symeda.sormas.ui.statistics.AbstractStatisticsView;
@@ -263,6 +263,14 @@ public class MainScreen extends HorizontalLayout {
 				I18nProperties.getCaption(Captions.mainMenuConfiguration),
 				VaadinIcons.COGS);
 		}
+		//Form Builder
+		if (permitted(FeatureType.DASHBOARD, UserRight.CASE_VIEW)) {
+			menu.addView(FormBuildersView.class, FormBuildersView.VIEW_NAME, I18nProperties.getCaption(Captions.mainMenuFormBuilder), VaadinIcons.COGS);
+		}
+
+		/*if (permitted(FeatureType.TASK_MANAGEMENT, UserRight.TASK_VIEW)) {
+			menu.addView(TasksView.class, TasksView.VIEW_NAME, I18nProperties.getCaption(Captions.mainMenuTasks), VaadinIcons.TASKS);
+		}*/
 		menu.addView(AboutView.class, AboutView.VIEW_NAME, I18nProperties.getCaption(Captions.mainMenuAbout), VaadinIcons.INFO_CIRCLE);
 
 		navigator.addViewChangeListener(viewChangeListener);
@@ -350,6 +358,7 @@ public class MainScreen extends HorizontalLayout {
 				CountriesView.VIEW_NAME,
 				ExternalMessagesView.VIEW_NAME,
 				TravelEntriesView.VIEW_NAME,
+				FormBuildersView.VIEW_NAME,
 				ImmunizationsView.VIEW_NAME));
 
 		if (enabled(FeatureType.DASHBOARD)) {
@@ -414,6 +423,8 @@ public class MainScreen extends HorizontalLayout {
 					defaultView = SamplesView.VIEW_NAME;
 				} else if (permitted(FeatureType.TASK_MANAGEMENT, UserRight.TASK_VIEW)) {
 					defaultView = TasksView.VIEW_NAME;
+				} else if (permitted(FeatureType.FORM_BUILDER, UserRight.FORM_BUILDER_VIEW)) {
+					defaultView = FormBuildersView.VIEW_NAME;
 				} else {
 					defaultView = AboutView.VIEW_NAME;
 				}

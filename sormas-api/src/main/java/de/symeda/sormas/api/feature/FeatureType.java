@@ -40,6 +40,7 @@ public enum FeatureType {
 	// FEATURE MODULES
 	AGGREGATE_REPORTING(true, true, null, null, null),
 	CAMPAIGNS(true, false, null, null, null),
+	FORM_BUILDER(true, true, null, null, null),
 	CASE_SURVEILANCE(true, true, null, null, ImmutableMap.of(FeatureTypeProperty.AUTOMATIC_RESPONSIBILITY_ASSIGNMENT, Boolean.TRUE)),
 	CLINICAL_MANAGEMENT(true, true, null, null, null),
 	CONTACT_TRACING(true,

@@ -1547,6 +1547,7 @@ public interface Captions {
 	String mainMenuShareRequests = "mainMenuShareRequests";
 	String mainMenuStatistics = "mainMenuStatistics";
 	String mainMenuTasks = "mainMenuTasks";
+	String mainMenuFormBuilder = "mainMenuFormBuilder";
 	String mainMenuUsers = "mainMenuUsers";
 	String MaternalHistory_ageAtBirth = "MaternalHistory.ageAtBirth";
 	String MaternalHistory_arthralgiaArthritis = "MaternalHistory.arthralgiaArthritis";
@@ -2308,6 +2309,7 @@ public interface Captions {
 	String TaskExport_personSex = "TaskExport.personSex";
 	String taskMyTasks = "taskMyTasks";
 	String taskNewTask = "taskNewTask";
+	String formBuilderNew = "formBuilderNew";
 	String taskNoTasks = "taskNoTasks";
 	String taskOfficerTasks = "taskOfficerTasks";
 	String TestReport = "TestReport";

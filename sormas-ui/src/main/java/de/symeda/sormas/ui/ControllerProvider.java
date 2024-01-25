@@ -33,6 +33,7 @@ import de.symeda.sormas.ui.events.EventController;
 import de.symeda.sormas.ui.events.EventGroupController;
 import de.symeda.sormas.ui.events.EventParticipantsController;
 import de.symeda.sormas.ui.externalmessage.ExternalMessageController;
+import de.symeda.sormas.ui.formbuilder.FormBuilderController;
 import de.symeda.sormas.ui.immunization.ImmunizationController;
 import de.symeda.sormas.ui.person.PersonController;
 import de.symeda.sormas.ui.reports.aggregate.AggregateReportController;
@@ -62,6 +63,7 @@ public class ControllerProvider extends BaseControllerProvider {
 	private final PersonController personController;
 	private final UserController userController;
 	private final TaskController taskController;
+	private final FormBuilderController formBuilderController;
 	private final ActionController actionController;
 	private final SampleController sampleController;
 	private final PathogenTestController pathogenTestController;
@@ -118,6 +120,7 @@ public class ControllerProvider extends BaseControllerProvider {
 		vaccinationController = new VaccinationController();
 		archivingController = new ArchivingController();
 		caseArchivingController = new CaseArchivingController();
+		formBuilderController = new FormBuilderController();
 	}
 
 	protected static ControllerProvider get() {
@@ -162,6 +165,10 @@ public class ControllerProvider extends BaseControllerProvider {
 
 	public static TaskController getTaskController() {
 		return get().taskController;
+	}
+
+	public static FormBuilderController getFormBuilderController() {
+		return get().formBuilderController;
 	}
 
 	public static ActionController getActionController() {
