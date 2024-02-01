@@ -244,13 +244,15 @@ public enum FeatureType {
 	VIEW_TAB_CONTACTS_EPIDEMIOLOGICAL_DATA(true,
 		true,
 		new FeatureType[] {
-			CONTACT_TRACING },
+			CONTACT_TRACING
+		},
 		null,
 		null),
 	VIEW_TAB_CONTACTS_FOLLOW_UP_VISITS(true,
 		true,
 		new FeatureType[] {
-			CONTACT_TRACING },
+			CONTACT_TRACING
+		},
 		null,
 		null),
 
@@ -262,7 +264,8 @@ public enum FeatureType {
 		true,
 		new FeatureType[] {
 			CASE_SURVEILANCE,
-			EVENT_SURVEILLANCE },
+			EVENT_SURVEILLANCE
+		},
 		null,
 		null),
 
@@ -327,12 +330,29 @@ public enum FeatureType {
 			CASE_SURVEILANCE,
 			CONTACT_TRACING },
 		null,
-		ImmutableMap.of(FeatureTypeProperty.S2S_SHARING, Boolean.FALSE));
+		ImmutableMap.of(FeatureTypeProperty.S2S_SHARING, Boolean.FALSE)),
+	SORMAS_TO_SORMAS_SHARE_CASES_WITH_CONTACTS_AND_SAMPLES(true,
+			true,
+			new FeatureType[] {
+					CASE_SURVEILANCE,
+					CONTACT_TRACING,
+					SAMPLES_LAB },
+			null,
+			ImmutableMap.of(
+					FeatureTypeProperty.SHARE_ASSOCIATED_CONTACTS,
+					Boolean.FALSE,
+					FeatureTypeProperty.SHARE_SAMPLES,
+					Boolean.TRUE,
+					FeatureTypeProperty.SHARE_IMMUNIZATIONS,
+					Boolean.TRUE,
+					FeatureTypeProperty.SHARE_REPORTS,
+					Boolean.TRUE));
 
 	public static final FeatureType[] SURVEILLANCE_FEATURE_TYPES = {
 		FeatureType.CASE_SURVEILANCE,
 		FeatureType.EVENT_SURVEILLANCE,
-		FeatureType.AGGREGATE_REPORTING };
+		FeatureType.AGGREGATE_REPORTING
+	};
 
 	/**
 	 * Server feature means that the feature only needs to be configured once per server since they define the way the system

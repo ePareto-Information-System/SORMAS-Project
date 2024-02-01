@@ -34,12 +34,7 @@ import static de.symeda.sormas.ui.utils.LayoutUtil.loc;
 import static de.symeda.sormas.ui.utils.LayoutUtil.locCss;
 import static de.symeda.sormas.ui.utils.LayoutUtil.locs;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -1147,14 +1142,58 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 		FieldHelper.setVisibleWhen(getFieldGroup(), CaseDataDto.TRIMESTER, CaseDataDto.PREGNANT, Arrays.asList(YesNoUnknown.YES), true);
 
-		diseaseField.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
+		System.out.println("++====called addValueChangeListener====++");
+
+//			diseaseField.addValueChangeListener((ValueChangeListener) valueChangeEvent -> {
+//				Disease disease = (Disease) valueChangeEvent.getProperty().getValue();
+//
+//				System.out.println("++====disease====++");
+//				System.out.println(disease);
+//
+//				List<DiseaseVariant> diseaseVariants =
+//						FacadeProvider.getCustomizableEnumFacade().getEnumValues(CustomizableEnumType.DISEASE_VARIANT, disease);
+//
+//				System.out.println("++====diseaseVariants====++");
+//
+//				System.out.println(diseaseVariants);
+//				System.out.println("++====disease====++");
+//				System.out.println(disease);
+//
+//
+//				FieldHelper.updateItems(diseaseVariantField, diseaseVariants);
+//				diseaseVariantField
+//						.setVisible(disease != null && isVisibleAllowed(CaseDataDto.DISEASE_VARIANT) && CollectionUtils.isNotEmpty(diseaseVariants));
+//			});
+
+
+		diseaseField.addValueChangeListener(valueChangeEvent -> {
 			Disease disease = (Disease) valueChangeEvent.getProperty().getValue();
-			List<DiseaseVariant> diseaseVariants =
-				FacadeProvider.getCustomizableEnumFacade().getEnumValues(CustomizableEnumType.DISEASE_VARIANT, disease);
-			FieldHelper.updateItems(diseaseVariantField, diseaseVariants);
-			diseaseVariantField
-				.setVisible(disease != null && isVisibleAllowed(CaseDataDto.DISEASE_VARIANT) && CollectionUtils.isNotEmpty(diseaseVariants));
+
+			System.out.println("++====disease====++");
+			System.out.println(disease);
+
+			if (disease != null) {
+				// Get unique disease variants
+				Set<DiseaseVariant> uniqueDiseaseVariants = new HashSet<>(
+						FacadeProvider.getCustomizableEnumFacade().getEnumValues(CustomizableEnumType.DISEASE_VARIANT, disease)
+				);
+
+				System.out.println("++====diseaseVariants====++");
+
+				System.out.println(uniqueDiseaseVariants);
+				System.out.println("++====disease====++");
+				System.out.println(disease);
+
+				FieldHelper.updateItems(diseaseVariantField, new ArrayList<>(uniqueDiseaseVariants));
+				diseaseVariantField.setVisible(isVisibleAllowed(CaseDataDto.DISEASE_VARIANT) && !uniqueDiseaseVariants.isEmpty());
+			} else {
+				// Handle the case where disease is null
+				FieldHelper.updateItems(diseaseVariantField, Collections.emptyList());
+				diseaseVariantField.setVisible(false);
+			}
 		});
+
+
 		diseaseVariantField.addValueChangeListener(e -> {
 			DiseaseVariant diseaseVariant = (DiseaseVariant) e.getProperty().getValue();
 			diseaseVariantDetailsField.setVisible(diseaseVariant != null && diseaseVariant.matchPropertyValue(DiseaseVariant.HAS_DETAILS, true));

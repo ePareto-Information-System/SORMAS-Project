@@ -94,8 +94,7 @@ public class CaseExportDto extends AbstractUuidDto {
 	public static final String MAX_SOURCE_CASE_CLASSIFICATION = "maxSourceCaseClassification";
 	public static final String ASSOCIATED_WITH_OUTBREAK = "associatedWithOutbreak";
 	public static final String BURIAL_INFO = "burialInfo";
-	public static final String ADDRESS_GPS_COORDINATES = "person.address.gpsCoordinates";
-	public static final String CASE_GPS_COORDINATES = "caseGpsCoordinates";
+	public static final String ADDRESS_GPS_COORDINATES = "addressGpsCoordinates";
 	public static final String BURIAL_ATTENDED = "burialAttended";
 	public static final String TRAVELED = "traveled";
 	public static final String TRAVEL_HISTORY = "travelHistory";
@@ -113,17 +112,10 @@ public class CaseExportDto extends AbstractUuidDto {
 	public static final String LATEST_EVENT_ID = "latestEventId";
 	public static final String LATEST_EVENT_STATUS = "latestEventStatus";
 	public static final String LATEST_EVENT_TITLE = "latestEventTitle";
-	public static final String CASE_LATITUDE = "reportLat";
-	public static final String CASE_LONGITUDE = "reportLon";
-	public static final String CASE_LAT_LON_ACCURACY = "reportLatLonAccuracy";
-	public static final String PERSON_LATITUDE = "person.address.latitude";
-	public static final String PERSON_LONGITUDE = "person.address.longitude";
-	public static final String PERSON_LAT_LON_ACCURACY = "person.address.latLonAccuracy";
 
 	private String country;
 	private long id;
 	private long personId;
-	private long personAddressId;
 	private long epiDataId;
 	private long hospitalizationId;
 	private long symptomsId;
@@ -135,7 +127,6 @@ public class CaseExportDto extends AbstractUuidDto {
 	private DiseaseVariant diseaseVariant;
 	private String diseaseVariantDetails;
 	private String personUuid;
-
 	@PersonalData
 	@SensitiveData
 	private String firstName;
@@ -225,7 +216,6 @@ public class CaseExportDto extends AbstractUuidDto {
 	@PersonalData
 	@SensitiveData
 	private String addressGpsCoordinates;
-	private String caseGpsCoordinates;
 	@PersonalData
 	@SensitiveData
 	private String facility;
@@ -357,16 +347,9 @@ public class CaseExportDto extends AbstractUuidDto {
 	private Date dateOfInvestigation;
 	private Date dateOfOutcome;
 
-	private Double caseLatitude;
-	private Double caseLongitude;
-	private Float caseLatLonAccuracy;
-	private Double personLatitude;
-	private Double personLongitude;
-	private String personLatLonAccuracy;
-
 	//@formatter:off
 	@SuppressWarnings("unchecked")
-	public CaseExportDto(long id, long personId, long personAddressId, Double personAddressLatitude, Double personAddressLongitude, Float personAddressLatLonAcc, long epiDataId, long symptomsId,
+	public CaseExportDto(long id, long personId, Double personAddressLatitude, Double personAddressLongitude, Float personAddressLatLonAcc, long epiDataId, long symptomsId,
 						 long hospitalizationId, long healthConditionsId, String uuid, String epidNumber,
 						 Disease disease, DiseaseVariant diseaseVariant, String diseaseDetails, String diseaseVariantDetails,
 						 String personUuid, String firstName, String lastName, Salutation salutation, String otherSalutation, Sex sex, YesNoUnknown pregnant,
@@ -416,7 +399,6 @@ public class CaseExportDto extends AbstractUuidDto {
 		super(uuid);
 		this.id = id;
 		this.personId = personId;
-		this.personAddressId = personAddressId;
 		this.addressGpsCoordinates = LocationHelper.buildGpsCoordinatesCaption(personAddressLatitude, personAddressLongitude, personAddressLatLonAcc);
 		this.epiDataId = epiDataId;
 		this.symptomsId = symptomsId;
@@ -564,8 +546,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(0)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(COUNTRY)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getCountry() {
@@ -574,8 +556,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(1)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(ID)
 	@ExportGroup(ExportGroupType.CORE)
 	public long getId() {
@@ -585,10 +567,6 @@ public class CaseExportDto extends AbstractUuidDto {
 	public long getPersonId() {
 		return personId;
 	}
-	public long getPersonAddressId() {
-		return personAddressId;
-	}
-
 
 	public long getEpiDataId() {
 		return epiDataId;
@@ -608,8 +586,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(2)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.UUID)
 	@ExportGroup(ExportGroupType.CORE)
 	@Override
@@ -619,8 +597,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(3)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.EPID_NUMBER)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getEpidNumber() {
@@ -629,8 +607,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(4)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.EXTERNAL_ID)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getExternalID() {
@@ -639,8 +617,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(5)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.EXTERNAL_TOKEN)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getExternalToken() {
@@ -649,8 +627,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(6)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.INTERNAL_TOKEN)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getInternalToken() {
@@ -659,8 +637,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(7)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.DISEASE)
 	@ExportGroup(ExportGroupType.CORE)
 	public Disease getDisease() {
@@ -669,8 +647,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(8)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.DISEASE_DETAILS)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getDiseaseDetails() {
@@ -679,8 +657,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(9)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.DISEASE_VARIANT)
 	@ExportGroup(ExportGroupType.CORE)
 	public DiseaseVariant getDiseaseVariant() {
@@ -689,8 +667,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(10)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.DISEASE_VARIANT_DETAILS)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getDiseaseVariantDetails() {
@@ -699,12 +677,12 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(11)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.UUID })
+			CaseDataDto.PERSON,
+			PersonDto.UUID })
 	@ExportGroup(ExportGroupType.CORE)
 	public String getPersonUuid() {
 		return personUuid;
@@ -712,12 +690,12 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(12)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.FIRST_NAME })
+			CaseDataDto.PERSON,
+			PersonDto.FIRST_NAME })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getFirstName() {
 		return firstName;
@@ -725,12 +703,12 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(13)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.LAST_NAME })
+			CaseDataDto.PERSON,
+			PersonDto.LAST_NAME })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getLastName() {
 		return lastName;
@@ -738,12 +716,12 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(14)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.SALUTATION })
+			CaseDataDto.PERSON,
+			PersonDto.SALUTATION })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	@HideForCountriesExcept
 	public Salutation getSalutation() {
@@ -752,12 +730,12 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(15)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.OTHER_SALUTATION })
+			CaseDataDto.PERSON,
+			PersonDto.OTHER_SALUTATION })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	@HideForCountriesExcept
 	public String getOtherSalutation() {
@@ -766,12 +744,12 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(16)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.SEX })
+			CaseDataDto.PERSON,
+			PersonDto.SEX })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public Sex getSex() {
 		return sex;
@@ -779,8 +757,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(17)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.PREGNANT)
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public YesNoUnknown getPregnant() {
@@ -789,8 +767,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(18)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.TRIMESTER)
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public Trimester getTrimester() {
@@ -799,8 +777,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(19)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.POSTPARTUM)
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public YesNoUnknown getPostpartum() {
@@ -809,12 +787,12 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(20)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.APPROXIMATE_AGE })
+			CaseDataDto.PERSON,
+			PersonDto.APPROXIMATE_AGE })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getApproximateAge() {
 		return approximateAge;
@@ -822,12 +800,12 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(21)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		AGE_GROUP })
+			CaseDataDto.PERSON,
+			AGE_GROUP })
 	@ExportGroup(ExportGroupType.PERSON)
 	public String getAgeGroup() {
 		return ageGroup;
@@ -835,8 +813,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(22)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
 	@ExportProperty(CaseExportDto.BIRTH_DATE)
 	@ExportGroup(ExportGroupType.SENSITIVE)
@@ -846,8 +824,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(23)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.REPORT_DATE)
 	@ExportGroup(ExportGroupType.CORE)
 	public Date getReportDate() {
@@ -856,8 +834,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(24)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.RESPONSIBLE_REGION)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getResponsibleRegion() {
@@ -866,8 +844,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(25)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.RESPONSIBLE_DISTRICT)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getResponsibleDistrict() {
@@ -876,8 +854,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(26)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.RESPONSIBLE_COMMUNITY)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getResponsibleCommunity() {
@@ -886,8 +864,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(27)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.REGION)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getRegion() {
@@ -896,8 +874,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(28)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.DISTRICT)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getDistrict() {
@@ -906,8 +884,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(29)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.COMMUNITY)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getCommunity() {
@@ -916,8 +894,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(30)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.FACILITY_TYPE)
 	@ExportGroup(ExportGroupType.CORE)
 	public FacilityType getFacilityType() {
@@ -926,8 +904,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(31)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.HEALTH_FACILITY)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getHealthFacility() {
@@ -936,8 +914,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(32)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.HEALTH_FACILITY_DETAILS)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getHealthFacilityDetails() {
@@ -946,8 +924,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(33)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.POINT_OF_ENTRY)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getPointOfEntry() {
@@ -956,8 +934,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(34)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.POINT_OF_ENTRY_DETAILS)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getPointOfEntryDetails() {
@@ -966,8 +944,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(35)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(INITIAL_DETECTION_PLACE)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getInitialDetectionPlace() {
@@ -976,7 +954,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(36)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseDataDto.CASE_CLASSIFICATION)
 	@ExportGroup(ExportGroupType.CORE)
 	public CaseClassification getCaseClassification() {
@@ -985,8 +963,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(37)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.CLINICAL_CONFIRMATION)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public YesNoUnknown getClinicalConfirmation() {
@@ -995,8 +973,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(38)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.EPIDEMIOLOGICAL_CONFIRMATION)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public YesNoUnknown getEpidemiologicalConfirmation() {
@@ -1005,8 +983,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(39)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.LABORATORY_DIAGNOSTIC_CONFIRMATION)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public YesNoUnknown getLaboratoryDiagnosticConfirmation() {
@@ -1015,7 +993,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(41)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseDataDto.INVESTIGATION_STATUS)
 	@ExportGroup(ExportGroupType.CORE)
 	public InvestigationStatus getInvestigationStatus() {
@@ -1024,7 +1002,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(42)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseDataDto.INVESTIGATED_DATE)
 	@ExportGroup(ExportGroupType.CORE)
 	public Date getInvestigatedDate() {
@@ -1033,8 +1011,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(43)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.OUTCOME)
 	@ExportGroup(ExportGroupType.CORE)
 	public CaseOutcome getOutcome() {
@@ -1043,8 +1021,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(44)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.OUTCOME_DATE)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public Date getOutcomeDate() {
@@ -1053,8 +1031,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(45)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.SEQUELAE)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public YesNoUnknown getSequelae() {
@@ -1063,8 +1041,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(46)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = CaseDataDto.SEQUELAE_DETAILS, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getSequelaeDetails() {
@@ -1073,8 +1051,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(47)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.BLOOD_ORGAN_OR_TISSUE_DONATED)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept()
@@ -1084,8 +1062,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(48)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = CaseDataDto.NOSOCOMIAL_OUTBREAK, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept
@@ -1095,8 +1073,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(49)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = CaseDataDto.NOSOCOMIAL_OUTBREAK, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept
@@ -1106,8 +1084,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(50)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = CaseDataDto.PROHIBITION_TO_WORK, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept
@@ -1117,8 +1095,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(51)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = CaseDataDto.PROHIBITION_TO_WORK, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept
@@ -1128,8 +1106,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(52)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = CaseDataDto.PROHIBITION_TO_WORK, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept
@@ -1139,8 +1117,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(53)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = CaseDataDto.RE_INFECTION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept
@@ -1150,8 +1128,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(54)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = CaseDataDto.RE_INFECTION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept
@@ -1161,8 +1139,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(55)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = CaseDataDto.RE_INFECTION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept
@@ -1172,8 +1150,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(56)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = CaseDataDto.RE_INFECTION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept
@@ -1183,8 +1161,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(57)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public QuarantineType getQuarantine() {
@@ -1193,8 +1171,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(58)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getQuarantineTypeDetails() {
@@ -1203,8 +1181,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(59)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public Date getQuarantineFrom() {
@@ -1213,8 +1191,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(60)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public Date getQuarantineTo() {
@@ -1223,8 +1201,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(61)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public Date getPreviousQuarantineTo() {
@@ -1233,8 +1211,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(62)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getQuarantineChangeComment() {
@@ -1243,8 +1221,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(63)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getQuarantineHelpNeeded() {
@@ -1253,86 +1231,86 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(64)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+			CountryHelper.COUNTRY_CODE_GERMANY,
+			CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	public boolean isQuarantineOrderedVerbally() {
 		return quarantineOrderedVerbally;
 	}
 
 	@Order(65)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+			CountryHelper.COUNTRY_CODE_GERMANY,
+			CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	public boolean isQuarantineOrderedOfficialDocument() {
 		return quarantineOrderedOfficialDocument;
 	}
 
 	@Order(66)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+			CountryHelper.COUNTRY_CODE_GERMANY,
+			CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	public Date getQuarantineOrderedVerballyDate() {
 		return quarantineOrderedVerballyDate;
 	}
 
 	@Order(67)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+			CountryHelper.COUNTRY_CODE_GERMANY,
+			CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	public Date getQuarantineOrderedOfficialDocumentDate() {
 		return quarantineOrderedOfficialDocumentDate;
 	}
 
 	@Order(68)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+			CountryHelper.COUNTRY_CODE_GERMANY,
+			CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	public boolean isQuarantineOfficialOrderSent() {
 		return quarantineOfficialOrderSent;
 	}
 
 	@Order(69)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	@HideForCountriesExcept(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_SWITZERLAND })
+			CountryHelper.COUNTRY_CODE_GERMANY,
+			CountryHelper.COUNTRY_CODE_SWITZERLAND })
 	public Date getQuarantineOfficialOrderSentDate() {
 		return quarantineOfficialOrderSentDate;
 	}
 
 	@Order(70)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public boolean isQuarantineExtended() {
@@ -1341,8 +1319,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(71)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = QUARANTINE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public boolean isQuarantineReduced() {
@@ -1351,7 +1329,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(72)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(MAX_SOURCE_CASE_CLASSIFICATION)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public CaseClassification getMaxSourceCaseClassification() {
@@ -1360,7 +1338,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(73)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(ASSOCIATED_WITH_OUTBREAK)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getAssociatedWithOutbreak() {
@@ -1373,12 +1351,12 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(74)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(HospitalizationDto.class)
 	@ExportProperty({
-		CaseDataDto.HOSPITALIZATION,
-		HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY })
+			CaseDataDto.HOSPITALIZATION,
+			HospitalizationDto.ADMITTED_TO_HEALTH_FACILITY })
 	@ExportGroup(ExportGroupType.HOSPITALIZATION)
 	public YesNoUnknown getAdmittedToHealthFacility() {
 		return admittedToHealthFacility;
@@ -1386,12 +1364,12 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(75)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(HospitalizationDto.class)
 	@ExportProperty({
-		CaseDataDto.HOSPITALIZATION,
-		HospitalizationDto.ADMISSION_DATE })
+			CaseDataDto.HOSPITALIZATION,
+			HospitalizationDto.ADMISSION_DATE })
 	@ExportGroup(ExportGroupType.HOSPITALIZATION)
 	public Date getAdmissionDate() {
 		return admissionDate;
@@ -1399,12 +1377,12 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(76)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(HospitalizationDto.class)
 	@ExportProperty({
-		CaseDataDto.HOSPITALIZATION,
-		HospitalizationDto.DISCHARGE_DATE })
+			CaseDataDto.HOSPITALIZATION,
+			HospitalizationDto.DISCHARGE_DATE })
 	@ExportGroup(ExportGroupType.HOSPITALIZATION)
 	public Date getDischargeDate() {
 		return dischargeDate;
@@ -1416,12 +1394,12 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(77)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(HospitalizationDto.class)
 	@ExportProperty({
-		CaseDataDto.HOSPITALIZATION,
-		HospitalizationDto.LEFT_AGAINST_ADVICE })
+			CaseDataDto.HOSPITALIZATION,
+			HospitalizationDto.LEFT_AGAINST_ADVICE })
 	@ExportGroup(ExportGroupType.HOSPITALIZATION)
 	public YesNoUnknown getLeftAgainstAdvice() {
 		return leftAgainstAdvice;
@@ -1433,12 +1411,12 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(78)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.PRESENT_CONDITION })
+			CaseDataDto.PERSON,
+			PersonDto.PRESENT_CONDITION })
 	@ExportGroup(ExportGroupType.PERSON)
 	public PresentCondition getPresentCondition() {
 		return presentCondition;
@@ -1446,10 +1424,10 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(79)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.DEATH_DATE })
+			CaseDataDto.PERSON,
+			PersonDto.DEATH_DATE })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public Date getDeathDate() {
 		return deathDate;
@@ -1457,7 +1435,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(80)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(BURIAL_INFO)
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	@HideForCountries
@@ -1467,13 +1445,13 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(81)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(LocationDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.ADDRESS,
-		LocationDto.REGION })
+			CaseDataDto.PERSON,
+			PersonDto.ADDRESS,
+			LocationDto.REGION })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getAddressRegion() {
 		return addressRegion;
@@ -1481,13 +1459,13 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(82)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(LocationDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.ADDRESS,
-		LocationDto.DISTRICT })
+			CaseDataDto.PERSON,
+			PersonDto.ADDRESS,
+			LocationDto.DISTRICT })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getAddressDistrict() {
 		return addressDistrict;
@@ -1495,13 +1473,13 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(83)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(LocationDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.ADDRESS,
-		LocationDto.COMMUNITY })
+			CaseDataDto.PERSON,
+			PersonDto.ADDRESS,
+			LocationDto.COMMUNITY })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getAddressCommunity() {
 		return addressCommunity;
@@ -1509,13 +1487,13 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(84)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(LocationDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.ADDRESS,
-		LocationDto.CITY })
+			CaseDataDto.PERSON,
+			PersonDto.ADDRESS,
+			LocationDto.CITY })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getCity() {
 		return city;
@@ -1523,13 +1501,13 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(85)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(LocationDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.ADDRESS,
-		LocationDto.STREET })
+			CaseDataDto.PERSON,
+			PersonDto.ADDRESS,
+			LocationDto.STREET })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getStreet() {
 		return street;
@@ -1537,13 +1515,13 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(86)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(LocationDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.ADDRESS,
-		LocationDto.HOUSE_NUMBER })
+			CaseDataDto.PERSON,
+			PersonDto.ADDRESS,
+			LocationDto.HOUSE_NUMBER })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getHouseNumber() {
 		return houseNumber;
@@ -1551,13 +1529,13 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(87)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(LocationDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.ADDRESS,
-		LocationDto.ADDITIONAL_INFORMATION })
+			CaseDataDto.PERSON,
+			PersonDto.ADDRESS,
+			LocationDto.ADDITIONAL_INFORMATION })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getAdditionalInformation() {
 		return additionalInformation;
@@ -1565,13 +1543,13 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(88)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(LocationDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.ADDRESS,
-		LocationDto.POSTAL_CODE })
+			CaseDataDto.PERSON,
+			PersonDto.ADDRESS,
+			LocationDto.POSTAL_CODE })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getPostalCode() {
 		return postalCode;
@@ -1579,43 +1557,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(89)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
-	@ExportEntity(LocationDto.class)
-	@ExportProperty(PERSON_LATITUDE)
-	@ExportGroup(ExportGroupType.SENSITIVE)
-	public Double getPersonLatitude() {
-		return personLatitude;
-	}
-
-	@Order(87)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
-	@ExportEntity(LocationDto.class)
-	@ExportProperty(PERSON_LONGITUDE)
-	@ExportGroup(ExportGroupType.SENSITIVE)
-	public Double getPersonLongitude() {
-		return personLongitude;
-	}
-
-	@Order(88)
-	@ExportTarget(caseExportTypes = {
-
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
-	@ExportEntity(LocationDto.class)
-	@ExportProperty(PERSON_LAT_LON_ACCURACY)
-	@ExportGroup(ExportGroupType.SENSITIVE)
-	public String getPersonLatLonAccuracy() {
-		return personLatLonAccuracy;
-	}
-
-	@Order(89)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
-	@ExportEntity(LocationDto.class)
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(ADDRESS_GPS_COORDINATES)
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getAddressGpsCoordinates() {
@@ -1624,13 +1567,13 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(90)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(LocationDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.ADDRESS,
-		LocationDto.FACILITY })
+			CaseDataDto.PERSON,
+			PersonDto.ADDRESS,
+			LocationDto.FACILITY })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getFacility() {
 		return facility;
@@ -1638,13 +1581,13 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(91)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(LocationDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.ADDRESS,
-		LocationDto.FACILITY_DETAILS })
+			CaseDataDto.PERSON,
+			PersonDto.ADDRESS,
+			LocationDto.FACILITY_DETAILS })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getFacilityDetails() {
 		return facilityDetails;
@@ -1652,12 +1595,12 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(92)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.PHONE })
+			CaseDataDto.PERSON,
+			PersonDto.PHONE })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getPhone() {
 		return phone;
@@ -1665,12 +1608,12 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(93)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.PHONE_OWNER })
+			CaseDataDto.PERSON,
+			PersonDto.PHONE_OWNER })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getPhoneOwner() {
 		return phoneOwner;
@@ -1678,12 +1621,12 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(94)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.EMAIL_ADDRESS })
+			CaseDataDto.PERSON,
+			PersonDto.EMAIL_ADDRESS })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getEmailAddress() {
 		return emailAddress;
@@ -1691,12 +1634,12 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(95)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.OTHER_CONTACT_DETAILS })
+			CaseDataDto.PERSON,
+			PersonDto.OTHER_CONTACT_DETAILS })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	public String getOtherContactDetails() {
 		return otherContactDetails;
@@ -1704,28 +1647,28 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(96)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.EDUCATION_TYPE })
+			CaseDataDto.PERSON,
+			PersonDto.EDUCATION_TYPE })
 	@ExportGroup(ExportGroupType.PERSON)
 	@HideForCountries(countries = {
-		CountryHelper.COUNTRY_CODE_GERMANY,
-		CountryHelper.COUNTRY_CODE_FRANCE })
+			CountryHelper.COUNTRY_CODE_GERMANY,
+			CountryHelper.COUNTRY_CODE_FRANCE })
 	public EducationType getEducationType() {
 		return educationType;
 	}
 
 	@Order(97)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.EDUCATION_DETAILS })
+			CaseDataDto.PERSON,
+			PersonDto.EDUCATION_DETAILS })
 	@ExportGroup(ExportGroupType.PERSON)
 	public String getEducationDetails() {
 		return educationDetails;
@@ -1733,12 +1676,12 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(98)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.OCCUPATION_TYPE })
+			CaseDataDto.PERSON,
+			PersonDto.OCCUPATION_TYPE })
 	@ExportGroup(ExportGroupType.PERSON)
 	public OccupationType getOccupationType() {
 		return occupationType;
@@ -1746,12 +1689,12 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(99)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.OCCUPATION_DETAILS })
+			CaseDataDto.PERSON,
+			PersonDto.OCCUPATION_DETAILS })
 	@ExportGroup(ExportGroupType.PERSON)
 	public String getOccupationDetails() {
 		return occupationDetails;
@@ -1759,12 +1702,12 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(100)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.ARMED_FORCES_RELATION_TYPE })
+			CaseDataDto.PERSON,
+			PersonDto.ARMED_FORCES_RELATION_TYPE })
 	@ExportGroup(ExportGroupType.PERSON)
 	public ArmedForcesRelationType getArmedForcesRelationType() {
 		return armedForcesRelationType;
@@ -1772,7 +1715,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(101)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(TRAVELED)
 	@ExportGroup(ExportGroupType.EPIDEMIOLOGICAL)
 	public boolean isTraveled() {
@@ -1785,7 +1728,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(102)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(TRAVEL_HISTORY)
 	@ExportGroup(ExportGroupType.EPIDEMIOLOGICAL)
 	public String getTravelHistory() {
@@ -1794,7 +1737,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(103)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(BURIAL_ATTENDED)
 	@ExportGroup(ExportGroupType.EPIDEMIOLOGICAL)
 	public boolean isBurialAttended() {
@@ -1807,11 +1750,11 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(104)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportEntity(EpiDataDto.class)
 	@ExportProperty({
-		CaseDataDto.EPI_DATA,
-		EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN })
+			CaseDataDto.EPI_DATA,
+			EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN })
 	@ExportGroup(ExportGroupType.EPIDEMIOLOGICAL)
 	public YesNoUnknown getContactWithSourceCaseKnown() {
 		return contactWithSourceCaseKnown;
@@ -1823,8 +1766,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(105)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.VACCINATION_STATUS)
 	@ExportGroup(ExportGroupType.VACCINATION)
 	public VaccinationStatus getVaccinationStatus() {
@@ -1833,8 +1776,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(106)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(ImmunizationDto.NUMBER_OF_DOSES)
 	@ExportGroup(ExportGroupType.VACCINATION)
 	public String getNumberOfDoses() {
@@ -1843,8 +1786,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(107)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(VaccinationDto.VACCINATION_INFO_SOURCE)
 	@ExportGroup(ExportGroupType.VACCINATION)
 	public VaccinationInfoSource getVaccinationInfoSource() {
@@ -1853,8 +1796,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(108)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(ImmunizationDto.FIRST_VACCINATION_DATE)
 	@ExportGroup(ExportGroupType.VACCINATION)
 	public Date getFirstVaccinationDate() {
@@ -1863,8 +1806,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(109)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(ImmunizationDto.LAST_VACCINATION_DATE)
 	@ExportGroup(ExportGroupType.VACCINATION)
 	public Date getLastVaccinationDate() {
@@ -1873,8 +1816,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(110)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(VaccinationDto.VACCINE_NAME)
 	@ExportGroup(ExportGroupType.VACCINATION)
 	public Vaccine getVaccineName() {
@@ -1883,8 +1826,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(111)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(VaccinationDto.OTHER_VACCINE_NAME)
 	@ExportGroup(ExportGroupType.VACCINATION)
 	public String getOtherVaccineName() {
@@ -1893,8 +1836,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(112)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(VaccinationDto.VACCINE_MANUFACTURER)
 	@ExportGroup(ExportGroupType.VACCINATION)
 	public VaccineManufacturer getVaccineManufacturer() {
@@ -1903,8 +1846,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(113)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(VaccinationDto.OTHER_VACCINE_MANUFACTURER)
 	@ExportGroup(ExportGroupType.VACCINATION)
 	public String getOtherVaccineManufacturer() {
@@ -1913,8 +1856,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(114)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(VaccinationDto.VACCINE_INN)
 	@ExportGroup(ExportGroupType.VACCINATION)
 	public String getVaccineInn() {
@@ -1923,8 +1866,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(115)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(VaccinationDto.VACCINE_BATCH_NUMBER)
 	@ExportGroup(ExportGroupType.VACCINATION)
 	public String getVaccineBatchNumber() {
@@ -1933,8 +1876,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(116)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(VaccinationDto.VACCINE_UNII_CODE)
 	@ExportGroup(ExportGroupType.VACCINATION)
 	public String getVaccineUniiCode() {
@@ -1943,8 +1886,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(117)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(VaccinationDto.VACCINE_ATC_CODE)
 	@ExportGroup(ExportGroupType.VACCINATION)
 	public String getVaccineAtcCode() {
@@ -1963,8 +1906,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(121)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.SYMPTOMS)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public SymptomsDto getSymptoms() {
@@ -1973,7 +1916,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(122)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.HEALTH_CONDITIONS)
 	@ExportGroup(ExportGroupType.CLINICAL_COURSE)
 	public HealthConditionsDto getHealthConditions() {
@@ -1982,7 +1925,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(123)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(NUMBER_OF_PRESCRIPTIONS)
 	@ExportGroup(ExportGroupType.THERAPY)
 	public int getNumberOfPrescriptions() {
@@ -1991,7 +1934,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(124)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(NUMBER_OF_TREATMENTS)
 	@ExportGroup(ExportGroupType.THERAPY)
 	public int getNumberOfTreatments() {
@@ -2000,7 +1943,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(125)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(NUMBER_OF_CLINICAL_VISITS)
 	@ExportGroup(ExportGroupType.CLINICAL_COURSE)
 	public int getNumberOfClinicalVisits() {
@@ -2009,7 +1952,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(131)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(value = SAMPLE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getSampleUuid1() {
@@ -2018,7 +1961,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(132)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(value = SAMPLE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public Date getSampleDateTime1() {
@@ -2027,7 +1970,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(133)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(value = SAMPLE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getSampleLab1() {
@@ -2036,7 +1979,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(134)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(value = SAMPLE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public PathogenTestResultType getSampleResult1() {
@@ -2045,7 +1988,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(135)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(value = SAMPLE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getSampleUuid2() {
@@ -2054,7 +1997,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(136)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(value = SAMPLE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public Date getSampleDateTime2() {
@@ -2063,7 +2006,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(137)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(value = SAMPLE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getSampleLab2() {
@@ -2072,7 +2015,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(138)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(value = SAMPLE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public PathogenTestResultType getSampleResult2() {
@@ -2081,7 +2024,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(139)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(value = SAMPLE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getSampleUuid3() {
@@ -2090,7 +2033,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(140)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(value = SAMPLE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public Date getSampleDateTime3() {
@@ -2099,7 +2042,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(141)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(value = SAMPLE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getSampleLab3() {
@@ -2108,7 +2051,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(142)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(value = SAMPLE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public PathogenTestResultType getSampleResult3() {
@@ -2117,7 +2060,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(143)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(value = SAMPLE_INFORMATION, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getOtherSamplesString() {
@@ -2133,7 +2076,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(144)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseDataDto.FOLLOW_UP_STATUS)
 	@ExportGroup(ExportGroupType.FOLLOW_UP)
 	public FollowUpStatus getFollowUpStatus() {
@@ -2142,7 +2085,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(145)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseDataDto.FOLLOW_UP_UNTIL)
 	@ExportGroup(ExportGroupType.FOLLOW_UP)
 	public Date getFollowUpUntil() {
@@ -2151,7 +2094,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(146)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseExportDto.NUMBER_OF_VISITS)
 	@ExportGroup(ExportGroupType.FOLLOW_UP)
 	public int getNumberOfVisits() {
@@ -2160,7 +2103,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(147)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseExportDto.LAST_COOPERATIVE_VISIT_SYMPTOMATIC)
 	@ExportGroup(ExportGroupType.FOLLOW_UP)
 	public YesNoUnknown getLastCooperativeVisitSymptomatic() {
@@ -2169,7 +2112,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(148)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseExportDto.LAST_COOPERATIVE_VISIT_DATE)
 	@ExportGroup(ExportGroupType.FOLLOW_UP)
 	public Date getLastCooperativeVisitDate() {
@@ -2178,7 +2121,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(149)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseExportDto.LAST_COOPERATIVE_VISIT_SYMPTOMS)
 	@ExportGroup(ExportGroupType.FOLLOW_UP)
 	public String getLastCooperativeVisitSymptoms() {
@@ -2187,7 +2130,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(150)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseExportDto.EVENT_COUNT)
 	@ExportGroup(ExportGroupType.EVENT)
 	public Long getEventCount() {
@@ -2196,7 +2139,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(151)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseExportDto.LATEST_EVENT_ID)
 	@ExportGroup(ExportGroupType.EVENT)
 	public String getLatestEventId() {
@@ -2205,7 +2148,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(152)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseExportDto.LATEST_EVENT_STATUS)
 	@ExportGroup(ExportGroupType.EVENT)
 	public EventStatus getLatestEventStatus() {
@@ -2214,7 +2157,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(153)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseExportDto.LATEST_EVENT_TITLE)
 	@ExportGroup(ExportGroupType.EVENT)
 	public String getLatestEventTitle() {
@@ -2223,12 +2166,12 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(161)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.BIRTH_NAME })
+			CaseDataDto.PERSON,
+			PersonDto.BIRTH_NAME })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	@HideForCountriesExcept
 	public String getBirthName() {
@@ -2237,12 +2180,12 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(162)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.BIRTH_COUNTRY })
+			CaseDataDto.PERSON,
+			PersonDto.BIRTH_COUNTRY })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	@HideForCountriesExcept(countries = {})
 	public String getBirthCountry() {
@@ -2251,12 +2194,12 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(163)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportEntity(PersonDto.class)
 	@ExportProperty({
-		CaseDataDto.PERSON,
-		PersonDto.CITIZENSHIP })
+			CaseDataDto.PERSON,
+			PersonDto.CITIZENSHIP })
 	@ExportGroup(ExportGroupType.SENSITIVE)
 	@HideForCountriesExcept(countries = {})
 	public String getCitizenship() {
@@ -2265,7 +2208,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(165)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseDataDto.NOT_A_CASE_REASON_NEGATIVE_TEST)
 	@ExportGroup(ExportGroupType.CORE)
 	public Boolean getNotACaseReasonNegativeTest() {
@@ -2274,7 +2217,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(166)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseDataDto.NOT_A_CASE_REASON_PHYSICIAN_INFORMATION)
 	@ExportGroup(ExportGroupType.CORE)
 	public Boolean getNotACaseReasonPhysicianInformation() {
@@ -2283,7 +2226,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(167)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseDataDto.NOT_A_CASE_REASON_DIFFERENT_PATHOGEN)
 	@ExportGroup(ExportGroupType.CORE)
 	public Boolean getNotACaseReasonDifferentPathogen() {
@@ -2292,7 +2235,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(168)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseDataDto.NOT_A_CASE_REASON_OTHER)
 	@ExportGroup(ExportGroupType.CORE)
 	public Boolean getNotACaseReasonOther() {
@@ -2301,7 +2244,7 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(169)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE })
+			CaseExportType.CASE_SURVEILLANCE })
 	@ExportProperty(CaseDataDto.NOT_A_CASE_REASON_DETAILS)
 	@ExportGroup(ExportGroupType.CORE)
 	public String getNotACaseReasonDetails() {
@@ -2310,8 +2253,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(170)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.CASE_IDENTIFICATION_SOURCE)
 	@ExportGroup(ExportGroupType.CORE)
 	@HideForCountriesExcept
@@ -2321,8 +2264,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(171)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.SCREENING_TYPE)
 	@ExportGroup(ExportGroupType.CORE)
 	@HideForCountriesExcept
@@ -2332,8 +2275,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(172)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.CLINICIAN_NAME)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getClinicianName() {
@@ -2342,8 +2285,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(173)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.CLINICIAN_PHONE)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getClinicianPhone() {
@@ -2352,8 +2295,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(174)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.CLINICIAN_EMAIL)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getClinicianEmail() {
@@ -2370,8 +2313,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(175)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = CaseDataDto.REPORTING_USER, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getReportingUserName() {
@@ -2384,8 +2327,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(176)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = CaseDataDto.REPORTING_USER, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getReportingUserRoles() {
@@ -2398,8 +2341,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(177)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = CaseDataDto.FOLLOW_UP_STATUS_CHANGE_USER, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getFollowUpStatusChangeUserName() {
@@ -2412,8 +2355,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(178)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(value = CaseDataDto.FOLLOW_UP_STATUS_CHANGE_USER, combined = true)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public String getFollowUpStatusChangeUserRoles() {
@@ -2422,13 +2365,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(179)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
-	@ExportProperty(CASE_LATITUDE)
-	@ExportGroup(ExportGroupType.SENSITIVE)
-	public Double getCaseLatitude() {
-		return caseLatitude;
-	}
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.INVESTIGATED_DATE)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public Date getDateOfInvestigation() {
@@ -2441,33 +2379,8 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	@Order(180)
 	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
-	@ExportProperty(CASE_LONGITUDE)
-	@ExportGroup(ExportGroupType.SENSITIVE)
-	public Double getCaseLongitude() {
-		return caseLongitude;
-	}
-
-	@Order(181)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
-	@ExportProperty(CASE_LAT_LON_ACCURACY)
-	@ExportGroup(ExportGroupType.SENSITIVE)
-	public Float getCaseLatLonAccuracy() {
-		return caseLatLonAccuracy;
-	}
-
-	@Order(182)
-	@ExportTarget(caseExportTypes = {
-		CaseExportType.CASE_SURVEILLANCE,
-		CaseExportType.CASE_MANAGEMENT })
-	@ExportProperty(CASE_GPS_COORDINATES)
-	@ExportGroup(ExportGroupType.SENSITIVE)
-	public String getCaseGpsCoordinates() {
-		return caseGpsCoordinates;
-	}
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
 	@ExportProperty(CaseDataDto.OUTCOME_DATE)
 	@ExportGroup(ExportGroupType.ADDITIONAL)
 	public Date getDateOfOutcome() {
@@ -2482,34 +2395,6 @@ public class CaseExportDto extends AbstractUuidDto {
 		this.followUpStatusChangeUserRoles = roles.stream().map(ReferenceDto::buildCaption).collect(Collectors.joining(", "));;
 	}
 
-	public void setCaseLatitude(Double caseLatitude) {
-		this.caseLatitude = caseLatitude;
-	}
-
-	public void setCaseLongitude(Double caseLongitude) {
-		this.caseLongitude = caseLongitude;
-	}
-
-	public void setCaseLatLonAccuracy(Float caseLatLonAccuracy) {
-		this.caseLatLonAccuracy = caseLatLonAccuracy;
-	}
-
-	public void setCaseGpsCoordinates(String caseGpsCoordinates) {
-		this.caseGpsCoordinates = caseGpsCoordinates;
-	}
-
-	public void setPersonLatitude(Double personLatitude) {
-		this.personLatitude = personLatitude;
-	}
-
-	public void setPersonLongitude(Double personLongitude) {
-		this.personLongitude = personLongitude;
-	}
-
-	public void setPersonLatLonAccuracy(String personLatLonAccuracy) {
-		this.personLatLonAccuracy = personLatLonAccuracy;
-	}
-
 	public void setCountry(String country) {
 		this.country = country;
 	}
@@ -2520,10 +2405,6 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	public void setPersonId(long personId) {
 		this.personId = personId;
-	}
-
-	public void setPersonAddressId(long personAddressId) {
-		this.personAddressId = personAddressId;
 	}
 
 	public void setEpiDataId(long epiDataId) {

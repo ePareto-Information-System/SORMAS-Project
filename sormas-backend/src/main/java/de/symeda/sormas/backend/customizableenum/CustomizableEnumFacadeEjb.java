@@ -144,6 +144,7 @@ public class CustomizableEnumFacadeEjb implements CustomizableEnumFacade {
 	/**
 	 * @return Entries are currently not returned in any specific order
 	 */
+
 	@Lock(LockType.READ)
 	@Override
 	@SuppressWarnings("unchecked")
@@ -152,28 +153,34 @@ public class CustomizableEnumFacadeEjb implements CustomizableEnumFacade {
 		Class<T> enumClass = (Class<T>) type.getEnumClass();
 		Optional<Disease> innerDisease = Optional.ofNullable(disease);
 
+		System.out.println("++==== Debugging Output ====");
+		System.out.println("Enum Type: " + type);
+		System.out.println("Disease: " + innerDisease.orElse(null));
+		System.out.println("Language: " + language);
+
 		if (!enumValuesByLanguage.get(enumClass).containsKey(language)) {
+			System.out.println("Language cache is not populated. Populating...");
 			fillLanguageCache(type, enumClass, language);
 		}
 
 		if (!enumValuesByDisease.get(enumClass).containsKey(innerDisease)) {
+			System.out.println("Disease cache is not populated. Populating...");
 			fillDiseaseCache(type, enumClass, innerDisease);
 		}
 
-		Stream<String> diseaseValuesStream;
-		if (innerDisease.isPresent()) {
-			// combine specific and unspecific values
-			diseaseValuesStream = Stream.concat(
-				enumValuesByDisease.get(enumClass).get(innerDisease).stream(),
-				enumValuesByDisease.get(enumClass).get(Optional.empty()).stream());
-		} else {
-			diseaseValuesStream = enumValuesByDisease.get(enumClass).get(Optional.empty()).stream();
-		}
+		List<T> result = Stream.concat(
+						enumValuesByDisease.get(enumClass).get(innerDisease).stream(),
+						enumValuesByDisease.get(enumClass).get(Optional.empty()).stream())
+				.map(value -> buildCustomizableEnum(type, value, language, enumClass))
+				.sorted(Comparator.comparing(CustomizableEnum::getCaption))
+				.collect(Collectors.toList());
 
-		return diseaseValuesStream.map(value -> buildCustomizableEnum(type, value, language, enumClass))
-			.sorted(Comparator.comparing(CustomizableEnum::getCaption))
-			.collect(Collectors.toList());
+		System.out.println("Resulting Enum Values: " + result);
+
+		return result;
 	}
+
+
 
 	@Lock(LockType.READ)
 	@Override

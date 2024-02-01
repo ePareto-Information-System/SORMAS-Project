@@ -36,7 +36,7 @@ public class OccupationType extends CustomizableEnum implements Serializable {
 	public static final String OTHER = "OTHER";
 	public static final String UNKNOWN = "UNKNOWN";
 	public static final String TRANSPORTER="TRANSPORTER";
-	public static final  String BUSINESSMAN_WOMAN="BUSINESSMAN_WOMAN";
+	//public static final  String BUSINESSMAN_WOMAN="BUSINESSMAN_WOMAN";
 	private boolean hasDetails;
 
 	@Override
@@ -81,13 +81,24 @@ public class OccupationType extends CustomizableEnum implements Serializable {
 		defaultValues.put("LABORATORY_STAFF", propertiesDetailsFalse);
 		defaultValues.put("OTHER", propertiesDetailsTrue);
 		defaultValues.put("UNKNOWN", propertiesDetailsFalse);
-
-		defaultValues.put("TRANSPORTER", propertiesDetailsFalse);
-		defaultValues.put("BUSINESSMAN_WOMAN", propertiesDetailsFalse);
-
-
+		defaultValues.put("TRANSPORTER", propertiesDetailsFalseForTransporter());
+		//defaultValues.put("BUSINESSMAN_WOMAN", propertiesDetailsFalseForBusinessmanWoman());
 
 		return defaultValues;
+	}
+
+	private static Map<String, Object> propertiesDetailsFalseForTransporter() {
+		Map<String, Object> propertiesDetailsFalse = new HashMap<>();
+		propertiesDetailsFalse.put(HAS_DETAILS, false);
+		// Add other properties specific to TRANSPORTER if needed
+		return propertiesDetailsFalse;
+	}
+
+	private static Map<String, Object> propertiesDetailsFalseForBusinessmanWoman() {
+		Map<String, Object> propertiesDetailsFalse = new HashMap<>();
+		propertiesDetailsFalse.put(HAS_DETAILS, false);
+		// Add other properties specific to BUSINESSMAN_WOMAN if needed
+		return propertiesDetailsFalse;
 	}
 
 	public boolean isHasDetails() {
