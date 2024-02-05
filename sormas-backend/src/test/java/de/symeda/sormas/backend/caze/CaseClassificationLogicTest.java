@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import de.symeda.sormas.api.utils.YesNo;
 import org.jboss.weld.exceptions.UnsupportedOperationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -94,30 +95,30 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 
 		// Probable
 		caze = buildProbableCaseBasis(Disease.EVD);
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.YES);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.YES);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.PROBABLE, caze.getCaseClassification());
 
 		caze = buildProbableCaseBasis(Disease.EVD);
 		ExposureDto exposure = ExposureDto.build(ExposureType.WORK);
-		exposure.setHandlingSamples(YesNoUnknown.YES);
+		exposure.setHandlingSamples(YesNo.YES);
 		caze.getEpiData().getExposures().add(exposure);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.PROBABLE, caze.getCaseClassification());
 
 		caze = buildProbableCaseBasis(Disease.EVD);
 		exposure = ExposureDto.build(ExposureType.WORK);
-		exposure.setPercutaneous(YesNoUnknown.YES);
+		exposure.setPercutaneous(YesNo.YES);
 		caze.getEpiData().getExposures().add(exposure);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.PROBABLE, caze.getCaseClassification());
 
 		caze = buildProbableCaseBasis(Disease.EVD);
 		exposure = ExposureDto.build(ExposureType.TRAVEL);
-		exposure.setRiskArea(YesNoUnknown.YES);
+		exposure.setRiskArea(YesNo.YES);
 		caze.getEpiData().getExposures().add(exposure);
 		ExposureDto exposure2 = ExposureDto.build(ExposureType.BURIAL);
-		exposure2.setPhysicalContactWithBody(YesNoUnknown.YES);
+		exposure2.setPhysicalContactWithBody(YesNo.YES);
 		caze.getEpiData().getExposures().add(exposure2);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.PROBABLE, caze.getCaseClassification());
@@ -162,18 +163,18 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
 		fillEpiData(caze.getEpiData());
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.NO);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.NO);
 		ExposureDto exposure = ExposureDto.build(ExposureType.WORK);
-		exposure.setHandlingSamples(YesNoUnknown.NO);
-		exposure.setPercutaneous(YesNoUnknown.NO);
+		exposure.setHandlingSamples(YesNo.NO);
+		exposure.setPercutaneous(YesNo.NO);
 		caze.getEpiData().getExposures().add(exposure);
 		ExposureDto exposure2 = ExposureDto.build(ExposureType.TRAVEL);
-		exposure2.setRiskArea(YesNoUnknown.NO);
+		exposure2.setRiskArea(YesNo.NO);
 		caze.getEpiData().getExposures().add(exposure2);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
 		caze.setOutcome(CaseOutcome.NO_OUTCOME);
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.YES);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.YES);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
 
@@ -217,7 +218,7 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 		// Probable
 		caze = buildSuspectCase(Disease.CSM);
 		caze.setOutcome(CaseOutcome.DECEASED);
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.YES);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.YES);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.PROBABLE, caze.getCaseClassification());
 
@@ -252,11 +253,11 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
 		fillEpiData(caze.getEpiData());
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.NO);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.NO);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
 		caze.setOutcome(CaseOutcome.NO_OUTCOME);
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.YES);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.YES);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
 
@@ -274,67 +275,67 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 		// Suspect
 		CaseDataDto caze = buildSuspectCaseBasis(Disease.LASSA);
 		caze.getSymptoms().setFatigueWeakness(SymptomState.YES);
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.YES);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.YES);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
 
 		caze = buildSuspectCaseBasis(Disease.LASSA);
 		caze.getSymptoms().setFever(SymptomState.YES);
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.YES);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.YES);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
 
 		caze = buildSuspectCaseBasis(Disease.LASSA);
 		caze.getSymptoms().setHeadache(SymptomState.YES);
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.YES);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.YES);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
 
 		caze = buildSuspectCaseBasis(Disease.LASSA);
 		caze.getSymptoms().setSoreThroat(SymptomState.YES);
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.YES);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.YES);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
 
 		caze = buildSuspectCaseBasis(Disease.LASSA);
 		caze.getSymptoms().setCough(SymptomState.YES);
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.YES);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.YES);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
 
 		caze = buildSuspectCaseBasis(Disease.LASSA);
 		caze.getSymptoms().setNausea(SymptomState.YES);
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.YES);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.YES);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
 
 		caze = buildSuspectCaseBasis(Disease.LASSA);
 		caze.getSymptoms().setVomiting(SymptomState.YES);
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.YES);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.YES);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
 
 		caze = buildSuspectCaseBasis(Disease.LASSA);
 		caze.getSymptoms().setDiarrhea(SymptomState.YES);
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.YES);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.YES);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
 
 		caze = buildSuspectCaseBasis(Disease.LASSA);
 		caze.getSymptoms().setMusclePain(SymptomState.YES);
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.YES);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.YES);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
 
 		caze = buildSuspectCaseBasis(Disease.LASSA);
 		caze.getSymptoms().setChestPain(SymptomState.YES);
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.YES);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.YES);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
 
 		caze = buildSuspectCaseBasis(Disease.LASSA);
 		caze.getSymptoms().setHearingloss(SymptomState.YES);
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.YES);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.YES);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
 
@@ -381,7 +382,7 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 		fillEpiData(caze.getEpiData());
 		ExposureDto exposure = creator.buildAnimalContactExposure(TypeOfAnimal.BAT);
 		caze.getEpiData().getExposures().add(exposure);
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.NO);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.NO);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.NOT_CLASSIFIED, caze.getCaseClassification());
 		caze.getSymptoms().setFever(SymptomState.YES);
@@ -390,7 +391,7 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 		caze.getSymptoms().setFever(SymptomState.NO);
 		ExposureDto exposure2 = creator.buildAnimalContactExposure(TypeOfAnimal.RODENT);
 		caze.getEpiData().getExposures().add(exposure2);
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.YES);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.YES);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.NOT_CLASSIFIED, caze.getCaseClassification());
 
@@ -421,7 +422,7 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 		// Probable
 		caze = buildSuspectCase(Disease.YELLOW_FEVER);
 		ExposureDto exposure = ExposureDto.build(ExposureType.TRAVEL);
-		exposure.setRiskArea(YesNoUnknown.YES);
+		exposure.setRiskArea(YesNo.YES);
 		caze.getEpiData().getExposures().add(exposure);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.PROBABLE, caze.getCaseClassification());
@@ -497,7 +498,7 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 		caze = buildSuspectCase(Disease.YELLOW_FEVER);
 		fillEpiData(caze.getEpiData());
 		ExposureDto exposure = ExposureDto.build(ExposureType.TRAVEL);
-		exposure.setRiskArea(YesNoUnknown.NO);
+		exposure.setRiskArea(YesNo.NO);
 		caze.getEpiData().getExposures().add(exposure);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
@@ -572,7 +573,7 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 		// Probable
 		caze = buildSuspectCase(Disease.DENGUE);
 		ExposureDto exposure = ExposureDto.build(ExposureType.TRAVEL);
-		exposure.setRiskArea(YesNoUnknown.YES);
+		exposure.setRiskArea(YesNo.YES);
 		caze.getEpiData().getExposures().add(exposure);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.PROBABLE, caze.getCaseClassification());
@@ -628,7 +629,7 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 		caze = buildSuspectCase(Disease.DENGUE);
 		fillEpiData(caze.getEpiData());
 		ExposureDto exposure = ExposureDto.build(ExposureType.TRAVEL);
-		exposure.setRiskArea(YesNoUnknown.NO);
+		exposure.setRiskArea(YesNo.NO);
 		caze.getEpiData().getExposures().add(exposure);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
@@ -654,40 +655,40 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 
 		// Suspect
 		CaseDataDto caze = buildSuspectCaseBasis(Disease.NEW_INFLUENZA);
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.YES);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.YES);
 		caze.getSymptoms().setCough(SymptomState.YES);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
 
 		caze = buildSuspectCaseBasis(Disease.NEW_INFLUENZA);
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.YES);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.YES);
 		caze.getSymptoms().setDifficultyBreathing(SymptomState.YES);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
 
 		caze = buildSuspectCaseBasis(Disease.NEW_INFLUENZA);
 		caze.getSymptoms().setCough(SymptomState.YES);
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.YES);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.YES);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
 
 		caze = buildSuspectCaseBasis(Disease.NEW_INFLUENZA);
 		caze.getSymptoms().setCough(SymptomState.YES);
-		caze.getEpiData().setAreaInfectedAnimals(YesNoUnknown.YES);
+		caze.getEpiData().setAreaInfectedAnimals(YesNo.YES);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
 
 		caze = buildSuspectCaseBasis(Disease.NEW_INFLUENZA);
 		caze.getSymptoms().setCough(SymptomState.YES);
 		ExposureDto exposure = ExposureDto.build(ExposureType.WORK);
-		exposure.setHandlingSamples(YesNoUnknown.YES);
+		exposure.setHandlingSamples(YesNo.YES);
 		caze.getEpiData().getExposures().add(exposure);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
 
 		// Probable
 		caze = buildProbableCaseBasis(Disease.NEW_INFLUENZA);
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.YES);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.YES);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.PROBABLE, caze.getCaseClassification());
 
@@ -727,10 +728,10 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.NOT_CLASSIFIED, caze.getCaseClassification());
 		caze.getSymptoms().setCough(SymptomState.YES);
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.NO);
-		caze.getEpiData().setAreaInfectedAnimals(YesNoUnknown.NO);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.NO);
+		caze.getEpiData().setAreaInfectedAnimals(YesNo.NO);
 		ExposureDto exposure = ExposureDto.build(ExposureType.WORK);
-		exposure.setHandlingSamples(YesNoUnknown.NO);
+		exposure.setHandlingSamples(YesNo.NO);
 		caze.getEpiData().getExposures().add(exposure);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.NOT_CLASSIFIED, caze.getCaseClassification());
@@ -742,7 +743,7 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
 		caze.setOutcome(CaseOutcome.NO_OUTCOME);
 		fillEpiData(caze.getEpiData());
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.NO);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.NO);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
 
@@ -780,7 +781,7 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 
 		// Probable
 		caze = buildSuspectCase(Disease.MEASLES);
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.YES);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.YES);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.PROBABLE, caze.getCaseClassification());
 
@@ -814,7 +815,7 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 		// Probable
 		caze = buildSuspectCase(Disease.MEASLES);
 		fillEpiData(caze.getEpiData());
-		caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.NO);
+		caze.getEpiData().setContactWithSourceCaseKnown(YesNo.NO);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
 
@@ -844,7 +845,7 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 		caze = buildSuspectCaseBasis(Disease.CHOLERA);
 		caze.getSymptoms().setDiarrhea(SymptomState.YES);
 		ExposureDto exposure = ExposureDto.build(ExposureType.TRAVEL);
-		exposure.setRiskArea(YesNoUnknown.YES);
+		exposure.setRiskArea(YesNo.YES);
 		caze.getEpiData().getExposures().add(exposure);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
@@ -866,7 +867,7 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 		caze.getSymptoms().setDehydration(SymptomState.NO);
 		caze.getSymptoms().setDiarrhea(SymptomState.NO);
 		ExposureDto exposure = ExposureDto.build(ExposureType.TRAVEL);
-		exposure.setRiskArea(YesNoUnknown.NO);
+		exposure.setRiskArea(YesNo.NO);
 		caze.getEpiData().getExposures().add(exposure);
 		PersonDto casePerson = getPersonFacade().getByUuid(caze.getPerson().getUuid());
 		casePerson.setApproximateAge(5);
@@ -877,7 +878,7 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 		casePerson.setApproximateAge(0);
 		getPersonFacade().save(casePerson);
 		caze.setOutcome(CaseOutcome.DECEASED);
-		caze.getEpiData().getExposures().get(0).setRiskArea(YesNoUnknown.YES);
+		caze.getEpiData().getExposures().get(0).setRiskArea(YesNo.YES);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.NOT_CLASSIFIED, caze.getCaseClassification());
 		caze.getSymptoms().setDiarrhea(SymptomState.YES);
@@ -987,7 +988,7 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 
 		caze = buildSuspectCase(Disease.PLAGUE);
 		ExposureDto exposure = ExposureDto.build(ExposureType.TRAVEL);
-		exposure.setRiskArea(YesNoUnknown.YES);
+		exposure.setRiskArea(YesNo.YES);
 		caze.getEpiData().getExposures().add(exposure);
 		caze = getCaseFacade().save(caze);
 		caze = getCaseFacade().getCaseDataByUuid(caze.getUuid());
@@ -1035,7 +1036,7 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 		caze = buildSuspectCase(Disease.PLAGUE);
 		fillEpiData(caze.getEpiData());
 		ExposureDto exposure = ExposureDto.build(ExposureType.TRAVEL);
-		exposure.setRiskArea(YesNoUnknown.NO);
+		exposure.setRiskArea(YesNo.NO);
 		caze.getEpiData().getExposures().add(exposure);
 		caze = getCaseFacade().save(caze);
 		assertEquals(CaseClassification.SUSPECT, caze.getCaseClassification());
@@ -1076,7 +1077,7 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 	public void testFulfilledReferenceDefinitionGermanServerUnknownSymptoms2() {
 		MockProducer.getProperties().setProperty(ConfigFacadeEjb.COUNTRY_LOCALE, "de");
 		CaseDataDto caze = buildSuspectCase(Disease.CORONAVIRUS);
-		caze.getSymptoms().setCough(SymptomState.UNKNOWN);
+		caze.getSymptoms().setCough(SymptomState.NO);
 		caze.getSymptoms().setChillsSweats(SymptomState.YES);
 		caze = getCaseFacade().save(caze);
 		createSampleTestsForAllTestTypesExcept(caze, Disease.CORONAVIRUS, PathogenTestType.ISOLATION);
@@ -1091,7 +1092,7 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 		CaseDataDto caze = buildSuspectCase(Disease.CORONAVIRUS);
 		caze.getSymptoms().setCough(null);
 		caze.getSymptoms().setChillsSweats(SymptomState.YES);
-		caze.getSymptoms().setOxygenSaturationLower94(SymptomState.UNKNOWN);
+		caze.getSymptoms().setOxygenSaturationLower94(SymptomState.NO);
 		caze = getCaseFacade().save(caze);
 		createSampleTestsForAllTestTypesExcept(caze, Disease.CORONAVIRUS, PathogenTestType.ISOLATION);
 		caze = getCaseFacade().getCaseDataByUuid(caze.getUuid());
@@ -1175,7 +1176,7 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 		for (Method method : methods) {
 			if (method.getName().startsWith("set") && method.getParameterTypes()[0] == YesNoUnknown.class) {
 				try {
-					method.invoke(epiData, YesNoUnknown.YES);
+					method.invoke(epiData, YesNo.YES);
 				} catch (Exception e) {
 					throw new RuntimeException(e);
 				}
@@ -1243,7 +1244,7 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 			break;
 		case LASSA:
 			caze.getSymptoms().setFever(SymptomState.YES);
-			caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.YES);
+			caze.getEpiData().setContactWithSourceCaseKnown(YesNo.YES);
 			break;
 		case YELLOW_FEVER:
 			caze.getSymptoms().setJaundice(SymptomState.YES);
@@ -1254,7 +1255,7 @@ public class CaseClassificationLogicTest extends AbstractBeanTest {
 			break;
 		case NEW_INFLUENZA:
 			caze.getSymptoms().setCough(SymptomState.YES);
-			caze.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.YES);
+			caze.getEpiData().setContactWithSourceCaseKnown(YesNo.YES);
 			break;
 		case MEASLES:
 			caze.getSymptoms().setCough(SymptomState.YES);

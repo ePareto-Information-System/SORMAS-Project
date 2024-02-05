@@ -12550,4 +12550,267 @@ ALTER TABLE samples ALTER COLUMN samplepurpose DROP NOT NULL;
 INSERT INTO schema_version (version_number, comment) VALUES (525, 'Altered column samplepurpose in samples to not null');
 
 
+ALTER TABLE facility ADD COLUMN facilityafptype varchar(255) NULL;
+ALTER TABLE facility ADD COLUMN facility_afptype varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (485, 'Added a column name facilityafptype to facility');
+
+ALTER TABLE epidata ADD COLUMN disease varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (486, 'Added a column name disease to epidata');
+
+ALTER TABLE samples ADD COLUMN disease varchar(512) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (487, 'Added a column name disease to samples');
+
+ALTER TABLE samples ADD COLUMN yellowfeversampletype varchar(512) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (488, 'Added a column name yellowfeversampletype to samples');
+
+ALTER TABLE facility ADD COLUMN afptype varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (489, 'Added a column name afptype to facility');
+
+ALTER TABLE cases ADD COLUMN dhimsfacilitytype varchar(255);
+ALTER TABLE cases_history ADD COLUMN dhimsfacilitytype varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (490, 'Added a column name dhimsfacilitytype to cases');
+
+ALTER TABLE facility ADD COLUMN dhimsfacilitytype varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (491, 'Added a column name dhimsfacilitytype to facility');
+
+ALTER TABLE location ADD COLUMN dhimsfacilitytype varchar(255);
+ALTER TABLE person ADD COLUMN dhimsfacilitytype varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (492, 'Added a column name dhimsfacilitytype to location,person');
+
+ALTER TABLE cases ADD COLUMN reportingOfficerTitle varchar(255) NULL;
+ALTER TABLE cases ADD COLUMN functionOfReportingOfficer varchar(255) NULL;
+ALTER TABLE cases ADD COLUMN reportingOfficerContactPhone varchar(255) NULL;
+ALTER TABLE cases ADD COLUMN reportingOfficerEmail varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (493, 'Added columns:  reportingOfficerTitle, functionOfReportingOfficer, reportingOfficerContactPhone, reportingOfficerEmail to cases');
+
+ALTER TABLE samples ADD COLUMN sampletests varchar(255) NULL;
+ALTER TABLE samples ADD COLUMN diseasesampletests varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (494, 'Added columns:  disease, sampletests to samples');
+
+ALTER TABLE samples ADD COLUMN sampledispatchmode varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (495, 'Added columns:  sampleDispatchMode to samples');
+
+ALTER TABLE samples ADD COLUMN sampleDispatchDate varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (496, 'Added columns:  sampleDispatchDate to samples');
+
+ALTER TABLE samples ADD COLUMN sampletestsstring varchar(512);
+ALTER TABLE samples_history ADD COLUMN sampletestsstring varchar(512);
+INSERT INTO schema_version (version_number, comment) VALUES (497, 'Added columns:  sampletestsstring to samples');
+
+ALTER TABLE symptoms ADD COLUMN outcome varchar(255);
+ALTER TABLE symptoms_history ADD COLUMN outcome varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (498, 'Added columns:  outcome to symptoms');
+
+ALTER TABLE epidata ADD COLUMN recenttraveloutbreak varchar(255);
+ALTER TABLE epidata ADD COLUMN contactsimilaroutbreak varchar(255);
+ALTER TABLE epidata ADD COLUMN contactsickanimals varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (499, 'Added columns:  outcome to epidata');
+
+ALTER TABLE cases ADD COLUMN vaccinetype varchar(255);
+ALTER TABLE cases ADD COLUMN numberofdoses varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (500, 'Added columns:  vaccinetype,numberofdoses to cases');
+
+ALTER TABLE samples ADD COLUMN csfsamplecollected varchar(512);
+ALTER TABLE samples ADD COLUMN rdtsperformed varchar(512);
+ALTER TABLE samples ADD COLUMN samplesenttolab varchar(512);
+
+ALTER TABLE samples ADD COLUMN csfreason varchar(512);
+ALTER TABLE samples ADD COLUMN appearanceofcsf varchar(512);
+ALTER TABLE samples ADD COLUMN samplecontainerused varchar(512);
+
+ALTER TABLE samples ADD COLUMN rdtresults varchar(512);
+ALTER TABLE samples ADD COLUMN nameofperson varchar(512);
+ALTER TABLE samples ADD COLUMN numberoftel varchar(512);
+
+ALTER TABLE samples ADD COLUMN inoculationtimetransportmedia timestamp;
+ALTER TABLE samples ADD COLUMN districtnotificationdate date;
+ALTER TABLE samples ADD COLUMN datesamplesenttolab date;
+ALTER TABLE samples ADD COLUMN dateformsenttodistrict date;
+ALTER TABLE samples ADD COLUMN dateformreceivedatdistrict date;
+ALTER TABLE samples ADD COLUMN dateformsenttoregion date;
+ALTER TABLE samples ADD COLUMN dateformreceivedatregion date;
+ALTER TABLE samples ADD COLUMN dateformsenttonational date;
+ALTER TABLE samples ADD COLUMN dateformreceivedatnational date;
+INSERT INTO schema_version (version_number, comment) VALUES (501, 'Added 18 columns to samples');
+
+ALTER TABLE samples ADD COLUMN telnumber varchar(255);
+ALTER TABLE samples ADD COLUMN reasonnotsenttolab varchar(512);
+ALTER TABLE samples ADD COLUMN rdtperformed varchar(512);
+INSERT INTO schema_version (version_number, comment) VALUES (502, 'Added telnumber, reasonnotsenttolab,rdtperformed  to samples');
+
+-- Add columns to the "samples" table
+ALTER TABLE samples ADD COLUMN laboratoryName varchar(255);
+ALTER TABLE samples ADD COLUMN laboratoryNumber varchar(255);
+ALTER TABLE samples ADD COLUMN laboratorySerotype varchar(255);
+ALTER TABLE samples ADD COLUMN laboratorySerotypeType varchar(255);
+ALTER TABLE samples ADD COLUMN laboratorySerotypeResults varchar(255);
+ALTER TABLE samples ADD COLUMN laboratoryFinalResults varchar(512);
+ALTER TABLE samples ADD COLUMN laboratoryObservations varchar(255);
+ALTER TABLE samples ADD COLUMN laboratorySampleContainerOther varchar(255);
+ALTER TABLE samples ADD COLUMN laboratoryTestPerformedOther varchar(255);
+ALTER TABLE samples ADD COLUMN laboratoryCytology varchar(255);
+ALTER TABLE samples ADD COLUMN laboratoryGramOther varchar(255);
+ALTER TABLE samples ADD COLUMN laboratoryCultureOther varchar(255);
+ALTER TABLE samples ADD COLUMN laboratoryOtherTests varchar(255);
+ALTER TABLE samples ADD COLUMN laboratoryOtherTestsResults varchar(512);
+ALTER TABLE samples ADD COLUMN laboratoryRdtResults varchar(512);
+ALTER TABLE samples ADD COLUMN laboratoryFinalClassification varchar(255);
+ALTER TABLE samples ADD COLUMN laboratoryPcrType varchar(255);
+
+ALTER TABLE samples ADD COLUMN laboratorySampleContainerReceived varchar(255);
+ALTER TABLE samples ADD COLUMN laboratorySampleCondition varchar(255);
+ALTER TABLE samples ADD COLUMN laboratoryAppearanceOfCSF varchar(255);
+ALTER TABLE samples ADD COLUMN laboratoryTestPerformed varchar(255);
+ALTER TABLE samples ADD COLUMN laboratoryGram varchar(255);
+ALTER TABLE samples ADD COLUMN laboratoryRdtPerformed varchar(255);
+ALTER TABLE samples ADD COLUMN laboratoryLatex varchar(255);
+ALTER TABLE samples ADD COLUMN laboratoryCulture varchar(255);
+ALTER TABLE samples ADD COLUMN laboratoryPcrOptions varchar(255);
+ALTER TABLE samples ADD COLUMN laboratoryCeftriaxone varchar(255);
+ALTER TABLE samples ADD COLUMN laboratoryPenicillinG varchar(255);
+ALTER TABLE samples ADD COLUMN laboratoryAmoxycillin varchar(255);
+ALTER TABLE samples ADD COLUMN laboratoryOxacillin varchar(255);
+ALTER TABLE samples ADD COLUMN laboratoryAntibiogramOther varchar(255);
+
+ALTER TABLE samples ADD COLUMN laboratoryDateResultsSentHealthFacility date;
+ALTER TABLE samples ADD COLUMN laboratoryDateResultsSentDSD date;
+ALTER TABLE samples ADD COLUMN laboratorySampleDateReceived date;
+ALTER TABLE samples ADD COLUMN laboratoryDatePcrPerformed date;
+INSERT INTO schema_version (version_number, comment) VALUES (503, 'Added 35 to samples');
+
+ALTER TABLE hospitalization ADD COLUMN diseaseonsetdate date;
+ALTER TABLE hospitalization ADD COLUMN patienthospitalizedordetained varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (504, 'Added diseaseonsetdate,patientHospitalizedOrDetained to hospitalization');
+
+ALTER TABLE samples ADD COLUMN laboratorytype varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (505, 'Added laboratoryType to samples');
+
+ALTER TABLE samples ADD COLUMN requestedSampleMaterialsString varchar(512);
+ALTER TABLE samples_history ADD COLUMN requestedSampleMaterialsString varchar(512);
+INSERT INTO schema_version (version_number, comment) VALUES (506, 'Added requestedSampleMaterialsString to samples');
+
+ALTER TABLE samples ADD COLUMN samplematerialtestingrequested boolean;
+ALTER TABLE samples_history ADD COLUMN samplematerialtestingrequested boolean;
+INSERT INTO schema_version (version_number, comment) VALUES (507, 'Added samplematerialtestingrequested to samples');
+
+ALTER TABLE cases ADD COLUMN homeaddressrecreational varchar(512);
+INSERT INTO schema_version (version_number, comment) VALUES (508, 'Added homeaddressrecreational to cases');
+
+ALTER TABLE person ADD COLUMN additionalplacesstayed varchar(512);
+INSERT INTO schema_version (version_number, comment) VALUES (509, 'Added additionalPlacesStayed to person');
+
+ALTER TABLE samples ADD COLUMN datesenttonationalreglab date;
+ALTER TABLE samples ADD COLUMN datedifferentiationsenttoepi date;
+ALTER TABLE samples ADD COLUMN datedifferentiationreceivedfromepi date;
+ALTER TABLE samples ADD COLUMN dateisolatesentforSequencing date;
+ALTER TABLE samples ADD COLUMN dateseqresultssenttoprogram date;
+ALTER TABLE samples ADD COLUMN finallabresults varchar(512);
+ALTER TABLE samples ADD COLUMN immunocompromisedstatussuspected varchar(255);
+ALTER TABLE samples ADD COLUMN afpfinalclassification varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (510, 'Added 8 columns to samples');
+
+ALTER TABLE hospitalization ADD COLUMN place varchar(255);
+ALTER TABLE hospitalization ADD COLUMN durationmonths varchar(255);
+ALTER TABLE hospitalization ADD COLUMN durationdays varchar(255);
+ALTER TABLE hospitalization ADD COLUMN investigatorname varchar(255);
+ALTER TABLE hospitalization ADD COLUMN investigatortitle varchar(255);
+ALTER TABLE hospitalization ADD COLUMN investigatorunit varchar(255);
+ALTER TABLE hospitalization ADD COLUMN investigatoraddress varchar(255);
+ALTER TABLE hospitalization ADD COLUMN investigatortel varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (511, 'Added 8 columns to hospitalization');
+
+ALTER TABLE hospitalization ADD COLUMN muscleTone varchar(255);
+ALTER TABLE hospitalization ADD COLUMN deepTendonReflex varchar(255);
+ALTER TABLE hospitalization ADD COLUMN muscleVolume varchar(255);
+ALTER TABLE hospitalization ADD COLUMN sensoryLoss varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (512, 'Added 8 columns to hospitalization');
+
+ALTER TABLE symptoms ADD COLUMN muscletone varchar(255);
+ALTER TABLE symptoms ADD COLUMN deeptendonreflex varchar(255);
+ALTER TABLE symptoms ADD COLUMN musclevolume varchar(255);
+ALTER TABLE symptoms ADD COLUMN sensoryloss varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (513, 'Added 4 columns to symptoms');
+
+ALTER TABLE symptoms ADD COLUMN provisionaldiagnosis varchar(512);
+INSERT INTO schema_version (version_number, comment) VALUES (514, 'Added provisionalDiagnosis to symptoms');
+
+CREATE TABLE sixtyday (
+             id BIGINT PRIMARY KEY NOT NULL,
+             personexaminecase VARCHAR(255),
+             dateoffollowup DATE,
+             datebirth DATE,
+             residentiallocation VARCHAR(255),
+             patientfound VARCHAR(50),
+             patientfoundreason VARCHAR(255),
+             locatechildattempt VARCHAR(255),
+             paralysisweaknesspresent VARCHAR(50),
+             paralysisweaknesspresentsite VARCHAR(50),
+             paralyzedpartother VARCHAR(255),
+             paralysisweaknessfloppy VARCHAR(50),
+             muscletoneparalyzedpart VARCHAR(50),
+             muscletoneotherpartbody VARCHAR(255),
+             deeptendon VARCHAR(50),
+             musclevolume VARCHAR(50),
+             sensoryloss VARCHAR(50),
+             provisionaldiagnosis VARCHAR(512),
+             comments VARCHAR(512),
+             contactdetailsnumber VARCHAR(50),
+             contactdetailsemail VARCHAR(255),
+             signature VARCHAR(255),
+             datesubmissionforms DATE);
+
+INSERT INTO schema_version (version_number, comment) VALUES (515, 'created sixtyday table');
+
+ALTER TABLE cases ADD COLUMN sixtyday_id bigint;
+INSERT INTO schema_version (version_number, comment) VALUES (516, 'Added provisionalDiagnosis to symptoms');
+
+ALTER TABLE sixtyday ADD COLUMN changedate timestamp(3);
+INSERT INTO schema_version (version_number, comment) VALUES (517, 'Added changedate to sixtyday');
+
+ALTER TABLE sixtyday ADD COLUMN change_user_id bigint;
+INSERT INTO schema_version (version_number, comment) VALUES (518, 'Added change_user_id to sixtyday');
+
+ALTER TABLE sixtyday ADD COLUMN creationdate DATE;
+ALTER TABLE sixtyday ADD COLUMN uuid VARCHAR(512);
+INSERT INTO schema_version (version_number, comment) VALUES (519, 'Added change_user_id to sixtyday');
+
+ALTER TABLE symptoms ADD COLUMN dateofonset DATE;
+INSERT INTO schema_version (version_number, comment) VALUES (520, 'Added dateofonset to symptoms');
+
+ALTER TABLE cases ALTER COLUMN caseclassification DROP DEFAULT;
+ALTER TABLE cases ALTER COLUMN caseclassification SET DEFAULT 'SUSPECT';
+INSERT INTO schema_version (version_number, comment) VALUES (521, 'modified query caseclassify');
+
+ALTER TABLE cases ALTER COLUMN systemcaseclassification DROP DEFAULT;
+ALTER TABLE cases ALTER COLUMN systemcaseclassification SET DEFAULT 'SUSPECT';
+INSERT INTO schema_version (version_number, comment) VALUES (522, 'Updated default systemcaseclaffication value to SUSPECT');
+
+ALTER TABLE cases ALTER COLUMN caseclassification DROP NOT NULL;
+ALTER TABLE cases ALTER COLUMN systemcaseclassification DROP NOT NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (523, 'modified query not null');
+
+ALTER TABLE cases ADD COLUMN hospitalname varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (524, 'added hospitalname to cases');
+
+ALTER TABLE cases ADD COLUMN reportingofficername varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (525, 'added reportingOfficerName to cases');
+
+ALTER TABLE hospitalization ADD COLUMN notifydistrictdate varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (526, 'added notifydistrictdate to hospitalization');
+
+ALTER TABLE person ADD COLUMN homeaddressrecreational varchar(512);
+INSERT INTO schema_version (version_number, comment) VALUES (527, 'added homeAddressRecreational to person');
+
+ALTER TABLE hospitalization ADD COLUMN admittedtohealthfacilitynew varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (528, 'Added admittedToHealthFacilityNew to hospitalization');
+
+ALTER TABLE symptoms ADD COLUMN feverbodytempgreater varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (529, 'Added feverBodyTempGreater to symptoms');
+
+ALTER TABLE hospitalization ADD COLUMN datefirstseen DATE;
+INSERT INTO schema_version (version_number, comment) VALUES (530, 'Added datefirstseen to hospitalization');
+
+ALTER TABLE hospitalization ADD COLUMN terminationdatehospitalstay DATE;
+INSERT INTO schema_version (version_number, comment) VALUES (531, 'Added terminationDateHospitalStay to hospitalization');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
+``

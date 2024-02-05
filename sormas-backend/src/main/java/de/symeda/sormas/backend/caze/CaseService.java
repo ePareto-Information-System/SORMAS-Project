@@ -55,7 +55,7 @@ import javax.transaction.Transactional;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.collections.CollectionUtils;
+import de.symeda.sormas.backend.sixtyday.SixtyDay;
 import org.apache.commons.lang3.StringUtils;
 
 import de.symeda.sormas.api.Disease;
@@ -280,6 +280,19 @@ public class CaseService extends AbstractCoreAdoService<Case, CaseJoins> {
 	@Override
 	@SuppressWarnings("rawtypes")
 	protected Predicate createRelevantDataFilter(CriteriaBuilder cb, CriteriaQuery cq, From<?, Case> from) {
+	public List<Case> getAllActiveCasesAfter(Date date, boolean includeExtendedChangeDateFilters, Integer batchSize, String lastSynchronizedUuid) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Case> cq = cb.createQuery(getElementClass());
+		Root<Case> from = cq.from(getElementClass());
+		from.fetch(Case.SYMPTOMS);
+		from.fetch(Case.THERAPY);
+		from.fetch(Case.HEALTH_CONDITIONS);
+		from.fetch(Case.HOSPITALIZATION);
+		from.fetch(Case.SIXTY_DAY);
+		from.fetch(Case.EPI_DATA);
+		from.fetch(Case.PORT_HEALTH_INFO);
+		from.fetch(Case.MATERNAL_HISTORY);
 
 		Predicate filter = createActiveCasesFilter(cb, from);
 
@@ -750,6 +763,9 @@ public class CaseService extends AbstractCoreAdoService<Case, CaseJoins> {
 		}
 		if (caseCriteria.getFacilityType() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Case.FACILITY_TYPE), caseCriteria.getFacilityType()));
+		}
+		if (caseCriteria.getDhimsFacilityType() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Case.DHIMS_FACILITY_TYPE), caseCriteria.getDhimsFacilityType()));
 		}
 		if (caseCriteria.getAfpFacilityOptions() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Case.AFP_FACILITY_OPTIONS), caseCriteria.getAfpFacilityOptions()));
@@ -1310,14 +1326,15 @@ public class CaseService extends AbstractCoreAdoService<Case, CaseJoins> {
 	}
 
 	@Override
-	protected <T extends ChangeDateBuilder<T>> T addChangeDates(T builder, CaseJoins joins, boolean includeExtendedChangeDateFilters) {
-		final From<?, Case> caseFrom = joins.getRoot();
-		Join<Case, Hospitalization> hospitalization = joins.getHospitalization();
-		Join<Case, ClinicalCourse> clinicalCourse = joins.getClinicalCourse();
+	protected <T extends ChangeDateBuilder<T>> T addChangeDates(T builder, From<?, Case> caseFrom, boolean includeExtendedChangeDateFilters) {
+		Join<Case, Hospitalization> hospitalization = caseFrom.join(Case.HOSPITALIZATION, JoinType.LEFT);
+		Join<Case, SixtyDay> sixtyDay = caseFrom.join(Case.SIXTY_DAY, JoinType.LEFT);
+		Join<Case, ClinicalCourse> clinicalCourse = caseFrom.join(Case.CLINICAL_COURSE, JoinType.LEFT);
 
 		builder = super.addChangeDates(builder, joins, includeExtendedChangeDateFilters).add(caseFrom, Case.SYMPTOMS)
 			.add(hospitalization)
 			.add(hospitalization, Hospitalization.PREVIOUS_HOSPITALIZATIONS)
+			.add(sixtyDay)
 			.add(caseFrom, Case.THERAPY)
 			.add(clinicalCourse)
 			.add(caseFrom, Case.HEALTH_CONDITIONS)

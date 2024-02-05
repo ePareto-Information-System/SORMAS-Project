@@ -38,6 +38,7 @@ public class FacilityCriteria extends BaseCriteria implements Serializable, Clon
 	private String nameAddressLike;
 	private FacilityTypeGroup typeGroup;
 	private FacilityType type;
+	private DhimsFacility dhimsFacilityType;
 	private EntityRelevanceStatus relevanceStatus;
 
 	public CountryReferenceDto getCountry() {
@@ -95,6 +96,15 @@ public class FacilityCriteria extends BaseCriteria implements Serializable, Clon
 	@IgnoreForUrl
 	public FacilityType getType() {
 		return type;
+	}
+	public FacilityCriteria dhimsFacilityType(DhimsFacility dhimsFacilityType) {
+		this.dhimsFacilityType = dhimsFacilityType;
+		return this;
+	}
+
+	@IgnoreForUrl
+	public DhimsFacility getDhimsFacilityType() {
+		return dhimsFacilityType;
 	}
 
 	public FacilityCriteria relevanceStatus(EntityRelevanceStatus relevanceStatus) {

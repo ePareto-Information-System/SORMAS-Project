@@ -22,8 +22,7 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 public enum SymptomState {
 
 	YES,
-	NO,
-	UNKNOWN;
+	NO;
 
 	@Override
 	public String toString() {

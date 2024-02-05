@@ -28,6 +28,9 @@ import java.util.Date;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import de.symeda.sormas.api.utils.YesNo;
+import org.junit.Before;
+import org.junit.Test;
 
 import de.symeda.sormas.api.EntityDtoAccessHelper.CachedReferenceDtoResolver;
 import de.symeda.sormas.api.EntityDtoAccessHelper.IReferenceDtoResolver;
@@ -49,6 +52,15 @@ public class EntityDtoAccessHelperTest {
 		caseDataDto = CaseDataDto.build(null, Disease.DENGUE);
 
 		personDto = PersonDto.build();
+		hospitalizationDto = new HospitalizationDto();
+		hospitalizationDto.setDischargeDate(new Date(1600387200000L));
+		hospitalizationDto.setIsolated(YesNo.NO);
+
+		personReferenceDto = new PersonReferenceDto();
+		personReferenceDto.setUuid("GHIJKL");
+
+		personDto = new PersonDto();
+		personDto.setUuid("GHIJKL");
 		personDto.setFirstName("Tenzing");
 		personDto.setLastName("Mike");
 		personDto.setBirthdateDD(26);

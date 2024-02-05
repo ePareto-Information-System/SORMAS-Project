@@ -184,7 +184,9 @@ public class ActivityAsCaseForm extends AbstractEditForm<ActivityAsCaseDto> {
 					|| TypeOfPlace.COMMUNITY_FACILITY.equals(field.getValue())
 					|| TypeOfPlace.FACILITY_36_IFSG.equals(field.getValue())) {
 					ComboBox facilityType = locationForm.getFacilityType();
+					ComboBox dhimsFacilityType = locationForm.getDhimsFacilityType();
 					facilityType.removeAllItems();
+					dhimsFacilityType.removeAllItems();
 					List<FacilityType> list;
 					TypeOfPlace type = (TypeOfPlace) field.getValue();
 					if (TypeOfPlace.FACILITY_23_IFSG.equals(type)) {

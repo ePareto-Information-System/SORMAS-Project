@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import de.symeda.sormas.api.utils.YesNo;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.vaadin.shared.ui.ContentMode;
@@ -59,17 +60,23 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 	private static final long serialVersionUID = 1L;
 
 	private static final String LOC_EXPOSURE_INVESTIGATION_HEADING = "locExposureInvestigationHeading";
+	private static final String LOC_EXPOSURE_TRAVEL_HISTORY_HEADING = "locExposureTravelHistoryHeading";
 	private static final String LOC_ACTIVITY_AS_CASE_INVESTIGATION_HEADING = "locActivityAsCaseInvestigationHeading";
 	private static final String LOC_SOURCE_CASE_CONTACTS_HEADING = "locSourceCaseContactsHeading";
 	private static final String LOC_EPI_DATA_FIELDS_HINT = "locEpiDataFieldsHint";
 
 	//@formatter:off
 	private static final String MAIN_HTML_LAYOUT = 
-			loc(LOC_EXPOSURE_INVESTIGATION_HEADING) + 
+			loc(LOC_EXPOSURE_TRAVEL_HISTORY_HEADING) +
+					loc(EpiDataDto.RECENT_TRAVEL_OUTBREAK)+
+					loc(EpiDataDto.CONTACT_SIMILAR_SYMPTOMS)+
+					loc(EpiDataDto.CONTACT_SICK_ANIMALS)+
+			loc(LOC_EXPOSURE_INVESTIGATION_HEADING) +
 			loc(EpiDataDto.EXPOSURE_DETAILS_KNOWN) +
 			loc(EpiDataDto.EXPOSURES) +
-			loc(LOC_ACTIVITY_AS_CASE_INVESTIGATION_HEADING) + 
+			loc(LOC_ACTIVITY_AS_CASE_INVESTIGATION_HEADING) +
 			loc(EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN)+
+
 			loc(EpiDataDto.ACTIVITIES_AS_CASE) +
 			locCss(VSPACE_TOP_3, LOC_EPI_DATA_FIELDS_HINT) +
 			loc(EpiDataDto.HIGH_TRANSMISSION_RISK_AREA) +
@@ -114,6 +121,13 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			addHeadingsAndInfoTexts();
 		}
 
+		NullableOptionGroup recentTravelOutbreak = addField(EpiDataDto.RECENT_TRAVEL_OUTBREAK, NullableOptionGroup.class);
+		recentTravelOutbreak.setCaption("Did the patient travel to a place with a recent history of outbreak?");
+		NullableOptionGroup contactSimilarOutbreak = addField(EpiDataDto.CONTACT_SIMILAR_SYMPTOMS, NullableOptionGroup.class);
+		contactSimilarOutbreak.setCaption("Did the patient come in contact with someone with similar symptoms");
+		NullableOptionGroup contactSickAnimals = addField(EpiDataDto.CONTACT_SICK_ANIMALS, NullableOptionGroup.class);
+		contactSickAnimals.setCaption("Did the patient come in contact with sick animal(s)?");
+
 		NullableOptionGroup ogExposureDetailsKnown = addField(EpiDataDto.EXPOSURE_DETAILS_KNOWN, NullableOptionGroup.class);
 		ExposuresField exposuresField = addField(EpiDataDto.EXPOSURES, ExposuresField.class);
 		exposuresField.setEpiDataParentClass(parentClass);
@@ -131,8 +145,8 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 
 		if (sourceContactsToggleCallback != null) {
 			ogContactWithSourceCaseKnown.addValueChangeListener(e -> {
-				YesNoUnknown sourceContactsKnown = (YesNoUnknown) FieldHelper.getNullableSourceFieldValue((Field) e.getProperty());
-				sourceContactsToggleCallback.accept(YesNoUnknown.YES == sourceContactsKnown);
+				YesNo sourceContactsKnown = (YesNo) FieldHelper.getNullableSourceFieldValue((Field) e.getProperty());
+				sourceContactsToggleCallback.accept(YesNo.YES == sourceContactsKnown);
 			});
 		}
 
@@ -140,7 +154,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			getFieldGroup(),
 			EpiDataDto.EXPOSURES,
 			EpiDataDto.EXPOSURE_DETAILS_KNOWN,
-			Collections.singletonList(YesNoUnknown.YES),
+			Collections.singletonList(YesNo.YES),
 			true);
 
 		initializeVisibilitiesAndAllowedVisibilities();
@@ -153,16 +167,27 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		if (diseaseCheck()) {
 			setVisible(false, EpiDataDto.EXPOSURES, EpiDataDto.EXPOSURE_DETAILS_KNOWN, EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN);
 		}
+
+		if (diseaseCSMCheck()) {
+			recentTravelOutbreak.setVisible(false);
+			contactSickAnimals.setVisible(false);
+
+			setVisible(false, EpiDataDto.HIGH_TRANSMISSION_RISK_AREA, EpiDataDto.LARGE_OUTBREAKS_AREA, EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN);
+
+		}
+
 	}
 
 	private void addActivityAsCaseFields() {
 
-		getContent().addComponent(
-			new MultilineLabel(
-				h3(I18nProperties.getString(Strings.headingActivityAsCase))
-					+ divsCss(VSPACE_3, I18nProperties.getString(Strings.infoActivityAsCaseInvestigation)),
-				ContentMode.HTML),
-			LOC_ACTIVITY_AS_CASE_INVESTIGATION_HEADING);
+		if(!diseaseCSMCheck()){
+			getContent().addComponent(
+					new MultilineLabel(
+							h3(I18nProperties.getString(Strings.headingActivityAsCase))
+								+ divsCss(VSPACE_3, I18nProperties.getString(Strings.infoActivityAsCaseInvestigation)),
+							ContentMode.HTML),
+				LOC_ACTIVITY_AS_CASE_INVESTIGATION_HEADING);
+		}
 
 		NullableOptionGroup ogActivityAsCaseDetailsKnown = addField(EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN, NullableOptionGroup.class);
 		ActivityAsCaseField activityAsCaseField = addField(EpiDataDto.ACTIVITIES_AS_CASE, ActivityAsCaseField.class);
@@ -173,7 +198,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			getFieldGroup(),
 			EpiDataDto.ACTIVITIES_AS_CASE,
 			EpiDataDto.ACTIVITY_AS_CASE_DETAILS_KNOWN,
-			Collections.singletonList(YesNoUnknown.YES),
+			Collections.singletonList(YesNo.YES),
 			true);
 
 		activityAsCaseField.addValueChangeListener(e -> {
@@ -220,4 +245,5 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 	private boolean diseaseCheck(){
 		return disease == Disease.YELLOW_FEVER;
 	}
+	private boolean diseaseCSMCheck(){return disease == Disease.CSM; }
 }

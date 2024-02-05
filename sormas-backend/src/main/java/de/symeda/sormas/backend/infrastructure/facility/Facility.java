@@ -32,7 +32,9 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import de.symeda.sormas.api.infrastructure.area.AreaType;
+import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
+import de.symeda.sormas.api.utils.AFPFacilityOptions;
 import de.symeda.sormas.backend.common.InfrastructureAdo;
 import de.symeda.sormas.backend.infrastructure.community.Community;
 import de.symeda.sormas.backend.infrastructure.district.District;
@@ -64,6 +66,8 @@ public class Facility extends InfrastructureAdo {
 	public static final String LATITUDE = "latitude";
 	public static final String LONGITUDE = "longitude";
 	public static final String TYPE = "type";
+	public static final String DHIMS_FACILITY_TYPE = "dhimsFacilityType";
+	public static final String AFP_TYPE = "afpType";
 	public static final String PUBLIC_OWNERSHIP = "publicOwnership";
 	public static final String EXTERNAL_ID = "externalID";
 
@@ -84,6 +88,8 @@ public class Facility extends InfrastructureAdo {
 	private Double latitude;
 	private Double longitude;
 	private FacilityType type;
+	private DhimsFacility dhimsFacilityType;
+	private AFPFacilityOptions afpType;
 	private boolean publicOwnership;
 	private String externalID;
 
@@ -236,6 +242,19 @@ public class Facility extends InfrastructureAdo {
 	public void setType(FacilityType type) {
 		this.type = type;
 	}
+
+	@Enumerated(EnumType.STRING)
+	public DhimsFacility getDhimsFacilityType() {
+		return dhimsFacilityType;
+	}
+
+	public void setDhimsFacilityType(DhimsFacility dhimsFacilityType) {
+		this.dhimsFacilityType = dhimsFacilityType;
+	}
+	@Enumerated(EnumType.STRING)
+	public AFPFacilityOptions getAfpType(){return afpType;}
+
+	public void setAfpType(AFPFacilityOptions afpType){this.afpType = afpType;}
 
 	public boolean isPublicOwnership() {
 		return publicOwnership;

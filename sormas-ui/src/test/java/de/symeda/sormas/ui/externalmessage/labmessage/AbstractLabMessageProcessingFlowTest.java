@@ -636,9 +636,8 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractUiBeanTest {
 
 		SampleReportDto sampleReport = SampleReportDto.build();
 		ExternalMessageDto labMessage = createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED);
-		labMessage.addSampleReport(sampleReport);
-		sampleReport.setSampleDateTime(new Date());
-		sampleReport.setSampleMaterial(SampleMaterial.BLOOD);
+		labMessage.setSampleDateTime(new Date());
+		labMessage.setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
 
 		TestReportDto testReport1 = TestReportDto.build();
 		testReport1.setTestType(PathogenTestType.CULTURE);
@@ -654,8 +653,8 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractUiBeanTest {
 		assertThat(result.getStatus(), is(DONE));
 		verify(handleCreateSampleAndPathogenTests).handle(argThat(sample -> {
 			assertThat(sample.getAssociatedCase(), is(caseCaptor.getValue().toReference()));
-			assertThat(sample.getSampleDateTime(), is(labMessage.getSampleReports().get(0).getSampleDateTime()));
-			assertThat(sample.getSampleMaterial(), is(SampleMaterial.BLOOD));
+			assertThat(sample.getSampleDateTime(), is(labMessage.getSampleDateTime()));
+			assertThat(sample.getSampleMaterial(), is(SampleMaterial.WHOLE_BLOOD));
 			assertThat(sample.getReportingUser(), is(user.toReference()));
 
 			return true;
@@ -760,8 +759,9 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractUiBeanTest {
 		ExternalMessageDto labMessage = createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED);
 		SampleReportDto sampleReport = SampleReportDto.build();
 		sampleReport.setSampleDateTime(new Date());
-		sampleReport.setSampleMaterial(SampleMaterial.BLOOD);
 		labMessage.addSampleReport(sampleReport);
+		labMessage.setSampleDateTime(new Date());
+		labMessage.setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
 
 		ProcessingResult<RelatedSamplesReportsAndPathogenTests> result = runFlow(labMessage);
 
@@ -847,8 +847,9 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractUiBeanTest {
 		ExternalMessageDto labMessage = createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED);
 		SampleReportDto sampleReport = SampleReportDto.build();
 		sampleReport.setSampleDateTime(new Date());
-		sampleReport.setSampleMaterial(SampleMaterial.BLOOD);
 		labMessage.addSampleReport(sampleReport);
+		labMessage.setSampleDateTime(new Date());
+		labMessage.setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
 
 		TestReportDto testReport = TestReportDto.build();
 		testReport.setTestType(PathogenTestType.CULTURE);
@@ -861,7 +862,8 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractUiBeanTest {
 		verify(handleCreateSampleAndPathogenTests).handle(argThat(sample -> {
 			assertThat(sample.getAssociatedContact(), is(contactCaptor.getValue().toReference()));
 			assertThat(sample.getSampleDateTime(), is(labMessage.getSampleReports().get(0).getSampleDateTime()));
-			assertThat(sample.getSampleMaterial(), is(SampleMaterial.BLOOD));
+			assertThat(sample.getSampleDateTime(), is(labMessage.getSampleDateTime()));
+			assertThat(sample.getSampleMaterial(), is(SampleMaterial.WHOLE_BLOOD));
 			assertThat(sample.getReportingUser(), is(user.toReference()));
 
 			return true;
@@ -1121,8 +1123,9 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractUiBeanTest {
 		ExternalMessageDto labMessage = createLabMessage(Disease.CORONAVIRUS, "test-report-id", ExternalMessageStatus.UNPROCESSED);
 		SampleReportDto sampleReport = SampleReportDto.build();
 		sampleReport.setSampleDateTime(new Date());
-		sampleReport.setSampleMaterial(SampleMaterial.BLOOD);
 		labMessage.addSampleReport(sampleReport);
+		labMessage.setSampleDateTime(new Date());
+		labMessage.setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
 
 		TestReportDto testReport = TestReportDto.build();
 		testReport.setTestType(PathogenTestType.CULTURE);
@@ -1134,8 +1137,8 @@ public class AbstractLabMessageProcessingFlowTest extends AbstractUiBeanTest {
 		assertThat(result.getStatus(), is(DONE));
 		verify(handleCreateSampleAndPathogenTests).handle(argThat(sample -> {
 			assertThat(sample.getAssociatedEventParticipant(), is(eventParticipantCaptor.getValue().toReference()));
-			assertThat(sample.getSampleDateTime(), is(labMessage.getSampleReports().get(0).getSampleDateTime()));
-			assertThat(sample.getSampleMaterial(), is(SampleMaterial.BLOOD));
+			assertThat(sample.getSampleDateTime(), is(labMessage.getSampleDateTime()));
+			assertThat(sample.getSampleMaterial(), is(SampleMaterial.WHOLE_BLOOD));
 			assertThat(sample.getReportingUser(), is(user.toReference()));
 
 			return true;

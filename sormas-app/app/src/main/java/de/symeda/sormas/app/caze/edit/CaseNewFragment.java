@@ -18,6 +18,8 @@ package de.symeda.sormas.app.caze.edit;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import android.view.View;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -38,7 +40,6 @@ import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.user.JurisdictionLevel;
 import de.symeda.sormas.api.utils.DateHelper;
-import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
 import de.symeda.sormas.app.backend.caze.Case;
@@ -243,10 +244,18 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 		int year = Calendar.getInstance().get(Calendar.YEAR);
 		contentBinding.personBirthdateYYYY.setSelectionOnOpen(year - 35);
 
-		contentBinding.personSex.initializeSpinner(sexList);
+		List<Item> filteredSexList = new ArrayList<>();
+		filteredSexList.add(new Item("", null));
 
+		for (Sex sex : Sex.values()) {
+			if (sex == Sex.MALE || sex == Sex.FEMALE) {
+				Item item = new Item(sex.toString(), sex);
+				filteredSexList.add(item);
+			}
+		}
+
+		contentBinding.personSex.initializeSpinner(filteredSexList);
 		contentBinding.personPresentCondition.initializeSpinner(presentConditionList);
-
 		contentBinding.facilityOrHome.addValueChangedListener(e -> {
 			if (e.getValue() == TypeOfPlace.FACILITY) {
 				contentBinding.facilityTypeGroup.setValue(FacilityTypeGroup.MEDICAL_FACILITY);
@@ -258,6 +267,18 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 			}
 		});
 		contentBinding.caseDataDisease.addValueChangedListener(e -> {
+			Disease selectedDisease = (Disease) e.getValue();
+			if(selectedDisease == Disease.YELLOW_FEVER){
+				contentBinding.caseDataCaseTransmissionClassification.setVisibility(GONE);
+			}
+			else if(selectedDisease == Disease.AHF){
+				contentBinding.caseDataCaseTransmissionClassification.setVisibility(GONE);
+			} else if (selectedDisease == Disease.CSM) {
+				contentBinding.caseDataCaseTransmissionClassification.setVisibility(GONE);
+				contentBinding.caseDataCaseOrigin.setVisibility(GONE);
+			}else{
+				contentBinding.caseDataCaseTransmissionClassification.setVisibility(View.VISIBLE);
+			}
 			contentBinding.rapidCaseEntryCheckBox.setVisibility(
 				e.getValue() != null && ((CaseNewActivity) getActivity()).getLineListingDiseases().contains(e.getValue()) ? VISIBLE : GONE);
 			updateDiseaseVariantsField(contentBinding);
@@ -374,6 +395,9 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 			contentBinding.caseDataCaseOrigin.setVisibility(GONE);
 			contentBinding.caseDataPointOfEntry.setVisibility(GONE);
 		}
+
+		//Get Disease in change listener
+
 	}
 
 	private void updateDiseaseVariantsField(FragmentCaseNewLayoutBinding contentBinding) {
@@ -389,12 +413,29 @@ public class CaseNewFragment extends BaseEditFragment<FragmentCaseNewLayoutBindi
 	private void updatePresentConditionField(FragmentCaseNewLayoutBinding contentBinding) {
 		Disease diseaseValue = (Disease) contentBinding.caseDataDisease.getValue();
 		PresentCondition presentConditionValue = (PresentCondition) contentBinding.personPresentCondition.getValue();
-		List<Item> items;
-		if (diseaseValue == null) {
-			items = DataUtils.getEnumItems(PresentCondition.class, true);
+		List<Item> items = new ArrayList<>();
+
+		if (diseaseValue != null) {
+			if (diseaseValue == Disease.YELLOW_FEVER || diseaseValue == Disease.AHF) {
+				items.add(new Item(PresentCondition.ALIVE.toString(), PresentCondition.ALIVE));
+				items.add(new Item(PresentCondition.UNKNOWN.toString(), PresentCondition.UNKNOWN));
+			} else if (diseaseValue == Disease.CSM) {
+				items.add(new Item(PresentCondition.ALIVE.toString(), PresentCondition.ALIVE));
+				items.add(new Item(PresentCondition.DEAD.toString(), PresentCondition.DEAD));
+			} else if (diseaseValue == Disease.AFP) {
+				items.add(new Item(PresentCondition.ALIVE.toString(), PresentCondition.ALIVE));
+				items.add(new Item(PresentCondition.DEAD.toString(), PresentCondition.DEAD));
+				items.add(new Item(PresentCondition.BURIED.toString(), PresentCondition.BURIED));
+			} else {
+				// For other diseases, add all PresentCondition values
+				items = DataUtils.getEnumItems(PresentCondition.class, true);
+			}
 		} else {
-			items = DataUtils.getEnumItems(PresentCondition.class, true, FieldVisibilityCheckers.withDisease(diseaseValue));
+			// Handle case when diseaseValue is null
+			items = DataUtils.getEnumItems(PresentCondition.class, true);
 		}
+
+		// Check and add the current value if not present in the items list
 		if (presentConditionValue != null) {
 			Item currentValueItem = new Item(presentConditionValue.toString(), presentConditionValue);
 			if (!items.contains(currentValueItem)) {

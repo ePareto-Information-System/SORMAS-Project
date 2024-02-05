@@ -14,12 +14,7 @@
  */
 package de.symeda.sormas.backend.sample;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -38,6 +33,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.sample.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,20 +52,6 @@ import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityHelper;
-import de.symeda.sormas.api.sample.AdditionalTestDto;
-import de.symeda.sormas.api.sample.PathogenTestDto;
-import de.symeda.sormas.api.sample.PathogenTestResultType;
-import de.symeda.sormas.api.sample.SampleCriteria;
-import de.symeda.sormas.api.sample.SampleDto;
-import de.symeda.sormas.api.sample.SampleExportDto;
-import de.symeda.sormas.api.sample.SampleFacade;
-import de.symeda.sormas.api.sample.SampleIndexDto;
-import de.symeda.sormas.api.sample.SampleJurisdictionFlagsDto;
-import de.symeda.sormas.api.sample.SampleListEntryDto;
-import de.symeda.sormas.api.sample.SampleMaterial;
-import de.symeda.sormas.api.sample.SamplePurpose;
-import de.symeda.sormas.api.sample.SampleReferenceDto;
-import de.symeda.sormas.api.sample.SampleSimilarityCriteria;
 import de.symeda.sormas.api.user.NotificationType;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.AccessDeniedException;
@@ -397,9 +379,19 @@ public class SampleFacadeEjb implements SampleFacade {
 		if (sample.getAdditionalTestingRequested() == null) {
 			sample.setAdditionalTestingRequested(false);
 		}
-		if (sample.getSampleMaterialRequested() == null) {
-			sample.setSampleMaterialRequested(false);
+		if (sample.getSampleMaterialTestingRequested() == null) {
+			sample.setSampleMaterialTestingRequested(false);
 		}
+
+		if (sample.getSampleTests() == null || sample.getSampleTests().isEmpty()) {
+			Set<PathogenTestType> defaultTests = new HashSet<>(Arrays.asList(
+					PathogenTestType.IGM_SERUM_ANTIBODY,
+					PathogenTestType.IGG_SERUM_ANTIBODY,
+					PathogenTestType.PCR_RT_PCR
+			));
+			sample.setSampleTests(defaultTests);
+		}
+
 
 		sampleService.ensurePersisted(sample);
 
@@ -561,7 +553,9 @@ public class SampleFacadeEjb implements SampleFacade {
 			sampleRoot.get(Sample.LAB_DETAILS),
 			sampleRoot.get(Sample.PATHOGEN_TEST_RESULT),
 			sampleRoot.get(Sample.PATHOGEN_TESTING_REQUESTED),
+			sampleRoot.get(Sample.SAMPLE_MATERIAL_REQUESTED),
 			sampleRoot.get(Sample.REQUESTED_PATHOGEN_TESTS_STRING),
+			sampleRoot.get(Sample.REQUESTED_SAMPLE_MATERIALS_STRING),
 			sampleRoot.get(Sample.REQUESTED_OTHER_PATHOGEN_TESTS),
 			sampleRoot.get(Sample.ADDITIONAL_TESTING_REQUESTED),
 			sampleRoot.get(Sample.REQUESTED_ADDITIONAL_TESTS_STRING),
@@ -844,12 +838,14 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setSampleSource(source.getSampleSource());
 		target.setReferredTo(sampleService.getByReferenceDto(source.getReferredTo()));
 		target.setShipped(source.isShipped());
+		target.setYellowFeverSampleType(source.isYellowFeverSampleType());
 		target.setReceived(source.isReceived());
 		target.setPathogenTestingRequested(source.getPathogenTestingRequested());
-		target.setSampleMaterialRequested(source.getSampleMaterialRequested());
+		target.setSampleMaterialTestingRequested(source.getSampleMaterialTestingRequested());
 		target.setAdditionalTestingRequested(source.getAdditionalTestingRequested());
 		target.setRequestedPathogenTests(source.getRequestedPathogenTests());
 		target.setRequestedSampleMaterials(source.getRequestedSampleMaterials());
+		target.setSampleTests(source.getSampleTests());
 		target.setRequestedAdditionalTests(source.getRequestedAdditionalTests());
 		target.setPathogenTestResult(source.getPathogenTestResult());
 		target.setRequestedOtherPathogenTests(source.getRequestedOtherPathogenTests());
@@ -859,10 +855,81 @@ public class SampleFacadeEjb implements SampleFacade {
 
 		target.setIpSampleSent(source.getIpSampleSent());
 		target.setIpSampleResults(source.getIpSampleResults());
+		target.setDisease(source.getDisease());
+		target.setSampleDispatchMode(source.getSampleDispatchMode());
+		target.setSampleDispatchDate(source.getSampleDispatchDate());
 
 		target.setReportLat(source.getReportLat());
 		target.setReportLon(source.getReportLon());
 		target.setReportLatLonAccuracy(source.getReportLatLonAccuracy());
+
+		target.setCsfSampleCollected(source.getCsfSampleCollected());
+		target.setRdtPerformed(source.getRdtPerformed());
+		target.setSampleSentToLab(source.getSampleSentToLab());
+		target.setCsfReason(source.getCsfReason());
+		target.setAppearanceOfCsf(source.getAppearanceOfCsf());
+		target.setSampleContainerUsed(source.getSampleContainerUsed());
+		target.setRdtResults(source.getRdtResults());
+		target.setReasonNotSentToLab(source.getReasonNotSentToLab());
+		target.setNameOfPerson(source.getNameOfPerson());
+		target.setTelNumber(source.getTelNumber());
+		target.setInoculationTimeTransportMedia(source.getInoculationTimeTransportMedia());
+		target.setDistrictNotificationDate(source.getDistrictNotificationDate());
+		target.setDateSampleSentToLab(source.getDateSampleSentToLab());
+		target.setDateFormSentToDistrict(source.getDateFormSentToDistrict());
+		target.setDateFormReceivedAtDistrict(source.getDateFormReceivedAtDistrict());
+		target.setDateFormSentToRegion(source.getDateFormSentToRegion());
+		target.setDateFormReceivedAtRegion(source.getDateFormReceivedAtRegion());
+		target.setDateFormSentToNational(source.getDateFormSentToNational());
+		target.setDateFormReceivedAtNational(source.getDateFormReceivedAtNational());
+
+
+		target.setLaboratoryName(source.getLaboratoryName());
+		target.setLaboratoryNumber(source.getLaboratoryNumber());
+		target.setLaboratorySerotype(source.getLaboratorySerotype());
+		target.setLaboratorySerotypeType(source.getLaboratorySerotypeType());
+		target.setLaboratorySerotypeResults(source.getLaboratorySerotypeResults());
+		target.setLaboratoryFinalResults(source.getLaboratoryFinalResults());
+		target.setLaboratoryObservations(source.getLaboratoryObservations());
+		target.setLaboratorySampleContainerOther(source.getLaboratorySampleContainerOther());
+		target.setLaboratoryTestPerformedOther(source.getLaboratoryTestPerformedOther());
+		target.setLaboratoryCytology(source.getLaboratoryCytology());
+		target.setLaboratoryGramOther(source.getLaboratoryGramOther());
+		target.setLaboratoryCultureOther(source.getLaboratoryCultureOther());
+		target.setLaboratoryOtherTests(source.getLaboratoryOtherTests());
+		target.setLaboratoryOtherTestsResults(source.getLaboratoryOtherTestsResults());
+		target.setLaboratoryRdtResults(source.getLaboratoryRdtResults());
+		target.setLaboratoryFinalClassification(source.getLaboratoryFinalClassification());
+		target.setLaboratoryPcrType(source.getLaboratoryPcrType());
+		target.setLaboratorySampleContainerReceived(source.getLaboratorySampleContainerReceived());
+		target.setLaboratorySampleCondition(source.getLaboratorySampleCondition());
+		target.setLaboratoryAppearanceOfCSF(source.getLaboratoryAppearanceOfCSF());
+		target.setLaboratoryTestPerformed(source.getLaboratoryTestPerformed());
+		target.setLaboratoryGram(source.getLaboratoryGram());
+		target.setLaboratoryRdtPerformed(source.getLaboratoryRdtPerformed());
+		target.setLaboratoryLatex(source.getLaboratoryLatex());
+		target.setLaboratoryCulture(source.getLaboratoryCulture());
+		target.setLaboratoryPcrOptions(source.getLaboratoryPcrOptions());
+		target.setLaboratoryCeftriaxone(source.getLaboratoryCeftriaxone());
+		target.setLaboratoryPenicillinG(source.getLaboratoryPenicillinG());
+		target.setLaboratoryAmoxycillin(source.getLaboratoryAmoxycillin());
+		target.setLaboratoryOxacillin(source.getLaboratoryOxacillin());
+		target.setLaboratoryAntibiogramOther(source.getLaboratoryAntibiogramOther());
+		target.setLaboratoryType(source.getLaboratoryType());
+		target.setLaboratoryDateResultsSentHealthFacility(source.getLaboratoryDateResultsSentHealthFacility());
+		target.setLaboratoryDateResultsSentDSD(source.getLaboratoryDateResultsSentDSD());
+		target.setLaboratorySampleDateReceived(source.getLaboratorySampleDateReceived());
+		target.setLaboratoryDatePcrPerformed(source.getLaboratoryDatePcrPerformed());
+		target.setDateSentToNationalRegLab(source.getDateSentToNationalRegLab());
+		target.setDateDifferentiationSentToEpi(source.getDateDifferentiationSentToEpi());
+		target.setDateDifferentiationReceivedFromEpi(source.getDateDifferentiationReceivedFromEpi());
+		target.setDateIsolateSentForSequencing(source.getDateIsolateSentForSequencing());
+		target.setDateSeqResultsSentToProgram(source.getDateSeqResultsSentToProgram());
+		target.setFinalLabResults(source.getFinalLabResults());
+		target.setImmunocompromisedStatusSuspected(source.getImmunocompromisedStatusSuspected());
+		target.setAfpFinalClassification(source.getAfpFinalClassification());
+
+
 
 		if (source.getSormasToSormasOriginInfo() != null) {
 			target.setSormasToSormasOriginInfo(originInfoService.getByUuid(source.getSormasToSormasOriginInfo().getUuid()));
@@ -1003,10 +1070,13 @@ public class SampleFacadeEjb implements SampleFacade {
 		target.setShipped(source.isShipped());
 		target.setReceived(source.isReceived());
 		target.setPathogenTestingRequested(source.getPathogenTestingRequested());
-		target.setSampleMaterialRequested(source.getSampleMaterialRequested());
+		target.setSampleMaterialTestingRequested(source.getSampleMaterialTestingRequested());
+		target.setYellowFeverSampleType(source.isYellowFeverSampleType());
+		target.setDiseaseSampleTests(source.isDiseaseSampleTests());
 		target.setAdditionalTestingRequested(source.getAdditionalTestingRequested());
 		target.setRequestedPathogenTests(source.getRequestedPathogenTests());
 		target.setRequestedSampleMaterials(source.getRequestedSampleMaterials());
+		target.setSampleTests(source.getSampleTests());
 		target.setRequestedAdditionalTests(source.getRequestedAdditionalTests());
 		target.setPathogenTestResult(source.getPathogenTestResult());
 		target.setRequestedOtherPathogenTests(source.getRequestedOtherPathogenTests());
@@ -1027,6 +1097,75 @@ public class SampleFacadeEjb implements SampleFacade {
 
 		target.setIpSampleSent(source.getIpSampleSent());
 		target.setIpSampleResults(source.getIpSampleResults());
+		target.setDisease(source.getDisease());
+		target.setSampleDispatchMode(source.getSampleDispatchMode());
+		target.setSampleDispatchDate(source.getSampleDispatchDate());
+
+		target.setCsfSampleCollected(source.getCsfSampleCollected());
+		target.setRdtPerformed(source.getRdtPerformed());
+		target.setSampleSentToLab(source.getSampleSentToLab());
+		target.setCsfReason(source.getCsfReason());
+		target.setAppearanceOfCsf(source.getAppearanceOfCsf());
+		target.setSampleContainerUsed(source.getSampleContainerUsed());
+		target.setRdtResults(source.getRdtResults());
+		target.setReasonNotSentToLab(source.getReasonNotSentToLab());
+		target.setNameOfPerson(source.getNameOfPerson());
+		target.setTelNumber(source.getTelNumber());
+		target.setInoculationTimeTransportMedia(source.getInoculationTimeTransportMedia());
+		target.setDistrictNotificationDate(source.getDistrictNotificationDate());
+		target.setDateSampleSentToLab(source.getDateSampleSentToLab());
+		target.setDateFormSentToDistrict(source.getDateFormSentToDistrict());
+		target.setDateFormReceivedAtDistrict(source.getDateFormReceivedAtDistrict());
+		target.setDateFormSentToRegion(source.getDateFormSentToRegion());
+		target.setDateFormReceivedAtRegion(source.getDateFormReceivedAtRegion());
+		target.setDateFormSentToNational(source.getDateFormSentToNational());
+		target.setDateFormReceivedAtNational(source.getDateFormReceivedAtNational());
+
+		target.setLaboratoryName(source.getLaboratoryName());
+		target.setLaboratoryNumber(source.getLaboratoryNumber());
+		target.setLaboratorySerotype(source.getLaboratorySerotype());
+		target.setLaboratorySerotypeType(source.getLaboratorySerotypeType());
+		target.setLaboratorySerotypeResults(source.getLaboratorySerotypeResults());
+		target.setLaboratoryFinalResults(source.getLaboratoryFinalResults());
+		target.setLaboratoryObservations(source.getLaboratoryObservations());
+		target.setLaboratorySampleContainerOther(source.getLaboratorySampleContainerOther());
+		target.setLaboratoryTestPerformedOther(source.getLaboratoryTestPerformedOther());
+		target.setLaboratoryCytology(source.getLaboratoryCytology());
+		target.setLaboratoryGramOther(source.getLaboratoryGramOther());
+		target.setLaboratoryCultureOther(source.getLaboratoryCultureOther());
+		target.setLaboratoryOtherTests(source.getLaboratoryOtherTests());
+		target.setLaboratoryOtherTestsResults(source.getLaboratoryOtherTestsResults());
+		target.setLaboratoryRdtResults(source.getLaboratoryRdtResults());
+		target.setLaboratoryFinalClassification(source.getLaboratoryFinalClassification());
+		target.setLaboratoryPcrType(source.getLaboratoryPcrType());
+		target.setLaboratorySampleContainerReceived(source.getLaboratorySampleContainerReceived());
+		target.setLaboratorySampleCondition(source.getLaboratorySampleCondition());
+		target.setLaboratoryAppearanceOfCSF(source.getLaboratoryAppearanceOfCSF());
+		target.setLaboratoryTestPerformed(source.getLaboratoryTestPerformed());
+		target.setLaboratoryGram(source.getLaboratoryGram());
+		target.setLaboratoryRdtPerformed(source.getLaboratoryRdtPerformed());
+		target.setLaboratoryLatex(source.getLaboratoryLatex());
+		target.setLaboratoryCulture(source.getLaboratoryCulture());
+		target.setLaboratoryPcrOptions(source.getLaboratoryPcrOptions());
+		target.setLaboratoryCeftriaxone(source.getLaboratoryCeftriaxone());
+		target.setLaboratoryPenicillinG(source.getLaboratoryPenicillinG());
+		target.setLaboratoryAmoxycillin(source.getLaboratoryAmoxycillin());
+		target.setLaboratoryOxacillin(source.getLaboratoryOxacillin());
+		target.setLaboratoryAntibiogramOther(source.getLaboratoryAntibiogramOther());
+		target.setLaboratoryDateResultsSentHealthFacility(source.getLaboratoryDateResultsSentHealthFacility());
+		target.setLaboratoryDateResultsSentDSD(source.getLaboratoryDateResultsSentDSD());
+		target.setLaboratorySampleDateReceived(source.getLaboratorySampleDateReceived());
+		target.setLaboratoryDatePcrPerformed(source.getLaboratoryDatePcrPerformed());
+		target.setDateSentToNationalRegLab(source.getDateSentToNationalRegLab());
+		target.setDateDifferentiationSentToEpi(source.getDateDifferentiationSentToEpi());
+		target.setDateDifferentiationReceivedFromEpi(source.getDateDifferentiationReceivedFromEpi());
+		target.setDateIsolateSentForSequencing(source.getDateIsolateSentForSequencing());
+		target.setDateSeqResultsSentToProgram(source.getDateSeqResultsSentToProgram());
+		target.setFinalLabResults(source.getFinalLabResults());
+		target.setImmunocompromisedStatusSuspected(source.getImmunocompromisedStatusSuspected());
+		target.setAfpFinalClassification(source.getAfpFinalClassification());
+
+
 
 		return target;
 	}

@@ -21,10 +21,14 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.Diseases;
+import de.symeda.sormas.api.utils.LatexCulture;
+
+import java.util.Arrays;
+import java.util.List;
 
 public enum SampleMaterial {
 
-	BLOOD,
+	WHOLE_BLOOD,
 	SERA,
 	@Diseases(value = {
 		Disease.CORONAVIRUS }, hide = true)
@@ -63,12 +67,24 @@ public enum SampleMaterial {
 	OP_ASPIRATE,
 	NP_ASPIRATE,
 	PLEURAL_FLUID,
+	PLASMA,
+	SERUM,
+	POST_MORTEM_LIVER_SPECIMEN,
+	PLASMA_SERUM,
 	OTHER;
+
+	public static SampleMaterial[] YF_TYPES() {
+		return new SampleMaterial[] { SampleMaterial.WHOLE_BLOOD, SampleMaterial.SERUM, SampleMaterial.POST_MORTEM_LIVER_SPECIMEN };
+	}
+
 
 	@Override
 	public String toString() {
 		return I18nProperties.getEnumCaption(this);
 	}
+	public static final List<SampleMaterial> YF_TYPES = Arrays.asList(
+			WHOLE_BLOOD, SERUM, POST_MORTEM_LIVER_SPECIMEN);
+
 
 	public static String toString(SampleMaterial value, String details) {
 

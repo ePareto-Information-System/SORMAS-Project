@@ -18,6 +18,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
@@ -69,6 +71,7 @@ public class FacilityDto extends InfrastructureDto {
 	public static final String LONGITUDE = "longitude";
 	public static final String TYPE_GROUP = "typeGroup";
 	public static final String TYPE = "type";
+	public static final String DHIMS_FACILITY_TYPE = "dhimsFacilityType";
 	public static final String AFP_TYPE = "afp_type";
 	public static final String EXTERNAL_ID = "externalID";
 
@@ -103,6 +106,7 @@ public class FacilityDto extends InfrastructureDto {
 	@Max(value = 180, message = Validations.numberTooBig)
 	private Double longitude;
 	private FacilityType type;
+	private DhimsFacility dhimsFacilityType;
 	private AFPFacilityOptions afp_type;
 	private boolean publicOwnership;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
@@ -308,6 +312,18 @@ public class FacilityDto extends InfrastructureDto {
 	public void setType(FacilityType type) {
 		this.type = type;
 	}
+
+	public DhimsFacility getDhimsFacilityType() {
+		return dhimsFacilityType;
+	}
+
+	public void setDhimsFacilityType(DhimsFacility dhimsFacilityType) {
+		this.dhimsFacilityType = dhimsFacilityType;
+	}
+
+	public AFPFacilityOptions getAfpType(){return afp_type;}
+
+	public void setAfpType(AFPFacilityOptions afp_type){this.afp_type = afp_type;}
 
 	public boolean isPublicOwnership() {
 		return publicOwnership;

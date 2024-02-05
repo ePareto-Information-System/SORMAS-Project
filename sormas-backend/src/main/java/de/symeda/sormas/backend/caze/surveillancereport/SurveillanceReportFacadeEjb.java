@@ -114,6 +114,25 @@ public class SurveillanceReportFacadeEjb
 			return null;
 		}
 		return new SurveillanceReportReferenceDto(entity.getUuid());
+
+		SurveillanceReportDto target = new SurveillanceReportDto();
+		DtoHelper.fillDto(target, source);
+
+		target.setReportingType(source.getReportingType());
+		target.setCreatingUser(source.getCreatingUser().toReference());
+		target.setReportDate(source.getReportDate());
+		target.setDateOfDiagnosis(source.getDateOfDiagnosis());
+		target.setFacilityRegion(RegionFacadeEjb.toReferenceDto(source.getFacilityRegion()));
+		target.setFacilityDistrict(DistrictFacadeEjb.toReferenceDto(source.getFacilityDistrict()));
+		target.setFacilityType(source.getFacilityType());
+		target.setDhimsFacilityType(source.getDhimsFacilityType());
+		target.setFacility(FacilityFacadeEjb.toReferenceDto(source.getFacility()));
+		target.setFacilityDetails(source.getFacilityDetails());
+		target.setNotificationDetails(source.getNotificationDetails());
+		target.setCaze(CaseFacadeEjb.toReferenceDto(source.getCaze()));
+
+		return target;
+
 	}
 
 	@Override
@@ -175,6 +194,7 @@ public class SurveillanceReportFacadeEjb
 		target.setFacilityRegion(regionService.getByReferenceDto(source.getFacilityRegion()));
 		target.setFacilityDistrict(districtService.getByReferenceDto(source.getFacilityDistrict()));
 		target.setFacilityType(source.getFacilityType());
+		target.setDhimsFacilityType(source.getDhimsFacilityType());
 		target.setFacility(facilityService.getByReferenceDto(source.getFacility()));
 		target.setFacilityDetails(source.getFacilityDetails());
 		target.setNotificationDetails(source.getNotificationDetails());

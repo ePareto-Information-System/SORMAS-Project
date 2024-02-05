@@ -54,8 +54,13 @@ public class SampleControllerTest extends AbstractUiBeanTest {
 		// event participant
 		EventDto event = creator.createEvent(user.toReference(), Disease.CHOLERA, rdcf);
 		EventParticipantDto eventParticipant = creator.createEventParticipant(event.toReference(), person, user.toReference());
-		sample =
-			creator.createSample(eventParticipant.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
+		sample = creator.createSample(
+			eventParticipant.toReference(),
+			new Date(),
+			new Date(),
+			user.toReference(),
+			SampleMaterial.WHOLE_BLOOD,
+			rdcf.facility.toReference());
 
 		assertThat(sut.getDiseaseOf(sample), equalTo(Disease.CHOLERA));
 	}

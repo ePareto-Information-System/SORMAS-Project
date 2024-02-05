@@ -31,6 +31,7 @@ import javax.ejb.Stateless;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
+import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.utils.AFPFacilityOptions;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -457,7 +458,9 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
 							infrastructureData.getElement0(),
 							infrastructureData.getElement1(),
 							getTypeOfFacility(pd.getName(), currentElement),
+							getTypeOfDhimsFacility(pd.getName(), currentElement),
 							false);
+
 
 						if (facilities.isEmpty()) {
 							if (infrastructureData.getElement1() != null) {
@@ -610,6 +613,18 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
 		}
 		PropertyDescriptor pd = new PropertyDescriptor(typeProperty, currentElement.getClass());
 		return (FacilityType) pd.getReadMethod().invoke(currentElement);
+	}
+
+	protected DhimsFacility getTypeOfDhimsFacility(String propertyName, Object currentElement)
+			throws IntrospectionException, InvocationTargetException, IllegalAccessException {
+		String typeProperty;
+		if (CaseDataDto.class.equals(currentElement.getClass()) && CaseDataDto.DHIMS_FACILITY_TYPE.equals(propertyName)) {
+			typeProperty = CaseDataDto.DHIMS_FACILITY_TYPE;
+		} else {
+			typeProperty = propertyName + "DhimsType";
+		}
+		PropertyDescriptor pd = new PropertyDescriptor(typeProperty, currentElement.getClass());
+		return (DhimsFacility) pd.getReadMethod().invoke(currentElement);
 	}
 
 	protected AFPFacilityOptions getTypeOfFacilityForAFP(String propertyName, Object currentElement)

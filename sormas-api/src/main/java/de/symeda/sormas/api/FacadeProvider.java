@@ -84,6 +84,7 @@ import de.symeda.sormas.api.sample.AdditionalTestFacade;
 import de.symeda.sormas.api.sample.PathogenTestFacade;
 import de.symeda.sormas.api.sample.SampleFacade;
 import de.symeda.sormas.api.share.ExternalShareInfoFacade;
+import de.symeda.sormas.api.sixtyday.SixtyDayFacade;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasEncryptionFacade;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasFacade;
 import de.symeda.sormas.api.sormastosormas.entities.caze.SormasToSormasCaseFacade;
@@ -251,6 +252,10 @@ public class FacadeProvider {
 
 	public static HospitalizationFacade getHospitalizationFacade() {
 		return get().lookupEjbRemote(HospitalizationFacade.class);
+	}
+
+	public static SixtyDayFacade getSixtyDayFacade() {
+		return get().lookupEjbRemote(SixtyDayFacade.class);
 	}
 
 	public static EpiDataFacade getEpiDataFacade() {

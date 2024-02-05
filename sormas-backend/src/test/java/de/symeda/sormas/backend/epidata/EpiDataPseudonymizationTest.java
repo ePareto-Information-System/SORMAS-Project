@@ -20,7 +20,10 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyString;
 import static org.hamcrest.Matchers.nullValue;
 
-import org.junit.jupiter.api.Test;
+import de.symeda.sormas.api.utils.YesNo;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.epidata.AnimalCondition;
@@ -145,7 +148,7 @@ public class EpiDataPseudonymizationTest extends AbstractBeanTest {
 			epiData.getExposures().add(exposure2);
 
 			ExposureDto exposure3 = ExposureDto.build(ExposureType.TRAVEL);
-			exposure3.setBodyOfWater(YesNoUnknown.YES);
+			exposure3.setBodyOfWater(YesNo.YES);
 			exposure3.setWaterSource(WaterSource.OTHER);
 			exposure3.setWaterSourceDetails("Test water source details");
 			epiData.getExposures().add(exposure3);

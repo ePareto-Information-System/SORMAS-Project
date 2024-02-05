@@ -68,10 +68,14 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 
 		target.setExposureDetailsKnown(source.getExposureDetailsKnown());
 		target.setActivityAsCaseDetailsKnown(source.getActivityAsCaseDetailsKnown());
+		target.setRecentTravelOutbreak(source.getRecentTravelOutbreak());
+		target.setContactSimilarOutbreak(source.getContactSimilarOutbreak());
+		target.setContactSickAnimals(source.getContactSickAnimals());
 		target.setContactWithSourceCaseKnown(source.getContactWithSourceCaseKnown());
 		target.setHighTransmissionRiskArea(source.getHighTransmissionRiskArea());
 		target.setLargeOutbreaksArea(source.getLargeOutbreaksArea());
 		target.setAreaInfectedAnimals(source.getAreaInfectedAnimals());
+		target.setDisease(source.getDisease());
 
 		List<Exposure> exposures = new ArrayList<>();
 		for (ExposureDto exposureDto : source.getExposures()) {
@@ -223,10 +227,14 @@ public class EpiDataFacadeEjb implements EpiDataFacade {
 
 		target.setExposureDetailsKnown(source.getExposureDetailsKnown());
 		target.setActivityAsCaseDetailsKnown(source.getActivityAsCaseDetailsKnown());
+		target.setRecentTravelOutbreak(source.getRecentTravelOutbreak());
+		target.setContactSimilarOutbreak(source.getContactSimilarOutbreak());
+		target.setContactSickAnimals(source.getContactSickAnimals());
 		target.setContactWithSourceCaseKnown(source.getContactWithSourceCaseKnown());
 		target.setHighTransmissionRiskArea(source.getHighTransmissionRiskArea());
 		target.setLargeOutbreaksArea(source.getLargeOutbreaksArea());
 		target.setAreaInfectedAnimals(source.getAreaInfectedAnimals());
+		target.setDisease(source.getDisease());
 
 		List<ExposureDto> exposureDtos = new ArrayList<>();
 		for (Exposure exposure : source.getExposures()) {

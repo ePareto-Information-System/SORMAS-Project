@@ -37,10 +37,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import de.symeda.sormas.ui.configuration.generate.config.CaseGenerationConfig;
-import de.symeda.sormas.ui.configuration.generate.config.ContactGenerationConfig;
-import de.symeda.sormas.ui.configuration.generate.config.EventGenerationConfig;
-import de.symeda.sormas.ui.configuration.generate.config.SampleGenerationConfig;
+import de.symeda.sormas.api.utils.YellowFeverSample;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1029,6 +1026,8 @@ public class DevModeView extends AbstractConfigurationView {
 				caze.setResponsibleCommunity(healthFacility.getCommunity());
 				caze.setHealthFacility(healthFacility.toReference());
 				caze.setFacilityType(healthFacility.getType());
+				caze.setDhimsFacilityType(healthFacility.getDhimsFacilityType());
+				caze.setAfpFacilityOptions(healthFacility.getAfpFacilityOptions());
 				caze.setReportLat(healthFacility.getLatitude());
 				caze.setReportLon(healthFacility.getLongitude());
 			}
@@ -1152,13 +1151,18 @@ public class DevModeView extends AbstractConfigurationView {
 					sample.setAdditionalTestingRequested(true);
 					sample.setRequestedAdditionalTests(additionalTestTypes);
 				}
-				if (sampleGenerationConfig.isRequestSampleMaterialsToAdded()) {
-					Set sampleMaterialTypes = new HashSet<SampleMaterial>();
-					int until = randomInt(1, SampleMaterial.values().length);
+				// if (sampleGenerationConfig.isRequestSampleMaterialsToAdded()) {
+				// 	Set sampleMaterialTypes = new HashSet<SampleMaterial>();
+				// 	int until = randomInt(1, SampleMaterial.values().length);
+				// }
+
+				if (config.isRequestSampleMaterialsToAdded()) {
+					Set sampleMaterialTypes = new HashSet<YellowFeverSample>();
+					int until = randomInt(1, YellowFeverSample.values().length);
 					for (int j = 0; j < until; j++) {
-						sampleMaterialTypes.add(SampleMaterial.values()[j]);
+						sampleMaterialTypes.add(YellowFeverSample.values()[j]);
 					}
-					sample.setSampleMaterialRequested(true);
+					sample.setSampleMaterialTestingRequested(true);
 					sample.setRequestedSampleMaterials(sampleMaterialTypes);
 				}
 
@@ -1558,6 +1562,8 @@ public class DevModeView extends AbstractConfigurationView {
 						FacilityIndexDto facility = random(healthFacilities);
 						caze.setHealthFacility(facility.toReference());
 						caze.setFacilityType(facility.getType());
+						caze.setDhimsFacilityType(facility.getDhimsFacilityType());
+						caze.setAfpFacilityOptions(facility.getAfpFacilityOptions());
 						caze.setAdditionalDetails("Case generated using DevMode on " + LocalDate.now());
 						FacadeProvider.getCaseFacade().save(caze);
 						eventParticipant.setResultingCase(caze.toReference());
