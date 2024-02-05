@@ -17,6 +17,7 @@ package de.symeda.sormas.app.backend.sample;
 
 import java.util.List;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.PushResult;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SampleReferenceDto;
@@ -92,12 +93,17 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 			target.setReferredToUuid(null);
 		}
 		target.setShipped(source.isShipped());
+		target.setYellowFeverSampleType(source.isYellowFeverSampleType());
 		target.setReceived(source.isReceived());
 		target.setPathogenTestResult(source.getPathogenTestResult());
 		target.setPathogenTestingRequested(source.getPathogenTestingRequested());
 		target.setAdditionalTestingRequested(source.getAdditionalTestingRequested());
+		target.setIpSampleSent(source.getIpSampleSent());
+		target.setIpSampleResults(String.valueOf(source.getIpSampleResults()));
+		target.setDisease(source.getDisease());
 		target.setRequestedPathogenTests(source.getRequestedPathogenTests());
 		target.setRequestedAdditionalTests(source.getRequestedAdditionalTests());
+		target.setRequestedSampleMaterials(source.getRequestedSampleMaterials());
 		target.setRequestedOtherPathogenTests(source.getRequestedOtherPathogenTests());
 		target.setRequestedOtherAdditionalTests(source.getRequestedOtherAdditionalTests());
 
@@ -160,14 +166,19 @@ public class SampleDtoHelper extends AdoDtoHelper<Sample, SampleDto> {
 		target.setComment(source.getComment());
 		target.setSampleSource(source.getSampleSource());
 		target.setShipped(source.isShipped());
+		target.setYellowFeverSampleType(source.isYellowFeverSampleType());
 		target.setReceived(source.isReceived());
 		target.setPathogenTestResult(source.getPathogenTestResult());
 		target.setPathogenTestingRequested(source.getPathogenTestingRequested());
 		target.setAdditionalTestingRequested(source.getAdditionalTestingRequested());
+		target.setIpSampleSent(source.getIpSampleSent());
+		target.setIpSampleResults(Disease.valueOf(source.getIpSampleResults()));
 		target.setRequestedPathogenTests(source.getRequestedPathogenTests());
 		target.setRequestedAdditionalTests(source.getRequestedAdditionalTests());
+		target.setRequestedSampleMaterials(source.getRequestedSampleMaterials());
 		target.setRequestedOtherPathogenTests(source.getRequestedOtherPathogenTests());
 		target.setRequestedOtherAdditionalTests(source.getRequestedOtherAdditionalTests());
+		target.setDisease(source.getDisease());
 
 		target.setReportLat(source.getReportLat());
 		target.setReportLon(source.getReportLon());

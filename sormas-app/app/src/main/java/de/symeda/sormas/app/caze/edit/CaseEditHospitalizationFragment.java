@@ -23,6 +23,7 @@ import androidx.databinding.ObservableArrayList;
 
 import java.util.List;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.hospitalization.HospitalizationReasonType;
 import de.symeda.sormas.api.hospitalization.PreviousHospitalizationDto;
@@ -191,6 +192,14 @@ public class CaseEditHospitalizationFragment extends BaseEditFragment<FragmentCa
 		contentBinding.caseHospitalizationIsolationDate.initializeDateField(getFragmentManager());
 
 		verifyPrevHospitalizationStatus();
+
+		if(caze.getDisease() == Disease.AHF){
+			contentBinding.caseHospitalizationAdmittedToHealthFacility.setVisibility(View.GONE);
+			contentBinding.caseHospitalizationAdmissionDate.setVisibility(View.GONE);
+			contentBinding.caseHospitalizationDischargeDate.setVisibility(View.GONE);
+			contentBinding.caseHospitalizationLeftAgainstAdvice.setVisibility(View.GONE);
+			contentBinding.caseHospitalizationHospitalizationReason.setVisibility(View.GONE);
+		}
 	}
 
 	@Override

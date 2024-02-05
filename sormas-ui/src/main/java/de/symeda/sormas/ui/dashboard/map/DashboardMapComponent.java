@@ -577,10 +577,10 @@ public class DashboardMapComponent extends VerticalLayout {
 			}
 		}
 
-		PopupButton layersDropdown = ButtonHelper.createPopupButton(Captions.dashboardMapLayers, layersLayout, CssStyles.BUTTON_SUBTLE);
+		//PopupButton layersDropdown = ButtonHelper.createPopupButton(Captions.dashboardMapLayers, layersLayout, CssStyles.BUTTON_SUBTLE);
 
-		mapFooterLayout.addComponent(layersDropdown);
-		mapFooterLayout.setComponentAlignment(layersDropdown, Alignment.MIDDLE_RIGHT);
+		//mapFooterLayout.addComponent(layersDropdown);
+		//mapFooterLayout.setComponentAlignment(layersDropdown, Alignment.MIDDLE_RIGHT);
 
 		return mapFooterLayout;
 	}

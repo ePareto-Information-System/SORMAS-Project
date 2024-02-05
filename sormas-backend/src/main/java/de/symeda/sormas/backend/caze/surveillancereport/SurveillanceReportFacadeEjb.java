@@ -87,6 +87,7 @@ public class SurveillanceReportFacadeEjb implements SurveillanceReportFacade {
 		target.setFacilityRegion(RegionFacadeEjb.toReferenceDto(source.getFacilityRegion()));
 		target.setFacilityDistrict(DistrictFacadeEjb.toReferenceDto(source.getFacilityDistrict()));
 		target.setFacilityType(source.getFacilityType());
+		target.setDhimsFacilityType(source.getDhimsFacilityType());
 		target.setFacility(FacilityFacadeEjb.toReferenceDto(source.getFacility()));
 		target.setFacilityDetails(source.getFacilityDetails());
 		target.setNotificationDetails(source.getNotificationDetails());
@@ -179,6 +180,7 @@ public class SurveillanceReportFacadeEjb implements SurveillanceReportFacade {
 		target.setFacilityRegion(regionService.getByReferenceDto(source.getFacilityRegion()));
 		target.setFacilityDistrict(districtService.getByReferenceDto(source.getFacilityDistrict()));
 		target.setFacilityType(source.getFacilityType());
+		target.setDhimsFacilityType(source.getDhimsFacilityType());
 		target.setFacility(facilityService.getByReferenceDto(source.getFacility()));
 		target.setFacilityDetails(source.getFacilityDetails());
 		target.setNotificationDetails(source.getNotificationDetails());

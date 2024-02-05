@@ -32,6 +32,7 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.InfrastructureDataReferenceDto;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.infrastructure.area.AreaType;
+import de.symeda.sormas.api.infrastructure.facility.*;
 import de.symeda.sormas.ui.caze.CaseDataForm;
 import de.symeda.sormas.ui.caze.CasePersonView;
 import de.symeda.sormas.ui.person.PersonEditForm;
@@ -70,10 +71,6 @@ import de.symeda.sormas.api.infrastructure.continent.ContinentCriteria;
 import de.symeda.sormas.api.infrastructure.continent.ContinentReferenceDto;
 import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
-import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
-import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
-import de.symeda.sormas.api.infrastructure.facility.FacilityType;
-import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.infrastructure.subcontinent.SubcontinentCriteria;
 import de.symeda.sormas.api.infrastructure.subcontinent.SubcontinentReferenceDto;
@@ -108,17 +105,20 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		divs(
 			fluidRowLocs(LocationDto.COUNTRY, COUNTRY_HINT_LOC, ""),
 			fluidRowLocs(LocationDto.ADDRESS_TYPE, LocationDto.ADDRESS_TYPE_DETAILS, ""),
-			fluidRowLocs(LocationDto.CONTINENT, LocationDto.SUB_CONTINENT, ""),
+			//fluidRowLocs(LocationDto.CONTINENT, LocationDto.SUB_CONTINENT, ""),
 			fluidRowLocs(LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY),
-			fluidRowLocs(FACILITY_TYPE_GROUP_LOC, LocationDto.FACILITY_TYPE),
-			fluidRowLocs(LocationDto.FACILITY, LocationDto.FACILITY_DETAILS),
-			fluidRowLocs(LocationDto.STREET, LocationDto.HOUSE_NUMBER, LocationDto.ADDITIONAL_INFORMATION),
-			fluidRowLocs(LocationDto.POSTAL_CODE, LocationDto.CITY, LocationDto.AREA_TYPE),
-//			fluidRowLocs(LocationDto.LAND_MARK),
+			//fluidRowLocs(FACILITY_TYPE_GROUP_LOC, LocationDto.FACILITY_TYPE),
+			//fluidRowLocs(LocationDto.FACILITY, LocationDto.FACILITY_DETAILS),
+			fluidRowLocs(6,LocationDto.STREET),
+			fluidRowLocs(6,LocationDto.ADDITIONAL_INFORMATION),
+			fluidRowLocs(6,LocationDto.HOUSE_NUMBER),
+			fluidRowLocs(LocationDto.CITY, LocationDto.AREA_TYPE),
+			fluidRowLocs(6,LocationDto.POSTAL_CODE),
+			fluidRowLocs(6,LocationDto.LAND_MARK),
 			fluidRowLocs(LocationDto.CONTACT_PERSON_FIRST_NAME, LocationDto.CONTACT_PERSON_LAST_NAME),
 			fluidRowLocs(LocationDto.CONTACT_PERSON_PHONE, LocationDto.CONTACT_PERSON_EMAIL),
 			fluidRow(
-				fluidColumnLoc(4, 0, LocationDto.DETAILS),
+				//fluidColumnLoc(4, 0, LocationDto.DETAILS),
 				fluidColumnLoc(2, 0, GEO_BUTTONS_LOC),
 				fluidColumnLoc(2, 0, LocationDto.LATITUDE),
 				fluidColumnLoc(2, 0, LocationDto.LONGITUDE),
@@ -128,6 +128,7 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	private ComboBox addressType;
 	private ComboBox facilityTypeGroup;
 	private ComboBox facilityType;
+	private ComboBox dhimsFacilityType;
 	private ComboBox facility;
 	private TextField facilityDetails;
 	private ComboBox continent;
@@ -155,10 +156,10 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 	public ComboBox getFacilityTypeGroup() {
 		return facilityTypeGroup;
 	}
-
 	public ComboBox getFacilityType() {
 		return facilityType;
 	}
+	public ComboBox getDhimsFacilityType() {return dhimsFacilityType;}
 
 	private void setConvertedValue(String propertyId, Object value) {
 		((AbstractField<?>) getField(propertyId)).setConvertedValue(value);
@@ -239,6 +240,8 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		TextField postalCodeField = addField(LocationDto.POSTAL_CODE, TextField.class);
 
 		areaType = addField(LocationDto.AREA_TYPE, ComboBox.class);
+		areaType.removeItem(AreaType.UNKNOWN);
+		areaType.setVisible(false);
 		areaType.setDescription(I18nProperties.getDescription(getPropertyI18nPrefix() + "." + LocationDto.AREA_TYPE));
 
 		contactPersonFirstName = addField(LocationDto.CONTACT_PERSON_FIRST_NAME, TextField.class);
@@ -255,12 +258,16 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		final AccessibleTextField tfAccuracy = addField(LocationDto.LAT_LON_ACCURACY, AccessibleTextField.class);
 		final StringToAngularLocationConverter stringToAngularLocationConverter = new StringToAngularLocationConverter();
 		tfLatitude.setConverter(stringToAngularLocationConverter);
+		tfLatitude.setVisible(false);
 		tfLongitude.setConverter(stringToAngularLocationConverter);
+		tfLongitude.setVisible(false);
 		tfAccuracy.setConverter(stringToAngularLocationConverter);
+		tfAccuracy.setVisible(false);
 
 		continent = addInfrastructureField(LocationDto.CONTINENT);
 		subcontinent = addInfrastructureField(LocationDto.SUB_CONTINENT);
 		country = addInfrastructureField(LocationDto.COUNTRY);
+		country.setVisible(false);
 		ComboBox region = addInfrastructureField(LocationDto.REGION);
 		ComboBox district = addInfrastructureField(LocationDto.DISTRICT);
 		ComboBox community = addInfrastructureField(LocationDto.COMMUNITY);
@@ -864,15 +871,47 @@ public class LocationEditForm extends AbstractEditForm<LocationDto> {
 		}
 	}
 
+	public void setOnlyUnknownForYellowFever(Disease incomingDisease) {
+		newDisease = incomingDisease;
+		if (newDisease != null && newDisease.equals(Disease.YELLOW_FEVER)) {
+			setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAND_MARK);
+		}
+	}
+	public void setOnlyUnknownForAHF(Disease incomingDisease) {
+		newDisease = incomingDisease;
+		if (newDisease != null && newDisease.equals(Disease.AHF)) {
+			setVisible(false,
+					LocationDto.POSTAL_CODE, LocationDto.ADDITIONAL_INFORMATION);
+		}
+	}
+
 	public void setOnlyUnknownForCSM(Disease incomingDisease) {
 		newDisease = incomingDisease;
 		if (newDisease != null && newDisease.equals(Disease.CSM)) {
-			additionalInformationField.setCaption("Landmark");
-			for (AreaType areatype : AreaType.values()) {
-				if (areatype != AreaType.UNKNOWN) {
-					areaType.removeItem(areatype);
-				}
-			}
+			setVisible(true, LocationDto.LONGITUDE, LocationDto.LATITUDE, LocationDto.LAT_LON_ACCURACY, LocationDto.LAND_MARK);
+		}
+	}
+
+	public void setOnlyUnknownForInfluenza(Disease incomingDisease) {
+		newDisease = incomingDisease;
+		if (newDisease != null && newDisease.equals(Disease.NEW_INFLUENZA)) {
+			setVisible(false,
+					LocationDto.POSTAL_CODE, LocationDto.STREET, LocationDto.REGION, LocationDto.DISTRICT, LocationDto.COMMUNITY);
+			additionalInformationField.setCaption("Address (Location)");
+			areaType.setVisible(true);
+
+		}
+	}
+	public void setOnlyUnknownForAFP(Disease incomingDisease) {
+		newDisease = incomingDisease;
+		if (newDisease != null && newDisease.equals(Disease.AFP)) {
+			additionalInformationField.setCaption("Village");
+
+			setVisible(false, LocationDto.ADDRESS_TYPE,
+					LocationDto.ADDRESS_TYPE_DETAILS,
+					LocationDto.CITY,
+					LocationDto.STREET,
+					LocationDto.CONTACT_PERSON_FIRST_NAME);
 		}
 	}
 

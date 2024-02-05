@@ -40,10 +40,12 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.Size;
 
 import de.symeda.auditlog.api.Audited;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.externaldata.HasExternalData;
+import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.person.ApproximateAgeType;
 import de.symeda.sormas.api.person.ArmedForcesRelationType;
@@ -58,6 +60,7 @@ import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.person.Salutation;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.person.SymptomJournalStatus;
+import de.symeda.sormas.api.utils.FieldConstraints;
 import de.symeda.sormas.backend.caze.Case;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.common.messaging.ManualMessageLog;
@@ -213,7 +216,8 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 	private Country birthCountry;
 	private Country citizenship;
 	private String additionalDetails;
-
+	private String additionalPlacesStayed;
+	private String homeAddressRecreational;
 	private List<Case> cases = new ArrayList<>();
 	private List<Contact> contacts = new ArrayList<>();
 	private List<EventParticipant> eventParticipants = new ArrayList<>();
@@ -802,6 +806,22 @@ public class Person extends AbstractDomainObject implements HasExternalData {
 
 	public void setAdditionalDetails(String additionalDetails) {
 		this.additionalDetails = additionalDetails;
+	}
+	@Column(columnDefinition = "text")
+	public String getAdditionalPlacesStayed() {
+		return additionalPlacesStayed;
+	}
+
+	public void setAdditionalPlacesStayed(String additionalPlacesStayed) {
+		this.additionalPlacesStayed = additionalPlacesStayed;
+	}
+	@Column(columnDefinition = "text")
+	public String getHomeAddressRecreational() {
+		return homeAddressRecreational;
+	}
+
+	public void setHomeAddressRecreational(String homeAddressRecreational) {
+		this.homeAddressRecreational = homeAddressRecreational;
 	}
 
 	private void setPersonContactInformation(String contactInfo, PersonContactDetailType personContactDetailType) {

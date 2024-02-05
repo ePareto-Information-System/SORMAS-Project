@@ -55,6 +55,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -351,7 +352,7 @@ public class StartupShutdownService {
 			Region region = regionService.getByUuid(DefaultEntityHelper.getConstantUuidFor(DefaultEntityHelper.DefaultInfrastructureUuidSeed.REGION));
 			District district = region.getDistricts().get(0);
 			Community community = district.getCommunities().get(0);
-			List<Facility> healthFacilities = facilityService.getActiveFacilitiesByCommunityAndType(community, FacilityType.HOSPITAL, false, false);
+			List<Facility> healthFacilities = facilityService.getActiveFacilitiesByCommunityAndType(community, FacilityType.HOSPITAL,false, false);
 			Facility facility = !healthFacilities.isEmpty() ? healthFacilities.get(0) : null;
 			List<Facility> laboratories = facilityService.getAllActiveLaboratories(false);
 			Facility laboratory = !laboratories.isEmpty() ? laboratories.get(0) : null;

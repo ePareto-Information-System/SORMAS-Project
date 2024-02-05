@@ -34,6 +34,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
+import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -647,6 +648,18 @@ public abstract class DataImporter {
 		}
 		PropertyDescriptor pd = new PropertyDescriptor(typeProperty, currentElement.getClass());
 		return (FacilityType) pd.getReadMethod().invoke(currentElement);
+	}
+
+	protected DhimsFacility getTypeOfDhimsFacility(String propertyName, Object currentElement)
+			throws IntrospectionException, InvocationTargetException, IllegalAccessException {
+		String typeProperty;
+		if (CaseDataDto.class.equals(currentElement.getClass()) && CaseDataDto.DHIMS_FACILITY_TYPE.equals(propertyName)) {
+			typeProperty = CaseDataDto.DHIMS_FACILITY_TYPE;
+		} else {
+			typeProperty = propertyName + "Type";
+		}
+		PropertyDescriptor pd = new PropertyDescriptor(typeProperty, currentElement.getClass());
+		return (DhimsFacility) pd.getReadMethod().invoke(currentElement);
 	}
 
 	protected void writeImportError(String[] errorLine, String message) throws IOException {

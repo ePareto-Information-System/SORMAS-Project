@@ -46,6 +46,7 @@ import de.symeda.sormas.api.caze.VaccinationInfoSource;
 import de.symeda.sormas.api.common.DeletionDetails;
 import de.symeda.sormas.api.common.DeletionReason;
 import de.symeda.sormas.api.i18n.Strings;
+import de.symeda.sormas.api.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Assert;
@@ -58,7 +59,6 @@ import de.symeda.sormas.api.caze.CaseClassification;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.caze.InvestigationStatus;
-import de.symeda.sormas.api.caze.VaccinationInfoSource;
 import de.symeda.sormas.api.caze.VaccinationStatus;
 import de.symeda.sormas.api.caze.Vaccine;
 import de.symeda.sormas.api.caze.VaccineManufacturer;
@@ -89,7 +89,6 @@ import de.symeda.sormas.api.exposure.ExposureDto;
 import de.symeda.sormas.api.exposure.ExposureType;
 import de.symeda.sormas.api.followup.FollowUpLogic;
 import de.symeda.sormas.api.i18n.I18nProperties;
-import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.immunization.ImmunizationDto;
 import de.symeda.sormas.api.immunization.ImmunizationManagementStatus;
 import de.symeda.sormas.api.immunization.ImmunizationStatus;
@@ -112,10 +111,6 @@ import de.symeda.sormas.api.task.TaskType;
 import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
-import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.DateHelper;
-import de.symeda.sormas.api.utils.SortProperty;
-import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.vaccination.VaccinationDto;
 import de.symeda.sormas.api.visit.VisitCriteria;
 import de.symeda.sormas.api.visit.VisitDto;
@@ -533,9 +528,9 @@ public class ContactFacadeEjbTest extends AbstractBeanTest {
 			new Date(),
 			user.toReference());
 		SampleDto sample =
-			creator.createSample(contact.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
+			creator.createSample(contact.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
 		SampleDto sample2 =
-			creator.createSample(contact.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
+			creator.createSample(contact.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
 		sample2.setAssociatedCase(new CaseReferenceDto(caze.getUuid()));
 		getSampleFacade().saveSample(sample2);
 
@@ -1126,7 +1121,7 @@ public class ContactFacadeEjbTest extends AbstractBeanTest {
 		PersonDto contactPerson = getPersonFacade().getPersonByUuid(contact.getPerson().getUuid());
 		VisitDto visit = creator.createVisit(caze.getDisease(), contactPerson.toReference(), new Date(), VisitStatus.COOPERATIVE, VisitOrigin.USER);
 		EpiDataDto epiData = contact.getEpiData();
-		epiData.setExposureDetailsKnown(YesNoUnknown.YES);
+		epiData.setExposureDetailsKnown(YesNo.YES);
 		List<ExposureDto> travels = new ArrayList<>();
 		ExposureDto exposure = ExposureDto.build(ExposureType.TRAVEL);
 		exposure.getLocation().setDetails("Mallorca");
@@ -1270,7 +1265,7 @@ public class ContactFacadeEjbTest extends AbstractBeanTest {
 		PersonDto contactPerson = getPersonFacade().getPersonByUuid(contact.getPerson().getUuid());
 		VisitDto visit = creator.createVisit(caze.getDisease(), contactPerson.toReference(), new Date(), VisitStatus.COOPERATIVE, VisitOrigin.USER);
 		EpiDataDto epiData = contact.getEpiData();
-		epiData.setExposureDetailsKnown(YesNoUnknown.YES);
+		epiData.setExposureDetailsKnown(YesNo.YES);
 		List<ExposureDto> travels = new ArrayList<>();
 		ExposureDto exposure = ExposureDto.build(ExposureType.TRAVEL);
 		exposure.getLocation().setDetails("Mallorca");

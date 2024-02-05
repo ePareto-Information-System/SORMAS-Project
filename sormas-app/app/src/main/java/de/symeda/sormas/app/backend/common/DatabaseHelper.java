@@ -2993,14 +2993,53 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 				getDao(DiseaseConfiguration.class).executeRaw("ALTER TABLE diseaseConfiguration ADD COLUMN ageGroupsString text;");
 				getDao(DiseaseConfiguration.class).executeRaw("UPDATE diseaseConfiguration SET changeDate = 0;");
 
-			case 216:
-				currentVersion = 216;
+			case 337:
+				currentVersion = 337;
 				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN caseTransmissionClassification varchar(512);");
 
-			case 217:
-				currentVersion = 217;
+			case 338:
+				currentVersion = 338;
 				getDao(Contact.class).executeRaw("ALTER TABLE contacts ADD COLUMN contactTransmissionClassification varchar(512);");
 
+			case 339:
+					currentVersion = 339;
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN vaccinationType varchar(256);");
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN vaccinationDate timestamp;");
+			case 340:
+					currentVersion = 340;
+				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN ghanaCard varchar(256) NULL;");
+				getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN otherName varchar(256) NULL;");
+
+				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN sampleMaterialRequested boolean;");
+				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN ipSampleSent varchar(255);");
+				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN ipSampleResults varchar(512);");
+				getDao(Sample.class).executeRaw("ALTER TABLE samples ALTER COLUMN sampleMaterial DROP NOT NULL;");
+				getDao(Sample.class).executeRaw("ALTER TABLE samples ALTER COLUMN samplePurpose DROP NOT NULL;");
+
+				getDao(Case.class).executeRaw("ALTER TABLE cases ADD COLUMN afpFacilityOptions varchar(255) NULL;");
+
+				getDao(Location.class).executeRaw("ALTER TABLE location ADD COLUMN landmark varchar(255) NULL;");
+				getDao(Location.class).executeRaw("ALTER TABLE location ADD COLUMN afpFacilityOptions varchar(255) NULL;");
+
+				getDao(Facility.class).executeRaw("ALTER TABLE facility ADD COLUMN landmark varchar(255) NULL;");
+				getDao(Facility.class).executeRaw("ALTER TABLE facility ADD COLUMN facilityAfpType varchar(255) NULL;");
+				getDao(Facility.class).executeRaw("ALTER TABLE facility ADD COLUMN facility_AfpType varchar(255) NULL;");
+
+			case 341:
+					currentVersion = 341;
+				getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN sampleMaterialTypeForYF boolean;");
+			case 342:
+					currentVersion = 342;
+				getDao(EpiData.class).executeRaw("ALTER TABLE epidata ADD COLUMN disease varchar(255) NULL;");
+			case 343:
+				currentVersion = 343;
+					getDao(Person.class).executeRaw("ALTER TABLE person ADD COLUMN disease varchar(255) NULL;");
+			case 344:
+					currentVersion = 344;
+					getDao(Sample.class).executeRaw("ALTER TABLE samples ADD COLUMN pathogentestresult varchar(255) NULL;");
+			case 345:
+					currentVersion = 345;
+					getDao(Location.class).executeRaw("ALTER TABLE location ADD COLUMN landMark varchar(255) NULL;");
 					// ATTENTION: break should only be done after last version
 				break;
 

@@ -21,13 +21,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 
 public enum Disease
 	implements
 	StatisticsGroupingKey {
 
-	AFP(true, true, true, false, 0, true, false, false),
+	AFP(true, true, true, false, 60, true, false, false),
 	CHOLERA(true, true, true, true, 5, true, false, false),
 	CONGENITAL_RUBELLA(true, true, true, true, 21, true, false, false),
 	CSM(true, true, true, false, 10, true, false, false),
@@ -82,12 +83,14 @@ public enum Disease
 	M_PNEUMONIAE(true, false, true, false, 0, true, false, false),
 	C_PNEUMONIAE(true, false, true, false, 0, true, false, false),
 	ARI(true, false, false, false, 0, true, false, false),
-	CHIKUNGUNYA(true, false, false, false, 0, true, false, false),
+	CHIKUNGUNYA(true, true, true, false, 0, true, false, false),
 	POST_IMMUNIZATION_ADVERSE_EVENTS_MILD(true, false, false, false, 0, true, false, false),
 	POST_IMMUNIZATION_ADVERSE_EVENTS_SEVERE(true, false, false, false, 0, true, false, false),
 	FHA(true, false, false, false, 0, true, false, false),
 	AHF(true, true, true, true, 21, true, false, false),
 	OTHER(true, true, true, true, 21, false, false, false),
+	ZIKA(true, true, true, false, 6, true, false, false),
+	MARBURG(true, true, true, false, 0, true, false, false),
 	UNDEFINED(true, true, true, true, 0, false, false, false);
 
 	private final boolean defaultActive;
@@ -194,4 +197,14 @@ public enum Disease
 	}
 
 	public static List<Disease> DISEASE_LIST = Arrays.asList(Disease.values());
+	public static final List<Disease> AHF_DISEASES = Arrays.asList(
+			EVD,
+			MARBURG,
+			LASSA,
+			DENGUE,
+			CHIKUNGUNYA,
+			ZIKA,
+			YELLOW_FEVER
+	);
+
 }

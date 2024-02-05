@@ -226,7 +226,7 @@ public class Contact extends PseudonymizableAdo {
 	private Date quarantineOfficialOrderSentDate;
 	@Column(length = CHARACTER_LIMIT_BIG)
 	private String additionalDetails;
-	@Column(length = COLUMN_LENGTH_DEFAULT)
+//	@Column(length = COLUMN_LENGTH_DEFAULT)
 	@Enumerated(EnumType.STRING)
 	private TransmissionClassification contactTransmissionClassification;
 
@@ -888,6 +888,8 @@ public class Contact extends PseudonymizableAdo {
 
 	public void setVaccinationStatus(VaccinationStatus vaccinationStatus) {
 		this.vaccinationStatus = vaccinationStatus;
+	}
+
 	public TransmissionClassification getContactTransmissionClassification() {
 		return contactTransmissionClassification;
 	}

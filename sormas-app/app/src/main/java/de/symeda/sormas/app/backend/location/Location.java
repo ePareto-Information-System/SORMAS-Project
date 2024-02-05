@@ -91,6 +91,9 @@ public class Location extends PseudonymizableAdo {
 	private String street;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String houseNumber;
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String landMark;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	private String additionalInformation;
 	@Column
@@ -238,6 +241,15 @@ public class Location extends PseudonymizableAdo {
 	}
 
 	@Bindable
+	public String getLandMark() {
+		return landMark;
+	}
+
+	public void setLandMark(String landMark) {
+		this.landMark = landMark;
+	}
+
+	@Bindable
 	public String getAdditionalInformation() {
 		return additionalInformation;
 	}
@@ -338,6 +350,12 @@ public class Location extends PseudonymizableAdo {
 				sb.append(" ");
 			}
 			sb.append(getHouseNumber());
+		}
+		if (getLandMark() != null && !getLandMark().isEmpty()) {
+			if (sb.length() > 0) {
+				sb.append(" ");
+			}
+			sb.append(getLandMark());
 		}
 		if (getAdditionalInformation() != null && !getAdditionalInformation().isEmpty()) {
 			if (sb.length() > 0) {
@@ -450,6 +468,7 @@ public class Location extends PseudonymizableAdo {
 	public boolean isEmptyLocation() {
 		return street == null
 			&& houseNumber == null
+			&& landMark == null
 			&& additionalInformation == null
 			&& details == null
 			&& city == null

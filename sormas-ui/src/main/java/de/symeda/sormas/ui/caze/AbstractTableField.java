@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityDto;
 import de.symeda.sormas.api.utils.DataHelper;
 import org.apache.commons.lang3.ObjectUtils;
@@ -98,6 +99,7 @@ public abstract class AbstractTableField<E> extends CustomField<Collection> {
 	private BeanItemContainer<E> container;
 
 	protected UiFieldAccessCheckers fieldAccessCheckers;
+	protected Disease disease;
 
 	protected CaseDataForm caseDataForm;
 

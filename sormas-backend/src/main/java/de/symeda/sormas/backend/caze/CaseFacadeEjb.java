@@ -71,6 +71,10 @@ import javax.persistence.criteria.Subquery;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import de.symeda.sormas.api.sixtyday.SixtyDayDto;
+import de.symeda.sormas.api.utils.*;
+import de.symeda.sormas.backend.sixtyday.SixtyDay;
+import de.symeda.sormas.backend.sixtyday.SixtyDayFacadeEjb;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -194,14 +198,7 @@ import de.symeda.sormas.api.therapy.TreatmentDto;
 import de.symeda.sormas.api.user.NotificationType;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.api.utils.AccessDeniedException;
-import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.DataHelper.Pair;
-import de.symeda.sormas.api.utils.DateHelper;
-import de.symeda.sormas.api.utils.InfoProvider;
-import de.symeda.sormas.api.utils.SortProperty;
-import de.symeda.sormas.api.utils.ValidationRuntimeException;
-import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.fieldaccess.checkers.UserRightFieldAccessChecker;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.visit.VisitDto;
@@ -258,6 +255,7 @@ import de.symeda.sormas.backend.feature.FeatureConfigurationFacadeEjb.FeatureCon
 import de.symeda.sormas.backend.hospitalization.Hospitalization;
 import de.symeda.sormas.backend.hospitalization.HospitalizationFacadeEjb;
 import de.symeda.sormas.backend.hospitalization.HospitalizationFacadeEjb.HospitalizationFacadeEjbLocal;
+import de.symeda.sormas.backend.sixtyday.SixtyDayFacadeEjb.SixtyDayFacadeEjbLocal;
 import de.symeda.sormas.backend.hospitalization.PreviousHospitalization;
 import de.symeda.sormas.backend.immunization.ImmunizationEntityHelper;
 import de.symeda.sormas.backend.immunization.entity.Immunization;
@@ -396,6 +394,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	private PathogenTestFacadeEjbLocal sampleTestFacade;
 	@EJB
 	private HospitalizationFacadeEjbLocal hospitalizationFacade;
+	@EJB
+	private SixtyDayFacadeEjbLocal sixtyDayFacade;
 	@EJB
 	private EpiDataFacadeEjbLocal epiDataFacade;
 	@EJB
@@ -776,6 +776,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				joins.getEpiData().get(EpiData.ID),
 				joins.getRoot().get(Case.SYMPTOMS).get(Symptoms.ID),
 				joins.getHospitalization().get(Hospitalization.ID),
+				joins.getSixtyDay().get(SixtyDay.ID),
 				joins.getRoot().get(Case.HEALTH_CONDITIONS).get(HealthConditions.ID),
 				caseRoot.get(Case.UUID),
 				caseRoot.get(Case.EPID_NUMBER), caseRoot.get(Case.DISEASE), caseRoot.get(Case.DISEASE_VARIANT), caseRoot.get(Case.DISEASE_DETAILS),
@@ -831,6 +832,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				joins.getPerson().get(Person.EDUCATION_TYPE),
 				joins.getPerson().get(Person.EDUCATION_DETAILS), joins.getPerson().get(Person.OCCUPATION_TYPE),
 				joins.getPerson().get(Person.OCCUPATION_DETAILS), joins.getPerson().get(Person.ARMED_FORCES_RELATION_TYPE), joins.getEpiData().get(EpiData.CONTACT_WITH_SOURCE_CASE_KNOWN),
+				joins.getSixtyDay().get(SixtyDay.PARALYSIS_WEAKNESS_PRESENT),
 				caseRoot.get(Case.VACCINATION_STATUS), caseRoot.get(Case.POSTPARTUM), caseRoot.get(Case.TRIMESTER),
 				caseRoot.get(Case.VACCINATION_TYPE), caseRoot.get(Case.VACCINATION_DATE),
 				eventCountSq,
@@ -1520,6 +1522,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				caze.setDistrict(newDistrict);
 				caze.setCommunity(newCommunity);
 				caze.setFacilityType(updatedCaseBulkEditData.getFacilityType());
+				caze.setDhimsFacilityType(updatedCaseBulkEditData.getDhimsFacilityType());
 				caze.setHealthFacility(facilityService.getByUuid(updatedCaseBulkEditData.getHealthFacility().getUuid()));
 				caze.setHealthFacilityDetails(updatedCaseBulkEditData.getHealthFacilityDetails());
 				CaseLogic.handleHospitalization(toDto(caze), existingCaseDto, doTransfer);
@@ -1754,7 +1757,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			&& !communityFacade.getByUuid(caze.getResponsibleCommunity().getUuid()).getDistrict().equals(caze.getResponsibleDistrict())) {
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.noResponsibleCommunityInResponsibleDistrict));
 		}
-		if ((caze.getCaseOrigin() == null || caze.getCaseOrigin() == CaseOrigin.IN_COUNTRY) && caze.getHealthFacility() == null && caze.getAfpFacilityOptions() == null) {
+		if ((caze.getCaseOrigin() == null || caze.getCaseOrigin() == CaseOrigin.IN_COUNTRY) && (caze.getHealthFacility() == null && caze.getDhimsFacilityType() == null && caze.getAfpFacilityOptions() == null && caze.getHospitalName() == null)) {
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.validFacility));
 		}
 		if (CaseOrigin.POINT_OF_ENTRY.equals(caze.getCaseOrigin()) && caze.getPointOfEntry() == null) {
@@ -2116,11 +2119,11 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		// Set Yes/No/Unknown fields associated with embedded lists to Yes if the lists
 		// are not empty
 		if (!newCase.getHospitalization().getPreviousHospitalizations().isEmpty()
-			&& YesNoUnknown.YES != newCase.getHospitalization().getHospitalizedPreviously()) {
-			newCase.getHospitalization().setHospitalizedPreviously(YesNoUnknown.YES);
+			&& YesNo.YES != newCase.getHospitalization().getHospitalizedPreviously()) {
+			newCase.getHospitalization().setHospitalizedPreviously(YesNo.YES);
 		}
-		if (!newCase.getEpiData().getExposures().isEmpty() && !YesNoUnknown.YES.equals(newCase.getEpiData().getExposureDetailsKnown())) {
-			newCase.getEpiData().setExposureDetailsKnown(YesNoUnknown.YES);
+		if (!newCase.getEpiData().getExposures().isEmpty() && !YesNo.YES.equals(newCase.getEpiData().getExposureDetailsKnown())) {
+			newCase.getEpiData().setExposureDetailsKnown(YesNo.YES);
 		}
 
 		// Update completeness value
@@ -2660,6 +2663,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 				pseudonymizer.pseudonymizeDto(SymptomsDto.class, dto.getSymptoms(), inJurisdiction, null);
 				pseudonymizer.pseudonymizeDto(MaternalHistoryDto.class, dto.getMaternalHistory(), inJurisdiction, null);
+				pseudonymizer.pseudonymizeDto(SixtyDayDto.class, dto.getSixtyDay(), inJurisdiction, null);
 			});
 		}
 	}
@@ -2719,6 +2723,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			pseudonymizer.restorePseudonymizedValues(SymptomsDto.class, dto.getSymptoms(), existingCaseDto.getSymptoms(), inJurisdiction);
 			pseudonymizer
 				.restorePseudonymizedValues(MaternalHistoryDto.class, dto.getMaternalHistory(), existingCaseDto.getMaternalHistory(), inJurisdiction);
+			pseudonymizer.restorePseudonymizedValues(SixtyDayDto.class, dto.getSixtyDay(), existingCaseDto.getSixtyDay(), inJurisdiction);
 		}
 	}
 
@@ -2758,7 +2763,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setPlagueType(source.getPlagueType());
 		target.setDengueFeverType(source.getDengueFeverType());
 		target.setRabiesType(source.getRabiesType());
-		target.setCaseClassification(source.getCaseClassification());
+		target.setCaseClassification(source.getCaseClassification() == CaseClassification.NOT_CLASSIFIED ? CaseClassification.SUSPECT : source.getCaseClassification());
 		target.setCaseIdentificationSource(source.getCaseIdentificationSource());
 		target.setScreeningType(source.getScreeningType());
 		target.setClassificationUser(UserFacadeEjb.toReferenceDto(source.getClassificationUser()));
@@ -2770,6 +2775,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setInvestigationStatus(source.getInvestigationStatus());
 		target.setPerson(PersonFacadeEjb.toReferenceDto(source.getPerson()));
 		target.setHospitalization(HospitalizationFacadeEjb.toDto(source.getHospitalization()));
+		target.setSixtyDay(SixtyDayFacadeEjb.toDto(source.getSixtyDay()));
 		target.setEpiData(EpiDataFacadeEjb.toDto(source.getEpiData()));
 		if (source.getTherapy() != null) {
 			target.setTherapy(TherapyFacadeEjb.toDto(source.getTherapy()));
@@ -2806,8 +2812,15 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setClinicianName(source.getClinicianName());
 		target.setClinicianPhone(source.getClinicianPhone());
 		target.setClinicianEmail(source.getClinicianEmail());
+		target.setReportingOfficerTitle(source.getReportingOfficerTitle());
+		target.setReportingOfficerName(source.getReportingOfficerName());
+		target.setFunctionOfReportingOfficer(source.getFunctionOfReportingOfficer());
+		target.setReportingOfficerContactPhone(source.getReportingOfficerContactPhone());
+		target.setReportingOfficerEmail(source.getReportingOfficerEmail());
 		target.setCaseOfficer(UserFacadeEjb.toReferenceDto(source.getCaseOfficer()));
 		target.setSymptoms(SymptomsFacadeEjb.toDto(source.getSymptoms()));
+		target.setHomeAddressRecreational(source.getHomeAddressRecreational());
+		target.setHospitalName(source.getHospitalName());
 
 		target.setPregnant(source.getPregnant());
 		target.setIpSampleSent(source.getIpSampleSent());
@@ -2860,11 +2873,14 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setQuarantineOfficialOrderSentDate(source.getQuarantineOfficialOrderSentDate());
 		target.setPostpartum(source.getPostpartum());
 		target.setTrimester(source.getTrimester());
+		target.setVaccineType(source.getVaccineType());
+		target.setNumberOfDoses(source.getNumberOfDoses());
 		target.setFollowUpComment(source.getFollowUpComment());
 		target.setFollowUpStatus(source.getFollowUpStatus());
 		target.setFollowUpUntil(source.getFollowUpUntil());
 		target.setOverwriteFollowUpUntil(source.isOverwriteFollowUpUntil());
 		target.setFacilityType(source.getFacilityType());
+		target.setDhimsFacilityType(source.getDhimsFacilityType());
 		target.setAfpFacilityOptions(source.getAfpFacilityOptions());
 
 		target.setCaseIdIsm(source.getCaseIdIsm());
@@ -2930,7 +2946,6 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 		target = DtoHelper.fillOrBuildEntity(source, target, () -> {
 			Case newCase = new Case();
-			newCase.setSystemCaseClassification(CaseClassification.NOT_CLASSIFIED);
 
 			return newCase;
 		}, checkChangeDate);
@@ -2948,13 +2963,15 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			// make sure we do have a report date
 			target.setReportDate(new Date());
 		}
+
 		target.setReportingUser(userService.getByReferenceDto(source.getReportingUser()));
 		target.setInvestigatedDate(source.getInvestigatedDate());
 		target.setRegionLevelDate(source.getRegionLevelDate());
 		target.setNationalLevelDate(source.getNationalLevelDate());
 		target.setDistrictLevelDate(source.getDistrictLevelDate());
 		target.setPerson(personService.getByReferenceDto(source.getPerson()));
-		target.setCaseClassification(source.getCaseClassification());
+
+		target.setCaseClassification(source.getCaseClassification() == CaseClassification.NOT_CLASSIFIED ? CaseClassification.SUSPECT : source.getCaseClassification());
 		target.setCaseIdentificationSource(source.getCaseIdentificationSource());
 		target.setScreeningType(source.getScreeningType());
 		target.setClassificationUser(userService.getByReferenceDto(source.getClassificationUser()));
@@ -2965,6 +2982,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setLaboratoryDiagnosticConfirmation(source.getLaboratoryDiagnosticConfirmation());
 		target.setInvestigationStatus(source.getInvestigationStatus());
 		target.setHospitalization(hospitalizationFacade.fromDto(source.getHospitalization(), checkChangeDate));
+		target.setSixtyDay(sixtyDayFacade.fromDto(source.getSixtyDay(), checkChangeDate));
 		target.setEpiData(epiDataFacade.fromDto(source.getEpiData(), checkChangeDate));
 		if (source.getTherapy() == null) {
 			source.setTherapy(TherapyDto.build());
@@ -2999,10 +3017,17 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 		target.setSurveillanceOfficer(userService.getByReferenceDto(source.getSurveillanceOfficer()));
 		target.setClinicianName(source.getClinicianName());
+		target.setReportingOfficerName(source.getReportingOfficerName());
+		target.setReportingOfficerTitle(source.getReportingOfficerTitle());
+		target.setFunctionOfReportingOfficer(source.getFunctionOfReportingOfficer());
+		target.setReportingOfficerContactPhone(source.getReportingOfficerContactPhone());
+		target.setReportingOfficerEmail(source.getReportingOfficerEmail());
 		target.setClinicianPhone(source.getClinicianPhone());
 		target.setClinicianEmail(source.getClinicianEmail());
 		target.setCaseOfficer(userService.getByReferenceDto(source.getCaseOfficer()));
 		target.setSymptoms(symptomsFacade.fromDto(source.getSymptoms(), checkChangeDate));
+		target.setHomeAddressRecreational(source.getHomeAddressRecreational());
+		target.setHospitalName(source.getHospitalName());
 
 		target.setPregnant(source.getPregnant());
 		target.setIpSampleSent(source.getIpSampleSent());
@@ -3055,7 +3080,10 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setQuarantineOfficialOrderSentDate(source.getQuarantineOfficialOrderSentDate());
 		target.setPostpartum(source.getPostpartum());
 		target.setTrimester(source.getTrimester());
+		target.setVaccineType(source.getVaccineType());
+		target.setNumberOfDoses(source.getNumberOfDoses());
 		target.setFacilityType(source.getFacilityType());
+		target.setDhimsFacilityType(source.getDhimsFacilityType());
 		target.setAfpFacilityOptions(source.getAfpFacilityOptions());
 		if (source.getSormasToSormasOriginInfo() != null) {
 			target.setSormasToSormasOriginInfo(originInfoFacade.fromDto(source.getSormasToSormasOriginInfo(), checkChangeDate));
@@ -3688,11 +3716,11 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		// 10 Activity as case
 		final EpiData otherEpiData = otherCase.getEpiData();
 		if (otherEpiData != null
-			&& YesNoUnknown.YES == otherEpiData.getActivityAsCaseDetailsKnown()
+			&& YesNo.YES == otherEpiData.getActivityAsCaseDetailsKnown()
 			&& CollectionUtils.isNotEmpty(otherEpiData.getActivitiesAsCase())) {
 
 			final EpiData leadEpiData = leadCase.getEpiData();
-			leadEpiData.setActivityAsCaseDetailsKnown(YesNoUnknown.YES);
+			leadEpiData.setActivityAsCaseDetailsKnown(YesNo.YES);
 			epiDataService.ensurePersisted(leadEpiData);
 		}
 

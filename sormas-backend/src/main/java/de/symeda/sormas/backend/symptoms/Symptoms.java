@@ -17,6 +17,7 @@
  *******************************************************************************/
 package de.symeda.sormas.backend.symptoms;
 
+import static de.symeda.sormas.api.Disease.*;
 import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
 
 import java.util.Date;
@@ -29,9 +30,13 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import de.symeda.auditlog.api.Audited;
+import de.symeda.sormas.api.caze.CaseOutcome;
 import de.symeda.sormas.api.symptoms.CongenitalHeartDiseaseType;
 import de.symeda.sormas.api.symptoms.SymptomState;
 import de.symeda.sormas.api.symptoms.TemperatureSource;
+import de.symeda.sormas.api.utils.Diseases;
+import de.symeda.sormas.api.utils.SymptomGroup;
+import de.symeda.sormas.api.utils.SymptomGrouping;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 
@@ -44,6 +49,7 @@ public class Symptoms extends AbstractDomainObject {
 	public static final String TABLE_NAME = "symptoms";
 
 	public static final String ONSET_DATE = "onsetDate";
+	public static final String DATE_OF_ONSET = "dateOfOnset";
 	public static final String SYMPTOMATIC = "symptomatic";
 	public static final String TEMPERATURE = "temperature";
 	public static final String TEMPERATURE_SOURCE = "temperatureSource";
@@ -52,6 +58,8 @@ public class Symptoms extends AbstractDomainObject {
 	public static final String HEART_RATE = "heartRate";
 
 	private Date onsetDate;
+	private Date dateOfOnset;
+	private YesNoUnknown feverBodyTempGreater;
 	private String onsetSymptom;
 	private Boolean symptomatic;
 	private String patientIllLocation;
@@ -63,6 +71,7 @@ public class Symptoms extends AbstractDomainObject {
 	private Integer heartRate;
 	private Integer respiratoryRate;
 	private Integer weight;
+	private CaseOutcome outcome;
 	private Integer height;
 	private Integer midUpperArmCircumference;
 	private Integer glasgowComaScale;
@@ -217,6 +226,13 @@ public class Symptoms extends AbstractDomainObject {
 	private SymptomState dizzinessStandingUp;
 	private SymptomState highOrLowBloodPressure;
 	private SymptomState urinaryRetention;
+	private SymptomState muscleTone;
+
+	private SymptomState deepTendonReflex;
+
+	private SymptomState muscleVolume;
+
+	private SymptomState sensoryLoss;
 
 	// complications
 	private SymptomState alteredConsciousness;
@@ -237,6 +253,7 @@ public class Symptoms extends AbstractDomainObject {
 
 	private SymptomState otherComplications;
 	private String otherComplicationsText;
+	private String provisionalDiagnosis;
 
 	// when adding new fields make sure to extend toHumanString
 
@@ -247,6 +264,23 @@ public class Symptoms extends AbstractDomainObject {
 
 	public void setOnsetDate(Date onsetDate) {
 		this.onsetDate = onsetDate;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getDateOfOnset() {
+		return dateOfOnset;
+	}
+
+	public void setDateOfOnset(Date dateOfOnset) {
+		this.dateOfOnset = dateOfOnset;
+	}
+	@Enumerated(EnumType.STRING)
+	public YesNoUnknown getFeverBodyTempGreater() {
+		return feverBodyTempGreater;
+	}
+
+	public void setFeverBodyTempGreater(YesNoUnknown feverBodyTempGreater) {
+		this.feverBodyTempGreater = feverBodyTempGreater;
 	}
 
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
@@ -1190,7 +1224,12 @@ public class Symptoms extends AbstractDomainObject {
 	public void setWeight(Integer weight) {
 		this.weight = weight;
 	}
-
+	public CaseOutcome getOutcome() {
+		return outcome;
+	}
+	public void setOutcome(CaseOutcome outcome) {
+		this.outcome = outcome;
+	}
 	public Integer getHeight() {
 		return height;
 	}
@@ -1824,6 +1863,40 @@ public class Symptoms extends AbstractDomainObject {
 		this.urinaryRetention = urinaryRetention;
 	}
 
+	@Enumerated(EnumType.STRING)
+	public SymptomState getMuscleTone() {
+		return muscleTone;
+	}
+
+	public void setMuscleTone(SymptomState muscleTone) {
+		this.muscleTone = muscleTone;
+	}
+	@Enumerated(EnumType.STRING)
+	public SymptomState getDeepTendonReflex() {
+		return deepTendonReflex;
+	}
+
+	public void setDeepTendonReflex(SymptomState deepTendonReflex) {
+		this.deepTendonReflex = deepTendonReflex;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public SymptomState getMuscleVolume() {
+		return muscleVolume;
+	}
+
+	public void setMuscleVolume(SymptomState muscleVolume) {
+		this.muscleVolume = muscleVolume;
+	}
+	@Enumerated(EnumType.STRING)
+	public SymptomState getSensoryLoss() {
+		return sensoryLoss;
+	}
+
+	public void setSensoryLoss(SymptomState sensoryLoss) {
+		this.sensoryLoss = sensoryLoss;
+	}
+
 	@Enumerated
 	public SymptomState getOtherComplications() {
 		return otherComplications;
@@ -1840,5 +1913,14 @@ public class Symptoms extends AbstractDomainObject {
 
 	public void setOtherComplicationsText(String otherComplicationsText) {
 		this.otherComplicationsText = otherComplicationsText;
+	}
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public String getProvisionalDiagnosis() {
+		return provisionalDiagnosis;
+	}
+
+	public void setProvisionalDiagnosis(String provisionalDiagnosis) {
+		this.provisionalDiagnosis = provisionalDiagnosis;
 	}
 }

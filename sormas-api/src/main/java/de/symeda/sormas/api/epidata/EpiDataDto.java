@@ -20,6 +20,8 @@ package de.symeda.sormas.api.epidata;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.Valid;
 
 import de.symeda.sormas.api.Disease;
@@ -27,10 +29,7 @@ import de.symeda.sormas.api.ImportIgnore;
 import de.symeda.sormas.api.activityascase.ActivityAsCaseDto;
 import de.symeda.sormas.api.exposure.ExposureDto;
 import de.symeda.sormas.api.feature.FeatureType;
-import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.DependingOnFeatureType;
-import de.symeda.sormas.api.utils.Diseases;
-import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;
 
 @DependingOnFeatureType(featureType = {
@@ -44,6 +43,9 @@ public class EpiDataDto extends PseudonymizableDto {
 
 	public static final String EXPOSURE_DETAILS_KNOWN = "exposureDetailsKnown";
 	public static final String ACTIVITY_AS_CASE_DETAILS_KNOWN = "activityAsCaseDetailsKnown";
+	public static final String RECENT_TRAVEL_OUTBREAK = "recentTravelOutbreak";
+	public static final String CONTACT_SIMILAR_SYMPTOMS = "contactSimilarOutbreak";
+	public static final String CONTACT_SICK_ANIMALS = "contactSickAnimals";
 	public static final String CONTACT_WITH_SOURCE_CASE_KNOWN = "contactWithSourceCaseKnown";
 	public static final String EXPOSURES = "exposures";
 	public static final String ACTIVITIES_AS_CASE = "activitiesAsCase";
@@ -51,11 +53,16 @@ public class EpiDataDto extends PseudonymizableDto {
 	public static final String HIGH_TRANSMISSION_RISK_AREA = "highTransmissionRiskArea";
 	public static final String LARGE_OUTBREAKS_AREA = "largeOutbreaksArea";
 
-	private YesNoUnknown exposureDetailsKnown;
-	private YesNoUnknown activityAsCaseDetailsKnown;
-	private YesNoUnknown contactWithSourceCaseKnown;
-	private YesNoUnknown highTransmissionRiskArea;
-	private YesNoUnknown largeOutbreaksArea;
+	@Enumerated(EnumType.STRING)
+	private Disease disease;
+	private YesNo exposureDetailsKnown;
+	private YesNo activityAsCaseDetailsKnown;
+	private YesNo recentTravelOutbreak;
+	private YesNo contactSimilarOutbreak;
+	private YesNo contactSickAnimals;
+	private YesNo contactWithSourceCaseKnown;
+	private YesNo highTransmissionRiskArea;
+	private YesNo largeOutbreaksArea;
 	@Diseases({
 		Disease.AFP,
 		Disease.GUINEA_WORM,
@@ -64,7 +71,7 @@ public class EpiDataDto extends PseudonymizableDto {
 		Disease.POLIO,
 		Disease.UNDEFINED,
 		Disease.OTHER })
-	private YesNoUnknown areaInfectedAnimals;
+	private YesNo areaInfectedAnimals;
 
 	@Valid
 	private List<ExposureDto> exposures = new ArrayList<>();
@@ -72,20 +79,44 @@ public class EpiDataDto extends PseudonymizableDto {
 	@Valid
 	private List<ActivityAsCaseDto> activitiesAsCase = new ArrayList<>();
 
-	public YesNoUnknown getExposureDetailsKnown() {
+	public YesNo getExposureDetailsKnown() {
 		return exposureDetailsKnown;
 	}
 
-	public void setExposureDetailsKnown(YesNoUnknown exposureDetailsKnown) {
+	public void setExposureDetailsKnown(YesNo exposureDetailsKnown) {
 		this.exposureDetailsKnown = exposureDetailsKnown;
 	}
 
-	public YesNoUnknown getActivityAsCaseDetailsKnown() {
+	public YesNo getActivityAsCaseDetailsKnown() {
 		return activityAsCaseDetailsKnown;
 	}
 
-	public void setActivityAsCaseDetailsKnown(YesNoUnknown activityAsCaseDetailsKnown) {
+	public void setActivityAsCaseDetailsKnown(YesNo activityAsCaseDetailsKnown) {
 		this.activityAsCaseDetailsKnown = activityAsCaseDetailsKnown;
+	}
+
+	public YesNo getRecentTravelOutbreak() {
+		return recentTravelOutbreak;
+	}
+
+	public void setRecentTravelOutbreak(YesNo recentTravelOutbreak) {
+		this.recentTravelOutbreak = recentTravelOutbreak;
+	}
+
+	public YesNo getContactSimilarOutbreak() {
+		return contactSimilarOutbreak;
+	}
+
+	public void setContactSimilarOutbreak(YesNo contactSimilarOutbreak) {
+		this.contactSimilarOutbreak = contactSimilarOutbreak;
+	}
+
+	public YesNo getContactSickAnimals() {
+		return contactSickAnimals;
+	}
+
+	public void setContactSickAnimals(YesNo contactSickAnimals) {
+		this.contactSickAnimals = contactSickAnimals;
 	}
 
 	@ImportIgnore
@@ -106,36 +137,43 @@ public class EpiDataDto extends PseudonymizableDto {
 		this.activitiesAsCase = activitiesAsCase;
 	}
 
-	public YesNoUnknown getContactWithSourceCaseKnown() {
+	public YesNo getContactWithSourceCaseKnown() {
 		return contactWithSourceCaseKnown;
 	}
 
-	public void setContactWithSourceCaseKnown(YesNoUnknown contactWithSourceCaseKnown) {
+	public void setContactWithSourceCaseKnown(YesNo contactWithSourceCaseKnown) {
 		this.contactWithSourceCaseKnown = contactWithSourceCaseKnown;
 	}
 
-	public YesNoUnknown getHighTransmissionRiskArea() {
+	public YesNo getHighTransmissionRiskArea() {
 		return highTransmissionRiskArea;
 	}
 
-	public void setHighTransmissionRiskArea(YesNoUnknown highTransmissionRiskArea) {
+	public void setHighTransmissionRiskArea(YesNo highTransmissionRiskArea) {
 		this.highTransmissionRiskArea = highTransmissionRiskArea;
 	}
 
-	public YesNoUnknown getLargeOutbreaksArea() {
+	public YesNo getLargeOutbreaksArea() {
 		return largeOutbreaksArea;
 	}
 
-	public void setLargeOutbreaksArea(YesNoUnknown largeOutbreaksArea) {
+	public void setLargeOutbreaksArea(YesNo largeOutbreaksArea) {
 		this.largeOutbreaksArea = largeOutbreaksArea;
 	}
 
-	public YesNoUnknown getAreaInfectedAnimals() {
+	public YesNo getAreaInfectedAnimals() {
 		return areaInfectedAnimals;
 	}
 
-	public void setAreaInfectedAnimals(YesNoUnknown areaInfectedAnimals) {
+	public void setAreaInfectedAnimals(YesNo areaInfectedAnimals) {
 		this.areaInfectedAnimals = areaInfectedAnimals;
+	}
+
+	public Disease getDisease() {
+		return disease;
+	}
+	public void setDisease(Disease disease) {
+		this.disease = disease;
 	}
 
 	public static EpiDataDto build() {

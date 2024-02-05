@@ -21,7 +21,6 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNotNull;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -497,7 +496,7 @@ public class SormasToSormasContactFacadeEjbTest extends SormasToSormasTest {
 		SampleDto sample = SampleDto.build(reportingUser, associatedContact);
 		sample.setSampleDateTime(new Date());
 		sample.setReportDateTime(new Date());
-		sample.setSampleMaterial(SampleMaterial.BLOOD);
+		sample.setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
 		sample.setSamplePurpose(SamplePurpose.EXTERNAL);
 		sample.setLab(getFacilityFacade().getReferenceByUuid(lab.getUuid()));
 

@@ -26,6 +26,7 @@ import static org.mockito.Mockito.when;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 
+import de.symeda.sormas.api.utils.YesNo;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -54,7 +55,7 @@ public class EntityDtoAccessHelperTest {
 
 		hospitalizationDto = new HospitalizationDto();
 		hospitalizationDto.setDischargeDate(new Date(1600387200000L));
-		hospitalizationDto.setIsolated(YesNoUnknown.NO);
+		hospitalizationDto.setIsolated(YesNo.NO);
 
 		personReferenceDto = new PersonReferenceDto();
 		personReferenceDto.setUuid("GHIJKL");

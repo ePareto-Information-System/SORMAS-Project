@@ -33,6 +33,7 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import de.symeda.sormas.api.utils.YesNo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
@@ -281,7 +282,7 @@ public class SormasToSormasCaseFacadeEjbTest extends SormasToSormasTest {
 		person.setLastName("Smith");
 
 		CaseDataDto caze = createRemoteCaseDto(rdcf, person);
-		caze.getHospitalization().setAdmittedToHealthFacility(YesNoUnknown.YES);
+		caze.getHospitalization().setAdmittedToHealthFacility(YesNo.YES);
 		caze.getSymptoms().setAgitation(SymptomState.YES);
 		ExposureDto exposure = ExposureDto.build(ExposureType.ANIMAL_CONTACT);
 		exposure.setAnimalContactType(AnimalContactType.TOUCH);
@@ -328,7 +329,7 @@ public class SormasToSormasCaseFacadeEjbTest extends SormasToSormasTest {
 		person.setLastName("Smith");
 
 		CaseDataDto caze = createRemoteCaseDto(rdcf, person);
-		caze.getHospitalization().setAdmittedToHealthFacility(YesNoUnknown.YES);
+		caze.getHospitalization().setAdmittedToHealthFacility(YesNo.YES);
 		caze.getSymptoms().setAgitation(SymptomState.YES);
 		ExposureDto exposure = ExposureDto.build(ExposureType.ANIMAL_CONTACT);
 		exposure.setAnimalContactType(AnimalContactType.TOUCH);
@@ -1216,7 +1217,7 @@ public class SormasToSormasCaseFacadeEjbTest extends SormasToSormasTest {
 		SampleDto sample = SampleDto.build(reportingUser, associatedCase);
 		sample.setSampleDateTime(new Date());
 		sample.setReportDateTime(new Date());
-		sample.setSampleMaterial(SampleMaterial.BLOOD);
+		sample.setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
 		sample.setSamplePurpose(SamplePurpose.EXTERNAL);
 		sample.setLab(getFacilityFacade().getReferenceByUuid(lab.getUuid()));
 

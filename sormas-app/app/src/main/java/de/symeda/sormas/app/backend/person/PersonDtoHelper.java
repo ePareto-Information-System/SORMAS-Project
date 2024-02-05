@@ -71,6 +71,7 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 
 		target.setFirstName(source.getFirstName());
 		target.setLastName(source.getLastName());
+		target.setOtherName(source.getOtherName());
 		target.setSalutation(source.getSalutation());
 		target.setOtherSalutation(source.getOtherSalutation());
 		target.setBirthName(source.getBirthName());
@@ -104,6 +105,7 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 		target.setCauseOfDeath(source.getCauseOfDeath());
 		target.setCauseOfDeathDisease(source.getCauseOfDeathDisease());
 		target.setCauseOfDeathDetails(source.getCauseOfDeathDetails());
+		target.setDisease(source.getDisease());
 		target.setMothersName(source.getMothersName());
 		target.setFathersName(source.getFathersName());
 		target.setNamesOfGuardians(source.getNamesOfGuardians());
@@ -117,6 +119,7 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 
 		target.setPassportNumber(source.getPassportNumber());
 		target.setNationalHealthId(source.getNationalHealthId());
+		target.setGhanaCard(source.getGhanaCard());
 
 		target.setPseudonymized(source.isPseudonymized());
 		target.setPlaceOfBirthFacilityType(source.getPlaceOfBirthFacilityType());
@@ -155,6 +158,7 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 
 		target.setFirstName(source.getFirstName());
 		target.setLastName(source.getLastName());
+		target.setOtherName(source.getOtherName());
 		target.setSalutation(source.getSalutation());
 		target.setOtherSalutation(source.getOtherSalutation());
 		target.setBirthName(source.getBirthName());
@@ -179,6 +183,7 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 		target.setCauseOfDeath(source.getCauseOfDeath());
 		target.setCauseOfDeathDisease(source.getCauseOfDeathDisease());
 		target.setCauseOfDeathDetails(source.getCauseOfDeathDetails());
+		//target.setDisease(source.getDisease());
 
 		Location address = DatabaseHelper.getLocationDao().queryForId(source.getAddress().getId());
 		target.setAddress(locationHelper.adoToDto(address));
@@ -225,6 +230,7 @@ public class PersonDtoHelper extends AdoDtoHelper<Person, PersonDto> {
 
 		target.setPassportNumber(source.getPassportNumber());
 		target.setNationalHealthId(source.getNationalHealthId());
+		target.setGhanaCard(source.getGhanaCard());
 
 		target.setPseudonymized(source.isPseudonymized());
 		target.setPlaceOfBirthFacilityType(source.getPlaceOfBirthFacilityType());

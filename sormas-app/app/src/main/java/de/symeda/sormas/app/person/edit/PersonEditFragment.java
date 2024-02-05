@@ -86,6 +86,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 	public static final String TAG = PersonEditFragment.class.getSimpleName();
 
 	private Person record;
+	private Disease disease;
 	private AbstractDomainObject rootData;
 	private IEntryItemOnClickListener onAddressItemClickListener;
 	private IEntryItemOnClickListener onPersonContactDetailItemClickListener;
@@ -135,7 +136,7 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 
 	private void setUpLayoutBinding(final BaseEditFragment fragment, final Person record, final FragmentPersonEditLayoutBinding contentBinding) {
 
-		setUpControlListeners(record, fragment, contentBinding);
+		setUpControlListeners(record, fragment, contentBinding, disease);
 
 		fragment.setFieldVisibilitiesAndAccesses(PersonDto.class, contentBinding.mainContent);
 
@@ -215,7 +216,18 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		FieldVisibilityCheckers countryVisibilityChecker = FieldVisibilityCheckers.withCountry(ConfigProvider.getServerCountryCode());
 		contentBinding.personBirthdateYYYY.setSelectionOnOpen(year - 35);
 		contentBinding.personApproximateAgeType.initializeSpinner(approximateAgeTypeList);
-		contentBinding.personSex.initializeSpinner(sexList);
+
+		List<Item> filteredSexList = new ArrayList<>();
+		filteredSexList.add(new Item("", null));
+
+		for (Sex sex : Sex.values()) {
+			if (sex == Sex.MALE || sex == Sex.FEMALE) {
+				Item item = new Item(sex.toString(), sex);
+				filteredSexList.add(item);
+			}
+		}
+
+		contentBinding.personSex.initializeSpinner(filteredSexList);
 		contentBinding.personCauseOfDeath.initializeSpinner(causeOfDeathList);
 		contentBinding.personCauseOfDeathDisease.initializeSpinner(diseaseList);
 		contentBinding.personDeathPlaceType.initializeSpinner(deathPlaceTypeList);
@@ -264,8 +276,9 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 	public static void setUpControlListeners(
 		final Person record,
 		final BaseEditFragment fragment,
-		final FragmentPersonEditLayoutBinding contentBinding) {
-		contentBinding.personAddress.setOnClickListener(v -> openAddressPopup(record, fragment, contentBinding));
+		final FragmentPersonEditLayoutBinding contentBinding,
+		final Disease disease) {
+		contentBinding.personAddress.setOnClickListener(v -> openAddressPopup(record, fragment, contentBinding, disease));
 	}
 
 	public static Date calculateBirthDateValue(FragmentPersonEditLayoutBinding contentBinding) {
@@ -311,10 +324,11 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		}
 	}
 
-	private static void openAddressPopup(final Person record, final BaseEditFragment fragment, final FragmentPersonEditLayoutBinding contentBinding) {
+	private static void openAddressPopup(final Person record, final BaseEditFragment fragment, final FragmentPersonEditLayoutBinding contentBinding, Disease disease) {
 		final Location location = record.getAddress();
 		final Location locationClone = (Location) location.clone();
 		final LocationDialog locationDialog = new LocationDialog(BaseActivity.getActiveActivity(), locationClone, fragment.getFieldAccessCheckers());
+		locationDialog.setDisease(disease);
 		locationDialog.show();
 
 		locationDialog.setPositiveCallback(() -> {
@@ -585,6 +599,8 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 
 		if (ado instanceof Case) {
 			record = ((Case) ado).getPerson();
+			disease = ((Case) ado).getDisease();
+
 			rootData = ado;
 		} else if (ado instanceof Contact) {
 			record = ((Contact) ado).getPerson();
@@ -624,13 +640,47 @@ public class PersonEditFragment extends BaseEditFragment<FragmentPersonEditLayou
 		getContentBinding().setPersonContactDetailBindCallback(this::setLocationFieldVisibilitiesAndAccesses);
 
 		setUpLayoutBinding(this, record, contentBinding);
-	}
+
+//		contentBinding.personDisease.addValueChangedListener(new ValueChangeListener() {
+//			Disease currentDisease = record.getDisease();
+//			@Override
+//			public void onChange(ControlPropertyField field) {
+//
+//			}
+//		});
+		}
 
 	@Override
 	public void onAfterLayoutBinding(final FragmentPersonEditLayoutBinding contentBinding) {
 		if (!ConfigProvider.isConfiguredServer(CountryHelper.COUNTRY_CODE_GERMANY)) {
 			contentBinding.personArmedForcesRelationType.setVisibility(GONE);
 		}
+
+		if (disease != null) {
+			if (disease == Disease.AHF) {
+
+				List<Item> presentConditionList = new ArrayList<>();
+				presentConditionList.add(new Item("", null));
+
+				for (PresentCondition present : PresentCondition.values()) {
+					if (present == PresentCondition.ALIVE || present == PresentCondition.UNKNOWN) {
+						Item item = new Item(present.toString(), present);
+						presentConditionList.add(item);
+					}
+				}
+				contentBinding.personPresentCondition.initializeSpinner(presentConditionList);
+			}
+			else if(disease == Disease.CSM){
+				contentBinding.personAdditionalDetails.setVisibility(GONE);
+				contentBinding.headingAdditionalDetails.setVisibility(GONE);
+				contentBinding.personNickname.setVisibility(GONE);
+				contentBinding.personMothersMaidenName.setVisibility(GONE);
+
+
+
+			}
+		}
+
 	}
 
 	@Override

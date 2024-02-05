@@ -16,6 +16,7 @@
 package de.symeda.sormas.api.caze.surveillancereport;
 
 import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.utils.DependingOnFeatureType;
 import java.util.Date;
 
@@ -47,6 +48,7 @@ public class SurveillanceReportDto extends PseudonymizableDto {
 	public static final String FACILITY_REGION = "facilityRegion";
 	public static final String FACILITY_DISTRICT = "facilityDistrict";
 	public static final String FACILITY_TYPE = "facilityType";
+	public static final String DHIMS_FACILITY_TYPE = "dhimsFacilityType";
 	public static final String FACILITY = "facility";
 	public static final String FACILITY_DETAILS = "facilityDetails";
 	public static final String NOTIFICATION_DETAILS = "notificationDetails";
@@ -74,6 +76,7 @@ public class SurveillanceReportDto extends PseudonymizableDto {
 	private DistrictReferenceDto facilityDistrict;
 
 	private FacilityType facilityType;
+	private DhimsFacility dhimsFacilityType;
 
 	private FacilityReferenceDto facility;
 
@@ -141,6 +144,13 @@ public class SurveillanceReportDto extends PseudonymizableDto {
 
 	public void setFacilityType(FacilityType facilityType) {
 		this.facilityType = facilityType;
+	}
+
+	public DhimsFacility getDhimsFacilityType() {
+		return dhimsFacilityType;
+	}
+	public void setDhimsFacilityType(DhimsFacility dhimsFacilityType) {
+		this.dhimsFacilityType = dhimsFacilityType;
 	}
 
 	public FacilityReferenceDto getFacility() {

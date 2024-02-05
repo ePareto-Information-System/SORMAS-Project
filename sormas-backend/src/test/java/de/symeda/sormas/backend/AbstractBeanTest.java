@@ -26,8 +26,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import de.symeda.sormas.api.report.AggregateReportFacade;
+import de.symeda.sormas.api.sixtyday.SixtyDayFacade;
 import de.symeda.sormas.backend.report.AggregateReport;
 import de.symeda.sormas.backend.report.AggregateReportFacadeEjb;
+import de.symeda.sormas.backend.sixtyday.SixtyDayFacadeEjb;
 import org.junit.Before;
 
 import de.symeda.sormas.api.ConfigFacade;
@@ -564,6 +566,9 @@ public abstract class AbstractBeanTest extends BaseBeanTest {
 
 	public HospitalizationFacade getHospitalizationFacade() {
 		return getBean(HospitalizationFacadeEjbLocal.class);
+	}
+	public SixtyDayFacade getSixtyDayFacade() {
+		return getBean(SixtyDayFacadeEjb.SixtyDayFacadeEjbLocal.class);
 	}
 
 	public EpiDataFacade getEpiDataFacade() {

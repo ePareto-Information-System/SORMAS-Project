@@ -71,11 +71,19 @@ public class Person extends PseudonymizableAdo {
 	public static final String BIRTHDATE_YYYY = "birthdateYYYY";
 	public static final String BIRTHDATE_MM = "birthdateMM";
 	public static final String BIRTHDATE_DD = "birthdateDD";
+	public static final String OTHER_NAME = "otherName";
+	public static final String GHANA_CARD = "ghanaCard";
+	public static final String PASSPORT_NUMBER = "passportNumber";
+	public static final String DISEASE = "disease";
 
 	@Column(nullable = false)
 	private String firstName;
 	@Column(nullable = false)
 	private String lastName;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String otherName;
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	private String ghanaCard;
 	@Enumerated(EnumType.STRING)
 	private Salutation salutation;
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
@@ -188,6 +196,9 @@ public class Person extends PseudonymizableAdo {
 	@Column(columnDefinition = "text")
 	private String additionalDetails;
 
+	@Enumerated(EnumType.STRING)
+	private Disease disease;
+
 	public Person() {
 	}
 
@@ -207,6 +218,14 @@ public class Person extends PseudonymizableAdo {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+
+	public String getOtherName() {
+		return otherName;
+	}
+
+	public void setOtherName(String otherName) {
+		this.otherName = otherName;
 	}
 
 	public Salutation getSalutation() {
@@ -406,7 +425,12 @@ public class Person extends PseudonymizableAdo {
 	public Disease getCauseOfDeathDisease() {
 		return causeOfDeathDisease;
 	}
-
+	public Disease getDisease() {
+		return disease;
+	}
+	public void setDisease(Disease disease) {
+		this.disease = disease;
+	}
 	public void setCauseOfDeathDisease(Disease causeOfDeathDisease) {
 		this.causeOfDeathDisease = causeOfDeathDisease;
 	}
@@ -526,11 +550,16 @@ public class Person extends PseudonymizableAdo {
 	public void setBirthWeight(Integer birthWeight) {
 		this.birthWeight = birthWeight;
 	}
+	public String getGhanaCard() {
+		return ghanaCard;
+	}
 
+	public void setGhanaCard(String ghanaCard) {
+		this.ghanaCard = ghanaCard;
+	}
 	public String getPassportNumber() {
 		return passportNumber;
 	}
-
 	public void setPassportNumber(String passportNumber) {
 		this.passportNumber = passportNumber;
 	}

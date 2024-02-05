@@ -246,7 +246,7 @@ public class TestDataCreator {
 		SampleDto sample = SampleDto.build(reportingUser, associatedContact);
 		sample.setSampleDateTime(new Date());
 		sample.setReportDateTime(new Date());
-		sample.setSampleMaterial(SampleMaterial.BLOOD);
+		sample.setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
 		sample.setSamplePurpose(SamplePurpose.EXTERNAL);
 		sample.setLab(FacadeProvider.getFacilityFacade().getReferenceByUuid(lab.getUuid()));
 
@@ -506,7 +506,7 @@ public class TestDataCreator {
 		UserReferenceDto reportingUser,
 		FacilityDto lab,
 		Consumer<SampleDto> customConfig) {
-		return createSample(associatedCase, new Date(), new Date(), reportingUser, SampleMaterial.BLOOD, lab, customConfig);
+		return createSample(associatedCase, new Date(), new Date(), reportingUser, SampleMaterial.WHOLE_BLOOD, lab, customConfig);
 	}
 
 	public SampleDto createSample(

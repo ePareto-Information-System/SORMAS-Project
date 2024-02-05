@@ -501,7 +501,7 @@ public class CaseClassificationFacadeEjb implements CaseClassificationFacade {
 				PathogenTestType.ISOLATION,
 				PathogenTestType.SEQUENCING,
 				PathogenTestType.RAPID_TEST),
-			xOf(1, anyOfSymptoms(SymptomState.UNKNOWN, Disease.CORONAVIRUS), anyOfSymptoms(null, Disease.CORONAVIRUS)),
+			xOf(1, anyOfSymptoms(SymptomState.NO, Disease.CORONAVIRUS), anyOfSymptoms(null, Disease.CORONAVIRUS)),
 			noneOf(anyOfSymptoms(SymptomState.NO, Disease.CORONAVIRUS)),
 			noneOf(suspect));
 

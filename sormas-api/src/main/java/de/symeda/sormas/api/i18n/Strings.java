@@ -393,6 +393,7 @@ public interface Strings {
 	String headingChangeCaseDisease = "headingChangeCaseDisease";
 	String headingChangePathogenTestResult = "headingChangePathogenTestResult";
 	String headingClinicalMeasurements = "headingClinicalMeasurements";
+	String headingClinicalHistory = "headingClinicalHistory";
 	String headingClinicalVisitsDeleted = "headingClinicalVisitsDeleted";
 	String headingComparisonCase = "headingComparisonCase";
 	String headingCompleteness = "headingCompleteness";
@@ -535,6 +536,9 @@ public interface Strings {
 	String headingGenerateContacts = "headingGenerateContacts";
 	String headingHealthConditions = "headingHealthConditions";
 	String headingHospitalization = "headingHospitalization";
+	String headingSixtyDay = "headingSixtyDay";
+	String headingFillThis = "headingFillThis";
+	String headingChildSeek = "headingChildSeek";
 	String headingHowToMergeCases = "headingHowToMergeCases";
 	String headingHowToMergeContacts = "headingHowToMergeContacts";
 	String headingImportAllContinents = "headingImportAllContinents";
@@ -638,6 +642,11 @@ public interface Strings {
 	String headingRejectSormasToSormasShareRequest = "headingRejectSormasToSormasShareRequest";
 	String headingRemoveCaseFromContact = "headingRemoveCaseFromContact";
 	String headingRequestedAdditionalTests = "headingRequestedAdditionalTests";
+	String headingDistrictLaboratory = "headingDistrictLaboratory";
+	String headingRegionalLaboratory = "headingRegionalLaboratory";
+	String headingReferenceLaboratory = "headingReferenceLaboratory";
+	String laboratoryAntibiogramHeadlineloc = "headingLaboratoryAntibiogramHeadlineloc";
+	String laboratoryPcrHeadlineloc = "headingLaboratoryPcrHeadlineloc";
 	String headingRequestedPathogenTests = "headingRequestedPathogenTests";
 	String headingResponsibleJurisdiction = "headingResponsibleJurisdiction";
 	String headingResults = "headingResults";

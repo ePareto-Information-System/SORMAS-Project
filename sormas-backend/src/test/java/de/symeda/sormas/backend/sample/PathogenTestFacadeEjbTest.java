@@ -81,7 +81,7 @@ public class PathogenTestFacadeEjbTest extends AbstractBeanTest {
 		final CaseDataDto caze = creator.createCase(user.toReference(), person.toReference(), rdcf);
 		final ContactDto contact = creator.createContact(user.toReference(), person.toReference(), caze);
 		final SampleDto sample =
-			creator.createSample(contact.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
+			creator.createSample(contact.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
 
 		final PathogenTestDto newPathogenTest = creator.buildPathogenTestDto(rdcf, user, sample, contact.getDisease(), testDateTime);
 
@@ -97,7 +97,7 @@ public class PathogenTestFacadeEjbTest extends AbstractBeanTest {
 		final CaseDataDto caze = creator.createCase(user.toReference(), person.toReference(), rdcf);
 		final ContactDto contact = creator.createContact(user.toReference(), person.toReference(), caze);
 		final SampleDto sample =
-			creator.createSample(contact.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
+			creator.createSample(contact.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
 
 		final CaseDataDto caseDataDto = CaseDataDto.buildFromContact(contact);
 		caseDataDto.setResponsibleRegion(new RegionReferenceDto(rdcf.region.getUuid(), null, null));

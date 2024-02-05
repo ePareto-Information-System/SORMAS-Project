@@ -15,8 +15,6 @@
 
 package de.symeda.sormas.backend.caze;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.exactly;
-import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -60,8 +58,8 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolException;
 import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolFacade;
+import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.backend.MockProducer;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.http.HttpStatus;
@@ -166,11 +164,6 @@ import de.symeda.sormas.api.travelentry.TravelEntryDto;
 import de.symeda.sormas.api.user.DefaultUserRole;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
-import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.DateHelper;
-import de.symeda.sormas.api.utils.OutdatedEntityException;
-import de.symeda.sormas.api.utils.SortProperty;
-import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.criteria.ExternalShareDateType;
 import de.symeda.sormas.api.vaccination.VaccinationDto;
 import de.symeda.sormas.api.visit.VisitCriteria;
@@ -242,11 +235,11 @@ public class CaseFacadeEjbTest extends AbstractBeanTest {
 			Disease.CORONAVIRUS,
 			null);
 		SampleDto contactSample =
-			creator.createSample(contact.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
+			creator.createSample(contact.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
 
 		ContactDto otherContact = creator.createContact(user.toReference(), creator.createPerson("John", "Doe").toReference(), new Date());
 		SampleDto otherContactSample =
-			creator.createSample(otherContact.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
+			creator.createSample(otherContact.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
 		otherContact.setResultingCase(caze.toReference());
 		getContactFacade().save(otherContact);
 
@@ -911,7 +904,7 @@ public class CaseFacadeEjbTest extends AbstractBeanTest {
 		caze = getCaseFacade().save(caze);
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DATE, -1);
-		creator.createSample(caze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcfEntities.facility);
+		creator.createSample(caze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.WHOLE_BLOOD, rdcfEntities.facility);
 		creator.createSample(caze.toReference(), cal.getTime(), cal.getTime(), user.toReference(), SampleMaterial.CRUST, rdcfEntities.facility);
 		creator.createPathogenTest(caze, PathogenTestType.ANTIGEN_DETECTION, PathogenTestResultType.POSITIVE);
 		creator.createPrescription(caze);
@@ -1155,7 +1148,7 @@ public class CaseFacadeEjbTest extends AbstractBeanTest {
 			new Date(),
 			rdcf);
 
-		caze.getEpiData().setExposureDetailsKnown(YesNoUnknown.YES);
+		caze.getEpiData().setExposureDetailsKnown(YesNo.YES);
 
 		{
 			ExposureDto exposure = ExposureDto.build(ExposureType.TRAVEL);
@@ -1275,9 +1268,9 @@ public class CaseFacadeEjbTest extends AbstractBeanTest {
 			null,
 			new Date(),
 			user.toReference());
-		SampleDto sample = creator.createSample(caze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
+		SampleDto sample = creator.createSample(caze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
 		SampleDto sampleAssociatedToContactAndCase =
-			creator.createSample(caze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.BLOOD, rdcf.facility);
+			creator.createSample(caze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
 		ContactDto contact2 =
 			creator.createContact(user.toReference(), user.toReference(), contactPerson.toReference(), caze, new Date(), new Date(), null);
 		sampleAssociatedToContactAndCase.setAssociatedContact(new ContactReferenceDto(contact2.getUuid()));
@@ -1733,8 +1726,8 @@ public class CaseFacadeEjbTest extends AbstractBeanTest {
 				c.setAdditionalDetails("Test additional details");
 				c.setFollowUpComment("Test followup comment");
 			});
-		leadCase.setPregnant(YesNoUnknown.UNKNOWN);
-		leadCase.getEpiData().setActivityAsCaseDetailsKnown(YesNoUnknown.NO);
+		leadCase.setPregnant(YesNo.NO);
+		leadCase.getEpiData().setActivityAsCaseDetailsKnown(YesNo.NO);
 		getCaseFacade().save(leadCase);
 		VisitDto leadVisit = creator.createVisit(leadCase.getDisease(), leadCase.getPerson(), leadCase.getReportDate());
 		leadVisit.getSymptoms().setAnorexiaAppetiteLoss(SymptomState.YES);
@@ -1783,7 +1776,7 @@ public class CaseFacadeEjbTest extends AbstractBeanTest {
 		PrescriptionDto prescription = creator.createPrescription(otherCase);
 		ClinicalVisitDto visit = creator.createClinicalVisit(otherCase);
 
-		otherCase.getEpiData().setActivityAsCaseDetailsKnown(YesNoUnknown.YES);
+		otherCase.getEpiData().setActivityAsCaseDetailsKnown(YesNo.YES);
 		final ArrayList<ActivityAsCaseDto> otherActivitiesAsCase = new ArrayList<>();
 		ActivityAsCaseDto activityAsCaseDto = new ActivityAsCaseDto();
 		activityAsCaseDto.setActivityAsCaseType(ActivityAsCaseType.GATHERING);
@@ -1961,7 +1954,7 @@ public class CaseFacadeEjbTest extends AbstractBeanTest {
 				c.setFollowUpComment("Test other followup comment");
 			});
 
-		aCase.getEpiData().setActivityAsCaseDetailsKnown(YesNoUnknown.YES);
+		aCase.getEpiData().setActivityAsCaseDetailsKnown(YesNo.YES);
 		final ArrayList<ActivityAsCaseDto> otherActivitiesAsCase = new ArrayList<>();
 		ActivityAsCaseDto activityAsCaseDto = new ActivityAsCaseDto();
 		activityAsCaseDto.setActivityAsCaseType(ActivityAsCaseType.GATHERING);

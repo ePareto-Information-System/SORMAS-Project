@@ -33,6 +33,7 @@ import androidx.databinding.library.baseAdapters.BR;
 import androidx.fragment.app.FragmentActivity;
 
 import de.symeda.sormas.api.CountryHelper;
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.area.AreaType;
@@ -67,6 +68,7 @@ public class LocationDialog extends FormDialog {
 	private Location data;
 	private Facility previousFacility;
 	private DialogLocationLayoutBinding contentBinding;
+	private Disease disease;
 
 	// Constructor
 
@@ -220,6 +222,18 @@ public class LocationDialog extends FormDialog {
 			}
 		});
 
+		contentBinding.locationCountry.addValueChangedListener(e -> {
+			final Country country = (Country) e.getValue();
+
+			if (country != null && "Ghana".equals(country.getName())) {
+				// Show all items for Ghana
+				showAllItems();
+			} else {
+				// Hide all items for countries other than Ghana
+				hideAllItems();
+			}
+		});
+
 		contentBinding.locationFacility.addValueChangedListener(field -> {
 			final Facility facility = (Facility) field.getValue();
 
@@ -274,6 +288,42 @@ public class LocationDialog extends FormDialog {
 		ValidationHelper.initPhoneNumberValidator(contentBinding.locationContactPersonPhone);
 	}
 
+	private void hideAllItems(){
+		contentBinding.locationRegion.setVisibility(GONE);
+		contentBinding.locationDistrict.setVisibility(GONE);
+		contentBinding.locationCommunity.setVisibility(GONE);
+		contentBinding.locationPostalCode.setVisibility(GONE);
+		contentBinding.locationCity.setVisibility(GONE);
+		contentBinding.locationStreet.setVisibility(GONE);
+		contentBinding.locationAdditionalInformation.setVisibility(GONE);
+		contentBinding.locationAreaType.setVisibility(GONE);
+		contentBinding.locationHouseNumber.setVisibility(GONE);
+		contentBinding.pickGpsCoordinates.setVisibility(GONE);
+		contentBinding.locationLatitude.setVisibility(GONE);
+		contentBinding.locationLongitude.setVisibility(GONE);
+		contentBinding.locationLatLonAccuracy.setVisibility(GONE);
+	}
+
+	private void showAllItems() {
+		contentBinding.locationRegion.setVisibility(VISIBLE);
+		contentBinding.locationDistrict.setVisibility(VISIBLE);
+		contentBinding.locationCommunity.setVisibility(VISIBLE);
+		contentBinding.locationPostalCode.setVisibility(VISIBLE);
+		contentBinding.locationCity.setVisibility(VISIBLE);
+		contentBinding.locationStreet.setVisibility(VISIBLE);
+		contentBinding.locationAdditionalInformation.setVisibility(VISIBLE);
+		contentBinding.locationAreaType.setVisibility(VISIBLE);
+		contentBinding.pickGpsCoordinates.setVisibility(VISIBLE);
+		contentBinding.locationLatitude.setVisibility(VISIBLE);
+		contentBinding.locationLongitude.setVisibility(VISIBLE);
+		contentBinding.locationLatLonAccuracy.setVisibility(VISIBLE);
+
+		if(disease == Disease.CSM){
+			contentBinding.locationAreaType.setVisibility(GONE);
+			contentBinding.locationAdditionalInformation.setVisibility(GONE);
+		}
+
+	}
 	private void overrideLocationDetailsWithFacilityOnes(Facility facility) {
 		contentBinding.locationCity.setValue(facility.getCity());
 		contentBinding.locationPostalCode.setValue(facility.getPostalCode());
@@ -432,5 +482,9 @@ public class LocationDialog extends FormDialog {
 			contentBinding.locationFacility.setValue(oldFacility);
 			contentBinding.locationFacilityDetails.setValue(oldDetails);
 		});
+	}
+
+	public void setDisease(Disease incomingDisease) {
+		disease = incomingDisease;
 	}
 }

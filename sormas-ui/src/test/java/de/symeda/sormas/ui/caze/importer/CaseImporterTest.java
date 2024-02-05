@@ -398,11 +398,11 @@ public class CaseImporterTest extends AbstractBeanTest {
 		List<SampleDto> case2Samples = getSampleFacade().getByCaseUuids(Collections.singletonList(case2.getUuid()));
 		assertEquals(1, case2Samples.size());
 
-		assertEquals(SampleMaterial.BLOOD, case2Samples.get(0).getSampleMaterial());
+		assertEquals(SampleMaterial.WHOLE_BLOOD, case2Samples.get(0).getSampleMaterial());
 
 		List<SampleDto> case3Samples = getSampleFacade().getByCaseUuids(Collections.singletonList(case3.getUuid()));
 		assertEquals(2, case3Samples.size());
-		assertEquals("Should have one blood sample", 1, case3Samples.stream().filter(s -> s.getSampleMaterial() == SampleMaterial.BLOOD).count());
+		assertEquals("Should have one blood sample", 1, case3Samples.stream().filter(s -> s.getSampleMaterial() == SampleMaterial.WHOLE_BLOOD).count());
 		assertEquals("Should have one stool sample", 1, case3Samples.stream().filter(s -> s.getSampleMaterial() == SampleMaterial.STOOL).count());
 
 	}

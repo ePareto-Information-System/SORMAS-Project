@@ -60,6 +60,7 @@ public interface Descriptions {
 	String descFacilityFilter = "descFacilityFilter";
 	String descFollowUpExportButton = "descFollowUpExportButton";
 	String descGdpr = "descGdpr";
+	String observation = "observation";
 	String descPointOfEntryFilter = "descPointOfEntryFilter";
 	String discardDescription = "discardDescription";
 	String EpiData_bats = "EpiData.bats";
