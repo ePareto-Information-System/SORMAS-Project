@@ -15,7 +15,6 @@
 
 package de.symeda.sormas.ui.person;
 
-import static de.symeda.sormas.api.i18n.Strings.enabled;
 import static de.symeda.sormas.ui.utils.CssStyles.H3;
 import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_3;
 import static de.symeda.sormas.ui.utils.LayoutUtil.divsCss;
@@ -27,7 +26,6 @@ import java.time.Month;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -483,7 +481,7 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		}
 	}
 
-	public void showPersonalEmail(){
+	public void hidePersonalEmail(){
 		 setVisible(false, PersonDto.EMAIL_ADDRESS);
 	}
 
@@ -502,15 +500,16 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 
 		if (disease == Disease.YELLOW_FEVER || disease == Disease.AHF) {
 			validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.UNKNOWN);
-			showPersonalEmail();
+			hidePersonalEmail();
 		} else if (disease == Disease.CSM) {
 			validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.DEAD);
-			showPersonalEmail();
+			hidePersonalEmail();
 		}else if (disease == Disease.AFP) {
 			validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.DEAD, PresentCondition.BURIED);
-			showPersonalEmail();
+			hidePersonalEmail();
 		} else if (disease == Disease.MEASLES) {
 			validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.UNKNOWN);
+			hidePersonalEmail();
 		} else {
 			validValues = Arrays.asList(PresentCondition.values());
 		}
