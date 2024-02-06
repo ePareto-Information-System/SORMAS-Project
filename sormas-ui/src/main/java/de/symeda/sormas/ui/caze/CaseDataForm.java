@@ -1287,6 +1287,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			getFieldGroup().getField(CaseDataDto.PREGNANT).setVisible(false);
 			getFieldGroup().getField(CaseDataDto.POSTPARTUM).setVisible(false);
 			healthConditionsField.setVisible(false);
+			surveillanceOfficerField.setVisible(false);
 		}
 
 		if(disease == Disease.YELLOW_FEVER || disease == Disease.CSM){
