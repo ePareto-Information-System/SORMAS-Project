@@ -81,6 +81,7 @@ public class ExternalMessageDto extends SormasToSormasShareableDto {
 	public static final String ASSIGNEE = "assignee";
 	public static final String SURVEILLANCE_REPORT = "surveillanceReport";
 
+
 	@AuditIncludeProperty
 	private ExternalMessageType type;
 	private Disease disease;
@@ -146,7 +147,13 @@ public class ExternalMessageDto extends SormasToSormasShareableDto {
 	private String reportMessageId;
 	@AuditIncludeProperty
 	private ExternalMessageStatus status = ExternalMessageStatus.UNPROCESSED;
+	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_LUXEMBOURG)
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
+	private String personExternalId;
 
+	@HideForCountriesExcept(countries = CountryHelper.COUNTRY_CODE_LUXEMBOURG)
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_SMALL, message = Validations.textTooLong)
+	private String personNationalHealthId;
 	private UserReferenceDto assignee;
 	/**
 	 * Used in S2S context

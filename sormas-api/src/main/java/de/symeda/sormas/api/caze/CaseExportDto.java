@@ -401,6 +401,7 @@ public class CaseExportDto extends AbstractUuidDto {
 		this.symptomsId = symptomsId;
 		this.hospitalizationId = hospitalizationId;
 		this.healthConditionsId = healthConditionsId;
+		this.uuid = uuid;
 		this.epidNumber = epidNumber;
 		this.armedForcesRelationType = ArmedForcesRelationType;
 		this.disease = disease;
