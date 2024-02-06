@@ -270,6 +270,8 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		getContent().addComponent(addressesHeader, ADDRESSES_HEADER);
 		getContent().addComponent(contactInformationHeader, CONTACT_INFORMATION_HEADER);
 
+		addFields();
+
 	}
 
 	@Override
@@ -381,12 +383,6 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		});
 
 		addFields(PersonDto.ARMED_FORCES_RELATION_TYPE, PersonDto.EDUCATION_TYPE, PersonDto.EDUCATION_DETAILS);
-		addFields(
-			PersonDto.OCCUPATION_TYPE,
-			PersonDto.OCCUPATION_DETAILS,
-			PersonDto.ARMED_FORCES_RELATION_TYPE,
-									PersonDto.EDUCATION_TYPE,
-			PersonDto.EDUCATION_DETAILS);
 
 		List<CountryReferenceDto> countries = FacadeProvider.getCountryFacade().getAllActiveAsReference();
 		addInfrastructureField(PersonDto.BIRTH_COUNTRY).addItems(countries);
@@ -739,6 +735,9 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 				FieldHelper.updateEnumData(presentConditionField, validValues);
 			} else if (disease == Disease.AFP) {
 				List<PresentCondition> validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.DEAD, PresentCondition.BURIED);
+				FieldHelper.updateEnumData(presentConditionField, validValues);
+			} else if (disease == Disease.MEASLES) {
+				List<PresentCondition> validValues = Arrays.asList(PresentCondition.ALIVE, PresentCondition.UNKNOWN);
 				FieldHelper.updateEnumData(presentConditionField, validValues);
 			} else {
 				FieldVisibilityCheckers fieldVisibilityCheckers = FieldVisibilityCheckers.withDisease(disease);
