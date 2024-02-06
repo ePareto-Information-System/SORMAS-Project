@@ -549,7 +549,7 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 			Disease disease = (Disease) valueChangeEvent.getProperty().getValue();
 			updateDiseaseVariant(disease);
 
-			caseTransmissionClassification.setVisible(disease != Disease.YELLOW_FEVER && disease != Disease.CSM && disease != Disease.AHF);
+			caseTransmissionClassification.setVisible(disease != Disease.YELLOW_FEVER && disease != Disease.CSM && disease != Disease.AHF && disease != Disease.MEASLES);
 			ogCaseOrigin.setVisible(disease != Disease.CSM);
 
 			facilityOrHome.setVisible(disease != Disease.AFP);
