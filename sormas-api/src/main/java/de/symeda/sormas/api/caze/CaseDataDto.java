@@ -612,7 +612,7 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 		caze.setPortHealthInfo(PortHealthInfoDto.build());
 		caze.setDisease(disease);
 		caze.setInvestigationStatus(InvestigationStatus.PENDING);
-		caze.setCaseClassification(CaseClassification.NOT_CLASSIFIED);
+		caze.setCaseClassification(CaseClassification.SUSPECT);
 		caze.setOutcome(CaseOutcome.NO_OUTCOME);
 		caze.setCaseOrigin(CaseOrigin.IN_COUNTRY);
 		// TODO This is a workaround for transferring the followup comment while converting a contact to a case. This can be removed if the followup for cases is implemented in the mobile app
