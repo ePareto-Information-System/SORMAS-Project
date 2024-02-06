@@ -1083,7 +1083,7 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 			new Date(),
 			new Date(),
 			user.toReference(),
-			SampleMaterial.BLOOD,
+			SampleMaterial.WHOLE_BLOOD,
 			creator.createRDCF().facility);
 
 		ContactDto contactWithCoord = creator.createContact(user.toReference(), creator.createPerson().toReference(), Disease.CORONAVIRUS, c -> {
@@ -1095,7 +1095,7 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 			new Date(),
 			new Date(),
 			user.toReference(),
-			SampleMaterial.BLOOD,
+			SampleMaterial.WHOLE_BLOOD,
 			creator.createRDCF().facility);
 
 		EventDto event = creator.createEvent(user.toReference());
@@ -1106,7 +1106,7 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 			new Date(),
 			new Date(),
 			user.toReference(),
-			SampleMaterial.BLOOD,
+			SampleMaterial.WHOLE_BLOOD,
 			creator.createRDCF().facility);
 
 		EventDto eventWithCoord = creator.createEvent(user.toReference(), Disease.CORONAVIRUS, e -> {
@@ -1120,7 +1120,7 @@ public class SampleFacadeEjbTest extends AbstractBeanTest {
 			new Date(),
 			new Date(),
 			user.toReference(),
-			SampleMaterial.BLOOD,
+			SampleMaterial.WHOLE_BLOOD,
 			creator.createRDCF().facility);
 
 		// sample coordinates not taken

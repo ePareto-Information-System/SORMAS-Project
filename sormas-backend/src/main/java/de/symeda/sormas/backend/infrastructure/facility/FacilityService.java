@@ -367,9 +367,9 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.isNotNull(root.get(Facility.TYPE)));
 		}
 		if (facilityCriteria.getDhimsFacilityType() != null) {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Facility.DHIMS_FACILITY_TYPE), facilityCriteria.getDhimsFacilityType()));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(root.get(Facility.DHIMS_FACILITY_TYPE), facilityCriteria.getDhimsFacilityType()));
 		} else {
-			filter = CriteriaBuilderHelper.and(cb, filter, cb.isNotNull(from.get(Facility.DHIMS_FACILITY_TYPE)));
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.isNotNull(root.get(Facility.DHIMS_FACILITY_TYPE)));
 		}
 		if (facilityCriteria.getRelevanceStatus() != null) {
 			if (facilityCriteria.getRelevanceStatus() == EntityRelevanceStatus.ACTIVE) {

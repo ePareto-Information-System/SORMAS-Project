@@ -267,7 +267,6 @@ import de.symeda.sormas.backend.feature.FeatureConfigurationFacadeEjb.FeatureCon
 import de.symeda.sormas.backend.hospitalization.Hospitalization;
 import de.symeda.sormas.backend.hospitalization.HospitalizationFacadeEjb;
 import de.symeda.sormas.backend.hospitalization.HospitalizationFacadeEjb.HospitalizationFacadeEjbLocal;
-import de.symeda.sormas.backend.sixtyday.SixtyDayFacadeEjb.SixtyDayFacadeEjbLocal;
 import de.symeda.sormas.backend.hospitalization.PreviousHospitalization;
 import de.symeda.sormas.backend.immunization.ImmunizationEntityHelper;
 import de.symeda.sormas.backend.immunization.entity.Immunization;
@@ -360,7 +359,7 @@ import de.symeda.sormas.backend.visit.VisitService;
 @Stateless(name = "CaseFacade")
 @RightsAllowed(UserRight._CASE_VIEW)
 public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, CaseIndexDto, CaseReferenceDto, CaseService, CaseCriteria>
-	implements CaseFacade {
+		implements CaseFacade {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -407,7 +406,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	@EJB
 	private HospitalizationFacadeEjbLocal hospitalizationFacade;
 	@EJB
-	private SixtyDayFacadeEjbLocal sixtyDayFacade;
+	private SixtyDayFacadeEjb.SixtyDayFacadeEjbLocal sixtyDayFacade;
 	@EJB
 	private EpiDataFacadeEjbLocal epiDataFacade;
 	@EJB
@@ -517,7 +516,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight, pseudonymizedValue);
 
 		UserRightFieldAccessChecker clinicianViewRightChecker =
-			new UserRightFieldAccessChecker(UserRight.CASE_CLINICIAN_VIEW, userService.hasRight(UserRight.CASE_CLINICIAN_VIEW));
+				new UserRightFieldAccessChecker(UserRight.CASE_CLINICIAN_VIEW, userService.hasRight(UserRight.CASE_CLINICIAN_VIEW));
 		pseudonymizer.addFieldAccessChecker(clinicianViewRightChecker, clinicianViewRightChecker);
 
 		return pseudonymizer;
@@ -572,10 +571,10 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	}
 
 	public Page<CaseIndexDetailedDto> getIndexDetailedPage(
-		CaseCriteria caseCriteria,
-		Integer offset,
-		Integer size,
-		List<SortProperty> sortProperties) {
+			CaseCriteria caseCriteria,
+			Integer offset,
+			Integer size,
+			List<SortProperty> sortProperties) {
 		List<CaseIndexDetailedDto> caseIndexDetailedList = getIndexDetailedList(caseCriteria, offset * size, size, sortProperties);
 		long totalElementCount = count(caseCriteria);
 		return new Page<>(caseIndexDetailedList, offset, size, totalElementCount);
@@ -586,7 +585,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 		CriteriaQuery<Tuple> cqIds = listQueryBuilder.buildIndexCriteriaPrefetchIds(caseCriteria, sortProperties);
 		List<Long> indexListIds =
-			QueryHelper.getResultList(em, cqIds, first, max).stream().map(t -> t.get(0, Long.class)).collect(Collectors.toList());
+				QueryHelper.getResultList(em, cqIds, first, max).stream().map(t -> t.get(0, Long.class)).collect(Collectors.toList());
 
 		List<CaseIndexDto> cases = new ArrayList<>();
 		IterableHelper.executeBatched(indexListIds, ModelConstants.PARAMETER_LIMIT, batchedIds -> {
@@ -599,8 +598,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		Map<String, ExternalShareInfoCountAndLatestDate> survToolShareCountAndDates = null;
 		if (externalSurveillanceToolGatewayFacade.isFeatureEnabled()) {
 			survToolShareCountAndDates = externalShareInfoService.getCaseShareCountAndLatestDate(caseIds)
-				.stream()
-				.collect(Collectors.toMap(ExternalShareInfoCountAndLatestDate::getAssociatedObjectUuid, Function.identity()));
+					.stream()
+					.collect(Collectors.toMap(ExternalShareInfoCountAndLatestDate::getAssociatedObjectUuid, Function.identity()));
 		}
 
 		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight, I18nProperties.getCaption(Captions.inaccessibleValue));
@@ -617,14 +616,14 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 			Boolean isInJurisdiction = caze.getInJurisdiction();
 			pseudonymizer.pseudonymizeDto(
-				CaseIndexDto.class,
-				caze,
-				isInJurisdiction,
-				c -> pseudonymizer.pseudonymizeDto(AgeAndBirthDateDto.class, caze.getAgeAndBirthDate(), isInJurisdiction, null));
+					CaseIndexDto.class,
+					caze,
+					isInJurisdiction,
+					c -> pseudonymizer.pseudonymizeDto(AgeAndBirthDateDto.class, caze.getAgeAndBirthDate(), isInJurisdiction, null));
 
 			if (diseaseConfigurationFacade.hasFollowUp(caze.getDisease())) {
 				int numberOfMissedVisits =
-					FollowUpLogic.getNumberOfRequiredVisitsSoFar(caze.getReportDate(), caze.getFollowUpUntil()) - caze.getVisitCount();
+						FollowUpLogic.getNumberOfRequiredVisitsSoFar(caze.getReportDate(), caze.getFollowUpUntil()) - caze.getVisitCount();
 				if (numberOfMissedVisits < 0) {
 					numberOfMissedVisits = 0;
 				}
@@ -640,7 +639,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 		CriteriaQuery<Tuple> cqIds = listQueryBuilder.buildIndexDetailedCriteriaPrefetchIds(caseCriteria, sortProperties);
 		List<Long> indexListIds =
-			QueryHelper.getResultList(em, cqIds, first, max).stream().map(t -> t.get(0, Long.class)).collect(Collectors.toList());
+				QueryHelper.getResultList(em, cqIds, first, max).stream().map(t -> t.get(0, Long.class)).collect(Collectors.toList());
 
 		List<CaseIndexDetailedDto> cases = new ArrayList<>();
 		IterableHelper.executeBatched(indexListIds, ModelConstants.PARAMETER_LIMIT, batchedIds -> {
@@ -652,14 +651,14 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		// Adding a second query here is not perfect, but selecting the last event with a criteria query
 		// doesn't seem to be possible and using a native query is not an option because of user filters
 		List<EventSummaryDetails> eventSummaries =
-			eventService.getEventSummaryDetailsByCases(cases.stream().map(CaseIndexDetailedDto::getId).collect(Collectors.toList()));
+				eventService.getEventSummaryDetailsByCases(cases.stream().map(CaseIndexDetailedDto::getId).collect(Collectors.toList()));
 
 		Map<String, ExternalShareInfoCountAndLatestDate> survToolShareCountAndDates = null;
 		if (externalSurveillanceToolGatewayFacade.isFeatureEnabled()) {
 			survToolShareCountAndDates =
-				externalShareInfoService.getCaseShareCountAndLatestDate(cases.stream().map(CaseIndexDto::getId).collect(Collectors.toList()))
-					.stream()
-					.collect(Collectors.toMap(ExternalShareInfoCountAndLatestDate::getAssociatedObjectUuid, Function.identity()));
+					externalShareInfoService.getCaseShareCountAndLatestDate(cases.stream().map(CaseIndexDto::getId).collect(Collectors.toList()))
+							.stream()
+							.collect(Collectors.toMap(ExternalShareInfoCountAndLatestDate::getAssociatedObjectUuid, Function.identity()));
 		}
 
 		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight, I18nProperties.getCaption(Captions.inaccessibleValue));
@@ -676,25 +675,25 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 			if (caze.getEventCount() > 0) {
 				eventSummaries.stream()
-					.filter(v -> v.getCaseId() == caze.getId())
-					.max(Comparator.comparing(EventSummaryDetails::getEventDate))
-					.ifPresent(eventSummary -> {
-						caze.setLatestEventId(eventSummary.getEventUuid());
-						caze.setLatestEventStatus(eventSummary.getEventStatus());
-						caze.setLatestEventTitle(eventSummary.getEventTitle());
-					});
+						.filter(v -> v.getCaseId() == caze.getId())
+						.max(Comparator.comparing(EventSummaryDetails::getEventDate))
+						.ifPresent(eventSummary -> {
+							caze.setLatestEventId(eventSummary.getEventUuid());
+							caze.setLatestEventStatus(eventSummary.getEventStatus());
+							caze.setLatestEventTitle(eventSummary.getEventTitle());
+						});
 			}
 
 			Boolean isInJurisdiction = caze.getInJurisdiction();
 			pseudonymizer.pseudonymizeDto(CaseIndexDetailedDto.class, caze, isInJurisdiction, c -> {
 				pseudonymizer.pseudonymizeDto(AgeAndBirthDateDto.class, caze.getAgeAndBirthDate(), isInJurisdiction, null);
 				pseudonymizer
-					.pseudonymizeUser(userService.getByUuid(caze.getReportingUser().getUuid()), userService.getCurrentUser(), caze::setReportingUser);
+						.pseudonymizeUser(userService.getByUuid(caze.getReportingUser().getUuid()), userService.getCurrentUser(), caze::setReportingUser);
 			});
 
 			if (diseaseConfigurationFacade.hasFollowUp(caze.getDisease())) {
 				int numberOfMissedVisits =
-					FollowUpLogic.getNumberOfRequiredVisitsSoFar(caze.getReportDate(), caze.getFollowUpUntil()) - caze.getVisitCount();
+						FollowUpLogic.getNumberOfRequiredVisitsSoFar(caze.getReportDate(), caze.getFollowUpUntil()) - caze.getVisitCount();
 				if (numberOfMissedVisits < 0) {
 					numberOfMissedVisits = 0;
 				}
@@ -728,7 +727,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	}
 
 	@RightsAllowed({
-		UserRight._CASE_EDIT })
+			UserRight._CASE_EDIT })
 	public CaseDataDto postUpdate(String uuid, JsonNode caseDataDtoJson) {
 		CaseDataDto existingCaseDto = getCaseDataWithoutPseudonyimization(uuid);
 		PatchHelper.postUpdate(caseDataDtoJson, existingCaseDto);
@@ -740,13 +739,13 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@RightsAllowed(UserRight._CASE_EXPORT)
 	public List<CaseExportDto> getExportList(
-		CaseCriteria caseCriteria,
-		Collection<String> selectedRows,
-		CaseExportType exportType,
-		int first,
-		int max,
-		ExportConfigurationDto exportConfiguration,
-		Language userLanguage) {
+			CaseCriteria caseCriteria,
+			Collection<String> selectedRows,
+			CaseExportType exportType,
+			int first,
+			int max,
+			ExportConfigurationDto exportConfiguration,
+			Language userLanguage) {
 
 		Boolean previousCaseManagementDataCriteria = caseCriteria.getMustHaveCaseManagementData();
 		if (CaseExportType.CASE_MANAGEMENT == exportType) {
@@ -766,10 +765,10 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		Join<EventParticipant, Event> event = eventCountRoot.join(EventParticipant.EVENT, JoinType.INNER);
 		Join<EventParticipant, Case> resultingCase = eventCountRoot.join(EventParticipant.RESULTING_CASE, JoinType.INNER);
 		eventCountSq.where(
-			cb.and(
-				cb.equal(resultingCase.get(Case.ID), caseRoot.get(Case.ID)),
-				cb.isFalse(event.get(Event.DELETED)),
-				cb.isFalse(eventCountRoot.get(EventParticipant.DELETED))));
+				cb.and(
+						cb.equal(resultingCase.get(Case.ID), caseRoot.get(Case.ID)),
+						cb.isFalse(event.get(Event.DELETED)),
+						cb.isFalse(eventCountRoot.get(EventParticipant.DELETED))));
 		eventCountSq.select(cb.countDistinct(event.get(Event.ID)));
 
 		Subquery<Long> prescriptionCountSq = cq.subquery(Long.class);
@@ -786,11 +785,11 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 		boolean exportGpsCoordinates = ExportHelper.shouldExportFields(exportConfiguration, PersonDto.ADDRESS, CaseExportDto.ADDRESS_GPS_COORDINATES);
 		boolean exportPrescriptionNumber = (exportType == null || exportType == CaseExportType.CASE_MANAGEMENT)
-			&& ExportHelper.shouldExportFields(exportConfiguration, CaseExportDto.NUMBER_OF_PRESCRIPTIONS);
+				&& ExportHelper.shouldExportFields(exportConfiguration, CaseExportDto.NUMBER_OF_PRESCRIPTIONS);
 		boolean exportTreatmentNumber = (exportType == null || exportType == CaseExportType.CASE_MANAGEMENT)
-			&& ExportHelper.shouldExportFields(exportConfiguration, CaseExportDto.NUMBER_OF_TREATMENTS);
+				&& ExportHelper.shouldExportFields(exportConfiguration, CaseExportDto.NUMBER_OF_TREATMENTS);
 		boolean exportClinicalVisitNumber = (exportType == null || exportType == CaseExportType.CASE_MANAGEMENT)
-			&& ExportHelper.shouldExportFields(exportConfiguration, CaseExportDto.NUMBER_OF_CLINICAL_VISITS);
+				&& ExportHelper.shouldExportFields(exportConfiguration, CaseExportDto.NUMBER_OF_CLINICAL_VISITS);
 		boolean exportOutbreakInfo = ExportHelper.shouldExportFields(exportConfiguration, CaseExportDto.ASSOCIATED_WITH_OUTBREAK);
 
 		//@formatter:off
@@ -932,7 +931,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 					Root<HealthConditions> healthConditionsRoot = healthConditionsCq.from(HealthConditions.class);
 					Expression<String> healthConditionsIdsExpr = healthConditionsRoot.get(HealthConditions.ID);
 					healthConditionsCq.where(
-						healthConditionsIdsExpr.in(resultList.stream().map(CaseExportDto::getHealthConditionsId).collect(Collectors.toList())));
+							healthConditionsIdsExpr.in(resultList.stream().map(CaseExportDto::getHealthConditionsId).collect(Collectors.toList())));
 					healthConditionsList = em.createQuery(healthConditionsCq).setHint(ModelConstants.READ_ONLY, true).getResultList();
 					healthConditions = healthConditionsList.stream().collect(Collectors.toMap(HealthConditions::getId, Function.identity()));
 				}
@@ -944,38 +943,38 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				CriteriaQuery<PreviousHospitalization> prevHospsCq = cb.createQuery(PreviousHospitalization.class);
 				Root<PreviousHospitalization> prevHospsRoot = prevHospsCq.from(PreviousHospitalization.class);
 				Join<PreviousHospitalization, Hospitalization> prevHospsHospitalizationJoin =
-					prevHospsRoot.join(PreviousHospitalization.HOSPITALIZATION, JoinType.LEFT);
+						prevHospsRoot.join(PreviousHospitalization.HOSPITALIZATION, JoinType.LEFT);
 				Expression<String> hospitalizationIdsExpr = prevHospsHospitalizationJoin.get(Hospitalization.ID);
 				prevHospsCq
-					.where(hospitalizationIdsExpr.in(resultList.stream().map(CaseExportDto::getHospitalizationId).collect(Collectors.toList())));
+						.where(hospitalizationIdsExpr.in(resultList.stream().map(CaseExportDto::getHospitalizationId).collect(Collectors.toList())));
 				prevHospsCq.orderBy(cb.asc(prevHospsRoot.get(PreviousHospitalization.ADMISSION_DATE)));
 				prevHospsList = em.createQuery(prevHospsCq).setHint(ModelConstants.READ_ONLY, true).getResultList();
 				firstPreviousHospitalizations =
-					prevHospsList.stream().collect(Collectors.toMap(p -> p.getHospitalization().getId(), Function.identity(), (id1, id2) -> id1));
+						prevHospsList.stream().collect(Collectors.toMap(p -> p.getHospitalization().getId(), Function.identity(), (id1, id2) -> id1));
 			}
 
 			Map<Long, CaseClassification> sourceCaseClassifications = null;
 			if (ExportHelper.shouldExportFields(exportConfiguration, CaseExportDto.MAX_SOURCE_CASE_CLASSIFICATION)) {
 				sourceCaseClassifications = contactService.getSourceCaseClassifications(resultCaseIds)
-					.stream()
-					.collect(
-						Collectors
-							.toMap(e -> (Long) e[0], e -> (CaseClassification) e[1], (c1, c2) -> c1.getSeverity() >= c2.getSeverity() ? c1 : c2));
+						.stream()
+						.collect(
+								Collectors
+										.toMap(e -> (Long) e[0], e -> (CaseClassification) e[1], (c1, c2) -> c1.getSeverity() >= c2.getSeverity() ? c1 : c2));
 			}
 
 			Map<Long, List<Exposure>> exposures = null;
 			if ((exportType == null || exportType == CaseExportType.CASE_SURVEILLANCE)
-				&& ExportHelper
+					&& ExportHelper
 					.shouldExportFields(exportConfiguration, CaseExportDto.TRAVELED, CaseExportDto.TRAVEL_HISTORY, CaseExportDto.BURIAL_ATTENDED)) {
 				CriteriaQuery<Exposure> exposuresCq = cb.createQuery(Exposure.class);
 				Root<Exposure> exposuresRoot = exposuresCq.from(Exposure.class);
 				Join<Exposure, EpiData> exposuresEpiDataJoin = exposuresRoot.join(Exposure.EPI_DATA, JoinType.LEFT);
 				Expression<String> epiDataIdsExpr = exposuresEpiDataJoin.get(EpiData.ID);
 				Predicate exposuresPredicate = cb.and(
-					epiDataIdsExpr.in(resultList.stream().map(CaseExportDto::getEpiDataId).collect(Collectors.toList())),
-					cb.or(
-						cb.equal(exposuresRoot.get(Exposure.EXPOSURE_TYPE), ExposureType.TRAVEL),
-						cb.equal(exposuresRoot.get(Exposure.EXPOSURE_TYPE), ExposureType.BURIAL)));
+						epiDataIdsExpr.in(resultList.stream().map(CaseExportDto::getEpiDataId).collect(Collectors.toList())),
+						cb.or(
+								cb.equal(exposuresRoot.get(Exposure.EXPOSURE_TYPE), ExposureType.TRAVEL),
+								cb.equal(exposuresRoot.get(Exposure.EXPOSURE_TYPE), ExposureType.BURIAL)));
 				exposuresCq.where(exposuresPredicate);
 				exposuresCq.orderBy(cb.asc(exposuresEpiDataJoin.get(EpiData.ID)));
 				List<Exposure> exposureList = em.createQuery(exposuresCq).setHint(ModelConstants.READ_ONLY, true).getResultList();
@@ -984,20 +983,20 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 			Map<Long, List<EmbeddedSampleExportDto>> samples = null;
 			if ((exportType == null || exportType == CaseExportType.CASE_SURVEILLANCE)
-				&& ExportHelper.shouldExportFields(exportConfiguration, CaseExportDto.SAMPLE_INFORMATION)) {
+					&& ExportHelper.shouldExportFields(exportConfiguration, CaseExportDto.SAMPLE_INFORMATION)) {
 				List<EmbeddedSampleExportDto> samplesList = null;
 				CriteriaQuery<EmbeddedSampleExportDto> samplesCq = cb.createQuery(EmbeddedSampleExportDto.class);
 				Root<Sample> samplesRoot = samplesCq.from(Sample.class);
 				Join<Sample, Case> samplesCaseJoin = samplesRoot.join(Sample.ASSOCIATED_CASE, JoinType.LEFT);
 				Expression<String> caseIdsExpr = samplesCaseJoin.get(Case.ID);
 				samplesCq.multiselect(
-					samplesRoot.get(Sample.UUID),
-					samplesRoot.get(Sample.SAMPLE_DATE_TIME),
-					samplesRoot.get(Sample.LAB).get(Facility.UUID),
-					samplesRoot.get(Sample.LAB).get(Facility.NAME),
-					samplesRoot.get(Sample.LAB_DETAILS),
-					samplesRoot.get(Sample.PATHOGEN_TEST_RESULT),
-					caseIdsExpr);
+						samplesRoot.get(Sample.UUID),
+						samplesRoot.get(Sample.SAMPLE_DATE_TIME),
+						samplesRoot.get(Sample.LAB).get(Facility.UUID),
+						samplesRoot.get(Sample.LAB).get(Facility.NAME),
+						samplesRoot.get(Sample.LAB_DETAILS),
+						samplesRoot.get(Sample.PATHOGEN_TEST_RESULT),
+						caseIdsExpr);
 
 				Predicate eliminateDeletedSamplesFilter = cb.equal(samplesRoot.get(Sample.DELETED), false);
 				samplesCq.where(caseIdsExpr.in(resultCaseIds), eliminateDeletedSamplesFilter);
@@ -1007,7 +1006,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 			List<VisitSummaryExportDetails> visitSummaries = null;
 			if (featureConfigurationFacade.isFeatureEnabled(FeatureType.CASE_FOLLOWUP)
-				&& ExportHelper.shouldExportFields(
+					&& ExportHelper.shouldExportFields(
 					exportConfiguration,
 					CaseExportDto.NUMBER_OF_VISITS,
 					CaseExportDto.LAST_COOPERATIVE_VISIT_DATE,
@@ -1019,35 +1018,35 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				Join<Visit, Symptoms> visitSymptomsJoin = visitsJoin.join(Visit.SYMPTOMS, JoinType.LEFT);
 
 				visitsCq.where(
-					CriteriaBuilderHelper
-						.and(cb, visitsCqRoot.get(AbstractDomainObject.ID).in(resultCaseIds), cb.isNotEmpty(visitsCqRoot.get(Case.VISITS))));
+						CriteriaBuilderHelper
+								.and(cb, visitsCqRoot.get(AbstractDomainObject.ID).in(resultCaseIds), cb.isNotEmpty(visitsCqRoot.get(Case.VISITS))));
 				visitsCq.multiselect(
-					visitsCqRoot.get(AbstractDomainObject.ID),
-					visitsJoin.get(Visit.VISIT_DATE_TIME),
-					visitsJoin.get(Visit.VISIT_STATUS),
-					visitSymptomsJoin);
+						visitsCqRoot.get(AbstractDomainObject.ID),
+						visitsJoin.get(Visit.VISIT_DATE_TIME),
+						visitsJoin.get(Visit.VISIT_STATUS),
+						visitSymptomsJoin);
 
 				visitSummaries = em.createQuery(visitsCq).getResultList();
 			}
 
 			Map<Long, List<Immunization>> immunizations = null;
 			if ((exportType == null || exportType == CaseExportType.CASE_SURVEILLANCE)
-				&& (exportConfiguration == null
+					&& (exportConfiguration == null
 					|| exportConfiguration.getProperties()
-						.stream()
-						.anyMatch(p -> StringUtils.equalsAny(p, ExportHelper.getVaccinationExportProperties())))) {
+					.stream()
+					.anyMatch(p -> StringUtils.equalsAny(p, ExportHelper.getVaccinationExportProperties())))) {
 				List<Immunization> immunizationList;
 				CriteriaQuery<Immunization> immunizationsCq = cb.createQuery(Immunization.class);
 				Root<Immunization> immunizationsCqRoot = immunizationsCq.from(Immunization.class);
 				Join<Immunization, Person> personJoin = immunizationsCqRoot.join(Immunization.PERSON, JoinType.LEFT);
 				Expression<String> personIdsExpr = personJoin.get(Person.ID);
 				immunizationsCq.where(
-					CriteriaBuilderHelper.and(
-						cb,
-						cb.or(
-							cb.equal(immunizationsCqRoot.get(Immunization.MEANS_OF_IMMUNIZATION), MeansOfImmunization.VACCINATION),
-							cb.equal(immunizationsCqRoot.get(Immunization.MEANS_OF_IMMUNIZATION), MeansOfImmunization.VACCINATION_RECOVERY)),
-						personIdsExpr.in(resultList.stream().map(CaseExportDto::getPersonId).collect(Collectors.toList()))));
+						CriteriaBuilderHelper.and(
+								cb,
+								cb.or(
+										cb.equal(immunizationsCqRoot.get(Immunization.MEANS_OF_IMMUNIZATION), MeansOfImmunization.VACCINATION),
+										cb.equal(immunizationsCqRoot.get(Immunization.MEANS_OF_IMMUNIZATION), MeansOfImmunization.VACCINATION_RECOVERY)),
+								personIdsExpr.in(resultList.stream().map(CaseExportDto::getPersonId).collect(Collectors.toList()))));
 				immunizationsCq.select(immunizationsCqRoot);
 				immunizationList = em.createQuery(immunizationsCq).setHint(ModelConstants.READ_ONLY, true).getResultList();
 				immunizations = immunizationList.stream().collect(Collectors.groupingBy(i -> i.getPerson().getId()));
@@ -1058,10 +1057,10 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			// doesn't seem to be possible and using a native query is not an option because of user filters
 			List<EventSummaryDetails> eventSummaries = null;
 			if (ExportHelper.shouldExportFields(
-				exportConfiguration,
-				CaseExportDto.LATEST_EVENT_ID,
-				CaseExportDto.LATEST_EVENT_STATUS,
-				CaseExportDto.LATEST_EVENT_TITLE)) {
+					exportConfiguration,
+					CaseExportDto.LATEST_EVENT_ID,
+					CaseExportDto.LATEST_EVENT_STATUS,
+					CaseExportDto.LATEST_EVENT_TITLE)) {
 
 				eventSummaries = eventService.getEventSummaryDetailsByCases(resultCaseIds);
 			}
@@ -1078,25 +1077,25 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				}
 				if (ExportHelper.shouldExportFields(exportConfiguration, CaseDataDto.SYMPTOMS)) {
 					Optional.ofNullable(symptoms.get(exportDto.getSymptomsId()))
-						.ifPresent(symptom -> exportDto.setSymptoms(SymptomsFacadeEjb.toSymptomsDto(symptom)));
+							.ifPresent(symptom -> exportDto.setSymptoms(SymptomsFacadeEjb.toSymptomsDto(symptom)));
 				}
 				if (healthConditions != null) {
 					Optional.ofNullable(healthConditions.get(exportDto.getHealthConditionsId()))
-						.ifPresent(healthCondition -> exportDto.setHealthConditions(HealthConditionsMapper.toDto(healthCondition)));
+							.ifPresent(healthCondition -> exportDto.setHealthConditions(HealthConditionsMapper.toDto(healthCondition)));
 				}
 				if (firstPreviousHospitalizations != null) {
 					Optional.ofNullable(firstPreviousHospitalizations.get(exportDto.getHospitalizationId()))
-						.ifPresent(firstPreviousHospitalization -> {
-							if (firstPreviousHospitalization.getHealthFacility() != null) {
-								exportDto.setInitialDetectionPlace(
-									FacilityHelper.buildFacilityString(
-										firstPreviousHospitalization.getHealthFacility().getUuid(),
-										firstPreviousHospitalization.getHealthFacility().getName(),
-										firstPreviousHospitalization.getHealthFacilityDetails()));
-							} else {
-								exportDto.setInitialDetectionPlace(I18nProperties.getCaption(Captions.unknown));
-							}
-						});
+							.ifPresent(firstPreviousHospitalization -> {
+								if (firstPreviousHospitalization.getHealthFacility() != null) {
+									exportDto.setInitialDetectionPlace(
+											FacilityHelper.buildFacilityString(
+													firstPreviousHospitalization.getHealthFacility().getUuid(),
+													firstPreviousHospitalization.getHealthFacility().getName(),
+													firstPreviousHospitalization.getHealthFacilityDetails()));
+								} else {
+									exportDto.setInitialDetectionPlace(I18nProperties.getCaption(Captions.unknown));
+								}
+							});
 					if (StringUtils.isEmpty(exportDto.getInitialDetectionPlace())) {
 						if (!StringUtils.isEmpty(exportDto.getHealthFacility())) {
 							exportDto.setInitialDetectionPlace(exportDto.getHealthFacility());
@@ -1107,7 +1106,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				}
 				if (sourceCaseClassifications != null) {
 					Optional.ofNullable(sourceCaseClassifications.get(exportDto.getId()))
-						.ifPresent(sourceCaseClassification -> exportDto.setMaxSourceCaseClassification(sourceCaseClassification));
+							.ifPresent(sourceCaseClassification -> exportDto.setMaxSourceCaseClassification(sourceCaseClassification));
 				}
 				if (exposures != null) {
 					Optional.ofNullable(exposures.get(exportDto.getEpiDataId())).ifPresent(caseExposures -> {
@@ -1118,20 +1117,20 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 						caseExposures.stream().filter(e -> ExposureType.TRAVEL.equals(e.getExposureType())).forEach(exposure -> {
 							Location location = exposure.getLocation();
 							travelHistoryBuilder.append(
-								EpiDataHelper.buildDetailedTravelString(
-									LocationReferenceDto.buildCaption(
-										location.getRegion() != null ? location.getRegion().getName() : null,
-										location.getDistrict() != null ? location.getDistrict().getName() : null,
-										location.getCommunity() != null ? location.getCommunity().getName() : null,
-										location.getCity(),
-										location.getStreet(),
-										location.getHouseNumber(),
-										location.getAdditionalInformation()),
-									exposure.getDescription(),
-									exposure.getStartDate(),
-									exposure.getEndDate(),
-									userLanguage))
-								.append(", ");
+											EpiDataHelper.buildDetailedTravelString(
+													LocationReferenceDto.buildCaption(
+															location.getRegion() != null ? location.getRegion().getName() : null,
+															location.getDistrict() != null ? location.getDistrict().getName() : null,
+															location.getCommunity() != null ? location.getCommunity().getName() : null,
+															location.getCity(),
+															location.getStreet(),
+															location.getHouseNumber(),
+															location.getAdditionalInformation()),
+													exposure.getDescription(),
+													exposure.getStartDate(),
+													exposure.getEndDate(),
+													userLanguage))
+									.append(", ");
 						});
 						if (travelHistoryBuilder.length() > 0) {
 							exportDto.setTraveled(true);
@@ -1147,17 +1146,17 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 						for (EmbeddedSampleExportDto sampleDto : caseSamples) {
 
 							switch (++count) {
-							case 1:
-								exportDto.setSample1(sampleDto);
-								break;
-							case 2:
-								exportDto.setSample2(sampleDto);
-								break;
-							case 3:
-								exportDto.setSample3(sampleDto);
-								break;
-							default:
-								exportDto.addOtherSample(sampleDto);
+								case 1:
+									exportDto.setSample1(sampleDto);
+									break;
+								case 2:
+									exportDto.setSample2(sampleDto);
+									break;
+								case 3:
+									exportDto.setSample3(sampleDto);
+									break;
+								default:
+									exportDto.addOtherSample(sampleDto);
 							}
 						}
 					});
@@ -1165,7 +1164,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				if (immunizations != null) {
 					Optional.ofNullable(immunizations.get(exportDto.getPersonId())).ifPresent(caseImmunizations -> {
 						List<Immunization> filteredImmunizations =
-							caseImmunizations.stream().filter(i -> i.getDisease() == exportDto.getDisease()).collect(Collectors.toList());
+								caseImmunizations.stream().filter(i -> i.getDisease() == exportDto.getDisease()).collect(Collectors.toList());
 						if (!filteredImmunizations.isEmpty()) {
 							filteredImmunizations.sort(Comparator.comparing(i -> ImmunizationEntityHelper.getDateForComparison(i, false)));
 							Immunization mostRecentImmunization = filteredImmunizations.get(filteredImmunizations.size() - 1);
@@ -1173,9 +1172,9 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 							Date onsetDate = Optional.ofNullable(symptoms.get(exportDto.getSymptomsId())).map(Symptoms::getOnsetDate).orElse(null);
 
 							List<Vaccination> relevantSortedVaccinations = vaccinationService.getRelevantSortedVaccinations(
-								filteredImmunizations.stream().flatMap(i -> i.getVaccinations().stream()).collect(Collectors.toList()),
-								onsetDate,
-								exportDto.getReportDate());
+									filteredImmunizations.stream().flatMap(i -> i.getVaccinations().stream()).collect(Collectors.toList()),
+									onsetDate,
+									exportDto.getReportDate());
 							Vaccination firstVaccination = null;
 							Vaccination lastVaccination = null;
 
@@ -1196,18 +1195,18 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 							}
 
 							exportDto.setNumberOfDoses(
-								numberOfDoses != null ? String.valueOf(numberOfDoses) : getNumberOfDosesFromVaccinations(lastVaccination));
+									numberOfDoses != null ? String.valueOf(numberOfDoses) : getNumberOfDosesFromVaccinations(lastVaccination));
 						}
 					});
 				}
 				if (visitSummaries != null) {
 					List<VisitSummaryExportDetails> visits =
-						visitSummaries.stream().filter(v -> v.getContactId() == exportDto.getId()).collect(Collectors.toList());
+							visitSummaries.stream().filter(v -> v.getContactId() == exportDto.getId()).collect(Collectors.toList());
 
 					VisitSummaryExportDetails lastCooperativeVisit = visits.stream()
-						.filter(v -> v.getVisitStatus() == VisitStatus.COOPERATIVE)
-						.max(Comparator.comparing(VisitSummaryExportDetails::getVisitDateTime))
-						.orElse(null);
+							.filter(v -> v.getVisitStatus() == VisitStatus.COOPERATIVE)
+							.max(Comparator.comparing(VisitSummaryExportDetails::getVisitDateTime))
+							.orElse(null);
 
 					exportDto.setNumberOfVisits(visits.size());
 					if (lastCooperativeVisit != null) {
@@ -1218,21 +1217,21 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 						exportDto.setLastCooperativeVisitSymptoms(SymptomsHelper.buildSymptomsHumanString(visitSymptoms, true, userLanguage));
 						exportDto.setLastCooperativeVisitSymptomatic(
-							visitSymptoms.getSymptomatic() == null
-								? YesNoUnknown.UNKNOWN
-								: (visitSymptoms.getSymptomatic() ? YesNoUnknown.YES : YesNoUnknown.NO));
+								visitSymptoms.getSymptomatic() == null
+										? YesNoUnknown.UNKNOWN
+										: (visitSymptoms.getSymptomatic() ? YesNoUnknown.YES : YesNoUnknown.NO));
 					}
 				}
 
 				if (eventSummaries != null && exportDto.getEventCount() != 0) {
 					eventSummaries.stream()
-						.filter(v -> v.getCaseId() == exportDto.getId())
-						.max(Comparator.comparing(EventSummaryDetails::getEventDate))
-						.ifPresent(eventSummary -> {
-							exportDto.setLatestEventId(eventSummary.getEventUuid());
-							exportDto.setLatestEventStatus(eventSummary.getEventStatus());
-							exportDto.setLatestEventTitle(eventSummary.getEventTitle());
-						});
+							.filter(v -> v.getCaseId() == exportDto.getId())
+							.max(Comparator.comparing(EventSummaryDetails::getEventDate))
+							.ifPresent(eventSummary -> {
+								exportDto.setLatestEventId(eventSummary.getEventUuid());
+								exportDto.setLatestEventStatus(eventSummary.getEventStatus());
+								exportDto.setLatestEventTitle(eventSummary.getEventTitle());
+							});
 				}
 
 				if (!caseUsers.isEmpty()) {
@@ -1241,7 +1240,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 						exportDto.setReportingUserName(user.getName());
 						exportDto.setReportingUserRoles(
-							user.getUserRoles().stream().map(userRole -> UserRoleFacadeEjb.toReferenceDto(userRole)).collect(Collectors.toSet()));
+								user.getUserRoles().stream().map(userRole -> UserRoleFacadeEjb.toReferenceDto(userRole)).collect(Collectors.toSet()));
 					}
 
 					if (exportDto.getFollowUpStatusChangeUserId() != null) {
@@ -1249,7 +1248,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 						exportDto.setFollowUpStatusChangeUserName(user.getName());
 						exportDto.setFollowUpStatusChangeUserRoles(
-							user.getUserRoles().stream().map(userRole -> UserRoleFacadeEjb.toReferenceDto(userRole)).collect(Collectors.toSet()));
+								user.getUserRoles().stream().map(userRole -> UserRoleFacadeEjb.toReferenceDto(userRole)).collect(Collectors.toSet()));
 					}
 				}
 
@@ -1283,12 +1282,12 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		outbreakSubquery.select(outbreakRoot.get(Outbreak.ID));
 		outbreakSubquery.where(cb.and(cb.equal(districtJoin.get(District.ID), joins.getDistrict().
 
-			get(District.ID)),
-			cb.equal(outbreakRoot.get(Outbreak.DISEASE), caseRoot.get(Case.DISEASE)),
-			cb.lessThanOrEqualTo(outbreakRoot.get(Outbreak.START_DATE), caseRoot.get(Case.REPORT_DATE)),
-			cb.or(
-				cb.isNull(outbreakRoot.get(Outbreak.END_DATE)),
-				cb.greaterThanOrEqualTo(outbreakRoot.get(Outbreak.END_DATE), caseRoot.get(Case.REPORT_DATE)))));
+						get(District.ID)),
+				cb.equal(outbreakRoot.get(Outbreak.DISEASE), caseRoot.get(Case.DISEASE)),
+				cb.lessThanOrEqualTo(outbreakRoot.get(Outbreak.START_DATE), caseRoot.get(Case.REPORT_DATE)),
+				cb.or(
+						cb.isNull(outbreakRoot.get(Outbreak.END_DATE)),
+						cb.greaterThanOrEqualTo(outbreakRoot.get(Outbreak.END_DATE), caseRoot.get(Case.REPORT_DATE)))));
 		return outbreakSubquery;
 	}
 
@@ -1297,7 +1296,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		Root<ClinicalVisit> clinicalVisitRoot = clinicalVisitCountSq.from(ClinicalVisit.class);
 		Join<ClinicalVisit, ClinicalCourse> clinicalVisitClinicalCourseJoin = clinicalVisitRoot.join(ClinicalVisit.CLINICAL_COURSE, JoinType.LEFT);
 		clinicalVisitCountSq.where(
-			cb.and(cb.equal(clinicalVisitClinicalCourseJoin.get(ClinicalCourse.ID), caseRoot.get(Case.CLINICAL_COURSE).get(ClinicalCourse.ID))));
+				cb.and(cb.equal(clinicalVisitClinicalCourseJoin.get(ClinicalCourse.ID), caseRoot.get(Case.CLINICAL_COURSE).get(ClinicalCourse.ID))));
 		clinicalVisitCountSq.select(cb.countDistinct(clinicalVisitRoot.get(ClinicalVisit.ID)));
 		return clinicalVisitCountSq;
 	}
@@ -1305,13 +1304,13 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	private Map<Long, UserReference> getCaseUsersForExport(List<CaseExportDto> resultList, ExportConfigurationDto exportConfiguration) {
 		Map<Long, UserReference> caseUsers = Collections.emptyMap();
 		if (exportConfiguration == null
-			|| exportConfiguration.getProperties().contains(CaseDataDto.REPORTING_USER)
-			|| exportConfiguration.getProperties().contains(CaseDataDto.FOLLOW_UP_STATUS_CHANGE_USER)) {
+				|| exportConfiguration.getProperties().contains(CaseDataDto.REPORTING_USER)
+				|| exportConfiguration.getProperties().contains(CaseDataDto.FOLLOW_UP_STATUS_CHANGE_USER)) {
 			Set<Long> userIds = resultList.stream()
-				.map((c -> Arrays.asList(c.getReportingUserId(), c.getFollowUpStatusChangeUserId())))
-				.flatMap(Collection::stream)
-				.filter(Objects::nonNull)
-				.collect(Collectors.toSet());
+					.map((c -> Arrays.asList(c.getReportingUserId(), c.getFollowUpStatusChangeUserId())))
+					.flatMap(Collection::stream)
+					.filter(Objects::nonNull)
+					.collect(Collectors.toSet());
 			caseUsers = userService.getUserReferencesByIds(userIds).stream().collect(Collectors.toMap(UserReference::getId, Function.identity()));
 		}
 
@@ -1333,14 +1332,14 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	}
 
 	@RightsAllowed({
-		UserRight._DASHBOARD_SURVEILLANCE_VIEW, })
+			UserRight._DASHBOARD_SURVEILLANCE_VIEW, })
 	public Long countCasesForMap(
-		RegionReferenceDto regionRef,
-		DistrictReferenceDto districtRef,
-		Disease disease,
-		Date from,
-		Date to,
-		NewCaseDateType dateType) {
+			RegionReferenceDto regionRef,
+			DistrictReferenceDto districtRef,
+			Disease disease,
+			Date from,
+			Date to,
+			NewCaseDateType dateType) {
 		Region region = regionService.getByReferenceDto(regionRef);
 		District district = districtService.getByReferenceDto(districtRef);
 
@@ -1349,14 +1348,14 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 	@Override
 	@RightsAllowed({
-		UserRight._DASHBOARD_SURVEILLANCE_VIEW, })
+			UserRight._DASHBOARD_SURVEILLANCE_VIEW, })
 	public List<MapCaseDto> getCasesForMap(
-		RegionReferenceDto regionRef,
-		DistrictReferenceDto districtRef,
-		Disease disease,
-		Date from,
-		Date to,
-		NewCaseDateType dateType) {
+			RegionReferenceDto regionRef,
+			DistrictReferenceDto districtRef,
+			Disease disease,
+			Date from,
+			Date to,
+			NewCaseDateType dateType) {
 
 		Region region = regionService.getByReferenceDto(regionRef);
 		District district = districtService.getByReferenceDto(districtRef);
@@ -1365,10 +1364,10 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		// todo shouldn't this also use the overridden createPseudonymizer method?
 		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight);
 		pseudonymizer.pseudonymizeDtoCollection(
-			MapCaseDto.class,
-			cases,
-			MapCaseDto::getInJurisdiction,
-			(c, isInJurisdiction) -> pseudonymizer.pseudonymizeDto(PersonReferenceDto.class, c.getPerson(), isInJurisdiction, null));
+				MapCaseDto.class,
+				cases,
+				MapCaseDto::getInJurisdiction,
+				(c, isInJurisdiction) -> pseudonymizer.pseudonymizeDto(PersonReferenceDto.class, c.getPerson(), isInJurisdiction, null));
 
 		return cases;
 	}
@@ -1452,11 +1451,11 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 	@Override
 	public List<CaseMergeIndexDto[]> getCasesForDuplicateMerging(
-		CaseCriteria criteria,
-		@Min(1) Integer limit,
-		boolean showDuplicatesWithDifferentRegion) {
+			CaseCriteria criteria,
+			@Min(1) Integer limit,
+			boolean showDuplicatesWithDifferentRegion) {
 		List<CaseMergeIndexDto[]> cases =
-			service.getCasesForDuplicateMerging(criteria, limit, showDuplicatesWithDifferentRegion, configFacade.getNameSimilarityThreshold());
+				service.getCasesForDuplicateMerging(criteria, limit, showDuplicatesWithDifferentRegion, configFacade.getNameSimilarityThreshold());
 
 		for (CaseMergeIndexDto[] caze : cases) {
 			pseudonymizeCasePairs(caze);
@@ -1471,10 +1470,10 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		Arrays.stream(cazePair).forEach(caze -> {
 			Boolean isInJurisdiction = caze.getInJurisdiction();
 			pseudonymizer.pseudonymizeDto(
-				CaseMergeIndexDto.class,
-				caze,
-				isInJurisdiction,
-				c -> pseudonymizer.pseudonymizeDto(AgeAndBirthDateDto.class, caze.getAgeAndBirthDate(), isInJurisdiction, null));
+					CaseMergeIndexDto.class,
+					caze,
+					isInJurisdiction,
+					c -> pseudonymizer.pseudonymizeDto(AgeAndBirthDateDto.class, caze.getAgeAndBirthDate(), isInJurisdiction, null));
 		});
 	}
 
@@ -1500,16 +1499,16 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 	@Override
 	@RightsAllowed({
-		UserRight._CASE_CREATE,
-		UserRight._CASE_EDIT })
+			UserRight._CASE_CREATE,
+			UserRight._CASE_EDIT })
 	public CaseDataDto save(@Valid @NotNull CaseDataDto dto) throws ValidationRuntimeException {
 		return save(dto, true, true, true);
 	}
 
 	@Override
 	@RightsAllowed({
-		UserRight._CASE_CREATE,
-		UserRight._CASE_EDIT })
+			UserRight._CASE_CREATE,
+			UserRight._CASE_EDIT })
 	public CoreAndPersonDto<CaseDataDto> save(@Valid @NotNull CoreAndPersonDto<CaseDataDto> coreAndPersonDto) throws ValidationRuntimeException {
 		CaseDataDto caseDto = coreAndPersonDto.getCoreData();
 		CoreAndPersonDto savedCoreAndPersonDto = new CoreAndPersonDto();
@@ -1525,17 +1524,17 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 	@Override
 	@RightsAllowed({
-		UserRight._CASE_EDIT })
+			UserRight._CASE_EDIT })
 	public Integer saveBulkCase(
-		List<String> caseUuidList,
-		@Valid CaseBulkEditData updatedCaseBulkEditData,
-		boolean diseaseChange,
-		boolean diseaseVariantChange,
-		boolean classificationChange,
-		boolean investigationStatusChange,
-		boolean outcomeChange,
-		boolean surveillanceOfficerChange)
-		throws ValidationRuntimeException {
+			List<String> caseUuidList,
+			@Valid CaseBulkEditData updatedCaseBulkEditData,
+			boolean diseaseChange,
+			boolean diseaseVariantChange,
+			boolean classificationChange,
+			boolean investigationStatusChange,
+			boolean outcomeChange,
+			boolean surveillanceOfficerChange)
+			throws ValidationRuntimeException {
 
 		int changedCases = 0;
 		for (String caseUuid : caseUuidList) {
@@ -1544,14 +1543,14 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			if (service.isEditAllowed(caze)) {
 				CaseDataDto existingCaseDto = toDto(caze);
 				updateCaseWithBulkData(
-					updatedCaseBulkEditData,
-					caze,
-					diseaseChange,
-					diseaseVariantChange,
-					classificationChange,
-					investigationStatusChange,
-					outcomeChange,
-					surveillanceOfficerChange);
+						updatedCaseBulkEditData,
+						caze,
+						diseaseChange,
+						diseaseVariantChange,
+						classificationChange,
+						investigationStatusChange,
+						outcomeChange,
+						surveillanceOfficerChange);
 				doSave(caze, true, existingCaseDto, true);
 				changedCases++;
 			}
@@ -1561,22 +1560,22 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 	@Override
 	@RightsAllowed({
-		UserRight._CASE_EDIT })
+			UserRight._CASE_EDIT })
 	public Integer saveBulkEditWithFacilities(
-		List<String> caseUuidList,
-		@Valid CaseBulkEditData updatedCaseBulkEditData,
-		boolean diseaseChange,
-		boolean diseaseVariantChange,
-		boolean classificationChange,
-		boolean investigationStatusChange,
-		boolean outcomeChange,
-		boolean surveillanceOfficerChange,
-		Boolean doTransfer) {
+			List<String> caseUuidList,
+			@Valid CaseBulkEditData updatedCaseBulkEditData,
+			boolean diseaseChange,
+			boolean diseaseVariantChange,
+			boolean classificationChange,
+			boolean investigationStatusChange,
+			boolean outcomeChange,
+			boolean surveillanceOfficerChange,
+			Boolean doTransfer) {
 
 		Region newRegion = regionService.getByUuid(updatedCaseBulkEditData.getRegion().getUuid());
 		District newDistrict = districtService.getByUuid(updatedCaseBulkEditData.getDistrict().getUuid());
 		Community newCommunity =
-			updatedCaseBulkEditData.getCommunity() != null ? communityService.getByUuid(updatedCaseBulkEditData.getCommunity().getUuid()) : null;
+				updatedCaseBulkEditData.getCommunity() != null ? communityService.getByUuid(updatedCaseBulkEditData.getCommunity().getUuid()) : null;
 		Facility newFacility = facilityService.getByUuid(updatedCaseBulkEditData.getHealthFacility().getUuid());
 
 		int changedCases = 0;
@@ -1586,14 +1585,14 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			if (service.isEditAllowed(caze)) {
 				CaseDataDto existingCaseDto = toDto(caze);
 				updateCaseWithBulkData(
-					updatedCaseBulkEditData,
-					caze,
-					diseaseChange,
-					diseaseVariantChange,
-					classificationChange,
-					investigationStatusChange,
-					outcomeChange,
-					surveillanceOfficerChange);
+						updatedCaseBulkEditData,
+						caze,
+						diseaseChange,
+						diseaseVariantChange,
+						classificationChange,
+						investigationStatusChange,
+						outcomeChange,
+						surveillanceOfficerChange);
 
 				caze.setRegion(newRegion);
 				caze.setDistrict(newDistrict);
@@ -1612,22 +1611,22 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	}
 
 	private void updateCaseWithBulkData(
-		CaseBulkEditData updatedCaseBulkEditData,
-		Case existingCase,
-		boolean diseaseChange,
-		boolean diseaseVariantChange,
-		boolean classificationChange,
-		boolean investigationStatusChange,
-		boolean outcomeChange,
-		boolean surveillanceOfficerChange) {
+			CaseBulkEditData updatedCaseBulkEditData,
+			Case existingCase,
+			boolean diseaseChange,
+			boolean diseaseVariantChange,
+			boolean classificationChange,
+			boolean investigationStatusChange,
+			boolean outcomeChange,
+			boolean surveillanceOfficerChange) {
 
 		if (diseaseChange) {
 			Disease newDisease = updatedCaseBulkEditData.getDisease();
 			existingCase.setDisease(newDisease);
 
 			if (!diseaseVariantChange
-				&& existingCase.getDiseaseVariant() != null
-				&& !customizableEnumFacade
+					&& existingCase.getDiseaseVariant() != null
+					&& !customizableEnumFacade
 					.existsEnumValue(CustomizableEnumType.DISEASE_VARIANT, existingCase.getDiseaseVariant().getValue(), newDisease)) {
 				existingCase.setDiseaseVariant(null);
 				existingCase.setDiseaseVariantDetails(null);
@@ -1669,10 +1668,10 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	}
 
 	@RightsAllowed({
-		UserRight._CASE_CREATE,
-		UserRight._CASE_EDIT })
+			UserRight._CASE_CREATE,
+			UserRight._CASE_EDIT })
 	public CaseDataDto save(@Valid CaseDataDto dto, boolean handleChanges, boolean checkChangeDate, boolean internal)
-		throws ValidationRuntimeException {
+			throws ValidationRuntimeException {
 
 		Case existingCase = service.getByUuid(dto.getUuid(), true);
 		FacadeHelper.checkCreateAndEditRights(existingCase, userService, UserRight.CASE_CREATE, UserRight.CASE_EDIT);
@@ -1690,7 +1689,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	}
 
 	@RightsAllowed({
-		UserRight._CASE_EDIT })
+			UserRight._CASE_EDIT })
 	public CaseDataDto updateFollowUpComment(@Valid @NotNull CaseDataDto dto) throws ValidationRuntimeException {
 
 		Case caze = service.getByUuid(dto.getUuid());
@@ -1701,10 +1700,10 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 	@Override
 	@RightsAllowed({
-		UserRight._CASE_EDIT,
-		UserRight._IMMUNIZATION_CREATE,
-		UserRight._IMMUNIZATION_EDIT,
-		UserRight._IMMUNIZATION_DELETE })
+			UserRight._CASE_EDIT,
+			UserRight._IMMUNIZATION_CREATE,
+			UserRight._IMMUNIZATION_EDIT,
+			UserRight._IMMUNIZATION_DELETE })
 	public void updateVaccinationStatus(CaseReferenceDto caseRef, VaccinationStatus status) {
 		Case caze = service.getByReferenceDto(caseRef);
 		caze.setVaccinationStatus(status);
@@ -1713,13 +1712,13 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	}
 
 	private CaseDataDto caseSave(
-		@Valid CaseDataDto dto,
-		boolean handleChanges,
-		Case existingCaze,
-		CaseDataDto existingCaseDto,
-		boolean checkChangeDate,
-		boolean syncShares)
-		throws ValidationRuntimeException {
+			@Valid CaseDataDto dto,
+			boolean handleChanges,
+			Case existingCaze,
+			CaseDataDto existingCaseDto,
+			boolean checkChangeDate,
+			boolean syncShares)
+			throws ValidationRuntimeException {
 		SymptomsHelper.updateIsSymptomatic(dto.getSymptoms());
 
 		Pseudonymizer pseudonymizer = createPseudonymizer();
@@ -1759,9 +1758,9 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	private void updateCaseVisitAssociations(CaseDataDto existingCase, Case caze) {
 
 		if (existingCase != null
-			&& Objects.equals(existingCase.getReportDate(), caze.getReportDate())
-			&& Objects.equals(existingCase.getFollowUpUntil(), caze.getFollowUpUntil())
-			&& existingCase.getDisease() == caze.getDisease()) {
+				&& Objects.equals(existingCase.getReportDate(), caze.getReportDate())
+				&& Objects.equals(existingCase.getFollowUpUntil(), caze.getFollowUpUntil())
+				&& existingCase.getDisease() == caze.getDisease()) {
 			return;
 		}
 
@@ -1772,10 +1771,10 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		}
 
 		Set<Visit> allRelevantVisits = visitService.getAllRelevantVisits(
-			caze.getPerson(),
-			caze.getDisease(),
-			CaseLogic.getStartDate(caze.getSymptoms().getOnsetDate(), caze.getSymptoms().getOnsetDate()),
-			CaseLogic.getEndDate(caze.getSymptoms().getOnsetDate(), caze.getReportDate(), caze.getFollowUpUntil()));
+				caze.getPerson(),
+				caze.getDisease(),
+				CaseLogic.getStartDate(caze.getSymptoms().getOnsetDate(), caze.getSymptoms().getOnsetDate()),
+				CaseLogic.getEndDate(caze.getSymptoms().getOnsetDate(), caze.getReportDate(), caze.getFollowUpUntil()));
 
 		for (Visit visit : allRelevantVisits) {
 			caze.getVisits().add(visit); // Necessary for further logic during the case save process
@@ -1785,8 +1784,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 	@Override
 	@RightsAllowed({
-		UserRight._CASE_CREATE,
-		UserRight._CASE_EDIT })
+			UserRight._CASE_CREATE,
+			UserRight._CASE_EDIT })
 	public void setSampleAssociations(ContactReferenceDto sourceContact, CaseReferenceDto cazeRef) {
 
 		if (sourceContact != null) {
@@ -1814,8 +1813,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 	@Override
 	@RightsAllowed({
-		UserRight._CASE_CREATE,
-		UserRight._CASE_EDIT })
+			UserRight._CASE_CREATE,
+			UserRight._CASE_EDIT })
 	public void setSampleAssociations(EventParticipantReferenceDto sourceEventParticipant, CaseReferenceDto cazeRef) {
 
 		if (sourceEventParticipant != null) {
@@ -1843,8 +1842,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 	@Override
 	@RightsAllowed({
-		UserRight._CASE_CREATE,
-		UserRight._CASE_EDIT })
+			UserRight._CASE_CREATE,
+			UserRight._CASE_EDIT })
 	public void setSampleAssociationsUnrelatedDisease(EventParticipantReferenceDto sourceEventParticipant, CaseReferenceDto cazeRef) {
 		final EventParticipant eventParticipant = eventParticipantService.getByUuid(sourceEventParticipant.getUuid());
 		final Case caze = service.getByUuid(cazeRef.getUuid());
@@ -1882,7 +1881,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.validResponsibleDistrict));
 		}
 		if (caze.getResponsibleCommunity() != null
-			&& !communityFacade.getByUuid(caze.getResponsibleCommunity().getUuid()).getDistrict().equals(caze.getResponsibleDistrict())) {
+				&& !communityFacade.getByUuid(caze.getResponsibleCommunity().getUuid()).getDistrict().equals(caze.getResponsibleDistrict())) {
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.noResponsibleCommunityInResponsibleDistrict));
 		}
 		if ((caze.getCaseOrigin() == null || caze.getCaseOrigin() == CaseOrigin.IN_COUNTRY) && (caze.getHealthFacility() == null && caze.getDhimsFacilityType() == null && caze.getAfpFacilityOptions() == null && caze.getHospitalName() == null)) {
@@ -1899,17 +1898,17 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.noResponsibleDistrictInResponsibleRegion));
 		}
 		if (caze.getResponsibleCommunity() != null
-			&& !communityFacade.getByUuid(caze.getResponsibleCommunity().getUuid()).getDistrict().equals(caze.getResponsibleDistrict())) {
+				&& !communityFacade.getByUuid(caze.getResponsibleCommunity().getUuid()).getDistrict().equals(caze.getResponsibleDistrict())) {
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.noResponsibleCommunityInResponsibleDistrict));
 		}
 		if (caze.getRegion() != null
-			&& caze.getDistrict() != null
-			&& !districtFacade.getByUuid(caze.getDistrict().getUuid()).getRegion().equals(caze.getRegion())) {
+				&& caze.getDistrict() != null
+				&& !districtFacade.getByUuid(caze.getDistrict().getUuid()).getRegion().equals(caze.getRegion())) {
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.noDistrictInRegion));
 		}
 		if (caze.getDistrict() != null
-			&& caze.getCommunity() != null
-			&& !communityFacade.getByUuid(caze.getCommunity().getUuid()).getDistrict().equals(caze.getDistrict())) {
+				&& caze.getCommunity() != null
+				&& !communityFacade.getByUuid(caze.getCommunity().getUuid()).getDistrict().equals(caze.getDistrict())) {
 			throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.noCommunityInDistrict));
 		}
 		if (caze.getHealthFacility() != null) {
@@ -1921,18 +1920,18 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				}
 			} else if (!caze.getFacilityType().isAccommodation()) {
 				throw new ValidationRuntimeException(
-					I18nProperties.getValidationError(Validations.notAccomodationFacilityType, caze.getFacilityType()));
+						I18nProperties.getValidationError(Validations.notAccomodationFacilityType, caze.getFacilityType()));
 			}
 
 			if (caze.getRegion() == null) {
 				if (caze.getResponsibleCommunity() == null
-					&& healthFacility.getDistrict() != null
-					&& !healthFacility.getDistrict().equals(caze.getResponsibleDistrict())) {
+						&& healthFacility.getDistrict() != null
+						&& !healthFacility.getDistrict().equals(caze.getResponsibleDistrict())) {
 					throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.noFacilityInResponsibleDistrict));
 				}
 				if (caze.getResponsibleCommunity() != null
-					&& healthFacility.getCommunity() != null
-					&& !caze.getResponsibleCommunity().equals(healthFacility.getCommunity())) {
+						&& healthFacility.getCommunity() != null
+						&& !caze.getResponsibleCommunity().equals(healthFacility.getCommunity())) {
 					throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.noFacilityInResponsibleCommunity));
 				}
 				if (healthFacility.getRegion() != null && !caze.getResponsibleRegion().equals(healthFacility.getRegion())) {
@@ -1943,8 +1942,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 					throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.noFacilityInDistrict));
 				}
 				if (caze.getCommunity() != null
-					&& healthFacility.getCommunity() != null
-					&& !caze.getCommunity().equals(healthFacility.getCommunity())) {
+						&& healthFacility.getCommunity() != null
+						&& !caze.getCommunity().equals(healthFacility.getCommunity())) {
 					throw new ValidationRuntimeException(I18nProperties.getValidationError(Validations.noFacilityInCommunity));
 				}
 				if (healthFacility.getRegion() != null && !caze.getRegion().equals(healthFacility.getRegion())) {
@@ -1959,68 +1958,68 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			if (!DataHelper.isSame(caze.getHealthFacility(), existingCaze.getHealthFacility())) {
 
 				if (existingCaze.getPointOfEntry() != null
-					&& caze.getHealthFacility() != null
-					&& !userService.hasRight(UserRight.CASE_REFER_FROM_POE)) {
+						&& caze.getHealthFacility() != null
+						&& !userService.hasRight(UserRight.CASE_REFER_FROM_POE)) {
 					throw new AccessDeniedException(
-						String.format(
-							I18nProperties.getString(Strings.errorNoRightsForChangingField),
-							I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.HEALTH_FACILITY)));
+							String.format(
+									I18nProperties.getString(Strings.errorNoRightsForChangingField),
+									I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.HEALTH_FACILITY)));
 				}
 
 				if (existingCaze.getHealthFacility() != null && !userService.hasRight(UserRight.CASE_TRANSFER)) {
 					throw new AccessDeniedException(
-						String.format(
-							I18nProperties.getString(Strings.errorNoRightsForChangingField),
-							I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.HEALTH_FACILITY)));
+							String.format(
+									I18nProperties.getString(Strings.errorNoRightsForChangingField),
+									I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.HEALTH_FACILITY)));
 				}
 			}
 
 			if (!userService.hasRight(UserRight.CASE_INVESTIGATE)
-				&& (!DataHelper.equal(caze.getInvestigationStatus(), existingCaze.getInvestigationStatus())
+					&& (!DataHelper.equal(caze.getInvestigationStatus(), existingCaze.getInvestigationStatus())
 					|| !DataHelper.equal(caze.getInvestigatedDate(), existingCaze.getInvestigatedDate()))) {
 				throw new AccessDeniedException(
-					String.format(
-						I18nProperties.getString(Strings.errorNoRightsForChangingMultipleFields),
-						I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.INVESTIGATION_STATUS)));
+						String.format(
+								I18nProperties.getString(Strings.errorNoRightsForChangingMultipleFields),
+								I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.INVESTIGATION_STATUS)));
 			}
 
 			if (!userService.hasRight(UserRight.CASE_CLASSIFY)
-				&& (!DataHelper.equal(caze.getCaseClassification(), existingCaze.getCaseClassification())
+					&& (!DataHelper.equal(caze.getCaseClassification(), existingCaze.getCaseClassification())
 					|| !DataHelper.equal(caze.getClassificationComment(), existingCaze.getClassificationComment())
 					|| !DataHelper.equal(caze.getClassificationDate(), existingCaze.getClassificationDate())
 					|| !DataHelper.equal(caze.getClassificationUser(), existingCaze.getClassificationUser())
 					|| !DataHelper.equal(caze.getOutcome(), existingCaze.getOutcome())
 					|| !DataHelper.equal(caze.getOutcomeDate(), existingCaze.getOutcomeDate()))) {
 				throw new AccessDeniedException(
-					String.format(
-						I18nProperties.getString(Strings.errorNoRightsForChangingMultipleFields),
-						I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.CASE_CLASSIFICATION)));
+						String.format(
+								I18nProperties.getString(Strings.errorNoRightsForChangingMultipleFields),
+								I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.CASE_CLASSIFICATION)));
 			}
 
 			if (!userService.hasRight(UserRight.CASE_CHANGE_DISEASE)
-				&& (!DataHelper.equal(caze.getDisease(), existingCaze.getDisease())
+					&& (!DataHelper.equal(caze.getDisease(), existingCaze.getDisease())
 					|| !DataHelper.equal(caze.getDiseaseDetails(), existingCaze.getDiseaseDetails()))) {
 				throw new AccessDeniedException(
-					String.format(
-						I18nProperties.getString(Strings.errorNoRightsForChangingField),
-						I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.DISEASE)));
+						String.format(
+								I18nProperties.getString(Strings.errorNoRightsForChangingField),
+								I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.DISEASE)));
 			}
 
 			if (!userService.hasRight(UserRight.CASE_CHANGE_EPID_NUMBER) && (!DataHelper.equal(caze.getEpidNumber(), existingCaze.getEpidNumber()))) {
 				throw new AccessDeniedException(
-					String.format(
-						I18nProperties.getString(Strings.errorNoRightsForChangingField),
-						I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.EPID_NUMBER)));
+						String.format(
+								I18nProperties.getString(Strings.errorNoRightsForChangingField),
+								I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.EPID_NUMBER)));
 			}
 
 			if (!userService.hasRight(UserRight.CASE_CLINICIAN_VIEW)
-				&& (!DataHelper.equal(caze.getClinicianName(), existingCaze.getClinicianName())
+					&& (!DataHelper.equal(caze.getClinicianName(), existingCaze.getClinicianName())
 					|| !DataHelper.equal(caze.getClinicianEmail(), existingCaze.getClinicianEmail())
 					|| !DataHelper.equal(caze.getClinicianPhone(), existingCaze.getClinicianPhone()))) {
 				throw new AccessDeniedException(
-					String.format(
-						I18nProperties.getString(Strings.errorNoRightsForChangingMultipleFields),
-						I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.CLINICIAN_NAME)));
+						String.format(
+								I18nProperties.getString(Strings.errorNoRightsForChangingMultipleFields),
+								I18nProperties.getPrefixCaption(CaseDataDto.I18N_PREFIX, CaseDataDto.CLINICIAN_NAME)));
 			}
 		}
 	}
@@ -2049,12 +2048,12 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			boolean facilityChanged = !DataHelper.isSame(existingCase.getHealthFacility(), newCase.getHealthFacility());
 
 			if (responsibleRegionChanged
-				|| responsibleDistrictChanged
-				|| responsibleCommunityChanged
-				|| regionChanged
-				|| districtChanged
-				|| communityChanged
-				|| facilityChanged) {
+					|| responsibleDistrictChanged
+					|| responsibleCommunityChanged
+					|| regionChanged
+					|| districtChanged
+					|| communityChanged
+					|| facilityChanged) {
 				reassignTasksOfCase(newCase, false);
 			}
 
@@ -2062,8 +2061,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 		// Create a task to search for other cases for new Plague cases
 		if (existingCase == null
-			&& newCase.getDisease() == Disease.PLAGUE
-			&& featureConfigurationFacade.isTaskGenerationFeatureEnabled(TaskType.ACTIVE_SEARCH_FOR_OTHER_CASES)) {
+				&& newCase.getDisease() == Disease.PLAGUE
+				&& featureConfigurationFacade.isTaskGenerationFeatureEnabled(TaskType.ACTIVE_SEARCH_FOR_OTHER_CASES)) {
 			createActiveSearchForOtherCasesTask(newCase);
 		}
 	}
@@ -2116,8 +2115,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		Facility facility = newCase.getHealthFacility();
 		if (existingCase == null && facility != null && !FacilityHelper.isOtherOrNoneHealthFacility(facility.getUuid())) {
 			if ((facility.getLatitude() == null || facility.getLongitude() == null)
-				&& newCase.getReportLat() != null
-				&& newCase.getReportLon() != null) {
+					&& newCase.getReportLat() != null
+					&& newCase.getReportLon() != null) {
 				facility.setLatitude(newCase.getReportLat());
 				facility.setLongitude(newCase.getReportLon());
 				facilityService.ensurePersisted(facility);
@@ -2135,14 +2134,14 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		// Generate epid number if missing or incomplete
 		FieldVisibilityCheckers fieldVisibilityCheckers = FieldVisibilityCheckers.withCountry(configFacade.getCountryLocale());
 		if (fieldVisibilityCheckers.isVisible(CaseDataDto.class, CaseDataDto.EPID_NUMBER)
-			&& !CaseLogic.isCompleteEpidNumber(newCase.getEpidNumber())) {
+				&& !CaseLogic.isCompleteEpidNumber(newCase.getEpidNumber())) {
 			newCase.setEpidNumber(
-				generateEpidNumber(
-					newCase.getEpidNumber(),
-					newCase.getUuid(),
-					newCase.getDisease(),
-					newCase.getReportDate(),
-					newCase.getResponsibleDistrict().getUuid()));
+					generateEpidNumber(
+							newCase.getEpidNumber(),
+							newCase.getUuid(),
+							newCase.getDisease(),
+							newCase.getReportDate(),
+							newCase.getResponsibleDistrict().getUuid()));
 		}
 
 		// update the plague type based on symptoms
@@ -2157,9 +2156,9 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		Region survOffRegion = newCase.getSurveillanceOfficer() != null ? newCase.getSurveillanceOfficer().getRegion() : null;
 
 		boolean missingSurvOffDistrict =
-			survOffDistrict == null || (!survOffDistrict.equals(newCase.getResponsibleDistrict()) && !survOffDistrict.equals(newCase.getDistrict()));
+				survOffDistrict == null || (!survOffDistrict.equals(newCase.getResponsibleDistrict()) && !survOffDistrict.equals(newCase.getDistrict()));
 		boolean missingSurvOffRegion =
-			survOffRegion == null || (!survOffRegion.equals(newCase.getResponsibleRegion()) && !survOffRegion.equals(newCase.getRegion()));
+				survOffRegion == null || (!survOffRegion.equals(newCase.getResponsibleRegion()) && !survOffRegion.equals(newCase.getRegion()));
 
 		if (missingSurvOffDistrict && missingSurvOffRegion) {
 			setCaseResponsible(newCase);
@@ -2173,7 +2172,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 		// Change the disease of all contacts if the case disease or disease details have changed
 		if (existingCase != null
-			&& (newCase.getDisease() != existingCase.getDisease()
+				&& (newCase.getDisease() != existingCase.getDisease()
 				|| !StringUtils.equals(newCase.getDiseaseDetails(), existingCase.getDiseaseDetails()))) {
 			for (Contact contact : contactService.findBy(new ContactCriteria().caze(newCase.toReference()), null)) {
 				if (contact.getDisease() != newCase.getDisease() || !StringUtils.equals(contact.getDiseaseDetails(), newCase.getDiseaseDetails())) {
@@ -2186,7 +2185,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		}
 
 		if (existingCase != null
-			&& (newCase.getDisease() != existingCase.getDisease()
+				&& (newCase.getDisease() != existingCase.getDisease()
 				|| !Objects.equals(newCase.getReportDate(), existingCase.getReportDate())
 				|| !Objects.equals(newCase.getSymptoms().getOnsetDate(), existingCase.getSymptoms().getOnsetDate()))) {
 
@@ -2232,7 +2231,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		}
 
 		if (setClassificationInfo
-			&& ((existingCase == null && newCase.getCaseClassification() != CaseClassification.NOT_CLASSIFIED)
+				&& ((existingCase == null && newCase.getCaseClassification() != CaseClassification.NOT_CLASSIFIED)
 				|| (existingCase != null && newCase.getCaseClassification() != existingCase.getCaseClassification()))) {
 			newCase.setClassificationUser(userService.getCurrentUser());
 			newCase.setClassificationDate(new Date());
@@ -2247,7 +2246,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		// Set Yes/No/Unknown fields associated with embedded lists to Yes if the lists
 		// are not empty
 		if (!newCase.getHospitalization().getPreviousHospitalizations().isEmpty()
-			&& YesNo.YES != newCase.getHospitalization().getHospitalizedPreviously()) {
+				&& YesNo.YES != newCase.getHospitalization().getHospitalizedPreviously()) {
 			newCase.getHospitalization().setHospitalizedPreviously(YesNo.YES);
 		}
 		if (!newCase.getEpiData().getExposures().isEmpty() && !YesNo.YES.equals(newCase.getEpiData().getExposureDetailsKnown())) {
@@ -2263,15 +2262,15 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 			try {
 				String message = String.format(
-					I18nProperties.getString(MessageContents.CONTENT_CASE_CLASSIFICATION_CHANGED),
-					DataHelper.getShortUuid(newCase.getUuid()),
-					newCase.getCaseClassification().toString());
+						I18nProperties.getString(MessageContents.CONTENT_CASE_CLASSIFICATION_CHANGED),
+						DataHelper.getShortUuid(newCase.getUuid()),
+						newCase.getCaseClassification().toString());
 				notificationService.sendNotifications(
-					NotificationType.CASE_CLASSIFICATION_CHANGED,
-					JurisdictionHelper.getCaseRegions(newCase),
-					null,
-					MessageSubject.CASE_CLASSIFICATION_CHANGED,
-					message);
+						NotificationType.CASE_CLASSIFICATION_CHANGED,
+						JurisdictionHelper.getCaseRegions(newCase),
+						null,
+						MessageSubject.CASE_CLASSIFICATION_CHANGED,
+						message);
 			} catch (NotificationDeliveryFailedException e) {
 				logger.error("NotificationDeliveryFailedException when trying to notify supervisors about the change of a case classification. ");
 			}
@@ -2283,17 +2282,17 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 			try {
 				String message = String.format(
-					I18nProperties.getString(MessageContents.CONTENT_DISEASE_CHANGED),
-					DataHelper.getShortUuid(newCase.getUuid()),
-					existingCase.getDisease().toString(),
-					newCase.getDisease().toString());
+						I18nProperties.getString(MessageContents.CONTENT_DISEASE_CHANGED),
+						DataHelper.getShortUuid(newCase.getUuid()),
+						existingCase.getDisease().toString(),
+						newCase.getDisease().toString());
 
 				notificationService.sendNotifications(
-					NotificationType.CASE_DISEASE_CHANGED,
-					JurisdictionHelper.getCaseRegions(newCase),
-					null,
-					MessageSubject.DISEASE_CHANGED,
-					message);
+						NotificationType.CASE_DISEASE_CHANGED,
+						JurisdictionHelper.getCaseRegions(newCase),
+						null,
+						MessageSubject.DISEASE_CHANGED,
+						message);
 			} catch (NotificationDeliveryFailedException e) {
 				logger.error("NotificationDeliveryFailedException when trying to notify supervisors about the change of a case disease.");
 			}
@@ -2303,7 +2302,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		// and now the case is in a CONFIRMED status, notify related surveillance officers
 		Set<CaseClassification> confirmedClassifications = CaseClassification.getConfirmedClassifications();
 		if ((existingCase == null || !confirmedClassifications.contains(existingCase.getCaseClassification()))
-			&& confirmedClassifications.contains(newCase.getCaseClassification())) {
+				&& confirmedClassifications.contains(newCase.getCaseClassification())) {
 			sendConfirmedCaseNotificationsForEvents(newCase);
 		}
 
@@ -2331,7 +2330,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 		if (newCase.getCaseClassification() != CaseClassification.NO_CASE) {
 			List<CaseClassification> fulfilledCaseClassificationOptions =
-				Arrays.asList(CaseClassification.CONFIRMED, CaseClassification.CONFIRMED_NO_SYMPTOMS, CaseClassification.CONFIRMED_UNKNOWN_SYMPTOMS);
+					Arrays.asList(CaseClassification.CONFIRMED, CaseClassification.CONFIRMED_NO_SYMPTOMS, CaseClassification.CONFIRMED_UNKNOWN_SYMPTOMS);
 
 			if (caseClassification == null) {
 				caseClassification = caseClassificationFacade.getClassification(newCase);
@@ -2341,11 +2340,11 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			if (fulfilledCaseClassificationOptions.contains(caseClassification)) {
 				casePathogenTests = pathogenTestService.getAllByCase(newCase.getUuid());
 				casePathogenTests = casePathogenTests.stream()
-					.filter(
-						pathogenTest -> (Arrays.asList(PathogenTestType.PCR_RT_PCR, PathogenTestType.ISOLATION, PathogenTestType.SEQUENCING)
-							.contains(pathogenTest.getTestType())
-							&& PathogenTestResultType.POSITIVE.equals(pathogenTest.getTestResult())))
-					.collect(Collectors.toList());
+						.filter(
+								pathogenTest -> (Arrays.asList(PathogenTestType.PCR_RT_PCR, PathogenTestType.ISOLATION, PathogenTestType.SEQUENCING)
+										.contains(pathogenTest.getTestType())
+										&& PathogenTestResultType.POSITIVE.equals(pathogenTest.getTestResult())))
+						.collect(Collectors.toList());
 			}
 			return casePathogenTests != null && !casePathogenTests.isEmpty();
 		} else {
@@ -2357,26 +2356,26 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 		try {
 			notificationService.sendNotifications(
-				NotificationType.EVENT_PARTICIPANT_CASE_CLASSIFICATION_CONFIRMED,
-				MessageSubject.EVENT_PARTICIPANT_CASE_CLASSIFICATION_CONFIRMED,
-				new Object[] {
-					caze.getDisease().getName() },
-				() -> {
-					final Date fromDate = Date.from(Instant.now().minus(Duration.ofDays(30)));
-					Map<String, User> eventResponsibleUsers =
-						eventService.getAllEventUuidWithResponsibleUserByCaseAfterDateForNotification(caze, fromDate);
+					NotificationType.EVENT_PARTICIPANT_CASE_CLASSIFICATION_CONFIRMED,
+					MessageSubject.EVENT_PARTICIPANT_CASE_CLASSIFICATION_CONFIRMED,
+					new Object[] {
+							caze.getDisease().getName() },
+					() -> {
+						final Date fromDate = Date.from(Instant.now().minus(Duration.ofDays(30)));
+						Map<String, User> eventResponsibleUsers =
+								eventService.getAllEventUuidWithResponsibleUserByCaseAfterDateForNotification(caze, fromDate);
 
-					return eventResponsibleUsers.keySet()
-						.stream()
-						.collect(
-							Collectors.toMap(
-								eventResponsibleUsers::get,
-								eventUuid -> String.format(
-									I18nProperties.getString(MessageContents.CONTENT_EVENT_PARTICIPANT_CASE_CLASSIFICATION_CONFIRMED),
-									DataHelper.getShortUuid(eventUuid),
-									caze.getDisease().getName(),
-									DataHelper.getShortUuid(caze.getUuid()))));
-				});
+						return eventResponsibleUsers.keySet()
+								.stream()
+								.collect(
+										Collectors.toMap(
+												eventResponsibleUsers::get,
+												eventUuid -> String.format(
+														I18nProperties.getString(MessageContents.CONTENT_EVENT_PARTICIPANT_CASE_CLASSIFICATION_CONFIRMED),
+														DataHelper.getShortUuid(eventUuid),
+														caze.getDisease().getName(),
+														DataHelper.getShortUuid(caze.getUuid()))));
+					});
 		} catch (NotificationDeliveryFailedException e) {
 			logger.error("NotificationDeliveryFailedException when trying to notify event responsible user about a newly confirmed case.");
 		}
@@ -2389,18 +2388,18 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 	@RightsAllowed(UserRight._CASE_EDIT)
 	public void setCaseResponsible(
-		Case caze,
-		boolean neededFeatureAlreadyChecked,
-		List<User> possibleUsersForReplacementSurvOfficerBasedOnResponsibleDistrict,
-		List<User> possibleUsersForReplacementSurvOfficerBasedOnDistrict,
-		Set<User> possibleUsersForReplacementFacilityUsers) {
+			Case caze,
+			boolean neededFeatureAlreadyChecked,
+			List<User> possibleUsersForReplacementSurvOfficerBasedOnResponsibleDistrict,
+			List<User> possibleUsersForReplacementSurvOfficerBasedOnDistrict,
+			Set<User> possibleUsersForReplacementFacilityUsers) {
 		if (neededFeatureAlreadyChecked
-			|| featureConfigurationFacade
+				|| featureConfigurationFacade
 				.isPropertyValueTrue(FeatureType.CASE_SURVEILANCE, FeatureTypeProperty.AUTOMATIC_RESPONSIBILITY_ASSIGNMENT)) {
 			District reportingUserDistrict = caze.getReportingUser().getDistrict();
 
 			if (userRoleService.hasUserRight(caze.getReportingUser().getUserRoles(), UserRight.CASE_RESPONSIBLE)
-				&& (reportingUserDistrict == null
+					&& (reportingUserDistrict == null
 					|| reportingUserDistrict.equals(caze.getResponsibleDistrict())
 					|| reportingUserDistrict.equals(caze.getDistrict()))) {
 				caze.setSurveillanceOfficer(caze.getReportingUser());
@@ -2408,14 +2407,14 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				List<User> hospitalUsers;
 				if (possibleUsersForReplacementFacilityUsers == null) {
 					hospitalUsers = caze.getHealthFacility() != null && FacilityType.HOSPITAL.equals(caze.getHealthFacility().getType())
-						? userService.getFacilityUsersOfHospital(caze.getHealthFacility())
-						: new ArrayList<>();
+							? userService.getFacilityUsersOfHospital(caze.getHealthFacility())
+							: new ArrayList<>();
 				} else {
 					hospitalUsers = possibleUsersForReplacementFacilityUsers.stream()
-						.filter(
-							user -> user.getHealthFacility().equals(caze.getHealthFacility())
-								&& user.getJurisdictionLevel().equals(JurisdictionLevel.HEALTH_FACILITY))
-						.collect(Collectors.toList());
+							.filter(
+									user -> user.getHealthFacility().equals(caze.getHealthFacility())
+											&& user.getJurisdictionLevel().equals(JurisdictionLevel.HEALTH_FACILITY))
+							.collect(Collectors.toList());
 				}
 				Random rand = new Random();
 
@@ -2430,8 +2429,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 							survOff = getRandomDistrictCaseResponsible(caze.getResponsibleDistrict());
 						} else if (!possibleUsersForReplacementSurvOfficerBasedOnResponsibleDistrict.isEmpty()) {
 							List<User> collect = possibleUsersForReplacementSurvOfficerBasedOnResponsibleDistrict.stream()
-								.filter(user -> caze.getResponsibleDistrict().equals(user.getDistrict()))
-								.collect(Collectors.toList());
+									.filter(user -> caze.getResponsibleDistrict().equals(user.getDistrict()))
+									.collect(Collectors.toList());
 							survOff = collect.size() > 0 ? collect.get(new Random().nextInt(collect.size())) : null;
 						}
 					}
@@ -2441,8 +2440,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 							survOff = getRandomDistrictCaseResponsible(caze.getDistrict());
 						} else if (!possibleUsersForReplacementSurvOfficerBasedOnDistrict.isEmpty()) {
 							List<User> collect = possibleUsersForReplacementSurvOfficerBasedOnDistrict.stream()
-								.filter(user -> caze.getDistrict().equals(user.getDistrict()))
-								.collect(Collectors.toList());
+									.filter(user -> caze.getDistrict().equals(user.getDistrict()))
+									.collect(Collectors.toList());
 							survOff = collect.size() > 0 ? collect.get(new Random().nextInt(collect.size())) : null;
 						}
 					}
@@ -2463,8 +2462,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	 *            force reassignment of case tasks.
 	 */
 	@RightsAllowed({
-		UserRight._CASE_CREATE,
-		UserRight._CASE_EDIT })
+			UserRight._CASE_CREATE,
+			UserRight._CASE_EDIT })
 	public void reassignTasksOfCase(Case caze, boolean forceReassignment) {
 		// for each task that is related to the case, the task assignee must match the jurisdiction of the case
 		// otherwise we will reassign the task
@@ -2518,11 +2517,11 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	@Override
 	public String getGenerateEpidNumber(CaseDataDto caze) {
 		return generateEpidNumber(
-			caze.getEpidNumber(),
-			caze.getUuid(),
-			caze.getDisease(),
-			caze.getReportDate(),
-			caze.getResponsibleDistrict().getUuid());
+				caze.getEpidNumber(),
+				caze.getUuid(),
+				caze.getDisease(),
+				caze.getReportDate(),
+				caze.getResponsibleDistrict().getUuid());
 	}
 
 	private String generateEpidNumber(String newEpidNumber, String caseUuid, Disease disease, Date reportDate, String districtUuid) {
@@ -2568,7 +2567,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 			if (newCase.getOutcome() == CaseOutcome.DECEASED) {
 				if (newCase.getPerson().getPresentCondition() != PresentCondition.DEAD
-					&& newCase.getPerson().getPresentCondition() != PresentCondition.BURIED) {
+						&& newCase.getPerson().getPresentCondition() != PresentCondition.BURIED) {
 					PersonDto existingPerson = PersonFacadeEjb.toPersonDto(newCase.getPerson());
 					newCase.getPerson().setPresentCondition(PresentCondition.DEAD);
 					newCase.getPerson().setDeathDate(newCase.getOutcomeDate());
@@ -2582,14 +2581,13 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				PersonDto existingPerson = PersonFacadeEjb.toPersonDto(newCase.getPerson());
 
 				if (existingPerson.getCauseOfDeath() == CauseOfDeath.EPIDEMIC_DISEASE
-					&& existingPerson.getCauseOfDeathDisease() == newCase.getDisease()) {
+						&& existingPerson.getCauseOfDeathDisease() == newCase.getDisease()) {
 					// Make sure no other case associated with the person has Outcome=DECEASED
 					CaseCriteria caseCriteria = new CaseCriteria();
 					caseCriteria.setPerson(existingPerson.toReference());
 					caseCriteria.setOutcome(CaseOutcome.DECEASED);
 					if (count(caseCriteria, true) == 0) {
-						newCase.getPerson()
-							.setPresentCondition(newCase.getOutcome() == CaseOutcome.UNKNOWN ? PresentCondition.UNKNOWN : PresentCondition.ALIVE);
+						newCase.getPerson().setPresentCondition(PresentCondition.ALIVE);
 						newCase.getPerson().setBurialDate(null);
 						newCase.getPerson().setDeathDate(null);
 						newCase.getPerson().setDeathPlaceDescription(null);
@@ -2602,13 +2600,13 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				}
 			}
 		} else if (existingCase != null
-			&& newCase.getOutcome() == CaseOutcome.DECEASED
-			&& (newCase.getPerson().getPresentCondition() == PresentCondition.DEAD
+				&& newCase.getOutcome() == CaseOutcome.DECEASED
+				&& (newCase.getPerson().getPresentCondition() == PresentCondition.DEAD
 				|| newCase.getPerson().getPresentCondition() == PresentCondition.BURIED)
-			&& !Objects.equals(existingCase.getOutcomeDate(), newCase.getOutcomeDate())
-			&& newCase.getOutcomeDate() != null
-			&& newCase.getPerson().getCauseOfDeath() == CauseOfDeath.EPIDEMIC_DISEASE
-			&& newCase.getPerson().getCauseOfDeathDisease() == existingCase.getDisease()) {
+				&& !Objects.equals(existingCase.getOutcomeDate(), newCase.getOutcomeDate())
+				&& newCase.getOutcomeDate() != null
+				&& newCase.getPerson().getCauseOfDeath() == CauseOfDeath.EPIDEMIC_DISEASE
+				&& newCase.getPerson().getCauseOfDeathDisease() == existingCase.getDisease()) {
 			// outcomeDate of a deceased case was changed, but person is already considered dead
 			// update the deathdate of the person
 			PersonDto existingPerson = PersonFacadeEjb.toPersonDto(newCase.getPerson());
@@ -2617,8 +2615,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		} else if (existingCase == null) {
 			// new Case; Still compare persons Condition and caseOutcome
 			if (newCase.getOutcome() == CaseOutcome.DECEASED
-				&& newCase.getPerson().getPresentCondition() != PresentCondition.BURIED
-				&& newCase.getPerson().getPresentCondition() != PresentCondition.DEAD) {
+					&& newCase.getPerson().getPresentCondition() != PresentCondition.BURIED
+					&& newCase.getPerson().getPresentCondition() != PresentCondition.DEAD) {
 				// person is alive but case has outcome deceased
 				PersonDto existingPerson = PersonFacadeEjb.toPersonDto(newCase.getPerson());
 				newCase.getPerson().setDeathDate(newCase.getOutcomeDate());
@@ -2631,14 +2629,14 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				PersonDto existingPerson = PersonFacadeEjb.toPersonDto(newCase.getPerson());
 
 				if (existingPerson.getCauseOfDeath() == CauseOfDeath.EPIDEMIC_DISEASE
-					&& existingPerson.getCauseOfDeathDisease() == newCase.getDisease()) {
+						&& existingPerson.getCauseOfDeathDisease() == newCase.getDisease()) {
 					// Make sure no other case associated with the person has Outcome=DECEASED
 					CaseCriteria caseCriteria = new CaseCriteria();
 					caseCriteria.setPerson(existingPerson.toReference());
 					caseCriteria.setOutcome(CaseOutcome.DECEASED);
 					if (count(caseCriteria, true) == 0) {
 						newCase.getPerson()
-							.setPresentCondition(newCase.getOutcome() == CaseOutcome.UNKNOWN ? PresentCondition.UNKNOWN : PresentCondition.ALIVE);
+								.setPresentCondition(newCase.getOutcome() == CaseOutcome.UNKNOWN ? PresentCondition.UNKNOWN : PresentCondition.ALIVE);
 						newCase.getPerson().setBurialDate(null);
 						newCase.getPerson().setDeathDate(null);
 						newCase.getPerson().setDeathPlaceDescription(null);
@@ -2676,7 +2674,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	@Override
 	@RightsAllowed(UserRight._CASE_DELETE)
 	public void delete(String caseUuid, DeletionDetails deletionDetails)
-		throws ExternalSurveillanceToolRuntimeException, SormasToSormasRuntimeException {
+			throws ExternalSurveillanceToolRuntimeException, SormasToSormasRuntimeException {
 		Case caze = service.getByUuid(caseUuid);
 		deleteCase(caze, deletionDetails);
 	}
@@ -2737,7 +2735,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	}
 
 	private void deleteCase(Case caze, DeletionDetails deletionDetails)
-		throws ExternalSurveillanceToolRuntimeException, SormasToSormasRuntimeException, AccessDeniedException {
+			throws ExternalSurveillanceToolRuntimeException, SormasToSormasRuntimeException, AccessDeniedException {
 
 		if (!caseService.inJurisdictionOrOwned(caze)) {
 			throw new AccessDeniedException(I18nProperties.getString(Strings.messageCaseOutsideJurisdictionDeletionDenied));
@@ -2766,9 +2764,9 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	}
 
 	@RightsAllowed({
-		UserRight._CASE_DELETE,
-		UserRight._CASE_MERGE,
-		UserRight._SYSTEM })
+			UserRight._CASE_DELETE,
+			UserRight._CASE_MERGE,
+			UserRight._SYSTEM })
 	public void deleteCaseInExternalSurveillanceTool(Case caze) throws ExternalSurveillanceToolException {
 
 		if (externalSurveillanceToolGatewayFacade.isFeatureEnabled() && caze.getExternalID() != null && !caze.getExternalID().isEmpty()) {
@@ -2813,8 +2811,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 	@Override
 	@RightsAllowed({
-		UserRight._CASE_CREATE,
-		UserRight._CASE_EDIT })
+			UserRight._CASE_CREATE,
+			UserRight._CASE_EDIT })
 	public void setResultingCase(EventParticipantReferenceDto eventParticipantReferenceDto, CaseReferenceDto caseReferenceDto) {
 		final EventParticipant eventParticipant = eventParticipantService.getByUuid(eventParticipantReferenceDto.getUuid());
 		if (eventParticipant != null) {
@@ -2867,34 +2865,33 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				pseudonymizer.pseudonymizeUser(source.getClassificationUser(), currentUser, dto::setClassificationUser);
 
 				pseudonymizer.pseudonymizeDto(
-					EpiDataDto.class,
-					dto.getEpiData(),
-					inJurisdiction,
-					e -> pseudonymizer.pseudonymizeDtoCollection(
-						ExposureDto.class,
-						e.getExposures(),
-						exp -> inJurisdiction,
-						(exp, expInJurisdiction) -> pseudonymizer.pseudonymizeDto(LocationDto.class, exp.getLocation(), expInJurisdiction, null)));
+						EpiDataDto.class,
+						dto.getEpiData(),
+						inJurisdiction,
+						e -> pseudonymizer.pseudonymizeDtoCollection(
+								ExposureDto.class,
+								e.getExposures(),
+								exp -> inJurisdiction,
+								(exp, expInJurisdiction) -> pseudonymizer.pseudonymizeDto(LocationDto.class, exp.getLocation(), expInJurisdiction, null)));
 
 				pseudonymizer.pseudonymizeDto(HealthConditionsDto.class, c.getHealthConditions(), inJurisdiction, null);
 
 				pseudonymizer.pseudonymizeDtoCollection(
-					PreviousHospitalizationDto.class,
-					c.getHospitalization().getPreviousHospitalizations(),
-					h -> inJurisdiction,
-					null);
+						PreviousHospitalizationDto.class,
+						c.getHospitalization().getPreviousHospitalizations(),
+						h -> inJurisdiction,
+						null);
 
 				pseudonymizer.pseudonymizeDto(SymptomsDto.class, dto.getSymptoms(), inJurisdiction, null);
 				pseudonymizer.pseudonymizeDto(MaternalHistoryDto.class, dto.getMaternalHistory(), inJurisdiction, null);
-				pseudonymizer.pseudonymizeDto(SixtyDayDto.class, dto.getSixtyDay(), inJurisdiction, null);
 			});
 		}
 	}
 
 	@Override
 	@RightsAllowed({
-		UserRight._CASE_EDIT,
-		UserRight._CASE_EDIT })
+			UserRight._CASE_EDIT,
+			UserRight._CASE_EDIT })
 	public void restorePseudonymizedDto(CaseDataDto dto, CaseDataDto existingCaseDto, Case caze, Pseudonymizer pseudonymizer) {
 		if (existingCaseDto != null) {
 			boolean inJurisdiction = service.inJurisdictionOrOwned(caze);
@@ -2913,39 +2910,38 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 			epiData.getExposures().forEach(exposure -> {
 				ExposureDto existingExposure =
-					existingEpiData.getExposures().stream().filter(exp -> DataHelper.isSame(exposure, exp)).findFirst().orElse(null);
+						existingEpiData.getExposures().stream().filter(exp -> DataHelper.isSame(exposure, exp)).findFirst().orElse(null);
 
 				if (existingExposure != null) {
 					pseudonymizer.restorePseudonymizedValues(ExposureDto.class, exposure, existingExposure, inJurisdiction);
 					pseudonymizer
-						.restorePseudonymizedValues(LocationDto.class, exposure.getLocation(), existingExposure.getLocation(), inJurisdiction);
+							.restorePseudonymizedValues(LocationDto.class, exposure.getLocation(), existingExposure.getLocation(), inJurisdiction);
 				}
 			});
 
 			pseudonymizer.restorePseudonymizedValues(
-				HealthConditionsDto.class,
-				dto.getHealthConditions(),
-				existingCaseDto.getHealthConditions(),
-				inJurisdiction);
+					HealthConditionsDto.class,
+					dto.getHealthConditions(),
+					existingCaseDto.getHealthConditions(),
+					inJurisdiction);
 
 			dto.getHospitalization()
-				.getPreviousHospitalizations()
-				.forEach(
-					previousHospitalization -> existingCaseDto.getHospitalization()
-						.getPreviousHospitalizations()
-						.stream()
-						.filter(eh -> DataHelper.isSame(previousHospitalization, eh))
-						.findFirst()
-						.ifPresent(
-							existingPreviousHospitalization -> pseudonymizer.restorePseudonymizedValues(
-								PreviousHospitalizationDto.class,
-								previousHospitalization,
-								existingPreviousHospitalization,
-								inJurisdiction)));
+					.getPreviousHospitalizations()
+					.forEach(
+							previousHospitalization -> existingCaseDto.getHospitalization()
+									.getPreviousHospitalizations()
+									.stream()
+									.filter(eh -> DataHelper.isSame(previousHospitalization, eh))
+									.findFirst()
+									.ifPresent(
+											existingPreviousHospitalization -> pseudonymizer.restorePseudonymizedValues(
+													PreviousHospitalizationDto.class,
+													previousHospitalization,
+													existingPreviousHospitalization,
+													inJurisdiction)));
 
 			pseudonymizer.restorePseudonymizedValues(SymptomsDto.class, dto.getSymptoms(), existingCaseDto.getSymptoms(), inJurisdiction);
-			pseudonymizer
-				.restorePseudonymizedValues(MaternalHistoryDto.class, dto.getMaternalHistory(), existingCaseDto.getMaternalHistory(), inJurisdiction);
+			pseudonymizer.restorePseudonymizedValues(MaternalHistoryDto.class, dto.getMaternalHistory(), existingCaseDto.getMaternalHistory(), inJurisdiction);
 			pseudonymizer.restorePseudonymizedValues(SixtyDayDto.class, dto.getSixtyDay(), existingCaseDto.getSixtyDay(), inJurisdiction);
 		}
 	}
@@ -2964,8 +2960,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 	@Override
 	@RightsAllowed({
-		UserRight._CASE_VIEW,
-		UserRight._EXTERNAL_VISITS })
+			UserRight._CASE_VIEW,
+			UserRight._EXTERNAL_VISITS })
 	public CaseDataDto toDto(Case source) {
 		return toCaseDto(source);
 	}
@@ -2987,6 +2983,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setDengueFeverType(source.getDengueFeverType());
 		target.setRabiesType(source.getRabiesType());
 		target.setCaseClassification(source.getCaseClassification() == CaseClassification.NOT_CLASSIFIED ? CaseClassification.SUSPECT : source.getCaseClassification());
+		target.setCaseClassification(source.getCaseClassification());
 		target.setCaseIdentificationSource(source.getCaseIdentificationSource());
 		target.setScreeningType(source.getScreeningType());
 		target.setClassificationUser(UserFacadeEjb.toReferenceDto(source.getClassificationUser()));
@@ -3041,7 +3038,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setReportingOfficerContactPhone(source.getReportingOfficerContactPhone());
 		target.setReportingOfficerEmail(source.getReportingOfficerEmail());
 		target.setCaseOfficer(UserFacadeEjb.toReferenceDto(source.getCaseOfficer()));
-		target.setSymptoms(SymptomsFacadeEjb.toDto(source.getSymptoms()));
+		target.setSymptoms(SymptomsFacadeEjb.toSymptomsDto(source.getSymptoms()));
 		target.setHomeAddressRecreational(source.getHomeAddressRecreational());
 		target.setHospitalName(source.getHospitalName());
 
@@ -3154,7 +3151,6 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setDeleted(source.isDeleted());
 		target.setDeletionReason(source.getDeletionReason());
 		target.setOtherDeletionReason(source.getOtherDeletionReason());
-
 		target.setCaseTransmissionClassification(source.getCaseTransmissionClassification());
 
 		return target;
@@ -3168,8 +3164,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	public Case fillOrBuildEntity(@NotNull CaseDataDto source, Case target, boolean checkChangeDate) {
 		boolean targetWasNull = isNull(target);
 
-		target = DtoHelper.fillOrBuildEntity(source, target, () -> {
-			Case newCase = new Case();
+		target = DtoHelper.fillOrBuildEntity(source, target, Case::build, checkChangeDate);
 
 		if (targetWasNull) {
 			FacadeHelper.setUuidIfDtoExists(target.getHospitalization(), source.getHospitalization());
@@ -3190,14 +3185,12 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			// make sure we do have a report date
 			target.setReportDate(new Date());
 		}
-
 		target.setReportingUser(userService.getByReferenceDto(source.getReportingUser()));
 		target.setInvestigatedDate(source.getInvestigatedDate());
 		target.setRegionLevelDate(source.getRegionLevelDate());
 		target.setNationalLevelDate(source.getNationalLevelDate());
 		target.setDistrictLevelDate(source.getDistrictLevelDate());
 		target.setPerson(personService.getByReferenceDto(source.getPerson()));
-
 		target.setCaseClassification(source.getCaseClassification() == CaseClassification.NOT_CLASSIFIED ? CaseClassification.SUSPECT : source.getCaseClassification());
 		target.setCaseIdentificationSource(source.getCaseIdentificationSource());
 		target.setScreeningType(source.getScreeningType());
@@ -3208,9 +3201,11 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		target.setEpidemiologicalConfirmation(source.getEpidemiologicalConfirmation());
 		target.setLaboratoryDiagnosticConfirmation(source.getLaboratoryDiagnosticConfirmation());
 		target.setInvestigationStatus(source.getInvestigationStatus());
-		target.setHospitalization(hospitalizationFacade.fromDto(source.getHospitalization(), checkChangeDate));
+		target.setHospitalization(hospitalizationFacade.fillOrBuildEntity(source.getHospitalization(), target.getHospitalization(),checkChangeDate));
 		target.setSixtyDay(sixtyDayFacade.fromDto(source.getSixtyDay(), checkChangeDate));
-		target.setEpiData(epiDataFacade.fromDto(source.getEpiData(), checkChangeDate));
+
+		target.setHospitalization(hospitalizationFacade.fillOrBuildEntity(source.getHospitalization(), target.getHospitalization(), checkChangeDate));
+		target.setEpiData(epiDataFacade.fillOrBuildEntity(source.getEpiData(), target.getEpiData(), checkChangeDate));
 		if (source.getTherapy() == null) {
 			source.setTherapy(TherapyDto.build());
 		}
@@ -3219,7 +3214,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			source.setHealthConditions(HealthConditionsDto.build());
 		}
 		target.setHealthConditions(
-			healthConditionsMapper.fillOrBuildEntity(source.getHealthConditions(), target.getHealthConditions(), checkChangeDate));
+				healthConditionsMapper.fillOrBuildEntity(source.getHealthConditions(), target.getHealthConditions(), checkChangeDate));
 		if (source.getClinicalCourse() == null) {
 			source.setClinicalCourse(ClinicalCourseDto.build());
 		}
@@ -3245,24 +3240,24 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 		target.setSurveillanceOfficer(userService.getByReferenceDto(source.getSurveillanceOfficer()));
 		target.setClinicianName(source.getClinicianName());
+		target.setClinicianPhone(source.getClinicianPhone());
+		target.setClinicianEmail(source.getClinicianEmail());
 		target.setReportingOfficerName(source.getReportingOfficerName());
 		target.setReportingOfficerTitle(source.getReportingOfficerTitle());
 		target.setFunctionOfReportingOfficer(source.getFunctionOfReportingOfficer());
 		target.setReportingOfficerContactPhone(source.getReportingOfficerContactPhone());
-		target.setReportingOfficerEmail(source.getReportingOfficerEmail());
-		target.setClinicianPhone(source.getClinicianPhone());
-		target.setClinicianEmail(source.getClinicianEmail());
 		target.setCaseOfficer(userService.getByReferenceDto(source.getCaseOfficer()));
-		target.setSymptoms(symptomsFacade.fromDto(source.getSymptoms(), checkChangeDate));
+		//target.setSymptoms(symptomsFacade.fromDto(source.getSymptoms(), checkChangeDate));
 		target.setHomeAddressRecreational(source.getHomeAddressRecreational());
 		target.setHospitalName(source.getHospitalName());
+		target.setSymptoms(symptomsFacade.fillOrBuildEntity(source.getSymptoms(), target.getSymptoms(), checkChangeDate));
 
 		target.setPregnant(source.getPregnant());
 		target.setIpSampleSent(source.getIpSampleSent());
 		target.setIpSampleResults(source.getIpSampleResults());
-		target.setVaccinationStatus(source.getVaccinationStatus());
 		target.setVaccinationType(source.getVaccinationType());
 		target.setVaccinationDate(source.getVaccinationDate());
+		target.setVaccinationStatus(source.getVaccinationStatus());
 		target.setSmallpoxVaccinationScar(source.getSmallpoxVaccinationScar());
 		target.setSmallpoxVaccinationReceived(source.getSmallpoxVaccinationReceived());
 		target.setSmallpoxLastVaccinationDate(source.getSmallpoxLastVaccinationDate());
@@ -3379,7 +3374,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		if (reinfectionDetails != null && reinfectionDetails.containsValue(Boolean.FALSE)) {
 			Map<ReinfectionDetail, Boolean> onlyTrueReinfectionDetails = new HashMap<>();
 			onlyTrueReinfectionDetails =
-				reinfectionDetails.entrySet().stream().filter(Map.Entry::getValue).collect(Collectors.toMap(Map.Entry::getKey, entry -> true));
+					reinfectionDetails.entrySet().stream().filter(Map.Entry::getValue).collect(Collectors.toMap(Map.Entry::getKey, entry -> true));
 
 			return onlyTrueReinfectionDetails;
 		} else {
@@ -3407,9 +3402,9 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			// the case status has been updated manually
 			if (existingCase != null) {
 				List<Task> pendingTasks =
-					taskService.findBy(new TaskCriteria().taskType(TaskType.CASE_INVESTIGATION).caze(caseRef).taskStatus(TaskStatus.PENDING), true);
+						taskService.findBy(new TaskCriteria().taskType(TaskType.CASE_INVESTIGATION).caze(caseRef).taskStatus(TaskStatus.PENDING), true);
 				final boolean caseStatusSetToDone =
-					caze.getInvestigationStatus() == InvestigationStatus.DONE && existingCase.getInvestigationStatus() != InvestigationStatus.DONE;
+						caze.getInvestigationStatus() == InvestigationStatus.DONE && existingCase.getInvestigationStatus() != InvestigationStatus.DONE;
 				for (Task task : pendingTasks) {
 					task.setTaskStatus(caseStatusSetToDone ? TaskStatus.DONE : TaskStatus.REMOVED);
 					task.setStatusChangeDate(new Date());
@@ -3426,7 +3421,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 			// Create a new investigation task if none is present
 			long investigationTaskCount =
-				existingCase != null ? taskService.getCount(new TaskCriteria().taskType(TaskType.CASE_INVESTIGATION).caze(caseRef)) : 0;
+					existingCase != null ? taskService.getCount(new TaskCriteria().taskType(TaskType.CASE_INVESTIGATION).caze(caseRef)) : 0;
 
 			if (investigationTaskCount == 0 && featureConfigurationFacade.isTaskGenerationFeatureEnabled(TaskType.CASE_INVESTIGATION)) {
 				createInvestigationTask(caze);
@@ -3441,7 +3436,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 		// any pending case investigation task?
 		long pendingCount =
-			taskService.getCount(new TaskCriteria().taskType(TaskType.CASE_INVESTIGATION).caze(caseRef).taskStatus(TaskStatus.PENDING));
+				taskService.getCount(new TaskCriteria().taskType(TaskType.CASE_INVESTIGATION).caze(caseRef).taskStatus(TaskStatus.PENDING));
 
 		if (pendingCount > 0) {
 			// set status to investigation pending
@@ -3462,23 +3457,23 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				}).get();
 
 				switch (youngestTask.getTaskStatus()) {
-				case PENDING:
-					throw new UnsupportedOperationException("there should not be any pending tasks");
-				case DONE:
-					caze.setInvestigationStatus(InvestigationStatus.DONE);
-					caze.setInvestigatedDate(youngestTask.getStatusChangeDate());
-					sendInvestigationDoneNotifications(caze);
-					break;
-				case REMOVED:
-					caze.setInvestigationStatus(InvestigationStatus.DISCARDED);
-					caze.setInvestigatedDate(youngestTask.getStatusChangeDate());
-					break;
-				case NOT_EXECUTABLE:
-					caze.setInvestigationStatus(InvestigationStatus.PENDING);
-					caze.setInvestigatedDate(null);
-					break;
-				default:
-					break;
+					case PENDING:
+						throw new UnsupportedOperationException("there should not be any pending tasks");
+					case DONE:
+						caze.setInvestigationStatus(InvestigationStatus.DONE);
+						caze.setInvestigatedDate(youngestTask.getStatusChangeDate());
+						sendInvestigationDoneNotifications(caze);
+						break;
+					case REMOVED:
+						caze.setInvestigationStatus(InvestigationStatus.DISCARDED);
+						caze.setInvestigatedDate(youngestTask.getStatusChangeDate());
+						break;
+					case NOT_EXECUTABLE:
+						caze.setInvestigationStatus(InvestigationStatus.PENDING);
+						caze.setInvestigatedDate(null);
+						break;
+					default:
+						break;
 				}
 			}
 		}
@@ -3598,19 +3593,19 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				suffixNumber = Integer.parseInt(suffixString);
 			} catch (NumberFormatException e) {
 				throw new IllegalArgumentException(
-					String.format("Invalid suffix for epid number. epidNumber: '%s', suffixString: '%s'", epidNumber, suffixString),
-					e);
+						String.format("Invalid suffix for epid number. epidNumber: '%s', suffixString: '%s'", epidNumber, suffixString),
+						e);
 			}
 			regexPattern = cb.parameter(String.class);
 			regexReplacement = cb.parameter(String.class);
 			regexFlags = cb.parameter(String.class);
 			Expression<String> epidNumberSuffixClean = cb.function(
-				"regexp_replace",
-				String.class,
-				cb.substring(caze.get(Case.EPID_NUMBER), suffixSeperatorIndex + 2),
-				regexPattern,
-				regexReplacement,
-				regexFlags);
+					"regexp_replace",
+					String.class,
+					cb.substring(caze.get(Case.EPID_NUMBER), suffixSeperatorIndex + 2),
+					regexPattern,
+					regexReplacement,
+					regexFlags);
 			filter = cb.and(filter, cb.equal(cb.concat("0", epidNumberSuffixClean).as(Integer.class), suffixNumber));
 		} else {
 			filter = cb.and(filter, cb.equal(caze.get(Case.EPID_NUMBER), prefixString));
@@ -3630,11 +3625,11 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	@Override
 	public boolean doesExternalTokenExist(String externalToken, String caseUuid) {
 		return service.exists(
-			(cb, caseRoot, cq) -> CriteriaBuilderHelper.and(
-				cb,
-				cb.equal(caseRoot.get(Case.EXTERNAL_TOKEN), externalToken),
-				cb.notEqual(caseRoot.get(Case.UUID), caseUuid),
-				cb.notEqual(caseRoot.get(Case.DELETED), Boolean.TRUE)));
+				(cb, caseRoot, cq) -> CriteriaBuilderHelper.and(
+						cb,
+						cb.equal(caseRoot.get(Case.EXTERNAL_TOKEN), externalToken),
+						cb.notEqual(caseRoot.get(Case.UUID), caseUuid),
+						cb.notEqual(caseRoot.get(Case.DELETED), Boolean.TRUE)));
 	}
 
 	@Override
@@ -3658,8 +3653,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		}
 
 		Predicate districtFilter = cb.or(
-			cb.equal(caseRoot.get(Case.DISTRICT), districtRoot),
-			cb.and(cb.isNull(caseRoot.get(Case.DISTRICT)), cb.equal(caseRoot.get(Case.RESPONSIBLE_DISTRICT), districtRoot)));
+				cb.equal(caseRoot.get(Case.DISTRICT), districtRoot),
+				cb.and(cb.isNull(caseRoot.get(Case.DISTRICT)), cb.equal(caseRoot.get(Case.RESPONSIBLE_DISTRICT), districtRoot)));
 		filter = filter != null ? cb.and(filter, districtFilter) : districtFilter;
 
 		cq.where(filter);
@@ -3673,8 +3668,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 		if (caseMeasure == CaseMeasure.CASE_COUNT) {
 			return results.stream()
-				.map(e -> new Pair<>(districtFacade.toDto((District) e[0]), new BigDecimal((Long) e[1])))
-				.collect(Collectors.toList());
+					.map(e -> new Pair<>(districtFacade.toDto((District) e[0]), new BigDecimal((Long) e[1])))
+					.collect(Collectors.toList());
 		} else {
 			return results.stream().map(e -> {
 				District district = (District) e[0];
@@ -3686,8 +3681,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 					return new Pair<>(districtFacade.toDto(district), new BigDecimal(0));
 				} else {
 					return new Pair<>(
-						districtFacade.toDto(district),
-						InfrastructureHelper.getCaseIncidence(caseCount.intValue(), population, InfrastructureHelper.CASE_INCIDENCE_DIVISOR));
+							districtFacade.toDto(district),
+							InfrastructureHelper.getCaseIncidence(caseCount.intValue(), population, InfrastructureHelper.CASE_INCIDENCE_DIVISOR));
 				}
 			}).sorted(Comparator.comparing(Pair::getElement1)).collect(Collectors.toList());
 		}
@@ -3697,13 +3692,13 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 		try {
 			String message =
-				String.format(I18nProperties.getString(MessageContents.CONTENT_CASE_INVESTIGATION_DONE), DataHelper.getShortUuid(caze.getUuid()));
+					String.format(I18nProperties.getString(MessageContents.CONTENT_CASE_INVESTIGATION_DONE), DataHelper.getShortUuid(caze.getUuid()));
 			notificationService.sendNotifications(
-				NotificationType.CASE_INVESTIGATION_DONE,
-				JurisdictionHelper.getCaseRegions(caze),
-				null,
-				MessageSubject.CASE_INVESTIGATION_DONE,
-				message);
+					NotificationType.CASE_INVESTIGATION_DONE,
+					JurisdictionHelper.getCaseRegions(caze),
+					null,
+					MessageSubject.CASE_INVESTIGATION_DONE,
+					message);
 		} catch (NotificationDeliveryFailedException e) {
 			logger.error("NotificationDeliveryFailedException when trying to notify supervisors about the completion of a case investigation.");
 		}
@@ -3782,7 +3777,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		for (Contact contact : contacts) {
 			if (cloning) {
 				ContactDto newContact =
-					ContactDto.build(leadCase.toReference(), leadCase.getDisease(), leadCase.getDiseaseDetails(), leadCase.getDiseaseVariant());
+						ContactDto.build(leadCase.toReference(), leadCase.getDisease(), leadCase.getDiseaseDetails(), leadCase.getDiseaseVariant());
 				newContact.setPerson(new PersonReferenceDto(contact.getPerson().getUuid()));
 				DtoHelper.copyDtoValues(newContact, contactFacade.toDto(contact), cloning);
 				contactFacade.save(newContact, false, false);
@@ -3834,7 +3829,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		// 3 Change Therapy Reference
 		// 3.1 Treatments
 		List<Treatment> treatments =
-			treatmentService.findBy(new TreatmentCriteria().therapy(new TherapyReferenceDto(otherCase.getTherapy().getUuid())));
+				treatmentService.findBy(new TreatmentCriteria().therapy(new TherapyReferenceDto(otherCase.getTherapy().getUuid())));
 		TherapyReferenceDto leadCaseTherapyReference = new TherapyReferenceDto(leadCase.getTherapy().getUuid());
 		for (Treatment treatment : treatments) {
 			if (cloning) {
@@ -3850,7 +3845,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 		// 3.2 Prescriptions
 		List<Prescription> prescriptions =
-			prescriptionService.findBy(new PrescriptionCriteria().therapy(new TherapyReferenceDto(otherCase.getTherapy().getUuid())));
+				prescriptionService.findBy(new PrescriptionCriteria().therapy(new TherapyReferenceDto(otherCase.getTherapy().getUuid())));
 		for (Prescription prescription : prescriptions) {
 			if (cloning) {
 				PrescriptionDto newPrescription = PrescriptionDto.buildPrescription(leadCaseTherapyReference);
@@ -3866,7 +3861,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		// 4 Change Clinical Course Reference
 		// 4.1 Clinical Visits
 		List<ClinicalVisit> clinicalVisits = clinicalVisitService
-			.findBy(new ClinicalVisitCriteria().clinicalCourse(new ClinicalCourseReferenceDto(otherCase.getClinicalCourse().getUuid())));
+				.findBy(new ClinicalVisitCriteria().clinicalCourse(new ClinicalCourseReferenceDto(otherCase.getClinicalCourse().getUuid())));
 		for (ClinicalVisit clinicalVisit : clinicalVisits) {
 			if (cloning) {
 				ClinicalVisitDto newClinicalVisit = ClinicalVisitDto.build(leadCaseData.getClinicalCourse().toReference(), leadCase.getDisease());
@@ -3907,7 +3902,7 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		// if there are more than 2 exposures marked as probable infection environment, find the one that originates from the otherCase and set it to false
 		// the one originating from the otherCase should always be found at the higher index
 		List<Exposure> probableExposuresList =
-			leadCase.getEpiData().getExposures().stream().filter(Exposure::isProbableInfectionEnvironment).collect(Collectors.toList());
+				leadCase.getEpiData().getExposures().stream().filter(Exposure::isProbableInfectionEnvironment).collect(Collectors.toList());
 		while (probableExposuresList.size() >= 2) {
 			// should never be > 2, but still make sure to set all but one exposures to false
 			probableExposuresList.get(probableExposuresList.size() - 1).setProbableInfectionEnvironment(false);
@@ -3926,8 +3921,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		// 10 Activity as case
 		final EpiData otherEpiData = otherCase.getEpiData();
 		if (otherEpiData != null
-			&& YesNo.YES == otherEpiData.getActivityAsCaseDetailsKnown()
-			&& CollectionUtils.isNotEmpty(otherEpiData.getActivitiesAsCase())) {
+				&& YesNo.YES == otherEpiData.getActivityAsCaseDetailsKnown()
+				&& CollectionUtils.isNotEmpty(otherEpiData.getActivitiesAsCase())) {
 
 			final EpiData leadEpiData = leadCase.getEpiData();
 			leadEpiData.setActivityAsCaseDetailsKnown(YesNo.YES);
@@ -3993,9 +3988,9 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 		Timestamp notChangedTimestamp = Timestamp.valueOf(notChangedSince.atStartOfDay());
 		cq.where(
-			cb.equal(from.get(Case.ARCHIVED), false),
-			cb.equal(from.get(Case.DELETED), false),
-			cb.not(service.createChangeDateFilter(cb, qc.getJoins(), notChangedTimestamp, true)));
+				cb.equal(from.get(Case.ARCHIVED), false),
+				cb.equal(from.get(Case.DELETED), false),
+				cb.not(service.createChangeDateFilter(cb, qc.getJoins(), notChangedTimestamp, true)));
 		cq.select(from.get(Case.UUID)).distinct(true);
 		List<String> caseUuids = em.createQuery(cq).getResultList();
 
@@ -4004,19 +3999,19 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		}
 
 		logger.debug(
-			"archiveAllArchivableCases() finished. caseCount = {}, daysAfterCaseGetsArchived = {}, {}ms",
-			caseUuids.size(),
-			daysAfterCaseGetsArchived,
-			DateHelper.durationMillies(startTime));
+				"archiveAllArchivableCases() finished. caseCount = {}, daysAfterCaseGetsArchived = {}, {}ms",
+				caseUuids.size(),
+				daysAfterCaseGetsArchived,
+				DateHelper.durationMillies(startTime));
 	}
 
 	public Page<CaseFollowUpDto> getCaseFollowUpIndexPage(
-		CaseFollowUpCriteria criteria,
-		Integer offset,
-		Integer size,
-		List<SortProperty> sortProperties) {
+			CaseFollowUpCriteria criteria,
+			Integer offset,
+			Integer size,
+			List<SortProperty> sortProperties) {
 		List<CaseFollowUpDto> caseFollowUpIndexList =
-			getCaseFollowUpList(criteria, criteria.getReferenceDate(), criteria.getInterval(), offset, size, sortProperties);
+				getCaseFollowUpList(criteria, criteria.getReferenceDate(), criteria.getInterval(), offset, size, sortProperties);
 		long totalElementCount = count(criteria);
 		return new Page<>(caseFollowUpIndexList, offset, size, totalElementCount);
 
@@ -4024,12 +4019,12 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 	@Override
 	public List<CaseFollowUpDto> getCaseFollowUpList(
-		CaseCriteria caseCriteria,
-		Date referenceDate,
-		int interval,
-		Integer first,
-		Integer max,
-		List<SortProperty> sortProperties) {
+			CaseCriteria caseCriteria,
+			Date referenceDate,
+			int interval,
+			Integer first,
+			Integer max,
+			List<SortProperty> sortProperties) {
 
 		Date end = DateHelper.getEndOfDay(referenceDate);
 		Date start = DateHelper.getStartOfDay(DateHelper.subtractDays(end, interval));
@@ -4042,19 +4037,19 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		final CaseJoins joins = caseQueryContext.getJoins();
 
 		cq.multiselect(
-			caze.get(Case.UUID),
-			caze.get(Case.CHANGE_DATE),
-			joins.getPerson().get(Person.FIRST_NAME),
-			joins.getPerson().get(Person.LAST_NAME),
-			caze.get(Case.REPORT_DATE),
-			joins.getSymptoms().get(Symptoms.ONSET_DATE),
-			caze.get(Case.FOLLOW_UP_UNTIL),
-			joins.getPerson().get(Person.SYMPTOM_JOURNAL_STATUS),
-			caze.get(Case.DISEASE),
-			JurisdictionHelper.booleanSelector(cb, service.inJurisdictionOrOwned(caseQueryContext)));
+				caze.get(Case.UUID),
+				caze.get(Case.CHANGE_DATE),
+				joins.getPerson().get(Person.FIRST_NAME),
+				joins.getPerson().get(Person.LAST_NAME),
+				caze.get(Case.REPORT_DATE),
+				joins.getSymptoms().get(Symptoms.ONSET_DATE),
+				caze.get(Case.FOLLOW_UP_UNTIL),
+				joins.getPerson().get(Person.SYMPTOM_JOURNAL_STATUS),
+				caze.get(Case.DISEASE),
+				JurisdictionHelper.booleanSelector(cb, service.inJurisdictionOrOwned(caseQueryContext)));
 
 		Predicate filter =
-			CriteriaBuilderHelper.and(cb, service.createUserFilter(caseQueryContext), service.createCriteriaFilter(caseCriteria, caseQueryContext));
+				CriteriaBuilderHelper.and(cb, service.createUserFilter(caseQueryContext), service.createCriteriaFilter(caseCriteria, caseQueryContext));
 
 		if (filter != null) {
 			cq.where(filter);
@@ -4067,24 +4062,24 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			for (SortProperty sortProperty : sortProperties) {
 				Expression<?> expression;
 				switch (sortProperty.propertyName) {
-				case FollowUpDto.UUID:
-				case FollowUpDto.REPORT_DATE:
-				case FollowUpDto.FOLLOW_UP_UNTIL:
-					expression = caze.get(sortProperty.propertyName);
-					break;
-				case FollowUpDto.FIRST_NAME:
-					expression = joins.getPerson().get(Person.FIRST_NAME);
-					order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
-					break;
-				case FollowUpDto.SYMPTOM_JOURNAL_STATUS:
-					expression = joins.getPerson().get(Person.SYMPTOM_JOURNAL_STATUS);
-					break;
-				case FollowUpDto.LAST_NAME:
-					expression = joins.getPerson().get(Person.LAST_NAME);
-					order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
-					break;
-				default:
-					throw new IllegalArgumentException(sortProperty.propertyName);
+					case FollowUpDto.UUID:
+					case FollowUpDto.REPORT_DATE:
+					case FollowUpDto.FOLLOW_UP_UNTIL:
+						expression = caze.get(sortProperty.propertyName);
+						break;
+					case FollowUpDto.FIRST_NAME:
+						expression = joins.getPerson().get(Person.FIRST_NAME);
+						order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
+						break;
+					case FollowUpDto.SYMPTOM_JOURNAL_STATUS:
+						expression = joins.getPerson().get(Person.SYMPTOM_JOURNAL_STATUS);
+						break;
+					case FollowUpDto.LAST_NAME:
+						expression = joins.getPerson().get(Person.LAST_NAME);
+						order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
+						break;
+					default:
+						throw new IllegalArgumentException(sortProperty.propertyName);
 				}
 				order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
 			}
@@ -4104,17 +4099,17 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			Join<Visit, Symptoms> visitSymptomsJoin = visitsJoin.join(Visit.SYMPTOMS, JoinType.LEFT);
 
 			visitsCq.where(
-				CriteriaBuilderHelper.and(
-					cb,
-					caze.get(AbstractDomainObject.UUID).in(caseUuids),
-					cb.isNotEmpty(visitsCqRoot.get(Case.VISITS)),
-					cb.between(visitsJoin.get(Visit.VISIT_DATE_TIME), start, end)));
+					CriteriaBuilderHelper.and(
+							cb,
+							caze.get(AbstractDomainObject.UUID).in(caseUuids),
+							cb.isNotEmpty(visitsCqRoot.get(Case.VISITS)),
+							cb.between(visitsJoin.get(Visit.VISIT_DATE_TIME), start, end)));
 			visitsCq.multiselect(
-				visitsCqRoot.get(Case.UUID),
-				visitsJoin.get(Visit.VISIT_DATE_TIME),
-				visitsJoin.get(Visit.VISIT_STATUS),
-				visitsJoin.get(Visit.ORIGIN),
-				visitSymptomsJoin.get(Symptoms.SYMPTOMATIC));
+					visitsCqRoot.get(Case.UUID),
+					visitsJoin.get(Visit.VISIT_DATE_TIME),
+					visitsJoin.get(Visit.VISIT_STATUS),
+					visitsJoin.get(Visit.ORIGIN),
+					visitSymptomsJoin.get(Symptoms.SYMPTOMATIC));
 			// Sort by visit date so that we'll have the latest visit of each day
 			visitsCq.orderBy(cb.asc(visitsJoin.get(Visit.VISIT_DATE_TIME)));
 
@@ -4148,12 +4143,12 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 			samples = sampleFacade.getByCaseUuids(Collections.singletonList(caseDto.getUuid()));
 		}
 		return CaseLogic.calculateFollowUpUntilDate(
-			caseDto,
-			CaseLogic.getFollowUpStartDate(caseDto, samples),
-			visitFacade.getVisitsByCase(caseDto.toReference()),
-			diseaseConfigurationFacade.getCaseFollowUpDuration(caseDto.getDisease()),
-			ignoreOverwrite,
-			featureConfigurationFacade.isPropertyValueTrue(FeatureType.CASE_FOLLOWUP, FeatureTypeProperty.ALLOW_FREE_FOLLOW_UP_OVERWRITE));
+				caseDto,
+				CaseLogic.getFollowUpStartDate(caseDto, samples),
+				visitFacade.getVisitsByCase(caseDto.toReference()),
+				diseaseConfigurationFacade.getCaseFollowUpDuration(caseDto.getDisease()),
+				ignoreOverwrite,
+				featureConfigurationFacade.isPropertyValueTrue(FeatureType.CASE_FOLLOWUP, FeatureTypeProperty.ALLOW_FREE_FOLLOW_UP_OVERWRITE));
 	}
 
 	@Override
@@ -4167,11 +4162,11 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 				messagingService.sendManualMessage(person, subject, messageContent, messageTypes);
 			} catch (NotificationDeliveryFailedException e) {
 				logger.error(
-					String.format(
-						"NotificationDeliveryFailedException when trying to notify person about: %s" + "Failed to send " + e.getMessageType()
-							+ " to person with UUID %s.",
-						subject,
-						person.getUuid()));
+						String.format(
+								"NotificationDeliveryFailedException when trying to notify person about: %s" + "Failed to send " + e.getMessageType()
+										+ " to person with UUID %s.",
+								subject,
+								person.getUuid()));
 			}
 		});
 	}
@@ -4182,9 +4177,9 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		final AtomicLong totalCount = new AtomicLong();
 
 		IterableHelper.executeBatched(
-			caseUuids,
-			ModelConstants.PARAMETER_LIMIT,
-			batchedUuids -> totalCount.addAndGet(countCasesWithMissingContactInfo(batchedUuids, messageType)));
+				caseUuids,
+				ModelConstants.PARAMETER_LIMIT,
+				batchedUuids -> totalCount.addAndGet(countCasesWithMissingContactInfo(batchedUuids, messageType)));
 
 		return totalCount.get();
 	}
@@ -4198,8 +4193,8 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 		cq.select(cb.count(root));
 		Expression<?> contactInformation = messageType == MessageType.EMAIL
-			? caseQueryContext.getSubqueryExpression(CaseQueryContext.PERSON_EMAIL_SUBQUERY)
-			: caseQueryContext.getSubqueryExpression(CaseQueryContext.PERSON_PHONE_SUBQUERY);
+				? caseQueryContext.getSubqueryExpression(CaseQueryContext.PERSON_EMAIL_SUBQUERY)
+				: caseQueryContext.getSubqueryExpression(CaseQueryContext.PERSON_PHONE_SUBQUERY);
 		cq.where(cb.and(root.get(Case.UUID).in(caseUuids), cb.isNull(contactInformation)));
 		return em.createQuery(cq).getSingleResult();
 	}
@@ -4207,14 +4202,14 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	@Override
 	public List<ManualMessageLogDto> getMessageLog(String personUuid, MessageType messageType) {
 		return manualMessageLogService.getByPersonUuid(personUuid, messageType)
-			.stream()
-			.map(
-				mml -> new ManualMessageLogDto(
-					mml.getMessageType(),
-					mml.getSentDate(),
-					mml.getSendingUser().toReference(),
-					mml.getRecipientPerson().toReference()))
-			.collect(Collectors.toList());
+				.stream()
+				.map(
+						mml -> new ManualMessageLogDto(
+								mml.getMessageType(),
+								mml.getSentDate(),
+								mml.getSendingUser().toReference(),
+								mml.getRecipientPerson().toReference()))
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -4227,12 +4222,12 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 		cq.select(caseRoot.get(Case.UUID));
 		cq.where(
-			cb.and(
-				cb.or(
-					cb.isFalse(originInfoJoin.get(SormasToSormasOriginInfo.OWNERSHIP_HANDED_OVER)),
-					cb.isTrue(shareInfoJoin.get(SormasToSormasShareInfo.OWNERSHIP_HANDED_OVER)),
-					cb.isTrue(caseRoot.get(Case.DONT_SHARE_WITH_REPORTING_TOOL))),
-				caseRoot.get(Case.UUID).in(caseUuids)));
+				cb.and(
+						cb.or(
+								cb.isFalse(originInfoJoin.get(SormasToSormasOriginInfo.OWNERSHIP_HANDED_OVER)),
+								cb.isTrue(shareInfoJoin.get(SormasToSormasShareInfo.OWNERSHIP_HANDED_OVER)),
+								cb.isTrue(caseRoot.get(Case.DONT_SHARE_WITH_REPORTING_TOOL))),
+						caseRoot.get(Case.UUID).in(caseUuids)));
 		cq.orderBy(cb.asc(caseRoot.get(AbstractDomainObject.CREATION_DATE)));
 
 		return QueryHelper.getResultList(em, cq, null, null);
@@ -4279,79 +4274,79 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		Predicate externalTokenPredicate = null;
 		if (searchCaze.getExternalToken() != null) {
 			externalTokenPredicate =
-				and(cb, cb.isNotNull(externalToken), cb.equal(cb.trim(cb.lower(externalToken)), searchCaze.getExternalToken().toLowerCase().trim()));
+					and(cb, cb.isNotNull(externalToken), cb.equal(cb.trim(cb.lower(externalToken)), searchCaze.getExternalToken().toLowerCase().trim()));
 		}
 		// todo this should use PersonService.buildSimilarityCriteriaFilter
 		Predicate combinedPredicate = null;
 		if (searchPerson.getFirstName() != null
-			&& searchPerson.getLastName() != null
-			&& searchCaze.getReportDate() != null
-			&& searchCaze.getResponsibleDistrict() != null) {
+				&& searchPerson.getLastName() != null
+				&& searchCaze.getReportDate() != null
+				&& searchCaze.getResponsibleDistrict() != null) {
 			Predicate personPredicate = and(
-				cb,
-				cb.equal(cb.trim(cb.lower(person.get(Person.FIRST_NAME))), searchPerson.getFirstName().toLowerCase().trim()),
-				cb.equal(cb.trim(cb.lower(person.get(Person.LAST_NAME))), searchPerson.getLastName().toLowerCase().trim()));
+					cb,
+					cb.equal(cb.trim(cb.lower(person.get(Person.FIRST_NAME))), searchPerson.getFirstName().toLowerCase().trim()),
+					cb.equal(cb.trim(cb.lower(person.get(Person.LAST_NAME))), searchPerson.getLastName().toLowerCase().trim()));
 
 			if (searchPerson.getBirthdateDD() != null) {
 				personPredicate = and(
-					cb,
-					personPredicate,
-					or(cb, cb.isNull(person.get(Person.BIRTHDATE_DD)), cb.equal(person.get(Person.BIRTHDATE_DD), searchPerson.getBirthdateDD())));
+						cb,
+						personPredicate,
+						or(cb, cb.isNull(person.get(Person.BIRTHDATE_DD)), cb.equal(person.get(Person.BIRTHDATE_DD), searchPerson.getBirthdateDD())));
 			}
 
 			if (searchPerson.getBirthdateMM() != null) {
 				personPredicate = and(
-					cb,
-					personPredicate,
-					or(cb, cb.isNull(person.get(Person.BIRTHDATE_DD)), cb.equal(person.get(Person.BIRTHDATE_MM), searchPerson.getBirthdateMM())));
+						cb,
+						personPredicate,
+						or(cb, cb.isNull(person.get(Person.BIRTHDATE_DD)), cb.equal(person.get(Person.BIRTHDATE_MM), searchPerson.getBirthdateMM())));
 			}
 
 			if (searchPerson.getBirthdateYYYY() != null) {
 				personPredicate = and(
-					cb,
-					personPredicate,
-					or(
 						cb,
-						cb.isNull(person.get(Person.BIRTHDATE_YYYY)),
-						cb.equal(person.get(Person.BIRTHDATE_YYYY), searchPerson.getBirthdateYYYY())));
+						personPredicate,
+						or(
+								cb,
+								cb.isNull(person.get(Person.BIRTHDATE_YYYY)),
+								cb.equal(person.get(Person.BIRTHDATE_YYYY), searchPerson.getBirthdateYYYY())));
 			}
 
 			if (searchPerson.getSex() != null) {
 				personPredicate =
-					and(cb, personPredicate, or(cb, cb.isNull(person.get(Person.SEX)), cb.equal(person.get(Person.SEX), searchPerson.getSex())));
+						and(cb, personPredicate, or(cb, cb.isNull(person.get(Person.SEX)), cb.equal(person.get(Person.SEX), searchPerson.getSex())));
 			}
 
 			final Predicate reportDatePredicate;
 			if (reportDateThreshold == 0) {
 				// threshold is zero: we want to get exact matches
 				reportDatePredicate = cb.equal(
-					cb.function(ExtendedPostgreSQL94Dialect.DATE, Date.class, caseRoot.get(Case.REPORT_DATE)),
-					cb.function(ExtendedPostgreSQL94Dialect.DATE, Date.class, cb.literal(searchCaze.getReportDate())));
+						cb.function(ExtendedPostgreSQL94Dialect.DATE, Date.class, caseRoot.get(Case.REPORT_DATE)),
+						cb.function(ExtendedPostgreSQL94Dialect.DATE, Date.class, cb.literal(searchCaze.getReportDate())));
 			} else {
 				// threshold is nonzero: apply time range of threshold to the reportDate
 				Date reportDate = casePerson.getCaze().getReportDate();
 				Date dateBefore = DateHelper.subtractDays(reportDate, reportDateThreshold);
 				Date dateAfter = DateHelper.addDays(reportDate, reportDateThreshold);
 				reportDatePredicate = cb.between(
-					cb.function(ExtendedPostgreSQL94Dialect.DATE, Date.class, caseRoot.get(Case.REPORT_DATE)),
-					cb.function(ExtendedPostgreSQL94Dialect.DATE, Date.class, cb.literal(dateBefore)),
-					cb.function(ExtendedPostgreSQL94Dialect.DATE, Date.class, cb.literal(dateAfter)));
+						cb.function(ExtendedPostgreSQL94Dialect.DATE, Date.class, caseRoot.get(Case.REPORT_DATE)),
+						cb.function(ExtendedPostgreSQL94Dialect.DATE, Date.class, cb.literal(dateBefore)),
+						cb.function(ExtendedPostgreSQL94Dialect.DATE, Date.class, cb.literal(dateAfter)));
 			}
 
 			Predicate districtPredicate = CriteriaBuilderHelper.or(
-				cb,
-				cb.equal(caseCaseJoins.getResponsibleDistrict().get(District.UUID), searchCaze.getResponsibleDistrict().getUuid()),
-				cb.equal(caseCaseJoins.getDistrict().get(District.UUID), searchCaze.getResponsibleDistrict().getUuid()));
+					cb,
+					cb.equal(caseCaseJoins.getResponsibleDistrict().get(District.UUID), searchCaze.getResponsibleDistrict().getUuid()),
+					cb.equal(caseCaseJoins.getDistrict().get(District.UUID), searchCaze.getResponsibleDistrict().getUuid()));
 			if (searchCaze.getDistrict() != null) {
 				districtPredicate = CriteriaBuilderHelper.or(
-					cb,
-					districtPredicate,
-					cb.equal(caseCaseJoins.getResponsibleDistrict().get(District.UUID), searchCaze.getDistrict().getUuid()),
-					cb.equal(caseCaseJoins.getDistrict().get(District.UUID), searchCaze.getDistrict().getUuid()));
+						cb,
+						districtPredicate,
+						cb.equal(caseCaseJoins.getResponsibleDistrict().get(District.UUID), searchCaze.getDistrict().getUuid()),
+						cb.equal(caseCaseJoins.getDistrict().get(District.UUID), searchCaze.getDistrict().getUuid()));
 			}
 
 			combinedPredicate =
-				and(cb, personPredicate, cb.equal(caseRoot.get(Case.DISEASE), searchCaze.getDisease()), reportDatePredicate, districtPredicate);
+					and(cb, personPredicate, cb.equal(caseRoot.get(Case.DISEASE), searchCaze.getDisease()), reportDatePredicate, districtPredicate);
 		}
 
 		Predicate filters = or(cb, externalIdPredicate, externalTokenPredicate, combinedPredicate);
@@ -4364,11 +4359,11 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 		List<Object[]> duplicateUuids = em.createQuery(cq).getResultList();
 
 		return duplicateUuids.stream()
-			.map(
-				(casePersonUuids) -> new CasePersonDto(
-					getCaseDataByUuid((String) casePersonUuids[0]),
-					personFacade.getByUuid((String) casePersonUuids[1])))
-			.collect(Collectors.toList());
+				.map(
+						(casePersonUuids) -> new CasePersonDto(
+								getCaseDataByUuid((String) casePersonUuids[0]),
+								personFacade.getByUuid((String) casePersonUuids[1])))
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -4384,10 +4379,10 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 
 		cq.select(caseRoot);
 		Predicate filter = cb.and(
-			cb.equal(caseRoot.get(Case.DISEASE), pathogenTestDto.getTestedDisease()),
-			cb.equal(personJoin.get(Person.UUID), personReferenceDto.getUuid()),
-			cb.equal(caseRoot.get(Case.DISEASE), pathogenTestJoin.get(PathogenTest.TESTED_DISEASE)),
-			cb.exists(sampleService.exists(cb, cq, samplesJoin, pathogenTestDto.getSample().getUuid())));
+				cb.equal(caseRoot.get(Case.DISEASE), pathogenTestDto.getTestedDisease()),
+				cb.equal(personJoin.get(Person.UUID), personReferenceDto.getUuid()),
+				cb.equal(caseRoot.get(Case.DISEASE), pathogenTestJoin.get(PathogenTest.TESTED_DISEASE)),
+				cb.exists(sampleService.exists(cb, cq, samplesJoin, pathogenTestDto.getSample().getUuid())));
 
 		cq.where(filter);
 
@@ -4417,9 +4412,9 @@ public class CaseFacadeEjb extends AbstractCoreFacadeEjb<Case, CaseDataDto, Case
 	}
 
 	@RightsAllowed({
-		UserRight._VISIT_CREATE,
-		UserRight._VISIT_EDIT,
-		UserRight._EXTERNAL_VISITS })
+			UserRight._VISIT_CREATE,
+			UserRight._VISIT_EDIT,
+			UserRight._EXTERNAL_VISITS })
 	public void updateSymptomsByVisit(Visit visit) {
 		CaseDataDto cazeDto = toDto(visit.getCaze());
 		SymptomsDto caseSymptoms = cazeDto.getSymptoms();

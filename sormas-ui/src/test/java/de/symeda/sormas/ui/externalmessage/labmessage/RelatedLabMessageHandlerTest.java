@@ -416,8 +416,9 @@ public class RelatedLabMessageHandlerTest extends AbstractUiBeanTest {
 
 		ExternalMessageDto labMessageToProcess = ExternalMessageDto.build();
 		labMessageToProcess.setReportId(reportId);
-		labMessageToProcess.setLabSampleId(labSampleId);
-		labMessageToProcess.setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
+		labMessageToProcess.addSampleReport(SampleReportDto.build());
+		labMessageToProcess.getSampleReports().get(0).setLabSampleId(labSampleId);
+		labMessageToProcess.getSampleReports().get(0).setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
 		labMessageToProcess.setReporterExternalIds(Collections.singletonList(sample.getLab().getExternalId()));
 		labMessageToProcess.getSampleReports().get(0).setSampleDateTime(sample.getSampleDateTime());
 		labMessageToProcess.getSampleReports().get(0).setSpecimenCondition(sample.getSpecimenCondition());
@@ -677,7 +678,7 @@ public class RelatedLabMessageHandlerTest extends AbstractUiBeanTest {
 		labMessageToProcess.setPersonFirstName(person.getFirstName());
 		labMessageToProcess.setPersonLastName(person.getLastName() + " Changed");
 		labMessageToProcess.setPersonSex(person.getSex());
-		labMessageToProcess.setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
+		labMessageToProcess.getSampleReports().get(0).setSampleMaterial(SampleMaterial.WHOLE_BLOOD);
 		labMessageToProcess.setReporterExternalIds(Collections.singletonList(sample.getLab().getExternalId()));
 		labMessageToProcess.getSampleReports().get(0).setSampleDateTime(sample.getSampleDateTime());
 		labMessageToProcess.getSampleReports().get(0).setSpecimenCondition(sample.getSpecimenCondition());

@@ -267,7 +267,7 @@ public class SormasToSormasEventFacadeEjbTest extends SormasToSormasTest {
 			null);
 
 		SampleDto sample =
-			creator.createSample(eventParticipant.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
+			creator.createSample(eventParticipant.toReference(), new Date(), new Date(), nationalUser.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
 		creator.createPathogenTest(
 			sample.toReference(),
 			PathogenTestType.CULTURE,

@@ -20,6 +20,6 @@ public class SixtyDayFollowupView extends AbstractCaseView {
         CommitDiscardWrapperComponent<SixtyDayForm> sixtyDayForm =
                 ControllerProvider.getCaseController().getSixtyDayComponent(getCaseRef().getUuid(), getViewMode());
         setSubComponent(sixtyDayForm);
-        setCaseEditPermission(sixtyDayForm);
+        //setCaseEditPermission(sixtyDayForm);
     }
 }

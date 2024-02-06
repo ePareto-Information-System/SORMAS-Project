@@ -30,7 +30,6 @@ import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.utils.AFPFacilityOptions;
 import de.symeda.sormas.api.utils.YesNo;
-import org.joda.time.DateTimeComparator;
 
 import com.vaadin.server.ErrorMessage;
 import com.vaadin.server.UserError;

@@ -916,7 +916,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	}
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@AuditedIgnore
+	//@AuditedIgnore
 	public SixtyDay getSixtyDay(){
 		if (sixtyDay == null){
 			sixtyDay = new SixtyDay();

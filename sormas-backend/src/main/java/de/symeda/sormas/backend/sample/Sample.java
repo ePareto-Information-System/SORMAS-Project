@@ -56,7 +56,6 @@ import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfo;
 import de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShareInfo;
 import de.symeda.sormas.backend.user.User;
 import org.bouncycastle.asn1.x509.Time;
-import org.joda.time.DateTime;
 
 @Entity(name = "samples")
 public class Sample extends DeletableAdo implements SormasToSormasShareable {
@@ -880,6 +879,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	public void setSampleReports(List<SampleReport> externalMessages) {
 		this.sampleReports = externalMessages;
+	}
 	public YesNo getCsfSampleCollected() {
 		return csfSampleCollected;
 	}

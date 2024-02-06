@@ -38,6 +38,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import de.symeda.sormas.api.utils.YellowFeverSample;
+import de.symeda.sormas.ui.configuration.generate.config.CaseGenerationConfig;
+import de.symeda.sormas.ui.configuration.generate.config.ContactGenerationConfig;
+import de.symeda.sormas.ui.configuration.generate.config.EventGenerationConfig;
+import de.symeda.sormas.ui.configuration.generate.config.SampleGenerationConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1156,7 +1160,7 @@ public class DevModeView extends AbstractConfigurationView {
 				// 	int until = randomInt(1, SampleMaterial.values().length);
 				// }
 
-				if (config.isRequestSampleMaterialsToAdded()) {
+				if (sampleGenerationConfig.isRequestSampleMaterialsToAdded()) {
 					Set sampleMaterialTypes = new HashSet<YellowFeverSample>();
 					int until = randomInt(1, YellowFeverSample.values().length);
 					for (int j = 0; j < until; j++) {

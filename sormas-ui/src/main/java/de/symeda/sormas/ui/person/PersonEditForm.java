@@ -836,21 +836,21 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 		approximateAgeTypeSelect.setReadOnly(true);
 	}
 
-	private void toggleOccupationMetaFields() {
+	/*private void toggleOccupationMetaFields() {
 		OccupationType type = (OccupationType) ((AbstractSelect) getFieldGroup().getField(PersonDto.OCCUPATION_TYPE)).getValue();
 		if (type != null) {
 			switch (type) {
 			case BUSINESSMAN_WOMAN:
 			case TRANSPORTER:
-			/*case OTHER:
-				setVisible(true, PersonDto.OCCUPATION_DETAILS);*/
+			*//*case OTHER:
+				setVisible(true, PersonDto.OCCUPATION_DETAILS);*//*
 				break;
 			default:
 				//setVisible(false, PersonDto.OCCUPATION_DETAILS);
 				break;
 			}
 		}
-	}
+	}*/
 
 	private void updateFacilityDetailsVisibility(TextField detailsField, FacilityReferenceDto facility) {
 		if (facility == null) {

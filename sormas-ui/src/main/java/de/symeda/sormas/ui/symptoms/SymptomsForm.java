@@ -44,7 +44,6 @@ import java.util.stream.Stream;
 
 import com.vaadin.v7.ui.*;
 import de.symeda.sormas.api.caze.CaseOutcome;
-import org.joda.time.DateTimeComparator;
 
 import com.vaadin.server.ErrorMessage;
 import com.vaadin.server.ThemeResource;

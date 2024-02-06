@@ -241,11 +241,11 @@ public class CaseFacadeEjbTest extends AbstractBeanTest {
 			Disease.CORONAVIRUS,
 			null);
 		SampleDto contactSample =
-			creator.createSample(contact.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
+			creator.createSample(contact.toReference(), new Date(), new Date(), surveillanceSupervisor.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
 
-		ContactDto otherContact = creator.createContact(user.toReference(), creator.createPerson("John", "Doe").toReference(), new Date());
+		ContactDto otherContact = creator.createContact(surveillanceSupervisor.toReference(), creator.createPerson("John", "Doe").toReference(), new Date());
 		SampleDto otherContactSample =
-			creator.createSample(otherContact.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
+			creator.createSample(otherContact.toReference(), new Date(), new Date(), surveillanceSupervisor.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
 		otherContact.setResultingCase(caze.toReference());
 		getContactFacade().save(otherContact);
 
@@ -893,8 +893,8 @@ public class CaseFacadeEjbTest extends AbstractBeanTest {
 		caze = getCaseFacade().save(caze);
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DATE, -1);
-		creator.createSample(caze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.WHOLE_BLOOD, rdcfEntities.facility);
-		creator.createSample(caze.toReference(), cal.getTime(), cal.getTime(), user.toReference(), SampleMaterial.CRUST, rdcfEntities.facility);
+		creator.createSample(caze.toReference(), new Date(), new Date(), surveillanceSupervisor.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
+		creator.createSample(caze.toReference(), cal.getTime(), cal.getTime(), surveillanceSupervisor.toReference(), SampleMaterial.CRUST, rdcf.facility);
 		creator.createPathogenTest(caze, PathogenTestType.ANTIGEN_DETECTION, PathogenTestResultType.POSITIVE);
 		creator.createPrescription(caze);
 		ImmunizationDto immunization = creator.createImmunization(
@@ -1288,12 +1288,12 @@ public class CaseFacadeEjbTest extends AbstractBeanTest {
 			null,
 			null,
 			new Date(),
-			user.toReference());
-		SampleDto sample = creator.createSample(caze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
+				surveillanceSupervisor.toReference());
+		SampleDto sample = creator.createSample(caze.toReference(), new Date(), new Date(), surveillanceSupervisor.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
 		SampleDto sampleAssociatedToContactAndCase =
-			creator.createSample(caze.toReference(), new Date(), new Date(), user.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
+			creator.createSample(caze.toReference(), new Date(), new Date(), surveillanceSupervisor.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
 		ContactDto contact2 =
-			creator.createContact(user.toReference(), user.toReference(), contactPerson.toReference(), caze, new Date(), new Date(), null);
+			creator.createContact(surveillanceSupervisor.toReference(), surveillanceSupervisor.toReference(), contactPerson.toReference(), caze, new Date(), new Date(), null);
 		sampleAssociatedToContactAndCase.setAssociatedContact(new ContactReferenceDto(contact2.getUuid()));
 		getSampleFacade().saveSample(sampleAssociatedToContactAndCase);
 
@@ -3056,7 +3056,7 @@ public class CaseFacadeEjbTest extends AbstractBeanTest {
 			new Date(),
 			rdcf);
 		SampleDto sampleDto =
-			creator.createSample(covidCase.toReference(), new Date(), new Date(), nationalUser.toReference(), SampleMaterial.BLOOD, rdcf.facility);
+			creator.createSample(covidCase.toReference(), new Date(), new Date(), nationalUser.toReference(), SampleMaterial.WHOLE_BLOOD, rdcf.facility);
 		PathogenTestDto pathogenTestDto = creator.createPathogenTest(
 			sampleDto.toReference(),
 			PathogenTestType.PCR_RT_PCR,

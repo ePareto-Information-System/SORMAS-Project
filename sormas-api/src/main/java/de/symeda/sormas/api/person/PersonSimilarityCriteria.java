@@ -22,7 +22,6 @@ public class PersonSimilarityCriteria extends BaseCriteria implements Cloneable 
 	private String nameUuidExternalIdExternalTokenLike;
 	private String ghanaCard;
 	private String uuidExternalIdExternalTokenLike;
-	private String nameUuidExternalIdExternalTokenLike;
 	private Boolean matchMissingInfo = Boolean.FALSE;
 	private Boolean strictNameComparison = Boolean.FALSE;
 

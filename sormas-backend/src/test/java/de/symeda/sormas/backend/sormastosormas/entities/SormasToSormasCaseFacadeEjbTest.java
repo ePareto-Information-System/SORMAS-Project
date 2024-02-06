@@ -35,6 +35,7 @@ import javax.ws.rs.core.Response;
 
 import de.symeda.sormas.api.utils.YesNo;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
@@ -296,7 +297,7 @@ public class SormasToSormasCaseFacadeEjbTest extends SormasToSormasTest {
 		person.setFirstName("James");
 		person.setLastName("Smith");
 
-		CaseDataDto caze = createRemoteCaseDto(rdcf, person);
+		CaseDataDto caze = createCaseDto(rdcf, person);
 		caze.getHospitalization().setAdmittedToHealthFacility(YesNo.YES);
 		caze.getSymptoms().setAgitation(SymptomState.YES);
 		ExposureDto exposure = ExposureDto.build(ExposureType.ANIMAL_CONTACT);
@@ -340,7 +341,7 @@ public class SormasToSormasCaseFacadeEjbTest extends SormasToSormasTest {
 		person.setFirstName("James");
 		person.setLastName("Smith");
 
-		CaseDataDto caze = createRemoteCaseDto(rdcf, person);
+		CaseDataDto caze = createCaseDto(rdcf, person);
 		caze.getHospitalization().setAdmittedToHealthFacility(YesNo.YES);
 		caze.getSymptoms().setAgitation(SymptomState.YES);
 		ExposureDto exposure = ExposureDto.build(ExposureType.ANIMAL_CONTACT);

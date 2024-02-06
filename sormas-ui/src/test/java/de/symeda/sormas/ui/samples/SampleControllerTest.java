@@ -60,7 +60,7 @@ public class SampleControllerTest extends AbstractUiBeanTest {
 			new Date(),
 			user.toReference(),
 			SampleMaterial.WHOLE_BLOOD,
-			rdcf.facility.toReference());
+			rdcf.facility);
 
 		assertThat(sut.getDiseaseOf(sample), equalTo(Disease.CHOLERA));
 	}

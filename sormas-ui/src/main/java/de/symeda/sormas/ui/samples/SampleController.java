@@ -128,7 +128,8 @@ public class SampleController {
 		// add option to create additional pathogen tests
 
 		if(disease != Disease.CSM && disease != Disease.YELLOW_FEVER && disease != Disease.AFP){
-			addPathogenTestButton(editView, false);
+			SampleEditPathogenTestListHandler pathogenTestHandler = new SampleEditPathogenTestListHandler();
+			addPathogenTestButton(editView,false,null,null, pathogenTestHandler::addPathogenTest);
 		}
 		VaadinUiUtil.showModalPopupWindow(editView, I18nProperties.getString(Strings.headingCreateNewSample));
 	}

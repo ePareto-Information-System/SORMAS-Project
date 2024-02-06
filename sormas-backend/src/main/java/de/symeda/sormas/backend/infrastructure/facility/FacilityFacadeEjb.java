@@ -39,6 +39,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import de.symeda.sormas.api.infrastructure.facility.*;
+import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.api.utils.AFPFacilityOptions;
 import org.apache.commons.collections.CollectionUtils;
 

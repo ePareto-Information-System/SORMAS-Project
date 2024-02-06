@@ -1,6 +1,6 @@
 package de.symeda.sormas.backend.sixtyday;
 
-import de.symeda.auditlog.api.Audited;
+//import de.symeda.auditlog.api.Audited;
 import de.symeda.sormas.api.utils.*;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 
@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Audited
+//@Audited
 public class SixtyDay extends AbstractDomainObject {
 
     private static final long serialVersionUID = -8294812479501735786L;

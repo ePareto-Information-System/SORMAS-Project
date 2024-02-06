@@ -1639,10 +1639,10 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			facilityOrHome.setReadOnly(true);
 
 			facilityTypeGroup.setVisible(true);
-			FieldHelper.setComboInaccessible(facilityTypeGroup);
+			FieldHelper.setComboInaccessible((ComboBoxWithPlaceholder) facilityTypeGroup);
 
 			setVisible(true, facilityTypeCombo, facilityCombo);
-			FieldHelper.setComboInaccessible(facilityTypeCombo);
+			FieldHelper.setComboInaccessible((ComboBoxWithPlaceholder) facilityTypeCombo);
 		} else {
 			facilityOrHome.setVisible(false);
 		}

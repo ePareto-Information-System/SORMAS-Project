@@ -57,8 +57,9 @@ import de.symeda.sormas.ui.dashboard.map.MapCaseDisplayMode;
 import de.symeda.sormas.ui.utils.*;
 import de.symeda.sormas.ui.utils.DateFormatHelper;
 import de.symeda.sormas.ui.utils.DateTimeField;
+import java.util.Date;
 import org.apache.commons.collections.CollectionUtils;
-import org.joda.time.DateTime;
+import org.apache.james.mime4j.dom.datetime.DateTime;
 import org.vaadin.hene.popupbutton.PopupButton;
 
 public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
@@ -897,7 +898,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 		OptionGroup sampleDispatchModeTypes = addField(SampleDto.SAMPLE_DISPATCH_MODE, outcome);
 		DateField cardDateField = addField(SampleDto.SAMPLE_DISPATCH_DATE, DateField.class);
-		cardDateField.setValue(DateTime.now().toDate());
+		cardDateField.setValue(new Date());
 
 		FieldHelper.setEnabledWhen(
 				sampleDispatchModeTypes,

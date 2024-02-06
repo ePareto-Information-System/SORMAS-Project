@@ -157,9 +157,9 @@ public final class FacadeProviderMock extends FacadeProvider {
 		} else if (UserFacade.class == clazz) {
 			return (P) beanTest.getBean(UserFacadeEjbLocal.class);
 		} else if (HospitalizationFacade.class == clazz) {
-			return (P) bm.getBean(HospitalizationFacadeEjbLocal.class);
+			return (P) beanTest.getBean(HospitalizationFacadeEjbLocal.class);
 		} else if (SixtyDayFacade.class == clazz) {
-			return (P) bm.getBean(SixtyDayFacadeEjb.SixtyDayFacadeEjbLocal.class);
+			return (P) beanTest.getBean(SixtyDayFacadeEjb.SixtyDayFacadeEjbLocal.class);
 		} else if (EpiDataFacade.class == clazz) {
 			return (P) beanTest.getBean(EpiDataFacadeEjbLocal.class);
 		} else if (WeeklyReportFacade.class == clazz) {

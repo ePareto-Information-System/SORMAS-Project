@@ -21,7 +21,6 @@ import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.ui.hospitalization.PreviousHospitalizationsField;
 import de.symeda.sormas.ui.utils.*;
-import org.joda.time.DateTimeComparator;
 
 import java.util.Arrays;
 import java.util.Collections;

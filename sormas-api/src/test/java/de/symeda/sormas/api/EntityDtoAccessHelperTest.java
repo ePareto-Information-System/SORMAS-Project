@@ -26,11 +26,10 @@ import static org.mockito.Mockito.when;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 
+import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import de.symeda.sormas.api.utils.YesNo;
-import org.junit.Before;
-import org.junit.Test;
 
 import de.symeda.sormas.api.EntityDtoAccessHelper.CachedReferenceDtoResolver;
 import de.symeda.sormas.api.EntityDtoAccessHelper.IReferenceDtoResolver;
@@ -46,6 +45,7 @@ public class EntityDtoAccessHelperTest {
 	private PersonReferenceDto personReferenceDto;
 	private PersonDto personDto;
 	private IReferenceDtoResolver referenceDtoResolver;
+	private HospitalizationDto hospitalizationDto;
 
 	@BeforeEach
 	public void setup() {
@@ -164,7 +164,7 @@ public class EntityDtoAccessHelperTest {
 	@Test
 	public void readPropertyValuesString() {
 		caseDataDto.setPerson(personReferenceDto);
-		caseDataDto.getHospitalization().setIsolated(YesNoUnknown.NO);
+		caseDataDto.getHospitalization().setIsolated(YesNo.NO);
 		caseDataDto.getHospitalization().setDischargeDate(new Date(1600387200000L));
 		assertEquals("Tenzing", EntityDtoAccessHelper.getPropertyPathValueString(caseDataDto, "person.firstName", referenceDtoResolver));
 		assertEquals(
