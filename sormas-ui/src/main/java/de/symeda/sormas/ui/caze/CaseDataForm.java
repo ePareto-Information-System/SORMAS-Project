@@ -1156,8 +1156,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 			Disease disease = (Disease) valueChangeEvent.getProperty().getValue();
 
 			caseTransmissionClassification.setVisible(disease != Disease.YELLOW_FEVER && disease != Disease.CSM && disease != Disease.AHF && disease != Disease.MEASLES);
-			investigationstatus.setVisible(disease != Disease.YELLOW_FEVER && disease != Disease.CSM);
-			investigationstatus.setVisible(disease != Disease.YELLOW_FEVER && disease != Disease.CSM);
+			investigationstatus.setVisible(disease != Disease.YELLOW_FEVER && disease != Disease.CSM && disease != Disease.MEASLES);
 			ogReinfection.setVisible(disease != Disease.YELLOW_FEVER && disease != Disease.CSM && disease != Disease.AHF);
 			generalCommentLabel.setVisible(false);
 
