@@ -1338,9 +1338,9 @@ public class ContactFacadeEjb
 				joins.getRegion().get(Region.NAME),
 				joins.getDistrict().get(District.NAME));
 
-		List<ContactIndexDto> dtos = QueryHelper.getResultList(em, cq, first, max);
+		//List<ContactIndexDto> dtos = QueryHelper.getResultList(em, cq, first, max);
 
-		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight, I18nProperties.getCaption(Captions.inaccessibleValue));
+		//Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight, I18nProperties.getCaption(Captions.inaccessibleValue));
 //		pseudonymizer.pseudonymizeDtoCollection(ContactIndexDto.class, dtos, ContactIndexDto::getInJurisdiction, (c, isInJurisdiction) -> {
 //			if (c.getCaze() != null) {
 //				pseudonymizer.pseudonymizeDto(CaseReferenceDto.class, c.getCaze(), c.getCaseInJurisdiction(), null);

@@ -429,7 +429,7 @@ public class PersonController {
 		return editView;
 	}
 
-	public CommitDiscardWrapperComponent<PersonEditForm> getPersonEditComponent(
+	/*public CommitDiscardWrapperComponent<PersonEditForm> getPersonEditComponent(
 		PersonContext personContext,
 		PersonDto person,
 		Disease disease,
@@ -452,7 +452,7 @@ public class PersonController {
 		});
 
 		return editView;
-	}
+	}*/
 
 	public CommitDiscardWrapperComponent<PersonEditForm> getPersonEditComponent(
 		PersonContext personContext,
@@ -484,6 +484,7 @@ public class PersonController {
 
 		return editView;
 	}
+	
 
 	private void savePerson(PersonDto personDto) {
 		DataHelper.Pair<CaseClassification, PersonDto> saveResult = personFacade.savePersonWithoutNotifyingExternalJournal(personDto);
@@ -571,5 +572,30 @@ public class PersonController {
 		} catch (ValidationRuntimeException ex) {
 			throw new Validator.InvalidValueException(ex.getMessage());
 		}
+	}
+
+	public CommitDiscardWrapperComponent<PersonEditForm> getPersonEditComponent(
+			PersonContext personContext,
+			PersonDto person,
+			Disease disease,
+			String diseaseDetails,
+			UserRight editUserRight,
+			final ViewMode viewMode) {
+
+		PersonEditForm editForm =
+				new PersonEditForm(personContext, disease, diseaseDetails, viewMode, person.isPseudonymized(), person.isInJurisdiction());
+		editForm.setValue(person);
+
+		final CommitDiscardWrapperComponent<PersonEditForm> editView =
+				new CommitDiscardWrapperComponent<>(editForm, UserProvider.getCurrent().hasUserRight(editUserRight), editForm.getFieldGroup());
+
+		editView.addCommitListener(() -> {
+			if (!editForm.getFieldGroup().isModified()) {
+				PersonDto dto = editForm.getValue();
+				savePerson(dto);
+			}
+		});
+
+		return editView;
 	}
 }

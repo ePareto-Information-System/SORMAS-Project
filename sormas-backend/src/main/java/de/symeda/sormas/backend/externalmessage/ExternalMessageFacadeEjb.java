@@ -449,7 +449,7 @@ public class ExternalMessageFacadeEjb implements ExternalMessageFacade {
 		return messages;
 	}
 
-	public List<Long> getIndexListIds(ExternalMessageCriteria criteria, Integer first, Integer max, List<SortProperty> sortProperties) {
+	/*public List<Long> getIndexListIds(ExternalMessageCriteria criteria, Integer first, Integer max, List<SortProperty> sortProperties) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Tuple> cq = cb.createTupleQuery();
 		Root<ExternalMessage> externalMessage = cq.from(ExternalMessage.class);
@@ -473,6 +473,37 @@ public class ExternalMessageFacadeEjb implements ExternalMessageFacade {
 			userJoin.get(User.UUID),
 			userJoin.get(User.FIRST_NAME),
 			userJoin.get(User.LAST_NAME));
+
+		List<Order> orderList = getOrderList(sortProperties, cb, externalMessage);
+		List<Expression<?>> sortColumns = orderList.stream().map(Order::getExpression).collect(Collectors.toList());
+		selections.addAll(sortColumns);
+
+		cq.multiselect(selections);
+
+		Predicate filter = externalMessageService.createDefaultFilter(cb, externalMessage);
+
+		if (criteria != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, externalMessageService.buildCriteriaFilter(cb, externalMessage, criteria));
+		}
+
+		if (filter != null) {
+			cq.where(filter);
+		}
+
+		// Distinct is necessary here to avoid duplicate results due to the user role join in taskService.createAssigneeFilter
+		cq.distinct(true);
+		cq.orderBy(orderList);
+
+		return QueryHelper.getResultList(em, cq, first, max).stream().map(t -> t.get(0, Long.class)).collect(Collectors.toList());
+	}*/
+
+	public List<Long> getIndexListIds(ExternalMessageCriteria criteria, Integer first, Integer max, List<SortProperty> sortProperties) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Tuple> cq = cb.createTupleQuery();
+		Root<ExternalMessage> externalMessage = cq.from(ExternalMessage.class);
+
+		List<Selection<?>> selections = new ArrayList<>();
+		selections.add(externalMessage.get(ExternalMessage.ID));
 
 		List<Order> orderList = getOrderList(sortProperties, cb, externalMessage);
 		List<Expression<?>> sortColumns = orderList.stream().map(Order::getExpression).collect(Collectors.toList());

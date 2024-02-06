@@ -17,6 +17,7 @@
  *******************************************************************************/
 package de.symeda.sormas.ui.caze;
 
+import com.vaadin.ui.CustomLayout;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
@@ -47,26 +48,25 @@ public class CasePersonView extends AbstractCaseView implements PersonSideCompon
 	protected void initView(String params) {
 
 		CaseDataDto caseData = FacadeProvider.getCaseFacade().getCaseDataByUuid(getCaseRef().getUuid());
-		disease = caseData.getDisease();
-		CommitDiscardWrapperComponent<PersonEditForm> personEditComponent = ControllerProvider.getPersonController()
-			.getPersonEditComponent(
-				PersonContext.CASE,
-				person,
-				caseData.getDisease(),
-				caseData.getDiseaseDetails(),
-				caseData.getCaseOrigin(),
-				UserRight.CASE_EDIT,
-				getViewMode(),
-				isEditAllowed());
+		person = FacadeProvider.getPersonFacade().getByUuid(caseData.getPerson().getUuid());
+		CommitDiscardWrapperComponent<PersonEditForm> editComponent = ControllerProvider.getPersonController()
+				.getPersonEditComponent(
+						PersonContext.CASE,
+						person,
+						caseData.getDisease(),
+						caseData.getDiseaseDetails(),
+						UserRight.CASE_EDIT,
+						getViewMode(),
+						isEditAllowed());
 		DetailSubComponentWrapper componentWrapper = addComponentWrapper(editComponent);
 		CustomLayout layout = addPageLayout(componentWrapper, editComponent);
 		setSubComponent(componentWrapper);
 		addSideComponents(layout, CoreEntityType.CASE, caseData.getUuid(), person.toReference(), this::showUnsavedChangesPopup, isEditAllowed());
 		setEditPermission(
-			editComponent,
-			UserProvider.getCurrent().hasUserRight(UserRight.PERSON_EDIT),
-			PersonDto.ADDRESSES,
-			PersonDto.PERSON_CONTACT_DETAILS);
+				editComponent,
+				UserProvider.getCurrent().hasUserRight(UserRight.PERSON_EDIT),
+				PersonDto.ADDRESSES,
+				PersonDto.PERSON_CONTACT_DETAILS);
 	}
 
 	@Override
@@ -79,8 +79,8 @@ public class CasePersonView extends AbstractCaseView implements PersonSideCompon
 		return caseData.getDisease();
 	}
 
-	public Disease getDiseaseFromCaseData() {
+	/*public Disease getDiseaseFromCaseData() {
 		CaseDataDto caseData = FacadeProvider.getCaseFacade().getCaseDataByUuid(getCaseRef().getUuid());
 		return caseData.getDisease();
-	}
+	}*/
 }

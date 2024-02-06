@@ -159,7 +159,7 @@ public class ContactDto extends SormasToSormasShareableDto {
 	private String caseOrEventInformation;
 	@NotNull(message = Validations.validDisease)
 	private Disease disease;
-	@Required
+	//@Required
 	private CaseOrigin caseOrigin;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String diseaseDetails;

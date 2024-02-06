@@ -360,7 +360,8 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 				facilityType.setValue(facilityUserType);
 				String facilityName = facilityDto.getName();
 				facilityCombo.setValue(facilityName);
-			FieldHelper.removeItems(facilityCombo);
+				FieldHelper.removeItems(facilityCombo);
+			}
 			if (TypeOfPlace.FACILITY.equals(facilityOrHome.getValue())
 					|| ((facilityOrHome.getValue() instanceof java.util.Set) && TypeOfPlace.FACILITY.equals(facilityOrHome.getNullableValue()))) {
 				if (facilityTypeGroup.getValue() == null) {

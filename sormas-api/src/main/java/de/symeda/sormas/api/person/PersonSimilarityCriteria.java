@@ -21,6 +21,10 @@ public class PersonSimilarityCriteria extends BaseCriteria implements Cloneable 
 	private String nationalHealthId;
 	private String ghanaCard;
 	private String uuidExternalIdExternalTokenLike;
+	private String nameUuidExternalIdExternalTokenLike;
+	private Boolean matchMissingInfo = Boolean.FALSE;
+	private Boolean strictNameComparison = Boolean.FALSE;
+
 
 	@IgnoreForUrl
 	public String getFirstName() {
@@ -114,7 +118,9 @@ public class PersonSimilarityCriteria extends BaseCriteria implements Cloneable 
 	public String getUuidExternalIdExternalTokenLike() {
 		return uuidExternalIdExternalTokenLike;
 	}
-
+	public String getNameUuidExternalIdExternalTokenLike() {
+		return nameUuidExternalIdExternalTokenLike;
+	}
 	public void setNameUuidExternalIdExternalTokenLike(String nameUuidExternalIdExternalTokenLike) {
 		this.nameUuidExternalIdExternalTokenLike = nameUuidExternalIdExternalTokenLike;
 	}

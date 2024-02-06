@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.Objects;
 
 import de.symeda.sormas.api.Disease;
-import org.joda.time.DateTimeComparator;
+//import org.joda.time.DateTimeComparator;
 
 import com.vaadin.server.ErrorMessage;
 import com.vaadin.server.UserError;

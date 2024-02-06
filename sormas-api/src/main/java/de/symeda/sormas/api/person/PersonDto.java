@@ -394,7 +394,7 @@ public class PersonDto extends PseudonymizableDto {
 	private String additionalDetails;
 
 	@Outbreaks
-	@Required
+	//@Required
 	private Disease disease;
 
 	@SuppressWarnings("serial")

@@ -107,7 +107,7 @@ import de.symeda.sormas.backend.util.ModelConstants;
 import de.symeda.sormas.backend.visit.Visit;
 
 @Entity(name = "cases")
-@Audited
+//@Audited
 public class Case extends CoreAdo implements SormasToSormasShareable, HasExternalData, Comparable<Case>  {
 
 	private static final long serialVersionUID = -2697795184663562129L;
@@ -454,9 +454,6 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public void setPersonId(Long personId) {
 		this.personId = personId;
 	}
-
-	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
-	private TransmissionClassification caseTransmissionClassification;
 
 	@ManyToOne(cascade = {})
 	@JoinColumn(nullable = false)
@@ -1722,7 +1719,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 			CascadeType.MERGE,
 			CascadeType.DETACH,
 			CascadeType.REFRESH })
-	@AuditedIgnore
+	//@AuditedIgnore
 	public SormasToSormasOriginInfo getSormasToSormasOriginInfo() {
 		return sormasToSormasOriginInfo;
 	}

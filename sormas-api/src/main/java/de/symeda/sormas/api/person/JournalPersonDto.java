@@ -26,7 +26,7 @@ import de.symeda.sormas.api.uuid.AbstractUuidDto;
 public class JournalPersonDto extends AbstractUuidDto {
 
 	private static final long serialVersionUID = 3561284010406711305L;
-
+	private String uuid;
 	private boolean pseudonymized;
 	@PersonalData
 	private String firstName;

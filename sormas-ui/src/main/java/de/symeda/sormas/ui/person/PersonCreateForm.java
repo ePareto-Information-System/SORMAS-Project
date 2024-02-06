@@ -15,6 +15,7 @@
 
 package de.symeda.sormas.ui.person;
 
+import static de.symeda.sormas.api.i18n.Strings.enabled;
 import static de.symeda.sormas.ui.utils.CssStyles.H3;
 import static de.symeda.sormas.ui.utils.CssStyles.VSPACE_3;
 import static de.symeda.sormas.ui.utils.LayoutUtil.divsCss;
@@ -386,28 +387,26 @@ public class PersonCreateForm extends AbstractEditForm<PersonDto> {
 		}
 	}
 
-	public void enablePersonFields(Boolean enable) {
-		getField(PersonDto.FIRST_NAME).setEnabled(enable);
-		getField(PersonDto.LAST_NAME).setEnabled(enable);
-		getField(PersonDto.OTHER_NAME).setEnabled(enable);
-		getField(PersonDto.BIRTH_DATE_DD).setEnabled(enable);
-		getField(PersonDto.BIRTH_DATE_MM).setEnabled(enable);
-		getField(PersonDto.BIRTH_DATE_YYYY).setEnabled(enable);
-		getField(PersonDto.SEX).setEnabled(enable);
-		getField(PersonDto.PRESENT_CONDITION).setEnabled(enable);
-		getField(PersonDto.PHONE).setEnabled(enable);
-		getField(PersonDto.EMAIL_ADDRESS).setEnabled(enable);
-		getField(PersonDto.PASSPORT_NUMBER).setEnabled(enable);
-		getField(PersonDto.NATIONAL_HEALTH_ID).setEnabled(enable);
-		getField(PersonDto.GHANA_CARD).setEnabled(enable);
+	public void enablePersonFields(Boolean enabled) {
+		enablePersonFields(enabled, false);
+		getField(PersonDto.FIRST_NAME).setEnabled(enabled);
+		getField(PersonDto.LAST_NAME).setEnabled(enabled);
+		getField(PersonDto.OTHER_NAME).setEnabled(enabled);
+		getField(PersonDto.BIRTH_DATE_DD).setEnabled(enabled);
+		getField(PersonDto.BIRTH_DATE_MM).setEnabled(enabled);
+		getField(PersonDto.BIRTH_DATE_YYYY).setEnabled(enabled);
+		getField(PersonDto.SEX).setEnabled(enabled);
+		getField(PersonDto.PRESENT_CONDITION).setEnabled(enabled);
+		getField(PersonDto.PHONE).setEnabled(enabled);
+		getField(PersonDto.EMAIL_ADDRESS).setEnabled(enabled);
+		getField(PersonDto.PASSPORT_NUMBER).setEnabled(enabled);
+		getField(PersonDto.NATIONAL_HEALTH_ID).setEnabled(enabled);
+		getField(PersonDto.GHANA_CARD).setEnabled(enabled);
 		if (homeAddressForm != null) {
-			homeAddressForm.setEnabled(enable);
+			homeAddressForm.setEnabled(enabled);
 		}
 	}
 
-	public void enablePersonFields(Boolean enabled) {
-		enablePersonFields(enabled, false);
-	}
 
 	public void enablePersonFields(Boolean enabled, boolean alwaysEnableAddressFields) {
 

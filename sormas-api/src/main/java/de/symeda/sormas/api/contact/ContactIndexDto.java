@@ -196,6 +196,10 @@ public class ContactIndexDto extends PseudonymizableIndexDto implements Serializ
 		this.contactJurisdictionFlagsDto = new ContactJurisdictionFlagsDto(isInJurisdiction, isCaseInJurisdiction);
 	}
 
+	public ContactIndexDto(String uuid, String personUuid, String personFirstName, String personLastName, String personOtherName, String cazeUuid, Disease disease, String diseaseDetails, String caseFirstName, String caseLastName, String caseOtherName, String regionName, String districtName, Date lastContactDate, ContactCategory contactCategory, ContactProximity contactProximity, ContactClassification contactClassification, ContactStatus contactStatus, Float completeness, FollowUpStatus followUpStatus, Date followUpUntil, SymptomJournalStatus symptomJournalStatus, VaccinationStatus vaccinationStatus, String contactOfficerUuid, String reportingUserUuid, Date reportDateTime, CaseClassification caseClassification, String caseRegionName, String caseDistrictName, Date changeDate, String externalID, String externalToken, String internalToken, boolean isInJurisdiction, boolean isCaseInJurisdiction, int visitCount, Date latestChangedDate) {
+		super(uuid);
+	}
+
 
 	public String getPersonUuid() {
 		return personUuid;

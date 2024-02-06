@@ -99,7 +99,7 @@ public class ImmunizationDto extends SormasToSormasShareableDto {
 	@Outbreaks
 	@NotNull(message = Validations.validDisease)
 	private Disease disease;
-	@Required
+	//@Required
 	private CaseOrigin caseOrigin;
 	@Outbreaks
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)

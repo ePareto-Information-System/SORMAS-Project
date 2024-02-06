@@ -16,6 +16,7 @@ public class SampleGenerationConfig extends BaseGenerationConfig {
   private boolean externalLabOrInternalInHouseTesting = false;
   private boolean requestPathogenTestsToBePerformed = false;
   private boolean requestAdditionalTestsToBePerformed = false;
+  private boolean requestSampleMaterialsToBeSelected = false;
   private boolean sendDispatch = false;
   private boolean received = false;
   private String comment;
@@ -101,6 +102,14 @@ public class SampleGenerationConfig extends BaseGenerationConfig {
 
   public boolean isRequestAdditionalTestsToBePerformed() {
     return requestAdditionalTestsToBePerformed;
+  }
+
+  public boolean isRequestSampleMaterialsToAdded(){
+    return requestSampleMaterialsToBeSelected;
+  }
+
+  public void setRequestSampleMaterialsToBeAdded(boolean requestSampleMaterialsToBeAdded){
+    this.requestSampleMaterialsToBeSelected = requestSampleMaterialsToBeAdded;
   }
 
   public void setRequestAdditionalTestsToBePerformed(boolean requestAdditionalTestsToBePerformed) {

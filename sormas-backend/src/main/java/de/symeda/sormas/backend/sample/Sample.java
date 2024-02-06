@@ -155,7 +155,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private String requestedAdditionalTestsString;
 	private SamplingReason samplingReason;
 	private String samplingReasonDetails;
-
+	private List<SampleReport> sampleReports = new ArrayList<>(0);
 	private List<PathogenTest> pathogenTests;
 	private List<AdditionalTest> additionalTests;
 

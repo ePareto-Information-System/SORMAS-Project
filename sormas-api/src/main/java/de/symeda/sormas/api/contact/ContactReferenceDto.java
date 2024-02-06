@@ -179,6 +179,11 @@ public class ContactReferenceDto extends ReferenceDto {
 		public String toString() {
 			return firstName + " " + lastName  + " " + otherName ;
 		}
+
+		@Override
+		public String buildCaption() {
+			return null;
+		}
 	}
 
 	public void setContactName(PersonName contactName) {

@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import de.symeda.sormas.api.utils.*;
-import org.apache.commons.lang3.StringUtils;
 
 import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.Disease;
@@ -114,7 +113,7 @@ public class CaseExportDto extends AbstractUuidDto {
 	private long hospitalizationId;
 	private long symptomsId;
 	private long healthConditionsId;
-
+	private String uuid;
 	private String epidNumber;
 	private Disease disease;
 	private String diseaseDetails;

@@ -285,15 +285,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
         reportInfoLabel.setEnabled(false);
         getContent().addComponent(reportInfoLabel, REPORT_INFO_LABEL_LOC);
 
-		StringBuilder reportInfoText = new StringBuilder().append(I18nProperties.getString(Strings.reportedOn))
-			.append(" ")
-			.append(DateFormatHelper.formatLocalDateTime(getValue().getReportDateTime()));
-		if (reportingUser != null) {
-			reportInfoText.append(" ").append(I18nProperties.getString(Strings.by)).append(" ").append(reportingUser.buildCaption());
-		}
-		Label reportInfoLabel = new Label(reportInfoText.toString());
-		reportInfoLabel.setEnabled(false);
-		getContent().addComponent(reportInfoLabel, REPORT_INFO_LABEL_LOC);
     }
 
 	protected abstract Disease getDisease();

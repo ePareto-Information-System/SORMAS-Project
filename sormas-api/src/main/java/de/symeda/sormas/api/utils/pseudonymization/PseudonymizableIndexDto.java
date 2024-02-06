@@ -24,6 +24,10 @@ public class PseudonymizableIndexDto extends AbstractUuidDto implements Pseudony
 	private boolean pseudonymized;
 	private boolean inJurisdiction;
 
+	public PseudonymizableIndexDto() {
+		super();
+	}
+
 	@Override
 	public boolean isPseudonymized() {
 		return pseudonymized;

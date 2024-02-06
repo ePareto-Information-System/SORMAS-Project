@@ -18,8 +18,6 @@ package de.symeda.sormas.api.person;
 import java.util.Arrays;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.utils.HideForCountries;
 import de.symeda.sormas.api.uuid.AbstractUuidDto;
@@ -46,7 +44,7 @@ public class SimilarPersonDto extends AbstractUuidDto {
 	public static final String PASSPORT_NUMBER = "passportNumber";
 
 	private static final List<String> LOCATION_DETAILS = Arrays.asList(POSTAL_CODE, CITY, STREET, HOUSE_NUMBER);
-
+	private String uuid;
 	private String firstName;
 	private String lastName;
 	private String otherName;
@@ -71,6 +69,10 @@ public class SimilarPersonDto extends AbstractUuidDto {
 
 	@HideForCountries
 	private String ghanaCard;
+
+	public SimilarPersonDto(String uuid) {
+		super(uuid);
+	}
 
 	public String getUuid() {
 		return uuid;

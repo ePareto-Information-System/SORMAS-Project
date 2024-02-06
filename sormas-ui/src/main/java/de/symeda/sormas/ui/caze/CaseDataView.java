@@ -76,6 +76,7 @@ public class CaseDataView extends AbstractCaseView {
 	private CommitDiscardWrapperComponent<CaseDataForm> editComponent;
 
 	private Disease disease;
+
 	public CaseDataView() {
 		super(VIEW_NAME, false);
 	}
@@ -97,18 +98,18 @@ public class CaseDataView extends AbstractCaseView {
 		editComponent = ControllerProvider.getCaseController().getCaseDataEditComponent(getCaseRef().getUuid(), ViewMode.NORMAL);
 
 		LayoutWithSidePanel layout = new LayoutWithSidePanel(
-			editComponent,
-			TASKS_LOC,
-			SAMPLES_LOC,
-			EVENTS_LOC,
-			IMMUNIZATION_LOC,
-			VACCINATIONS_LOC,
-			SORMAS_TO_SORMAS_LOC,
-			SMS_LOC,
-			ExternalSurveillanceServiceGateway.EXTERANEL_SURVEILLANCE_TOOL_GATEWAY_LOC,
-			SURVEILLANCE_REPORTS_LOC,
-			DOCUMENTS_LOC,
-			QuarantineOrderDocumentsComponent.QUARANTINE_LOC);
+				editComponent,
+				TASKS_LOC,
+				SAMPLES_LOC,
+				EVENTS_LOC,
+				IMMUNIZATION_LOC,
+				VACCINATIONS_LOC,
+				SORMAS_TO_SORMAS_LOC,
+				SMS_LOC,
+				ExternalSurveillanceServiceGateway.EXTERANEL_SURVEILLANCE_TOOL_GATEWAY_LOC,
+				SURVEILLANCE_REPORTS_LOC,
+				DOCUMENTS_LOC,
+				QuarantineOrderDocumentsComponent.QUARANTINE_LOC);
 
 		container.addComponent(layout);
 
@@ -117,9 +118,9 @@ public class CaseDataView extends AbstractCaseView {
 		boolean isEditAllowed = isEditAllowed();
 
 		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.TASK_MANAGEMENT)
-			&& UserProvider.getCurrent().hasUserRight(UserRight.TASK_VIEW)) {
+				&& UserProvider.getCurrent().hasUserRight(UserRight.TASK_VIEW)) {
 			TaskListComponent taskList =
-				new TaskListComponent(TaskContext.CASE, getCaseRef(), caze.getDisease(), this::showUnsavedChangesPopup, isEditAllowed);
+					new TaskListComponent(TaskContext.CASE, getCaseRef(), caze.getDisease(), this::showUnsavedChangesPopup, isEditAllowed);
 			taskList.addStyleName(CssStyles.SIDE_COMPONENT);
 			layout.addSidePanelComponent(taskList, TASKS_LOC);
 		}
@@ -133,19 +134,19 @@ public class CaseDataView extends AbstractCaseView {
 		}
 
 		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.SAMPLES_LAB)
-			&& UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW)
-			&& !caze.checkIsUnreferredPortHealthCase()) {
+				&& UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_VIEW)
+				&& !caze.checkIsUnreferredPortHealthCase()) {
 			SampleListComponent sampleList = new SampleListComponent(
-				new SampleCriteria().caze(getCaseRef()).sampleAssociationType(SampleAssociationType.CASE).disease(caze.getDisease()),
-				this::showUnsavedChangesPopup,
-				isEditAllowed);
+					new SampleCriteria().caze(getCaseRef()).sampleAssociationType(SampleAssociationType.CASE).disease(caze.getDisease()),
+					this::showUnsavedChangesPopup,
+					isEditAllowed);
 			SampleListComponentLayout sampleListComponentLayout =
-				new SampleListComponentLayout(sampleList, I18nProperties.getString(Strings.infoCreateNewSampleDiscardsChangesCase), isEditAllowed);
+					new SampleListComponentLayout(sampleList, I18nProperties.getString(Strings.infoCreateNewSampleDiscardsChangesCase), isEditAllowed);
 			layout.addSidePanelComponent(sampleListComponentLayout, SAMPLES_LOC);
 		}
 
 		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.EVENT_SURVEILLANCE)
-			&& UserProvider.getCurrent().hasUserRight(UserRight.EVENT_VIEW)) {
+				&& UserProvider.getCurrent().hasUserRight(UserRight.EVENT_VIEW)) {
 			VerticalLayout eventLayout = new VerticalLayout();
 			eventLayout.setMargin(false);
 			eventLayout.setSpacing(false);
@@ -161,70 +162,71 @@ public class CaseDataView extends AbstractCaseView {
 					&& FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.IMMUNIZATION_MANAGEMENT)) {
 				if (!FacadeProvider.getFeatureConfigurationFacade()
 						.isPropertyValueTrue(FeatureType.IMMUNIZATION_MANAGEMENT, FeatureTypeProperty.REDUCED)) {
-					final ImmunizationListCriteria immunizationListCriteria =
-							new ImmunizationListCriteria.Builder(caze.getPerson()).wihDisease(caze.getDisease()).build();
-					layout.addSidePanelComponent(
-							new SideComponentLayout(new ImmunizationListComponent(immunizationListCriteria, this::showUnsavedChangesPopup)),
-							IMMUNIZATION_LOC);
+					/*final ImmunizationListCriteria immunizationListCriteria =
+							new ImmunizationListCriteria.Builder(caze.getPerson()).withDisease(caze.getDisease()).build();*/
+					layout.addSidePanelComponent(new SideComponentLayout(new ImmunizationListComponent(() -> {
+						CaseDataDto refreshedCase = FacadeProvider.getCaseFacade().getCaseDataByUuid(getCaseRef().getUuid());
+						return new ImmunizationListCriteria.Builder(refreshedCase.getPerson()).withDisease(refreshedCase.getDisease()).build();
+					}, null, this::showUnsavedChangesPopup, isEditAllowed)), IMMUNIZATION_LOC);
 				} else {
-					VaccinationListCriteria criteria = new VaccinationListCriteria.Builder(caze.getPerson()).withDisease(caze.getDisease())
-							.build()
-							.vaccinationAssociationType(VaccinationAssociationType.CASE)
-							.caseReference(getCaseRef())
-							.region(caze.getResponsibleRegion())
-							.district(caze.getResponsibleDistrict());
-					layout.addSidePanelComponent(
-							new SideComponentLayout(new VaccinationListComponent(criteria, this::showUnsavedChangesPopup)),
-							VACCINATIONS_LOC);
+					layout.addSidePanelComponent(new SideComponentLayout(new VaccinationListComponent(() -> {
+						CaseDataDto refreshedCase = FacadeProvider.getCaseFacade().getCaseDataByUuid(getCaseRef().getUuid());
+						return new VaccinationCriteria.Builder(refreshedCase.getPerson()).withDisease(refreshedCase.getDisease())
+								.build()
+								.vaccinationAssociationType(VaccinationAssociationType.CASE)
+								.caseReference(getCaseRef())
+								.region(refreshedCase.getResponsibleRegion())
+								.district(refreshedCase.getResponsibleDistrict());
+					}, null, this::showUnsavedChangesPopup, isEditAllowed)), VACCINATIONS_LOC);
 				}
 			}
+
+			boolean sormasToSormasEnabled = FacadeProvider.getSormasToSormasFacade().isAnyFeatureConfigured(FeatureType.SORMAS_TO_SORMAS_SHARE_CASES);
+			if (sormasToSormasEnabled || caze.getSormasToSormasOriginInfo() != null || caze.isOwnershipHandedOver()) {
+				VerticalLayout sormasToSormasLocLayout = new VerticalLayout();
+				sormasToSormasLocLayout.setMargin(false);
+				sormasToSormasLocLayout.setSpacing(false);
+
+				SormasToSormasListComponent sormasToSormasListComponent = new SormasToSormasListComponent(caze, isEditAllowed);
+				sormasToSormasListComponent.addStyleNames(CssStyles.SIDE_COMPONENT);
+				sormasToSormasLocLayout.addComponent(sormasToSormasListComponent);
+
+				layout.addSidePanelComponent(sormasToSormasLocLayout, SORMAS_TO_SORMAS_LOC);
+			}
+
+			ExternalSurveillanceServiceGateway.addComponentToLayout(layout, editComponent, caze, isEditAllowed);
+
+			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.SURVEILLANCE_REPORTS)) {
+				SurveillanceReportListComponent surveillanceReportList =
+						new SurveillanceReportListComponent(caze.toReference(), this::showUnsavedChangesPopup, UserRight.CASE_EDIT, isEditAllowed);
+				surveillanceReportList.addStyleNames(CssStyles.SIDE_COMPONENT);
+				VerticalLayout surveillanceReportListLocLayout = new VerticalLayout();
+				surveillanceReportListLocLayout.setMargin(false);
+				surveillanceReportListLocLayout.setSpacing(false);
+				surveillanceReportListLocLayout.addComponent(surveillanceReportList);
+
+				layout.addSidePanelComponent(surveillanceReportListLocLayout, SURVEILLANCE_REPORTS_LOC);
+			}
+			DocumentListComponent documentList = null;
+			if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.DOCUMENTS)
+					&& UserProvider.getCurrent().hasUserRight(UserRight.DOCUMENT_VIEW)) {
+
+				boolean isDocumentDeleteAllowed =
+						EditPermissionType.ALLOWED.equals(caseEditAllowed) || EditPermissionType.WITHOUT_OWNERSHIP.equals(caseEditAllowed);
+				documentList = new DocumentListComponent(
+						DocumentRelatedEntityType.CASE,
+						getCaseRef(),
+						UserRight.CASE_EDIT,
+						caze.isPseudonymized(),
+						isEditAllowed,
+						isDocumentDeleteAllowed);
+				layout.addSidePanelComponent(new SideComponentLayout(documentList), DOCUMENTS_LOC);
+			}
+
+			QuarantineOrderDocumentsComponent.addComponentToLayout(layout, caze, documentList);
+
+			final boolean deleted = FacadeProvider.getCaseFacade().isDeleted(uuid);
+			layout.disableIfNecessary(deleted, caseEditAllowed);
 		}
-
-		boolean sormasToSormasEnabled = FacadeProvider.getSormasToSormasFacade().isAnyFeatureConfigured(FeatureType.SORMAS_TO_SORMAS_SHARE_CASES);
-		if (sormasToSormasEnabled || caze.getSormasToSormasOriginInfo() != null || caze.isOwnershipHandedOver()) {
-			VerticalLayout sormasToSormasLocLayout = new VerticalLayout();
-			sormasToSormasLocLayout.setMargin(false);
-			sormasToSormasLocLayout.setSpacing(false);
-
-			SormasToSormasListComponent sormasToSormasListComponent = new SormasToSormasListComponent(caze, isEditAllowed);
-			sormasToSormasListComponent.addStyleNames(CssStyles.SIDE_COMPONENT);
-			sormasToSormasLocLayout.addComponent(sormasToSormasListComponent);
-
-			layout.addSidePanelComponent(sormasToSormasLocLayout, SORMAS_TO_SORMAS_LOC);
-		}
-
-		ExternalSurveillanceServiceGateway.addComponentToLayout(layout, editComponent, caze, isEditAllowed);
-
-		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.SURVEILLANCE_REPORTS)) {
-			SurveillanceReportListComponent surveillanceReportList =
-				new SurveillanceReportListComponent(caze.toReference(), this::showUnsavedChangesPopup, UserRight.CASE_EDIT, isEditAllowed);
-			surveillanceReportList.addStyleNames(CssStyles.SIDE_COMPONENT);
-			VerticalLayout surveillanceReportListLocLayout = new VerticalLayout();
-			surveillanceReportListLocLayout.setMargin(false);
-			surveillanceReportListLocLayout.setSpacing(false);
-			surveillanceReportListLocLayout.addComponent(surveillanceReportList);
-
-			layout.addSidePanelComponent(surveillanceReportListLocLayout, SURVEILLANCE_REPORTS_LOC);
-		}
-		DocumentListComponent documentList = null;
-		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.DOCUMENTS)
-			&& UserProvider.getCurrent().hasUserRight(UserRight.DOCUMENT_VIEW)) {
-
-			boolean isDocumentDeleteAllowed =
-				EditPermissionType.ALLOWED.equals(caseEditAllowed) || EditPermissionType.WITHOUT_OWNERSHIP.equals(caseEditAllowed);
-			documentList = new DocumentListComponent(
-				DocumentRelatedEntityType.CASE,
-				getCaseRef(),
-				UserRight.CASE_EDIT,
-				caze.isPseudonymized(),
-				isEditAllowed,
-				isDocumentDeleteAllowed);
-			layout.addSidePanelComponent(new SideComponentLayout(documentList), DOCUMENTS_LOC);
-		}
-
-		QuarantineOrderDocumentsComponent.addComponentToLayout(layout, caze, documentList);
-
-		final boolean deleted = FacadeProvider.getCaseFacade().isDeleted(uuid);
-		layout.disableIfNecessary(deleted, caseEditAllowed);
 	}
 }
