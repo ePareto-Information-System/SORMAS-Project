@@ -998,7 +998,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 		NullableOptionGroup vaccinatedByCardOrHistory = addField(CaseDataDto.VACCINATION_TYPE, NullableOptionGroup.class);
 
-		FieldHelper.setEnabledWhen(vaccinationStatus, Arrays.asList(VaccinationStatus.VACCINATED, VaccinationStatus.UNVACCINATED, VaccinationStatus.UNKNOWN), Collections.singletonList(
+		FieldHelper.setEnabledWhen(vaccinationStatus, Arrays.asList(VaccinationStatus.VACCINATED), Collections.singletonList(
 				vaccinatedByCardOrHistory
 		), false);
 
@@ -1281,6 +1281,13 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 				Arrays.asList(CaseDataDto.PREGNANT, CaseDataDto.VACCINATION_STATUS, CaseDataDto.SMALLPOX_VACCINATION_RECEIVED);
 
 		HealthConditionsForm healthConditionsField = addField(CaseDataDto.HEALTH_CONDITIONS, HealthConditionsForm.class);
+		if (disease == Disease.MEASLES) {
+			healthConditionsField.setVisible(false);
+			internaltoken.setVisible(false);
+			getFieldGroup().getField(CaseDataDto.PREGNANT).setVisible(false);
+			getFieldGroup().getField(CaseDataDto.POSTPARTUM).setVisible(false);
+			healthConditionsField.setVisible(false);
+		}
 
 		if(disease == Disease.YELLOW_FEVER || disease == Disease.CSM){
 			externalTokenField.setVisible(false);
