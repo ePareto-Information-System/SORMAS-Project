@@ -12508,46 +12508,36 @@ DO $$
 $$ LANGUAGE plpgsql;
 
 INSERT INTO schema_version (version_number, comment) VALUES (519, 'Add the ''See personal data inside jurisdiction'' user right to the default Environmental Surveillance User #12284');
--- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 
 -- Version 520
 ALTER TABLE samples ADD COLUMN ipsamplesent varchar(255);
 ALTER TABLE samples ADD COLUMN ipsampleresults varchar(512);
-INSERT INTO schema_version (version_number, comment) VALUES (520, 'Added a column name ipsampleresults to samples');
+ALTER TABLE samples ADD COLUMN samplematerialrequested boolean;
+ALTER TABLE samples ALTER COLUMN samplematerial DROP NOT NULL;
+ALTER TABLE samples ALTER COLUMN samplepurpose DROP NOT NULL;
 
--- Version 523
-ALTER TABLE person ADD COLUMN othername varchar(512) NULL;
-ALTER TABLE location ADD COLUMN contactPersonOtherName text;
-ALTER TABLE person_history ADD COLUMN othername varchar(512);
-ALTER TABLE person ADD COLUMN ghanacard varchar(255) NULL;
-ALTER TABLE location ADD COLUMN landmark varchar(255) NULL;
-INSERT INTO schema_version (version_number, comment) VALUES (521, 'Added a column name landmark to location');
+ALTER TABLE samples_history ADD COLUMN samplematerialrequested boolean;
 
--- Version 526
-ALTER TABLE externalmessage ADD COLUMN personothername varchar(255) NULL;
-ALTER TABLE externalmessage_history ADD COLUMN personothername varchar(255) NULL;
-INSERT INTO schema_version (version_number, comment) VALUES (522, 'Added a column name landmark to location');
-
--- Version 528
 ALTER TABLE cases ADD COLUMN ipsamplesent varchar(255);
 ALTER TABLE cases ADD COLUMN ipsampleresults varchar(255);
 ALTER TABLE cases ADD COLUMN vaccinationtype varchar(255);
 ALTER TABLE cases ADD COLUMN vaccinationdate timestamp;
-INSERT INTO schema_version (version_number, comment) VALUES (523, 'Added columns vaccinationtype and vaccinationdate to cases');
-
--- Version 526
-ALTER TABLE samples ADD COLUMN samplematerialrequested boolean;
-ALTER TABLE samples_history ADD COLUMN samplematerialrequested boolean;
-ALTER TABLE samples ALTER COLUMN samplematerial DROP NOT NULL;
 ALTER TABLE cases ADD COLUMN afpfacilityoptions varchar(255) NULL;
-ALTER TABLE location ADD COLUMN afpfacilityoptions varchar(255) NULL;
-ALTER TABLE facility ADD COLUMN landmark varchar(255) NULL;
-INSERT INTO schema_version (version_number, comment) VALUES (524, 'Added a column name samplematerialrequested to samples and samples_history, altered column samplematerial in samples to not null, Added columns afpfacilityoptions to cases and location, Added a column name landmark to facility');
-
--- Version 527
 ALTER TABLE cases ADD COLUMN specifyotheroutcome varchar(255);
-ALTER TABLE samples ALTER COLUMN samplepurpose DROP NOT NULL;
-INSERT INTO schema_version (version_number, comment) VALUES (525, 'Altered column samplepurpose in samples to not null');
 
+ALTER TABLE person ADD COLUMN othername varchar(512) NULL;
+ALTER TABLE person ADD COLUMN ghanacard varchar(255) NULL;
 
+ALTER TABLE person_history ADD COLUMN othername varchar(512);
+
+ALTER TABLE location ADD COLUMN contactPersonOtherName text;
+ALTER TABLE location ADD COLUMN landmark varchar(255) NULL;
+ALTER TABLE location ADD COLUMN afpfacilityoptions varchar(255) NULL;
+
+ALTER TABLE externalmessage ADD COLUMN personothername varchar(255) NULL;
+ALTER TABLE externalmessage_history ADD COLUMN personothername varchar(255) NULL;
+
+ALTER TABLE facility ADD COLUMN landmark varchar(255) NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (520, 'Added new columns to samples, cases, person, location, externalmessage and facility #12284');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
