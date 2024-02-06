@@ -42,32 +42,12 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import de.symeda.sormas.api.caze.*;
 import de.symeda.sormas.api.utils.AFPFacilityOptions;
 import de.symeda.sormas.api.utils.CardOrHistory;
 import org.hibernate.annotations.Type;
 
 import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.caze.CaseClassification;
-import de.symeda.sormas.api.caze.CaseIdentificationSource;
-import de.symeda.sormas.api.caze.CaseOrigin;
-import de.symeda.sormas.api.caze.CaseOutcome;
-import de.symeda.sormas.api.caze.CaseReferenceDefinition;
-import de.symeda.sormas.api.caze.CaseReferenceDto;
-import de.symeda.sormas.api.caze.ContactTracingContactType;
-import de.symeda.sormas.api.caze.DengueFeverType;
-import de.symeda.sormas.api.caze.EndOfIsolationReason;
-import de.symeda.sormas.api.caze.HospitalWardType;
-import de.symeda.sormas.api.caze.InfectionSetting;
-import de.symeda.sormas.api.caze.InvestigationStatus;
-import de.symeda.sormas.api.caze.PlagueType;
-import de.symeda.sormas.api.caze.QuarantineReason;
-import de.symeda.sormas.api.caze.RabiesType;
-import de.symeda.sormas.api.caze.ReinfectionDetail;
-import de.symeda.sormas.api.caze.ReinfectionStatus;
-import de.symeda.sormas.api.caze.ScreeningType;
-import de.symeda.sormas.api.caze.TransmissionClassification;
-import de.symeda.sormas.api.caze.Trimester;
-import de.symeda.sormas.api.caze.VaccinationStatus;
 import de.symeda.sormas.api.contact.FollowUpStatus;
 import de.symeda.sormas.api.contact.QuarantineType;
 import de.symeda.sormas.api.disease.DiseaseVariant;
@@ -162,6 +142,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public static final String VACCINATION_STATUS = "vaccinationStatus";
 	public static final String VACCINATION_TYPE = "vaccinationType";
 	public static final String VACCINATION_DATE = "vaccinationDate";
+	private Date vaccinationRoutineDate;
 	public static final String EPID_NUMBER = "epidNumber";
 	public static final String REPORT_LAT = "reportLat";
 	public static final String REPORT_LON = "reportLon";
@@ -324,6 +305,8 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private VaccinationStatus vaccinationStatus;
 	private CardOrHistory vaccinationType;
 	private Date vaccinationDate;
+
+	private VaccinationRoutine vaccinationRoutine;
 	private YesNoUnknown smallpoxVaccinationScar;
 	private YesNoUnknown smallpoxVaccinationReceived;
 	private Date smallpoxLastVaccinationDate;
@@ -1850,5 +1833,21 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		// Return a negative value if this case is smaller, positive if larger, or 0 if equal
 		// For example, if you have a caseId field, you can compare based on that:
 		return this.getUuid().compareTo(otherCase.getUuid());
+	}
+
+	public VaccinationRoutine getVaccinationRoutine() {
+		return vaccinationRoutine;
+	}
+
+	public void setVaccinationRoutine(VaccinationRoutine vaccinationRoutine) {
+		this.vaccinationRoutine = vaccinationRoutine;
+	}
+
+	public Date getVaccinationRoutineDate() {
+		return vaccinationRoutineDate;
+	}
+
+	public void setVaccinationRoutineDate(Date vaccinationRoutineDate) {
+		this.vaccinationRoutineDate = vaccinationRoutineDate;
 	}
 }

@@ -238,6 +238,7 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 					fluidRowLocs(CaseDataDto.BLOOD_ORGAN_OR_TISSUE_DONATED) +
 					fluidRowLocs(CaseDataDto.PREGNANT, CaseDataDto.POSTPARTUM) + fluidRowLocs(CaseDataDto.TRIMESTER, "") +
 					fluidRowLocs(CaseDataDto.IPSAMPLESENT) + fluidRowLocs(CaseDataDto.IPSAMPLERESULTS, "") +
+					fluidRowLocs(CaseDataDto.VACCINATION_ROUTINE, CaseDataDto.VACCINATION_ROUTINE_DATE) +
 					fluidRowLocs(CaseDataDto.VACCINATION_STATUS, CaseDataDto.VACCINATION_TYPE, CaseDataDto.VACCINATION_DATE) +
 					fluidRowLocs(CaseDataDto.SMALLPOX_VACCINATION_RECEIVED, CaseDataDto.SMALLPOX_VACCINATION_SCAR) +
 					fluidRowLocs(CaseDataDto.SMALLPOX_LAST_VACCINATION_DATE, "") +
@@ -283,6 +284,8 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 	private CheckBox differentPlaceOfStayJurisdiction;
 	private ComboBox responsibleDistrict;
 	private NullableOptionGroup vaccinationStatus;
+	private NullableOptionGroup vaccinationRoutine;
+	private DateField vaccinationRoutineDate;
 	private ComboBox responsibleCommunity;
 	private ComboBox districtCombo;
 	private ComboBox communityCombo;
@@ -1000,6 +1003,14 @@ public class CaseDataForm extends AbstractEditForm<CaseDataDto> {
 
 		FieldHelper.setEnabledWhen(vaccinationStatus, Arrays.asList(VaccinationStatus.VACCINATED), Collections.singletonList(
 				vaccinatedByCardOrHistory
+		), false);
+
+		vaccinationRoutine = addField(CaseDataDto.VACCINATION_ROUTINE, NullableOptionGroup.class);
+		vaccinationRoutine.addItems(VaccinationRoutine.MR1, VaccinationRoutine.MR2, VaccinationRoutine.SIA);
+		vaccinationRoutine.setVisible(disease == Disease.MEASLES);
+		vaccinationRoutineDate = addDateField(CaseDataDto.VACCINATION_ROUTINE_DATE, DateField.class, -1);
+		FieldHelper.setEnabledWhen(vaccinationRoutine, Arrays.asList(VaccinationRoutine.MR1, VaccinationRoutine.MR2, VaccinationRoutine.SIA), Collections.singletonList(
+				vaccinationRoutineDate
 		), false);
 
 		DateField cardDateField = addField(CaseDataDto.VACCINATION_DATE, DateField.class);

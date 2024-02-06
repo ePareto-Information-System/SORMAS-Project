@@ -12539,5 +12539,11 @@ ALTER TABLE externalmessage_history ADD COLUMN personothername varchar(255) NULL
 
 ALTER TABLE facility ADD COLUMN landmark varchar(255) NULL;
 
-INSERT INTO schema_version (version_number, comment) VALUES (520, 'Added new columns to samples, cases, person, location, externalmessage and facility #12284');
+INSERT INTO schema_version (version_number, comment) VALUES (520, 'Added new columns to samples, cases, person, location, externalmessage and facility');
+
+ALTER TABLE cases ADD COLUMN vaccinationroutine varchar(255) NULL;
+ALTER TABLE cases ADD COLUMN vaccinationroutinedate timestamp NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (521, 'Added new columns to cases #12284');
+
+
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
