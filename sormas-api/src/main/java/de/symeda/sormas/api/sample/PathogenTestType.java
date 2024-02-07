@@ -19,8 +19,13 @@ package de.symeda.sormas.api.sample;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.Diseases;
+
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
 
 public enum PathogenTestType {
 
@@ -57,6 +62,12 @@ public enum PathogenTestType {
 	SEQUENCING,
 	DNA_MICROARRAY,
 	OTHER;
+
+	public static final List<PathogenTestType> DISEASE_TESTS = Arrays.asList(
+			IGM_SERUM_ANTIBODY,
+			IGG_SERUM_ANTIBODY,
+			PCR_RT_PCR
+	);
 
 	@Override
 	public String toString() {

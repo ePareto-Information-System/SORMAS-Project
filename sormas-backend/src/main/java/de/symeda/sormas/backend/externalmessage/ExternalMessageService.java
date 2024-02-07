@@ -122,6 +122,7 @@ public class ExternalMessageService extends AdoServiceWithUserFilterAndJurisdict
 					CriteriaBuilderHelper.ilike(cb, labMessage.get(ExternalMessage.UUID), textFilter),
 					CriteriaBuilderHelper.unaccentedIlike(cb, labMessage.get(ExternalMessage.PERSON_FIRST_NAME), textFilter),
 					CriteriaBuilderHelper.unaccentedIlike(cb, labMessage.get(ExternalMessage.PERSON_LAST_NAME), textFilter),
+					CriteriaBuilderHelper.unaccentedIlike(cb, labMessage.get(ExternalMessage.PERSON_OTHER_NAME), textFilter),
 					CriteriaBuilderHelper.ilike(cb, labMessage.get(ExternalMessage.PERSON_POSTAL_CODE), textFilter),
 					CriteriaBuilderHelper.unaccentedIlike(cb, labMessage.get(ExternalMessage.REPORTER_NAME), textFilter),
 					CriteriaBuilderHelper.ilike(cb, labMessage.get(ExternalMessage.REPORTER_POSTAL_CODE), textFilter));

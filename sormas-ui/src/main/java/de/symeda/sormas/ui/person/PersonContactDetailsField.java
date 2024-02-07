@@ -60,7 +60,7 @@ public class PersonContactDetailsField extends AbstractTableField<PersonContactD
 			entry.setUuid(DataHelper.createUuid());
 		}
 
-		PersonContactDetailEditForm editForm = new PersonContactDetailEditForm(fieldVisibilityCheckers, fieldAccessCheckers);
+		PersonContactDetailEditForm editForm = new PersonContactDetailEditForm(fieldVisibilityCheckers, fieldAccessCheckers, disease);
 		editForm.setValue(entry);
 
 		final CommitDiscardWrapperComponent<PersonContactDetailEditForm> editView =

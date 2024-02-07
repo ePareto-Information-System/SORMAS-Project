@@ -227,7 +227,7 @@ public abstract class AbstractContactGrid<IndexDto extends ContactIndexDto> exte
 	}
 
 	protected Stream<String> getPersonColumns() {
-		return Stream.of(ContactIndexDto.PERSON_UUID, ContactIndexDto.PERSON_FIRST_NAME, ContactIndexDto.PERSON_LAST_NAME);
+		return Stream.of(ContactIndexDto.PERSON_UUID, ContactIndexDto.PERSON_FIRST_NAME, ContactIndexDto.PERSON_LAST_NAME, ContactIndexDto.PERSON_OTHER_NAME);
 	}
 
 	protected Stream<String> getEventColumns() {

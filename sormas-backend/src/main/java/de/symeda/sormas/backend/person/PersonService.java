@@ -776,6 +776,7 @@ public class PersonService extends AdoServiceWithUserFilterAndJurisdiction<Perso
 		similarPersonDto.setHouseNumber(entity.getAddress().getHouseNumber());
 		similarPersonDto.setNationalHealthId(entity.getNationalHealthId());
 		similarPersonDto.setPassportNumber(entity.getPassportNumber());
+		similarPersonDto.setGhanaCard(entity.getGhanaCard());
 
 		return similarPersonDto;
 	}
@@ -894,6 +895,14 @@ public class PersonService extends AdoServiceWithUserFilterAndJurisdiction<Perso
 		}
 		if (!StringUtils.isBlank(criteria.getPassportNumber())) {
 			filter = CriteriaBuilderHelper.or(cb, filter, cb.equal(personFrom.get(Person.PASSPORT_NUMBER), criteria.getPassportNumber()));
+		}
+		if (!StringUtils.isBlank(criteria.getGhanaCard())) {
+			filter = and(
+					cb,
+					filter,
+					cb.or(
+							cb.isNull(personFrom.get(Person.GHANA_CARD)),
+							cb.equal(personFrom.get(Person.GHANA_CARD), criteria.getGhanaCard())));
 		}
 
 		String uuidExternalIdExternalTokenLike = criteria.getNameUuidExternalIdExternalTokenLike();

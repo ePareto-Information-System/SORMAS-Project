@@ -32,8 +32,10 @@ import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.person.SymptomJournalStatus;
 import de.symeda.sormas.api.share.ExternalShareStatus;
+import de.symeda.sormas.api.utils.CardOrHistory;
 import de.symeda.sormas.api.utils.PersonalData;
 import de.symeda.sormas.api.utils.SensitiveData;
+import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableIndexDto;
 import de.symeda.sormas.api.uuid.HasUuid;
 
@@ -52,6 +54,7 @@ public class CaseIndexDto extends PseudonymizableIndexDto implements MergeableIn
 	public static final String PERSON_UUID = "personUuid";
 	public static final String PERSON_FIRST_NAME = "personFirstName";
 	public static final String PERSON_LAST_NAME = "personLastName";
+	public static final String PERSON_OTHER_NAME = "personOtherName";
 	public static final String DISEASE = "disease";
 	public static final String DISEASE_VARIANT = "diseaseVariant";
 	public static final String DISEASE_DETAILS = "diseaseDetails";
@@ -77,6 +80,8 @@ public class CaseIndexDto extends PseudonymizableIndexDto implements MergeableIn
 	public static final String FOLLOW_UP_UNTIL = "followUpUntil";
 	public static final String SYMPTOM_JOURNAL_STATUS = "symptomJournalStatus";
 	public static final String VACCINATION_STATUS = "vaccinationStatus";
+	public static final String VACCINATION_TYPE = "vaccinationType";
+	public static final String VACCINATION_DATE = "vaccinationDate";
 	public static final String SURVEILLANCE_TOOL_LAST_SHARE_DATE = "surveillanceToolLastShareDate";
 	public static final String SURVEILLANCE_TOOL_SHARE_COUNT = "surveillanceToolShareCount";
 	public static final String SURVEILLANCE_TOOL_STATUS = "surveillanceToolStatus";
@@ -93,6 +98,9 @@ public class CaseIndexDto extends PseudonymizableIndexDto implements MergeableIn
 	@PersonalData
 	@SensitiveData
 	private String personLastName;
+	@PersonalData
+	@SensitiveData
+	private String personOtherName;
 	private Disease disease;
 	private DiseaseVariant diseaseVariant;
 	private String diseaseDetails;
@@ -117,6 +125,8 @@ public class CaseIndexDto extends PseudonymizableIndexDto implements MergeableIn
 	private Date followUpUntil;
 	private SymptomJournalStatus symptomJournalStatus;
 	private VaccinationStatus vaccinationStatus;
+	private CardOrHistory vaccinationType;
+	private Date vaccinationDate;
 	private Integer visitCount;
 	private Integer missedVisitsCount;
 
@@ -136,36 +146,38 @@ public class CaseIndexDto extends PseudonymizableIndexDto implements MergeableIn
 	private Boolean isInJurisdiction;
 
 	//@formatter:off
-	public CaseIndexDto(long id, String uuid, String epidNumber, String externalID, String externalToken, String internalToken, String personUuid, String personFirstName, String personLastName, Disease disease,
+	public CaseIndexDto(long id, String uuid, String epidNumber, String externalID, String externalToken, String internalToken, String personUuid, String personFirstName, String personLastName, String personOtherName, Disease disease,
 						DiseaseVariant diseaseVariant, String diseaseDetails, CaseClassification caseClassification, InvestigationStatus investigationStatus,
 						PresentCondition presentCondition, Date reportDate, Date creationDate, String regionUuid,
 						String districtUuid, String healthFacilityUuid, String healthFacilityName, String healthFacilityDetails,
 						String pointOfEntryUuid, String pointOfEntryName, String pointOfEntryDetails, String surveillanceOfficerUuid, CaseOutcome outcome,
 						Integer age, ApproximateAgeType ageType, Integer birthdateDD, Integer birthdateMM, Integer birthdateYYYY, Sex sex, Date quarantineTo,
-						Float completeness, FollowUpStatus followUpStatus, Date followUpUntil, SymptomJournalStatus symptomJournalStatus, VaccinationStatus vaccinationStatus, Date changeDate, Long facilityId,
+						Float completeness, FollowUpStatus followUpStatus, Date followUpUntil, SymptomJournalStatus symptomJournalStatus, VaccinationStatus vaccinationStatus, CardOrHistory vaccinationType, Date vaccinationDate, Date changeDate, Long facilityId,
 						// responsible jurisdiction
-						String responsibleRegionUuid, String responsibleDistrictUuid, String responsibleDistrictName, DeletionReason deletionReason, String otherDeletionReason,  boolean isInJurisdiction) {
-		this(id, uuid, epidNumber, externalID, externalToken, internalToken, personUuid, personFirstName, personLastName, disease,
+						String responsibleRegionUuid, String responsibleDistrictUuid, String responsibleDistrictName, boolean isInJurisdiction) {
+		this(id, uuid, epidNumber, externalID, externalToken, internalToken, personUuid, personFirstName, personLastName, personOtherName, disease,
 				diseaseVariant, diseaseDetails, caseClassification, investigationStatus,
 				presentCondition, reportDate, creationDate, regionUuid,
 				districtUuid, healthFacilityUuid, healthFacilityName, healthFacilityDetails,
 				pointOfEntryUuid, pointOfEntryName, pointOfEntryDetails, surveillanceOfficerUuid, outcome,
 				age, ageType, birthdateDD, birthdateMM, birthdateYYYY, sex, quarantineTo,
-				completeness, followUpStatus, followUpUntil, symptomJournalStatus, vaccinationStatus, changeDate, facilityId,
-				responsibleRegionUuid, responsibleDistrictUuid, responsibleDistrictName, deletionReason, otherDeletionReason, isInJurisdiction,
+				completeness, followUpStatus, followUpUntil, symptomJournalStatus, vaccinationStatus, vaccinationType, vaccinationDate, changeDate, facilityId,
+				responsibleRegionUuid, responsibleDistrictUuid, responsibleDistrictName, isInJurisdiction,
 				null, null
 		);
 	}
+
+
 	//@formatter:on
 
 	//@formatter:off
-	public CaseIndexDto(long id, String uuid, String epidNumber, String externalID, String externalToken, String internalToken, String personUuid, String personFirstName, String personLastName, Disease disease,
+	public CaseIndexDto(long id, String uuid, String epidNumber, String externalID, String externalToken, String internalToken, String personUuid, String personFirstName, String personLastName, String personOtherName ,Disease disease,
 						DiseaseVariant diseaseVariant, String diseaseDetails, CaseClassification caseClassification, InvestigationStatus investigationStatus,
 						PresentCondition presentCondition, Date reportDate, Date creationDate, String regionUuid,
 						String districtUuid, String healthFacilityUuid, String healthFacilityName, String healthFacilityDetails,
 						String pointOfEntryUuid, String pointOfEntryName, String pointOfEntryDetails, String surveillanceOfficerUuid, CaseOutcome outcome,
 						Integer age, ApproximateAgeType ageType, Integer birthdateDD, Integer birthdateMM, Integer birthdateYYYY, Sex sex, Date quarantineTo,
-						Float completeness, FollowUpStatus followUpStatus, Date followUpUntil,  SymptomJournalStatus symptomJournalStatus, VaccinationStatus vaccinationStatus,
+						Float completeness, FollowUpStatus followUpStatus, Date followUpUntil,  SymptomJournalStatus symptomJournalStatus, VaccinationStatus vaccinationStatus, CardOrHistory vaccinationType, Date vaccinationDate,
 						Date changeDate, Long facilityId, // XXX: unused, only here for TypedQuery mapping
 						// responsible jurisdiction
 						String responsibleRegionUuid, String responsibleDistrictUuid, String responsibleDistrictName, DeletionReason deletionReason, String otherDeletionReason, boolean isInJurisdiction,
@@ -184,6 +196,7 @@ public class CaseIndexDto extends PseudonymizableIndexDto implements MergeableIn
 		this.personUuid = personUuid;
 		this.personFirstName = personFirstName;
 		this.personLastName = personLastName;
+		this.personOtherName = personOtherName;
 		this.disease = disease;
 		this.diseaseVariant = diseaseVariant;
 		this.diseaseDetails = diseaseDetails;
@@ -205,7 +218,8 @@ public class CaseIndexDto extends PseudonymizableIndexDto implements MergeableIn
 		this.followUpUntil = followUpUntil;
 		this.symptomJournalStatus = symptomJournalStatus;
 		this.vaccinationStatus = vaccinationStatus;
-
+		this.vaccinationType = vaccinationType;
+		this.vaccinationDate = vaccinationDate;
 		this.responsibleDistrictName = responsibleDistrictName;
 
 		this.responsibleRegionUuid = responsibleRegionUuid;
@@ -218,6 +232,74 @@ public class CaseIndexDto extends PseudonymizableIndexDto implements MergeableIn
 
 		this.isInJurisdiction = isInJurisdiction;
 	}
+
+	public CaseIndexDto(long id, String uuid, String epidNumber, String externalID, String externalToken, String internalToken, String personUuid, String personFirstName, String personLastName, String personOtherName ,Disease disease,
+						DiseaseVariant diseaseVariant, String diseaseDetails, CaseClassification caseClassification, InvestigationStatus investigationStatus,
+						PresentCondition presentCondition, Date reportDate, Date creationDate, String regionUuid,
+						String districtUuid, String healthFacilityUuid, String healthFacilityName, String healthFacilityDetails,
+						String pointOfEntryUuid, String pointOfEntryName, String pointOfEntryDetails, String surveillanceOfficerUuid, CaseOutcome outcome,
+						Integer age, ApproximateAgeType ageType, Integer birthdateDD, Integer birthdateMM, Integer birthdateYYYY, Sex sex, Date quarantineTo,
+						Float completeness, FollowUpStatus followUpStatus, Date followUpUntil,  SymptomJournalStatus symptomJournalStatus, VaccinationStatus vaccinationStatus, CardOrHistory vaccinationType, Date vaccinationDate,
+						Date changeDate, Long facilityId, // XXX: unused, only here for TypedQuery mapping
+						// responsible jurisdiction
+						String responsibleRegionUuid, String responsibleDistrictUuid, String responsibleDistrictName, boolean isInJurisdiction,
+						// others
+						Integer visitCount,
+						Date latestChangedDate // unused, only here for TypedQuery mapping
+	) {
+		//@formatter:on
+
+		super(uuid);
+		this.id = id;
+		this.epidNumber = epidNumber;
+		this.externalID = externalID;
+		this.externalToken = externalToken;
+		this.internalToken = internalToken;
+		this.personUuid = personUuid;
+		this.personFirstName = personFirstName;
+		this.personLastName = personLastName;
+		this.personOtherName = personOtherName;
+		this.disease = disease;
+		this.diseaseVariant = diseaseVariant;
+		this.diseaseDetails = diseaseDetails;
+		this.caseClassification = caseClassification;
+		this.investigationStatus = investigationStatus;
+		this.presentCondition = presentCondition;
+		this.reportDate = reportDate;
+		this.creationDate = creationDate;
+		this.visitCount = visitCount;
+		this.healthFacilityName = FacilityHelper.buildFacilityString(healthFacilityUuid, healthFacilityName, healthFacilityDetails);
+		this.pointOfEntryName = InfrastructureHelper.buildPointOfEntryString(pointOfEntryUuid, pointOfEntryName, pointOfEntryDetails);
+		this.surveillanceOfficerUuid = surveillanceOfficerUuid;
+		this.outcome = outcome;
+		this.ageAndBirthDate = new AgeAndBirthDateDto(age, ageType, birthdateDD, birthdateMM, birthdateYYYY);
+		this.sex = sex;
+		this.quarantineTo = quarantineTo;
+		this.completeness = completeness;
+		this.followUpStatus = followUpStatus;
+		this.followUpUntil = followUpUntil;
+		this.symptomJournalStatus = symptomJournalStatus;
+		this.vaccinationStatus = vaccinationStatus;
+		this.vaccinationType = vaccinationType;
+		this.vaccinationDate = vaccinationDate;
+		this.responsibleDistrictName = responsibleDistrictName;
+
+		this.responsibleRegionUuid = responsibleRegionUuid;
+		this.responsibleDistrictUuid = responsibleDistrictUuid;
+		this.districtUuid = districtUuid;
+		this.regionUuid = regionUuid;
+
+		this.isInJurisdiction = isInJurisdiction;
+	}
+
+	public CaseIndexDto(long id, String uuid, String epidNumber, String externalID, String externalToken, String internalToken, String personUuid, String personFirstName, String personLastName, Disease disease, DiseaseVariant diseaseVariant, String diseaseDetails, CaseClassification caseClassification, InvestigationStatus investigationStatus, PresentCondition presentCondition, Date reportDate, Date creationDate, String regionUuid, String districtUuid, String healthFacilityUuid, String healthFacilityName, String healthFacilityDetails, String pointOfEntryUuid, String pointOfEntryName, String pointOfEntryDetails, String surveillanceOfficerUuid, CaseOutcome outcome, Integer age, ApproximateAgeType ageType, Integer birthdateDD, Integer birthdateMM, Integer birthdateYYYY, Sex sex, Date quarantineTo, Float completeness, FollowUpStatus followUpStatus, Date followUpUntil, SymptomJournalStatus symptomJournalStatus, VaccinationStatus vaccinationStatus, Date changeDate, Long facilityId, String responsibleRegionUuid, String responsibleDistrictUuid, String responsibleDistrictName, DeletionReason deletionReason, String otherDeleteReason, boolean isInJurisdiction, YesNoUnknown reInfection, String city, String street, String houseNumber, String additionalInformation, String postalCode, String phone, String reportingUserUuid, String reportingUserFirstName, String reportingUserLastName, Date symptomOnsetDate, String responsibleRegion, String responsibleCommunity, int visitCount, int i, Date latestSampleDateTime, long sampleCount, Date latestChangedDate) {
+		super(uuid);
+	}
+
+	public CaseIndexDto(long id, String uuid, String epidNumber, String externalID, String externalToken, String internalToken, String personUuid, String personFirstName, String personLastName, Disease disease, DiseaseVariant diseaseVariant, String diseaseDetails, CaseClassification caseClassification, InvestigationStatus investigationStatus, PresentCondition presentCondition, Date reportDate, Date creationDate, String regionUuid, String districtUuid, String healthFacilityUuid, String healthFacilityName, String healthFacilityDetails, String pointOfEntryUuid, String pointOfEntryName, String pointOfEntryDetails, String surveillanceOfficerUuid, CaseOutcome outcome, Integer age, ApproximateAgeType ageType, Integer birthdateDD, Integer birthdateMM, Integer birthdateYYYY, Sex sex, Date quarantineTo, Float completeness, FollowUpStatus followUpStatus, Date followUpUntil, SymptomJournalStatus symptomJournalStatus, VaccinationStatus vaccinationStatus, Date changeDate, Long facilityId, String responsibleRegionUuid, String responsibleDistrictUuid, String responsibleDistrictName, DeletionReason deletionReason, String otherDeletionReason, boolean isInJurisdiction, Object o, Object o1) {
+		super(uuid);
+	}
+
 
 	public long getId() {
 		return id;
@@ -257,6 +339,14 @@ public class CaseIndexDto extends PseudonymizableIndexDto implements MergeableIn
 
 	public void setPersonLastName(String personLastName) {
 		this.personLastName = personLastName;
+	}
+
+	public String getPersonOtherName() {
+		return personOtherName;
+	}
+
+	public void setPersonOtherName(String personOtherName) {
+		this.personOtherName = personOtherName;
 	}
 
 	public Disease getDisease() {
@@ -396,12 +486,12 @@ public class CaseIndexDto extends PseudonymizableIndexDto implements MergeableIn
 	}
 
 	public CaseReferenceDto toReference() {
-		return new CaseReferenceDto(getUuid(), personFirstName, personLastName);
+		return new CaseReferenceDto(getUuid(), personFirstName, personLastName, personOtherName);
 	}
 
 	@Override
 	public String getCaption() {
-		return CaseReferenceDto.buildCaption(getUuid(), getPersonFirstName(), getPersonLastName());
+		return CaseReferenceDto.buildCaption(getUuid(), getPersonFirstName(), getPersonLastName(), getPersonOtherName());
 	}
 
 	@Override
@@ -491,6 +581,22 @@ public class CaseIndexDto extends PseudonymizableIndexDto implements MergeableIn
 
 	public void setVaccinationStatus(VaccinationStatus vaccinationStatus) {
 		this.vaccinationStatus = vaccinationStatus;
+	}
+
+	public CardOrHistory getVaccinationType() {
+		return vaccinationType;
+	}
+
+	public void setVaccinationType(CardOrHistory vaccinationType) {
+		this.vaccinationType = vaccinationType;
+	}
+
+	public Date getVaccinationDate() {
+		return vaccinationDate;
+	}
+
+	public void setVaccinationDate(Date vaccinationDate) {
+		this.vaccinationDate = vaccinationDate;
 	}
 
 	public Integer getVisitCount() {

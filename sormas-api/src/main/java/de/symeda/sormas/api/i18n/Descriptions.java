@@ -18,6 +18,8 @@ public interface Descriptions {
 	String CaseData_healthFacility = "CaseData.healthFacility";
 	String CaseData_measlesVaccination = "CaseData.measlesVaccination";
 	String CaseData_pregnant = "CaseData.pregnant";
+	String CaseData_ipSampleSent = "CaseData.ipSampleSent";
+	String CaseData_ipSampleResults = "CaseData.ipSampleResults";
 	String CaseData_reportLat = "CaseData.reportLat";
 	String CaseData_reportLatLonAccuracy = "CaseData.reportLatLonAccuracy";
 	String CaseData_reportLon = "CaseData.reportLon";
@@ -58,6 +60,7 @@ public interface Descriptions {
 	String descFacilityFilter = "descFacilityFilter";
 	String descFollowUpExportButton = "descFollowUpExportButton";
 	String descGdpr = "descGdpr";
+	String observation = "observation";
 	String descPointOfEntryFilter = "descPointOfEntryFilter";
 	String discardDescription = "discardDescription";
 	String EpiData_bats = "EpiData.bats";

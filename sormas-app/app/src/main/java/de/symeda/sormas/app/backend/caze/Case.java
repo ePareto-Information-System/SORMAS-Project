@@ -30,6 +30,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import de.symeda.sormas.api.Disease;
@@ -49,12 +51,15 @@ import de.symeda.sormas.api.caze.RabiesType;
 //import de.symeda.sormas.api.caze.ReportingType;
 import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.caze.ScreeningType;
+//import de.symeda.sormas.api.caze.ReportingType;
+import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.caze.Trimester;
 import de.symeda.sormas.api.caze.VaccinationStatus;
 import de.symeda.sormas.api.contact.QuarantineType;
 import de.symeda.sormas.api.customizableenum.CustomizableEnumType;
 import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
+import de.symeda.sormas.api.utils.CardOrHistory;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.app.backend.caze.maternalhistory.MaternalHistory;
@@ -106,7 +111,10 @@ public class Case extends PseudonymizableAdo {
 	public static final String SPECIFYOTHEROUTCOME = "specifyOtherOutcome";
 	public static final String CASE_TRANSMISSION_CLASSIFICATION = "caseTransmissionClassification";
 	public static final String VACCINATION_STATUS = "vaccinationStatus";
+	public static final String VACCINATION_TYPE = "vaccinationType";
+	public static final String VACCINATION_DATE = "vaccinationDate";
 	public static final String HEALTH_CONDITIONS = "healthConditions";
+	public static final String CONTACT_TRANSMISSION_CLASSIFICATION = "caseTransmissionClassification";
 
 	@DatabaseField(foreign = true, foreignAutoRefresh = true, canBeNull = false, maxForeignAutoRefreshLevel = 3)
 	private Person person;
@@ -229,6 +237,10 @@ public class Case extends PseudonymizableAdo {
 	@Enumerated(EnumType.STRING)
 	@DatabaseField(columnName = "vaccination")
 	private VaccinationStatus vaccinationStatus;
+
+	@Enumerated(EnumType.STRING)
+	private CardOrHistory vaccinationType;
+	private Date vaccinationDate;
 
 	@Enumerated(EnumType.STRING)
 	private YesNoUnknown smallpoxVaccinationScar;
@@ -405,6 +417,9 @@ public class Case extends PseudonymizableAdo {
 	private Date followUpStatusChangeDate;
 	@DatabaseField(foreign = true, foreignAutoRefresh = true)
 	private User followUpStatusChangeUser;
+	@Enumerated(EnumType.STRING)
+	private TransmissionClassification caseTransmissionClassification;
+
 
 	public boolean isUnreferredPortHealthCase() {
 		return caseOrigin == CaseOrigin.POINT_OF_ENTRY && healthFacility == null;
@@ -690,6 +705,24 @@ public class Case extends PseudonymizableAdo {
 
 	public void setVaccinationStatus(VaccinationStatus vaccinationStatus) {
 		this.vaccinationStatus = vaccinationStatus;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public CardOrHistory getVaccinationType() {
+		return vaccinationType;
+	}
+
+	public void setVaccinationType(CardOrHistory vaccinationType) {
+		this.vaccinationType = vaccinationType;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getVaccinationDate() {
+		return vaccinationDate;
+	}
+
+	public void setVaccinationDate(Date vaccinationDate) {
+		this.vaccinationDate = vaccinationDate;
 	}
 
 	public YesNoUnknown getSmallpoxVaccinationScar() {
@@ -1370,4 +1403,11 @@ public class Case extends PseudonymizableAdo {
 	public void setFollowUpStatusChangeUser(User followUpStatusChangeUser) {
 		this.followUpStatusChangeUser = followUpStatusChangeUser;
 	}
+    public TransmissionClassification getCaseTransmissionClassification() {
+        return caseTransmissionClassification;
+    }
+
+    public void setCaseTransmissionClassification(TransmissionClassification caseTransmissionClassification) {
+        this.caseTransmissionClassification = caseTransmissionClassification;
+    }
 }

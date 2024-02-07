@@ -70,6 +70,8 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setNeckStiffness(source.getNeckStiffness());
 		target.setNoseBleeding(source.getNoseBleeding());
 		target.setOnsetDate(source.getOnsetDate());
+		target.setDateOfOnset(source.getDateOfOnset());
+		target.setFeverBodyTempGreater(source.getFeverBodyTempGreater());
 		target.setOnsetSymptom(source.getOnsetSymptom());
 		target.setOtherHemorrhagicSymptoms(source.getOtherHemorrhagicSymptoms());
 		target.setOtherHemorrhagicSymptomsText(source.getOtherHemorrhagicSymptomsText());
@@ -150,6 +152,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setMidUpperArmCircumference(source.getMidUpperArmCircumference());
 		target.setRespiratoryRate(source.getRespiratoryRate());
 		target.setWeight(source.getWeight());
+		target.setOutcome(source.getOutcome());
 		target.setHeight(source.getHeight());
 		target.setGlasgowComaScale(source.getGlasgowComaScale());
 		target.setBilateralCataracts(source.getBilateralCataracts());
@@ -202,6 +205,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setInDrawingOfChestWall(source.getInDrawingOfChestWall());
 		target.setOtherComplications(source.getOtherComplications());
 		target.setOtherComplicationsText(source.getOtherComplicationsText());
+		target.setProvisionalDiagnosis(source.getProvisionalDiagnosis());
 		target.setRespiratoryDiseaseVentilation(source.getRespiratoryDiseaseVentilation());
 		target.setFeelingIll(source.getFeelingIll());
 		target.setShivering(source.getShivering());
@@ -227,6 +231,10 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setMacularRash(source.getMacularRash());
 		target.setVesicularRash(source.getVesicularRash());
 		target.setOtherLesionAreas(source.getOtherLesionAreas());
+		target.setMuscleTone(source.getMuscleTone());
+		target.setDeepTendonReflex(source.getDeepTendonReflex());
+		target.setMuscleVolume(source.getMuscleVolume());
+		target.setSensoryLoss(source.getSensoryLoss());
 
 		return target;
 	}
@@ -245,6 +253,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		DtoHelper.fillDto(target, source);
 
 		target.setAbdominalPain(source.getAbdominalPain());
+		target.setOutcome(source.getOutcome());
 		target.setAlteredConsciousness(source.getAlteredConsciousness());
 		target.setAnorexiaAppetiteLoss(source.getAnorexiaAppetiteLoss());
 		target.setBleedingVagina(source.getBleedingVagina());
@@ -275,6 +284,8 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setNeckStiffness(source.getNeckStiffness());
 		target.setNoseBleeding(source.getNoseBleeding());
 		target.setOnsetDate(source.getOnsetDate());
+		target.setDateOfOnset(source.getDateOfOnset());
+		target.setFeverBodyTempGreater(source.getFeverBodyTempGreater());
 		target.setOnsetSymptom(source.getOnsetSymptom());
 		target.setOtherHemorrhagicSymptoms(source.getOtherHemorrhagicSymptoms());
 		target.setOtherHemorrhagicSymptomsText(source.getOtherHemorrhagicSymptomsText());
@@ -407,6 +418,7 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setInDrawingOfChestWall(source.getInDrawingOfChestWall());
 		target.setOtherComplications(source.getOtherComplications());
 		target.setOtherComplicationsText(source.getOtherComplicationsText());
+		target.setProvisionalDiagnosis(source.getProvisionalDiagnosis());
 		target.setRespiratoryDiseaseVentilation(source.getRespiratoryDiseaseVentilation());
 		target.setFeelingIll(source.getFeelingIll());
 		target.setShivering(source.getShivering());
@@ -432,6 +444,10 @@ public class SymptomsFacadeEjb implements SymptomsFacade {
 		target.setMacularRash(source.getMacularRash());
 		target.setVesicularRash(source.getVesicularRash());
 		target.setOtherLesionAreas(source.getOtherLesionAreas());
+		target.setMuscleTone(source.getMuscleTone());
+		target.setDeepTendonReflex(source.getDeepTendonReflex());
+		target.setMuscleVolume(source.getMuscleVolume());
+		target.setSensoryLoss(source.getSensoryLoss());
 
 		return target;
 	}

@@ -202,6 +202,7 @@ public class SurveillanceReportFacadeEjb
 		target.setFacilityRegion(regionService.getByReferenceDto(source.getFacilityRegion()));
 		target.setFacilityDistrict(districtService.getByReferenceDto(source.getFacilityDistrict()));
 		target.setFacilityType(source.getFacilityType());
+		target.setDhimsFacilityType(source.getDhimsFacilityType());
 		target.setFacility(facilityService.getByReferenceDto(source.getFacility()));
 		target.setFacilityDetails(source.getFacilityDetails());
 		target.setNotificationDetails(source.getNotificationDetails());

@@ -51,6 +51,10 @@ public class PersonExportDto extends AbstractUuidDto {
 	private String lastName;
 	@PersonalData
 	@SensitiveData
+	private String otherName;
+
+	@PersonalData
+	@SensitiveData
 	private Salutation salutation;
 	@PersonalData
 	@SensitiveData
@@ -136,7 +140,8 @@ public class PersonExportDto extends AbstractUuidDto {
 	private String passportNumber;
 	@SensitiveData
 	private String nationalHealthId;
-
+	@SensitiveData
+	private String ghanaCard;
 	private boolean hasCovidApp;
 	private boolean covidCodeDelivered;
 
@@ -159,6 +164,7 @@ public class PersonExportDto extends AbstractUuidDto {
 		String uuid,
 		String firstName,
 		String lastName,
+		String otherName,
 		Salutation salutation,
 		String otherSalutation,
 		Sex sex,
@@ -213,6 +219,7 @@ public class PersonExportDto extends AbstractUuidDto {
 		super(uuid);
 		this.firstName = firstName;
 		this.lastName = lastName;
+		this.otherName = otherName;
 		this.salutation = salutation;
 		this.otherSalutation = otherSalutation;
 		this.sex = sex;
@@ -267,6 +274,7 @@ public class PersonExportDto extends AbstractUuidDto {
 		String uuid,
 		String firstName,
 		String lastName,
+		String otherName,
 		Sex sex,
 		String district,
 		String street,
@@ -280,6 +288,7 @@ public class PersonExportDto extends AbstractUuidDto {
 		super(uuid);
 		this.firstName = firstName;
 		this.lastName = lastName;
+		this.otherName = otherName;
 		this.sex = sex;
 		this.district = district;
 		this.street = street;
@@ -310,6 +319,13 @@ public class PersonExportDto extends AbstractUuidDto {
 	@ExportGroup(ExportGroupType.CORE)
 	public String getLastName() {
 		return lastName;
+	}
+
+	@Order(2)
+	@ExportProperty(PersonDto.OTHER_NAME)
+	@ExportGroup(ExportGroupType.CORE)
+	public String getOtherName() {
+		return otherName;
 	}
 
 	@Order(3)
@@ -619,9 +635,7 @@ public class PersonExportDto extends AbstractUuidDto {
 	@ExportProperty(PersonDto.NATIONAL_HEALTH_ID)
 	@ExportGroup(ExportGroupType.CORE)
 	@HideForCountries
-	public String getNationalHealthId() {
-		return nationalHealthId;
-	}
+	public String getNationalHealthId() {return nationalHealthId;}
 
 	@Order(62)
 	@ExportProperty(PersonDto.HAS_COVID_APP)
@@ -692,6 +706,13 @@ public class PersonExportDto extends AbstractUuidDto {
 		return additionalDetails;
 	}
 
+	@Order(76)
+	@ExportProperty(PersonDto.GHANA_CARD)
+	@ExportGroup(ExportGroupType.CORE)
+	@HideForCountries
+	public String getGhanaCard() {
+		return ghanaCard;
+	}
 	public Boolean getInJurisdiction() {
 		return isInJurisdiction;
 	}

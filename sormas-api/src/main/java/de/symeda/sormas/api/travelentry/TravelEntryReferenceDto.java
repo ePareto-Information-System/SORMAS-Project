@@ -10,8 +10,8 @@ public class TravelEntryReferenceDto extends ReferenceDto {
 
 	private String externalId;
 
-	public TravelEntryReferenceDto(String uuid, String externalId, String firstName, String lastName) {
-		super(uuid, PersonDto.buildCaption(firstName, lastName));
+	public TravelEntryReferenceDto(String uuid, String externalId, String firstName, String lastName, String otherName) {
+		super(uuid, PersonDto.buildCaption(firstName, lastName, otherName));
 		this.externalId = externalId;
 	}
 

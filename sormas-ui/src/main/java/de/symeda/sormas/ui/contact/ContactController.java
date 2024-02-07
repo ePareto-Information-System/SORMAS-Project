@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import de.symeda.sormas.api.utils.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -49,6 +50,7 @@ import de.symeda.sormas.api.contact.ContactBulkEditData;
 import de.symeda.sormas.api.contact.ContactClassification;
 import de.symeda.sormas.api.contact.ContactCriteria;
 import de.symeda.sormas.api.contact.ContactDto;
+import de.symeda.sormas.api.uuid.HasUuid;
 import de.symeda.sormas.api.contact.ContactFacade;
 import de.symeda.sormas.api.contact.ContactIndexDetailedDto;
 import de.symeda.sormas.api.contact.ContactIndexDto;
@@ -71,11 +73,6 @@ import de.symeda.sormas.api.person.PersonFacade;
 import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.user.UserDto;
 import de.symeda.sormas.api.user.UserRight;
-import de.symeda.sormas.api.utils.DataHelper;
-import de.symeda.sormas.api.utils.DateFormatHelper;
-import de.symeda.sormas.api.utils.ValidationRuntimeException;
-import de.symeda.sormas.api.utils.YesNoUnknown;
-import de.symeda.sormas.api.uuid.HasUuid;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.SormasUI;
 import de.symeda.sormas.ui.UserProvider;
@@ -456,7 +453,7 @@ public class ContactController {
 
 				if (asSourceContact && caze != null) {
 					CaseDataDto caseDto = FacadeProvider.getCaseFacade().getByUuid(caze.getUuid());
-					caseDto.getEpiData().setContactWithSourceCaseKnown(YesNoUnknown.YES);
+					caseDto.getEpiData().setContactWithSourceCaseKnown(YesNo.YES);
 					FacadeProvider.getCaseFacade().save(caseDto);
 				}
 				if (asSourceContact && alternativeCallback != null && casePerson != null) {
@@ -994,7 +991,7 @@ public class ContactController {
 				mainRowText.append(" ")
 					.append(I18nProperties.getString(Strings.toCase))
 					.append(" ")
-					.append(PersonDto.buildCaption(contact.getCaze().getFirstName(), contact.getCaze().getLastName()));
+					.append(PersonDto.buildCaption(contact.getCaze().getFirstName(), contact.getCaze().getLastName(), contact.getCaze().getOtherName()));
 			}
 		}
 		mainRowText.append(mainRowText.length() > 0 ? " (" + shortUuid + ")" : shortUuid);

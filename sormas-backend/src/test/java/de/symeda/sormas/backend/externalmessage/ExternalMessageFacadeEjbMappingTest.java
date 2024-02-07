@@ -70,6 +70,7 @@ public class ExternalMessageFacadeEjbMappingTest {
 		source.setDisease(Disease.CORONAVIRUS);
 		source.setPersonFirstName("Person First Name");
 		source.setPersonLastName("Person Last Name");
+		source.setPersonOtherName("Person Other Name");
 		source.setPersonSex(Sex.OTHER);
 		source.setPersonPresentCondition(PresentCondition.ALIVE);
 		source.setPersonBirthDateDD(1);
@@ -141,6 +142,7 @@ public class ExternalMessageFacadeEjbMappingTest {
 		source.setDisease(Disease.CORONAVIRUS);
 		source.setPersonFirstName("Person First Name");
 		source.setPersonLastName("Person Last Name");
+		source.setPersonOtherName("Person Other Name");
 		source.setPersonSex(Sex.OTHER);
 		source.setPersonPresentCondition(PresentCondition.DEAD);
 		source.setPersonBirthDateDD(1);
@@ -171,6 +173,7 @@ public class ExternalMessageFacadeEjbMappingTest {
 		assertEquals(source.getDisease(), result.getDisease());
 		assertEquals(source.getPersonFirstName(), result.getPersonFirstName());
 		assertEquals(source.getPersonLastName(), result.getPersonLastName());
+		assertEquals(source.getPersonOtherName(), result.getPersonOtherName());
 		assertEquals(source.getPersonSex(), result.getPersonSex());
 		assertEquals(source.getPersonPresentCondition(), result.getPersonPresentCondition());
 		assertEquals(source.getPersonBirthDateDD(), result.getPersonBirthDateDD());

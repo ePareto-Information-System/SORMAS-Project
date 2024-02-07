@@ -28,6 +28,7 @@ import de.symeda.sormas.api.common.Page;
 import de.symeda.sormas.api.infrastructure.InfrastructureFacade;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.utils.AFPFacilityOptions;
 import de.symeda.sormas.api.utils.SortProperty;
 
 @Remote
@@ -39,9 +40,21 @@ public interface FacilityFacade extends InfrastructureFacade<FacilityDto, Facili
 			boolean includeOtherFacility,
 			boolean includeNoneFacility);
 
+	List<FacilityReferenceDto> getActiveFacilitiesByCommunityAndType(
+			CommunityReferenceDto community,
+			DhimsFacility dhimsFacilityType,
+			boolean includeOtherFacility,
+			boolean includeNoneFacility);
+
 	List<FacilityReferenceDto> getActiveFacilitiesByDistrictAndType(
 			DistrictReferenceDto district,
 			FacilityType type,
+			boolean includeOtherFacility,
+			boolean includeNoneFacility);
+
+	List<FacilityReferenceDto> getActiveFacilitiesByDistrictAndType(
+			DistrictReferenceDto district,
+			DhimsFacility dhimsFacilityType,
 			boolean includeOtherFacility,
 			boolean includeNoneFacility);
 
@@ -66,7 +79,27 @@ public interface FacilityFacade extends InfrastructureFacade<FacilityDto, Facili
 			FacilityType type,
 			boolean includeArchivedEntities);
 
-	List<FacilityReferenceDto> getLaboratoriesByName(String name, boolean includeArchivedEntities);
+	List<FacilityReferenceDto> getByNameAndType(
+			String name,
+			DistrictReferenceDto districtRef,
+			CommunityReferenceDto communityRef,
+			FacilityType type,
+			AFPFacilityOptions afpType,
+			boolean includeArchivedEntities);
+
+
+	List<FacilityReferenceDto> getByNameAndType(
+			String name,
+			DistrictReferenceDto districtRef,
+			CommunityReferenceDto communityRef,
+			FacilityType type,
+			DhimsFacility dhimsFacilityType,
+			AFPFacilityOptions afpType,
+			boolean includeArchivedEntities);
+
+    List<FacilityReferenceDto> getByNameAndType(String name, DistrictReferenceDto districtRef, CommunityReferenceDto communityRef, FacilityType type, DhimsFacility dhimsFacilityType, boolean includeArchivedEntities);
+
+    List<FacilityReferenceDto> getLaboratoriesByName(String name, boolean includeArchivedEntities);
 
 	boolean hasArchivedParentInfrastructure(Collection<String> facilityUuids);
 
@@ -75,6 +108,7 @@ public interface FacilityFacade extends InfrastructureFacade<FacilityDto, Facili
 	Map<String, String> getCommunityUuidsForFacilities(List<FacilityReferenceDto> facilities);
 
 	List<FacilityReferenceDto> getByExternalIdAndType(String id, FacilityType type, boolean includeArchivedEntities);
+	List<FacilityReferenceDto> getByExternalIdAndType(String id, FacilityType type, AFPFacilityOptions afpType,boolean includeArchivedEntities);
 
 	Page<FacilityIndexDto> getIndexPage(FacilityCriteria criteria, Integer offset, Integer size, List<SortProperty> sortProperties);
 

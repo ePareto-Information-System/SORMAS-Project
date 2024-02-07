@@ -38,7 +38,6 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Version;
-import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.TypeDef;
@@ -105,8 +104,7 @@ public abstract class AbstractDomainObject implements Serializable, Cloneable, H
 	}
 
 	@Basic(optional = false)
-	@Size(min = 20, max = 36)
-	@Column(nullable = false, unique = true, length = 36)
+    @Column(nullable = false, unique = true, length = 36)
 	public String getUuid() {
 
 		if (uuid == null) {

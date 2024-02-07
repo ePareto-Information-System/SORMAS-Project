@@ -14,13 +14,7 @@ public class TitleLayoutHelper {
 
 	public static StringBuilder buildPersonString(PersonDto person) {
 		StringBuilder personString = new StringBuilder();
-		final String personFullName;
-		if (!person.isPseudonymized()) {
-			personFullName = PersonDto.buildCaption(person.getFirstName(), person.getLastName());
-		} else {
-			personFullName = I18nProperties.getCaption(Captions.inaccessibleValue);
-		}
-
+		String personFullName = PersonDto.buildCaption(person.getFirstName(), person.getLastName(), person.getOtherName() );
 		if (StringUtils.isNotBlank(personFullName)) {
 			personString.append(personFullName);
 

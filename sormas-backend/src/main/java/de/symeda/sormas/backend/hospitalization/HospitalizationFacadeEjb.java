@@ -70,6 +70,7 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target = DtoHelper.fillOrBuildEntity(source, target, Hospitalization::new, checkChangeDate);
 
 		target.setAdmittedToHealthFacility(source.getAdmittedToHealthFacility());
+		target.setAdmittedToHealthFacilityNew(source.getAdmittedToHealthFacilityNew());
 		target.setAdmissionDate(source.getAdmissionDate());
 		target.setDischargeDate(source.getDischargeDate());
 		target.setHospitalizedPreviously(source.getHospitalizedPreviously());
@@ -100,6 +101,21 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setPatientConditionOnAdmission(source.getPatientConditionOnAdmission());
 		target.setDescription(source.getDescription());
 		target.setHealthFacilityRecordNumber(source.getHealthFacilityRecordNumber());
+		target.setDiseaseOnsetDate(source.getDiseaseOnsetDate());
+		target.setNotifyDistrictDate(source.getNotifyDistrictDate());
+		target.setDateFirstSeen(source.getDateFirstSeen());
+		target.setTerminationDateHospitalStay(source.getTerminationDateHospitalStay());
+		target.setPlace(source.getPlace());
+		target.setDurationMonths(source.getDurationMonths());
+		target.setDurationDays(source.getDurationDays());
+		target.setPlace2(source.getPlace2());
+		target.setDurationMonths2(source.getDurationMonths2());
+		target.setDurationDays2(source.getDurationDays2());
+		target.setInvestigatorName(source.getInvestigatorName());
+		target.setInvestigatorTitle(source.getInvestigatorTitle());
+		target.setInvestigatorUnit(source.getInvestigatorUnit());
+		target.setInvestigatorAddress(source.getInvestigatorAddress());
+		target.setInvestigatorTel(source.getInvestigatorTel());
 
 		return target;
 	}
@@ -149,6 +165,7 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		DtoHelper.fillDto(target, source);
 
 		target.setAdmittedToHealthFacility(source.getAdmittedToHealthFacility());
+		target.setAdmittedToHealthFacilityNew(source.getAdmittedToHealthFacilityNew());
 		target.setAdmissionDate(source.getAdmissionDate());
 		target.setDischargeDate(source.getDischargeDate());
 		target.setHospitalizedPreviously(source.getHospitalizedPreviously());
@@ -170,6 +187,22 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setIntensiveCareUnitEnd(source.getIntensiveCareUnitEnd());
 		target.setPatientConditionOnAdmission(source.getPatientConditionOnAdmission());
 		target.setDescription(source.getDescription());
+		target.setDiseaseOnsetDate(source.getDiseaseOnsetDate());
+		target.setPatientHospitalizedOrDetained(source.getPatientHospitalizedOrDetained());
+		target.setPlace(source.getPlace());
+		target.setDurationMonths(source.getDurationMonths());
+		target.setDurationDays(source.getDurationDays());
+		target.setPlace2(source.getPlace2());
+		target.setDurationMonths2(source.getDurationMonths2());
+		target.setDurationDays2(source.getDurationDays2());
+		target.setInvestigatorName(source.getInvestigatorName());
+		target.setInvestigatorTitle(source.getInvestigatorTitle());
+		target.setInvestigatorUnit(source.getInvestigatorUnit());
+		target.setInvestigatorAddress(source.getInvestigatorAddress());
+		target.setInvestigatorTel(source.getInvestigatorTel());
+		target.setNotifyDistrictDate(source.getNotifyDistrictDate());
+		target.setDateFirstSeen(source.getDateFirstSeen());
+		target.setTerminationDateHospitalStay(source.getTerminationDateHospitalStay());
 
 		return target;
 	}

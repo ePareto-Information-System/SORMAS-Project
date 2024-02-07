@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Date;
 
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import org.junit.jupiter.api.Test;
 
@@ -194,7 +195,7 @@ public class CasePartialUpdateTest extends AbstractBeanTest {
 			InvestigationStatus.PENDING,
 			new Date(),
 			rdcf);
-		caze.setPregnant(YesNoUnknown.NO);
+		caze.setPregnant(YesNo.NO);
 		caze.setAdditionalDetails("additional details");
 		caze = getCaseFacade().save(caze);
 

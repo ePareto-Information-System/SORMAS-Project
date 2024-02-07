@@ -41,7 +41,13 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.Size;
 
+import de.symeda.sormas.api.i18n.Validations;
+import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
+import de.symeda.sormas.api.sixtyday.SixtyDayDto;
+import de.symeda.sormas.api.utils.*;
+import de.symeda.sormas.backend.sixtyday.SixtyDay;
 import org.hibernate.annotations.Type;
 
 import de.symeda.sormas.api.Disease;
@@ -73,8 +79,6 @@ import de.symeda.sormas.api.externaldata.HasExternalData;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
-import de.symeda.sormas.api.utils.PersonalData;
-import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.backend.caze.maternalhistory.MaternalHistory;
 import de.symeda.sormas.backend.caze.porthealthinfo.PortHealthInfo;
 import de.symeda.sormas.backend.caze.surveillancereport.SurveillanceReport;
@@ -106,8 +110,7 @@ import de.symeda.sormas.backend.visit.Visit;
 
 @Entity(name = "cases")
 //@Audited
-//public class Case extends CoreAdo implements SormasToSormasShareable, HasExternalData, Comparable<Case>  {
-public class Case extends CoreAdo implements SormasToSormasShareable, HasExternalData {
+public class Case extends CoreAdo implements SormasToSormasShareable, HasExternalData, Comparable<Case>  {
 
 	private static final long serialVersionUID = -2697795184663562129L;
 
@@ -140,6 +143,12 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public static final String CLINICIAN_NAME = "clinicianName";
 	public static final String CLINICIAN_PHONE = "clinicianPhone";
 	public static final String CLINICIAN_EMAIL = "clinicianEmail";
+	public static final String REPORTING_OFFICER_NAME = "reportingOfficerName";
+	public static final String REPORTING_OFFICER_TITLE = "reportingOfficerTitle";
+	public static final String FUNCTION_OF_REPORTING_OFFICER = "functionOfReportingOfficer";
+	public static final String REPORTING_OFFICER_CONTACT_PHONE = "reportingOfficerContactPhone";
+	public static final String REPORTING_OFFICER_EMAIL = "reportingOfficerEmail";
+
 	public static final String CASE_OFFICER = "caseOfficer";
 	public static final String SYMPTOMS = "symptoms";
 	public static final String TASKS = "tasks";
@@ -150,6 +159,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public static final String DISTRICT = "district";
 	public static final String COMMUNITY = "community";
 	public static final String HOSPITALIZATION = "hospitalization";
+	public static final String SIXTY_DAY = "sixtyDay";
 	public static final String EPI_DATA = "epiData";
 	public static final String CLINICAL_COURSE = "clinicalCourse";
 	public static final String MATERNAL_HISTORY = "maternalHistory";
@@ -159,6 +169,8 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public static final String PREGNANT = "pregnant";
 	public static final String VACCINATION_STATUS = "vaccinationStatus";
+	public static final String VACCINATION_TYPE = "vaccinationType";
+	public static final String VACCINATION_DATE = "vaccinationDate";
 	public static final String EPID_NUMBER = "epidNumber";
 	public static final String REPORT_LAT = "reportLat";
 	public static final String REPORT_LON = "reportLon";
@@ -203,6 +215,8 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public static final String QUARANTINE_OFFICIAL_ORDER_SENT_DATE = "quarantineOfficialOrderSentDate";
 	public static final String POSTPARTUM = "postpartum";
 	public static final String TRIMESTER = "trimester";
+	public static final String VACCINE_TYPE = "vaccineType";
+	public static final String NUMBER_OF_DOSES = "numberOfDoses";
 	public static final String SAMPLES = "samples";
 	public static final String FOLLOW_UP_STATUS = "followUpStatus";
 	public static final String FOLLOW_UP_COMMENT = "followUpComment";
@@ -211,6 +225,8 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public static final String VISITS = "visits";
 	public static final String SURVEILLANCE_REPORTS = "surveillanceReports";
 	public static final String FACILITY_TYPE = "facilityType";
+	public static final String DHIMS_FACILITY_TYPE = "dhimsFacilityType";
+	public static final String AFP_FACILITY_OPTIONS = "afpFacilityOptions";
 	public static final String CONTACTS = "contacts";
 	public static final String CONVERTED_FROM_CONTACT = "convertedContact";
 	public static final String EVENT_PARTICIPANTS = "eventParticipants";
@@ -272,6 +288,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	private InvestigationStatus investigationStatus;
 	private Hospitalization hospitalization;
+	private SixtyDay sixtyDay;
 	private EpiData epiData;
 	private Therapy therapy;
 	private ClinicalCourse clinicalCourse;
@@ -286,6 +303,8 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private District district;
 	private Community community;
 	private FacilityType facilityType;
+	private DhimsFacility dhimsFacilityType;
+	private AFPFacilityOptions afpFacilityOptions;
 	private Facility healthFacility;
 	private String healthFacilityDetails;
 
@@ -304,8 +323,14 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private String clinicianName;
 	private String clinicianPhone;
 	private String clinicianEmail;
+	private String reportingOfficerName;
+	private String reportingOfficerTitle;
+	private String functionOfReportingOfficer;
+	private String reportingOfficerContactPhone;
+	private String reportingOfficerEmail;
 	private User caseOfficer;
-
+	private String homeAddressRecreational;
+	private String hospitalName;
 	private HospitalWardType notifyingClinic;
 	private String notifyingClinicDetails;
 
@@ -313,9 +338,12 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	private HealthConditions healthConditions;
 
-	private YesNoUnknown pregnant;
-
+	private YesNo pregnant;
+	private YesNoUnknown ipSampleSent;
+	private Disease ipSampleResults;
 	private VaccinationStatus vaccinationStatus;
+	private CardOrHistory vaccinationType;
+	private Date vaccinationDate;
 	private YesNoUnknown smallpoxVaccinationScar;
 	private YesNoUnknown smallpoxVaccinationReceived;
 	private Date smallpoxLastVaccinationDate;
@@ -367,9 +395,10 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	private Date followUpUntil;
 	private boolean overwriteFollowUpUntil;
 
-	private YesNoUnknown postpartum;
+	private YesNo postpartum;
 	private Trimester trimester;
-
+	private CSMVaccines vaccineType;
+	private String numberOfDoses;
 	private List<Task> tasks;
 	private Set<Sample> samples = new HashSet<>();
 	private Set<Visit> visits = new HashSet<>();
@@ -447,7 +476,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		this.personId = personId;
 	}
 
-	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
+	@ManyToOne(cascade = {})
 	@JoinColumn(nullable = false)
 	public Person getPerson() {
 		return person;
@@ -722,6 +751,64 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	public void setClinicianEmail(String clinicianEmail) {
 		this.clinicianEmail = clinicianEmail;
 	}
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public String getReportingOfficerName() {return reportingOfficerName;}
+
+	public void setReportingOfficerName(String reportingOfficerName) {
+		this.reportingOfficerName = reportingOfficerName;
+	}
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public String getReportingOfficerTitle() {
+		return reportingOfficerTitle;
+	}
+
+	public void setReportingOfficerTitle(String reportingOfficerTitle) {
+		this.reportingOfficerTitle = reportingOfficerTitle;
+	}
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public String getFunctionOfReportingOfficer() {
+		return functionOfReportingOfficer;
+	}
+
+	public void setFunctionOfReportingOfficer(String functionOfReportingOfficer) {
+		this.functionOfReportingOfficer = functionOfReportingOfficer;
+	}
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public String getReportingOfficerContactPhone() {
+		return reportingOfficerContactPhone;
+	}
+
+	public void setReportingOfficerContactPhone(String reportingOfficerContactPhone) {
+		this.reportingOfficerContactPhone = reportingOfficerContactPhone;
+	}
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public String getHomeAddressRecreational() {
+		return homeAddressRecreational;
+	}
+
+	public void setHomeAddressRecreational(String homeAddressRecreational) {
+		this.homeAddressRecreational = homeAddressRecreational;
+	}
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public String getHospitalName() {
+		return hospitalName;
+	}
+
+	public void setHospitalName(String hospitalName) {
+		this.hospitalName = hospitalName;
+	}
+
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public String getReportingOfficerEmail() {
+		return reportingOfficerEmail;
+	}
+
+	public void setReportingOfficerEmail(String reportingOfficerEmail) {
+		this.reportingOfficerEmail = reportingOfficerEmail;
+	}
 
 	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public User getCaseOfficer() {
@@ -828,6 +915,17 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		this.epiData = epiData;
 	}
 
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	//@AuditedIgnore
+	public SixtyDay getSixtyDay(){
+		if (sixtyDay == null){
+			sixtyDay = new SixtyDay();
+		}
+		return sixtyDay;
+	}
+
+	public void setSixtyDay(SixtyDay sixtyDay) {this.sixtyDay = sixtyDay; }
+
 	// It's necessary to do a lazy fetch here because having three eager fetching
 	// one to one relations
 	// produces an error where two non-xa connections are opened
@@ -903,12 +1001,30 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getPregnant() {
+	public YesNo getPregnant() {
 		return pregnant;
 	}
 
-	public void setPregnant(YesNoUnknown pregnant) {
+	public void setPregnant(YesNo pregnant) {
 		this.pregnant = pregnant;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public YesNoUnknown getIpSampleSent() {
+		return ipSampleSent;
+	}
+
+	public void setIpSampleSent(YesNoUnknown ipSampleSent) {
+		this.ipSampleSent = ipSampleSent;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public Disease getIpSampleResults(){
+		return ipSampleResults;
+	}
+
+	public void setIpSampleResults(Disease ipSampleResults) {
+		this.ipSampleResults = ipSampleResults;
 	}
 
 	@Enumerated(EnumType.STRING)
@@ -918,6 +1034,24 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setVaccinationStatus(VaccinationStatus vaccination) {
 		this.vaccinationStatus = vaccination;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public CardOrHistory getVaccinationType() {
+		return vaccinationType;
+	}
+
+	public void setVaccinationType(CardOrHistory vaccinationType) {
+		this.vaccinationType = vaccinationType;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getVaccinationDate() {
+		return vaccinationDate;
+	}
+
+	public void setVaccinationDate(Date vaccinationDate) {
+		this.vaccinationDate = vaccinationDate;
 	}
 
 	@Enumerated(EnumType.STRING)
@@ -957,7 +1091,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	}
 
 	public CaseReferenceDto toReference() {
-		return new CaseReferenceDto(getUuid(), person.getFirstName(), person.getLastName());
+		return new CaseReferenceDto(getUuid(), person.getFirstName(), person.getLastName(), person.getOtherName());
 	}
 
 	@OneToMany(cascade = {}, mappedBy = Task.CAZE, fetch = FetchType.LAZY)
@@ -1173,6 +1307,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 		this.additionalDetails = additionalDetails;
 	}
 
+
 	@Column(length = CHARACTER_LIMIT_DEFAULT)
 	public String getExternalID() {
 		return externalID;
@@ -1194,7 +1329,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	/**
 	 * Extra setter for externalID needed to comply with the HasExternalData interface
-	 * 
+	 *
 	 * @param externalId
 	 *            the value to be set for externalID
 	 */
@@ -1383,11 +1518,11 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getPostpartum() {
+	public YesNo getPostpartum() {
 		return postpartum;
 	}
 
-	public void setPostpartum(YesNoUnknown postpartum) {
+	public void setPostpartum(YesNo postpartum) {
 		this.postpartum = postpartum;
 	}
 
@@ -1398,6 +1533,22 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setTrimester(Trimester trimester) {
 		this.trimester = trimester;
+	}
+	@Enumerated(EnumType.STRING)
+	public CSMVaccines getVaccineType() {
+		return vaccineType;
+	}
+
+	public void setVaccineType(CSMVaccines vaccineType) {
+		this.vaccineType = vaccineType;
+	}
+	@Column(length = CHARACTER_LIMIT_DEFAULT)
+	public String getNumberOfDoses() {
+		return numberOfDoses;
+	}
+
+	public void setNumberOfDoses(String numberOfDoses) {
+		this.numberOfDoses = numberOfDoses;
 	}
 
 	@Enumerated(EnumType.STRING)
@@ -1443,6 +1594,21 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	public void setFacilityType(FacilityType facilityType) {
 		this.facilityType = facilityType;
+	}
+	@Enumerated(EnumType.STRING)
+	public DhimsFacility getDhimsFacilityType() {
+		return dhimsFacilityType;
+	}
+	public void setDhimsFacilityType(DhimsFacility dhimsFacilityType) {
+		this.dhimsFacilityType = dhimsFacilityType;
+	}
+	@Enumerated(EnumType.STRING)
+	public AFPFacilityOptions getAfpFacilityOptions() {
+		return afpFacilityOptions;
+	}
+
+	public void setAfpFacilityOptions(AFPFacilityOptions afpFacilityOptions) {
+		this.afpFacilityOptions = afpFacilityOptions;
 	}
 
 	@Column
@@ -1663,10 +1829,11 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 
 	@Override
 	@ManyToOne(cascade = {
-		CascadeType.PERSIST,
-		CascadeType.MERGE,
-		CascadeType.DETACH,
-		CascadeType.REFRESH }, fetch = FetchType.LAZY)
+			CascadeType.PERSIST,
+			CascadeType.MERGE,
+			CascadeType.DETACH,
+			CascadeType.REFRESH })
+	//@AuditedIgnore
 	public SormasToSormasOriginInfo getSormasToSormasOriginInfo() {
 		return sormasToSormasOriginInfo;
 	}
@@ -1791,7 +1958,7 @@ public class Case extends CoreAdo implements SormasToSormasShareable, HasExterna
 	}
 
 
-	//@Override
+	@Override
 	public int compareTo(Case otherCase) {
 		// Implement comparison logic based on your requirements
 		// Return a negative value if this case is smaller, positive if larger, or 0 if equal

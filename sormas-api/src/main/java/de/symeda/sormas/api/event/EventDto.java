@@ -15,6 +15,12 @@
 
 package de.symeda.sormas.api.event;
 
+import de.symeda.sormas.api.caze.CaseOrigin;
+import de.symeda.sormas.api.common.DeletionReason;
+import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
+import de.symeda.sormas.api.user.UserDto;
+import de.symeda.sormas.api.feature.FeatureType;
+import de.symeda.sormas.api.utils.DependingOnFeatureType;
 import java.util.Date;
 import java.util.Map;
 
@@ -182,6 +188,8 @@ public class EventDto extends SormasToSormasShareableDto {
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_BIG, message = Validations.textTooLong)
 	private String srcMediaDetails;
 	private Disease disease;
+
+	private CaseOrigin caseOrigin;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String diseaseDetails;
 	private DiseaseVariant diseaseVariant;
@@ -551,6 +559,11 @@ public class EventDto extends SormasToSormasShareableDto {
 	public void setDisease(Disease disease) {
 		this.disease = disease;
 	}
+
+	public CaseOrigin getCaseOrigin() {
+		return caseOrigin;
+	}
+	public void setCaseOrigin(CaseOrigin caseOrigin) {this.caseOrigin = caseOrigin;}
 
 	public String getDiseaseDetails() {
 		return diseaseDetails;

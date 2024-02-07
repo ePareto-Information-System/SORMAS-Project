@@ -44,16 +44,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Tuple;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Selection;
+import javax.persistence.criteria.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -472,6 +463,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 			exportPerson.setPseudonymized(detailedPerson.isPseudonymized());
 			exportPerson.setFirstName(detailedPerson.getFirstName());
 			exportPerson.setLastName(detailedPerson.getLastName());
+			exportPerson.setOtherName(detailedPerson.getOtherName());
 			exportPerson.setBirthdateYYYY(detailedPerson.getBirthdateYYYY());
 			exportPerson.setBirthdateMM(detailedPerson.getBirthdateMM());
 			exportPerson.setBirthdateDD(detailedPerson.getBirthdateDD());
@@ -1037,6 +1029,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 
 		target.setFirstName(source.getFirstName());
 		target.setLastName(source.getLastName());
+		target.setOtherName(source.getOtherName());
 		target.setSalutation(source.getSalutation());
 		target.setOtherSalutation(source.getOtherSalutation());
 		target.setSex(source.getSex());
@@ -1123,6 +1116,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 
 		target.setPassportNumber(source.getPassportNumber());
 		target.setNationalHealthId(source.getNationalHealthId());
+		target.setGhanaCard(source.getGhanaCard());
 		target.setPlaceOfBirthFacilityType(source.getPlaceOfBirthFacilityType());
 		target.setSymptomJournalStatus(source.getSymptomJournalStatus());
 
@@ -1135,6 +1129,8 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setBirthCountry(CountryFacadeEjb.toReferenceDto(source.getBirthCountry()));
 		target.setCitizenship(CountryFacadeEjb.toReferenceDto(source.getCitizenship()));
 		target.setAdditionalDetails(source.getAdditionalDetails());
+		target.setAdditionalPlacesStayed(source.getAdditionalPlacesStayed());
+		target.setHomeAddressRecreational(source.getHomeAddressRecreational());
 
 		//target.setCadre(CadreFacadeEjb.toReferenceDto(source.getCadre()));
 
@@ -1446,31 +1442,41 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 	public List<PersonIndexDto> getIndexList(PersonCriteria criteria, Integer first, Integer max, List<SortProperty> sortProperties) {
 
 		long startTime = DateHelper.startTime();
+		final CriteriaBuilder cb = em.getCriteriaBuilder();
+		final CriteriaQuery<PersonIndexDto> cq = cb.createQuery(PersonIndexDto.class);
+		final Root<Person> person = cq.from(Person.class);
 
-		List<Long> indexListIds = getIndexListIds(criteria, first, max, sortProperties);
+		final PersonQueryContext personQueryContext = new PersonQueryContext(cb, cq, person);
+		final PersonJoins personJoins = personQueryContext.getJoins();
+		personJoins.configure(criteria);
 
-		List<PersonIndexDto> persons = new ArrayList<>();
+		final Join<Person, Location> location = personJoins.getAddress();
+		final Join<Location, District> district = personJoins.getAddressJoins().getDistrict();
 
-		IterableHelper.executeBatched(indexListIds, ModelConstants.PARAMETER_LIMIT, batchedIds -> {
-			final CriteriaBuilder cb = em.getCriteriaBuilder();
-			final CriteriaQuery<PersonIndexDto> cq = cb.createQuery(PersonIndexDto.class);
-			final Root<Person> person = cq.from(Person.class);
+		final Subquery<String> phoneSubQuery = cq.subquery(String.class);
+		final Root<PersonContactDetail> phoneRoot = phoneSubQuery.from(PersonContactDetail.class);
+		phoneSubQuery.where(
+				cb.and(
+						cb.equal(phoneRoot.get(PersonContactDetail.PERSON), person),
+						cb.isTrue(phoneRoot.get(PersonContactDetail.PRIMARY_CONTACT)),
+						cb.equal(phoneRoot.get(PersonContactDetail.PERSON_CONTACT_DETAIL_TYPE), PersonContactDetailType.PHONE)));
+		phoneSubQuery.select(phoneRoot.get(PersonContactDetail.CONTACT_INFORMATION));
 
-			final PersonQueryContext personQueryContext = new PersonQueryContext(cb, cq, person);
-			final PersonJoins personJoins = personQueryContext.getJoins();
-			personJoins.configure(criteria);
+		final Subquery<String> emailSubQuery = cq.subquery(String.class);
+		final Root<PersonContactDetail> emailRoot = emailSubQuery.from(PersonContactDetail.class);
+		emailSubQuery.where(
+				cb.and(
+						cb.equal(emailRoot.get(PersonContactDetail.PERSON), person),
+						cb.isTrue(emailRoot.get(PersonContactDetail.PRIMARY_CONTACT)),
+						cb.equal(emailRoot.get(PersonContactDetail.PERSON_CONTACT_DETAIL_TYPE), PersonContactDetailType.EMAIL)));
+		emailSubQuery.select(emailRoot.get(PersonContactDetail.CONTACT_INFORMATION));
 
-			final Join<Person, Location> location = personJoins.getAddress();
-			final Join<Location, District> district = personJoins.getAddressJoins().getDistrict();
-
-			final Join<Person, PersonContactDetail> phone = personQueryContext.getPhoneJoin();
-			final Join<Person, PersonContactDetail> email = personQueryContext.getEmailAddressJoin();
-
-			// make sure to check the sorting by the multi-select order if you extend the selections here
-			cq.multiselect(
+		// make sure to check the sorting by the multi-select order if you extend the selections here
+		cq.multiselect(
 				person.get(Person.UUID),
 				person.get(Person.FIRST_NAME),
 				person.get(Person.LAST_NAME),
+				person.get(Person.OTHER_NAME),
 				person.get(Person.APPROXIMATE_AGE),
 				person.get(Person.APPROXIMATE_AGE_TYPE),
 				person.get(Person.BIRTHDATE_DD),
@@ -1482,38 +1488,71 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 				location.get(Location.HOUSE_NUMBER),
 				location.get(Location.POSTAL_CODE),
 				location.get(Location.CITY),
-				phone.get(PersonContactDetail.CONTACT_INFORMATION),
-				email.get(PersonContactDetail.CONTACT_INFORMATION),
+				phoneSubQuery.alias(PersonIndexDto.PHONE),
+				emailSubQuery.alias(PersonIndexDto.EMAIL_ADDRESS),
 				person.get(Person.CHANGE_DATE),
-				JurisdictionHelper.booleanSelector(cb, service.inJurisdictionOrOwned(personQueryContext)));
+				JurisdictionHelper.booleanSelector(cb, personService.inJurisdictionOrOwned(personQueryContext)));
 
-			Predicate filter = person.get(Person.ID).in(batchedIds);
-
-			Predicate indexListFilter = createIndexListFilter(criteria, personQueryContext);
-			if (indexListFilter != null) {
-				filter = cb.and(filter, indexListFilter);
-			}
-
+		Predicate filter = createIndexListFilter(criteria, personQueryContext);
+		if (filter != null) {
 			cq.where(filter);
-			cq.distinct(true);
+		}
+		cq.distinct(true);
 
-			sortBy(sortProperties, personQueryContext);
+		if (sortProperties != null && sortProperties.size() > 0) {
+			List<Order> order = new ArrayList<Order>(sortProperties.size());
+			for (SortProperty sortProperty : sortProperties) {
+				Expression<?> expression;
+				switch (sortProperty.propertyName) {
+					case PersonIndexDto.UUID:
+					case PersonIndexDto.FIRST_NAME:
+					case PersonIndexDto.LAST_NAME:
+					case PersonIndexDto.OTHER_NAME:
+					case PersonIndexDto.SEX:
+						expression = person.get(sortProperty.propertyName);
+						break;
+					case PersonIndexDto.PHONE:
+						expression = cb.literal(15); // order in the multiselect - Postgres limitation - needed to make sure it uses the same expression for ordering
+						break;
+					case PersonIndexDto.EMAIL_ADDRESS:
+						expression = cb.literal(16); // order in the multiselect - Postgres limitation - needed to make sure it uses the same expression for ordering
+						break;
+					case PersonIndexDto.AGE_AND_BIRTH_DATE:
+						expression = person.get(Person.APPROXIMATE_AGE);
+						break;
+					case PersonIndexDto.DISTRICT:
+						expression = district.get(District.NAME);
+						break;
+					case PersonIndexDto.STREET:
+					case PersonIndexDto.HOUSE_NUMBER:
+					case PersonIndexDto.POSTAL_CODE:
+					case PersonIndexDto.CITY:
+						expression = location.get(sortProperty.propertyName);
+						break;
+					default:
+						throw new IllegalArgumentException(sortProperty.propertyName);
+				}
+				order.add(sortProperty.ascending ? cb.asc(expression) : cb.desc(expression));
+			}
+			cq.orderBy(order);
+		} else {
+			cq.orderBy(cb.desc(person.get(Person.CHANGE_DATE)));
+		}
 
-			persons.addAll(em.createQuery(cq).getResultList());
-		});
+		List<PersonIndexDto> persons = QueryHelper.getResultList(em, cq, first, max);
 
 		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight, I18nProperties.getCaption(Captions.inaccessibleValue));
 		pseudonymizer.pseudonymizeDtoCollection(
-			PersonIndexDto.class,
-			persons,
-			PersonIndexDto::getInJurisdiction,
-			(p, isInJurisdiction) -> pseudonymizer.pseudonymizeDto(AgeAndBirthDateDto.class, p.getAgeAndBirthDate(), isInJurisdiction, null));
+				PersonIndexDto.class,
+				persons,
+				p -> p.getInJurisdiction(),
+				(p, isInJurisdiction) -> pseudonymizer.pseudonymizeDto(AgeAndBirthDateDto.class, p.getAgeAndBirthDate(), isInJurisdiction, null));
 
 		logger.debug(
-			"getIndexList() finished. association={}, count={}, {}ms",
-			Optional.ofNullable(criteria).orElse(new PersonCriteria()).getPersonAssociation().name(),
-			persons.size(),
-			DateHelper.durationMillies(startTime));
+				"getIndexList() finished. association={}, count={}, {}ms",
+				Optional.ofNullable(criteria).orElse(new PersonCriteria()).getPersonAssociation().name(),
+				persons.size(),
+				DateHelper.durationMillies(startTime));
 		return persons;
 	}
 
@@ -1620,6 +1659,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 			person.get(Person.UUID),
 			person.get(Person.FIRST_NAME),
 			person.get(Person.LAST_NAME),
+			person.get(Person.OTHER_NAME),
 			person.get(Person.SALUTATION),
 			person.get(Person.OTHER_SALUTATION),
 			person.get(Person.SEX),
@@ -1666,6 +1706,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 
 			person.get(Person.PASSPORT_NUMBER),
 			person.get(Person.NATIONAL_HEALTH_ID),
+			person.get(Person.GHANA_CARD),
 
 			person.get(Person.HAS_COVID_APP),
 			person.get(Person.COVID_CODE_DELIVERED),
@@ -1739,6 +1780,15 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		}
 	}
 
+	private void pseudonymizeDto(PersonDto dto, Pseudonymizer pseudonymizer, boolean isInJurisdiction) {
+		if (dto != null) {
+			pseudonymizer.pseudonymizeDto(PersonDto.class, dto, isInJurisdiction, p -> {
+				pseudonymizer.pseudonymizeDto(LocationDto.class, p.getAddress(), isInJurisdiction, null);
+				p.getAddresses().forEach(l -> pseudonymizer.pseudonymizeDto(LocationDto.class, l, isInJurisdiction, null));
+				p.getPersonContactDetails().forEach(pcd -> pseudonymizer.pseudonymizeDto(PersonContactDetailDto.class, pcd, isInJurisdiction, null));
+			});
+		}
+	}
 	@Override
 	protected void restorePseudonymizedDto(PersonDto source, PersonDto existingPerson, Person person, Pseudonymizer pseudonymizer) {
 		if (person != null && existingPerson != null) {
@@ -1772,7 +1822,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		if (entity == null) {
 			return null;
 		}
-		return new PersonReferenceDto(entity.getUuid(), entity.getFirstName(), entity.getLastName());
+		return new PersonReferenceDto(entity.getUuid(), entity.getFirstName(), entity.getLastName(), entity.getOtherName());
 	}
 
 	@Override
@@ -1787,6 +1837,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 
 		target.setFirstName(source.getFirstName());
 		target.setLastName(source.getLastName());
+		target.setOtherName(source.getOtherName());
 		target.setSalutation(source.getSalutation());
 		target.setOtherSalutation(source.getOtherSalutation());
 		target.setSex(source.getSex());
@@ -1868,6 +1919,7 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 
 		target.setPassportNumber(source.getPassportNumber());
 		target.setNationalHealthId(source.getNationalHealthId());
+		target.setGhanaCard(source.getGhanaCard());
 		target.setPlaceOfBirthFacilityType(source.getPlaceOfBirthFacilityType());
 
 		if (!RequestContextHolder.isMobileSync()) {
@@ -1883,6 +1935,8 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		target.setBirthCountry(countryService.getByReferenceDto(source.getBirthCountry()));
 		target.setCitizenship(countryService.getByReferenceDto(source.getCitizenship()));
 		target.setAdditionalDetails(source.getAdditionalDetails());
+		target.setAdditionalPlacesStayed(source.getAdditionalPlacesStayed());
+		target.setHomeAddressRecreational(source.getHomeAddressRecreational());
 
 		//target.setCadre(cadreService.getByReferenceDto(source.getCadre()));
 
@@ -1896,7 +1950,15 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 
 	public boolean isPersonSimilarToExisting(PersonDto referencePerson) {
 
-		PersonSimilarityCriteria criteria = PersonSimilarityCriteria.forPerson(referencePerson);
+		PersonSimilarityCriteria criteria = new PersonSimilarityCriteria().firstName(referencePerson.getFirstName())
+			.lastName(referencePerson.getLastName())
+			.sex(referencePerson.getSex())
+			.birthdateDD(referencePerson.getBirthdateDD())
+			.birthdateMM(referencePerson.getBirthdateMM())
+			.birthdateYYYY(referencePerson.getBirthdateYYYY())
+			.passportNumber(referencePerson.getPassportNumber())
+			.nationalHealthId(referencePerson.getNationalHealthId())
+			.ghanaCard(referencePerson.getGhanaCard());
 
 		return checkMatchingNameInDatabase(userFacade.getCurrentUser().toReference(), criteria);
 	}
@@ -2127,6 +2189,12 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		targetAddress = DtoHelper.copyDtoValues(targetAddress, sourceAddress, true);
 		targetPerson.setAddress(targetAddress);
 		save(targetPerson);
+	}
+	public PersonDto convertToDto(Person p, Pseudonymizer pseudonymizer, boolean inJurisdiction) {
+		final PersonDto personDto = toDto(p);
+		pseudonymizeDto(personDto, pseudonymizer, inJurisdiction);
+
+		return personDto;
 	}
 
 	@Override

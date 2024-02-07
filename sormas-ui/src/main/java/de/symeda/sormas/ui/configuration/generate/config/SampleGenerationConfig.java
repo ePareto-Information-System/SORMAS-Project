@@ -16,6 +16,7 @@ public class SampleGenerationConfig extends BaseGenerationConfig {
   private boolean externalLabOrInternalInHouseTesting = false;
   private boolean requestPathogenTestsToBePerformed = false;
   private boolean requestAdditionalTestsToBePerformed = false;
+  private boolean requestSampleMaterialsToBeSelected = false;
   private boolean sendDispatch = false;
   private boolean received = false;
   private String comment;
@@ -32,7 +33,7 @@ public class SampleGenerationConfig extends BaseGenerationConfig {
     sampleGenerationConfig.region = null;
     sampleGenerationConfig.district = null;
     sampleGenerationConfig.samplePurpose = SamplePurpose.INTERNAL;
-    sampleGenerationConfig.sampleMaterial = SampleMaterial.BLOOD;
+    sampleGenerationConfig.sampleMaterial = SampleMaterial.WHOLE_BLOOD;
     return sampleGenerationConfig;
   }
 
@@ -45,7 +46,7 @@ public class SampleGenerationConfig extends BaseGenerationConfig {
     sampleGenerationConfig.region = null;
     sampleGenerationConfig.district = null;
     sampleGenerationConfig.samplePurpose = SamplePurpose.EXTERNAL;
-    sampleGenerationConfig.sampleMaterial = SampleMaterial.BLOOD;
+    sampleGenerationConfig.sampleMaterial = SampleMaterial.WHOLE_BLOOD;
     sampleGenerationConfig.laboratory = FacadeProvider.getFacilityFacade().getAllActiveLaboratories(false).get(0);
     return sampleGenerationConfig;
   }
@@ -101,6 +102,14 @@ public class SampleGenerationConfig extends BaseGenerationConfig {
 
   public boolean isRequestAdditionalTestsToBePerformed() {
     return requestAdditionalTestsToBePerformed;
+  }
+
+  public boolean isRequestSampleMaterialsToAdded(){
+    return requestSampleMaterialsToBeSelected;
+  }
+
+  public void setRequestSampleMaterialsToBeAdded(boolean requestSampleMaterialsToBeAdded){
+    this.requestSampleMaterialsToBeSelected = requestSampleMaterialsToBeAdded;
   }
 
   public void setRequestAdditionalTestsToBePerformed(boolean requestAdditionalTestsToBePerformed) {

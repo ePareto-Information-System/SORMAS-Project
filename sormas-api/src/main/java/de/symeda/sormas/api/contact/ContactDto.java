@@ -31,6 +31,7 @@ import de.symeda.sormas.api.MappingException;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.caze.VaccinationStatus;
+import de.symeda.sormas.api.caze.*;
 import de.symeda.sormas.api.clinicalcourse.HealthConditionsDto;
 import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.common.DeletionReason;
@@ -150,6 +151,7 @@ public class ContactDto extends SormasToSormasShareableDto {
 	public static final String QUARANTINE_CHANGE_COMMENT = "quarantineChangeComment";
 	public static final String DELETION_REASON = "deletionReason";
 	public static final String OTHER_DELETION_REASON = "otherDeletionReason";
+	public static final String CONTACT_TRANSMISSION_CLASSIFICATION = "contactTransmissionClassification";
 
 	private CaseReferenceDto caze;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
@@ -159,6 +161,8 @@ public class ContactDto extends SormasToSormasShareableDto {
 	private String caseOrEventInformation;
 	@NotNull(message = Validations.validDisease)
 	private Disease disease;
+	//@Required
+	private CaseOrigin caseOrigin;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String diseaseDetails;
 	@MappingException(reason = MappingException.FILLED_FROM_OTHER_ENTITY)
@@ -342,7 +346,7 @@ public class ContactDto extends SormasToSormasShareableDto {
 		Disease.YELLOW_FEVER,
 		Disease.CSM,
 		Disease.RABIES,
-		Disease.UNSPECIFIED_VHF,
+		Disease.AHF,
 		Disease.ANTHRAX,
 		Disease.CORONAVIRUS,
 		Disease.OTHER })
@@ -357,6 +361,7 @@ public class ContactDto extends SormasToSormasShareableDto {
 	private DeletionReason deletionReason;
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
 	private String otherDeletionReason;
+	private TransmissionClassification contactTransmissionClassification;
 
 	public static ContactDto build() {
 		final ContactDto contact = new ContactDto();
@@ -615,12 +620,16 @@ public class ContactDto extends SormasToSormasShareableDto {
 
 	public ContactReferenceDto toReference() {
 		return new ContactReferenceDto(
-			getUuid(),
-			getPerson().getFirstName(),
-			getPerson().getLastName(),
-			getCaze() != null ? getCaze().getFirstName() : null,
-			getCaze() != null ? getCaze().getLastName() : null);
+				getUuid(),
+				getPerson().getFirstName(),
+				getPerson().getLastName(),
+				getPerson().getOtherName(),
+				getCaze() != null ? getCaze().getFirstName() : null,
+				getCaze() != null ? getCaze().getLastName() : null,
+				getCaze() != null ? getCaze().getOtherName() : null
+		);
 	}
+
 
 	public UserReferenceDto getResultingCaseUser() {
 		return resultingCaseUser;
@@ -628,6 +637,13 @@ public class ContactDto extends SormasToSormasShareableDto {
 
 	public void setResultingCaseUser(UserReferenceDto resultingCaseUser) {
 		this.resultingCaseUser = resultingCaseUser;
+	}
+
+	public CaseOrigin getCaseOrigin() {
+		return caseOrigin;
+	}
+	public void setCaseOrigin(CaseOrigin caseOrigin) {
+		this.caseOrigin = caseOrigin;
 	}
 
 	public Disease getDisease() {
@@ -1060,5 +1076,13 @@ public class ContactDto extends SormasToSormasShareableDto {
 
 	public void setOtherDeletionReason(String otherDeletionReason) {
 		this.otherDeletionReason = otherDeletionReason;
+	}
+
+	public TransmissionClassification getContactTransmissionClassification() {
+		return contactTransmissionClassification;
+	}
+
+	public void setContactTransmissionClassification(TransmissionClassification contactTransmissionClassification) {
+		this.contactTransmissionClassification = contactTransmissionClassification;
 	}
 }

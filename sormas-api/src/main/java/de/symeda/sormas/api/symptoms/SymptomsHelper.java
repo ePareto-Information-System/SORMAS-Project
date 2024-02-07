@@ -317,7 +317,7 @@ public final class SymptomsHelper {
 			for (Method method : SymptomsDto.class.getDeclaredMethods()) {
 				if (method.getReturnType() == SymptomState.class) {
 					Object symptomState = method.invoke(dto);
-					if (symptomState == SymptomState.YES || symptomState == SymptomState.UNKNOWN || symptomState == null) {
+					if (symptomState == SymptomState.YES || symptomState == null) {
 						return false;
 					}
 				}

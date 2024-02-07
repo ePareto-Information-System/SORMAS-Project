@@ -12,6 +12,7 @@ import de.symeda.sormas.api.person.PresentCondition;
 import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.person.SymptomJournalStatus;
 import de.symeda.sormas.api.user.UserReferenceDto;
+import de.symeda.sormas.api.utils.CardOrHistory;
 import de.symeda.sormas.api.utils.PersonalData;
 import de.symeda.sormas.api.utils.SensitiveData;
 import de.symeda.sormas.api.utils.YesNoUnknown;
@@ -74,28 +75,28 @@ public class CaseIndexDetailedDto extends CaseIndexDto {
 	private UserReferenceDto reportingUser;
 
 	//@formatter:off
-	public CaseIndexDetailedDto(long id, String uuid, String epidNumber, String externalID, String externalToken, String internalToken, String personUuid, String personFirstName, String personLastName,
+	public CaseIndexDetailedDto(long id, String uuid, String epidNumber, String externalID, String externalToken, String internalToken, String personUuid, String personFirstName, String personLastName, String personOtherName,
 								Disease disease, DiseaseVariant diseaseVariant, String diseaseDetails, CaseClassification caseClassification, InvestigationStatus investigationStatus,
 								PresentCondition presentCondition, Date reportDate, Date creationDate,
 								String regionUuid, String districtUuid,
 								String healthFacilityUuid, String healthFacilityName, String healthFacilityDetails,
 								String pointOfEntryUuid, String pointOfEntryName, String pointOfEntryDetails, String surveillanceOfficerUuid, CaseOutcome outcome,
 								Integer age, ApproximateAgeType ageType, Integer birthdateDD, Integer birthdateMM, Integer birthdateYYYY, Sex sex,
-								Date quarantineTo, Float completeness, FollowUpStatus followUpStatus, Date followUpUntil, SymptomJournalStatus symptomJournalStatus, VaccinationStatus vaccinationStatus, Date changeDate, Long facilityId,
-								String responsibleRegionUuid, String responsibleDistrictUuid, String responsibleDistrictName, DeletionReason deletionReason, String otherDeleteReason, boolean isInJurisdiction,
+								Date quarantineTo, Float completeness, FollowUpStatus followUpStatus, Date followUpUntil, SymptomJournalStatus symptomJournalStatus, VaccinationStatus vaccinationStatus, CardOrHistory vaccinationType, Date vaccinationDate, Date changeDate, Long facilityId,
+								String responsibleRegionUuid, String responsibleDistrictUuid, String responsibleDistrictName, boolean isInJurisdiction,
 								//detailed fields
 								YesNoUnknown reInfection, String city, String street, String houseNumber, String additionalInformation, String postalCode, String phone,
 								String reportingUserUuid, String reportingUserFirstName, String reportingUserLastName, Date symptomOnsetDate,
 								String responsibleRegion, String responsibleCommunity,
 								int visitCount, long eventCount, Date latestSampleDateTime, long sampleCount, Date latestChangedDate) {
-		super(id, uuid, epidNumber, externalID, externalToken, internalToken, personUuid, personFirstName, personLastName,
+		super(id, uuid, epidNumber, externalID, externalToken, internalToken, personUuid, personFirstName, personLastName, personOtherName,
 				disease, diseaseVariant, diseaseDetails, caseClassification, investigationStatus,
 				presentCondition, reportDate, creationDate,
 				regionUuid, districtUuid, healthFacilityUuid,
 				healthFacilityName, healthFacilityDetails, pointOfEntryUuid, pointOfEntryName, pointOfEntryDetails, surveillanceOfficerUuid, outcome,
 				age, ageType, birthdateDD, birthdateMM, birthdateYYYY, sex,
-				quarantineTo, completeness, followUpStatus, followUpUntil, symptomJournalStatus, vaccinationStatus, changeDate, facilityId,
-				responsibleRegionUuid, responsibleDistrictUuid, responsibleDistrictName, deletionReason, otherDeleteReason, isInJurisdiction, visitCount, latestChangedDate);
+				quarantineTo, completeness, followUpStatus, followUpUntil, symptomJournalStatus, vaccinationStatus, vaccinationType, vaccinationDate,changeDate, facilityId,
+				responsibleRegionUuid, responsibleDistrictUuid, responsibleDistrictName, isInJurisdiction, visitCount, latestChangedDate);
 		//@formatter:on
 
 		this.reInfection = reInfection;
@@ -144,6 +145,10 @@ public class CaseIndexDetailedDto extends CaseIndexDto {
 				reportingUserFirstName, reportingUserLastName, symptomOnsetDate, responsibleRegion, responsibleCommunity,
 				visitCount, 0, latestSampleDateTime, sampleCount, latestChangedDate);
 		//@formatter:on
+	}
+
+	public CaseIndexDetailedDto(long id, String uuid, String epidNumber, String externalID, String externalToken, String internalToken, String personUuid, String personFirstName, String personLastName, Disease disease, DiseaseVariant diseaseVariant, String diseaseDetails, CaseClassification caseClassification, InvestigationStatus investigationStatus, PresentCondition presentCondition, Date reportDate, Date creationDate, String regionUuid, String districtUuid, String healthFacilityUuid, String healthFacilityName, String healthFacilityDetails, String pointOfEntryUuid, String pointOfEntryName, String pointOfEntryDetails, String surveillanceOfficerUuid, CaseOutcome outcome, Integer age, ApproximateAgeType ageType, Integer birthdateDD, Integer birthdateMM, Integer birthdateYYYY, Sex sex, Date quarantineTo, Float completeness, FollowUpStatus followUpStatus, Date followUpUntil, SymptomJournalStatus symptomJournalStatus, VaccinationStatus vaccinationStatus, Date changeDate, Long facilityId, String responsibleRegionUuid, String responsibleDistrictUuid, String responsibleDistrictName, DeletionReason deletionReason, String otherDeleteReason, boolean isInJurisdiction, YesNoUnknown reInfection, String city, String street, String houseNumber, String additionalInformation, String postalCode, String phone, String reportingUserUuid, String reportingUserFirstName, String reportingUserLastName, Date symptomOnsetDate, String responsibleRegion, String responsibleCommunity, int visitCount, int i, Date latestSampleDateTime, long sampleCount, Date latestChangedDate) {
+		super(id, uuid, epidNumber, externalID, externalToken, internalToken, personUuid, personFirstName, personLastName, disease, diseaseVariant, diseaseDetails, caseClassification, investigationStatus, presentCondition, reportDate, creationDate, regionUuid, districtUuid, healthFacilityUuid, healthFacilityName, healthFacilityDetails, pointOfEntryUuid, pointOfEntryName, pointOfEntryDetails, surveillanceOfficerUuid, outcome, age, ageType, birthdateDD, birthdateMM, birthdateYYYY, sex, quarantineTo, completeness, followUpStatus, followUpUntil, symptomJournalStatus, vaccinationStatus, changeDate, facilityId, responsibleRegionUuid, responsibleDistrictUuid, responsibleDistrictName, deletionReason, otherDeleteReason, isInJurisdiction, reInfection, city, street, houseNumber, additionalInformation, postalCode, phone, reportingUserUuid, reportingUserFirstName, reportingUserLastName, symptomOnsetDate, responsibleRegion, responsibleCommunity, visitCount, i, latestSampleDateTime, sampleCount, latestChangedDate);
 	}
 
 	public YesNoUnknown getReInfection() {

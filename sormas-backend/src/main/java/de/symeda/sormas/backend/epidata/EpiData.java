@@ -27,6 +27,9 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
 
+//import de.symeda.auditlog.api.Audited;
+import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.backend.activityascase.ActivityAsCase;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
@@ -44,12 +47,16 @@ public class EpiData extends AbstractDomainObject {
 	public static final String EXPOSURES = "exposures";
 	public static final String ACTIVITIES_AS_CASE = "activitiesAsCase";
 
-	private YesNoUnknown exposureDetailsKnown;
-	private YesNoUnknown activityAsCaseDetailsKnown;
-	private YesNoUnknown contactWithSourceCaseKnown;
-	private YesNoUnknown highTransmissionRiskArea;
-	private YesNoUnknown largeOutbreaksArea;
-	private YesNoUnknown areaInfectedAnimals;
+	private YesNo exposureDetailsKnown;
+	private YesNo activityAsCaseDetailsKnown;
+	private YesNo recentTravelOutbreak;
+	private YesNo contactSimilarOutbreak;
+	private YesNo contactSickAnimals;
+	private YesNo contactWithSourceCaseKnown;
+	private YesNo highTransmissionRiskArea;
+	private YesNo largeOutbreaksArea;
+	private YesNo areaInfectedAnimals;
+	private Disease disease;
 
 	private List<Exposure> exposures = new ArrayList<>();
 	private List<ActivityAsCase> activitiesAsCase = new ArrayList<>();
@@ -57,23 +64,46 @@ public class EpiData extends AbstractDomainObject {
 	private Date changeDateOfEmbeddedLists;
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getExposureDetailsKnown() {
+	public YesNo getExposureDetailsKnown() {
 		return exposureDetailsKnown;
 	}
 
-	public void setExposureDetailsKnown(YesNoUnknown exposureDetailsKnown) {
+	public void setExposureDetailsKnown(YesNo exposureDetailsKnown) {
 		this.exposureDetailsKnown = exposureDetailsKnown;
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getActivityAsCaseDetailsKnown() {
+	public YesNo getActivityAsCaseDetailsKnown() {
 		return activityAsCaseDetailsKnown;
 	}
 
-	public void setActivityAsCaseDetailsKnown(YesNoUnknown activityAsCaseDetailsKnown) {
+	public void setActivityAsCaseDetailsKnown(YesNo activityAsCaseDetailsKnown) {
 		this.activityAsCaseDetailsKnown = activityAsCaseDetailsKnown;
 	}
+	@Enumerated(EnumType.STRING)
+	public YesNo getRecentTravelOutbreak() {
+		return recentTravelOutbreak;
+	}
 
+	public void setRecentTravelOutbreak(YesNo recentTravelOutbreak) {
+		this.recentTravelOutbreak = recentTravelOutbreak;
+	}
+	@Enumerated(EnumType.STRING)
+	public YesNo getContactSimilarOutbreak() {
+		return contactSimilarOutbreak;
+	}
+
+	public void setContactSimilarOutbreak(YesNo contactSimilarOutbreak) {
+		this.contactSimilarOutbreak = contactSimilarOutbreak;
+	}
+	@Enumerated(EnumType.STRING)
+	public YesNo getContactSickAnimals() {
+		return contactSickAnimals;
+	}
+
+	public void setContactSickAnimals(YesNo contactSickAnimals) {
+		this.contactSickAnimals = contactSickAnimals;
+	}
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = Exposure.EPI_DATA)
 	public List<Exposure> getExposures() {
 		return exposures;
@@ -104,38 +134,44 @@ public class EpiData extends AbstractDomainObject {
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getAreaInfectedAnimals() {
+	public YesNo getAreaInfectedAnimals() {
 		return areaInfectedAnimals;
 	}
 
-	public void setAreaInfectedAnimals(YesNoUnknown areaInfectedAnimals) {
+	public void setAreaInfectedAnimals(YesNo areaInfectedAnimals) {
 		this.areaInfectedAnimals = areaInfectedAnimals;
+	}
+	public Disease getDisease() {
+		return disease;
+	}
+	public void setDisease(Disease disease) {
+		this.disease = disease;
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getHighTransmissionRiskArea() {
+	public YesNo getHighTransmissionRiskArea() {
 		return highTransmissionRiskArea;
 	}
 
-	public void setHighTransmissionRiskArea(YesNoUnknown highTransmissionRiskArea) {
+	public void setHighTransmissionRiskArea(YesNo highTransmissionRiskArea) {
 		this.highTransmissionRiskArea = highTransmissionRiskArea;
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getLargeOutbreaksArea() {
+	public YesNo getLargeOutbreaksArea() {
 		return largeOutbreaksArea;
 	}
 
-	public void setLargeOutbreaksArea(YesNoUnknown largeOutbreaksArea) {
+	public void setLargeOutbreaksArea(YesNo largeOutbreaksArea) {
 		this.largeOutbreaksArea = largeOutbreaksArea;
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getContactWithSourceCaseKnown() {
+	public YesNo getContactWithSourceCaseKnown() {
 		return contactWithSourceCaseKnown;
 	}
 
-	public void setContactWithSourceCaseKnown(YesNoUnknown contactWithSourceCaseKnown) {
+	public void setContactWithSourceCaseKnown(YesNo contactWithSourceCaseKnown) {
 		this.contactWithSourceCaseKnown = contactWithSourceCaseKnown;
 	}
 }
