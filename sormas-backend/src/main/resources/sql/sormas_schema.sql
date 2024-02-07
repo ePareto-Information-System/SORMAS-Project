@@ -12787,5 +12787,13 @@ INSERT INTO schema_version (version_number, comment) VALUES (524, 'Added column 
 ALTER TABLE symptoms RENAME COLUMN runninnosedate TO runnynosedate;
 INSERT INTO schema_version (version_number, comment) VALUES (525, 'Added column to runnynosedate to symptoms');
 
+ALTER TABLE hospitalization ADD COLUMN waspatientadmitted varchar(255) NULL;
+ALTER TABLE previoushospitalization ADD COLUMN waspatientadmitted varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (526, 'Added column to hospitalization to hospitalization and previoushospitalization');
+
+
+ALTER TABLE hospitalization ADD COLUMN seenatahealthfacility varchar(255) NULL;
+ALTER TABLE previoushospitalization ADD COLUMN seenatahealthfacility varchar(255) NULL;
+INSERT INTO schema_version (version_number, comment) VALUES (527, 'Added column to seenatahealthfacility');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``

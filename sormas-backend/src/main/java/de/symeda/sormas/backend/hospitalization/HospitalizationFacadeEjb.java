@@ -104,7 +104,8 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setInvestigatorUnit(source.getInvestigatorUnit());
 		target.setInvestigatorAddress(source.getInvestigatorAddress());
 		target.setInvestigatorTel(source.getInvestigatorTel());
-
+		target.setIntensiveCareUnitEnd(source.getIntensiveCareUnitEnd());
+		target.setWasPatientAdmitted(source.getWasPatientAdmitted());
 		return target;
 	}
 
@@ -137,6 +138,8 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setIntensiveCareUnit(source.getIntensiveCareUnit());
 		target.setIntensiveCareUnitStart(source.getIntensiveCareUnitStart());
 		target.setIntensiveCareUnitEnd(source.getIntensiveCareUnitEnd());
+		target.setIntensiveCareUnitEnd(source.getIntensiveCareUnitEnd());
+		target.setWasPatientAdmitted(source.getWasPatientAdmitted());
 
 		return target;
 	}
@@ -189,7 +192,8 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setNotifyDistrictDate(source.getNotifyDistrictDate());
 		target.setDateFirstSeen(source.getDateFirstSeen());
 		target.setTerminationDateHospitalStay(source.getTerminationDateHospitalStay());
-
+		target.setSeenAtAHealthFacility(source.getSeenAtAHealthFacility());
+		target.setWasPatientAdmitted(source.getWasPatientAdmitted());
 		return target;
 	}
 
@@ -219,7 +223,8 @@ public class HospitalizationFacadeEjb implements HospitalizationFacade {
 		target.setIntensiveCareUnit(source.getIntensiveCareUnit());
 		target.setIntensiveCareUnitStart(source.getIntensiveCareUnitStart());
 		target.setIntensiveCareUnitEnd(source.getIntensiveCareUnitEnd());
-
+		target.setSeenAtAHealthFacility(source.getSeenAtAHealthFacility());
+		target.setWasPatientAdmitted(source.getWasPatientAdmitted());
 		return target;
 	}
 

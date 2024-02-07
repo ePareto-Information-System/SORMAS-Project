@@ -82,6 +82,9 @@ public class PreviousHospitalization extends AbstractDomainObject {
 	private Date intensiveCareUnitStart;
 	private Date intensiveCareUnitEnd;
 
+	private YesNoUnknown seenAtAHealthFacility;
+	private YesNoUnknown wasPatientAdmitted;
+
 	@Enumerated(EnumType.STRING)
 	public YesNo getAdmittedToHealthFacility() {
 		return admittedToHealthFacility;
@@ -233,5 +236,23 @@ public class PreviousHospitalization extends AbstractDomainObject {
 
 	public void setIntensiveCareUnitEnd(Date intensiveCareUnitEnd) {
 		this.intensiveCareUnitEnd = intensiveCareUnitEnd;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public YesNoUnknown getSeenAtAHealthFacility() {
+		return seenAtAHealthFacility;
+	}
+
+	public void setSeenAtAHealthFacility(YesNoUnknown seenAtAHealthFacility) {
+		this.seenAtAHealthFacility = seenAtAHealthFacility;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public YesNoUnknown getWasPatientAdmitted() {
+		return wasPatientAdmitted;
+	}
+
+	public void setWasPatientAdmitted(YesNoUnknown wasPatientAdmitted) {
+		this.wasPatientAdmitted = wasPatientAdmitted;
 	}
 }
