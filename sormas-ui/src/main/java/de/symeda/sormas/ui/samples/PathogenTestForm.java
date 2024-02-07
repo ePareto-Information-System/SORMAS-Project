@@ -269,7 +269,16 @@ public class PathogenTestForm extends AbstractEditForm<PathogenTestDto> {
 				Arrays.asList(PathogenTestType.values()),
 				FieldVisibilityCheckers.withDisease(disease),
 				PathogenTestType.class);
+
+			if (disease == Disease.MEASLES) {
+				List<PathogenTestType> measelesPathogenTests = PathogenTestType.getMeaslesTestTypes();
+				Arrays.stream(PathogenTestType.values())
+						.filter(pathogenTestType -> !measelesPathogenTests.contains(pathogenTestType))
+						.forEach(pathogenTestType -> testTypeField.removeItem(pathogenTestType));
+			}
 		});
+
+
 		diseaseVariantField.addValueChangeListener(e -> {
 			DiseaseVariant diseaseVariant = (DiseaseVariant) e.getProperty().getValue();
 			diseaseVariantDetailsField.setVisible(diseaseVariant != null && diseaseVariant.matchPropertyValue(DiseaseVariant.HAS_DETAILS, true));
