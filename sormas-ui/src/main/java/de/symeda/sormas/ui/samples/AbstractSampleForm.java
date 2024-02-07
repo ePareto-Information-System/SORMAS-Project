@@ -27,7 +27,11 @@ import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseReferenceDto;
+import de.symeda.sormas.api.contact.ContactDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.event.EventDto;
+import de.symeda.sormas.api.event.EventParticipantReferenceDto;
+import de.symeda.sormas.api.event.EventReferenceDto;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Descriptions;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -76,6 +80,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private ComboBox lab;
 
 	private TextField labDetails;
+
+	OptionGroup requestedPathogenTestsField;
 
 	//@formatter:off
     protected static final String SAMPLE_COMMON_HTML_LAYOUT =
@@ -195,15 +201,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
         samplePurposeField.setRequired(true);
 
-        final CaseReferenceDto associatedCase = getValue().getAssociatedCase();
-        if (associatedCase != null && UserProvider.getCurrent().hasAllUserRights(UserRight.CASE_VIEW)) {
-            disease = FacadeProvider.getCaseFacade().getCaseDataByUuid(associatedCase.getUuid()).getDisease();
-        } else {
-            final ContactReferenceDto associatedContact = getValue().getAssociatedContact();
-            if (associatedContact != null && UserProvider.getCurrent().hasAllUserRights(UserRight.CONTACT_VIEW)) {
-                disease = FacadeProvider.getContactFacade().getByUuid(associatedContact.getUuid()).getDisease();
-            }
-        }
+		disease = getAssociatedDisease();
+
 		getDisease();
 
         FieldHelper.setVisibleWhen(
@@ -243,7 +242,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
                     Arrays.asList(SamplePurpose.EXTERNAL, null));
 
 
-			Disease disease = getDisease();
+			Disease disease = getAssociatedDisease();
 
 			switch (disease) {
 				case CSM:
@@ -257,7 +256,10 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 					break;
 				case YELLOW_FEVER:
 					handleYellowFever();
-
+					break;
+				case MEASLES:
+					handleMeasel();
+					break;
 				default:
 					// Handle default case, maybe log an error or set default visibility
 					break;
@@ -404,7 +406,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		additionalTestingRequestedField.addValueChangeListener(e -> updateRequestedTestFields());
 
 		// CheckBox groups to select the requested pathogen/additional tests
-		OptionGroup requestedPathogenTestsField = addField(SampleDto.REQUESTED_PATHOGEN_TESTS, OptionGroup.class);
+		requestedPathogenTestsField = addField(SampleDto.REQUESTED_PATHOGEN_TESTS, OptionGroup.class);
 		CssStyles.style(requestedPathogenTestsField, CssStyles.OPTIONGROUP_CHECKBOXES_HORIZONTAL);
 		requestedPathogenTestsField.setMultiSelect(true);
 		requestedPathogenTestsField.addItems(
@@ -588,6 +590,20 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		initializeMaterialsMultiSelect();
 	}
 
+	private void handleMeasel() {
+		if (disease == Disease.MEASLES) {
+			setVisible(false, SampleDto.SAMPLING_REASON);
+			setVisible(false, SampleDto.SAMPLE_PURPOSE);
+
+			List<PathogenTestType> measelesPathogenTests = PathogenTestType.getMeaslesTestTypes();
+
+			Arrays.stream(PathogenTestType.values())
+					.filter(pathogenTestType -> !measelesPathogenTests.contains(pathogenTestType))
+					.forEach(pathogenTestType -> requestedPathogenTestsField.removeItem(pathogenTestType));
+
+		}
+	}
+
 	private FacilityReferenceDto findLabByName(List<FacilityReferenceDto> labs, String labName) {
 		for (FacilityReferenceDto labItem : labs) {
 			if (labName.equals(labItem.getCaption())) {
@@ -616,4 +632,27 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			System.out.println("Lab dropdown is null. Please check your code.");
 		}
 	}
+	private Disease getAssociatedDisease() {
+
+		final CaseReferenceDto associatedCase = getValue().getAssociatedCase();
+		final ContactReferenceDto associatedContact = getValue().getAssociatedContact();
+		final EventParticipantReferenceDto associatedEventParticipant = getValue().getAssociatedEventParticipant();
+
+		if (associatedCase != null && UserProvider.getCurrent().hasAllUserRights(UserRight.CASE_VIEW)) {
+			CaseDataDto caseDataDto = FacadeProvider.getCaseFacade().getCaseDataByUuid(associatedCase.getUuid());
+			return (caseDataDto != null) ? caseDataDto.getDisease() : null;
+		} else if (associatedContact != null && UserProvider.getCurrent().hasAllUserRights(UserRight.CONTACT_VIEW)) {
+			ContactDto contactDto = FacadeProvider.getContactFacade().getByUuid(associatedContact.getUuid());
+			return (contactDto != null) ? contactDto.getDisease() : null;
+		} else if (associatedEventParticipant != null && UserProvider.getCurrent().hasAllUserRights(UserRight.EVENT_VIEW)) {
+			EventReferenceDto eventReferenceDto = FacadeProvider.getEventParticipantFacade().getEventParticipantByUuid(associatedEventParticipant.getUuid()).getEvent();
+			if (eventReferenceDto != null) {
+				EventDto eventDto = FacadeProvider.getEventFacade().getByUuid(eventReferenceDto.getUuid());
+				return (eventDto != null) ? eventDto.getDisease() : null;
+			}
+		}
+
+		return null;
+	}
+
 }
