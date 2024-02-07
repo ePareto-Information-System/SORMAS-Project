@@ -189,13 +189,12 @@ public class SampleDto extends SormasToSormasShareableDto {
 
 	private Float reportLatLonAccuracy;
 
-	@NotNull(message = Validations.requiredField)
 	private SampleMaterial sampleMaterial;
 	private Disease disease;
 	@SensitiveData
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String sampleMaterialText;
-	@NotNull(message = Validations.requiredField)
+
 	private SamplePurpose samplePurpose;
 
 	private FacilityReferenceDto lab;
@@ -244,7 +243,7 @@ public class SampleDto extends SormasToSormasShareableDto {
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
 	private String otherDeletionReason;
 
-	private YesNoUnknown ipSampleSent;
+	private YesNo ipSampleSent;
 	private IpResult ipSampleResults;
 	private SampleDispatchMode sampleDispatchMode;
 	private Date sampleDispatchDate;
@@ -471,11 +470,11 @@ public class SampleDto extends SormasToSormasShareableDto {
 		this.sampleDispatchDate = sampleDispatchDate;
 	}
 
-	public YesNoUnknown getIpSampleSent() {
+	public YesNo getIpSampleSent() {
 		return ipSampleSent;
 	}
 
-	public void setIpSampleSent(YesNoUnknown ipSampleSent) {
+	public void setIpSampleSent(YesNo ipSampleSent) {
 		this.ipSampleSent = ipSampleSent;
 	}
 

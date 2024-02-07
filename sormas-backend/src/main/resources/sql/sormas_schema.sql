@@ -12778,5 +12778,11 @@ ALTER TABLE hospitalization ADD COLUMN place3 varchar(255);
 ALTER TABLE hospitalization ADD COLUMN durationmonths3 varchar(255);
 ALTER TABLE hospitalization ADD COLUMN durationdays3 varchar(255);
 INSERT INTO schema_version (version_number, comment) VALUES (547, 'Added place2,durationmonths2,durationdays2 to hospitalization');
+
+ALTER TABLE cases ADD COLUMN numberofdoses varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (548, 'Added numberofdoses to cases');
+
+ALTER TABLE cases ADD COLUMN vaccinetype varchar(255);
+INSERT INTO schema_version (version_number, comment) VALUES (549, 'Added vaccinetype to cases');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***
 ``

@@ -243,8 +243,8 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 
 		OptionGroup ipSampleSent = new OptionGroup("YesNoUnknown");
 
-		for (YesNoUnknown val : YesNoUnknown.values()) {
-			if (val == YesNoUnknown.YES || val == YesNoUnknown.NO) {
+		for (YesNo val : YesNo.values()) {
+			if (val == YesNo.YES || val == YesNo.NO) {
 				ipSampleSent.addItem(val);
 			}
 		}
@@ -266,7 +266,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			Collections.singletonList(SamplingReason.OTHER_REASON),
 			true);
 
-		FieldHelper.setVisibleWhen(getFieldGroup(), SampleDto.IPSAMPLERESULTS, SampleDto.IPSAMPLESENT, Collections.singletonList(YesNoUnknown.YES), true);
+		FieldHelper.setVisibleWhen(getFieldGroup(), SampleDto.IPSAMPLERESULTS, SampleDto.IPSAMPLESENT, Collections.singletonList(YesNo.YES), true);
 
 		addField(SampleDto.DELETION_REASON);
 		addField(SampleDto.OTHER_DELETION_REASON, TextArea.class).setRows(3);
@@ -467,11 +467,11 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			SampleDto.SPECIMEN_CONDITION,
 			Arrays.asList(SpecimenCondition.NOT_ADEQUATE),
 			true);
-		FieldHelper.setRequiredWhen(
+		/*FieldHelper.setRequiredWhen(
 			getFieldGroup(),
 			SampleDto.SAMPLE_MATERIAL,
 			Arrays.asList(SampleDto.SAMPLE_MATERIAL_TEXT),
-			Arrays.asList(SampleMaterial.OTHER));
+			Arrays.asList(SampleMaterial.OTHER));*/
 		FieldHelper.setRequiredWhen(
 			getFieldGroup(),
 			SampleDto.SPECIMEN_CONDITION,
@@ -884,8 +884,7 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private void handleYellowFever(){
 		OptionGroup outcome = new OptionGroup("Sample Dispatch Modes");
 
-		setRequired(false, SampleDto.SAMPLE_DATE_TIME, SampleDto.SAMPLE_MATERIAL);
-		sampleMaterialComboBox.setVisible(false);
+
 
 		setVisible(false, SampleDto.SAMPLE_MATERIAL, SampleDto.SAMPLING_REASON, SampleDto.PATHOGEN_TESTING_REQUESTED);
 		setVisible(false, SampleDto.SAMPLE_TESTS, SampleDto.SAMPLE_SOURCE, SampleDto.DISEASE, SampleDto.SAMPLE_MATERIAL_TEXT);
@@ -907,6 +906,10 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 						cardDateField
 				),
 				false);
+
+		setRequired(false, SampleDto.SAMPLE_DATE_TIME, SampleDto.SAMPLE_MATERIAL);
+		sampleMaterialComboBox.setVisible(false);
+		sampleMaterialComboBox.setRequired(false);
 
 		initializeMaterialsMultiSelect();
 		//updateSampleTestsFields();

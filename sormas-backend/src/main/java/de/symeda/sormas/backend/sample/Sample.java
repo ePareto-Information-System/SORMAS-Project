@@ -216,7 +216,7 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	private SormasToSormasOriginInfo sormasToSormasOriginInfo;
 	private List<SormasToSormasShareInfo> sormasToSormasShares = new ArrayList<>(0);
-	private YesNoUnknown ipSampleSent;
+	private YesNo ipSampleSent;
 	private IpResult ipSampleResults;
 	private Disease disease;
 	private SampleDispatchMode sampleDispatchMode;
@@ -773,12 +773,12 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setSamplingReasonDetails(String samplingReasonDetails) {
 		this.samplingReasonDetails = samplingReasonDetails;
 	}
-	public void setIpSampleSent(YesNoUnknown ipSampleSent) {
+	public void setIpSampleSent(YesNo ipSampleSent) {
 		this.ipSampleSent = ipSampleSent;
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getIpSampleSent() {
+	public YesNo getIpSampleSent() {
 		return ipSampleSent;
 	}
 
