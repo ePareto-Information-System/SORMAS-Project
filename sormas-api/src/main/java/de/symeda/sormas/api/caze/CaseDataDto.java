@@ -1900,6 +1900,7 @@ public class CaseDataDto extends SormasToSormasShareableDto {
 
 	public void setVaccinationRoutineDate(Date vaccinationRoutineDate) {
 		this.vaccinationRoutineDate = vaccinationRoutineDate;
+	}
 	public String getHomeAddressRecreational() {
 		return homeAddressRecreational;
 	}
