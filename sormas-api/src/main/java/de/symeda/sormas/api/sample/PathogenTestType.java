@@ -22,6 +22,9 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.api.utils.Diseases;
 
+import java.util.Arrays;
+import java.util.List;
+
 public enum PathogenTestType {
 
 	ANTIBODY_DETECTION,
@@ -73,5 +76,9 @@ public enum PathogenTestType {
 		}
 
 		return value.toString();
+	}
+
+	public static List<PathogenTestType> getMeaslesTestTypes() {
+		return  Arrays.asList(IGM_SERUM_ANTIBODY, IGG_SERUM_ANTIBODY, PCR_RT_PCR);
 	}
 }
