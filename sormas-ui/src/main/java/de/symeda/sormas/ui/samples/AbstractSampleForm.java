@@ -215,7 +215,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			diseaseBox.addItem(ahfDisease);
 		}
 
+
 		ComboBox diseaseField = addField(SampleDto.DISEASE, diseaseBox);
+		diseaseField.setVisible(disease == Disease.AHF);
 
 		addField(SampleDto.SAMPLE_MATERIAL_TEXT, TextField.class);
 		addField(SampleDto.SAMPLE_SOURCE, ComboBox.class);
@@ -882,10 +884,20 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	}
 
 	private void handleYellowFever(){
-		OptionGroup outcome = new OptionGroup("Sample Dispatch Modes");
 
-		setVisible(false, SampleDto.SAMPLE_MATERIAL, SampleDto.SAMPLING_REASON, SampleDto.PATHOGEN_TESTING_REQUESTED);
-		setVisible(false, SampleDto.SAMPLE_TESTS, SampleDto.SAMPLE_SOURCE, SampleDto.DISEASE, SampleDto.SAMPLE_MATERIAL_TEXT);
+		addSampleDispatchFields();
+
+		setRequired(false, SampleDto.SAMPLE_DATE_TIME, SampleDto.SAMPLE_MATERIAL);
+		sampleMaterialComboBox.setVisible(false);
+		sampleMaterialComboBox.setRequired(false);
+
+		initializeMaterialsMultiSelect();
+		//updateSampleTestsFields();
+
+	}
+
+	private void addSampleDispatchFields() {
+		OptionGroup outcome = new OptionGroup("Sample Dispatch Modes");
 
 		for (SampleDispatchMode sampleDis : SampleDispatchMode.values()) {
 			if (sampleDis == SampleDispatchMode.NATIONAL_LAB || sampleDis == SampleDispatchMode.REGIONAL_COLDROOM || sampleDis == SampleDispatchMode.NATIONAL_BY_DISTRICT) {
@@ -900,20 +912,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 		FieldHelper.setEnabledWhen(
 				sampleDispatchModeTypes,
 				Arrays.asList(SampleDispatchMode.NATIONAL_LAB, SampleDispatchMode.REGIONAL_COLDROOM, SampleDispatchMode.NATIONAL_BY_DISTRICT),
-				Collections.singletonList(
-						cardDateField
-				),
+				Collections.singletonList(cardDateField),
 				false);
-
-		setRequired(false, SampleDto.SAMPLE_DATE_TIME, SampleDto.SAMPLE_MATERIAL);
-		sampleMaterialComboBox.setVisible(false);
-		sampleMaterialComboBox.setRequired(false);
-
-		initializeMaterialsMultiSelect();
-		//updateSampleTestsFields();
-
 	}
-
 	private FacilityReferenceDto findLabByName(List<FacilityReferenceDto> labs, String labName) {
 		for (FacilityReferenceDto labItem : labs) {
 			if (labName.equals(labItem.getCaption())) {
