@@ -393,15 +393,15 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			occupationTypeDetailsField.setVisible(occupationType != null && occupationType.matchPropertyValue(OccupationType.HAS_DETAILS, true));
 		});
 
-		addFields(PersonDto.ARMED_FORCES_RELATION_TYPE, PersonDto.EDUCATION_TYPE, PersonDto.EDUCATION_DETAILS);
-		ComboBox occu = addField(PersonDto.OCCUPATION_TYPE, ComboBox.class);
-		TextField occuDetails = addField(PersonDto.OCCUPATION_DETAILS, TextField.class);
-		occuDetails.setCaption("Please Specify Occupation");
+		//addFields(PersonDto.ARMED_FORCES_RELATION_TYPE);
+//		ComboBox occu = addField(PersonDto.OCCUPATION_TYPE, ComboBox.class);
+//		TextField occuDetails = addField(PersonDto.OCCUPATION_DETAILS, TextField.class);
+//		occuDetails.setCaption("Please Specify Occupation");
 		ComboBox armedForces = addField(PersonDto.ARMED_FORCES_RELATION_TYPE, ComboBox.class);
 		ComboBox educationType = addField(PersonDto.EDUCATION_TYPE, ComboBox.class);
 		educationType.removeItem(EducationType.NURSERY);
 		TextField educationDetails = addField(PersonDto.EDUCATION_DETAILS, TextField.class);
-		occu.setVisible(false);
+//		occu.setVisible(false);
 
 		List<CountryReferenceDto> countries = FacadeProvider.getCountryFacade().getAllActiveAsReference();
 		addInfrastructureField(PersonDto.BIRTH_COUNTRY).addItems(countries);
@@ -649,7 +649,7 @@ public class PersonEditForm extends AbstractEditForm<PersonDto> {
 			addressesHeader.setVisible(false);
 			contactInformationHeader.setVisible(false);
 			homeaddrecreational.setVisible(true);
-			occuDetails.setVisible(false);
+//			occuDetails.setVisible(false);
 
 		}
 
