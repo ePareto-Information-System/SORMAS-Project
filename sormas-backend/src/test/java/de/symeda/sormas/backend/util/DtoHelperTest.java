@@ -84,14 +84,14 @@ public class DtoHelperTest extends AbstractBeanTest {
 			// lead and other have different values
 			SymptomState abdominalPain = SymptomState.NO;
 			targetSymptomsDto.setAbdominalPain(abdominalPain);
-			sourceSymptomsDto.setAbdominalPain(SymptomState.UNKNOWN);
+			sourceSymptomsDto.setAbdominalPain(SymptomState.NO);
 
 			// lead has value, other has not
 			SymptomState alteredConsciousness = SymptomState.YES;
 			targetSymptomsDto.setAlteredConsciousness(alteredConsciousness);
 
 			// lead has no value, other has
-			SymptomState anorexiaAppetiteLoss = SymptomState.UNKNOWN;
+			SymptomState anorexiaAppetiteLoss = SymptomState.NO;
 			sourceSymptomsDto.setAnorexiaAppetiteLoss(anorexiaAppetiteLoss);
 
 			targetDto.setSymptoms(targetSymptomsDto);

@@ -19,28 +19,29 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.sample.PathogenTestType;
 import de.symeda.sormas.api.statistics.StatisticsGroupingKey;
 
 public enum Disease
 	implements
 	StatisticsGroupingKey {
 
-	AFP(true, true, true, false, false,0, true, false, false),
+	AFP(true, true, true, false, false,60, true, false, false),
 	CHOLERA(true, true, true, true, false,5, true, false, false),
 	CONGENITAL_RUBELLA(true, true, true, true, false,21, true, false, false),
 	CSM(true, true, true, false, false,10, true, false, false),
 	DENGUE(true, true, true, false, false,14, true, false, false),
-	EVD(true, true, true, true, false,21, true, false, false),
-	GUINEA_WORM(true, true, true, false,false, 0, true, false, false),
+	EVD(true, true, true, true,false, 21, true, false, false),
+	GUINEA_WORM(true, true, true, false, false,0, true, false, false),
 	LASSA(true, true, true, true, false,21, true, false, false),
 	MEASLES(true, true, true, false, false,21, true, true, false),
-	MONKEYPOX(true, true, true, true,false,21, true, false, false),
+	MONKEYPOX(true, true, true, true, false,21, true, false, false),
 	NEW_INFLUENZA(true, true, true, true, false,17, true, false, false),
 	PLAGUE(true, true, true, true, false,7, true, false, false),
 	POLIO(true, true, true, false, false,0, true, false, false),
 	//AHF(true, true, true, true, 21, true, false, false),
 	WEST_NILE_FEVER(true, false, true, false, false,0, true, false, false),
-	YELLOW_FEVER(true, true, true, false,false, 6, true, false, false),
+	YELLOW_FEVER(true, true, true, false, false,6, true, false, false),
 	RABIES(true, true, true, true, false,6, true, false, false),
 	ANTHRAX(true, true, true, false, false,0, true, false, false),
 	CORONAVIRUS(true, true, true, true, false,14, true, true, true),
@@ -80,14 +81,17 @@ public enum Disease
 	M_PNEUMONIAE(true, false, true, false, false,0, true, false, false),
 	C_PNEUMONIAE(true, false, true, false, false,0, true, false, false),
 	ARI(true, false, false, false, false,0, true, false, false),
-	CHIKUNGUNYA(true, false, false, false, false,0, true, false, false),
+	CHIKUNGUNYA(true, true, true, false, false,0, true, false, false),
 	POST_IMMUNIZATION_ADVERSE_EVENTS_MILD(true, false, false, false, false,0, true, false, false),
 	POST_IMMUNIZATION_ADVERSE_EVENTS_SEVERE(true, false, false, false, false,0, true, false, false),
-	FHA(true, false, false, false,false, 0, true, false, false),
+	FHA(true, false, false, false, false,0, true, false, false),
 	AHF(true, true, true, true, false,21, true, false, false),
-	UNSPECIFIED_VHF(true, true, true, true, false,21, true, false, false),
 	OTHER(true, true, true, true, false,21, false, false, false),
-	UNDEFINED(true, true, true, true, false,0, false, false, false);
+	ZIKA(true, true, true, false, false,6, true, false, false),
+	MARBURG(true, true, true, false, false,0, true, false, false),
+	UNDEFINED(true, true, true, true, false,0, false, false, false),
+	UNSPECIFIED_VHF(true, true, true, true, false,0, false, false, false);
+
 
 	private final boolean defaultActive;
 	private final boolean defaultPrimary;
@@ -200,4 +204,14 @@ public enum Disease
 	}
 
 	public static List<Disease> DISEASE_LIST = Arrays.asList(Disease.values());
+	public static final List<Disease> AHF_DISEASES = Arrays.asList(
+			EVD,
+			MARBURG,
+			LASSA,
+			DENGUE,
+			CHIKUNGUNYA,
+			ZIKA,
+			YELLOW_FEVER
+	);
+
 }

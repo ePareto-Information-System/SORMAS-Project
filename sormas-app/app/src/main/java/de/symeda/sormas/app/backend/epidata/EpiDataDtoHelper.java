@@ -74,6 +74,7 @@ public class EpiDataDtoHelper extends AdoDtoHelper<EpiData, EpiDataDto> {
 		target.setHighTransmissionRiskArea(source.getHighTransmissionRiskArea());
 		target.setLargeOutbreaksArea(source.getLargeOutbreaksArea());
 		target.setAreaInfectedAnimals(source.getAreaInfectedAnimals());
+		//target.setDisease(source.getDisease());
 
 		List<Exposure> exposures = new ArrayList<>();
 		if (!source.getExposures().isEmpty()) {
@@ -107,6 +108,7 @@ public class EpiDataDtoHelper extends AdoDtoHelper<EpiData, EpiDataDto> {
 		target.setHighTransmissionRiskArea(source.getHighTransmissionRiskArea());
 		target.setLargeOutbreaksArea(source.getLargeOutbreaksArea());
 		target.setAreaInfectedAnimals(source.getAreaInfectedAnimals());
+		//target.setDisease(source.getDisease());
 
 		List<ExposureDto> exposureDtos = new ArrayList<>();
 		if (!source.getExposures().isEmpty()) {

@@ -75,6 +75,7 @@ public class PersonDto extends PseudonymizableDto {
 	public static final String SALUTATION = "salutation";
 	public static final String OTHER_SALUTATION = "otherSalutation";
 	public static final String PRESENT_CONDITION = "presentCondition";
+	public static final String HOME_ADDRESS_RECREATIONAL = "homeAddressRecreational";
 	public static final String CASE_ORIGIN = "caseOrigin";
 	public static final String BIRTH_DATE = "birthdate";
 	public static final String BIRTH_DATE_DD = "birthdateDD";
@@ -133,8 +134,11 @@ public class PersonDto extends PseudonymizableDto {
 	public static final String CITIZENSHIP = "citizenship";
 	public static final String ADDITIONAL_DETAILS = "additionalDetails";
 	private static final long serialVersionUID = -8558187171374254398L;
+	public static final String DISEASE = "disease";
+	public static final String ADDITIONAL_PLACES_STAYED = "additionalPlacesStayed";
 
 	// Fields are declared in the order they should appear in the import template
+
 	@Outbreaks
 	@NotBlank(message = Validations.specifyFirstName)
 	@PersonalData(mandatoryField = true)
@@ -396,6 +400,11 @@ public class PersonDto extends PseudonymizableDto {
 	@Outbreaks
 	//@Required
 	private Disease disease;
+
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_TEXT, message = Validations.textTooLong)
+	private String additionalPlacesStayed;
+
+	private String homeAddressRecreational;
 
 	@SuppressWarnings("serial")
 	public static class SeveralNonPrimaryContactDetailsException extends RuntimeException {
@@ -1089,5 +1098,21 @@ public class PersonDto extends PseudonymizableDto {
 		clone.setPersonContactDetails(contactDetailsClone);
 
 		return clone;
+	}
+
+	public String getAdditionalPlacesStayed() {
+		return additionalPlacesStayed;
+	}
+
+	public void setAdditionalPlacesStayed(String additionalPlacesStayed) {
+		this.additionalPlacesStayed = additionalPlacesStayed;
+	}
+
+	public String getHomeAddressRecreational() {
+		return homeAddressRecreational;
+	}
+
+	public void setHomeAddressRecreational(String homeAddressRecreational) {
+		this.homeAddressRecreational = homeAddressRecreational;
 	}
 }

@@ -27,6 +27,7 @@ import de.symeda.sormas.api.contact.QuarantineType;
 import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
@@ -77,6 +78,7 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	public static final String REINFECTION_STATUS = "reinfectionStatus";
 	public static final String FACILITY_TYPE_GROUP = "facilityTypeGroup";
 	public static final String FACILITY_TYPE = "facilityType";
+	public static final String DHIMS_FACILITY_TYPE = "dhimsFacilityType";
 	public static final String AFP_FACILITY_OPTIONS = "afpFacilityOptions";
 	public static final String INCLUDE_CASES_FROM_OTHER_JURISDICTIONS = "includeCasesFromOtherJurisdictions";
 	public static final String ONLY_CONTACTS_FROM_OTHER_INSTANCES = "onlyContactsFromOtherInstances";
@@ -146,6 +148,7 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	private Date reportDateTo;
 	private FacilityTypeGroup facilityTypeGroup;
 	private FacilityType facilityType;
+	private DhimsFacility dhimsFacilityType;
 	private AFPFacilityOptions afpFacilityOptions;
 	private Boolean includeCasesFromOtherJurisdictions = Boolean.FALSE;
 	private Boolean onlyContactsFromOtherInstances;
@@ -685,6 +688,14 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 
 	public void setFacilityType(FacilityType type) {
 		this.facilityType = type;
+	}
+
+	public DhimsFacility getDhimsFacilityType() {
+		return dhimsFacilityType;
+	}
+
+	public void setDhimsFacilityType(DhimsFacility dhimsFacilityType) {
+		this.dhimsFacilityType = dhimsFacilityType;
 	}
 
 	public AFPFacilityOptions getAfpFacilityOptions() {

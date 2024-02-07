@@ -63,6 +63,7 @@ public class ContactReferenceDto extends ReferenceDto {
 		}
 	}
 
+
 	@Override
 	public String getCaption() {
 		return buildCaption(

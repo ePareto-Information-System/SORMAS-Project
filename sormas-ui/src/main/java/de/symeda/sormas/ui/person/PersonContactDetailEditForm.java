@@ -12,6 +12,7 @@ import com.vaadin.v7.ui.CheckBox;
 import com.vaadin.v7.ui.Field;
 import com.vaadin.v7.ui.TextField;
 
+import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Validations;
@@ -35,8 +36,11 @@ public class PersonContactDetailEditForm extends AbstractEditForm<PersonContactD
 		fluidRowLocs(PersonContactDetailDto.CONTACT_INFORMATION, PersonContactDetailDto.ADDITIONAL_INFORMATION),
 		fluidRowLocsCss(CssStyles.VSPACE_3, PersonContactDetailDto.PRIMARY_CONTACT));
 
-	public PersonContactDetailEditForm(FieldVisibilityCheckers fieldVisibilityCheckers, UiFieldAccessCheckers fieldAccessCheckers) {
+	private Disease disease;
+	public PersonContactDetailEditForm(FieldVisibilityCheckers fieldVisibilityCheckers, UiFieldAccessCheckers fieldAccessCheckers, Disease disease) {
 		super(PersonContactDetailDto.class, PersonContactDetailDto.I18N_PREFIX, true, fieldVisibilityCheckers, fieldAccessCheckers);
+
+		this.disease = disease;
 	}
 
 	@Override
@@ -85,6 +89,9 @@ public class PersonContactDetailEditForm extends AbstractEditForm<PersonContactD
 			PersonContactDetailType.PHONE,
 			false);
 
+		if(disease == Disease.AFP){
+			setVisible(false, PersonContactDetailDto.PERSON_CONTACT_DETAILS_TYPE);
+		}
 		addFieldListeners(PersonContactDetailDto.PERSON_CONTACT_DETAILS_TYPE, e -> {
 			final Field<?> contactInformationField = getFieldGroup().getField(PersonContactDetailDto.CONTACT_INFORMATION);
 			final PersonContactDetailType value = (PersonContactDetailType) e.getProperty().getValue();

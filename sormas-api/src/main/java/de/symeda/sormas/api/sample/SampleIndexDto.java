@@ -30,8 +30,10 @@ import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.utils.DateFormatHelper;
 import de.symeda.sormas.api.utils.EmbeddedPersonalData;
 import de.symeda.sormas.api.utils.EmbeddedSensitiveData;
+import de.symeda.sormas.api.utils.IpResult;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableIndexDto;
 import de.symeda.sormas.api.utils.pseudonymization.Pseudonymizer;
+import de.symeda.sormas.api.utils.pseudonymization.SampleDispatchMode;
 import de.symeda.sormas.api.utils.pseudonymization.valuepseudonymizers.EmptyValuePseudonymizer;
 
 public class SampleIndexDto extends PseudonymizableIndexDto implements Serializable {
@@ -96,10 +98,16 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 	private Long pathogenTestCount;
 	private PathogenTestType typeOfLastTest;
 	private Float lastTestCqValue;
-
 	private SampleJurisdictionFlagsDto sampleJurisdictionFlagsDto;
 	private DeletionReason deletionReason;
 	private String otherDeletionReason;
+	private PathogenTestType sampleTests;
+	private String diseaseSampleTests;
+	private SampleDispatchMode sampleDispatchMode;
+	private Date sampleDispatchDate;
+	private String sampleTestsString;
+	private String ipSampleSent;
+	private IpResult ipSampleResults;
 
 	//@formatter:off
 	public SampleIndexDto(String uuid, String epidNumber, String labSampleId, Date sampleDateTime,
@@ -111,8 +119,9 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 						  String associatedContactUuid, String associatedContactFirstName, String associatedContactLastName, String associatedContactOtherName,
 						  String associatedEventParticipantUuid, String associatedEventParticipantFirstName, String associatedEventParticipantLastName, String associatedEventParticipantOtherName,
 						  Disease disease, String diseaseDetails, PathogenTestResultType pathogenTestResult, Boolean additionalTestingRequested, Boolean additionalTestPerformed,
-						  String districtName, String labUuid, DeletionReason deletionReason, String otherDeletionReason, Long pathogenTestCount,
-						  boolean isInJurisdiction, boolean isCaseInJurisdiction, boolean isContactInJurisdiction,  boolean isContactCaseInJurisdiction, boolean isEventParticipantInJurisdiction) {
+						  String districtName, String labUuid, Long pathogenTestCount,
+						  boolean isInJurisdiction, boolean isCaseInJurisdiction, boolean isContactInJurisdiction,  boolean isContactCaseInJurisdiction, boolean isEventParticipantInJurisdiction, PathogenTestType sampleTests,
+						  String diseaseSampleTests, SampleDispatchMode sampleDispatchMode, Date sampleDispatchDate, String sampleTestsString, String ipSampleSent, IpResult ipSampleResults) {
 	//@formatter:on
 
 		super(uuid);
@@ -166,6 +175,13 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 			isContactInJurisdiction,
 			isContactCaseInJurisdiction,
 			isEventParticipantInJurisdiction);
+		this.sampleTests = sampleTests;
+		this.diseaseSampleTests = diseaseSampleTests;
+		this.sampleDispatchMode = sampleDispatchMode;
+		this.sampleDispatchDate = sampleDispatchDate;
+		this.sampleTestsString = sampleTestsString;
+		this.ipSampleSent = ipSampleSent;
+		this.ipSampleResults = ipSampleResults;
 	}
 
 	public CaseReferenceDto getAssociatedCase() {
@@ -272,6 +288,14 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 		this.samplePurpose = samplePurpose;
 	}
 
+	public SampleDispatchMode getSampleDispatchMode() {
+		return sampleDispatchMode;
+	}
+
+	public void setSampleDispatchMode(SampleDispatchMode sampleDispatchMode) {
+		this.sampleDispatchMode = sampleDispatchMode;
+	}
+
 	public boolean isShipped() {
 		return shipped;
 	}
@@ -322,12 +346,36 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 		this.pathogenTestResult = pathogenTestResult;
 	}
 
+	public PathogenTestType getSampleTests() {
+		return sampleTests;
+	}
+
+	public void setSampleTests(PathogenTestType sampleTests) {
+		this.sampleTests = sampleTests;
+	}
+
+	public IpResult getIpSampleResults() {
+		return ipSampleResults;
+	}
+
+	public void setIpSampleResults(IpResult ipSampleResults) {
+		this.ipSampleResults = ipSampleResults;
+	}
+
 	public Date getSampleDateTime() {
 		return sampleDateTime;
 	}
 
 	public void setSampleDateTime(Date sampleDateTime) {
 		this.sampleDateTime = sampleDateTime;
+	}
+
+	public Date getSampleDispatchDate() {
+		return sampleDispatchDate;
+	}
+
+	public void setSampleDispatchDate(Date sampleDispatchDate) {
+		this.sampleDispatchDate = sampleDispatchDate;
 	}
 
 	public AdditionalTestingStatus getAdditionalTestingStatus() {
@@ -352,6 +400,30 @@ public class SampleIndexDto extends PseudonymizableIndexDto implements Serializa
 
 	public void setSamplingReasonDetails(String samplingReasonDetails) {
 		this.samplingReasonDetails = samplingReasonDetails;
+	}
+
+	public String getDiseaseSampleTests() {
+		return diseaseSampleTests;
+	}
+
+	public void setDiseaseSampleTests(String diseaseSampleTests) {
+		this.diseaseSampleTests = diseaseSampleTests;
+	}
+
+	public String getSampleTestsString() {
+		return sampleTestsString;
+	}
+
+	public void setSampleTestsString(String sampleTestsString) {
+		this.sampleTestsString = sampleTestsString;
+	}
+
+	public String getIpSampleSent() {
+		return ipSampleSent;
+	}
+
+	public void setIpSampleSent(String ipSampleSent) {
+		this.ipSampleSent = ipSampleSent;
 	}
 
 	public SampleJurisdictionFlagsDto getSampleJurisdictionFlagsDto() {

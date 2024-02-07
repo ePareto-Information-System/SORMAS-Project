@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.utils.*;
 
 import de.symeda.sormas.api.CountryHelper;
@@ -111,6 +112,7 @@ public class CaseExportDto extends AbstractUuidDto {
 	private long personId;
 	private long epiDataId;
 	private long hospitalizationId;
+	private long sixtyDayId;
 	private long symptomsId;
 	private long healthConditionsId;
 	private String uuid;
@@ -146,6 +148,7 @@ public class CaseExportDto extends AbstractUuidDto {
 	@PersonalData
 	@SensitiveData
 	private FacilityType facilityType;
+	private DhimsFacility dhimsFacilityType;
 	private AFPFacilityOptions afpFacilityOptions;
 	@PersonalData
 	@SensitiveData
@@ -329,6 +332,11 @@ public class CaseExportDto extends AbstractUuidDto {
 	@DependingOnUserRight(UserRight.CASE_CLINICIAN_VIEW)
 	private String clinicianEmail;
 
+	private String reportingOfficerTitle;
+	private String functionOfReportingOfficer;
+	private String reportingOfficerContactPhone;
+	private String reportingOfficerEmail;
+
 	private Long reportingUserId;
 	private Long followUpStatusChangeUserId;
 
@@ -347,12 +355,12 @@ public class CaseExportDto extends AbstractUuidDto {
 	//@formatter:off
 	@SuppressWarnings("unchecked")
 	public CaseExportDto(long id, long personId, Double personAddressLatitude, Double personAddressLongitude, Float personAddressLatLonAcc, long epiDataId, long symptomsId,
-						 long hospitalizationId, long healthConditionsId, String uuid, String epidNumber,
+						 long hospitalizationId, long sixtyDayId, long healthConditionsId, String uuid, String epidNumber,
 						 Disease disease, DiseaseVariant diseaseVariant, String diseaseDetails, String diseaseVariantDetails,
 						 String personUuid, String firstName, String lastName, String otherName, Salutation salutation, String otherSalutation, Sex sex, YesNoUnknown pregnant,
 						 Integer approximateAge, ApproximateAgeType approximateAgeType, Integer birthdateDD, Integer birthdateMM,
 						 Integer birthdateYYYY, Date reportDate, String region, String district, String community,
-						 FacilityType facilityType, AFPFacilityOptions afpFacilityOptions, String healthFacility, String healthFacilityUuid, String healthFacilityDetails, String pointOfEntry,
+						 FacilityType facilityType, DhimsFacility dhimsFacilityType, AFPFacilityOptions afpFacilityOptions, String healthFacility, String healthFacilityUuid, String healthFacilityDetails, String pointOfEntry,
 						 String pointOfEntryUuid, String pointOfEntryDetails, CaseClassification caseClassification,
 						 YesNoUnknown clinicalConfirmation, YesNoUnknown epidemiologicalConfirmation, YesNoUnknown laboratoryDiagnosticConfirmation,
 						 Boolean notACaseReasonNegativeTest, Boolean notACaseReasonPhysicianInformation, Boolean notACaseReasonDifferentPathogen, Boolean notACaseReasonOther,
@@ -386,6 +394,8 @@ public class CaseExportDto extends AbstractUuidDto {
 						 String responsibleRegion, String responsibleDistrict, String responsibleCommunity,
 						 // clinician
 						 String clinicianName, String clinicianPhone, String clinicianEmail,
+						 // reporting officer
+						 String reportingOfficerTitle, String functionOfReportingOfficer, String reportingOfficerContactPhone, String reportingOfficerEmail,
 						 // users
 						 Long reportingUserId, Long followUpStatusChangeUserId,
 						 Date previousQuarantineTo, String quarantineChangeComment,
@@ -400,7 +410,9 @@ public class CaseExportDto extends AbstractUuidDto {
 		this.epiDataId = epiDataId;
 		this.symptomsId = symptomsId;
 		this.hospitalizationId = hospitalizationId;
+		this.sixtyDayId = sixtyDayId;
 		this.healthConditionsId = healthConditionsId;
+		this.uuid = uuid;
 		this.epidNumber = epidNumber;
 		this.armedForcesRelationType = ArmedForcesRelationType;
 		this.disease = disease;
@@ -461,6 +473,7 @@ public class CaseExportDto extends AbstractUuidDto {
 		this.quarantineOfficialOrderSent = quarantineOfficialOrderSent;
 		this.quarantineOfficialOrderSentDate = quarantineOfficialOrderSentDate;
 		this.facilityType = facilityType;
+		this.dhimsFacilityType = dhimsFacilityType;
 		this.afpFacilityOptions = afpFacilityOptions;
 		this.healthFacility = FacilityHelper.buildFacilityString(healthFacilityUuid, healthFacility);
 		this.healthFacilityDetails = healthFacilityDetails;
@@ -522,6 +535,11 @@ public class CaseExportDto extends AbstractUuidDto {
 		this.clinicianPhone = clinicianPhone;
 		this.clinicianEmail = clinicianEmail;
 
+		this.reportingOfficerTitle = reportingOfficerTitle;
+		this.functionOfReportingOfficer = functionOfReportingOfficer;
+		this.reportingOfficerContactPhone = reportingOfficerContactPhone;
+		this.reportingOfficerEmail = reportingOfficerEmail;
+
 		this.reportingUserId = reportingUserId;
 		this.followUpStatusChangeUserId = followUpStatusChangeUserId;
 
@@ -580,6 +598,9 @@ public class CaseExportDto extends AbstractUuidDto {
 
 	public long getHospitalizationId() {
 		return hospitalizationId;
+	}
+	public long getSixtyDayId() {
+		return sixtyDayId;
 	}
 
 	@Order(2)
@@ -2384,6 +2405,56 @@ public class CaseExportDto extends AbstractUuidDto {
 		return afpFacilityOptions;
 	}
 
+	@Order(181)
+	@ExportTarget(caseExportTypes = {
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
+	@ExportProperty(CaseDataDto.DHIMS_FACILITY_TYPE)
+	@ExportGroup(ExportGroupType.CORE)
+	public DhimsFacility getDhimsFacilityType() {
+		return dhimsFacilityType;
+	}
+
+	@Order(182)
+	@ExportTarget(caseExportTypes = {
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
+	@ExportProperty(CaseDataDto.REPORTING_OFFICER_TITLE)
+	@ExportGroup(ExportGroupType.ADDITIONAL)
+	public String getReportingOfficerTitle() {
+		return reportingOfficerTitle;
+	}
+
+	@Order(183)
+	@ExportTarget(caseExportTypes = {
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
+	@ExportProperty(CaseDataDto.REPORTING_OFFICER_TITLE)
+	@ExportGroup(ExportGroupType.ADDITIONAL)
+	public String getFunctionOfReportingOfficer() {
+		return functionOfReportingOfficer;
+	}
+
+	@Order(184)
+	@ExportTarget(caseExportTypes = {
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
+	@ExportProperty(CaseDataDto.REPORTING_OFFICER_TITLE)
+	@ExportGroup(ExportGroupType.ADDITIONAL)
+	public String getReportingOfficerContactPhone() {
+		return reportingOfficerContactPhone;
+	}
+
+	@Order(185)
+	@ExportTarget(caseExportTypes = {
+			CaseExportType.CASE_SURVEILLANCE,
+			CaseExportType.CASE_MANAGEMENT })
+	@ExportProperty(CaseDataDto.REPORTING_OFFICER_TITLE)
+	@ExportGroup(ExportGroupType.ADDITIONAL)
+	public String getReportingOfficerEmail() {
+		return reportingOfficerEmail;
+	}
+
 	public void setFollowUpStatusChangeUserRoles(Set<UserRoleReferenceDto> roles) {
 		this.followUpStatusChangeUserRoles = roles.stream().map(ReferenceDto::buildCaption).collect(Collectors.joining(", "));;
 	}
@@ -2432,6 +2503,12 @@ public class CaseExportDto extends AbstractUuidDto {
 		this.hospitalizationId = hospitalizationId;
 	}
 
+	public  void setSixtyDayId(long sixtyDayId) {this.sixtyDayId = sixtyDayId;}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
 	public void setEpidNumber(String epidNumber) {
 		this.epidNumber = epidNumber;
 	}
@@ -2463,6 +2540,7 @@ public class CaseExportDto extends AbstractUuidDto {
 	}
 
 	public void setFacilityType(FacilityType facilityType) {this.facilityType = facilityType;}
+	public void setDhimsFacilityType(DhimsFacility dhimsFacilityType) {this.dhimsFacilityType = dhimsFacilityType;}
 
 	public void setAfpFacilityOptions(AFPFacilityOptions afpFacilityOptions) {this.afpFacilityOptions = afpFacilityOptions;}
 
@@ -2679,6 +2757,24 @@ public class CaseExportDto extends AbstractUuidDto {
 	public void setClinicianEmail(String clinicianEmail) {
 		this.clinicianEmail = clinicianEmail;
 	}
+
+	public void setReportingOfficerTitle(String reportingOfficerTitle) {
+		this.reportingOfficerTitle = reportingOfficerTitle;
+	}
+
+	public void setFunctionOfReportingOfficer(String functionOfReportingOfficer) {
+		this.functionOfReportingOfficer = functionOfReportingOfficer;
+	}
+
+	public void setReportingOfficerContactPhone(String reportingOfficerContactPhone) {
+		this.reportingOfficerContactPhone = reportingOfficerContactPhone;
+	}
+
+	public void setReportingOfficerEmail(String reportingOfficerEmail) {
+		this.reportingOfficerEmail = reportingOfficerEmail;
+	}
+
+
 
 	public void setReportingUserId(Long reportingUserId) {
 		this.reportingUserId = reportingUserId;

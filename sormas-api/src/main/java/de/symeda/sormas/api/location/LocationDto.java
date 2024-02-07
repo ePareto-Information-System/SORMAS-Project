@@ -22,6 +22,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
 import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -81,6 +82,7 @@ public class LocationDto extends PseudonymizableDto {
 	public static final String ADDRESS_TYPE = "addressType";
 	public static final String ADDRESS_TYPE_DETAILS = "addressTypeDetails";
 	public static final String FACILITY_TYPE = "facilityType";
+	public static final String DHIMS_FACILITY_TYPE = "dhimsFacilityType";
 	public static final String FACILITY = "facility";
 	public static final String FACILITY_DETAILS = "facilityDetails";
 	public static final String CONTACT_PERSON_FIRST_NAME = "contactPersonFirstName";
@@ -151,6 +153,9 @@ public class LocationDto extends PseudonymizableDto {
 	@PersonalData
 	@SensitiveData
 	private FacilityType facilityType;
+
+	@PersonalData
+	private DhimsFacility dhimsFacilityType;
 	@PersonalData
 	@SensitiveData
 	private FacilityReferenceDto facility;
@@ -337,6 +342,14 @@ public class LocationDto extends PseudonymizableDto {
 
 	public void setFacilityType(FacilityType facilityType) {
 		this.facilityType = facilityType;
+	}
+
+	public DhimsFacility getDhimsFacilityType() {
+		return dhimsFacilityType;
+	}
+
+	public void setDhimsFacilityType(DhimsFacility dhimsFacilityType) {
+		this.dhimsFacilityType = dhimsFacilityType;
 	}
 
 	public FacilityReferenceDto getFacility() {

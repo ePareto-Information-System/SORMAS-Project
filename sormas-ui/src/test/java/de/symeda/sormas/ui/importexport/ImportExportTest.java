@@ -33,6 +33,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import de.symeda.sormas.api.utils.YesNo;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
@@ -93,10 +94,10 @@ public class ImportExportTest extends AbstractUiBeanTest {
 		caze.setQuarantine(QuarantineType.INSTITUTIONELL);
 		caze.setQuarantineFrom(dateNow);
 		caze.setQuarantineTo(dateNow);
-		caze.getHospitalization().setAdmittedToHealthFacility(YesNoUnknown.YES);
+		caze.getHospitalization().setAdmittedToHealthFacility(YesNo.YES);
 		caze.getHospitalization().setAdmissionDate(dateNow);
 		caze.getHospitalization().setDischargeDate(dateNow);
-		caze.getHospitalization().setLeftAgainstAdvice(YesNoUnknown.YES);
+		caze.getHospitalization().setLeftAgainstAdvice(YesNo.YES);
 		caze.getSymptoms().setAbdominalPain(SymptomState.YES);
 		caze.getSymptoms().setAgitation(SymptomState.YES);
 		caze.getSymptoms().setBedridden(SymptomState.YES);
