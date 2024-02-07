@@ -252,6 +252,15 @@ public class Symptoms extends AbstractDomainObject {
 
 	private SymptomState otherComplications;
 	private String otherComplicationsText;
+
+	private SymptomState nonVascular;
+	private Date nonVascularDate;
+	private Date skinRashDate;
+	private Date feverDate;
+	private Date coughDate;
+	private Date runnyNoseDate;
+	private Date conjunctivitisDate;
+	private Date kopliksSpotsDate;
 	private String provisionalDiagnosis;
 
 	// when adding new fields make sure to extend toHumanString
@@ -1922,4 +1931,71 @@ public class Symptoms extends AbstractDomainObject {
 	public void setProvisionalDiagnosis(String provisionalDiagnosis) {
 		this.provisionalDiagnosis = provisionalDiagnosis;
 	}
+
+	@Enumerated
+	public SymptomState getNonVascular() {
+		return nonVascular;
+	}
+
+	public void setNonVascular(SymptomState nonVascular) {
+		this.nonVascular = nonVascular;
+	}
+
+	public void setNonVascularDate(Date nonVascularDate) {
+		this.nonVascularDate = nonVascularDate;
+	}
+
+	public void setSkinRashDate(Date skinRashDate) {
+		this.skinRashDate = skinRashDate;
+	}
+
+	public void setFeverDate(Date feverDate) {
+		this.feverDate = feverDate;
+	}
+
+	public void setCoughDate(Date coughDate) {
+		this.coughDate = coughDate;
+	}
+
+	public void setRunnyNoseDate(Date runnyNoseDate) {
+		this.runnyNoseDate = runnyNoseDate;
+	}
+
+	public void setConjunctivitisDate(Date conjunctivitisDate) {
+		this.conjunctivitisDate = conjunctivitisDate;
+	}
+
+	public void setKopliksSpotsDate(Date kopliksSpotsDate) {
+		this.kopliksSpotsDate = kopliksSpotsDate;
+	}
+
+	public Date getNonVascularDate() {
+		return nonVascularDate;
+	}
+
+	public Date getSkinRashDate() {
+		return skinRashDate;
+	}
+
+	public Date getFeverDate() {
+		return feverDate;
+	}
+
+	public Date getCoughDate() {
+		return coughDate;
+	}
+
+	public Date getRunnyNoseDate() {
+		return runnyNoseDate;
+	}
+
+	public Date getConjunctivitisDate() {
+		return conjunctivitisDate;
+	}
+
+	public Date getKopliksSpotsDate() {
+		return kopliksSpotsDate;
+	}
+
+
 }

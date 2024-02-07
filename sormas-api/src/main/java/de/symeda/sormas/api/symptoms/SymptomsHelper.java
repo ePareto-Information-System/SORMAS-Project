@@ -499,6 +499,9 @@ public final class SymptomsHelper {
 
 		appendNotNullValue(string, symptomsDto.getOtherComplicationsText(), SymptomsDto.OTHER_COMPLICATIONS_TEXT);
 
+		appendYesSymptom(string, SymptomsDto.build().getNonVascular(), SymptomsDto.NON_VASCULAR);
+		appendNotNullDateValue(string, SymptomsDto.build().getNonVascularDate(), SymptomsDto.NON_VASCULAR_DATE, language);
+
 		// symptomsComments;
 
 		return string.toString();
