@@ -86,6 +86,13 @@ public class SampleEditForm extends AbstractSampleForm {
 
 		addValueChangeListener(e -> {
 			defaultValueChangeListener();
+
+			if (FacadeProvider.getPathogenTestFacade().hasPathogenTest(getValue().toReference())) {
+				getField(SampleDto.PATHOGEN_TEST_RESULT).setRequired(true);
+			} else {
+				getField(SampleDto.PATHOGEN_TEST_RESULT).setEnabled(false);
+			}
+
 			fillPathogenTestResult();
 			UserReferenceDto reportingUser = getValue().getReportingUser();
 			if (!(UserProvider.getCurrent().hasUserRight(UserRight.SAMPLE_EDIT_NOT_OWNED)
