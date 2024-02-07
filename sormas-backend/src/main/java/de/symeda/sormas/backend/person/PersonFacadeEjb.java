@@ -1663,6 +1663,15 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		}
 	}
 
+	private void pseudonymizeDto(PersonDto dto, Pseudonymizer pseudonymizer, boolean isInJurisdiction) {
+		if (dto != null) {
+			pseudonymizer.pseudonymizeDto(PersonDto.class, dto, isInJurisdiction, p -> {
+				pseudonymizer.pseudonymizeDto(LocationDto.class, p.getAddress(), isInJurisdiction, null);
+				p.getAddresses().forEach(l -> pseudonymizer.pseudonymizeDto(LocationDto.class, l, isInJurisdiction, null));
+				p.getPersonContactDetails().forEach(pcd -> pseudonymizer.pseudonymizeDto(PersonContactDetailDto.class, pcd, isInJurisdiction, null));
+			});
+		}
+	}
 	@Override
 	protected void restorePseudonymizedDto(PersonDto source, PersonDto existingPerson, Person person, Pseudonymizer pseudonymizer) {
 		if (person != null && existingPerson != null) {
@@ -2061,6 +2070,12 @@ public class PersonFacadeEjb extends AbstractBaseEjb<Person, PersonDto, PersonIn
 		targetAddress = DtoHelper.copyDtoValues(targetAddress, sourceAddress, true);
 		targetPerson.setAddress(targetAddress);
 		save(targetPerson);
+	}
+	public PersonDto convertToDto(Person p, Pseudonymizer pseudonymizer, boolean inJurisdiction) {
+		final PersonDto personDto = toDto(p);
+		pseudonymizeDto(personDto, pseudonymizer, inJurisdiction);
+
+		return personDto;
 	}
 
 	@Override

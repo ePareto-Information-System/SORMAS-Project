@@ -884,8 +884,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	private void handleYellowFever(){
 		OptionGroup outcome = new OptionGroup("Sample Dispatch Modes");
 
-
-
 		setVisible(false, SampleDto.SAMPLE_MATERIAL, SampleDto.SAMPLING_REASON, SampleDto.PATHOGEN_TESTING_REQUESTED);
 		setVisible(false, SampleDto.SAMPLE_TESTS, SampleDto.SAMPLE_SOURCE, SampleDto.DISEASE, SampleDto.SAMPLE_MATERIAL_TEXT);
 

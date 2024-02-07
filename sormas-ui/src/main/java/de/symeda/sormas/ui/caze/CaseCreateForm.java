@@ -334,7 +334,6 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		dhimsFacilityOrHome.setId("dhimsFacilityOrHome");
 		dhimsFacilityOrHome.setWidth(100, Unit.PERCENTAGE);
 		CssStyles.style(dhimsFacilityOrHome, ValoTheme.OPTIONGROUP_HORIZONTAL);
-		dhimsFacilityOrHome.setVisible(false);
 
 		dhimsFacilityType = ComboBoxHelper.createComboBoxV7();
 		dhimsFacilityType.setVisible(false);

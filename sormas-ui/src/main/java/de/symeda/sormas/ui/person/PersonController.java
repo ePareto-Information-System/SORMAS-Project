@@ -583,7 +583,7 @@ public class PersonController {
 			final ViewMode viewMode) {
 
 		PersonEditForm editForm =
-				new PersonEditForm(personContext, disease, diseaseDetails, viewMode, person.isPseudonymized(), person.isInJurisdiction());
+				new PersonEditForm(personContext, disease, diseaseDetails, viewMode, person.isPseudonymized(), person.getCaseOrigin());
 		editForm.setValue(person);
 
 		final CommitDiscardWrapperComponent<PersonEditForm> editView =
