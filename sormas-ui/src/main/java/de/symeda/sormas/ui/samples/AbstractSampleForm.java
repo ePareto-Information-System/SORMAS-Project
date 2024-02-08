@@ -87,7 +87,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	protected static final String REFERRED_FROM_BUTTON_LOC = "referredFromButtonLoc";
 	private ComboBox lab;
 	private Disease disease;
-	private ComboBox diseaseField;
 	public ComboBox sampleMaterialComboBox;
 	private ComboBox lab;
 	private TextField labDetails;
@@ -221,8 +220,9 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 			diseaseBox.addItem(ahfDisease);
 		}
 
-		diseaseField = addField(SampleDto.DISEASE, diseaseBox);
-		diseaseField.setVisible(false);
+
+		ComboBox diseaseField = addField(SampleDto.DISEASE, diseaseBox);
+		diseaseField.setVisible(disease == Disease.AHF);
 
 		addField(SampleDto.SAMPLE_MATERIAL_TEXT, TextField.class);
 		addField(SampleDto.SAMPLE_SOURCE, ComboBox.class);
@@ -914,7 +914,6 @@ public abstract class AbstractSampleForm extends AbstractEditForm<SampleDto> {
 	}
 
 	private void handleAHF(){
-		diseaseField.setVisible(true);
 		setVisible(false,SampleDto.SAMPLE_SOURCE,
 				SampleDto.SAMPLE_PURPOSE,SampleDto.SAMPLING_REASON, SampleDto.FIELD_SAMPLE_ID, SampleDto.SAMPLE_MATERIAL_TEXT,
 				SampleDto.IPSAMPLESENT, SampleDto.SAMPLE_MATERIAL_REQUESTED, SampleDto.SHIPPED, SampleDto.RECEIVED, SampleDto.COMMENT, SampleDto.PATHOGEN_TESTING_REQUESTED, SampleDto.REQUESTED_SAMPLE_MATERIALS);
