@@ -85,7 +85,7 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 	
 	private static final String SOURCE_CONTACTS_HTML_LAYOUT =
 			locCss(VSPACE_TOP_3, LOC_SOURCE_CASE_CONTACTS_HEADING) +
-			loc(EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN);
+			loc(EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN) + loc(EpiDataDto.CHILD_COME_IN_CONTACT_WITH_SYMPTOMS);
 	//@formatter:on
 
 	private final Disease disease;
@@ -142,7 +142,13 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 		addField(EpiDataDto.LARGE_OUTBREAKS_AREA, NullableOptionGroup.class);
 		addField(EpiDataDto.AREA_INFECTED_ANIMALS, NullableOptionGroup.class);
 		NullableOptionGroup ogContactWithSourceCaseKnown = addField(EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN, NullableOptionGroup.class);
-
+		NullableOptionGroup ogchildComeInContactWithSymptoms = addField(EpiDataDto.CHILD_COME_IN_CONTACT_WITH_SYMPTOMS, NullableOptionGroup.class);
+		ogchildComeInContactWithSymptoms.setVisible(false);
+		if (disease == Disease.MEASLES) {
+			ogchildComeInContactWithSymptoms.setVisible(true);
+			setVisible(false, EpiDataDto.EXPOSURES);
+			setVisible(false, EpiDataDto.EXPOSURE_DETAILS_KNOWN);
+		}
 		if (sourceContactsToggleCallback != null) {
 			ogContactWithSourceCaseKnown.addValueChangeListener(e -> {
 				YesNo sourceContactsKnown = (YesNo) FieldHelper.getNullableSourceFieldValue((Field) e.getProperty());
@@ -168,6 +174,10 @@ public class EpiDataForm extends AbstractEditForm<EpiDataDto> {
 			setVisible(false, EpiDataDto.EXPOSURES, EpiDataDto.EXPOSURE_DETAILS_KNOWN, EpiDataDto.CONTACT_WITH_SOURCE_CASE_KNOWN);
 		}
 
+		if(disease == Disease.MEASLES) {
+			setVisible(false, EpiDataDto.EXPOSURES, EpiDataDto.EXPOSURE_DETAILS_KNOWN);
+
+		}
 		if (diseaseCSMCheck()) {
 			recentTravelOutbreak.setVisible(false);
 			contactSickAnimals.setVisible(false);
