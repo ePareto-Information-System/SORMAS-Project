@@ -36,6 +36,7 @@ import com.vaadin.v7.ui.DateField;
 import com.vaadin.v7.ui.OptionGroup;
 import com.vaadin.v7.ui.TextArea;
 import com.vaadin.v7.ui.TextField;
+import com.vaadin.v7.ui.*;
 
 import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.Disease;
@@ -154,6 +155,7 @@ public class ContactCreateForm extends AbstractEditForm<ContactDto> {
 		reportDate = addField(ContactDto.REPORT_DATE_TIME, DateField.class);
 		ComboBox cbDisease = addDiseaseField(ContactDto.DISEASE, false, true);
 		addField(ContactDto.DISEASE_DETAILS, TextField.class);
+		addField(ContactDto.CONTACT_TRANSMISSION_CLASSIFICATION, OptionGroup.class);
 
 		personCreateForm = new PersonCreateForm(false, false, false, showPersonSearchButton);
 		personCreateForm.setWidth(100, Unit.PERCENTAGE);
@@ -216,7 +218,7 @@ public class ContactCreateForm extends AbstractEditForm<ContactDto> {
 				districtDto != null ? FacadeProvider.getCommunityFacade().getAllActiveByDistrict(districtDto.getUuid()) : null);
 		});
 
-		setRequired(true, ContactDto.REPORT_DATE_TIME, ContactDto.CONTACT_TRANSMISSION_CLASSIFICATION);
+		setRequired(true, PersonDto.FIRST_NAME, PersonDto.LAST_NAME, ContactDto.REPORT_DATE_TIME, ContactDto.CONTACT_TRANSMISSION_CLASSIFICATION);
 		FieldHelper.setVisibleWhen(
 			getFieldGroup(),
 			ContactDto.RELATION_DESCRIPTION,

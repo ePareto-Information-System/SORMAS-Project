@@ -172,13 +172,13 @@ public class PhysiciansReportCaseEditComponent extends CommitDiscardWrapperCompo
 				() -> {
 					PersonDto person = FacadeProvider.getPersonFacade().getByUuid(caze.getPerson().getUuid());
 					return ControllerProvider.getPersonController()
-						.getPersonEditComponent(
-							PersonContext.CASE,
-							person,
-							caze.getDisease(),
-							caze.getDiseaseDetails(),
-							UserRight.PERSON_EDIT,
-							viewMode);
+							.getPersonEditComponent(
+									PersonContext.CASE,
+									person,
+									caze.getDisease(),
+									caze.getDiseaseDetails(),
+									UserRight.PERSON_EDIT,
+									viewMode);
 				}));
 		configs.add(
 			TabConfig.of(

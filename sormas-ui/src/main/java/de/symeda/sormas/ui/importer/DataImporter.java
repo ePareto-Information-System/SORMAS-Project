@@ -37,6 +37,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
 import de.symeda.sormas.api.utils.*;
+import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

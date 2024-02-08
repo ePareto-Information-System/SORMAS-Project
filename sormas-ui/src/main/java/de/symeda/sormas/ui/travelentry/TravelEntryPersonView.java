@@ -30,23 +30,23 @@ public class TravelEntryPersonView extends AbstractTravelEntryView implements Pe
 		TravelEntryDto travelEntry = FacadeProvider.getTravelEntryFacade().getByUuid(getReference().getUuid());
 		person = FacadeProvider.getPersonFacade().getByUuid(travelEntry.getPerson().getUuid());
 		CommitDiscardWrapperComponent<PersonEditForm> editComponent = ControllerProvider.getPersonController()
-			.getPersonEditComponent(
-				PersonContext.TRAVEL_ENTRY,
-				person,
-				travelEntry.getDisease(),
-				travelEntry.getDiseaseDetails(),
-				UserRight.PERSON_EDIT,
-				null);
+				.getPersonEditComponent(
+						PersonContext.TRAVEL_ENTRY,
+						person,
+						travelEntry.getDisease(),
+						travelEntry.getDiseaseDetails(),
+						UserRight.PERSON_EDIT,
+						null);
 		DetailSubComponentWrapper componentWrapper = addComponentWrapper(editComponent);
 		CustomLayout layout = addPageLayout(componentWrapper, editComponent);
 		setSubComponent(componentWrapper);
 		addSideComponents(
-			layout,
-			CoreEntityType.TRAVEL_ENTRY,
-			travelEntry.getUuid(),
-			person.toReference(),
-			this::showUnsavedChangesPopup,
-			isEditAllowed());
+				layout,
+				CoreEntityType.TRAVEL_ENTRY,
+				travelEntry.getUuid(),
+				person.toReference(),
+				this::showUnsavedChangesPopup,
+				isEditAllowed());
 		setEditPermission(editComponent);
 	}
 

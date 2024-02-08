@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import de.symeda.sormas.api.utils.YesNo;
 import org.apache.commons.lang3.StringUtils;
 
 import de.symeda.sormas.api.EntityDto;
@@ -130,7 +131,7 @@ public final class CaseLogic {
 			// therefore add the old hospitalization to the list of previous ones
 			PreviousHospitalizationDto prevHosp = PreviousHospitalizationDto.build(oldCase);
 			caze.getHospitalization().getPreviousHospitalizations().add(prevHosp);
-			caze.getHospitalization().setHospitalizedPreviously(YesNoUnknown.YES);
+			caze.getHospitalization().setHospitalizedPreviously(YesNo.YES);
 		}
 
 		// clear everything if a case is transferred or discharged from a hospital

@@ -317,7 +317,7 @@ public final class SymptomsHelper {
 			for (Method method : SymptomsDto.class.getDeclaredMethods()) {
 				if (method.getReturnType() == SymptomState.class) {
 					Object symptomState = method.invoke(dto);
-					if (symptomState == SymptomState.YES || symptomState == SymptomState.UNKNOWN || symptomState == null) {
+					if (symptomState == SymptomState.YES || symptomState == null) {
 						return false;
 					}
 				}
@@ -500,13 +500,13 @@ public final class SymptomsHelper {
 		appendYesSymptom(string, symptomsDto.getUrinaryRetention(), SymptomsDto.URINARY_RETENTION);
 
 		appendNotNullValue(string, symptomsDto.getOtherComplicationsText(), SymptomsDto.OTHER_COMPLICATIONS_TEXT);
-		appendYesSymptom(string, symptomsDto.getGeneralBodilyPains(), SymptomsDto.GENERAL_BODILY_PAINS);
+		/*appendYesSymptom(string, symptomsDto.getGeneralBodilyPains(), SymptomsDto.GENERAL_BODILY_PAINS);
 		appendYesSymptom(string, symptomsDto.getGeneralBodilyPains(), SymptomsDto.LESIONS_NECK);
 		appendYesSymptom(string, symptomsDto.getGeneralBodilyPains(), SymptomsDto.LESIONS_TRUNK);
 		appendYesSymptom(string, symptomsDto.getMacularRash(), SymptomsDto.MACULAR_RASH);
 		appendYesSymptom(string, symptomsDto.getPapularRash(), SymptomsDto.PAPULAR_RASH);
 		appendYesSymptom(string, symptomsDto.getVesicularRash(), SymptomsDto.VESICULAR_RASH);
-		appendNotNullValue(string, symptomsDto.getOtherLesionAreas(), SymptomsDto.OTHER_LESION_AREAS);
+		appendNotNullValue(string, symptomsDto.getOtherLesionAreas(), SymptomsDto.OTHER_LESION_AREAS);*/
 		// symptomsComments;
 
 		return string.toString();

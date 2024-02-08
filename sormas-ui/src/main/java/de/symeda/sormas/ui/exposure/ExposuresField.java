@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import de.symeda.sormas.api.utils.YesNo;
 import org.apache.commons.lang3.StringUtils;
 
 import com.vaadin.icons.VaadinIcons;
@@ -148,10 +149,10 @@ public class ExposuresField extends AbstractTableField<ExposureDto> {
 					: (exposure.getTypeOfAnimalDetails() != null ? exposure.getTypeOfAnimalDetails() : TypeOfAnimal.OTHER.toString())) + ")";
 			}
 
-			if (exposure.getRiskArea() == YesNoUnknown.YES || exposure.isProbableInfectionEnvironment())
+			if (exposure.getRiskArea() == YesNo.YES || exposure.isProbableInfectionEnvironment())
 				exposureString = "<b>" + exposureString + "</b>";
 
-			if (exposure.getRiskArea() == YesNoUnknown.YES) {
+			if (exposure.getRiskArea() == YesNo.YES) {
 				exposureString = VaadinIcons.INFO_CIRCLE.getHtml() + " " + exposureString;
 			}
 
@@ -161,7 +162,7 @@ public class ExposuresField extends AbstractTableField<ExposureDto> {
 
 			Label exposureTypeLabel = new Label(exposureString, ContentMode.HTML);
 
-			if (exposure.getRiskArea() == YesNoUnknown.YES) {
+			if (exposure.getRiskArea() == YesNo.YES) {
 				exposureTypeLabel.setDescription(I18nProperties.getString(Strings.infoExposuresRiskAreaHint) + " ");
 			}
 

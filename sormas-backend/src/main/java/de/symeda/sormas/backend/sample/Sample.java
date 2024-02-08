@@ -28,20 +28,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
+import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.caze.CaseClassification;
+import de.symeda.sormas.api.utils.*;
+import de.symeda.sormas.api.utils.pseudonymization.SampleDispatchMode;
 import org.apache.commons.lang3.StringUtils;
 
 import de.symeda.sormas.api.sample.AdditionalTestType;
@@ -64,6 +56,7 @@ import de.symeda.sormas.backend.sormastosormas.entities.SormasToSormasShareable;
 import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfo;
 import de.symeda.sormas.backend.sormastosormas.share.outgoing.SormasToSormasShareInfo;
 import de.symeda.sormas.backend.user.User;
+import org.bouncycastle.asn1.x509.Time;
 
 @Entity(name = "samples")
 public class Sample extends DeletableAdo implements SormasToSormasShareable {
@@ -96,11 +89,13 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public static final String RECEIVED = "received";
 	public static final String SPECIMEN_CONDITION = "specimenCondition";
 	public static final String PATHOGEN_TESTING_REQUESTED = "pathogenTestingRequested";
+	public static final String SAMPLE_MATERIAL_REQUESTED = "sampleMaterialTestingRequested";
 	public static final String ADDITIONAL_TESTING_REQUESTED = "additionalTestingRequested";
 	public static final String ADDITIONAL_TESTS = "additionalTests";
 	public static final String PATHOGEN_TEST_RESULT = "pathogenTestResult";
 	public static final String PATHOGEN_TEST_RESULT_CHANGE_DATE = "pathogenTestResultChangeDate";
 	public static final String REQUESTED_PATHOGEN_TESTS_STRING = "requestedPathogenTestsString";
+	public static final String REQUESTED_SAMPLE_MATERIALS_STRING = "requestedSampleMaterialsString";
 	public static final String REQUESTED_ADDITIONAL_TESTS_STRING = "requestedAdditionalTestsString";
 	public static final String REQUESTED_OTHER_PATHOGEN_TESTS = "requestedOtherPathogenTests";
 	public static final String REQUESTED_OTHER_ADDITIONAL_TESTS = "requestedOtherAdditionalTests";
@@ -109,6 +104,64 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public static final String SAMPLING_REASON_DETAILS = "samplingReasonDetails";
 	public static final String SORMAS_TO_SORMAS_ORIGIN_INFO = "sormasToSormasOriginInfo";
 	public static final String SORMAS_TO_SORMAS_SHARES = "sormasToSormasShares";
+
+	public static final String CSF_SAMPLE_COLLECTED = "csfSampleCollected";
+	public static final String CSF_REASON = "csfReason";
+	public static final String APPEARANCE_OF_CSF = "appearanceOfCsf";
+	public static final String INOCULATION_TIME_TRANSPORT_MEDIA = "inoculationTimeTransportMedia";
+	public static final String SAMPLE_SENT_TO_LAB = "sampleSentToLab";
+	public static final String DATE_SAMPLE_SENT_TO_LAB = "dateSampleSentToLab";
+	public static final String SAMPLE_CONTAINER_USED = "sampleContainerUsed";
+	public static final String RDT_PERFORMED = "rdtPerformed";
+	public static final String RDT_RESULTS = "rdtResults";
+	public static final String DISTRICT_NOTIFICATION_DATE = "districtNotificationDate";
+	public static final String NAME_OF_PERSON = "nameOfPerson";
+	public static final String TEL_NUMBER = "telNumber";
+	public static final String DATE_FORM_SENT_TO_DISTRICT = "dateFormSentToDistrict";
+	public static final String DATE_FORM_RECEIVED_AT_DISTRICT = "dateFormReceivedAtDistrict";
+	public static final String DATE_FORM_SENT_TO_REGION = "dateFormSentToRegion";
+	public static final String DATE_FORM_RECEIVED_AT_REGION = "dateFormReceivedAtRegion";
+	public static final String DATE_FORM_SENT_TO_NATIONAL = "dateFormSentToNational";
+	public static final String DATE_FORM_RECEIVED_AT_NATIONAL = "dateFormReceivedAtNational";
+	public static final String REASON_NOT_SENT_TO_LAB = "reasonNotSentToLab";
+
+	public static final String LABORATORY_NAME = "laboratoryName";
+	public static final String LABORATORY_SAMPLE_DATE_RECEIVED = "laboratorySampleDateReceived";
+	public static final String LABORATORY_NUMBER = "laboratoryNumber";
+	public static final String LABORATORY_SAMPLE_CONTAINER_RECEIVED = "laboratorySampleContainerReceived";
+	public static final String LABORATORY_SAMPLE_CONTAINER_OTHER = "laboratorySampleContainerOther";
+	public static final String LABORATORY_SAMPLE_CONDITION = "laboratorySampleCondition";
+	public static final String LABORATORY_APPEARANCE_OF_CSF = "laboratoryAppearanceOfCSF";
+	public static final String LABORATORY_TEST_PERFORMED = "laboratoryTestPerformed";
+	public static final String LABORATORY_TEST_PERFORMED_OTHER = "laboratoryTestPerformedOther";
+	public static final String LABORATORY_CYTOLOGY = "laboratoryCytology";
+	public static final String LABORATORY_GRAM = "laboratoryGram";
+	public static final String LABORATORY_GRAM_OTHER = "laboratoryGramOther";
+	public static final String LABORATORY_RDT_PERFORMED = "laboratoryRdtPerformed";
+	public static final String LABORATORY_RDT_RESULTS = "laboratoryRdtResults";
+	public static final String LABORATORY_LATEX = "laboratoryLatex";
+	public static final String LABORATORY_CULTURE = "laboratoryCulture";
+	public static final String LABORATORY_CULTURE_OTHER = "laboratoryCultureOther";
+	public static final String LABORATORY_OTHER_TESTS = "laboratoryOtherTests";
+	public static final String LABORATORY_OTHER_TESTS_RESULTS = "laboratoryOtherTestsResults";
+	public static final String LABORATORY_CEFTRIAXONE = "laboratoryCeftriaxone";
+	public static final String LABORATORY_PENICILLIN_G = "laboratoryPenicillinG";
+	public static final String LABORATORY_AMOXYCILLIN = "laboratoryAmoxycillin";
+	public static final String LABORATORY_OXACILLIN = "laboratoryOxacillin";
+	public static final String LABORATORY_ANTIBIOGRAM_OTHER = "laboratoryAntibiogramOther";
+	public static final String LABORATORY_DATE_PCR_PERFORMED = "laboratoryDatePcrPerformed";
+	public static final String LABORATORY_PCR_TYPE = "laboratoryPcrType";
+	public static final String LABORATORY_PCR_OPTIONS = "laboratoryPcrOptions";
+	public static final String LABORATORY_SEROTYPE = "laboratorySerotype";
+	public static final String LABORATORY_SEROTYPE_TYPE = "laboratorySerotypeType";
+	public static final String LABORATORY_SEROTYPE_RESULTS = "laboratorySerotypeResults";
+	public static final String LABORATORY_FINAL_RESULTS = "laboratoryFinalResults";
+	public static final String LABORATORY_OBSERVATIONS = "laboratoryObservations";
+	public static final String LABORATORY_DATE_RESULTS_SENT_HEALTH_FACILITY = "laboratoryDateResultsSentHealthFacility";
+	public static final String LABORATORY_DATE_RESULTS_SENT_DSD = "laboratoryDateResultsSentDSD";
+	public static final String LABORATORY_FINAL_CLASSIFICATION = "laboratoryFinalClassification";
+	public static final String LABORATORY_TYPE = "laboratoryType";
+
 
 	private Case associatedCase;
 	private Contact associatedContact;
@@ -138,28 +191,107 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	private SampleSource sampleSource;
 	private Sample referredTo;
 	private boolean shipped;
+	private boolean sampleMaterialTypeForYF;
+	private boolean sampleDiseaseTests;
 	private boolean received;
 	private PathogenTestResultType pathogenTestResult;
 	private Date pathogenTestResultChangeDate;
 
 	private Boolean pathogenTestingRequested;
+	private Boolean sampleMaterialTestingRequested;
 	private Boolean additionalTestingRequested;
 	private Set<PathogenTestType> requestedPathogenTests;
+	private Set<YellowFeverSample> requestedSampleMaterials;
+	private Set<PathogenTestType> sampleTests;
 	private Set<AdditionalTestType> requestedAdditionalTests;
 	private String requestedOtherPathogenTests;
 	private String requestedOtherAdditionalTests;
 	private String requestedPathogenTestsString;
+	private String requestedSampleMaterialsString;
+	private String sampleTestsString;
 	private String requestedAdditionalTestsString;
 	private SamplingReason samplingReason;
 	private String samplingReasonDetails;
-
+	private List<SampleReport> sampleReports = new ArrayList<>(0);
 	private List<PathogenTest> pathogenTests;
 	private List<AdditionalTest> additionalTests;
 
 	private SormasToSormasOriginInfo sormasToSormasOriginInfo;
 	private List<SormasToSormasShareInfo> sormasToSormasShares = new ArrayList<>(0);
+	private YesNo ipSampleSent;
+	private IpResult ipSampleResults;
+	private Disease disease;
+	private SampleDispatchMode sampleDispatchMode;
+	private Date sampleDispatchDate;
 
-	private List<SampleReport> sampleReports = new ArrayList<>(0);
+	private YesNo csfSampleCollected;
+	private YesNo rdtPerformed;
+	private YesNo sampleSentToLab;
+
+	private CsfReason csfReason;
+	private CsfAppearance appearanceOfCsf;
+	private SampleContainerUsed sampleContainerUsed;
+
+	private String rdtResults;
+	private String reasonNotSentToLab;
+	private String nameOfPerson;
+	private String telNumber;
+
+	private Date inoculationTimeTransportMedia;
+	private Date districtNotificationDate;
+	private Date dateSampleSentToLab;
+	private Date dateFormSentToDistrict;
+	private Date dateFormReceivedAtDistrict;
+	private Date dateFormSentToRegion;
+	private Date dateFormReceivedAtRegion;
+	private Date dateFormSentToNational;
+	private Date dateFormReceivedAtNational;
+	private String laboratoryName;
+	private String laboratoryNumber;
+	private String laboratorySerotype;
+	private String laboratorySerotypeType;
+	private String laboratorySerotypeResults;
+	private String laboratoryFinalResults;
+	private String laboratoryObservations;
+	private String laboratorySampleContainerOther;
+	private String laboratoryTestPerformedOther;
+	private String laboratoryCytology;
+	private String laboratoryGramOther;
+	private String laboratoryCultureOther;
+	private String laboratoryOtherTests;
+	private String laboratoryOtherTestsResults;
+	private String laboratoryRdtResults;
+	private CaseClassification laboratoryFinalClassification;
+	private String laboratoryPcrType;
+	private SampleContainerUsed laboratorySampleContainerReceived;
+	private SpecimenCondition laboratorySampleCondition;
+	private CsfAppearance laboratoryAppearanceOfCSF;
+	private LabTest laboratoryTestPerformed;
+	private Gram laboratoryGram;
+	private YesNo laboratoryRdtPerformed;
+	private LatexCulture laboratoryLatex;
+	private LatexCulture laboratoryCulture;
+	private LatexCulture laboratoryPcrOptions;
+	private Antibiogram laboratoryCeftriaxone;
+	private Antibiogram laboratoryPenicillinG;
+	private Antibiogram laboratoryAmoxycillin;
+	private Antibiogram laboratoryOxacillin;
+	private Antibiogram laboratoryAntibiogramOther;
+	private LabType laboratoryType;
+	private Date laboratoryDateResultsSentHealthFacility;
+	private Date laboratoryDateResultsSentDSD;
+	private Date laboratorySampleDateReceived;
+	private Date laboratoryDatePcrPerformed;
+
+	private Date dateSentToNationalRegLab;
+	private Date dateDifferentiationSentToEpi;
+	private Date dateDifferentiationReceivedFromEpi;
+	private Date dateIsolateSentForSequencing;
+	private Date dateSeqResultsSentToProgram;
+
+	private PosNeg finalLabResults;
+	private YesNoUnknown immunocompromisedStatusSuspected;
+	private AFPClassification afpFinalClassification;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn
@@ -396,6 +528,22 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 		this.shipped = shipped;
 	}
 
+	public boolean isYellowFeverSampleType() {
+		return sampleMaterialTypeForYF;
+	}
+
+	public void setYellowFeverSampleType(boolean sampleMaterialTypeForYF) {
+		this.sampleMaterialTypeForYF = sampleMaterialTypeForYF;
+	}
+
+	public boolean isDiseaseSampleTests() {
+		return sampleDiseaseTests;
+	}
+
+	public void setDiseaseSampleTests(boolean sampleDiseaseTests) {
+		this.sampleDiseaseTests = sampleDiseaseTests;
+	}
+
 	@Column
 	public boolean isReceived() {
 		return received;
@@ -430,6 +578,15 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	public void setPathogenTestingRequested(Boolean pathogenTestingRequested) {
 		this.pathogenTestingRequested = pathogenTestingRequested;
+	}
+
+	@Column
+	public Boolean getSampleMaterialTestingRequested() {
+		return sampleMaterialTestingRequested;
+	}
+
+	public void setSampleMaterialTestingRequested(Boolean sampleMaterialTestingRequested) {
+		this.sampleMaterialTestingRequested = sampleMaterialTestingRequested;
 	}
 
 	@Column
@@ -473,6 +630,68 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	}
 
 	@Transient
+	public Set<YellowFeverSample> getRequestedSampleMaterials() {
+		if (requestedSampleMaterials == null) {
+			if (StringUtils.isEmpty(requestedSampleMaterialsString)) {
+				requestedSampleMaterials = new HashSet<>();
+			} else {
+				requestedSampleMaterials =
+						Arrays.stream(requestedSampleMaterialsString.split(",")).map(YellowFeverSample::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return requestedSampleMaterials;
+	}
+
+	public void setRequestedSampleMaterials(Set<YellowFeverSample> requestedSampleMaterials) {
+		this.requestedSampleMaterials = requestedSampleMaterials;
+
+		if (this.requestedSampleMaterials == null) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		requestedSampleMaterials.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		requestedSampleMaterialsString = sb.toString();
+	}
+
+	@Transient
+	public Set<PathogenTestType> getSampleTests() {
+		if (sampleTests == null) {
+			if (StringUtils.isEmpty(sampleTestsString)) {
+				sampleTests = new HashSet<>();
+			} else {
+				sampleTests =
+						Arrays.stream(sampleTestsString.split(",")).map(PathogenTestType::valueOf).collect(Collectors.toSet());
+			}
+		}
+		return sampleTests;
+	}
+
+	public void setSampleTests(Set<PathogenTestType> sampleTests) {
+		this.sampleTests = sampleTests;
+
+		if (this.sampleTests == null) {
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		sampleTests.stream().forEach(t -> {
+			sb.append(t.name());
+			sb.append(",");
+		});
+		if (sb.length() > 0) {
+			sb.substring(0, sb.lastIndexOf(","));
+		}
+		sampleTestsString = sb.toString();
+	}
+
+	@Transient
 	public Set<AdditionalTestType> getRequestedAdditionalTests() {
 		if (requestedAdditionalTests == null) {
 			if (StringUtils.isEmpty(requestedAdditionalTestsString)) {
@@ -510,6 +729,15 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 	public void setRequestedPathogenTestsString(String requestedPathogenTestsString) {
 		this.requestedPathogenTestsString = requestedPathogenTestsString;
 		requestedPathogenTests = null;
+	}
+
+	public String getRequestedSampleMaterialsString() {
+		return requestedSampleMaterialsString;
+	}
+
+	public void setRequestedSampleMaterialsString(String requestedSampleMaterialsString) {
+		this.requestedSampleMaterialsString = requestedSampleMaterialsString;
+		requestedSampleMaterials = null;
 	}
 
 	public String getRequestedAdditionalTestsString() {
@@ -555,6 +783,47 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	public void setSamplingReasonDetails(String samplingReasonDetails) {
 		this.samplingReasonDetails = samplingReasonDetails;
+	}
+	public void setIpSampleSent(YesNo ipSampleSent) {
+		this.ipSampleSent = ipSampleSent;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public YesNo getIpSampleSent() {
+		return ipSampleSent;
+	}
+
+	public Date getSampleDispatchDate() {
+		return sampleDispatchDate;
+	}
+
+	public void setSampleDispatchDate(Date sampleDispatchDate) {
+		this.sampleDispatchDate = sampleDispatchDate;
+	}
+
+	public void setIpSampleResults(IpResult ipSampleResults) {
+		this.ipSampleResults = ipSampleResults;
+	}
+	@Enumerated(EnumType.STRING)
+	public IpResult getIpSampleResults(){
+		return ipSampleResults;
+	}
+
+	public void setDisease(Disease disease) {
+		this.disease = disease;
+	}
+	@Enumerated(EnumType.STRING)
+	public Disease getDisease(){
+		return disease;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public SampleDispatchMode getSampleDispatchMode() {
+		return sampleDispatchMode;
+	}
+
+	public void setSampleDispatchMode(SampleDispatchMode sampleDispatchMode) {
+		this.sampleDispatchMode = sampleDispatchMode;
 	}
 
 	public SampleReferenceDto toReference() {
@@ -621,5 +890,494 @@ public class Sample extends DeletableAdo implements SormasToSormasShareable {
 
 	public void setSampleReports(List<SampleReport> externalMessages) {
 		this.sampleReports = externalMessages;
+	}
+	public YesNo getCsfSampleCollected() {
+		return csfSampleCollected;
+	}
+	public void setCsfSampleCollected(YesNo csfSampleCollected) {
+		this.csfSampleCollected = csfSampleCollected;
+	}
+	public YesNo getRdtPerformed() {
+		return rdtPerformed;
+	}
+	public void setRdtPerformed(YesNo rdtPerformed) {
+		this.rdtPerformed = rdtPerformed;
+	}
+	public YesNo getSampleSentToLab() {
+		return sampleSentToLab;
+	}
+	public void setSampleSentToLab(YesNo sampleSentToLab) {
+		this.sampleSentToLab = sampleSentToLab;
+	}
+
+	public CsfReason getCsfReason() {
+		return csfReason;
+	}
+	public void setCsfReason(CsfReason csfReason) {
+		this.csfReason = csfReason;
+	}
+	public CsfAppearance getAppearanceOfCsf() {return appearanceOfCsf; }
+	public void setAppearanceOfCsf(CsfAppearance appearanceOfCsf) {
+		this.appearanceOfCsf = appearanceOfCsf;
+	}
+	public SampleContainerUsed getSampleContainerUsed() {
+		return sampleContainerUsed;
+	}
+	public void setSampleContainerUsed(SampleContainerUsed sampleContainerUsed) {
+		this.sampleContainerUsed = sampleContainerUsed;
+	}
+
+	public String getRdtResults() {
+		return rdtResults;
+	}
+
+	public void setRdtResults(String rdtResults) {
+		this.rdtResults = rdtResults;
+	}
+
+	public String getReasonNotSentToLab() {
+		return reasonNotSentToLab;
+	}
+
+	public void setReasonNotSentToLab(String reasonNotSentToLab) {
+		this.reasonNotSentToLab = reasonNotSentToLab;
+	}
+	public String getNameOfPerson() {
+		return nameOfPerson;
+	}
+
+	public void setNameOfPerson(String nameOfPerson) {
+		this.nameOfPerson = nameOfPerson;
+	}
+	public String getTelNumber() {
+		return telNumber;
+	}
+
+	public void setTelNumber(String telNumber) {
+		this.telNumber = telNumber;
+	}
+
+	public Date getInoculationTimeTransportMedia() {
+		return inoculationTimeTransportMedia;
+	}
+
+	public void setInoculationTimeTransportMedia(Date inoculationTimeTransportMedia) {
+		this.inoculationTimeTransportMedia = inoculationTimeTransportMedia;
+	}
+
+	public Date getDistrictNotificationDate() {
+		return districtNotificationDate;
+	}
+
+	public void setDistrictNotificationDate(Date districtNotificationDate) {
+		this.districtNotificationDate = districtNotificationDate;
+	}
+
+	public Date getDateSampleSentToLab() {
+		return dateSampleSentToLab;
+	}
+
+	public void setDateSampleSentToLab(Date dateSampleSentToLab) {
+		this.dateSampleSentToLab = dateSampleSentToLab;
+	}
+
+	public Date getDateFormSentToDistrict() {
+		return dateFormSentToDistrict;
+	}
+
+	public void setDateFormSentToDistrict(Date dateFormSentToDistrict) {
+		this.dateFormSentToDistrict = dateFormSentToDistrict;
+	}
+
+	public Date getDateFormReceivedAtDistrict() {
+		return dateFormReceivedAtDistrict;
+	}
+
+	public void setDateFormReceivedAtDistrict(Date dateFormReceivedAtDistrict) {
+		this.dateFormReceivedAtDistrict = dateFormReceivedAtDistrict;
+	}
+
+	public Date getDateFormSentToRegion() {
+		return dateFormSentToRegion;
+	}
+
+	public void setDateFormSentToRegion(Date dateFormSentToRegion) {
+		this.dateFormSentToRegion = dateFormSentToRegion;
+	}
+
+	public Date getDateFormReceivedAtRegion() {
+		return dateFormReceivedAtRegion;
+	}
+
+	public void setDateFormReceivedAtRegion(Date dateFormReceivedAtRegion) {
+		this.dateFormReceivedAtRegion = dateFormReceivedAtRegion;
+	}
+
+	public Date getDateFormSentToNational() {
+		return dateFormSentToNational;
+	}
+
+	public void setDateFormSentToNational(Date dateFormSentToNational) {
+		this.dateFormSentToNational = dateFormSentToNational;
+	}
+
+	public Date getDateFormReceivedAtNational() {
+		return dateFormReceivedAtNational;
+	}
+
+	public void setDateFormReceivedAtNational(Date dateFormReceivedAtNational) {
+		this.dateFormReceivedAtNational = dateFormReceivedAtNational;
+	}
+
+	public String getLaboratoryName() {
+		return laboratoryName;
+	}
+
+	public void setLaboratoryName(String laboratoryName) {
+		this.laboratoryName = laboratoryName;
+	}
+
+	public String getLaboratoryNumber() {
+		return laboratoryNumber;
+	}
+
+	public void setLaboratoryNumber(String laboratoryNumber) {
+		this.laboratoryNumber = laboratoryNumber;
+	}
+
+	public String getLaboratorySerotype() {
+		return laboratorySerotype;
+	}
+
+	public void setLaboratorySerotype(String laboratorySerotype) {
+		this.laboratorySerotype = laboratorySerotype;
+	}
+
+	public String getLaboratorySerotypeType() {
+		return laboratorySerotypeType;
+	}
+
+	public void setLaboratorySerotypeType(String laboratorySerotypeType) {
+		this.laboratorySerotypeType = laboratorySerotypeType;
+	}
+
+	public String getLaboratorySerotypeResults() {
+		return laboratorySerotypeResults;
+	}
+
+	public void setLaboratorySerotypeResults(String laboratorySerotypeResults) {
+		this.laboratorySerotypeResults = laboratorySerotypeResults;
+	}
+
+	public String getLaboratoryFinalResults() {
+		return laboratoryFinalResults;
+	}
+
+	public void setLaboratoryFinalResults(String laboratoryFinalResults) {
+		this.laboratoryFinalResults = laboratoryFinalResults;
+	}
+
+	public String getLaboratoryObservations() {
+		return laboratoryObservations;
+	}
+
+	public void setLaboratoryObservations(String laboratoryObservations) {
+		this.laboratoryObservations = laboratoryObservations;
+	}
+
+	public String getLaboratorySampleContainerOther() {
+		return laboratorySampleContainerOther;
+	}
+
+	public void setLaboratorySampleContainerOther(String laboratorySampleContainerOther) {
+		this.laboratorySampleContainerOther = laboratorySampleContainerOther;
+	}
+
+	public String getLaboratoryTestPerformedOther() {
+		return laboratoryTestPerformedOther;
+	}
+
+	public void setLaboratoryTestPerformedOther(String laboratoryTestPerformedOther) {
+		this.laboratoryTestPerformedOther = laboratoryTestPerformedOther;
+	}
+
+	public String getLaboratoryCytology() {
+		return laboratoryCytology;
+	}
+
+	public void setLaboratoryCytology(String laboratoryCytology) {
+		this.laboratoryCytology = laboratoryCytology;
+	}
+
+	public String getLaboratoryGramOther() {
+		return laboratoryGramOther;
+	}
+
+	public void setLaboratoryGramOther(String laboratoryGramOther) {
+		this.laboratoryGramOther = laboratoryGramOther;
+	}
+
+	public String getLaboratoryCultureOther() {
+		return laboratoryCultureOther;
+	}
+
+	public void setLaboratoryCultureOther(String laboratoryCultureOther) {
+		this.laboratoryCultureOther = laboratoryCultureOther;
+	}
+
+	public String getLaboratoryOtherTests() {
+		return laboratoryOtherTests;
+	}
+
+	public void setLaboratoryOtherTests(String laboratoryOtherTests) {
+		this.laboratoryOtherTests = laboratoryOtherTests;
+	}
+
+	public String getLaboratoryOtherTestsResults() {
+		return laboratoryOtherTestsResults;
+	}
+
+	public void setLaboratoryOtherTestsResults(String laboratoryOtherTestsResults) {
+		this.laboratoryOtherTestsResults = laboratoryOtherTestsResults;
+	}
+
+	public String getLaboratoryRdtResults() {
+		return laboratoryRdtResults;
+	}
+
+	public void setLaboratoryRdtResults(String laboratoryRdtResults) {
+		this.laboratoryRdtResults = laboratoryRdtResults;
+	}
+
+	public CaseClassification getLaboratoryFinalClassification() {
+		return laboratoryFinalClassification;
+	}
+
+	public void setLaboratoryFinalClassification(CaseClassification laboratoryFinalClassification) {
+		this.laboratoryFinalClassification = laboratoryFinalClassification;
+	}
+
+	public String getLaboratoryPcrType() {
+		return laboratoryPcrType;
+	}
+
+	public void setLaboratoryPcrType(String laboratoryPcrType) {
+		this.laboratoryPcrType = laboratoryPcrType;
+	}
+
+	public SampleContainerUsed getLaboratorySampleContainerReceived() {
+		return laboratorySampleContainerReceived;
+	}
+
+	public void setLaboratorySampleContainerReceived(SampleContainerUsed laboratorySampleContainerReceived) {
+		this.laboratorySampleContainerReceived = laboratorySampleContainerReceived;
+	}
+
+	public SpecimenCondition getLaboratorySampleCondition() {
+		return laboratorySampleCondition;
+	}
+
+	public void setLaboratorySampleCondition(SpecimenCondition laboratorySampleCondition) {
+		this.laboratorySampleCondition = laboratorySampleCondition;
+	}
+
+	public CsfAppearance getLaboratoryAppearanceOfCSF() {
+		return laboratoryAppearanceOfCSF;
+	}
+
+	public void setLaboratoryAppearanceOfCSF(CsfAppearance laboratoryAppearanceOfCSF) {
+		this.laboratoryAppearanceOfCSF = laboratoryAppearanceOfCSF;
+	}
+
+	public LabTest getLaboratoryTestPerformed() {
+		return laboratoryTestPerformed;
+	}
+
+	public void setLaboratoryTestPerformed(LabTest laboratoryTestPerformed) {
+		this.laboratoryTestPerformed = laboratoryTestPerformed;
+	}
+
+	public Gram getLaboratoryGram() {
+		return laboratoryGram;
+	}
+
+	public void setLaboratoryGram(Gram laboratoryGram) {
+		this.laboratoryGram = laboratoryGram;
+	}
+
+	public YesNo getLaboratoryRdtPerformed() {
+		return laboratoryRdtPerformed;
+	}
+
+	public void setLaboratoryRdtPerformed(YesNo laboratoryRdtPerformed) {
+		this.laboratoryRdtPerformed = laboratoryRdtPerformed;
+	}
+
+	public LatexCulture getLaboratoryLatex() {
+		return laboratoryLatex;
+	}
+
+	public void setLaboratoryLatex(LatexCulture laboratoryLatex) {
+		this.laboratoryLatex = laboratoryLatex;
+	}
+
+	public LatexCulture getLaboratoryCulture() {
+		return laboratoryCulture;
+	}
+
+	public void setLaboratoryCulture(LatexCulture laboratoryCulture) {
+		this.laboratoryCulture = laboratoryCulture;
+	}
+
+	public LatexCulture getLaboratoryPcrOptions() {
+		return laboratoryPcrOptions;
+	}
+
+	public void setLaboratoryPcrOptions(LatexCulture laboratoryPcrOptions) {
+		this.laboratoryPcrOptions = laboratoryPcrOptions;
+	}
+
+	public Antibiogram getLaboratoryCeftriaxone() {
+		return laboratoryCeftriaxone;
+	}
+
+	public void setLaboratoryCeftriaxone(Antibiogram laboratoryCeftriaxone) {
+		this.laboratoryCeftriaxone = laboratoryCeftriaxone;
+	}
+
+	public Antibiogram getLaboratoryPenicillinG() {
+		return laboratoryPenicillinG;
+	}
+
+	public void setLaboratoryPenicillinG(Antibiogram laboratoryPenicillinG) {
+		this.laboratoryPenicillinG = laboratoryPenicillinG;
+	}
+
+	public Antibiogram getLaboratoryAmoxycillin() {
+		return laboratoryAmoxycillin;
+	}
+
+	public void setLaboratoryAmoxycillin(Antibiogram laboratoryAmoxycillin) {
+		this.laboratoryAmoxycillin = laboratoryAmoxycillin;
+	}
+
+	public Antibiogram getLaboratoryOxacillin() {
+		return laboratoryOxacillin;
+	}
+
+	public void setLaboratoryOxacillin(Antibiogram laboratoryOxacillin) {
+		this.laboratoryOxacillin = laboratoryOxacillin;
+	}
+
+	public Antibiogram getLaboratoryAntibiogramOther() {
+		return laboratoryAntibiogramOther;
+	}
+
+	public void setLaboratoryAntibiogramOther(Antibiogram laboratoryAntibiogramOther) {
+		this.laboratoryAntibiogramOther = laboratoryAntibiogramOther;
+	}
+
+	public LabType getLaboratoryType() {
+		return laboratoryType;
+	}
+
+	public void setLaboratoryType(LabType laboratoryType) {
+		this.laboratoryType = laboratoryType;
+	}
+
+	public Date getLaboratoryDateResultsSentHealthFacility() {
+		return laboratoryDateResultsSentHealthFacility;
+	}
+
+	public void setLaboratoryDateResultsSentHealthFacility(Date laboratoryDateResultsSentHealthFacility) {
+		this.laboratoryDateResultsSentHealthFacility = laboratoryDateResultsSentHealthFacility;
+	}
+
+	public Date getLaboratoryDateResultsSentDSD() {
+		return laboratoryDateResultsSentDSD;
+	}
+
+	public void setLaboratoryDateResultsSentDSD(Date laboratoryDateResultsSentDSD) {
+		this.laboratoryDateResultsSentDSD = laboratoryDateResultsSentDSD;
+	}
+
+	public Date getLaboratorySampleDateReceived() {
+		return laboratorySampleDateReceived;
+	}
+
+	public void setLaboratorySampleDateReceived(Date laboratorySampleDateReceived) {
+		this.laboratorySampleDateReceived = laboratorySampleDateReceived;
+	}
+
+	public Date getLaboratoryDatePcrPerformed() {
+		return laboratoryDatePcrPerformed;
+	}
+
+	public void setLaboratoryDatePcrPerformed(Date laboratoryDatePcrPerformed) {
+		this.laboratoryDatePcrPerformed = laboratoryDatePcrPerformed;
+	}
+
+	public Date getDateSentToNationalRegLab() {
+		return dateSentToNationalRegLab;
+	}
+
+	public void setDateSentToNationalRegLab(Date dateSentToNationalRegLab) {
+		this.dateSentToNationalRegLab = dateSentToNationalRegLab;
+	}
+
+	public Date getDateDifferentiationSentToEpi() {
+		return dateDifferentiationSentToEpi;
+	}
+
+	public void setDateDifferentiationSentToEpi(Date dateDifferentiationSentToEpi) {
+		this.dateDifferentiationSentToEpi = dateDifferentiationSentToEpi;
+	}
+
+	public Date getDateDifferentiationReceivedFromEpi() {
+		return dateDifferentiationReceivedFromEpi;
+	}
+
+	public void setDateDifferentiationReceivedFromEpi(Date dateDifferentiationReceivedFromEpi) {
+		this.dateDifferentiationReceivedFromEpi = dateDifferentiationReceivedFromEpi;
+	}
+
+	public Date getDateIsolateSentForSequencing() {
+		return dateIsolateSentForSequencing;
+	}
+
+	public void setDateIsolateSentForSequencing(Date dateIsolateSentForSequencing) {
+		this.dateIsolateSentForSequencing = dateIsolateSentForSequencing;
+	}
+
+	public Date getDateSeqResultsSentToProgram() {
+		return dateSeqResultsSentToProgram;
+	}
+
+	public void setDateSeqResultsSentToProgram(Date dateSeqResultsSentToProgram) {
+		this.dateSeqResultsSentToProgram = dateSeqResultsSentToProgram;
+	}
+
+	public PosNeg getFinalLabResults() {
+		return finalLabResults;
+	}
+
+	public void setFinalLabResults(PosNeg finalLabResults) {
+		this.finalLabResults = finalLabResults;
+	}
+
+	public YesNoUnknown getImmunocompromisedStatusSuspected() {
+		return immunocompromisedStatusSuspected;
+	}
+
+	public void setImmunocompromisedStatusSuspected(YesNoUnknown immunocompromisedStatusSuspected) {
+		this.immunocompromisedStatusSuspected = immunocompromisedStatusSuspected;
+	}
+
+	public AFPClassification getAfpFinalClassification() {
+		return afpFinalClassification;
+	}
+
+	public void setAfpFinalClassification(AFPClassification afpFinalClassification) {
+		this.afpFinalClassification = afpFinalClassification;
 	}
 }

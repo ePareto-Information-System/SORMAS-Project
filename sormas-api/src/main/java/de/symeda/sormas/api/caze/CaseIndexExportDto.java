@@ -75,6 +75,7 @@ public class CaseIndexExportDto implements Serializable {
     public static final String PERSON_UUID = "personUuid";
     public static final String PERSON_FIRST_NAME = "personFirstName";
     public static final String PERSON_LAST_NAME = "personLastName";
+    public static final String PERSON_OTHER_NAME = "personOtherName";
     public static final String DISEASE = "disease";
     public static final String DISEASE_VARIANT = "diseaseVariant";
     public static final String DISEASE_DETAILS = "diseaseDetails";
@@ -117,6 +118,9 @@ public class CaseIndexExportDto implements Serializable {
     @PersonalData
     @SensitiveData
     private String personLastName;
+    @PersonalData
+    @SensitiveData
+    private String personOtherName;
     private Disease disease;
     private DiseaseVariant diseaseVariant;
     private String diseaseDetails;
@@ -322,6 +326,19 @@ public class CaseIndexExportDto implements Serializable {
         this.disease = disease;
     }
 
+    @Order(7)
+    @ExportTarget(caseExportTypes = {
+            CaseExportType.CASE_SURVEILLANCE,
+            CaseExportType.CASE_MANAGEMENT })
+    @ExportProperty(PERSON_OTHER_NAME)
+    public String getPersonOtherName() {
+        return personOtherName;
+    }
+
+    public void setPersonOtherName(String personOtherName) {
+        this.personOtherName = personOtherName;
+    }
+
     public DiseaseVariant getDiseaseVariant() {
         return diseaseVariant;
     }
@@ -451,12 +468,12 @@ public class CaseIndexExportDto implements Serializable {
     }
 
     public CaseReferenceDto toReference() {
-        return new CaseReferenceDto(getUuid(), personFirstName, personLastName);
+        return new CaseReferenceDto(getUuid(), personFirstName, personLastName, personOtherName);
     }
 
 
     public String getCaption() {
-        return CaseReferenceDto.buildCaption(getUuid(), getPersonFirstName(), getPersonLastName());
+        return CaseReferenceDto.buildCaption(getUuid(), getPersonFirstName(), getPersonLastName(), getPersonOtherName());
     }
     @Order(2)
     @ExportTarget(caseExportTypes = {

@@ -33,6 +33,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import de.symeda.sormas.api.hospitalization.HospitalizationReasonType;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.api.utils.YesNoUnknown;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.infrastructure.community.Community;
@@ -64,7 +65,7 @@ public class PreviousHospitalization extends AbstractDomainObject {
 	public static final String INTENSIVE_CARE_UNIT_END = "intensiveCareUnitEnd";
 	public static final String HEALTH_FACILITY_RECORD_NUMBER = "healthFacilityRecordNumber";
 
-	private YesNoUnknown admittedToHealthFacility;
+	private YesNo admittedToHealthFacility;
 	private Date admissionDate;
 	private Date dischargeDate;
 	private Region region;
@@ -72,23 +73,23 @@ public class PreviousHospitalization extends AbstractDomainObject {
 	private Community community;
 	private Facility healthFacility;
 	private String healthFacilityDetails;
-	private YesNoUnknown isolated;
+	private YesNo isolated;
 	private Date isolationDate;
 	private String description;
 	private Hospitalization hospitalization;
 	private HospitalizationReasonType hospitalizationReason;
 	private String otherHospitalizationReason;
-	private YesNoUnknown intensiveCareUnit;
+	private YesNo intensiveCareUnit;
 	private Date intensiveCareUnitStart;
 	private Date intensiveCareUnitEnd;
 	private String healthFacilityRecordNumber;
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getAdmittedToHealthFacility() {
+	public YesNo getAdmittedToHealthFacility() {
 		return admittedToHealthFacility;
 	}
 
-	public void setAdmittedToHealthFacility(YesNoUnknown admittedToHealthFacility) {
+	public void setAdmittedToHealthFacility(YesNo admittedToHealthFacility) {
 		this.admittedToHealthFacility = admittedToHealthFacility;
 	}
 
@@ -147,11 +148,11 @@ public class PreviousHospitalization extends AbstractDomainObject {
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getIsolated() {
+	public YesNo getIsolated() {
 		return isolated;
 	}
 
-	public void setIsolated(YesNoUnknown isolated) {
+	public void setIsolated(YesNo isolated) {
 		this.isolated = isolated;
 	}
 
@@ -210,11 +211,11 @@ public class PreviousHospitalization extends AbstractDomainObject {
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getIntensiveCareUnit() {
+	public YesNo getIntensiveCareUnit() {
 		return intensiveCareUnit;
 	}
 
-	public void setIntensiveCareUnit(YesNoUnknown intensiveCareUnit) {
+	public void setIntensiveCareUnit(YesNo intensiveCareUnit) {
 		this.intensiveCareUnit = intensiveCareUnit;
 	}
 

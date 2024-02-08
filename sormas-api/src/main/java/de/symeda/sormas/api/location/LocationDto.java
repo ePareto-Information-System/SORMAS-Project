@@ -21,6 +21,8 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
+import de.symeda.sormas.api.Disease;
+import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -73,12 +75,14 @@ public class LocationDto extends PseudonymizableDto {
 	public static final String LONGITUDE = "longitude";
 	public static final String LAT_LON_ACCURACY = "latLonAccuracy";
 	public static final String POSTAL_CODE = "postalCode";
+	public static final String LAND_MARK = "landMark";
 	public static final String STREET = "street";
 	public static final String HOUSE_NUMBER = "houseNumber";
 	public static final String ADDITIONAL_INFORMATION = "additionalInformation";
 	public static final String ADDRESS_TYPE = "addressType";
 	public static final String ADDRESS_TYPE_DETAILS = "addressTypeDetails";
 	public static final String FACILITY_TYPE = "facilityType";
+	public static final String DHIMS_FACILITY_TYPE = "dhimsFacilityType";
 	public static final String FACILITY = "facility";
 	public static final String FACILITY_DETAILS = "facilityDetails";
 	public static final String CONTACT_PERSON_FIRST_NAME = "contactPersonFirstName";
@@ -91,6 +95,7 @@ public class LocationDto extends PseudonymizableDto {
 	private CountryReferenceDto country;
 	private RegionReferenceDto region;
 	private DistrictReferenceDto district;
+	private Disease disease;
 	@PersonalData
 	@SensitiveData
 	private CommunityReferenceDto community;
@@ -126,6 +131,10 @@ public class LocationDto extends PseudonymizableDto {
 	@Pseudonymizer(PostalCodePseudonymizer.class)
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
 	private String postalCode;
+	@PersonalData()
+	@SensitiveData()
+	@Size(max = FieldConstraints.CHARACTER_LIMIT_DEFAULT, message = Validations.textTooLong)
+	private String landMark;
 	@PersonalData
 	@SensitiveData
 	@Size(max = FieldConstraints.CHARACTER_LIMIT_BIG, message = Validations.textTooLong)
@@ -144,6 +153,9 @@ public class LocationDto extends PseudonymizableDto {
 	@PersonalData
 	@SensitiveData
 	private FacilityType facilityType;
+
+	@PersonalData
+	private DhimsFacility dhimsFacilityType;
 	@PersonalData
 	@SensitiveData
 	private FacilityReferenceDto facility;
@@ -174,6 +186,14 @@ public class LocationDto extends PseudonymizableDto {
 
 	public void setDetails(String details) {
 		this.details = details;
+	}
+
+	public Disease getDisease() {
+		return disease;
+	}
+
+	public void setDisease(Disease disease) {
+		this.disease = disease;
 	}
 
 	public String getCity() {
@@ -272,6 +292,10 @@ public class LocationDto extends PseudonymizableDto {
 		this.postalCode = postalCode;
 	}
 
+	public  String getLandMark(){return  landMark;}
+
+	public void setLandMark(String landMark){this.landMark = landMark;}
+
 	public String getStreet() {
 		return street;
 	}
@@ -318,6 +342,14 @@ public class LocationDto extends PseudonymizableDto {
 
 	public void setFacilityType(FacilityType facilityType) {
 		this.facilityType = facilityType;
+	}
+
+	public DhimsFacility getDhimsFacilityType() {
+		return dhimsFacilityType;
+	}
+
+	public void setDhimsFacilityType(DhimsFacility dhimsFacilityType) {
+		this.dhimsFacilityType = dhimsFacilityType;
 	}
 
 	public FacilityReferenceDto getFacility() {

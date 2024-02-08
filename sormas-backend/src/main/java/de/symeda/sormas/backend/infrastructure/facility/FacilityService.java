@@ -33,9 +33,11 @@ import javax.validation.constraints.NotNull;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.EntityRelevanceStatus;
 import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.infrastructure.facility.FacilityCriteria;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
+import de.symeda.sormas.api.utils.AFPFacilityOptions;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.backend.common.AbstractInfrastructureAdoService;
 import de.symeda.sormas.backend.common.CriteriaBuilderHelper;
@@ -96,6 +98,38 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 		return facilities;
 	}
 
+	public List<Facility> getActiveFacilitiesByCommunityAndType(
+			Community community,
+			DhimsFacility dhimsFacilityType,
+			boolean includeOtherFacility,
+			boolean includeNoneFacility) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Facility> cq = cb.createQuery(getElementClass());
+		Root<Facility> from = cq.from(getElementClass());
+
+		Predicate filter = createBasicFilter(cb, from);
+
+		if (dhimsFacilityType != null) {
+			filter = cb.and(filter, cb.equal(from.get(Facility.DHIMS_FACILITY_TYPE), dhimsFacilityType));
+		}
+		filter = cb.and(filter, cb.equal(from.get(Facility.COMMUNITY), community));
+		cq.where(filter);
+		cq.distinct(true);
+		cq.orderBy(cb.asc(from.get(Facility.NAME)));
+
+		List<Facility> facilities = em.createQuery(cq).getResultList();
+
+		if (includeOtherFacility) {
+			facilities.add(getByUuid(FacilityDto.OTHER_FACILITY_UUID));
+		}
+		if (includeNoneFacility) {
+			facilities.add(getByUuid(FacilityDto.NONE_FACILITY_UUID));
+		}
+
+		return facilities;
+	}
+
 	public List<Facility> getActiveFacilitiesByDistrictAndType(
 			District district,
 			FacilityType type,
@@ -110,6 +144,7 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 		if (type != null) {
 			filter = cb.and(filter, cb.equal(from.get(Facility.TYPE), type));
 		}
+
 		filter = cb.and(filter, cb.equal(from.get(Facility.DISTRICT), district));
 		cq.where(filter);
 		cq.distinct(true);
@@ -118,6 +153,38 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 		List<Facility> facilities = em.createQuery(cq).getResultList();
 
 		if (includeOtherFacility) {
+			facilities.add(getByUuid(FacilityDto.OTHER_FACILITY_UUID));
+		}
+		if (includeNoneFacility) {
+			facilities.add(getByUuid(FacilityDto.NONE_FACILITY_UUID));
+		}
+
+		return facilities;
+	}
+
+	public List<Facility> getActiveFacilitiesByDistrictAndType(
+			District district,
+			DhimsFacility dhimsFacilityType,
+			boolean includeDhimsFacility,
+			boolean includeNoneFacility) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Facility> cq = cb.createQuery(getElementClass());
+		Root<Facility> from = cq.from(getElementClass());
+
+		Predicate filter = createBasicFilter(cb, from);
+
+		if (dhimsFacilityType != null) {
+			filter = cb.and(filter, cb.equal(from.get(Facility.DHIMS_FACILITY_TYPE), dhimsFacilityType));
+		}
+		filter = cb.and(filter, cb.equal(from.get(Facility.DISTRICT), district));
+		cq.where(filter);
+		cq.distinct(true);
+		cq.orderBy(cb.asc(from.get(Facility.NAME)));
+
+		List<Facility> facilities = em.createQuery(cq).getResultList();
+
+		if (includeDhimsFacility) {
 			facilities.add(getByUuid(FacilityDto.OTHER_FACILITY_UUID));
 		}
 		if (includeNoneFacility) {
@@ -212,11 +279,13 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 
 
 	public List<Facility> getFacilitiesByNameAndType(
-			String name,
-			District district,
-			Community community,
-			FacilityType type,
-			boolean includeArchivedEntities) {
+		String name,
+		District district,
+		Community community,
+		FacilityType type,
+		DhimsFacility dhimsFacilityType,
+		AFPFacilityOptions afpType,
+		boolean includeArchivedEntities) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Facility> cq = cb.createQuery(getElementClass());
@@ -239,6 +308,12 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 
 			if (type != null) {
 				filter = cb.and(filter, cb.equal(from.get(Facility.TYPE), type));
+			}
+			if (dhimsFacilityType != null) {
+				filter = cb.and(filter, cb.equal(from.get(Facility.DHIMS_FACILITY_TYPE), dhimsFacilityType));
+			}
+			if (afpType != null) {
+				filter = cb.and(filter, cb.equal(from.get(Facility.AFP_TYPE), afpType));
 			}
 		}
 
@@ -338,6 +413,11 @@ public class FacilityService extends AbstractInfrastructureAdoService<Facility, 
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(root.get(Facility.TYPE), facilityCriteria.getType()));
 		} else {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.isNotNull(root.get(Facility.TYPE)));
+		}
+		if (facilityCriteria.getDhimsFacilityType() != null) {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(root.get(Facility.DHIMS_FACILITY_TYPE), facilityCriteria.getDhimsFacilityType()));
+		} else {
+			filter = CriteriaBuilderHelper.and(cb, filter, cb.isNotNull(root.get(Facility.DHIMS_FACILITY_TYPE)));
 		}
 		if (facilityCriteria.getRelevanceStatus() != null) {
 			if (facilityCriteria.getRelevanceStatus() == EntityRelevanceStatus.ACTIVE) {

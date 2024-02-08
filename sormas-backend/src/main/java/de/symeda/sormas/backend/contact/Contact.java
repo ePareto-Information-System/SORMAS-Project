@@ -44,6 +44,7 @@ import javax.persistence.Transient;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.caze.VaccinationStatus;
+import de.symeda.sormas.api.caze.TransmissionClassification;
 import de.symeda.sormas.api.contact.ContactCategory;
 import de.symeda.sormas.api.contact.ContactClassification;
 import de.symeda.sormas.api.contact.ContactIdentificationSource;
@@ -292,7 +293,7 @@ public class Contact extends CoreAdo implements SormasToSormasShareable, HasExte
 		Disease.YELLOW_FEVER,
 		Disease.CSM,
 		Disease.RABIES,
-		Disease.UNSPECIFIED_VHF,
+		Disease.AHF,
 		Disease.ANTHRAX,
 		Disease.CORONAVIRUS,
 		Disease.OTHER })
@@ -316,6 +317,7 @@ public class Contact extends CoreAdo implements SormasToSormasShareable, HasExte
 	public void setPersonId(Long personId) {
 		this.personId = personId;
 	}
+	
 
 	@ManyToOne(cascade = {})
 	@JoinColumn(nullable = false)
@@ -536,8 +538,10 @@ public class Contact extends CoreAdo implements SormasToSormasShareable, HasExte
 			getUuid(),
 			contactPerson.getFirstName(),
 			contactPerson.getLastName(),
+			contactPerson.getOtherName(),
 			getCaze() != null ? getCaze().getPerson().getFirstName() : null,
-			getCaze() != null ? getCaze().getPerson().getLastName() : null);
+			getCaze() != null ? getCaze().getPerson().getLastName() : null,
+			getCaze() != null ? getCaze().getPerson().getOtherName() : null);
 	}
 
 	@OneToMany(cascade = {}, mappedBy = Task.CONTACT)
@@ -1046,14 +1050,6 @@ public class Contact extends CoreAdo implements SormasToSormasShareable, HasExte
 	public void setReturningTraveler(YesNoUnknown returningTraveler) {
 		this.returningTraveler = returningTraveler;
 	}
-	@Enumerated(EnumType.STRING)
-	public TransmissionClassification getContactTransmissionClassification() {
-		return contactTransmissionClassification;
-	}
-
-	public void setContactTransmissionClassification(TransmissionClassification contactTransmissionClassification) {
-		this.contactTransmissionClassification = contactTransmissionClassification;
-	}
 
 	@Temporal(TemporalType.DATE)
 	public Date getFollowUpStatusChangeDate() {
@@ -1108,4 +1104,14 @@ public class Contact extends CoreAdo implements SormasToSormasShareable, HasExte
 	public void setQuarantineChangeComment(String quarantineChangeComment) {
 		this.quarantineChangeComment = quarantineChangeComment;
 	}
+	@Enumerated(EnumType.STRING)
+	public TransmissionClassification getContactTransmissionClassification() {
+		return contactTransmissionClassification;
+	}
+
+	
+	public void setContactTransmissionClassification(TransmissionClassification contactTransmissionClassification) {
+		this.contactTransmissionClassification = contactTransmissionClassification;
+	}
+	
 }

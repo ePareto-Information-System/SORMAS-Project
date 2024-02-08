@@ -29,6 +29,7 @@ import de.symeda.sormas.api.dashboard.DashboardCriteria;
 import de.symeda.sormas.api.disease.DiseaseVariant;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
+import de.symeda.sormas.api.infrastructure.facility.DhimsFacility;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
@@ -40,6 +41,8 @@ import de.symeda.sormas.api.person.SymptomJournalStatus;
 import de.symeda.sormas.api.share.ExternalShareCriteria;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRoleReferenceDto;
+import de.symeda.sormas.api.utils.AFPFacilityOptions;
+import de.symeda.sormas.api.utils.CardOrHistory;
 import de.symeda.sormas.api.utils.DateFilterOption;
 import de.symeda.sormas.api.utils.IgnoreForUrl;
 import de.symeda.sormas.api.utils.criteria.CriteriaDateType;
@@ -77,6 +80,8 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	public static final String REINFECTION_STATUS = "reinfectionStatus";
 	public static final String FACILITY_TYPE_GROUP = "facilityTypeGroup";
 	public static final String FACILITY_TYPE = "facilityType";
+	public static final String DHIMS_FACILITY_TYPE = "dhimsFacilityType";
+	public static final String AFP_FACILITY_OPTIONS = "afpFacilityOptions";
 	public static final String INCLUDE_CASES_FROM_OTHER_JURISDICTIONS = "includeCasesFromOtherJurisdictions";
 	public static final String ONLY_CONTACTS_FROM_OTHER_INSTANCES = "onlyContactsFromOtherInstances";
 	public static final String ONLY_CASES_WITH_REINFECTION = "onlyCasesWithReinfection";
@@ -140,6 +145,8 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	private Integer followUpVisitsInterval;
 	private SymptomJournalStatus symptomJournalStatus;
 	private VaccinationStatus vaccinationStatus;
+	private CardOrHistory vaccinationType;
+	private Date vaccinationDate;
 	private ReinfectionStatus reinfectionStatus;
 	private Date reportDateTo;
 	private Date reportDateFrom;
@@ -150,6 +157,8 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	private String viewMode;
 	
 	public Boolean excludeSharedCases;
+	private DhimsFacility dhimsFacilityType;
+	private AFPFacilityOptions afpFacilityOptions;
 	private Boolean onlyContactsFromOtherInstances;
 	private Boolean onlyCasesWithReinfection;
 	private Boolean onlyEntitiesNotSharedWithExternalSurvTool;
@@ -674,10 +683,18 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	public VaccinationStatus getVaccinationStatus() {
 		return vaccinationStatus;
 	}
+	public CardOrHistory getVaccinationType() {
+		return vaccinationType;
+	}
+	public Date getVaccinationDate() {
+		return vaccinationDate;
+	}
 
 	public void setVaccinationStatus(VaccinationStatus vaccinationStatus) {
 		this.vaccinationStatus = vaccinationStatus;
 	}
+	public void setVaccinationType(CardOrHistory vaccinationType) {this.vaccinationType = vaccinationType;}
+	public void setVaccinationDate(Date vaccinationDate) {this.vaccinationDate = vaccinationDate;}
 
 	public ReinfectionStatus getReinfectionStatus() {
 		return reinfectionStatus;
@@ -720,6 +737,20 @@ public class CaseCriteria extends CriteriaWithDateType implements ExternalShareC
 	public void setFacilityType(FacilityType type) {
 		this.facilityType = type;
 	}
+
+	public DhimsFacility getDhimsFacilityType() {
+		return dhimsFacilityType;
+	}
+
+	public void setDhimsFacilityType(DhimsFacility dhimsFacilityType) {
+		this.dhimsFacilityType = dhimsFacilityType;
+	}
+
+	public AFPFacilityOptions getAfpFacilityOptions() {
+		return afpFacilityOptions;
+	}
+
+	public void setAfpFacilityOptions(AFPFacilityOptions afpFacilityOptions) {this.afpFacilityOptions = afpFacilityOptions;}
 
 	public Boolean getIncludeCasesFromOtherJurisdictions() {
 		return includeCasesFromOtherJurisdictions;

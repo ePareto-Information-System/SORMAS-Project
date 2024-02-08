@@ -27,6 +27,7 @@ public interface Captions {
 	String aboutVersion = "aboutVersion";
 	String aboutWhatsNew = "aboutWhatsNew";
 	String Action = "Action";
+	String Sample_test_PathogenResult = "Sample.test_pathogenResult";
 	String Action_actionContext = "Action.actionContext";
 	String Action_actionMeasure = "Action.actionMeasure";
 	String Action_actionStatus = "Action.actionStatus";
@@ -364,6 +365,7 @@ public interface Captions {
 	String CaseData_healthFacility = "CaseData.healthFacility";
 	String CaseData_healthFacilityDetails = "CaseData.healthFacilityDetails";
 	String CaseData_healthFacilityName = "CaseData.healthFacilityName";
+	String CaseData_homeAddressRecreational = "CaseData.homeAddressRecreational";
 	String CaseData_hospitalization = "CaseData.hospitalization";
 	String CaseData_infectionSetting = "CaseData.infectionSetting";
 	String CaseData_internalToken = "CaseData.internalToken";
@@ -389,11 +391,14 @@ public interface Captions {
 	String CaseData_otherDeletionReason = "CaseData.otherDeletionReason";
 	String CaseData_outcome = "CaseData.outcome";
 	String CaseData_specify_other_outcome = "CaseData.specifyOtherOutcome";
+	String CaseData_clinialOutcome = "CaseData.clinicalOutcome";
 	String CaseData_outcomeDate = "CaseData.outcomeDate";
 	String CaseData_overwriteFollowUpUntil = "CaseData.overwriteFollowUpUntil";
 	String CaseData_person = "CaseData.person";
+	String CaseData_sixtyDay = "CaseData.sixtyDay";
 	String CaseData_personFirstName = "CaseData.personFirstName";
 	String CaseData_personLastName = "CaseData.personLastName";
+	String CaseData_personOtherName = "CaseData.personOtherName";
 	String CaseData_personUuid = "CaseData.personUuid";
 	String CaseData_plagueType = "CaseData.plagueType";
 	String CaseData_pointOfEntry = "CaseData.pointOfEntry";
@@ -404,6 +409,8 @@ public interface Captions {
 	String CaseData_portHealthInfo = "CaseData.portHealthInfo";
 	String CaseData_postpartum = "CaseData.postpartum";
 	String CaseData_pregnant = "CaseData.pregnant";
+	String CaseData_ipSampleSent = "CaseData.ipSampleSent";
+	String CaseData_ipSampleResults = "CaseData.ipSampleResults";
 	String CaseData_previousInfectionDate = "CaseData.previousInfectionDate";
 	String CaseData_previousQuarantineTo = "CaseData.previousQuarantineTo";
 	String CaseData_prohibitionToWork = "CaseData.prohibitionToWork";
@@ -435,6 +442,7 @@ public interface Captions {
 	String CaseData_reInfection = "CaseData.reInfection";
 	String CaseData_reinfectionStatus = "CaseData.reinfectionStatus";
 	String CaseData_reportDate = "CaseData.reportDate";
+	String CaseData_dhimsFacilityType = "CaseData.dhimsFacilityType";
 	String CaseData_reportingDistrict = "CaseData.reportingDistrict";
 	String CaseData_reportingUser = "CaseData.reportingUser";
 	String CaseData_reportLat = "CaseData.reportLat";
@@ -453,6 +461,11 @@ public interface Captions {
 	String CaseData_smallpoxVaccinationScar = "CaseData.smallpoxVaccinationScar";
 	String CaseData_sormasToSormasOriginInfo = "CaseData.sormasToSormasOriginInfo";
 	String CaseData_surveillanceOfficer = "CaseData.surveillanceOfficer";
+	String CaseData_reportingOfficerName = "CaseData.reportingOfficerName";
+	String CaseData_reportingOfficerTitle = "CaseData.reportingOfficerTitle";
+	String CaseData_functionOfReportingOfficer = "CaseData.functionOfReportingOfficer";
+	String CaseData_reportingOfficerContactPhone = "CaseData.reportingOfficerContactPhone";
+	String CaseData_reportingOfficerEmail = "CaseData.reportingOfficerEmail";
 	String CaseData_surveillanceToolLastShareDate = "CaseData.surveillanceToolLastShareDate";
 	String CaseData_surveillanceToolShareCount = "CaseData.surveillanceToolShareCount";
 	String CaseData_surveillanceToolStatus = "CaseData.surveillanceToolStatus";
@@ -463,6 +476,8 @@ public interface Captions {
 	String CaseData_uuid = "CaseData.uuid";
 	String CaseData_vaccinationStatus = "CaseData.vaccinationStatus";
 	String CaseData_vaccinationStatusUpdate = "CaseData.vaccinationStatusUpdate";
+	String CaseData_vaccinationType = "CaseData.vaccinationType";
+	String CaseData_vaccinationDate = "CaseData.vaccinationDate";
 	String CaseData_visits = "CaseData.visits";
 	String CaseData_wasInQuarantineBeforeIsolation = "CaseData.wasInQuarantineBeforeIsolation";
 	String caseDataEnterHomeAddressNow = "caseDataEnterHomeAddressNow";
@@ -496,6 +511,7 @@ public interface Captions {
 	String CaseExport_lastCooperativeVisitSymptomatic = "CaseExport.lastCooperativeVisitSymptomatic";
 	String CaseExport_lastCooperativeVisitSymptoms = "CaseExport.lastCooperativeVisitSymptoms";
 	String CaseExport_lastName = "CaseExport.lastName";
+	String CaseExport_otherName = "CaseExport.otherName";
 	String CaseExport_maxSourceCaseClassification = "CaseExport.maxSourceCaseClassification";
 	String CaseExport_numberOfClinicalVisits = "CaseExport.numberOfClinicalVisits";
 	String CaseExport_numberOfPrescriptions = "CaseExport.numberOfPrescriptions";
@@ -551,9 +567,13 @@ public interface Captions {
 	String CaseHospitalization = "CaseHospitalization";
 	String CaseHospitalization_admissionDate = "CaseHospitalization.admissionDate";
 	String CaseHospitalization_admittedToHealthFacility = "CaseHospitalization.admittedToHealthFacility";
+	String CaseHospitalization_terminationDateHospitalStay = "CaseHospitalization.terminationDateHospitalStay";
+	String CaseHospitalization_notifyDistrictDate = "CaseHospitalization.notifyDistrictDate";
 	String CaseHospitalization_dischargeDate = "CaseHospitalization.dischargeDate";
 	String CaseHospitalization_healthFacility = "CaseHospitalization.healthFacility";
 	String CaseHospitalization_healthFacilityRecordNumber = "CaseHospitalization.healthFacilityRecordNumber";
+	String CaseHospitalization_fillSectionBeforeSigningLoc = "CaseHospitalization.fillSectionBeforeSigning";
+	String CaseHospitalization_seekHelpChildLoc = "CaseHospitalization.seekHelpChild";
 	String CaseHospitalization_hospitalizationReason = "CaseHospitalization.hospitalizationReason";
 	String CaseHospitalization_hospitalizedPreviously = "CaseHospitalization.hospitalizedPreviously";
 	String CaseHospitalization_intensiveCareUnit = "CaseHospitalization.intensiveCareUnit";
@@ -563,6 +583,21 @@ public interface Captions {
 	String CaseHospitalization_isolationDate = "CaseHospitalization.isolationDate";
 	String CaseHospitalization_leftAgainstAdvice = "CaseHospitalization.leftAgainstAdvice";
 	String CaseHospitalization_otherHospitalizationReason = "CaseHospitalization.otherHospitalizationReason";
+	String CaseHospitalization_diseaseOnsetDate = "CaseHospitalization.diseaseOnsetDate";
+	String CaseHospitalization_patientHospitalizedOrDetained = "CaseHospitalization.patientHospitalizedOrDetained";
+	String CaseHospitalization_dateFirstSeen = "CaseHospitalization.dateFirstSeen";
+	String CaseHospitalization_durationMonths = "CaseHospitalization.durationMonths";
+	String CaseHospitalization_durationDays = "CaseHospitalization.durationDays";
+	String CaseHospitalization_investigatorName = "CaseHospitalization.investigatorName";
+	String CaseHospitalization_place2 = "CaseHospitalization.place2";
+	String CaseHospitalization_durationMonths2 = "CaseHospitalization.durationMonths2";
+	String CaseHospitalization_durationDays2 = "CaseHospitalization.durationDays2";
+	String CaseHospitalization_investigatorName2 = "CaseHospitalization.investigatorName";
+	String CaseHospitalization_investigatorTitle = "CaseHospitalization.investigatorTitle";
+	String CaseHospitalization_investigatorUnit = "CaseHospitalization.investigatorUnit";
+	String CaseHospitalization_investigatorAddress = "CaseHospitalization.investigatorAddress";
+	String CaseHospitalization_investigatorTel = "CaseHospitalization.investigatorTel";
+
 	String CaseHospitalization_previousHospitalizations = "CaseHospitalization.previousHospitalizations";
 	String caseImportErrorDescription = "caseImportErrorDescription";
 	String caseImportMergeCase = "caseImportMergeCase";
@@ -877,6 +912,7 @@ public interface Captions {
 	String dashboardFollowUpUntilChart = "dashboardFollowUpUntilChart";
 	String dashboardFollowUpUntilShort = "dashboardFollowUpUntilShort";
 	String dashboardGrouping = "dashboardGrouping";
+	String sampleDispatchMode = "sampleDispatchMode";
 	String dashboardGt1ConfirmedCases = "dashboardGt1ConfirmedCases";
 	String dashboardGt1ProbableCases = "dashboardGt1ProbableCases";
 	String dashboardGt1SuspectCases = "dashboardGt1SuspectCases";
@@ -1023,6 +1059,7 @@ public interface Captions {
 	String devModeSampleLaboratory = "devModeSampleLaboratory";
 	String devModeSampleMaterial = "devModeSampleMaterial";
 	String devModeSamplePathogenTestsToBePerformed = "devModeSamplePathogenTestsToBePerformed";
+	String devModeSampleMaterialsToBeAdded = "devModeSampleMaterialsToBeAdded";
 	String devModeSampleReceived = "devModeSampleReceived";
 	String devModeSampleRegion = "devModeSampleRegion";
 	String devModeSampleSendDispatch = "devModeSampleSendDispatch";
@@ -1293,6 +1330,7 @@ public interface Captions {
 	String EventParticipantExport_eventTitle = "EventParticipantExport.eventTitle";
 	String EventParticipantExport_eventTypeOfPlace = "EventParticipantExport.eventTypeOfPlace";
 	String EventParticipantExport_personNationalHealthId = "EventParticipantExport.personNationalHealthId";
+	String EventParticipantExport_personGhanaCard = "EventParticipantExport.personGhanaCard";
 	String EventParticipantExport_sampleInformation = "EventParticipantExport.sampleInformation";
 	String eventParticipantSelect = "eventParticipantSelect";
 	String EventParticipantSelection_eventParticipantUuidLink = "EventParticipantSelection.eventParticipantUuidLink";
@@ -1466,6 +1504,8 @@ public interface Captions {
 	String facilityAllFacilities = "facilityAllFacilities";
 	String facilityArchivedFacilities = "facilityArchivedFacilities";
 	String facilityType = "facilityType";
+	String dhimsFacilityType = "dhimsFacilityType";
+	String afpFacilityOptions = "afpFacilityOptions";
 	String facilityTypeGroup = "facilityTypeGroup";
 	String FeatureConfiguration_districtName = "FeatureConfiguration.districtName";
 	String FeatureConfiguration_enabled = "FeatureConfiguration.enabled";
@@ -1628,6 +1668,7 @@ public interface Captions {
 	String Location_postalCode = "Location.postalCode";
 	String Location_region = "Location.region";
 	String Location_street = "Location.street";
+	String Location_landmark = "Location.landmark";
 	String Location_subcontinent = "Location.subcontinent";
 	String Login_doLogIn = "Login.doLogIn";
 	String Login_login = "Login.login";
@@ -1682,6 +1723,31 @@ public interface Captions {
 	String MaternalHistory_swollenLymphs = "MaternalHistory.swollenLymphs";
 	String MaternalHistory_swollenLymphsMonth = "MaternalHistory.swollenLymphsMonth";
 	String MaternalHistory_swollenLymphsOnset = "MaternalHistory.swollenLymphsOnset";
+
+	String SixtyDay_personExamineCase = "SixtyDay.personExamineCase";
+	String SixtyDay_dateOfFollowup = "SixtyDay.dateOfFollowup";
+	String SixtyDay_dateBirth = "SixtyDay.dateBirth";
+	String SixtyDay_residentialLocation = "SixtyDay.residentialLocation";
+	String SixtyDay_patientFound = "SixtyDay.patientFound";
+	String SixtyDay_patientFoundReason = "SixtyDay.patientFoundReason";
+	String SixtyDay_locateChildAttempt = "SixtyDay.locateChildAttempt";
+	String SixtyDay_paralysisWeaknessPresent = "SixtyDay.paralysisWeaknessPresent";
+	String SixtyDay_paralysisWeaknessPresentSite = "SixtyDay.paralysisWeaknessPresentSite";
+	String SixtyDay_paralyzedPartOther = "SixtyDay.paralyzedPartOther";
+	String SixtyDay_paralysisWeaknessFloppy = "SixtyDay.paralysisWeaknessFloppy";
+	String SixtyDay_muscleToneParalyzedPart = "SixtyDay.muscleToneParalyzedPart";
+	String SixtyDay_muscleToneOtherPartBody = "SixtyDay.muscleToneOtherPartBody";
+	String SixtyDay_deepTendon = "SixtyDay.deepTendon";
+	String SixtyDay_muscleVolume = "SixtyDay.muscleVolume";
+	String SixtyDay_sensoryLoss = "SixtyDay.sensoryLoss";
+	String SixtyDay_provisionalDiagnosis = "SixtyDay.provisionalDiagnosis";
+	String SixtyDay_comments = "SixtyDay.comments";
+	String SixtyDay_contactDetailsNumber = "SixtyDay.contactDetailsNumber";
+	String SixtyDay_contactDetailsEmail = "SixtyDay.contactDetailsEmail";
+	String SixtyDay_signature = "SixtyDay.signature";
+	String SixtyDay_dateSubmissionForms = "SixtyDay.dateSubmissionForms";
+
+
 	String menu = "menu";
 	String messagesCharacters = "messagesCharacters";
 	String messagesEmail = "messagesEmail";
@@ -1697,6 +1763,7 @@ public interface Captions {
 	String moreActions = "moreActions";
 	String name = "name";
 	String nationalHealthId = "nationalHealthId";
+	String ghanaCard = "ghanaCard";
 	String notAvailableShort = "notAvailableShort";
 	String notificationType = "notificationType";
 	String notificationType_caption = "notificationType.caption";
@@ -1753,6 +1820,7 @@ public interface Captions {
 	String patientDiaryRegistrationError = "patientDiaryRegistrationError";
 	String Person = "Person";
 	String Person_additionalDetails = "Person.additionalDetails";
+	String Person_additionalPlacesStayed = "Person.additionalPlacesStayed";
 	String Person_address = "Person.address";
 	String Person_addresses = "Person.addresses";
 	String Person_ageAndBirthDate = "Person.ageAndBirthDate";
@@ -1796,6 +1864,7 @@ public interface Captions {
 	String Person_mothersName = "Person.mothersName";
 	String Person_namesOfGuardians = "Person.namesOfGuardians";
 	String Person_nationalHealthId = "Person.nationalHealthId";
+	String Person_ghanaCard = "Person.ghanaCard";
 	String Person_nickname = "Person.nickname";
 	String Person_occupationCommunity = "Person.occupationCommunity";
 	String Person_occupationDetails = "Person.occupationDetails";
@@ -1805,6 +1874,8 @@ public interface Captions {
 	String Person_occupationFacilityType = "Person.occupationFacilityType";
 	String Person_occupationRegion = "Person.occupationRegion";
 	String Person_occupationType = "Person.occupationType";
+	String Person_homeAddressRecreational = "Person.homeAddressRecreational";
+	String Person_other_occupationDetails = "Person.other.occupationDetails";
 	String Person_otherContactDetails = "Person.otherContactDetails";
 	String Person_otherSalutation = "Person.otherSalutation";
 	String Person_passportNumber = "Person.passportNumber";
@@ -1990,10 +2061,77 @@ public interface Captions {
 	String Sample_shipped = "Sample.shipped";
 	String Sample_specimenCondition = "Sample.specimenCondition";
 	String Sample_suggestedTypeOfTest = "Sample.suggestedTypeOfTest";
-	
-	String Sample_testResult = "Sample.test_Result";
-	String Sample_test_PathogenResult = "Sample.test_pathogenResult";
-	
+	String Sample_testResult = "Sample.testResult";
+	String Sample_csfSampleCollected = "Sample.csfSampleCollected";
+	String Sample_rdtPerformed = "Sample.rdtPerformed";
+	String Sample_sampleSentToLab = "Sample.sampleSentToLab";
+
+	String Sample_csfReason = "Sample.csfReason";
+	String Sample_appearanceOfCsf = "Sample.appearanceOfCsf";
+	String Sample_sampleContainerUsed = "Sample.sampleContainerUsed";
+
+	String Sample_rdtResults = "Sample.rdtResults";
+	String Sample_reasonNotSentToLab = "Sample.reasonNotSentToLab";
+	String Sample_nameOfPerson = "Sample.nameOfPerson";
+	String Sample_telNumber = "Sample.telNumber";
+
+	String Sample_inoculationTimeTransportMedia = "Sample.inoculationTimeTransportMedia";
+	String Sample_districtNotificationDate = "Sample.districtNotificationDate";
+	String Sample_dateSampleSentToLab = "Sample.dateSampleSentToLab";
+	String Sample_dateFormSentToDistrict = "Sample.dateFormSentToDistrict";
+	String Sample_dateFormReceivedAtDistrict = "Sample.dateFormReceivedAtDistrict";
+	String Sample_dateFormSentToRegion = "Sample.dateFormSentToRegion";
+	String Sample_dateFormReceivedAtRegion = "Sample.dateFormReceivedAtRegion";
+	String Sample_dateFormSentToNational = "Sample.dateFormSentToNational";
+	String Sample_dateFormReceivedAtNational = "Sample.dateFormReceivedAtNational";
+	String Sample_sampleTests = "Sample.sampleTests";
+
+
+	String Sample_laboratoryName = "Sample.laboratoryName";
+	String Sample_laboratorySampleDateReceived = "Sample.laboratorySampleDateReceived";
+	String Sample_laboratoryNumber = "Sample.laboratoryNumber";
+	String Sample_laboratorySampleContainerReceived = "Sample.laboratorySampleContainerReceived";
+	String Sample_laboratorySampleContainerOther = "Sample.laboratorySampleContainerOther";
+	String Sample_laboratorySampleCondition = "Sample.laboratorySampleCondition";
+	String Sample_laboratoryAppearanceOfCSF = "Sample.laboratoryAppearanceOfCSF";
+	String Sample_laboratoryTestPerformed = "Sample.laboratoryTestPerformed";
+	String Sample_laboratoryTestPerformedOther = "Sample.laboratoryTestPerformedOther";
+	String Sample_laboratoryCytology = "Sample.laboratoryCytology";
+	String Sample_laboratoryGram = "Sample.laboratoryGram";
+	String Sample_laboratoryGramOther = "Sample.laboratoryGramOther";
+	String Sample_laboratoryRdtPerformed = "Sample.laboratoryRdtPerformed";
+	String Sample_laboratoryRdtResults = "Sample.laboratoryRdtResults";
+	String Sample_laboratoryLatex = "Sample.laboratoryLatex";
+	String Sample_laboratoryCulture = "Sample.laboratoryCulture";
+	String Sample_laboratoryCultureOther = "Sample.laboratoryCultureOther";
+	String Sample_laboratoryOtherTests = "Sample.laboratoryOtherTests";
+	String Sample_laboratoryOtherTestsResults = "Sample.laboratoryOtherTestsResults";
+	String Sample_laboratoryCeftriaxone = "Sample.laboratoryCeftriaxone";
+	String Sample_laboratoryPenicillinG = "Sample.laboratoryPenicillinG";
+	String Sample_laboratoryAmoxycillin = "Sample.laboratoryAmoxycillin";
+	String Sample_laboratoryOxacillin = "Sample.laboratoryOxacillin";
+	String Sample_laboratoryAntibiogramOther = "Sample.laboratoryAntibiogramOther";
+	String Sample_laboratoryDatePcrPerformed = "Sample.laboratoryDatePcrPerformed";
+	String Sample_laboratoryPcrType = "Sample.laboratoryPcrType";
+	String Sample_laboratoryPcrOptions = "Sample.laboratoryPcrOptions";
+	String Sample_laboratorySerotype = "Sample.laboratorySerotype";
+	String Sample_laboratorySerotypeType = "Sample.laboratorySerotypeType";
+	String Sample_laboratorySerotypeResults = "Sample.laboratorySerotypeResults";
+	String Sample_laboratoryFinalResults = "Sample.laboratoryFinalResults";
+	String Sample_laboratoryObservations = "Sample.laboratoryObservations";
+	String Sample_laboratoryDateResultsSentHealthFacility = "Sample.laboratoryDateResultsSentHealthFacility";
+	String Sample_laboratoryDateResultsSentDSD = "Sample.laboratoryDateResultsSentDSD";
+	String Sample_laboratoryFinalClassification = "Sample.laboratoryFinalClassification";
+	String Sample_laboratoryType = "Sample.laboratoryType";
+
+	String Sample_dateSentToNationalRegLabString = "Sample.dateSentToNationalRegLab";
+	String Sample_dateDifferentiationSentToEpiString = "Sample.dateDifferentiationSentToEpi";
+	String Sample_dateDifferentiationReceivedFromEpiString = "Sample.dateDifferentiationReceivedFromEpi";
+	String Sample_dateIsolateSentForSequencingString = "Sample.dateIsolateSentForSequencing";
+	String Sample_dateSeqResultsSentToProgramString = "Sample.dateSeqResultsSentToProgram";
+	String Sample_finalLabResultsString = "Sample.finalLabResults";
+	String Sample_immunocompromisedStatusSuspectedString = "Sample.immunocompromisedStatusSuspected";
+	String Sample_afpFinalClassificationString = "Sample.afpFinalClassification";
 	String Sample_testStatusGen = "Sample.testStatusGen";
 	String Sample_testType = "Sample.testType";
 	String Sample_typeOfTest = "Sample.typeOfTest";
@@ -2275,6 +2413,7 @@ public interface Captions {
 	String Symptoms_fever = "Symptoms.fever";
 	String Symptoms_feverishFeeling = "Symptoms.feverishFeeling";
 	String Symptoms_firstSymptom = "Symptoms.firstSymptom";
+	String Symptoms_provisionalDiagnosis = "Symptoms.provisionalDiagnosis";
 	String Symptoms_fluidInLungCavity = "Symptoms.fluidInLungCavity";
 	String Symptoms_fluidInLungCavityAuscultation = "Symptoms.fluidInLungCavityAuscultation";
 	String Symptoms_fluidInLungCavityXray = "Symptoms.fluidInLungCavityXray";
@@ -2282,6 +2421,10 @@ public interface Captions {
 	String Symptoms_gumsBleeding = "Symptoms.gumsBleeding";
 	String Symptoms_headache = "Symptoms.headache";
 	String Symptoms_generalBodilyPains = "Symptoms.generalBodilyPains";
+	String Symptoms_muscleTone = "Symptoms.muscleTone";
+	String Symptoms_deepTendonReflex = "Symptoms.deepTendonReflex";
+	String Symptoms_muscleVolume = "Symptoms.muscleVolume";
+	String Symptoms_sensoryLoss = "Symptoms.sensoryLoss";
 	String Symptoms_hearingloss = "Symptoms.hearingloss";
 	String Symptoms_heartRate = "Symptoms.heartRate";
 	String Symptoms_height = "Symptoms.height";
@@ -2397,6 +2540,8 @@ public interface Captions {
 	String Symptoms_symptomsUnknownOccurred = "Symptoms.symptomsUnknownOccurred";
 	String Symptoms_temperature = "Symptoms.temperature";
 	String Symptoms_temperatureSource = "Symptoms.temperatureSource";
+	String Symptoms_dateOfOnset = "Symptoms.dateOfOnset";
+	String Symptoms_feverBodyTempGreater = "Symptoms.feverBodyTempGreater";
 	String Symptoms_throbocytopenia = "Symptoms.throbocytopenia";
 	String Symptoms_tremor = "Symptoms.tremor";
 	String Symptoms_unexplainedBleeding = "Symptoms.unexplainedBleeding";

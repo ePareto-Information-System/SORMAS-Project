@@ -42,7 +42,7 @@ import de.symeda.sormas.api.exposure.GatheringType;
 import de.symeda.sormas.api.exposure.HabitationType;
 import de.symeda.sormas.api.exposure.TypeOfAnimal;
 import de.symeda.sormas.api.exposure.WorkEnvironment;
-import de.symeda.sormas.api.utils.YesNoUnknown;
+import de.symeda.sormas.api.utils.YesNo;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.contact.Contact;
 import de.symeda.sormas.backend.epidata.EpiData;
@@ -83,31 +83,31 @@ public class Exposure extends AbstractDomainObject {
 	private WorkEnvironment workEnvironment;
 
 	// Details
-	private YesNoUnknown indoors;
-	private YesNoUnknown outdoors;
-	private YesNoUnknown wearingMask;
-	private YesNoUnknown wearingPpe;
-	private YesNoUnknown otherProtectiveMeasures;
+	private YesNo indoors;
+	private YesNo outdoors;
+	private YesNo wearingMask;
+	private YesNo wearingPpe;
+	private YesNo otherProtectiveMeasures;
 	private String protectiveMeasuresDetails;
-	private YesNoUnknown shortDistance;
-	private YesNoUnknown longFaceToFaceContact;
-	private YesNoUnknown animalMarket;
-	private YesNoUnknown percutaneous;
-	private YesNoUnknown contactToBodyFluids;
-	private YesNoUnknown handlingSamples;
-	private YesNoUnknown eatingRawAnimalProducts;
-	private YesNoUnknown handlingAnimals;
+	private YesNo shortDistance;
+	private YesNo longFaceToFaceContact;
+	private YesNo animalMarket;
+	private YesNo percutaneous;
+	private YesNo contactToBodyFluids;
+	private YesNo handlingSamples;
+	private YesNo eatingRawAnimalProducts;
+	private YesNo handlingAnimals;
 	private AnimalCondition animalCondition;
-	private YesNoUnknown animalVaccinated;
+	private YesNo animalVaccinated;
 	private AnimalContactType animalContactType;
 	private String animalContactTypeDetails;
-	private YesNoUnknown bodyOfWater;
+	private YesNo bodyOfWater;
 	private WaterSource waterSource;
 	private String waterSourceDetails;
 	private Contact contactToCase;
-	private YesNoUnknown prophylaxis;
+	private YesNo prophylaxis;
 	private Date prophylaxisDate;
-	private YesNoUnknown riskArea;
+	private YesNo riskArea;
 
 	// Exposure sub-types
 	private GatheringType gatheringType;
@@ -118,14 +118,14 @@ public class Exposure extends AbstractDomainObject {
 	private String typeOfAnimalDetails;
 
 	// Fields specific to ExposureType.BURIAL
-	private YesNoUnknown physicalContactDuringPreparation;
-	private YesNoUnknown physicalContactWithBody;
-	private YesNoUnknown deceasedPersonIll;
+	private YesNo physicalContactDuringPreparation;
+	private YesNo physicalContactWithBody;
+	private YesNo deceasedPersonIll;
 	private String deceasedPersonName;
 	private String deceasedPersonRelation;
 
 	// Fields specific to ExposureType.GATHERING
-	private YesNoUnknown largeAttendanceNumber;
+	private YesNo largeAttendanceNumber;
 
 	@ManyToOne
 	@JoinColumn(nullable = false)
@@ -225,47 +225,47 @@ public class Exposure extends AbstractDomainObject {
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getIndoors() {
+	public YesNo getIndoors() {
 		return indoors;
 	}
 
-	public void setIndoors(YesNoUnknown indoors) {
+	public void setIndoors(YesNo indoors) {
 		this.indoors = indoors;
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getOutdoors() {
+	public YesNo getOutdoors() {
 		return outdoors;
 	}
 
-	public void setOutdoors(YesNoUnknown outdoors) {
+	public void setOutdoors(YesNo outdoors) {
 		this.outdoors = outdoors;
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getWearingMask() {
+	public YesNo getWearingMask() {
 		return wearingMask;
 	}
 
-	public void setWearingMask(YesNoUnknown wearingMask) {
+	public void setWearingMask(YesNo wearingMask) {
 		this.wearingMask = wearingMask;
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getWearingPpe() {
+	public YesNo getWearingPpe() {
 		return wearingPpe;
 	}
 
-	public void setWearingPpe(YesNoUnknown wearingPpe) {
+	public void setWearingPpe(YesNo wearingPpe) {
 		this.wearingPpe = wearingPpe;
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getOtherProtectiveMeasures() {
+	public YesNo getOtherProtectiveMeasures() {
 		return otherProtectiveMeasures;
 	}
 
-	public void setOtherProtectiveMeasures(YesNoUnknown otherProtectiveMeasures) {
+	public void setOtherProtectiveMeasures(YesNo otherProtectiveMeasures) {
 		this.otherProtectiveMeasures = otherProtectiveMeasures;
 	}
 
@@ -279,74 +279,74 @@ public class Exposure extends AbstractDomainObject {
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getShortDistance() {
+	public YesNo getShortDistance() {
 		return shortDistance;
 	}
 
-	public void setShortDistance(YesNoUnknown shortDistance) {
+	public void setShortDistance(YesNo shortDistance) {
 		this.shortDistance = shortDistance;
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getLongFaceToFaceContact() {
+	public YesNo getLongFaceToFaceContact() {
 		return longFaceToFaceContact;
 	}
 
-	public void setLongFaceToFaceContact(YesNoUnknown longFaceToFaceContact) {
+	public void setLongFaceToFaceContact(YesNo longFaceToFaceContact) {
 		this.longFaceToFaceContact = longFaceToFaceContact;
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getAnimalMarket() {
+	public YesNo getAnimalMarket() {
 		return animalMarket;
 	}
 
-	public void setAnimalMarket(YesNoUnknown animalMarket) {
+	public void setAnimalMarket(YesNo animalMarket) {
 		this.animalMarket = animalMarket;
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getPercutaneous() {
+	public YesNo getPercutaneous() {
 		return percutaneous;
 	}
 
-	public void setPercutaneous(YesNoUnknown percutaneous) {
+	public void setPercutaneous(YesNo percutaneous) {
 		this.percutaneous = percutaneous;
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getContactToBodyFluids() {
+	public YesNo getContactToBodyFluids() {
 		return contactToBodyFluids;
 	}
 
-	public void setContactToBodyFluids(YesNoUnknown contactToBodyFluids) {
+	public void setContactToBodyFluids(YesNo contactToBodyFluids) {
 		this.contactToBodyFluids = contactToBodyFluids;
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getHandlingSamples() {
+	public YesNo getHandlingSamples() {
 		return handlingSamples;
 	}
 
-	public void setHandlingSamples(YesNoUnknown handlingSamples) {
+	public void setHandlingSamples(YesNo handlingSamples) {
 		this.handlingSamples = handlingSamples;
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getEatingRawAnimalProducts() {
+	public YesNo getEatingRawAnimalProducts() {
 		return eatingRawAnimalProducts;
 	}
 
-	public void setEatingRawAnimalProducts(YesNoUnknown eatingRawAnimalProducts) {
+	public void setEatingRawAnimalProducts(YesNo eatingRawAnimalProducts) {
 		this.eatingRawAnimalProducts = eatingRawAnimalProducts;
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getHandlingAnimals() {
+	public YesNo getHandlingAnimals() {
 		return handlingAnimals;
 	}
 
-	public void setHandlingAnimals(YesNoUnknown handlingAnimals) {
+	public void setHandlingAnimals(YesNo handlingAnimals) {
 		this.handlingAnimals = handlingAnimals;
 	}
 
@@ -360,11 +360,11 @@ public class Exposure extends AbstractDomainObject {
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getAnimalVaccinated() {
+	public YesNo getAnimalVaccinated() {
 		return animalVaccinated;
 	}
 
-	public void setAnimalVaccinated(YesNoUnknown animalVaccinated) {
+	public void setAnimalVaccinated(YesNo animalVaccinated) {
 		this.animalVaccinated = animalVaccinated;
 	}
 
@@ -387,11 +387,11 @@ public class Exposure extends AbstractDomainObject {
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getBodyOfWater() {
+	public YesNo getBodyOfWater() {
 		return bodyOfWater;
 	}
 
-	public void setBodyOfWater(YesNoUnknown bodyOfWater) {
+	public void setBodyOfWater(YesNo bodyOfWater) {
 		this.bodyOfWater = bodyOfWater;
 	}
 
@@ -478,29 +478,29 @@ public class Exposure extends AbstractDomainObject {
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getPhysicalContactDuringPreparation() {
+	public YesNo getPhysicalContactDuringPreparation() {
 		return physicalContactDuringPreparation;
 	}
 
-	public void setPhysicalContactDuringPreparation(YesNoUnknown physicalContactDuringPreparation) {
+	public void setPhysicalContactDuringPreparation(YesNo physicalContactDuringPreparation) {
 		this.physicalContactDuringPreparation = physicalContactDuringPreparation;
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getPhysicalContactWithBody() {
+	public YesNo getPhysicalContactWithBody() {
 		return physicalContactWithBody;
 	}
 
-	public void setPhysicalContactWithBody(YesNoUnknown physicalContactWithBody) {
+	public void setPhysicalContactWithBody(YesNo physicalContactWithBody) {
 		this.physicalContactWithBody = physicalContactWithBody;
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getDeceasedPersonIll() {
+	public YesNo getDeceasedPersonIll() {
 		return deceasedPersonIll;
 	}
 
-	public void setDeceasedPersonIll(YesNoUnknown deceasedPersonIll) {
+	public void setDeceasedPersonIll(YesNo deceasedPersonIll) {
 		this.deceasedPersonIll = deceasedPersonIll;
 	}
 
@@ -586,11 +586,11 @@ public class Exposure extends AbstractDomainObject {
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getProphylaxis() {
+	public YesNo getProphylaxis() {
 		return prophylaxis;
 	}
 
-	public void setProphylaxis(YesNoUnknown prophylaxis) {
+	public void setProphylaxis(YesNo prophylaxis) {
 		this.prophylaxis = prophylaxis;
 	}
 
@@ -604,20 +604,20 @@ public class Exposure extends AbstractDomainObject {
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getRiskArea() {
+	public YesNo getRiskArea() {
 		return riskArea;
 	}
 
-	public void setRiskArea(YesNoUnknown riskArea) {
+	public void setRiskArea(YesNo riskArea) {
 		this.riskArea = riskArea;
 	}
 
 	@Enumerated(EnumType.STRING)
-	public YesNoUnknown getLargeAttendanceNumber() {
+	public YesNo getLargeAttendanceNumber() {
 		return largeAttendanceNumber;
 	}
 
-	public void setLargeAttendanceNumber(YesNoUnknown largeAttendanceNumber) {
+	public void setLargeAttendanceNumber(YesNo largeAttendanceNumber) {
 		this.largeAttendanceNumber = largeAttendanceNumber;
 	}
 }

@@ -109,10 +109,10 @@ public class TaskIndexDto extends PseudonymizableIndexDto {
 	private TaskJurisdictionFlagsDto taskJurisdictionFlagsDto;
 
 	//@formatter:off
-	public TaskIndexDto(String uuid, TaskContext taskContext, String caseUuid, String caseFirstName, String caseLastName,
+	public TaskIndexDto(String uuid, TaskContext taskContext, String caseUuid, String caseFirstName, String caseLastName, String caseOtherName,
 			String eventUuid, String eventTitle, Disease eventDisease, String eventDiseaseDetails, EventStatus eventStatus, EventInvestigationStatus eventInvestigationStatus, Date eventDate,
-			String contactUuid, String contactFirstName, String contactLastName, String contactCaseFirstName, String contactCaseLastName,
-			String travelEntryUuid, String travelEntryExternalId, String travelEntryFirstName, String travelEntryLastName,
+			String contactUuid, String contactFirstName, String contactLastName, String contactOtherName, String contactCaseFirstName, String contactCaseLastName, String contactCaseOtherName,
+			String travelEntryUuid, String travelEntryExternalId, String travelEntryFirstName, String travelEntryLastName, String travelEntryOtherName,
 			TaskType taskType, TaskPriority priority, Date dueDate, Date suggestedStart, TaskStatus taskStatus, Disease disease,
 			String creatorUserUuid, String creatorUserFirstName, String creatorUserLastName, String creatorComment,
 			String assigneeUserUuid, String assigneeUserFirstName, String assigneeUserLastName, String assigneeReply,
@@ -126,7 +126,7 @@ public class TaskIndexDto extends PseudonymizableIndexDto {
 		this.taskContext = taskContext;
 
 		if (caseUuid != null) {
-			this.caze = new CaseReferenceDto(caseUuid, caseFirstName, caseLastName);
+			this.caze = new CaseReferenceDto(caseUuid, caseFirstName, caseLastName, caseOtherName);
 		}
 
 		if (eventUuid != null) {
@@ -138,11 +138,11 @@ public class TaskIndexDto extends PseudonymizableIndexDto {
 		}
 
 		if (contactUuid != null) {
-			this.contact = new ContactReferenceDto(contactUuid, contactFirstName, contactLastName, contactCaseFirstName, contactCaseLastName);
+			this.contact = new ContactReferenceDto(contactUuid, contactFirstName, contactLastName, contactOtherName,contactCaseFirstName, contactCaseLastName, contactCaseOtherName);
 		}
 
 		if (travelEntryUuid != null) {
-			this.travelEntry = new TravelEntryReferenceDto(travelEntryUuid, travelEntryExternalId, travelEntryFirstName, travelEntryLastName);
+			this.travelEntry = new TravelEntryReferenceDto(travelEntryUuid, travelEntryExternalId, travelEntryFirstName, travelEntryLastName, travelEntryOtherName);
 		}
 
 		this.taskType = taskType;

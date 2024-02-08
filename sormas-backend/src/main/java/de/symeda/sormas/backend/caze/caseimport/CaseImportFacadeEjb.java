@@ -19,24 +19,21 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
-import javax.ejb.Stateful;
 import javax.ejb.Stateless;
-
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
-import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.*;
 import de.symeda.sormas.api.caze.caseimport.CaseDMImportEntities;
 import de.symeda.sormas.api.caze.caseimport.EntityImportResultDto;
-import de.symeda.sormas.api.externalsurveillancetool.ExternalSurveillanceToolRuntimeException;
-import de.symeda.sormas.api.person.PersonNameDto;
-import de.symeda.sormas.api.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +69,9 @@ import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sample.SampleReferenceDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
+import de.symeda.sormas.api.utils.DataHelper;
+import de.symeda.sormas.api.utils.DateHelper;
+import de.symeda.sormas.api.utils.ValidationRuntimeException;
 import de.symeda.sormas.api.vaccination.VaccinationDto;
 import de.symeda.sormas.backend.caze.CaseFacadeEjb.CaseFacadeEjbLocal;
 import de.symeda.sormas.backend.common.EnumService;
@@ -122,7 +122,6 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
     @EJB
     private VaccinationFacadeEjbLocal vaccinationFacade;
 
-
     @Override
     @Transactional
     public ImportLineResultDto<CaseImportEntities> importCaseData(
@@ -138,7 +137,7 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
             return ImportLineResultDto.errorResult(I18nProperties.getValidationError(Validations.importLineTooLong));
         }
 
-         CaseImportEntities entities = new CaseImportEntities(userService.getCurrentUser().toReference());
+        final CaseImportEntities entities = new CaseImportEntities(userService.getCurrentUser().toReference());
         ImportLineResultDto<CaseImportEntities> importResult =
                 buildEntities(values, entityClasses, entityPropertyPaths, ignoreEmptyEntries, entities);
         if (importResult.isError()) {
@@ -151,150 +150,15 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
         }
 
         PersonDto person = entities.getPerson();
-        List<PersonNameDto> similarPersons = personFacade.similarExistingPersons(person);
-        CaseDataDto caseDataDto = null;
-        //PickMerge pickMerge = entities.getCaze().getImportUpdateCaseStatus();
-//        if (pickMerge == null) {
-//            pickMerge = PickMerge.CANCEL;
-//        }
-        //pickMerge.equals(PickMerge.PICK) &&
-        if ( entities.getCaze().getUuid() != null) {
-            caseDataDto = caseFacade.getCaseDataByUuid(entities.getCaze().getUuid());
-        }
-        //pickMerge.equals(PickMerge.MERGE) &&
-        //caseDataDto = caseFacade.getCaseDataByUuid(entities.getCaze().getUuid());
 
-        if ( entities.getCaze().getUuid() != null && caseDataDto!=null) {
-            String uuid = caseDataDto.getUuid();
-            caseDataDto = entities.getCaze();
-            caseDataDto.setUuid(uuid);
-            List<SampleDto> samplesList = sampleFacade.getByPersonNames(similarPersons);
-            List<PathogenTestDto> pathogenTests = pathogenTestFacade.getByPersonNames(similarPersons);
-            List<VaccinationDto> vaccinationDtoList = vaccinationFacade.getByPersonNames(similarPersons);
-            entities = new CaseImportEntities(person, caseDataDto,samplesList,pathogenTests,vaccinationDtoList);
-        }
-//		CaseDataDto caseDataDto = entities.getCaze().getUuid() == null ? caseFacade.getCaseDataByUuid(entities.getCaze().getUuid())
-//				: caseFacade.getByExternalId(entities.getCaze().getExternalID());
-        ImportLineResultDto<CaseImportEntities> result;
-
-//		if (personFacade.isPersonSimilarToExisting(person)) {
-//			return ImportLineResultDto.duplicateResult(entities);
-//		}
-
-        NewExisting newExisting = entities.getCaze().getExistingCase();
-        if (newExisting == null) {
-            newExisting = NewExisting.NEW_CASE;
+        if (personFacade.isPersonSimilarToExisting(person)) {
+            return ImportLineResultDto.duplicateResult(entities);
         }
 
-        if (similarPersons.size() > 0 && newExisting.equals(NewExisting.EXISTING_CASE) && caseDataDto == null) {
-            entities.setSimilarPersons(similarPersons);
-            return ImportLineResultDto.mergeResult(entities);
-        }
-        //Nii here, to remove
-//		if (personFacade.isPersonSimilarToExisting(person) && newExisting.equals(NewExisting.EXISTING_CASE)) {
-////			entities.setSimilarPersons(similarPersons);
-//			return ImportLineResultDto.duplicateResult(entities);
-//		}
-        if (caseDataDto != null) {
-            result = updateCaseWithImportData(entities.getPerson()!=null?entities.getPerson().getUuid():caseDataDto.getPerson().getUuid(),
-                    caseDataDto.getUuid(), values, entityClasses, entityPropertyPaths, false);
-        } else {
-            result = saveImportedEntities(entities, false);
-        }
-//		ImportLineResultDto<CaseImportEntities> result = saveImportedEntities(entities);
-		// final PersonDto person;1.87.0
-		// if (personUuid != null) {
-		// 	person = personFacade.getByUuid(personUuid);
-		// } else {
-		// 	person = PersonDto.buildImportEntity();
-		// }
+        ImportLineResultDto<CaseImportEntities> result = saveImportedEntities(entities, false);
 
         return result;
     }
-
-    @Override
-    @Transactional
-    public EntityImportResultDto importCaseDataPopulateModal(
-            String[] values,
-            String[] entityClasses,
-            String[] entityProperties,
-            String[][] entityPropertyPaths,
-            boolean ignoreEmptyEntries,CaseDMImportEntities saveentities
-
-    )
-            throws InvalidColumnException {
-
-
-        // Check whether the new line has the same length as the header line
-//		if (values.length > entityProperties.length) {
-//			return ImportLineResultDto.errorResult(I18nProperties.getValidationError(Validations.importLineTooLong));
-//		}
-
-
-        final CaseDMImportEntities entities = new CaseDMImportEntities();
-        EntityImportResultDto importResult =
-                buildEntitiesToPopulateModal(values, entityClasses, entityPropertyPaths, ignoreEmptyEntries,entities);
-
-        //importResult.getImportEntities().getCaseMDDataDtoList().add(importResult.getImportEntities().getCaseMDDataDto());
-        //ImportLineResultDto<CaseImportEntities> validationResult = validateEntities(entities);
-//		if (validationResult.isError()) {
-//			return validationResult;
-//		}
-
-
-        // CaseDataDto caseDataDto = null;
-
-
-
-
-
-       // EntityImportResultDto entityImportResultDto = new EntityImportResultDto(importResult, entities);
-
-
-        return importResult;
-        //return importResult;
-    }
-
-
-
-//	@Override
-//	@Transactional
-//	public ImportLineResultDto<CaseImportEntities> importCaseData(
-//		String[] values,
-//		String[] entityClasses,
-//		String[] entityProperties,
-//		String[][] entityPropertyPaths,
-//		boolean ignoreEmptyEntries)
-//		throws InvalidColumnException {
-//
-//		// Check whether the new line has the same length as the header line
-//		if (values.length > entityProperties.length) {
-//			return ImportLineResultDto.errorResult(I18nProperties.getValidationError(Validations.importLineTooLong));
-//		}
-//
-//		final CaseImportEntities entities = new CaseImportEntities(userService.getCurrentUser().toReference());
-//		ImportLineResultDto<CaseImportEntities> importResult =
-//			buildEntities(values, entityClasses, entityPropertyPaths, ignoreEmptyEntries, entities);
-//		if (importResult.isError()) {
-//			return importResult;
-//		}
-//
-//		ImportLineResultDto<CaseImportEntities> validationResult = validateEntities(entities);
-//		if (validationResult.isError()) {
-//			return validationResult;
-//		}
-//
-//		PersonDto person = entities.getPerson();
-//
-//		if (personFacade.isPersonSimilarToExisting(person)) {
-//			return ImportLineResultDto.duplicateResult(entities);
-//		}
-//
-//		ImportLineResultDto<CaseImportEntities> result = saveImportedEntities(entities, false);
-//
-//		return result;
-//	}
-
 
     @Override
     public ImportLineResultDto<CaseImportEntities> updateCaseWithImportData(
@@ -308,7 +172,7 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
 
         final PersonDto person;
         if (personUuid != null) {
-            person = personFacade.getPersonByUuid(personUuid);
+            person = personFacade.getByUuid(personUuid);
         } else {
             person = PersonDto.buildImportEntity();
         }
@@ -350,7 +214,7 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
             }
 
 //			PersonDto savedPerson = personFacade.savePerson(person);
-            final PersonDto savedPerson = personFacade.savePerson(person, skipPersonValidation);
+            final PersonDto savedPerson = personFacade.save(person, skipPersonValidation);
             caze.setPerson(savedPerson.toReference());
             // Workaround: Reset the change date to avoid OutdatedEntityExceptions
             // Should be changed when doing #2265
@@ -362,18 +226,6 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
             for (PathogenTestDto pathogenTest : pathogenTests) {
                 pathogenTestFacade.savePathogenTest(pathogenTest);
             }
-			// final PersonDto savedPerson = personFacade.save(person, skipPersonValidation);
-			// caze.setPerson(savedPerson.toReference());
-			// // Workaround: Reset the change date to avoid OutdatedEntityExceptions
-			// // Should be changed when doing #2265
-			// caze.setChangeDate(new Date());
-			// caseFacade.save(caze);
-			// for (SampleDto sample : samples) {
-			// 	sampleFacade.saveSample(sample);
-			// }
-			// for (PathogenTestDto pathogenTest : pathogenTests) {
-			// 	pathogenTestFacade.savePathogenTest(pathogenTest);
-			// }
 
             for (VaccinationDto vaccination : vaccinations) {
                 vaccinationFacade.createWithImmunization(
@@ -387,6 +239,102 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
             return ImportLineResultDto.successResult();
         } catch (ValidationRuntimeException e) {
             return ImportLineResultDto.errorResult(e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional
+    public EntityImportResultDto importCaseDataPopulateModal(
+            String[] values,
+            String[] entityClasses,
+            String[] entityProperties,
+            String[][] entityPropertyPaths,
+            boolean ignoreEmptyEntries,CaseDMImportEntities saveentities)
+            throws InvalidColumnException {
+
+        final CaseDMImportEntities entities = new CaseDMImportEntities();
+        EntityImportResultDto importResult =
+                buildEntitiesToPopulateModal(values, entityClasses, entityPropertyPaths, ignoreEmptyEntries,entities);
+
+        return importResult;
+    }
+
+    private EntityImportResultDto buildEntitiesToPopulateModal(
+            String[] values,
+            String[] entityClasses,
+            String[][] entityPropertyPaths,
+            boolean ignoreEmptyEntries,
+            CaseDMImportEntities entities) {
+
+        //final UserReferenceDto currentUserRef = userService.getCurrentUser().toReference();
+
+
+        ImportRelatedObjectsMapper relatedMapper = new ImportRelatedObjectsMapper.Builder().build();
+
+        ImportLineResultDto<CaseDMImportEntities> result = insertRowIntoDataToPopulateModal(values, entityClasses, entityPropertyPaths, ignoreEmptyEntries, (cellData) -> {
+            try {
+                CaseMDDataDto caze = entities.getCaseMDDataDto();
+
+                if (!relatedMapper.map(cellData)) {
+                    if (StringUtils.isNotEmpty(cellData.getValue())) {
+                        // If the cell entry is not empty, try to insert it into the current case
+                        insertColumnEntryIntoDataToPopulateDataIntoModal(caze, cellData.getValue(), cellData.getEntityPropertyPath());
+                    }
+                }
+            } catch (ImportErrorException | InvalidColumnException e) {
+                return e;
+            }
+
+            return null;
+        });
+
+        // Sanitize non-HOME address
+        //PersonHelper.sanitizeNonHomeAddress(entities.getPerson());
+        EntityImportResultDto entityImportResultDto = new EntityImportResultDto(result,null,entities);
+        return entityImportResultDto;
+    }
+
+    private void insertColumnEntryIntoDataToPopulateDataIntoModal(CaseMDDataDto caze, String entry, String[] entryHeaderPath)
+            throws InvalidColumnException, ImportErrorException {
+
+        Object currentElement = caze;
+        for (int i = 0; i < entryHeaderPath.length; i++) {
+            String headerPathElementName = entryHeaderPath[i];
+
+            Language language = I18nProperties.getUserLanguage();
+            try {
+
+                PropertyDescriptor pd = new PropertyDescriptor(headerPathElementName, currentElement.getClass());
+                Class<?> propertyType = pd.getPropertyType();
+
+                // Execute the default invokes specified in the data importer; if none of those were triggered, execute additional invokes
+                // according to the types of the case or person fields
+                if (importFacade.executeDefaultInvoke(pd, currentElement, entry, entryHeaderPath, false)) {
+                    continue;
+                } else {
+                    throw new UnsupportedOperationException(
+                            I18nProperties.getValidationError(Validations.importCasesPropertyTypeNotAllowed, propertyType.getName()));
+                }
+
+            } catch (IntrospectionException e) {
+                throw new InvalidColumnException(buildEntityProperty(entryHeaderPath));
+            } catch (InvocationTargetException | IllegalAccessException e) {
+                throw new ImportErrorException(
+                        I18nProperties.getValidationError(Validations.importErrorInColumn, buildEntityProperty(entryHeaderPath)));
+            } catch (IllegalArgumentException | EnumService.InvalidEnumCaptionException e) {
+                throw new ImportErrorException(entry, buildEntityProperty(entryHeaderPath));
+            } catch (ParseException e) {
+                throw new ImportErrorException(
+                        I18nProperties.getValidationError(
+                                Validations.importInvalidDate,
+                                buildEntityProperty(entryHeaderPath),
+                                DateHelper.getAllowedDateFormats(language.getDateFormat())));
+            } catch (ImportErrorException e) {
+                throw e;
+            } catch (Exception e) {
+                LOGGER.error("Unexpected error when trying to import a case: " + e.getMessage(), e);
+                throw new ImportErrorException(I18nProperties.getValidationError(Validations.importCasesUnexpectedError));
+            }
         }
     }
 
@@ -412,6 +360,57 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
 
         return ImportLineResultDto.successResult();
     }
+
+    protected ImportLineResultDto<CaseDMImportEntities> insertRowIntoDataToPopulateModal(
+            String[] values,
+            String[] entityClasses,
+            String[][] entityPropertyPaths,
+            boolean ignoreEmptyEntries,
+            Function<ImportCellData, Exception> insertCallback) {
+
+        String importError = null;
+        List<String> invalidColumns = new ArrayList<>();
+
+        for (int i = 0; i < values.length; i++) {
+            String value = StringUtils.trimToNull(values[i]);
+            if (ignoreEmptyEntries && (value == null || value.isEmpty())) {
+                continue;
+            }
+
+            String[] entityPropertyPath = entityPropertyPaths[i];
+            // Error description column is ignored
+            if (entityPropertyPath[0].equals(ERROR_COLUMN_NAME)) {
+                continue;
+            }
+
+            if (!(ignoreEmptyEntries && StringUtils.isEmpty(value))) {
+                Exception exception =
+                        insertCallback.apply(new ImportCellData(value, entityClasses != null ? entityClasses[i] : null, entityPropertyPath));
+                if (exception != null) {
+                    if (exception instanceof ImportErrorException) {
+                        importError = exception.getMessage();
+                        StringBuilder additionalInfo = new StringBuilder();
+                        for (int j = 0; j < entityPropertyPath.length; j++) {
+                            additionalInfo.append(" ").append(entityPropertyPath[j]);
+                        }
+                        importError += additionalInfo;
+                        importError += "value:" + value;
+                        break;
+                    } else if (exception instanceof InvalidColumnException) {
+                        invalidColumns.add(((InvalidColumnException) exception).getColumnName());
+                    }
+                }
+            }
+        }
+
+        if (invalidColumns.size() > 0) {
+            LOGGER.warn("Unhandled columns [{}]", String.join(", ", invalidColumns));
+        }
+
+
+        return importError != null ? ImportLineResultDto.errorResult(importError) : ImportLineResultDto.successResult();
+    }
+
 
     private ImportLineResultDto<CaseImportEntities> buildEntities(
             String[] values,
@@ -474,71 +473,12 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
         return result;
     }
 
-
-    private EntityImportResultDto buildEntitiesToPopulateModal(
-            String[] values,
-            String[] entityClasses,
-            String[][] entityPropertyPaths,
-            boolean ignoreEmptyEntries,
-            CaseDMImportEntities entities) {
-
-        //final UserReferenceDto currentUserRef = userService.getCurrentUser().toReference();
-
-
-        ImportRelatedObjectsMapper relatedMapper = new ImportRelatedObjectsMapper.Builder().build();
-
-         ImportLineResultDto<CaseDMImportEntities> result = insertRowIntoDataToPopulateModal(values, entityClasses, entityPropertyPaths, ignoreEmptyEntries, (cellData) -> {
-                    try {
-                        CaseMDDataDto caze = entities.getCaseMDDataDto();
-
-                        if (!relatedMapper.map(cellData)) {
-                            if (StringUtils.isNotEmpty(cellData.getValue())) {
-                                // If the cell entry is not empty, try to insert it into the current case
-                                insertColumnEntryIntoDataToPopulateDataIntoModal(caze, cellData.getValue(), cellData.getEntityPropertyPath());
-                            }
-                        }
-                    } catch (ImportErrorException | InvalidColumnException e) {
-                        return e;
-                    }
-
-                    return null;
-                });
-
-        // Sanitize non-HOME address
-        //PersonHelper.sanitizeNonHomeAddress(entities.getPerson());
-        EntityImportResultDto entityImportResultDto = new EntityImportResultDto(result,null,entities);
-        return entityImportResultDto;
-    }
-
     protected ImportLineResultDto<CaseImportEntities> insertRowIntoData(
             String[] values,
             String[] entityClasses,
             String[][] entityPropertyPaths,
             boolean ignoreEmptyEntries,
             Function<ImportCellData, Exception> insertCallback) {
-		// Language language = I18nProperties.getUserLanguage();1.87.0
-
-		// Object currentElement = caze;
-		// for (int i = 0; i < entryHeaderPath.length; i++) {
-		// 	String headerPathElementName = entryHeaderPath[i];
-
-		// 	try {
-		// 		if (i != entryHeaderPath.length - 1) {
-		// 			currentElement = new PropertyDescriptor(headerPathElementName, currentElement.getClass()).getReadMethod().invoke(currentElement);
-		// 			// Set the current element to the created person
-		// 			if (currentElement instanceof PersonReferenceDto) {
-		// 				currentElement = person;
-		// 			}
-		// 		} else if (CaseExportDto.BIRTH_DATE.equals(headerPathElementName)) {
-		// 			BirthDateDto birthDateDto = PersonHelper.parseBirthdate(entry, language);
-		// 			if (birthDateDto != null) {
-		// 				person.setBirthdateDD(birthDateDto.getDateOfBirthDD());
-		// 				person.setBirthdateMM(birthDateDto.getDateOfBirthMM());
-		// 				person.setBirthdateYYYY(birthDateDto.getDateOfBirthYYYY());
-		// 			}
-		// 		} else {
-		// 			PropertyDescriptor pd = new PropertyDescriptor(headerPathElementName, currentElement.getClass());
-		// 			Class<?> propertyType = pd.getPropertyType();
 
         String importError = null;
         List<String> invalidColumns = new ArrayList<>();
@@ -578,56 +518,6 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
         if (invalidColumns.size() > 0) {
             LOGGER.warn("Unhandled columns [{}]", String.join(", ", invalidColumns));
         }
-
-        return importError != null ? ImportLineResultDto.errorResult(importError) : ImportLineResultDto.successResult();
-    }
-
-    protected ImportLineResultDto<CaseDMImportEntities> insertRowIntoDataToPopulateModal(
-            String[] values,
-            String[] entityClasses,
-            String[][] entityPropertyPaths,
-            boolean ignoreEmptyEntries,
-            Function<ImportCellData, Exception> insertCallback) {
-
-        String importError = null;
-        List<String> invalidColumns = new ArrayList<>();
-
-        for (int i = 0; i < values.length; i++) {
-            String value = StringUtils.trimToNull(values[i]);
-            if (ignoreEmptyEntries && (value == null || value.isEmpty())) {
-                continue;
-            }
-
-            String[] entityPropertyPath = entityPropertyPaths[i];
-            // Error description column is ignored
-            if (entityPropertyPath[0].equals(ERROR_COLUMN_NAME)) {
-                continue;
-            }
-
-            if (!(ignoreEmptyEntries && StringUtils.isEmpty(value))) {
-                Exception exception =
-                        insertCallback.apply(new ImportCellData(value, entityClasses != null ? entityClasses[i] : null, entityPropertyPath));
-                if (exception != null) {
-                    if (exception instanceof ImportErrorException) {
-                        importError = exception.getMessage();
-                        StringBuilder additionalInfo = new StringBuilder();
-                        for (int j = 0; j < entityPropertyPath.length; j++) {
-                            additionalInfo.append(" ").append(entityPropertyPath[j]);
-                        }
-                        importError += additionalInfo;
-                        importError += "value:" + value;
-                        break;
-                    } else if (exception instanceof InvalidColumnException) {
-                        invalidColumns.add(((InvalidColumnException) exception).getColumnName());
-                    }
-                }
-            }
-        }
-
-        if (invalidColumns.size() > 0) {
-            LOGGER.warn("Unhandled columns [{}]", String.join(", ", invalidColumns));
-        }
-
 
         return importError != null ? ImportLineResultDto.errorResult(importError) : ImportLineResultDto.successResult();
     }
@@ -638,11 +528,12 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
     private void insertColumnEntryIntoData(CaseDataDto caze, PersonDto person, String entry, String[] entryHeaderPath)
             throws InvalidColumnException, ImportErrorException {
 
+        Language language = I18nProperties.getUserLanguage();
+
         Object currentElement = caze;
         for (int i = 0; i < entryHeaderPath.length; i++) {
             String headerPathElementName = entryHeaderPath[i];
 
-            Language language = I18nProperties.getUserLanguage();
             try {
                 if (i != entryHeaderPath.length - 1) {
                     currentElement = new PropertyDescriptor(headerPathElementName, currentElement.getClass()).getReadMethod().invoke(currentElement);
@@ -796,51 +687,6 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
         }
     }
 
-
-    private void insertColumnEntryIntoDataToPopulateDataIntoModal(CaseMDDataDto caze, String entry, String[] entryHeaderPath)
-            throws InvalidColumnException, ImportErrorException {
-
-        Object currentElement = caze;
-        for (int i = 0; i < entryHeaderPath.length; i++) {
-            String headerPathElementName = entryHeaderPath[i];
-
-            Language language = I18nProperties.getUserLanguage();
-            try {
-
-                PropertyDescriptor pd = new PropertyDescriptor(headerPathElementName, currentElement.getClass());
-                Class<?> propertyType = pd.getPropertyType();
-
-                // Execute the default invokes specified in the data importer; if none of those were triggered, execute additional invokes
-                // according to the types of the case or person fields
-                if (importFacade.executeDefaultInvoke(pd, currentElement, entry, entryHeaderPath, false)) {
-                    continue;
-                } else {
-                    throw new UnsupportedOperationException(
-                            I18nProperties.getValidationError(Validations.importCasesPropertyTypeNotAllowed, propertyType.getName()));
-                }
-
-            } catch (IntrospectionException e) {
-                throw new InvalidColumnException(buildEntityProperty(entryHeaderPath));
-            } catch (InvocationTargetException | IllegalAccessException e) {
-                throw new ImportErrorException(
-                        I18nProperties.getValidationError(Validations.importErrorInColumn, buildEntityProperty(entryHeaderPath)));
-            } catch (IllegalArgumentException | EnumService.InvalidEnumCaptionException e) {
-                throw new ImportErrorException(entry, buildEntityProperty(entryHeaderPath));
-            } catch (ParseException e) {
-                throw new ImportErrorException(
-                        I18nProperties.getValidationError(
-                                Validations.importInvalidDate,
-                                buildEntityProperty(entryHeaderPath),
-                                DateHelper.getAllowedDateFormats(language.getDateFormat())));
-            } catch (ImportErrorException e) {
-                throw e;
-            } catch (Exception e) {
-                LOGGER.error("Unexpected error when trying to import a case: " + e.getMessage(), e);
-                throw new ImportErrorException(I18nProperties.getValidationError(Validations.importCasesUnexpectedError));
-            }
-        }
-    }
-
     /**
      * Inserts the entry of a single cell into the sample, pathogen test, vaccinations or any other related object
      */
@@ -913,7 +759,6 @@ public class CaseImportFacadeEjb implements CaseImportFacade {
     protected String buildEntityProperty(String[] entityPropertyPath) {
         return String.join(".", entityPropertyPath);
     }
-
 
     @LocalBean
     @Stateless
