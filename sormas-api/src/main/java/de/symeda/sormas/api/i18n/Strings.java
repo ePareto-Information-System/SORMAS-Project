@@ -432,6 +432,7 @@ public interface Strings {
 	String headingCaution = "headingCaution";
 	String headingChangeCaseDisease = "headingChangeCaseDisease";
 	String headingChangePathogenTestResult = "headingChangePathogenTestResult";
+	String headingTakeNewTestForRubella = "headingTakeNewTestForRubella";
 	String headingClinicalMeasurements = "headingClinicalMeasurements";
 	String headingClinicalHistory = "headingClinicalHistory";
 	String headingClinicalVisitsDeleted = "headingClinicalVisitsDeleted";
@@ -1394,6 +1395,7 @@ public interface Strings {
 	String messageVisitsNotDeleted = "messageVisitsNotDeleted";
 	String messageWrongFileType = "messageWrongFileType";
 	String messageWrongTemplateFileType = "messageWrongTemplateFileType";
+	String messageTakeNewTestForRubella = "messageTakeNewTestForRubella";
 	String min = "min";
 	String mmhg = "mmhg";
 	String month = "month";
