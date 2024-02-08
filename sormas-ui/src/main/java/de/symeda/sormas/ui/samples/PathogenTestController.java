@@ -110,6 +110,35 @@ public class PathogenTestController {
 		return editView;
 	}
 
+	public CommitDiscardWrapperComponent<PathogenTestForm> getPathogenTestCreateComponentForRubella(
+			SampleDto sampleDto,
+			int caseSampleCount,
+			Consumer<PathogenTestDto> onSavedPathogenTest,
+			boolean suppressNavigateToCase) {
+		PathogenTestForm createForm = new PathogenTestForm(sampleDto, true, caseSampleCount, false, true, Disease.MEASLES); // Valid because jurisdiction doesn't matter for entities that are about to be created
+
+		createForm.setValue(PathogenTestDto.build(sampleDto, UserProvider.getCurrent().getUser()), Disease.CONGENITAL_RUBELLA);
+		final CommitDiscardWrapperComponent<PathogenTestForm> editView = new CommitDiscardWrapperComponent<>(
+				createForm,
+				UserProvider.getCurrent().hasUserRight(UserRight.PATHOGEN_TEST_CREATE),
+				createForm.getFieldGroup());
+
+
+		editView.addCommitListener(() -> {
+			if (!createForm.getFieldGroup().isModified()) {
+				PathogenTestDto pathogenTest = createForm.getValue();
+				savePathogenTest(pathogenTest, suppressNavigateToCase);
+
+				if (onSavedPathogenTest != null) {
+					onSavedPathogenTest.accept(pathogenTest);
+				}
+
+				SormasUI.refreshView();
+			}
+		});
+		return editView;
+	}
+
 	public void edit(String pathogenTestUuid, Runnable doneCallback, boolean isEditAllowed, boolean isDeleteAllowed) {
 		final CommitDiscardWrapperComponent<PathogenTestForm> editView =
 			getPathogenTestEditComponent(pathogenTestUuid, doneCallback, isEditAllowed, isDeleteAllowed);
@@ -465,11 +494,13 @@ public class PathogenTestController {
 	private void showChangeAssociatedSampleResultDialog(PathogenTestDto dto, Consumer<Boolean> callback) {
 		if (dto.getTestResult() != FacadeProvider.getSampleFacade().getSampleByUuid(dto.getSample().getUuid()).getPathogenTestResult()) {
 			ControllerProvider.getSampleController()
-				.showChangePathogenTestResultWindow(null, dto.getSample().getUuid(), dto.getTestResult(), callback);
+				.showChangePathogenTestResultWindow(null, dto.getSample().getUuid(), dto.getTestResult(), dto, callback);
 		} else if (callback != null) {
 			callback.accept(true);
 		}
 	}
+
+
 
 	public void showConvertEventParticipantToCaseDialog(EventParticipantDto eventParticipant, Disease testedDisease, Consumer<Boolean> callback) {
 		final EventDto event = FacadeProvider.getEventFacade().getEventByUuid(eventParticipant.getEvent().getUuid(), false);
