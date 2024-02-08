@@ -334,7 +334,6 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 		dhimsFacilityOrHome.setId("dhimsFacilityOrHome");
 		dhimsFacilityOrHome.setWidth(100, Unit.PERCENTAGE);
 		CssStyles.style(dhimsFacilityOrHome, ValoTheme.OPTIONGROUP_HORIZONTAL);
-		dhimsFacilityOrHome.setVisible(false);
 
 		dhimsFacilityType = ComboBoxHelper.createComboBoxV7();
 		dhimsFacilityType.setVisible(false);
@@ -678,8 +677,8 @@ import de.symeda.sormas.ui.utils.NullableOptionGroup;public class CaseCreateForm
 				hospitalName.setVisible(true);
 			}
 			investigated.setVisible(disease == Disease.NEW_INFLUENZA);
-			dhimsFacilityOrHome.setVisible(disease == Disease.YELLOW_FEVER || disease == Disease.AHF || disease == Disease.CSM);
-			dhimsFacilityType.setVisible(disease == Disease.YELLOW_FEVER || disease == Disease.AHF  || disease == Disease.CSM);
+			dhimsFacilityOrHome.setVisible(disease == Disease.YELLOW_FEVER || disease == Disease.AHF || disease == Disease.CSM || disease == Disease.MEASLES);
+			dhimsFacilityType.setVisible(disease == Disease.YELLOW_FEVER || disease == Disease.AHF  || disease == Disease.CSM || disease == Disease.MEASLES);
 
 			personCreateForm.updatePresentConditionEnum((Disease) valueChangeEvent.getProperty().getValue());
 
